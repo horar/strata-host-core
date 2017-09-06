@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="175px" height="87px" viewBox="0 0 175 87" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 45.2 (43514) - http://www.bohemiancoding.com/sketch -->
+    <title>usb plug copy</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <rect id="path-1" x="38.8232813" y="89.5921875" width="6.96828125" height="84.6148437"></rect>
+        <rect id="path-2" x="11.945625" y="0" width="63.71" height="28.8685937"></rect>
+    </defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Desktop" transform="translate(-899.000000, -273.000000)">
+            <g id="Main-Screen" transform="translate(206.000000, 157.000000)">
+                <g id="usb-plug-copy" transform="translate(780.500000, 159.500000) rotate(270.000000) translate(-780.500000, -159.500000) translate(738.000000, 72.000000)">
+                    <g id="Rectangle">
+                        <use fill-opacity="0.0253057065" fill="#D8D8D8" fill-rule="evenodd" xlink:href="#path-1"></use>
+                        <rect stroke="#000000" stroke-width="2" x="39.8232813" y="90.5921875" width="4.96828125" height="82.6148437"></rect>
+                    </g>
+                    <path d="M0.382786803,28.3708594 C-2.5608454,69.8798324 11.4729308,90.6343188 42.4841155,90.6343188 C89.0008926,90.6343188 84.5854443,28.7694357 84.5854443,28.7694357 C84.5854443,28.7694357 56.5178918,28.6365769 0.382786803,28.3708594 Z" id="Path-2" stroke="#000000" stroke-width="2" fill="#FFFFFF"></path>
+                    <g id="Rectangle-2">
+                        <use fill="#9B9B9B" fill-rule="evenodd" xlink:href="#path-2"></use>
+                        <rect stroke="#000000" stroke-width="2" x="12.945625" y="1" width="61.71" height="26.8685937"></rect>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>
