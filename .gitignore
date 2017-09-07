@@ -11,8 +11,8 @@
 */Debug/*
 */Release/*
 platform/cli/USB-PD/BUILD/*
-*build*/
-*BUILD*/
+build/*
+BUILD/*
 *.pro.user*
 *.pro.user
 !platform/lib/libmbed-os.a
