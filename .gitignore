@@ -9,6 +9,7 @@
 *.so
 *.obj
 */Debug/*
+Debug*
 */Release/*
 platform/cli/USB-PD/BUILD/*
 *build*/
