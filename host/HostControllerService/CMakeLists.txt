@@ -5,10 +5,15 @@ project (HostControllerService)
 set (HostControllerService_VERSION_MAJOR 1)
 set (HostControllerService_VERSION_MINOR 0)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x -levent")
-set(GCC_COMPILE_FLAGS "-std=c++11")
+if(WINDOWS)
+SET(CMAKE_TOOLCHAIN_FILE x86_64.cmake)
+SET(CMAKE_CXX_FLAGS "-v -std=gnu++11 -static-libstdc++ -static-libgcc -static")
+endif()
+
+if(LINUX)
+SET(CMAKE_CXX_FLAGS "-v -std=c++11")
+endif()
+
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "Debug/")
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "lib/")
@@ -28,10 +33,23 @@ set(SOURCE
 
 add_executable(HCS ${SOURCE})
 
+if(WINDOWS)
+target_link_libraries(HCS
+                      -lzmq.dll
+                      -lstdc++
+                      -lpthread
+                      -levent
+                      -lserialport.dll
+		      -lws2_32
+                     )
+endif()
+
+if(LINUX)
 target_link_libraries(HCS
                       -lzmq
                       -lstdc++
                       -lpthread
                       -levent
+                      -lserialport
                      )
-
+endif()

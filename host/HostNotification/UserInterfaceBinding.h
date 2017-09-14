@@ -9,7 +9,6 @@
 #include <QJsonDocument>
 #include <QVariant>
 #include <QStringList>
-#include <sys/socket.h>
 #include <QString>
 #include <pthread.h>
 #include <unistd.h>

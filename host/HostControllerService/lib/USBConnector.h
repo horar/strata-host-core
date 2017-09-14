@@ -28,8 +28,7 @@ public :
 
 	virtual ~USBConnector();
 private:
-	vector<char> responseUSB;
+	vector<char> response;
 };
-
 
 #endif /* LIB_USBCONNECTOR_H_ */

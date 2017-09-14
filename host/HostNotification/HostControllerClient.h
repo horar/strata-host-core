@@ -4,7 +4,6 @@
 #include <stdlib.h>
 #include <list>
 #include <algorithm>
-#include <syslog.h>
 #include <memory>
 #include <QJsonObject>
 #include <QDebug>
@@ -19,20 +18,6 @@
 
 #ifndef HOSTCONTROLLERCLIENT_H
 #define HOSTCONTROLLERCLIENT_H
-
-
-#define DEBUG
-#ifdef DEBUG
-#define DBGLEVEL LOG_DEBUG
-#define SYSLOGLEVEL LOG_WARNING
-#define dbgprint(level, ...) {\
-    if(level >= SYSLOGLEVEL) syslog(LOG_WARNING, __VA_ARGS__);\
-    if(level >= DBGLEVEL) printf(__VA_ARGS__); putchar('\n');\
-}
-
-#else // DEBUG
-#define dbgprint(...)
-#endif // DEBUG
 
 class HostControllerClient {
 

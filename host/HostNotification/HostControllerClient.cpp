@@ -22,12 +22,12 @@ HostControllerClient::HostControllerClient() {
 #else
     s_set_id(*sendCmdSocket);
 #endif
-
+    //request platform-id first step before proceeding with further request
+    s_send(*sendCmdSocket,"{\"cmd\":\"request_platform_id\",\"Host_OS\":\"Linux\"}");
+    s_recv(*sendCmdSocket);
 }
 
-HostControllerClient::~HostControllerClient(){
-
-}
+HostControllerClient::~HostControllerClient(){}
 
 bool HostControllerClient::sendCmd(QJsonObject cmd) {
 
@@ -55,11 +55,8 @@ QJsonObject HostControllerClient::receiveCommandAck() {
 QJsonObject HostControllerClient::receiveNotification() {
 
     QJsonObject jsonResponse;
-    //qDebug() << "Receive Notification called ";
     s_recv(*notificationSocket);
-    //qDebug() << " Message Part 1 " << QString::fromStdString(s_recv(*notificationSocket));
     std::string message = s_recv(*notificationSocket);
-    //qDebug() << " Message Part 2 " << QString::fromStdString(message);
 
     QString response = QString::fromStdString(message);
     qDebug() << "Converted QString = " << response;

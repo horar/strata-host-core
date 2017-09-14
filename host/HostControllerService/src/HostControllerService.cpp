@@ -1,20 +1,16 @@
 /*
- * HostControllerService.cpp
- *
- *  Created on: Aug 14, 2017
- *      Author: abhishek
- */
+* HostControllerService.cpp
+*
+*  Created on: Aug 14, 2017
+*      Author: abhishek
+*/
 
 #include "HostControllerService.h"
 
-/*!
- * \brief :
- * 			Initialize ZMQ && USB related global parameters
- */
+using namespace std;
 
 HostControllerService::HostControllerService(string ipRouter,string ipPub) {
 
-	_platformSocket=0;
 	_connect = false;
 	conObj= new(ConnectFactory);
 
@@ -32,10 +28,10 @@ HostControllerService::HostControllerService(string ipRouter,string ipPub) {
 HostControllerService::~HostControllerService() {}
 
 /*!
- * \brief
- * 		 parse the received JSON from HostControllerClient
- * 		 verify if the command is supported and respond back
- */
+* \brief
+* 		 parse the received JSON from HostControllerClient
+* 		 verify if the command is supported and respond back
+*/
 bool HostControllerService::verifyReceiveCommand(string command, string *response) {
 
 	StaticJsonBuffer<2000> jsonBuffer;
@@ -48,7 +44,8 @@ bool HostControllerService::verifyReceiveCommand(string command, string *respons
 
 	if(!root.success()) {
 
-		dbgprint(LOG_DEBUG,"PARSING UNSUCCESSFUL CHECK JSON BUFFER SIZE");
+		//dbgprint(LOG_DEBUG,"PARSING UNSUCCESSFUL CHECK JSON BUFFER SIZE");
+		printf("PARSING UNSUCCESSFUL CHECK JSON BUFFER SIZE\n");
 		return "Unsuccessful";
 	}
 
@@ -103,31 +100,46 @@ bool HostControllerService::verifyReceiveCommand(string command, string *respons
 	return false;
 }
 
-
-/*!
- * 	\brief:
- * 		Callback handle for servicing commands from HostControllerClient
- * 		@params: hostP, struct of type host_packet
- */
-void callbackServiceHandler(evutil_socket_t fd ,short what, void* hostP ){
+void callbackConnectionHandler(evutil_socket_t fd ,short what, void* hostP) {
 
 	HostControllerService::host_packet *host = (HostControllerService::host_packet *)hostP;
-	int _plat = host->_plat;
+	HostControllerService *obj= host->hcs;
+
+	if(obj->error == 0) {
+		cout << "Platform Disconnect detected " <<endl;
+		event_base_loopbreak(host->base);
+	}
+	cout << "ERROR " << obj->error <<endl;
+}
+
+/*
+* \brief :
+*      callback function to to handle service side requests
+*/
+void callbackServiceHandler(evutil_socket_t fd ,short what, void* hostP) {
+
+	HostControllerService::host_packet *host = (HostControllerService::host_packet *)hostP;
+	HostControllerService *obj= host->hcs;
 	zmq::socket_t *send = host->command;
 
 	unsigned int     zmq_events;
 	size_t           zmq_events_size  = sizeof(zmq_events);
 	send->getsockopt(ZMQ_EVENTS, &zmq_events, &zmq_events_size);
 
+	if(obj->error <= 0) {
+		cout << "Platform Disconnect detected " <<endl;
+		event_base_loopbreak(host->base);
+	}
+
 	if (zmq_events & ZMQ_POLLIN) {
 
-		Connector::messageProperty message = host->service->receive((void *)host->command);
+		Connector::messageProperty message = host->service->receive(host->command);
 
 		string response;
 
 		bool ack=host->hcs->verifyReceiveCommand(message.message,&response);
 		message.message=response;
-		host->service->sendAck(message,(void *) host->command);
+		host->service->sendAck(message,host->command);
 
 		if(ack == true ) {
 
@@ -135,12 +147,10 @@ void callbackServiceHandler(evutil_socket_t fd ,short what, void* hostP ){
 
 			if(success == true) {
 				string log = "<--- To Platform = " + message.message;
-				dbgprint(LOG_WARNING,log.c_str());
-				//cout << "<--- To Platform = " << message.message <<endl;
+				cout << "<--- To Platform = " << message.message <<endl;
 			} else {
 
-				dbgprint(LOG_WARNING," Message send to platform failed ");
-				//cout << "Message send to platform failed " <<endl;
+				cout << "Message send to platform failed " <<endl;
 			}
 		}
 	} else {
@@ -148,120 +158,137 @@ void callbackServiceHandler(evutil_socket_t fd ,short what, void* hostP ){
 	}
 }
 
-/*!
- * 	\brief:
- * 		Callback handle, for notifying HostControllerClient about platform changes
- * 		@params: hostP, is of type struct host_packet
- */
-void callbackPlatformHandler(evutil_socket_t fd ,short what, void* hostP) {
-
+/*
+* \brief :
+*    Function to handle notification from platform
+*/
+void HostControllerService::callbackPlatformHandler(void* hostP) {
 
 	HostControllerService::host_packet *host = (HostControllerService::host_packet *)hostP;
-	int _plat = host->_plat;
+	HostControllerService *obj = host->hcs;
 	zmq::socket_t *notify = host->notify;
 	Connector::messageProperty message;
 
-	message = host->platform->receive((void *)host->hcs);
+	sp_new_event_set(&ev);
+	sp_add_port_events(ev, platform_socket_, SP_EVENT_RX_READY);
 
-	if(!message.message.compare("")) {
+	while(1) {
+
+		message = host->platform->receive((void *)host->hcs);
+
+		if(!message.message.compare("")) {
 
 
-	} else if(!message.message.compare("DISCONNECTED")) {
+		} else if(!message.message.compare("DISCONNECTED")) {
 
-		host->hcs->disconnect=message.message;
-		close(host->hcs->_platformSocket);
-		message.message="{\"notification\":{\"value\":\"platform_connection_change_notification\",\"payload\":{\"status\":\"disconnected\"}}}";
-		host->service->sendNotification(message,host->notify);
-		event_base_loopbreak(host->base);
-	} else {
+			cout << "Platform disconnected " <<endl;
 
-		if(!host->service->sendNotification(message,(void *)host->notify)) {
+			host->hcs->disconnect=message.message;
+			message.message="{\"notification\":{\"value\":\"platform_connection_change_notification\",\"payload\":{\"status\":\"disconnected\"}}}";
+			host->service->sendNotification(message,host->notify);
 
-			string log = "Notification to UI Failed = " + message.message ;
-			dbgprint(LOG_WARNING,log.c_str());
-			//cout << "Notification to UI Failed = " << message.message <<endl;
-		}
-	}
-}
-
-/*!
- * \brief:
- * 		Opens default serial socket path
- */
-bool HostControllerService::openPlatformSocket() {
-
-	_platformSocket = open(DEFAULT_SERIAL_PATH, O_RDWR | O_NOCTTY |O_NONBLOCK);
-
-	if(_platformSocket < 0) {
-
-		dbgprint(LOG_WARNING,"Platform Socket open failed ");
-		//cout << "Platform Socket open failed " <<endl;
-		close(_platformSocket);
-		return false;
-	} else {
-
-		_connect = true;
-		hostP._plat = _platformSocket;
-
-		if(tcflush(_platformSocket,TCIOFLUSH) <0 ) {
-
-			dbgprint(LOG_WARNING,"Socket Buffer clear failed ");
-			//cout << "Socket Buffer clear failed "<<endl;
-			close(_platformSocket);
+			sp_close(platform_socket_);
+			//Signal
+			zmq::context_t context(1);
+			zmq::socket_t signal(context,ZMQ_DEALER);
+			signal.setsockopt(ZMQ_IDENTITY,"BREAK");
+			signal.connect("tcp://127.0.0.1:5564");
+			return ;
 		} else {
 
-			dbgprint(LOG_WARNING,"Connection Opened to PLATFORM ");
-			//cout << "Connection Opened to PLATFORM "<<endl;
-			sleep(2);
-			return true;
+			if(!host->service->sendNotification(message,host->notify)) {
+
+				string log = "Notification to UI Failed = " + message.message ;
+				cout << "Notification to UI Failed = " << message.message <<endl;
+			}
 		}
+	}
+}
+
+/*!
+* \brief :
+*    Open serial port to platform
+*/
+bool HostControllerService::openPlatformSocket() {
+
+	#ifndef _WIN32
+	error = sp_get_port_by_name("/dev/ttyUSB0",&platform_socket_);
+	#else
+	error = sp_get_port_by_name("COM7",&platform_socket_);
+	#endif
+
+	if(error == SP_OK) {
+
+		error = sp_open(platform_socket_, SP_MODE_READ_WRITE);
+		if(error == SP_OK) {
+			cout << "Serial PORT OPEN SUCCESS "<<endl;
+			return true;
+		} else {
+			cout << "SERIAL PORT OPEN FAILED "<<endl;
+			return false;
+		}
+	} else {
+		cout << "REQUESTED PORT NOT PRESENT "<<endl;
 		return false;
 	}
 }
 
-/*
- * \brief:
- * 		Initializes the default serial socket
- * 		with needed parameters to start fruitful communication
- */
+/*!
+* \brief:
+*    Initialzes serial port configuration to match platform
+*/
 void HostControllerService::initPlatformSocket() {
 
-	int rc = tcgetattr(_platformSocket, &_options);
+	error = sp_set_stopbits(platform_socket_,1);
 
-	if(rc < 0) {
+	if(error == SP_OK ) {
 
-		string log = "failed to get errno = "+(string) strerror(errno);
-		dbgprint(LOG_WARNING,log.c_str());
-		//fprintf(stderr, "failed to get errno: %s\n", strerror(errno));
+		cout << "stop bit set length = 1" <<endl;
 	}
 
-	_options.c_cflag &= ~CRTSCTS;// Disable hardware flow control
-	_options.c_cflag &= ~CSTOPB;// 1 stop bit
-	_options.c_cflag= CBAUD | CS8 | CLOCAL | CREAD;
-	_options.c_iflag=IGNPAR;
-	_options.c_oflag=0;
-	_options.c_lflag=0;
-	_options.c_cc[VMIN]= 1;
-	_options.c_cc[VTIME] = 2;
-	cfsetospeed(&_options,9600);
-	cfsetispeed(&_options,9600);
+	error = sp_set_bits(platform_socket_,8);
 
-	rc = tcsetattr(_platformSocket, TCSANOW, &_options);
+	if(error == SP_OK ) {
 
-	if (rc < 0) {
-
-		string log = "failed to get attr: errno = "+ (string)strerror(errno);
-		dbgprint(LOG_WARNING,log.c_str());
-		//printf("failed to get attr: errno: %s\n", strerror(errno));
+		cout << "data bit length = 8" <<endl;
 	}
+
+	error = sp_set_rts(platform_socket_,SP_RTS_OFF);
+	if(error == SP_OK ) {
+
+		cout << "rts disabled" <<endl;
+	}
+
+	error = sp_set_baudrate(platform_socket_,9600);
+	if(error == SP_OK ) {
+
+		cout << "baud rate = 9600" <<endl;
+	}
+
+	error= sp_set_dtr(platform_socket_,SP_DTR_OFF);
+	if(error == SP_OK ) {
+
+		cout << "dts disabled" <<endl;
+	}
+
+	error= sp_set_parity(platform_socket_,SP_PARITY_NONE );
+	if(error == SP_OK ) {
+
+		cout << "parity bit = NONE" <<endl;
+	}
+
+	error = sp_set_cts(platform_socket_,SP_CTS_IGNORE );
+	if(error == SP_OK ) {
+
+		cout << "cts = IGNORE" <<endl;
+	}
+
 }
 
-
-
 /*!
- * \brief:
- * 		  Initializes the HostContorllerService
- */
+* \brief:
+* 		  Initializes the HostContorllerService
+*/
 string HostControllerService::setupHostControllerService(string ipRouter, string ipPub) {
 
 	Connector *cons = conObj->getServiceTypeObject("SERVICE");
@@ -270,62 +297,65 @@ string HostControllerService::setupHostControllerService(string ipRouter, string
 	Connector *conp = conObj->getServiceTypeObject("PLATFORM");
 	hostP.platform = conp;
 
-	string cmd = "{\"cmd\":\"request_platform_id\",\"Host_OS\":\"Linux\"}\n";
+	string cmd = "{\"cmd\":\"request_platform_id\",\"Host_OS\":\"Linux\"}";
 
 	while(!openPlatformSocket()) {
 
-		dbgprint(LOG_DEBUG,"Waiting for Board to get Connected ");
-		//cout << "Waiting for Board to get Connected" <<endl;
+		cout << "Waiting for Board to get Connected" <<endl;
+#ifndef _WIN32
 		sleep(2);
+#else
+		Sleep(2);
+#endif
 	}
 
 	initPlatformSocket();
-	//Send board platform id request to USB PD Board
 	Connector::messageProperty message;
 	message.message=cmd;
 	conp->sendNotification(message,this);
 
-	//Send Platform Connected notification to HostControllerClient
-	cmd="{\"notification\":{\"value\":\"platform_connection_change_notification\",\"payload\":{\"status\":\"connected\"}}}";
-	message.message=cmd;
-	cons->sendNotification(message,(void *)hostP.notify);
-
+#ifndef _WIN32
 	int sockService=0;
 	size_t size_sockService = sizeof(sockService);
+#else
+	unsigned long long int sockService=0;
+	size_t size_sockService = sizeof(sockService);
+#endif
+
 	hostP.command->getsockopt(ZMQ_FD,&sockService,&size_sockService);
 
 	hostP.hcs=this;
 
 	struct event_base *base = event_base_new();
 	hostP.base = base;
-	struct event *platform = event_new(base,_platformSocket ,
-			 	 	 	 	 	 	   EV_READ | EV_PERSIST ,
-									   callbackPlatformHandler,(void *)&hostP);
 
+	thread t(&HostControllerService::callbackPlatformHandler,this,(void *)&hostP);
 	//EV_ET says its edge triggered. EV_READ and EV_WRITE are both
 	//needed when event is added else it doesn't function properly
 	//As libevent READ and WRITE functionality is affected by edge triggered events.
 	struct event *service = event_new(base, sockService ,
-									  EV_READ | EV_WRITE | EV_ET | EV_PERSIST ,
-									  callbackServiceHandler,(void *)&hostP);
+			EV_READ | EV_WRITE | EV_ET | EV_PERSIST ,
+			callbackServiceHandler,(void *)&hostP);
 
-	if (event_base_set(base,platform) <0 )
-		//cout <<"Event BASE SET PLATFORM FAILED "<<endl;
-		dbgprint(LOG_DEBUG,"Event BASE SET PLATFORM FAILED ");
+	// struct event *connection = event_new(base, -1 ,
+	// 		EV_PERSIST ,callbackConnectionHandler,(void *)&hostP);
 
-	if(event_add(platform,NULL) <0 )
-		//cout<<"Event SEND PLATFORM FAILED "<<endl;
-		dbgprint(LOG_DEBUG,"Event SEND PLATFORM FAILED ");
-
-	//timeval i = {0,500};
 	if (event_base_set(base,service) <0 )
-		//cout <<"Event BASE SET SERVICE FAILED "<<endl;
-		dbgprint(LOG_DEBUG,"Event BASE SET SERVICE FAILED ");
+		cout <<"Event BASE SET SERVICE FAILED "<<endl;
 
 	if(event_add(service,NULL) <0 )
-		//cout<<"Event SERVICE ADD FAILED "<<endl;
-		dbgprint(LOG_DEBUG,"Event SERVICE ADD FAILED ");
+		cout<<"Event SERVICE ADD FAILED "<<endl;
+
+	// if (event_base_set(base,connection) <0 )
+	// cout <<"Event BASE SET CONNECTION FAILED "<<endl;
+	//
+	// timeval i = {1,0};
+	// if(event_add(connection,&i) <0 )
+	// cout<<"Event CONNECTION ADD FAILED "<<endl;
+
 
 	event_base_dispatch(base);
+	t.join();
+	cout << "returnting " <<endl;
 	return disconnect;
 }

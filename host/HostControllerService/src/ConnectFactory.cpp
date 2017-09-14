@@ -7,8 +7,7 @@
 
 #include "ConnectFactory.h"
 
-mutex lock_platSocket;
-
+std::mutex lock_serial_;
 //Constructor
 ConnectFactory::ConnectFactory() {}
 
@@ -31,5 +30,3 @@ Connector* ConnectFactory::getServiceTypeObject(string servicetype) {
 }
 
 ConnectFactory::~ConnectFactory() {}
-
-
