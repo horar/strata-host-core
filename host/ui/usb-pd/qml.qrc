@@ -15,7 +15,7 @@
         <file>leftArrow.svg</file>
         <file>usbPlugLeft.svg</file>
         <file>usbPlugRight.svg</file>
-        <file>boarder.svg</file>
+        <file>border.svg</file>
         <file>deviceOutline.svg</file>
         <file>submitButton.svg</file>
         <file>boarder_graph.svg</file>
@@ -80,5 +80,19 @@
         <file>framework/SGSlider.qml</file>
         <file>framework/images/sliderThumb.svg</file>
         <file>framework/images/sliderValue.svg</file>
+        <file>SGIconList.qml</file>
+        <file>SGIconStatistic.qml</file>
+        <file>SGPortTitle.qml</file>
+        <file>SGPortGroup.qml</file>
+        <file>SGVerticalDivider.qml</file>
+        <file>SGIconLabel.qml</file>
+        <file>BackSide.qml</file>
+        <file>Board.qml</file>
+        <file>Connector.qml</file>
+        <file>Device.qml</file>
+        <file>FrontSide.qml</file>
+        <file>infoIcon.svg</file>
+        <file>temperatureIcon.svg</file>
+        <file>On_Logo_Green.svg</file>
     </qresource>
 </RCC>

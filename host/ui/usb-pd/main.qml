@@ -12,7 +12,6 @@ ApplicationWindow {
 
     Rectangle {
         id: startupDialog
-
         anchors { top: parent.top }
         width: mainWindow.width; height: mainWindow.height
         //border.color: "green"; border.width: 2 // debug
@@ -26,6 +25,7 @@ ApplicationWindow {
             width: parent.width; height: 40
             color: "#235A92"
         }
+
         Image {
             anchors { top: parent.top; right: parent.right }
             height: 40
@@ -43,7 +43,6 @@ ApplicationWindow {
             Label {
                 id: statusMessage
                 anchors { centerIn: parent}
-
                 text: "Detecting Platform Hardware"
                 font { pixelSize: 22
                        bold: true }
@@ -85,7 +84,6 @@ ApplicationWindow {
             Label {
                 id: platformTypeMessage
                 anchors { centerIn: parent}
-
                 text: "Automotive USB-PD Platform"
                 font.pixelSize: 22
                 font.bold: true
@@ -198,10 +196,8 @@ ApplicationWindow {
 
     PropertyAnimation {
         id: dialogAnimationClose
-
         target: startupDialog; properties: "height"
         from: startupDialog.height; to: 0; duration: 1500
-
         onStopped: {
             startupDialog.visible = false
         }
@@ -213,10 +209,7 @@ ApplicationWindow {
         currentIndex: tabBar.currentIndex
 
         z:1
-
-        PageControl { id: pageControlID
-            width: parent.parent.width; height: parent.parent.height
-        }
+        PageControl { id: pageControlID;width: parent.parent.width; height: parent.parent.height }
         PageBOM { id: pageBOMID }
         PageSchematic { id: pageSchematic }
         PageAssembly { id: pageAssembly }
