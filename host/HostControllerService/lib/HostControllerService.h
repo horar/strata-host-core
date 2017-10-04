@@ -16,7 +16,6 @@
 #define LIB_HOSTCONTROLLERSERVICE_H_
 
 void callbackServiceHandler(evutil_socket_t fd ,short what, void* hostP );
-void callbackConnectionHandler(evutil_socket_t fd ,short what, void* hostP);
 
 class HostControllerService {
 

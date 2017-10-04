@@ -48,33 +48,29 @@ Connector::messageProperty USBConnector::receive(void *HCS) {
 
   char temp = '\0';
   sp_wait(obj->ev, 0);
-  //sp_blocking_read_next(obj->platform_socket_,(void *)&temp,1,0);
-	obj->error = sp_nonblocking_read(obj->platform_socket_,(void *)&temp,1);
+  obj->error = sp_nonblocking_read(obj->platform_socket_,(void *)&temp,1);
 
-	if(obj->error <= 0) {
+  if(obj->error <= 0) {
 
     cout << "Platform Disconnected " <<endl;
-		message.message="DISCONNECTED";
-		return message;
-	}
+    message.message="DISCONNECTED";
+    return message;
+  }
 
-  if(temp!= '\n' && temp != '\0') {
+  if(temp !='\n') {
 
     response.push_back(temp);
     message.message="";
     return message;
-  } else if(temp == '\n') {
-
-    string new_string(response.begin(),response.end());
-    cout << "Received Message = " << new_string  << endl;
-    response.clear();
-    message.message = new_string;
-    return message;
   } else {
-
-    //cout << "cout returning else " <<endl;
-    message.message="";
-    return message;
+    if(!response.empty()) {
+      cout << "String complete temp = " << temp <<endl;
+      string new_string(response.begin(),response.end());
+      cout << "Received Message = " << new_string  << endl;
+      response.clear();
+      message.message = new_string;
+      return message;
+    }
   }
 }
 

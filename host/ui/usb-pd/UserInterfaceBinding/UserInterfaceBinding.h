@@ -9,12 +9,11 @@
 #include <QJsonDocument>
 #include <QVariant>
 #include <QStringList>
-#include <sys/socket.h>
 #include <QString>
 #include <pthread.h>
 #include <unistd.h>
 #include <stdlib.h>
-#include <HostControllerClient.h>
+#include "../../../include/HostControllerClient.h"
 
 //aPort = Variable to store current
 //vPort = Variable to store voltage
@@ -41,10 +40,15 @@ class UserInterfaceBinding : public QObject
     Q_PROPERTY(float time READ getPort0Time NOTIFY port0TimeChanged)
     Q_PROPERTY(float powerPort0 READ getpowerPort0  NOTIFY powerPort0Changed)
 
+    //QProperty : To know Platform Status
+    Q_PROPERTY(QString platformState READ getPlatformState NOTIFY platformStateChanged)
+
     //QProperty : Platform Id
     Q_PROPERTY(QString Id READ getPlatformId NOTIFY platformIdChanged)
 
-
+    //QProperty : To know USB-C port status
+    //Q_PROPERTY(bool usbcPort1 READ getUsbCPort1  NOTIFY usbCPort1StateChanged)
+    //Q_PROPERTY(bool usbcPort2 READ getUsbCPort2  NOTIFY usbCPort2StateChanged)
 public:
     explicit UserInterfaceBinding(QObject *parent = nullptr);
 
@@ -54,7 +58,9 @@ public:
     float getoutputCurrentPort0();
     float getpowerPort0();
     float getPort0Time();
+    bool getPlatformState();
     QString getPlatformId();
+    //bool get
 
 //Helper methods to handle QString to JSON conversion
     QJsonObject convertQstringtoJson(const QString string);
@@ -63,6 +69,7 @@ public:
     QVariantMap validateJsonReply(const QVariantMap json_map);
     void handleUsbPowerNotification(const QVariantMap json_map);
     void handlePlatformIdNotification(const QVariantMap json_map);
+    void handlePlatformStateNotification(const QVariantMap json_map);
 
 //Notification Simulator
     friend void *simulateNotificationsThread(void *);
@@ -78,12 +85,14 @@ signals:
     void port0TimeChanged(const float time);
     void powerPort0Changed(const float powerPort0);
     void platformIdChanged(const QString platformId);
+    void platformStateChanged(const bool platformState);
 
 private:
     //Members private to class
     platform_Ports Ports;
     pthread_t notificationThread;
     QString platformId;
+    bool platformState, usbC_Port_1_State, usbC_Port_2_State;
     bool registrationSuccessful;
 
 public:

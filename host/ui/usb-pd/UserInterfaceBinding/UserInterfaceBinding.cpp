@@ -1,5 +1,5 @@
-#include <UserInterfaceBinding.h>
-
+#include "UserInterfaceBinding.h"
+#include "../../../include/zhelpers.hpp"
 
 /*!
  * Constructor initialization
@@ -9,17 +9,18 @@
 
 UserInterfaceBinding::UserInterfaceBinding(QObject *parent) : QObject(parent) {
 
-    Ports.a_oport[0]=-1;
-    Ports.a_oport[1]=-1;
-    Ports.v_oport[0]=-1;
-    Ports.v_oport[1]=-1;
-    Ports.v_iport[0]=-1;
-    Ports.v_iport[1]=-1;
-    Ports.time[0]=-1;
-    Ports.time[0]=-1;
-    Ports.power[0]=-1;
-    Ports.power[1]=-1;
+    Ports.a_oport[0]='\0';
+    Ports.a_oport[1]='\0';
+    Ports.v_oport[0]='\0';
+    Ports.v_oport[1]='\0';
+    Ports.v_iport[0]='\0';
+    Ports.v_iport[1]='\0';
+    Ports.time[0]='\0';
+    Ports.time[0]='\0';
+    Ports.power[0]='\0';
+    Ports.power[1]='\0';
     platformId= QString();
+    platformState=false;
     pthread_create(&notificationThread,NULL,notificationsThreadHandle,this);
 }
 
@@ -72,6 +73,15 @@ QString UserInterfaceBinding::getPlatformId() {
 }
 
 /*!
+ * \brief get platform connection state
+ */
+
+bool UserInterfaceBinding::getPlatformState() {
+
+    return platformState;
+}
+
+/*!
  * End of Getter and Setter Methods
  */
 
@@ -94,6 +104,9 @@ void UserInterfaceBinding::handleNotification(QVariantMap current_map) {
         } else if(current_map["value"] == "platform_id") {
             payloadMap = current_map["payload"].toMap();
             handlePlatformIdNotification(payloadMap);
+        } else if (current_map["value"] == "platform_connection_change_notification"){
+            payloadMap=current_map["payload"].toMap();
+            handlePlatformStateNotification(payloadMap);
         }else {
             qDebug() << "Unsupported value field Received";
             qDebug() << "Received JSON = " <<current_map;
@@ -111,39 +124,28 @@ void UserInterfaceBinding::handleUsbPowerNotification(const QVariantMap payloadM
     int port = payloadMap["port"].toInt();
 
     if(port == 0) {
-        qDebug() << "in handlling power notification" ;
+
         if(Ports.v_oport[0] != payloadMap["output"].toFloat()) {
             Ports.v_oport[0] = payloadMap["output"].toFloat();
-            //ceil(Ports.v_oport[0]);
-            qDebug() << "ouput Voltage emitted " << payloadMap["output"].toFloat();
-
             emit outputVoltagePort0Changed(Ports.v_oport[0]);
         }
 
         if(Ports.v_iport[0] != payloadMap["input"].toFloat()) {
             Ports.v_iport[0] = payloadMap["input"].toFloat();
-            qDebug() << "input Voltage emitted "<<payloadMap["input"].toFloat();
-            //ceil(Ports.v_iport[0]);
             emit inputVoltagePort0Changed(Ports.v_iport[0]);
         }
 
         if(Ports.a_oport[0] != payloadMap["current"].toFloat()) {
             Ports.a_oport[0] = payloadMap["current"].toFloat();
-            qDebug() << "output current emitted " << payloadMap["current"].toFloat();
-            //ceil(Ports.a_oport[0]);
             emit outputCurrentPort0Changed(Ports.a_oport[0]);
         }
 
         if(Ports.power[0] != payloadMap["power"].toFloat()) {
             Ports.power[0] = payloadMap["power"].toFloat();
-            qDebug() << "output power emitted " <<payloadMap["power"].toFloat();
-            //ceil(Ports.power[0]);
             emit powerPort0Changed(Ports.power[0]);
         }
         if(Ports.time[0] != payloadMap["time"].toFloat()) {
             Ports.time[0] = payloadMap["time"].toFloat();
-            qDebug() << "time emitted " << payloadMap["time"].toFloat();
-            //ceil(Ports.time[0]);
             emit port0TimeChanged(Ports.time[0]);
         }
 
@@ -151,30 +153,25 @@ void UserInterfaceBinding::handleUsbPowerNotification(const QVariantMap payloadM
 
         if(Ports.v_oport[1] != payloadMap["output"].toFloat()) {
             Ports.v_oport[1] = payloadMap["output"].toFloat();
-            //ceil(Ports.v_oport[1]);
             emit outputVoltagePort0Changed(Ports.v_oport[1]);
         }
 
         if(Ports.v_iport[1] != payloadMap["input"].toFloat()) {
             Ports.v_iport[1] = payloadMap["input"].toFloat();
-            //ceil(Ports.v_iport[1]);
             emit inputVoltagePort0Changed(Ports.v_iport[1]);
         }
 
         if(Ports.a_oport[1] != payloadMap["current"].toFloat()) {
             Ports.a_oport[1] = payloadMap["current"].toFloat();
-            //ceil(Ports.a_oport[1]);
             emit outputCurrentPort0Changed(Ports.a_oport[1]);
         }
 
         if(Ports.power[1] != payloadMap["power"].toFloat()) {
             Ports.power[1] = payloadMap["power"].toFloat();
-            //ceil(Ports.power[1]);
             emit powerPort0Changed(Ports.power[1]);
         }
         if(Ports.time[1] != payloadMap["time"].toFloat()) {
             Ports.time[1] = payloadMap["time"].toFloat();
-            //ceil(Ports.time[1]);
             emit port0TimeChanged(Ports.time[1]);
         }
 
@@ -185,16 +182,43 @@ void UserInterfaceBinding::handlePlatformIdNotification(const QVariantMap payloa
 
     if (payloadMap.contains("platform_id")){
 
-            QString platformIdTemp = payloadMap["platform_id"].toString();
-            qDebug() << "Received platformId = " << platformId;
-            if(platformIdTemp != platformId) {
-                platformId = platformIdTemp;
-                emit platformIdChanged(platformId);
-                qDebug() << "PlatformIdChanged notification";
-            }
+        QString platformIdTemp = payloadMap["platform_id"].toString();
+        qDebug() << "Received platformId = " << platformId;
+        if(platformIdTemp != platformId) {
+            platformId = platformIdTemp;
+            emit platformIdChanged(platformId);
+            qDebug() << "PlatformIdChanged notification";
         }
+    }
 }
 
+void UserInterfaceBinding::handlePlatformStateNotification(const QVariantMap payloadMap) {
+
+    QString status = payloadMap["status"].toString();
+    qDebug() << "Status =" << payloadMap;
+    if (status.compare("connected") == 0){
+
+        bool platformStateTemp = true;
+        if(platformStateTemp != platformState) {
+
+            platformState = platformStateTemp;
+            emit platformStateChanged(platformState);
+            qDebug() << "platformStateChanged notification";
+        }
+    } else if (status.compare("disconnected") == 0) {
+
+        bool platformStateTemp = false;
+        if(platformStateTemp != platformState) {
+
+            platformState = platformStateTemp;
+            emit platformStateChanged(platformState);
+            qDebug() << "platformStateChanged notification";
+        }
+    } else {
+
+        qDebug() << "Unsupported PlatformState ";
+    }
+}
 /*!
  * End of notification handlers
  */
@@ -275,14 +299,20 @@ QVariantMap UserInterfaceBinding::validateJsonReply(const QVariantMap json_map) 
  *     Simulate JSON Messages and notify on changes
  */
 
+
 void *notificationsThreadHandle(void* ObjectHost) {
     //read series of files each loop
     UserInterfaceBinding *Obj = (UserInterfaceBinding *)ObjectHost;
     HostControllerClient Object= Obj->HCCObj;
     qDebug () << "Thread Created for notification ";
     while(1) {
-        QJsonObject json_obj = Object.receiveNotification();
-        qDebug()<<"Response received  = " << json_obj;
+
+        std::string response= Object.receiveNotification();
+        QString q_response = QString::fromStdString(response);
+        QJsonDocument doc= QJsonDocument::fromJson(q_response.toUtf8());
+        QJsonObject json_obj=doc.object();
+
+        //qDebug()<<"Response received  = " << json_obj;
 
         QVariantMap json_map = Obj->getJsonMapObject(json_obj);
         json_map = Obj->getJsonMapObject(json_obj);

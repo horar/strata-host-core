@@ -100,18 +100,6 @@ bool HostControllerService::verifyReceiveCommand(string command, string *respons
 	return false;
 }
 
-void callbackConnectionHandler(evutil_socket_t fd ,short what, void* hostP) {
-
-	HostControllerService::host_packet *host = (HostControllerService::host_packet *)hostP;
-	HostControllerService *obj= host->hcs;
-
-	if(obj->error == 0) {
-		cout << "Platform Disconnect detected " <<endl;
-		event_base_loopbreak(host->base);
-	}
-	cout << "ERROR " << obj->error <<endl;
-}
-
 /*
 * \brief :
 *      callback function to to handle service side requests
@@ -178,7 +166,7 @@ void HostControllerService::callbackPlatformHandler(void* hostP) {
 
 		if(!message.message.compare("")) {
 
-
+				//Do Nothing
 		} else if(!message.message.compare("DISCONNECTED")) {
 
 			cout << "Platform disconnected " <<endl;
@@ -222,6 +210,9 @@ bool HostControllerService::openPlatformSocket() {
 		error = sp_open(platform_socket_, SP_MODE_READ_WRITE);
 		if(error == SP_OK) {
 			cout << "Serial PORT OPEN SUCCESS "<<endl;
+			Connector::messageProperty message;
+			message.message="{\"notification\":{\"value\":\"platform_connection_change_notification\",\"payload\":{\"status\":\"connected\"}}}";
+			hostP.service->sendNotification(message,hostP.notify);
 			return true;
 		} else {
 			cout << "SERIAL PORT OPEN FAILED "<<endl;
@@ -305,7 +296,7 @@ string HostControllerService::setupHostControllerService(string ipRouter, string
 #ifndef _WIN32
 		sleep(2);
 #else
-		Sleep(2);
+		Sleep(2000);
 #endif
 	}
 
@@ -337,22 +328,12 @@ string HostControllerService::setupHostControllerService(string ipRouter, string
 			EV_READ | EV_WRITE | EV_ET | EV_PERSIST ,
 			callbackServiceHandler,(void *)&hostP);
 
-	// struct event *connection = event_new(base, -1 ,
-	// 		EV_PERSIST ,callbackConnectionHandler,(void *)&hostP);
 
 	if (event_base_set(base,service) <0 )
 		cout <<"Event BASE SET SERVICE FAILED "<<endl;
 
 	if(event_add(service,NULL) <0 )
 		cout<<"Event SERVICE ADD FAILED "<<endl;
-
-	// if (event_base_set(base,connection) <0 )
-	// cout <<"Event BASE SET CONNECTION FAILED "<<endl;
-	//
-	// timeval i = {1,0};
-	// if(event_add(connection,&i) <0 )
-	// cout<<"Event CONNECTION ADD FAILED "<<endl;
-
 
 	event_base_dispatch(base);
 	t.join();

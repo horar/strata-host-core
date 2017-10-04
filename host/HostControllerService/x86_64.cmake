@@ -7,9 +7,8 @@ SET(CMAKE_CXX_COMPILER          "x86_64-w64-mingw32-g++-posix")
 #SET(CMAKE_CXX_COMPILER          "x86_64-w64-mingw32-g++")
 
 
-# Currently not using these 
+# Currently not using these
 #SET(CMAKE_FIND_ROOT_PATH "/usr/include")
 SET(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
 SET(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
 SET(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
-

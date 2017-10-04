@@ -1,0 +1,10 @@
+﻿  ConfigurationType : Application
+  Configuration     : DebugDEXE
+  PlatformToolset   : v141
+  TargetPath        : C:\Users\zbdfhn\Downloads\demo\libzmq\builds\msvc\vs2017\local_lat\..\..\..\..\bin\Win32\Debug\v141\dynamic\local_lat.exe
+  Linkage-libzmq    : dynamic
+  local_lat.cpp
+  local_lat.vcxproj -> C:\Users\zbdfhn\Downloads\demo\libzmq\builds\msvc\vs2017\local_lat\..\..\..\..\bin\Win32\Debug\v141\dynamic\local_lat.exe
+  local_lat.vcxproj -> C:\Users\zbdfhn\Downloads\demo\libzmq\builds\msvc\vs2017\local_lat\..\..\..\..\bin\Win32\Debug\v141\dynamic\local_lat.pdb (Full PDB)
+  Copying libzmq.dll -> C:\Users\zbdfhn\Downloads\demo\libzmq\bin\Win32\Debug\v141\dynamic\libzmq.dll
+  Copying libzmq.pdb -> C:\Users\zbdfhn\Downloads\demo\libzmq\bin\Win32\Debug\v141\dynamic\libzmq.pdb

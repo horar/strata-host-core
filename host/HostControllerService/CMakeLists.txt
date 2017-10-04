@@ -22,6 +22,11 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "lib/")
 include_directories(lib)
 include_directories(lib/ArduinoJson)
 
+if(LINUX) 
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}../../lib/linux/include)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}../../lib/linux/include/event2)
+endif()
+
 set(SOURCE
    ${SOURCE}
    ${CMAKE_CURRENT_SOURCE_DIR}/src/ConnectFactory.cpp
@@ -30,6 +35,8 @@ set(SOURCE
    ${CMAKE_CURRENT_SOURCE_DIR}/src/HostControllerService.cpp
    ${CMAKE_CURRENT_SOURCE_DIR}/src/startHostControllerService.cpp
 )
+
+add_library(usbconnector STATIC ${CMAKE_CURRENT_SOURCE_DIR}/src/USBConnector.cpp)
 
 add_executable(HCS ${SOURCE})
 
