@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="207px" height="171px" viewBox="0 0 207 171" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 45.2 (43514) - http://www.bohemiancoding.com/sketch -->
+    <title>usb plug</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <rect id="path-1" x="15.1201313" y="5.68434189e-14" width="64.6407005" height="28.8685937"></rect>
+    </defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Desktop" transform="translate(-560.000000, -317.000000)">
+            <g id="Main-Screen" transform="translate(78.000000, 186.000000)">
+                <g id="usb-plug" transform="translate(585.429041, 215.690584) rotate(270.000000) translate(-585.429041, -215.690584) translate(500.929041, 112.690584)">
+                    <path d="M3.3883787,28.3708594 C0.401744775,69.8798324 14.6405319,90.6343188 46.10474,90.6343188 C93.3010523,90.6343188 88.8211014,28.7694357 88.8211014,28.7694357 C88.8211014,28.7694357 60.3435271,28.6365769 3.3883787,28.3708594 Z" id="Path-2" stroke="#000000" stroke-width="2" fill="#FFFFFF"></path>
+                    <path d="M136.998269,182.805117 C135.908547,197.950343 141.103801,205.522956 152.584031,205.522956 C169.804375,205.522956 168.169792,182.950544 168.169792,182.950544 C168.169792,182.950544 157.779284,182.902069 136.998269,182.805117 Z" id="Path-2" stroke="#000000" stroke-width="2" fill="#FFFFFF" transform="translate(152.533983, 194.164037) rotate(-180.000000) translate(-152.533983, -194.164037) "></path>
+                    <g id="Rectangle-2">
+                        <use fill="#9B9B9B" fill-rule="evenodd" xlink:href="#path-1"></use>
+                        <rect stroke="#000000" stroke-width="2" x="16.1201313" y="1" width="62.6407005" height="26.8685937"></rect>
+                    </g>
+                    <path d="M29.8552526,165.747546 C43.1815376,162.920267 52.5806879,166.820429 58.0527035,177.448033 C66.2607268,193.38944 62.2834491,212.462865 80.8400897,211.935522 C99.3967303,211.408178 90.444869,115.473424 93.9504202,86.6745959 C96.2874544,67.4753771 105.731371,58.8054553 122.282171,60.6648303" id="Path-3" stroke="#060606" stroke-width="3" transform="translate(76.068712, 136.182394) rotate(90.000000) translate(-76.068712, -136.182394) "></path>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

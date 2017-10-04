@@ -1,5 +1,6 @@
 import QtQuick 2.0
 import QtQuick.Layouts 1.0
+import "framework"
 
 Rectangle {
     id: container
@@ -23,12 +24,16 @@ Rectangle {
         SGPortTitle {
             id: portTitle
             Layout.column: 0
-            Layout.columnSpan: 1
+            Layout.columnSpan: 2
             Layout.row: 0
             Layout.rowSpan: 1
             Layout.preferredWidth  : grid.prefWidth(this)
             Layout.preferredHeight : grid.prefHeight(this)
             text: "Port 1"
+            MouseArea {
+                anchors { fill: parent }
+                onClicked: { portPowerandTemperatureGraph.open() }
+            }
         }
 
         SGIconList {
@@ -39,28 +44,37 @@ Rectangle {
             Layout.rowSpan: 1
             Layout.preferredWidth  : grid.prefWidth(this)
             Layout.preferredHeight : grid.prefHeight(this)
+            Layout.leftMargin: 10
         }
 
         Rectangle {
             id:connectorHolder
-            border.color: "transparent"
             color: "transparent"
             Layout.column: 4
             Layout.columnSpan: 1
             Layout.row: 0
             Layout.rowSpan: 1
-            Layout.preferredWidth  : grid.prefWidth(this)
+            Layout.preferredWidth  : grid.prefWidth(this) - 15
             Layout.preferredHeight : grid.prefHeight(this)
 
+
             Rectangle {
-                width:parent.width/3; height:parent.height/3
+                width:connectorHolder.width/4; height:connectorHolder.height/3
                 color: "black"
                 anchors {
-                    right:connectorHolder.right
-                    top:connectorHolder.top
-                    topMargin: connectorHolder.width/0.88
+                      verticalCenter: connectorHolder.verticalCenter
+                      right: connectorHolder.right
+
                 }
             }
+        }
+    }
+    SGPopup {
+        id: portPowerandTemperatureGraph
+        x: portTitle.x - portTitle.width / 2; y:portTitle .y - portTitle.height / 2
+        width: parent.width * 2 ; height: parent.height * 2
+        contentItem: SGLineGraph {
+            title: "Power and Temperature Graph"
         }
     }
 }

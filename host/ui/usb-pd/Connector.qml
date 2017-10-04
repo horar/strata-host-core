@@ -73,9 +73,25 @@ Rectangle {
     }
     Image {
         id: leftUSBPlug
-        width: connector.width/10;height: connector.height/3.5
-        anchors{ verticalCenter: parent.verticalCenter }
+        width: connector.width/5; height: connector.height/4
+        x:  connector.x + connector.width/3
+        anchors{ verticalCenter: connector.verticalCenter }/*; verticalCenterOffset: 9}*/
         source: "leftUSBPlug.svg"
+
+        MouseArea {
+            anchors { fill: parent }
+            onClicked: {
+                if (!isConnected){
+                    isConnected = true;
+                    connect.start()
+
+                }
+                else{
+                    isConnected = false;
+                    disconnect.start()
+                }
+            }
+        }
 
         SequentialAnimation {
             running: false
@@ -85,7 +101,7 @@ Rectangle {
                 target: leftUSBPlug
                 property: "x";
                 from: leftUSBPlug.x
-                to: connector.x - connector.width/20
+                to: connector.x - connector.width/12
                 easing.type: Easing.InQuad;
                 duration: 500
             }
@@ -165,31 +181,6 @@ Rectangle {
             }
         }
     }
-
-
-    Button {
-        id: button
-        text: qsTr("Connect")
-        width: 100;height:50
-        anchors{ centerIn:parent }
-    }
-
-    Connections {
-        target: button
-        onClicked: {
-            if (!isConnected){
-                isConnected = true;
-                connect.start()
-                button.text = "Disconnect"
-            }
-            else{
-                isConnected = false;
-                button.text = "Connect"
-                disconnect.start()
-            }
-        }
-    }
-
 }
 
 

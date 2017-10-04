@@ -13,7 +13,7 @@
 #include <pthread.h>
 #include <unistd.h>
 #include <stdlib.h>
-#include "../../../include/HostControllerClient.h"
+#include "../../../include/HostControllerClient.hpp"
 
 //aPort = Variable to store current
 //vPort = Variable to store voltage
@@ -96,7 +96,7 @@ private:
     bool registrationSuccessful;
 
 public:
-    HostControllerClient HCCObj;
+    hcc::HostControllerClient HCCObj;
 };
 
 

@@ -219,6 +219,7 @@ void UserInterfaceBinding::handlePlatformStateNotification(const QVariantMap pay
         qDebug() << "Unsupported PlatformState ";
     }
 }
+
 /*!
  * End of notification handlers
  */
@@ -303,7 +304,7 @@ QVariantMap UserInterfaceBinding::validateJsonReply(const QVariantMap json_map) 
 void *notificationsThreadHandle(void* ObjectHost) {
     //read series of files each loop
     UserInterfaceBinding *Obj = (UserInterfaceBinding *)ObjectHost;
-    HostControllerClient Object= Obj->HCCObj;
+    hcc::HostControllerClient Object= Obj->HCCObj;
     qDebug () << "Thread Created for notification ";
     while(1) {
 

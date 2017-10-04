@@ -2,9 +2,7 @@
     <qresource prefix="/">
         <file>main.qml</file>
         <file>MainForm.ui.qml</file>
-        <file>Border.png</file>
         <file>RightPlug.png</file>
-        <file>LeftPlug.png</file>
         <file>ONLogo.png</file>
         <file>LeftArrow.png</file>
         <file>VoltageIcon.png</file>
@@ -15,8 +13,6 @@
         <file>leftArrow.svg</file>
         <file>usbPlugLeft.svg</file>
         <file>usbPlugRight.svg</file>
-        <file>border.svg</file>
-        <file>deviceOutline.svg</file>
         <file>submitButton.svg</file>
         <file>boarder_graph.svg</file>
         <file>GraphByEmail.svg</file>
@@ -83,16 +79,32 @@
         <file>SGIconList.qml</file>
         <file>SGIconStatistic.qml</file>
         <file>SGPortTitle.qml</file>
-        <file>SGPortGroup.qml</file>
         <file>SGVerticalDivider.qml</file>
         <file>SGIconLabel.qml</file>
+        <file>infoIcon.svg</file>
+        <file>temperatureIcon.svg</file>
+        <file>On_Logo_Green.svg</file>
+        <file>HostControllerClient/HostControllerClient.cpp</file>
+        <file>HostControllerClient/HostControllerClient.h</file>
+        <file>HostControllerClient/zhelpers.hpp</file>
+        <file>HostControllerClient/zmq.hpp</file>
+        <file>HostControllerClient/zmq_addon.hpp</file>
+        <file>UserInterfaceBinding/UserInterfaceBinding.cpp</file>
+        <file>UserInterfaceBinding/UserInterfaceBinding.h</file>
+        <file>main.cpp</file>
         <file>BackSide.qml</file>
         <file>Board.qml</file>
         <file>Connector.qml</file>
         <file>Device.qml</file>
         <file>FrontSide.qml</file>
-        <file>infoIcon.svg</file>
-        <file>temperatureIcon.svg</file>
-        <file>On_Logo_Green.svg</file>
+        <file>SGBoardLayout.qml</file>
+        <file>SGLoginScreen.qml</file>
+        <file>SGPortGroup.qml</file>
+        <file>Border.png</file>
+        <file>border.svg</file>
+        <file>deviceOutline.svg</file>
+        <file>LeftPlug.png</file>
+        <file>ONBall.svg</file>
+        <file>backIcon.svg</file>
     </qresource>
 </RCC>

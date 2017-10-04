@@ -3,9 +3,8 @@ import QtQuick.Controls 2.0
 
 Rectangle {
     border.color: "black"
-    color: "white"
     anchors { fill: parent }
-
+    
     Label {
         x: 32 ; y: 128
         width: 176;height: 64
@@ -14,16 +13,43 @@ Rectangle {
         anchors { horizontalCenter: parent.horizontalCenter; verticalCenter: parent.verticalCenter }
         font.pointSize: 72
     }
-
-    Image {
-        source:"infoIcon.svg"
-        anchors { bottom: parent.bottom; right: parent.right }
-        height: 40;width:40
+    
+    SwipeView {
+        id: swipeView
+        anchors{ fill: parent }
+        currentIndex: tabBar.currentIndex
+        PageBOM { id: pageBOMID }
+        PageSchematic { id: pageSchematic }
+        PageAssembly { id: pageAssembly }
+        PagePCB { id: pagePCB }
+        PageReport { id: pageReport }
+        PageRelated { id: pageRelated }
+        PageMagazine { id: pageMagazine }
+        PageBusinessIntelligence { id: pageBusinessIntelligence }
     }
-
+    
+    TabBar {
+        id: tabBar
+        width: parent.width - flipButton.width
+        currentIndex: swipeView.currentIndex
+        anchors { bottom: parent.bottom;}
+        TabButton { text: "BOM" }
+        TabButton { text: "Schematic" }
+        TabButton { text: "Assembly" }
+        TabButton { text: "PCB Layout" }
+        TabButton { text: "Test Report" }
+    }
+    
+    Image {
+        id: flipButton
+        source:"backIcon.svg"
+        anchors { bottom: parent.bottom; right: parent.right }
+        height: 50;width:50
+    }
+    
     MouseArea {
-        width: 100; height: 100
-        anchors { right: parent.right; bottom: parent.bottom }
+        width: flipButton.width; height: flipButton.height
+        anchors { bottom: parent.bottom; right: parent.right }
         visible: true
         onClicked: flipable.flipped = !flipable.flipped
     }

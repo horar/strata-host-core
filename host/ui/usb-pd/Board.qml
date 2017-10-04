@@ -1,5 +1,7 @@
-import QtQuick 2.0
+import QtQuick 2.7
 import QtQuick.Layouts 1.3
+import QtQuick.Controls 1.4
+import "framework"
 
 Rectangle {
     id: device
@@ -7,11 +9,12 @@ Rectangle {
     property alias deviceLayout: deviceLayout
     anchors { horizontalCenter: parent.horizontalCenter; verticalCenter: parent.verticalCenter }
 
+
     //a grid for the the device, including the input plug
     //deviceGrid
     GridLayout {
         id: deviceGrid
-        columns: 4
+        columns: 5
         rows: 1
         columnSpacing: 0
         rowSpacing: 0
@@ -30,15 +33,17 @@ Rectangle {
         Rectangle {
             id:deviceLayout
             Layout.column: 1
-            Layout.columnSpan: 3
+            Layout.columnSpan: 4
             Layout.row: 0
             Layout.rowSpan: 1
             Layout.preferredWidth : deviceGrid.devicePrefWidth(this)
             Layout.preferredHeight : deviceGrid.devicePrefHeight(this)
+            color:"transparent"
+            z:1 //in front of the plugOutline
 
             Image {
                 id:deviceOutline
-                width:parent.width; height: parent.height *.75
+                width:parent.width ; height: width //*.75
                 anchors{ horizontalCenter: parent.horizontalCenter
                     horizontalCenterOffset: 0
                     verticalCenter: parent.verticalCenter
@@ -83,9 +88,40 @@ Rectangle {
 
                     Image {
                         id:onLogo
-                        width: parent.width/2; height: parent.width/2
-                        anchors{ verticalCenter: parent.verticalCenter; left:parent.left; leftMargin: parent.width/3 }
+                        width: parent.width*.75; height: parent.width*.75
+                        anchors{ verticalCenter: parent.verticalCenter; left:parent.left; leftMargin: parent.width/8 }
                         source:"On_Logo_Green.svg"
+
+                        ScaleAnimator {
+                            id: increaseOnMouseEnter
+                            target: onLogo;
+                            from: 1;
+                            to: 1.2;
+                            duration: 200
+                            running: false
+                        }
+
+                        ScaleAnimator {
+                            id: decreaseOnMouseExit
+                            target: onLogo;
+                            from: 1.2;//onLogo.scale;
+                            to: 1;
+                            duration: 200
+                            running: false
+                        }
+
+                        MouseArea {
+                            id: imageMouse
+                            anchors.fill: parent
+                            hoverEnabled: true
+                            onEntered:{
+                                increaseOnMouseEnter.start()
+                            }
+                            onExited:{
+                                decreaseOnMouseExit.start()
+                            }
+                            onClicked: { inputPowergraph.open() }
+                        }
                     }
                 }
 
@@ -103,7 +139,7 @@ Rectangle {
 
                     SGPortGroup {
                         id: portGroupPort1
-                        width: parent.width/0.95; height:parent.height/0.95
+                        width: parent.width; height:parent.height
                         text: "Port 1"
                         radius: 1
                         color: "transparent"
@@ -123,7 +159,8 @@ Rectangle {
 
                     SGPortGroup {
                         id: portGroupPort2
-                        width: parent.width/0.95; height:parent.height/0.95
+                        width: parent.width; height:parent.height /*parent.width/0.95; height:parent.height/0.95*/
+                        //width: topPortRect.width; height: topPortRect.height
                         text: "Port 2"
                         radius: 1
                         color: "transparent"
@@ -143,17 +180,41 @@ Rectangle {
 
             Image {
                 id: plugOutline
-                width:parent.height/3.4; height: parent.height/4
-                anchors{ verticalCenter: parent.verticalCenter; left:parent.left }
+                width:parent.width * 1.5
+                height:parent.height/5
+                anchors{ verticalCenter: parent.verticalCenter;
+                    horizontalCenter: parent.horizontalCenter ;
+                }
                 source: "LeftPlug.png"
+            }
 
-                Text {
-                    id: inputPlugName
-                    text: qsTr("12 V")
-                    anchors { horizontalCenter: parent.horizontalCenter; horizontalCenterOffset: parent.width/7; verticalCenter: parent.verticalCenter }
-                    font.pointSize: parent.width/10 > 0 ? parent.width/10 : 1
+            Text {
+                id: inputPlugName
+                text: qsTr("12 V")
+                width: inputPlugColumn.width
+                horizontalAlignment: Text.AlignRight
+                anchors {verticalCenter: parent.verticalCenter}
+                font{ family: "Helvetica"
+                    bold:true
+                }
+                color:"grey"
+            }
+
+            Component.onCompleted: {
+                //adjust font size based on platform
+                if (Qt.platform.os === "osx"){
+                    inputPlugName.font.pointSize = parent.width/10 > 0 ? parent.width/20 : 1;
+                }
+                else{
+                    fontSizeMode : Text.Fit
                 }
             }
         }
+    }
+    SGPopup {
+        id: inputPowergraph
+        x: onLogo.x - onLogo.width / 2; y: onLogo.y - onLogo.height / 2
+        width: parent.width/0.9  ; height: parent.height/1.1
+        contentItem: SGLineGraph { title: "Input Power Graph" }
     }
 }
