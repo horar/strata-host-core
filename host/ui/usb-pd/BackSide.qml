@@ -20,7 +20,6 @@ Rectangle {
         currentIndex: tabBar.currentIndex
         PageBOM { id: pageBOMID }
         PageSchematic { id: pageSchematic }
-        PageAssembly { id: pageAssembly }
         PagePCB { id: pagePCB }
         PageReport { id: pageReport }
         PageRelated { id: pageRelated }
@@ -35,9 +34,9 @@ Rectangle {
         anchors { bottom: parent.bottom;}
         TabButton { text: "BOM" }
         TabButton { text: "Schematic" }
-        TabButton { text: "Assembly" }
-        TabButton { text: "PCB Layout" }
+        TabButton { text: "Layout" }
         TabButton { text: "Test Report" }
+        TabButton { text: "Related Material" }
     }
     
     Image {

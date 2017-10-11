@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg width="21px" height="21px" viewBox="0 0 21 21" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<svg width="396px" height="396px" viewBox="0 0 396 396" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
     <!-- Generator: Sketch 46.2 (44496) - http://www.bohemiancoding.com/sketch -->
     <title>temperatureIcon</title>
     <desc>Created with Sketch.</desc>
     <defs></defs>
     <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-        <g id="temperatureIcon" transform="translate(1.000000, 1.000000)" stroke="#2EB457" stroke-width="2">
-            <circle id="Oval" cx="9.5" cy="9.5" r="9.5"></circle>
-            <path d="M10.771,11.4232283 L10.771,4.25065617 C10.771,3.55971129 10.202,3 9.50033333,3 C8.79866667,3 8.22933333,3.55971129 8.22933333,4.25065617 L8.22933333,11.4232283 C7.49433333,11.851706 7,12.6377953 7,13.5393701 C7,14.898294 8.11933333,16 9.5,16 C10.8806667,16 12,14.898294 12,13.5393701 C12,12.6377953 11.506,11.851706 10.771,11.4232283 Z" id="Shape" stroke-linecap="round" stroke-linejoin="round"></path>
+        <g id="temperatureIcon" transform="translate(8.000000, 8.000000)" stroke="#2EB457" stroke-width="16">
+            <circle id="Oval" cx="190" cy="190" r="190"></circle>
+            <path d="M215.42,228.464566 L215.42,85.0131234 C215.42,71.1942258 204.04,60 190.006667,60 C175.973333,60 164.586667,71.1942258 164.586667,85.0131234 L164.586667,228.464566 C149.886667,237.03412 140,252.755906 140,270.787402 C140,297.96588 162.386667,320 190,320 C217.613334,320 240,297.96588 240,270.787402 C240,252.755906 230.12,237.03412 215.42,228.464566 Z" id="Shape" fill="#2EB457" stroke-linecap="round" stroke-linejoin="round"></path>
         </g>
     </g>
 </svg>

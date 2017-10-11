@@ -5,15 +5,18 @@ import QtWebView 1.1
 
 Item {
 
-    WebView {
-        id: pdfViewer
-        anchors { fill: parent }
+    Rectangle{
+        anchors{fill:parent}
+        color:"white"
+    }
 
-        url: "http://www.onsemi.com/PowerSolutions/home.do"
-        onLoadingChanged: {
-            if (loadRequest.errorString)
-                console.error(loadRequest.errorString);
-        }
+    Text{
+        id:placeholderText
+        color:"light grey"
+        anchors{horizontalCenter: parent.horizontalCenter;
+                verticalCenter: parent.verticalCenter}
+        font{pointSize:72; family:"helvetica"}
+        text:"Related Materials"
     }
 }
 
