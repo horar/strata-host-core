@@ -4,19 +4,19 @@ import QtQuick.Layouts 1.3
 import QtWebView 1.1
 
 Item {
-
-    Rectangle{
-        anchors{fill:parent}
+    //add a couple of placeholder items so we know what is on the tab
+    Rectangle {
+        anchors.fill:parent
         color:"white"
     }
 
-    Text{
+    Text {
         id:placeholderText
-        color:"light grey"
         anchors{horizontalCenter: parent.horizontalCenter;
                 verticalCenter: parent.verticalCenter}
-        font{pointSize:72; family:"helvetica"}
-        text:"Related Materials"
+        color:"light grey"
+        font{family: "helvetica"; pointSize:72}
+        text: qsTr("Related Materials")
     }
 }
 
