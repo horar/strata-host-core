@@ -10,8 +10,7 @@
 #include <QVariant>
 #include <QStringList>
 #include <QString>
-#include <pthread.h>
-#include <unistd.h>
+#include <thread>
 #include <stdlib.h>
 #include "../../../include/HostControllerClient.hpp"
 

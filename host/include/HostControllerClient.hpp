@@ -1,6 +1,5 @@
 #include <iostream>
 #include <string>
-#include <pthread.h>
 #include <stdlib.h>
 #include "zhelpers.hpp"
 #include "zmq_addon.hpp"

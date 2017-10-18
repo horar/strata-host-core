@@ -1,8 +1,8 @@
-TEMPLATE = app
-
-QT += qml quick webview webengine opengl
+QT += qml quick
 
 CONFIG += c++11
+
+SOURCES += main.cpp
 
 RESOURCES += qml.qrc
 
@@ -27,24 +27,3 @@ DEFINES += QT_DEPRECATED_WARNINGS
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
-
-DISTFILES +=
-
-HEADERS += $${PWD}/../../test/ui_binding_hcc/ImplementationInterfaceBinding/ImplementationInterfaceBinding.h \
-           $${PWD}/../../include/HostControllerClient.hpp \
-           $${PWD}/../../include/zhelpers.hpp \
-           $${PWD}/../../include/zmq.hpp \
-           $${PWD}/../../include/zmq_addon.hpp
-
-SOURCES += main.cpp \
-           $${PWD}/../../test/ui_binding_hcc/ImplementationInterfaceBinding/ImplementationInterfaceBinding.cpp
-
-INCLUDEPATH += $$PWD/../../lib/linux/include
-DEPENDPATH += $$PWD/../../lib/linux/include
-INCLUDEPATH += $$PWD/../../lib/windows/zeromq
-DEPENDPATH += $$PWD/../../lib/windows/zeromq
-
-unix: LIBS += -L$$PWD/../../lib/linux/lib/ -lzmq
-else:win32: LIBS += -L$$PWD/../../lib/windows/zeromq/ -llibzmq
-
-unix: PRE_TARGETDEPS += $$PWD/../../lib/linux/lib/libzmq.a

@@ -1,6 +1,7 @@
 import QtQuick 2.0
 import QtQuick.Controls 1.4
 
+
 Rectangle {
     id: connector
     width: parent.width; height: (parent.width * .75)
@@ -10,7 +11,10 @@ Rectangle {
     property int anchorbottom: 0
     anchors.bottom: if(anchorbottom) { parent.bottom }
     property bool isConnected: false
+    signal activated()
     //Create a cable
+
+
     Canvas {
         id: cable
         x: leftUSBPlug.x + leftUSBPlug.width; y: leftUSBPlug.y
@@ -80,15 +84,16 @@ Rectangle {
 
         MouseArea {
             anchors { fill: parent }
+
             onClicked: {
                 if (!isConnected){
                     isConnected = true;
-                    connect.start()
-
+                    connect.start();
+                    //disconnectMessage.visible= false;
                 }
                 else{
                     isConnected = false;
-                    disconnect.start()
+                    disconnect.start();
                 }
             }
         }

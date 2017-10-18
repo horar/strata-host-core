@@ -214,7 +214,14 @@ Rectangle {
     SGPopup {
         id: inputPowergraph
         x: onLogo.x - onLogo.width / 2; y: onLogo.y - onLogo.height / 2
-        width: parent.width/0.9  ; height: parent.height/1.1
-        contentItem: SGLineGraph { title: "Input Power Graph" }
+        width: boardRect.width/0.9 ;height: boardRect.height/2
+        leftMargin : 30
+        rightMargin : 30
+        topMargin: 30
+        bottomMargin:30
+        axisXLabel: "Time (S)"
+        axisYLabel: "Power (W)"
+        graphTitle: "Input Power Graph"
+        inVariable1Name: "Power"
     }
 }

@@ -4,9 +4,22 @@ import "framework"
 Rectangle {
     id: container
     color: "transparent"
-    //color: "gray"
     width:container.width; height:container.height
+    //visible: false
+    property point theDialogStartPosition;
 
+//    SGDisconnectMessage {
+//        id: disconnectMessage
+//        //visible: false
+//        width: 50; height : 50
+//        anchors.centerIn: parent
+//    }
+    function message()
+    {
+        console.log("hi");
+      // disconnectMessage.visible = true;
+
+    }
 
     Column {
         spacing: 8
@@ -21,7 +34,12 @@ Rectangle {
 
             MouseArea {
                 anchors { fill: parent }
-                onClicked: { voltageAndCurrentGraph.open() }
+                onClicked: { voltageAndCurrentGraph.open()
+                    //in order to get the dialog to appear out of the voltage icon, we have to know where that icon is
+                    //located in root QML item coordinates.
+                    //theDialogStartPosition = negotiatedValues.mapFromItem(null, negotiatedValues.x, negotiatedValues.y)
+                }
+
             }
 
             SGIconLabel {
@@ -30,6 +48,7 @@ Rectangle {
                 text: "0 V, 0 A"
             }
         }
+
         SGIconStatistic {
             id: currentVoltageValue
             width: container.width/4; height: width
@@ -81,19 +100,46 @@ Rectangle {
                 text: "0 °C"
             }
         }
-    }
+}
+
 
     SGPopup {
         id: voltageAndCurrentGraph
-        x: temperatureValue.x - temperatureValue.width ; y: temperatureValue.y - temperatureValue.height
-        width: parent.width * 5 ; height: parent.height * 2
-        contentItem: SGLineGraph { title: "Device Voltage and Current" }
+        startPositionX: theDialogStartPosition.x
+        startPositionY: theDialogStartPosition.y
+        width: boardRect.width/0.8 ;height: boardRect.height/2
+        leftMargin : 30
+        rightMargin : 30
+        topMargin: 30
+        bottomMargin:30
+        axisXLabel: "Time (S)"
+        axisYLabel: "Voltage (V)"
+        axisY2Label: "Current (A)"
+        graphTitle: "Device Voltage and Current"
+        inVariable1Name:  "Voltage"
+        inVariable2Name:  "Current"
+        inVariable1Color: "blue"
+        inVariable2Color: "red"
+
     }
 
     SGPopup {
         id: portPowerAndTemperatureGraph
-        x: temperatureValue.x - temperatureValue.width ; y: temperatureValue.y - temperatureValue.height
-        width: parent.width * 5 ; height: parent.height * 2
-        contentItem: SGLineGraph { title: "Port Power and Temperature" }
+        startPositionX: theDialogStartPosition.x
+        startPositionY: theDialogStartPosition.y
+        width: boardRect.width/0.8 ;height: boardRect.height/2
+        leftMargin : 30
+        rightMargin : 30
+        topMargin: 30
+        bottomMargin:30
+        graphTitle: "Port Power and Temperature"
+        axisXLabel: "Time (S)"
+        axisYLabel: "Power (W)"
+        axisY2Label: "Temperature (C)"
+        inVariable1Name:  "Power"
+        inVariable2Name:  "Temperature"
+        inVariable1Color: "blue"
+        inVariable2Color: "red"
     }
+
 }

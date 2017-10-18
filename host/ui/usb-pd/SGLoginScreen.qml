@@ -4,9 +4,9 @@ import QtQuick.Controls 2.0
 
 Rectangle {
     visible: true
+
     //determine which screen to show based on how the caller set the
     //showLoginOnCompletion property
-
     property bool showLoginOnCompletion: false
 
 

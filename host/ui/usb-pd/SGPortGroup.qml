@@ -30,6 +30,7 @@ Rectangle {
             Layout.preferredWidth  : grid.prefWidth(this)
             Layout.preferredHeight : grid.prefHeight(this)
             text: "Port 1"
+
             MouseArea {
                 anchors { fill: parent }
                 onClicked: { portPowerandTemperatureGraph.open() }
@@ -68,6 +69,7 @@ Rectangle {
                 }
             }
         }
+
     }
     SGPopup {
         id: portPowerandTemperatureGraph

@@ -5,11 +5,8 @@ import QtQuick.Controls.Styles 1.4
 import QtPositioning 5.2
 import QtQuick.Window 2.2
 import QtCharts 2.2
-
 import QtQuick.Controls 1.4
-
-
-import tech.spyglass.userinterfacebinding 1.0
+import tech.spyglass.ImplementationInterfaceBinding 1.0
 
 import "framework"
 
@@ -75,7 +72,5 @@ Rectangle {
             stack.pop()
         }
     }
-
-
 
 }

@@ -3,7 +3,8 @@ import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.0
 
 Rectangle {
-    id: container
+    id: frontSide
+
     anchors{ fill:parent }
 
     StackView {

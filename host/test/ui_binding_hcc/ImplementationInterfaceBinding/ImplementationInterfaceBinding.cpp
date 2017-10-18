@@ -21,7 +21,7 @@ ImplementationInterfaceBinding::ImplementationInterfaceBinding(QObject *parent) 
     Ports.power[1]='\0';
     platformId= QString();
     platformState=false;
-    pthread_create(&notificationThread,NULL,notificationsThreadHandle,this);
+    notification_thread_= std::thread(&ImplementationInterfaceBinding::notificationsThreadHandle,this);
 }
 
 /*!
@@ -303,9 +303,8 @@ QVariantMap ImplementationInterfaceBinding::validateJsonReply(const QVariantMap 
  */
 
 
-void *notificationsThreadHandle(void* ObjectHost) {
+void ImplementationInterfaceBinding::notificationsThreadHandle() {
     //read series of files each loop
-    ImplementationInterfaceBinding *Obj = (ImplementationInterfaceBinding *)ObjectHost;
     hcc::HostControllerClient hcc_object;
     qDebug () << "Thread Created for notification ";
     while(1) {
@@ -317,12 +316,12 @@ void *notificationsThreadHandle(void* ObjectHost) {
 
         //qDebug()<<"Response received  = " << json_obj;
 
-        QVariantMap json_map = Obj->getJsonMapObject(json_obj);
-        json_map = Obj->getJsonMapObject(json_obj);
-        QVariantMap current_map = Obj->validateJsonReply(json_map);
+        QVariantMap json_map = getJsonMapObject(json_obj);
+        json_map = getJsonMapObject(json_obj);
+        QVariantMap current_map = validateJsonReply(json_map);
         if(current_map.contains("payload")) {
 
-            Obj->handleNotification(current_map);
+            handleNotification(current_map);
         }
     }
 }

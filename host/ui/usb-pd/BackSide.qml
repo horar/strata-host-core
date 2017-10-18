@@ -43,7 +43,7 @@ Rectangle {
         id: flipButton
         source:"backIcon.svg"
         anchors { bottom: parent.bottom; right: parent.right }
-        height: 50;width:50
+        height: 40;width:40
     }
     
     MouseArea {

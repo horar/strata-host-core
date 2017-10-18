@@ -10,8 +10,7 @@
 #include <QVariant>
 #include <QStringList>
 #include <QString>
-#include <pthread.h>
-#include <unistd.h>
+#include <thread>
 #include <stdlib.h>
 #include "../../../include/HostControllerClient.hpp"
 
@@ -27,7 +26,7 @@ struct platform_Ports {
     float power[2];
 };
 
-void *notificationsThreadHandle(void *);
+
 //void *simulateVoltageNotificationsThread(void *);
 
 class ImplementationInterfaceBinding : public QObject
@@ -51,6 +50,8 @@ class ImplementationInterfaceBinding : public QObject
     //Q_PROPERTY(bool usbcPort2 READ getUsbCPort2  NOTIFY usbCPort2StateChanged)
 public:
     explicit ImplementationInterfaceBinding(QObject *parent = nullptr);
+    std::thread notification_thread_;
+    void notificationsThreadHandle();
 
 //Getter invoked when GUI tries to get the data
     float getoutputVoltagePort0();
@@ -90,7 +91,6 @@ signals:
 private:
     //Members private to class
     platform_Ports Ports;
-    pthread_t notificationThread;
     QString platformId;
     bool platformState, usbC_Port_1_State, usbC_Port_2_State;
     bool registrationSuccessful;

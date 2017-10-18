@@ -95,6 +95,7 @@ bool UserInterfaceBinding::getPlatformState() {
 
 void UserInterfaceBinding::handleNotification(QVariantMap current_map) {
 
+
     QVariantMap payloadMap;
     if(current_map.contains("value")) {
         if(current_map["value"] == "usb_pd_power") {
@@ -111,7 +112,7 @@ void UserInterfaceBinding::handleNotification(QVariantMap current_map) {
             qDebug() << "Unsupported value field Received";
             qDebug() << "Received JSON = " <<current_map;
         }
-    }
+  }
 }
 
 /*!

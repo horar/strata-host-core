@@ -84,13 +84,6 @@
         <file>infoIcon.svg</file>
         <file>temperatureIcon.svg</file>
         <file>On_Logo_Green.svg</file>
-        <file>HostControllerClient/HostControllerClient.cpp</file>
-        <file>HostControllerClient/HostControllerClient.h</file>
-        <file>HostControllerClient/zhelpers.hpp</file>
-        <file>HostControllerClient/zmq.hpp</file>
-        <file>HostControllerClient/zmq_addon.hpp</file>
-        <file>UserInterfaceBinding/UserInterfaceBinding.cpp</file>
-        <file>UserInterfaceBinding/UserInterfaceBinding.h</file>
         <file>main.cpp</file>
         <file>BackSide.qml</file>
         <file>Board.qml</file>
@@ -106,5 +99,8 @@
         <file>LeftPlug.png</file>
         <file>ONBall.svg</file>
         <file>backIcon.svg</file>
+        <file>USB-PD_blockDiagram.png</file>
+        <file>framework/images/boarder_graph.svg</file>
+        <file>SGDisconnectMessage.qml</file>
     </qresource>
 </RCC>

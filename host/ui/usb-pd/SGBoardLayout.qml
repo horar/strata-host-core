@@ -107,9 +107,10 @@ Rectangle {
 
 
         Button {
-            width: 100; height: 50
+            width: 90; height: 25
             text: "Disconnect"
-            anchors {right:parent.left}
+            anchors {right:parent.left
+                     verticalCenter:parent.verticalCenter}
             onClicked: {
                 stack.push([page1, {immediate:true}])
             }
@@ -119,7 +120,7 @@ Rectangle {
             SGLoginScreen {
                 showLoginOnCompletion: true
                 Button {
-                    width: 100; height:50
+                    width: 80; height:25
                     text: "Connect"
                     anchors{horizontalCenter: parent.horizontalCenter; bottom: parent.bottom; bottomMargin: 300}
                     onClicked: { stack.pop() }
