@@ -23,8 +23,10 @@ include_directories(lib)
 include_directories(lib/ArduinoJson)
 
 if(LINUX) 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}../../lib/linux/include)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}../../lib/linux/include/event2)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../lib/linux/include)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../lib/linux/include/event2)
+link_directories(${CMAKE_CURRENT_SOURCE_DIR}/../lib/linux/lib/event2)
+link_directories(${CMAKE_CURRENT_SOURCE_DIR}/../lib/linux/lib)
 endif()
 
 set(SOURCE
@@ -60,3 +62,4 @@ target_link_libraries(HCS
                       -lserialport
                      )
 endif()
+

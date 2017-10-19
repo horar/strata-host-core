@@ -1,9 +1,9 @@
 /*
-* HostControllerService.cpp
-*
-*  Created on: Aug 14, 2017
-*      Author: abhishek
-*/
+ * HostControllerService.cpp
+ *
+ *  Created on: Aug 14, 2017
+ *      Author: abhishek
+ */
 
 #include "HostControllerService.h"
 
@@ -28,10 +28,10 @@ HostControllerService::HostControllerService(string ipRouter,string ipPub) {
 HostControllerService::~HostControllerService() {}
 
 /*!
-* \brief
-* 		 parse the received JSON from HostControllerClient
-* 		 verify if the command is supported and respond back
-*/
+ * \brief
+ * 		 parse the received JSON from HostControllerClient
+ * 		 verify if the command is supported and respond back
+ */
 bool HostControllerService::verifyReceiveCommand(string command, string *response) {
 
 	StaticJsonBuffer<2000> jsonBuffer;
@@ -44,7 +44,6 @@ bool HostControllerService::verifyReceiveCommand(string command, string *respons
 
 	if(!root.success()) {
 
-		//dbgprint(LOG_DEBUG,"PARSING UNSUCCESSFUL CHECK JSON BUFFER SIZE");
 		printf("PARSING UNSUCCESSFUL CHECK JSON BUFFER SIZE\n");
 		return "Unsuccessful";
 	}
@@ -101,9 +100,9 @@ bool HostControllerService::verifyReceiveCommand(string command, string *respons
 }
 
 /*
-* \brief :
-*      callback function to to handle service side requests
-*/
+ * \brief :
+ *      callback function to to handle service side requests
+ */
 void callbackServiceHandler(evutil_socket_t fd ,short what, void* hostP) {
 
 	HostControllerService::host_packet *host = (HostControllerService::host_packet *)hostP;
@@ -114,42 +113,37 @@ void callbackServiceHandler(evutil_socket_t fd ,short what, void* hostP) {
 	size_t           zmq_events_size  = sizeof(zmq_events);
 	send->getsockopt(ZMQ_EVENTS, &zmq_events, &zmq_events_size);
 
-	if(obj->error <= 0) {
+	Connector::messageProperty message = host->service->receive(host->command);
+
+	if(!message.message.compare("DISCONNECTED")) {
+
 		cout << "Platform Disconnect detected " <<endl;
 		event_base_loopbreak(host->base);
 	}
+	string response;
 
-	if (zmq_events & ZMQ_POLLIN) {
+	bool ack=host->hcs->verifyReceiveCommand(message.message,&response);
+	message.message=response;
+	host->service->sendAck(message,host->command);
 
-		Connector::messageProperty message = host->service->receive(host->command);
+	if(ack == true ) {
 
-		string response;
+		bool success = host->platform->sendNotification(message,host->hcs);
 
-		bool ack=host->hcs->verifyReceiveCommand(message.message,&response);
-		message.message=response;
-		host->service->sendAck(message,host->command);
+		if(success == true) {
+			string log = "<--- To Platform = " + message.message;
+			cout << "<--- To Platform = " << message.message <<endl;
+		} else {
 
-		if(ack == true ) {
-
-			bool success = host->platform->sendNotification(message,host->hcs);
-
-			if(success == true) {
-				string log = "<--- To Platform = " + message.message;
-				cout << "<--- To Platform = " << message.message <<endl;
-			} else {
-
-				cout << "Message send to platform failed " <<endl;
-			}
+			cout << "Message send to platform failed " <<endl;
 		}
-	} else {
-		//do nothing Has nothing available to receive
 	}
 }
 
 /*
-* \brief :
-*    Function to handle notification from platform
-*/
+ * \brief :
+ *    Function to handle notification from platform
+ */
 void HostControllerService::callbackPlatformHandler(void* hostP) {
 
 	HostControllerService::host_packet *host = (HostControllerService::host_packet *)hostP;
@@ -181,6 +175,7 @@ void HostControllerService::callbackPlatformHandler(void* hostP) {
 			zmq::socket_t signal(context,ZMQ_DEALER);
 			signal.setsockopt(ZMQ_IDENTITY,"BREAK");
 			signal.connect("tcp://127.0.0.1:5564");
+			s_send(signal,"DISCONNECTED");
 			return ;
 		} else {
 
@@ -194,16 +189,16 @@ void HostControllerService::callbackPlatformHandler(void* hostP) {
 }
 
 /*!
-* \brief :
-*    Open serial port to platform
-*/
+ * \brief :
+ *    Open serial port to platform
+ */
 bool HostControllerService::openPlatformSocket() {
 
-	#ifndef _WIN32
+#ifndef _WIN32
 	error = sp_get_port_by_name("/dev/ttyUSB0",&platform_socket_);
-	#else
+#else
 	error = sp_get_port_by_name("COM7",&platform_socket_);
-	#endif
+#endif
 
 	if(error == SP_OK) {
 
@@ -225,9 +220,9 @@ bool HostControllerService::openPlatformSocket() {
 }
 
 /*!
-* \brief:
-*    Initialzes serial port configuration to match platform
-*/
+ * \brief:
+ *    Initialzes serial port configuration to match platform
+ */
 void HostControllerService::initPlatformSocket() {
 
 	error = sp_set_stopbits(platform_socket_,1);
@@ -277,9 +272,9 @@ void HostControllerService::initPlatformSocket() {
 }
 
 /*!
-* \brief:
-* 		  Initializes the HostContorllerService
-*/
+ * \brief:
+ * 		  Initializes the HostContorllerService
+ */
 string HostControllerService::setupHostControllerService(string ipRouter, string ipPub) {
 
 	Connector *cons = conObj->getServiceTypeObject("SERVICE");
@@ -327,8 +322,7 @@ string HostControllerService::setupHostControllerService(string ipRouter, string
 	struct event *service = event_new(base, sockService ,
 			EV_READ | EV_WRITE | EV_ET | EV_PERSIST ,
 			callbackServiceHandler,(void *)&hostP);
-
-
+	
 	if (event_base_set(base,service) <0 )
 		cout <<"Event BASE SET SERVICE FAILED "<<endl;
 
