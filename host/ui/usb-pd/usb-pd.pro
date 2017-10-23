@@ -75,3 +75,4 @@ message(Host Root: $${HOST_ROOT});
 message(Current Build Directory: $$PWD);
 message(Include Path: $$INCLUDEPATH);
 message(Depend Path: $$DEPENDPATH);
+message("done");

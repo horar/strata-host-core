@@ -28,5 +28,4 @@ CTestTestfile.cmake
 .vs*
 GeneratedFiles*
 release*
-*usb-pd.vcxproj.user*
-
+*vcxproj*
