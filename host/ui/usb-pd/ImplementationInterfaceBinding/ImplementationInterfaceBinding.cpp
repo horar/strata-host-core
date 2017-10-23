@@ -1,4 +1,4 @@
-#include "UserInterfaceBinding.h"
+#include "ImplementationInterfaceBinding.h"
 #include "../../../include/zhelpers.hpp"
 
 /*!
@@ -7,7 +7,7 @@
  * Tie the respective signal and slots using connect
  */
 
-UserInterfaceBinding::UserInterfaceBinding(QObject *parent) : QObject(parent) {
+ImplementationInterfaceBinding::ImplementationInterfaceBinding(QObject *parent) : QObject(parent) {
 
     Ports.a_oport[0]='\0';
     Ports.a_oport[1]='\0';
@@ -21,7 +21,7 @@ UserInterfaceBinding::UserInterfaceBinding(QObject *parent) : QObject(parent) {
     Ports.power[1]='\0';
     platformId= QString();
     platformState=false;
-    pthread_create(&notificationThread,NULL,notificationsThreadHandle,this);
+    notification_thread_= std::thread(&ImplementationInterfaceBinding::notificationsThreadHandle,this);
 }
 
 /*!
@@ -34,7 +34,7 @@ UserInterfaceBinding::UserInterfaceBinding(QObject *parent) : QObject(parent) {
 /*! \brief gets the cached voltage of port 0
  */
 
-float UserInterfaceBinding::getoutputVoltagePort0() {
+float ImplementationInterfaceBinding::getoutputVoltagePort0() {
 
     qDebug() << "getting port 0 voltage";
     return Ports.v_oport[0];
@@ -42,24 +42,24 @@ float UserInterfaceBinding::getoutputVoltagePort0() {
 
 /*! \brief gets the cached voltage of port 1
  */
-float UserInterfaceBinding::getinputVoltagePort0() {
+float ImplementationInterfaceBinding::getinputVoltagePort0() {
 
     return Ports.v_iport[0];
 }
 
 /*! \brief gets the cached current of port 0
  */
-float UserInterfaceBinding::getoutputCurrentPort0() {
+float ImplementationInterfaceBinding::getoutputCurrentPort0() {
 
     return Ports.a_oport[0];
 }
 
-float UserInterfaceBinding::getPort0Time() {
+float ImplementationInterfaceBinding::getPort0Time() {
 
     return Ports.time[0];
 }
 
-float UserInterfaceBinding::getpowerPort0() {
+float ImplementationInterfaceBinding::getpowerPort0() {
 
     return Ports.power[0];
 }
@@ -67,7 +67,7 @@ float UserInterfaceBinding::getpowerPort0() {
 /*!
  * \brief update the platform Id
  */
-QString UserInterfaceBinding::getPlatformId() {
+QString ImplementationInterfaceBinding::getPlatformId() {
 
     return platformId;
 }
@@ -76,7 +76,7 @@ QString UserInterfaceBinding::getPlatformId() {
  * \brief get platform connection state
  */
 
-bool UserInterfaceBinding::getPlatformState() {
+bool ImplementationInterfaceBinding::getPlatformState() {
 
     return platformState;
 }
@@ -93,8 +93,7 @@ bool UserInterfaceBinding::getPlatformState() {
  * platform notify it to UI by emitting respective signals
  */
 
-void UserInterfaceBinding::handleNotification(QVariantMap current_map) {
-
+void ImplementationInterfaceBinding::handleNotification(QVariantMap current_map) {
 
     QVariantMap payloadMap;
     if(current_map.contains("value")) {
@@ -112,7 +111,7 @@ void UserInterfaceBinding::handleNotification(QVariantMap current_map) {
             qDebug() << "Unsupported value field Received";
             qDebug() << "Received JSON = " <<current_map;
         }
-  }
+    }
 }
 
 /*!
@@ -120,7 +119,7 @@ void UserInterfaceBinding::handleNotification(QVariantMap current_map) {
  *          @params: payloadMap map of usb_pd_power notification
  *                   parses and notifies the corresponding signal
  */
-void UserInterfaceBinding::handleUsbPowerNotification(const QVariantMap payloadMap) {
+void ImplementationInterfaceBinding::handleUsbPowerNotification(const QVariantMap payloadMap) {
 
     int port = payloadMap["port"].toInt();
 
@@ -179,13 +178,16 @@ void UserInterfaceBinding::handleUsbPowerNotification(const QVariantMap payloadM
     }
 }
 
-void UserInterfaceBinding::handlePlatformIdNotification(const QVariantMap payloadMap) {
+void ImplementationInterfaceBinding::handlePlatformIdNotification(const QVariantMap payloadMap) {
 
     if (payloadMap.contains("platform_id")){
 
         QString platformIdTemp = payloadMap["platform_id"].toString();
         qDebug() << "Received platformId = " << platformId;
         if(platformIdTemp != platformId) {
+
+            platformState=true;
+            emit platformStateChanged(platformState);
             platformId = platformIdTemp;
             emit platformIdChanged(platformId);
             qDebug() << "PlatformIdChanged notification";
@@ -193,7 +195,7 @@ void UserInterfaceBinding::handlePlatformIdNotification(const QVariantMap payloa
     }
 }
 
-void UserInterfaceBinding::handlePlatformStateNotification(const QVariantMap payloadMap) {
+void ImplementationInterfaceBinding::handlePlatformStateNotification(const QVariantMap payloadMap) {
 
     QString status = payloadMap["status"].toString();
     qDebug() << "Status =" << payloadMap;
@@ -220,7 +222,6 @@ void UserInterfaceBinding::handlePlatformStateNotification(const QVariantMap pay
         qDebug() << "Unsupported PlatformState ";
     }
 }
-
 /*!
  * End of notification handlers
  */
@@ -231,7 +232,7 @@ void UserInterfaceBinding::handlePlatformStateNotification(const QVariantMap pay
  */
 
 //Convert the input QString in JSON format to JSON object
-QJsonObject UserInterfaceBinding::convertQstringtoJson(const QString string) {
+QJsonObject ImplementationInterfaceBinding::convertQstringtoJson(const QString string) {
 
     QByteArray json_String = string.toLocal8Bit();
     auto json_doc=QJsonDocument::fromJson(json_String);
@@ -249,21 +250,21 @@ QJsonObject UserInterfaceBinding::convertQstringtoJson(const QString string) {
 }
 
 //Get Keys of JSON object and store it in QStringList type object
-QStringList UserInterfaceBinding::getJsonObjectKeys(const QJsonObject json_obj) {
+QStringList ImplementationInterfaceBinding::getJsonObjectKeys(const QJsonObject json_obj) {
 
     QStringList list = json_obj.keys();
     return list;
 }
 
 //Convert JSON object to JSON map "to handle it like HASH Map"
-QVariantMap UserInterfaceBinding::getJsonMapObject(const QJsonObject json_obj) {
+QVariantMap ImplementationInterfaceBinding::getJsonMapObject(const QJsonObject json_obj) {
 
     QVariantMap json_map=json_obj.toVariantMap();
     return json_map;
 }
 
 //Validate Response from platform
-QVariantMap UserInterfaceBinding::validateJsonReply(const QVariantMap json_map) {
+QVariantMap ImplementationInterfaceBinding::validateJsonReply(const QVariantMap json_map) {
 
     QVariantMap current_map;
     if(json_map.contains("ack")) {
@@ -302,26 +303,25 @@ QVariantMap UserInterfaceBinding::validateJsonReply(const QVariantMap json_map) 
  */
 
 
-void *notificationsThreadHandle(void* ObjectHost) {
+void ImplementationInterfaceBinding::notificationsThreadHandle() {
     //read series of files each loop
-    UserInterfaceBinding *Obj = (UserInterfaceBinding *)ObjectHost;
-    hcc::HostControllerClient Object= Obj->HCCObj;
+    hcc::HostControllerClient hcc_object;
     qDebug () << "Thread Created for notification ";
     while(1) {
 
-        std::string response= Object.receiveNotification();
+        std::string response= hcc_object.receiveNotification();
         QString q_response = QString::fromStdString(response);
         QJsonDocument doc= QJsonDocument::fromJson(q_response.toUtf8());
         QJsonObject json_obj=doc.object();
 
         //qDebug()<<"Response received  = " << json_obj;
 
-        QVariantMap json_map = Obj->getJsonMapObject(json_obj);
-        json_map = Obj->getJsonMapObject(json_obj);
-        QVariantMap current_map = Obj->validateJsonReply(json_map);
+        QVariantMap json_map = getJsonMapObject(json_obj);
+        json_map = getJsonMapObject(json_obj);
+        QVariantMap current_map = validateJsonReply(json_map);
         if(current_map.contains("payload")) {
 
-            Obj->handleNotification(current_map);
+            handleNotification(current_map);
         }
     }
 }

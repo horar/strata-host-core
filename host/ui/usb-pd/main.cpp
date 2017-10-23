@@ -1,10 +1,10 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QtWebView/QtWebView>
-#include "../../test/ui_binding_hcc/ImplementationInterfaceBinding/ImplementationInterfaceBinding.h"
 #include <QtWebEngine>
 #include <QtWidgets/QApplication>
 
+#include "ImplementationInterfaceBinding/ImplementationInterfaceBinding.h"
 
 int main(int argc, char *argv[])
 {

@@ -30,21 +30,48 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 DISTFILES +=
 
-HEADERS += $${PWD}/../../test/ui_binding_hcc/ImplementationInterfaceBinding/ImplementationInterfaceBinding.h \
+HEADERS +=  ImplementationInterfaceBinding/ImplementationInterfaceBinding.h \
            $${PWD}/../../include/HostControllerClient.hpp \
            $${PWD}/../../include/zhelpers.hpp \
            $${PWD}/../../include/zmq.hpp \
            $${PWD}/../../include/zmq_addon.hpp
 
 SOURCES += main.cpp \
-           $${PWD}/../../test/ui_binding_hcc/ImplementationInterfaceBinding/ImplementationInterfaceBinding.cpp
+           ImplementationInterfaceBinding/ImplementationInterfaceBinding.cpp
 
-INCLUDEPATH += $$PWD/../../lib/linux/include
-DEPENDPATH += $$PWD/../../lib/linux/include
-INCLUDEPATH += $$PWD/../../lib/windows/zeromq
-DEPENDPATH += $$PWD/../../lib/windows/zeromq
+# set root host build path
+HOST_ROOT = ../..
 
-unix: LIBS += -L$$PWD/../../lib/linux/lib/ -lzmq
-else:win32: LIBS += -L$$PWD/../../lib/windows/zeromq/ -llibzmq
+# linux
+unix : !macx : !win32 {
+    message("Building on Linux")
+    LIBS += -L$$PWD/../../lib/linux/lib/ -lzmq
+    INCLUDEPATH += $$PWD/../../lib/linux/include
+    INCLUDEPATH += $$PWD/../../lib/linux/include
+    DEPENDPATH += $$PWD/../../lib/linux/include
+}
 
-unix: PRE_TARGETDEPS += $$PWD/../../lib/linux/lib/libzmq.a
+# mac (not iOS)
+else : macx : !win32 {
+    message("Building on OSX")
+    LIBS += -L$${HOST_ROOT}/lib/mac/zeromq/4.2.2/lib -lzmq
+    DEPENDPATH += $${HOST_ROOT}/lib/mac/zeromq/4.2.2
+    INCLUDEPATH += $${HOST_ROOT}/lib/mac/zeromq/4.2.2/include/
+}
+
+# windows
+else : win32 {
+    message("Building on Windows")
+    LIBS += -L$$PWD/../../lib/windows/zeromq/ -llibzmq
+    INCLUDEPATH += $$PWD/../../lib/windows/zeromq
+    DEPENDPATH += $$PWD/../../lib/windows/zeromq
+    INCLUDEPATH += $$PWD/../../lib/linux/include
+    DEPENDPATH += $$PWD/../../lib/linux/include
+}
+else: message("UNKNOWN machine type. Build configuration failed !!!!")
+
+message("BUILD VARIABLES")
+message(Host Root: $${HOST_ROOT});
+message(Current Build Directory: $$PWD);
+message(Include Path: $$INCLUDEPATH);
+message(Depend Path: $$DEPENDPATH);

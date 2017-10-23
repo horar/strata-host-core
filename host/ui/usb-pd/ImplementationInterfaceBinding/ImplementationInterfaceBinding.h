@@ -26,10 +26,10 @@ struct platform_Ports {
     float power[2];
 };
 
-void *notificationsThreadHandle(void *);
+
 //void *simulateVoltageNotificationsThread(void *);
 
-class UserInterfaceBinding : public QObject
+class ImplementationInterfaceBinding : public QObject
 {
     Q_OBJECT
     //QProperty : Port 0 Voltage, Current, Time and Power properties
@@ -49,7 +49,9 @@ class UserInterfaceBinding : public QObject
     //Q_PROPERTY(bool usbcPort1 READ getUsbCPort1  NOTIFY usbCPort1StateChanged)
     //Q_PROPERTY(bool usbcPort2 READ getUsbCPort2  NOTIFY usbCPort2StateChanged)
 public:
-    explicit UserInterfaceBinding(QObject *parent = nullptr);
+    explicit ImplementationInterfaceBinding(QObject *parent = nullptr);
+    std::thread notification_thread_;
+    void notificationsThreadHandle();
 
 //Getter invoked when GUI tries to get the data
     float getoutputVoltagePort0();
@@ -89,13 +91,12 @@ signals:
 private:
     //Members private to class
     platform_Ports Ports;
-    pthread_t notificationThread;
     QString platformId;
     bool platformState, usbC_Port_1_State, usbC_Port_2_State;
     bool registrationSuccessful;
 
 public:
-    hcc::HostControllerClient HCCObj;
+    //HostControllerClient HCCObj;
 };
 
 
