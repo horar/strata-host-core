@@ -30,15 +30,6 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 DISTFILES +=
 
-HEADERS +=  ImplementationInterfaceBinding/ImplementationInterfaceBinding.h \
-           $${PWD}/../../include/HostControllerClient.hpp \
-           $${PWD}/../../include/zhelpers.hpp \
-           $${PWD}/../../include/zmq.hpp \
-           $${PWD}/../../include/zmq_addon.hpp
-
-SOURCES += main.cpp \
-           ImplementationInterfaceBinding/ImplementationInterfaceBinding.cpp
-
 # set root host build path
 HOST_ROOT = ../..
 
@@ -76,3 +67,12 @@ message(Current Build Directory: $$PWD);
 message(Include Path: $$INCLUDEPATH);
 message(Depend Path: $$DEPENDPATH);
 message("done");
+
+HEADERS +=  ImplementationInterfaceBinding/ImplementationInterfaceBinding.h \
+           $${HOST_ROOT}/include/HostControllerClient.hpp \
+           $${HOST_ROOT}/include/zhelpers.hpp \
+           $${HOST_ROOT}/include/zmq.hpp \
+           $${HOST_ROOT}/include/zmq_addon.hpp
+
+SOURCES += main.cpp \
+           ImplementationInterfaceBinding/ImplementationInterfaceBinding.cpp
