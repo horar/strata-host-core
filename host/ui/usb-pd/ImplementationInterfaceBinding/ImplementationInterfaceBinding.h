@@ -50,6 +50,7 @@ class ImplementationInterfaceBinding : public QObject
     //Q_PROPERTY(bool usbcPort2 READ getUsbCPort2  NOTIFY usbCPort2StateChanged)
 public:
     explicit ImplementationInterfaceBinding(QObject *parent = nullptr);
+    virtual ~ImplementationInterfaceBinding();
     std::thread notification_thread_;
     void notificationsThreadHandle();
 
@@ -95,8 +96,9 @@ private:
     bool platformState, usbC_Port_1_State, usbC_Port_2_State;
     bool registrationSuccessful;
 
+
 public:
-    //HostControllerClient HCCObj;
+    hcc::HostControllerClient *hcc_object;
 };
 
 

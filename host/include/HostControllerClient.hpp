@@ -37,7 +37,6 @@ namespace hcc {
       //request platform-id first step before proceeding with further request
       std::string cmd= "{\"cmd\":\"request_platform_id\",\"Host_OS\":\"Linux\"}";
       s_send(*sendCmdSocket,cmd.c_str());
-      s_recv(*sendCmdSocket);
     }
     inline ~HostControllerClient() {}
 
@@ -57,7 +56,6 @@ namespace hcc {
       return response;
     }
 
-  private:
     zmq::context_t *context;
     zmq::socket_t *sendCmdSocket;
     zmq::socket_t *notificationSocket;

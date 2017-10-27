@@ -9,6 +9,7 @@
 
 ImplementationInterfaceBinding::ImplementationInterfaceBinding(QObject *parent) : QObject(parent) {
 
+    hcc_object = new (hcc::HostControllerClient);
     Ports.a_oport[0]='\0';
     Ports.a_oport[1]='\0';
     Ports.v_oport[0]='\0';
@@ -20,8 +21,23 @@ ImplementationInterfaceBinding::ImplementationInterfaceBinding(QObject *parent) 
     Ports.power[0]='\0';
     Ports.power[1]='\0';
     platformId= QString();
-    platformState=false;
+    platformState = false;
     notification_thread_= std::thread(&ImplementationInterfaceBinding::notificationsThreadHandle,this);
+}
+
+ImplementationInterfaceBinding::~ImplementationInterfaceBinding() {
+
+    hcc_object->notificationSocket->close();
+    hcc_object->sendCmdSocket->close();
+
+    delete(hcc_object->notificationSocket);
+    delete(hcc_object->sendCmdSocket);
+
+    zmq_ctx_term(hcc_object->context);
+    delete(hcc_object);
+
+    //notification_thread_.detach();
+    notification_thread_.detach();
 }
 
 /*!
@@ -304,12 +320,20 @@ QVariantMap ImplementationInterfaceBinding::validateJsonReply(const QVariantMap 
 
 
 void ImplementationInterfaceBinding::notificationsThreadHandle() {
-    //read series of files each loop
-    hcc::HostControllerClient hcc_object;
+
     qDebug () << "Thread Created for notification ";
+    emit platformStateChanged(platformState);
+
+    //Will use this if needed for future testing, so leaving this piece of code
+    //QString filename="Data.txt";
+    //QFile file( filename );
+    //file.open(QIODevice::ReadWrite);
+
     while(1) {
 
-        std::string response= hcc_object.receiveNotification();
+        //QTextStream stream( &file );
+        std::string response= hcc_object->receiveNotification();
+
         QString q_response = QString::fromStdString(response);
         QJsonDocument doc= QJsonDocument::fromJson(q_response.toUtf8());
         QJsonObject json_obj=doc.object();
