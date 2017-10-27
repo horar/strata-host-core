@@ -31,7 +31,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 DISTFILES +=
 
 # set root host build path
-HOST_ROOT = ../..
+HOST_ROOT = ../../../host
 
 # linux
 unix : !macx : !win32 {
