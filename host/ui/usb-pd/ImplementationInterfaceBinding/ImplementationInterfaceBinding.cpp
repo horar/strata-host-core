@@ -27,16 +27,8 @@ ImplementationInterfaceBinding::ImplementationInterfaceBinding(QObject *parent) 
 
 ImplementationInterfaceBinding::~ImplementationInterfaceBinding() {
 
-    hcc_object->notificationSocket->close();
-    hcc_object->sendCmdSocket->close();
-
-    delete(hcc_object->notificationSocket);
-    delete(hcc_object->sendCmdSocket);
-
-    zmq_ctx_term(hcc_object->context);
+    zmq_term(hcc_object->context);
     delete(hcc_object);
-
-    //notification_thread_.detach();
     notification_thread_.detach();
 }
 
