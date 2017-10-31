@@ -11,28 +11,29 @@
 
 namespace hcc {
 
-  class HostControllerClient {
+class HostControllerClient {
 
-  public:
+public:
     inline HostControllerClient() {
 
-      context = new zmq::context_t;
-      sendCmdSocket = new zmq::socket_t(*context,ZMQ_DEALER);
-      sendCmdSocket->connect("tcp://127.0.0.1:5564");
-      sendCmdSocket->setsockopt(ZMQ_IDENTITY,"ONSEMI",sizeof("ONSEMI"));
+        context = new zmq::context_t;
+        sendCmdSocket = new zmq::socket_t(*context,ZMQ_DEALER);
+        sendCmdSocket->connect("tcp://127.0.0.1:5564");
+        sendCmdSocket->setsockopt(ZMQ_IDENTITY,"ONSEMI",sizeof("ONSEMI"));
 
-      notificationSocket = new zmq::socket_t(*context,ZMQ_SUB);
-      notificationSocket->connect("tcp://127.0.0.1:5563");
-      notificationSocket->setsockopt(ZMQ_SUBSCRIBE,"ONSEMI",strlen("ONSEMI"));
+        notificationSocket = new zmq::socket_t(*context,ZMQ_SUB);
+        notificationSocket->connect("tcp://127.0.0.1:5563");
+        notificationSocket->setsockopt(ZMQ_SUBSCRIBE,"ONSEMI",strlen("ONSEMI"));
+        //notificationSocket->setsockopt(ZMQ_RCVTIMEO, 3000);
 
-      //Unique Identity generator
-      //Will be replaced by random generator sent by HostControllerService in future
+        //Unique Identity generator
+        //Will be replaced by random generator sent by HostControllerService in future
 
-      #if (defined (WIN32))
-      s_set_id(*sendCmdSocket, (intptr_t)1);
-      #else
-      s_set_id(*sendCmdSocket);
-      #endif
+#if (defined (WIN32))
+        s_set_id(*sendCmdSocket, (intptr_t)1);
+#else
+        s_set_id(*sendCmdSocket);
+#endif
 
       //request platform-id first step before proceeding with further request
       std::string cmd= "{\"cmd\":\"request_platform_id\",\"Host_OS\":\"Linux\"}";
@@ -41,24 +42,27 @@ namespace hcc {
     inline ~HostControllerClient() {}
 
     inline bool sendCmd(std::string cmd) {
-      s_send(*sendCmdSocket,cmd.c_str());
-      std::cout << "Command Sent " << cmd <<std::endl;
-      return true;
+
+        s_send(*sendCmdSocket,cmd.c_str());
+        std::cout << "Command Sent " << cmd <<std::endl;
+        return true;
     }
+
     inline std::string receiveCommandAck() {
-      std::string response = s_recv(*sendCmdSocket);
-      return response;
+
+        std::string response = s_recv(*sendCmdSocket);
+        return response;
     }
+
     inline std::string receiveNotification() {
-      //s_recv(*notificationSocket);
-      std::string response = s_recv(*notificationSocket);
-      std::cout << "Received String " << response <<std::endl;
-      return response;
+        s_recv(*notificationSocket);
+        std::string response = s_recv(*notificationSocket);
+        std::cout << "Received String " << response <<std::endl;
     }
 
     zmq::context_t *context;
     zmq::socket_t *sendCmdSocket;
     zmq::socket_t *notificationSocket;
-  };
+};
 }
 #endif // HOSTCONTROLLERCLIENT_H

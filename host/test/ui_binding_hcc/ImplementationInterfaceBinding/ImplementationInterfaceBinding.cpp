@@ -305,6 +305,7 @@ QVariantMap ImplementationInterfaceBinding::validateJsonReply(const QVariantMap 
 
 void ImplementationInterfaceBinding::notificationsThreadHandle() {
     //read series of files each loop
+    emit platformStateChanged(platformState);
     hcc::HostControllerClient hcc_object;
     qDebug () << "Thread Created for notification ";
     while(1) {

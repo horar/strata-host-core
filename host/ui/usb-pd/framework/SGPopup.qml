@@ -14,6 +14,7 @@ Popup {
     property alias graphTitle: graph.title
     property real startPositionX: 0
     property real startPositionY: 0
+    property bool efficencyLabel: false;
 
     modal: true
     focus: false
@@ -101,6 +102,13 @@ Popup {
                 verticalCenter: contentItem.verticalCenter ;
                 verticalCenterOffset: labelAxis_y2.height;}
         }
+        Label {
+            width: 100; height: 50
+            text: "Efficency: 95% "
+            visible: efficencyLabel
+            z: 2
+            anchors { bottom: contentItem.bottom; left: contentItem.left ; leftMargin: 10 }
+        }
 
         SGLineGraph {
             id: graph
@@ -108,6 +116,7 @@ Popup {
             width: container.width/1.2 ; height: container.height/1.2
             anchors { centerIn: parent }
             secondValueVisible: true;
+            efficencyLable: true;
             variable1Name: inVariable1Name
             variable2Name: inVariable2Name
             variable1Color: inVariable1Color

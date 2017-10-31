@@ -29,4 +29,5 @@ CTestTestfile.cmake
 GeneratedFiles*
 release*
 *vcxproj*
+*usb-pd.vcxproj.user*
 *.swp

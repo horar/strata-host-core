@@ -71,7 +71,7 @@ Rectangle {
             cursorShape: Qt.PointingHandCursor
 
             onClicked: {
-                currentURL = "http://www.onsemi.com/PowerSolutions/product.do?id=NCP1852"
+                currentURL = "http://www.onsemi.com/PowerSolutions/product.do?id=NVMFS5A140PLZ"
                 detailView.open()
 
             }
@@ -86,7 +86,7 @@ Rectangle {
             cursorShape: Qt.PointingHandCursor
 
             onClicked: {
-                currentURL = "http://www.onsemi.com/PowerSolutions/product.do?id=NVT211"
+                currentURL = "https://www.onsemi.com/PowerSolutions/product.do?id=NVT211"
                 detailView.open()
             }
         }
@@ -99,7 +99,7 @@ Rectangle {
             height: 37
             cursorShape: Qt.PointingHandCursor
             onClicked: {
-                currentURL = "http://www.onsemi.com/PowerSolutions/product.do?id=NCT65"
+                currentURL = "http://www.onsemi.com/PowerSolutions/product.do?id=MMBT3906W"
                 detailView.open()
             }
         }
@@ -112,7 +112,7 @@ Rectangle {
             height: 80
             cursorShape: Qt.PointingHandCursor
             onClicked: {
-                currentURL = "http://www.onsemi.com/PowerSolutions/product.do?id=NCV8154"
+                currentURL = "http://www.onsemi.com/PowerSolutions/product.do?id=NCP81239"
                 detailView.open()
             }
         }
@@ -138,7 +138,7 @@ Rectangle {
             height: 30
             cursorShape: Qt.PointingHandCursor
             onClicked: {
-                currentURL = "http://www.onsemi.com/PowerSolutions/product.do?id=EFC2J013NUZ"
+                currentURL = "http://www.onsemi.com/PowerSolutions/product.do?id=NVTFS5C453NL"
                 detailView.open()
             }
         }
@@ -151,7 +151,7 @@ Rectangle {
             height: 28
             cursorShape: Qt.PointingHandCursor
             onClicked: {
-                currentURL = "http://www.onsemi.com/PowerSolutions/product.do?id=EFC2J013NUZ"
+                currentURL = "http://www.onsemi.com/PowerSolutions/product.do?id=NVTFS5C453NL"
                 detailView.open()
             }
         }
@@ -164,7 +164,7 @@ Rectangle {
             height: 30
             cursorShape: Qt.PointingHandCursor
             onClicked: {
-                currentURL = "http://www.onsemi.com/PowerSolutions/product.do?id=EFC2J013NUZ"
+                currentURL = "http://www.onsemi.com/PowerSolutions/product.do?id=NVTFS5C453NL"
                 detailView.open()
             }
         }
@@ -177,7 +177,7 @@ Rectangle {
             height: 30
             cursorShape: Qt.PointingHandCursor
             onClicked: {
-                currentURL = "http://www.onsemi.com/PowerSolutions/product.do?id=EFC2J013NUZ"
+                currentURL = "http://www.onsemi.com/PowerSolutions/product.do?id=NVTFS5C453NL"
                 detailView.open()
             }
         }
@@ -190,7 +190,7 @@ Rectangle {
             height: 30
             cursorShape: Qt.PointingHandCursor
             onClicked: {
-                currentURL = "http://www.onsemi.com/PowerSolutions/product.do?id=EFC2J013NUZ"
+                currentURL = "http://www.onsemi.com/PowerSolutions/product.do?id=NVTFS5C453NL"
                 detailView.open()
             }
         }
@@ -203,7 +203,7 @@ Rectangle {
             height: 30
             cursorShape: Qt.PointingHandCursor
             onClicked: {
-                currentURL = "http://www.onsemi.com/PowerSolutions/product.do?id=EFC2J013NUZ"
+                currentURL = "http://www.onsemi.com/PowerSolutions/product.do?id=NVTFS5C453NL"
                 detailView.open()
             }
         }
@@ -216,7 +216,7 @@ Rectangle {
             height: 30
             cursorShape: Qt.PointingHandCursor
             onClicked: {
-                currentURL = "http://www.onsemi.com/PowerSolutions/product.do?id=EFC2J013NUZ"
+                currentURL = "http://www.onsemi.com/PowerSolutions/product.do?id=NVTFS5C453NL"
                 detailView.open()
             }
         }
@@ -229,7 +229,7 @@ Rectangle {
             height: 81
             cursorShape: Qt.PointingHandCursor
             onClicked: {
-                currentURL = "http://www.onsemi.com/PowerSolutions/product.do?id=NCV8154"
+                currentURL = "http://www.onsemi.com/PowerSolutions/product.do?id=NCP81239"
                 detailView.open()
             }
         }
@@ -242,7 +242,7 @@ Rectangle {
             height: 84
             cursorShape: Qt.PointingHandCursor
             onClicked: {
-                currentURL = "http://www.onsemi.com/PowerSolutions/product.do?id=NCV890100"
+                currentURL = "https://www.onsemi.com/PowerSolutions/product.do?id=NCV890100 "
                 detailView.open()
             }
         }
@@ -268,7 +268,7 @@ Rectangle {
             height: 30
             cursorShape: Qt.PointingHandCursor
             onClicked: {
-                currentURL = "http://www.onsemi.com/PowerSolutions/product.do?id=NCP392B"
+                currentURL = "http://www.onsemi.com/PowerSolutions/product.do?id=NVTFS5C453NL"
                 detailView.open()
             }
         }
@@ -281,7 +281,7 @@ Rectangle {
             height: 63
             cursorShape: Qt.PointingHandCursor
             onClicked: {
-                currentURL = "http://www.onsemi.com/PowerSolutions/product.do?id=FUSB302T"
+                currentURL = "https://www.onsemi.com/PowerSolutions/product.do?id=FUSB302T"
                 detailView.open()
             }
         }

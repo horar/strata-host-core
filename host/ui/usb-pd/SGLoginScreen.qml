@@ -1,6 +1,7 @@
 import QtQuick 2.7
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.0
+import tech.spyglass.ImplementationInterfaceBinding 1.0
 
 Rectangle {
     visible: true
@@ -8,16 +9,19 @@ Rectangle {
     //determine which screen to show based on how the caller set the
     //showLoginOnCompletion property
     property bool showLoginOnCompletion: false
+    property bool hardwareStatus: null
+    property bool loginScreen: true
+
 
 
     Component.onCompleted: {
-        spotlightAnimation.start();
-        if (showLoginOnCompletion){
-            showConnectionScreen.start();
-        }
-    }
+        spotlightAnimation.start();
+        console.log ("plateform state",implementationinterfacebinding.platformState);
+        if (showLoginOnCompletion){
+            showConnectionScreen.start();
+        }
 
-
+    }
     //-----------------------------------------------------------
     //Elements common to both the connection and login screens
     //-----------------------------------------------------------
@@ -231,18 +235,33 @@ Rectangle {
             }
 
             onClicked: {
-                myTime.stop();
-                handleLoginClick.start();
-                myTime.start();
+//                                myTime.stop();
+//                                handleLoginClick.start();
+//                                myTime.start();
+                console.log("on clicked");
+                loginScreen = false;
+                if(hardwareStatus == false){
+                    handleLoginClick.start();
+                }
+                else { console.log("on clicked in board");
+                    stack.pop();
+                    return;
+                }
             }
         }
     }
 
     //handle a return key click, which is the equivalent of the login button being clicked
     Keys.onReturnPressed:{
-        myTime.stop();
-        handleLoginClick.start();
-        myTime.start();
+//                myTime.stop();
+//                handleLoginClick.start();
+//                myTime.start();
+         console.log("on clicked");
+         loginScreen = false;
+        if(hardwareStatus == false){
+            handleLoginClick.start();
+        }
+        else stack.pop();
     }
 
     Button {
@@ -270,11 +289,30 @@ Rectangle {
             border{ width: 1; color: "black" }
         }
         onClicked: {
-            myTime.stop();
-            handleLoginClick.start();
-            myTime.start();
-        }
+          //  myTime.stop();
+//            console.log("on clicked");
+            loginScreen = false;
+            if(hardwareStatus == false){
+                handleLoginClick.start();
+                return;
+
+            }
+//            //console.log("on clicked in board");
+               stack.pop();
+////                  stack.push([page1, {immediate:true}])
+//                //console.log("on clicked in board 2");
+//               // return;
+
+
+
+           // handleLoginClick.start();
+          //  myTime.start();
+        }      
     }
+//    Component {
+//        id: page1
+//        SGBoardLayout { }
+//    }
 
     Timer {
         id: myTime
@@ -393,6 +431,32 @@ Rectangle {
             NumberAnimation { target: spyglassText8; property: "opacity"; from: 1; to: 0; easing.type:Easing.OutInCubic; duration: 500; }
         }
     }
+
+    ImplementationInterfaceBinding {
+        id : implementationinterfacebinding
+
+        onPlatformStateChanged: {
+            hardwareStatus = implementationinterfacebinding.platformState;
+
+            console.log ("Current State = ",hardwareStatus);
+            if(loginScreen == true) {
+                console.log ("Stay on login screen");
+            }
+            else if(loginScreen == false && hardwareStatus == false){
+                console.log ("Stay on waiting screen")
+                handleLoginClick.start();
+            }
+
+            else {
+                console.log ("Stay on Board")
+                stack.pop();
+            }
+        }
+        Component.onCompleted:
+            console.log ("Hardware state",hardwareStatus);
+    }
+
 }
+
 
 

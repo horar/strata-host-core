@@ -37,12 +37,50 @@ HEADERS +=ImplementationInterfaceBinding/ImplementationInterfaceBinding.h \
 SOURCES += main.cpp \
     ImplementationInterfaceBinding/ImplementationInterfaceBinding.cpp \
 
-unix: LIBS += -L$$PWD/../../lib/linux/lib/ -lzmq
-else:win32: LIBS += -L$$PWD/../../lib/windows/zeromq/ -llibzmq
+#unix: LIBS += -L$$PWD/../../lib/linux/lib/ -lzmq
+#else:win32: LIBS += -L$$PWD/../../lib/windows/zeromq/ -llibzmq
 
-INCLUDEPATH += $$PWD/../../lib/linux/include
-DEPENDPATH += $$PWD/../../lib/linux/include
-INCLUDEPATH += $$PWD/../../lib/windows/zeromq
-DEPENDPATH += $$PWD/../../lib/windows/zeromq
+#INCLUDEPATH += $$PWD/../../lib/linux/include
+#DEPENDPATH += $$PWD/../../lib/linux/include
+#INCLUDEPATH += $$PWD/../../lib/windows/zeromq
+#DEPENDPATH += $$PWD/../../lib/windows/zeromq
 
-unix: PRE_TARGETDEPS += $$PWD/../../lib/linux/lib/libzmq.a
+#unix: PRE_TARGETDEPS += $$PWD/../../lib/linux/lib/libzmq.a
+
+HOST_ROOT = ../..
+
+# linux
+unix : !macx : !win32 {
+    message("Building on Linux")
+    LIBS += -L$$PWD/../../lib/linux/lib/ -lzmq
+    INCLUDEPATH += $$PWD/../../lib/linux/include
+    INCLUDEPATH += $$PWD/../../lib/linux/include
+    DEPENDPATH += $$PWD/../../lib/linux/include
+}
+
+# mac (not iOS)
+else : macx : !win32 {
+    message("Building on OSX")
+    LIBS += -L$${HOST_ROOT}/lib/mac/zeromq/4.2.2/lib -lzmq
+    DEPENDPATH += $${HOST_ROOT}/lib/mac/zeromq/4.2.2
+    INCLUDEPATH += $${HOST_ROOT}/lib/mac/zeromq/4.2.2/include/
+}
+
+# windows
+else : win32 {
+    message("Building on Windows")
+    LIBS += -L$$PWD/../../lib/windows/zeromq/ -llibzmq
+    INCLUDEPATH += $$PWD/../../lib/windows/zeromq
+    DEPENDPATH += $$PWD/../../lib/windows/zeromq
+    INCLUDEPATH += $$PWD/../../lib/linux/include
+    DEPENDPATH += $$PWD/../../lib/linux/include
+}
+else: message("UNKNOWN machine type. Build configuration failed !!!!")
+
+message("BUILD VARIABLES")
+message(Host Root: $${HOST_ROOT});
+message(Current Build Directory: $$PWD);
+message(Include Path: $$INCLUDEPATH);
+message(Depend Path: $$DEPENDPATH);
+message("done");
+

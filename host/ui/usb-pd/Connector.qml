@@ -180,7 +180,7 @@ Rectangle {
                 target: cable;
                 property: "halfWidth";
                 from:3*cable.width/8;
-                to: 5*cable.width/16;
+                to: cable.width/2;
                 easing.type: Easing.OutQuad;
                 duration: 1000
             }

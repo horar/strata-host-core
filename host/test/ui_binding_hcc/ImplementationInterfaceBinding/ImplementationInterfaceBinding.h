@@ -40,7 +40,7 @@ class ImplementationInterfaceBinding : public QObject
     Q_PROPERTY(float powerPort0 READ getpowerPort0  NOTIFY powerPort0Changed)
 
     //QProperty : To know Platform Status
-    Q_PROPERTY(QString platformState READ getPlatformState NOTIFY platformStateChanged)
+    Q_PROPERTY(bool platformState READ getPlatformState NOTIFY platformStateChanged)
 
     //QProperty : Platform Id
     Q_PROPERTY(QString Id READ getPlatformId NOTIFY platformIdChanged)

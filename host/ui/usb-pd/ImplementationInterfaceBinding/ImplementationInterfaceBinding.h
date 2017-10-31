@@ -40,7 +40,7 @@ class ImplementationInterfaceBinding : public QObject
     Q_PROPERTY(float powerPort0 READ getpowerPort0  NOTIFY powerPort0Changed)
 
     //QProperty : To know Platform Status
-    Q_PROPERTY(QString platformState READ getPlatformState NOTIFY platformStateChanged)
+    Q_PROPERTY(bool platformState READ getPlatformState NOTIFY platformStateChanged)
 
     //QProperty : Platform Id
     Q_PROPERTY(QString Id READ getPlatformId NOTIFY platformIdChanged)
@@ -49,11 +49,12 @@ class ImplementationInterfaceBinding : public QObject
     //Q_PROPERTY(bool usbcPort1 READ getUsbCPort1  NOTIFY usbCPort1StateChanged)
     //Q_PROPERTY(bool usbcPort2 READ getUsbCPort2  NOTIFY usbCPort2StateChanged)
 public:
+
     explicit ImplementationInterfaceBinding(QObject *parent = nullptr);
     virtual ~ImplementationInterfaceBinding();
+
     std::thread notification_thread_;
     void notificationsThreadHandle();
-
 //Getter invoked when GUI tries to get the data
     float getoutputVoltagePort0();
     float getinputVoltagePort0();

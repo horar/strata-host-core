@@ -8,11 +8,10 @@ ChartView {
 
     property alias variable1Name: variable1.name
     property alias variable2Name: variable2.name
-
     property alias variable1Color: variable1.color
     property alias variable2Color: variable2.color
-
     property  bool secondValueVisible: false
+    property bool efficencyLable: false
 
     // warning zone image
     Rectangle {
@@ -27,13 +26,35 @@ ChartView {
     Label {
         id: labelAxisx
         width: 50; height: 50
+    }
+//    Label {
+//        width: 100; height: 50
+//        text: "Efficency: 95% "
+//        visible: efficencyLable
+//        anchors { bottom: container.bottom; left: container.left }
+//    }
 
-        //anchors { bottom: parent.bottom; horizontalCenter: parent.horizontalCenter }
+    ValueAxis {
+        id: axisY1
+        min: 0
+        max: 7
     }
 
+    ValueAxis {
+        id: axisY2
+        min: -5
+        max: 7
+    }
+    ValueAxis {
+        id: axisX
+        min: 0
+        max: 10
+    }
     SplineSeries {
         id: variable1
         color: "blue"
+        axisY: axisY1
+        axisX: axisX
         XYPoint { x: 0; y: 0 }
         XYPoint { x: 1.1; y: 2.1 }
         XYPoint { x: 1.9; y: 3.3 }
@@ -46,12 +67,12 @@ ChartView {
         XYPoint { x: 7.9; y: 6.3 }
         XYPoint { x: 10.0; y: 7.0 }
 
-
     }
     SplineSeries {
         id: variable2
         color:"red"
         visible: secondValueVisible
+        axisYRight: axisY2
         XYPoint { x: 0; y: 0 }
         XYPoint { x: 1; y: 1 }
         XYPoint { x: 2; y: 2 }

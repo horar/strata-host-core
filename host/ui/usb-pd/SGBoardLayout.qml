@@ -1,8 +1,11 @@
 import QtQuick 2.7
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 1.4
+import tech.spyglass.ImplementationInterfaceBinding 1.0
 
 Rectangle {
+    property bool hardwareStatus: null
+    property bool boardScreen: true
 
     Button {
         width: 100;height: 100
@@ -29,6 +32,7 @@ Rectangle {
 
         Component.onCompleted: {
             rotateInfoIcon.start()
+
         }
 
         Rectangle {
@@ -99,6 +103,7 @@ Rectangle {
             Device { verticalOffset: -parent.height*.3 }
         }
     }
+
     Image {
         id: infoIcon
         anchors{ bottom: parent.bottom;right: parent.right}
@@ -110,7 +115,7 @@ Rectangle {
             width: 90; height: 25
             text: "Disconnect"
             anchors {right:parent.left
-                     verticalCenter:parent.verticalCenter}
+                verticalCenter:parent.verticalCenter}
             onClicked: {
                 stack.push([page1, {immediate:true}])
             }
@@ -174,4 +179,5 @@ Rectangle {
             }
         }
     }
+
 }

@@ -34,6 +34,7 @@ ApplicationWindow {
         }
 
         onPlatformStateChanged: {
+            console.log("PlatformState Changed lol");
             currentLabel7.text=implementationInterfaceBinding.platformState
         }
     }

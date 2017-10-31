@@ -5,26 +5,25 @@ Rectangle {
     border.color: "black"
     anchors { fill: parent }
     
-    Label {
-        x: 32 ; y: 128
-        width: 176;height: 64
-        text: "back"
-        opacity: 1
-        anchors { horizontalCenter: parent.horizontalCenter; verticalCenter: parent.verticalCenter }
-        font.pointSize: 72
-    }
+//    Label {
+//        x: 32 ; y: 128
+//        width: 176;height: 64
+//        text: "back"
+//        opacity: 1
+//        anchors { horizontalCenter: parent.horizontalCenter; verticalCenter: parent.verticalCenter }
+//        font.pointSize: 72
+//    }
     
     SwipeView {
         id: swipeView
         anchors{ fill: parent }
         currentIndex: tabBar.currentIndex
-        PageBOM { id: pageBOMID }
+        PageBlockDiagram { id: pageBlockDiagram }
         PageSchematic { id: pageSchematic }
-        PagePCB { id: pagePCB }
-        PageReport { id: pageReport }
-        PageRelated { id: pageRelated }
-        PageMagazine { id: pageMagazine }
-        PageBusinessIntelligence { id: pageBusinessIntelligence }
+        PageLayout { id: pageLayout }
+        PageTestReport { id: pageTestReport }
+        PageSystemContent {id: pageSystemContent}
+        //PageAssociatedCollateral {id: pageAssociatedCollateral}
     }
     
     TabBar {
@@ -32,11 +31,12 @@ Rectangle {
         width: parent.width - flipButton.width
         currentIndex: swipeView.currentIndex
         anchors { bottom: parent.bottom;}
-        TabButton { text: "BOM" }
+        TabButton { text: "Block Diagram" }
         TabButton { text: "Schematic" }
         TabButton { text: "Layout" }
         TabButton { text: "Test Report" }
-        TabButton { text: "Related Material" }
+        TabButton { text: "System Content" }
+        //TabButton { text: "Related Material" }
     }
     
     Image {

@@ -8,18 +8,6 @@ Rectangle {
     //visible: false
     property point theDialogStartPosition;
 
-//    SGDisconnectMessage {
-//        id: disconnectMessage
-//        //visible: false
-//        width: 50; height : 50
-//        anchors.centerIn: parent
-//    }
-    function message()
-    {
-        console.log("hi");
-      // disconnectMessage.visible = true;
-
-    }
 
     Column {
         spacing: 8

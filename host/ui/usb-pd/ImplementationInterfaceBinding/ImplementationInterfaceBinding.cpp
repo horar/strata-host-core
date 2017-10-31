@@ -22,14 +22,18 @@ ImplementationInterfaceBinding::ImplementationInterfaceBinding(QObject *parent) 
     Ports.power[1]='\0';
     platformId= QString();
     platformState = false;
+
     notification_thread_= std::thread(&ImplementationInterfaceBinding::notificationsThreadHandle,this);
 }
 
 ImplementationInterfaceBinding::~ImplementationInterfaceBinding() {
 
+    hcc_object->notificationSocket->close();
+    hcc_object->sendCmdSocket->close();
     zmq_term(hcc_object->context);
     delete(hcc_object);
     notification_thread_.detach();
+
 }
 
 /*!
@@ -325,12 +329,11 @@ void ImplementationInterfaceBinding::notificationsThreadHandle() {
 
         //QTextStream stream( &file );
         std::string response= hcc_object->receiveNotification();
-
         QString q_response = QString::fromStdString(response);
         QJsonDocument doc= QJsonDocument::fromJson(q_response.toUtf8());
         QJsonObject json_obj=doc.object();
 
-        //qDebug()<<"Response received  = " << json_obj;
+        //qDebug()<<"Response received  = " << json_obj;  // debug message
 
         QVariantMap json_map = getJsonMapObject(json_obj);
         json_map = getJsonMapObject(json_obj);

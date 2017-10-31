@@ -159,7 +159,7 @@ Rectangle {
 
                     SGPortGroup {
                         id: portGroupPort2
-                        width: parent.width; height:parent.height /*parent.width/0.95; height:parent.height/0.95*/
+                        width: parent.width; height:parent.height
                         //width: topPortRect.width; height: topPortRect.height
                         text: "Port 2"
                         radius: 1
@@ -214,7 +214,7 @@ Rectangle {
     SGPopup {
         id: inputPowergraph
         x: onLogo.x - onLogo.width / 2; y: onLogo.y - onLogo.height / 2
-        width: boardRect.width/0.9 ;height: boardRect.height/2
+        width: boardRect.width/0.8 ;height: boardRect.height/2
         leftMargin : 30
         rightMargin : 30
         topMargin: 30
@@ -223,5 +223,7 @@ Rectangle {
         axisYLabel: "Power (W)"
         graphTitle: "Input Power Graph"
         inVariable1Name: "Power"
+        efficencyLabel: true
+
     }
 }

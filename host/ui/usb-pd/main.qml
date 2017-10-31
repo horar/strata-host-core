@@ -10,13 +10,17 @@ ApplicationWindow {
     width: 1200
     height: 900
     title: qsTr("USB-PD Dual")
+    property bool hardwareStatus: null
 
-    //Test object instantiation, without this call
-    //backend object wont be invoked.
-    ImplementationInterfaceBinding {
-        id : implementationinterfacebinding
+
+
+    Label {
+        id: currentLabel7
+        x: 118
+        y: 64
+        width: 51
+        height: 14
     }
-
     Flipable {
         id: flipable
         anchors{ fill:parent }
