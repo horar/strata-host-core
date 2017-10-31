@@ -6,8 +6,19 @@
  */
 
 #include "HostControllerService.h"
+#include "nimbus.h"
 
 using namespace std;
+
+AttachmentObserver::AttachmentObserver(void *hostP) {
+	host = (host_packet *)hostP;
+}
+
+void AttachmentObserver::ValidateDocumentCallback(jsonString jsonBody) {
+	 Connector::messageProperty message;
+     message.message = jsonBody;
+     host->service->sendNotification(message,host->notify);    
+}
 
 HostControllerService::HostControllerService(string ipRouter,string ipPub) {
 
@@ -283,6 +294,16 @@ string HostControllerService::setupHostControllerService(string ipRouter, string
 	Connector *conp = conObj->getServiceTypeObject("PLATFORM");
 	hostP.platform = conp;
 
+	// cloud integration
+	// Initialize Nimbus object
+    Nimbus local_db = Nimbus();
+// Use the test database to observe
+    local_db.Open(NIMBUS_TEST_PLATFORM_JSON);
+    // NIMBUS integration **Needs better organisation --Prasanth** 
+	AttachmentObserver blobObserver((void *)&hostP);
+	local_db.Register(&blobObserver);
+
+
 	string cmd = "{\"cmd\":\"request_platform_id\",\"Host_OS\":\"Linux\"}";
 
 	while(!openPlatformSocket()) {
@@ -329,8 +350,11 @@ string HostControllerService::setupHostControllerService(string ipRouter, string
 	if(event_add(service,NULL) <0 )
 		cout<<"Event SERVICE ADD FAILED "<<endl;
 
+	
+
 	event_base_dispatch(base);
 	t.join();
 	cout << "returnting " <<endl;
 	return disconnect;
 }
+

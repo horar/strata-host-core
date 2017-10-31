@@ -50,7 +50,7 @@ namespace hcc {
       return response;
     }
     inline std::string receiveNotification() {
-      s_recv(*notificationSocket);
+      //s_recv(*notificationSocket);
       std::string response = s_recv(*notificationSocket);
       std::cout << "Received String " << response <<std::endl;
       return response;

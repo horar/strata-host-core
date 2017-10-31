@@ -11,7 +11,9 @@
 #include "ConnectFactory.h"
 #include "ArduinoJson.h"
 #include <libserialport.h>
-
+// NIMBUS integration **Needs better organisation --Prasanth** 
+#include "Observer.h"
+ 
 #ifndef LIB_HOSTCONTROLLERSERVICE_H_
 #define LIB_HOSTCONTROLLERSERVICE_H_
 
