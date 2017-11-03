@@ -5,23 +5,53 @@ import tech.spyglass.ImplementationInterfaceBinding 1.0
 
 Rectangle {
     visible: true
-
     //determine which screen to show based on how the caller set the
-    //showLoginOnCompletion property
+
     property bool showLoginOnCompletion: false
-    property bool hardwareStatus: null
     property bool loginScreen: true
 
-
-
     Component.onCompleted: {
-        spotlightAnimation.start();
-        console.log ("plateform state",implementationinterfacebinding.platformState);
-        if (showLoginOnCompletion){
-            showConnectionScreen.start();
-        }
+        spotlightAnimation.start();
+        console.log ("plateform state",implementationInterfaceBinding.platformState);
+        if (showLoginOnCompletion){
+            showConnectionScreen.start();
+        }
+    }
 
-    }
+    property bool  hardwareStatus : {
+        var state = implementationInterfaceBinding.platformState;
+        console.debug("state value ", state)
+
+        if(loginScreen==true) {
+
+            if(state == true && login_detected == true){
+                console.log("inside waiting screen")
+                stack.pop();
+                return
+            }   else if(state == false) {
+                console.log ("Stay on login screen");
+            } else {
+                console.log("Invalid Condition hit on Login == true")
+            }
+        } else if (loginScreen == false) {
+
+            if(state == false && login_detected == true){
+                console.log("inside waiting screen")
+            } else if(state == true && login_detected == true){
+                console.log ("Switching to board layout")
+                stack.pop();
+            } else if(state == false){
+                console.log ("Stay on waiting screen")
+                handleLoginClick.start();
+            } else {
+                console.log("Invalid Condition hit on Login == false")
+            }
+        } else {
+            console.log("Invalid LoginScreen value")
+        }
+        implementationInterfaceBinding.platformState
+    }
+
     //-----------------------------------------------------------
     //Elements common to both the connection and login screens
     //-----------------------------------------------------------
@@ -235,33 +265,18 @@ Rectangle {
             }
 
             onClicked: {
-//                                myTime.stop();
-//                                handleLoginClick.start();
-//                                myTime.start();
                 console.log("on clicked");
                 loginScreen = false;
-                if(hardwareStatus == false){
-                    handleLoginClick.start();
-                }
-                else { console.log("on clicked in board");
-                    stack.pop();
-                    return;
-                }
+                login_detected = true;
             }
         }
     }
 
     //handle a return key click, which is the equivalent of the login button being clicked
     Keys.onReturnPressed:{
-//                myTime.stop();
-//                handleLoginClick.start();
-//                myTime.start();
-         console.log("on clicked");
-         loginScreen = false;
-        if(hardwareStatus == false){
-            handleLoginClick.start();
-        }
-        else stack.pop();
+        console.log("on clicked");
+        loginScreen = false;
+        login_detected = true;
     }
 
     Button {
@@ -289,30 +304,12 @@ Rectangle {
             border{ width: 1; color: "black" }
         }
         onClicked: {
-          //  myTime.stop();
-//            console.log("on clicked");
+            console.log("on clicked");
             loginScreen = false;
-            if(hardwareStatus == false){
-                handleLoginClick.start();
-                return;
+            login_detected = true;
 
-            }
-//            //console.log("on clicked in board");
-               stack.pop();
-////                  stack.push([page1, {immediate:true}])
-//                //console.log("on clicked in board 2");
-//               // return;
-
-
-
-           // handleLoginClick.start();
-          //  myTime.start();
-        }      
+        }
     }
-//    Component {
-//        id: page1
-//        SGBoardLayout { }
-//    }
 
     Timer {
         id: myTime
@@ -431,31 +428,6 @@ Rectangle {
             NumberAnimation { target: spyglassText8; property: "opacity"; from: 1; to: 0; easing.type:Easing.OutInCubic; duration: 500; }
         }
     }
-
-    ImplementationInterfaceBinding {
-        id : implementationinterfacebinding
-
-        onPlatformStateChanged: {
-            hardwareStatus = implementationinterfacebinding.platformState;
-
-            console.log ("Current State = ",hardwareStatus);
-            if(loginScreen == true) {
-                console.log ("Stay on login screen");
-            }
-            else if(loginScreen == false && hardwareStatus == false){
-                console.log ("Stay on waiting screen")
-                handleLoginClick.start();
-            }
-
-            else {
-                console.log ("Stay on Board")
-                stack.pop();
-            }
-        }
-        Component.onCompleted:
-            console.log ("Hardware state",hardwareStatus);
-    }
-
 }
 
 

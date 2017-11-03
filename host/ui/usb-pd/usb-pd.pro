@@ -36,10 +36,9 @@ HOST_ROOT = ../../../host
 # linux
 unix : !macx : !win32 {
     message("Building on Linux")
-    LIBS += -L$$PWD/../../lib/linux/lib/ -lzmq
-    INCLUDEPATH += $$PWD/../../lib/linux/include
-    INCLUDEPATH += $$PWD/../../lib/linux/include
-    DEPENDPATH += $$PWD/../../lib/linux/include
+    LIBS += -L$${HOST_ROOT}/lib/linux/lib/ -lzmq
+    INCLUDEPATH += $${HOST_ROOT}/lib/linux/include
+    DEPENDPATH += $${HOST_ROOT}/lib/linux/include
 }
 
 # mac (not iOS)
@@ -69,10 +68,12 @@ message(Depend Path: $$DEPENDPATH);
 message("done");
 
 HEADERS +=  ImplementationInterfaceBinding/ImplementationInterfaceBinding.h \
+           DocumentManager.h \
            $${HOST_ROOT}/include/HostControllerClient.hpp \
            $${HOST_ROOT}/include/zhelpers.hpp \
            $${HOST_ROOT}/include/zmq.hpp \
            $${HOST_ROOT}/include/zmq_addon.hpp
 
 SOURCES += main.cpp \
+           DocumentManager.cpp \
            ImplementationInterfaceBinding/ImplementationInterfaceBinding.cpp

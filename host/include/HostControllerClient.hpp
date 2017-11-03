@@ -58,6 +58,7 @@ public:
         s_recv(*notificationSocket);
         std::string response = s_recv(*notificationSocket);
         std::cout << "Received String " << response <<std::endl;
+        return response;
     }
 
     zmq::context_t *context;

@@ -4,6 +4,8 @@ import QtQuick.Layouts 1.0
 import QtQuick.Extras 1.4
 import QtQuick.Controls.Styles 1.4
 
+import tech.spyglass.Document 1.0
+import tech.spyglass.DocumentManager 1.0
 Item {
     ListModel {
         id: schematicModel
@@ -52,7 +54,8 @@ Item {
             width: mainWindow.width; height: parent.height
 
             snapMode: ListView.SnapOneItem
-            model: schematicModel
+            model: documentManager.documents
+            //model: schematicModel
             focus: true
             clip: true
             add: Transition { NumberAnimation { properties: "x,y"; from: 100; duration: 1000 } }
@@ -65,7 +68,7 @@ Item {
                     anchors.centerIn: parent
                     width: parent.width; height: parent.height
                     fillMode: Image.PreserveAspectFit
-                    source: image_name
+                    source: "data:image/png;base64," + model.data
                 }
 
                 MouseArea {

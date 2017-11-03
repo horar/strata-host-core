@@ -22,7 +22,8 @@ ImplementationInterfaceBinding::ImplementationInterfaceBinding(QObject *parent) 
     Ports.power[1]='\0';
     platformId= QString();
     platformState = false;
-
+    // DocumentManager is a C++ model for QML objects and is a super class of QObject
+    document_manager_ = static_cast<DocumentManager *>(parent);
     notification_thread_= std::thread(&ImplementationInterfaceBinding::notificationsThreadHandle,this);
 }
 
@@ -126,6 +127,23 @@ void ImplementationInterfaceBinding::handleNotification(QVariantMap current_map)
     }
 }
 
+/*!
+ * Notification handlers for cloud to UI
+ */
+void ImplementationInterfaceBinding::handleCloudNotification(QJsonObject json_obj) {
+    QList<QString> documents;
+    QJsonArray assembly_array = json_obj["schematic"].toArray();
+    int schematic_array_size = assembly_array.size();
+    documents.reserve (schematic_array_size);
+    foreach (const QJsonValue & assembly_image, assembly_array)
+    {
+        QJsonObject obj = assembly_image.toObject();
+        QJsonDocument assembly_doc(obj);
+        QString strJson(assembly_doc.toJson(QJsonDocument::Compact));
+        documents.push_back (QString(strJson));
+    }
+    document_manager_->updateDocuments("schematic",documents);
+}
 /*!
  * \brief :
  *          @params: payloadMap map of usb_pd_power notification
@@ -318,12 +336,6 @@ QVariantMap ImplementationInterfaceBinding::validateJsonReply(const QVariantMap 
 void ImplementationInterfaceBinding::notificationsThreadHandle() {
 
     qDebug () << "Thread Created for notification ";
-    emit platformStateChanged(platformState);
-
-    //Will use this if needed for future testing, so leaving this piece of code
-    //QString filename="Data.txt";
-    //QFile file( filename );
-    //file.open(QIODevice::ReadWrite);
 
     while(1) {
 
@@ -332,15 +344,17 @@ void ImplementationInterfaceBinding::notificationsThreadHandle() {
         QString q_response = QString::fromStdString(response);
         QJsonDocument doc= QJsonDocument::fromJson(q_response.toUtf8());
         QJsonObject json_obj=doc.object();
-
-        //qDebug()<<"Response received  = " << json_obj;  // debug message
-
-        QVariantMap json_map = getJsonMapObject(json_obj);
-        json_map = getJsonMapObject(json_obj);
-        QVariantMap current_map = validateJsonReply(json_map);
-        if(current_map.contains("payload")) {
-
-            handleNotification(current_map);
+        if(json_obj.contains("command")) {
+            qWarning() << "Notification Handler: Cloud";
+            handleCloudNotification(json_obj);
+        }
+        else {
+            QVariantMap json_map = getJsonMapObject(json_obj);
+            json_map = getJsonMapObject(json_obj);
+            QVariantMap current_map = validateJsonReply(json_map);
+            if(current_map.contains("payload")) {
+                handleNotification(current_map);
+            }
         }
     }
 }

@@ -74,9 +74,6 @@ add_library(usbconnector STATIC ${CMAKE_CURRENT_SOURCE_DIR}/src/USBConnector.cpp
 
 add_executable(HCS ${SOURCE})
 
-add_executable (HCC_NIMBUS_TEST   ${CMAKE_CURRENT_SOURCE_DIR}/src/HCC_NIMBUS_TEST.cpp
-${SHARED_DIR}/cpp-base64/base64.cpp)
-
 if(WINDOWS)
 target_link_libraries(HCS
                       -lzmq.dll
@@ -98,12 +95,3 @@ target_link_libraries(HCS
                       ${litecore} ${libdl}
                      )
 endif()
-
-target_link_libraries(HCC_NIMBUS_TEST
-                      -lzmq
-                      -lstdc++
-                      -lpthread
-                      -levent
-                      -lserialport
-                      ${litecore} ${libdl}
-                     )

@@ -10,9 +10,11 @@
 #include <QVariant>
 #include <QStringList>
 #include <QString>
+#include <QJsonArray>
 #include <thread>
 #include <stdlib.h>
 #include "../../../include/HostControllerClient.hpp"
+#include "DocumentManager.h"
 
 //aPort = Variable to store current
 //vPort = Variable to store voltage
@@ -78,6 +80,7 @@ public:
     friend void *simulateNotificationsThread(void *);
     //friend void *simulateCurrentNotificationsThread(void *);
     void handleNotification(QVariantMap current_map);
+    void handleCloudNotification(QJsonObject json_obj);
     //void handleCurrentNotification(QVariantMap current_map);
 
 //Signalling done when something needs to be notified
@@ -96,7 +99,7 @@ private:
     QString platformId;
     bool platformState, usbC_Port_1_State, usbC_Port_2_State;
     bool registrationSuccessful;
-
+    DocumentManager *document_manager_;
 
 public:
     hcc::HostControllerClient *hcc_object;

@@ -4,8 +4,25 @@ import QtQuick.Controls 1.4
 import tech.spyglass.ImplementationInterfaceBinding 1.0
 
 Rectangle {
-    property bool hardwareStatus: null
     property bool boardScreen: true
+
+    property bool hardwareStatus:  {
+
+        onPlatformStateChanged: {
+            var state = implementationInterfaceBinding.platformState;
+            if(state == false && boardScreen == true)
+            {
+                stack.push([page, {immediate:true}]);
+            }
+        }
+        implementationInterfaceBinding.platformState
+    }
+    Component {
+        id: page
+        SGLoginScreen {
+            showLoginOnCompletion: true
+        }
+    }
 
     Button {
         width: 100;height: 100
@@ -179,5 +196,21 @@ Rectangle {
             }
         }
     }
+//        ImplementationInterfaceBinding {
+//            id : implementationinterfacebinding
 
+//            onPlatformStateChanged: {
+//                hardwareStatus = implementationinterfacebinding.platformState;
+//                if(hardwareStatus == false && boardScreen == true)
+//                {
+//                    stack.push([page, {immediate:true}]);
+//                }
+//            }
+//        }
+//        Component {
+//            id: page
+//            SGLoginScreen {
+//                showLoginOnCompletion: true
+//            }
+//        }
 }
