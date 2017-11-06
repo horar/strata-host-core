@@ -65,7 +65,6 @@ public:
     float getPort0Time();
     bool getPlatformState();
     QString getPlatformId();
-    //bool get
 
 //Helper methods to handle QString to JSON conversion
     QJsonObject convertQstringtoJson(const QString string);
@@ -100,6 +99,7 @@ private:
     bool platformState, usbC_Port_1_State, usbC_Port_2_State;
     bool registrationSuccessful;
     DocumentManager *document_manager_;
+    bool notification_thread_running_;
 
 public:
     hcc::HostControllerClient *hcc_object;

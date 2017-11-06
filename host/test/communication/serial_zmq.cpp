@@ -47,9 +47,9 @@ void servicehandle(evutil_socket_t fd ,short what,void* service) {
   s_recv(*socket);
   string cmd = s_recv(*socket);
   lock_serial_.lock();
-  cout << "Received String " <<cmd <<endl;
+  //cout << "Received String " <<cmd <<endl;
   error = sp_blocking_write(port,(void *)cmd.c_str(),cmd.length(),5);
-  cout << "service handle exit " <<endl;
+  // cout << "service handle exit " <<endl;
   lock_serial_.unlock();
 }
 

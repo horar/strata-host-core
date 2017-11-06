@@ -22,6 +22,7 @@ ImplementationInterfaceBinding::ImplementationInterfaceBinding(QObject *parent) 
     Ports.power[1]='\0';
     platformId= QString();
     platformState = false;
+
     // DocumentManager is a C++ model for QML objects and is a super class of QObject
     document_manager_ = static_cast<DocumentManager *>(parent);
     notification_thread_= std::thread(&ImplementationInterfaceBinding::notificationsThreadHandle,this);
@@ -34,7 +35,6 @@ ImplementationInterfaceBinding::~ImplementationInterfaceBinding() {
     zmq_term(hcc_object->context);
     delete(hcc_object);
     notification_thread_.detach();
-
 }
 
 /*!
@@ -98,8 +98,6 @@ bool ImplementationInterfaceBinding::getPlatformState() {
  * End of Getter and Setter Methods
  */
 
-
-
 /*!
  * Notification handlers
  * if there is any change in the newly received voltage from the
@@ -129,21 +127,37 @@ void ImplementationInterfaceBinding::handleNotification(QVariantMap current_map)
 
 /*!
  * Notification handlers for cloud to UI
- */
+ * CLOUD JSON STRUCTURE
+      {"cloud_sync":"document_set",
+      "type" : "schematic",
+      "documents":[
+         {"data":*******","filename":"schematic15.png"}
+       ]
+      }
+*/
 void ImplementationInterfaceBinding::handleCloudNotification(QJsonObject json_obj) {
+    // local variable declaration
     QList<QString> documents;
-    QJsonArray assembly_array = json_obj["schematic"].toArray();
-    int schematic_array_size = assembly_array.size();
-    documents.reserve (schematic_array_size);
-    foreach (const QJsonValue & assembly_image, assembly_array)
-    {
-        QJsonObject obj = assembly_image.toObject();
-        QJsonDocument assembly_doc(obj);
-        QString strJson(assembly_doc.toJson(QJsonDocument::Compact));
+    QString viewer_type = json_obj.value("type").toString();  // Can be schematic, layout or assembly and so on
+
+    // getting the json array
+    QJsonArray document_array = json_obj["documents"].toArray();
+    int document_array_size = document_array.size();
+
+    // set the "list" size based on the received array size
+    documents.reserve (document_array_size);
+
+    // loop through the array and the data from cloud into the "list"
+    foreach (const QJsonValue & image, document_array) {
+        QJsonObject obj = image.toObject();
+        QJsonDocument document_doc(obj);
+        QString strJson(document_doc.toJson(QJsonDocument::Compact));
         documents.push_back (QString(strJson));
     }
-    document_manager_->updateDocuments("schematic",documents);
+
+    document_manager_->updateDocuments(viewer_type,documents);
 }
+
 /*!
  * \brief :
  *          @params: payloadMap map of usb_pd_power notification
@@ -336,18 +350,36 @@ QVariantMap ImplementationInterfaceBinding::validateJsonReply(const QVariantMap 
 void ImplementationInterfaceBinding::notificationsThreadHandle() {
 
     qDebug () << "Thread Created for notification ";
+    notification_thread_running_ = true;
 
-    while(1) {
-
+    while(notification_thread_running_) {
+        /*
+         *      CLOUD JSON STRUCTURE
+            {"cloud_sync":"document_set",
+              "type" : "schematic",
+              "documents":[
+                 {"data":*******","filename":"schematic15.png"}
+                 ]
+            }
+         */
         //QTextStream stream( &file );
+
+        // receive data from host controller client
         std::string response= hcc_object->receiveNotification();
         QString q_response = QString::fromStdString(response);
+
+        // create the json document from the received string
         QJsonDocument doc= QJsonDocument::fromJson(q_response.toUtf8());
         QJsonObject json_obj=doc.object();
-        if(json_obj.contains("command")) {
+
+        // todo: [prasanth] needs better way to determine the handler
+
+        // handler for cloud
+        if(json_obj.contains("cloud_sync")) {
             qWarning() << "Notification Handler: Cloud";
             handleCloudNotification(json_obj);
         }
+        // handler for platform
         else {
             QVariantMap json_map = getJsonMapObject(json_obj);
             json_map = getJsonMapObject(json_obj);

@@ -4,19 +4,10 @@ import QtQuick.Layouts 1.0
 import QtQuick.Extras 1.4
 import QtQuick.Controls.Styles 1.4
 
-Item {
-    ListModel {
-        id: reportModel
-        ListElement { image_name: "report1.png" }
-        ListElement { image_name: "report2.png" }
-        ListElement { image_name: "report3.png" }
-        ListElement { image_name: "report4.png" }
-        ListElement { image_name: "report5.png" }
-        ListElement { image_name: "report7.png" }
-        ListElement { image_name: "report8.png" }
-        ListElement { image_name: "report9.png" }
-    }
+import tech.spyglass.Document 1.0
+import tech.spyglass.DocumentManager 1.0
 
+Item {
     // LOGO
     Rectangle {
         id: headerLogo
@@ -24,6 +15,7 @@ Item {
         width: parent.width; height: 40
         color: "#235A92"
     }
+
     Image {
         anchors { top: parent.top; right: parent.right }
         height: 40
@@ -41,7 +33,7 @@ Item {
             width: mainWindow.width; height: parent.height
 
             snapMode: ListView.SnapOneItem
-            model: reportModel
+            model: documentManager.testReportDocuments
             focus: true
             clip: true
             add: Transition { NumberAnimation { properties: "x,y"; from: 100; duration: 1000 } }
@@ -54,13 +46,12 @@ Item {
                     anchors.centerIn: parent
                     width: parent.width; height: parent.height
                     fillMode: Image.PreserveAspectFit
-                    source: image_name
+                    source: "data:image/png;base64," + model.data
                 }
 
                 MouseArea {
                     anchors.fill: parent
                     onClicked: {
-                        console.debug("image_name=" + image_name);
                         reportList.currentIndex = index
                     }
                 }

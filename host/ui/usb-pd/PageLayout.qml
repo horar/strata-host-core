@@ -4,16 +4,10 @@ import QtQuick.Layouts 1.0
 import QtQuick.Extras 1.4
 import QtQuick.Controls.Styles 1.4
 
+import tech.spyglass.Document 1.0
+import tech.spyglass.DocumentManager 1.0
+
 Item {
-    ListModel {
-        id: pcbModel
-
-        ListElement { image_name: "layer1.png" }
-        ListElement { image_name: "layer2.png" }
-        ListElement { image_name: "layer3.png" }
-        ListElement { image_name: "layer4.png" }
-    }
-
     // LOGO
     Rectangle {
         id: headerLogo
@@ -21,6 +15,7 @@ Item {
         width: parent.width; height: 40
         color: "#235A92"
     }
+
     Image {
         anchors { top: parent.top; right: parent.right }
         height: 40
@@ -38,7 +33,7 @@ Item {
             width: mainWindow.width; height: parent.height
 
             snapMode: ListView.SnapOneItem
-            model: pcbModel
+            model: documentManager.assemblyDocuments
             focus: true
             clip: true
             add: Transition { NumberAnimation { properties: "x,y"; from: 100; duration: 1000 } }
@@ -51,7 +46,7 @@ Item {
                     anchors.centerIn: parent
                     width: parent.width; height: parent.height
                     fillMode: Image.PreserveAspectFit
-                    source: image_name
+                    source: "data:image/png;base64," + model.data
                 }
 
                 MouseArea {

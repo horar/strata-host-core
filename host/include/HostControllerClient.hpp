@@ -1,3 +1,5 @@
+#ifndef HOSTCONTROLLERCLIENT_H
+#define HOSTCONTROLLERCLIENT_H
 
 #include <iostream>
 #include <string>
@@ -5,9 +7,11 @@
 #include "zhelpers.hpp"
 #include "zmq_addon.hpp"
 
-
-#ifndef HOSTCONTROLLERCLIENT_H
-#define HOSTCONTROLLERCLIENT_H
+// TODO move this to a configuration file
+#define HOST_CONTROLLER_SERVICE_OUT_ADDRESS "tcp://127.0.0.1:5564"
+#define HOST_CONTROLLER_SERVICE_IN_ADDRESS "tcp://127.0.0.1:5563"
+//#define HOST_CONTROLLER_SERVICE_OUT_ADDRESS "tcp://10.211.55.14:5564"
+//#define HOST_CONTROLLER_SERVICE_IN_ADDRESS "tcp://10.211.55.14:5563"
 
 namespace hcc {
 
@@ -18,16 +22,14 @@ public:
 
         context = new zmq::context_t;
         sendCmdSocket = new zmq::socket_t(*context,ZMQ_DEALER);
-        sendCmdSocket->connect("tcp://127.0.0.1:5564");
+        sendCmdSocket->connect(HOST_CONTROLLER_SERVICE_OUT_ADDRESS);
         sendCmdSocket->setsockopt(ZMQ_IDENTITY,"ONSEMI",sizeof("ONSEMI"));
 
         notificationSocket = new zmq::socket_t(*context,ZMQ_SUB);
-        notificationSocket->connect("tcp://127.0.0.1:5563");
+        notificationSocket->connect(HOST_CONTROLLER_SERVICE_IN_ADDRESS);
         notificationSocket->setsockopt(ZMQ_SUBSCRIBE,"ONSEMI",strlen("ONSEMI"));
-        //notificationSocket->setsockopt(ZMQ_RCVTIMEO, 3000);
 
-        //Unique Identity generator
-        //Will be replaced by random generator sent by HostControllerService in future
+        //TODO Unique Identity generator which will be replaced by random generator sent by HostControllerService in future
 
 #if (defined (WIN32))
         s_set_id(*sendCmdSocket, (intptr_t)1);
@@ -35,21 +37,19 @@ public:
         s_set_id(*sendCmdSocket);
 #endif
 
-      //request platform-id first step before proceeding with further request
-      std::string cmd= "{\"cmd\":\"request_platform_id\",\"Host_OS\":\"Linux\"}";
-      s_send(*sendCmdSocket,cmd.c_str());
+        //request platform-id first step before proceeding with further request
+        std::string cmd= "{\"cmd\":\"request_platform_id\",\"Host_OS\":\"Linux\"}";
+        s_send(*sendCmdSocket,cmd.c_str());
     }
+
     inline ~HostControllerClient() {}
 
     inline bool sendCmd(std::string cmd) {
-
         s_send(*sendCmdSocket,cmd.c_str());
-        std::cout << "Command Sent " << cmd <<std::endl;
-        return true;
+         return true;
     }
 
     inline std::string receiveCommandAck() {
-
         std::string response = s_recv(*sendCmdSocket);
         return response;
     }
@@ -57,7 +57,6 @@ public:
     inline std::string receiveNotification() {
         s_recv(*notificationSocket);
         std::string response = s_recv(*notificationSocket);
-        std::cout << "Received String " << response <<std::endl;
         return response;
     }
 

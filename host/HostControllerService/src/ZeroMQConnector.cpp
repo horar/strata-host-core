@@ -32,7 +32,7 @@ bool ZeroMQConnector::sendNotification(messageProperty message,void *service) {
 	zmq::socket_t *soc = (zmq::socket_t *)service;
 	s_sendmore(*soc,"ONSEMI");
 	s_send (*soc,message.message);
-	cout << "----> Notification to UI = "<< message.message << endl;
+	//cout << "----> Notification to UI = "<< message.message << endl;
 	return true;
 }
 

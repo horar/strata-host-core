@@ -59,11 +59,11 @@ QJsonObject HostControllerClient::receiveNotification() {
     std::string message = s_recv(*notificationSocket);
 
     QString response = QString::fromStdString(message);
-    qDebug() << "Converted QString = " << response;
+    //qDebug() << "Converted QString = " << response;
 
     QJsonDocument doc= QJsonDocument::fromJson(response.toUtf8());
     jsonResponse=doc.object();
-    qDebug() << "JSON DATA = " << jsonResponse;
+    //qDebug() << "JSON DATA = " << jsonResponse;
     return jsonResponse;
 }
 

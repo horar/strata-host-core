@@ -18,6 +18,17 @@
 #include <QMetaObject>
 #include <QQmlEngine>
 
+// Note: adding document set
+
+// 3) Create DocumentSet <name>_documents_;  // class memmber
+// 4) add Q_PROPERTY(QmlListProperty<Document> <name>Documents READ <name>Documents NOTIFY <name>DocumentsChanged
+// 5) add <name>Documents() READ implementation
+//      eg:
+//   QQmlListProperty<Document> DocumentManager::<name>Documents() { return QQmlListProperty<Document>(this, <name>_documents_); }
+// 6) add signal definition to class.  void <name>DocumentsChanged();
+//
+//
+
 class Document : public QObject
 {
     Q_OBJECT
@@ -38,35 +49,51 @@ private:
     QString data_;
 };
 
+using DocumentSet = QList<Document *>;
+using DocumentSetPtr = QList<Document *> *;
+
 class DocumentManager : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(QQmlListProperty<Document> documents READ documents NOTIFY documentsChanged)
+
+    Q_PROPERTY(QQmlListProperty<Document> schematicDocuments READ schematicDocuments NOTIFY schematicDocumentsChanged)
+    Q_PROPERTY(QQmlListProperty<Document> assemblyDocuments READ assemblyDocuments NOTIFY assemblyDocumentsChanged)
+    Q_PROPERTY(QQmlListProperty<Document> layoutDocuments READ layoutDocuments NOTIFY layoutDocumentsChanged)
+    Q_PROPERTY(QQmlListProperty<Document> testReportDocuments READ testReportDocuments NOTIFY testReportDocumentsChanged)
 
 public:
     DocumentManager();
     explicit DocumentManager(QObject *parent);
     virtual ~DocumentManager();
 
-    QQmlListProperty<Document> documents();  // read method for Q_PROPERTY
+    // read methods
+    QQmlListProperty<Document> schematicDocuments() { return QQmlListProperty<Document>(this, schematic_documents_); }
+    QQmlListProperty<Document> assemblyDocuments() { return QQmlListProperty<Document>(this, assembly_documents_); }
+    QQmlListProperty<Document> layoutDocuments() { return QQmlListProperty<Document>(this, layout_documents_); }
+    QQmlListProperty<Document> testReportDocuments() { return QQmlListProperty<Document>(this, test_report_documents_); }
 
-    Q_INVOKABLE void registerDocumentViewer(const QString &object_name);
-    Q_INVOKABLE void simulateNewDocuments();
-
-    void updateDocuments(const QString viewer, const QList<QString> &documents);
+    bool updateDocuments(const QString set, const QList<QString> &documents);
 
 signals:
-  void documentsChanged();
+  void schematicDocumentsChanged();
+  void assemblyDocumentsChanged();
+  void layoutDocumentsChanged();
+  void testReportDocumentsChanged();
 
 private:
-    QList<Document *> documents_;
+
+  // Document Sets
+  DocumentSet schematic_documents_;
+  DocumentSet assembly_documents_;
+  DocumentSet layout_documents_;
+  DocumentSet test_report_documents_;
+
+  std::map<QString, DocumentSetPtr> document_sets;
+
+  DocumentSetPtr getDocumentSet(const QString &set);
+
+  void init();
 
 };
-
-
-
-
-
-
 
 #endif // DOCUMENT_MANAGER_H

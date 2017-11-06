@@ -6,30 +6,8 @@ import QtQuick.Controls.Styles 1.4
 
 import tech.spyglass.Document 1.0
 import tech.spyglass.DocumentManager 1.0
+
 Item {
-    ListModel {
-        id: schematicModel
-
-        ListElement {
-            image_name: "lv8907_bldc_motor_controller_schematic_1.png"
-        }
-        ListElement {
-            image_name: "lv8907_bldc_motor_controller_schematic_2.png"
-        }
-        ListElement {
-            image_name: "lv8907_bldc_motor_controller_schematic_3.png"
-        }
-        ListElement {
-            image_name: "lv8907_bldc_motor_controller_schematic_4.png"
-        }
-        ListElement {
-            image_name: "lv8907_bldc_motor_controller_schematic_5.png"
-        }
-        ListElement {
-            image_name: "lv8907_bldc_motor_controller_schematic_6.png"
-        }
-    }
-
     // LOGO
     Rectangle {
         id: headerLogo
@@ -54,8 +32,7 @@ Item {
             width: mainWindow.width; height: parent.height
 
             snapMode: ListView.SnapOneItem
-            model: documentManager.documents
-            //model: schematicModel
+            model: documentManager.schematicDocuments
             focus: true
             clip: true
             add: Transition { NumberAnimation { properties: "x,y"; from: 100; duration: 1000 } }
@@ -82,6 +59,3 @@ Item {
         } // end ListView
     }
 }
-
-
-

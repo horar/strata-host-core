@@ -20,7 +20,7 @@ Rectangle {
         currentIndex: tabBar.currentIndex
         PageBlockDiagram { id: pageBlockDiagram }
         PageSchematic { id: pageSchematic }
-        PageLayout { id: pageLayout }
+        PageLayout { id: pageAssembly }
         PageTestReport { id: pageTestReport }
         PageSystemContent {id: pageSystemContent}
         //PageAssociatedCollateral {id: pageAssociatedCollateral}
@@ -33,7 +33,7 @@ Rectangle {
         anchors { bottom: parent.bottom;}
         TabButton { text: "Block Diagram" }
         TabButton { text: "Schematic" }
-        TabButton { text: "Layout" }
+        TabButton { text: "Assembly" }
         TabButton { text: "Test Report" }
         TabButton { text: "System Content" }
         //TabButton { text: "Related Material" }
