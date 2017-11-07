@@ -2,9 +2,7 @@
     <qresource prefix="/">
         <file>main.qml</file>
         <file>MainForm.ui.qml</file>
-        <file>Border.png</file>
         <file>RightPlug.png</file>
-        <file>LeftPlug.png</file>
         <file>ONLogo.png</file>
         <file>LeftArrow.png</file>
         <file>VoltageIcon.png</file>
@@ -15,8 +13,6 @@
         <file>leftArrow.svg</file>
         <file>usbPlugLeft.svg</file>
         <file>usbPlugRight.svg</file>
-        <file>boarder.svg</file>
-        <file>deviceOutline.svg</file>
         <file>submitButton.svg</file>
         <file>boarder_graph.svg</file>
         <file>GraphByEmail.svg</file>
@@ -42,17 +38,6 @@
         <file>report1.png</file>
         <file>qtquickcontrols2.conf</file>
         <file>PageSchematic.qml</file>
-        <file>PageReport.qml</file>
-        <file>PageRelated.qml</file>
-        <file>PagePCB.qml</file>
-        <file>PageMotorControl.qml</file>
-        <file>PageMagazine.qml</file>
-        <file>PageControl.qml</file>
-        <file>PageBusinessIntelligence.qml</file>
-        <file>PageBOM.qml</file>
-        <file>PageAssembly.qml</file>
-        <file>Page1Form.ui.qml</file>
-        <file>Page1.qml</file>
         <file>onsemi_logo.png</file>
         <file>onsemi_logo_small.png</file>
         <file>motor_board_platform.png</file>
@@ -80,5 +65,49 @@
         <file>framework/SGSlider.qml</file>
         <file>framework/images/sliderThumb.svg</file>
         <file>framework/images/sliderValue.svg</file>
+        <file>SGIconList.qml</file>
+        <file>SGIconStatistic.qml</file>
+        <file>SGPortTitle.qml</file>
+        <file>SGVerticalDivider.qml</file>
+        <file>SGIconLabel.qml</file>
+        <file>infoIcon.svg</file>
+        <file>temperatureIcon.svg</file>
+        <file>On_Logo_Green.svg</file>
+        <file>main.cpp</file>
+        <file>BackSide.qml</file>
+        <file>Board.qml</file>
+        <file>Connector.qml</file>
+        <file>Device.qml</file>
+        <file>FrontSide.qml</file>
+        <file>SGBoardLayout.qml</file>
+        <file>SGLoginScreen.qml</file>
+        <file>SGPortGroup.qml</file>
+        <file>Border.png</file>
+        <file>border.svg</file>
+        <file>deviceOutline.svg</file>
+        <file>LeftPlug.png</file>
+        <file>ONBall.svg</file>
+        <file>backIcon.svg</file>
+        <file>USB-PD_blockDiagram.png</file>
+        <file>framework/images/boarder_graph.svg</file>
+        <file>SGDisconnectMessage.qml</file>
+        <file>PageAssociatedCollateral.qml</file>
+        <file>PageBlockDiagram.qml</file>
+        <file>PageLayout.qml</file>
+        <file>PageTestReport.qml</file>
+        <file>RelatedMaterialBackground.png</file>
+        <file>AlternativePartsIcon.svg</file>
+        <file>PlusInACircle.svg</file>
+        <file>PageSystemContent.qml</file>
+        <file>battery.png</file>
+        <file>BatteryProtectionSchematic.png</file>
+        <file>NCV81599-PowerStage1.png</file>
+        <file>TempSensorSchematic.png</file>
+        <file>ThreeVoltRailSchematic.png</file>
+        <file>usb-c_plug.png</file>
+        <file>USBCInterfaceSchematic1.png</file>
+        <file>USBCInterfaceSchematic2.png</file>
+        <file>bill_hall.jpg</file>
+        <file>bob_klosterboer.jpg</file>
     </qresource>
 </RCC>

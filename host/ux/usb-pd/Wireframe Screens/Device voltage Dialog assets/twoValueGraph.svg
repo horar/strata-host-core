@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="503px" height="288px" viewBox="0 0 503 288" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 45.2 (43514) - http://www.bohemiancoding.com/sketch -->
+    <title>Two value Graph</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Desktop" transform="translate(-399.000000, -301.000000)">
+            <g id="Device-Voltage-and-Current-Dialog" transform="translate(326.000000, 221.000000)">
+                <g id="Two-value-Graph" transform="translate(72.000000, 77.000000)">
+                    <rect id="Rectangle" stroke="#9B9B9B" x="17.5" y="3.5" width="471.081553" height="269"></rect>
+                    <polyline id="Path-2" stroke="#000000" points="19.4611499 269.435462 89.2308025 200.71875 208.051244 212.512908 269.239161 165.944633 327.25198 98.013587 397.534671 97.8515625 445.512743 150.136549 489.451085 168.845788"></polyline>
+                    <path d="M17.4592233,139.565217 L25.7252427,139.565217" id="Tick-Mark" stroke="#9B9B9B" stroke-linecap="square"></path>
+                    <path d="M480.356311,137.217391 L488.62233,137.217391" id="Tick-Mark-Copy" stroke="#9B9B9B" stroke-linecap="square"></path>
+                    <path d="M17.4592233,203.73913 L25.7252427,203.73913" id="Tick-Mark-2" stroke="#9B9B9B" stroke-linecap="square"></path>
+                    <path d="M480.356311,201.391304 L488.62233,201.391304" id="Tick-Mark-2-Copy" stroke="#9B9B9B" stroke-linecap="square"></path>
+                    <path d="M17.4592233,75.3913043 L25.7252427,75.3913043" id="Tick-Mark-3" stroke="#9B9B9B" stroke-linecap="square"></path>
+                    <path d="M480.356311,73.0434783 L488.62233,73.0434783" id="Tick-Mark-3-Copy" stroke="#9B9B9B" stroke-linecap="square"></path>
+                    <path d="M251.663107,264.782609 L251.663107,271.826087" id="Tick-Mark-4" stroke="#979797" stroke-linecap="square"></path>
+                    <path d="M123.080583,264.782609 L123.080583,271.826087" id="Tick-Mark-5" stroke="#979797" stroke-linecap="square"></path>
+                    <path d="M380.245631,264.782609 L380.245631,271.826087" id="Tick-Mark-6" stroke="#979797" stroke-linecap="square"></path>
+                    <polyline id="Path-4" stroke="#4A90E2" points="18.7070312 139.236328 123.8125 139.236328 251.597656 206.970703 382.804688 139.236328 488.322266 137.087891"></polyline>
+                    <text id="12-copy" font-family="HelveticaNeue, Helvetica Neue" font-size="14" font-weight="normal" letter-spacing="0.5" fill="#9B9B9B">
+                        <tspan x="0.216" y="13">12</tspan>
+                    </text>
+                    <text id="12-copy-2" font-family="HelveticaNeue, Helvetica Neue" font-size="14" font-weight="normal" letter-spacing="0.5" fill="#9B9B9B">
+                        <tspan x="488.216" y="13">12</tspan>
+                    </text>
+                    <text id="9-copy" font-family="HelveticaNeue, Helvetica Neue" font-size="14" font-weight="normal" letter-spacing="0.5" fill="#9B9B9B">
+                        <tspan x="4.358" y="81">9</tspan>
+                    </text>
+                    <text id="9-copy-2" font-family="HelveticaNeue, Helvetica Neue" font-size="14" font-weight="normal" letter-spacing="0.5" fill="#9B9B9B">
+                        <tspan x="492.358" y="79">9</tspan>
+                    </text>
+                    <text id="6-copy-2" font-family="HelveticaNeue, Helvetica Neue" font-size="14" font-weight="normal" letter-spacing="0.5" fill="#9B9B9B">
+                        <tspan x="4.358" y="146">6</tspan>
+                    </text>
+                    <text id="6-copy-3" font-family="HelveticaNeue, Helvetica Neue" font-size="14" font-weight="normal" letter-spacing="0.5" fill="#9B9B9B">
+                        <tspan x="492.358" y="144">6</tspan>
+                    </text>
+                    <text id="3-copy" font-family="HelveticaNeue, Helvetica Neue" font-size="14" font-weight="normal" letter-spacing="0.5" fill="#9B9B9B">
+                        <tspan x="4.358" y="210">3</tspan>
+                    </text>
+                    <text id="3-copy-2" font-family="HelveticaNeue, Helvetica Neue" font-size="14" font-weight="normal" letter-spacing="0.5" fill="#9B9B9B">
+                        <tspan x="492.358" y="207">3</tspan>
+                    </text>
+                    <text id="0-copy-4" font-family="HelveticaNeue, Helvetica Neue" font-size="14" font-weight="normal" letter-spacing="0.5" fill="#9B9B9B">
+                        <tspan x="4.358" y="269">0</tspan>
+                    </text>
+                    <text id="0-copy-5" font-family="HelveticaNeue, Helvetica Neue" font-size="14" font-weight="normal" letter-spacing="0.5" fill="#9B9B9B">
+                        <tspan x="492.358" y="269">0</tspan>
+                    </text>
+                    <text id="0-copy" font-family="HelveticaNeue, Helvetica Neue" font-size="14" font-weight="normal" letter-spacing="0.5" fill="#9B9B9B">
+                        <tspan x="10.858" y="290">0</tspan>
+                    </text>
+                    <text id="2" font-family="HelveticaNeue, Helvetica Neue" font-size="14" font-weight="normal" letter-spacing="0.5" fill="#9B9B9B">
+                        <tspan x="118.858" y="290">2</tspan>
+                    </text>
+                    <text id="4" font-family="HelveticaNeue, Helvetica Neue" font-size="14" font-weight="normal" letter-spacing="0.5" fill="#9B9B9B">
+                        <tspan x="244.858" y="290">4</tspan>
+                    </text>
+                    <text id="6" font-family="HelveticaNeue, Helvetica Neue" font-size="14" font-weight="normal" letter-spacing="0.5" fill="#9B9B9B">
+                        <tspan x="373.858" y="290">6</tspan>
+                    </text>
+                    <text id="8" font-family="HelveticaNeue, Helvetica Neue" font-size="14" font-weight="normal" letter-spacing="0.5" fill="#9B9B9B">
+                        <tspan x="479.858" y="290">8</tspan>
+                    </text>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

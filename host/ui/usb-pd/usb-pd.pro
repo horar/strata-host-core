@@ -6,22 +6,6 @@ CONFIG += c++11
 
 RESOURCES += qml.qrc
 
-INCLUDEPATH += HostControllerClient \
-               UserInterfaceBinding \
-               /usr/local/include
-
-HEADERS += \
-    HostControllerClient/HostControllerClient.h \
-    UserInterfaceBinding/UserInterfaceBinding.h \
-    HostControllerClient/zmq_addon.hpp \
-    HostControllerClient/zmq.hpp \
-    HostControllerClient/zhelpers.hpp
-
-SOURCES += main.cpp \
-    HostControllerClient/HostControllerClient.cpp \
-    UserInterfaceBinding/UserInterfaceBinding.cpp
-
-LIBS += -L$$PWD/libs -lzmq
 # Additional import path used to resolve QML modules in Qt Creator's code model
 QML_IMPORT_PATH =
 
@@ -45,3 +29,51 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 DISTFILES +=
+
+# set root host build path
+HOST_ROOT = ../../../host
+
+# linux
+unix : !macx : !win32 {
+    message("Building on Linux")
+    LIBS += -L$${HOST_ROOT}/lib/linux/lib/ -lzmq
+    INCLUDEPATH += $${HOST_ROOT}/lib/linux/include
+    DEPENDPATH += $${HOST_ROOT}/lib/linux/include
+}
+
+# mac (not iOS)
+else : macx : !win32 {
+    message("Building on OSX")
+    LIBS += -L$${HOST_ROOT}/lib/mac/zeromq/4.2.2/lib -lzmq
+    DEPENDPATH += $${HOST_ROOT}/lib/mac/zeromq/4.2.2
+    INCLUDEPATH += $${HOST_ROOT}/lib/mac/zeromq/4.2.2/include/
+}
+
+# windows
+else : win32 {
+    message("Building on Windows")
+    LIBS += -L$$PWD/../../lib/windows/zeromq/ -llibzmq
+    INCLUDEPATH += $$PWD/../../lib/windows/zeromq
+    DEPENDPATH += $$PWD/../../lib/windows/zeromq
+    INCLUDEPATH += $$PWD/../../lib/linux/include
+    DEPENDPATH += $$PWD/../../lib/linux/include
+}
+else: message("UNKNOWN machine type. Build configuration failed !!!!")
+
+message("BUILD VARIABLES")
+message(Host Root: $${HOST_ROOT});
+message(Current Build Directory: $$PWD);
+message(Include Path: $$INCLUDEPATH);
+message(Depend Path: $$DEPENDPATH);
+message("done");
+
+HEADERS +=  ImplementationInterfaceBinding/ImplementationInterfaceBinding.h \
+           DocumentManager.h \
+           $${HOST_ROOT}/include/HostControllerClient.hpp \
+           $${HOST_ROOT}/include/zhelpers.hpp \
+           $${HOST_ROOT}/include/zmq.hpp \
+           $${HOST_ROOT}/include/zmq_addon.hpp
+
+SOURCES += main.cpp \
+           DocumentManager.cpp \
+           ImplementationInterfaceBinding/ImplementationInterfaceBinding.cpp
