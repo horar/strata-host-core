@@ -49,7 +49,7 @@ private:
     QString data_;
 };
 
-using DocumentSet = QList<Document *>;
+using DocumentSet = QList<Document *>;            // typedefs
 using DocumentSetPtr = QList<Document *> *;
 
 class DocumentManager : public QObject
@@ -60,6 +60,7 @@ class DocumentManager : public QObject
     Q_PROPERTY(QQmlListProperty<Document> assemblyDocuments READ assemblyDocuments NOTIFY assemblyDocumentsChanged)
     Q_PROPERTY(QQmlListProperty<Document> layoutDocuments READ layoutDocuments NOTIFY layoutDocumentsChanged)
     Q_PROPERTY(QQmlListProperty<Document> testReportDocuments READ testReportDocuments NOTIFY testReportDocumentsChanged)
+    Q_PROPERTY(QQmlListProperty<Document> targetedDocuments READ targetedDocuments NOTIFY targetedDocumentsChanged)
 
 public:
     DocumentManager();
@@ -71,6 +72,7 @@ public:
     QQmlListProperty<Document> assemblyDocuments() { return QQmlListProperty<Document>(this, assembly_documents_); }
     QQmlListProperty<Document> layoutDocuments() { return QQmlListProperty<Document>(this, layout_documents_); }
     QQmlListProperty<Document> testReportDocuments() { return QQmlListProperty<Document>(this, test_report_documents_); }
+    QQmlListProperty<Document> targetedDocuments() { return QQmlListProperty<Document>(this, targeted_documents_); }
 
     bool updateDocuments(const QString set, const QList<QString> &documents);
 
@@ -79,6 +81,7 @@ signals:
   void assemblyDocumentsChanged();
   void layoutDocumentsChanged();
   void testReportDocumentsChanged();
+  void targetedDocumentsChanged();
 
 private:
 
@@ -87,6 +90,7 @@ private:
   DocumentSet assembly_documents_;
   DocumentSet layout_documents_;
   DocumentSet test_report_documents_;
+  DocumentSet targeted_documents_;
 
   std::map<QString, DocumentSetPtr> document_sets;
 

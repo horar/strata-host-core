@@ -6,48 +6,35 @@ import tech.spyglass.ImplementationInterfaceBinding 1.0
 Rectangle {
     visible: true
     //determine which screen to show based on how the caller set the
-
+    //showLoginOnCompletion property
     property bool showLoginOnCompletion: false
     property bool loginScreen: true
 
     Component.onCompleted: {
         spotlightAnimation.start();
-        console.log ("plateform state",implementationInterfaceBinding.platformState);
         if (showLoginOnCompletion){
             showConnectionScreen.start();
         }
     }
 
     property bool  hardwareStatus : {
-        var state = implementationInterfaceBinding.platformState;
-        console.debug("state value ", state)
+        var state = true//implementationInterfaceBinding.platformState;
 
         if(loginScreen==true) {
-
             if(state == true && login_detected == true){
-                console.log("inside waiting screen")
                 stack.pop();
                 return
-            }   else if(state == false) {
-                console.log ("Stay on login screen");
-            } else {
-                console.log("Invalid Condition hit on Login == true")
             }
-        } else if (loginScreen == false) {
+        }
+        else if (loginScreen == false) {
 
             if(state == false && login_detected == true){
-                console.log("inside waiting screen")
             } else if(state == true && login_detected == true){
-                console.log ("Switching to board layout")
                 stack.pop();
             } else if(state == false){
-                console.log ("Stay on waiting screen")
                 handleLoginClick.start();
-            } else {
-                console.log("Invalid Condition hit on Login == false")
+
             }
-        } else {
-            console.log("Invalid LoginScreen value")
         }
         implementationInterfaceBinding.platformState
     }
@@ -55,6 +42,21 @@ Rectangle {
     //-----------------------------------------------------------
     //Elements common to both the connection and login screens
     //-----------------------------------------------------------
+
+    // PROOF OF CONCEPT BANNER
+    Rectangle {
+        anchors { top: parent.top; horizontalCenter: parent.horizontalCenter }
+        width: parent.width * 0.70; height: 30;
+        color: "red"
+        radius: 4
+        Label {
+            anchors { centerIn: parent }
+            text: "SPYGLASS PROOF OF CONCEPT WITH LAB CLOUD"
+            color: "white"
+            font.bold: true
+        }
+    }
+
     Image {
         id: onLogo
         width: 80; height: 80
@@ -258,6 +260,7 @@ Rectangle {
                 horizontalAlignment: Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter
                 elide: Text.ElideRight
+                fontSizeMode: Qt.platform.os != "osx"? 8 :Text.Fit
             }
 
             background: Rectangle {
@@ -265,7 +268,6 @@ Rectangle {
             }
 
             onClicked: {
-                console.log("on clicked");
                 loginScreen = false;
                 login_detected = true;
             }
@@ -274,7 +276,6 @@ Rectangle {
 
     //handle a return key click, which is the equivalent of the login button being clicked
     Keys.onReturnPressed:{
-        console.log("on clicked");
         loginScreen = false;
         login_detected = true;
     }
@@ -282,29 +283,26 @@ Rectangle {
     Button {
         id: guestLoginButton
         width: 200; height: 32
-        text:"continue as guest"
         font{ pointSize: 13; bold: true;}
         anchors{ horizontalCenter: parent.horizontalCenter;
             top: loginRectangle.bottom
             topMargin: 25}
 
         contentItem: Text {
-            text: guestLoginButton.text
-            font: guestLoginButton.font
+            text:"continue as guest"
             opacity: enabled ? 1.0 : 0.3
             //the color of the content determines the button's text color
             color: guestLoginButton.down ? Qt.darker("#2eb457") : "#2eb457"
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
             elide: Text.ElideRight
-            fontSizeMode: Text.Fit
+            fontSizeMode: Qt.platform.os != "osx"? 8 :Text.Fit
         }
         background: Rectangle {
             color: "white"
             border{ width: 1; color: "black" }
         }
         onClicked: {
-            console.log("on clicked");
             loginScreen = false;
             login_detected = true;
 

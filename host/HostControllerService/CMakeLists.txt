@@ -61,6 +61,7 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../lib/linux/include)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../lib/linux/include/event2)
 link_directories(${CMAKE_CURRENT_SOURCE_DIR}/../lib/linux/lib/event2)
 link_directories(${CMAKE_CURRENT_SOURCE_DIR}/../lib/linux/lib)
+
 # LiteCore
 find_library(litecore STATIC NAMES LiteCore 
 				HINTS "${CMAKE_CURRENT_SOURCE_DIR}/../../cloud/couchbase-lite-core/build_cmake/unix")

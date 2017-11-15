@@ -1,20 +1,19 @@
 import QtQuick 2.7
 import QtQuick.Controls 2.0
-
+import "../sgLiveGraph"
 
 Popup {
     id: container
     property alias axisXLabel: labelAxis_x.text
     property alias axisYLabel: labelAxis_y.text
     property alias axisY2Label: labelAxis_y2.text
-    property alias inVariable1Name: graph.variable1Name
-    property alias inVariable2Name: graph.variable2Name
-    property alias inVariable1Color: graph.variable1Color
-    property alias inVariable2Color: graph.variable2Color
-    property alias graphTitle: graph.title
+    property alias inVariable1Color: labelAxis_y.color
+    property alias inVariable2Color: labelAxis_y2.color
+    property string chartType: ""
     property real startPositionX: 0
     property real startPositionY: 0
     property bool efficencyLabel: false;
+    property int portNumber:0
 
     modal: true
     focus: false
@@ -110,18 +109,29 @@ Popup {
             anchors { bottom: contentItem.bottom; left: contentItem.left ; leftMargin: 10 }
         }
 
-        SGLineGraph {
+
+       LiveGraph {
             id: graph
             z: 1
-            width: container.width/1.2 ; height: container.height/1.2
+            width: container.width/1.3 ; height: container.height/1.2
             anchors { centerIn: parent }
-            secondValueVisible: true;
-            efficencyLable: true;
-            variable1Name: inVariable1Name
-            variable2Name: inVariable2Name
-            variable1Color: inVariable1Color
-            variable2Color: inVariable2Color
+            chartType: container.chartType
+            portNumber: container.portNumber
         }
+//        SGLineGraph {
+//            id: graph
+//            z: 1
+//            width: container.width/1.2 ; height: container.height/1.2
+//            anchors { centerIn: parent }
+//            secondValueVisible: true;
+//            efficencyLable: true;
+//            variable1Name: inVariable1Name
+//            variable2Name: inVariable2Name
+//            variable1Color: inVariable1Color
+//            variable2Color: inVariable2Color
+//        }
+
+
     }
 }
 

@@ -1,5 +1,6 @@
 import QtQuick 2.0
 import QtQuick.Controls 1.4
+import tech.spyglass.ImplementationInterfaceBinding 1.0
 
 
 Rectangle {
@@ -12,8 +13,39 @@ Rectangle {
     anchors.bottom: if(anchorbottom) { parent.bottom }
     property bool isConnected: false
     signal activated()
-    //Create a cable
+    property alias connectanimation: connect
+    property alias disconnectanimation: disconnect
+    property int portNumber:0;
 
+    Connections {
+        target: implementationInterfaceBinding
+
+        onUsbCPortStateChanged: {
+            if( portNumber === port ) {
+                (value == true)?connect.start():disconnect.start();
+            }
+        }
+    }
+
+    //[Prasanth] this property is needed, when the usb-c is connected before the app launch
+    //[Prasanth] needs more organisation for this function
+    onVisibleChanged: {
+        if(visible){
+
+            if (portNumber == 1) {
+                var state = implementationInterfaceBinding.usbCPort1State;
+                if(state == true)
+                    connect.start();
+            }
+            if (portNumber == 2) {
+                var state = implementationInterfaceBinding.usbCPort2State;
+                if(state == true)
+                    connect.start();
+            }
+        }
+    }
+
+    //Create a cable
 
     Canvas {
         id: cable

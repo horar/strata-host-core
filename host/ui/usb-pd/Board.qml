@@ -7,6 +7,21 @@ Rectangle {
     id: device
     width: parent.width; height: parent.width
     property alias deviceLayout: deviceLayout
+
+    //  Getting realtime data for input voltage
+    property double inputVoltage: 0;
+    property double portCurrent: 0;
+
+    Connections {
+        target: implementationInterfaceBinding
+
+        onPortInputVoltageChanged: {
+            device.inputVoltage = value;
+        }
+        onPortCurrentChanged: {
+            device.portCurrent = value;
+        }
+    }
     anchors { horizontalCenter: parent.horizontalCenter; verticalCenter: parent.verticalCenter }
 
 
@@ -143,6 +158,7 @@ Rectangle {
                         text: "Port 1"
                         radius: 1
                         color: "transparent"
+                        portNumber: 1
                     }
                 }
 
@@ -164,6 +180,7 @@ Rectangle {
                         text: "Port 2"
                         radius: 1
                         color: "transparent"
+                        portNumber: 2
                     }
                 }
             }
@@ -190,8 +207,8 @@ Rectangle {
 
             Text {
                 id: inputPlugName
-                text: qsTr("12 V")
-                width: inputPlugColumn.width
+                text: device.inputVoltage.toFixed(1) + " V\n " + device.portCurrent.toFixed(1)+ " A"
+                width: inputPlugColumn.width-2
                 horizontalAlignment: Text.AlignRight
                 anchors {verticalCenter: parent.verticalCenter}
                 font{ family: "Helvetica"
@@ -203,7 +220,7 @@ Rectangle {
             Component.onCompleted: {
                 //adjust font size based on platform
                 if (Qt.platform.os === "osx"){
-                    inputPlugName.font.pointSize = parent.width/10 > 0 ? parent.width/20 : 1;
+                    inputPlugName.font.pointSize = parent.width/10 > 0 ? parent.width/25 : 1;
                 }
                 else{
                     fontSizeMode : Text.Fit
@@ -221,9 +238,10 @@ Rectangle {
         bottomMargin:30
         axisXLabel: "Time (S)"
         axisYLabel: "Power (W)"
-        graphTitle: "Input Power Graph"
-        inVariable1Name: "Power"
-        efficencyLabel: true
-
+        //graphTitle: "Input Power Graph"
+        //inVariable1Name: "Power"
+        efficencyLabel: false
+        chartType:"Input Power"
+        portNumber: 1
     }
 }

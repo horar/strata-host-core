@@ -8,12 +8,27 @@ import tech.spyglass.Document 1.0
 import tech.spyglass.DocumentManager 1.0
 
 Item {
+    id: view
     // LOGO
     Rectangle {
         id: headerLogo
         anchors { top: parent.top }
         width: parent.width; height: 40
         color: "#235A92"
+
+        // PROOF OF CONCEPT BANNER
+        Rectangle {
+            anchors { horizontalCenter: parent.horizontalCenter; verticalCenter: parent.verticalCenter }
+            width: parent.width * 0.70; height: 30;
+            color: "red"
+            radius: 4
+            Label {
+                anchors { centerIn: parent }
+                text: "SPYGLASS PROOF OF CONCEPT WITH LAB CLOUD"
+                color: "white"
+                font.bold: true
+            }
+        }
     }
     Image {
         anchors { top: parent.top; right: parent.right }
@@ -58,4 +73,16 @@ Item {
             }
         } // end ListView
     }
+
+    // Attach a scrollbar to the right edge of the view.
+        ScrollBar {
+            id: verticalScrollBar
+            hoverEnabled: true
+            //active: hovered || pressed
+            width: 12; height: view.height-12
+            anchors.right: view.right
+            opacity: 0
+            orientation: Qt.Vertical
+            policy: ScrollBar.AsNeeded
+        }
 }

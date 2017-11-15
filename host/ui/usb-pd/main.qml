@@ -11,7 +11,7 @@ ApplicationWindow {
     height: 900
     title: qsTr("USB-PD Dual")
     property bool hardwareStatus: null
-    property bool  login_detected: false
+    property bool login_detected: false
 
     Label {
         id: currentLabel7

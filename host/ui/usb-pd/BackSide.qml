@@ -3,16 +3,9 @@ import QtQuick.Controls 2.0
 
 Rectangle {
     border.color: "black"
+    border.width: 0
     anchors { fill: parent }
-    
-//    Label {
-//        x: 32 ; y: 128
-//        width: 176;height: 64
-//        text: "back"
-//        opacity: 1
-//        anchors { horizontalCenter: parent.horizontalCenter; verticalCenter: parent.verticalCenter }
-//        font.pointSize: 72
-//    }
+
     
     SwipeView {
         id: swipeView
@@ -20,10 +13,10 @@ Rectangle {
         currentIndex: tabBar.currentIndex
         PageBlockDiagram { id: pageBlockDiagram }
         PageSchematic { id: pageSchematic }
-        PageLayout { id: pageAssembly }
+        PageLayout { id: pageLayout }
         PageTestReport { id: pageTestReport }
         PageSystemContent {id: pageSystemContent}
-        //PageAssociatedCollateral {id: pageAssociatedCollateral}
+        PageComingSoon {id: pageComingSoonContent}
     }
     
     TabBar {
@@ -33,10 +26,10 @@ Rectangle {
         anchors { bottom: parent.bottom;}
         TabButton { text: "Block Diagram" }
         TabButton { text: "Schematic" }
-        TabButton { text: "Assembly" }
+        TabButton { text: "Layout" }
         TabButton { text: "Test Report" }
         TabButton { text: "System Content" }
-        //TabButton { text: "Related Material" }
+        TabButton { text: "Coming Soon" }
     }
     
     Image {

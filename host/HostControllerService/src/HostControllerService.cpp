@@ -17,7 +17,7 @@ AttachmentObserver::AttachmentObserver(void *hostP) {
 void AttachmentObserver::ValidateDocumentCallback(jsonString jsonBody) {
 	 Connector::messageProperty message;
      message.message = jsonBody;
-     host->service->sendNotification(message,host->notify);    
+     host->service->sendNotification(message,host->notify);
 }
 
 HostControllerService::HostControllerService(string ipRouter,string ipPub) {
@@ -55,7 +55,7 @@ bool HostControllerService::verifyReceiveCommand(string command, string *respons
 
 	if(!root.success()) {
 
-		printf("PARSING UNSUCCESSFUL CHECK JSON BUFFER SIZE\n");
+		printf("PARSING UNSUCCESSFUL CHECK JSON BUFFER SIZE %s\n",command);
 		return "Unsuccessful";
 	}
 
@@ -94,7 +94,12 @@ bool HostControllerService::verifyReceiveCommand(string command, string *respons
 
 				return false;
 			}
-		} else {
+		}
+		else if(root["cmd"] == "request_usb_pd_output_voltage") {
+			root.printTo(*response);
+			return true;
+		}
+		else {
 
 			return false;
 		}
@@ -169,6 +174,7 @@ void HostControllerService::callbackPlatformHandler(void* hostP) {
 
 		message = host->platform->receive((void *)host->hcs);
 
+//  debug statements
 		if(!message.message.compare("")) {
 
 				//Do Nothing
@@ -256,7 +262,7 @@ void HostControllerService::initPlatformSocket() {
 		cout << "rts disabled" <<endl;
 	}
 
-	error = sp_set_baudrate(platform_socket_,9600);
+	error = sp_set_baudrate(platform_socket_,115200);
 	if(error == SP_OK ) {
 
 		cout << "baud rate = 9600" <<endl;
@@ -299,7 +305,7 @@ string HostControllerService::setupHostControllerService(string ipRouter, string
     Nimbus local_db = Nimbus();
 // Use the test database to observe
     local_db.Open(NIMBUS_TEST_PLATFORM_JSON);
-    // NIMBUS integration **Needs better organisation --Prasanth** 
+    // NIMBUS integration **Needs better organisation --Prasanth**
 	AttachmentObserver blobObserver((void *)&hostP);
 	local_db.Register(&blobObserver);
 
@@ -343,18 +349,17 @@ string HostControllerService::setupHostControllerService(string ipRouter, string
 	struct event *service = event_new(base, sockService ,
 			EV_READ | EV_WRITE | EV_ET | EV_PERSIST ,
 			callbackServiceHandler,(void *)&hostP);
-	
+
 	if (event_base_set(base,service) <0 )
 		cout <<"Event BASE SET SERVICE FAILED "<<endl;
 
 	if(event_add(service,NULL) <0 )
 		cout<<"Event SERVICE ADD FAILED "<<endl;
 
-	
+
 
 	event_base_dispatch(base);
 	t.join();
 	cout << "returnting " <<endl;
 	return disconnect;
 }
-

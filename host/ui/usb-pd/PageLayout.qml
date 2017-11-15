@@ -14,6 +14,19 @@ Item {
         anchors { top: parent.top }
         width: parent.width; height: 40
         color: "#235A92"
+        // PROOF OF CONCEPT BANNER
+        Rectangle {
+            anchors { horizontalCenter: parent.horizontalCenter; verticalCenter: parent.verticalCenter }
+            width: parent.width * 0.70; height: 30;
+            color: "red"
+            radius: 4
+            Label {
+                anchors { centerIn: parent }
+                text: "SPYGLASS PROOF OF CONCEPT WITH LAB CLOUD"
+                color: "white"
+                font.bold: true
+            }
+        }
     }
 
     Image {
@@ -33,7 +46,7 @@ Item {
             width: mainWindow.width; height: parent.height
 
             snapMode: ListView.SnapOneItem
-            model: documentManager.assemblyDocuments
+            model: documentManager.layoutDocuments
             focus: true
             clip: true
             add: Transition { NumberAnimation { properties: "x,y"; from: 100; duration: 1000 } }

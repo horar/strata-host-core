@@ -47,6 +47,7 @@ Connector::messageProperty ZeroMQConnector::receive(void *service) {
 	string jsonCommandString = s_recv(*soc);
 	message.nodeId= nodeid;
 	message.message= jsonCommandString;
+	cout << "received message"<<message.message;
 	return message;
 }
 

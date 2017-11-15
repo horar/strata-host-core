@@ -15,13 +15,13 @@ using namespace std;
 
 DocumentManager::DocumentManager()
 {
-    qDebug("DocumentManager::DocumentManager() default ctor");
+    //qDebug("DocumentManager::DocumentManager() default ctor");
     init();
 }
 
 DocumentManager::DocumentManager(QObject *parent) : QObject(parent)
 {
-    qDebug("DocumentManager::DocumentManager(parent=%p)", parent);
+    //qDebug("DocumentManager::DocumentManager(parent=%p)", parent);
     init();
 }
 
@@ -33,13 +33,14 @@ DocumentManager::~DocumentManager ()
 
 void DocumentManager::init()
 {
-    qDebug("DocumentManager::init");
+    //qDebug("DocumentManager::init");
 
     // create document sets: "<name>",  & <name>_documnts_
     document_sets.emplace(make_pair(QString("schematic"), &schematic_documents_));
     document_sets.emplace(make_pair(QString("assembly"), &assembly_documents_));
     document_sets.emplace(make_pair(QString("layout"), &layout_documents_));
     document_sets.emplace(make_pair(QString("test_report"), &test_report_documents_));
+    document_sets.emplace(make_pair(QString("targeted_content"), &targeted_documents_));
 
 }
 
@@ -119,6 +120,9 @@ bool DocumentManager::updateDocuments(const QString set, const QList<QString> &d
     }
     else if( set == "test_report" ) {
         emit testReportDocumentsChanged();
+    }
+    else if( set == "targeted_content" ) {
+        emit targetedDocumentsChanged();
     }
     else {
         qCritical("DocumentManager::updateDocuments: invalid document set = '%s'", set.toStdString ().c_str ());

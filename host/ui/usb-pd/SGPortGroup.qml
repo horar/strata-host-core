@@ -6,6 +6,7 @@ Rectangle {
     id: container
     color: "transparent"
     property alias text: portTitle.text
+    property int portNumber:0;
 
     GridLayout {
         id:grid
@@ -27,8 +28,8 @@ Rectangle {
             Layout.columnSpan: 2
             Layout.row: 0
             Layout.rowSpan: 1
-            Layout.preferredWidth  : grid.prefWidth(this)
-            Layout.preferredHeight : grid.prefHeight(this)
+            Layout.preferredWidth:grid.prefWidth(this)
+            Layout.preferredHeight:grid.prefHeight(this)
             text: "Port 1"
 
             MouseArea {
@@ -46,6 +47,8 @@ Rectangle {
             Layout.preferredWidth  : grid.prefWidth(this)
             Layout.preferredHeight : grid.prefHeight(this)
             Layout.leftMargin: 10
+            portNumber: container.portNumber ;
+            
         }
 
         Rectangle {

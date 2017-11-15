@@ -4,19 +4,25 @@ import QtQuick.Controls 1.4
 import tech.spyglass.ImplementationInterfaceBinding 1.0
 
 Rectangle {
-    property bool boardScreen: true
 
+    property bool hardwareStatusChange: null
+    property bool boardScreen: true
     property bool hardwareStatus:  {
 
         onPlatformStateChanged: {
             var state = implementationInterfaceBinding.platformState;
-            if(state == false && boardScreen == true)
-            {
-                stack.push([page, {immediate:true}]);
+            if(state == false && boardScreen == true) {
+                stack.push([page, {immediate:false}]);
             }
         }
         implementationInterfaceBinding.platformState
     }
+
+    onOpacityChanged: {
+        if (opacity == 1)
+            rotateInfoIcon.start()
+    }
+
     Component {
         id: page
         SGLoginScreen {
@@ -24,10 +30,6 @@ Rectangle {
         }
     }
 
-    Button {
-        width: 100;height: 100
-        text: "Button"
-    }
     GridLayout {
         id: grid
         columns: 5
@@ -46,11 +48,6 @@ Rectangle {
             return rowMulti * item.Layout.rowSpan
         }
 
-
-        Component.onCompleted: {
-            rotateInfoIcon.start()
-
-        }
 
         Rectangle {
             id:boardRect
@@ -78,7 +75,9 @@ Rectangle {
             Layout.preferredHeight : grid.prefHeight(this)
             Layout.fillWidth:true
             Layout.fillHeight:true
-            Connector { anchorbottom: 1 }
+            Connector { anchorbottom: 1
+                        portNumber: 1
+            }
         }
 
         Rectangle {
@@ -91,7 +90,10 @@ Rectangle {
             Layout.preferredHeight : grid.prefHeight(this)
             Layout.fillWidth:true
             Layout.fillHeight:true
-            Connector { anchorbottom: 0 }
+            Connector { anchorbottom: 0
+                        portNumber: 2
+            }
+
         }
 
         Rectangle {
@@ -104,7 +106,10 @@ Rectangle {
             Layout.preferredHeight : grid.prefHeight(this)
             Layout.fillWidth:true
             Layout.fillHeight:true
-            Device { verticalOffset: parent.height *.3 }
+            Device {
+                verticalOffset: parent.height *.3
+                port_number: 1
+            }
         }
 
         Rectangle {
@@ -117,7 +122,10 @@ Rectangle {
             Layout.preferredHeight : grid.prefHeight(this)
             Layout.fillWidth:true
             Layout.fillHeight:true
-            Device { verticalOffset: -parent.height*.3 }
+            Device {
+                verticalOffset: -parent.height*.3
+                port_number: 2
+            }
         }
     }
 
@@ -127,16 +135,6 @@ Rectangle {
         height: 50; width:50
         source:"infoIcon.svg"
 
-
-        Button {
-            width: 90; height: 25
-            text: "Disconnect"
-            anchors {right:parent.left
-                verticalCenter:parent.verticalCenter}
-            onClicked: {
-                stack.push([page1, {immediate:true}])
-            }
-        }
         Component {
             id: page1
             SGLoginScreen {
@@ -196,21 +194,5 @@ Rectangle {
             }
         }
     }
-//        ImplementationInterfaceBinding {
-//            id : implementationinterfacebinding
 
-//            onPlatformStateChanged: {
-//                hardwareStatus = implementationinterfacebinding.platformState;
-//                if(hardwareStatus == false && boardScreen == true)
-//                {
-//                    stack.push([page, {immediate:true}]);
-//                }
-//            }
-//        }
-//        Component {
-//            id: page
-//            SGLoginScreen {
-//                showLoginOnCompletion: true
-//            }
-//        }
 }

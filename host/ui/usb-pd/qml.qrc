@@ -41,13 +41,6 @@
         <file>onsemi_logo.png</file>
         <file>onsemi_logo_small.png</file>
         <file>motor_board_platform.png</file>
-        <file>lv8907_bldc_motor_controller_schematic.png</file>
-        <file>lv8907_bldc_motor_controller_schematic_6.png</file>
-        <file>lv8907_bldc_motor_controller_schematic_5.png</file>
-        <file>lv8907_bldc_motor_controller_schematic_4.png</file>
-        <file>lv8907_bldc_motor_controller_schematic_3.png</file>
-        <file>lv8907_bldc_motor_controller_schematic_2.png</file>
-        <file>lv8907_bldc_motor_controller_schematic_1.png</file>
         <file>layer4.png</file>
         <file>layer3.png</file>
         <file>layer2.png</file>
@@ -107,7 +100,26 @@
         <file>usb-c_plug.png</file>
         <file>USBCInterfaceSchematic1.png</file>
         <file>USBCInterfaceSchematic2.png</file>
-        <file>bill_hall.jpg</file>
-        <file>bob_klosterboer.jpg</file>
+        <file>DC-DCPowerIcon.png</file>
+        <file>ProtectionIcon.png</file>
+        <file>SensorsIcon.png</file>
+        <file>USBInterfaceIcon.png</file>
+        <file>sgLiveGraph/ScopeView.qml</file>
+        <file>sgLiveGraph/LiveGraph.qml</file>
+        <file>PageComingSoon.qml</file>
+        <file>images/adas_comming_soon.png</file>
+        <file>USB-PD_blockDiagram_BatteryProtectionHighlighted.png</file>
+        <file>USB-PD_blockDiagram_PowerStage1Highlighted.png</file>
+        <file>USB-PD_blockDiagram_PowerStage2Highlighted.png</file>
+        <file>USB-PD_blockDiagram_TempSensorHighlighted.png</file>
+        <file>USB-PD_blockDiagram_USB-C1Highlighted.png</file>
+        <file>USB-PD_blockDiagram_USB-C2Highlighted.png</file>
+        <file>USB-PD_blockDiagram_ThreeVoltHighlighted.png</file>
+        <file>spyglass.icns</file>
+        <file>framework/SGRadioButton.qml</file>
+        <file>images/NCV81599_test_report.png</file>
+        <file>images/ONSEC-17-014_schematic.png</file>
+        <file>images/bill_hall.jpg</file>
+        <file>images/bob_klosterboer.jpg</file>
     </qresource>
 </RCC>

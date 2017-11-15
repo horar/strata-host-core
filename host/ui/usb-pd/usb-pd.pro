@@ -1,10 +1,14 @@
 TEMPLATE = app
 
-QT += qml quick webview webengine opengl
+QT += qml quick webview webengine opengl charts
 
-CONFIG += c++11
+CONFIG += c++11 resources_big
 
 RESOURCES += qml.qrc
+ICON = spyglass.icns
+
+#Windows Icon
+win32: RC_ICONS = spyglass.ico
 
 # Additional import path used to resolve QML modules in Qt Creator's code model
 QML_IMPORT_PATH =
@@ -28,7 +32,9 @@ qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
-DISTFILES +=
+DISTFILES += \
+    deviceOutlineActive.png \
+    deviceOutlineActive.png
 
 # set root host build path
 HOST_ROOT = ../../../host
@@ -72,8 +78,11 @@ HEADERS +=  ImplementationInterfaceBinding/ImplementationInterfaceBinding.h \
            $${HOST_ROOT}/include/HostControllerClient.hpp \
            $${HOST_ROOT}/include/zhelpers.hpp \
            $${HOST_ROOT}/include/zmq.hpp \
-           $${HOST_ROOT}/include/zmq_addon.hpp
+           $${HOST_ROOT}/include/zmq_addon.hpp \
+    DataCollector.h
+
 
 SOURCES += main.cpp \
            DocumentManager.cpp \
-           ImplementationInterfaceBinding/ImplementationInterfaceBinding.cpp
+           ImplementationInterfaceBinding/ImplementationInterfaceBinding.cpp \
+    DataCollector.cpp

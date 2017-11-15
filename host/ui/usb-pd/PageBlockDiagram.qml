@@ -10,35 +10,6 @@ Rectangle {
 
     property var currentURL: "http:www.onsemi.com"
 
-/*
-    // header content
-    Rectangle {
-        id: headerLogo
-        anchors { top: parent.top }
-        width: parent.width; height: 40
-        color: "#235A92"
-    }
-    Image {
-        anchors { top: parent.top; right: parent.right }
-        height: 40
-        fillMode: Image.PreserveAspectFit
-        source: "onsemi_logo.png"
-    }
-
-    ListView {
-        id: partList
-        anchors { top: headerLogo.bottom}
-        width: parent.width; height: parent.height*0.2
-        model: partModel
-        delegate: partDelegate
-        focus: true
-        clip: true
-        add: Transition {
-            NumberAnimation { properties: "x,y"; from: 100; duration: 1000 }
-        }
-    }
-
-    */
 
     Text {
         text: "USB-PD Dual 100W "
@@ -125,7 +96,7 @@ Rectangle {
             height: 28
             cursorShape: Qt.PointingHandCursor
             onClicked: {
-                currentURL = "http://www.onsemi.com/PowerSolutions/product.do?id=EFC2J013NUZ"
+                currentURL = "http://www.onsemi.com/PowerSolutions/product.do?id=NVTFS5C453NL"
                 detailView.open()
             }
         }

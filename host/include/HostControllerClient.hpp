@@ -8,10 +8,14 @@
 #include "zmq_addon.hpp"
 
 // TODO move this to a configuration file
+#define LOCAL_HOST_CONTROLLER_SERVICE 1
+#if LOCAL_HOST_CONTROLLER_SERVICE
 #define HOST_CONTROLLER_SERVICE_OUT_ADDRESS "tcp://127.0.0.1:5564"
 #define HOST_CONTROLLER_SERVICE_IN_ADDRESS "tcp://127.0.0.1:5563"
-//#define HOST_CONTROLLER_SERVICE_OUT_ADDRESS "tcp://10.211.55.14:5564"
-//#define HOST_CONTROLLER_SERVICE_IN_ADDRESS "tcp://10.211.55.14:5563"
+#else
+#define HOST_CONTROLLER_SERVICE_OUT_ADDRESS "tcp://10.211.55.14:5564"
+#define HOST_CONTROLLER_SERVICE_IN_ADDRESS "tcp://10.211.55.14:5563"
+#endif
 
 namespace hcc {
 
@@ -40,13 +44,19 @@ public:
         //request platform-id first step before proceeding with further request
         std::string cmd= "{\"cmd\":\"request_platform_id\",\"Host_OS\":\"Linux\"}";
         s_send(*sendCmdSocket,cmd.c_str());
+
+
     }
 
     inline ~HostControllerClient() {}
 
     inline bool sendCmd(std::string cmd) {
-        s_send(*sendCmdSocket,cmd.c_str());
-         return true;
+        if(s_send(*sendCmdSocket,cmd.c_str()))
+        {
+            return true;
+        }
+        else
+            return false;
     }
 
     inline std::string receiveCommandAck() {
