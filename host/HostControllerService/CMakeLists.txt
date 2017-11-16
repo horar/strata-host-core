@@ -138,7 +138,7 @@ endif()
 
 if(MAC)
 target_link_libraries(HCS
-                      -lzmq
+											-lzmq
                       -lstdc++
                       -lpthread
                       -levent
