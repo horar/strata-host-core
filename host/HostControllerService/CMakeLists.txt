@@ -10,12 +10,12 @@ string(ASCII 27 Esc)
 set (red "${Esc}[31m")
 set (reset_color "${Esc}[m")
 
-if(WINDOWS)
+if(WINDOWS )
 SET(CMAKE_TOOLCHAIN_FILE x86_64.cmake)
 SET(CMAKE_CXX_FLAGS "-v -std=gnu++11 -static-libstdc++ -static-libgcc -static")
 endif()
 
-if(LINUX)
+if(LINUX OR MAC)
 SET(CMAKE_CXX_FLAGS "-v -std=c++11")
 endif()
 
@@ -56,6 +56,29 @@ find_library(litecore STATIC NAMES LiteCore HINTS "${NIMBUS_DIR}/bin/x64")
 message("Using litecore at: ${litecore}")
 endif()
 
+if(MAC)
+# Include Files
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../include/macos/libserial)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../include/macos/libevent)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../include/macos/libevent/event2)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../include/macos/libzmq)
+# Target Files
+link_directories(${CMAKE_CURRENT_SOURCE_DIR}/../lib/mac/libevents)
+link_directories(${CMAKE_CURRENT_SOURCE_DIR}/../lib/mac/libserial)
+link_directories(${CMAKE_CURRENT_SOURCE_DIR}/../lib/mac/libzmq)
+
+# LiteCore
+find_library(litecore STATIC NAMES LiteCore
+				HINTS "${CMAKE_CURRENT_SOURCE_DIR}/../lib/mac/litecore")
+if(litecore)
+message("Found litecore library")
+else()
+# Make this Red so its hard to miss
+message("${red} !! Litecore library is missing. Run configure script in cloud/submodule_patches/ !! ${reset_color}")
+endif()
+endif()
+
+
 if(LINUX)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../lib/linux/include)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../lib/linux/include/event2)
@@ -63,7 +86,7 @@ link_directories(${CMAKE_CURRENT_SOURCE_DIR}/../lib/linux/lib/event2)
 link_directories(${CMAKE_CURRENT_SOURCE_DIR}/../lib/linux/lib)
 
 # LiteCore
-find_library(litecore STATIC NAMES LiteCore 
+find_library(litecore STATIC NAMES LiteCore
 				HINTS "${CMAKE_CURRENT_SOURCE_DIR}/../../cloud/couchbase-lite-core/build_cmake/unix")
 if(litecore)
 message("Found litecore library")
@@ -96,12 +119,24 @@ target_link_libraries(HCS
                       -levent
                       -lserialport.dll
 		      -lws2_32
-		      nimbusLib 
+		      nimbusLib
 		      ${litecore}
                      )
 endif()
 
 if(LINUX)
+target_link_libraries(HCS
+                      -lzmq
+                      -lstdc++
+                      -lpthread
+                      -levent
+                      -lserialport
+		      nimbusLib
+		      ${litecore}
+                     )
+endif()
+
+if(MAC)
 target_link_libraries(HCS
                       -lzmq
                       -lstdc++

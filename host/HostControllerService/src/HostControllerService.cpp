@@ -55,7 +55,7 @@ bool HostControllerService::verifyReceiveCommand(string command, string *respons
 
 	if(!root.success()) {
 
-		printf("PARSING UNSUCCESSFUL CHECK JSON BUFFER SIZE %s\n",command);
+		printf("PARSING UNSUCCESSFUL CHECK JSON BUFFER SIZE %s\n",command.c_str());
 		return "Unsuccessful";
 	}
 
@@ -211,10 +211,12 @@ void HostControllerService::callbackPlatformHandler(void* hostP) {
  */
 bool HostControllerService::openPlatformSocket() {
 
-#ifndef _WIN32
+#if __linux__
 	error = sp_get_port_by_name("/dev/ttyUSB0",&platform_socket_);
-#else
+#elif _WIN32
 	error = sp_get_port_by_name("COM7",&platform_socket_);
+#elif __APPLE__
+	error = sp_get_port_by_name("/dev/tty.usbserial-DM008R9X",&platform_socket_);
 #endif
 
 	if(error == SP_OK) {
