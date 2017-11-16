@@ -1,0 +1,8 @@
+Name: libserialport
+Description: Cross-platform serial port access library.
+URL: http://sigrok.org/wiki/Libserialport
+Requires.private: 
+Version: 0.1.1
+Libs: -L${dirname "$0"} -lserialport
+Libs.private: 
+Cflags: -I${(dirname "$0")}

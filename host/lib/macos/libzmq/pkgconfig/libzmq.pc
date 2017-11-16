@@ -1,4 +1,4 @@
-prefix=/usr/local/Cellar/zeromq/4.2.2
+prefix=/Users/tharunprasanth/Desktop/libzeromq
 exec_prefix=${prefix}
 libdir=${exec_prefix}/lib
 includedir=${prefix}/include
