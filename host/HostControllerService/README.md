@@ -15,10 +15,12 @@ which are currently checked in as binary files.
 
 To compile you can run cmake by creating a '/build' folder in this directory. Then run 'cmake .. -DWINDOWS=1 -DCMAKE_TOOLCHAIN_FILE=x86_64.cmake'
 
-Compiling on MAC
+**Compiling on MAC**
+
 1) LiteCore is already built and available in host/lib/macos/liblitecore
 2) Make sure all the submodules are updated
 3) If not, go to the spyglass home directory and type
+
 ```
 git submodule update --init --recursive
 ```
