@@ -18,7 +18,10 @@ endif()
 if(LINUX OR MAC)
 SET(CMAKE_CXX_FLAGS "-v -std=c++11")
 endif()
-
+if(MAC)
+	find_library(IOKIT_LIBRARY IOKit)
+	find_library(FOUNDATION_LIBRARY Foundation)
+endif()
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "Debug/")
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "lib/")
@@ -63,19 +66,21 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../include/macos/libevent)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../include/macos/libevent/event2)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../include/macos/libzmq)
 # Target Files
-link_directories(${CMAKE_CURRENT_SOURCE_DIR}/../lib/mac/libevents)
-link_directories(${CMAKE_CURRENT_SOURCE_DIR}/../lib/mac/libserial)
-link_directories(${CMAKE_CURRENT_SOURCE_DIR}/../lib/mac/libzmq)
+link_directories(${CMAKE_CURRENT_SOURCE_DIR}/../lib/macos/libevents)
+link_directories(${CMAKE_CURRENT_SOURCE_DIR}/../lib/macos/libserial)
+link_directories(${CMAKE_CURRENT_SOURCE_DIR}/../lib/macos/libzmq)
 
 # LiteCore
 find_library(litecore STATIC NAMES LiteCore
-				HINTS "${CMAKE_CURRENT_SOURCE_DIR}/../lib/mac/litecore")
+				HINTS "${CMAKE_CURRENT_SOURCE_DIR}/../lib/macos/litecore")
 if(litecore)
 message("Found litecore library")
 else()
 # Make this Red so its hard to miss
 message("${red} !! Litecore library is missing. Run configure script in cloud/submodule_patches/ !! ${reset_color}")
 endif()
+
+
 endif()
 
 
@@ -143,7 +148,8 @@ target_link_libraries(HCS
                       -lpthread
                       -levent
                       -lserialport
-		      nimbusLib
-		      ${litecore}
+		      						nimbusLib
+		      						${litecore}
+											${FOUNDATION_LIBRARY} ${IOKIT_LIBRARY}
                      )
 endif()
