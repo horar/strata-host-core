@@ -52,9 +52,7 @@ else : macx : !win32 {
     message("Building on OSX")
     LIBS += -L$${HOST_ROOT}/lib/macos/libzmq -lzmq
     DEPENDPATH += $${HOST_ROOT}/include/macos
-    INCLUDEPATH += $${HOST_ROOT}/include/macos/libevent
     INCLUDEPATH += $${HOST_ROOT}/include/macos/libzmq
-    INCLUDEPATH += $${HOST_ROOT}/include/macos/libserialport
 }
 
 # windows
