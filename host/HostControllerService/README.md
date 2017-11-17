@@ -18,14 +18,19 @@ To compile you can run cmake by creating a '/build' folder in this directory. Th
 **Compiling on MAC**
 
 1) LiteCore is already built and available in host/lib/macos/liblitecore
+
 2) Make sure all the submodules are updated
+
 3) If not, go to the spyglass home directory and type
 
 ```
 git submodule update --init --recursive
 ```
+
 4) Once all the submodules are updated, go to spyglass/host/HostContorllerService/build
+
 5) To build, type the following
+
 ```
 cmake .. -DMAC=1
 make
