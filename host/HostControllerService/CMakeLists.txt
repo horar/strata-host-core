@@ -12,17 +12,17 @@ set(reset_color "${Esc}[m")
 
 if (WIN32)
     message("Building WINDOWS booo...")
+elseif (UNIX AND NOT APPLE)
+    message("Building LINUX yea...")
 elseif (APPLE)
     message("Building MAC yea...")
-elseif (UNIX)
-    message("Building LINUX yea...")
 endif ()
 
 if (WIN32)
     message("TOOL CHAIN: windows")
     SET(CMAKE_TOOLCHAIN_FILE x86_64.cmake)
     SET(CMAKE_CXX_FLAGS "-v -std=gnu++11 -static-libstdc++ -static-libgcc -static")
-elseif(UNIX AND !APPLE)
+elseif(UNIX AND NOT APPLE)
     message("TOOL CHAIN: linux")
     SET(CMAKE_CXX_FLAGS "-v -std=c++11")
 elseif (APPLE)
@@ -70,7 +70,7 @@ if (WIN32)
     find_library(litecore STATIC NAMES LiteCore HINTS "${NIMBUS_DIR}/bin/x64")
     message("Using litecore at: ${litecore}")
 
-elseif (UNIX AND !APPLE)
+elseif (UNIX AND NOT APPLE)
     #--- LINUX
     message("INCLUDE/LITECORE: linux")
 
@@ -143,7 +143,7 @@ if (WIN32)
             )
 endif ()
 
-if (UNIX AND !APPLE)
+if (UNIX AND NOT APPLE)
     message("LINKING: linux")
     target_link_libraries(HCS
             -lzmq
