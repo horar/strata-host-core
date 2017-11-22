@@ -2,13 +2,47 @@
  * main.cpp
  */
 
+#include <stdio.h>
+#include <fstream>
+
 #include "HostControllerService.h"
 
-int main(int argc, char *argv[])
-{
-    std::string configuration_file = "../files/conf/host_controller_service.config";
-    try {
+using namespace std;
 
+void print_usage(const std::string &error_message)
+{
+    printf("%s\nusage: hcs -f <configuration_file>\n", error_message.c_str());
+}
+
+int main(int argc, char *argv[]) {
+    std::string configuration_file = {};
+
+    int option = 0;
+    while ((option = getopt (argc , argv , "f:")) != -1) {
+        switch (option) {
+            case 'f' :
+                configuration_file = optarg;
+                break;
+            default:
+                print_usage ("Unknown argument flag");
+                exit (EXIT_FAILURE);
+        }
+    }
+
+    if( configuration_file.empty () ) {
+        print_usage ("No configuration file specified");
+        exit (EXIT_FAILURE);
+    }
+
+    // check to make sure config file is accessible
+    ifstream f(configuration_file.c_str());
+    if( ! f.good () ) {
+        print_usage ("Configuration file does not exist or not accessible.");
+        exit (EXIT_FAILURE);
+    }
+    f.close();
+
+    try {
         std::cout << "STARTING HOST CONTROLLER SERVICE: config file: " << configuration_file << std::endl;
         HostControllerService host_controller_service(configuration_file);
 

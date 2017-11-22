@@ -36,6 +36,7 @@ else()
     message("ERROR: unsupported operating system !")
 endif ()
 
+set(HOST_CONTROLLER_SERVICE_BINARY_NAME "hcs")
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "lib/")
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "lib/")
 set(NIMBUS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../cloud")
@@ -134,11 +135,11 @@ set(SOURCE
 
 add_library(usbconnector STATIC ${CMAKE_CURRENT_SOURCE_DIR}/src/USBConnector.cpp)
 
-add_executable(HCS ${SOURCE})
+add_executable(${HOST_CONTROLLER_SERVICE_BINARY_NAME} ${SOURCE})
 
 if (WIN32)
     message("LINKING: windows")
-    target_link_libraries(HCS
+    target_link_libraries(${HOST_CONTROLLER_SERVICE_BINARY_NAME}
             -lzmq.dll
             -lstdc++
             -lpthread
@@ -150,7 +151,7 @@ if (WIN32)
             )
 elseif( UNIX AND NOT APPLE )
     message("LINKING: linux")
-    target_link_libraries(HCS
+    target_link_libraries(${HOST_CONTROLLER_SERVICE_BINARY_NAME}
             -lzmq
             -lstdc++
             -lpthread
@@ -161,7 +162,7 @@ elseif( UNIX AND NOT APPLE )
             )
 elseif (APPLE)
     message("LINKING: mac")
-    target_link_libraries(HCS
+    target_link_libraries(${HOST_CONTROLLER_SERVICE_BINARY_NAME}
             -lzmq
             -lstdc++
             -lpthread

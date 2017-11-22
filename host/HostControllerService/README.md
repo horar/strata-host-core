@@ -32,6 +32,13 @@ git submodule update --init --recursive
 5) To build, type the following
 
 ```
+// building
 cmake ..
 make
+
+// running
+// 1) update files/conf/host_controller_service.config file as needed
+//     You shouldn't need to update it for normal operation
+
+./build/hcs -f ../files/conf/host_controller_service.config
 ```
