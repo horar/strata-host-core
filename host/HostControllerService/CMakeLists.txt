@@ -128,7 +128,7 @@ set(SOURCE
         ${CMAKE_CURRENT_SOURCE_DIR}/src/USBConnector.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/ZeroMQConnector.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/HostControllerService.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/startHostControllerService.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp
         ${SHARED_DIR}/cpp-base64/base64.cpp
         )
 

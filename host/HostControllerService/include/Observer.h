@@ -17,6 +17,9 @@
 using namespace std;
 using namespace rapidjson;
 
+// TODO : ian : this is a duplicate structure with
+//   HostControllerService.h struct host_packet
+//   move to a common location
 struct host_packet {
     zmq::socket_t* command;
     zmq::socket_t* notify;
@@ -27,20 +30,11 @@ struct host_packet {
 class AttachmentObserver : public Observer {
 public:
     host_packet *host;
-
-    AttachmentObserver() {
-    };
-
+    AttachmentObserver() {};
     AttachmentObserver(void *hostP);
-
-    void DocumentChange() {
-    }
-
-    void ReplicationComplete() {
-    };
-
-    void ValidateDocumentCallback(jsonString jsonBody);    
-
+    void DocumentChange() {}
+    void ReplicationComplete() {};
+    void ValidateDocumentCallback(jsonString jsonBody);
     ~AttachmentObserver(){};
 };
 

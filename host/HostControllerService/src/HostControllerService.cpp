@@ -20,20 +20,22 @@ void AttachmentObserver::ValidateDocumentCallback(jsonString jsonBody) {
      host->service->sendNotification(message,host->notify);
 }
 
-HostControllerService::HostControllerService(string ipRouter,string ipPub) {
+HostControllerService::HostControllerService(string command_address,string subscription_address) :
+   command_address_(command_address),
+   subscription_address_(subscription_address) {
 
-	_connect = false;
+	connect_ = false;
 	conObj= new(ConnectFactory);
 
 	context = new(zmq::context_t);
 	notifyAll = new zmq::socket_t(*context,ZMQ_PUB);
 	commandAck = new zmq::socket_t(*context,ZMQ_ROUTER);
 
-	notifyAll->bind(ipPub.c_str());
-	hostP.notify=notifyAll;
+	notifyAll->bind(subscription_address.c_str());
+	hostP.notify = notifyAll;
 
-	commandAck->bind(ipRouter.c_str());
-	hostP.command=commandAck;
+	commandAck->bind(command_address.c_str());
+	hostP.command = commandAck;
 }
 
 HostControllerService::~HostControllerService() {}
@@ -143,14 +145,13 @@ void callbackServiceHandler(evutil_socket_t fd ,short what, void* hostP) {
 	host->service->sendAck(message,host->command);
 
 	if(ack == true ) {
-
 		bool success = host->platform->sendNotification(message,host->hcs);
 
 		if(success == true) {
 			string log = "<--- To Platform = " + message.message;
 			cout << "<--- To Platform = " << message.message <<endl;
-		} else {
-
+		}
+		else {
 			cout << "Message send to platform failed " <<endl;
 		}
 	}
@@ -171,22 +172,19 @@ void HostControllerService::callbackPlatformHandler(void* hostP) {
 	sp_add_port_events(ev, platform_socket_, SP_EVENT_RX_READY);
 
 	while(1) {
-
 		message = host->platform->receive((void *)host->hcs);
 
-//  debug statements
-		if(!message.message.compare("")) {
-
-				//Do Nothing
-		} else if(!message.message.compare("DISCONNECTED")) {
-
+		if(!message.message.compare("DISCONNECTED")) {
 			cout << "Platform disconnected " <<endl;
 
-			host->hcs->disconnect=message.message;
-			message.message="{\"notification\":{\"value\":\"platform_connection_change_notification\",\"payload\":{\"status\":\"disconnected\"}}}";
-			host->service->sendNotification(message,host->notify);
+			host->hcs->platform_ = connected_state::DISCONNECTED;
 
+			// TODO : ian : clean this up. move to a static string or construct the json message
+			message.message="{\"notification\":{\"value\":\"platform_connection_change_notification\",\"payload\":{\"status\":\"disconnected\"}}}";
+
+			host->service->sendNotification(message,host->notify);
 			sp_close(platform_socket_);
+
 			//Signal
 			zmq::context_t context(1);
 			zmq::socket_t signal(context,ZMQ_DEALER);
@@ -194,10 +192,9 @@ void HostControllerService::callbackPlatformHandler(void* hostP) {
 			signal.connect("tcp://127.0.0.1:5564");
 			s_send(signal,"DISCONNECTED");
 			return ;
-		} else {
-
+		}
+		else {
 			if(!host->service->sendNotification(message,host->notify)) {
-
 				string log = "Notification to UI Failed = " + message.message ;
 				cout << "Notification to UI Failed = " << message.message <<endl;
 			}
@@ -290,38 +287,32 @@ void HostControllerService::initPlatformSocket() {
 
 }
 
-/*!
- * \brief:
- * 		  Initializes the HostContorllerService
- */
-string HostControllerService::setupHostControllerService(string ipRouter, string ipPub) {
-
+// @f wait
+// @b start host controller service and wait for events
+//
+connected_state HostControllerService::wait()
+{
 	Connector *cons = conObj->getServiceTypeObject("SERVICE");
 	hostP.service = cons;
 
 	Connector *conp = conObj->getServiceTypeObject("PLATFORM");
 	hostP.platform = conp;
 
-	// cloud integration
+	//--- cloud integration
 	// Initialize Nimbus object
     Nimbus local_db = Nimbus();
-// Use the test database to observe
+
+    // Use the test database to observe
     local_db.Open(NIMBUS_TEST_PLATFORM_JSON);
     // NIMBUS integration **Needs better organisation --Prasanth**
 	AttachmentObserver blobObserver((void *)&hostP);
 	local_db.Register(&blobObserver);
 
-
 	string cmd = "{\"cmd\":\"request_platform_id\",\"Host_OS\":\"Linux\"}";
 
 	while(!openPlatformSocket()) {
-
 		cout << "Waiting for Board to get Connected" <<endl;
-#ifndef _WIN32
-		sleep(2);
-#else
-		Sleep(2000);
-#endif
+		this_thread::sleep_for(std::chrono::milliseconds(2000));
 	}
 
 	initPlatformSocket();
@@ -338,13 +329,13 @@ string HostControllerService::setupHostControllerService(string ipRouter, string
 #endif
 
 	hostP.command->getsockopt(ZMQ_FD,&sockService,&size_sockService);
-
-	hostP.hcs=this;
+	hostP.hcs = this;
 
 	struct event_base *base = event_base_new();
 	hostP.base = base;
 
 	thread t(&HostControllerService::callbackPlatformHandler,this,(void *)&hostP);
+
 	//EV_ET says its edge triggered. EV_READ and EV_WRITE are both
 	//needed when event is added else it doesn't function properly
 	//As libevent READ and WRITE functionality is affected by edge triggered events.
@@ -352,16 +343,16 @@ string HostControllerService::setupHostControllerService(string ipRouter, string
 			EV_READ | EV_WRITE | EV_ET | EV_PERSIST ,
 			callbackServiceHandler,(void *)&hostP);
 
-	if (event_base_set(base,service) <0 )
-		cout <<"Event BASE SET SERVICE FAILED "<<endl;
+	if (event_base_set(base,service) <0 ) {
+		cout << "Event BASE SET SERVICE FAILED " << endl;
+	}
 
-	if(event_add(service,NULL) <0 )
-		cout<<"Event SERVICE ADD FAILED "<<endl;
-
-
+	if(event_add(service,NULL) <0 ) {
+		cout << "Event SERVICE ADD FAILED " << endl;
+	}
 
 	event_base_dispatch(base);
 	t.join();
-	cout << "returnting " <<endl;
-	return disconnect;
+	cout << "returning " <<endl;
+	return platform_;
 }

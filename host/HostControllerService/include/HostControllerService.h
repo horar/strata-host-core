@@ -5,6 +5,9 @@
 #ifndef HOSTCONTROLLERSERVICE_H_
 #define HOSTCONTROLLERSERVICE_H_
 
+#include <chrono>
+#include <thread>
+
 #include "USBConnector.h"
 #include "ZeroMQConnector.h"
 #include "Connector.h"
@@ -15,10 +18,19 @@
 // NIMBUS integration **Needs better organisation --Prasanth**
 #include "Observer.h"
 
+enum class connected_state {
+	CONNECTED,
+	DISCONNECTED
+};
+
 void callbackServiceHandler(evutil_socket_t fd ,short what, void* hostP );
 
 class HostControllerService {
 public:
+
+	// TODO : ian : this is a duplicate structure with
+    //   Observer.h struct host_packet
+    //   move to a common location
 	struct host_packet {
 		zmq::socket_t* command;
 		zmq::socket_t* notify;
@@ -36,13 +48,12 @@ public:
 	friend void callbackServiceHandler(evutil_socket_t fd ,short what, void* hostP);
 	void callbackPlatformHandler(void* hostP);
 
-	string setupHostControllerService(string ipRouter, string ipPub);
 	bool openPlatformSocket();
 	void initPlatformSocket();
 	bool verifyReceiveCommand(string command, string *response);
+	connected_state wait();
 
-	bool _connect;
-	std::string disconnect;
+	bool connect_;
 	struct sp_port *platform_socket_;
 	struct sp_event_set *ev;
 	sp_return error;
@@ -52,6 +63,13 @@ private :
 	zmq::context_t* context;
 	zmq::socket_t* commandAck;
 	zmq::socket_t* notifyAll;
+
+	std::string command_address_;
+	std::string subscription_address_;
+
+	connected_state platform_;
+
 };
+
 
 #endif // HOSTCONTROLLERSERVICE_H_
