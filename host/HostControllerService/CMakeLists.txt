@@ -16,11 +16,13 @@ elseif (UNIX AND NOT APPLE)
     message("Building LINUX yea...")
 elseif (APPLE)
     message("Building MAC yea...")
+else()
+    message("ERROR: unsupported operating system !")
 endif ()
 
 if (WIN32)
     message("TOOL CHAIN: windows")
-    SET(CMAKE_TOOLCHAIN_FILE x86_64.cmake)
+    SET(CMAKE_TOOLCHAIN_FILE ./cmake/x86_64.cmake)
     SET(CMAKE_CXX_FLAGS "-v -std=gnu++11 -static-libstdc++ -static-libgcc -static")
 elseif(UNIX AND NOT APPLE)
     message("TOOL CHAIN: linux")
@@ -30,9 +32,10 @@ elseif (APPLE)
     SET(CMAKE_CXX_FLAGS "-v -std=c++11")
     find_library(IOKIT_LIBRARY IOKit)
     find_library(FOUNDATION_LIBRARY Foundation)
+else()
+    message("ERROR: unsupported operating system !")
 endif ()
 
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "Debug/")
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "lib/")
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "lib/")
 set(NIMBUS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../cloud")
@@ -40,11 +43,10 @@ set(SHARED_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../shared")
 set(CB_DIR "${NIMBUS_DIR}/couchbase-lite-core")
 set(CB_LIB_DIR "${CB_DIR}/build_cmake/unix")
 
-include_directories(lib)
-include_directories(lib/ArduinoJson)
-
-# Add headers and Library for Nimbus
-include_directories(${NIMBUS_DIR}
+include_directories(
+        include
+        include/ArduinoJson
+        ${NIMBUS_DIR}
         "${SHARED_DIR}/cpp-base64"      #cpp-base64 submodule
         "${SHARED_DIR}/rapidjson/include"    #rapidjson submodule
         "${CB_DIR}/C"
@@ -62,10 +64,12 @@ if (WIN32)
 
     # ZMQ
     link_directories(${CMAKE_CURRENT_SOURCE_DIR}/../lib/windows/zeromq)
+
     # LibEvent
     link_directories(${CMAKE_CURRENT_SOURCE_DIR}/../lib/cross-lib/bin)
     link_directories(${CMAKE_CURRENT_SOURCE_DIR}/../lib/cross-lib/lib)
     include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../lib/cross-lib/include)
+
     # Litecore
     find_library(litecore STATIC NAMES LiteCore HINTS "${NIMBUS_DIR}/bin/x64")
     message("Using litecore at: ${litecore}")
@@ -82,6 +86,7 @@ elseif (UNIX AND NOT APPLE)
     # LiteCore for linux/unix
     find_library(litecore STATIC NAMES LiteCore
             HINTS "${CMAKE_CURRENT_SOURCE_DIR}/../../cloud/couchbase-lite-core/build_cmake/unix")
+
     if (litecore)
         message("Found litecore library")
     else ()
@@ -113,6 +118,8 @@ elseif (APPLE)
         message("${red} !! Litecore library is missing. Run configure script in cloud/submodule_patches/ !! ${reset_color}")
     endif ()
 
+else()
+    message("ERROR: unsupported operating system !")
 endif ()
 
 set(SOURCE
@@ -141,9 +148,7 @@ if (WIN32)
             nimbusLib
             ${litecore}
             )
-endif ()
-
-if (UNIX AND NOT APPLE)
+elseif( UNIX AND NOT APPLE )
     message("LINKING: linux")
     target_link_libraries(HCS
             -lzmq
@@ -154,9 +159,7 @@ if (UNIX AND NOT APPLE)
             nimbusLib
             ${litecore}
             )
-endif ()
-
-if (APPLE)
+elseif (APPLE)
     message("LINKING: mac")
     target_link_libraries(HCS
             -lzmq
@@ -168,4 +171,7 @@ if (APPLE)
             ${litecore}
             ${FOUNDATION_LIBRARY} ${IOKIT_LIBRARY}
             )
+
+else()
+    message("ERROR: unsupported operating system !")
 endif ()

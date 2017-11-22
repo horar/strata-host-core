@@ -32,6 +32,6 @@ git submodule update --init --recursive
 5) To build, type the following
 
 ```
-cmake .. -DMAC=1
+cmake ..
 make
 ```

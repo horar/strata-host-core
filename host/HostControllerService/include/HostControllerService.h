@@ -1,9 +1,9 @@
 /*
  * HostControllerService.cpp
- *
- *  Created on: Aug 14, 2017
- *      Author: abhishek
  */
+
+#ifndef HOSTCONTROLLERSERVICE_H_
+#define HOSTCONTROLLERSERVICE_H_
 
 #include "USBConnector.h"
 #include "ZeroMQConnector.h"
@@ -11,20 +11,15 @@
 #include "ConnectFactory.h"
 #include "ArduinoJson.h"
 #include <libserialport.h>
-// NIMBUS integration **Needs better organisation --Prasanth** 
+
+// NIMBUS integration **Needs better organisation --Prasanth**
 #include "Observer.h"
- 
-#ifndef LIB_HOSTCONTROLLERSERVICE_H_
-#define LIB_HOSTCONTROLLERSERVICE_H_
 
 void callbackServiceHandler(evutil_socket_t fd ,short what, void* hostP );
 
 class HostControllerService {
-
 public:
-
 	struct host_packet {
-
 		zmq::socket_t* command;
 		zmq::socket_t* notify;
 
@@ -33,7 +28,7 @@ public:
 		HostControllerService *hcs;
 
 		event_base *base;
-	}hostP;
+	} hostP;
 
 	HostControllerService(string ipRouter, string ipPub);
 	~HostControllerService();
@@ -49,15 +44,14 @@ public:
 	bool _connect;
 	std::string disconnect;
 	struct sp_port *platform_socket_;
-  struct sp_event_set *ev;
-  sp_return error;
+	struct sp_event_set *ev;
+	sp_return error;
 
 private :
-
 	ConnectFactory *conObj;
 	zmq::context_t* context;
 	zmq::socket_t* commandAck;
 	zmq::socket_t* notifyAll;
 };
 
-#endif
+#endif // HOSTCONTROLLERSERVICE_H_
