@@ -7,19 +7,20 @@
 
 #include "ZeroMQConnector.h"
 
+using namespace std;
+
 //Constructor
 ZeroMQConnector::ZeroMQConnector() {}
 
 //Destructor
 ZeroMQConnector::~ZeroMQConnector() {}
 
-
 /*!
  *  send notification feed to HostControllerClient
  * 	receive command request from HostControllerClient
  */
-bool ZeroMQConnector::sendAck(messageProperty message,void *service) {
-
+bool ZeroMQConnector::sendAck(messageProperty message,void *service)
+{
 	zmq::socket_t *soc = (zmq::socket_t *)service;
 
 	s_sendmore(*soc,message.nodeId);
@@ -27,8 +28,8 @@ bool ZeroMQConnector::sendAck(messageProperty message,void *service) {
 	return true;
 }
 
-bool ZeroMQConnector::sendNotification(messageProperty message,void *service) {
-
+bool ZeroMQConnector::sendNotification(messageProperty message,void *service)
+{
 	zmq::socket_t *soc = (zmq::socket_t *)service;
 	s_sendmore(*soc,"ONSEMI");
 	s_send (*soc,message.message);
@@ -39,8 +40,8 @@ bool ZeroMQConnector::sendNotification(messageProperty message,void *service) {
 /*!
  *  receive command request from HostControllerClient
  */
-Connector::messageProperty ZeroMQConnector::receive(void *service) {
-
+Connector::messageProperty ZeroMQConnector::receive(void *service)
+{
 	zmq::socket_t *soc = (zmq::socket_t *)service;
 	Connector::messageProperty message;
 	string nodeid = s_recv (*soc);
@@ -54,8 +55,8 @@ Connector::messageProperty ZeroMQConnector::receive(void *service) {
 /*!
  *  To be used in future, currently no use case available
  */
-bool ZeroMQConnector::connectivitycheck(string address) {
-
+bool ZeroMQConnector::connectivitycheck(string address)
+{
 	cout << "Connectivity check from ZMQConnector" <<endl;
 	return true;
 }

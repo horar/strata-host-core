@@ -1,16 +1,18 @@
 /*
- * connectorInterface.h
+ * Connector.h
  *
- *  Created on: Jul 20, 2017
- *      Author: abhishek
  */
+
+#ifndef CONNECTOR_H__
+#define CONNECTOR_H__
+
 #include <iostream>
 #include <string>
 #include <stdlib.h>
 
 #include <event2/event.h>
 #include <event.h>
-#include<libserialport.h>
+#include <libserialport.h>
 #include <thread>
 #include <mutex>
 #include <condition_variable>
@@ -18,18 +20,11 @@
 #include <cstring>
 #include <vector>
 
-#include "ZeroMQConnector.h"
 #include "zmq.hpp"
 #include "zmq_addon.hpp"
 #include "zhelpers.hpp"
 #include <fcntl.h>   // File control definitions
 #include <errno.h>   // Error number definitions
-
-using namespace std;
-
-#ifndef LIB_CONNECTOR_H_
-#define LIB_CONNECTOR_H_
-
 
 #ifdef _WIN32
 #include <winsock2.h>
@@ -44,18 +39,17 @@ class Connector {
 
 public :
 
-	struct messageProperty {
+    struct messageProperty {
+	    std::string nodeId;
+        std::string message;
+    };
 
-		string nodeId;
-		string message;
-	};
+    virtual bool  sendAck(messageProperty,void *)= 0;
+    virtual bool  sendNotification(messageProperty,void *)= 0;
+    virtual messageProperty receive(void *)=0;
+    virtual bool connectivitycheck(std::string address)=0;
 
-	virtual bool  sendAck(messageProperty,void *)= 0;
-	virtual bool  sendNotification(messageProperty,void *)= 0;
-	virtual messageProperty receive(void *)=0;
-	virtual bool connectivitycheck(string address)=0;
-
-	virtual ~Connector(){}
+    virtual ~Connector(){}
 };
 
 

@@ -1,12 +1,9 @@
 /*
  * ConnectFactory.h
- *
- *  Created on: Jul 20, 2017
- *      Author: abhishek
  */
 
-#ifndef LIB_CONNECTFACTORY_H_
-#define LIB_CONNECTFACTORY_H_
+#ifndef CONNECTFACTORY_H_
+#define CONNECTFACTORY_H_
 
 #include "Connector.h"
 #include "USBConnector.h"
@@ -19,8 +16,8 @@ class ConnectFactory {
 
 public:
 	ConnectFactory();
-	Connector *getServiceTypeObject(string type);
+	Connector *getServiceTypeObject(std::string type);
 	~ConnectFactory();
 };
 
-#endif /* LIB_CONNECTFACTORY_H_ */
+#endif /* CONNECTFACTORY_H_ */

@@ -7,9 +7,12 @@
 
 #include "ConnectFactory.h"
 
+using namespace std;
+
 std::mutex lock_serial_;
-//Constructor
+
 ConnectFactory::ConnectFactory() {}
+ConnectFactory::~ConnectFactory() {}
 
 /*!
  * getServiceTypeObject returns the connector object to connect
@@ -17,16 +20,15 @@ ConnectFactory::ConnectFactory() {}
  */
 Connector* ConnectFactory::getServiceTypeObject(string servicetype) {
 
-	if(servicetype.compare("SERVICE") ==0 ) {
+    if(servicetype.compare("SERVICE") ==0 ) {
 
-		cout << "ZEROMQ object returned" << endl;
-		return dynamic_cast<Connector*>(new ZeroMQConnector);
-	} else if(servicetype.compare("PLATFORM")==0) {
+        cout << "ZEROMQ object returned" << endl;
+        return dynamic_cast<Connector*>(new ZeroMQConnector);
+    } else if(servicetype.compare("PLATFORM")==0) {
 
-		cout << "USB object returned" << endl;
-		return dynamic_cast<Connector*>(new USBConnector);
-	}
-	return nullptr;
+        cout << "USB object returned" << endl;
+        return dynamic_cast<Connector*>(new USBConnector);
+    }
+    return nullptr;
 }
 
-ConnectFactory::~ConnectFactory() {}

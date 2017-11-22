@@ -19,8 +19,8 @@
 #include "Observer.h"
 
 enum class connected_state {
-	CONNECTED,
-	DISCONNECTED
+    CONNECTED,
+    DISCONNECTED
 };
 
 void callbackServiceHandler(evutil_socket_t fd ,short what, void* hostP );
@@ -28,46 +28,46 @@ void callbackServiceHandler(evutil_socket_t fd ,short what, void* hostP );
 class HostControllerService {
 public:
 
-	// TODO : ian : this is a duplicate structure with
+    // TODO : ian : this is a duplicate structure with
     //   Observer.h struct host_packet
     //   move to a common location
-	struct host_packet {
-		zmq::socket_t* command;
-		zmq::socket_t* notify;
+    struct host_packet {
+        zmq::socket_t* command;
+        zmq::socket_t* notify;
 
-		Connector *platform;
-		Connector *service;
-		HostControllerService *hcs;
+        Connector *platform;
+        Connector *service;
+        HostControllerService *hcs;
 
-		event_base *base;
-	} hostP;
+        event_base *base;
+    } hostP;
 
-	HostControllerService(string ipRouter, string ipPub);
-	~HostControllerService();
+    HostControllerService(string ipRouter, string ipPub);
+    ~HostControllerService();
 
-	friend void callbackServiceHandler(evutil_socket_t fd ,short what, void* hostP);
-	void callbackPlatformHandler(void* hostP);
+    friend void callbackServiceHandler(evutil_socket_t fd ,short what, void* hostP);
+    void callbackPlatformHandler(void* hostP);
 
-	bool openPlatformSocket();
-	void initPlatformSocket();
-	bool verifyReceiveCommand(string command, string *response);
-	connected_state wait();
+    bool openPlatformSocket();
+    void initPlatformSocket();
+    bool verifyReceiveCommand(string command, string *response);
+    connected_state wait();
 
-	bool connect_;
-	struct sp_port *platform_socket_;
-	struct sp_event_set *ev;
-	sp_return error;
+    bool connect_;
+    struct sp_port *platform_socket_;
+    struct sp_event_set *ev;
+    sp_return error;
 
 private :
-	ConnectFactory *conObj;
-	zmq::context_t* context;
-	zmq::socket_t* commandAck;
-	zmq::socket_t* notifyAll;
+    ConnectFactory *conObj;
+    zmq::context_t* context;
+    zmq::socket_t* commandAck;
+    zmq::socket_t* notifyAll;
 
-	std::string command_address_;
-	std::string subscription_address_;
+    std::string command_address_;
+    std::string subscription_address_;
 
-	connected_state platform_;
+    connected_state platform_;
 
 };
 

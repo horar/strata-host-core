@@ -5,13 +5,10 @@
  *      Author: abhishek
  */
 
-#ifndef LIB_USBCONNECTOR_H_
-#define LIB_USBCONNECTOR_H_
+#ifndef USBCONNECTOR_H_
+#define USBCONNECTOR_H_
 
 #include "Connector.h"
-
-
-
 
 /*!
  * Class to handle functionality of USB connection
@@ -24,11 +21,11 @@ public :
 	bool sendAck(messageProperty,void *);
 	bool sendNotification(messageProperty,void *);
 	messageProperty receive(void *);
-	bool connectivitycheck(string address);
+	bool connectivitycheck(std::string address);
 
 	virtual ~USBConnector();
 private:
-	vector<char> response;
+	std::vector<char> response;
 };
 
-#endif /* LIB_USBCONNECTOR_H_ */
+#endif // USBCONNECTOR_H_
