@@ -14,8 +14,6 @@
 #define ASSEMBLY_KEY    "assembly"
 
 #define DEBUG(...) printf("TEST: "); printf(__VA_ARGS__)
-using namespace std;
-using namespace rapidjson;
 
 // TODO : ian : this is a duplicate structure with
 //   HostControllerService.h struct host_packet

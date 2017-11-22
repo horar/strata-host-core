@@ -4,42 +4,27 @@
 
 #include "HostControllerService.h"
 
-
 int main(int argc, char *argv[])
 {
-    string routerIp,pubIp;
-
-    if ((!(strcmp(argv[1],"-help"))) || (!(strcmp(argv[1],"-h")))) {
-        cout << endl;
-        cout << "Argument 1 = Ip address for ZMQ_ROUTER Socket" <<endl;
-        cout << "Arg 1 will be used for HostControllerClient to send and receive" <<endl;
-        cout << "Argument 2 = Ip address for ZMQ_PUB Socket" <<endl;
-        cout << "Arg 2 will be used for HostControllerClient to receive platform notification" <<endl;
-        exit(0);
-    }
-    else {
-        routerIp = argv[1];
-        cout << "router Ip = " << routerIp <<endl;
-        pubIp = argv[2];
-        cout << "pub Ip = " << pubIp << endl;
-    }
-
+    std::string configuration_file = "../files/conf/host_controller_service.config";
     try {
-        HostControllerService host_controller_service(routerIp, pubIp);
+
+        std::cout << "STARTING HOST CONTROLLER SERVICE: config file: " << configuration_file << std::endl;
+        HostControllerService host_controller_service(configuration_file);
+
+        // TODO : ian : remove need for while loop. this is nuts to not handle this internally
         while( host_controller_service.wait() == connected_state::DISCONNECTED ) {
             std::cout << "PLATFORM DISCONNECTED: waiting for connect\n";
         }
-
     }
     catch (const std::exception & e) {
-        cout << "Host Controller Service failed to start: " << e.what() << endl;
+        std::cout << "Host Controller Service failed to start: " << e.what() << std::endl;
         return -1;
     }
     catch (...) {
-        cout << "Host Controller Service failure: unexpected error\n";
+        std::cout << "Host Controller Service failure: unexpected error\n";
         return -1;
     }
-
 
     return 0;
 }

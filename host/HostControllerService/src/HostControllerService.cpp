@@ -10,31 +10,43 @@
 
 using namespace std;
 
-AttachmentObserver::AttachmentObserver(void *hostP) {
+AttachmentObserver::AttachmentObserver(void *hostP)
+{
     host = (host_packet *)hostP;
 }
 
-void AttachmentObserver::ValidateDocumentCallback(jsonString jsonBody) {
+void AttachmentObserver::ValidateDocumentCallback(jsonString jsonBody)
+{
      Connector::messageProperty message;
      message.message = jsonBody;
      host->service->sendNotification(message,host->notify);
 }
 
-HostControllerService::HostControllerService(string command_address,string subscription_address) :
-   command_address_(command_address),
-   subscription_address_(subscription_address) {
+HostControllerService::HostControllerService(std::string configuration_file)
+{
+    configuration_ = new ParseConfig(configuration_file);
+    cout << "CONFIG: \n" << *configuration_ << endl;
 
-    connect_ = false;
-    conObj= new(ConnectFactory);
-
+    conObj = new ConnectFactory;
     context = new(zmq::context_t);
+
+    // TODO rename variables "notifyAll" and "commandAck" to something more reasonable
+    // subscribers_socket_
+    // command_socket_
+
     notifyAll = new zmq::socket_t(*context,ZMQ_PUB);
     commandAck = new zmq::socket_t(*context,ZMQ_ROUTER);
 
-    notifyAll->bind(subscription_address.c_str());
+    subscription_address_ = configuration_->GetSubscriberAddress ();
+    notifyAll->bind(subscription_address_.c_str());
+
+    // TODO rename variable "hostP" what on earth is this supposed to help with?
     hostP.notify = notifyAll;
 
-    commandAck->bind(command_address.c_str());
+    command_address_ = configuration_->GetCommandAddress ();
+    commandAck->bind(command_address_.c_str());
+
+    // TODO rename variable "hostP" wtf ...
     hostP.command = commandAck;
 }
 

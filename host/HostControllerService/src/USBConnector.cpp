@@ -6,6 +6,8 @@
 #include "USBConnector.h"
 #include "HostControllerService.h"
 
+using namespace std;
+
 USBConnector::USBConnector()
 {
     response.reserve(512);

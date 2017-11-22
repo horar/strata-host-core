@@ -130,7 +130,7 @@ set(SOURCE
         ${CMAKE_CURRENT_SOURCE_DIR}/src/HostControllerService.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp
         ${SHARED_DIR}/cpp-base64/base64.cpp
-        )
+        src/ParseConfig.cpp)
 
 add_library(usbconnector STATIC ${CMAKE_CURRENT_SOURCE_DIR}/src/USBConnector.cpp)
 

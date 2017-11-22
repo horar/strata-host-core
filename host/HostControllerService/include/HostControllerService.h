@@ -17,6 +17,7 @@
 
 // NIMBUS integration **Needs better organisation --Prasanth**
 #include "Observer.h"
+#include "ParseConfig.h"
 
 enum class connected_state {
     CONNECTED,
@@ -28,21 +29,27 @@ void callbackServiceHandler(evutil_socket_t fd ,short what, void* hostP );
 class HostControllerService {
 public:
 
-    // TODO : ian : this is a duplicate structure with
+    // TODO : ian : host_packet this is a duplicate structure with
     //   Observer.h struct host_packet
-    //   move to a common location
+    //   move to a common location or remove all together. Not sure of it's purpose
+
+    // TODO : what is a "host_packet"? this doesn't even make sense.
+    //    it is the sockets and service/serial port .... AND the HCS itself? the "this pointer?
+    //    void * user_context pointers to 0mq event callback functions is the correct way of
+    //    pointing back to "self".
+    //
     struct host_packet {
         zmq::socket_t* command;
         zmq::socket_t* notify;
 
         Connector *platform;
         Connector *service;
-        HostControllerService *hcs;
+        HostControllerService *hcs; // TODO why do we need a reference back to 'this' pointer?
 
         event_base *base;
     } hostP;
 
-    HostControllerService(string ipRouter, string ipPub);
+    HostControllerService(std::string);
     ~HostControllerService();
 
     friend void callbackServiceHandler(evutil_socket_t fd ,short what, void* hostP);
@@ -50,10 +57,9 @@ public:
 
     bool openPlatformSocket();
     void initPlatformSocket();
-    bool verifyReceiveCommand(string command, string *response);
+    bool verifyReceiveCommand(std::string command, std::string *response);
     connected_state wait();
 
-    bool connect_;
     struct sp_port *platform_socket_;
     struct sp_event_set *ev;
     sp_return error;
@@ -69,6 +75,7 @@ private :
 
     connected_state platform_;
 
+    ParseConfig *configuration_;
 };
 
 
