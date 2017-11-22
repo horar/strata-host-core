@@ -9,8 +9,6 @@
 
 using namespace std;
 
-std::mutex lock_serial_;
-
 ConnectFactory::ConnectFactory() {}
 ConnectFactory::~ConnectFactory() {}
 

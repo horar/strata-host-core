@@ -31,7 +31,6 @@
 #include <windows.h>
 #endif
 
-extern std::mutex lock_serial_;
 /*!
  * Interface class defining basic functionality of HostControllerService
  */
@@ -50,6 +49,9 @@ public :
     virtual bool connectivitycheck(std::string address)=0;
 
     virtual ~Connector(){}
+
+        std::mutex lock_serial_;
+
 };
 
 

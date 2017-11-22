@@ -42,9 +42,11 @@ Connector::messageProperty USBConnector::receive(void *HCS)
     HostControllerService *obj =(HostControllerService *)HCS;
     Connector::messageProperty message;
 
+    // TODO : ian : this sooooooo needs to be cleaned up !
     char temp = '\0';
     sp_wait(obj->ev, 0);
     obj->error = sp_nonblocking_read(obj->platform_socket_,(void *)&temp,1);
+
     #ifndef _WIN32
     if(obj->error <= 0) {
       cout << "error = " << obj->error << "\n";
@@ -64,7 +66,7 @@ Connector::messageProperty USBConnector::receive(void *HCS)
         message.message="";
         return message;
     }
-  #endif
+    #endif
 
     if(temp !='\n') {
       response.push_back(temp);
@@ -79,10 +81,11 @@ Connector::messageProperty USBConnector::receive(void *HCS)
           message.message = new_string;
           return message;
       }
-  }
+    }
+    return message;
 }
 
 bool USBConnector::connectivitycheck(string address)
 {
-  return true;
+    return true;
 }

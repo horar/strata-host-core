@@ -13,7 +13,7 @@
 /*!
  * Class to handle functionality of USB connection
  */
-class USBConnector : public Connector{
+class USBConnector : public Connector {
 
 public :
 	USBConnector();
