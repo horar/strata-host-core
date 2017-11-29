@@ -25,7 +25,7 @@ enum class connected_state {
 };
 
 void callbackServiceHandler(evutil_socket_t fd ,short what, void* hostP );
-
+void heartBeatPeriodicEvent(evutil_socket_t fd ,short what, void* hostP);
 class HostControllerService {
 public:
 
@@ -41,9 +41,12 @@ public:
     struct host_packet {
         zmq::socket_t* command;
         zmq::socket_t* notify;
+        zmq::socket_t* simulationOnly;
 
         Connector *platform;
         Connector *service;
+        Connector *simulation;
+
         HostControllerService *hcs; // TODO why do we need a reference back to 'this' pointer?
 
         event_base *base;
@@ -53,6 +56,7 @@ public:
     ~HostControllerService();
 
     friend void callbackServiceHandler(evutil_socket_t fd ,short what, void* hostP);
+    friend void heartBeatPeriodicEvent(evutil_socket_t fd ,short what, void* hostP);
     void callbackPlatformHandler(void* hostP);
 
     bool openPlatformSocket();
@@ -69,12 +73,14 @@ private :
     zmq::context_t* context;
     zmq::socket_t* commandAck;
     zmq::socket_t* notifyAll;
+    zmq::socket_t* simulationQemuSocket;
 
     std::string command_address_;
     std::string subscription_address_;
 
     connected_state platform_;
-
+    bool simulation_;
+    bool platformConnect;
     ParseConfig *configuration_;
 };
 

@@ -7,7 +7,7 @@
 
 #include "HostControllerService.h"
 #include "nimbus.h"
-
+#include <csignal>
 using namespace std;
 
 AttachmentObserver::AttachmentObserver(void *hostP)
@@ -39,7 +39,18 @@ HostControllerService::HostControllerService(std::string configuration_file)
 
     subscription_address_ = configuration_->GetSubscriberAddress ();
     notifyAll->bind(subscription_address_.c_str());
-
+    size_t raw_size = 256;
+    uint8_t id [256];
+    // assigning the simulation state
+    simulation_ = configuration_->IsSimulatedPlatform();
+    // creating stream socket for non zmq tcp sockets and only for simulation
+    if(simulation_) {
+      simulationQemuSocket = new zmq::socket_t(*context,ZMQ_STREAM);
+      // Prasanth: Port number hardcoded for initial version
+      simulationQemuSocket->connect("tcp://localhost:7777");
+      platformConnect = false;
+      hostP.simulationOnly = simulationQemuSocket;
+    }
     // TODO rename variable "hostP" what on earth is this supposed to help with?
     hostP.notify = notifyAll;
 
@@ -48,6 +59,7 @@ HostControllerService::HostControllerService(std::string configuration_file)
 
     // TODO rename variable "hostP" wtf ...
     hostP.command = commandAck;
+
 }
 
 HostControllerService::~HostControllerService() {}
@@ -138,13 +150,24 @@ void callbackServiceHandler(evutil_socket_t fd ,short what, void* hostP) {
     HostControllerService::host_packet *host = (HostControllerService::host_packet *)hostP;
     HostControllerService *obj= host->hcs;
     zmq::socket_t *send = host->command;
+    zmq::socket_t *simulationReceive = host->simulationOnly;
+
+    uint8_t id [256];
+    size_t id_size = 256;
+    if(obj->simulation_)
+    simulationReceive->getsockopt(ZMQ_IDENTITY,&id,&id_size);
 
     unsigned int     zmq_events;
     size_t           zmq_events_size  = sizeof(zmq_events);
     send->getsockopt(ZMQ_EVENTS, &zmq_events, &zmq_events_size);
 
-    Connector::messageProperty message = host->service->receive(host->command);
+    zmq::pollitem_t items [] = {
+        { *host->command, 0, ZMQ_POLLIN, 0 }
+    };
+    zmq::poll (&items [0], 1, 10);
+    if (items [0].revents & ZMQ_POLLIN) {
 
+    Connector::messageProperty message = host->service->receive(host->command);
     if(!message.message.compare("DISCONNECTED")) {
 
         cout << "Platform Disconnect detected " <<endl;
@@ -157,8 +180,11 @@ void callbackServiceHandler(evutil_socket_t fd ,short what, void* hostP) {
     host->service->sendAck(message,host->command);
 
     if(ack == true ) {
-        bool success = host->platform->sendNotification(message,host->hcs);
-
+      bool success;
+      if (!obj->simulation_)
+         success = host->platform->sendNotification(message,host->hcs);
+    else
+         success = host->simulation->emulatorSend(message,simulationReceive);
         if(success == true) {
             string log = "<--- To Platform = " + message.message;
             cout << "<--- To Platform = " << message.message <<endl;
@@ -167,6 +193,25 @@ void callbackServiceHandler(evutil_socket_t fd ,short what, void* hostP) {
             cout << "Message send to platform failed " <<endl;
         }
     }
+  }
+}
+
+void heartBeatPeriodicEvent(evutil_socket_t fd ,short what, void* hostP) {
+
+  HostControllerService::host_packet *host = (HostControllerService::host_packet *)hostP;
+  HostControllerService *obj= host->hcs;
+
+  zmq::socket_t *simulationReceive = host->simulationOnly;
+  Connector::messageProperty message;
+
+  if (obj->platformConnect){
+      message.message="{\"notification\":{\"value\":\"platform_connection_change_notification\",\"payload\":{\"status\":\"connected\"}}}";
+  }
+  else {
+    message.message="{\"notification\":{\"value\":\"platform_connection_change_notification\",\"payload\":{\"status\":\"disconnected\"}}}";
+  }
+  host->service->sendNotification(message,host->notify);
+  obj->platformConnect = false;
 }
 
 /*
@@ -178,12 +223,23 @@ void HostControllerService::callbackPlatformHandler(void* hostP) {
     HostControllerService::host_packet *host = (HostControllerService::host_packet *)hostP;
     HostControllerService *obj = host->hcs;
     zmq::socket_t *notify = host->notify;
+    zmq::socket_t *simulationReceive = host->simulationOnly;
     Connector::messageProperty message;
 
     sp_new_event_set(&ev);
     sp_add_port_events(ev, platform_socket_, SP_EVENT_RX_READY);
 
     while(1) {
+      if(simulation_) {
+      message = host->simulation->emulatorReceive(simulationReceive);
+      if (!message.message.empty());
+        {
+          platformConnect = true;
+        }
+
+      host->service->sendNotification(message,host->notify);
+    }
+    else{
         message = host->platform->receive((void *)host->hcs);
 
         if(!message.message.compare("DISCONNECTED")) {
@@ -212,6 +268,7 @@ void HostControllerService::callbackPlatformHandler(void* hostP) {
             }
         }
     }
+}
 }
 
 /*!
@@ -307,6 +364,10 @@ connected_state HostControllerService::wait()
     Connector *cons = conObj->getServiceTypeObject("SERVICE");
     hostP.service = cons;
 
+    if(simulation_) {
+      hostP.simulation = conObj->getServiceTypeObject("SERVICE");
+    }
+
     Connector *conp = conObj->getServiceTypeObject("PLATFORM");
     hostP.platform = conp;
 
@@ -322,6 +383,7 @@ connected_state HostControllerService::wait()
 
     string cmd = "{\"cmd\":\"request_platform_id\",\"Host_OS\":\"Linux\"}";
 
+if(!simulation_) {
     while(!openPlatformSocket()) {
         cout << "Waiting for Board to get Connected" <<endl;
         this_thread::sleep_for(std::chrono::milliseconds(2000));
@@ -331,40 +393,68 @@ connected_state HostControllerService::wait()
     Connector::messageProperty message;
     message.message=cmd;
     conp->sendNotification(message,this);
+}
 
 #ifndef _WIN32
     int sockService=0;
     size_t size_sockService = sizeof(sockService);
+    //if(simulation_){
+      int simulationSockService=0;
+      size_t size_simulationSockService = sizeof(simulationSockService);
+    //}
 #else
     unsigned long long int sockService=0;
     size_t size_sockService = sizeof(sockService);
+    //if(simulation_){
+      unsigned long long int simulationSockService=0;
+      size_t size_simulationSockService = sizeof(simulationSockService);
+    //}
 #endif
 
-    hostP.command->getsockopt(ZMQ_FD,&sockService,&size_sockService);
+    hostP.command->getsockopt(ZMQ_FD, &sockService, &size_sockService);
+    if(simulation_) {
+      hostP.simulationOnly->getsockopt(ZMQ_FD, &simulationSockService, &size_simulationSockService);
+    }
+
     hostP.hcs = this;
 
     struct event_base *base = event_base_new();
     hostP.base = base;
 
-    thread t(&HostControllerService::callbackPlatformHandler,this,(void *)&hostP);
+//if(!simulation_) {
+	thread t(&HostControllerService::callbackPlatformHandler,this,(void *)&hostP);
+//}
+	//EV_ET says its edge triggered. EV_READ and EV_WRITE are both
+	//needed when event is added else it doesn't function properly
+	//As libevent READ and WRITE functionality is affected by edge triggered events.
+#ifndef __APPLE__
+        struct event *service = event_new(base, sockService ,
+                        EV_READ | EV_WRITE | EV_ET | EV_PERSIST ,
+                        callbackServiceHandler,(void *)&hostP);
+#else
+        struct event *service = event_new(base, sockService ,
+                        EV_READ | EV_WRITE | EV_PERSIST ,
+                        callbackServiceHandler,(void *)&hostP);
+#endif
 
-    //EV_ET says its edge triggered. EV_READ and EV_WRITE are both
-    //needed when event is added else it doesn't function properly
-    //As libevent READ and WRITE functionality is affected by edge triggered events.
-    struct event *service = event_new(base, sockService ,
-            EV_READ | EV_WRITE | EV_ET | EV_PERSIST ,
-            callbackServiceHandler,(void *)&hostP);
-
-    if (event_base_set(base,service) <0 ) {
-        cout << "Event BASE SET SERVICE FAILED " << endl;
-    }
+	if (event_base_set(base,service) <0 )
+		cout <<"Event BASE SET SERVICE FAILED "<<endl;
 
     if(event_add(service,NULL) <0 ) {
         cout << "Event SERVICE ADD FAILED " << endl;
     }
+    if(simulation_) {
+  	struct event *heartBeatSimulationEvent = event_new(base, -1, EV_TIMEOUT | EV_PERSIST, heartBeatPeriodicEvent,(void *)&hostP);
+  	timeval twoSec = {2, 0};
+  	if(event_add(heartBeatSimulationEvent, &twoSec)<0) {
+      cout<< "Periodic event add service failed\n";
+    }
+  }
 
     event_base_dispatch(base);
+if(!simulation_) {
     t.join();
+  }
     cout << "returning " <<endl;
     return platform_;
 }

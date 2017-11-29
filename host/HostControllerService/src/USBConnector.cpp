@@ -38,6 +38,8 @@ bool USBConnector::sendNotification(messageProperty message,void *HCS)
       return false;
     }
 }
+Connector::messageProperty USBConnector::emulatorReceive(void *HCS){}
+bool USBConnector::emulatorSend(messageProperty message,void *HCS){}
 
 Connector::messageProperty USBConnector::receive(void *HCS)
 {

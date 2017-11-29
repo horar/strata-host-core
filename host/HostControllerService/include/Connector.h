@@ -46,12 +46,13 @@ public :
     virtual bool  sendAck(messageProperty,void *)= 0;
     virtual bool  sendNotification(messageProperty,void *)= 0;
     virtual messageProperty receive(void *)=0;
+    virtual messageProperty emulatorReceive(void *)=0;
+    virtual bool  emulatorSend(messageProperty,void *)= 0;
     virtual bool connectivitycheck(std::string address)=0;
 
     virtual ~Connector(){}
-
-        std::mutex lock_serial_;
-
+    std::mutex lock_serial_;
+    std::mutex lock_zmq_;
 };
 
 

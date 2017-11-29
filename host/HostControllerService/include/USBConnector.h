@@ -20,7 +20,9 @@ public :
 
 	bool sendAck(messageProperty,void *);
 	bool sendNotification(messageProperty,void *);
+	bool emulatorSend(messageProperty,void *);
 	messageProperty receive(void *);
+	messageProperty emulatorReceive(void *);
 	bool connectivitycheck(std::string address);
 
 	virtual ~USBConnector();

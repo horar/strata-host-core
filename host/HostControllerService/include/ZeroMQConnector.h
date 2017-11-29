@@ -24,7 +24,9 @@ public :
 
 	bool sendAck(messageProperty message, void *service);
 	bool sendNotification(messageProperty message, void *service);
+	bool emulatorSend(messageProperty message, void *service);
 	messageProperty receive(void *service);
+	messageProperty emulatorReceive(void *service);
 	bool connectivitycheck(std::string address);
 
 	virtual ~ZeroMQConnector();
