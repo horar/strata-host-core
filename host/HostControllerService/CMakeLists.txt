@@ -10,9 +10,9 @@ string(ASCII 27 Esc)
 set(red "${Esc}[31m")
 set(reset_color "${Esc}[m")
 
-if (WIN32)
+if (CROSSCOMPILE)
     message("Building WINDOWS booo...")
-elseif (UNIX AND NOT APPLE)
+elseif (UNIX AND NOT APPLE AND NOT CROSSCOMPILE)
     message("Building LINUX yea...")
 elseif (APPLE)
     message("Building MAC yea...")
@@ -20,11 +20,11 @@ else()
     message("ERROR: unsupported operating system !")
 endif ()
 
-if (WIN32)
+if (CROSSCOMPILE)
     message("TOOL CHAIN: windows")
     SET(CMAKE_TOOLCHAIN_FILE ./cmake/x86_64.cmake)
     SET(CMAKE_CXX_FLAGS "-v -std=gnu++11 -static-libstdc++ -static-libgcc -static")
-elseif(UNIX AND NOT APPLE)
+elseif(UNIX AND NOT APPLE AND NOT CROSSCOMPILE)
     message("TOOL CHAIN: linux")
     SET(CMAKE_CXX_FLAGS "-v -std=c++11")
 elseif (APPLE)
@@ -62,7 +62,7 @@ include_directories(
         )
 add_library(nimbusLib STATIC ${NIMBUS_DIR}/nimbus_internal.cc)
 
-if (WIN32)
+if (CROSSCOMPILE)
     # --- WINDOWS
     message("INCLUDE/LITECORE: windows")
 
@@ -78,7 +78,7 @@ if (WIN32)
     find_library(litecore STATIC NAMES LiteCore HINTS "${NIMBUS_DIR}/bin/x64")
     message("Using litecore at: ${litecore}")
 
-elseif (UNIX AND NOT APPLE)
+elseif (UNIX AND NOT APPLE AND NOT CROSSCOMPILE)
     #--- LINUX
     message("INCLUDE/LITECORE: linux")
 
@@ -140,7 +140,7 @@ add_library(usbconnector STATIC ${CMAKE_CURRENT_SOURCE_DIR}/src/USBConnector.cpp
 
 add_executable(${HOST_CONTROLLER_SERVICE_BINARY_NAME} ${SOURCE})
 
-if (WIN32)
+if (CROSSCOMPILE)
     message("LINKING: windows")
     target_link_libraries(${HOST_CONTROLLER_SERVICE_BINARY_NAME}
             -lzmq.dll
@@ -152,7 +152,7 @@ if (WIN32)
             nimbusLib
             ${litecore}
             )
-elseif( UNIX AND NOT APPLE )
+elseif( UNIX AND NOT APPLE AND NOT CROSSCOMPILE)
     message("LINKING: linux")
     target_link_libraries(${HOST_CONTROLLER_SERVICE_BINARY_NAME}
             -lzmq
