@@ -111,7 +111,7 @@ elseif (APPLE)
     link_directories(${CMAKE_CURRENT_SOURCE_DIR}/../lib/macos/libevents)
     link_directories(${CMAKE_CURRENT_SOURCE_DIR}/../lib/macos/libserial)
     link_directories(${CMAKE_CURRENT_SOURCE_DIR}/../lib/macos/libzmq)
-
+    link_directories(${CMAKE_CURRENT_SOURCE_DIR}/../lib/macos/litecore)
     # LiteCore for mac
     find_library(litecore STATIC NAMES LiteCore
             HINTS "${CMAKE_CURRENT_SOURCE_DIR}/../lib/macos/litecore")
@@ -171,6 +171,7 @@ elseif (APPLE)
             -lpthread
             -levent
             -lserialport
+            -lFleece
             nimbusLib
             ${litecore}
             ${FOUNDATION_LIBRARY} ${IOKIT_LIBRARY}

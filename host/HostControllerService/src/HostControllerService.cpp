@@ -433,7 +433,7 @@ if(!simulation_) {
     }
     if(simulation_) {
   	struct event *heartBeatSimulationEvent = event_new(base, -1, EV_TIMEOUT | EV_PERSIST, heartBeatPeriodicEvent,(void *)&hostP);
-  	timeval twoSec = {2, 0};
+  	timeval twoSec = {1, 0};
   	if(event_add(heartBeatSimulationEvent, &twoSec)<0) {
       cout<< "Periodic event add service failed\n";
     }

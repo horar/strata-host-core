@@ -1,6 +1,7 @@
 #include "nimbus.h"
-#include "base64.h" 
+#include "base64.h"
 #include "Connector.h"
+#include "HostControllerService.h"
 #include <iostream>
 #include <fstream>
 
@@ -21,8 +22,11 @@
 struct host_packet {
     zmq::socket_t* command;
     zmq::socket_t* notify;
+    zmq::socket_t* simulationOnly;
+
     Connector *platform;
     Connector *service;
+    Connector *simulation;
 };
 
 class AttachmentObserver : public Observer {
@@ -35,4 +39,3 @@ public:
     void ValidateDocumentCallback(jsonString jsonBody);
     ~AttachmentObserver(){};
 };
-

@@ -30,9 +30,11 @@ bool ZeroMQConnector::sendAck(messageProperty message,void *service)
 
 bool ZeroMQConnector::sendNotification(messageProperty message,void *service)
 {
+	lock_zmq_.lock();
 	zmq::socket_t *soc = (zmq::socket_t *)service;
 	s_sendmore(*soc,"ONSEMI");
 	s_send (*soc,message.message);
+	lock_zmq_.unlock();
 	// cout << "----> Notification to UI = "<< message.message << endl;
 	return true;
 }
@@ -64,12 +66,12 @@ bool ZeroMQConnector::emulatorSend(messageProperty message,void *service)
 	zmq::socket_t *soc = (zmq::socket_t *)service;
 	uint8_t id [256];
 	size_t id_size = 256;
-	lock_zmq_.lock();
+	// lock_zmq_.lock();
 	soc->getsockopt(ZMQ_IDENTITY,&id,&id_size);
 	soc->send(id,id_size,ZMQ_SNDMORE);
 	message.message.append("\n");
 	bool success = s_send(*soc,message.message);
-	lock_zmq_.unlock();
+	// lock_zmq_.unlock();
 	return success;
 }
 
