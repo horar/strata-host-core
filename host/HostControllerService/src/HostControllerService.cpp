@@ -45,7 +45,7 @@ HostControllerService::HostControllerService(std::string configuration_file)
     simulation_ = configuration_->IsSimulatedPlatform();
     // creating stream socket for non zmq tcp sockets and only for simulation
     if(simulation_) {
-      simulationQemuSocket = new zmq::socket_t(*context,ZMQ_STREAM);
+     simulationQemuSocket = new zmq::socket_t(*context,ZMQ_STREAM);
       // Prasanth: Port number hardcoded for initial version
       simulationQemuSocket->connect("tcp://localhost:7777");
       platformConnect = false;
@@ -225,10 +225,10 @@ void HostControllerService::callbackPlatformHandler(void* hostP) {
     zmq::socket_t *notify = host->notify;
     zmq::socket_t *simulationReceive = host->simulationOnly;
     Connector::messageProperty message;
-
-    sp_new_event_set(&ev);
-    sp_add_port_events(ev, platform_socket_, SP_EVENT_RX_READY);
-
+    if(!simulation_){
+       sp_new_event_set(&ev);
+	     sp_add_port_events(ev, platform_socket_, SP_EVENT_RX_READY);
+    }
     while(1) {
       if(simulation_) {
       message = host->simulation->emulatorReceive(simulationReceive);
@@ -398,39 +398,27 @@ if(!simulation_) {
 #ifndef _WIN32
     int sockService=0;
     size_t size_sockService = sizeof(sockService);
-    //if(simulation_){
-      int simulationSockService=0;
-      size_t size_simulationSockService = sizeof(simulationSockService);
-    //}
+
 #else
     unsigned long long int sockService=0;
     size_t size_sockService = sizeof(sockService);
-    //if(simulation_){
-      unsigned long long int simulationSockService=0;
-      size_t size_simulationSockService = sizeof(simulationSockService);
-    //}
+
 #endif
 
     hostP.command->getsockopt(ZMQ_FD, &sockService, &size_sockService);
-    if(simulation_) {
-      hostP.simulationOnly->getsockopt(ZMQ_FD, &simulationSockService, &size_simulationSockService);
-    }
 
     hostP.hcs = this;
 
     struct event_base *base = event_base_new();
     hostP.base = base;
 
-//if(!simulation_) {
-	thread t(&HostControllerService::callbackPlatformHandler,this,(void *)&hostP);
-//}
+	  thread t(&HostControllerService::callbackPlatformHandler,this,(void *)&hostP);
+
 	//EV_ET says its edge triggered. EV_READ and EV_WRITE are both
 	//needed when event is added else it doesn't function properly
 	//As libevent READ and WRITE functionality is affected by edge triggered events.
 #ifndef __APPLE__
-        struct event *service = event_new(base, sockService ,
-                        EV_READ | EV_WRITE | EV_ET | EV_PERSIST ,
-                        callbackServiceHandler,(void *)&hostP);
+        struct event *service = event_new(base, sockService,EV_READ | EV_WRITE | EV_ET | EV_PERSIST,callbackServiceHandler,(void*)&hostP);
 #else
         struct event *service = event_new(base, sockService ,
                         EV_READ | EV_WRITE | EV_PERSIST ,
@@ -452,9 +440,8 @@ if(!simulation_) {
   }
 
     event_base_dispatch(base);
-if(!simulation_) {
     t.join();
-  }
+
     cout << "returning " <<endl;
     return platform_;
 }

@@ -18,16 +18,17 @@ int main(int argc, char *argv[]) {
     std::string configuration_file = {};
 
     int option = 0;
-    while ((option = getopt (argc , argv , "f:")) != -1) {
-        switch (option) {
-            case 'f' :
-                configuration_file = optarg;
-                break;
-            default:
-                print_usage ("Unknown argument flag");
-                exit (EXIT_FAILURE);
-        }
-    }
+    // while ((option = getopt (argc , argv , "f:")) != -1) {
+    //     switch (option) {
+    //         case 'f' :
+    //             configuration_file = optarg;
+    //             break;
+    //         default:
+    //             print_usage ("Unknown argument flag");
+    //             exit (EXIT_FAILURE);
+    //     }
+    // }
+    configuration_file = argv[2];
 
     if( configuration_file.empty () ) {
         print_usage ("No configuration file specified");
@@ -62,5 +63,3 @@ int main(int argc, char *argv[]) {
 
     return 0;
 }
-
-
