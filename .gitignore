@@ -32,4 +32,4 @@ release*
 *usb-pd.vcxproj.user*
 *.swp
 tags
-
+cmake-build-debug
