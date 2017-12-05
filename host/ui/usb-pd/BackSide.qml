@@ -34,7 +34,7 @@ Rectangle {
     
     Image {
         id: flipButton
-        source:"backIcon.svg"
+        source:"./images/icons/backIcon.svg"
         anchors { bottom: parent.bottom; right: parent.right }
         height: 40;width:40
     }

@@ -1,7 +1,9 @@
 import QtQuick 2.7
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 1.4
+import QtGraphicalEffects 1.0
 import tech.spyglass.ImplementationInterfaceBinding 1.0
+import "framework"
 
 Rectangle {
 
@@ -76,7 +78,7 @@ Rectangle {
             Layout.fillWidth:true
             Layout.fillHeight:true
             Connector { anchorbottom: 1
-                        portNumber: 1
+                portNumber: 1
             }
         }
 
@@ -91,9 +93,8 @@ Rectangle {
             Layout.fillWidth:true
             Layout.fillHeight:true
             Connector { anchorbottom: 0
-                        portNumber: 2
+                portNumber: 2
             }
-
         }
 
         Rectangle {
@@ -131,22 +132,23 @@ Rectangle {
 
     Image {
         id: infoIcon
-        anchors{ bottom: parent.bottom;right: parent.right}
+        anchors{ bottom: parent.bottom;
+            bottomMargin: 10
+            right: parent.right
+            rightMargin: 10}
         height: 50; width:50
         source:"./images/icons/infoIcon.svg"
-
-        Component {
-            id: page1
-            SGLoginScreen {
-                showLoginOnCompletion: true
-                Button {
-                    width: 80; height:25
-                    text: "Connect"
-                    anchors{horizontalCenter: parent.horizontalCenter; bottom: parent.bottom; bottomMargin: 300}
-                    onClicked: { stack.pop() }
-                }
-            }
+        layer.enabled: true
+        layer.effect: DropShadow {
+            anchors.fill: infoIcon
+            horizontalOffset: 3
+            verticalOffset: 6
+            radius: 12.0
+            samples: 24
+            color: "#60000000"
+            source: infoIcon
         }
+
         transform: Rotation {
             id: zRot
             origin.x: infoIcon.width/2; origin.y: infoIcon.height/2;
@@ -175,7 +177,7 @@ Rectangle {
         ScaleAnimator {
             id: decreaseOnMouseExit
             target: infoIcon;
-            from: 1.2;//onLogo.scale;
+            from: 1.2;
             to: 1;
             duration: 200
             running: false
@@ -185,6 +187,7 @@ Rectangle {
             id: imageMouse
             anchors.fill: parent
             hoverEnabled: true
+            cursorShape: Qt.PointingHandCursor
             onClicked: flipable.flipped = !flipable.flipped
             onEntered:{
                 increaseOnMouseEnter.start()
@@ -193,6 +196,5 @@ Rectangle {
                 decreaseOnMouseExit.start()
             }
         }
-    }
-
+    } 
 }

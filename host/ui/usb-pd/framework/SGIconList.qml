@@ -1,6 +1,4 @@
 import QtQuick 2.7
-import "framework"
-import "sgLiveGraph"
 import tech.spyglass.ImplementationInterfaceBinding 1.0
 import QtQuick.Controls 1.4
 
@@ -10,7 +8,6 @@ Rectangle {
     id: container
     color: "transparent"
     width:container.width; height:container.height
-    //visible: false
     property point theDialogStartPosition;
     property int portNumber:0;
 
@@ -20,14 +17,6 @@ Rectangle {
     property double portTemperature: 0;
     property double portPower: 0;
 
-
-    Label {
-        id: disconnectMessage
-        text: " No connected
-        device"
-        opacity: 0.0
-        anchors.centerIn: parent
-    }
 
     // Values are being Signalled from ImplementationInterfaceBinding.cpp
     Connections {
@@ -67,37 +56,6 @@ Rectangle {
                 container.portPower = value;
             }
         }
-        onUsbCPortStateChanged: {
-
-            if( portNumber === port ) {
-                if (value == true) {
-                    console.log("USB-PD Connected");
-                      negotiatedValues.opacity = 1.0;
-                      currentVoltageValue.opacity = 1.0;
-                      powerValue.opacity = 1.0;
-                      temperatureValue.opacity = 1.0;
-                      targetVoltage.opacity = 1.0;
-                      outputVoltage.opacity = 1.0;
-                      portPower.opacity = 1.0;
-                      portTemperature.opacity = 1.0;
-                      disconnectMessage.opacity = 0.0;
-                }
-                else {
-                    console.log("USB-PD Disconnected");
-                    negotiatedValues.opacity = 0.0;
-                    currentVoltageValue.opacity = 0.0;
-                    powerValue.opacity = 0.0;
-                    temperatureValue.opacity = 0.0;
-                    targetVoltage.opacity = 0.0;
-                    outputVoltage.opacity = 0.0;
-                    portPower.opacity = 0.0;
-                    portTemperature.opacity = 0.0;
-                    disconnectMessage.opacity = 1.0;
-                }
-            }
-        }
-
-
     }
 
     property alias power: powerValue;
@@ -107,75 +65,47 @@ Rectangle {
         anchors { top: container.top; topMargin: parent.height*.15
             bottom:container.bottom}
 
-        SGIconStatistic {
+        SGIconListItem {
             id: negotiatedValues
             width:container.width/4; height: width
-            source: "leftArrow.svg"
-            color: "transparent"
+            icon: "../images/icons/leftArrow.svg"
+            text: container.targetVoltage.toFixed(1) +" V   "//+ container.portCurrent.toFixed(1)+" A"
 
             MouseArea {
                 anchors { fill: parent }
-                onClicked: { outputVoltageAndCurrentGraph.open()
-                    //in order to get the dialog to appear out of the voltage icon, we have to know where that icon is
-                    //located in root QML item coordinates.
-                    //theDialogStartPosition = negotiatedValues.mapFromItem(null, negotiatedValues.x, negotiatedValues.y)
-                }
-
-            }
-
-            SGIconLabel {
-                id:targetVoltage
-                width:container.width/0.99; height: negotiatedValues.width
-                anchors{ left:negotiatedValues.right}
-                text: container.targetVoltage.toFixed(1) +" V   "//+ container.portCurrent.toFixed(1)+" A"
-                portNumber: container.portNumber;
-
+                onClicked: { outputVoltageAndCurrentGraph.open() }
             }
         }
 
-        SGIconStatistic {
+        SGIconListItem {
             id: currentVoltageValue
             width: container.width/4; height: width
-            source: "rightArrow.svg"
-            color: "transparent"
+            icon: "../images/icons/rightArrow.svg"
+            text: container.outputVoltage.toFixed(1) + " V"
 
             MouseArea {
                 anchors { fill: parent }
                 onClicked: { targetVoltageGraph.open() }
             }
 
-            SGIconLabel {
-                id: outputVoltage
-                width:container.width/0.99; height:currentVoltageValue.width
-                anchors{ left:currentVoltageValue.right ;  }
-                text: container.outputVoltage.toFixed(1) + " V"
-                portNumber: container.portNumber;
-            }
         }
-        SGIconStatistic {
+        SGIconListItem {
             id: powerValue
             width:container.width/4; height: width
-            source: "voltageIcon.svg"
-            color: "transparent"
+            icon: "../images/icons/voltageIcon.svg"
+            text: container.portPower.toFixed(1)+" W"
 
             MouseArea {
                 anchors { fill: parent }
                 onClicked: { portPowerGraph.open() }
             }
 
-            SGIconLabel {
-                id: portPower
-                width:container.width/0.99; height:powerValue.width
-                anchors{ left:powerValue.right}
-                text: container.portPower.toFixed(1)+" W"
-                portNumber: container.portNumber;
-            }
         }
-        SGIconStatistic {
+        SGIconListItem {
             id: temperatureValue
             width:container.width/4; height: width
-            source: "temperatureIcon.svg"
-            color: "transparent"
+            icon: "../images/icons/temperatureIcon.svg"
+            text: container.portTemperature.toFixed(0) +" °C"
 
             MouseArea {
                 anchors { fill: parent }
@@ -183,15 +113,8 @@ Rectangle {
                 }
             }
 
-            SGIconLabel {
-                id: portTemperature
-                width:container.width/0.99; height: temperatureValue.width
-                anchors{ left:temperatureValue.right }
-                text: container.portTemperature.toFixed(0) +" °C"
-                portNumber: container.portNumber;
-            }
         }
-}
+    }
 
     SGPopup {
         id: outputVoltageAndCurrentGraph
@@ -206,6 +129,9 @@ Rectangle {
         axisYLabel: "Voltage (V)"
         chartType: "Target Voltage"
         portNumber: container.portNumber
+        efficencyLabel: false
+        powerMessageVisible: false;
+        graphVisible: true;
 
     }
     SGPopup {
@@ -221,6 +147,9 @@ Rectangle {
         axisYLabel: "Voltage (V)"
         chartType: "Output Voltage"
         portNumber: container.portNumber
+        efficencyLabel: false
+        powerMessageVisible: false;
+        graphVisible: true;
     }
 
     SGPopup {
@@ -236,6 +165,9 @@ Rectangle {
         axisYLabel: "Power (W)"
         chartType: "Port Power"
         portNumber: container.portNumber
+        efficencyLabel: false
+        powerMessageVisible: false;
+        graphVisible: true;
     }
 
     SGPopup {
@@ -251,6 +183,9 @@ Rectangle {
         axisYLabel: "Temperature (C)"
         chartType: "Port Temperature"
         portNumber: container.portNumber
+        efficencyLabel: false
+        powerMessageVisible: false;
+        graphVisible: true;
     }
 
 }

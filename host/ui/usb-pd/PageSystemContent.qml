@@ -6,9 +6,9 @@ import QtQuick.Controls.Styles 1.4
 
 Item {
     property var currentSystemModel: powerStagesModel
-    property var currentSchematic: "NCV81599-PowerStage1.png"
+    property var currentSchematic: "./images/schematics/PowerStageSchematic.png"
     property var currentVPModel: vpModel2
-    property var currentBlockDiagram: "USB-PD_blockDiagram_PowerStage1Highlighted.png"
+    property var currentBlockDiagram: "./images/highlightedBlockDiagram/USB-PD_blockDiagram_PowerStage1Highlighted.png"
 
     GridLayout{
         id: systemContentGridLayout
@@ -56,7 +56,7 @@ Item {
                     Layout.leftMargin: -5
                     Layout.rightMargin: 5
                     fillMode: Image.PreserveAspectFit
-                    source:"DC-DCPowerIcon.png"
+                    source:"./images/icons/DC-DCPowerIcon.png"
                 }
                 Button{
                     id:button1
@@ -84,8 +84,8 @@ Item {
 
                     onClicked: {
                         currentSystemModel = powerStagesModel
-                        currentSchematic = "NCV81599-PowerStage1.png"
-                        currentBlockDiagram = "USB-PD_blockDiagram_PowerStage1Highlighted.png"
+                        currentSchematic = "./images/schematics/PowerStageSchematic.png"
+                        currentBlockDiagram = "./images/highlightedBlockDiagram/USB-PD_blockDiagram_PowerStage1Highlighted.png"
                         currentVPModel = vpModel2
                     }
                 }
@@ -113,8 +113,8 @@ Item {
                     }
                     onClicked: {
                         currentSystemModel = powerStagesModel
-                        currentSchematic = "NCV81599-PowerStage1.png"
-                        currentBlockDiagram = "USB-PD_blockDiagram_PowerStage2Highlighted.png"
+                        currentSchematic = "./images/schematics/PowerStageSchematic.png"
+                        currentBlockDiagram = "./images/highlightedBlockDiagram/USB-PD_blockDiagram_PowerStage2Highlighted.png"
                         currentVPModel = vpModel2
                     }
                 }
@@ -142,8 +142,8 @@ Item {
                     }
                     onClicked: {
                         currentSystemModel = threeVoltRailModel
-                        currentSchematic = "ThreeVoltRailSchematic.png"
-                        currentBlockDiagram = "USB-PD_blockDiagram_ThreeVoltHighlighted.png"
+                        currentSchematic = "./images/schematics/ThreeVoltRailSchematic.png"
+                        currentBlockDiagram = "./images/highlightedBlockDiagram/USB-PD_blockDiagram_ThreeVoltHighlighted.png"
                         currentVPModel = vpModel2
                     }
                 }
@@ -178,7 +178,7 @@ Item {
                     Layout.rightMargin: 5
                     Layout.bottomMargin: 6
                     fillMode: Image.PreserveAspectFit
-                    source:"ProtectionIcon.png"
+                    source:"./images/icons/ProtectionIcon.png"
                 }
                 Button{
                     id:button4
@@ -204,8 +204,8 @@ Item {
                     }
                     onClicked: {
                         currentSystemModel = batterySystemModel
-                        currentSchematic = "BatteryProtectionSchematic.png"
-                        currentBlockDiagram = "USB-PD_blockDiagram_BatteryProtectionHighlighted.png"
+                        currentSchematic = "./images/schematics/BatteryProtectionSchematic.png"
+                        currentBlockDiagram = "./images/highlightedBlockDiagram/USB-PD_blockDiagram_BatteryProtectionHighlighted.png"
                         currentVPModel = vpModel1
                     }
                 }
@@ -241,7 +241,7 @@ Item {
                     Layout.rightMargin: 5
                     Layout.bottomMargin: 6
                     fillMode: Image.PreserveAspectFit
-                    source:"SensorsIcon.png"
+                    source:"./images/icons/SensorsIcon.png"
                 }
                 Button{
                     id:button5
@@ -268,8 +268,8 @@ Item {
                     }
                     onClicked: {
                         currentSystemModel = tempSensorSystemModel
-                        currentSchematic = "TempSensorSchematic.png"
-                        currentBlockDiagram = "USB-PD_blockDiagram_TempSensorHighlighted.png"
+                        currentSchematic = "./images/schematics/TempSensorSchematic.png"
+                        currentBlockDiagram = "./images/highlightedBlockDiagram/USB-PD_blockDiagram_TempSensorHighlighted.png"
                         currentVPModel = vpModel2
                     }
                 }
@@ -299,8 +299,8 @@ Item {
                     }
                     onClicked: {
                         currentSystemModel = tempSensorSystemModel
-                        currentSchematic = "TempSensorSchematic.png"
-                        currentBlockDiagram = "USB-PD_blockDiagram_TempSensorHighlighted.png"
+                        currentSchematic = "./images/schematics/TempSensorSchematic.png"
+                        currentBlockDiagram = "./images/highlightedBlockDiagram/USB-PD_blockDiagram_TempSensorHighlighted.png"
                         currentVPModel = vpModel2
                     }
                 }
@@ -336,7 +336,7 @@ Item {
                     Layout.rightMargin: 15
                     Layout.bottomMargin: 2
                     fillMode: Image.PreserveAspectFit
-                    source:"USBInterfaceIcon.png"
+                    source:"./images/icons/USBInterfaceIcon.png"
                 }
                 Button{
                     id:button7
@@ -363,8 +363,8 @@ Item {
                     }
                     onClicked: {
                         currentSystemModel = usbCModel
-                        currentSchematic = "USBCInterfaceSchematic1.png"
-                        currentBlockDiagram = "USB-PD_blockDiagram_USB-C1Highlighted.png"
+                        currentSchematic = "./images/schematics/USBCInterfaceSchematic1.png"
+                        currentBlockDiagram = "./images/highlightedBlockDiagram/USB-PD_blockDiagram_USB-C1Highlighted.png"
                         currentVPModel = vpModel2
                     }
                 }
@@ -393,8 +393,8 @@ Item {
                     }
                     onClicked: {
                         currentSystemModel = usbCModel
-                        currentSchematic = "USBCInterfaceSchematic1.png"
-                        currentBlockDiagram = "USB-PD_blockDiagram_USB-C2Highlighted.png"
+                        currentSchematic = "./images/schematics/USBCInterfaceSchematic1.png"
+                        currentBlockDiagram = "./images/highlightedBlockDiagram/USB-PD_blockDiagram_USB-C2Highlighted.png"
                         currentVPModel = vpModel2
                     }
                 }
@@ -473,7 +473,7 @@ Item {
                          closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
                          background: Image {
                              id: popupBorder
-                             source: "./framework/images/boarder_graph.svg"
+                             source: "./images/dialogBorder.svg"
                              width:parent.width; height:parent.height
 
                              MouseArea {
@@ -565,7 +565,7 @@ Item {
                          closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
                          background: Image {
                              id: popupBorder
-                             source: "./framework/images/boarder_graph.svg"
+                             source: "./images/dialogBorder.svg"
                              width:parent.width
                              height:parent.height
 

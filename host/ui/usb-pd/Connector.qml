@@ -1,5 +1,6 @@
 import QtQuick 2.0
 import QtQuick.Controls 1.4
+import QtGraphicalEffects 1.0
 import tech.spyglass.ImplementationInterfaceBinding 1.0
 
 
@@ -111,8 +112,8 @@ Rectangle {
         id: leftUSBPlug
         width: connector.width/5; height: connector.height/4
         x:  connector.x + connector.width/3
-        anchors{ verticalCenter: connector.verticalCenter }/*; verticalCenterOffset: 9}*/
-        source: "leftUSBPlug.svg"
+        anchors{ verticalCenter: connector.verticalCenter }
+        source: "./images/rightUSBPlug.svg"
 
         MouseArea {
             anchors { fill: parent }
@@ -121,7 +122,6 @@ Rectangle {
                 if (!isConnected){
                     isConnected = true;
                     connect.start();
-                    //disconnectMessage.visible= false;
                 }
                 else{
                     isConnected = false;
@@ -217,6 +217,16 @@ Rectangle {
                 duration: 1000
             }
         }
+    }
+
+    DropShadow {
+        anchors.fill: leftUSBPlug
+        horizontalOffset: 1
+        verticalOffset: 3
+        radius: 12.0
+        samples: 24
+        color: "#60000000"
+        source: leftUSBPlug
     }
 }
 

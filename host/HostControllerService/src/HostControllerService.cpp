@@ -130,7 +130,6 @@ void callbackServiceHandler(evutil_socket_t fd ,short what, void* hostP) {
 	send->getsockopt(ZMQ_EVENTS, &zmq_events, &zmq_events_size);
 
 	Connector::messageProperty message = host->service->receive(host->command);
-
 	if(!message.message.compare("DISCONNECTED")) {
 
 		cout << "Platform Disconnect detected " <<endl;
@@ -346,10 +345,15 @@ string HostControllerService::setupHostControllerService(string ipRouter, string
 	//EV_ET says its edge triggered. EV_READ and EV_WRITE are both
 	//needed when event is added else it doesn't function properly
 	//As libevent READ and WRITE functionality is affected by edge triggered events.
+#ifndef __APPLE__
 	struct event *service = event_new(base, sockService ,
 			EV_READ | EV_WRITE | EV_ET | EV_PERSIST ,
 			callbackServiceHandler,(void *)&hostP);
-
+#else 
+	struct event *service = event_new(base, sockService ,
+			EV_READ | EV_WRITE |EV_PERSIST ,
+			callbackServiceHandler,(void *)&hostP);
+#endif
 	if (event_base_set(base,service) <0 )
 		cout <<"Event BASE SET SERVICE FAILED "<<endl;
 

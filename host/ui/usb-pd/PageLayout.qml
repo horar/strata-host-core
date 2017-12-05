@@ -33,7 +33,7 @@ Item {
         anchors { top: parent.top; right: parent.right }
         height: 40
         fillMode: Image.PreserveAspectFit
-        source: "onsemi_logo.png"
+        source: "./images/icons/onLogoGreenWithText.png"
     }
 
     Rectangle {

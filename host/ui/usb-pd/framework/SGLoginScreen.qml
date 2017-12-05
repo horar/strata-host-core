@@ -1,6 +1,8 @@
 import QtQuick 2.7
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.0
+import QtQuick.Controls.Material 2.2
+import QtQuick.Controls.Styles 1.4
 import tech.spyglass.ImplementationInterfaceBinding 1.0
 
 Rectangle {
@@ -15,10 +17,11 @@ Rectangle {
         if (showLoginOnCompletion){
             showConnectionScreen.start();
         }
+        usernameField.forceActiveFocus();   //allows the user to type their username without clicking
     }
 
     property bool  hardwareStatus : {
-        var state = true//implementationInterfaceBinding.platformState;
+        var state = implementationInterfaceBinding.platformState;
 
         if(loginScreen==true) {
             if(state == true && login_detected == true){
@@ -48,6 +51,7 @@ Rectangle {
         anchors { top: parent.top; horizontalCenter: parent.horizontalCenter }
         width: parent.width * 0.70; height: 30;
         color: "red"
+        opacity: .8
         radius: 4
         Label {
             anchors { centerIn: parent }
@@ -62,7 +66,7 @@ Rectangle {
         width: 80; height: 80
         anchors{horizontalCenter: parent.horizontalCenter
             bottom:spyglassTextRect.top}
-        source: "ONBall.svg"
+        source: "../images/icons/onLogoGrey.svg"
         mipmap: true;
     }
 
@@ -209,7 +213,10 @@ Rectangle {
         color: "#ffffff"
         border { color: "black"; width: 1 }
         anchors { horizontalCenter: parent.horizontalCenter;
-            verticalCenter: parent.verticalCenter}
+            top: spyglassTextRect.bottom
+            topMargin: 15}
+
+
 
         Rectangle {
             id: headerBackground
@@ -225,68 +232,135 @@ Rectangle {
             color: "#ffffff"
             text: qsTr("login to your account")
             font { bold: true }
-            fontSizeMode: Text.Fit
+            font.pointSize: Qt.platform.os == "osx"? 13 :8
             anchors { horizontalCenterOffset: 1; horizontalCenter: parent.horizontalCenter }
             horizontalAlignment: Text.AlignHCenter
         }
 
         TextField {
             id: usernameField
-            x: 8; y: 36
-            width: 184; height: 28
-            placeholderText: qsTr("username")
+            x: 8; y: 40
+            width: 184; height: 38
+            focus: true
+            placeholderText: qsTr(" username")
+            Material.accent: Material.Grey
+            cursorPosition: 3
+
+            //handle a return key click, which is the equivalent of the login button being clicked
+            Keys.onReturnPressed:{
+                if (usernameField.text=="" && passwordField.text==""){
+                    failedLogin.start();
+                }
+                else{
+                    loginScreen = false;
+                    login_detected = true;
+                }
+            }
         }
 
         TextField {
             id: passwordField
             x: 8; y: 75
-            width: 184; height: 28
-            placeholderText: qsTr("password")
+            width: 184; height: 38
+            activeFocusOnTab: true
+            placeholderText: qsTr(" password")
             echoMode: TextInput.Password
+            Material.accent: Material.Grey
+
+            //handle a return key click, which is the equivalent of the login button being clicked
+            Keys.onReturnPressed:{
+                if (usernameField.text=="" && passwordField.text==""){
+                    failedLogin.start();
+                }
+                else{
+                    loginScreen = false;
+                    login_detected = true;
+                }
+            }
+        }
+
+        Rectangle{
+            id:loginErrorRect
+            x:8; y:111
+            width: 184; height:48
+            color:"red"
+            opacity: 0.0
+
+            Image{
+                id:alertIcon
+                source: "./images/whiteAlertIcon.svg"
+                anchors{left:parent.left; top:parent.top; bottom:parent.bottom
+                        leftMargin: 5; topMargin:10; bottomMargin:10}
+                fillMode:Image.PreserveAspectFit
+
+                mipmap: true;
+            }
+
+            Text{
+                id:loginErrorText
+                font.family: "helvetica"
+                font.bold:true
+                font.pointSize: (Qt.platform.os == "osx") ? 13 : 8
+                wrapMode: Label.WordWrap
+                anchors {
+                    left: alertIcon.right
+                    right: parent.right
+                    verticalCenter: parent.verticalCenter
+                }
+                horizontalAlignment:Text.AlignHCenter
+                text: "Your username or password is incorrect"
+                color: "white"
+            }
+
+
         }
 
         Button {
             id: loginButton
-            x: 8; y: 112
-            width: 184; height: 28
+            anchors{bottom:loginRectangle.bottom
+                    bottomMargin: 6
+                    left: loginRectangle.left
+                    leftMargin: 8}
+            width: 184; height: 38
             text:"login"
-            font{ pointSize: 13; bold: true }
+            Material.elevation: 6
+            Material.background: loginButton.down ? Qt.darker("#2eb457") : "#2eb457"
 
             contentItem: Text {
                 text: loginButton.text
-                font: loginButton.font
+                font.family: "helvetica"
                 opacity: enabled ? 1.0 : 0.3
                 color: loginButton.down ? "white" : "white"
                 horizontalAlignment: Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter
                 elide: Text.ElideRight
-                fontSizeMode: Qt.platform.os != "osx"? 8 :Text.Fit
-            }
-
-            background: Rectangle {
-                color: loginButton.down ? Qt.darker("#2eb457") : "#2eb457"
+                font.pointSize: Qt.platform.os != "osx"? 10 :13
+                font.bold:true
             }
 
             onClicked: {
-                loginScreen = false;
-                login_detected = true;
+
+                if (usernameField.text=="" && passwordField.text==""){
+                    failedLogin.start();
+                }
+                else{   //valid login
+                    loginScreen = false;
+                    login_detected = true;
+                }
             }
+
+
         }
     }
 
-    //handle a return key click, which is the equivalent of the login button being clicked
-    Keys.onReturnPressed:{
-        loginScreen = false;
-        login_detected = true;
-    }
+
 
     Button {
         id: guestLoginButton
         width: 200; height: 32
-        font{ pointSize: 13; bold: true;}
         anchors{ horizontalCenter: parent.horizontalCenter;
-            top: loginRectangle.bottom
-            topMargin: 25}
+            top: spyglassTextRect.bottom
+            topMargin: 230}
 
         contentItem: Text {
             text:"continue as guest"
@@ -296,7 +370,8 @@ Rectangle {
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
             elide: Text.ElideRight
-            fontSizeMode: Qt.platform.os != "osx"? 8 :Text.Fit
+            font.pointSize: Qt.platform.os == "osx"? 15 :8
+            font.bold: true
         }
         background: Rectangle {
             color: "white"
@@ -314,6 +389,24 @@ Rectangle {
         interval: 5000; running: guestLoginButton.pressed | loginButton.pressed ; repeat: false
         onTriggered:{ stack.pop() }
 
+    }
+
+    SequentialAnimation{
+        //animator to show that the login failed
+        id:failedLogin
+
+        NumberAnimation {
+            target: loginRectangle
+            property: "height"
+            to: 200
+            duration: 700
+        }
+        NumberAnimation{
+            target:loginErrorRect
+            property:"opacity"
+            to: 1
+            duration: 700
+        }
     }
 
     SequentialAnimation{

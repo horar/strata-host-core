@@ -238,6 +238,8 @@ void ImplementationInterfaceBinding::handleUsbPowerNotification(const QVariantMa
 
     float input_voltage = payloadMap["input"].toFloat();
     emit portInputVoltageChanged(port, input_voltage);
+
+    emit portEfficencyChanged(port, input_voltage*current, power);
 #else
 // For load board data simulation only
     float output_voltage = targetVoltage +  static_cast <float> ((rand()%10)/10);
