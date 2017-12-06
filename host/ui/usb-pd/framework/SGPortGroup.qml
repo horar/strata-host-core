@@ -113,23 +113,6 @@ Rectangle {
             Layout.preferredWidth:grid.prefWidth(this)
             Layout.preferredHeight:grid.prefHeight(this)
 
-
-//            transform: Rotation {
-//                id: zRot
-//                origin.x: infoIcon.width/2; origin.y: infoIcon.height/2;
-//                axis { x: 0; y: 1; z: 0 }
-//            }
-
-//            NumberAnimation {
-//                id:rotateInfoIcon
-//                running: false
-//                loops: 1
-//                target: zRot;
-//                property: "angle";
-//                from: 0; to: 360;
-//                duration: 1000;
-//            }
-
             PropertyAnimation {
                 id: portEnter
                 target: portTitle
@@ -216,7 +199,7 @@ Rectangle {
                 verticalAlignment: Text.AlignVCenter
                 horizontalAlignment:Text.AlignHCenter
                 font.family: "helvetica"
-                font.pointSize: 14
+                font.pointSize: (Qt.platform.os === "osx")? 24: 14
 
             }
         }
