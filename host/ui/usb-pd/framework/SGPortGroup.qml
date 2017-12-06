@@ -114,27 +114,28 @@ Rectangle {
             Layout.preferredHeight:grid.prefHeight(this)
 
 
-            transform: Rotation {
-                id: zRot
-                origin.x: infoIcon.width/2; origin.y: infoIcon.height/2;
-                axis { x: 0; y: 1; z: 0 }
-            }
+//            transform: Rotation {
+//                id: zRot
+//                origin.x: infoIcon.width/2; origin.y: infoIcon.height/2;
+//                axis { x: 0; y: 1; z: 0 }
+//            }
 
-            NumberAnimation {
-                id:rotateInfoIcon
-                running: false
-                loops: 1
-                target: zRot;
-                property: "angle";
-                from: 0; to: 360;
-                duration: 1000;
-            }
+//            NumberAnimation {
+//                id:rotateInfoIcon
+//                running: false
+//                loops: 1
+//                target: zRot;
+//                property: "angle";
+//                from: 0; to: 360;
+//                duration: 1000;
+//            }
 
             PropertyAnimation {
                 id: portEnter
                 target: portTitle
                 property: "font.pointSize"
-                to : 15
+                to : (Qt.platform.os == "osx") ?
+                         parent.width/8 : Label.Fit
                 duration: 200
                 running: false
             }
@@ -143,7 +144,8 @@ Rectangle {
                 id: portExit
                 target: portTitle
                 property: "font.pointSize"
-                to : 9
+                to : (Qt.platform.os == "osx") ?
+                             parent.width/10 : Label.Fit
                 duration: 200
                 running: false
             }
