@@ -15,6 +15,7 @@ Popup {
     property int portNumber:0
     property bool powerMessageVisible: false;
     property bool graphVisible: false;
+    property var selection: undefined
 
     modal: true
     focus: false
@@ -27,20 +28,20 @@ Popup {
         color: "transparent"
         border.color : "transparent"
     }
-        Image {
-            id: popupBoarder
-            source: "./images/dialogBorder.svg"
-            width: container.width; height: container.height
-            z: 0
+    Image {
+        id: popupBoarder
+        source: "./images/dialogBorder.svg"
+        width: container.width; height: container.height
+        z: 0
 
-            MouseArea {
-                id: mouseArea
-                width: parent.width/7; height: width
-                anchors.centerIn: popupBoarder.Top
-                anchors.right: popupBoarder.right
-                onClicked: { container.close() }
-            }
+        MouseArea {
+            id: mouseArea
+            width: parent.width/7; height: width
+            anchors.centerIn: popupBoarder.Top
+            anchors.right: popupBoarder.right
+            onClicked: { container.close() }
         }
+    }
 
     enter: Transition {
         // grow and fade_in
@@ -62,7 +63,7 @@ Popup {
     contentItem:
 
 
-    Rectangle {
+        Rectangle {
         id:contentItem
         width: container.width/10; height: container.height/10
         color: "transparent"
@@ -70,13 +71,13 @@ Popup {
 
         z: 1
         Image {
-        id: powerMessage
-        width: container.width/1.3; height: container.height/1.3
-        visible: powerMessageVisible
-        anchors { centerIn: parent }
-        z: 2
-        source: "./images/Port_Power_Messages_Dialog.png"
-    }
+            id: powerMessage
+            width: container.width/1.3; height: container.height/1.3
+            visible: powerMessageVisible
+            anchors { centerIn: parent }
+            z: 2
+            source: "./images/Port_Power_Messages_Dialog.png"
+        }
         Label {
             id: labelAxis_x
             y: 430
@@ -111,6 +112,7 @@ Popup {
                 verticalCenter: contentItem.verticalCenter ;
                 verticalCenterOffset: labelAxis_y2.height;}
         }
+
 
         SGScopeView {
             id: graph

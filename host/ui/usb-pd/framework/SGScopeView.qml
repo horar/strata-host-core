@@ -16,13 +16,6 @@ ChartView {
     property var  efficencyValue: 0
     property bool efficencyVisible: false
     property bool hardwareStatus : {
-        // if user wants to reset the axis
-        //        if(count == 100) {
-        //            lineSeries1.clear();
-        //            count = 0;
-        //            axisX.max = 10;
-        //        }
-
         // if user wants to shrink all the data in single chart after opening the graph
         if(chartView.count%100 == 0 && chartView.count!=0){
             axisX.max+=5;
@@ -102,12 +95,82 @@ ChartView {
                       else {
                           whenOpen = false;
                           if(count!=0) {
-                              //                            lineSeries1.clear();
                               (chartType === "outputVoltageCurrent")?lineSeries2.clear()&lineSeries1.clear():lineSeries1.clear();
                               count = 0;
                               axisX.max=10;
                           }
                       }
+    MouseArea {
+        anchors.fill: parent
+        onClicked: {
+            if(!selection)
+            {
+                selection = selectionComponent.createObject(parent, {"x": 10, "y": 10, "width": parent.width - 60 , "height":parent.height / 3})
+            }
+        }
+    }
+    Component {
+        id: selectionComponent
+
+        Rectangle {
+            id: selComp
+            opacity: 0.2
+
+            anchors { top : parent.top;
+                topMargin: parent.height/4
+                left: parent.left
+                leftMargin: 59
+                right: parent.right
+                rightMargin: 51
+            }
+
+            border {
+                width: 2
+                color: "red"
+            }
+            color: "red"
+            property int rulersSize: 20
+            MouseArea {     // drag mouse area
+                anchors.fill: parent
+                drag{
+                    target: parent
+                    minimumX: 0
+                    minimumY: 0
+                    maximumX: parent.parent.width - parent.width
+                    maximumY: parent.parent.height - parent.height
+                    smoothed: true
+                }
+
+                onDoubleClicked: {
+                    parent.destroy()        // destroy component
+                }
+            }
+
+            Rectangle {
+                width: rulersSize
+                height: rulersSize
+                radius: rulersSize
+                x: parent.x / 2
+                y: parent.y
+                opacity: 2
+                color: "red"
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.verticalCenter: parent.bottom
+
+                MouseArea {
+                    anchors.fill: parent
+                    drag{ target: parent; axis: Drag.YAxis }
+                    onMouseYChanged: {
+                        if(drag.active){
+                            selComp.height = selComp.height + mouseY
+                            if(selComp.height < 50)
+                                selComp.height = 50
+                        }
+                    }
+                }
+            }
+        }
+    }
 
     ValueAxis {
         id: axisY1
