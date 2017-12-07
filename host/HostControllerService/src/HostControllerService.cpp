@@ -236,8 +236,14 @@ void HostControllerService::callbackPlatformHandler(void* hostP) {
         {
           platformConnect = true;
         }
-
-      host->service->sendNotification(message,host->notify);
+      string tempMessage = message.message;
+      // cout<< "received new line size "<<stringSize<<"   "<<message.message.size()<<endl;
+      // cout << "Emulator receive "<<message.message<<endl;
+      istringstream iss(message.message);
+      while ( getline( iss,message.message, '\n' ) ) {
+          host->service->sendNotification(message,host->notify);
+          cout << "Emulator receive "<<message.message<<endl;
+      }
     }
     else{
         message = host->platform->receive((void *)host->hcs);
