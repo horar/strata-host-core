@@ -52,10 +52,12 @@ Rectangle {
 
             if( portNumber === port ){
                 if (value == true) {
+                    iconListAnimation.stop()
                     messageAnimation.start()
                 }
 
                 else {
+                    messageAnimation.stop()
                     iconListAnimation.start()
                 }
             }
@@ -118,7 +120,7 @@ Rectangle {
                 target: portTitle
                 property: "font.pointSize"
                 to : (Qt.platform.os == "osx") ?
-                         parent.width/8 : Label.Fit
+                         parent.width/8 : parent.width/20
                 duration: 200
                 running: false
             }
@@ -128,7 +130,7 @@ Rectangle {
                 target: portTitle
                 property: "font.pointSize"
                 to : (Qt.platform.os == "osx") ?
-                             parent.width/10 : Label.Fit
+                         parent.width/10 : parent.width/28
                 duration: 200
                 running: false
             }
@@ -141,6 +143,7 @@ Rectangle {
                 font { family: "Helvetica"; bold: true }
                 horizontalAlignment: Text.AlignRight
                 color: "Green"
+
                 anchors { verticalCenter: portNameAndDivider.verticalCenter; right: portNameAndDivider.right; rightMargin: 10 }
 
                 MouseArea {
@@ -159,7 +162,10 @@ Rectangle {
                     portTitle.font.pointSize = parent.width/10 > 0 ? parent.width/10 : 1;
                 }
                 else{
-                    fontSizeMode : Label.Fit
+                    font.pointSize = Label.Fit
+
+
+
                 }
             }
 
