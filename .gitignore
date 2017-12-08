@@ -32,4 +32,10 @@ release*
 *usb-pd.vcxproj.user*
 *.swp
 tags
+*.bin
+*.elf
+*.map
+*.a
+*.so
+
 
