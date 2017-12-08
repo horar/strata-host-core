@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="91px" height="47px" viewBox="0 0 91 47" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 48.1 (47250) - http://www.bohemiancoding.com/sketch -->
+    <title>Arrows</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="tabloid" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" transform="translate(-360.000000, -460.000000)" stroke-linecap="square">
+        <g id="One-Repeater-data-route" transform="translate(256.000000, 429.000000)" stroke-width="4">
+            <g id="Arrows" transform="translate(112.000000, 36.000000)">
+                <path d="M0,36 L71.1577644,36" id="Line-Copy-7" stroke="#4A90E2" transform="translate(35.578882, 36.000000) scale(-1, 1) translate(-35.578882, -36.000000) "></path>
+                <path id="Line-Copy-7-decoration-1" d="M71.1577644,36 L60.3577644,33 L60.3577644,39 L71.1577644,36 Z" stroke="#4A90E2"></path>
+                <path d="M0.422222222,1.5 L75.5777778,1.5" id="Line-Copy-3" stroke="#963232"></path>
+                <path id="Line-Copy-3-decoration-1" d="M75.5777778,1.5 L64.7777778,-1.5 L64.7777778,4.5 L75.5777778,1.5 Z" stroke="#963232"></path>
+            </g>
+        </g>
+    </g>
+</svg>
