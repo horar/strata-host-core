@@ -3,8 +3,8 @@ import QtQuick.Controls 2.0
 
 Button {
     id:leftButton
-    width:100
-    height:40
+    //width:100
+    //height:40
     property var tabName
     checkable: true
     checked:true
@@ -39,14 +39,5 @@ Button {
         //console.log("marking canvas as dirty")
     }
 
-    function createTab(inTabName, inParent){
-        var component  = Qt.createComponent(inTabName);
-        var object = component.createObject(inParent);
-        return object
-    }
-
-    Component.onCompleted: {
-        tabName = createTab("One.qml",contentRectangle);
-    }
 
 }

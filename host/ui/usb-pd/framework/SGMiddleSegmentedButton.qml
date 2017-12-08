@@ -2,7 +2,7 @@ import QtQuick 2.0
 import QtQuick.Controls 2.0
 
 Button {
-    property var tabName: Two{}
+    property var tabName
     checkable: true
     text: "two"
     width:100
@@ -38,15 +38,7 @@ Button {
         middleButtonCanvas.requestPaint()
     }
 
-    function createTab(inTabName, inParent){
-        var component  = Qt.createComponent(inTabName);
-        var object = component.createObject(inParent);
-        return object
-    }
 
-    Component.onCompleted: {
-        tabName = createTab("Two.qml",contentRectangle);
-    }
 }
 
 
