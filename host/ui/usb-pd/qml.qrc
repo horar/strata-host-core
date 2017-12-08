@@ -68,5 +68,9 @@
         <file>framework/SGPortGroup.qml</file>
         <file>framework/images/Port_Power_Messages_Dialog.png</file>
         <file>framework/images/whiteAlertIcon.svg</file>
+        <file>PageDataPath.qml</file>
+        <file>framework/SGLeftSegmentedButton.qml</file>
+        <file>framework/SGMiddleSegmentedButton.qml</file>
+        <file>framework/SGRightSegmentedButton.qml</file>
     </qresource>
 </RCC>
