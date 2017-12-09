@@ -17,6 +17,16 @@ Item {
         showPassiveSourceAndSink(false);
     }
 
+
+    Text{
+        font.family: "helvetica"
+        font.pointSize: 36
+        text:"Data Path Configuration"
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.top: parent.top
+        anchors.topMargin: 20
+    }
+
     //segmented buttons for signal loss
     Label{
         id: signalLossLabel
@@ -60,7 +70,6 @@ Item {
     }
 
     function showOneRedriverSourceAndSink(inShow){
-        console.log("one redriver show = ", inShow);
         oneRedriverLaptop.visible = inShow;
         oneRedriverLeftArrows.visible = inShow;
         oneRedriverRightArrows.visible = inShow;
@@ -83,7 +92,6 @@ Item {
     ButtonGroup {
         id:dataPathGroup
         onClicked: {
-            console.log(button.objectName, " clicked");
             if (button.objectName == "twoRedrivers"){
                 showTwoRedriverSourceAndSink(true);
                 showOneRedriverSourceAndSink(false);
