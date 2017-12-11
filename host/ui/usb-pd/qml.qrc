@@ -72,7 +72,6 @@
         <file>framework/SGLeftSegmentedButton.qml</file>
         <file>framework/SGMiddleSegmentedButton.qml</file>
         <file>framework/SGRightSegmentedButton.qml</file>
-        <file>images/DataPath/arrows.svg</file>
         <file>images/DataPath/laptop.svg</file>
         <file>images/DataPath/OneRepeaterRouteActive.svg</file>
         <file>images/DataPath/PassiveDataRouteInactive.svg</file>
@@ -81,5 +80,6 @@
         <file>images/DataPath/OneRepeaterRouteInactive.svg</file>
         <file>images/DataPath/hardDrive.svg</file>
         <file>images/DataPath/PassiveDataRouteActive.svg</file>
+        <file>images/DataPath/arrows.png</file>
     </qresource>
 </RCC>
