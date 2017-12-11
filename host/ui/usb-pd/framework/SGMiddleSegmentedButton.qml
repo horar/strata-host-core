@@ -5,8 +5,8 @@ Button {
     property var tabName
     checkable: true
     text: "two"
-    width:100
-    height:40
+    //width:100
+    //height:40
 
     background: Canvas{
         id:middleButtonCanvas

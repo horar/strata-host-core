@@ -3,8 +3,8 @@ import QtQuick.Controls 2.0
 
 Button {
     property var tabName
-    width:100
-    height:40
+    //width:100
+    //height:40
     checkable:true
     text: "three"
 
