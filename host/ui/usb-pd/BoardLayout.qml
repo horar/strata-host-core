@@ -141,8 +141,8 @@ Rectangle {
         layer.enabled: true
         layer.effect: DropShadow {
             anchors.fill: infoIcon
-            horizontalOffset: 3
-            verticalOffset: 6
+            horizontalOffset: 2
+            verticalOffset: 2
             radius: 12.0
             samples: 24
             color: "#60000000"
