@@ -7,7 +7,7 @@ import "framework"
 
 Item {
 
-    property var verticalButtonDelta: 40
+    property var verticalButtonDelta: 40    //distance betwen the routing buttons
 
     //set the hidden elements of the UI correctly based on the two redriver
     //button being set on startup
@@ -133,7 +133,7 @@ Item {
 
     Image {
         id: twoRedriversLeftArrows
-        source: "./images/DataPath/arrows.svg"
+        source: "./images/DataPath/arrows.png"
         anchors.verticalCenter: twoRedrivers.verticalCenter
         anchors.right: twoRedrivers.left
         anchors.rightMargin: 10
@@ -150,11 +150,49 @@ Item {
         ButtonGroup.group: dataPathGroup
         checkable:true
         checked:true
+        background: Rectangle{color:"transparent"}
 
         Image{
             source: twoRedrivers.checked ? "./images/DataPath/TwoRepeaterRouteActive.svg" : "./images/DataPath/TwoRepeaterDataRouteInactive.svg"
             height: twoRedrivers.height
             width: twoRedrivers.width
+
+            Text{
+                text:"Flex Cable"
+                color: twoRedrivers.checked ? "white" : "transparent"
+                font.family: "helvetica"
+                font.pointSize: 14
+                anchors.centerIn:parent
+            }
+
+            Text{
+                text:"Redriver"
+                color: twoRedrivers.checked ? "white" : "transparent"
+                font.family: "helvetica"
+                font.pointSize: 14
+                anchors{top:parent.top; left: parent.left; leftMargin: parent.width/8}
+            }
+            Text{
+                text:"Redriver"
+                color: twoRedrivers.checked ? "white" : "transparent"
+                font.family: "helvetica"
+                font.pointSize: 14
+                anchors{top:parent.top; right: parent.right; rightMargin: parent.width/8}
+            }
+            Text{
+                text:"Redriver"
+                color: twoRedrivers.checked ? "white" : "transparent"
+                font.family: "helvetica"
+                font.pointSize: 14
+                anchors{bottom:parent.bottom; left: parent.left; leftMargin: parent.width/8}
+            }
+            Text{
+                text:"Redriver"
+                color: twoRedrivers.checked ? "white" : "transparent"
+                font.family: "helvetica"
+                font.pointSize: 14
+                anchors{bottom:parent.bottom; right: parent.right; rightMargin: parent.width/8}
+            }
         }
     }
 
@@ -170,7 +208,7 @@ Item {
 
     Image {
         id: twoRedriversRightArrows
-        source: "./images/DataPath/arrows.svg"
+        source: "./images/DataPath/arrows.png"
         anchors.verticalCenter: twoRedrivers.verticalCenter
         anchors.left: twoRedrivers.right
         anchors.leftMargin: 10
@@ -217,7 +255,7 @@ Item {
 
     Image {
         id: oneRedriverLeftArrows
-        source: "./images/DataPath/arrows.svg"
+        source: "./images/DataPath/arrows.png"
         anchors.verticalCenter: oneRedriver.verticalCenter
         anchors.right: oneRedriver.left
         anchors.rightMargin: 10
@@ -231,11 +269,35 @@ Item {
         height: parent.height/8
         ButtonGroup.group: dataPathGroup
         checkable:true
+        background: Rectangle{color:"transparent"}
 
         Image{
             source: oneRedriver.checked ? "./images/DataPath/OneRepeaterRouteActive.svg" : "./images/DataPath/OneRepeaterRouteInactive.svg"
             height: oneRedriver.height
             width: oneRedriver.width
+
+            Text{
+                text:"Flex Cable"
+                color: oneRedriver.checked ? "white" : "transparent"
+                font.family: "helvetica"
+                font.pointSize: 14
+                anchors.centerIn:parent
+            }
+            Text{
+                text:"Redriver"
+                color: oneRedriver.checked ? "white" : "transparent"
+                font.family: "helvetica"
+                font.pointSize: 14
+                anchors{top:parent.top; right: parent.right; rightMargin: parent.width/8}
+            }
+            Text{
+                text:"Redriver"
+                color: oneRedriver.checked ? "white" : "transparent"
+                font.family: "helvetica"
+                font.pointSize: 14
+                anchors{bottom:parent.bottom; left: parent.left; leftMargin: parent.width/8}
+            }
+
         }
     }
 
@@ -251,7 +313,7 @@ Item {
 
     Image {
         id: oneRedriverRightArrows
-        source: "./images/DataPath/arrows.svg"
+        source: "./images/DataPath/arrows.png"
         anchors.verticalCenter: oneRedriver.verticalCenter
         anchors.left: oneRedriver.right
         anchors.leftMargin: 10
@@ -298,7 +360,7 @@ Item {
 
     Image {
         id: passiveLeftArrows
-        source: "./images/DataPath/arrows.svg"
+        source: "./images/DataPath/arrows.png"
         anchors.verticalCenter: passiveRoute.verticalCenter
         anchors.right: passiveRoute.left
         anchors.rightMargin: 10
@@ -314,11 +376,20 @@ Item {
         height: parent.height/8
         ButtonGroup.group: dataPathGroup
         checkable:true
+        background: Rectangle{color:"transparent"}
 
         Image{
             source: passiveRoute.checked ? "./images/DataPath/PassiveDataRouteActive.svg" : "./images/DataPath/PassiveDataRouteInactive.svg"
             height: passiveRoute.height
             width: passiveRoute.width
+
+            Text{
+                text:"Flex Cable"
+                color: passiveRoute.checked ? "white" : "transparent"
+                font.family: "helvetica"
+                font.pointSize: 14
+                anchors.centerIn:parent
+            }
         }
     }
 
@@ -334,7 +405,7 @@ Item {
 
     Image {
         id: passiveRightArrows
-        source: "./images/DataPath/arrows.svg"
+        source: "./images/DataPath/arrows.png"
         anchors.verticalCenter: passiveRoute.verticalCenter
         anchors.left: passiveRoute.right
         anchors.leftMargin: 10
@@ -361,37 +432,14 @@ Item {
 
     //status and instructions
     Label{
-        id: statusLabel
-        anchors {verticalCenter:statusIndicator.verticalCenter
-                  right: signalLossLabel.right
-        }
-        horizontalAlignment: Text.AlignRight
-        font.family: "helvetica"
-        font.pointSize: 24
-        text:"Status:"
-    }
-
-    Rectangle{
-        id:statusIndicator
-        color:"red"
-        height:70
-        width:70
-        radius: 35
-        anchors{bottom:parent.bottom
-                bottomMargin: parent.height/8
-                left: buttonRow.left
-        }
-    }
-
-    Label{
         id:statusMessage
         font.family: "helvetica"
         font.pointSize: 24
-        color:"red"
+        color:passiveRoute.checked ? "red" : "transparent"
         text:"Please flip the connection to port 1"
-        anchors{verticalCenter: statusLabel.verticalCenter
-                left: statusIndicator.right
-                leftMargin: 15
+        anchors{horizontalCenter: parent.horizontalCenter
+                bottom:parent.bottom
+                bottomMargin: parent.height/8
         }
     }
 }
