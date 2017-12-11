@@ -42,7 +42,8 @@ include_directories(${NIMBUS_DIR}
 		"${CB_DIR}/build_cmake/unix"
 		"${CB_LIB_DIR}"
 		)
-add_library(nimbusLib STATIC ${NIMBUS_DIR}/nimbus_internal.cc)
+add_library(nimbusLib STATIC 	${NIMBUS_DIR}/nimbus_internal.cc
+				${NIMBUS_DIR}/couchbase_helper.cpp )
 
 if(WINDOWS)
 # ZMQ
