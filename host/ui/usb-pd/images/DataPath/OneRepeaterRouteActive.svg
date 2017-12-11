@@ -8,14 +8,14 @@
         <g id="One-Repeater-data-route" transform="translate(256.000000, 429.000000)">
             <g id="OneRepeaterRouteActive" transform="translate(197.000000, 0.000000)">
                 <rect id="background" fill="#2EB457" opacity="0.60790308" x="0" y="0" width="343" height="109"></rect>
-                <path d="M44,72 L115.157764,72" id="Line-Copy-5" stroke="#4A90E2" stroke-width="4" stroke-linecap="square" transform="translate(79.578882, 72.000000) scale(-1, 1) translate(-79.578882, -72.000000) "></path>
-                <path id="Line-Copy-5-decoration-1" d="M115.157764,72 L104.357764,69 L104.357764,75 L115.157764,72 Z" stroke="#4A90E2" stroke-width="4" stroke-linecap="square"></path>
-                <path d="M229.422222,73.5 L304.577778,73.5" id="Line-Copy-6" stroke="#4A90E2" stroke-width="4" stroke-linecap="square" transform="translate(267.000000, 73.500000) scale(-1, 1) translate(-267.000000, -73.500000) "></path>
-                <path id="Line-Copy-6-decoration-1" d="M304.577778,73.5 L293.777778,70.5 L293.777778,76.5 L304.577778,73.5 Z" stroke="#4A90E2" stroke-width="4" stroke-linecap="square"></path>
                 <path d="M37.4222222,37.5 L112.577778,37.5" id="Line-Copy" stroke="#963232" stroke-width="4" stroke-linecap="square"></path>
                 <path id="Line-Copy-decoration-1" d="M112.577778,37.5 L101.777778,34.5 L101.777778,40.5 L112.577778,37.5 Z" stroke="#963232" stroke-width="4" stroke-linecap="square"></path>
                 <path d="M229.422222,39.5 L304.577778,39.5" id="Line-Copy-2" stroke="#963232" stroke-width="4" stroke-linecap="square"></path>
                 <path id="Line-Copy-2-decoration-1" d="M304.577778,39.5 L293.777778,36.5 L293.777778,42.5 L304.577778,39.5 Z" stroke="#963232" stroke-width="4" stroke-linecap="square"></path>
+                <path d="M117,72 L41,72" id="blue-line-left" stroke="#4A90E2" stroke-width="4" stroke-linecap="square"></path>
+                <path id="blue-line-left-decoration-1" d="M41,72 L51.8,75 L51.8,69 L41,72 Z" stroke="#4A90E2" stroke-width="4" stroke-linecap="square"></path>
+                <path d="M304,72 L229,72" id="blue-line-right" stroke="#4A90E2" stroke-width="4" stroke-linecap="square"></path>
+                <path id="blue-line-right-decoration-1" d="M229,72 L239.8,75 L239.8,69 L229,72 Z" stroke="#4A90E2" stroke-width="4" stroke-linecap="square"></path>
                 <polygon id="Triangle-Copy-2" stroke="#000000" fill="#2EB457" transform="translate(84.500000, 68.500000) scale(-1, -1) rotate(211.000000) translate(-84.500000, -68.500000) " points="84.5 54 102 83 67 83"></polygon>
                 <polygon id="Triangle-Copy" stroke="#000000" fill="#2EB457" transform="translate(259.500000, 41.500000) scale(-1, -1) rotate(32.000000) translate(-259.500000, -41.500000) " points="259.5 27 277 56 242 56"></polygon>
                 <path d="M121,27.0572843 L121,91.1282024 C130.173473,79.8988134 140.778796,74.3387343 152.815969,74.447965 C170.871728,74.611811 172.706131,101.334726 193.790896,101.966973 C207.847406,102.388471 216.917107,98.7755474 221,91.1282024 L221,27.0572843 C212.169669,33.0530988 203.099968,35.7660565 193.790896,35.1961573 C179.827288,34.3413085 171,12.2790855 152.815969,12.0048215 C140.693281,11.8219789 130.087958,16.8394665 121,27.0572843 Z" id="flex-cable" stroke="#979797" fill="#F5A623"></path>

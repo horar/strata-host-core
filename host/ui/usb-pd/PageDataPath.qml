@@ -133,7 +133,7 @@ Item {
 
     Image {
         id: twoRedriversLeftArrows
-        source: "./images/DataPath/arrows.png"
+        source: "./images/DataPath/arrows.svg"
         anchors.verticalCenter: twoRedrivers.verticalCenter
         anchors.right: twoRedrivers.left
         anchors.rightMargin: 10
@@ -208,7 +208,7 @@ Item {
 
     Image {
         id: twoRedriversRightArrows
-        source: "./images/DataPath/arrows.png"
+        source: "./images/DataPath/arrows.svg"
         anchors.verticalCenter: twoRedrivers.verticalCenter
         anchors.left: twoRedrivers.right
         anchors.leftMargin: 10
@@ -255,7 +255,7 @@ Item {
 
     Image {
         id: oneRedriverLeftArrows
-        source: "./images/DataPath/arrows.png"
+        source: "./images/DataPath/arrows.svg"
         anchors.verticalCenter: oneRedriver.verticalCenter
         anchors.right: oneRedriver.left
         anchors.rightMargin: 10
@@ -313,7 +313,7 @@ Item {
 
     Image {
         id: oneRedriverRightArrows
-        source: "./images/DataPath/arrows.png"
+        source: "./images/DataPath/arrows.svg"
         anchors.verticalCenter: oneRedriver.verticalCenter
         anchors.left: oneRedriver.right
         anchors.leftMargin: 10
@@ -360,7 +360,7 @@ Item {
 
     Image {
         id: passiveLeftArrows
-        source: "./images/DataPath/arrows.png"
+        source: "./images/DataPath/arrows.svg"
         anchors.verticalCenter: passiveRoute.verticalCenter
         anchors.right: passiveRoute.left
         anchors.rightMargin: 10
@@ -405,7 +405,7 @@ Item {
 
     Image {
         id: passiveRightArrows
-        source: "./images/DataPath/arrows.png"
+        source: "./images/DataPath/arrows.svg"
         anchors.verticalCenter: passiveRoute.verticalCenter
         anchors.left: passiveRoute.right
         anchors.leftMargin: 10

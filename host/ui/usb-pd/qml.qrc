@@ -80,6 +80,6 @@
         <file>images/DataPath/OneRepeaterRouteInactive.svg</file>
         <file>images/DataPath/hardDrive.svg</file>
         <file>images/DataPath/PassiveDataRouteActive.svg</file>
-        <file>images/DataPath/arrows.png</file>
+        <file>images/DataPath/arrows.svg</file>
     </qresource>
 </RCC>
