@@ -2,11 +2,20 @@ import QtQuick 2.0
 import QtQuick.Controls 2.0
 
 Button {
+    id: rightButton
+
     property var tabName
-    //width:100
-    //height:40
     checkable:true
-    text: "three"
+
+    contentItem: Text {
+        text: rightButton.text
+        font.family:"helvetica"
+        font.pointSize:16
+        opacity: enabled ? 1.0 : 0.3
+        horizontalAlignment: Text.AlignHCenter
+        verticalAlignment: Text.AlignVCenter
+        elide: Text.ElideRight
+    }
 
     background: Canvas{
         id:rightButtonCanvas

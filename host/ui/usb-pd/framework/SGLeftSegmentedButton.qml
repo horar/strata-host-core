@@ -3,12 +3,21 @@ import QtQuick.Controls 2.0
 
 Button {
     id:leftButton
-    //width:100
-    //height:40
+
     property var tabName
+
     checkable: true
     checked:true
-    text: "one"
+
+    contentItem: Text {
+        text: leftButton.text
+        font.family:"helvetica"
+        font.pointSize:16
+        opacity: enabled ? 1.0 : 0.3
+        horizontalAlignment: Text.AlignHCenter
+        verticalAlignment: Text.AlignVCenter
+        elide: Text.ElideRight
+    }
 
     background: Canvas{
         id:leftButtonCanvas
@@ -36,7 +45,6 @@ Button {
 
     onCheckedChanged: {
         leftButtonCanvas.requestPaint()
-        //console.log("marking canvas as dirty")
     }
 
 

@@ -2,11 +2,21 @@ import QtQuick 2.0
 import QtQuick.Controls 2.0
 
 Button {
+    id: middleButton
     property var tabName
     checkable: true
     text: "two"
-    //width:100
-    //height:40
+
+
+    contentItem: Text {
+        text: middleButton.text
+        font.family:"helvetica"
+        font.pointSize:16
+        opacity: enabled ? 1.0 : 0.3
+        horizontalAlignment: Text.AlignHCenter
+        verticalAlignment: Text.AlignVCenter
+        elide: Text.ElideRight
+    }
 
     background: Canvas{
         id:middleButtonCanvas
