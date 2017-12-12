@@ -1,5 +1,5 @@
 #include "nimbus.h"
-#include "base64.h" 
+#include "base64.h"
 #include "Connector.h"
 #include <iostream>
 #include <fstream>
@@ -33,13 +33,13 @@ public:
 
     AttachmentObserver(void *hostP);
 
-    void DocumentChange() {
+    void SyncStatusCallback(NimbusSyncInfo info) {
     }
 
     void ReplicationComplete() {
     };
 
-    void ValidateDocumentCallback(jsonString jsonBody);    
+    void DocumentChangeCallback(jsonString jsonBody);
 
     ~AttachmentObserver(){};
 };
