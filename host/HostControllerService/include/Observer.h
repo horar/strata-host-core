@@ -34,8 +34,14 @@ public:
     host_packet *host;
     AttachmentObserver() {};
     AttachmentObserver(void *hostP);
-    void DocumentChange() {}
-    void ReplicationComplete() {};
-    void ValidateDocumentCallback(jsonString jsonBody);
+
+    void SyncStatusCallback(NimbusSyncInfo info) {
+    }
+
+    void ReplicationComplete() {
+    };
+
+    void DocumentChangeCallback(jsonString jsonBody);
+
     ~AttachmentObserver(){};
 };

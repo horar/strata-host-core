@@ -47,20 +47,22 @@ set(SHARED_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../shared")
 set(CB_DIR "${NIMBUS_DIR}/couchbase-lite-core")
 set(CB_LIB_DIR "${CB_DIR}/build_cmake/unix")
 
+# Add headers and Library for Nimbus
 include_directories(
-        include
-        include/ArduinoJson
-        ${NIMBUS_DIR}
-        "${SHARED_DIR}/cpp-base64"      #cpp-base64 submodule
-        "${SHARED_DIR}/rapidjson/include"    #rapidjson submodule
-        "${CB_DIR}/C"
-        "${CB_DIR}/C/include"
-        "${CB_DIR}/vendor/fleece/Fleece"
-        "${CB_DIR}/LiteCore/Database"
-        "${CB_DIR}/build_cmake/unix"
-        "${CB_LIB_DIR}"
-        )
-add_library(nimbusLib STATIC ${NIMBUS_DIR}/nimbus_internal.cc)
+		include
+        	include/ArduinoJson
+		"${NIMBUS_DIR}"
+		"${SHARED_DIR}/cpp-base64"    		#cpp-base64 submodule
+          	"${SHARED_DIR}/rapidjson/include"   	#rapidjson submodule
+		"${CB_DIR}/C"
+		"${CB_DIR}/C/include"
+		"${CB_DIR}/vendor/fleece/Fleece"
+		"${CB_DIR}/LiteCore/Database"
+		"${CB_DIR}/build_cmake/unix"
+		"${CB_LIB_DIR}"
+		)
+add_library(nimbusLib STATIC 	${NIMBUS_DIR}/nimbus_internal.cc
+				${NIMBUS_DIR}/couchbase_helper.cpp )
 
 if (CROSSCOMPILE)
     # --- WINDOWS

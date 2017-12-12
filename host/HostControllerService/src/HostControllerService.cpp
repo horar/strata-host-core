@@ -15,9 +15,8 @@ AttachmentObserver::AttachmentObserver(void *hostP)
     host = (host_packet *)hostP;
 }
 
-void AttachmentObserver::ValidateDocumentCallback(jsonString jsonBody)
-{
-     Connector::messageProperty message;
+void AttachmentObserver::DocumentChangeCallback(jsonString jsonBody) {
+	 Connector::messageProperty message;
      message.message = jsonBody;
      host->service->sendNotification(message,host->notify);
 }
