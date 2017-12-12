@@ -1,1 +1,1 @@
-sudo ./build/Debug/HCS "tcp://*:5564" "tcp://*:5563"
+sudo ./build/hcs -f "files/conf/host_controller_service.config"
