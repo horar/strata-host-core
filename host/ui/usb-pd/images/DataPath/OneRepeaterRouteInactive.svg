@@ -10,14 +10,14 @@
     <g id="tabloid" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" transform="translate(-721.000000, -750.000000)">
         <g id="OneRepeateRouteInactive" transform="translate(721.000000, 750.000000)">
             <rect id="Rectangle-4" fill="#B4B4B4" x="0" y="0" width="343" height="109"></rect>
-            <path d="M37.4222222,70.5 L112.577778,70.5" id="Line-Copy-5" stroke="#979797" stroke-width="4" stroke-linecap="square" transform="translate(75.000000, 70.500000) scale(-1, 1) translate(-75.000000, -70.500000) "></path>
-            <path id="Line-Copy-5-decoration-1" d="M112.577778,70.5 L101.777778,67.5 L101.777778,73.5 L112.577778,70.5 Z" stroke="#979797" stroke-width="4" stroke-linecap="square"></path>
-            <path d="M229.422222,72.5 L304.577778,72.5" id="Line-Copy-6" stroke="#979797" stroke-width="4" stroke-linecap="square" transform="translate(267.000000, 72.500000) scale(-1, 1) translate(-267.000000, -72.500000) "></path>
-            <path id="Line-Copy-6-decoration-1" d="M304.577778,72.5 L293.777778,69.5 L293.777778,75.5 L304.577778,72.5 Z" stroke="#979797" stroke-width="4" stroke-linecap="square"></path>
             <path d="M37.4222222,34.5 L112.577778,34.5" id="Line-Copy" stroke="#979797" stroke-width="4" stroke-linecap="square"></path>
             <path id="Line-Copy-decoration-1" d="M112.577778,34.5 L101.777778,31.5 L101.777778,37.5 L112.577778,34.5 Z" stroke="#979797" stroke-width="4" stroke-linecap="square"></path>
             <path d="M229.422222,36.5 L304.577778,36.5" id="Line-Copy-2" stroke="#979797" stroke-width="4" stroke-linecap="square"></path>
             <path id="Line-Copy-2-decoration-1" d="M304.577778,36.5 L293.777778,33.5 L293.777778,39.5 L304.577778,36.5 Z" stroke="#979797" stroke-width="4" stroke-linecap="square"></path>
+            <path d="M116,72 L40,71" id="blue-line-left-copy-5" stroke="#979797" stroke-width="4" stroke-linecap="square"></path>
+            <path id="blue-line-left-copy-5-decoration-1" d="M40,71 L50.759595,74.1418333 L50.8385355,68.1423526 L40,71 Z" stroke="#979797" stroke-width="4" stroke-linecap="square"></path>
+            <path d="M308,73 L232,72" id="blue-line-left-copy-6" stroke="#979797" stroke-width="4" stroke-linecap="square"></path>
+            <path id="blue-line-left-copy-6-decoration-1" d="M232,72 L242.759595,75.1418333 L242.838535,69.1423526 L232,72 Z" stroke="#979797" stroke-width="4" stroke-linecap="square"></path>
             <g id="Rectangle">
                 <use fill="#9B9B9B" fill-rule="evenodd" xlink:href="#path-1"></use>
                 <rect stroke="#979797" stroke-width="1" x="6.5" y="5.5" width="23" height="96" rx="11"></rect>
