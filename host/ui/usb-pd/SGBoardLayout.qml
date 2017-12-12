@@ -133,7 +133,7 @@ Rectangle {
         id: infoIcon
         anchors{ bottom: parent.bottom;right: parent.right}
         height: 50; width:50
-        source:"infoIcon.svg"
+        source:"./images/icons/infoIcon.svg"
 
         Component {
             id: page1

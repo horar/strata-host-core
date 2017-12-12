@@ -46,6 +46,9 @@ class ImplementationInterfaceBinding : public QObject
     Q_PROPERTY(float portTemperature NOTIFY portTemperatureChanged)
     Q_PROPERTY(float portCurrent NOTIFY portCurrentChanged)
     Q_PROPERTY(float portPower NOTIFY portPowerChanged)
+    Q_PROPERTY(float inputPower NOTIFY portEfficiencyChanged)
+    Q_PROPERTY(float outputPower NOTIFY portEfficiencyChanged)
+
 
     //QProperty : To know Platform Status
     Q_PROPERTY(bool platformState READ getPlatformState NOTIFY platformStateChanged)
@@ -115,7 +118,7 @@ signals:
     void portTemperatureChanged(int port, float value);
     void portPowerChanged(int port, float value);
     void portCurrentChanged(int port, float value);
-
+    void portEfficencyChanged(int port, float input_power,float output_power);
 private:
     //Members private to class
     platform_Ports Ports;

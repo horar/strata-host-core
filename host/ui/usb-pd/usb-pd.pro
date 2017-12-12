@@ -50,9 +50,9 @@ unix : !macx : !win32 {
 # mac (not iOS)
 else : macx : !win32 {
     message("Building on OSX")
-    LIBS += -L$${HOST_ROOT}/lib/mac/zeromq/4.2.2/lib -lzmq
-    DEPENDPATH += $${HOST_ROOT}/lib/mac/zeromq/4.2.2
-    INCLUDEPATH += $${HOST_ROOT}/lib/mac/zeromq/4.2.2/include/
+    LIBS += -L$${HOST_ROOT}/lib/macos/libzmq -lzmq
+    DEPENDPATH += $${HOST_ROOT}/include/macos
+    INCLUDEPATH += $${HOST_ROOT}/include/macos/libzmq
 }
 
 # windows

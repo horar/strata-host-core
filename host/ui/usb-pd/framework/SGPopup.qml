@@ -1,6 +1,5 @@
 import QtQuick 2.7
 import QtQuick.Controls 2.0
-import "../sgLiveGraph"
 
 Popup {
     id: container
@@ -14,6 +13,8 @@ Popup {
     property real startPositionY: 0
     property bool efficencyLabel: false;
     property int portNumber:0
+    property bool powerMessageVisible: false;
+    property bool graphVisible: false;
 
     modal: true
     focus: false
@@ -28,7 +29,7 @@ Popup {
     }
         Image {
             id: popupBoarder
-            source: "./images/boarder_graph.svg"
+            source: "./images/dialogBorder.svg"
             width: container.width; height: container.height
             z: 0
 
@@ -41,32 +42,41 @@ Popup {
             }
         }
 
-
-
-        enter: Transition {
-            // grow and fade_in
-            ParallelAnimation {
-                NumberAnimation { property: "scale"; from: 0.1; to: 1.0; easing.type: Easing.OutQuint; duration: 1000 }
-                NumberAnimation { property: "opacity"; from: 0.0; to: 1.0; easing.type: Easing.OutCubic; duration: 1000  }
-                //NumberAnimation { property: "x"; from: startPositionX; to:parent.width/4-container.width/2; duration: 1000}
-                //NumberAnimation { property: "y"; from: startPositionY; to:parent.height/4-container.height/2; duration: 1000}
-            }
+    enter: Transition {
+        // grow and fade_in
+        ParallelAnimation {
+            NumberAnimation { property: "scale"; from: 0.1; to: 1.0; easing.type: Easing.OutQuint; duration: 1000 }
+            NumberAnimation { property: "opacity"; from: 0.0; to: 1.0; easing.type: Easing.OutCubic; duration: 1000  }
+            //NumberAnimation { property: "x"; from: startPositionX; to:parent.width/4-container.width/2; duration: 1000}
+            //NumberAnimation { property: "y"; from: startPositionY; to:parent.height/4-container.height/2; duration: 1000}
         }
+    }
 
-        exit: Transition {
-            // shrink and fade_out
-            ParallelAnimation {
-                NumberAnimation { property: "scale"; from: 1.0; to: 0.1; easing.type: Easing.OutQuint; duration: 500 }
-                NumberAnimation { property: "opacity"; from: 1.0; to: 0.0; easing.type: Easing.OutCubic; duration: 500 }
-            }
+    exit: Transition {
+        // shrink and fade_out
+        ParallelAnimation {
+            NumberAnimation { property: "scale"; from: 1.0; to: 0.1; easing.type: Easing.OutQuint; duration: 500 }
+            NumberAnimation { property: "opacity"; from: 1.0; to: 0.0; easing.type: Easing.OutCubic; duration: 500 }
         }
+    }
     contentItem:
-        Rectangle {
+
+
+    Rectangle {
         id:contentItem
-        width: container.width; height: container.height
+        width: container.width/10; height: container.height/10
         color: "transparent"
         border.color : "transparent"
+
+        z: 1
+        Image {
+        id: powerMessage
+        width: container.width/1.3; height: container.height/1.3
+        visible: powerMessageVisible
+        anchors { centerIn: parent }
         z: 2
+        source: "./images/Port_Power_Messages_Dialog.png"
+    }
         Label {
             id: labelAxis_x
             y: 430
@@ -101,37 +111,17 @@ Popup {
                 verticalCenter: contentItem.verticalCenter ;
                 verticalCenterOffset: labelAxis_y2.height;}
         }
-        Label {
-            width: 100; height: 50
-            text: "Efficency: 95% "
-            visible: efficencyLabel
-            z: 2
-            anchors { bottom: contentItem.bottom; left: contentItem.left ; leftMargin: 10 }
-        }
 
-
-       LiveGraph {
+        SGScopeView {
             id: graph
             z: 1
+            visible: graphVisible
+            efficencyVisible: efficencyLabel
             width: container.width/1.3 ; height: container.height/1.2
             anchors { centerIn: parent }
             chartType: container.chartType
             portNumber: container.portNumber
         }
-//        SGLineGraph {
-//            id: graph
-//            z: 1
-//            width: container.width/1.2 ; height: container.height/1.2
-//            anchors { centerIn: parent }
-//            secondValueVisible: true;
-//            efficencyLable: true;
-//            variable1Name: inVariable1Name
-//            variable2Name: inVariable2Name
-//            variable1Color: inVariable1Color
-//            variable2Color: inVariable2Color
-//        }
-
-
     }
 }
 

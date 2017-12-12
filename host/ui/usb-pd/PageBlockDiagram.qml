@@ -28,7 +28,7 @@ Rectangle {
 
     Image{
         id:blockDiagram
-        source:"USB-PD_blockDiagram.png"
+        source:"./images/USB-PD_blockDiagram.png"
         anchors{left:parent.left
             bottom: parent.bottom
             bottomMargin: 50}
