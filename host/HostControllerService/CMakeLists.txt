@@ -47,11 +47,11 @@ set(SHARED_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../shared")
 set(CB_DIR "${NIMBUS_DIR}/couchbase-lite-core")
 set(CB_LIB_DIR "${CB_DIR}/build_cmake/unix")
 
-include_directories(lib)
-include_directories(lib/ArduinoJson)
-
 # Add headers and Library for Nimbus
-include_directories(${NIMBUS_DIR}
+include_directories(
+		include
+        	include/ArduinoJson
+		"${NIMBUS_DIR}"
 		"${SHARED_DIR}/cpp-base64"    		#cpp-base64 submodule
           	"${SHARED_DIR}/rapidjson/include"   	#rapidjson submodule
 		"${CB_DIR}/C"
