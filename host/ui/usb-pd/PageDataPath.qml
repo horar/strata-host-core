@@ -53,9 +53,9 @@ Item {
         anchors.top: parent.top
         anchors.topMargin: parent.height/8
 
-        SGLeftSegmentedButton{width: 250; text:"3 dB" }
-        SGMiddleSegmentedButton{width: 250; text:"6 dB" }
-        SGRightSegmentedButton{width: 250; text:"9 dB"}
+        SGLeftSegmentedButton{width: 250; text:"6.6 dB" }
+        SGMiddleSegmentedButton{width: 250; text:"9 dB" }
+        SGRightSegmentedButton{width: 250; text:"12 dB"}
     }
 
 
