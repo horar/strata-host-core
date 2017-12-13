@@ -52,10 +52,12 @@ Rectangle {
 
             if( portNumber === port ){
                 if (value == true) {
+                    iconListAnimation.stop()
                     messageAnimation.start()
                 }
 
                 else {
+                    messageAnimation.stop()
                     iconListAnimation.start()
                 }
             }
@@ -113,28 +115,12 @@ Rectangle {
             Layout.preferredWidth:grid.prefWidth(this)
             Layout.preferredHeight:grid.prefHeight(this)
 
-
-            transform: Rotation {
-                id: zRot
-                origin.x: infoIcon.width/2; origin.y: infoIcon.height/2;
-                axis { x: 0; y: 1; z: 0 }
-            }
-
-            NumberAnimation {
-                id:rotateInfoIcon
-                running: false
-                loops: 1
-                target: zRot;
-                property: "angle";
-                from: 0; to: 360;
-                duration: 1000;
-            }
-
             PropertyAnimation {
                 id: portEnter
                 target: portTitle
                 property: "font.pointSize"
-                to : 15
+                to : (Qt.platform.os == "osx") ?
+                         parent.width/8 : parent.width/20
                 duration: 200
                 running: false
             }
@@ -143,7 +129,8 @@ Rectangle {
                 id: portExit
                 target: portTitle
                 property: "font.pointSize"
-                to : 9
+                to : (Qt.platform.os == "osx") ?
+                         parent.width/10 : parent.width/28
                 duration: 200
                 running: false
             }
@@ -156,6 +143,7 @@ Rectangle {
                 font { family: "Helvetica"; bold: true }
                 horizontalAlignment: Text.AlignRight
                 color: "Green"
+
                 anchors { verticalCenter: portNameAndDivider.verticalCenter; right: portNameAndDivider.right; rightMargin: 10 }
 
                 MouseArea {
@@ -174,7 +162,10 @@ Rectangle {
                     portTitle.font.pointSize = parent.width/10 > 0 ? parent.width/10 : 1;
                 }
                 else{
-                    fontSizeMode : Label.Fit
+                    font.pointSize = Label.Fit
+
+
+
                 }
             }
 
@@ -214,7 +205,7 @@ Rectangle {
                 verticalAlignment: Text.AlignVCenter
                 horizontalAlignment:Text.AlignHCenter
                 font.family: "helvetica"
-                font.pointSize: 14
+                font.pointSize: (Qt.platform.os === "osx")? 24: 14
 
             }
         }

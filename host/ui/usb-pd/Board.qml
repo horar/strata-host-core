@@ -245,7 +245,7 @@ Rectangle {
 
             Text {
                 id: inputPlugName
-                text: device.inputVoltage.toFixed(1) + " V\n " + device.portCurrent.toFixed(1)+ " A"
+                text: device.inputVoltage.toFixed(1) + " V"// + device.portCurrent.toFixed(1)+ " A"
                 width: inputPlugColumn.width-2
                 horizontalAlignment: Text.AlignRight
                 anchors {verticalCenter: parent.verticalCenter}
