@@ -1,5 +1,5 @@
 import QtQuick 2.7
-import QtQuick.Controls 2.3
+import QtQuick.Controls 2.0
 import QtQuick.Layouts 1.1
 import QtQuick.Extras 1.4
 import QtQuick.Controls.Styles 1.4
@@ -460,7 +460,7 @@ Item {
         text:"Please flip the connection to port 1"
         anchors{horizontalCenter: parent.horizontalCenter
                 bottom:parent.bottom
-                bottomMargin: parent.height/8
+                bottomMargin: parent.height/10
         }
     }
 }
