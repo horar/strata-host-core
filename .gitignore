@@ -31,5 +31,6 @@ release*
 *vcxproj*
 *usb-pd.vcxproj.user*
 *.swp
+*.swo
 tags
 
