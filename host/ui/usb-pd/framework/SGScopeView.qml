@@ -1,4 +1,4 @@
-import QtQuick 2.0
+﻿import QtQuick 2.0
 import QtCharts 2.1
 import QtQuick.Controls 1.4
 import tech.spyglass.ImplementationInterfaceBinding 1.0
@@ -15,6 +15,19 @@ ChartView {
     property var parameterCurrentValue: 0
     property var  efficencyValue: 0
     property bool efficencyVisible: false
+    property real minLimit: 0.79
+    property int yMax: 0
+    
+    property int plotWidth: 0;
+    property int plotHeight: 0;
+    property int plotX: 0;
+    property int plotY: 0;
+    property int setRectheight: 0;
+    property real currentHeight: 0;
+    property real percentageHeight: 0;
+    property real overallHeight: 0;
+    property bool redZoneVisibility: false;
+    
     property bool hardwareStatus : {
         // if user wants to shrink all the data in single chart after opening the graph
         if(chartView.count%100 == 0 && chartView.count!=0){
@@ -23,12 +36,21 @@ ChartView {
         if(chartView.parameterValue > axisY1.max) {
             axisY1.max = chartView.parameterValue+1;
         }
+        
         implementationInterfaceBinding.platformState
     }
-
+    onPlotAreaChanged:  {
+        plotWidth = plotArea.width;
+        plotHeight = plotArea.height;
+        plotX = plotArea.x;
+        plotY = plotArea.y;
+        setRectheight =  (axisY1.max - (minLimit/axisY1.max))  * plotHeight;
+    }
+    
+    
     Connections {
         target: implementationInterfaceBinding
-
+        
         onPortTargetVoltageChanged: {
             if( chartType === "Target Voltage" && whenOpen && portNumber == port ) {
                 parameterValue = value;
@@ -36,16 +58,17 @@ ChartView {
                 count++;
             }
         }
-
+        
         onPortTemperatureChanged: {
             if( chartType === "Port Temperature"&& whenOpen && portNumber == port  ) {
                 parameterValue = value;
                 lineSeries1.append(count/10,parameterValue);
                 count++;
+                
             }
-
+            
         }
-
+        
         onPortPowerChanged: {
             if( chartType === "Port Power"&& whenOpen  && portNumber == port ) {
                 parameterValue = value;
@@ -53,7 +76,7 @@ ChartView {
                 count++;
             }
         }
-
+        
         onPortOutputVoltageChanged: {
             if( chartType === "Output Voltage"&& whenOpen  && portNumber == port ) {
                 parameterValue = value;
@@ -63,67 +86,70 @@ ChartView {
                 count++;
             }
         }
-
+        
         onPortInputVoltageChanged:{
             if( chartType === "Input Power"&& whenOpen  && portNumber == port ) {
                 parameterValue = value*parameterCurrentValue;
-                // lineSeries2.visible = true;
                 lineSeries1.append(count/10,parameterValue);
                 lineSeries1.name = "Input Power";
                 count++;
+                
             }
         }
-
+        
         onPortCurrentChanged: {
             parameterCurrentValue = value;
-
-
+            
+            
         }
         onPortEfficencyChanged: {
             if( chartType === "Input Power"&& whenOpen  && portNumber == port ) {
                 efficencyValue = output_power/input_power;
-
+                
             }
         }
-
+        
     }
-
-    onVisibleChanged: if (visible) {
-                          console.log("should start the timer");
-                          whenOpen= true;
-                      }
-                      else {
-                          whenOpen = false;
-                          if(count!=0) {
-                              (chartType === "outputVoltageCurrent")?lineSeries2.clear()&lineSeries1.clear():lineSeries1.clear();
-                              count = 0;
-                              axisX.max=10;
-                          }
-                      }
+    
+    onVisibleChanged:  { if (visible) {
+            console.log("should start the timer");
+            whenOpen= true;
+        }
+        else {
+            whenOpen = false;
+            if(count!=0) {
+                (chartType === "outputVoltageCurrent")?lineSeries2.clear()&lineSeries1.clear():lineSeries1.clear();
+                count = 0;
+                axisX.max=10;
+            }
+        }
+    }
+    
     MouseArea {
         anchors.fill: parent
         onClicked: {
             if(!selection)
             {
-                selection = selectionComponent.createObject(parent, {"x": 10, "y": 10, "width": parent.width - 60 , "height":parent.height / 3})
+                selection = selectionComponent.createObject(parent, {"x": plotX, "y": plotY, "width": plotWidth , "height":setRectheight})
             }
         }
     }
     Component {
         id: selectionComponent
-
+        
         Rectangle {
             id: selComp
             opacity: 0.2
-
-            anchors { top : parent.top;
-                topMargin: parent.height/4
-                left: parent.left
-                leftMargin: 59
-                right: parent.right
-                rightMargin: 51
+            visible: redZoneVisibility
+            Label {
+                id: currentYvalue
+                opacity: 0.0
+                text: currentHeight.toFixed(2)
+                font.bold: true
+                z:1
+                anchors.centerIn: parent
             }
-
+            
             border {
                 width: 2
                 color: "red"
@@ -140,12 +166,12 @@ ChartView {
                     maximumY: parent.parent.height - parent.height
                     smoothed: true
                 }
-
+                
                 onDoubleClicked: {
                     parent.destroy()        // destroy component
                 }
             }
-
+            
             Rectangle {
                 width: rulersSize
                 height: rulersSize
@@ -156,35 +182,44 @@ ChartView {
                 color: "red"
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.verticalCenter: parent.bottom
-
+                
                 MouseArea {
                     anchors.fill: parent
                     drag{ target: parent; axis: Drag.YAxis }
                     onMouseYChanged: {
                         if(drag.active){
-                            selComp.height = selComp.height + mouseY
-                            if(selComp.height < 50)
-                                selComp.height = 50
+                            selComp.height = selComp.height + mouseY;
+                            overallHeight = selComp.height /plotHeight
+                            currentHeight = - ( (axisY1.max * overallHeight) - (axisY1.max));
+                            currentYvalue.opacity = 1.0
+                            if(currentHeight > axisY1.max) {
+                                currentYvalue.opacity = 0.0; }
+                            if(selComp.height < axisY1.max) {
+                                selComp.height = 0; }
+                            else if(currentHeight < axisY1.min) {
+                                selComp.height = plotHeight;
+                                currentHeight = 0.0;
+                            }
                         }
                     }
                 }
             }
         }
     }
-
+    
     ValueAxis {
         id: axisY1
         min: 0
         max: 1
     }
-
+    
     ValueAxis {
         id: axisX
         min: 0
         max: 10
         visible: true
     }
-
+    
     LineSeries {
         id: lineSeries1
         name: chartView.chartType
@@ -197,7 +232,7 @@ ChartView {
         axisY: axisY1
         visible: false
     }
-
+    
     Label {
         id: efficencyLabel
         width: 100; height: 50
