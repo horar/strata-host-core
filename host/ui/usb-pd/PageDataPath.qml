@@ -21,7 +21,7 @@ Item {
     Text{
         font.family: "helvetica"
         font.pointSize: 36
-        text:"Data Path Configuration"
+        text:"SuperSpeed Data Path"
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: parent.top
         anchors.topMargin: 20
@@ -53,11 +53,24 @@ Item {
         anchors.top: parent.top
         anchors.topMargin: parent.height/8
 
-        SGLeftSegmentedButton{width: 200; text:"3 dB" }
-        SGMiddleSegmentedButton{width: 200; text:"6 dB" }
-        SGRightSegmentedButton{width: 200; text:"9 dB"}
+        SGLeftSegmentedButton{width: 250; text:"3 dB" }
+        SGMiddleSegmentedButton{width: 250; text:"6 dB" }
+        SGRightSegmentedButton{width: 250; text:"9 dB"}
     }
 
+
+    Label{
+        id: redriverConfigurationLabel
+        anchors {top:twoRedrivers.top
+                topMargin: - redriverConfigurationLabel.height
+                 left: signalLossLabel.left
+
+        }
+        horizontalAlignment: Text.AlignRight
+        font.family: "helvetica"
+        font.pointSize: 24
+        text:"Redriver configuration:"
+    }
 
     function showTwoRedriverSourceAndSink(inShow){
         twoRedriverLaptop.visible = inShow;
@@ -125,7 +138,8 @@ Item {
         id: twoRedriverSourceText
         text:"Source"
         font.family: "helvetica"
-        font.pointSize: 24
+        font.pointSize: 18
+        color: "grey"
         anchors.horizontalCenter: twoRedriverLaptop.horizontalCenter
         anchors.top:twoRedriverLaptop.bottom
         anchors.topMargin: 5
@@ -145,8 +159,8 @@ Item {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottom: oneRedriver.top
         anchors.bottomMargin: verticalButtonDelta
-        width: parent.width/4
-        height: parent.height/8
+        width: parent.width/3
+        height: parent.height/6
         ButtonGroup.group: dataPathGroup
         checkable:true
         checked:true
@@ -161,37 +175,37 @@ Item {
                 text:"Flex Cable"
                 color: twoRedrivers.checked ? "white" : "transparent"
                 font.family: "helvetica"
-                font.pointSize: 14
+                font.pointSize: 15
                 anchors.centerIn:parent
             }
 
             Text{
                 text:"Redriver"
-                color: twoRedrivers.checked ? "white" : "transparent"
+                color: twoRedrivers.checked ? "darkslategrey" : "transparent"
                 font.family: "helvetica"
-                font.pointSize: 14
-                anchors{top:parent.top; left: parent.left; leftMargin: parent.width/8}
+                font.pointSize: 15
+                anchors{top:parent.top; topMargin:parent.height/16; left: parent.left; leftMargin: 3*parent.width/16}
             }
             Text{
                 text:"Redriver"
-                color: twoRedrivers.checked ? "white" : "transparent"
+                color: twoRedrivers.checked ? "darkslategrey" : "transparent"
                 font.family: "helvetica"
-                font.pointSize: 14
-                anchors{top:parent.top; right: parent.right; rightMargin: parent.width/8}
+                font.pointSize: 15
+                anchors{top:parent.top; topMargin:parent.height/16; right: parent.right; rightMargin: parent.width/8}
             }
             Text{
                 text:"Redriver"
-                color: twoRedrivers.checked ? "white" : "transparent"
+                color: twoRedrivers.checked ? "darkslategrey" : "transparent"
                 font.family: "helvetica"
-                font.pointSize: 14
-                anchors{bottom:parent.bottom; left: parent.left; leftMargin: parent.width/8}
+                font.pointSize: 15
+                anchors{bottom:parent.bottom; bottomMargin:parent.height/16; left: parent.left; leftMargin: 3*parent.width/16}
             }
             Text{
                 text:"Redriver"
-                color: twoRedrivers.checked ? "white" : "transparent"
+                color: twoRedrivers.checked ? "darkslategrey" : "transparent"
                 font.family: "helvetica"
-                font.pointSize: 14
-                anchors{bottom:parent.bottom; right: parent.right; rightMargin: parent.width/8}
+                font.pointSize: 15
+                anchors{bottom:parent.bottom; bottomMargin:parent.height/16; right: parent.right; rightMargin: parent.width/8}
             }
         }
     }
@@ -226,7 +240,8 @@ Item {
         id:twoRedriversSinkText
         text:"Sink"
         font.family: "helvetica"
-        font.pointSize: 24
+        font.pointSize: 18
+        color:"grey"
         anchors.horizontalCenter: twoRedriverHD.horizontalCenter
         anchors.top:twoRedriverHD.bottom
         anchors.topMargin: 5
@@ -247,7 +262,8 @@ Item {
         id:oneRedriverSourceText
         text:"Source"
         font.family: "helvetica"
-        font.pointSize: 24
+        font.pointSize: 18
+        color:"grey"
         anchors.horizontalCenter: oneRedriverLaptop.horizontalCenter
         anchors.top:oneRedriverLaptop.bottom
         anchors.topMargin: 5
@@ -264,9 +280,11 @@ Item {
     Button{
         id:oneRedriver
         objectName: "oneRedriver"
-        anchors.centerIn: parent
-        width: parent.width/4
-        height: parent.height/8
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.verticalCenter:parent.verticalCenter
+        anchors.verticalCenterOffset: parent.height/20
+        width: parent.width/3
+        height: parent.height/6
         ButtonGroup.group: dataPathGroup
         checkable:true
         background: Rectangle{color:"transparent"}
@@ -280,22 +298,22 @@ Item {
                 text:"Flex Cable"
                 color: oneRedriver.checked ? "white" : "transparent"
                 font.family: "helvetica"
-                font.pointSize: 14
+                font.pointSize: 15
                 anchors.centerIn:parent
             }
             Text{
                 text:"Redriver"
-                color: oneRedriver.checked ? "white" : "transparent"
+                color: oneRedriver.checked ? "darkslategrey" : "transparent"
                 font.family: "helvetica"
-                font.pointSize: 14
-                anchors{top:parent.top; right: parent.right; rightMargin: parent.width/8}
+                font.pointSize: 15
+                anchors{top:parent.top; topMargin: parent.height/16; right: parent.right; rightMargin: 3*parent.width/16}
             }
             Text{
                 text:"Redriver"
-                color: oneRedriver.checked ? "white" : "transparent"
+                color: oneRedriver.checked ? "darkslategrey" : "transparent"
                 font.family: "helvetica"
-                font.pointSize: 14
-                anchors{bottom:parent.bottom; left: parent.left; leftMargin: parent.width/8}
+                font.pointSize: 15
+                anchors{bottom:parent.bottom; bottomMargin: parent.height/16; left: parent.left; leftMargin: 3*parent.width/16}
             }
 
         }
@@ -331,7 +349,8 @@ Item {
         id:oneRedriverSinkText
         text:"Sink"
         font.family: "helvetica"
-        font.pointSize: 24
+        font.pointSize: 18
+        color:"grey"
         anchors.horizontalCenter: oneRedriverHD.horizontalCenter
         anchors.top:oneRedriverHD.bottom
         anchors.topMargin: 5
@@ -352,7 +371,8 @@ Item {
         id:passiveSourceText
         text:"Source"
         font.family: "helvetica"
-        font.pointSize: 24
+        font.pointSize: 18
+        color:"grey"
         anchors.horizontalCenter: passiveLaptop.horizontalCenter
         anchors.top:passiveLaptop.bottom
         anchors.topMargin: 5
@@ -372,8 +392,8 @@ Item {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: oneRedriver.bottom
         anchors.topMargin: verticalButtonDelta
-        width: parent.width/4
-        height: parent.height/8
+        width: parent.width/3
+        height: parent.height/6
         ButtonGroup.group: dataPathGroup
         checkable:true
         background: Rectangle{color:"transparent"}
@@ -423,7 +443,8 @@ Item {
         id:passiveSinkText
         text:"Sink"
         font.family: "helvetica"
-        font.pointSize: 24
+        font.pointSize: 18
+        color:"grey"
         anchors.horizontalCenter: passiveHD.horizontalCenter
         anchors.top:passiveHD.bottom
         anchors.topMargin: 5
