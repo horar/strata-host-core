@@ -61,6 +61,12 @@ void ImplementationInterfaceBinding::setOutputVoltageVBUS(int port, int voltage)
         else
             qDebug() << "Radio button send failed";
     }
+    if(port == 2) {
+        if(hcc_object->sendCmd(strJson.toStdString()))
+            qDebug() << "Radio button send";
+        else
+            qDebug() << "Radio button send failed";
+    }
 
 
 #if BOARD_DATA_SIMULATION
@@ -171,8 +177,8 @@ void ImplementationInterfaceBinding::handleNotification(QVariantMap current_map)
             payloadMap=current_map["payload"].toMap();
             handleUSBCportDisconnectNotification(payloadMap);
         }  else {
-            //qDebug() << "Unsupported value field Received";
-            //qDebug() << "Received JSON = " <<current_map;
+            qDebug() << "Unsupported value field Received";
+            qDebug() << "Received JSON = " <<current_map;
         }
     }
 }
@@ -218,7 +224,7 @@ void ImplementationInterfaceBinding::handleCloudNotification(QJsonObject json_ob
 void ImplementationInterfaceBinding::handleUsbPowerNotification(const QVariantMap payloadMap) {
 
     // TODO [ian] needs error checking on json object parsing
-
+    qDebug() << payloadMap;
     int port = payloadMap["port"].toInt();
 #if !BOARD_DATA_SIMULATION
     float output_voltage = payloadMap["output"].toFloat();
@@ -238,6 +244,8 @@ void ImplementationInterfaceBinding::handleUsbPowerNotification(const QVariantMa
 
     float input_voltage = payloadMap["input"].toFloat();
     emit portInputVoltageChanged(port, input_voltage);
+
+    emit portEfficencyChanged(port, input_voltage*current, power);
 #else
 // For load board data simulation only
     float output_voltage = targetVoltage +  static_cast <float> ((rand()%10)/10);
@@ -282,7 +290,7 @@ void ImplementationInterfaceBinding::handlePlatformIdNotification(const QVariant
 void ImplementationInterfaceBinding::handlePlatformStateNotification(const QVariantMap payloadMap) {
 
     QString status = payloadMap["status"].toString();
-    qDebug() << "Status =" << payloadMap;
+//    qDebug() << "Status =" << payloadMap;
     if (status.compare("connected") == 0){
 
         bool platformStateTemp = true;
@@ -305,7 +313,7 @@ void ImplementationInterfaceBinding::handlePlatformStateNotification(const QVari
         }
     } else {
 
-        qDebug() << "Unsupported PlatformState ";
+//        qDebug() << "Unsupported PlatformState ";
     }
 }
 
@@ -433,7 +441,7 @@ QVariantMap ImplementationInterfaceBinding::validateJsonReply(const QVariantMap 
         return current_map;
     } else {
 
-        qDebug() << "Unsupported command received from platform";
+//        qDebug() << "Unsupported command received from platform";
     }
     current_map.clear();
     return current_map;
@@ -468,6 +476,7 @@ void ImplementationInterfaceBinding::notificationsThreadHandle() {
 
         // receive data from host controller client
         std::string response= hcc_object->receiveNotification();
+
         QString q_response = QString::fromStdString(response);
 
         // create the json document from the received string

@@ -33,4 +33,4 @@ release*
 *.swp
 *.swo
 tags
-
+cmake-build-debug

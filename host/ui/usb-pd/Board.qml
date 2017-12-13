@@ -1,6 +1,8 @@
 import QtQuick 2.7
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 1.4
+import QtGraphicalEffects 1.0
+import QtQuick.Controls.Material 2.2
 import "framework"
 
 Rectangle {
@@ -11,6 +13,7 @@ Rectangle {
     //  Getting realtime data for input voltage
     property double inputVoltage: 0;
     property double portCurrent: 0;
+
 
     Connections {
         target: implementationInterfaceBinding
@@ -53,17 +56,31 @@ Rectangle {
             Layout.rowSpan: 1
             Layout.preferredWidth : deviceGrid.devicePrefWidth(this)
             Layout.preferredHeight : deviceGrid.devicePrefHeight(this)
-            color:"transparent"
+            //color:"transparent"
             z:1 //in front of the plugOutline
+            Material.elevation: 6
 
             Image {
                 id:deviceOutline
-                width:parent.width ; height: width //*.75
+                width:parent.width ; height: width
                 anchors{ horizontalCenter: parent.horizontalCenter
                     horizontalCenterOffset: 0
                     verticalCenter: parent.verticalCenter
                     verticalCenterOffset: 0 }
-                source: "border.svg"
+                source: "./images/border.svg"
+
+            }
+
+
+
+            DropShadow {
+                anchors.fill: deviceOutline
+                horizontalOffset: 3
+                verticalOffset: 6
+                radius: 12.0
+                samples: 24
+                color: "#60000000"
+                source: deviceOutline
             }
 
             //a grid for the icon, and ports
@@ -105,7 +122,17 @@ Rectangle {
                         id:onLogo
                         width: parent.width*.75; height: parent.width*.75
                         anchors{ verticalCenter: parent.verticalCenter; left:parent.left; leftMargin: parent.width/8 }
-                        source:"On_Logo_Green.svg"
+                        source:"./images/icons/onLogoGreen.svg"
+                        layer.enabled: true
+                        layer.effect:  DropShadow {
+                            anchors.fill: onLogo
+                            horizontalOffset: 3
+                            verticalOffset: 6
+                            radius: 12.0
+                            samples: 24
+                            color: "#60000000"
+                            source: onLogo
+                        }
 
                         ScaleAnimator {
                             id: increaseOnMouseEnter
@@ -129,6 +156,7 @@ Rectangle {
                             id: imageMouse
                             anchors.fill: parent
                             hoverEnabled: true
+                            cursorShape: Qt.PointingHandCursor
                             onEntered:{
                                 increaseOnMouseEnter.start()
                             }
@@ -202,7 +230,17 @@ Rectangle {
                 anchors{ verticalCenter: parent.verticalCenter;
                     horizontalCenter: parent.horizontalCenter ;
                 }
-                source: "LeftPlug.png"
+                source: "./images/LeftPowerPlug.png"
+            }
+
+            DropShadow {
+                anchors.fill: plugOutline
+                horizontalOffset: 3
+                verticalOffset: 6
+                radius: 12.0
+                samples: 24
+                color: "#60000000"
+                source: plugOutline
             }
 
             Text {
@@ -214,6 +252,7 @@ Rectangle {
                 font{ family: "Helvetica"
                     bold:true
                 }
+                font.pointSize: 9
                 color:"grey"
             }
 
@@ -238,10 +277,10 @@ Rectangle {
         bottomMargin:30
         axisXLabel: "Time (S)"
         axisYLabel: "Power (W)"
-        //graphTitle: "Input Power Graph"
-        //inVariable1Name: "Power"
-        efficencyLabel: false
+        efficencyLabel: true
         chartType:"Input Power"
         portNumber: 1
+        powerMessageVisible: false;
+        graphVisible: true;
     }
 }

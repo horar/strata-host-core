@@ -1,125 +1,72 @@
 <RCC>
     <qresource prefix="/">
         <file>main.qml</file>
-        <file>MainForm.ui.qml</file>
-        <file>RightPlug.png</file>
-        <file>ONLogo.png</file>
-        <file>LeftArrow.png</file>
-        <file>VoltageIcon.png</file>
-        <file>PortConnector.png</file>
-        <file>clockIcon.svg</file>
-        <file>voltageIcon.svg</file>
-        <file>rightArrow.svg</file>
-        <file>leftArrow.svg</file>
-        <file>usbPlugLeft.svg</file>
-        <file>usbPlugRight.svg</file>
-        <file>submitButton.svg</file>
-        <file>boarder_graph.svg</file>
-        <file>GraphByEmail.svg</file>
-        <file>InputPowerGraph.png</file>
-        <file>twoValueGraph.svg</file>
-        <file>deviceVoltageGraph.png</file>
-        <file>powerAndTemperatureGraph.png</file>
-        <file>gray-card.jpg</file>
-        <file>blur_image_file.qml</file>
-        <file>InputPowerDialog.png</file>
-        <file>PortPowerandTemperatureDialog.png</file>
-        <file>DeviceVoltageAndCurrentDialog.png</file>
-        <file>animator.qml</file>
-        <file>leftUSBPlug.svg</file>
-        <file>usb_plug.svg</file>
-        <file>report9.png</file>
-        <file>report8.png</file>
-        <file>report7.png</file>
-        <file>report5.png</file>
-        <file>report4.png</file>
-        <file>report3.png</file>
-        <file>report2.png</file>
-        <file>report1.png</file>
         <file>qtquickcontrols2.conf</file>
         <file>PageSchematic.qml</file>
-        <file>onsemi_logo.png</file>
-        <file>onsemi_logo_small.png</file>
-        <file>motor_board_platform.png</file>
-        <file>layer4.png</file>
-        <file>layer3.png</file>
-        <file>layer2.png</file>
-        <file>layer1.png</file>
-        <file>graph3.png</file>
-        <file>graph2.png</file>
-        <file>graph1.png</file>
-        <file>download_from_cloud.png</file>
-        <file>business_intelligence.png</file>
-        <file>assembly_drawing.png</file>
         <file>usb-pd.pro</file>
         <file>usb-pd.pro.user</file>
         <file>framework/SGPopup.qml</file>
-        <file>framework/SGLineGraph.qml</file>
         <file>framework/SGSlider.qml</file>
         <file>framework/images/sliderThumb.svg</file>
         <file>framework/images/sliderValue.svg</file>
-        <file>SGIconList.qml</file>
-        <file>SGIconStatistic.qml</file>
-        <file>SGPortTitle.qml</file>
-        <file>SGVerticalDivider.qml</file>
-        <file>SGIconLabel.qml</file>
-        <file>infoIcon.svg</file>
-        <file>temperatureIcon.svg</file>
-        <file>On_Logo_Green.svg</file>
         <file>main.cpp</file>
         <file>BackSide.qml</file>
         <file>Board.qml</file>
         <file>Connector.qml</file>
         <file>Device.qml</file>
         <file>FrontSide.qml</file>
-        <file>SGBoardLayout.qml</file>
-        <file>SGLoginScreen.qml</file>
-        <file>SGPortGroup.qml</file>
-        <file>Border.png</file>
-        <file>border.svg</file>
-        <file>deviceOutline.svg</file>
-        <file>LeftPlug.png</file>
-        <file>ONBall.svg</file>
-        <file>backIcon.svg</file>
-        <file>USB-PD_blockDiagram.png</file>
-        <file>framework/images/boarder_graph.svg</file>
-        <file>SGDisconnectMessage.qml</file>
-        <file>PageAssociatedCollateral.qml</file>
         <file>PageBlockDiagram.qml</file>
         <file>PageLayout.qml</file>
         <file>PageTestReport.qml</file>
-        <file>RelatedMaterialBackground.png</file>
-        <file>AlternativePartsIcon.svg</file>
-        <file>PlusInACircle.svg</file>
         <file>PageSystemContent.qml</file>
-        <file>battery.png</file>
-        <file>BatteryProtectionSchematic.png</file>
-        <file>NCV81599-PowerStage1.png</file>
-        <file>TempSensorSchematic.png</file>
-        <file>ThreeVoltRailSchematic.png</file>
-        <file>usb-c_plug.png</file>
-        <file>USBCInterfaceSchematic1.png</file>
-        <file>USBCInterfaceSchematic2.png</file>
-        <file>DC-DCPowerIcon.png</file>
-        <file>ProtectionIcon.png</file>
-        <file>SensorsIcon.png</file>
-        <file>USBInterfaceIcon.png</file>
-        <file>sgLiveGraph/ScopeView.qml</file>
-        <file>sgLiveGraph/LiveGraph.qml</file>
         <file>PageComingSoon.qml</file>
         <file>images/adas_comming_soon.png</file>
-        <file>USB-PD_blockDiagram_BatteryProtectionHighlighted.png</file>
-        <file>USB-PD_blockDiagram_PowerStage1Highlighted.png</file>
-        <file>USB-PD_blockDiagram_PowerStage2Highlighted.png</file>
-        <file>USB-PD_blockDiagram_TempSensorHighlighted.png</file>
-        <file>USB-PD_blockDiagram_USB-C1Highlighted.png</file>
-        <file>USB-PD_blockDiagram_USB-C2Highlighted.png</file>
-        <file>USB-PD_blockDiagram_ThreeVoltHighlighted.png</file>
-        <file>spyglass.icns</file>
         <file>framework/SGRadioButton.qml</file>
         <file>images/NCV81599_test_report.png</file>
         <file>images/ONSEC-17-014_schematic.png</file>
         <file>images/bill_hall.jpg</file>
         <file>images/bob_klosterboer.jpg</file>
+        <file>images/icons/backIcon.svg</file>
+        <file>images/schematics/BatteryProtectionSchematic.png</file>
+        <file>images/dialogBorder.svg</file>
+        <file>framework/images/dialogBorder.svg</file>
+        <file>images/border.svg</file>
+        <file>images/icons/DC-DCPowerIcon.png</file>
+        <file>images/deviceOutline.svg</file>
+        <file>images/icons/downloadFromCloud.png</file>
+        <file>images/icons/infoIcon.svg</file>
+        <file>images/icons/leftArrow.svg</file>
+        <file>BoardLayout.qml</file>
+        <file>images/LeftPowerPlug.png</file>
+        <file>images/rightUSBPlug.svg</file>
+        <file>images/schematics/PowerStageSchematic.png</file>
+        <file>images/icons/onLogoGreen.svg</file>
+        <file>images/icons/onLogoGrey.svg</file>
+        <file>images/icons/onLogoGreenWithText.png</file>
+        <file>images/icons/ProtectionIcon.png</file>
+        <file>images/icons/rightArrow.svg</file>
+        <file>images/icons/SensorsIcon.png</file>
+        <file>images/icons/temperatureIcon.svg</file>
+        <file>images/schematics/TempSensorSchematic.png</file>
+        <file>images/schematics/ThreeVoltRailSchematic.png</file>
+        <file>images/highlightedBlockDiagram/USB-PD_blockDiagram_BatteryProtectionHighlighted.png</file>
+        <file>images/highlightedBlockDiagram/USB-PD_blockDiagram_PowerStage1Highlighted.png</file>
+        <file>images/highlightedBlockDiagram/USB-PD_blockDiagram_PowerStage2Highlighted.png</file>
+        <file>images/highlightedBlockDiagram/USB-PD_blockDiagram_TempSensorHighlighted.png</file>
+        <file>images/highlightedBlockDiagram/USB-PD_blockDiagram_ThreeVoltHighlighted.png</file>
+        <file>images/highlightedBlockDiagram/USB-PD_blockDiagram_USB-C1Highlighted.png</file>
+        <file>images/highlightedBlockDiagram/USB-PD_blockDiagram_USB-C2Highlighted.png</file>
+        <file>images/USB-PD_blockDiagram.png</file>
+        <file>images/schematics/USBCInterfaceSchematic1.png</file>
+        <file>images/schematics/USBCInterfaceSchematic2.png</file>
+        <file>images/icons/USBInterfaceIcon.png</file>
+        <file>images/icons/voltageIcon.svg</file>
+        <file>framework/SGScopeView.qml</file>
+        <file>framework/SGIconList.qml</file>
+        <file>framework/SGIconListItem.qml</file>
+        <file>framework/SGLoginScreen.qml</file>
+        <file>framework/SGPortGroup.qml</file>
+        <file>framework/images/Port_Power_Messages_Dialog.png</file>
+        <file>framework/images/whiteAlertIcon.svg</file>
     </qresource>
 </RCC>

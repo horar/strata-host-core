@@ -1,7 +1,7 @@
 import QtQuick 2.7
-
 import QtQuick.Controls 1.4
 import QtQuick.Controls.Styles 1.4
+import QtGraphicalEffects 1.0
 
 import "framework"
 
@@ -21,9 +21,19 @@ Rectangle {
 
     Image {
         id:deviceOutline
-        source: "deviceOutline.svg"
+        source: "./images/deviceOutline.svg"
         anchors.fill:parent
         mipmap: true
+    }
+
+    DropShadow {
+        anchors.fill: deviceOutline
+        horizontalOffset: 3
+        verticalOffset: 6
+        radius: 12.0
+        samples: 24
+        color: "#60000000"
+        source: deviceOutline
     }
 
     SGRadioButton {
