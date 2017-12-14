@@ -1,6 +1,6 @@
 import QtQuick 2.0
 import QtQuick.Controls 2.0
-
+import tech.spyglass.ImplementationInterfaceBinding 1.0
 Button {
     id:leftButton
 
@@ -45,7 +45,11 @@ Button {
 
     onCheckedChanged: {
         leftButtonCanvas.requestPaint()
+
+        if(checked)
+            implementationInterfaceBinding.setRedriverLoss(6.6)
     }
+
 
 
 }

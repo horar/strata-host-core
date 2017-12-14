@@ -68,6 +68,8 @@ public:
     virtual ~ImplementationInterfaceBinding();
 
     Q_INVOKABLE void setOutputVoltageVBUS(int port, int voltage);
+    Q_INVOKABLE void setRedriverLoss(float lossValue);
+    Q_INVOKABLE void setRedriverCount(int value);
 
     std::thread notification_thread_;
     void notificationsThreadHandle();

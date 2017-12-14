@@ -46,6 +46,8 @@ Button {
 
     onCheckedChanged: {
         rightButtonCanvas.requestPaint()
+        if(checked)
+            implementationInterfaceBinding.setRedriverLoss(12)
         //console.log("marking canvas as dirty")
     }
 
