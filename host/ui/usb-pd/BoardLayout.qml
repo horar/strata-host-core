@@ -12,7 +12,7 @@ Rectangle {
     property bool hardwareStatus:  {
 
         onPlatformStateChanged: {
-            var state = implementationInterfaceBinding.platformState;
+            var state = true//implementationInterfaceBinding.platformState;
             if(state == false && boardScreen == true) {
                 stack.push([page, {immediate:false}]);
             }
@@ -141,8 +141,8 @@ Rectangle {
         layer.enabled: true
         layer.effect: DropShadow {
             anchors.fill: infoIcon
-            horizontalOffset: 3
-            verticalOffset: 6
+            horizontalOffset: 2
+            verticalOffset: 2
             radius: 12.0
             samples: 24
             color: "#60000000"

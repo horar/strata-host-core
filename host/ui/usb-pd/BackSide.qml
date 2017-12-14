@@ -12,6 +12,7 @@ Rectangle {
         anchors{ fill: parent }
         currentIndex: tabBar.currentIndex
         PageBlockDiagram { id: pageBlockDiagram }
+        PageDataPath {id: pageDataPath}
         PageSchematic { id: pageSchematic }
         PageLayout { id: pageLayout }
         PageTestReport { id: pageTestReport }
@@ -25,6 +26,7 @@ Rectangle {
         currentIndex: swipeView.currentIndex
         anchors { bottom: parent.bottom;}
         TabButton { text: "Block Diagram" }
+        TabButton { text: "Data Path"}
         TabButton { text: "Schematic" }
         TabButton { text: "Layout" }
         TabButton { text: "Test Report" }

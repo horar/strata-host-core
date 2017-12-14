@@ -30,6 +30,10 @@ Item {
             }
         }
     }
+    onVisibleChanged: {
+        console.log("Schematic page change");
+    }
+
     Image {
         anchors { top: parent.top; right: parent.right }
         height: 40
