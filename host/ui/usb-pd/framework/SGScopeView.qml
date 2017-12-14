@@ -10,12 +10,12 @@ ChartView {
     property int count:0
     property string chartType: ""
     property int portNumber:0
-    property bool whenOpen: false
+    property bool whenOpen: true //false
     property var parameterValue: 1
     property var parameterCurrentValue: 0
     property var  efficencyValue: 0
     property bool efficencyVisible: false
-    property real minLimit: 0.79
+    property real minLimit: 79
     property int yMax: 0
     
     property int plotWidth: 0;
@@ -44,7 +44,8 @@ ChartView {
         plotHeight = plotArea.height;
         plotX = plotArea.x;
         plotY = plotArea.y;
-        setRectheight =  (axisY1.max - (minLimit/axisY1.max))  * plotHeight;
+        setRectheight =  (1 - (minLimit/axisY1.max)) * plotHeight;
+
     }
     
     
@@ -108,23 +109,8 @@ ChartView {
                 
             }
         }
-        
     }
-    
-    onVisibleChanged:  { if (visible) {
-            console.log("should start the timer");
-            whenOpen= true;
-        }
-        else {
-            whenOpen = false;
-            if(count!=0) {
-                (chartType === "outputVoltageCurrent")?lineSeries2.clear()&lineSeries1.clear():lineSeries1.clear();
-                count = 0;
-                axisX.max=10;
-            }
-        }
-    }
-    
+
     MouseArea {
         anchors.fill: parent
         onClicked: {
@@ -190,11 +176,11 @@ ChartView {
                         if(drag.active){
                             selComp.height = selComp.height + mouseY;
                             overallHeight = selComp.height /plotHeight
-                            currentHeight = - ( (axisY1.max * overallHeight) - (axisY1.max));
+                            currentHeight = - ((axisY1.max * overallHeight) - (axisY1.max));
                             currentYvalue.opacity = 1.0
                             if(currentHeight > axisY1.max) {
                                 currentYvalue.opacity = 0.0; }
-                            if(selComp.height < axisY1.max) {
+                           if(currentHeight > axisY1.max) {
                                 selComp.height = 0; }
                             else if(currentHeight < axisY1.min) {
                                 selComp.height = plotHeight;
