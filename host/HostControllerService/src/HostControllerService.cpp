@@ -123,6 +123,12 @@ bool HostControllerService::verifyReceiveCommand(string command, string *respons
         else if(root["cmd"] == "request_usb_pd_output_voltage") {
             root.printTo(*response);
             return true;
+        }else if(root["cmd"] == "request_redriver_signal_loss") {
+            root.printTo(*response);
+            return true;
+        }else if(root["cmd"] == "request_redriver_count") {
+            root.printTo(*response);
+            return true;
         }
         else {
 
@@ -246,7 +252,6 @@ void HostControllerService::callbackPlatformHandler(void* hostP) {
     }
     else{
         message = host->platform->receive((void *)host->hcs);
-
         if(!message.message.compare("DISCONNECTED")) {
             cout << "Platform disconnected " <<endl;
 
@@ -287,7 +292,7 @@ bool HostControllerService::openPlatformSocket() {
 #elif _WIN32
     error = sp_get_port_by_name("COM7",&platform_socket_);
 #elif __APPLE__
-    error = sp_get_port_by_name("/dev/tty.usbserial-DM008R9X",&platform_socket_);
+    error = sp_get_port_by_name("/dev/tty.usbmodem14123",&platform_socket_);
 #endif
 
     if(error == SP_OK) {
