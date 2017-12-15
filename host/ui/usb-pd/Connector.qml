@@ -17,6 +17,16 @@ Rectangle {
     property alias connectanimation: connect
     property alias disconnectanimation: disconnect
     property int portNumber:0;
+    property double leftUSBPlugInitialXPosition
+    property double originalCableWidth
+
+
+    Component.onCompleted:{
+        //save off the initial x position of the plug, so we can restore it later when
+        //the device is unplugged
+        leftUSBPlugInitialXPosition = leftUSBPlug.x;
+        originalCableWidth = connector.width/1.35;
+    }
 
     Connections {
         target: implementationInterfaceBinding
@@ -91,43 +101,32 @@ Rectangle {
 
 
             ctx.beginPath();
-            ctx.moveTo(width/2, cable.top)
-            ctx.lineTo(cable.width/2, cable.bottom)
+            ctx.moveTo(halfWidth, cable.top)
+            ctx.lineTo(halfWidth, cable.bottom)
+
 
             ctx.moveTo(0,halfConnectorHeight);
             //a bit of rigidity from the cable on the left
             ctx.quadraticCurveTo(sixteenthWidth,halfConnectorHeight,eighthWidth,halfConnectorHeight*1.5);
 
             //bottom middle of the span
-            ctx.quadraticCurveTo(halfWidth, height, width - eighthWidth,halfConnectorHeight*1.5)
+            if (! isConnected){
+                ctx.quadraticCurveTo(halfWidth, height, width - eighthWidth,halfConnectorHeight*1.5)
+            }
+            else{
+                ctx.quadraticCurveTo(halfWidth, height, width - quarterWidth,halfConnectorHeight*1.5)
+            }
 
             //a bit of rigidity on the right
-            ctx.quadraticCurveTo(width - sixteenthWidth,halfConnectorHeight,width,halfConnectorHeight);
+            if (! isConnected){
+                ctx.quadraticCurveTo(width - sixteenthWidth,halfConnectorHeight,width,halfConnectorHeight);
+                }
+            else{
+                ctx.quadraticCurveTo(width - quarterWidth,halfConnectorHeight*1.5,width,halfConnectorHeight);
+            }
 
             ctx.stroke();
             ctx.restore();
-        }
-    }
-    Image {
-        id: leftUSBPlug
-        width: connector.width/5; height: connector.height/4
-        x:  connector.x + connector.width/3
-        anchors{ verticalCenter: connector.verticalCenter }
-        source: "./images/rightUSBPlug.svg"
-
-        MouseArea {
-            anchors { fill: parent }
-
-            onClicked: {
-                if (!isConnected){
-                    isConnected = true;
-                    connect.start();
-                }
-                else{
-                    isConnected = false;
-                    disconnect.start();
-                }
-            }
         }
 
         SequentialAnimation {
@@ -182,7 +181,8 @@ Rectangle {
                 target: leftUSBPlug
                 property: "x";
                 from: leftUSBPlug.x
-                to: connector.x + connector.width/4
+                //to: connector.x + connector.width/4
+                to:leftUSBPlugInitialXPosition
                 easing.type: Easing.OutQuad;
                 duration: 500
             }
@@ -191,8 +191,10 @@ Rectangle {
             PropertyAnimation {
                 target: cable;
                 property: "halfWidth";
-                from:cable.width/2;
-                to: 5* cable.width/8;
+                //from:cable.width/2;
+                from:width/8
+                //to: 5* cable.width/8;
+                to: 5*width/16
                 easing.type: Easing.OutQuad;
                 duration: 500
             }
@@ -201,8 +203,10 @@ Rectangle {
             PropertyAnimation {
                 target: cable;
                 property: "halfWidth";
-                from:5*cable.width/8;
-                to: 3*cable.width/8;
+                //from:5*cable.width/8;
+                //to: 3*cable.width/8;
+                from: 5*width/16
+                to: 3*width/16
                 easing.type: Easing.OutQuad;
                 duration: 750
             }
@@ -211,12 +215,38 @@ Rectangle {
             PropertyAnimation {
                 target: cable;
                 property: "halfWidth";
-                from:3*cable.width/8;
-                to: cable.width/2;
+                //from:3*cable.width/8;
+                //to: cable.width/2;
+                from: 3*width/16
+                to: width/4
                 easing.type: Easing.OutQuad;
                 duration: 1000
             }
         }
+    }
+
+
+    Image {
+        id: leftUSBPlug
+        width: connector.width/5; height: connector.height/4
+        x:  connector.x + connector.width/3
+        anchors{ verticalCenter: connector.verticalCenter }
+        source: "./images/rightUSBPlug.svg"
+
+        MouseArea {
+            anchors { fill: parent }
+
+            onClicked: {
+                if (!isConnected){
+                    isConnected = true;
+                    connect.start();
+                }
+                else{
+                    isConnected = false;
+                    disconnect.start();
+                }
+            }
+        }        
     }
 
     DropShadow {
@@ -229,6 +259,8 @@ Rectangle {
         source: leftUSBPlug
     }
 }
+
+
 
 
 
