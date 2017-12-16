@@ -132,6 +132,7 @@ Rectangle {
         efficencyLabel: false
         powerMessageVisible: false;
         graphVisible: true;
+        overlimitVisibility: false;
 
     }
     SGPopup {
@@ -150,6 +151,7 @@ Rectangle {
         efficencyLabel: false
         powerMessageVisible: false;
         graphVisible: true;
+        overlimitVisibility: false;
     }
 
     SGPopup {
@@ -168,6 +170,7 @@ Rectangle {
         efficencyLabel: false
         powerMessageVisible: false;
         graphVisible: true;
+        overlimitVisibility: false;
     }
 
     SGPopup {
@@ -186,6 +189,7 @@ Rectangle {
         efficencyLabel: false
         powerMessageVisible: false;
         graphVisible: true;
+        overlimitVisibility: true;
     }
 
 }
