@@ -9,6 +9,7 @@ import tech.spyglass.DocumentManager 1.0
 
 Item {
     id: view
+
     // LOGO
     Rectangle {
         id: headerLogo
@@ -29,9 +30,6 @@ Item {
                 font.bold: true
             }
         }
-    }
-    onVisibleChanged: {
-        console.log("Schematic page change");
     }
 
     Image {

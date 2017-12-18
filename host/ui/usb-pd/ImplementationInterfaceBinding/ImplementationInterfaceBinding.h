@@ -18,71 +18,45 @@
 
 // To simulate the data
 #define BOARD_DATA_SIMULATION 0
+#define USB_NUM_PORTS         2     // todo move to config file
 
-//aPort = Variable to store current
-//vPort = Variable to store voltage
-
-struct platform_Ports {
-
-    float v_tport[2];
-    float v_oport[2];
-    float a_oport[2];
-    float temperature[2];
-    float power[2];
-    float v_iport[2];
+struct platform_port_data {
+    float output_voltage;
+    float input_voltage;
+    float target_voltage;
+    float temperature;
+    float current;
+    float power;
 };
-
-
-//void *simulateVoltageNotificationsThread(void *);
 
 class ImplementationInterfaceBinding : public QObject
 {
     Q_OBJECT
 
-    // QProperty for all ports 
-    Q_PROPERTY(float outputVoltage NOTIFY portOutputVoltageChanged)
-    Q_PROPERTY(float inputVoltage NOTIFY portInputVoltageChanged)
-    Q_PROPERTY(float targetVoltage NOTIFY portTargetVoltageChanged)
-    Q_PROPERTY(float portTemperature NOTIFY portTemperatureChanged)
-    Q_PROPERTY(float portCurrent NOTIFY portCurrentChanged)
-    Q_PROPERTY(float portPower NOTIFY portPowerChanged)
-    Q_PROPERTY(float inputPower NOTIFY portEfficiencyChanged)
-    Q_PROPERTY(float outputPower NOTIFY portEfficiencyChanged)
-
-
-    //QProperty : To know Platform Status
+    // platform board connected status
     Q_PROPERTY(bool platformState READ getPlatformState NOTIFY platformStateChanged)
 
-    //QProperty : Platform Id
+    // platform board unique id
     Q_PROPERTY(QString Id READ getPlatformId NOTIFY platformIdChanged)
 
-    //QProperty : To know USB-PDp- Port Status
-    Q_PROPERTY(bool usbCPort1State READ getUSBCPort1State NOTIFY usbCPortStateChanged)
-
-    //QProperty : To know USB-C port status
-    //Q_PROPERTY(bool usbcPort1 READ getUsbCPort1  NOTIFY usbCPort1StateChanged)
-    //Q_PROPERTY(bool usbcPort2 READ getUsbCPort2  NOTIFY usbCPort2StateChanged)
 public:
 
     explicit ImplementationInterfaceBinding(QObject *parent = nullptr);
     virtual ~ImplementationInterfaceBinding();
 
     Q_INVOKABLE void setOutputVoltageVBUS(int port, int voltage);
+    Q_INVOKABLE float getOutputVoltage(unsigned int port);
+    Q_INVOKABLE float getInputVoltage(unsigned int port);
+    Q_INVOKABLE float getOutputCurrent(unsigned int port);
+    Q_INVOKABLE float getInputPower(unsigned int port);
+    Q_INVOKABLE float getOutputPower(unsigned int port);
+    Q_INVOKABLE float getTemperature(unsigned int port);
+    Q_INVOKABLE bool getUSBCState(unsigned int port);
 
-    std::thread notification_thread_;
-    void notificationsThreadHandle();
-//Getter invoked when GUI tries to get the data
-    float getoutputVoltagePort0();
-    float getinputVoltagePort0();
-    float getoutputCurrentPort0();
-    float getpowerPort0();
-    float getPort0Temperature();
-    bool getPlatformState();
-    bool getUSBCPort1State();
-    bool getUSBCPort2State();
-    QString getPlatformId();
+    Q_INVOKABLE bool getPlatformState();
+    Q_INVOKABLE QString getPlatformId();
 
-//Helper methods to handle QString to JSON conversion
+    //Helper methods to handle QString to JSON conversion
     QJsonObject convertQstringtoJson(const QString string);
     QStringList getJsonObjectKeys(const QJsonObject json_obj);
     QVariantMap getJsonMapObject(const QJsonObject json_obj);
@@ -93,24 +67,19 @@ public:
     void handleUSBCportConnectNotification(const QVariantMap json_map);
     void handleUSBCportDisconnectNotification(const QVariantMap json_map);
 
-//Notification Simulator
-    friend void *simulateNotificationsThread(void *);
-    //friend void *simulateCurrentNotificationsThread(void *);
+    std::thread notification_thread_;
+    void notificationsThreadHandle();
+
     void handleNotification(QVariantMap current_map);
     void handleCloudNotification(QJsonObject json_obj);
     void clearBoardMetrics(int);
-    //void handleCurrentNotification(QVariantMap current_map);
+    friend void *simulateNotificationsThread(void *);
 
-//Signalling done when something needs to be notified
 signals:
-    void outputVoltagePort0Changed(const float outputVoltagePort0);
-    void inputVoltagePort0Changed(const float inputVoltagePort0);
-    void outputCurrentPort0Changed(const float outputCurrentPort0);
-    void port0TemperatureChanged(const float time);
-    void powerPort0Changed(const float powerPort0);
     void platformIdChanged(const QString platformId);
     void platformStateChanged(const bool platformState);
     void usbCPortStateChanged(int port, const bool value);
+
     // port metrics notification
     void portOutputVoltageChanged(int port, float value);
     void portInputVoltageChanged(int port, float value);
@@ -119,17 +88,19 @@ signals:
     void portPowerChanged(int port, float value);
     void portCurrentChanged(int port, float value);
     void portEfficencyChanged(int port, float input_power,float output_power);
+
 private:
-    //Members private to class
-    platform_Ports Ports;
+    platform_port_data port_data[USB_NUM_PORTS];
     QString platformId;
-    bool platformState, usbCPort1State, usbCPort2State;    
+    bool platformState;
+    bool USBCPortState[USB_NUM_PORTS];
     bool registrationSuccessful;
     DocumentManager *document_manager_;
     bool notification_thread_running_;
 
     // For load board data simulation only
     float targetVoltage;
+
 public:
     hcc::HostControllerClient *hcc_object;
 };

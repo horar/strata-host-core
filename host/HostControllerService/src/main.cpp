@@ -43,9 +43,7 @@ int main(int argc, char *argv[]) {
     }
     f.close();
 
-    try {
-        std::cout << "STARTING HOST CONTROLLER SERVICE: config file: " << configuration_file << std::endl;
-        HostControllerService host_controller_service(configuration_file);
+roller_service(configuration_file);
 
         // TODO : ian : remove need for while loop. this is nuts to not handle this internally
         while( host_controller_service.wait() == connected_state::DISCONNECTED ) {
