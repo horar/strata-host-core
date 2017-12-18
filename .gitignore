@@ -34,3 +34,8 @@ release*
 *.swo
 tags
 cmake-build-debug
+*.bin
+*.elf
+*.map
+*.a
+*.so
