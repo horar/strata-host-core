@@ -21,7 +21,7 @@ Rectangle {
     }
 
     property bool  hardwareStatus : {
-        var state = implementationInterfaceBinding.platformState;
+        var state = true;//implementationInterfaceBinding.platformState;
 
         if(loginScreen==true) {
             if(state == true && login_detected == true){

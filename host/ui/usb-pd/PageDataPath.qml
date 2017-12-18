@@ -109,16 +109,20 @@ Item {
                 showTwoRedriverSourceAndSink(true);
                 showOneRedriverSourceAndSink(false);
                 showPassiveSourceAndSink(false);
+                implementationInterfaceBinding.setRedriverCount(2);
+
             }
             else if (button.objectName == "oneRedriver"){
                 showTwoRedriverSourceAndSink(false);
                 showOneRedriverSourceAndSink(true);
                 showPassiveSourceAndSink(false);
+                implementationInterfaceBinding.setRedriverCount(1);
             }
             else if (button.objectName == "passiveRoute"){
                 showTwoRedriverSourceAndSink(false);
                 showOneRedriverSourceAndSink(false);
                 showPassiveSourceAndSink(true);
+                implementationInterfaceBinding.setRedriverCount(0);
             }
         }
     }
