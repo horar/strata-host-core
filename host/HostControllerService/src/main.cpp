@@ -4,41 +4,56 @@
 
 #include <stdio.h>
 #include <fstream>
+#include <SimpleOpt.h>
 
 #include "HostControllerService.h"
 
 using namespace std;
 
+enum { OPT_HELP, OPT_ARG };
+CSimpleOpt::SOption g_rgOptions[] = {
+        { OPT_ARG,  "-f",     SO_REQ_SEP },
+        { OPT_HELP, "-?",     SO_NONE    },
+        { OPT_HELP, "-h",     SO_NONE    },
+        { OPT_HELP, "--help", SO_NONE    },
+        SO_END_OF_OPTIONS
+};
+
 void print_usage(const std::string &error_message)
 {
-    printf("%s\nusage: hcs -f <configuration_file>\n", error_message.c_str());
+    printf("%s\nusage: hcs -f <configuration_file> [-?] [--help]\n", error_message.c_str());
 }
 
 int main(int argc, char *argv[])
 {
     std::string configuration_file = {};
 
-    //int option = 0;
-    // while ((option = getopt (argc , argv , "f:")) != -1) {
-    //     switch (option) {
-    //         case 'f' :
-    //             configuration_file = optarg;
-    //             break;
-    //         default:
-    //             print_usage ("Unknown argument flag");
-    //             exit (EXIT_FAILURE);
-    //     }
-    // }
-
-    if( argc < 1 ) {
-        print_usage("missing configuration file argument");
+    if( argc <= 1 ) {
+        print_usage("missing arguments");
         exit (EXIT_FAILURE);
     }
 
-    configuration_file = argv[1];
-    if( configuration_file.empty () ) {
-        print_usage ("No configuration file specified");
-        exit (EXIT_FAILURE);
+    CSimpleOpt args(argc, argv, g_rgOptions);
+    while ( args.Next() ) {
+
+        if (args.LastError() != SO_SUCCESS) {
+            print_usage("Help: ");
+            exit(1);
+        }
+
+        switch (args.OptionId()) {
+            case OPT_HELP:
+                print_usage("help: ");
+                exit(0);
+
+            case OPT_ARG:
+                string argument = args.OptionText();
+                if( argument == "-f" ) {
+                    printf("!!!!!!!!!!!!!!!!! %s\n", args.OptionArg());
+                    configuration_file = args.OptionArg();
+                }
+                break;
+        }
     }
 
     // check to make sure config file is accessible
