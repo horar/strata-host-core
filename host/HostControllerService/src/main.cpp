@@ -14,10 +14,11 @@ void print_usage(const std::string &error_message)
     printf("%s\nusage: hcs -f <configuration_file>\n", error_message.c_str());
 }
 
-int main(int argc, char *argv[]) {
+int main(int argc, char *argv[])
+{
     std::string configuration_file = {};
 
-    int option = 0;
+    //int option = 0;
     // while ((option = getopt (argc , argv , "f:")) != -1) {
     //     switch (option) {
     //         case 'f' :
@@ -28,15 +29,17 @@ int main(int argc, char *argv[]) {
     //             exit (EXIT_FAILURE);
     //     }
     // }
-    configuration_file = argv[2];
-    printf("config: %s\n", configuration_file.c_str());
 
+    if( argc < 1 ) {
+        print_usage("missing configuration file argument");
+        exit (EXIT_FAILURE);
+    }
+
+    configuration_file = argv[1];
     if( configuration_file.empty () ) {
         print_usage ("No configuration file specified");
         exit (EXIT_FAILURE);
     }
-
-    exit( EXIT_FAILURE );
 
     // check to make sure config file is accessible
     ifstream f(configuration_file.c_str());
