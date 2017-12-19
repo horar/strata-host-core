@@ -12,7 +12,7 @@ Rectangle {
     property bool hardwareStatus:  {
 
         onPlatformStateChanged: {
-            var state = true//implementationInterfaceBinding.platformState;
+            var state = implementationInterfaceBinding.platformState;
             if(state == false && boardScreen == true) {
                 stack.push([page, {immediate:false}]);
             }
