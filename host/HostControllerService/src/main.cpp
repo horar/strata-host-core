@@ -29,11 +29,14 @@ int main(int argc, char *argv[]) {
     //     }
     // }
     configuration_file = argv[2];
+    printf("config: %s\n", configuration_file.c_str());
 
     if( configuration_file.empty () ) {
         print_usage ("No configuration file specified");
         exit (EXIT_FAILURE);
     }
+
+    exit( EXIT_FAILURE );
 
     // check to make sure config file is accessible
     ifstream f(configuration_file.c_str());
@@ -43,7 +46,9 @@ int main(int argc, char *argv[]) {
     }
     f.close();
 
-roller_service(configuration_file);
+    try {
+        std::cout << "STARTING HOST CONTROLLER SERVICE: config file: " << configuration_file << std::endl;
+        HostControllerService host_controller_service(configuration_file);
 
         // TODO : ian : remove need for while loop. this is nuts to not handle this internally
         while( host_controller_service.wait() == connected_state::DISCONNECTED ) {
