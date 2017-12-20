@@ -70,8 +70,40 @@ void ImplementationInterfaceBinding::setOutputVoltageVBUS(int port, int voltage)
 #endif
 }
 
-float ImplementationInterfaceBinding::getOutputVoltage( unsigned int port ) {
+void ImplementationInterfaceBinding::setRedriverLoss(float lossValue)
+{
+    qDebug("ImplementationInterfaceBinding::setRedriverLoss(%f)", lossValue);
+    QJsonObject cmdMessageObject;
+    cmdMessageObject.insert("cmd", "request_redriver_signal_loss");
+    QJsonObject payloadObject;
+    payloadObject.insert("loss_value", lossValue);
+    cmdMessageObject.insert("payload",payloadObject);
+    QJsonDocument doc(cmdMessageObject);
+    QString strJson(doc.toJson(QJsonDocument::Compact));
+    if(hcc_object->sendCmd(strJson.toStdString()))
+        qDebug() << "Radio button send";
+    else
+        qDebug() << "Radio button send failed";
+}
 
+void ImplementationInterfaceBinding::setRedriverCount(int value)
+{
+    qDebug("ImplementationInterfaceBinding::setRedriverCount(%d)", value);
+    QJsonObject cmdMessageObject;
+    cmdMessageObject.insert("cmd", "request_redriver_count");
+    QJsonObject payloadObject;
+    payloadObject.insert("loss_value", value);
+    cmdMessageObject.insert("payload",payloadObject);
+    QJsonDocument doc(cmdMessageObject);
+    QString strJson(doc.toJson(QJsonDocument::Compact));
+    if(hcc_object->sendCmd(strJson.toStdString()))
+        qDebug() << "Radio button send";
+    else
+        qDebug() << "Radio button send failed";
+}
+
+float ImplementationInterfaceBinding::getOutputVoltage( unsigned int port )
+{
     if( port >= USB_NUM_PORTS ) {
         qCritical("ERROR: port(%d) invalid port !\n", port);
         return -1.0;

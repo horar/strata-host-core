@@ -46,6 +46,8 @@ Button {
 
     onCheckedChanged: {
         middleButtonCanvas.requestPaint()
+        if(checked)
+            implementationInterfaceBinding.setRedriverLoss(9)
     }
 
 
