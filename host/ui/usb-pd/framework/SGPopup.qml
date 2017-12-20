@@ -17,6 +17,7 @@ Popup {
     property bool graphVisible: false;
     property var selection: undefined
     property bool overlimitVisibility : false;
+    property bool underlimitVisibility: false;
 
     modal: true
     focus: false
@@ -124,7 +125,8 @@ Popup {
             anchors { centerIn: parent }
             chartType: container.chartType
             portNumber: container.portNumber
-            redZoneVisibility: overlimitVisibility
+            portTempRedZone: overlimitVisibility
+            inputPowerRedzone: underlimitVisibility
         }
     }
 }
