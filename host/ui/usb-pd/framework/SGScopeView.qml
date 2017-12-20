@@ -17,20 +17,19 @@ ChartView {
     property bool efficencyVisible: false
     property real minLimit: 0
     property real maxLimit: 10
-    property int yMax: 0
 
-    property int plotWidth: 0;
-    property int plotHeight: 0;
-    property int plotX: 0;
-    property int plotY: 0;
-    property int setUpperRectheight: 0;
-    property int setLowerRectheight: 0;
-    property real currentHeight: 0;
-    property real percentageHeight: 0;
-    property real overallHeight: 0;
-    property bool portTempRedZone: false;
-    property bool inputPowerRedzone: false;
-    property bool currentYvalueOnGraphVisibility: false;
+    property int plotWidth: 0
+    property int plotHeight: 0
+    property int plotX: 0
+    property int plotY: 0
+    property int setUpperRectheight: 0
+    property int setLowerRectheight: 0
+    property real currentHeight: 0
+    property real percentageHeight: 0
+    property real overallHeight: 0
+    property bool portTempRedZone: false
+    property bool inputPowerRedZone: false
+    property bool currentYvalueOnGraphVisibility: false
     property string warningMessageOntheGraph: warningMessage.text
 
     property bool hardwareStatus : {
@@ -106,7 +105,6 @@ ChartView {
         onPortOutputVoltageChanged: {
             if( chartType === "Output Voltage"&& whenOpen  && portNumber == port ) {
                 parameterValue = value;
-                // lineSeries2.visible = true;
                 lineSeries1.append(count/10,value);
                 lineSeries1.name = "Output Voltage";
                 count++;
@@ -120,13 +118,13 @@ ChartView {
                 lineSeries1.name = "Input Power";
                 count++;
                 if(parameterValue <= currentHeight) {
-
                     warningMessage.opacity = 1.0;
                     warningMessageOntheGraph = "Voltage Too Low";
                     currentYvalueOnGraphVisibility = false;
 
                 }
-                else  { warningMessage.opacity = 0.0;
+                else  {
+                    warningMessage.opacity = 0.0;
                     currentYvalueOnGraphVisibility = true;
                 }
 
@@ -233,7 +231,6 @@ ChartView {
                 }
             }
         }
-
     }
 
     Component {
@@ -241,7 +238,7 @@ ChartView {
         Rectangle {
             id: selComp2
             opacity: 0.2
-            visible: inputPowerRedzone
+            visible: inputPowerRedZone
             z:1
 
             Label {

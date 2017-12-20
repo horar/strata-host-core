@@ -57,6 +57,7 @@ Rectangle {
             anchors { centerIn: parent }
             text: "SPYGLASS PROOF OF CONCEPT WITH LAB CLOUD"
             color: "white"
+            font.pointSize: Qt.platform.os == "osx"? 13 :8
             font.bold: true
         }
     }

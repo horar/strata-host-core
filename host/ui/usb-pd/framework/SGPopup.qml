@@ -126,7 +126,7 @@ Popup {
             chartType: container.chartType
             portNumber: container.portNumber
             portTempRedZone: overlimitVisibility
-            inputPowerRedzone: underlimitVisibility
+            inputPowerRedZone: underlimitVisibility
         }
     }
 }
