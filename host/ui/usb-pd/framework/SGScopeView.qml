@@ -83,7 +83,7 @@ ChartView {
                 count++;
                 if(parameterValue <= currentHeight) {
                     warningMessage.opacity = 1.0;
-                    warningMessageOntheGraph = "Temperture Too High";
+                    warningMessageOntheGraph = "Temperature Too High";
                     currentYvalueOnGraphVisibility = false;
                 }
                 else  {
