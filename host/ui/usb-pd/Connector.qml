@@ -181,8 +181,8 @@ Rectangle {
                 target: leftUSBPlug
                 property: "x";
                 from: leftUSBPlug.x
-                //to: connector.x + connector.width/4
-                to:leftUSBPlugInitialXPosition
+                to: connector.x + connector.width/4
+                //to:leftUSBPlugInitialXPosition
                 easing.type: Easing.OutQuad;
                 duration: 500
             }
@@ -191,10 +191,10 @@ Rectangle {
             PropertyAnimation {
                 target: cable;
                 property: "halfWidth";
-                //from:cable.width/2;
-                from:width/8
-                //to: 5* cable.width/8;
-                to: 5*width/16
+                from:cable.width/2;
+               // from:width/8
+                to: 5* cable.width/8;
+                //to: 5*width/16
                 easing.type: Easing.OutQuad;
                 duration: 500
             }
@@ -203,10 +203,10 @@ Rectangle {
             PropertyAnimation {
                 target: cable;
                 property: "halfWidth";
-                //from:5*cable.width/8;
-                //to: 3*cable.width/8;
-                from: 5*width/16
-                to: 3*width/16
+                from:5*cable.width/8;
+                to: 3*cable.width/8;
+                //from: 5*width/16
+                //to: 3*width/16
                 easing.type: Easing.OutQuad;
                 duration: 750
             }
@@ -215,10 +215,10 @@ Rectangle {
             PropertyAnimation {
                 target: cable;
                 property: "halfWidth";
-                //from:3*cable.width/8;
-                //to: cable.width/2;
-                from: 3*width/16
-                to: width/4
+                from:3*cable.width/8;
+                to: cable.width/2;
+                //from: 3*width/16
+                //to: width/4
                 easing.type: Easing.OutQuad;
                 duration: 1000
             }
