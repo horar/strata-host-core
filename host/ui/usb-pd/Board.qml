@@ -282,5 +282,7 @@ Rectangle {
         portNumber: 1
         powerMessageVisible: false;
         graphVisible: true;
+        overlimitVisibility: false;
+        underlimitVisibility: true;
     }
 }
