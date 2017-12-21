@@ -57,6 +57,7 @@ Rectangle {
             anchors { centerIn: parent }
             text: "SPYGLASS PROOF OF CONCEPT WITH LAB CLOUD"
             color: "white"
+            font.pointSize: Qt.platform.os == "osx"? 13 :8
             font.bold: true
         }
     }
@@ -245,6 +246,7 @@ Rectangle {
             placeholderText: qsTr(" username")
             Material.accent: Material.Grey
             cursorPosition: 3
+            font.pointSize: Qt.platform.os == "osx"? 13 :8
 
             //handle a return key click, which is the equivalent of the login button being clicked
             Keys.onReturnPressed:{
@@ -266,6 +268,7 @@ Rectangle {
             placeholderText: qsTr(" password")
             echoMode: TextInput.Password
             Material.accent: Material.Grey
+            font.pointSize: Qt.platform.os == "osx"? 13 :8
 
             //handle a return key click, which is the equivalent of the login button being clicked
             Keys.onReturnPressed:{

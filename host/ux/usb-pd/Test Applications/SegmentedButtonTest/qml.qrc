@@ -1,0 +1,12 @@
+<RCC>
+    <qresource prefix="/">
+        <file>main.qml</file>
+        <file>qtquickcontrols2.conf</file>
+        <file>One.qml</file>
+        <file>Two.qml</file>
+        <file>Three.qml</file>
+        <file>SGLeftSegmentedButton.qml</file>
+        <file>SGMiddleSegmentedButton.qml</file>
+        <file>SGRightSegmentedButton.qml</file>
+    </qresource>
+</RCC>
