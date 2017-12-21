@@ -27,15 +27,9 @@ CTestTestfile.cmake
 .qmake.stash
 .vs*
 GeneratedFiles*
-release*
 *vcxproj*
 *usb-pd.vcxproj.user*
 *.swp
 *.swo
 tags
 cmake-build-debug
-*.bin
-*.elf
-*.map
-*.a
-*.so

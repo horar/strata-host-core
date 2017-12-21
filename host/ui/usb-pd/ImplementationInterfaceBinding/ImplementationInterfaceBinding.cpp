@@ -16,7 +16,13 @@ ImplementationInterfaceBinding::ImplementationInterfaceBinding(QObject *parent) 
     }
 
     platformId= QString();
+
+#ifdef QT_NO_DEBUG
     platformState = false;
+#else
+    // Debug builds should not need a platform board
+    platformState = true;
+#endif
 
     // DocumentManager is a C++ model for QML objects and is a super class of QObject
     document_manager_ = static_cast<DocumentManager *>(parent);
@@ -555,3 +561,4 @@ void ImplementationInterfaceBinding::notificationsThreadHandle() {
         }
     }
 }
+

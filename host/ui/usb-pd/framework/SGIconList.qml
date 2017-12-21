@@ -133,6 +133,7 @@ Rectangle {
         powerMessageVisible: false;
         graphVisible: true;
         overlimitVisibility: false;
+        underlimitVisibility: false;
 
     }
     SGPopup {
@@ -152,6 +153,7 @@ Rectangle {
         powerMessageVisible: false;
         graphVisible: true;
         overlimitVisibility: false;
+        underlimitVisibility: false;
     }
 
     SGPopup {
@@ -171,6 +173,7 @@ Rectangle {
         powerMessageVisible: false;
         graphVisible: true;
         overlimitVisibility: false;
+        underlimitVisibility: false;
     }
 
     SGPopup {
@@ -190,6 +193,7 @@ Rectangle {
         powerMessageVisible: false;
         graphVisible: true;
         overlimitVisibility: true;
+        underlimitVisibility: false;
     }
 
 }
