@@ -3,12 +3,14 @@ import QtQuick.Controls 2.0
 import QtQuick.Layouts 1.1
 import QtQuick.Extras 1.4
 import QtQuick.Controls.Styles 1.4
+import tech.spyglass.ImplementationInterfaceBinding 1.0
+
 import "framework"
 
 Item {
 
     property var verticalButtonDelta: 40    //distance betwen the routing buttons
-
+//    property Q
     //set the hidden elements of the UI correctly based on the two redriver
     //button being set on startup
     Component.onCompleted: {
@@ -17,6 +19,15 @@ Item {
         showPassiveSourceAndSink(false);
     }
 
+    // Values are being Signalled from ImplementationInterfaceBinding.cpp
+    Connections {
+        target: implementationInterfaceBinding
+
+        //  swap cable status
+        onSwapCableStatusChanged: {
+            statusMessage.text = "Please Flip the connection on " + cableStatus;
+        }
+    }
 
     Text{
         font.family: "helvetica"
@@ -460,8 +471,8 @@ Item {
         id:statusMessage
         font.family: "helvetica"
         font.pointSize: 24
-        color:passiveRoute.checked ? "red" : "transparent"
-        text:"Please flip the connection to port 1"
+        color:"red"
+        text:""
         anchors{horizontalCenter: parent.horizontalCenter
                 bottom:parent.bottom
                 bottomMargin: parent.height/10

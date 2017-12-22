@@ -103,7 +103,7 @@ void ImplementationInterfaceBinding::setRedriverCount(int value)
     QJsonObject cmdMessageObject;
     cmdMessageObject.insert("cmd", "request_redriver_count");
     QJsonObject payloadObject;
-    payloadObject.insert("loss_value", value);
+    payloadObject.insert("value", value);
     cmdMessageObject.insert("payload",payloadObject);
     QJsonDocument doc(cmdMessageObject);
     QString strJson(doc.toJson(QJsonDocument::Compact));
@@ -214,6 +214,9 @@ void ImplementationInterfaceBinding::handleNotification(QVariantMap current_map)
         } else if (current_map["value"] == "usb_pd_port_disconnect"){
             payloadMap=current_map["payload"].toMap();
             handleUSBCportDisconnectNotification(payloadMap);
+        }  else if (current_map["value"] == "usb_pd_cable_swap_notification"){
+            payloadMap=current_map["payload"].toMap();
+            handleUSBPDcableswapNotification(payloadMap);
         }  else {
             qDebug() << "Unsupported value field Received";
             qDebug() << "Received JSON = " <<current_map;
@@ -412,7 +415,10 @@ void ImplementationInterfaceBinding::handleUSBCportDisconnectNotification(const 
     }
 }
 
-
+void ImplementationInterfaceBinding::handleUSBPDcableswapNotification(const QVariantMap json_map) {
+    QString swapCable = json_map["swap_cable"].toString();
+    emit swapCableStatusChanged(swapCable);
+}
 
 /*!
  * End of notification handlers

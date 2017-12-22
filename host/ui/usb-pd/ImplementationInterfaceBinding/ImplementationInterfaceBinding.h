@@ -57,7 +57,10 @@ class ImplementationInterfaceBinding : public QObject
     Q_PROPERTY(QString Id READ getPlatformId NOTIFY platformIdChanged)
 
     //QProperty : To know USB-PDp- Port Status
-    Q_PROPERTY(bool usbCPort1State READ getUSBCPort1State NOTIFY usbCPortStateChanged)
+    Q_PROPERTY(bool usbCPort1State  NOTIFY usbCPortStateChanged)
+
+    //QProperty to show the swap cable status
+    Q_PROPERTY(QString swapCable NOTIFY swapCableStatusChanged)
 
     //QProperty : To know USB-C port status
     //Q_PROPERTY(bool usbcPort1 READ getUsbCPort1  NOTIFY usbCPort1StateChanged)
@@ -94,6 +97,7 @@ public:
     void handlePlatformStateNotification(const QVariantMap json_map);
     void handleUSBCportConnectNotification(const QVariantMap json_map);
     void handleUSBCportDisconnectNotification(const QVariantMap json_map);
+    void handleUSBPDcableswapNotification(const QVariantMap json_map);
 
 //Notification Simulator
     friend void *simulateNotificationsThread(void *);
@@ -111,6 +115,7 @@ signals:
     void port0TemperatureChanged(const float time);
     void powerPort0Changed(const float powerPort0);
     void platformIdChanged(const QString platformId);
+    void swapCableStatusChanged(const QString cableStatus);
     void platformStateChanged(const bool platformState);
     void usbCPortStateChanged(int port, const bool value);
     // port metrics notification
