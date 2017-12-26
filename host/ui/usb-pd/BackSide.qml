@@ -16,8 +16,10 @@ Rectangle {
         PageSchematic { id: pageSchematic }
         PageLayout { id: pageLayout }
         PageTestReport { id: pageTestReport }
-        PageSystemContent {id: pageSystemContent}
+        PageSystemContent { id: pageSystemContent}
+        PageDemoLayout { id : pageDemoLayout }
         PageComingSoon {id: pageComingSoonContent}
+
     }
     
     TabBar {
@@ -31,6 +33,7 @@ Rectangle {
         TabButton { text: "Layout" }
         TabButton { text: "Test Report" }
         TabButton { text: "System Content" }
+        TabButton { text: "Demo Layout" }
         TabButton { text: "Coming Soon" }
     }
     

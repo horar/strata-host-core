@@ -81,5 +81,6 @@
         <file>images/DataPath/hardDrive.svg</file>
         <file>images/DataPath/PassiveDataRouteActive.svg</file>
         <file>images/DataPath/arrows.svg</file>
+        <file>PageDemoLayout.qml</file>
     </qresource>
 </RCC>
