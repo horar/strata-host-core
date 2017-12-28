@@ -1,4 +1,4 @@
-﻿import QtQuick 2.0
+import QtQuick 2.0
 import QtCharts 2.1
 import QtQuick.Controls 1.4
 import tech.spyglass.ImplementationInterfaceBinding 1.0
@@ -16,7 +16,7 @@ ChartView {
     property var  efficencyValue: 0
     property bool efficencyVisible: false
     property real minLimit: 0
-    property real maxLimit: 10
+    property real maxLimit: 0.50
 
     property int plotWidth: 0
     property int plotHeight: 0
@@ -301,18 +301,20 @@ ChartView {
                             if(currentHeight > axisY1.max) {
                                 selComp2.height = plotHeight;
                                 selComp2.y = plotY;
-                                currentHeight = axisY1.max;
-
-                            }
-                            else if(currentHeight < axisY1.min) {
-                                selComp2.height = 0;
-                                currentHeight = axisY1.min;
-                                selComp2.y = plotY + plotHeight - setLowerRectheight;
                                 currentYvalueInInputPower.opacity = 0.0;
                                 currentYvalueOnGraphVisibility = false;
 
                             }
-
+                            else if(currentHeight < axisY1.min) {
+                                selComp2.height = 0;
+                                currentHeight = 0
+                                selComp2.y = plotY + plotHeight;
+                                currentYvalueInInputPower.opacity = 0.0;
+                                currentYvalueOnGraphVisibility = false;
+                                console.log("plotY",plotY);
+                                console.log("plotHeight",plotHeight);
+                                console.log("setLowerRectheight",setLowerRectheight);
+                            }
                         }
                     }
                 }
