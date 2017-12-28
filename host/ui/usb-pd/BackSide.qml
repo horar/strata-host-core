@@ -17,7 +17,7 @@ Rectangle {
         PageLayout { id: pageLayout }
         PageTestReport { id: pageTestReport }
         PageSystemContent { id: pageSystemContent}
-        PageDemoLayout { id : pageDemoLayout }
+        PageDemoSetup{ id : pageDemoSetup}
         PageComingSoon {id: pageComingSoonContent}
 
     }
@@ -33,7 +33,7 @@ Rectangle {
         TabButton { text: "Layout" }
         TabButton { text: "Test Report" }
         TabButton { text: "System Content" }
-        TabButton { text: "Demo Layout" }
+        TabButton { text: "Demo Setup" }
         TabButton { text: "Coming Soon" }
     }
     

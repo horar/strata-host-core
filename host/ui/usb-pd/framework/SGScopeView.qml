@@ -112,7 +112,7 @@ ChartView {
         }
 
         onPortInputVoltageChanged:{
-            if( chartType === "Input Power"&& whenOpen  && portNumber == port ) {
+            if( chartType === "Input Power"&& whenOpen) {
                 parameterValue = value*parameterCurrentValue;
                 lineSeries1.append(count/10,parameterValue);
                 lineSeries1.name = "Input Power";
@@ -213,7 +213,7 @@ ChartView {
                     onMouseYChanged: {
                         if(drag.active){
                             selComp.height = selComp.height + mouseY;
-                            overallHeight = selComp.height /plotHeight
+                            overallHeight = selComp.height/plotHeight;
                             currentHeight = - ((axisY1.max * overallHeight) - (axisY1.max));
                             currentYvalue.opacity = 1.0
                             currentYvalueOnGraphVisibility = true;
@@ -303,17 +303,13 @@ ChartView {
                                 selComp2.y = plotY;
                                 currentYvalueInInputPower.opacity = 0.0;
                                 currentYvalueOnGraphVisibility = false;
-
                             }
                             else if(currentHeight < axisY1.min) {
                                 selComp2.height = 0;
-                                currentHeight = 0
                                 selComp2.y = plotY + plotHeight;
                                 currentYvalueInInputPower.opacity = 0.0;
                                 currentYvalueOnGraphVisibility = false;
-                                console.log("plotY",plotY);
-                                console.log("plotHeight",plotHeight);
-                                console.log("setLowerRectheight",setLowerRectheight);
+
                             }
                         }
                     }
