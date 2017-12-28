@@ -41,7 +41,7 @@ class ImplementationInterfaceBinding : public QObject
 
     // QProperty for all ports 
     Q_PROPERTY(float outputVoltage NOTIFY portOutputVoltageChanged)
-    Q_PROPERTY(float inputVoltage NOTIFY portInputVoltageChanged)
+    Q_PROPERTY(float inputVoltage READ getInputVoltage NOTIFY portInputVoltageChanged)
     Q_PROPERTY(float targetVoltage NOTIFY portTargetVoltageChanged)
     Q_PROPERTY(float portTemperature NOTIFY portTemperatureChanged)
     Q_PROPERTY(float portCurrent NOTIFY portCurrentChanged)
@@ -78,7 +78,7 @@ public:
     void notificationsThreadHandle();
 //Getter invoked when GUI tries to get the data
     float getoutputVoltagePort0();
-    float getinputVoltagePort0();
+    float getInputVoltage();
     float getoutputCurrentPort0();
     float getpowerPort0();
     float getPort0Temperature();
@@ -110,7 +110,7 @@ public:
 //Signalling done when something needs to be notified
 signals:
     void outputVoltagePort0Changed(const float outputVoltagePort0);
-    void inputVoltagePort0Changed(const float inputVoltagePort0);
+    void inputVoltagePort0Changed(const float inputVoltage);
     void outputCurrentPort0Changed(const float outputCurrentPort0);
     void port0TemperatureChanged(const float time);
     void powerPort0Changed(const float powerPort0);
@@ -130,7 +130,8 @@ private:
     //Members private to class
     platform_Ports Ports;
     QString platformId;
-    bool platformState, usbCPort1State, usbCPort2State;    
+    bool platformState, usbCPort1State, usbCPort2State;
+    float inputVoltage;
     bool registrationSuccessful;
     DocumentManager *document_manager_;
     bool notification_thread_running_;

@@ -69,7 +69,7 @@ Rectangle {
             id: negotiatedValues
             width:container.width/4; height: width
             icon: "../images/icons/leftArrow.svg"
-            text: container.targetVoltage.toFixed(1) +" V   "//+ container.portCurrent.toFixed(1)+" A"
+            text: container.targetVoltage.toFixed(0) +" V   "//+ container.portCurrent.toFixed(1)+" A"
 
             MouseArea {
                 anchors { fill: parent }
