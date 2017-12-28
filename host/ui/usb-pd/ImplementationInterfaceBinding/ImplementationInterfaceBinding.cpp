@@ -108,7 +108,7 @@ void ImplementationInterfaceBinding::setRedriverCount(int value)
     QJsonDocument doc(cmdMessageObject);
     QString strJson(doc.toJson(QJsonDocument::Compact));
     if(hcc_object->sendCmd(strJson.toStdString()))
-        qDebug() << "Radio button send";
+        qDebug() << "Radio button send" << doc;
     else
         qDebug() << "Radio button send failed";
 }
@@ -131,9 +131,9 @@ float ImplementationInterfaceBinding::getoutputVoltagePort0() {
 
 /*! \brief gets the cached voltage of port 1
  */
-float ImplementationInterfaceBinding::getinputVoltagePort0() {
+float ImplementationInterfaceBinding::getInputVoltage() {
 
-    return Ports.v_tport[0];
+    return inputVoltage;
 }
 
 /*! \brief gets the cached current of port 0
@@ -284,7 +284,8 @@ void ImplementationInterfaceBinding::handleUsbPowerNotification(const QVariantMa
     emit portTemperatureChanged(port, temperature);
 
     float input_voltage = payloadMap["input"].toFloat();
-    emit portInputVoltageChanged(port, input_voltage);
+    inputVoltage = input_voltage;
+    emit portInputVoltageChanged(port, inputVoltage);
 
     emit portEfficencyChanged(port, input_voltage*current, power);
 #else
@@ -389,7 +390,7 @@ void ImplementationInterfaceBinding::clearBoardMetrics(int portNumber){
     emit portPowerChanged(portNumber,0);
     emit portCurrentChanged(portNumber,0);
     emit portTemperatureChanged(portNumber,0);
-    emit portInputVoltageChanged(portNumber,0);
+//    emit portInputVoltageChanged(portNumber,0);
 }
 
 
