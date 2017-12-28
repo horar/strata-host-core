@@ -14,9 +14,9 @@ Item {
     //set the hidden elements of the UI correctly based on the two redriver
     //button being set on startup
     Component.onCompleted: {
-        showTwoRedriverSourceAndSink(true);
-        showOneRedriverSourceAndSink(false);
+        showTwoRedriverSourceAndSink(true);       
         showPassiveSourceAndSink(false);
+        showOneRedriverSourceAndSink(false);
     }
 
     // Values are being Signalled from ImplementationInterfaceBinding.cpp
@@ -125,7 +125,7 @@ Item {
             }
             else if (button.objectName == "oneRedriver"){
                 showTwoRedriverSourceAndSink(false);
-                showOneRedriverSourceAndSink(true);
+                showOneRedriverSourceAndSink(false);
                 showPassiveSourceAndSink(false);
                 implementationInterfaceBinding.setRedriverCount(1);
             }
@@ -172,7 +172,7 @@ Item {
         id:twoRedrivers
         objectName: "twoRedrivers"
         anchors.horizontalCenter: parent.horizontalCenter
-        anchors.bottom: oneRedriver.top
+        anchors.bottom: passiveRoute.top
         anchors.bottomMargin: verticalButtonDelta
         width: parent.width/3
         height: parent.height/6
@@ -295,9 +295,12 @@ Item {
     Button{
         id:oneRedriver
         objectName: "oneRedriver"
+//        anchors.horizontalCenter: parent.horizontalCenter
+//        anchors.verticalCenter:parent.verticalCenter
+//        anchors.verticalCenterOffset: parent.height/20
         anchors.horizontalCenter: parent.horizontalCenter
-        anchors.verticalCenter:parent.verticalCenter
-        anchors.verticalCenterOffset: parent.height/20
+        anchors.top: passiveRoute.bottom
+        anchors.topMargin: verticalButtonDelta
         width: parent.width/3
         height: parent.height/6
         ButtonGroup.group: dataPathGroup
@@ -305,31 +308,31 @@ Item {
         background: Rectangle{color:"transparent"}
 
         Image{
-            source: oneRedriver.checked ? "./images/DataPath/OneRepeaterRouteActive.svg" : "./images/DataPath/OneRepeaterRouteInactive.svg"
+            source: oneRedriver.checked ? "./images/DataPath/charge_only_activate.png" : "./images/DataPath/charge_only_inactivate.png"
             height: oneRedriver.height
             width: oneRedriver.width
 
-            Text{
-                text:"Flex Cable"
-                color: oneRedriver.checked ? "white" : "transparent"
-                font.family: "helvetica"
-                font.pointSize: 15
-                anchors.centerIn:parent
-            }
-            Text{
-                text:"Redriver"
-                color: oneRedriver.checked ? "darkslategrey" : "transparent"
-                font.family: "helvetica"
-                font.pointSize: 15
-                anchors{top:parent.top; topMargin: parent.height/16; right: parent.right; rightMargin: 3*parent.width/16}
-            }
-            Text{
-                text:"Redriver"
-                color: oneRedriver.checked ? "darkslategrey" : "transparent"
-                font.family: "helvetica"
-                font.pointSize: 15
-                anchors{bottom:parent.bottom; bottomMargin: parent.height/16; left: parent.left; leftMargin: 3*parent.width/16}
-            }
+//            Text{
+//                text:"Flex Cable"
+//                color: oneRedriver.checked ? "white" : "transparent"
+//                font.family: "helvetica"
+//                font.pointSize: 15
+//                anchors.centerIn:parent
+////            }
+//            Text{
+//                text:"Redriver"
+//                color: oneRedriver.checked ? "darkslategrey" : "transparent"
+//                font.family: "helvetica"
+//                font.pointSize: 15
+//                anchors{top:parent.top; topMargin: parent.height/16; right: parent.right; rightMargin: 3*parent.width/16}
+//            }
+//            Text{
+//                text:"Redriver"
+//                color: oneRedriver.checked ? "darkslategrey" : "transparent"
+//                font.family: "helvetica"
+//                font.pointSize: 15
+//                anchors{bottom:parent.bottom; bottomMargin: parent.height/16; left: parent.left; leftMargin: 3*parent.width/16}
+//            }
 
         }
     }
@@ -404,9 +407,12 @@ Item {
     Button{
         id:passiveRoute
         objectName: "passiveRoute"
+//        anchors.horizontalCenter: parent.horizontalCenter
+//        anchors.top: oneRedriver.bottom
+//        anchors.topMargin: verticalButtonDelta
         anchors.horizontalCenter: parent.horizontalCenter
-        anchors.top: oneRedriver.bottom
-        anchors.topMargin: verticalButtonDelta
+        anchors.verticalCenter:parent.verticalCenter
+        anchors.verticalCenterOffset: parent.height/20
         width: parent.width/3
         height: parent.height/6
         ButtonGroup.group: dataPathGroup
