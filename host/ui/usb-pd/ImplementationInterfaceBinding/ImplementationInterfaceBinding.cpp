@@ -275,7 +275,19 @@ void ImplementationInterfaceBinding::handleUsbPowerNotification(const QVariantMa
     emit portTargetVoltageChanged(port, target_voltage);
 
     float current = payloadMap["current"].toFloat();
-    emit portCurrentChanged(port, current);
+    if(port == 1) {
+        port1Current = current;
+    }
+    if(port == 2) {
+        port2Current = current;
+        //port1Current = 0;
+    }
+    if(usbCPort2State && usbCPort2State)
+        emit portCurrentChanged(port, port2Current+port1Current);
+    else if(usbCPort1State && !usbCPort2State)
+        emit portCurrentChanged(port, port1Current);
+    else if(!usbCPort1State && usbCPort2State)
+        emit portCurrentChanged(port, port2Current);
 
     float power = payloadMap["power"].toFloat();
     emit portPowerChanged(port, power);

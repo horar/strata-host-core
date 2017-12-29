@@ -14,7 +14,7 @@ Item {
     //set the hidden elements of the UI correctly based on the two redriver
     //button being set on startup
     Component.onCompleted: {
-        showTwoRedriverSourceAndSink(true);       
+        showTwoRedriverSourceAndSink(false);
         showPassiveSourceAndSink(false);
         showOneRedriverSourceAndSink(false);
     }
@@ -178,7 +178,7 @@ Item {
         height: parent.height/6
         ButtonGroup.group: dataPathGroup
         checkable:true
-        checked:true
+        checked:false
         background: Rectangle{color:"transparent"}
 
         Image{
@@ -190,7 +190,7 @@ Item {
                 text:"Flex Cable"
                 color: twoRedrivers.checked ? "white" : "transparent"
                 font.family: "helvetica"
-                font.pointSize: 15
+                font.pointSize: 10
                 anchors.centerIn:parent
             }
 
@@ -198,28 +198,28 @@ Item {
                 text:"Redriver"
                 color: twoRedrivers.checked ? "darkslategrey" : "transparent"
                 font.family: "helvetica"
-                font.pointSize: 15
+                font.pointSize: 10
                 anchors{top:parent.top; topMargin:parent.height/16; left: parent.left; leftMargin: 3*parent.width/16}
             }
             Text{
                 text:"Redriver"
                 color: twoRedrivers.checked ? "darkslategrey" : "transparent"
                 font.family: "helvetica"
-                font.pointSize: 15
+                font.pointSize: 10
                 anchors{top:parent.top; topMargin:parent.height/16; right: parent.right; rightMargin: parent.width/8}
             }
             Text{
                 text:"Redriver"
                 color: twoRedrivers.checked ? "darkslategrey" : "transparent"
                 font.family: "helvetica"
-                font.pointSize: 15
+                font.pointSize: 10
                 anchors{bottom:parent.bottom; bottomMargin:parent.height/16; left: parent.left; leftMargin: 3*parent.width/16}
             }
             Text{
                 text:"Redriver"
                 color: twoRedrivers.checked ? "darkslategrey" : "transparent"
                 font.family: "helvetica"
-                font.pointSize: 15
+                font.pointSize: 10
                 anchors{bottom:parent.bottom; bottomMargin:parent.height/16; right: parent.right; rightMargin: parent.width/8}
             }
         }
@@ -229,7 +229,7 @@ Item {
         id:twoRedriverButtonLabel
         text:"Two Redrivers"
         font.family: "helvetica"
-        font.pointSize: 24
+        font.pointSize: 19
         anchors.horizontalCenter: twoRedrivers.horizontalCenter
         anchors.top:twoRedrivers.bottom
         anchors.topMargin: 5
@@ -305,6 +305,7 @@ Item {
         height: parent.height/6
         ButtonGroup.group: dataPathGroup
         checkable:true
+        checked: true
         background: Rectangle{color:"transparent"}
 
         Image{

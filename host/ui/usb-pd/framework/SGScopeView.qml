@@ -10,7 +10,7 @@ ChartView {
     property int count:0
     property string chartType: ""
     property int portNumber:0
-    property bool whenOpen: true
+    property bool whenOpen: false
     property var parameterValue: 1
     property var parameterCurrentValue: 0
     property var  efficencyValue: 0
@@ -51,6 +51,19 @@ ChartView {
         setUpperRectheight =  (1 - (minLimit/axisY1.max)) * plotHeight;
         setLowerRectheight = (maxLimit/axisY1.max) * plotHeight;
 
+    }
+    onVisibleChanged: {
+        if(visible){
+            whenOpen = true;
+        }
+        else {
+            whenOpen = false;
+            if(count != 0) {
+                (chartType === "outputVoltageCurrent")?lineSeries2.clear()&lineSeries1.clear():lineSeries1.clear();
+                count = 0;
+                axisX.max= 10;
+            }
+        }
     }
 
     Label

@@ -140,6 +140,7 @@ private:
     float targetVoltage;
 public:
     hcc::HostControllerClient *hcc_object;
+    float port1Current,port2Current;
 };
 
 

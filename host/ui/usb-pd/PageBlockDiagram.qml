@@ -267,7 +267,7 @@ Rectangle {
             cursorShape: Qt.PointingHandCursor
             opacity: 0
             onClicked: {
-                currentURL = "http://www.onsemi.com/PowerSolutions/product.do?id=ESD7104"
+                currentURL = "http://www.onsemi.com/PowerSolutions/product.do?id=FUSB252"
                 detailView.open()
             }
         }
@@ -280,7 +280,7 @@ Rectangle {
             height: 55
             cursorShape: Qt.PointingHandCursor
             onClicked: {
-                currentURL = "http://www.onsemi.com/PowerSolutions/product.do?id=ESD7104"
+                currentURL = "http://www.onsemi.com/PowerSolutions/product.do?id=FUSB252"
                 detailView.open()
             }
         }
