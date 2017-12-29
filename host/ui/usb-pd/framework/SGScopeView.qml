@@ -62,6 +62,7 @@ ChartView {
         font.pixelSize: 22
         color: "red"
         anchors.centerIn: parent
+
     }
 
     Connections {
@@ -80,15 +81,15 @@ ChartView {
                 parameterValue = value;
                 lineSeries1.append(count/10,parameterValue);
                 count++;
-                if(parameterValue <= currentHeight) {
-                    warningMessage.opacity = 1.0;
-                    warningMessageOntheGraph = "Temperature Too High";
-                    currentYvalueOnGraphVisibility = false;
-                }
-                else  {
-                    warningMessage.opacity = 0.0;
-                    currentYvalueOnGraphVisibility = true;
-                }
+//                if(parameterValue <= currentHeight) {
+//                    warningMessage.opacity = 1.0;
+//                    warningMessageOntheGraph = "Temperature Too High";
+//                    currentYvalueOnGraphVisibility = false;
+//                }
+//                else  {
+//                    warningMessage.opacity = 0.0;
+//                    currentYvalueOnGraphVisibility = true;
+//                }
 
             }
 
@@ -117,24 +118,22 @@ ChartView {
                 lineSeries1.append(count/10,parameterValue);
                 lineSeries1.name = "Input Power";
                 count++;
-                if(parameterValue <= currentHeight) {
-                    warningMessage.opacity = 1.0;
-                    warningMessageOntheGraph = "Voltage Too Low";
-                    currentYvalueOnGraphVisibility = false;
+//                if(parameterValue <= currentHeight) {
+//                    warningMessage.opacity = 1.0;
+//                    warningMessageOntheGraph = "Voltage Too Low";
+//                    currentYvalueOnGraphVisibility = false;
 
-                }
-                else  {
-                    warningMessage.opacity = 0.0;
-                    currentYvalueOnGraphVisibility = true;
-                }
+//                }
+//                else  {
+//                    warningMessage.opacity = 0.0;
+//                    currentYvalueOnGraphVisibility = true;
+//                }
 
             }
         }
 
         onPortCurrentChanged: {
             parameterCurrentValue = value;
-
-
         }
         onPortEfficencyChanged: {
             if( chartType === "Input Power"&& whenOpen  && portNumber == port ) {
@@ -144,179 +143,179 @@ ChartView {
         }
     }
 
-    MouseArea {
-        anchors.fill: parent
-        onClicked: {
-            if(!selection)
-            {
-                selection = selectionComponent.createObject(parent, {"x": plotX, "y": plotY, "width": plotWidth , "height":setUpperRectheight})
-                selection = selectionComponent2.createObject(parent, {"x": plotX, "y": plotY + plotHeight - setLowerRectheight , "width": plotWidth , "height": setLowerRectheight});
-            }
-        }
-    }
+//    MouseArea {
+//        anchors.fill: parent
+//        onClicked: {
+//            if(!selection)
+//            {
+//                selection = selectionComponent.createObject(parent, {"x": plotX, "y": plotY, "width": plotWidth , "height":setUpperRectheight})
+//                selection = selectionComponent2.createObject(parent, {"x": plotX, "y": plotY + plotHeight - setLowerRectheight , "width": plotWidth , "height": setLowerRectheight});
+//            }
+//        }
+//    }
 
-    Component {
-        id: selectionComponent
+//    Component {
+//        id: selectionComponent
 
-        Rectangle {
-            id: selComp
-            opacity: 0.2
-            visible: portTempRedZone
-            Label {
-                id: currentYvalue
-                opacity: 1.0
-                text: currentHeight.toFixed(2)
-                font.bold: true
-                font.pixelSize: 22
-                color: "red"
-                anchors.centerIn: parent
-                visible: currentYvalueOnGraphVisibility
+//        Rectangle {
+//            id: selComp
+//            opacity: 0.2
+//            visible: portTempRedZone
+//            Label {
+//                id: currentYvalue
+//                opacity: 1.0
+//                text: currentHeight.toFixed(2)
+//                font.bold: true
+//                font.pixelSize: 22
+//                color: "red"
+//                anchors.centerIn: parent
+//                visible: currentYvalueOnGraphVisibility
 
 
-            }
-            border {
-                width: 2
-                color: "red"
-            }
-            color: "red"
-            property int rulersSize: 20
-            MouseArea {     // drag mouse area
-                anchors.fill: parent
-                drag{
-                    target: parent
-                    minimumX: 0
-                    minimumY: 0
-                    maximumX: parent.parent.width - parent.width
-                    maximumY: parent.parent.height - parent.height
-                    smoothed: true
-                }
+//            }
+//            border {
+//                width: 2
+//                color: "red"
+//            }
+//            color: "red"
+//            property int rulersSize: 20
+//            MouseArea {     // drag mouse area
+//                anchors.fill: parent
+//                drag{
+//                    target: parent
+//                    minimumX: 0
+//                    minimumY: 0
+//                    maximumX: parent.parent.width - parent.width
+//                    maximumY: parent.parent.height - parent.height
+//                    smoothed: true
+//                }
 
-                onDoubleClicked: {
-                    parent.destroy()        // destroy component
-                }
-            }
+//                onDoubleClicked: {
+//                    parent.destroy()        // destroy component
+//                }
+//            }
 
-            Rectangle {
-                width: rulersSize
-                height: rulersSize
-                radius: rulersSize
-                x: parent.x / 2
-                y: parent.y
-                opacity: 2
-                color: "red"
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.verticalCenter: parent.bottom
+//            Rectangle {
+//                width: rulersSize
+//                height: rulersSize
+//                radius: rulersSize
+//                x: parent.x / 2
+//                y: parent.y
+//                opacity: 2
+//                color: "red"
+//                anchors.horizontalCenter: parent.horizontalCenter
+//                anchors.verticalCenter: parent.bottom
 
-                MouseArea {
-                    anchors.fill: parent
-                    drag{ target: parent; axis: Drag.YAxis }
-                    onMouseYChanged: {
-                        if(drag.active){
-                            selComp.height = selComp.height + mouseY;
-                            overallHeight = selComp.height/plotHeight;
-                            currentHeight = - ((axisY1.max * overallHeight) - (axisY1.max));
-                            currentYvalue.opacity = 1.0
-                            currentYvalueOnGraphVisibility = true;
-                            if(currentHeight > axisY1.max) {
-                                currentYvalue.opacity = 0.0;
-                                currentYvalueOnGraphVisibility = false;
-                                selComp.height = 0;
-                            }
-                            else if(currentHeight < axisY1.min) {
-                                selComp.height = plotHeight;
-                                currentHeight = 0.0;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
+//                MouseArea {
+//                    anchors.fill: parent
+//                    drag{ target: parent; axis: Drag.YAxis }
+//                    onMouseYChanged: {
+//                        if(drag.active){
+//                            selComp.height = selComp.height + mouseY;
+//                            overallHeight = selComp.height/plotHeight;
+//                            currentHeight = - ((axisY1.max * overallHeight) - (axisY1.max));
+//                            currentYvalue.opacity = 1.0
+//                            currentYvalueOnGraphVisibility = true;
+//                            if(currentHeight > axisY1.max) {
+//                                currentYvalue.opacity = 0.0;
+//                                currentYvalueOnGraphVisibility = false;
+//                                selComp.height = 0;
+//                            }
+//                            else if(currentHeight < axisY1.min) {
+//                                selComp.height = plotHeight;
+//                                currentHeight = 0.0;
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//    }
 
-    Component {
-        id: selectionComponent2
-        Rectangle {
-            id: selComp2
-            opacity: 0.2
-            visible: inputPowerRedZone
-            z:1
+//    Component {
+//        id: selectionComponent2
+//        Rectangle {
+//            id: selComp2
+//            opacity: 0.2
+//            visible: inputPowerRedZone
+//            z:1
 
-            Label {
-                id: currentYvalueInInputPower
-                opacity: 1.0
-                text: currentHeight.toFixed(2)
-                font.bold: true
-                font.pixelSize: 22
-                color: "red"
-                z:2
-                anchors.centerIn: parent
-                visible: currentYvalueOnGraphVisibility
-            }
+//            Label {
+//                id: currentYvalueInInputPower
+//                opacity: 1.0
+//                text: currentHeight.toFixed(2)
+//                font.bold: true
+//                font.pixelSize: 22
+//                color: "red"
+//                z:2
+//                anchors.centerIn: parent
+//                visible: currentYvalueOnGraphVisibility
+//            }
 
-            border {
-                width: 2
-                color: "red"
-            }
-            color: "red"
-            property int rulersSize: 20
-            MouseArea {     // drag mouse area
-                anchors.fill: parent
-                drag{
-                    target: parent
-                    minimumX: 0
-                    minimumY: 0
-                    maximumX: parent.parent.width - parent.width
-                    maximumY: parent.parent.height - parent.height
-                    smoothed: true
-                }
+//            border {
+//                width: 2
+//                color: "red"
+//            }
+//            color: "red"
+//            property int rulersSize: 20
+//            MouseArea {     // drag mouse area
+//                anchors.fill: parent
+//                drag{
+//                    target: parent
+//                    minimumX: 0
+//                    minimumY: 0
+//                    maximumX: parent.parent.width - parent.width
+//                    maximumY: parent.parent.height - parent.height
+//                    smoothed: true
+//                }
 
-                onDoubleClicked: {
-                    parent.destroy()        // destroy component
-                }
-            }
+//                onDoubleClicked: {
+//                    parent.destroy()        // destroy component
+//                }
+//            }
 
-            Rectangle {
-                id: draggableHolder
-                width: rulersSize
-                height: rulersSize
-                radius: rulersSize
-                x: parent.x/2
-                y: parent.y
-                opacity: 2
-                color: "red"
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.verticalCenter: parent.top
-                MouseArea {
-                    anchors.fill: parent
-                    drag{ target: parent; axis: Drag.YAxis }
-                    onMouseYChanged: {
-                        if(drag.active){
-                            selComp2.height = selComp2.height - mouseY
-                            selComp2.y = selComp2.y + mouseY
-                            overallHeight = selComp2.height/plotHeight;
-                            currentHeight = (axisY1.max * overallHeight);
-                            currentYvalueInInputPower.opacity = 1.0;
-                            currentYvalueOnGraphVisibility = true;
+//            Rectangle {
+//                id: draggableHolder
+//                width: rulersSize
+//                height: rulersSize
+//                radius: rulersSize
+//                x: parent.x/2
+//                y: parent.y
+//                opacity: 2
+//                color: "red"
+//                anchors.horizontalCenter: parent.horizontalCenter
+//                anchors.verticalCenter: parent.top
+//                MouseArea {
+//                    anchors.fill: parent
+//                    drag{ target: parent; axis: Drag.YAxis }
+//                    onMouseYChanged: {
+//                        if(drag.active){
+//                            selComp2.height = selComp2.height - mouseY
+//                            selComp2.y = selComp2.y + mouseY
+//                            overallHeight = selComp2.height/plotHeight;
+//                            currentHeight = (axisY1.max * overallHeight);
+//                            currentYvalueInInputPower.opacity = 1.0;
+//                            currentYvalueOnGraphVisibility = true;
 
-                            if(currentHeight > axisY1.max) {
-                                selComp2.height = plotHeight;
-                                selComp2.y = plotY;
-                                currentYvalueInInputPower.opacity = 0.0;
-                                currentYvalueOnGraphVisibility = false;
-                            }
-                            else if(currentHeight < axisY1.min) {
-                                selComp2.height = 0;
-                                selComp2.y = plotY + plotHeight;
-                                currentYvalueInInputPower.opacity = 0.0;
-                                currentYvalueOnGraphVisibility = false;
+//                            if(currentHeight > axisY1.max) {
+//                                selComp2.height = plotHeight;
+//                                selComp2.y = plotY;
+//                                currentYvalueInInputPower.opacity = 0.0;
+//                                currentYvalueOnGraphVisibility = false;
+//                            }
+//                            else if(currentHeight < axisY1.min) {
+//                                selComp2.height = 0;
+//                                selComp2.y = plotY + plotHeight;
+//                                currentYvalueInInputPower.opacity = 0.0;
+//                                currentYvalueOnGraphVisibility = false;
 
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//    }
 
     ValueAxis {
         id: axisY1
