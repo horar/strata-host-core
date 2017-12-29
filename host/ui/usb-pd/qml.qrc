@@ -85,5 +85,6 @@
         <file>images/DataPath/charge_only_inactivate.png</file>
         <file>images/DataPath/charge_only_activate.png</file>
         <file>images/Beta_Block Diagram.png</file>
+        <file>images/CES_Demo_Setup.png</file>
     </qresource>
 </RCC>

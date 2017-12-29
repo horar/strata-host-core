@@ -66,6 +66,7 @@ ChartView {
         }
     }
 
+
     Label
     {
         id: warningMessage
@@ -355,7 +356,6 @@ ChartView {
         axisY: axisY1
         visible: false
     }
-
     Label {
         id: efficencyLabel
         width: 100; height: 50

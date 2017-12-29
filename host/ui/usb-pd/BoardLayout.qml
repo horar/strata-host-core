@@ -32,6 +32,7 @@ Rectangle {
         }
     }
 
+
     GridLayout {
         id: grid
         columns: 5
@@ -196,5 +197,5 @@ Rectangle {
                 decreaseOnMouseExit.start()
             }
         }
-    } 
+    }
 }
