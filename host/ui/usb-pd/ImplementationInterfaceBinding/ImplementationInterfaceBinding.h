@@ -49,6 +49,8 @@ class ImplementationInterfaceBinding : public QObject
     Q_PROPERTY(float inputPower NOTIFY portEfficiencyChanged)
     Q_PROPERTY(float outputPower NOTIFY portEfficiencyChanged)
 
+    //QProperty : To know Platform Reset
+    Q_PROPERTY(bool reset_status NOTIFY platformResetDetected)
 
     //QProperty : To know Platform Status
     Q_PROPERTY(bool platformState READ getPlatformState NOTIFY platformStateChanged)
@@ -98,6 +100,8 @@ public:
     void handleUSBCportConnectNotification(const QVariantMap json_map);
     void handleUSBCportDisconnectNotification(const QVariantMap json_map);
     void handleUSBPDcableswapNotification(const QVariantMap json_map);
+    void handleInputVoltageNotification(const QVariantMap json_map);
+    void handleResetNotification(const QVariantMap payloadMap);
 
 //Notification Simulator
     friend void *simulateNotificationsThread(void *);
@@ -118,6 +122,7 @@ signals:
     void swapCableStatusChanged(const QString cableStatus);
     void platformStateChanged(const bool platformState);
     void usbCPortStateChanged(int port, const bool value);
+    void platformResetDetected(bool reset_status);
     // port metrics notification
     void portOutputVoltageChanged(int port, float value);
     void portInputVoltageChanged(int port, float value);

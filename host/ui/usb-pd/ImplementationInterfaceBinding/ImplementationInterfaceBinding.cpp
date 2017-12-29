@@ -214,10 +214,16 @@ void ImplementationInterfaceBinding::handleNotification(QVariantMap current_map)
         } else if (current_map["value"] == "usb_pd_port_disconnect"){
             payloadMap=current_map["payload"].toMap();
             handleUSBCportDisconnectNotification(payloadMap);
-        }  else if (current_map["value"] == "usb_pd_cable_swap_notification"){
+        } else if (current_map["value"] == "usb_pd_cable_swap_notification"){
             payloadMap=current_map["payload"].toMap();
             handleUSBPDcableswapNotification(payloadMap);
-        }  else {
+        } else if (current_map["value"] == "request_input_voltage_notification"){
+            payloadMap=current_map["payload"].toMap();
+            handleInputVoltageNotification(payloadMap);
+        } else if (current_map["value"] == "request_reset_notification"){
+            payloadMap=current_map["payload"].toMap();
+            handleResetNotification(payloadMap);
+        } else {
             qDebug() << "Unsupported value field Received";
             qDebug() << "Received JSON = " <<current_map;
         }
@@ -296,9 +302,6 @@ void ImplementationInterfaceBinding::handleUsbPowerNotification(const QVariantMa
     emit portTemperatureChanged(port, temperature);
 
     float input_voltage = payloadMap["input"].toFloat();
-    inputVoltage = input_voltage;
-    emit portInputVoltageChanged(port, inputVoltage);
-
     emit portEfficencyChanged(port, input_voltage*current, power);
 #else
 // For load board data simulation only
@@ -433,6 +436,19 @@ void ImplementationInterfaceBinding::handleUSBPDcableswapNotification(const QVar
     emit swapCableStatusChanged(swapCable);
 }
 
+void ImplementationInterfaceBinding::handleInputVoltageNotification(const QVariantMap json_map) {
+    float input_voltage = json_map["input"].toFloat();
+    inputVoltage = input_voltage;
+    emit portInputVoltageChanged(1, inputVoltage);
+    qDebug() << json_map;
+}
+
+void ImplementationInterfaceBinding::handleResetNotification(const QVariantMap payloadMap) {
+    bool status = payloadMap["reset_status"].toBool();
+    if(status) {
+        emit platformResetDetected(status);
+    }
+}
 /*!
  * End of notification handlers
  */

@@ -27,6 +27,17 @@ Item {
         onSwapCableStatusChanged: {
             statusMessage.text = "Please Flip the connection on " + cableStatus;
         }
+
+        onPlatformResetDetected: {
+            if(reset_status) {
+                twoRedrivers.checked = false;
+                oneRedriver.checked = true;
+                passiveRoute.checked = false;
+                showTwoRedriverSourceAndSink(false);
+                showPassiveSourceAndSink(false);
+                showOneRedriverSourceAndSink(false);
+            }
+        }
     }
 
     Text{
