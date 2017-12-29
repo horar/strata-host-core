@@ -7,7 +7,7 @@ import QtQuick.Controls.Styles 1.4
 Item {
     property var currentSystemModel: powerStagesModel
     property var currentSchematic: "./images/schematics/PowerStageSchematic.png"
-    property var currentVPModel: vpModel2
+    //property var currentVPModel: vpModel2
     property var currentBlockDiagram: "./images/highlightedBlockDiagram/USB-PD_blockDiagram_PowerStage1Highlighted.png"
 
     GridLayout{
@@ -1178,18 +1178,18 @@ Item {
             }
         }
 
-        ListModel{
-            id: vpModel2
-            ListElement {
-                name: "Bill Hall"
-                photo: "qrc:/images/bill_hall.jpg"
-            }
+//        ListModel{
+//            id: vpModel2
+//            ListElement {
+//                name: "Bill Hall"
+//                photo: "qrc:/images/bill_hall.jpg"
+//            }
 
-            ListElement {
-                name: "Bob Klosterboer"
-                photo: "./images/bob_klosterboer.jpg"
-            }
-        }
+//            ListElement {
+//                name: "Bob Klosterboer"
+//                photo: "./images/bob_klosterboer.jpg"
+//            }
+//        }
 
 
         Rectangle{
