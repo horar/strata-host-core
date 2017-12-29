@@ -86,7 +86,7 @@ Item {
                         currentSystemModel = powerStagesModel
                         currentSchematic = "./images/schematics/PowerStageSchematic.png"
                         currentBlockDiagram = "./images/highlightedBlockDiagram/USB-PD_blockDiagram_PowerStage1Highlighted.png"
-                        currentVPModel = vpModel2
+                        //currentVPModel = vpModel2
                     }
                 }
                 Button{
@@ -115,7 +115,7 @@ Item {
                         currentSystemModel = powerStagesModel
                         currentSchematic = "./images/schematics/PowerStageSchematic.png"
                         currentBlockDiagram = "./images/highlightedBlockDiagram/USB-PD_blockDiagram_PowerStage2Highlighted.png"
-                        currentVPModel = vpModel2
+                        //currentVPModel = vpModel2
                     }
                 }
                 Button{
@@ -144,7 +144,7 @@ Item {
                         currentSystemModel = threeVoltRailModel
                         currentSchematic = "./images/schematics/ThreeVoltRailSchematic.png"
                         currentBlockDiagram = "./images/highlightedBlockDiagram/USB-PD_blockDiagram_ThreeVoltHighlighted.png"
-                        currentVPModel = vpModel2
+                        //currentVPModel = vpModel2
                     }
                 }
             }
@@ -206,7 +206,7 @@ Item {
                         currentSystemModel = batterySystemModel
                         currentSchematic = "./images/schematics/BatteryProtectionSchematic.png"
                         currentBlockDiagram = "./images/highlightedBlockDiagram/USB-PD_blockDiagram_BatteryProtectionHighlighted.png"
-                        currentVPModel = vpModel1
+                        //currentVPModel = vpModel1
                     }
                 }
 
@@ -270,7 +270,7 @@ Item {
                         currentSystemModel = tempSensorSystemModel
                         currentSchematic = "./images/schematics/TempSensorSchematic.png"
                         currentBlockDiagram = "./images/highlightedBlockDiagram/USB-PD_blockDiagram_TempSensorHighlighted.png"
-                        currentVPModel = vpModel2
+                        //currentVPModel = vpModel2
                     }
                 }
                 Button{
@@ -365,7 +365,7 @@ Item {
                         currentSystemModel = usbCModel
                         currentSchematic = "./images/schematics/USBCInterfaceSchematic1.png"
                         currentBlockDiagram = "./images/highlightedBlockDiagram/USB-PD_blockDiagram_USB-C1Highlighted.png"
-                        currentVPModel = vpModel2
+                        //currentVPModel = vpModel2
                     }
                 }
                 Button{
@@ -395,7 +395,7 @@ Item {
                         currentSystemModel = usbCModel
                         currentSchematic = "./images/schematics/USBCInterfaceSchematic1.png"
                         currentBlockDiagram = "./images/highlightedBlockDiagram/USB-PD_blockDiagram_USB-C2Highlighted.png"
-                        currentVPModel = vpModel2
+                        //currentVPModel = vpModel2
                     }
                 }
 
@@ -1170,13 +1170,13 @@ Item {
 //------------------------------------------------------------
 //      Headshots
 //------------------------------------------------------------
-        ListModel{
-            id: vpModel1
-            ListElement {
-                name: "Bill Hall"
-                photo: "qrc:/images/bill_hall.jpg"
-            }
-        }
+//        ListModel{
+//            id: vpModel1
+//            ListElement {
+//                name: "Bill Hall"
+//                photo: "qrc:/images/bill_hall.jpg"
+//            }
+//        }
 
 //        ListModel{
 //            id: vpModel2
