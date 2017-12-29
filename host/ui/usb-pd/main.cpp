@@ -51,12 +51,13 @@ int main(int argc, char *argv[])
 
     // Argument list for zmq
     QStringList arguments;
-    arguments << "tcp://*:5564" << "tcp://*:5563";
+    arguments << "-f" << "HCS/host_controller_service.config";
 
     // Create a QProcess
     QProcess *hcsProcess = new QProcess(nullptr);
     hcsProcess->setStandardOutputFile("hcs_output.log");
     hcsProcess->setStandardErrorFile("hcs_error.log");
+    hcsProcess->setWorkingDirectory(app.applicationDirPath());
     hcsProcess->start(hcsPath,arguments);
 #endif
 
