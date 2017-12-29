@@ -1210,7 +1210,7 @@ Item {
                 anchors.fill: parent
                 anchors.leftMargin: 10
                 orientation: ListView.Horizontal
-                model: currentVPModel
+                //model: currentVPModel
                 delegate: Item {
                     x: 5
                     width: parent.height
