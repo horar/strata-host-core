@@ -233,20 +233,20 @@ Rectangle {
         anchors{ verticalCenter: connector.verticalCenter }
         source: "./images/rightUSBPlug.svg"
 
-//        MouseArea {
-//            anchors { fill: parent }
+        MouseArea {
+            anchors { fill: parent }
 
-//            onClicked: {
-//                if (!isConnected){
-//                    isConnected = true;
-//                    connect.start();
-//                }
-//                else{
-//                    isConnected = false;
-//                    disconnect.start();
-//                }
-//            }
-//        }
+            onClicked: {
+                if (!isConnected){
+                    isConnected = true;
+                    connect.start();
+                }
+                else{
+                    isConnected = false;
+                    disconnect.start();
+                }
+            }
+        }
     }
 
     DropShadow {

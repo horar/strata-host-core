@@ -19,6 +19,23 @@ Item {
         showOneRedriverSourceAndSink(false);
     }
 
+//     property bool usbportCstatus: {
+//        if((!implementationInterfaceBinding.usbCPort1State)&&(!implementationInterfaceBinding.usbCPort2State==false)) {
+//            statusMessage.color = "red";
+//            statusMessage.text = "Connect both ports";
+//        }
+//        else if(!implementationInterfaceBinding.usbCPort1State) {
+//            statusMessage.color = "red";
+//            statusMessage.text = "Connect Port 1";
+//        }
+//        else if(!implementationInterfaceBinding.usbCPort2State) {
+//            statusMessage.color = "red";
+//            statusMessage.text = "Connect Port 2";
+//        }
+
+//        implementationInterfaceBinding.usbCPort1State
+//    }
+
     // Values are being Signalled from ImplementationInterfaceBinding.cpp
     Connections {
         target: implementationInterfaceBinding
@@ -48,6 +65,8 @@ Item {
                 showTwoRedriverSourceAndSink(false);
                 showPassiveSourceAndSink(false);
                 showOneRedriverSourceAndSink(false);
+                statusMessage.color = "green";
+                statusMessage.text = "Ready";
             }
         }
     }
