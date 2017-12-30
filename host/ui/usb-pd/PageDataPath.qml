@@ -25,7 +25,19 @@ Item {
 
         //  swap cable status
         onSwapCableStatusChanged: {
-            statusMessage.text = "Please Flip the connection on " + cableStatus;
+            if(cableStatus == "Good") {
+                statusMessage.color = "green";
+                statusMessage.text = "Ready";
+            }
+            else {
+                statusMessage.color = "red";
+                if(cableStatus == "USB_C_port_1")
+                    statusMessage.text = "Please Flip the Connection on Port 1";
+                if(cableStatus == "USB_C_port_2")
+                    statusMessage.text = "Please Flip the Connection on Port 2";
+                if(cableStatus == "Both")
+                    statusMessage.text = "Please Flip the Connection on Both Ports";
+            }
         }
 
         onPlatformResetDetected: {

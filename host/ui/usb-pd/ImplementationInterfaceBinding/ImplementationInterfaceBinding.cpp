@@ -271,7 +271,7 @@ void ImplementationInterfaceBinding::handleCloudNotification(QJsonObject json_ob
 void ImplementationInterfaceBinding::handleUsbPowerNotification(const QVariantMap payloadMap) {
 
     // TODO [ian] needs error checking on json object parsing
-    qDebug() << payloadMap;
+//    qDebug() << payloadMap;
     int port = payloadMap["port"].toInt();
 #if !BOARD_DATA_SIMULATION
     float output_voltage = payloadMap["output"].toFloat();
@@ -434,13 +434,14 @@ void ImplementationInterfaceBinding::handleUSBCportDisconnectNotification(const 
 void ImplementationInterfaceBinding::handleUSBPDcableswapNotification(const QVariantMap json_map) {
     QString swapCable = json_map["swap_cable"].toString();
     emit swapCableStatusChanged(swapCable);
+    qDebug() << "cable notification "<<swapCable;
 }
 
 void ImplementationInterfaceBinding::handleInputVoltageNotification(const QVariantMap json_map) {
     float input_voltage = json_map["input"].toFloat();
     inputVoltage = input_voltage;
     emit portInputVoltageChanged(1, inputVoltage);
-    qDebug() << json_map;
+//    qDebug() << json_map;
 }
 
 void ImplementationInterfaceBinding::handleResetNotification(const QVariantMap payloadMap) {
