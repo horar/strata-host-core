@@ -4,7 +4,7 @@ Item {
     Text{
         font.family: "helvetica"
         font.pointSize: 36
-        text:"Demo Setup"
+        text:"PD + Redriver Demo Setup"
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: parent.top
         anchors.topMargin: 20

@@ -283,7 +283,7 @@ Rectangle {
         bottomMargin:30
         axisXLabel: "Time (S)"
         axisYLabel: "Power (W)"
-        efficencyLabel: true
+        efficencyLabel: false
         chartType:"Input Power"
         portNumber: 1
         powerMessageVisible: false;
