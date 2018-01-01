@@ -18,8 +18,6 @@
 #include <QMetaObject>
 #include <QQmlEngine>
 
-#include "HostControllerClient.hpp"
-
 // Note: adding document set
 
 // 3) Create DocumentSet <name>_documents_;  // class memmber
@@ -65,7 +63,7 @@ class DocumentManager : public QObject
     Q_PROPERTY(QQmlListProperty<Document> targetedDocuments READ targetedDocuments NOTIFY targetedDocumentsChanged)
 
 public:
-    DocumentManager(HCC::HostControllerClient host_controller_client *);
+    DocumentManager();
     explicit DocumentManager(QObject *parent);
     virtual ~DocumentManager();
 
@@ -77,8 +75,6 @@ public:
     QQmlListProperty<Document> targetedDocuments() { return QQmlListProperty<Document>(this, targeted_documents_); }
 
     bool updateDocuments(const QString set, const QList<QString> &documents);
-
-    Q_INVOKABLE bool connectDocumentViewer(const QString &viewer);
 
 signals:
   void schematicDocumentsChanged();

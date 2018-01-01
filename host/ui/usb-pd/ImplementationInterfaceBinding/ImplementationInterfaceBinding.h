@@ -13,10 +13,8 @@
 #include <QJsonArray>
 #include <thread>
 #include <stdlib.h>
-#include "HostControllerClient.hpp"
+#include "../../../include/HostControllerClient.hpp"
 #include "DocumentManager.h"
-
-using namespace HCC;
 
 // To simulate the data
 #define BOARD_DATA_SIMULATION 0
@@ -43,7 +41,6 @@ class ImplementationInterfaceBinding : public QObject
 
 public:
 
-    ImplementationInterfaceBinding(DocumentManager * document_manager, HostControllerClient * host_controller_client);
     explicit ImplementationInterfaceBinding(QObject *parent = nullptr);
     virtual ~ImplementationInterfaceBinding();
 
@@ -78,6 +75,7 @@ public:
     void handleNotification(QVariantMap current_map);
     void handleCloudNotification(QJsonObject json_obj);
     void clearBoardMetrics(int);
+    friend void *simulateNotificationsThread(void *);
 
 signals:
     void platformIdChanged(const QString platformId);
@@ -99,14 +97,14 @@ private:
     bool platformState;
     bool USBCPortState[USB_NUM_PORTS];
     bool registrationSuccessful;
+    DocumentManager *document_manager_;
     bool notification_thread_running_;
 
-    HCC::HostControllerClient *host_controller_client_;
-    DocumentManager *document_manager_;
+    // For load board data simulation only
+    float targetVoltage;
 
 public:
-    ImplementationInterfaceBinding(ImplementationInterfaceBinding const&) = delete;
-    void operator=(ImplementationInterfaceBinding const&) = delete;
+    hcc::HostControllerClient *hcc_object;
 };
 
 

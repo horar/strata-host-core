@@ -129,37 +129,3 @@ bool DocumentManager::updateDocuments(const QString set, const QList<QString> &d
     }
     return true;
 }
-
-bool DocumentManager::connectDocumentViewer(const QString & viewer)
-{
-    auto document_set = document_sets.find(viewer.toStdString ().c_str ());
-    if (document_set == document_sets.end()) {
-        qDebug("DocumentManager::connectDocumentViewer: %s NOT FOUND", viewer.toStdString ().c_str ());
-        return nullptr;
-    }
-
-    qDebug("DocumentManager::connectDocumentViewer: %s FOUND", viewer.toStdString ().c_str ());
-
-    qDebug("ImplementationInterfaceBinding::connectDataStream(%s)", name.toStdString().c_str());
-
-    // { "db::cmd":"connect_data_stream", payload: {"name":<name>}
-    //
-    QJsonObject cmdMessageObject;
-    cmdMessageObject.insert("db::cmd", "connect_data_stream");
-
-    QJsonObject payloadObject;
-    payloadObject.insert("name", name);
-    cmdMessageObject.insert("payload", payloadObject);
-
-    QJsonDocument doc(cmdMessageObject);
-    QString strJson(doc.toJson(QJsonDocument::Compact));
-
-    bool rv = host_controller_client->sendCmd(strJson.toStdString());
-    if( ! rv ) {
-        qCritical("ERROR: HCC sendCmd(%s).", strJson.toStdString().c_str());
-    }
-
-    return rv;
-
-    return true;
-}

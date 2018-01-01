@@ -19,7 +19,6 @@
 #include "DocumentManager.h"
 #include "DataCollector.h"
 #include "ImplementationInterfaceBinding/ImplementationInterfaceBinding.h"
-#include "HostControllerClient.hpp"
 
 int main(int argc, char *argv[])
 {
@@ -29,14 +28,8 @@ int main(int argc, char *argv[])
     qmlRegisterType<Document>("tech.spyglass.Document", 1, 0, "Document");
     qmlRegisterType<DocumentManager>("tech.spyglass.DocumentManager", 1, 0, "DocumentManager");
     qmlRegisterType<DataCollector>("tech.spyglass.DataCollector",1,0,"DataCollector");
-
-    // all communications to Host Controller Service go through singleton Host Controller Client
-    HCC::HostControllerClient * host_controller_client = HCC::HostControllerClient::getInstance();
-
-    // various control modules
-    DocumentManager* documentManager = new DocumentManager(host_controller_client);
-    ImplementationInterfaceBinding *implementationInterfaceBinding = new ImplementationInterfaceBinding(documentManager,
-                                                                                                        host_controller_client);
+    DocumentManager* documentManager = new DocumentManager();
+    ImplementationInterfaceBinding *implementationInterfaceBinding = new ImplementationInterfaceBinding(static_cast<QObject *>(documentManager));
     DataCollector* dataCollector = new DataCollector();
     QtWebEngine::initialize();
     QtWebView::initialize();
@@ -76,8 +69,5 @@ int main(int argc, char *argv[])
     qDebug() << "Killing HCS";
     hcsProcess->kill();
 #endif
-
-    host_controller_client->closeConnection();
-
     return appResult;
 }

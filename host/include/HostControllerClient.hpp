@@ -17,58 +17,12 @@
 #define HOST_CONTROLLER_SERVICE_IN_ADDRESS "tcp://192.168.1.64:5563"
 #endif
 
-namespace HCC {
+namespace hcc {
 
-// singleton connector layer to platform board
 class HostControllerClient {
 
 public:
-
-    static HostControllerClient * getInstance()
-    {
-        static HostControllerClient instance;
-        return &instance;
-    }
-
-    inline ~HostControllerClient() {}
-
-    inline bool sendCmd(std::string cmd)
-    {
-        if(s_send(*sendCmdSocket,cmd.c_str())) {
-            return true;
-        }
-        else {
-            return false;
-        }
-    }
-
-    inline std::string receiveCommandAck()
-    {
-        std::string response = s_recv(*sendCmdSocket);
-        return response;
-    }
-
-    inline std::string receiveNotification()
-    {
-        s_recv(*notificationSocket);
-        std::string response = s_recv(*notificationSocket);
-        return response;
-    }
-
-    inline void closeConnection()
-    {
-        notificationSocket->close();
-        sendCmdSocket->close();
-        zmq_term(context);
-    }
-
-    HostControllerClient (HostControllerClient const&) = delete;
-    void operator=(HostControllerClient const&) = delete;
-
-private:
-
-    inline HostControllerClient()
-    {
+    inline HostControllerClient() {
 
         context = new zmq::context_t;
         sendCmdSocket = new zmq::socket_t(*context,ZMQ_DEALER);
@@ -90,6 +44,30 @@ private:
         //request platform-id first step before proceeding with further request
         std::string cmd= "{\"cmd\":\"request_platform_id\",\"Host_OS\":\"Linux\"}";
         s_send(*sendCmdSocket,cmd.c_str());
+
+
+    }
+
+    inline ~HostControllerClient() {}
+
+    inline bool sendCmd(std::string cmd) {
+        if(s_send(*sendCmdSocket,cmd.c_str()))
+        {
+            return true;
+        }
+        else
+            return false;
+    }
+
+    inline std::string receiveCommandAck() {
+        std::string response = s_recv(*sendCmdSocket);
+        return response;
+    }
+
+    inline std::string receiveNotification() {
+        s_recv(*notificationSocket);
+        std::string response = s_recv(*notificationSocket);
+        return response;
     }
 
     zmq::context_t *context;

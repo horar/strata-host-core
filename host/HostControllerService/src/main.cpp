@@ -49,6 +49,7 @@ int main(int argc, char *argv[])
             case OPT_ARG:
                 string argument = args.OptionText();
                 if( argument == "-f" ) {
+                    printf("!!!!!!!!!!!!!!!!! %s\n", args.OptionArg());
                     configuration_file = args.OptionArg();
                 }
                 break;
