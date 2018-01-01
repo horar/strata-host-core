@@ -10,11 +10,16 @@
 ImplementationInterfaceBinding::ImplementationInterfaceBinding(QObject *parent) : QObject(parent) {
 
     hcc_object = new (hcc::HostControllerClient);
-
-    for(unsigned int i=0; i < USB_NUM_PORTS; ++i) {
-        port_data[i] = {0};
-    }
-
+    Ports.a_oport[0]='\0';
+    Ports.a_oport[1]='\0';
+    Ports.v_oport[0]='\0';
+    Ports.v_oport[1]='\0';
+    Ports.v_tport[0]='\0';
+    Ports.v_tport[1]='\0';
+    Ports.temperature[0]='\0';
+    Ports.temperature[0]='\0';
+    Ports.power[0]='\0';
+    Ports.power[1]='\0';
     platformId= QString();
 
 #ifdef QT_NO_DEBUG
@@ -108,79 +113,34 @@ void ImplementationInterfaceBinding::setRedriverCount(int value)
         qDebug() << "Radio button send failed";
 }
 
-float ImplementationInterfaceBinding::getOutputVoltage( unsigned int port )
+float ImplementationInterfaceBinding::getoutputVoltagePort0()
 {
-    if( port >= USB_NUM_PORTS ) {
-        qCritical("ERROR: port(%d) invalid port !\n", port);
-        return -1.0;
-    }
-
-    qDebug("port(%d) output_voltage = %.2f\n", port, port_data[port].output_voltage);
-    return port_data[port].output_voltage;
+    qDebug() << "getting port 0 voltage";
+    return Ports.v_oport[0];
 }
 
 /*! \brief gets the cached voltage of port 1
  */
-float ImplementationInterfaceBinding::getInputVoltage(unsigned int port)
-{
-    if( port >= USB_NUM_PORTS ) {
-        qCritical("ERROR: port(%d) invalid port !\n", port);
-        return -1.0;
-    }
+float ImplementationInterfaceBinding::getinputVoltagePort0() {
 
-    qDebug("port(%d) intput_voltage = %.2f\n", port, port_data[port].output_voltage);
-    return port_data[port].input_voltage;
+    return Ports.v_tport[0];
 }
 
 /*! \brief gets the cached current of port 0
  */
-float ImplementationInterfaceBinding::getOutputCurrent(unsigned int port)
-{
-    if( port >= USB_NUM_PORTS ) {
-        qCritical("ERROR: port(%d) invalid port !\n", port);
-        return -1.0;
-    }
+float ImplementationInterfaceBinding::getoutputCurrentPort0() {
 
-    qDebug("port(%d) output current = %.2f\n", port, port_data[port].current);
-    return port_data[port].current;
+    return Ports.a_oport[0];
 }
 
-float ImplementationInterfaceBinding::getTemperature(unsigned int port)
-{
-    if( port >= USB_NUM_PORTS ) {
-        qCritical("ERROR: port(%d) invalid port !\n", port);
-        return -1.0;
-    }
+float ImplementationInterfaceBinding::getPort0Temperature() {
 
-    qDebug("port(%d) output current = %.2f\n", port, port_data[port].temperature);
-    return port_data[port].temperature;
-
+    return Ports.temperature[0];
 }
 
-float ImplementationInterfaceBinding::getInputPower(unsigned int port)
-{
-    if( port >= USB_NUM_PORTS ) {
-        qCritical("ERROR: port(%d) invalid port !\n", port);
-        return -1.0;
-    }
+float ImplementationInterfaceBinding::getpowerPort0() {
 
-    // TODO [ian] this is a calculated value and is very confusing. It should either come as base/fudamental values from
-    //            the platform and be calculated in the UI as needed.
-    //          OR ... it should be calculated on the platform and come in the json payload
-    float input_power = port_data[port].input_voltage * port_data[port].current;
-    qDebug("port(%d) input power = %.2f\n", port,  input_power);
-    return input_power;
-}
-
-float ImplementationInterfaceBinding::getOutputPower(unsigned int port)
-{
-    if( port >= USB_NUM_PORTS ) {
-        qCritical("ERROR: port(%d) invalid port !\n", port);
-        return -1.0;
-    }
-
-    qDebug("port(%d) output current = %.2f\n", port, port_data[port].power);
-    return port_data[port].power;
+    return Ports.power[0];
 }
 
 /*!
@@ -194,23 +154,26 @@ QString ImplementationInterfaceBinding::getPlatformId() {
 /*!
  * \brief get platform connection state
  */
-bool ImplementationInterfaceBinding::getPlatformState()
-{
+bool ImplementationInterfaceBinding::getPlatformState() {
+
     return platformState;
 }
 
 /*!
  * \brief get USB PD port 1 connection state
  */
-bool ImplementationInterfaceBinding::getUSBCState(unsigned int port)
-{
-    if( port >= USB_NUM_PORTS ) {
-        qCritical("ERROR: port(%d) invalid port !\n", port);
-        return false;
-    }
-    return USBCPortState[port];
+bool ImplementationInterfaceBinding::getUSBCPort1State() {
+
+    return usbCPort1State;
 }
 
+/*!
+ * \brief get USB PD port 2 connection state
+ */
+bool ImplementationInterfaceBinding::getUSBCPort2State() {
+
+    return usbCPort2State;
+}
 
 /*!
  * End of Getter and Setter Methods
@@ -286,48 +249,56 @@ void ImplementationInterfaceBinding::handleCloudNotification(QJsonObject json_ob
  *          @params: payloadMap map of usb_pd_power notification
  *                   parses and notifies the corresponding signal
  */
-void ImplementationInterfaceBinding::handleUsbPowerNotification(const QVariantMap payloadMap)
-{
+void ImplementationInterfaceBinding::handleUsbPowerNotification(const QVariantMap payloadMap) {
 
     // TODO [ian] needs error checking on json object parsing
     qDebug() << payloadMap;
     int port = payloadMap["port"].toInt();
+#if !BOARD_DATA_SIMULATION
+    float output_voltage = payloadMap["output"].toFloat();
+    emit portOutputVoltageChanged(port, output_voltage);
 
-    if( port >= USB_NUM_PORTS ) {
-        qCritical("ERROR: port(%d) invalid port !\n", port);
-        return;
-    }
+    float target_voltage = payloadMap["target_volts"].toFloat();
+    emit portTargetVoltageChanged(port, target_voltage);
 
-    port_data[port].input_voltage = payloadMap["input"].toFloat();
-    emit portInputVoltageChanged(port, port_data[port].input_voltage);
+    float current = payloadMap["current"].toFloat();
+    emit portCurrentChanged(port, current);
 
-    port_data[port].output_voltage = payloadMap["output"].toFloat();
-    emit portOutputVoltageChanged(port, port_data[port].output_voltage);
+    float power = payloadMap["power"].toFloat();
+    emit portPowerChanged(port, power);
 
-    port_data[port].target_voltage = payloadMap["target_volts"].toFloat();
-    emit portTargetVoltageChanged(port, port_data[port].target_voltage);
+    float temperature = payloadMap["temperature"].toFloat();
+    emit portTemperatureChanged(port, temperature);
 
-    port_data[port].current = payloadMap["current"].toFloat();
-    emit portCurrentChanged(port, port_data[port].current);
+    float input_voltage = payloadMap["input"].toFloat();
+    emit portInputVoltageChanged(port, input_voltage);
 
-    port_data[port].power = payloadMap["power"].toFloat();
-    emit portPowerChanged(port, port_data[port].power);
+    emit portEfficencyChanged(port, input_voltage*current, power);
+#else
+// For load board data simulation only
+    float output_voltage = targetVoltage +  static_cast <float> ((rand()%10)/10);
+    emit portOutputVoltageChanged(port, output_voltage);
 
-    port_data[port].temperature = payloadMap["temperature"].toFloat();
-    emit portTemperatureChanged(port, port_data[port].temperature);
+    float target_voltage = targetVoltage; //payloadMap["target_volts"].toFloat();
+    emit portTargetVoltageChanged(port, target_voltage);
 
+    float current = 2.5;//payloadMap["current"].toFloat();
+    emit portCurrentChanged(port, current);
 
-    // TODO [ian] clear up "power" or "input power" and "output power".
-    //             we are only getting "power" from the platform
-    //                                                   P = V I
-    //
-    emit portEfficencyChanged(port,
-                              port_data[port].target_voltage * port_data[port].current // input power ?
-                              , port_data[port].power);                                // output power?
+    float power = current*output_voltage;//payloadMap["power"].toFloat();
+    emit portPowerChanged(port, power);
+
+    float temperature = 27;//payloadMap["temperature"].toFloat();
+    emit portTemperatureChanged(port, temperature);
+
+    float input_voltage = payloadMap["input"].toFloat();
+    emit portInputVoltageChanged(port, input_voltage);
+
+#endif
+
 }
 
-void ImplementationInterfaceBinding::handlePlatformIdNotification(const QVariantMap payloadMap)
-{
+void ImplementationInterfaceBinding::handlePlatformIdNotification(const QVariantMap payloadMap) {
 
     if (payloadMap.contains("platform_id")){
 
@@ -344,10 +315,10 @@ void ImplementationInterfaceBinding::handlePlatformIdNotification(const QVariant
     }
 }
 
-void ImplementationInterfaceBinding::handlePlatformStateNotification(const QVariantMap payloadMap)
-{
+void ImplementationInterfaceBinding::handlePlatformStateNotification(const QVariantMap payloadMap) {
 
     QString status = payloadMap["status"].toString();
+//    qDebug() << "Status =" << payloadMap;
     if (status.compare("connected") == 0){
 
         bool platformStateTemp = true;
@@ -378,15 +349,14 @@ void ImplementationInterfaceBinding::handleUSBCportConnectNotification(const QVa
     QString usbCPortId = payloadMap["port_id"].toString();
     QString connection_state = payloadMap["connection_state"].toString();
 
-    // TODO [ian] label/document JSON format of notiifcation or add the link to the correct wiki docs
     if (connection_state.compare("connected") == 0) {
         if (usbCPortId.compare("USB_C_port_1") == 0) {
-            USBCPortState[0] =  true;
-            emit usbCPortStateChanged(1,USBCPortState[0]);
+            usbCPort1State =  true;
+            emit usbCPortStateChanged(1,usbCPort1State);
         }
         else if(usbCPortId.compare("USB_C_port_2") == 0) {
-            USBCPortState[1] =  true;
-            emit usbCPortStateChanged(2, USBCPortState[1]);
+            usbCPort2State =  true;
+            emit usbCPortStateChanged(2,usbCPort2State);
         }
         else {
             qDebug() << "Unsupported Connection USBC connection state";
@@ -399,8 +369,7 @@ void ImplementationInterfaceBinding::handleUSBCportConnectNotification(const QVa
  *          @params: USB C port number
  *                   emits 0 to all the board parameters when the port is disconnected
  */
-void ImplementationInterfaceBinding::clearBoardMetrics(int portNumber)
-{
+void ImplementationInterfaceBinding::clearBoardMetrics(int portNumber){
 
     emit portOutputVoltageChanged(portNumber,0);
     emit portTargetVoltageChanged(portNumber,0);
@@ -411,21 +380,20 @@ void ImplementationInterfaceBinding::clearBoardMetrics(int portNumber)
 }
 
 
-void ImplementationInterfaceBinding::handleUSBCportDisconnectNotification(const QVariantMap payloadMap)
-{
+void ImplementationInterfaceBinding::handleUSBCportDisconnectNotification(const QVariantMap payloadMap) {
     QString usbCPortId = payloadMap["port_id"].toString();
     QString connection_state = payloadMap["connection_state"].toString();
 
     if (connection_state.compare("disconnected") == 0) {
         if (usbCPortId.compare("USB_C_port_1") == 0) {
-            USBCPortState[0] =  false;
-            emit usbCPortStateChanged(1, USBCPortState[0]);
+            usbCPort1State =  false;
+            emit usbCPortStateChanged(1,usbCPort1State);
             // TODO:[Prasanth] Needs to dynamically pass the port number
             clearBoardMetrics(1);
         }
         else if(usbCPortId.compare("USB_C_port_2") == 0) {
-            USBCPortState[1] =  false;
-            emit usbCPortStateChanged(2, USBCPortState[1]);
+            usbCPort2State =  false;
+            emit usbCPortStateChanged(2,usbCPort2State);
             clearBoardMetrics(2);
         }
         else {
