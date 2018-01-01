@@ -39,6 +39,8 @@ DISTFILES += \
 # set root host build path
 HOST_ROOT = ../../../host
 
+INCLUDEPATH += $${HOST_ROOT}/include
+
 # linux
 unix : !macx : !win32 {
     message("Building on Linux")

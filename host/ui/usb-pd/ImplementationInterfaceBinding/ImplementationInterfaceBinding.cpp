@@ -7,25 +7,27 @@
  * Tie the respective signal and slots using connect
  */
 
-ImplementationInterfaceBinding::ImplementationInterfaceBinding(QObject *parent) : QObject(parent) {
-
-    hcc_object = new (hcc::HostControllerClient);
+ImplementationInterfaceBinding::ImplementationInterfaceBinding(DocumentManager * document_manager,
+                                                               HostControllerClient * host_controller_client)
+{
+    host_controller_client = new (hcc::HostControllerClient);
 
     for(unsigned int i=0; i < USB_NUM_PORTS; ++i) {
         port_data[i] = {0};
     }
 
-    platformId= QString();
+    platformId = QString();
 
 #ifdef QT_NO_DEBUG
+
     platformState = false;
 #else
     // Debug builds should not need a platform board
     platformState = true;
 #endif
 
-    // DocumentManager is a C++ model for QML objects and is a super class of QObject
-    document_manager_ = static_cast<DocumentManager *>(parent);
+    document_manager_ = document_manager;
+    host_controller_client_ = host_controller_client;
     notification_thread_= std::thread(&ImplementationInterfaceBinding::notificationsThreadHandle,this);
 
 #if BOARD_DATA_SIMULATION
@@ -35,12 +37,8 @@ ImplementationInterfaceBinding::ImplementationInterfaceBinding(QObject *parent) 
 
 }
 
-ImplementationInterfaceBinding::~ImplementationInterfaceBinding() {
-
-    hcc_object->notificationSocket->close();
-    hcc_object->sendCmdSocket->close();
-    zmq_term(hcc_object->context);
-    delete(hcc_object);
+ImplementationInterfaceBinding::~ImplementationInterfaceBinding()
+{
     notification_thread_.detach();
 }
 
@@ -57,13 +55,13 @@ void ImplementationInterfaceBinding::setOutputVoltageVBUS(int port, int voltage)
     QJsonDocument doc(cmdMessageObject);
     QString strJson(doc.toJson(QJsonDocument::Compact));
     if(port == 1) {
-        if(hcc_object->sendCmd(strJson.toStdString()))
+        if(host_controller_client->sendCmd(strJson.toStdString()))
             qDebug() << "Radio button send";
         else
             qDebug() << "Radio button send failed";
     }
     if(port == 2) {
-        if(hcc_object->sendCmd(strJson.toStdString()))
+        if(host_controller_client->sendCmd(strJson.toStdString()))
             qDebug() << "Radio button send";
         else
             qDebug() << "Radio button send failed";
@@ -86,7 +84,7 @@ void ImplementationInterfaceBinding::setRedriverLoss(float lossValue)
     cmdMessageObject.insert("payload",payloadObject);
     QJsonDocument doc(cmdMessageObject);
     QString strJson(doc.toJson(QJsonDocument::Compact));
-    if(hcc_object->sendCmd(strJson.toStdString()))
+    if(host_controller_client->sendCmd(strJson.toStdString()))
         qDebug() << "Radio button send";
     else
         qDebug() << "Radio button send failed";
@@ -102,7 +100,7 @@ void ImplementationInterfaceBinding::setRedriverCount(int value)
     cmdMessageObject.insert("payload",payloadObject);
     QJsonDocument doc(cmdMessageObject);
     QString strJson(doc.toJson(QJsonDocument::Compact));
-    if(hcc_object->sendCmd(strJson.toStdString()))
+    if(host_controller_client->sendCmd(strJson.toStdString()))
         qDebug() << "Radio button send";
     else
         qDebug() << "Radio button send failed";
@@ -258,7 +256,29 @@ void ImplementationInterfaceBinding::handleNotification(QVariantMap current_map)
        ]
       }
 */
-void ImplementationInterfaceBinding::handleCloudNotification(QJsonObject json_obj) {
+void ImplementationInterfaceBinding::handleCloudNotification(QJsonObject json_obj)
+{
+    // registerCloudNotificationHandler("document_set", documentHandler);
+
+
+
+
+    // search through CloudNotificationHanders cloud_notification_handlers map
+    //
+    QString handler_type = json_obj.value("cloud_sync").toString();  // Can be schematic, layout or assembly and so on
+
+    auto handler = cloud_notification_handlers.find(viewer.toStdString ().c_str ());
+    if (handler == cloud_notification_handlers.end()) {
+        handler.second(json_obj);
+    }
+    else {
+        qDebug("DocumentManager::connectDocumentViewer: %s NOT FOUND", viewer.toStdString ().c_str ());
+        return nullptr;
+    }
+
+    // TODO [ian] this will need to be more generic if we use messaging/chat or other services
+    //             besides just documentation
+
     // local variable declaration
     QList<QString> documents;
     QString viewer_type = json_obj.value("type").toString();  // Can be schematic, layout or assembly and so on
@@ -535,7 +555,7 @@ void ImplementationInterfaceBinding::notificationsThreadHandle() {
         //QTextStream stream( &file );
 
         // receive data from host controller client
-        std::string response= hcc_object->receiveNotification();
+        std::string response= host_controller_client->receiveNotification();
 
         QString q_response = QString::fromStdString(response);
 
@@ -561,4 +581,3 @@ void ImplementationInterfaceBinding::notificationsThreadHandle() {
         }
     }
 }
-

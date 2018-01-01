@@ -4,11 +4,16 @@ import QtQuick.Layouts 1.0
 import QtQuick.Extras 1.4
 import QtQuick.Controls.Styles 1.4
 
-import tech.spyglass.Document 1.0
 import tech.spyglass.DocumentManager 1.0
 
 Item {
     id: view
+
+    // Connect to DocumentManager
+    Component.onCompleted: {
+        console.log("DocumentViewer(schematic)::onCompleted")
+        documentManager.connectDocumentViewer("schematic");
+    }
 
     // LOGO
     Rectangle {
