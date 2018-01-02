@@ -68,8 +68,6 @@ public:
     virtual ~ImplementationInterfaceBinding();
 
     Q_INVOKABLE void setOutputVoltageVBUS(int port, int voltage);
-    Q_INVOKABLE void setRedriverLoss(float lossValue);
-    Q_INVOKABLE void setRedriverCount(int value);
 
     std::thread notification_thread_;
     void notificationsThreadHandle();
@@ -84,7 +82,8 @@ public:
     bool getUSBCPort2State();
     QString getPlatformId();
 
-//Helper methods to handle QString to JSON conversion
+    Q_INVOKABLE void setRedriverLoss(float lossValue);
+    Q_INVOKABLE void setRedriverCount(int value);
     QJsonObject convertQstringtoJson(const QString string);
     QStringList getJsonObjectKeys(const QJsonObject json_obj);
     QVariantMap getJsonMapObject(const QJsonObject json_obj);

@@ -49,14 +49,15 @@ int main(int argc, char *argv[])
     qDebug() << "Starting HCS";
     QString hcsPath = "HCS/HCS.exe";
 
-    // Argument list for zmq
+    // Argument list for HCS; Path depends on if we are
     QStringList arguments;
-    arguments << "tcp://*:5564" << "tcp://*:5563";
+    arguments << "-f" << "HCS/host_controller_service.config";
 
     // Create a QProcess
     QProcess *hcsProcess = new QProcess(nullptr);
     hcsProcess->setStandardOutputFile("hcs_output.log");
     hcsProcess->setStandardErrorFile("hcs_error.log");
+    hcsProcess->setWorkingDirectory(app.applicationDirPath());
     hcsProcess->start(hcsPath,arguments);
 #endif
 

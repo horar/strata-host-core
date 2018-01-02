@@ -76,9 +76,14 @@ if (CROSSCOMPILE)
     link_directories(${CMAKE_CURRENT_SOURCE_DIR}/../lib/cross-lib/lib)
     include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../lib/cross-lib/include)
 
-    # Litecore
-    find_library(litecore STATIC NAMES LiteCore HINTS "${NIMBUS_DIR}/bin/x64")
+    # Litecore; Only link LiteCore to HCS. The others will cause problems on crosscompile.
+    # Currently they are not needed.
+    find_library(litecore NAMES LiteCore HINTS "${NIMBUS_DIR}/bin/x64")
+    find_library(litecoreREST NAMES LiteCoreREST HINTS "${NIMBUS_DIR}/bin/x64")
+    find_library(fleece NAMES FleeceStatic HINTS "${NIMBUS_DIR}/bin/x64")
     message("Using litecore at: ${litecore}")
+    message("Using litecoreREST at: ${litecoreREST}")
+    message("Using fleece at: ${fleece}")
 
 elseif (UNIX AND NOT APPLE AND NOT CROSSCOMPILE)
     #--- LINUX
