@@ -49,7 +49,7 @@ int main(int argc, char *argv[])
     qDebug() << "Starting HCS";
     QString hcsPath = "HCS/HCS.exe";
 
-    // Argument list for zmq
+    // Argument list for HCS; Path depends on if we are
     QStringList arguments;
     arguments << "-f" << "HCS/host_controller_service.config";
 

@@ -113,18 +113,8 @@ void ImplementationInterfaceBinding::setRedriverCount(int value)
         qDebug() << "Radio button send failed";
 }
 
-/*!
- * Getter and Setter methods, used for retriving/writing something to/from platform
- * Retreived/set value is indidcated by function name.
- * For instance getVoltagePort0 gets voltage of port 0 from
- * the platform
- */
-
-/*! \brief gets the cached voltage of port 0
- */
-
-float ImplementationInterfaceBinding::getoutputVoltagePort0() {
-
+float ImplementationInterfaceBinding::getoutputVoltagePort0()
+{
     qDebug() << "getting port 0 voltage";
     return Ports.v_oport[0];
 }
