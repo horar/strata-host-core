@@ -90,8 +90,6 @@ public:
     bool getUSBCPort2State();
     QString getPlatformId();
 
-    Q_INVOKABLE void setRedriverLoss(float lossValue);
-    Q_INVOKABLE void setRedriverCount(int value);
     QJsonObject convertQstringtoJson(const QString string);
     QStringList getJsonObjectKeys(const QJsonObject json_obj);
     QVariantMap getJsonMapObject(const QJsonObject json_obj);
