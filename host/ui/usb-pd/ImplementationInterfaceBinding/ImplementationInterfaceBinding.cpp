@@ -103,27 +103,48 @@ void ImplementationInterfaceBinding::setRedriverCount(int value)
     QJsonObject cmdMessageObject;
     cmdMessageObject.insert("cmd", "request_redriver_count");
     QJsonObject payloadObject;
-    payloadObject.insert("loss_value", value);
+    payloadObject.insert("value", value);
     cmdMessageObject.insert("payload",payloadObject);
     QJsonDocument doc(cmdMessageObject);
     QString strJson(doc.toJson(QJsonDocument::Compact));
     if(hcc_object->sendCmd(strJson.toStdString()))
-        qDebug() << "Radio button send";
+        qDebug() << "Radio button send" << doc;
     else
         qDebug() << "Radio button send failed";
 }
 
-float ImplementationInterfaceBinding::getoutputVoltagePort0()
+
+bool ImplementationInterfaceBinding::getUSBCPortState(int port_number)
 {
+    switch(port_number){
+    case 1: return usbCPort1State;
+            break;
+    case 2: return usbCPort2State;
+            break;
+    }
+}
+
+/*!
+ * Getter and Setter methods, used for retriving/writing something to/from platform
+ * Retreived/set value is indidcated by function name.
+ * For instance getVoltagePort0 gets voltage of port 0 from
+ * the platform
+ */
+
+/*! \brief gets the cached voltage of port 0
+ */
+
+float ImplementationInterfaceBinding::getoutputVoltagePort0() {
+
     qDebug() << "getting port 0 voltage";
     return Ports.v_oport[0];
 }
 
 /*! \brief gets the cached voltage of port 1
  */
-float ImplementationInterfaceBinding::getinputVoltagePort0() {
+float ImplementationInterfaceBinding::getInputVoltage() {
 
-    return Ports.v_tport[0];
+    return inputVoltage;
 }
 
 /*! \brief gets the cached current of port 0
@@ -163,7 +184,8 @@ bool ImplementationInterfaceBinding::getPlatformState() {
  * \brief get USB PD port 1 connection state
  */
 bool ImplementationInterfaceBinding::getUSBCPort1State() {
-
+    //usbCPortState[0] = usbCPort1State;
+//    usbCPortState[1] = usbCPort2State;
     return usbCPort1State;
 }
 
@@ -204,7 +226,16 @@ void ImplementationInterfaceBinding::handleNotification(QVariantMap current_map)
         } else if (current_map["value"] == "usb_pd_port_disconnect"){
             payloadMap=current_map["payload"].toMap();
             handleUSBCportDisconnectNotification(payloadMap);
-        }  else {
+        } else if (current_map["value"] == "usb_pd_cable_swap_notification"){
+            payloadMap=current_map["payload"].toMap();
+            handleUSBPDcableswapNotification(payloadMap);
+        } else if (current_map["value"] == "request_input_voltage_notification"){
+            payloadMap=current_map["payload"].toMap();
+            handleInputVoltageNotification(payloadMap);
+        } else if (current_map["value"] == "request_reset_notification"){
+            payloadMap=current_map["payload"].toMap();
+            handleResetNotification(payloadMap);
+        } else {
             qDebug() << "Unsupported value field Received";
             qDebug() << "Received JSON = " <<current_map;
         }
@@ -252,7 +283,7 @@ void ImplementationInterfaceBinding::handleCloudNotification(QJsonObject json_ob
 void ImplementationInterfaceBinding::handleUsbPowerNotification(const QVariantMap payloadMap) {
 
     // TODO [ian] needs error checking on json object parsing
-    qDebug() << payloadMap;
+//    qDebug() << payloadMap;
     int port = payloadMap["port"].toInt();
 #if !BOARD_DATA_SIMULATION
     float output_voltage = payloadMap["output"].toFloat();
@@ -262,7 +293,20 @@ void ImplementationInterfaceBinding::handleUsbPowerNotification(const QVariantMa
     emit portTargetVoltageChanged(port, target_voltage);
 
     float current = payloadMap["current"].toFloat();
-    emit portCurrentChanged(port, current);
+
+    if(port == 1) {
+        port1Current = current;
+    }
+    if(port == 2) {
+        port2Current = current;
+    }
+
+    if(usbCPort2State && usbCPort2State)
+        emit portCurrentChanged(port, port2Current+port1Current);
+    else if(usbCPort1State && !usbCPort2State)
+        emit portCurrentChanged(port, port1Current);
+    else if(!usbCPort1State && usbCPort2State)
+        emit portCurrentChanged(port, port2Current);
 
     float power = payloadMap["power"].toFloat();
     emit portPowerChanged(port, power);
@@ -271,8 +315,6 @@ void ImplementationInterfaceBinding::handleUsbPowerNotification(const QVariantMa
     emit portTemperatureChanged(port, temperature);
 
     float input_voltage = payloadMap["input"].toFloat();
-    emit portInputVoltageChanged(port, input_voltage);
-
     emit portEfficencyChanged(port, input_voltage*current, power);
 #else
 // For load board data simulation only
@@ -351,6 +393,7 @@ void ImplementationInterfaceBinding::handleUSBCportConnectNotification(const QVa
 
     if (connection_state.compare("connected") == 0) {
         if (usbCPortId.compare("USB_C_port_1") == 0) {
+
             usbCPort1State =  true;
             emit usbCPortStateChanged(1,usbCPort1State);
         }
@@ -376,7 +419,7 @@ void ImplementationInterfaceBinding::clearBoardMetrics(int portNumber){
     emit portPowerChanged(portNumber,0);
     emit portCurrentChanged(portNumber,0);
     emit portTemperatureChanged(portNumber,0);
-    emit portInputVoltageChanged(portNumber,0);
+//    emit portInputVoltageChanged(portNumber,0);
 }
 
 
@@ -402,8 +445,25 @@ void ImplementationInterfaceBinding::handleUSBCportDisconnectNotification(const 
     }
 }
 
+void ImplementationInterfaceBinding::handleUSBPDcableswapNotification(const QVariantMap json_map) {
+    QString swapCable = json_map["swap_cable"].toString();
+    emit swapCableStatusChanged(swapCable);
+    qDebug() << "cable notification "<<swapCable;
+}
 
+void ImplementationInterfaceBinding::handleInputVoltageNotification(const QVariantMap json_map) {
+    float input_voltage = json_map["input"].toFloat();
+    inputVoltage = input_voltage;
+    emit portInputVoltageChanged(1, inputVoltage);
+//    qDebug() << json_map;
+}
 
+void ImplementationInterfaceBinding::handleResetNotification(const QVariantMap payloadMap) {
+    bool status = payloadMap["reset_status"].toBool();
+    if(status) {
+        emit platformResetDetected(status);
+    }
+}
 /*!
  * End of notification handlers
  */
@@ -506,10 +566,12 @@ void ImplementationInterfaceBinding::notificationsThreadHandle() {
         std::string response= hcc_object->receiveNotification();
 
         QString q_response = QString::fromStdString(response);
-
+//        qDebug() << "inside port 1 state check " <<usbCPort1State ;
+//         qDebug() << "Rx'ed msg :"<< q_response;
         // create the json document from the received string
         QJsonDocument doc= QJsonDocument::fromJson(q_response.toUtf8());
         QJsonObject json_obj=doc.object();
+
 
         // todo: [prasanth] needs better way to determine the handler
 

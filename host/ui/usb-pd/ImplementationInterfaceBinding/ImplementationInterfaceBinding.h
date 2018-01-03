@@ -41,7 +41,7 @@ class ImplementationInterfaceBinding : public QObject
 
     // QProperty for all ports 
     Q_PROPERTY(float outputVoltage NOTIFY portOutputVoltageChanged)
-    Q_PROPERTY(float inputVoltage NOTIFY portInputVoltageChanged)
+    Q_PROPERTY(float inputVoltage READ getInputVoltage NOTIFY portInputVoltageChanged)
     Q_PROPERTY(float targetVoltage NOTIFY portTargetVoltageChanged)
     Q_PROPERTY(float portTemperature NOTIFY portTemperatureChanged)
     Q_PROPERTY(float portCurrent NOTIFY portCurrentChanged)
@@ -49,6 +49,8 @@ class ImplementationInterfaceBinding : public QObject
     Q_PROPERTY(float inputPower NOTIFY portEfficiencyChanged)
     Q_PROPERTY(float outputPower NOTIFY portEfficiencyChanged)
 
+    //QProperty : To know Platform Reset
+    Q_PROPERTY(bool reset_status NOTIFY platformResetDetected)
 
     //QProperty : To know Platform Status
     Q_PROPERTY(bool platformState READ getPlatformState NOTIFY platformStateChanged)
@@ -57,7 +59,10 @@ class ImplementationInterfaceBinding : public QObject
     Q_PROPERTY(QString Id READ getPlatformId NOTIFY platformIdChanged)
 
     //QProperty : To know USB-PDp- Port Status
-    Q_PROPERTY(bool usbCPort1State READ getUSBCPort1State NOTIFY usbCPortStateChanged)
+    Q_PROPERTY(bool usbCPort1State  NOTIFY usbCPortStateChanged)
+
+    //QProperty to show the swap cable status
+    Q_PROPERTY(QString swapCable NOTIFY swapCableStatusChanged)
 
     //QProperty : To know USB-C port status
     //Q_PROPERTY(bool usbcPort1 READ getUsbCPort1  NOTIFY usbCPort1StateChanged)
@@ -69,11 +74,14 @@ public:
 
     Q_INVOKABLE void setOutputVoltageVBUS(int port, int voltage);
 
+    Q_INVOKABLE void setRedriverLoss(float lossValue);
+    Q_INVOKABLE void setRedriverCount(int value);
+    Q_INVOKABLE bool getUSBCPortState(int port_number);
     std::thread notification_thread_;
     void notificationsThreadHandle();
 //Getter invoked when GUI tries to get the data
     float getoutputVoltagePort0();
-    float getinputVoltagePort0();
+    float getInputVoltage();
     float getoutputCurrentPort0();
     float getpowerPort0();
     float getPort0Temperature();
@@ -82,8 +90,6 @@ public:
     bool getUSBCPort2State();
     QString getPlatformId();
 
-    Q_INVOKABLE void setRedriverLoss(float lossValue);
-    Q_INVOKABLE void setRedriverCount(int value);
     QJsonObject convertQstringtoJson(const QString string);
     QStringList getJsonObjectKeys(const QJsonObject json_obj);
     QVariantMap getJsonMapObject(const QJsonObject json_obj);
@@ -93,6 +99,9 @@ public:
     void handlePlatformStateNotification(const QVariantMap json_map);
     void handleUSBCportConnectNotification(const QVariantMap json_map);
     void handleUSBCportDisconnectNotification(const QVariantMap json_map);
+    void handleUSBPDcableswapNotification(const QVariantMap json_map);
+    void handleInputVoltageNotification(const QVariantMap json_map);
+    void handleResetNotification(const QVariantMap payloadMap);
 
 //Notification Simulator
     friend void *simulateNotificationsThread(void *);
@@ -105,13 +114,15 @@ public:
 //Signalling done when something needs to be notified
 signals:
     void outputVoltagePort0Changed(const float outputVoltagePort0);
-    void inputVoltagePort0Changed(const float inputVoltagePort0);
+    void inputVoltagePort0Changed(const float inputVoltage);
     void outputCurrentPort0Changed(const float outputCurrentPort0);
     void port0TemperatureChanged(const float time);
     void powerPort0Changed(const float powerPort0);
     void platformIdChanged(const QString platformId);
+    void swapCableStatusChanged(const QString cableStatus);
     void platformStateChanged(const bool platformState);
     void usbCPortStateChanged(int port, const bool value);
+    void platformResetDetected(bool reset_status);
     // port metrics notification
     void portOutputVoltageChanged(int port, float value);
     void portInputVoltageChanged(int port, float value);
@@ -124,16 +135,19 @@ private:
     //Members private to class
     platform_Ports Ports;
     QString platformId;
-    bool platformState, usbCPort1State, usbCPort2State;    
+    bool platformState, usbCPort1State, usbCPort2State;
+    float inputVoltage;
     bool registrationSuccessful;
     DocumentManager *document_manager_;
     bool notification_thread_running_;
-
+    float port1Current,port2Current;
     // For load board data simulation only
     float targetVoltage;
 public:
     hcc::HostControllerClient *hcc_object;
+
 };
 
 
 #endif // UserInterfaceBinding_H
+

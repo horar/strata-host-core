@@ -28,7 +28,8 @@ Rectangle {
 
     Image{
         id:blockDiagram
-        source:"./images/USB-PD_blockDiagram.png"
+        //source:"./images/USB-PD_blockDiagram.png"
+        source: "./images/Beta_Block Diagram.png"
         anchors{left:parent.left
             bottom: parent.bottom
             bottomMargin: 50}
@@ -260,12 +261,13 @@ Rectangle {
         MouseArea {
             id: esdProtectionMouseArea1
             x: 928
-            y: 185
+            y: 175
             width: 100
-            height: 32
+            height: 55
             cursorShape: Qt.PointingHandCursor
+            opacity: 0
             onClicked: {
-                currentURL = "http://www.onsemi.com/PowerSolutions/product.do?id=ESD7104"
+                currentURL = "http://www.onsemi.com/PowerSolutions/product.do?id=FUSB252"
                 detailView.open()
             }
         }
@@ -273,12 +275,12 @@ Rectangle {
         MouseArea {
             id: esdProtectionMouseArea2
             x: 928
-            y: 512
+            y: 504
             width: 100
-            height: 32
+            height: 55
             cursorShape: Qt.PointingHandCursor
             onClicked: {
-                currentURL = "http://www.onsemi.com/PowerSolutions/product.do?id=ESD7104"
+                currentURL = "http://www.onsemi.com/PowerSolutions/product.do?id=FUSB252"
                 detailView.open()
             }
         }

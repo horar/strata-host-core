@@ -26,7 +26,6 @@ ApplicationWindow {
         property bool flipped: false
         front: FrontSide{}
         back: BackSide{}
-
         transform: Rotation {
             id: rotation
             origin{ x: flipable.width/2;y: flipable.height/2 }

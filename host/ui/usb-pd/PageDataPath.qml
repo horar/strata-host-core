@@ -3,20 +3,73 @@ import QtQuick.Controls 2.0
 import QtQuick.Layouts 1.1
 import QtQuick.Extras 1.4
 import QtQuick.Controls.Styles 1.4
+import tech.spyglass.ImplementationInterfaceBinding 1.0
+
 import "framework"
 
 Item {
 
     property var verticalButtonDelta: 40    //distance betwen the routing buttons
-
+//    property Q
     //set the hidden elements of the UI correctly based on the two redriver
     //button being set on startup
     Component.onCompleted: {
-        showTwoRedriverSourceAndSink(true);
-        showOneRedriverSourceAndSink(false);
+        showTwoRedriverSourceAndSink(false);
         showPassiveSourceAndSink(false);
+        showOneRedriverSourceAndSink(false);
     }
 
+//     property bool usbportCstatus: {
+//        if((!implementationInterfaceBinding.usbCPort1State)&&(!implementationInterfaceBinding.usbCPort2State==false)) {
+//            statusMessage.color = "red";
+//            statusMessage.text = "Connect both ports";
+//        }
+//        else if(!implementationInterfaceBinding.usbCPort1State) {
+//            statusMessage.color = "red";
+//            statusMessage.text = "Connect Port 1";
+//        }
+//        else if(!implementationInterfaceBinding.usbCPort2State) {
+//            statusMessage.color = "red";
+//            statusMessage.text = "Connect Port 2";
+//        }
+
+//        implementationInterfaceBinding.usbCPort1State
+//    }
+
+    // Values are being Signalled from ImplementationInterfaceBinding.cpp
+    Connections {
+        target: implementationInterfaceBinding
+
+        //  swap cable status
+        onSwapCableStatusChanged: {
+            if(cableStatus == "Good") {
+                statusMessage.color = "green";
+                statusMessage.text = "Ready";
+            }
+            else {
+                statusMessage.color = "red";
+                if(cableStatus == "USB_C_port_1")
+                    statusMessage.text = "Please Flip the Connection on Port 1";
+                if(cableStatus == "USB_C_port_2")
+                    statusMessage.text = "Please Flip the Connection on Port 2";
+                if(cableStatus == "Both")
+                    statusMessage.text = "Please Flip the Connection on Both Ports";
+            }
+        }
+
+        onPlatformResetDetected: {
+            if(reset_status) {
+                twoRedrivers.checked = false;
+                oneRedriver.checked = true;
+                passiveRoute.checked = false;
+                showTwoRedriverSourceAndSink(false);
+                showPassiveSourceAndSink(false);
+                showOneRedriverSourceAndSink(false);
+                statusMessage.color = "green";
+                statusMessage.text = "Ready";
+            }
+        }
+    }
 
     Text{
         font.family: "helvetica"
@@ -114,7 +167,7 @@ Item {
             }
             else if (button.objectName == "oneRedriver"){
                 showTwoRedriverSourceAndSink(false);
-                showOneRedriverSourceAndSink(true);
+                showOneRedriverSourceAndSink(false);
                 showPassiveSourceAndSink(false);
                 implementationInterfaceBinding.setRedriverCount(1);
             }
@@ -161,13 +214,13 @@ Item {
         id:twoRedrivers
         objectName: "twoRedrivers"
         anchors.horizontalCenter: parent.horizontalCenter
-        anchors.bottom: oneRedriver.top
+        anchors.bottom: passiveRoute.top
         anchors.bottomMargin: verticalButtonDelta
         width: parent.width/3
         height: parent.height/6
         ButtonGroup.group: dataPathGroup
         checkable:true
-        checked:true
+        checked:false
         background: Rectangle{color:"transparent"}
 
         Image{
@@ -179,7 +232,7 @@ Item {
                 text:"Flex Cable"
                 color: twoRedrivers.checked ? "white" : "transparent"
                 font.family: "helvetica"
-                font.pointSize: 15
+                font.pointSize: 10
                 anchors.centerIn:parent
             }
 
@@ -187,28 +240,28 @@ Item {
                 text:"Redriver"
                 color: twoRedrivers.checked ? "darkslategrey" : "transparent"
                 font.family: "helvetica"
-                font.pointSize: 15
+                font.pointSize: 10
                 anchors{top:parent.top; topMargin:parent.height/16; left: parent.left; leftMargin: 3*parent.width/16}
             }
             Text{
                 text:"Redriver"
                 color: twoRedrivers.checked ? "darkslategrey" : "transparent"
                 font.family: "helvetica"
-                font.pointSize: 15
+                font.pointSize: 10
                 anchors{top:parent.top; topMargin:parent.height/16; right: parent.right; rightMargin: parent.width/8}
             }
             Text{
                 text:"Redriver"
                 color: twoRedrivers.checked ? "darkslategrey" : "transparent"
                 font.family: "helvetica"
-                font.pointSize: 15
+                font.pointSize: 10
                 anchors{bottom:parent.bottom; bottomMargin:parent.height/16; left: parent.left; leftMargin: 3*parent.width/16}
             }
             Text{
                 text:"Redriver"
                 color: twoRedrivers.checked ? "darkslategrey" : "transparent"
                 font.family: "helvetica"
-                font.pointSize: 15
+                font.pointSize: 10
                 anchors{bottom:parent.bottom; bottomMargin:parent.height/16; right: parent.right; rightMargin: parent.width/8}
             }
         }
@@ -218,7 +271,7 @@ Item {
         id:twoRedriverButtonLabel
         text:"Two Redrivers"
         font.family: "helvetica"
-        font.pointSize: 24
+        font.pointSize: 19
         anchors.horizontalCenter: twoRedrivers.horizontalCenter
         anchors.top:twoRedrivers.bottom
         anchors.topMargin: 5
@@ -284,41 +337,45 @@ Item {
     Button{
         id:oneRedriver
         objectName: "oneRedriver"
+//        anchors.horizontalCenter: parent.horizontalCenter
+//        anchors.verticalCenter:parent.verticalCenter
+//        anchors.verticalCenterOffset: parent.height/20
         anchors.horizontalCenter: parent.horizontalCenter
-        anchors.verticalCenter:parent.verticalCenter
-        anchors.verticalCenterOffset: parent.height/20
+        anchors.top: passiveRoute.bottom
+        anchors.topMargin: verticalButtonDelta
         width: parent.width/3
         height: parent.height/6
         ButtonGroup.group: dataPathGroup
         checkable:true
+        checked: true
         background: Rectangle{color:"transparent"}
 
         Image{
-            source: oneRedriver.checked ? "./images/DataPath/OneRepeaterRouteActive.svg" : "./images/DataPath/OneRepeaterRouteInactive.svg"
+            source: oneRedriver.checked ? "./images/DataPath/charge_only_activate.png" : "./images/DataPath/charge_only_inactivate.png"
             height: oneRedriver.height
             width: oneRedriver.width
 
-            Text{
-                text:"Flex Cable"
-                color: oneRedriver.checked ? "white" : "transparent"
-                font.family: "helvetica"
-                font.pointSize: 15
-                anchors.centerIn:parent
-            }
-            Text{
-                text:"Redriver"
-                color: oneRedriver.checked ? "darkslategrey" : "transparent"
-                font.family: "helvetica"
-                font.pointSize: 15
-                anchors{top:parent.top; topMargin: parent.height/16; right: parent.right; rightMargin: 3*parent.width/16}
-            }
-            Text{
-                text:"Redriver"
-                color: oneRedriver.checked ? "darkslategrey" : "transparent"
-                font.family: "helvetica"
-                font.pointSize: 15
-                anchors{bottom:parent.bottom; bottomMargin: parent.height/16; left: parent.left; leftMargin: 3*parent.width/16}
-            }
+//            Text{
+//                text:"Flex Cable"
+//                color: oneRedriver.checked ? "white" : "transparent"
+//                font.family: "helvetica"
+//                font.pointSize: 15
+//                anchors.centerIn:parent
+////            }
+//            Text{
+//                text:"Redriver"
+//                color: oneRedriver.checked ? "darkslategrey" : "transparent"
+//                font.family: "helvetica"
+//                font.pointSize: 15
+//                anchors{top:parent.top; topMargin: parent.height/16; right: parent.right; rightMargin: 3*parent.width/16}
+//            }
+//            Text{
+//                text:"Redriver"
+//                color: oneRedriver.checked ? "darkslategrey" : "transparent"
+//                font.family: "helvetica"
+//                font.pointSize: 15
+//                anchors{bottom:parent.bottom; bottomMargin: parent.height/16; left: parent.left; leftMargin: 3*parent.width/16}
+//            }
 
         }
     }
@@ -393,9 +450,12 @@ Item {
     Button{
         id:passiveRoute
         objectName: "passiveRoute"
+//        anchors.horizontalCenter: parent.horizontalCenter
+//        anchors.top: oneRedriver.bottom
+//        anchors.topMargin: verticalButtonDelta
         anchors.horizontalCenter: parent.horizontalCenter
-        anchors.top: oneRedriver.bottom
-        anchors.topMargin: verticalButtonDelta
+        anchors.verticalCenter:parent.verticalCenter
+        anchors.verticalCenterOffset: parent.height/20
         width: parent.width/3
         height: parent.height/6
         ButtonGroup.group: dataPathGroup
@@ -460,8 +520,8 @@ Item {
         id:statusMessage
         font.family: "helvetica"
         font.pointSize: 24
-        color:passiveRoute.checked ? "red" : "transparent"
-        text:"Please flip the connection to port 1"
+        color:"red"
+        text:""
         anchors{horizontalCenter: parent.horizontalCenter
                 bottom:parent.bottom
                 bottomMargin: parent.height/10

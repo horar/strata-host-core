@@ -3,6 +3,8 @@ import QtQuick.Layouts 1.3
 import QtQuick.Controls 1.4
 import QtGraphicalEffects 1.0
 import QtQuick.Controls.Material 2.2
+import tech.spyglass.ImplementationInterfaceBinding 1.0
+
 import "framework"
 
 Rectangle {
@@ -11,16 +13,20 @@ Rectangle {
     property alias deviceLayout: deviceLayout
 
     //  Getting realtime data for input voltage
-    property double inputVoltage: 0;
+    property double inputVoltage: implementationInterfaceBinding.inputVoltage;
     property double portCurrent: 0;
 
+//    property bool harwareStatus: {
+//        device.inputVoltage = implementationInterfaceBinding.inputVoltage;
+//        implementationInterfaceBinding.platformState
+//    }
 
     Connections {
         target: implementationInterfaceBinding
 
-        onPortInputVoltageChanged: {
-            device.inputVoltage = value;
-        }
+//        onPortInputVoltageChanged: {
+//            device.inputVoltage = value;
+//        }
         onPortCurrentChanged: {
             device.portCurrent = value;
         }
@@ -245,7 +251,7 @@ Rectangle {
 
             Text {
                 id: inputPlugName
-                text: device.inputVoltage.toFixed(1) + " V"// + device.portCurrent.toFixed(1)+ " A"
+                text: device.inputVoltage .toFixed(1) + " V\n" + device.portCurrent.toFixed(1)+ " A"
                 width: inputPlugColumn.width-2
                 horizontalAlignment: Text.AlignRight
                 anchors {verticalCenter: parent.verticalCenter}
@@ -277,7 +283,7 @@ Rectangle {
         bottomMargin:30
         axisXLabel: "Time (S)"
         axisYLabel: "Power (W)"
-        efficencyLabel: true
+        efficencyLabel: false
         chartType:"Input Power"
         portNumber: 1
         powerMessageVisible: false;

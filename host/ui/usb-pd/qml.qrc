@@ -81,5 +81,10 @@
         <file>images/DataPath/hardDrive.svg</file>
         <file>images/DataPath/PassiveDataRouteActive.svg</file>
         <file>images/DataPath/arrows.svg</file>
+        <file>PageDemoSetup.qml</file>
+        <file>images/DataPath/charge_only_inactivate.png</file>
+        <file>images/DataPath/charge_only_activate.png</file>
+        <file>images/Beta_Block Diagram.png</file>
+        <file>images/CES_Demo_Setup.PNG</file>
     </qresource>
 </RCC>

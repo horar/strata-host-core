@@ -292,7 +292,7 @@ bool HostControllerService::openPlatformSocket() {
 #elif _WIN32
     error = sp_get_port_by_name("COM7",&platform_socket_);
 #elif __APPLE__
-    error = sp_get_port_by_name("/dev/tty.usbmodem14123",&platform_socket_);
+    error = sp_get_port_by_name("/dev/tty.usbserial-DO0088MQ",&platform_socket_);
 #endif
 
     if(error == SP_OK) {

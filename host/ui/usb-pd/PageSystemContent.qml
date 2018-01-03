@@ -7,7 +7,7 @@ import QtQuick.Controls.Styles 1.4
 Item {
     property var currentSystemModel: powerStagesModel
     property var currentSchematic: "./images/schematics/PowerStageSchematic.png"
-    property var currentVPModel: vpModel2
+    //property var currentVPModel: vpModel2
     property var currentBlockDiagram: "./images/highlightedBlockDiagram/USB-PD_blockDiagram_PowerStage1Highlighted.png"
 
     GridLayout{
@@ -15,7 +15,7 @@ Item {
         columns: 6
         rows: 7
         anchors {fill:parent
-                bottomMargin: tabBar.height}
+            bottomMargin: tabBar.height}
         columnSpacing: 0
         rowSpacing: 0
 
@@ -86,7 +86,7 @@ Item {
                         currentSystemModel = powerStagesModel
                         currentSchematic = "./images/schematics/PowerStageSchematic.png"
                         currentBlockDiagram = "./images/highlightedBlockDiagram/USB-PD_blockDiagram_PowerStage1Highlighted.png"
-                        currentVPModel = vpModel2
+                        //currentVPModel = vpModel2
                     }
                 }
                 Button{
@@ -115,7 +115,7 @@ Item {
                         currentSystemModel = powerStagesModel
                         currentSchematic = "./images/schematics/PowerStageSchematic.png"
                         currentBlockDiagram = "./images/highlightedBlockDiagram/USB-PD_blockDiagram_PowerStage2Highlighted.png"
-                        currentVPModel = vpModel2
+                        //currentVPModel = vpModel2
                     }
                 }
                 Button{
@@ -144,13 +144,13 @@ Item {
                         currentSystemModel = threeVoltRailModel
                         currentSchematic = "./images/schematics/ThreeVoltRailSchematic.png"
                         currentBlockDiagram = "./images/highlightedBlockDiagram/USB-PD_blockDiagram_ThreeVoltHighlighted.png"
-                        currentVPModel = vpModel2
+                        //currentVPModel = vpModel2
                     }
                 }
             }
-            }
+        }
 
-         Rectangle{
+        Rectangle{
             id: functionGroup2
             Layout.column: 1
             Layout.columnSpan: 1
@@ -206,14 +206,14 @@ Item {
                         currentSystemModel = batterySystemModel
                         currentSchematic = "./images/schematics/BatteryProtectionSchematic.png"
                         currentBlockDiagram = "./images/highlightedBlockDiagram/USB-PD_blockDiagram_BatteryProtectionHighlighted.png"
-                        currentVPModel = vpModel1
+                        //currentVPModel = vpModel1
                     }
                 }
 
             }
-            }
+        }
 
-         Rectangle{
+        Rectangle{
             id: functionGroup3
             Layout.column: 2
             Layout.columnSpan: 1
@@ -270,7 +270,7 @@ Item {
                         currentSystemModel = tempSensorSystemModel
                         currentSchematic = "./images/schematics/TempSensorSchematic.png"
                         currentBlockDiagram = "./images/highlightedBlockDiagram/USB-PD_blockDiagram_TempSensorHighlighted.png"
-                        currentVPModel = vpModel2
+                        //currentVPModel = vpModel2
                     }
                 }
                 Button{
@@ -306,9 +306,9 @@ Item {
                 }
 
             }
-            }
+        }
 
-         Rectangle{
+        Rectangle{
             id: functionGroup4
             Layout.column: 3
             Layout.columnSpan: 1
@@ -365,7 +365,7 @@ Item {
                         currentSystemModel = usbCModel
                         currentSchematic = "./images/schematics/USBCInterfaceSchematic1.png"
                         currentBlockDiagram = "./images/highlightedBlockDiagram/USB-PD_blockDiagram_USB-C1Highlighted.png"
-                        currentVPModel = vpModel2
+                        //currentVPModel = vpModel2
                     }
                 }
                 Button{
@@ -395,212 +395,216 @@ Item {
                         currentSystemModel = usbCModel
                         currentSchematic = "./images/schematics/USBCInterfaceSchematic1.png"
                         currentBlockDiagram = "./images/highlightedBlockDiagram/USB-PD_blockDiagram_USB-C2Highlighted.png"
-                        currentVPModel = vpModel2
+                        //currentVPModel = vpModel2
                     }
                 }
 
             }
+        }
+
+        ButtonGroup {
+            id: systemButtonGroup
+        }
+
+        Image{
+            id: blockDiagram
+            Layout.column: 4
+            Layout.columnSpan: 2
+            Layout.row: 0
+            Layout.rowSpan: 3
+            Layout.preferredWidth  : systemContentGridLayout.prefWidth(this)
+            Layout.preferredHeight : systemContentGridLayout.prefHeight(this)
+            Layout.fillWidth:true
+            Layout.fillHeight:true
+            fillMode: Image.PreserveAspectFit
+            source:currentBlockDiagram
+        }
+
+        GridView {
+            id:gridView
+            Layout.column: 0
+            Layout.columnSpan: 4
+            Layout.row: 4
+            Layout.rowSpan: 2
+            Layout.preferredWidth  : systemContentGridLayout.prefWidth(this)
+            //Layout.preferredHeight : systemContentGridLayout.prefHeight(this)
+            height:150
+            Layout.fillWidth:true
+            //Layout.fillHeight:true
+            Layout.leftMargin: 10
+            Layout.topMargin: 50
+            Layout.bottomMargin: 50
+            cellWidth: 150; cellHeight: 25
+            highlight: Rectangle { color: "lightsteelblue"; radius: 5 }
+            focus: true
+            flow: GridView.FlowTopToBottom | GridView.FlowTopToBottom
+
+            model: currentSystemModel
+            delegate: Item {
+                x: 25
+                width: 150; height: 25
+                Rectangle{
+                    id: itemRectangle
+                    anchors.fill:parent
+                    color: isPartName? "lightgrey":
+                                       index % 2 == 0 ? "ghostwhite":"#EEEEEE"
+                    border.width: 1
+                    border.color: "white"
+                    Text {
+                        id: systemDataItem
+                        text: file ? "<a href='http:" +file+ "'>"+name+"</a>":name
+                        linkColor: Qt.darker("#2eb457")
+                        onLinkActivated: documentationPopup.open()
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        anchors.verticalCenter: parent.verticalCenter
+                        font.bold: isPartName? true: false
+                    }
+                    Popup {
+                        id: documentationPopup
+                        width: mainWindow.contentItem.width * 0.75; height: mainWindow.contentItem.height * 0.65
+                        modal: true
+                        focus: true
+
+                        topMargin: mainWindow.contentItem.height/4
+                        bottomMargin: mainWindow.contentItem.height/4
+                        leftMargin: mainWindow.contentItem.width/4
+                        rightMargin: mainWindow.contentItem.width/4
+
+                        closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
+                        background: Image {
+                            id: popupBorder
+                            source: "./images/dialogBorder.svg"
+                            width:parent.width; height:parent.height
+
+                            MouseArea {
+                                id: mouseArea
+                                width: parent.width/7; height: width
+                                anchors.centerIn: popupBorder.Top
+                                anchors.right: popupBorder.right
+                                onClicked: { documentationPopup.close() }
+                            }
+                        }
+                        contentItem: Rectangle{
+                            id: contentRectangle
+                            anchors.fill:parent
+                            anchors.topMargin: 20
+                            anchors.leftMargin:20
+                            anchors.rightMargin: 20
+                            //anchors.topMargin: 20
+                            anchors.bottomMargin: 20
+                            anchors.centerIn: popupBorder
+                            color:"transparent"
+                            border.width:0
+                            Image {
+                                anchors.fill: parent
+                                fillMode: Image.PreserveAspectFit
+                                source: "images/NCV81599_test_report.png";
+                            }
+                        }
+                    }
+
+
+                }
+
             }
-
-         ButtonGroup {
-             id: systemButtonGroup
-         }
-
-         Image{
-             id: blockDiagram
-             Layout.column: 4
-             Layout.columnSpan: 2
-             Layout.row: 0
-             Layout.rowSpan: 3
-             Layout.preferredWidth  : systemContentGridLayout.prefWidth(this)
-             Layout.preferredHeight : systemContentGridLayout.prefHeight(this)
-             Layout.fillWidth:true
-             Layout.fillHeight:true
-             fillMode: Image.PreserveAspectFit
-             source:currentBlockDiagram
-             }
-
-         GridView {
-             id:gridView
-             Layout.column: 0
-             Layout.columnSpan: 4
-             Layout.row: 4
-             Layout.rowSpan: 2
-             Layout.preferredWidth  : systemContentGridLayout.prefWidth(this)
-             //Layout.preferredHeight : systemContentGridLayout.prefHeight(this)
-             height:150
-             Layout.fillWidth:true
-             //Layout.fillHeight:true
-             Layout.leftMargin: 10
-             Layout.topMargin: 50
-             Layout.bottomMargin: 50
-             cellWidth: 150; cellHeight: 25
-             highlight: Rectangle { color: "lightsteelblue"; radius: 5 }
-             focus: true
-             flow: GridView.FlowTopToBottom | GridView.FlowTopToBottom
-
-             model: currentSystemModel
-             delegate: Item {
-                 x: 25
-                 width: 150; height: 25
-                 Rectangle{
-                     id: itemRectangle
-                     anchors.fill:parent
-                     color: isPartName? "lightgrey":
-                                        index % 2 == 0 ? "ghostwhite":"#EEEEEE"
-                     border.width: 1
-                     border.color: "white"
-                     Text {
-                         id: systemDataItem
-                         text: file ? "<a href='http:" +file+ "'>"+name+"</a>":name
-                         linkColor: Qt.darker("#2eb457")
-                         onLinkActivated: documentationPopup.open()
-                         anchors.horizontalCenter: parent.horizontalCenter
-                         anchors.verticalCenter: parent.verticalCenter
-                         font.bold: isPartName? true: false
-                     }
-                     Popup {
-                         id: documentationPopup
-                         width: mainWindow.contentItem.width * 0.75; height: mainWindow.contentItem.height * 0.65
-                         modal: true
-                         focus: true
-
-                         topMargin: mainWindow.contentItem.height/4
-                         bottomMargin: mainWindow.contentItem.height/4
-                         leftMargin: mainWindow.contentItem.width/4
-                         rightMargin: mainWindow.contentItem.width/4
-
-                         closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
-                         background: Image {
-                             id: popupBorder
-                             source: "./images/dialogBorder.svg"
-                             width:parent.width; height:parent.height
-
-                             MouseArea {
-                                 id: mouseArea
-                                 width: parent.width/7; height: width
-                                 anchors.centerIn: popupBorder.Top
-                                 anchors.right: popupBorder.right
-                                 onClicked: { documentationPopup.close() }
-                             }
-                         }
-                         contentItem: Rectangle{
-                             id: contentRectangle
-                             anchors.fill:parent
-                             anchors.topMargin:20
-                             anchors.leftMargin:20
-                             anchors.rightMargin: 20
-                             anchors.bottomMargin: 20
-                             color:"transparent"
-                             border.width:0
-                             Image {
-                                 anchors.fill: parent
-                                 fillMode: Image.PreserveAspectFit
-                                 source: "images/NCV81599_test_report.png";
-                             }
-                         }
-                     }
-
-
-                 }
-
-             }
-         }
+        }
 
 
 
-         Rectangle{
-             id: schematicView
-             Layout.column: 4
-             Layout.columnSpan: 2
-             Layout.row: 3
-             Layout.rowSpan: 3
-             Layout.preferredWidth  : systemContentGridLayout.prefWidth(this)
-             Layout.preferredHeight : systemContentGridLayout.prefHeight(this)
-             Layout.fillWidth:true
-             Layout.fillHeight:true
-             border.width: 0
+        Rectangle{
+            id: schematicView
+            Layout.column: 4
+            Layout.columnSpan: 2
+            Layout.row: 3
+            Layout.rowSpan: 3
+            Layout.preferredWidth  : systemContentGridLayout.prefWidth(this)
+            Layout.preferredHeight : systemContentGridLayout.prefHeight(this)
+            Layout.fillWidth:true
+            Layout.fillHeight:true
+            border.width: 0
 
-             Image {
-                 id: schematic
-                 source: currentSchematic
-                 anchors.fill:parent
-                 fillMode: Image.PreserveAspectFit
+            Image {
+                id: schematic
+                source: currentSchematic
+                anchors.fill:parent
+                fillMode: Image.PreserveAspectFit
 
-                 Rectangle{
-                     id: schematicOverlay
-                     anchors.fill:parent
-                     anchors.topMargin: 60
-                     anchors.bottomMargin: 60
-                     border.color: "#2EB457"
-                     border.width: 2
-                     color:"#802EB457"
-                     Text{
-                         anchors.centerIn: parent
-                         width:parent.width
-                         horizontalAlignment: Text.AlignHCenter
-                         text:"Open schematic"
-                         font.bold: true
-                         font.pointSize: 24
-                         color: "white"
-                         wrapMode: Text.WordWrap
-                     }
-                     MouseArea{
-                         anchors.fill:parent
-                         onClicked:{
-                             schematicPopup.open()
-                         }
-                     }
-                     Popup {
-                         id: schematicPopup
-                         width: mainWindow.contentItem.width * 0.65
-                         height: mainWindow.contentItem.height * 0.65
-                         modal: true
-                         focus: true
+                Rectangle{
+                    id: schematicOverlay
+                    anchors.fill:parent
+                    anchors.topMargin: 60
+                    anchors.bottomMargin: 60
+                    border.color: "#2EB457"
+                    border.width: 2
+                    color:"#802EB457"
+                    Text{
+                        anchors.centerIn: parent
+                        width:parent.width
+                        horizontalAlignment: Text.AlignHCenter
+                        text:"Open schematic"
+                        font.bold: true
+                        font.pointSize: 24
+                        color: "white"
+                        wrapMode: Text.WordWrap
+                    }
+                    MouseArea{
+                        anchors.fill:parent
+                        onClicked:{
+                            schematicPopup.open()
+                        }
+                    }
+                    Popup {
+                        id: schematicPopup
+                        width: mainWindow.contentItem.width * 0.65
+                        height: mainWindow.contentItem.height * 0.65
+                        modal: true
+                        focus: true
 
-                         topMargin: mainWindow.contentItem.height/4
-                         bottomMargin: mainWindow.contentItem.height/4
-                         leftMargin: mainWindow.contentItem.width/4
-                         rightMargin: mainWindow.contentItem.width/4
-                         closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
-                         background: Image {
-                             id: popupBorder
-                             source: "./images/dialogBorder.svg"
-                             width:parent.width
-                             height:parent.height
+                        topMargin: mainWindow.contentItem.height/4
+                        bottomMargin: mainWindow.contentItem.height/4
+                        leftMargin: mainWindow.contentItem.width/4
+                        rightMargin: mainWindow.contentItem.width/4
+                        closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
+                        background: Image {
+                            id: popupBorder
+                            source: "./images/dialogBorder.svg"
+                            width:parent.width
+                            height:parent.height
 
-                             MouseArea {
-                                 id: mouseArea
-                                 width: parent.width/7; height: width
-                                 anchors.centerIn: popupBorder.Top
-                                 anchors.right: popupBorder.right
-                                 onClicked: { schematicPopup.close() }
-                             }
-                         }
-                         contentItem: Rectangle{
-                             id: contentRectangle
-                             anchors.fill:parent
-                             anchors.topMargin:20
-                             anchors.leftMargin:20
-                             anchors.rightMargin: 20
-                             anchors.bottomMargin: 20
-                             color:"transparent"
-                             border.width:0
-                             Image {
-                                 anchors.topMargin:20
-                                 anchors.leftMargin:20
-                                 anchors.rightMargin: 20
-                                 anchors.bottomMargin: 20
-                                 anchors.fill: parent
-                                 fillMode: Image.PreserveAspectFit
-                                 source: "images/ONSEC-17-014_schematic.png";
-                             }
+                            MouseArea {
+                                id: mouseArea
+                                width: parent.width/7; height: width
+                                anchors.centerIn: popupBorder.Top
+                                anchors.right: popupBorder.right
+                                onClicked: { schematicPopup.close();
+                                }
+                            }
+                        }
+                        contentItem: Rectangle{
+                            id: contentRectangle
+                            anchors.fill:parent
+                            anchors.topMargin:20
+                            anchors.leftMargin:20
+                            anchors.rightMargin: 20
+                            anchors.bottomMargin: 20
+                            color:"transparent"
+                            border.width:0
+                            Image {
+                                id: schematicImage
+                                anchors.topMargin:20
+                                anchors.leftMargin:20
+                                anchors.rightMargin: 40
+                                anchors.bottomMargin: 20
+                                anchors.fill: parent
+                                fillMode: Image.PreserveAspectFit
+                                source: "images/ONSEC-17-014_schematic.png";
+                            }
 
-                         }
-                     }
-                 }
-             }
-         }
+                        }
+                    }
+                }
+            }
+        }
 
         ListModel {
             id: batterySystemModel
@@ -731,7 +735,7 @@ Item {
                 name: "NCV890100"//"NCV890100 1.2A, 2 MHz Automotive Buck Switching Regulator"
                 file: ""
                 isPartName: true
-                }
+            }
             ListElement {
                 system: "3.3V Rail"
                 name: "SEC Test Report"
@@ -766,7 +770,7 @@ Item {
                 name: "NSVR05F40NX"//"NSVR05F40NX Schottky Barrier Diode"
                 file: ""
                 isPartName: true
-                }
+            }
             ListElement {
                 system: "3.3V Rail"
                 name: "Datasheet"
@@ -801,7 +805,7 @@ Item {
                 name: "NRVB140SF"//"NRVB140SF Surface Mount Schottky Power Rectifier"
                 file: ""
                 isPartName: true
-                }
+            }
             ListElement {
                 system: "3.3V Rail"
                 name: "Datasheet"
@@ -840,7 +844,7 @@ Item {
                 name: "NCV81599"//"NCV81599 Automotive 4 Switch Buck-Boost"
                 file: ""
                 isPartName: true
-                }
+            }
             ListElement {
                 system: "Power Stages"
                 name: "SEC Test Report"
@@ -877,7 +881,7 @@ Item {
                 name: "NVTFS5C453"//"NVTFS5C453 Power MOSFET"
                 file: ""
                 isPartName: true
-                }
+            }
             ListElement {
                 system: "Power Stages"
                 name: "Datasheet"
@@ -913,7 +917,7 @@ Item {
                 name: "NSVR05F40NX"//"NSVR05F40NX Schottky Barrier Diode"
                 file: ""
                 isPartName: true
-                }
+            }
             ListElement {
                 system: "Power Stages"
                 name: "Datasheet"
@@ -949,7 +953,7 @@ Item {
                 name: "BVSS84L"//"BVSS84L Automotive Small Signal MOSFET "
                 file: ""
                 isPartName: true
-                }
+            }
             ListElement {
                 system: "Power Stages"
                 name: "Datasheet"
@@ -985,7 +989,7 @@ Item {
                 name: "2V7002W"//"2V7002W Automotive Small Signal MOSFET"
                 file: ""
                 isPartName: true
-                }
+            }
             ListElement {
                 system: "Power Stages"
                 name: "Datasheet"
@@ -1025,7 +1029,7 @@ Item {
                 name: "NSVR05F40NX"//"NSVR05F40NX Schottky Barrier Diode"
                 file: ""
                 isPartName: true
-                }
+            }
             ListElement {
                 system: "USB-C Interface"
                 name: "Datasheet"
@@ -1061,7 +1065,7 @@ Item {
                 name: "NSVR05F40NX"//"SZESD7104 4-ch Transient Voltage Suppressors"
                 file: ""
                 isPartName: true
-                }
+            }
             ListElement {
                 system: "USB-C Interface"
                 name: "Datasheet"
@@ -1097,7 +1101,7 @@ Item {
                 name: "2V7002W"//"2V7002W Automotive Small Signal MOSFET"
                 file: ""
                 isPartName: true
-                }
+            }
             ListElement {
                 system: "USB-C Interface"
                 name: "Datasheet"
@@ -1133,7 +1137,7 @@ Item {
                 name: "NVTFS5C453"//"NVTFS5C453 Power MOSFET"
                 file: ""
                 isPartName: true
-                }
+            }
             ListElement {
                 system: "USB-C Interface"
                 name: "Datasheet"
@@ -1167,29 +1171,29 @@ Item {
 
         }
 
-//------------------------------------------------------------
-//      Headshots
-//------------------------------------------------------------
-        ListModel{
-            id: vpModel1
-            ListElement {
-                name: "Bill Hall"
-                photo: "qrc:/images/bill_hall.jpg"
-            }
-        }
+        //------------------------------------------------------------
+        //      Headshots
+        //------------------------------------------------------------
+        //        ListModel{
+        //            id: vpModel1
+        //            ListElement {
+        //                name: "Bill Hall"
+        //                photo: "qrc:/images/bill_hall.jpg"
+        //            }
+        //        }
 
-        ListModel{
-            id: vpModel2
-            ListElement {
-                name: "Bill Hall"
-                photo: "qrc:/images/bill_hall.jpg"
-            }
+        //        ListModel{
+        //            id: vpModel2
+        //            ListElement {
+        //                name: "Bill Hall"
+        //                photo: "qrc:/images/bill_hall.jpg"
+        //            }
 
-            ListElement {
-                name: "Bob Klosterboer"
-                photo: "./images/bob_klosterboer.jpg"
-            }
-        }
+        //            ListElement {
+        //                name: "Bob Klosterboer"
+        //                photo: "./images/bob_klosterboer.jpg"
+        //            }
+        //        }
 
 
         Rectangle{
@@ -1210,7 +1214,7 @@ Item {
                 anchors.fill: parent
                 anchors.leftMargin: 10
                 orientation: ListView.Horizontal
-                model: currentVPModel
+                //model: currentVPModel
                 delegate: Item {
                     x: 5
                     width: parent.height

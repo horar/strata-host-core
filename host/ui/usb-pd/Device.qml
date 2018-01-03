@@ -36,12 +36,12 @@ Rectangle {
         source: deviceOutline
     }
 
-    SGRadioButton {
-        id: radioButtonList
-        anchors { centerIn:  parent; topMargin: 20 }
-        width : 100; height: 150
-        port_number : device.port_number
-    }
+//    SGRadioButton {
+//        id: radioButtonList
+//        anchors { centerIn:  parent; topMargin: 20 }
+//        width : 100; height: 150
+//        port_number : device.port_number
+//    }
 
 
 }
