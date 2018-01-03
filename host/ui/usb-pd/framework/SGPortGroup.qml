@@ -67,7 +67,7 @@ Rectangle {
     Component.onCompleted:  {
         if(visible) {
             if (portNumber == 1) {
-                var state = implementationInterfaceBinding.usbCPort1State;
+                var state = implementationInterfaceBinding.getUSBCPortState(1);
                 if(state == true){
                     console.log("USB-C Connected Port1 when app launch ");
                     iconList.opacity = 1.0
@@ -79,7 +79,7 @@ Rectangle {
                 }
             }
             if (portNumber == 2) {
-                var state = implementationInterfaceBinding.usbCPort2State;
+                var state = implementationInterfaceBinding.getUSBCPortState(2);
                 if(state == true){
                     console.log("USB-C Connected Port2 when app launch ");
                     iconList.opacity = 1.0

@@ -113,8 +113,29 @@ void ImplementationInterfaceBinding::setRedriverCount(int value)
         qDebug() << "Radio button send failed";
 }
 
-float ImplementationInterfaceBinding::getoutputVoltagePort0()
+
+bool ImplementationInterfaceBinding::getUSBCPortState(int port_number)
 {
+    switch(port_number){
+    case 1: return usbCPort1State;
+            break;
+    case 2: return usbCPort2State;
+            break;
+    }
+}
+
+/*!
+ * Getter and Setter methods, used for retriving/writing something to/from platform
+ * Retreived/set value is indidcated by function name.
+ * For instance getVoltagePort0 gets voltage of port 0 from
+ * the platform
+ */
+
+/*! \brief gets the cached voltage of port 0
+ */
+
+float ImplementationInterfaceBinding::getoutputVoltagePort0() {
+
     qDebug() << "getting port 0 voltage";
     return Ports.v_oport[0];
 }
@@ -163,7 +184,8 @@ bool ImplementationInterfaceBinding::getPlatformState() {
  * \brief get USB PD port 1 connection state
  */
 bool ImplementationInterfaceBinding::getUSBCPort1State() {
-
+    //usbCPortState[0] = usbCPort1State;
+//    usbCPortState[1] = usbCPort2State;
     return usbCPort1State;
 }
 
@@ -271,13 +293,14 @@ void ImplementationInterfaceBinding::handleUsbPowerNotification(const QVariantMa
     emit portTargetVoltageChanged(port, target_voltage);
 
     float current = payloadMap["current"].toFloat();
+
     if(port == 1) {
         port1Current = current;
     }
     if(port == 2) {
         port2Current = current;
-        //port1Current = 0;
     }
+
     if(usbCPort2State && usbCPort2State)
         emit portCurrentChanged(port, port2Current+port1Current);
     else if(usbCPort1State && !usbCPort2State)
@@ -370,6 +393,7 @@ void ImplementationInterfaceBinding::handleUSBCportConnectNotification(const QVa
 
     if (connection_state.compare("connected") == 0) {
         if (usbCPortId.compare("USB_C_port_1") == 0) {
+
             usbCPort1State =  true;
             emit usbCPortStateChanged(1,usbCPort1State);
         }
@@ -542,10 +566,12 @@ void ImplementationInterfaceBinding::notificationsThreadHandle() {
         std::string response= hcc_object->receiveNotification();
 
         QString q_response = QString::fromStdString(response);
-
+//        qDebug() << "inside port 1 state check " <<usbCPort1State ;
+//         qDebug() << "Rx'ed msg :"<< q_response;
         // create the json document from the received string
         QJsonDocument doc= QJsonDocument::fromJson(q_response.toUtf8());
         QJsonObject json_obj=doc.object();
+
 
         // todo: [prasanth] needs better way to determine the handler
 

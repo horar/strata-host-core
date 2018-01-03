@@ -74,6 +74,9 @@ public:
 
     Q_INVOKABLE void setOutputVoltageVBUS(int port, int voltage);
 
+    Q_INVOKABLE void setRedriverLoss(float lossValue);
+    Q_INVOKABLE void setRedriverCount(int value);
+    Q_INVOKABLE bool getUSBCPortState(int port_number);
     std::thread notification_thread_;
     void notificationsThreadHandle();
 //Getter invoked when GUI tries to get the data
@@ -139,13 +142,14 @@ private:
     bool registrationSuccessful;
     DocumentManager *document_manager_;
     bool notification_thread_running_;
-
+    float port1Current,port2Current;
     // For load board data simulation only
     float targetVoltage;
 public:
     hcc::HostControllerClient *hcc_object;
-    float port1Current,port2Current;
+
 };
 
 
 #endif // UserInterfaceBinding_H
+
