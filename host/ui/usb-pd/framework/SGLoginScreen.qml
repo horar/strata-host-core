@@ -47,20 +47,20 @@ Rectangle {
     //-----------------------------------------------------------
 
     // PROOF OF CONCEPT BANNER
-    Rectangle {
-        anchors { top: parent.top; horizontalCenter: parent.horizontalCenter }
-        width: parent.width * 0.70; height: 30;
-        color: "red"
-        opacity: .8
-        radius: 4
-        Label {
-            anchors { centerIn: parent }
-            text: "SPYGLASS PROOF OF CONCEPT WITH LAB CLOUD"
-            color: "white"
-            font.pointSize: Qt.platform.os == "osx"? 13 :8
-            font.bold: true
-        }
-    }
+//    Rectangle {
+//        anchors { top: parent.top; horizontalCenter: parent.horizontalCenter }
+//        width: parent.width * 0.70; height: 30;
+//        color: "red"
+//        opacity: .8
+//        radius: 4
+//        Label {
+//            anchors { centerIn: parent }
+//            text: "SPYGLASS PROOF OF CONCEPT WITH LAB CLOUD"
+//            color: "white"
+//            font.pointSize: Qt.platform.os == "osx"? 13 :8
+//            font.bold: true
+//        }
+//    }
 
     Image {
         id: onLogo
