@@ -27,7 +27,27 @@ Rectangle {
         width: parent.width - flipButton.width
         currentIndex: swipeView.currentIndex
         anchors { bottom: parent.bottom;}
-        TabButton { text: "Block Diagram" }
+
+        TabButton { text: "Block Diagram"
+            Rectangle {
+                 width: parent.width<parent.height?parent.width/1.9:parent.height/1.8
+                 height: width
+                 color: "red"
+                 radius: width*0.5
+                 anchors.bottom: parent.top
+                 anchors.right: parent.right
+                 anchors.bottomMargin: -10
+                 Text {
+                      color: "white"
+                      text: "1"
+                      z:2
+                      wrapMode: Text.WordWrap
+                      anchors { fill: parent; centerIn: parent.Center }
+                      horizontalAlignment: Text.AlignHCenter
+
+                 }
+            }
+        }
         TabButton { text: "Demo Setup" }
         TabButton { text: "Data Path"}
         TabButton { text: "Schematic" }
@@ -35,6 +55,8 @@ Rectangle {
         TabButton { text: "Test Report" }
         TabButton { text: "System Content" }
         TabButton { text: "Coming Soon" }
+
+
     }
     
     Image {
