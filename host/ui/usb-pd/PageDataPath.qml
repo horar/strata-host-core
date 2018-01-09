@@ -22,31 +22,14 @@ Item {
         source: "./images/icons/onLogoGreenWithText.png"
     }
     property var verticalButtonDelta: 40    //distance betwen the routing buttons
-//    property Q
+
     //set the hidden elements of the UI correctly based on the two redriver
     //button being set on startup
     Component.onCompleted: {
         showTwoRedriverSourceAndSink(false);
         showPassiveSourceAndSink(false);
-        showOneRedriverSourceAndSink(false);
+        showChargeOnlySourceAndSink(false);
     }
-
-//     property bool usbportCstatus: {
-//        if((!implementationInterfaceBinding.usbCPort1State)&&(!implementationInterfaceBinding.usbCPort2State==false)) {
-//            statusMessage.color = "red";
-//            statusMessage.text = "Connect both ports";
-//        }
-//        else if(!implementationInterfaceBinding.usbCPort1State) {
-//            statusMessage.color = "red";
-//            statusMessage.text = "Connect Port 1";
-//        }
-//        else if(!implementationInterfaceBinding.usbCPort2State) {
-//            statusMessage.color = "red";
-//            statusMessage.text = "Connect Port 2";
-//        }
-
-//        implementationInterfaceBinding.usbCPort1State
-//    }
 
     // Values are being Signalled from ImplementationInterfaceBinding.cpp
     Connections {
@@ -77,7 +60,7 @@ Item {
                 passiveRoute.checked = false;
                 showTwoRedriverSourceAndSink(false);
                 showPassiveSourceAndSink(false);
-                showOneRedriverSourceAndSink(false);
+                showChargeOnlySourceAndSink(false);
                 statusMessage.color = "green";
                 statusMessage.text = "Ready";
                 console.log("reset detected with ",oneRedriver.checked);
@@ -86,58 +69,26 @@ Item {
     }
 
     Text{
+        id: pageTitle
         font.family: "helvetica"
         font.pointSize: 32
         text:"SuperSpeed Data Path"
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: parent.top
-        anchors.topMargin: 45
+        anchors.topMargin: 50
     }
-
-    //segmented buttons for signal loss
-//    Label{
-//        id: signalLossLabel
-//        anchors {verticalCenter:buttonRow.verticalCenter
-//                  right: buttonRow.left
-//                  rightMargin: 10
-//        }
-//        horizontalAlignment: Text.AlignRight
-//        font.family: "helvetica"
-//        font.pointSize: 20
-//        text:"Signal Loss:"
-//    }
-
-//    ButtonGroup {
-//        buttons: buttonRow.children
-//        onClicked: {
-
-//        }
-//    }
-
-//    Row {
-//        id:buttonRow
-//        anchors.horizontalCenter: parent.horizontalCenter
-//        anchors.top: parent.top
-//        anchors.topMargin: parent.height/8
-
-//        SGLeftSegmentedButton{width: 250; text:"6.6 dB" }
-//        SGMiddleSegmentedButton{width: 250; text:"9 dB" }
-//        SGRightSegmentedButton{width: 250; text:"12 dB"}
-//    }
-
 
     Label{
         id: redriverConfigurationLabel
-        anchors {top:twoRedrivers.top
-                topMargin: - redriverConfigurationLabel.height/0.7
-                //left: signalLossLabel.left
-                horizontalCenter: parent.horizontalCenter
-
-        }
+        anchors {bottom:twoRedrivers.top
+                bottomMargin: 20
+                right: twoRedrivers.left
+                rightMargin: 20
+                }
         horizontalAlignment: Text.AlignRight
         font.family: "helvetica"
-        font.pointSize: 20
-        text:"Redriver configuration"
+        font.pointSize: (Qt.platform.os == "osx") ? 25 : 20
+        text:"Redriver configuration:"
     }
 
     function showTwoRedriverSourceAndSink(inShow){
@@ -146,18 +97,8 @@ Item {
         twoRedriversRightArrows.visible = inShow;
         twoRedriverHD.visible = inShow;
         twoRedriverSourceText.visible = inShow
-        twoRedriverButtonLabel.visible = inShow
+        //twoRedriverButtonLabel.visible = inShow
         twoRedriversSinkText.visible = inShow
-    }
-
-    function showOneRedriverSourceAndSink(inShow){
-        oneRedriverLaptop.visible = inShow;
-        oneRedriverLeftArrows.visible = inShow;
-        oneRedriverRightArrows.visible = inShow;
-        oneRedriverHD.visible = inShow;
-        oneRedriverSourceText.visible = inShow
-        oneRedriverButtonLabel.visible = inShow
-        oneRedriverSinkText.visible = inShow
     }
 
     function showPassiveSourceAndSink(inShow){
@@ -166,8 +107,12 @@ Item {
         passiveRightArrows.visible = inShow;
         passiveHD.visible = inShow;
         passiveSourceText.visible = inShow
-        passiveButtonLabel.visible = inShow
+        //passiveButtonLabel.visible = inShow
         passiveSinkText.visible = inShow
+    }
+
+    function showChargeOnlySourceAndSink(inShow){
+
     }
 
     ButtonGroup {
@@ -175,21 +120,21 @@ Item {
         onClicked: {
             if (button.objectName == "twoRedrivers"){
                 showTwoRedriverSourceAndSink(true);
-                showOneRedriverSourceAndSink(false);
                 showPassiveSourceAndSink(false);
+                showChargeOnlySourceAndSink(false);
                 implementationInterfaceBinding.setRedriverCount(2);
 
             }
-            else if (button.objectName == "oneRedriver"){
-                showTwoRedriverSourceAndSink(false);
-                showOneRedriverSourceAndSink(false);
-                showPassiveSourceAndSink(false);
-                implementationInterfaceBinding.setRedriverCount(1);
-            }
             else if (button.objectName == "passiveRoute"){
                 showTwoRedriverSourceAndSink(false);
-                showOneRedriverSourceAndSink(false);
                 showPassiveSourceAndSink(true);
+                showChargeOnlySourceAndSink(false);
+                implementationInterfaceBinding.setRedriverCount(1);
+            }
+            else if (button.objectName == "chargeOnlyRoute"){
+                showTwoRedriverSourceAndSink(false);
+                showPassiveSourceAndSink(false);
+                showChargeOnlySourceAndSink(true);
                 implementationInterfaceBinding.setRedriverCount(0);
             }
         }
@@ -211,7 +156,7 @@ Item {
         id: twoRedriverSourceText
         text:"Source"
         font.family: "helvetica"
-        font.pointSize: 18
+        font.pointSize: (Qt.platform.os == "osx") ? 18 : 18
         color: "grey"
         anchors.horizontalCenter: twoRedriverLaptop.horizontalCenter
         anchors.top:twoRedriverLaptop.bottom
@@ -249,7 +194,7 @@ Item {
                 text:"Flex Cable"
                 color: twoRedrivers.checked ? "white" : "transparent"
                 font.family: "helvetica"
-                font.pointSize: 10
+                font.pointSize: (Qt.platform.os == "osx") ? 18 : 10
                 anchors.centerIn:parent
             }
 
@@ -257,28 +202,28 @@ Item {
                 text:"Redriver"
                 color: twoRedrivers.checked ? "darkslategrey" : "transparent"
                 font.family: "helvetica"
-                font.pointSize: 10
+                font.pointSize: (Qt.platform.os == "osx") ? 15 : 10
                 anchors{top:parent.top; topMargin:parent.height/16; left: parent.left; leftMargin: 3*parent.width/16}
             }
             Text{
                 text:"Redriver"
                 color: twoRedrivers.checked ? "darkslategrey" : "transparent"
                 font.family: "helvetica"
-                font.pointSize: 10
+                font.pointSize: (Qt.platform.os == "osx") ? 15 : 10
                 anchors{top:parent.top; topMargin:parent.height/16; right: parent.right; rightMargin: parent.width/8}
             }
             Text{
                 text:"Redriver"
                 color: twoRedrivers.checked ? "darkslategrey" : "transparent"
                 font.family: "helvetica"
-                font.pointSize: 10
+                font.pointSize: (Qt.platform.os == "osx") ? 15 : 10
                 anchors{bottom:parent.bottom; bottomMargin:parent.height/16; left: parent.left; leftMargin: 3*parent.width/16}
             }
             Text{
                 text:"Redriver"
                 color: twoRedrivers.checked ? "darkslategrey" : "transparent"
                 font.family: "helvetica"
-                font.pointSize: 10
+                font.pointSize: (Qt.platform.os == "osx") ? 15 : 10
                 anchors{bottom:parent.bottom; bottomMargin:parent.height/16; right: parent.right; rightMargin: parent.width/8}
             }
         }
@@ -288,7 +233,8 @@ Item {
         id:twoRedriverButtonLabel
         text:"With Redrivers"
         font.family: "helvetica"
-        font.pointSize: 12
+        font.pointSize: (Qt.platform.os == "osx") ? 18 : 12
+        color: twoRedrivers.checked ? "black" : "grey"
         anchors.horizontalCenter: twoRedrivers.horizontalCenter
         anchors.top:twoRedrivers.bottom
         anchors.topMargin: 5
@@ -314,125 +260,14 @@ Item {
         id:twoRedriversSinkText
         text:"Sink"
         font.family: "helvetica"
-        font.pointSize: 18
+        font.pointSize: (Qt.platform.os == "osx") ? 18 : 18
         color:"grey"
         anchors.horizontalCenter: twoRedriverHD.horizontalCenter
         anchors.top:twoRedriverHD.bottom
         anchors.topMargin: 5
     }
 
-    //--------------------------------------------------------------
-    //  One Redriver group
-    //--------------------------------------------------------------
-    Image {
-        id:oneRedriverLaptop
-        source: "./images/DataPath/laptop.svg"
-        anchors.verticalCenter: oneRedriver.verticalCenter
-        anchors.right: oneRedriverLeftArrows.left
-        anchors.rightMargin: 10
-    }
 
-    Text{
-        id:oneRedriverSourceText
-        text:"Source"
-        font.family: "helvetica"
-        font.pointSize: 18
-        color:"grey"
-        anchors.horizontalCenter: oneRedriverLaptop.horizontalCenter
-        anchors.top:oneRedriverLaptop.bottom
-        anchors.topMargin: 5
-    }
-
-    Image {
-        id: oneRedriverLeftArrows
-        source: "./images/DataPath/arrows.svg"
-        anchors.verticalCenter: oneRedriver.verticalCenter
-        anchors.right: oneRedriver.left
-        anchors.rightMargin: 10
-    }
-
-    Button{
-        id:oneRedriver
-        objectName: "oneRedriver"
-//        anchors.horizontalCenter: parent.horizontalCenter
-//        anchors.verticalCenter:parent.verticalCenter
-//        anchors.verticalCenterOffset: parent.height/20
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.top: passiveRoute.bottom
-        anchors.topMargin: verticalButtonDelta
-        width: parent.width/3
-        height: parent.height/6
-        ButtonGroup.group: dataPathGroup
-        checkable:true
-        checked: true
-        background: Rectangle{color:"transparent"}
-
-        Image{
-            source: oneRedriver.checked ? "./images/DataPath/charge_only_activate.png" : "./images/DataPath/charge_only_inactivate.png"
-            height: oneRedriver.height
-            width: oneRedriver.width
-
-//            Text{
-//                text:"Flex Cable"
-//                color: oneRedriver.checked ? "white" : "transparent"
-//                font.family: "helvetica"
-//                font.pointSize: 15
-//                anchors.centerIn:parent
-////            }
-//            Text{
-//                text:"Redriver"
-//                color: oneRedriver.checked ? "darkslategrey" : "transparent"
-//                font.family: "helvetica"
-//                font.pointSize: 15
-//                anchors{top:parent.top; topMargin: parent.height/16; right: parent.right; rightMargin: 3*parent.width/16}
-//            }
-//            Text{
-//                text:"Redriver"
-//                color: oneRedriver.checked ? "darkslategrey" : "transparent"
-//                font.family: "helvetica"
-//                font.pointSize: 15
-//                anchors{bottom:parent.bottom; bottomMargin: parent.height/16; left: parent.left; leftMargin: 3*parent.width/16}
-//            }
-
-        }
-    }
-
-    Text{
-        id:oneRedriverButtonLabel
-        text:"One Redriver"
-        font.family: "helvetica"
-        font.pointSize: 24
-        anchors.horizontalCenter: oneRedriver.horizontalCenter
-        anchors.top:oneRedriver.bottom
-        anchors.topMargin: 5
-    }
-
-    Image {
-        id: oneRedriverRightArrows
-        source: "./images/DataPath/arrows.svg"
-        anchors.verticalCenter: oneRedriver.verticalCenter
-        anchors.left: oneRedriver.right
-        anchors.leftMargin: 10
-    }
-
-    Image {
-        id:oneRedriverHD
-        source: "./images/DataPath/hardDrive.svg"
-        anchors.verticalCenter: oneRedriver.verticalCenter
-        anchors.left: oneRedriverRightArrows.right
-        anchors.leftMargin: 10
-    }
-
-    Text{
-        id:oneRedriverSinkText
-        text:"Sink"
-        font.family: "helvetica"
-        font.pointSize: 18
-        color:"grey"
-        anchors.horizontalCenter: oneRedriverHD.horizontalCenter
-        anchors.top:oneRedriverHD.bottom
-        anchors.topMargin: 5
-    }
 
     //--------------------------------------------------------------
     //  Passive group
@@ -467,9 +302,6 @@ Item {
     Button{
         id:passiveRoute
         objectName: "passiveRoute"
-//        anchors.horizontalCenter: parent.horizontalCenter
-//        anchors.top: oneRedriver.bottom
-//        anchors.topMargin: verticalButtonDelta
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter:parent.verticalCenter
         anchors.verticalCenterOffset: parent.height/20
@@ -488,7 +320,7 @@ Item {
                 text:"Flex Cable"
                 color: passiveRoute.checked ? "white" : "transparent"
                 font.family: "helvetica"
-                font.pointSize: 14
+                font.pointSize: (Qt.platform.os == "osx") ? 18 : 10
                 anchors.centerIn:parent
             }
         }
@@ -498,7 +330,8 @@ Item {
         id:passiveButtonLabel
         text:"Passive"
         font.family: "helvetica"
-        font.pointSize: 12
+        font.pointSize: (Qt.platform.os == "osx") ? 18 : 12
+        color: passiveRoute.checked ? "black" : "grey"
         anchors.horizontalCenter: passiveRoute.horizontalCenter
         anchors.top:passiveRoute.bottom
         anchors.topMargin: 5
@@ -531,12 +364,53 @@ Item {
         anchors.topMargin: 5
     }
 
+    //--------------------------------------------------------------
+    //  Charge Only group
+    //--------------------------------------------------------------
+
+
+    Button{
+        id:chargeOnly
+        objectName: "chargeOnlyRoute"
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.top: passiveRoute.bottom
+        anchors.topMargin: verticalButtonDelta
+        width: parent.width/3
+        height: parent.height/6
+        ButtonGroup.group: dataPathGroup
+        checkable:true
+        checked: true
+        background: Rectangle{
+                border.color: chargeOnly.checked? "black" : "lightgrey"
+                border.width: 2
+                color: chargeOnly.checked? "lightgreen" : "lightgrey"
+            }
+
+
+        Image{
+            id:chargeOnlyIcon
+            source: chargeOnly.checked ? "./images/powerSymbolGreen.svg": "./images/powerSymbolGrey.svg"
+            anchors.centerIn: parent
+        }
+    }
+
+    Text{
+        id:chargeOnlyButtonLabel
+        text:"Charge only (no data)"
+        font.family: "helvetica"
+        font.pointSize: (Qt.platform.os == "osx") ? 18 : 12
+        color: chargeOnly.checked ? "black" : "grey"
+        anchors.horizontalCenter: chargeOnly.horizontalCenter
+        anchors.top:chargeOnly.bottom
+        anchors.topMargin: 5
+    }
+
 
     //status and instructions
     Label{
         id:statusMessage
         font.family: "helvetica"
-        font.pointSize: 24
+        font.pointSize: (Qt.platform.os == "osx") ? 24 : 24
         color:"red"
         text:""
         anchors{horizontalCenter: parent.horizontalCenter
