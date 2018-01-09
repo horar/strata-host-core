@@ -19,19 +19,6 @@ import QtWebView 1.1
             width: parent.width; height: 40
             color: "#235A92"
 
-            // PROOF OF CONCEPT BANNER
-            //        Rectangle {
-            //            anchors { horizontalCenter: parent.horizontalCenter; verticalCenter: parent.verticalCenter }
-            //            width: parent.width * 0.70; height: 30;
-            //            color: "red"
-            //            radius: 4
-            //            Label {
-            //                anchors { centerIn: parent }
-            //                text: "SPYGLASS PROOF OF CONCEPT WITH LAB CLOUD"
-            //                color: "white"
-            //                font.bold: true
-            //            }
-            //        }
         }
         Image {
             anchors { top: parent.top; right: parent.right }
@@ -60,7 +47,7 @@ import QtWebView 1.1
             source: "./images/Beta_Block Diagram.png"
             anchors{left:parent.left
                 bottom: parent.bottom
-                bottomMargin: 50}
+                bottomMargin: 100}
 
             MouseArea {
                 id: batteryProtectionmMouseArea
