@@ -68,14 +68,28 @@ Item {
         }
     }
 
-    Text{
+//    Text{
+//        id: pageTitle
+//        font.family: "helvetica"
+//        font.pointSize: 32
+//        text:"SuperSpeed Data Path"
+//        anchors.horizontalCenter: parent.horizontalCenter
+//        anchors.top: parent.top
+//        anchors.topMargin: 50
+//    }
+
+    Text {
         id: pageTitle
-        font.family: "helvetica"
-        font.pointSize: 32
         text:"SuperSpeed Data Path"
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.top: parent.top
-        anchors.topMargin: 50
+        horizontalAlignment: Text.AlignHCenter
+        font.family: "Helvetica"
+        font.pointSize: 36
+        color: "grey"
+        anchors{ left: parent.left;
+            right: parent.right;
+            top: parent.top;
+            topMargin: parent.height/10
+        }
     }
 
     Label{
