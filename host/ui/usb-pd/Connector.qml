@@ -42,15 +42,15 @@ Rectangle {
     //[Prasanth] needs more organisation for this function
     onVisibleChanged: {
         if(visible){
-
             if (portNumber == 1) {
                 var state = implementationInterfaceBinding.getUSBCPortState(1);
-                if(state == true)
+                if(state === true)
                     connect.start();
+
             }
             if (portNumber == 2) {
                 var state = implementationInterfaceBinding.getUSBCPortState(2);
-                if(state == true)
+                if(state === true)
                     connect.start();
             }
         }
@@ -132,6 +132,7 @@ Rectangle {
         SequentialAnimation {
             running: false
             id: connect
+
 
             NumberAnimation {
                 target: leftUSBPlug

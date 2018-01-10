@@ -21,6 +21,8 @@ ImplementationInterfaceBinding::ImplementationInterfaceBinding(QObject *parent) 
     Ports.power[0]='\0';
     Ports.power[1]='\0';
     platformId= QString();
+    usbCPort1State = false;
+    usbCPort2State = false;
 
 #ifdef QT_NO_DEBUG
     platformState = false;
