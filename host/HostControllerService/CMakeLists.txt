@@ -89,6 +89,11 @@ if (CROSSCOMPILE)
     message("Using litecoreREST at: ${litecoreREST}")
     message("Using fleece at: ${fleece}")
 
+    # Overwrite definition for schema; Release backports look in the same folder
+    remove_definitions(-DNIMBUS_SCHEMA_PATH)
+    add_definitions(-DNIMBUS_SCHEMA_PATH="nimbus_command_schema.json")
+
+
 elseif (UNIX AND NOT APPLE AND NOT CROSSCOMPILE)
     #--- LINUX
     message("INCLUDE/LITECORE: linux")
