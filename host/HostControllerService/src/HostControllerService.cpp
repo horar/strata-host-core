@@ -169,8 +169,6 @@ void callbackServiceHandler(evutil_socket_t fd ,short what, void* hostP) {
     zmq::pollitem_t items [] = {
         { *host->command, 0, ZMQ_POLLIN, 0 }
     };
-    zmq::poll (&items [0], 1, 10);
-    if (items [0].revents & ZMQ_POLLIN) {
 
     Connector::messageProperty message = host->service->receive(host->command);
     if(!message.message.compare("DISCONNECTED")) {
@@ -198,7 +196,6 @@ void callbackServiceHandler(evutil_socket_t fd ,short what, void* hostP) {
             cout << "Message send to platform failed " <<endl;
         }
     }
-  }
 }
 
 void heartBeatPeriodicEvent(evutil_socket_t fd ,short what, void* hostP) {

@@ -8,7 +8,33 @@ import tech.spyglass.ImplementationInterfaceBinding 1.0
 import "framework"
 
 Item {
+    Rectangle {
+        id: headerLogo
+        anchors { top: parent.top }
+        width: parent.width; height: 40
+        color: "#235A92"
 
+        // PROOF OF CONCEPT BANNER
+//        Rectangle {
+//            anchors { horizontalCenter: parent.horizontalCenter; verticalCenter: parent.verticalCenter }
+//            width: parent.width * 0.70; height: 30;
+//            color: "red"
+//            radius: 4
+//            Label {
+//                anchors { centerIn: parent }
+//                text: "SPYGLASS PROOF OF CONCEPT WITH LAB CLOUD"
+//                color: "white"
+//                font.bold: true
+//            }
+//        }
+    }
+
+    Image {
+        anchors { top: parent.top; right: parent.right }
+        height: 40
+        fillMode: Image.PreserveAspectFit
+        source: "./images/icons/onLogoGreenWithText.png"
+    }
     property var verticalButtonDelta: 40    //distance betwen the routing buttons
 //    property Q
     //set the hidden elements of the UI correctly based on the two redriver
@@ -58,6 +84,7 @@ Item {
         }
 
         onPlatformResetDetected: {
+            console.log("in reset");
             if(reset_status) {
                 twoRedrivers.checked = false;
                 oneRedriver.checked = true;
@@ -67,62 +94,64 @@ Item {
                 showOneRedriverSourceAndSink(false);
                 statusMessage.color = "green";
                 statusMessage.text = "Ready";
+                console.log("reset detected with ",oneRedriver.checked);
             }
         }
     }
 
     Text{
         font.family: "helvetica"
-        font.pointSize: 36
+        font.pointSize: 32
         text:"SuperSpeed Data Path"
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: parent.top
-        anchors.topMargin: 20
+        anchors.topMargin: 45
     }
 
     //segmented buttons for signal loss
-    Label{
-        id: signalLossLabel
-        anchors {verticalCenter:buttonRow.verticalCenter
-                  right: buttonRow.left
-                  rightMargin: 10
-        }
-        horizontalAlignment: Text.AlignRight
-        font.family: "helvetica"
-        font.pointSize: 24
-        text:"Signal Loss:"
-    }
+//    Label{
+//        id: signalLossLabel
+//        anchors {verticalCenter:buttonRow.verticalCenter
+//                  right: buttonRow.left
+//                  rightMargin: 10
+//        }
+//        horizontalAlignment: Text.AlignRight
+//        font.family: "helvetica"
+//        font.pointSize: 20
+//        text:"Signal Loss:"
+//    }
 
-    ButtonGroup {
-        buttons: buttonRow.children
-        onClicked: {
+//    ButtonGroup {
+//        buttons: buttonRow.children
+//        onClicked: {
 
-        }
-    }
+//        }
+//    }
 
-    Row {
-        id:buttonRow
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.top: parent.top
-        anchors.topMargin: parent.height/8
+//    Row {
+//        id:buttonRow
+//        anchors.horizontalCenter: parent.horizontalCenter
+//        anchors.top: parent.top
+//        anchors.topMargin: parent.height/8
 
-        SGLeftSegmentedButton{width: 250; text:"6.6 dB" }
-        SGMiddleSegmentedButton{width: 250; text:"9 dB" }
-        SGRightSegmentedButton{width: 250; text:"12 dB"}
-    }
+//        SGLeftSegmentedButton{width: 250; text:"6.6 dB" }
+//        SGMiddleSegmentedButton{width: 250; text:"9 dB" }
+//        SGRightSegmentedButton{width: 250; text:"12 dB"}
+//    }
 
 
     Label{
         id: redriverConfigurationLabel
         anchors {top:twoRedrivers.top
-                topMargin: - redriverConfigurationLabel.height
-                 left: signalLossLabel.left
+                topMargin: - redriverConfigurationLabel.height/0.7
+                //left: signalLossLabel.left
+                horizontalCenter: parent.horizontalCenter
 
         }
         horizontalAlignment: Text.AlignRight
         font.family: "helvetica"
-        font.pointSize: 24
-        text:"Redriver configuration:"
+        font.pointSize: 20
+        text:"Redriver configuration"
     }
 
     function showTwoRedriverSourceAndSink(inShow){
@@ -189,6 +218,7 @@ Item {
         anchors.verticalCenter: twoRedrivers.verticalCenter
         anchors.right: twoRedriversLeftArrows.left
         anchors.rightMargin: 10
+
     }
 
     Text{
@@ -208,6 +238,7 @@ Item {
         anchors.verticalCenter: twoRedrivers.verticalCenter
         anchors.right: twoRedrivers.left
         anchors.rightMargin: 10
+        anchors.topMargin: 20
     }
 
     Button{
@@ -269,9 +300,9 @@ Item {
 
     Text{
         id:twoRedriverButtonLabel
-        text:"Two Redrivers"
+        text:"With Redrivers"
         font.family: "helvetica"
-        font.pointSize: 19
+        font.pointSize: 12
         anchors.horizontalCenter: twoRedrivers.horizontalCenter
         anchors.top:twoRedrivers.bottom
         anchors.topMargin: 5
@@ -481,7 +512,7 @@ Item {
         id:passiveButtonLabel
         text:"Passive"
         font.family: "helvetica"
-        font.pointSize: 24
+        font.pointSize: 12
         anchors.horizontalCenter: passiveRoute.horizontalCenter
         anchors.top:passiveRoute.bottom
         anchors.topMargin: 5
