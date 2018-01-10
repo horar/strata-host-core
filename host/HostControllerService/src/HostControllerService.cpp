@@ -165,44 +165,40 @@ void callbackServiceHandler(evutil_socket_t fd ,short what, void* hostP) {
     unsigned int     zmq_events;
     size_t           zmq_events_size  = sizeof(zmq_events);
     send->getsockopt(ZMQ_EVENTS, &zmq_events, &zmq_events_size);
-
-    zmq::pollitem_t items [] = {
-        { *host->command, 0, ZMQ_POLLIN, 0 }
-    };
-
-    Connector::messageProperty message = host->service->receive(host->command);
-    if(!message.message.compare("DISCONNECTED")) {
-
-        cout << "Platform Disconnect detected " <<endl;
-        event_base_loopbreak(host->base);
-    }
-    string response;
-
-    bool ack=host->hcs->verifyReceiveCommand(message.message,&response);
-    message.message=response;
-    host->service->sendAck(message,host->command);
-
-    if(ack == true ) {
-      bool success;
-      if (!obj->simulation_)
-         success = host->platform->sendNotification(message,host->hcs);
-    else
-         success = host->simulation->emulatorSend(message,simulationReceive);
-        if(success == true) {
-            string log = "<--- To Platform = " + message.message;
-            cout << "<--- To Platform = " << message.message <<endl;
+    do {
+        Connector::messageProperty message = host->service->receive(host->command);
+        if(!message.message.compare("DISCONNECTED")) {
+            cout << "Platform Disconnect detected " <<endl;
+            event_base_loopbreak(host->base);
         }
-        else {
-            cout << "Message send to platform failed " <<endl;
+        string response;
+
+        bool ack=host->hcs->verifyReceiveCommand(message.message,&response);
+        message.message=response;
+        host->service->sendAck(message,host->command);
+
+        if(ack == true ) {
+            bool success;
+            if (!obj->simulation_)
+            success = host->platform->sendNotification(message,host->hcs);
+            else
+            success = host->simulation->emulatorSend(message,simulationReceive);
+            if(success == true) {
+                string log = "<--- To Platform = " + message.message;
+                cout << "<--- To Platform = " << message.message <<endl;
+            }
+            else {
+                cout << "Message send to platform failed " <<endl;
+            }
         }
-    }
+        send->getsockopt(ZMQ_EVENTS, &zmq_events, &zmq_events_size);
+    }while (zmq_events & ZMQ_POLLIN);
 }
 
 void heartBeatPeriodicEvent(evutil_socket_t fd ,short what, void* hostP) {
 
   HostControllerService::host_packet *host = (HostControllerService::host_packet *)hostP;
   HostControllerService *obj= host->hcs;
-
   zmq::socket_t *simulationReceive = host->simulationOnly;
   Connector::messageProperty message;
 
@@ -428,7 +424,7 @@ if(!simulation_) {
         struct event *service = event_new(base, sockService,EV_READ | EV_WRITE | EV_ET | EV_PERSIST,callbackServiceHandler,(void*)&hostP);
 #else
         struct event *service = event_new(base, sockService ,
-                        EV_READ | EV_WRITE | EV_PERSIST ,
+                        EV_READ | EV_ET | EV_PERSIST ,
                         callbackServiceHandler,(void *)&hostP);
 #endif
 
