@@ -165,34 +165,32 @@ void callbackServiceHandler(evutil_socket_t fd ,short what, void* hostP) {
     unsigned int     zmq_events;
     size_t           zmq_events_size  = sizeof(zmq_events);
     send->getsockopt(ZMQ_EVENTS, &zmq_events, &zmq_events_size);
-    do {
-        Connector::messageProperty message = host->service->receive(host->command);
-        if(!message.message.compare("DISCONNECTED")) {
-            cout << "Platform Disconnect detected " <<endl;
-            event_base_loopbreak(host->base);
-        }
-        string response;
+    Connector::messageProperty message = host->service->receive(host->command);
+    if(!message.message.compare("DISCONNECTED")) {
+        cout << "Platform Disconnect detected " <<endl;
+        event_base_loopbreak(host->base);
+    }
+    string response;
 
-        bool ack=host->hcs->verifyReceiveCommand(message.message,&response);
-        message.message=response;
-        host->service->sendAck(message,host->command);
+    bool ack=host->hcs->verifyReceiveCommand(message.message,&response);
+    message.message=response;
+    host->service->sendAck(message,host->command);
 
-        if(ack == true ) {
-            bool success;
-            if (!obj->simulation_)
+    if(ack == true ) {
+        bool success;
+        if (!obj->simulation_)
             success = host->platform->sendNotification(message,host->hcs);
-            else
+        else
             success = host->simulation->emulatorSend(message,simulationReceive);
-            if(success == true) {
-                string log = "<--- To Platform = " + message.message;
-                cout << "<--- To Platform = " << message.message <<endl;
-            }
-            else {
-                cout << "Message send to platform failed " <<endl;
-            }
+        if(success == true) {
+            string log = "<--- To Platform = " + message.message;
+            cout << "<--- To Platform = " << message.message <<endl;
         }
-        send->getsockopt(ZMQ_EVENTS, &zmq_events, &zmq_events_size);
-    }while (zmq_events & ZMQ_POLLIN);
+        else {
+            cout << "Message send to platform failed " <<endl;
+        }
+    }
+    send->getsockopt(ZMQ_EVENTS, &zmq_events, &zmq_events_size);
 }
 
 void heartBeatPeriodicEvent(evutil_socket_t fd ,short what, void* hostP) {
@@ -285,7 +283,7 @@ bool HostControllerService::openPlatformSocket() {
 #elif _WIN32
     error = sp_get_port_by_name("COM7",&platform_socket_);
 #elif __APPLE__
-    error = sp_get_port_by_name("/dev/tty.usbserial-DO0088MQ",&platform_socket_);
+    error = sp_get_port_by_name("/dev/tty.usbserial-DB00VFHS",&platform_socket_);
 #endif
 
     if(error == SP_OK) {
