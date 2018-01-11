@@ -421,7 +421,7 @@ if(!simulation_) {
 	//needed when event is added else it doesn't function properly
 	//As libevent READ and WRITE functionality is affected by edge triggered events.
 #ifndef __APPLE__
-        struct event *service = event_new(base, sockService,EV_READ | EV_WRITE | EV_ET | EV_PERSIST,callbackServiceHandler,(void*)&hostP);
+        struct event *service = event_new(base, sockService,EV_READ | EV_ET | EV_PERSIST,callbackServiceHandler,(void*)&hostP);
 #else
         struct event *service = event_new(base, sockService ,
                         EV_READ | EV_ET | EV_PERSIST ,
