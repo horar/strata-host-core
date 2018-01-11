@@ -164,7 +164,7 @@ void callbackServiceHandler(evutil_socket_t fd ,short what, void* hostP) {
 
     unsigned int     zmq_events;
     size_t           zmq_events_size  = sizeof(zmq_events);
-    send->getsockopt(ZMQ_EVENTS, &zmq_events, &zmq_events_size);
+
     Connector::messageProperty message = host->service->receive(host->command);
     if(!message.message.compare("DISCONNECTED")) {
         cout << "Platform Disconnect detected " <<endl;
@@ -178,10 +178,12 @@ void callbackServiceHandler(evutil_socket_t fd ,short what, void* hostP) {
 
     if(ack == true ) {
         bool success;
-        if (!obj->simulation_)
+        if (!obj->simulation_) {
             success = host->platform->sendNotification(message,host->hcs);
-        else
+        }
+        else {
             success = host->simulation->emulatorSend(message,simulationReceive);
+        }
         if(success == true) {
             string log = "<--- To Platform = " + message.message;
             cout << "<--- To Platform = " << message.message <<endl;
