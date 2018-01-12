@@ -29,20 +29,13 @@ Item {
         }
     }
 
-//    Text{
-//        font.family: "helvetica"
-//        font.pointSize: 29
-//        text:"PD + Redriver Demo Setup"
-//        anchors { horizontalCenter: parent.horizontalCenter; top: parent.top; topMargin: 50 }
-//        z: 2
-//    }
-
     Image {
         //anchors.fill: parent
 
         fillMode: Image.PreserveAspectFit
-        anchors { /*centerIn: parent;*/ top: parent.top; topMargin: 130 }
-        source: "./images/CES_Demo_Setup.PNG"
+        anchors { fill:parent }
+        //anchors { centerIn: parent; }
+        source: "./images/demoSetup.png"
     }
 
 }
