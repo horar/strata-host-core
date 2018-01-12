@@ -68,16 +68,6 @@ Item {
         }
     }
 
-//    Text{
-//        id: pageTitle
-//        font.family: "helvetica"
-//        font.pointSize: 32
-//        text:"SuperSpeed Data Path"
-//        anchors.horizontalCenter: parent.horizontalCenter
-//        anchors.top: parent.top
-//        anchors.topMargin: 50
-//    }
-
     Text {
         id: pageTitle
         text:"SuperSpeed Data Path"
@@ -168,7 +158,7 @@ Item {
 
     Text{
         id: twoRedriverSourceText
-        text:"Source"
+        text:"Data source"
         font.family: "helvetica"
         font.pointSize: (Qt.platform.os == "osx") ? 18 : 18
         color: "grey"
@@ -272,7 +262,7 @@ Item {
 
     Text{
         id:twoRedriversSinkText
-        text:"Sink"
+        text:"Data sink"
         font.family: "helvetica"
         font.pointSize: (Qt.platform.os == "osx") ? 18 : 18
         color:"grey"
@@ -296,7 +286,7 @@ Item {
 
     Text{
         id:passiveSourceText
-        text:"Source"
+        text:"Data source"
         font.family: "helvetica"
         font.pointSize: 18
         color:"grey"
@@ -369,7 +359,7 @@ Item {
 
     Text{
         id:passiveSinkText
-        text:"Sink"
+        text:"Data sink"
         font.family: "helvetica"
         font.pointSize: 18
         color:"grey"
