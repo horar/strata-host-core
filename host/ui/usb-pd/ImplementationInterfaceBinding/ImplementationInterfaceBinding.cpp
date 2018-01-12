@@ -215,16 +215,6 @@ bool ImplementationInterfaceBinding::registerDataSourceHandler(std::string sourc
     }
 
     data_source_handlers_.emplace(std::make_pair(source, handler));
-
-    // notify Host Controller Service of the data source connection
-    // QJsonObject cmd;
-    // cmd.insert("db::cmd", "request_usb_pd_output_voltage");
-
-    // QJsonObject payload;
-    // payload.insert("port", port);
-    // payload.insert("Volts", voltage);
-    // command.insert("payload",payload);
-    // hcc_object->sendCmd(QString(QJsonDocument(cmd).toJson(QJsonDocument::Compact)).toStdString());
     return true;
 }
 
@@ -238,8 +228,8 @@ bool ImplementationInterfaceBinding::registerDataSourceHandler(std::string sourc
 //
 //  EXAMPLE implementation
 //
-//void ImplementationInterfaceBinding::handleNotification(QVariantMap current_map) // TODO [ian] why is this a QVariantMap and not a JSON object?
-//{
+// void ImplementationInterfaceBinding::handleNotification(QVariantMap current_map) // TODO [ian] why is this a QVariantMap and not a JSON object?
+// {
 //    QVariantMap payloadMap;
 //    if(current_map.contains("value")) {
 //
@@ -253,10 +243,10 @@ bool ImplementationInterfaceBinding::registerDataSourceHandler(std::string sourc
 //
 //        handler->second(current_map["payload"].toMap());  // dispatch handler for notification
 //    }
-//}
-
-void ImplementationInterfaceBinding::handleNotification(QVariantMap current_map) {
-
+// }
+//
+void ImplementationInterfaceBinding::handleNotification(QVariantMap current_map)
+{
     QVariantMap payloadMap;
 
     // TODO FIX [ian] why is the "notification" keyword called "value"??!!

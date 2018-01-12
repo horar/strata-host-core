@@ -119,7 +119,7 @@ void DocumentManager::dataSourceHandler(QJsonObject data)
             Document *d = new Document (data);
             document_set->append (d);
 
-            qDebug("fname=%s, data=%.200s", fname.toStdString().c_str(), data.toStdString().c_str());
+            //qDebug("fname=%s, data=%.200s", fname.toStdString().c_str(), data.toStdString().c_str());
         }
 
         // TODO: [ian] SUPER hack. Unable to call "emit" on dynamic document set.
