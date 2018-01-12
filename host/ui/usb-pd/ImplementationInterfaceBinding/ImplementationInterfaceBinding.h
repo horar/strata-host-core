@@ -151,7 +151,7 @@ private:
     std::map<std::string, DataSourceHandler > data_source_handlers_;
 
 public:
-    hcc::HostControllerClient *hcc_object;
+    Spyglass::HostControllerClient *hcc_object;
 
     bool registerDataSourceHandler(std::string source, DataSourceHandler handler);
 

@@ -49,7 +49,7 @@ void DocumentManager::init()
 
     // register w/ Implementation Interface for Docoument Data Source Updates
     // TODO [ian] change to "document" on cloud update
-    implInterfaceBinding_->registerDataSourceHandler("document_set",
+    implInterfaceBinding_->registerDataSourceHandler("document",
                                                      bind(&DocumentManager::dataSourceHandler,
                                                           this, placeholders::_1));
 
@@ -98,14 +98,15 @@ void DocumentManager::dataSourceHandler(QJsonObject data)
 {
     qDebug("DocumentManager::documentDataSourceHandler called");
 
-    if (data.contains("type") && data["type"].isString()) {
-        QString type = data.value("type").toString();  // Can be schematic, layout or assembly and so on
+    if (data.contains("name") && data.contains("documents") ) {
 
-        qDebug("DocumentManager::documentDataSourceHandler called : type=%s", type.toStdString().c_str());
+        QString name = data.value("name").toString();  // Can be schematic, layout or assembly and so on
 
-        DocumentSetPtr document_set = getDocumentSet (type);
+        qDebug("DocumentManager::documentDataSourceHandler called : name=%s", name.toStdString().c_str());
+
+        DocumentSetPtr document_set = getDocumentSet (name);
         if( document_set == nullptr ) {
-            qCritical("DocumentManager::updateDocuments: invalid document set = '%s'", type.toStdString ().c_str ());
+            qCritical("DocumentManager::updateDocuments: invalid document name = '%s'", name.toStdString ().c_str ());
             return;
         }
         document_set->clear ();
@@ -113,35 +114,35 @@ void DocumentManager::dataSourceHandler(QJsonObject data)
         // walk through documents and add to Document Viewer
         QJsonArray document_array = data["documents"].toArray();
         foreach (const QJsonValue &r, document_array) {
-            QString name = r["filename"].toString();
+            QString fname = r["filename"].toString();
             QString data = r["data"].toString();
             Document *d = new Document (data);
             document_set->append (d);
 
-            //qDebug("name=%s, data=%s", name.toStdString().c_str(), data.toStdString().c_str());
+            qDebug("fname=%s, data=%.200s", fname.toStdString().c_str(), data.toStdString().c_str());
         }
 
         // TODO: [ian] SUPER hack. Unable to call "emit" on dynamic document set.
         //   it may be possible to use QObject::connect to create a "dispatcher" type object
         //   to emit based on string set name
         //
-        if( type == "schematic" ) {
+        if( name == "schematic" ) {
             emit schematicDocumentsChanged();
         }
-        else if( type == "assembly" ) {
+        else if( name == "assembly" ) {
             emit assemblyDocumentsChanged();
         }
-        else if( type == "layout" ) {
+        else if( name == "layout" ) {
             emit layoutDocumentsChanged();
         }
-        else if( type == "test_report" ) {
+        else if( name == "test_report" ) {
             emit testReportDocumentsChanged();
         }
-        else if( type == "targeted_content" ) {
+        else if( name == "targeted_content" ) {
             emit targetedDocumentsChanged();
         }
         else {
-            qCritical("DocumentManager::updateDocuments: invalid document type = '%s'", type.toStdString ().c_str ());
+            qCritical("DocumentManager::updateDocuments: invalid document name = '%s'", name.toStdString ().c_str ());
         }
     }
 }

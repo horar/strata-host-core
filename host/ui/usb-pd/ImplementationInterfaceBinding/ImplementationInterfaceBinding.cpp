@@ -2,6 +2,7 @@
 #include "../../../include/zhelpers.hpp"    // TODO [ian] next guy/gal that uses a relative file location is going to get the Walk of Shame
 
 using namespace std;
+using namespace Spyglass;
 
 /*!
  * Constructor initialization
@@ -11,7 +12,7 @@ using namespace std;
 
 ImplementationInterfaceBinding::ImplementationInterfaceBinding(QObject *parent) : QObject(parent) {
 
-    hcc_object = new (hcc::HostControllerClient);
+    hcc_object = new (HostControllerClient);
     Ports.a_oport[0]='\0';
     Ports.a_oport[1]='\0';
     Ports.v_oport[0]='\0';
@@ -214,6 +215,16 @@ bool ImplementationInterfaceBinding::registerDataSourceHandler(std::string sourc
     }
 
     data_source_handlers_.emplace(std::make_pair(source, handler));
+
+    // notify Host Controller Service of the data source connection
+    // QJsonObject cmd;
+    // cmd.insert("db::cmd", "request_usb_pd_output_voltage");
+
+    // QJsonObject payload;
+    // payload.insert("port", port);
+    // payload.insert("Volts", voltage);
+    // command.insert("payload",payload);
+    // hcc_object->sendCmd(QString(QJsonDocument(cmd).toJson(QJsonDocument::Compact)).toStdString());
     return true;
 }
 
@@ -317,23 +328,24 @@ void ImplementationInterfaceBinding::handleNotification(QVariantMap current_map)
 */
 void ImplementationInterfaceBinding::handleCloudNotification(QJsonObject json_obj)
 {
-    if( json_obj.contains("cloud_sync") == false ) {
+    if( json_obj.contains("cloud::notification") == false ) {
         qCritical("ImplementationInterfaceBinding::handleCloudNotification"
                   " ERROR: cloud_sync argument does not exist!!");
         return;
     }
 
     // data source type: document_set, chat, marketing et al
-    string source = json_obj.value("cloud_sync").toString().toStdString();
+    QJsonObject payload = json_obj["cloud::notification"].toObject();
+    string type = payload.value("type").toString().toStdString();
 
-    auto handler = data_source_handlers_.find(source);
+    auto handler = data_source_handlers_.find(type);
     if( handler == data_source_handlers_.end()) {
         qCritical("ImplementationInterfaceBinding::handleNotification"
-                  " ERROR: no handler exits for %s !!", source.c_str ());
+                  " ERROR: no handler exits for %s !!", type.c_str ());
         return;
     }
 
-    handler->second(json_obj);  // dispatch handler for notification
+    handler->second(payload);  // dispatch handler for notification
 
 }
 
@@ -481,7 +493,7 @@ void ImplementationInterfaceBinding::clearBoardMetrics(int portNumber){
     emit portPowerChanged(portNumber,0);
     emit portCurrentChanged(portNumber,0);
     emit portTemperatureChanged(portNumber,0);
-//    emit portInputVoltageChanged(portNumber,0);
+//    emit portInputVoltageChanged(portNumber,0); // TODO FIXME [ian] why is this commented out?
 }
 
 
@@ -517,7 +529,6 @@ void ImplementationInterfaceBinding::handleInputVoltageNotification(const QVaria
     float input_voltage = json_map["input"].toFloat();
     inputVoltage = input_voltage;
     emit portInputVoltageChanged(1, inputVoltage);
-//    qDebug() << json_map;
 }
 
 void ImplementationInterfaceBinding::handleResetNotification(const QVariantMap payloadMap) {
@@ -567,6 +578,9 @@ QVariantMap ImplementationInterfaceBinding::validateJsonReply(const QVariantMap 
     }
     else {
         qCritical("ERROR: invalid 'ack' reply !!!!");
+        if( json_map.isEmpty() ) {
+            qCritical("ERROR: Platform Reply is empty");
+        }
     }
     current_map.clear();
     return current_map;
@@ -618,7 +632,7 @@ void ImplementationInterfaceBinding::notificationsThreadHandle()
 
         // todo: [prasanth] needs better way to determine the handler
         // handler for cloud
-        if(json_obj.contains("cloud_sync")) {
+        if(json_obj.contains("cloud::notification")) {
             qWarning() << "Notification Handler: Cloud";
             handleCloudNotification(json_obj);
         }

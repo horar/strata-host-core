@@ -17,7 +17,7 @@
 #define HOST_CONTROLLER_SERVICE_IN_ADDRESS "tcp://192.168.1.64:5563"
 #endif
 
-namespace hcc {
+namespace Spyglass {
 
 class HostControllerClient {
 
