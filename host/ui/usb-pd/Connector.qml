@@ -46,7 +46,6 @@ Rectangle {
                 var state = implementationInterfaceBinding.getUSBCPortState(1);
                 if(state === true)
                     connect.start();
-
             }
             if (portNumber == 2) {
                 var state = implementationInterfaceBinding.getUSBCPortState(2);
