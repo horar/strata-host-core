@@ -215,6 +215,23 @@ bool ImplementationInterfaceBinding::registerDataSourceHandler(std::string sourc
     }
 
     data_source_handlers_.emplace(std::make_pair(source, handler));
+
+    // notify Host Controller Service of the data source connection
+    //    {
+    //        "db::cmd":"connect_data_source",
+    //        "db::payload":{
+    //            "type":"documents"
+    //        }
+    //    }
+    //
+    QJsonObject cmd;
+    QJsonObject payload;
+
+    cmd.insert("db::cmd", "connect_data_source");
+    payload.insert("type", source.c_str());
+    cmd.insert("db::payload", payload);
+
+    hcc_object->sendCmd(QString(QJsonDocument(cmd).toJson(QJsonDocument::Compact)).toStdString());
     return true;
 }
 

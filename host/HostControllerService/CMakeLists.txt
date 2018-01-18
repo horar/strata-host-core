@@ -49,7 +49,7 @@ set(CB_LIB_DIR "${CB_DIR}/build_cmake/unix")
 
 # Compiler definitions for file locations #
 # Schema json file
-add_definitions(-DNIMBUS_SCHEMA_PATH="../../cloud/nimbus_command_schema.json")
+add_definitions(-DNIMBUS_SCHEMA_PATH="${CMAKE_CURRENT_SOURCE_DIR}/../../cloud/nimbus_command_schema.json")
 
 # Add headers and Library for Nimbus
 include_directories(
