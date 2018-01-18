@@ -167,15 +167,9 @@ void callbackServiceHandler(evutil_socket_t fd ,short what, void* hostP) {
 
     unsigned int     zmq_events;
     size_t           zmq_events_size  = sizeof(zmq_events);
-    send->getsockopt(ZMQ_EVENTS, &zmq_events, &zmq_events_size);
-
-    zmq::pollitem_t items [] = {
-        { *host->command, 0, ZMQ_POLLIN, 0 }
-    };
 
     Connector::messageProperty message = host->service->receive(host->command);
     if(!message.message.compare("DISCONNECTED")) {
-
         cout << "Platform Disconnect detected " <<endl;
         event_base_loopbreak(host->base);
     }
@@ -186,11 +180,13 @@ void callbackServiceHandler(evutil_socket_t fd ,short what, void* hostP) {
     host->service->sendAck(message,host->command);
 
     if(ack == true ) {
-      bool success;
-      if (!obj->simulation_)
-         success = host->platform->sendNotification(message,host->hcs);
-    else
-         success = host->simulation->emulatorSend(message,simulationReceive);
+        bool success;
+        if (!obj->simulation_) {
+            success = host->platform->sendNotification(message,host->hcs);
+        }
+        else {
+            success = host->simulation->emulatorSend(message,simulationReceive);
+        }
         if(success == true) {
             string log = "<--- To Platform = " + message.message;
             cout << "<--- To Platform = " << message.message <<endl;
@@ -199,13 +195,13 @@ void callbackServiceHandler(evutil_socket_t fd ,short what, void* hostP) {
             cout << "Message send to platform failed " <<endl;
         }
     }
+    send->getsockopt(ZMQ_EVENTS, &zmq_events, &zmq_events_size);
 }
 
 void heartBeatPeriodicEvent(evutil_socket_t fd ,short what, void* hostP) {
 
   HostControllerService::host_packet *host = (HostControllerService::host_packet *)hostP;
   HostControllerService *obj= host->hcs;
-
   zmq::socket_t *simulationReceive = host->simulationOnly;
   Connector::messageProperty message;
 
@@ -420,10 +416,10 @@ if(!simulation_) {
 	//needed when event is added else it doesn't function properly
 	//As libevent READ and WRITE functionality is affected by edge triggered events.
 #ifndef __APPLE__
-        struct event *service = event_new(base, sockService,EV_READ | EV_WRITE | EV_ET | EV_PERSIST,callbackServiceHandler,(void*)&hostP);
+        struct event *service = event_new(base, sockService,EV_READ | EV_ET | EV_PERSIST,callbackServiceHandler,(void*)&hostP);
 #else
         struct event *service = event_new(base, sockService ,
-                        EV_READ | EV_WRITE | EV_PERSIST ,
+                        EV_READ | EV_ET | EV_PERSIST ,
                         callbackServiceHandler,(void *)&hostP);
 #endif
 
