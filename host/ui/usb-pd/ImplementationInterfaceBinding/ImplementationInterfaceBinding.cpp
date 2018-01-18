@@ -23,15 +23,17 @@ ImplementationInterfaceBinding::ImplementationInterfaceBinding(QObject *parent) 
     Ports.temperature[0]='\0';
     Ports.power[0]='\0';
     Ports.power[1]='\0';
-    platformId= QString();
     usbCPort1State = false;
     usbCPort2State = false;
 
 #ifdef QT_NO_DEBUG
+    // Release should not assume anything
     platformState = false;
+    platformId = NONE;
 #else
-    // Debug builds should not need a platform board
-    platformState = true;
+    // Debug builds should not need a platform board; assume usb-pd
+   platformState = true;
+   platformId = USB_PD;
 #endif
 
     notification_thread_= std::thread(&ImplementationInterfaceBinding::notificationsThreadHandle,this);
@@ -170,11 +172,26 @@ float ImplementationInterfaceBinding::getpowerPort0() {
 }
 
 /*!
- * \brief update the platform Id
+ * \brief Remap the ugly id to a beautiful and simple integer
  */
-QString ImplementationInterfaceBinding::getPlatformId() {
+ImplementationInterfaceBinding::e_MappedPlatformId ImplementationInterfaceBinding::getPlatformId() {
+    e_MappedPlatformId mappedId = NONE;
 
-    return platformId;
+    // Initialize the mapping since we can't statically initialize it.
+    if (idMap.size() == 0) {
+        // BUBU Interface
+        idMap.insert("blah", BUBU_INTERFACE);
+
+        // USB-PD
+        idMap.insert("P2.2017.1.1.0.0.cbde0519-0f42-4431-a379-caee4a1494af", USB_PD);
+    }
+
+    // Map our current platform to enum if we support it.
+    if (idMap.contains(rawPlatformId)) {
+        mappedId = idMap[rawPlatformId];
+        qDebug() << "Platform is " << mappedId;
+    }
+    return mappedId;
 }
 
 /*!
@@ -431,13 +448,15 @@ void ImplementationInterfaceBinding::handlePlatformIdNotification(const QVariant
     if (payloadMap.contains("platform_id")){
 
         QString platformIdTemp = payloadMap["platform_id"].toString();
-        qDebug() << "Received platformId = " << platformId;
-        if(platformIdTemp != platformId) {
+        qDebug() << "Received platformId = " << platformIdTemp;
+
+        // Emit signal if changed
+        if(platformIdTemp != rawPlatformId) {
 
             platformState=true;
             emit platformStateChanged(platformState);
-            platformId = platformIdTemp;
-            emit platformIdChanged(platformId);
+            rawPlatformId = platformIdTemp;
+            emit platformIdChanged(rawPlatformId);
             qDebug() << "PlatformIdChanged notification";
         }
     }
@@ -600,6 +619,10 @@ QVariantMap ImplementationInterfaceBinding::validateJsonReply(const QVariantMap 
 
 /*!
  * End of JSON Parsers
+ */
+
+/*!
+ *     Simulate JSON Messages and notify on changes
  */
 
 void ImplementationInterfaceBinding::notificationsThreadHandle()

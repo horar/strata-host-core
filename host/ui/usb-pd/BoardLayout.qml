@@ -7,21 +7,6 @@ import "framework"
 
 Rectangle {
 
-    objectName: "boardLayout"
-    property bool hardwareStatusChange: null
-    property bool boardScreen: true
-    property bool hardwareStatus:  {
-
-        onPlatformStateChanged: {
-            var state = implementationInterfaceBinding.platformState;
-            if(state == false && boardScreen == true) {
-                stack.push([page, {immediate:false}]);
-            }
-        }
-        implementationInterfaceBinding.platformState
-    }
-
-    //actions to take when the board layout view becomes visible from being pushed on the stack
     onOpacityChanged: {
         if (opacity == 1){
             rotateInfoIcon.start()

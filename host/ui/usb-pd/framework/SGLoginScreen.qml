@@ -10,7 +10,6 @@ Rectangle {
     //determine which screen to show based on how the caller set the
     //showLoginOnCompletion property
     property bool showLoginOnCompletion: false
-    property bool loginScreen: true
 
     Component.onCompleted: {
         spotlightAnimation.start();
@@ -20,27 +19,50 @@ Rectangle {
         usernameField.forceActiveFocus();   //allows the user to type their username without clicking
     }
 
-    property bool  hardwareStatus : {
-        var state = implementationInterfaceBinding.platformState;
+    property bool  platformDetected : {
+        var platformDetected = implementationInterfaceBinding.platformState;
 
-        if(loginScreen==true) {
-            if(state == true && login_detected == true){
-                stack.pop();
-                return
-            }
+        // If Logged in and platform is detected
+        if ( !login_detected ) {
+            // Keep showing the login screen; so do nothing
         }
-        else if (loginScreen == false) {
+        else if(login_detected && platformDetected ) {
+            var platformId = implementationInterfaceBinding.Id;
 
-            if(state == false && login_detected == true){
-            } else if(state == true && login_detected == true){
-                stack.pop();
-            } else if(state == false){
-                handleLoginClick.start();
-
+            // Show the platform specific GUI
+            switch (platformId) {
+                case ImplementationInterfaceBinding.NONE:
+                    console.log("Not recognizing new platform");
+                    break;
+                case ImplementationInterfaceBinding.BUBU_INTERFACE:
+                    console.log("Displaying BU Bring Up");
+                    break;
+                case ImplementationInterfaceBinding.USB_PD:
+                    console.log("Displaying USB-PD");
+                    stack.push([cBoardLayout, {immediate:false}]);
+                    break;
             }
+
         }
-        implementationInterfaceBinding.platformState
+        else {
+            // Reveal platform search
+            handleLoginClick.start();
+        }
+
+        return platformDetected;
+
     }
+        property bool platformChanged: {
+            onPlatformStateChanged: {
+                var platform_detected = implementationInterfaceBinding.platformState;
+
+                // If disconnected; Show detecting screen
+                if (!platform_detected){
+                    stack.pop()
+                }
+                return platform_detected;
+                }
+        }
 
     //-----------------------------------------------------------
     //Elements common to both the connection and login screens
@@ -254,7 +276,6 @@ Rectangle {
                     failedLogin.start();
                 }
                 else{
-                    loginScreen = false;
                     login_detected = true;
                 }
             }
@@ -276,7 +297,6 @@ Rectangle {
                     failedLogin.start();
                 }
                 else{
-                    loginScreen = false;
                     login_detected = true;
                 }
             }
@@ -347,7 +367,6 @@ Rectangle {
                     failedLogin.start();
                 }
                 else{   //valid login
-                    loginScreen = false;
                     login_detected = true;
                 }
             }
@@ -381,7 +400,6 @@ Rectangle {
             border{ width: 1; color: "black" }
         }
         onClicked: {
-            loginScreen = false;
             login_detected = true;
 
         }
