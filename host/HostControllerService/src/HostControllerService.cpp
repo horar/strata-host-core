@@ -10,6 +10,7 @@
 #include "rapidjson/document.h"
 
 using namespace std;
+using namespace rapidjson;
 
 AttachmentObserver::AttachmentObserver(void *hostP)
 {
