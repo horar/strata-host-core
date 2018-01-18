@@ -77,6 +77,7 @@ private :
 
     std::string command_address_;
     std::string subscription_address_;
+    std::string serial_port_number_;
 
     connected_state platform_;
     bool simulation_;
