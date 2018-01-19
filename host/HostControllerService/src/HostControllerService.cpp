@@ -44,6 +44,9 @@ HostControllerService::HostControllerService(std::string configuration_file)
     uint8_t id [256];
     // assigning the simulation state
     simulation_ = configuration_->IsSimulatedPlatform();
+    // assigning the serial port number
+    serial_port_number_ = configuration_->GetSerialPortNumber();
+    cout<< "the serial port number is "<<serial_port_number_<<endl;
     // creating stream socket for non zmq tcp sockets and only for simulation
     if(simulation_) {
      simulationQemuSocket = new zmq::socket_t(*context,ZMQ_STREAM);
@@ -350,18 +353,10 @@ void HostControllerService::callbackPlatformHandler(void* hostP) {
  * \brief :
  *    Open serial port to platform
  */
-bool HostControllerService::openPlatformSocket() {
-
-#if __linux__
-    error = sp_get_port_by_name("/dev/ttyUSB0",&platform_socket_);
-#elif _WIN32
-    error = sp_get_port_by_name("COM7",&platform_socket_);
-#elif __APPLE__
-    error = sp_get_port_by_name("/dev/tty.usbserial-DB00VFHS",&platform_socket_);
-#endif
-
+bool HostControllerService::openPlatformSocket()
+{
+    error = sp_get_port_by_name(serial_port_number_.c_str(),&platform_socket_);
     if(error == SP_OK) {
-
         error = sp_open(platform_socket_, SP_MODE_READ_WRITE);
         if(error == SP_OK) {
             cout << "Serial PORT OPEN SUCCESS "<<endl;
