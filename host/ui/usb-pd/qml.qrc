@@ -103,5 +103,8 @@
         <file>boardBringUp/Gpio.qml</file>
         <file>boardBringUp/Pwm.qml</file>
         <file>boardBringUp/Serial.qml</file>
+        <file>images/icons/gpioIcon.svg</file>
+        <file>images/icons/pwmIcon.svg</file>
+        <file>images/icons/serialIcon.svg</file>
     </qresource>
 </RCC>
