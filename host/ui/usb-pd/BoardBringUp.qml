@@ -4,7 +4,7 @@ import QtQuick.Controls.Styles 1.4
 import QtQuick.Layouts 1.3
 import QtQuick.Controls.Material 2.0
 import "framework"
-
+import "boardBringUp"
 
 
 Rectangle {
@@ -24,10 +24,10 @@ Rectangle {
     }
 
     Component.onCompleted: {
-        currentTab = createTab("serial.qml", contentRectangle);
+        currentTab = createTab("serial.qml", contentArea);
         currentTab.opacity = 1;
 
-        newTab = createTab("gpio.qml",contentRectangle);
+        newTab = createTab("gpio.qml",contentArea);
     }
 
     ParallelAnimation{
@@ -122,7 +122,7 @@ Rectangle {
     }
 
     Flickable {
-        id: flickable
+        id: contentArea
 
         anchors.fill: parent
         anchors.leftMargin: inLandscape ? drawer.width : undefined
@@ -131,9 +131,9 @@ Rectangle {
         bottomMargin: 20
         contentHeight: column.height
 
-//        serial{}
-//        gpio{}
-//        pwm{}
+        Serial{}
+        Gpio{}
+        Pwm{}
 
         ScrollIndicator.vertical: ScrollIndicator { }
     }
