@@ -371,13 +371,13 @@ connected_state HostControllerService::wait()
 
     //--- cloud integration
     // Initialize Nimbus object
-    // Nimbus local_db = Nimbus();
+    Nimbus local_db = Nimbus();
     //
     // // Use the test database to observe
-    // local_db.Open(NIMBUS_TEST_PLATFORM_JSON);
+    local_db.Open(NIMBUS_TEST_PLATFORM_JSON);
     // // NIMBUS integration **Needs better organisation --Prasanth**
-    // AttachmentObserver blobObserver((void *)&hostP);
-    // local_db.Register(&blobObserver);
+    AttachmentObserver blobObserver((void *)&hostP);
+    local_db.Register(&blobObserver);
 
     string cmd = "{\"cmd\":\"request_platform_id\",\"Host_OS\":\"Linux\"}";
 
