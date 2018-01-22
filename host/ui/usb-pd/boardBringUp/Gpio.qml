@@ -2,6 +2,7 @@ import QtQuick 2.0
 
 Rectangle{
     id:gpioTab
+    objectName: "gpioTab"
     opacity: 0
     anchors.fill:parent
 

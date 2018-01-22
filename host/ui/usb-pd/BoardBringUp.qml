@@ -17,19 +17,6 @@ Rectangle {
     property var currentTab
     property var newTab
 
-    function createTab(inTabName, inParent){
-        var component  = Qt.createComponent(inTabName);
-        var object = component.createObject(inParent);
-        return object
-    }
-
-    Component.onCompleted: {
-        currentTab = createTab("serial.qml", contentArea);
-        currentTab.opacity = 1;
-
-        newTab = createTab("gpio.qml",contentArea);
-    }
-
     ParallelAnimation{
         id: crosfadeTabs
         OpacityAnimator{
@@ -51,14 +38,15 @@ Rectangle {
     ButtonGroup {
         id:boardCommunicationsGroup
         onClicked: {
-            if (button.id == "serialBringUpButton"){
-                newTab = serial
+            console.log("button clicked is ",button.objectName)
+            if (button.objectName == "serialBoardBringUpButton"){
+                newTab = serialView
                 }
-            else if (button.id == "gpioBoardBringUpButton"){
-                newTab = gpio
+            else if (button.objectName == "gpioBoardBringUpButton"){
+                newTab = gpioView
                 }
-            else if (button.id == "pwmBoardBringUpButton"){
-                newTab = pwm
+            else if (button.objectName == "pwmBoardBringUpButton"){
+                newTab = pwmView
             }
             crosfadeTabs.start()
             currentTab = newTab
@@ -72,8 +60,8 @@ Rectangle {
         width: boardBringUP.width / 8
         height: boardBringUP.height //- overlayHeader.height
 
-        modal: inLandscape
-        interactive: inLandscape
+        modal: false
+        interactive: false
         position: inLandscape ? 1 : 0
         visible: inLandscape
 
@@ -83,12 +71,14 @@ Rectangle {
             spacing:0
             Button{
                 id:serialBoardBringUpButton
+                objectName: "serialBoardBringUpButton"
                 Layout.preferredWidth: communicaionsColumnView.width
                 Layout.preferredHeight: communicaionsColumnView.height/3
                 text: "serial"
                 ButtonGroup.group:boardCommunicationsGroup
                 checkable:true
                 checked: true
+                icon.source: "./images/icons/serialIcon.svg"
                 background: Rectangle{
                     color: serialBoardBringUpButton.checked ? "grey" :"lightgrey"
                 }
@@ -96,22 +86,26 @@ Rectangle {
             }
             Button{
                 id:gpioBoardBringUpButton
+                objectName: "gpioBoardBringUpButton"
                 Layout.preferredWidth: communicaionsColumnView.width
                 Layout.preferredHeight: communicaionsColumnView.height/3
                 text: "GPIO"
                 ButtonGroup.group:boardCommunicationsGroup
                 checkable:true
+                icon.source: "./images/icons/gpioIcon.svg"
                 background: Rectangle{
                     color: gpioBoardBringUpButton.checked ? "grey" :"lightgrey"
                 }
             }
             Button{
                 id:pwmBoardBringUpButton
+                objectName: "pwmBoardBringUpButton"
                 Layout.preferredWidth: communicaionsColumnView.width
                 Layout.preferredHeight: communicaionsColumnView.height/3
                 text: "PWM"
                 ButtonGroup.group:boardCommunicationsGroup
                 checkable:true
+                icon.source: "./images/icons/pwmIcon.svg"
                 background: Rectangle{
                     color: pwmBoardBringUpButton.checked ? "grey" :"lightgrey"
                 }
@@ -123,20 +117,32 @@ Rectangle {
 
     Flickable {
         id: contentArea
-
         anchors.fill: parent
         anchors.leftMargin: inLandscape ? drawer.width : undefined
+        topMargin: 0
+        bottomMargin: 0
+        contentHeight: boardBringUP.height
 
-        topMargin: 20
-        bottomMargin: 20
-        contentHeight: column.height
+        Serial{
+            id:serialView
+            anchors.fill:parent
+            opacity:1.0
+            }
 
-        Serial{}
-        Gpio{}
-        Pwm{}
+        Gpio{
+            id:gpioView
+            anchors.fill:parent
+            }
+
+        Pwm{
+            id:pwmView
+            anchors.fill:parent
+        }
 
         ScrollIndicator.vertical: ScrollIndicator { }
     }
+
+
 
 }
 

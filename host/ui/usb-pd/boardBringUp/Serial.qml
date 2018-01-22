@@ -2,6 +2,7 @@ import QtQuick 2.0
 
 Rectangle{
     id:serialTab
+    objectName: "serialTab"
     opacity: 0
     anchors.fill:parent
 

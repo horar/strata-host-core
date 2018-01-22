@@ -2,6 +2,7 @@ import QtQuick 2.0
 
 Rectangle{
     id:pwmTab
+    objectName: "pwmTab"
     opacity:0
     anchors.fill:parent
     //color:"transparent"
