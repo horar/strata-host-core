@@ -69,14 +69,12 @@ Connector::messageProperty USBConnector::receive(void *HCS)
         if (obj->error == 0) {
             Sleep(200);
             message.message="";
-            //return message;
         }
         #endif
 
         if(temp !='\n') {
             response.push_back(temp);
             message.message="";
-            //return message;
         }
     }
     if(!response.empty()) {
