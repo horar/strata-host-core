@@ -69,112 +69,7 @@ HostControllerService::HostControllerService(std::string configuration_file)
     database_->Open(NIMBUS_TEST_PLATFORM_JSON);
 }
 
-HostControllerService::~HostControllerService() {}
-
-/*!
- * \brief
- * 		 parse the received JSON from HostControllerClient
- * 		 verify if the command is supported and respond back
- */
-bool HostControllerService::verifyReceiveCommand(string command, string *response)
-{
-
-    // TODO [ian] violates message architecture design.
-    // SEE: https://ons-sec.atlassian.net/wiki/spaces/SPYG/pages/3178509/Messaging+Architecture
-    //    1) parse for valid json
-    //    2) create and send JSON ack
-    //
-    //   it does NOT filter if the command itself is valid !
-    //
-    // COMMAND:
-    //   {
-    //       ”cmd” : ”platform_id_request”,
-    //        “payload”:  {0}
-    //   }
-    //
-    //   parse for valid json
-    //
-    //  ACK
-    // {
-    //    ”ack”: {
-    //        ”cmd” : ”platform_id_request”,
-    //        “response_verbose” : ”Command Valid”,
-    //        ”return_value” : true
-    //    }
-    //
-
-    // TODO [ian] rewrite in rapidjson
-    StaticJsonBuffer<2000> jsonBuffer;
-    StaticJsonBuffer<2000> tempBuf;
-    StaticJsonBuffer<2000> returnBuffer;
-
-    JsonObject& root = jsonBuffer.parseObject(command.c_str());
-    JsonObject& returnRoot = tempBuf.createObject();
-    JsonObject& retBuf = returnBuffer.createObject();
-
-    printf("verifyReceiveCommand cmd=%s\n",command.c_str());
-
-    if(!root.success()) {
-
-        printf("PARSING UNSUCCESSFUL CHECK JSON BUFFER SIZE %s\n",command.c_str());
-        return "Unsuccessful";
-    }
-
-    if(root.containsKey("events")) {
-
-        string event = root["events"][0];
-
-        if(!event.compare("ALL_EVENTS")) {
-
-            returnRoot["cmd"]="register_event_notification";
-            returnRoot["response_verbose"]="command_valid";
-            returnRoot["return_value"]=true;
-            retBuf["ack"]=returnRoot;
-
-            //Convert json to string
-            retBuf.printTo(*response);
-            return true;
-        } else {
-
-            returnRoot["cmd"]="register_event_notification";
-            returnRoot["response_verbose"]="command_valid";
-            returnRoot["port_existence"]=false;
-            retBuf["nack"]=returnRoot;
-            retBuf.printTo(*response);
-            return false;
-        }
-    } else if(root.containsKey("cmd")) {
-        printf("verifyReceiveCommand cmd=%s\n",command.c_str());
-
-        if(root["cmd"] == "request_platform_id") {
-            root.printTo(*response);
-            return true;
-        }
-        else if(root["cmd"] == "request_usb_pd_output_voltage") {
-            root.printTo(*response);
-            return true;
-        }else if(root["cmd"] == "request_redriver_signal_loss") {
-            root.printTo(*response);
-            return true;
-        }else if(root["cmd"] == "request_redriver_count") {
-            root.printTo(*response);
-            return true;
-        }
-        else {
-
-            return false;
-        }
-    } else {
-
-        returnRoot["cmd"]="not_recognised";
-        returnRoot["response_verbose"]="command_invalid";
-        returnRoot["update_interval"]=1000;
-        retBuf["nack"]=returnRoot;
-        retBuf.printTo(*response);
-        return false;
-    }
-    return false;
-}
+HostControllerService::~HostControllerService() = default;
 
 /*
  * \brief :
@@ -192,8 +87,29 @@ bool HostControllerService::verifyReceiveCommand(string command, string *respons
 //	     bool _member_(ConnectorHandle* handle, ConnectorMessage* message, void* ctx);
 // USAGE:
 // 	CONNECTOR_EVENT_HANDLER(Connector, setVoltageCallback, setVoltageCommand);
-
-
+//
+// TODO [ian] violates message architecture design.
+// SEE: https://ons-sec.atlassian.net/wiki/spaces/SPYG/pages/3178509/Messaging+Architecture
+//    1) parse for valid json
+//    2) create and send JSON ack
+//
+//
+// COMMAND:
+//   {
+//       ”cmd” : ”platform_id_request”,
+//        “payload”:  {0}
+//   }
+//
+//   parse for valid json
+//
+//  ACK
+// {
+//    ”ack”: {
+//        ”cmd” : ”platform_id_request”,
+//        “response_verbose” : ”Command Valid”,
+//        ”return_value” : true
+//    }
+//
 void callbackServiceHandler(evutil_socket_t fd ,short what, void* hostP) {
 
     HostControllerService::host_packet *host = (HostControllerService::host_packet *)hostP;
