@@ -1,14 +1,14 @@
 import QtQuick 2.0
 
 Rectangle{
-    id:three
+    id:pwmTab
     opacity:0
     anchors.fill:parent
     //color:"transparent"
 
     Text{
         anchors.centerIn: parent
-        text:"three"
+        text:"pwm"
         font.pointSize: 100
         font.family: "helvetica"
     }

@@ -1,13 +1,13 @@
 import QtQuick 2.0
 
 Rectangle{
-    id:one
+    id:serialTab
     opacity: 0
     anchors.fill:parent
 
     Text{
         anchors.centerIn: parent
-        text:"one"
+        text:"serial"
         font.pointSize: 100
         font.family: "helvetica"
     }
