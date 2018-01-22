@@ -17,7 +17,7 @@ Rectangle {
         PageSchematic { id: pageSchematic }
         PageLayout { id: pageLayout }
         PageTestReport { id: pageTestReport }
-        PageSystemContent { id: pageSystemContent}        
+        PageSystemContent { id: pageSystemContent}
         PageComingSoon {id: pageComingSoonContent}
 
     }
@@ -27,16 +27,100 @@ Rectangle {
         width: parent.width - flipButton.width
         currentIndex: swipeView.currentIndex
         anchors { bottom: parent.bottom;}
+
         TabButton { text: "Block Diagram" }
         TabButton { text: "Demo Setup" }
         TabButton { text: "Data Path"}
-        TabButton { text: "Schematic" }
-        TabButton { text: "Layout" }
-        TabButton { text: "Test Report" }
+        TabButton { text: "Schematic"
+            Rectangle {
+                id: newSchematicDocuments
+                width: parent.width<parent.height?parent.width/1.9:parent.height/1.8
+                height: width
+                color: "red"
+                radius: width*0.5
+                anchors.bottom: parent.top
+                anchors.right: parent.right
+                anchors.bottomMargin: -20
+                Text {
+                    color: "white"
+                    text: "2"
+                    z:2
+                    wrapMode: Text.WordWrap
+                    anchors { fill: parent; centerIn: parent.Center }
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCenter
+                }
+            }
+            onClicked: newSchematicDocuments.visible = false
+        }
+        TabButton { text: "Layout"
+            Rectangle {
+                id: newLayoutDocuments
+                width: parent.width<parent.height?parent.width/1.9:parent.height/1.8
+                height: width
+                color: "red"
+                radius: width*0.5
+                anchors.bottom: parent.top
+                anchors.right: parent.right
+                anchors.bottomMargin: -20
+                Text {
+                    color: "white"
+                    text: "3"
+                    z:2
+                    wrapMode: Text.WordWrap
+                    anchors { fill: parent; centerIn: parent.Center }
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCenter
+                }
+            }
+            onClicked: newLayoutDocuments.visible = false
+        }
+        TabButton { text: "Test Report"
+            Rectangle {
+                id: newTestDocuments
+                width: parent.width<parent.height?parent.width/1.9:parent.height/1.8
+                height: width
+                color: "red"
+                radius: width*0.5
+                anchors.bottom: parent.top
+                anchors.right: parent.right
+                anchors.bottomMargin: -20
+                Text {
+                    color: "white"
+                    text: "5"
+                    z:2
+                    wrapMode: Text.WordWrap
+                    anchors { fill: parent; centerIn: parent.Center }
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCenter
+                }
+            }
+            onClicked: newTestDocuments.visible = false
+        }
         TabButton { text: "System Content" }
-        TabButton { text: "Coming Soon" }
+        TabButton { text: "Coming Soon"
+            Rectangle {
+                id: newComingSoonDocuments
+                width: parent.width<parent.height?parent.width/1.9:parent.height/1.8
+                height: width
+                color: "red"
+                radius: width*0.5
+                anchors.bottom: parent.top
+                anchors.right: parent.right
+                anchors.bottomMargin: -20
+                Text {
+                    color: "white"
+                    text: "2"
+                    z:2
+                    wrapMode: Text.WordWrap
+                    anchors { fill: parent; centerIn: parent.Center }
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCenter
+                }
+            }
+            onClicked: newComingSoonDocuments.visible = false
+        }
     }
-    
     Image {
         id: flipButton
         source:"./images/icons/backIcon.svg"

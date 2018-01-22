@@ -21,6 +21,8 @@ ImplementationInterfaceBinding::ImplementationInterfaceBinding(QObject *parent) 
     Ports.power[0]='\0';
     Ports.power[1]='\0';
     platformId= QString();
+    usbCPort1State = false;
+    usbCPort2State = false;
 
 #ifdef QT_NO_DEBUG
     platformState = false;
@@ -83,7 +85,7 @@ void ImplementationInterfaceBinding::setOutputVoltageVBUS(int port, int voltage)
 
 void ImplementationInterfaceBinding::setRedriverLoss(float lossValue)
 {
-    qDebug("ImplementationInterfaceBinding::setRedriverLoss(%f)", lossValue);
+    //qDebug("ImplementationInterfaceBinding::setRedriverLoss(%f)", lossValue);
     QJsonObject cmdMessageObject;
     cmdMessageObject.insert("cmd", "request_redriver_signal_loss");
     QJsonObject payloadObject;
@@ -91,15 +93,15 @@ void ImplementationInterfaceBinding::setRedriverLoss(float lossValue)
     cmdMessageObject.insert("payload",payloadObject);
     QJsonDocument doc(cmdMessageObject);
     QString strJson(doc.toJson(QJsonDocument::Compact));
-    if(hcc_object->sendCmd(strJson.toStdString()))
-        qDebug() << "Radio button send";
-    else
-        qDebug() << "Radio button send failed";
+    //if(hcc_object->sendCmd(strJson.toStdString()))
+        //qDebug() << "Radio button send";
+    //else
+        //qDebug() << "Radio button send failed";
 }
 
 void ImplementationInterfaceBinding::setRedriverCount(int value)
 {
-    qDebug("ImplementationInterfaceBinding::setRedriverCount(%d)", value);
+    //qDebug("ImplementationInterfaceBinding::setRedriverCount(%d)", value);
     QJsonObject cmdMessageObject;
     cmdMessageObject.insert("cmd", "request_redriver_count");
     QJsonObject payloadObject;
@@ -107,10 +109,10 @@ void ImplementationInterfaceBinding::setRedriverCount(int value)
     cmdMessageObject.insert("payload",payloadObject);
     QJsonDocument doc(cmdMessageObject);
     QString strJson(doc.toJson(QJsonDocument::Compact));
-    if(hcc_object->sendCmd(strJson.toStdString()))
-        qDebug() << "Radio button send" << doc;
-    else
-        qDebug() << "Radio button send failed";
+    //if(hcc_object->sendCmd(strJson.toStdString()))
+        //qDebug() << "Radio button send" << doc;
+    //else
+        //qDebug() << "Radio button send failed";
 }
 
 
@@ -121,6 +123,7 @@ bool ImplementationInterfaceBinding::getUSBCPortState(int port_number)
             break;
     case 2: return usbCPort2State;
             break;
+    default: return true;
     }
 }
 
