@@ -9,7 +9,7 @@ ApplicationWindow {
     visible: true
     width: 1200
     height: 900
-    title: qsTr("USB-PD Dual")
+    title: qsTr("Spectrum Hardware Vision USB Power and Delivery Automotive Dual Port")
     property bool hardwareStatus: null
     property bool login_detected: false
 

@@ -94,14 +94,14 @@
         <file>images/icons/showMoreIcon.svg</file>
         <file>images/placeholders/blackGraph.png</file>
         <file>BoardBringUp.qml</file>
-        <file>boardBringUp/gpio.qml</file>
-        <file>boardBringUp/pwm.qml</file>
-        <file>boardBringUp/serial.qml</file>
         <file>ImplementationInterfaceBinding/ImplementationInterfaceBinding.cpp</file>
         <file>ImplementationInterfaceBinding/ImplementationInterfaceBinding.h</file>
         <file>DataCollector.cpp</file>
         <file>DataCollector.h</file>
         <file>DocumentManager.cpp</file>
         <file>DocumentManager.h</file>
+        <file>boardBringUp/Gpio.qml</file>
+        <file>boardBringUp/Pwm.qml</file>
+        <file>boardBringUp/Serial.qml</file>
     </qresource>
 </RCC>
