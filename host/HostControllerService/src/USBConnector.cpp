@@ -48,8 +48,8 @@ Connector::messageProperty USBConnector::receive(void *HCS)
 
     // TODO : ian : this sooooooo needs to be cleaned up !
     char temp = '\0';
-    sp_wait(obj->ev, 0);
     while(temp != '\n') {
+        sp_wait(obj->ev, 0);
         obj->error = sp_nonblocking_read(obj->platform_socket_,(void *)&temp,1);
 
         #ifndef _WIN32
