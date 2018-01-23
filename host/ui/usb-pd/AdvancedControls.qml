@@ -89,20 +89,57 @@ Rectangle {
                         checkable: true
                         checked: true
                         background: Rectangle {
-                            color: boardSettingsDisclosureButton.checked ? "green" : "red"
+                            //color: boardSettingsDisclosureButton.checked ? "green" : "red"
+                            color:"black"
                         }
-                        icon.source: checked ? "./images/icons/showLessIcon.svg" : "./images/icons/showMoreIcon.svg"
-                        icon.height: parent.height
-                        icon.width:parent.width
+
+
+                        Image{
+                            id:boardSettingsDisclosureButtonImage
+                            anchors.left:parent.left
+                            anchors.leftMargin: 3
+                            anchors.top:parent.top
+                            height:10
+                            width:14
+                            source:"./images/icons/showLessIcon.svg"
+
+                            transform: Rotation {
+                                id: rotateBoardSettingsButtonImage
+                                origin.x: boardSettingsDisclosureButtonImage.width/2;
+                                origin.y: boardSettingsDisclosureButtonImage.height/2;
+                                axis { x: 0; y: 0; z: 1 }
+                            }
+
+                            NumberAnimation {
+                                id:collapseBoardSettingsDisclosureIcon
+                                running: false
+                                loops: 1
+                                target: rotateBoardSettingsButtonImage;
+                                property: "angle";
+                                from: 0; to: 180;
+                                duration: 1000;
+                            }
+
+                            NumberAnimation {
+                                id:expandBoardSettingsDisclosureIcon
+                                running: false
+                                loops: 1
+                                target: rotateBoardSettingsButtonImage;
+                                property: "angle";
+                                from: 180; to: 0;
+                                duration: 1000;
+                            }
+                        }
+
 
                         onClicked:{
                             if (checked == true){
                                 expandBoardSettings.start();
-                                console.log ("expanding");
+                                expandBoardSettingsDisclosureIcon.start()
                                 }
                             else{
-                            collapseBoardSettings.start();
-                                console.log ("collapsing");
+                                collapseBoardSettings.start();
+                                collapseBoardSettingsDisclosureIcon.start()
                               }
                         }
 
@@ -546,20 +583,55 @@ Rectangle {
                         checkable: true
                         checked: true
                         background: Rectangle {
-                            color: port1SettingsDisclosureButton.checked ? "green" : "red"
+                            color: "black"
                         }
-                        icon.source: checked ? "./images/icons/showLessIcon.svg" : "./images/icons/showMoreIcon.svg"
-                        icon.height: parent.height
-                        icon.width:parent.width
+
+
+                        Image{
+                            id:port1DisclosureButtonImage
+                            anchors.left:parent.left
+                            anchors.leftMargin: 3
+                            anchors.top:parent.top
+                            height:10
+                            width:14
+                            source:"./images/icons/showLessIcon.svg"
+
+                            transform: Rotation {
+                                id: rotatePort1ButtonImage
+                                origin.x: port1DisclosureButtonImage.width/2;
+                                origin.y: port1DisclosureButtonImage.height/2;
+                                axis { x: 0; y: 0; z: 1 }
+                            }
+
+                            NumberAnimation {
+                                id:collapsePort1DisclosureIcon
+                                running: false
+                                loops: 1
+                                target: rotatePort1ButtonImage;
+                                property: "angle";
+                                from: 0; to: 180;
+                                duration: 1000;
+                            }
+
+                            NumberAnimation {
+                                id:expandPort1DisclosureIcon
+                                running: false
+                                loops: 1
+                                target: rotatePort1ButtonImage;
+                                property: "angle";
+                                from: 180; to: 0;
+                                duration: 1000;
+                            }
+                        }
 
                         onClicked:{
                             if (checked == true){
                                 expandPort1Settings.start();
-                                console.log ("expanding");
+                                expandPort1DisclosureIcon.start();
                                 }
                             else{
-                            collapsePort1Settings.start();
-                                console.log ("collapsing");
+                                collapsePort1Settings.start();
+                                collapsePort1DisclosureIcon.start();
                               }
                         }
 
@@ -1372,20 +1444,54 @@ Rectangle {
                         checkable: true
                         checked: true
                         background: Rectangle {
-                            color: port2SettingsDisclosureButton.checked ? "green" : "red"
+                            color: "black"
                         }
-                        icon.source: checked ? "./images/icons/showLessIcon.svg" : "./images/icons/showMoreIcon.svg"
-                        icon.height: parent.height
-                        icon.width:parent.width
+
+                        Image{
+                            id:port2DisclosureButtonImage
+                            anchors.left:parent.left
+                            anchors.leftMargin: 3
+                            anchors.top:parent.top
+                            height:10
+                            width:14
+                            source:"./images/icons/showLessIcon.svg"
+
+                            transform: Rotation {
+                                id: rotatePort2ButtonImage
+                                origin.x: port2DisclosureButtonImage.width/2;
+                                origin.y: port2DisclosureButtonImage.height/2;
+                                axis { x: 0; y: 0; z: 1 }
+                            }
+
+                            NumberAnimation {
+                                id:collapsePort2DisclosureIcon
+                                running: false
+                                loops: 1
+                                target: rotatePort2ButtonImage;
+                                property: "angle";
+                                from: 0; to: 180;
+                                duration: 1000;
+                            }
+
+                            NumberAnimation {
+                                id:expandPort2DisclosureIcon
+                                running: false
+                                loops: 1
+                                target: rotatePort2ButtonImage;
+                                property: "angle";
+                                from: 180; to: 0;
+                                duration: 1000;
+                            }
+                        }
 
                         onClicked:{
                             if (checked == true){
                                 expandPort2Settings.start();
-                                console.log ("expanding");
+                                expandPort2DisclosureIcon.start();
                                 }
                             else{
-                            collapsePort2Settings.start();
-                                console.log ("collapsing");
+                                collapsePort2Settings.start();
+                                collapsePort2DisclosureIcon.start()
                               }
                         }
 
