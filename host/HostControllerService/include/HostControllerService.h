@@ -14,6 +14,7 @@
 #include "ConnectFactory.h"
 #include "ArduinoJson.h"
 #include <libserialport.h>
+#include "nimbus.h"
 
 // NIMBUS integration **Needs better organisation --Prasanth**
 #include "Observer.h"
@@ -83,6 +84,9 @@ private :
     bool simulation_;
     bool platformConnect;
     ParseConfig *configuration_;
+
+    Nimbus * database_;
+
 };
 
 

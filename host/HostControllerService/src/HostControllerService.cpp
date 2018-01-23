@@ -6,9 +6,11 @@
  */
 
 #include "HostControllerService.h"
-#include "nimbus.h"
 #include <csignal>
+#include "rapidjson/document.h"
+
 using namespace std;
+using namespace rapidjson;
 
 AttachmentObserver::AttachmentObserver(void *hostP)
 {
@@ -58,100 +60,55 @@ HostControllerService::HostControllerService(std::string configuration_file)
     command_address_ = configuration_->GetCommandAddress ();
     commandAck->bind(command_address_.c_str());
 
-    // TODO rename variable "hostP" wtf ...
+    // TODO [ian] rename variable "hostP" wtf is "hostP"?
     hostP.command = commandAck;
 
+    // open and observe database events
+    database_ = new Nimbus();
+    database_->Open(NIMBUS_TEST_PLATFORM_JSON);
 }
 
-HostControllerService::~HostControllerService() {}
-
-/*!
- * \brief
- * 		 parse the received JSON from HostControllerClient
- * 		 verify if the command is supported and respond back
- */
-bool HostControllerService::verifyReceiveCommand(string command, string *response) {
-
-    StaticJsonBuffer<2000> jsonBuffer;
-    StaticJsonBuffer<2000> tempBuf;
-    StaticJsonBuffer<2000> returnBuffer;
-
-    JsonObject& root = jsonBuffer.parseObject(command.c_str());
-    JsonObject& returnRoot = tempBuf.createObject();
-    JsonObject& retBuf = returnBuffer.createObject();
-
-    if(!root.success()) {
-
-        printf("PARSING UNSUCCESSFUL CHECK JSON BUFFER SIZE %s\n",command.c_str());
-        return "Unsuccessful";
-    }
-
-    if(root.containsKey("events")) {
-
-        string event = root["events"][0];
-
-        if(!event.compare("ALL_EVENTS")) {
-
-            returnRoot["cmd"]="register_event_notification";
-            returnRoot["response_verbose"]="command_valid";
-            returnRoot["return_value"]=true;
-            retBuf["ack"]=returnRoot;
-
-            //Convert json to string
-            retBuf.printTo(*response);
-            return true;
-        } else {
-
-            returnRoot["cmd"]="register_event_notification";
-            returnRoot["response_verbose"]="command_valid";
-            returnRoot["port_existence"]=false;
-            retBuf["nack"]=returnRoot;
-            retBuf.printTo(*response);
-            return false;
-        }
-    } else if(root.containsKey("cmd")) {
-
-        if(root["cmd"] == "request_platform_id") {
-
-            if(root["Host_OS"] == "Linux") {
-
-                root.printTo(*response);
-                return true;
-            } else {
-
-                return false;
-            }
-        }
-        else if(root["cmd"] == "request_usb_pd_output_voltage") {
-            root.printTo(*response);
-            return true;
-        }else if(root["cmd"] == "request_redriver_signal_loss") {
-            root.printTo(*response);
-            return true;
-        }else if(root["cmd"] == "request_redriver_count") {
-            root.printTo(*response);
-            return true;
-        }
-        else {
-
-            return false;
-        }
-    } else {
-
-        returnRoot["cmd"]="not_recognised";
-        returnRoot["response_verbose"]="command_invalid";
-        returnRoot["update_interval"]=1000;
-        retBuf["nack"]=returnRoot;
-        retBuf.printTo(*response);
-        return false;
-    }
-    return false;
-}
+HostControllerService::~HostControllerService() = default;
 
 /*
  * \brief :
  *      callback function to to handle service side requests
  */
+
+// TODO FIXME [ian] better way to hand back the Host Controller Service "this" pointer
+//     typical solution is to use a macro such as below for older C function pointer only interfaces
+//
+//     #define CONNECTOR_EVENT_HANDLER(_class_, _cb_, _member_) \
+//		static bool _cb_(ConnectorHandle* handle, ConnectorMessage* message, void* ctx) { \
+//	          _class_ *self = static_cast<_class_ *>(ctx); \
+//	          bool rv = self->_member_(handle, message,ctx);   \
+//	          return rv;  } \
+//	     bool _member_(ConnectorHandle* handle, ConnectorMessage* message, void* ctx);
+// USAGE:
+// 	CONNECTOR_EVENT_HANDLER(Connector, setVoltageCallback, setVoltageCommand);
+//
+// TODO [ian] violates message architecture design.
+// SEE: https://ons-sec.atlassian.net/wiki/spaces/SPYG/pages/3178509/Messaging+Architecture
+//    1) parse for valid json
+//    2) create and send JSON ack
+//
+//
+// COMMAND:
+//   {
+//       ”cmd” : ”platform_id_request”,
+//        “payload”:  {0}
+//   }
+//
+//   parse for valid json
+//
+//  ACK
+// {
+//    ”ack”: {
+//        ”cmd” : ”platform_id_request”,
+//        “response_verbose” : ”Command Valid”,
+//        ”return_value” : true
+//    }
+//
 void callbackServiceHandler(evutil_socket_t fd ,short what, void* hostP) {
 
     HostControllerService::host_packet *host = (HostControllerService::host_packet *)hostP;
@@ -161,31 +118,58 @@ void callbackServiceHandler(evutil_socket_t fd ,short what, void* hostP) {
 
     uint8_t id [256];
     size_t id_size = 256;
-    if(obj->simulation_)
-    simulationReceive->getsockopt(ZMQ_IDENTITY,&id,&id_size);
+    bool success;
 
     unsigned int     zmq_events;
     size_t           zmq_events_size  = sizeof(zmq_events);
 
+    if(obj->simulation_) {
+        simulationReceive->getsockopt(ZMQ_IDENTITY,&id,&id_size);
+    }
+
     Connector::messageProperty message = host->service->receive(host->command);
-    if(!message.message.compare("DISCONNECTED")) {
+    if(!message.message.compare("DISCONNECTED")) {   // TODO [ian] why would a "platform" command be in "service" handler?
         cout << "Platform Disconnect detected " <<endl;
         event_base_loopbreak(host->base);
     }
-    string response;
 
-    bool ack=host->hcs->verifyReceiveCommand(message.message,&response);
-    message.message=response;
-    host->service->sendAck(message,host->command);
+    // TODO FIXME [ian] no idea what verifyReceiveCommand is doing ... removing ...
 
-    if(ack == true ) {
-        bool success;
+    host->service->sendAck(message, host->command);
+    cout << "SERVICE_MESSAGE: " << message.message << endl;
+
+    // intercept db:: commands and forward to Nimbus
+    // {
+    //    "db::cmd":"connect_data_source",
+    //            "db::payload":{
+    //        "type":"documents"
+    //    }
+    // }
+
+    Document service_command;
+    if (service_command.Parse(message.message.c_str()).HasParseError()) {
+        cout << "ERROR: json parse error!\n";
+    }
+
+    // TODO [ian] add this to a "command_filter" map to add more then just "db::cmd"
+    if( service_command.HasMember("db::cmd") ) {
+
+        printf("FILTER: %s\n", message.message.c_str());
+
+        if ( host->hcs->database_->Command( message.message.c_str() ) != NO_ERRORS ){
+            printf("ERROR: database failed failed!");
+        }
+    }
+    else {
+
+        // forward message to platform
         if (!obj->simulation_) {
             success = host->platform->sendNotification(message,host->hcs);
         }
         else {
             success = host->simulation->emulatorSend(message,simulationReceive);
         }
+
         if(success == true) {
             string log = "<--- To Platform = " + message.message;
             cout << "<--- To Platform = " << message.message <<endl;
@@ -194,6 +178,7 @@ void callbackServiceHandler(evutil_socket_t fd ,short what, void* hostP) {
             cout << "Message send to platform failed " <<endl;
         }
     }
+
     send->getsockopt(ZMQ_EVENTS, &zmq_events, &zmq_events_size);
 }
 
@@ -229,23 +214,26 @@ void HostControllerService::callbackPlatformHandler(void* hostP) {
        sp_new_event_set(&ev);
 	     sp_add_port_events(ev, platform_socket_, SP_EVENT_RX_READY);
     }
+
     while(1) {
       if(simulation_) {
       message = host->simulation->emulatorReceive(simulationReceive);
-      if (!message.message.empty());
-        {
+      if (!message.message.empty()) {
           platformConnect = true;
-        }
+      }
+
       string tempMessage = message.message;
       // cout<< "received new line size "<<stringSize<<"   "<<message.message.size()<<endl;
       // cout << "Emulator receive "<<message.message<<endl;
+
       istringstream iss(message.message);
       while ( getline( iss,message.message, '\n' ) ) {
           host->service->sendNotification(message,host->notify);
           cout << "Emulator receive "<<message.message<<endl;
       }
+
     }
-    else{
+    else {
         message = host->platform->receive((void *)host->hcs);
         if(!message.message.compare("DISCONNECTED")) {
             cout << "Platform disconnected " <<endl;
@@ -372,29 +360,23 @@ connected_state HostControllerService::wait()
     Connector *conp = conObj->getServiceTypeObject("PLATFORM");
     hostP.platform = conp;
 
-    //--- cloud integration
-    // Initialize Nimbus object
-    Nimbus local_db = Nimbus();
-    //
-    // // Use the test database to observe
-    local_db.Open(NIMBUS_TEST_PLATFORM_JSON);
-    // // NIMBUS integration **Needs better organisation --Prasanth**
+    // TODO [prasanth] NIMBUS integration **Needs better organisation
     AttachmentObserver blobObserver((void *)&hostP);
-    local_db.Register(&blobObserver);
+    database_->Register(&blobObserver);
 
     string cmd = "{\"cmd\":\"request_platform_id\",\"Host_OS\":\"Linux\"}";
 
-if(!simulation_) {
-    while(!openPlatformSocket()) {
-        cout << "Waiting for Board to get Connected" <<endl;
-        this_thread::sleep_for(std::chrono::milliseconds(2000));
-    }
+    if(!simulation_) {
+        while(!openPlatformSocket()) {
+            cout << "Waiting for Board to get Connected" <<endl;
+            this_thread::sleep_for(std::chrono::milliseconds(2000));
+        }
 
-    initPlatformSocket();
-    Connector::messageProperty message;
-    message.message=cmd;
-    conp->sendNotification(message,this);
-}
+        initPlatformSocket();
+        Connector::messageProperty message;
+        message.message=cmd;
+        conp->sendNotification(message,this);
+    }
 
 #ifndef _WIN32
     int sockService=0;
@@ -413,7 +395,7 @@ if(!simulation_) {
     struct event_base *base = event_base_new();
     hostP.base = base;
 
-	  thread t(&HostControllerService::callbackPlatformHandler,this,(void *)&hostP);
+    thread t(&HostControllerService::callbackPlatformHandler,this,(void *)&hostP);
 
 	//EV_ET says its edge triggered. EV_READ and EV_WRITE are both
 	//needed when event is added else it doesn't function properly
@@ -426,19 +408,20 @@ if(!simulation_) {
                         callbackServiceHandler,(void *)&hostP);
 #endif
 
-	if (event_base_set(base,service) <0 )
-		cout <<"Event BASE SET SERVICE FAILED "<<endl;
+	if (event_base_set(base,service) <0 ) {
+        cout << "Event BASE SET SERVICE FAILED " << endl;
+    }
 
     if(event_add(service,NULL) <0 ) {
         cout << "Event SERVICE ADD FAILED " << endl;
     }
     if(simulation_) {
-  	struct event *heartBeatSimulationEvent = event_new(base, -1, EV_TIMEOUT | EV_PERSIST, heartBeatPeriodicEvent,(void *)&hostP);
-  	timeval twoSec = {1, 0};
-  	if(event_add(heartBeatSimulationEvent, &twoSec)<0) {
-      cout<< "Periodic event add service failed\n";
+        struct event *heartBeatSimulationEvent = event_new(base, -1, EV_TIMEOUT | EV_PERSIST, heartBeatPeriodicEvent,(void *)&hostP);
+        timeval twoSec = {1, 0};
+        if(event_add(heartBeatSimulationEvent, &twoSec)<0) {
+            cout<< "Periodic event add service failed\n";
+        }
     }
-  }
 
     event_base_dispatch(base);
     t.join();
