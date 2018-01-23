@@ -44,7 +44,6 @@ HostControllerService::HostControllerService(std::string configuration_file)
     simulation_ = configuration_->IsSimulatedPlatform();
     // assigning the serial port number
     serial_port_number_ = configuration_->GetSerialPortNumber();
-    cout<< "the serial port number is "<<serial_port_number_<<endl;
     // creating stream socket for non zmq tcp sockets and only for simulation
     if(simulation_) {
      simulationQemuSocket = new zmq::socket_t(*context,ZMQ_STREAM);
@@ -283,6 +282,10 @@ void HostControllerService::callbackPlatformHandler(void* hostP) {
  */
 bool HostControllerService::openPlatformSocket()
 {
+    if(serial_port_number_.empty()) {
+        cout << "ERROR: Please add serial port number in config file  !!!"<< serial_port_number_<<endl;
+        return false;
+    }
     error = sp_get_port_by_name(serial_port_number_.c_str(),&platform_socket_);
     if(error == SP_OK) {
         error = sp_open(platform_socket_, SP_MODE_READ_WRITE);
@@ -297,7 +300,7 @@ bool HostControllerService::openPlatformSocket()
             return false;
         }
     } else {
-        cout << "REQUESTED PORT NOT PRESENT "<<endl;
+        cout << "ERROR: Invalid Serial Port Number. Please check the config file  !!!"<<endl;
         return false;
     }
 }
@@ -372,10 +375,10 @@ connected_state HostControllerService::wait()
     //--- cloud integration
     // Initialize Nimbus object
     Nimbus local_db = Nimbus();
-
-    // Use the test database to observe
+    //
+    // // Use the test database to observe
     local_db.Open(NIMBUS_TEST_PLATFORM_JSON);
-    // NIMBUS integration **Needs better organisation --Prasanth**
+    // // NIMBUS integration **Needs better organisation --Prasanth**
     AttachmentObserver blobObserver((void *)&hostP);
     local_db.Register(&blobObserver);
 
