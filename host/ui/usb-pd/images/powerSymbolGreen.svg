@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="64px" height="72px" viewBox="0 0 64 72" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 48.1 (47250) - http://www.bohemiancoding.com/sketch -->
+    <title>power symbol</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="power-symbol" fill="#417505" fill-rule="nonzero">
+            <path d="M43.27,10.46 L41.14,16.07 C52.770276,20.4972001 59.5804029,32.5980055 57.3296852,44.8371922 C55.0789675,57.0763789 44.4094132,65.962769 31.965,65.962769 C19.5205868,65.962769 8.85103246,57.0763789 6.60031477,44.8371922 C4.34959708,32.5980055 11.159724,20.4972001 22.79,16.07 L20.65,10.47 C6.31412803,15.9273663 -2.08013433,30.8433945 0.694307248,45.9298967 C3.46874882,61.0163988 16.6205061,71.9700656 31.96,71.9700656 C47.2994939,71.9700656 60.4512512,61.0163988 63.2256928,45.9298967 C66.0001343,30.8433945 57.605872,15.9273663 43.27,10.47 L43.27,10.46 Z" id="Shape"></path>
+            <rect id="Rectangle-path" x="29" y="0.02" width="6" height="42.97"></rect>
+        </g>
+    </g>
+</svg>

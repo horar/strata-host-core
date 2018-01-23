@@ -10,12 +10,26 @@ Item {
     //property var currentVPModel: vpModel2
     property var currentBlockDiagram: "./images/highlightedBlockDiagram/USB-PD_blockDiagram_PowerStage1Highlighted.png"
 
+    Text {
+        text: "System Content"
+        horizontalAlignment: Text.AlignHCenter
+        font.family: "Helvetica"
+        font.pointSize: 36
+        color: "grey"
+        anchors{ left: parent.left;
+            right: parent.right;
+            top: parent.top;
+            topMargin: parent.height/20
+        }
+    }
+
     GridLayout{
         id: systemContentGridLayout
         columns: 6
         rows: 7
         anchors {fill:parent
-            bottomMargin: tabBar.height}
+            //bottomMargin: tabBar.height
+            topMargin: 100}
         columnSpacing: 0
         rowSpacing: 0
 

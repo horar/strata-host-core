@@ -7,19 +7,7 @@ Item {
         width: parent.width; height: 40
         color: "#235A92"
 
-        // PROOF OF CONCEPT BANNER
-//        Rectangle {
-//            anchors { horizontalCenter: parent.horizontalCenter; verticalCenter: parent.verticalCenter }
-//            width: parent.width * 0.70; height: 30;
-//            color: "red"
-//            radius: 4
-//            Label {
-//                anchors { centerIn: parent }
-//                text: "SPYGLASS PROOF OF CONCEPT WITH LAB CLOUD"
-//                color: "white"
-//                font.bold: true
-//            }
-//        }
+
     }
     Image {
         anchors { top: parent.top; right: parent.right }
@@ -27,19 +15,27 @@ Item {
         fillMode: Image.PreserveAspectFit
         source: "./images/icons/onLogoGreenWithText.png"
     }
-    Text{
-        font.family: "helvetica"
-        font.pointSize: 29
+
+    Text {
         text:"PD + Redriver Demo Setup"
-        anchors { horizontalCenter: parent.horizontalCenter; top: parent.top; topMargin: 50 }
-        z: 2
+        horizontalAlignment: Text.AlignHCenter
+        font.family: "Helvetica"
+        font.pointSize: 36
+        color: "grey"
+        anchors{ left: parent.left;
+            right: parent.right;
+            top: parent.top;
+            topMargin: parent.height/10
+        }
     }
+
     Image {
         //anchors.fill: parent
 
         fillMode: Image.PreserveAspectFit
-        anchors { /*centerIn: parent;*/ top: parent.top; topMargin: 130 }
-        source: "./images/CES_Demo_Setup.PNG"
+        anchors { fill:parent }
+        //anchors { centerIn: parent; }
+        source: "./images/demoSetup.png"
     }
 
 }
