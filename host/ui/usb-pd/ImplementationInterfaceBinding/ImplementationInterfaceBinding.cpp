@@ -180,7 +180,7 @@ ImplementationInterfaceBinding::e_MappedPlatformId ImplementationInterfaceBindin
     // Initialize the mapping since we can't statically initialize it.
     if (idMap.size() == 0) {
         // BUBU Interface
-        idMap.insert("blah", BUBU_INTERFACE);
+        idMap.insert("P2.2018.1.1.0.0.c9060ff8-5c5e-4295-b95a-d857ee9a3671", BUBU_INTERFACE);
 
         // USB-PD
         idMap.insert("P2.2017.1.1.0.0.cbde0519-0f42-4431-a379-caee4a1494af", USB_PD);
