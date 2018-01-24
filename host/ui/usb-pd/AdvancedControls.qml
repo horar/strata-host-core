@@ -242,18 +242,22 @@ Rectangle {
                             anchors.leftMargin: 10
                             anchors.verticalCenter: startLimitingText.verticalCenter
                             color:"white"//"#838484"
-                            placeholderText:"7"
+                            placeholderText:"5"
                             verticalAlignment: TextInput.AlignTop
                             font.family: "helvetica"
                             font.pointSize: 12
                             height:15
                             width:30
+                            validator: DoubleValidator{bottom: 5.0; top: 32.0;}
                             background: Rectangle {
                                     implicitWidth: 15
                                     implicitHeight: 10
                                     color: "#838484"//"#33FFFFFF"
                                     border.color: "#838484"
                                 }
+                            onEditingFinished: {
+                                console.log ("user set value for start limiting:", limitingVoltageTextInput.text)
+                            }
                         }
                         Text{
                             id:startLimitingUnitText
@@ -292,12 +296,20 @@ Rectangle {
                             font.pointSize: 12
                             height:15
                             width:30
+                            //validator: DoubleValidator{bottom: 5.0; top: 32.0;}
                             background: Rectangle {
                                     implicitWidth: 15
                                     implicitHeight: 10
                                     color: "#838484"//"#33FFFFFF"
                                     border.color: "#838484"
                                 }
+                            onEditingFinished: {
+                                if (outputLimitTextInput.text >32){
+                                    outputLimitTextInput.text = 32
+                                }
+
+                                console.log ("user set value for output limiting:", outputLimitTextInput.text)
+                            }
                         }
                         Text{
                             id:outputLimitUnitText
@@ -324,24 +336,18 @@ Rectangle {
                             anchors.top: outputLimitText.bottom
                             anchors.topMargin: 10
                         }
-                        TextField{
+                        Label{
                             id:minimumInputTextInput
                             anchors.left:minimumInputTempText.right
                             anchors.leftMargin: 10
                             anchors.verticalCenter: minimumInputTempText.verticalCenter
-                            color:"white"//"#838484"
-                            placeholderText:"7"
+                            color:"white"
+                            text:minimumInputVoltageSlider.value
                             verticalAlignment: TextInput.AlignTop
                             font.family: "helvetica"
                             font.pointSize: 12
                             height:15
                             width:30
-                            background: Rectangle {
-                                    implicitWidth: 15
-                                    implicitHeight: 10
-                                    color: "#838484"//"#33FFFFFF"
-                                    border.color: "#838484"
-                                }
                         }
                         Text{
                             id:minimumInputUnitText
@@ -352,6 +358,57 @@ Rectangle {
                             anchors.left:minimumInputTextInput.right
                             anchors.leftMargin: 5
                             anchors.verticalCenter: minimumInputTempText.verticalCenter
+
+                        }
+                        Slider{
+                            id:minimumInputVoltageSlider
+                            anchors.left:minimumInputUnitText.right
+                            anchors.leftMargin: 5
+                            anchors.right:parent.right
+                            anchors.rightMargin: 10
+                            anchors.verticalCenter: minimumInputTempText.verticalCenter
+                            height:10
+                            from: 5
+                            to:32
+                            value:5
+                            stepSize: 0.0
+                            //the trail of the slider
+                            background: Rectangle {
+                                    x: minimumInputVoltageSlider.leftPadding
+                                    y: minimumInputVoltageSlider.topPadding + minimumInputVoltageSlider.availableHeight / 2 - height / 2
+                                    implicitWidth: 200
+                                    implicitHeight: 2
+                                    width: minimumInputVoltageSlider.availableWidth
+                                    height: implicitHeight
+                                    radius: 2
+                                    color: "#bdbebf"
+
+                                    //the portion of the trail to the left of the thumb
+                                    Rectangle {
+                                        width: minimumInputVoltageSlider.visualPosition * parent.width
+                                        height: parent.height
+                                        color: "#0078D7"
+                                        radius: 2
+                                    }
+                                }
+
+                            //the thumb of the slider
+                                handle: Rectangle {
+                                    x: minimumInputVoltageSlider.leftPadding + minimumInputVoltageSlider.visualPosition * (minimumInputVoltageSlider.availableWidth - width)
+                                    y: minimumInputVoltageSlider.topPadding + minimumInputVoltageSlider.availableHeight / 2 - height / 2
+                                    implicitWidth: 10
+                                    implicitHeight: 10
+                                    radius: 5
+                                    color: "black"
+                                    border.color: "#0078D7"
+                                    border.width: 2
+                                }
+
+                                onMoved: {
+                                    minimumInputTextInput.text = Math.round(minimumInputVoltageSlider.value *10)/10
+
+                                }
+
 
                         }
 
@@ -749,7 +806,7 @@ Rectangle {
                     }
 
                     Text{
-                        id:maxPowerText
+                        id:port1MaxPowerText
                         text:"Maximum power output:"
                         font.family: "helvetica"
                         font.pointSize: 12
@@ -760,34 +817,121 @@ Rectangle {
                         anchors.top: voltageCompensationText.bottom
                         anchors.topMargin: 10
                     }
-                    TextField{
-                        id:maxPowerTextInput
-                        anchors.left:maxPowerText.right
+                    ComboBox {
+                        id:port1MaxPowerCombo
+                         model: ["27", "36", "45","60","100"]
+//                        textRole: "key"
+//                        model: ListModel {
+//                         id:model
+//                                ListElement { key: "27"; value: 27 }
+//                                ListElement { key: "36"; value: 36 }
+//                                ListElement { key: "45"; value: 45 }
+//                                ListElement { key: "60"; value: 60 }
+//                                ListElement { key: "100"; value: 100 }
+//                            }
+                        anchors.left:port1MaxPowerText.right
                         anchors.leftMargin: 10
-                        anchors.verticalCenter: maxPowerText.verticalCenter
-                        color:"white"//"#838484"
-                        placeholderText:"7"
-                        verticalAlignment: TextInput.AlignTop
+                        anchors.verticalCenter: port1MaxPowerText.verticalCenter
                         font.family: "helvetica"
                         font.pointSize: 12
                         height:15
                         width:30
+
+                        //this is used by the PopUp to determine what font to use
+                        delegate: ItemDelegate {
+                                width: port1MaxPowerCombo.width
+                                height:15
+                                contentItem: Text {
+                                    text: modelData
+                                    color: highlighted? "#D8D8D8" :"black"
+                                    font: port2MaxPowerCombo.font
+                                    elide: Text.ElideRight
+                                    verticalAlignment: Text.AlignVCenter
+                                }
+                                onClicked:{
+                                    //here's where a click on a new selection should be handled
+                                    console.log("clicked:", modelData)
+                                }
+
+                                highlighted: port1MaxPowerCombo.highlightedIndex === index
+                            }
+
+//                        indicator: Canvas {
+//                                id: canvas
+//                                x: port1MaxPowerCombo.width /*- width*/ - port1MaxPowerCombo.rightPadding
+//                                y: port1MaxPowerCombo.topPadding + (port1MaxPowerCombo.availableHeight - height) / 2
+//                                width: 12
+//                                height: 8
+//                                contextType: "2d"
+
+//                                Connections {
+//                                    target: port1MaxPowerCombo
+//                                    onPressedChanged: canvas.requestPaint()
+//                                }
+
+//                                onPaint: {
+//                                    context.reset();
+//                                    context.moveTo(0, 0);
+//                                    context.lineTo(width, 0);
+//                                    context.lineTo(width / 2, height);
+//                                    context.closePath();
+//                                    context.fillStyle = "black";
+//                                    context.fill();
+//                                }
+//                            }
+
                         background: Rectangle {
                                 implicitWidth: 15
                                 implicitHeight: 10
-                                color: "#838484"//"#33FFFFFF"
+                                color: "#838484"
                                 border.color: "#838484"
                             }
+
+                        contentItem: Text {
+                                leftPadding: 0
+                                rightPadding: port1MaxPowerCombo.indicator.width + port1MaxPowerCombo.spacing
+
+                                text: port1MaxPowerCombo.displayText
+                                font: port1MaxPowerCombo.font
+                                color: port1MaxPowerCombo.pressed ? "#17a81a" : "#D8D8D8"
+                                horizontalAlignment: Text.AlignLeft
+                                verticalAlignment: Text.AlignVCenter
+                                elide: Text.ElideRight
+                            }
+
+                        popup: Popup {
+                            y: port1MaxPowerCombo.height - 1
+                            width: port1MaxPowerCombo.width *2
+                            implicitHeight: contentItem.implicitHeight
+                            padding: 1
+                            font.family: "helvetica"
+                            font.pointSize: 12
+                            //color: "#D8D8D8"
+
+                            contentItem: ListView {
+                                clip: true
+                                implicitHeight: contentHeight
+                                model: port1MaxPowerCombo.popup.visible ? port1MaxPowerCombo.delegateModel : null
+                                currentIndex: port1MaxPowerCombo.highlightedIndex
+
+                                ScrollIndicator.vertical: ScrollIndicator { }
+                            }
+
+                            background: Rectangle {
+                                color: "#838484"
+                                border.color: "#838484"
+                            }
+                        }
                     }
                     Text{
-                        id:maxPowerUnitText
+                        id:port1MaxPowerUnitText
                         text:"W"
                         font.family: "helvetica"
                         font.pointSize: 12
                         color: "#D8D8D8"
-                        anchors.left:maxPowerTextInput.right
+                        anchors.left:port1MaxPowerCombo.right
                         anchors.leftMargin: 5
-                        anchors.verticalCenter: maxPowerText.verticalCenter
+                        anchors.verticalCenter: port1MaxPowerText.verticalCenter
 
                     }
 
@@ -800,7 +944,7 @@ Rectangle {
                         color: "#D8D8D8"
                         anchors.right:parent.right
                         anchors.rightMargin: parent.width*.6
-                        anchors.top: maxPowerText.bottom
+                        anchors.top: port1MaxPowerText.bottom
                         anchors.topMargin: 10
                     }
                     TextField{
@@ -1620,36 +1764,127 @@ Rectangle {
                         anchors.top: port2VoltageCompensationText.bottom
                         anchors.topMargin: 10
                     }
-                    TextField{
-                        id:port2MaxPowerTextInput
+
+                    ComboBox {
+                        id:port2MaxPowerCombo
+                         model: ["27", "36", "45","60","100"]
+//                        textRole: "key"
+//                        model: ListModel {
+//                         id:model
+//                                ListElement { key: "27"; value: 27 }
+//                                ListElement { key: "36"; value: 36 }
+//                                ListElement { key: "45"; value: 45 }
+//                                ListElement { key: "60"; value: 60 }
+//                                ListElement { key: "100"; value: 100 }
+//                            }
                         anchors.left:port2MaxPowerText.right
                         anchors.leftMargin: 10
                         anchors.verticalCenter: port2MaxPowerText.verticalCenter
-                        color:"white"//"#838484"
-                        placeholderText:"7"
-                        verticalAlignment: TextInput.AlignTop
                         font.family: "helvetica"
                         font.pointSize: 12
                         height:15
                         width:30
+
+                        //this is used by the PopUp to determine what font to use
+                        delegate: ItemDelegate {
+                                width: port2MaxPowerCombo.width
+                                height:15
+                                contentItem: Text {
+                                    text: modelData
+                                    color: highlighted? "#D8D8D8" :"black"
+                                    font: port2MaxPowerCombo.font
+                                    elide: Text.ElideRight
+                                    verticalAlignment: Text.AlignVCenter
+                                }
+                                onClicked:{
+                                    //here's where a click on a new selection should be handled
+                                    console.log("clicked:", modelData)
+                                }
+
+                                highlighted: port2MaxPowerCombo.highlightedIndex === index
+                            }
+
+//                        indicator: Canvas {
+//                                id: canvas
+//                                x: port2MaxPowerCombo.width /*- width*/ - port2MaxPowerCombo.rightPadding
+//                                y: port2MaxPowerCombo.topPadding + (port2MaxPowerCombo.availableHeight - height) / 2
+//                                width: 12
+//                                height: 8
+//                                contextType: "2d"
+
+//                                Connections {
+//                                    target: port2MaxPowerCombo
+//                                    onPressedChanged: canvas.requestPaint()
+//                                }
+
+//                                onPaint: {
+//                                    context.reset();
+//                                    context.moveTo(0, 0);
+//                                    context.lineTo(width, 0);
+//                                    context.lineTo(width / 2, height);
+//                                    context.closePath();
+//                                    context.fillStyle = "black";
+//                                    context.fill();
+//                                }
+//                            }
+
                         background: Rectangle {
                                 implicitWidth: 15
                                 implicitHeight: 10
-                                color: "#838484"//"#33FFFFFF"
+                                color: "#838484"
                                 border.color: "#838484"
                             }
+
+                        contentItem: Text {
+                                leftPadding: 0
+                                rightPadding: port2MaxPowerCombo.indicator.width + port2MaxPowerCombo.spacing
+
+                                text: port2MaxPowerCombo.displayText
+                                font: port2MaxPowerCombo.font
+                                color: port2MaxPowerCombo.pressed ? "#17a81a" : "#D8D8D8"
+                                horizontalAlignment: Text.AlignLeft
+                                verticalAlignment: Text.AlignVCenter
+                                elide: Text.ElideRight
+                            }
+
+                        popup: Popup {
+                            y: port2MaxPowerCombo.height - 1
+                            width: port2MaxPowerCombo.width *2
+                            implicitHeight: contentItem.implicitHeight
+                            padding: 1
+                            font.family: "helvetica"
+                            font.pointSize: 12
+                            //color: "#D8D8D8"
+
+                            contentItem: ListView {
+                                clip: true
+                                implicitHeight: contentHeight
+                                model: port2MaxPowerCombo.popup.visible ? port2MaxPowerCombo.delegateModel : null
+                                currentIndex: port2MaxPowerCombo.highlightedIndex
+
+                                ScrollIndicator.vertical: ScrollIndicator { }
+                            }
+
+                            background: Rectangle {
+                                color: "#838484"
+                                border.color: "#838484"
+                            }
+                        }
                     }
+
                     Text{
                         id:port2MaxPowerUnitText
                         text:"W"
                         font.family: "helvetica"
                         font.pointSize: 12
                         color: "#D8D8D8"
-                        anchors.left:port2MaxPowerTextInput.right
+                        anchors.left:port2MaxPowerCombo.right
                         anchors.leftMargin: 5
                         anchors.verticalCenter: port2MaxPowerText.verticalCenter
 
                     }
+
+
 
                     Text{
                         id:port2MaxCurrentText
