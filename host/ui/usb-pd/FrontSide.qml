@@ -14,8 +14,7 @@ Rectangle {
         height: 44
         anchors.left: parent.left
         anchors.right: parent.right
-        //color:(stack.currentItem.objectName == "boardLayout") ? "white" :"black"
-        color:"white"
+        color:(stack.currentItem.objectName == "boardLayout") ? "white" :"black"
         visible: false
 
         RowLayout {
@@ -23,10 +22,22 @@ Rectangle {
             ToolButton {
                 id: settingsToolButton
                 //icon.source:(stack.currentItem.objectName == "boardLayout")? "./images/icons/settingsIcon.svg":"./images/icons/settingsIconWhite.svg"
-                icon.source:"./images/icons/settingsIconWhite.svg"
+                //icon.source:"./images/icons/settingsIconWhite.svg"
                 onClicked: settingsMenu.open()
                 opacity:.5
                 z:2
+
+                Image{
+                    anchors.left:parent.left
+                    anchors.leftMargin: 10
+                    anchors.top:parent.top
+                    anchors.topMargin:10
+                    anchors.right:parent.right
+                    anchors.rightMargin: 10
+                    anchors.bottom:parent.bottom
+                    anchors.bottomMargin: 10
+                    source:(stack.currentItem.objectName == "boardLayout")? "./images/icons/settingsIcon.svg":"./images/icons/settingsIconWhite.svg"
+                }
 
                 Menu{
                     id:settingsMenu
