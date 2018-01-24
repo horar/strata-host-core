@@ -14,16 +14,16 @@ Rectangle {
         height: 44
         anchors.left: parent.left
         anchors.right: parent.right
-        color:(stack.currentItem.objectName == "boardLayout") ? "white" :"black"
-        //color:"black"
+        //color:(stack.currentItem.objectName == "boardLayout") ? "white" :"black"
+        color:"white"
         visible: false
 
         RowLayout {
             anchors.fill:parent
             ToolButton {
                 id: settingsToolButton
-                icon.source:(stack.currentItem.objectName == "boardLayout")? "./images/icons/settingsIcon.svg":"./images/icons/settingsIconWhite.svg"
-                //icon.source:"./images/icons/settingsIconWhite.svg"
+                //icon.source:(stack.currentItem.objectName == "boardLayout")? "./images/icons/settingsIcon.svg":"./images/icons/settingsIconWhite.svg"
+                icon.source:"./images/icons/settingsIconWhite.svg"
                 onClicked: settingsMenu.open()
                 opacity:.5
                 z:2
