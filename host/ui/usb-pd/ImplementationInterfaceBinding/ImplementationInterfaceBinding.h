@@ -11,10 +11,12 @@
 #include <QStringList>
 #include <QString>
 #include <QJsonArray>
+#include <string>
 #include <thread>
+#include <map>
+#include <functional>
 #include <stdlib.h>
-#include "../../../include/HostControllerClient.hpp"
-#include "DocumentManager.h"
+#include "../../../include/HostControllerClient.hpp"  // TODO [ian] FIX THIS ... locally referenced files
 
 // To simulate the data
 #define BOARD_DATA_SIMULATION 0
@@ -34,6 +36,8 @@ struct platform_Ports {
 
 
 //void *simulateVoltageNotificationsThread(void *);
+
+typedef std::function<void(QJsonObject)> DataSourceHandler; // data source handler accepting QJsonObject
 
 class ImplementationInterfaceBinding : public QObject
 {
@@ -138,13 +142,18 @@ private:
     bool platformState, usbCPort1State, usbCPort2State;
     float inputVoltage;
     bool registrationSuccessful;
-    DocumentManager *document_manager_;
     bool notification_thread_running_;
     float port1Current,port2Current;
     // For load board data simulation only
     float targetVoltage;
+
+    //       data source, data source handler
+    std::map<std::string, DataSourceHandler > data_source_handlers_;
+
 public:
-    hcc::HostControllerClient *hcc_object;
+    Spyglass::HostControllerClient *hcc_object;
+
+    bool registerDataSourceHandler(std::string source, DataSourceHandler handler);
 
 };
 
