@@ -221,6 +221,21 @@ Rectangle {
                                     color: "white"
                                 }
                             }
+                            onToggled: {
+                                //toggle enablement of the input limiting controls
+                                startLimitingText.enabled = inputLimitingSwitch.checked
+                                startLimitingVoltageTextInput.enabled = inputLimitingSwitch.checked
+                                startLimitingUnitText.enabled = inputLimitingSwitch.checked
+                                startLimitingVoltageTextInput.enabled = inputLimitingSwitch.checked
+                                startLimitingUnitText.enabled = inputLimitingSwitch.checked
+                                outputLimitText.enabled = inputLimitingSwitch.checked
+                                outputLimitTextInput.enabled = inputLimitingSwitch.checked
+                                outputLimitUnitText.enabled = inputLimitingSwitch.checked
+                                minimumInputVoltageText.enabled = inputLimitingSwitch.checked
+                                minimumInputTextInput.enabled = inputLimitingSwitch.checked
+                                minimumInputUnitText.enabled = inputLimitingSwitch.checked
+                                minimumInputVoltageSlider.enabled = inputLimitingSwitch.checked
+                            }
                         }
 
                         Text{
@@ -237,7 +252,7 @@ Rectangle {
 
                         }
                         TextField{
-                            id:limitingVoltageTextInput
+                            id:startLimitingVoltageTextInput
                             anchors.left:startLimitingText.right
                             anchors.leftMargin: 10
                             anchors.verticalCenter: startLimitingText.verticalCenter
@@ -248,7 +263,6 @@ Rectangle {
                             font.pointSize: 12
                             height:15
                             width:30
-                            validator: DoubleValidator{bottom: 5.0; top: 32.0;}
                             background: Rectangle {
                                     implicitWidth: 15
                                     implicitHeight: 10
@@ -256,7 +270,14 @@ Rectangle {
                                     border.color: "#838484"
                                 }
                             onEditingFinished: {
-                                console.log ("user set value for start limiting:", limitingVoltageTextInput.text)
+                                //keep the values in the correct range
+                                if (startLimitingVoltageTextInput.text >32){
+                                    startLimitingVoltageTextInput.text = 32
+                                }
+                                else if (startLimitingVoltageTextInput.text <5){
+                                    startLimitingVoltageTextInput.text = 5
+                                }
+                                console.log ("user set value for start limiting:", startLimitingVoltageTextInput.text)
                             }
                         }
                         Text{
@@ -266,7 +287,7 @@ Rectangle {
                             font.pointSize: 12
                             //horizontalAlignment: Text.AlignRight
                             color: "#D8D8D8"
-                            anchors.left:limitingVoltageTextInput.right
+                            anchors.left:startLimitingVoltageTextInput.right
                             anchors.leftMargin: 5
                             anchors.verticalCenter: startLimitingText.verticalCenter
 
@@ -296,7 +317,6 @@ Rectangle {
                             font.pointSize: 12
                             height:15
                             width:30
-                            //validator: DoubleValidator{bottom: 5.0; top: 32.0;}
                             background: Rectangle {
                                     implicitWidth: 15
                                     implicitHeight: 10
@@ -304,8 +324,12 @@ Rectangle {
                                     border.color: "#838484"
                                 }
                             onEditingFinished: {
+                                //keep the values in the correct range
                                 if (outputLimitTextInput.text >32){
                                     outputLimitTextInput.text = 32
+                                }
+                                else if (outputLimitTextInput.text <5){
+                                    outputLimitTextInput.text = 5
                                 }
 
                                 console.log ("user set value for output limiting:", outputLimitTextInput.text)
@@ -325,7 +349,7 @@ Rectangle {
                         }
 
                         Text{
-                            id:minimumInputTempText
+                            id:minimumInputVoltageText
                             text:"Minimum input voltage:"
                             font.family: "helvetica"
                             font.pointSize: 12
@@ -338,16 +362,17 @@ Rectangle {
                         }
                         Label{
                             id:minimumInputTextInput
-                            anchors.left:minimumInputTempText.right
+                            anchors.left:minimumInputVoltageText.right
                             anchors.leftMargin: 10
-                            anchors.verticalCenter: minimumInputTempText.verticalCenter
+                            anchors.verticalCenter: minimumInputVoltageText.verticalCenter
+                            anchors.verticalCenterOffset: 2
                             color:"white"
                             text:minimumInputVoltageSlider.value
                             verticalAlignment: TextInput.AlignTop
                             font.family: "helvetica"
                             font.pointSize: 12
                             height:15
-                            width:30
+                            width:20
                         }
                         Text{
                             id:minimumInputUnitText
@@ -357,7 +382,7 @@ Rectangle {
                             color: "#D8D8D8"
                             anchors.left:minimumInputTextInput.right
                             anchors.leftMargin: 5
-                            anchors.verticalCenter: minimumInputTempText.verticalCenter
+                            anchors.verticalCenter: minimumInputVoltageText.verticalCenter
 
                         }
                         Slider{
@@ -366,7 +391,7 @@ Rectangle {
                             anchors.leftMargin: 5
                             anchors.right:parent.right
                             anchors.rightMargin: 10
-                            anchors.verticalCenter: minimumInputTempText.verticalCenter
+                            anchors.verticalCenter: minimumInputVoltageText.verticalCenter
                             height:10
                             from: 5
                             to:32
@@ -469,6 +494,19 @@ Rectangle {
                                     color: "white"
                                 }
                             }
+                            onToggled: {
+                                //toggle enablement of the input limiting controls
+                                boardTemperatureText.enabled = temperatureLimitingSwitch.checked
+                                boardTemperatureTextInput.enabled = temperatureLimitingSwitch.checked
+                                boardTemperatureUnitText.enabled = temperatureLimitingSwitch.checked
+                                boardOutputLimitText.enabled = temperatureLimitingSwitch.checked
+                                boardOutputTextInput.enabled = temperatureLimitingSwitch.checked
+                                boardOutputUnitText.enabled = temperatureLimitingSwitch.checked
+                                faultTempText.enabled = temperatureLimitingSwitch.checked
+                                faultTempLabel.enabled = temperatureLimitingSwitch.checked
+                                faultTempUnitText.enabled = temperatureLimitingSwitch.checked
+                                faultTempSlider.enabled = temperatureLimitingSwitch.checked
+                            }
                         }
 
                         Text{
@@ -533,7 +571,7 @@ Rectangle {
                             anchors.leftMargin: 10
                             anchors.verticalCenter: boardOutputLimitText.verticalCenter
                             color:"white"//"#838484"
-                            placeholderText:"7"
+                            placeholderText:"5"
                             verticalAlignment: TextInput.AlignTop
                             font.family: "helvetica"
                             font.pointSize: 12
@@ -545,7 +583,18 @@ Rectangle {
                                     color: "#838484"//"#33FFFFFF"
                                     border.color: "#838484"
                                 }
+                            onEditingFinished: {
+                                //keep the values in the correct range
+                                if (boardOutputTextInput.text >32){
+                                    boardOutputTextInput.text = 32
+                                }
+                                else if (boardOutputTextInput.text <5){
+                                    boardOutputTextInput.text = 5
+                                }
+                                console.log ("user set value for start limiting:", limitingVoltageTextInput.text)
+                            }
                         }
+
                         Text{
                             id:boardOutputUnitText
                             text:"W"
@@ -570,34 +619,83 @@ Rectangle {
                             anchors.top: boardOutputLimitText.bottom
                             anchors.topMargin: 10
                         }
-                        TextField{
-                            id:faultTempTextInput
+
+                        Label{
+                            id:faultTempLabel
                             anchors.left:faultTempText.right
                             anchors.leftMargin: 10
                             anchors.verticalCenter: faultTempText.verticalCenter
-                            color:"white"//"#838484"
-                            placeholderText:"7"
+                            anchors.verticalCenterOffset: 2
+                            color:"white"
+                            text:minimumInputVoltageSlider.value
                             verticalAlignment: TextInput.AlignTop
                             font.family: "helvetica"
                             font.pointSize: 12
                             height:15
-                            width:30
-                            background: Rectangle {
-                                    implicitWidth: 15
-                                    implicitHeight: 10
-                                    color: "#838484"//"#33FFFFFF"
-                                    border.color: "#838484"
-                                }
+                            width:20
                         }
+
+
                         Text{
                             id:faultTempUnitText
                             text:"°C"
                             font.family: "helvetica"
                             font.pointSize: 12
                             color: "#D8D8D8"
-                            anchors.left:faultTempTextInput.right
+                            anchors.left:faultTempLabel.right
                             anchors.leftMargin: 5
                             anchors.verticalCenter: faultTempText.verticalCenter
+
+                        }
+                        Slider{
+                            id:faultTempSlider
+                            anchors.left:faultTempUnitText.right
+                            anchors.leftMargin: 5
+                            anchors.right:parent.right
+                            anchors.rightMargin: 10
+                            anchors.verticalCenter: faultTempText.verticalCenter
+                            height:10
+                            from: 25
+                            to:100
+                            value:5
+                            stepSize: 0.0
+                            //the trail of the slider
+                            background: Rectangle {
+                                    x: faultTempSlider.leftPadding
+                                    y: faultTempSlider.topPadding + faultTempSlider.availableHeight / 2 - height / 2
+                                    implicitWidth: 200
+                                    implicitHeight: 2
+                                    width: faultTempSlider.availableWidth
+                                    height: implicitHeight
+                                    radius: 2
+                                    color: "#bdbebf"
+
+                                    //the portion of the trail to the left of the thumb
+                                    Rectangle {
+                                        width: faultTempSlider.visualPosition * parent.width
+                                        height: parent.height
+                                        color: "#0078D7"
+                                        radius: 2
+                                    }
+                                }
+
+                            //the thumb of the slider
+                                handle: Rectangle {
+                                    x: faultTempSlider.leftPadding + faultTempSlider.visualPosition * (faultTempSlider.availableWidth - width)
+                                    y: faultTempSlider.topPadding + faultTempSlider.availableHeight / 2 - height / 2
+                                    implicitWidth: 10
+                                    implicitHeight: 10
+                                    radius: 5
+                                    color: "black"
+                                    border.color: "#0078D7"
+                                    border.width: 2
+                                }
+
+                                onMoved: {
+                                    faultTempLabel.text = Math.round(faultTempSlider.value *10)/10
+
+                                }
+
 
                         }
                     }
