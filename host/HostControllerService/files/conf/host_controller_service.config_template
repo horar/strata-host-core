@@ -1,0 +1,18 @@
+//
+// Host Controller Service configuration file
+// Copy this file and rename extension to .config to write local changes
+// Do not check in your local file into git
+{
+    "host_controller_service": {
+        "command_address":      "tcp://*:5564",             // Hcs command address
+        "subscriber_address":   "tcp://*:5563",             // Client subscribe address
+        "simulated_platform":   false,                      // Simulate platform hw
+        "serial_port_number":   "/dev/tty.usbserial-DMXX"   // Linux/Mac: /dev/ttyXYZ, Windows: COM7, COM6
+    },
+
+    "database":{
+       "server":        "cobra.spyglass.tech/gw/development",   // Server to point to
+       "gateway_sync":  "cobra.spyglass.tech/gw/development",   // Sync to point to
+       "channels":      "*"                                     // Channels to filter; For testing;
+    }
+}
