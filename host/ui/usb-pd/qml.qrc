@@ -107,5 +107,21 @@
         <file>images/icons/pwmIcon.svg</file>
         <file>images/icons/serialIcon.svg</file>
         <file>images/icons/settingsIconWhite.svg</file>
+        <file>../../../../../BUBUinterface/PWMSwitch.qml</file>
+        <file>../../../../../BUBUinterface/SerialInterfaceI2C.qml</file>
+        <file>../../../../../BUBUinterface/SerialInterfaceSPI.qml</file>
+        <file>../../../../../BUBUinterface/SerialInterfaceUART.qml</file>
+        <file>../../../../../BUBUinterface/SGLeftSegmentedButton.qml</file>
+        <file>../../../../../BUBUinterface/SGMiddleSegmentedButton.qml</file>
+        <file>../../../../../BUBUinterface/SGRightSegmentedButton.qml</file>
+        <file>boardBringUp/SGLeftSegmentedButton.qml</file>
+        <file>boardBringUp/SGMiddleSegmentedButton.qml</file>
+        <file>boardBringUp/SGRightSegmentedButton.qml</file>
+        <file>boardBringUp/ButtonView.qml</file>
+        <file>boardBringUp/PWMSetting.qml</file>
+        <file>boardBringUp/GPIOSetting.qml</file>
+        <file>boardBringUp/PWMSwitch.qml</file>
+        <file>boardBringUp/CircularSpinner.qml</file>
+        <file>boardBringUp/lockIcon.png</file>
     </qresource>
 </RCC>

@@ -1,0 +1,326 @@
+import QtQuick 2.0
+import QtQuick 2.7
+import QtQuick.Layouts 1.3
+//import QtQuick.Controls 2.1
+import QtQuick.Controls 1.4
+import QtGraphicalEffects 1.0
+import QtQuick.Controls.Styles 1.4
+
+Rectangle{
+    id:two
+    width: 651
+    height: 757
+    color: "#babdb6"
+    //  opacity: 0
+    anchors.fill:parent
+
+    RowLayout {
+        id: rowLayout
+        x: -37
+        y: -43
+        width: 1220
+        height: 761
+    }
+
+    Rectangle {
+        id: rectangle
+        x: -10
+        y: 23
+        width: 200
+        height: 659
+        color: "#888a85"
+
+        Label {
+            id: label
+            x: 72
+            y: 26
+            text: qsTr("Bit")
+            font.pointSize: 15
+            font.bold: true
+        }
+
+        Label {
+            id: label4
+            x: 68
+            y: 96
+            text: qsTr("0")
+        }
+
+        Label {
+            id: label5
+            x: 68
+            y: 172
+            width: 17
+            height: 20
+            text: qsTr("1")
+        }
+
+        Label {
+            id: label6
+            x: 70
+            y: 242
+            width: 22
+            height: 20
+            text: qsTr("2")
+        }
+
+        Label {
+            id: label7
+            x: 72
+            y: 326
+            width: 17
+            height: 27
+            text: qsTr("3")
+        }
+
+        Label {
+            id: label2
+            x: 70
+            y: 394
+            width: 15
+            height: 20
+            text: qsTr("4")
+        }
+
+        Label {
+            id: label3
+            x: 76
+            y: 465
+            width: 9
+            height: 29
+            text: qsTr("5")
+        }
+
+        Label {
+            id: label1
+            x: 76
+            y: 532
+            width: 13
+            height: 20
+            text: qsTr("6")
+        }
+
+        Label {
+            id: label11
+            x: 78
+            y: 600
+            width: 9
+            height: 26
+            text: qsTr("7")
+        }
+    }
+
+    Rectangle {
+        id: rectangle4
+        x: 196
+        y: 23
+        width: 200
+        height: 659
+        color: "#888a85"
+        Label {
+            id: label8
+            x: 58
+            y: 25
+            text: qsTr("Enabled")
+            font.bold: true
+            font.pointSize: 13
+        }
+
+        PWMSwitch {
+            x: 108
+            y: 128
+            initialState: true
+        }
+
+        PWMSwitch {
+            x: 108
+            y: 348
+            initialState: true
+        }
+
+        PWMSwitch {
+            x: 108
+            y: 200
+            initialState: true
+        }
+        Rectangle {
+            id: rectangle5
+            x: 206
+            y: 0
+            width: 365
+            height: 659
+            color: "#888a85"
+            Label {
+                id: label9
+                x: 88
+                y: 27
+                text: qsTr("Frequency  (HZ)")
+                font.bold: true
+                font.pointSize: 13
+            }
+
+            TextField {
+                id: textField3
+                x: 120
+                y: 92
+                placeholderText: qsTr("10 Hz")
+            }
+
+            TextField {
+                id: textField4
+                x: 120
+                y: 164
+                placeholderText: qsTr("100HZ")
+            }
+
+            TextField {
+                id: textField5
+                x: 120
+                y: 240
+                placeholderText: qsTr("1000HZ")
+            }
+
+            TextField {
+                id: textField6
+                x: 125
+                y: 311
+                placeholderText: qsTr("10 Hz")
+            }
+
+            TextField {
+                id: textField7
+                x: 125
+                y: 383
+                placeholderText: qsTr("10 Hz")
+            }
+
+            TextField {
+                id: textField8
+                x: 125
+                y: 457
+                placeholderText: qsTr("10 Hz")
+            }
+
+            TextField {
+                id: textField9
+                x: 125
+                y: 527
+                placeholderText: qsTr("10 Hz")
+            }
+
+            TextField {
+                id: textField10
+                x: 125
+                y: 604
+                placeholderText: qsTr("10 Hz")
+            }
+        }
+
+        Rectangle {
+            id: rectangle6
+            x: 564
+            y: 0
+            width: 282
+            height: 659
+            color: "#888a85"
+            Label {
+                id: label10
+                x: -72
+                y: 29
+                text: qsTr("Duty Cycle")
+                font.bold: true
+                font.pointSize: 13
+            }
+
+            CircularSpinner {
+                x: -77
+                y: 65
+                width: 113
+                height: 64
+            }
+
+            CircularSpinner {
+                x: -76
+                y: 141
+                width: 104
+                height: 62
+            }
+
+            CircularSpinner {
+                x: -72
+                y: 219
+                width: 103
+                height: 60
+            }
+
+            CircularSpinner {
+                x: -69
+                y: 292
+                width: 97
+                height: 60
+            }
+
+            CircularSpinner {
+                x: -77
+                y: 369
+                width: 113
+                height: 60
+                from: -0.2
+            }
+
+            CircularSpinner {
+                x: -77
+                y: 443
+                width: 113
+                height: 60
+                from: -0.2
+            }
+
+            CircularSpinner {
+                x: -76
+                y: 520
+                width: 113
+                height: 59
+                from: -0.2
+            }
+
+            CircularSpinner {
+                x: -77
+                y: 592
+                width: 113
+                height: 59
+                from: -0.2
+            }
+        }
+
+        PWMSwitch {
+            x: 106
+            y: 273
+            initialState: true
+        }
+
+        PWMSwitch {
+            x: 109
+            y: 418
+            initialState: true
+        }
+
+        PWMSwitch {
+            x: 112
+            y: 496
+            initialState: true
+        }
+
+        PWMSwitch {
+            x: 113
+            y: 564
+            initialState: true
+        }
+
+        PWMSwitch {
+            x: 112
+            y: 631
+            initialState: true
+        }
+    }
+}
