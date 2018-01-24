@@ -145,7 +145,6 @@ void callbackServiceHandler(evutil_socket_t fd ,short what, void* hostP) {
     //        "type":"documents"
     //    }
     // }
-
     Document service_command;
     if (service_command.Parse(message.message.c_str()).HasParseError()) {
         cout << "ERROR: json parse error!\n";
@@ -161,7 +160,6 @@ void callbackServiceHandler(evutil_socket_t fd ,short what, void* hostP) {
         }
     }
     else {
-
         // forward message to platform
         if (!obj->simulation_) {
             success = host->platform->sendNotification(message,host->hcs);
@@ -212,7 +210,7 @@ void HostControllerService::callbackPlatformHandler(void* hostP) {
     Connector::messageProperty message;
     if(!simulation_){
        sp_new_event_set(&ev);
-	     sp_add_port_events(ev, platform_socket_, SP_EVENT_RX_READY);
+	   sp_add_port_events(ev, platform_socket_, SP_EVENT_RX_READY);
     }
 
     while(1) {
@@ -221,11 +219,6 @@ void HostControllerService::callbackPlatformHandler(void* hostP) {
       if (!message.message.empty()) {
           platformConnect = true;
       }
-
-      string tempMessage = message.message;
-      // cout<< "received new line size "<<stringSize<<"   "<<message.message.size()<<endl;
-      // cout << "Emulator receive "<<message.message<<endl;
-
       istringstream iss(message.message);
       while ( getline( iss,message.message, '\n' ) ) {
           host->service->sendNotification(message,host->notify);

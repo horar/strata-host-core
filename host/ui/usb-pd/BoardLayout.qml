@@ -10,19 +10,24 @@ Rectangle {
     objectName: "boardLayout"
     property bool hardwareStatusChange: null
     property bool boardScreen: false
-//    property bool hardwareStatus:  {
 
-
-//        implementationInterfaceBinding.platformState
-//    }
     Connections {
         target: implementationInterfaceBinding
 
         onPlatformStateChanged: {
             var state = implementationInterfaceBinding.platformState;
-            if(state == false) {
+            if(state == false && boardScreen == true) {
                 stack.push([page, {immediate:false}]);
             }
+        }
+    }
+
+    onVisibleChildrenChanged: {
+        if(visible) {
+            boardScreen = true;
+        }
+        else {
+            boardScreen = false;
         }
     }
 
