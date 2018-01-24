@@ -106,5 +106,6 @@
         <file>images/icons/gpioIcon.svg</file>
         <file>images/icons/pwmIcon.svg</file>
         <file>images/icons/serialIcon.svg</file>
+        <file>images/icons/settingsIconWhite.svg</file>
     </qresource>
 </RCC>

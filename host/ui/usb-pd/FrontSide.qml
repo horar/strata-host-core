@@ -15,15 +15,19 @@ Rectangle {
         anchors.left: parent.left
         anchors.right: parent.right
         color:(stack.currentItem.objectName == "boardLayout") ? "white" :"black"
+        //color:"black"
         visible: false
 
         RowLayout {
             anchors.fill:parent
             ToolButton {
-                icon.source: "./images/icons/settingsIcon.svg"
+                id: settingsToolButton
+                icon.source:(stack.currentItem.objectName == "boardLayout")? "./images/icons/settingsIcon.svg":"./images/icons/settingsIconWhite.svg"
+                //icon.source:"./images/icons/settingsIconWhite.svg"
                 onClicked: settingsMenu.open()
                 opacity:.5
                 z:2
+
                 Menu{
                     id:settingsMenu
                     MenuItem{
@@ -62,6 +66,8 @@ Rectangle {
         //otherwise, pop off the current view, and show the advanced controls
         stack.pop({immediate:true})             //remove the standard controls
         stack.push(advanced, {immediate:true})  //push in the advanced controls
+        //switch to a white icon on a black background
+        //settingsToolButton.icon.source = "./images/icons/settingsIconWhite.svg"
         }
     }
 
