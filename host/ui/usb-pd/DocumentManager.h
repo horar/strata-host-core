@@ -17,6 +17,7 @@
 #include <QJsonDocument>
 #include <QMetaObject>
 #include <QQmlEngine>
+#include "ImplementationInterfaceBinding/ImplementationInterfaceBinding.h"
 
 // Note: adding document set
 
@@ -64,6 +65,7 @@ class DocumentManager : public QObject
 
 public:
     DocumentManager();
+    DocumentManager(ImplementationInterfaceBinding *implementationInterfaceBinding);
     explicit DocumentManager(QObject *parent);
     virtual ~DocumentManager();
 
@@ -77,26 +79,29 @@ public:
     bool updateDocuments(const QString set, const QList<QString> &documents);
 
 signals:
-  void schematicDocumentsChanged();
-  void assemblyDocumentsChanged();
-  void layoutDocumentsChanged();
-  void testReportDocumentsChanged();
-  void targetedDocumentsChanged();
+    void schematicDocumentsChanged();
+    void assemblyDocumentsChanged();
+    void layoutDocumentsChanged();
+    void testReportDocumentsChanged();
+    void targetedDocumentsChanged();
 
 private:
+    ImplementationInterfaceBinding *implInterfaceBinding_;
 
-  // Document Sets
-  DocumentSet schematic_documents_;
-  DocumentSet assembly_documents_;
-  DocumentSet layout_documents_;
-  DocumentSet test_report_documents_;
-  DocumentSet targeted_documents_;
+    void dataSourceHandler(QJsonObject);
 
-  std::map<QString, DocumentSetPtr> document_sets;
+    // Document Sets
+    DocumentSet schematic_documents_;
+    DocumentSet assembly_documents_;
+    DocumentSet layout_documents_;
+    DocumentSet test_report_documents_;
+    DocumentSet targeted_documents_;
 
-  DocumentSetPtr getDocumentSet(const QString &set);
+    std::map<QString, DocumentSetPtr> document_sets_;
 
-  void init();
+    DocumentSetPtr getDocumentSet(const QString &set);
+
+    void init();
 
 };
 

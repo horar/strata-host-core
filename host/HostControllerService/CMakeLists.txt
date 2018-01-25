@@ -47,6 +47,10 @@ set(SHARED_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../shared")
 set(CB_DIR "${NIMBUS_DIR}/couchbase-lite-core")
 set(CB_LIB_DIR "${CB_DIR}/build_cmake/unix")
 
+# Compiler definitions for file locations #
+# Schema json file
+add_definitions(-DNIMBUS_SCHEMA_PATH="${CMAKE_CURRENT_SOURCE_DIR}/../../cloud/nimbus_command_schema.json")
+
 # Add headers and Library for Nimbus
 include_directories(
 		include
@@ -84,6 +88,11 @@ if (CROSSCOMPILE)
     message("Using litecore at: ${litecore}")
     message("Using litecoreREST at: ${litecoreREST}")
     message("Using fleece at: ${fleece}")
+
+    # Overwrite definition for schema; Release backports look in the same folder
+    remove_definitions(-DNIMBUS_SCHEMA_PATH)
+    add_definitions(-DNIMBUS_SCHEMA_PATH="nimbus_command_schema.json")
+
 
 elseif (UNIX AND NOT APPLE AND NOT CROSSCOMPILE)
     #--- LINUX

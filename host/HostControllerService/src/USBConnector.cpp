@@ -48,45 +48,42 @@ Connector::messageProperty USBConnector::receive(void *HCS)
 
     // TODO : ian : this sooooooo needs to be cleaned up !
     char temp = '\0';
-    sp_wait(obj->ev, 0);
-    obj->error = sp_nonblocking_read(obj->platform_socket_,(void *)&temp,1);
+    while(temp != '\n') {
+        sp_wait(obj->ev, 0);
+        obj->error = sp_nonblocking_read(obj->platform_socket_,(void *)&temp,1);
 
-    #ifndef _WIN32
-    if(obj->error <= 0) {
-      cout << "error = " << obj->error << "\n";
-      cout << "Platform Disconnected " <<endl;
-      message.message="DISCONNECTED";
-      return message;
-    }
-    #else
-    if(obj->error <= -1) {
-        cout << "error = " << obj->error << "\n";
-        cout << "Platform Disconnected " <<endl;
-        message.message="DISCONNECTED";
-        return message;
-      }
-    if (obj->error == 0) {
-        Sleep(200);
-        message.message="";
-        return message;
-    }
-    #endif
+        #ifndef _WIN32
+        if(obj->error <= 0) {
+            cout << "error = " << obj->error << "\n";
+            cout << "Platform Disconnected " <<endl;
+            message.message="DISCONNECTED";
+            return message;
+        }
+        #else
+        if(obj->error <= -1) {
+            cout << "error = " << obj->error << "\n";
+            cout << "Platform Disconnected " <<endl;
+            message.message="DISCONNECTED";
+            return message;
+        }
+        if (obj->error == 0) {
+            Sleep(200);
+            message.message="";
+        }
+        #endif
 
-    if(temp !='\n') {
-      response.push_back(temp);
-      message.message="";
-      return message;
+        if(temp !='\n') {
+            response.push_back(temp);
+            message.message="";
+        }
     }
-    else {
-      if(!response.empty()) {
-          string new_string(response.begin(),response.end());
-          cout << "Received Message = " << new_string  << endl;
-          response.clear();
-          message.message = new_string;
-          return message;
-      }
+    if(!response.empty()) {
+        string new_string(response.begin(),response.end());
+        cout << "Received Message = " << new_string  << endl;
+        response.clear();
+        message.message = new_string;
+        return message;
     }
-    return message;
 }
 
 bool USBConnector::connectivitycheck(string address)
