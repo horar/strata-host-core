@@ -135,6 +135,7 @@ void callbackServiceHandler(evutil_socket_t fd ,short what, void* hostP) {
     if(!message.message.compare("DISCONNECTED")) {   // TODO [ian] why would a "platform" command be in "service" handler?
         cout << "Platform Disconnect detected " <<endl;
         event_base_loopbreak(host->base);
+        return;
     }
 
     // TODO FIXME [ian] no idea what verifyReceiveCommand is doing ... removing ...
@@ -404,10 +405,7 @@ connected_state HostControllerService::wait()
     hostP.base = base;
 
     thread t(&HostControllerService::callbackPlatformHandler,this,(void *)&hostP);
-
-    struct event *service = event_new(base, sockService ,
-                        EV_READ | EV_ET | EV_PERSIST ,
-                        callbackServiceHandler,(void *)&hostP);
+    struct event *service = event_new(base,sockService ,EV_READ | EV_ET | EV_PERSIST ,callbackServiceHandler,(void *)&hostP);
 
 	if (event_base_set(base,service) <0 ) {
         cout << "Event BASE SET SERVICE FAILED " << endl;

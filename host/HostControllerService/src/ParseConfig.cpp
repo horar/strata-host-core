@@ -49,7 +49,7 @@ ParseConfig::ParseConfig(std::string file) :
     else {
         rapidjson::Value array;
         array = hcs_config["serial_port_number"].GetArray();
-        for ( int i = 0; i < array.MemberCount(); i++)
+        for ( int i = 0; i < array.Size(); i++)
         {
             serial_ports_.push_back(array[i].GetString());
         }
