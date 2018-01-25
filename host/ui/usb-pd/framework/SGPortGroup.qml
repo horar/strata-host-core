@@ -11,6 +11,7 @@ Rectangle {
     property alias text: portTitle.text
     property int portNumber:0;
     property point theDialogStartPosition;
+    property bool inAdvancedMode : false;
 
     SequentialAnimation{
         id:messageAnimation
@@ -114,6 +115,7 @@ Rectangle {
             Layout.columnSpan: 2
             Layout.preferredWidth:grid.prefWidth(this)
             Layout.preferredHeight:grid.prefHeight(this)
+            color:"transparent"
 
             PropertyAnimation {
                 id: portEnter
@@ -171,7 +173,7 @@ Rectangle {
 
             Rectangle {
                 id: divider
-                color: "black"
+                color: (inAdvancedMode)?"white":"black"
                 width: portNameAndDivider.width/50; height:portNameAndDivider.height*.75
                 anchors{right:portNameAndDivider.right; top:portNameAndDivider.top; topMargin: portNameAndDivider.height/8 }
             }
@@ -186,6 +188,7 @@ Rectangle {
             Layout.preferredWidth  : grid.prefWidth(this)
             Layout.preferredHeight : grid.prefHeight(this)
             Layout.leftMargin: 10
+            color:"transparent"
 
 
             SGIconList {
@@ -205,7 +208,19 @@ Rectangle {
                 verticalAlignment: Text.AlignVCenter
                 horizontalAlignment:Text.AlignHCenter
                 font.family: "helvetica"
-                font.pointSize: (Qt.platform.os === "osx")? 24: 14
+                font.pointSize:{
+                    if (Qt.platform.os === "osx"){
+                        if (iconContainer.width/4 ==0){
+                           font.pointSize = 20
+                        }
+                        else{
+                        font.pointSize = iconContainer.width/4/*24*/
+                        }
+                    }
+                    else{
+                        font.pointSize= 14
+                    }
+                }
 
             }
         }
@@ -224,7 +239,7 @@ Rectangle {
             Rectangle {
                 id: usbJack
                 width:usbJackContainer.width/4; height:usbJackContainer.height/3
-                color: "black"
+                color: (inAdvancedMode)?"white":"black"
                 anchors {
                     verticalCenter: usbJackContainer.verticalCenter
                     right: usbJackContainer.right
