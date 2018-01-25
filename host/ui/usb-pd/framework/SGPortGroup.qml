@@ -174,8 +174,13 @@ Rectangle {
             Rectangle {
                 id: divider
                 color: (inAdvancedMode)?"white":"black"
-                width: portNameAndDivider.width/50; height:portNameAndDivider.height*.75
-                anchors{right:portNameAndDivider.right; top:portNameAndDivider.top; topMargin: portNameAndDivider.height/8 }
+                width: portNameAndDivider.width/50;
+                //height:portNameAndDivider.height*.75
+                anchors{right:portNameAndDivider.right;
+                    top:portNameAndDivider.top;
+                    topMargin: portNameAndDivider.height/4
+                    bottom:portNameAndDivider.bottom
+                    bottomMargin: portNameAndDivider.height/4}
             }
         }
 
@@ -214,7 +219,7 @@ Rectangle {
                            font.pointSize = 20
                         }
                         else{
-                        font.pointSize = iconContainer.width/4/*24*/
+                        font.pointSize = iconContainer.width/4
                         }
                     }
                     else{
