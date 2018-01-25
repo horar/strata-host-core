@@ -134,15 +134,15 @@ Rectangle {
     }
 
     Component.onCompleted:{
-        stack.push(page2, {immediate:true})
-        stack.push(page1, {immediate:true})
+        // Push the login screen first; We'll decide later what else needs to be shown
+        stack.push(cLoginScreen, {immediate:true})
     }
     Component {
-        id: page1
+        id: cLoginScreen
         SGLoginScreen { }
     }
     Component {
-        id: page2
+        id: cBoardLayout
         BoardLayout { }
     }
 

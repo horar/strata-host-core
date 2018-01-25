@@ -11,10 +11,13 @@
 #include <QStringList>
 #include <QString>
 #include <QJsonArray>
+#include <string>
 #include <thread>
+#include <map>
+#include <functional>
 #include <stdlib.h>
-#include "../../../include/HostControllerClient.hpp"
-#include "DocumentManager.h"
+#include "../../../include/HostControllerClient.hpp"  // TODO [ian] FIX THIS ... locally referenced files
+#include <QMap>
 
 // To simulate the data
 #define BOARD_DATA_SIMULATION 0
@@ -34,6 +37,8 @@ struct platform_Ports {
 
 
 //void *simulateVoltageNotificationsThread(void *);
+
+typedef std::function<void(QJsonObject)> DataSourceHandler; // data source handler accepting QJsonObject
 
 class ImplementationInterfaceBinding : public QObject
 {
@@ -56,7 +61,7 @@ class ImplementationInterfaceBinding : public QObject
     Q_PROPERTY(bool platformState READ getPlatformState NOTIFY platformStateChanged)
 
     //QProperty : Platform Id
-    Q_PROPERTY(QString Id READ getPlatformId NOTIFY platformIdChanged)
+    Q_PROPERTY(e_MappedPlatformId Id READ getPlatformId NOTIFY platformIdChanged)
 
     //QProperty : To know USB-PDp- Port Status
     Q_PROPERTY(bool usbCPort1State  NOTIFY usbCPortStateChanged)
@@ -68,6 +73,16 @@ class ImplementationInterfaceBinding : public QObject
     //Q_PROPERTY(bool usbcPort1 READ getUsbCPort1  NOTIFY usbCPort1StateChanged)
     //Q_PROPERTY(bool usbcPort2 READ getUsbCPort2  NOTIFY usbCPort2StateChanged)
 public:
+
+    // Enum for hardcode platforms;
+    enum e_MappedPlatformId
+    {
+        NONE = 0,
+        BUBU_INTERFACE,
+        USB_PD,
+    }PlatformNames;
+
+    Q_ENUM(e_MappedPlatformId)
 
     explicit ImplementationInterfaceBinding(QObject *parent = nullptr);
     virtual ~ImplementationInterfaceBinding();
@@ -88,7 +103,7 @@ public:
     bool getPlatformState();
     bool getUSBCPort1State();
     bool getUSBCPort2State();
-    QString getPlatformId();
+    e_MappedPlatformId getPlatformId();
 
     QJsonObject convertQstringtoJson(const QString string);
     QStringList getJsonObjectKeys(const QJsonObject json_obj);
@@ -131,20 +146,31 @@ signals:
     void portPowerChanged(int port, float value);
     void portCurrentChanged(int port, float value);
     void portEfficencyChanged(int port, float input_power,float output_power);
+
 private:
     //Members private to class
-    platform_Ports Ports;
-    QString platformId;
-    bool platformState, usbCPort1State, usbCPort2State;
-    float inputVoltage;
-    bool registrationSuccessful;
-    DocumentManager *document_manager_;
-    bool notification_thread_running_;
-    float port1Current,port2Current;
+    platform_Ports      Ports;
+    e_MappedPlatformId  platformId;
+    QString             rawPlatformId;
+    bool                platformState,
+                        usbCPort1State,
+                        usbCPort2State;
+    float               inputVoltage;
+    bool                registrationSuccessful;
+    bool                notification_thread_running_;
+    float               port1Current,
+                        port2Current;
+
+    QMap<QString, e_MappedPlatformId> idMap;
+    std::map<std::string, DataSourceHandler > data_source_handlers_;
+
     // For load board data simulation only
-    float targetVoltage;
+    float               targetVoltage;
+
 public:
-    hcc::HostControllerClient *hcc_object;
+    Spyglass::HostControllerClient *hcc_object;
+
+    bool registerDataSourceHandler(std::string source, DataSourceHandler handler);
 
 };
 
