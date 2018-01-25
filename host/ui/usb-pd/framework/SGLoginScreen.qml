@@ -253,10 +253,6 @@ Rectangle {
                 if (usernameField.text=="" && passwordField.text==""){
                     failedLogin.start();
                 }
-//                else{
-//                    loginScreen = false;
-//                    login_detected = true;
-//                }
             }
         }
 
@@ -275,10 +271,6 @@ Rectangle {
                 if (usernameField.text=="" && passwordField.text==""){
                     failedLogin.start();
                 }
-//                else{
-//                    loginScreen = false;
-//                    login_detected = true;
-//                }
             }
         }
 
