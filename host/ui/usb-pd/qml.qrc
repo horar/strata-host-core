@@ -116,5 +116,7 @@
         <file>boardBringUp/PWMSwitch.qml</file>
         <file>boardBringUp/CircularSpinner.qml</file>
         <file>boardBringUp/lockIcon.png</file>
+        <file>AdvancedBoard.qml</file>
+        <file>images/borderWhite.svg</file>
     </qresource>
 </RCC>
