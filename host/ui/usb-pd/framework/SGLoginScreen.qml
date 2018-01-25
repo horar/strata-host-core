@@ -36,6 +36,7 @@ Rectangle {
                     break;
                 case ImplementationInterfaceBinding.BUBU_INTERFACE:
                     console.log("Displaying BU Bring Up");
+                    stack.push([boardBringUp, {immediate:false}]);
                     break;
                 case ImplementationInterfaceBinding.USB_PD:
                     console.log("Displaying USB-PD");
