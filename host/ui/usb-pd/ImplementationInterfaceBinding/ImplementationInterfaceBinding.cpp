@@ -94,10 +94,8 @@ void ImplementationInterfaceBinding::setRedriverLoss(float lossValue)
     cmdMessageObject.insert("payload",payloadObject);
     QJsonDocument doc(cmdMessageObject);
     QString strJson(doc.toJson(QJsonDocument::Compact));
-    //if(hcc_object->sendCmd(strJson.toStdString()))
-        //qDebug() << "Radio button send";
-    //else
-        //qDebug() << "Radio button send failed";
+    hcc_object->sendCmd(strJson.toStdString());
+
 }
 
 void ImplementationInterfaceBinding::setRedriverCount(int value)
@@ -110,10 +108,7 @@ void ImplementationInterfaceBinding::setRedriverCount(int value)
     cmdMessageObject.insert("payload",payloadObject);
     QJsonDocument doc(cmdMessageObject);
     QString strJson(doc.toJson(QJsonDocument::Compact));
-    //if(hcc_object->sendCmd(strJson.toStdString()))
-        //qDebug() << "Radio button send" << doc;
-    //else
-        //qDebug() << "Radio button send failed";
+    hcc_object->sendCmd(strJson.toStdString());
 }
 
 
@@ -235,8 +230,14 @@ bool ImplementationInterfaceBinding::registerDataSourceHandler(std::string sourc
     cmd.insert("db::cmd", "connect_data_source");
     payload.insert("type", source.c_str());
     cmd.insert("db::payload", payload);
+    QJsonDocument doc(cmd);
+    QString strJson(doc.toJson(QJsonDocument::Compact));
 
-    hcc_object->sendCmd(QString(QJsonDocument(cmd).toJson(QJsonDocument::Compact)).toStdString());
+//    if(hcc_object->sendCmd(QString(QJsonDocument(cmd).toJson(QJsonDocument::Compact)).toStdString()))
+    if(hcc_object->sendCmd(strJson.toStdString()))
+        qCritical() << "db command send success";
+    else
+        qCritical() << "db command send failure";
     return true;
 }
 
@@ -505,7 +506,9 @@ void ImplementationInterfaceBinding::clearBoardMetrics(int portNumber){
     emit portPowerChanged(portNumber,0);
     emit portCurrentChanged(portNumber,0);
     emit portTemperatureChanged(portNumber,0);
-//    emit portInputVoltageChanged(portNumber,0); // TODO FIXME [ian] why is this commented out?
+    // [prasanth] : commented the input voltage since the platform emits the voltage
+    // periodically in a different notification
+//    emit portInputVoltageChanged(portNumber,0);
 }
 
 

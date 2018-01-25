@@ -128,6 +128,10 @@ void callbackServiceHandler(evutil_socket_t fd ,short what, void* hostP) {
     }
 
     Connector::messageProperty message = host->service->receive(host->command);
+
+    // debugging printf
+    cout<<"[Service Recv:] "<<message.message<<endl;
+
     if(!message.message.compare("DISCONNECTED")) {   // TODO [ian] why would a "platform" command be in "service" handler?
         cout << "Platform Disconnect detected " <<endl;
         event_base_loopbreak(host->base);
@@ -177,7 +181,11 @@ void callbackServiceHandler(evutil_socket_t fd ,short what, void* hostP) {
         }
     }
 
+    // debugging printf
+    cout<<"[Service Recv:] reset ev. "<<message.message<<endl;
     send->getsockopt(ZMQ_EVENTS, &zmq_events, &zmq_events_size);
+    // debugging printf
+    cout<<"[Service Recv:] reset complete "<<message.message<<endl;
 }
 
 void heartBeatPeriodicEvent(evutil_socket_t fd ,short what, void* hostP) {
@@ -397,16 +405,9 @@ connected_state HostControllerService::wait()
 
     thread t(&HostControllerService::callbackPlatformHandler,this,(void *)&hostP);
 
-	//EV_ET says its edge triggered. EV_READ and EV_WRITE are both
-	//needed when event is added else it doesn't function properly
-	//As libevent READ and WRITE functionality is affected by edge triggered events.
-#ifndef __APPLE__
-        struct event *service = event_new(base, sockService,EV_READ | EV_ET | EV_PERSIST,callbackServiceHandler,(void*)&hostP);
-#else
-        struct event *service = event_new(base, sockService ,
+    struct event *service = event_new(base, sockService ,
                         EV_READ | EV_ET | EV_PERSIST ,
                         callbackServiceHandler,(void *)&hostP);
-#endif
 
 	if (event_base_set(base,service) <0 ) {
         cout << "Event BASE SET SERVICE FAILED " << endl;

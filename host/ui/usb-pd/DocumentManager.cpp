@@ -49,6 +49,10 @@ void DocumentManager::init()
 
     // register w/ Implementation Interface for Docoument Data Source Updates
     // TODO [ian] change to "document" on cloud update
+
+    struct timespec ts = { 1, 0};//(1000 % 1000) * 1000 * 1000 };
+    nanosleep(&ts, NULL);
+
     implInterfaceBinding_->registerDataSourceHandler("document",
                                                      bind(&DocumentManager::dataSourceHandler,
                                                           this, placeholders::_1));
