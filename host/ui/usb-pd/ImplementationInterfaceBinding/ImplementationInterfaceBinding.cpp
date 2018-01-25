@@ -31,9 +31,9 @@ ImplementationInterfaceBinding::ImplementationInterfaceBinding(QObject *parent) 
     platformState = false;
     platformId = NONE;
 #else
-    // Debug builds should not need a platform board; assume usb-pd
+    // Debug builds should not need a platform board
    platformState = true;
-   platformId = USB_PD;
+   platformId = NONE;
 #endif
 
     notification_thread_= std::thread(&ImplementationInterfaceBinding::notificationsThreadHandle,this);
@@ -175,7 +175,12 @@ float ImplementationInterfaceBinding::getpowerPort0() {
  * \brief Remap the ugly id to a beautiful and simple integer
  */
 ImplementationInterfaceBinding::e_MappedPlatformId ImplementationInterfaceBinding::getPlatformId() {
+#ifdef QT_NO_DEBUG
     e_MappedPlatformId mappedId = NONE;
+#else
+    // For testing purposes show USB-PD as default
+    e_MappedPlatformId mappedId = USB_PD;
+#endif
 
     // Initialize the mapping since we can't statically initialize it.
     if (idMap.size() == 0) {

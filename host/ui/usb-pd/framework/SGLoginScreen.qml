@@ -58,7 +58,8 @@ Rectangle {
                 var platform_detected = implementationInterfaceBinding.platformState;
 
                 // If disconnected; Show detecting screen
-                if (!platform_detected){
+                if (!platform_detected && login_detected){
+                    // Clear all screens and load the login
                     stack.pop()
                 }
                 return platform_detected;

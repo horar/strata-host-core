@@ -6,8 +6,8 @@ import tech.spyglass.ImplementationInterfaceBinding 1.0
 import "framework"
 
 Rectangle {
-
-    onOpacityChanged: {
+    objectName: "boardLayout"
+    Component.onCompleted: {
         if (opacity == 1){
             rotateInfoIcon.start()
             }

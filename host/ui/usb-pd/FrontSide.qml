@@ -16,7 +16,6 @@ Rectangle {
         anchors.right: parent.right
         color:(stack.currentItem.objectName == "boardLayout") ? "white" :"black"
         visible: false
-
         RowLayout {
             anchors.fill:parent
             ToolButton {
@@ -68,17 +67,14 @@ Rectangle {
     //  showAdvancedControls()
     //-------------------------------------------------------------------------
     function showAdvancedControls(){
-
         if (stack.currentItem.objectName == "advancedControls"){
             //if advanced controls are already showing, do nothing
             console.log("advanced controls already showing")
         }
         else if (stack.currentItem.objectName == "boardLayout"){
-        //otherwise, pop off the current view, and show the advanced controls
-        stack.pop({immediate:true})             //remove the standard controls
-        stack.push(advanced, {immediate:true})  //push in the advanced controls
-        //switch to a white icon on a black background
-        //settingsToolButton.icon.source = "./images/icons/settingsIconWhite.svg"
+            //otherwise, pop off the current view, and show the advanced controls
+            stack.pop({immediate:true})             //remove the standard controls
+            stack.push(advanced, {immediate:true})  //push in the advanced controls
         }
     }
 
@@ -92,9 +88,9 @@ Rectangle {
             console.log("standard controls already showing")
         }
         else if (stack.currentItem.objectName == "advancedControls"){
-        //otherwise, pop off the current view, and show the standard controls
-        stack.pop({immediate:true})             //remove the advanced controls
-        stack.push(page2, {immediate:true})  //push in the advanced controls
+            //otherwise, pop off the current view, and show the standard controls
+            stack.pop({immediate:true})             //remove the advanced controls
+            stack.push(cBoardLayout, {immediate:true})  //push in the advanced controls
         }
     }
 
@@ -103,19 +99,8 @@ Rectangle {
     //-------------------------------------------------------------------------
     function showBoardBringupControls(){
 
-        stack.pop({immediate:true})             //remove the advanced controls
+        stack.pop({immediate:true})                 //remove the advanced controls
         stack.push(boardBringUp, {immediate:true})  //push in the advanced controls
-
-
-//        if (stack.currentItem.objectName == "boardLayout"){
-//            //if advanced controls are already showing, do nothing
-//            console.log("standard controls already showing")
-//        }
-//        else if (stack.currentItem.objectName == "advancedControls"){
-//        //otherwise, pop off the current view, and show the standard controls
-//        stack.pop({immediate:true})             //remove the advanced controls
-//        stack.push(page2, {immediate:true})  //push in the advanced controls
-//        }
     }
 
     Component {
