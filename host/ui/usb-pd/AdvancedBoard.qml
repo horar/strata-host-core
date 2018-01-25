@@ -228,15 +228,17 @@ Rectangle {
             Layout.rowSpan: 1
             Layout.preferredWidth : deviceGrid.devicePrefWidth(this)
             Layout.preferredHeight : deviceGrid.devicePrefHeight(this)
-            color: "black"
+            color: "transparent"
             Image {
                 id: plugOutline
-                width:parent.width * 1.5
-                height:parent.height/5
+                width:parent.width*.8
+                height:parent.height/7
                 anchors{ verticalCenter: parent.verticalCenter;
-                    horizontalCenter: parent.horizontalCenter ;
+                    right:parent.right
+                    rightMargin: -17
+                    //horizontalCenter: parent.horizontalCenter ;
                 }
-                source: "./images/LeftPowerPlug.png"
+                source: "./images/leftPowerPlugWhite.svg"
             }
 
             DropShadow {
@@ -251,10 +253,13 @@ Rectangle {
 
             Text {
                 id: inputPlugName
-                text: device.inputVoltage .toFixed(1) + "V"// + device.portCurrent.toFixed(1)+ " A"
+                text: device.inputVoltage .toFixed(1) + "V"
                 width: inputPlugColumn.width-2
                 horizontalAlignment: Text.AlignRight
-                anchors {verticalCenter: parent.verticalCenter}
+                anchors {verticalCenter: parent.verticalCenter
+                        right:parent.right
+                        rightMargin: -10
+                        }
                 font{ family: "Helvetica"
                 }
                 font.pointSize: 9
