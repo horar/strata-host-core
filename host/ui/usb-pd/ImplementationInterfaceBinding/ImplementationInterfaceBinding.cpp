@@ -233,7 +233,6 @@ bool ImplementationInterfaceBinding::registerDataSourceHandler(std::string sourc
     QJsonDocument doc(cmd);
     QString strJson(doc.toJson(QJsonDocument::Compact));
 
-//    if(hcc_object->sendCmd(QString(QJsonDocument(cmd).toJson(QJsonDocument::Compact)).toStdString()))
     if(hcc_object->sendCmd(strJson.toStdString()))
         qCritical() << "db command send success";
     else
