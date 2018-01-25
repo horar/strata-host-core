@@ -119,5 +119,8 @@
         <file>AdvancedBoard.qml</file>
         <file>images/borderWhite.svg</file>
         <file>images/leftPowerPlugWhite.svg</file>
+        <file>boardBringUp/SerialInterfaceI2C.qml</file>
+        <file>boardBringUp/SerialInterfaceSPI.qml</file>
+        <file>boardBringUp/SerialInterfaceUART.qml</file>
     </qresource>
 </RCC>

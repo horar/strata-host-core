@@ -32,7 +32,6 @@ Rectangle {
         Component.onCompleted: {
             currentTab = createTab("buttonView.qml", contentRectangle);
             currentTab.opacity = 1.0;
-
             newTab = createTab("buttonView.qml",contentRectangle);
         }
 
