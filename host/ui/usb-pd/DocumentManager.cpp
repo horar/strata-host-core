@@ -9,6 +9,7 @@
 #include <QJsonObject>
 #include <QJsonArray>
 
+
 #include "DocumentManager.h"
 
 using namespace std;
@@ -47,12 +48,18 @@ void DocumentManager::init()
     document_sets_.emplace(make_pair(QString("test_report"), &test_report_documents_));
     document_sets_.emplace(make_pair(QString("targeted_content"), &targeted_documents_));
 
-    // register w/ Implementation Interface for Docoument Data Source Updates
-    // TODO [ian] change to "document" on cloud update
-
+    //  [prasanth] Adding this sleep since router socket in HCS gets hangup on sending both
+    // platform id request and the database register command without this delay
+#ifdef Q_OS_WIN
+    qDebug()<<"before wait";
+    Sleep(1000);
+#else
     struct timespec ts = { 1, 0};
     nanosleep(&ts, NULL);
+#endif
 
+    // register w/ Implementation Interface for Docoument Data Source Updates
+    // TODO [ian] change to "document" on cloud update
     implInterfaceBinding_->registerDataSourceHandler("document",
                                                      bind(&DocumentManager::dataSourceHandler,
                                                           this, placeholders::_1));
