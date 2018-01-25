@@ -45,7 +45,7 @@ HostControllerService::HostControllerService(std::string configuration_file)
     // assigning the simulation state
     simulation_ = configuration_->IsSimulatedPlatform();
     // assigning the serial port number
-    serial_port_number_ = configuration_->GetSerialPortNumber();
+    serial_port_list_ = configuration_->GetSerialPorts();
     // creating stream socket for non zmq tcp sockets and only for simulation
     if(simulation_) {
      simulationQemuSocket = new zmq::socket_t(*context,ZMQ_STREAM);
@@ -263,27 +263,34 @@ void HostControllerService::callbackPlatformHandler(void* hostP) {
  */
 bool HostControllerService::openPlatformSocket()
 {
-    if(serial_port_number_.empty()) {
-        cout << "ERROR: Please add serial port number in config file  !!!"<< serial_port_number_<<endl;
+    static bool outputPortError = true;
+
+    if(serial_port_list_.empty()) {
+        cout << "ERROR: Please add serial port number in config file  !!!"<< endl;
         return false;
     }
-    error = sp_get_port_by_name(serial_port_number_.c_str(),&platform_socket_);
-    if(error == SP_OK) {
-        error = sp_open(platform_socket_, SP_MODE_READ_WRITE);
-        if(error == SP_OK) {
-            cout << "Serial PORT OPEN SUCCESS "<<endl;
-            Connector::messageProperty message;
-            message.message="{\"notification\":{\"value\":\"platform_connection_change_notification\",\"payload\":{\"status\":\"connected\"}}}";
-            hostP.service->sendNotification(message,hostP.notify);
-            return true;
-        } else {
-            cout << "SERIAL PORT OPEN FAILED "<<endl;
-            return false;
+    for (auto port : serial_port_list_) {
+        error = sp_get_port_by_name(port.c_str(), &platform_socket_);
+        if (error == SP_OK) {
+            error = sp_open(platform_socket_, SP_MODE_READ_WRITE);
+            if (error == SP_OK) {
+                cout << "SERIAL PORT OPEN SUCCESS: " << port << endl;
+                Connector::messageProperty message;
+                message.message = "{\"notification\":{\"value\":\"platform_connection_change_notification\",\"payload\":{\"status\":\"connected\"}}}";
+                hostP.service->sendNotification(message, hostP.notify);
+
+                // Reset our flag to output errors when we disconnect
+                outputPortError = true;
+                return true;
+            }
         }
-    } else {
-        cout << "ERROR: Invalid Serial Port Number. Please check the config file  !!!"<<endl;
-        return false;
+        else if(outputPortError) {
+            cout << "ERROR: Invalid Serial Port Number " << port <<" Please check the config file  !!!" << endl;
+        }
     }
+    // Only output the error once
+    outputPortError = false;
+    return false;
 }
 
 /*!
