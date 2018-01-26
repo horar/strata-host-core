@@ -92,6 +92,10 @@ public:
     Q_INVOKABLE void setRedriverLoss(float lossValue);
     Q_INVOKABLE void setRedriverCount(int value);
     Q_INVOKABLE bool getUSBCPortState(int port_number);
+
+    // To set the input voltage limit in platform
+    Q_INVOKABLE void setInputVoltageLimiting(int value);
+
     std::thread notification_thread_;
     void notificationsThreadHandle();
 //Getter invoked when GUI tries to get the data

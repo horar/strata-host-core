@@ -126,6 +126,22 @@ bool ImplementationInterfaceBinding::getUSBCPortState(int port_number)
     return false;
 }
 
+void ImplementationInterfaceBinding::setInputVoltageLimiting(int value)
+{
+    QJsonObject cmdMessageObject;
+    cmdMessageObject.insert("cmd", "request_set_minimum_voltage");
+    QJsonObject payloadObject;
+    payloadObject.insert("value", value);
+    qDebug() << "voltage limit "<<value;
+    cmdMessageObject.insert("payload",payloadObject);
+    QJsonDocument doc(cmdMessageObject);
+    QString strJson(doc.toJson(QJsonDocument::Compact));
+    if(hcc_object->sendCmd(strJson.toStdString()))
+        qDebug() << "Radio button send with value" << doc;
+    else
+        qDebug() << "Radio button send failed";
+}
+
 /*!
  * Getter and Setter methods, used for retriving/writing something to/from platform
  * Retreived/set value is indidcated by function name.

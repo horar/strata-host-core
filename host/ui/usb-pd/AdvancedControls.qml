@@ -283,6 +283,7 @@ Rectangle {
                                 else if (startLimitingVoltageTextInput.text <5){
                                     startLimitingVoltageTextInput.text = 5
                                 }
+                                implementationInterfaceBinding.setInputVoltageLimiting(parseInt(startLimitingVoltageTextInput.text))
                                 console.log ("user set value for start limiting:", startLimitingVoltageTextInput.text)
                             }
                         }
