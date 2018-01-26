@@ -253,10 +253,6 @@ Rectangle {
                 if (usernameField.text=="" && passwordField.text==""){
                     failedLogin.start();
                 }
-                else{
-                    loginScreen = false;
-                    login_detected = true;
-                }
             }
         }
 
@@ -274,10 +270,6 @@ Rectangle {
             Keys.onReturnPressed:{
                 if (usernameField.text=="" && passwordField.text==""){
                     failedLogin.start();
-                }
-                else{
-                    loginScreen = false;
-                    login_detected = true;
                 }
             }
         }
