@@ -116,5 +116,11 @@
         <file>boardBringUp/PWMSwitch.qml</file>
         <file>boardBringUp/CircularSpinner.qml</file>
         <file>boardBringUp/lockIcon.png</file>
+        <file>AdvancedBoard.qml</file>
+        <file>images/borderWhite.svg</file>
+        <file>images/leftPowerPlugWhite.svg</file>
+        <file>boardBringUp/SerialInterfaceI2C.qml</file>
+        <file>boardBringUp/SerialInterfaceSPI.qml</file>
+        <file>boardBringUp/SerialInterfaceUART.qml</file>
     </qresource>
 </RCC>

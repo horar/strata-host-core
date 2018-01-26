@@ -2617,14 +2617,15 @@ Rectangle {
             Layout.fillWidth:true
             Layout.fillHeight:true
             z:1     //set the z level higher so connectors go behind the board
-            Board{}
+            color:"black"
+            AdvancedBoard{}
 
             Text{
                 id:usbPDText
                 text:"USB-PD Dual"
                 font.family: "helvetica"
                 font.pointSize: 36
-                color:"grey"
+                color:"#D8D8D8"
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.top: parent.top
                 anchors.topMargin: parent.height/20
@@ -2633,7 +2634,7 @@ Rectangle {
                 text:"Advanced Controls"
                 font.family: "helvetica"
                 font.pointSize: 24
-                color:"grey"
+                color:"#D8D8D8"
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.top: usbPDText.bottom
                 anchors.topMargin: usbPDText.height/4

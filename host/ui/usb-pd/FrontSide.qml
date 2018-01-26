@@ -20,8 +20,6 @@ Rectangle {
             anchors.fill:parent
             ToolButton {
                 id: settingsToolButton
-                //icon.source:(stack.currentItem.objectName == "boardLayout")? "./images/icons/settingsIcon.svg":"./images/icons/settingsIconWhite.svg"
-                //icon.source:"./images/icons/settingsIconWhite.svg"
                 onClicked: settingsMenu.open()
                 opacity:.5
                 z:2
@@ -98,7 +96,6 @@ Rectangle {
     //  showBoardBringupControls()
     //-------------------------------------------------------------------------
     function showBoardBringupControls(){
-
         stack.pop({immediate:true})                 //remove the advanced controls
         stack.push(boardBringUp, {immediate:true})  //push in the advanced controls
     }

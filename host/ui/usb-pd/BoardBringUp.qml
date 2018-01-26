@@ -38,7 +38,7 @@ Rectangle {
     ButtonGroup {
         id:boardCommunicationsGroup
         onClicked: {
-            console.log("button clicked is ",button.objectName)
+            //console.log("button clicked is ",button.objectName)
             if (button.objectName == "serialBoardBringUpButton"){
                 newTab = serialView
                 }
@@ -132,11 +132,13 @@ Rectangle {
         Gpio{
             id:gpioView
             anchors.fill:parent
+            opacity:0
             }
 
         Pwm{
             id:pwmView
             anchors.fill:parent
+            opacity:0
         }
 
         ScrollIndicator.vertical: ScrollIndicator { }
