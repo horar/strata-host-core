@@ -190,7 +190,7 @@ Rectangle {
             Layout.columnSpan: 2
             Layout.row: 0
             Layout.rowSpan: 1
-            Layout.preferredWidth  : grid.prefWidth(this)
+            Layout.preferredWidth  : grid.prefWidth(this)
             Layout.preferredHeight : grid.prefHeight(this)
             Layout.leftMargin: 10
             color:"transparent"
@@ -223,7 +223,7 @@ Rectangle {
                         }
                     }
                     else{
-                        font.pointSize= 14
+                        font.pointSize= 12
                     }
                 }
 

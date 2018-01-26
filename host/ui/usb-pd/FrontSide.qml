@@ -42,19 +42,19 @@ Rectangle {
                         text: qsTr("Standard Controls")
                         onClicked: showStandardControls()
                         font.family: "helvetica"
-                        font.pointSize: 14
+                        font.pointSize: (Qt.platform.os === "osx") ? 14  : 10;
                     }
                     MenuItem{
                         text: qsTr("Advanced Controls")
                         onClicked: showAdvancedControls()
                         font.family: "helvetica"
-                        font.pointSize: 14
+                        font.pointSize: (Qt.platform.os === "osx") ? 14  : 10;
                     }
                     MenuItem{
                         text: qsTr("Board Bring-up")
                         onClicked: showBoardBringupControls()
                         font.family: "helvetica"
-                        font.pointSize: 14
+                        font.pointSize: (Qt.platform.os === "osx") ? 14  : 10;
                     }
                 }
             }
