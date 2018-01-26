@@ -7,9 +7,11 @@ import "framework"
 
 Rectangle {
 
-    property int windowsSmallFontSize: (Qt.platform.os === "osx") ? 10  : 10;
-    property int windowsMediumFontSize: (Qt.platform.os === "osx") ? 15  : 15;
-    property int windowsLargeFontSize: (Qt.platform.os === "osx") ? 20  : 20;
+    property int smallFontSize: (Qt.platform.os === "osx") ? 12  : 10;
+    property int mediumFontSize: (Qt.platform.os === "osx") ? 15  : 12;
+    property int largeFontSize: (Qt.platform.os === "osx") ? 24  : 20;
+    property int extraLargeFontSize: (Qt.platform.os === "osx") ? 36  : 24;
+
 
     objectName: "advancedControls"
 
@@ -153,12 +155,12 @@ Rectangle {
                         id: boardSettingsLabel
                         text: "Board Settings"
                         font.family: "Helvetica"
-                        font.pointSize: 15
+                        font.pointSize: mediumFontSize
                         color: "#D8D8D8"
                         anchors.left:parent.left
                         anchors.top:parent.top
-                        anchors.leftMargin: 20//parent.width/20
-                        anchors.topMargin: 20//parent.height/20
+                        anchors.leftMargin: 20
+                        anchors.topMargin: 20
                     }
 
                     Rectangle{
@@ -188,7 +190,7 @@ Rectangle {
                             id:inputLimitingText
                             text:"Input Limiting"
                             font.family: "helvetica"
-                            font.pointSize: 15
+                            font.pointSize: mediumFontSize
                             color: "#D8D8D8"
                             anchors.left: parent.left
                             anchors.leftMargin: 5
@@ -246,7 +248,7 @@ Rectangle {
                             id:startLimitingText
                             text:"Start limiting at:"
                             font.family: "helvetica"
-                            font.pointSize: 12
+                            font.pointSize: smallFontSize
                             horizontalAlignment: Text.AlignRight
                             color: "#D8D8D8"
                             anchors.right:parent.right
@@ -264,7 +266,7 @@ Rectangle {
                             placeholderText:"5"
                             verticalAlignment: TextInput.AlignTop
                             font.family: "helvetica"
-                            font.pointSize: 12
+                            font.pointSize: smallFontSize
                             height:15
                             width:30
                             background: Rectangle {
@@ -288,7 +290,7 @@ Rectangle {
                             id:startLimitingUnitText
                             text:"V"
                             font.family: "helvetica"
-                            font.pointSize: 12
+                            font.pointSize: smallFontSize
                             //horizontalAlignment: Text.AlignRight
                             color: "#D8D8D8"
                             anchors.left:startLimitingVoltageTextInput.right
@@ -301,7 +303,7 @@ Rectangle {
                             id:outputLimitText
                             text:"Limit Board Output to:"
                             font.family: "helvetica"
-                            font.pointSize: 12
+                            font.pointSize: smallFontSize
                             horizontalAlignment: Text.AlignRight
                             color: "#D8D8D8"
                             anchors.right:parent.right
@@ -318,7 +320,7 @@ Rectangle {
                             placeholderText:"7"
                             verticalAlignment: TextInput.AlignTop
                             font.family: "helvetica"
-                            font.pointSize: 12
+                            font.pointSize: smallFontSize
                             height:15
                             width:30
                             background: Rectangle {
@@ -343,7 +345,7 @@ Rectangle {
                             id:outputLimitUnitText
                             text:"W"
                             font.family: "helvetica"
-                            font.pointSize: 12
+                            font.pointSize: smallFontSize
                             //horizontalAlignment: Text.AlignRight
                             color: "#D8D8D8"
                             anchors.left:outputLimitTextInput.right
@@ -356,7 +358,7 @@ Rectangle {
                             id:minimumInputVoltageText
                             text:"Minimum input voltage:"
                             font.family: "helvetica"
-                            font.pointSize: 12
+                            font.pointSize: smallFontSize
                             horizontalAlignment: Text.AlignRight
                             color: "#D8D8D8"
                             anchors.right:parent.right
@@ -374,7 +376,7 @@ Rectangle {
                             text:minimumInputVoltageSlider.value
                             verticalAlignment: TextInput.AlignTop
                             font.family: "helvetica"
-                            font.pointSize: 12
+                            font.pointSize: smallFontSize
                             height:15
                             width:20
                         }
@@ -382,7 +384,7 @@ Rectangle {
                             id:minimumInputUnitText
                             text:"V"
                             font.family: "helvetica"
-                            font.pointSize: 12
+                            font.pointSize: smallFontSize
                             color: "#D8D8D8"
                             anchors.left:minimumInputTextInput.right
                             anchors.leftMargin: 5
@@ -461,7 +463,7 @@ Rectangle {
                             id:temperatureLimitingText
                             text:"Temperature Limiting"
                             font.family: "helvetica"
-                            font.pointSize: 15
+                            font.pointSize: mediumFontSize
                             color: "#D8D8D8"
                             anchors.left: parent.left
                             anchors.leftMargin: 5
@@ -517,7 +519,7 @@ Rectangle {
                             id:boardTemperatureText
                             text:"When board temperature reaches:"
                             font.family: "helvetica"
-                            font.pointSize: 12
+                            font.pointSize: smallFontSize
                             horizontalAlignment: Text.AlignRight
                             color: "#D8D8D8"
                             anchors.right:parent.right
@@ -535,7 +537,7 @@ Rectangle {
                             placeholderText:"70"
                             verticalAlignment: TextInput.AlignTop
                             font.family: "helvetica"
-                            font.pointSize: 12
+                            font.pointSize: smallFontSize
                             height:15
                             width:30
                             background: Rectangle {
@@ -549,7 +551,7 @@ Rectangle {
                             id:boardTemperatureUnitText
                             text:"°C"
                             font.family: "helvetica"
-                            font.pointSize: 12
+                            font.pointSize: smallFontSize
                             color: "#D8D8D8"
                             anchors.left:boardTemperatureTextInput.right
                             anchors.leftMargin: 5
@@ -561,7 +563,7 @@ Rectangle {
                             id:boardOutputLimitText
                             text:"Limit Board Output to:"
                             font.family: "helvetica"
-                            font.pointSize: 12
+                            font.pointSize: smallFontSize
                             horizontalAlignment: Text.AlignRight
                             color: "#D8D8D8"
                             anchors.right:parent.right
@@ -578,7 +580,7 @@ Rectangle {
                             placeholderText:"5"
                             verticalAlignment: TextInput.AlignTop
                             font.family: "helvetica"
-                            font.pointSize: 12
+                            font.pointSize: smallFontSize
                             height:15
                             width:30
                             background: Rectangle {
@@ -603,7 +605,7 @@ Rectangle {
                             id:boardOutputUnitText
                             text:"W"
                             font.family: "helvetica"
-                            font.pointSize: 12
+                            font.pointSize: smallFontSize
                             color: "#D8D8D8"
                             anchors.left:boardOutputTextInput.right
                             anchors.leftMargin: 5
@@ -615,7 +617,7 @@ Rectangle {
                             id:faultTempText
                             text:"Fault when temperature reaches:"
                             font.family: "helvetica"
-                            font.pointSize: 12
+                            font.pointSize: smallFontSize
                             horizontalAlignment: Text.AlignRight
                             color: "#D8D8D8"
                             anchors.right:parent.right
@@ -634,7 +636,7 @@ Rectangle {
                             text:minimumInputVoltageSlider.value
                             verticalAlignment: TextInput.AlignTop
                             font.family: "helvetica"
-                            font.pointSize: 12
+                            font.pointSize: smallFontSize
                             height:15
                             width:20
                         }
@@ -644,7 +646,7 @@ Rectangle {
                             id:faultTempUnitText
                             text:"°C"
                             font.family: "helvetica"
-                            font.pointSize: 12
+                            font.pointSize: smallFontSize
                             color: "#D8D8D8"
                             anchors.left:faultTempLabel.right
                             anchors.leftMargin: 5
@@ -800,7 +802,7 @@ Rectangle {
                         id: port1SettingsLabel
                         text: "Port 1 Settings"
                         font.family: "Helvetica"
-                        font.pointSize: 15
+                        font.pointSize: mediumFontSize
                         color: "#D8D8D8"
                         anchors.left:parent.left
                         anchors.top:parent.top
@@ -824,7 +826,7 @@ Rectangle {
                         id:port1CableCompensationText
                         text:"Cable compensation step:"
                         font.family: "helvetica"
-                        font.pointSize: 12
+                        font.pointSize: smallFontSize
                         horizontalAlignment: Text.AlignRight
                         color: "#D8D8D8"
                         anchors.right:parent.right
@@ -842,7 +844,7 @@ Rectangle {
                         placeholderText:"70"
                         verticalAlignment: TextInput.AlignTop
                         font.family: "helvetica"
-                        font.pointSize: 12
+                        font.pointSize: smallFontSize
                         height:15
                         width:30
                         background: Rectangle {
@@ -856,7 +858,7 @@ Rectangle {
                         id:port1CableCompensationUnitText
                         text:"A"
                         font.family: "helvetica"
-                        font.pointSize: 12
+                        font.pointSize: smallFontSize
                         color: "#D8D8D8"
                         anchors.left:port1CableCompensationTextInput.right
                         anchors.leftMargin: 5
@@ -868,7 +870,7 @@ Rectangle {
                         id:voltageCompensationText
                         text:"Voltage compensation:"
                         font.family: "helvetica"
-                        font.pointSize: 12
+                        font.pointSize: smallFontSize
                         horizontalAlignment: Text.AlignRight
                         color: "#D8D8D8"
                         anchors.right:parent.right
@@ -885,7 +887,7 @@ Rectangle {
                         placeholderText:"7"
                         verticalAlignment: TextInput.AlignTop
                         font.family: "helvetica"
-                        font.pointSize: 12
+                        font.pointSize: smallFontSize
                         height:15
                         width:30
                         background: Rectangle {
@@ -899,7 +901,7 @@ Rectangle {
                         id:voltageCompensationUnitText
                         text:"mV"
                         font.family: "helvetica"
-                        font.pointSize: 12
+                        font.pointSize: smallFontSize
                         color: "#D8D8D8"
                         anchors.left:voltageCompensationTextInput.right
                         anchors.leftMargin: 5
@@ -911,7 +913,7 @@ Rectangle {
                         id:port1MaxPowerText
                         text:"Maximum power output:"
                         font.family: "helvetica"
-                        font.pointSize: 12
+                        font.pointSize: smallFontSize
                         horizontalAlignment: Text.AlignRight
                         color: "#D8D8D8"
                         anchors.right:parent.right
@@ -935,7 +937,7 @@ Rectangle {
                         anchors.leftMargin: 10
                         anchors.verticalCenter: port1MaxPowerText.verticalCenter
                         font.family: "helvetica"
-                        font.pointSize: 12
+                        font.pointSize: smallFontSize
                         height:15
                         width:30
 
@@ -1007,7 +1009,7 @@ Rectangle {
                             implicitHeight: contentItem.implicitHeight
                             padding: 1
                             font.family: "helvetica"
-                            font.pointSize: 12
+                            font.pointSize: smallFontSize
                             //color: "#D8D8D8"
 
                             contentItem: ListView {
@@ -1029,7 +1031,7 @@ Rectangle {
                         id:port1MaxPowerUnitText
                         text:"W"
                         font.family: "helvetica"
-                        font.pointSize: 12
+                        font.pointSize: smallFontSize
                         color: "#D8D8D8"
                         anchors.left:port1MaxPowerCombo.right
                         anchors.leftMargin: 5
@@ -1041,7 +1043,7 @@ Rectangle {
                         id:maxCurrentText
                         text:"Maximum current:"
                         font.family: "helvetica"
-                        font.pointSize: 12
+                        font.pointSize: smallFontSize
                         horizontalAlignment: Text.AlignRight
                         color: "#D8D8D8"
                         anchors.right:parent.right
@@ -1058,7 +1060,7 @@ Rectangle {
                         placeholderText:"7"
                         verticalAlignment: TextInput.AlignTop
                         font.family: "helvetica"
-                        font.pointSize: 12
+                        font.pointSize: smallFontSize
                         height:15
                         width:30
                         background: Rectangle {
@@ -1072,7 +1074,7 @@ Rectangle {
                         id:maxCurrentUnitText
                         text:"A"
                         font.family: "helvetica"
-                        font.pointSize: 12
+                        font.pointSize: smallFontSize
                         color: "#D8D8D8"
                         anchors.left:maxCurrentTextInput.right
                         anchors.leftMargin: 5
@@ -1097,7 +1099,7 @@ Rectangle {
                             id:port1AdvertizedVoltagesLabel
                             text:"Advertized Voltages:"
                             font.family: "helvetica"
-                            font.pointSize: 12
+                            font.pointSize: smallFontSize
                             color: "#D8D8D8"
                             anchors.right:parent.right
                             anchors.rightMargin: parent.width*.6
@@ -1115,7 +1117,7 @@ Rectangle {
                             placeholderText:"5"
                             verticalAlignment: TextInput.AlignTop
                             font.family: "helvetica"
-                            font.pointSize: 12
+                            font.pointSize: smallFontSize
                             height:15
                             width:20
                             background: Rectangle {
@@ -1130,7 +1132,7 @@ Rectangle {
                             id:port1voltage1UnitText
                             text:"V"
                             font.family: "helvetica"
-                            font.pointSize: 12
+                            font.pointSize: smallFontSize
                             color: "#D8D8D8"
                             anchors.left:port1voltage1TextInput.right
                             anchors.leftMargin: 5
@@ -1194,7 +1196,7 @@ Rectangle {
                             placeholderText:"5"
                             verticalAlignment: TextInput.AlignTop
                             font.family: "helvetica"
-                            font.pointSize: 12
+                            font.pointSize: smallFontSize
                             height:15
                             width:20
                             background: Rectangle {
@@ -1209,7 +1211,7 @@ Rectangle {
                             id:port1voltage2UnitText
                             text:"V"
                             font.family: "helvetica"
-                            font.pointSize: 12
+                            font.pointSize: smallFontSize
                             color: "#D8D8D8"
                             anchors.left:port1voltage2TextInput.right
                             anchors.leftMargin: 5
@@ -1272,7 +1274,7 @@ Rectangle {
                             placeholderText:"5"
                             verticalAlignment: TextInput.AlignTop
                             font.family: "helvetica"
-                            font.pointSize: 12
+                            font.pointSize: smallFontSize
                             height:15
                             width:20
                             background: Rectangle {
@@ -1287,7 +1289,7 @@ Rectangle {
                             id:port1voltage3UnitText
                             text:"V"
                             font.family: "helvetica"
-                            font.pointSize: 12
+                            font.pointSize: smallFontSize
                             color: "#D8D8D8"
                             anchors.left:port1voltage3TextInput.right
                             anchors.leftMargin: 5
@@ -1350,7 +1352,7 @@ Rectangle {
                             placeholderText:"5"
                             verticalAlignment: TextInput.AlignTop
                             font.family: "helvetica"
-                            font.pointSize: 12
+                            font.pointSize: smallFontSize
                             height:15
                             width:20
                             background: Rectangle {
@@ -1365,7 +1367,7 @@ Rectangle {
                             id:port1voltage4UnitText
                             text:"V"
                             font.family: "helvetica"
-                            font.pointSize: 12
+                            font.pointSize: smallFontSize
                             color: "#D8D8D8"
                             anchors.left:port1voltage4TextInput.right
                             anchors.leftMargin: 5
@@ -1428,7 +1430,7 @@ Rectangle {
                             placeholderText:"5"
                             verticalAlignment: TextInput.AlignTop
                             font.family: "helvetica"
-                            font.pointSize: 12
+                            font.pointSize: smallFontSize
                             height:15
                             width:20
                             background: Rectangle {
@@ -1443,7 +1445,7 @@ Rectangle {
                             id:port1voltage5UnitText
                             text:"V"
                             font.family: "helvetica"
-                            font.pointSize: 12
+                            font.pointSize: smallFontSize
                             color: "#D8D8D8"
                             anchors.left:port1voltage5TextInput.right
                             anchors.leftMargin: 5
@@ -1506,7 +1508,7 @@ Rectangle {
                             placeholderText:"5"
                             verticalAlignment: TextInput.AlignTop
                             font.family: "helvetica"
-                            font.pointSize: 12
+                            font.pointSize: smallFontSize
                             height:15
                             width:20
                             background: Rectangle {
@@ -1521,7 +1523,7 @@ Rectangle {
                             id:port1voltage6UnitText
                             text:"V"
                             font.family: "helvetica"
-                            font.pointSize: 12
+                            font.pointSize: smallFontSize
                             color: "#D8D8D8"
                             anchors.left:port1voltage6TextInput.right
                             anchors.leftMargin: 5
@@ -1584,7 +1586,7 @@ Rectangle {
                             placeholderText:"5"
                             verticalAlignment: TextInput.AlignTop
                             font.family: "helvetica"
-                            font.pointSize: 12
+                            font.pointSize: smallFontSize
                             height:15
                             width:20
                             background: Rectangle {
@@ -1599,7 +1601,7 @@ Rectangle {
                             id:port1voltage7UnitText
                             text:"V"
                             font.family: "helvetica"
-                            font.pointSize: 12
+                            font.pointSize: smallFontSize
                             color: "#D8D8D8"
                             anchors.left:port1voltage7TextInput.right
                             anchors.leftMargin: 5
@@ -1747,7 +1749,7 @@ Rectangle {
                         id: port2SettingsLabel
                         text: "Port 2 Settings"
                         font.family: "Helvetica"
-                        font.pointSize: 15
+                        font.pointSize: mediumFontSize
                         color: "#D8D8D8"
                         anchors.left:parent.left
                         anchors.top:parent.top
@@ -1771,7 +1773,7 @@ Rectangle {
                         id:port2CableCompensationText
                         text:"Cable compensation step:"
                         font.family: "helvetica"
-                        font.pointSize: 12
+                        font.pointSize: smallFontSize
                         horizontalAlignment: Text.AlignRight
                         color: "#D8D8D8"
                         anchors.right:parent.right
@@ -1789,7 +1791,7 @@ Rectangle {
                         placeholderText:"70"
                         verticalAlignment: TextInput.AlignTop
                         font.family: "helvetica"
-                        font.pointSize: 12
+                        font.pointSize: smallFontSize
                         height:15
                         width:30
                         background: Rectangle {
@@ -1803,7 +1805,7 @@ Rectangle {
                         id:port2CableCompensationUnitText
                         text:"A"
                         font.family: "helvetica"
-                        font.pointSize: 12
+                        font.pointSize: smallFontSize
                         color: "#D8D8D8"
                         anchors.left:port2CableCompensationTextInput.right
                         anchors.leftMargin: 5
@@ -1815,7 +1817,7 @@ Rectangle {
                         id:port2VoltageCompensationText
                         text:"Voltage compensation:"
                         font.family: "helvetica"
-                        font.pointSize: 12
+                        font.pointSize: smallFontSize
                         horizontalAlignment: Text.AlignRight
                         color: "#D8D8D8"
                         anchors.right:parent.right
@@ -1832,7 +1834,7 @@ Rectangle {
                         placeholderText:"7"
                         verticalAlignment: TextInput.AlignTop
                         font.family: "helvetica"
-                        font.pointSize: 12
+                        font.pointSize: smallFontSize
                         height:15
                         width:30
                         background: Rectangle {
@@ -1846,7 +1848,7 @@ Rectangle {
                         id:port2VoltageCompensationUnitText
                         text:"mV"
                         font.family: "helvetica"
-                        font.pointSize: 12
+                        font.pointSize: smallFontSize
                         color: "#D8D8D8"
                         anchors.left:port2VoltageCompensationTextInput.right
                         anchors.leftMargin: 5
@@ -1858,7 +1860,7 @@ Rectangle {
                         id:port2MaxPowerText
                         text:"Maximum power output:"
                         font.family: "helvetica"
-                        font.pointSize: 12
+                        font.pointSize: smallFontSize
                         horizontalAlignment: Text.AlignRight
                         color: "#D8D8D8"
                         anchors.right:parent.right
@@ -1883,7 +1885,7 @@ Rectangle {
                         anchors.leftMargin: 10
                         anchors.verticalCenter: port2MaxPowerText.verticalCenter
                         font.family: "helvetica"
-                        font.pointSize: 12
+                        font.pointSize: smallFontSize
                         height:15
                         width:30
 
@@ -1955,7 +1957,7 @@ Rectangle {
                             implicitHeight: contentItem.implicitHeight
                             padding: 1
                             font.family: "helvetica"
-                            font.pointSize: 12
+                            font.pointSize: smallFontSize
                             //color: "#D8D8D8"
 
                             contentItem: ListView {
@@ -1978,7 +1980,7 @@ Rectangle {
                         id:port2MaxPowerUnitText
                         text:"W"
                         font.family: "helvetica"
-                        font.pointSize: 12
+                        font.pointSize: smallFontSize
                         color: "#D8D8D8"
                         anchors.left:port2MaxPowerCombo.right
                         anchors.leftMargin: 5
@@ -1992,7 +1994,7 @@ Rectangle {
                         id:port2MaxCurrentText
                         text:"Maximum current:"
                         font.family: "helvetica"
-                        font.pointSize: 12
+                        font.pointSize: smallFontSize
                         horizontalAlignment: Text.AlignRight
                         color: "#D8D8D8"
                         anchors.right:parent.right
@@ -2009,7 +2011,7 @@ Rectangle {
                         placeholderText:"7"
                         verticalAlignment: TextInput.AlignTop
                         font.family: "helvetica"
-                        font.pointSize: 12
+                        font.pointSize: smallFontSize
                         height:15
                         width:30
                         background: Rectangle {
@@ -2023,7 +2025,7 @@ Rectangle {
                         id:port2MaxCurrentUnitText
                         text:"A"
                         font.family: "helvetica"
-                        font.pointSize: 12
+                        font.pointSize: smallFontSize
                         color: "#D8D8D8"
                         anchors.left:port2MaxCurrentTextInput.right
                         anchors.leftMargin: 5
@@ -2048,7 +2050,7 @@ Rectangle {
                             id:port2AdvertizedVoltagesLabel
                             text:"Advertized Voltages:"
                             font.family: "helvetica"
-                            font.pointSize: 12
+                            font.pointSize: smallFontSize
                             color: "#D8D8D8"
                             anchors.right:parent.right
                             anchors.rightMargin: parent.width*.6
@@ -2066,7 +2068,7 @@ Rectangle {
                             placeholderText:"5"
                             verticalAlignment: TextInput.AlignTop
                             font.family: "helvetica"
-                            font.pointSize: 12
+                            font.pointSize: smallFontSize
                             height:15
                             width:20
                             background: Rectangle {
@@ -2081,7 +2083,7 @@ Rectangle {
                             id:port2voltage1UnitText
                             text:"V"
                             font.family: "helvetica"
-                            font.pointSize: 12
+                            font.pointSize: smallFontSize
                             color: "#D8D8D8"
                             anchors.left:port2voltage1TextInput.right
                             anchors.leftMargin: 5
@@ -2145,7 +2147,7 @@ Rectangle {
                             placeholderText:"5"
                             verticalAlignment: TextInput.AlignTop
                             font.family: "helvetica"
-                            font.pointSize: 12
+                            font.pointSize: smallFontSize
                             height:15
                             width:20
                             background: Rectangle {
@@ -2160,7 +2162,7 @@ Rectangle {
                             id:port2voltage2UnitText
                             text:"V"
                             font.family: "helvetica"
-                            font.pointSize: 12
+                            font.pointSize: smallFontSize
                             color: "#D8D8D8"
                             anchors.left:port2voltage2TextInput.right
                             anchors.leftMargin: 5
@@ -2223,7 +2225,7 @@ Rectangle {
                             placeholderText:"5"
                             verticalAlignment: TextInput.AlignTop
                             font.family: "helvetica"
-                            font.pointSize: 12
+                            font.pointSize: smallFontSize
                             height:15
                             width:20
                             background: Rectangle {
@@ -2238,7 +2240,7 @@ Rectangle {
                             id:port2voltage3UnitText
                             text:"V"
                             font.family: "helvetica"
-                            font.pointSize: 12
+                            font.pointSize: smallFontSize
                             color: "#D8D8D8"
                             anchors.left:port2voltage3TextInput.right
                             anchors.leftMargin: 5
@@ -2301,7 +2303,7 @@ Rectangle {
                             placeholderText:"5"
                             verticalAlignment: TextInput.AlignTop
                             font.family: "helvetica"
-                            font.pointSize: 12
+                            font.pointSize: smallFontSize
                             height:15
                             width:20
                             background: Rectangle {
@@ -2316,7 +2318,7 @@ Rectangle {
                             id:port2voltage4UnitText
                             text:"V"
                             font.family: "helvetica"
-                            font.pointSize: 12
+                            font.pointSize: smallFontSize
                             color: "#D8D8D8"
                             anchors.left:port2voltage4TextInput.right
                             anchors.leftMargin: 5
@@ -2379,7 +2381,7 @@ Rectangle {
                             placeholderText:"5"
                             verticalAlignment: TextInput.AlignTop
                             font.family: "helvetica"
-                            font.pointSize: 12
+                            font.pointSize: smallFontSize
                             height:15
                             width:20
                             background: Rectangle {
@@ -2394,7 +2396,7 @@ Rectangle {
                             id:port2voltage5UnitText
                             text:"V"
                             font.family: "helvetica"
-                            font.pointSize: 12
+                            font.pointSize: smallFontSize
                             color: "#D8D8D8"
                             anchors.left:port2voltage5TextInput.right
                             anchors.leftMargin: 5
@@ -2457,7 +2459,7 @@ Rectangle {
                             placeholderText:"5"
                             verticalAlignment: TextInput.AlignTop
                             font.family: "helvetica"
-                            font.pointSize: 12
+                            font.pointSize: smallFontSize
                             height:15
                             width:20
                             background: Rectangle {
@@ -2472,7 +2474,7 @@ Rectangle {
                             id:port2voltage6UnitText
                             text:"V"
                             font.family: "helvetica"
-                            font.pointSize: 12
+                            font.pointSize: smallFontSize
                             color: "#D8D8D8"
                             anchors.left:port2voltage6TextInput.right
                             anchors.leftMargin: 5
@@ -2535,7 +2537,7 @@ Rectangle {
                             placeholderText:"5"
                             verticalAlignment: TextInput.AlignTop
                             font.family: "helvetica"
-                            font.pointSize: 12
+                            font.pointSize: smallFontSize
                             height:15
                             width:20
                             background: Rectangle {
@@ -2550,7 +2552,7 @@ Rectangle {
                             id:port2voltage7UnitText
                             text:"V"
                             font.family: "helvetica"
-                            font.pointSize: 12
+                            font.pointSize: smallFontSize
                             color: "#D8D8D8"
                             anchors.left:port2voltage7TextInput.right
                             anchors.leftMargin: 5
@@ -2628,7 +2630,7 @@ Rectangle {
                 id:usbPDText
                 text:"USB-PD Dual"
                 font.family: "helvetica"
-                font.pointSize: 36
+                font.pointSize: extraLargeFontSize
                 color:"#D8D8D8"
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.top: parent.top
@@ -2637,7 +2639,7 @@ Rectangle {
             Text{
                 text:"Advanced Controls"
                 font.family: "helvetica"
-                font.pointSize: 24
+                font.pointSize: largeFontSize
                 color:"#D8D8D8"
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.top: usbPDText.bottom
@@ -2701,7 +2703,7 @@ Rectangle {
                             text:"PORT 1 VOLTAGE AND CURRENT"
                             horizontalAlignment: Text.Center
                             font.family: "helvetica"
-                            font.pointSize: 12
+                            font.pointSize: smallFontSize
                             color:"#D8D8D8"
                             anchors.left:parent.left
                             anchors.right:parent.right
@@ -2742,7 +2744,7 @@ Rectangle {
                             text:"PORT 2 VOLTAGE AND CURRENT"
                             horizontalAlignment: Text.Center
                             font.family: "helvetica"
-                            font.pointSize: 12
+                            font.pointSize: smallFontSize
                             color:"#D8D8D8"
                             anchors.left:parent.left
                             anchors.right:parent.right
@@ -2784,7 +2786,7 @@ Rectangle {
                             text:"PORT 1 POWER"
                             horizontalAlignment: Text.Center
                             font.family: "helvetica"
-                            font.pointSize: 12
+                            font.pointSize: smallFontSize
                             color:"#D8D8D8"
                             anchors.left:parent.left
                             anchors.right:parent.right
@@ -2825,7 +2827,7 @@ Rectangle {
                             text:"PORT 2 POWER"
                             horizontalAlignment: Text.Center
                             font.family: "helvetica"
-                            font.pointSize: 12
+                            font.pointSize: smallFontSize
                             color:"#D8D8D8"
                             anchors.left:parent.left
                             anchors.right:parent.right
@@ -2866,7 +2868,7 @@ Rectangle {
                             text:"PORT 1 TEMPERATURE"
                             horizontalAlignment: Text.Center
                             font.family: "helvetica"
-                            font.pointSize: 12
+                            font.pointSize: smallFontSize
                             color:"#D8D8D8"
                             anchors.left:parent.left
                             anchors.right:parent.right
@@ -2908,7 +2910,7 @@ Rectangle {
                             text:"PORT 2 TEMPERATURE"
                             horizontalAlignment: Text.Center
                             font.family: "helvetica"
-                            font.pointSize: 12
+                            font.pointSize: smallFontSize
                             color:"#D8D8D8"
                             anchors.left:parent.left
                             anchors.right:parent.right
@@ -2957,7 +2959,7 @@ Rectangle {
                             id: activeFaultsLabel
                             text: "Active Faults"
                             font.family: "Helvetica"
-                            font.pointSize: 15
+                            font.pointSize: mediumFontSize
                             color: "#D8D8D8"
                             anchors.left:parent.left
                             anchors.top:parent.top
@@ -3005,7 +3007,7 @@ Rectangle {
                             id: faultHistoryLabel
                             text: "Fault History"
                             font.family: "Helvetica"
-                            font.pointSize: 15
+                            font.pointSize: mediumFontSize
                             color: "#D8D8D8"
                             anchors.left:parent.left
                             anchors.top:parent.top
@@ -3052,7 +3054,7 @@ Rectangle {
                             id: usbPDMessagesLabel
                             text: "USB-PD Messages"
                             font.family: "Helvetica"
-                            font.pointSize: 15
+                            font.pointSize: mediumFontSize
                             color: "#D8D8D8"
                             anchors.left:parent.left
                             anchors.top:parent.top
