@@ -3011,6 +3011,19 @@ Rectangle {
                            color:"#CCCCCC"
                         }
 
+                        Rectangle{
+                            id:activeFaultsListBackground
+                            anchors.left: parent.left
+                            anchors.leftMargin: parent.width/20
+                            anchors.right: parent.right
+                            anchors.rightMargin: parent.width/20
+                            anchors.top: activeFaultsSeparator.bottom
+                            anchors.topMargin: parent.height/20
+                            anchors.bottom:parent.bottom
+                            anchors.bottomMargin: parent.height/20
+                            color: "#2B2B2B"
+                        }
+
                         ListModel {
                             id:activeFaultsListModel
                             ListElement {
@@ -3030,34 +3043,15 @@ Rectangle {
                             anchors.bottomMargin: parent.height/20
 
                             model: activeFaultsListModel
+
                             delegate: Text {
                                 text: fault
                                 color: "orangered"
-                                font.pointSize: smallTextSize
+                                font.pointSize: smallFontSize
                             }
-<<<<<<< ours
-                            text: "Port 1 Temperature: 71°C"
-                            font.pointSize: smallFontSize
-                            color: "orangered"
-=======
->>>>>>> theirs
+
                         }
 
-//                        Label{
-//                            anchors.left: parent.left
-//                            anchors.leftMargin: parent.width/20
-//                            anchors.right: parent.right
-//                            anchors.rightMargin: parent.width/20
-//                            anchors.top: activeFaultsSeparator.bottom
-//                            anchors.topMargin: parent.height/20
-//                            anchors.bottom:parent.bottom
-//                            anchors.bottomMargin: parent.height/20
-//                            background: Rectangle {
-//                                color: "#2B2B2B"
-//                            }
-//                            text: "Port 1 Temperature: 71°C"
-//                            color: "orangered"
-//                        }
                     } //Active Fonts box
 
                     Rectangle{
@@ -3093,6 +3087,19 @@ Rectangle {
                            color:"#CCCCCC"
                         }
 
+                        Rectangle{
+                            id:faultHistoryListBackground
+                            anchors.left: parent.left
+                            anchors.leftMargin: parent.width/20
+                            anchors.right: parent.right
+                            anchors.rightMargin: parent.width/20
+                            anchors.top: faultHistorySeparator.bottom
+                            anchors.topMargin: parent.height/20
+                            anchors.bottom:parent.bottom
+                            anchors.bottomMargin: parent.height/20
+                            color: "#2B2B2B"
+                        }
+
                         ListModel {
                             id:faultHistoryListModel
                             ListElement {
@@ -3112,34 +3119,15 @@ Rectangle {
                             anchors.bottomMargin: parent.height/20
 
                             model: faultHistoryListModel
+
                             delegate: Text {
                                 text: fault
                                 color: "#D8D8D8"
-                                font.pointSize: smallTextSize
+                                font.pointSize: smallFontSize
                             }
-<<<<<<< ours
-                            text: "Port 1 Temperature: 70°C"
-                            font.pointSize: smallFontSize
-                            color: "#D8D8D8"
-=======
->>>>>>> theirs
                         }
 
-//                        Label{
-//                            anchors.left: parent.left
-//                            anchors.leftMargin: parent.width/20
-//                            anchors.right: parent.right
-//                            anchors.rightMargin: parent.width/20
-//                            anchors.top: faultHistorySeparator.bottom
-//                            anchors.topMargin: parent.height/20
-//                            anchors.bottom:parent.bottom
-//                            anchors.bottomMargin: parent.height/20
-//                            background: Rectangle {
-//                                color: "#2B2B2B"
-//                            }
-//                            text: "Port 1 Temperature: 70°C"
-//                            color: "#D8D8D8"
-//                        }
+
                     }
                     Rectangle{
                         id: usbPdMessages
