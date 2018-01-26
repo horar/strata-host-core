@@ -8,26 +8,27 @@ import QtQuick.Controls.Styles 1.4
 
 Rectangle{
     id:two
+    x: 4
     width: 651
     height: 757
     color: "#babdb6"
-    //  opacity: 0
+    opacity: 0
     anchors.fill:parent
 
     RowLayout {
         id: rowLayout
-        x: -37
-        y: -43
-        width: 1220
+        x: -8
+        y: -46
+        width: 1013
         height: 761
     }
 
     Rectangle {
         id: rectangle
-        x: -10
-        y: 23
+        x: 37
+        y: 0
         width: 200
-        height: 659
+        height: 657
         color: "#888a85"
 
         Label {
@@ -46,14 +47,6 @@ Rectangle{
             text: qsTr("0")
         }
 
-        Label {
-            id: label5
-            x: 68
-            y: 172
-            width: 17
-            height: 20
-            text: qsTr("1")
-        }
 
         Label {
             id: label6
@@ -66,16 +59,25 @@ Rectangle{
 
         Label {
             id: label7
-            x: 72
-            y: 326
-            width: 17
-            height: 27
+            x: 67
+            y: 325
+            width: 22
+            height: 10
             text: qsTr("3")
         }
 
         Label {
+            id: label5
+            x: 68
+            y: 172
+            width: 12
+            height: 20
+            text: qsTr("1")
+        }
+
+        Label {
             id: label2
-            x: 70
+            x: 67
             y: 394
             width: 15
             height: 20
@@ -84,27 +86,27 @@ Rectangle{
 
         Label {
             id: label3
-            x: 76
-            y: 465
-            width: 9
-            height: 29
+            x: 65
+            y: 463
+            width: 24
+            height: 31
             text: qsTr("5")
         }
 
         Label {
             id: label1
-            x: 76
-            y: 532
-            width: 13
-            height: 20
+            x: 65
+            y: 527
+            width: 24
+            height: 25
             text: qsTr("6")
         }
 
         Label {
             id: label11
-            x: 78
-            y: 600
-            width: 9
+            x: 63
+            y: 602
+            width: 17
             height: 26
             text: qsTr("7")
         }
@@ -112,10 +114,10 @@ Rectangle{
 
     Rectangle {
         id: rectangle4
-        x: 196
-        y: 23
+        x: 195
+        y: 0
         width: 200
-        height: 659
+        height: 657
         color: "#888a85"
         Label {
             id: label8
@@ -145,10 +147,10 @@ Rectangle{
         }
         Rectangle {
             id: rectangle5
-            x: 206
+            x: 197
             y: 0
-            width: 365
-            height: 659
+            width: 383
+            height: 657
             color: "#888a85"
             Label {
                 id: label9
@@ -218,10 +220,10 @@ Rectangle{
 
         Rectangle {
             id: rectangle6
-            x: 564
+            x: 565
             y: 0
-            width: 282
-            height: 659
+            width: 67
+            height: 657
             color: "#888a85"
             Label {
                 id: label10

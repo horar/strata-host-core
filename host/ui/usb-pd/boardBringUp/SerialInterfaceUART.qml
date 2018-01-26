@@ -3,6 +3,8 @@ import QtQuick.Controls 1.4
 import QtQuick.Controls.Styles 1.4
 import QtQuick.Layouts 1.3
 import QtQuick.Extras 1.4
+import QtQuick.Controls.Styles 1.4
+import QtQuick.Controls.Private 1.0
 
 Rectangle {
     id : serialInterfaceUART
@@ -73,18 +75,7 @@ Rectangle {
             placeholderText: qsTr("Hello World")
         }
 
-        ToggleButton {
-            id: toggleButton
-            x: 203
-            y: 238
-            width: 59
-            height: 91
-            text: "0"
-            checkable: true
-            checked: false
 
-
-        }
 
         Label {
             id: label4
@@ -159,6 +150,9 @@ Rectangle {
 
 
         }
+
+
+
 
     }
 

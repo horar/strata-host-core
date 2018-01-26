@@ -21,7 +21,6 @@ Item {
             Switch {
                 id: switchComponent
                 y: 221
-//                x: 56
                 checkable: true
                 checked: initialState
                 transform:  Rotation {angle : 90}
@@ -31,13 +30,10 @@ Item {
                 y: 282
                 width: rowRow.width - rowRow.spacing - switchComponent.width
                 height: switchComponent.height
-//                anchors.horizontalCenter: rowRow.Center
                 anchors.left: switchComponent.right
                 verticalAlignment: Text.AlignVCenter
                 horizontalAlignment: Text.AlignLeft
                 text: switchComponent.checked ? settingMessageOne : settingMessageTwo
-                //font.pixelSize: platformStyle.fontSizeMedium
-                //color: platformStyle.colorNormalLight
             }
         }
 

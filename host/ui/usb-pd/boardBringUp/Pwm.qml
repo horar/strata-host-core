@@ -14,19 +14,19 @@ Rectangle {
     property var newTab
     Rectangle {
         x: 8
-        y: 39
+        y: 8
         width: 1154
-        height: 839
+        height: 814
         color: "#babdb6"
 
         Label {
             id: label
-            x: 309
-            y: 41
+            x: 312
+            y: 8
             width: 344
             height: 48
             text: qsTr("PWM Configuration")
-            anchors.horizontalCenterOffset: 30
+            anchors.horizontalCenterOffset: -52
             font.pixelSize: 36
             font.bold: true
             anchors.horizontalCenter: parent.horizontalCenter
@@ -76,11 +76,13 @@ Rectangle {
 
         Row {
             id:buttonRow
-            x: 51
-            anchors.horizontalCenterOffset: 17
+            x: 62
+            width: 600
+            height: 65
+            anchors.horizontalCenterOffset: -28
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.top: parent.top
-            anchors.topMargin: 87
+            anchors.topMargin: 70
 
             SGLeftSegmentedButton{x: 5;text:"Port A"; tabName:PWMSetting{}}
             SGMiddleSegmentedButton{text:"Port B"; tabName:PWMSetting {}}
@@ -97,19 +99,17 @@ Rectangle {
             width: 881
             height: 727
 
-            anchors.rightMargin: 71
-            anchors.bottomMargin: 56
-            anchors.leftMargin: 74
-            anchors.topMargin: 6
+            anchors.rightMargin: 212
+            anchors.bottomMargin: 73
+            anchors.leftMargin: 138
+            anchors.topMargin: -15
             z: 2
             color:  "#babdb6"
             anchors.left:parent.left
             anchors.right:parent.right
             anchors.bottom:parent.bottom
             anchors.top:buttonRow.bottom
-            PWMSetting{}
-            PWMSetting{}
-            PWMSetting{ anchors.bottomMargin: -55}
+            PWMSetting{ anchors.rightMargin: 175; anchors.bottomMargin: -37; anchors.leftMargin: -51; anchors.topMargin: 0}
 
         }
 

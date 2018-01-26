@@ -122,5 +122,6 @@
         <file>boardBringUp/SerialInterfaceI2C.qml</file>
         <file>boardBringUp/SerialInterfaceSPI.qml</file>
         <file>boardBringUp/SerialInterfaceUART.qml</file>
+        <file>boardBringUp/lock.svg</file>
     </qresource>
 </RCC>

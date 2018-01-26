@@ -187,7 +187,7 @@ Rectangle {
             y: 561
             width: 42
             height: 46
-            source: "lockIcon.png"
+            source: "lock.svg"
 
         }
 

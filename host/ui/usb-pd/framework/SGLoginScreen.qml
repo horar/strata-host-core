@@ -59,7 +59,12 @@ Rectangle {
                     }
 
                     console.log("Displaying USB-PD");
+<<<<<<< 13cef19d6d9ba1436138a8baab01e8662cee9fb3
 
+=======
+                  //  stack.push([cBoardLayout, {immediate:false}]);
+                    stack.push([boardBringUp, {immediate:false}]);
+>>>>>>> fixing the alignment
                     break;
             }
 

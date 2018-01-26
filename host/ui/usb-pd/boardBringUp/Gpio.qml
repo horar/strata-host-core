@@ -12,8 +12,6 @@ Rectangle {
 
     property var currentTab : gpioView
     property var newTab:  gpioView
-//    color: "#888a85"
-
 
     Rectangle {
         id: rectangle
@@ -50,8 +48,6 @@ Rectangle {
         }
 
 
-
-
         ParallelAnimation{
             id: crosfadeTabs
             OpacityAnimator{
@@ -71,9 +67,6 @@ Rectangle {
         }
 
 
-
-
-
         ButtonGroup {
             buttons: buttonRow.children
             onClicked: {
@@ -82,8 +75,6 @@ Rectangle {
                 currentTab = newTab
             }
         }
-
-
 
 
         Row {
