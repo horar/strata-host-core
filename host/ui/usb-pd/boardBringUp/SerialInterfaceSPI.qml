@@ -58,7 +58,7 @@ Rectangle {
             id: textField1
             x: 568
             y: 110
-            placeholderText: qsTr("ohh hi")
+            placeholderText: qsTr("0x00")
         }
 
         Button {
