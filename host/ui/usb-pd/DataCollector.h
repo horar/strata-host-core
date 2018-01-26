@@ -14,6 +14,8 @@
 #include <QTimer>
 #include <map>
 
+#include "ImplementationInterfaceBinding/ImplementationInterfaceBinding.h"
+
 class View {
 public:
     explicit View(QString name) : name(name), hits(0), timer_running(false) {}
@@ -30,6 +32,7 @@ class DataCollector : public QObject
 
 public:
     DataCollector();
+    DataCollector(ImplementationInterfaceBinding * implInterface);
     explicit DataCollector(QObject *parent);
     virtual ~DataCollector();
 
@@ -40,6 +43,7 @@ public:
 private:
     void init();
 
+    ImplementationInterfaceBinding * implInterface_;
     std::map<QString, View> views;
 
 };

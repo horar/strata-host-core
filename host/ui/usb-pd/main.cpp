@@ -28,9 +28,10 @@ int main(int argc, char *argv[])
     qmlRegisterType<Document>("tech.spyglass.Document", 1, 0, "Document");
     qmlRegisterType<DocumentManager>("tech.spyglass.DocumentManager", 1, 0, "DocumentManager");
     qmlRegisterType<DataCollector>("tech.spyglass.DataCollector",1,0,"DataCollector");
-    DocumentManager* documentManager = new DocumentManager();
-    ImplementationInterfaceBinding *implementationInterfaceBinding = new ImplementationInterfaceBinding(static_cast<QObject *>(documentManager));
-    DataCollector* dataCollector = new DataCollector();
+    ImplementationInterfaceBinding *implementationInterfaceBinding = new ImplementationInterfaceBinding();
+
+    DocumentManager* documentManager = new DocumentManager(implementationInterfaceBinding);
+    DataCollector* dataCollector = new DataCollector(implementationInterfaceBinding);
     QtWebEngine::initialize();
     QtWebView::initialize();
 
@@ -44,7 +45,7 @@ int main(int argc, char *argv[])
     }
 
 // Only start HCS for release
-#ifdef _WIN32 && QT_NO_DEBUG
+#if (_WIN32 && QT_NO_DEBUG)
     // Start HCS before handling events for QT
     qDebug() << "Starting HCS";
     QString hcsPath = "HCS/HCS.exe";
@@ -64,7 +65,7 @@ int main(int argc, char *argv[])
     // Call QT and stay here until the application quits.
     int appResult = app.exec();
 
-#ifdef _WIN32 && QT_NO_DEBUG
+#if _WIN32 && QT_NO_DEBUG
     // Do some last minute clean-up; Terminate HCS
     qDebug() << "Killing HCS";
     hcsProcess->kill();
