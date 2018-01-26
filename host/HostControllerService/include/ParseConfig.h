@@ -21,7 +21,7 @@ public:
 
     const std::string &GetCommandAddress() const { return command_address_; }
     const std::string &GetSubscriberAddress() const { return subscriber_address_; }
-    const std::string &GetSerialPortNumber() const { return serial_port_number_; }
+    const std::vector<std::string> &GetSerialPorts() const { return serial_ports_; }
     bool IsSimulatedPlatform() const { return simulated_platform_; }
 
     const std::string &GetDatabaseServer() const { return database_server_; }
@@ -33,6 +33,9 @@ public:
         std::cout << "simulated_platform: " << (config.simulated_platform_ ? "TRUE":"FALSE") << std::endl;
         std::cout << "database_server: " << config.database_server_ << std::endl;
         std::cout << "gateway_sync: " << config.gateway_sync_<< std::endl;
+        for (auto &serial_port : config.serial_ports_) {
+            std::cout << " + serial port: " << serial_port << std::endl;
+        }
         for( auto &channel : config.channels_ ) {
             std::cout << " + channel: " << channel << std::endl;
         }
@@ -49,7 +52,7 @@ private:
     std::string gateway_sync_;
 
     // serial port number
-    std::string serial_port_number_;
+    std::vector<std::string> serial_ports_;
 
     std::vector<std::string> channels_;
     bool simulated_platform_;
