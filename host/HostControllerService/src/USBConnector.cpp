@@ -23,13 +23,14 @@ bool USBConnector::sendAck(messageProperty message,void *HCS)
 
 bool USBConnector::sendNotification(messageProperty message,void *HCS)
 {
+        // lock_serial_.lock();
     HostControllerService * obj = (HostControllerService *)HCS;
 
     string cmd = message.message + "\n";
 
-    lock_serial_.lock();
+
     obj->error = sp_blocking_write(obj->platform_socket_,(void *)cmd.c_str(),cmd.length(),5);
-    lock_serial_.unlock();
+
 
     if(obj->error  > 0 ) {
       return true;
@@ -37,6 +38,7 @@ bool USBConnector::sendNotification(messageProperty message,void *HCS)
     else {
       return false;
     }
+        // lock_serial_.unlock();
 }
 Connector::messageProperty USBConnector::emulatorReceive(void *HCS){}
 bool USBConnector::emulatorSend(messageProperty message,void *HCS){}

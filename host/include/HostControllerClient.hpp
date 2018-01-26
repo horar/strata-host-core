@@ -43,7 +43,7 @@ public:
         // The platform id notification is required by UI to know if board is connected
         // On UI launch this message is sent to HCS and then HCS sends back the platform
         //id notification
-        std::string cmd= "{\"cmd\":\"request_platform_id\",\"Host_OS\":\"Linux\"}";
+        std::string cmd= "{\"cmd\":\"request_platform_id\"}";
         s_send(*sendCmdSocket,cmd.c_str());
     }
 
