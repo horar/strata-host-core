@@ -8,6 +8,7 @@ Rectangle{
     anchors.fill:parent
 
 
+
     //    Text{
     //        anchors.centerIn: parent
     //        text:"serial"
@@ -29,17 +30,16 @@ Rectangle{
 
     TabBar {
         id: tabBar
-        x: 65
-        y: 28
-        width: 755
-        height: 75
+        x: 65;y: 28
+        width: parent.width;height: parent.height
+        anchors.bottom: parent.bottom
 
         background: Rectangle {
-             color: "lightgray"
-         }
+            color: "lightgray"
+        }
 
         currentIndex: swipeView.currentIndex
-       // anchors { middle: parent.middle}
+        // anchors { middle: parent.middle}
         transform: Rotation{ angle: 90  }
         TabButton { id: tabButton; x: 0; y: -22; width: 286; height: 63; font.bold: true; font.pointSize: 19;spacing: 9;
             Text{
@@ -58,20 +58,19 @@ Rectangle{
             }
             checkable: true
             checked: false
-            onClicked: checked ? i2c.color = "green" : i2c.color = "black"
         }
 
         TabButton { x: 272; y: -15; width: 286; height: 63; font.bold: true;font.pointSize: 19
             Text{
                 id: spi
                 y: 50
-//                anchors.centerIn: parent.Center
+                //                anchors.centerIn: parent.Center
                 text: "SPI"
                 anchors.left: parent.horizontalCenter
                 font.pointSize: 14
                 font.bold: true
                 z:2
-               //horizontalAlignment: Text.AlignHCenter
+                //horizontalAlignment: Text.AlignHCenter
                 //verticalAlignment: Text.AlignVCenter
                 transform: Rotation{ angle: -90 }
             }

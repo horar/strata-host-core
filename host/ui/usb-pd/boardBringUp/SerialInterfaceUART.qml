@@ -79,9 +79,9 @@ Rectangle {
             y: 238
             width: 59
             height: 91
+            text: "0"
             checkable: true
             checked: false
-            text: checked? "1" : "0";
 
 
         }

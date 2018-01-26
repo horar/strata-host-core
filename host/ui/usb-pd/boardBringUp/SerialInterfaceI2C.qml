@@ -255,7 +255,7 @@ Rectangle {
 
     Rectangle {
         id: rectangle3
-        x: 188
+        x: 113
         y: 378
         width: serialData.width
         height: serialData.height
