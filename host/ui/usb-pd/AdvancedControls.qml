@@ -15,6 +15,24 @@ Rectangle {
 
     objectName: "advancedControls"
 
+
+//    ListModel {
+//        id: faultHistoryList
+//    }
+
+//    ListModel {
+//        id: activeFaultList
+//    }
+//    // signal handling
+//    Connections {
+//        target: implementationInterfaceBinding
+
+//        onMinimumVoltageChanged: {
+//            faultHistoryList.append()
+
+//        }
+//    }
+
     GridLayout {
         id: grid
         columns: 3
@@ -31,7 +49,7 @@ Rectangle {
         }
         function prefHeight(item){
             return rowMulti * item.Layout.rowSpan
-        }
+        }       
 
         Rectangle {
             id:settings
@@ -547,6 +565,17 @@ Rectangle {
                                     color: "#838484"//"#33FFFFFF"
                                     border.color: "#838484"
                                 }
+                            onEditingFinished: {
+                                //keep the values in the correct range
+                                if (boardTemperatureTextInput.text >32){
+                                    boardTemperatureTextInput.text = 32
+                                }
+                                else if (boardTemperatureTextInput.text <5){
+                                    boardTemperatureTextInput.text = 5
+                                }
+                                implementationInterfaceBinding.setMaximumTemperature(boardTemperatureTextInput.text)
+                                console.log ("user set value for start limiting:", boardTemperatureTextInput.text)
+                            }
                         }
                         Text{
                             id:boardTemperatureUnitText
@@ -598,7 +627,7 @@ Rectangle {
                                 else if (boardOutputTextInput.text <5){
                                     boardOutputTextInput.text = 5
                                 }
-                                console.log ("user set value for start limiting:", limitingVoltageTextInput.text)
+                                console.log ("user set value for start limiting:", boardOutputTextInput.text)
                             }
                         }
 
@@ -955,6 +984,7 @@ Rectangle {
                                 }
                                 onClicked:{
                                     //here's where a click on a new selection should be handled
+                                    implementationInterfaceBinding.setMaximumPortPower(1,modelData)
                                     console.log("clicked:", modelData)
                                 }
 
@@ -1903,6 +1933,7 @@ Rectangle {
                                 }
                                 onClicked:{
                                     //here's where a click on a new selection should be handled
+                                    implementationInterfaceBinding.setMaximumPortPower(2,modelData)
                                     console.log("clicked:", modelData)
                                 }
 
