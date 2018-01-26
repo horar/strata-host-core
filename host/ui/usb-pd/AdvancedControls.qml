@@ -16,22 +16,33 @@ Rectangle {
     objectName: "advancedControls"
 
 
-//    ListModel {
-//        id: faultHistoryList
-//    }
+    ListModel {
+        id: faultHistoryList
+    }
 
-//    ListModel {
-//        id: activeFaultList
-//    }
-//    // signal handling
-//    Connections {
-//        target: implementationInterfaceBinding
+    ListModel {
+        id: activeFaultList
+    }
+    onVisibleChanged: {
+        if(visible){
+        faultHistoryList.append({"parameter":"voltage","condition":"<","value":value})
+        console.log("message",faultHistoryList)
+    }}
 
-//        onMinimumVoltageChanged: {
-//            faultHistoryList.append()
+    // signal handling
+    Connections {
+        target: implementationInterfaceBinding
 
-//        }
-//    }
+        onMinimumVoltageChanged: {
+            if(state) {
+                faultHistoryList.append({"parameter":"voltage","condition":"<","value":value})
+            }
+            else {
+                faultHistoryList.append({"parameter":"voltage","condition":">","value":value})
+            }
+
+        }
+    }
 
     GridLayout {
         id: grid
@@ -49,7 +60,7 @@ Rectangle {
         }
         function prefHeight(item){
             return rowMulti * item.Layout.rowSpan
-        }       
+        }
 
         Rectangle {
             id:settings
