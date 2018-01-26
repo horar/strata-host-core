@@ -45,7 +45,7 @@ HostControllerService::HostControllerService(std::string configuration_file)
     // assigning the simulation state
     simulation_ = configuration_->IsSimulatedPlatform();
     // assigning the serial port number
-    serial_port_number_ = configuration_->GetSerialPortNumber();
+    serial_port_list_ = configuration_->GetSerialPorts();
     // creating stream socket for non zmq tcp sockets and only for simulation
     if(simulation_) {
      simulationQemuSocket = new zmq::socket_t(*context,ZMQ_STREAM);
@@ -128,9 +128,14 @@ void callbackServiceHandler(evutil_socket_t fd ,short what, void* hostP) {
     }
 
     Connector::messageProperty message = host->service->receive(host->command);
+
+    // debugging printf
+    cout<<"[Service Recv:] "<<message.message<<endl;
+
     if(!message.message.compare("DISCONNECTED")) {   // TODO [ian] why would a "platform" command be in "service" handler?
         cout << "Platform Disconnect detected " <<endl;
         event_base_loopbreak(host->base);
+        return;
     }
 
     // TODO FIXME [ian] no idea what verifyReceiveCommand is doing ... removing ...
@@ -145,7 +150,6 @@ void callbackServiceHandler(evutil_socket_t fd ,short what, void* hostP) {
     //        "type":"documents"
     //    }
     // }
-
     Document service_command;
     if (service_command.Parse(message.message.c_str()).HasParseError()) {
         cout << "ERROR: json parse error!\n";
@@ -161,7 +165,6 @@ void callbackServiceHandler(evutil_socket_t fd ,short what, void* hostP) {
         }
     }
     else {
-
         // forward message to platform
         if (!obj->simulation_) {
             success = host->platform->sendNotification(message,host->hcs);
@@ -179,7 +182,11 @@ void callbackServiceHandler(evutil_socket_t fd ,short what, void* hostP) {
         }
     }
 
+    // debugging printf
+    cout<<"[Service Recv:] reset ev. "<<message.message<<endl;
     send->getsockopt(ZMQ_EVENTS, &zmq_events, &zmq_events_size);
+    // debugging printf
+    cout<<"[Service Recv:] reset complete "<<message.message<<endl;
 }
 
 void heartBeatPeriodicEvent(evutil_socket_t fd ,short what, void* hostP) {
@@ -212,7 +219,7 @@ void HostControllerService::callbackPlatformHandler(void* hostP) {
     Connector::messageProperty message;
     if(!simulation_){
        sp_new_event_set(&ev);
-	     sp_add_port_events(ev, platform_socket_, SP_EVENT_RX_READY);
+	   sp_add_port_events(ev, platform_socket_, SP_EVENT_RX_READY);
     }
 
     while(1) {
@@ -221,11 +228,6 @@ void HostControllerService::callbackPlatformHandler(void* hostP) {
       if (!message.message.empty()) {
           platformConnect = true;
       }
-
-      string tempMessage = message.message;
-      // cout<< "received new line size "<<stringSize<<"   "<<message.message.size()<<endl;
-      // cout << "Emulator receive "<<message.message<<endl;
-
       istringstream iss(message.message);
       while ( getline( iss,message.message, '\n' ) ) {
           host->service->sendNotification(message,host->notify);
@@ -270,27 +272,34 @@ void HostControllerService::callbackPlatformHandler(void* hostP) {
  */
 bool HostControllerService::openPlatformSocket()
 {
-    if(serial_port_number_.empty()) {
-        cout << "ERROR: Please add serial port number in config file  !!!"<< serial_port_number_<<endl;
+    static bool outputPortError = true;
+
+    if(serial_port_list_.empty()) {
+        cout << "ERROR: Please add serial port number in config file  !!!"<< endl;
         return false;
     }
-    error = sp_get_port_by_name(serial_port_number_.c_str(),&platform_socket_);
-    if(error == SP_OK) {
-        error = sp_open(platform_socket_, SP_MODE_READ_WRITE);
-        if(error == SP_OK) {
-            cout << "Serial PORT OPEN SUCCESS "<<endl;
-            Connector::messageProperty message;
-            message.message="{\"notification\":{\"value\":\"platform_connection_change_notification\",\"payload\":{\"status\":\"connected\"}}}";
-            hostP.service->sendNotification(message,hostP.notify);
-            return true;
-        } else {
-            cout << "SERIAL PORT OPEN FAILED "<<endl;
-            return false;
+    for (auto port : serial_port_list_) {
+        error = sp_get_port_by_name(port.c_str(), &platform_socket_);
+        if (error == SP_OK) {
+            error = sp_open(platform_socket_, SP_MODE_READ_WRITE);
+            if (error == SP_OK) {
+                cout << "SERIAL PORT OPEN SUCCESS: " << port << endl;
+                Connector::messageProperty message;
+                message.message = "{\"notification\":{\"value\":\"platform_connection_change_notification\",\"payload\":{\"status\":\"connected\"}}}";
+                hostP.service->sendNotification(message, hostP.notify);
+
+                // Reset our flag to output errors when we disconnect
+                outputPortError = true;
+                return true;
+            }
         }
-    } else {
-        cout << "ERROR: Invalid Serial Port Number. Please check the config file  !!!"<<endl;
-        return false;
+        else if(outputPortError) {
+            cout << "ERROR: Invalid Serial Port Number " << port <<" Please check the config file  !!!" << endl;
+        }
     }
+    // Only output the error once
+    outputPortError = false;
+    return false;
 }
 
 /*!
@@ -396,17 +405,7 @@ connected_state HostControllerService::wait()
     hostP.base = base;
 
     thread t(&HostControllerService::callbackPlatformHandler,this,(void *)&hostP);
-
-	//EV_ET says its edge triggered. EV_READ and EV_WRITE are both
-	//needed when event is added else it doesn't function properly
-	//As libevent READ and WRITE functionality is affected by edge triggered events.
-#ifndef __APPLE__
-        struct event *service = event_new(base, sockService,EV_READ | EV_ET | EV_PERSIST,callbackServiceHandler,(void*)&hostP);
-#else
-        struct event *service = event_new(base, sockService ,
-                        EV_READ | EV_ET | EV_PERSIST ,
-                        callbackServiceHandler,(void *)&hostP);
-#endif
+    struct event *service = event_new(base,sockService ,EV_READ | EV_ET | EV_PERSIST ,callbackServiceHandler,(void *)&hostP);
 
 	if (event_base_set(base,service) <0 ) {
         cout << "Event BASE SET SERVICE FAILED " << endl;
