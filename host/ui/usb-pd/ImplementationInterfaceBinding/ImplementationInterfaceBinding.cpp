@@ -126,6 +126,55 @@ bool ImplementationInterfaceBinding::getUSBCPortState(int port_number)
     return false;
 }
 
+void ImplementationInterfaceBinding::setInputVoltageLimiting(int value)
+{
+    QJsonObject cmdMessageObject;
+    cmdMessageObject.insert("cmd", "request_set_minimum_voltage");
+    QJsonObject payloadObject;
+    payloadObject.insert("value", value);
+    qDebug() << "voltage limit "<<value;
+    cmdMessageObject.insert("payload",payloadObject);
+    QJsonDocument doc(cmdMessageObject);
+    QString strJson(doc.toJson(QJsonDocument::Compact));
+    if(hcc_object->sendCmd(strJson.toStdString()))
+        qDebug() << "Radio button send with value" << doc;
+    else
+        qDebug() << "Radio button send failed";
+}
+
+
+void ImplementationInterfaceBinding::setMaximumTemperature(int value)
+{
+    QJsonObject cmdMessageObject;
+    cmdMessageObject.insert("cmd", "request_set_maximum_temperature");
+    QJsonObject payloadObject;
+    payloadObject.insert("value", value);
+    qDebug() << "temp limit "<<value;
+    cmdMessageObject.insert("payload",payloadObject);
+    QJsonDocument doc(cmdMessageObject);
+    QString strJson(doc.toJson(QJsonDocument::Compact));
+    if(hcc_object->sendCmd(strJson.toStdString()))
+        qDebug() << "Radio button send with value" << doc;
+    else
+        qDebug() << "Radio button send failed";
+}
+
+void ImplementationInterfaceBinding::setMaximumPortPower(int port,int value)
+{
+    QJsonObject cmdMessageObject;
+    cmdMessageObject.insert("cmd", "request_usb_pd_maximum_power");
+    QJsonObject payloadObject;
+    payloadObject.insert("Port_number",port);
+    payloadObject.insert("Watts", value);
+    qDebug() << "temp limit "<<value;
+    cmdMessageObject.insert("payload",payloadObject);
+    QJsonDocument doc(cmdMessageObject);
+    QString strJson(doc.toJson(QJsonDocument::Compact));
+    if(hcc_object->sendCmd(strJson.toStdString()))
+        qDebug() << "Radio button send with value" << doc;
+    else
+        qDebug() << "Radio button send failed";
+}
 /*!
  * Getter and Setter methods, used for retriving/writing something to/from platform
  * Retreived/set value is indidcated by function name.
@@ -319,6 +368,9 @@ void ImplementationInterfaceBinding::handleNotification(QVariantMap current_map)
         } else if (current_map["value"] == "request_reset_notification"){
             payloadMap=current_map["payload"].toMap();
             handleResetNotification(payloadMap);
+        } else if (current_map["value"] == "input_under_voltage_notification"){
+            payloadMap=current_map["payload"].toMap();
+            handleInputUnderVoltageNotification(payloadMap);
         } else {
             qDebug() << "Unsupported value field Received";
             qDebug() << "Received JSON = " <<current_map;
@@ -577,6 +629,12 @@ void ImplementationInterfaceBinding::handleResetNotification(const QVariantMap p
     if(status) {
         emit platformResetDetected(status);
     }
+}
+
+void ImplementationInterfaceBinding::handleInputUnderVoltageNotification(const QVariantMap payloadMap) {
+    bool state = payloadMap["under_voltage"].toBool();
+    int value = payloadMap["minimum_voltage"].toInt();
+    emit minimumVoltageChanged(state,value);
 }
 /*!
  * End of notification handlers

@@ -54,6 +54,9 @@ class ImplementationInterfaceBinding : public QObject
     Q_PROPERTY(float inputPower NOTIFY portEfficiencyChanged)
     Q_PROPERTY(float outputPower NOTIFY portEfficiencyChanged)
 
+    //QProperty for fault messages
+    Q_PROPERTY(int  minimum_voltage NOTIFY minimumVoltageChanged)
+
     //QProperty : To know Platform Reset
     Q_PROPERTY(bool reset_status NOTIFY platformResetDetected)
 
@@ -92,6 +95,16 @@ public:
     Q_INVOKABLE void setRedriverLoss(float lossValue);
     Q_INVOKABLE void setRedriverCount(int value);
     Q_INVOKABLE bool getUSBCPortState(int port_number);
+
+    // To set the input voltage limit in platform
+    Q_INVOKABLE void setInputVoltageLimiting(int value);
+
+    // To set the maximum temperature limit in platform
+    Q_INVOKABLE void setMaximumTemperature(int value);
+
+    // To set the maximum power request for a particular port in USB-PD platform
+    Q_INVOKABLE void setMaximumPortPower(int port,int value);
+
     std::thread notification_thread_;
     void notificationsThreadHandle();
 //Getter invoked when GUI tries to get the data
@@ -117,6 +130,7 @@ public:
     void handleUSBPDcableswapNotification(const QVariantMap json_map);
     void handleInputVoltageNotification(const QVariantMap json_map);
     void handleResetNotification(const QVariantMap payloadMap);
+    void handleInputUnderVoltageNotification(const QVariantMap payloadMap);
 
 //Notification Simulator
     friend void *simulateNotificationsThread(void *);
@@ -146,6 +160,8 @@ signals:
     void portPowerChanged(int port, float value);
     void portCurrentChanged(int port, float value);
     void portEfficencyChanged(int port, float input_power,float output_power);
+    // fault messages notification
+    void minimumVoltageChanged(bool state,int value);
 
 private:
     //Members private to class
