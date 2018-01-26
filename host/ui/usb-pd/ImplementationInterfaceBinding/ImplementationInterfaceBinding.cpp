@@ -488,7 +488,10 @@ void ImplementationInterfaceBinding::handlePlatformStateNotification(const QVari
         if(platformStateTemp != platformState) {
 
             platformState = platformStateTemp;
+            // Also reset platformId
+            rawPlatformId = "";
             emit platformStateChanged(platformState);
+            emit platformIdChanged(rawPlatformId);
             qDebug() << "platformStateChanged notification";
         }
     } else {

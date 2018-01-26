@@ -19,20 +19,22 @@ Rectangle {
         usernameField.forceActiveFocus();   //allows the user to type their username without clicking
     }
 
-    property bool  platformDetected : {
-        var platformDetected = implementationInterfaceBinding.platformState;
+    property bool  onIdChange : {
+        onPlatformIdChanged: {
 
         // If Logged in and platform is detected
         if ( !login_detected ) {
             // Keep showing the login screen; so do nothing
         }
-        else if(login_detected && platformDetected ) {
+        else if(login_detected ) {
             var platformId = implementationInterfaceBinding.Id;
 
             // Show the platform specific GUI
             switch (platformId) {
                 case ImplementationInterfaceBinding.NONE:
                     console.log("Not recognizing new platform");
+                    stack.pop()
+                    handleLoginClick.start();
                     break;
                 case ImplementationInterfaceBinding.BUBU_INTERFACE:
                     console.log("Displaying BU Bring Up");
@@ -45,26 +47,10 @@ Rectangle {
             }
 
         }
-        else {
-            // Reveal platform search
-            handleLoginClick.start();
+        console.log("stack depth:", stack.depth)
+        return true;
         }
-
-        return platformDetected;
-
     }
-        property bool platformChanged: {
-            onPlatformStateChanged: {
-                var platform_detected = implementationInterfaceBinding.platformState;
-
-                // If disconnected; Show detecting screen
-                if (!platform_detected && login_detected){
-                    // Clear all screens and load the login
-                    stack.pop()
-                }
-                return platform_detected;
-                }
-        }
 
     //-----------------------------------------------------------
     //Elements common to both the connection and login screens
