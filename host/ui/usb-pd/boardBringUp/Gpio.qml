@@ -10,17 +10,17 @@ import QtQuick.Controls.Material 2.0
 
 Rectangle {
 
-    property var currentTab
-    property var newTab
+    property var currentTab : gpioView
+    property var newTab:  gpioView
 //    color: "#888a85"
 
 
     Rectangle {
         id: rectangle
         x: 17
-        y: 19
-        width: 957
-        height: 866
+        y: 8
+        width: 977
+        height: 821
         color: "#babdb6"
 
         function createTab(inTabName, inParent){
@@ -31,9 +31,10 @@ Rectangle {
 
         Component.onCompleted: {
             currentTab = createTab("buttonView.qml", contentRectangle);
-            currentTab.opacity = 1.0;
             newTab = createTab("buttonView.qml",contentRectangle);
         }
+
+
 
         Label {
             id: label
@@ -47,6 +48,8 @@ Rectangle {
             text: qsTr("GPIO Configuration")
             anchors.horizontalCenterOffset: 5
         }
+
+
 
 
         ParallelAnimation{
@@ -69,6 +72,8 @@ Rectangle {
 
 
 
+
+
         ButtonGroup {
             buttons: buttonRow.children
             onClicked: {
@@ -79,9 +84,14 @@ Rectangle {
         }
 
 
+
+
         Row {
             id:buttonRow
             x: 51
+            y: 83
+            width: 600
+            height: 40
             anchors.horizontalCenterOffset: 17
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.top: parent.top
@@ -103,9 +113,9 @@ Rectangle {
             width: 881
             height: 727
 
-            anchors.rightMargin: 71
-            anchors.bottomMargin: 56
-            anchors.leftMargin: 74
+            anchors.rightMargin: 84
+            anchors.bottomMargin: 67
+            anchors.leftMargin: 61
             anchors.topMargin: 6
             z: 2
             color:  "#babdb6"

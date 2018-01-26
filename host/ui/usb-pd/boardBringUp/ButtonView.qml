@@ -15,7 +15,7 @@ Rectangle {
         id: rowLayout
         x: -28
         y: -70
-        width: 789
+        width: 876
         height: 674
     }
 
@@ -23,10 +23,10 @@ Rectangle {
 
     Rectangle {
         id: rectangle1
-        x: 81
-        y: 85
+        x: 115
+        y: 8
         width: 311
-        height: 634
+        height: 612
         color: "#888a85"
 
 
@@ -115,10 +115,10 @@ Rectangle {
 
     Rectangle {
         id: rectangle2
-        x: 398
-        y: 86
+        x: 432
+        y: 8
         width: 363
-        height: 633
+        height: 611
         color: "#888a85"
 
         Label {

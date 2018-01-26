@@ -14,8 +14,8 @@ Rectangle {
     color:"grey"
 
     readonly property bool inLandscape: boardBringUP.width > boardBringUP.height
-    property var currentTab
-    property var newTab
+    property var currentTab : serialView
+    property var newTab : gpioView
 
     ParallelAnimation{
         id: crosfadeTabs
@@ -40,6 +40,7 @@ Rectangle {
         onClicked: {
             //console.log("button clicked is ",button.objectName)
             if (button.objectName == "serialBoardBringUpButton"){
+
                 newTab = serialView
                 }
             else if (button.objectName == "gpioBoardBringUpButton"){
