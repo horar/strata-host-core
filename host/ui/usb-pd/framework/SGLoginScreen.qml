@@ -22,6 +22,8 @@ Rectangle {
     property bool  onIdChange : {
         onPlatformIdChanged: {
 
+        // TODO[Abe]: Why does this property get called on stack changes?
+
         // If Logged in and platform is detected
         if ( !login_detected ) {
             // Keep showing the login screen; so do nothing
@@ -33,6 +35,8 @@ Rectangle {
             switch (platformId) {
                 case ImplementationInterfaceBinding.NONE:
                     console.log("Not recognizing new platform");
+                    // Hide the toolbar; Comes back on platform detect
+                    frontToolBar.visible = false;
                     stack.pop()
                     handleLoginClick.start();
                     break;
@@ -41,8 +45,21 @@ Rectangle {
                     stack.push([boardBringUp, {immediate:false}]);
                     break;
                 case ImplementationInterfaceBinding.USB_PD:
+                    if(mainWindow.control_type == "standard") {
+                        stack.pop();
+                        stack.push([cBoardLayout, {immediate:false}]);
+                    }
+                    else if (mainWindow.control_type == "advanced") {
+                        stack.pop();
+                        stack.push([advanced, {immediate:false}]);
+                    }
+                    else if(mainWindow.control_type == "BuBu") {
+                        stack.pop();
+                        stack.push([boardBringUp, {immediate:false}]);
+                    }
+
                     console.log("Displaying USB-PD");
-                    stack.push([cBoardLayout, {immediate:false}]);
+
                     break;
             }
 

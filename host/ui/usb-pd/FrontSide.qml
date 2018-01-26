@@ -65,39 +65,21 @@ Rectangle {
     //  showAdvancedControls()
     //-------------------------------------------------------------------------
     function showAdvancedControls(){
-        if (stack.currentItem.objectName == "advancedControls"){
-            //if advanced controls are already showing, do nothing
-            console.log("advanced controls already showing")
-        }
-        else if (stack.currentItem.objectName == "boardLayout"){
-            //otherwise, pop off the current view, and show the advanced controls
-            stack.pop({immediate:true})             //remove the standard controls
-            stack.push(advanced, {immediate:true})  //push in the advanced controls
-        }
+        mainWindow.control_type = "advanced"
     }
 
     //-------------------------------------------------------------------------
     //  showStandardControls()
     //-------------------------------------------------------------------------
     function showStandardControls(){
-
-        if (stack.currentItem.objectName == "boardLayout"){
-            //if advanced controls are already showing, do nothing
-            console.log("standard controls already showing")
-        }
-        else if (stack.currentItem.objectName == "advancedControls"){
-            //otherwise, pop off the current view, and show the standard controls
-            stack.pop({immediate:true})             //remove the advanced controls
-            stack.push(cBoardLayout, {immediate:true})  //push in the advanced controls
-        }
+        mainWindow.control_type = "standard"
     }
 
     //-------------------------------------------------------------------------
     //  showBoardBringupControls()
     //-------------------------------------------------------------------------
     function showBoardBringupControls(){
-        stack.pop({immediate:true})                 //remove the advanced controls
-        stack.push(boardBringUp, {immediate:true})  //push in the advanced controls
+        mainWindow.control_type = "BuBu"
     }
 
     Component {
