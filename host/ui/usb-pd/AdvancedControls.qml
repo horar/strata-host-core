@@ -7,6 +7,10 @@ import "framework"
 
 Rectangle {
 
+    property int windowsSmallFontSize: (Qt.platform.os === "osx") ? 10  : 10;
+    property int windowsMediumFontSize: (Qt.platform.os === "osx") ? 15  : 15;
+    property int windowsLargeFontSize: (Qt.platform.os === "osx") ? 20  : 20;
+
     objectName: "advancedControls"
 
     GridLayout {
