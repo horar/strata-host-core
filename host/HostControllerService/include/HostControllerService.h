@@ -7,7 +7,7 @@
 
 #include <chrono>
 #include <thread>
-
+#include <vector>
 #include "USBConnector.h"
 #include "ZeroMQConnector.h"
 #include "Connector.h"
@@ -78,7 +78,7 @@ private :
 
     std::string command_address_;
     std::string subscription_address_;
-    std::string serial_port_number_;
+    std::vector<std::string> serial_port_list_;
 
     connected_state platform_;
     bool simulation_;
