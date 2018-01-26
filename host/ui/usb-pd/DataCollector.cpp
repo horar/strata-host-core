@@ -5,7 +5,13 @@ using namespace std;
 
 DataCollector::DataCollector()
 {
-    //qDebug("DataCollector::DataCollector(): default ctor");
+    qDebug("DataCollector::DataCollector(): default ctor");
+    init();
+}
+
+DataCollector::DataCollector(ImplementationInterfaceBinding * implInterface) : implInterface_(implInterface)
+{
+    qDebug("DataCollector::DataCollector(): ctor: implInterface");
     init();
 }
 

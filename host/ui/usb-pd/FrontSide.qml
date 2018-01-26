@@ -9,9 +9,109 @@ Rectangle {
 
     anchors{ fill:parent }
 
+    Rectangle{
+        id: frontToolBar
+        height: 44
+        anchors.left: parent.left
+        anchors.right: parent.right
+        color:(stack.currentItem.objectName == "boardLayout") ? "white" :"black"
+        visible: false
+
+        RowLayout {
+            anchors.fill:parent
+            ToolButton {
+                icon.source: "./images/icons/settingsIcon.svg"
+                onClicked: settingsMenu.open()
+                opacity:.5
+                z:2
+                Menu{
+                    id:settingsMenu
+                    MenuItem{
+                        text: qsTr("Standard Controls")
+                        onClicked: showStandardControls()
+                        font.family: "helvetica"
+                        font.pointSize: 14
+                    }
+                    MenuItem{
+                        text: qsTr("Advanced Controls")
+                        onClicked: showAdvancedControls()
+                        font.family: "helvetica"
+                        font.pointSize: 14
+                    }
+                    MenuItem{
+                        text: qsTr("Board Bring-up")
+                        onClicked: showBoardBringupControls()
+                        font.family: "helvetica"
+                        font.pointSize: 14
+                    }
+                }
+            }
+        }
+    }
+
+    //-------------------------------------------------------------------------
+    //  showAdvancedControls()
+    //-------------------------------------------------------------------------
+    function showAdvancedControls(){
+
+        if (stack.currentItem.objectName == "advancedControls"){
+            //if advanced controls are already showing, do nothing
+            console.log("advanced controls already showing")
+        }
+        else if (stack.currentItem.objectName == "boardLayout"){
+        //otherwise, pop off the current view, and show the advanced controls
+        stack.pop({immediate:true})             //remove the standard controls
+        stack.push(advanced, {immediate:true})  //push in the advanced controls
+        }
+    }
+
+    //-------------------------------------------------------------------------
+    //  showStandardControls()
+    //-------------------------------------------------------------------------
+    function showStandardControls(){
+
+        if (stack.currentItem.objectName == "boardLayout"){
+            //if advanced controls are already showing, do nothing
+            console.log("standard controls already showing")
+        }
+        else if (stack.currentItem.objectName == "advancedControls"){
+        //otherwise, pop off the current view, and show the standard controls
+        stack.pop({immediate:true})             //remove the advanced controls
+        stack.push(page2, {immediate:true})  //push in the advanced controls
+        }
+    }
+
+    //-------------------------------------------------------------------------
+    //  showBoardBringupControls()
+    //-------------------------------------------------------------------------
+    function showBoardBringupControls(){
+
+        stack.pop({immediate:true})             //remove the advanced controls
+        stack.push(boardBringUp, {immediate:true})  //push in the advanced controls
+
+
+//        if (stack.currentItem.objectName == "boardLayout"){
+//            //if advanced controls are already showing, do nothing
+//            console.log("standard controls already showing")
+//        }
+//        else if (stack.currentItem.objectName == "advancedControls"){
+//        //otherwise, pop off the current view, and show the standard controls
+//        stack.pop({immediate:true})             //remove the advanced controls
+//        stack.push(page2, {immediate:true})  //push in the advanced controls
+//        }
+    }
+
+    Component {
+        id: advanced
+        AdvancedControls { }
+    }
+
     StackView {
         id:stack
-        anchors { fill: parent }
+        anchors { left: parent.left
+                        right: parent.right
+                        bottom: parent.bottom
+                        top: frontToolBar.bottom}
 
         popEnter: Transition {
             PropertyAnimation { property: "opacity"; to: 1.0; duration: 1000 }
@@ -38,6 +138,11 @@ Rectangle {
     Component {
         id: page2
         BoardLayout { }
+    }
+
+    Component {
+        id: boardBringUp
+        BoardBringUp { }
     }
 }
 

@@ -7,13 +7,14 @@
 
 #include <chrono>
 #include <thread>
-
+#include <vector>
 #include "USBConnector.h"
 #include "ZeroMQConnector.h"
 #include "Connector.h"
 #include "ConnectFactory.h"
 #include "ArduinoJson.h"
 #include <libserialport.h>
+#include "nimbus.h"
 
 // NIMBUS integration **Needs better organisation --Prasanth**
 #include "Observer.h"
@@ -77,11 +78,15 @@ private :
 
     std::string command_address_;
     std::string subscription_address_;
+    std::vector<std::string> serial_port_list_;
 
     connected_state platform_;
     bool simulation_;
     bool platformConnect;
     ParseConfig *configuration_;
+
+    Nimbus * database_;
+
 };
 
 

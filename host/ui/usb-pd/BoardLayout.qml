@@ -7,9 +7,12 @@ import "framework"
 
 Rectangle {
 
+    objectName: "boardLayout"
     property bool hardwareStatusChange: null
-    property bool boardScreen: true
-    property bool hardwareStatus:  {
+    property bool boardScreen: false
+
+    Connections {
+        target: implementationInterfaceBinding
 
         onPlatformStateChanged: {
             var state = implementationInterfaceBinding.platformState;
@@ -17,13 +20,42 @@ Rectangle {
                 stack.push([page, {immediate:false}]);
             }
         }
-        implementationInterfaceBinding.platformState
     }
 
-    onOpacityChanged: {
-        if (opacity == 1)
-            rotateInfoIcon.start()
+    onVisibleChildrenChanged: {
+        if(visible) {
+            boardScreen = true;
+        }
+        else {
+            boardScreen = false;
+        }
     }
+
+    //actions to take when the board layout view becomes visible from being pushed on the stack
+    onOpacityChanged: {
+        if (opacity == 1){
+            rotateInfoIcon.start()
+            }
+         if (opacity == 1 && frontToolBar.visible == false){
+            frontToolBar.visible = true
+            frontToolBar.opacity = 0
+             fadeInFrontToolBar.start()
+
+        }
+    }
+
+
+    NumberAnimation {
+        id: fadeInFrontToolBar
+        target: frontToolBar
+        property: "opacity"
+        duration: 1000
+        from: 0
+        to: 1
+        easing.type: Easing.InOutQuad
+    }
+
+
 
     Component {
         id: page

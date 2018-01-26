@@ -39,6 +39,22 @@ ParseConfig::ParseConfig(std::string file) :
     subscriber_address_ = hcs_config["subscriber_address"].GetString();
     command_address_ = hcs_config["command_address"].GetString();
 
+    // get serial port number
+    if(! hcs_config.HasMember("serial_port_number") ) {
+        cout << "ERROR: No Serial port number is added in the host controller configuration parameters !!! \n";
+    }
+    else if(!hcs_config["serial_port_number"].IsArray()) {
+        cout << "ERROR: serial port type is not array! \n";
+    }
+    else {
+        rapidjson::Value array;
+        array = hcs_config["serial_port_number"].GetArray();
+        for ( int i = 0; i < array.Size(); i++)
+        {
+            serial_ports_.push_back(array[i].GetString());
+        }
+    }
+
     // parse optional parameters
     if( hcs_config.HasMember("simulated_platform") ) {
         simulated_platform_ = hcs_config["simulated_platform"].GetBool ();
