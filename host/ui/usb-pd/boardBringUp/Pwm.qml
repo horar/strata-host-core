@@ -10,8 +10,8 @@ import QtQuick.Controls.Material 2.0
 
 Rectangle {
 
-    property var currentTab
-    property var newTab
+    property var currentTab: pwmView
+    property var newTab: pwmView
     Rectangle {
         x: 8
         y: 8
@@ -84,7 +84,7 @@ Rectangle {
             anchors.top: parent.top
             anchors.topMargin: 70
 
-            SGLeftSegmentedButton{x: 5;text:"Port A"; tabName:PWMSetting{}}
+            SGLeftSegmentedButton{text:"Port A"; tabName:PWMSetting{}}
             SGMiddleSegmentedButton{text:"Port B"; tabName:PWMSetting {}}
             SGMiddleSegmentedButton{text:"Port C"; tabName:PWMSetting {}}
             SGMiddleSegmentedButton{text:"Port D"; tabName:PWMSetting {}}
@@ -109,8 +109,9 @@ Rectangle {
             anchors.right:parent.right
             anchors.bottom:parent.bottom
             anchors.top:buttonRow.bottom
-            PWMSetting{ anchors.rightMargin: 175; anchors.bottomMargin: -37; anchors.leftMargin: -51; anchors.topMargin: 0}
-
+            PWMSetting{ opacity: 1 /*anchors.rightMargin: 175; anchors.bottomMargin: -37; anchors.leftMargin: -51; anchors.topMargin: 0*/}
+            PWMSetting{ opacity: 1}
+            PWMSetting{ opacity: 1}
         }
 
     }

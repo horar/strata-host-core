@@ -151,6 +151,33 @@ Rectangle {
 
         }
 
+        ColumnLayout {
+            x: 195
+            y: 254
+            width: 79
+            height: 62
+
+
+            ExclusiveGroup { id: tabPositionGroup2 }
+            RadioButton {
+                id: radio1
+                x: 290
+                y: 38
+                exclusiveGroup: tabPositionGroup2
+                text: qsTr("0")
+            }
+
+            RadioButton {
+                id: radio2
+                x: 290
+                y: 76
+                exclusiveGroup: tabPositionGroup2
+                text: qsTr("1")
+            }
+
+
+        }
+
 
 
 

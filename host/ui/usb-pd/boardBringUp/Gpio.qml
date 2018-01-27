@@ -114,9 +114,9 @@ Rectangle {
             anchors.right:parent.right
             anchors.bottom:parent.bottom
             anchors.top:buttonRow.bottom
-            ButtonView{}
-            ButtonView{}
-            ButtonView{}
+            ButtonView{opacity: 1}
+            ButtonView{opacity: 1}
+            ButtonView{opacity: 1}
 
         }
     }

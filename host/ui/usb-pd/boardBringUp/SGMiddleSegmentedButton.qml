@@ -21,7 +21,6 @@ Button {
             var theTop = theLineWidth
             var theBottom = height - theLineWidth
             ctx.fillStyle = theFillColor
-
             ctx.beginPath();
             ctx.moveTo(theLeft, theTop)
             ctx.moveTo(width,theTop);
