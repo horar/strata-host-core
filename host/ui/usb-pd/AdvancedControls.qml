@@ -397,7 +397,7 @@ Rectangle {
                             anchors.topMargin: 10
                         }
                         Label{
-                            id:minimumInputTextInput
+                            id:minimumInputLabel
                             anchors.left:minimumInputVoltageText.right
                             anchors.leftMargin: 10
                             anchors.verticalCenter: minimumInputVoltageText.verticalCenter
@@ -416,7 +416,7 @@ Rectangle {
                             font.family: "helvetica"
                             font.pointSize: smallFontSize
                             color: "#D8D8D8"
-                            anchors.left:minimumInputTextInput.right
+                            anchors.left:minimumInputLabel.right
                             anchors.leftMargin: 5
                             anchors.verticalCenter: minimumInputVoltageText.verticalCenter
 
@@ -466,7 +466,7 @@ Rectangle {
                                 }
 
                                 onMoved: {
-                                    minimumInputTextInput.text = Math.round(minimumInputVoltageSlider.value *10)/10
+                                    minimumInputLabel.text = Math.round(minimumInputVoltageSlider.value *10)/10
 
                                 }
 
@@ -674,7 +674,7 @@ Rectangle {
                             anchors.verticalCenter: faultTempText.verticalCenter
                             anchors.verticalCenterOffset: 2
                             color:"white"
-                            text:minimumInputVoltageSlider.value
+                            text:faultTempSlider.value
                             verticalAlignment: TextInput.AlignTop
                             font.family: "helvetica"
                             font.pointSize: smallFontSize
