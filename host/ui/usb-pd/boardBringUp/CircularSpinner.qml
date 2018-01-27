@@ -24,6 +24,10 @@ Dial {
     live : true
     from : 0
     to : 100
+    property int smallFontSize: (Qt.platform.os === "osx") ? 12  : 10;
+    property int mediumFontSize: (Qt.platform.os === "osx") ? 15  : 12;
+    property int largeFontSize: (Qt.platform.os === "osx") ? 24  : 20;
+    property int extraLargeFontSize: (Qt.platform.os === "osx") ? 36  : 24;
     background: Rectangle {
         x: control.width / 2 - width / 2
         y: control.height / 2 - height / 2
@@ -60,10 +64,11 @@ Dial {
 
     }
     Label {
-        id: test
+        id: text
         x: 51
         width: 42
         height: 30
+        font.pointSize: smallFontSize
 
         text: Math.round(control.value)
         anchors.topMargin: 77

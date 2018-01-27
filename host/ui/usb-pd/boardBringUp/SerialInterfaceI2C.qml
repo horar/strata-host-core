@@ -22,7 +22,7 @@ Rectangle {
         color: "lightgray"
         anchors.top: parent.top
         anchors.topMargin: 58
-        anchors.horizontalCenterOffset: 1
+        anchors.horizontalCenterOffset: -23
         anchors.horizontalCenter: parent.horizontalCenter
 
         Rectangle {
@@ -255,9 +255,9 @@ Rectangle {
 
     Rectangle {
         id: rectangle3
-        x: 113
+        x: 94
         y: 378
-        width: serialData.width
+        width: 824
         height: serialData.height
         anchors.top : serialData.Bottom
         color: "#babdb6"
@@ -316,14 +316,14 @@ Rectangle {
 
         Label {
             id: label3
-            x: 274
-            y: 176
+            x: 418
+            y: 178
             text: qsTr("1kHz")
         }
 
         Label {
             id: label5
-            x: 553
+            x: 654
             y: 178
             text: qsTr("100 kHz")
         }
@@ -331,8 +331,8 @@ Rectangle {
 
     Slider {
         id: sliderHorizontal
-        x: 498
-        y: 569
+        x: 522
+        y: 580
         width: 261
         height: 32
         maximumValue: 100

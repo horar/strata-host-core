@@ -4,7 +4,7 @@ import QtQuick.Controls 2.0
 Rectangle{
     id:serialTab
     objectName: "serialTab"
-    opacity: 0
+    opacity: 1
     anchors.fill:parent
 
 
@@ -30,8 +30,10 @@ Rectangle{
 
     TabBar {
         id: tabBar
-        x: 65;y: 28
-        width: parent.width;height: parent.height
+        x: 71;y: 0
+        width: parent.width
+        height: parent.height
+        anchors.bottomMargin: 0
         anchors.bottom: parent.bottom
 
         background: Rectangle {
@@ -41,15 +43,15 @@ Rectangle{
         currentIndex: swipeView.currentIndex
         // anchors { middle: parent.middle}
         transform: Rotation{ angle: 90  }
-        TabButton { id: tabButton; x: 0; y: -22; width: 286; height: 63; font.bold: true; font.pointSize: 19;spacing: 9;
+        TabButton { id: tabButton; x: 0; y: 9; width: 286; height: 74; font.bold: true; font.pointSize: 19;spacing: 9;
             Text{
                 id: i2c
-                y: 50
+                y: 54
                 anchors.centerIn: parent.Center
                 text: "I2C"
                 anchors.left: parent.horizontalCenter
-                anchors.leftMargin: -39
-                font.pointSize: 14
+                anchors.leftMargin: -23
+                font.pointSize: 12
                 font.bold: true
                 z:2
                 horizontalAlignment: Text.AlignHCenter
@@ -60,14 +62,15 @@ Rectangle{
             checked: false
         }
 
-        TabButton { x: 272; y: -15; width: 286; height: 63; font.bold: true;font.pointSize: 19
+        TabButton { x: 292; y: 0; width: 286; height: 74; font.bold: true;font.pointSize: 19
             Text{
                 id: spi
-                y: 50
+                y: 64
                 //                anchors.centerIn: parent.Center
                 text: "SPI"
+                anchors.leftMargin: 0
                 anchors.left: parent.horizontalCenter
-                font.pointSize: 14
+                font.pointSize: 12
                 font.bold: true
                 z:2
                 //horizontalAlignment: Text.AlignHCenter
@@ -79,17 +82,17 @@ Rectangle{
 
 
         }
-        TabButton { x: 533; y: -18; width: 287
-            height: 63
+        TabButton { x: 579; y: 0; width: 287
+            height: 74
             Text{
                 id: uART
                 x: 81
-                y: 63
+                y: 65
                 anchors.centerIn: parent.Center
                 text: "UART"
                 anchors.left: parent.horizontalCenter
-                anchors.leftMargin: -41
-                font.pointSize: 14
+                anchors.leftMargin: 29
+                font.pointSize: 11
                 font.bold: true
                 z:2
                 horizontalAlignment: Text.AlignHCenter

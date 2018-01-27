@@ -12,8 +12,14 @@ Rectangle{
     width: 651
     height: 757
     color: "#babdb6"
-    opacity: 0
+    opacity: 1
     anchors.fill:parent
+
+    property int smallFontSize: (Qt.platform.os === "osx") ? 12  : 10;
+    property int mediumFontSize: (Qt.platform.os === "osx") ? 15  : 12;
+    property int largeFontSize: (Qt.platform.os === "osx") ? 24  : 20;
+    property int extraLargeFontSize: (Qt.platform.os === "osx") ? 36  : 24;
+
 
     RowLayout {
         id: rowLayout
@@ -45,6 +51,7 @@ Rectangle{
             x: 68
             y: 96
             text: qsTr("0")
+            font.pointSize: mediumFontSize
         }
 
 
@@ -55,6 +62,7 @@ Rectangle{
             width: 22
             height: 20
             text: qsTr("2")
+            font.pointSize: mediumFontSize
         }
 
         Label {
@@ -64,6 +72,7 @@ Rectangle{
             width: 22
             height: 10
             text: qsTr("3")
+            font.pointSize: mediumFontSize
         }
 
         Label {
@@ -73,6 +82,7 @@ Rectangle{
             width: 12
             height: 20
             text: qsTr("1")
+            font.pointSize: mediumFontSize
         }
 
         Label {
@@ -82,6 +92,7 @@ Rectangle{
             width: 15
             height: 20
             text: qsTr("4")
+            font.pointSize: mediumFontSize
         }
 
         Label {
@@ -91,6 +102,7 @@ Rectangle{
             width: 24
             height: 31
             text: qsTr("5")
+            font.pointSize: mediumFontSize
         }
 
         Label {
@@ -100,6 +112,7 @@ Rectangle{
             width: 24
             height: 25
             text: qsTr("6")
+            font.pointSize: mediumFontSize
         }
 
         Label {
@@ -109,6 +122,7 @@ Rectangle{
             width: 17
             height: 26
             text: qsTr("7")
+            font.pointSize: mediumFontSize
         }
     }
 
@@ -165,6 +179,7 @@ Rectangle{
                 id: textField3
                 x: 120
                 y: 92
+                width: 116
                 placeholderText: qsTr("10 Hz")
             }
 
@@ -172,6 +187,7 @@ Rectangle{
                 id: textField4
                 x: 120
                 y: 164
+                width: 116
                 placeholderText: qsTr("100HZ")
             }
 
@@ -179,6 +195,7 @@ Rectangle{
                 id: textField5
                 x: 120
                 y: 240
+                width: 116
                 placeholderText: qsTr("1000HZ")
             }
 
@@ -186,6 +203,7 @@ Rectangle{
                 id: textField6
                 x: 125
                 y: 311
+                width: 116
                 placeholderText: qsTr("10 Hz")
             }
 
@@ -193,6 +211,7 @@ Rectangle{
                 id: textField7
                 x: 125
                 y: 383
+                width: 116
                 placeholderText: qsTr("10 Hz")
             }
 
@@ -200,6 +219,7 @@ Rectangle{
                 id: textField8
                 x: 125
                 y: 457
+                width: 116
                 placeholderText: qsTr("10 Hz")
             }
 
@@ -207,6 +227,7 @@ Rectangle{
                 id: textField9
                 x: 125
                 y: 527
+                width: 116
                 placeholderText: qsTr("10 Hz")
             }
 
@@ -214,6 +235,8 @@ Rectangle{
                 id: textField10
                 x: 125
                 y: 604
+                width: 116
+                height: 25
                 placeholderText: qsTr("10 Hz")
             }
         }

@@ -6,10 +6,15 @@ Button {
     width:100
     height:40
     property var tabName
+    property int smallFontSize: (Qt.platform.os === "osx") ? 12  : 10;
+    property int mediumFontSize: (Qt.platform.os === "osx") ? 15  : 12;
+    property int largeFontSize: (Qt.platform.os === "osx") ? 24  : 20;
+    property int extraLargeFontSize: (Qt.platform.os === "osx") ? 36  : 24;
 
     checkable: true
     checked:true
 
+    font.pixelSize: mediumFontSize
     background: Canvas{
         id:leftButtonCanvas
         anchors.fill:parent
@@ -49,6 +54,4 @@ Button {
         console.log("PWM setting", tabName);
         tabName = createTab(tabName,contentRectangle);
     }
-
-
 }

@@ -62,7 +62,7 @@ Rectangle {
         x: leftUSBPlug.x + leftUSBPlug.width; y: leftUSBPlug.y
         width: connector.width/1.35; height: 100
         anchors{ left: leftUSBPlug.right; right: connector.right }
-        property color strokeStyle:  "black"
+        property color strokeStyle: "black"
         property color fillStyle: "#b40000" // red
         property int lineWidth: 2
         property bool fill: true
