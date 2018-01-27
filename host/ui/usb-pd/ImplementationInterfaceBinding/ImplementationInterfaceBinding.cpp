@@ -175,6 +175,24 @@ void ImplementationInterfaceBinding::setMaximumPortPower(int port,int value)
     else
         qDebug() << "Radio button send failed";
 }
+
+void ImplementationInterfaceBinding::setMinimumInputVoltage(int value)
+{
+    QJsonObject cmdMessageObject;
+    cmdMessageObject.insert("cmd", "request_set_minimum_voltage");
+    QJsonObject payloadObject;
+    payloadObject.insert("value",value);
+    qDebug() << "Setting minimum input voltage: " << value;
+    cmdMessageObject.insert("payload",payloadObject);
+    QJsonDocument doc(cmdMessageObject);
+    QString strJson(doc.toJson(QJsonDocument::Compact));
+
+    if(hcc_object->sendCmd(strJson.toStdString()))
+        qDebug() << "Sent cmd with value" << doc;
+    else
+        qDebug() << "Send failed";
+}
+
 /*!
  * Getter and Setter methods, used for retriving/writing something to/from platform
  * Retreived/set value is indidcated by function name.
@@ -371,7 +389,11 @@ void ImplementationInterfaceBinding::handleNotification(QVariantMap current_map)
         } else if (current_map["value"] == "input_under_voltage_notification"){
             payloadMap=current_map["payload"].toMap();
             handleInputUnderVoltageNotification(payloadMap);
-        } else {
+        } else if (current_map["value"] == "over_temperature_notification"){
+            payloadMap=current_map["payload"].toMap();
+            handleOverTemperatureNotification(payloadMap);
+        }
+        else {
             qDebug() << "Unsupported value field Received";
             qDebug() << "Received JSON = " <<current_map;
         }
@@ -634,7 +656,16 @@ void ImplementationInterfaceBinding::handleResetNotification(const QVariantMap p
 void ImplementationInterfaceBinding::handleInputUnderVoltageNotification(const QVariantMap payloadMap) {
     bool state = payloadMap["under_voltage"].toBool();
     int value = payloadMap["minimum_voltage"].toInt();
+    qDebug() << "received Minimum voltage";
     emit minimumVoltageChanged(state,value);
+}
+
+void ImplementationInterfaceBinding::handleOverTemperatureNotification(const QVariantMap payloadMap)
+{
+    bool state = payloadMap["over_temperature"].toBool();
+    int value = payloadMap["maximum_temperature"].toInt();
+    qDebug() << "received over temperature";
+    emit overTemperatureChanged(state,value);
 }
 /*!
  * End of notification handlers
