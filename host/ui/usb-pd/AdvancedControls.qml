@@ -7,7 +7,42 @@ import "framework"
 
 Rectangle {
 
+    property int smallFontSize: (Qt.platform.os === "osx") ? 12  : 8;
+    property int mediumFontSize: (Qt.platform.os === "osx") ? 15  : 12;
+    property int largeFontSize: (Qt.platform.os === "osx") ? 24  : 16;
+    property int extraLargeFontSize: (Qt.platform.os === "osx") ? 36  : 24;
+
+
     objectName: "advancedControls"
+
+
+    ListModel {
+        id: faultHistoryList
+    }
+
+    ListModel {
+        id: activeFaultList
+    }
+    onVisibleChanged: {
+        if(visible){
+        faultHistoryList.append({"parameter":"voltage","condition":"<","value":value})
+        console.log("message",faultHistoryList)
+    }}
+
+    // signal handling
+    Connections {
+        target: implementationInterfaceBinding
+
+        onMinimumVoltageChanged: {
+            if(state) {
+                faultHistoryList.append({"parameter":"voltage","condition":"<","value":value})
+            }
+            else {
+                faultHistoryList.append({"parameter":"voltage","condition":">","value":value})
+            }
+
+        }
+    }
 
     GridLayout {
         id: grid
@@ -89,20 +124,57 @@ Rectangle {
                         checkable: true
                         checked: true
                         background: Rectangle {
-                            color: boardSettingsDisclosureButton.checked ? "green" : "red"
+                            //color: boardSettingsDisclosureButton.checked ? "green" : "red"
+                            color:"black"
                         }
-                        icon.source: checked ? "./images/icons/showLessIcon.svg" : "./images/icons/showMoreIcon.svg"
-                        icon.height: parent.height
-                        icon.width:parent.width
+
+
+                        Image{
+                            id:boardSettingsDisclosureButtonImage
+                            anchors.left:parent.left
+                            anchors.leftMargin: 3
+                            anchors.top:parent.top
+                            height:10
+                            width:14
+                            source:"./images/icons/showLessIcon.svg"
+
+                            transform: Rotation {
+                                id: rotateBoardSettingsButtonImage
+                                origin.x: boardSettingsDisclosureButtonImage.width/2;
+                                origin.y: boardSettingsDisclosureButtonImage.height/2;
+                                axis { x: 0; y: 0; z: 1 }
+                            }
+
+                            NumberAnimation {
+                                id:collapseBoardSettingsDisclosureIcon
+                                running: false
+                                loops: 1
+                                target: rotateBoardSettingsButtonImage;
+                                property: "angle";
+                                from: 0; to: 180;
+                                duration: 1000;
+                            }
+
+                            NumberAnimation {
+                                id:expandBoardSettingsDisclosureIcon
+                                running: false
+                                loops: 1
+                                target: rotateBoardSettingsButtonImage;
+                                property: "angle";
+                                from: 180; to: 0;
+                                duration: 1000;
+                            }
+                        }
+
 
                         onClicked:{
                             if (checked == true){
                                 expandBoardSettings.start();
-                                console.log ("expanding");
+                                expandBoardSettingsDisclosureIcon.start()
                                 }
                             else{
-                            collapseBoardSettings.start();
-                                console.log ("collapsing");
+                                collapseBoardSettings.start();
+                                collapseBoardSettingsDisclosureIcon.start()
                               }
                         }
 
@@ -112,12 +184,12 @@ Rectangle {
                         id: boardSettingsLabel
                         text: "Board Settings"
                         font.family: "Helvetica"
-                        font.pointSize: 15
+                        font.pointSize: mediumFontSize
                         color: "#D8D8D8"
                         anchors.left:parent.left
                         anchors.top:parent.top
-                        anchors.leftMargin: 20//parent.width/20
-                        anchors.topMargin: 20//parent.height/20
+                        anchors.leftMargin: 20
+                        anchors.topMargin: 20
                     }
 
                     Rectangle{
@@ -147,7 +219,7 @@ Rectangle {
                             id:inputLimitingText
                             text:"Input Limiting"
                             font.family: "helvetica"
-                            font.pointSize: 15
+                            font.pointSize: mediumFontSize
                             color: "#D8D8D8"
                             anchors.left: parent.left
                             anchors.leftMargin: 5
@@ -184,13 +256,28 @@ Rectangle {
                                     color: "white"
                                 }
                             }
+                            onToggled: {
+                                //toggle enablement of the input limiting controls
+                                startLimitingText.enabled = inputLimitingSwitch.checked
+                                startLimitingVoltageTextInput.enabled = inputLimitingSwitch.checked
+                                startLimitingUnitText.enabled = inputLimitingSwitch.checked
+                                startLimitingVoltageTextInput.enabled = inputLimitingSwitch.checked
+                                startLimitingUnitText.enabled = inputLimitingSwitch.checked
+                                outputLimitText.enabled = inputLimitingSwitch.checked
+                                outputLimitTextInput.enabled = inputLimitingSwitch.checked
+                                outputLimitUnitText.enabled = inputLimitingSwitch.checked
+                                minimumInputVoltageText.enabled = inputLimitingSwitch.checked
+                                minimumInputTextInput.enabled = inputLimitingSwitch.checked
+                                minimumInputUnitText.enabled = inputLimitingSwitch.checked
+                                minimumInputVoltageSlider.enabled = inputLimitingSwitch.checked
+                            }
                         }
 
                         Text{
                             id:startLimitingText
                             text:"Start limiting at:"
                             font.family: "helvetica"
-                            font.pointSize: 12
+                            font.pointSize: smallFontSize
                             horizontalAlignment: Text.AlignRight
                             color: "#D8D8D8"
                             anchors.right:parent.right
@@ -200,15 +287,15 @@ Rectangle {
 
                         }
                         TextField{
-                            id:limitingVoltageTextInput
+                            id:startLimitingVoltageTextInput
                             anchors.left:startLimitingText.right
                             anchors.leftMargin: 10
                             anchors.verticalCenter: startLimitingText.verticalCenter
                             color:"white"//"#838484"
-                            placeholderText:"7"
+                            placeholderText:"5"
                             verticalAlignment: TextInput.AlignTop
                             font.family: "helvetica"
-                            font.pointSize: 12
+                            font.pointSize: smallFontSize
                             height:15
                             width:30
                             background: Rectangle {
@@ -217,15 +304,26 @@ Rectangle {
                                     color: "#838484"//"#33FFFFFF"
                                     border.color: "#838484"
                                 }
+                            onEditingFinished: {
+                                //keep the values in the correct range
+                                if (startLimitingVoltageTextInput.text >32){
+                                    startLimitingVoltageTextInput.text = 32
+                                }
+                                else if (startLimitingVoltageTextInput.text <5){
+                                    startLimitingVoltageTextInput.text = 5
+                                }
+                                implementationInterfaceBinding.setInputVoltageLimiting(parseInt(startLimitingVoltageTextInput.text))
+                                console.log ("user set value for start limiting:", startLimitingVoltageTextInput.text)
+                            }
                         }
                         Text{
                             id:startLimitingUnitText
                             text:"V"
                             font.family: "helvetica"
-                            font.pointSize: 12
+                            font.pointSize: smallFontSize
                             //horizontalAlignment: Text.AlignRight
                             color: "#D8D8D8"
-                            anchors.left:limitingVoltageTextInput.right
+                            anchors.left:startLimitingVoltageTextInput.right
                             anchors.leftMargin: 5
                             anchors.verticalCenter: startLimitingText.verticalCenter
 
@@ -235,7 +333,7 @@ Rectangle {
                             id:outputLimitText
                             text:"Limit Board Output to:"
                             font.family: "helvetica"
-                            font.pointSize: 12
+                            font.pointSize: smallFontSize
                             horizontalAlignment: Text.AlignRight
                             color: "#D8D8D8"
                             anchors.right:parent.right
@@ -252,7 +350,7 @@ Rectangle {
                             placeholderText:"7"
                             verticalAlignment: TextInput.AlignTop
                             font.family: "helvetica"
-                            font.pointSize: 12
+                            font.pointSize: smallFontSize
                             height:15
                             width:30
                             background: Rectangle {
@@ -261,12 +359,23 @@ Rectangle {
                                     color: "#838484"//"#33FFFFFF"
                                     border.color: "#838484"
                                 }
+                            onEditingFinished: {
+                                //keep the values in the correct range
+                                if (outputLimitTextInput.text >32){
+                                    outputLimitTextInput.text = 32
+                                }
+                                else if (outputLimitTextInput.text <5){
+                                    outputLimitTextInput.text = 5
+                                }
+
+                                console.log ("user set value for output limiting:", outputLimitTextInput.text)
+                            }
                         }
                         Text{
                             id:outputLimitUnitText
                             text:"W"
                             font.family: "helvetica"
-                            font.pointSize: 12
+                            font.pointSize: smallFontSize
                             //horizontalAlignment: Text.AlignRight
                             color: "#D8D8D8"
                             anchors.left:outputLimitTextInput.right
@@ -276,10 +385,10 @@ Rectangle {
                         }
 
                         Text{
-                            id:minimumInputTempText
+                            id:minimumInputVoltageText
                             text:"Minimum input voltage:"
                             font.family: "helvetica"
-                            font.pointSize: 12
+                            font.pointSize: smallFontSize
                             horizontalAlignment: Text.AlignRight
                             color: "#D8D8D8"
                             anchors.right:parent.right
@@ -287,34 +396,80 @@ Rectangle {
                             anchors.top: outputLimitText.bottom
                             anchors.topMargin: 10
                         }
-                        TextField{
-                            id:minimumInputTextInput
-                            anchors.left:minimumInputTempText.right
+                        Label{
+                            id:minimumInputLabel
+                            anchors.left:minimumInputVoltageText.right
                             anchors.leftMargin: 10
-                            anchors.verticalCenter: minimumInputTempText.verticalCenter
-                            color:"white"//"#838484"
-                            placeholderText:"7"
+                            anchors.verticalCenter: minimumInputVoltageText.verticalCenter
+                            anchors.verticalCenterOffset: 2
+                            color:"white"
+                            text:minimumInputVoltageSlider.value
                             verticalAlignment: TextInput.AlignTop
                             font.family: "helvetica"
-                            font.pointSize: 12
+                            font.pointSize: smallFontSize
                             height:15
-                            width:30
-                            background: Rectangle {
-                                    implicitWidth: 15
-                                    implicitHeight: 10
-                                    color: "#838484"//"#33FFFFFF"
-                                    border.color: "#838484"
-                                }
+                            width:20
                         }
                         Text{
                             id:minimumInputUnitText
                             text:"V"
                             font.family: "helvetica"
-                            font.pointSize: 12
+                            font.pointSize: smallFontSize
                             color: "#D8D8D8"
-                            anchors.left:minimumInputTextInput.right
+                            anchors.left:minimumInputLabel.right
                             anchors.leftMargin: 5
-                            anchors.verticalCenter: minimumInputTempText.verticalCenter
+                            anchors.verticalCenter: minimumInputVoltageText.verticalCenter
+
+                        }
+                        Slider{
+                            id:minimumInputVoltageSlider
+                            anchors.left:minimumInputUnitText.right
+                            anchors.leftMargin: 5
+                            anchors.right:parent.right
+                            anchors.rightMargin: 10
+                            anchors.verticalCenter: minimumInputVoltageText.verticalCenter
+                            height:10
+                            from: 5
+                            to:32
+                            value:5
+                            stepSize: 0.0
+                            //the trail of the slider
+                            background: Rectangle {
+                                    x: minimumInputVoltageSlider.leftPadding
+                                    y: minimumInputVoltageSlider.topPadding + minimumInputVoltageSlider.availableHeight / 2 - height / 2
+                                    implicitWidth: 200
+                                    implicitHeight: 2
+                                    width: minimumInputVoltageSlider.availableWidth
+                                    height: implicitHeight
+                                    radius: 2
+                                    color: "#bdbebf"
+
+                                    //the portion of the trail to the left of the thumb
+                                    Rectangle {
+                                        width: minimumInputVoltageSlider.visualPosition * parent.width
+                                        height: parent.height
+                                        color: "#0078D7"
+                                        radius: 2
+                                    }
+                                }
+
+                            //the thumb of the slider
+                                handle: Rectangle {
+                                    x: minimumInputVoltageSlider.leftPadding + minimumInputVoltageSlider.visualPosition * (minimumInputVoltageSlider.availableWidth - width)
+                                    y: minimumInputVoltageSlider.topPadding + minimumInputVoltageSlider.availableHeight / 2 - height / 2
+                                    implicitWidth: 10
+                                    implicitHeight: 10
+                                    radius: 5
+                                    color: "black"
+                                    border.color: "#0078D7"
+                                    border.width: 2
+                                }
+
+                                onMoved: {
+                                    minimumInputLabel.text = Math.round(minimumInputVoltageSlider.value *10)/10
+
+                                }
+
 
                         }
 
@@ -338,7 +493,7 @@ Rectangle {
                             id:temperatureLimitingText
                             text:"Temperature Limiting"
                             font.family: "helvetica"
-                            font.pointSize: 15
+                            font.pointSize: mediumFontSize
                             color: "#D8D8D8"
                             anchors.left: parent.left
                             anchors.leftMargin: 5
@@ -375,13 +530,26 @@ Rectangle {
                                     color: "white"
                                 }
                             }
+                            onToggled: {
+                                //toggle enablement of the input limiting controls
+                                boardTemperatureText.enabled = temperatureLimitingSwitch.checked
+                                boardTemperatureTextInput.enabled = temperatureLimitingSwitch.checked
+                                boardTemperatureUnitText.enabled = temperatureLimitingSwitch.checked
+                                boardOutputLimitText.enabled = temperatureLimitingSwitch.checked
+                                boardOutputTextInput.enabled = temperatureLimitingSwitch.checked
+                                boardOutputUnitText.enabled = temperatureLimitingSwitch.checked
+                                faultTempText.enabled = temperatureLimitingSwitch.checked
+                                faultTempLabel.enabled = temperatureLimitingSwitch.checked
+                                faultTempUnitText.enabled = temperatureLimitingSwitch.checked
+                                faultTempSlider.enabled = temperatureLimitingSwitch.checked
+                            }
                         }
 
                         Text{
                             id:boardTemperatureText
                             text:"When board temperature reaches:"
                             font.family: "helvetica"
-                            font.pointSize: 12
+                            font.pointSize: smallFontSize
                             horizontalAlignment: Text.AlignRight
                             color: "#D8D8D8"
                             anchors.right:parent.right
@@ -399,7 +567,7 @@ Rectangle {
                             placeholderText:"70"
                             verticalAlignment: TextInput.AlignTop
                             font.family: "helvetica"
-                            font.pointSize: 12
+                            font.pointSize: smallFontSize
                             height:15
                             width:30
                             background: Rectangle {
@@ -408,12 +576,23 @@ Rectangle {
                                     color: "#838484"//"#33FFFFFF"
                                     border.color: "#838484"
                                 }
+                            onEditingFinished: {
+                                //keep the values in the correct range
+                                if (boardTemperatureTextInput.text >32){
+                                    boardTemperatureTextInput.text = 32
+                                }
+                                else if (boardTemperatureTextInput.text <5){
+                                    boardTemperatureTextInput.text = 5
+                                }
+                                implementationInterfaceBinding.setMaximumTemperature(boardTemperatureTextInput.text)
+                                console.log ("user set value for start limiting:", boardTemperatureTextInput.text)
+                            }
                         }
                         Text{
                             id:boardTemperatureUnitText
                             text:"°C"
                             font.family: "helvetica"
-                            font.pointSize: 12
+                            font.pointSize: smallFontSize
                             color: "#D8D8D8"
                             anchors.left:boardTemperatureTextInput.right
                             anchors.leftMargin: 5
@@ -425,7 +604,7 @@ Rectangle {
                             id:boardOutputLimitText
                             text:"Limit Board Output to:"
                             font.family: "helvetica"
-                            font.pointSize: 12
+                            font.pointSize: smallFontSize
                             horizontalAlignment: Text.AlignRight
                             color: "#D8D8D8"
                             anchors.right:parent.right
@@ -439,10 +618,10 @@ Rectangle {
                             anchors.leftMargin: 10
                             anchors.verticalCenter: boardOutputLimitText.verticalCenter
                             color:"white"//"#838484"
-                            placeholderText:"7"
+                            placeholderText:"5"
                             verticalAlignment: TextInput.AlignTop
                             font.family: "helvetica"
-                            font.pointSize: 12
+                            font.pointSize: smallFontSize
                             height:15
                             width:30
                             background: Rectangle {
@@ -451,12 +630,23 @@ Rectangle {
                                     color: "#838484"//"#33FFFFFF"
                                     border.color: "#838484"
                                 }
+                            onEditingFinished: {
+                                //keep the values in the correct range
+                                if (boardOutputTextInput.text >32){
+                                    boardOutputTextInput.text = 32
+                                }
+                                else if (boardOutputTextInput.text <5){
+                                    boardOutputTextInput.text = 5
+                                }
+                                console.log ("user set value for start limiting:", boardOutputTextInput.text)
+                            }
                         }
+
                         Text{
                             id:boardOutputUnitText
                             text:"W"
                             font.family: "helvetica"
-                            font.pointSize: 12
+                            font.pointSize: smallFontSize
                             color: "#D8D8D8"
                             anchors.left:boardOutputTextInput.right
                             anchors.leftMargin: 5
@@ -468,7 +658,7 @@ Rectangle {
                             id:faultTempText
                             text:"Fault when temperature reaches:"
                             font.family: "helvetica"
-                            font.pointSize: 12
+                            font.pointSize: smallFontSize
                             horizontalAlignment: Text.AlignRight
                             color: "#D8D8D8"
                             anchors.right:parent.right
@@ -476,34 +666,83 @@ Rectangle {
                             anchors.top: boardOutputLimitText.bottom
                             anchors.topMargin: 10
                         }
-                        TextField{
-                            id:faultTempTextInput
+
+                        Label{
+                            id:faultTempLabel
                             anchors.left:faultTempText.right
                             anchors.leftMargin: 10
                             anchors.verticalCenter: faultTempText.verticalCenter
-                            color:"white"//"#838484"
-                            placeholderText:"7"
+                            anchors.verticalCenterOffset: 2
+                            color:"white"
+                            text:faultTempSlider.value
                             verticalAlignment: TextInput.AlignTop
                             font.family: "helvetica"
-                            font.pointSize: 12
+                            font.pointSize: smallFontSize
                             height:15
-                            width:30
-                            background: Rectangle {
-                                    implicitWidth: 15
-                                    implicitHeight: 10
-                                    color: "#838484"//"#33FFFFFF"
-                                    border.color: "#838484"
-                                }
+                            width:20
                         }
+
+
                         Text{
                             id:faultTempUnitText
                             text:"°C"
                             font.family: "helvetica"
-                            font.pointSize: 12
+                            font.pointSize: smallFontSize
                             color: "#D8D8D8"
-                            anchors.left:faultTempTextInput.right
+                            anchors.left:faultTempLabel.right
                             anchors.leftMargin: 5
                             anchors.verticalCenter: faultTempText.verticalCenter
+
+                        }
+                        Slider{
+                            id:faultTempSlider
+                            anchors.left:faultTempUnitText.right
+                            anchors.leftMargin: 5
+                            anchors.right:parent.right
+                            anchors.rightMargin: 10
+                            anchors.verticalCenter: faultTempText.verticalCenter
+                            height:10
+                            from: 25
+                            to:100
+                            value:5
+                            stepSize: 0.0
+                            //the trail of the slider
+                            background: Rectangle {
+                                    x: faultTempSlider.leftPadding
+                                    y: faultTempSlider.topPadding + faultTempSlider.availableHeight / 2 - height / 2
+                                    implicitWidth: 200
+                                    implicitHeight: 2
+                                    width: faultTempSlider.availableWidth
+                                    height: implicitHeight
+                                    radius: 2
+                                    color: "#bdbebf"
+
+                                    //the portion of the trail to the left of the thumb
+                                    Rectangle {
+                                        width: faultTempSlider.visualPosition * parent.width
+                                        height: parent.height
+                                        color: "#0078D7"
+                                        radius: 2
+                                    }
+                                }
+
+                            //the thumb of the slider
+                                handle: Rectangle {
+                                    x: faultTempSlider.leftPadding + faultTempSlider.visualPosition * (faultTempSlider.availableWidth - width)
+                                    y: faultTempSlider.topPadding + faultTempSlider.availableHeight / 2 - height / 2
+                                    implicitWidth: 10
+                                    implicitHeight: 10
+                                    radius: 5
+                                    color: "black"
+                                    border.color: "#0078D7"
+                                    border.width: 2
+                                }
+
+                                onMoved: {
+                                    faultTempLabel.text = Math.round(faultTempSlider.value *10)/10
+
+                                }
+
 
                         }
                     }
@@ -546,20 +785,55 @@ Rectangle {
                         checkable: true
                         checked: true
                         background: Rectangle {
-                            color: port1SettingsDisclosureButton.checked ? "green" : "red"
+                            color: "black"
                         }
-                        icon.source: checked ? "./images/icons/showLessIcon.svg" : "./images/icons/showMoreIcon.svg"
-                        icon.height: parent.height
-                        icon.width:parent.width
+
+
+                        Image{
+                            id:port1DisclosureButtonImage
+                            anchors.left:parent.left
+                            anchors.leftMargin: 3
+                            anchors.top:parent.top
+                            height:10
+                            width:14
+                            source:"./images/icons/showLessIcon.svg"
+
+                            transform: Rotation {
+                                id: rotatePort1ButtonImage
+                                origin.x: port1DisclosureButtonImage.width/2;
+                                origin.y: port1DisclosureButtonImage.height/2;
+                                axis { x: 0; y: 0; z: 1 }
+                            }
+
+                            NumberAnimation {
+                                id:collapsePort1DisclosureIcon
+                                running: false
+                                loops: 1
+                                target: rotatePort1ButtonImage;
+                                property: "angle";
+                                from: 0; to: 180;
+                                duration: 1000;
+                            }
+
+                            NumberAnimation {
+                                id:expandPort1DisclosureIcon
+                                running: false
+                                loops: 1
+                                target: rotatePort1ButtonImage;
+                                property: "angle";
+                                from: 180; to: 0;
+                                duration: 1000;
+                            }
+                        }
 
                         onClicked:{
                             if (checked == true){
                                 expandPort1Settings.start();
-                                console.log ("expanding");
+                                expandPort1DisclosureIcon.start();
                                 }
                             else{
-                            collapsePort1Settings.start();
-                                console.log ("collapsing");
+                                collapsePort1Settings.start();
+                                collapsePort1DisclosureIcon.start();
                               }
                         }
 
@@ -569,7 +843,7 @@ Rectangle {
                         id: port1SettingsLabel
                         text: "Port 1 Settings"
                         font.family: "Helvetica"
-                        font.pointSize: 15
+                        font.pointSize: mediumFontSize
                         color: "#D8D8D8"
                         anchors.left:parent.left
                         anchors.top:parent.top
@@ -593,7 +867,7 @@ Rectangle {
                         id:port1CableCompensationText
                         text:"Cable compensation step:"
                         font.family: "helvetica"
-                        font.pointSize: 12
+                        font.pointSize: smallFontSize
                         horizontalAlignment: Text.AlignRight
                         color: "#D8D8D8"
                         anchors.right:parent.right
@@ -611,7 +885,7 @@ Rectangle {
                         placeholderText:"70"
                         verticalAlignment: TextInput.AlignTop
                         font.family: "helvetica"
-                        font.pointSize: 12
+                        font.pointSize: smallFontSize
                         height:15
                         width:30
                         background: Rectangle {
@@ -625,7 +899,7 @@ Rectangle {
                         id:port1CableCompensationUnitText
                         text:"A"
                         font.family: "helvetica"
-                        font.pointSize: 12
+                        font.pointSize: smallFontSize
                         color: "#D8D8D8"
                         anchors.left:port1CableCompensationTextInput.right
                         anchors.leftMargin: 5
@@ -637,7 +911,7 @@ Rectangle {
                         id:voltageCompensationText
                         text:"Voltage compensation:"
                         font.family: "helvetica"
-                        font.pointSize: 12
+                        font.pointSize: smallFontSize
                         horizontalAlignment: Text.AlignRight
                         color: "#D8D8D8"
                         anchors.right:parent.right
@@ -654,7 +928,7 @@ Rectangle {
                         placeholderText:"7"
                         verticalAlignment: TextInput.AlignTop
                         font.family: "helvetica"
-                        font.pointSize: 12
+                        font.pointSize: smallFontSize
                         height:15
                         width:30
                         background: Rectangle {
@@ -668,7 +942,7 @@ Rectangle {
                         id:voltageCompensationUnitText
                         text:"mV"
                         font.family: "helvetica"
-                        font.pointSize: 12
+                        font.pointSize: smallFontSize
                         color: "#D8D8D8"
                         anchors.left:voltageCompensationTextInput.right
                         anchors.leftMargin: 5
@@ -677,10 +951,10 @@ Rectangle {
                     }
 
                     Text{
-                        id:maxPowerText
+                        id:port1MaxPowerText
                         text:"Maximum power output:"
                         font.family: "helvetica"
-                        font.pointSize: 12
+                        font.pointSize: smallFontSize
                         horizontalAlignment: Text.AlignRight
                         color: "#D8D8D8"
                         anchors.right:parent.right
@@ -688,34 +962,122 @@ Rectangle {
                         anchors.top: voltageCompensationText.bottom
                         anchors.topMargin: 10
                     }
-                    TextField{
-                        id:maxPowerTextInput
-                        anchors.left:maxPowerText.right
+                    ComboBox {
+                        id:port1MaxPowerCombo
+                         model: ["27", "36", "45","60","100"]
+//                        textRole: "key"
+//                        model: ListModel {
+//                         id:model
+//                                ListElement { key: "27"; value: 27 }
+//                                ListElement { key: "36"; value: 36 }
+//                                ListElement { key: "45"; value: 45 }
+//                                ListElement { key: "60"; value: 60 }
+//                                ListElement { key: "100"; value: 100 }
+//                            }
+                        anchors.left:port1MaxPowerText.right
                         anchors.leftMargin: 10
-                        anchors.verticalCenter: maxPowerText.verticalCenter
-                        color:"white"//"#838484"
-                        placeholderText:"7"
-                        verticalAlignment: TextInput.AlignTop
+                        anchors.verticalCenter: port1MaxPowerText.verticalCenter
                         font.family: "helvetica"
-                        font.pointSize: 12
+                        font.pointSize: smallFontSize
                         height:15
                         width:30
+
+                        //this is used by the PopUp to determine what font to use
+                        delegate: ItemDelegate {
+                                width: port1MaxPowerCombo.width
+                                height:15
+                                contentItem: Text {
+                                    text: modelData
+                                    color: highlighted? "#D8D8D8" :"black"
+                                    font: port2MaxPowerCombo.font
+                                    elide: Text.ElideRight
+                                    verticalAlignment: Text.AlignVCenter
+                                }
+                                onClicked:{
+                                    //here's where a click on a new selection should be handled
+                                    implementationInterfaceBinding.setMaximumPortPower(1,modelData)
+                                    console.log("clicked:", modelData)
+                                }
+
+                                highlighted: port1MaxPowerCombo.highlightedIndex === index
+                            }
+
+//                        indicator: Canvas {
+//                                id: canvas
+//                                x: port1MaxPowerCombo.width /*- width*/ - port1MaxPowerCombo.rightPadding
+//                                y: port1MaxPowerCombo.topPadding + (port1MaxPowerCombo.availableHeight - height) / 2
+//                                width: 12
+//                                height: 8
+//                                contextType: "2d"
+
+//                                Connections {
+//                                    target: port1MaxPowerCombo
+//                                    onPressedChanged: canvas.requestPaint()
+//                                }
+
+//                                onPaint: {
+//                                    context.reset();
+//                                    context.moveTo(0, 0);
+//                                    context.lineTo(width, 0);
+//                                    context.lineTo(width / 2, height);
+//                                    context.closePath();
+//                                    context.fillStyle = "black";
+//                                    context.fill();
+//                                }
+//                            }
+
                         background: Rectangle {
                                 implicitWidth: 15
                                 implicitHeight: 10
-                                color: "#838484"//"#33FFFFFF"
+                                color: "#838484"
                                 border.color: "#838484"
                             }
+
+                        contentItem: Text {
+                                leftPadding: 0
+                                rightPadding: port1MaxPowerCombo.indicator.width + port1MaxPowerCombo.spacing
+
+                                text: port1MaxPowerCombo.displayText
+                                font: port1MaxPowerCombo.font
+                                color: port1MaxPowerCombo.pressed ? "#17a81a" : "#D8D8D8"
+                                horizontalAlignment: Text.AlignLeft
+                                verticalAlignment: Text.AlignVCenter
+                                elide: Text.ElideRight
+                            }
+
+                        popup: Popup {
+                            y: port1MaxPowerCombo.height - 1
+                            width: port1MaxPowerCombo.width *2
+                            implicitHeight: contentItem.implicitHeight
+                            padding: 1
+                            font.family: "helvetica"
+                            font.pointSize: smallFontSize
+                            //color: "#D8D8D8"
+
+                            contentItem: ListView {
+                                clip: true
+                                implicitHeight: contentHeight
+                                model: port1MaxPowerCombo.popup.visible ? port1MaxPowerCombo.delegateModel : null
+                                currentIndex: port1MaxPowerCombo.highlightedIndex
+
+                                ScrollIndicator.vertical: ScrollIndicator { }
+                            }
+
+                            background: Rectangle {
+                                color: "#838484"
+                                border.color: "#838484"
+                            }
+                        }
                     }
                     Text{
-                        id:maxPowerUnitText
+                        id:port1MaxPowerUnitText
                         text:"W"
                         font.family: "helvetica"
-                        font.pointSize: 12
+                        font.pointSize: smallFontSize
                         color: "#D8D8D8"
-                        anchors.left:maxPowerTextInput.right
+                        anchors.left:port1MaxPowerCombo.right
                         anchors.leftMargin: 5
-                        anchors.verticalCenter: maxPowerText.verticalCenter
+                        anchors.verticalCenter: port1MaxPowerText.verticalCenter
 
                     }
 
@@ -723,12 +1085,12 @@ Rectangle {
                         id:maxCurrentText
                         text:"Maximum current:"
                         font.family: "helvetica"
-                        font.pointSize: 12
+                        font.pointSize: smallFontSize
                         horizontalAlignment: Text.AlignRight
                         color: "#D8D8D8"
                         anchors.right:parent.right
                         anchors.rightMargin: parent.width*.6
-                        anchors.top: maxPowerText.bottom
+                        anchors.top: port1MaxPowerText.bottom
                         anchors.topMargin: 10
                     }
                     TextField{
@@ -740,7 +1102,7 @@ Rectangle {
                         placeholderText:"7"
                         verticalAlignment: TextInput.AlignTop
                         font.family: "helvetica"
-                        font.pointSize: 12
+                        font.pointSize: smallFontSize
                         height:15
                         width:30
                         background: Rectangle {
@@ -754,7 +1116,7 @@ Rectangle {
                         id:maxCurrentUnitText
                         text:"A"
                         font.family: "helvetica"
-                        font.pointSize: 12
+                        font.pointSize: smallFontSize
                         color: "#D8D8D8"
                         anchors.left:maxCurrentTextInput.right
                         anchors.leftMargin: 5
@@ -779,7 +1141,7 @@ Rectangle {
                             id:port1AdvertizedVoltagesLabel
                             text:"Advertized Voltages:"
                             font.family: "helvetica"
-                            font.pointSize: 12
+                            font.pointSize: smallFontSize
                             color: "#D8D8D8"
                             anchors.right:parent.right
                             anchors.rightMargin: parent.width*.6
@@ -797,7 +1159,7 @@ Rectangle {
                             placeholderText:"5"
                             verticalAlignment: TextInput.AlignTop
                             font.family: "helvetica"
-                            font.pointSize: 12
+                            font.pointSize: smallFontSize
                             height:15
                             width:20
                             background: Rectangle {
@@ -812,7 +1174,7 @@ Rectangle {
                             id:port1voltage1UnitText
                             text:"V"
                             font.family: "helvetica"
-                            font.pointSize: 12
+                            font.pointSize: smallFontSize
                             color: "#D8D8D8"
                             anchors.left:port1voltage1TextInput.right
                             anchors.leftMargin: 5
@@ -876,7 +1238,7 @@ Rectangle {
                             placeholderText:"5"
                             verticalAlignment: TextInput.AlignTop
                             font.family: "helvetica"
-                            font.pointSize: 12
+                            font.pointSize: smallFontSize
                             height:15
                             width:20
                             background: Rectangle {
@@ -891,7 +1253,7 @@ Rectangle {
                             id:port1voltage2UnitText
                             text:"V"
                             font.family: "helvetica"
-                            font.pointSize: 12
+                            font.pointSize: smallFontSize
                             color: "#D8D8D8"
                             anchors.left:port1voltage2TextInput.right
                             anchors.leftMargin: 5
@@ -954,7 +1316,7 @@ Rectangle {
                             placeholderText:"5"
                             verticalAlignment: TextInput.AlignTop
                             font.family: "helvetica"
-                            font.pointSize: 12
+                            font.pointSize: smallFontSize
                             height:15
                             width:20
                             background: Rectangle {
@@ -969,7 +1331,7 @@ Rectangle {
                             id:port1voltage3UnitText
                             text:"V"
                             font.family: "helvetica"
-                            font.pointSize: 12
+                            font.pointSize: smallFontSize
                             color: "#D8D8D8"
                             anchors.left:port1voltage3TextInput.right
                             anchors.leftMargin: 5
@@ -1032,7 +1394,7 @@ Rectangle {
                             placeholderText:"5"
                             verticalAlignment: TextInput.AlignTop
                             font.family: "helvetica"
-                            font.pointSize: 12
+                            font.pointSize: smallFontSize
                             height:15
                             width:20
                             background: Rectangle {
@@ -1047,7 +1409,7 @@ Rectangle {
                             id:port1voltage4UnitText
                             text:"V"
                             font.family: "helvetica"
-                            font.pointSize: 12
+                            font.pointSize: smallFontSize
                             color: "#D8D8D8"
                             anchors.left:port1voltage4TextInput.right
                             anchors.leftMargin: 5
@@ -1110,7 +1472,7 @@ Rectangle {
                             placeholderText:"5"
                             verticalAlignment: TextInput.AlignTop
                             font.family: "helvetica"
-                            font.pointSize: 12
+                            font.pointSize: smallFontSize
                             height:15
                             width:20
                             background: Rectangle {
@@ -1125,7 +1487,7 @@ Rectangle {
                             id:port1voltage5UnitText
                             text:"V"
                             font.family: "helvetica"
-                            font.pointSize: 12
+                            font.pointSize: smallFontSize
                             color: "#D8D8D8"
                             anchors.left:port1voltage5TextInput.right
                             anchors.leftMargin: 5
@@ -1188,7 +1550,7 @@ Rectangle {
                             placeholderText:"5"
                             verticalAlignment: TextInput.AlignTop
                             font.family: "helvetica"
-                            font.pointSize: 12
+                            font.pointSize: smallFontSize
                             height:15
                             width:20
                             background: Rectangle {
@@ -1203,7 +1565,7 @@ Rectangle {
                             id:port1voltage6UnitText
                             text:"V"
                             font.family: "helvetica"
-                            font.pointSize: 12
+                            font.pointSize: smallFontSize
                             color: "#D8D8D8"
                             anchors.left:port1voltage6TextInput.right
                             anchors.leftMargin: 5
@@ -1266,7 +1628,7 @@ Rectangle {
                             placeholderText:"5"
                             verticalAlignment: TextInput.AlignTop
                             font.family: "helvetica"
-                            font.pointSize: 12
+                            font.pointSize: smallFontSize
                             height:15
                             width:20
                             background: Rectangle {
@@ -1281,7 +1643,7 @@ Rectangle {
                             id:port1voltage7UnitText
                             text:"V"
                             font.family: "helvetica"
-                            font.pointSize: 12
+                            font.pointSize: smallFontSize
                             color: "#D8D8D8"
                             anchors.left:port1voltage7TextInput.right
                             anchors.leftMargin: 5
@@ -1372,20 +1734,54 @@ Rectangle {
                         checkable: true
                         checked: true
                         background: Rectangle {
-                            color: port2SettingsDisclosureButton.checked ? "green" : "red"
+                            color: "black"
                         }
-                        icon.source: checked ? "./images/icons/showLessIcon.svg" : "./images/icons/showMoreIcon.svg"
-                        icon.height: parent.height
-                        icon.width:parent.width
+
+                        Image{
+                            id:port2DisclosureButtonImage
+                            anchors.left:parent.left
+                            anchors.leftMargin: 3
+                            anchors.top:parent.top
+                            height:10
+                            width:14
+                            source:"./images/icons/showLessIcon.svg"
+
+                            transform: Rotation {
+                                id: rotatePort2ButtonImage
+                                origin.x: port2DisclosureButtonImage.width/2;
+                                origin.y: port2DisclosureButtonImage.height/2;
+                                axis { x: 0; y: 0; z: 1 }
+                            }
+
+                            NumberAnimation {
+                                id:collapsePort2DisclosureIcon
+                                running: false
+                                loops: 1
+                                target: rotatePort2ButtonImage;
+                                property: "angle";
+                                from: 0; to: 180;
+                                duration: 1000;
+                            }
+
+                            NumberAnimation {
+                                id:expandPort2DisclosureIcon
+                                running: false
+                                loops: 1
+                                target: rotatePort2ButtonImage;
+                                property: "angle";
+                                from: 180; to: 0;
+                                duration: 1000;
+                            }
+                        }
 
                         onClicked:{
                             if (checked == true){
                                 expandPort2Settings.start();
-                                console.log ("expanding");
+                                expandPort2DisclosureIcon.start();
                                 }
                             else{
-                            collapsePort2Settings.start();
-                                console.log ("collapsing");
+                                collapsePort2Settings.start();
+                                collapsePort2DisclosureIcon.start()
                               }
                         }
 
@@ -1395,7 +1791,7 @@ Rectangle {
                         id: port2SettingsLabel
                         text: "Port 2 Settings"
                         font.family: "Helvetica"
-                        font.pointSize: 15
+                        font.pointSize: mediumFontSize
                         color: "#D8D8D8"
                         anchors.left:parent.left
                         anchors.top:parent.top
@@ -1419,7 +1815,7 @@ Rectangle {
                         id:port2CableCompensationText
                         text:"Cable compensation step:"
                         font.family: "helvetica"
-                        font.pointSize: 12
+                        font.pointSize: smallFontSize
                         horizontalAlignment: Text.AlignRight
                         color: "#D8D8D8"
                         anchors.right:parent.right
@@ -1437,7 +1833,7 @@ Rectangle {
                         placeholderText:"70"
                         verticalAlignment: TextInput.AlignTop
                         font.family: "helvetica"
-                        font.pointSize: 12
+                        font.pointSize: smallFontSize
                         height:15
                         width:30
                         background: Rectangle {
@@ -1451,7 +1847,7 @@ Rectangle {
                         id:port2CableCompensationUnitText
                         text:"A"
                         font.family: "helvetica"
-                        font.pointSize: 12
+                        font.pointSize: smallFontSize
                         color: "#D8D8D8"
                         anchors.left:port2CableCompensationTextInput.right
                         anchors.leftMargin: 5
@@ -1463,7 +1859,7 @@ Rectangle {
                         id:port2VoltageCompensationText
                         text:"Voltage compensation:"
                         font.family: "helvetica"
-                        font.pointSize: 12
+                        font.pointSize: smallFontSize
                         horizontalAlignment: Text.AlignRight
                         color: "#D8D8D8"
                         anchors.right:parent.right
@@ -1480,7 +1876,7 @@ Rectangle {
                         placeholderText:"7"
                         verticalAlignment: TextInput.AlignTop
                         font.family: "helvetica"
-                        font.pointSize: 12
+                        font.pointSize: smallFontSize
                         height:15
                         width:30
                         background: Rectangle {
@@ -1494,7 +1890,7 @@ Rectangle {
                         id:port2VoltageCompensationUnitText
                         text:"mV"
                         font.family: "helvetica"
-                        font.pointSize: 12
+                        font.pointSize: smallFontSize
                         color: "#D8D8D8"
                         anchors.left:port2VoltageCompensationTextInput.right
                         anchors.leftMargin: 5
@@ -1506,7 +1902,7 @@ Rectangle {
                         id:port2MaxPowerText
                         text:"Maximum power output:"
                         font.family: "helvetica"
-                        font.pointSize: 12
+                        font.pointSize: smallFontSize
                         horizontalAlignment: Text.AlignRight
                         color: "#D8D8D8"
                         anchors.right:parent.right
@@ -1514,42 +1910,134 @@ Rectangle {
                         anchors.top: port2VoltageCompensationText.bottom
                         anchors.topMargin: 10
                     }
-                    TextField{
-                        id:port2MaxPowerTextInput
+
+                    ComboBox {
+                        id:port2MaxPowerCombo
+                         model: ["27", "36", "45","60","100"]
+//                        textRole: "key"
+//                        model: ListModel {
+//                         id:model
+//                                ListElement { key: "27"; value: 27 }
+//                                ListElement { key: "36"; value: 36 }
+//                                ListElement { key: "45"; value: 45 }
+//                                ListElement { key: "60"; value: 60 }
+//                                ListElement { key: "100"; value: 100 }
+//                            }
                         anchors.left:port2MaxPowerText.right
                         anchors.leftMargin: 10
                         anchors.verticalCenter: port2MaxPowerText.verticalCenter
-                        color:"white"//"#838484"
-                        placeholderText:"7"
-                        verticalAlignment: TextInput.AlignTop
                         font.family: "helvetica"
-                        font.pointSize: 12
+                        font.pointSize: smallFontSize
                         height:15
                         width:30
+
+                        //this is used by the PopUp to determine what font to use
+                        delegate: ItemDelegate {
+                                width: port2MaxPowerCombo.width
+                                height:15
+                                contentItem: Text {
+                                    text: modelData
+                                    color: highlighted? "#D8D8D8" :"black"
+                                    font: port2MaxPowerCombo.font
+                                    elide: Text.ElideRight
+                                    verticalAlignment: Text.AlignVCenter
+                                }
+                                onClicked:{
+                                    //here's where a click on a new selection should be handled
+                                    implementationInterfaceBinding.setMaximumPortPower(2,modelData)
+                                    console.log("clicked:", modelData)
+                                }
+
+                                highlighted: port2MaxPowerCombo.highlightedIndex === index
+                            }
+
+//                        indicator: Canvas {
+//                                id: canvas
+//                                x: port2MaxPowerCombo.width /*- width*/ - port2MaxPowerCombo.rightPadding
+//                                y: port2MaxPowerCombo.topPadding + (port2MaxPowerCombo.availableHeight - height) / 2
+//                                width: 12
+//                                height: 8
+//                                contextType: "2d"
+
+//                                Connections {
+//                                    target: port2MaxPowerCombo
+//                                    onPressedChanged: canvas.requestPaint()
+//                                }
+
+//                                onPaint: {
+//                                    context.reset();
+//                                    context.moveTo(0, 0);
+//                                    context.lineTo(width, 0);
+//                                    context.lineTo(width / 2, height);
+//                                    context.closePath();
+//                                    context.fillStyle = "black";
+//                                    context.fill();
+//                                }
+//                            }
+
                         background: Rectangle {
                                 implicitWidth: 15
                                 implicitHeight: 10
-                                color: "#838484"//"#33FFFFFF"
+                                color: "#838484"
                                 border.color: "#838484"
                             }
+
+                        contentItem: Text {
+                                leftPadding: 0
+                                rightPadding: port2MaxPowerCombo.indicator.width + port2MaxPowerCombo.spacing
+
+                                text: port2MaxPowerCombo.displayText
+                                font: port2MaxPowerCombo.font
+                                color: port2MaxPowerCombo.pressed ? "#17a81a" : "#D8D8D8"
+                                horizontalAlignment: Text.AlignLeft
+                                verticalAlignment: Text.AlignVCenter
+                                elide: Text.ElideRight
+                            }
+
+                        popup: Popup {
+                            y: port2MaxPowerCombo.height - 1
+                            width: port2MaxPowerCombo.width *2
+                            implicitHeight: contentItem.implicitHeight
+                            padding: 1
+                            font.family: "helvetica"
+                            font.pointSize: smallFontSize
+                            //color: "#D8D8D8"
+
+                            contentItem: ListView {
+                                clip: true
+                                implicitHeight: contentHeight
+                                model: port2MaxPowerCombo.popup.visible ? port2MaxPowerCombo.delegateModel : null
+                                currentIndex: port2MaxPowerCombo.highlightedIndex
+
+                                ScrollIndicator.vertical: ScrollIndicator { }
+                            }
+
+                            background: Rectangle {
+                                color: "#838484"
+                                border.color: "#838484"
+                            }
+                        }
                     }
+
                     Text{
                         id:port2MaxPowerUnitText
                         text:"W"
                         font.family: "helvetica"
-                        font.pointSize: 12
+                        font.pointSize: smallFontSize
                         color: "#D8D8D8"
-                        anchors.left:port2MaxPowerTextInput.right
+                        anchors.left:port2MaxPowerCombo.right
                         anchors.leftMargin: 5
                         anchors.verticalCenter: port2MaxPowerText.verticalCenter
 
                     }
 
+
+
                     Text{
                         id:port2MaxCurrentText
                         text:"Maximum current:"
                         font.family: "helvetica"
-                        font.pointSize: 12
+                        font.pointSize: smallFontSize
                         horizontalAlignment: Text.AlignRight
                         color: "#D8D8D8"
                         anchors.right:parent.right
@@ -1566,7 +2054,7 @@ Rectangle {
                         placeholderText:"7"
                         verticalAlignment: TextInput.AlignTop
                         font.family: "helvetica"
-                        font.pointSize: 12
+                        font.pointSize: smallFontSize
                         height:15
                         width:30
                         background: Rectangle {
@@ -1580,7 +2068,7 @@ Rectangle {
                         id:port2MaxCurrentUnitText
                         text:"A"
                         font.family: "helvetica"
-                        font.pointSize: 12
+                        font.pointSize: smallFontSize
                         color: "#D8D8D8"
                         anchors.left:port2MaxCurrentTextInput.right
                         anchors.leftMargin: 5
@@ -1605,7 +2093,7 @@ Rectangle {
                             id:port2AdvertizedVoltagesLabel
                             text:"Advertized Voltages:"
                             font.family: "helvetica"
-                            font.pointSize: 12
+                            font.pointSize: smallFontSize
                             color: "#D8D8D8"
                             anchors.right:parent.right
                             anchors.rightMargin: parent.width*.6
@@ -1623,7 +2111,7 @@ Rectangle {
                             placeholderText:"5"
                             verticalAlignment: TextInput.AlignTop
                             font.family: "helvetica"
-                            font.pointSize: 12
+                            font.pointSize: smallFontSize
                             height:15
                             width:20
                             background: Rectangle {
@@ -1638,7 +2126,7 @@ Rectangle {
                             id:port2voltage1UnitText
                             text:"V"
                             font.family: "helvetica"
-                            font.pointSize: 12
+                            font.pointSize: smallFontSize
                             color: "#D8D8D8"
                             anchors.left:port2voltage1TextInput.right
                             anchors.leftMargin: 5
@@ -1702,7 +2190,7 @@ Rectangle {
                             placeholderText:"5"
                             verticalAlignment: TextInput.AlignTop
                             font.family: "helvetica"
-                            font.pointSize: 12
+                            font.pointSize: smallFontSize
                             height:15
                             width:20
                             background: Rectangle {
@@ -1717,7 +2205,7 @@ Rectangle {
                             id:port2voltage2UnitText
                             text:"V"
                             font.family: "helvetica"
-                            font.pointSize: 12
+                            font.pointSize: smallFontSize
                             color: "#D8D8D8"
                             anchors.left:port2voltage2TextInput.right
                             anchors.leftMargin: 5
@@ -1780,7 +2268,7 @@ Rectangle {
                             placeholderText:"5"
                             verticalAlignment: TextInput.AlignTop
                             font.family: "helvetica"
-                            font.pointSize: 12
+                            font.pointSize: smallFontSize
                             height:15
                             width:20
                             background: Rectangle {
@@ -1795,7 +2283,7 @@ Rectangle {
                             id:port2voltage3UnitText
                             text:"V"
                             font.family: "helvetica"
-                            font.pointSize: 12
+                            font.pointSize: smallFontSize
                             color: "#D8D8D8"
                             anchors.left:port2voltage3TextInput.right
                             anchors.leftMargin: 5
@@ -1858,7 +2346,7 @@ Rectangle {
                             placeholderText:"5"
                             verticalAlignment: TextInput.AlignTop
                             font.family: "helvetica"
-                            font.pointSize: 12
+                            font.pointSize: smallFontSize
                             height:15
                             width:20
                             background: Rectangle {
@@ -1873,7 +2361,7 @@ Rectangle {
                             id:port2voltage4UnitText
                             text:"V"
                             font.family: "helvetica"
-                            font.pointSize: 12
+                            font.pointSize: smallFontSize
                             color: "#D8D8D8"
                             anchors.left:port2voltage4TextInput.right
                             anchors.leftMargin: 5
@@ -1936,7 +2424,7 @@ Rectangle {
                             placeholderText:"5"
                             verticalAlignment: TextInput.AlignTop
                             font.family: "helvetica"
-                            font.pointSize: 12
+                            font.pointSize: smallFontSize
                             height:15
                             width:20
                             background: Rectangle {
@@ -1951,7 +2439,7 @@ Rectangle {
                             id:port2voltage5UnitText
                             text:"V"
                             font.family: "helvetica"
-                            font.pointSize: 12
+                            font.pointSize: smallFontSize
                             color: "#D8D8D8"
                             anchors.left:port2voltage5TextInput.right
                             anchors.leftMargin: 5
@@ -2014,7 +2502,7 @@ Rectangle {
                             placeholderText:"5"
                             verticalAlignment: TextInput.AlignTop
                             font.family: "helvetica"
-                            font.pointSize: 12
+                            font.pointSize: smallFontSize
                             height:15
                             width:20
                             background: Rectangle {
@@ -2029,7 +2517,7 @@ Rectangle {
                             id:port2voltage6UnitText
                             text:"V"
                             font.family: "helvetica"
-                            font.pointSize: 12
+                            font.pointSize: smallFontSize
                             color: "#D8D8D8"
                             anchors.left:port2voltage6TextInput.right
                             anchors.leftMargin: 5
@@ -2092,7 +2580,7 @@ Rectangle {
                             placeholderText:"5"
                             verticalAlignment: TextInput.AlignTop
                             font.family: "helvetica"
-                            font.pointSize: 12
+                            font.pointSize: smallFontSize
                             height:15
                             width:20
                             background: Rectangle {
@@ -2107,7 +2595,7 @@ Rectangle {
                             id:port2voltage7UnitText
                             text:"V"
                             font.family: "helvetica"
-                            font.pointSize: 12
+                            font.pointSize: smallFontSize
                             color: "#D8D8D8"
                             anchors.left:port2voltage7TextInput.right
                             anchors.leftMargin: 5
@@ -2178,14 +2666,15 @@ Rectangle {
             Layout.fillWidth:true
             Layout.fillHeight:true
             z:1     //set the z level higher so connectors go behind the board
-            Board{}
+            color:"black"
+            AdvancedBoard{}
 
             Text{
                 id:usbPDText
                 text:"USB-PD Dual"
                 font.family: "helvetica"
-                font.pointSize: 36
-                color:"grey"
+                font.pointSize: extraLargeFontSize
+                color:"#D8D8D8"
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.top: parent.top
                 anchors.topMargin: parent.height/20
@@ -2193,8 +2682,8 @@ Rectangle {
             Text{
                 text:"Advanced Controls"
                 font.family: "helvetica"
-                font.pointSize: 24
-                color:"grey"
+                font.pointSize: largeFontSize
+                color:"#D8D8D8"
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.top: usbPDText.bottom
                 anchors.topMargin: usbPDText.height/4
@@ -2257,7 +2746,7 @@ Rectangle {
                             text:"PORT 1 VOLTAGE AND CURRENT"
                             horizontalAlignment: Text.Center
                             font.family: "helvetica"
-                            font.pointSize: 12
+                            font.pointSize: smallFontSize
                             color:"#D8D8D8"
                             anchors.left:parent.left
                             anchors.right:parent.right
@@ -2298,7 +2787,7 @@ Rectangle {
                             text:"PORT 2 VOLTAGE AND CURRENT"
                             horizontalAlignment: Text.Center
                             font.family: "helvetica"
-                            font.pointSize: 12
+                            font.pointSize: smallFontSize
                             color:"#D8D8D8"
                             anchors.left:parent.left
                             anchors.right:parent.right
@@ -2340,7 +2829,7 @@ Rectangle {
                             text:"PORT 1 POWER"
                             horizontalAlignment: Text.Center
                             font.family: "helvetica"
-                            font.pointSize: 12
+                            font.pointSize: smallFontSize
                             color:"#D8D8D8"
                             anchors.left:parent.left
                             anchors.right:parent.right
@@ -2381,7 +2870,7 @@ Rectangle {
                             text:"PORT 2 POWER"
                             horizontalAlignment: Text.Center
                             font.family: "helvetica"
-                            font.pointSize: 12
+                            font.pointSize: smallFontSize
                             color:"#D8D8D8"
                             anchors.left:parent.left
                             anchors.right:parent.right
@@ -2422,7 +2911,7 @@ Rectangle {
                             text:"PORT 1 TEMPERATURE"
                             horizontalAlignment: Text.Center
                             font.family: "helvetica"
-                            font.pointSize: 12
+                            font.pointSize: smallFontSize
                             color:"#D8D8D8"
                             anchors.left:parent.left
                             anchors.right:parent.right
@@ -2464,7 +2953,7 @@ Rectangle {
                             text:"PORT 2 TEMPERATURE"
                             horizontalAlignment: Text.Center
                             font.family: "helvetica"
-                            font.pointSize: 12
+                            font.pointSize: smallFontSize
                             color:"#D8D8D8"
                             anchors.left:parent.left
                             anchors.right:parent.right
@@ -2513,7 +3002,7 @@ Rectangle {
                             id: activeFaultsLabel
                             text: "Active Faults"
                             font.family: "Helvetica"
-                            font.pointSize: 15
+                            font.pointSize: mediumFontSize
                             color: "#D8D8D8"
                             anchors.left:parent.left
                             anchors.top:parent.top
@@ -2533,7 +3022,8 @@ Rectangle {
                            color:"#CCCCCC"
                         }
 
-                        Label{
+                        Rectangle{
+                            id:activeFaultsListBackground
                             anchors.left: parent.left
                             anchors.leftMargin: parent.width/20
                             anchors.right: parent.right
@@ -2542,12 +3032,37 @@ Rectangle {
                             anchors.topMargin: parent.height/20
                             anchors.bottom:parent.bottom
                             anchors.bottomMargin: parent.height/20
-                            background: Rectangle {
-                                color: "#2B2B2B"
-                            }
-                            text: "Port 1 Temperature: 71°C"
-                            color: "orangered"
+                            color: "#2B2B2B"
                         }
+
+                        ListModel {
+                            id:activeFaultsListModel
+                            ListElement {
+                                fault: "Port 1 Temperature: 71°C"
+                            }
+                        }
+
+                        ListView {
+                            id:activeFaultsListView
+                            anchors.left: parent.left
+                            anchors.leftMargin: parent.width/20
+                            anchors.right: parent.right
+                            anchors.rightMargin: parent.width/20
+                            anchors.top: activeFaultsSeparator.bottom
+                            anchors.topMargin: parent.height/20
+                            anchors.bottom:parent.bottom
+                            anchors.bottomMargin: parent.height/20
+
+                            model: activeFaultsListModel
+
+                            delegate: Text {
+                                text: fault
+                                color: "orangered"
+                                font.pointSize: smallFontSize
+                            }
+
+                        }
+
                     } //Active Fonts box
 
                     Rectangle{
@@ -2557,11 +3072,13 @@ Rectangle {
                         color:"black"
                         border.color:"black"
 
+
+
                         Label{
                             id: faultHistoryLabel
                             text: "Fault History"
                             font.family: "Helvetica"
-                            font.pointSize: 15
+                            font.pointSize: mediumFontSize
                             color: "#D8D8D8"
                             anchors.left:parent.left
                             anchors.top:parent.top
@@ -2581,7 +3098,8 @@ Rectangle {
                            color:"#CCCCCC"
                         }
 
-                        Label{
+                        Rectangle{
+                            id:faultHistoryListBackground
                             anchors.left: parent.left
                             anchors.leftMargin: parent.width/20
                             anchors.right: parent.right
@@ -2590,12 +3108,37 @@ Rectangle {
                             anchors.topMargin: parent.height/20
                             anchors.bottom:parent.bottom
                             anchors.bottomMargin: parent.height/20
-                            background: Rectangle {
-                                color: "#2B2B2B"
-                            }
-                            text: "Port 1 Temperature: 70°C"
-                            color: "#D8D8D8"
+                            color: "#2B2B2B"
                         }
+
+                        ListModel {
+                            id:faultHistoryListModel
+                            ListElement {
+                                fault: "Port 1 Temperature: 71°C"
+                            }
+                        }
+
+                        ListView {
+                            id:faultHistoryListView
+                            anchors.left: parent.left
+                            anchors.leftMargin: parent.width/20
+                            anchors.right: parent.right
+                            anchors.rightMargin: parent.width/20
+                            anchors.top: faultHistorySeparator.bottom
+                            anchors.topMargin: parent.height/20
+                            anchors.bottom:parent.bottom
+                            anchors.bottomMargin: parent.height/20
+
+                            model: faultHistoryListModel
+
+                            delegate: Text {
+                                text: fault
+                                color: "#D8D8D8"
+                                font.pointSize: smallFontSize
+                            }
+                        }
+
+
                     }
                     Rectangle{
                         id: usbPdMessages
@@ -2608,7 +3151,7 @@ Rectangle {
                             id: usbPDMessagesLabel
                             text: "USB-PD Messages"
                             font.family: "Helvetica"
-                            font.pointSize: 15
+                            font.pointSize: mediumFontSize
                             color: "#D8D8D8"
                             anchors.left:parent.left
                             anchors.top:parent.top
@@ -2641,6 +3184,7 @@ Rectangle {
                                 color: "#2B2B2B"
                             }
                             text: "Capabilities request"
+                            font.pointSize: smallFontSize
                             color: "#D8D8D8"
                         }
                     }

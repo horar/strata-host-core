@@ -308,7 +308,6 @@ Item {
         objectName: "passiveRoute"
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter:parent.verticalCenter
-        anchors.verticalCenterOffset: parent.height/20
         width: parent.width/3
         height: parent.height/6
         ButtonGroup.group: dataPathGroup

@@ -23,15 +23,17 @@ ImplementationInterfaceBinding::ImplementationInterfaceBinding(QObject *parent) 
     Ports.temperature[0]='\0';
     Ports.power[0]='\0';
     Ports.power[1]='\0';
-    platformId= QString();
     usbCPort1State = false;
     usbCPort2State = false;
 
 #ifdef QT_NO_DEBUG
+    // Release should not assume anything
     platformState = false;
+    platformId = NONE;
 #else
     // Debug builds should not need a platform board
-    platformState = true;
+   platformState = true;
+   platformId = NONE;
 #endif
 
     notification_thread_= std::thread(&ImplementationInterfaceBinding::notificationsThreadHandle,this);
@@ -124,6 +126,73 @@ bool ImplementationInterfaceBinding::getUSBCPortState(int port_number)
     return false;
 }
 
+void ImplementationInterfaceBinding::setInputVoltageLimiting(int value)
+{
+    QJsonObject cmdMessageObject;
+    cmdMessageObject.insert("cmd", "request_set_minimum_voltage");
+    QJsonObject payloadObject;
+    payloadObject.insert("value", value);
+    qDebug() << "voltage limit "<<value;
+    cmdMessageObject.insert("payload",payloadObject);
+    QJsonDocument doc(cmdMessageObject);
+    QString strJson(doc.toJson(QJsonDocument::Compact));
+    if(hcc_object->sendCmd(strJson.toStdString()))
+        qDebug() << "Radio button send with value" << doc;
+    else
+        qDebug() << "Radio button send failed";
+}
+
+
+void ImplementationInterfaceBinding::setMaximumTemperature(int value)
+{
+    QJsonObject cmdMessageObject;
+    cmdMessageObject.insert("cmd", "request_set_maximum_temperature");
+    QJsonObject payloadObject;
+    payloadObject.insert("value", value);
+    qDebug() << "temp limit "<<value;
+    cmdMessageObject.insert("payload",payloadObject);
+    QJsonDocument doc(cmdMessageObject);
+    QString strJson(doc.toJson(QJsonDocument::Compact));
+    if(hcc_object->sendCmd(strJson.toStdString()))
+        qDebug() << "Radio button send with value" << doc;
+    else
+        qDebug() << "Radio button send failed";
+}
+
+void ImplementationInterfaceBinding::setMaximumPortPower(int port,int value)
+{
+    QJsonObject cmdMessageObject;
+    cmdMessageObject.insert("cmd", "request_usb_pd_maximum_power");
+    QJsonObject payloadObject;
+    payloadObject.insert("Port_number",port);
+    payloadObject.insert("Watts", value);
+    qDebug() << "temp limit "<<value;
+    cmdMessageObject.insert("payload",payloadObject);
+    QJsonDocument doc(cmdMessageObject);
+    QString strJson(doc.toJson(QJsonDocument::Compact));
+    if(hcc_object->sendCmd(strJson.toStdString()))
+        qDebug() << "Radio button send with value" << doc;
+    else
+        qDebug() << "Radio button send failed";
+}
+
+void ImplementationInterfaceBinding::setMinimumInputVoltage(int value)
+{
+    QJsonObject cmdMessageObject;
+    cmdMessageObject.insert("cmd", "request_set_minimum_voltage");
+    QJsonObject payloadObject;
+    payloadObject.insert("value",value);
+    qDebug() << "Setting minimum input voltage: " << value;
+    cmdMessageObject.insert("payload",payloadObject);
+    QJsonDocument doc(cmdMessageObject);
+    QString strJson(doc.toJson(QJsonDocument::Compact));
+
+    if(hcc_object->sendCmd(strJson.toStdString()))
+        qDebug() << "Sent cmd with value" << doc;
+    else
+        qDebug() << "Send failed";
+}
+
 /*!
  * Getter and Setter methods, used for retriving/writing something to/from platform
  * Retreived/set value is indidcated by function name.
@@ -165,11 +234,31 @@ float ImplementationInterfaceBinding::getpowerPort0() {
 }
 
 /*!
- * \brief update the platform Id
+ * \brief Remap the ugly id to a beautiful and simple integer
  */
-QString ImplementationInterfaceBinding::getPlatformId() {
+ImplementationInterfaceBinding::e_MappedPlatformId ImplementationInterfaceBinding::getPlatformId() {
+#ifdef QT_NO_DEBUG
+    e_MappedPlatformId mappedId = NONE;
+#else
+    // For testing purposes show USB-PD as default
+    e_MappedPlatformId mappedId = USB_PD;
+#endif
 
-    return platformId;
+    // Initialize the mapping since we can't statically initialize it.
+    if (idMap.size() == 0) {
+        // BUBU Interface
+        idMap.insert("P2.2018.1.1.0.0.c9060ff8-5c5e-4295-b95a-d857ee9a3671", BUBU_INTERFACE);
+
+        // USB-PD
+        idMap.insert("P2.2017.1.1.0.0.cbde0519-0f42-4431-a379-caee4a1494af", USB_PD);
+    }
+
+    // Map our current platform to enum if we support it.
+    if (idMap.contains(rawPlatformId)) {
+        mappedId = idMap[rawPlatformId];
+        qDebug() << "Platform is " << mappedId;
+    }
+    return mappedId;
 }
 
 /*!
@@ -297,7 +386,14 @@ void ImplementationInterfaceBinding::handleNotification(QVariantMap current_map)
         } else if (current_map["value"] == "request_reset_notification"){
             payloadMap=current_map["payload"].toMap();
             handleResetNotification(payloadMap);
-        } else {
+        } else if (current_map["value"] == "input_under_voltage_notification"){
+            payloadMap=current_map["payload"].toMap();
+            handleInputUnderVoltageNotification(payloadMap);
+        } else if (current_map["value"] == "over_temperature_notification"){
+            payloadMap=current_map["payload"].toMap();
+            handleOverTemperatureNotification(payloadMap);
+        }
+        else {
             qDebug() << "Unsupported value field Received";
             qDebug() << "Received JSON = " <<current_map;
         }
@@ -372,13 +468,13 @@ void ImplementationInterfaceBinding::handleUsbPowerNotification(const QVariantMa
 //    qDebug() << payloadMap;
     int port = payloadMap["port"].toInt();
 #if !BOARD_DATA_SIMULATION
-    float output_voltage = payloadMap["output"].toFloat();
+    float output_voltage = payloadMap["output_voltage"].toFloat();
     emit portOutputVoltageChanged(port, output_voltage);
 
     float target_voltage = payloadMap["target_volts"].toFloat();
     emit portTargetVoltageChanged(port, target_voltage);
 
-    float current = payloadMap["current"].toFloat();
+    float current = payloadMap["output_current"].toFloat();
 
     if(port == 1) {
         port1Current = current;
@@ -394,7 +490,7 @@ void ImplementationInterfaceBinding::handleUsbPowerNotification(const QVariantMa
     else if(!usbCPort1State && usbCPort2State)
         emit portCurrentChanged(port, port2Current);
 
-    float power = payloadMap["power"].toFloat();
+    float power = output_voltage*current;
     emit portPowerChanged(port, power);
 
     float temperature = payloadMap["temperature"].toFloat();
@@ -431,13 +527,15 @@ void ImplementationInterfaceBinding::handlePlatformIdNotification(const QVariant
     if (payloadMap.contains("platform_id")){
 
         QString platformIdTemp = payloadMap["platform_id"].toString();
-        qDebug() << "Received platformId = " << platformId;
-        if(platformIdTemp != platformId) {
+        qDebug() << "Received platformId = " << platformIdTemp;
+
+        // Emit signal if changed
+        if(platformIdTemp != rawPlatformId) {
 
             platformState=true;
             emit platformStateChanged(platformState);
-            platformId = platformIdTemp;
-            emit platformIdChanged(platformId);
+            rawPlatformId = platformIdTemp;
+            emit platformIdChanged(rawPlatformId);
             qDebug() << "PlatformIdChanged notification";
         }
     }
@@ -464,7 +562,10 @@ void ImplementationInterfaceBinding::handlePlatformStateNotification(const QVari
         if(platformStateTemp != platformState) {
 
             platformState = platformStateTemp;
+            // Also reset platformId
+            rawPlatformId = "";
             emit platformStateChanged(platformState);
+            emit platformIdChanged(rawPlatformId);
             qDebug() << "platformStateChanged notification";
         }
     } else {
@@ -481,10 +582,12 @@ void ImplementationInterfaceBinding::handleUSBCportConnectNotification(const QVa
         if (usbCPortId.compare("USB_C_port_1") == 0) {
 
             usbCPort1State =  true;
+            qDebug() << "port 1 connected";
             emit usbCPortStateChanged(1,usbCPort1State);
         }
         else if(usbCPortId.compare("USB_C_port_2") == 0) {
             usbCPort2State =  true;
+            qDebug() << "port 2 connected";
             emit usbCPortStateChanged(2,usbCPort2State);
         }
         else {
@@ -551,6 +654,21 @@ void ImplementationInterfaceBinding::handleResetNotification(const QVariantMap p
         emit platformResetDetected(status);
     }
 }
+
+void ImplementationInterfaceBinding::handleInputUnderVoltageNotification(const QVariantMap payloadMap) {
+    bool state = payloadMap["under_voltage"].toBool();
+    int value = payloadMap["minimum_voltage"].toInt();
+    qDebug() << "received Minimum voltage";
+    emit minimumVoltageChanged(state,value);
+}
+
+void ImplementationInterfaceBinding::handleOverTemperatureNotification(const QVariantMap payloadMap)
+{
+    bool state = payloadMap["over_temperature"].toBool();
+    int value = payloadMap["maximum_temperature"].toInt();
+    qDebug() << "received over temperature";
+    emit overTemperatureChanged(state,value);
+}
 /*!
  * End of notification handlers
  */
@@ -591,9 +709,9 @@ QVariantMap ImplementationInterfaceBinding::validateJsonReply(const QVariantMap 
         return current_map;
     }
     else {
-        qCritical("ERROR: invalid 'ack' reply !!!!");
+//        qCritical("ERROR: invalid 'ack' reply !!!!");
         if( json_map.isEmpty() ) {
-            qCritical("ERROR: Platform Reply is empty");
+//            qCritical("ERROR: Platform Reply is empty");
         }
     }
     current_map.clear();
@@ -602,6 +720,10 @@ QVariantMap ImplementationInterfaceBinding::validateJsonReply(const QVariantMap 
 
 /*!
  * End of JSON Parsers
+ */
+
+/*!
+ *     Simulate JSON Messages and notify on changes
  */
 
 void ImplementationInterfaceBinding::notificationsThreadHandle()
@@ -639,7 +761,7 @@ void ImplementationInterfaceBinding::notificationsThreadHandle()
 
         // receive data from host controller client
         std::string response= hcc_object->receiveNotification();
-
+//        qDebug()<<"recv :",response;
         QString q_response = QString::fromStdString(response);
         QJsonDocument doc= QJsonDocument::fromJson(q_response.toUtf8());
         QJsonObject json_obj=doc.object();
