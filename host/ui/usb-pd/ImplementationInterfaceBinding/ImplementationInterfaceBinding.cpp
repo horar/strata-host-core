@@ -761,7 +761,7 @@ void ImplementationInterfaceBinding::notificationsThreadHandle()
 
         // receive data from host controller client
         std::string response= hcc_object->receiveNotification();
-        qDebug()<<"recv :",response;
+//        qDebug()<<"recv :",response;
         QString q_response = QString::fromStdString(response);
         QJsonDocument doc= QJsonDocument::fromJson(q_response.toUtf8());
         QJsonObject json_obj=doc.object();
