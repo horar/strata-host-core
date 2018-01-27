@@ -26,6 +26,18 @@ Rectangle {
         //the device is unplugged
         leftUSBPlugInitialXPosition = leftUSBPlug.x;
         originalCableWidth = connector.width/1.35;
+        if(visible){
+            if (portNumber == 1) {
+                var state = implementationInterfaceBinding.getUSBCPortState(1);
+                if(state === true)
+                    connect.start();
+            }
+            if (portNumber == 2) {
+                var state = implementationInterfaceBinding.getUSBCPortState(2);
+                if(state === true)
+                    connect.start();
+            }
+        }
     }
 
     Connections {
