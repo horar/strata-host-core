@@ -106,5 +106,22 @@
         <file>images/icons/gpioIcon.svg</file>
         <file>images/icons/pwmIcon.svg</file>
         <file>images/icons/serialIcon.svg</file>
+        <file>images/icons/settingsIconWhite.svg</file>
+        <file>boardBringUp/SGLeftSegmentedButton.qml</file>
+        <file>boardBringUp/SGMiddleSegmentedButton.qml</file>
+        <file>boardBringUp/SGRightSegmentedButton.qml</file>
+        <file>boardBringUp/ButtonView.qml</file>
+        <file>boardBringUp/PWMSetting.qml</file>
+        <file>boardBringUp/GPIOSetting.qml</file>
+        <file>boardBringUp/PWMSwitch.qml</file>
+        <file>boardBringUp/CircularSpinner.qml</file>
+        <file>boardBringUp/lockIcon.png</file>
+        <file>AdvancedBoard.qml</file>
+        <file>images/borderWhite.svg</file>
+        <file>images/leftPowerPlugWhite.svg</file>
+        <file>boardBringUp/SerialInterfaceI2C.qml</file>
+        <file>boardBringUp/SerialInterfaceSPI.qml</file>
+        <file>boardBringUp/SerialInterfaceUART.qml</file>
+        <file>boardBringUp/lock.svg</file>
     </qresource>
 </RCC>
