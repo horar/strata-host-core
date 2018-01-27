@@ -468,13 +468,13 @@ void ImplementationInterfaceBinding::handleUsbPowerNotification(const QVariantMa
 //    qDebug() << payloadMap;
     int port = payloadMap["port"].toInt();
 #if !BOARD_DATA_SIMULATION
-    float output_voltage = payloadMap["output"].toFloat();
+    float output_voltage = payloadMap["output_voltage"].toFloat();
     emit portOutputVoltageChanged(port, output_voltage);
 
     float target_voltage = payloadMap["target_volts"].toFloat();
     emit portTargetVoltageChanged(port, target_voltage);
 
-    float current = payloadMap["current"].toFloat();
+    float current = payloadMap["output_current"].toFloat();
 
     if(port == 1) {
         port1Current = current;
@@ -490,7 +490,7 @@ void ImplementationInterfaceBinding::handleUsbPowerNotification(const QVariantMa
     else if(!usbCPort1State && usbCPort2State)
         emit portCurrentChanged(port, port2Current);
 
-    float power = payloadMap["power"].toFloat();
+    float power = output_voltage*current;
     emit portPowerChanged(port, power);
 
     float temperature = payloadMap["temperature"].toFloat();
@@ -582,10 +582,12 @@ void ImplementationInterfaceBinding::handleUSBCportConnectNotification(const QVa
         if (usbCPortId.compare("USB_C_port_1") == 0) {
 
             usbCPort1State =  true;
+            qDebug() << "port 1 connected";
             emit usbCPortStateChanged(1,usbCPort1State);
         }
         else if(usbCPortId.compare("USB_C_port_2") == 0) {
             usbCPort2State =  true;
+            qDebug() << "port 2 connected";
             emit usbCPortStateChanged(2,usbCPort2State);
         }
         else {
@@ -707,9 +709,9 @@ QVariantMap ImplementationInterfaceBinding::validateJsonReply(const QVariantMap 
         return current_map;
     }
     else {
-        qCritical("ERROR: invalid 'ack' reply !!!!");
+//        qCritical("ERROR: invalid 'ack' reply !!!!");
         if( json_map.isEmpty() ) {
-            qCritical("ERROR: Platform Reply is empty");
+//            qCritical("ERROR: Platform Reply is empty");
         }
     }
     current_map.clear();
@@ -759,7 +761,7 @@ void ImplementationInterfaceBinding::notificationsThreadHandle()
 
         // receive data from host controller client
         std::string response= hcc_object->receiveNotification();
-
+        qDebug()<<"recv :",response;
         QString q_response = QString::fromStdString(response);
         QJsonDocument doc= QJsonDocument::fromJson(q_response.toUtf8());
         QJsonObject json_obj=doc.object();
