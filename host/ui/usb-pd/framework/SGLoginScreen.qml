@@ -55,7 +55,7 @@ Rectangle {
                     }
                     else if(mainWindow.control_type == "BuBu") {
                         stack.pop();
-                        stack.push([cBoardLayout, {immediate:false}]);
+                        stack.push([boardBringUp, {immediate:false}]);
 
                     }
 
