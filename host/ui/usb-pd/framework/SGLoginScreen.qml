@@ -45,6 +45,7 @@ Rectangle {
                     stack.push([boardBringUp, {immediate:false}]);
                     break;
                 case ImplementationInterfaceBinding.USB_PD:
+                    frontToolBar.visible = true
                     if(mainWindow.control_type == "standard") {
                         stack.pop();
                         stack.push([cBoardLayout, {immediate:false}]);
