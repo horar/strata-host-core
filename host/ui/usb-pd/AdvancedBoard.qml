@@ -32,13 +32,13 @@ Rectangle {
         }
     }
     anchors { horizontalCenter: parent.horizontalCenter; verticalCenter: parent.verticalCenter }
-
+    color:"black"
 
     //a grid for the the device, including the input plug
     //deviceGrid
     GridLayout {
         id: deviceGrid
-        columns: 5
+        columns: 6
         rows: 1
         columnSpacing: 0
         rowSpacing: 0
@@ -62,7 +62,7 @@ Rectangle {
             Layout.rowSpan: 1
             Layout.preferredWidth : deviceGrid.devicePrefWidth(this)
             Layout.preferredHeight : deviceGrid.devicePrefHeight(this)
-            //color:"transparent"
+            color:"transparent"
             z:1 //in front of the plugOutline
             Material.elevation: 6
 
@@ -73,20 +73,20 @@ Rectangle {
                     horizontalCenterOffset: 0
                     verticalCenter: parent.verticalCenter
                     verticalCenterOffset: 0 }
-                source: "./images/border.svg"
+                source: "./images/borderWhite.svg"
 
             }
 
 
-            DropShadow {
-                anchors.fill: deviceOutline
-                horizontalOffset: 3
-                verticalOffset: 6
-                radius: 12.0
-                samples: 24
-                color: "#60000000"
-                source: deviceOutline
-            }
+//            DropShadow {
+//                anchors.fill: deviceOutline
+//                horizontalOffset: 3
+//                verticalOffset: 6
+//                radius: 12.0
+//                samples: 24
+//                color: "#60000000"
+//                source: deviceOutline
+//            }
 
             //a grid for the icon, and ports
             GridLayout {
@@ -192,6 +192,7 @@ Rectangle {
                         radius: 1
                         color: "transparent"
                         portNumber: 1
+                        inAdvancedMode: true
                     }
                 }
 
@@ -209,11 +210,11 @@ Rectangle {
                     SGPortGroup {
                         id: portGroupPort2
                         width: parent.width; height:parent.height
-                        //width: topPortRect.width; height: topPortRect.height
                         text: "Port 2"
                         radius: 1
                         color: "transparent"
                         portNumber: 2
+                        inAdvancedMode: true
                     }
                 }
             }
@@ -227,15 +228,17 @@ Rectangle {
             Layout.rowSpan: 1
             Layout.preferredWidth : deviceGrid.devicePrefWidth(this)
             Layout.preferredHeight : deviceGrid.devicePrefHeight(this)
-
+            color: "transparent"
             Image {
                 id: plugOutline
-                width:parent.width * 1.5
-                height:parent.height/5
+                width:parent.width*.8
+                height:parent.height/7
                 anchors{ verticalCenter: parent.verticalCenter;
-                    horizontalCenter: parent.horizontalCenter ;
+                    right:parent.right
+                    rightMargin: -17
+                    //horizontalCenter: parent.horizontalCenter ;
                 }
-                source: "./images/LeftPowerPlug.png"
+                source: "./images/leftPowerPlugWhite.svg"
             }
 
             DropShadow {
@@ -250,12 +253,14 @@ Rectangle {
 
             Text {
                 id: inputPlugName
-                text: device.inputVoltage .toFixed(1) + " V"// + device.portCurrent.toFixed(1)+ " A"
+                text: device.inputVoltage .toFixed(1) + "V"
                 width: inputPlugColumn.width-2
                 horizontalAlignment: Text.AlignRight
-                anchors {verticalCenter: parent.verticalCenter}
+                anchors {verticalCenter: parent.verticalCenter
+                        right:parent.right
+                        rightMargin: -10
+                        }
                 font{ family: "Helvetica"
-                    bold:true
                 }
                 font.pointSize: 9
                 color:"grey"
@@ -264,7 +269,7 @@ Rectangle {
             Component.onCompleted: {
                 //adjust font size based on platform
                 if (Qt.platform.os === "osx"){
-                    inputPlugName.font.pointSize = 14;//parent.width/10 > 0 ? parent.width/25 : 1;
+                    inputPlugName.font.pointSize = parent.width/10 > 0 ? parent.width/25 : 1;
                 }
                 else{
                     fontSizeMode : Text.Fit

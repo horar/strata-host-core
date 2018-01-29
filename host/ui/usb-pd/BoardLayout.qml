@@ -6,33 +6,8 @@ import tech.spyglass.ImplementationInterfaceBinding 1.0
 import "framework"
 
 Rectangle {
-
     objectName: "boardLayout"
-    property bool hardwareStatusChange: null
-    property bool boardScreen: false
-
-    Connections {
-        target: implementationInterfaceBinding
-
-        onPlatformStateChanged: {
-            var state = implementationInterfaceBinding.platformState;
-            if(state == false && boardScreen == true) {
-                stack.push([page, {immediate:false}]);
-            }
-        }
-    }
-
-    onVisibleChildrenChanged: {
-        if(visible) {
-            boardScreen = true;
-        }
-        else {
-            boardScreen = false;
-        }
-    }
-
-    //actions to take when the board layout view becomes visible from being pushed on the stack
-    onOpacityChanged: {
+    Component.onCompleted: {
         if (opacity == 1){
             rotateInfoIcon.start()
             }
