@@ -6,17 +6,16 @@ Rectangle {
     border.width: 0
     anchors { fill: parent }
 
-    
     SwipeView {
         id: swipeView
         anchors{ fill: parent }
         currentIndex: tabBar.currentIndex
+        ControlLayout { id: pageControl }
         PageSchematic { id: pageSchematic }
         PageLayout { id: pageLayout }
         PageTestReport { id: pageTestReport }
         PageSystemContent { id: pageSystemContent}
         PageComingSoon {id: pageComingSoonContent}
-
     }
     
     TabBar {
@@ -24,6 +23,10 @@ Rectangle {
         width: parent.width - flipButton.width
         currentIndex: swipeView.currentIndex
         anchors { bottom: parent.bottom;}
+
+        TabButton {
+            text: "Control"
+        }
 
         TabButton { text: "Schematic"
             Rectangle {

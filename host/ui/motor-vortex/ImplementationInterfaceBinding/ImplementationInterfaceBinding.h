@@ -33,6 +33,7 @@ class ImplementationInterfaceBinding : public QObject
     // Platform Implementation properties
     //
     Q_PROPERTY(unsigned int motor_speed_ READ motorSpeed NOTIFY motorSpeedChanged)
+    Q_PROPERTY(QString motor_mode_ READ motorSpeed NOTIFY motorModeChanged)
 
     //----
     // Core Framework Properties
@@ -48,18 +49,21 @@ public:
     // ---
     // Platform Implementation: Commands
     //
-    //Q_INVOKABLE bool setMotorSpeed(unsigned int speed);
+    Q_INVOKABLE bool setMotorSpeed(unsigned int speed);
+    Q_INVOKABLE bool setMotorMode(QString mode);         // "auto", "manual"
 
     // ---
     // Platform Implementation: Notification handlers
     // add platform specific notification handlers here
+    void motorStatsNotificationHandler(QJsonObject payload);
 
     // ---
     // Platform Implementation: Error handlers
 
     // ---
     // Platform Implementation: Q_PROPERTY read methods
-    unsigned int motorSpeed() { return motor_speed_; }
+    unsigned int motorSpeed() { return current_speed_; }
+    QString motorMode() { return motor_mode_; }
 
     // End Platform Implementation Specific
     // ---
@@ -85,6 +89,7 @@ signals:
     // ---
     // Platform Implementation Signals
     bool motorSpeedChanged(unsigned int);
+    bool motorModeChanged(QString mode);
 
     // ---
     // Core Framework Signals
@@ -95,8 +100,11 @@ private:
 
     // ---
     // Platform Implementation variables
-    unsigned int motor_speed_;
+    unsigned int current_speed_;
+    unsigned int target_speed_;
+    QString motor_mode_;
 
+    // --- end Platform Implementation variables
     // ---
     // Core Framework
     QString platform_id_;

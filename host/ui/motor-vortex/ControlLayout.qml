@@ -1,36 +1,17 @@
 import QtQuick 2.7
 import QtQuick.Layouts 1.3
-import QtQuick.Controls 1.4
 import QtQuick.Controls 2.3
 import QtGraphicalEffects 1.0
+import QtQuick.Controls.Styles 1.4
+import QtQuick.Extras 1.4
 import tech.spyglass.ImplementationInterfaceBinding 1.0
 import "framework"
 import "views"
 
-Rectangle {
+Item {
     id: controlPage
     objectName: "controlLayout"
 
-    property bool hardwareStatusChange: true
-    property bool boardScreen: true
-
-    //actions to take when the control layout view becomes visible from being pushed on the stack
-    onOpacityChanged: {
-
-        if (opacity == 1) {
-            rotateInfoIcon.start()
-        }
-
-        if (opacity == 1 && frontToolBar.visible == false) {
-            frontToolBar.visible = true
-            frontToolBar.opacity = 0
-            fadeInFrontToolBar.start()
-        }
-    }
-
-    // border.color: "red"; border.width: 1 // debug layout
-
-    // ----------------
     // LOGO
     Rectangle {
         id: headerLogo
@@ -42,191 +23,322 @@ Rectangle {
             anchors { top: parent.top; right: parent.right }
             height: 40
             fillMode: Image.PreserveAspectFit
-            source: "./images/icons/onLogoGreenWithText.png"
+            source: "images/icons/onLogoGreen.svg"
         }
     }
 
-    // ----------------
-    // Speed Dial
-    //
-
-    // Values are being Signalled from ImplementationInterfaceBinding.cpp
-    Connections {
-        target: implementationInterfaceBinding
-
-        // motor speed
-        onMotorSpeedChanged: {
-            console.log("MOTOR SPEED UPDATE: ", motor_speed);
-        }
-    }
-
-
+    // Control Section
     Rectangle {
-        id: speedDial
+        id: controlSection
+        anchors {top: headerLogo.bottom}
+        width: mainWindow.width; height: mainWindow.height * 0.5
+        //border.width: 1; border.color: "red"; color: "#cbd9ef"  // DEBUG
 
-        anchors { centerIn: parent }
-        width: 300; height: 300
+        ColumnLayout {
+            id: layoutId
+            anchors { fill: parent }
+            Layout.alignment: Qt.AlignVCenter
 
-        //color: "#545454"
+            CircularGauge {
+                id: tachMeterGauge
 
-        Dial {
-            id: dial
-            anchors.centerIn: parent
+                minimumValue: 0; maximumValue: 100
+                stepSize: 1
 
-            //value: slider.x * 100 / (container.width - 32)  // debug. tied directly to the slider
-            value: implementationInterfaceBinding.motor_speed * 100 / (container.width - 32)
+                Layout.alignment: Qt.AlignCenter
 
+                Behavior on value { NumberAnimation { duration: 1500 } }
+
+                style: CircularGaugeStyle {
+                    minimumValueAngle: -90; maximumValueAngle: 90
+
+                    needle: Rectangle {
+                        y: outerRadius * 0.15
+                        implicitWidth: outerRadius * 0.03
+                        implicitHeight: outerRadius * 0.9
+                        antialiasing: true
+                        color: Qt.rgba(0.66, 0.3, 0, 1)
+                    }
+
+                    foreground: Item {
+                        Rectangle {
+                            width: outerRadius * 0.2
+                            height: width
+                            radius: width / 2
+                            color: "black"
+                            anchors.centerIn: parent
+                        }
+                    }
+                    tickmarkLabel:  Text {
+                        font.pixelSize: Math.max(6, outerRadius * 0.1)
+                        text: styleData.value
+                        color: styleData.value >= 80 ? "#e34c22" : "black"
+                        antialiasing: true
+                    }
+                }
+            } // end CircularGauge
+
+            Slider {
+                id: motorSpeedControl
+                from: 0; value: 0
+                Layout.alignment: Qt.AlignCenter
+                snapMode: Slider.SnapAlways
+                live: false
+
+                function motorSpeed(value) {
+                    //console.log("slider:", value * 5400, ", guage: ", value * 5400);
+                    return value * 5400;
+                }
+
+                function guageValue(value) {
+                    return value * 100;
+                }
+
+                onMoved: {
+                    console.log("silder raw:", position);
+
+                    tachMeterGauge.value = guageValue(position)
+                    gauge1.value = position * 200
+                    gauge2.value = position * 200
+                    gauge3.value = position * 200
+
+                    // call implementationInterfaceBinding
+                    //implementationInterfaceBinding.setMotorSpeed();
+                    console.log("slider: setMotorSpeed(", motorSpeed(position), ")");
+                    implementationInterfaceBinding.setMotorSpeed(motorSpeed(position));
+                }
+
+                ToolTip {
+                    parent: motorSpeedControl.handle
+                    visible: motorSpeedControl.pressed
+                    text: motorSpeedControl.valueAt(motorSpeedControl.position).toFixed(1) * 5400
+                }
+            }
+
+            ButtonGroup {
+                Layout.alignment: Qt.AlignCenter
+
+                buttons: buttonColumn.children
+            }
+
+            GroupBox {
+                Layout.alignment: Qt.AlignCenter
+
+                title: "<b><font color='red'>Operation Mode</b></font>"
+                Row {
+                    id: buttonColumn
+                    anchors {fill: parent}
+
+                    RadioButton {
+                        checked: true
+                        text: "Manual Control"
+
+                        onPressed: {
+                            console.log("MANUAL CONTROL")
+                            implementationInterfaceBinding.setMotorMode("manual");
+                        }
+                    }
+
+                    RadioButton {
+                        text: "Automatic Test Pattern"
+
+                        onPressed: {
+                            console.log("AUTOMATIC")
+                            implementationInterfaceBinding.setMotorMode("automatic");
+                        }
+                    }
+                }
+            }
+
+        } // end Column Layout
+    } // end Control Section Rectangle
+
+    // Environment Section
+    Rectangle {
+        id: environmentSection
+        anchors {
+            top: controlSection.bottom;
+            verticalCenter: controlPage.verticalCenter
         }
 
-        Rectangle {
-            id: container
-            property int oldWidth: 0
+        width: controlPage.width * 0.75; height: controlPage.height * 0.25
 
-            anchors { bottom: parent.bottom; left: parent.left
-                right: parent.right; leftMargin: 20; rightMargin: 20
-                bottomMargin: 10
-            }
+        //border.width: 1; border.color: "black"  // DEBUG
+        //color: "#dae2ef"
 
-            height: 16
+        // Phase U temperature
+        RowLayout {
+            spacing: 180
+            ColumnLayout {
+                Layout.alignment: Qt.AlignCenter
 
-            radius: 8
-            opacity: 0.7
-            antialiasing: true
-            gradient: Gradient {
-                GradientStop { position: 0.0; color: "gray" }
-                GradientStop { position: 1.0; color: "white" }
-            }
-
-            onWidthChanged: {
-                if (oldWidth === 0) {
-                    oldWidth = width;
-                    return
-                }
-
-                var desiredPercent = slider.x * 100 / (oldWidth - 32)
-                slider.x = desiredPercent * (width - 32) / 100
-                oldWidth = width
-            }
-
-            Rectangle {
-                id: slider
-                x: 1; y: 1; width: 30; height: 14
-                radius: 6
-                antialiasing: true
-                gradient: Gradient {
-                    GradientStop { position: 0.0; color: "#424242" }
-                    GradientStop { position: 1.0; color: "black" }
-                }
-
-                MouseArea {
+                width: environmentSection.width / 3;  height: environmentSection.height - 30
+                Gauge {
+                    id: gauge1
+                    width: parent.width; height: parent.height * 0.9
                     anchors.fill: parent
-                    anchors.margins: -16 // Increase mouse area outside slider
-                    drag.target: parent; drag.axis: Drag.XAxis
-                    drag.minimumX: 2; drag.maximumX: container.width - 32
+                    anchors.margins: 10
+                    minimumValue: -40
+                    maximumValue: 200
+
+                    value: 20
+
+                    Behavior on value { NumberAnimation {duration: 6000 } }
+
+                    style: GaugeStyle {
+                        valueBar: Rectangle {
+                            implicitWidth: 16
+                            color: Qt.rgba(gauge1.value / gauge1.maximumValue, 0, 1 - gauge1.value / gauge1.maximumValue, 1)
+                        }
+
+                        tickmark: Item {
+                            implicitWidth: 18
+                            implicitHeight: 1
+
+                            Rectangle {
+                                color: "black"
+                                anchors.fill: parent
+                                anchors.leftMargin: 3
+                                anchors.rightMargin: 3
+                            }
+                        }
+
+                        minorTickmark: Item {
+                            implicitWidth: 8
+                            implicitHeight: 1
+
+                            Rectangle {
+                                color: "#cccccc"
+                                anchors.fill: parent
+                                anchors.leftMargin: 2
+                                anchors.rightMargin: 4
+                            }
+                        }
+                    }
+
+                }
+                Label {
+                    id: gaugeLabel1
+                    anchors {top: gauge1.bottom; left: parent.left; leftMargin: 5 }
+                    width: parent.width; height: parent.height * 0.1
+                    text: "Phase U"
+                }
+            }
+
+            // Phase U temperature
+            ColumnLayout {
+                width: environmentSection.width / 3;  height: environmentSection.height - 30
+                Gauge {
+                    id: gauge2
+                    width: parent.width; height: parent.height * 0.9
+                    anchors.fill: parent
+                    anchors.margins: 10
+                    minimumValue: -40
+                    maximumValue: 200
+
+                    value: 20
+
+                    Behavior on value { NumberAnimation {duration: 2000 } }
+
+                    style: GaugeStyle {
+                        valueBar: Rectangle {
+                            implicitWidth: 16
+                            color: Qt.rgba(gauge2.value / gauge2.maximumValue, 0, 1 - gauge2.value / gauge2.maximumValue, 1)
+                        }
+
+                        tickmark: Item {
+                            implicitWidth: 18
+                            implicitHeight: 1
+
+                            Rectangle {
+                                color: "black"
+                                anchors.fill: parent
+                                anchors.leftMargin: 3
+                                anchors.rightMargin: 3
+                            }
+                        }
+
+                        minorTickmark: Item {
+                            implicitWidth: 8
+                            implicitHeight: 1
+
+                            Rectangle {
+                                color: "#cccccc"
+                                anchors.fill: parent
+                                anchors.leftMargin: 2
+                                anchors.rightMargin: 4
+                            }
+                        }
+                    }
+
+                }
+                Label {
+                    id: gaugeLabel2
+                    anchors {top: gauge2.bottom; left: parent.left; leftMargin: 5 }
+                    width: parent.width; height: parent.height * 0.1
+                    text: "Phase V"
+                }
+            }
+
+            // Phase W temperature
+            ColumnLayout {
+                width: environmentSection.width / 3;  height: environmentSection.height - 30
+                Gauge {
+                    id: gauge3
+                    width: parent.width; height: parent.height * 0.9
+                    anchors.fill: parent
+                    anchors.margins: 10
+                    minimumValue: -40
+                    maximumValue: 200
+
+                    value: 20
+
+                    Behavior on value { NumberAnimation {duration: 4000 } }
+
+                    style: GaugeStyle {
+                        valueBar: Rectangle {
+                            implicitWidth: 16
+                            color: Qt.rgba(gauge3.value / gauge3.maximumValue, 0, 1 - gauge3.value / gauge3.maximumValue, 1)
+                        }
+
+                        tickmark: Item {
+                            implicitWidth: 18
+                            implicitHeight: 1
+
+                            Rectangle {
+                                color: "black"
+                                anchors.fill: parent
+                                anchors.leftMargin: 3
+                                anchors.rightMargin: 3
+                            }
+                        }
+
+                        minorTickmark: Item {
+                            implicitWidth: 8
+                            implicitHeight: 1
+
+                            Rectangle {
+                                color: "#cccccc"
+                                anchors.fill: parent
+                                anchors.leftMargin: 2
+                                anchors.rightMargin: 4
+                            }
+                        }
+                    }
+
+                }
+                Label {
+                    id: gaugeLabel3
+                    anchors {top: gauge3.bottom; left: parent.left; leftMargin: 5 }
+                    width: parent.width; height: parent.height * 0.1
+                    text: "Phase W"
                 }
             }
         }
+
     }
 
-    ButtonGroup {
-        buttons: buttonColumn.children
-    }
 
-    GroupBox {
-        title: "<b><font color='red'>Operation Mode</b></font>"
-        anchors { top: speedDial.bottom; topMargin: 40; horizontalCenter: parent.horizontalCenter}
 
-        Row {
-            id: buttonColumn
-            anchors {fill: parent}
-
-            RadioButton {
-                checked: true
-                text: "Manual Control"
-
-                onPressed: {
-                    console.log("MANUAL CONTROL")
-
-                }
-            }
-
-            RadioButton {
-                text: "Automatic Test Pattern"
-
-                onPressed: {
-                    console.log("AUTOMATIC")
-
-                }
-            }
-        }
-    }
-
-    // INFO ICON
-    Image {
-        id: infoIcon
-        anchors{ bottom: parent.bottom;
-            bottomMargin: 10
-            right: parent.right
-            rightMargin: 10}
-        height: 50; width:50
-        source:"./images/icons/infoIcon.svg"
-        layer.enabled: true
-        layer.effect: DropShadow {
-            anchors.fill: infoIcon
-            horizontalOffset: 2
-            verticalOffset: 2
-            radius: 12.0
-            samples: 24
-            color: "#60000000"
-            source: infoIcon
-        }
-
-        transform: Rotation {
-            id: zRot
-            origin.x: infoIcon.width/2; origin.y: infoIcon.height/2;
-            axis { x: 0; y: 1; z: 0 }
-        }
-
-        NumberAnimation {
-            id:rotateInfoIcon
-            running: false
-            loops: 1
-            target: zRot;
-            property: "angle";
-            from: 0; to: 360;
-            duration: 1000;
-        }
-
-        ScaleAnimator {
-            id: increaseOnMouseEnter
-            target: infoIcon;
-            from: 1;
-            to: 1.2;
-            duration: 200
-            running: false
-        }
-
-        ScaleAnimator {
-            id: decreaseOnMouseExit
-            target: infoIcon;
-            from: 1.2;
-            to: 1;
-            duration: 200
-            running: false
-        }
-
-        MouseArea {
-            id: imageMouse
-            anchors.fill: parent
-            hoverEnabled: true
-            cursorShape: Qt.PointingHandCursor
-            onClicked: flipable.flipped = !flipable.flipped
-            onEntered:{
-                increaseOnMouseEnter.start()
-            }
-            onExited:{
-                decreaseOnMouseExit.start()
-            }
-        }
-    }
 }
+

@@ -22,6 +22,9 @@ ImplementationInterfaceBinding::ImplementationInterfaceBinding(QObject *parent) 
     // ---
     // Platform Implementation Notification handlers
     //
+    registerNotificationHandler("pi_stats",
+                                bind(&ImplementationInterfaceBinding::motorStatsNotificationHandler,
+                                     this, placeholders::_1));
 
     // --------------------
     // Core Framework
@@ -73,10 +76,127 @@ ImplementationInterfaceBinding::~ImplementationInterfaceBinding()
     notification_thread_.detach();
 }
 
+// ----- Platform Implementation Commands
+//
+// Add Platform Specific Command Handlers
+// Q_INVOKABLE() functions
+
+// @f setMotorSpeed
+// @b set motor speed
+//
+bool ImplementationInterfaceBinding::setMotorSpeed( unsigned int speed )
+{
+    qDebug("ImplementationInterfaceBinding::setMotorSpeed(%ld)", speed);
+
+    // { "cmd":"speedInput",
+    //   "payload": {
+    //   "speed_target":3000
+    //  }}
+
+    QJsonObject cmd, payload;
+
+    cmd.insert("cmd", QJsonValue("speedInput"));
+    payload.insert("speed_target", QJsonValue((double)speed));
+    cmd.insert("payload", payload);
+    QJsonDocument doc(cmd);
+    QString cmd_json(doc.toJson(QJsonDocument::Compact));
+
+    bool rv = hcc->sendCmd(cmd_json.toStdString());
+    if( rv == false) {
+        qCritical() << "ERROR:ImplementationInterfaceBinding::setMotorSpeed:"
+                       " command send failure";
+    }
+
+    return rv;
+}
+
+// @f setMotorMode
+// @b set motor mode to manual control or automatic demo
+//
+bool ImplementationInterfaceBinding::setMotorMode( QString mode )
+{
+    qDebug("ImplementationInterfaceBinding::setMotorMode(%s)",
+           mode.toStdString().c_str());
+
+    // Manual:
+    //
+    // {"cmd":"setSystemMode",
+    //  "payload":{"system_mode":1}}
+    //
+    // Automation:
+    //
+    // {"cmd":"setSystemMode",
+    //  "payload":{"system_mode":0}}
+    //
+    QJsonObject cmd, payload;
+
+    cmd.insert("cmd", QJsonValue("setSystemMode"));
+    payload.insert("system_mode", mode == "manual" ? QJsonValue(1) :QJsonValue(0));
+    cmd.insert("payload", payload);
+    QJsonDocument doc(cmd);
+    QString cmd_json(doc.toJson(QJsonDocument::Compact));
+
+    qDebug() << "cmd: " << cmd_json;
+
+    bool rv = hcc->sendCmd(cmd_json.toStdString());
+    if( rv == false) {
+        qCritical() << "ERROR:ImplementationInterfaceBinding::setMotorMode:"
+                       " command send failure";
+    }
+
+    return rv;
+}
+
+// END Platform Implementation Notification Handlers
+// ----------
+
+
 // ----- Platform Implementation Notification Handlers
 //
 // Add Platform Specific Notification Handlers here
 
+// @f motorStats
+// @b Motor statistics
+//
+void ImplementationInterfaceBinding::motorStatsNotificationHandler(QJsonObject payload)
+{
+    //{
+    //   "notification": {
+    //         "value":"pi_stats",
+    //         "payload": {
+    //               "speed_target":4000,
+    //               "current_speed":3880,
+    //               "error":120,
+    //               "sum":0.00,
+    //               "duty_now":0.58,
+    //               "Mode":"Auto"}}}
+    //
+    // current_speed is the actual measured speed of the motor.
+
+    unsigned int current_speed = payload["current_speed"].toInt();
+    unsigned int target_speed = payload["speed_target"].toInt();
+    QString motor_mode = payload["Mode"].toString();
+
+    qDebug() << "current_speed = " << current_speed;
+    qDebug() << "target_speed = " << target_speed;
+    qDebug() << "mode = " << motor_mode;
+
+    if( current_speed != current_speed_ ) {
+        current_speed_ = current_speed;
+        emit motorSpeedChanged(current_speed_);
+    }
+
+    // TODO [ian] target speed is not used at this time.
+    //    if( target_speed != target_speed_ ) {
+    //        target_speed_ = target_speed;
+    //        emit targetSpeedChanged(target_speed_);
+    //    }
+
+    if( motor_mode != motor_mode_ ) {
+        motor_mode_ = motor_mode;
+        emit motorModeChanged(motor_mode_);
+    }
+}
 
 // END Platform Implementation Notification Handlers
 // ----------
@@ -122,9 +242,10 @@ void ImplementationInterfaceBinding::notificationsThreadHandle()
         QString n(message.c_str());
 
         QJsonDocument doc = QJsonDocument::fromJson(n.toUtf8());
-        if(doc.isNull()){
-            qCritical()<<"ERROR: void ImplementationInterfaceBinding::notificationsThreadHandle()."
-                         "Failed to create JSON doc.";
+        if(doc.isNull()) {
+            // TODO [ian] fix the "ONSEMI" message from fouling up all this
+            //qCritical()<<"ERROR: void ImplementationInterfaceBinding::notificationsThreadHandle()."
+            //             "Failed to create JSON doc. message=" << n.toStdString().c_str();
             continue;
         }
 
@@ -206,7 +327,7 @@ void ImplementationInterfaceBinding::connectionChangeNotificationHandler(QJsonOb
 
 void ImplementationInterfaceBinding::platformNotificationHandler(QJsonObject payload)
 {
-    qDebug("ImplementationInterfaceBinding::platformmNotificationHandler: CALLED");
+    //qDebug("ImplementationInterfaceBinding::platformmNotificationHandler: CALLED");
 
     if( payload.contains("value") == false ) {
         qCritical("ImplementationInterfaceBinding::platformNotificationHandler()"
@@ -258,7 +379,8 @@ void ImplementationInterfaceBinding::platformNotificationHandler(QJsonObject pay
 //
 void ImplementationInterfaceBinding::cloudNotificationHandler(QJsonObject value)
 {
-    qDebug("ImplementationInterfaceBinding::cloudNotificationHandler: CALLED");
+    //qDebug("ImplementationInterfaceBinding::cloudNotificationHandler: CALLED");
+
     // data source type: document_set, chat, marketing et al
     QJsonObject payload = value["cloud::notification"].toObject();
     string type = payload.value("type").toString().toStdString();
