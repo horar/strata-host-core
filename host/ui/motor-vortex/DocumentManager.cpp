@@ -49,6 +49,11 @@ void DocumentManager::init()
 
     // register w/ Implementation Interface for Docoument Data Source Updates
     // TODO [ian] change to "document" on cloud update
+
+    // TODO [ian] hack around some messaging issue we have that dead locks the communications
+    //             without the sleep.
+    //
+    sleep(2);
     implInterfaceBinding_->registerDataSourceHandler("document",
                                                      bind(&DocumentManager::dataSourceHandler,
                                                           this, placeholders::_1));

@@ -131,7 +131,7 @@ bool ImplementationInterfaceBinding::setMotorMode( QString mode )
     QJsonObject cmd, payload;
 
     cmd.insert("cmd", QJsonValue("setSystemMode"));
-    payload.insert("system_mode", mode == "manual" ? QJsonValue(1) :QJsonValue(0));
+    payload.insert("system_mode", mode == "manual" ? QJsonValue(0) :QJsonValue(1));
     cmd.insert("payload", payload);
     QJsonDocument doc(cmd);
     QString cmd_json(doc.toJson(QJsonDocument::Compact));
@@ -182,6 +182,7 @@ void ImplementationInterfaceBinding::motorStatsNotificationHandler(QJsonObject p
     qDebug() << "mode = " << motor_mode;
 
     if( current_speed != current_speed_ ) {
+        qDebug() << "EMIT: current_speed = " << current_speed;
         current_speed_ = current_speed;
         emit motorSpeedChanged(current_speed_);
     }

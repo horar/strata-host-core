@@ -88,7 +88,7 @@ public:
 signals:
     // ---
     // Platform Implementation Signals
-    bool motorSpeedChanged(unsigned int);
+    bool motorSpeedChanged(unsigned int speed);
     bool motorModeChanged(QString mode);
 
     // ---

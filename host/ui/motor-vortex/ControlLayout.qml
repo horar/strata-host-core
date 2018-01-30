@@ -27,6 +27,16 @@ Item {
         }
     }
 
+    // Platform Implementation signals
+    Connections {
+        target: implementationInterfaceBinding
+
+        onMotorSpeedChanged: {
+            tachMeterGauge.value = ((speed - 1500) / 4000) * 100;
+            console.log("qml: speed= ", tachMeterGauge.value);
+        }
+    }
+
     // Control Section
     Rectangle {
         id: controlSection
@@ -80,32 +90,27 @@ Item {
 
             Slider {
                 id: motorSpeedControl
-                from: 0; value: 0
-                Layout.alignment: Qt.AlignCenter
+                from: 0; to: 1
+                value: 0   // start value
                 snapMode: Slider.SnapAlways
+                stepSize : 0.05
                 live: false
 
-                function motorSpeed(value) {
-                    //console.log("slider:", value * 5400, ", guage: ", value * 5400);
-                    return value * 5400;
-                }
+                Layout.alignment: Qt.AlignCenter
 
-                function guageValue(value) {
-                    return value * 100;
+                function motorSpeed(value) {
+                    // slider range 0 - 1 (%)
+                    // motor rage:  1500 -- 5500  (4000 range)
+                    return value * 4000 + 1500;
                 }
 
                 onMoved: {
-                    console.log("silder raw:", position);
-
-                    tachMeterGauge.value = guageValue(position)
-                    gauge1.value = position * 200
+                    gauge1.value = position * 200  // TODO [ian] false temp values until hooked up
                     gauge2.value = position * 200
                     gauge3.value = position * 200
-
-                    // call implementationInterfaceBinding
-                    //implementationInterfaceBinding.setMotorSpeed();
-                    console.log("slider: setMotorSpeed(", motorSpeed(position), ")");
+                    //console.log("slider: setMotorSpeed(", motorSpeed(position), ")");
                     implementationInterfaceBinding.setMotorSpeed(motorSpeed(position));
+
                 }
 
                 ToolTip {
