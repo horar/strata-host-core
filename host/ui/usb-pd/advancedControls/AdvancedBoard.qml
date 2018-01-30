@@ -5,7 +5,7 @@ import QtGraphicalEffects 1.0
 import QtQuick.Controls.Material 2.2
 import tech.spyglass.ImplementationInterfaceBinding 1.0
 
-import "framework"
+import "../framework"
 
 Rectangle {
     id: device
@@ -73,7 +73,7 @@ Rectangle {
                     horizontalCenterOffset: 0
                     verticalCenter: parent.verticalCenter
                     verticalCenterOffset: 0 }
-                source: "./images/borderWhite.svg"
+                source: "../images/borderWhite.svg"
 
             }
 
@@ -127,7 +127,7 @@ Rectangle {
                         id:onLogo
                         width: parent.width*.75; height: parent.width*.75
                         anchors{ verticalCenter: parent.verticalCenter; left:parent.left; leftMargin: parent.width/8 }
-                        source:"./images/icons/onLogoGreen.svg"
+                        source:"../images/icons/onLogoGreen.svg"
                         layer.enabled: true
                         layer.effect:  DropShadow {
                             anchors.fill: onLogo
@@ -238,22 +238,20 @@ Rectangle {
                     rightMargin: -17
                     //horizontalCenter: parent.horizontalCenter ;
                 }
-                source: "./images/leftPowerPlugWhite.svg"
+                source: "../images/leftPowerPlugWhite.svg"
             }
 
-            DropShadow {
-                anchors.fill: plugOutline
-                horizontalOffset: 3
-                verticalOffset: 6
-                radius: 12.0
-                samples: 24
-                color: "#60000000"
-                source: plugOutline
-            }
+
 
             Text {
                 id: inputPlugName
-                text: device.inputVoltage .toFixed(1) + "V"
+                text: {if (inputVoltage !=0){
+                        text = Math.round(device.inputVoltage * 100) / 100 + "V"
+                    }
+                    else{
+                        text: "0V"
+                    }
+                }
                 width: inputPlugColumn.width-2
                 horizontalAlignment: Text.AlignRight
                 anchors {verticalCenter: parent.verticalCenter
