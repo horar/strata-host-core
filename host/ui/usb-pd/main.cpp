@@ -33,8 +33,8 @@ int main(int argc, char *argv[])
         #ifdef Q_OS_WIN
         // We are at the build folder as root
         #define HOST_ROOT_PATH      (app.applicationDirPath())
-        #define HCS_PATH            HOST_ROOT_PATH + "HCS/HCS.exe"
-        #define HCS_CONFIG_PATH     HOST_ROOT_PATH + "HCS/host_controller_service.config"
+        #define HCS_PATH            HOST_ROOT_PATH + "/HCS/HCS.exe"
+        #define HCS_CONFIG_PATH     HOST_ROOT_PATH + "/HCS/host_controller_service.config"
         #endif
 
         #ifdef Q_OS_MACOS
