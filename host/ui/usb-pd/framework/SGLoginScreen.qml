@@ -10,7 +10,6 @@ Rectangle {
     //determine which screen to show based on how the caller set the
     //showLoginOnCompletion property
     property bool showLoginOnCompletion: false
-    property bool loginScreen: true
 
     Component.onCompleted: {
         spotlightAnimation.start();
@@ -20,26 +19,57 @@ Rectangle {
         usernameField.forceActiveFocus();   //allows the user to type their username without clicking
     }
 
-    property bool  hardwareStatus : {
-        var state = implementationInterfaceBinding.platformState;
+    property bool  onIdChange : {
+        onPlatformIdChanged: {
 
-        if(loginScreen==true) {
-            if(state == true && login_detected == true){
-                stack.pop();
-                return
-            }
+        // TODO[Abe]: Why does this property get called on stack changes?
+
+        // If Logged in and platform is detected
+        if ( !login_detected ) {
+            // Keep showing the login screen; so do nothing
         }
-        else if (loginScreen == false) {
+        else if(login_detected ) {
+            var platformId = implementationInterfaceBinding.Id;
 
-            if(state == false && login_detected == true){
-            } else if(state == true && login_detected == true){
-                stack.pop();
-            } else if(state == false){
-                handleLoginClick.start();
+            // Show the platform specific GUI
+            switch (platformId) {
+                case ImplementationInterfaceBinding.NONE:
+                    console.log("Not recognizing new platform");
+                    // Hide the toolbar; Comes back on platform detect
+                    frontToolBar.visible = false;
+                    stack.pop()
+                    handleLoginClick.start();
+                    break;
+                case ImplementationInterfaceBinding.BUBU_INTERFACE:
+                    console.log("Displaying BU Bring Up");
+                    stack.push([boardBringUp, {immediate:false}]);
+                    break;
+                case ImplementationInterfaceBinding.USB_PD:
+                    frontToolBar.visible = true
+                    if(mainWindow.control_type == "standard") {
+                        stack.pop();
+                        stack.push([cBoardLayout, {immediate:false}]);
+                    }
+                    else if (mainWindow.control_type == "advanced") {
+                        stack.pop();
+                        stack.push([advanced, {immediate:false}]);
+                    }
+                    else if(mainWindow.control_type == "BuBu") {
+                        stack.pop();
+                        stack.push([boardBringUp, {immediate:false}]);
 
+                    }
+
+                    console.log("Displaying USB-PD");
+
+
+                    break;
             }
+
         }
-        implementationInterfaceBinding.platformState
+        console.log("stack depth:", stack.depth)
+        return true;
+        }
     }
 
     //-----------------------------------------------------------
@@ -253,6 +283,9 @@ Rectangle {
                 if (usernameField.text=="" && passwordField.text==""){
                     failedLogin.start();
                 }
+                else{
+                    login_detected = true;
+                }
             }
         }
 
@@ -270,6 +303,9 @@ Rectangle {
             Keys.onReturnPressed:{
                 if (usernameField.text=="" && passwordField.text==""){
                     failedLogin.start();
+                }
+                else{
+                    login_detected = true;
                 }
             }
         }
@@ -339,7 +375,6 @@ Rectangle {
                     failedLogin.start();
                 }
                 else{   //valid login
-                    loginScreen = false;
                     login_detected = true;
                 }
             }
@@ -373,7 +408,6 @@ Rectangle {
             border{ width: 1; color: "black" }
         }
         onClicked: {
-            loginScreen = false;
             login_detected = true;
 
         }

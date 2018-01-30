@@ -17,6 +17,7 @@
 #include <functional>
 #include <stdlib.h>
 #include "../../../include/HostControllerClient.hpp"  // TODO [ian] FIX THIS ... locally referenced files
+#include <QMap>
 
 // To simulate the data
 #define BOARD_DATA_SIMULATION 0
@@ -53,6 +54,11 @@ class ImplementationInterfaceBinding : public QObject
     Q_PROPERTY(float inputPower NOTIFY portEfficiencyChanged)
     Q_PROPERTY(float outputPower NOTIFY portEfficiencyChanged)
 
+    //QProperty for fault messages
+    Q_PROPERTY(int  minimum_voltage NOTIFY minimumVoltageChanged)
+
+    Q_PROPERTY(int over_temperature NOTIFY overTemperatureChanged)
+
     //QProperty : To know Platform Reset
     Q_PROPERTY(bool reset_status NOTIFY platformResetDetected)
 
@@ -60,7 +66,7 @@ class ImplementationInterfaceBinding : public QObject
     Q_PROPERTY(bool platformState READ getPlatformState NOTIFY platformStateChanged)
 
     //QProperty : Platform Id
-    Q_PROPERTY(QString Id READ getPlatformId NOTIFY platformIdChanged)
+    Q_PROPERTY(e_MappedPlatformId Id READ getPlatformId NOTIFY platformIdChanged)
 
     //QProperty : To know USB-PDp- Port Status
     Q_PROPERTY(bool usbCPort1State  NOTIFY usbCPortStateChanged)
@@ -73,6 +79,16 @@ class ImplementationInterfaceBinding : public QObject
     //Q_PROPERTY(bool usbcPort2 READ getUsbCPort2  NOTIFY usbCPort2StateChanged)
 public:
 
+    // Enum for hardcode platforms;
+    enum e_MappedPlatformId
+    {
+        NONE = 0,
+        BUBU_INTERFACE,
+        USB_PD,
+    }PlatformNames;
+
+    Q_ENUM(e_MappedPlatformId)
+
     explicit ImplementationInterfaceBinding(QObject *parent = nullptr);
     virtual ~ImplementationInterfaceBinding();
 
@@ -81,6 +97,19 @@ public:
     Q_INVOKABLE void setRedriverLoss(float lossValue);
     Q_INVOKABLE void setRedriverCount(int value);
     Q_INVOKABLE bool getUSBCPortState(int port_number);
+
+    // To set the input voltage limit in platform
+    Q_INVOKABLE void setInputVoltageLimiting(int value);
+
+    // To set the maximum temperature limit in platform
+    Q_INVOKABLE void setMaximumTemperature(int value);
+
+    // To set the maximum power request for a particular port in USB-PD platform
+    Q_INVOKABLE void setMaximumPortPower(int port,int value);
+
+    // To set the Minimum Input Voltage
+    Q_INVOKABLE void setMinimumInputVoltage(int value);
+
     std::thread notification_thread_;
     void notificationsThreadHandle();
 //Getter invoked when GUI tries to get the data
@@ -92,7 +121,7 @@ public:
     bool getPlatformState();
     bool getUSBCPort1State();
     bool getUSBCPort2State();
-    QString getPlatformId();
+    e_MappedPlatformId getPlatformId();
 
     QJsonObject convertQstringtoJson(const QString string);
     QStringList getJsonObjectKeys(const QJsonObject json_obj);
@@ -106,6 +135,8 @@ public:
     void handleUSBPDcableswapNotification(const QVariantMap json_map);
     void handleInputVoltageNotification(const QVariantMap json_map);
     void handleResetNotification(const QVariantMap payloadMap);
+    void handleInputUnderVoltageNotification(const QVariantMap payloadMap);
+    void handleOverTemperatureNotification(const QVariantMap payloadMap);
 
 //Notification Simulator
     friend void *simulateNotificationsThread(void *);
@@ -135,20 +166,29 @@ signals:
     void portPowerChanged(int port, float value);
     void portCurrentChanged(int port, float value);
     void portEfficencyChanged(int port, float input_power,float output_power);
+    // fault messages notification
+    void minimumVoltageChanged(bool state,int value);
+    void overTemperatureChanged(bool state,int value);
+
 private:
     //Members private to class
-    platform_Ports Ports;
-    QString platformId;
-    bool platformState, usbCPort1State, usbCPort2State;
-    float inputVoltage;
-    bool registrationSuccessful;
-    bool notification_thread_running_;
-    float port1Current,port2Current;
-    // For load board data simulation only
-    float targetVoltage;
+    platform_Ports      Ports;
+    e_MappedPlatformId  platformId;
+    QString             rawPlatformId;
+    bool                platformState,
+                        usbCPort1State,
+                        usbCPort2State;
+    float               inputVoltage;
+    bool                registrationSuccessful;
+    bool                notification_thread_running_;
+    float               port1Current,
+                        port2Current;
 
-    //       data source, data source handler
+    QMap<QString, e_MappedPlatformId> idMap;
     std::map<std::string, DataSourceHandler > data_source_handlers_;
+
+    // For load board data simulation only
+    float               targetVoltage;
 
 public:
     Spyglass::HostControllerClient *hcc_object;
