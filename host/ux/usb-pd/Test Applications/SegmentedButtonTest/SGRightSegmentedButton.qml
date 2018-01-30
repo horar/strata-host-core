@@ -2,11 +2,11 @@ import QtQuick 2.0
 import QtQuick.Controls 2.0
 
 Button {
-    property var tabName: Three{}
+    property var tabName: Four{}
     width:100
     height:40
     checkable:true
-    text: "three"
+    text: "four"
 
     background: Canvas{
         id:rightButtonCanvas
@@ -47,7 +47,7 @@ Button {
     }
 
     Component.onCompleted: {
-        tabName = createTab("Three.qml",contentRectangle);
+        tabName = createTab("Four.qml",contentRectangle);
     }
 }
 

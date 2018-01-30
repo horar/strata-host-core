@@ -45,7 +45,7 @@ Button {
     }
 
     Component.onCompleted: {
-        tabName = createTab("Two.qml",contentRectangle);
+        tabName = createTab("Three.qml",contentRectangle);
     }
 }
 

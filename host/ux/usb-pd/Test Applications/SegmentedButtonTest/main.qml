@@ -60,10 +60,10 @@ ApplicationWindow {
         anchors.top: parent.top
         anchors.topMargin: 15
 
-        SGLeftSegmentedButton{text:"left" ; tabName:One{}}
-        SGMiddleSegmentedButton{text:"middle"; tabName:Two{}}
-        SGMiddleSegmentedButton{text:"middle2"; tabName:Two{}}
-        SGRightSegmentedButton{text:"right"; tabName:Three{}}
+        SGLeftSegmentedButton{text:"one" ; tabName:One{}}
+        SGMiddleSegmentedButton{text:"two"; tabName:Two{}}
+        SGMiddleSegmentedButton{text:"three"; tabName:Three{}}
+        SGRightSegmentedButton{text:"four"; tabName:Four{}}
     }
 
     Rectangle{
@@ -76,6 +76,7 @@ ApplicationWindow {
         One{}       //first page
         Two{}       //second page
         Three{}
+        Four{}
     }
 
 
