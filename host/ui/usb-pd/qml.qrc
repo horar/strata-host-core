@@ -124,5 +124,8 @@
         <file>boardBringUp/lock.svg</file>
         <file>advancedControls/AdvancedControlSettings.qml</file>
         <file>advancedControls/AdvancedBoard.qml</file>
+        <file>advancedControls/LeftSegmentedButton.qml</file>
+        <file>advancedControls/MiddleSegmentedButton.qml</file>
+        <file>advancedControls/RightSegmentedButton.qml</file>
     </qresource>
 </RCC>
