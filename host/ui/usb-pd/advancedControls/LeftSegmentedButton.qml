@@ -5,22 +5,29 @@ Button {
     id:leftButton
     width:100
     height:40
-    property var tabName
-    property int smallFontSize: (Qt.platform.os === "osx") ? 12  : 10;
-    property int mediumFontSize: (Qt.platform.os === "osx") ? 15  : 12;
-    property int largeFontSize: (Qt.platform.os === "osx") ? 24  : 20;
-    property int extraLargeFontSize: (Qt.platform.os === "osx") ? 36  : 24;
+
+    property color checkedColor: "grey"
+    property color unCheckedColor: "lightgrey"
+
+    property color checkedTextColor: "white"
+    property color uncheckedTextColor: "grey"
 
     checkable: true
     checked:true
 
-    font.pixelSize: mediumFontSize
+    contentItem: Text {
+        text: parent.text
+        font: parent.font
+        color: parent.checked ? checkedTextColor : uncheckedTextColor
+        verticalAlignment: Text.AlignVCenter
+    }
+
     background: Canvas{
         id:leftButtonCanvas
         anchors.fill:parent
         onPaint:{
             var ctx = getContext("2d");
-            var theFillColor = parent.checked ? "grey" :"lightgrey"
+            var theFillColor = parent.checked ? checkedColor : unCheckedColor
             var eighthWidth = parent.width/8
             var theLineWidth = 1
             var theTop = theLineWidth
@@ -41,17 +48,6 @@ Button {
 
     onCheckedChanged: {
         leftButtonCanvas.requestPaint()
-        //console.log("marking canvas as dirty")
     }
 
-    function createTab(inTabName, inParent){
-        var component  = Qt.createComponent(inTabName);
-        var object = component.createObject(inParent);
-        return object
-    }
-
-    Component.onCompleted: {
-        console.log("PWM setting", tabName);
-        tabName = createTab(tabName,contentRectangle);
-    }
 }
