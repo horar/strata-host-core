@@ -1,0 +1,16 @@
+<RCC>
+    <qresource prefix="/">
+        <file>main.qml</file>
+        <file>MainForm.ui.qml</file>
+        <file>SerialInterfaceI2C.qml</file>
+        <file>SerialInterfaceUART.qml</file>
+        <file>SerialInterfaceSPI.qml</file>
+        <file>GPIOConfiguration.qml</file>
+        <file>GPIOSetting.qml</file>
+        <file>lockIcon.png</file>
+        <file>ButtonView.qml</file>
+        <file>SGLeftSegmentedButton.qml</file>
+        <file>SGMiddleSegmentedButton.qml</file>
+        <file>SGRightSegmentedButton.qml</file>
+    </qresource>
+</RCC>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="411px" height="273px" viewBox="0 0 411 273" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 45.2 (43514) - http://www.bohemiancoding.com/sketch -->
+    <title>Graph</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Desktop" transform="translate(-491.000000, -328.000000)">
+            <g id="Port-Power-Messages-Dialog" transform="translate(324.000000, 221.000000)">
+                <g id="Graph" transform="translate(167.000000, 107.000000)">
+                    <rect id="Rectangle-6" stroke="#000000" x="0.5" y="0.5" width="409" height="272"></rect>
+                    <path d="M0.5,135.5 L409.5,132.5" id="Line-3" stroke="#979797" stroke-linecap="square"></path>
+                    <polyline id="Path-5" stroke="#000000" points="1.57617188 94.2675781 50.7910156 94.2675781 50.7910156 177.876953 95.3222656 177.876953 95.3222656 94.2675781 140.744141 94.2675781 140.744141 177.876953 248.933594 177.876953 248.933594 90.7148438 312.123047 90.7148438 312.123047 177.876953 372.664062 177.876953 372.664062 88.6699219 410.201172 88.6699219"></polyline>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>
