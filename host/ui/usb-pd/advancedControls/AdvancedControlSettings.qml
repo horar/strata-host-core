@@ -316,7 +316,7 @@ Item {
                         startLimitingVoltageTextInput.enabled = inputLimitingSwitch.checked
                         startLimitingUnitText.enabled = inputLimitingSwitch.checked
                         outputLimitText.enabled = inputLimitingSwitch.checked
-                        outputLimitTextInput.enabled = inputLimitingSwitch.checked
+                        outputLimitPopup.enabled = inputLimitingSwitch.checked
                         outputLimitUnitText.enabled = inputLimitingSwitch.checked
                         minimumInputVoltageText.enabled = inputLimitingSwitch.checked
                         minimumInputLabel.enabled = inputLimitingSwitch.checked
@@ -393,36 +393,45 @@ Item {
                     anchors.top: startLimitingText.bottom
                     anchors.topMargin: 10
                 }
-                TextField{
-                    id:outputLimitTextInput
+
+                PopUpMenu{
+                    id: outputLimitPopup
+                    model: ["15","27", "36", "45","60","100"]
                     anchors.left:outputLimitText.right
                     anchors.leftMargin: 10
                     anchors.verticalCenter: outputLimitText.verticalCenter
-                    color:enabled ? enabledTextColor : disabledTextColor
-                    placeholderText:"7"
-                    verticalAlignment: TextInput.AlignTop
-                    font.family: "helvetica"
-                    font.pointSize: smallFontSize
-                    height:15
-                    width:30
-                    background: Rectangle {
-                            implicitWidth: 15
-                            implicitHeight: 10
-                            color: "#838484"//"#33FFFFFF"
-                            border.color: "#838484"
-                        }
-                    onEditingFinished: {
-                        //keep the values in the correct range
-                        if (outputLimitTextInput.text >32){
-                            outputLimitTextInput.text = 32
-                        }
-                        else if (outputLimitTextInput.text <5){
-                            outputLimitTextInput.text = 5
-                        }
-
-                        console.log ("user set value for output limiting:", outputLimitTextInput.text)
-                    }
                 }
+
+//                TextField{
+//                    id:outputLimitTextInput
+//                    anchors.left:outputLimitText.right
+//                    anchors.leftMargin: 10
+//                    anchors.verticalCenter: outputLimitText.verticalCenter
+//                    color:enabled ? enabledTextColor : disabledTextColor
+//                    placeholderText:"7"
+//                    verticalAlignment: TextInput.AlignTop
+//                    font.family: "helvetica"
+//                    font.pointSize: smallFontSize
+//                    height:15
+//                    width:30
+//                    background: Rectangle {
+//                            implicitWidth: 15
+//                            implicitHeight: 10
+//                            color: "#838484"//"#33FFFFFF"
+//                            border.color: "#838484"
+//                        }
+//                    onEditingFinished: {
+//                        //keep the values in the correct range
+//                        if (outputLimitTextInput.text >32){
+//                            outputLimitTextInput.text = 32
+//                        }
+//                        else if (outputLimitTextInput.text <5){
+//                            outputLimitTextInput.text = 5
+//                        }
+
+//                        console.log ("user set value for output limiting:", outputLimitTextInput.text)
+//                    }
+//                }
                 Text{
                     id:outputLimitUnitText
                     text:"W"
@@ -430,7 +439,7 @@ Item {
                     font.pointSize: smallFontSize
                     //horizontalAlignment: Text.AlignRight
                     color: enabled ? enabledTextColor : disabledTextColor
-                    anchors.left:outputLimitTextInput.right
+                    anchors.left:outputLimitPopup.right
                     anchors.leftMargin: 5
                     anchors.verticalCenter: outputLimitText.verticalCenter
 
