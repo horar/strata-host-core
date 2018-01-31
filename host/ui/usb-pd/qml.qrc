@@ -128,5 +128,7 @@
         <file>advancedControls/MiddleSegmentedButton.qml</file>
         <file>advancedControls/RightSegmentedButton.qml</file>
         <file>advancedControls/PopUpMenu.qml</file>
+        <file>advancedControls/AdvancedSlider.qml</file>
+        <file>advancedControls/AdvancedPortSettings.qml</file>
     </qresource>
 </RCC>
