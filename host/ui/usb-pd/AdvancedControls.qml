@@ -70,7 +70,7 @@ Rectangle {
         ScrollView{
             ScrollBar.vertical.policy: ScrollBar.AlwaysOn
             //clip: true
-            contentHeight: AdvancedControlSettings.height+1
+            contentHeight: 1100//AdvancedControlSettings.height
 
             id:settings
 
@@ -82,10 +82,10 @@ Rectangle {
             Layout.row: 0
             Layout.rowSpan: 3
             Layout.preferredWidth  : grid.prefWidth(this)
-            //Layout.preferredHeight : grid.prefHeight(this)
             Layout.fillWidth:true
             Layout.fillHeight:true
 
+            //how do I turn the background behind the scrollable area black?
             //color: "black"
 
 
