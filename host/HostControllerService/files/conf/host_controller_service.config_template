@@ -7,7 +7,7 @@
         "command_address":      "tcp://*:5564",             // Hcs command address
         "subscriber_address":   "tcp://*:5563",             // Client subscribe address
         "simulated_platform":   false,                      // Simulate platform hw
-        "serial_port_number":   "/dev/tty.usbserial-DMXX"   // Linux/Mac: /dev/ttyXYZ, Windows: COM7, COM6
+        "serial_port_number":   ["/dev/tty.usbserial-DMXX"] // List of ports. Linux/Mac: /dev/ttyXYZ, Windows: COM7, COM6
     },
 
     "database":{
