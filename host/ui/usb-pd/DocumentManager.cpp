@@ -52,7 +52,8 @@ void DocumentManager::init()
     // platform id request and the database register command without this delay
 #ifdef Q_OS_WIN
     qDebug()<<"before wait";
-    Sleep(1000);
+    // HCS takes more than a second to load in windows
+    Sleep(3000);
 #else
     struct timespec ts = { 1, 0};
     nanosleep(&ts, NULL);
