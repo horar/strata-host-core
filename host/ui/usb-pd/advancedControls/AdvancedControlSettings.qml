@@ -1,6 +1,6 @@
 import QtQuick 2.7
 import QtQuick.Layouts 1.3
-import QtQuick.Controls 2.1
+import QtQuick.Controls 2.3
 import QtGraphicalEffects 1.0
 import tech.spyglass.ImplementationInterfaceBinding 1.0
 
@@ -12,7 +12,7 @@ Item {
 
         Rectangle{
             id: boardSettings
-            property int fullHeight:300
+            property int fullHeight:350
             property int collapsedHeight:60
             Layout.preferredWidth  : grid.prefWidth(this)
             Layout.preferredHeight : boardSettings.fullHeight
@@ -124,6 +124,138 @@ Item {
                 color:"#CCCCCC"
             }
 
+            Label{
+                id:faultProtectionLabel
+                text:"Fault Protection:"
+                font.family: "helvetica"
+                font.pointSize: mediumFontSize
+                color: enabledTextColor
+                anchors.left: parent.left
+                anchors.leftMargin: 40
+                anchors.top: boardSettingsSeparator.bottom
+                anchors.topMargin: 10
+            }
+
+            ButtonGroup { id: faultProtectionGroup
+                          exclusive: true
+            }
+
+            LeftSegmentedButton{
+                id:shutdownButton
+                anchors.left: faultProtectionLabel.right
+                anchors.leftMargin: 5
+                anchors.verticalCenter: faultProtectionLabel.verticalCenter
+                text: "Shutdown"
+                font.capitalization: Font.MixedCase
+                font.pointSize: smallFontSize
+                checkedColor: "#767676"
+                unCheckedColor: "#4C4A48"
+                checkedTextColor: enabledTextColor
+                uncheckedTextColor: disabledTextColor
+                ButtonGroup.group: faultProtectionGroup
+                height: 25
+                width:75
+
+            }
+            MiddleSegmentedButton{
+                id:restartButton
+                anchors.left: shutdownButton.right
+                anchors.leftMargin: 0
+                anchors.verticalCenter: faultProtectionLabel.verticalCenter
+                text:"Restart"
+                font.pointSize: smallFontSize
+                font.capitalization: Font.MixedCase
+                checkedColor: "#767676"
+                unCheckedColor: "#4C4A48"
+                checkedTextColor: enabledTextColor
+                uncheckedTextColor: disabledTextColor
+                ButtonGroup.group: faultProtectionGroup
+                height: 25
+                width:60
+            }
+            RightSegmentedButton{
+                id:noProtectionButton
+                anchors.left: restartButton.right
+                anchors.leftMargin: 0
+                anchors.verticalCenter: faultProtectionLabel.verticalCenter
+                text:"None"
+                font.capitalization: Font.MixedCase
+                font.pointSize: smallFontSize
+                checkedColor: "#767676"
+                unCheckedColor: "#4C4A48"
+                checkedTextColor: enabledTextColor
+                uncheckedTextColor: disabledTextColor
+                ButtonGroup.group: faultProtectionGroup
+                height: 25
+                width:60
+            }
+
+            Label{
+                id:dataConfigurationLabel
+                text:"Data Configuration:"
+                font.family: "helvetica"
+                font.pointSize: mediumFontSize
+                color: "#D8D8D8"
+                anchors.left: parent.left
+                anchors.leftMargin: 20
+                anchors.top: faultProtectionLabel.bottom
+                anchors.topMargin: 15
+            }
+
+            ButtonGroup { id: dataConfigurationGroup
+                          exclusive: true
+            }
+
+            LeftSegmentedButton{
+                id:chargeOnlyButton
+                anchors.left: dataConfigurationLabel.right
+                anchors.leftMargin: 5
+                anchors.verticalCenter: dataConfigurationLabel.verticalCenter
+                text: "Charge only"
+                font.capitalization: Font.MixedCase
+                font.pointSize: smallFontSize
+                checkedColor: "#767676"
+                unCheckedColor: "#4C4A48"
+                checkedTextColor: enabledTextColor
+                uncheckedTextColor: disabledTextColor
+                ButtonGroup.group: dataConfigurationGroup
+                height: 25
+                width:90
+
+            }
+            MiddleSegmentedButton{
+                id:passiveButton
+                anchors.left: chargeOnlyButton.right
+                anchors.leftMargin: 0
+                anchors.verticalCenter: dataConfigurationLabel.verticalCenter
+                text:"Passive"
+                font.pointSize: smallFontSize
+                font.capitalization: Font.MixedCase
+                checkedColor: "#767676"
+                unCheckedColor: "#4C4A48"
+                checkedTextColor: enabledTextColor
+                uncheckedTextColor: disabledTextColor
+                ButtonGroup.group: dataConfigurationGroup
+                height: 25
+                width:65
+            }
+            RightSegmentedButton{
+                id:redriverButton
+                anchors.left: passiveButton.right
+                anchors.leftMargin: 0
+                anchors.verticalCenter: dataConfigurationLabel.verticalCenter
+                text:"Redriver"
+                font.capitalization: Font.MixedCase
+                font.pointSize: smallFontSize
+                checkedColor: "#767676"
+                unCheckedColor: "#4C4A48"
+                checkedTextColor: enabledTextColor
+                uncheckedTextColor: disabledTextColor
+                ButtonGroup.group: dataConfigurationGroup
+                height: 25
+                width:75
+            }
+
             Rectangle{
                 id:inputLimitingGroup
                 color:"#33FFFFFF"
@@ -131,8 +263,8 @@ Item {
                 anchors.right: parent.right
                 anchors.leftMargin: 20
                 anchors.rightMargin: 20
-                anchors.top: boardSettingsSeparator.bottom
-                anchors.topMargin: boardSettingsLabel.height
+                anchors.top: dataConfigurationLabel.bottom
+                anchors.topMargin: dataConfigurationLabel.height
                 height: 100
 
                 Text{
@@ -887,7 +1019,7 @@ Item {
             }
             ComboBox {
                 id:port1MaxPowerCombo
-                 model: ["27", "36", "45","60","100"]
+                 model: ["15","27", "36", "45","60","100"]
 //                        textRole: "key"
 //                        model: ListModel {
 //                         id:model
@@ -1838,7 +1970,7 @@ Item {
 
             ComboBox {
                 id:port2MaxPowerCombo
-                 model: ["27", "36", "45","60","100"]
+                 model: ["15","27", "36", "45","60","100"]
 //                        textRole: "key"
 //                        model: ListModel {
 //                         id:model
