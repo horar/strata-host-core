@@ -69,7 +69,6 @@ ComboBox {
     contentItem: Text {
             leftPadding: 0
             rightPadding: parent.indicator.width + parent.spacing
-
             text: parent.displayText
             font: parent.font
             color: parent.pressed ? "#17a81a" : "#D8D8D8"
@@ -86,17 +85,27 @@ ComboBox {
         padding: 1
         font.family: "helvetica"
         font.pointSize: smallFontSize
+        topPadding: -8
 
         contentItem: ListView {
+            id: popupListView
             clip: true
             implicitHeight: contentHeight
             model: control.popup.visible ? control.delegateModel : null
             currentIndex: control.highlightedIndex
+            highlightFollowsCurrentItem: false // false so the highlight delegate can control how the highlight is moved.
+            highlight: Rectangle {
+                width: backgroundRectangle.width;
+                height: contentItem.implicitHeight *1.2
+                color: "darkgrey"
+                y: popupListView.currentItem.y + contentItem.height/2;
+                Behavior on y { SpringAnimation { spring: 2; damping: 0.1 } }
+            }
 
-            ScrollIndicator.vertical: ScrollIndicator { }
         }
 
         background: Rectangle {
+            id:backgroundRectangle
             color: control.backgroundColor
             border.color: control.backgroundColor
         }
