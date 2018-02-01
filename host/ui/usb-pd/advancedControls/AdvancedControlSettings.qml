@@ -13,7 +13,7 @@ Item {
         Rectangle{
             id: boardSettings
             property int fullHeight:350
-            property int collapsedHeight:60
+            property int collapsedHeight:55
             Layout.preferredWidth  : grid.prefWidth(this)
             Layout.preferredHeight : boardSettings.fullHeight
             color: "black"
