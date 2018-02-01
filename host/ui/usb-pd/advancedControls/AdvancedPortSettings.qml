@@ -7,33 +7,39 @@ import QtGraphicalEffects 1.0
 //  Port  settings
 //-----------------------------------------------
 Rectangle{
-    id:port1Settings
+    id:portSettings
     property int fullHeight:300
     property int collapsedHeight:60
     property var portName:"Port n"
 
+    property color enabledTextFieldBackgroundColor: "#838484"
+    property color disabledTextFieldBackgroundColor: "#33FFFFFF"
+
+    property color enabledTextFieldTextColor: "white"
+    property color disabledTextFieldTextColor: "grey"
+
     Layout.preferredWidth  : grid.prefWidth(this)
-    Layout.preferredHeight : port1Settings.fullHeight
+    Layout.preferredHeight : portSettings.fullHeight
     color: "black"
 
     NumberAnimation{
-        id: collapsePort1Settings
-        target: port1Settings;
+        id: collapsePortSettings
+        target: portSettings;
         property: "Layout.preferredHeight";
-        to: port1Settings.collapsedHeight;
+        to: portSettings.collapsedHeight;
         duration: settings.collapseAnimationSpeed
     }
 
     NumberAnimation {
-        id: expandPort1Settings
-        target: port1Settings
+        id: expandPortSettings
+        target: portSettings
         property: "Layout.preferredHeight";
-        to: port1Settings.fullHeight
+        to: portSettings.fullHeight
         duration: settings.collapseAnimationSpeed;
     }
 
     Button{
-        id: port1SettingsDisclosureButton
+        id: portSettingsDisclosureButton
         anchors.top: parent.top
         anchors.left: parent.left
         anchors.leftMargin: 0
@@ -48,7 +54,7 @@ Rectangle{
 
 
         Image{
-            id:port1DisclosureButtonImage
+            id:portDisclosureButtonImage
             anchors.left:parent.left
             anchors.leftMargin: 3
             anchors.top:parent.top
@@ -57,27 +63,27 @@ Rectangle{
             source:"../images/icons/showLessIcon.svg"
 
             transform: Rotation {
-                id: rotatePort1ButtonImage
-                origin.x: port1DisclosureButtonImage.width/2;
-                origin.y: port1DisclosureButtonImage.height/2;
+                id: rotatePortButtonImage
+                origin.x: portDisclosureButtonImage.width/2;
+                origin.y: portDisclosureButtonImage.height/2;
                 axis { x: 0; y: 0; z: 1 }
             }
 
             NumberAnimation {
-                id:collapsePort1DisclosureIcon
+                id:collapsePortDisclosureIcon
                 running: false
                 loops: 1
-                target: rotatePort1ButtonImage;
+                target: rotatePortButtonImage;
                 property: "angle";
                 from: 0; to: 180;
                 duration: 1000;
             }
 
             NumberAnimation {
-                id:expandPort1DisclosureIcon
+                id:expandPortDisclosureIcon
                 running: false
                 loops: 1
-                target: rotatePort1ButtonImage;
+                target: rotatePortButtonImage;
                 property: "angle";
                 from: 180; to: 0;
                 duration: 1000;
@@ -86,19 +92,19 @@ Rectangle{
 
         onClicked:{
             if (checked == true){
-                expandPort1Settings.start();
-                expandPort1DisclosureIcon.start();
+                expandPortSettings.start();
+                expandPortDisclosureIcon.start();
                 }
             else{
-                collapsePort1Settings.start();
-                collapsePort1DisclosureIcon.start();
+                collapsePortSettings.start();
+                collapsePortDisclosureIcon.start();
               }
         }
 
     }
 
     Label{
-        id: port1SettingsLabel
+        id: portSettingsLabel
         text: parent.portName + " Settings"
         font.family: "Helvetica"
         font.pointSize: mediumFontSize
@@ -110,19 +116,19 @@ Rectangle{
     }
 
     Rectangle{
-        id: port1SettingsSeparator
+        id: portSettingsSeparator
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.leftMargin: parent.width/20
         anchors.rightMargin: parent.width/20
-        anchors.top: port1SettingsLabel.bottom
-        anchors.topMargin: port1SettingsLabel.height
+        anchors.top: portSettingsLabel.bottom
+        anchors.topMargin: portSettingsLabel.height
         height: 1
         color:"#CCCCCC"
     }
 
     Text{
-        id:port1MaxPowerText
+        id:portMaxPowerText
         text:"Maximum power output:"
         font.family: "helvetica"
         font.pointSize: smallFontSize
@@ -130,34 +136,34 @@ Rectangle{
         color: "#D8D8D8"
         anchors.right:parent.right
         anchors.rightMargin: parent.width*.6
-        anchors.top: port1SettingsSeparator.bottom
+        anchors.top: portSettingsSeparator.bottom
         anchors.topMargin: 15
     }
 
     PopUpMenu{
-        id: port1MaxPowerCombo
+        id: portMaxPowerCombo
         model: ["15","27", "36", "45","60","100"]
-        anchors.left:port1MaxPowerText.right
+        anchors.left:portMaxPowerText.right
         anchors.leftMargin: 10
-        anchors.verticalCenter: port1MaxPowerText.verticalCenter
+        anchors.verticalCenter: portMaxPowerText.verticalCenter
     }
 
 
     Text{
-        id:port1MaxPowerUnitText
+        id:portMaxPowerUnitText
         text:"W"
         font.family: "helvetica"
         font.pointSize: smallFontSize
         color: "#D8D8D8"
-        anchors.left:port1MaxPowerCombo.right
+        anchors.left:portMaxPowerCombo.right
         anchors.leftMargin: 5
-        anchors.verticalCenter: port1MaxPowerText.verticalCenter
+        anchors.verticalCenter: portMaxPowerText.verticalCenter
 
     }
 
 
     Text{
-        id:port1CableCompensationText
+        id:portCableCompensationText
         text:"Cable compensation step:"
         font.family: "helvetica"
         font.pointSize: smallFontSize
@@ -165,17 +171,17 @@ Rectangle{
         color: "#D8D8D8"
         anchors.right:parent.right
         anchors.rightMargin: parent.width*.6
-        anchors.top: port1MaxPowerText.bottom
+        anchors.top: portMaxPowerText.bottom
         anchors.topMargin: 10
 
     }
     TextField{
-        id:port1CableCompensationTextInput
-        anchors.left:port1CableCompensationText.right
+        id:portCableCompensationTextInput
+        anchors.left:portCableCompensationText.right
         anchors.leftMargin: 10
-        anchors.verticalCenter: port1CableCompensationText.verticalCenter
+        anchors.verticalCenter: portCableCompensationText.verticalCenter
         color:enabled ? enabledTextColor : disabledTextColor
-        placeholderText:port1CableCompensationSlider.value
+        placeholderText:portCableCompensationSlider.value
         font.family: "helvetica"
         font.pointSize: 12
         verticalAlignment: TextInput.AlignTop
@@ -189,24 +195,24 @@ Rectangle{
             }
     }
     Text{
-        id:port1CableCompensationUnitText
+        id:portCableCompensationUnitText
         text:"A"
         font.family: "helvetica"
         font.pointSize: smallFontSize
         color: "#D8D8D8"
-        anchors.left:port1CableCompensationTextInput.right
+        anchors.left:portCableCompensationTextInput.right
         anchors.leftMargin: 5
-        anchors.verticalCenter: port1CableCompensationText.verticalCenter
+        anchors.verticalCenter: portCableCompensationText.verticalCenter
 
     }
 
     AdvancedSlider{
-        id:port1CableCompensationSlider
-        anchors.left:port1CableCompensationUnitText.right
+        id:portCableCompensationSlider
+        anchors.left:portCableCompensationUnitText.right
         anchors.leftMargin: 5
         anchors.right:parent.right
         anchors.rightMargin: 10
-        anchors.verticalCenter: port1CableCompensationText.verticalCenter
+        anchors.verticalCenter: portCableCompensationText.verticalCenter
         height:10
         from: .25
         to:2
@@ -214,7 +220,7 @@ Rectangle{
         stepSize: 0.0
 
         onValueChanged: {
-            port1CableCompensationTextInput.text = Math.round (port1CableCompensationSlider.value *100)/100
+            portCableCompensationTextInput.text = Math.round (portCableCompensationSlider.value *100)/100
         }
     }
 
@@ -227,7 +233,7 @@ Rectangle{
         color: "#D8D8D8"
         anchors.right:parent.right
         anchors.rightMargin: parent.width*.6
-        anchors.top: port1CableCompensationText.bottom
+        anchors.top: portCableCompensationText.bottom
         anchors.topMargin: 10
     }
     TextField{
@@ -346,7 +352,7 @@ Rectangle{
     //  advertized voltages group
     //-----------------------------------------------
     Rectangle{
-        id:port1AdvertizedVoltagesGroup
+        id:portAdvertizedVoltagesGroup
         color:"black"//"#33FFFFFF"
         anchors.left: parent.left
         anchors.right: parent.right
@@ -356,11 +362,11 @@ Rectangle{
         anchors.topMargin: 10
         height: 150
         Text{
-            id:port1AdvertizedVoltagesLabel
-            text:"Advertized Voltages:"
+            id:portAdvertizedVoltagesLabel
+            text:"Advertised Voltages:"
             font.family: "helvetica"
             font.pointSize: smallFontSize
-            color: "#D8D8D8"
+            color: enabled ? enabledTextColor : disabledTextColor
             anchors.right:parent.right
             anchors.rightMargin: parent.width*.6
             anchors.top: parent.top
@@ -368,12 +374,12 @@ Rectangle{
         }
 
         TextField{
-            id:port1voltage1TextInput
-            anchors.left:port1AdvertizedVoltagesLabel.right
+            id:portvoltage1TextInput
+            anchors.left:portAdvertizedVoltagesLabel.right
             anchors.leftMargin: 5
-            anchors.top: port1AdvertizedVoltagesGroup.top
+            anchors.top: portAdvertizedVoltagesGroup.top
             anchors.topMargin: 0
-            color:"white"//"#838484"
+            color:enabled ? enabledTextFieldTextColor : disabledTextFieldTextColor
             placeholderText:"5"
             verticalAlignment: TextInput.AlignTop
             font.family: "helvetica"
@@ -383,49 +389,57 @@ Rectangle{
             background: Rectangle {
                     implicitWidth: 15
                     implicitHeight: 10
-                    color: "#838484"//"#33FFFFFF"
-                    border.color: "#838484"
+                    color: enabled ? enabledTextFieldBackgroundColor : disabledTextFieldBackgroundColor
                 }
         }
 
         Text{
-            id:port1voltage1UnitText
+            id:portvoltage1UnitText
             text:"V"
             font.family: "helvetica"
             font.pointSize: smallFontSize
-            color: "#D8D8D8"
-            anchors.left:port1voltage1TextInput.right
+            color: enabled ? enabledTextColor : disabledTextColor
+            anchors.left:portvoltage1TextInput.right
             anchors.leftMargin: 5
-            anchors.verticalCenter: port1voltage1TextInput.verticalCenter
+            anchors.verticalCenter: portvoltage1TextInput.verticalCenter
 
         }
         AdvancedSlider{
-            id:port1voltage1Slider
-            anchors.left:port1voltage1UnitText.right
+            id:portvoltage1Slider
+            anchors.left:portvoltage1UnitText.right
             anchors.leftMargin: 5
             anchors.right:parent.right
             anchors.rightMargin: 10
-            anchors.verticalCenter: port1voltage1TextInput.verticalCenter
+            anchors.verticalCenter: portvoltage1TextInput.verticalCenter
             height:10
-            from: 5
+            from: 4.95
             to:20
             value:5
             stepSize: 0.0
 
             onValueChanged: {
-                port1voltage1TextInput.text = Math.round (port1voltage1Slider.value *10)/10
+                portvoltage1TextInput.text = Math.round (portvoltage1Slider.value *10)/10
+                if (portvoltage1Slider.value < 5){
+                    portvoltage1TextInput.enabled = false;
+                    portvoltage1TextInput.text = "NA";
+                    portvoltage1UnitText.enabled = false;
+                    }
+                else{
+                    portvoltage1TextInput.enabled = true;
+                    portvoltage1UnitText.enabled = true;
+                }
             }
         }
 
 
 
         TextField{
-            id:port1voltage2TextInput
-            anchors.left:port1AdvertizedVoltagesLabel.right
+            id:portvoltage2TextInput
+            anchors.left:portAdvertizedVoltagesLabel.right
             anchors.leftMargin: 5
-            anchors.top: port1voltage1TextInput.bottom
+            anchors.top: portvoltage1TextInput.bottom
             anchors.topMargin: 5
-            color:"white"//"#838484"
+            color:enabled ? enabledTextFieldTextColor : disabledTextFieldTextColor
             placeholderText:"5"
             verticalAlignment: TextInput.AlignTop
             font.family: "helvetica"
@@ -435,50 +449,58 @@ Rectangle{
             background: Rectangle {
                     implicitWidth: 15
                     implicitHeight: 10
-                    color: "#838484"//"#33FFFFFF"
-                    border.color: "#838484"
+                    color: enabled ? enabledTextFieldBackgroundColor : disabledTextFieldBackgroundColor
                 }
         }
 
         Text{
-            id:port1voltage2UnitText
+            id:portvoltage2UnitText
             text:"V"
             font.family: "helvetica"
             font.pointSize: smallFontSize
-            color: "#D8D8D8"
-            anchors.left:port1voltage2TextInput.right
+            color: enabled ? enabledTextColor : disabledTextColor
+            anchors.left:portvoltage2TextInput.right
             anchors.leftMargin: 5
-            anchors.verticalCenter: port1voltage2TextInput.verticalCenter
+            anchors.verticalCenter: portvoltage2TextInput.verticalCenter
 
         }
 
         AdvancedSlider{
-            id:port1voltage2Slider
-            anchors.left:port1voltage2UnitText.right
+            id:portvoltage2Slider
+            anchors.left:portvoltage2UnitText.right
             anchors.leftMargin: 5
             anchors.right:parent.right
             anchors.rightMargin: 10
-            anchors.verticalCenter: port1voltage2UnitText.verticalCenter
+            anchors.verticalCenter: portvoltage2UnitText.verticalCenter
             height:10
-            from: 5
+            from: 4.95
             to:20
             value:5
             stepSize: 0.0
 
             onValueChanged: {
-                port1voltage2TextInput.text = Math.round (port1voltage2Slider.value *10)/10
+                portvoltage2TextInput.text = Math.round (portvoltage2Slider.value *10)/10
+                if (portvoltage2Slider.value < 5){
+                    portvoltage2TextInput.enabled = false;
+                    portvoltage2TextInput.text = "NA";
+                    portvoltage2UnitText.enabled = false;
+                    }
+                else{
+                    portvoltage2TextInput.enabled = true;
+                    portvoltage2UnitText.enabled = true;
+                }
             }
         }
 
 
 
         TextField{
-            id:port1voltage3TextInput
-            anchors.left:port1AdvertizedVoltagesLabel.right
+            id:portvoltage3TextInput
+            anchors.left:portAdvertizedVoltagesLabel.right
             anchors.leftMargin: 5
-            anchors.top: port1voltage2TextInput.bottom
+            anchors.top: portvoltage2TextInput.bottom
             anchors.topMargin: 5
-            color:"white"//"#838484"
+            color:enabled ? enabledTextFieldTextColor : disabledTextFieldTextColor
             placeholderText:"5"
             verticalAlignment: TextInput.AlignTop
             font.family: "helvetica"
@@ -488,50 +510,58 @@ Rectangle{
             background: Rectangle {
                     implicitWidth: 15
                     implicitHeight: 10
-                    color: "#838484"//"#33FFFFFF"
-                    border.color: "#838484"
+                    color: enabled ? enabledTextFieldBackgroundColor : disabledTextFieldBackgroundColor
                 }
         }
 
         Text{
-            id:port1voltage3UnitText
+            id:portvoltage3UnitText
             text:"V"
             font.family: "helvetica"
             font.pointSize: smallFontSize
-            color: "#D8D8D8"
-            anchors.left:port1voltage3TextInput.right
+            color: enabled ? enabledTextColor : disabledTextColor
+            anchors.left:portvoltage3TextInput.right
             anchors.leftMargin: 5
-            anchors.verticalCenter: port1voltage3TextInput.verticalCenter
+            anchors.verticalCenter: portvoltage3TextInput.verticalCenter
 
         }
 
         AdvancedSlider{
-            id:port1voltage3Slider
-            anchors.left:port1voltage3UnitText.right
+            id:portvoltage3Slider
+            anchors.left:portvoltage3UnitText.right
             anchors.leftMargin: 5
             anchors.right:parent.right
             anchors.rightMargin: 10
-            anchors.verticalCenter: port1voltage3TextInput.verticalCenter
+            anchors.verticalCenter: portvoltage3TextInput.verticalCenter
             height:10
-            from: 5
+            from: 4.95
             to:20
             value:5
             stepSize: 0.0
 
             onValueChanged: {
-                port1voltage3TextInput.text = Math.round (port1voltage3Slider.value *10)/10
+                portvoltage3TextInput.text = Math.round (portvoltage3Slider.value *10)/10
+                if (portvoltage3Slider.value < 5){
+                    portvoltage3TextInput.enabled = false;
+                    portvoltage3TextInput.text = "NA";
+                    portvoltage3UnitText.enabled = false;
+                    }
+                else{
+                    portvoltage3TextInput.enabled = true;
+                    portvoltage3UnitText.enabled = true;
+                }
             }
         }
 
 
 
         TextField{
-            id:port1voltage4TextInput
-            anchors.left:port1AdvertizedVoltagesLabel.right
+            id:portvoltage4TextInput
+            anchors.left:portAdvertizedVoltagesLabel.right
             anchors.leftMargin: 5
-            anchors.top: port1voltage3TextInput.bottom
+            anchors.top: portvoltage3TextInput.bottom
             anchors.topMargin: 5
-            color:"white"//"#838484"
+            color:enabled ? enabledTextFieldTextColor : disabledTextFieldTextColor
             placeholderText:"5"
             verticalAlignment: TextInput.AlignTop
             font.family: "helvetica"
@@ -541,50 +571,58 @@ Rectangle{
             background: Rectangle {
                     implicitWidth: 15
                     implicitHeight: 10
-                    color: "#838484"//"#33FFFFFF"
-                    border.color: "#838484"
+                    color: enabled ? enabledTextFieldBackgroundColor : disabledTextFieldBackgroundColor
                 }
         }
 
         Text{
-            id:port1voltage4UnitText
+            id:portvoltage4UnitText
             text:"V"
             font.family: "helvetica"
             font.pointSize: smallFontSize
-            color: "#D8D8D8"
-            anchors.left:port1voltage4TextInput.right
+            color: enabled ? enabledTextColor : disabledTextColor
+            anchors.left:portvoltage4TextInput.right
             anchors.leftMargin: 5
-            anchors.verticalCenter: port1voltage4TextInput.verticalCenter
+            anchors.verticalCenter: portvoltage4TextInput.verticalCenter
 
         }
 
         AdvancedSlider{
-            id:port1voltage4Slider
-            anchors.left:port1voltage4UnitText.right
+            id:portvoltage4Slider
+            anchors.left:portvoltage4UnitText.right
             anchors.leftMargin: 5
             anchors.right:parent.right
             anchors.rightMargin: 10
-            anchors.verticalCenter: port1voltage4TextInput.verticalCenter
+            anchors.verticalCenter: portvoltage4TextInput.verticalCenter
             height:10
-            from: 5
+            from: 4.95
             to:20
             value:5
             stepSize: 0.0
 
             onValueChanged: {
-                port1voltage4TextInput.text = Math.round (port1voltage4Slider.value *10)/10
+                portvoltage4TextInput.text = Math.round (portvoltage4Slider.value *10)/10
+                if (portvoltage4Slider.value < 5){
+                    portvoltage4TextInput.enabled = false;
+                    portvoltage4TextInput.text = "NA";
+                    portvoltage4UnitText.enabled = false;
+                    }
+                else{
+                    portvoltage4TextInput.enabled = true;
+                    portvoltage4UnitText.enabled = true;
+                }
             }
         }
 
 
 
         TextField{
-            id:port1voltage5TextInput
-            anchors.left:port1AdvertizedVoltagesLabel.right
+            id:portvoltage5TextInput
+            anchors.left:portAdvertizedVoltagesLabel.right
             anchors.leftMargin: 5
-            anchors.top: port1voltage4TextInput.bottom
+            anchors.top: portvoltage4TextInput.bottom
             anchors.topMargin: 5
-            color:"white"//"#838484"
+            color:enabled ? enabledTextFieldTextColor : disabledTextFieldTextColor
             placeholderText:"5"
             verticalAlignment: TextInput.AlignTop
             font.family: "helvetica"
@@ -594,50 +632,58 @@ Rectangle{
             background: Rectangle {
                     implicitWidth: 15
                     implicitHeight: 10
-                    color: "#838484"//"#33FFFFFF"
-                    border.color: "#838484"
+                    color: enabled ? enabledTextFieldBackgroundColor : disabledTextFieldBackgroundColor
                 }
         }
 
         Text{
-            id:port1voltage5UnitText
+            id:portvoltage5UnitText
             text:"V"
             font.family: "helvetica"
             font.pointSize: smallFontSize
-            color: "#D8D8D8"
-            anchors.left:port1voltage5TextInput.right
+            color: enabled ? enabledTextColor : disabledTextColor
+            anchors.left:portvoltage5TextInput.right
             anchors.leftMargin: 5
-            anchors.verticalCenter: port1voltage5TextInput.verticalCenter
+            anchors.verticalCenter: portvoltage5TextInput.verticalCenter
 
         }
 
         AdvancedSlider{
-            id:port1voltage5Slider
-            anchors.left:port1voltage5UnitText.right
+            id:portvoltage5Slider
+            anchors.left:portvoltage5UnitText.right
             anchors.leftMargin: 5
             anchors.right:parent.right
             anchors.rightMargin: 10
-            anchors.verticalCenter: port1voltage5TextInput.verticalCenter
+            anchors.verticalCenter: portvoltage5TextInput.verticalCenter
             height:10
-            from: 5
+            from: 4.95
             to:20
             value:5
             stepSize: 0.0
 
             onValueChanged: {
-                port1voltage5TextInput.text = Math.round (port1voltage5Slider.value *10)/10
+                portvoltage5TextInput.text = Math.round (portvoltage5Slider.value *10)/10
+                if (portvoltage5Slider.value < 5){
+                    portvoltage5TextInput.enabled = false;
+                    portvoltage5TextInput.text = "NA";
+                    portvoltage5UnitText.enabled = false;
+                    }
+                else{
+                    portvoltage5TextInput.enabled = true;
+                    portvoltage5UnitText.enabled = true;
+                }
             }
         }
 
 
 
         TextField{
-            id:port1voltage6TextInput
-            anchors.left:port1AdvertizedVoltagesLabel.right
+            id:portvoltage6TextInput
+            anchors.left:portAdvertizedVoltagesLabel.right
             anchors.leftMargin: 5
-            anchors.top: port1voltage5TextInput.bottom
+            anchors.top: portvoltage5TextInput.bottom
             anchors.topMargin: 5
-            color:"white"//"#838484"
+            color:enabled ? enabledTextFieldTextColor : disabledTextFieldTextColor
             placeholderText:"5"
             verticalAlignment: TextInput.AlignTop
             font.family: "helvetica"
@@ -647,50 +693,58 @@ Rectangle{
             background: Rectangle {
                     implicitWidth: 15
                     implicitHeight: 10
-                    color: "#838484"//"#33FFFFFF"
-                    border.color: "#838484"
+                    color: enabled ? enabledTextFieldBackgroundColor : disabledTextFieldBackgroundColor
                 }
         }
 
         Text{
-            id:port1voltage6UnitText
+            id:portvoltage6UnitText
             text:"V"
             font.family: "helvetica"
             font.pointSize: smallFontSize
-            color: "#D8D8D8"
-            anchors.left:port1voltage6TextInput.right
+            color: enabled ? enabledTextColor : disabledTextColor
+            anchors.left:portvoltage6TextInput.right
             anchors.leftMargin: 5
-            anchors.verticalCenter: port1voltage6TextInput.verticalCenter
+            anchors.verticalCenter: portvoltage6TextInput.verticalCenter
 
         }
 
         AdvancedSlider{
-            id:port1voltage6Slider
-            anchors.left:port1voltage6UnitText.right
+            id:portvoltage6Slider
+            anchors.left:portvoltage6UnitText.right
             anchors.leftMargin: 5
             anchors.right:parent.right
             anchors.rightMargin: 10
-            anchors.verticalCenter: port1voltage6TextInput.verticalCenter
+            anchors.verticalCenter: portvoltage6TextInput.verticalCenter
             height:10
-            from: 5
+            from: 4.95
             to:20
             value:5
             stepSize: 0.0
 
             onValueChanged: {
-                port1voltage6TextInput.text = Math.round (port1voltage6Slider.value *10)/10
+                portvoltage6TextInput.text = Math.round (portvoltage6Slider.value *10)/10
+                if (portvoltage6Slider.value < 5){
+                    portvoltage6TextInput.enabled = false;
+                    portvoltage6TextInput.text = "NA";
+                    portvoltage6UnitText.enabled = false;
+                    }
+                else{
+                    portvoltage6TextInput.enabled = true;
+                    portvoltage6UnitText.enabled = true;
+                }
             }
         }
 
 
 
         TextField{
-            id:port1voltage7TextInput
-            anchors.left:port1AdvertizedVoltagesLabel.right
+            id:portvoltage7TextInput
+            anchors.left:portAdvertizedVoltagesLabel.right
             anchors.leftMargin: 5
-            anchors.top: port1voltage6TextInput.bottom
+            anchors.top: portvoltage6TextInput.bottom
             anchors.topMargin: 5
-            color:"white"//"#838484"
+            color:enabled ? enabledTextFieldTextColor : disabledTextFieldTextColor
             placeholderText:"5"
             verticalAlignment: TextInput.AlignTop
             font.family: "helvetica"
@@ -700,38 +754,46 @@ Rectangle{
             background: Rectangle {
                     implicitWidth: 15
                     implicitHeight: 10
-                    color: "#838484"//"#33FFFFFF"
-                    border.color: "#838484"
+                    color: enabled ? enabledTextFieldBackgroundColor : disabledTextFieldBackgroundColor
                 }
         }
 
         Text{
-            id:port1voltage7UnitText
+            id:portvoltage7UnitText
             text:"V"
             font.family: "helvetica"
             font.pointSize: smallFontSize
-            color: "#D8D8D8"
-            anchors.left:port1voltage7TextInput.right
+            color: enabled ? enabledTextColor : disabledTextColor
+            anchors.left:portvoltage7TextInput.right
             anchors.leftMargin: 5
-            anchors.verticalCenter: port1voltage7TextInput.verticalCenter
+            anchors.verticalCenter: portvoltage7TextInput.verticalCenter
 
         }
 
         AdvancedSlider{
-            id:port1voltage7Slider
-            anchors.left:port1voltage7UnitText.right
+            id:portvoltage7Slider
+            anchors.left:portvoltage7UnitText.right
             anchors.leftMargin: 5
             anchors.right:parent.right
             anchors.rightMargin: 10
-            anchors.verticalCenter: port1voltage7TextInput.verticalCenter
+            anchors.verticalCenter: portvoltage7TextInput.verticalCenter
             height:10
-            from: 5
+            from: 4.95
             to:20
             value:5
             stepSize: 0.0
 
             onValueChanged: {
-                port1voltage7TextInput.text = Math.round (port1voltage7Slider.value *10)/10
+                portvoltage7TextInput.text = Math.round (portvoltage7Slider.value *10)/10
+                if (portvoltage7Slider.value < 5){
+                    portvoltage7TextInput.enabled = false;
+                    portvoltage7TextInput.text = "NA";
+                    portvoltage7UnitText.enabled = false;
+                    }
+                else{
+                    portvoltage7TextInput.enabled = true;
+                    portvoltage7UnitText.enabled = true;
+                }
             }
         }
 
