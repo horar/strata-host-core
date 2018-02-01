@@ -5,8 +5,6 @@ import QtGraphicalEffects 1.0
 
 ComboBox {
     id:control
-    // model: ["15","27", "36", "45","60","100"]
-
     font.family: "helvetica"
     font.pointSize: smallFontSize
     height:15
@@ -34,30 +32,32 @@ ComboBox {
             highlighted: parent.highlightedIndex === index
         }
 
-//                        indicator: Canvas {
-//                                id: canvas
-//                                x: port2MaxPowerCombo.width /*- width*/ - port2MaxPowerCombo.rightPadding
-//                                y: port2MaxPowerCombo.topPadding + (port2MaxPowerCombo.availableHeight - height) / 2
-//                                width: 12
-//                                height: 8
-//                                contextType: "2d"
+    //this just draws the drop down indicator triangle
+    indicator: Canvas {
+        id: canvas
+        x: control.width /*- width*/ - control.rightPadding
+        y: control.topPadding + (control.availableHeight - height) / 2
+        width: 8
+        height: 6
+        contextType: "2d"
 
-//                                Connections {
-//                                    target: port2MaxPowerCombo
-//                                    onPressedChanged: canvas.requestPaint()
-//                                }
+        Connections {
+            target: control
+            onPressedChanged: canvas.requestPaint()
+        }
 
-//                                onPaint: {
-//                                    context.reset();
-//                                    context.moveTo(0, 0);
-//                                    context.lineTo(width, 0);
-//                                    context.lineTo(width / 2, height);
-//                                    context.closePath();
-//                                    context.fillStyle = "black";
-//                                    context.fill();
-//                                }
-//                            }
+        onPaint: {
+            context.reset();
+            context.moveTo(0, 0);
+            context.lineTo(width, 0);
+            context.lineTo(width / 2, height);
+            context.closePath();
+            context.fillStyle = "black";
+            context.fill();
+        }
+    }
 
+    //the background of the box initially shown
     background: Rectangle {
             implicitWidth: 15
             implicitHeight: 10
@@ -65,6 +65,7 @@ ComboBox {
             border.color: parent.backgroundColor
         }
 
+    //the text shown in the box (i.e. not the menu text)
     contentItem: Text {
             leftPadding: 0
             rightPadding: parent.indicator.width + parent.spacing
@@ -77,14 +78,14 @@ ComboBox {
             elide: Text.ElideRight
         }
 
+    //this governs the rectangle that pops up when the comboBox is clicked
     popup: Popup {
-        y: parent.height - 1
+        y: control.height - 1
         width: parent.width *2
         implicitHeight: contentItem.implicitHeight
         padding: 1
         font.family: "helvetica"
         font.pointSize: smallFontSize
-        //color: "#D8D8D8"
 
         contentItem: ListView {
             clip: true
