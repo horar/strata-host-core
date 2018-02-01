@@ -174,17 +174,17 @@ Rectangle{
         anchors.left:port1CableCompensationText.right
         anchors.leftMargin: 10
         anchors.verticalCenter: port1CableCompensationText.verticalCenter
-        color:"white"//"#838484"
-        placeholderText:"70"
-        verticalAlignment: TextInput.AlignTop
+        color:enabled ? enabledTextColor : disabledTextColor
+        placeholderText:port1CableCompensationSlider.value
         font.family: "helvetica"
-        font.pointSize: smallFontSize
+        font.pointSize: 12
+        verticalAlignment: TextInput.AlignTop
         height:15
         width:30
         background: Rectangle {
-                implicitWidth: 15
-                implicitHeight: 10
-                color: "#838484"//"#33FFFFFF"
+                implicitWidth: parent.width
+                implicitHeight: parent.height
+                color: "#838484"
                 border.color: "#838484"
             }
     }
@@ -214,7 +214,7 @@ Rectangle{
         stepSize: 0.0
 
         onValueChanged: {
-            port1CableCompensationTextInput.text = Math.round (port1CableCompensationSlider.value *10)/10
+            port1CableCompensationTextInput.text = Math.round (port1CableCompensationSlider.value *100)/100
         }
     }
 
