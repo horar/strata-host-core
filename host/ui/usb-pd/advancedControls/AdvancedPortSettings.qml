@@ -134,83 +134,15 @@ Rectangle{
         anchors.topMargin: 15
     }
 
-    ComboBox {
-        id:port1MaxPowerCombo
-         model: ["15","27", "36", "45","60","100"]
-
+    PopUpMenu{
+        id: port1MaxPowerCombo
+        model: ["15","27", "36", "45","60","100"]
         anchors.left:port1MaxPowerText.right
         anchors.leftMargin: 10
         anchors.verticalCenter: port1MaxPowerText.verticalCenter
-        font.family: "helvetica"
-        font.pointSize: smallFontSize
-        height:15
-        width:30
-
-        //this is used by the PopUp to determine what font to use
-        delegate: ItemDelegate {
-                width: port1MaxPowerCombo.width
-                height:15
-                contentItem: Text {
-                    text: modelData
-                    color: highlighted? "#D8D8D8" :"black"
-                    font: port1MaxPowerCombo.font
-                    elide: Text.ElideRight
-                    verticalAlignment: Text.AlignVCenter
-                }
-                onClicked:{
-                    //here's where a click on a new selection should be handled
-                    implementationInterfaceBinding.setMaximumPortPower(1,modelData)
-                    console.log("clicked:", modelData)
-                }
-
-                highlighted: port1MaxPowerCombo.highlightedIndex === index
-            }
-
-
-
-        background: Rectangle {
-                implicitWidth: 15
-                implicitHeight: 10
-                color: "#838484"
-                border.color: "#838484"
-            }
-
-        contentItem: Text {
-                leftPadding: 0
-                rightPadding: port1MaxPowerCombo.indicator.width + port1MaxPowerCombo.spacing
-
-                text: port1MaxPowerCombo.displayText
-                font: port1MaxPowerCombo.font
-                color: port1MaxPowerCombo.pressed ? "#17a81a" : "#D8D8D8"
-                horizontalAlignment: Text.AlignLeft
-                verticalAlignment: Text.AlignVCenter
-                elide: Text.ElideRight
-            }
-
-        popup: Popup {
-            y: port1MaxPowerCombo.height - 1
-            width: port1MaxPowerCombo.width *2
-            implicitHeight: contentItem.implicitHeight
-            padding: 1
-            font.family: "helvetica"
-            font.pointSize: smallFontSize
-            //color: "#D8D8D8"
-
-            contentItem: ListView {
-                clip: true
-                implicitHeight: contentHeight
-                model: port1MaxPowerCombo.popup.visible ? port1MaxPowerCombo.delegateModel : null
-                currentIndex: port1MaxPowerCombo.highlightedIndex
-
-                ScrollIndicator.vertical: ScrollIndicator { }
-            }
-
-            background: Rectangle {
-                color: "#838484"
-                border.color: "#838484"
-            }
-        }
     }
+
+
     Text{
         id:port1MaxPowerUnitText
         text:"W"
