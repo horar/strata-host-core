@@ -99,7 +99,6 @@ ComboBox {
                 height: contentItem.implicitHeight *1.2
                 color: "darkgrey"
                 y: popupListView.currentItem.y + contentItem.height/2;
-                Behavior on y { SpringAnimation { spring: 2; damping: 0.1 } }
             }
 
         }
