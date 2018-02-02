@@ -33,3 +33,4 @@ GeneratedFiles*
 *.swo
 tags
 cmake-build-debug
+*.config
