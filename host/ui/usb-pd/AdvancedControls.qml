@@ -3053,7 +3053,7 @@ Rectangle {
                             anchors.bottom:parent.bottom
                             anchors.bottomMargin: parent.height/20
 
-                            model: activeFaultsListModel
+                            model: implementationInterfaceBinding.activeFaults
 
                             delegate: Text {
                                 text: fault

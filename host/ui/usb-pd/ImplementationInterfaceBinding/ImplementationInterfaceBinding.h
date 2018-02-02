@@ -7,6 +7,7 @@
 #include <QDebug>
 #include <QJsonObject>
 #include <QJsonDocument>
+#include <QQmlListProperty>
 #include <QVariant>
 #include <QStringList>
 #include <QString>
@@ -24,6 +25,8 @@
 
 //aPort = Variable to store current
 //vPort = Variable to store voltage
+
+using FaultMessages = QList<QString *>;            // typedefs
 
 struct platform_Ports {
 
@@ -77,6 +80,10 @@ class ImplementationInterfaceBinding : public QObject
     //QProperty : To know USB-C port status
     //Q_PROPERTY(bool usbcPort1 READ getUsbCPort1  NOTIFY usbCPort1StateChanged)
     //Q_PROPERTY(bool usbcPort2 READ getUsbCPort2  NOTIFY usbCPort2StateChanged)
+
+    //Qlist property to store all the active faults and fault history
+    Q_PROPERTY(QQmlListProperty<QString> activeFaults READ activeFaults NOTIFY activeFaultsChanged)
+    Q_PROPERTY(QQmlListProperty<QString> faultHistory READ faultHistory NOTIFY faultHistoryChanged)
 public:
 
     // Enum for hardcode platforms;
@@ -122,6 +129,9 @@ public:
     bool getUSBCPort1State();
     bool getUSBCPort2State();
     e_MappedPlatformId getPlatformId();
+    QQmlListProperty<QString> activeFaults() {return QQmlListProperty<QString>(this,active_faults_);}
+    QQmlListProperty<QString> faultHistory() {return QQmlListProperty<QString>(this,fault_history_);}
+
 
     QJsonObject convertQstringtoJson(const QString string);
     QStringList getJsonObjectKeys(const QJsonObject json_obj);
@@ -137,6 +147,12 @@ public:
     void handleResetNotification(const QVariantMap payloadMap);
     void handleInputUnderVoltageNotification(const QVariantMap payloadMap);
     void handleOverTemperatureNotification(const QVariantMap payloadMap);
+
+//Constructing the string for fault messages
+    QString constructFaultMessage(QString parameter,QString state,int value)
+                                 {return QString(tr("%1 is %2 the set value %3")).arg(parameter).arg(state).arg(value);}
+    QString constructFaultMessage(QString parameter,QString state,int value,int port_number)
+                                 {return QString(tr("%1 is %2 the set value %3 for port %4")).arg(parameter).arg(state).arg(value).arg(port_number);}
 
 //Notification Simulator
     friend void *simulateNotificationsThread(void *);
@@ -169,6 +185,9 @@ signals:
     // fault messages notification
     void minimumVoltageChanged(bool state,int value);
     void overTemperatureChanged(bool state,int value);
+    // fault message list notification
+    void faultHistoryChanged();
+    void activeFaultsChanged();
 
 private:
     //Members private to class
@@ -189,6 +208,10 @@ private:
 
     // For load board data simulation only
     float               targetVoltage;
+
+    // Fault message lists
+    FaultMessages active_faults_;
+    FaultMessages fault_history_;
 
 public:
     Spyglass::HostControllerClient *hcc_object;
