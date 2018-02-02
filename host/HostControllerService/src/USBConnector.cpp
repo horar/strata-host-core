@@ -74,7 +74,8 @@ Connector::messageProperty USBConnector::receive(void *HCS)
         }
         #endif
 
-        if(temp !='\n') {
+        if(temp !='\n' && temp!=NULL) {
+
             response.push_back(temp);
             message.message="";
         }
