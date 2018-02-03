@@ -88,14 +88,14 @@ bool ImplementationInterfaceBinding::setMotorSpeed( unsigned int speed )
 {
     qDebug("ImplementationInterfaceBinding::setMotorSpeed(%ld)", speed);
 
-    // { "cmd":"speedInput",
+    // { "cmd":"speed_input",
     //   "payload": {
     //   "speed_target":3000
     //  }}
 
     QJsonObject cmd, payload;
 
-    cmd.insert("cmd", QJsonValue("speedInput"));
+    cmd.insert("cmd", QJsonValue("speed_input"));
     payload.insert("speed_target", QJsonValue((double)speed));
     cmd.insert("payload", payload);
     QJsonDocument doc(cmd);
@@ -120,18 +120,18 @@ bool ImplementationInterfaceBinding::setMotorMode( QString mode )
 
     // Manual:
     //
-    // {"cmd":"setSystemMode",
+    // {"cmd":"set_system_mode",
     //  "payload":{"system_mode":1}}
     //
     // Automation:
     //
-    // {"cmd":"setSystemMode",
+    // {"cmd":"set_system_mode",
     //  "payload":{"system_mode":0}}
     //
     QJsonObject cmd, payload;
 
-    cmd.insert("cmd", QJsonValue("setSystemMode"));
-    payload.insert("system_mode", mode == "manual" ? QJsonValue(0) :QJsonValue(1));
+    cmd.insert("cmd", QJsonValue("set_system_mode"));
+    payload.insert("system_mode", mode == "manual" ? QJsonValue("manual") :QJsonValue("automation"));
     cmd.insert("payload", payload);
     QJsonDocument doc(cmd);
     QString cmd_json(doc.toJson(QJsonDocument::Compact));
@@ -169,13 +169,13 @@ void ImplementationInterfaceBinding::motorStatsNotificationHandler(QJsonObject p
     //               "error":120,
     //               "sum":0.00,
     //               "duty_now":0.58,
-    //               "Mode":"Auto"}}}
+    //               "mode":"automation"}}}
     //
     // current_speed is the actual measured speed of the motor.
 
     unsigned int current_speed = payload["current_speed"].toInt();
     unsigned int target_speed = payload["speed_target"].toInt();
-    QString motor_mode = payload["Mode"].toString();
+    QString motor_mode = payload["mode"].toString();
 
     qDebug() << "current_speed = " << current_speed;
     qDebug() << "target_speed = " << target_speed;
