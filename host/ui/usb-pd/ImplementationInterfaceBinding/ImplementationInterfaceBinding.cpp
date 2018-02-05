@@ -662,17 +662,24 @@ void ImplementationInterfaceBinding::handleInputUnderVoltageNotification(const Q
 
     QString message = constructFaultMessage("input voltage",state,value);
 
-    if(state == "above") {
-        active_faults_.append(&message);
+    if(state == "below") {
+        activeFaultsList.append(message);
+        qDebug() << "inside below";
+        qDebug()<< "constructed message"<<message;
     }
-    else if(state == "below") {
+    else if(state == "above") {
         QString message_to_remove = constructFaultMessage("input voltage",state,value);
-        if(active_faults_.contains(&message_to_remove)) {
-            active_faults_.removeOne(&message_to_remove);
+
+        if(active_faults_.contains(message_to_remove)) {
+            active_faults_.removeOne(message_to_remove);
+
         }
+        qDebug()<<"Inside above";
     }
     qDebug() << "received Minimum voltage";
-    fault_history_.append(&message);
+    fault_history_.append(message);
+    emit activeFaultsChanged();
+    emit faultHistoryChanged();
 }
 
 void ImplementationInterfaceBinding::handleOverTemperatureNotification(const QVariantMap payloadMap)
@@ -751,6 +758,8 @@ QVariantMap ImplementationInterfaceBinding::validateJsonReply(const QVariantMap 
 
 void ImplementationInterfaceBinding::notificationsThreadHandle()
 {
+    qDebug () << "Thread Created for notification ";
+    notification_thread_running_ = true;
 
     while(notification_thread_running_) {
 #if USE_DEBUG_JSON

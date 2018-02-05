@@ -26,7 +26,7 @@
 //aPort = Variable to store current
 //vPort = Variable to store voltage
 
-using FaultMessages = QList<QString *>;            // typedefs
+using FaultMessages = QList<QString>;            // typedefs
 
 struct platform_Ports {
 
@@ -82,8 +82,8 @@ class ImplementationInterfaceBinding : public QObject
     //Q_PROPERTY(bool usbcPort2 READ getUsbCPort2  NOTIFY usbCPort2StateChanged)
 
     //Qlist property to store all the active faults and fault history
-    Q_PROPERTY(QQmlListProperty<QString> activeFaults READ activeFaults NOTIFY activeFaultsChanged)
-    Q_PROPERTY(QQmlListProperty<QString> faultHistory READ faultHistory NOTIFY faultHistoryChanged)
+    Q_PROPERTY(QList<QString> activeFaultsList READ activeFaults NOTIFY activeFaultsChanged)
+    Q_PROPERTY(QList<QString> faultHistoryList READ faultHistory NOTIFY faultHistoryChanged)
 public:
 
     // Enum for hardcode platforms;
@@ -129,8 +129,8 @@ public:
     bool getUSBCPort1State();
     bool getUSBCPort2State();
     e_MappedPlatformId getPlatformId();
-    QQmlListProperty<QString> activeFaults() {return QQmlListProperty<QString>(this,active_faults_);}
-    QQmlListProperty<QString> faultHistory() {return QQmlListProperty<QString>(this,fault_history_);}
+    QList<QString> activeFaults() {return QList<QString>(active_faults_);}
+    QList<QString> faultHistory() {return QList<QString>(fault_history_);}
 
 
     QJsonObject convertQstringtoJson(const QString string);
@@ -212,6 +212,8 @@ private:
     // Fault message lists
     FaultMessages active_faults_;
     FaultMessages fault_history_;
+
+    QList<QString>  activeFaultsList;
 
 public:
     Spyglass::HostControllerClient *hcc_object;
