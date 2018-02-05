@@ -14,6 +14,7 @@ ApplicationWindow {
     property bool login_detected: false
     property string control_type: "standard"
 
+    property string applicationTitle: mainWindow.title
     Label {
         id: currentLabel7
         x: 118

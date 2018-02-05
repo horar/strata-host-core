@@ -10,6 +10,9 @@ Rectangle {
     //determine which screen to show based on how the caller set the
     //showLoginOnCompletion property
     property bool showLoginOnCompletion: false
+//    property string repeaterText:
+
+
 
     Component.onCompleted: {
         spotlightAnimation.start();
@@ -106,107 +109,124 @@ Rectangle {
         //x: 253; y: 178
         width: 133; height: 31
         color: "#ffffff"
+        anchors.horizontalCenterOffset: -80
         anchors { horizontalCenter: parent.horizontalCenter;
             verticalCenter: parent.verticalCenter;
-            verticalCenterOffset: -100}
+            verticalCenterOffset: -91}
 
-        Text {
-            id: spyglassText1
-            x: 0; y: 0
-            width: 14; height: 31
-            color: "#aeaeae"
-            opacity: 0
-            text: qsTr("s")
-            anchors{ horizontalCenter: parent.horizontalCenter;  horizontalCenterOffset: -40 }
-            font{ pixelSize: 24 }
-            horizontalAlignment: Text.AlignLeft
-        }
+//        Text {
+//            id: spyglassText1
+//            x: 0; y: 0
+//            width: 14; height: 31
+//            color: "#aeaeae"
+//            opacity: 0
+//            text: qsTr("s")
+//            anchors{ horizontalCenter: parent.horizontalCenter;  horizontalCenterOffset: -40 }
+//            font{ pixelSize: 24 }
+//            horizontalAlignment: Text.AlignLeft
+//        }
 
-        Text {
-            id: spyglassText2
-            x: 11; y: 0
-            width: 18; height: 31
-            color: "#aeaeae"
-            opacity: 0
-            text: qsTr("p")
-            anchors{ horizontalCenter: parent.horizontalCenter; horizontalCenterOffset: -26 }
-            font.pixelSize: 24
-            horizontalAlignment: Text.AlignLeft
-        }
+//        Text {
+//            id: spyglassText2
+//            x: 11; y: 0
+//            width: 18; height: 31
+//            color: "#aeaeae"
+//            opacity: 0
+//            text: qsTr("p")
+//            anchors{ horizontalCenter: parent.horizontalCenter; horizontalCenterOffset: -26 }
+//            font.pixelSize: 24
+//            horizontalAlignment: Text.AlignLeft
+//        }
 
-        Text {
-            id: spyglassText3
-            x: 82; y: 0
-            width: 14; height: 31
-            color: "#aeaeae"
-            opacity: 0
-            text: qsTr("y")
-            anchors{ horizontalCenter: parent.horizontalCenter; horizontalCenterOffset: -14 }
-            font { pixelSize: 24 }
-            horizontalAlignment: Text.AlignLeft
-        }
+//        Text {
+//            id: spyglassText3
+//            x: 82; y: 0
+//            width: 14; height: 31
+//            color: "#aeaeae"
+//            opacity: 0
+//            text: qsTr("y")
+//            anchors{ horizontalCenter: parent.horizontalCenter; horizontalCenterOffset: -14 }
+//            font { pixelSize: 24 }
+//            horizontalAlignment: Text.AlignLeft
+//        }
 
-        Text {
-            id: spyglassText4
-            x: 91; y: 0
-            width: 14; height: 31
-            color: "#aeaeae"
-            opacity: 0
-            text: qsTr("g")
-            anchors { horizontalCenter: parent.horizontalCenter; horizontalCenterOffset: -2 }
-            font.pixelSize: 24
-            horizontalAlignment: Text.AlignLeft
-        }
+//        Text {
+//            id: spyglassText4
+//            x: 91; y: 0
+//            width: 14; height: 31
+//            color: "#aeaeae"
+//            opacity: 0
+//            text: qsTr("g")
+//            anchors { horizontalCenter: parent.horizontalCenter; horizontalCenterOffset: -2 }
+//            font.pixelSize: 24
+//            horizontalAlignment: Text.AlignLeft
+//        }
 
-        Text {
-            id: spyglassText5
-            x: 77; y: 0
-            width: 12; height: 31
-            color: "#aeaeae"
-            opacity: 0
-            text: qsTr("l")
-            anchors { horizontalCenter: parent.horizontalCenter; horizontalCenterOffset: 11 }
-            font { pixelSize: 24 }
-            horizontalAlignment: Text.AlignLeft
-        }
+//        Text {
+//            id: spyglassText5
+//            x: 77; y: 0
+//            width: 12; height: 31
+//            color: "#aeaeae"
+//            opacity: 0
+//            text: qsTr("l")
+//            anchors { horizontalCenter: parent.horizontalCenter; horizontalCenterOffset: 11 }
+//            font { pixelSize: 24 }
+//            horizontalAlignment: Text.AlignLeft
+//        }
 
-        Text {
-            id: spyglassText6
-            x: 77;  y: 0
-            width: 14; height: 31
-            color: "#aeaeae"
-            opacity: 0
-            text: qsTr("a")
-            anchors{ horizontalCenter: parent.horizontalCenter; horizontalCenterOffset: 17 }
-            font { pixelSize: 24 }
-            horizontalAlignment: Text.AlignLeft
-        }
+//        Text {
+//            id: spyglassText6
+//            x: 77;  y: 0
+//            width: 14; height: 31
+//            color: "#aeaeae"
+//            opacity: 0
+//            text: qsTr("a")
+//            anchors{ horizontalCenter: parent.horizontalCenter; horizontalCenterOffset: 17 }
+//            font { pixelSize: 24 }
+//            horizontalAlignment: Text.AlignLeft
+//        }
 
-        Text {
-            id: spyglassText7
-            x: 74; y: 0
-            width: 14; height: 31
-            color: "#aeaeae"
-            opacity: 0
-            text: qsTr("s")
-            anchors{ horizontalCenter: parent.horizontalCenter;  horizontalCenterOffset: 30 }
-            font { pixelSize: 24 }
-            horizontalAlignment: Text.AlignLeft
+//        Text {
+//            id: spyglassText7
+//            x: 74; y: 0
+//            width: 14; height: 31
+//            color: "#aeaeae"
+//            opacity: 0
+//            text: qsTr("s")
+//            anchors{ horizontalCenter: parent.horizontalCenter;  horizontalCenterOffset: 30 }
+//            font { pixelSize: 24 }
+//            horizontalAlignment: Text.AlignLeft
 
-        }
+//        }
 
-        Text {
-            id: spyglassText8
-            x: 83; y: 0
-            width: 14; height: 31
-            color: "#aeaeae"
-            opacity: 0
-            text: qsTr("s")
-            anchors { horizontalCenter: parent.horizontalCenter; horizontalCenterOffset: 41 }
-            font { pixelSize: 24 }
-            horizontalAlignment: Text.AlignLeft
-        }
+        Row {
+            x: 14
+            y: 4
+            Repeater {
+                 id: repeated
+                 model: ["S", "p", "e", "c", "t", "r", "u", "m", " ", "H","a","r","d", "w", "a","r","e", " ", "V","i","s","i","o", "n"]
+                 Text {  /*width: 14; height: 31*/
+                     id: modelText
+                     color: "#aeaeae"
+                     opacity: 1
+                     font { pixelSize: 24 }
+                     text: modelData }
+             }
+         }
+        //        Text {
+        //            id: spyglassText8
+        //            x: 83; y: 0
+        //            width: 14; height: 31
+        //            color: "#aeaeae"
+        //            opacity: 0
+        //            text: qsTr("s")
+        //            anchors { horizontalCenter: parent.horizontalCenter; horizontalCenterOffset: 41 }
+        //            font { pixelSize: 24 }
+        //            horizontalAlignment: Text.AlignLeft
+        //        }
     }
+
+
     //-----------------------------------------------------------
     //connection screen elements
     //-----------------------------------------------------------
@@ -508,46 +528,50 @@ Rectangle {
         id: spotlightAnimation
 
         loops: Animation.Infinite// The animation is set to loop indefinitely
-        SequentialAnimation{
-            NumberAnimation { target: spyglassText1; property: "opacity"; from: 0; to: 1; easing.type:Easing.OutInCubic; duration: 1000; }
-            NumberAnimation { target: spyglassText1; property: "opacity"; from: 1; to: 0; easing.type:Easing.OutInCubic; duration: 500; }
-        }
-        SequentialAnimation{
-            PauseAnimation { duration: 250 }
-            NumberAnimation { target: spyglassText2; property: "opacity"; from: 0; to: 1; easing.type:Easing.OutInCubic; duration: 1000; }
-            NumberAnimation { target: spyglassText2; property: "opacity"; from: 1; to: 0; easing.type:Easing.OutInCubic; duration: 500; }
-        }
-        SequentialAnimation{
-            PauseAnimation { duration: 250*2 }
-            NumberAnimation { target: spyglassText3; property: "opacity"; from: 0; to: 1; easing.type:Easing.OutInCubic; duration: 1000; }
-            NumberAnimation { target: spyglassText3; property: "opacity"; from: 1; to: 0; easing.type:Easing.OutInCubic; duration: 500; }
-        }
-        SequentialAnimation{
-            PauseAnimation { duration: 250*3 }
-            NumberAnimation { target: spyglassText4; property: "opacity"; from: 0; to: 1; easing.type:Easing.OutInCubic; duration: 1000; }
-            NumberAnimation { target: spyglassText4; property: "opacity"; from: 1; to: 0; easing.type:Easing.OutInCubic; duration: 500; }
-        }
-        SequentialAnimation{
-            PauseAnimation { duration: 250*4 }
-            NumberAnimation { target: spyglassText5; property: "opacity"; from: 0; to: 1; easing.type:Easing.OutInCubic; duration: 1000; }
-            NumberAnimation { target: spyglassText5; property: "opacity"; from: 1; to: 0; easing.type:Easing.OutInCubic; duration: 500; }
-        }
-        SequentialAnimation{
-            PauseAnimation { duration: 250*5 }
-            NumberAnimation { target: spyglassText6; property: "opacity"; from: 0; to: 1; easing.type:Easing.OutInCubic; duration: 1000; }
-            NumberAnimation { target: spyglassText6; property: "opacity"; from: 1; to: 0; easing.type:Easing.OutInCubic; duration: 500; }
-        }
-        SequentialAnimation{
-            PauseAnimation { duration: 250*6 }
-            NumberAnimation { target: spyglassText7; property: "opacity"; from: 0; to: 1; easing.type:Easing.OutInCubic; duration: 1000; }
-            NumberAnimation { target: spyglassText7; property: "opacity"; from: 1; to: 0; easing.type:Easing.OutInCubic; duration: 500; }
-        }
-        SequentialAnimation{
-            PauseAnimation { duration: 250*7 }
-            NumberAnimation { target: spyglassText8; property: "opacity"; from: 0; to: 1; easing.type:Easing.OutInCubic; duration: 1000; }
-            NumberAnimation { target: spyglassText8; property: "opacity"; from: 1; to: 0; easing.type:Easing.OutInCubic; duration: 500; }
-        }
+       SequentialAnimation{
+           Component.onCompleted: { ;
+               console.log(repeated.itemAt(3).text.toString());}
+            NumberAnimation { target:repeated.itemAt(3); property: "opacity"; from: 0; to: 1; easing.type:Easing.OutInCubic; duration: 1000;}
+            NumberAnimation { target: repeated.itemAt(3); property: "opacity"; from: 1; to: 0; easing.type:Easing.OutInCubic; duration: 500; }
+}
     }
+//       }
+//        SequentialAnimation{
+//            PauseAnimation { duration: 250 }
+//            NumberAnimation { target: spyglassText2; property: "opacity"; from: 0; to: 1; easing.type:Easing.OutInCubic; duration: 1000; }
+//            NumberAnimation { target: spyglassText2; property: "opacity"; from: 1; to: 0; easing.type:Easing.OutInCubic; duration: 500; }
+//        }
+//        SequentialAnimation{
+//            PauseAnimation { duration: 250*2 }
+//            NumberAnimation { target: spyglassText3; property: "opacity"; from: 0; to: 1; easing.type:Easing.OutInCubic; duration: 1000; }
+//            NumberAnimation { target: spyglassText3; property: "opacity"; from: 1; to: 0; easing.type:Easing.OutInCubic; duration: 500; }
+//        }
+//        SequentialAnimation{
+//            PauseAnimation { duration: 250*3 }
+//            NumberAnimation { target: spyglassText4; property: "opacity"; from: 0; to: 1; easing.type:Easing.OutInCubic; duration: 1000; }
+//            NumberAnimation { target: spyglassText4; property: "opacity"; from: 1; to: 0; easing.type:Easing.OutInCubic; duration: 500; }
+//        }
+//        SequentialAnimation{
+//            PauseAnimation { duration: 250*4 }
+//            NumberAnimation { target: spyglassText5; property: "opacity"; from: 0; to: 1; easing.type:Easing.OutInCubic; duration: 1000; }
+//            NumberAnimation { target: spyglassText5; property: "opacity"; from: 1; to: 0; easing.type:Easing.OutInCubic; duration: 500; }
+//        }
+//        SequentialAnimation{
+//            PauseAnimation { duration: 250*5 }
+//            NumberAnimation { target: spyglassText6; property: "opacity"; from: 0; to: 1; easing.type:Easing.OutInCubic; duration: 1000; }
+//            NumberAnimation { target: spyglassText6; property: "opacity"; from: 1; to: 0; easing.type:Easing.OutInCubic; duration: 500; }
+//        }
+//        SequentialAnimation{
+//            PauseAnimation { duration: 250*6 }
+//            NumberAnimation { target: spyglassText7; property: "opacity"; from: 0; to: 1; easing.type:Easing.OutInCubic; duration: 1000; }
+//            NumberAnimation { target: spyglassText7; property: "opacity"; from: 1; to: 0; easing.type:Easing.OutInCubic; duration: 500; }
+//        }
+//        SequentialAnimation{
+//            PauseAnimation { duration: 250*7 }
+//            NumberAnimation { target: spyglassText8; property: "opacity"; from: 0; to: 1; easing.type:Easing.OutInCubic; duration: 1000; }
+//            NumberAnimation { target: spyglassText8; property: "opacity"; from: 1; to: 0; easing.type:Easing.OutInCubic; duration: 500; }
+//        }
+//    }
 }
 
 
