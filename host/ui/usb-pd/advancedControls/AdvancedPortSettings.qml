@@ -175,32 +175,42 @@ Rectangle{
         anchors.topMargin: 10
 
     }
-    TextField{
-        id:portCableCompensationTextInput
-        anchors.left:portCableCompensationText.right
-        anchors.leftMargin: 10
-        anchors.verticalCenter: portCableCompensationText.verticalCenter
-        color:enabled ? enabledTextColor : disabledTextColor
-        placeholderText:portCableCompensationSlider.value
-        font.family: "helvetica"
-        font.pointSize: 12
-        verticalAlignment: TextInput.AlignTop
-        height:15
-        width:30
-        background: Rectangle {
-                implicitWidth: parent.width
-                implicitHeight: parent.height
-                color: "#838484"
-                border.color: "#838484"
+
+    Rectangle{
+         id: portCableCompensationTextInputRect
+         color: "#838484"
+         anchors.left:portCableCompensationText.right
+         anchors.leftMargin: 10
+         anchors.verticalCenter: portCableCompensationText.verticalCenter
+         height:15
+         width:30
+
+        TextField{
+            id:portCableCompensationTextInput
+            anchors.fill: parent
+            anchors.leftMargin: 2
+            anchors.topMargin: 5
+
+            horizontalAlignment: Qt.AlignLeft
+
+            font.family: "helvetica"
+            font.pointSize: 12
+            color:enabled ? enabledTextColor : disabledTextColor
+            text: portCableCompensationSlider.value
+            background: Rectangle {
+                color:"transparent"
             }
+        }
     }
+
+
     Text{
         id:portCableCompensationUnitText
         text:"A"
         font.family: "helvetica"
         font.pointSize: smallFontSize
         color: "#D8D8D8"
-        anchors.left:portCableCompensationTextInput.right
+        anchors.left:portCableCompensationTextInputRect.right
         anchors.leftMargin: 5
         anchors.verticalCenter: portCableCompensationText.verticalCenter
 
@@ -236,32 +246,40 @@ Rectangle{
         anchors.top: portCableCompensationText.bottom
         anchors.topMargin: 10
     }
-    TextField{
-        id:voltageCompensationTextInput
-        anchors.left:voltageCompensationText.right
-        anchors.leftMargin: 10
-        anchors.verticalCenter: voltageCompensationText.verticalCenter
-        color:"white"//"#838484"
-        placeholderText:"7"
-        verticalAlignment: TextInput.AlignTop
-        font.family: "helvetica"
-        font.pointSize: smallFontSize
-        height:15
-        width:30
-        background: Rectangle {
-                implicitWidth: 15
-                implicitHeight: 10
-                color: "#838484"//"#33FFFFFF"
-                border.color: "#838484"
+    Rectangle{
+         id: voltageCompensationTextInputRect
+         color: "#838484"
+         anchors.left:voltageCompensationText.right
+         anchors.leftMargin: 10
+         anchors.verticalCenter: voltageCompensationText.verticalCenter
+         height:15
+         width:30
+
+        TextField{
+            id:voltageCompensationTextInput
+            anchors.fill: parent
+            anchors.leftMargin: 2
+            anchors.topMargin: 5
+
+            horizontalAlignment: Qt.AlignLeft
+
+            font.family: "helvetica"
+            font.pointSize: 12
+            color:enabled ? enabledTextColor : disabledTextColor
+            text: portCableCompensationSlider.value
+            background: Rectangle {
+                color:"transparent"
             }
+        }
     }
+
     Text{
         id:voltageCompensationUnitText
         text:"mV"
         font.family: "helvetica"
         font.pointSize: smallFontSize
         color: "#D8D8D8"
-        anchors.left:voltageCompensationTextInput.right
+        anchors.left:voltageCompensationTextInputRect.right
         anchors.leftMargin: 5
         anchors.verticalCenter: voltageCompensationText.verticalCenter
 
@@ -299,32 +317,40 @@ Rectangle{
         anchors.top: voltageCompensationText.bottom
         anchors.topMargin: 10
     }
-    TextField{
-        id:maxCurrentTextInput
-        anchors.left:maxCurrentText.right
-        anchors.leftMargin: 10
-        anchors.verticalCenter: maxCurrentText.verticalCenter
-        color:"white"//"#838484"
-        placeholderText:"7"
-        verticalAlignment: TextInput.AlignTop
-        font.family: "helvetica"
-        font.pointSize: smallFontSize
-        height:15
-        width:30
-        background: Rectangle {
-                implicitWidth: 15
-                implicitHeight: 10
-                color: "#838484"//"#33FFFFFF"
-                border.color: "#838484"
+    Rectangle{
+         id: maxCurrentTextInputRect
+         color: "#838484"
+         anchors.left:maxCurrentText.right
+         anchors.leftMargin: 10
+         anchors.verticalCenter: maxCurrentText.verticalCenter
+         height:15
+         width:30
+
+        TextField{
+            id:maxCurrentTextInput
+            anchors.fill: parent
+            anchors.leftMargin: 2
+            anchors.topMargin: 5
+
+            horizontalAlignment: Qt.AlignLeft
+
+            font.family: "helvetica"
+            font.pointSize: smallFontSize
+            color:enabled ? enabledTextColor : disabledTextColor
+            text: portCableCompensationSlider.value
+            background: Rectangle {
+                color:"transparent"
             }
+        }
     }
+
     Text{
         id:maxCurrentUnitText
         text:"A"
         font.family: "helvetica"
         font.pointSize: smallFontSize
         color: "#D8D8D8"
-        anchors.left:maxCurrentTextInput.right
+        anchors.left:maxCurrentTextInputRect.right
         anchors.leftMargin: 5
         anchors.verticalCenter: maxCurrentText.verticalCenter
 
@@ -372,25 +398,32 @@ Rectangle{
             anchors.top: parent.top
             anchors.topMargin: 0
         }
+        Rectangle{
+             id: portvoltage1TextInputRect
+             color: enabled ? enabledTextFieldBackgroundColor : disabledTextFieldBackgroundColor
+             anchors.left:portAdvertizedVoltagesLabel.right
+             anchors.leftMargin: 5
+             anchors.verticalCenter: portAdvertizedVoltagesLabel.verticalCenter
+             height:15
+             width:20
 
-        TextField{
-            id:portvoltage1TextInput
-            anchors.left:portAdvertizedVoltagesLabel.right
-            anchors.leftMargin: 5
-            anchors.top: portAdvertizedVoltagesGroup.top
-            anchors.topMargin: 0
-            color:enabled ? enabledTextFieldTextColor : disabledTextFieldTextColor
-            placeholderText:"5"
-            verticalAlignment: TextInput.AlignTop
-            font.family: "helvetica"
-            font.pointSize: smallFontSize
-            height:15
-            width:20
-            background: Rectangle {
-                    implicitWidth: 15
-                    implicitHeight: 10
-                    color: enabled ? enabledTextFieldBackgroundColor : disabledTextFieldBackgroundColor
+            TextField{
+                id:portvoltage1TextInput
+                anchors.fill: parent
+                anchors.leftMargin: 2
+                anchors.topMargin: 5
+
+                horizontalAlignment: Qt.AlignLeft
+
+                font.family: "helvetica"
+                font.pointSize: smallFontSize
+                color:enabled ? enabledTextColor : disabledTextColor
+                placeholderText:"NA"
+                text: portCableCompensationSlider.value
+                background: Rectangle {
+                    color:"transparent"
                 }
+            }
         }
 
         Text{
@@ -399,9 +432,9 @@ Rectangle{
             font.family: "helvetica"
             font.pointSize: smallFontSize
             color: enabled ? enabledTextColor : disabledTextColor
-            anchors.left:portvoltage1TextInput.right
+            anchors.left:portvoltage1TextInputRect.right
             anchors.leftMargin: 5
-            anchors.verticalCenter: portvoltage1TextInput.verticalCenter
+            anchors.verticalCenter: portAdvertizedVoltagesLabel.verticalCenter
 
         }
         AdvancedSlider{
@@ -410,7 +443,7 @@ Rectangle{
             anchors.leftMargin: 5
             anchors.right:parent.right
             anchors.rightMargin: 10
-            anchors.verticalCenter: portvoltage1TextInput.verticalCenter
+            anchors.verticalCenter: portAdvertizedVoltagesLabel.verticalCenter
             height:10
             from: 4.95
             to:20
@@ -432,25 +465,33 @@ Rectangle{
         }
 
 
+        Rectangle{
+             id: portvoltage2TextInputRect
+             color: enabled ? enabledTextFieldBackgroundColor : disabledTextFieldBackgroundColor
+             anchors.left:portAdvertizedVoltagesLabel.right
+             anchors.leftMargin: 5
+             anchors.top: portvoltage1TextInputRect.bottom
+             anchors.topMargin: 5
+             height:15
+             width:20
 
-        TextField{
-            id:portvoltage2TextInput
-            anchors.left:portAdvertizedVoltagesLabel.right
-            anchors.leftMargin: 5
-            anchors.top: portvoltage1TextInput.bottom
-            anchors.topMargin: 5
-            color:enabled ? enabledTextFieldTextColor : disabledTextFieldTextColor
-            placeholderText:"5"
-            verticalAlignment: TextInput.AlignTop
-            font.family: "helvetica"
-            font.pointSize: smallFontSize
-            height:15
-            width:20
-            background: Rectangle {
-                    implicitWidth: 15
-                    implicitHeight: 10
-                    color: enabled ? enabledTextFieldBackgroundColor : disabledTextFieldBackgroundColor
+            TextField{
+                id:portvoltage2TextInput
+                anchors.fill: parent
+                anchors.leftMargin: 2
+                anchors.topMargin: 5
+
+                horizontalAlignment: Qt.AlignLeft
+
+                font.family: "helvetica"
+                font.pointSize: smallFontSize
+                color:enabled ? enabledTextColor : disabledTextColor
+                placeholderText:"NA"
+                text: portCableCompensationSlider.value
+                background: Rectangle {
+                    color:"transparent"
                 }
+            }
         }
 
         Text{
@@ -459,9 +500,9 @@ Rectangle{
             font.family: "helvetica"
             font.pointSize: smallFontSize
             color: enabled ? enabledTextColor : disabledTextColor
-            anchors.left:portvoltage2TextInput.right
+            anchors.left:portvoltage2TextInputRect.right
             anchors.leftMargin: 5
-            anchors.verticalCenter: portvoltage2TextInput.verticalCenter
+            anchors.verticalCenter: portvoltage2TextInputRect.verticalCenter
 
         }
 
@@ -471,11 +512,11 @@ Rectangle{
             anchors.leftMargin: 5
             anchors.right:parent.right
             anchors.rightMargin: 10
-            anchors.verticalCenter: portvoltage2UnitText.verticalCenter
+            anchors.verticalCenter: portvoltage2TextInputRect.verticalCenter
             height:10
             from: 4.95
             to:20
-            value:5
+            value:5.0
             stepSize: 0.0
 
             onValueChanged: {
@@ -493,26 +534,36 @@ Rectangle{
         }
 
 
+        Rectangle{
+             id: portvoltage3TextInputRect
+             color: enabled ? enabledTextFieldBackgroundColor : disabledTextFieldBackgroundColor
+             anchors.left:portAdvertizedVoltagesLabel.right
+             anchors.leftMargin: 5
+             anchors.top: portvoltage2TextInputRect.bottom
+             anchors.topMargin: 5
+             height:15
+             width:20
 
-        TextField{
-            id:portvoltage3TextInput
-            anchors.left:portAdvertizedVoltagesLabel.right
-            anchors.leftMargin: 5
-            anchors.top: portvoltage2TextInput.bottom
-            anchors.topMargin: 5
-            color:enabled ? enabledTextFieldTextColor : disabledTextFieldTextColor
-            placeholderText:"5"
-            verticalAlignment: TextInput.AlignTop
-            font.family: "helvetica"
-            font.pointSize: smallFontSize
-            height:15
-            width:20
-            background: Rectangle {
-                    implicitWidth: 15
-                    implicitHeight: 10
-                    color: enabled ? enabledTextFieldBackgroundColor : disabledTextFieldBackgroundColor
+            TextField{
+                id:portvoltage3TextInput
+                anchors.fill: parent
+                anchors.leftMargin: 2
+                anchors.topMargin: 5
+
+                horizontalAlignment: Qt.AlignLeft
+
+                font.family: "helvetica"
+                font.pointSize: smallFontSize
+                color:enabled ? enabledTextColor : disabledTextColor
+                placeholderText:"NA"
+                text: portCableCompensationSlider.value
+                background: Rectangle {
+                    color:"transparent"
                 }
+            }
         }
+
+
 
         Text{
             id:portvoltage3UnitText
@@ -520,9 +571,9 @@ Rectangle{
             font.family: "helvetica"
             font.pointSize: smallFontSize
             color: enabled ? enabledTextColor : disabledTextColor
-            anchors.left:portvoltage3TextInput.right
+            anchors.left:portvoltage3TextInputRect.right
             anchors.leftMargin: 5
-            anchors.verticalCenter: portvoltage3TextInput.verticalCenter
+            anchors.verticalCenter: portvoltage3TextInputRect.verticalCenter
 
         }
 
@@ -532,7 +583,7 @@ Rectangle{
             anchors.leftMargin: 5
             anchors.right:parent.right
             anchors.rightMargin: 10
-            anchors.verticalCenter: portvoltage3TextInput.verticalCenter
+            anchors.verticalCenter: portvoltage3TextInputRect.verticalCenter
             height:10
             from: 4.95
             to:20
@@ -554,25 +605,33 @@ Rectangle{
         }
 
 
+        Rectangle{
+             id: portvoltage4TextInputRect
+             color: enabled ? enabledTextFieldBackgroundColor : disabledTextFieldBackgroundColor
+             anchors.left:portAdvertizedVoltagesLabel.right
+             anchors.leftMargin: 5
+             anchors.top: portvoltage3TextInputRect.bottom
+             anchors.topMargin: 5
+             height:15
+             width:20
 
-        TextField{
-            id:portvoltage4TextInput
-            anchors.left:portAdvertizedVoltagesLabel.right
-            anchors.leftMargin: 5
-            anchors.top: portvoltage3TextInput.bottom
-            anchors.topMargin: 5
-            color:enabled ? enabledTextFieldTextColor : disabledTextFieldTextColor
-            placeholderText:"5"
-            verticalAlignment: TextInput.AlignTop
-            font.family: "helvetica"
-            font.pointSize: smallFontSize
-            height:15
-            width:20
-            background: Rectangle {
-                    implicitWidth: 15
-                    implicitHeight: 10
-                    color: enabled ? enabledTextFieldBackgroundColor : disabledTextFieldBackgroundColor
+            TextField{
+                id:portvoltage4TextInput
+                anchors.fill: parent
+                anchors.leftMargin: 2
+                anchors.topMargin: 5
+
+                horizontalAlignment: Qt.AlignLeft
+
+                font.family: "helvetica"
+                font.pointSize: smallFontSize
+                color:enabled ? enabledTextColor : disabledTextColor
+                placeholderText:"NA"
+                text: portCableCompensationSlider.value
+                background: Rectangle {
+                    color:"transparent"
                 }
+            }
         }
 
         Text{
@@ -581,9 +640,9 @@ Rectangle{
             font.family: "helvetica"
             font.pointSize: smallFontSize
             color: enabled ? enabledTextColor : disabledTextColor
-            anchors.left:portvoltage4TextInput.right
+            anchors.left:portvoltage4TextInputRect.right
             anchors.leftMargin: 5
-            anchors.verticalCenter: portvoltage4TextInput.verticalCenter
+            anchors.verticalCenter: portvoltage4TextInputRect.verticalCenter
 
         }
 
@@ -593,7 +652,7 @@ Rectangle{
             anchors.leftMargin: 5
             anchors.right:parent.right
             anchors.rightMargin: 10
-            anchors.verticalCenter: portvoltage4TextInput.verticalCenter
+            anchors.verticalCenter: portvoltage4TextInputRect.verticalCenter
             height:10
             from: 4.95
             to:20
@@ -615,26 +674,35 @@ Rectangle{
         }
 
 
+        Rectangle{
+             id: portvoltage5TextInputRect
+             color: enabled ? enabledTextFieldBackgroundColor : disabledTextFieldBackgroundColor
+             anchors.left:portAdvertizedVoltagesLabel.right
+             anchors.leftMargin: 5
+             anchors.top: portvoltage4TextInputRect.bottom
+             anchors.topMargin: 5
+             height:15
+             width:20
 
-        TextField{
-            id:portvoltage5TextInput
-            anchors.left:portAdvertizedVoltagesLabel.right
-            anchors.leftMargin: 5
-            anchors.top: portvoltage4TextInput.bottom
-            anchors.topMargin: 5
-            color:enabled ? enabledTextFieldTextColor : disabledTextFieldTextColor
-            placeholderText:"5"
-            verticalAlignment: TextInput.AlignTop
-            font.family: "helvetica"
-            font.pointSize: smallFontSize
-            height:15
-            width:20
-            background: Rectangle {
-                    implicitWidth: 15
-                    implicitHeight: 10
-                    color: enabled ? enabledTextFieldBackgroundColor : disabledTextFieldBackgroundColor
+            TextField{
+                id:portvoltage5TextInput
+                anchors.fill: parent
+                anchors.leftMargin: 2
+                anchors.topMargin: 5
+
+                horizontalAlignment: Qt.AlignLeft
+
+                font.family: "helvetica"
+                font.pointSize: smallFontSize
+                color:enabled ? enabledTextColor : disabledTextColor
+                placeholderText:"NA"
+                text: portCableCompensationSlider.value
+                background: Rectangle {
+                    color:"transparent"
                 }
+            }
         }
+
 
         Text{
             id:portvoltage5UnitText
@@ -642,9 +710,9 @@ Rectangle{
             font.family: "helvetica"
             font.pointSize: smallFontSize
             color: enabled ? enabledTextColor : disabledTextColor
-            anchors.left:portvoltage5TextInput.right
+            anchors.left:portvoltage5TextInputRect.right
             anchors.leftMargin: 5
-            anchors.verticalCenter: portvoltage5TextInput.verticalCenter
+            anchors.verticalCenter: portvoltage5TextInputRect.verticalCenter
 
         }
 
@@ -654,7 +722,7 @@ Rectangle{
             anchors.leftMargin: 5
             anchors.right:parent.right
             anchors.rightMargin: 10
-            anchors.verticalCenter: portvoltage5TextInput.verticalCenter
+            anchors.verticalCenter: portvoltage5TextInputRect.verticalCenter
             height:10
             from: 4.95
             to:20
@@ -676,26 +744,35 @@ Rectangle{
         }
 
 
+        Rectangle{
+             id: portvoltage6TextInputRect
+             color: enabled ? enabledTextFieldBackgroundColor : disabledTextFieldBackgroundColor
+             anchors.left:portAdvertizedVoltagesLabel.right
+             anchors.leftMargin: 5
+             anchors.top: portvoltage5TextInputRect.bottom
+             anchors.topMargin: 5
+             height:15
+             width:20
 
-        TextField{
-            id:portvoltage6TextInput
-            anchors.left:portAdvertizedVoltagesLabel.right
-            anchors.leftMargin: 5
-            anchors.top: portvoltage5TextInput.bottom
-            anchors.topMargin: 5
-            color:enabled ? enabledTextFieldTextColor : disabledTextFieldTextColor
-            placeholderText:"5"
-            verticalAlignment: TextInput.AlignTop
-            font.family: "helvetica"
-            font.pointSize: smallFontSize
-            height:15
-            width:20
-            background: Rectangle {
-                    implicitWidth: 15
-                    implicitHeight: 10
-                    color: enabled ? enabledTextFieldBackgroundColor : disabledTextFieldBackgroundColor
+            TextField{
+                id:portvoltage6TextInput
+                anchors.fill: parent
+                anchors.leftMargin: 2
+                anchors.topMargin: 5
+
+                horizontalAlignment: Qt.AlignLeft
+
+                font.family: "helvetica"
+                font.pointSize: smallFontSize
+                color:enabled ? enabledTextColor : disabledTextColor
+                placeholderText:"NA"
+                text: portCableCompensationSlider.value
+                background: Rectangle {
+                    color:"transparent"
                 }
+            }
         }
+
 
         Text{
             id:portvoltage6UnitText
@@ -703,9 +780,9 @@ Rectangle{
             font.family: "helvetica"
             font.pointSize: smallFontSize
             color: enabled ? enabledTextColor : disabledTextColor
-            anchors.left:portvoltage6TextInput.right
+            anchors.left:portvoltage6TextInputRect.right
             anchors.leftMargin: 5
-            anchors.verticalCenter: portvoltage6TextInput.verticalCenter
+            anchors.verticalCenter: portvoltage6TextInputRect.verticalCenter
 
         }
 
@@ -715,7 +792,7 @@ Rectangle{
             anchors.leftMargin: 5
             anchors.right:parent.right
             anchors.rightMargin: 10
-            anchors.verticalCenter: portvoltage6TextInput.verticalCenter
+            anchors.verticalCenter: portvoltage6TextInputRect.verticalCenter
             height:10
             from: 4.95
             to:20
@@ -737,26 +814,53 @@ Rectangle{
         }
 
 
+        Rectangle{
+             id: portvoltage7TextInputRect
+             color: enabled ? enabledTextFieldBackgroundColor : disabledTextFieldBackgroundColor
+             anchors.left:portAdvertizedVoltagesLabel.right
+             anchors.leftMargin: 5
+             anchors.top: portvoltage6TextInputRect.bottom
+             anchors.topMargin: 5
+             height:15
+             width:20
 
-        TextField{
-            id:portvoltage7TextInput
-            anchors.left:portAdvertizedVoltagesLabel.right
-            anchors.leftMargin: 5
-            anchors.top: portvoltage6TextInput.bottom
-            anchors.topMargin: 5
-            color:enabled ? enabledTextFieldTextColor : disabledTextFieldTextColor
-            placeholderText:"5"
-            verticalAlignment: TextInput.AlignTop
-            font.family: "helvetica"
-            font.pointSize: smallFontSize
-            height:15
-            width:20
-            background: Rectangle {
-                    implicitWidth: 15
-                    implicitHeight: 10
-                    color: enabled ? enabledTextFieldBackgroundColor : disabledTextFieldBackgroundColor
+            TextField{
+                id:portvoltage7TextInput
+                anchors.fill: parent
+                anchors.leftMargin: 2
+                anchors.topMargin: 5
+
+                horizontalAlignment: Qt.AlignLeft
+
+                font.family: "helvetica"
+                font.pointSize: smallFontSize
+                color:enabled ? enabledTextColor : disabledTextColor
+                placeholderText:"NA"
+                text: portCableCompensationSlider.value
+                background: Rectangle {
+                    color:"transparent"
                 }
+            }
         }
+//        TextField{
+//            id:portvoltage7TextInput
+//            anchors.left:portAdvertizedVoltagesLabel.right
+//            anchors.leftMargin: 5
+//            anchors.top: portvoltage6TextInputRect.bottom
+//            anchors.topMargin: 5
+//            color:enabled ? enabledTextFieldTextColor : disabledTextFieldTextColor
+//            placeholderText:"5"
+//            verticalAlignment: TextInput.AlignTop
+//            font.family: "helvetica"
+//            font.pointSize: smallFontSize
+//            height:15
+//            width:20
+//            background: Rectangle {
+//                    implicitWidth: 15
+//                    implicitHeight: 10
+//                    color: enabled ? enabledTextFieldBackgroundColor : disabledTextFieldBackgroundColor
+//                }
+//        }
 
         Text{
             id:portvoltage7UnitText
@@ -764,9 +868,9 @@ Rectangle{
             font.family: "helvetica"
             font.pointSize: smallFontSize
             color: enabled ? enabledTextColor : disabledTextColor
-            anchors.left:portvoltage7TextInput.right
+            anchors.left:portvoltage7TextInputRect.right
             anchors.leftMargin: 5
-            anchors.verticalCenter: portvoltage7TextInput.verticalCenter
+            anchors.verticalCenter: portvoltage7TextInputRect.verticalCenter
 
         }
 
@@ -776,7 +880,7 @@ Rectangle{
             anchors.leftMargin: 5
             anchors.right:parent.right
             anchors.rightMargin: 10
-            anchors.verticalCenter: portvoltage7TextInput.verticalCenter
+            anchors.verticalCenter: portvoltage7TextInputRect.verticalCenter
             height:10
             from: 4.95
             to:20
