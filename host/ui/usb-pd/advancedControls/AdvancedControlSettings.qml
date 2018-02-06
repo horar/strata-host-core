@@ -151,7 +151,7 @@ Item {
                 checkedColor: "#767676"
                 unCheckedColor: "#4C4A48"
                 checkedTextColor: enabledTextColor
-                uncheckedTextColor: disabledTextColor
+                uncheckedTextColor: unselectedButtonSegmentTextColor
                 ButtonGroup.group: faultProtectionGroup
                 height: 25
                 width:75
@@ -168,7 +168,7 @@ Item {
                 checkedColor: "#767676"
                 unCheckedColor: "#4C4A48"
                 checkedTextColor: enabledTextColor
-                uncheckedTextColor: disabledTextColor
+                uncheckedTextColor: unselectedButtonSegmentTextColor
                 ButtonGroup.group: faultProtectionGroup
                 height: 25
                 width:60
@@ -184,7 +184,7 @@ Item {
                 checkedColor: "#767676"
                 unCheckedColor: "#4C4A48"
                 checkedTextColor: enabledTextColor
-                uncheckedTextColor: disabledTextColor
+                uncheckedTextColor: unselectedButtonSegmentTextColor
                 ButtonGroup.group: faultProtectionGroup
                 height: 25
                 width:60
@@ -217,7 +217,7 @@ Item {
                 checkedColor: "#767676"
                 unCheckedColor: "#4C4A48"
                 checkedTextColor: enabledTextColor
-                uncheckedTextColor: disabledTextColor
+                uncheckedTextColor: unselectedButtonSegmentTextColor
                 ButtonGroup.group: dataConfigurationGroup
                 height: 25
                 width:90
@@ -234,7 +234,7 @@ Item {
                 checkedColor: "#767676"
                 unCheckedColor: "#4C4A48"
                 checkedTextColor: enabledTextColor
-                uncheckedTextColor: disabledTextColor
+                uncheckedTextColor: unselectedButtonSegmentTextColor
                 ButtonGroup.group: dataConfigurationGroup
                 height: 25
                 width:65
@@ -250,7 +250,7 @@ Item {
                 checkedColor: "#767676"
                 unCheckedColor: "#4C4A48"
                 checkedTextColor: enabledTextColor
-                uncheckedTextColor: disabledTextColor
+                uncheckedTextColor: unselectedButtonSegmentTextColor
                 ButtonGroup.group: dataConfigurationGroup
                 height: 25
                 width:75
