@@ -11,6 +11,7 @@ Rectangle{
     property int fullHeight:300
     property int collapsedHeight:60
     property var portName:"Port n"
+    property var minimumAdvertizedVoltage: 4.95
 
     property color enabledTextFieldBackgroundColor: "#838484"
     property color disabledTextFieldBackgroundColor: "#33FFFFFF"
@@ -21,6 +22,16 @@ Rectangle{
     Layout.preferredWidth  : grid.prefWidth(this)
     Layout.preferredHeight : portSettings.fullHeight
     color: "black"
+
+    Component.onCompleted: {
+        portvoltage1Slider.value = minimumAdvertizedVoltage;
+        portvoltage2Slider.value = minimumAdvertizedVoltage;
+        portvoltage3Slider.value = minimumAdvertizedVoltage
+        portvoltage4Slider.value = minimumAdvertizedVoltage
+        portvoltage5Slider.value = minimumAdvertizedVoltage
+        portvoltage6Slider.value = minimumAdvertizedVoltage
+        portvoltage7Slider.value = minimumAdvertizedVoltage
+    }
 
     NumberAnimation{
         id: collapsePortSettings
@@ -324,7 +335,7 @@ Rectangle{
          anchors.leftMargin: 10
          anchors.verticalCenter: maxCurrentText.verticalCenter
          height:15
-         width:30
+         width:25
 
         TextField{
             id:maxCurrentTextInput
@@ -405,7 +416,7 @@ Rectangle{
              anchors.leftMargin: 5
              anchors.verticalCenter: portAdvertizedVoltagesLabel.verticalCenter
              height:15
-             width:20
+             width:25
 
             TextField{
                 id:portvoltage1TextInput
@@ -447,7 +458,7 @@ Rectangle{
             height:10
             from: 4.95
             to:20
-            value:5
+            value:5.0
             stepSize: 0.0
 
             onValueChanged: {
@@ -473,7 +484,7 @@ Rectangle{
              anchors.top: portvoltage1TextInputRect.bottom
              anchors.topMargin: 5
              height:15
-             width:20
+             width:25
 
             TextField{
                 id:portvoltage2TextInput
@@ -542,7 +553,7 @@ Rectangle{
              anchors.top: portvoltage2TextInputRect.bottom
              anchors.topMargin: 5
              height:15
-             width:20
+             width:25
 
             TextField{
                 id:portvoltage3TextInput
@@ -613,7 +624,7 @@ Rectangle{
              anchors.top: portvoltage3TextInputRect.bottom
              anchors.topMargin: 5
              height:15
-             width:20
+             width:25
 
             TextField{
                 id:portvoltage4TextInput
@@ -682,7 +693,7 @@ Rectangle{
              anchors.top: portvoltage4TextInputRect.bottom
              anchors.topMargin: 5
              height:15
-             width:20
+             width:25
 
             TextField{
                 id:portvoltage5TextInput
@@ -752,7 +763,7 @@ Rectangle{
              anchors.top: portvoltage5TextInputRect.bottom
              anchors.topMargin: 5
              height:15
-             width:20
+             width:25
 
             TextField{
                 id:portvoltage6TextInput
@@ -822,7 +833,7 @@ Rectangle{
              anchors.top: portvoltage6TextInputRect.bottom
              anchors.topMargin: 5
              height:15
-             width:20
+             width:25
 
             TextField{
                 id:portvoltage7TextInput
@@ -842,25 +853,6 @@ Rectangle{
                 }
             }
         }
-//        TextField{
-//            id:portvoltage7TextInput
-//            anchors.left:portAdvertizedVoltagesLabel.right
-//            anchors.leftMargin: 5
-//            anchors.top: portvoltage6TextInputRect.bottom
-//            anchors.topMargin: 5
-//            color:enabled ? enabledTextFieldTextColor : disabledTextFieldTextColor
-//            placeholderText:"5"
-//            verticalAlignment: TextInput.AlignTop
-//            font.family: "helvetica"
-//            font.pointSize: smallFontSize
-//            height:15
-//            width:20
-//            background: Rectangle {
-//                    implicitWidth: 15
-//                    implicitHeight: 10
-//                    color: enabled ? enabledTextFieldBackgroundColor : disabledTextFieldBackgroundColor
-//                }
-//        }
 
         Text{
             id:portvoltage7UnitText
