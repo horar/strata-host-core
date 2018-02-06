@@ -213,7 +213,6 @@ private:
     FaultMessages active_faults_;
     FaultMessages fault_history_;
 
-
 public:
     Spyglass::HostControllerClient *hcc_object;
 
