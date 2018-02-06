@@ -43,7 +43,6 @@ ImplementationInterfaceBinding::ImplementationInterfaceBinding(QObject *parent) 
     targetVoltage = 5;
 #endif
 
-
 }
 
 ImplementationInterfaceBinding::~ImplementationInterfaceBinding() {

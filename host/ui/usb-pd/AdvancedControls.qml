@@ -15,35 +15,6 @@ Rectangle {
 
     objectName: "advancedControls"
 
-
-    ListModel {
-        id: faultHistoryList
-    }
-
-    ListModel {
-        id: activeFaultList
-    }
-    onVisibleChanged: {
-        if(visible){
-        faultHistoryList.append({"parameter":"voltage","condition":"<","value":value})
-        console.log("message",faultHistoryList)
-    }}
-
-    // signal handling
-    Connections {
-        target: implementationInterfaceBinding
-
-        onMinimumVoltageChanged: {
-            if(state) {
-                faultHistoryList.append({"parameter":"voltage","condition":"<","value":value})
-            }
-            else {
-                faultHistoryList.append({"parameter":"voltage","condition":">","value":value})
-            }
-
-        }
-    }
-
     GridLayout {
         id: grid
         columns: 3
@@ -3054,10 +3025,6 @@ Rectangle {
                             anchors.bottomMargin: parent.height/20
 
                             model: implementationInterfaceBinding.activeFaultsList
-                            snapMode: ListView.SnapOneItem
-                            focus: true
-                            clip: true
-                            add: Transition { NumberAnimation { properties: "x,y"; from: 100; duration: 1000 } }
 
                             delegate: Text {
                                 text: modelData
