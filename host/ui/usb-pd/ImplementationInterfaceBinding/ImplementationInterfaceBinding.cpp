@@ -659,24 +659,19 @@ void ImplementationInterfaceBinding::handleResetNotification(const QVariantMap p
 void ImplementationInterfaceBinding::handleInputUnderVoltageNotification(const QVariantMap payloadMap) {
     QString state = payloadMap["state"].toString();
     int value = payloadMap["minimum_voltage"].toInt();
-
+    // Generates the message to be printed in the UI
     QString message = constructFaultMessage("input voltage",state,value);
 
     if(state == "below") {
-        activeFaultsList.append(message);
-        qDebug() << "inside below";
-        qDebug()<< "constructed message"<<message;
+        active_faults_.append(message);
     }
     else if(state == "above") {
-        QString message_to_remove = constructFaultMessage("input voltage",state,value);
-
-        if(active_faults_.contains(message_to_remove)) {
-            active_faults_.removeOne(message_to_remove);
-
+        QStringList message_to_remove = active_faults_.filter("input voltage");
+        if(active_faults_.contains(message_to_remove[0])) {
+            active_faults_.removeOne(message_to_remove[0]);
         }
-        qDebug()<<"Inside above";
     }
-    qDebug() << "received Minimum voltage";
+
     fault_history_.append(message);
     emit activeFaultsChanged();
     emit faultHistoryChanged();
@@ -685,19 +680,44 @@ void ImplementationInterfaceBinding::handleInputUnderVoltageNotification(const Q
 void ImplementationInterfaceBinding::handleOverTemperatureNotification(const QVariantMap payloadMap)
 {
     QString state = payloadMap["state"].toString();
-    int value = payloadMap["maximum_temperature"].toInt();
+    int value = payloadMap["temperature_limit"].toInt();
 
     int port_number;
-    QString usbCPortId = payloadMap["port"].toString();
-    if(usbCPortId.compare("USB_C_port_1") == 0) {
-        port_number = 1;
+    QString usbCPortId = payloadMap["Port"].toString();
+    qDebug()<<"port 1 connection"<<usbCPort1State;
+    if(usbCPortId.compare("USB_C_port_1") == 0){
+        if (usbCPort1State) {
+            port_number = 1;
+        }
+        else if(!usbCPort1State){
+            return;
+        }
     }
-    if(usbCPortId.compare("USB_C_port_2") == 0) {
-        port_number = 2;
+
+    if(usbCPortId.compare("USB_C_port_2") == 0){
+        if (usbCPort2State) {
+            port_number = 2;
+        }
+        else if(!usbCPort2State){
+            return;
+        }
     }
 
     QString message = constructFaultMessage("temperature",state,value,port_number);
-    qDebug() << "received over temperature";
+    qDebug() << "received over temperature" <<message;
+
+    if(state == "above") {
+        active_faults_.append(message);
+    }
+    else if(state == "below") {
+        QStringList message_to_remove = active_faults_.filter("temperature");
+        if(active_faults_.contains(message_to_remove[0])) {
+            active_faults_.removeOne(message_to_remove[0]);
+        }
+    }
+    fault_history_.append(message);
+    emit activeFaultsChanged();
+    emit faultHistoryChanged();
 }
 /*!
  * End of notification handlers

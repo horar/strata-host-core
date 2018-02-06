@@ -26,7 +26,7 @@
 //aPort = Variable to store current
 //vPort = Variable to store voltage
 
-using FaultMessages = QList<QString>;            // typedefs
+using FaultMessages = QStringList;            // typedefs
 
 struct platform_Ports {
 
@@ -82,8 +82,8 @@ class ImplementationInterfaceBinding : public QObject
     //Q_PROPERTY(bool usbcPort2 READ getUsbCPort2  NOTIFY usbCPort2StateChanged)
 
     //Qlist property to store all the active faults and fault history
-    Q_PROPERTY(QList<QString> activeFaultsList READ activeFaults NOTIFY activeFaultsChanged)
-    Q_PROPERTY(QList<QString> faultHistoryList READ faultHistory NOTIFY faultHistoryChanged)
+    Q_PROPERTY(QStringList activeFaultsList READ activeFaults NOTIFY activeFaultsChanged)
+    Q_PROPERTY(QStringList faultHistoryList READ faultHistory NOTIFY faultHistoryChanged)
 public:
 
     // Enum for hardcode platforms;
@@ -129,8 +129,8 @@ public:
     bool getUSBCPort1State();
     bool getUSBCPort2State();
     e_MappedPlatformId getPlatformId();
-    QList<QString> activeFaults() {return QList<QString>(active_faults_);}
-    QList<QString> faultHistory() {return QList<QString>(fault_history_);}
+    QStringList activeFaults() {return QStringList(active_faults_);}
+    QStringList faultHistory() {return QStringList(fault_history_);}
 
 
     QJsonObject convertQstringtoJson(const QString string);
@@ -150,9 +150,9 @@ public:
 
 //Constructing the string for fault messages
     QString constructFaultMessage(QString parameter,QString state,int value)
-                                 {return QString(tr("%1 is %2 the set value %3")).arg(parameter).arg(state).arg(value);}
+                                 {return QString(tr("%1 is %2 %3")).arg(parameter).arg(state).arg(value);}
     QString constructFaultMessage(QString parameter,QString state,int value,int port_number)
-                                 {return QString(tr("%1 is %2 the set value %3 for port %4")).arg(parameter).arg(state).arg(value).arg(port_number);}
+                                 {return QString(tr("%1 is %2 %3 for port %4")).arg(parameter).arg(state).arg(value).arg(port_number);}
 
 //Notification Simulator
     friend void *simulateNotificationsThread(void *);
@@ -213,7 +213,6 @@ private:
     FaultMessages active_faults_;
     FaultMessages fault_history_;
 
-    QList<QString>  activeFaultsList;
 
 public:
     Spyglass::HostControllerClient *hcc_object;

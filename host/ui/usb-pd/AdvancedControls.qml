@@ -578,11 +578,11 @@ Rectangle {
                                 }
                             onEditingFinished: {
                                 //keep the values in the correct range
-                                if (boardTemperatureTextInput.text >32){
-                                    boardTemperatureTextInput.text = 32
+                                if (boardTemperatureTextInput.text >125){
+                                    boardTemperatureTextInput.text = 125
                                 }
-                                else if (boardTemperatureTextInput.text <5){
-                                    boardTemperatureTextInput.text = 5
+                                else if (boardTemperatureTextInput.text <25){
+                                    boardTemperatureTextInput.text = 25
                                 }
                                 implementationInterfaceBinding.setMaximumTemperature(boardTemperatureTextInput.text)
                                 console.log ("user set value for start limiting:", boardTemperatureTextInput.text)
@@ -3054,9 +3054,13 @@ Rectangle {
                             anchors.bottomMargin: parent.height/20
 
                             model: implementationInterfaceBinding.activeFaultsList
+                            snapMode: ListView.SnapOneItem
+                            focus: true
+                            clip: true
+                            add: Transition { NumberAnimation { properties: "x,y"; from: 100; duration: 1000 } }
 
                             delegate: Text {
-                                text: fault
+                                text: modelData
                                 color: "orangered"
                                 font.pointSize: smallFontSize
                             }
@@ -3129,10 +3133,10 @@ Rectangle {
                             anchors.bottom:parent.bottom
                             anchors.bottomMargin: parent.height/20
 
-                            model: faultHistoryListModel
+                            model: implementationInterfaceBinding.faultHistoryList
 
                             delegate: Text {
-                                text: fault
+                                text: modelData
                                 color: "#D8D8D8"
                                 font.pointSize: smallFontSize
                             }
