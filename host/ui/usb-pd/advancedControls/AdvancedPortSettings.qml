@@ -11,7 +11,9 @@ Rectangle{
     property int fullHeight:300
     property int collapsedHeight:60
     property var portName:"Port n"
-    property var minimumAdvertizedVoltage: 4.95
+    property var minimumVoltage: 4.95
+    property var minimumAdvertisedVoltage: 5.0
+    property var maximumAdvertisedVoltage: 20.0
 
     property color enabledTextFieldBackgroundColor: "#838484"
     property color disabledTextFieldBackgroundColor: "#33FFFFFF"
@@ -24,13 +26,13 @@ Rectangle{
     color: "black"
 
     Component.onCompleted: {
-        portvoltage1Slider.value = minimumAdvertizedVoltage;
-        portvoltage2Slider.value = minimumAdvertizedVoltage;
-        portvoltage3Slider.value = minimumAdvertizedVoltage
-        portvoltage4Slider.value = minimumAdvertizedVoltage
-        portvoltage5Slider.value = minimumAdvertizedVoltage
-        portvoltage6Slider.value = minimumAdvertizedVoltage
-        portvoltage7Slider.value = minimumAdvertizedVoltage
+        portvoltage1Slider.value = minimumVoltage;
+        portvoltage2Slider.value = minimumVoltage;
+        portvoltage3Slider.value = minimumVoltage;
+        portvoltage4Slider.value = minimumVoltage;
+        portvoltage5Slider.value = minimumVoltage;
+        portvoltage6Slider.value = minimumVoltage;
+        portvoltage7Slider.value = minimumVoltage;
     }
 
     NumberAnimation{
@@ -456,14 +458,13 @@ Rectangle{
             anchors.rightMargin: 10
             anchors.verticalCenter: portAdvertizedVoltagesLabel.verticalCenter
             height:10
-            from: 4.95
-            to:20
-            value:5.0
+            from: minimumVoltage
+            to:maximumAdvertisedVoltage
             stepSize: 0.0
 
             onValueChanged: {
                 portvoltage1TextInput.text = Math.round (portvoltage1Slider.value *10)/10
-                if (portvoltage1Slider.value < 5){
+                if (portvoltage1Slider.value < minimumAdvertisedVoltage){
                     portvoltage1TextInput.enabled = false;
                     portvoltage1TextInput.text = "NA";
                     portvoltage1UnitText.enabled = false;
@@ -525,14 +526,13 @@ Rectangle{
             anchors.rightMargin: 10
             anchors.verticalCenter: portvoltage2TextInputRect.verticalCenter
             height:10
-            from: 4.95
-            to:20
-            value:5.0
+            from: minimumVoltage
+            to:maximumAdvertisedVoltage
             stepSize: 0.0
 
             onValueChanged: {
                 portvoltage2TextInput.text = Math.round (portvoltage2Slider.value *10)/10
-                if (portvoltage2Slider.value < 5){
+                if (portvoltage2Slider.value < minimumAdvertisedVoltage){
                     portvoltage2TextInput.enabled = false;
                     portvoltage2TextInput.text = "NA";
                     portvoltage2UnitText.enabled = false;
@@ -596,14 +596,13 @@ Rectangle{
             anchors.rightMargin: 10
             anchors.verticalCenter: portvoltage3TextInputRect.verticalCenter
             height:10
-            from: 4.95
-            to:20
-            value:5
+            from: minimumVoltage
+            to:maximumAdvertisedVoltage
             stepSize: 0.0
 
             onValueChanged: {
                 portvoltage3TextInput.text = Math.round (portvoltage3Slider.value *10)/10
-                if (portvoltage3Slider.value < 5){
+                if (portvoltage3Slider.value < minimumAdvertisedVoltage){
                     portvoltage3TextInput.enabled = false;
                     portvoltage3TextInput.text = "NA";
                     portvoltage3UnitText.enabled = false;
@@ -665,14 +664,13 @@ Rectangle{
             anchors.rightMargin: 10
             anchors.verticalCenter: portvoltage4TextInputRect.verticalCenter
             height:10
-            from: 4.95
-            to:20
-            value:5
+            from: minimumVoltage
+            to:maximumAdvertisedVoltage
             stepSize: 0.0
 
             onValueChanged: {
                 portvoltage4TextInput.text = Math.round (portvoltage4Slider.value *10)/10
-                if (portvoltage4Slider.value < 5){
+                if (portvoltage4Slider.value < minimumAdvertisedVoltage){
                     portvoltage4TextInput.enabled = false;
                     portvoltage4TextInput.text = "NA";
                     portvoltage4UnitText.enabled = false;
@@ -735,14 +733,13 @@ Rectangle{
             anchors.rightMargin: 10
             anchors.verticalCenter: portvoltage5TextInputRect.verticalCenter
             height:10
-            from: 4.95
-            to:20
-            value:5
+            from: minimumVoltage
+            to:maximumAdvertisedVoltage
             stepSize: 0.0
 
             onValueChanged: {
                 portvoltage5TextInput.text = Math.round (portvoltage5Slider.value *10)/10
-                if (portvoltage5Slider.value < 5){
+                if (portvoltage5Slider.value < minimumAdvertisedVoltage){
                     portvoltage5TextInput.enabled = false;
                     portvoltage5TextInput.text = "NA";
                     portvoltage5UnitText.enabled = false;
@@ -805,14 +802,13 @@ Rectangle{
             anchors.rightMargin: 10
             anchors.verticalCenter: portvoltage6TextInputRect.verticalCenter
             height:10
-            from: 4.95
-            to:20
-            value:5
+            from: minimumVoltage
+            to:maximumAdvertisedVoltage
             stepSize: 0.0
 
             onValueChanged: {
                 portvoltage6TextInput.text = Math.round (portvoltage6Slider.value *10)/10
-                if (portvoltage6Slider.value < 5){
+                if (portvoltage6Slider.value < minimumAdvertisedVoltage){
                     portvoltage6TextInput.enabled = false;
                     portvoltage6TextInput.text = "NA";
                     portvoltage6UnitText.enabled = false;
@@ -874,14 +870,13 @@ Rectangle{
             anchors.rightMargin: 10
             anchors.verticalCenter: portvoltage7TextInputRect.verticalCenter
             height:10
-            from: 4.95
-            to:20
-            value:5
+            from: minimumVoltage
+            to:maximumAdvertisedVoltage
             stepSize: 0.0
 
             onValueChanged: {
                 portvoltage7TextInput.text = Math.round (portvoltage7Slider.value *10)/10
-                if (portvoltage7Slider.value < 5){
+                if (portvoltage7Slider.value < minimumAdvertisedVoltage){
                     portvoltage7TextInput.enabled = false;
                     portvoltage7TextInput.text = "NA";
                     portvoltage7UnitText.enabled = false;
