@@ -14,7 +14,8 @@ Rectangle {
     property int extraLargeFontSize: (Qt.platform.os === "osx") ? 36  : 24;
 
     property color enabledTextColor: "#D8D8D8"
-    property color disabledTextColor: "#7A7A7A"
+    property color disabledTextColor: "#484848"
+    property color unselectedButtonSegmentTextColor: "black"
 
     objectName: "advancedControls"
 
