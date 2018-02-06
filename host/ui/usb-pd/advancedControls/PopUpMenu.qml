@@ -8,7 +8,7 @@ ComboBox {
     font.family: "helvetica"
     font.pointSize: smallFontSize
     height:15
-    width:30
+    width:40
 
     property color backgroundColor: "#838484"
 
@@ -20,7 +20,7 @@ ComboBox {
                 text: modelData
                 color: highlighted? "#D8D8D8" :"black"
                 font: parent.font
-                elide: Text.ElideRight
+                elide: Text.ElideNone
                 verticalAlignment: Text.AlignVCenter
             }
             onClicked:{
