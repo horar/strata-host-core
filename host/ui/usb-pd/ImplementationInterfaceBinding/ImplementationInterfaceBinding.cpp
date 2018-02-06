@@ -659,12 +659,16 @@ void ImplementationInterfaceBinding::handleResetNotification(const QVariantMap p
 void ImplementationInterfaceBinding::handleInputUnderVoltageNotification(const QVariantMap payloadMap) {
     QString state = payloadMap["state"].toString();
     int value = payloadMap["minimum_voltage"].toInt();
+
     // Generates the message to be printed in the UI
     QString message = constructFaultMessage("input voltage",state,value);
 
+    // fault occurs and the message is added to the active fault list
     if(state == "below") {
         active_faults_.append(message);
     }
+
+    // fault is corrected and the message is removed from the active fault list
     else if(state == "above") {
         QStringList message_to_remove = active_faults_.filter("input voltage");
         if(active_faults_.contains(message_to_remove[0])) {
@@ -672,6 +676,7 @@ void ImplementationInterfaceBinding::handleInputUnderVoltageNotification(const Q
         }
     }
 
+    // both fault occurence and correction are added to the fault history list
     fault_history_.append(message);
     emit activeFaultsChanged();
     emit faultHistoryChanged();
@@ -684,7 +689,11 @@ void ImplementationInterfaceBinding::handleOverTemperatureNotification(const QVa
 
     int port_number;
     QString usbCPortId = payloadMap["Port"].toString();
-    qDebug()<<"port 1 connection"<<usbCPort1State;
+
+    // assign port number
+    // [prasanth] firmware sends fault occurence for two ports [two messages] irrespective
+    // of how many ports are connected to the platform
+    // this if logic is used to send only the fault message for the port that is connected
     if(usbCPortId.compare("USB_C_port_1") == 0){
         if (usbCPort1State) {
             port_number = 1;
@@ -693,7 +702,7 @@ void ImplementationInterfaceBinding::handleOverTemperatureNotification(const QVa
             return;
         }
     }
-
+    // assign port number
     if(usbCPortId.compare("USB_C_port_2") == 0){
         if (usbCPort2State) {
             port_number = 2;
@@ -702,19 +711,23 @@ void ImplementationInterfaceBinding::handleOverTemperatureNotification(const QVa
             return;
         }
     }
-
+    // Generates the message to be printed in the UI
     QString message = constructFaultMessage("temperature",state,value,port_number);
-    qDebug() << "received over temperature" <<message;
 
+    // fault occurs and the message is added to the active fault list
     if(state == "above") {
         active_faults_.append(message);
     }
+
+    // fault is corrected and the message is removed from the active fault list
     else if(state == "below") {
         QStringList message_to_remove = active_faults_.filter("temperature");
         if(active_faults_.contains(message_to_remove[0])) {
             active_faults_.removeOne(message_to_remove[0]);
         }
     }
+
+    // both fault occurence and correction are added to the fault history list
     fault_history_.append(message);
     emit activeFaultsChanged();
     emit faultHistoryChanged();
