@@ -15,35 +15,6 @@ Rectangle {
 
     objectName: "advancedControls"
 
-
-    ListModel {
-        id: faultHistoryList
-    }
-
-    ListModel {
-        id: activeFaultList
-    }
-    onVisibleChanged: {
-        if(visible){
-        faultHistoryList.append({"parameter":"voltage","condition":"<","value":value})
-        console.log("message",faultHistoryList)
-    }}
-
-    // signal handling
-    Connections {
-        target: implementationInterfaceBinding
-
-        onMinimumVoltageChanged: {
-            if(state) {
-                faultHistoryList.append({"parameter":"voltage","condition":"<","value":value})
-            }
-            else {
-                faultHistoryList.append({"parameter":"voltage","condition":">","value":value})
-            }
-
-        }
-    }
-
     GridLayout {
         id: grid
         columns: 3
@@ -578,11 +549,11 @@ Rectangle {
                                 }
                             onEditingFinished: {
                                 //keep the values in the correct range
-                                if (boardTemperatureTextInput.text >32){
-                                    boardTemperatureTextInput.text = 32
+                                if (boardTemperatureTextInput.text >125){
+                                    boardTemperatureTextInput.text = 125
                                 }
-                                else if (boardTemperatureTextInput.text <5){
-                                    boardTemperatureTextInput.text = 5
+                                else if (boardTemperatureTextInput.text <25){
+                                    boardTemperatureTextInput.text = 25
                                 }
                                 implementationInterfaceBinding.setMaximumTemperature(boardTemperatureTextInput.text)
                                 console.log ("user set value for start limiting:", boardTemperatureTextInput.text)
@@ -3053,10 +3024,10 @@ Rectangle {
                             anchors.bottom:parent.bottom
                             anchors.bottomMargin: parent.height/20
 
-                            model: activeFaultsListModel
+                            model: implementationInterfaceBinding.activeFaultsList
 
                             delegate: Text {
-                                text: fault
+                                text: modelData
                                 color: "orangered"
                                 font.pointSize: smallFontSize
                             }
@@ -3129,10 +3100,10 @@ Rectangle {
                             anchors.bottom:parent.bottom
                             anchors.bottomMargin: parent.height/20
 
-                            model: faultHistoryListModel
+                            model: implementationInterfaceBinding.faultHistoryList
 
                             delegate: Text {
-                                text: fault
+                                text: modelData
                                 color: "#D8D8D8"
                                 font.pointSize: smallFontSize
                             }
