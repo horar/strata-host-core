@@ -67,37 +67,35 @@ Rectangle {
         }
 
 
-//        Rectangle {
         ScrollView{
-            ScrollBar.vertical.policy: ScrollBar.AlwaysOn
-            //clip: true
-            contentHeight: 1100//AdvancedControlSettings.height
 
-            id:settings
+                ScrollBar.vertical.policy: ScrollBar.AlwaysOn   //but I can't get them to show
+                contentHeight: 950// this has to be set manually based on the height of the controlSettings
 
-            property var collapseAnimationSpeed:900
+                id:settings
 
-            //columns 0 and 1, both rows
-            Layout.column: 0
-            Layout.columnSpan: 1
-            Layout.row: 0
-            Layout.rowSpan: 3
-            Layout.preferredWidth  : grid.prefWidth(this)
-            Layout.fillWidth:true
-            Layout.fillHeight:true
+                property var collapseAnimationSpeed:900
 
-            //how do I turn the background behind the scrollable area black?
-            //color: "black"
+                //columns 0 and 1, both rows
+                Layout.column: 0
+                Layout.columnSpan: 1
+                Layout.row: 0
+                Layout.rowSpan: 3
+                Layout.preferredWidth  : grid.prefWidth(this)
+                Layout.fillWidth:true
+                Layout.fillHeight:true
 
+            Rectangle{
+                anchors.left:parent.left
+                anchors.right:parent.right
+                anchors.top:parent.top
+                height:1100
+                color: "black"
 
-
-
-                AdvancedControlSettings{}
+                AdvancedControlSettings{ id:controlSettings}
             }
+        }
 
-
-
-//        } //settings rectangle
 
         Rectangle {
             id:boardRect
