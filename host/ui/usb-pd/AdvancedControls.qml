@@ -483,6 +483,7 @@ Rectangle {
                             ListElement {
                                 fault: "Port 1 Temperature: 71°C"
                             }
+
                         }
 
                         ListView {
@@ -492,9 +493,13 @@ Rectangle {
                             anchors.right: parent.right
                             anchors.rightMargin: parent.width/20
                             anchors.top: activeFaultsSeparator.bottom
-                            anchors.topMargin: parent.height/20
+                            anchors.topMargin: parent.height/15
                             anchors.bottom:parent.bottom
-                            anchors.bottomMargin: parent.height/20
+                            anchors.bottomMargin: parent.height/15
+
+                            ScrollBar.vertical: ScrollBar {
+                                    active: true
+                                    }
 
                             model: activeFaultsListModel
 
