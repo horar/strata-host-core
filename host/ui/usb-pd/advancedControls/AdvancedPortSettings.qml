@@ -279,7 +279,7 @@ Rectangle{
             font.family: "helvetica"
             font.pointSize: 12
             color:enabled ? enabledTextColor : disabledTextColor
-            text: portCableCompensationSlider.value
+            text: voltageCompensationSlider.value
             background: Rectangle {
                 color:"transparent"
             }
@@ -312,7 +312,7 @@ Rectangle{
         stepSize: 50.0
 
         onValueChanged: {
-            voltageCompensationTextInput.text = Math.round (voltageCompensationSlider.value *10)/10
+            voltageCompensationTextInput.text = voltageCompensationSlider.value
         }
     }
 
