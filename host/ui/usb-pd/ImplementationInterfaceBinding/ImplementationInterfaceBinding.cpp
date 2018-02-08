@@ -25,6 +25,7 @@ ImplementationInterfaceBinding::ImplementationInterfaceBinding(QObject *parent) 
     Ports.power[1]='\0';
     usbCPort1State = false;
     usbCPort2State = false;
+    inputVoltage =0;
 
 #ifdef QT_NO_DEBUG
     // Release should not assume anything
