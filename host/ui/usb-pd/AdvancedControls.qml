@@ -68,32 +68,39 @@ Rectangle {
 
 
         ScrollView{
+            id:settings
+            contentHeight: 950// this has to be set manually based on the height of the controlSettings
+            //columns 0 and 1, both rows
+            Layout.column: 0
+            Layout.columnSpan: 1
+            Layout.row: 0
+            Layout.rowSpan: 3
+            Layout.preferredWidth  : grid.prefWidth(this)
+            Layout.fillWidth:true
+            Layout.fillHeight:true
 
-                ScrollBar.vertical.policy: ScrollBar.AlwaysOn   //but I can't get them to show
-                contentHeight: 950// this has to be set manually based on the height of the controlSettings
+            property var collapseAnimationSpeed:900
 
-                id:settings
-
-                property var collapseAnimationSpeed:900
-
-                //columns 0 and 1, both rows
-                Layout.column: 0
-                Layout.columnSpan: 1
-                Layout.row: 0
-                Layout.rowSpan: 3
-                Layout.preferredWidth  : grid.prefWidth(this)
-                Layout.fillWidth:true
-                Layout.fillHeight:true
-
-            Rectangle{
-                anchors.left:parent.left
-                anchors.right:parent.right
-                anchors.top:parent.top
-                height:1100
-                color: "black"
-
-                AdvancedControlSettings{ id:controlSettings}
+            ScrollBar.vertical: ScrollBar{
+                policy: ScrollBar.AsNeeded
+                anchors.top: parent.top
+                anchors.right: parent.right
+                anchors.bottom: parent.bottom
+                active:pressed
+                contentItem: Rectangle{
+                    //width:40
+                    implicitWidth: 1
+                    implicitHeight: 100
+                    radius: width / 2
+                    color: disabledTextColor
+                }
             }
+
+            background: Rectangle{
+                color:"black"
+            }
+
+            AdvancedControlSettings{ id:controlSettings}
         }
 
 
@@ -511,7 +518,7 @@ Rectangle {
 
                         }
 
-                    } //Active Fonts box
+                    } //Fault History box
 
                     Rectangle{
                         id: faultHistory
@@ -573,9 +580,13 @@ Rectangle {
                             anchors.right: parent.right
                             anchors.rightMargin: parent.width/20
                             anchors.top: faultHistorySeparator.bottom
-                            anchors.topMargin: parent.height/20
+                            anchors.topMargin: parent.height/15
                             anchors.bottom:parent.bottom
-                            anchors.bottomMargin: parent.height/20
+                            anchors.bottomMargin: parent.height/15
+
+                            ScrollBar.vertical: ScrollBar {
+                                    active: true
+                                    }
 
                             model: faultHistoryListModel
 
@@ -619,7 +630,8 @@ Rectangle {
                            color:"#CCCCCC"
                         }
 
-                        Label{
+                        Rectangle{
+                            id:usbPDListBackground
                             anchors.left: parent.left
                             anchors.leftMargin: parent.width/20
                             anchors.right: parent.right
@@ -628,13 +640,56 @@ Rectangle {
                             anchors.topMargin: parent.height/20
                             anchors.bottom:parent.bottom
                             anchors.bottomMargin: parent.height/20
-                            background: Rectangle {
-                                color: "#2B2B2B"
-                            }
-                            text: "Capabilities request"
-                            font.pointSize: smallFontSize
-                            color: "#D8D8D8"
+                            color: "#2B2B2B"
                         }
+
+                        ListModel {
+                            id:usbPDListModel
+                            ListElement {
+                                fault: "Port 1 Temperature: 71°C"
+                            }
+                        }
+
+                        ListView {
+                            id:usbPDListView
+                            anchors.left: parent.left
+                            anchors.leftMargin: parent.width/20
+                            anchors.right: parent.right
+                            anchors.rightMargin: parent.width/20
+                            anchors.top: usbPDMessagesSeparator.bottom
+                            anchors.topMargin: parent.height/15
+                            anchors.bottom:parent.bottom
+                            anchors.bottomMargin: parent.height/15
+
+                            ScrollBar.vertical: ScrollBar {
+                                    active: true
+                                    }
+
+                            model: faultHistoryListModel
+
+                            delegate: Text {
+                                text: fault
+                                color: "#D8D8D8"
+                                font.pointSize: smallFontSize
+                            }
+                        }
+
+//                        Label{
+//                            anchors.left: parent.left
+//                            anchors.leftMargin: parent.width/20
+//                            anchors.right: parent.right
+//                            anchors.rightMargin: parent.width/20
+//                            anchors.top: usbPDMessagesSeparator.bottom
+//                            anchors.topMargin: parent.height/20
+//                            anchors.bottom:parent.bottom
+//                            anchors.bottomMargin: parent.height/20
+//                            background: Rectangle {
+//                                color: "#2B2B2B"
+//                            }
+//                            text: "Capabilities request"
+//                            font.pointSize: smallFontSize
+//                            color: "#D8D8D8"
+//                        }
                     }
                 }
             }
