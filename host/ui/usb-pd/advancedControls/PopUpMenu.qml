@@ -11,6 +11,7 @@ ComboBox {
     width:40
 
     property color backgroundColor: "#838484"
+    property color disabledBackgroundColor: "#404040"
 
     //this is used by the PopUp to determine what font to use
     delegate: ItemDelegate {
@@ -35,7 +36,7 @@ ComboBox {
     //this just draws the drop down indicator triangle
     indicator: Canvas {
         id: canvas
-        x: control.width /*- width*/ - control.rightPadding
+        x: control.width  - control.rightPadding
         y: control.topPadding + (control.availableHeight - height) / 2
         width: 8
         height: 6
@@ -61,8 +62,8 @@ ComboBox {
     background: Rectangle {
             implicitWidth: 15
             implicitHeight: 10
-            color: parent.backgroundColor
-            border.color: parent.backgroundColor
+            color: parent.enabled? parent.backgroundColor : parent.disabledBackgroundColor
+
         }
 
     //the text shown in the box (i.e. not the menu text)
@@ -71,7 +72,8 @@ ComboBox {
             rightPadding: parent.indicator.width + parent.spacing
             text: parent.displayText
             font: parent.font
-            color: parent.pressed ? "#17a81a" : "#D8D8D8"
+            //color: parent.pressed ? "#17a81a" : "#D8D8D8"
+            color: parent.enabled ? enabledTextColor : disabledTextColor
             horizontalAlignment: Text.AlignLeft
             verticalAlignment: Text.AlignVCenter
             elide: Text.ElideRight
