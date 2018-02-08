@@ -5,16 +5,13 @@ import QtGraphicalEffects 1.0
 
 Slider{
     id:control
-//    anchors.left:faultTempUnitText.right
-//    anchors.leftMargin: 5
-//    anchors.right:parent.right
-//    anchors.rightMargin: 10
-//    anchors.verticalCenter: faultTempText.verticalCenter
     height:10
-//    from: 25
-//    to:100
-//    value:5
-//    stepSize: 0.0
+
+    property color enabledThumbBorder: "#0078D7"
+    property color disabledThumbBorder: "#404040"
+    property color enabledTrackFill: "#0078D7"
+    property color disabledTrackFill: "#404040"
+
     //the trail of the slider
     background: Rectangle {
             x: control.leftPadding
@@ -24,13 +21,14 @@ Slider{
             width: control.availableWidth
             height: implicitHeight
             radius: 2
-            color: enabled? "#bdbebf": disabledTextColor
+            //color: enabled? "#bdbebf": disabledTextColor
+            color: enabled? enabledTextColor : disabledTextColor
 
             //the portion of the trail to the left of the thumb
             Rectangle {
                 width: control.visualPosition * parent.width
                 height: parent.height
-                color: "#0078D7"
+                color: parent.enabled ? enabledTrackFill : disabledTrackFill
                 radius: 2
             }
         }
@@ -43,7 +41,7 @@ Slider{
             implicitHeight: 10
             radius: 5
             color: "black"
-            border.color: "#0078D7"
+            border.color: parent.enabled ? enabledThumbBorder : disabledThumbBorder
             border.width: 2
         }
 
