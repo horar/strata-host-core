@@ -130,5 +130,7 @@
         <file>advancedControls/PopUpMenu.qml</file>
         <file>advancedControls/AdvancedSlider.qml</file>
         <file>advancedControls/AdvancedPortSettings.qml</file>
+        <file>advancedControls/AdvancedIconList.qml</file>
+        <file>advancedControls/AdvancedPort.qml</file>
     </qresource>
 </RCC>
