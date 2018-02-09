@@ -126,7 +126,7 @@ Item {
 
             Label{
                 id: boardSettingsLabel
-                text: "Board Settings"
+                text: "System Settings"
                 font.family: "Helvetica"
                 font.pointSize: mediumFontSize
                 color: "#D8D8D8"
