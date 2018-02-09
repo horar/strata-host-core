@@ -18,20 +18,44 @@ Item {
             Layout.preferredHeight : boardSettings.fullHeight
             color: "black"
 
-            NumberAnimation{
+            SequentialAnimation{
                 id: collapseBoardSettings
-                target: boardSettings;
-                property: "Layout.preferredHeight";
-                to: boardSettings.collapsedHeight;
-                duration: settings.collapseAnimationSpeed;
+
+                PropertyAnimation{
+                    targets: [faultProtectionLabel, shutdownButton, restartButton, noProtectionButton, dataConfigurationLabel,
+                    chargeOnlyButton, passiveButton, redriverButton,
+                    inputLimitingGroup, inputLimitingGroup.children, temperatureLimitingGroup, temperatureLimitingGroup.chidren]
+                    property:"opacity"
+                    to: 0
+                    duration:500
+                }
+                NumberAnimation{
+                    target: boardSettings;
+                    property: "Layout.preferredHeight";
+                    to: boardSettings.collapsedHeight;
+                    duration: settings.collapseAnimationSpeed;
+                }
             }
 
-            NumberAnimation {
+            SequentialAnimation{
                 id: expandBoardSettings
-                target: boardSettings
-                property: "Layout.preferredHeight";
-                to: boardSettings.fullHeight;
-                duration: settings.collapseAnimationSpeed;
+
+                NumberAnimation {
+                    target: boardSettings
+                    property: "Layout.preferredHeight";
+                    to: boardSettings.fullHeight;
+                    duration: settings.collapseAnimationSpeed;
+                }
+                PropertyAnimation{
+                    targets: [faultProtectionLabel, shutdownButton, restartButton, noProtectionButton, dataConfigurationLabel,
+                    chargeOnlyButton, passiveButton, redriverButton,
+                    inputLimitingGroup, inputLimitingGroup.children, temperatureLimitingGroup, temperatureLimitingGroup.chidren]
+
+                    property:"opacity"
+                    to: 1.0
+                    duration:500
+                }
+
             }
 
             Button{

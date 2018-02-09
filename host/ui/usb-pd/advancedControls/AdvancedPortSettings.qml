@@ -35,21 +35,49 @@ Rectangle{
         portvoltage7Slider.value = minimumVoltage;
     }
 
-    NumberAnimation{
+    SequentialAnimation{
         id: collapsePortSettings
-        target: portSettings;
-        property: "Layout.preferredHeight";
-        to: portSettings.collapsedHeight;
-        duration: settings.collapseAnimationSpeed
+
+        PropertyAnimation{
+            targets: [portMaxPowerText,portMaxPowerCombo, portMaxPowerUnitText,portCableCompensationText,
+                portCableCompensationTextInputRect, portCableCompensationUnitText, portCableCompensationSlider, voltageCompensationText,
+            voltageCompensationTextInputRect, voltageCompensationUnitText,voltageCompensationSlider, maxCurrentText,
+            maxCurrentTextInputRect, maxCurrentUnitText, maxCurrentSlider, portAdvertizedVoltagesGroup]
+            property:"opacity"
+            to: 0
+            duration:500
+        }
+        NumberAnimation{
+            target: portSettings;
+            property: "Layout.preferredHeight";
+            to: portSettings.collapsedHeight;
+            duration: settings.collapseAnimationSpeed;
+        }
     }
 
-    NumberAnimation {
+    SequentialAnimation{
         id: expandPortSettings
-        target: portSettings
-        property: "Layout.preferredHeight";
-        to: portSettings.fullHeight
-        duration: settings.collapseAnimationSpeed;
+
+        NumberAnimation {
+            target: portSettings
+            property: "Layout.preferredHeight";
+            to: portSettings.fullHeight;
+            duration: settings.collapseAnimationSpeed;
+        }
+        PropertyAnimation{
+            targets: [portMaxPowerText,portMaxPowerCombo, portMaxPowerUnitText,portCableCompensationText,
+                portCableCompensationTextInputRect, portCableCompensationUnitText, portCableCompensationSlider, voltageCompensationText,
+            voltageCompensationTextInputRect, voltageCompensationUnitText,voltageCompensationSlider, maxCurrentText,
+            maxCurrentTextInputRect, maxCurrentUnitText, maxCurrentSlider, portAdvertizedVoltagesGroup]
+
+            property:"opacity"
+            to: 1.0
+            duration:500
+        }
+
     }
+
+
 
     Button{
         id: portSettingsDisclosureButton
