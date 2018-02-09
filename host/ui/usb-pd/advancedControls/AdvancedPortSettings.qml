@@ -256,7 +256,7 @@ Rectangle{
         anchors.left:maxCurrentUnitText.right
         anchors.leftMargin: 5
         anchors.right:parent.right
-        anchors.rightMargin: 10
+        anchors.rightMargin: 30
         anchors.verticalCenter: maxCurrentText.verticalCenter
         height:10
         from: 3
