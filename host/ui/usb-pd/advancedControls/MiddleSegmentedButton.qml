@@ -18,6 +18,7 @@ Button {
         font: parent.font
         color: parent.checked ? checkedTextColor : uncheckedTextColor
         verticalAlignment: Text.AlignVCenter
+        horizontalAlignment: Text.Center
     }
 
     background: Canvas{
