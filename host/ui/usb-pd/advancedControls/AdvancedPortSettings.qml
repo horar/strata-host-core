@@ -298,7 +298,7 @@ Rectangle{
             id: portCableCompensationTextInputRect
             color: "#838484"
             anchors.left:portCableCompensationText.right
-            anchors.leftMargin: 10
+            anchors.leftMargin: 5
             anchors.verticalCenter: portCableCompensationText.verticalCenter
             height:15
             width:30
@@ -368,7 +368,7 @@ Rectangle{
             id: voltageCompensationTextInputRect
             color: "#838484"
             anchors.left:voltageCompensationText.right
-            anchors.leftMargin: 10
+            anchors.leftMargin: 5
             anchors.verticalCenter: voltageCompensationText.verticalCenter
             height:15
             width:30

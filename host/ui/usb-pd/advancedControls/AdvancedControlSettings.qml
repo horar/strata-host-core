@@ -178,7 +178,7 @@ Item {
                 uncheckedTextColor: unselectedButtonSegmentTextColor
                 ButtonGroup.group: faultProtectionGroup
                 height: 25
-                width:75
+                width:90
 
             }
             MiddleSegmentedButton{
@@ -195,7 +195,7 @@ Item {
                 uncheckedTextColor: unselectedButtonSegmentTextColor
                 ButtonGroup.group: faultProtectionGroup
                 height: 25
-                width:60
+                width:65
             }
             RightSegmentedButton{
                 id:noProtectionButton
@@ -211,7 +211,7 @@ Item {
                 uncheckedTextColor: unselectedButtonSegmentTextColor
                 ButtonGroup.group: faultProtectionGroup
                 height: 25
-                width:60
+                width:75
             }
 
             Label{
@@ -289,7 +289,7 @@ Item {
                 anchors.rightMargin: 20
                 anchors.top: dataConfigurationLabel.bottom
                 anchors.topMargin: dataConfigurationLabel.height
-                height: 100
+                height: 75
 
                 Text{
                     id:inputLimitingText
@@ -441,61 +441,7 @@ Item {
 
                 }
 
-                Text{
-                    id:minimumInputVoltageText
-                    text:"Minimum input voltage:"
-                    font.family: "helvetica"
-                    font.pointSize: smallFontSize
-                    horizontalAlignment: Text.AlignRight
-                    color: enabled ? enabledTextColor : disabledTextColor
-                    anchors.right:parent.right
-                    anchors.rightMargin: parent.width*.6
-                    anchors.top: outputLimitText.bottom
-                    anchors.topMargin: 10
-                }
-                Label{
-                    id:minimumInputLabel
-                    anchors.left:minimumInputVoltageText.right
-                    anchors.leftMargin: 10
-                    anchors.verticalCenter: minimumInputVoltageText.verticalCenter
-                    anchors.verticalCenterOffset: 2
-                    color:enabled ? enabledTextColor : disabledTextColor
-                    text:minimumInputVoltageSlider.value
-                    verticalAlignment: TextInput.AlignTop
-                    font.family: "helvetica"
-                    font.pointSize: smallFontSize
-                    height:15
-                    width:20
-                }
-                Text{
-                    id:minimumInputUnitText
-                    text:"V"
-                    font.family: "helvetica"
-                    font.pointSize: smallFontSize
-                    color: enabled ? enabledTextColor : disabledTextColor
-                    anchors.left:minimumInputLabel.right
-                    anchors.leftMargin: 5
-                    anchors.verticalCenter: minimumInputVoltageText.verticalCenter
 
-                }
-
-                AdvancedSlider{
-                    id:minimumInputVoltageSlider
-                    anchors.left:minimumInputUnitText.right
-                    anchors.leftMargin: 5
-                    anchors.right:parent.right
-                    anchors.rightMargin: 10
-                    anchors.verticalCenter: minimumInputVoltageText.verticalCenter
-                    height:10
-                    from: 5
-                    to:32
-                    value:5
-                    stepSize: 0.0
-
-                    onMoved: {
-                        minimumInputLabel.text = Math.round(minimumInputVoltageSlider.value *10)/10
-                    }
-                }
 
             }
 
@@ -511,7 +457,7 @@ Item {
                 anchors.rightMargin: 20
                 anchors.top: inputLimitingGroup.bottom
                 anchors.topMargin: boardSettingsLabel.height
-                height: 100
+                height: 75
 
                 Text{
                     id:temperatureLimitingText
@@ -544,7 +490,7 @@ Item {
                         color: temperatureLimitingSwitch.checked ? "#0078D7"  : "black"
                         border.color: temperatureLimitingSwitch.checked ? "#0078D7" : "white"
 
-                          //this is the thumb that moves
+                        //this is the thumb that moves
                         Rectangle {
                             x: temperatureLimitingSwitch.checked ? parent.width - width : 0
                             y: parent.height / 2 - height / 2
@@ -661,71 +607,128 @@ Item {
                     anchors.verticalCenter: boardOutputLimitText.verticalCenter
 
                 }
+            }
 
-                Text{
-                    id:faultTempText
-                    text:"Fault when temperature reaches:"
-                    font.family: "helvetica"
-                    font.pointSize: smallFontSize
-                    horizontalAlignment: Text.AlignRight
-                    color: enabled ? enabledTextColor : disabledTextColor
-                    anchors.right:parent.right
-                    anchors.rightMargin: parent.width*.4
-                    anchors.top: boardOutputLimitText.bottom
-                    anchors.topMargin: 10
-                }
+//--------------------------------------
+//     System faults
+ //--------------------------------------
 
-                Label{
-                    id:faultTempLabel
-                    anchors.left:faultTempText.right
-                    anchors.leftMargin: 10
-                    anchors.verticalCenter: faultTempText.verticalCenter
-                    anchors.verticalCenterOffset: 2
-                    color:enabled ? enabledTextColor : disabledTextColor
-                    text:faultTempSlider.value
-                    verticalAlignment: TextInput.AlignTop
-                    font.family: "helvetica"
-                    font.pointSize: smallFontSize
-                    height:15
-                    width:20
-                }
-
-
-                Text{
-                    id:faultTempUnitText
-                    text:"°C"
-                    font.family: "helvetica"
-                    font.pointSize: smallFontSize
-                    color: enabled ? enabledTextColor : disabledTextColor
-                    anchors.left:faultTempLabel.right
-                    anchors.leftMargin: 5
-                    anchors.verticalCenter: faultTempText.verticalCenter
-
-                }
-
-                AdvancedSlider{
-                    id:faultTempSlider
-                    anchors.left:faultTempUnitText.right
-                    anchors.leftMargin: 5
-                    anchors.right:parent.right
-                    anchors.rightMargin: 10
-                    anchors.verticalCenter: faultTempText.verticalCenter
-                    height:10
-                    from: 25
-                    to:100
-                    value:5
-                    stepSize: 0.0
-
-                    onMoved: {
-                        faultTempLabel.text = Math.round(faultTempSlider.value *10)/10
-
-                    }
-                }
-
+            Text{
+                id:minimumInputVoltageText
+                text:"Fault when input falls below:"
+                font.family: "helvetica"
+                font.pointSize: smallFontSize
+                horizontalAlignment: Text.AlignRight
+                color: enabled ? enabledTextColor : disabledTextColor
+                anchors.right:parent.right
+                anchors.rightMargin: parent.width*.5
+                anchors.top: temperatureLimitingGroup.bottom
+                anchors.topMargin: 10
+            }
+            Label{
+                id:minimumInputLabel
+                anchors.left:minimumInputVoltageText.right
+                anchors.leftMargin: 10
+                anchors.verticalCenter: minimumInputVoltageText.verticalCenter
+                anchors.verticalCenterOffset: 2
+                color:enabled ? enabledTextColor : disabledTextColor
+                text:minimumInputVoltageSlider.value
+                verticalAlignment: TextInput.AlignTop
+                font.family: "helvetica"
+                font.pointSize: smallFontSize
+                height:15
+                width:20
+            }
+            Text{
+                id:minimumInputUnitText
+                text:"V"
+                font.family: "helvetica"
+                font.pointSize: smallFontSize
+                color: enabled ? enabledTextColor : disabledTextColor
+                anchors.left:minimumInputLabel.right
+                anchors.leftMargin: 5
+                anchors.verticalCenter: minimumInputVoltageText.verticalCenter
 
             }
 
+            AdvancedSlider{
+                id:minimumInputVoltageSlider
+                anchors.left:minimumInputUnitText.right
+                anchors.leftMargin: 5
+                anchors.right:parent.right
+                anchors.rightMargin: 25
+                anchors.verticalCenter: minimumInputVoltageText.verticalCenter
+                height:10
+                from: 5
+                to:32
+                value:5
+                stepSize: 0.0
+
+                onMoved: {
+                    minimumInputLabel.text = Math.round(minimumInputVoltageSlider.value *10)/10
+                }
+            }
+
+            Text{
+                id:faultTempText
+                text:"Fault when temperature reaches:"
+                font.family: "helvetica"
+                font.pointSize: smallFontSize
+                horizontalAlignment: Text.AlignRight
+                color: enabled ? enabledTextColor : disabledTextColor
+                anchors.right:parent.right
+                anchors.rightMargin: parent.width*.5
+                anchors.top: minimumInputVoltageText.bottom
+                anchors.topMargin: 10
+            }
+
+            Label{
+                id:faultTempLabel
+                anchors.left:faultTempText.right
+                anchors.leftMargin: 10
+                anchors.verticalCenter: faultTempText.verticalCenter
+                anchors.verticalCenterOffset: 2
+                color:enabled ? enabledTextColor : disabledTextColor
+                text:faultTempSlider.value
+                verticalAlignment: TextInput.AlignTop
+                font.family: "helvetica"
+                font.pointSize: smallFontSize
+                height:15
+                width:20
+            }
+
+
+            Text{
+                id:faultTempUnitText
+                text:"°C"
+                font.family: "helvetica"
+                font.pointSize: smallFontSize
+                color: enabled ? enabledTextColor : disabledTextColor
+                anchors.left:faultTempLabel.right
+                anchors.leftMargin: 5
+                anchors.verticalCenter: faultTempText.verticalCenter
+
+            }
+
+            AdvancedSlider{
+                id:faultTempSlider
+                anchors.left:faultTempUnitText.right
+                anchors.leftMargin: 5
+                anchors.right:parent.right
+                anchors.rightMargin: 25
+                anchors.verticalCenter: faultTempText.verticalCenter
+                height:10
+                from: 25
+                to:100
+                value:5
+                stepSize: 0.0
+
+                onMoved: {
+                    faultTempLabel.text = Math.round(faultTempSlider.value *10)/10
+
+                }
         }
+        }   //board settings rect
 
         //-----------------------------------------------
         //  Port 1 settings
