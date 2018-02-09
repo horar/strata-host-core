@@ -8,7 +8,7 @@ import QtGraphicalEffects 1.0
 //-----------------------------------------------
 Rectangle{
     id:portSettings
-    property int fullHeight:300
+    property int fullHeight:310
     property int collapsedHeight:60
     property var portName:"Port n"
     property var minimumVoltage: 4.95
@@ -39,9 +39,8 @@ Rectangle{
         id: collapsePortSettings
 
         PropertyAnimation{
-            targets: [portMaxPowerText,portMaxPowerCombo, portMaxPowerUnitText,portCableCompensationText,
-                portCableCompensationTextInputRect, portCableCompensationUnitText, portCableCompensationSlider, voltageCompensationText,
-            voltageCompensationTextInputRect, voltageCompensationUnitText,voltageCompensationSlider, maxCurrentText,
+            targets: [portMaxPowerText,portMaxPowerCombo, portMaxPowerUnitText,cableCompensationGroup.children,
+                cableCompensationGroup, maxCurrentText,
             maxCurrentTextInputRect, maxCurrentUnitText, maxCurrentSlider, portAdvertizedVoltagesGroup]
             property:"opacity"
             to: 0
@@ -65,9 +64,8 @@ Rectangle{
             duration: settings.collapseAnimationSpeed;
         }
         PropertyAnimation{
-            targets: [portMaxPowerText,portMaxPowerCombo, portMaxPowerUnitText,portCableCompensationText,
-                portCableCompensationTextInputRect, portCableCompensationUnitText, portCableCompensationSlider, voltageCompensationText,
-            voltageCompensationTextInputRect, voltageCompensationUnitText,voltageCompensationSlider, maxCurrentText,
+            targets: [portMaxPowerText,portMaxPowerCombo, portMaxPowerUnitText,cableCompensationGroup.children,
+                cableCompensationGroup, maxCurrentText,
             maxCurrentTextInputRect, maxCurrentUnitText, maxCurrentSlider, portAdvertizedVoltagesGroup]
 
             property:"opacity"
@@ -202,150 +200,6 @@ Rectangle{
 
     }
 
-
-    Text{
-        id:portCableCompensationText
-        text:"Cable compensation step:"
-        font.family: "helvetica"
-        font.pointSize: smallFontSize
-        horizontalAlignment: Text.AlignRight
-        color: "#D8D8D8"
-        anchors.right:parent.right
-        anchors.rightMargin: parent.width*.6
-        anchors.top: portMaxPowerText.bottom
-        anchors.topMargin: 10
-
-    }
-
-    Rectangle{
-         id: portCableCompensationTextInputRect
-         color: "#838484"
-         anchors.left:portCableCompensationText.right
-         anchors.leftMargin: 10
-         anchors.verticalCenter: portCableCompensationText.verticalCenter
-         height:15
-         width:30
-
-        TextField{
-            id:portCableCompensationTextInput
-            anchors.fill: parent
-            anchors.leftMargin: 2
-            anchors.topMargin: 5
-
-            horizontalAlignment: Qt.AlignLeft
-
-            font.family: "helvetica"
-            font.pointSize: 12
-            color:enabled ? enabledTextColor : disabledTextColor
-            text: portCableCompensationSlider.value
-            background: Rectangle {
-                color:"transparent"
-            }
-        }
-    }
-
-
-    Text{
-        id:portCableCompensationUnitText
-        text:"A"
-        font.family: "helvetica"
-        font.pointSize: smallFontSize
-        color: "#D8D8D8"
-        anchors.left:portCableCompensationTextInputRect.right
-        anchors.leftMargin: 5
-        anchors.verticalCenter: portCableCompensationText.verticalCenter
-
-    }
-
-    AdvancedSlider{
-        id:portCableCompensationSlider
-        anchors.left:portCableCompensationUnitText.right
-        anchors.leftMargin: 5
-        anchors.right:parent.right
-        anchors.rightMargin: 10
-        anchors.verticalCenter: portCableCompensationText.verticalCenter
-        height:10
-        from: .25
-        to:2
-        value:.25
-        stepSize: 0.0
-
-        onValueChanged: {
-            portCableCompensationTextInput.text = Math.round (portCableCompensationSlider.value *100)/100
-        }
-    }
-
-    Text{
-        id:voltageCompensationText
-        text:"Voltage compensation:"
-        font.family: "helvetica"
-        font.pointSize: smallFontSize
-        horizontalAlignment: Text.AlignRight
-        color: "#D8D8D8"
-        anchors.right:parent.right
-        anchors.rightMargin: parent.width*.6
-        anchors.top: portCableCompensationText.bottom
-        anchors.topMargin: 10
-    }
-    Rectangle{
-         id: voltageCompensationTextInputRect
-         color: "#838484"
-         anchors.left:voltageCompensationText.right
-         anchors.leftMargin: 10
-         anchors.verticalCenter: voltageCompensationText.verticalCenter
-         height:15
-         width:30
-
-        TextField{
-            id:voltageCompensationTextInput
-            anchors.fill: parent
-            anchors.leftMargin: 2
-            anchors.topMargin: 5
-
-            horizontalAlignment: Qt.AlignLeft
-
-            font.family: "helvetica"
-            font.pointSize: 12
-            color:enabled ? enabledTextColor : disabledTextColor
-            text: voltageCompensationSlider.value
-            background: Rectangle {
-                color:"transparent"
-            }
-        }
-    }
-
-    Text{
-        id:voltageCompensationUnitText
-        text:"mV"
-        font.family: "helvetica"
-        font.pointSize: smallFontSize
-        color: "#D8D8D8"
-        anchors.left:voltageCompensationTextInputRect.right
-        anchors.leftMargin: 5
-        anchors.verticalCenter: voltageCompensationText.verticalCenter
-
-    }
-
-    AdvancedSlider{
-        id:voltageCompensationSlider
-        anchors.left:voltageCompensationUnitText.right
-        anchors.leftMargin: 5
-        anchors.right:parent.right
-        anchors.rightMargin: 10
-        anchors.verticalCenter: voltageCompensationText.verticalCenter
-        height:10
-        from: 0
-        to:200
-        value:0
-        stepSize: 50.0
-
-        onValueChanged: {
-            voltageCompensationTextInput.text = voltageCompensationSlider.value
-        }
-    }
-
-
-
     Text{
         id:maxCurrentText
         text:"Current limit:"
@@ -355,7 +209,7 @@ Rectangle{
         color: "#D8D8D8"
         anchors.right:parent.right
         anchors.rightMargin: parent.width*.6
-        anchors.top: voltageCompensationText.bottom
+        anchors.top: portMaxPowerText.bottom
         anchors.topMargin: 10
     }
     Rectangle{
@@ -378,7 +232,7 @@ Rectangle{
             font.family: "helvetica"
             font.pointSize: smallFontSize
             color:enabled ? enabledTextColor : disabledTextColor
-            text: portCableCompensationSlider.value
+            text: maxCurrentSlider.value
             background: Rectangle {
                 color:"transparent"
             }
@@ -415,6 +269,163 @@ Rectangle{
         }
     }
 
+    Rectangle{
+        id:cableCompensationGroup
+        color:"#33FFFFFF"
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.leftMargin: 20
+        anchors.rightMargin: 20
+        anchors.top: maxCurrentText.bottom
+        anchors.topMargin: 10
+        height: 50
+
+        Text{
+            id:portCableCompensationText
+            text:"For every cable loss of:"
+            font.family: "helvetica"
+            font.pointSize: smallFontSize
+            horizontalAlignment: Text.AlignRight
+            color: "#D8D8D8"
+            anchors.right:parent.right
+            anchors.rightMargin: parent.width*.6
+            anchors.top: cableCompensationGroup.top
+            anchors.topMargin: 10
+
+        }
+
+        Rectangle{
+            id: portCableCompensationTextInputRect
+            color: "#838484"
+            anchors.left:portCableCompensationText.right
+            anchors.leftMargin: 10
+            anchors.verticalCenter: portCableCompensationText.verticalCenter
+            height:15
+            width:30
+
+            TextField{
+                id:portCableCompensationTextInput
+                anchors.fill: parent
+                anchors.leftMargin: 2
+                anchors.topMargin: 5
+
+                horizontalAlignment: Qt.AlignLeft
+
+                font.family: "helvetica"
+                font.pointSize: 12
+                color:enabled ? enabledTextColor : disabledTextColor
+                text: portCableCompensationSlider.value
+                background: Rectangle {
+                    color:"transparent"
+                }
+            }
+        }
+
+
+        Text{
+            id:portCableCompensationUnitText
+            text:"A"
+            font.family: "helvetica"
+            font.pointSize: smallFontSize
+            color: "#D8D8D8"
+            anchors.left:portCableCompensationTextInputRect.right
+            anchors.leftMargin: 5
+            anchors.verticalCenter: portCableCompensationText.verticalCenter
+
+        }
+
+        AdvancedSlider{
+            id:portCableCompensationSlider
+            anchors.left:portCableCompensationUnitText.right
+            anchors.leftMargin: 5
+            anchors.right:parent.right
+            anchors.rightMargin: 10
+            anchors.verticalCenter: portCableCompensationText.verticalCenter
+            height:10
+            from: .25
+            to:2
+            value:.25
+            stepSize: 0.0
+
+            onValueChanged: {
+                portCableCompensationTextInput.text = Math.round (portCableCompensationSlider.value *100)/100
+            }
+        }
+
+        Text{
+            id:voltageCompensationText
+            text:"Bias output by:"
+            font.family: "helvetica"
+            font.pointSize: smallFontSize
+            horizontalAlignment: Text.AlignRight
+            color: "#D8D8D8"
+            anchors.right:parent.right
+            anchors.rightMargin: parent.width*.6
+            anchors.top: portCableCompensationText.bottom
+            anchors.topMargin: 10
+        }
+        Rectangle{
+            id: voltageCompensationTextInputRect
+            color: "#838484"
+            anchors.left:voltageCompensationText.right
+            anchors.leftMargin: 10
+            anchors.verticalCenter: voltageCompensationText.verticalCenter
+            height:15
+            width:30
+
+            TextField{
+                id:voltageCompensationTextInput
+                anchors.fill: parent
+                anchors.leftMargin: 2
+                anchors.topMargin: 5
+
+                horizontalAlignment: Qt.AlignLeft
+
+                font.family: "helvetica"
+                font.pointSize: 12
+                color:enabled ? enabledTextColor : disabledTextColor
+                text: voltageCompensationSlider.value
+                background: Rectangle {
+                    color:"transparent"
+                }
+            }
+        }
+
+        Text{
+            id:voltageCompensationUnitText
+            text:"mV"
+            font.family: "helvetica"
+            font.pointSize: smallFontSize
+            color: "#D8D8D8"
+            anchors.left:voltageCompensationTextInputRect.right
+            anchors.leftMargin: 5
+            anchors.verticalCenter: voltageCompensationText.verticalCenter
+
+        }
+
+        AdvancedSlider{
+            id:voltageCompensationSlider
+            anchors.left:voltageCompensationUnitText.right
+            anchors.leftMargin: 5
+            anchors.right:parent.right
+            anchors.rightMargin: 10
+            anchors.verticalCenter: voltageCompensationText.verticalCenter
+            height:10
+            from: 0
+            to:200
+            value:0
+            stepSize: 50.0
+
+            onValueChanged: {
+                voltageCompensationTextInput.text = voltageCompensationSlider.value
+            }
+        }
+    }
+
+
+
+
+
     //-----------------------------------------------
     //  advertized voltages group
     //-----------------------------------------------
@@ -425,7 +436,7 @@ Rectangle{
         anchors.right: parent.right
         anchors.leftMargin: 20
         anchors.rightMargin: 20
-        anchors.top: maxCurrentText.bottom
+        anchors.top: cableCompensationGroup.bottom
         anchors.topMargin: 10
         height: 150
         Text{

@@ -69,7 +69,7 @@ Rectangle {
 
         ScrollView{
             id:settings
-            contentHeight: 950// this has to be set manually based on the height of the controlSettings
+            contentHeight: 970// this has to be set manually based on the height of the controlSettings
             //columns 0 and 1, both rows
             Layout.column: 0
             Layout.columnSpan: 1

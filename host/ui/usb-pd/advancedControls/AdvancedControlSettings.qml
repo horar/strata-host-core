@@ -732,7 +732,7 @@ Item {
         //-----------------------------------------------
         AdvancedPortSettings{
             id:port1Settings
-            fullHeight:300
+            fullHeight:310
             collapsedHeight:60
             portName:"Port 1"
 
@@ -745,7 +745,7 @@ Item {
         //--------------------------
         AdvancedPortSettings{
             id:port2Settings
-            fullHeight:300
+            fullHeight:310
             collapsedHeight:60
             portName:"Port 2"
 
