@@ -39,7 +39,7 @@ Rectangle{
         id: collapsePortSettings
 
         PropertyAnimation{
-            targets: [portMaxPowerText,portMaxPowerCombo, portMaxPowerUnitText,cableCompensationGroup.children,
+            targets: [portMaxPowerText,portMaxPowerCombo, portMaxPowerUnitText,
                 cableCompensationGroup, maxCurrentText,
             maxCurrentTextInputRect, maxCurrentUnitText, maxCurrentSlider, portAdvertizedVoltagesGroup]
             property:"opacity"
@@ -64,7 +64,7 @@ Rectangle{
             duration: settings.collapseAnimationSpeed;
         }
         PropertyAnimation{
-            targets: [portMaxPowerText,portMaxPowerCombo, portMaxPowerUnitText,cableCompensationGroup.children,
+            targets: [portMaxPowerText,portMaxPowerCombo, portMaxPowerUnitText,
                 cableCompensationGroup, maxCurrentText,
             maxCurrentTextInputRect, maxCurrentUnitText, maxCurrentSlider, portAdvertizedVoltagesGroup]
 
