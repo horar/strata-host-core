@@ -132,5 +132,6 @@
         <file>advancedControls/AdvancedPortSettings.qml</file>
         <file>advancedControls/AdvancedIconList.qml</file>
         <file>advancedControls/AdvancedPort.qml</file>
+        <file>images/icons/maxPowerIcon.svg</file>
     </qresource>
 </RCC>
