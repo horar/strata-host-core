@@ -28,7 +28,7 @@ The only items the script requires from the user is what branch to pull the late
 
 What you'll need: 
 Docker toolbox for Windows 7 - https://docs.docker.com/toolbox/toolbox_install_windows/
-Download the spyglass docker container (this has all the compile toolchains installed) 
+Download the spyglass docker container (this has all the compile toolchains installed). This is located at cobra.spyglass.tech/share/alopez 
 
 1) Run build_hcs_on_windows.bat with arguments of <branchname> <output_directory>
 2) Wait a minute or two...
