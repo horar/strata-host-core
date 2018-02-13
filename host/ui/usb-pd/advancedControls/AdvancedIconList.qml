@@ -1,7 +1,7 @@
 import QtQuick 2.7
 import tech.spyglass.ImplementationInterfaceBinding 1.0
 import QtQuick.Controls 1.4
-
+import "../framework"
 
 
 Rectangle {
@@ -61,20 +61,29 @@ Rectangle {
     property alias power: powerValue;
 
     Column {
-        spacing: 8
-        anchors { top: container.top; topMargin: parent.height*.15
+        spacing: 5
+        anchors { top: container.top; //topMargin: parent.height*.15
             bottom:container.bottom}
 
         SGIconListItem {
             id: negotiatedValues
             width:container.width/4; height: width
             icon: "../images/icons/leftArrow.svg"
-            text: container.targetVoltage.toFixed(0) +" V   "//+ container.portCurrent.toFixed(1)+" A"
+            text: container.targetVoltage.toFixed(0) +" V," + container.portCurrent.toFixed(1)+" A," +
+                 container.targetVoltage.toFixed(0) * container.portCurrent.toFixed(1)+" W"
 
             MouseArea {
                 anchors { fill: parent }
                 onClicked: { outputVoltageAndCurrentGraph.open() }
             }
+        }
+
+        SGIconListItem {
+            id:  maximumPowerValue
+            width: container.width/4; height: width
+            icon: "../images/icons/maxPowerIcon.svg"
+            text: container.outputVoltage.toFixed(1) + " W"
+
         }
 
         SGIconListItem {

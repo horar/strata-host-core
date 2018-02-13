@@ -117,7 +117,11 @@ Rectangle {
             Layout.fillHeight:true
             z:1     //set the z level higher so connectors go behind the board
             color:"black"
-            AdvancedBoard{}
+            AdvancedBoard{
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.bottom: parent.bottom
+                //anchors.bottomMargin: parent.height/2
+            }
 
             Text{
                 id:usbPDText

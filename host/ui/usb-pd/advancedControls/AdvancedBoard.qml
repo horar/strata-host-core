@@ -9,7 +9,8 @@ import "../framework"
 
 Rectangle {
     id: device
-    width: parent.width; height: parent.width
+    width: parent.width; height: parent.width * 1.5
+
     property alias deviceLayout: deviceLayout
 
     //  Getting realtime data for input voltage
@@ -31,8 +32,11 @@ Rectangle {
             device.portCurrent = value;
         }
     }
-    anchors { horizontalCenter: parent.horizontalCenter; verticalCenter: parent.verticalCenter }
+    //anchors { horizontalCenter: parent.horizontalCenter; verticalCenter: parent.verticalCenter }
+    anchors {horizontalCenter: parent.horizontalCenter; bottom: parent.bottom; top:parent.top
+            topMargin:parent.height/4}
     color:"black"
+
 
     //a grid for the the device, including the input plug
     //deviceGrid
@@ -68,7 +72,7 @@ Rectangle {
 
             Image {
                 id:deviceOutline
-                width:parent.width ; height: width
+                width:parent.width ; height: parent.width*1.5
                 anchors{ horizontalCenter: parent.horizontalCenter
                     horizontalCenterOffset: 0
                     verticalCenter: parent.verticalCenter
@@ -77,24 +81,72 @@ Rectangle {
 
             }
 
+            Rectangle{
+                id:onLogoRect
+                width:60
+                height:60
+                anchors{ left:parent.left
+                         leftMargin: parent.width *.05
+                    verticalCenter: parent.verticalCenter}
+                color:"transparent"
 
-//            DropShadow {
-//                anchors.fill: deviceOutline
-//                horizontalOffset: 3
-//                verticalOffset: 6
-//                radius: 12.0
-//                samples: 24
-//                color: "#60000000"
-//                source: deviceOutline
-//            }
+                Image {
+                    id:onLogo
+                    width: parent.width; height: parent.width
+                    //anchors{ verticalCenter: parent.verticalCenter; left:parent.left; leftMargin: parent.width/8 }
+                    source:"../images/icons/onLogoGreen.svg"
+                    layer.enabled: true
+                    layer.effect:  DropShadow {
+                        anchors.fill: onLogo
+                        horizontalOffset: 3
+                        verticalOffset: 6
+                        radius: 12.0
+                        samples: 24
+                        color: "#60000000"
+                        source: onLogo
+                    }
+
+                    ScaleAnimator {
+                        id: increaseOnMouseEnter
+                        target: onLogo;
+                        from: 1;
+                        to: 1.2;
+                        duration: 200
+                        running: false
+                    }
+
+                    ScaleAnimator {
+                        id: decreaseOnMouseExit
+                        target: onLogo;
+                        from: 1.2;//onLogo.scale;
+                        to: 1;
+                        duration: 200
+                        running: false
+                    }
+
+                    MouseArea {
+                        id: imageMouse
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        cursorShape: Qt.PointingHandCursor
+                        onEntered:{
+                            increaseOnMouseEnter.start()
+                        }
+                        onExited:{
+                            decreaseOnMouseExit.start()
+                        }
+                        onClicked: { inputPowergraph.open() }
+                    }
+                }
+            }
 
             //a grid for the icon, and ports
             GridLayout {
                 id: deviceGridLayout
-                columns: 3
+                columns: 4
                 rows: 2
                 columnSpacing: 0
-                rowSpacing: 0
+                rowSpacing: parent.height/16
                 width: parent.width; height: parent.height *.75
 
                 anchors { horizontalCenter: parent.horizontalCenter
@@ -113,71 +165,13 @@ Rectangle {
                     return deviceGridLayoutRowMulti * item.Layout.rowSpan
                 }
 
-                Rectangle {
-                    id:leftDeviceColumn
-                    color:"transparent"
-                    Layout.column: 0
-                    Layout.columnSpan: 1
-                    Layout.row: 0
-                    Layout.rowSpan: 2
-                    Layout.preferredWidth : deviceGridLayout.deviceGridLayoutWidth(this)
-                    Layout. preferredHeight : deviceGridLayout.deviceGridLayoutHeight(this)
 
-                    Image {
-                        id:onLogo
-                        width: parent.width*.75; height: parent.width*.75
-                        anchors{ verticalCenter: parent.verticalCenter; left:parent.left; leftMargin: parent.width/8 }
-                        source:"../images/icons/onLogoGreen.svg"
-                        layer.enabled: true
-                        layer.effect:  DropShadow {
-                            anchors.fill: onLogo
-                            horizontalOffset: 3
-                            verticalOffset: 6
-                            radius: 12.0
-                            samples: 24
-                            color: "#60000000"
-                            source: onLogo
-                        }
-
-                        ScaleAnimator {
-                            id: increaseOnMouseEnter
-                            target: onLogo;
-                            from: 1;
-                            to: 1.2;
-                            duration: 200
-                            running: false
-                        }
-
-                        ScaleAnimator {
-                            id: decreaseOnMouseExit
-                            target: onLogo;
-                            from: 1.2;//onLogo.scale;
-                            to: 1;
-                            duration: 200
-                            running: false
-                        }
-
-                        MouseArea {
-                            id: imageMouse
-                            anchors.fill: parent
-                            hoverEnabled: true
-                            cursorShape: Qt.PointingHandCursor
-                            onEntered:{
-                                increaseOnMouseEnter.start()
-                            }
-                            onExited:{
-                                decreaseOnMouseExit.start()
-                            }
-                            onClicked: { inputPowergraph.open() }
-                        }
-                    }
-                }
 
                 Rectangle {
                     id:topPortRect
                     color:"transparent"
                     Layout.column: 1
-                    Layout.columnSpan: 2
+                    Layout.columnSpan: 4
                     Layout.row: 0
                     Layout.rowSpan: 1
                     Layout.preferredWidth : deviceGridLayout.deviceGridLayoutWidth(this)
@@ -185,12 +179,12 @@ Rectangle {
                     border.color: "transparent"
                     radius: 10
 
-                    SGPortGroup {
+                    AdvancedPort {
                         id: portGroupPort1
                         width: parent.width; height:parent.height
                         text: "Port 1"
                         radius: 1
-                        color: "transparent"
+                        //color: "transparent"
                         portNumber: 1
                         inAdvancedMode: true
                     }
@@ -200,19 +194,19 @@ Rectangle {
                     id:bottomPortRect
                     color:"transparent"
                     Layout.column: 1
-                    Layout.columnSpan: 2
+                    Layout.columnSpan: 4
                     Layout.row: 1
                     Layout.rowSpan: 1
                     Layout.preferredWidth : deviceGridLayout.deviceGridLayoutWidth(this)
                     Layout.preferredHeight : deviceGridLayout.deviceGridLayoutHeight(this)
                     border { color: "transparent" }
 
-                    SGPortGroup {
+                    AdvancedPort {
                         id: portGroupPort2
                         width: parent.width; height:parent.height
                         text: "Port 2"
                         radius: 1
-                        color: "transparent"
+                        //color: "transparent"
                         portNumber: 2
                         inAdvancedMode: true
                     }

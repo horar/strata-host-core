@@ -2,9 +2,10 @@ import QtQuick 2.7
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 1.4
 import QtGraphicalEffects 1.0
+import "../framework"
 
 //This represents the port name, a divider line, and a set of icons and text that
-//represent the port properties, contained in an SGIconList
+//represent the port properties, contained in an AdvancedIconLIst
 Rectangle {
     id: container
     color: "transparent"
@@ -161,7 +162,7 @@ Rectangle {
             Component.onCompleted: {
                 //adjust font size based on platform
                 if (Qt.platform.os === "osx"){
-                    portTitle.font.pointSize = parent.width/10 > 0 ? parent.width/10 : 1;
+                    portTitle.font.pointSize = parent.width/15 > 0 ? parent.width/10 : 1;
                 }
                 else{
                     font.pointSize = Label.Fit
@@ -178,9 +179,9 @@ Rectangle {
                 //height:portNameAndDivider.height*.75
                 anchors{right:portNameAndDivider.right;
                     top:portNameAndDivider.top;
-                    topMargin: portNameAndDivider.height/4
+                    topMargin: portNameAndDivider.height/8
                     bottom:portNameAndDivider.bottom
-                    bottomMargin: portNameAndDivider.height/4}
+                    bottomMargin: portNameAndDivider.height/8}
             }
         }
 
@@ -196,11 +197,12 @@ Rectangle {
             color:"transparent"
 
 
-            SGIconList {
+            AdvancedIconList {
                 id:iconList
                 width: iconContainer.width
                 height: iconContainer.height
                 portNumber: container.portNumber
+                //opacity:1
             }
             Label {
                 id: disconnectMessage
@@ -229,6 +231,7 @@ Rectangle {
 
             }
         }
+
 
         Rectangle {
             id:usbJackContainer
