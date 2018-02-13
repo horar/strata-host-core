@@ -164,8 +164,8 @@ void ImplementationInterfaceBinding::setMaximumPortPower(int port,int value)
     QJsonObject cmdMessageObject;
     cmdMessageObject.insert("cmd", "request_usb_pd_maximum_power");
     QJsonObject payloadObject;
-    payloadObject.insert("Port_number",port);
-    payloadObject.insert("Watts", value);
+    payloadObject.insert("port",port);
+    payloadObject.insert("watts", value);
     qDebug() << "temp limit "<<value;
     cmdMessageObject.insert("payload",payloadObject);
     QJsonDocument doc(cmdMessageObject);
