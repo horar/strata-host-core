@@ -146,7 +146,7 @@ Rectangle {
                 columns: 4
                 rows: 2
                 columnSpacing: 0
-                rowSpacing: parent.height/16
+                //rowSpacing: parent.height/16
                 width: parent.width; height: parent.height *.75
 
                 anchors { horizontalCenter: parent.horizontalCenter
@@ -177,7 +177,6 @@ Rectangle {
                     Layout.preferredWidth : deviceGridLayout.deviceGridLayoutWidth(this)
                     Layout.preferredHeight : deviceGridLayout.deviceGridLayoutHeight(this)
                     border.color: "transparent"
-                    radius: 10
 
                     AdvancedPort {
                         id: portGroupPort1
@@ -229,8 +228,7 @@ Rectangle {
                 height:parent.height/7
                 anchors{ verticalCenter: parent.verticalCenter;
                     right:parent.right
-                    rightMargin: -17
-                    //horizontalCenter: parent.horizontalCenter ;
+                    //rightMargin: -17
                 }
                 source: "../images/leftPowerPlugWhite.svg"
             }
@@ -247,25 +245,63 @@ Rectangle {
                     }
                 }
                 width: inputPlugColumn.width-2
-                horizontalAlignment: Text.AlignRight
+                horizontalAlignment: Text.AlignHCenter
                 anchors {verticalCenter: parent.verticalCenter
-                        right:parent.right
-                        rightMargin: -10
+                    horizontalCenter: parent.horizontalCenter
+                    horizontalCenterOffset: parent.width/10
+                        //right:parent.right
+                        //rightMargin: -10
                         }
-                font{ family: "Helvetica"
+                font{ family: "Helvetica";
+                    pointSize: (Qt.platform.os === "osx") ? parent.width/4 +1 : Text.fit
+                    bold:true
                 }
-                font.pointSize: 9
                 color:"grey"
+
             }
 
-            Component.onCompleted: {
-                //adjust font size based on platform
-                if (Qt.platform.os === "osx"){
-                    inputPlugName.font.pointSize = parent.width/10 > 0 ? parent.width/25 : 1;
+
+        }
+
+        Rectangle {
+            id: connectors
+            Layout.column: 5
+            Layout.columnSpan: 1
+            Layout.row: 0
+            Layout.rowSpan: 1
+            Layout.preferredWidth : deviceGrid.devicePrefWidth(this)
+            Layout.preferredHeight : deviceGrid.devicePrefHeight(this)
+            color:"transparent"
+
+            Rectangle{
+                id:port1ConnectorRect
+                anchors.top:parent.top
+                anchors.topMargin: parent.height/8
+                anchors.bottom:parent.verticalCenter
+                anchors.left:parent.left
+                anchors.right:parent.right
+                color:"transparent"
+
+                AdvancedConnector{
+                    id:port1Connector
+                    anchors.verticalCenter: parent.verticalCenter
                 }
-                else{
-                    fontSizeMode : Text.Fit
+            }
+
+            Rectangle{
+                id:port2ConnectorRect
+                anchors.top:parent.verticalCenter
+                anchors.bottom:parent.bottom
+                anchors.bottomMargin: parent.height/8 - 10
+                anchors.left:parent.left
+                anchors.right:parent.right
+                color:"transparent"
+
+                AdvancedConnector{
+                    id:port2Connector
+                    anchors.verticalCenter: parent.verticalCenter
                 }
+
             }
         }
     }

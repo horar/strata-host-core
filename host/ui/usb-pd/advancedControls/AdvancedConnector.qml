@@ -8,10 +8,9 @@ Rectangle {
     id: connector
     width: parent.width; height: (parent.width * .75)
     color:"transparent"
-    //border{ color: "transparent"; width: 2 }
-    border.color:"red"
     property int anchorbottom: 0
     anchors.bottom: if(anchorbottom) { parent.bottom }
+    clip:true
     property bool isConnected: false
     signal activated()
     //property alias connectanimation: connect
@@ -36,6 +35,21 @@ Rectangle {
                 var state = implementationInterfaceBinding.getUSBCPortState(2);
                 if(state === true)
                     connect.start();
+            }
+        }
+    }
+
+    MouseArea {
+        anchors { fill: parent }
+
+        onClicked: {
+            if (!isConnected){
+                isConnected = true;
+                connect.start();
+            }
+            else{
+                isConnected = false;
+                disconnect.start();
             }
         }
     }
@@ -237,32 +251,45 @@ Rectangle {
 //        }
 //    }
 
+    NumberAnimation {
+        id: connect
+        target: leftUSBPlug
+        property: "x";
+        from: leftUSBPlug.x
+        to: connector.x - connector.width/4
+        easing.type: Easing.InQuad;
+        duration: 500
+    }
+
+
+    NumberAnimation {
+        id: disconnect
+        target: leftUSBPlug
+        property: "x";
+        from: leftUSBPlug.x
+        to: connector.x + connector.width
+        easing.type: Easing.OutQuad;
+        duration: 500
+    }
 
     Image {
         id: leftUSBPlug
-        //fillMode: Image.PreserveAspectFit
         smooth : true
-//        width: connector.width;
-//        height: connector.height
         width: connector.width/5*4; height: connector.height
-        //x:  connector.x + connector.width/3
+        x:  parent.width
         anchors{ verticalCenter: connector.verticalCenter }
         source: "../images/rightUSBPlug.svg"
-
-        MouseArea {
-            anchors { fill: parent }
-
-            onClicked: {
-                if (!isConnected){
-                    isConnected = true;
-                    connect.start();
-                }
-                else{
-                    isConnected = false;
-                    disconnect.start();
-                }
-            }
         }
+
+    Rectangle{
+        id:cable
+        color:"white"
+        anchors.left:leftUSBPlug.right
+        anchors.leftMargin: -5
+        anchors.verticalCenter: leftUSBPlug.verticalCenter
+        width:50
+        height:5
+
     }
 
 
