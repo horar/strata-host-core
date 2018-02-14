@@ -202,7 +202,6 @@ Rectangle {
                 width: iconContainer.width
                 height: iconContainer.height
                 portNumber: container.portNumber
-                //opacity:1
             }
             Label {
                 id: disconnectMessage
