@@ -134,5 +134,6 @@
         <file>advancedControls/AdvancedPort.qml</file>
         <file>images/icons/maxPowerIcon.svg</file>
         <file>advancedControls/AdvancedConnector.qml</file>
+        <file>images/rightUSBPlugWhite.svg</file>
     </qresource>
 </RCC>
