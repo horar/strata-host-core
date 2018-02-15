@@ -275,6 +275,7 @@ Rectangle {
 
                 AdvancedConnector{
                     id:port1Connector
+                    portNumber: 1
                     anchors.verticalCenter: parent.verticalCenter
                 }
             }
@@ -290,6 +291,7 @@ Rectangle {
 
                 AdvancedConnector{
                     id:port2Connector
+                    portNumber: 2
                     anchors.verticalCenter: parent.verticalCenter
                 }
 

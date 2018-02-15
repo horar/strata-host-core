@@ -13,8 +13,8 @@ Rectangle {
     clip:true
     property bool isConnected: false
     signal activated()
-    //property alias connectanimation: connect
-    //property alias disconnectanimation: disconnect
+    property alias connectanimation: connect
+    property alias disconnectanimation: disconnect
     property int portNumber:0;
     property double leftUSBPlugInitialXPosition
     property double originalCableWidth
