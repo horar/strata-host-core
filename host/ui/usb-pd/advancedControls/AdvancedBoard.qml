@@ -228,7 +228,6 @@ Rectangle {
                 height:parent.height/7
                 anchors{ verticalCenter: parent.verticalCenter;
                     right:parent.right
-                    //rightMargin: -17
                 }
                 source: "../images/leftPowerPlugWhite.svg"
             }
