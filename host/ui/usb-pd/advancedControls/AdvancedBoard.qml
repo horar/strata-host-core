@@ -86,57 +86,49 @@ Rectangle {
                 width:60
                 height:60
                 anchors{ left:parent.left
-                         leftMargin: parent.width *.05
+                    leftMargin: parent.width *.05
                     verticalCenter: parent.verticalCenter}
                 color:"transparent"
 
                 Image {
                     id:onLogo
                     width: parent.width; height: parent.width
-                    //anchors{ verticalCenter: parent.verticalCenter; left:parent.left; leftMargin: parent.width/8 }
                     source:"../images/icons/onLogoGreen.svg"
-                    layer.enabled: true
-                    layer.effect:  DropShadow {
-                        anchors.fill: onLogo
-                        horizontalOffset: 3
-                        verticalOffset: 6
-                        radius: 12.0
-                        samples: 24
-                        color: "#60000000"
-                        source: onLogo
-                    }
 
-                    ScaleAnimator {
-                        id: increaseOnMouseEnter
-                        target: onLogo;
-                        from: 1;
-                        to: 1.2;
-                        duration: 200
-                        running: false
-                    }
+                }
 
-                    ScaleAnimator {
-                        id: decreaseOnMouseExit
-                        target: onLogo;
-                        from: 1.2;//onLogo.scale;
-                        to: 1;
-                        duration: 200
-                        running: false
-                    }
+                ScaleAnimator {
+                    id: increaseOnMouseEnter
+                    target: onLogo;
+                    easing.type: Easing.InQuad;
+                    from: 1;
+                    to: 1.2;
+                    duration: 200
+                    running: false
+                }
 
-                    MouseArea {
-                        id: imageMouse
-                        anchors.fill: parent
-                        hoverEnabled: true
-                        cursorShape: Qt.PointingHandCursor
-                        onEntered:{
-                            increaseOnMouseEnter.start()
-                        }
-                        onExited:{
-                            decreaseOnMouseExit.start()
-                        }
-                        onClicked: { inputPowergraph.open() }
+                ScaleAnimator {
+                    id: decreaseOnMouseExit
+                    target: onLogo;
+                    easing.type: Easing.InQuad;
+                    from: 1.2;
+                    to: 1;
+                    duration: 200
+                    running: false
+                }
+
+                MouseArea {
+                    id: imageMouse
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    cursorShape: Qt.PointingHandCursor
+                    onEntered:{
+                        increaseOnMouseEnter.start()
                     }
+                    onExited:{
+                        decreaseOnMouseExit.start()
+                    }
+                    onClicked: { inputPowergraph.open() }
                 }
             }
 
