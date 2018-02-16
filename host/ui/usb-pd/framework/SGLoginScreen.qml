@@ -6,36 +6,110 @@ import QtQuick.Controls.Styles 1.4
 import tech.spyglass.ImplementationInterfaceBinding 1.0
 
 Rectangle {
+    id: parent
     visible: true
+    property string titleName: "Encore Design Suite"
+
     //determine which screen to show based on how the caller set the
     //showLoginOnCompletion property
     property bool showLoginOnCompletion: false
-//    property string repeaterText:
+    property int position : 10
+    property int offset: 10
+    property int letterHolder: -1
+    property int animationHolder:0
+
+    function getElement(element) {
+        return element.itemAt(letterHolder);
+
+    }
+
+    function createObject() {
+        console.log("Letter",  getElement(repeater).text );
+        var dynamicObject = Qt.createQmlObject(
+                    'import QtQuick 2.7; SequentialAnimation{ id: animation
+               NumberAnimation { target: getElement(repeater) ; property: "opacity"; from: 0; to: 1; easing.type:Easing.OutInCubic; duration: 1500;}
+                NumberAnimation { target: getElement(repeater); property: "opacity"; from: 1; to: 0; easing.type:Easing.OutInCubic; duration: 4000;}
+            }',
+                    parent,'firstObject');
+        dynamicObject.start();
+        return dynamicObject;
+    }
 
 
+
+    function substring(str,start,end) {
+        return str.substring(start, end);
+    }
+    function changePosition(){
+
+        return position = position + offset;
+    }
+
+    function changeInterval(index) {
+        return index * 500;
+    }
 
     Component.onCompleted: {
-        spotlightAnimation.start();
+        //spotlightAnimation.start();
+        timerAnimation.start();
         if (showLoginOnCompletion){
             showConnectionScreen.start();
         }
         usernameField.forceActiveFocus();   //allows the user to type their username without clicking
     }
 
+    Item {
+        z: 2
+        anchors { top: onLogo.bottom;
+            horizontalCenter: parent.horizontalCenter;
+            horizontalCenterOffset: -170
+        }
+        Repeater {
+            id: repeater
+            model: titleName.length
+
+            Text{
+                id: modelText
+                color: "#aeaeae"
+                opacity: 0
+                width: 18; height: 31
+                font.pixelSize: 24
+                horizontalAlignment: Text.AlignLeft
+                text: substring(titleName,index,index+1)
+                Component.onCompleted: {x = changePosition();console.log("change position", changePosition())}
+            }
+        }
+    }
+
+    Timer {
+        id: timerAnimation
+        interval: 500;  running: true; repeat: true
+        onTriggered: {
+
+            if(letterHolder != titleName.length - 1)
+            { letterHolder++; }
+            else  { letterHolder = 0; }
+            createObject();
+        }
+
+    }
+
     property bool  onIdChange : {
+
         onPlatformIdChanged: {
 
-        // TODO[Abe]: Why does this property get called on stack changes?
+            // TODO[Abe]: Why does this property get called on stack changes?
 
-        // If Logged in and platform is detected
-        if ( !login_detected ) {
-            // Keep showing the login screen; so do nothing
-        }
-        else if(login_detected ) {
-            var platformId = implementationInterfaceBinding.Id;
+            // If Logged in and platform is detected id: spotlightAnimation
 
-            // Show the platform specific GUI
-            switch (platformId) {
+            if ( !login_detected ) {
+                // Keep showing the login screen; so do nothing
+            }
+            else if(login_detected ) {
+                var platformId = implementationInterfaceBinding.Id;
+
+                // Show the platform specific GUI
+                switch (platformId) {
                 case ImplementationInterfaceBinding.NONE:
                     console.log("Not recognizing new platform");
                     // Hide the toolbar; Comes back on platform detect
@@ -67,11 +141,11 @@ Rectangle {
 
 
                     break;
-            }
+                }
 
-        }
-        console.log("stack depth:", stack.depth)
-        return true;
+            }
+            console.log("stack depth:", stack.depth)
+            return true;
         }
     }
 
@@ -79,21 +153,6 @@ Rectangle {
     //Elements common to both the connection and login screens
     //-----------------------------------------------------------
 
-    // PROOF OF CONCEPT BANNER
-//    Rectangle {
-//        anchors { top: parent.top; horizontalCenter: parent.horizontalCenter }
-//        width: parent.width * 0.70; height: 30;
-//        color: "red"
-//        opacity: .8
-//        radius: 4
-//        Label {
-//            anchors { centerIn: parent }
-//            text: "SPYGLASS PROOF OF CONCEPT WITH LAB CLOUD"
-//            color: "white"
-//            font.pointSize: Qt.platform.os == "osx"? 13 :8
-//            font.bold: true
-//        }
-//    }
 
     Image {
         id: onLogo
@@ -103,129 +162,18 @@ Rectangle {
         source: "../images/icons/onLogoGrey.svg"
         mipmap: true;
     }
-
-    Rectangle {
+    Rectangle{
         id: spyglassTextRect
         //x: 253; y: 178
         width: 133; height: 31
         color: "#ffffff"
-        anchors.horizontalCenterOffset: -80
+        anchors.horizontalCenterOffset: -7
         anchors { horizontalCenter: parent.horizontalCenter;
             verticalCenter: parent.verticalCenter;
-            verticalCenterOffset: -91}
+            verticalCenterOffset: -72 }
 
-//        Text {
-//            id: spyglassText1
-//            x: 0; y: 0
-//            width: 14; height: 31
-//            color: "#aeaeae"
-//            opacity: 0
-//            text: qsTr("s")
-//            anchors{ horizontalCenter: parent.horizontalCenter;  horizontalCenterOffset: -40 }
-//            font{ pixelSize: 24 }
-//            horizontalAlignment: Text.AlignLeft
-//        }
 
-//        Text {
-//            id: spyglassText2
-//            x: 11; y: 0
-//            width: 18; height: 31
-//            color: "#aeaeae"
-//            opacity: 0
-//            text: qsTr("p")
-//            anchors{ horizontalCenter: parent.horizontalCenter; horizontalCenterOffset: -26 }
-//            font.pixelSize: 24
-//            horizontalAlignment: Text.AlignLeft
-//        }
-
-//        Text {
-//            id: spyglassText3
-//            x: 82; y: 0
-//            width: 14; height: 31
-//            color: "#aeaeae"
-//            opacity: 0
-//            text: qsTr("y")
-//            anchors{ horizontalCenter: parent.horizontalCenter; horizontalCenterOffset: -14 }
-//            font { pixelSize: 24 }
-//            horizontalAlignment: Text.AlignLeft
-//        }
-
-//        Text {
-//            id: spyglassText4
-//            x: 91; y: 0
-//            width: 14; height: 31
-//            color: "#aeaeae"
-//            opacity: 0
-//            text: qsTr("g")
-//            anchors { horizontalCenter: parent.horizontalCenter; horizontalCenterOffset: -2 }
-//            font.pixelSize: 24
-//            horizontalAlignment: Text.AlignLeft
-//        }
-
-//        Text {
-//            id: spyglassText5
-//            x: 77; y: 0
-//            width: 12; height: 31
-//            color: "#aeaeae"
-//            opacity: 0
-//            text: qsTr("l")
-//            anchors { horizontalCenter: parent.horizontalCenter; horizontalCenterOffset: 11 }
-//            font { pixelSize: 24 }
-//            horizontalAlignment: Text.AlignLeft
-//        }
-
-//        Text {
-//            id: spyglassText6
-//            x: 77;  y: 0
-//            width: 14; height: 31
-//            color: "#aeaeae"
-//            opacity: 0
-//            text: qsTr("a")
-//            anchors{ horizontalCenter: parent.horizontalCenter; horizontalCenterOffset: 17 }
-//            font { pixelSize: 24 }
-//            horizontalAlignment: Text.AlignLeft
-//        }
-
-//        Text {
-//            id: spyglassText7
-//            x: 74; y: 0
-//            width: 14; height: 31
-//            color: "#aeaeae"
-//            opacity: 0
-//            text: qsTr("s")
-//            anchors{ horizontalCenter: parent.horizontalCenter;  horizontalCenterOffset: 30 }
-//            font { pixelSize: 24 }
-//            horizontalAlignment: Text.AlignLeft
-
-//        }
-
-        Row {
-            x: 14
-            y: 4
-            Repeater {
-                 id: repeated
-                 model: ["S", "p", "e", "c", "t", "r", "u", "m", " ", "H","a","r","d", "w", "a","r","e", " ", "V","i","s","i","o", "n"]
-                 Text {  /*width: 14; height: 31*/
-                     id: modelText
-                     color: "#aeaeae"
-                     opacity: 1
-                     font { pixelSize: 24 }
-                     text: modelData }
-             }
-         }
-        //        Text {
-        //            id: spyglassText8
-        //            x: 83; y: 0
-        //            width: 14; height: 31
-        //            color: "#aeaeae"
-        //            opacity: 0
-        //            text: qsTr("s")
-        //            anchors { horizontalCenter: parent.horizontalCenter; horizontalCenterOffset: 41 }
-        //            font { pixelSize: 24 }
-        //            horizontalAlignment: Text.AlignLeft
-        //        }
     }
-
 
     //-----------------------------------------------------------
     //connection screen elements
@@ -341,7 +289,7 @@ Rectangle {
                 id:alertIcon
                 source: "./images/whiteAlertIcon.svg"
                 anchors{left:parent.left; top:parent.top; bottom:parent.bottom
-                        leftMargin: 5; topMargin:10; bottomMargin:10}
+                    leftMargin: 5; topMargin:10; bottomMargin:10}
                 fillMode:Image.PreserveAspectFit
 
                 mipmap: true;
@@ -369,9 +317,9 @@ Rectangle {
         Button {
             id: loginButton
             anchors{bottom:loginRectangle.bottom
-                    bottomMargin: 6
-                    left: loginRectangle.left
-                    leftMargin: 8}
+                bottomMargin: 6
+                left: loginRectangle.left
+                leftMargin: 8}
             width: 184; height: 38
             text:"login"
             Material.elevation: 6
@@ -398,7 +346,6 @@ Rectangle {
                     login_detected = true;
                 }
             }
-
 
         }
     }
@@ -524,55 +471,57 @@ Rectangle {
         property int interLetterDelayTime: 500
     }
 
-    ParallelAnimation{
-        id: spotlightAnimation
+    //    ParallelAnimation{
+    //        //id: spotlightAnimation
 
-        loops: Animation.Infinite// The animation is set to loop indefinitely
-       SequentialAnimation{
-           Component.onCompleted: { ;
-               console.log(repeated.itemAt(3).text.toString());}
-            NumberAnimation { target:repeated.itemAt(3); property: "opacity"; from: 0; to: 1; easing.type:Easing.OutInCubic; duration: 1000;}
-            NumberAnimation { target: repeated.itemAt(3); property: "opacity"; from: 1; to: 0; easing.type:Easing.OutInCubic; duration: 500; }
+    //        loops: Animation.Infinite// The animation is set to loop indefinitely
+    //        SequentialAnimation{
+    //            Component.onCompleted: { ;
+    //                console.log(repeated.itemAt(3).text.toString());}
+    //            NumberAnimation { target:repeated.itemAt(3); property: "opacity"; from: 0; to: 1; easing.type:Easing.OutInCubic; duration: 1000;}
+    //            NumberAnimation { target: repeated.itemAt(3); property: "opacity"; from: 1; to: 0; easing.type:Easing.OutInCubic; duration: 500; }
+    //        }
+    //    }
+    //       }
+    //        SequentialAnimation{
+    //            PauseAnimation { duration: 250 }
+    //            NumberAnimation { target: spyglassText2; property: "opacity"; from: 0; to: 1; easing.type:Easing.OutInCubic; duration: 1000; }
+    //            NumberAnimation { target: spyglassText2; property: "opacity"; from: 1; to: 0; easing.type:Easing.OutInCubic; duration: 500; }
+    //        }
+    //        SequentialAnimation{
+    //            PauseAnimation { duration: 250*2 }
+    //            NumberAnimation { target: spyglassText3; property: "opacity"; from: 0; to: 1; easing.type:Easing.OutInCubic; duration: 1000; }
+    //            NumberAnimation { target: spyglassText3; property: "opacity"; from: 1; to: 0; easing.type:Easing.OutInCubic; duration: 500; }
+    //        }
+    //        SequentialAnimation{
+    //            PauseAnimation { duration: 250*3 }
+    //            NumberAnimation { target: spyglassText4; property: "opacity"; from: 0; to: 1; easing.type:Easing.OutInCubic; duration: 1000; }
+    //            NumberAnimation { target: spyglassText4; property: "opacity"; from: 1; to: 0; easing.type:Easing.OutInCubic; duration: 500; }
+    //        }
+    //        SequentialAnimation{
+    //            PauseAnimation { duration: 250*4 }
+    //            NumberAnimation { target: spyglassText5; property: "opacity"; from: 0; to: 1; easing.type:Easing.OutInCubic; duration: 1000; }
+    //            NumberAnimation { target: spyglassText5; property: "opacity"; from: 1; to: 0; easing.type:Easing.OutInCubic; duration: 500; }
+    //        }
+    //        SequentialAnimation{
+    //            PauseAnimation { duration: 250*5 }
+    //            NumberAnimation { target: spyglassText6; property: "opacity"; from: 0; to: 1; easing.type:Easing.OutInCubic; duration: 1000; }
+    //            NumberAnimation { target: spyglassText6; property: "opacity"; from: 1; to: 0; easing.type:Easing.OutInCubic; duration: 500; }
+    //        }
+    //        SequentialAnimation{
+    //            PauseAnimation { duration: 250*6 }
+    //            NumberAnimation { target: spyglassText7; property: "opacity"; from: 0; to: 1; easing.type:Easing.OutInCubic; duration: 1000; }
+    //            NumberAnimation { target: spyglassText7; property: "opacity"; from: 1; to: 0; easing.type:Easing.OutInCubic; duration: 500; }
+    //        }
+    //        SequentialAnimation{
+    //            PauseAnimation { duration: 250*7 }
+    //            NumberAnimation { target: spyglassText8; property: "opacity"; from: 0; to: 1; easing.type:Easing.OutInCubic; duration: 1000; }
+    //            NumberAnimation { target: spyglassText8; property: "opacity"; from: 1; to: 0; easing.type:Easing.OutInCubic; duration: 500; }
+    //        }
+    //    }
 }
-    }
-//       }
-//        SequentialAnimation{
-//            PauseAnimation { duration: 250 }
-//            NumberAnimation { target: spyglassText2; property: "opacity"; from: 0; to: 1; easing.type:Easing.OutInCubic; duration: 1000; }
-//            NumberAnimation { target: spyglassText2; property: "opacity"; from: 1; to: 0; easing.type:Easing.OutInCubic; duration: 500; }
-//        }
-//        SequentialAnimation{
-//            PauseAnimation { duration: 250*2 }
-//            NumberAnimation { target: spyglassText3; property: "opacity"; from: 0; to: 1; easing.type:Easing.OutInCubic; duration: 1000; }
-//            NumberAnimation { target: spyglassText3; property: "opacity"; from: 1; to: 0; easing.type:Easing.OutInCubic; duration: 500; }
-//        }
-//        SequentialAnimation{
-//            PauseAnimation { duration: 250*3 }
-//            NumberAnimation { target: spyglassText4; property: "opacity"; from: 0; to: 1; easing.type:Easing.OutInCubic; duration: 1000; }
-//            NumberAnimation { target: spyglassText4; property: "opacity"; from: 1; to: 0; easing.type:Easing.OutInCubic; duration: 500; }
-//        }
-//        SequentialAnimation{
-//            PauseAnimation { duration: 250*4 }
-//            NumberAnimation { target: spyglassText5; property: "opacity"; from: 0; to: 1; easing.type:Easing.OutInCubic; duration: 1000; }
-//            NumberAnimation { target: spyglassText5; property: "opacity"; from: 1; to: 0; easing.type:Easing.OutInCubic; duration: 500; }
-//        }
-//        SequentialAnimation{
-//            PauseAnimation { duration: 250*5 }
-//            NumberAnimation { target: spyglassText6; property: "opacity"; from: 0; to: 1; easing.type:Easing.OutInCubic; duration: 1000; }
-//            NumberAnimation { target: spyglassText6; property: "opacity"; from: 1; to: 0; easing.type:Easing.OutInCubic; duration: 500; }
-//        }
-//        SequentialAnimation{
-//            PauseAnimation { duration: 250*6 }
-//            NumberAnimation { target: spyglassText7; property: "opacity"; from: 0; to: 1; easing.type:Easing.OutInCubic; duration: 1000; }
-//            NumberAnimation { target: spyglassText7; property: "opacity"; from: 1; to: 0; easing.type:Easing.OutInCubic; duration: 500; }
-//        }
-//        SequentialAnimation{
-//            PauseAnimation { duration: 250*7 }
-//            NumberAnimation { target: spyglassText8; property: "opacity"; from: 0; to: 1; easing.type:Easing.OutInCubic; duration: 1000; }
-//            NumberAnimation { target: spyglassText8; property: "opacity"; from: 1; to: 0; easing.type:Easing.OutInCubic; duration: 500; }
-//        }
-//    }
-}
+//}
+
 
 
 
