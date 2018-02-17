@@ -6,10 +6,8 @@ import QtQuick.Controls.Styles 1.4
 import tech.spyglass.ImplementationInterfaceBinding 1.0
 
 Rectangle {
-    id: parent
+
     visible: true
-
-
     property bool showLoginOnCompletion: false
     Component.onCompleted: {
 
@@ -220,10 +218,9 @@ Rectangle {
             Image{
                 id:alertIcon
                 source: "./images/whiteAlertIcon.svg"
-                anchors{left:parent.left; top:parent.top; bottom:parent.bottom
+                anchors{left:loginErrorRect.left; top:loginErrorRect.top; bottom:loginErrorRect.bottom
                     leftMargin: 5; topMargin:10; bottomMargin:10}
                 fillMode:Image.PreserveAspectFit
-
                 mipmap: true;
             }
 
@@ -235,8 +232,8 @@ Rectangle {
                 wrapMode: Label.WordWrap
                 anchors {
                     left: alertIcon.right
-                    right: parent.right
-                    verticalCenter: parent.verticalCenter
+                    right: loginErrorRect.right
+                    verticalCenter: loginErrorRect.verticalCenter
                 }
                 horizontalAlignment:Text.AlignHCenter
                 text: "Your username or password is incorrect"

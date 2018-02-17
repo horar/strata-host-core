@@ -4,7 +4,7 @@ Item {
 
     property int position : 10
     property int offset: 10
-    property int letterHolder: -1
+    property int indexIncrementer: -1
     property int animationHolder:0
     property int fadeInTime: 0
     property int fadeOutTime: 0
@@ -17,14 +17,13 @@ Item {
     }
 
     function getElement(element) {
-        return element.itemAt(letterHolder);
+        return element.itemAt(indexIncrementer);
 
     }
     function createObject() {
-        var dynamicObject = Qt.createQmlObject(
-                    'import QtQuick 2.7; SequentialAnimation{ id: animation
-               NumberAnimation { target: getElement(repeater) ; property: "opacity"; from: 0; to: 1; easing.type:Easing.OutInCubic; duration: fadeInTime;}
-                NumberAnimation { target: getElement(repeater); property: "opacity"; from: 1; to: 0; easing.type:Easing.OutInCubic; duration: fadeOutTime;}
+        var dynamicObject = Qt.createQmlObject('import QtQuick 2.7; SequentialAnimation{ id: animation
+                    NumberAnimation { target: getElement(repeater) ; property: "opacity"; from: 0; to: 1; easing.type:Easing.OutInCubic; duration: fadeInTime;}
+                    NumberAnimation { target: getElement(repeater); property: "opacity"; from: 1; to: 0; easing.type:Easing.OutInCubic; duration: fadeOutTime;}
             }',
                     parent,'firstObject');
         dynamicObject.start();
@@ -68,12 +67,11 @@ Item {
 
     Timer {
         id: timerAnimation
-        interval: timerInterval;running: true; repeat: true
+        interval: timerInterval; running: true; repeat: true
         onTriggered: {
-
-            if(letterHolder != titleName.length - 1)
-            { letterHolder++; }
-            else  { letterHolder = 0; }
+            if(indexIncrementer!= titleName.length - 1)
+             indexIncrementer++;
+            else indexIncrementer = 0;
             createObject();
         }
 
