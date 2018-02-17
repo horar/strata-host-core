@@ -8,89 +8,25 @@ import tech.spyglass.ImplementationInterfaceBinding 1.0
 Rectangle {
     id: parent
     visible: true
-    property string titleName: "Encore Design Suite"
 
-    //determine which screen to show based on how the caller set the
-    //showLoginOnCompletion property
+
     property bool showLoginOnCompletion: false
-    property int position : 10
-    property int offset: 10
-    property int letterHolder: -1
-    property int animationHolder:0
-
-    function getElement(element) {
-        return element.itemAt(letterHolder);
-
-    }
-
-    function createObject() {
-        console.log("Letter",  getElement(repeater).text );
-        var dynamicObject = Qt.createQmlObject(
-                    'import QtQuick 2.7; SequentialAnimation{ id: animation
-               NumberAnimation { target: getElement(repeater) ; property: "opacity"; from: 0; to: 1; easing.type:Easing.OutInCubic; duration: 1500;}
-                NumberAnimation { target: getElement(repeater); property: "opacity"; from: 1; to: 0; easing.type:Easing.OutInCubic; duration: 4000;}
-            }',
-                    parent,'firstObject');
-        dynamicObject.start();
-        return dynamicObject;
-    }
-
-
-
-    function substring(str,start,end) {
-        return str.substring(start, end);
-    }
-    function changePosition(){
-
-        return position = position + offset;
-    }
-
-    function changeInterval(index) {
-        return index * 500;
-    }
-
     Component.onCompleted: {
-        //spotlightAnimation.start();
-        timerAnimation.start();
+
         if (showLoginOnCompletion){
             showConnectionScreen.start();
         }
-        usernameField.forceActiveFocus();   //allows the user to type their username without clicking
+        usernameField.forceActiveFocus(); //allows the user to type their username without clicking
     }
 
-    Item {
-        z: 2
+    SGFadingTitle {  z: 2
         anchors { top: onLogo.bottom;
             horizontalCenter: parent.horizontalCenter;
-            horizontalCenterOffset: -170
-        }
-        Repeater {
-            id: repeater
-            model: titleName.length
-
-            Text{
-                id: modelText
-                color: "#aeaeae"
-                opacity: 0
-                width: 18; height: 31
-                font.pixelSize: 24
-                horizontalAlignment: Text.AlignLeft
-                text: substring(titleName,index,index+1)
-                Component.onCompleted: {x = changePosition();console.log("change position", changePosition())}
-            }
-        }
-    }
-
-    Timer {
-        id: timerAnimation
-        interval: 500;  running: true; repeat: true
-        onTriggered: {
-
-            if(letterHolder != titleName.length - 1)
-            { letterHolder++; }
-            else  { letterHolder = 0; }
-            createObject();
-        }
+            horizontalCenterOffset: -50 }
+        fadeInTime: 1500
+        fadeOutTime: 4000
+        timerInterval: 400
+        titleName: "Encore Design Suite"
 
     }
 
@@ -136,13 +72,9 @@ Rectangle {
                         stack.push([boardBringUp, {immediate:false}]);
 
                     }
-
                     console.log("Displaying USB-PD");
-
-
                     break;
                 }
-
             }
             console.log("stack depth:", stack.depth)
             return true;
@@ -349,9 +281,6 @@ Rectangle {
 
         }
     }
-
-
-
     Button {
         id: guestLoginButton
         width: 200; height: 32
@@ -464,63 +393,8 @@ Rectangle {
             to: 1;
             duration: 1 }
     }
-
-    Item{
-        property int fadeInTime: 1000
-        property int fadeOutTime: 1000
-        property int interLetterDelayTime: 500
-    }
-
-    //    ParallelAnimation{
-    //        //id: spotlightAnimation
-
-    //        loops: Animation.Infinite// The animation is set to loop indefinitely
-    //        SequentialAnimation{
-    //            Component.onCompleted: { ;
-    //                console.log(repeated.itemAt(3).text.toString());}
-    //            NumberAnimation { target:repeated.itemAt(3); property: "opacity"; from: 0; to: 1; easing.type:Easing.OutInCubic; duration: 1000;}
-    //            NumberAnimation { target: repeated.itemAt(3); property: "opacity"; from: 1; to: 0; easing.type:Easing.OutInCubic; duration: 500; }
-    //        }
-    //    }
-    //       }
-    //        SequentialAnimation{
-    //            PauseAnimation { duration: 250 }
-    //            NumberAnimation { target: spyglassText2; property: "opacity"; from: 0; to: 1; easing.type:Easing.OutInCubic; duration: 1000; }
-    //            NumberAnimation { target: spyglassText2; property: "opacity"; from: 1; to: 0; easing.type:Easing.OutInCubic; duration: 500; }
-    //        }
-    //        SequentialAnimation{
-    //            PauseAnimation { duration: 250*2 }
-    //            NumberAnimation { target: spyglassText3; property: "opacity"; from: 0; to: 1; easing.type:Easing.OutInCubic; duration: 1000; }
-    //            NumberAnimation { target: spyglassText3; property: "opacity"; from: 1; to: 0; easing.type:Easing.OutInCubic; duration: 500; }
-    //        }
-    //        SequentialAnimation{
-    //            PauseAnimation { duration: 250*3 }
-    //            NumberAnimation { target: spyglassText4; property: "opacity"; from: 0; to: 1; easing.type:Easing.OutInCubic; duration: 1000; }
-    //            NumberAnimation { target: spyglassText4; property: "opacity"; from: 1; to: 0; easing.type:Easing.OutInCubic; duration: 500; }
-    //        }
-    //        SequentialAnimation{
-    //            PauseAnimation { duration: 250*4 }
-    //            NumberAnimation { target: spyglassText5; property: "opacity"; from: 0; to: 1; easing.type:Easing.OutInCubic; duration: 1000; }
-    //            NumberAnimation { target: spyglassText5; property: "opacity"; from: 1; to: 0; easing.type:Easing.OutInCubic; duration: 500; }
-    //        }
-    //        SequentialAnimation{
-    //            PauseAnimation { duration: 250*5 }
-    //            NumberAnimation { target: spyglassText6; property: "opacity"; from: 0; to: 1; easing.type:Easing.OutInCubic; duration: 1000; }
-    //            NumberAnimation { target: spyglassText6; property: "opacity"; from: 1; to: 0; easing.type:Easing.OutInCubic; duration: 500; }
-    //        }
-    //        SequentialAnimation{
-    //            PauseAnimation { duration: 250*6 }
-    //            NumberAnimation { target: spyglassText7; property: "opacity"; from: 0; to: 1; easing.type:Easing.OutInCubic; duration: 1000; }
-    //            NumberAnimation { target: spyglassText7; property: "opacity"; from: 1; to: 0; easing.type:Easing.OutInCubic; duration: 500; }
-    //        }
-    //        SequentialAnimation{
-    //            PauseAnimation { duration: 250*7 }
-    //            NumberAnimation { target: spyglassText8; property: "opacity"; from: 0; to: 1; easing.type:Easing.OutInCubic; duration: 1000; }
-    //            NumberAnimation { target: spyglassText8; property: "opacity"; from: 1; to: 0; easing.type:Easing.OutInCubic; duration: 500; }
-    //        }
-    //    }
 }
-//}
+
 
 
 

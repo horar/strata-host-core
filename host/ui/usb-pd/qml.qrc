@@ -135,5 +135,6 @@
         <file>images/icons/maxPowerIcon.svg</file>
         <file>advancedControls/AdvancedConnector.qml</file>
         <file>images/rightUSBPlugWhite.svg</file>
+        <file>framework/SGFadingTitle.qml</file>
     </qresource>
 </RCC>
