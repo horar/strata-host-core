@@ -54,7 +54,7 @@ ChartView {
         //name: "Port 1 voltage"
         axisX: valueAxisX
         axisY: valueAxisY
-        color: Qt.rgba(1,153/255,0,.3)//Qt.rgba(.5,.5,.5,.3)     //fill/brush color
+        color: Qt.rgba(.5,.5,.5,.3)     //fill/brush color
         borderWidth: .5                  //borderColor is determined by the line series!
         upperSeries: upperLineSeries
     }
