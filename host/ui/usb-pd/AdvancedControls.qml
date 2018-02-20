@@ -178,6 +178,7 @@ Rectangle {
                 function prefHeight(item){
                     return rowMulti * item.Layout.rowSpan
                 }
+
                 Rectangle{
                     id:port1VoltageAndCurrentRect
                     Layout.column: 0
@@ -188,37 +189,23 @@ Rectangle {
                     Layout.preferredHeight : graphGrid.prefHeight(this)
                     Layout.fillWidth:true
                     Layout.fillHeight:true
-                    Rectangle{
-                        id:port1VoltageAndCurrentHeader
-                        anchors.left:parent.left
-                        anchors.right:parent.right
+                    color:"red"
+                    clip: true
+
+                    AdvancedGraph{
+                        id:port1VoltageAndCurrentGraph
+                        title: "PORT 1: VOLTAGE AND CURRENT"
                         anchors.top:parent.top
-                        height:20
-                        color:"black"
-
-                        Text{
-                            text:"PORT 1 VOLTAGE AND CURRENT"
-                            horizontalAlignment: Text.Center
-                            font.family: "helvetica"
-                            font.pointSize: smallFontSize
-                            color:"#D8D8D8"
-                            anchors.left:parent.left
-                            anchors.right:parent.right
-                            anchors.top:parent.top
-                            anchors.verticalCenter: parent.verticalCenter
-                            height:20
-                        }
-                    }
-
-                    Image{
-                        id:port1VoltageAndCurrent
-                        source: "./images/placeholders/blackGraph.png"
+                        anchors.topMargin: -15
                         anchors.left:parent.left
-                        anchors.right:parent.right
-                        anchors.top:port1VoltageAndCurrentHeader.bottom
+                        anchors.leftMargin: -15
                         anchors.bottom:parent.bottom
+                        anchors.bottomMargin: -15
+                        anchors.right:parent.right
+                        anchors.rightMargin: -15
                     }
                 }
+
                 Rectangle{
                     id:port2VoltageAndCurrentRect
                     Layout.column: 1
@@ -229,37 +216,21 @@ Rectangle {
                     Layout.preferredHeight : graphGrid.prefHeight(this)
                     Layout.fillWidth:true
                     Layout.fillHeight:true
-                    Rectangle{
-                        id:port2VoltageAndCurrentHeader
-                        anchors.left:parent.left
-                        anchors.right:parent.right
+
+                    AdvancedGraph{
+                        id:port2VoltageAndCurrentGraph
+                        title: "PORT 2: VOLTAGE AND CURRENT"
                         anchors.top:parent.top
-                        height:20
-                        color:"black"
-
-                        Text{
-                            text:"PORT 2 VOLTAGE AND CURRENT"
-                            horizontalAlignment: Text.Center
-                            font.family: "helvetica"
-                            font.pointSize: smallFontSize
-                            color:"#D8D8D8"
-                            anchors.left:parent.left
-                            anchors.right:parent.right
-                            anchors.top:parent.top
-                            anchors.verticalCenter: parent.verticalCenter
-                            height:20
-                        }
-                    }
-
-                    Image{
-                        id:port2VoltageAndCurrent
-                        source: "./images/placeholders/blackGraph.png"
+                        anchors.topMargin: -15
                         anchors.left:parent.left
-                        anchors.right:parent.right
-                        anchors.top:port2VoltageAndCurrentHeader.bottom
+                        anchors.leftMargin: -15
                         anchors.bottom:parent.bottom
+                        anchors.bottomMargin: -15
+                        anchors.right:parent.right
+                        anchors.rightMargin: -15
                     }
                 }
+
 
                 Rectangle{
                     id:port1PowerRect
@@ -271,37 +242,21 @@ Rectangle {
                     Layout.preferredHeight : graphGrid.prefHeight(this)
                     Layout.fillWidth:true
                     Layout.fillHeight:true
-                    Rectangle{
-                        id:port1PowerHeader
-                        anchors.left:parent.left
-                        anchors.right:parent.right
+
+                    AdvancedGraph{
+                        id:port1PowerGraph
+                        title: "PORT 1 POWER"
                         anchors.top:parent.top
-                        height:20
-                        color:"black"
-
-                        Text{
-                            text:"PORT 1 POWER"
-                            horizontalAlignment: Text.Center
-                            font.family: "helvetica"
-                            font.pointSize: smallFontSize
-                            color:"#D8D8D8"
-                            anchors.left:parent.left
-                            anchors.right:parent.right
-                            anchors.top:parent.top
-                            anchors.verticalCenter: parent.verticalCenter
-                            height:20
-                        }
-                    }
-
-                    Image{
-                        id:port1Power
-                        source: "./images/placeholders/blackGraph.png"
+                        anchors.topMargin: -15
                         anchors.left:parent.left
-                        anchors.right:parent.right
-                        anchors.top:port1PowerHeader.bottom
+                        anchors.leftMargin: -15
                         anchors.bottom:parent.bottom
+                        anchors.bottomMargin: -15
+                        anchors.right:parent.right
+                        anchors.rightMargin: -15
                     }
                 }
+
                 Rectangle{
                     id:port2PowerRect
                     Layout.column: 1
@@ -312,35 +267,18 @@ Rectangle {
                     Layout.preferredHeight : graphGrid.prefHeight(this)
                     Layout.fillWidth:true
                     Layout.fillHeight:true
-                    Rectangle{
-                        id:port2PowerHeader
-                        anchors.left:parent.left
-                        anchors.right:parent.right
+
+                    AdvancedGraph{
+                        id:port2PowerGraph
+                        title: "PORT 2 POWER"
                         anchors.top:parent.top
-                        height:20
-                        color:"black"
-
-                        Text{
-                            text:"PORT 2 POWER"
-                            horizontalAlignment: Text.Center
-                            font.family: "helvetica"
-                            font.pointSize: smallFontSize
-                            color:"#D8D8D8"
-                            anchors.left:parent.left
-                            anchors.right:parent.right
-                            anchors.top:parent.top
-                            anchors.verticalCenter: parent.verticalCenter
-                            height:20
-                        }
-                    }
-
-                    Image{
-                        id:port2Power
-                        source: "./images/placeholders/blackGraph.png"
+                        anchors.topMargin: -15
                         anchors.left:parent.left
-                        anchors.right:parent.right
-                        anchors.top:port2PowerHeader.bottom
+                        anchors.leftMargin: -15
                         anchors.bottom:parent.bottom
+                        anchors.bottomMargin: -15
+                        anchors.right:parent.right
+                        anchors.rightMargin: -15
                     }
                 }
                 Rectangle{
@@ -353,35 +291,18 @@ Rectangle {
                     Layout.preferredHeight : graphGrid.prefHeight(this)
                     Layout.fillWidth:true
                     Layout.fillHeight:true
-                    Rectangle{
-                        id:port1TemperatureHeader
-                        anchors.left:parent.left
-                        anchors.right:parent.right
+
+                    AdvancedGraph{
+                        id:port1TemperatureGraph
+                        title: "PORT 1 TEMPERATURE"
                         anchors.top:parent.top
-                        height:20
-                        color:"black"
-
-                        Text{
-                            text:"PORT 1 TEMPERATURE"
-                            horizontalAlignment: Text.Center
-                            font.family: "helvetica"
-                            font.pointSize: smallFontSize
-                            color:"#D8D8D8"
-                            anchors.left:parent.left
-                            anchors.right:parent.right
-                            anchors.top:parent.top
-                            anchors.verticalCenter: parent.verticalCenter
-                            height:20
-                        }
-                    }
-
-                    Image{
-                        id:port1Temperature
-                        source: "./images/placeholders/blackGraph.png"
+                        anchors.topMargin: -15
                         anchors.left:parent.left
-                        anchors.right:parent.right
-                        anchors.top:port1TemperatureHeader.bottom
+                        anchors.leftMargin: -15
                         anchors.bottom:parent.bottom
+                        anchors.bottomMargin: -15
+                        anchors.right:parent.right
+                        anchors.rightMargin: -15
                     }
                 }
 
@@ -395,41 +316,27 @@ Rectangle {
                     Layout.preferredHeight : graphGrid.prefHeight(this)
                     Layout.fillWidth:true
                     Layout.fillHeight:true
-                    Rectangle{
-                        id:port2TemperatureHeader
-                        anchors.left:parent.left
-                        anchors.right:parent.right
+
+                    AdvancedGraph{
+                        id:port2TemperatureGraph
+                        title: "PORT 2 TEMPERATURE"
                         anchors.top:parent.top
-                        height:20
-                        color:"black"
-
-                        Text{
-                            text:"PORT 2 TEMPERATURE"
-                            horizontalAlignment: Text.Center
-                            font.family: "helvetica"
-                            font.pointSize: smallFontSize
-                            color:"#D8D8D8"
-                            anchors.left:parent.left
-                            anchors.right:parent.right
-                            anchors.top:parent.top
-                            anchors.verticalCenter: parent.verticalCenter
-                            height:20
-                        }
-                    }
-
-                    Image{
-                        id:port2Temperature
-                        source: "./images/placeholders/blackGraph.png"
+                        anchors.topMargin: -15
                         anchors.left:parent.left
-                        anchors.right:parent.right
-                        anchors.top:port2TemperatureHeader.bottom
+                        anchors.leftMargin: -15
                         anchors.bottom:parent.bottom
+                        anchors.bottomMargin: -15
+                        anchors.right:parent.right
+                        anchors.rightMargin: -15
                     }
                 }
 
             }
         }
 
+        //----------------------------------------------------
+        //  Messages (faults and CC)
+        //----------------------------------------------------
             Rectangle {
                 id:message
                 //row 3, columns 2 and 3
