@@ -1,0 +1,13 @@
+<RCC>
+    <qresource prefix="/">
+        <file>main.qml</file>
+        <file>navigationControl.js</file>
+        <file>main.cpp</file>
+        <file>bubuControl.qml</file>
+        <file>detectingPlatform.qml</file>
+        <file>loginScreen.qml</file>
+        <file>navigation_router.pro</file>
+        <file>usbAdvanced.qml</file>
+        <file>usbControl.qml</file>
+    </qresource>
+</RCC>
