@@ -17,7 +17,8 @@ Rectangle {
         usernameField.forceActiveFocus(); //allows the user to type their username without clicking
     }
 
-    SGFadingTitle {  z: 2
+   SGScrollingText {
+        z: 2
         anchors { top: onLogo.bottom;
             horizontalCenter: parent.horizontalCenter;
             horizontalCenterOffset: -50 }
