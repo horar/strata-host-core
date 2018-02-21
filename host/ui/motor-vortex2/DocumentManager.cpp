@@ -19,7 +19,7 @@ DocumentManager::DocumentManager()
     init();
 }
 
-DocumentManager::DocumentManager(ImplementationInterfaceBinding *implInterfaceBinding) : implInterfaceBinding_(implInterfaceBinding)
+DocumentManager::DocumentManager(PlatformInterface *platformInterface) : platformInterface_(platformInterface)
 {
     qDebug("DocumentManager::DocumentManager() ctor: implInterfaceBinding");
     init();
@@ -54,9 +54,9 @@ void DocumentManager::init()
     //             without the sleep.
     //
     sleep(2);
-    implInterfaceBinding_->registerDataSourceHandler("document",
-                                                     bind(&DocumentManager::dataSourceHandler,
-                                                          this, placeholders::_1));
+    //platformInterface_->registerDataSourceHandler("document",
+    //                                                 bind(&DocumentManager::dataSourceHandler,
+    //                                                      this, placeholders::_1));
 
 }
 

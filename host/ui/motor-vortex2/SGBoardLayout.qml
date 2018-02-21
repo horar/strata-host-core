@@ -1,22 +1,13 @@
 import QtQuick 2.7
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 1.4
-import tech.spyglass.ImplementationInterfaceBinding 1.0
+import tech.spyglass.PlatformInterface 1.0
 
 Rectangle {
 
     property bool hardwareStatusChange: null
     property bool boardScreen: true
-    property bool hardwareStatus:  {
-
-        onPlatformStateChanged: {
-            var state = implementationInterfaceBinding.platformState;
-            if(state == false && boardScreen == true) {
-                stack.push([page, {immediate:false}]);
-            }
-        }
-        implementationInterfaceBinding.platformState
-    }
+    property bool hardwareStatus:  true
 
     onOpacityChanged: {
         if (opacity == 1)

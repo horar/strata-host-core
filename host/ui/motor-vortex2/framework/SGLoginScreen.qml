@@ -3,7 +3,7 @@ import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.0
 import QtQuick.Controls.Material 2.2
 import QtQuick.Controls.Styles 1.4
-import tech.spyglass.ImplementationInterfaceBinding 1.0
+import tech.spyglass.PlatformInterface 1.0
 
 Rectangle {
     visible: true
@@ -17,58 +17,7 @@ Rectangle {
         usernameField.forceActiveFocus();   //allows the user to type their username without clicking
     }
 
-    property bool  onIdChange : {
-        onPlatformIDChanged: {
-
-            // TODO[Abe]: Why does this property get called on stack changes?
-
-            // If Logged in and platform is detected
-            if ( !login_detected ) {
-                // Keep showing the login screen; so do nothing
-            }
-            else if(login_detected ) {
-                var platformId = implementationInterfaceBinding.Id;
-
-                // Show the platform specific GUI
-                switch (platformId) {
-                case ImplementationInterfaceBinding.NONE:
-                    console.log("Not recognizing new platform");
-                    // Hide the toolbar; Comes back on platform detect
-                    frontToolBar.visible = false;
-                    stack.pop()
-                    handleLoginClick.start();
-                    break;
-                case ImplementationInterfaceBinding.BUBU_INTERFACE:
-                    console.log("Displaying BU Bring Up");
-                    stack.push([boardBringUp, {immediate:false}]);
-                    break;
-                case ImplementationInterfaceBinding.USB_PD:
-                    frontToolBar.visible = true
-                    if(mainWindow.control_type == "standard") {
-                        stack.pop();
-                        stack.push([cBoardLayout, {immediate:false}]);
-                    }
-                    else if (mainWindow.control_type == "advanced") {
-                        stack.pop();
-                        stack.push([advanced, {immediate:false}]);
-                    }
-                    else if(mainWindow.control_type == "BuBu") {
-                        stack.pop();
-                        stack.push([boardBringUp, {immediate:false}]);
-
-                    }
-
-                    console.log("Displaying USB-PD");
-
-
-                    break;
-                }
-
-            }
-            console.log("stack depth:", stack.depth)
-            return true;
-        }
-    }
+    //property bool  onIdChange :
 
     //-----------------------------------------------------------
     //Elements common to both the connection and login screens

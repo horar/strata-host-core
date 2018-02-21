@@ -14,7 +14,7 @@
 #include <QTimer>
 #include <map>
 
-#include "ImplementationInterfaceBinding/ImplementationInterfaceBinding.h"
+#include <PlatformInterface/PlatformInterface.h>
 
 class View {
 public:
@@ -32,7 +32,7 @@ class DataCollector : public QObject
 
 public:
     DataCollector();
-    DataCollector(ImplementationInterfaceBinding * implInterface);
+    DataCollector(PlatformInterface * implInterface);
     explicit DataCollector(QObject *parent);
     virtual ~DataCollector();
 
@@ -43,7 +43,7 @@ public:
 private:
     void init();
 
-    ImplementationInterfaceBinding * implInterface_;
+    PlatformInterface * implInterface_;
     std::map<QString, View> views;
 
 };

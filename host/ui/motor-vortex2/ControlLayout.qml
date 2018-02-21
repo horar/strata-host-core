@@ -4,7 +4,7 @@ import QtQuick.Controls 2.3
 import QtGraphicalEffects 1.0
 import QtQuick.Controls.Styles 1.4
 import QtQuick.Extras 1.4
-import tech.spyglass.ImplementationInterfaceBinding 1.0
+import tech.spyglass.PlatformInterface 1.0
 import "framework"
 import "views"
 
@@ -29,7 +29,7 @@ Item {
 
     // Platform Implementation signals
     Connections {
-        target: implementationInterfaceBinding
+        target: platformInterface
 
         onMotorSpeedChanged: {
             tachMeterGauge.value = ((speed - 1500) / 4000) * 100;
@@ -109,7 +109,7 @@ Item {
                     gauge2.value = position * 200
                     gauge3.value = position * 200
                     //console.log("slider: setMotorSpeed(", motorSpeed(position), ")");
-                    implementationInterfaceBinding.setMotorSpeed(motorSpeed(position));
+                    platformInterface.setMotorSpeed(motorSpeed(position));
 
                 }
 
@@ -140,7 +140,7 @@ Item {
 
                         onPressed: {
                             console.log("MANUAL CONTROL")
-                            implementationInterfaceBinding.setMotorMode("manual");
+                            platformInterface.setMotorMode("manual");
                         }
                     }
 
@@ -149,7 +149,7 @@ Item {
 
                         onPressed: {
                             console.log("AUTOMATIC")
-                            implementationInterfaceBinding.setMotorMode("automatic");
+                            platformInterface.setMotorMode("automatic");
                         }
                     }
                 }

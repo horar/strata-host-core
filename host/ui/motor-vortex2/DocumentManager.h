@@ -17,7 +17,7 @@
 #include <QJsonDocument>
 #include <QMetaObject>
 #include <QQmlEngine>
-#include "ImplementationInterfaceBinding/ImplementationInterfaceBinding.h"
+#include <PlatformInterface/PlatformInterface.h>
 
 // Note: adding document set
 
@@ -65,7 +65,7 @@ class DocumentManager : public QObject
 
 public:
     DocumentManager();
-    DocumentManager(ImplementationInterfaceBinding *implementationInterfaceBinding);
+    DocumentManager(PlatformInterface *platformInterface);
     explicit DocumentManager(QObject *parent);
     virtual ~DocumentManager();
 
@@ -86,7 +86,7 @@ signals:
     void targetedDocumentsChanged();
 
 private:
-    ImplementationInterfaceBinding *implInterfaceBinding_;
+    PlatformInterface *platformInterface_;
 
     void dataSourceHandler(QJsonObject);
 
