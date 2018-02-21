@@ -145,8 +145,8 @@ Rectangle {
         } //board rectangle
 
         //----------------------------------------
-        //
-
+        //  graphs
+        //----------------------------------------
         Rectangle {
             id:graphs
             //column 2, 2 rows
@@ -189,12 +189,12 @@ Rectangle {
                     Layout.preferredHeight : graphGrid.prefHeight(this)
                     Layout.fillWidth:true
                     Layout.fillHeight:true
-                    color:"red"
-                    clip: true
 
                     AdvancedGraph{
                         id:port1VoltageAndCurrentGraph
                         title: "PORT 1: VOLTAGE AND CURRENT"
+                        chartType: "Output Voltage"
+                        portNumber:1
                         anchors.top:parent.top
                         anchors.topMargin: -15
                         anchors.left:parent.left
@@ -220,6 +220,8 @@ Rectangle {
                     AdvancedGraph{
                         id:port2VoltageAndCurrentGraph
                         title: "PORT 2: VOLTAGE AND CURRENT"
+                        chartType: "Output Voltage"
+                        portNumber:2
                         anchors.top:parent.top
                         anchors.topMargin: -15
                         anchors.left:parent.left
@@ -246,6 +248,8 @@ Rectangle {
                     AdvancedGraph{
                         id:port1PowerGraph
                         title: "PORT 1 POWER"
+                        chartType: "Port Power"
+                        portNumber:1
                         anchors.top:parent.top
                         anchors.topMargin: -15
                         anchors.left:parent.left
@@ -271,6 +275,8 @@ Rectangle {
                     AdvancedGraph{
                         id:port2PowerGraph
                         title: "PORT 2 POWER"
+                        chartType: "Port Power"
+                        portNumber:2
                         anchors.top:parent.top
                         anchors.topMargin: -15
                         anchors.left:parent.left
@@ -295,6 +301,8 @@ Rectangle {
                     AdvancedGraph{
                         id:port1TemperatureGraph
                         title: "PORT 1 TEMPERATURE"
+                        chartType: "Port Temperature"
+                        portNumber:1
                         anchors.top:parent.top
                         anchors.topMargin: -15
                         anchors.left:parent.left
@@ -320,6 +328,8 @@ Rectangle {
                     AdvancedGraph{
                         id:port2TemperatureGraph
                         title: "PORT 2 TEMPERATURE"
+                        chartType: "Port Temperature"
+                        portNumber:2
                         anchors.top:parent.top
                         anchors.topMargin: -15
                         anchors.left:parent.left
