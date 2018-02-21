@@ -41,21 +41,21 @@ Window {
             Button {
                 text: "USB-PD"
                 onClicked: {
-                    var data = { platform_name: "USB-PD Control"}
+                    var data = { platform_name: "usb-pd"}
                     NavigationControl.updateState(NavigationControl.events.PLATFORM_CONNECTED_EVENT, data)
                 }
             }
             Button {
                 text: "BuBU Interface"
                 onClicked: {
-                    var data = { platform_name: "BuBu Interface"}
+                    var data = { platform_name: "bubu"}
                     NavigationControl.updateState(NavigationControl.events.PLATFORM_CONNECTED_EVENT, data)
                 }
             }
             Button {
-                text: "Advanced"
+                text: "Motor Vortex"
                 onClicked: {
-                   var data = { platform_name: "USB-PD Advanced Control"}
+                   var data = { platform_name: "motor-vortex"}
                     NavigationControl.updateState(NavigationControl.events.PLATFORM_CONNECTED_EVENT, data)
                 }
             }

@@ -3,11 +3,12 @@
         <file>main.qml</file>
         <file>navigationControl.js</file>
         <file>main.cpp</file>
-        <file>bubuControl.qml</file>
-        <file>detectingPlatform.qml</file>
-        <file>loginScreen.qml</file>
         <file>navigation_router.pro</file>
-        <file>usbAdvanced.qml</file>
-        <file>usbControl.qml</file>
+        <file>views/bubu/Control.qml</file>
+        <file>views/usb-pd/Advanced.qml</file>
+        <file>views/usb-pd/Control.qml</file>
+        <file>SGLoginScreen.qml</file>
+        <file>SGDetectingPlatform.qml</file>
+        <file>views/motor-vortex/Control.qml</file>
     </qresource>
 </RCC>

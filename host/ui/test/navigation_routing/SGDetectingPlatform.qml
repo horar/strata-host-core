@@ -18,7 +18,7 @@ Rectangle {
         anchors {   top: busyIcon.bottom
                     centerIn: parent
         }
-        text: qsTr("Waiting for platform connection")
+        text:   qsTr("Waiting for platform connection")
     }
 }
 

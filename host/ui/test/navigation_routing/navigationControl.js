@@ -14,10 +14,16 @@ var context = {
 /*
   Mapping of verbose_name to file directory structure.
 */
-var control_page_map = {
-    "USB-PD Control": "usbControl.qml",
-    "BuBu Interface": "bubuControl.qml",
-    "USB-PD Advanced Control":"usbAdvanced.qml"
+
+//var control_page_map = {
+//    "USB-PD Control": "usbControl.qml",
+//    "BuBu Interface": "bubuControl.qml",
+//    "USB-PD Advanced Control":"usbAdvanced.qml"
+//}
+
+var screens = {
+    LOGIN_SCREEN: "SGLoginScreen.qml",
+    DETECTING_PLATFORM_SCREEN : "SGDetectingPlatform.qml",
 }
 
 /*
@@ -48,9 +54,23 @@ var events = {
 var navigation_state = states.UNINITIALIZED
 var parent_ = null
 
-function getControlPage(platform_name) {
-    console.log("retured control qml: ", control_page_map[platform_name])
-    return control_page_map[platform_name]
+/*
+    Retrieve the qml file in the templated file structure
+*/
+var PREFIX = "qrc:/views/"
+function getQMLFile(platform_name, filename) {
+    console.log(platform_name, "-", filename, "qml file requested.")
+
+    // Build the file name - ./view/<platform_name>/filename.qml
+    if (filename.search(".qml") < 0){
+        console.log("adding extension to filename: ", filename)
+        filename = filename + ".qml"
+    }
+
+    var qml_file_name = PREFIX + platform_name + "/" + filename
+    console.log("Locating at ", qml_file_name)
+
+    return qml_file_name
 }
 
 /*
@@ -94,7 +114,7 @@ function globalState(event,data)
     case events.PROMPT_LOGIN_EVENT:
         console.log("Updated state to Login:", states.LOGIN_STATE)
         navigation_state = states.LOGIN_STATE
-        createView("loginScreen.qml")
+        createView(screens.LOGIN_SCREEN)
         break;
 
     case events.LOGOUT_EVENT:
@@ -125,6 +145,11 @@ function globalState(event,data)
 /*
   Navigator state machine
 */
+function updateState(event)
+{
+    updateState(event,null)
+}
+
 function updateState(event, data)
 {
     console.log("Received event: ", event)
@@ -162,12 +187,12 @@ function updateState(event, data)
             case events.SHOW_CONTROL_EVENT:
                 // Refresh Control View based on conditions
                 if (context.platform_state){
-                    var qml_name = getControlPage(context.platform_name)
+                    var qml_name = getQMLFile(context.platform_name, "Control")
                     createView(qml_name)
                 }
                 else {
                     // Disconnected; Show detection page
-                    createView("detectingPlatform.qml")
+                    createView(screens.DETECTING_PLATFORM_SCREEN)
                 }
 
                 break;
@@ -178,7 +203,7 @@ function updateState(event, data)
                 context.platform_name = data.platform_name
                 context.platform_state = true;
                 // Refresh
-                updateState(events.SHOW_CONTROL_EVENT,null)
+                updateState(events.SHOW_CONTROL_EVENT)
                 break;
 
             case events.PLATFORM_DISCONNECTED_EVENT:
@@ -186,7 +211,7 @@ function updateState(event, data)
                 context.platform_name = ""
                 context.platform_state = false;
                 // Refresh
-                updateState(events.SHOW_CONTROL_EVENT,null)
+                updateState(events.SHOW_CONTROL_EVENT)
                 break;
 
             default:
