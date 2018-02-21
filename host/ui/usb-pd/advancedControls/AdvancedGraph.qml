@@ -18,6 +18,10 @@ ChartView {
     backgroundRoundness: 0
     margins{top:0; left:0; right:0; bottom:0}
 
+    property string chartType: ""
+    property int portNumber:0
+    property int count:0
+
 
 
     // Define x-axis to be used with the series instead of default one
@@ -47,7 +51,7 @@ ChartView {
         //lineVisible: false
         gridLineColor: Qt.rgba(.5,.5,.5,.3)
         //shadesVisible: true
-        //shadesColor:Qt.rgba(1,153/255,0,.3)
+        //shadesColor:Qt.rgba(1,.6,0,.3)    //dark orange
     }
 
     AreaSeries {
@@ -56,25 +60,65 @@ ChartView {
         axisY: valueAxisY
         color: Qt.rgba(.5,.5,.5,.3)     //fill/brush color
         borderWidth: .5                  //borderColor is determined by the line series!
-        upperSeries: upperLineSeries
+        upperSeries: lineSeries1
     }
 
 
 
     LineSeries {
-        id:upperLineSeries
+        id:lineSeries1
         color:Qt.rgba(.9,.9,.9,1)
-        XYPoint { x: 2000; y: 1 }
-        XYPoint { x: 2001; y: 4 }
-        XYPoint { x: 2002; y: 3 }
-        XYPoint { x: 2003; y: 5 }
-        XYPoint { x: 2004; y: 7 }
-        XYPoint { x: 2005; y: 8 }
-        XYPoint { x: 2006; y: 9 }
-        XYPoint { x: 2007; y: 6 }
-        XYPoint { x: 2008; y: 7 }
-        XYPoint { x: 2009; y: 3 }
-        XYPoint { x: 2010; y: 2 }
-        XYPoint { x: 2011; y: 1 }
+
+    }
+
+    Connections {
+        target: implementationInterfaceBinding
+
+        onPortTargetVoltageChanged: {
+            if( chartType === "Target Voltage" && portNumber == port ) {
+                parameterValue = value;
+                lineSeries1.append(count/10,parameterValue);
+                count++;
+            }
+        }
+
+        onPortTemperatureChanged: {
+            if( chartType === "Port Temperature" && portNumber == port  ) {
+                parameterValue = value;
+                lineSeries1.append(count/10,parameterValue);
+                count++;
+
+            }
+
+        }
+
+        onPortPowerChanged: {
+            if( chartType === "Port Power"  && portNumber == port ) {
+                parameterValue = value;
+                lineSeries1.append(count/10,parameterValue);
+                count++;
+            }
+        }
+
+        onPortOutputVoltageChanged: {
+            if( chartType === "Output Voltage"  && portNumber == port ) {
+                parameterValue = value;
+                lineSeries1.append(count/10,value);
+                lineSeries1.name = "Output Voltage";
+                count++;
+            }
+        }
+
+        onPortInputVoltageChanged:{
+            if( chartType === "Input Power") {
+                parameterValue = value*parameterCurrentValue;
+                lineSeries1.append(count/10,parameterValue);
+                lineSeries1.name = "Input Power";
+                count++;
+
+
+            }
+        }
+
     }
 }
