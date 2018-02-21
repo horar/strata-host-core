@@ -24,7 +24,9 @@ Item {
                 PropertyAnimation{
                     targets: [faultProtectionLabel, shutdownButton, restartButton, noProtectionButton, dataConfigurationLabel,
                     chargeOnlyButton, passiveButton, redriverButton,
-                    inputLimitingGroup, inputLimitingGroup.children, temperatureLimitingGroup, temperatureLimitingGroup.chidren]
+                    inputLimitingGroup, inputLimitingGroup.children, temperatureLimitingGroup, temperatureLimitingGroup.chidren,
+                    minimumInputVoltageText, minimumInputLabel, minimumInputUnitText, minimumInputVoltageSlider,
+                    faultTempText, faultTempLabel, faultTempUnitText, faultTempSlider]
                     property:"opacity"
                     to: 0
                     duration:500
@@ -49,7 +51,9 @@ Item {
                 PropertyAnimation{
                     targets: [faultProtectionLabel, shutdownButton, restartButton, noProtectionButton, dataConfigurationLabel,
                     chargeOnlyButton, passiveButton, redriverButton,
-                    inputLimitingGroup, inputLimitingGroup.children, temperatureLimitingGroup, temperatureLimitingGroup.chidren]
+                    inputLimitingGroup, inputLimitingGroup.children, temperatureLimitingGroup, temperatureLimitingGroup.chidren,
+                    minimumInputVoltageText, minimumInputLabel, minimumInputUnitText, minimumInputVoltageSlider,
+                    faultTempText, faultTempLabel, faultTempUnitText, faultTempSlider]
 
                     property:"opacity"
                     to: 1.0
