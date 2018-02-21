@@ -2,14 +2,13 @@ import QtQuick 2.0
 
 Item {
 
-    property int position : 10
-    property int offset: 10
+    property int position : 9
     property int indexIncrementer: -1
     property int animationHolder:0
-    property int fadeInTime: 0
-    property int fadeOutTime: 0
-    property string titleName: " "
-    property int timerInterval: 0
+    property int fadeInTime: 1000
+    property int fadeOutTime: 4000
+    property string titleName: "Scrolling Title Name"
+    property int timerInterval: 400
 
 
     Component.onCompleted: {
@@ -20,33 +19,27 @@ Item {
         return element.itemAt(indexIncrementer);
 
     }
+    // TODO[Taniya] : create an component for the animation
     function createObject() {
         var dynamicObject = Qt.createQmlObject('import QtQuick 2.7; SequentialAnimation{ id: animation
                     NumberAnimation { target: getElement(repeater) ; property: "opacity"; from: 0; to: 1; easing.type:Easing.OutInCubic; duration: fadeInTime;}
                     NumberAnimation { target: getElement(repeater); property: "opacity"; from: 1; to: 0; easing.type:Easing.OutInCubic; duration: fadeOutTime;}
             }',
-                    parent,'firstObject');
+                                               parent,'firstObject');
         dynamicObject.start();
         return dynamicObject;
     }
+        function changePosition(TextWidth){
 
-    function substring(str,start,end) {
-        return str.substring(start, end);
-    }
-    function changePosition(){
+            return position = position + TextWidth;
+        }
 
-        return position = position + offset;
-    }
-
-    function changeInterval(index) {
-        return index * 500;
-    }
 
     Item {
         z: 2
-        anchors { top: onLogo.bottom;
+        anchors { /*top: onLogo.bottom;*/
             horizontalCenter: parent.horizontalCenter;
-            horizontalCenterOffset: -170
+            horizontalCenterOffset: -150
         }
         Repeater {
             id: repeater
@@ -59,8 +52,10 @@ Item {
                 width: 18; height: 31
                 font.pixelSize: 24
                 horizontalAlignment: Text.AlignLeft
-                text: substring(titleName,index,index+1)
-                Component.onCompleted: {x = changePosition();console.log("change position", changePosition())}
+                text: titleName.substring(index,index+1)
+                Component.onCompleted:{
+                   x = changePosition(modelText.width);
+                }
             }
         }
     }
@@ -69,9 +64,12 @@ Item {
         id: timerAnimation
         interval: timerInterval; running: true; repeat: true
         onTriggered: {
-            if(indexIncrementer!= titleName.length - 1)
-             indexIncrementer++;
-            else indexIncrementer = 0;
+            if(indexIncrementer!= titleName.length - 1) {
+                indexIncrementer++;
+            }
+            else {
+                indexIncrementer = 0;
+            }
             createObject();
         }
 
