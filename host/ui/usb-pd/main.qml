@@ -9,11 +9,12 @@ ApplicationWindow {
     visible: true
     width: 1200
     height: 900
-    title: qsTr("Spectrum Hardware Vision - USB Power Delivery Automotive Dual Port")
+    title: qsTr("Encore Design Suite")
     property bool hardwareStatus: null
     property bool login_detected: false
     property string control_type: "standard"
 
+    property string applicationTitle: mainWindow.title
     Label {
         id: currentLabel7
         x: 118

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="396px" height="396px" viewBox="0 0 396 396" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 48.2 (47327) - http://www.bohemiancoding.com/sketch -->
+    <title>maxPowerIcon</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="maxPowerIcon" transform="translate(8.000000, 8.000000)">
+            <circle id="Oval" stroke="#D0021B" stroke-width="16" cx="190" cy="190" r="190"></circle>
+            <path d="M165.601716,175.619934 C158.564914,187.085198 162.154464,202.083744 173.619728,209.121012 C190.754147,219.637154 344.532375,283 344.532375,283 C344.532375,283 216.236748,178.118065 199.102329,167.601923 C187.637065,160.564655 172.638519,164.154671 165.601716,175.619934 Z" id="Path" fill="#C83232"></path>
+        </g>
+    </g>
+</svg>

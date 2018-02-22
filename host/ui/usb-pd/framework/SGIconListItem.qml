@@ -59,7 +59,7 @@ Item {
         id: statisticText
         width:container.width; height: container.height
         anchors{ left:iconImage.right; leftMargin: 10; verticalCenter: iconImage.verticalCenter; verticalCenterOffset:2}
-        font.pointSize: Qt.platform.os === "osx" ? width/1.5 +1: parent.width/1.6
+        font.pointSize: Qt.platform.os === "osx" ? width/1.75 +1: parent.width/1.6
         color:(inAdvancedMode) ? "#D8D8D8":"black"
     }
 }
