@@ -2,11 +2,24 @@ import QtQuick 2.0
 import QtQuick.Controls 2.0
 
 Button {
-    property var tabName: Two{}
+    id: middleButton
     checkable: true
-    text: "two"
     width:100
     height:40
+
+    property color checkedColor: "grey"
+    property color unCheckedColor: "lightgrey"
+
+    property color checkedTextColor: "white"
+    property color uncheckedTextColor: "grey"
+
+    contentItem: Text {
+        text: parent.text
+        font: parent.font
+        color: parent.checked ? checkedTextColor : uncheckedTextColor
+        verticalAlignment: Text.AlignVCenter
+        horizontalAlignment: Text.Center
+    }
 
     background: Canvas{
         id:middleButtonCanvas
@@ -14,14 +27,13 @@ Button {
         onPaint:{
             //console.log("repainting")
             var ctx = getContext("2d");
-            var theFillColor = parent.checked ? "grey" :"lightgrey"
+            var theFillColor = parent.checked ? checkedColor : unCheckedColor
             var eighthWidth = parent.width/8
             var theLineWidth = 1
             var theLeft = 0
             var theTop = theLineWidth
             var theBottom = height - theLineWidth
             ctx.fillStyle = theFillColor
-
             ctx.beginPath();
             ctx.moveTo(theLeft, theTop)
             ctx.moveTo(width,theTop);
@@ -38,15 +50,4 @@ Button {
         middleButtonCanvas.requestPaint()
     }
 
-    function createTab(inTabName, inParent){
-        var component  = Qt.createComponent(inTabName);
-        var object = component.createObject(inParent);
-        return object
-    }
-
-    Component.onCompleted: {
-        tabName = createTab("Three.qml",contentRectangle);
-    }
 }
-
-

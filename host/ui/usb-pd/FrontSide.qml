@@ -16,6 +16,7 @@ Rectangle {
         anchors.right: parent.right
         color:(stack.currentItem.objectName == "boardLayout") ? "white" :"black"
         visible: false
+        z:2
         RowLayout {
             anchors.fill:parent
             ToolButton {

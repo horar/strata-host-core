@@ -116,12 +116,26 @@
         <file>boardBringUp/PWMSwitch.qml</file>
         <file>boardBringUp/CircularSpinner.qml</file>
         <file>boardBringUp/lockIcon.png</file>
-        <file>AdvancedBoard.qml</file>
         <file>images/borderWhite.svg</file>
         <file>images/leftPowerPlugWhite.svg</file>
         <file>boardBringUp/SerialInterfaceI2C.qml</file>
         <file>boardBringUp/SerialInterfaceSPI.qml</file>
         <file>boardBringUp/SerialInterfaceUART.qml</file>
         <file>boardBringUp/lock.svg</file>
+        <file>advancedControls/AdvancedControlSettings.qml</file>
+        <file>advancedControls/AdvancedBoard.qml</file>
+        <file>advancedControls/LeftSegmentedButton.qml</file>
+        <file>advancedControls/MiddleSegmentedButton.qml</file>
+        <file>advancedControls/RightSegmentedButton.qml</file>
+        <file>advancedControls/PopUpMenu.qml</file>
+        <file>advancedControls/AdvancedSlider.qml</file>
+        <file>advancedControls/AdvancedPortSettings.qml</file>
+        <file>advancedControls/AdvancedIconList.qml</file>
+        <file>advancedControls/AdvancedPort.qml</file>
+        <file>images/icons/maxPowerIcon.svg</file>
+        <file>advancedControls/AdvancedConnector.qml</file>
+        <file>images/rightUSBPlugWhite.svg</file>
+        <file>advancedControls/AdvancedGraph.qml</file>
+        <file>framework/SGScrollingText.qml</file>
     </qresource>
 </RCC>
