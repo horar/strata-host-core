@@ -15,19 +15,14 @@ var context = {
   Mapping of verbose_name to file directory structure.
 */
 
-//var control_page_map = {
-//    "USB-PD Control": "usbControl.qml",
-//    "BuBu Interface": "bubuControl.qml",
-//    "USB-PD Advanced Control":"usbAdvanced.qml"
-//}
-
 var screens = {
     LOGIN_SCREEN: "SGLoginScreen.qml",
     DETECTING_PLATFORM_SCREEN : "SGDetectingPlatform.qml",
+    CONTENT_SCREEN : "SGContent.qml"
 }
 
 /*
-  All states handled by navigation_state
+  All states handled by navigation_state_
 */
 var states = {
 
@@ -51,8 +46,9 @@ var events = {
 /*
  Navigation Members
 */
-var navigation_state = states.UNINITIALIZED
-var parent_ = null
+var navigation_state_ = states.UNINITIALIZED
+var control_container_ = null
+var content_container_ = null
 
 /*
     Retrieve the qml file in the templated file structure
@@ -77,25 +73,27 @@ function getQMLFile(platform_name, filename) {
   Navigation must be initialized with parent container
   that will hold control views
 */
-function init(parent)
+function init(control_parent, content_parent)
 {
-    parent_ = parent
+    control_container_ = control_parent
+    content_container_ = content_parent
     updateState(events.PROMPT_LOGIN_EVENT)
 }
+
 /*
   Dynamically load qml controls by qml filename
 */
-function createView(name) {
+function createView(name, parent) {
     console.log("createObject: name =", name, ", parameters =", JSON.stringify(context))
 
-    var component = Qt.createComponent(name, QtQuickModule.Component.PreferSynchronous, parent_);
+    var component = Qt.createComponent(name, QtQuickModule.Component.PreferSynchronous, parent);
 
     if (component.status === QtQuickModule.Component.Error) {
         console.log("ERROR: Cannot createComponent(", name, "), parameters=", JSON.stringify(context));
     }
 
     // TODO[Abe]: store this globally for later destroying
-    var object = component.createObject(parent_,context)
+    var object = component.createObject(parent,context)
     if (object === null) {
         console.log("Error creating object: name=", name, ", parameters=", JSON.stringify(context));
     }
@@ -113,8 +111,10 @@ function globalState(event,data)
     {
     case events.PROMPT_LOGIN_EVENT:
         console.log("Updated state to Login:", states.LOGIN_STATE)
-        navigation_state = states.LOGIN_STATE
-        createView(screens.LOGIN_SCREEN)
+        navigation_state_ = states.LOGIN_STATE
+        // Update both containers; Login blocks both
+        createView(screens.LOGIN_SCREEN, control_container_)
+        createView(screens.LOGIN_SCREEN, content_container_)
         break;
 
     case events.LOGOUT_EVENT:
@@ -137,7 +137,7 @@ function globalState(event,data)
         context.platform_state = false;
         break;
     default:
-        console.log("Unhandled signal, ", event, " in state ", navigation_state)
+        console.log("Unhandled signal, ", event, " in state ", navigation_state_)
         break;
     }
 }
@@ -154,7 +154,7 @@ function updateState(event, data)
 {
     console.log("Received event: ", event)
 
-    switch(navigation_state){
+    switch(navigation_state_){
         case states.UNINITIALIZED:
             switch(event)
             {
@@ -171,7 +171,12 @@ function updateState(event, data)
             {
             case events.LOGIN_SUCCESSFUL_EVENT:
                 context.is_logged_in = true;
-                navigation_state = states.CONTROL_STATE
+                navigation_state_ = states.CONTROL_STATE
+
+                // Allow content
+                createView(screens.CONTENT_SCREEN, content_container_)
+
+                // Update Control by next state
                 updateState(events.SHOW_CONTROL_EVENT,null)
             break;
 
@@ -188,11 +193,11 @@ function updateState(event, data)
                 // Refresh Control View based on conditions
                 if (context.platform_state){
                     var qml_name = getQMLFile(context.platform_name, "Control")
-                    createView(qml_name)
+                    createView(qml_name, control_container_)
                 }
                 else {
                     // Disconnected; Show detection page
-                    createView(screens.DETECTING_PLATFORM_SCREEN)
+                    createView(screens.DETECTING_PLATFORM_SCREEN, control_container_)
                 }
 
                 break;

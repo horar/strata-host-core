@@ -8,27 +8,56 @@ Window {
 
     id: mainWindow
     visible: true
-    width: 640
-    height: 480
+    width: 1200
+    height: 900
     title: qsTr("Navigation Framework")
 
-    Item {
-
-        id: controlContainer
+    Flipable {
+        id: flipable
         height: 0.7 * parent.height
         width: parent.width
 
+        property bool flipped: false
+
+        front: SGControlContainer{ id: controlContainer}
+        back: SGContentContainer { id: contentContainer }
+
+        transform: Rotation {
+            id: rotation
+            origin {
+                    x: flipable.width/2;
+                    y: flipable.height/2
+                    }
+            axis {
+                    x: 0;
+                    y: -1;
+                    z: 0
+                 }    // set axis.y to 1 to rotate around y-axis
+
+            angle: 0    // the default angle
+        }
+
+        states: State {
+            name: "back"
+            PropertyChanges { target: rotation; angle: 180 }
+            when: flipable.flipped
+        }
+
+        transitions: Transition {
+            NumberAnimation { target: rotation; property: "angle"; duration: 2000 }
+        }
         Component.onCompleted: {
             console.log("Initializing")
-            NavigationControl.init(controlContainer)
+            NavigationControl.init(controlContainer, contentContainer)
         }
+
     }
 
     // Debug commands for simulation
     Rectangle {
         id: commandBar
         width: parent.width
-        anchors.top: controlContainer.bottom
+        anchors.top: flipable.bottom
         anchors.bottom: parent.bottom
 
         // Simulate Platform events
@@ -74,9 +103,15 @@ Window {
                     NavigationControl.updateState(NavigationControl.events.LOGOUT_EVENT,null)
                 }
             }
+            Button {
+                text: "Toggle Content/Control"
+                onClicked: {
+                flipable.flipped = !flipable.flipped
+                }
+            }
+            }
 
 
         }
-    }
 
 }
