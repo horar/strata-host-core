@@ -193,7 +193,7 @@ Rectangle {
                     AdvancedGraph{
                         id:port1VoltageAndCurrentGraph
                         title: "PORT 1: VOLTAGE AND CURRENT"
-                        chartType: "Output Voltage"
+                        chartType: "Target Voltage"
                         portNumber:1
                         anchors.top:parent.top
                         anchors.topMargin: -15
@@ -220,7 +220,7 @@ Rectangle {
                     AdvancedGraph{
                         id:port2VoltageAndCurrentGraph
                         title: "PORT 2: VOLTAGE AND CURRENT"
-                        chartType: "Output Voltage"
+                        chartType: "Target Voltage"
                         portNumber:2
                         anchors.top:parent.top
                         anchors.topMargin: -15
