@@ -165,8 +165,8 @@ void ImplementationInterfaceBinding::setMaximumPortPower(int port,int value)
     QJsonObject cmdMessageObject;
     cmdMessageObject.insert("cmd", "request_usb_pd_maximum_power");
     QJsonObject payloadObject;
-    payloadObject.insert("Port_number",port);
-    payloadObject.insert("Watts", value);
+    payloadObject.insert("port",port);
+    payloadObject.insert("watts", value);
     qDebug() << "temp limit "<<value;
     cmdMessageObject.insert("payload",payloadObject);
     QJsonDocument doc(cmdMessageObject);
@@ -657,18 +657,80 @@ void ImplementationInterfaceBinding::handleResetNotification(const QVariantMap p
 }
 
 void ImplementationInterfaceBinding::handleInputUnderVoltageNotification(const QVariantMap payloadMap) {
-    bool state = payloadMap["under_voltage"].toBool();
+    QString state = payloadMap["state"].toString();
     int value = payloadMap["minimum_voltage"].toInt();
-    qDebug() << "received Minimum voltage";
-    emit minimumVoltageChanged(state,value);
+
+    // Generates the message to be printed in the UI
+    QString message = constructFaultMessage("input voltage",state,value);
+
+    // fault occurs and the message is added to the active fault list
+    if(state == "below") {
+        active_faults_.append(message);
+    }
+
+    // fault is corrected and the message is removed from the active fault list
+    else if(state == "above") {
+        QStringList message_to_remove = active_faults_.filter("input voltage");
+        if(active_faults_.contains(message_to_remove[0])) {
+            active_faults_.removeOne(message_to_remove[0]);
+        }
+    }
+
+    // both fault occurence and correction are added to the fault history list
+    fault_history_.append(message);
+    emit activeFaultsChanged();
+    emit faultHistoryChanged();
 }
 
 void ImplementationInterfaceBinding::handleOverTemperatureNotification(const QVariantMap payloadMap)
 {
-    bool state = payloadMap["over_temperature"].toBool();
-    int value = payloadMap["maximum_temperature"].toInt();
-    qDebug() << "received over temperature";
-    emit overTemperatureChanged(state,value);
+    QString state = payloadMap["state"].toString();
+    int value = payloadMap["temperature_limit"].toInt();
+
+    int port_number;
+    QString usbCPortId = payloadMap["Port"].toString();
+
+    // assign port number
+    // [prasanth] firmware sends fault occurence for two ports [two messages] irrespective
+    // of how many ports are connected to the platform
+    // this if logic is used to send only the fault message for the port that is connected
+    if(usbCPortId.compare("USB_C_port_1") == 0){
+        if (usbCPort1State) {
+            port_number = 1;
+        }
+        else if(!usbCPort1State){
+            return;
+        }
+    }
+    // assign port number
+    if(usbCPortId.compare("USB_C_port_2") == 0){
+        if (usbCPort2State) {
+            port_number = 2;
+        }
+        else if(!usbCPort2State){
+            return;
+        }
+    }
+    // Generates the message to be printed in the UI
+    QString message = constructFaultMessage("temperature",state,value,port_number);
+
+    // fault occurs and the message is added to the active fault list
+    if(state == "above") {
+        active_faults_.append(message);
+    }
+
+    // fault is corrected and the message is removed from the active fault list
+    else if(state == "below") {
+        QStringList message_to_remove = active_faults_.filter("temperature");
+        if(active_faults_.contains(message_to_remove[0])) {
+            active_faults_.removeOne(message_to_remove[0]);
+        }
+    }
+
+    // both fault occurence and correction are added to the fault history list
+    fault_history_.append(message);
+    emit activeFaultsChanged();
+    emit faultHistoryChanged();
 }
 /*!
  * End of notification handlers
@@ -729,12 +791,10 @@ QVariantMap ImplementationInterfaceBinding::validateJsonReply(const QVariantMap 
 
 void ImplementationInterfaceBinding::notificationsThreadHandle()
 {
-
     qDebug () << "Thread Created for notification ";
     notification_thread_running_ = true;
 
     while(notification_thread_running_) {
-
 #if USE_DEBUG_JSON
         // FIXME debugging/testing only. REMOVE BEFORE COMMIT
         QString raw = R"(
@@ -764,6 +824,7 @@ void ImplementationInterfaceBinding::notificationsThreadHandle()
         std::string response= hcc_object->receiveNotification();
 //        qDebug()<<"recv :",response;
         QString q_response = QString::fromStdString(response);
+//        qDebug()<< "[Impl Recv]: "<<q_response;
         QJsonDocument doc= QJsonDocument::fromJson(q_response.toUtf8());
         QJsonObject json_obj=doc.object();
 

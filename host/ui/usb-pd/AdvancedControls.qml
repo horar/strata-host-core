@@ -432,7 +432,7 @@ Rectangle {
                             model: activeFaultsListModel
 
                             delegate: Text {
-                                text: fault
+                                text: modelData
                                 color: "orangered"
                                 font.pointSize: smallFontSize
                             }
@@ -512,7 +512,7 @@ Rectangle {
                             model: faultHistoryListModel
 
                             delegate: Text {
-                                text: fault
+                                text: modelData
                                 color: "#D8D8D8"
                                 font.pointSize: smallFontSize
                             }
