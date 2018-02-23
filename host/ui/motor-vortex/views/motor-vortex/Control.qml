@@ -3,9 +3,8 @@ import QtQuick 2.0
 Rectangle {
     property string user_id
     property string platform_name
-
     anchors.fill: parent
-    color: "green"
+    color: "blue"
     Text {
         anchors { centerIn: parent }
         text: {

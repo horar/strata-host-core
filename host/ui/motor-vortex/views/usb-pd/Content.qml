@@ -6,7 +6,7 @@ Rectangle {
     id: content
     anchors { fill: parent}
 
-    property string control_name:  "Bubu"
+    property string control_name:  "USB-PD"
 
     StackLayout{
 

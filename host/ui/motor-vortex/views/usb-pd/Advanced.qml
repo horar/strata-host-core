@@ -5,7 +5,7 @@ Rectangle {
     property string platform_name
 
     anchors.fill: parent
-    color: "green"
+    color: "blue"
     Text {
         anchors { centerIn: parent }
         text: {

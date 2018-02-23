@@ -1,5 +1,12 @@
 import QtQuick 2.0
+import "navigationControl.js" as NavigationControl
 
-Item {
+Rectangle {
 
+    id: contentContainer
+    anchors { fill: parent}
+    color: "yellow"
+
+    Component.onCompleted: {
+    }
 }

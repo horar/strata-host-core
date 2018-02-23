@@ -25,10 +25,12 @@
 
 int main(int argc, char *argv[])
 {
+#if defined(Q_OS_WIN)
+    QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+#endif
+
     QApplication app(argc, argv);
     QQmlApplicationEngine engine;
-
-    QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 
     qmlRegisterType<CoreInterface>("tech.spyglass.CoreInterface",1,0,"CoreInterface");
     qmlRegisterType<PlatformInterfaceBuBu::PlatformInterface>("tech.spyglass.PlatformInterfaceBuBu",1,0,"PlatformInterfaceBuBu");

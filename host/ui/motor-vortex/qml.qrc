@@ -1,11 +1,81 @@
 <RCC>
     <qresource prefix="/">
         <file>main.qml</file>
+        <file>navigationControl.js</file>
+        <file>main.cpp</file>
+        <file>views/bubu/Control.qml</file>
+        <file>views/usb-pd/Advanced.qml</file>
+        <file>views/usb-pd/Control.qml</file>
+        <file>SGLoginScreen.qml</file>
+        <file>SGDetectingPlatform.qml</file>
+        <file>views/motor-vortex/Control.qml</file>
         <file>SGControlContainer.qml</file>
         <file>SGContentContainer.qml</file>
-        <file>views/bubu/Control.qml</file>
         <file>views/bubu/Content.qml</file>
-        <file>SGLogin.qml</file>
-        <file>SGRegistration.qml</file>
+        <file>views/motor-vortex/Content.qml</file>
+        <file>views/usb-pd/Content.qml</file>
+        <file>images/DataPath/arrows.svg</file>
+        <file>images/DataPath/charge_only_activate.png</file>
+        <file>images/DataPath/charge_only_inactivate.png</file>
+        <file>images/DataPath/hardDrive.svg</file>
+        <file>images/DataPath/laptop.svg</file>
+        <file>images/DataPath/OneRepeaterRouteActive.svg</file>
+        <file>images/DataPath/OneRepeaterRouteInactive.svg</file>
+        <file>images/DataPath/PassiveData RouteInactive.svg</file>
+        <file>images/DataPath/PassiveDataRouteActive.svg</file>
+        <file>images/DataPath/PassiveDataRouteInactive.svg</file>
+        <file>images/DataPath/TwoRepeaterDataRouteInactive.svg</file>
+        <file>images/DataPath/TwoRepeaterRouteActive.svg</file>
+        <file>images/highlightedBlockDiagram/USB-PD_blockDiagram_BatteryProtectionHighlighted.png</file>
+        <file>images/highlightedBlockDiagram/USB-PD_blockDiagram_PowerStage1Highlighted.png</file>
+        <file>images/highlightedBlockDiagram/USB-PD_blockDiagram_PowerStage2Highlighted.png</file>
+        <file>images/highlightedBlockDiagram/USB-PD_blockDiagram_TempSensorHighlighted.png</file>
+        <file>images/highlightedBlockDiagram/USB-PD_blockDiagram_ThreeVoltHighlighted.png</file>
+        <file>images/highlightedBlockDiagram/USB-PD_blockDiagram_USB-C1Highlighted.png</file>
+        <file>images/highlightedBlockDiagram/USB-PD_blockDiagram_USB-C2Highlighted.png</file>
+        <file>images/icons/backIcon.svg</file>
+        <file>images/icons/DC-DCPowerIcon.png</file>
+        <file>images/icons/downloadFromCloud.png</file>
+        <file>images/icons/gpioIcon.svg</file>
+        <file>images/icons/infoIcon.svg</file>
+        <file>images/icons/leftArrow.svg</file>
+        <file>images/icons/onLogoGreen.svg</file>
+        <file>images/icons/onLogoGreenWithText.png</file>
+        <file>images/icons/onLogoGrey.svg</file>
+        <file>images/icons/ProtectionIcon.png</file>
+        <file>images/icons/pwmIcon.svg</file>
+        <file>images/icons/rightArrow.svg</file>
+        <file>images/icons/SensorsIcon.png</file>
+        <file>images/icons/serialIcon.svg</file>
+        <file>images/icons/settingsIcon.svg</file>
+        <file>images/icons/showLessIcon.svg</file>
+        <file>images/icons/showMoreIcon.svg</file>
+        <file>images/icons/temperatureIcon.svg</file>
+        <file>images/icons/USBInterfaceIcon.png</file>
+        <file>images/icons/voltageIcon.svg</file>
+        <file>images/placeholders/blackGraph.png</file>
+        <file>images/schematics/BatteryProtectionSchematic.png</file>
+        <file>images/schematics/PowerStageSchematic.png</file>
+        <file>images/schematics/TempSensorSchematic.png</file>
+        <file>images/schematics/ThreeVoltRailSchematic.png</file>
+        <file>images/schematics/USBCInterfaceSchematic1.png</file>
+        <file>images/schematics/USBCInterfaceSchematic2.png</file>
+        <file>images/adas_comming_soon.png</file>
+        <file>images/assembly_drawing.png</file>
+        <file>images/Beta_Block Diagram.png</file>
+        <file>images/bill_hall.jpg</file>
+        <file>images/bob_klosterboer.jpg</file>
+        <file>images/border.svg</file>
+        <file>images/demoSetup.png</file>
+        <file>images/deviceOutline.svg</file>
+        <file>images/dialogBorder.svg</file>
+        <file>images/LeftPowerPlug.png</file>
+        <file>images/NCV81599_test_report.png</file>
+        <file>images/ONSEC-17-014_schematic.png</file>
+        <file>images/powerSymbolGreen.svg</file>
+        <file>images/powerSymbolGrey.svg</file>
+        <file>images/rightUSBPlug.svg</file>
+        <file>images/USB-PD_blockDiagram.png</file>
+        <file>SGWelcome.qml</file>
     </qresource>
 </RCC>
