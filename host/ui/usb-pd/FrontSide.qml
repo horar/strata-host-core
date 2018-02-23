@@ -4,6 +4,7 @@ import QtQuick.Controls 2.2
 import "framework"
 
 
+
 Rectangle {
     id: frontSide
 
@@ -17,8 +18,55 @@ Rectangle {
         color:(stack.currentItem.objectName == "boardLayout") ? "white" :"black"
         visible: false
         z:2
-        RowLayout {
-            anchors.fill:parent
+
+        states: [
+            State {
+                name: "backButtonShowing"
+                PropertyChanges { target: toolBarRow; x: 0 }
+            },
+
+            State {
+                name: "backButtonHidden"
+                PropertyChanges { target: toolBarRow; x: -50 }
+            }
+            ]
+
+            transitions: Transition {
+                // smoothly reanchor myRect and move into new position
+                PropertyAnimation { properties:"x"; duration: 500 }
+            }
+
+        Row {
+            id:toolBarRow
+            anchors.top:parent.top
+            anchors.bottom:parent.bottom
+            x: -50          //initial position keeps the back button off the screen
+            width: parent.width+50
+
+            ToolButton{
+                id: backToolButton
+                //onClicked: settingsMenu.open()
+                opacity:(stack.currentItem.objectName == "boardLayout") ? 0 : .5
+                z:2
+
+                Image{
+                    anchors.left:parent.left
+                    anchors.leftMargin: 20
+                    anchors.top:parent.top
+                    anchors.topMargin:10
+                    anchors.right:parent.right
+                    anchors.rightMargin: 10
+                    anchors.bottom:parent.bottom
+                    anchors.bottomMargin: 10
+                    source:{
+                        if (stack.currentItem.objectName != "boardLayout")
+                            source = "./images/icons/backArrowWhite.svg"
+                    }
+                }
+            }
+
+
+
             ToolButton {
                 id: settingsToolButton
                 onClicked: settingsMenu.open()
