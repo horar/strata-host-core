@@ -85,6 +85,43 @@
         <file>images/DataPath/charge_only_inactivate.png</file>
         <file>images/DataPath/charge_only_activate.png</file>
         <file>images/Beta_Block Diagram.png</file>
-        <file>images/CES_Demo_Setup.PNG</file>
+        <file>images/powerSymbolGreen.svg</file>
+        <file>images/powerSymbolGrey.svg</file>
+        <file>images/demoSetup.png</file>
+        <file>AdvancedControls.qml</file>
+        <file>images/icons/settingsIcon.svg</file>
+        <file>images/icons/showLessIcon.svg</file>
+        <file>images/icons/showMoreIcon.svg</file>
+        <file>images/placeholders/blackGraph.png</file>
+        <file>BoardBringUp.qml</file>
+        <file>ImplementationInterfaceBinding/ImplementationInterfaceBinding.cpp</file>
+        <file>ImplementationInterfaceBinding/ImplementationInterfaceBinding.h</file>
+        <file>DataCollector.cpp</file>
+        <file>DataCollector.h</file>
+        <file>DocumentManager.cpp</file>
+        <file>DocumentManager.h</file>
+        <file>boardBringUp/Gpio.qml</file>
+        <file>boardBringUp/Pwm.qml</file>
+        <file>boardBringUp/Serial.qml</file>
+        <file>images/icons/gpioIcon.svg</file>
+        <file>images/icons/pwmIcon.svg</file>
+        <file>images/icons/serialIcon.svg</file>
+        <file>images/icons/settingsIconWhite.svg</file>
+        <file>boardBringUp/SGLeftSegmentedButton.qml</file>
+        <file>boardBringUp/SGMiddleSegmentedButton.qml</file>
+        <file>boardBringUp/SGRightSegmentedButton.qml</file>
+        <file>boardBringUp/ButtonView.qml</file>
+        <file>boardBringUp/PWMSetting.qml</file>
+        <file>boardBringUp/GPIOSetting.qml</file>
+        <file>boardBringUp/PWMSwitch.qml</file>
+        <file>boardBringUp/CircularSpinner.qml</file>
+        <file>boardBringUp/lockIcon.png</file>
+        <file>AdvancedBoard.qml</file>
+        <file>images/borderWhite.svg</file>
+        <file>images/leftPowerPlugWhite.svg</file>
+        <file>boardBringUp/SerialInterfaceI2C.qml</file>
+        <file>boardBringUp/SerialInterfaceSPI.qml</file>
+        <file>boardBringUp/SerialInterfaceUART.qml</file>
+        <file>boardBringUp/lock.svg</file>
     </qresource>
 </RCC>

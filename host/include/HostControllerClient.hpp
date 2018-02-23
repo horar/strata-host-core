@@ -17,13 +17,13 @@
 #define HOST_CONTROLLER_SERVICE_IN_ADDRESS "tcp://192.168.1.64:5563"
 #endif
 
-namespace hcc {
+namespace Spyglass {
 
 class HostControllerClient {
 
 public:
-    inline HostControllerClient() {
-
+    inline HostControllerClient()
+    {
         context = new zmq::context_t;
         sendCmdSocket = new zmq::socket_t(*context,ZMQ_DEALER);
         sendCmdSocket->connect(HOST_CONTROLLER_SERVICE_OUT_ADDRESS);
@@ -33,41 +33,40 @@ public:
         notificationSocket->connect(HOST_CONTROLLER_SERVICE_IN_ADDRESS);
         notificationSocket->setsockopt(ZMQ_SUBSCRIBE,"ONSEMI",strlen("ONSEMI"));
 
-        //TODO Unique Identity generator which will be replaced by random generator sent by HostControllerService in future
-
 #if (defined (WIN32))
         s_set_id(*sendCmdSocket, (intptr_t)1);
 #else
         s_set_id(*sendCmdSocket);
 #endif
 
-        //request platform-id first step before proceeding with further request
-        std::string cmd= "{\"cmd\":\"request_platform_id\",\"Host_OS\":\"Linux\"}";
+        // TODO: [prasanth] Sending the platform id request is vital in this version
+        // The platform id notification is required by UI to know if board is connected
+        // On UI launch this message is sent to HCS and then HCS sends back the platform
+        //id notification
+        std::string cmd= "{\"cmd\":\"request_platform_id\"}";
         s_send(*sendCmdSocket,cmd.c_str());
-
-
     }
 
     inline ~HostControllerClient() {}
 
-    inline bool sendCmd(std::string cmd) {
-        if(s_send(*sendCmdSocket,cmd.c_str()))
-        {
+    inline bool sendCmd(std::string cmd)
+    {
+        if(s_send(*sendCmdSocket,cmd.c_str())) {
             return true;
         }
-        else
+        else {
             return false;
+        }
     }
 
-    inline std::string receiveCommandAck() {
-        std::string response = s_recv(*sendCmdSocket);
-        return response;
+    inline std::string receiveCommandAck()
+    {
+        return std::string(s_recv(*sendCmdSocket));
     }
 
-    inline std::string receiveNotification() {
-        s_recv(*notificationSocket);
-        std::string response = s_recv(*notificationSocket);
-        return response;
+    inline std::string receiveNotification()
+    {
+        return std::string(s_recv(*notificationSocket));
     }
 
     zmq::context_t *context;

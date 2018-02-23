@@ -264,7 +264,7 @@ Rectangle {
             Component.onCompleted: {
                 //adjust font size based on platform
                 if (Qt.platform.os === "osx"){
-                    inputPlugName.font.pointSize = parent.width/10 > 0 ? parent.width/25 : 1;
+                    inputPlugName.font.pointSize = 14;//parent.width/10 > 0 ? parent.width/25 : 1;
                 }
                 else{
                     fontSizeMode : Text.Fit

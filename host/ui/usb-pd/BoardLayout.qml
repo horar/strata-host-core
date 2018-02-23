@@ -6,24 +6,31 @@ import tech.spyglass.ImplementationInterfaceBinding 1.0
 import "framework"
 
 Rectangle {
-
-    property bool hardwareStatusChange: null
-    property bool boardScreen: true
-    property bool hardwareStatus:  {
-
-        onPlatformStateChanged: {
-            var state = implementationInterfaceBinding.platformState;
-            if(state == false && boardScreen == true) {
-                stack.push([page, {immediate:false}]);
-            }
-        }
-        implementationInterfaceBinding.platformState
-    }
-
-    onOpacityChanged: {
-        if (opacity == 1)
+    objectName: "boardLayout"
+    Component.onCompleted: {
+        if (opacity == 1){
             rotateInfoIcon.start()
+            }
+         if (opacity == 1 && frontToolBar.visible == false){
+            frontToolBar.visible = true
+            frontToolBar.opacity = 0
+             fadeInFrontToolBar.start()
+
+        }
     }
+
+
+    NumberAnimation {
+        id: fadeInFrontToolBar
+        target: frontToolBar
+        property: "opacity"
+        duration: 1000
+        from: 0
+        to: 1
+        easing.type: Easing.InOutQuad
+    }
+
+
 
     Component {
         id: page

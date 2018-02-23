@@ -9,26 +9,32 @@
 #include <QJsonObject>
 #include <QJsonArray>
 
+
 #include "DocumentManager.h"
 
 using namespace std;
 
 DocumentManager::DocumentManager()
 {
-    //qDebug("DocumentManager::DocumentManager() default ctor");
+    qDebug("DocumentManager::DocumentManager() ctor: default");
+    init();
+}
+
+DocumentManager::DocumentManager(ImplementationInterfaceBinding *implInterfaceBinding) : implInterfaceBinding_(implInterfaceBinding)
+{
+    qDebug("DocumentManager::DocumentManager() ctor: implInterfaceBinding");
     init();
 }
 
 DocumentManager::DocumentManager(QObject *parent) : QObject(parent)
 {
-    //qDebug("DocumentManager::DocumentManager(parent=%p)", parent);
+    qDebug("DocumentManager::DocumentManager(parent=%p)", parent);
     init();
 }
 
 DocumentManager::~DocumentManager ()
 {
-    // TODO free all documents
-
+    document_sets_.clear();
 }
 
 void DocumentManager::init()
@@ -36,12 +42,121 @@ void DocumentManager::init()
     //qDebug("DocumentManager::init");
 
     // create document sets: "<name>",  & <name>_documnts_
-    document_sets.emplace(make_pair(QString("schematic"), &schematic_documents_));
-    document_sets.emplace(make_pair(QString("assembly"), &assembly_documents_));
-    document_sets.emplace(make_pair(QString("layout"), &layout_documents_));
-    document_sets.emplace(make_pair(QString("test_report"), &test_report_documents_));
-    document_sets.emplace(make_pair(QString("targeted_content"), &targeted_documents_));
+    document_sets_.emplace(make_pair(QString("schematic"), &schematic_documents_));
+    document_sets_.emplace(make_pair(QString("assembly"), &assembly_documents_));
+    document_sets_.emplace(make_pair(QString("layout"), &layout_documents_));
+    document_sets_.emplace(make_pair(QString("test_report"), &test_report_documents_));
+    document_sets_.emplace(make_pair(QString("targeted_content"), &targeted_documents_));
 
+    //  [prasanth] Adding this sleep since router socket in HCS gets hangup on sending both
+    // platform id request and the database register command without this delay
+#ifdef Q_OS_WIN
+    qDebug()<<"before wait";
+    // HCS takes more than a second to load in windows
+    Sleep(3000);
+#else
+    struct timespec ts = { 1, 0};
+    nanosleep(&ts, NULL);
+#endif
+
+    // register w/ Implementation Interface for Docoument Data Source Updates
+    // TODO [ian] change to "document" on cloud update
+    implInterfaceBinding_->registerDataSourceHandler("document",
+                                                     bind(&DocumentManager::dataSourceHandler,
+                                                          this, placeholders::_1));
+
+}
+
+// @f documentDataSourceHandler
+// @b handle document data source updates from Implementation Interface
+//
+// arguments:
+//  IN:
+//   data : JSON data object
+//
+//  ERROR:
+//    returns true/false
+//
+//{
+//  "cloud_sync": "document_set",
+//  "type": "schematic",
+//  "documents": [
+//    {
+//      "data": "*******",
+//      "filename": "schematic15.png"
+//    }
+//  ]
+//}
+//{
+//  "cloud::notification": {
+//    "type": "document",
+//    "name": "schematic",
+//    "documents": [
+//      {"data": "*******","filename": "schematic1.png"},
+//      {"data": "*******","filename": "schematic1.png"}
+//    ]
+//  }
+//}
+//{
+//  "cloud::notification": {
+//    "type": "marketing",
+//    "name": "adas_sensor_fusion",
+//    "data": "raw html"
+//  }
+//}
+
+//
+void DocumentManager::dataSourceHandler(QJsonObject data)
+{
+    qDebug("DocumentManager::documentDataSourceHandler called");
+
+    if (data.contains("name") && data.contains("documents") ) {
+
+        QString name = data.value("name").toString();  // Can be schematic, layout or assembly and so on
+
+        qDebug("DocumentManager::documentDataSourceHandler called : name=%s", name.toStdString().c_str());
+
+        DocumentSetPtr document_set = getDocumentSet (name);
+        if( document_set == nullptr ) {
+            qCritical("DocumentManager::updateDocuments: invalid document name = '%s'", name.toStdString ().c_str ());
+            return;
+        }
+        document_set->clear ();
+
+        // walk through documents and add to Document Viewer
+        QJsonArray document_array = data["documents"].toArray();
+        foreach (const QJsonValue &r, document_array) {
+            QString fname = r["filename"].toString();
+            QString data = r["data"].toString();
+            Document *d = new Document (data);
+            document_set->append (d);
+
+            //qDebug("fname=%s, data=%.200s", fname.toStdString().c_str(), data.toStdString().c_str());
+        }
+
+        // TODO: [ian] SUPER hack. Unable to call "emit" on dynamic document set.
+        //   it may be possible to use QObject::connect to create a "dispatcher" type object
+        //   to emit based on string set name
+        //
+        if( name == "schematic" ) {
+            emit schematicDocumentsChanged();
+        }
+        else if( name == "assembly" ) {
+            emit assemblyDocumentsChanged();
+        }
+        else if( name == "layout" ) {
+            emit layoutDocumentsChanged();
+        }
+        else if( name == "test_report" ) {
+            emit testReportDocumentsChanged();
+        }
+        else if( name == "targeted_content" ) {
+            emit targetedDocumentsChanged();
+        }
+        else {
+            qCritical("DocumentManager::updateDocuments: invalid document name = '%s'", name.toStdString ().c_str ());
+        }
+    }
 }
 
 // @f getDocumentSet
@@ -59,73 +174,11 @@ void DocumentManager::init()
 //
 DocumentSetPtr DocumentManager::getDocumentSet(const QString &set)
 {
-    auto document_set = document_sets.find(set.toStdString ().c_str ());
-    if (document_set == document_sets.end()) {
+    auto document_set = document_sets_.find(set.toStdString ().c_str ());
+    if (document_set == document_sets_.end()) {
         qDebug("DocumentManager::getDocumentSet: %s NOT FOUND)", set.toStdString ().c_str ());
         return nullptr;
     }
 
     return document_set->second;
-}
-
-// @f updateDocuments
-// @b called by InterfaceImplementationBinding to update document set for viewer
-//
-// arguments:
-// IN:
-//   viewer : document viewer to update "schematic", "assembly", "test_report"
-//   documents <json format>: QList[ {"data":"<base64 image data>"} ]
-//
-// OUT: bool error
-//
-bool DocumentManager::updateDocuments(const QString set, const QList<QString> &documents)
-{
-
-    qDebug() << "DocumentManager::updateDocuments(" << set << ")";
-
-    DocumentSetPtr document_set = getDocumentSet (set);
-    if( document_set == nullptr ) {
-        qCritical("DocumentManager::updateDocuments: invalid document set = '%s'", set.toStdString ().c_str ());
-        return false;
-    }
-
-    document_set->clear ();
-
-    for( auto &document : documents) {
-        QJsonDocument json_doc = QJsonDocument::fromJson(document.toUtf8());
-        if (!json_doc.isObject()) {
-            qCritical("JSON invalid. '%s'", document.toStdString ().c_str ());
-            return false;
-        }
-
-        QJsonObject json = json_doc.object();
-        QString data = json["data"].toString ();
-
-        Document *d = new Document (data);
-        document_set->append (d);
-    }
-
-    // TODO: [ian] SUPER hack. Unable to call "emit" on dynamic document set.
-    //   it may be possible to use QObject::connect to create a "dispatcher" type object
-    //   to emit based on string set name
-    //
-    if( set == "schematic" ) {
-        emit schematicDocumentsChanged();
-    }
-    else if( set == "assembly" ) {
-        emit assemblyDocumentsChanged();
-    }
-    else if( set == "layout" ) {
-        emit layoutDocumentsChanged();
-    }
-    else if( set == "test_report" ) {
-        emit testReportDocumentsChanged();
-    }
-    else if( set == "targeted_content" ) {
-        emit targetedDocumentsChanged();
-    }
-    else {
-        qCritical("DocumentManager::updateDocuments: invalid document set = '%s'", set.toStdString ().c_str ());
-    }
-    return true;
 }
