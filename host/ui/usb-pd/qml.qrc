@@ -131,7 +131,7 @@
         <file>advancedControls/AdvancedConnector.qml</file>
         <file>images/rightUSBPlugWhite.svg</file>
         <file>advancedControls/AdvancedGraph.qml</file>
-        <file>framework/SGScrollingText.qml</file>
         <file>images/icons/backArrowWhite.svg</file>
+        <file>framework/SGSpotlightText.qml</file>
     </qresource>
 </RCC>
