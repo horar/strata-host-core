@@ -9,7 +9,6 @@
         <file>framework/SGSlider.qml</file>
         <file>framework/images/sliderThumb.svg</file>
         <file>framework/images/sliderValue.svg</file>
-        <file>main.cpp</file>
         <file>BackSide.qml</file>
         <file>Board.qml</file>
         <file>Connector.qml</file>
@@ -96,10 +95,6 @@
         <file>BoardBringUp.qml</file>
         <file>ImplementationInterfaceBinding/ImplementationInterfaceBinding.cpp</file>
         <file>ImplementationInterfaceBinding/ImplementationInterfaceBinding.h</file>
-        <file>DataCollector.cpp</file>
-        <file>DataCollector.h</file>
-        <file>DocumentManager.cpp</file>
-        <file>DocumentManager.h</file>
         <file>boardBringUp/Gpio.qml</file>
         <file>boardBringUp/Pwm.qml</file>
         <file>boardBringUp/Serial.qml</file>
