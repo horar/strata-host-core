@@ -27,8 +27,8 @@ ChartView {
     // Define x-axis to be used with the series instead of default one
     ValueAxis {
         id: valueAxisX
-        min: 2000
-        max: 2011
+        min: 0
+        max: 10
         tickCount: 3
         labelFormat: "%.0f"
         labelsFont.family: "helvetica"
