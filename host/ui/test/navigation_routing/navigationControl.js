@@ -132,9 +132,8 @@ function globalState(event,data)
         break;
 
     case events.PLATFORM_DISCONNECTED_EVENT:
-        // Erase platform name
+        // Disconnected
         console.log("Platform disconnected")
-        context.platform_name = ""
         context.platform_state = false;
         break;
     default:
@@ -200,7 +199,7 @@ function updateState(event, data)
                     createView(screens.DETECTING_PLATFORM_SCREEN, control_container_)
                 }
 
-                // Show content when we have a platform name; doesn't ahve to be actively connected
+                // Show content when we have a platform name; doesn't have to be actively connected
                 if(context.platform_name !== ""){
                     var qml_content = getQMLFile(context.platform_name, "Content")
                     createView(qml_content, content_container_)
@@ -223,14 +222,13 @@ function updateState(event, data)
 
             case events.PLATFORM_DISCONNECTED_EVENT:
                 // Erase platform name
-                //context.platform_name = ""
                 context.platform_state = false;
                 // Refresh
                 updateState(events.SHOW_CONTROL_EVENT)
                 break;
 
             case events.OFFLINE_MODE_EVENT:
-                // offline mode just keeps platform_state as false
+                // Offline mode just keeps platform_state as false
                 console.log("Entering offline mode for ", data.platform_name)
                 context.platform_name = data.platform_name
                 context.platform_state = false;
