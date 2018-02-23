@@ -7,8 +7,9 @@ import "framework"
 
 Rectangle {
     id: frontSide
-
     anchors{ fill:parent }
+
+    property int backButtonOffset: 50
 
     Rectangle{
         id: frontToolBar
@@ -23,25 +24,42 @@ Rectangle {
             State {
                 name: "backButtonShowing"
                 PropertyChanges { target: toolBarRow; x: 0 }
+                PropertyChanges { target: backToolButton; opacity: .5 }
             },
 
             State {
                 name: "backButtonHidden"
-                PropertyChanges { target: toolBarRow; x: -50 }
+                PropertyChanges { target: toolBarRow; x: -backButtonOffset }
+                PropertyChanges { target: backToolButton; opacity: 0 }
             }
-            ]
+        ]
 
-            transitions: Transition {
-                // smoothly reanchor myRect and move into new position
-                PropertyAnimation { properties:"x"; duration: 500 }
+        transitions: [
+            Transition {
+                from: "backButtonShowing"
+                to: "backButtonHidden"
+                SequentialAnimation{
+                    PropertyAnimation {properties:"opacity"; duration:200}
+                    PropertyAnimation { properties:"x"; duration: 300 }
+                }
+            },
+            Transition {
+                from: "backButtonHidden"
+                to: "backButtonShowing"
+                SequentialAnimation{
+                    PropertyAnimation { properties:"x"; duration: 500 }
+                    PropertyAnimation {properties:"opacity"; duration:500}
+                }
             }
+        ]
+
 
         Row {
             id:toolBarRow
             anchors.top:parent.top
             anchors.bottom:parent.bottom
-            x: -50          //initial position keeps the back button off the screen
-            width: parent.width+50
+            x: -backButtonOffset          //initial position keeps the back button off the screen
+            width: parent.width+backButtonOffset
 
             ToolButton{
                 id: backToolButton
