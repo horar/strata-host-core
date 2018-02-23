@@ -61,10 +61,12 @@ Rectangle {
                     if(mainWindow.control_type == "standard") {
                         stack.pop();
                         stack.push([cBoardLayout, {immediate:false}]);
+                        frontToolBar.state = "backButtonHidden"
                     }
                     else if (mainWindow.control_type == "advanced") {
                         stack.pop();
                         stack.push([advanced, {immediate:false}]);
+                        frontToolBar.state = "backButtonShowing"
                     }
                     else if(mainWindow.control_type == "BuBu") {
                         stack.pop();

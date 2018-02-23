@@ -27,11 +27,18 @@ Rectangle {
     ListModel {
         id: activeFaultList
     }
+
+    //visibility is the only way we know that this view has been pushed on the stack
+    //handle activities that need to happen when the advanced controls view is seen here.
     onVisibleChanged: {
+
+
         if(visible){
-        faultHistoryList.append({"parameter":"voltage","condition":"<","value":value})
-        console.log("message",faultHistoryList)
-    }}
+            faultHistoryList.append({"parameter":"voltage","condition":"<","value":value})
+            console.log("message",faultHistoryList)
+        }
+
+    }
 
     // signal handling
     Connections {
