@@ -67,14 +67,18 @@ message(Depend Path: $$DEPENDPATH);
 message("DONE");
 
 HEADERS += PlatformInterface/core/CoreInterface.h \
-           PlatformInterface/platforms/bubu/PlatformInterface.h \
-           include/DocumentManager.h \
-           $${HOST_ROOT}/include/HostControllerClient.hpp \
-           $${HOST_ROOT}/include/zhelpers.hpp \
-           $${HOST_ROOT}/include/zmq.hpp \
-           $${HOST_ROOT}/include/zmq_addon.hpp
+    include/DocumentManager.h \
+    $${HOST_ROOT}/include/HostControllerClient.hpp \
+    $${HOST_ROOT}/include/zhelpers.hpp \
+    $${HOST_ROOT}/include/zmq.hpp \
+    $${HOST_ROOT}/include/zmq_addon.hpp \
+    PlatformInterface/platforms/bubu/PlatformInterfaceBuBu.h \
+    PlatformInterface/platforms/usb-pd/PlatformInterfaceUsbPd.h \
+    PlatformInterface/platforms/motor-vortex/PlatformInterfaceMotorVortex.h
 
 SOURCES += main.cpp \
-           PlatformInterface/core/CoreInterface.cpp \
-           PlatformInterface/platforms/bubu/PlatformInterface.cpp \
-           source/DocumentManager.cpp
+    PlatformInterface/core/CoreInterface.cpp \
+    source/DocumentManager.cpp \
+    PlatformInterface/platforms/bubu/PlatformInterfaceBuBu.cpp \
+    PlatformInterface/platforms/usb-pd/PlatformInterfaceUsbPd.cpp \
+    PlatformInterface/platforms/motor-vortex/PlatformInterfaceMotorVortex.cpp

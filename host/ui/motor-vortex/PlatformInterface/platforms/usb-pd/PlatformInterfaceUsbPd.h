@@ -1,5 +1,5 @@
-#ifndef PLATFORMINTERFACE_H
-#define PLATFORMINTERFACE_H
+#ifndef PLATFORMINTERFACEUSBPD_H
+#define PLATFORMINTERFACEUSBPD_H
 
 //----
 // Platform Interface
@@ -26,9 +26,8 @@
 #include <functional>
 #include <stdlib.h>
 #include <PlatformInterface/core/CoreInterface.h>
-#include <HostControllerClient.hpp>
 
-namespace PlatformInterfaceBuBu {
+namespace PlatformInterfaceUsbPd {
 
 class PlatformInterface : public CoreInterface
 {
@@ -44,6 +43,6 @@ private:
 
 };
 
-} // end namespace PlatformBuBu
+} // end namespace PlatformUsbPd
 
-#endif // PLATFORMINTERFACE_H
+#endif // PLATFORMINTERFACEUSBPD_H
