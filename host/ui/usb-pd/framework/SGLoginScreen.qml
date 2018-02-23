@@ -17,16 +17,17 @@ Rectangle {
         usernameField.forceActiveFocus(); //allows the user to type their username without clicking
     }
 
-   SGScrollingText {
+   SGSpotlightText {
         z: 2
         anchors { top: onLogo.bottom;
+            topMargin: 10
             horizontalCenter: parent.horizontalCenter;
             horizontalCenterOffset: -50 }
-        fadeInTime: 1500
-        fadeOutTime: 4000
-        timerInterval: 400
+        fadeInTime: 500
+        fadeOutTime: 1000
+        timerInterval: 100
+        endOfStringDelay: 2000
         titleName: "Encore Design Suite"
-
     }
 
     property bool  onIdChange : {
@@ -71,6 +72,7 @@ Rectangle {
                     else if(mainWindow.control_type == "BuBu") {
                         stack.pop();
                         stack.push([boardBringUp, {immediate:false}]);
+                        frontToolBar.state = "backButtonShowing"
 
                     }
                     console.log("Displaying USB-PD");
