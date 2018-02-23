@@ -5,11 +5,12 @@ import QtGraphicalEffects 1.0
 import QtQuick.Controls.Material 2.2
 import tech.spyglass.ImplementationInterfaceBinding 1.0
 
-import "framework"
+import "../framework"
 
 Rectangle {
     id: device
-    width: parent.width; height: parent.width
+    width: parent.width; height: parent.width * 1.5
+
     property alias deviceLayout: deviceLayout
 
     //  Getting realtime data for input voltage
@@ -31,8 +32,11 @@ Rectangle {
             device.portCurrent = value;
         }
     }
-    anchors { horizontalCenter: parent.horizontalCenter; verticalCenter: parent.verticalCenter }
+    //anchors { horizontalCenter: parent.horizontalCenter; verticalCenter: parent.verticalCenter }
+    anchors {horizontalCenter: parent.horizontalCenter; bottom: parent.bottom; top:parent.top
+            topMargin:parent.height/4}
     color:"black"
+
 
     //a grid for the the device, including the input plug
     //deviceGrid
@@ -68,33 +72,73 @@ Rectangle {
 
             Image {
                 id:deviceOutline
-                width:parent.width ; height: width
+                width:parent.width ; height: parent.width*1.5
                 anchors{ horizontalCenter: parent.horizontalCenter
                     horizontalCenterOffset: 0
                     verticalCenter: parent.verticalCenter
                     verticalCenterOffset: 0 }
-                source: "./images/borderWhite.svg"
+                source: "../images/borderWhite.svg"
 
             }
 
+            Rectangle{
+                id:onLogoRect
+                width:60
+                height:60
+                anchors{ left:parent.left
+                    leftMargin: parent.width *.05
+                    verticalCenter: parent.verticalCenter}
+                color:"transparent"
 
-//            DropShadow {
-//                anchors.fill: deviceOutline
-//                horizontalOffset: 3
-//                verticalOffset: 6
-//                radius: 12.0
-//                samples: 24
-//                color: "#60000000"
-//                source: deviceOutline
-//            }
+                Image {
+                    id:onLogo
+                    width: parent.width; height: parent.width
+                    source:"../images/icons/onLogoGreen.svg"
+
+                }
+
+                ScaleAnimator {
+                    id: increaseOnMouseEnter
+                    target: onLogo;
+                    easing.type: Easing.InQuad;
+                    from: 1;
+                    to: 1.2;
+                    duration: 200
+                    running: false
+                }
+
+                ScaleAnimator {
+                    id: decreaseOnMouseExit
+                    target: onLogo;
+                    easing.type: Easing.InQuad;
+                    from: 1.2;
+                    to: 1;
+                    duration: 200
+                    running: false
+                }
+
+                MouseArea {
+                    id: imageMouse
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    cursorShape: Qt.PointingHandCursor
+                    onEntered:{
+                        increaseOnMouseEnter.start()
+                    }
+                    onExited:{
+                        decreaseOnMouseExit.start()
+                    }
+                    onClicked: { inputPowergraph.open() }
+                }
+            }
 
             //a grid for the icon, and ports
             GridLayout {
                 id: deviceGridLayout
-                columns: 3
+                columns: 4
                 rows: 2
                 columnSpacing: 0
-                rowSpacing: 0
+                //rowSpacing: parent.height/16
                 width: parent.width; height: parent.height *.75
 
                 anchors { horizontalCenter: parent.horizontalCenter
@@ -113,84 +157,25 @@ Rectangle {
                     return deviceGridLayoutRowMulti * item.Layout.rowSpan
                 }
 
-                Rectangle {
-                    id:leftDeviceColumn
-                    color:"transparent"
-                    Layout.column: 0
-                    Layout.columnSpan: 1
-                    Layout.row: 0
-                    Layout.rowSpan: 2
-                    Layout.preferredWidth : deviceGridLayout.deviceGridLayoutWidth(this)
-                    Layout. preferredHeight : deviceGridLayout.deviceGridLayoutHeight(this)
 
-                    Image {
-                        id:onLogo
-                        width: parent.width*.75; height: parent.width*.75
-                        anchors{ verticalCenter: parent.verticalCenter; left:parent.left; leftMargin: parent.width/8 }
-                        source:"./images/icons/onLogoGreen.svg"
-                        layer.enabled: true
-                        layer.effect:  DropShadow {
-                            anchors.fill: onLogo
-                            horizontalOffset: 3
-                            verticalOffset: 6
-                            radius: 12.0
-                            samples: 24
-                            color: "#60000000"
-                            source: onLogo
-                        }
-
-                        ScaleAnimator {
-                            id: increaseOnMouseEnter
-                            target: onLogo;
-                            from: 1;
-                            to: 1.2;
-                            duration: 200
-                            running: false
-                        }
-
-                        ScaleAnimator {
-                            id: decreaseOnMouseExit
-                            target: onLogo;
-                            from: 1.2;//onLogo.scale;
-                            to: 1;
-                            duration: 200
-                            running: false
-                        }
-
-                        MouseArea {
-                            id: imageMouse
-                            anchors.fill: parent
-                            hoverEnabled: true
-                            cursorShape: Qt.PointingHandCursor
-                            onEntered:{
-                                increaseOnMouseEnter.start()
-                            }
-                            onExited:{
-                                decreaseOnMouseExit.start()
-                            }
-                            onClicked: { inputPowergraph.open() }
-                        }
-                    }
-                }
 
                 Rectangle {
                     id:topPortRect
                     color:"transparent"
                     Layout.column: 1
-                    Layout.columnSpan: 2
+                    Layout.columnSpan: 4
                     Layout.row: 0
                     Layout.rowSpan: 1
                     Layout.preferredWidth : deviceGridLayout.deviceGridLayoutWidth(this)
                     Layout.preferredHeight : deviceGridLayout.deviceGridLayoutHeight(this)
                     border.color: "transparent"
-                    radius: 10
 
-                    SGPortGroup {
+                    AdvancedPort {
                         id: portGroupPort1
                         width: parent.width; height:parent.height
                         text: "Port 1"
                         radius: 1
-                        color: "transparent"
+                        //color: "transparent"
                         portNumber: 1
                         inAdvancedMode: true
                     }
@@ -200,19 +185,19 @@ Rectangle {
                     id:bottomPortRect
                     color:"transparent"
                     Layout.column: 1
-                    Layout.columnSpan: 2
+                    Layout.columnSpan: 4
                     Layout.row: 1
                     Layout.rowSpan: 1
                     Layout.preferredWidth : deviceGridLayout.deviceGridLayoutWidth(this)
                     Layout.preferredHeight : deviceGridLayout.deviceGridLayoutHeight(this)
                     border { color: "transparent" }
 
-                    SGPortGroup {
+                    AdvancedPort {
                         id: portGroupPort2
                         width: parent.width; height:parent.height
                         text: "Port 2"
                         radius: 1
-                        color: "transparent"
+                        //color: "transparent"
                         portNumber: 2
                         inAdvancedMode: true
                     }
@@ -235,45 +220,81 @@ Rectangle {
                 height:parent.height/7
                 anchors{ verticalCenter: parent.verticalCenter;
                     right:parent.right
-                    rightMargin: -17
-                    //horizontalCenter: parent.horizontalCenter ;
                 }
-                source: "./images/leftPowerPlugWhite.svg"
+                source: "../images/leftPowerPlugWhite.svg"
             }
 
-            DropShadow {
-                anchors.fill: plugOutline
-                horizontalOffset: 3
-                verticalOffset: 6
-                radius: 12.0
-                samples: 24
-                color: "#60000000"
-                source: plugOutline
-            }
+
 
             Text {
                 id: inputPlugName
-                text: device.inputVoltage .toFixed(1) + "V"
-                width: inputPlugColumn.width-2
-                horizontalAlignment: Text.AlignRight
-                anchors {verticalCenter: parent.verticalCenter
-                        right:parent.right
-                        rightMargin: -10
-                        }
-                font{ family: "Helvetica"
+                text: {if (inputVoltage !=0){
+                        text = Math.round(device.inputVoltage * 100) / 100 + "V"
+                    }
+                    else{
+                        text: "0V"
+                    }
                 }
-                font.pointSize: 9
+                width: inputPlugColumn.width-2
+                horizontalAlignment: Text.AlignHCenter
+                anchors {verticalCenter: parent.verticalCenter
+                    horizontalCenter: parent.horizontalCenter
+                    horizontalCenterOffset: parent.width/10
+                        //right:parent.right
+                        //rightMargin: -10
+                        }
+                font{ family: "Helvetica";
+                    pointSize: (Qt.platform.os === "osx") ? parent.width/4 +1 : Text.fit
+                    bold:true
+                }
                 color:"grey"
+
             }
 
-            Component.onCompleted: {
-                //adjust font size based on platform
-                if (Qt.platform.os === "osx"){
-                    inputPlugName.font.pointSize = parent.width/10 > 0 ? parent.width/25 : 1;
+
+        }
+
+        Rectangle {
+            id: connectors
+            Layout.column: 5
+            Layout.columnSpan: 1
+            Layout.row: 0
+            Layout.rowSpan: 1
+            Layout.preferredWidth : deviceGrid.devicePrefWidth(this)
+            Layout.preferredHeight : deviceGrid.devicePrefHeight(this)
+            color:"transparent"
+
+            Rectangle{
+                id:port1ConnectorRect
+                anchors.top:parent.top
+                anchors.topMargin: parent.height/8
+                anchors.bottom:parent.verticalCenter
+                anchors.left:parent.left
+                anchors.right:parent.right
+                color:"transparent"
+
+                AdvancedConnector{
+                    id:port1Connector
+                    portNumber: 1
+                    anchors.verticalCenter: parent.verticalCenter
                 }
-                else{
-                    fontSizeMode : Text.Fit
+            }
+
+            Rectangle{
+                id:port2ConnectorRect
+                anchors.top:parent.verticalCenter
+                anchors.bottom:parent.bottom
+                anchors.bottomMargin: parent.height/8 - 10
+                anchors.left:parent.left
+                anchors.right:parent.right
+                color:"transparent"
+
+                AdvancedConnector{
+                    id:port2Connector
+                    portNumber: 2
+                    anchors.verticalCenter: parent.verticalCenter
                 }
+
             }
         }
     }

@@ -8,5 +8,6 @@
         <file>SGLeftSegmentedButton.qml</file>
         <file>SGMiddleSegmentedButton.qml</file>
         <file>SGRightSegmentedButton.qml</file>
+        <file>Four.qml</file>
     </qresource>
 </RCC>
