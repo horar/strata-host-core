@@ -26,21 +26,22 @@ var screens = {
 */
 var states = {
 
-    UNINITIALIZED: 1,
-    LOGIN_STATE: 2,
-    CONTROL_STATE: 3,
+    UNINITIALIZED: 1,       // Init() has not been called
+    LOGIN_STATE: 2,         // User needs to login
+    CONTROL_STATE: 3,       // Platform is connected and we are ready for control
 }
 
 /*
     All events to handle by navigation state machine
 */
 var events = {
-    PROMPT_LOGIN_EVENT: 1,
-    LOGIN_SUCCESSFUL_EVENT: 2,
-    LOGOUT_EVENT: 3,
-    PLATFORM_CONNECTED_EVENT: 4,
+    PROMPT_LOGIN_EVENT:         1,
+    LOGIN_SUCCESSFUL_EVENT:     2,
+    LOGOUT_EVENT:               3,
+    PLATFORM_CONNECTED_EVENT:   4,
     PLATFORM_DISCONNECTED_EVENT: 5,
-    SHOW_CONTROL_EVENT: 6,
+    SHOW_CONTROL_EVENT:         6,
+    OFFLINE_MODE_EVENT:         7,
 }
 
 /*
@@ -170,11 +171,9 @@ function updateState(event, data)
             switch(event)
             {
             case events.LOGIN_SUCCESSFUL_EVENT:
+                context.user_id = data.user_id
                 context.is_logged_in = true;
                 navigation_state_ = states.CONTROL_STATE
-
-                // Allow content
-                createView(screens.CONTENT_SCREEN, content_container_)
 
                 // Update Control by next state
                 updateState(events.SHOW_CONTROL_EVENT,null)
@@ -192,12 +191,23 @@ function updateState(event, data)
             case events.SHOW_CONTROL_EVENT:
                 // Refresh Control View based on conditions
                 if (context.platform_state){
-                    var qml_name = getQMLFile(context.platform_name, "Control")
-                    createView(qml_name, control_container_)
+                    // Show control when connected
+                    var qml_control = getQMLFile(context.platform_name, "Control")
+                    createView(qml_control, control_container_)
                 }
                 else {
                     // Disconnected; Show detection page
                     createView(screens.DETECTING_PLATFORM_SCREEN, control_container_)
+                }
+
+                // Show content when we have a platform name; doesn't ahve to be actively connected
+                if(context.platform_name !== ""){
+                    var qml_content = getQMLFile(context.platform_name, "Content")
+                    createView(qml_content, content_container_)
+                }
+                else {
+                    // Otherwise; no platform has been connected or chosen
+                    createView(screens.DETECTING_PLATFORM_SCREEN, content_container_)
                 }
 
                 break;
@@ -213,12 +223,19 @@ function updateState(event, data)
 
             case events.PLATFORM_DISCONNECTED_EVENT:
                 // Erase platform name
-                context.platform_name = ""
+                //context.platform_name = ""
                 context.platform_state = false;
                 // Refresh
                 updateState(events.SHOW_CONTROL_EVENT)
                 break;
 
+            case events.OFFLINE_MODE_EVENT:
+                // offline mode just keeps platform_state as false
+                console.log("Entering offline mode for ", data.platform_name)
+                context.platform_name = data.platform_name
+                context.platform_state = false;
+                updateState(events.SHOW_CONTROL_EVENT)
+                break;
             default:
                 globalState(event,data)
             break;

@@ -27,7 +27,8 @@ Rectangle {
             }
 
             onClicked: {
-                NavigationControl.updateState(NavigationControl.events.LOGIN_SUCCESSFUL_EVENT, null)
+                var data = { user_id: "Spyglass User"}
+                NavigationControl.updateState(NavigationControl.events.LOGIN_SUCCESSFUL_EVENT, data)
             }
        }
 

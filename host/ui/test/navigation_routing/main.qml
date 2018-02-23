@@ -14,7 +14,7 @@ Window {
 
     Flipable {
         id: flipable
-        height: 0.7 * parent.height
+        height: 0.85 * parent.height
         width: parent.width
 
         property bool flipped: false
