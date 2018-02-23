@@ -166,7 +166,7 @@ Rectangle {
             Layout.fillWidth:true
             Layout.fillHeight:true
 
-            color: "yellow"
+            color: "black"
 
             GridLayout{
                 id: graphGrid
@@ -207,9 +207,9 @@ Rectangle {
                         anchors.left:parent.left
                         anchors.leftMargin: -15
                         anchors.bottom:parent.bottom
-                        anchors.bottomMargin: -15
+                        anchors.bottomMargin: -12
                         anchors.right:parent.right
-                        anchors.rightMargin: -15
+                        anchors.rightMargin: -10
                     }
                 }
 
@@ -223,6 +223,7 @@ Rectangle {
                     Layout.preferredHeight : graphGrid.prefHeight(this)
                     Layout.fillWidth:true
                     Layout.fillHeight:true
+                    color:"black"
 
                     AdvancedGraph{
                         id:port2VoltageAndCurrentGraph
@@ -234,9 +235,9 @@ Rectangle {
                         anchors.left:parent.left
                         anchors.leftMargin: -15
                         anchors.bottom:parent.bottom
-                        anchors.bottomMargin: -15
+                        anchors.bottomMargin: -12
                         anchors.right:parent.right
-                        anchors.rightMargin: -15
+                        anchors.rightMargin: -10
                     }
                 }
 
@@ -251,6 +252,7 @@ Rectangle {
                     Layout.preferredHeight : graphGrid.prefHeight(this)
                     Layout.fillWidth:true
                     Layout.fillHeight:true
+                    color:"black"
 
                     AdvancedGraph{
                         id:port1PowerGraph
@@ -262,9 +264,9 @@ Rectangle {
                         anchors.left:parent.left
                         anchors.leftMargin: -15
                         anchors.bottom:parent.bottom
-                        anchors.bottomMargin: -15
+                        anchors.bottomMargin: -12
                         anchors.right:parent.right
-                        anchors.rightMargin: -15
+                        anchors.rightMargin: -10
                     }
                 }
 
@@ -278,6 +280,7 @@ Rectangle {
                     Layout.preferredHeight : graphGrid.prefHeight(this)
                     Layout.fillWidth:true
                     Layout.fillHeight:true
+                    color:"black"
 
                     AdvancedGraph{
                         id:port2PowerGraph
@@ -289,9 +292,9 @@ Rectangle {
                         anchors.left:parent.left
                         anchors.leftMargin: -15
                         anchors.bottom:parent.bottom
-                        anchors.bottomMargin: -15
+                        anchors.bottomMargin: -12
                         anchors.right:parent.right
-                        anchors.rightMargin: -15
+                        anchors.rightMargin: -10
                     }
                 }
                 Rectangle{
@@ -304,6 +307,7 @@ Rectangle {
                     Layout.preferredHeight : graphGrid.prefHeight(this)
                     Layout.fillWidth:true
                     Layout.fillHeight:true
+                    color:"black"
 
                     AdvancedGraph{
                         id:port1TemperatureGraph
@@ -315,9 +319,9 @@ Rectangle {
                         anchors.left:parent.left
                         anchors.leftMargin: -15
                         anchors.bottom:parent.bottom
-                        anchors.bottomMargin: -15
+                        anchors.bottomMargin: -12
                         anchors.right:parent.right
-                        anchors.rightMargin: -15
+                        anchors.rightMargin: -10
                     }
                 }
 
@@ -331,6 +335,7 @@ Rectangle {
                     Layout.preferredHeight : graphGrid.prefHeight(this)
                     Layout.fillWidth:true
                     Layout.fillHeight:true
+                    color:"black"
 
                     AdvancedGraph{
                         id:port2TemperatureGraph
@@ -342,9 +347,9 @@ Rectangle {
                         anchors.left:parent.left
                         anchors.leftMargin: -15
                         anchors.bottom:parent.bottom
-                        anchors.bottomMargin: -15
+                        anchors.bottomMargin: -12
                         anchors.right:parent.right
-                        anchors.rightMargin: -15
+                        anchors.rightMargin: -10
                     }
                 }
 
