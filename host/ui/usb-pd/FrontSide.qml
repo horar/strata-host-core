@@ -45,7 +45,7 @@ Rectangle {
 
             ToolButton{
                 id: backToolButton
-                //onClicked: settingsMenu.open()
+                onClicked: showStandardControls()
                 opacity:(stack.currentItem.objectName == "boardLayout") ? 0 : .5
                 z:2
 
@@ -64,6 +64,8 @@ Rectangle {
                     }
                 }
             }
+
+
 
 
 
