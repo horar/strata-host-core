@@ -21,11 +21,10 @@ Rectangle {
         z: 2
         anchors { top: onLogo.bottom;
             topMargin: 10
-            horizontalCenter: parent.horizontalCenter;
-            horizontalCenterOffset: -50 }
-        fadeInTime: 500
+            horizontalCenter: parent.horizontalCenter}
+        fadeInTime: 300
         fadeOutTime: 1000
-        timerInterval: 100
+        timerInterval: 80
         endOfStringDelay: 2000
         titleName: "Encore Design Suite"
     }
