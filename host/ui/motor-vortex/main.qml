@@ -5,5 +5,11 @@ Window {
     visible: true
     width: 640
     height: 480
-    title: qsTr("Hello World")
+    title: qsTr("Encore Design Suite -- Motor Vortex Demo")
+
+
+    Text {
+        anchors { centerIn: parent }
+        text: "MOTOR VORTEX DEMO"
+    }
 }

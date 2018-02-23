@@ -1,4 +1,0 @@
-#ifndef COREINTERFACE_H
-#define COREINTERFACE_H
-
-#endif // COREINTERFACE_H
