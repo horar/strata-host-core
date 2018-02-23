@@ -137,5 +137,6 @@
         <file>images/rightUSBPlugWhite.svg</file>
         <file>advancedControls/AdvancedGraph.qml</file>
         <file>framework/SGScrollingText.qml</file>
+        <file>images/icons/backArrowWhite.svg</file>
     </qresource>
 </RCC>
