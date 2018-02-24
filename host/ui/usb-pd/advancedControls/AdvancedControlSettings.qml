@@ -345,10 +345,7 @@ Item {
                         outputLimitText.enabled = inputLimitingSwitch.checked
                         outputLimitPopup.enabled = inputLimitingSwitch.checked
                         outputLimitUnitText.enabled = inputLimitingSwitch.checked
-                        minimumInputVoltageText.enabled = inputLimitingSwitch.checked
-                        minimumInputLabel.enabled = inputLimitingSwitch.checked
-                        minimumInputUnitText.enabled = inputLimitingSwitch.checked
-                        minimumInputVoltageSlider.enabled = inputLimitingSwitch.checked
+
                     }
                 }
 
@@ -513,10 +510,7 @@ Item {
                         boardOutputLimitText.enabled = temperatureLimitingSwitch.checked
                         boardOuputPopup.enabled = temperatureLimitingSwitch.checked
                         boardOutputUnitText.enabled = temperatureLimitingSwitch.checked
-                        faultTempText.enabled = temperatureLimitingSwitch.checked
-                        faultTempLabel.enabled = temperatureLimitingSwitch.checked
-                        faultTempUnitText.enabled = temperatureLimitingSwitch.checked
-                        faultTempSlider.enabled = temperatureLimitingSwitch.checked
+
                     }
                 }
 
