@@ -16,6 +16,8 @@ Rectangle {
     property color enabledTextColor: "#D8D8D8"
     property color disabledTextColor: "#484848"
     property color unselectedButtonSegmentTextColor: "black"
+    property color textEditFieldBackgroundColor: "#5D5A58"
+    property color popupMenuBackgroundColor: "#5D5A58"
 
     objectName: "advancedControls"
 
