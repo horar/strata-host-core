@@ -182,6 +182,7 @@ Rectangle{
     PopUpMenu{
         id: portMaxPowerCombo
         model: ["15","27", "36", "45","60","100"]
+        backgroundColor: popupMenuBackgroundColor
         anchors.left:portMaxPowerText.right
         anchors.leftMargin: 10
         anchors.verticalCenter: portMaxPowerText.verticalCenter
@@ -214,7 +215,7 @@ Rectangle{
     }
     Rectangle{
          id: maxCurrentTextInputRect
-         color: "#838484"
+         color: textEditFieldBackgroundColor
          anchors.left:maxCurrentText.right
          anchors.leftMargin: 10
          anchors.verticalCenter: maxCurrentText.verticalCenter
@@ -233,9 +234,13 @@ Rectangle{
             font.pointSize: smallFontSize
             color:enabled ? enabledTextColor : disabledTextColor
             text: maxCurrentSlider.value
+            validator: DoubleValidator {bottom:3; top:7.5; decimals:1}
             background: Rectangle {
                 color:"transparent"
             }
+            onEditingFinished:{
+                maxCurrentSlider.value= text
+              }
         }
     }
 
@@ -296,7 +301,7 @@ Rectangle{
 
         Rectangle{
             id: portCableCompensationTextInputRect
-            color: "#838484"
+            color: textEditFieldBackgroundColor
             anchors.left:portCableCompensationText.right
             anchors.leftMargin: 5
             anchors.verticalCenter: portCableCompensationText.verticalCenter
@@ -315,9 +320,13 @@ Rectangle{
                 font.pointSize: 12
                 color:enabled ? enabledTextColor : disabledTextColor
                 text: portCableCompensationSlider.value
+                validator: DoubleValidator {bottom:.25; top:2; decimals:1}
                 background: Rectangle {
                     color:"transparent"
                 }
+                onEditingFinished:{
+                    portCableCompensationSlider.value= text
+                  }
             }
         }
 
@@ -366,7 +375,7 @@ Rectangle{
         }
         Rectangle{
             id: voltageCompensationTextInputRect
-            color: "#838484"
+            color: textEditFieldBackgroundColor
             anchors.left:voltageCompensationText.right
             anchors.leftMargin: 5
             anchors.verticalCenter: voltageCompensationText.verticalCenter
@@ -385,9 +394,13 @@ Rectangle{
                 font.pointSize: 12
                 color:enabled ? enabledTextColor : disabledTextColor
                 text: voltageCompensationSlider.value
+                validator: IntValidator {bottom:0; top:200;}
                 background: Rectangle {
                     color:"transparent"
                 }
+                onEditingFinished:{
+                    voltageCompensationSlider.value= text
+                  }
             }
         }
 
@@ -471,10 +484,14 @@ Rectangle{
                 font.pointSize: smallFontSize
                 color:enabled ? enabledTextColor : disabledTextColor
                 placeholderText:"NA"
-                text: portCableCompensationSlider.value
+                validator: DoubleValidator{bottom:minimumAdvertisedVoltage; top:maximumAdvertisedVoltage; decimals:1}
+                text: portvoltage1Slider.value
                 background: Rectangle {
                     color:"transparent"
                 }
+                onEditingFinished:{
+                    portvoltage1Slider.value= text
+                  }
             }
         }
 
@@ -538,10 +555,14 @@ Rectangle{
                 font.pointSize: smallFontSize
                 color:enabled ? enabledTextColor : disabledTextColor
                 placeholderText:"NA"
-                text: portCableCompensationSlider.value
+                text: portvoltage2Slider.value
+                validator: DoubleValidator{bottom:minimumAdvertisedVoltage; top:maximumAdvertisedVoltage; decimals:1}
                 background: Rectangle {
                     color:"transparent"
                 }
+                onEditingFinished:{
+                    portvoltage2Slider.value= text
+                  }
             }
         }
 
@@ -606,10 +627,14 @@ Rectangle{
                 font.pointSize: smallFontSize
                 color:enabled ? enabledTextColor : disabledTextColor
                 placeholderText:"NA"
-                text: portCableCompensationSlider.value
+                text: portvoltage3Slider.value
+                validator: DoubleValidator{bottom:minimumAdvertisedVoltage; top:maximumAdvertisedVoltage; decimals:1}
                 background: Rectangle {
                     color:"transparent"
                 }
+                onEditingFinished:{
+                    portvoltage3Slider.value= text
+                  }
             }
         }
 
@@ -676,10 +701,14 @@ Rectangle{
                 font.pointSize: smallFontSize
                 color:enabled ? enabledTextColor : disabledTextColor
                 placeholderText:"NA"
-                text: portCableCompensationSlider.value
+                text: portvoltage4Slider.value
+                validator: DoubleValidator{bottom:minimumAdvertisedVoltage; top:maximumAdvertisedVoltage; decimals:1}
                 background: Rectangle {
                     color:"transparent"
                 }
+                onEditingFinished:{
+                    portvoltage4Slider.value= text
+                  }
             }
         }
 
@@ -744,10 +773,14 @@ Rectangle{
                 font.pointSize: smallFontSize
                 color:enabled ? enabledTextColor : disabledTextColor
                 placeholderText:"NA"
-                text: portCableCompensationSlider.value
+                text: portvoltage5Slider.value
+                validator: DoubleValidator{bottom:minimumAdvertisedVoltage; top:maximumAdvertisedVoltage; decimals:1}
                 background: Rectangle {
                     color:"transparent"
                 }
+                onEditingFinished:{
+                    portvoltage5Slider.value= text
+                  }
             }
         }
 
@@ -813,10 +846,14 @@ Rectangle{
                 font.pointSize: smallFontSize
                 color:enabled ? enabledTextColor : disabledTextColor
                 placeholderText:"NA"
-                text: portCableCompensationSlider.value
+                text: portvoltage6Slider.value
+                validator: DoubleValidator{bottom:minimumAdvertisedVoltage; top:maximumAdvertisedVoltage; decimals:1}
                 background: Rectangle {
                     color:"transparent"
                 }
+                onEditingFinished:{
+                    portvoltage6Slider.value= text
+                  }
             }
         }
 
@@ -882,10 +919,14 @@ Rectangle{
                 font.pointSize: smallFontSize
                 color:enabled ? enabledTextColor : disabledTextColor
                 placeholderText:"NA"
-                text: portCableCompensationSlider.value
+                text: portvoltage7Slider.value
+                validator: DoubleValidator{bottom:minimumAdvertisedVoltage; top:maximumAdvertisedVoltage; decimals:1}
                 background: Rectangle {
                     color:"transparent"
                 }
+                onEditingFinished:{
+                    portvoltage7Slider.value= text
+                  }
             }
         }
 
