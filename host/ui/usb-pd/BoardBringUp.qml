@@ -9,10 +9,106 @@ import "boardBringUp"
 
 Rectangle {
     id: boardBringUP
-
     anchors{ fill:parent }
-    color:"grey"
+    //color:lightGreyColor
 
+    property color lightGreyColor: "#EBEAE9"
+    property color mediumGreyColor: "#E4E3E2"
+    property color darkGreyColor: "#DBDAD9"
+
+    property var currentTab : serialView
+    property var newTab : gpioView
+
+    ParallelAnimation{
+        id: crosfadeTabs
+        OpacityAnimator{
+            target: currentTab
+            from: 1
+            to: 0
+            duration: 500
+            running: false
+        }
+        OpacityAnimator{
+            target: newTab
+            from: 0
+            to: 1
+            duration: 500
+            running: false
+        }
+    }
+
+    ButtonGroup {
+        buttons: buttonRow.children
+        onClicked: {
+            //console.log("button clicked is ",button.objectName)
+            if (button.objectName == "serialBoardBringUpButton"){
+
+                newTab = serialView
+                }
+            else if (button.objectName == "gpioBoardBringUpButton"){
+                newTab = gpioView
+                }
+            else if (button.objectName == "pwmBoardBringUpButton"){
+                newTab = pwmView
+            }
+            crosfadeTabs.start()
+            currentTab = newTab
+        }
+    }
+
+    Row {
+        id:buttonRow
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.top: parent.top
+        anchors.topMargin: 15
+
+        SGLeftSegmentedButton{
+            text:"serial" ;
+            objectName: "serialBoardBringUpButton"
+            tabName:Serial{}
+        }
+
+        SGMiddleSegmentedButton{
+            text:"gpio";
+            objectName: "gpioBoardBringUpButton"
+            tabName:Gpio{}
+        }
+        SGRightSegmentedButton{
+            text:"pwm";
+            objectName: "pwmBoardBringUpButton"
+            tabName:Pwm{}
+        }
+    }
+
+    Rectangle{
+        id:contentRectangle
+        anchors.left:parent.left
+        anchors.right:parent.right
+        anchors.bottom:parent.bottom
+        anchors.top:buttonRow.bottom
+
+        Serial{
+            id:serialView
+            anchors.fill:parent
+            opacity:1.0
+            }
+
+        Gpio{
+            id:gpioView
+            anchors.fill:parent
+            opacity:0
+            }
+
+        Pwm{
+            id:pwmView
+            anchors.fill:parent
+            opacity:0
+        }
+    }
+
+
+
+/*
     readonly property bool inLandscape: boardBringUP.width > boardBringUP.height
     property var currentTab : serialView
     property var newTab : gpioView
@@ -145,7 +241,7 @@ Rectangle {
         ScrollIndicator.vertical: ScrollIndicator { }
     }
 
-
+*/
 
 }
 
