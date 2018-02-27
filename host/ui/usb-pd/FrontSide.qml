@@ -16,7 +16,7 @@ Rectangle {
         height: 44
         anchors.left: parent.left
         anchors.right: parent.right
-        color:(stack.currentItem.objectName == "boardLayout") ? "white" :"black"
+        color:(stack.currentItem.objectName == "advancedControls") ? "black" :"white"
         visible: false
         z:2
 
@@ -77,8 +77,13 @@ Rectangle {
                     anchors.bottom:parent.bottom
                     anchors.bottomMargin: 10
                     source:{
-                        if (stack.currentItem.objectName != "boardLayout")
+                        if (stack.currentItem.objectName == "advancedControls"){
                             source = "./images/icons/backArrowWhite.svg"
+                        }
+                        else{
+                            source = "./images/icons/backArrow.svg"
+                        }
+
                     }
                 }
             }
@@ -102,7 +107,8 @@ Rectangle {
                     anchors.rightMargin: 10
                     anchors.bottom:parent.bottom
                     anchors.bottomMargin: 10
-                    source:(stack.currentItem.objectName == "boardLayout")? "./images/icons/settingsIcon.svg":"./images/icons/settingsIconWhite.svg"
+                    source:(stack.currentItem.objectName == "advancedControls")? "./images/icons/settingsIconWhite.svg":
+                                                                                 "./images/icons/settingsIcon.svg"
                 }
 
                 Menu{
