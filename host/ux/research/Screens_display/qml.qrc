@@ -1,0 +1,15 @@
+<RCC>
+    <qresource prefix="/">
+        <file>main.qml</file>
+        <file>SGWelcomeScreen.qml</file>
+        <file>WelcomeWaveImage.png</file>
+        <file>onLogoGrey.svg</file>
+        <file>SGStatusBar.qml</file>
+        <file>images/david_somo.png</file>
+        <file>images/paul_mascarenas.png</file>
+        <file>images/dave_priscak.png</file>
+        <file>images/daryl_ostrander.png</file>
+        <file>images/settingIcon.png</file>
+        <file>images/eat_logos_business_setting.png</file>
+    </qresource>
+</RCC>
