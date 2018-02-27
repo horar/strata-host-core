@@ -202,7 +202,7 @@ void CoreInterface::platformNotificationHandler(QJsonObject payload)
     QString value = payload["value"].toString();
     auto handler = notification_handlers_.find(value.toStdString());
     if( handler == notification_handlers_.end()) {
-        qCritical("CoreInterface::notificationsThreadHandle()"
+        qCritical("CoreInterface::platformNotificationHandler()"
                   " ERROR: no handler exits for %s !!", value.toStdString().c_str ());
         return;
     }
