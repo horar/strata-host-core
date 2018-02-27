@@ -39,23 +39,23 @@ int main(int argc, char *argv[])
 
     qmlRegisterType<DocumentManager>("tech.spyglass.DocumentManager", 1, 0, "DocumentManager");
 
-    CoreInterface *coreInterface = new CoreInterface();
-    PlatformInterfaceBuBu::PlatformInterface *platformInterfaceBuBu = new PlatformInterfaceBuBu::PlatformInterface();
+    //CoreInterface *coreInterface = new CoreInterface();
+    //PlatformInterfaceBuBu::PlatformInterface *platformInterfaceBuBu = new PlatformInterfaceBuBu::PlatformInterface();
     PlatformInterfaceMotorVortex::PlatformInterface *platformInterfaceMotorVortex = new PlatformInterfaceMotorVortex::PlatformInterface();
-    PlatformInterfaceUsbPd::PlatformInterface *platformInterfaceUsbPd = new PlatformInterfaceUsbPd::PlatformInterface();
+    //PlatformInterfaceUsbPd::PlatformInterface *platformInterfaceUsbPd = new PlatformInterfaceUsbPd::PlatformInterface();
 
-    DocumentManager* documentManager = new DocumentManager(coreInterface);
+    //DocumentManager* documentManager = new DocumentManager(coreInterface);
     //DataCollector* dataCollector = new DataCollector(coreInterface);
 
     QtWebEngine::initialize();
     QtWebView::initialize();
 
-    engine.rootContext ()->setContextProperty ("coreInterface", coreInterface);
-    engine.rootContext ()->setContextProperty ("platformInterfaceBuBu", platformInterfaceBuBu);
+    //engine.rootContext ()->setContextProperty ("coreInterface", coreInterface);
+    //engine.rootContext ()->setContextProperty ("platformInterfaceBuBu", platformInterfaceBuBu);
     engine.rootContext ()->setContextProperty ("platformInterfaceMotorVortex", platformInterfaceMotorVortex);
-    engine.rootContext ()->setContextProperty ("platformInterfaceUsbPd", platformInterfaceUsbPd);
+    //engine.rootContext ()->setContextProperty ("platformInterfaceUsbPd", platformInterfaceUsbPd);
 
-    engine.rootContext ()->setContextProperty ("documentManager", documentManager);
+    //engine.rootContext ()->setContextProperty ("documentManager", documentManager);
 
     //engine.rootContext ()->setContextProperty ("dataCollector", dataCollector);
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));

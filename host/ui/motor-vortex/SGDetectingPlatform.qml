@@ -1,7 +1,7 @@
 import QtQuick 2.0
 import QtQuick.Controls 2.3
 import QtQuick.Layouts 1.3
-import "navigationControl.js" as NavigationControl
+import "js/navigation_control.js" as NavigationControl
 
 Rectangle {
     property string user_id
@@ -37,13 +37,11 @@ Rectangle {
             }
             onActivated: {
                 var data = { platform_name: model.get(cbSelector.currentIndex).name}
+                 mainWindow.flipable.flipped = true;
                 NavigationControl.updateState(NavigationControl.events.OFFLINE_MODE_EVENT, data)
-
             }
         }
     }
-
-
 
 
 }

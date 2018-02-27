@@ -16,9 +16,9 @@ var context = {
 */
 
 var screens = {
-    LOGIN_SCREEN: "SGLoginScreen.qml",
-    DETECTING_PLATFORM_SCREEN : "SGDetectingPlatform.qml",
-    CONTENT_SCREEN : "Content.qml"
+    LOGIN_SCREEN: "qrc:/SGLoginScreen.qml",
+    DETECTING_PLATFORM_SCREEN : "qrc:/SGDetectingPlatform.qml",
+    CONTENT_SCREEN : "qrc:/Content.qml"
 }
 
 /*

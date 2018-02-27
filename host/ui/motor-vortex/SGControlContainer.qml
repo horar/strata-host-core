@@ -1,5 +1,5 @@
 import QtQuick 2.0
-import "navigationControl.js" as NavigationControl
+import "js/navigation_control.js" as NavigationControl
 
 Item {
 

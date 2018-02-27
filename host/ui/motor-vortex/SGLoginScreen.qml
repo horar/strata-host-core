@@ -3,7 +3,9 @@ import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.0
 import QtQuick.Controls.Material 2.2
 import QtQuick.Controls.Styles 1.4
-import "navigationControl.js" as NavigationControl
+import "js/navigation_control.js" as NavigationControl
+import "js/login.js" as Authenticator
+import "js/restclient.js" as Rest
 
 Rectangle {
     anchors { fill: parent }
@@ -312,23 +314,19 @@ Rectangle {
             }
 
             onClicked: {
+                // Check Login here
+                var login_info = { user: usernameField.text, password: passwordField.text }
+                //Authenticator.login(login_info)
 
-                if (usernameField.text=="" && passwordField.text==""){
-                    failedLogin.start();
-                }
-                else{
-                    // Check Login here
-
-                    // If valid; send user_id to NavigationControl
-                    console.log("Login successful!")
-                    var data = { user_id: usernameField.text }
-                    NavigationControl.updateState(NavigationControl.events.LOGIN_SUCCESSFUL_EVENT,data)
-                }
+                // If valid; send user_id to NavigationControl
+                console.log("Login successful!")
+                var data = { user_id: usernameField.text }
+                NavigationControl.updateState(NavigationControl.events.LOGIN_SUCCESSFUL_EVENT,data)
+            }
             }
 
 
         }
-    }
 
     SequentialAnimation{
         //animator to show that the login failed
