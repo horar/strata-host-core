@@ -76,17 +76,11 @@ Rectangle {
                     anchors.rightMargin: 10
                     anchors.bottom:parent.bottom
                     anchors.bottomMargin: 10
-                    source:{
-                        if (stack.currentItem.objectName == "advancedControls"){
-                            source = "./images/icons/backArrowWhite.svg"
-                        }
-                        else{
-                            source = "./images/icons/backArrow.svg"
-                        }
-
+                    source: (stack.currentItem.objectName == "advancedControls")?
+                            "./images/icons/backArrowWhite.svg":
+                            "./images/icons/backArrow.svg"
                     }
                 }
-            }
 
 
 
