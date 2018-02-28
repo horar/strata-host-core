@@ -6,22 +6,7 @@ Rectangle{
     id:container
     property string userName: "User Name"
     property string imageName: " "
-    property var userImages: [["David Priscak","images/dave_priscak.png"] , ["David Somo","images/david_somo.png"], ["Daryl Ostrander","images/daryl_ostrander.png"], ["Paul Mascarenas","images/paul_mascarenas.png"] ]
-
-    function getImages(user_name)
-    {
-        var i;
-        var flag = " ";
-        for(i = 0; i < userImages.length; i++) {
-
-            if(user_name === userImages[i][0])
-
-            {
-                console.log(userImages[i][1]);
-                return userImages[i][1];
-            }
-        }
-    }
+    property var link: getImages(userName);
 
     x: 62
     y: 12
@@ -42,7 +27,6 @@ Rectangle{
 
     Image {
         id: user_img
-        property var link: getImages(userName);
         width: 125
         height: 153
         anchors.horizontalCenter: messageContainer.horizontalCenter
@@ -59,7 +43,7 @@ Rectangle{
         anchors.topMargin: 100
         width: 123
         height: 118
-        source: "onLogoGrey.svg"
+        source: "images/onLogoGrey.svg"
     }
     Rectangle {
         id: messageContainer
@@ -77,7 +61,6 @@ Rectangle{
             font.pixelSize: 36
             color: "white"
             text: "Welcome"
-
 
             Label{
                 id: username
