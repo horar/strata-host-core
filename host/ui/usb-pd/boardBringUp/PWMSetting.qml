@@ -194,7 +194,6 @@ Rectangle{
 
             TextField {
                 id: textField3
-                //x: 120
                 anchors.horizontalCenter: parent.horizontalCenter
                 y: 92
                 width: 116
@@ -203,7 +202,6 @@ Rectangle{
 
             TextField {
                 id: textField4
-                //x: 120
                 anchors.horizontalCenter: parent.horizontalCenter
                 y: 164
                 width: 116
@@ -212,7 +210,6 @@ Rectangle{
 
             TextField {
                 id: textField5
-                //x: 120
                 anchors.horizontalCenter: parent.horizontalCenter
                 y: 240
                 width: 116
@@ -221,7 +218,6 @@ Rectangle{
 
             TextField {
                 id: textField6
-                //x: 125
                 anchors.horizontalCenter: parent.horizontalCenter
                 y: 311
                 width: 116
@@ -230,7 +226,6 @@ Rectangle{
 
             TextField {
                 id: textField7
-                //x: 125
                 anchors.horizontalCenter: parent.horizontalCenter
                 y: 383
                 width: 116
@@ -239,7 +234,6 @@ Rectangle{
 
             TextField {
                 id: textField8
-                //x: 125
                 anchors.horizontalCenter: parent.horizontalCenter
                 y: 457
                 width: 116
@@ -248,7 +242,6 @@ Rectangle{
 
             TextField {
                 id: textField9
-                //x: 125
                 anchors.horizontalCenter: parent.horizontalCenter
                 y: 527
                 width: 116
@@ -257,7 +250,6 @@ Rectangle{
 
             TextField {
                 id: textField10
-                //x: 125
                 anchors.horizontalCenter: parent.horizontalCenter
                 y: 604
                 width: 116
@@ -283,7 +275,6 @@ Rectangle{
             }
 
             CircularSpinner {
-                //x: -77
                 anchors.horizontalCenter: parent.horizontalCenter
                 y: 65
                 width: 113
@@ -291,7 +282,6 @@ Rectangle{
             }
 
             CircularSpinner {
-                //x: -76
                 anchors.horizontalCenter: parent.horizontalCenter
                 y: 141
                 width: 104
@@ -299,7 +289,6 @@ Rectangle{
             }
 
             CircularSpinner {
-                //x: -72
                 anchors.horizontalCenter: parent.horizontalCenter
                 y: 219
                 width: 103
@@ -307,7 +296,6 @@ Rectangle{
             }
 
             CircularSpinner {
-                //x: -69
                 anchors.horizontalCenter: parent.horizontalCenter
                 y: 292
                 width: 97
@@ -315,7 +303,6 @@ Rectangle{
             }
 
             CircularSpinner {
-                //x: -77
                 anchors.horizontalCenter: parent.horizontalCenter
                 y: 369
                 width: 113
@@ -324,7 +311,6 @@ Rectangle{
             }
 
             CircularSpinner {
-                //x: -77
                 anchors.horizontalCenter: parent.horizontalCenter
                 y: 443
                 width: 113
@@ -333,7 +319,6 @@ Rectangle{
             }
 
             CircularSpinner {
-                //x: -76
                 anchors.horizontalCenter: parent.horizontalCenter
                 y: 520
                 width: 113
@@ -342,7 +327,6 @@ Rectangle{
             }
 
             CircularSpinner {
-                //x: -77
                 anchors.horizontalCenter: parent.horizontalCenter
                 y: 592
                 width: 113
