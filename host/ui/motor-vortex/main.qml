@@ -53,6 +53,38 @@ Window {
 
     }
 
+    // Listen into Core Interface which gives us the platform changes
+
+    Connections {
+        target: coreInterface
+        onPlatformIDChanged: {
+            console.log("Main: PlatformIDChanged to ", id)
+            // Map out UUID->platform name
+            var uuid_map = {
+                //"P2.2017.1.1.0.0.cbde0519-0f42-4431-a379-caee4a1494af" : "usb-pd" assume motor for now
+                "P2.2017.1.1.0.0.cbde0519-0f42-4431-a379-caee4a1494af" : "motor-vortex",
+                "P2.2018.1.1.0.0.c9060ff8-5c5e-4295-b95a-d857ee9a3671" : "bubu"
+            }
+
+            // Send update to NavigationControl
+            if (uuid_map.hasOwnProperty(id)){
+                var data = { platform_name : uuid_map[id] }
+                NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT, data)
+            }
+        }
+        onPlatformStateChanged: {
+            console.log("Main: PlatformStateChanged: ", platform_connected_state)
+
+            if(platform_connected_state) {
+                // Show control as we have connected
+                NavigationControl.updateState(NavigationControl.events.PLATFORM_CONNECTED_EVENT)
+            }
+            else if (!platform_connected_state){
+                NavigationControl.updateState(NavigationControl.events.PLATFORM_DISCONNECTED_EVENT)
+            }
+        }
+    }
+
     // Debug commands for simulation
     Rectangle {
         id: commandBar
@@ -71,21 +103,21 @@ Window {
                 text: "USB-PD"
                 onClicked: {
                     var data = { platform_name: "usb-pd"}
-                    NavigationControl.updateState(NavigationControl.events.PLATFORM_CONNECTED_EVENT, data)
+                    NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT, data)
                 }
             }
             Button {
                 text: "BuBU Interface"
                 onClicked: {
                     var data = { platform_name: "bubu"}
-                    NavigationControl.updateState(NavigationControl.events.PLATFORM_CONNECTED_EVENT, data)
+                    NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT, data)
                 }
             }
             Button {
                 text: "Motor Vortex"
                 onClicked: {
                    var data = { platform_name: "motor-vortex"}
-                    NavigationControl.updateState(NavigationControl.events.PLATFORM_CONNECTED_EVENT, data)
+                    NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT, data)
                 }
             }
 

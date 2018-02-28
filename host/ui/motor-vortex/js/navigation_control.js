@@ -35,13 +35,14 @@ var states = {
     All events to handle by navigation state machine
 */
 var events = {
-    PROMPT_LOGIN_EVENT:         1,
-    LOGIN_SUCCESSFUL_EVENT:     2,
-    LOGOUT_EVENT:               3,
-    PLATFORM_CONNECTED_EVENT:   4,
-    PLATFORM_DISCONNECTED_EVENT: 5,
-    SHOW_CONTROL_EVENT:         6,
-    OFFLINE_MODE_EVENT:         7,
+    PROMPT_LOGIN_EVENT:             1,
+    LOGIN_SUCCESSFUL_EVENT:         2,
+    LOGOUT_EVENT:                   3,
+    PLATFORM_CONNECTED_EVENT:       4,
+    PLATFORM_DISCONNECTED_EVENT:    5,
+    SHOW_CONTROL_EVENT:             6,
+    OFFLINE_MODE_EVENT:             7,
+    NEW_PLATFORM_CONNECTED_EVENT:   8,
 }
 
 /*
@@ -124,7 +125,7 @@ function globalState(event,data)
         updateState(events.PROMPT_LOGIN_EVENT)
         break;
 
-    case events.PLATFORM_CONNECTED_EVENT:
+    case events.NEW_PLATFORM_CONNECTED_EVENT:
         // Cache platform name until we are ready to view
         console.log("Platform connected. Caching platform: ", data.platform_name)
         context.platform_name = data.platform_name
@@ -211,7 +212,7 @@ function updateState(event, data)
 
                 break;
 
-            case events.PLATFORM_CONNECTED_EVENT:
+            case events.NEW_PLATFORM_CONNECTED_EVENT:
                 // Cache platform name until we are ready to view
                 console.log("data:", data.platform_name)
                 context.platform_name = data.platform_name
@@ -220,8 +221,12 @@ function updateState(event, data)
                 updateState(events.SHOW_CONTROL_EVENT)
                 break;
 
+            case events.PLATFORM_CONNECTED_EVENT:
+                context.platform_state = true;
+                updateState(events.SHOW_CONTROL_EVENT)
+                break;
+
             case events.PLATFORM_DISCONNECTED_EVENT:
-                // Erase platform name
                 context.platform_state = false;
                 // Refresh
                 updateState(events.SHOW_CONTROL_EVENT)
