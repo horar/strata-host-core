@@ -1,6 +1,5 @@
 import QtQuick 2.0
 import QtQuick.Layouts 1.3
-//import QtQuick.Controls 2.1
 import QtGraphicalEffects 1.0
 import QtQuick 2.7
 import QtQuick.Controls 2.0
@@ -13,13 +12,9 @@ Rectangle {
     property var currentTab : gpioView
     property var newTab:  gpioView
 
-    Rectangle {
-        id: rectangle
-        x: 17
-        y: 8
-        width: 977
-        height: 821
-        color: "#babdb6"
+    anchors.fill:parent
+    //border.color:"red"
+
 
         function createTab(inTabName, inParent){
             var component  = Qt.createComponent(inTabName);
@@ -30,21 +25,6 @@ Rectangle {
         Component.onCompleted: {
             currentTab = createTab("buttonView.qml", contentRectangle);
             newTab = createTab("buttonView.qml",contentRectangle);
-        }
-
-
-
-        Label {
-            id: label
-            x: 191
-            y: 21
-            font.pixelSize: 36
-            font.bold: true
-            color: "gray"
-            font.family: "Helvetica"
-            anchors.horizontalCenter: parent.horizontalCenter
-            text: qsTr("GPIO Configuration")
-            anchors.horizontalCenterOffset: 5
         }
 
 
@@ -79,14 +59,12 @@ Rectangle {
 
         Row {
             id:buttonRow
-            x: 51
-            y: 83
+            anchors.top: parent.top
+            anchors.topMargin: 50
+            anchors.horizontalCenter: parent.horizontalCenter
             width: 600
             height: 40
-            anchors.horizontalCenterOffset: 17
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.top: parent.top
-            anchors.topMargin: 87
+
 
             SGLeftSegmentedButton{x: 5;text:"Port A"; tabName:ButtonView{}}
             SGMiddleSegmentedButton{text:"Port B"; tabName:ButtonView {}}
@@ -99,17 +77,14 @@ Rectangle {
 
         Rectangle{
             id:contentRectangle
-            x: 4
-            y: 116
-            width: 881
-            height: 727
 
-            anchors.rightMargin: 84
-            anchors.bottomMargin: 67
-            anchors.leftMargin: 61
-            anchors.topMargin: 6
-            z: 2
-            color:  "#babdb6"
+//            anchors.fill:parent
+//            anchors.rightMargin: 84
+//            anchors.bottomMargin: 67
+//            anchors.leftMargin: 61
+//            anchors.topMargin: 6
+            //z: 2
+            //color:  "#babdb6"
             anchors.left:parent.left
             anchors.right:parent.right
             anchors.bottom:parent.bottom
@@ -119,7 +94,6 @@ Rectangle {
             ButtonView{opacity: 1}
 
         }
-    }
 }
 
 

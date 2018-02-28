@@ -7,32 +7,25 @@ import QtGraphicalEffects 1.0
 import QtQuick.Controls.Styles 1.4
 
 Rectangle {
-    y: 6
-    width: 667
-    color: "#babdb6"
+
+    id:buttonViewContainer
+    anchors.fill:parent
+
     property int smallFontSize: (Qt.platform.os === "osx") ? 12  : 10;
     property int mediumFontSize: (Qt.platform.os === "osx") ? 15  : 12;
     property int largeFontSize: (Qt.platform.os === "osx") ? 24  : 20;
     property int extraLargeFontSize: (Qt.platform.os === "osx") ? 36  : 24;
 
-    RowLayout {
-        id: rowLayout
-        x: -28
-        y: -70
-        width: 876
-        height: 674
-    }
-
-
 
     Rectangle {
-        id: rectangle1
-        x: 115
-        y: 8
-        width: 311
+        id: bitRectangle
+        anchors.right:buttonViewContainer.horizontalCenter
+        anchors.rightMargin: 5
+        anchors.top:parent.top
+        anchors.topMargin: 20
+        width: 300
         height: 612
-        color: "#888a85"
-
+        color:lightGreyColor
 
 
         Label {
@@ -42,8 +35,8 @@ Rectangle {
             width: 58
             height: 25
             text: qsTr("Bit")
-            font.bold: true
-            font.pointSize: 13
+            font.pointSize: largeFontSize
+            font.family: "helvetica"
         }
 
         Label {
@@ -119,19 +112,21 @@ Rectangle {
 
     Rectangle {
         id: rectangle2
-        x: 432
-        y: 8
-        width: 363
-        height: 611
-        color: "#888a85"
+        anchors.left:buttonViewContainer.horizontalCenter
+        anchors.leftMargin: 5
+        anchors.top:parent.top
+        anchors.topMargin: 20
+        width: 300
+        height: 612
+        color:lightGreyColor
 
         Label {
             id: label2
             x: 116
             y: 13
             text: qsTr("Setting")
-            font.bold: true
-            font.pointSize: 13
+            font.pointSize: largeFontSize
+            font.family: "helvetica"
         }
 
         GPIOSetting {

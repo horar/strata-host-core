@@ -7,177 +7,195 @@ import QtGraphicalEffects 1.0
 import QtQuick.Controls.Styles 1.4
 
 Rectangle{
-    id:two
-    x: 4
-    width: 651
-    height: 757
-    color: "#babdb6"
+    id:pwmSettingRectangle
     opacity: 1
     anchors.fill:parent
 
     property int smallFontSize: (Qt.platform.os === "osx") ? 12  : 10;
     property int mediumFontSize: (Qt.platform.os === "osx") ? 15  : 12;
+    property int mediumLargeFontSize: (Qt.platform.os === "osx") ? 20  : 16;
     property int largeFontSize: (Qt.platform.os === "osx") ? 24  : 20;
     property int extraLargeFontSize: (Qt.platform.os === "osx") ? 36  : 24;
 
-
-    RowLayout {
-        id: rowLayout
-        x: -8
-        y: -46
-        width: 1013
-        height: 761
-    }
-
     Rectangle {
-        id: rectangle
-        x: 37
-        y: 0
+        id: bitColumn
+        anchors.right:enabledColumn.left
         width: 200
         height: 657
-        color: "#888a85"
+        color:lightGreyColor
 
         Label {
             id: label
-            x: 72
-            y: 26
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.top:parent.top
+            anchors.topMargin: 20
             text: qsTr("Bit")
-            font.pointSize: 15
-            font.bold: true
+            font.pointSize: largeFontSize
+            font.family: "helvetica"
+
         }
 
         Label {
             id: label4
-            x: 68
+            anchors.horizontalCenter: parent.horizontalCenter
             y: 96
             text: qsTr("0")
-            font.pointSize: mediumFontSize
+            font.pointSize: mediumLargeFontSize
         }
 
 
         Label {
             id: label6
-            x: 70
+            anchors.horizontalCenter: parent.horizontalCenter
             y: 242
-            width: 22
             height: 20
             text: qsTr("2")
-            font.pointSize: mediumFontSize
+            font.pointSize: mediumLargeFontSize
         }
 
         Label {
             id: label7
-            x: 67
+            anchors.horizontalCenter: parent.horizontalCenter
             y: 325
-            width: 22
             height: 10
             text: qsTr("3")
-            font.pointSize: mediumFontSize
+            font.pointSize: mediumLargeFontSize
         }
 
         Label {
             id: label5
-            x: 68
+            anchors.horizontalCenter: parent.horizontalCenter
             y: 172
-            width: 12
             height: 20
             text: qsTr("1")
-            font.pointSize: mediumFontSize
+            font.pointSize: mediumLargeFontSize
         }
 
         Label {
             id: label2
-            x: 67
+            anchors.horizontalCenter: parent.horizontalCenter
             y: 394
-            width: 15
             height: 20
             text: qsTr("4")
-            font.pointSize: mediumFontSize
+            font.pointSize: mediumLargeFontSize
         }
 
         Label {
             id: label3
-            x: 65
+            anchors.horizontalCenter: parent.horizontalCenter
             y: 463
-            width: 24
             height: 31
             text: qsTr("5")
-            font.pointSize: mediumFontSize
+            font.pointSize: mediumLargeFontSize
         }
 
         Label {
             id: label1
-            x: 65
+            anchors.horizontalCenter: parent.horizontalCenter
             y: 527
-            width: 24
             height: 25
             text: qsTr("6")
-            font.pointSize: mediumFontSize
+            font.pointSize: mediumLargeFontSize
         }
 
         Label {
             id: label11
-            x: 63
+            anchors.horizontalCenter: parent.horizontalCenter
             y: 602
-            width: 17
             height: 26
             text: qsTr("7")
-            font.pointSize: mediumFontSize
+            font.pointSize: mediumLargeFontSize
         }
     }
 
     Rectangle {
-        id: rectangle4
-        x: 195
-        y: 0
+        id: enabledColumn
+        anchors.right:pwmSettingRectangle.horizontalCenter
         width: 200
         height: 657
-        color: "#888a85"
+        color:lightGreyColor
         Label {
             id: label8
-            x: 58
-            y: 25
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.top:parent.top
+            anchors.topMargin: 20
             text: qsTr("Enabled")
-            font.bold: true
-            font.pointSize: 13
+            font.pointSize: largeFontSize
+            font.family: "helvetica"
         }
 
         PWMSwitch {
-            x: 108
+            anchors.horizontalCenter: parent.horizontalCenter
             y: 128
             initialState: true
         }
 
         PWMSwitch {
-            x: 108
+            anchors.horizontalCenter: parent.horizontalCenter
             y: 348
             initialState: true
         }
 
         PWMSwitch {
-            x: 108
+            anchors.horizontalCenter: parent.horizontalCenter
             y: 200
             initialState: true
         }
+
+        PWMSwitch {
+            anchors.horizontalCenter: parent.horizontalCenter
+            y: 273
+            initialState: true
+        }
+
+        PWMSwitch {
+            anchors.horizontalCenter: parent.horizontalCenter
+            y: 418
+            initialState: true
+        }
+
+        PWMSwitch {
+            anchors.horizontalCenter: parent.horizontalCenter
+            y: 496
+            initialState: true
+        }
+
+        PWMSwitch {
+            anchors.horizontalCenter: parent.horizontalCenter
+            y: 564
+            initialState: true
+        }
+
+        PWMSwitch {
+            anchors.horizontalCenter: parent.horizontalCenter
+            y: 631
+            initialState: true
+        }
+}
+
+        //-------------------------------------
+        //  frequency column
+        //-------------------------------------
         Rectangle {
-            id: rectangle5
-            x: 197
-            y: 0
-            width: 383
+            id: frequencyColumn
+            anchors.left:pwmSettingRectangle.horizontalCenter
+            width: 200
             height: 657
-            color: "#888a85"
+            color: lightGreyColor
             Label {
                 id: label9
-                x: 88
-                y: 27
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.top:parent.top
+                anchors.topMargin: 20
                 text: qsTr("Frequency  (HZ)")
-                font.bold: true
-                font.pointSize: 13
+                font.pointSize: largeFontSize
+                font.family: "helvetica"
             }
 
             TextField {
                 id: textField3
-                x: 120
+                //x: 120
+                anchors.horizontalCenter: parent.horizontalCenter
                 y: 92
                 width: 116
                 placeholderText: qsTr("10 Hz")
@@ -185,7 +203,8 @@ Rectangle{
 
             TextField {
                 id: textField4
-                x: 120
+                //x: 120
+                anchors.horizontalCenter: parent.horizontalCenter
                 y: 164
                 width: 116
                 placeholderText: qsTr("100HZ")
@@ -193,7 +212,8 @@ Rectangle{
 
             TextField {
                 id: textField5
-                x: 120
+                //x: 120
+                anchors.horizontalCenter: parent.horizontalCenter
                 y: 240
                 width: 116
                 placeholderText: qsTr("1000HZ")
@@ -201,7 +221,8 @@ Rectangle{
 
             TextField {
                 id: textField6
-                x: 125
+                //x: 125
+                anchors.horizontalCenter: parent.horizontalCenter
                 y: 311
                 width: 116
                 placeholderText: qsTr("10 Hz")
@@ -209,7 +230,8 @@ Rectangle{
 
             TextField {
                 id: textField7
-                x: 125
+                //x: 125
+                anchors.horizontalCenter: parent.horizontalCenter
                 y: 383
                 width: 116
                 placeholderText: qsTr("10 Hz")
@@ -217,7 +239,8 @@ Rectangle{
 
             TextField {
                 id: textField8
-                x: 125
+                //x: 125
+                anchors.horizontalCenter: parent.horizontalCenter
                 y: 457
                 width: 116
                 placeholderText: qsTr("10 Hz")
@@ -225,7 +248,8 @@ Rectangle{
 
             TextField {
                 id: textField9
-                x: 125
+                //x: 125
+                anchors.horizontalCenter: parent.horizontalCenter
                 y: 527
                 width: 116
                 placeholderText: qsTr("10 Hz")
@@ -233,7 +257,8 @@ Rectangle{
 
             TextField {
                 id: textField10
-                x: 125
+                //x: 125
+                anchors.horizontalCenter: parent.horizontalCenter
                 y: 604
                 width: 116
                 height: 25
@@ -242,51 +267,56 @@ Rectangle{
         }
 
         Rectangle {
-            id: rectangle6
-            x: 565
-            y: 0
-            width: 67
+            id: dutyCycleColumn
+            anchors.left:frequencyColumn.right
+            width: 200
             height: 657
-            color: "#888a85"
+            color: lightGreyColor
             Label {
                 id: label10
-                x: -72
-                y: 29
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.top:parent.top
+                anchors.topMargin: 20
                 text: qsTr("Duty Cycle")
-                font.bold: true
-                font.pointSize: 13
+                font.pointSize: largeFontSize
+                font.family: "helvetica"
             }
 
             CircularSpinner {
-                x: -77
+                //x: -77
+                anchors.horizontalCenter: parent.horizontalCenter
                 y: 65
                 width: 113
                 height: 64
             }
 
             CircularSpinner {
-                x: -76
+                //x: -76
+                anchors.horizontalCenter: parent.horizontalCenter
                 y: 141
                 width: 104
                 height: 62
             }
 
             CircularSpinner {
-                x: -72
+                //x: -72
+                anchors.horizontalCenter: parent.horizontalCenter
                 y: 219
                 width: 103
                 height: 60
             }
 
             CircularSpinner {
-                x: -69
+                //x: -69
+                anchors.horizontalCenter: parent.horizontalCenter
                 y: 292
                 width: 97
                 height: 60
             }
 
             CircularSpinner {
-                x: -77
+                //x: -77
+                anchors.horizontalCenter: parent.horizontalCenter
                 y: 369
                 width: 113
                 height: 60
@@ -294,7 +324,8 @@ Rectangle{
             }
 
             CircularSpinner {
-                x: -77
+                //x: -77
+                anchors.horizontalCenter: parent.horizontalCenter
                 y: 443
                 width: 113
                 height: 60
@@ -302,7 +333,8 @@ Rectangle{
             }
 
             CircularSpinner {
-                x: -76
+                //x: -76
+                anchors.horizontalCenter: parent.horizontalCenter
                 y: 520
                 width: 113
                 height: 59
@@ -310,7 +342,8 @@ Rectangle{
             }
 
             CircularSpinner {
-                x: -77
+                //x: -77
+                anchors.horizontalCenter: parent.horizontalCenter
                 y: 592
                 width: 113
                 height: 59
@@ -318,34 +351,5 @@ Rectangle{
             }
         }
 
-        PWMSwitch {
-            x: 106
-            y: 273
-            initialState: true
-        }
 
-        PWMSwitch {
-            x: 109
-            y: 418
-            initialState: true
-        }
-
-        PWMSwitch {
-            x: 112
-            y: 496
-            initialState: true
-        }
-
-        PWMSwitch {
-            x: 113
-            y: 564
-            initialState: true
-        }
-
-        PWMSwitch {
-            x: 112
-            y: 631
-            initialState: true
-        }
-    }
 }
