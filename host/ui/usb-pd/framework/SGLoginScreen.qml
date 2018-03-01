@@ -23,12 +23,7 @@ Rectangle {
         anchors { top: onLogo.bottom;
             topMargin: 10
             horizontalCenter: onLogo.horizontalCenter}
-
          z:2
-//        fadeInTime: 300
-//        fadeOutTime: 1000
-//        timerInterval: 80
-//        endOfStringDelay: 2000
         text: "Encore Design Suite"
         font.pointSize: Qt.platform.os == "osx"? 20 :16
         font.family:"helvetica"
