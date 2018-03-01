@@ -7,10 +7,14 @@ var xhr = function(method, endpoint, data, callback,errorCallback) {
                 console.log(xhr.responseText)
                 callback( JSON.parse(xhr.responseText) );
             }
-            else if(xhr.status >= 400){
+            else if(xhr.readyState === 4 && xhr.status >= 400){
                 if(errorCallback !== undefined){
                     errorCallback(JSON.parse(xhr.responseText));
                 }
+            }
+            // No connection to db. For some reason we get readyState as 4.
+            else if(xhr.readyState === 4 && !xhr.hasOwnProperty("status") ){
+                errorCallback({status: "no connection"})
             }
         };
         var fullUrl = url + endpoint;
