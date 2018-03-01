@@ -105,17 +105,38 @@ public:
     Q_INVOKABLE void setRedriverCount(int value);
     Q_INVOKABLE bool getUSBCPortState(int port_number);
 
-    // To set the input voltage limit in platform
-    Q_INVOKABLE void setInputVoltageLimiting(int value);
 
-    // To set the maximum temperature limit in platform
-    Q_INVOKABLE void setMaximumTemperature(int value);
+
+
 
     // To set the maximum power request for a particular port in USB-PD platform
     Q_INVOKABLE void setMaximumPortPower(int port,int value);
 
     // To set the Minimum Input Voltage
     Q_INVOKABLE void setMinimumInputVoltage(int value);
+
+    // To set the mode for fault protection for the board (shutdown/restart/none)
+    Q_INVOKABLE void setFaultMode(std::string faultModeAction);
+
+    // To set input voltage foldback parameters (on/off, starting voltage, output wattage limit)
+    Q_INVOKABLE void setVoltageFoldbackParameters(bool inEnabled,
+                                                  float inVoltage,
+                                                  int inWatts);
+
+    //To set the temperature foldback parameters (on/off, starting temperature, output wattage limit)
+    Q_INVOKABLE void setTemperatureFoldbackParameters(bool inEnabled,
+                                                     float inTemperature,
+                                                       int inWatts);
+
+    //To set the input voltage that will trigger a fault when input falls below
+    Q_INVOKABLE void setInputVoltageLimiting(float value);
+
+    // To set the maximum temperature limit in platform
+    Q_INVOKABLE void setMaximumTemperature(float value);
+
+    //set the maximum current that can be drawn by a device connected to a port
+    Q_INVOKABLE void setPortMaximumCurrent(int inPort,
+                                           float inMaximumCurrent);
 
     std::thread notification_thread_;
     void notificationsThreadHandle();
