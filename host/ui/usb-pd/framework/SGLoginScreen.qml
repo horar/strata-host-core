@@ -17,16 +17,22 @@ Rectangle {
         usernameField.forceActiveFocus(); //allows the user to type their username without clicking
     }
 
-   SGSpotlightText {
-        z: 2
+   Label {
+       width:text.fit
+       height:50
         anchors { top: onLogo.bottom;
             topMargin: 10
-            horizontalCenter: parent.horizontalCenter}
-        fadeInTime: 300
-        fadeOutTime: 1000
-        timerInterval: 80
-        endOfStringDelay: 2000
-        titleName: "Encore Design Suite"
+            horizontalCenter: onLogo.horizontalCenter}
+
+         z:2
+//        fadeInTime: 300
+//        fadeOutTime: 1000
+//        timerInterval: 80
+//        endOfStringDelay: 2000
+        text: "Encore Design Suite"
+        font.pointSize: Qt.platform.os == "osx"? 20 :16
+        font.family:"helvetica"
+        color:"lightGrey"
     }
 
     property bool  onIdChange : {
@@ -98,7 +104,6 @@ Rectangle {
     }
     Rectangle{
         id: spyglassTextRect
-        //x: 253; y: 178
         width: 133; height: 31
         color: "#ffffff"
         anchors.horizontalCenterOffset: -7
