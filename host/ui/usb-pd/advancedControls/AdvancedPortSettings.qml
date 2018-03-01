@@ -186,6 +186,10 @@ Rectangle{
         anchors.left:portMaxPowerText.right
         anchors.leftMargin: 10
         anchors.verticalCenter: portMaxPowerText.verticalCenter
+
+        onAccepted: {
+            implementationInterfaceBinding.setMaximumPortPower(port,portMaxPowerCombo.value)
+        }
     }
 
 
@@ -271,6 +275,9 @@ Rectangle{
 
         onValueChanged: {
             maxCurrentTextInput.text = Math.round (maxCurrentSlider.value *10)/10
+            if (!pressed){
+                implementationInterfaceBinding.setPortMaximumCurrent(Math.round (maxCurrentSlider.value *10)/10)
+            }
         }
     }
 
