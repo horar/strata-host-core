@@ -2,7 +2,7 @@ import QtQuick 2.10
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.3
 import QtGraphicalEffects 1.0
-
+import tech.spyglass.ImplementationInterfaceBinding 1.0
 
 import QtQuick.Window 2.10
 import QtCharts 2.2
