@@ -31,6 +31,7 @@ Item {
             fullHeight:310
             collapsedHeight:60
             portName:"Port 1"
+            portNumber:1
             enabledTextFieldBackgroundColor: textEditFieldBackgroundColor
 
             Layout.preferredWidth  : grid.prefWidth(this)
@@ -45,6 +46,7 @@ Item {
             fullHeight:310
             collapsedHeight:60
             portName:"Port 2"
+            portNumber:2
             enabledTextFieldBackgroundColor: textEditFieldBackgroundColor
 
             Layout.preferredWidth  : grid.prefWidth(this)

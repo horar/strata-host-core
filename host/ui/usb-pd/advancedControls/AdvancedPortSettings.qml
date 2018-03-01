@@ -11,6 +11,7 @@ Rectangle{
     property int fullHeight:310
     property int collapsedHeight:60
     property var portName:"Port n"
+    property var portNumber:0
     property var minimumVoltage: 4.95
     property var minimumAdvertisedVoltage: 5.0
     property var maximumAdvertisedVoltage: 20.0
@@ -187,9 +188,10 @@ Rectangle{
         anchors.leftMargin: 10
         anchors.verticalCenter: portMaxPowerText.verticalCenter
 
-        onAccepted: {
-            implementationInterfaceBinding.setMaximumPortPower(port,portMaxPowerCombo.value)
+        onActivated: {
+            implementationInterfaceBinding.setMaximumPortPower(portNumber,parseInt(portMaxPowerCombo.currentText))
         }
+
     }
 
 
@@ -273,11 +275,14 @@ Rectangle{
         value:0
         stepSize: .5
 
+        onPressedChanged: {
+            if (!pressed){
+                implementationInterfaceBinding.setPortMaximumCurrent(portNumber, Math.round (maxCurrentSlider.value *10)/10)
+            }
+        }
+
         onValueChanged: {
             maxCurrentTextInput.text = Math.round (maxCurrentSlider.value *10)/10
-            if (!pressed){
-                implementationInterfaceBinding.setPortMaximumCurrent(Math.round (maxCurrentSlider.value *10)/10)
-            }
         }
     }
 
