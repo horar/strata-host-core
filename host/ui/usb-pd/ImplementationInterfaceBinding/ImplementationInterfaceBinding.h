@@ -116,7 +116,7 @@ public:
     Q_INVOKABLE void setMinimumInputVoltage(int value);
 
     // To set the mode for fault protection for the board (shutdown/restart/none)
-    Q_INVOKABLE void setFaultMode(std::string faultModeAction);
+    Q_INVOKABLE void setFaultMode(QString faultModeAction);
 
     // To set input voltage foldback parameters (on/off, starting voltage, output wattage limit)
     Q_INVOKABLE void setVoltageFoldbackParameters(bool inEnabled,

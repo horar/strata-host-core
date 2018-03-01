@@ -112,6 +112,10 @@ void ImplementationInterfaceBinding::setRedriverCount(int value)
     QJsonDocument doc(cmdMessageObject);
     QString strJson(doc.toJson(QJsonDocument::Compact));
     hcc_object->sendCmd(strJson.toStdString());
+    if(hcc_object->sendCmd(strJson.toStdString()))
+        qDebug() << "Radio button send with value" << doc;
+    else
+        qDebug() << "Radio button send failed";
 }
 
 
@@ -127,20 +131,14 @@ bool ImplementationInterfaceBinding::getUSBCPortState(int port_number)
     return false;
 }
 
-//The platform calls this "Over-Current Protection Action"
-//but it really dictates platform behavior upon any type of fault
-//not just over-current faults
-void ImplementationInterfaceBinding::setFaultMode(std::string faultModeAction)
+// dictates platform behavior upon any type of fault (input voltage low, temp high, too much current drawn, etc.)
+void ImplementationInterfaceBinding::setFaultMode(QString faultModeAction)
 {
     QJsonObject cmdMessageObject;
-    cmdMessageObject.insert("cmd", "request_set_over_current_protection_action");
+    cmdMessageObject.insert("cmd", "request_protection_action");
     QJsonObject payloadObject;
-
-    //convert the std::string being passed in into a QString that the platform will understand
-    QString theFaultMode = QString::fromStdString(faultModeAction);
-
-    payloadObject.insert("action", theFaultMode);
-    qDebug() << "fault mode action "<<theFaultMode;
+    payloadObject.insert("action", faultModeAction);
+    qDebug() << "fault mode action "<<faultModeAction;
     cmdMessageObject.insert("payload",payloadObject);
     QJsonDocument doc(cmdMessageObject);
     QString strJson(doc.toJson(QJsonDocument::Compact));
@@ -206,9 +204,9 @@ void ImplementationInterfaceBinding::setInputVoltageLimiting(float value)
     QJsonDocument doc(cmdMessageObject);
     QString strJson(doc.toJson(QJsonDocument::Compact));
     if(hcc_object->sendCmd(strJson.toStdString()))
-        qDebug() << "Radio button send with value" << doc;
+        qDebug() << "Send command with value" << doc;
     else
-        qDebug() << "Radio button send failed";
+        qDebug() << "Command send failed";
 }
 
 void ImplementationInterfaceBinding::setPortMaximumCurrent(int inPort,
