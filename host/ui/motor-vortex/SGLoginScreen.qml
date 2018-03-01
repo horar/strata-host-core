@@ -20,6 +20,32 @@ Rectangle {
         usernameField.forceActiveFocus();   //allows the user to type their username without clicking
     }
 
+    // Login Button Connection
+    Connections {
+        target: loginButton
+        onClicked: {
+            // Pass info to Authenticator
+            var login_info = { user: usernameField.text, password: passwordField.text }
+            Authenticator.login(login_info)
+        }
+    }
+
+    Connections {
+        target: Authenticator.signals
+        onLoginResult: {
+            console.log("Login result received")
+            if(result){
+                var data = { user_id: usernameField.text }
+                NavigationControl.updateState(NavigationControl.events.LOGIN_SUCCESSFUL_EVENT,data)
+            }
+            else{
+                //Show the failed animation
+                failedLoginAnimation.start()
+            }
+        }
+
+    }
+
     //property bool  onIdChange :
 
     //-----------------------------------------------------------
@@ -190,7 +216,7 @@ Rectangle {
     Rectangle {
         id: loginRectangle
         x: 225; y: 213
-        width: 200; height: 149
+        width: 200; height: 150
         color: "#ffffff"
         border { color: "black"; width: 1 }
         anchors { horizontalCenter: parent.horizontalCenter;
@@ -228,10 +254,19 @@ Rectangle {
             cursorPosition: 3
             font.pointSize: Qt.platform.os == "osx"? 13 :8
 
+            Keys.onPressed: {
+                hideFailedLoginAnimation.start()
+            }
+
             //handle a return key click, which is the equivalent of the login button being clicked
             Keys.onReturnPressed:{
-                if (usernameField.text=="" && passwordField.text==""){
-                    failedLogin.start();
+                // Report Error if we are missing text
+                if (usernameField.text=="" || passwordField.text==""){
+                    failedLoginAnimation.start();
+                }
+                else {
+                    // Otherwise simulate a loginButton press
+                    loginButton.clicked()
                 }
             }
         }
@@ -246,10 +281,18 @@ Rectangle {
             Material.accent: Material.Grey
             font.pointSize: Qt.platform.os == "osx"? 13 :8
 
+            Keys.onPressed: {
+                hideFailedLoginAnimation.start()
+            }
             //handle a return key click, which is the equivalent of the login button being clicked
             Keys.onReturnPressed:{
-                if (usernameField.text=="" && passwordField.text==""){
-                    failedLogin.start();
+                // Report Error if we are missing text
+                if (usernameField.text=="" || passwordField.text==""){
+                    failedLoginAnimation.start();
+                }
+                else {
+                    // Otherwise simulate a loginButton press
+                    loginButton.clicked()
                 }
             }
         }
@@ -283,7 +326,7 @@ Rectangle {
                     verticalCenter: parent.verticalCenter
                 }
                 horizontalAlignment:Text.AlignHCenter
-                text: "Your username or password is incorrect"
+                text: "Your username or password are incorrect"
                 color: "white"
             }
 
@@ -313,37 +356,50 @@ Rectangle {
                 font.bold:true
             }
 
-            onClicked: {
-                // Check Login here
-                var login_info = { user: usernameField.text, password: passwordField.text }
-                //Authenticator.login(login_info)
+            /* OnClicked is handled in Connections section above */
 
-                // If valid; send user_id to NavigationControl
-                console.log("Login successful!")
-                var data = { user_id: usernameField.text }
-                NavigationControl.updateState(NavigationControl.events.LOGIN_SUCCESSFUL_EVENT,data)
-            }
-            }
+           }
 
 
         }
 
     SequentialAnimation{
         //animator to show that the login failed
-        id:failedLogin
+        id:failedLoginAnimation
 
         NumberAnimation {
             target: loginRectangle
             property: "height"
             to: 200
-            duration: 700
+            duration: 500
         }
         NumberAnimation{
             target:loginErrorRect
             property:"opacity"
             to: 1
-            duration: 700
+            duration: 500
         }
+    }
+
+    SequentialAnimation{
+        //animator to show that the login failed
+        id:hideFailedLoginAnimation
+
+        NumberAnimation{
+            target:loginErrorRect
+            property:"opacity"
+            to: 0
+            duration: 500
+        }
+
+        NumberAnimation {
+            target: loginRectangle
+            property: "height"
+            // Go back to original height
+            to: 150
+            duration: 500
+        }
+
     }
 
     SequentialAnimation{

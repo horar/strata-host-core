@@ -12,8 +12,6 @@ var xhr = function(method, endpoint, data, callback,errorCallback) {
                     errorCallback(JSON.parse(xhr.responseText));
                 }
             }
-            console.log("status")
-            console.log(xhr.status)
         };
         var fullUrl = url + endpoint;
         xhr.open( method, fullUrl );

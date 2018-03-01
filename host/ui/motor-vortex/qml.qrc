@@ -66,5 +66,6 @@
         <file>PlatformInterface/platforms/motor-vortex/PlatformInterfaceMotorVortex.h</file>
         <file>PlatformInterface/platforms/usb-pd/PlatformInterfaceUsbPd.cpp</file>
         <file>PlatformInterface/platforms/usb-pd/PlatformInterfaceUsbPd.h</file>
+        <file>SGSignals.qml</file>
     </qresource>
 </RCC>
