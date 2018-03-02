@@ -10,7 +10,7 @@ Window {
     visible: true
     width: 1200
     height: 900
-    title: qsTr("Encore Design Suite -- Motor Vortex Demo")
+    title: qsTr("Encore Design Suite")
 
     Flipable {
         id: flipable
