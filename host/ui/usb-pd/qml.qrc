@@ -9,7 +9,6 @@
         <file>framework/SGSlider.qml</file>
         <file>framework/images/sliderThumb.svg</file>
         <file>framework/images/sliderValue.svg</file>
-        <file>main.cpp</file>
         <file>BackSide.qml</file>
         <file>Board.qml</file>
         <file>Connector.qml</file>
@@ -96,10 +95,6 @@
         <file>BoardBringUp.qml</file>
         <file>ImplementationInterfaceBinding/ImplementationInterfaceBinding.cpp</file>
         <file>ImplementationInterfaceBinding/ImplementationInterfaceBinding.h</file>
-        <file>DataCollector.cpp</file>
-        <file>DataCollector.h</file>
-        <file>DocumentManager.cpp</file>
-        <file>DocumentManager.h</file>
         <file>boardBringUp/Gpio.qml</file>
         <file>boardBringUp/Pwm.qml</file>
         <file>boardBringUp/Serial.qml</file>
@@ -118,9 +113,6 @@
         <file>boardBringUp/lockIcon.png</file>
         <file>images/borderWhite.svg</file>
         <file>images/leftPowerPlugWhite.svg</file>
-        <file>boardBringUp/SerialInterfaceI2C.qml</file>
-        <file>boardBringUp/SerialInterfaceSPI.qml</file>
-        <file>boardBringUp/SerialInterfaceUART.qml</file>
         <file>boardBringUp/lock.svg</file>
         <file>advancedControls/AdvancedControlSettings.qml</file>
         <file>advancedControls/AdvancedBoard.qml</file>
@@ -136,6 +128,9 @@
         <file>advancedControls/AdvancedConnector.qml</file>
         <file>images/rightUSBPlugWhite.svg</file>
         <file>advancedControls/AdvancedGraph.qml</file>
-        <file>framework/SGScrollingText.qml</file>
+        <file>images/icons/backArrowWhite.svg</file>
+        <file>framework/SGSpotlightText.qml</file>
+        <file>images/icons/backArrow.svg</file>
+        <file>advancedControls/AdvancedBoardSettings.qml</file>
     </qresource>
 </RCC>
