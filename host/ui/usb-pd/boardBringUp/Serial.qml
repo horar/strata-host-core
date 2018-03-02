@@ -19,7 +19,7 @@ Rectangle{
         width:parent.width - 100
         height:130
         font.family: "helvetica"
-        font.pointSize: 24
+        font.pointSize: largeFontSize
         font.bold: true
 
         Rectangle{
@@ -41,7 +41,7 @@ Rectangle{
             anchors.left: parent.left
             anchors.leftMargin: 20
             font.family:"helvetica"
-            font.pointSize: 20
+            font.pointSize: mediumLargeFontSize
             font.bold: false
         }
 
@@ -66,7 +66,7 @@ Rectangle{
             anchors.leftMargin: 40
             anchors.left: channelSelect.right
             font.family:"helvetica"
-            font.pointSize: 20
+            font.pointSize: mediumLargeFontSize
             font.bold: false
         }
 
@@ -93,7 +93,7 @@ Rectangle{
             //cursorVisible : true
             placeholderText: qsTr("0x1F")
             font.family:"helvetica"
-            font.pointSize: 20
+            font.pointSize: mediumLargeFontSize
             font.bold: false
             color: "black"
 
@@ -105,7 +105,7 @@ Rectangle{
             anchors.leftMargin: 40
             anchors.left: slaveAddress7Bit.right
             font.family:"helvetica"
-            font.pointSize: 20
+            font.pointSize: mediumLargeFontSize
             font.bold: false
         }
 
@@ -118,7 +118,7 @@ Rectangle{
             height: 26
             placeholderText: qsTr("0x1C")
             font.family:"helvetica"
-            font.pointSize: 20
+            font.pointSize: mediumLargeFontSize
             font.bold: false
         }
 
@@ -128,7 +128,7 @@ Rectangle{
             anchors.left: registerAddress.right
             text: qsTr("Data:")
             font.family:"helvetica"
-            font.pointSize: 20
+            font.pointSize: mediumLargeFontSize
             font.bold: false
         }
 
@@ -141,7 +141,7 @@ Rectangle{
             height: 26
             placeholderText: qsTr("0x1C")
             font.family:"helvetica"
-            font.pointSize: 20
+            font.pointSize: mediumLargeFontSize
             font.bold: false
         }
 
@@ -200,7 +200,7 @@ Rectangle{
            anchors.top: bitRow.bottom
            anchors.topMargin: -10
            font.family:"helvetica"
-           font.pointSize: 12
+           font.pointSize: smallFontSize
            font.bold: false
        }
 
@@ -212,7 +212,7 @@ Rectangle{
            anchors.topMargin: -10
            text: qsTr("Bit 0")
            font.family:"helvetica"
-           font.pointSize: 12
+           font.pointSize: smallFontSize
            font.bold: false
        }
 
@@ -226,7 +226,7 @@ Rectangle{
            height:50
            text: qsTr("Read")
            font.family:"helvetica"
-           font.pointSize: 20
+           font.pointSize: mediumLargeFontSize
            font.bold: false
        }
 
@@ -239,7 +239,7 @@ Rectangle{
             height:50
             text: "Write"
             font.family:"helvetica"
-            font.pointSize: 20
+            font.pointSize: mediumLargeFontSize
             font.bold: false
         }
 
@@ -258,7 +258,7 @@ Rectangle{
         width:parent.width - 100
         height:130
         font.family: "helvetica"
-        font.pointSize: 24
+        font.pointSize: largeFontSize
         font.bold: true
 
         Rectangle{
@@ -282,7 +282,7 @@ Rectangle{
             anchors.topMargin:0
             text: qsTr("Display Format: ")
             font.family: "helvetica"
-            font.pointSize: 20
+            font.pointSize: mediumLargeFontSize
             font.bold: false
         }
 
@@ -302,7 +302,7 @@ Rectangle{
             ButtonGroup.group: displayFormatGroup
             text: qsTr("Decimal")
             font.family: "helvetica"
-            font.pointSize: 20
+            font.pointSize: mediumLargeFontSize
             font.bold: false
         }
 
@@ -314,7 +314,7 @@ Rectangle{
             ButtonGroup.group: displayFormatGroup
             text: qsTr("Hexidecimal")
             font.family: "helvetica"
-            font.pointSize: 20
+            font.pointSize: mediumLargeFontSize
             font.bold: false
         }
 
@@ -326,7 +326,7 @@ Rectangle{
             ButtonGroup.group: displayFormatGroup
             text: qsTr("Binary")
             font.family: "helvetica"
-            font.pointSize: 20
+            font.pointSize: mediumLargeFontSize
             font.bold: false
         }
 
@@ -339,7 +339,7 @@ Rectangle{
             height: 34
             text: qsTr("Bus Rate:")
             font.family: "helvetica"
-            font.pointSize: 20
+            font.pointSize: mediumLargeFontSize
             font.bold: false
         }
 
@@ -352,7 +352,7 @@ Rectangle{
             height: 45
             text:  busRateSlider.value
             font.family: "helvetica"
-            font.pointSize: 20
+            font.pointSize: mediumLargeFontSize
             font.bold: false
 
         }
@@ -393,7 +393,7 @@ Rectangle{
             anchors.top: busRateSlider.bottom
             text: qsTr("1")
             font.family: "helvetica"
-            font.pointSize: 12
+            font.pointSize: smallFontSize
             font.bold: false
         }
 
@@ -403,7 +403,7 @@ Rectangle{
             anchors.top: busRateSlider.bottom
             text: qsTr("100")
             font.family: "helvetica"
-            font.pointSize: 12
+            font.pointSize: smallFontSize
             font.bold: false
         }
     }
@@ -420,7 +420,7 @@ Rectangle{
         width:parent.width - 100
         height:130
         font.family: "helvetica"
-        font.pointSize: 24
+        font.pointSize: largeFontSize
         font.bold: true
 
         Rectangle{
@@ -442,7 +442,7 @@ Rectangle{
             anchors.leftMargin: 20
             text: qsTr("Clock Rate: ")
             font.family: "helvetica"
-            font.pointSize: 20
+            font.pointSize: mediumLargeFontSize
             font.bold: false
         }
 
@@ -456,7 +456,7 @@ Rectangle{
             width:50
             placeholderText: qsTr("1")
             font.family: "helvetica"
-            font.pointSize: 20
+            font.pointSize: mediumLargeFontSize
             font.bold: false
         }
 
@@ -477,7 +477,7 @@ Rectangle{
             anchors.leftMargin: 20
             text: qsTr("Data:")
             font.family: "helvetica"
-            font.pointSize: 20
+            font.pointSize: mediumLargeFontSize
             font.bold: false
         }
 
@@ -490,7 +490,7 @@ Rectangle{
             height: 26
             placeholderText: qsTr("0x00")
             font.family: "helvetica"
-            font.pointSize: 20
+            font.pointSize: mediumLargeFontSize
             font.bold: false
         }
 
@@ -504,7 +504,7 @@ Rectangle{
             height:50
             text: qsTr("Read")
             font.family: "helvetica"
-            font.pointSize: 20
+            font.pointSize: mediumLargeFontSize
             font.bold: false
 
         }
@@ -517,7 +517,7 @@ Rectangle{
             height:50
             text: "Write"
             font.family: "helvetica"
-            font.pointSize: 20
+            font.pointSize: mediumLargeFontSize
             font.bold: false
 
         }
@@ -536,7 +536,7 @@ Rectangle{
         width:parent.width - 100
         height:130
         font.family: "helvetica"
-        font.pointSize: 24
+        font.pointSize: largeFontSize
         font.bold: true
 
         Rectangle{
@@ -558,7 +558,7 @@ Rectangle{
             anchors.leftMargin: 20
             text: qsTr("Baud Rate:")
             font.family: "helvetica"
-            font.pointSize: 20
+            font.pointSize: mediumLargeFontSize
             font.bold: false
         }
 
@@ -571,7 +571,7 @@ Rectangle{
             height: 26
             placeholderText: qsTr("115200")
             font.family: "helvetica"
-            font.pointSize: 20
+            font.pointSize: mediumLargeFontSize
             font.bold: false
         }
 
@@ -581,7 +581,7 @@ Rectangle{
             anchors.leftMargin: 20
             text: qsTr("Parity:")
             font.family: "helvetica"
-            font.pointSize: 20
+            font.pointSize: mediumLargeFontSize
             font.bold: false
         }
 
@@ -598,7 +598,7 @@ Rectangle{
             anchors.leftMargin: 20
             text: qsTr("Data:")
             font.family: "helvetica"
-            font.pointSize: 20
+            font.pointSize: mediumLargeFontSize
             font.bold: false
         }
 
@@ -612,7 +612,7 @@ Rectangle{
             height: 26
             placeholderText: qsTr("0x00")
             font.family: "helvetica"
-            font.pointSize: 20
+            font.pointSize: mediumLargeFontSize
             font.bold: false
         }
 
@@ -624,7 +624,7 @@ Rectangle{
             anchors.leftMargin: 30
             text: qsTr("Stop Bit:")
             font.family: "helvetica"
-            font.pointSize: 20
+            font.pointSize: mediumLargeFontSize
             font.bold: false
         }
 
@@ -642,7 +642,7 @@ Rectangle{
             checked: true
             text: qsTr("0")
             font.family: "helvetica"
-            font.pointSize: 20
+            font.pointSize: mediumLargeFontSize
             font.bold: false
         }
 
@@ -654,7 +654,7 @@ Rectangle{
             ButtonGroup.group: tabPositionGroup2
             text: qsTr("1")
             font.family: "helvetica"
-            font.pointSize: 20
+            font.pointSize: mediumLargeFontSize
             font.bold: false
         }
 
@@ -669,7 +669,7 @@ Rectangle{
             height:50
             text: qsTr("Read")
             font.family: "helvetica"
-            font.pointSize: 20
+            font.pointSize: mediumLargeFontSize
             font.bold: false
 
         }
