@@ -203,6 +203,7 @@ Rectangle {
                         id:port1VoltageAndCurrentGraph
                         title: "PORT 1: VOLTAGE AND CURRENT"
                         chartType: "Target Voltage"
+                        maxYValue: 25
                         portNumber:1
                         anchors.top:parent.top
                         anchors.topMargin: -15
@@ -232,6 +233,7 @@ Rectangle {
                         title: "PORT 2: VOLTAGE AND CURRENT"
                         chartType: "Target Voltage"
                         portNumber:2
+                        maxYValue: 25
                         anchors.top:parent.top
                         anchors.topMargin: -15
                         anchors.left:parent.left
@@ -261,6 +263,7 @@ Rectangle {
                         title: "PORT 1 POWER"
                         chartType: "Port Power"
                         portNumber:1
+                        maxYValue: 100
                         anchors.top:parent.top
                         anchors.topMargin: -15
                         anchors.left:parent.left
@@ -289,6 +292,7 @@ Rectangle {
                         title: "PORT 2 POWER"
                         chartType: "Port Power"
                         portNumber:2
+                        maxYValue: 100
                         anchors.top:parent.top
                         anchors.topMargin: -15
                         anchors.left:parent.left
@@ -316,6 +320,7 @@ Rectangle {
                         title: "PORT 1 TEMPERATURE"
                         chartType: "Port Temperature"
                         portNumber:1
+                        maxYValue: 100
                         anchors.top:parent.top
                         anchors.topMargin: -15
                         anchors.left:parent.left
@@ -344,6 +349,7 @@ Rectangle {
                         title: "PORT 2 TEMPERATURE"
                         chartType: "Port Temperature"
                         portNumber:2
+                        maxYValue: 100
                         anchors.top:parent.top
                         anchors.topMargin: -15
                         anchors.left:parent.left
