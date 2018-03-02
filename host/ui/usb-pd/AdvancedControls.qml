@@ -16,6 +16,8 @@ Rectangle {
     property color enabledTextColor: "#D8D8D8"
     property color disabledTextColor: "#484848"
     property color unselectedButtonSegmentTextColor: "black"
+    property color textEditFieldBackgroundColor: "#5D5A58"
+    property color popupMenuBackgroundColor: "#5D5A58"
 
     objectName: "advancedControls"
 
@@ -27,11 +29,18 @@ Rectangle {
     ListModel {
         id: activeFaultList
     }
+
+    //visibility is the only way we know that this view has been pushed on the stack
+    //handle activities that need to happen when the advanced controls view is seen here.
     onVisibleChanged: {
+
+
         if(visible){
-        faultHistoryList.append({"parameter":"voltage","condition":"<","value":value})
-        console.log("message",faultHistoryList)
-    }}
+            faultHistoryList.append({"parameter":"voltage","condition":"<","value":value})
+            console.log("message",faultHistoryList)
+        }
+
+    }
 
     // signal handling
     Connections {
@@ -159,7 +168,7 @@ Rectangle {
             Layout.fillWidth:true
             Layout.fillHeight:true
 
-            color: "yellow"
+            color: "black"
 
             GridLayout{
                 id: graphGrid
@@ -194,15 +203,16 @@ Rectangle {
                         id:port1VoltageAndCurrentGraph
                         title: "PORT 1: VOLTAGE AND CURRENT"
                         chartType: "Target Voltage"
+                        maxYValue: 25
                         portNumber:1
                         anchors.top:parent.top
                         anchors.topMargin: -15
                         anchors.left:parent.left
                         anchors.leftMargin: -15
                         anchors.bottom:parent.bottom
-                        anchors.bottomMargin: -15
+                        anchors.bottomMargin: -12
                         anchors.right:parent.right
-                        anchors.rightMargin: -15
+                        anchors.rightMargin: -10
                     }
                 }
 
@@ -216,20 +226,22 @@ Rectangle {
                     Layout.preferredHeight : graphGrid.prefHeight(this)
                     Layout.fillWidth:true
                     Layout.fillHeight:true
+                    color:"black"
 
                     AdvancedGraph{
                         id:port2VoltageAndCurrentGraph
                         title: "PORT 2: VOLTAGE AND CURRENT"
                         chartType: "Target Voltage"
                         portNumber:2
+                        maxYValue: 25
                         anchors.top:parent.top
                         anchors.topMargin: -15
                         anchors.left:parent.left
                         anchors.leftMargin: -15
                         anchors.bottom:parent.bottom
-                        anchors.bottomMargin: -15
+                        anchors.bottomMargin: -12
                         anchors.right:parent.right
-                        anchors.rightMargin: -15
+                        anchors.rightMargin: -10
                     }
                 }
 
@@ -244,20 +256,22 @@ Rectangle {
                     Layout.preferredHeight : graphGrid.prefHeight(this)
                     Layout.fillWidth:true
                     Layout.fillHeight:true
+                    color:"black"
 
                     AdvancedGraph{
                         id:port1PowerGraph
                         title: "PORT 1 POWER"
                         chartType: "Port Power"
                         portNumber:1
+                        maxYValue: 100
                         anchors.top:parent.top
                         anchors.topMargin: -15
                         anchors.left:parent.left
                         anchors.leftMargin: -15
                         anchors.bottom:parent.bottom
-                        anchors.bottomMargin: -15
+                        anchors.bottomMargin: -12
                         anchors.right:parent.right
-                        anchors.rightMargin: -15
+                        anchors.rightMargin: -10
                     }
                 }
 
@@ -271,20 +285,22 @@ Rectangle {
                     Layout.preferredHeight : graphGrid.prefHeight(this)
                     Layout.fillWidth:true
                     Layout.fillHeight:true
+                    color:"black"
 
                     AdvancedGraph{
                         id:port2PowerGraph
                         title: "PORT 2 POWER"
                         chartType: "Port Power"
                         portNumber:2
+                        maxYValue: 100
                         anchors.top:parent.top
                         anchors.topMargin: -15
                         anchors.left:parent.left
                         anchors.leftMargin: -15
                         anchors.bottom:parent.bottom
-                        anchors.bottomMargin: -15
+                        anchors.bottomMargin: -12
                         anchors.right:parent.right
-                        anchors.rightMargin: -15
+                        anchors.rightMargin: -10
                     }
                 }
                 Rectangle{
@@ -297,20 +313,22 @@ Rectangle {
                     Layout.preferredHeight : graphGrid.prefHeight(this)
                     Layout.fillWidth:true
                     Layout.fillHeight:true
+                    color:"black"
 
                     AdvancedGraph{
                         id:port1TemperatureGraph
                         title: "PORT 1 TEMPERATURE"
                         chartType: "Port Temperature"
                         portNumber:1
+                        maxYValue: 100
                         anchors.top:parent.top
                         anchors.topMargin: -15
                         anchors.left:parent.left
                         anchors.leftMargin: -15
                         anchors.bottom:parent.bottom
-                        anchors.bottomMargin: -15
+                        anchors.bottomMargin: -12
                         anchors.right:parent.right
-                        anchors.rightMargin: -15
+                        anchors.rightMargin: -10
                     }
                 }
 
@@ -324,20 +342,22 @@ Rectangle {
                     Layout.preferredHeight : graphGrid.prefHeight(this)
                     Layout.fillWidth:true
                     Layout.fillHeight:true
+                    color:"black"
 
                     AdvancedGraph{
                         id:port2TemperatureGraph
                         title: "PORT 2 TEMPERATURE"
                         chartType: "Port Temperature"
                         portNumber:2
+                        maxYValue: 100
                         anchors.top:parent.top
                         anchors.topMargin: -15
                         anchors.left:parent.left
                         anchors.leftMargin: -15
                         anchors.bottom:parent.bottom
-                        anchors.bottomMargin: -15
+                        anchors.bottomMargin: -12
                         anchors.right:parent.right
-                        anchors.rightMargin: -15
+                        anchors.rightMargin: -10
                     }
                 }
 

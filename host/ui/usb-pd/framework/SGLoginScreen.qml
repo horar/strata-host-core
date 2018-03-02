@@ -17,16 +17,17 @@ Rectangle {
         usernameField.forceActiveFocus(); //allows the user to type their username without clicking
     }
 
-   SGScrollingText {
-        z: 2
+   Label {
+       width:text.fit
+       height:50
         anchors { top: onLogo.bottom;
-            horizontalCenter: parent.horizontalCenter;
-            horizontalCenterOffset: -50 }
-        fadeInTime: 1500
-        fadeOutTime: 4000
-        timerInterval: 400
-        titleName: "Encore Design Suite"
-
+            topMargin: 10
+            horizontalCenter: onLogo.horizontalCenter}
+         z:2
+        text: "Encore Design Suite"
+        font.pointSize: Qt.platform.os == "osx"? 20 :16
+        font.family:"helvetica"
+        color:"lightGrey"
     }
 
     property bool  onIdChange : {
@@ -61,14 +62,17 @@ Rectangle {
                     if(mainWindow.control_type == "standard") {
                         stack.pop();
                         stack.push([cBoardLayout, {immediate:false}]);
+                        frontToolBar.state = "backButtonHidden"
                     }
                     else if (mainWindow.control_type == "advanced") {
                         stack.pop();
                         stack.push([advanced, {immediate:false}]);
+                        frontToolBar.state = "backButtonShowing"
                     }
                     else if(mainWindow.control_type == "BuBu") {
                         stack.pop();
                         stack.push([boardBringUp, {immediate:false}]);
+                        frontToolBar.state = "backButtonShowing"
 
                     }
                     console.log("Displaying USB-PD");
@@ -95,7 +99,6 @@ Rectangle {
     }
     Rectangle{
         id: spyglassTextRect
-        //x: 253; y: 178
         width: 133; height: 31
         color: "#ffffff"
         anchors.horizontalCenterOffset: -7

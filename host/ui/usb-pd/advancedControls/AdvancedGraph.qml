@@ -2,7 +2,7 @@ import QtQuick 2.10
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.3
 import QtGraphicalEffects 1.0
-
+import tech.spyglass.ImplementationInterfaceBinding 1.0
 
 import QtQuick.Window 2.10
 import QtCharts 2.2
@@ -21,14 +21,15 @@ ChartView {
     property string chartType: ""
     property int portNumber:0
     property int count:0
+    property int maxYValue: 10
 
 
 
     // Define x-axis to be used with the series instead of default one
     ValueAxis {
         id: valueAxisX
-        min: 2000
-        max: 2011
+        min: 0
+        max: 10
         tickCount: 3
         labelFormat: "%.0f"
         labelsFont.family: "helvetica"
@@ -42,7 +43,7 @@ ChartView {
     ValueAxis {
         id: valueAxisY
         min: 0
-        max: 10
+        max: maxYValue
         tickCount: 6
         labelFormat: "%.0f"
         labelsFont.family: "helvetica"
@@ -68,7 +69,19 @@ ChartView {
     LineSeries {
         id:lineSeries1
         color:Qt.rgba(.9,.9,.9,1)
+    }
 
+    LineSeries {
+        id:portTargetVoltageLineSeries
+        color:Qt.rgba(.9,.9,.9,1)
+    }
+    LineSeries {
+        id:portTemperatureLineSeries
+        color:Qt.rgba(.9,.9,.9,1)
+    }
+    LineSeries {
+        id:portPowerLineSeries
+        color:Qt.rgba(.9,.9,.9,1)
     }
 
     Connections {
@@ -76,16 +89,17 @@ ChartView {
 
         onPortTargetVoltageChanged: {
             if( chartType === "Target Voltage" && portNumber == port ) {
-                parameterValue = value;
-                lineSeries1.append(count/10,parameterValue);
+                var parameterValue = value;
+                portTemperatureLineSeries.append(count/10,parameterValue);
                 count++;
+                //console.log("voltage changed on port ", port, value)
             }
         }
 
         onPortTemperatureChanged: {
             if( chartType === "Port Temperature" && portNumber == port  ) {
-                parameterValue = value;
-                lineSeries1.append(count/10,parameterValue);
+                var parameterValue = value;
+                portTemperatureLineSeries.append(count/10,parameterValue);
                 count++;
 
             }
@@ -94,31 +108,31 @@ ChartView {
 
         onPortPowerChanged: {
             if( chartType === "Port Power"  && portNumber == port ) {
-                parameterValue = value;
-                lineSeries1.append(count/10,parameterValue);
+                var parameterValue = value;
+                portPowerLineSeries.append(count/10,parameterValue);
                 count++;
             }
         }
 
-        onPortOutputVoltageChanged: {
-            if( chartType === "Output Voltage"  && portNumber == port ) {
-                parameterValue = value;
-                lineSeries1.append(count/10,value);
-                lineSeries1.name = "Output Voltage";
-                count++;
-            }
-        }
+//        onPortOutputVoltageChanged: {
+//            if( chartType === "Output Voltage"  && portNumber == port ) {
+//                parameterValue = value;
+//                var lineSeries1.append(count/10,value);
+//                //lineSeries1.name = "Output Voltage";
+//                count++;
+//            }
+//        }
 
-        onPortInputVoltageChanged:{
-            if( chartType === "Input Power") {
-                parameterValue = value*parameterCurrentValue;
-                lineSeries1.append(count/10,parameterValue);
-                lineSeries1.name = "Input Power";
-                count++;
+//        onPortInputVoltageChanged:{
+//            if( chartType === "Input Power") {
+//                parameterValue = value*parameterCurrentValue;
+//                var lineSeries1.append(count/10,parameterValue);
+//                //lineSeries1.name = "Input Power";
+//                count++;
 
 
-            }
-        }
+//            }
+//        }
 
     }
 }
