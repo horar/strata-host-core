@@ -141,6 +141,15 @@ Window {
                 flipable.flipped = !flipable.flipped
                 }
             }
+
+            Button {
+                text: "Login as guest"
+                onClicked: {
+                    var data = { user_id: "Guest" }
+                    NavigationControl.updateState(NavigationControl.events.LOGIN_SUCCESSFUL_EVENT,data)
+
+                }
+            }
             }
 
 
