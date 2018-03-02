@@ -24,6 +24,10 @@ Rectangle {
     Connections {
         target: loginButton
         onClicked: {
+            // Report Error if we are missing text
+            if (usernameField.text=="" || passwordField.text==""){
+                failedLoginAnimation.start();
+            }
             // Pass info to Authenticator
             var login_info = { user: usernameField.text, password: passwordField.text }
             Authenticator.login(login_info)
@@ -260,14 +264,7 @@ Rectangle {
 
             //handle a return key click, which is the equivalent of the login button being clicked
             Keys.onReturnPressed:{
-                // Report Error if we are missing text
-                if (usernameField.text=="" || passwordField.text==""){
-                    failedLoginAnimation.start();
-                }
-                else {
-                    // Otherwise simulate a loginButton press
-                    loginButton.clicked()
-                }
+                loginButton.clicked()
             }
         }
 
@@ -286,14 +283,7 @@ Rectangle {
             }
             //handle a return key click, which is the equivalent of the login button being clicked
             Keys.onReturnPressed:{
-                // Report Error if we are missing text
-                if (usernameField.text=="" || passwordField.text==""){
-                    failedLoginAnimation.start();
-                }
-                else {
-                    // Otherwise simulate a loginButton press
-                    loginButton.clicked()
-                }
+                loginButton.clicked()
             }
         }
 

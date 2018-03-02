@@ -67,5 +67,12 @@
         <file>PlatformInterface/platforms/usb-pd/PlatformInterfaceUsbPd.cpp</file>
         <file>PlatformInterface/platforms/usb-pd/PlatformInterfaceUsbPd.h</file>
         <file>SGSignals.qml</file>
+        <file>images/icons/onLogoGreen.svg</file>
+        <file>images/icons/onLogoGrey.svg</file>
+        <file>images/blank_avatar.png</file>
+        <file>images/daryl_ostrander.png</file>
+        <file>images/dave_priscak.png</file>
+        <file>images/david_somo.png</file>
+        <file>images/paul_mascarenas.png</file>
     </qresource>
 </RCC>

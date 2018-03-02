@@ -17,7 +17,7 @@ var context = {
 
 var screens = {
     LOGIN_SCREEN: "qrc:/SGLoginScreen.qml",
-    DETECTING_PLATFORM_SCREEN : "qrc:/SGDetectingPlatform.qml",
+    WELCOME_SCREEN : "qrc:/SGWelcome.qml",
     CONTENT_SCREEN : "qrc:/Content.qml"
 }
 
@@ -197,7 +197,7 @@ function updateState(event, data)
                 }
                 else {
                     // Disconnected; Show detection page
-                    createView(screens.DETECTING_PLATFORM_SCREEN, control_container_)
+                    createView(screens.WELCOME_SCREEN, control_container_)
                 }
 
                 // Show content when we have a platform name; doesn't have to be actively connected
@@ -207,7 +207,7 @@ function updateState(event, data)
                 }
                 else {
                     // Otherwise; no platform has been connected or chosen
-                    createView(screens.DETECTING_PLATFORM_SCREEN, content_container_)
+                    createView(screens.WELCOME_SCREEN, content_container_)
                 }
 
                 break;
