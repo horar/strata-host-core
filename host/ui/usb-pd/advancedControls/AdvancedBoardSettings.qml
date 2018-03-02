@@ -3,983 +3,727 @@ import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.3
 import QtGraphicalEffects 1.0
 
-//-----------------------------------------------
-//  Port  settings
-//-----------------------------------------------
+
 Rectangle{
-    id:portSettings
-    property int fullHeight:310
-    property int collapsedHeight:60
-    property var portName:"Port n"
-    property var portNumber:0
-    property var minimumVoltage: 4.95
-    property var minimumAdvertisedVoltage: 5.0
-    property var maximumAdvertisedVoltage: 20.0
+     id: boardSettings
+     property int fullHeight:350
+     property int collapsedHeight:55
+     Layout.preferredWidth  : grid.prefWidth(this)
+     Layout.preferredHeight : boardSettings.fullHeight
+     color: "black"
 
-    property color enabledTextFieldBackgroundColor: "#838484"
-    property color disabledTextFieldBackgroundColor: "#33FFFFFF"
+     SequentialAnimation{
+         id: collapseBoardSettings
 
-    property color enabledTextFieldTextColor: "white"
-    property color disabledTextFieldTextColor: "grey"
+         PropertyAnimation{
+             targets: [faultProtectionLabel, shutdownButton, restartButton, noProtectionButton, dataConfigurationLabel,
+             chargeOnlyButton, passiveButton, redriverButton,
+             inputLimitingGroup, temperatureLimitingGroup,
+             minimumInputVoltageText, minimumInputLabel, minimumInputUnitText, minimumInputVoltageSlider,
+             faultTempText, faultTempLabel, faultTempUnitText, faultTempSlider]
+             property:"opacity"
+             to: 0
+             duration:500
+         }
+         NumberAnimation{
+             target: boardSettings;
+             property: "Layout.preferredHeight";
+             to: boardSettings.collapsedHeight;
+             duration: settings.collapseAnimationSpeed;
+         }
+     }
 
-    Layout.preferredWidth  : grid.prefWidth(this)
-    Layout.preferredHeight : portSettings.fullHeight
-    color: "black"
+     SequentialAnimation{
+         id: expandBoardSettings
 
-    Component.onCompleted: {
-        portvoltage1Slider.value = minimumVoltage;
-        portvoltage2Slider.value = minimumVoltage;
-        portvoltage3Slider.value = minimumVoltage;
-        portvoltage4Slider.value = minimumVoltage;
-        portvoltage5Slider.value = minimumVoltage;
-        portvoltage6Slider.value = minimumVoltage;
-        portvoltage7Slider.value = minimumVoltage;
-    }
+         NumberAnimation {
+             target: boardSettings
+             property: "Layout.preferredHeight";
+             to: boardSettings.fullHeight;
+             duration: settings.collapseAnimationSpeed;
+         }
+         PropertyAnimation{
+             targets: [faultProtectionLabel, shutdownButton, restartButton, noProtectionButton, dataConfigurationLabel,
+             chargeOnlyButton, passiveButton, redriverButton,
+             inputLimitingGroup,  temperatureLimitingGroup,
+             minimumInputVoltageText, minimumInputLabel, minimumInputUnitText, minimumInputVoltageSlider,
+             faultTempText, faultTempLabel, faultTempUnitText, faultTempSlider]
 
-    SequentialAnimation{
-        id: collapsePortSettings
+             property:"opacity"
+             to: 1.0
+             duration:500
+         }
 
-        PropertyAnimation{
-            targets: [portMaxPowerText,portMaxPowerCombo, portMaxPowerUnitText,
-                cableCompensationGroup, maxCurrentText,
-            maxCurrentTextInputRect, maxCurrentUnitText, maxCurrentSlider, portAdvertizedVoltagesGroup]
-            property:"opacity"
-            to: 0
-            duration:500
-        }
-        NumberAnimation{
-            target: portSettings;
-            property: "Layout.preferredHeight";
-            to: portSettings.collapsedHeight;
-            duration: settings.collapseAnimationSpeed;
-        }
-    }
+     }
 
-    SequentialAnimation{
-        id: expandPortSettings
-
-        NumberAnimation {
-            target: portSettings
-            property: "Layout.preferredHeight";
-            to: portSettings.fullHeight;
-            duration: settings.collapseAnimationSpeed;
-        }
-        PropertyAnimation{
-            targets: [portMaxPowerText,portMaxPowerCombo, portMaxPowerUnitText,
-                cableCompensationGroup, maxCurrentText,
-            maxCurrentTextInputRect, maxCurrentUnitText, maxCurrentSlider, portAdvertizedVoltagesGroup]
-
-            property:"opacity"
-            to: 1.0
-            duration:500
-        }
-
-    }
+     Button{
+         id: boardSettingsDisclosureButton
+         anchors.top: parent.top
+         anchors.left: parent.left
+         anchors.leftMargin: 0
+         anchors.topMargin: 20
+         height: 20
+         width: 20
+         checkable: true
+         checked: true
+         background: Rectangle {
+             color:"black"
+         }
 
 
+         Image{
+             id:boardSettingsDisclosureButtonImage
+             anchors.left:parent.left
+             anchors.leftMargin: 3
+             anchors.top:parent.top
+             height:10
+             width:14
+             source:"../images/icons/showLessIcon.svg"
 
-    Button{
-        id: portSettingsDisclosureButton
-        anchors.top: parent.top
-        anchors.left: parent.left
-        anchors.leftMargin: 0
-        anchors.topMargin: 20
-        height: 20
-        width: 20
-        checkable: true
-        checked: true
-        background: Rectangle {
-            color: "black"
-        }
+             transform: Rotation {
+                 id: rotateBoardSettingsButtonImage
+                 origin.x: boardSettingsDisclosureButtonImage.width/2;
+                 origin.y: boardSettingsDisclosureButtonImage.height/2;
+                 axis { x: 0; y: 0; z: 1 }
+             }
 
+             NumberAnimation {
+                 id:collapseBoardSettingsDisclosureIcon
+                 running: false
+                 loops: 1
+                 target: rotateBoardSettingsButtonImage;
+                 property: "angle";
+                 from: 0; to: 180;
+                 duration: 1000;
+             }
 
-        Image{
-            id:portDisclosureButtonImage
-            anchors.left:parent.left
-            anchors.leftMargin: 3
-            anchors.top:parent.top
-            height:10
-            width:14
-            source:"../images/icons/showLessIcon.svg"
-
-            transform: Rotation {
-                id: rotatePortButtonImage
-                origin.x: portDisclosureButtonImage.width/2;
-                origin.y: portDisclosureButtonImage.height/2;
-                axis { x: 0; y: 0; z: 1 }
-            }
-
-            NumberAnimation {
-                id:collapsePortDisclosureIcon
-                running: false
-                loops: 1
-                target: rotatePortButtonImage;
-                property: "angle";
-                from: 0; to: 180;
-                duration: 1000;
-            }
-
-            NumberAnimation {
-                id:expandPortDisclosureIcon
-                running: false
-                loops: 1
-                target: rotatePortButtonImage;
-                property: "angle";
-                from: 180; to: 0;
-                duration: 1000;
-            }
-        }
-
-        onClicked:{
-            if (checked == true){
-                expandPortSettings.start();
-                expandPortDisclosureIcon.start();
-                }
-            else{
-                collapsePortSettings.start();
-                collapsePortDisclosureIcon.start();
-              }
-        }
-
-    }
-
-    Label{
-        id: portSettingsLabel
-        text: parent.portName + " Settings"
-        font.family: "Helvetica"
-        font.pointSize: mediumFontSize
-        color: "#D8D8D8"
-        anchors.left:parent.left
-        anchors.top:parent.top
-        anchors.leftMargin: 20//parent.width/20
-        anchors.topMargin: 20//parent.height/20
-    }
-
-    Rectangle{
-        id: portSettingsSeparator
-        anchors.left: parent.left
-        anchors.right: parent.right
-        anchors.leftMargin: parent.width/20
-        anchors.rightMargin: parent.width/20
-        anchors.top: portSettingsLabel.bottom
-        anchors.topMargin: portSettingsLabel.height
-        height: 1
-        color:"#CCCCCC"
-    }
-
-    Text{
-        id:portMaxPowerText
-        text:"Maximum power output:"
-        font.family: "helvetica"
-        font.pointSize: smallFontSize
-        horizontalAlignment: Text.AlignRight
-        color: "#D8D8D8"
-        anchors.right:parent.right
-        anchors.rightMargin: parent.width*.6
-        anchors.top: portSettingsSeparator.bottom
-        anchors.topMargin: 15
-    }
-
-    PopUpMenu{
-        id: portMaxPowerCombo
-        model: ["15","27", "36", "45","60","100"]
-        backgroundColor: popupMenuBackgroundColor
-        anchors.left:portMaxPowerText.right
-        anchors.leftMargin: 10
-        anchors.verticalCenter: portMaxPowerText.verticalCenter
-
-        onActivated: {
-            implementationInterfaceBinding.setMaximumPortPower(portNumber,parseInt(portMaxPowerCombo.currentText))
-        }
-
-    }
+             NumberAnimation {
+                 id:expandBoardSettingsDisclosureIcon
+                 running: false
+                 loops: 1
+                 target: rotateBoardSettingsButtonImage;
+                 property: "angle";
+                 from: 180; to: 0;
+                 duration: 1000;
+             }
+         }
 
 
-    Text{
-        id:portMaxPowerUnitText
-        text:"W"
-        font.family: "helvetica"
-        font.pointSize: smallFontSize
-        color: "#D8D8D8"
-        anchors.left:portMaxPowerCombo.right
-        anchors.leftMargin: 5
-        anchors.verticalCenter: portMaxPowerText.verticalCenter
+         onClicked:{
+             if (checked == true){
+                 expandBoardSettings.start();
+                 expandBoardSettingsDisclosureIcon.start()
+                 }
+             else{
+                 collapseBoardSettings.start();
+                 collapseBoardSettingsDisclosureIcon.start()
+               }
+         }
 
-    }
+     }
 
-    Text{
-        id:maxCurrentText
-        text:"Current limit:"
-        font.family: "helvetica"
-        font.pointSize: smallFontSize
-        horizontalAlignment: Text.AlignRight
-        color: "#D8D8D8"
-        anchors.right:parent.right
-        anchors.rightMargin: parent.width*.6
-        anchors.top: portMaxPowerText.bottom
-        anchors.topMargin: 10
-    }
-    Rectangle{
-         id: maxCurrentTextInputRect
-         color: textEditFieldBackgroundColor
-         anchors.left:maxCurrentText.right
+     Label{
+         id: boardSettingsLabel
+         text: "System Settings"
+         font.family: "Helvetica"
+         font.pointSize: mediumFontSize
+         color: "#D8D8D8"
+         anchors.left:parent.left
+         anchors.top:parent.top
+         anchors.leftMargin: 20
+         anchors.topMargin: 20
+     }
+
+     Rectangle{
+         id: boardSettingsSeparator
+         anchors.left: parent.left
+         anchors.right: parent.right
+         anchors.leftMargin: parent.width/20
+         anchors.rightMargin: parent.width/20
+         anchors.top: boardSettingsLabel.bottom
+         anchors.topMargin: boardSettingsLabel.height
+         height: 1
+         color:"#CCCCCC"
+     }
+
+     Label{
+         id:faultProtectionLabel
+         text:"Fault Protection:"
+         font.family: "helvetica"
+         font.pointSize: mediumFontSize
+         color: enabledTextColor
+         anchors.left: parent.left
+         anchors.leftMargin: 40
+         anchors.top: boardSettingsSeparator.bottom
+         anchors.topMargin: 10
+     }
+
+     ButtonGroup { id: faultProtectionGroup
+                   exclusive: true
+     }
+
+     LeftSegmentedButton{
+         id:shutdownButton
+         anchors.left: faultProtectionLabel.right
+         anchors.leftMargin: 5
+         anchors.verticalCenter: faultProtectionLabel.verticalCenter
+         text: "Shutdown"
+         font.capitalization: Font.MixedCase
+         font.pointSize: smallFontSize
+         checkedColor: "#767676"
+         unCheckedColor: "#4C4A48"
+         checkedTextColor: enabledTextColor
+         uncheckedTextColor: unselectedButtonSegmentTextColor
+         ButtonGroup.group: faultProtectionGroup
+         height: 25
+         width:90
+
+     }
+     MiddleSegmentedButton{
+         id:restartButton
+         anchors.left: shutdownButton.right
+         anchors.leftMargin: 0
+         anchors.verticalCenter: faultProtectionLabel.verticalCenter
+         text:"Restart"
+         font.pointSize: smallFontSize
+         font.capitalization: Font.MixedCase
+         checkedColor: "#767676"
+         unCheckedColor: "#4C4A48"
+         checkedTextColor: enabledTextColor
+         uncheckedTextColor: unselectedButtonSegmentTextColor
+         ButtonGroup.group: faultProtectionGroup
+         height: 25
+         width:65
+     }
+     RightSegmentedButton{
+         id:noProtectionButton
+         anchors.left: restartButton.right
+         anchors.leftMargin: 0
+         anchors.verticalCenter: faultProtectionLabel.verticalCenter
+         text:"None"
+         font.capitalization: Font.MixedCase
+         font.pointSize: smallFontSize
+         checkedColor: "#767676"
+         unCheckedColor: "#4C4A48"
+         checkedTextColor: enabledTextColor
+         uncheckedTextColor: unselectedButtonSegmentTextColor
+         ButtonGroup.group: faultProtectionGroup
+         height: 25
+         width:75
+     }
+
+     Label{
+         id:dataConfigurationLabel
+         text:"Data Configuration:"
+         font.family: "helvetica"
+         font.pointSize: mediumFontSize
+         color: "#D8D8D8"
+         anchors.left: parent.left
+         anchors.leftMargin: 20
+         anchors.top: faultProtectionLabel.bottom
+         anchors.topMargin: 15
+     }
+
+     ButtonGroup { id: dataConfigurationGroup
+                   exclusive: true
+     }
+
+     LeftSegmentedButton{
+         id:chargeOnlyButton
+         anchors.left: dataConfigurationLabel.right
+         anchors.leftMargin: 5
+         anchors.verticalCenter: dataConfigurationLabel.verticalCenter
+         text: "Charge only"
+         font.capitalization: Font.MixedCase
+         font.pointSize: smallFontSize
+         checkedColor: "#767676"
+         unCheckedColor: "#4C4A48"
+         checkedTextColor: enabledTextColor
+         uncheckedTextColor: unselectedButtonSegmentTextColor
+         ButtonGroup.group: dataConfigurationGroup
+         height: 25
+         width:90
+
+     }
+     MiddleSegmentedButton{
+         id:passiveButton
+         anchors.left: chargeOnlyButton.right
+         anchors.leftMargin: 0
+         anchors.verticalCenter: dataConfigurationLabel.verticalCenter
+         text:"Passive"
+         font.pointSize: smallFontSize
+         font.capitalization: Font.MixedCase
+         checkedColor: "#767676"
+         unCheckedColor: "#4C4A48"
+         checkedTextColor: enabledTextColor
+         uncheckedTextColor: unselectedButtonSegmentTextColor
+         ButtonGroup.group: dataConfigurationGroup
+         height: 25
+         width:65
+     }
+     RightSegmentedButton{
+         id:redriverButton
+         anchors.left: passiveButton.right
+         anchors.leftMargin: 0
+         anchors.verticalCenter: dataConfigurationLabel.verticalCenter
+         text:"Redriver"
+         font.capitalization: Font.MixedCase
+         font.pointSize: smallFontSize
+         checkedColor: "#767676"
+         unCheckedColor: "#4C4A48"
+         checkedTextColor: enabledTextColor
+         uncheckedTextColor: unselectedButtonSegmentTextColor
+         ButtonGroup.group: dataConfigurationGroup
+         height: 25
+         width:75
+     }
+
+     Rectangle{
+         id:inputLimitingGroup
+         color:"#33FFFFFF"
+         anchors.left: parent.left
+         anchors.right: parent.right
+         anchors.leftMargin: 20
+         anchors.rightMargin: 20
+         anchors.top: dataConfigurationLabel.bottom
+         anchors.topMargin: dataConfigurationLabel.height
+         height: 75
+
+         Text{
+             id:inputLimitingText
+             text:"Input Limiting"
+             font.family: "helvetica"
+             font.pointSize: mediumFontSize
+             color: "#D8D8D8"
+             anchors.left: parent.left
+             anchors.leftMargin: 5
+             anchors.top: parent.top
+             anchors.topMargin: 5
+         }
+
+         Switch{
+             id: inputLimitingSwitch
+             anchors.left: inputLimitingText.right
+             anchors.leftMargin: 10
+             anchors.top: parent.top
+             anchors.topMargin: 5
+             height: 15
+             width:30
+             checked:true
+             //this is the background of the switch
+             indicator: Rectangle {
+                 implicitWidth: 30
+                 implicitHeight: 15
+                 x: inputLimitingSwitch.leftPadding
+                 y: parent.height / 2 - height / 2
+                 radius: 7
+                 color: inputLimitingSwitch.checked ? "#0078D7"  : "black"
+                 border.color: inputLimitingSwitch.checked ? "#0078D7" : "white"
+
+                   //this is the thumb that moves
+                 Rectangle {
+                     x: inputLimitingSwitch.checked ? parent.width - width : 0
+                     y: parent.height / 2 - height / 2
+                     width: 10
+                     height: 10
+                     radius: 5
+                     color: "white"
+                 }
+             }
+             onToggled: {
+                 //toggle enablement of the input limiting controls
+                 startLimitingText.enabled = inputLimitingSwitch.checked
+                 startLimitingVoltageLabel.enabled = inputLimitingSwitch.checked
+                 startLimitingUnitText.enabled = inputLimitingSwitch.checked
+                 startLimitingVoltageSlider.enabled = inputLimitingSwitch.checked
+                 outputLimitText.enabled = inputLimitingSwitch.checked
+                 outputLimitPopup.enabled = inputLimitingSwitch.checked
+                 outputLimitUnitText.enabled = inputLimitingSwitch.checked
+                 minimumInputVoltageText.enabled = inputLimitingSwitch.checked
+                 minimumInputLabel.enabled = inputLimitingSwitch.checked
+                 minimumInputUnitText.enabled = inputLimitingSwitch.checked
+                 minimumInputVoltageSlider.enabled = inputLimitingSwitch.checked
+             }
+         }
+
+         Text{
+             id:startLimitingText
+             text:"Start limiting at:"
+             font.family: "helvetica"
+             font.pointSize: smallFontSize
+             horizontalAlignment: Text.AlignRight
+             color: enabled ? enabledTextColor : disabledTextColor
+             anchors.right:parent.right
+             anchors.rightMargin: parent.width*.6
+             anchors.top: inputLimitingText.bottom
+             anchors.topMargin: 10
+
+         }
+
+         Label{
+             id:startLimitingVoltageLabel
+             anchors.left:startLimitingText.right
+             anchors.leftMargin: 10
+             anchors.verticalCenter: startLimitingText.verticalCenter
+             color:enabled ? enabledTextColor : disabledTextColor
+             text:startLimitingVoltageSlider.value
+             verticalAlignment: TextInput.AlignVCenter
+             font.family: "helvetica"
+             font.pointSize: smallFontSize
+             height:15
+             width:20
+         }
+
+
+         Text{
+             id:startLimitingUnitText
+             text:"V"
+             font.family: "helvetica"
+             font.pointSize: smallFontSize
+             //horizontalAlignment: Text.AlignRight
+             color: enabled ? enabledTextColor : disabledTextColor
+             anchors.left:startLimitingVoltageLabel.right
+             anchors.leftMargin: 5
+             anchors.verticalCenter: startLimitingText.verticalCenter
+
+         }
+
+         AdvancedSlider{
+             id:startLimitingVoltageSlider
+             anchors.left:startLimitingUnitText.right
+             anchors.leftMargin: 5
+             anchors.verticalCenter: startLimitingText.verticalCenter
+             anchors.right:parent.right
+             anchors.rightMargin: 5
+             from: 5
+             to:32
+             value:5
+             stepSize: 0.0
+
+             onMoved: {
+                 startLimitingVoltageLabel.text = Math.round(startLimitingVoltageSlider.value *10)/10
+             }
+         }
+
+         Text{
+             id:outputLimitText
+             text:"Limit Board Output to:"
+             font.family: "helvetica"
+             font.pointSize: smallFontSize
+             horizontalAlignment: Text.AlignRight
+             color: enabled ? enabledTextColor : disabledTextColor
+             anchors.right:parent.right
+             anchors.rightMargin: parent.width*.6
+             anchors.top: startLimitingText.bottom
+             anchors.topMargin: 10
+         }
+
+         PopUpMenu{
+             id: outputLimitPopup
+             model: ["15","27", "36", "45","60","100"]
+             anchors.left:outputLimitText.right
+             anchors.leftMargin: 10
+             anchors.verticalCenter: outputLimitText.verticalCenter
+         }
+
+
+         Text{
+             id:outputLimitUnitText
+             text:"W"
+             font.family: "helvetica"
+             font.pointSize: smallFontSize
+             color: enabled ? enabledTextColor : disabledTextColor
+             anchors.left:outputLimitPopup.right
+             anchors.leftMargin: 5
+             anchors.verticalCenter: outputLimitText.verticalCenter
+
+         }
+
+
+
+     }
+
+     //------------------------------------
+     //  temperature limit Group
+     //---------------------------------
+     Rectangle{
+         id:temperatureLimitingGroup
+         color:"#33FFFFFF"
+         anchors.left: parent.left
+         anchors.right: parent.right
+         anchors.leftMargin: 20
+         anchors.rightMargin: 20
+         anchors.top: inputLimitingGroup.bottom
+         anchors.topMargin: boardSettingsLabel.height
+         height: 75
+
+         Text{
+             id:temperatureLimitingText
+             text:"Temperature Limiting"
+             font.family: "helvetica"
+             font.pointSize: mediumFontSize
+             color: "#D8D8D8"
+             anchors.left: parent.left
+             anchors.leftMargin: 5
+             anchors.top: parent.top
+             anchors.topMargin: 5
+         }
+
+         Switch{
+             id: temperatureLimitingSwitch
+             anchors.left: temperatureLimitingText.right
+             anchors.leftMargin: 10
+             anchors.top: parent.top
+             anchors.topMargin: 5
+             height: 15
+             width:30
+             checked:true
+             //this is the background of the switch
+             indicator: Rectangle {
+                 implicitWidth: 30
+                 implicitHeight: 15
+                 x: temperatureLimitingSwitch.leftPadding
+                 y: parent.height / 2 - height / 2
+                 radius: 7
+                 color: temperatureLimitingSwitch.checked ? "#0078D7"  : "black"
+                 border.color: temperatureLimitingSwitch.checked ? "#0078D7" : "white"
+
+                 //this is the thumb that moves
+                 Rectangle {
+                     x: temperatureLimitingSwitch.checked ? parent.width - width : 0
+                     y: parent.height / 2 - height / 2
+                     width: 10
+                     height: 10
+                     radius: 5
+                     color: "white"
+                 }
+             }
+             onToggled: {
+                 //toggle enablement of the input limiting controls
+                 boardTemperatureText.enabled = temperatureLimitingSwitch.checked
+                 boardTemperatureLabel.enabled = temperatureLimitingSwitch.checked
+                 boardTemperatureUnitText.enabled = temperatureLimitingSwitch.checked
+                 boardTemperatureSlider.enabled = temperatureLimitingSwitch.checked
+                 boardOutputLimitText.enabled = temperatureLimitingSwitch.checked
+                 boardOuputPopup.enabled = temperatureLimitingSwitch.checked
+                 boardOutputUnitText.enabled = temperatureLimitingSwitch.checked
+                 faultTempText.enabled = temperatureLimitingSwitch.checked
+                 faultTempLabel.enabled = temperatureLimitingSwitch.checked
+                 faultTempUnitText.enabled = temperatureLimitingSwitch.checked
+                 faultTempSlider.enabled = temperatureLimitingSwitch.checked
+             }
+         }
+
+         Text{
+             id:boardTemperatureText
+             text:"When board temperature reaches:"
+             font.family: "helvetica"
+             font.pointSize: smallFontSize
+             horizontalAlignment: Text.AlignRight
+             color: enabled ? enabledTextColor : disabledTextColor
+             anchors.right:parent.right
+             anchors.rightMargin: parent.width*.4
+             anchors.top: temperatureLimitingText.bottom
+             anchors.topMargin: 10
+
+         }
+         Label{
+             id:boardTemperatureLabel
+             anchors.left:boardTemperatureText.right
+             anchors.leftMargin: 10
+             anchors.verticalCenter: boardTemperatureText.verticalCenter
+             anchors.verticalCenterOffset: 2
+             color:enabled ? enabledTextColor : disabledTextColor
+             text:boardTemperatureSlider.value
+             verticalAlignment: TextInput.AlignTop
+             font.family: "helvetica"
+             font.pointSize: smallFontSize
+             height:15
+             width:20
+         }
+
+
+         Text{
+             id:boardTemperatureUnitText
+             text:"Â°C"
+             font.family: "helvetica"
+             font.pointSize: smallFontSize
+             color: enabled ? enabledTextColor : disabledTextColor
+             anchors.left:boardTemperatureLabel.right
+             anchors.leftMargin: 5
+             anchors.verticalCenter: boardTemperatureText.verticalCenter
+
+         }
+
+         AdvancedSlider{
+             id:boardTemperatureSlider
+             anchors.left:boardTemperatureUnitText.right
+             anchors.leftMargin: 5
+             anchors.right:parent.right
+             anchors.rightMargin: 10
+             anchors.verticalCenter: boardTemperatureText.verticalCenter
+             height:10
+             from: 25
+             to:100
+             value:5
+             stepSize: 0.0
+
+             onMoved: {
+                 boardTemperatureLabel.text = Math.round(boardTemperatureSlider.value *10)/10
+             }
+         }
+
+         Text{
+             id:boardOutputLimitText
+             text:"Limit Board Output to:"
+             font.family: "helvetica"
+             font.pointSize: smallFontSize
+             horizontalAlignment: Text.AlignRight
+             color: enabled ? enabledTextColor : disabledTextColor
+             anchors.right:parent.right
+             anchors.rightMargin: parent.width*.4
+             anchors.top: boardTemperatureText.bottom
+             anchors.topMargin: 10
+         }
+
+         PopUpMenu{
+             id: boardOuputPopup
+             model: ["15","27", "36", "45","60","100"]
+             anchors.left:boardOutputLimitText.right
+             anchors.leftMargin: 10
+             anchors.verticalCenter: boardOutputLimitText.verticalCenter
+         }
+
+         Text{
+             id:boardOutputUnitText
+             text:"W"
+             font.family: "helvetica"
+             font.pointSize: smallFontSize
+             color: enabled ? enabledTextColor : disabledTextColor
+             anchors.left:boardOuputPopup.right
+             anchors.leftMargin: 5
+             anchors.verticalCenter: boardOutputLimitText.verticalCenter
+
+         }
+     }
+
+//--------------------------------------
+//     System faults
+//--------------------------------------
+
+     Text{
+         id:minimumInputVoltageText
+         text:"Fault when input falls below:"
+         font.family: "helvetica"
+         font.pointSize: smallFontSize
+         horizontalAlignment: Text.AlignRight
+         color: enabled ? enabledTextColor : disabledTextColor
+         anchors.right:parent.right
+         anchors.rightMargin: parent.width*.5
+         anchors.top: temperatureLimitingGroup.bottom
+         anchors.topMargin: 10
+     }
+     Label{
+         id:minimumInputLabel
+         anchors.left:minimumInputVoltageText.right
          anchors.leftMargin: 10
-         anchors.verticalCenter: maxCurrentText.verticalCenter
+         anchors.verticalCenter: minimumInputVoltageText.verticalCenter
+         anchors.verticalCenterOffset: 2
+         color:enabled ? enabledTextColor : disabledTextColor
+         text:minimumInputVoltageSlider.value
+         verticalAlignment: TextInput.AlignTop
+         font.family: "helvetica"
+         font.pointSize: smallFontSize
          height:15
-         width:25
-
-        TextField{
-            id:maxCurrentTextInput
-            anchors.fill: parent
-            anchors.leftMargin: 2
-            anchors.topMargin: 5
-
-            horizontalAlignment: Qt.AlignLeft
-
-            font.family: "helvetica"
-            font.pointSize: smallFontSize
-            color:enabled ? enabledTextColor : disabledTextColor
-            text: maxCurrentSlider.value
-            validator: DoubleValidator {bottom:3; top:7.5; decimals:1}
-            background: Rectangle {
-                color:"transparent"
-            }
-            onEditingFinished:{
-                maxCurrentSlider.value= text
-              }
-        }
-    }
-
-    Text{
-        id:maxCurrentUnitText
-        text:"A"
-        font.family: "helvetica"
-        font.pointSize: smallFontSize
-        color: "#D8D8D8"
-        anchors.left:maxCurrentTextInputRect.right
-        anchors.leftMargin: 5
-        anchors.verticalCenter: maxCurrentText.verticalCenter
-
-    }
-
-    AdvancedSlider{
-        id:maxCurrentSlider
-        anchors.left:maxCurrentUnitText.right
-        anchors.leftMargin: 5
-        anchors.right:parent.right
-        anchors.rightMargin: 30
-        anchors.verticalCenter: maxCurrentText.verticalCenter
-        height:10
-        from: 3
-        to:7.5
-        value:0
-        stepSize: .5
-
-        onPressedChanged: {
-            if (!pressed){
-                implementationInterfaceBinding.setPortMaximumCurrent(portNumber, Math.round (maxCurrentSlider.value *10)/10)
-            }
-        }
-
-        onValueChanged: {
-            maxCurrentTextInput.text = Math.round (maxCurrentSlider.value *10)/10
-        }
-    }
-
-    Rectangle{
-        id:cableCompensationGroup
-        color:"#33FFFFFF"
-        anchors.left: parent.left
-        anchors.right: parent.right
-        anchors.leftMargin: 20
-        anchors.rightMargin: 20
-        anchors.top: maxCurrentText.bottom
-        anchors.topMargin: 10
-        height: 50
-
-        Text{
-            id:portCableCompensationText
-            text:"For every cable loss of:"
-            font.family: "helvetica"
-            font.pointSize: smallFontSize
-            horizontalAlignment: Text.AlignRight
-            color: "#D8D8D8"
-            anchors.right:parent.right
-            anchors.rightMargin: parent.width*.6
-            anchors.top: cableCompensationGroup.top
-            anchors.topMargin: 10
-
-        }
-
-        Rectangle{
-            id: portCableCompensationTextInputRect
-            color: textEditFieldBackgroundColor
-            anchors.left:portCableCompensationText.right
-            anchors.leftMargin: 5
-            anchors.verticalCenter: portCableCompensationText.verticalCenter
-            height:15
-            width:30
-
-            TextField{
-                id:portCableCompensationTextInput
-                anchors.fill: parent
-                anchors.leftMargin: 2
-                anchors.topMargin: 5
-
-                horizontalAlignment: Qt.AlignLeft
-
-                font.family: "helvetica"
-                font.pointSize: 12
-                color:enabled ? enabledTextColor : disabledTextColor
-                text: portCableCompensationSlider.value
-                validator: DoubleValidator {bottom:.25; top:2; decimals:1}
-                background: Rectangle {
-                    color:"transparent"
-                }
-                onEditingFinished:{
-                    portCableCompensationSlider.value= text
-                  }
-            }
-        }
-
-
-        Text{
-            id:portCableCompensationUnitText
-            text:"A"
-            font.family: "helvetica"
-            font.pointSize: smallFontSize
-            color: "#D8D8D8"
-            anchors.left:portCableCompensationTextInputRect.right
-            anchors.leftMargin: 5
-            anchors.verticalCenter: portCableCompensationText.verticalCenter
-
-        }
-
-        AdvancedSlider{
-            id:portCableCompensationSlider
-            anchors.left:portCableCompensationUnitText.right
-            anchors.leftMargin: 5
-            anchors.right:parent.right
-            anchors.rightMargin: 10
-            anchors.verticalCenter: portCableCompensationText.verticalCenter
-            height:10
-            from: .25
-            to:2
-            value:.25
-            stepSize: 0.0
-
-            onValueChanged: {
-                portCableCompensationTextInput.text = Math.round (portCableCompensationSlider.value *100)/100
-            }
-        }
-
-        Text{
-            id:voltageCompensationText
-            text:"Bias output by:"
-            font.family: "helvetica"
-            font.pointSize: smallFontSize
-            horizontalAlignment: Text.AlignRight
-            color: "#D8D8D8"
-            anchors.right:parent.right
-            anchors.rightMargin: parent.width*.6
-            anchors.top: portCableCompensationText.bottom
-            anchors.topMargin: 10
-        }
-        Rectangle{
-            id: voltageCompensationTextInputRect
-            color: textEditFieldBackgroundColor
-            anchors.left:voltageCompensationText.right
-            anchors.leftMargin: 5
-            anchors.verticalCenter: voltageCompensationText.verticalCenter
-            height:15
-            width:30
-
-            TextField{
-                id:voltageCompensationTextInput
-                anchors.fill: parent
-                anchors.leftMargin: 2
-                anchors.topMargin: 5
-
-                horizontalAlignment: Qt.AlignLeft
-
-                font.family: "helvetica"
-                font.pointSize: 12
-                color:enabled ? enabledTextColor : disabledTextColor
-                text: voltageCompensationSlider.value
-                validator: IntValidator {bottom:0; top:200;}
-                background: Rectangle {
-                    color:"transparent"
-                }
-                onEditingFinished:{
-                    voltageCompensationSlider.value= text
-                  }
-            }
-        }
-
-        Text{
-            id:voltageCompensationUnitText
-            text:"mV"
-            font.family: "helvetica"
-            font.pointSize: smallFontSize
-            color: "#D8D8D8"
-            anchors.left:voltageCompensationTextInputRect.right
-            anchors.leftMargin: 5
-            anchors.verticalCenter: voltageCompensationText.verticalCenter
-
-        }
-
-        AdvancedSlider{
-            id:voltageCompensationSlider
-            anchors.left:voltageCompensationUnitText.right
-            anchors.leftMargin: 5
-            anchors.right:parent.right
-            anchors.rightMargin: 10
-            anchors.verticalCenter: voltageCompensationText.verticalCenter
-            height:10
-            from: 0
-            to:200
-            value:0
-            stepSize: 50.0
-
-            onValueChanged: {
-                voltageCompensationTextInput.text = voltageCompensationSlider.value
-            }
-        }
-    }
-
-
-
-
-
-    //-----------------------------------------------
-    //  advertized voltages group
-    //-----------------------------------------------
-    Rectangle{
-        id:portAdvertizedVoltagesGroup
-        color:"black"//"#33FFFFFF"
-        anchors.left: parent.left
-        anchors.right: parent.right
-        anchors.leftMargin: 20
-        anchors.rightMargin: 20
-        anchors.top: cableCompensationGroup.bottom
-        anchors.topMargin: 10
-        height: 150
-        Text{
-            id:portAdvertizedVoltagesLabel
-            text:"Advertised Voltages:"
-            font.family: "helvetica"
-            font.pointSize: smallFontSize
-            color: enabled ? enabledTextColor : disabledTextColor
-            anchors.right:parent.right
-            anchors.rightMargin: parent.width*.6
-            anchors.top: parent.top
-            anchors.topMargin: 0
-        }
-        Rectangle{
-             id: portvoltage1TextInputRect
-             color: enabled ? enabledTextFieldBackgroundColor : disabledTextFieldBackgroundColor
-             anchors.left:portAdvertizedVoltagesLabel.right
-             anchors.leftMargin: 5
-             anchors.verticalCenter: portAdvertizedVoltagesLabel.verticalCenter
-             height:15
-             width:25
-
-            TextField{
-                id:portvoltage1TextInput
-                anchors.fill: parent
-                anchors.leftMargin: 2
-                anchors.topMargin: 5
-
-                horizontalAlignment: Qt.AlignLeft
-
-                font.family: "helvetica"
-                font.pointSize: smallFontSize
-                color:enabled ? enabledTextColor : disabledTextColor
-                placeholderText:"NA"
-                validator: DoubleValidator{bottom:minimumAdvertisedVoltage; top:maximumAdvertisedVoltage; decimals:1}
-                text: portvoltage1Slider.value
-                background: Rectangle {
-                    color:"transparent"
-                }
-                onEditingFinished:{
-                    portvoltage1Slider.value= text
-                  }
-            }
-        }
-
-        Text{
-            id:portvoltage1UnitText
-            text:"V"
-            font.family: "helvetica"
-            font.pointSize: smallFontSize
-            color: enabled ? enabledTextColor : disabledTextColor
-            anchors.left:portvoltage1TextInputRect.right
-            anchors.leftMargin: 5
-            anchors.verticalCenter: portAdvertizedVoltagesLabel.verticalCenter
-
-        }
-        AdvancedSlider{
-            id:portvoltage1Slider
-            anchors.left:portvoltage1UnitText.right
-            anchors.leftMargin: 5
-            anchors.right:parent.right
-            anchors.rightMargin: 10
-            anchors.verticalCenter: portAdvertizedVoltagesLabel.verticalCenter
-            height:10
-            from: minimumVoltage
-            to:maximumAdvertisedVoltage
-            stepSize: 0.0
-
-            onValueChanged: {
-                portvoltage1TextInput.text = Math.round (portvoltage1Slider.value *10)/10
-                if (portvoltage1Slider.value < minimumAdvertisedVoltage){
-                    portvoltage1TextInput.enabled = false;
-                    portvoltage1TextInput.text = "NA";
-                    portvoltage1UnitText.enabled = false;
-                    }
-                else{
-                    portvoltage1TextInput.enabled = true;
-                    portvoltage1UnitText.enabled = true;
-                }
-            }
-        }
-
-
-        Rectangle{
-             id: portvoltage2TextInputRect
-             color: enabled ? enabledTextFieldBackgroundColor : disabledTextFieldBackgroundColor
-             anchors.left:portAdvertizedVoltagesLabel.right
-             anchors.leftMargin: 5
-             anchors.top: portvoltage1TextInputRect.bottom
-             anchors.topMargin: 5
-             height:15
-             width:25
-
-            TextField{
-                id:portvoltage2TextInput
-                anchors.fill: parent
-                anchors.leftMargin: 2
-                anchors.topMargin: 5
-
-                horizontalAlignment: Qt.AlignLeft
-
-                font.family: "helvetica"
-                font.pointSize: smallFontSize
-                color:enabled ? enabledTextColor : disabledTextColor
-                placeholderText:"NA"
-                text: portvoltage2Slider.value
-                validator: DoubleValidator{bottom:minimumAdvertisedVoltage; top:maximumAdvertisedVoltage; decimals:1}
-                background: Rectangle {
-                    color:"transparent"
-                }
-                onEditingFinished:{
-                    portvoltage2Slider.value= text
-                  }
-            }
-        }
-
-        Text{
-            id:portvoltage2UnitText
-            text:"V"
-            font.family: "helvetica"
-            font.pointSize: smallFontSize
-            color: enabled ? enabledTextColor : disabledTextColor
-            anchors.left:portvoltage2TextInputRect.right
-            anchors.leftMargin: 5
-            anchors.verticalCenter: portvoltage2TextInputRect.verticalCenter
-
-        }
-
-        AdvancedSlider{
-            id:portvoltage2Slider
-            anchors.left:portvoltage2UnitText.right
-            anchors.leftMargin: 5
-            anchors.right:parent.right
-            anchors.rightMargin: 10
-            anchors.verticalCenter: portvoltage2TextInputRect.verticalCenter
-            height:10
-            from: minimumVoltage
-            to:maximumAdvertisedVoltage
-            stepSize: 0.0
-
-            onValueChanged: {
-                portvoltage2TextInput.text = Math.round (portvoltage2Slider.value *10)/10
-                if (portvoltage2Slider.value < minimumAdvertisedVoltage){
-                    portvoltage2TextInput.enabled = false;
-                    portvoltage2TextInput.text = "NA";
-                    portvoltage2UnitText.enabled = false;
-                    }
-                else{
-                    portvoltage2TextInput.enabled = true;
-                    portvoltage2UnitText.enabled = true;
-                }
-            }
-        }
-
-
-        Rectangle{
-             id: portvoltage3TextInputRect
-             color: enabled ? enabledTextFieldBackgroundColor : disabledTextFieldBackgroundColor
-             anchors.left:portAdvertizedVoltagesLabel.right
-             anchors.leftMargin: 5
-             anchors.top: portvoltage2TextInputRect.bottom
-             anchors.topMargin: 5
-             height:15
-             width:25
-
-            TextField{
-                id:portvoltage3TextInput
-                anchors.fill: parent
-                anchors.leftMargin: 2
-                anchors.topMargin: 5
-
-                horizontalAlignment: Qt.AlignLeft
-
-                font.family: "helvetica"
-                font.pointSize: smallFontSize
-                color:enabled ? enabledTextColor : disabledTextColor
-                placeholderText:"NA"
-                text: portvoltage3Slider.value
-                validator: DoubleValidator{bottom:minimumAdvertisedVoltage; top:maximumAdvertisedVoltage; decimals:1}
-                background: Rectangle {
-                    color:"transparent"
-                }
-                onEditingFinished:{
-                    portvoltage3Slider.value= text
-                  }
-            }
-        }
-
-
-
-        Text{
-            id:portvoltage3UnitText
-            text:"V"
-            font.family: "helvetica"
-            font.pointSize: smallFontSize
-            color: enabled ? enabledTextColor : disabledTextColor
-            anchors.left:portvoltage3TextInputRect.right
-            anchors.leftMargin: 5
-            anchors.verticalCenter: portvoltage3TextInputRect.verticalCenter
-
-        }
-
-        AdvancedSlider{
-            id:portvoltage3Slider
-            anchors.left:portvoltage3UnitText.right
-            anchors.leftMargin: 5
-            anchors.right:parent.right
-            anchors.rightMargin: 10
-            anchors.verticalCenter: portvoltage3TextInputRect.verticalCenter
-            height:10
-            from: minimumVoltage
-            to:maximumAdvertisedVoltage
-            stepSize: 0.0
-
-            onValueChanged: {
-                portvoltage3TextInput.text = Math.round (portvoltage3Slider.value *10)/10
-                if (portvoltage3Slider.value < minimumAdvertisedVoltage){
-                    portvoltage3TextInput.enabled = false;
-                    portvoltage3TextInput.text = "NA";
-                    portvoltage3UnitText.enabled = false;
-                    }
-                else{
-                    portvoltage3TextInput.enabled = true;
-                    portvoltage3UnitText.enabled = true;
-                }
-            }
-        }
-
-
-        Rectangle{
-             id: portvoltage4TextInputRect
-             color: enabled ? enabledTextFieldBackgroundColor : disabledTextFieldBackgroundColor
-             anchors.left:portAdvertizedVoltagesLabel.right
-             anchors.leftMargin: 5
-             anchors.top: portvoltage3TextInputRect.bottom
-             anchors.topMargin: 5
-             height:15
-             width:25
-
-            TextField{
-                id:portvoltage4TextInput
-                anchors.fill: parent
-                anchors.leftMargin: 2
-                anchors.topMargin: 5
-
-                horizontalAlignment: Qt.AlignLeft
-
-                font.family: "helvetica"
-                font.pointSize: smallFontSize
-                color:enabled ? enabledTextColor : disabledTextColor
-                placeholderText:"NA"
-                text: portvoltage4Slider.value
-                validator: DoubleValidator{bottom:minimumAdvertisedVoltage; top:maximumAdvertisedVoltage; decimals:1}
-                background: Rectangle {
-                    color:"transparent"
-                }
-                onEditingFinished:{
-                    portvoltage4Slider.value= text
-                  }
-            }
-        }
-
-        Text{
-            id:portvoltage4UnitText
-            text:"V"
-            font.family: "helvetica"
-            font.pointSize: smallFontSize
-            color: enabled ? enabledTextColor : disabledTextColor
-            anchors.left:portvoltage4TextInputRect.right
-            anchors.leftMargin: 5
-            anchors.verticalCenter: portvoltage4TextInputRect.verticalCenter
-
-        }
-
-        AdvancedSlider{
-            id:portvoltage4Slider
-            anchors.left:portvoltage4UnitText.right
-            anchors.leftMargin: 5
-            anchors.right:parent.right
-            anchors.rightMargin: 10
-            anchors.verticalCenter: portvoltage4TextInputRect.verticalCenter
-            height:10
-            from: minimumVoltage
-            to:maximumAdvertisedVoltage
-            stepSize: 0.0
-
-            onValueChanged: {
-                portvoltage4TextInput.text = Math.round (portvoltage4Slider.value *10)/10
-                if (portvoltage4Slider.value < minimumAdvertisedVoltage){
-                    portvoltage4TextInput.enabled = false;
-                    portvoltage4TextInput.text = "NA";
-                    portvoltage4UnitText.enabled = false;
-                    }
-                else{
-                    portvoltage4TextInput.enabled = true;
-                    portvoltage4UnitText.enabled = true;
-                }
-            }
-        }
-
-
-        Rectangle{
-             id: portvoltage5TextInputRect
-             color: enabled ? enabledTextFieldBackgroundColor : disabledTextFieldBackgroundColor
-             anchors.left:portAdvertizedVoltagesLabel.right
-             anchors.leftMargin: 5
-             anchors.top: portvoltage4TextInputRect.bottom
-             anchors.topMargin: 5
-             height:15
-             width:25
-
-            TextField{
-                id:portvoltage5TextInput
-                anchors.fill: parent
-                anchors.leftMargin: 2
-                anchors.topMargin: 5
-
-                horizontalAlignment: Qt.AlignLeft
-
-                font.family: "helvetica"
-                font.pointSize: smallFontSize
-                color:enabled ? enabledTextColor : disabledTextColor
-                placeholderText:"NA"
-                text: portvoltage5Slider.value
-                validator: DoubleValidator{bottom:minimumAdvertisedVoltage; top:maximumAdvertisedVoltage; decimals:1}
-                background: Rectangle {
-                    color:"transparent"
-                }
-                onEditingFinished:{
-                    portvoltage5Slider.value= text
-                  }
-            }
-        }
-
-
-        Text{
-            id:portvoltage5UnitText
-            text:"V"
-            font.family: "helvetica"
-            font.pointSize: smallFontSize
-            color: enabled ? enabledTextColor : disabledTextColor
-            anchors.left:portvoltage5TextInputRect.right
-            anchors.leftMargin: 5
-            anchors.verticalCenter: portvoltage5TextInputRect.verticalCenter
-
-        }
-
-        AdvancedSlider{
-            id:portvoltage5Slider
-            anchors.left:portvoltage5UnitText.right
-            anchors.leftMargin: 5
-            anchors.right:parent.right
-            anchors.rightMargin: 10
-            anchors.verticalCenter: portvoltage5TextInputRect.verticalCenter
-            height:10
-            from: minimumVoltage
-            to:maximumAdvertisedVoltage
-            stepSize: 0.0
-
-            onValueChanged: {
-                portvoltage5TextInput.text = Math.round (portvoltage5Slider.value *10)/10
-                if (portvoltage5Slider.value < minimumAdvertisedVoltage){
-                    portvoltage5TextInput.enabled = false;
-                    portvoltage5TextInput.text = "NA";
-                    portvoltage5UnitText.enabled = false;
-                    }
-                else{
-                    portvoltage5TextInput.enabled = true;
-                    portvoltage5UnitText.enabled = true;
-                }
-            }
-        }
-
-
-        Rectangle{
-             id: portvoltage6TextInputRect
-             color: enabled ? enabledTextFieldBackgroundColor : disabledTextFieldBackgroundColor
-             anchors.left:portAdvertizedVoltagesLabel.right
-             anchors.leftMargin: 5
-             anchors.top: portvoltage5TextInputRect.bottom
-             anchors.topMargin: 5
-             height:15
-             width:25
-
-            TextField{
-                id:portvoltage6TextInput
-                anchors.fill: parent
-                anchors.leftMargin: 2
-                anchors.topMargin: 5
-
-                horizontalAlignment: Qt.AlignLeft
-
-                font.family: "helvetica"
-                font.pointSize: smallFontSize
-                color:enabled ? enabledTextColor : disabledTextColor
-                placeholderText:"NA"
-                text: portvoltage6Slider.value
-                validator: DoubleValidator{bottom:minimumAdvertisedVoltage; top:maximumAdvertisedVoltage; decimals:1}
-                background: Rectangle {
-                    color:"transparent"
-                }
-                onEditingFinished:{
-                    portvoltage6Slider.value= text
-                  }
-            }
-        }
-
-
-        Text{
-            id:portvoltage6UnitText
-            text:"V"
-            font.family: "helvetica"
-            font.pointSize: smallFontSize
-            color: enabled ? enabledTextColor : disabledTextColor
-            anchors.left:portvoltage6TextInputRect.right
-            anchors.leftMargin: 5
-            anchors.verticalCenter: portvoltage6TextInputRect.verticalCenter
-
-        }
-
-        AdvancedSlider{
-            id:portvoltage6Slider
-            anchors.left:portvoltage6UnitText.right
-            anchors.leftMargin: 5
-            anchors.right:parent.right
-            anchors.rightMargin: 10
-            anchors.verticalCenter: portvoltage6TextInputRect.verticalCenter
-            height:10
-            from: minimumVoltage
-            to:maximumAdvertisedVoltage
-            stepSize: 0.0
-
-            onValueChanged: {
-                portvoltage6TextInput.text = Math.round (portvoltage6Slider.value *10)/10
-                if (portvoltage6Slider.value < minimumAdvertisedVoltage){
-                    portvoltage6TextInput.enabled = false;
-                    portvoltage6TextInput.text = "NA";
-                    portvoltage6UnitText.enabled = false;
-                    }
-                else{
-                    portvoltage6TextInput.enabled = true;
-                    portvoltage6UnitText.enabled = true;
-                }
-            }
-        }
-
-
-        Rectangle{
-             id: portvoltage7TextInputRect
-             color: enabled ? enabledTextFieldBackgroundColor : disabledTextFieldBackgroundColor
-             anchors.left:portAdvertizedVoltagesLabel.right
-             anchors.leftMargin: 5
-             anchors.top: portvoltage6TextInputRect.bottom
-             anchors.topMargin: 5
-             height:15
-             width:25
-
-            TextField{
-                id:portvoltage7TextInput
-                anchors.fill: parent
-                anchors.leftMargin: 2
-                anchors.topMargin: 5
-
-                horizontalAlignment: Qt.AlignLeft
-
-                font.family: "helvetica"
-                font.pointSize: smallFontSize
-                color:enabled ? enabledTextColor : disabledTextColor
-                placeholderText:"NA"
-                text: portvoltage7Slider.value
-                validator: DoubleValidator{bottom:minimumAdvertisedVoltage; top:maximumAdvertisedVoltage; decimals:1}
-                background: Rectangle {
-                    color:"transparent"
-                }
-                onEditingFinished:{
-                    portvoltage7Slider.value= text
-                  }
-            }
-        }
-
-        Text{
-            id:portvoltage7UnitText
-            text:"V"
-            font.family: "helvetica"
-            font.pointSize: smallFontSize
-            color: enabled ? enabledTextColor : disabledTextColor
-            anchors.left:portvoltage7TextInputRect.right
-            anchors.leftMargin: 5
-            anchors.verticalCenter: portvoltage7TextInputRect.verticalCenter
-
-        }
-
-        AdvancedSlider{
-            id:portvoltage7Slider
-            anchors.left:portvoltage7UnitText.right
-            anchors.leftMargin: 5
-            anchors.right:parent.right
-            anchors.rightMargin: 10
-            anchors.verticalCenter: portvoltage7TextInputRect.verticalCenter
-            height:10
-            from: minimumVoltage
-            to:maximumAdvertisedVoltage
-            stepSize: 0.0
-
-            onValueChanged: {
-                portvoltage7TextInput.text = Math.round (portvoltage7Slider.value *10)/10
-                if (portvoltage7Slider.value < minimumAdvertisedVoltage){
-                    portvoltage7TextInput.enabled = false;
-                    portvoltage7TextInput.text = "NA";
-                    portvoltage7UnitText.enabled = false;
-                    }
-                else{
-                    portvoltage7TextInput.enabled = true;
-                    portvoltage7UnitText.enabled = true;
-                }
-            }
-        }
-
-
-    }
-}
+         width:20
+     }
+     Text{
+         id:minimumInputUnitText
+         text:"V"
+         font.family: "helvetica"
+         font.pointSize: smallFontSize
+         color: enabled ? enabledTextColor : disabledTextColor
+         anchors.left:minimumInputLabel.right
+         anchors.leftMargin: 5
+         anchors.verticalCenter: minimumInputVoltageText.verticalCenter
+
+     }
+
+     AdvancedSlider{
+         id:minimumInputVoltageSlider
+         anchors.left:minimumInputUnitText.right
+         anchors.leftMargin: 5
+         anchors.right:parent.right
+         anchors.rightMargin: 25
+         anchors.verticalCenter: minimumInputVoltageText.verticalCenter
+         height:10
+         from: 5
+         to:32
+         value:5
+         stepSize: 0.0
+
+         onMoved: {
+             minimumInputLabel.text = Math.round(minimumInputVoltageSlider.value *10)/10
+         }
+     }
+
+     Text{
+         id:faultTempText
+         text:"Fault when temperature reaches:"
+         font.family: "helvetica"
+         font.pointSize: smallFontSize
+         horizontalAlignment: Text.AlignRight
+         color: enabled ? enabledTextColor : disabledTextColor
+         anchors.right:parent.right
+         anchors.rightMargin: parent.width*.5
+         anchors.top: minimumInputVoltageText.bottom
+         anchors.topMargin: 10
+     }
+
+     Label{
+         id:faultTempLabel
+         anchors.left:faultTempText.right
+         anchors.leftMargin: 10
+         anchors.verticalCenter: faultTempText.verticalCenter
+         anchors.verticalCenterOffset: 2
+         color:enabled ? enabledTextColor : disabledTextColor
+         text:faultTempSlider.value
+         verticalAlignment: TextInput.AlignTop
+         font.family: "helvetica"
+         font.pointSize: smallFontSize
+         height:15
+         width:20
+     }
+
+
+     Text{
+         id:faultTempUnitText
+         text:"Â°C"
+         font.family: "helvetica"
+         font.pointSize: smallFontSize
+         color: enabled ? enabledTextColor : disabledTextColor
+         anchors.left:faultTempLabel.right
+         anchors.leftMargin: 5
+         anchors.verticalCenter: faultTempText.verticalCenter
+
+     }
+
+     AdvancedSlider{
+         id:faultTempSlider
+         anchors.left:faultTempUnitText.right
+         anchors.leftMargin: 5
+         anchors.right:parent.right
+         anchors.rightMargin: 25
+         anchors.verticalCenter: faultTempText.verticalCenter
+         height:10
+         from: 25
+         to:100
+         value:5
+         stepSize: 0.0
+
+         onMoved: {
+             faultTempLabel.text = Math.round(faultTempSlider.value *10)/10
+
+         }
+ }
+ }   //board settings rect
