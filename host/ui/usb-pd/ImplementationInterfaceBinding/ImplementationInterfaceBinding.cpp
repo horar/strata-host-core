@@ -112,6 +112,10 @@ void ImplementationInterfaceBinding::setRedriverCount(int value)
     QJsonDocument doc(cmdMessageObject);
     QString strJson(doc.toJson(QJsonDocument::Compact));
     hcc_object->sendCmd(strJson.toStdString());
+    if(hcc_object->sendCmd(strJson.toStdString()))
+        qDebug() << "Radio button send with value" << doc;
+    else
+        qDebug() << "Radio button send failed";
 }
 
 
@@ -127,7 +131,69 @@ bool ImplementationInterfaceBinding::getUSBCPortState(int port_number)
     return false;
 }
 
-void ImplementationInterfaceBinding::setInputVoltageLimiting(int value)
+// dictates platform behavior upon any type of fault (input voltage low, temp high, too much current drawn, etc.)
+void ImplementationInterfaceBinding::setFaultMode(QString faultModeAction)
+{
+    QJsonObject cmdMessageObject;
+    cmdMessageObject.insert("cmd", "request_protection_action");
+    QJsonObject payloadObject;
+    payloadObject.insert("action", faultModeAction);
+    qDebug() << "fault mode action "<<faultModeAction;
+    cmdMessageObject.insert("payload",payloadObject);
+    QJsonDocument doc(cmdMessageObject);
+    QString strJson(doc.toJson(QJsonDocument::Compact));
+    if(hcc_object->sendCmd(strJson.toStdString()))
+        qDebug() << "Sent command with value" << doc;
+    else
+        qDebug() << "Command send failed";
+}
+
+//set all the parameters for temperature foldback
+void ImplementationInterfaceBinding::setTemperatureFoldbackParameters(bool inEnabled,
+                                                              float inTemperature,
+                                                              int inWatts)
+{
+    QJsonObject cmdMessageObject;
+    cmdMessageObject.insert("cmd", "request_temperature_foldback");
+    QJsonObject payloadObject;
+    payloadObject.insert("enabled", inEnabled);
+    payloadObject.insert("temperature", inTemperature);
+    payloadObject.insert("power", inWatts);
+    qDebug() << "temperature foldback action "<<inEnabled << inTemperature<< inWatts;
+    cmdMessageObject.insert("payload",payloadObject);
+    QJsonDocument doc(cmdMessageObject);
+    QString strJson(doc.toJson(QJsonDocument::Compact));
+    if(hcc_object->sendCmd(strJson.toStdString()))
+        qDebug() << "Sent command with value" << doc;
+    else
+        qDebug() << "Command send failed";
+}
+
+//the platform uses one command to set the status of voltage foldback,
+//the voltage to start limiting at, and the number of watts to limit ouput to
+//The UI sets these values independently, so they have to be bundled here.
+void ImplementationInterfaceBinding::setVoltageFoldbackParameters(bool inEnabled,
+                                                              float inVoltage,
+                                                              int inWatts)
+{
+    QJsonObject cmdMessageObject;
+    cmdMessageObject.insert("cmd", "request_set_voltage_foldback");
+    QJsonObject payloadObject;
+    payloadObject.insert("enabled", inEnabled);
+    payloadObject.insert("voltage", inVoltage);
+    payloadObject.insert("power", inWatts);
+    qDebug() << "voltage foldback action "<<inEnabled << inVoltage<< inWatts;
+    cmdMessageObject.insert("payload",payloadObject);
+    QJsonDocument doc(cmdMessageObject);
+    QString strJson(doc.toJson(QJsonDocument::Compact));
+    if(hcc_object->sendCmd(strJson.toStdString()))
+        qDebug() << "Sent command with value" << doc;
+    else
+        qDebug() << "Command send failed";
+}
+
+//this sets the starting input voltage that will generate a fault
+void ImplementationInterfaceBinding::setInputVoltageLimiting(float value)
 {
     QJsonObject cmdMessageObject;
     cmdMessageObject.insert("cmd", "request_set_minimum_voltage");
@@ -138,13 +204,31 @@ void ImplementationInterfaceBinding::setInputVoltageLimiting(int value)
     QJsonDocument doc(cmdMessageObject);
     QString strJson(doc.toJson(QJsonDocument::Compact));
     if(hcc_object->sendCmd(strJson.toStdString()))
+        qDebug() << "Send command with value" << doc;
+    else
+        qDebug() << "Command send failed";
+}
+
+void ImplementationInterfaceBinding::setPortMaximumCurrent(int inPort,
+                                                           float inMaximumCurrent)
+{
+    QJsonObject cmdMessageObject;
+    cmdMessageObject.insert("cmd", "request_over_current_protection");
+    QJsonObject payloadObject;
+    payloadObject.insert("port", inPort);
+    payloadObject.insert("enabled", true);
+    payloadObject.insert("maximum_current", inMaximumCurrent);
+    qDebug() << "maximum current "<<inMaximumCurrent;
+    cmdMessageObject.insert("payload",payloadObject);
+    QJsonDocument doc(cmdMessageObject);
+    QString strJson(doc.toJson(QJsonDocument::Compact));
+    if(hcc_object->sendCmd(strJson.toStdString()))
         qDebug() << "Radio button send with value" << doc;
     else
         qDebug() << "Radio button send failed";
 }
 
-
-void ImplementationInterfaceBinding::setMaximumTemperature(int value)
+void ImplementationInterfaceBinding::setMaximumTemperature(float value)
 {
     QJsonObject cmdMessageObject;
     cmdMessageObject.insert("cmd", "request_set_maximum_temperature");

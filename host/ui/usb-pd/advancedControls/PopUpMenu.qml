@@ -24,11 +24,6 @@ ComboBox {
                 elide: Text.ElideNone
                 verticalAlignment: Text.AlignVCenter
             }
-            onClicked:{
-                //here's where a click on a new selection should be handled
-                //implementationInterfaceBinding.setMaximumPortPower(2,modelData)
-                console.log("clicked:", modelData)
-            }
 
             highlighted: parent.highlightedIndex === index
         }

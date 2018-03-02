@@ -13,26 +13,7 @@ Rectangle {
     property var currentTab: pwmView
     property var newTab: pwmView
     Rectangle {
-        x: 8
-        y: 8
-        width: 1154
-        height: 814
-        color: "#babdb6"
-
-        Label {
-            id: label
-            x: 312
-            y: 8
-            width: 344
-            height: 48
-            text: qsTr("PWM Configuration")
-            anchors.horizontalCenterOffset: -52
-            font.pixelSize: 36
-            font.bold: true
-            anchors.horizontalCenter: parent.horizontalCenter
-            color: "gray"
-            font.family: "Helvetica"
-        }
+        anchors.fill:parent
 
         function createTab(inTabName, inParent){
             var component  = Qt.createComponent(inTabName);
@@ -76,13 +57,12 @@ Rectangle {
 
         Row {
             id:buttonRow
-            x: 62
-            width: 600
-            height: 65
-            anchors.horizontalCenterOffset: -28
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.top: parent.top
-            anchors.topMargin: 70
+            anchors.topMargin: 20
+            width: 600
+            height: 65
+
 
             SGLeftSegmentedButton{text:"Port A"; tabName:PWMSetting{}}
             SGMiddleSegmentedButton{text:"Port B"; tabName:PWMSetting {}}
@@ -94,17 +74,18 @@ Rectangle {
         }
         Rectangle{
             id:contentRectangle
-            x: 4
-            y: 116
-            width: 881
-            height: 727
+            //x: 4
+            //y: 116
+            //width: 881
+            //height: 727
 
-            anchors.rightMargin: 212
-            anchors.bottomMargin: 73
-            anchors.leftMargin: 138
-            anchors.topMargin: -15
-            z: 2
-            color:  "#babdb6"
+//            anchors.rightMargin: 212
+//            anchors.bottomMargin: 73
+//            anchors.leftMargin: 138
+//            anchors.topMargin: -15
+            //z: 2
+            //color:  "#babdb6"
+            color:"red"
             anchors.left:parent.left
             anchors.right:parent.right
             anchors.bottom:parent.bottom
