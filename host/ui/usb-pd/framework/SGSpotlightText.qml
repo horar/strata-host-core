@@ -1,15 +1,15 @@
-import QtQuick 2.0
+import QtQuick 2.7
 
 Item {
 
-    property int position : 9
     property int indexIncrementer: -1
     property int animationHolder:0
     property int fadeInTime: 1000
     property int fadeOutTime: 4000
     property string titleName: "Scrolling Title Name"
     property int timerInterval: 400
-
+    property int endOfStringDelay: 500
+    property real currentXPosition: 0
 
     Component.onCompleted: {
         timerAnimation.start();
@@ -29,17 +29,21 @@ Item {
         dynamicObject.start();
         return dynamicObject;
     }
-        function changePosition(TextWidth){
 
-            return position = position + TextWidth;
-        }
 
+    TextMetrics {
+        //this is used to calculate the width of the title
+        //so it will be centered horizontally on the screen
+        id: titleMetrics
+        font.family: "helvetica"
+        font.pixelSize: 24
+        text: titleName
+    }
 
     Item {
-        z: 2
-        anchors { /*top: onLogo.bottom;*/
+        anchors {
             horizontalCenter: parent.horizontalCenter;
-            horizontalCenterOffset: -150
+            horizontalCenterOffset: -(titleMetrics.width/2)
         }
         Repeater {
             id: repeater
@@ -49,16 +53,34 @@ Item {
                 id: modelText
                 color: "#aeaeae"
                 opacity: 0
-                width: 18; height: 31
+                width: 0; height: 31
+
+                font.family: "helvetica"
                 font.pixelSize: 24
-                horizontalAlignment: Text.AlignLeft
+                horizontalAlignment: Text.AlignHCenter
                 text: titleName.substring(index,index+1)
                 Component.onCompleted:{
-                   x = changePosition(modelText.width);
+                    //increment the current x position by the width of this character
+                   x = currentXPosition;
+                   currentXPosition += modelText.advance.width;
+                   width = modelText.advance.width;
+                   //console.log("character=",modelText.text,"x=",x," width=",width)
                 }
             }
         }
     }
+
+    //this timer is used to pause the animation of individual letters at the end of the string
+    Timer{
+        id:endOfStringDelayTimer
+        interval: endOfStringDelay
+        running: false
+
+        onTriggered:{
+            timerAnimation.start()
+        }
+    }
+
 
     Timer {
         id: timerAnimation
@@ -66,11 +88,16 @@ Item {
         onTriggered: {
             if(indexIncrementer!= titleName.length - 1) {
                 indexIncrementer++;
+                createObject();
             }
             else {
-                indexIncrementer = 0;
+                indexIncrementer = -1;
+                //at the end of the string, stop the animation of letters, and let the
+                //string fade out briefly
+                timerAnimation.stop()
+                endOfStringDelayTimer.start()
             }
-            createObject();
+
         }
 
     }
