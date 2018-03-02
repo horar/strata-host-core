@@ -130,7 +130,7 @@
         <file>advancedControls/AdvancedGraph.qml</file>
         <file>images/icons/backArrowWhite.svg</file>
         <file>framework/SGSpotlightText.qml</file>
-        <file>advancedControls/AdvancedBoardSettings.qml</file>
         <file>images/icons/backArrow.svg</file>
+        <file>advancedControls/AdvancedBoardSettings.qml</file>
     </qresource>
 </RCC>
