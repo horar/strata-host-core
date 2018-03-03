@@ -215,13 +215,13 @@ std::string selectPlatform(JsonObject &json_object)
 {
 	int platform_index_selected;
 	printf("#####################################\n");
-	JsonArray& array = json_object["platforms"].asArray();
+	JsonArray& array = json_object["handshake"].asArray();
 	for(int i = 0; i<array.size(); i++) {
 		// std::cout<<i+1<<") "<<json_object["platforms"][i];
-		std::string platform_verbose = json_object["platforms"][i]["verbose"];
-		std::string platform_uuid = json_object["platforms"][i]["uuid"];
+		std::string platform_verbose = json_object["handshake"][i]["verbose"];
+		std::string platform_uuid = json_object["handshake"][i]["uuid"];
 		std::string remote_status="local connect";
-		if(json_object["platforms"][i]["remote"]) {
+		if(json_object["handshake"][i]["remote"]) {
 			remote_status = "remote connect";
 		}
 		printf("%d) %s[%s] with \033[1;4;31m%s\033[0m\n",i+1,platform_verbose.c_str(),platform_uuid.c_str(),remote_status.c_str());
@@ -234,15 +234,15 @@ std::string selectPlatform(JsonObject &json_object)
 	//  JSON object
 	JsonObject & json_object_to_send = json_buffer.createObject();
 	json_object_to_send["command"] = "platform_select";
-	json_object_to_send["platform_uuid"] = json_object["platforms"][platform_index_selected-1]["verbose"];
-	if(json_object["platforms"][platform_index_selected-1]["remote"]) {
+	json_object_to_send["platform_uuid"] = json_object["handshake"][platform_index_selected-1]["verbose"];
+	if(json_object["handshake"][platform_index_selected-1]["remote"]) {
 		json_object_to_send["remote"] = "remote";
 	}
 	else {
 		json_object_to_send["remote"] = "local";
 	}
 	// assiging the platform uuid to the global variable
-	std::string connected_platform = json_object["platforms"][platform_index_selected-1]["verbose"];
+	std::string connected_platform = json_object["handshake"][platform_index_selected-1]["verbose"];
 	g_connected_platform = connected_platform;
 	//  JSON encoding
 	std::string message;
@@ -258,10 +258,11 @@ void dispatchMessage(std::string read_message)
             json_buffer.parseObject(read_message);
 	// get the cmd arguments
 	// use enum here
-	std::string command= received_json["command"];
+	std::string command= received_json["handshake"];
 	// char message_to_send[100];
 	std::string message_to_send;
 	// 	sprintf(message_to_send,JSON_SINGLE_OBJECT("command","request_hcs_status"),client_number);
+	if(!command.empty()){
 	switch(stringHash(command)) {
 		case broadcast_hcs: std::cout<<"\n print hello\n";
 							break;
@@ -270,14 +271,14 @@ void dispatchMessage(std::string read_message)
 							s_send(*client_socket,JSON_SINGLE_OBJECT("command","request_available_platforms"));
 							PDEBUG("\033[1;4;31m[%s<-%s]\033[0m:%s\n",g_connected_platform.c_str(),g_user_name.c_str(),message_to_send.c_str());
 							break;
-		case available_platforms:
+		default:
 									message_to_send = selectPlatform(received_json);
 									s_send(*client_socket,message_to_send);
 									PDEBUG("\033[1;4;31m[%s<-%s]\033[0m:%s\n",g_connected_platform.c_str(),g_user_name.c_str(),message_to_send.c_str());
 									hcs_connected = true;
 									break;
 
-	}
+	}}
 }
 
 static void callbackServiceHandler(evutil_socket_t fd, short what, void* args)

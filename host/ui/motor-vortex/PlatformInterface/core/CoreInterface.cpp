@@ -18,6 +18,11 @@ CoreInterface::CoreInterface(QObject *parent) : QObject(parent)
 
     hcc = new HostControllerClient;
 
+    // [TODO] [prasanth] : need to be added in a better place
+    // json command to ask the list of available platforms from hcs
+    std::string cmd= "{\"command\":\"request_available_platforms\"}";
+    hcc->sendCmd(cmd);
+
     // --------------------
     // Core Framework
     // install main notification notification handlers
@@ -29,6 +34,10 @@ CoreInterface::CoreInterface(QObject *parent) : QObject(parent)
     // from platform TODO [ian] make namespaced platform::notification
     registerNotificationHandler("notification",
                                 bind(&CoreInterface::platformNotificationHandler,
+                                     this, placeholders::_1));
+
+    registerNotificationHandler("handshake",
+                                bind(&CoreInterface::initialHandshakeHandler,
                                      this, placeholders::_1));
 
     registerNotificationHandler("cloud::notification",
@@ -98,6 +107,8 @@ void CoreInterface::notificationsThread()
         string message = hcc->receiveNotification();  // Host Controller Service
 
         QString n(message.c_str());
+
+        qDebug() <<"[recv]" << n;
 
         QJsonDocument doc = QJsonDocument::fromJson(n.toUtf8());
         if(doc.isNull()) {
@@ -209,6 +220,36 @@ void CoreInterface::platformNotificationHandler(QJsonObject payload)
 
     handler->second(payload["payload"].toObject());
 
+}
+
+// @f initialHandshakeHandler
+// @b handle initial list of platform message
+//
+//    {
+//        "handshake": "available_platforms",
+//        "platforms":[{
+//            "verbose":"simulated-usb-pd",
+//            "uuid":"P2.2017.1.1.0.0.cbde0519-0f42-4431-a379-caee4a1494af",
+//             "remote":false
+//            }
+//        ]
+//    }
+
+void CoreInterface::initialHandshakeHandler(QJsonObject payload)
+{
+    qDebug() << "gotcha !!!";
+    QJsonObject cmdMessageObject;
+    cmdMessageObject.insert("command", "platform_select");
+
+//    QString verbose = payload[2]["verbose"].toString();
+    qDebug() << "verbose"<< payload;
+
+    cmdMessageObject.insert("platform_uuid","Vortex Fountain Motor Platform Board");
+
+    cmdMessageObject.insert("remote","local");
+    QJsonDocument doc(cmdMessageObject);
+    QString strJson(doc.toJson(QJsonDocument::Compact));
+    hcc->sendCmd(strJson.toStdString());
 }
 
 // @f cloudNotificationHandler

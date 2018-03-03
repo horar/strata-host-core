@@ -147,7 +147,7 @@ HcsError HostControllerService::run()
 
     // adding the service handler callback to the event loop
     struct event *service_handler = event_new(event_loop_base_,server_socket_file_descriptor,
-                        EV_READ | EV_ET | EV_PERSIST ,
+                        EV_READ | EV_WRITE | EV_PERSIST ,
                         HostControllerService::serviceCallback,this);
     event_add(service_handler,NULL);
 
@@ -256,7 +256,7 @@ void HostControllerService::serviceCallback(evutil_socket_t fd, short what, void
     }
 
     if(hcs->platform_client_mapping_.empty()) {
-        std::cout << "[received message ] "<<read_message<<std::endl;
+        // std::cout << "[received message ] "<<read_message<<std::endl;
     }
 
     if(hcs->platform_client_mapping_.empty() || !hcs->clientExists(dealer_id)) {
@@ -452,7 +452,7 @@ std::vector<std::string> HostControllerService::initialCommandDispatch(std::stri
     Document service_command;
     // [TODO] [prasanth] : needs better organization
     if (service_command.Parse(command.c_str()).HasParseError()) {
-        PDEBUG("ERROR: json parse error!\n");
+        // PDEBUG("ERROR: json parse error!\n");
         return selected_platform;
     }
 
@@ -460,7 +460,7 @@ std::vector<std::string> HostControllerService::initialCommandDispatch(std::stri
     switch(stringHash(service_command["command"].GetString())) {
         case request_hcs_status:            s_sendmore(*server_socket_,dealer_id);
                                             s_send(*server_socket_,JSON_SINGLE_OBJECT
-                                                ("command","hcs_active"));
+                                                ("handshake","hcs_active"));
                                             break;
         case request_available_platforms:   PDEBUG("Sending the list of available platform");
                                             s_sendmore(*server_socket_,dealer_id);
@@ -775,8 +775,11 @@ std::string HostControllerService::getPlatformListJson()
         array_object.AddMember("remote",platform.remote,allocator);
         array.PushBack(array_object,allocator);
     }
-    document.AddMember("command","available_platforms",allocator);
-    document.AddMember("platforms",array,allocator);
+    Value nested_object;
+    nested_object.SetObject();
+    nested_object.AddMember("list",array,allocator);
+    document.AddMember("handshake",nested_object,allocator);
+    // document.AddMember("platforms",array,allocator);
     StringBuffer strbuf;
     Writer<StringBuffer> writer(strbuf);
     document.Accept(writer);

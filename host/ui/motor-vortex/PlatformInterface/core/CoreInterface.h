@@ -86,6 +86,7 @@ private:
     // Core Framework Notificaion Handlers
     void platformIDNotificationHandler(QJsonObject payload);
     void connectionChangeNotificationHandler(QJsonObject payload);
+    void initialHandshakeHandler(QJsonObject payload);
 
     // attached Data Source subscribers
     std::map<std::string, DataSourceHandler > data_source_handlers_;
