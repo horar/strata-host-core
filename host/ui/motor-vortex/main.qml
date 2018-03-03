@@ -12,45 +12,130 @@ Window {
     height: 900
     title: qsTr("Encore Design Suite")
 
-    Flipable {
-        id: flipable
-        height: 0.85 * parent.height
-        width: parent.width
+    Component.onCompleted: {
+        console.log("Initializing")
+        NavigationControl.init(controlContainer, contentContainer, statusBarContainer)
+    }
+    ColumnLayout {
+        spacing: 0
+        anchors.fill: parent
 
-        property bool flipped: false
-
-        front: SGControlContainer{ id: controlContainer}
-        back: SGContentContainer { id: contentContainer }
-
-        transform: Rotation {
-            id: rotation
-            origin {
-                    x: flipable.width/2;
-                    y: flipable.height/2
-                    }
-            axis {
-                    x: 0;
-                    y: -1;
-                    z: 0
-                 }    // set axis.y to 1 to rotate around y-axis
-
-            angle: 0    // the default angle
+        Rectangle {
+            id: statusBarContainer
+            Layout.alignment : Qt.AlignTop
+            Layout.preferredHeight: .05 * parent.height
+            Layout.preferredWidth: parent.width
         }
 
-        states: State {
-            name: "back"
-            PropertyChanges { target: rotation; angle: 180 }
-            when: flipable.flipped
-        }
+        Flipable {
+             id: flipable
+             Layout.preferredHeight: 0.85 * parent.height
+             Layout.preferredWidth: parent.width
+             anchors.top: statusBarContainer.bottom
 
-        transitions: Transition {
-            NumberAnimation { target: rotation; property: "angle"; duration: 2000 }
-        }
-        Component.onCompleted: {
-            console.log("Initializing")
-            NavigationControl.init(controlContainer, contentContainer)
-        }
+             property bool flipped: false
 
+             front: SGControlContainer{ id: controlContainer}
+             back: SGContentContainer { id: contentContainer }
+
+             transform: Rotation {
+                 id: rotation
+                 origin {
+                         x: flipable.width/2;
+                         y: flipable.height/2
+                         }
+                 axis {
+                         x: 0;
+                         y: -1;
+                         z: 0
+                      }    // set axis.y to 1 to rotate around y-axis
+
+                 angle: 0    // the default angle
+             }
+
+             states: State {
+                 name: "back"
+                 PropertyChanges { target: rotation; angle: 180 }
+                 when: flipable.flipped
+             }
+
+             transitions: Transition {
+                 NumberAnimation { target: rotation; property: "angle"; duration: 2000 }
+             }
+         }
+         // Debug commands for simulation
+         Rectangle {
+
+             id: commandBar
+             width: parent.width
+             Layout.alignment: Qt.AlignBottom
+             Layout.preferredHeight: .10 * parent.height
+             Layout.preferredWidth: parent.width
+             anchors.top: flipable.bottom
+
+             color: "lightgrey"
+             // Simulate Platform events
+             GridLayout {
+                 anchors.centerIn: parent
+                 Text {
+                     id: commandLabel
+                     text: qsTr("Commands")
+                 }
+                 Button {
+                     text: "USB-PD"
+                     onClicked: {
+                         var data = { platform_name: "usb-pd"}
+                         NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT, data)
+                     }
+                 }
+                 Button {
+                     text: "BuBU Interface"
+                     onClicked: {
+                         var data = { platform_name: "bubu"}
+                         NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT, data)
+                     }
+                 }
+                 Button {
+                     text: "Motor Vortex"
+                     onClicked: {
+                        var data = { platform_name: "motor-vortex"}
+                         NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT, data)
+                     }
+                 }
+
+             // UI events
+                 Button {
+                     text: "Disconnect"
+                     onClicked: {
+                         NavigationControl.updateState(NavigationControl.events.PLATFORM_DISCONNECTED_EVENT, null)
+                     }
+                 }
+
+                 Button {
+                     text: "Logout"
+                     onClicked: {
+                         NavigationControl.updateState(NavigationControl.events.LOGOUT_EVENT,null)
+                     }
+                 }
+                 Button {
+                     text: "Toggle Content/Control"
+                     onClicked: {
+                     flipable.flipped = !flipable.flipped
+                     }
+                 }
+
+                 Button {
+                     text: "Login as guest"
+                     onClicked: {
+                         var data = { user_id: "Guest" }
+                         NavigationControl.updateState(NavigationControl.events.LOGIN_SUCCESSFUL_EVENT,data)
+
+                     }
+                 }
+                 }
+
+
+             }
     }
 
     // Listen into Core Interface which gives us the platform changes
@@ -85,73 +170,5 @@ Window {
         }
     }
 
-    // Debug commands for simulation
-    Rectangle {
-        id: commandBar
-        width: parent.width
-        anchors.top: flipable.bottom
-        anchors.bottom: parent.bottom
-        color: "lightgrey"
-        // Simulate Platform events
-        GridLayout {
-            anchors.centerIn: parent
-            Text {
-                id: commandLabel
-                text: qsTr("Commands")
-            }
-            Button {
-                text: "USB-PD"
-                onClicked: {
-                    var data = { platform_name: "usb-pd"}
-                    NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT, data)
-                }
-            }
-            Button {
-                text: "BuBU Interface"
-                onClicked: {
-                    var data = { platform_name: "bubu"}
-                    NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT, data)
-                }
-            }
-            Button {
-                text: "Motor Vortex"
-                onClicked: {
-                   var data = { platform_name: "motor-vortex"}
-                    NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT, data)
-                }
-            }
 
-        // UI events
-            Button {
-                text: "Disconnect"
-                onClicked: {
-                    NavigationControl.updateState(NavigationControl.events.PLATFORM_DISCONNECTED_EVENT, null)
-                }
-            }
-
-            Button {
-                text: "Logout"
-                onClicked: {
-                    NavigationControl.updateState(NavigationControl.events.LOGOUT_EVENT,null)
-                }
-            }
-            Button {
-                text: "Toggle Content/Control"
-                onClicked: {
-                flipable.flipped = !flipable.flipped
-                }
-            }
-
-            Button {
-                text: "Login as guest"
-                onClicked: {
-                    var data = { user_id: "Guest" }
-                    NavigationControl.updateState(NavigationControl.events.LOGIN_SUCCESSFUL_EVENT,data)
-
-                }
-            }
-            }
-
-
-        }
 }

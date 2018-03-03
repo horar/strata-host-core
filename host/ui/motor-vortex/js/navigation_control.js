@@ -18,7 +18,8 @@ var context = {
 var screens = {
     LOGIN_SCREEN: "qrc:/SGLoginScreen.qml",
     WELCOME_SCREEN : "qrc:/SGWelcome.qml",
-    CONTENT_SCREEN : "qrc:/Content.qml"
+    CONTENT_SCREEN : "qrc:/Content.qml",
+    STATUS_BAR:     "qrc:/SGStatusBar.qml"
 }
 
 /*
@@ -51,6 +52,7 @@ var events = {
 var navigation_state_ = states.UNINITIALIZED
 var control_container_ = null
 var content_container_ = null
+var status_bar_container_ = null
 
 /*
     Retrieve the qml file in the templated file structure
@@ -75,10 +77,11 @@ function getQMLFile(platform_name, filename) {
   Navigation must be initialized with parent container
   that will hold control views
 */
-function init(control_parent, content_parent)
+function init(control_parent, content_parent, bar_parent)
 {
     control_container_ = control_parent
     content_container_ = content_parent
+    status_bar_container_ = bar_parent
     updateState(events.PROMPT_LOGIN_EVENT)
 }
 
@@ -175,6 +178,8 @@ function updateState(event, data)
                 context.is_logged_in = true;
                 navigation_state_ = states.CONTROL_STATE
 
+                // Update StatusBar
+                createView(screens.STATUS_BAR, status_bar_container_)
                 // Update Control by next state
                 updateState(events.SHOW_CONTROL_EVENT,null)
             break;

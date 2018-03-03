@@ -87,5 +87,7 @@
         <file>views/bubu/boardBringUp/GPIOSetting.qml</file>
         <file>views/bubu/boardBringUp/PWMSwitch.qml</file>
         <file>views/bubu/boardBringUp/lockIcon.png</file>
+        <file>SGStatusBar.qml</file>
+        <file>images/icons/SettingIcon.svg</file>
     </qresource>
 </RCC>
