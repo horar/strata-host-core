@@ -87,26 +87,28 @@ Rectangle {
     Rectangle {
         id: spyglassTextRect
         //x: 253; y: 178
-        width: 133; height: 31
+        //width: 133;
+        height: 31
         color: "#ffffff"
         anchors.horizontalCenterOffset: -45
         anchors { horizontalCenter: parent.horizontalCenter;
             verticalCenter: parent.verticalCenter;
             verticalCenterOffset: -97}
+    }
 
         Label {
             width:text.fit
             height:50
-//            anchors { top: onLogo.bottom;
-//                topMargin: 10
-//                horizontalCenter: onLogo.horizontalCenter}
+            anchors { top: onLogo.bottom;
+                topMargin: 10
+                horizontalCenter: onLogo.horizontalCenter}
             z:2
             text: "Encore Design Suite"
             font.pointSize: Qt.platform.os == "osx"? 20 :16
             font.family:"helvetica"
             color:"lightGrey"
         }
-    }
+   // }
     //        Text {
     //            id: spyglassText1
     //            x: 0; y: 0
