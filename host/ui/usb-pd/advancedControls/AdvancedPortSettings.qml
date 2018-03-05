@@ -29,7 +29,7 @@ Rectangle{
     property double portPower: 0;
     property double portNegotiatedContractVoltage:0;
     property double portNegotiatedContractAmperage:0;
-    property double portMaximumPower:0;
+    property string portMaximumPower:"";
 
     // Values are being Signalled from ImplementationInterfaceBinding.cpp
     Connections {
@@ -92,8 +92,7 @@ Rectangle{
 
         onPortMaximumPowerChanged:{
             if( portNumber === port ) {
-                portSettings.portMaximumPower = watts;
-                console.log("new port max power:", watts);
+                portSettings.portMaximumPower = parseInt(watts);
             }
         }
     }
@@ -264,14 +263,19 @@ Rectangle{
         anchors.leftMargin: 10
         anchors.verticalCenter: portMaxPowerText.verticalCenter
 
+        currentIndex: portMaxPowerCombo.find(portSettings.portMaximumPower)
+
         onActivated: {
             implementationInterfaceBinding.setMaximumPortPower(portNumber,parseInt(portMaxPowerCombo.currentText))
         }
 
-        Component.onCompleted: {
-            //set the popup menu's value to match the current setting for the port
-            //will be set to -1 if the current setting isn't found
-            portMaxPowerCombo.currentIndex = portMaxPowerCombo.find(portSettings.portMaximumPower)
+        Connections {
+            target: implementationInterfaceBinding
+            onPortMaximumPowerChanged:{
+                if( portNumber === port ) {
+                    portMaxPowerCombo.currentIndex = portMaxPowerCombo.find(parseInt(watts))
+                }
+            }
         }
 
     }
