@@ -2,6 +2,7 @@
     <qresource prefix="/">
         <file>main.qml</file>
         <file>main.cpp</file>
+        <file>SGMetrics.qml</file>
         <file>views/bubu/Control.qml</file>
         <file>views/usb-pd/Advanced.qml</file>
         <file>views/usb-pd/Control.qml</file>
@@ -74,6 +75,21 @@
         <file>images/dave_priscak.png</file>
         <file>images/david_somo.png</file>
         <file>images/paul_mascarenas.png</file>
-        <file>Metrics.qml</file>
+        <file>views/bubu/boardBringUp/Pwm.qml</file>
+        <file>views/bubu/boardBringUp/PWMSetting.qml</file>
+        <file>views/bubu/boardBringUp/Serial.qml</file>
+        <file>views/bubu/boardBringUp/ButtonView.qml</file>
+        <file>views/bubu/boardBringUp/Gpio.qml</file>
+        <file>views/bubu/boardBringUp/SGRightSegmentedButton.qml</file>
+        <file>views/bubu/boardBringUp/SGMiddleSegmentedButton.qml</file>
+        <file>views/bubu/boardBringUp/SGLeftSegmentedButton.qml</file>
+        <file>views/bubu/boardBringUp/CircularSpinner.qml</file>
+        <file>views/bubu/boardBringUp/lock.svg</file>
+        <file>views/bubu/boardBringUp/GPIOSetting.qml</file>
+        <file>views/bubu/boardBringUp/PWMSwitch.qml</file>
+        <file>views/bubu/boardBringUp/lockIcon.png</file>
+        <file>SGStatusBar.qml</file>
+        <file>images/icons/SettingIcon.svg</file>
+        <file>images/icons/whiteAlertIcon.svg</file>
     </qresource>
 </RCC>

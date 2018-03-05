@@ -1,4 +1,4 @@
-//.pragma library
+.pragma library
 .import QtQuick 2.0 as QtQuickModule
 
 
@@ -19,7 +19,12 @@ var context = {
 var screens = {
     LOGIN_SCREEN: "qrc:/SGLoginScreen.qml",
     WELCOME_SCREEN : "qrc:/SGWelcome.qml",
-    CONTENT_SCREEN : "qrc:/Content.qml"
+    CONTENT_SCREEN : "qrc:/Content.qml",
+    STATUS_BAR:     "qrc:/SGStatusBar.qml"
+}
+
+var components = {
+    METRICS: "qrc:/SGMetrics.qml"
 }
 
 /*
@@ -52,6 +57,8 @@ var events = {
 var navigation_state_ = states.UNINITIALIZED
 var control_container_ = null
 var content_container_ = null
+var status_bar_container_ = null
+var metrics = null
 
 /*
     Retrieve the qml file in the templated file structure
@@ -76,17 +83,20 @@ function getQMLFile(platform_name, filename) {
   Navigation must be initialized with parent container
   that will hold control views
 */
-function init(control_parent, content_parent)
+function init(control_parent, content_parent, bar_parent)
 {
+    metrics = createView(components.METRICS, null);
     control_container_ = control_parent
     content_container_ = content_parent
+    status_bar_container_ = bar_parent
     updateState(events.PROMPT_LOGIN_EVENT)
 }
 
 /*
   Dynamically load qml controls by qml filename
 */
-function createView(name, parent) {
+function createView(name, parent)
+{
     console.log("createObject: name =", name, ", parameters =", JSON.stringify(context))
 
     var component = Qt.createComponent(name, QtQuickModule.Component.PreferSynchronous, parent);
@@ -107,6 +117,14 @@ function createView(name, parent) {
 }
 
 /*
+  Remove first child from a view
+*/
+function removeView(parent)
+{
+    console.log("destroying view: ", parent.children[0])
+    parent.children[0].destroy()
+}
+/*
   a catch-all for events that are required to be handled regardless of state
 */
 function globalState(event,data)
@@ -117,12 +135,18 @@ function globalState(event,data)
     case events.PROMPT_LOGIN_EVENT:
         console.log("Updated state to Login:", states.LOGIN_STATE)
         navigation_state_ = states.LOGIN_STATE
+
         // Update both containers; Login blocks both
         createView(screens.LOGIN_SCREEN, control_container_)
         createView(screens.LOGIN_SCREEN, content_container_)
+
+        // Remove StatusBar at Login
+        removeView(status_bar_container_)
         break;
 
     case events.LOGOUT_EVENT:
+        context.is_logged_in = false;
+
         // Show Login Screen
         console.log("Logging user out. Displaying Login screen")
         updateState(events.PROMPT_LOGIN_EVENT)
@@ -178,6 +202,8 @@ function updateState(event, data)
                 context.is_logged_in = true;
                 navigation_state_ = states.CONTROL_STATE
 
+                // Update StatusBar
+                createView(screens.STATUS_BAR, status_bar_container_)
                 // Update Control by next state
                 updateState(events.SHOW_CONTROL_EVENT,null)
             break;

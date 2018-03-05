@@ -11,21 +11,6 @@ Item {
     objectName: "control"
     anchors { fill: parent }
 
-    // LOGO
-    Rectangle {
-        id: headerLogo
-        anchors { top: parent.top }
-        width: parent.width; height: 40
-        color: "#235A92"
-
-        Image {
-            anchors { top: parent.top; right: parent.right }
-            height: 40
-            fillMode: Image.PreserveAspectFit
-            source: "images/icons/onLogoGreen.svg"
-        }
-    }
-
     // Platform Implementation signals
     Connections {
         target: platformInterfaceMotorVortex
