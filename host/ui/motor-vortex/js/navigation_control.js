@@ -228,8 +228,7 @@ function updateState(event, data)
                     // Show control when connected
                     var qml_control = getQMLFile(context.platform_name, "Control")
                     createView(qml_control, control_container_)
-                    metrics.stopCounter()
-
+                    metrics.restartCounter()
                 }
                 else {
                     // Disconnected; Show detection page
@@ -243,7 +242,7 @@ function updateState(event, data)
                     var contentObject = createView(qml_content, content_container_)
                     // Insert Listener
                     injectEventToTree(contentObject)
-                    metrics.startCounter()
+                    metrics.restartCounter()
 
                 }
                 else {
@@ -281,8 +280,15 @@ function updateState(event, data)
                 updateState(events.SHOW_CONTROL_EVENT)
                 break;
             case events.TOGGLE_CONTROL_CONTENT:
+                // about to leave control view
+                if(flipable_parent_.flipped===false){
+                    console.log("in fplipable ",context.platform_name)
+                    var pageName = context.platform_name +' Control'
+                    metrics.sendMetricsToCloud(pageName)
+                }
                 // Flip to show control/content
                 flipable_parent_.flipped = !flipable_parent_.flipped
+
                 break;
             default:
                 globalState(event,data)

@@ -31,14 +31,29 @@ Item {
     function onCurrentIndexChange(object,args){
         console.log("onCurrentIndexChanged:", object,"index:",object.currentIndex,"tab name:",object.currentItem.text)
 
-        //restart counter
-        counter.restart();
+        var tabName = object.currentItem.text
+        sendMetricsToCloud(tabName)
 
+        currentTab = object.currentIndex;
+    }
+    function startCounter(){
+        counter.start()
+    }
+    function stopCounter(){
+        counter.stop()
+    }
+    function restartCounter(){
+        counter.restart()
+        seconds = 0.0
+    }
+    function sendMetricsToCloud(page){
+
+        counter.restart();
 
         var data = {
             time:timeSinceLastIndexChange,
             howLong:String(seconds),
-            page: object.contentChildren[currentTab].text
+            page: page
         };
 
         console.log(JSON.stringify(data))
@@ -50,13 +65,8 @@ Item {
         });
 
         timeSinceLastIndexChange = new Date();
-        currentTab = object.currentIndex;
         seconds= 0.0
-    }
-    function startCounter(){
-        counter.start()
-    }
-    function stopCounter(){
-        counter.stop()
+
+
     }
 }
