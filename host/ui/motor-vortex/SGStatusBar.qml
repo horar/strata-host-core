@@ -11,7 +11,9 @@ Rectangle {
     // Context properties that get passed when created dynamically
     property string user_id: ""
     property bool is_logged_in: false
-    property color backgroundColor: "#0c54e5"
+    //property color backgroundColor: "#0c54e5"
+    property color backgroundColor: "#C0C0C0"
+
 
     function getWidth(string) {
         return (string.match(/width=\"([0-9]+)\"/))
@@ -76,7 +78,7 @@ Rectangle {
         horizontalAlignment: Image.AlignLeft
         verticalAlignment: Image.AlignTop
         fillMode: Image.PreserveAspectFit
-        source: "qrc:/images/icons/onLogoGreen.svg"
+        source: "qrc:/images/icons/onLogoGrey.svg"
     }
 
     ToolButton {
@@ -95,9 +97,9 @@ Rectangle {
             horizontalAlignment: Qt.AlignHCenter
             verticalAlignment: Qt.AlignVCenter
             Layout.fillWidth: true
-            font.pixelSize: 30
+            font.pixelSize: 20
             font.bold: true
-            color: "gray"
+            color: "black"
 
             background: Rectangle {
                 anchors { fill: parent }
