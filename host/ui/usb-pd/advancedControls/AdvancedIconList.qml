@@ -16,7 +16,9 @@ Rectangle {
     property double portCurrent: 0;
     property double portTemperature: 0;
     property double portPower: 0;
-
+    property double portNegotiatedContractVoltage:0;
+    property double portNegotiatedContractAmperage:0;
+    property double portMaximumPower:0;
 
     // Values are being Signalled from ImplementationInterfaceBinding.cpp
     Connections {
@@ -56,6 +58,34 @@ Rectangle {
                 container.portPower = value;
             }
         }
+
+        onPortNegotiatedContractChanged:{
+            if( portNumber === port ) {
+                container.portNegotiatedContractVoltage = voltage;
+                container.portNegotiatedContractAmperage = maxCurrent;
+            }
+        }
+
+        onPortNegotiatedVoltageChanged:{
+            if( portNumber === port ) {
+                container.portNegotiatedContractVoltage = voltage;
+                //console.log("new negotiated voltage:", voltage);
+            }
+        }
+
+        onPortNegotiatedCurrentChanged:{
+            if( portNumber === port ) {
+                container.portNegotiatedContractAmperage = current;
+                //console.log("new port max power:", current);
+            }
+        }
+
+        onPortMaximumPowerChanged:{
+            if( portNumber === port ) {
+                container.portMaximumPower = watts;
+                //console.log("new port max power:", watts);
+            }
+        }
     }
 
     property alias power: powerValue;
@@ -69,8 +99,8 @@ Rectangle {
             id: negotiatedValues
             width:container.width/4; height: width
             icon: "../images/icons/leftArrow.svg"
-            text: container.targetVoltage.toFixed(0) +" V," + container.portCurrent.toFixed(1)+" A," +
-                 container.targetVoltage.toFixed(0) * container.portCurrent.toFixed(1)+" W"
+            text: container.portNegotiatedContractVoltage.toFixed(0) +" V," + container.portNegotiatedContractAmperage.toFixed(1)+" A," +
+                 container.portNegotiatedContractVoltage.toFixed(0) * container.portNegotiatedContractAmperage.toFixed(1)+" W"
 
             MouseArea {
                 anchors { fill: parent }
@@ -82,7 +112,7 @@ Rectangle {
             id:  maximumPowerValue
             width: container.width/4; height: width
             icon: "../images/icons/maxPowerIcon.svg"
-            text: container.outputVoltage.toFixed(1) + " W"
+            text: container.portMaximumPower.toFixed(1) + " W"
 
         }
 
