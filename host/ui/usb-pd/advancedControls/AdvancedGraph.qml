@@ -9,8 +9,7 @@ import QtCharts 2.2
 
 ChartView {
     id:chartView
-    //title: "PORT 1: VOLTAGE AND CURRENT"
-    titleColor: "#D8D8D8"//Qt.rgba(.5,.5,.5,1)
+    titleColor: "#D8D8D8"
     titleFont.pointSize:11
     legend.visible:false
     antialiasing: true

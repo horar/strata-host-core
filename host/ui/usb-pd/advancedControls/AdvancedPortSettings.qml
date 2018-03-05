@@ -22,6 +22,81 @@ Rectangle{
     property color enabledTextFieldTextColor: "white"
     property color disabledTextFieldTextColor: "grey"
 
+    property double outputVoltage: 0;
+    property double targetVoltage: 0;
+    property double portCurrent: 0;
+    property double portTemperature: 0;
+    property double portPower: 0;
+    property double portNegotiatedContractVoltage:0;
+    property double portNegotiatedContractAmperage:0;
+    property string portMaximumPower:"";
+
+    // Values are being Signalled from ImplementationInterfaceBinding.cpp
+    Connections {
+        target: implementationInterfaceBinding
+
+        // output voltage
+        onPortOutputVoltageChanged: {
+            if( portNumber === port ) {
+                portSettings.outputVoltage = value;
+            }
+        }
+
+        // target voltage
+        onPortTargetVoltageChanged: {
+
+            if( portNumber === port ) {
+                portSettings.targetVoltage = value;
+            }
+        }
+
+        // port current
+        onPortCurrentChanged: {
+            if( portNumber === port ) {
+                portSettings.portCurrent = value;
+            }
+        }
+
+        // port temperature
+        onPortTemperatureChanged: {
+            if( portNumber === port ) {
+                portSettings.portTemperature = value;
+            }
+        }
+
+        // port power
+        onPortPowerChanged: {
+            if( portNumber === port ) {
+                portSettings.portPower = value;
+            }
+        }
+
+        onPortNegotiatedContractChanged:{
+            if( portNumber === port ) {
+                portSettings.portNegotiatedContractVoltage = voltage;
+                portSettings.portNegotiatedContractAmperage = maxCurrent;
+            }
+        }
+
+        onPortNegotiatedVoltageChanged:{
+            if( portNumber === port ) {
+                portSettings.portNegotiatedContractVoltage = voltage;
+            }
+        }
+
+        onPortNegotiatedCurrentChanged:{
+            if( portNumber === port ) {
+                portSettings.portNegotiatedContractAmperage = current;
+            }
+        }
+
+        onPortMaximumPowerChanged:{
+            if( portNumber === port ) {
+                portSettings.portMaximumPower = parseInt(watts);
+            }
+        }
+    }
+
     Layout.preferredWidth  : grid.prefWidth(this)
     Layout.preferredHeight : portSettings.fullHeight
     color: "black"
@@ -188,8 +263,19 @@ Rectangle{
         anchors.leftMargin: 10
         anchors.verticalCenter: portMaxPowerText.verticalCenter
 
+        currentIndex: portMaxPowerCombo.find(portSettings.portMaximumPower)
+
         onActivated: {
             implementationInterfaceBinding.setMaximumPortPower(portNumber,parseInt(portMaxPowerCombo.currentText))
+        }
+
+        Connections {
+            target: implementationInterfaceBinding
+            onPortMaximumPowerChanged:{
+                if( portNumber === port ) {
+                    portMaxPowerCombo.currentIndex = portMaxPowerCombo.find(parseInt(watts))
+                }
+            }
         }
 
     }

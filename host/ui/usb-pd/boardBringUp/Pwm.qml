@@ -9,6 +9,9 @@ import QtQuick.Layouts 1.3
 //import QtQuick.Controls.Material 2.0
 
 Rectangle {
+    id:pwmTab
+    objectName: "pwmTab"
+    visible: opacity > 0
 
     property var currentTab: pwmView
     property var newTab: pwmView

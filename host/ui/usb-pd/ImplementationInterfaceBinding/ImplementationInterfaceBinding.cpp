@@ -251,7 +251,7 @@ void ImplementationInterfaceBinding::setMaximumPortPower(int port,int value)
     QJsonObject payloadObject;
     payloadObject.insert("port",port);
     payloadObject.insert("watts", value);
-    qDebug() << "temp limit "<<value;
+    qDebug() << "maximum power "<<value;
     cmdMessageObject.insert("payload",payloadObject);
     QJsonDocument doc(cmdMessageObject);
     QString strJson(doc.toJson(QJsonDocument::Compact));
@@ -477,6 +477,12 @@ void ImplementationInterfaceBinding::handleNotification(QVariantMap current_map)
         } else if (current_map["value"] == "over_temperature_notification"){
             payloadMap=current_map["payload"].toMap();
             handleOverTemperatureNotification(payloadMap);
+        } else if (current_map["value"] == "usb_pd_negotiated_contract_notification"){
+            payloadMap=current_map["payload"].toMap();
+            handleNegotiatedContractNotification(payloadMap);
+        }else if (current_map["value"] == "usb_pd_maximum_power"){
+            payloadMap=current_map["payload"].toMap();
+            handleMaximumPortPowerNotification(payloadMap);
         }
         else {
             qDebug() << "Unsupported value field Received";
@@ -550,7 +556,7 @@ void ImplementationInterfaceBinding::handleCloudNotification(QJsonObject json_ob
 void ImplementationInterfaceBinding::handleUsbPowerNotification(const QVariantMap payloadMap) {
 
     // TODO [ian] needs error checking on json object parsing
-//    qDebug() << payloadMap;
+    //qDebug() << payloadMap;
     int port = payloadMap["port"].toInt();
 #if !BOARD_DATA_SIMULATION
     float output_voltage = payloadMap["output_voltage"].toFloat();
@@ -583,6 +589,16 @@ void ImplementationInterfaceBinding::handleUsbPowerNotification(const QVariantMa
 
     float input_voltage = payloadMap["input"].toFloat();
     emit portEfficencyChanged(port, input_voltage*current, power);
+
+    float negotiated_voltage = payloadMap["negotiated_voltage"].toFloat();
+    //qDebug() << "handle negotiated_voltage: "<<negotiated_voltage;
+    emit portNegotiatedVoltageChanged(port, negotiated_voltage);
+
+    float negotiated_current = payloadMap["negotiated_current"].toFloat();
+    emit portNegotiatedCurrentChanged(port, negotiated_current);
+
+    float maximum_power = payloadMap["maximum_power"].toFloat();
+    emit portMaximumPowerChanged(port, maximum_power);
 #else
 // For load board data simulation only
     float output_voltage = targetVoltage +  static_cast <float> ((rand()%10)/10);
@@ -815,6 +831,28 @@ void ImplementationInterfaceBinding::handleOverTemperatureNotification(const QVa
     fault_history_.append(message);
     emit activeFaultsChanged();
     emit faultHistoryChanged();
+}
+
+void ImplementationInterfaceBinding::handleNegotiatedContractNotification(const QVariantMap payloadMap){
+
+    int port_number = payloadMap["port"].toInt();
+    int voltage = payloadMap["voltage"].toInt();
+    int maxCurrent = payloadMap["maximum_current"].toInt();
+
+    //current is sent in milliamps. Convert to amps here
+    maxCurrent = maxCurrent/1000.0;
+
+    emit portNegotiatedContractChanged(port_number, voltage, maxCurrent);
+}
+
+void ImplementationInterfaceBinding::handleMaximumPortPowerNotification(const QVariantMap payloadMap){
+
+    int port_number = payloadMap["port"].toInt();
+    int watts = payloadMap["watts"].toInt();
+
+    qDebug() << "new max port power notification received: "<<port_number<<" "<<watts;
+
+    emit portMaximumPowerChanged(port_number, watts);
 }
 /*!
  * End of notification handlers
