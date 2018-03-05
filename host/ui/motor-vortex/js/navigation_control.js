@@ -49,6 +49,7 @@ var events = {
     SHOW_CONTROL_EVENT:             6,
     OFFLINE_MODE_EVENT:             7,
     NEW_PLATFORM_CONNECTED_EVENT:   8,
+    TOGGLE_CONTROL_CONTENT:         9,
 }
 
 /*
@@ -59,6 +60,7 @@ var control_container_ = null
 var content_container_ = null
 var status_bar_container_ = null
 var metrics = null
+var flipable_parent_= null
 
 /*
     Retrieve the qml file in the templated file structure
@@ -83,9 +85,12 @@ function getQMLFile(platform_name, filename) {
   Navigation must be initialized with parent container
   that will hold control views
 */
-function init(control_parent, content_parent, bar_parent)
+function init(flipable_parent, control_parent, content_parent, bar_parent)
 {
+    // Create metrics object to track usage
     metrics = createView(components.METRICS, null);
+
+    flipable_parent_    = flipable_parent
     control_container_ = control_parent
     content_container_ = content_parent
     status_bar_container_ = bar_parent
@@ -273,6 +278,10 @@ function updateState(event, data)
                 context.platform_name = data.platform_name
                 context.platform_state = false;
                 updateState(events.SHOW_CONTROL_EVENT)
+                break;
+            case events.TOGGLE_CONTROL_CONTENT:
+                // Flip to show control/content
+                flipable_parent_.flipped = !flipable_parent_.flipped
                 break;
             default:
                 globalState(event,data)
