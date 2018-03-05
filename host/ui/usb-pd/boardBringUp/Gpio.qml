@@ -8,13 +8,13 @@ import QtQuick.Layouts 1.3
 import QtQuick.Controls.Material 2.0
 
 Rectangle {
+    id:gpioTab
+    objectName: "gpioTab"
+    visible: opacity > 0
+    anchors.fill:parent
 
     property var currentTab : gpioView
     property var newTab:  gpioView
-
-    anchors.fill:parent
-    //border.color:"red"
-
 
         function createTab(inTabName, inParent){
             var component  = Qt.createComponent(inTabName);
