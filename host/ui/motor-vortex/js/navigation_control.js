@@ -223,6 +223,7 @@ function updateState(event, data)
                     // Show control when connected
                     var qml_control = getQMLFile(context.platform_name, "Control")
                     createView(qml_control, control_container_)
+                    metrics.stopCounter()
 
                 }
                 else {
@@ -236,8 +237,8 @@ function updateState(event, data)
                     var qml_content = getQMLFile(context.platform_name, "Content")
                     var contentObject = createView(qml_content, content_container_)
                     // Insert Listener
-                    console.log("---------Inserting a listener----------")
                     injectEventToTree(contentObject)
+                    metrics.startCounter()
 
                 }
                 else {

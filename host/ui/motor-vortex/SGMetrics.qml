@@ -23,7 +23,7 @@ Item {
         //this.childrenSignal.connect(onControlViewChange)
         timeSinceLastIndexChange = new Date();
 
-        counter.start()
+        //counter.start()
 
     }
     signal childrenSignal(var sender, var arguments)
@@ -52,5 +52,11 @@ Item {
         timeSinceLastIndexChange = new Date();
         currentTab = object.currentIndex;
         seconds= 0.0
+    }
+    function startCounter(){
+        counter.start()
+    }
+    function stopCounter(){
+        counter.stop()
     }
 }
