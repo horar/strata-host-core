@@ -7,33 +7,6 @@ import QtQuick.Controls.Styles 1.4
 import tech.spyglass.DocumentManager 1.0
 
 Item {
-    // LOGO
-    Rectangle {
-        id: headerLogo
-        anchors { top: parent.top }
-        width: parent.width; height: 40
-        color: "#235A92"
-        // PROOF OF CONCEPT BANNER
-//        Rectangle {
-//            anchors { horizontalCenter: parent.horizontalCenter; verticalCenter: parent.verticalCenter }
-//            width: parent.width * 0.70; height: 30;
-//            color: "red"
-//            radius: 4
-//            Label {
-//                anchors { centerIn: parent }
-//                text: "SPYGLASS PROOF OF CONCEPT WITH LAB CLOUD"
-//                color: "white"
-//                font.bold: true
-//            }
-//        }
-    }
-
-    Image {
-        anchors { top: parent.top; right: parent.right }
-        height: 40
-        fillMode: Image.PreserveAspectFit
-        source: "./images/icons/onLogoGreenWithText.png"
-    }
 
     Rectangle {
         anchors { top: headerLogo.bottom }

@@ -7,12 +7,12 @@ import "js/navigation_control.js" as NavigationControl
 Rectangle {
     id: container
     anchors.fill: parent
+
     // Context properties that get passed when created dynamically
     property string user_id: ""
+    property bool is_logged_in: false
 
     color: "#0c54e5"
-    width: parent.widthr
-    height: parent.height/20
 
     function getWidth(string) {
         return (string.match(/width=\"([0-9]+)\"/))
@@ -54,10 +54,9 @@ Rectangle {
 
     Label {
         id: userNameLabel
-        //width: getWidth(this.text)
         height: parent.height
         text:  user_id
-        font.pointSize: 10
+        font.pointSize: 18
         font.bold: true
         color: "white"
         anchors.left: user_img.right
@@ -99,6 +98,9 @@ Rectangle {
                 title: "setting"
                 MenuItem{
                     text: qsTr("Log out")
+                    onClicked: {
+                    NavigationControl.updateState(NavigationControl.events.LOGOUT_EVENT)
+                    }
                 }
 
                 MenuItem{
