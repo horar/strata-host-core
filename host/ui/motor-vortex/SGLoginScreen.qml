@@ -86,8 +86,6 @@ Rectangle {
 
     Rectangle {
         id: spyglassTextRect
-        //x: 253; y: 178
-        //width: 133;
         height: 31
         color: "#ffffff"
         anchors.horizontalCenterOffset: -45

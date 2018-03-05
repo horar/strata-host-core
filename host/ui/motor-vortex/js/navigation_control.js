@@ -88,7 +88,8 @@ function init(control_parent, content_parent, bar_parent)
 /*
   Dynamically load qml controls by qml filename
 */
-function createView(name, parent) {
+function createView(name, parent)
+{
     console.log("createObject: name =", name, ", parameters =", JSON.stringify(context))
 
     var component = Qt.createComponent(name, QtQuickModule.Component.PreferSynchronous, parent);
@@ -107,6 +108,14 @@ function createView(name, parent) {
 }
 
 /*
+  Remove first child from a view
+*/
+function removeView(parent)
+{
+    console.log("destroying view: ", parent.children[0])
+    parent.children[0].destroy()
+}
+/*
   a catch-all for events that are required to be handled regardless of state
 */
 function globalState(event,data)
@@ -117,12 +126,18 @@ function globalState(event,data)
     case events.PROMPT_LOGIN_EVENT:
         console.log("Updated state to Login:", states.LOGIN_STATE)
         navigation_state_ = states.LOGIN_STATE
+
         // Update both containers; Login blocks both
         createView(screens.LOGIN_SCREEN, control_container_)
         createView(screens.LOGIN_SCREEN, content_container_)
+
+        // Remove StatusBar at Login
+        removeView(status_bar_container_)
         break;
 
     case events.LOGOUT_EVENT:
+        context.is_logged_in = false;
+
         // Show Login Screen
         console.log("Logging user out. Displaying Login screen")
         updateState(events.PROMPT_LOGIN_EVENT)
