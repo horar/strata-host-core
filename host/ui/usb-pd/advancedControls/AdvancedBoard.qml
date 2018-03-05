@@ -78,6 +78,7 @@ Rectangle {
                     verticalCenter: parent.verticalCenter
                     verticalCenterOffset: 0 }
                 source: "../images/borderWhite.svg"
+                opacity:.9
 
             }
 
@@ -92,6 +93,7 @@ Rectangle {
 
                 Image {
                     id:onLogo
+                    opacity:.9
                     width: parent.width; height: parent.width
                     source:"../images/icons/onLogoGreen.svg"
 
@@ -229,7 +231,7 @@ Rectangle {
             Text {
                 id: inputPlugName
                 text: {if (inputVoltage !=0){
-                        text = Math.round(device.inputVoltage * 100) / 100 + "V"
+                        text = Math.round(device.inputVoltage * 10) / 10 + "V"
                     }
                     else{
                         text: "0V"
