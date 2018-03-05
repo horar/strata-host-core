@@ -8,6 +8,7 @@ import "js/login.js" as Authenticator
 import "js/restclient.js" as Rest
 
 Rectangle {
+    id: container
     anchors { fill: parent }
     visible: true
     property bool showLoginOnCompletion: false
@@ -19,7 +20,6 @@ Rectangle {
         }
         usernameField.forceActiveFocus();   //allows the user to type their username without clicking
     }
-
 
 
 
@@ -61,13 +61,14 @@ Rectangle {
 
     // PROOF OF CONCEPT BANNER
     Rectangle {
-        anchors { top: parent.top; horizontalCenter: parent.horizontalCenter }
-        width: parent.width * 0.70; height: 30;
+        id: banner
+        anchors { top: container.top; horizontalCenter: container.horizontalCenter }
+        width: container.width * 0.70; height: 30;
         color: "red"
         opacity: .8
         radius: 4
         Label {
-            anchors { centerIn: parent }
+            anchors { centerIn: banner}
             text: "SPYGLASS PROOF OF CONCEPT WITH LAB CLOUD"
             color: "white"
             font.pointSize: Qt.platform.os == "osx"? 13 :8
@@ -78,7 +79,7 @@ Rectangle {
     Image {
         id: onLogo
         width: 80; height: 80
-        anchors{horizontalCenter: parent.horizontalCenter
+        anchors{horizontalCenter: container.horizontalCenter
             bottom:spyglassTextRect.top}
         source: "../images/icons/onLogoGrey.svg"
         mipmap: true;
@@ -89,8 +90,8 @@ Rectangle {
         height: 31
         color: "#ffffff"
         anchors.horizontalCenterOffset: -45
-        anchors { horizontalCenter: parent.horizontalCenter;
-            verticalCenter: parent.verticalCenter;
+        anchors { horizontalCenter: container.horizontalCenter;
+            verticalCenter: container.verticalCenter;
             verticalCenterOffset: -97}
     }
 
@@ -213,7 +214,7 @@ Rectangle {
         width: 147; height: 15
         color: "#aeaeae"
         text: qsTr("Searching for hardware")
-        anchors { horizontalCenter: parent.horizontalCenter
+        anchors { horizontalCenter: container.horizontalCenter
             top: spyglassTextRect.bottom
             topMargin: 25}
         horizontalAlignment: Text.AlignHCenter
@@ -223,7 +224,7 @@ Rectangle {
     BusyIndicator {
         id: busyIndicator
         x: 301; y: 264
-        anchors {horizontalCenter: parent.horizontalCenter
+        anchors {horizontalCenter: container.horizontalCenter
             top: searchingText.bottom
             topMargin: 25}
         font { pixelSize: 8 }
@@ -240,7 +241,7 @@ Rectangle {
         width: 200; height: 150
         color: "#ffffff"
         border { color: "black"; width: 1 }
-        anchors { horizontalCenter: parent.horizontalCenter;
+        anchors { horizontalCenter: container.horizontalCenter;
             top: spyglassTextRect.bottom
             topMargin: 15}
 
@@ -261,7 +262,7 @@ Rectangle {
             text: qsTr("Login to your account")
             font { bold: true }
             font.pointSize: Qt.platform.os == "osx"? 13 :8
-            anchors { horizontalCenterOffset: 1; horizontalCenter: parent.horizontalCenter }
+            anchors { horizontalCenterOffset: 1; horizontalCenter: loginErrorRect.horizontalCenter }
             horizontalAlignment: Text.AlignHCenter
         }
 
@@ -313,11 +314,10 @@ Rectangle {
 
             Image{
                 id:alertIcon
-                source: "./images/whiteAlertIcon.svg"
-                anchors{left:parent.left; top:parent.top; bottom:parent.bottom
+                source: "./images/icons/whiteAlertIcon.svg"
+                anchors{left:loginErrorRect.left; top:loginErrorRect.top; bottom:loginErrorRect.bottom
                     leftMargin: 5; topMargin:10; bottomMargin:10}
                 fillMode:Image.PreserveAspectFit
-
                 mipmap: true;
             }
 
@@ -329,8 +329,8 @@ Rectangle {
                 wrapMode: Label.WordWrap
                 anchors {
                     left: alertIcon.right
-                    right: parent.right
-                    verticalCenter: parent.verticalCenter
+                    right: loginErrorRect.right
+                    verticalCenter: loginErrorRect.verticalCenter
                 }
                 horizontalAlignment:Text.AlignHCenter
                 text: "Your username or password are incorrect"

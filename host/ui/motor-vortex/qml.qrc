@@ -89,5 +89,6 @@
         <file>views/bubu/boardBringUp/lockIcon.png</file>
         <file>SGStatusBar.qml</file>
         <file>images/icons/SettingIcon.svg</file>
+        <file>images/icons/whiteAlertIcon.svg</file>
     </qresource>
 </RCC>
