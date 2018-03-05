@@ -76,7 +76,7 @@ Rectangle {
         onPortNegotiatedCurrentChanged:{
             if( portNumber === port ) {
                 container.portNegotiatedContractAmperage = current;
-                //console.log("new port max power:", current);
+                //console.log("new negotiated current:", current);
             }
         }
 
