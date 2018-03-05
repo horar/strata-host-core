@@ -56,6 +56,8 @@ class ImplementationInterfaceBinding : public QObject
     Q_PROPERTY(float portPower NOTIFY portPowerChanged)
     Q_PROPERTY(float inputPower NOTIFY portEfficiencyChanged)
     Q_PROPERTY(float outputPower NOTIFY portEfficiencyChanged)
+    Q_PROPERTY(float portNegotiatedContract NOTIFY portNegotiatedContractChanged)
+    Q_PROPERTY(float portMaximumPower NOTIFY portMaximumPowerChanged)
 
     //QProperty for fault messages
     Q_PROPERTY(int  minimum_voltage NOTIFY minimumVoltageChanged)
@@ -168,6 +170,8 @@ public:
     void handleResetNotification(const QVariantMap payloadMap);
     void handleInputUnderVoltageNotification(const QVariantMap payloadMap);
     void handleOverTemperatureNotification(const QVariantMap payloadMap);
+    void handleNegotiatedContractNotification(const QVariantMap payloadMap);
+    void handleMaximumPortPowerNotification(const QVariantMap payloadMap);
 
 //Constructing the string for fault messages
     QString constructFaultMessage(QString parameter,QString state,int value)
@@ -203,6 +207,10 @@ signals:
     void portPowerChanged(int port, float value);
     void portCurrentChanged(int port, float value);
     void portEfficencyChanged(int port, float input_power,float output_power);
+    void portNegotiatedContractChanged(int port,float voltage,float maxCurrent);
+    void portNegotiatedVoltageChanged(int port, float voltage);
+    void portNegotiatedCurrentChanged(int port, float current);
+    void portMaximumPowerChanged(int port, int watts);
     // fault messages notification
     void minimumVoltageChanged(bool state,int value);
     void overTemperatureChanged(bool state,int value);
