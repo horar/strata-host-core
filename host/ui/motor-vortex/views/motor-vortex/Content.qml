@@ -1,6 +1,7 @@
 import QtQuick 2.0
 import QtQuick.Controls 2.0
 import "."  //Import directory
+import "qrc:/js/navigation_control.js" as NavigationControl
 
 Rectangle {
     border.color: "black"
@@ -125,6 +126,8 @@ Rectangle {
         width: flipButton.width; height: flipButton.height
         anchors { bottom: parent.bottom; right: parent.right }
         visible: true
-        onClicked: flipable.flipped = !flipable.flipped
+        onClicked: {
+            NavigationControl.updateState(NavigationControl.events.TOGGLE_CONTROL_CONTENT)
+        }
     }
 }

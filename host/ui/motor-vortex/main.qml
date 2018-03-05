@@ -17,12 +17,12 @@ Window {
 //    }
     Component.onCompleted: {
         console.log("Initializing")
-        NavigationControl.init(controlContainer, contentContainer, statusBarContainer)
+        NavigationControl.init(flipable,controlContainer, contentContainer, statusBarContainer)
     }
     ColumnLayout {
         spacing: 0
         anchors.fill: parent
-
+        id: view
         Rectangle {
             id: statusBarContainer
             Layout.alignment : Qt.AlignTop
@@ -123,7 +123,7 @@ Window {
                  Button {
                      text: "Toggle Content/Control"
                      onClicked: {
-                     flipable.flipped = !flipable.flipped
+                         NavigationControl.updateState(NavigationControl.events.TOGGLE_CONTROL_CONTENT)
                      }
                  }
 
