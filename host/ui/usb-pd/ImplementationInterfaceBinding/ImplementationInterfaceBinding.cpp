@@ -483,7 +483,6 @@ void ImplementationInterfaceBinding::handleNotification(QVariantMap current_map)
         }else if (current_map["value"] == "usb_pd_maximum_power"){
             payloadMap=current_map["payload"].toMap();
             handleMaximumPortPowerNotification(payloadMap);
-            qDebug() << "new max power notifcation received";
         }
         else {
             qDebug() << "Unsupported value field Received";
@@ -557,7 +556,7 @@ void ImplementationInterfaceBinding::handleCloudNotification(QJsonObject json_ob
 void ImplementationInterfaceBinding::handleUsbPowerNotification(const QVariantMap payloadMap) {
 
     // TODO [ian] needs error checking on json object parsing
-//    qDebug() << payloadMap;
+    //qDebug() << payloadMap;
     int port = payloadMap["port"].toInt();
 #if !BOARD_DATA_SIMULATION
     float output_voltage = payloadMap["output_voltage"].toFloat();
@@ -592,6 +591,7 @@ void ImplementationInterfaceBinding::handleUsbPowerNotification(const QVariantMa
     emit portEfficencyChanged(port, input_voltage*current, power);
 
     float negotiated_voltage = payloadMap["negotiated_voltage"].toFloat();
+    //qDebug() << "handle negotiated_voltage: "<<negotiated_voltage;
     emit portNegotiatedVoltageChanged(port, negotiated_voltage);
 
     float negotiated_current = payloadMap["negotiated_current"].toFloat();
