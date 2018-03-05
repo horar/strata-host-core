@@ -11,8 +11,7 @@ Rectangle {
     // Context properties that get passed when created dynamically
     property string user_id: ""
     property bool is_logged_in: false
-
-    color: "#0c54e5"
+    property color backgroundColor: "#0c54e5"
 
     function getWidth(string) {
         return (string.match(/width=\"([0-9]+)\"/))
@@ -24,10 +23,10 @@ Rectangle {
 
     property var userImages: {
         "davidpriscak" : "dave_priscak.png",
-        "davidsomo" : "david_somo.png",
-        "darylostrander" : "daryl_ostrander.png",
-        "paulmascarenas" : "paul_masarenas.png",
-        "blankavatar" : "blank_avatar.png"
+                "davidsomo" : "david_somo.png",
+                "darylostrander" : "daryl_ostrander.png",
+                "paulmascarenas" : "paul_masarenas.png",
+                "blankavatar" : "blank_avatar.png"
     }
 
     function getUserImage(user_name){
@@ -40,36 +39,40 @@ Rectangle {
         }
     }
 
+    color: backgroundColor
+
     Image {
         id: user_img
-        sourceSize.width: 1024
-        sourceSize.height: 1024
-        height: parent.height
-        anchors.left: container.left
+        anchors { left: container.left }
         horizontalAlignment: Image.AlignLeft
         verticalAlignment: Image.AlignTop
+        sourceSize.width: 1024; sourceSize.height: 1024
+
+        height: parent.height
         fillMode: Image.PreserveAspectFit
         source: "qrc:/images/" + getUserImage(user_id)
     }
 
     Label {
         id: userNameLabel
+
+        anchors {
+            left: user_img.right;
+            leftMargin: 10;
+            verticalCenter: container.verticalCenter;
+            verticalCenterOffset: 10
+        }
+
         height: parent.height
         text:  user_id
-        font.pointSize: 18
+        font.pointSize: 15
         font.bold: true
         color: "white"
-        anchors.left: user_img.right
-        anchors.leftMargin: 10
-        anchors.verticalCenter: container.verticalCenter
-        anchors.verticalCenterOffset: 10
-
     }
-
 
     Image {
         height: parent.height
-        anchors.right: parent.right
+        anchors { right: parent.right }
         horizontalAlignment: Image.AlignLeft
         verticalAlignment: Image.AlignTop
         fillMode: Image.PreserveAspectFit
@@ -77,36 +80,50 @@ Rectangle {
     }
 
     ToolButton {
-            id: settingsToolButton
-            x: 170
-            width: 30
-            height: parent.height
-            onClicked: settingsMenu.open()
-            anchors.left: userNameLabel.right
-            anchors.leftMargin: 10
-            opacity:1
-            z:2
-            Image {
-                id: setting_icon
-                width: parent.width
-                height: parent.height
-                fillMode: Image.PreserveAspectFit
-                source: "qrc:/images/icons/SettingIcon.svg"
-            }
-            Menu{
-                id: settingsMenu
-                title: "setting"
-                MenuItem{
-                    text: qsTr("Log out")
-                    onClicked: {
-                    NavigationControl.updateState(NavigationControl.events.LOGOUT_EVENT)
-                    }
-                }
+        id: settingsToolButton
 
-                MenuItem{
-                    text: qsTr("My Profile")
-                }
+        anchors { left: userNameLabel.right;  leftMargin: 10 }
+        width: 30; height: parent.height
+        onClicked: settingsMenu.open()
+        opacity: 1
 
+        Label {
+            anchors { fill: parent }
+
+            text: qsTr("\u22EE")
+            elide: Label.ElideRight
+            horizontalAlignment: Qt.AlignHCenter
+            verticalAlignment: Qt.AlignVCenter
+            Layout.fillWidth: true
+            font.pixelSize: 30
+            font.bold: true
+            color: "gray"
+
+            background: Rectangle {
+                anchors { fill: parent }
+                color: backgroundColor
             }
+
         }
+
+        Menu {
+            id: settingsMenu
+            title: "setting"
+            MenuItem {
+                text: qsTr("Log out")
+                onClicked: {
+                    NavigationControl.updateState(NavigationControl.events.LOGOUT_EVENT)
+                }
+            }
+
+            MenuItem {
+                text: qsTr("Remote Support")
+            }
+
+            MenuItem {
+                text: qsTr("My Profile")
+            }
+
+        }
+    }
 }
