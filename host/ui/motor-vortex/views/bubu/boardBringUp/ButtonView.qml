@@ -19,14 +19,15 @@ Rectangle {
 
     Rectangle {
         id: bitRectangle
+        x: 19
         anchors.right:buttonViewContainer.horizontalCenter
-        anchors.rightMargin: 5
+        anchors.rightMargin: 1
         anchors.top:buttonViewContainer.top
         anchors.topMargin: 20
         width: 300
         height: 612
         anchors.bottom: buttonViewContainer.bottom
-        anchors.bottomMargin: -30
+        anchors.bottomMargin: -152
         color:lightGreyColor
 
 
@@ -115,7 +116,7 @@ Rectangle {
     Rectangle {
         id: rectangle2
         anchors.left:buttonViewContainer.horizontalCenter
-        anchors.leftMargin: 5
+        anchors.leftMargin: 12
         anchors.top:parent.top
         anchors.topMargin: 20
         width: 300

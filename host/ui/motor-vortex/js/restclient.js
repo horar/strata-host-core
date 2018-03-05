@@ -1,4 +1,4 @@
-var url = "http://localhost:8081/";
+var url = "http://cobra.spyglass.tech:8081/";
 
 var xhr = function(method, endpoint, data, callback,errorCallback) {
     var xhr = new XMLHttpRequest();

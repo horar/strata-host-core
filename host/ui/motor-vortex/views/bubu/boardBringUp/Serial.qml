@@ -200,7 +200,7 @@ Rectangle{
            text: qsTr("Bit 7")
            anchors.left:bitRow.left
            anchors.top: bitRow.bottom
-           anchors.topMargin: -10
+           anchors.topMargin: -3
            font.family:"helvetica"
            font.pointSize: smallFontSize
            font.bold: false
@@ -211,7 +211,7 @@ Rectangle{
            id: bit0Title
            anchors.right:bitRow.right
            anchors.top: bitRow.bottom
-           anchors.topMargin: -10
+           anchors.topMargin: -3
            text: qsTr("Bit 0")
            font.family:"helvetica"
            font.pointSize: smallFontSize
@@ -223,9 +223,9 @@ Rectangle{
            anchors.right: parent.right
            anchors.rightMargin: (Qt.platform.os === "osx") ? 20 : 10
            anchors.top:parent.top
-           anchors.topMargin: (Qt.platform.os === "osx") ? -12 : -4
+           anchors.topMargin: (Qt.platform.os === "osx") ? -10 : -4
            width: 100
-           height: (Qt.platform.os === "osx") ? 50 : 35
+           height: (Qt.platform.os === "osx") ? 45 : 35
            text: qsTr("Read")
            font.family:"helvetica"
            font.pointSize: smallFontSize
@@ -235,10 +235,11 @@ Rectangle{
         Button {
             id: writeButton
             anchors.top:readButton.bottom
+            anchors.topMargin: 5
             anchors.right: parent.right
             anchors.rightMargin: (Qt.platform.os === "osx") ? 20 : 10
             width:100
-            height: (Qt.platform.os === "osx") ? 50 : 35
+            height: (Qt.platform.os === "osx") ? 45 : 35
             text: "Write"
             font.family:"helvetica"
             font.pointSize: smallFontSize
@@ -311,7 +312,7 @@ Rectangle{
             id: hexidecimal//            height: 26
             anchors.left:decimal.left
             anchors.top:decimal.bottom
-            anchors.topMargin: (Qt.platform.os === "osx") ? -20 : -11
+            anchors.topMargin: (Qt.platform.os === "osx") ? -10: -11
             ButtonGroup.group: displayFormatGroup
             text: qsTr("Hexidecimal")
             font.family: "helvetica"
@@ -323,7 +324,7 @@ Rectangle{
             id: binary
             anchors.left:hexidecimal.left
             anchors.top:hexidecimal.bottom
-            anchors.topMargin: (Qt.platform.os === "osx") ? -20 : -11
+            anchors.topMargin: (Qt.platform.os === "osx") ? -8: -11
             ButtonGroup.group: displayFormatGroup
             text: qsTr("Binary")
             font.family: "helvetica"
@@ -350,35 +351,21 @@ Rectangle{
             anchors.left: busRateLabel.right
             anchors.leftMargin: (Qt.platform.os === "osx") ? -10  : -4;
             anchors.top: busRateLabel.top
+            anchors.topMargin: 5
             width: 20
             height: 45
-            text:  busRateSlider.value
+            text:  busRateSlider.value + "kHz"
             font.family: "helvetica"
             font.pointSize: mediumFontSize
             font.bold: false
 
         }
 
-        Label {
-            id: busRateUnitValueLabel
-            y: 11
-            anchors.left: busRateValue.right
-            anchors.bottom: busRateValue.bottom
-            anchors.bottomMargin: 11
-            width: 25
-            height: 23
-            text:  "kHz"
-            anchors.leftMargin: 18
-            font.family: "helvetica"
-            font.pointSize: smallFontSize
-            font.bold: false
-
-        }
 
         Slider {
             id: busRateSlider
-            anchors.left: busRateUnitValueLabel.right
-            anchors.leftMargin: (Qt.platform.os === "osx") ? 10  : 35;
+            anchors.left: busRateValue.right
+            anchors.leftMargin: (Qt.platform.os === "osx") ? 30 : 35;
             anchors.verticalCenter: busRateLabel.verticalCenter
             anchors.verticalCenterOffset: -8
             live : true
@@ -442,6 +429,8 @@ Rectangle{
             id: clockRateLabel
             anchors.left:parent.left
             anchors.leftMargin: 20
+            anchors.top:parent.top
+            anchors.topMargin: 13
             text: qsTr("Clock Rate: ")
             font.family: "helvetica"
             font.pointSize: mediumLargeFontSize
@@ -453,8 +442,7 @@ Rectangle{
             anchors.left:clockRateLabel.right
             anchors.leftMargin: 10
             anchors.verticalCenter: clockRateLabel.verticalCenter
-            anchors.verticalCenterOffset: 5
-            height: 26
+            height: 29
             placeholderText: qsTr("1")
             font.family: "helvetica"
             font.pointSize: mediumLargeFontSize
@@ -465,9 +453,8 @@ Rectangle{
             id: clockRateUnitLabel
             anchors.left:clockRateTextField.right
             anchors.leftMargin: 20
-            anchors.verticalCenter:clockRateLabel.verticalCenter
+            anchors.verticalCenter:clockRateTextField.verticalCenter
             text: qsTr("MHz")
-            anchors.verticalCenterOffset: 5
             font.family: "helvetica"
             font.pointSize: smallFontSize
             font.bold: false
@@ -477,6 +464,8 @@ Rectangle{
             id: spiDataLabel
             anchors.left:clockRateUnitLabel.right
             anchors.leftMargin: 20
+            anchors.top:parent.top
+            anchors.topMargin: 13
             text: qsTr("Data:")
             font.family: "helvetica"
             font.pointSize: mediumLargeFontSize
@@ -488,41 +477,39 @@ Rectangle{
             anchors.left:spiDataLabel.right
             anchors.leftMargin: 10
             anchors.verticalCenter: spiDataLabel.verticalCenter
-            anchors.verticalCenterOffset: 5
             height: 26
             placeholderText: qsTr("0x00")
             font.family: "helvetica"
             font.pointSize: mediumLargeFontSize
             font.bold: false
         }
-
         Button {
-            id: spiReadButton
+            id: spireadButton
             anchors.right: parent.right
             anchors.rightMargin: (Qt.platform.os === "osx") ? 20 : 10
             anchors.top:parent.top
-            anchors.topMargin: (Qt.platform.os === "osx") ? -12 : -4
-            width:100
-            height: (Qt.platform.os === "osx") ? 50 : 35
+            anchors.topMargin: (Qt.platform.os === "osx") ? -10 : -4
+            width: 100
+            height: (Qt.platform.os === "osx") ? 45 : 35
             text: qsTr("Read")
-            font.family: "helvetica"
+            font.family:"helvetica"
             font.pointSize: smallFontSize
             font.bold: false
-
         }
 
-        Button {
-            id: spiWriteButton
-            anchors.top:spiReadButton.bottom
-            anchors.left:spiReadButton.left
-            width:100
-            height: (Qt.platform.os === "osx") ? 50 : 35
-            text: "Write"
-            font.family: "helvetica"
-            font.pointSize: smallFontSize
-            font.bold: false
-
-        }
+         Button {
+             id: spiwriteButton
+             anchors.top:spireadButton.bottom
+             anchors.topMargin: 5
+             anchors.right: parent.right
+             anchors.rightMargin: (Qt.platform.os === "osx") ? 20 : 10
+             width:100
+             height: (Qt.platform.os === "osx") ? 45 : 35
+             text: "Write"
+             font.family:"helvetica"
+             font.pointSize: smallFontSize
+             font.bold: false
+         }
 
     }
 
@@ -558,6 +545,8 @@ Rectangle{
             id: baudRateLabel
             anchors.left:parent.left
             anchors.leftMargin: 20
+            anchors.top: parent.top
+            anchors.topMargin: 13
             text: qsTr("Baud Rate:")
             font.family: "helvetica"
             font.pointSize: mediumLargeFontSize
@@ -569,7 +558,6 @@ Rectangle{
             anchors.left:baudRateLabel.right
             anchors.leftMargin: 10
             anchors.verticalCenter: baudRateLabel.verticalCenter
-            anchors.verticalCenterOffset: 5
             height: 26
             placeholderText: qsTr("115200")
             font.family: "helvetica"
@@ -581,6 +569,8 @@ Rectangle{
             id: parityLabel
             anchors.left:baudRateTextField.right
             anchors.leftMargin: 20
+            anchors.top: parent.top
+            anchors.topMargin: 13
             text: qsTr("Parity:")
             font.family: "helvetica"
             font.pointSize: mediumLargeFontSize
@@ -598,6 +588,8 @@ Rectangle{
             id: dataLabel
             anchors.left:parityCheckBox.right
             anchors.leftMargin: 20
+            anchors.top: parent.top
+            anchors.topMargin: 13
             text: qsTr("Data:")
             font.family: "helvetica"
             font.pointSize: mediumLargeFontSize
@@ -610,7 +602,6 @@ Rectangle{
             anchors.left:dataLabel.right
             anchors.leftMargin: 10
             anchors.verticalCenter: dataLabel.verticalCenter
-            anchors.verticalCenterOffset: 5
             height: 26
             placeholderText: qsTr("0x00")
             font.family: "helvetica"
@@ -652,7 +643,7 @@ Rectangle{
             id: stopBitRadio1
             anchors.left: stopBitRadio.left
             anchors.top:stopBitRadio.bottom
-            anchors.topMargin: (Qt.platform.os === "osx") ? -20 : -11
+            anchors.topMargin: (Qt.platform.os === "osx") ? -10 : -11
             ButtonGroup.group: tabPositionGroup2
             text: qsTr("1")
             font.family: "helvetica"
@@ -660,34 +651,33 @@ Rectangle{
             font.bold: false
         }
 
-
         Button {
-            id: uartReadButton
+            id: uartreadButton
             anchors.right: parent.right
-            anchors.rightMargin:  (Qt.platform.os === "osx") ? 20 : 10
+            anchors.rightMargin: (Qt.platform.os === "osx") ? 20 : 10
             anchors.top:parent.top
-            anchors.topMargin: (Qt.platform.os === "osx") ? -12 : -4
-            width:100
-            height: (Qt.platform.os === "osx") ? 50 : 35
-            text: qsTr("Read")
-            font.family: "helvetica"
-            font.pointSize: smallFontSize
-            font.bold: false
-
-        }
-
-        Button {
-            id: uartWriteButton
-            anchors.top:uartReadButton.bottom
-            anchors.left:uartReadButton.left
+            anchors.topMargin: (Qt.platform.os === "osx") ? -10 : -4
             width: 100
-            height: (Qt.platform.os === "osx") ? 50 : 35
-            text: "Write"
-            font.family: "helvetica"
+            height: (Qt.platform.os === "osx") ? 45 : 35
+            text: qsTr("Read")
+            font.family:"helvetica"
             font.pointSize: smallFontSize
             font.bold: false
-
         }
+
+         Button {
+             id: uartwriteButton
+             anchors.top:uartreadButton.bottom
+             anchors.topMargin: 5
+             anchors.right: parent.right
+             anchors.rightMargin: (Qt.platform.os === "osx") ? 20 : 10
+             width:100
+             height: (Qt.platform.os === "osx") ? 45 : 35
+             text: "Write"
+             font.family:"helvetica"
+             font.pointSize: smallFontSize
+             font.bold: false
+         }
     }
 }
 
