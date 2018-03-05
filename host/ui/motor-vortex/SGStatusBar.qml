@@ -22,6 +22,24 @@ Rectangle {
         return (string.match(/height=\"([0-9]+)\"/))
     }
 
+    property var userImages: {
+        "davidpriscak" : "dave_priscak.png",
+        "davidsomo" : "david_somo.png",
+        "darylostrander" : "daryl_ostrander.png",
+        "paulmascarenas" : "paul_masarenas.png",
+        "blankavatar" : "blank_avatar.png"
+    }
+
+    function getUserImage(user_name){
+        user_name = user_name.toLowerCase()
+        if(userImages.hasOwnProperty(user_name)){
+            return userImages[user_name]
+        }
+        else{
+            return userImages["blankavatar"]
+        }
+    }
+
     Image {
         id: user_img
         sourceSize.width: 1024
@@ -31,7 +49,7 @@ Rectangle {
         horizontalAlignment: Image.AlignLeft
         verticalAlignment: Image.AlignTop
         fillMode: Image.PreserveAspectFit
-        //source: "qrc:/images/" + SGWelcome.getUserImage(user_id)
+        source: "qrc:/images/" + getUserImage(user_id)
     }
 
     Label {
