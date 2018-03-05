@@ -5,6 +5,8 @@ import QtGraphicalEffects 1.0
 import QtQuick.Controls.Styles 1.4
 import QtQuick.Extras 1.4
 import tech.spyglass.PlatformInterfaceMotorVortex 1.0
+import "qrc:/js/navigation_control.js" as NavigationControl
+
 
 Item {
     id: controlPage
@@ -329,10 +331,20 @@ Item {
                 }
             }
         }
-
     }
-
-
-
+    Image {
+        id: flipButton
+        source:"./images/icons/infoIcon.svg"
+        anchors { bottom: parent.bottom; right: parent.right }
+        height: 40;width:40
+    }
+    MouseArea {
+        width: flipButton.width; height: flipButton.height
+        anchors { bottom: controlPage.bottom; right: controlPage.right }
+        visible: true
+        onClicked: {
+            NavigationControl.updateState(NavigationControl.events.TOGGLE_CONTROL_CONTENT)
+        }
+    }
 }
 
