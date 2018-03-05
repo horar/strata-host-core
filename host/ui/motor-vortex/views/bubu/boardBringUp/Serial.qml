@@ -200,7 +200,7 @@ Rectangle{
            text: qsTr("Bit 7")
            anchors.left:bitRow.left
            anchors.top: bitRow.bottom
-           anchors.topMargin: -10
+           anchors.topMargin: -3
            font.family:"helvetica"
            font.pointSize: smallFontSize
            font.bold: false
@@ -211,7 +211,7 @@ Rectangle{
            id: bit0Title
            anchors.right:bitRow.right
            anchors.top: bitRow.bottom
-           anchors.topMargin: -10
+           anchors.topMargin: -3
            text: qsTr("Bit 0")
            font.family:"helvetica"
            font.pointSize: smallFontSize
