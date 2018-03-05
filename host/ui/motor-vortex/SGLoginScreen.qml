@@ -58,24 +58,6 @@ Rectangle {
     //-----------------------------------------------------------
     //Elements common to both the connection and login screens
     //-----------------------------------------------------------
-
-    // PROOF OF CONCEPT BANNER
-    Rectangle {
-        id: banner
-        anchors { top: container.top; horizontalCenter: container.horizontalCenter }
-        width: container.width * 0.70; height: 30;
-        color: "red"
-        opacity: .8
-        radius: 4
-        Label {
-            anchors { centerIn: banner}
-            text: "SPYGLASS PROOF OF CONCEPT WITH LAB CLOUD"
-            color: "white"
-            font.pointSize: Qt.platform.os == "osx"? 13 :8
-            font.bold: true
-        }
-    }
-
     Image {
         id: onLogo
         width: 80; height: 80
