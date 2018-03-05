@@ -77,18 +77,27 @@ Rectangle {
             verticalCenterOffset: -97}
     }
 
-        Label {
-            width:text.fit
-            height:50
-            anchors { top: onLogo.bottom;
-                topMargin: 10
-                horizontalCenter: onLogo.horizontalCenter}
-            z:2
-            text: "Encore Design Suite"
-            font.pointSize: Qt.platform.os == "osx"? 20 :16
-            font.family:"helvetica"
-            color:"lightGrey"
-        }
+//        Label {
+//            width:text.fit
+//            height:50
+//            anchors { top: onLogo.bottom;
+//                topMargin: 10
+//                horizontalCenter: onLogo.horizontalCenter}
+//            z:2
+//            text: "Encore Design Suite"
+//            font.pointSize: Qt.platform.os == "osx"? 20 :16
+//            font.family:"helvetica"
+//            color:"lightGrey"
+//        }
+    SGSpotlightText {
+        titleName: "Encore Design Suite"
+        fadeInTime: 1000
+        fadeOutTime: 4000
+        anchors { top: onLogo.bottom;
+                  topMargin: 10
+                  horizontalCenter: onLogo.horizontalCenter}
+    }
+
    // }
     //        Text {
     //            id: spyglassText1

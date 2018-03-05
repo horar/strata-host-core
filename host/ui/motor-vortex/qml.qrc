@@ -91,5 +91,6 @@
         <file>SGStatusBar.qml</file>
         <file>images/icons/SettingIcon.svg</file>
         <file>images/icons/whiteAlertIcon.svg</file>
+        <file>SGSpotlightText.qml</file>
     </qresource>
 </RCC>
