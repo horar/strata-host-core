@@ -74,5 +74,6 @@
         <file>images/dave_priscak.png</file>
         <file>images/david_somo.png</file>
         <file>images/paul_mascarenas.png</file>
+        <file>Metrics.qml</file>
     </qresource>
 </RCC>

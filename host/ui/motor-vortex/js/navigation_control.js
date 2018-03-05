@@ -1,5 +1,6 @@
-.pragma library
+//.pragma library
 .import QtQuick 2.0 as QtQuickModule
+
 
 /*
     Data that will likely be needed for platform views
@@ -100,6 +101,8 @@ function createView(name, parent) {
         console.log("Error creating object: name=", name, ", parameters=", JSON.stringify(context));
     }
 
+
+
     return object;
 }
 
@@ -194,16 +197,22 @@ function updateState(event, data)
                     // Show control when connected
                     var qml_control = getQMLFile(context.platform_name, "Control")
                     createView(qml_control, control_container_)
+
                 }
                 else {
                     // Disconnected; Show detection page
                     createView(screens.WELCOME_SCREEN, control_container_)
+
                 }
 
                 // Show content when we have a platform name; doesn't have to be actively connected
                 if(context.platform_name !== ""){
                     var qml_content = getQMLFile(context.platform_name, "Content")
-                    createView(qml_content, content_container_)
+                    var contentObject = createView(qml_content, content_container_)
+                    // Insert Listener
+                    console.log("---------Inserting a listener----------")
+                    injectEventToTree(contentObject)
+
                 }
                 else {
                     // Otherwise; no platform has been connected or chosen
@@ -252,4 +261,42 @@ function updateState(event, data)
     }
 }
 
+/*
+    Metrics Code
+*/
+
+//Iterate through qml objects tree and invoke add custom function to listen on events
+function injectEventToTree(obj) {
+
+    // inject custom function to all children that has onCurrentIndexChanged event
+    if(qmltypeof(obj,"QQuickTabBar")){
+        Object.defineProperty(obj, 'listenerFunction', { value: createListenerFunction(obj) })
+        obj.onCurrentIndexChanged.connect(obj.listenerFunction);
+
+    }
+
+    if (obj.children) {
+
+        for (var i = 0; i < obj.children.length; i++) {
+            injectEventToTree(obj.children[i])
+        }
+        if(obj.children.length > 100){
+            console.log("WARNING: QML object children exceeds 100.")
+        }
+    }
+}
+
+// return a listener function that will be invoked on the tabbar change event
+function createListenerFunction(object) {
+    console.log("----------------- createListenerFunction ----------------------")
+    //TODO: return diferent events - such as on view change
+    return function() { metrics.onCurrentIndexChange(object, arguments) }
+}
+
+
+// given qml object and name, it check whether name is matching object type
+function qmltypeof(obj, className) {
+  var str = obj.toString();
+  return str.indexOf(className + "(") === 0 || str.indexOf(className + "_QML") === 0;
+}
 

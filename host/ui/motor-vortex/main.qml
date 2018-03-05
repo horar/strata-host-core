@@ -12,6 +12,11 @@ Window {
     height: 900
     title: qsTr("Encore Design Suite")
 
+    Metrics{
+        id:metrics
+
+    }
+
     Flipable {
         id: flipable
         height: 0.85 * parent.height
