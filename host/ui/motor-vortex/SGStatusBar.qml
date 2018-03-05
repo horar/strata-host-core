@@ -24,13 +24,12 @@ Rectangle {
     }
 
     property var userImages: {
-        "davidpriscak" : "dave_priscak.png",
-                "davidsomo" : "david_somo.png",
-                "darylostrander" : "daryl_ostrander.png",
-                "paulmascarenas" : "paul_masarenas.png",
-                "blankavatar" : "blank_avatar.png"
+        "dave.priscak@onsemi.com" : "dave_priscak.png",
+        "david.somo@onsemi.com" : "david_somo.png",
+        "daryl.ostrander@onsemi.com" : "daryl_ostrander.png",
+        "paul.mascarenas@onsemi.com" : "paul_mascarenas.png",
+        "blankavatar" : "blank_avatar.png"
     }
-
     function getUserImage(user_name){
         user_name = user_name.toLowerCase()
         if(userImages.hasOwnProperty(user_name)){
