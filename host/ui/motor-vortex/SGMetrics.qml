@@ -23,8 +23,6 @@ Item {
         //this.childrenSignal.connect(onControlViewChange)
         timeSinceLastIndexChange = new Date();
 
-        //counter.start()
-
     }
     signal childrenSignal(var sender, var arguments)
 
@@ -32,7 +30,8 @@ Item {
         console.log("onCurrentIndexChanged:", object,"index:",object.currentIndex,"tab name:",object.currentItem.text)
 
         var tabName = object.currentItem.text
-        sendMetricsToCloud(tabName)
+        var platfromName = NavigationControl.context.platform_name
+        sendMetricsToCloud(platfromName +' '+tabName)
 
         currentTab = object.currentIndex;
     }
