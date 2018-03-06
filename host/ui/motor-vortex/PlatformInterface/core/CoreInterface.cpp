@@ -142,7 +142,7 @@ void CoreInterface::notificationsThread()
         }
 
         // dispatch handler for notification
-        handler->second(notification_json["notification"].toObject());
+        handler->second(notification_json[notification].toObject());
     }
 }
 
@@ -226,8 +226,8 @@ void CoreInterface::platformNotificationHandler(QJsonObject payload)
 // @b handle initial list of platform message
 //
 //    {
-//        "handshake": "available_platforms",
-//        "platforms":[{
+//        "handshake":
+//          "list":[{
 //            "verbose":"simulated-usb-pd",
 //            "uuid":"P2.2017.1.1.0.0.cbde0519-0f42-4431-a379-caee4a1494af",
 //             "remote":false
@@ -237,18 +237,32 @@ void CoreInterface::platformNotificationHandler(QJsonObject payload)
 
 void CoreInterface::initialHandshakeHandler(QJsonObject payload)
 {
-    qDebug() << "gotcha !!!";
+    QJsonDocument testdoc(payload);
+    QString strJson2(testdoc.toJson(QJsonDocument::Compact));
+    qDebug() << "gotcha !!!"<<strJson2;
+
     QJsonObject cmdMessageObject;
     cmdMessageObject.insert("command", "platform_select");
 
-//    QString verbose = payload[2]["verbose"].toString();
-    qDebug() << "verbose"<< payload;
+//    QString verbose = payload["list"][2]["verbose"].toString();
+    // parsing hte incomming list of platforms
+    QJsonValue list_value = payload.value("list");
+    QJsonArray array = list_value.toArray();
+    foreach (const QJsonValue & v, array) {
+      cmdMessageObject.insert("platform_uuid",v.toObject().value("verbose").toString());
+      if (v.toObject().value("remote").toBool())
+          cmdMessageObject.insert("remote","remote");
+      else
+          cmdMessageObject.insert("remote","local");
+        qDebug() << "verbose "<< v.toObject().value("verbose").toString();
+    }
 
-    cmdMessageObject.insert("platform_uuid","Vortex Fountain Motor Platform Board");
 
-    cmdMessageObject.insert("remote","local");
+//    cmdMessageObject.insert("platform_uuid","Vortex Fountain Motor Platform Board");
+//    cmdMessageObject.insert("remote","local");
     QJsonDocument doc(cmdMessageObject);
     QString strJson(doc.toJson(QJsonDocument::Compact));
+    qDebug()<<"parse to send"<<strJson;
     hcc->sendCmd(strJson.toStdString());
 }
 
