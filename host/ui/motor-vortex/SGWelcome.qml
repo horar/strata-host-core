@@ -123,27 +123,35 @@ Rectangle{
                 var platform_list_json = coreInterface.platform_list_
 
                 // Parse JSON
-                var platform_list = JSON.parse(platform_list_json)
+                try {
+                    var platform_list = JSON.parse(platform_list_json)
 
-                for (var i = 0; i < platform_list.list.length; i ++){
-                    // Extract platform verbose name and UUID
-                    var platform_info = {
-                        "text" : platform_list.list[i].verbose,
-                        "name" : uuid_map[platform_list.list[i].uuid],
-                        "connection" : platform_list.list[i].connection
-                    }
+                    for (var i = 0; i < platform_list.list.length; i ++){
+                        // Extract platform verbose name and UUID
+                        var platform_info = {
+                            "text" : platform_list.list[i].verbose,
+                            "name" : uuid_map[platform_list.list[i].uuid],
+                            "connection" : platform_list.list[i].connection
+                        }
 
-                    // Append text to state the type of Connection
-                    if(platform_list.list[i].connection === "remote"){
-                        platform_info.text += " (Remote)"
-                    }
-                    else if (platform_list.list[i].connection === "view"){
-                        platform_info.text += " (View-only)"
-                    }
+                        // Append text to state the type of Connection
+                        if(platform_list.list[i].connection === "remote"){
+                            platform_info.text += " (Remote)"
+                        }
+                        else if (platform_list.list[i].connection === "view"){
+                            platform_info.text += " (View-only)"
+                        }
 
-                    // Add to the model
-                    model.append(platform_info)
+                        // Add to the model
+                        model.append(platform_info)
+                    }
                 }
+                catch(err) {
+                    console.log("CoreInterface error: ")
+                    model.clear()
+                    model.append({ text: "No Platforms Available" } )
+                }
+
                 // update text
                 updateComboWidth(model)
                 return model
