@@ -17,7 +17,10 @@ Rectangle {
     property color disabledTextColor: "#484848"
     property color unselectedButtonSegmentTextColor: "black"
     property color textEditFieldBackgroundColor: "#5D5A58"
+    property color textEditFieldDisabledBackgroundColor: "#404040"
     property color popupMenuBackgroundColor: "#5D5A58"
+
+
 
     objectName: "advancedControls"
 
@@ -429,7 +432,7 @@ Rectangle {
                         ListModel {
                             id:activeFaultsListModel
                             ListElement {
-                                fault: "Port 1 Temperature: 71°C"
+                                fault: ""//"Port 1 Temperature: 71°C"
                             }
 
                         }
@@ -510,7 +513,7 @@ Rectangle {
                         ListModel {
                             id:faultHistoryListModel
                             ListElement {
-                                fault: "Port 1 Temperature: 71°C"
+                                fault: ""//"Port 1 Temperature: 71°C"
                             }
                         }
 
@@ -587,7 +590,7 @@ Rectangle {
                         ListModel {
                             id:usbPDListModel
                             ListElement {
-                                fault: "Port 1 Temperature: 71°C"
+                                fault: ""//"Port 1 Temperature: 71°C"
                             }
                         }
 
