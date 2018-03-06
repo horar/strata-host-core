@@ -231,7 +231,7 @@ Rectangle {
             Text {
                 id: inputPlugName
                 text: {if (inputVoltage !=0){
-                        text = Math.round(device.inputVoltage * 10) / 10 + "V"
+                        text = Math.round(inputVoltage * 10) / 10 + "V"
                     }
                     else{
                         text: "0V"
