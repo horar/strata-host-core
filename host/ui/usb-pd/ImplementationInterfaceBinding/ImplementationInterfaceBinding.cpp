@@ -159,7 +159,7 @@ void ImplementationInterfaceBinding::setTemperatureFoldbackParameters(bool inEna
     payloadObject.insert("enabled", inEnabled);
     payloadObject.insert("temperature", inTemperature);
     payloadObject.insert("power", inWatts);
-    qDebug() << "temperature foldback action "<<inEnabled << inTemperature<< inWatts;
+    //qDebug() << "temperature foldback action "<<inEnabled << inTemperature<< inWatts;
     cmdMessageObject.insert("payload",payloadObject);
     QJsonDocument doc(cmdMessageObject);
     QString strJson(doc.toJson(QJsonDocument::Compact));
