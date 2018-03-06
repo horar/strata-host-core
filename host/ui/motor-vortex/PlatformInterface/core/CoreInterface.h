@@ -61,6 +61,10 @@ public:
     std::thread notification_thread_;
     void notificationsThread();
 
+    // Invokables
+    //To send the selected platform and its connection status
+    Q_INVOKABLE void sendSelectedPlatform(QString verbose, QString connection_status);
+
 signals:
 
     // ---

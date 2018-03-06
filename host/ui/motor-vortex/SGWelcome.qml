@@ -130,6 +130,7 @@ Rectangle{
                         // Extract platform verbose name and UUID
                         var platform_info = {
                             "text" : platform_list.list[i].verbose,
+                            "verbose" : platform_list.list[i].verbose,
                             "name" : uuid_map[platform_list.list[i].uuid],
                             "connection" : platform_list.list[i].connection
                         }
@@ -144,6 +145,7 @@ Rectangle{
 
                         // Add to the model
                         model.append(platform_info)
+
                     }
                 }
                 catch(err) {
@@ -187,6 +189,9 @@ Rectangle{
                 else if( connection === "remote"){
                     NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT,data)
                     // Call coreinterface connect()
+                    console.log("calling the send");
+                    coreInterface.sendSelectedPlatform(model.get(cbSelector.currentIndex).verbose,model.get(cbSelector.currentIndex).connection)
+                    platformInterfaceMotorVortex.sendSelectedPlatform(model.get(cbSelector.currentIndex).verbose,model.get(cbSelector.currentIndex).connection)
                 }
 
 

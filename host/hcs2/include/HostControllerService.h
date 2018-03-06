@@ -163,6 +163,6 @@ private:
     int usb_pd_target_voltage_ = 5; // to add to the multimap for testing case alone
 	int vortex_target_pwm_ = 1300;
     // zmq::message_t g_reply_;
-	std::string g_reply_;
+	std::string g_reply_,g_selected_platform_verbose_;
 };
 #endif

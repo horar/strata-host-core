@@ -253,34 +253,34 @@ void HostControllerService::serviceCallback(evutil_socket_t fd, short what, void
     if(items.revents & ZMQ_POLLIN) {
         // reading the message from client/dealer socket
         read_message = s_recv(*hcs->server_socket_);
-    }
-
-    if(hcs->platform_client_mapping_.empty()) {
-        // std::cout << "[received message ] "<<read_message<<std::endl;
-    }
-
-    if(hcs->platform_client_mapping_.empty() || !hcs->clientExists(dealer_id)) {
-        std::vector<std::string> selected_platform_info = hcs->initialCommandDispatch(dealer_id,read_message);
-        // strictly for testing alone
-        if(!(selected_platform_info[0] == "NONE")) {
-            // need to change the following lines to support struct
-            std::vector<std::string> map_element;
-            map_element.insert(map_element.begin(),selected_platform_info[0]);
-            map_element.insert(map_element.begin()+1,selected_platform_info[1]);
-            // hcs->g_platform_uuid_ = selected_platform_info[0];
-            hcs->platform_client_mapping_.emplace(map_element,dealer_id);
-            PDEBUG("adding the %s uuid to multimap\n",selected_platform_info[0].c_str());
+        if(hcs->platform_client_mapping_.empty()) {
+            // std::cout << "[received message ] "<<read_message<<std::endl;
         }
-    } else {
-        PDEBUG("Dispatching message to platform/s\n");
-        hcs->disptachMessageToPlatforms(dealer_id,read_message);
-    }
-    // [prasanth] : The following lines are required for the event handling
-    // to recognize the next read trigger
+        if(hcs->platform_client_mapping_.empty() || !hcs->clientExists(dealer_id)) {
+            std::vector<std::string> selected_platform_info = hcs->initialCommandDispatch(dealer_id,read_message);
+            // strictly for testing alone
+            PDEBUG("[selected verbose] %s",selected_platform_info[0].c_str());
+            if(!(selected_platform_info[0] == "NONE")) {
+                // need to change the following lines to support struct
+                std::vector<std::string> map_element;
+                map_element.insert(map_element.begin(),selected_platform_info[0]);
+                map_element.insert(map_element.begin()+1,"remote");
+                // hcs->g_platform_uuid_ = selected_platform_info[0];
+                hcs->platform_client_mapping_.emplace(map_element,dealer_id);
+                hcs->g_selected_platform_verbose_ = selected_platform_info[0];
+                PDEBUG("adding the %s uuid to multimap with %s\n",selected_platform_info[0].c_str(),selected_platform_info[1].c_str());
+            }
+        } else {
+            PDEBUG("Dispatching message to platform/s\n");
+            hcs->disptachMessageToPlatforms(dealer_id,read_message);
+        }
+        // [prasanth] : The following lines are required for the event handling
+        // to recognize the next read trigger
 
-    unsigned int     zmq_events;
-    size_t           zmq_events_size  = sizeof(zmq_events);
-    hcs->server_socket_->getsockopt(ZMQ_EVENTS, &zmq_events, &zmq_events_size);
+        unsigned int     zmq_events;
+        size_t           zmq_events_size  = sizeof(zmq_events);
+        hcs->server_socket_->getsockopt(ZMQ_EVENTS, &zmq_events, &zmq_events_size);
+    }
 }
 
 // @f remote socket callback
@@ -491,6 +491,7 @@ bool HostControllerService::disptachMessageToPlatforms(std::string dealer_id,std
     multimap_iterator_ = platform_client_mapping_.begin();
     for(multimap_iterator_= platform_client_mapping_.begin();multimap_iterator_!=
                             platform_client_mapping_.end();multimap_iterator_++) {
+        PDEBUG("[map iter]");
         if (multimap_iterator_->second == dealer_id) {
             // the following printing is strictly for testing only
             PDEBUG("\033[1;4;31m[%s<-%s]\033[0m: %s\n",multimap_iterator_->first[0].c_str(),dealer_id.c_str(),read_message.c_str());
@@ -513,7 +514,7 @@ bool HostControllerService::disptachMessageToPlatforms(std::string dealer_id,std
                     vortex_target_pwm_ = service_command["target_pwm"].GetInt();
                 }
                 return true;
-            } else if(multimap_iterator_->first[0] == "Vortex Fountain Motor Platform Board") {
+            } else if(multimap_iterator_->first[0] == g_selected_platform_verbose_) {
                 if(multimap_iterator_->first[1] == "connected") {
                     PDEBUG("\033[1;4;31mlocal write %s\033[0m\n",multimap_iterator_->first[1].c_str());
                     sp_flush(platform_socket_,SP_BUF_BOTH);
@@ -844,7 +845,7 @@ bool HostControllerService::checkPlatformExist(std::string *dealer_id,std::strin
         PDEBUG("[List of Platform]: %s\n",map_uuid[0].c_str());
         PDEBUG("connected paltform uuid%s\n",g_platform_uuid_.c_str());
         PDEBUG("[msg]%s",message.c_str());
-        (map_uuid[0] == "Vortex Fountain Motor Platform Board")?does_platform_exist = true : does_platform_exist = false;
+        (map_uuid[0] == g_selected_platform_verbose_)?does_platform_exist = true : does_platform_exist = false;
         PDEBUG("The comparison %d\n",(int)does_platform_exist);
         if(does_platform_exist) {
             *dealer_id = multimap_iterator_->second;
@@ -871,10 +872,11 @@ void HostControllerService::remoteRouting(std::string message)
         PDEBUG("[List of Platform]: %s\n",map_uuid[0].c_str());
         PDEBUG("connected paltform uuid%s\n",g_platform_uuid_.c_str());
         PDEBUG("[msg]%s",message.c_str());
-        (map_uuid[0] == "Vortex Fountain Motor Platform Board")?does_platform_exist = true : does_platform_exist = false;
+        (map_uuid[0] == g_selected_platform_verbose_)?does_platform_exist = true : does_platform_exist = false;
         PDEBUG("The comparison %d\n",(int)does_platform_exist);
         if(does_platform_exist) {
             dealer_id = multimap_iterator_->second;
+            PDEBUG("dealer is empty %d",dealer_id.empty());
             if(!message.empty()) {
               if(map_uuid[1] == "remote") {
                   s_sendmore(*server_socket_,dealer_id);

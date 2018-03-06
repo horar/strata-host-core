@@ -243,23 +243,39 @@ void CoreInterface::initialHandshakeHandler(QJsonObject payload)
     qDebug() << "gotcha !!!"<<platform_list_;
     emit platformListChanged(platform_list_);
 
+//    QJsonObject cmdMessageObject;
+//    cmdMessageObject.insert("command", "platform_select");
+
+////    QString verbose = payload["list"][2]["verbose"].toString();
+//    // parsing hte incomming list of platforms
+//    QJsonValue list_value = payload.value("list");
+//    QJsonArray array = list_value.toArray();
+//    foreach (const QJsonValue & v, array) {
+//      cmdMessageObject.insert("platform_uuid",v.toObject().value("verbose").toString());
+//      cmdMessageObject.insert("remote",v.toObject().value("connection").toString());
+
+//        qDebug() << "verbose "<< v.toObject().value("verbose").toString();
+//    }
+
+
+////    cmdMessageObject.insert("platform_uuid","Vortex Fountain Motor Platform Board");
+////    cmdMessageObject.insert("remote","local");
+//    QJsonDocument doc(cmdMessageObject);
+//    QString strJson(doc.toJson(QJsonDocument::Compact));
+//    qDebug()<<"parse to send"<<strJson;
+//    hcc->sendCmd(strJson.toStdString());
+}
+
+// @f sendSelectedPlatform
+// @b send the user selected platform to HCS to create the mapping
+//
+void CoreInterface::sendSelectedPlatform(QString verbose, QString connection_status)
+{
     QJsonObject cmdMessageObject;
     cmdMessageObject.insert("command", "platform_select");
+    cmdMessageObject.insert("platform_uuid",verbose);
+    cmdMessageObject.insert("remote",connection_status);
 
-//    QString verbose = payload["list"][2]["verbose"].toString();
-    // parsing hte incomming list of platforms
-    QJsonValue list_value = payload.value("list");
-    QJsonArray array = list_value.toArray();
-    foreach (const QJsonValue & v, array) {
-      cmdMessageObject.insert("platform_uuid",v.toObject().value("verbose").toString());
-      cmdMessageObject.insert("remote",v.toObject().value("connection").toString());
-
-        qDebug() << "verbose "<< v.toObject().value("verbose").toString();
-    }
-
-
-//    cmdMessageObject.insert("platform_uuid","Vortex Fountain Motor Platform Board");
-//    cmdMessageObject.insert("remote","local");
     QJsonDocument doc(cmdMessageObject);
     QString strJson(doc.toJson(QJsonDocument::Compact));
     qDebug()<<"parse to send"<<strJson;
