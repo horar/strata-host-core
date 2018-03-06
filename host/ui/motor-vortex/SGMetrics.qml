@@ -4,8 +4,9 @@ import "js/navigation_control.js" as NavigationControl
 Item {
 
     property var seconds: 0.0
-    property var timeSinceLastIndexChange:0.0 ;
+    property var timeSinceLastViewChanged:0.0 ;
     property var currentTab: 0
+    property var currentTabName: ''
 
     Timer {
         id:counter
@@ -16,15 +17,14 @@ Item {
     }
 
     Component.onCompleted: function(e){
-
-        //TODO: check if content or control
         this.childrenSignal.connect(onCurrentIndexChange)
-
-        //this.childrenSignal.connect(onControlViewChange)
-        timeSinceLastIndexChange = new Date();
-
+        this.tabBarOnCompletedSignal.connect(tabBarCompleted)
+        timeSinceLastViewChanged = new Date();
     }
+
     signal childrenSignal(var sender, var arguments)
+
+    signal tabBarOnCompletedSignal(var sender, var arguments)
 
     function onCurrentIndexChange(object,args){
         console.log("onCurrentIndexChanged:", object,"index:",object.currentIndex,"tab name:",object.currentItem.text)
@@ -34,7 +34,13 @@ Item {
         sendMetricsToCloud(platfromName +' '+tabName)
 
         currentTab = object.currentIndex;
+        currentTabName = object.currentItem.text
     }
+    function tabBarCompleted(object,args){
+        console.log("I am here --------------------------------------",object.currentItem.text,object.currentItem)
+        currentTabName = object.currentItem.text
+    }
+
     function startCounter(){
         counter.start()
     }
@@ -45,12 +51,16 @@ Item {
         counter.restart()
         seconds = 0.0
     }
+    function getCurrentTab(){
+        return currentTabName
+    }
+
     function sendMetricsToCloud(page){
 
         counter.restart();
 
         var data = {
-            time:timeSinceLastIndexChange,
+            time:timeSinceLastViewChanged,
             howLong:String(seconds),
             page: page
         };
@@ -63,7 +73,7 @@ Item {
             console.log(err)
         });
 
-        timeSinceLastIndexChange = new Date();
+        timeSinceLastViewChanged = new Date();
         seconds= 0.0
 
 

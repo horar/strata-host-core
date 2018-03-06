@@ -280,12 +280,18 @@ function updateState(event, data)
                 updateState(events.SHOW_CONTROL_EVENT)
                 break;
             case events.TOGGLE_CONTROL_CONTENT:
-                // about to leave control view
+                //send request to metrics service when entering and leaving platfrom coontrol view
+                var pageName = '';
                 if(flipable_parent_.flipped===false){
                     console.log("in fplipable ",context.platform_name)
-                    var pageName = context.platform_name +' Control'
-                    metrics.sendMetricsToCloud(pageName)
+                    pageName = context.platform_name +' Control'
+                }else {
+                    var currentTabName = metrics.getCurrentTab()
+                    pageName = context.platform_name +' '+ currentTabName
                 }
+
+                metrics.sendMetricsToCloud(pageName)
+
                 // Flip to show control/content
                 flipable_parent_.flipped = !flipable_parent_.flipped
 
@@ -312,8 +318,12 @@ function injectEventToTree(obj) {
 
     // inject custom function to all children that has onCurrentIndexChanged event
     if(qmltypeof(obj,"QQuickTabBar")){
-        Object.defineProperty(obj, 'listenerFunction', { value: createListenerFunction(obj) })
-        obj.onCurrentIndexChanged.connect(obj.listenerFunction);
+        Object.defineProperty(obj, 'onCurrentIndexChangedlListenerFunction', { value: createListenerFunction(obj) })
+        obj.onCurrentIndexChanged.connect(obj.onCurrentIndexChangedlListenerFunction);
+
+        //TODO: Add a listener to get tababr button's name at index 0
+        //Object.defineProperty(obj, 'onCompletedListenerFunction', { value: onTabBarCompletedListenerFunction(obj) })
+        //obj.Component.onCompleted.connect(obj.onCompletedListenerFunction);
 
     }
 
@@ -330,12 +340,12 @@ function injectEventToTree(obj) {
 
 // return a listener function that will be invoked on the tabbar change event
 function createListenerFunction(object) {
-    console.log("----------------- createListenerFunction ----------------------")
-    //TODO: return diferent events - such as on view change
     return function() { metrics.onCurrentIndexChange(object, arguments) }
 }
+function onTabBarCompletedListenerFunction(object) {
 
-
+    return function() { metrics.tabBarCompleted(object, arguments) }
+}
 // given qml object and name, it check whether name is matching object type
 function qmltypeof(obj, className) {
   var str = obj.toString();
