@@ -269,7 +269,7 @@ void CoreInterface::initialHandshakeHandler(QJsonObject payload)
 // @f sendSelectedPlatform
 // @b send the user selected platform to HCS to create the mapping
 //
-void sendSelectedPlatform(QString verbose, QString connection_status)
+void CoreInterface::sendSelectedPlatform(QString verbose, QString connection_status)
 {
     QJsonObject cmdMessageObject;
     cmdMessageObject.insert("command", "platform_select");
