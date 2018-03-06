@@ -59,6 +59,15 @@ Rectangle {
     }
     color: backgroundColor
 
+    Popup {
+        id: remoteSupport
+        x: 100; y: 100
+        width: 200; height: 300
+        modal: true
+        focus: true
+        closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
+    }
+
     Image {
         id: user_img
         anchors { left: container.left }
@@ -136,6 +145,11 @@ Rectangle {
 
             MenuItem {
                 text: qsTr("Remote Support")
+
+                onClicked: {
+                    remoteSupport.open()
+
+                }
             }
 
             MenuItem {
