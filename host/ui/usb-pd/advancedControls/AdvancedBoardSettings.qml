@@ -351,7 +351,7 @@ Rectangle{
             onToggled: {
                 //toggle enablement of the input limiting controls
                 startLimitingText.enabled = inputLimitingSwitch.checked
-                startLimitingVoltageLabel.enabled = inputLimitingSwitch.checked
+                startLimitingVoltageRect.enabled = inputLimitingSwitch.checked
                 startLimitingUnitText.enabled = inputLimitingSwitch.checked
                 startLimitingVoltageSlider.enabled = inputLimitingSwitch.checked
                 outputLimitText.enabled = inputLimitingSwitch.checked
@@ -378,18 +378,39 @@ Rectangle{
 
         }
 
-        Label{
-            id:startLimitingVoltageLabel
-            anchors.left:startLimitingText.right
-            anchors.leftMargin: 10
-            anchors.verticalCenter: startLimitingText.verticalCenter
-            color:enabled ? enabledTextColor : disabledTextColor
-            text:startLimitingVoltageSlider.value
-            verticalAlignment: TextInput.AlignVCenter
-            font.family: "helvetica"
-            font.pointSize: smallFontSize
-            height:15
-            width:20
+        Rectangle{
+             id: startLimitingVoltageRect
+             color: enabled ? textEditFieldBackgroundColor : textEditFieldDisabledBackgroundColor
+             anchors.left:startLimitingText.right
+             anchors.leftMargin: 10
+             anchors.verticalCenter: startLimitingText.verticalCenter
+             height:15
+             width:25
+
+            TextField{
+                id:startLimitingTextInput
+                anchors.fill: parent
+                anchors.leftMargin: 2
+                anchors.topMargin: 5
+
+                horizontalAlignment: Qt.AlignLeft
+
+                font.family: "helvetica"
+                font.pointSize: smallFontSize
+                color:enabled ? enabledTextColor : disabledTextColor
+                text: startLimitingVoltageSlider.value
+                validator: DoubleValidator {bottom:5; top:32; decimals:0}
+                background: Rectangle {
+                    color:"transparent"
+                }
+                onEditingFinished:{
+                    startLimitingVoltageSlider.value= text
+                    implementationInterfaceBinding.setTemperatureFoldbackParameters(temperatureLimitingSwitch.checked,
+                                                                                    Math.round(boardTemperatureSlider.value *10)/10,
+                                                                                    parseInt(boardOuputPopup.displayText))
+
+                  }
+            }
         }
 
 
@@ -400,7 +421,7 @@ Rectangle{
             font.pointSize: smallFontSize
             //horizontalAlignment: Text.AlignRight
             color: enabled ? enabledTextColor : disabledTextColor
-            anchors.left:startLimitingVoltageLabel.right
+            anchors.left:startLimitingVoltageRect.right
             anchors.leftMargin: 5
             anchors.verticalCenter: startLimitingText.verticalCenter
 
@@ -427,7 +448,7 @@ Rectangle{
             }
 
             onMoved: {
-                startLimitingVoltageLabel.text = Math.round(startLimitingVoltageSlider.value *10)/10
+                startLimitingTextInput.text = Math.round(startLimitingVoltageSlider.value *10)/10
             }
         }
 
@@ -533,7 +554,7 @@ Rectangle{
             onToggled: {
                 //toggle enablement of the input limiting controls
                 boardTemperatureText.enabled = temperatureLimitingSwitch.checked
-                boardTemperatureLabel.enabled = temperatureLimitingSwitch.checked
+                boardTemperatureRect.enabled = temperatureLimitingSwitch.checked
                 boardTemperatureUnitText.enabled = temperatureLimitingSwitch.checked
                 boardTemperatureSlider.enabled = temperatureLimitingSwitch.checked
                 boardOutputLimitText.enabled = temperatureLimitingSwitch.checked
@@ -559,20 +580,43 @@ Rectangle{
             anchors.topMargin: 10
 
         }
-        Label{
-            id:boardTemperatureLabel
-            anchors.left:boardTemperatureText.right
-            anchors.leftMargin: 10
-            anchors.verticalCenter: boardTemperatureText.verticalCenter
-            anchors.verticalCenterOffset: 2
-            color:enabled ? enabledTextColor : disabledTextColor
-            text:boardTemperatureSlider.value
-            verticalAlignment: TextInput.AlignTop
-            font.family: "helvetica"
-            font.pointSize: smallFontSize
-            height:15
-            width:20
+
+        Rectangle{
+             id: boardTemperatureRect
+             color: enabled ? textEditFieldBackgroundColor : textEditFieldDisabledBackgroundColor
+             anchors.left:boardTemperatureText.right
+             anchors.leftMargin: 10
+             anchors.verticalCenter: boardTemperatureText.verticalCenter
+             anchors.verticalCenterOffset: 0
+             height:15
+             width:25
+
+            TextField{
+                id:boardTemperatureTextInput
+                anchors.fill: parent
+                anchors.leftMargin: 2
+                anchors.topMargin: 5
+
+                horizontalAlignment: Qt.AlignLeft
+
+                font.family: "helvetica"
+                font.pointSize: smallFontSize
+                color:enabled ? enabledTextColor : disabledTextColor
+                text: boardTemperatureSlider.value
+                validator: DoubleValidator {bottom:25; top:100; decimals:1}
+                background: Rectangle {
+                    color:"transparent"
+                }
+                onEditingFinished:{
+                    boardTemperatureSlider.value= text
+                    implementationInterfaceBinding.setTemperatureFoldbackParameters(temperatureLimitingSwitch.checked,
+                                                                                    Math.round(boardTemperatureSlider.value *10)/10,
+                                                                                    parseInt(boardOuputPopup.displayText))
+
+                  }
+            }
         }
+
 
 
         Text{
@@ -581,7 +625,7 @@ Rectangle{
             font.family: "helvetica"
             font.pointSize: smallFontSize
             color: enabled ? enabledTextColor : disabledTextColor
-            anchors.left:boardTemperatureLabel.right
+            anchors.left:boardTemperatureRect.right
             anchors.leftMargin: 5
             anchors.verticalCenter: boardTemperatureText.verticalCenter
 
@@ -609,7 +653,7 @@ Rectangle{
             }
 
             onMoved: {
-                boardTemperatureLabel.text = Math.round(boardTemperatureSlider.value *10)/10
+                boardTemperatureTextInput.text = Math.round(boardTemperatureSlider.value *10)/10
             }
         }
 
