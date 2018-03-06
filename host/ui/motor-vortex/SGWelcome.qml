@@ -120,10 +120,10 @@ Rectangle{
                 }
                 var example = {list: [{ verbose: "Motor Vortex", uuid: "P2.2017.1.1.0.0.cbde0519-0f42-4431-a379-caee4a1494af", connection: "connected"}]}
 
-                //var platform_list_json = coreInterface.getPlatformList()
+                var platform_list_json = coreInterface.platform_list_
 
                 // Parse JSON
-                var platform_list = example//JSON.parse(platform_list_json)
+                var platform_list = JSON.parse(platform_list_json)
 
                 for (var i = 0; i < platform_list.list.length; i ++){
                     // Extract platform verbose name and UUID
@@ -177,6 +177,7 @@ Rectangle{
                     NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT,data)
                 }
                 else if( connection === "remote"){
+                    NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT,data)
                     // Call coreinterface connect()
                 }
 
