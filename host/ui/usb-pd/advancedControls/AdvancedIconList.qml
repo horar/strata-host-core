@@ -101,6 +101,7 @@ Rectangle {
             icon: "../images/icons/leftArrow.svg"
             text: container.portNegotiatedContractVoltage.toFixed(0) +" V," + container.portNegotiatedContractAmperage.toFixed(1)+" A," +
                  container.portNegotiatedContractVoltage.toFixed(0) * container.portNegotiatedContractAmperage.toFixed(1)+" W"
+            fontSize: mediumFontSize
 
             MouseArea {
                 anchors { fill: parent }
@@ -113,6 +114,7 @@ Rectangle {
             width: container.width/4; height: width
             icon: "../images/icons/maxPowerIcon.svg"
             text: container.portMaximumPower.toFixed(1) + " W"
+            fontSize: mediumFontSize
 
         }
 
@@ -121,6 +123,7 @@ Rectangle {
             width: container.width/4; height: width
             icon: "../images/icons/rightArrow.svg"
             text: container.outputVoltage.toFixed(1) + " V"
+            fontSize: mediumFontSize
 
             MouseArea {
                 anchors { fill: parent }
@@ -133,6 +136,7 @@ Rectangle {
             width:container.width/4; height: width
             icon: "../images/icons/voltageIcon.svg"
             text: container.portPower.toFixed(1)+" W"
+            fontSize: mediumFontSize
 
             MouseArea {
                 anchors { fill: parent }
@@ -145,6 +149,7 @@ Rectangle {
             width:container.width/4; height: width
             icon: "../images/icons/temperatureIcon.svg"
             text: container.portTemperature.toFixed(0) +" °C"
+            fontSize: mediumFontSize
 
             MouseArea {
                 anchors { fill: parent }
