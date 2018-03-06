@@ -83,11 +83,11 @@ HcsError HostControllerService::init()
     platform_details simulated_usb_pd,simulated_motor_vortex;
     simulated_usb_pd.platform_uuid = "simulation_1";
     simulated_usb_pd.platform_verbose = "simulated-usb-pd";
-    simulated_usb_pd.remote = false;
+    simulated_usb_pd.connection_status = "view";
 
     simulated_motor_vortex.platform_uuid = "simulation_2";
     simulated_motor_vortex.platform_verbose = "simulated-motor-vortex";
-    simulated_motor_vortex.remote = false;
+    simulated_motor_vortex.connection_status = "view";
 
     platform_uuid_.push_back(simulated_usb_pd);  // for testing alone
     platform_uuid_.push_back(simulated_motor_vortex);  // for testing alone
@@ -591,7 +591,7 @@ bool HostControllerService::parseAndGetPlatformId()
               platform_details platform;
               platform.platform_uuid = platform_command["notification"]["payload"]["platform_id"].GetString();
               platform.platform_verbose = platform_command["notification"]["payload"]["verbose_name"].GetString();
-              platform.remote = false;    // [TODO] need some cool way to do it
+              platform.connection_status = "connected";    // [TODO] need some cool way to do it
               // PDEBUG("Platform UUID %s\n",platform_uuid.c_str());
               // [TODO] : add the platform element to the list
               platform_uuid_.push_back(platform);
@@ -645,7 +645,7 @@ void HostControllerService::addToLocalPlatformList(remote_platforms remote_platf
     platform_details platform;
     platform.platform_uuid = remote_platform[0].platform_uuid;
     platform.platform_verbose = remote_platform[0].platform_verbose;
-    platform.remote = true;
+    platform.connection_status = "remote";
     platform_uuid_.push_back(platform);
 }
 /******************************************************************************/
@@ -776,12 +776,13 @@ std::string HostControllerService::getPlatformListJson()
         platform_details platform = *platform_list_iterator;
         Value json_verbose(platform.platform_verbose.c_str(),allocator);
         Value json_uuid(platform.platform_uuid.c_str(),allocator);
+        Value json_connection_status(platform.connection_status.c_str(),allocator);
         Value array_object;
         array_object.SetObject();
 
         array_object.AddMember("verbose",json_verbose,allocator);
         array_object.AddMember("uuid",json_uuid,allocator);
-        array_object.AddMember("remote",platform.remote,allocator);
+        array_object.AddMember("connection",json_connection_status,allocator);
         array.PushBack(array_object,allocator);
     }
     Value nested_object;
@@ -878,7 +879,7 @@ void HostControllerService::remoteRouting(std::string message)
               if(map_uuid[1] == "remote") {
                   s_sendmore(*server_socket_,dealer_id);
                   s_send(*server_socket_,message);
-              } else if (map_uuid[1] == "local") {
+              } else if (map_uuid[1] == "connected") {
                   sp_nonblocking_write(platform_socket_,(void *)message.c_str(),message.length());
               }
             }

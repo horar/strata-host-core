@@ -250,10 +250,8 @@ void CoreInterface::initialHandshakeHandler(QJsonObject payload)
     QJsonArray array = list_value.toArray();
     foreach (const QJsonValue & v, array) {
       cmdMessageObject.insert("platform_uuid",v.toObject().value("verbose").toString());
-      if (v.toObject().value("remote").toBool())
-          cmdMessageObject.insert("remote","remote");
-      else
-          cmdMessageObject.insert("remote","local");
+      cmdMessageObject.insert("remote",v.toObject().value("connection").toString());
+
         qDebug() << "verbose "<< v.toObject().value("verbose").toString();
     }
 

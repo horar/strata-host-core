@@ -76,7 +76,7 @@ typedef enum{
 typedef struct{
     std::string platform_uuid;
     std::string platform_verbose;
-    bool remote;
+    std::string connection_status;
 }platform_details;
 
 class HostControllerService {
