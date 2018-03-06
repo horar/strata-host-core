@@ -9,7 +9,7 @@ import "advancedControls"
 Rectangle {
 
     property int smallFontSize: (Qt.platform.os === "osx") ? 12  : 8;
-    property int mediumFontSize: (Qt.platform.os === "osx") ? 15  : 12;
+    property int mediumFontSize: (Qt.platform.os === "osx") ? 15  : 11;
     property int largeFontSize: (Qt.platform.os === "osx") ? 24  : 16;
     property int extraLargeFontSize: (Qt.platform.os === "osx") ? 36  : 24;
 

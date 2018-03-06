@@ -415,7 +415,7 @@ Rectangle{
                 horizontalAlignment: Qt.AlignLeft
 
                 font.family: "helvetica"
-                font.pointSize: 12
+                font.pointSize: smallFontSize
                 color:enabled ? enabledTextColor : disabledTextColor
                 text: portCableCompensationSlider.value
                 validator: DoubleValidator {bottom:.25; top:2; decimals:1}
@@ -489,7 +489,7 @@ Rectangle{
                 horizontalAlignment: Qt.AlignLeft
 
                 font.family: "helvetica"
-                font.pointSize: 12
+                font.pointSize: smallFontSize
                 color:enabled ? enabledTextColor : disabledTextColor
                 text: voltageCompensationSlider.value
                 validator: IntValidator {bottom:0; top:200;}
