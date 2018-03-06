@@ -27,7 +27,7 @@
 #include <rapidjson/stringbuffer.h>
 
 //hardcoded json string
-#define PLATFORM_UUID "P2.2017.1.1.0.0.cbde0519-0f42-4431-a379-caee4a1494af"
+#define PLATFORM_UUID "motorvortex1"
 #define PLATFORM_VERBOSE_NAME  "Vortex Fountain Motor Platform Board"
 
 typedef struct {
