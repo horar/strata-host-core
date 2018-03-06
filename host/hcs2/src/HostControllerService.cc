@@ -514,7 +514,7 @@ bool HostControllerService::disptachMessageToPlatforms(std::string dealer_id,std
                 }
                 return true;
             } else if(multimap_iterator_->first[0] == "Vortex Fountain Motor Platform Board") {
-                if(multimap_iterator_->first[1] == "local") {
+                if(multimap_iterator_->first[1] == "connected") {
                     PDEBUG("\033[1;4;31mlocal write %s\033[0m\n",multimap_iterator_->first[1].c_str());
                     sp_flush(platform_socket_,SP_BUF_BOTH);
                     read_message += "\n";
@@ -573,7 +573,7 @@ bool HostControllerService::parseAndGetPlatformId()
 
     PDEBUG("parseAndGetPlatformId\n");
 
-    bool isPlatformId;
+    bool isPlatformId=false;
     //
     // // platform read will be handled by connector factory and will always be called libevents
     while(!isPlatformId) {
@@ -592,15 +592,15 @@ bool HostControllerService::parseAndGetPlatformId()
               platform.platform_uuid = platform_command["notification"]["payload"]["platform_id"].GetString();
               platform.platform_verbose = platform_command["notification"]["payload"]["verbose_name"].GetString();
               platform.connection_status = "connected";    // [TODO] need some cool way to do it
-              // PDEBUG("Platform UUID %s\n",platform_uuid.c_str());
+              PDEBUG("Platform UUID %s\n",platform.platform_uuid.c_str());
               // [TODO] : add the platform element to the list
               platform_uuid_.push_back(platform);
 
               // [TODO] [prasanth] the following section is for mapping between remote and paltform
               std::vector<std::string> map_element;
               map_element.insert(map_element.begin(),platform.platform_verbose);
-              map_element.insert(map_element.begin()+1,"local");
-
+              map_element.insert(map_element.begin()+1,"connected");
+              PDEBUG("[remote routing ] added into map");
               platform_client_mapping_.emplace(map_element,"remote");
               g_platform_uuid_ = platform.platform_verbose;
               break;
@@ -880,6 +880,7 @@ void HostControllerService::remoteRouting(std::string message)
                   s_sendmore(*server_socket_,dealer_id);
                   s_send(*server_socket_,message);
               } else if (map_uuid[1] == "connected") {
+                  PDEBUG("Inside remote writing");
                   sp_nonblocking_write(platform_socket_,(void *)message.c_str(),message.length());
               }
             }
