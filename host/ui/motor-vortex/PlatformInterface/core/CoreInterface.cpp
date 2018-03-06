@@ -238,8 +238,10 @@ void CoreInterface::platformNotificationHandler(QJsonObject payload)
 void CoreInterface::initialHandshakeHandler(QJsonObject payload)
 {
     QJsonDocument testdoc(payload);
-    QString strJson2(testdoc.toJson(QJsonDocument::Compact));
-    qDebug() << "gotcha !!!"<<strJson2;
+    QString strJson_list(testdoc.toJson(QJsonDocument::Compact));
+    platform_list_ = strJson_list;
+    qDebug() << "gotcha !!!"<<platform_list_;
+    emit platformListChanged(platform_list_);
 
     QJsonObject cmdMessageObject;
     cmdMessageObject.insert("command", "platform_select");

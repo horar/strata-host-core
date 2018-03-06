@@ -42,6 +42,7 @@ class CoreInterface : public QObject
     //
     Q_PROPERTY(QString platform_id_ READ platformID NOTIFY platformIDChanged)                   // update platformID to switch control interface
     Q_PROPERTY(bool platform_state_ READ platformState NOTIFY platformStateChanged)  // TODO [ian] define core framework platform states
+    Q_PROPERTY(QString platform_list_ READ platformList NOTIFY platformListChanged)
 
 public:
     explicit CoreInterface(QObject *parent = nullptr);
@@ -51,6 +52,7 @@ public:
     // Core Framework: Q_PROPERTY read methods
     QString platformID() { return platform_id_; }
     bool platformState() { return platform_state_; }
+    QString platformList() { return platform_list_; }
 
     bool registerNotificationHandler(std::string notification, NotificationHandler handler);
     bool registerDataSourceHandler(std::string source, DataSourceHandler handler);
@@ -66,12 +68,15 @@ signals:
     bool platformIDChanged(QString id);
     bool platformStateChanged(bool platform_connected_state);
 
+    bool platformListChanged(QString list);
+
 private:
 
     // ---
     // Core Framework
     QString platform_id_;
     bool platform_state_;         // TODO [ian] change variable name to platform_connected_state
+    QString platform_list_;       // [TODO] [prasanth] change the name to more proper
 
     bool notification_thread_running_;
 
