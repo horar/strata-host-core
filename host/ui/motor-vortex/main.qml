@@ -12,9 +12,6 @@ Window {
     height: 900
     title: qsTr("Encore Design Suite")
 
-//    Metrics{
-//        id:metrics
-//    }
     Component.onCompleted: {
         console.log("Initializing")
         NavigationControl.init(flipable,controlContainer, contentContainer, statusBarContainer)
@@ -151,7 +148,8 @@ Window {
             var uuid_map = {
                 //"P2.2017.1.1.0.0.cbde0519-0f42-4431-a379-caee4a1494af" : "usb-pd" assume motor for now
                 "P2.2017.1.1.0.0.cbde0519-0f42-4431-a379-caee4a1494af" : "motor-vortex",
-                "P2.2018.1.1.0.0.c9060ff8-5c5e-4295-b95a-d857ee9a3671" : "bubu"
+                "P2.2018.1.1.0.0.c9060ff8-5c5e-4295-b95a-d857ee9a3671" : "bubu",
+                "motorvortex1" : "motor-vortex"
             }
 
             // Send update to NavigationControl

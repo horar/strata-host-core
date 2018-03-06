@@ -1,4 +1,4 @@
-import QtQuick 2.0
+import QtQuick 2.7
 import QtQuick.Controls 2.3
 import QtQuick.Controls.Styles 1.4
 
@@ -99,19 +99,88 @@ Rectangle{
             color: "white"
         }
 
+        ListModel {
+        id: model
+        }
+
+
         ComboBox {
             id: cbSelector
             anchors.left: platformSelector.right
             textRole: "text"
-            model: ListModel {
-                id: model
-                ListElement { text: "USB-PD 100W";  name: "usb-pd"}
-                ListElement { text: "Motor Vortex"; name: "motor-vortex"}
-                ListElement { text: "BuBu Interface"; name: "bubu"}
+            TextMetrics{ id: textMetrics}
+
+            model: {
+                // Map out UUID->platform name
+                var uuid_map = {
+                    "P2.2017.1.1.0.0.cbde0519-0f42-4431-a379-caee4a1494af" : "usb-pd",
+                    //"P2.2017.1.1.0.0.cbde0519-0f42-4431-a379-caee4a1494af" : "motor-vortex",
+                    "P2.2018.1.1.0.0.c9060ff8-5c5e-4295-b95a-d857ee9a3671" : "bubu",
+                    "motorvortex1" : "motor-vortex"
+                }
+                var example = {list: [{ verbose: "Motor Vortex", uuid: "P2.2017.1.1.0.0.cbde0519-0f42-4431-a379-caee4a1494af", connection: "connected"}]}
+
+                //var platform_list_json = coreInterface.getPlatformList()
+
+                // Parse JSON
+                var platform_list = example//JSON.parse(platform_list_json)
+
+                for (var i = 0; i < platform_list.list.length; i ++){
+                    // Extract platform verbose name and UUID
+                    var platform_info = {
+                        "text" : platform_list.list[i].verbose,
+                        "name" : uuid_map[platform_list.list[i].uuid],
+                        "connection" : platform_list.list[i].connection
+                    }
+
+                    // Append text to state the type of Connection
+                    if(platform_list.list[i].connection === "remote"){
+                        platform_info.text += " (Remote)"
+                    }
+                    else if (platform_list.list[i].connection === "view"){
+                        platform_info.text += " (View-only)"
+                    }
+
+                    // Add to the model
+                    model.append(platform_info)
+                }
+                // update text
+                updateComboWidth(model)
+                return model
+            }
+
+           function updateComboWidth(newModel) {
+                // Update our width depending on the children text size
+                var maxWidth = 0
+                textMetrics.font = cbSelector.font
+                for(var i = 0; i < newModel.count; i++){
+                    textMetrics.text = newModel.get(i).text
+                    maxWidth = Math.max(textMetrics.width, maxWidth)
+                }
+                // Add some padding for the selector arrows
+                cbSelector.width = maxWidth + 60
             }
             onActivated: {
+                /*
+                   Determine action depending on what type of 'connection' is used
+                */
+
+                var connection = model.get(cbSelector.currentIndex).connection
                 var data = { platform_name: model.get(cbSelector.currentIndex).name}
-                NavigationControl.updateState(NavigationControl.events.OFFLINE_MODE_EVENT, data)
+
+                if (connection === "view") {
+                    // Go offline-mode
+                    NavigationControl.updateState(NavigationControl.events.OFFLINE_MODE_EVENT, data)
+                    NavigationControl.updateState(NavigationControl.events.TOGGLE_CONTROL_CONTENT)
+                }
+                else if(connection === "connected"){
+                    NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT,data)
+                }
+                else if( connection === "remote"){
+                    // Call coreinterface connect()
+                }
+
+
             }
         }
     }
