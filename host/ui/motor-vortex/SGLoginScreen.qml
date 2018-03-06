@@ -145,12 +145,16 @@ Rectangle {
 
         TextField {
             id: usernameField
-            x: 8; y: 40
             width: 184; height: 38
             focus: true
             placeholderText: qsTr(" Username")
             Material.accent: Material.Grey
             cursorPosition: 3
+            anchors.top: loginHeaderText.bottom
+            anchors.topMargin: 10
+            anchors.left: parent.left
+            anchors.leftMargin: 10
+            anchors.centerIn: loginHeaderText.Center
             font.pointSize: Qt.platform.os == "osx"? 13 :8
 
             Keys.onPressed: {
@@ -165,7 +169,11 @@ Rectangle {
 
         TextField {
             id: passwordField
-            x: 8; y: 75
+            anchors.top: usernameField.bottom
+            anchors.topMargin: 2
+            anchors.left: parent.left
+            anchors.leftMargin: 10
+            anchors.centerIn: usernameField.Center
             width: 184; height: 38
             activeFocusOnTab: true
             placeholderText: qsTr(" Password")
@@ -222,7 +230,12 @@ Rectangle {
             anchors{bottom:loginRectangle.bottom
                 bottomMargin: 6
                 left: loginRectangle.left
-                leftMargin: 8}
+                leftMargin: 10
+                top: passwordField.bottom
+                topMargin: 2
+                centerIn: passwordField.Center
+
+            }
             width: 184; height: 38
             text:"Login"
             Material.elevation: 6
