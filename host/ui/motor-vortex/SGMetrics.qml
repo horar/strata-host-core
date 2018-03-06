@@ -29,7 +29,7 @@ Item {
     function onCurrentIndexChange(object,args){
         console.log("onCurrentIndexChanged:", object,"index:",object.currentIndex,"tab name:",object.currentItem.text)
 
-        var tabName = object.currentItem.text
+        var tabName = object.contentChildren[currentTab].text
         var platfromName = NavigationControl.context.platform_name
         sendMetricsToCloud(platfromName +' '+tabName)
 
