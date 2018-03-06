@@ -115,7 +115,7 @@ Rectangle {
     Rectangle {
         id: loginRectangle
         x: 225; y: 213
-        width: 200; height: 150
+        width: 200; height: 155
         color: "#ffffff"
         border { color: "black"; width: 1 }
         anchors { horizontalCenter: container.horizontalCenter;
@@ -196,6 +196,9 @@ Rectangle {
             width: 184; height:48
             color:"red"
             opacity: 0.0
+            anchors { left: loginRectangle.left
+                      leftMargin: 10 }
+
 
             Image{
                 id:alertIcon
@@ -228,12 +231,12 @@ Rectangle {
         Button {
             id: loginButton
             anchors{bottom:loginRectangle.bottom
-                bottomMargin: 6
+                bottomMargin: 4
                 left: loginRectangle.left
-                leftMargin: 10
-                top: passwordField.bottom
-                topMargin: 2
-                centerIn: passwordField.Center
+                leftMargin: 9.25
+//                top: loginRectangle.top
+//                topMargin: 100
+               centerIn: passwordField.Center
 
             }
             width: 184; height: 38
@@ -293,7 +296,7 @@ Rectangle {
             target: loginRectangle
             property: "height"
             // Go back to original height
-            to: 150
+            to: 155
             duration: 500
         }
 
