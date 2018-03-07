@@ -233,9 +233,7 @@ Rectangle {
             anchors{bottom:loginRectangle.bottom
                 bottomMargin: 4
                 left: loginRectangle.left
-                leftMargin: 9.25
-//                top: loginRectangle.top
-//                topMargin: 100
+                leftMargin: 10
                centerIn: passwordField.Center
 
             }
