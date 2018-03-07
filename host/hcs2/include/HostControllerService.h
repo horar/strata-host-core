@@ -174,5 +174,8 @@ private:
     std::thread *lib_event_thread;
 
     bool port_disconnected_;
+
+    // platform libevents
+    struct event *platform_handler;
 };
 #endif

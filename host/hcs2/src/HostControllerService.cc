@@ -153,7 +153,7 @@ HcsError HostControllerService::run()
     sp_get_port_handle(platform_socket_,&serial_fd_);
     PDEBUG("Serial fd %d\n",serial_fd_);
 
-    struct event *platform_handler = event_new(event_loop_base_, serial_fd_, EV_READ | EV_PERSIST,
+    platform_handler = event_new(event_loop_base_, serial_fd_, EV_READ | EV_PERSIST,
                                     HostControllerService::platformCallback,this);
     event_add(platform_handler,NULL);
 
@@ -265,7 +265,7 @@ void HostControllerService::serviceCallback(evutil_socket_t fd, short what, void
     if(items.revents & ZMQ_POLLIN) {
         // reading the message from client/dealer socket
         read_message = s_recv(*hcs->server_socket_);
-    }
+
 
     if(hcs->platform_client_mapping_.empty()) {
         // std::cout << "[received message ] "<<read_message<<std::endl;
@@ -290,7 +290,7 @@ void HostControllerService::serviceCallback(evutil_socket_t fd, short what, void
     }
     // [prasanth] : The following lines are required for the event handling
     // to recognize the next read trigger
-
+}
     unsigned int     zmq_events;
     size_t           zmq_events_size  = sizeof(zmq_events);
     hcs->server_socket_->getsockopt(ZMQ_EVENTS, &zmq_events, &zmq_events_size);
@@ -467,7 +467,7 @@ std::vector<std::string> HostControllerService::initialCommandDispatch(std::stri
     Document service_command;
     // [TODO] [prasanth] : needs better organization
     if (service_command.Parse(command.c_str()).HasParseError()) {
-        // PDEBUG("ERROR: json parse error!\n");
+        PDEBUG("ERROR: json parse error!\n");
         return selected_platform;
     }
 
@@ -695,7 +695,7 @@ std::string HostControllerService::platformRead()
             PDEBUG("Platform Disconnected\n");
             //return "disconnected";  // think about this
             port_disconnected_ = true;
-            // event_base_loopbreak(event_loop_base_);
+
             sendDisconnecttoUI();
             platform_uuid_.clear();
 
@@ -721,6 +721,7 @@ std::string HostControllerService::platformRead()
                 PDEBUG("[hcs to hcc]%s",platformList.c_str());
                 multimap_iterator_++;
             }
+            event_del(platform_handler);
             break;
         }
         if(temp !='\n' && temp!=NULL) {
@@ -951,11 +952,8 @@ void HostControllerService::serialPortMonitor()
         sleep(1);
         if(port_disconnected_) {
             if(openPlatform()) {
-                // startLibevents = true;
-                event_base_loopbreak(event_loop_base_);
+                event_add(platform_handler,NULL);
                 initializePlatform();
-                platform_client_mapping_.clear();
-
                 platform_details simulated_usb_pd,simulated_motor_vortex;
                 simulated_usb_pd.platform_uuid = "simulation_1";
                 simulated_usb_pd.platform_verbose = "simulated-usb-pd";

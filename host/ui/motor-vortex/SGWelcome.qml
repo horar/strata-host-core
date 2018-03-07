@@ -46,39 +46,39 @@ Rectangle{
         }
     }
 
-    Component.onCompleted: {
-        coreInterface.sendHandshake()
-    }
-
     // DEBUG test butt-un to simulate signal data
-    //    Button {
-    //        text: "TEST"
+        Button {
+            text: "TEST"
 
-    //        onClicked: {
+            onClicked: {
 
-    //            // DEBUG inject test data for testing offline
-    //            var list = [
-    //                        {
-    //                            "verbose":"usb-pd",
-    //                            "uuid":"P2.2017.1.1.0.0.cbde0519-0f42-4431-a379-caee4a1494af",
-    //                            "connection":"view"
-    //                        },
-    //                        {
-    //                            "verbose":"bubu",
-    //                            "uuid":"P2.2018.1.1.0.0.c9060ff8-5c5e-4295-b95a-d857ee9a3671",
-    //                            "connection":"connected"
-    //                        },
-    //                        {
-    //                            "verbose":"motor-vortex",
-    //                            "uuid":"motorvortex1",
-    //                            "connection":"connected"
-    //                        }];
+//                // DEBUG inject test data for testing offline
+//                var list = [
+//                            {
+//                                "verbose":"usb-pd",
+//                                "uuid":"P2.2017.1.1.0.0.cbde0519-0f42-4431-a379-caee4a1494af",
+//                                "connection":"view"
+//                            },
+//                            {
+//                                "verbose":"bubu",
+//                                "uuid":"P2.2018.1.1.0.0.c9060ff8-5c5e-4295-b95a-d857ee9a3671",
+//                                "connection":"connected"
+//                            },
+//                            {
+//                                "verbose":"motor-vortex",
+//                                "uuid":"motorvortex1",
+//                                "connection":"connected"
+//                            }];
 
-    //            var handshake = {"list":list};
-    //            console.log("TEST platformList: ", JSON.stringify(handshake));
-    //            platformSelectorContainer.populatePlatforms(JSON.stringify(handshake));
-    //        }
-    //    }
+//                var handshake = {"list":list};
+//                console.log("TEST platformList: ", JSON.stringify(handshake));
+//                platformSelectorContainer.populatePlatforms(JSON.stringify(handshake));
+
+                coreInterface.sendHandshake();
+            }
+
+
+        }
 
     anchors.fill: parent
     color: "#d9dfe1"
@@ -161,6 +161,11 @@ Rectangle{
         ListModel {
             id: platformListModel
 
+            Component.onCompleted: {
+                console.log("platformListModel:Component.onCompleted:");
+                append(platformSelectorContainer.populatePlatforms(coreInterface.platform_list_));
+            }
+
             // DEBUG hard code model data for testing
             //            ListElement {
             //                text: "Motor Vortex"
@@ -236,12 +241,14 @@ Rectangle{
                     // TODO update width of text here instead of adding to model and then re-reading model and updating
                     platformListModel.append(platform_info)
                 }
+
             }
             catch(err) {
                 console.log("CoreInterface error: ")
                 platformListModel.clear()
                 platformListModel.append({ text: "No Platforms Available" } )
             }
+            platformListModel.sync();
         }
 
         ComboBox {
@@ -257,8 +264,8 @@ Rectangle{
                    Determine action depending on what type of 'connection' is used
                 */
 
-                var connection = model.get(cbSelector.currentIndex).connection
-                var data = { platform_name: model.get(cbSelector.currentIndex).name}
+                var connection = platformListModel.get(cbSelector.currentIndex).connection
+                var data = { platform_name: platformListModel.get(cbSelector.currentIndex).name}
 
                 if (connection === "view") {
                     // Go offline-mode
@@ -267,15 +274,15 @@ Rectangle{
                 }
                 else if(connection === "connected"){
                     NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT,data)
-                    coreInterface.sendSelectedPlatform(model.get(cbSelector.currentIndex).verbose,model.get(cbSelector.currentIndex).connection)
-                    platformInterfaceMotorVortex.sendSelectedPlatform(model.get(cbSelector.currentIndex).verbose,model.get(cbSelector.currentIndex).connection)
+                    coreInterface.sendSelectedPlatform(platformListModel.get(cbSelector.currentIndex).verbose,platformListModel.get(cbSelector.currentIndex).connection)
+                    platformInterfaceMotorVortex.sendSelectedPlatform(platformListModel.get(cbSelector.currentIndex).verbose,platformListModel.get(cbSelector.currentIndex).connection)
                 }
                 else if( connection === "remote"){
                     NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT,data)
                     // Call coreinterface connect()
                     console.log("calling the send");
-                    coreInterface.sendSelectedPlatform(model.get(cbSelector.currentIndex).verbose,model.get(cbSelector.currentIndex).connection)
-                    platformInterfaceMotorVortex.sendSelectedPlatform(model.get(cbSelector.currentIndex).verbose,model.get(cbSelector.currentIndex).connection)
+                    coreInterface.sendSelectedPlatform(platformListModel.get(cbSelector.currentIndex).verbose,platformListModel.get(cbSelector.currentIndex).connection)
+                    platformInterfaceMotorVortex.sendSelectedPlatform(platformListModel.get(cbSelector.currentIndex).verbose,platformListModel.get(cbSelector.currentIndex).connection)
                 }
 
 
