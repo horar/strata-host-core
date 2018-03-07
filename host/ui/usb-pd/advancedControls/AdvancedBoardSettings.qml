@@ -307,6 +307,18 @@ Rectangle{
         anchors.topMargin: dataConfigurationLabel.height
         height: 75
 
+        Component.onCompleted: {
+            inputLimitingSwitch.toggle()
+
+            startLimitingText.enabled = inputLimitingSwitch.checked
+            startLimitingVoltageRect.enabled = inputLimitingSwitch.checked
+            startLimitingUnitText.enabled = inputLimitingSwitch.checked
+            startLimitingVoltageSlider.enabled = inputLimitingSwitch.checked
+            outputLimitText.enabled = inputLimitingSwitch.checked
+            outputLimitPopup.enabled = inputLimitingSwitch.checked
+            outputLimitUnitText.enabled = inputLimitingSwitch.checked
+        }
+
         Text{
             id:inputLimitingText
             text:"Input Limiting"
@@ -510,6 +522,18 @@ Rectangle{
         anchors.topMargin: boardSettingsLabel.height
         height: 75
 
+        Component.onCompleted: {
+            temperatureLimitingSwitch.toggle()
+
+            boardTemperatureText.enabled = temperatureLimitingSwitch.checked
+            boardTemperatureRect.enabled = temperatureLimitingSwitch.checked
+            boardTemperatureUnitText.enabled = temperatureLimitingSwitch.checked
+            boardTemperatureSlider.enabled = temperatureLimitingSwitch.checked
+            boardOutputLimitText.enabled = temperatureLimitingSwitch.checked
+            boardOuputPopup.enabled = temperatureLimitingSwitch.checked
+            boardOutputUnitText.enabled = temperatureLimitingSwitch.checked
+        }
+
         Text{
             id:temperatureLimitingText
             text:"Temperature Limiting"
@@ -565,6 +589,7 @@ Rectangle{
                                                                                 Math.round(boardTemperatureSlider.value *10)/10,
                                                                                 parseInt(boardOuputPopup.displayText))
             }
+
         }
 
         Text{
@@ -653,7 +678,7 @@ Rectangle{
             }
 
             onMoved: {
-                boardTemperatureTextInput.text = Math.round(boardTemperatureSlider.value *10)/10
+                boardTemperatureTextInput.text = Math.round(boardTemperatureSlider.value)
             }
         }
 
