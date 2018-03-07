@@ -562,8 +562,8 @@ void ImplementationInterfaceBinding::handleUsbPowerNotification(const QVariantMa
     float output_voltage = payloadMap["output_voltage"].toFloat();
     emit portOutputVoltageChanged(port, output_voltage);
 
-    float target_voltage = payloadMap["target_volts"].toFloat();
-    emit portTargetVoltageChanged(port, target_voltage);
+//    float target_voltage = payloadMap["target_volts"].toFloat();
+//    emit portTargetVoltageChanged(port, target_voltage);
 
     float current = payloadMap["output_current"].toFloat();
 
