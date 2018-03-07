@@ -36,7 +36,7 @@ CoreInterface::CoreInterface(QObject *parent) : QObject(parent)
                                      this, placeholders::_1));
 
     registerNotificationHandler("handshake",
-                                bind(&CoreInterface::initialHandshakeHandler,
+                                bind(&CoreInterface::platformListHandler,
                                      this, placeholders::_1));
 
     registerNotificationHandler("cloud::notification",
@@ -235,12 +235,12 @@ void CoreInterface::platformNotificationHandler(QJsonObject payload)
 //        ]
 //    }
 
-void CoreInterface::initialHandshakeHandler(QJsonObject payload)
+void CoreInterface::platformListHandler(QJsonObject payload)
 {
     QJsonDocument testdoc(payload);
     QString strJson_list(testdoc.toJson(QJsonDocument::Compact));
     platform_list_ = strJson_list;
-    qDebug() << "gotcha !!!"<<platform_list_;
+    qDebug() << "initialHandshakeHandler: platform_list:" << platform_list_;
     emit platformListChanged(platform_list_);
 
 //    QJsonObject cmdMessageObject;

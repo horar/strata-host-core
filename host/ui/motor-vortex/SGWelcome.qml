@@ -50,6 +50,36 @@ Rectangle{
         coreInterface.sendHandshake()
     }
 
+    // DEBUG test butt-un to simulate signal data
+    //    Button {
+    //        text: "TEST"
+
+    //        onClicked: {
+
+    //            // DEBUG inject test data for testing offline
+    //            var list = [
+    //                        {
+    //                            "verbose":"usb-pd",
+    //                            "uuid":"P2.2017.1.1.0.0.cbde0519-0f42-4431-a379-caee4a1494af",
+    //                            "connection":"view"
+    //                        },
+    //                        {
+    //                            "verbose":"bubu",
+    //                            "uuid":"P2.2018.1.1.0.0.c9060ff8-5c5e-4295-b95a-d857ee9a3671",
+    //                            "connection":"connected"
+    //                        },
+    //                        {
+    //                            "verbose":"motor-vortex",
+    //                            "uuid":"motorvortex1",
+    //                            "connection":"connected"
+    //                        }];
+
+    //            var handshake = {"list":list};
+    //            console.log("TEST platformList: ", JSON.stringify(handshake));
+    //            platformSelectorContainer.populatePlatforms(JSON.stringify(handshake));
+    //        }
+    //    }
+
     anchors.fill: parent
     color: "#d9dfe1"
     gradient: Gradient {
@@ -120,10 +150,99 @@ Rectangle{
             color: "white"
         }
 
-        ListModel {
-        id: model
+        Connections {
+            target: coreInterface
+            onPlatformListChanged: {
+                console.log("platform list updated: ", list)
+                platformSelectorContainer.populatePlatforms(list)
+            }
         }
 
+        ListModel {
+            id: platformListModel
+
+            // DEBUG hard code model data for testing
+            //            ListElement {
+            //                text: "Motor Vortex"
+            //                name: "motor-vortex" // folder name of qml
+            //                verbose: "motor-vortex"
+            //                connection: "local"
+            //            }
+
+            //            ListElement {
+            //                text: "USB PD"
+            //                name: "bubu"
+            //                verbose: "usb-pd"
+            //                connection: "local"
+            //            }
+        }
+
+        function updateComboWidth(newModel) {
+            // Update our width depending on the children text size
+            var maxWidth = 0
+            textMetrics.font = cbSelector.font
+            for(var i = 0; i < newModel.count; i++){
+                textMetrics.text = newModel.get(i).text
+                maxWidth = Math.max(textMetrics.width, maxWidth)
+            }
+            // Add some padding for the selector arrows
+            cbSelector.width = maxWidth + 60
+        }
+
+        function populatePlatforms(platform_list_json) {
+            // Map out UUID->platform name
+            // Lookup table
+            //  platform_id -> local qml directory holding interface
+            var uuid_map = {
+                "P2.2017.1.1.0.0.cbde0519-0f42-4431-a379-caee4a1494af" : "usb-pd",
+                //"P2.2017.1.1.0.0.cbde0519-0f42-4431-a379-caee4a1494af" : "motor-vortex",
+                "P2.2018.1.1.0.0.c9060ff8-5c5e-4295-b95a-d857ee9a3671" : "bubu",
+                "motorvortex1" : "motor-vortex"
+            }
+
+            platformListModel.clear()
+
+            // Parse JSON
+            try {
+                console.log("populatePlaforms: ", platform_list_json)
+                var platform_list = JSON.parse(platform_list_json)
+
+                for (var i = 0; i < platform_list.list.length; i ++){
+                    // Extract platform verbose name and UUID
+                    var platform_info = {
+                        "text" : platform_list.list[i].verbose,
+                        "verbose" : platform_list.list[i].verbose,
+                        "name" : uuid_map[platform_list.list[i].uuid],
+                        "connection" : platform_list.list[i].connection
+                    }
+
+                    // Append text to state the type of Connection
+                    if(platform_list.list[i].connection === "remote"){
+                        platform_info.text += " (Remote)"
+                    }
+                    else if (platform_list.list[i].connection === "view"){
+                        platform_info.text += " (View-only)"
+                    }
+                    else {
+                        platform_info.text += " (Connected)"
+                        // For Demo purposes only; Immediately go to control
+                        var data = { platform_name: platform_info.name}
+                        NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT,data)
+                        coreInterface.sendSelectedPlatform(platform_info.verbose, platform_info.connection)
+                        platformInterfaceMotorVortex.sendSelectedPlatform(platform_info.verbose, platform_info.connection)
+                    }
+
+                    // Add to the model
+                    // TODO update width of text here instead of adding to model and then re-reading model and updating
+                    platformListModel.append(platform_info)
+                }
+            }
+            catch(err) {
+                console.log("CoreInterface error: ")
+                platformListModel.clear()
+                platformListModel.append({ text: "No Platforms Available" } )
+            }
+        }
 
         ComboBox {
             id: cbSelector
@@ -131,75 +250,8 @@ Rectangle{
             textRole: "text"
             TextMetrics{ id: textMetrics}
 
-            model: {
-                // Map out UUID->platform name
-                var uuid_map = {
-                    "P2.2017.1.1.0.0.cbde0519-0f42-4431-a379-caee4a1494af" : "usb-pd",
-                    //"P2.2017.1.1.0.0.cbde0519-0f42-4431-a379-caee4a1494af" : "motor-vortex",
-                    "P2.2018.1.1.0.0.c9060ff8-5c5e-4295-b95a-d857ee9a3671" : "bubu",
-                    "motorvortex1" : "motor-vortex"
-                }
+            model: platformListModel
 
-                model.clear()
-
-                var platform_list_json = coreInterface.platform_list_
-
-                // Parse JSON
-                try {
-                    var platform_list = JSON.parse(platform_list_json)
-
-                    for (var i = 0; i < platform_list.list.length; i ++){
-                        // Extract platform verbose name and UUID
-                        var platform_info = {
-                            "text" : platform_list.list[i].verbose,
-                            "verbose" : platform_list.list[i].verbose,
-                            "name" : uuid_map[platform_list.list[i].uuid],
-                            "connection" : platform_list.list[i].connection
-                        }
-
-                        // Append text to state the type of Connection
-                        if(platform_list.list[i].connection === "remote"){
-                            platform_info.text += " (Remote)"
-                        }
-                        else if (platform_list.list[i].connection === "view"){
-                            platform_info.text += " (View-only)"
-                        }
-                        else{
-                            platform_info.text += " (Connected)"
-                            // For Demo purposes only; Immediately go to control
-                            var data = { platform_name: platform_info.name}
-                            NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT,data)
-                            coreInterface.sendSelectedPlatform(platform_info.verbose, platform_info.connection)
-                            platformInterfaceMotorVortex.sendSelectedPlatform(platform_info.verbose, platform_info.connection)
-                        }
-
-                        // Add to the model
-                        model.append(platform_info)
-
-                    }
-                }
-                catch(err) {
-                    console.log("CoreInterface error: ")
-                    model.clear()
-                    model.append({ text: "No Platforms Available" } )
-                }
-
-                // update text
-                updateComboWidth(model)
-                return model
-            }
-
-           function updateComboWidth(newModel) {
-                // Update our width depending on the children text size
-                var maxWidth = 0
-                textMetrics.font = cbSelector.font
-                for(var i = 0; i < newModel.count; i++){
-                    textMetrics.text = newModel.get(i).text
-                    maxWidth = Math.max(textMetrics.width, maxWidth)
-                }
-                // Add some padding for the selector arrows
-                cbSelector.width = maxWidth + 60
-            }
             onActivated: {
                 /*
                    Determine action depending on what type of 'connection' is used
