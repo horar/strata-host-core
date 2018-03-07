@@ -92,11 +92,11 @@ HcsError HostControllerService::init()
     platform_uuid_.push_back(simulated_usb_pd);  // for testing alone
     platform_uuid_.push_back(simulated_motor_vortex);  // for testing alone
     // initialize the event base
-    event_loop_base_ = event_base_new();
-    if (!event_loop_base_) {
-    	PDEBUG("Could not create event base");
-        return EVENT_BASE_FAILURE;
-  	}
+    // event_loop_base_ = event_base_new();
+    // if (!event_loop_base_) {
+    // 	PDEBUG("Could not create event base");
+    //     return EVENT_BASE_FAILURE;
+  	// }
     // open the serial port connected to platform
     if(openPlatform()) {
         PDEBUG("\033[1;32mPlatform detected\033[0m\n");
@@ -115,6 +115,7 @@ HcsError HostControllerService::init()
     // PDEBUG("remote platform values %s %s",remote_platform_list[0].platform_uuid.c_str(),remote_platform_list[0].platform_verbose.c_str());
     // serial_monitor_thread.join();
     serial_monitor_thread = new std::thread(&HostControllerService::serialPortMonitor,this);
+    lib_event_thread = new std::thread(&HostControllerService::run,this);
     return NO_ERROR;
 }
 
@@ -133,6 +134,11 @@ HcsError HostControllerService::init()
 HcsError HostControllerService::run()
 {
     // creating a periodic event for test case
+    event_loop_base_ = event_base_new();
+    if (!event_loop_base_) {
+        PDEBUG("Could not create event base");
+        return EVENT_BASE_FAILURE;
+    }
     struct event *periodic_event = event_new(event_loop_base_, -1, EV_TIMEOUT
                         | EV_PERSIST, HostControllerService::testCallback,this);
   	timeval seconds = {3, 0};
@@ -393,7 +399,9 @@ bool HostControllerService::openPlatform()
                 // hostP.service->sendNotification(message, hostP.notify);
                 // Reset our flag to output errors when we disconnect
                 outputPortError = true;
+                port_disconnected_ = false;
                 return true;
+                // run();
             }
         }
         else if(outputPortError) {
@@ -508,6 +516,7 @@ bool HostControllerService::disptachMessageToPlatforms(std::string dealer_id,std
                 PDEBUG("ERROR: json parse error!\n");
                 return false;
             }
+            if(service_command.HasMember("cmd")) {
             std::string command = service_command["cmd"].GetString();
             if(multimap_iterator_->first[0] == "simulated-usb-pd") {
                 if(command == "set_target_voltage") {
@@ -534,7 +543,7 @@ bool HostControllerService::disptachMessageToPlatforms(std::string dealer_id,std
                     // sp_nonblocking_write(platform_socket_,(void *)read_message.c_str(),read_message.length());
                 }
             }
-        }
+        }}
     }
     return false;
 }
@@ -684,6 +693,10 @@ std::string HostControllerService::platformRead()
         if(error <= 0) {
             PDEBUG("Platform Disconnected\n");
             //return "disconnected";  // think about this
+            port_disconnected_ = true;
+            // event_base_loopbreak(event_loop_base_);
+            sendDisconnecttoUI();
+            platform_uuid_.clear();
             break;
         }
         if(temp !='\n' && temp!=NULL) {
@@ -698,6 +711,17 @@ std::string HostControllerService::platformRead()
     }
 }
 
+void HostControllerService::sendDisconnecttoUI()
+{
+    multimap_iterator_ = platform_client_mapping_.begin();
+    std::string disconnect_message = "{\"notification\":{\"value\":\"platform_connection_change_notification\",\"payload\":{\"status\":\"disconnected\"}}}";
+    while(multimap_iterator_ != platform_client_mapping_.end()) {
+        std::string dealer_id = multimap_iterator_->second;
+        s_sendmore(*server_socket_,dealer_id);
+        s_send(*server_socket_,disconnect_message);
+        multimap_iterator_++;
+    }
+}
 /******************************************************************************/
 /*                              getter functions                              */
 /******************************************************************************/
@@ -901,16 +925,36 @@ void HostControllerService::serialPortMonitor()
     while(1){
         PDEBUG("Inside thread\n");
         sleep(1);
-        for (auto port : serial_port_list_) {
-            std::ifstream infile(port.c_str());
-            if(infile.good()) {
-                PDEBUG("port is open");
-            } else {
-                PDEBUG("port is not open");
-                std::string disconnect_message = "{\"notification\":{\"value\":\"platform_connection_change_notification\",\"payload\":{\"status\":\"disconnected\"}}}";
-                s_sendmore(*server_socket_,g_dealer_id_);
-                s_send(*server_socket_,disconnect_message);
+        if(port_disconnected_) {
+            if(openPlatform()) {
+                // startLibevents = true;
+                event_base_loopbreak(event_loop_base_);
+                initializePlatform();
+                platform_client_mapping_.clear();
+
+                platform_details simulated_usb_pd,simulated_motor_vortex;
+                simulated_usb_pd.platform_uuid = "simulation_1";
+                simulated_usb_pd.platform_verbose = "simulated-usb-pd";
+                simulated_usb_pd.connection_status = "view";
+
+                simulated_motor_vortex.platform_uuid = "simulation_2";
+                simulated_motor_vortex.platform_verbose = "simulated-motor-vortex";
+                simulated_motor_vortex.connection_status = "view";
+
+                platform_uuid_.push_back(simulated_usb_pd);  // for testing alone
+                platform_uuid_.push_back(simulated_motor_vortex);  // for testing alone
+                // run();
+                lib_event_thread = new std::thread(&HostControllerService::run,this);
+
             }
         }
+        //         std::string disconnect_message = "{\"notification\":{\"value\":\"platform_connection_change_notification\",\"payload\":{\"status\":\"disconnected\"}}}";
+        //         s_sendmore(*server_socket_,g_dealer_id_);
+        //         s_send(*server_socket_,disconnect_message);
+        //     }
+        // }
+
     }
 }
+
+// void HostControllerService::serialPortMonitor()

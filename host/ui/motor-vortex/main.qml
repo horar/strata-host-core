@@ -163,7 +163,7 @@ Window {
 
             if(platform_connected_state) {
                 // Show control as we have connected
-                NavigationControl.updateState(NavigationControl.events.PLATFORM_CONNECTED_EVENT)
+                //NavigationControl.updateState(NavigationControl.events.PLATFORM_CONNECTED_EVENT)
             }
             else if (!platform_connected_state){
                 NavigationControl.updateState(NavigationControl.events.PLATFORM_DISCONNECTED_EVENT)

@@ -176,6 +176,7 @@ void CoreInterface::connectionChangeNotificationHandler(QJsonObject payload)
     }
     else {
         platform_state_ = false;
+        platform_list_ = "";
         emit platformStateChanged(platform_state_);
     }
 }

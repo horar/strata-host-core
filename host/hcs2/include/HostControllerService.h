@@ -122,6 +122,7 @@ public:
 
     // thread to monitor the serial port
     void serialPortMonitor();
+    void sendDisconnecttoUI();
 private:
     // config file data members
     ParseConfig *configuration_;
@@ -170,5 +171,8 @@ private:
 	std::string g_reply_,g_selected_platform_verbose_,g_dealer_id_;
 
     std::thread *serial_monitor_thread;
+    std::thread *lib_event_thread;
+
+    bool port_disconnected_;
 };
 #endif
