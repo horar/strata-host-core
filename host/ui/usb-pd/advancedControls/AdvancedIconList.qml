@@ -1,6 +1,7 @@
 import QtQuick 2.7
 import tech.spyglass.ImplementationInterfaceBinding 1.0
-import QtQuick.Controls 1.4
+//import QtQuick.Controls 1.4
+import QtQuick.Controls 2.3
 import "../framework"
 
 
@@ -99,22 +100,26 @@ Rectangle {
             id: negotiatedValues
             width:container.width/4; height: width
             icon: "../images/icons/leftArrow.svg"
-            text: container.portNegotiatedContractVoltage.toFixed(0) +" V," + container.portNegotiatedContractAmperage.toFixed(1)+" A," +
+            text: container.portNegotiatedContractVoltage.toFixed(0) +" V (" +
                  container.portNegotiatedContractVoltage.toFixed(0) * container.portNegotiatedContractAmperage.toFixed(1)+" W"
+                +")"
             fontSize: mediumFontSize
+            toolTipText: "Negotiated Contract"
 
             MouseArea {
                 anchors { fill: parent }
                 onClicked: { outputVoltageAndCurrentGraph.open() }
             }
+
         }
 
         SGIconListItem {
             id:  maximumPowerValue
             width: container.width/4; height: width
             icon: "../images/icons/maxPowerIcon.svg"
-            text: container.portMaximumPower.toFixed(1) + " W"
+            text: container.portMaximumPower.toFixed(0) + " W"
             fontSize: mediumFontSize
+            toolTipText: "Maximum Power"
 
         }
 
@@ -124,6 +129,7 @@ Rectangle {
             icon: "../images/icons/rightArrow.svg"
             text: container.outputVoltage.toFixed(1) + " V"
             fontSize: mediumFontSize
+            toolTipText: "Voltage"
 
             MouseArea {
                 anchors { fill: parent }
@@ -137,6 +143,7 @@ Rectangle {
             icon: "../images/icons/voltageIcon.svg"
             text: container.portPower.toFixed(1)+" W"
             fontSize: mediumFontSize
+            toolTipText: "Power"
 
             MouseArea {
                 anchors { fill: parent }
@@ -150,6 +157,7 @@ Rectangle {
             icon: "../images/icons/temperatureIcon.svg"
             text: container.portTemperature.toFixed(0) +" °C"
             fontSize: mediumFontSize
+            toolTipText: "Temperature"
 
             MouseArea {
                 anchors { fill: parent }
@@ -171,7 +179,7 @@ Rectangle {
         bottomMargin:30
         axisXLabel: "Time (S)"
         axisYLabel: "Voltage (V)"
-        chartType: "Target Voltage"
+        chartType: "Port Voltage"
         portNumber: container.portNumber
         efficencyLabel: false
         powerMessageVisible: false;
