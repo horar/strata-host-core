@@ -134,7 +134,6 @@ Rectangle{
                     "P2.2018.1.1.0.0.c9060ff8-5c5e-4295-b95a-d857ee9a3671" : "bubu",
                     "motorvortex1" : "motor-vortex"
                 }
-                var example = {list: [{ verbose: "Motor Vortex", uuid: "P2.2017.1.1.0.0.cbde0519-0f42-4431-a379-caee4a1494af", connection: "connected"}]}
 
                 var platform_list_json = coreInterface.platform_list_
 
@@ -157,6 +156,9 @@ Rectangle{
                         }
                         else if (platform_list.list[i].connection === "view"){
                             platform_info.text += " (View-only)"
+                        }
+                        else{
+                            platform_info.text += " (Connected)"
                         }
 
                         // Add to the model
