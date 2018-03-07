@@ -340,7 +340,7 @@ Rectangle {
                         horizontalCenter: popupContainer.horizontalCenter
 
                     }
-                    text: user_id
+                    text: getUserName(user_id) + "@onsemi.com"
                     anchors.horizontalCenterOffset: 1
                     //anchors.topMargin: 18
                     font.pointSize: 15
