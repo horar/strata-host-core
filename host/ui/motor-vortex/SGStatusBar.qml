@@ -11,6 +11,7 @@ Rectangle {
     // Context properties that get passed when created dynamically
     property string user_id: ""
     property bool is_logged_in: false
+    property string generalTitle: "Guest"
     //property color backgroundColor: "#0c54e5"
     property color backgroundColor: "#C0C0C0"
 
@@ -25,17 +26,27 @@ Rectangle {
 
     property var userImages: {
         "dave.priscak@onsemi.com" : "dave_priscak.png",
-        "david.somo@onsemi.com" : "david_somo.png",
-        "daryl.ostrander@onsemi.com" : "daryl_ostrander.png",
-        "paul.mascarenas@onsemi.com" : "paul_mascarenas.png",
-        "blankavatar" : "blank_avatar.png"
+                "david.somo@onsemi.com" : "david_somo.png",
+                "daryl.ostrander@onsemi.com" : "daryl_ostrander.png",
+                "paul.mascarenas@onsemi.com" : "paul_mascarenas.png",
+                "ian.cain@onsemi.com" : "ian.cain.jpg",
+                "blankavatar" : "blank_avatar.png"
     }
 
     property var userNames: {
         "dave.priscak@onsemi.com" : "Dave Priscak",
-        "david.somo@onsemi.com"   : "David Somo",
-        "daryl.ostrander@onsemi.com" : "Daryl Ostrander",
-        "paul.mascarenas@onsemi.com" : "Paul Mascarenas",
+                "david.somo@onsemi.com"   : "David Somo",
+                "daryl.ostrander@onsemi.com" : "Daryl Ostrander",
+                "paul.mascarenas@onsemi.com" : "Paul Mascarenas",
+                "ian.cain@onsemi.com" : "Ian Cain"
+    }
+
+    property var userJobtitle: {
+        "dave.priscak@onsemi.com" : "VP Solutions Engineering",
+                "david.somo@onsemi.com"   : "Vice President, Corporate Strategy and Marketing",
+                "daryl.ostrander@onsemi.com" : "Director ON Semiconductor",
+                "paul.mascarenas@onsemi.com" : "Director ON Semiconductor",
+                "ian.cain@onsemi.com" : "Corporate Tech Ladder-Apps Mgmt (TL)"
     }
 
     function getUserImage(user_name){
@@ -48,6 +59,7 @@ Rectangle {
         }
     }
 
+
     function getUserName(user_name){
         var user_lower = user_name.toLowerCase()
         if(userNames.hasOwnProperty(user_lower)){
@@ -56,6 +68,17 @@ Rectangle {
         else{
             return user_name
         }
+    }
+
+    function getJobTitle(user_name){
+        var user_lower = user_name.toLowerCase()
+        if(userJobtitle.hasOwnProperty(user_lower)){
+            return userJobtitle[user_lower]
+        }
+        else{
+            return generalTitle;
+        }
+
     }
 
     function generateToken(n) {
@@ -254,6 +277,99 @@ Rectangle {
 
         }
 
+        Popup {
+            id: profilePopup
+            width: 500
+            height: 500
+            modal: true
+            focus: true
+            x: 200; y: 200
+            Rectangle {
+                id: popupContainer
+                anchors.fill: parent
+                width: profilePopup.width;height: profilePopup.height
+                color: "lightgray"
+
+                Rectangle {
+                    id: title
+                    height: 30
+                    width: popupContainer.width
+                    anchors.top: popupContainer.top
+                    color: "gray"
+
+                    Label {
+                        id: profileTitle
+                        anchors {
+                            left: title.left
+                            leftMargin: 10
+                        }
+                        text: "My Profile"
+                        font.pointSize: 10
+                        font.bold: true
+                    }
+                }
+
+                Image {
+                    id: profile_image
+                    anchors { horizontalCenter: popupContainer.horizontalCenter
+                        top: popupContainer.top
+                        topMargin: 60
+                    }
+                    width: 100; height: 100
+                    fillMode: Image.PreserveAspectFit
+                    source: "qrc:/images/" + getUserImage(user_id)
+                }
+                Label {
+                    id:profile_userId
+                    text: getUserName(user_id)
+                    anchors {
+                        top: profile_image.bottom
+                        topMargin: 5
+                        horizontalCenter: popupContainer.horizontalCenter
+
+                    }
+                    font.pointSize: 15
+                    font.bold: true
+                    color: "black"
+                }
+
+                Label {
+                    id: profile_username
+                    anchors {
+                        top: profile_userId.bottom
+                        horizontalCenter: popupContainer.horizontalCenter
+
+                    }
+                    text: user_id
+                    anchors.horizontalCenterOffset: 1
+                    //anchors.topMargin: 18
+                    font.pointSize: 15
+                    font.bold: true
+                    color: "black"
+                }
+
+                Label {
+                    id: email
+                    text : getJobTitle(user_id)
+                    anchors.top: profile_username.bottom
+                    anchors.topMargin: 5
+                    anchors.horizontalCenter:  popupContainer.horizontalCenter
+                }
+
+                Label {
+                    id: cusomerSupport
+                    text: "Customer Support: 1800-onsemi-support"
+                    anchors.top: email.bottom
+                    anchors.topMargin: 5
+                    anchors.horizontalCenter:  popupContainer.horizontalCenter
+
+
+                }
+
+            }
+            closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
+        }
+
         Menu {
             id: settingsMenu
             title: "setting"
@@ -283,6 +399,7 @@ Rectangle {
 
             MenuItem {
                 text: qsTr("My Profile")
+                onClicked: profilePopup.open();
             }
 
         }

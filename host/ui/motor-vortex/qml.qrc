@@ -93,5 +93,6 @@
         <file>images/icons/SettingIcon.svg</file>
         <file>images/icons/whiteAlertIcon.svg</file>
         <file>SGSpotlightText.qml</file>
+        <file>images/ian.cain.jpg</file>
     </qresource>
 </RCC>
