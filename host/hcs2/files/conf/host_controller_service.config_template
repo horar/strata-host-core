@@ -8,8 +8,8 @@
 		"subscriber_address": "tcp://*:5563",  // client subscribe address
 		"remote_address": "tcp://70.89.191.58:5556",	  // remote address to connect to cobra
         	"simulated_platform":false,            // simulate platform hw
-			"hcs_remote_id":"h2",			//  dealer socket id for remote connection
-		"serial_port_number": ["/dev/tty.usbserial-DM008R9X", "/dev/tty.usbmodem14153"] // linux/mac: /dev/ttyXYZ, windows: COM7, COM6
+			"hcs_remote_id":"h3",			//  dealer socket id for remote connection
+		"serial_port_number": ["/dev/tty.usbserial-DB00VFH8", "/dev/tty.usbmodem14123","/dev/tty.usbserial-DB00VFIU"] // linux/mac: /dev/ttyXYZ, windows: COM7, COM6
 
 	},
 
