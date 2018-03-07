@@ -848,9 +848,10 @@ void ImplementationInterfaceBinding::handleNegotiatedContractNotification(const 
 void ImplementationInterfaceBinding::handleMaximumPortPowerNotification(const QVariantMap payloadMap){
 
     int port_number = payloadMap["port"].toInt();
-    int watts = payloadMap["watts"].toInt();
+    int currentWatts = payloadMap["current_max_power"].toInt(); //max power including input and temp limiting
+    int watts = payloadMap["default_max_power"].toInt();        //max power without any adjustment for limiting
 
-    qDebug() << "new max port power notification received: "<<port_number<<" "<<watts;
+    //qDebug() << "new max port power notification received: "<<port_number<<" "<<watts;
 
     emit portMaximumPowerChanged(port_number, watts);
 }
