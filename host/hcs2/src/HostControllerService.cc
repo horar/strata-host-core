@@ -98,26 +98,27 @@ HcsError HostControllerService::init()
     //     return EVENT_BASE_FAILURE;
   	// }
     // open the serial port connected to platform
-    if(openPlatform()) {
-        PDEBUG("\033[1;32mPlatform detected\033[0m\n");
-        initializePlatform(); // init serial config
-        PDEBUG("platform handle value is %d",serial_fd_);
-        port_disconnected_ = false;
-    } else {
-        PDEBUG(RED_TEXT_START "WARNING: no connected platforms" RED_TEXT_END"\n");
-        port_disconnected_ = true;
-    }
-
-    // get the platform list from the discovery service
-    // [TODO] [Prasanth] : Should be added dynamically
-    // remote_platforms remote_platform_list = discovery_service_.getPlatforms();
-    addToLocalPlatformList(discovery_service_.getPlatforms());
-
-    // std::thread serial_monitor_thread(&HostControllerService::serialPortMonitor,this,NULL);
-    // PDEBUG("remote platform values %s %s",remote_platform_list[0].platform_uuid.c_str(),remote_platform_list[0].platform_verbose.c_str());
-    // serial_monitor_thread.join();
-    serial_monitor_thread = new std::thread(&HostControllerService::serialPortMonitor,this);
-    lib_event_thread = new std::thread(&HostControllerService::run,this);
+    // if(openPlatform()) {
+    //     PDEBUG("\033[1;32mPlatform detected\033[0m\n");
+    //     initializePlatform(); // init serial config
+    //     PDEBUG("platform handle value is %d",serial_fd_);
+    //     port_disconnected_ = false;
+    // } else {
+    //     PDEBUG(RED_TEXT_START "WARNING: no connected platforms" RED_TEXT_END"\n");
+    //     port_disconnected_ = true;
+    // }
+    //
+    // // get the platform list from the discovery service
+    // // [TODO] [Prasanth] : Should be added dynamically
+    // // remote_platforms remote_platform_list = discovery_service_.getPlatforms();
+    // addToLocalPlatformList(discovery_service_.getPlatforms());
+    //
+    // // std::thread serial_monitor_thread(&HostControllerService::serialPortMonitor,this,NULL);
+    // // PDEBUG("remote platform values %s %s",remote_platform_list[0].platform_uuid.c_str(),remote_platform_list[0].platform_verbose.c_str());
+    // // serial_monitor_thread.join();
+    // serial_monitor_thread = new std::thread(&HostControllerService::serialPortMonitor,this);
+    // lib_event_thread = new std::thread(&HostControllerService::run,this);
+    while(run());
     return NO_ERROR;
 }
 
@@ -135,6 +136,21 @@ HcsError HostControllerService::init()
 //
 HcsError HostControllerService::run()
 {
+
+    while(!openPlatform()) {
+        sleep(2);
+    }
+    PDEBUG("\033[1;32mPlatform detected\033[0m\n");
+    initializePlatform(); // init serial config
+    PDEBUG("platform handle value is %d",serial_fd_);
+    port_disconnected_ = false;
+
+
+    // get the platform list from the discovery service
+    // [TODO] [Prasanth] : Should be added dynamically
+    // remote_platforms remote_platform_list = discovery_service_.getPlatforms();
+    addToLocalPlatformList(discovery_service_.getPlatforms());
+    sendtoMap() ; // function that sends to dealer id in maps
     // creating a periodic event for test case
     event_loop_base_ = event_base_new();
     if (!event_loop_base_) {
@@ -180,6 +196,7 @@ HcsError HostControllerService::run()
 
     // dispatch all the events
     event_base_dispatch(event_loop_base_);
+    return EVENT_BASE_FAILURE;
 }
 
 /******************************************************************************/
@@ -731,6 +748,7 @@ std::string HostControllerService::platformRead()
                 multimap_iterator_++;
             }
             event_del(platform_handler);
+            event_base_loopbreak(event_loop_base_);
             break;
         }
         if(temp !='\n' && temp!=NULL) {
@@ -956,52 +974,79 @@ void HostControllerService::remoteRouting(std::string message)
 
 void HostControllerService::serialPortMonitor()
 {
-    while(1){
-        PDEBUG("Inside thread\n");
-        sleep(1);
-        if(port_disconnected_) {
-            if(openPlatform()) {
-                // event_add(platform_handler,NULL);
-                event_base_loopbreak(event_loop_base_);
-
-                initializePlatform();
-                platform_details simulated_usb_pd,simulated_motor_vortex;
-                simulated_usb_pd.platform_uuid = "simulation_1";
-                simulated_usb_pd.platform_verbose = "simulated-usb-pd";
-                simulated_usb_pd.connection_status = "view";
-
-                simulated_motor_vortex.platform_uuid = "simulation_2";
-                simulated_motor_vortex.platform_verbose = "simulated-motor-vortex";
-                simulated_motor_vortex.connection_status = "view";
-
-                platform_uuid_.push_back(simulated_usb_pd);  // for testing alone
-                platform_uuid_.push_back(simulated_motor_vortex);  // for testing alone
-
-                std::string platformList = getPlatformListJson();
-                multimap_iterator_ = platform_client_mapping_.begin();
-                // std::string disconnect_message = "{\"notification\":{\"value\":\"platform_connection_change_notification\",\"payload\":{\"status\":\"disconnected\"}}}";
-                while(multimap_iterator_ != platform_client_mapping_.end()) {
-                    std::string dealer_id = multimap_iterator_->second;
-                    s_sendmore(*server_socket_,dealer_id);
-                    s_send(*server_socket_,platformList);
-                    PDEBUG("[hcs to hcc]%s",platformList.c_str());
-                    multimap_iterator_++;
-                }
-
-                // iter through map and send the list to all
-
-                // run();
-                lib_event_thread = new std::thread(&HostControllerService::run,this);
-
-            }
-        }
-        //         std::string disconnect_message = "{\"notification\":{\"value\":\"platform_connection_change_notification\",\"payload\":{\"status\":\"disconnected\"}}}";
-        //         s_sendmore(*server_socket_,g_dealer_id_);
-        //         s_send(*server_socket_,disconnect_message);
-        //     }
-        // }
-
-    }
+    // while(1){
+    //     PDEBUG("Inside thread\n");
+    //     sleep(1);
+    //     if(port_disconnected_) {
+    //         if(openPlatform()) {
+    //             // event_add(platform_handler,NULL);
+    //             event_base_loopbreak(event_loop_base_);
+    //
+    //             initializePlatform();
+    //             platform_details simulated_usb_pd,simulated_motor_vortex;
+    //             simulated_usb_pd.platform_uuid = "simulation_1";
+    //             simulated_usb_pd.platform_verbose = "simulated-usb-pd";
+    //             simulated_usb_pd.connection_status = "view";
+    //
+    //             simulated_motor_vortex.platform_uuid = "simulation_2";
+    //             simulated_motor_vortex.platform_verbose = "simulated-motor-vortex";
+    //             simulated_motor_vortex.connection_status = "view";
+    //
+    //             platform_uuid_.push_back(simulated_usb_pd);  // for testing alone
+    //             platform_uuid_.push_back(simulated_motor_vortex);  // for testing alone
+    //
+    //             std::string platformList = getPlatformListJson();
+    //             multimap_iterator_ = platform_client_mapping_.begin();
+    //             // std::string disconnect_message = "{\"notification\":{\"value\":\"platform_connection_change_notification\",\"payload\":{\"status\":\"disconnected\"}}}";
+    //             while(multimap_iterator_ != platform_client_mapping_.end()) {
+    //                 std::string dealer_id = multimap_iterator_->second;
+    //                 s_sendmore(*server_socket_,dealer_id);
+    //                 s_send(*server_socket_,platformList);
+    //                 PDEBUG("[hcs to hcc]%s",platformList.c_str());
+    //                 multimap_iterator_++;
+    //             }
+    //
+    //             // iter through map and send the list to all
+    //
+    //             // run();
+    //             lib_event_thread = new std::thread(&HostControllerService::run,this);
+    //
+    //         }
+    //     }
+    //     //         std::string disconnect_message = "{\"notification\":{\"value\":\"platform_connection_change_notification\",\"payload\":{\"status\":\"disconnected\"}}}";
+    //     //         s_sendmore(*server_socket_,g_dealer_id_);
+    //     //         s_send(*server_socket_,disconnect_message);
+    //     //     }
+    //     // }
+    //
+    // }
 }
 
+void HostControllerService::sendtoMap()
+{
+    if(!platform_client_mapping_.empty()) {
+        platform_details simulated_usb_pd,simulated_motor_vortex;
+                    simulated_usb_pd.platform_uuid = "simulation_1";
+                    simulated_usb_pd.platform_verbose = "simulated-usb-pd";
+                    simulated_usb_pd.connection_status = "view";
+
+                    simulated_motor_vortex.platform_uuid = "simulation_2";
+                    simulated_motor_vortex.platform_verbose = "simulated-motor-vortex";
+                    simulated_motor_vortex.connection_status = "view";
+
+                    platform_uuid_.push_back(simulated_usb_pd);  // for testing alone
+                    platform_uuid_.push_back(simulated_motor_vortex);  // for testing alone
+
+                    std::string platformList = getPlatformListJson();
+                    multimap_iterator_ = platform_client_mapping_.begin();
+                    // std::string disconnect_message = "{\"notification\":{\"value\":\"platform_connection_change_notification\",\"payload\":{\"status\":\"disconnected\"}}}";
+                    while(multimap_iterator_ != platform_client_mapping_.end()) {
+                        std::string dealer_id = multimap_iterator_->second;
+                        s_sendmore(*server_socket_,dealer_id);
+                        s_send(*server_socket_,platformList);
+                        PDEBUG("[hcs to hcc]%s",platformList.c_str());
+                        multimap_iterator_++;
+                    }
+    }
+}
 // void HostControllerService::serialPortMonitor()

@@ -123,6 +123,8 @@ public:
     // thread to monitor the serial port
     void serialPortMonitor();
     void sendDisconnecttoUI();
+
+    void sendtoMap();
 private:
     // config file data members
     ParseConfig *configuration_;
