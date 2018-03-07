@@ -79,29 +79,52 @@ Rectangle {
 
 
         Rectangle {
-            anchors { fill: parent }
-            color: "grey"
-
-            Label {
-                id: tokenLabel
-
-                height: parent.height
-                text: "Enter token"
-                font.pointSize: 15
-                font.bold: true
-                color: "dark blue"
+            anchors {
+                fill: parent
             }
-
-            TextField {
-                id: tokenField
-                width: 184; height: 38
-                focus: true
-                placeholderText: qsTr("TOKEN")
-                cursorPosition: 1
-                font.pointSize: Qt.platform.os == "osx"? 13 :8
-                Keys.onReturnPressed:{
-                    console.log("TOKEN: ", text);
+            color: "grey"
+            Column{
+                anchors.fill: parent
+                anchors.centerIn: parent
+                Label {
+                    id: tokenLabel
+                    height: 30
+                    text: "Enter token"
+                    font.pointSize: 15
+                    font.bold: true
+                    color: "dark blue"
+                    anchors.horizontalCenter: parent.horizontalCenter
                 }
+                Rectangle{
+                    width: 300
+                    height: 50
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    color: "grey"
+
+                    TextField {
+                        id: tokenField
+                        width: 184; height: 38
+                        focus: true
+                        placeholderText: qsTr("TOKEN")
+                        cursorPosition: 1
+                        font.pointSize: Qt.platform.os == "osx"? 13 :8
+                        Keys.onReturnPressed:{
+                            console.log("TOKEN: ", text);
+                        }
+                        anchors.horizontalCenter: parent.horizontalCenter
+                    }
+                    Button{
+                        text: "Submit"
+                        width: 80; height: 38
+                        anchors{
+                            left:tokenField.right
+                        }
+
+                    }
+                }
+
+
+
             }
         }
     }
@@ -118,12 +141,52 @@ Rectangle {
             anchors {fill: parent }
 
             Label {
-                anchors {centerIn: parent}
+                id:displayTokenLabel
+                anchors {
+                    horizontalCenter: parent.horizontalCenter
+                    margins: 30
+                }
                 text: "TOKEN: " + generateToken(7);
                 font.pointSize: 15
                 font.bold: true
                 color: "dark blue"
             }
+            Label {
+                id:supportPhoneNumber
+                anchors {
+                    top:displayTokenLabel.bottom
+                    horizontalCenter: parent.horizontalCenter
+                    margins: 30
+                }
+                text: "Call: 1800-onsemi-support"
+                font.pointSize: 15
+                font.bold: true
+                color: "black"
+            }
+            Rectangle{
+                height: 100
+                width: 100
+
+                anchors{
+                    top:supportPhoneNumber.bottom
+                    margins: 10
+                    horizontalCenter: parent.horizontalCenter
+                }
+                Image {
+                    id: phoneIcon
+                    anchors.centerIn: parent
+                    sourceSize.width: 100; sourceSize.height: 100
+                    height: parent.height
+                    fillMode: Image.PreserveAspectFit
+                    source: "qrc:/images/phone-icon.png"
+                }
+
+            }
+
+
+        }
+        onAboutToShow: function(){
+            displayTokenLabel.text = "TOKEN: " + generateToken(7);
         }
     }
 
