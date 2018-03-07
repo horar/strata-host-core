@@ -718,6 +718,7 @@ std::string HostControllerService::platformRead()
                 std::string dealer_id = multimap_iterator_->second;
                 s_sendmore(*server_socket_,dealer_id);
                 s_send(*server_socket_,platformList);
+                PDEBUG("[hcs to hcc]%s",platformList.c_str());
                 multimap_iterator_++;
             }
             break;
@@ -974,6 +975,7 @@ void HostControllerService::serialPortMonitor()
                     std::string dealer_id = multimap_iterator_->second;
                     s_sendmore(*server_socket_,dealer_id);
                     s_send(*server_socket_,platformList);
+                    PDEBUG("[hcs to hcc]%s",platformList.c_str());
                     multimap_iterator_++;
                 }
 
