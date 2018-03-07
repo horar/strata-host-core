@@ -1,6 +1,9 @@
 import QtQuick 2.0
 import QtQuick.Controls 2.2
 import QtQuick.Layouts 1.3
+import "."  //Import directory
+import "qrc:/js/navigation_control.js" as NavigationControl
+
 Rectangle {
 
     id: content
@@ -86,8 +89,20 @@ Rectangle {
         }
     }
 
+    Image {
+        id: flipButton
+        source:"./images/icons/backIcon.svg"
+        anchors { bottom: parent.bottom; right: parent.right }
+        height: 40;width:40
+    }
 
-
-
+    MouseArea {
+        width: flipButton.width; height: flipButton.height
+        anchors { bottom: parent.bottom; right: parent.right }
+        visible: true
+        onClicked: {
+            NavigationControl.updateState(NavigationControl.events.TOGGLE_CONTROL_CONTENT)
+        }
+    }
 
 }
