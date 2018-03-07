@@ -99,6 +99,7 @@ Rectangle {
                 anchors.right: parent.right
                 anchors.bottom: parent.bottom
                 active:pressed
+                //interactive: false
                 contentItem: Rectangle{
                     //width:40
                     implicitWidth: 1
@@ -204,8 +205,8 @@ Rectangle {
 
                     AdvancedGraph{
                         id:port1VoltageAndCurrentGraph
-                        title: "PORT 1: VOLTAGE AND CURRENT"
-                        chartType: "Target Voltage"
+                        title: "PORT 1 VOLTAGE"
+                        chartType: "Port Voltage"
                         maxYValue: 25
                         portNumber:1
                         anchors.top:parent.top
@@ -233,8 +234,8 @@ Rectangle {
 
                     AdvancedGraph{
                         id:port2VoltageAndCurrentGraph
-                        title: "PORT 2: VOLTAGE AND CURRENT"
-                        chartType: "Target Voltage"
+                        title: "PORT 2 VOLTAGE"
+                        chartType: "Port Voltage"
                         portNumber:2
                         maxYValue: 25
                         anchors.top:parent.top
