@@ -29,7 +29,14 @@ Window {
 
         Flipable {
              id: flipable
-             Layout.preferredHeight: 0.85 * parent.height
+             Layout.preferredHeight: {
+                 if (commandBar.visible){
+                     return .85 * parent.height
+                 }
+                 else {
+                     return .95 * parent.height
+                 }
+            }
              Layout.preferredWidth: parent.width
              anchors.top: statusBarContainer.bottom
 
@@ -67,6 +74,7 @@ Window {
          Rectangle {
 
              id: commandBar
+             visible: false
              width: parent.width
              Layout.alignment: Qt.AlignBottom
              Layout.preferredHeight: .10 * parent.height
