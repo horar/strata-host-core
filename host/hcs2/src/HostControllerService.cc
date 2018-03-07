@@ -80,7 +80,7 @@ HcsError HostControllerService::init()
 
     // place for serial/platform handling
     // [TODO] [prasanth] strictly for testing alone
-    platform_details simulated_usb_pd,simulated_motor_vortex;
+    platform_details simulated_usb_pd,simulated_motor_vortex,sim_usb;
     simulated_usb_pd.platform_uuid = "P2.2018.1.1.0.0.c9060ff8-5c5e-4295-b95a-d857ee9a3671";
     simulated_usb_pd.platform_verbose = "USB PD Load Board";
     simulated_usb_pd.connection_status = "view";
@@ -89,8 +89,13 @@ HcsError HostControllerService::init()
     simulated_motor_vortex.platform_verbose = "Vortex Fountain Motor Platform Board";
     simulated_motor_vortex.connection_status = "view";
 
+    sim_usb.platform_uuid = "P2.2017.1.1.0.0.cbde0519-0f42-4431-a379-caee4a1494af";
+    sim_usb.platform_verbose = "USB PD";
+    sim_usb.connection_status = "view";
+
     platform_uuid_.push_back(simulated_usb_pd);  // for testing alone
-    platform_uuid_.push_back(simulated_motor_vortex);  // for testing alone
+    platform_uuid_.push_back(simulated_motor_vortex);
+    platform_uuid_.push_back(sim_usb);  // for testing alone
     // initialize the event base
     // event_loop_base_ = event_base_new();
     // if (!event_loop_base_) {
@@ -725,7 +730,7 @@ std::string HostControllerService::platformRead()
             sendDisconnecttoUI();
             platform_uuid_.clear();
 
-            platform_details simulated_usb_pd,simulated_motor_vortex;
+            platform_details simulated_usb_pd,simulated_motor_vortex,sim_usb;
             simulated_usb_pd.platform_uuid = "P2.2018.1.1.0.0.c9060ff8-5c5e-4295-b95a-d857ee9a3671";
             simulated_usb_pd.platform_verbose = "USB PD Load Board";
             simulated_usb_pd.connection_status = "view";
@@ -734,8 +739,13 @@ std::string HostControllerService::platformRead()
             simulated_motor_vortex.platform_verbose = "Vortex Fountain Motor Platform Board";
             simulated_motor_vortex.connection_status = "view";
 
+            sim_usb.platform_uuid = "P2.2017.1.1.0.0.cbde0519-0f42-4431-a379-caee4a1494af";
+            sim_usb.platform_verbose = "USB PD";
+            sim_usb.connection_status = "view";
+
             platform_uuid_.push_back(simulated_usb_pd);  // for testing alone
             platform_uuid_.push_back(simulated_motor_vortex);
+            platform_uuid_.push_back(sim_usb);
 
             std::string platformList = getPlatformListJson();
             multimap_iterator_ = platform_client_mapping_.begin();
@@ -1025,17 +1035,22 @@ void HostControllerService::serialPortMonitor()
 void HostControllerService::sendtoMap()
 {
     if(!platform_client_mapping_.empty()) {
-        platform_details simulated_usb_pd,simulated_motor_vortex;
-        simulated_usb_pd.platform_uuid = "P2.2018.1.1.0.0.c9060ff8-5c5e-4295-b95a-d857ee9a3671";
-        simulated_usb_pd.platform_verbose = "USB PD Load Board";
-        simulated_usb_pd.connection_status = "view";
+      platform_details simulated_usb_pd,simulated_motor_vortex,sim_usb;
+      simulated_usb_pd.platform_uuid = "P2.2018.1.1.0.0.c9060ff8-5c5e-4295-b95a-d857ee9a3671";
+      simulated_usb_pd.platform_verbose = "USB PD Load Board";
+      simulated_usb_pd.connection_status = "view";
 
-        simulated_motor_vortex.platform_uuid = "motorvortex1";
-        simulated_motor_vortex.platform_verbose = "Vortex Fountain Motor Platform Board";
-        simulated_motor_vortex.connection_status = "view";
+      simulated_motor_vortex.platform_uuid = "motorvortex1";
+      simulated_motor_vortex.platform_verbose = "Vortex Fountain Motor Platform Board";
+      simulated_motor_vortex.connection_status = "view";
 
-        platform_uuid_.push_back(simulated_usb_pd);  // for testing alone
-        platform_uuid_.push_back(simulated_motor_vortex);
+      sim_usb.platform_uuid = "P2.2017.1.1.0.0.cbde0519-0f42-4431-a379-caee4a1494af";
+      sim_usb.platform_verbose = "USB PD";
+      sim_usb.connection_status = "view";
+
+      platform_uuid_.push_back(simulated_usb_pd);  // for testing alone
+      platform_uuid_.push_back(simulated_motor_vortex);
+      platform_uuid_.push_back(sim_usb);
 
                     platform_uuid_.push_back(simulated_usb_pd);  // for testing alone
                     platform_uuid_.push_back(simulated_motor_vortex);  // for testing alone
