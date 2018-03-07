@@ -203,6 +203,8 @@ Rectangle{
                 }
                 else if(connection === "connected"){
                     NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT,data)
+                    coreInterface.sendSelectedPlatform(model.get(cbSelector.currentIndex).verbose,model.get(cbSelector.currentIndex).connection)
+                    platformInterfaceMotorVortex.sendSelectedPlatform(model.get(cbSelector.currentIndex).verbose,model.get(cbSelector.currentIndex).connection)
                 }
                 else if( connection === "remote"){
                     NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT,data)
