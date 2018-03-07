@@ -82,7 +82,7 @@ Rectangle {
             anchors {
                 fill: parent
             }
-            color: "grey"
+
             Column{
                 anchors.fill: parent
                 anchors.centerIn: parent
@@ -99,7 +99,6 @@ Rectangle {
                     width: 300
                     height: 50
                     anchors.horizontalCenter: parent.horizontalCenter
-                    color: "grey"
 
                     TextField {
                         id: tokenField
