@@ -74,7 +74,7 @@ Window {
          Rectangle {
 
              id: commandBar
-             visible: true
+             visible: false
              width: parent.width
              Layout.alignment: Qt.AlignBottom
              Layout.preferredHeight: .10 * parent.height
