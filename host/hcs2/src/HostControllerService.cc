@@ -81,12 +81,12 @@ HcsError HostControllerService::init()
     // place for serial/platform handling
     // [TODO] [prasanth] strictly for testing alone
     platform_details simulated_usb_pd,simulated_motor_vortex;
-    simulated_usb_pd.platform_uuid = "simulation_1";
-    simulated_usb_pd.platform_verbose = "simulated-usb-pd";
+    simulated_usb_pd.platform_uuid = "P2.2018.1.1.0.0.c9060ff8-5c5e-4295-b95a-d857ee9a3671";
+    simulated_usb_pd.platform_verbose = "USB PD Load Board";
     simulated_usb_pd.connection_status = "view";
 
-    simulated_motor_vortex.platform_uuid = "simulation_2";
-    simulated_motor_vortex.platform_verbose = "simulated-motor-vortex";
+    simulated_motor_vortex.platform_uuid = "motorvortex1";
+    simulated_motor_vortex.platform_verbose = "Vortex Fountain Motor Platform Board";
     simulated_motor_vortex.connection_status = "view";
 
     platform_uuid_.push_back(simulated_usb_pd);  // for testing alone
@@ -726,16 +726,16 @@ std::string HostControllerService::platformRead()
             platform_uuid_.clear();
 
             platform_details simulated_usb_pd,simulated_motor_vortex;
-            simulated_usb_pd.platform_uuid = "simulation_1";
-            simulated_usb_pd.platform_verbose = "simulated-usb-pd";
+            simulated_usb_pd.platform_uuid = "P2.2018.1.1.0.0.c9060ff8-5c5e-4295-b95a-d857ee9a3671";
+            simulated_usb_pd.platform_verbose = "USB PD Load Board";
             simulated_usb_pd.connection_status = "view";
 
-            simulated_motor_vortex.platform_uuid = "simulation_2";
-            simulated_motor_vortex.platform_verbose = "simulated-motor-vortex";
+            simulated_motor_vortex.platform_uuid = "motorvortex1";
+            simulated_motor_vortex.platform_verbose = "Vortex Fountain Motor Platform Board";
             simulated_motor_vortex.connection_status = "view";
 
             platform_uuid_.push_back(simulated_usb_pd);  // for testing alone
-            platform_uuid_.push_back(simulated_motor_vortex);  // for testing alone
+            platform_uuid_.push_back(simulated_motor_vortex);
 
             std::string platformList = getPlatformListJson();
             multimap_iterator_ = platform_client_mapping_.begin();
@@ -1026,13 +1026,16 @@ void HostControllerService::sendtoMap()
 {
     if(!platform_client_mapping_.empty()) {
         platform_details simulated_usb_pd,simulated_motor_vortex;
-                    simulated_usb_pd.platform_uuid = "simulation_1";
-                    simulated_usb_pd.platform_verbose = "simulated-usb-pd";
-                    simulated_usb_pd.connection_status = "view";
+        simulated_usb_pd.platform_uuid = "P2.2018.1.1.0.0.c9060ff8-5c5e-4295-b95a-d857ee9a3671";
+        simulated_usb_pd.platform_verbose = "USB PD Load Board";
+        simulated_usb_pd.connection_status = "view";
 
-                    simulated_motor_vortex.platform_uuid = "simulation_2";
-                    simulated_motor_vortex.platform_verbose = "simulated-motor-vortex";
-                    simulated_motor_vortex.connection_status = "view";
+        simulated_motor_vortex.platform_uuid = "motorvortex1";
+        simulated_motor_vortex.platform_verbose = "Vortex Fountain Motor Platform Board";
+        simulated_motor_vortex.connection_status = "view";
+
+        platform_uuid_.push_back(simulated_usb_pd);  // for testing alone
+        platform_uuid_.push_back(simulated_motor_vortex);
 
                     platform_uuid_.push_back(simulated_usb_pd);  // for testing alone
                     platform_uuid_.push_back(simulated_motor_vortex);  // for testing alone
