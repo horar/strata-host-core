@@ -89,13 +89,17 @@ Rectangle {
         }
     }
 
-    Image {
-        id: flipButton
-        source:"./images/icons/backIcon.svg"
-        anchors { bottom: parent.bottom; right: parent.right }
+    Rectangle{
         height: 40;width:40
+        anchors { bottom: content.bottom; right: content.right }
+        color: "white";
+        Image {
+            id: flipButton
+            source:"qrc:/views/motor-vortex/images/icons/backIcon.svg"
+            anchors { fill: parent }
+            height: 40;width:40
+        }
     }
-
     MouseArea {
         width: flipButton.width; height: flipButton.height
         anchors { bottom: parent.bottom; right: parent.right }
