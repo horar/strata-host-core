@@ -37,9 +37,9 @@ Rectangle{
     }
 
     function getUserName(user_name){
-        user_name = user_name.toLowerCase()
-        if(userNames.hasOwnProperty(user_name)){
-            return userNames[user_name]
+        var user_lower = user_name.toLowerCase()
+        if(userNames.hasOwnProperty(user_lower)){
+            return userNames[user_lower]
         }
         else{
             return user_name
@@ -94,7 +94,7 @@ Rectangle{
             //height: 40
             font.pixelSize: 36
             color: "white"
-            text: "Welcome " + userNames[user_id] + "!"
+            text: "Welcome " + getUserName(user_id) + "!"
             anchors.centerIn: messageContainer
         }
     }

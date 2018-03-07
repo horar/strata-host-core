@@ -48,6 +48,15 @@ Rectangle {
         }
     }
 
+    function getUserName(user_name){
+        var user_lower = user_name.toLowerCase()
+        if(userNames.hasOwnProperty(user_lower)){
+            return userNames[user_lower]
+        }
+        else{
+            return user_name
+        }
+    }
     color: backgroundColor
 
     Image {
@@ -73,7 +82,7 @@ Rectangle {
         }
 
         height: parent.height
-        text:  userNames[user_id]
+        text:  getUserName(user_id)
         font.pointSize: 15
         font.bold: true
         color: "white"
