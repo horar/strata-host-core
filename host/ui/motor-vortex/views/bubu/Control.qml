@@ -5,6 +5,7 @@ import QtQuick.Controls.Styles 1.4
 import QtQuick.Layouts 1.3
 import QtQuick.Controls.Material 2.0
 import "boardBringUp"
+import "qrc:/js/navigation_control.js" as NavigationControl
 
 
 Rectangle {
@@ -110,6 +111,26 @@ Rectangle {
             id:pwmView
             anchors.fill:parent
             opacity:0
+        }
+    }
+
+    Rectangle{
+        height: 40;width:40
+        anchors { bottom: boardBringUP.bottom; right: boardBringUP.right }
+        color: "white";
+        Image {
+            id: flipButton
+            source:"qrc:/views/motor-vortex/images/icons/infoIcon.svg"
+            anchors { fill: parent }
+            height: 40;width:40
+        }
+    }
+    MouseArea {
+        width: flipButton.width; height: flipButton.height
+        anchors { bottom: parent.bottom; right: parent.right }
+        visible: true
+        onClicked: {
+            NavigationControl.updateState(NavigationControl.events.TOGGLE_CONTROL_CONTENT)
         }
     }
 }
