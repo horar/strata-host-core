@@ -8,6 +8,7 @@ Item {
     property alias icon: iconImage.source
     property alias text: statisticText.text
     property alias fontSize: statisticText.font.pointSize
+    property var toolTipText:""
 
     Image {
         id:iconImage
@@ -50,11 +51,15 @@ Item {
         cursorShape: Qt.PointingHandCursor
         onEntered:{
             increaseOnMouseEnter.start()
+            if (toolTipText.length > 0){
+                ToolTip.show(toolTipText,2000)
+            }
         }
         onExited:{
             decreaseOnMouseExit.start()
         }
     }
+
 
     Label {
         id: statisticText
