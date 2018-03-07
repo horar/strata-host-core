@@ -254,6 +254,7 @@ Rectangle{
         ComboBox {
             id: cbSelector
             anchors.left: platformSelector.right
+            width: 350
             textRole: "text"
             TextMetrics{ id: textMetrics}
 
