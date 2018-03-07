@@ -160,6 +160,7 @@ Rectangle{
                         else{
                             platform_info.text += " (Connected)"
                             // For Demo purposes only; Immediately go to control
+                            var data = { platform_name: platform_info.name}
                             NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT,data)
                             coreInterface.sendSelectedPlatform(platform_info.verbose, platform_info.connection)
                             platformInterfaceMotorVortex.sendSelectedPlatform(platform_info.verbose, platform_info.connection)
