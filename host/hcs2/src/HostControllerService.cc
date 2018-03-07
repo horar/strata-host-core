@@ -152,6 +152,7 @@ HcsError HostControllerService::run()
 
     sp_get_port_handle(platform_socket_,&serial_fd_);
     PDEBUG("Serial fd %d\n",serial_fd_);
+
     struct event *platform_handler = event_new(event_loop_base_, serial_fd_, EV_READ | EV_PERSIST,
                                     HostControllerService::platformCallback,this);
     event_add(platform_handler,NULL);
@@ -164,7 +165,7 @@ HcsError HostControllerService::run()
 
     // remote handler
     int remote_socket_file_descriptor = getRemoteSocketFileDescriptor();
-    // adding the service handler callback to the event loop
+    // // adding the service handler callback to the event loop
     unsigned int     zmq_events;
     size_t           zmq_events_size  = sizeof(zmq_events);
     remote_socket_->getsockopt(ZMQ_EVENTS, &zmq_events, &zmq_events_size);
@@ -697,6 +698,28 @@ std::string HostControllerService::platformRead()
             // event_base_loopbreak(event_loop_base_);
             sendDisconnecttoUI();
             platform_uuid_.clear();
+
+            platform_details simulated_usb_pd,simulated_motor_vortex;
+            simulated_usb_pd.platform_uuid = "simulation_1";
+            simulated_usb_pd.platform_verbose = "simulated-usb-pd";
+            simulated_usb_pd.connection_status = "view";
+
+            simulated_motor_vortex.platform_uuid = "simulation_2";
+            simulated_motor_vortex.platform_verbose = "simulated-motor-vortex";
+            simulated_motor_vortex.connection_status = "view";
+
+            platform_uuid_.push_back(simulated_usb_pd);  // for testing alone
+            platform_uuid_.push_back(simulated_motor_vortex);  // for testing alone
+
+            std::string platformList = getPlatformListJson();
+            multimap_iterator_ = platform_client_mapping_.begin();
+            // std::string disconnect_message = "{\"notification\":{\"value\":\"platform_connection_change_notification\",\"payload\":{\"status\":\"disconnected\"}}}";
+            while(multimap_iterator_ != platform_client_mapping_.end()) {
+                std::string dealer_id = multimap_iterator_->second;
+                s_sendmore(*server_socket_,dealer_id);
+                s_send(*server_socket_,platformList);
+                multimap_iterator_++;
+            }
             break;
         }
         if(temp !='\n' && temp!=NULL) {
@@ -943,6 +966,19 @@ void HostControllerService::serialPortMonitor()
 
                 platform_uuid_.push_back(simulated_usb_pd);  // for testing alone
                 platform_uuid_.push_back(simulated_motor_vortex);  // for testing alone
+
+                std::string platformList = getPlatformListJson();
+                multimap_iterator_ = platform_client_mapping_.begin();
+                // std::string disconnect_message = "{\"notification\":{\"value\":\"platform_connection_change_notification\",\"payload\":{\"status\":\"disconnected\"}}}";
+                while(multimap_iterator_ != platform_client_mapping_.end()) {
+                    std::string dealer_id = multimap_iterator_->second;
+                    s_sendmore(*server_socket_,dealer_id);
+                    s_send(*server_socket_,platformList);
+                    multimap_iterator_++;
+                }
+
+                // iter through map and send the list to all
+
                 // run();
                 lib_event_thread = new std::thread(&HostControllerService::run,this);
 
