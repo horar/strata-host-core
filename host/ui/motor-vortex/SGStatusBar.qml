@@ -57,15 +57,74 @@ Rectangle {
             return user_name
         }
     }
+
+    function generateToken(n) {
+        var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+        var token = '';
+        for(var i = 0; i < n; i++) {
+            token += chars[Math.floor(Math.random() * chars.length)];
+        }
+        return token;
+    }
+
     color: backgroundColor
 
     Popup {
-        id: remoteSupport
-        x: 100; y: 100
-        width: 200; height: 300
+        id: remoteSupportConnect
+        x: 400; y: 200
+        width: 400; height: 200
         modal: true
         focus: true
         closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
+
+
+        Rectangle {
+            anchors { fill: parent }
+            color: "grey"
+
+            Label {
+                id: tokenLabel
+
+                height: parent.height
+                text: "Enter token"
+                font.pointSize: 15
+                font.bold: true
+                color: "dark blue"
+            }
+
+            TextField {
+                id: tokenField
+                width: 184; height: 38
+                focus: true
+                placeholderText: qsTr("TOKEN")
+                cursorPosition: 1
+                font.pointSize: Qt.platform.os == "osx"? 13 :8
+                Keys.onReturnPressed:{
+                    console.log("TOKEN: ", text);
+                }
+            }
+        }
+    }
+
+    Popup {
+        id: remoteSupportRequest
+        x: 400; y: 200
+        width: 400; height: 200
+        modal: true
+        focus: true
+        closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
+
+        Rectangle {
+            anchors {fill: parent }
+
+            Label {
+                anchors {centerIn: parent}
+                text: "TOKEN: " + generateToken(7);
+                font.pointSize: 15
+                font.bold: true
+                color: "dark blue"
+            }
+        }
     }
 
     Image {
@@ -144,11 +203,19 @@ Rectangle {
             }
 
             MenuItem {
-                text: qsTr("Remote Support")
+                text: qsTr("Remote Support FAE")
 
                 onClicked: {
-                    remoteSupport.open()
+                    remoteSupportConnect.open()
 
+                }
+            }
+
+            MenuItem {
+                text: qsTr("Remote Support CUSTOMER")
+
+                onClicked: {
+                    remoteSupportRequest.open()
                 }
             }
 
