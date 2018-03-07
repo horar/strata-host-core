@@ -110,7 +110,11 @@ HcsError HostControllerService::init()
     // [TODO] [Prasanth] : Should be added dynamically
     // remote_platforms remote_platform_list = discovery_service_.getPlatforms();
     addToLocalPlatformList(discovery_service_.getPlatforms());
+
+    // std::thread serial_monitor_thread(&HostControllerService::serialPortMonitor,this,NULL);
     // PDEBUG("remote platform values %s %s",remote_platform_list[0].platform_uuid.c_str(),remote_platform_list[0].platform_verbose.c_str());
+    // serial_monitor_thread.join();
+    serial_monitor_thread = new std::thread(&HostControllerService::serialPortMonitor,this);
     return NO_ERROR;
 }
 
@@ -138,7 +142,8 @@ HcsError HostControllerService::run()
     int server_socket_file_descriptor = getServerSocketFileDescriptor();
 
     // [prasanth] : Always add the serial port handling to event loop before socket
-    // the socket event loop opens
+    // the socket event loop
+
     sp_get_port_handle(platform_socket_,&serial_fd_);
     PDEBUG("Serial fd %d\n",serial_fd_);
     struct event *platform_handler = event_new(event_loop_base_, serial_fd_, EV_READ | EV_PERSIST,
@@ -268,6 +273,7 @@ void HostControllerService::serviceCallback(evutil_socket_t fd, short what, void
             map_element.insert(map_element.begin(),selected_platform_info[0]);
             map_element.insert(map_element.begin()+1,selected_platform_info[1]);
             // hcs->g_platform_uuid_ = selected_platform_info[0];
+            hcs->g_dealer_id_ = dealer_id;
             hcs->platform_client_mapping_.emplace(map_element,dealer_id);
             PDEBUG("adding the %s uuid to multimap\n",selected_platform_info[0].c_str());
         }
@@ -677,7 +683,8 @@ std::string HostControllerService::platformRead()
         error = sp_nonblocking_read(platform_socket_,&temp,1);
         if(error <= 0) {
             PDEBUG("Platform Disconnected\n");
-            return "disconnected";  // think about this
+            //return "disconnected";  // think about this
+            break;
         }
         if(temp !='\n' && temp!=NULL) {
             response.push_back(temp);
@@ -886,5 +893,24 @@ void HostControllerService::remoteRouting(std::string message)
             }
         }
         multimap_iterator_++;
+    }
+}
+
+void HostControllerService::serialPortMonitor()
+{
+    while(1){
+        PDEBUG("Inside thread\n");
+        sleep(1);
+        for (auto port : serial_port_list_) {
+            std::ifstream infile(port.c_str());
+            if(infile.good()) {
+                PDEBUG("port is open");
+            } else {
+                PDEBUG("port is not open");
+                std::string disconnect_message = "{\"notification\":{\"value\":\"platform_connection_change_notification\",\"payload\":{\"status\":\"disconnected\"}}}";
+                s_sendmore(*server_socket_,g_dealer_id_);
+                s_send(*server_socket_,disconnect_message);
+            }
+        }
     }
 }

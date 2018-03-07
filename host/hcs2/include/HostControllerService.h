@@ -21,6 +21,7 @@
 #include <SimpleOpt.h>
 #include <map>
 #include <list>
+#include <thread>
 
 // zero mq library
 #include "zmq.hpp"
@@ -118,6 +119,9 @@ public:
 	bool clientExists(std::string);
 	bool checkPlatformExist(std::string *,std::string message);
     void remoteRouting(std::string message);
+
+    // thread to monitor the serial port
+    void serialPortMonitor();
 private:
     // config file data members
     ParseConfig *configuration_;
@@ -163,6 +167,8 @@ private:
     int usb_pd_target_voltage_ = 5; // to add to the multimap for testing case alone
 	int vortex_target_pwm_ = 1300;
     // zmq::message_t g_reply_;
-	std::string g_reply_,g_selected_platform_verbose_;
+	std::string g_reply_,g_selected_platform_verbose_,g_dealer_id_;
+
+    std::thread *serial_monitor_thread;
 };
 #endif
