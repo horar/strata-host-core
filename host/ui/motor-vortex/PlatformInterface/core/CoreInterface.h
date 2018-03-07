@@ -64,6 +64,7 @@ public:
     // Invokables
     //To send the selected platform and its connection status
     Q_INVOKABLE void sendSelectedPlatform(QString verbose, QString connection_status);
+    Q_INVOKABLE void sendHandshake();
 
 signals:
 

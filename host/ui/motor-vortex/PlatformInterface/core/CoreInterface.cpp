@@ -20,8 +20,7 @@ CoreInterface::CoreInterface(QObject *parent) : QObject(parent)
 
     // [TODO] [prasanth] : need to be added in a better place
     // json command to ask the list of available platforms from hcs
-    std::string cmd= "{\"command\":\"request_available_platforms\"}";
-    hcc->sendCmd(cmd);
+    sendHandshake();
 
     // --------------------
     // Core Framework
@@ -280,6 +279,15 @@ void CoreInterface::sendSelectedPlatform(QString verbose, QString connection_sta
     QString strJson(doc.toJson(QJsonDocument::Compact));
     qDebug()<<"parse to send"<<strJson;
     hcc->sendCmd(strJson.toStdString());
+}
+
+// @f sendHandshake
+// @b send initial handshake to receive platform list
+//
+void CoreInterface::sendHandshake()
+{
+    std::string cmd= "{\"command\":\"request_available_platforms\"}";
+    hcc->sendCmd(cmd);
 }
 
 // @f cloudNotificationHandler

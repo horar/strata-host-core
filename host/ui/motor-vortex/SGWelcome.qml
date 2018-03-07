@@ -45,6 +45,11 @@ Rectangle{
             return user_name
         }
     }
+
+    Component.onCompleted: {
+        coreInterface.sendHandshake()
+    }
+
     anchors.fill: parent
     color: "#d9dfe1"
     gradient: Gradient {
@@ -134,6 +139,8 @@ Rectangle{
                     "P2.2018.1.1.0.0.c9060ff8-5c5e-4295-b95a-d857ee9a3671" : "bubu",
                     "motorvortex1" : "motor-vortex"
                 }
+
+                model.clear()
 
                 var platform_list_json = coreInterface.platform_list_
 
