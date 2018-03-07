@@ -30,6 +30,14 @@ Rectangle {
         "paul.mascarenas@onsemi.com" : "paul_mascarenas.png",
         "blankavatar" : "blank_avatar.png"
     }
+
+    property var userNames: {
+        "dave.priscak@onsemi.com" : "Dave Priscak",
+        "david.somo@onsemi.com"   : "David Somo",
+        "daryl.ostrander@onsemi.com" : "Daryl Ostrander",
+        "paul.mascarenas@onsemi.com" : "Paul Mascarenas",
+    }
+
     function getUserImage(user_name){
         user_name = user_name.toLowerCase()
         if(userImages.hasOwnProperty(user_name)){
@@ -65,7 +73,7 @@ Rectangle {
         }
 
         height: parent.height
-        text:  user_id
+        text:  userNames[user_id]
         font.pointSize: 15
         font.bold: true
         color: "white"

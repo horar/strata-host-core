@@ -19,6 +19,13 @@ Rectangle{
         "blankavatar" : "blank_avatar.png"
     }
 
+    property var userNames: {
+        "dave.priscak@onsemi.com" : "Dave Priscak",
+        "david.somo@onsemi.com"   : "David Somo",
+        "daryl.ostrander@onsemi.com" : "Daryl Ostrander",
+        "paul.mascarenas@onsemi.com" : "Paul Mascarenas",
+    }
+
     function getUserImage(user_name){
         user_name = user_name.toLowerCase()
         if(userImages.hasOwnProperty(user_name)){
@@ -29,6 +36,15 @@ Rectangle{
         }
     }
 
+    function getUserName(user_name){
+        user_name = user_name.toLowerCase()
+        if(userNames.hasOwnProperty(user_name)){
+            return userNames[user_name]
+        }
+        else{
+            return user_name
+        }
+    }
     anchors.fill: parent
     color: "#d9dfe1"
     gradient: Gradient {
@@ -78,7 +94,7 @@ Rectangle{
             //height: 40
             font.pixelSize: 36
             color: "white"
-            text: "Welcome " + user_id + "!"
+            text: "Welcome " + userNames[user_id] + "!"
             anchors.centerIn: messageContainer
         }
     }
