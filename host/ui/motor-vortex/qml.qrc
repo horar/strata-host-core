@@ -2,7 +2,6 @@
     <qresource prefix="/">
         <file>main.qml</file>
         <file>main.cpp</file>
-        <file>SGMetrics.qml</file>
         <file>views/bubu/Control.qml</file>
         <file>views/usb-pd/Advanced.qml</file>
         <file>views/usb-pd/Control.qml</file>
@@ -94,5 +93,6 @@
         <file>images/icons/whiteAlertIcon.svg</file>
         <file>SGSpotlightText.qml</file>
         <file>images/ian.cain.jpg</file>
+        <file>js/metrics.js</file>
     </qresource>
 </RCC>

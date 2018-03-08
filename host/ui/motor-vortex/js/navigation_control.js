@@ -1,5 +1,6 @@
 .pragma library
 .import QtQuick 2.0 as QtQuickModule
+.import "metrics.js" as Metrics
 
 
 /*
@@ -88,7 +89,8 @@ function getQMLFile(platform_name, filename) {
 function init(flipable_parent, control_parent, content_parent, bar_parent)
 {
     // Create metrics object to track usage
-    metrics = createView(components.METRICS, null);
+    //metrics = createView(components.METRICS, null);
+    Metrics.init(context)
 
     flipable_parent_    = flipable_parent
     control_container_ = control_parent
@@ -228,7 +230,7 @@ function updateState(event, data)
                     // Show control when connected
                     var qml_control = getQMLFile(context.platform_name, "Control")
                     createView(qml_control, control_container_)
-                    metrics.restartCounter()
+                    Metrics.restartTimer()
                 }
                 else {
                     // Disconnected; Show detection page
@@ -241,8 +243,8 @@ function updateState(event, data)
                     var qml_content = getQMLFile(context.platform_name, "Content")
                     var contentObject = createView(qml_content, content_container_)
                     // Insert Listener
-                    injectEventToTree(contentObject)
-                    metrics.restartCounter()
+                    Metrics.injectEventToTree(contentObject)
+                    Metrics.restartTimer()
 
                 }
                 else {
@@ -286,11 +288,11 @@ function updateState(event, data)
                     console.log("in fplipable ",context.platform_name)
                     pageName = context.platform_name +' Control'
                 }else {
-                    var currentTabName = metrics.getCurrentTab()
+                    var currentTabName = Metrics.getCurrentTab()
                     pageName = context.platform_name +' '+ currentTabName
                 }
 
-                metrics.sendMetricsToCloud(pageName)
+                Metrics.sendMetricsToCloud(pageName)
 
                 // Flip to show control/content
                 flipable_parent_.flipped = !flipable_parent_.flipped
@@ -307,48 +309,5 @@ function updateState(event, data)
             break;
 
     }
-}
-
-/*
-    Metrics Code
-*/
-
-//Iterate through qml objects tree and invoke add custom function to listen on events
-function injectEventToTree(obj) {
-
-    // inject custom function to all children that has onCurrentIndexChanged event
-    if(qmltypeof(obj,"QQuickTabBar")){
-        Object.defineProperty(obj, 'onCurrentIndexChangedlListenerFunction', { value: createListenerFunction(obj) })
-        obj.onCurrentIndexChanged.connect(obj.onCurrentIndexChangedlListenerFunction);
-
-        //TODO: Add a listener to get tababr button's name at index 0
-        //Object.defineProperty(obj, 'onCompletedListenerFunction', { value: onTabBarCompletedListenerFunction(obj) })
-        //obj.Component.onCompleted.connect(obj.onCompletedListenerFunction);
-
-    }
-
-    if (obj.children) {
-
-        for (var i = 0; i < obj.children.length; i++) {
-            injectEventToTree(obj.children[i])
-        }
-        if(obj.children.length > 100){
-            console.log("WARNING: QML object children exceeds 100.")
-        }
-    }
-}
-
-// return a listener function that will be invoked on the tabbar change event
-function createListenerFunction(object) {
-    return function() { metrics.onCurrentIndexChange(object, arguments) }
-}
-function onTabBarCompletedListenerFunction(object) {
-
-    return function() { metrics.tabBarCompleted(object, arguments) }
-}
-// given qml object and name, it check whether name is matching object type
-function qmltypeof(obj, className) {
-  var str = obj.toString();
-  return str.indexOf(className + "(") === 0 || str.indexOf(className + "_QML") === 0;
 }
 
