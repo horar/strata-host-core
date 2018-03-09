@@ -946,5 +946,13 @@ Rectangle{
             faultTempLabel.text = Math.round(faultTempSlider.value *10)/10
 
         }
+        Connections {
+            target: implementationInterfaceBinding
+            onMaximumTemperatureChanged:{
+                console.log("maximum temperature notification received:",value)
+                faultTempSlider.value = Math.round(value*10)/10
+            }
+        }
+
     }
 }   //board settings rect

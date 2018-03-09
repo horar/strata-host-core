@@ -517,6 +517,12 @@ void ImplementationInterfaceBinding::handleNotification(QVariantMap current_map)
         }else if (current_map["value"] == "foldback_limiting"){
             payloadMap=current_map["payload"].toMap();
             handleFoldbackLimitingNotification(payloadMap);
+        }else if (current_map["value"] == "set_input_under_voltage_notification"){
+                payloadMap=current_map["payload"].toMap();
+                handleInputUnderVoltageValueNotification(payloadMap);
+        }else if (current_map["value"] == "set_maximum_temperature_notification"){
+            payloadMap=current_map["payload"].toMap();
+            handleMaximumTemperatureNotification(payloadMap);
         }else if (current_map["value"] == "output_current_exceeds_maximum"){
             payloadMap=current_map["payload"].toMap();
             //handleOutputCurrentOverMaximumNotification(payloadMap);
@@ -823,6 +829,23 @@ void ImplementationInterfaceBinding::handleResetNotification(const QVariantMap p
     if(status) {
         emit platformResetDetected(status);
     }
+}
+
+void ImplementationInterfaceBinding::handleInputUnderVoltageValueNotification (const QVariantMap payloadMap) {
+
+    QString state = payloadMap["state"].toString();
+    float value = payloadMap["minimum_voltage"].toFloat();
+
+    emit inputUnderVoltageChanged(value);
+}
+
+void ImplementationInterfaceBinding::handleMaximumTemperatureNotification (const QVariantMap payloadMap) {
+
+    float value = payloadMap["maximum_temperature"].toFloat();
+
+    qDebug() << "max temp notification "<<value;
+
+    emit maximumTemperatureChanged(value);
 }
 
 void ImplementationInterfaceBinding::handleInputUnderVoltageNotification(const QVariantMap payloadMap) {
