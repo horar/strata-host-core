@@ -33,10 +33,14 @@ Rectangle {
         id: activeFaultList
     }
 
+    Component.onCompleted:{
+        console.log("AdvancedControls created")
+        implementationInterfaceBinding.sendPlatformRefresh();    //get new values for controls from the platform
+    }
+
     //visibility is the only way we know that this view has been pushed on the stack
     //handle activities that need to happen when the advanced controls view is seen here.
     onVisibleChanged: {
-
 
         if(visible){
             faultHistoryList.append({"parameter":"voltage","condition":"<","value":value})
@@ -88,7 +92,7 @@ Rectangle {
             Layout.row: 0
             Layout.rowSpan: 3
             Layout.preferredWidth  : grid.prefWidth(this)
-            Layout.fillWidth:true
+//            Layout.fillWidth:true
             Layout.fillHeight:true
 
             property var collapseAnimationSpeed:900
@@ -101,9 +105,9 @@ Rectangle {
                 active:pressed
                 //interactive: false
                 contentItem: Rectangle{
-                    //width:40
+                    width:40
                     implicitWidth: 1
-                    implicitHeight: 100
+                    //implicitHeight: 100
                     radius: width / 2
                     color: disabledTextColor
                 }
