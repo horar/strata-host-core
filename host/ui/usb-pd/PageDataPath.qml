@@ -126,20 +126,20 @@ Item {
                 showTwoRedriverSourceAndSink(true);
                 showPassiveSourceAndSink(false);
                 showChargeOnlySourceAndSink(false);
-                implementationInterfaceBinding.setRedriverCount(2);
+                implementationInterfaceBinding.setRedriverConfiguration("redriver");
 
             }
             else if (button.objectName == "passiveRoute"){
                 showTwoRedriverSourceAndSink(false);
                 showPassiveSourceAndSink(true);
                 showChargeOnlySourceAndSink(false);
-                implementationInterfaceBinding.setRedriverCount(1);
+                implementationInterfaceBinding.setRedriverConfiguration("passive");
             }
             else if (button.objectName == "chargeOnlyRoute"){
                 showTwoRedriverSourceAndSink(false);
                 showPassiveSourceAndSink(false);
                 showChargeOnlySourceAndSink(true);
-                implementationInterfaceBinding.setRedriverCount(0);
+                implementationInterfaceBinding.setRedriverConfiguration("charge_only");
             }
         }
     }
