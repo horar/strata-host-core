@@ -466,9 +466,9 @@ void ImplementationInterfaceBinding::handleNotification(QVariantMap current_map)
     QVariantMap payloadMap;
 
     //what kind of notifications are we getting back? I'll omit the steady stream of power notifications
-    if (current_map["value"] != "request_usb_power_notification"){
-        qDebug() << "notification received! "<< current_map["value"].toString()<<" " <<current_map["payload"];
-    }
+    //if (current_map["value"] != "request_usb_power_notification"){
+    //    qDebug() << "notification received! "<< current_map["value"].toString()<<" " <<current_map["payload"];
+    //}
 
     // TODO FIX [ian] why is the "notification" keyword called "value"??!!
     if(current_map.contains("value")) {
