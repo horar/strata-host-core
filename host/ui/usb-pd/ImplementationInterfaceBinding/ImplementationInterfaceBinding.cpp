@@ -101,11 +101,11 @@ void ImplementationInterfaceBinding::setRedriverLoss(float lossValue)
 
 }
 
-void ImplementationInterfaceBinding::setRedriverCount(int value)
+void ImplementationInterfaceBinding::setRedriverConfiguration(QString value)
 {
-    //qDebug("ImplementationInterfaceBinding::setRedriverCount(%d)", value);
+    //qDebug("ImplementationInterfaceBinding::setRedriverConfiguration(%d)", value);
     QJsonObject cmdMessageObject;
-    cmdMessageObject.insert("cmd", "request_redriver_count");
+    cmdMessageObject.insert("cmd", "request_data_configuration");
     QJsonObject payloadObject;
     payloadObject.insert("value", value);
     cmdMessageObject.insert("payload",payloadObject);
@@ -113,9 +113,27 @@ void ImplementationInterfaceBinding::setRedriverCount(int value)
     QString strJson(doc.toJson(QJsonDocument::Compact));
     hcc_object->sendCmd(strJson.toStdString());
     if(hcc_object->sendCmd(strJson.toStdString()))
-        qDebug() << "Radio button send with value" << doc;
+        qDebug() << "Command sent with value" << doc;
     else
-        qDebug() << "Radio button send failed";
+        qDebug() << "Command send failed";
+}
+
+//this triggers the platform to send all of the current values it holds for controls
+//as separate notifications
+void ImplementationInterfaceBinding::sendPlatformRefresh()
+{
+    qDebug("ImplementationInterfaceBinding::sendPlatformRefresh()");
+    QJsonObject cmdMessageObject;
+    cmdMessageObject.insert("cmd", "request_platform_refresh");
+    QJsonObject payloadObject;
+    cmdMessageObject.insert("payload",payloadObject);
+    QJsonDocument doc(cmdMessageObject);
+    QString strJson(doc.toJson(QJsonDocument::Compact));
+    hcc_object->sendCmd(strJson.toStdString());
+    if(hcc_object->sendCmd(strJson.toStdString()))
+        qDebug() << "Command sent with value" << doc;
+    else
+        qDebug() << "Command send failed";
 }
 
 
@@ -177,7 +195,7 @@ void ImplementationInterfaceBinding::setVoltageFoldbackParameters(bool inEnabled
                                                               int inWatts)
 {
     QJsonObject cmdMessageObject;
-    cmdMessageObject.insert("cmd", "request_set_voltage_foldback");
+    cmdMessageObject.insert("cmd", "request_voltage_foldback");
     QJsonObject payloadObject;
     payloadObject.insert("enabled", inEnabled);
     payloadObject.insert("voltage", inVoltage);
@@ -329,6 +347,8 @@ ImplementationInterfaceBinding::e_MappedPlatformId ImplementationInterfaceBindin
     e_MappedPlatformId mappedId = USB_PD;
 #endif
 
+    qDebug() << "asking for platform ID ";
+
     // Initialize the mapping since we can't statically initialize it.
     if (idMap.size() == 0) {
         // BUBU Interface
@@ -445,6 +465,11 @@ void ImplementationInterfaceBinding::handleNotification(QVariantMap current_map)
 {
     QVariantMap payloadMap;
 
+    //what kind of notifications are we getting back? I'll omit the steady stream of power notifications
+    if (current_map["value"] != "request_usb_power_notification"){
+        qDebug() << "notification received! "<< current_map["value"].toString()<<" " <<current_map["payload"];
+    }
+
     // TODO FIX [ian] why is the "notification" keyword called "value"??!!
     if(current_map.contains("value")) {
         if(current_map["value"] == "request_usb_power_notification") {
@@ -483,7 +508,21 @@ void ImplementationInterfaceBinding::handleNotification(QVariantMap current_map)
         }else if (current_map["value"] == "usb_pd_maximum_power"){
             payloadMap=current_map["payload"].toMap();
             handleMaximumPortPowerNotification(payloadMap);
-        }
+        }else if (current_map["value"] == "usb_pd_protection_action"){
+            payloadMap=current_map["payload"].toMap();
+            handleFaultProtectionNotification(payloadMap);
+        }else if (current_map["value"] == "request_data_configuration"){
+            payloadMap=current_map["payload"].toMap();
+            handleDataConfigurationNotification(payloadMap);
+        }else if (current_map["value"] == "foldback_limiting"){
+            payloadMap=current_map["payload"].toMap();
+            handleFoldbackLimitingNotification(payloadMap);
+        }else if (current_map["value"] == "output_current_exceeds_maximum"){
+            payloadMap=current_map["payload"].toMap();
+            //handleOutputCurrentOverMaximumNotification(payloadMap);
+         }
+
+
         else {
             qDebug() << "Unsupported value field Received";
             qDebug() << "Received JSON = " <<current_map;
@@ -712,6 +751,36 @@ void ImplementationInterfaceBinding::clearBoardMetrics(int portNumber){
     // [prasanth] : commented the input voltage since the platform emits the voltage
     // periodically in a different notification
 //    emit portInputVoltageChanged(portNumber,0);
+}
+
+void ImplementationInterfaceBinding::handleFoldbackLimitingNotification(const QVariantMap payloadMap) {
+
+    //qDebug() << "foldback notification"<<payloadMap;
+
+    bool inputVoltageFoldbackEnabled = payloadMap["input_voltage_limiting_enabled"].toBool();
+    float inputVoltageFoldbackStartVoltage = payloadMap["minimum_voltage"].toFloat();
+    int inputVoltageFoldbackOutputLimit = payloadMap["maximum_power_voltage_limited"].toInt();
+
+    bool temperatureFoldbackEnabled = payloadMap["temperature_limiting_enabled"].toBool();
+    float temperatureFoldbackStartTemp = payloadMap["maximum_temperature"].toFloat();
+    int temperatureFoldbackOutputLimit = payloadMap["maximum_power_temperature_limited"].toInt();
+
+    emit foldbackLimitingChanged(inputVoltageFoldbackEnabled,
+                                 inputVoltageFoldbackStartVoltage,
+                                 inputVoltageFoldbackOutputLimit,
+                                 temperatureFoldbackEnabled,
+                                 temperatureFoldbackStartTemp,
+                                 temperatureFoldbackOutputLimit);
+}
+void ImplementationInterfaceBinding::handleDataConfigurationNotification(const QVariantMap json_map) {
+    QString dataConfiguration = json_map["value"].toString();
+    //qDebug() << "Data path config notification received. value="<<dataConfiguration;
+    emit dataPathConfigurationChanged(dataConfiguration);
+}
+
+void ImplementationInterfaceBinding::handleFaultProtectionNotification(const QVariantMap json_map) {
+    QString protectionAction = json_map["action"].toString();
+    emit faultProtectionChanged(protectionAction);
 }
 
 

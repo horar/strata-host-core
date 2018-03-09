@@ -104,7 +104,8 @@ public:
     Q_INVOKABLE void setOutputVoltageVBUS(int port, int voltage);
 
     Q_INVOKABLE void setRedriverLoss(float lossValue);
-    Q_INVOKABLE void setRedriverCount(int value);
+    Q_INVOKABLE void setRedriverConfiguration(QString value);
+    Q_INVOKABLE void sendPlatformRefresh();
     Q_INVOKABLE bool getUSBCPortState(int port_number);
 
 
@@ -172,6 +173,9 @@ public:
     void handleOverTemperatureNotification(const QVariantMap payloadMap);
     void handleNegotiatedContractNotification(const QVariantMap payloadMap);
     void handleMaximumPortPowerNotification(const QVariantMap payloadMap);
+    void handleFaultProtectionNotification(const QVariantMap json_map);
+    void handleDataConfigurationNotification(const QVariantMap json_map);
+    void handleFoldbackLimitingNotification(const QVariantMap json_map);
 
 //Constructing the string for fault messages
     QString constructFaultMessage(QString parameter,QString state,int value)
@@ -211,9 +215,18 @@ signals:
     void portNegotiatedVoltageChanged(int port, float voltage);
     void portNegotiatedCurrentChanged(int port, float current);
     void portMaximumPowerChanged(int port, int watts);
+    void faultProtectionChanged(QString protectionMode);
+    void dataPathConfigurationChanged(QString dataConfiguration);
+    void foldbackLimitingChanged(bool inputVoltageFoldbackEnabled,
+                                 float inputVoltageFoldbackStartVoltage,
+                                 int inputVoltageFoldbackOutputLimit,
+                                 bool temperatureFoldbackEnabled,
+                                 float temperatureFoldbackStartTemp,
+                                 int temperatureFoldbackOutputLimit);
     // fault messages notification
     void minimumVoltageChanged(bool state,int value);
     void overTemperatureChanged(bool state,int value);
+    void inputUnderVoltageChanged(QString state, int value);
     // fault message list notification
     void faultHistoryChanged();
     void activeFaultsChanged();

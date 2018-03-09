@@ -180,6 +180,15 @@ Rectangle{
         onClicked: {
             implementationInterfaceBinding.setFaultMode("shutdown")
         }
+        Connections {
+            target: implementationInterfaceBinding
+            onFaultProtectionChanged:{
+                //onsole.log("fault protection message received with value ",protectionMode)
+                if( protectionMode === "shutdown" ) {
+                    shutdownButton.checked= true
+                }
+            }
+        }
 
     }
     MiddleSegmentedButton{
@@ -200,6 +209,14 @@ Rectangle{
         onClicked: {
             implementationInterfaceBinding.setFaultMode("retry")
         }
+        Connections {
+            target: implementationInterfaceBinding
+            onFaultProtectionChanged:{
+                if( protectionMode === "retry" ) {
+                    restartButton.checked= true
+                }
+            }
+        }
     }
     RightSegmentedButton{
         id:noProtectionButton
@@ -218,6 +235,15 @@ Rectangle{
         width:75
         onClicked: {
             implementationInterfaceBinding.setFaultMode("nothing")
+        }
+
+        Connections {
+            target: implementationInterfaceBinding
+            onFaultProtectionChanged:{
+                if( protectionMode === "nothing" ) {
+                    noProtectionButton.checked = true
+                }
+            }
         }
     }
 
@@ -253,7 +279,15 @@ Rectangle{
         height: 25
         width:90
         onClicked: {
-            implementationInterfaceBinding.setRedriverCount(0)
+            implementationInterfaceBinding.setRedriverConfiguration("charge_only")
+        }
+        Connections {
+            target: implementationInterfaceBinding
+            onDataPathConfigurationChanged:{
+                if( dataConfiguration === "charge_only" ) {
+                    chargeOnlyButton.checked = true
+                }
+            }
         }
 
     }
@@ -273,7 +307,15 @@ Rectangle{
         height: 25
         width:65
         onClicked: {
-            implementationInterfaceBinding.setRedriverCount(1)
+            implementationInterfaceBinding.setRedriverConfiguration("passive")
+        }
+        Connections {
+            target: implementationInterfaceBinding
+            onDataPathConfigurationChanged:{
+                if( dataConfiguration === "passive" ) {
+                    passiveButton.checked = true
+                }
+            }
         }
     }
     RightSegmentedButton{
@@ -292,7 +334,15 @@ Rectangle{
         height: 25
         width:75
         onClicked: {
-            implementationInterfaceBinding.setRedriverCount(2)
+            implementationInterfaceBinding.setRedriverConfiguration("redriver")
+        }
+        Connections {
+            target: implementationInterfaceBinding
+            onDataPathConfigurationChanged:{
+                if( dataConfiguration === "redriver" ) {
+                    redriverButton.checked = true
+                }
+            }
         }
     }
 
@@ -309,14 +359,7 @@ Rectangle{
 
         Component.onCompleted: {
             inputLimitingSwitch.toggle()
-
-            startLimitingText.enabled = inputLimitingSwitch.checked
-            startLimitingVoltageRect.enabled = inputLimitingSwitch.checked
-            startLimitingUnitText.enabled = inputLimitingSwitch.checked
-            startLimitingVoltageSlider.enabled = inputLimitingSwitch.checked
-            outputLimitText.enabled = inputLimitingSwitch.checked
-            outputLimitPopup.enabled = inputLimitingSwitch.checked
-            outputLimitUnitText.enabled = inputLimitingSwitch.checked
+            inputLimitingGroup.setInputVoltageLimitingEnabled(inputLimitingSwitch.checked)
         }
 
         Text{
@@ -329,6 +372,17 @@ Rectangle{
             anchors.leftMargin: 5
             anchors.top: parent.top
             anchors.topMargin: 5
+        }
+
+        function setInputVoltageLimitingEnabled(inEnabled){
+            //toggle enablement of the input limiting controls
+            startLimitingText.enabled = inEnabled
+            startLimitingVoltageRect.enabled = inEnabled
+            startLimitingUnitText.enabled = inEnabled
+            startLimitingVoltageSlider.enabled = inEnabled
+            outputLimitText.enabled = inEnabled
+            outputLimitPopup.enabled = inEnabled
+            outputLimitUnitText.enabled = inEnabled
         }
 
         Switch{
@@ -361,18 +415,19 @@ Rectangle{
                 }
             }
             onToggled: {
-                //toggle enablement of the input limiting controls
-                startLimitingText.enabled = inputLimitingSwitch.checked
-                startLimitingVoltageRect.enabled = inputLimitingSwitch.checked
-                startLimitingUnitText.enabled = inputLimitingSwitch.checked
-                startLimitingVoltageSlider.enabled = inputLimitingSwitch.checked
-                outputLimitText.enabled = inputLimitingSwitch.checked
-                outputLimitPopup.enabled = inputLimitingSwitch.checked
-                outputLimitUnitText.enabled = inputLimitingSwitch.checked
+                inputLimitingGroup.setInputVoltageLimitingEnabled(inputLimitingSwitch.checked)
 
                 implementationInterfaceBinding.setVoltageFoldbackParameters(inputLimitingSwitch.checked,
                                                                             Math.round(startLimitingVoltageSlider.value *10)/10,
                                                                             parseInt(outputLimitPopup.displayText))
+            }
+            Connections {
+                target: implementationInterfaceBinding
+                onFoldbackLimitingChanged:{
+                    //console.log("input limiting message to set voltage to ",inputVoltageFoldbackEnabled)
+                    inputLimitingSwitch.checked = inputVoltageFoldbackEnabled
+                    inputLimitingGroup.setInputVoltageLimitingEnabled(inputVoltageFoldbackEnabled)
+                }
             }
         }
 
@@ -422,6 +477,8 @@ Rectangle{
                                                                                     parseInt(boardOuputPopup.displayText))
 
                   }
+
+
             }
         }
 
@@ -462,6 +519,13 @@ Rectangle{
             onMoved: {
                 startLimitingTextInput.text = Math.round(startLimitingVoltageSlider.value *10)/10
             }
+
+            Connections {
+                target: implementationInterfaceBinding
+                onFoldbackLimitingChanged:{
+                        startLimitingVoltageSlider.value = Math.round(inputVoltageFoldbackStartVoltage *10)/10
+                    }
+                }
         }
 
         Text{
@@ -489,6 +553,13 @@ Rectangle{
                                                                             Math.round(startLimitingVoltageSlider.value *10)/10,
                                                                             parseInt(outputLimitPopup.displayText))
             }
+
+            Connections {
+                target: implementationInterfaceBinding
+                onFoldbackLimitingChanged:{
+                    outputLimitPopup.currentIndex = outputLimitPopup.find(parseInt(inputVoltageFoldbackOutputLimit))
+                    }
+                }
         }
 
 
@@ -501,10 +572,7 @@ Rectangle{
             anchors.left:outputLimitPopup.right
             anchors.leftMargin: 5
             anchors.verticalCenter: outputLimitText.verticalCenter
-
         }
-
-
 
     }
 
@@ -524,14 +592,17 @@ Rectangle{
 
         Component.onCompleted: {
             temperatureLimitingSwitch.toggle()
+            temperatureLimitingGroup.setTemperatureLimitingEnabled(temperatureLimitingSwitch.checked)
+        }
 
-            boardTemperatureText.enabled = temperatureLimitingSwitch.checked
-            boardTemperatureRect.enabled = temperatureLimitingSwitch.checked
-            boardTemperatureUnitText.enabled = temperatureLimitingSwitch.checked
-            boardTemperatureSlider.enabled = temperatureLimitingSwitch.checked
-            boardOutputLimitText.enabled = temperatureLimitingSwitch.checked
-            boardOuputPopup.enabled = temperatureLimitingSwitch.checked
-            boardOutputUnitText.enabled = temperatureLimitingSwitch.checked
+        function setTemperatureLimitingEnabled(inEnabled){
+            boardTemperatureText.enabled = inEnabled
+            boardTemperatureRect.enabled = inEnabled
+            boardTemperatureUnitText.enabled = inEnabled
+            boardTemperatureSlider.enabled = inEnabled
+            boardOutputLimitText.enabled = inEnabled
+            boardOuputPopup.enabled = inEnabled
+            boardOutputUnitText.enabled = inEnabled
         }
 
         Text{
@@ -577,18 +648,20 @@ Rectangle{
             }
             onToggled: {
                 //toggle enablement of the input limiting controls
-                boardTemperatureText.enabled = temperatureLimitingSwitch.checked
-                boardTemperatureRect.enabled = temperatureLimitingSwitch.checked
-                boardTemperatureUnitText.enabled = temperatureLimitingSwitch.checked
-                boardTemperatureSlider.enabled = temperatureLimitingSwitch.checked
-                boardOutputLimitText.enabled = temperatureLimitingSwitch.checked
-                boardOuputPopup.enabled = temperatureLimitingSwitch.checked
-                boardOutputUnitText.enabled = temperatureLimitingSwitch.checked
+                temperatureLimitingGroup.setTemperatureLimitingEnabled(temperatureLimitingSwitch.checked)
 
                 implementationInterfaceBinding.setTemperatureFoldbackParameters(temperatureLimitingSwitch.checked,
                                                                                 Math.round(boardTemperatureSlider.value *10)/10,
                                                                                 parseInt(boardOuputPopup.displayText))
             }
+
+            Connections {
+                target: implementationInterfaceBinding
+                onFoldbackLimitingChanged:{
+                    temperatureLimitingSwitch.checked = temperatureFoldbackEnabled
+                    temperatureLimitingGroup.setTemperatureLimitingEnabled(temperatureFoldbackEnabled)
+                    }
+                }
 
         }
 
@@ -680,6 +753,13 @@ Rectangle{
             onMoved: {
                 boardTemperatureTextInput.text = Math.round(boardTemperatureSlider.value)
             }
+
+            Connections {
+                target: implementationInterfaceBinding
+                onFoldbackLimitingChanged:{
+                        boardTemperatureSlider.value = Math.round(temperatureFoldbackStartTemp*10)/10
+                    }
+                }
         }
 
         Text{
@@ -707,6 +787,13 @@ Rectangle{
                                                                                 Math.round(boardTemperatureSlider.value *10)/10,
                                                                                 parseInt(boardOuputPopup.displayText))
             }
+
+            Connections {
+                target: implementationInterfaceBinding
+                onFoldbackLimitingChanged:{
+                    boardOuputPopup.currentIndex = boardOuputPopup.find(parseInt(temperatureFoldbackOutputLimit))
+                    }
+                }
         }
 
         Text{
@@ -785,6 +872,14 @@ Rectangle{
 
         onMoved: {
             minimumInputLabel.text = Math.round(minimumInputVoltageSlider.value *10)/10
+        }
+
+        Connections {
+            target: implementationInterfaceBinding
+            onInputUnderVoltageChanged:{
+                console.log("minimum input notification received:",value)
+                minimumInputVoltageSlider.value = Math.round(value*10)/10
+            }
         }
     }
 
