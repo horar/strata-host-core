@@ -231,6 +231,16 @@ Item {
                 anchors{bottom:parent.bottom; bottomMargin:parent.height/16; right: parent.right; rightMargin: parent.width/8}
             }
         }
+
+        Connections {
+            target: implementationInterfaceBinding
+            onDataPathConfigurationChanged:{
+                if( dataConfiguration === "redriver" ) {
+                    twoRedrivers.checked = true
+                }
+            }
+        }
+
     }
 
     Text{
@@ -327,6 +337,15 @@ Item {
                 anchors.centerIn:parent
             }
         }
+
+        Connections {
+            target: implementationInterfaceBinding
+            onDataPathConfigurationChanged:{
+                if( dataConfiguration === "passive" ) {
+                    passiveRoute.checked = true
+                }
+            }
+        }
     }
 
     Text{
@@ -394,6 +413,15 @@ Item {
             id:chargeOnlyIcon
             source: chargeOnly.checked ? "./images/powerSymbolGreen.svg": "./images/powerSymbolGrey.svg"
             anchors.centerIn: parent
+        }
+
+        Connections {
+            target: implementationInterfaceBinding
+            onDataPathConfigurationChanged:{
+                if( dataConfiguration === "charge_only" ) {
+                    chargeOnly.checked = true
+                }
+            }
         }
     }
 
