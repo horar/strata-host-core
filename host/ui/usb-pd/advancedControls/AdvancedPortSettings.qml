@@ -370,6 +370,16 @@ Rectangle{
         onValueChanged: {
             maxCurrentTextInput.text = Math.round (maxCurrentSlider.value *10)/10
         }
+
+        Connections {
+            target: implementationInterfaceBinding
+            onPortOverCurrentChanged:{
+                if( portNumber === port ) {
+                    maxCurrentSlider.value = max_current
+                }
+            }
+        }
+
     }
 
     Rectangle{

@@ -523,9 +523,9 @@ void ImplementationInterfaceBinding::handleNotification(QVariantMap current_map)
         }else if (current_map["value"] == "set_maximum_temperature_notification"){
             payloadMap=current_map["payload"].toMap();
             handleMaximumTemperatureNotification(payloadMap);
-        }else if (current_map["value"] == "output_current_exceeds_maximum"){
+        }else if (current_map["value"] == "request_over_current_protection_notification"){
             payloadMap=current_map["payload"].toMap();
-            //handleOutputCurrentOverMaximumNotification(payloadMap);
+            handlePortOverCurrentNotification(payloadMap);
          }
 
 
@@ -778,6 +778,16 @@ void ImplementationInterfaceBinding::handleFoldbackLimitingNotification(const QV
                                  temperatureFoldbackStartTemp,
                                  temperatureFoldbackOutputLimit);
 }
+
+
+void ImplementationInterfaceBinding::handlePortOverCurrentNotification(const QVariantMap json_map) {
+    int port = json_map["port"].toInt();
+    float max_current = json_map["current_limit"].toFloat();
+    //qDebug() << "port over current notification received. value="<<dataConfiguration;
+    emit portOverCurrentChanged(port, max_current);
+}
+
+
 void ImplementationInterfaceBinding::handleDataConfigurationNotification(const QVariantMap json_map) {
     QString dataConfiguration = json_map["value"].toString();
     //qDebug() << "Data path config notification received. value="<<dataConfiguration;

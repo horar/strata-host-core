@@ -178,6 +178,7 @@ public:
     void handleDataConfigurationNotification(const QVariantMap json_map);
     void handleFoldbackLimitingNotification(const QVariantMap json_map);
     void handleMaximumTemperatureNotification (const QVariantMap payloadMap);
+    void handlePortOverCurrentNotification(const QVariantMap payloadMap);
 
 //Constructing the string for fault messages
     QString constructFaultMessage(QString parameter,QString state,int value)
@@ -226,8 +227,9 @@ signals:
                                  float temperatureFoldbackStartTemp,
                                  int temperatureFoldbackOutputLimit);
     void inputUnderVoltageChanged(float value);
-    void maximumTemperatureChanged(float value)
-;
+    void maximumTemperatureChanged(float value);
+    void portOverCurrentChanged(int port, float max_current);
+
     // fault messages notification
     void minimumVoltageChanged(bool state,int value);
     void overTemperatureChanged(bool state,int value);
