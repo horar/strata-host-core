@@ -787,6 +787,9 @@ std::string HostControllerService::platformRead()
             sendDisconnecttoUI();
             platform_uuid_.clear();
 
+            // adding the remote platform
+            addToLocalPlatformList(discovery_service_.getPlatforms());
+
             platform_details simulated_usb_pd,simulated_motor_vortex,sim_usb;
             simulated_usb_pd.platform_uuid = "P2.2018.1.1.0.0.c9060ff8-5c5e-4295-b95a-d857ee9a3671";
             simulated_usb_pd.platform_verbose = "USB PD Load Board";
