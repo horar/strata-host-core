@@ -10,24 +10,51 @@ Item {
     property int timerInterval: 400
     property int endOfStringDelay: 500
     property real currentXPosition: 0
+    property var letterObject: [ ]
 
     Component.onCompleted: {
         timerAnimation.start();
+        createObject(titleName.length);
     }
 
     function getElement(element) {
         return element.itemAt(indexIncrementer);
 
     }
+
+    function createObject(count) {
+        for(var i = 0 ; i < count ; ++i) {
+            letterObject.push(getObject());
+        }
+    }
+
     // TODO[Taniya] : create an component for the animation
-    function createObject() {
+    function getObject() {
+        console.log("inside get object");
         var dynamicObject = Qt.createQmlObject('import QtQuick 2.7; SequentialAnimation{ id: animation
-                    NumberAnimation { target: getElement(repeater) ; property: "opacity"; from: 0; to: 1; easing.type:Easing.OutInCubic; duration: fadeInTime;}
-                    NumberAnimation { target: getElement(repeater); property: "opacity"; from: 1; to: 0; easing.type:Easing.OutInCubic; duration: fadeOutTime;}
-            }',
+                        NumberAnimation { target: getElement(repeater) ; property: "opacity"; from: 0; to: 1; easing.type:Easing.OutInCubic; duration: fadeInTime;}
+                        NumberAnimation { target: getElement(repeater); property: "opacity"; from: 1; to: 0; easing.type:Easing.OutInCubic; duration: fadeOutTime;}
+                }',
+
                                                parent,'firstObject');
-        dynamicObject.start();
         return dynamicObject;
+    }
+
+    //This function will loop on letter object
+    function test() {
+        if(indexIncrementer!= titleName.length - 1) {
+            for(var i = 0; i < titleName.length-1; ++i){
+                console.log("in test");
+                indexIncrementer++;
+                var object = letterObject[i];
+                object.start();
+            }
+        }
+        else {
+            indexIncrementer = -1;
+            endOfStringDelayTimer.start()
+        }
+        return object;
     }
 
 
@@ -61,10 +88,10 @@ Item {
                 text: titleName.substring(index,index+1)
                 Component.onCompleted:{
                     //increment the current x position by the width of this character
-                   x = currentXPosition;
-                   currentXPosition += modelText.advance.width;
-                   width = modelText.advance.width;
-                   //console.log("character=",modelText.text,"x=",x," width=",width)
+                    x = currentXPosition;
+                    currentXPosition += modelText.advance.width;
+                    width = modelText.advance.width;
+                    //console.log("character=",modelText.text,"x=",x," width=",width)
                 }
             }
         }
@@ -73,14 +100,13 @@ Item {
     //this timer is used to pause the animation of individual letters at the end of the string
     Timer{
         id:endOfStringDelayTimer
-        interval: endOfStringDelay
+        interval: timerInterval
         running: false
+        repeat: true
 
-        onTriggered:{
+        onTriggered:
             timerAnimation.start()
-        }
     }
-
 
     Timer {
         id: timerAnimation
@@ -88,7 +114,7 @@ Item {
         onTriggered: {
             if(indexIncrementer!= titleName.length - 1) {
                 indexIncrementer++;
-                createObject();
+                letterObject[indexIncrementer].start();
             }
             else {
                 indexIncrementer = -1;
@@ -97,7 +123,6 @@ Item {
                 timerAnimation.stop()
                 endOfStringDelayTimer.start()
             }
-
         }
 
     }
