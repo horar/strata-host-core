@@ -4,7 +4,7 @@ import QtQuick.Controls 2.3
 import QtGraphicalEffects 1.0
 import QtQuick.Controls.Styles 1.4
 import QtQuick.Extras 1.4
-import tech.spyglass.PlatformInterfaceMotorVortex 1.0
+//import tech.spyglass. 1.0
 import "qrc:/js/navigation_control.js" as NavigationControl
 
 
@@ -15,12 +15,21 @@ Item {
 
     // Platform Implementation signals
     Connections {
-        target: platformInterfaceMotorVortex
+        target: coreInterface
 
-        onMotorSpeedChanged: {
-            tachMeterGauge.value = ((speed - 1500) / 4000) * 100;
+        onNotification: {
+            console.log("We received notification: ", payload);
+            var notification = JSON.parse(payload)
+            var speed = notification.payload.current_speed;
+            tachMeterGauge.value = ((speed - 1500) / 4000) * 100
             console.log("qml: speed= ", tachMeterGauge.value);
+
         }
+
+//        onMotorSpeedChanged: {
+//            tachMeterGauge.value = ((speed - 1500) / 4000) * 100;
+//            console.log("qml: speed= ", tachMeterGauge.value);
+//        }
     }
 
     // Control Section
@@ -86,7 +95,14 @@ Item {
                 function motorSpeed(value) {
                     // slider range 0 - 1 (%)
                     // motor rage:  1500 -- 5500  (4000 range)
-                    return value * 4000 + 1500;
+                    var setSpeedCmd ={
+                        "cmd":"speed_input",
+                        "payload": {
+                           "speed_target":value * 4000 + 1500
+                        }
+                    }
+                    console.log(JSON.stringify(setSpeedCmd))
+                    coreInterface.sendCommand(JSON.stringify(setSpeedCmd))
                 }
 
                 onMoved: {
@@ -94,7 +110,9 @@ Item {
                     gauge2.value = position * 200
                     gauge3.value = position * 200
                     console.log("slider: setMotorSpeed(", motorSpeed(position), ")");
-                    platformInterfaceMotorVortex.setMotorSpeed(motorSpeed(position));
+                    //platformInterfaceMotorVortex.setMotorSpeed(motorSpeed(position));
+
+                    motorSpeed(position)
 
                 }
 
