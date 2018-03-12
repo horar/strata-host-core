@@ -12,6 +12,7 @@ Item {
     id: controlPage
     objectName: "control"
     anchors { fill: parent }
+    property var isMotorGuageUpdated: false;
 
     // Platform Implementation signals
     Connections {
@@ -20,10 +21,26 @@ Item {
         onNotification: {
             //parse payload to json
             var notification = JSON.parse(payload)
+
             //get speed value from json
             var speed = notification.payload.current_speed;
             tachMeterGauge.value = ((speed - 1500) / 4000) * 100
-            console.log("qml: speed= ", tachMeterGauge.value);
+
+            //system mode
+            var systemMode = notification.payload.mode;
+            if(systemMode ==="manual"){
+                manualButton.checked = true;
+                automaticButton.checked = false;
+            }else if(systemMode ==="automation") {
+                manualButton.checked = false;
+                automaticButton.checked = true;
+            }
+
+            if(!isMotorGuageUpdated){
+                //set value only once
+                motorSpeedControl.value = (speed/5500.0)
+                isMotorGuageUpdated = !isMotorGuageUpdated
+            }
         }
     }
 
@@ -127,21 +144,36 @@ Item {
                     anchors {fill: parent}
 
                     RadioButton {
+                        id:manualButton
                         checked: true
                         text: "Manual Control"
 
                         onPressed: {
                             console.log("MANUAL CONTROL")
-                            platformInterfaceMotorVortex.setMotorMode("manual");
+                            var systemModeCmd ={
+                                "cmd":"set_system_mode",
+                                "payload": {
+                                   "system_mode":"manual"
+                                }
+                            }
+                            // send Manual mode command to platform
+                            coreInterface.sendCommand(JSON.stringify(systemModeCmd))
                         }
                     }
 
                     RadioButton {
+                        id:automaticButton
                         text: "Automatic Test Pattern"
-
                         onPressed: {
                             console.log("AUTOMATIC")
-                            platformInterfaceMotorVortex.setMotorMode("automatic");
+                            var systemModeCmd ={
+                                "cmd":"set_system_mode",
+                                "payload": {
+                                   "system_mode":"automation"
+                                }
+                            }
+                            // send Automation command to platform
+                            coreInterface.sendCommand(JSON.stringify(systemModeCmd))
                         }
                     }
                 }
