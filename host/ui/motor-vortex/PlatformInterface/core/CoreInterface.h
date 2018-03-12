@@ -65,6 +65,7 @@ public:
     //To send the selected platform and its connection status
     Q_INVOKABLE void sendSelectedPlatform(QString verbose, QString connection_status);
     Q_INVOKABLE void sendHandshake();
+    Q_INVOKABLE void sendCommand(QString cmd);
 
 signals:
 
@@ -72,8 +73,10 @@ signals:
     // Core Framework Signals
     bool platformIDChanged(QString id);
     bool platformStateChanged(bool platform_connected_state);
-
     bool platformListChanged(QString list);
+
+    // Platform Framework Signals
+    void notification(QString payload);
 
 private:
 

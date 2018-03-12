@@ -213,12 +213,15 @@ void CoreInterface::platformNotificationHandler(QJsonObject payload)
     QString value = payload["value"].toString();
     auto handler = notification_handlers_.find(value.toStdString());
     if( handler == notification_handlers_.end()) {
-        qCritical("CoreInterface::platformNotificationHandler()"
-                  " ERROR: no handler exits for %s !!", value.toStdString().c_str ());
+        QJsonDocument doc(payload);
+        emit notification( doc.toJson(QJsonDocument::Compact));
         return;
     }
 
     handler->second(payload["payload"].toObject());
+    QJsonDocument doc(payload);
+    emit notification( doc.toJson(QJsonDocument::Compact));
+
 
 }
 
@@ -262,6 +265,14 @@ void CoreInterface::sendSelectedPlatform(QString verbose, QString connection_sta
     QString strJson(doc.toJson(QJsonDocument::Compact));
     qDebug()<<"parse to send"<<strJson;
     hcc->sendCmd(strJson.toStdString());
+}
+
+// @f sendCommand
+// @b send json command to platform
+//
+void CoreInterface::sendCommand(QString cmd)
+{
+    hcc->sendCmd(cmd.toStdString());
 }
 
 // @f sendHandshake
