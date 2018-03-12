@@ -18,18 +18,13 @@ Item {
         target: coreInterface
 
         onNotification: {
-            console.log("We received notification: ", payload);
+            //parse payload to json
             var notification = JSON.parse(payload)
+            //get speed value from json
             var speed = notification.payload.current_speed;
             tachMeterGauge.value = ((speed - 1500) / 4000) * 100
             console.log("qml: speed= ", tachMeterGauge.value);
-
         }
-
-//        onMotorSpeedChanged: {
-//            tachMeterGauge.value = ((speed - 1500) / 4000) * 100;
-//            console.log("qml: speed= ", tachMeterGauge.value);
-//        }
     }
 
     // Control Section
@@ -92,16 +87,14 @@ Item {
 
                 Layout.alignment: Qt.AlignCenter
 
-                function motorSpeed(value) {
-                    // slider range 0 - 1 (%)
-                    // motor rage:  1500 -- 5500  (4000 range)
+                function setMotorSpeedCommand(value) {
                     var setSpeedCmd ={
                         "cmd":"speed_input",
                         "payload": {
                            "speed_target":value * 4000 + 1500
                         }
                     }
-                    console.log(JSON.stringify(setSpeedCmd))
+                    // send set speed command to platform
                     coreInterface.sendCommand(JSON.stringify(setSpeedCmd))
                 }
 
@@ -109,11 +102,7 @@ Item {
                     gauge1.value = position * 200  // TODO [ian] false temp values until hooked up
                     gauge2.value = position * 200
                     gauge3.value = position * 200
-                    console.log("slider: setMotorSpeed(", motorSpeed(position), ")");
-                    //platformInterfaceMotorVortex.setMotorSpeed(motorSpeed(position));
-
-                    motorSpeed(position)
-
+                    setMotorSpeedCommand(position)
                 }
 
                 ToolTip {
