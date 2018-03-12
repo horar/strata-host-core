@@ -34,14 +34,14 @@ int main(int argc, char *argv[])
 
     qmlRegisterType<CoreInterface>("tech.spyglass.CoreInterface",1,0,"CoreInterface");
     qmlRegisterType<PlatformInterfaceBuBu::PlatformInterface>("tech.spyglass.PlatformInterfaceBuBu",1,0,"PlatformInterfaceBuBu");
-    qmlRegisterType<PlatformInterfaceMotorVortex::PlatformInterface>("tech.spyglass.PlatformInterfaceMotorVortex",1,0,"PlatformInterfaceMotorVortex");
+    //qmlRegisterType<PlatformInterfaceMotorVortex::PlatformInterface>("tech.spyglass.PlatformInterfaceMotorVortex",1,0,"PlatformInterfaceMotorVortex");
     qmlRegisterType<PlatformInterfaceUsbPd::PlatformInterface>("tech.spyglass.PlatformInterfaceMotorVortex",1,0,"PlatformInterfaceMotorVortex");
 
     qmlRegisterType<DocumentManager>("tech.spyglass.DocumentManager", 1, 0, "DocumentManager");
 
     CoreInterface *coreInterface = new CoreInterface();
     //PlatformInterfaceBuBu::PlatformInterface *platformInterfaceBuBu = new PlatformInterfaceBuBu::PlatformInterface();
-    PlatformInterfaceMotorVortex::PlatformInterface *platformInterfaceMotorVortex = new PlatformInterfaceMotorVortex::PlatformInterface();
+    //PlatformInterfaceMotorVortex::PlatformInterface *platformInterfaceMotorVortex = new PlatformInterfaceMotorVortex::PlatformInterface();
     //PlatformInterfaceUsbPd::PlatformInterface *platformInterfaceUsbPd = new PlatformInterfaceUsbPd::PlatformInterface();
 
     //DocumentManager* documentManager = new DocumentManager(coreInterface);
@@ -52,7 +52,7 @@ int main(int argc, char *argv[])
 
     engine.rootContext ()->setContextProperty ("coreInterface", coreInterface);
     //engine.rootContext ()->setContextProperty ("platformInterfaceBuBu", platformInterfaceBuBu);
-    engine.rootContext ()->setContextProperty ("platformInterfaceMotorVortex", platformInterfaceMotorVortex);
+    //engine.rootContext ()->setContextProperty ("platformInterfaceMotorVortex", platformInterfaceMotorVortex);
     //engine.rootContext ()->setContextProperty ("platformInterfaceUsbPd", platformInterfaceUsbPd);
 
     //engine.rootContext ()->setContextProperty ("documentManager", documentManager);
