@@ -40,23 +40,6 @@ Item {
         return dynamicObject;
     }
 
-    //This function will loop on letter object
-    function test() {
-        if(indexIncrementer!= titleName.length - 1) {
-            for(var i = 0; i < titleName.length-1; ++i){
-                console.log("in test");
-                indexIncrementer++;
-                var object = letterObject[i];
-                object.start();
-            }
-        }
-        else {
-            indexIncrementer = -1;
-            endOfStringDelayTimer.start()
-        }
-        return object;
-    }
-
 
     TextMetrics {
         //this is used to calculate the width of the title
