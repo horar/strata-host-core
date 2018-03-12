@@ -70,6 +70,7 @@ typedef enum{
 	request_hcs_status	= 0,
 	request_available_platforms = 1,
 	platform_select		= 2,
+    register_client     = 3,
 	command_not_found	= 10,
 }CommandDispatcherMessages;
 
@@ -125,6 +126,7 @@ public:
     void sendDisconnecttoUI();
 
     void sendtoMap();
+    HcsError setEventLoop();
 private:
     // config file data members
     ParseConfig *configuration_;
