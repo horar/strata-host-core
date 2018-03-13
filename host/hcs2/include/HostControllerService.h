@@ -120,6 +120,7 @@ public:
 	bool clientExists(std::string);
 	bool checkPlatformExist(std::string *,std::string message);
     void remoteRouting(std::string message);
+    bool clientExistInList(std::string);
 
     // thread to monitor the serial port
     void serialPortMonitor();
@@ -158,6 +159,9 @@ private:
 	typedef std::list<platform_details> platformList;
     platformList platform_uuid_;    // [TODO] : change the naming style
 	std::string g_platform_uuid_;	// global variable to stor connected uuid
+
+    std::list<std::string> clientList;
+
 	// ********************** //
 	// lib serial port variables
 	struct sp_port *platform_socket_;
