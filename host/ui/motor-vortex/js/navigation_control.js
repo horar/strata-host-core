@@ -105,9 +105,12 @@ function createView(name, parent)
 
     if (component.status === QtQuickModule.Component.Error) {
         console.log("ERROR: Cannot createComponent(", name, "), parameters=", JSON.stringify(context));
-    }
+        console.log("errString: ", component.errorString())
+    }
 
-    // TODO[Abe]: store this globally for later destroying
+    // Remove children from container before creating another instance
+    removeView(parent)
+
     var object = component.createObject(parent,context)
     if (object === null) {
         console.log("Error creating object: name=", name, ", parameters=", JSON.stringify(context));
@@ -119,12 +122,17 @@ function createView(name, parent)
 }
 
 /*
-  Remove first child from a view
+  Remove children from a container
 */
 function removeView(parent)
 {
-    console.log("destroying view: ", parent.children[0])
-    parent.children[0].destroy()
+    if (parent.children.length > 0){
+        console.log("Destroying view")
+        for (var x in parent.children){
+            parent.children[x].destroy()
+        }
+    }
+
 }
 
 /*
