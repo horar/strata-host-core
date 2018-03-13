@@ -116,7 +116,7 @@ function getCurrentTab(){
 function sendMetricsToCloud(page_name){
     var data = {
         time:timeSinceLastViewChanged,
-        howLong:getTimeElapsed(),
+        howLong:String(getTimeElapsed()),
         page: page_name
     };
     console.log(JSON.stringify(data))
