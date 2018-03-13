@@ -21,6 +21,10 @@ function login(login_info){
 function login_result(response)
 {
     console.log("Login success! ", response)
+
+    if(response.hasOwnProperty("token")){
+        Rest.jwt = response.token;
+    }
     signals.loginResult(true)
 }
 
