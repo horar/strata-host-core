@@ -280,7 +280,7 @@ void CoreInterface::sendCommand(QString cmd)
 //
 void CoreInterface::sendHandshake()
 {
-    std::string cmd= "{\"cmd\":\"request_available_platforms\"}";
+    std::string cmd= "{\"cmd\":\"register_client\"}";
     hcc->sendCmd(cmd);
 }
 
