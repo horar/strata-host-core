@@ -488,11 +488,12 @@ std::vector<std::string> HostControllerService::initialCommandDispatch(std::stri
     }
 
     // state machine using switch statements
-    switch(stringHash(service_command["command"].GetString())) {
+    switch(stringHash(service_command["cmd"].GetString())) {
         case request_hcs_status:            s_sendmore(*server_socket_,dealer_id);
                                             s_send(*server_socket_,JSON_SINGLE_OBJECT
-                                                ("handshake","hcs_active"));
+                                                ("hcs::notification","hcs_active"));
                                             break;
+        case register_client:
         case request_available_platforms:   PDEBUG("Sending the list of available platform");
                                             s_sendmore(*server_socket_,dealer_id);
                                             s_send(*server_socket_,getPlatformListJson());
@@ -503,7 +504,6 @@ std::vector<std::string> HostControllerService::initialCommandDispatch(std::stri
                                             selected_platform.insert(selected_platform.begin(),board_name);
                                             selected_platform.insert(selected_platform.begin()+1,remote_status);
                                             return selected_platform;
-        case register_client:               PDEBUG("Registering the client");
     }
     getServerSocketEventReady();
     return selected_platform;
@@ -882,7 +882,7 @@ std::string HostControllerService::getPlatformListJson()
     Value nested_object;
     nested_object.SetObject();
     nested_object.AddMember("list",array,allocator);
-    document.AddMember("handshake",nested_object,allocator);
+    document.AddMember("hcs::notification",nested_object,allocator);
     // document.AddMember("platforms",array,allocator);
     StringBuffer strbuf;
     Writer<StringBuffer> writer(strbuf);

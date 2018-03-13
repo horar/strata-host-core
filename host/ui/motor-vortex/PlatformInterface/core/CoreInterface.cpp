@@ -35,7 +35,7 @@ CoreInterface::CoreInterface(QObject *parent) : QObject(parent)
                                 bind(&CoreInterface::platformNotificationHandler,
                                      this, placeholders::_1));
 
-    registerNotificationHandler("handshake",
+    registerNotificationHandler("hcs::notification",
                                 bind(&CoreInterface::platformListHandler,
                                      this, placeholders::_1));
 
@@ -257,7 +257,7 @@ void CoreInterface::platformListHandler(QJsonObject payload)
 void CoreInterface::sendSelectedPlatform(QString verbose, QString connection_status)
 {
     QJsonObject cmdMessageObject;
-    cmdMessageObject.insert("command", "platform_select");
+    cmdMessageObject.insert("cmd", "platform_select");
     cmdMessageObject.insert("platform_uuid",verbose);
     cmdMessageObject.insert("remote",connection_status);
 
@@ -280,7 +280,7 @@ void CoreInterface::sendCommand(QString cmd)
 //
 void CoreInterface::sendHandshake()
 {
-    std::string cmd= "{\"command\":\"request_available_platforms\"}";
+    std::string cmd= "{\"cmd\":\"request_available_platforms\"}";
     hcc->sendCmd(cmd);
 }
 
