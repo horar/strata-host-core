@@ -6,22 +6,27 @@
 */
 var signals = createObject("qrc:/SGSignals.qml", null)
 
-function onInputChange() {
-    // clear error
-    errorMsgText.text = ""
-}
+/*
+  Send Login information to server
+*/
 function login(login_info){
     var data = {"username":login_info.user,"password":login_info.password};
     Rest.xhr("post","login",data,
              login_result, login_error)
 }
 
+/*
+  Callback function when we get a success result from the REST object
+*/
 function login_result(response)
 {
     console.log("Login success! ", response)
     signals.loginResult(true)
 }
 
+/*
+  Callback function when we get a fail result from the REST object
+*/
 function login_error(error)
 {
     console.log("Login Error : ", error)

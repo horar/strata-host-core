@@ -13,6 +13,7 @@ var context = {
     "is_logged_in" : "false",
     "platform_state" : ""
 }
+
 /*
   Mapping of verbose_name to file directory structure.
 */
@@ -22,10 +23,6 @@ var screens = {
     WELCOME_SCREEN : "qrc:/SGWelcome.qml",
     CONTENT_SCREEN : "qrc:/Content.qml",
     STATUS_BAR:     "qrc:/SGStatusBar.qml"
-}
-
-var components = {
-    METRICS: "qrc:/SGMetrics.qml"
 }
 
 /*
@@ -60,7 +57,6 @@ var navigation_state_ = states.UNINITIALIZED
 var control_container_ = null
 var content_container_ = null
 var status_bar_container_ = null
-var metrics = null
 var flipable_parent_= null
 
 /*
@@ -89,7 +85,6 @@ function getQMLFile(platform_name, filename) {
 function init(flipable_parent, control_parent, content_parent, bar_parent)
 {
     // Create metrics object to track usage
-    //metrics = createView(components.METRICS, null);
     Metrics.init(context)
 
     flipable_parent_    = flipable_parent
@@ -131,10 +126,12 @@ function removeView(parent)
     console.log("destroying view: ", parent.children[0])
     parent.children[0].destroy()
 }
+
 /*
-  a catch-all for events that are required to be handled regardless of state
+  A catch-all for events that are required to be handled for default event behaviors
+  or handle events that were not caught in the main state machine handler
 */
-function globalState(event,data)
+function globalEventHandler(event,data)
 {
 
     switch(event)
@@ -178,13 +175,22 @@ function globalState(event,data)
 }
 
 /*
-  Navigator state machine
+  Navigator state machine event handler with no data
 */
 function updateState(event)
 {
     updateState(event,null)
 }
 
+/*
+  Main state machine event handler.
+  Any navigation request must use this function to attempt a navigation change.
+  This includes SGXXX.qml as well as the platform specific Control/Content.qmls
+  This state machine determines what is shown (or not shown) on the:
+  1. Statusbar container
+  2. Flipable Control container
+  3. Flipable Content container
+*/
 function updateState(event, data)
 {
     console.log("Received event: ", event)
@@ -195,7 +201,7 @@ function updateState(event, data)
             {
 
             default:
-                globalState(event,data)
+                globalEventHandler(event,data)
             break;
             }
 
@@ -216,7 +222,7 @@ function updateState(event, data)
             break;
 
             default:
-                globalState(event,data)
+                globalEventHandler(event,data)
             break;
 
             }
@@ -230,6 +236,8 @@ function updateState(event, data)
                     // Show control when connected
                     var qml_control = getQMLFile(context.platform_name, "Control")
                     createView(qml_control, control_container_)
+
+                    // Restart timer of control
                     Metrics.restartTimer()
                 }
                 else {
@@ -282,10 +290,10 @@ function updateState(event, data)
                 updateState(events.SHOW_CONTROL_EVENT)
                 break;
             case events.TOGGLE_CONTROL_CONTENT:
-                //send request to metrics service when entering and leaving platfrom coontrol view
+                // Send request to metrics service when entering and leaving platform control view
                 var pageName = '';
                 if(flipable_parent_.flipped===false){
-                    console.log("in fplipable ",context.platform_name)
+                    console.log("In flipable ",context.platform_name)
                     pageName = context.platform_name +' Control'
                 }else {
                     var currentTabName = Metrics.getCurrentTab()
@@ -299,13 +307,13 @@ function updateState(event, data)
 
                 break;
             default:
-                globalState(event,data)
+                globalEventHandler(event,data)
             break;
             }
         break;
 
         default:
-            globalState(event,data)
+            globalEventHandler(event,data)
             break;
 
     }

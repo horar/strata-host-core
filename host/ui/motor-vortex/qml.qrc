@@ -18,7 +18,6 @@
         <file>js/login.js</file>
         <file>js/navigation_control.js</file>
         <file>js/restclient.js</file>
-        <file>js/signup.js</file>
         <file>PlatformInterface/core/CoreInterface.cpp</file>
         <file>PlatformInterface/core/CoreInterface.h</file>
         <file>source/DocumentManager.cpp</file>
