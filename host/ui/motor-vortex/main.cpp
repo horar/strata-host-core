@@ -16,29 +16,48 @@
 #include <QGLContext>
 #include <QProcess>
 
+#include <PlatformInterface/core/CoreInterface.h>
+#include <PlatformInterface/platforms/bubu/PlatformInterfaceBuBu.h>
+#include <PlatformInterface/platforms/motor-vortex/PlatformInterfaceMotorVortex.h>
+#include <PlatformInterface/platforms/usb-pd/PlatformInterfaceUsbPd.h>
+
 #include "DocumentManager.h"
-#include "DataCollector.h"
-#include "ImplementationInterfaceBinding/ImplementationInterfaceBinding.h"
 
 int main(int argc, char *argv[])
 {
+#if defined(Q_OS_WIN)
+    QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+#endif
+
     QApplication app(argc, argv);
+    QQmlApplicationEngine engine;
 
-    qmlRegisterType<ImplementationInterfaceBinding>("tech.spyglass.ImplementationInterfaceBinding",1,0,"ImplementationInterfaceBinding");
-    qmlRegisterType<Document>("tech.spyglass.Document", 1, 0, "Document");
+    qmlRegisterType<CoreInterface>("tech.spyglass.CoreInterface",1,0,"CoreInterface");
+    qmlRegisterType<PlatformInterfaceBuBu::PlatformInterface>("tech.spyglass.PlatformInterfaceBuBu",1,0,"PlatformInterfaceBuBu");
+    //qmlRegisterType<PlatformInterfaceMotorVortex::PlatformInterface>("tech.spyglass.PlatformInterfaceMotorVortex",1,0,"PlatformInterfaceMotorVortex");
+    qmlRegisterType<PlatformInterfaceUsbPd::PlatformInterface>("tech.spyglass.PlatformInterfaceMotorVortex",1,0,"PlatformInterfaceMotorVortex");
+
     qmlRegisterType<DocumentManager>("tech.spyglass.DocumentManager", 1, 0, "DocumentManager");
-    qmlRegisterType<DataCollector>("tech.spyglass.DataCollector",1,0,"DataCollector");
-    ImplementationInterfaceBinding *implementationInterfaceBinding = new ImplementationInterfaceBinding();
 
-    DocumentManager* documentManager = new DocumentManager(implementationInterfaceBinding);
-    DataCollector* dataCollector = new DataCollector(implementationInterfaceBinding);
+    CoreInterface *coreInterface = new CoreInterface();
+    //PlatformInterfaceBuBu::PlatformInterface *platformInterfaceBuBu = new PlatformInterfaceBuBu::PlatformInterface();
+    //PlatformInterfaceMotorVortex::PlatformInterface *platformInterfaceMotorVortex = new PlatformInterfaceMotorVortex::PlatformInterface();
+    //PlatformInterfaceUsbPd::PlatformInterface *platformInterfaceUsbPd = new PlatformInterfaceUsbPd::PlatformInterface();
+
+    //DocumentManager* documentManager = new DocumentManager(coreInterface);
+    //DataCollector* dataCollector = new DataCollector(coreInterface);
+
     QtWebEngine::initialize();
     QtWebView::initialize();
 
-    QQmlApplicationEngine engine;
-    engine.rootContext ()->setContextProperty ("implementationInterfaceBinding", implementationInterfaceBinding);
-    engine.rootContext ()->setContextProperty ("documentManager", documentManager);
-    engine.rootContext ()->setContextProperty ("dataCollector", dataCollector);
+    engine.rootContext ()->setContextProperty ("coreInterface", coreInterface);
+    //engine.rootContext ()->setContextProperty ("platformInterfaceBuBu", platformInterfaceBuBu);
+    //engine.rootContext ()->setContextProperty ("platformInterfaceMotorVortex", platformInterfaceMotorVortex);
+    //engine.rootContext ()->setContextProperty ("platformInterfaceUsbPd", platformInterfaceUsbPd);
+
+    //engine.rootContext ()->setContextProperty ("documentManager", documentManager);
+
+    //engine.rootContext ()->setContextProperty ("dataCollector", dataCollector);
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
     if (engine.rootObjects().isEmpty()) {
         return -1;

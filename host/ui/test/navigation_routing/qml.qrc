@@ -1,0 +1,19 @@
+<RCC>
+    <qresource prefix="/">
+        <file>main.qml</file>
+        <file>navigationControl.js</file>
+        <file>main.cpp</file>
+        <file>navigation_router.pro</file>
+        <file>views/bubu/Control.qml</file>
+        <file>views/usb-pd/Advanced.qml</file>
+        <file>views/usb-pd/Control.qml</file>
+        <file>SGLoginScreen.qml</file>
+        <file>SGDetectingPlatform.qml</file>
+        <file>views/motor-vortex/Control.qml</file>
+        <file>SGControlContainer.qml</file>
+        <file>SGContentContainer.qml</file>
+        <file>views/bubu/Content.qml</file>
+        <file>views/motor-vortex/Content.qml</file>
+        <file>views/usb-pd/Content.qml</file>
+    </qresource>
+</RCC>
