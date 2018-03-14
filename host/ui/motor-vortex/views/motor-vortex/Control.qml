@@ -12,34 +12,60 @@ Item {
     id: controlPage
     objectName: "control"
     anchors { fill: parent }
-    property var isMotorGuageUpdated: false;
+    property var isMotorSliderUpdated: false;
 
     // Platform Implementation signals
     Connections {
         target: coreInterface
 
         onNotification: {
-            //parse payload to json
-            var notification = JSON.parse(payload)
 
-            //get speed value from json
+            try {
+
+                /*
+                    Attempt to parse JSON
+                    Note: Motor platform sometimes has noise in json and can corrupt values
+                */
+                var notification = JSON.parse(payload)
+
+            }
+            catch(e)
+            {
+                if ( e instanceof SyntaxError){
+                    console.log("Notification JSON is invalid. ignoring")
+                }
+            }
+
+            //get speed value from json; check i
             var speed = notification.payload.current_speed;
-            tachMeterGauge.value = ((speed - 1500) / 4000) * 100
+            if(speed !== undefined){
+                tachMeterGauge.value = ((speed - 1500) / 4000) * 100
+            }
+            else
+            {
+                console.log("Junk data found on speed ", speed)
+            }
 
             //system mode
             var systemMode = notification.payload.mode;
-            if(systemMode ==="manual"){
-                manualButton.checked = true;
-                automaticButton.checked = false;
-            }else if(systemMode ==="automation") {
-                manualButton.checked = false;
-                automaticButton.checked = true;
+            if (systemMode !== undefined){
+                if(systemMode ==="manual"){
+                    manualButton.checked = true;
+                    automaticButton.checked = false;
+                }else if(systemMode ==="automation") {
+                    manualButton.checked = false;
+                    automaticButton.checked = true;
+                }
+            }
+            else
+            {
+                console.log("Junk data found on mode")
             }
 
-            if(!isMotorGuageUpdated){
+            if(!isMotorSliderUpdated){
                 //set value only once
                 motorSpeedControl.value = (speed/5500.0)
-                isMotorGuageUpdated = !isMotorGuageUpdated
+                isMotorSliderUpdated = !isMotorSliderUpdated
             }
         }
     }
