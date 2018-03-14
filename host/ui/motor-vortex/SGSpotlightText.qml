@@ -28,6 +28,16 @@ Item {
         }
     }
 
+    function getLetter() {
+
+        indexIncrementer = indexIncrementer % titleName.length;
+        if (typeof letterObject[indexIncrementer] !== "undefined") {  //  check for validation valid object
+            letterObject[indexIncrementer].start();
+        }
+        indexIncrementer++;
+
+    }
+
     // TODO[Taniya] : create an component for the animation
     function getObject() {
         var dynamicObject = Qt.createQmlObject('import QtQuick 2.7; SequentialAnimation{ id: animation
@@ -94,17 +104,7 @@ Item {
         id: timerAnimation
         interval: timerInterval; running: true; repeat: true
         onTriggered: {
-            if(indexIncrementer!= titleName.length - 1) {
-                indexIncrementer++;
-                letterObject[indexIncrementer].start();
-            }
-            else {
-                indexIncrementer = -1;
-                //at the end of the string, stop the animation of letters, and let the
-                //string fade out briefly
-                timerAnimation.stop()
-                endOfStringDelayTimer.start()
-            }
+            getLetter();
         }
 
     }
