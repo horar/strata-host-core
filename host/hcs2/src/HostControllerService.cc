@@ -690,6 +690,7 @@ void HostControllerService::addToLocalPlatformList(remote_platforms remote_platf
     platform.connection_status = "remote";
     platform_uuid_.push_back(platform);
 }
+
 /******************************************************************************/
 /*               potential connector factory functions                        */
 /******************************************************************************/
@@ -1007,91 +1008,3 @@ void HostControllerService::remoteRouting(std::string message)
         multimap_iterator_++;
     }
 }
-
-void HostControllerService::serialPortMonitor()
-{
-    // while(1){
-    //     PDEBUG("Inside thread\n");
-    //     sleep(1);
-    //     if(port_disconnected_) {
-    //         if(openPlatform()) {
-    //             // event_add(platform_handler,NULL);
-    //             event_base_loopbreak(event_loop_base_);
-    //
-    //             initializePlatform();
-    //             platform_details simulated_usb_pd,simulated_motor_vortex;
-    //             simulated_usb_pd.platform_uuid = "simulation_1";
-    //             simulated_usb_pd.platform_verbose = "simulated-usb-pd";
-    //             simulated_usb_pd.connection_status = "view";
-    //
-    //             simulated_motor_vortex.platform_uuid = "simulation_2";
-    //             simulated_motor_vortex.platform_verbose = "simulated-motor-vortex";
-    //             simulated_motor_vortex.connection_status = "view";
-    //
-    //             platform_uuid_.push_back(simulated_usb_pd);  // for testing alone
-    //             platform_uuid_.push_back(simulated_motor_vortex);  // for testing alone
-    //
-    //             std::string platformList = getPlatformListJson();
-    //             multimap_iterator_ = platform_client_mapping_.begin();
-    //             // std::string disconnect_message = "{\"notification\":{\"value\":\"platform_connection_change_notification\",\"payload\":{\"status\":\"disconnected\"}}}";
-    //             while(multimap_iterator_ != platform_client_mapping_.end()) {
-    //                 std::string dealer_id = multimap_iterator_->second;
-    //                 s_sendmore(*server_socket_,dealer_id);
-    //                 s_send(*server_socket_,platformList);
-    //                 PDEBUG("[hcs to hcc]%s",platformList.c_str());
-    //                 multimap_iterator_++;
-    //             }
-    //
-    //             // iter through map and send the list to all
-    //
-    //             // run();
-    //             lib_event_thread = new std::thread(&HostControllerService::run,this);
-    //
-    //         }
-    //     }
-    //     //         std::string disconnect_message = "{\"notification\":{\"value\":\"platform_connection_change_notification\",\"payload\":{\"status\":\"disconnected\"}}}";
-    //     //         s_sendmore(*server_socket_,g_dealer_id_);
-    //     //         s_send(*server_socket_,disconnect_message);
-    //     //     }
-    //     // }
-    //
-    // }
-}
-
-void HostControllerService::sendtoMap()
-{
-    if(!platform_client_mapping_.empty()) {
-        platform_details simulated_usb_pd,simulated_motor_vortex,sim_usb;
-        simulated_usb_pd.platform_uuid = "P2.2018.1.1.0.0.c9060ff8-5c5e-4295-b95a-d857ee9a3671";
-        simulated_usb_pd.platform_verbose = "USB PD Load Board";
-        simulated_usb_pd.connection_status = "view";
-
-        simulated_motor_vortex.platform_uuid = "motorvortex1";
-        simulated_motor_vortex.platform_verbose = "Vortex Fountain Motor Platform Board";
-        simulated_motor_vortex.connection_status = "view";
-
-        sim_usb.platform_uuid = "P2.2017.1.1.0.0.cbde0519-0f42-4431-a379-caee4a1494af";
-        sim_usb.platform_verbose = "USB PD";
-        sim_usb.connection_status = "view";
-
-        platform_uuid_.push_back(simulated_usb_pd);  // for testing alone
-        platform_uuid_.push_back(simulated_motor_vortex);
-        platform_uuid_.push_back(sim_usb);
-
-        platform_uuid_.push_back(simulated_usb_pd);  // for testing alone
-        platform_uuid_.push_back(simulated_motor_vortex);  // for testing alone
-
-        std::string platformList = getPlatformListJson();
-        multimap_iterator_ = platform_client_mapping_.begin();
-        // std::string disconnect_message = "{\"notification\":{\"value\":\"platform_connection_change_notification\",\"payload\":{\"status\":\"disconnected\"}}}";
-        while(multimap_iterator_ != platform_client_mapping_.end()) {
-            std::string dealer_id = multimap_iterator_->second;
-            s_sendmore(*server_socket_,dealer_id);
-            s_send(*server_socket_,platformList);
-            getServerSocketEventReady();
-            PDEBUG("[hcs to hcc]%s",platformList.c_str());
-            multimap_iterator_++;
-        }
-    }
-}
-// void HostControllerService::serialPortMonitor()
