@@ -19,7 +19,6 @@ Item {
 
     function getElement(element) {
         return element.itemAt(indexIncrementer);
-
     }
 
     function createObject(count) {
@@ -35,20 +34,22 @@ Item {
             letterObject[indexIncrementer].start();
         }
         indexIncrementer++;
-
     }
 
-    // TODO[Taniya] : create an component for the animation
     function getObject() {
-        var dynamicObject = Qt.createQmlObject('import QtQuick 2.7; SequentialAnimation{ id: animation
-                        NumberAnimation { target: getElement(repeater) ; property: "opacity"; from: 0; to: 1; easing.type:Easing.OutInCubic; duration: fadeInTime;}
-                        NumberAnimation { target: getElement(repeater); property: "opacity"; from: 1; to: 0; easing.type:Easing.OutInCubic; duration: fadeOutTime;}
-                }',
+          console.log("component url:", textAnimation.url)
+          var dynamicObject = textAnimation.createObject(this)
+          return dynamicObject;
+      }
 
-                                               parent,'firstObject');
-        return dynamicObject;
-    }
-
+      Component {
+          id: textAnimation
+          SequentialAnimation{
+              id: animation
+          NumberAnimation { target: getElement(repeater); property: "opacity"; from: 0; to: 1; easing.type:Easing.OutInCubic; duration: fadeInTime;}
+          NumberAnimation { target: getElement(repeater); property: "opacity"; from: 1; to: 0; easing.type:Easing.OutInCubic; duration: fadeOutTime;}
+          }
+      }
 
     TextMetrics {
         //this is used to calculate the width of the title
