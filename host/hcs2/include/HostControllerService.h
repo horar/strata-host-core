@@ -44,6 +44,7 @@
 #include "ParseConfig.h"
 #include "Logger.h"
 #include "DiscoveryService.h"
+#include "Connector.h"
 
 // Console print function
 // used in main.cc and host-controller-service.cc
@@ -185,5 +186,8 @@ private:
 
     // platform libevents
     struct event *platform_handler;
+
+    SerialConnector *serial_object_;
+
 };
 #endif
