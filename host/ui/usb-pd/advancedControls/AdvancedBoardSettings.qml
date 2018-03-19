@@ -20,7 +20,7 @@ Rectangle{
                 chargeOnlyButton, passiveButton, redriverButton,
                 inputLimitingGroup, temperatureLimitingGroup,
                 minimumInputVoltageText, minimumInputRect, minimumInputUnitText, minimumInputVoltageSlider,
-                faultTempText, faultTempLabel, faultTempUnitText, faultTempSlider]
+                faultTempText, faultTempTextField, faultTempUnitText, faultTempSlider]
             property:"opacity"
             to: 0
             duration:500
@@ -46,7 +46,7 @@ Rectangle{
             targets: [faultProtectionLabel, shutdownButton, restartButton, noProtectionButton, dataConfigurationLabel,
                 chargeOnlyButton, passiveButton, redriverButton,
                 inputLimitingGroup,  temperatureLimitingGroup,
-                minimumInputVoltageText, minimumInputLabel, minimumInputUnitText, minimumInputVoltageSlider,
+                minimumInputVoltageText, minimumInputTextField, minimumInputUnitText, minimumInputVoltageSlider,
                 faultTempText, faultTempLabel, faultTempUnitText, faultTempSlider]
 
             property:"opacity"
@@ -847,12 +847,12 @@ Rectangle{
             font.pointSize: smallFontSize
             color:enabled ? enabledTextColor : disabledTextColor
             text: minimumInputVoltageSlider.value
-            validator: DoubleValidator {bottom:.25; top:2; decimals:1}
+            validator: DoubleValidator {bottom:5; top:32; decimals:1}
             background: Rectangle {
                 color:"transparent"
             }
             onEditingFinished:{
-                portCableCompensationSlider.value= text
+                minimumInputVoltageSlider.value= text
               }
         }
     }
@@ -936,12 +936,12 @@ Rectangle{
             font.pointSize: smallFontSize
             color:enabled ? enabledTextColor : disabledTextColor
             text: faultTempSlider.value
-            validator: DoubleValidator {bottom:.25; top:2; decimals:1}
+            validator: DoubleValidator {bottom:25; top:100; decimals:1}
             background: Rectangle {
                 color:"transparent"
             }
             onEditingFinished:{
-                portCableCompensationSlider.value= text
+                faultTempSlider.value= text
               }
         }
     }
