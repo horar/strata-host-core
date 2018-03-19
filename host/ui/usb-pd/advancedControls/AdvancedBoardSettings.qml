@@ -19,7 +19,7 @@ Rectangle{
             targets: [faultProtectionLabel, shutdownButton, restartButton, noProtectionButton, dataConfigurationLabel,
                 chargeOnlyButton, passiveButton, redriverButton,
                 inputLimitingGroup, temperatureLimitingGroup,
-                minimumInputVoltageText, minimumInputLabel, minimumInputUnitText, minimumInputVoltageSlider,
+                minimumInputVoltageText, minimumInputRect, minimumInputUnitText, minimumInputVoltageSlider,
                 faultTempText, faultTempLabel, faultTempUnitText, faultTempSlider]
             property:"opacity"
             to: 0
@@ -825,27 +825,46 @@ Rectangle{
         anchors.top: temperatureLimitingGroup.bottom
         anchors.topMargin: 10
     }
-    Label{
-        id:minimumInputLabel
+
+    Rectangle{
+        id: minimumInputRect
+        color: textEditFieldBackgroundColor
         anchors.left:minimumInputVoltageText.right
-        anchors.leftMargin: 10
+        anchors.leftMargin: 5
         anchors.verticalCenter: minimumInputVoltageText.verticalCenter
-        anchors.verticalCenterOffset: 2
-        color:enabled ? enabledTextColor : disabledTextColor
-        text:minimumInputVoltageSlider.value
-        verticalAlignment: TextInput.AlignTop
-        font.family: "helvetica"
-        font.pointSize: smallFontSize
         height:15
-        width:20
+        width:30
+
+        TextField{
+            id:minimumInputTextField
+            anchors.fill: parent
+            anchors.leftMargin: 2
+            anchors.topMargin: 5
+
+            horizontalAlignment: Qt.AlignLeft
+
+            font.family: "helvetica"
+            font.pointSize: smallFontSize
+            color:enabled ? enabledTextColor : disabledTextColor
+            text: minimumInputVoltageSlider.value
+            validator: DoubleValidator {bottom:.25; top:2; decimals:1}
+            background: Rectangle {
+                color:"transparent"
+            }
+            onEditingFinished:{
+                portCableCompensationSlider.value= text
+              }
+        }
     }
+
+
     Text{
         id:minimumInputUnitText
         text:"V"
         font.family: "helvetica"
         font.pointSize: smallFontSize
         color: enabled ? enabledTextColor : disabledTextColor
-        anchors.left:minimumInputLabel.right
+        anchors.left:minimumInputRect.right
         anchors.leftMargin: 5
         anchors.verticalCenter: minimumInputVoltageText.verticalCenter
 
@@ -871,7 +890,7 @@ Rectangle{
         }
 
         onMoved: {
-            minimumInputLabel.text = Math.round(minimumInputVoltageSlider.value *10)/10
+            minimumInputTextField.text = Math.round(minimumInputVoltageSlider.value *10)/10
         }
 
         Connections {
@@ -896,20 +915,38 @@ Rectangle{
         anchors.topMargin: 10
     }
 
-    Label{
-        id:faultTempLabel
+    Rectangle{
+        id: faultTempRect
+        color: textEditFieldBackgroundColor
         anchors.left:faultTempText.right
-        anchors.leftMargin: 10
+        anchors.leftMargin: 5
         anchors.verticalCenter: faultTempText.verticalCenter
-        anchors.verticalCenterOffset: 2
-        color:enabled ? enabledTextColor : disabledTextColor
-        text:faultTempSlider.value
-        verticalAlignment: TextInput.AlignTop
-        font.family: "helvetica"
-        font.pointSize: smallFontSize
         height:15
-        width:20
+        width:30
+
+        TextField{
+            id:faultTempTextField
+            anchors.fill: parent
+            anchors.leftMargin: 2
+            anchors.topMargin: 5
+
+            horizontalAlignment: Qt.AlignLeft
+
+            font.family: "helvetica"
+            font.pointSize: smallFontSize
+            color:enabled ? enabledTextColor : disabledTextColor
+            text: faultTempSlider.value
+            validator: DoubleValidator {bottom:.25; top:2; decimals:1}
+            background: Rectangle {
+                color:"transparent"
+            }
+            onEditingFinished:{
+                portCableCompensationSlider.value= text
+              }
+        }
     }
+
+
 
 
     Text{
@@ -918,7 +955,7 @@ Rectangle{
         font.family: "helvetica"
         font.pointSize: smallFontSize
         color: enabled ? enabledTextColor : disabledTextColor
-        anchors.left:faultTempLabel.right
+        anchors.left:faultTempRect.right
         anchors.leftMargin: 5
         anchors.verticalCenter: faultTempText.verticalCenter
 
@@ -943,7 +980,7 @@ Rectangle{
             }
         }
         onMoved: {
-            faultTempLabel.text = Math.round(faultTempSlider.value *10)/10
+            faultTempTextField.text = Math.round(faultTempSlider.value *10)/10
 
         }
         Connections {
