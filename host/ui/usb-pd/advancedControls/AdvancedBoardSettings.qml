@@ -739,7 +739,7 @@ Rectangle{
             height:10
             from: 25
             to:100
-            value:5
+            value:100
             stepSize: 0.0
 
             onPressedChanged: {
