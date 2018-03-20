@@ -12,6 +12,9 @@ Window {
     height: 900
     title: qsTr("Encore Design Suite")
 
+    // Debug option(s)
+    property bool showDebugCommandBar: true
+
     Component.onCompleted: {
         console.log("Initializing")
         NavigationControl.init(flipable,controlContainer, contentContainer, statusBarContainer)
@@ -74,7 +77,7 @@ Window {
          Rectangle {
 
              id: commandBar
-             visible: true
+             visible: showDebugCommandBar
              width: parent.width
              Layout.alignment: Qt.AlignBottom
              Layout.preferredHeight: .10 * parent.height
