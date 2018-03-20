@@ -163,7 +163,7 @@ Rectangle{
 
             Component.onCompleted: {
                 console.log("platformListModel:Component.onCompleted:");
-                append(platformSelectorContainer.populatePlatforms(coreInterface.platform_list_));
+                platformSelectorContainer.populatePlatforms(coreInterface.platform_list_)
             }
 
             // DEBUG hard code model data for testing
@@ -195,6 +195,9 @@ Rectangle{
         }
 
         function populatePlatforms(platform_list_json) {
+            var autoSelectEnabled = true
+            var autoSelectedPlatform = null
+
             // Map out UUID->platform name
             // Lookup table
             //  platform_id -> local qml directory holding interface
@@ -230,11 +233,8 @@ Rectangle{
                     }
                     else {
                         platform_info.text += " (Connected)"
-                        // For Demo purposes only; Immediately go to control
-                        var data = { platform_name: platform_info.name}
-                        NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT,data)
-                        coreInterface.sendSelectedPlatform(platform_info.verbose, platform_info.connection)
-                        platformInterfaceMotorVortex.sendSelectedPlatform(platform_info.verbose, platform_info.connection)
+                        // copy "connected" platform; Note: this will auto select the last listed "connected" platform
+                        autoSelectedPlatform = platform_info
                     }
 
                     // Add to the model
@@ -244,11 +244,24 @@ Rectangle{
 
             }
             catch(err) {
-                console.log("CoreInterface error: ")
+                console.log("CoreInterface error: ", err.toString())
                 platformListModel.clear()
                 platformListModel.append({ text: "No Platforms Available" } )
             }
-            platformListModel.sync();
+
+            // Auto Select "connected" platform
+            if ( autoSelectEnabled && autoSelectedPlatform) {
+                console.log("Auto selecting connected platform: ", autoSelectedPlatform.name)
+
+               // For Demo purposes only; Immediately go to control
+               var data = { platform_name: autoSelectedPlatform.name}
+               coreInterface.sendSelectedPlatform(autoSelectedPlatform.verbose, autoSelectedPlatform.connection)
+               NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT,data)
+            }
+            else if ( autoSelectEnabled == false){
+                console.log("Auto selecting disabled.")
+            }
+
         }
 
         ComboBox {
@@ -276,14 +289,12 @@ Rectangle{
                 else if(connection === "connected"){
                     NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT,data)
                     coreInterface.sendSelectedPlatform(platformListModel.get(cbSelector.currentIndex).verbose,platformListModel.get(cbSelector.currentIndex).connection)
-                    platformInterfaceMotorVortex.sendSelectedPlatform(platformListModel.get(cbSelector.currentIndex).verbose,platformListModel.get(cbSelector.currentIndex).connection)
                 }
                 else if( connection === "remote"){
                     NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT,data)
                     // Call coreinterface connect()
                     console.log("calling the send");
                     coreInterface.sendSelectedPlatform(platformListModel.get(cbSelector.currentIndex).verbose,platformListModel.get(cbSelector.currentIndex).connection)
-                    platformInterfaceMotorVortex.sendSelectedPlatform(platformListModel.get(cbSelector.currentIndex).verbose,platformListModel.get(cbSelector.currentIndex).connection)
                 }
 
 
