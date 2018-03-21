@@ -111,7 +111,6 @@ void ImplementationInterfaceBinding::setRedriverConfiguration(QString value)
     cmdMessageObject.insert("payload",payloadObject);
     QJsonDocument doc(cmdMessageObject);
     QString strJson(doc.toJson(QJsonDocument::Compact));
-    hcc_object->sendCmd(strJson.toStdString());
     if(hcc_object->sendCmd(strJson.toStdString()))
         qDebug() << "Command sent with value" << doc;
     else
@@ -132,7 +131,6 @@ void ImplementationInterfaceBinding::setCableCompensation(int inPort, float inCu
     cmdMessageObject.insert("payload",payloadObject);
     QJsonDocument doc(cmdMessageObject);
     QString strJson(doc.toJson(QJsonDocument::Compact));
-    hcc_object->sendCmd(strJson.toStdString());
     if(hcc_object->sendCmd(strJson.toStdString()))
         qDebug() << "Command sent with value" << doc;
     else
@@ -150,7 +148,6 @@ void ImplementationInterfaceBinding::sendPlatformRefresh()
     cmdMessageObject.insert("payload",payloadObject);
     QJsonDocument doc(cmdMessageObject);
     QString strJson(doc.toJson(QJsonDocument::Compact));
-    hcc_object->sendCmd(strJson.toStdString());
     if(hcc_object->sendCmd(strJson.toStdString()))
         qDebug() << "Command sent with value" << doc;
     else
@@ -550,7 +547,11 @@ void ImplementationInterfaceBinding::handleNotification(QVariantMap current_map)
          }else if (current_map["value"] == "usb_pd_advertised_voltages_notification"){
             payloadMap=current_map["payload"].toMap();
             handlePortAdvertisedVoltagesNotification(payloadMap);
+         }else if (current_map["value"] == "get_cable_loss_compensation"){
+            payloadMap=current_map["payload"].toMap();
+            handlePortCableCompensationNotification(payloadMap);
          }
+
 
 
         else {
@@ -803,6 +804,15 @@ void ImplementationInterfaceBinding::handleFoldbackLimitingNotification(const QV
                                  temperatureFoldbackOutputLimit);
 }
 
+
+void ImplementationInterfaceBinding::handlePortCableCompensationNotification(const QVariantMap json_map) {
+    int port = json_map["port"].toInt();
+    float cableLoss = json_map["output_current"].toFloat();
+    float biasVoltage = json_map["bias_voltage"].toFloat() * 1000;      //switch from volts to millivolts
+    //qDebug() << "cable loss notification received. amps="<<cableLoss;
+    emit portCableCompensationChanged(port, cableLoss, biasVoltage);
+}
+
 void ImplementationInterfaceBinding::handlePortAdvertisedVoltagesNotification(const QVariantMap payloadMap) {
 
     //qDebug() << "port voltage notification"<<payloadMap;
@@ -910,9 +920,6 @@ void ImplementationInterfaceBinding::handleInputUnderVoltageValueNotification (c
 void ImplementationInterfaceBinding::handleMaximumTemperatureNotification (const QVariantMap payloadMap) {
 
     float value = payloadMap["maximum_temperature"].toFloat();
-
-    qDebug() << "max temp notification "<<value;
-
     emit maximumTemperatureChanged(value);
 }
 
