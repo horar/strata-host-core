@@ -108,8 +108,21 @@ function createView(name, parent)
         console.log("errString: ", component.errorString())
     }
 
-    // Remove children from container before creating another instance
-    removeView(parent)
+    /*
+        In some cases we have 'indestructible' children.
+        This seems to occur when a qml is being loaded and while executing tries to destroy itself.
+        Having auto selection enabled on the WelcomeScreen will cause this scenario. Catch the error here
+        output an error. When it errors the child will eventually get destroyed on subsequent view creation
+        TODO: Modify autoselect so it doesn't try to destroy itself on load.
+    */
+    try{
+        // Remove children from container before creating another instance
+        removeView(parent)
+    }
+    catch(err){
+        console.log("ERROR: Could not destroy child")
+    }
+
 
     var object = component.createObject(parent,context)
     if (object === null) {
