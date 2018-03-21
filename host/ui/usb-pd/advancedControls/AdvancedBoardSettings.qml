@@ -896,7 +896,7 @@ Rectangle{
         Connections {
             target: implementationInterfaceBinding
             onInputUnderVoltageChanged:{
-                console.log("minimum input notification received:",value)
+                //onsole.log("minimum input notification received:",value)
                 minimumInputVoltageSlider.value = Math.round(value*10)/10
             }
         }
@@ -986,7 +986,7 @@ Rectangle{
         Connections {
             target: implementationInterfaceBinding
             onMaximumTemperatureChanged:{
-                console.log("maximum temperature notification received:",value)
+                //onsole.log("maximum temperature notification received:",value)
                 faultTempSlider.value = Math.round(value*10)/10
             }
         }
