@@ -39,7 +39,6 @@ Rectangle{
     property double voltage6: 0;
     property double voltage7: 0;
 
-
     // Values are being Signalled from ImplementationInterfaceBinding.cpp
     Connections {
         target: implementationInterfaceBinding
@@ -116,6 +115,8 @@ Rectangle{
                 portSettings.voltage7 = voltage7;
             }
         }
+
+
     }
 
     Layout.preferredWidth  : grid.prefWidth(this)
@@ -496,6 +497,15 @@ Rectangle{
 
                 }
             }
+            Connections {
+                target: implementationInterfaceBinding
+                onPortCableCompensationChanged:{
+                    if( portNumber === port ) {
+                        //console.log("updating bias step notification with value ",cableLoss)
+                        portCableCompensationSlider.value = cableLoss
+                    }
+                }
+            }
         }
 
         Text{
@@ -574,6 +584,15 @@ Rectangle{
                 if (!pressed){
                     implementationInterfaceBinding.setCableCompensation(portNumber, portCableCompensationSlider.value, voltageCompensationSlider.value)
 
+                }
+            }
+            Connections {
+                target: implementationInterfaceBinding
+                onPortCableCompensationChanged:{
+                    if( portNumber === port ) {
+                        //console.log("updating voltage compensation from notification with value ",outputVoltageCompensation)
+                        voltageCompensationSlider.value = biasVoltage
+                    }
                 }
             }
         }
