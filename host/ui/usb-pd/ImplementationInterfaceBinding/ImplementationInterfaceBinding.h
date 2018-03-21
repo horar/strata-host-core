@@ -181,6 +181,7 @@ public:
     void handleMaximumTemperatureNotification (const QVariantMap payloadMap);
     void handlePortOverCurrentNotification(const QVariantMap payloadMap);
     void handlePortAdvertisedVoltagesNotification(const QVariantMap payloadMap);
+    void handlePortCableCompensationNotification(const QVariantMap payloadMap);
 
 //Constructing the string for fault messages
     QString constructFaultMessage(QString parameter,QString state,int value)
@@ -239,6 +240,9 @@ signals:
                                    float voltage5,
                                    float voltage6,
                                    float voltage7);
+    void portCableCompensationChanged(int port,
+                                      float cableLoss,
+                                      float biasVoltage);
 
     // fault messages notification
     void minimumVoltageChanged(bool state,int value);
