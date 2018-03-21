@@ -47,7 +47,7 @@ Rectangle{
                 chargeOnlyButton, passiveButton, redriverButton,
                 inputLimitingGroup,  temperatureLimitingGroup,
                 minimumInputVoltageText, minimumInputTextField, minimumInputUnitText, minimumInputVoltageSlider,
-                faultTempText, faultTempLabel, faultTempUnitText, faultTempSlider]
+                faultTempText, faultTempRect, faultTempUnitText, faultTempSlider]
 
             property:"opacity"
             to: 1.0
