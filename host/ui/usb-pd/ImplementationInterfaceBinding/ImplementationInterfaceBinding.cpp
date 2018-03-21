@@ -118,6 +118,27 @@ void ImplementationInterfaceBinding::setRedriverConfiguration(QString value)
         qDebug() << "Command send failed";
 }
 
+void ImplementationInterfaceBinding::setCableCompensation(int inPort, float inCurrent, float inMilliVolts)
+//Note that the UI deals in millivolts, but the platform deals in volts
+{
+    //qDebug("ImplementationInterfaceBinding::setCableCompensation(%d)", inCurrent);
+    QJsonObject cmdMessageObject;
+    cmdMessageObject.insert("cmd", "set_cable_loss_compensation");
+    QJsonObject payloadObject;
+    payloadObject.insert("port",inPort);
+    payloadObject.insert("output_current",inCurrent);
+    payloadObject.insert("bias_voltage",inMilliVolts/1000);
+
+    cmdMessageObject.insert("payload",payloadObject);
+    QJsonDocument doc(cmdMessageObject);
+    QString strJson(doc.toJson(QJsonDocument::Compact));
+    hcc_object->sendCmd(strJson.toStdString());
+    if(hcc_object->sendCmd(strJson.toStdString()))
+        qDebug() << "Command sent with value" << doc;
+    else
+        qDebug() << "Command send failed";
+}
+
 //this triggers the platform to send all of the current values it holds for controls
 //as separate notifications
 void ImplementationInterfaceBinding::sendPlatformRefresh()
@@ -518,14 +539,17 @@ void ImplementationInterfaceBinding::handleNotification(QVariantMap current_map)
             payloadMap=current_map["payload"].toMap();
             handleFoldbackLimitingNotification(payloadMap);
         }else if (current_map["value"] == "set_input_under_voltage_notification"){
-                payloadMap=current_map["payload"].toMap();
-                handleInputUnderVoltageValueNotification(payloadMap);
+            payloadMap=current_map["payload"].toMap();
+            handleInputUnderVoltageValueNotification(payloadMap);
         }else if (current_map["value"] == "set_maximum_temperature_notification"){
             payloadMap=current_map["payload"].toMap();
             handleMaximumTemperatureNotification(payloadMap);
         }else if (current_map["value"] == "request_over_current_protection_notification"){
             payloadMap=current_map["payload"].toMap();
             handlePortOverCurrentNotification(payloadMap);
+         }else if (current_map["value"] == "usb_pd_advertised_voltages_notification"){
+            payloadMap=current_map["payload"].toMap();
+            handlePortAdvertisedVoltagesNotification(payloadMap);
          }
 
 
@@ -779,6 +803,40 @@ void ImplementationInterfaceBinding::handleFoldbackLimitingNotification(const QV
                                  temperatureFoldbackOutputLimit);
 }
 
+void ImplementationInterfaceBinding::handlePortAdvertisedVoltagesNotification(const QVariantMap payloadMap) {
+
+    //qDebug() << "port voltage notification"<<payloadMap;
+
+    int port = payloadMap["port"].toInt();
+    int numberOfSettings = payloadMap["number_of_settings"].toInt();
+
+    QVariantMap settings1 = qvariant_cast<QVariantMap>((payloadMap["settings"]).toList()[0]);
+    QVariantMap settings2 = qvariant_cast<QVariantMap>((payloadMap["settings"]).toList()[1]);
+    QVariantMap settings3 = qvariant_cast<QVariantMap>((payloadMap["settings"]).toList()[2]);
+    QVariantMap settings4 = qvariant_cast<QVariantMap>((payloadMap["settings"]).toList()[3]);
+    QVariantMap settings5 = qvariant_cast<QVariantMap>((payloadMap["settings"]).toList()[4]);
+    QVariantMap settings6 = qvariant_cast<QVariantMap>((payloadMap["settings"]).toList()[5]);
+    QVariantMap settings7 = qvariant_cast<QVariantMap>((payloadMap["settings"]).toList()[6]);
+
+    //assuming that the QVarientMap will be NULL if the associated JSON can't be found...
+    float voltage1 = (!settings1.isEmpty()) ? settings1["voltage"].toFloat() : 0;
+    float voltage2 = (!settings2.isEmpty()) ? settings2["voltage"].toFloat() : 0;
+    float voltage3 = (!settings3.isEmpty()) ? settings3["voltage"].toFloat() : 0;
+    float voltage4 = (!settings4.isEmpty()) ? settings4["voltage"].toFloat() : 0;
+    float voltage5 = (!settings5.isEmpty()) ? settings5["voltage"].toFloat() : 0;
+    float voltage6 = (!settings6.isEmpty()) ? settings6["voltage"].toFloat() : 0;
+    float voltage7 = (!settings7.isEmpty()) ? settings7["voltage"].toFloat() : 0;
+
+
+    emit portAdvertisedVoltagesChanged(port,
+                                   voltage1,
+                                   voltage2,
+                                   voltage3,
+                                   voltage4,
+                                   voltage5,
+                                   voltage6,
+                                   voltage7);
+}
 
 void ImplementationInterfaceBinding::handlePortOverCurrentNotification(const QVariantMap json_map) {
     int port = json_map["port"].toInt();

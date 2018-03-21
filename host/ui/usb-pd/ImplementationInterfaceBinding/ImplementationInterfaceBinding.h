@@ -104,6 +104,7 @@ public:
     Q_INVOKABLE void setOutputVoltageVBUS(int port, int voltage);
 
     Q_INVOKABLE void setRedriverLoss(float lossValue);
+    Q_INVOKABLE void setCableCompensation(int inPort, float inCurrent, float inMilliVolts);
     Q_INVOKABLE void setRedriverConfiguration(QString value);
     Q_INVOKABLE void sendPlatformRefresh();
     Q_INVOKABLE bool getUSBCPortState(int port_number);
@@ -179,6 +180,7 @@ public:
     void handleFoldbackLimitingNotification(const QVariantMap json_map);
     void handleMaximumTemperatureNotification (const QVariantMap payloadMap);
     void handlePortOverCurrentNotification(const QVariantMap payloadMap);
+    void handlePortAdvertisedVoltagesNotification(const QVariantMap payloadMap);
 
 //Constructing the string for fault messages
     QString constructFaultMessage(QString parameter,QString state,int value)
@@ -229,6 +231,14 @@ signals:
     void inputUnderVoltageChanged(float value);
     void maximumTemperatureChanged(float value);
     void portOverCurrentChanged(int port, float max_current);
+    void portAdvertisedVoltagesChanged(int port,
+                                   float voltage1,
+                                   float voltage2,
+                                   float voltage3,
+                                   float voltage4,
+                                   float voltage5,
+                                   float voltage6,
+                                   float voltage7);
 
     // fault messages notification
     void minimumVoltageChanged(bool state,int value);
