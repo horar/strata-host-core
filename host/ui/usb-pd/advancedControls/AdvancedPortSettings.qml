@@ -31,6 +31,15 @@ Rectangle{
     property double portNegotiatedContractAmperage:0;
     property string portMaximumPower:"";
 
+    property double voltage1: 0;
+    property double voltage2: 0;
+    property double voltage3: 0;
+    property double voltage4: 0;
+    property double voltage5: 0;
+    property double voltage6: 0;
+    property double voltage7: 0;
+
+
     // Values are being Signalled from ImplementationInterfaceBinding.cpp
     Connections {
         target: implementationInterfaceBinding
@@ -95,6 +104,18 @@ Rectangle{
                 portSettings.portMaximumPower = parseInt(watts);
             }
         }
+
+        onPortAdvertisedVoltagesChanged:{
+            if (portNumber === port){
+                portSettings.voltage1 = voltage1;
+                portSettings.voltage2 = voltage2;
+                portSettings.voltage3 = voltage3;
+                portSettings.voltage4 = voltage4;
+                portSettings.voltage5 = voltage5;
+                portSettings.voltage6 = voltage6;
+                portSettings.voltage7 = voltage7;
+            }
+        }
     }
 
     Layout.preferredWidth  : grid.prefWidth(this)
@@ -102,13 +123,13 @@ Rectangle{
     color: "black"
 
     Component.onCompleted: {
-        portvoltage1Slider.value = minimumVoltage;
-        portvoltage2Slider.value = minimumVoltage;
-        portvoltage3Slider.value = minimumVoltage;
-        portvoltage4Slider.value = minimumVoltage;
-        portvoltage5Slider.value = minimumVoltage;
-        portvoltage6Slider.value = minimumVoltage;
-        portvoltage7Slider.value = minimumVoltage;
+        portvoltage1Slider.value = (voltage1 > 0) ?voltage1 : minimumVoltage;
+        portvoltage2Slider.value = (voltage2 > 0) ?voltage2 : minimumVoltage;
+        portvoltage3Slider.value = (voltage3 > 0) ?voltage3 : minimumVoltage;
+        portvoltage4Slider.value = (voltage4 > 0) ?voltage4 : minimumVoltage;
+        portvoltage5Slider.value = (voltage5 > 0) ?voltage5 : minimumVoltage;
+        portvoltage6Slider.value = (voltage6 > 0) ?voltage6 : minimumVoltage;
+        portvoltage7Slider.value = (voltage7 > 0) ?voltage7 : minimumVoltage;
     }
 
     SequentialAnimation{
@@ -332,6 +353,7 @@ Rectangle{
             }
             onEditingFinished:{
                 maxCurrentSlider.value= text
+                implementationInterfaceBinding.setPortMaximumCurrent(portNumber, Math.round (maxCurrentSlider.value *10)/10)
               }
         }
     }
@@ -434,6 +456,7 @@ Rectangle{
                 }
                 onEditingFinished:{
                     portCableCompensationSlider.value= text
+                    implementationInterfaceBinding.setCableCompensation(portNumber, portCableCompensationSlider.value, voltageCompensationSlider.value)
                   }
             }
         }
@@ -466,6 +489,12 @@ Rectangle{
 
             onValueChanged: {
                 portCableCompensationTextInput.text = Math.round (portCableCompensationSlider.value *100)/100
+            }
+            onPressedChanged: {
+                if (!pressed){
+                    implementationInterfaceBinding.setCableCompensation(portNumber, portCableCompensationSlider.value, voltageCompensationSlider.value)
+
+                }
             }
         }
 
@@ -508,6 +537,7 @@ Rectangle{
                 }
                 onEditingFinished:{
                     voltageCompensationSlider.value= text
+                    implementationInterfaceBinding.setCableCompensation(portNumber, portCableCompensationSlider.value, voltageCompensationSlider.value)
                   }
             }
         }
@@ -539,6 +569,12 @@ Rectangle{
 
             onValueChanged: {
                 voltageCompensationTextInput.text = voltageCompensationSlider.value
+            }
+            onPressedChanged: {
+                if (!pressed){
+                    implementationInterfaceBinding.setCableCompensation(portNumber, portCableCompensationSlider.value, voltageCompensationSlider.value)
+
+                }
             }
         }
     }
@@ -600,6 +636,7 @@ Rectangle{
                 onEditingFinished:{
                     portvoltage1Slider.value= text
                   }
+
             }
         }
 
@@ -636,6 +673,15 @@ Rectangle{
                 else{
                     portvoltage1TextInput.enabled = true;
                     portvoltage1UnitText.enabled = true;
+                }
+            }
+            Connections {
+                target: implementationInterfaceBinding
+                onPortAdvertisedVoltagesChanged:{
+                    if( portNumber === port ) {
+                        portvoltage1Slider.value = voltage1
+                        //console.log ("setting portVoltage1Slider to:", portvoltage1Slider.value)
+                    }
                 }
             }
         }
@@ -708,6 +754,14 @@ Rectangle{
                 else{
                     portvoltage2TextInput.enabled = true;
                     portvoltage2UnitText.enabled = true;
+                }
+            }
+            Connections {
+                target: implementationInterfaceBinding
+                onPortAdvertisedVoltagesChanged:{
+                    if( portNumber === port ) {
+                        portvoltage2Slider.value = voltage2
+                    }
                 }
             }
         }
@@ -784,6 +838,14 @@ Rectangle{
                     portvoltage3UnitText.enabled = true;
                 }
             }
+            Connections {
+                target: implementationInterfaceBinding
+                onPortAdvertisedVoltagesChanged:{
+                    if( portNumber === port ) {
+                        portvoltage3Slider.value = voltage3
+                    }
+                }
+            }
         }
 
 
@@ -854,6 +916,14 @@ Rectangle{
                 else{
                     portvoltage4TextInput.enabled = true;
                     portvoltage4UnitText.enabled = true;
+                }
+            }
+            Connections {
+                target: implementationInterfaceBinding
+                onPortAdvertisedVoltagesChanged:{
+                    if( portNumber === port ) {
+                        portvoltage4Slider.value = voltage4
+                    }
                 }
             }
         }
@@ -929,6 +999,14 @@ Rectangle{
                     portvoltage5UnitText.enabled = true;
                 }
             }
+            Connections {
+                target: implementationInterfaceBinding
+                onPortAdvertisedVoltagesChanged:{
+                    if( portNumber === port ) {
+                        portvoltage5Slider.value = voltage5
+                    }
+                }
+            }
         }
 
 
@@ -1002,6 +1080,14 @@ Rectangle{
                     portvoltage6UnitText.enabled = true;
                 }
             }
+            Connections {
+                target: implementationInterfaceBinding
+                onPortAdvertisedVoltagesChanged:{
+                    if( portNumber === port ) {
+                        portvoltage6Slider.value = voltage6
+                    }
+                }
+            }
         }
 
 
@@ -1072,6 +1158,14 @@ Rectangle{
                 else{
                     portvoltage7TextInput.enabled = true;
                     portvoltage7UnitText.enabled = true;
+                }
+            }
+            Connections {
+                target: implementationInterfaceBinding
+                onPortAdvertisedVoltagesChanged:{
+                    if( portNumber === port ) {
+                        portvoltage7Slider.value = voltage7
+                    }
                 }
             }
         }
