@@ -796,11 +796,7 @@ bool HostControllerService::checkPlatformExist(std::string *dealer_id,std::strin
         bool does_platform_exist = false;
         std::vector<std::string> map_uuid = multimap_iterator_->first;
         // strictly for testing only
-        PDEBUG("[List of Platform]: %s\n",map_uuid[0].c_str());
-        PDEBUG("connected paltform uuid%s\n",g_platform_uuid_.c_str());
-        PDEBUG("[msg]%s",message.c_str());
         (map_uuid[0] == "Vortex Fountain Motor Platform Board")?does_platform_exist = true : does_platform_exist = false;
-        PDEBUG("The comparison %d\n",(int)does_platform_exist);
         if(does_platform_exist) {
             *dealer_id = multimap_iterator_->second;
             if(!message.empty()) {
@@ -820,19 +816,20 @@ void HostControllerService::remoteRouting(std::string message)
     while(multimap_iterator_ != platform_client_mapping_.end()) {
         bool does_platform_exist = false;
         std::vector<std::string> map_uuid = multimap_iterator_->first;
+        std::string dealer_id = multimap_iterator_->second;
         // strictly for testing only
-        PDEBUG("[List of Platform]: %s\n",map_uuid[0].c_str());
-        PDEBUG("connected paltform uuid%s\n",g_platform_uuid_.c_str());
-        PDEBUG("[msg]%s",message.c_str());
+        // PDEBUG("[List of Platform]: %s\n",map_uuid[0].c_str());
+        // PDEBUG("connected paltform uuid%s\n",g_platform_uuid_.c_str());
+        // PDEBUG("[msg]%s",message.c_str());
         (map_uuid[0] == "Vortex Fountain Motor Platform Board")?does_platform_exist = true : does_platform_exist = false;
-        PDEBUG("The comparison %d\n",(int)does_platform_exist);
+        // PDEBUG("The comparison %d\n",(int)does_platform_exist);
         if(does_platform_exist) {
             dealer_id = multimap_iterator_->second;
             if(!message.empty()) {
               if(map_uuid[1] == "remote") {
                   client_connector_->dealer_id_ = dealer_id;
                   client_connector_->send(message);
-              } else if (map_uuid[1] == "connected") {
+              } else if ((map_uuid[1] == "connected")&&(dealer_id != "remote")) {
                   PDEBUG("Inside remote writing");
                   serial_connector_->send(message);
               }

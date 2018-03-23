@@ -51,8 +51,9 @@ if (CROSSCOMPILE)
 elseif (UNIX AND NOT APPLE AND NOT CROSSCOMPILE)
     #--- LINUX
     message("INCLUDE/LITECORE: linux")
-
+    include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../include)
     include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../lib/linux/include)
+    include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
     link_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../lib/linux/lib)
 
 elseif (APPLE)
