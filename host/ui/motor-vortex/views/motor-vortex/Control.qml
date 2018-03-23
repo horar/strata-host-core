@@ -47,7 +47,7 @@ Item {
     // Control Section
     Rectangle {
         id: controlSection
-        anchors {top: headerLogo.bottom}
+       // anchors {top: headerLogo.bottom}
         width: parent.width; height: parent.height * 0.5
         //border.width: 1; border.color: "red"; color: "#cbd9ef"  // DEBUG
         color: "white"
@@ -56,12 +56,14 @@ Item {
             anchors { fill: parent }
             Layout.alignment: Qt.AlignVCenter
 
+
             CircularGauge {
                 id: tachMeterGauge
 
                 minimumValue: 0; maximumValue: 100
                 stepSize: 1
                 Layout.alignment: Qt.AlignCenter
+                Layout.topMargin: 10
 
                 Behavior on value { NumberAnimation { duration: 1500 } }
 
@@ -101,9 +103,10 @@ Item {
                 snapMode: Slider.SnapAlways
                 stepSize : 0.05
                 live: false
-
+                //anchors.top: tachMeterGauge.bottom
                 Layout.alignment: Qt.AlignCenter
-
+                Layout.topMargin: -110
+               // Layout.top: tachMeterGauge.bottom
                 function setMotorSpeedCommand(value) {
                     var setSpeedCmd ={
                         "cmd":"speed_input",
@@ -131,12 +134,12 @@ Item {
 
             ButtonGroup {
                 Layout.alignment: Qt.AlignCenter
-
                 buttons: buttonColumn.children
             }
 
             GroupBox {
                 Layout.alignment: Qt.AlignCenter
+                Layout.topMargin: -40
 
                 title: "<b><font color='red'>Operation Mode</b></font>"
                 Row {
