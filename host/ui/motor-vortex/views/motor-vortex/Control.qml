@@ -47,15 +47,12 @@ Item {
     // Control Section
     Rectangle {
         id: controlSection
-       // anchors {top: headerLogo.bottom}
         width: parent.width; height: parent.height * 0.5
-        //border.width: 1; border.color: "red"; color: "#cbd9ef"  // DEBUG
         color: "white"
         ColumnLayout {
             id: layoutId
             anchors { fill: parent }
             Layout.alignment: Qt.AlignVCenter
-
 
             CircularGauge {
                 id: tachMeterGauge
@@ -103,10 +100,8 @@ Item {
                 snapMode: Slider.SnapAlways
                 stepSize : 0.05
                 live: false
-                //anchors.top: tachMeterGauge.bottom
                 Layout.alignment: Qt.AlignCenter
                 Layout.topMargin: -110
-               // Layout.top: tachMeterGauge.bottom
                 function setMotorSpeedCommand(value) {
                     var setSpeedCmd ={
                         "cmd":"speed_input",
@@ -140,7 +135,6 @@ Item {
             GroupBox {
                 Layout.alignment: Qt.AlignCenter
                 Layout.topMargin: -40
-
                 title: "<b><font color='red'>Operation Mode</b></font>"
                 Row {
                     id: buttonColumn
@@ -194,8 +188,6 @@ Item {
                 }
         color: "white"
         width: controlPage.width
-        //border.width: 1; border.color: "black"  // DEBUG
-        //color: "#dae2ef"
 
         // Phase U temperature
         RowLayout {
