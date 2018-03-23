@@ -39,6 +39,7 @@
 class Connector {
 public:
     Connector() {}
+    Connector(std::string) {}
     virtual ~Connector() {}
 
     virtual bool open(std::string) = 0;
@@ -54,9 +55,13 @@ public:
         return stream;
     }
 
+    virtual int getFileDescriptor() = 0;
+
+    std::string dealer_id_;
 protected:
     std::string client_id_;
     std::string server_;
+
 
 private:
 };
@@ -64,6 +69,7 @@ private:
 class SerialConnector : public Connector {
 public:
     SerialConnector();
+    SerialConnector(std::string){}
     virtual ~SerialConnector(){}
 
     bool open(std::string);
@@ -89,27 +95,36 @@ private:
 class ZMQConnector : public Connector {
 public:
     ZMQConnector() {}
+    ZMQConnector(std::string);
     virtual ~ZMQConnector() {}
 
-    bool open(std::string){}
+    bool open(std::string);
 
     bool close(){}
 
     // non-blocking calls
-    bool send(std::string message){}
-    bool read(std::string &notification){}
+    bool send(std::string message);
+    bool read(std::string &notification);
+
+    int getFileDescriptor();
+
+    //std::string dealer_id_;
 
 private:
     zmq::context_t* context_;
     zmq::socket_t* socket_;
+    std::string connection_interface_;
 };
 
 class ConnectorFactory {
 public:
     static Connector *getConnector(std::string type) {
         std::cout << "ConnectorFactory::getConnector type:" << type << std::endl;
-        if( type == "service") {
-            return dynamic_cast<Connector*>(new ZMQConnector);
+        if( type == "client") {
+            return dynamic_cast<Connector*>(new ZMQConnector("local"));
+        }
+        else if( type == "remote") {
+            return dynamic_cast<Connector*>(new ZMQConnector("remote"));
         }
         else if( type == "platform") {
             return dynamic_cast<Connector*>(new SerialConnector);

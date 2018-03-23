@@ -79,7 +79,7 @@ bool SerialConnector::read(string &notification)
     sp_return error;
     char temp = '\0';
     while(temp != '\n') {
-        sp_wait(ev, 0);
+        sp_wait(ev, 250);
         error = sp_nonblocking_read(platform_socket_,&temp,1);
         if(error <= 0) {
             cout<<"Platform Disconnected\n";

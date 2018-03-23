@@ -185,7 +185,7 @@ elseif( UNIX AND NOT APPLE AND NOT CROSSCOMPILE)
             -levent
             nimbusLib
             ${litecore}
-            serialconnector
+            connectors
             )
 elseif (APPLE)
     message("LINKING: mac")
@@ -199,7 +199,7 @@ elseif (APPLE)
             nimbusLib
             ${litecore}
             ${FOUNDATION_LIBRARY} ${IOKIT_LIBRARY}
-            serialconnector
+            connectors
             )
 
 else()

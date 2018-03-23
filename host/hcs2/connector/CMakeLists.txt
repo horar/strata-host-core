@@ -75,13 +75,14 @@ endif ()
 set(SOURCE
         ${SOURCE}
         ${CMAKE_CURRENT_SOURCE_DIR}/src/SerialConnector.cc
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/ZMQConnector.cc
         )
 
-add_library(serialconnector ${SOURCE})
+add_library(connectors ${SOURCE})
 
 if (CROSSCOMPILE)
     message("LINKING: windows")
-    target_link_libraries(serialconnector
+    target_link_libraries(connectors
             -lzmq.dll
             -lstdc++
             -lpthread
@@ -90,7 +91,7 @@ if (CROSSCOMPILE)
             )
 elseif( UNIX AND NOT APPLE AND NOT CROSSCOMPILE)
     message("LINKING: linux")
-    target_link_libraries(serialconnector
+    target_link_libraries(connectors
             -lzmq
             -lstdc++
             -lpthread
@@ -98,7 +99,7 @@ elseif( UNIX AND NOT APPLE AND NOT CROSSCOMPILE)
             )
 elseif (APPLE)
     message("LINKING: mac")
-    target_link_libraries(serialconnector
+    target_link_libraries(connectors
             -lzmq
             -lstdc++
             -lpthread
@@ -109,4 +110,4 @@ else()
     message("ERROR: unsupported operating system !")
 endif ()
 
-target_include_directories (serialconnector PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories (connectors PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})

@@ -187,7 +187,12 @@ private:
     // platform libevents
     struct event *platform_handler;
 
-    SerialConnector *serial_object_;
+    ConnectorFactory *connector_factory_;
+    Connector *client_connector_ = connector_factory_->getConnector("client");
+    Connector *serial_connector_ = connector_factory_->getConnector("platform");
+    Connector *remote_connector_ = connector_factory_->getConnector("remote");
+
+    // SerialConnector *serial_object_;
 
 };
 #endif
