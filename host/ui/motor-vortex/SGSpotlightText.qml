@@ -27,10 +27,10 @@ Item {
         }
     }
 
-    function getLetter() {
+    function startNextLetter() {
 
         indexIncrementer = indexIncrementer % titleName.length;
-        if (typeof letterObject[indexIncrementer] !== "undefined") {  //  check for validation valid object
+        if (typeof letterObject[indexIncrementer] !== "undefined") {
             letterObject[indexIncrementer].start();
         }
         indexIncrementer++;
@@ -105,7 +105,7 @@ Item {
         id: timerAnimation
         interval: timerInterval; running: true; repeat: true
         onTriggered: {
-            getLetter();
+            startNextLetter();
         }
 
     }

@@ -185,19 +185,12 @@ Item {
     // Environment Section
     Rectangle {
         id: environmentSection
-//        anchors {
-//            top: controlSection.bottom;
-//            verticalCenter: controlPage.verticalCenter
-//        }
         anchors {top: controlSection.bottom
                  bottom: controlPage.bottom
                  verticalCenter: controlSection.verticalCenter
                 }
         color: "white"
-
-        //width: controlPage.width * 0.75; height: controlPage.height * 0.25
         width: controlPage.width
-
         //border.width: 1; border.color: "black"  // DEBUG
         //color: "#dae2ef"
 
