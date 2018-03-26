@@ -17,17 +17,13 @@ Item {
     // Platform Implementation signals
     Connections {
         target: coreInterface
-
         onNotification: {
-
             try {
-
                 /*
                     Attempt to parse JSON
                     Note: Motor platform sometimes has noise in json and can corrupt values
                 */
                 var notification = JSON.parse(payload)
-
             }
             catch(e)
             {
@@ -350,7 +346,6 @@ Item {
                             }
                         }
                     }
-
                 }
                 Label {
                     id: gaugeLabel2
