@@ -81,14 +81,18 @@ Item {
             id: layoutId
             anchors { fill: parent }
 
+            /*
+              Created a rectangle as a container for the element inside which solves alignment in linux/mac
+            */
             Rectangle {
                 id: meterGaugeContainer
                 width: parent.width;height: parent.height/1.5
                 anchors { top: layoutId.top
                     topMargin: 10
                 }
+
                 CircularGauge {
-                    id: tachMeterGauge
+                    id: tachMeterGauges
                     height: parent.height
                     anchors.centerIn: parent
                     minimumValue: 0; maximumValue: 100
@@ -113,6 +117,7 @@ Item {
                                 radius: width / 2
                                 color: "black"
                                 anchors.centerIn: parent
+
                             }
                         }
                         tickmarkLabel:  Text {
@@ -126,9 +131,17 @@ Item {
                 } // end CircularGauge
             }
 
+            /*
+              Created a rectangle as a container for the element inside which solves alignment in linux/mac
+            */
             Rectangle {
                 id: speedSliderContainer
                 anchors.top : meterGaugeContainer.bottom
+                /*
+                  Use a negative margin on slider to close the gap from meter gauge. The gap in the meter gauge occurs due to having a _semi-circle_ for the gauge
+                  when it's allocated for the _full_ circle gauge.
+                */
+                anchors.topMargin: -50
                 width: parent.width
                 height: parent.height/6
 
@@ -167,6 +180,9 @@ Item {
                 }
             }
 
+            /*
+              Created a rectangle as a container for the element inside which solves alignment in linux/mac
+            */
             Rectangle {
                 id: buttonContainer
                 anchors.top : speedSliderContainer.bottom
