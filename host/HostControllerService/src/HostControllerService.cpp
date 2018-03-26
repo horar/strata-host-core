@@ -405,7 +405,7 @@ connected_state HostControllerService::wait()
     hostP.base = base;
 
     thread t(&HostControllerService::callbackPlatformHandler,this,(void *)&hostP);
-    struct event *service = event_new(base,sockService ,EV_READ | EV_ET | EV_PERSIST ,callbackServiceHandler,(void *)&hostP);
+    struct event *service = event_new(base,sockService ,EV_READ | EV_WRITE | EV_PERSIST ,callbackServiceHandler,(void *)&hostP);
 
 	if (event_base_set(base,service) <0 ) {
         cout << "Event BASE SET SERVICE FAILED " << endl;

@@ -12,34 +12,56 @@ Item {
     id: controlPage
     objectName: "control"
     anchors { fill: parent }
-    property var isMotorGuageUpdated: false;
+    property var isMotorSliderUpdated: false;
 
     // Platform Implementation signals
     Connections {
         target: coreInterface
-
         onNotification: {
-            //parse payload to json
-            var notification = JSON.parse(payload)
+            try {
+                /*
+                    Attempt to parse JSON
+                    Note: Motor platform sometimes has noise in json and can corrupt values
+                */
+                var notification = JSON.parse(payload)
+            }
+            catch(e)
+            {
+                if ( e instanceof SyntaxError){
+                    console.log("Notification JSON is invalid. ignoring")
+                }
+            }
 
-            //get speed value from json
+            //get speed value from json; check i
             var speed = notification.payload.current_speed;
-            tachMeterGauge.value = ((speed - 1500) / 4000) * 100
+            if(speed !== undefined){
+                tachMeterGauge.value = ((speed - 1500) / 4000) * 100
+            }
+            else
+            {
+                console.log("Junk data found on speed ", speed)
+            }
 
             //system mode
             var systemMode = notification.payload.mode;
-            if(systemMode ==="manual"){
-                manualButton.checked = true;
-                automaticButton.checked = false;
-            }else if(systemMode ==="automation") {
-                manualButton.checked = false;
-                automaticButton.checked = true;
+            if (systemMode !== undefined){
+                if(systemMode ==="manual"){
+                    manualButton.checked = true;
+                    automaticButton.checked = false;
+                }else if(systemMode ==="automation") {
+                    manualButton.checked = false;
+                    automaticButton.checked = true;
+                }
+            }
+            else
+            {
+                console.log("Junk data found on mode")
             }
 
-            if(!isMotorGuageUpdated){
+            if(!isMotorSliderUpdated){
                 //set value only once
                 motorSpeedControl.value = (speed/5500.0)
-                isMotorGuageUpdated = !isMotorGuageUpdated
+                isMotorSliderUpdated = !isMotorSliderUpdated
             }
         }
     }
@@ -49,133 +71,166 @@ Item {
         id: controlSection
         width: parent.width; height: parent.height * 0.5
         color: "white"
+
         ColumnLayout {
             id: layoutId
             anchors { fill: parent }
-            Layout.alignment: Qt.AlignVCenter
 
-            CircularGauge {
-                id: tachMeterGauge
+            /*
+              Created a rectangle as a container for the element inside which solves alignment in linux/mac
+            */
+            Rectangle {
+                id: meterGaugeContainer
+                width: parent.width;height: parent.height/1.5
+                anchors { top: layoutId.top
+                    topMargin: 10
+                }
 
-                minimumValue: 0; maximumValue: 100
-                stepSize: 1
-                Layout.alignment: Qt.AlignCenter
-                Layout.topMargin: 10
+                CircularGauge {
+                    id: tachMeterGauges
+                    height: parent.height
+                    anchors.centerIn: parent
+                    minimumValue: 0; maximumValue: 100
+                    stepSize: 1
 
-                Behavior on value { NumberAnimation { duration: 1500 } }
+                    Behavior on value { NumberAnimation { duration: 1500 } }
 
-                style: CircularGaugeStyle {
-                    minimumValueAngle: -90; maximumValueAngle: 90
-
-                    needle: Rectangle {
-                        y: outerRadius * 0.15
-                        implicitWidth: outerRadius * 0.03
-                        implicitHeight: outerRadius * 0.9
-                        antialiasing: true
-                        color: Qt.rgba(0.66, 0.3, 0, 1)
-                    }
-
-                    foreground: Item {
-                        Rectangle {
-                            width: outerRadius * 0.2
-                            height: width
-                            radius: width / 2
-                            color: "black"
-                            anchors.centerIn: parent
+                    style: CircularGaugeStyle {
+                        minimumValueAngle: -90; maximumValueAngle: 90
+                        needle: Rectangle {
+                            y: outerRadius * 0.15
+                            implicitWidth: outerRadius * 0.03
+                            implicitHeight: outerRadius * 0.9
+                            antialiasing: true
+                            color: Qt.rgba(0.66, 0.3, 0, 1)
                         }
-                    }
-                    tickmarkLabel:  Text {
-                        font.pixelSize: Math.max(6, outerRadius * 0.1)
-                        text: styleData.value
-                        color: styleData.value >= 80 ? "#e34c22" : "black"
-                        antialiasing: true
-                    }
-                }
-            } // end CircularGauge
 
-            Slider {
-                id: motorSpeedControl
-                from: 0; to: 1
-                value: 0   // start value
-                snapMode: Slider.SnapAlways
-                stepSize : 0.05
-                live: false
-                Layout.alignment: Qt.AlignCenter
-                Layout.topMargin: -110
-                function setMotorSpeedCommand(value) {
-                    var setSpeedCmd ={
-                        "cmd":"speed_input",
-                        "payload": {
-                           "speed_target":value * 4000 + 1500
-                        }
-                    }
-                    // send set speed command to platform
-                    coreInterface.sendCommand(JSON.stringify(setSpeedCmd))
-                }
+                        foreground: Item {
+                            Rectangle {
+                                width: outerRadius * 0.2
+                                height: width
+                                radius: width / 2
+                                color: "black"
+                                anchors.centerIn: parent
 
-                onMoved: {
-                    gauge1.value = position * 200  // TODO [ian] false temp values until hooked up
-                    gauge2.value = position * 200
-                    gauge3.value = position * 200
-                    setMotorSpeedCommand(position)
-                }
-
-                ToolTip {
-                    parent: motorSpeedControl.handle
-                    visible: motorSpeedControl.pressed
-                    text: motorSpeedControl.valueAt(motorSpeedControl.position).toFixed(1) * 5400
-                }
-            }
-
-            ButtonGroup {
-                Layout.alignment: Qt.AlignCenter
-                buttons: buttonColumn.children
-            }
-
-            GroupBox {
-                Layout.alignment: Qt.AlignCenter
-                Layout.topMargin: -40
-                title: "<b><font color='red'>Operation Mode</b></font>"
-                Row {
-                    id: buttonColumn
-                    anchors {fill: parent}
-
-                    RadioButton {
-                        id:manualButton
-                        checked: true
-                        text: "Manual Control"
-
-                        onPressed: {
-                            console.log("MANUAL CONTROL")
-                            var systemModeCmd ={
-                                "cmd":"set_system_mode",
-                                "payload": {
-                                   "system_mode":"manual"
-                                }
                             }
-                            // send Manual mode command to platform
-                            coreInterface.sendCommand(JSON.stringify(systemModeCmd))
+                        }
+                        tickmarkLabel:  Text {
+                            font.pixelSize: Math.max(6, outerRadius * 0.1)
+                            text: styleData.value
+                            color: styleData.value >= 80 ? "#e34c22" : "black"
+                            antialiasing: true
                         }
                     }
 
-                    RadioButton {
-                        id:automaticButton
-                        text: "Automatic Test Pattern"
-                        onPressed: {
-                            console.log("AUTOMATIC")
-                            var systemModeCmd ={
-                                "cmd":"set_system_mode",
-                                "payload": {
-                                   "system_mode":"automation"
-                                }
+                } // end CircularGauge
+            }
+
+            /*
+              Created a rectangle as a container for the element inside which solves alignment in linux/mac
+            */
+            Rectangle {
+                id: speedSliderContainer
+                anchors.top : meterGaugeContainer.bottom
+                /*
+                  Use a negative margin on slider to close the gap from meter gauge. The gap in the meter gauge occurs due to having a _semi-circle_ for the gauge
+                  when it's allocated for the _full_ circle gauge.
+                */
+                anchors.topMargin: -50
+                width: parent.width
+                height: parent.height/6
+
+                Slider {
+                    id: motorSpeedControl
+                    from: 0; to: 1
+                    value: 0   // start value
+                    snapMode: Slider.SnapAlways
+                    stepSize : 0.05
+                    live: false
+                    anchors.centerIn: parent
+
+                    function setMotorSpeedCommand(value) {
+                        var setSpeedCmd ={
+                            "cmd":"speed_input",
+                            "payload": {
+                                "speed_target":value * 4000 + 1500
                             }
-                            // send Automation command to platform
-                            coreInterface.sendCommand(JSON.stringify(systemModeCmd))
                         }
+                        // send set speed command to platform
+                        coreInterface.sendCommand(JSON.stringify(setSpeedCmd))
+                    }
+
+                    onMoved: {
+                        gauge1.value = position * 200  // TODO [ian] false temp values until hooked up
+                        gauge2.value = position * 200
+                        gauge3.value = position * 200
+                        setMotorSpeedCommand(position)
+                    }
+
+                    ToolTip {
+                        parent: motorSpeedControl.handle
+                        visible: motorSpeedControl.pressed
+                        text: motorSpeedControl.valueAt(motorSpeedControl.position).toFixed(1) * 5400
                     }
                 }
             }
 
+            /*
+              Created a rectangle as a container for the element inside which solves alignment in linux/mac
+            */
+            Rectangle {
+                id: buttonContainer
+                anchors.top : speedSliderContainer.bottom
+                width: parent.width
+                height: parent.height/3.5
+
+                ButtonGroup {
+                    buttons: buttonColumn.children
+                }
+
+                GroupBox {
+                    title: "<b><font color='red'>Operation Mode</b></font>"
+                    anchors.centerIn: parent
+                    Row {
+                        id: buttonColumn
+                        anchors {fill: parent}
+
+                        RadioButton {
+                            id:manualButton
+                            checked: true
+                            text: "Manual Control"
+
+                            onPressed: {
+                                console.log("MANUAL CONTROL")
+                                var systemModeCmd ={
+                                    "cmd":"set_system_mode",
+                                    "payload": {
+                                        "system_mode":"manual"
+                                    }
+                                }
+                                // send Manual mode command to platform
+                                coreInterface.sendCommand(JSON.stringify(systemModeCmd))
+                            }
+                        }
+
+                        RadioButton {
+                            id:automaticButton
+                            text: "Automatic Test Pattern"
+                            onPressed: {
+                                console.log("AUTOMATIC")
+                                var systemModeCmd ={
+                                    "cmd":"set_system_mode",
+                                    "payload": {
+                                        "system_mode":"automation"
+                                    }
+                                }
+                                // send Automation command to platform
+                                coreInterface.sendCommand(JSON.stringify(systemModeCmd))
+                            }
+                        }
+                    }
+                }
+            }
         } // end Column Layout
     } // end Control Section Rectangle
 
@@ -183,12 +238,12 @@ Item {
     Rectangle {
         id: environmentSection
         anchors {top: controlSection.bottom
-                 bottom: controlPage.bottom
-                 verticalCenter: controlSection.verticalCenter
-                }
+            topMargin: 50
+            bottom: controlPage.bottom
+            verticalCenter: controlSection.verticalCenter
+        }
         color: "white"
         width: controlPage.width
-
         // Phase U temperature
         RowLayout {
             spacing: 180
@@ -199,8 +254,7 @@ Item {
                 Gauge {
                     id: gauge1
                     width: parent.width; height: parent.height * 0.9
-                    anchors.fill: parent
-                    anchors.margins: 10
+                    anchors { fill: parent; margins: 10 }
                     minimumValue: -40
                     maximumValue: 200
 
@@ -238,7 +292,6 @@ Item {
                             }
                         }
                     }
-
                 }
                 Label {
                     id: gaugeLabel1
@@ -258,7 +311,6 @@ Item {
                     anchors.margins: 10
                     minimumValue: -40
                     maximumValue: 200
-
                     value: 20
 
                     Behavior on value { NumberAnimation {duration: 2000 } }
@@ -293,7 +345,6 @@ Item {
                             }
                         }
                     }
-
                 }
                 Label {
                     id: gaugeLabel2
@@ -309,11 +360,9 @@ Item {
                 Gauge {
                     id: gauge3
                     width: parent.width; height: parent.height * 0.9
-                    anchors.fill: parent
-                    anchors.margins: 10
+                    anchors { fill: parent; margins: 10 }
                     minimumValue: -40
                     maximumValue: 200
-
                     value: 20
 
                     Behavior on value { NumberAnimation {duration: 4000 } }
@@ -348,7 +397,6 @@ Item {
                             }
                         }
                     }
-
                 }
                 Label {
                     id: gaugeLabel3

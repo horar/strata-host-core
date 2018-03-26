@@ -86,11 +86,16 @@ ChartView {
     Connections {
         target: implementationInterfaceBinding
 
-        onPortTargetVoltageChanged: {
-            if( chartType === "Target Voltage" && portNumber == port ) {
+        onPortOutputVoltageChanged: {
+            if( chartType === "Port Voltage" && portNumber == port ) {
                 var parameterValue = value;
-                portTemperatureLineSeries.append(count/10,parameterValue);
+                portTargetVoltageLineSeries.append(count/10,parameterValue);
                 count++;
+                if (count>=100){
+                    count = 0;
+                    portTargetVoltageLineSeries.clear();
+                }
+
                 //console.log("voltage changed on port ", port, value)
             }
         }
@@ -100,7 +105,10 @@ ChartView {
                 var parameterValue = value;
                 portTemperatureLineSeries.append(count/10,parameterValue);
                 count++;
-
+                if (count>=100){
+                    count = 0;
+                    portTemperatureLineSeries.clear();
+                }
             }
 
         }
@@ -110,6 +118,10 @@ ChartView {
                 var parameterValue = value;
                 portPowerLineSeries.append(count/10,parameterValue);
                 count++;
+                if (count>=100){
+                    count = 0;
+                    portPowerLineSeries.clear();
+                }
             }
         }
 
