@@ -539,14 +539,6 @@ bool HostControllerService::sendToClient(std::string dealer_id, std::string mess
 //
 void HostControllerService::addToLocalPlatformList(remote_platforms remote_platform)
 {
-    for(auto platform_list_iterator = platform_uuid_.begin(); platform_list_iterator
-                                != platform_uuid_.end();platform_list_iterator++) {
-        platform_details platform = *platform_list_iterator;
-        if(platform.platform_uuid == remote_platform[0].platform_uuid) {
-            PDEBUG("local exists\n");
-            return;
-        }
-    }
     platform_details platform;
     platform.platform_uuid = remote_platform[0].platform_uuid;
     platform.platform_verbose = remote_platform[0].platform_verbose;
@@ -817,20 +809,15 @@ void HostControllerService::remoteRouting(std::string message)
         bool does_platform_exist = false;
         std::vector<std::string> map_uuid = multimap_iterator_->first;
         std::string dealer_id = multimap_iterator_->second;
-        // strictly for testing only
-        // PDEBUG("[List of Platform]: %s\n",map_uuid[0].c_str());
-        // PDEBUG("connected paltform uuid%s\n",g_platform_uuid_.c_str());
-        // PDEBUG("[msg]%s",message.c_str());
         (map_uuid[0] == "Vortex Fountain Motor Platform Board")?does_platform_exist = true : does_platform_exist = false;
-        // PDEBUG("The comparison %d\n",(int)does_platform_exist);
         if(does_platform_exist) {
             dealer_id = multimap_iterator_->second;
             if(!message.empty()) {
               if(map_uuid[1] == "remote") {
                   client_connector_->dealer_id_ = dealer_id;
                   client_connector_->send(message);
-              } else if ((map_uuid[1] == "connected")&&(dealer_id != "remote")) {
-                  PDEBUG("Inside remote writing");
+              } else if (map_uuid[1] == "connected") {
+                  PDEBUG("Inside remote writing %s with dealer id %s",message.c_str(),dealer_id.c_str());
                   serial_connector_->send(message);
               }
             }
