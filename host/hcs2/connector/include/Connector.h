@@ -59,6 +59,7 @@ public:
 
     std::string dealer_id_;
 protected:
+    std::mutex locker_;
     std::string client_id_;
     std::string server_;
 
@@ -107,8 +108,6 @@ public:
     bool read(std::string &notification);
 
     int getFileDescriptor();
-
-    //std::string dealer_id_;
 
 private:
     zmq::context_t* context_;
