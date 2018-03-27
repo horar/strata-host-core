@@ -101,21 +101,57 @@ void ImplementationInterfaceBinding::setRedriverLoss(float lossValue)
 
 }
 
-void ImplementationInterfaceBinding::setRedriverCount(int value)
+void ImplementationInterfaceBinding::setRedriverConfiguration(QString value)
 {
-    //qDebug("ImplementationInterfaceBinding::setRedriverCount(%d)", value);
+    //qDebug("ImplementationInterfaceBinding::setRedriverConfiguration(%d)", value);
     QJsonObject cmdMessageObject;
-    cmdMessageObject.insert("cmd", "request_redriver_count");
+    cmdMessageObject.insert("cmd", "request_data_configuration");
     QJsonObject payloadObject;
     payloadObject.insert("value", value);
     cmdMessageObject.insert("payload",payloadObject);
     QJsonDocument doc(cmdMessageObject);
     QString strJson(doc.toJson(QJsonDocument::Compact));
-    hcc_object->sendCmd(strJson.toStdString());
     if(hcc_object->sendCmd(strJson.toStdString()))
-        qDebug() << "Radio button send with value" << doc;
+        qDebug() << "Command sent with value" << doc;
     else
-        qDebug() << "Radio button send failed";
+        qDebug() << "Command send failed";
+}
+
+void ImplementationInterfaceBinding::setCableCompensation(int inPort, float inCurrent, float inMilliVolts)
+//Note that the UI deals in millivolts, but the platform deals in volts
+{
+    //qDebug("ImplementationInterfaceBinding::setCableCompensation(%d)", inCurrent);
+    QJsonObject cmdMessageObject;
+    cmdMessageObject.insert("cmd", "set_cable_loss_compensation");
+    QJsonObject payloadObject;
+    payloadObject.insert("port",inPort);
+    payloadObject.insert("output_current",inCurrent);
+    payloadObject.insert("bias_voltage",inMilliVolts/1000);
+
+    cmdMessageObject.insert("payload",payloadObject);
+    QJsonDocument doc(cmdMessageObject);
+    QString strJson(doc.toJson(QJsonDocument::Compact));
+    if(hcc_object->sendCmd(strJson.toStdString()))
+        qDebug() << "Command sent with value" << doc;
+    else
+        qDebug() << "Command send failed";
+}
+
+//this triggers the platform to send all of the current values it holds for controls
+//as separate notifications
+void ImplementationInterfaceBinding::sendPlatformRefresh()
+{
+    qDebug("ImplementationInterfaceBinding::sendPlatformRefresh()");
+    QJsonObject cmdMessageObject;
+    cmdMessageObject.insert("cmd", "request_platform_refresh");
+    QJsonObject payloadObject;
+    cmdMessageObject.insert("payload",payloadObject);
+    QJsonDocument doc(cmdMessageObject);
+    QString strJson(doc.toJson(QJsonDocument::Compact));
+    if(hcc_object->sendCmd(strJson.toStdString()))
+        qDebug() << "Command sent with value" << doc;
+    else
+        qDebug() << "Command send failed";
 }
 
 
@@ -159,7 +195,7 @@ void ImplementationInterfaceBinding::setTemperatureFoldbackParameters(bool inEna
     payloadObject.insert("enabled", inEnabled);
     payloadObject.insert("temperature", inTemperature);
     payloadObject.insert("power", inWatts);
-    qDebug() << "temperature foldback action "<<inEnabled << inTemperature<< inWatts;
+    //qDebug() << "temperature foldback action "<<inEnabled << inTemperature<< inWatts;
     cmdMessageObject.insert("payload",payloadObject);
     QJsonDocument doc(cmdMessageObject);
     QString strJson(doc.toJson(QJsonDocument::Compact));
@@ -177,7 +213,7 @@ void ImplementationInterfaceBinding::setVoltageFoldbackParameters(bool inEnabled
                                                               int inWatts)
 {
     QJsonObject cmdMessageObject;
-    cmdMessageObject.insert("cmd", "request_set_voltage_foldback");
+    cmdMessageObject.insert("cmd", "request_voltage_foldback");
     QJsonObject payloadObject;
     payloadObject.insert("enabled", inEnabled);
     payloadObject.insert("voltage", inVoltage);
@@ -329,6 +365,8 @@ ImplementationInterfaceBinding::e_MappedPlatformId ImplementationInterfaceBindin
     e_MappedPlatformId mappedId = USB_PD;
 #endif
 
+    qDebug() << "asking for platform ID ";
+
     // Initialize the mapping since we can't statically initialize it.
     if (idMap.size() == 0) {
         // BUBU Interface
@@ -445,6 +483,11 @@ void ImplementationInterfaceBinding::handleNotification(QVariantMap current_map)
 {
     QVariantMap payloadMap;
 
+    //what kind of notifications are we getting back? I'll omit the steady stream of power notifications
+    //if (current_map["value"] != "request_usb_power_notification"){
+    //    qDebug() << "notification received! "<< current_map["value"].toString()<<" " <<current_map["payload"];
+    //}
+
     // TODO FIX [ian] why is the "notification" keyword called "value"??!!
     if(current_map.contains("value")) {
         if(current_map["value"] == "request_usb_power_notification") {
@@ -483,7 +526,34 @@ void ImplementationInterfaceBinding::handleNotification(QVariantMap current_map)
         }else if (current_map["value"] == "usb_pd_maximum_power"){
             payloadMap=current_map["payload"].toMap();
             handleMaximumPortPowerNotification(payloadMap);
-        }
+        }else if (current_map["value"] == "usb_pd_protection_action"){
+            payloadMap=current_map["payload"].toMap();
+            handleFaultProtectionNotification(payloadMap);
+        }else if (current_map["value"] == "request_data_configuration"){
+            payloadMap=current_map["payload"].toMap();
+            handleDataConfigurationNotification(payloadMap);
+        }else if (current_map["value"] == "foldback_limiting"){
+            payloadMap=current_map["payload"].toMap();
+            handleFoldbackLimitingNotification(payloadMap);
+        }else if (current_map["value"] == "set_input_under_voltage_notification"){
+            payloadMap=current_map["payload"].toMap();
+            handleInputUnderVoltageValueNotification(payloadMap);
+        }else if (current_map["value"] == "set_maximum_temperature_notification"){
+            payloadMap=current_map["payload"].toMap();
+            handleMaximumTemperatureNotification(payloadMap);
+        }else if (current_map["value"] == "request_over_current_protection_notification"){
+            payloadMap=current_map["payload"].toMap();
+            handlePortOverCurrentNotification(payloadMap);
+         }else if (current_map["value"] == "usb_pd_advertised_voltages_notification"){
+            payloadMap=current_map["payload"].toMap();
+            handlePortAdvertisedVoltagesNotification(payloadMap);
+         }else if (current_map["value"] == "get_cable_loss_compensation"){
+            payloadMap=current_map["payload"].toMap();
+            handlePortCableCompensationNotification(payloadMap);
+         }
+
+
+
         else {
             qDebug() << "Unsupported value field Received";
             qDebug() << "Received JSON = " <<current_map;
@@ -562,8 +632,8 @@ void ImplementationInterfaceBinding::handleUsbPowerNotification(const QVariantMa
     float output_voltage = payloadMap["output_voltage"].toFloat();
     emit portOutputVoltageChanged(port, output_voltage);
 
-    float target_voltage = payloadMap["target_volts"].toFloat();
-    emit portTargetVoltageChanged(port, target_voltage);
+//    float target_voltage = payloadMap["target_volts"].toFloat();
+//    emit portTargetVoltageChanged(port, target_voltage);
 
     float current = payloadMap["output_current"].toFloat();
 
@@ -714,6 +784,89 @@ void ImplementationInterfaceBinding::clearBoardMetrics(int portNumber){
 //    emit portInputVoltageChanged(portNumber,0);
 }
 
+void ImplementationInterfaceBinding::handleFoldbackLimitingNotification(const QVariantMap payloadMap) {
+
+    //qDebug() << "foldback notification"<<payloadMap;
+
+    bool inputVoltageFoldbackEnabled = payloadMap["input_voltage_limiting_enabled"].toBool();
+    float inputVoltageFoldbackStartVoltage = payloadMap["minimum_voltage"].toFloat();
+    int inputVoltageFoldbackOutputLimit = payloadMap["maximum_power_voltage_limited"].toInt();
+
+    bool temperatureFoldbackEnabled = payloadMap["temperature_limiting_enabled"].toBool();
+    float temperatureFoldbackStartTemp = payloadMap["maximum_temperature"].toFloat();
+    int temperatureFoldbackOutputLimit = payloadMap["maximum_power_temperature_limited"].toInt();
+
+    emit foldbackLimitingChanged(inputVoltageFoldbackEnabled,
+                                 inputVoltageFoldbackStartVoltage,
+                                 inputVoltageFoldbackOutputLimit,
+                                 temperatureFoldbackEnabled,
+                                 temperatureFoldbackStartTemp,
+                                 temperatureFoldbackOutputLimit);
+}
+
+
+void ImplementationInterfaceBinding::handlePortCableCompensationNotification(const QVariantMap json_map) {
+    int port = json_map["port"].toInt();
+    float cableLoss = json_map["output_current"].toFloat();
+    float biasVoltage = json_map["bias_voltage"].toFloat() * 1000;      //switch from volts to millivolts
+    //qDebug() << "cable loss notification received. amps="<<cableLoss;
+    emit portCableCompensationChanged(port, cableLoss, biasVoltage);
+}
+
+void ImplementationInterfaceBinding::handlePortAdvertisedVoltagesNotification(const QVariantMap payloadMap) {
+
+    //qDebug() << "port voltage notification"<<payloadMap;
+
+    int port = payloadMap["port"].toInt();
+    int numberOfSettings = payloadMap["number_of_settings"].toInt();
+
+    QVariantMap settings1 = qvariant_cast<QVariantMap>((payloadMap["settings"]).toList()[0]);
+    QVariantMap settings2 = qvariant_cast<QVariantMap>((payloadMap["settings"]).toList()[1]);
+    QVariantMap settings3 = qvariant_cast<QVariantMap>((payloadMap["settings"]).toList()[2]);
+    QVariantMap settings4 = qvariant_cast<QVariantMap>((payloadMap["settings"]).toList()[3]);
+    QVariantMap settings5 = qvariant_cast<QVariantMap>((payloadMap["settings"]).toList()[4]);
+    QVariantMap settings6 = qvariant_cast<QVariantMap>((payloadMap["settings"]).toList()[5]);
+    QVariantMap settings7 = qvariant_cast<QVariantMap>((payloadMap["settings"]).toList()[6]);
+
+    //assuming that the QVarientMap will be NULL if the associated JSON can't be found...
+    float voltage1 = (!settings1.isEmpty()) ? settings1["voltage"].toFloat() : 0;
+    float voltage2 = (!settings2.isEmpty()) ? settings2["voltage"].toFloat() : 0;
+    float voltage3 = (!settings3.isEmpty()) ? settings3["voltage"].toFloat() : 0;
+    float voltage4 = (!settings4.isEmpty()) ? settings4["voltage"].toFloat() : 0;
+    float voltage5 = (!settings5.isEmpty()) ? settings5["voltage"].toFloat() : 0;
+    float voltage6 = (!settings6.isEmpty()) ? settings6["voltage"].toFloat() : 0;
+    float voltage7 = (!settings7.isEmpty()) ? settings7["voltage"].toFloat() : 0;
+
+
+    emit portAdvertisedVoltagesChanged(port,
+                                   voltage1,
+                                   voltage2,
+                                   voltage3,
+                                   voltage4,
+                                   voltage5,
+                                   voltage6,
+                                   voltage7);
+}
+
+void ImplementationInterfaceBinding::handlePortOverCurrentNotification(const QVariantMap json_map) {
+    int port = json_map["port"].toInt();
+    float max_current = json_map["current_limit"].toFloat();
+    //qDebug() << "port over current notification received. value="<<dataConfiguration;
+    emit portOverCurrentChanged(port, max_current);
+}
+
+
+void ImplementationInterfaceBinding::handleDataConfigurationNotification(const QVariantMap json_map) {
+    QString dataConfiguration = json_map["value"].toString();
+    //qDebug() << "Data path config notification received. value="<<dataConfiguration;
+    emit dataPathConfigurationChanged(dataConfiguration);
+}
+
+void ImplementationInterfaceBinding::handleFaultProtectionNotification(const QVariantMap json_map) {
+    QString protectionAction = json_map["action"].toString();
+    emit faultProtectionChanged(protectionAction);
+}
+
 
 void ImplementationInterfaceBinding::handleUSBCportDisconnectNotification(const QVariantMap payloadMap) {
     QString usbCPortId = payloadMap["port_id"].toString();
@@ -754,6 +907,20 @@ void ImplementationInterfaceBinding::handleResetNotification(const QVariantMap p
     if(status) {
         emit platformResetDetected(status);
     }
+}
+
+void ImplementationInterfaceBinding::handleInputUnderVoltageValueNotification (const QVariantMap payloadMap) {
+
+    QString state = payloadMap["state"].toString();
+    float value = payloadMap["minimum_voltage"].toFloat();
+
+    emit inputUnderVoltageChanged(value);
+}
+
+void ImplementationInterfaceBinding::handleMaximumTemperatureNotification (const QVariantMap payloadMap) {
+
+    float value = payloadMap["maximum_temperature"].toFloat();
+    emit maximumTemperatureChanged(value);
 }
 
 void ImplementationInterfaceBinding::handleInputUnderVoltageNotification(const QVariantMap payloadMap) {
@@ -848,9 +1015,10 @@ void ImplementationInterfaceBinding::handleNegotiatedContractNotification(const 
 void ImplementationInterfaceBinding::handleMaximumPortPowerNotification(const QVariantMap payloadMap){
 
     int port_number = payloadMap["port"].toInt();
-    int watts = payloadMap["watts"].toInt();
+    int currentWatts = payloadMap["current_max_power"].toInt(); //max power including input and temp limiting
+    int watts = payloadMap["default_max_power"].toInt();        //max power without any adjustment for limiting
 
-    qDebug() << "new max port power notification received: "<<port_number<<" "<<watts;
+    //qDebug() << "new max port power notification received: "<<port_number<<" "<<watts;
 
     emit portMaximumPowerChanged(port_number, watts);
 }

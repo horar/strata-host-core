@@ -11,8 +11,9 @@ Rectangle {
     property point theDialogStartPosition;
     property int portNumber:0;
 
+    property double negotiatedVoltage: 0;
+    property double negotiatedCurrent: 0;
     property double outputVoltage: 0;
-    property double targetVoltage: 0;
     property double portCurrent: 0;
     property double portTemperature: 0;
     property double portPower: 0;
@@ -22,17 +23,24 @@ Rectangle {
     Connections {
         target: implementationInterfaceBinding
 
+        // negotiated voltage
+        onPortNegotiatedVoltageChanged: {
+            if( portNumber === port ) {
+                container.negotiatedVoltage = voltage;
+            }
+        }
+
+        // negotiated current
+        onPortNegotiatedCurrentChanged: {
+            if( portNumber === port ) {
+                container.negotiatedCurrent = current;
+            }
+        }
+
         // output voltage
         onPortOutputVoltageChanged: {
             if( portNumber === port ) {
                 container.outputVoltage = value;
-            }
-        }
-
-        // target voltage
-        onPortTargetVoltageChanged: {
-            if( portNumber === port ) {
-                container.targetVoltage = value;
             }
         }
 
@@ -43,6 +51,13 @@ Rectangle {
             }
         }
 
+        // port power
+        onPortPowerChanged: {
+            if( portNumber === port ) {
+                container.portPower = value;
+            }
+        }
+
         // port temperature
         onPortTemperatureChanged: {
             if( portNumber === port ) {
@@ -50,12 +65,7 @@ Rectangle {
             }
         }
 
-        // port power
-        onPortPowerChanged: {
-            if( portNumber === port ) {
-                container.portPower = value;
-            }
-        }
+
     }
 
     property alias power: powerValue;
@@ -69,7 +79,8 @@ Rectangle {
             id: negotiatedValues
             width:container.width/4; height: width
             icon: "../images/icons/leftArrow.svg"
-            text: container.targetVoltage.toFixed(0) +" V   "//+ container.portCurrent.toFixed(1)+" A"
+            text: container.negotiatedVoltage.toFixed(0) +" V (" +
+                  container.negotiatedCurrent.toFixed(1)*container.negotiatedVoltage.toFixed(0) +" W)"
 
             MouseArea {
                 anchors { fill: parent }
@@ -127,7 +138,7 @@ Rectangle {
         bottomMargin:30
         axisXLabel: "Time (S)"
         axisYLabel: "Voltage (V)"
-        chartType: "Target Voltage"
+        chartType: "Port Voltage"
         portNumber: container.portNumber
         efficencyLabel: false
         powerMessageVisible: false;
