@@ -235,13 +235,13 @@ void HostControllerService::serviceCallback(evutil_socket_t fd, short what, void
         // TODO [ian] add this to a "command_filter" map to add more then just "db::cmd"
         if( service_command.HasMember("db::cmd") ) {
 
-            PDEBUG("FILTER: %s\n", read_message.c_str());
+            //PDEBUG("FILTER: %s\n", read_message.c_str());
 
             if ( hcs->database_->Command( read_message.c_str() ) != NO_ERRORS ){
                 PDEBUG("ERROR: database failed failed!");
             }
         }
-        if(hcs->platform_client_mapping_.empty() || !hcs->clientExists(dealer_id)) {
+        else if(hcs->platform_client_mapping_.empty() || !hcs->clientExists(dealer_id)) {
             std::vector<std::string> selected_platform_info = hcs->initialCommandDispatch(dealer_id,read_message);
             // strictly for testing alone
             if(!(selected_platform_info[0] == "NONE")) {
