@@ -21,6 +21,21 @@ using namespace std;
 SerialConnector::SerialConnector()
 {
     cout<<"Creating a Serial Connector Object"<<endl;
+    // context_ = new(zmq::context_t);
+
+int i;
+  struct sp_port **ports;
+
+  sp_return error = sp_list_ports(&ports);
+  if (error == SP_OK) {
+    for (i = 0; ports[i]; i++) {
+      printf("Found port: '%s'\n", sp_get_port_name(ports[i]));
+    }
+    sp_free_port_list(ports);
+  } else {
+    printf("No serial devices detected\n");
+  }
+  printf("\n");
 }
 
 // @f open

@@ -89,7 +89,14 @@ private:
     struct sp_event_set *ev;
     sp_return error;
     int serial_fd_;	//file descriptor for serial ports
-
+#define TESTING
+#ifdef TESTING
+    struct sp_port *port;
+#endif
+#ifdef _WIN32
+    zmq::context_t* context_;
+    zmq::socket_t* socket_;
+#endif
 };
 
 class ZMQConnector : public Connector {
