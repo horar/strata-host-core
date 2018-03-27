@@ -23,19 +23,6 @@ SerialConnector::SerialConnector()
     cout<<"Creating a Serial Connector Object"<<endl;
     // context_ = new(zmq::context_t);
 
-int i;
-  struct sp_port **ports;
-
-  sp_return error = sp_list_ports(&ports);
-  if (error == SP_OK) {
-    for (i = 0; ports[i]; i++) {
-      printf("Found port: '%s'\n", sp_get_port_name(ports[i]));
-    }
-    sp_free_port_list(ports);
-  } else {
-    printf("No serial devices detected\n");
-  }
-  printf("\n");
 }
 
 // @f open
@@ -51,7 +38,26 @@ int i;
 bool SerialConnector::open(std::string serial_port_name)
 {
     // TODO [prasanth] add platform socket inside the class declaration
-    error = sp_get_port_by_name(serial_port_name.c_str(), &platform_socket_);
+    int i;
+    struct sp_port **ports;
+    sp_return error = sp_list_ports(&ports);
+    if (error == SP_OK) {
+        for (i = 0; ports[i]; i++) {
+            std::string port_name = sp_get_port_name(ports[i]);
+            // cout<<"Found port: "<<port_name<<endl;
+            size_t found = port_name.find(usb_keyword);
+            if (found!=std::string::npos) {
+                cout << "'usb' found at: " << port_name << '\n';
+                platform_port_name = port_name;
+                error = sp_get_port_by_name(platform_port_name.c_str(), &platform_socket_);
+            }
+        }
+        sp_free_port_list(ports);
+    }
+    else {
+        cout<<"No serial devices detected\n";
+        return false;
+    }
     if (error == SP_OK) {
         error = sp_open(platform_socket_, SP_MODE_READ_WRITE);
         if (error == SP_OK) {
@@ -66,7 +72,7 @@ bool SerialConnector::open(std::string serial_port_name)
             return true;
         }
         else {
-            cout << "ERROR: Invalid Serial Port Number " << serial_port_name <<" Please check the config file  !!!" << endl;
+            cout << "No platform detected"<< endl;
         }
     }
     return false;

@@ -43,7 +43,7 @@ HostControllerService::HostControllerService(std::string configuration_file)
     hcs_server_address_ = configuration_->GetSubscriberAddress();
     hcs_remote_address_ = configuration_->GetRemoteAddress();
     // get the serial port numbers from config file and store it to a vector
-    serial_port_list_ = configuration_->GetSerialPorts();
+    // serial_port_list_ = configuration_->GetSerialPorts();
     // get the dealer id for remote socket connection
     dealer_remote_socket_id_ = configuration_->GetDealerSocketID();
     // creating the serial connector object
@@ -280,24 +280,11 @@ void HostControllerService::platformCallback(evutil_socket_t fd, short what, voi
 //
 bool HostControllerService::openPlatform()
 {
-    static bool outputPortError = true;
-
-    if(serial_port_list_.empty()) {
-        std::cout << "ERROR: Please add serial port number in config file  !!!"<< std::endl;
-        return false;
+    std::string platform_port_name;
+    if(serial_connector_->open(platform_port_name)) {
+        port_disconnected_ = false;
+        return true;
     }
-    for (auto port : serial_port_list_) {
-        if(serial_connector_->open((std::string)port)) {
-            outputPortError = true;
-            port_disconnected_ = false;
-            return true;
-        }
-        else if(outputPortError) {
-            std::cout << "ERROR: Invalid Serial Port Number " << port <<" Please check the config file  !!!" << std::endl;
-        }
-    }
-    // Only output the error once
-    outputPortError = false;
     return false;
 }
 

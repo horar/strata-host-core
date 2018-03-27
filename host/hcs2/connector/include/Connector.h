@@ -91,7 +91,14 @@ private:
     int serial_fd_;	//file descriptor for serial ports
 #define TESTING
 #ifdef TESTING
-    struct sp_port *port;
+    std::string usb_keyword;
+#ifdef _APPLE_
+    usb_keyword = "usb";
+#elif _linux_
+    usb_keyword = "USB";
+#endif
+    std::string platform_port_name;
+
 #endif
 #ifdef _WIN32
     zmq::context_t* context_;
