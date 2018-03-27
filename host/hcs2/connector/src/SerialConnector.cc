@@ -47,7 +47,7 @@ bool SerialConnector::open(std::string serial_port_name)
             // cout<<"Found port: "<<port_name<<endl;
             size_t found = port_name.find(usb_keyword);
             if (found!=std::string::npos) {
-                cout << "'usb' found at: " << port_name << '\n';
+                cout << "'platform found at: " << port_name << '\n';
                 platform_port_name = port_name;
                 error = sp_get_port_by_name(platform_port_name.c_str(), &platform_socket_);
             }
