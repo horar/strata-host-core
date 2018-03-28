@@ -30,7 +30,7 @@ Rectangle {
 
         TabButton { text: "Schematic"
             Rectangle {
-                id: newSchematicDocuments
+                id: newSchematicBadge
                 width: parent.width<parent.height?parent.width/1.9:parent.height/1.8
                 height: width
                 color: "red"
@@ -40,19 +40,21 @@ Rectangle {
                 anchors.bottomMargin: -20
                 Text {
                     color: "white"
-                    text: "2"
+                    text: { return documentManager.revisionCount}
                     z:2
                     wrapMode: Text.WordWrap
                     anchors { fill: parent; centerIn: parent.Center }
                     horizontalAlignment: Text.AlignHCenter
                     verticalAlignment: Text.AlignVCenter
                 }
+                // Only show badge if rev is > 0
+                visible: documentManager.revisionCount ? true : false
             }
-            onClicked: newSchematicDocuments.visible = false
+            onClicked: documentManager.clearRevisionCount()
         }
         TabButton { text: "Layout"
             Rectangle {
-                id: newLayoutDocuments
+                id: newLayoutBadge
                 width: parent.width<parent.height?parent.width/1.9:parent.height/1.8
                 height: width
                 color: "red"
@@ -62,19 +64,21 @@ Rectangle {
                 anchors.bottomMargin: -20
                 Text {
                     color: "white"
-                    text: "3"
+                    text: { return documentManager.revisionCount}
                     z:2
                     wrapMode: Text.WordWrap
                     anchors { fill: parent; centerIn: parent.Center }
                     horizontalAlignment: Text.AlignHCenter
                     verticalAlignment: Text.AlignVCenter
                 }
+                // Only show badge if rev is > 0
+                visible: documentManager.revisionCount ? true : false
             }
-            onClicked: newLayoutDocuments.visible = false
+            onClicked: documentManager.clearRevisionCount()
         }
         TabButton { text: "Test Report"
             Rectangle {
-                id: newTestDocuments
+                id: newTestReportBadge
                 width: parent.width<parent.height?parent.width/1.9:parent.height/1.8
                 height: width
                 color: "red"
@@ -84,20 +88,22 @@ Rectangle {
                 anchors.bottomMargin: -20
                 Text {
                     color: "white"
-                    text: "5"
+                    text: { return documentManager.revisionCount}
                     z:2
                     wrapMode: Text.WordWrap
                     anchors { fill: parent; centerIn: parent.Center }
                     horizontalAlignment: Text.AlignHCenter
                     verticalAlignment: Text.AlignVCenter
                 }
+                // Only show badge if rev is > 0
+                visible: documentManager.revisionCount ? true : false
             }
-            onClicked: newTestDocuments.visible = false
+            onClicked: documentManager.clearRevisionCount()
         }
         TabButton { text: "System Content" }
         TabButton { text: "Coming Soon"
             Rectangle {
-                id: newComingSoonDocuments
+                id: newCommingSoonBadge
                 width: parent.width<parent.height?parent.width/1.9:parent.height/1.8
                 height: width
                 color: "red"
@@ -107,15 +113,17 @@ Rectangle {
                 anchors.bottomMargin: -20
                 Text {
                     color: "white"
-                    text: "2"
+                    text: { return documentManager.revisionCount}
                     z:2
                     wrapMode: Text.WordWrap
                     anchors { fill: parent; centerIn: parent.Center }
                     horizontalAlignment: Text.AlignHCenter
                     verticalAlignment: Text.AlignVCenter
                 }
+                // Only show badge if rev is > 0
+                visible: documentManager.revisionCount ? true : false
             }
-            onClicked: newComingSoonDocuments.visible = false
+            onClicked: documentManager.clearRevisionCount()
         }
     }
     Image {
