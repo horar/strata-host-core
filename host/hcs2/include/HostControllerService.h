@@ -126,6 +126,7 @@ public:
     // thread to monitor the serial port
     void serialPortMonitor();
     void sendDisconnecttoUI();
+    void platformDisconnectRoutine();
 
     void sendtoMap();
     HcsError setEventLoop();

@@ -92,6 +92,7 @@ private:
 #define TESTING
 #ifdef TESTING
     std::string usb_keyword;
+    std::string platform_id_json_;
 #ifdef _APPLE_
     usb_keyword = "usb";
 #elif _linux_

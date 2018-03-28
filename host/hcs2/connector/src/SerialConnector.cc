@@ -22,7 +22,6 @@ SerialConnector::SerialConnector()
 {
     cout<<"Creating a Serial Connector Object"<<endl;
     // context_ = new(zmq::context_t);
-
 }
 
 // @f open
@@ -44,7 +43,6 @@ bool SerialConnector::open(std::string serial_port_name)
     if (error == SP_OK) {
         for (i = 0; ports[i]; i++) {
             std::string port_name = sp_get_port_name(ports[i]);
-            // cout<<"Found port: "<<port_name<<endl;
             size_t found = port_name.find(usb_keyword);
             if (found!=std::string::npos) {
                 cout << "'platform found at: " << port_name << '\n';
@@ -69,6 +67,19 @@ bool SerialConnector::open(std::string serial_port_name)
             sp_set_dtr(platform_socket_,SP_DTR_OFF);
             sp_set_parity(platform_socket_,SP_PARITY_NONE );
             sp_set_cts(platform_socket_,SP_CTS_IGNORE );
+            // getting the platform
+            string cmd = "{\"cmd\":\"request_platform_id\"}\n";
+            if(send(cmd)) {
+                read(dealer_id_);
+                if (read(dealer_id_)) {
+                    cout << "Platform_id_json "<<dealer_id_;
+                } else {
+                    return false;
+                }
+            } else {
+                cout<<"sending command to platform failed\n";
+                return false;
+            }
             return true;
         }
         else {
@@ -104,6 +115,7 @@ bool SerialConnector::read(string &notification)
         error = sp_nonblocking_read(platform_socket_,&temp,1);
         if(error <= 0) {
             cout<<"Platform Disconnected\n";
+            dealer_id_.clear();
             return false;
         }
         if(temp !='\n' && temp!= NULL) {
@@ -134,7 +146,7 @@ bool SerialConnector::send(std::string message)
     sp_flush(platform_socket_,SP_BUF_BOTH);
     if(sp_nonblocking_write(platform_socket_,(void *)message.c_str(),message.length()) >=0) {
     // if (i>=0) {
-        // cout << "write success "<<i <<endl;
+        cout << "write success "<<endl;
         return true;
     }
     return false;
