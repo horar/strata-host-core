@@ -145,8 +145,6 @@ Rectangle {
                     }
                 }
 
-
-
             }
         }
     }
@@ -370,38 +368,42 @@ Rectangle {
             closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
         }
 
-        Menu {
-            id: settingsMenu
-            title: "setting"
-            MenuItem {
-                text: qsTr("Log out")
-                onClicked: {
-                    NavigationControl.updateState(NavigationControl.events.LOGOUT_EVENT)
+
+            Menu {
+                id: settingsMenu
+                title: "setting"
+                y: settingsToolButton.y + settingsToolButton.height //To move the drop down menu below the setting icon
+
+                MenuItem {
+                    text: qsTr("Log out")
+                    onClicked: {
+                        NavigationControl.updateState(NavigationControl.events.LOGOUT_EVENT)
+                    }
                 }
-            }
 
-            MenuItem {
-                text: qsTr("Remote Support FAE")
+                MenuItem {
+                    text: qsTr("Remote Support FAE")
 
-                onClicked: {
-                    remoteSupportConnect.open()
+                    onClicked: {
+                        remoteSupportConnect.open()
 
+                    }
                 }
-            }
 
-            MenuItem {
-                text: qsTr("Remote Support CUSTOMER")
+                MenuItem {
+                    text: qsTr("Remote Support CUSTOMER")
 
-                onClicked: {
-                    remoteSupportRequest.open()
+                    onClicked: {
+                        remoteSupportRequest.open()
+                    }
                 }
+
+                MenuItem {
+                    text: qsTr("My Profile")
+                    onClicked: profilePopup.open();
+                }
+
             }
 
-            MenuItem {
-                text: qsTr("My Profile")
-                onClicked: profilePopup.open();
-            }
-
-        }
     }
 }

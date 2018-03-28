@@ -69,7 +69,6 @@ Item {
     // Control Section
     Rectangle {
         id: controlSection
-        anchors {top: headerLogo.bottom}
         width: parent.width; height: parent.height * 0.5
         color: "white"
 

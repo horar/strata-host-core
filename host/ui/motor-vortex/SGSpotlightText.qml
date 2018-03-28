@@ -19,7 +19,6 @@ Item {
 
     function getElement(element) {
         return element.itemAt(indexIncrementer);
-
     }
 
     function createObject(count) {
@@ -28,17 +27,29 @@ Item {
         }
     }
 
-    // TODO[Taniya] : create an component for the animation
-    function getObject() {
-        var dynamicObject = Qt.createQmlObject('import QtQuick 2.7; SequentialAnimation{ id: animation
-                        NumberAnimation { target: getElement(repeater) ; property: "opacity"; from: 0; to: 1; easing.type:Easing.OutInCubic; duration: fadeInTime;}
-                        NumberAnimation { target: getElement(repeater); property: "opacity"; from: 1; to: 0; easing.type:Easing.OutInCubic; duration: fadeOutTime;}
-                }',
+    function startNextLetter() {
 
-                                               parent,'firstObject');
-        return dynamicObject;
+        indexIncrementer = indexIncrementer % titleName.length;
+        if (typeof letterObject[indexIncrementer] !== "undefined") {
+            letterObject[indexIncrementer].start();
+        }
+        indexIncrementer++;
     }
 
+    function getObject() {
+          console.log("component url:", textAnimation.url)
+          var dynamicObject = textAnimation.createObject(this)
+          return dynamicObject;
+      }
+
+      Component {
+          id: textAnimation
+          SequentialAnimation{
+              id: animation
+          NumberAnimation { target: getElement(repeater); property: "opacity"; from: 0; to: 1; easing.type:Easing.OutInCubic; duration: fadeInTime;}
+          NumberAnimation { target: getElement(repeater); property: "opacity"; from: 1; to: 0; easing.type:Easing.OutInCubic; duration: fadeOutTime;}
+          }
+      }
 
     TextMetrics {
         //this is used to calculate the width of the title
@@ -94,17 +105,7 @@ Item {
         id: timerAnimation
         interval: timerInterval; running: true; repeat: true
         onTriggered: {
-            if(indexIncrementer!= titleName.length - 1) {
-                indexIncrementer++;
-                letterObject[indexIncrementer].start();
-            }
-            else {
-                indexIncrementer = -1;
-                //at the end of the string, stop the animation of letters, and let the
-                //string fade out briefly
-                timerAnimation.stop()
-                endOfStringDelayTimer.start()
-            }
+            startNextLetter();
         }
 
     }
