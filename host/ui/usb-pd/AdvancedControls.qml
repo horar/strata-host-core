@@ -9,7 +9,7 @@ import "advancedControls"
 Rectangle {
 
     property int smallFontSize: (Qt.platform.os === "osx") ? 12  : 8;
-    property int mediumFontSize: (Qt.platform.os === "osx") ? 15  : 12;
+    property int mediumFontSize: (Qt.platform.os === "osx") ? 15  : 11;
     property int largeFontSize: (Qt.platform.os === "osx") ? 24  : 16;
     property int extraLargeFontSize: (Qt.platform.os === "osx") ? 36  : 24;
 
@@ -17,7 +17,10 @@ Rectangle {
     property color disabledTextColor: "#484848"
     property color unselectedButtonSegmentTextColor: "black"
     property color textEditFieldBackgroundColor: "#5D5A58"
+    property color textEditFieldDisabledBackgroundColor: "#404040"
     property color popupMenuBackgroundColor: "#5D5A58"
+
+
 
     objectName: "advancedControls"
 
@@ -30,10 +33,14 @@ Rectangle {
         id: activeFaultList
     }
 
+    Component.onCompleted:{
+        console.log("AdvancedControls created")
+        implementationInterfaceBinding.sendPlatformRefresh();    //get new values for controls from the platform
+    }
+
     //visibility is the only way we know that this view has been pushed on the stack
     //handle activities that need to happen when the advanced controls view is seen here.
     onVisibleChanged: {
-
 
         if(visible){
             faultHistoryList.append({"parameter":"voltage","condition":"<","value":value})
@@ -85,7 +92,7 @@ Rectangle {
             Layout.row: 0
             Layout.rowSpan: 3
             Layout.preferredWidth  : grid.prefWidth(this)
-            Layout.fillWidth:true
+//            Layout.fillWidth:true
             Layout.fillHeight:true
 
             property var collapseAnimationSpeed:900
@@ -96,10 +103,11 @@ Rectangle {
                 anchors.right: parent.right
                 anchors.bottom: parent.bottom
                 active:pressed
+                //interactive: false
                 contentItem: Rectangle{
-                    //width:40
+                    width:40
                     implicitWidth: 1
-                    implicitHeight: 100
+                    //implicitHeight: 100
                     radius: width / 2
                     color: disabledTextColor
                 }
@@ -201,8 +209,8 @@ Rectangle {
 
                     AdvancedGraph{
                         id:port1VoltageAndCurrentGraph
-                        title: "PORT 1: VOLTAGE AND CURRENT"
-                        chartType: "Target Voltage"
+                        title: "PORT 1 VOLTAGE"
+                        chartType: "Port Voltage"
                         maxYValue: 25
                         portNumber:1
                         anchors.top:parent.top
@@ -230,8 +238,8 @@ Rectangle {
 
                     AdvancedGraph{
                         id:port2VoltageAndCurrentGraph
-                        title: "PORT 2: VOLTAGE AND CURRENT"
-                        chartType: "Target Voltage"
+                        title: "PORT 2 VOLTAGE"
+                        chartType: "Port Voltage"
                         portNumber:2
                         maxYValue: 25
                         anchors.top:parent.top
@@ -429,7 +437,7 @@ Rectangle {
                         ListModel {
                             id:activeFaultsListModel
                             ListElement {
-                                fault: "Port 1 Temperature: 71°C"
+                                fault: ""//"Port 1 Temperature: 71°C"
                             }
 
                         }
@@ -510,7 +518,7 @@ Rectangle {
                         ListModel {
                             id:faultHistoryListModel
                             ListElement {
-                                fault: "Port 1 Temperature: 71°C"
+                                fault: ""//"Port 1 Temperature: 71°C"
                             }
                         }
 
@@ -587,7 +595,7 @@ Rectangle {
                         ListModel {
                             id:usbPDListModel
                             ListElement {
-                                fault: "Port 1 Temperature: 71°C"
+                                fault: ""//"Port 1 Temperature: 71°C"
                             }
                         }
 

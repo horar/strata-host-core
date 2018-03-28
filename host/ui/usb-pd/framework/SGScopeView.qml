@@ -82,13 +82,13 @@ ChartView {
     Connections {
         target: implementationInterfaceBinding
 
-        onPortTargetVoltageChanged: {
-            if( chartType === "Target Voltage" && whenOpen && portNumber == port ) {
-                parameterValue = value;
-                lineSeries1.append(count/10,parameterValue);
-                count++;
-            }
-        }
+//        onPortOutputVoltageChanged: {
+//            if( chartType === "Port Voltage" && whenOpen && portNumber == port ) {
+//                parameterValue = value;
+//                lineSeries1.append(count/10,parameterValue);
+//                count++;
+//            }
+//        }
 
         onPortTemperatureChanged: {
             if( chartType === "Port Temperature"&& whenOpen && portNumber == port  ) {

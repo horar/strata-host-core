@@ -19,8 +19,8 @@ Rectangle{
             targets: [faultProtectionLabel, shutdownButton, restartButton, noProtectionButton, dataConfigurationLabel,
                 chargeOnlyButton, passiveButton, redriverButton,
                 inputLimitingGroup, temperatureLimitingGroup,
-                minimumInputVoltageText, minimumInputLabel, minimumInputUnitText, minimumInputVoltageSlider,
-                faultTempText, faultTempLabel, faultTempUnitText, faultTempSlider]
+                minimumInputVoltageText, minimumInputRect, minimumInputUnitText, minimumInputVoltageSlider,
+                faultTempText, faultTempTextField, faultTempUnitText, faultTempSlider]
             property:"opacity"
             to: 0
             duration:500
@@ -46,8 +46,8 @@ Rectangle{
             targets: [faultProtectionLabel, shutdownButton, restartButton, noProtectionButton, dataConfigurationLabel,
                 chargeOnlyButton, passiveButton, redriverButton,
                 inputLimitingGroup,  temperatureLimitingGroup,
-                minimumInputVoltageText, minimumInputLabel, minimumInputUnitText, minimumInputVoltageSlider,
-                faultTempText, faultTempLabel, faultTempUnitText, faultTempSlider]
+                minimumInputVoltageText, minimumInputTextField, minimumInputUnitText, minimumInputVoltageSlider,
+                faultTempText, faultTempRect, faultTempUnitText, faultTempSlider]
 
             property:"opacity"
             to: 1.0
@@ -180,6 +180,15 @@ Rectangle{
         onClicked: {
             implementationInterfaceBinding.setFaultMode("shutdown")
         }
+        Connections {
+            target: implementationInterfaceBinding
+            onFaultProtectionChanged:{
+                //onsole.log("fault protection message received with value ",protectionMode)
+                if( protectionMode === "shutdown" ) {
+                    shutdownButton.checked= true
+                }
+            }
+        }
 
     }
     MiddleSegmentedButton{
@@ -200,6 +209,14 @@ Rectangle{
         onClicked: {
             implementationInterfaceBinding.setFaultMode("retry")
         }
+        Connections {
+            target: implementationInterfaceBinding
+            onFaultProtectionChanged:{
+                if( protectionMode === "retry" ) {
+                    restartButton.checked= true
+                }
+            }
+        }
     }
     RightSegmentedButton{
         id:noProtectionButton
@@ -218,6 +235,15 @@ Rectangle{
         width:75
         onClicked: {
             implementationInterfaceBinding.setFaultMode("nothing")
+        }
+
+        Connections {
+            target: implementationInterfaceBinding
+            onFaultProtectionChanged:{
+                if( protectionMode === "nothing" ) {
+                    noProtectionButton.checked = true
+                }
+            }
         }
     }
 
@@ -253,7 +279,15 @@ Rectangle{
         height: 25
         width:90
         onClicked: {
-            implementationInterfaceBinding.setRedriverCount(0)
+            implementationInterfaceBinding.setRedriverConfiguration("charge_only")
+        }
+        Connections {
+            target: implementationInterfaceBinding
+            onDataPathConfigurationChanged:{
+                if( dataConfiguration === "charge_only" ) {
+                    chargeOnlyButton.checked = true
+                }
+            }
         }
 
     }
@@ -273,7 +307,15 @@ Rectangle{
         height: 25
         width:65
         onClicked: {
-            implementationInterfaceBinding.setRedriverCount(1)
+            implementationInterfaceBinding.setRedriverConfiguration("passive")
+        }
+        Connections {
+            target: implementationInterfaceBinding
+            onDataPathConfigurationChanged:{
+                if( dataConfiguration === "passive" ) {
+                    passiveButton.checked = true
+                }
+            }
         }
     }
     RightSegmentedButton{
@@ -292,7 +334,15 @@ Rectangle{
         height: 25
         width:75
         onClicked: {
-            implementationInterfaceBinding.setRedriverCount(2)
+            implementationInterfaceBinding.setRedriverConfiguration("redriver")
+        }
+        Connections {
+            target: implementationInterfaceBinding
+            onDataPathConfigurationChanged:{
+                if( dataConfiguration === "redriver" ) {
+                    redriverButton.checked = true
+                }
+            }
         }
     }
 
@@ -307,6 +357,11 @@ Rectangle{
         anchors.topMargin: dataConfigurationLabel.height
         height: 75
 
+        Component.onCompleted: {
+            inputLimitingSwitch.toggle()
+            inputLimitingGroup.setInputVoltageLimitingEnabled(inputLimitingSwitch.checked)
+        }
+
         Text{
             id:inputLimitingText
             text:"Input Limiting"
@@ -317,6 +372,17 @@ Rectangle{
             anchors.leftMargin: 5
             anchors.top: parent.top
             anchors.topMargin: 5
+        }
+
+        function setInputVoltageLimitingEnabled(inEnabled){
+            //toggle enablement of the input limiting controls
+            startLimitingText.enabled = inEnabled
+            startLimitingVoltageRect.enabled = inEnabled
+            startLimitingUnitText.enabled = inEnabled
+            startLimitingVoltageSlider.enabled = inEnabled
+            outputLimitText.enabled = inEnabled
+            outputLimitPopup.enabled = inEnabled
+            outputLimitUnitText.enabled = inEnabled
         }
 
         Switch{
@@ -349,18 +415,19 @@ Rectangle{
                 }
             }
             onToggled: {
-                //toggle enablement of the input limiting controls
-                startLimitingText.enabled = inputLimitingSwitch.checked
-                startLimitingVoltageLabel.enabled = inputLimitingSwitch.checked
-                startLimitingUnitText.enabled = inputLimitingSwitch.checked
-                startLimitingVoltageSlider.enabled = inputLimitingSwitch.checked
-                outputLimitText.enabled = inputLimitingSwitch.checked
-                outputLimitPopup.enabled = inputLimitingSwitch.checked
-                outputLimitUnitText.enabled = inputLimitingSwitch.checked
+                inputLimitingGroup.setInputVoltageLimitingEnabled(inputLimitingSwitch.checked)
 
                 implementationInterfaceBinding.setVoltageFoldbackParameters(inputLimitingSwitch.checked,
                                                                             Math.round(startLimitingVoltageSlider.value *10)/10,
                                                                             parseInt(outputLimitPopup.displayText))
+            }
+            Connections {
+                target: implementationInterfaceBinding
+                onFoldbackLimitingChanged:{
+                    //console.log("input limiting message to set voltage to ",inputVoltageFoldbackEnabled)
+                    inputLimitingSwitch.checked = inputVoltageFoldbackEnabled
+                    inputLimitingGroup.setInputVoltageLimitingEnabled(inputVoltageFoldbackEnabled)
+                }
             }
         }
 
@@ -378,18 +445,41 @@ Rectangle{
 
         }
 
-        Label{
-            id:startLimitingVoltageLabel
-            anchors.left:startLimitingText.right
-            anchors.leftMargin: 10
-            anchors.verticalCenter: startLimitingText.verticalCenter
-            color:enabled ? enabledTextColor : disabledTextColor
-            text:startLimitingVoltageSlider.value
-            verticalAlignment: TextInput.AlignVCenter
-            font.family: "helvetica"
-            font.pointSize: smallFontSize
-            height:15
-            width:20
+        Rectangle{
+             id: startLimitingVoltageRect
+             color: enabled ? textEditFieldBackgroundColor : textEditFieldDisabledBackgroundColor
+             anchors.left:startLimitingText.right
+             anchors.leftMargin: 10
+             anchors.verticalCenter: startLimitingText.verticalCenter
+             height:15
+             width:25
+
+            TextField{
+                id:startLimitingTextInput
+                anchors.fill: parent
+                anchors.leftMargin: 2
+                anchors.topMargin: 5
+
+                horizontalAlignment: Qt.AlignLeft
+
+                font.family: "helvetica"
+                font.pointSize: smallFontSize
+                color:enabled ? enabledTextColor : disabledTextColor
+                text: startLimitingVoltageSlider.value
+                validator: DoubleValidator {bottom:5; top:32; decimals:0}
+                background: Rectangle {
+                    color:"transparent"
+                }
+                onEditingFinished:{
+                    startLimitingVoltageSlider.value= text
+                    implementationInterfaceBinding.setTemperatureFoldbackParameters(temperatureLimitingSwitch.checked,
+                                                                                    Math.round(boardTemperatureSlider.value *10)/10,
+                                                                                    parseInt(boardOuputPopup.displayText))
+
+                  }
+
+
+            }
         }
 
 
@@ -400,7 +490,7 @@ Rectangle{
             font.pointSize: smallFontSize
             //horizontalAlignment: Text.AlignRight
             color: enabled ? enabledTextColor : disabledTextColor
-            anchors.left:startLimitingVoltageLabel.right
+            anchors.left:startLimitingVoltageRect.right
             anchors.leftMargin: 5
             anchors.verticalCenter: startLimitingText.verticalCenter
 
@@ -427,8 +517,15 @@ Rectangle{
             }
 
             onMoved: {
-                startLimitingVoltageLabel.text = Math.round(startLimitingVoltageSlider.value *10)/10
+                startLimitingTextInput.text = Math.round(startLimitingVoltageSlider.value *10)/10
             }
+
+            Connections {
+                target: implementationInterfaceBinding
+                onFoldbackLimitingChanged:{
+                        startLimitingVoltageSlider.value = Math.round(inputVoltageFoldbackStartVoltage *10)/10
+                    }
+                }
         }
 
         Text{
@@ -456,6 +553,13 @@ Rectangle{
                                                                             Math.round(startLimitingVoltageSlider.value *10)/10,
                                                                             parseInt(outputLimitPopup.displayText))
             }
+
+            Connections {
+                target: implementationInterfaceBinding
+                onFoldbackLimitingChanged:{
+                    outputLimitPopup.currentIndex = outputLimitPopup.find(parseInt(inputVoltageFoldbackOutputLimit))
+                    }
+                }
         }
 
 
@@ -468,10 +572,7 @@ Rectangle{
             anchors.left:outputLimitPopup.right
             anchors.leftMargin: 5
             anchors.verticalCenter: outputLimitText.verticalCenter
-
         }
-
-
 
     }
 
@@ -488,6 +589,21 @@ Rectangle{
         anchors.top: inputLimitingGroup.bottom
         anchors.topMargin: boardSettingsLabel.height
         height: 75
+
+        Component.onCompleted: {
+            temperatureLimitingSwitch.toggle()
+            temperatureLimitingGroup.setTemperatureLimitingEnabled(temperatureLimitingSwitch.checked)
+        }
+
+        function setTemperatureLimitingEnabled(inEnabled){
+            boardTemperatureText.enabled = inEnabled
+            boardTemperatureRect.enabled = inEnabled
+            boardTemperatureUnitText.enabled = inEnabled
+            boardTemperatureSlider.enabled = inEnabled
+            boardOutputLimitText.enabled = inEnabled
+            boardOuputPopup.enabled = inEnabled
+            boardOutputUnitText.enabled = inEnabled
+        }
 
         Text{
             id:temperatureLimitingText
@@ -532,18 +648,21 @@ Rectangle{
             }
             onToggled: {
                 //toggle enablement of the input limiting controls
-                boardTemperatureText.enabled = temperatureLimitingSwitch.checked
-                boardTemperatureLabel.enabled = temperatureLimitingSwitch.checked
-                boardTemperatureUnitText.enabled = temperatureLimitingSwitch.checked
-                boardTemperatureSlider.enabled = temperatureLimitingSwitch.checked
-                boardOutputLimitText.enabled = temperatureLimitingSwitch.checked
-                boardOuputPopup.enabled = temperatureLimitingSwitch.checked
-                boardOutputUnitText.enabled = temperatureLimitingSwitch.checked
+                temperatureLimitingGroup.setTemperatureLimitingEnabled(temperatureLimitingSwitch.checked)
 
                 implementationInterfaceBinding.setTemperatureFoldbackParameters(temperatureLimitingSwitch.checked,
                                                                                 Math.round(boardTemperatureSlider.value *10)/10,
                                                                                 parseInt(boardOuputPopup.displayText))
             }
+
+            Connections {
+                target: implementationInterfaceBinding
+                onFoldbackLimitingChanged:{
+                    temperatureLimitingSwitch.checked = temperatureFoldbackEnabled
+                    temperatureLimitingGroup.setTemperatureLimitingEnabled(temperatureFoldbackEnabled)
+                    }
+                }
+
         }
 
         Text{
@@ -559,20 +678,43 @@ Rectangle{
             anchors.topMargin: 10
 
         }
-        Label{
-            id:boardTemperatureLabel
-            anchors.left:boardTemperatureText.right
-            anchors.leftMargin: 10
-            anchors.verticalCenter: boardTemperatureText.verticalCenter
-            anchors.verticalCenterOffset: 2
-            color:enabled ? enabledTextColor : disabledTextColor
-            text:boardTemperatureSlider.value
-            verticalAlignment: TextInput.AlignTop
-            font.family: "helvetica"
-            font.pointSize: smallFontSize
-            height:15
-            width:20
+
+        Rectangle{
+             id: boardTemperatureRect
+             color: enabled ? textEditFieldBackgroundColor : textEditFieldDisabledBackgroundColor
+             anchors.left:boardTemperatureText.right
+             anchors.leftMargin: 10
+             anchors.verticalCenter: boardTemperatureText.verticalCenter
+             anchors.verticalCenterOffset: 0
+             height:15
+             width:25
+
+            TextField{
+                id:boardTemperatureTextInput
+                anchors.fill: parent
+                anchors.leftMargin: 2
+                anchors.topMargin: 5
+
+                horizontalAlignment: Qt.AlignLeft
+
+                font.family: "helvetica"
+                font.pointSize: smallFontSize
+                color:enabled ? enabledTextColor : disabledTextColor
+                text: boardTemperatureSlider.value
+                validator: DoubleValidator {bottom:25; top:100; decimals:1}
+                background: Rectangle {
+                    color:"transparent"
+                }
+                onEditingFinished:{
+                    boardTemperatureSlider.value= text
+                    implementationInterfaceBinding.setTemperatureFoldbackParameters(temperatureLimitingSwitch.checked,
+                                                                                    Math.round(boardTemperatureSlider.value *10)/10,
+                                                                                    parseInt(boardOuputPopup.displayText))
+
+                  }
+            }
         }
+
 
 
         Text{
@@ -581,7 +723,7 @@ Rectangle{
             font.family: "helvetica"
             font.pointSize: smallFontSize
             color: enabled ? enabledTextColor : disabledTextColor
-            anchors.left:boardTemperatureLabel.right
+            anchors.left:boardTemperatureRect.right
             anchors.leftMargin: 5
             anchors.verticalCenter: boardTemperatureText.verticalCenter
 
@@ -597,7 +739,7 @@ Rectangle{
             height:10
             from: 25
             to:100
-            value:5
+            value:100
             stepSize: 0.0
 
             onPressedChanged: {
@@ -609,8 +751,15 @@ Rectangle{
             }
 
             onMoved: {
-                boardTemperatureLabel.text = Math.round(boardTemperatureSlider.value *10)/10
+                boardTemperatureTextInput.text = Math.round(boardTemperatureSlider.value)
             }
+
+            Connections {
+                target: implementationInterfaceBinding
+                onFoldbackLimitingChanged:{
+                        boardTemperatureSlider.value = Math.round(temperatureFoldbackStartTemp*10)/10
+                    }
+                }
         }
 
         Text{
@@ -638,6 +787,13 @@ Rectangle{
                                                                                 Math.round(boardTemperatureSlider.value *10)/10,
                                                                                 parseInt(boardOuputPopup.displayText))
             }
+
+            Connections {
+                target: implementationInterfaceBinding
+                onFoldbackLimitingChanged:{
+                    boardOuputPopup.currentIndex = boardOuputPopup.find(parseInt(temperatureFoldbackOutputLimit))
+                    }
+                }
         }
 
         Text{
@@ -669,27 +825,46 @@ Rectangle{
         anchors.top: temperatureLimitingGroup.bottom
         anchors.topMargin: 10
     }
-    Label{
-        id:minimumInputLabel
+
+    Rectangle{
+        id: minimumInputRect
+        color: textEditFieldBackgroundColor
         anchors.left:minimumInputVoltageText.right
-        anchors.leftMargin: 10
+        anchors.leftMargin: 5
         anchors.verticalCenter: minimumInputVoltageText.verticalCenter
-        anchors.verticalCenterOffset: 2
-        color:enabled ? enabledTextColor : disabledTextColor
-        text:minimumInputVoltageSlider.value
-        verticalAlignment: TextInput.AlignTop
-        font.family: "helvetica"
-        font.pointSize: smallFontSize
         height:15
-        width:20
+        width:30
+
+        TextField{
+            id:minimumInputTextField
+            anchors.fill: parent
+            anchors.leftMargin: 2
+            anchors.topMargin: 5
+
+            horizontalAlignment: Qt.AlignLeft
+
+            font.family: "helvetica"
+            font.pointSize: smallFontSize
+            color:enabled ? enabledTextColor : disabledTextColor
+            text: minimumInputVoltageSlider.value
+            validator: DoubleValidator {bottom:5; top:32; decimals:1}
+            background: Rectangle {
+                color:"transparent"
+            }
+            onEditingFinished:{
+                minimumInputVoltageSlider.value= text
+              }
+        }
     }
+
+
     Text{
         id:minimumInputUnitText
         text:"V"
         font.family: "helvetica"
         font.pointSize: smallFontSize
         color: enabled ? enabledTextColor : disabledTextColor
-        anchors.left:minimumInputLabel.right
+        anchors.left:minimumInputRect.right
         anchors.leftMargin: 5
         anchors.verticalCenter: minimumInputVoltageText.verticalCenter
 
@@ -715,7 +890,15 @@ Rectangle{
         }
 
         onMoved: {
-            minimumInputLabel.text = Math.round(minimumInputVoltageSlider.value *10)/10
+            minimumInputTextField.text = Math.round(minimumInputVoltageSlider.value *10)/10
+        }
+
+        Connections {
+            target: implementationInterfaceBinding
+            onInputUnderVoltageChanged:{
+                //onsole.log("minimum input notification received:",value)
+                minimumInputVoltageSlider.value = Math.round(value*10)/10
+            }
         }
     }
 
@@ -732,20 +915,38 @@ Rectangle{
         anchors.topMargin: 10
     }
 
-    Label{
-        id:faultTempLabel
+    Rectangle{
+        id: faultTempRect
+        color: textEditFieldBackgroundColor
         anchors.left:faultTempText.right
-        anchors.leftMargin: 10
+        anchors.leftMargin: 5
         anchors.verticalCenter: faultTempText.verticalCenter
-        anchors.verticalCenterOffset: 2
-        color:enabled ? enabledTextColor : disabledTextColor
-        text:faultTempSlider.value
-        verticalAlignment: TextInput.AlignTop
-        font.family: "helvetica"
-        font.pointSize: smallFontSize
         height:15
-        width:20
+        width:30
+
+        TextField{
+            id:faultTempTextField
+            anchors.fill: parent
+            anchors.leftMargin: 2
+            anchors.topMargin: 5
+
+            horizontalAlignment: Qt.AlignLeft
+
+            font.family: "helvetica"
+            font.pointSize: smallFontSize
+            color:enabled ? enabledTextColor : disabledTextColor
+            text: faultTempSlider.value
+            validator: DoubleValidator {bottom:25; top:100; decimals:1}
+            background: Rectangle {
+                color:"transparent"
+            }
+            onEditingFinished:{
+                faultTempSlider.value= text
+              }
+        }
     }
+
+
 
 
     Text{
@@ -754,7 +955,7 @@ Rectangle{
         font.family: "helvetica"
         font.pointSize: smallFontSize
         color: enabled ? enabledTextColor : disabledTextColor
-        anchors.left:faultTempLabel.right
+        anchors.left:faultTempRect.right
         anchors.leftMargin: 5
         anchors.verticalCenter: faultTempText.verticalCenter
 
@@ -779,8 +980,16 @@ Rectangle{
             }
         }
         onMoved: {
-            faultTempLabel.text = Math.round(faultTempSlider.value *10)/10
+            faultTempTextField.text = Math.round(faultTempSlider.value *10)/10
 
         }
+        Connections {
+            target: implementationInterfaceBinding
+            onMaximumTemperatureChanged:{
+                //onsole.log("maximum temperature notification received:",value)
+                faultTempSlider.value = Math.round(value*10)/10
+            }
+        }
+
     }
 }   //board settings rect
