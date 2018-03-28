@@ -39,13 +39,26 @@ bool SerialConnector::open(std::string serial_port_name)
     // TODO [prasanth] add platform socket inside the class declaration
     int i;
     struct sp_port **ports;
-    sp_return error = sp_list_ports(&ports);
-    if (error == SP_OK) {
+    sp_return port_list_error = sp_list_ports(&ports);
+    std::string usb_keyword;
+    std::string platform_port_name;
+    // TODO [Prasanth] : The following TESTING section will look for a string pattern and try
+    // to open those that match. This will reduce the time taken for detecing the platform
+// #define TESTING
+#ifdef TESTING
+#ifdef __APPLE__
+    usb_keyword = "usb";
+#elif __linux__
+    usb_keyword = "USB";
+#endif
+#endif
+    if (port_list_error == SP_OK) {
         for (i = 0; ports[i]; i++) {
             std::string port_name = sp_get_port_name(ports[i]);
             size_t found = port_name.find(usb_keyword);
             if (found!=std::string::npos) {
-                cout << "'platform found at: " << port_name << '\n';
+                cout<<"usb_keyword\n"<<usb_keyword;
+                cout <<"platform found at: " << found << '\n';
                 platform_port_name = port_name;
                 error = sp_get_port_by_name(platform_port_name.c_str(), &platform_socket_);
             }

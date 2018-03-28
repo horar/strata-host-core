@@ -89,18 +89,7 @@ private:
     struct sp_event_set *ev;
     sp_return error;
     int serial_fd_;	//file descriptor for serial ports
-#define TESTING
-#ifdef TESTING
-    std::string usb_keyword;
-    std::string platform_id_json_;
-#ifdef _APPLE_
-    usb_keyword = "usb";
-#elif _linux_
-    usb_keyword = "USB";
-#endif
-    std::string platform_port_name;
 
-#endif
 #ifdef _WIN32
     zmq::context_t* context_;
     zmq::socket_t* socket_;
