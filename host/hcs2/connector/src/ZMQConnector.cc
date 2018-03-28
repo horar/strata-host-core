@@ -95,10 +95,12 @@ bool ZMQConnector::read(string &message)
         // while reading from dealer socket, you will have two messages,
         // 1) dealer_id and 2) message
         // remote sockets read from router and they have only message and not dealer id
+        locker_.lock();
         if(connection_interface_ == "local") {
             dealer_id_ = s_recv(*socket_);
         }
         message = s_recv(*socket_);
+        locker_.unlock();
     }
     else {
         return false;
@@ -124,10 +126,12 @@ bool ZMQConnector::send(std::string message)
     // while writing to dealer socket, you will have two messages,
     // 1) dealer_id and 2) message
     // remote sockets write to router and they have only message and not dealer id
+    locker_.lock();
     if(connection_interface_ == "local") {
         s_sendmore(*socket_,dealer_id_);
     }
     s_send(*socket_,message);
+    locker_.unlock();
     unsigned int     zmq_events;
     size_t           zmq_events_size  = sizeof(zmq_events);
     socket_->getsockopt(ZMQ_EVENTS, &zmq_events, &zmq_events_size);

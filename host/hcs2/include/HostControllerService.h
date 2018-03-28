@@ -46,6 +46,10 @@
 #include "DiscoveryService.h"
 #include "Connector.h"
 
+// nimbus integration
+#include "nimbus.h"
+#include "observer.h"
+
 // Console print function
 // used in main.cc and host-controller-service.cc
 // usage:1) PDEBUG("hello world",0);
@@ -188,12 +192,13 @@ private:
     // platform libevents
     struct event *platform_handler;
 
+    // Connector objects
     ConnectorFactory *connector_factory_;
     Connector *client_connector_ = connector_factory_->getConnector("client");
     Connector *serial_connector_ = connector_factory_->getConnector("platform");
     Connector *remote_connector_ = connector_factory_->getConnector("remote");
 
-    // SerialConnector *serial_object_;
-
+    // Nimbus/database object
+    Nimbus * database_;
 };
 #endif

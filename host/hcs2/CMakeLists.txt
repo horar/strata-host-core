@@ -195,7 +195,7 @@ elseif (APPLE)
             -lpthread
             -levent
             -lserialport
-            -lFleece
+            -lFleeceStatic
             nimbusLib
             ${litecore}
             ${FOUNDATION_LIBRARY} ${IOKIT_LIBRARY}

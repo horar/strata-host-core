@@ -107,7 +107,8 @@ void CoreInterface::notificationsThread()
 
         QString n(message.c_str());
 
-        qDebug() <<"[recv]" << n;
+        // Debug; Some messages are too long to print (ex: cloud images)
+        //qDebug() <<"[recv]" << n;
 
         QJsonDocument doc = QJsonDocument::fromJson(n.toUtf8());
         if(doc.isNull()) {
@@ -308,17 +309,14 @@ void CoreInterface::sendHandshake()
 //  }
 // }
 //
-void CoreInterface::cloudNotificationHandler(QJsonObject value)
+void CoreInterface::cloudNotificationHandler(QJsonObject payload)
 {
-    //qDebug("ImplementationInterfaceBinding::cloudNotificationHandler: CALLED");
-
     // data source type: document_set, chat, marketing et al
-    QJsonObject payload = value["cloud::notification"].toObject();
     string type = payload.value("type").toString().toStdString();
 
     auto handler = data_source_handlers_.find(type);
     if( handler == data_source_handlers_.end()) {
-        qCritical("CoreInterface::handleNotification"
+        qCritical("CoreInterface::cloudNotification"
                   " ERROR: no handler exits for %s !!", type.c_str ());
         return;
     }

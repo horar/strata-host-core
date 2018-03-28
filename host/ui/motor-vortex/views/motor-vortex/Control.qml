@@ -240,8 +240,8 @@ Item {
         anchors {top: controlSection.bottom
             topMargin: 50
             bottom: controlPage.bottom
-            verticalCenter: controlSection.verticalCenter
         }
+
         color: "white"
         width: controlPage.width
         // Phase U temperature

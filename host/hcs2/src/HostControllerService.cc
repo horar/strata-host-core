@@ -14,6 +14,23 @@
 #include "HostControllerService.h"
 
 using namespace rapidjson;
+
+AttachmentObserver::AttachmentObserver(void *client_socket,void *client_id_list)
+{
+    PDEBUG("Attaching the nimbus observer");
+    client_connector_ = (Connector *)client_socket;
+    client_list_ = (clientList *)client_id_list;
+}
+
+void AttachmentObserver::DocumentChangeCallback(jsonString jsonBody) {
+    clientList::iterator client_list_iterator = client_list_->begin();
+    while(client_list_iterator != client_list_->end()) {
+        client_connector_->dealer_id_ = *client_list_iterator;
+        client_connector_->send(jsonBody);
+        PDEBUG("[hcs to hcc]%s",jsonBody);
+        client_list_iterator++;
+    }
+}
 /******************************************************************************/
 /*                                core functions                              */
 /******************************************************************************/
@@ -46,7 +63,10 @@ HostControllerService::HostControllerService(std::string configuration_file)
     // serial_port_list_ = configuration_->GetSerialPorts();
     // get the dealer id for remote socket connection
     dealer_remote_socket_id_ = configuration_->GetDealerSocketID();
-    // creating the serial connector object
+    // creating the nimbus object
+    database_ = new Nimbus();
+    database_->Open(NIMBUS_TEST_PLATFORM_JSON);
+
 }
 
 // @f init
@@ -67,12 +87,17 @@ HcsError HostControllerService::init()
 {
     // zmq context creation
     socket_context_ = new(zmq::context_t);
-
+    // opening the client socket to connect with UI
     client_connector_->open(hcs_server_address_);
-
+    // registering the observer to the database
+    // TODO [prasanth] NIMBUS integration **Needs better organisation
+    AttachmentObserver blobObserver((void *)client_connector_, (void *)&clientList);
+    database_->Register(&blobObserver);
+    // openeing the socket to talk with the remote server
     remote_connector_->dealer_id_ = dealer_remote_socket_id_;
     remote_connector_->open(hcs_remote_address_);
-
+    // [TODO]: [prasanth] the following lines are used to handle the serial connect/disconnect
+    // This method will be removed once we get the serial to socket stuff in
     port_disconnected_ = true;
     setEventLoop();
     while(run());
@@ -201,7 +226,21 @@ void HostControllerService::serviceCallback(evutil_socket_t fd, short what, void
             PDEBUG("Adding new client to list");
             hcs->clientList.push_back(dealer_id);
         }
-        if(hcs->platform_client_mapping_.empty() || !hcs->clientExists(dealer_id)) {
+        Document service_command;
+        if (service_command.Parse(read_message.c_str()).HasParseError()) {
+            PDEBUG("ERROR: json parse error!");
+        }
+
+        // TODO [ian] add this to a "command_filter" map to add more then just "db::cmd"
+        if( service_command.HasMember("db::cmd") ) {
+
+            //PDEBUG("FILTER: %s\n", read_message.c_str());
+
+            if ( hcs->database_->Command( read_message.c_str() ) != NO_ERRORS ){
+                PDEBUG("ERROR: database failed failed!");
+            }
+        }
+        else if(hcs->platform_client_mapping_.empty() || !hcs->clientExists(dealer_id)) {
             std::vector<std::string> selected_platform_info = hcs->initialCommandDispatch(dealer_id,read_message);
             // strictly for testing alone
             if(!(selected_platform_info[0] == "NONE")) {
