@@ -21,6 +21,7 @@ using namespace std;
 SerialConnector::SerialConnector()
 {
     cout<<"Creating a Serial Connector Object"<<endl;
+    // context_ = new(zmq::context_t);
 }
 
 // @f open
@@ -36,7 +37,38 @@ SerialConnector::SerialConnector()
 bool SerialConnector::open(std::string serial_port_name)
 {
     // TODO [prasanth] add platform socket inside the class declaration
-    error = sp_get_port_by_name(serial_port_name.c_str(), &platform_socket_);
+    int i;
+    struct sp_port **ports;
+    sp_return port_list_error = sp_list_ports(&ports);
+    std::string usb_keyword;
+    std::string platform_port_name;
+    // TODO [Prasanth] : The following TESTING section will look for a string pattern and try
+    // to open those that match. This will reduce the time taken for detecing the platform
+// #define TESTING
+#ifdef TESTING
+#ifdef __APPLE__
+    usb_keyword = "usb";
+#elif __linux__
+    usb_keyword = "USB";
+#endif
+#endif
+    if (port_list_error == SP_OK) {
+        for (i = 0; ports[i]; i++) {
+            std::string port_name = sp_get_port_name(ports[i]);
+            size_t found = port_name.find(usb_keyword);
+            if (found!=std::string::npos) {
+                cout<<"usb_keyword\n"<<usb_keyword;
+                cout <<"platform found at: " << found << '\n';
+                platform_port_name = port_name;
+                error = sp_get_port_by_name(platform_port_name.c_str(), &platform_socket_);
+            }
+        }
+        sp_free_port_list(ports);
+    }
+    else {
+        cout<<"No serial devices detected\n";
+        return false;
+    }
     if (error == SP_OK) {
         error = sp_open(platform_socket_, SP_MODE_READ_WRITE);
         if (error == SP_OK) {
@@ -48,10 +80,23 @@ bool SerialConnector::open(std::string serial_port_name)
             sp_set_dtr(platform_socket_,SP_DTR_OFF);
             sp_set_parity(platform_socket_,SP_PARITY_NONE );
             sp_set_cts(platform_socket_,SP_CTS_IGNORE );
+            // getting the platform
+            string cmd = "{\"cmd\":\"request_platform_id\"}\n";
+            if(send(cmd)) {
+                read(dealer_id_);
+                if (read(dealer_id_)) {
+                    cout << "Platform_id_json "<<dealer_id_;
+                } else {
+                    return false;
+                }
+            } else {
+                cout<<"sending command to platform failed\n";
+                return false;
+            }
             return true;
         }
         else {
-            cout << "ERROR: Invalid Serial Port Number " << serial_port_name <<" Please check the config file  !!!" << endl;
+            cout << "No platform detected"<< endl;
         }
     }
     return false;
@@ -83,6 +128,7 @@ bool SerialConnector::read(string &notification)
         error = sp_nonblocking_read(platform_socket_,&temp,1);
         if(error <= 0) {
             cout<<"Platform Disconnected\n";
+            dealer_id_.clear();
             return false;
         }
         if(temp !='\n' && temp!= NULL) {
@@ -113,7 +159,7 @@ bool SerialConnector::send(std::string message)
     sp_flush(platform_socket_,SP_BUF_BOTH);
     if(sp_nonblocking_write(platform_socket_,(void *)message.c_str(),message.length()) >=0) {
     // if (i>=0) {
-        // cout << "write success "<<i <<endl;
+        cout << "write success "<<endl;
         return true;
     }
     return false;

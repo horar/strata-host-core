@@ -43,7 +43,7 @@ HostControllerService::HostControllerService(std::string configuration_file)
     hcs_server_address_ = configuration_->GetSubscriberAddress();
     hcs_remote_address_ = configuration_->GetRemoteAddress();
     // get the serial port numbers from config file and store it to a vector
-    serial_port_list_ = configuration_->GetSerialPorts();
+    // serial_port_list_ = configuration_->GetSerialPorts();
     // get the dealer id for remote socket connection
     dealer_remote_socket_id_ = configuration_->GetDealerSocketID();
     // creating the serial connector object
@@ -93,9 +93,8 @@ HcsError HostControllerService::init()
 //
 HcsError HostControllerService::run()
 {
-
     while(!openPlatform()) {
-        sleep(2);
+        sleep(0.5);
     }
     PDEBUG("\033[1;32mPlatform detected\033[0m\n");
     initializePlatform(); // init serial config
@@ -280,24 +279,11 @@ void HostControllerService::platformCallback(evutil_socket_t fd, short what, voi
 //
 bool HostControllerService::openPlatform()
 {
-    static bool outputPortError = true;
-
-    if(serial_port_list_.empty()) {
-        std::cout << "ERROR: Please add serial port number in config file  !!!"<< std::endl;
-        return false;
+    std::string platform_port_name;
+    if(serial_connector_->open(platform_port_name)) {
+        port_disconnected_ = false;
+        return true;
     }
-    for (auto port : serial_port_list_) {
-        if(serial_connector_->open((std::string)port)) {
-            outputPortError = true;
-            port_disconnected_ = false;
-            return true;
-        }
-        else if(outputPortError) {
-            std::cout << "ERROR: Invalid Serial Port Number " << port <<" Please check the config file  !!!" << std::endl;
-        }
-    }
-    // Only output the error once
-    outputPortError = false;
     return false;
 }
 
@@ -469,46 +455,33 @@ CommandDispatcherMessages HostControllerService::stringHash(std::string command)
 bool HostControllerService::parseAndGetPlatformId()
 {
     PDEBUG("parseAndGetPlatformId\n");
-    std::string cmd = "{\"cmd\":\"request_platform_id\"}\n";
+    Document platform_command;
+    if (platform_command.Parse(serial_connector_->dealer_id_.c_str()).HasParseError()) {
+        PDEBUG("ERROR: json parse error in Platform ID section %s!\n",serial_connector_->dealer_id_.c_str());
+    }
+    else if(platform_command.HasMember("notification")){
+        if (platform_command["notification"]["payload"].HasMember("verbose_name")) {
+            platform_details platform;
+            platform.platform_uuid = platform_command["notification"]["payload"]["platform_id"].GetString();
+            platform.platform_verbose = platform_command["notification"]["payload"]["verbose_name"].GetString();
+            platform.connection_status = "connected";    // [TODO] need some cool way to do it
+            PDEBUG("Platform UUID %s\n",platform.platform_uuid.c_str());
+            // [TODO] : add the platform element to the list
+            platform_uuid_.push_back(platform);
 
-    bool isPlatformId=false;
-    // // platform read will be handled by connector factory and will always be called libevents
-    while(!isPlatformId) {
-        if(serial_connector_->send(cmd)) {
-            PDEBUG("[Serial write] %s -> success\n",cmd.c_str());
-        }
-        else {
-            PDEBUG("[Serial write] %s -> fail\n",cmd.c_str());
-        }
-        std::string ack_message = platformRead();
-        std::string platform_id_message = platformRead();
-        Document platform_command;
-        if (platform_command.Parse(platform_id_message.c_str()).HasParseError()) {
-            PDEBUG("ERROR: json parse error in Platform ID section %s!\n",platform_id_message.c_str());
-            isPlatformId = false;
-        }
-
-        else if(platform_command.HasMember("notification")){
-            if (platform_command["notification"]["payload"].HasMember("verbose_name")) {
-              platform_details platform;
-              platform.platform_uuid = platform_command["notification"]["payload"]["platform_id"].GetString();
-              platform.platform_verbose = platform_command["notification"]["payload"]["verbose_name"].GetString();
-              platform.connection_status = "connected";    // [TODO] need some cool way to do it
-              PDEBUG("Platform UUID %s\n",platform.platform_uuid.c_str());
-              // [TODO] : add the platform element to the list
-              platform_uuid_.push_back(platform);
-
-              // [TODO] [prasanth] the following section is for mapping between remote and paltform
-              if(!clientExists("remote")) {
-                  std::vector<std::string> map_element;
-                  map_element.insert(map_element.begin(),platform.platform_verbose);
-                  map_element.insert(map_element.begin()+1,"connected");
-                  PDEBUG("[remote routing ] added into map");
-                  platform_client_mapping_.emplace(map_element,"remote");
-                  g_platform_uuid_ = platform.platform_verbose;
-              }
-              break;
+            // [TODO] [prasanth] the following section is for mapping between remote and paltform
+            if(!clientExists("remote")) {
+              std::vector<std::string> map_element;
+              map_element.insert(map_element.begin(),platform.platform_verbose);
+              map_element.insert(map_element.begin()+1,"connected");
+              PDEBUG("[remote routing ] added into map");
+              platform_client_mapping_.emplace(map_element,"remote");
+              g_platform_uuid_ = platform.platform_verbose;
             }
+        } else {
+            PDEBUG("The platform id is unknown");
+            PDEBUG("Disconnecting the platform");
+            platformDisconnectRoutine();
         }
     }
 }
@@ -566,47 +539,52 @@ std::string HostControllerService::platformRead()
         return notification;
     }
     else {
-        PDEBUG("Platform Disconnected\n");
-        port_disconnected_ = true;
-        sendDisconnecttoUI();
-        platform_uuid_.clear();
-        platform_client_mapping_.clear();
-        sleep(1);
-        // adding the remote platform
-        addToLocalPlatformList(discovery_service_.getPlatforms());
-
-        platform_details simulated_usb_pd,simulated_motor_vortex,sim_usb;
-        simulated_usb_pd.platform_uuid = "P2.2018.1.1.0.0.c9060ff8-5c5e-4295-b95a-d857ee9a3671";
-        simulated_usb_pd.platform_verbose = "USB PD Load Board";
-        simulated_usb_pd.connection_status = "view";
-
-        simulated_motor_vortex.platform_uuid = "motorvortex1";
-        simulated_motor_vortex.platform_verbose = "Vortex Fountain Motor Platform Board";
-        simulated_motor_vortex.connection_status = "view";
-
-        sim_usb.platform_uuid = "P2.2017.1.1.0.0.cbde0519-0f42-4431-a379-caee4a1494af";
-        sim_usb.platform_verbose = "USB PD";
-        sim_usb.connection_status = "view";
-
-        platform_uuid_.push_back(simulated_usb_pd);  // for testing alone
-        platform_uuid_.push_back(simulated_motor_vortex);
-        platform_uuid_.push_back(sim_usb);
-
-        std::string platformList = getPlatformListJson();
-        std::list<std::string>::iterator client_list_iterator = clientList.begin();
-        while(client_list_iterator != clientList.end()) {
-            client_connector_->dealer_id_ = *client_list_iterator;
-            client_connector_->send(platformList);
-            PDEBUG("[hcs to hcc]%s",platformList.c_str());
-            client_list_iterator++;
-        }
-        // event_del(platform_handler);
-        event_base_loopbreak(event_loop_base_);
-        port_disconnected_ = true;
-        setEventLoop();
-        return "";
+        platformDisconnectRoutine();
+        return "NULL";
     }
 }
+
+void HostControllerService::platformDisconnectRoutine ()
+{
+    PDEBUG("Platform Disconnected\n");
+    port_disconnected_ = true;
+    sendDisconnecttoUI();
+    platform_uuid_.clear();
+    platform_client_mapping_.clear();
+    // adding the remote platform
+    addToLocalPlatformList(discovery_service_.getPlatforms());
+
+    platform_details simulated_usb_pd,simulated_motor_vortex,sim_usb;
+    simulated_usb_pd.platform_uuid = "P2.2018.1.1.0.0.c9060ff8-5c5e-4295-b95a-d857ee9a3671";
+    simulated_usb_pd.platform_verbose = "USB PD Load Board";
+    simulated_usb_pd.connection_status = "view";
+
+    simulated_motor_vortex.platform_uuid = "motorvortex1";
+    simulated_motor_vortex.platform_verbose = "Vortex Fountain Motor Platform Board";
+    simulated_motor_vortex.connection_status = "view";
+
+    sim_usb.platform_uuid = "P2.2017.1.1.0.0.cbde0519-0f42-4431-a379-caee4a1494af";
+    sim_usb.platform_verbose = "USB PD";
+    sim_usb.connection_status = "view";
+
+    platform_uuid_.push_back(simulated_usb_pd);  // for testing alone
+    platform_uuid_.push_back(simulated_motor_vortex);
+    platform_uuid_.push_back(sim_usb);
+
+    std::string platformList = getPlatformListJson();
+    std::list<std::string>::iterator client_list_iterator = clientList.begin();
+    while(client_list_iterator != clientList.end()) {
+        client_connector_->dealer_id_ = *client_list_iterator;
+        client_connector_->send(platformList);
+        PDEBUG("[hcs to hcc]%s",platformList.c_str());
+        client_list_iterator++;
+    }
+    // event_del(platform_handler);
+    event_base_loopbreak(event_loop_base_);
+    port_disconnected_ = true;
+    setEventLoop();
+}
+
 
 void HostControllerService::sendDisconnecttoUI()
 {
