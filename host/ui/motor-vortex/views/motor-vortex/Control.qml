@@ -211,13 +211,8 @@ Item {
     // Environment Section
     Rectangle {
         id: environmentSection
-//        anchors {
-//            top: controlSection.bottom;
-//            verticalCenter: controlPage.verticalCenter
-//        }
         anchors {top: controlSection.bottom
                  bottom: controlPage.bottom
-                 verticalCenter: controlSection.verticalCenter
                 }
         color: "white"
 

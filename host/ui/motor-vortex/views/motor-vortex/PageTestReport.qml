@@ -6,40 +6,31 @@ import QtQuick.Controls.Styles 1.4
 
 import tech.spyglass.DocumentManager 1.0
 
-Item {
-    Rectangle {
-        anchors { top: headerLogo.bottom }
-        width: mainWindow.width; height: mainWindow.height - tabBar.height - headerLogo.height
-        //border.width: 2; border.color: "red"  // DEBUG
+Rectangle {
+    id: container
+    // Anchors are not supported on a SlideView ( Parent )
 
-        ListView {
-            id: reportList
-            width: mainWindow.width; height: parent.height
+    ListView {
+        id: schematicList
+        anchors.fill: parent
+        snapMode: ListView.NoSnap
+        /*
+            Point to the specific listModel from documentManager here
+        */
+        model: documentManager.testReportDocuments
+        focus: true
+        clip: true
+        add: Transition { NumberAnimation { properties: "x,y"; from: 100; duration: 1000 } }
 
-            snapMode: ListView.SnapOneItem
-            model: documentManager.testReportDocuments
-            focus: true
-            clip: true
-            add: Transition { NumberAnimation { properties: "x,y"; from: 100; duration: 1000 } }
-
-            delegate: Rectangle {
-                width: mainWindow.width; height: mainWindow.height - headerLogo.height
-                //border.width: 2; border.color: "green"  // DEBUG
-                Image {
-                    id: image
-                    anchors.centerIn: parent
-                    width: parent.width; height: parent.height
-                    fillMode: Image.PreserveAspectFit
-                    source: "data:image/png;base64," + model.data
-                }
-
-                MouseArea {
-                    anchors.fill: parent
-                    onClicked: {
-                        reportList.currentIndex = index
-                    }
-                }
-            }
-        } // end ListView
-    }
+        delegate: Rectangle {
+            width: container.width; height: container.height
+            Image {
+                id: image
+                anchors.fill: parent
+                fillMode: Image.PreserveAspectFit
+                source: "data:image/png;base64," + model.data
+           }
+        }
+        ScrollBar.vertical: ScrollBar {}
+    } // end ListView
 }

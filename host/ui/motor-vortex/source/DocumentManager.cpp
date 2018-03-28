@@ -21,7 +21,14 @@ DocumentManager::DocumentManager()
 
 DocumentManager::DocumentManager(CoreInterface *coreInterface) : coreInterface_(coreInterface)
 {
-    qDebug("DocumentManager::DocumentManager() ctor: implInterfaceBinding");
+    qDebug("DocumentManager::DocumentManager() ctor: core interface");
+    /*
+        Register document handler with CoreInterface
+        This will also send a command to Nimbus
+    */
+    coreInterface->registerDataSourceHandler("document",
+                                            bind(&DocumentManager::dataSourceHandler,
+                                            this, placeholders::_1));
     init();
 }
 

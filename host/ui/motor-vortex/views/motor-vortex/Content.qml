@@ -2,8 +2,11 @@ import QtQuick 2.0
 import QtQuick.Controls 2.0
 import "."  //Import directory
 import "qrc:/js/navigation_control.js" as NavigationControl
+import tech.spyglass.DocumentManager 1.0
+import tech.spyglass.Document 1.0
 
 Rectangle {
+    id: view
     border.color: "black"
     border.width: 0
     anchors { fill: parent }
