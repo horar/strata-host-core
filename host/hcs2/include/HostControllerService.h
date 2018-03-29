@@ -113,17 +113,11 @@ public:
 	std::string platformRead(); // this fucntion will be moved to usb connector
 	bool parseAndGetPlatformId(); // potential new class to parse and handle json messages
 
-	// sends the data from platform to client
-	bool sendToClient(std::string dealer_id, std::string message_to_send);
-
     // getter fucntions
-    int getServerSocketFileDescriptor();
-    int getRemoteSocketFileDescriptor();
-	void getServerSocketEventReady();
 	std::string getPlatformListJson();
 	// checker functions
 	bool clientExists(std::string);
-	bool checkPlatformExist(std::string *,std::string message);
+	bool checkPlatformExist(std::string message);
     void remoteRouting(std::string message);
     bool clientExistInList(std::string);
 

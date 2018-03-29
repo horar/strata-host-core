@@ -86,7 +86,6 @@ bool SerialConnector::open(std::string serial_port_name)
             for (int i =0 ; i <=15; i++) {
                 sleep(1);
                 send(cmd);
-                // sp_flush(platform_socket_,SP_BUF_BOTH);
                 string acknowledgement_string;
                 read(acknowledgement_string);
                 read(dealer_id_);
@@ -166,7 +165,6 @@ bool SerialConnector::send(std::string message)
 {
     sp_flush(platform_socket_,SP_BUF_BOTH);
     if(sp_nonblocking_write(platform_socket_,(void *)message.c_str(),message.length()) >=0) {
-    // if (i>=0) {
         cout << "write success "<<endl;
         return true;
     }
