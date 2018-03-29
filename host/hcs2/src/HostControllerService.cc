@@ -298,7 +298,10 @@ void HostControllerService::platformCallback(evutil_socket_t fd, short what, voi
     std::string dealer_id;
     hcs->checkPlatformExist(&dealer_id,read_message);
     //[TODO] [prasanth]: send data to the data bridge through multimap handle
-    hcs->remote_connector_->send(read_message);
+    // for now we are restricting the send to platform only with remote dealer id "h1"
+    if(hcs->dealer_remote_socket_id_ == "h1") {
+        hcs->remote_connector_->send(read_message);
+    }
 }
 
 /******************************************************************************/
@@ -498,7 +501,7 @@ bool HostControllerService::parseAndGetPlatformId()
     platform.platform_verbose = serial_connector_->dealer_id_;
     platform.connection_status = "connected";
     platform_uuid_.push_back(platform);
-    if(!clientExists("remote")) {
+    if((!clientExists("remote"))&&(dealer_remote_socket_id_== "h1")) {
       std::vector<std::string> map_element;
       map_element.insert(map_element.begin(),platform.platform_verbose);
       map_element.insert(map_element.begin()+1,"connected");
@@ -787,14 +790,10 @@ bool HostControllerService::checkPlatformExist(std::string *dealer_id,std::strin
     while(multimap_iterator_ != platform_client_mapping_.end()) {
         bool does_platform_exist = false;
         std::vector<std::string> map_uuid = multimap_iterator_->first;
-        // strictly for testing only
-        (map_uuid[0] == "Vortex Fountain Motor Platform Board")?does_platform_exist = true : does_platform_exist = false;
-        if(does_platform_exist) {
-            *dealer_id = multimap_iterator_->second;
-            if(!message.empty()) {
-              client_connector_->dealer_id_ = *dealer_id;
-              client_connector_->send(message);
-            }
+        *dealer_id = multimap_iterator_->second;
+        if(!message.empty()) {
+          client_connector_->dealer_id_ = *dealer_id;
+          client_connector_->send(message);
         }
         multimap_iterator_++;
     }
@@ -809,18 +808,14 @@ void HostControllerService::remoteRouting(std::string message)
         bool does_platform_exist = false;
         std::vector<std::string> map_uuid = multimap_iterator_->first;
         std::string dealer_id = multimap_iterator_->second;
-        (map_uuid[0] == "Vortex Fountain Motor Platform Board")?does_platform_exist = true : does_platform_exist = false;
-        PDEBUG("[remote routing exists] %d",(int)does_platform_exist);
-        if(does_platform_exist) {
-            dealer_id = multimap_iterator_->second;
-            if(!message.empty()) {
-              if(map_uuid[1] == "remote") {
-                  client_connector_->dealer_id_ = dealer_id;
-                  client_connector_->send(message);
-              } else if (map_uuid[1] == "connected") {
-                  PDEBUG("Inside remote writing %s with dealer id %s",message.c_str(),dealer_id.c_str());
-                  serial_connector_->send(message);
-              }
+        dealer_id = multimap_iterator_->second;
+        if(!message.empty()) {
+            if(map_uuid[1] == "remote") {
+                client_connector_->dealer_id_ = dealer_id;
+                client_connector_->send(message);
+            } else if ((map_uuid[1] == "connected") && (dealer_id == "remote")) {
+                PDEBUG("Inside remote writing %s with dealer id %s",message.c_str(),dealer_id.c_str());
+                serial_connector_->send(message);
             }
         }
         multimap_iterator_++;
