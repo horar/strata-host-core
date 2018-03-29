@@ -63,8 +63,9 @@ public:
     std::string getPlatformUUID() { return platform_uuid_;}
 protected:
     std::mutex locker_;
-    std::string client_id_;
+    std::string platform_uuid_;
     std::string server_;
+
 
 
 private:
