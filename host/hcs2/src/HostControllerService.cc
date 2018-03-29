@@ -119,7 +119,7 @@ HcsError HostControllerService::init()
 HcsError HostControllerService::run()
 {
     while(!openPlatform()) {
-        sleep(2);
+        sleep(0.2);
     }
     PDEBUG("\033[1;32mPlatform detected\033[0m\n");
     initializePlatform(); // init serial config
@@ -498,6 +498,14 @@ bool HostControllerService::parseAndGetPlatformId()
     platform.platform_verbose = serial_connector_->dealer_id_;
     platform.connection_status = "connected";
     platform_uuid_.push_back(platform);
+    if(!clientExists("remote")) {
+      std::vector<std::string> map_element;
+      map_element.insert(map_element.begin(),platform.platform_verbose);
+      map_element.insert(map_element.begin()+1,"connected");
+      PDEBUG("[remote routing ] added into map");
+      platform_client_mapping_.emplace(map_element,"remote");
+      g_platform_uuid_ = platform.platform_verbose;
+    }
 }
 
 // @f sendToClient
@@ -802,6 +810,7 @@ void HostControllerService::remoteRouting(std::string message)
         std::vector<std::string> map_uuid = multimap_iterator_->first;
         std::string dealer_id = multimap_iterator_->second;
         (map_uuid[0] == "Vortex Fountain Motor Platform Board")?does_platform_exist = true : does_platform_exist = false;
+        PDEBUG("[remote routing exists] %d",(int)does_platform_exist);
         if(does_platform_exist) {
             dealer_id = multimap_iterator_->second;
             if(!message.empty()) {

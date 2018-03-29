@@ -50,7 +50,7 @@ bool SerialConnector::open(std::string serial_port_name)
 #ifdef __APPLE__
     usb_keyword = "usb";
 #elif __linux__
-    usb_keyword = "USB";
+    usb_keyword = "ACM";
 #endif
 #endif
     if (port_list_error == SP_OK) {
