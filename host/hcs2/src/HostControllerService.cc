@@ -119,11 +119,10 @@ HcsError HostControllerService::init()
 HcsError HostControllerService::run()
 {
     while(!openPlatform()) {
-        sleep(0.5);
+        sleep(2);
     }
     PDEBUG("\033[1;32mPlatform detected\033[0m\n");
     initializePlatform(); // init serial config
-    PDEBUG("platform handle value is %d",serial_fd_);
     port_disconnected_ = false;
     event_base_loopbreak(event_loop_base_);
     setEventLoop();
@@ -144,7 +143,6 @@ HcsError HostControllerService::setEventLoop()
         PDEBUG("[hcs to hcc]%s",platformList.c_str());
         client_list_iterator++;
     }
-
     // creating a periodic event for test case
     event_loop_base_ = event_base_new();
     if (!event_loop_base_) {
@@ -200,6 +198,7 @@ void HostControllerService::testCallback(evutil_socket_t fd, short what, void* a
     if(hcs->port_disconnected_) {
         if(hcs->openPlatform())
             event_base_loopbreak(hcs->event_loop_base_);
+            sleep(1);
     }
 }
 /******************************************************************************/
@@ -494,35 +493,11 @@ CommandDispatcherMessages HostControllerService::stringHash(std::string command)
 bool HostControllerService::parseAndGetPlatformId()
 {
     PDEBUG("parseAndGetPlatformId\n");
-    Document platform_command;
-    if (platform_command.Parse(serial_connector_->dealer_id_.c_str()).HasParseError()) {
-        PDEBUG("ERROR: json parse error in Platform ID section %s!\n",serial_connector_->dealer_id_.c_str());
-    }
-    else if(platform_command.HasMember("notification")){
-        if (platform_command["notification"]["payload"].HasMember("verbose_name")) {
-            platform_details platform;
-            platform.platform_uuid = platform_command["notification"]["payload"]["platform_id"].GetString();
-            platform.platform_verbose = platform_command["notification"]["payload"]["verbose_name"].GetString();
-            platform.connection_status = "connected";    // [TODO] need some cool way to do it
-            PDEBUG("Platform UUID %s\n",platform.platform_uuid.c_str());
-            // [TODO] : add the platform element to the list
-            platform_uuid_.push_back(platform);
-
-            // [TODO] [prasanth] the following section is for mapping between remote and paltform
-            if(!clientExists("remote")) {
-              std::vector<std::string> map_element;
-              map_element.insert(map_element.begin(),platform.platform_verbose);
-              map_element.insert(map_element.begin()+1,"connected");
-              PDEBUG("[remote routing ] added into map");
-              platform_client_mapping_.emplace(map_element,"remote");
-              g_platform_uuid_ = platform.platform_verbose;
-            }
-        } else {
-            PDEBUG("The platform id is unknown");
-            PDEBUG("Disconnecting the platform");
-            platformDisconnectRoutine();
-        }
-    }
+    platform_details platform;
+    platform.platform_uuid = serial_connector_->getPlatformUUID();
+    platform.platform_verbose = serial_connector_->dealer_id_;
+    platform.connection_status = "connected";
+    platform_uuid_.push_back(platform);
 }
 
 // @f sendToClient

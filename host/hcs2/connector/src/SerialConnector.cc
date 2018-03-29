@@ -14,6 +14,7 @@
 #include "Connector.h"
 
 using namespace std;
+using namespace rapidjson;
 
 // @f constructor
 // @b
@@ -44,7 +45,7 @@ bool SerialConnector::open(std::string serial_port_name)
     std::string platform_port_name;
     // TODO [Prasanth] : The following TESTING section will look for a string pattern and try
     // to open those that match. This will reduce the time taken for detecing the platform
-// #define TESTING
+#define TESTING
 #ifdef TESTING
 #ifdef __APPLE__
     usb_keyword = "usb";
@@ -82,21 +83,27 @@ bool SerialConnector::open(std::string serial_port_name)
             sp_set_cts(platform_socket_,SP_CTS_IGNORE );
             // getting the platform
             string cmd = "{\"cmd\":\"request_platform_id\"}\n";
-            if(send(cmd)) {
+            for (int i =0 ; i <=5; i++) {
+                send(cmd);
+                sp_flush(platform_socket_,SP_BUF_BOTH);
+                string acknowledgement_string;
+                read(acknowledgement_string);
                 read(dealer_id_);
-                if (read(dealer_id_)) {
-                    cout << "Platform_id_json "<<dealer_id_;
-                } else {
-                    return false;
+                // [prasanth] : Adding rapid json parsing to get the platform id
+                Document platform_command;
+                if (platform_command.Parse(dealer_id_.c_str()).HasParseError()) {
+                    continue;
                 }
-            } else {
-                cout<<"sending command to platform failed\n";
-                return false;
+                if (!(platform_command.HasMember("notification"))) {
+                    continue;
+                }
+                if (platform_command["notification"]["payload"].HasMember("verbose_name")) {
+                    dealer_id_ = platform_command["notification"]["payload"]["verbose_name"].GetString();
+                    // add platform uuid
+                    platform_uuid_ = platform_command["notification"]["payload"]["platform_id"].GetString();
+                    return true;
+                }
             }
-            return true;
-        }
-        else {
-            cout << "No platform detected"<< endl;
         }
     }
     return false;

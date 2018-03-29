@@ -31,6 +31,8 @@
 #include <fcntl.h>   // File control definitions
 #include <errno.h>   // Error number definitions
 
+#include "rapidjson/document.h"
+
 #ifdef _WIN32
 #include <winsock2.h>
 #include <windows.h>
@@ -58,6 +60,7 @@ public:
     virtual int getFileDescriptor() = 0;
 
     std::string dealer_id_;
+    std::string getPlatformUUID() { return platform_uuid_;}
 protected:
     std::mutex locker_;
     std::string client_id_;

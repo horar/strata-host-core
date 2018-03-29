@@ -5,6 +5,8 @@ project(connectors)
 set(HostControllerService_VERSION_MAJOR 1)
 set(HostControllerService_VERSION_MINOR 0)
 
+set(SHARED_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../../shared")
+
 # Add Red color for errors
 string(ASCII 27 Esc)
 set(red "${Esc}[31m")
@@ -54,6 +56,7 @@ elseif (UNIX AND NOT APPLE AND NOT CROSSCOMPILE)
     include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../include)
     include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../lib/linux/include)
     include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
+    include_directories(${SHARED_DIR}/rapidjson/include)
     link_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../lib/linux/lib)
 
 elseif (APPLE)
@@ -65,6 +68,7 @@ elseif (APPLE)
     include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../include/macos/libzmq)
     include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../include)
     include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
+    include_directories(${SHARED_DIR}/rapidjson/include)
     # Target Files
     link_directories(${CMAKE_CURRENT_SOURCE_DIR}/../lib/macos/libserial)
     link_directories(${CMAKE_CURRENT_SOURCE_DIR}/../lib/macos/libzmq)

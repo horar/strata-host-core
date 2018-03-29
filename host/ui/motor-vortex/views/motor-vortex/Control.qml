@@ -87,7 +87,7 @@ Item {
                 }
 
                 CircularGauge {
-                    id: tachMeterGauges
+                    id: tachMeterGauge
                     height: parent.height
                     anchors.centerIn: parent
                     minimumValue: 0; maximumValue: 100
