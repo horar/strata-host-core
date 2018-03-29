@@ -13,7 +13,9 @@ Rectangle {
 
     SwipeView {
         id: swipeView
-        anchors{ fill: parent }
+        // Adjust Height for tabBar
+        width: parent.width
+        height: parent.height - tabBar.height
         currentIndex: tabBar.currentIndex
         PageSchematic { id: pageSchematic }
         PageLayout { id: pageLayout }
