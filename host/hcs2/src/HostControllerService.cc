@@ -198,7 +198,7 @@ void HostControllerService::testCallback(evutil_socket_t fd, short what, void* a
     if(hcs->port_disconnected_) {
         if(hcs->openPlatform())
             event_base_loopbreak(hcs->event_loop_base_);
-            sleep(1);
+            // sleep(1);
     }
 }
 /******************************************************************************/

@@ -83,9 +83,10 @@ bool SerialConnector::open(std::string serial_port_name)
             sp_set_cts(platform_socket_,SP_CTS_IGNORE );
             // getting the platform
             string cmd = "{\"cmd\":\"request_platform_id\"}\n";
-            for (int i =0 ; i <=5; i++) {
+            for (int i =0 ; i <=15; i++) {
+                sleep(1);
                 send(cmd);
-                sp_flush(platform_socket_,SP_BUF_BOTH);
+                // sp_flush(platform_socket_,SP_BUF_BOTH);
                 string acknowledgement_string;
                 read(acknowledgement_string);
                 read(dealer_id_);
