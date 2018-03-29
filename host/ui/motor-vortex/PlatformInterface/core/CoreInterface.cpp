@@ -20,7 +20,7 @@ CoreInterface::CoreInterface(QObject *parent) : QObject(parent)
 
     // [TODO] [prasanth] : need to be added in a better place
     // json command to ask the list of available platforms from hcs
-    sendHandshake();
+    registerClient();
 
     // --------------------
     // Core Framework
@@ -276,12 +276,21 @@ void CoreInterface::sendCommand(QString cmd)
     hcc->sendCmd(cmd.toStdString());
 }
 
-// @f sendHandshake
+// @f registerClient
 // @b send initial handshake to receive platform list
 //
-void CoreInterface::sendHandshake()
+void CoreInterface::registerClient()
 {
     std::string cmd= "{\"cmd\":\"register_client\"}";
+    hcc->sendCmd(cmd);
+}
+
+// @f unregisterClient
+// @b Unregister to remove any notifications from HCS
+//
+void CoreInterface::unregisterClient()
+{
+    std::string cmd= "{\"cmd\":\"unregister\"}";
     hcc->sendCmd(cmd);
 }
 
