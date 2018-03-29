@@ -27,7 +27,7 @@ void AttachmentObserver::DocumentChangeCallback(jsonString jsonBody) {
     while(client_list_iterator != client_list_->end()) {
         client_connector_->dealer_id_ = *client_list_iterator;
         client_connector_->send(jsonBody);
-        PDEBUG("[hcs to hcc]%s",jsonBody);
+        // PDEBUG("[hcs to hcc]%s",jsonBody);
         client_list_iterator++;
     }
 }
