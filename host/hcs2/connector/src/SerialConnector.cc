@@ -82,7 +82,7 @@ bool SerialConnector::open(std::string serial_port_name)
             sp_set_parity(platform_socket_,SP_PARITY_NONE );
             sp_set_cts(platform_socket_,SP_CTS_IGNORE );
             // getting the platform
-            string cmd = "{\"cmd\":\"request_platform_id\"}\n";
+            string cmd = "{\"cmd\":\"request_platform_id\"}";
             for (int i =0 ; i <=15; i++) {
                 sleep(1);
                 send(cmd);
@@ -163,6 +163,7 @@ bool SerialConnector::read(string &notification)
 //
 bool SerialConnector::send(std::string message)
 {
+    message += "\n";
     sp_flush(platform_socket_,SP_BUF_BOTH);
     if(sp_nonblocking_write(platform_socket_,(void *)message.c_str(),message.length()) >=0) {
         cout << "write success "<<endl;

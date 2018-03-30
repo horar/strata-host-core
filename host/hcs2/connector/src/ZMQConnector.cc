@@ -100,7 +100,6 @@ bool ZMQConnector::read(string &message)
             dealer_id_ = s_recv(*socket_);
         }
         message = s_recv(*socket_);
-        message += "\n";
         locker_.unlock();
     }
     else {
