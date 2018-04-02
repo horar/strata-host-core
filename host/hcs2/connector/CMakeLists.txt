@@ -46,7 +46,16 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "lib/")
 if (CROSSCOMPILE)
     # --- WINDOWS
     message("INCLUDE/LITECORE: windows")
+    include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
+    # --- WINDOWS
+    message("INCLUDE/LITECORE: windows")
 
+    # LibEvent
+    link_directories(${CMAKE_CURRENT_SOURCE_DIR}/../lib/cross-lib/bin)
+    link_directories(${CMAKE_CURRENT_SOURCE_DIR}/../lib/cross-lib/lib)
+    include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../lib/cross-lib/include)
+    include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../include)
+    include_directories(${SHARED_DIR}/rapidjson/include)
     # ZMQ
     link_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../lib/windows/zeromq)
 

@@ -66,8 +66,8 @@
 
 // Internal error numbers for Host Controller Services
 typedef enum {
-    NO_ERROR          = 0,
-    EVENT_BASE_FAILURE = 1,
+    no_error          = 0,
+    event_base_failure = 1,
 } HcsError;
 
 // Host Controller Service Command dipstach messages

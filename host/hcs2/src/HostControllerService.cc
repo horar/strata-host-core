@@ -100,7 +100,7 @@ HcsError HostControllerService::init()
     port_disconnected_ = true;
     setEventLoop();
     while(run());
-    return NO_ERROR;
+    return no_error;
 }
 
 // @f run
@@ -125,7 +125,7 @@ HcsError HostControllerService::run()
     port_disconnected_ = false;
     event_base_loopbreak(event_loop_base_);
     setEventLoop();
-    return EVENT_BASE_FAILURE;
+    return event_base_failure;
 }
 
 HcsError HostControllerService::setEventLoop()
@@ -145,7 +145,7 @@ HcsError HostControllerService::setEventLoop()
     event_loop_base_ = event_base_new();
     if (!event_loop_base_) {
         PDEBUG("Could not create event base");
-        return EVENT_BASE_FAILURE;
+        return event_base_failure;
     }
 
     struct event *periodic_event = event_new(event_loop_base_, -1, EV_TIMEOUT

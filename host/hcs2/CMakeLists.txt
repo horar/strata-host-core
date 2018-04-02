@@ -166,7 +166,7 @@ add_executable(${HOST_CONTROLLER_SERVICE_BINARY_NAME} ${SOURCE})
 
 if (CROSSCOMPILE)
     message("LINKING: windows")
-    target_link_libraries(${HOST_CONTROLLER_SERVICE_BINARY_NAME}
+    target_link_libraries(${HOST_CONTROLLER_SERVICE_BINARY_NAME} LINK_PUBLIC
             -lzmq.dll
             -lstdc++
             -lpthread
@@ -175,6 +175,7 @@ if (CROSSCOMPILE)
             -lws2_32
             nimbusLib
             ${litecore}
+            connectors
             )
 elseif( UNIX AND NOT APPLE AND NOT CROSSCOMPILE)
     message("LINKING: linux")
