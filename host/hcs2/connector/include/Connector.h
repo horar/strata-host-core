@@ -36,6 +36,9 @@
 #ifdef _WIN32
 #include <winsock2.h>
 #include <windows.h>
+#define sleep Sleep;
+#else
+
 #endif
 
 class Connector {
@@ -98,6 +101,8 @@ private:
     // two bool variables used for producer consumer model required for windows
     bool produced_;
     bool consumed_;
+    // integer variable used for wait timeout // required only for serial to socket
+    int serial_wait_timeout_;
 
 // #ifdef _WIN32
     zmq::context_t* context_;

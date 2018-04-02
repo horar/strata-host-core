@@ -96,41 +96,33 @@ bool SerialConnector::open(std::string serial_port_name)
             sp_set_cts(platform_socket_,SP_CTS_IGNORE );
 #ifdef WINDOWS_SERIAL_TESTING
             windows_thread = new thread(&SerialConnector::windowsPlatformReadHandler,this);
+            // adding timeout for the serial read during the platform ID session
+            // This timeout is mainly used for USB-PD Load Board
+            serial_wait_timeout_ = 250;
 #endif
             // getting the platform
             string cmd = "{\"cmd\":\"request_platform_id\"}";
-            for (int i =0 ; i <=15; i++) {
+            // 5 Retries for parsing the platform ID
+            // If valid Platform ID is read from platform, adds the platform handler to the event
+            // If negative, then scans the port and sends the platform ID
+            // This is essential for platforms like USB_PD Load Board that takes 5 second to boot
+            for (int i =0 ; i <=5; i++) {
                 sleep(1);
                 send(cmd);
-                sp_flush(platform_socket_,SP_BUF_BOTH);
-
                 // making the serial thread processing to start reading from the port
                 consumed_ = true;
                 producer_consumer_.notify_one();
-
                 string acknowledgement_string;
                 read(acknowledgement_string);
                 if(getPlatformID(acknowledgement_string)) {
+                    serial_wait_timeout_ = 0;
                     return true;
                 }
                 read(dealer_id_);
                 if(getPlatformID(dealer_id_)) {
+                    serial_wait_timeout_ = 0;
                     return true;
                 }
-                // [prasanth] : Adding rapid json parsing to get the platform id
-                // Document platform_command;
-                // if (platform_command.Parse(dealer_id_.c_str()).HasParseError()) {
-                //     continue;
-                // }
-                // if (!(platform_command.HasMember("notification"))) {
-                //     continue;
-                // }
-                // if (platform_command["notification"]["payload"].HasMember("verbose_name")) {
-                //     dealer_id_ = platform_command["notification"]["payload"]["verbose_name"].GetString();
-                //     // add platform uuid
-                //     platform_uuid_ = platform_command["notification"]["payload"]["platform_id"].GetString();
-                //     return true;
-                // }
             }
         }
     }
@@ -156,7 +148,7 @@ bool SerialConnector::read(string &notification)
     sp_new_event_set(&ev);
     sp_add_port_events(ev, platform_socket_, SP_EVENT_RX_READY);
 
-    std::vector<char> response;
+    vector<char> response;
     sp_return error;
     char temp = '\0';
     while(temp != '\n') {
@@ -181,8 +173,8 @@ bool SerialConnector::read(string &notification)
     }
     return false;
 #else
-    std::unique_lock<std::mutex> lk(locker_);
-    this->producer_consumer_.wait(lk, [this]{return produced_;});
+    unique_lock<mutex> lock_condition_variable(locker_);
+    this->producer_consumer_.wait(lock_condition_variable, [this]{return produced_;});
     zmq::pollitem_t items = {*read_socket_, 0, ZMQ_POLLIN, 0 };
     zmq::poll (&items,1,10);
     if(items.revents & ZMQ_POLLIN) {
@@ -259,21 +251,22 @@ int SerialConnector::getFileDescriptor()
 //
 void SerialConnector::windowsPlatformReadHandler()
 {
-    std::unique_lock<std::mutex> lk(locker_);
+    unique_lock<mutex> lock_condition_variable(locker_);
     while(true) {
-        this->producer_consumer_.wait(lk, [this]{return consumed_;});
+        this->producer_consumer_.wait(lock_condition_variable, [this]{return consumed_;});
         sp_new_event_set(&ev);
         sp_add_port_events(ev, platform_socket_, SP_EVENT_RX_READY);
-        std::vector<char> response;
+        vector<char> response;
         sp_return error;
         char temp = '\0';
         while(temp != '\n') {
             temp = '\0';
-            sp_wait(ev, 0);
+            sp_wait(ev,serial_wait_timeout_);
             error = sp_nonblocking_read(platform_socket_,&temp,1);
             if(error <= 0) {
                 cout<<"Platform Disconnected in push socket side\n";
                 s_send(*write_socket_,"Platform_Disconnected");
+                // Signaling the ZMQ PULL thread that the data is produced
                 produced_ = true;
                 consumed_ = false;
                 producer_consumer_.notify_one();
