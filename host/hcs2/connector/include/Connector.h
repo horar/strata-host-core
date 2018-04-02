@@ -65,9 +65,6 @@ protected:
     std::mutex locker_;
     std::string platform_uuid_;
     std::string server_;
-
-
-
 private:
 };
 
@@ -88,17 +85,25 @@ public:
 
     int getFileDescriptor();
 
-private:
+    void windowsPlatformReadHandler();
+    bool getPlatformID(std::string);
 
+private:
     struct sp_port *platform_socket_;
     struct sp_event_set *ev;
     sp_return error;
     int serial_fd_;	//file descriptor for serial ports
+    std::thread *windows_thread;
+    std::condition_variable producer_consumer_;
+    // two bool variables used for producer consumer model required for windows
+    bool produced_;
+    bool consumed_;
 
-#ifdef _WIN32
+// #ifdef _WIN32
     zmq::context_t* context_;
-    zmq::socket_t* socket_;
-#endif
+    zmq::socket_t* write_socket_;   // After serial port read, writes to this socket
+    zmq::socket_t* read_socket_;
+// #endif
 };
 
 class ZMQConnector : public Connector {

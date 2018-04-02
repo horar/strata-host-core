@@ -16,13 +16,26 @@
 using namespace std;
 using namespace rapidjson;
 
+#define SERIAL_SOCKET_ADDRESS "tcp://127.0.0.1:5567"
+#define WINDOWS_SERIAL_TESTING;
+
 // @f constructor
 // @b
 //
 SerialConnector::SerialConnector()
 {
     cout<<"Creating a Serial Connector Object"<<endl;
-    // context_ = new(zmq::context_t);
+#ifdef WINDOWS_SERIAL_TESTING
+    context_ = new(zmq::context_t);
+    // creating the push socket and binding to a address
+    write_socket_ = new zmq::socket_t(*context_,ZMQ_PUSH);
+    write_socket_->bind(SERIAL_SOCKET_ADDRESS);
+    // creating the pull socket and connecting it to the PUSH socket
+    read_socket_ = new zmq::socket_t(*context_,ZMQ_PULL);
+    read_socket_->connect(SERIAL_SOCKET_ADDRESS);
+    // producer consumer model
+#endif
+
 }
 
 // @f open
@@ -81,28 +94,43 @@ bool SerialConnector::open(std::string serial_port_name)
             sp_set_dtr(platform_socket_,SP_DTR_OFF);
             sp_set_parity(platform_socket_,SP_PARITY_NONE );
             sp_set_cts(platform_socket_,SP_CTS_IGNORE );
+#ifdef WINDOWS_SERIAL_TESTING
+            windows_thread = new thread(&SerialConnector::windowsPlatformReadHandler,this);
+#endif
             // getting the platform
             string cmd = "{\"cmd\":\"request_platform_id\"}";
             for (int i =0 ; i <=15; i++) {
                 sleep(1);
                 send(cmd);
+                sp_flush(platform_socket_,SP_BUF_BOTH);
+
+                // making the serial thread processing to start reading from the port
+                consumed_ = true;
+                producer_consumer_.notify_one();
+
                 string acknowledgement_string;
                 read(acknowledgement_string);
-                read(dealer_id_);
-                // [prasanth] : Adding rapid json parsing to get the platform id
-                Document platform_command;
-                if (platform_command.Parse(dealer_id_.c_str()).HasParseError()) {
-                    continue;
-                }
-                if (!(platform_command.HasMember("notification"))) {
-                    continue;
-                }
-                if (platform_command["notification"]["payload"].HasMember("verbose_name")) {
-                    dealer_id_ = platform_command["notification"]["payload"]["verbose_name"].GetString();
-                    // add platform uuid
-                    platform_uuid_ = platform_command["notification"]["payload"]["platform_id"].GetString();
+                if(getPlatformID(acknowledgement_string)) {
                     return true;
                 }
+                read(dealer_id_);
+                if(getPlatformID(dealer_id_)) {
+                    return true;
+                }
+                // [prasanth] : Adding rapid json parsing to get the platform id
+                // Document platform_command;
+                // if (platform_command.Parse(dealer_id_.c_str()).HasParseError()) {
+                //     continue;
+                // }
+                // if (!(platform_command.HasMember("notification"))) {
+                //     continue;
+                // }
+                // if (platform_command["notification"]["payload"].HasMember("verbose_name")) {
+                //     dealer_id_ = platform_command["notification"]["payload"]["verbose_name"].GetString();
+                //     // add platform uuid
+                //     platform_uuid_ = platform_command["notification"]["payload"]["platform_id"].GetString();
+                //     return true;
+                // }
             }
         }
     }
@@ -124,6 +152,7 @@ bool SerialConnector::read(string &notification)
     //  copied this section from current HCS
 
     // setting the libserial port events
+#ifndef WINDOWS_SERIAL_TESTING
     sp_new_event_set(&ev);
     sp_add_port_events(ev, platform_socket_, SP_EVENT_RX_READY);
 
@@ -131,6 +160,7 @@ bool SerialConnector::read(string &notification)
     sp_return error;
     char temp = '\0';
     while(temp != '\n') {
+        temp = '\0';
         sp_wait(ev, 250);
         error = sp_nonblocking_read(platform_socket_,&temp,1);
         if(error <= 0) {
@@ -150,6 +180,28 @@ bool SerialConnector::read(string &notification)
         return true;
     }
     return false;
+#else
+    std::unique_lock<std::mutex> lk(locker_);
+    this->producer_consumer_.wait(lk, [this]{return produced_;});
+    zmq::pollitem_t items = {*read_socket_, 0, ZMQ_POLLIN, 0 };
+    zmq::poll (&items,1,10);
+    if(items.revents & ZMQ_POLLIN) {
+        notification = s_recv(*read_socket_);
+        cout << "Rx'ed message : "<<notification<<endl;
+        if(notification == "Platform_Disconnected") {
+            return false;
+        }
+        else {
+            produced_ = false;
+            consumed_ = true;
+            producer_consumer_.notify_one();
+            return true;
+        }
+    }
+    unsigned int     zmq_events;
+    size_t           zmq_events_size  = sizeof(zmq_events);
+    read_socket_->getsockopt(ZMQ_EVENTS, &zmq_events, &zmq_events_size);
+#endif
 }
 
 // @f write
@@ -166,9 +218,10 @@ bool SerialConnector::send(std::string message)
     message += "\n";
     sp_flush(platform_socket_,SP_BUF_BOTH);
     if(sp_nonblocking_write(platform_socket_,(void *)message.c_str(),message.length()) >=0) {
-        cout << "write success "<<endl;
+        cout << "write success "<<message<<endl;
         return true;
     }
+    locker_.unlock();
     return false;
 }
 
@@ -184,7 +237,76 @@ bool SerialConnector::send(std::string message)
 int SerialConnector::getFileDescriptor()
 {
     int file_descriptor ;
+#ifndef WINDOWS_SERIAL_TESTING
     sp_get_port_handle(platform_socket_,&file_descriptor);
+#else
+    size_t file_descriptor_size = sizeof(file_descriptor);
+    read_socket_->getsockopt(ZMQ_FD,&file_descriptor,
+        &file_descriptor_size);
+#endif
     cout << "file descriptor "<<file_descriptor<<endl;
     return file_descriptor;
+}
+
+// @f windowsPlatformReadHandler
+// @b reads from the serial port
+//
+// arguments:
+//  IN:
+//
+//  OUT: file descriptor
+//
+//
+void SerialConnector::windowsPlatformReadHandler()
+{
+    std::unique_lock<std::mutex> lk(locker_);
+    while(true) {
+        this->producer_consumer_.wait(lk, [this]{return consumed_;});
+        sp_new_event_set(&ev);
+        sp_add_port_events(ev, platform_socket_, SP_EVENT_RX_READY);
+        std::vector<char> response;
+        sp_return error;
+        char temp = '\0';
+        while(temp != '\n') {
+            temp = '\0';
+            sp_wait(ev, 0);
+            error = sp_nonblocking_read(platform_socket_,&temp,1);
+            if(error <= 0) {
+                cout<<"Platform Disconnected in push socket side\n";
+                s_send(*write_socket_,"Platform_Disconnected");
+                produced_ = true;
+                consumed_ = false;
+                producer_consumer_.notify_one();
+                return;
+            }
+            if(temp !='\n' && temp!= NULL) {
+                response.push_back(temp);
+            }
+        }
+        if(!response.empty()) {
+            string read_message(response.begin(),response.end());
+            response.clear();
+            s_send(*write_socket_,read_message);
+            produced_ = true;
+            consumed_ = false;
+            producer_consumer_.notify_one();
+        }
+    }
+}
+
+bool SerialConnector::getPlatformID(std::string message)
+{
+    Document platform_command;
+    if (platform_command.Parse(message.c_str()).HasParseError()) {
+        return false;
+    }
+    if (!(platform_command.HasMember("notification"))) {
+        return false;
+    }
+    if (platform_command["notification"]["payload"].HasMember("verbose_name")) {
+        dealer_id_ = platform_command["notification"]["payload"]["verbose_name"].GetString();
+        // add platform uuid
+        platform_uuid_ = platform_command["notification"]["payload"]["platform_id"].GetString();
+        return true;
+    }
 }

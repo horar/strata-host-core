@@ -65,8 +65,8 @@ HostControllerService::HostControllerService(string configuration_file)
     // get the dealer id for remote socket connection
     dealer_remote_socket_id_ = configuration_->GetDealerSocketID();
     // creating the nimbus object
-    database_ = new Nimbus();
-    database_->Open(NIMBUS_TEST_PLATFORM_JSON);
+    // database_ = new Nimbus();
+    // database_->Open(NIMBUS_TEST_PLATFORM_JSON);
 
 }
 
@@ -90,8 +90,8 @@ HcsError HostControllerService::init()
     client_connector_->open(hcs_server_address_);
     // registering the observer to the database
     // TODO [prasanth] NIMBUS integration **Needs better organisation
-    AttachmentObserver blobObserver((void *)client_connector_, (void *)&clientList);
-    database_->Register(&blobObserver);
+    // AttachmentObserver blobObserver((void *)client_connector_, (void *)&clientList);
+    // database_->Register(&blobObserver);
     // openeing the socket to talk with the remote server
     remote_connector_->dealer_id_ = dealer_remote_socket_id_;
     remote_connector_->open(hcs_remote_address_);
@@ -156,7 +156,7 @@ HcsError HostControllerService::setEventLoop()
     // [prasanth] : Always add the serial port handling to event loop before socket
     // the socket event loop
     if(!port_disconnected_) {
-        platform_handler = event_new(event_loop_base_,serial_connector_->getFileDescriptor(), EV_READ | EV_PERSIST,
+        platform_handler = event_new(event_loop_base_,serial_connector_->getFileDescriptor(), EV_READ | EV_WRITE | EV_PERSIST,
                                         HostControllerService::platformCallback,this);
         event_add(platform_handler,NULL);
     }
