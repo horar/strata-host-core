@@ -72,10 +72,15 @@ bool ZMQConnector::open(string ip_address)
 //
 int ZMQConnector::getFileDescriptor()
 {
+#ifdef _WIN32
+    unsigned long long int server_socket_file_descriptor;
+#else
     int server_socket_file_descriptor=0;
+#endif
     size_t server_socket_file_descriptor_size = sizeof(server_socket_file_descriptor);
     socket_->getsockopt(ZMQ_FD,&server_socket_file_descriptor,
             &server_socket_file_descriptor_size);
+    return server_socket_file_descriptor;
 }
 
 // @f read

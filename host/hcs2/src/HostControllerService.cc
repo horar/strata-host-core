@@ -65,8 +65,8 @@ HostControllerService::HostControllerService(string configuration_file)
     // get the dealer id for remote socket connection
     dealer_remote_socket_id_ = configuration_->GetDealerSocketID();
     // creating the nimbus object
-    // database_ = new Nimbus();
-    // database_->Open(NIMBUS_TEST_PLATFORM_JSON);
+    database_ = new Nimbus();
+    database_->Open(NIMBUS_TEST_PLATFORM_JSON);
 
 }
 
@@ -89,9 +89,9 @@ HcsError HostControllerService::init()
     // opening the client socket to connect with UI
     client_connector_->open(hcs_server_address_);
     // registering the observer to the database
-    // TODO [prasanth] NIMBUS integration **Needs better organisation
-    // AttachmentObserver blobObserver((void *)client_connector_, (void *)&clientList);
-    // database_->Register(&blobObserver);
+    // // TODO [prasanth] NIMBUS integration **Needs better organisation
+    AttachmentObserver blobObserver((void *)client_connector_, (void *)&clientList);
+    database_->Register(&blobObserver);
     // openeing the socket to talk with the remote server
     remote_connector_->dealer_id_ = dealer_remote_socket_id_;
     remote_connector_->open(hcs_remote_address_);
@@ -141,6 +141,7 @@ HcsError HostControllerService::setEventLoop()
         PDEBUG("[hcs to hcc]%s",platformList.c_str());
         client_list_iterator++;
     }
+    PDEBUG("Starting the event");
     // creating a periodic event for test case
     event_loop_base_ = event_base_new();
     if (!event_loop_base_) {
@@ -156,25 +157,37 @@ HcsError HostControllerService::setEventLoop()
     // [prasanth] : Always add the serial port handling to event loop before socket
     // the socket event loop
     if(!port_disconnected_) {
+// #ifdef WINDOWS_SERIAL_TESTING
         platform_handler = event_new(event_loop_base_,serial_connector_->getFileDescriptor(), EV_READ | EV_WRITE | EV_PERSIST,
-                                        HostControllerService::platformCallback,this);
+                                HostControllerService::platformCallback,this);
+// #else
+//         platform_handler = event_new(event_loop_base_,serial_connector_->getFileDescriptor(), EV_READ | EV_PERSIST,
+//                                         HostControllerService::platformCallback,this);
+// #endif
         event_add(platform_handler,NULL);
     }
-
+    //
     // adding the service handler callback to the event loop
     struct event *service_handler = event_new(event_loop_base_,client_connector_->getFileDescriptor(),
                         EV_READ | EV_WRITE | EV_PERSIST ,
                         HostControllerService::serviceCallback,this);
     event_add(service_handler,NULL);
-
-    // remote handler
+    //
+    // // remote handler
     struct event *remote_handler = event_new(event_loop_base_,remote_connector_->getFileDescriptor(),
                         EV_READ | EV_WRITE | EV_PERSIST ,
                         HostControllerService::remoteCallback,this);
     event_add(remote_handler,NULL);
 
     // dispatch all the events
-    event_base_dispatch(event_loop_base_);
+    int event_base = event_base_dispatch(event_loop_base_);
+    if(event_base == 0) {
+      return no_error;
+    }
+    else {
+      PDEBUG("Base Failure");
+      return event_base_failure;
+    }
 }
 
 /******************************************************************************/
@@ -194,8 +207,10 @@ void HostControllerService::testCallback(evutil_socket_t fd, short what, void* a
     // creating a periodic event for test case
     HostControllerService *hcs = (HostControllerService*)args;
     if(hcs->port_disconnected_) {
-        if(hcs->openPlatform())
+        if(hcs->openPlatform()) {
             event_base_loopbreak(hcs->event_loop_base_);
+            hcs->serial_connector_->close();
+          }
     }
 }
 

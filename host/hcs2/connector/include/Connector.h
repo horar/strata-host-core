@@ -36,7 +36,7 @@
 #ifdef _WIN32
 #include <winsock2.h>
 #include <windows.h>
-#define sleep Sleep;
+#define sleep(n) Sleep(n*1000);
 #else
 
 #endif
@@ -79,7 +79,7 @@ public:
 
     bool open(std::string);
 
-    bool close(){}
+    bool close();
 
     // non-blocking calls
     bool send(std::string message);

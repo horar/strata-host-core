@@ -63,7 +63,9 @@ bool SerialConnector::open(std::string serial_port_name)
 #ifdef __APPLE__
     usb_keyword = "usb";
 #elif __linux__
-    usb_keyword = "ACM";
+    usb_keyword = "USB";
+#elif _WIN32
+    usb_keyword = "COM";
 #endif
 #endif
     if (port_list_error == SP_OK) {
@@ -71,8 +73,6 @@ bool SerialConnector::open(std::string serial_port_name)
             std::string port_name = sp_get_port_name(ports[i]);
             size_t found = port_name.find(usb_keyword);
             if (found!=std::string::npos) {
-                cout<<"usb_keyword\n"<<usb_keyword;
-                cout <<"platform found at: " << found << '\n';
                 platform_port_name = port_name;
                 error = sp_get_port_by_name(platform_port_name.c_str(), &platform_socket_);
             }
@@ -80,10 +80,10 @@ bool SerialConnector::open(std::string serial_port_name)
         sp_free_port_list(ports);
     }
     else {
-        cout<<"No serial devices detected\n";
         return false;
     }
     if (error == SP_OK) {
+        cout << "Opening the port "<<platform_port_name<<endl;
         error = sp_open(platform_socket_, SP_MODE_READ_WRITE);
         if (error == SP_OK) {
             cout << "SERIAL PORT OPEN SUCCESS: " << serial_port_name << endl;
@@ -127,6 +127,14 @@ bool SerialConnector::open(std::string serial_port_name)
         }
     }
     return false;
+}
+
+// @f close
+// @b closes the serial port connection
+bool SerialConnector::close()
+{
+  sp_close(platform_socket_);
+  return true;
 }
 
 // @f read
@@ -209,7 +217,7 @@ bool SerialConnector::send(std::string message)
 {
     message += "\n";
     sp_flush(platform_socket_,SP_BUF_BOTH);
-    if(sp_nonblocking_write(platform_socket_,(void *)message.c_str(),message.length()) >=0) {
+    if(sp_blocking_write(platform_socket_,(void *)message.c_str(),message.length(),5) >=0) {
         cout << "write success "<<message<<endl;
         return true;
     }
@@ -228,15 +236,15 @@ bool SerialConnector::send(std::string message)
 //
 int SerialConnector::getFileDescriptor()
 {
-    int file_descriptor ;
 #ifndef WINDOWS_SERIAL_TESTING
+    int file_descriptor ;
     sp_get_port_handle(platform_socket_,&file_descriptor);
 #else
+    unsigned long long int file_descriptor;
     size_t file_descriptor_size = sizeof(file_descriptor);
     read_socket_->getsockopt(ZMQ_FD,&file_descriptor,
         &file_descriptor_size);
 #endif
-    cout << "file descriptor "<<file_descriptor<<endl;
     return file_descriptor;
 }
 
@@ -263,15 +271,26 @@ void SerialConnector::windowsPlatformReadHandler()
             temp = '\0';
             sp_wait(ev,serial_wait_timeout_);
             error = sp_nonblocking_read(platform_socket_,&temp,1);
+#ifdef _WIN32
+            if(error <= -1) {
+#else
             if(error <= 0) {
-                cout<<"Platform Disconnected in push socket side\n";
+#endif
+                cout<<"Platform Disconnected\n";
                 s_send(*write_socket_,"Platform_Disconnected");
                 // Signaling the ZMQ PULL thread that the data is produced
                 produced_ = true;
                 consumed_ = false;
                 producer_consumer_.notify_one();
+                // close the serial port
+                sp_close(platform_socket_);
                 return;
             }
+#ifdef _WIN32
+            if (error == 0) {
+                Sleep(0.2);
+            }
+#endif
             if(temp !='\n' && temp!= NULL) {
                 response.push_back(temp);
             }
