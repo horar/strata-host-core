@@ -16,8 +16,13 @@
 using namespace std;
 using namespace rapidjson;
 
+// The following variable is "strictly" used only for windows build.
+// since windows does not support libevent handling of serial devices,
+// the connector factory will create a seperate thread for serial read and
+// after reading a message will write it to a push socket
+// serial connector read will read the paltform message from pull socket
 #define SERIAL_SOCKET_ADDRESS "tcp://127.0.0.1:5567"
-#define WINDOWS_SERIAL_TESTING;
+// #define WINDOWS_SERIAL_TESTING;
 
 // @f constructor
 // @b
@@ -33,7 +38,6 @@ SerialConnector::SerialConnector()
     // creating the pull socket and connecting it to the PUSH socket
     read_socket_ = new zmq::socket_t(*context_,ZMQ_PULL);
     read_socket_->connect(SERIAL_SOCKET_ADDRESS);
-    // producer consumer model
 #endif
 
 }
@@ -102,6 +106,8 @@ bool SerialConnector::open(std::string serial_port_name)
 #endif
             // getting the platform
             string cmd = "{\"cmd\":\"request_platform_id\"}";
+            // TODO [prasanth]: Take the following into a seperate thread
+            // The following section will block other functionalities if it detects a port and waits for platform id
             // 5 Retries for parsing the platform ID
             // If valid Platform ID is read from platform, adds the platform handler to the event
             // If negative, then scans the port and sends the platform ID
@@ -112,14 +118,20 @@ bool SerialConnector::open(std::string serial_port_name)
                 // making the serial thread processing to start reading from the port
                 consumed_ = true;
                 producer_consumer_.notify_one();
-                string acknowledgement_string;
-                read(acknowledgement_string);
-                if(getPlatformID(acknowledgement_string)) {
+                string read_message;
+                // the read is done twice here based on our messaging architecture
+                // we need to have the platform id to identify "spyglass" platforms
+                // on sending a command to the platform, the platform command dispatcher
+                // will send an acknowledgement followed by the notification
+                // wiki link:
+                // https://ons-sec.atlassian.net/wiki/spaces/SPYG/pages/6815754/Platform+Command+Dispatcher
+                read(read_message);
+                if(getPlatformID(read_message)) {
                     serial_wait_timeout_ = 0;
                     return true;
                 }
-                read(dealer_id_);
-                if(getPlatformID(dealer_id_)) {
+                read(read_message);
+                if(getPlatformID(read_message)) {
                     serial_wait_timeout_ = 0;
                     return true;
                 }
@@ -181,6 +193,8 @@ bool SerialConnector::read(string &notification)
     }
     return false;
 #else
+    // This section is only for windows
+    // it uses producer consumer model to read from a pull socket
     unique_lock<mutex> lock_condition_variable(locker_);
     this->producer_consumer_.wait(lock_condition_variable, [this]{return produced_;});
     zmq::pollitem_t items = {*read_socket_, 0, ZMQ_POLLIN, 0 };
@@ -215,13 +229,13 @@ bool SerialConnector::read(string &notification)
 //
 bool SerialConnector::send(std::string message)
 {
+    // adding a new line to the message to be sent, since platform uses gets and it needs a newline
     message += "\n";
     sp_flush(platform_socket_,SP_BUF_BOTH);
     if(sp_blocking_write(platform_socket_,(void *)message.c_str(),message.length(),5) >=0) {
         cout << "write success "<<message<<endl;
         return true;
     }
-    locker_.unlock();
     return false;
 }
 
@@ -259,6 +273,8 @@ int SerialConnector::getFileDescriptor()
 //
 void SerialConnector::windowsPlatformReadHandler()
 {
+    // Producer Consumer model is used here.
+    // This is to ensure the synchoronous activity between push and pull sockets
     unique_lock<mutex> lock_condition_variable(locker_);
     while(true) {
         this->producer_consumer_.wait(lock_condition_variable, [this]{return consumed_;});
@@ -276,6 +292,8 @@ void SerialConnector::windowsPlatformReadHandler()
 #else
             if(error <= 0) {
 #endif
+                // [TODO] [prasanth] think of better way to have serial disconnect logic
+                // Platform disconnect logic. Depends on the read and sp_wait
                 cout<<"Platform Disconnected\n";
                 s_send(*write_socket_,"Platform_Disconnected");
                 // Signaling the ZMQ PULL thread that the data is produced
@@ -286,11 +304,6 @@ void SerialConnector::windowsPlatformReadHandler()
                 sp_close(platform_socket_);
                 return;
             }
-#ifdef _WIN32
-            if (error == 0) {
-                Sleep(0.2);
-            }
-#endif
             if(temp !='\n' && temp!= NULL) {
                 response.push_back(temp);
             }
@@ -306,6 +319,15 @@ void SerialConnector::windowsPlatformReadHandler()
     }
 }
 
+// @f getPlatformID
+// @b parses the IN parameter and checks for the platform ID
+//
+// arguments:
+//  IN: message to parsed
+//
+//  OUT: true if platform ID exists, false if it does not
+//
+//
 bool SerialConnector::getPlatformID(std::string message)
 {
     Document platform_command;
@@ -317,7 +339,6 @@ bool SerialConnector::getPlatformID(std::string message)
     }
     if (platform_command["notification"]["payload"].HasMember("verbose_name")) {
         dealer_id_ = platform_command["notification"]["payload"]["verbose_name"].GetString();
-        // add platform uuid
         platform_uuid_ = platform_command["notification"]["payload"]["platform_id"].GetString();
         return true;
     }

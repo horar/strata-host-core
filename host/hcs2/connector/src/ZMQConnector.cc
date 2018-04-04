@@ -16,7 +16,7 @@
 using namespace std;
 
 // @f constructor
-// @b
+// @b creates the context for the socket
 //
 ZMQConnector::ZMQConnector(string type)
 {

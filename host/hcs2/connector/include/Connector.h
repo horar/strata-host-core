@@ -62,9 +62,11 @@ public:
 
     virtual int getFileDescriptor() = 0;
 
-    std::string dealer_id_;
+    void setDealerID(std::string id) {dealer_id_ = id;}
+    std::string getDealerID() {return dealer_id_;}
     std::string getPlatformUUID() { return platform_uuid_;}
 protected:
+    std::string dealer_id_;
     std::mutex locker_;
     std::string platform_uuid_;
     std::string server_;

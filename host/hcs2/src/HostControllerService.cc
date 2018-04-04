@@ -26,7 +26,7 @@ AttachmentObserver::AttachmentObserver(void *client_socket,void *client_id_list)
 void AttachmentObserver::DocumentChangeCallback(jsonString jsonBody) {
     clientList::iterator client_list_iterator = client_list_->begin();
     while(client_list_iterator != client_list_->end()) {
-        client_connector_->dealer_id_ = *client_list_iterator;
+        client_connector_->setDealerID(*client_list_iterator);
         client_connector_->send(jsonBody);
         // [prasanth] : comment the following PDEBUG for faster performance.
         // use it for debugging
@@ -93,7 +93,7 @@ HcsError HostControllerService::init()
     AttachmentObserver blobObserver((void *)client_connector_, (void *)&clientList);
     database_->Register(&blobObserver);
     // openeing the socket to talk with the remote server
-    remote_connector_->dealer_id_ = dealer_remote_socket_id_;
+    remote_connector_->setDealerID(dealer_remote_socket_id_);
     remote_connector_->open(hcs_remote_address_);
     // [TODO]: [prasanth] the following lines are used to handle the serial connect/disconnect
     // This method will be removed once we get the serial to socket stuff in
@@ -136,7 +136,7 @@ HcsError HostControllerService::setEventLoop()
     string platformList = getPlatformListJson();
     std::list<string>::iterator client_list_iterator = clientList.begin();
     while(client_list_iterator != clientList.end()) {
-        client_connector_->dealer_id_ = *client_list_iterator;
+        client_connector_->setDealerID(*client_list_iterator);
         client_connector_->send(platformList);
         PDEBUG("[hcs to hcc]%s",platformList.c_str());
         client_list_iterator++;
@@ -157,13 +157,13 @@ HcsError HostControllerService::setEventLoop()
     // [prasanth] : Always add the serial port handling to event loop before socket
     // the socket event loop
     if(!port_disconnected_) {
-// #ifdef WINDOWS_SERIAL_TESTING
+#ifdef WINDOWS_SERIAL_TESTING
         platform_handler = event_new(event_loop_base_,serial_connector_->getFileDescriptor(), EV_READ | EV_WRITE | EV_PERSIST,
                                 HostControllerService::platformCallback,this);
-// #else
-//         platform_handler = event_new(event_loop_base_,serial_connector_->getFileDescriptor(), EV_READ | EV_PERSIST,
-//                                         HostControllerService::platformCallback,this);
-// #endif
+#else
+        platform_handler = event_new(event_loop_base_,serial_connector_->getFileDescriptor(), EV_READ | EV_PERSIST,
+                                        HostControllerService::platformCallback,this);
+#endif
         event_add(platform_handler,NULL);
     }
     //
@@ -233,7 +233,7 @@ void HostControllerService::serviceCallback(evutil_socket_t fd, short what, void
     string dealer_id;
     string read_message;
     if(hcs->client_connector_->read(read_message)) {
-        dealer_id = hcs->client_connector_->dealer_id_;
+        dealer_id = hcs->client_connector_->getDealerID();
         if(!hcs->clientExistInList(dealer_id)) {
             PDEBUG("Adding new client to list");
             hcs->clientList.push_back(dealer_id);
@@ -382,7 +382,7 @@ std::vector<string> HostControllerService::initialCommandDispatch(string dealer_
     selected_platform.insert(selected_platform.begin(),"NONE");
     selected_platform.insert(selected_platform.begin()+1,"NONE");
     string board_name,remote_status ;
-    client_connector_->dealer_id_ = dealer_id;
+    client_connector_->setDealerID(dealer_id);
     Document service_command;
     // [TODO] [prasanth] : needs better organization
     if (service_command.Parse(command.c_str()).HasParseError()) {
@@ -488,7 +488,7 @@ bool HostControllerService::parseAndGetPlatformId()
     PDEBUG("parseAndGetPlatformId\n");
     platform_details platform;
     platform.platform_uuid = serial_connector_->getPlatformUUID();
-    platform.platform_verbose = serial_connector_->dealer_id_;
+    platform.platform_verbose = serial_connector_->getDealerID();
     platform.connection_status = "connected";
     platform_uuid_.push_back(platform);
     if((!clientExists("remote"))&&(dealer_remote_socket_id_== "h1")) {
@@ -571,7 +571,7 @@ void HostControllerService::platformDisconnectRoutine ()
     string platformList = getPlatformListJson();
     std::list<string>::iterator client_list_iterator = clientList.begin();
     while(client_list_iterator != clientList.end()) {
-        client_connector_->dealer_id_ = *client_list_iterator;
+        client_connector_->setDealerID(*client_list_iterator);
         client_connector_->send(platformList);
         PDEBUG("[hcs to hcc]%s",platformList.c_str());
         client_list_iterator++;
@@ -587,7 +587,7 @@ void HostControllerService::sendDisconnecttoUI()
     std::list<string>::iterator client_list_iterator = clientList.begin();
     string disconnect_message = "{\"notification\":{\"value\":\"platform_connection_change_notification\",\"payload\":{\"status\":\"disconnected\"}}}";
     while(client_list_iterator != clientList.end()) {
-        client_connector_->dealer_id_ = *client_list_iterator;
+        client_connector_->setDealerID(*client_list_iterator);
         client_connector_->send(disconnect_message);
         client_list_iterator++;
     }
@@ -702,7 +702,7 @@ bool HostControllerService::checkPlatformExist(string message)
         string dealer_id;
         dealer_id = multimap_iterator_->second;
         if(!message.empty()) {
-          client_connector_->dealer_id_ = dealer_id;
+          client_connector_->setDealerID(dealer_id);
           client_connector_->send(message);
         }
         multimap_iterator_++;
@@ -723,7 +723,7 @@ void HostControllerService::remoteRouting(string message)
         string dealer_id = multimap_iterator_->second;
         dealer_id = multimap_iterator_->second;
         if(map_uuid[1] == "remote") {
-            client_connector_->dealer_id_ = dealer_id;
+            client_connector_->setDealerID(dealer_id);
             client_connector_->send(message);
         } else if ((map_uuid[1] == "connected") && (dealer_id == "remote")) {
             PDEBUG("Inside remote writing %s with dealer id %s",message.c_str(),dealer_id.c_str());
