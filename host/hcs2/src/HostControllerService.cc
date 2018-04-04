@@ -157,7 +157,7 @@ HcsError HostControllerService::setEventLoop()
     // [prasanth] : Always add the serial port handling to event loop before socket
     // the socket event loop
     if(!port_disconnected_) {
-#ifdef WINDOWS_SERIAL_TESTING
+#ifdef _WIN32
         platform_handler = event_new(event_loop_base_,serial_connector_->getFileDescriptor(), EV_READ | EV_WRITE | EV_PERSIST,
                                 HostControllerService::platformCallback,this);
 #else
