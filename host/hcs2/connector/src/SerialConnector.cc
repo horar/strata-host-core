@@ -15,6 +15,7 @@
 
 using namespace std;
 using namespace rapidjson;
+// using namespace std::chrono_literals;
 
 // The following variable is "strictly" used only for windows build.
 // since windows does not support libevent handling of serial devices,
@@ -22,7 +23,6 @@ using namespace rapidjson;
 // after reading a message will write it to a push socket
 // serial connector read will read the paltform message from pull socket
 #define SERIAL_SOCKET_ADDRESS "tcp://127.0.0.1:5567"
-// #define WINDOWS_SERIAL_TESTING;
 
 // @f constructor
 // @b
@@ -30,7 +30,7 @@ using namespace rapidjson;
 SerialConnector::SerialConnector()
 {
     cout<<"Creating a Serial Connector Object"<<endl;
-#ifdef WINDOWS_SERIAL_TESTING
+#ifdef _WIN32
     context_ = new(zmq::context_t);
     // creating the push socket and binding to a address
     write_socket_ = new zmq::socket_t(*context_,ZMQ_PUSH);
@@ -67,7 +67,7 @@ bool SerialConnector::open(std::string serial_port_name)
 #ifdef __APPLE__
     usb_keyword = "usb";
 #elif __linux__
-    usb_keyword = "USB";
+    usb_keyword = "ACM";
 #elif _WIN32
     usb_keyword = "COM";
 #endif
@@ -98,7 +98,7 @@ bool SerialConnector::open(std::string serial_port_name)
             sp_set_dtr(platform_socket_,SP_DTR_OFF);
             sp_set_parity(platform_socket_,SP_PARITY_NONE );
             sp_set_cts(platform_socket_,SP_CTS_IGNORE );
-#ifdef WINDOWS_SERIAL_TESTING
+#ifdef _WIN32
             windows_thread = new thread(&SerialConnector::windowsPlatformReadHandler,this);
             // adding timeout for the serial read during the platform ID session
             // This timeout is mainly used for USB-PD Load Board
@@ -145,8 +145,8 @@ bool SerialConnector::open(std::string serial_port_name)
 // @b closes the serial port connection
 bool SerialConnector::close()
 {
-  sp_close(platform_socket_);
-  return true;
+    sp_close(platform_socket_);
+    return true;
 }
 
 // @f read
@@ -164,7 +164,7 @@ bool SerialConnector::read(string &notification)
     //  copied this section from current HCS
 
     // setting the libserial port events
-#ifndef WINDOWS_SERIAL_TESTING
+#ifndef _WIN32
     sp_new_event_set(&ev);
     sp_add_port_events(ev, platform_socket_, SP_EVENT_RX_READY);
 
@@ -196,7 +196,8 @@ bool SerialConnector::read(string &notification)
     // This section is only for windows
     // it uses producer consumer model to read from a pull socket
     unique_lock<mutex> lock_condition_variable(locker_);
-    this->producer_consumer_.wait(lock_condition_variable, [this]{return produced_;});
+    this->producer_consumer_.wait_for(lock_condition_variable, chrono::milliseconds(100),[this]{return produced_;});
+    cout<<"in pull read"<<endl;
     zmq::pollitem_t items = {*read_socket_, 0, ZMQ_POLLIN, 0 };
     zmq::poll (&items,1,10);
     if(items.revents & ZMQ_POLLIN) {
@@ -212,6 +213,11 @@ bool SerialConnector::read(string &notification)
             return true;
         }
     }
+    notification="";
+    send("");
+    produced_ = false;
+    consumed_ = true;
+    producer_consumer_.notify_one();
     unsigned int     zmq_events;
     size_t           zmq_events_size  = sizeof(zmq_events);
     read_socket_->getsockopt(ZMQ_EVENTS, &zmq_events, &zmq_events_size);
@@ -232,7 +238,7 @@ bool SerialConnector::send(std::string message)
     // adding a new line to the message to be sent, since platform uses gets and it needs a newline
     message += "\n";
     sp_flush(platform_socket_,SP_BUF_BOTH);
-    if(sp_blocking_write(platform_socket_,(void *)message.c_str(),message.length(),5) >=0) {
+    if(sp_blocking_write(platform_socket_,(void *)message.c_str(),message.length(),10) >=0) {
         cout << "write success "<<message<<endl;
         return true;
     }
@@ -250,7 +256,7 @@ bool SerialConnector::send(std::string message)
 //
 int SerialConnector::getFileDescriptor()
 {
-#ifndef WINDOWS_SERIAL_TESTING
+#ifndef _WIN32
     int file_descriptor ;
     sp_get_port_handle(platform_socket_,&file_descriptor);
 #else
@@ -276,8 +282,10 @@ void SerialConnector::windowsPlatformReadHandler()
     // Producer Consumer model is used here.
     // This is to ensure the synchoronous activity between push and pull sockets
     unique_lock<mutex> lock_condition_variable(locker_);
+    int number_of_misses = 0;
     while(true) {
         this->producer_consumer_.wait(lock_condition_variable, [this]{return consumed_;});
+        cout<<"signalled from pull socket side\n";
         sp_new_event_set(&ev);
         sp_add_port_events(ev, platform_socket_, SP_EVENT_RX_READY);
         vector<char> response;
@@ -304,9 +312,22 @@ void SerialConnector::windowsPlatformReadHandler()
                 sp_close(platform_socket_);
                 return;
             }
-            if(temp !='\n' && temp!= NULL) {
+            if(temp !='\n' && temp!= NULL ) {
                 response.push_back(temp);
             }
+#ifdef _WIN32
+            // if(temp == '\0') {
+            //     number_of_misses++;
+            //     // send("");
+            //     cout<<"miss incrementing "<<number_of_misses<<endl;
+            // }
+            // else {
+            //     number_of_misses = 0;
+            // }
+            // if(number_of_misses == 10) {
+            //     send("");
+            // }
+#endif
         }
         if(!response.empty()) {
             string read_message(response.begin(),response.end());

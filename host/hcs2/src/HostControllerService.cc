@@ -99,6 +99,8 @@ HcsError HostControllerService::init()
     // This method will be removed once we get the serial to socket stuff in
     port_disconnected_ = true;
     setEventLoop();
+    // [TODO] [prasanth] : This function run is coded in this, since the libevent dynamic
+    //addtion of event is not implemented successfully in hcs
     while(run());
     return no_error;
 }
@@ -115,6 +117,9 @@ HcsError HostControllerService::init()
 //  ERROR:
 //    exits if events cannot be dispatched or cannot be added to the base
 //
+
+// [TODO] [prasanth] : This function run is coded in this, since the libevent dynamic
+//addtion of event is not implemented successfully in hcs
 HcsError HostControllerService::run()
 {
     while(!openPlatform()) {

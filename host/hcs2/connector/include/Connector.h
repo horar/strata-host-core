@@ -24,6 +24,7 @@
 #include <cstdio>
 #include <cstring>
 #include <vector>
+#include <chrono>
 
 #include "zmq.hpp"
 #include "zmq_addon.hpp"
