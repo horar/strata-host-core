@@ -1,17 +1,18 @@
 import QtQuick 2.0
 import QtQuick.Controls 2.0
+import "qrc:/views/bubu/Control.js" as BubuControl
 
 Button {
     id: middleButton
-    property var tabName
     checkable: true
     width:100
     height:40
+    property var tabName
     property int smallFontSize: (Qt.platform.os === "osx") ? 12  : 10;
     property int mediumFontSize: (Qt.platform.os === "osx") ? 15  : 12;
     property int largeFontSize: (Qt.platform.os === "osx") ? 24  : 20;
     property int extraLargeFontSize: (Qt.platform.os === "osx") ? 36  : 24;
-
+    property var portName: ""
     font.pixelSize: mediumFontSize
     background: Canvas{
         id:middleButtonCanvas
@@ -40,6 +41,10 @@ Button {
 
     onCheckedChanged: {
         middleButtonCanvas.requestPaint()
+    }
+    onClicked: {
+        BubuControl.setPort(portName);
+        BubuControl.printCommand();
     }
 
     function createTab(inTabName, inParent){

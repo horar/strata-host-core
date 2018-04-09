@@ -93,5 +93,7 @@
         <file>SGSpotlightText.qml</file>
         <file>images/ian.cain.jpg</file>
         <file>js/metrics.js</file>
+        <file>views/bubu/Control.js</file>
+        <file>views/bubu/boardBringUp/SingleBitSettings.qml</file>
     </qresource>
 </RCC>
