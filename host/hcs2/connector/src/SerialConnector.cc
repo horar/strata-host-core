@@ -42,6 +42,43 @@ SerialConnector::SerialConnector()
 
 }
 
+bool SerialConnector::isPlatformAvailable()
+{
+  // TODO [prasanth] add platform socket inside the class declaration
+  int i;
+  struct sp_port **ports;
+  sp_return port_list_error = sp_list_ports(&ports);
+  std::string usb_keyword;
+  // TODO [Prasanth] : The following TESTING section will look for a string pattern and try
+  // to open those that match. This will reduce the time taken for detecing the platform
+#define TESTING
+#ifdef TESTING
+#ifdef __APPLE__
+  usb_keyword = "usb";
+#elif __linux__
+  usb_keyword = "ACM";
+#elif _WIN32
+  usb_keyword = "COM";
+#endif
+#endif
+  if (port_list_error == SP_OK) {
+      for (i = 0; ports[i]; i++) {
+          platform_port_name_ = sp_get_port_name(ports[i]);
+          size_t found = platform_port_name_.find(usb_keyword);
+          if (found!=std::string::npos) {
+              error = sp_get_port_by_name(platform_port_name_.c_str(), &platform_socket_);
+              if(error == SP_OK){
+                  sp_free_port_list(ports);
+                  return true;
+              }
+          }
+      }
+      sp_free_port_list(ports);
+  }
+  else {
+      return false;
+  }
+}
 // @f open
 // @b gets the port name and opens, if fail return false and if success return true
 //
@@ -54,43 +91,10 @@ SerialConnector::SerialConnector()
 //
 bool SerialConnector::open(std::string serial_port_name)
 {
-    // TODO [prasanth] add platform socket inside the class declaration
-    int i;
-    struct sp_port **ports;
-    sp_return port_list_error = sp_list_ports(&ports);
-    std::string usb_keyword;
-    std::string platform_port_name;
-    // TODO [Prasanth] : The following TESTING section will look for a string pattern and try
-    // to open those that match. This will reduce the time taken for detecing the platform
-#define TESTING
-#ifdef TESTING
-#ifdef __APPLE__
-    usb_keyword = "usb";
-#elif __linux__
-    usb_keyword = "ACM";
-#elif _WIN32
-    usb_keyword = "COM";
-#endif
-#endif
-    if (port_list_error == SP_OK) {
-        for (i = 0; ports[i]; i++) {
-            std::string port_name = sp_get_port_name(ports[i]);
-            size_t found = port_name.find(usb_keyword);
-            if (found!=std::string::npos) {
-                platform_port_name = port_name;
-                error = sp_get_port_by_name(platform_port_name.c_str(), &platform_socket_);
-            }
-        }
-        sp_free_port_list(ports);
-    }
-    else {
-        return false;
-    }
-    if (error == SP_OK) {
-        cout << "Opening the port "<<platform_port_name<<endl;
+    if (isPlatformAvailable()) {
         error = sp_open(platform_socket_, SP_MODE_READ_WRITE);
         if (error == SP_OK) {
-            cout << "SERIAL PORT OPEN SUCCESS: " << serial_port_name << endl;
+            cout << "SERIAL PORT OPEN SUCCESS: " << platform_port_name_ << endl;
             sp_set_stopbits(platform_socket_,1);
             sp_set_bits(platform_socket_,8);
             sp_set_rts(platform_socket_,SP_RTS_OFF);
@@ -138,6 +142,7 @@ bool SerialConnector::open(std::string serial_port_name)
             }
         }
     }
+    //close();
     return false;
 }
 
@@ -146,6 +151,7 @@ bool SerialConnector::open(std::string serial_port_name)
 bool SerialConnector::close()
 {
     sp_close(platform_socket_);
+    platform_port_name_.clear();
     return true;
 }
 
@@ -195,9 +201,7 @@ bool SerialConnector::read(string &notification)
 #else
     // This section is only for windows
     // it uses producer consumer model to read from a pull socket
-    unique_lock<mutex> lock_condition_variable(locker_);
-    this->producer_consumer_.wait_for(lock_condition_variable, chrono::milliseconds(100),[this]{return produced_;});
-    cout<<"in pull read"<<endl;
+    // unique_lock<mutex> lock_condition_variable(locker_);
     zmq::pollitem_t items = {*read_socket_, 0, ZMQ_POLLIN, 0 };
     zmq::poll (&items,1,10);
     if(items.revents & ZMQ_POLLIN) {
@@ -207,20 +211,16 @@ bool SerialConnector::read(string &notification)
             return false;
         }
         else {
-            produced_ = false;
-            consumed_ = true;
             producer_consumer_.notify_one();
             return true;
         }
     }
     notification="";
-    send("");
-    produced_ = false;
-    consumed_ = true;
     producer_consumer_.notify_one();
     unsigned int     zmq_events;
     size_t           zmq_events_size  = sizeof(zmq_events);
     read_socket_->getsockopt(ZMQ_EVENTS, &zmq_events, &zmq_events_size);
+    return true;
 #endif
 }
 
@@ -284,8 +284,7 @@ void SerialConnector::windowsPlatformReadHandler()
     unique_lock<mutex> lock_condition_variable(locker_);
     int number_of_misses = 0;
     while(true) {
-        this->producer_consumer_.wait(lock_condition_variable, [this]{return consumed_;});
-        cout<<"signalled from pull socket side\n";
+        this->producer_consumer_.wait_for(lock_condition_variable,chrono::milliseconds(200), [this]{return consumed_;});
         sp_new_event_set(&ev);
         sp_add_port_events(ev, platform_socket_, SP_EVENT_RX_READY);
         vector<char> response;
@@ -293,8 +292,10 @@ void SerialConnector::windowsPlatformReadHandler()
         char temp = '\0';
         while(temp != '\n') {
             temp = '\0';
+
             sp_wait(ev,serial_wait_timeout_);
             error = sp_nonblocking_read(platform_socket_,&temp,1);
+            cout<<"before wait "<<error<<endl;
 #ifdef _WIN32
             if(error <= -1) {
 #else
@@ -304,38 +305,32 @@ void SerialConnector::windowsPlatformReadHandler()
                 // Platform disconnect logic. Depends on the read and sp_wait
                 cout<<"Platform Disconnected\n";
                 s_send(*write_socket_,"Platform_Disconnected");
-                // Signaling the ZMQ PULL thread that the data is produced
-                produced_ = true;
-                consumed_ = false;
-                producer_consumer_.notify_one();
                 // close the serial port
-                sp_close(platform_socket_);
+                close();
                 return;
             }
+#ifdef _WIN32
+            if(error == 0) {
+                sleep(0.2);
+                // number_of_misses++;
+                // if(number_of_misses == 10 && !isPlatformAvailable()) {
+                //     cout<<"Platform Disconnected\n";
+                //     s_send(*write_socket_,"Platform_Disconnected");
+                //     // close the serial port
+                //     close();
+                //     return;
+                // }
+            }
+#endif
             if(temp !='\n' && temp!= NULL ) {
                 response.push_back(temp);
+                // number_of_misses = 0;
             }
-#ifdef _WIN32
-            // if(temp == '\0') {
-            //     number_of_misses++;
-            //     // send("");
-            //     cout<<"miss incrementing "<<number_of_misses<<endl;
-            // }
-            // else {
-            //     number_of_misses = 0;
-            // }
-            // if(number_of_misses == 10) {
-            //     send("");
-            // }
-#endif
         }
         if(!response.empty()) {
             string read_message(response.begin(),response.end());
             response.clear();
             s_send(*write_socket_,read_message);
-            produced_ = true;
-            consumed_ = false;
-            producer_consumer_.notify_one();
         }
     }
 }
@@ -351,6 +346,7 @@ void SerialConnector::windowsPlatformReadHandler()
 //
 bool SerialConnector::getPlatformID(std::string message)
 {
+    cout<<"platform id message "<<message<<endl;
     Document platform_command;
     if (platform_command.Parse(message.c_str()).HasParseError()) {
         return false;
@@ -363,4 +359,5 @@ bool SerialConnector::getPlatformID(std::string message)
         platform_uuid_ = platform_command["notification"]["payload"]["platform_id"].GetString();
         return true;
     }
+    return false;
 }

@@ -51,6 +51,8 @@ public:
     virtual bool open(std::string) = 0;
     virtual bool close() = 0;
 
+    virtual bool isPlatformAvailable()= 0;
+
     // non-blocking calls
     virtual bool send(std::string message) = 0;
     virtual bool read(std::string &notification) = 0;
@@ -83,6 +85,7 @@ public:
     bool open(std::string);
 
     bool close();
+    bool isPlatformAvailable();
 
     // non-blocking calls
     bool send(std::string message);
@@ -101,6 +104,7 @@ private:
     int serial_fd_;	//file descriptor for serial ports
     std::thread *windows_thread;
     std::condition_variable producer_consumer_;
+    std::string platform_port_name_;
     // two bool variables used for producer consumer model required for windows
     bool produced_;
     bool consumed_;
@@ -121,7 +125,7 @@ public:
     virtual ~ZMQConnector() {}
 
     bool open(std::string);
-
+    bool isPlatformAvailable(){}
     bool close(){}
 
     // non-blocking calls

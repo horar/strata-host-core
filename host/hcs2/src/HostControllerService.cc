@@ -212,9 +212,9 @@ void HostControllerService::testCallback(evutil_socket_t fd, short what, void* a
     // creating a periodic event for test case
     HostControllerService *hcs = (HostControllerService*)args;
     if(hcs->port_disconnected_) {
-        if(hcs->openPlatform()) {
+        if(hcs->serial_connector_->isPlatformAvailable()) {
             event_base_loopbreak(hcs->event_loop_base_);
-            hcs->serial_connector_->close();
+            // hcs->serial_connector_->close();
           }
     }
 }
@@ -305,16 +305,17 @@ void HostControllerService::remoteCallback(evutil_socket_t fd, short what, void*
 void HostControllerService::platformCallback(evutil_socket_t fd, short what, void* args)
 {
     // [TODO] [prasanth] This is just a test case. will clean this as we proceed
-    PDEBUG("Inside platform callback\n");
     HostControllerService *hcs = (HostControllerService*)args;
     string read_message = hcs->platformRead();
-    PDEBUG("message being read %s\n",read_message.c_str());
-    // [TODO] [prasanth] change the map value for platform from string to structure
-    hcs->checkPlatformExist(read_message);
-    //[TODO] [prasanth]: send data to the data bridge through multimap handle
-    // for now we are restricting the send to platform only with remote dealer id "h1"
-    if(hcs->dealer_remote_socket_id_ == "h1") {
-        hcs->remote_connector_->send(read_message);
+    if(read_message != "") {
+        PDEBUG("message being read %s\n",read_message.c_str());
+        // [TODO] [prasanth] change the map value for platform from string to structure
+        hcs->checkPlatformExist(read_message);
+        //[TODO] [prasanth]: send data to the data bridge through multimap handle
+        // for now we are restricting the send to platform only with remote dealer id "h1"
+        if(hcs->dealer_remote_socket_id_ == "h1") {
+            hcs->remote_connector_->send(read_message);
+        }
     }
 }
 
@@ -537,7 +538,6 @@ void HostControllerService::addToLocalPlatformList(remote_platforms remote_platf
 //
 string HostControllerService::platformRead()
 {
-    PDEBUG("Inside read");
     string notification;
     if (serial_connector_->read(notification)) {
         return notification;
