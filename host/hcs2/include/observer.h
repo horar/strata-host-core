@@ -3,7 +3,9 @@
 #include "Connector.h"
 #include <iostream>
 #include <fstream>
-
+// [TODO] [prasanth]
+// Move all the following "KEY" to a config file
+// This will break when we change the key value
 #define PINGPONG_KEY    "test_string"
 #define FILE_NAME_KEY   "filename"
 #define DATA_KEY        "data"

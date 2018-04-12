@@ -18,7 +18,7 @@ using namespace std;
 // @f constructor
 // @b creates the context for the socket
 //
-ZMQConnector::ZMQConnector(string type)
+ZMQConnector::ZMQConnector(const string& type)
 {
     cout<< "Creating ZMQ connector object for "<<type<<endl;
     // zmq context creation
@@ -36,7 +36,7 @@ ZMQConnector::ZMQConnector(string type)
 //       false, if device is not connected
 //
 //
-bool ZMQConnector::open(string ip_address)
+bool ZMQConnector::open(const string& ip_address)
 {
     if(connection_interface_ == "remote") {
         socket_ = new zmq::socket_t(*context_,ZMQ_DEALER);
@@ -91,7 +91,7 @@ int ZMQConnector::getFileDescriptor()
 //
 //  OUT: bool, true on success and false otherwise
 //
-bool ZMQConnector::read(string &message)
+bool ZMQConnector::read(string& message)
 {
     zmq::pollitem_t items = {*socket_, 0, ZMQ_POLLIN, 0 };
     zmq::poll (&items,1,10);
@@ -125,7 +125,7 @@ bool ZMQConnector::read(string &message)
 //  OUT: true if success and false if fail
 //
 //
-bool ZMQConnector::send(std::string message)
+bool ZMQConnector::send(const string& message)
 {
     // [prasanth] : Only for client UI connection since they are dealer socket
     // while writing to dealer socket, you will have two messages,

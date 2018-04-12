@@ -45,17 +45,17 @@
 class Connector {
 public:
     Connector() {}
-    Connector(std::string) {}
+    Connector(const std::string&) {}
     virtual ~Connector() {}
 
-    virtual bool open(std::string) = 0;
+    virtual bool open(const std::string&) = 0;
     virtual bool close() = 0;
 
     virtual bool isPlatformAvailable()= 0;
 
     // non-blocking calls
-    virtual bool send(std::string message) = 0;
-    virtual bool read(std::string &notification) = 0;
+    virtual bool send(const std::string& message) = 0;
+    virtual bool read(std::string& notification) = 0;
 
     friend std::ostream& operator<< (std::ostream& stream, const Connector & c) {
         std::cout << "Connector: " << std::endl;
@@ -79,18 +79,18 @@ private:
 class SerialConnector : public Connector {
 public:
     SerialConnector();
-    SerialConnector(std::string){}
+    SerialConnector(const std::string&){}
     virtual ~SerialConnector(){}
 
-    bool open(std::string);
+    bool open(const std::string&);
 
     bool close();
     bool isPlatformAvailable();
 
     // non-blocking calls
-    bool send(std::string message);
+    bool send(const std::string& message);
 
-    bool read(std::string &notification);
+    bool read(std::string& notification);
 
     int getFileDescriptor();
 
@@ -100,10 +100,9 @@ public:
 
 private:
     struct sp_port *platform_socket_;
-    struct sp_event_set *ev;
-    sp_return error;
+    struct sp_event_set *event_;
     int serial_fd_;	//file descriptor for serial ports
-    std::thread *windows_thread;
+    std::thread *windows_thread_;
     std::condition_variable producer_consumer_;
     std::string platform_port_name_;
     // two bool variables used for producer consumer model required for windows
@@ -122,16 +121,16 @@ private:
 class ZMQConnector : public Connector {
 public:
     ZMQConnector() {}
-    ZMQConnector(std::string);
+    ZMQConnector(const std::string&);
     virtual ~ZMQConnector() {}
 
-    bool open(std::string);
+    bool open(const std::string&);
     bool isPlatformAvailable(){}
     bool close(){}
 
     // non-blocking calls
-    bool send(std::string message);
-    bool read(std::string &notification);
+    bool send(const std::string& message);
+    bool read(std::string& notification);
 
     int getFileDescriptor();
 
@@ -143,7 +142,7 @@ private:
 
 class ConnectorFactory {
 public:
-    static Connector *getConnector(std::string type) {
+    static Connector *getConnector(const std::string& type) {
         std::cout << "ConnectorFactory::getConnector type:" << type << std::endl;
         if( type == "client") {
             return dynamic_cast<Connector*>(new ZMQConnector("local"));

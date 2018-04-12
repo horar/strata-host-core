@@ -103,9 +103,9 @@ public:
     static void remoteCallback(evutil_socket_t fd, short what, void* args);
 
 	// utility functions
-	std::vector<std::string> initialCommandDispatch(std::string dealer_id,std::string command);
-	bool disptachMessageToPlatforms(std::string dealer_id,std::string command);
-	CommandDispatcherMessages stringHash(std::string command);
+	std::vector<std::string> initialCommandDispatch(const std::string& dealer_id,const std::string& command);
+	bool disptachMessageToPlatforms(const std::string& dealer_id,const std::string& command);
+	CommandDispatcherMessages stringHash(const std::string& command);
 	bool openPlatform(); // platform functions
 	void initializePlatform(); //platform functions
     void addToLocalPlatformList(remote_platforms);  // add the element to the list
@@ -117,8 +117,8 @@ public:
 	void getPlatformListJson(std::string &);
 	// checker functions
 	bool clientExists(const std::string&);
-	bool checkPlatformExist(std::string message);
-    void remoteRouting(std::string message);
+	bool checkPlatformExist(const std::string& message);
+    void remoteRouting(const std::string& message);
     bool clientExistInList(const std::string&);
 
     // thread to monitor the serial port
@@ -162,29 +162,13 @@ private:
 
     std::list<std::string> clientList;
 
-	// ********************** //
-	// lib serial port variables
-	struct sp_port *platform_socket_;
-    struct sp_event_set *ev;
-    sp_return error;
-	int serial_fd_;	//file descriptor for serial ports
-
     // Object for Discovery Service
     DiscoveryService discovery_service_;
 
-    // Strictly for testing alone
-    int usb_pd_target_voltage_ = 5; // to add to the multimap for testing case alone
-	int vortex_target_pwm_ = 1300;
     // zmq::message_t g_reply_;
 	std::string g_reply_,g_selected_platform_verbose_,g_dealer_id_;
 
-    std::thread *serial_monitor_thread;
-    std::thread *lib_event_thread;
-
     bool port_disconnected_;
-
-    // platform libevents
-    struct event *platform_handler;
 
     // Connector objects
     ConnectorFactory *connector_factory_;

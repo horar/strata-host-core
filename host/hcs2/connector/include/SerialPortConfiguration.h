@@ -15,14 +15,19 @@
 
 #include "Connector.h"
 
-struct serialport_settings{
-    int stop_bit_ = 1;
-    int data_bit_ = 8;
-    int baudrate_ = 115200;
-    sp_rts RTS_setting_ = SP_RTS_OFF;
-    sp_dtr DTR_setting_ = SP_DTR_OFF;
-    sp_parity parity_setting_ = SP_PARITY_NONE;
-    sp_cts cts_setting_ = SP_CTS_IGNORE;
+// Serial Port Configuration
+enum class SERIAL_PORT_CONFIGURATION {
+    STOP_BIT = 1,
+    DATA_BIT = 8,
+    BAUD_RATE = 115200,
+};
+
+// Serial Port Flow Control
+struct serial_port_settings{
+    sp_rts rts_ = SP_RTS_OFF;
+    sp_dtr dtr_ = SP_DTR_OFF;
+    sp_parity parity_ = SP_PARITY_NONE;
+    sp_cts cts_ = SP_CTS_IGNORE;
 };
 
 #endif

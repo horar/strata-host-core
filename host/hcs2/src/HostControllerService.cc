@@ -173,10 +173,10 @@ HcsError HostControllerService::setEventLoop()
     // the socket event loop
     if(!port_disconnected_) {
 #ifdef _WIN32
-        platform_handler = event_new(event_loop_base_,serial_connector_->getFileDescriptor(), EV_READ | EV_WRITE | EV_PERSIST,
+        struct event *platform_handler = event_new(event_loop_base_,serial_connector_->getFileDescriptor(), EV_READ | EV_WRITE | EV_PERSIST,
                                 HostControllerService::platformCallback,this);
 #else
-        platform_handler = event_new(event_loop_base_,serial_connector_->getFileDescriptor(), EV_READ  | EV_PERSIST,
+        struct event *platform_handler = event_new(event_loop_base_,serial_connector_->getFileDescriptor(), EV_READ  | EV_PERSIST,
                                         HostControllerService::platformCallback,this);
 #endif
         event_add(platform_handler,NULL);
@@ -297,7 +297,6 @@ void HostControllerService::remoteCallback(evutil_socket_t fd, short what, void*
     // [TODO] [prasanth] This is just a test case. will clean this as we proceed
     HostControllerService *hcs = (HostControllerService*)args;
     string read_message;
-
     if (hcs->remote_connector_->read(read_message)) {
         PDEBUG("remote message read %s",read_message.c_str());
         hcs->remoteRouting(read_message);
@@ -392,7 +391,7 @@ void HostControllerService::initializePlatform()
 //  OUT:
 //
 //
-std::vector<string> HostControllerService::initialCommandDispatch(string dealer_id,string command)
+std::vector<string> HostControllerService::initialCommandDispatch(const std::string& dealer_id,const std::string& command)
 {
     // [TODO]: [prasanth] should be removed after bod demo
     std::vector<string> selected_platform;
@@ -440,7 +439,7 @@ std::vector<string> HostControllerService::initialCommandDispatch(string dealer_
 //  OUT: true if success,
 //       false if failure
 //
-bool HostControllerService::disptachMessageToPlatforms(string dealer_id,string read_message)
+bool HostControllerService::disptachMessageToPlatforms(const std::string& dealer_id,const std::string& read_message)
 {
     for(multimap_iterator_= platform_client_mapping_.begin();multimap_iterator_!=
                             platform_client_mapping_.end();multimap_iterator_++) {
@@ -481,7 +480,7 @@ bool HostControllerService::disptachMessageToPlatforms(string dealer_id,string r
 //  OUT: hash(enum) for the string
 //
 //
-CommandDispatcherMessages HostControllerService::stringHash(string command)
+CommandDispatcherMessages HostControllerService::stringHash(const std::string& command)
 {
     CommandDispatcherMessages message;
     if(command == "request_hcs_status") {
@@ -722,7 +721,7 @@ bool HostControllerService::clientExistInList(const string& client_identifier)
 //  OUT:
 //   true if it exists in map and false if it does not
 //
-bool HostControllerService::checkPlatformExist(string message)
+bool HostControllerService::checkPlatformExist(const std::string& message)
 {
     multimap_iterator_ = platform_client_mapping_.begin();
     while(multimap_iterator_ != platform_client_mapping_.end()) {
@@ -739,7 +738,7 @@ bool HostControllerService::checkPlatformExist(string message)
     return true;
 }
 
-void HostControllerService::remoteRouting(string message)
+void HostControllerService::remoteRouting(const std::string& message)
 {
     string dealer_id;
     multimap_iterator_ = platform_client_mapping_.begin();
