@@ -65,19 +65,19 @@
 #define JSON_SINGLE_OBJECT(key, value)      "{" WRAPQUOTE(key) ":" WRAPQUOTE(value) "}"
 
 // Internal error numbers for Host Controller Services
-typedef enum {
-    no_error          = 0,
-    event_base_failure = 1,
-} HcsError;
+enum class HcsError{
+    NO_ERROR          = 0,
+    EVENT_BASE_FAILURE = 1,
+};
 
 // Host Controller Service Command dipstach messages
-typedef enum{
-	request_hcs_status	= 0,
-	request_available_platforms = 1,
-	platform_select		= 2,
-    register_client     = 3,
-	command_not_found	= 10,
-}CommandDispatcherMessages;
+enum class CommandDispatcherMessages{
+	REQUEST_HCS_STATUS	= 0,
+	REQUEST_AVAILABLE_PLATFORMS = 1,
+	PLATFORM_SELECT		= 2,
+    REGISTER_CLIENT     = 3,
+	COMMAND_NOT_FOUND	= 10,
+};
 
 // struct that will be added to the list
 typedef struct{
@@ -114,12 +114,12 @@ public:
 	bool parseAndGetPlatformId(); // potential new class to parse and handle json messages
 
     // getter fucntions
-	std::string getPlatformListJson();
+	void getPlatformListJson(std::string &);
 	// checker functions
-	bool clientExists(std::string);
+	bool clientExists(const std::string&);
 	bool checkPlatformExist(std::string message);
     void remoteRouting(std::string message);
-    bool clientExistInList(std::string);
+    bool clientExistInList(const std::string&);
 
     // thread to monitor the serial port
     void serialPortMonitor();
@@ -188,9 +188,9 @@ private:
 
     // Connector objects
     ConnectorFactory *connector_factory_;
-    Connector *client_connector_ = connector_factory_->getConnector("client");
-    Connector *serial_connector_ = connector_factory_->getConnector("platform");
-    Connector *remote_connector_ = connector_factory_->getConnector("remote");
+    Connector *client_connector_ ;
+    Connector *serial_connector_ ;
+    Connector *remote_connector_ ;
 
     // Nimbus/database object
     Nimbus * database_;

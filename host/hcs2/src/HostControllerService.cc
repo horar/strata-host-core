@@ -67,7 +67,10 @@ HostControllerService::HostControllerService(string configuration_file)
     // creating the nimbus object
     database_ = new Nimbus();
     database_->Open(NIMBUS_TEST_PLATFORM_JSON);
-
+    // initializing the connectors
+    client_connector_ = connector_factory_->getConnector("client");
+    serial_connector_ = connector_factory_->getConnector("platform");
+    remote_connector_ = connector_factory_->getConnector("remote");
 }
 
 // @f init
@@ -101,8 +104,10 @@ HcsError HostControllerService::init()
     setEventLoop();
     // [TODO] [prasanth] : This function run is coded in this, since the libevent dynamic
     //addtion of event is not implemented successfully in hcs
-    while(run());
-    return no_error;
+    while((int)run());
+
+    HcsError error = HcsError::NO_ERROR;
+    return error;
 }
 
 // @f run
@@ -130,7 +135,9 @@ HcsError HostControllerService::run()
     port_disconnected_ = false;
     event_base_loopbreak(event_loop_base_);
     setEventLoop();
-    return event_base_failure;
+
+    HcsError error = HcsError::EVENT_BASE_FAILURE;
+    return error;
 }
 
 HcsError HostControllerService::setEventLoop()
@@ -138,7 +145,8 @@ HcsError HostControllerService::setEventLoop()
     // get the platform list from the discovery service
     // [TODO] [Prasanth] : Should be added dynamically
     addToLocalPlatformList(discovery_service_.getPlatforms());
-    string platformList = getPlatformListJson();
+    string platformList ;
+    getPlatformListJson(platformList);
     std::list<string>::iterator client_list_iterator = clientList.begin();
     while(client_list_iterator != clientList.end()) {
         client_connector_->setDealerID(*client_list_iterator);
@@ -151,7 +159,9 @@ HcsError HostControllerService::setEventLoop()
     event_loop_base_ = event_base_new();
     if (!event_loop_base_) {
         PDEBUG("Could not create event base");
-        return event_base_failure;
+
+        HcsError error = HcsError::EVENT_BASE_FAILURE;
+        return error;
     }
 
     struct event *periodic_event = event_new(event_loop_base_, -1, EV_TIMEOUT
@@ -187,11 +197,13 @@ HcsError HostControllerService::setEventLoop()
     // dispatch all the events
     int event_base = event_base_dispatch(event_loop_base_);
     if(event_base == 0) {
-      return no_error;
+      HcsError error = HcsError::NO_ERROR;
+      return error;
     }
     else {
       PDEBUG("Base Failure");
-      return event_base_failure;
+      HcsError error = HcsError::EVENT_BASE_FAILURE;
+      return error;
     }
 }
 
@@ -395,15 +407,21 @@ std::vector<string> HostControllerService::initialCommandDispatch(string dealer_
         return selected_platform;
     }
     // state machine using switch statements
-    switch(stringHash(service_command["cmd"].GetString())) {
-        case request_hcs_status:           client_connector_->send(JSON_SINGLE_OBJECT
+    string platformList;
+    CommandDispatcherMessages message = stringHash(service_command["cmd"].GetString());
+    switch(message) {
+        case CommandDispatcherMessages::REQUEST_HCS_STATUS:
+                                            client_connector_->send(JSON_SINGLE_OBJECT
                                                 ("hcs::notification","hcs_active"));
                                             break;
-        case register_client:
-        case request_available_platforms:   PDEBUG("Sending the list of available platform");
-                                            client_connector_->send(getPlatformListJson());
+        case CommandDispatcherMessages::REGISTER_CLIENT:
+        case CommandDispatcherMessages::REQUEST_AVAILABLE_PLATFORMS:
+                                            PDEBUG("Sending the list of available platform");
+                                            getPlatformListJson(platformList);
+                                            client_connector_->send(platformList);
                                             break;
-        case platform_select:               PDEBUG("The client has selected a platform");
+        case CommandDispatcherMessages::PLATFORM_SELECT:
+                                            PDEBUG("The client has selected a platform");
                                             board_name = service_command["platform_uuid"].GetString();
                                             remote_status = service_command["remote"].GetString();
                                             selected_platform.insert(selected_platform.begin(),board_name);
@@ -465,16 +483,22 @@ bool HostControllerService::disptachMessageToPlatforms(string dealer_id,string r
 //
 CommandDispatcherMessages HostControllerService::stringHash(string command)
 {
+    CommandDispatcherMessages message;
     if(command == "request_hcs_status") {
-        return request_hcs_status;
+        message = CommandDispatcherMessages::REQUEST_HCS_STATUS;
+        return message;
     } else if (command == "request_available_platforms") {
-        return request_available_platforms;
+        message = CommandDispatcherMessages::REQUEST_AVAILABLE_PLATFORMS;
+        return message;
     } else if (command == "platform_select") {
-        return platform_select;
+        message = CommandDispatcherMessages::PLATFORM_SELECT;
+        return message;
     } else if (command == "register_client") {
-        return register_client;
+        message = CommandDispatcherMessages::REGISTER_CLIENT;
+        return message;
     } else {
-        return command_not_found;
+        message = CommandDispatcherMessages::COMMAND_NOT_FOUND;
+        return message;
     }
 }
 
@@ -572,7 +596,8 @@ void HostControllerService::platformDisconnectRoutine ()
     platform_uuid_.push_back(simulated_motor_vortex);
     platform_uuid_.push_back(sim_usb);
 
-    string platformList = getPlatformListJson();
+    string platformList ;
+    getPlatformListJson(platformList);
     std::list<string>::iterator client_list_iterator = clientList.begin();
     while(client_list_iterator != clientList.end()) {
         client_connector_->setDealerID(*client_list_iterator);
@@ -601,12 +626,12 @@ void HostControllerService::sendDisconnecttoUI()
 // @b uses RapidJSON to create json message with list of available platforms
 //
 // arguments:
-//  IN:
+//  IN: string pointer that will store the platform list
 //
-//  OUT: string that is in json format and contains the list of available paltforms
+//  OUT:
 //
 //
-string HostControllerService::getPlatformListJson()
+void HostControllerService::getPlatformListJson(string &list)
 {
     // document is the root of a json message
     Document document;
@@ -636,7 +661,7 @@ string HostControllerService::getPlatformListJson()
     StringBuffer strbuf;
     Writer<StringBuffer> writer(strbuf);
     document.Accept(writer);
-    return strbuf.GetString();
+    list = strbuf.GetString();
 }
 
 /******************************************************************************/
@@ -651,7 +676,7 @@ string HostControllerService::getPlatformListJson()
 //  OUT:
 //   true if it exists in map and false if it does not
 //
-bool HostControllerService::clientExists(string client_identifier)
+bool HostControllerService::clientExists(const string& client_identifier)
 {
     bool does_client_exist;
     multimap_iterator_ = platform_client_mapping_.begin();
@@ -674,7 +699,7 @@ bool HostControllerService::clientExists(string client_identifier)
 //  OUT:
 //   true if it exists in list and false if it does not
 //
-bool HostControllerService::clientExistInList(string client_identifier)
+bool HostControllerService::clientExistInList(const string& client_identifier)
 {
     bool does_client_exist;
     std::list<string>::iterator client_list_iterator = clientList.begin();

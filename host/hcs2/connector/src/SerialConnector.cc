@@ -12,6 +12,7 @@
 */
 
 #include "Connector.h"
+#include "SerialPortConfiguration.h"
 
 using namespace std;
 using namespace rapidjson;
@@ -101,13 +102,14 @@ bool SerialConnector::open(std::string serial_port_name)
         error = sp_open(platform_socket_, SP_MODE_READ_WRITE);
         if (error == SP_OK) {
             cout << "SERIAL PORT OPEN SUCCESS: " << platform_port_name_ << endl;
-            sp_set_stopbits(platform_socket_,1);
-            sp_set_bits(platform_socket_,8);
-            sp_set_rts(platform_socket_,SP_RTS_OFF);
-            sp_set_baudrate(platform_socket_,115200);
-            sp_set_dtr(platform_socket_,SP_DTR_OFF);
-            sp_set_parity(platform_socket_,SP_PARITY_NONE );
-            sp_set_cts(platform_socket_,SP_CTS_IGNORE );
+            serialport_settings serialport;
+            sp_set_stopbits(platform_socket_,serialport.stop_bit_);
+            sp_set_bits(platform_socket_,serialport.data_bit_);
+            sp_set_rts(platform_socket_,serialport.RTS_setting_);
+            sp_set_baudrate(platform_socket_,serialport.baudrate_);
+            sp_set_dtr(platform_socket_,serialport.DTR_setting_);
+            sp_set_parity(platform_socket_,serialport.parity_setting_ );
+            sp_set_cts(platform_socket_,serialport.cts_setting_);
 
 #ifdef _WIN32
             windows_thread = new thread(&SerialConnector::windowsPlatformReadHandler,this);

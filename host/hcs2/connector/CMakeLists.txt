@@ -92,11 +92,11 @@ set(SOURCE
         ${CMAKE_CURRENT_SOURCE_DIR}/src/ZMQConnector.cc
         )
 
-add_library(connectors ${SOURCE})
+add_library(libconnectors.so ${SOURCE})
 
 if (CROSSCOMPILE)
     message("LINKING: windows")
-    target_link_libraries(connectors
+    target_link_libraries(libconnectors.so
             -lzmq.dll
             -lstdc++
             -lpthread
@@ -105,7 +105,7 @@ if (CROSSCOMPILE)
             )
 elseif( UNIX AND NOT APPLE AND NOT CROSSCOMPILE)
     message("LINKING: linux")
-    target_link_libraries(connectors
+    target_link_libraries(libconnectors.so
             -lzmq
             -lstdc++
             -lpthread
@@ -113,7 +113,7 @@ elseif( UNIX AND NOT APPLE AND NOT CROSSCOMPILE)
             )
 elseif (APPLE)
     message("LINKING: mac")
-    target_link_libraries(connectors
+    target_link_libraries(libconnectors.so
             -lzmq
             -lstdc++
             -lpthread
@@ -124,4 +124,4 @@ else()
     message("ERROR: unsupported operating system !")
 endif ()
 
-target_include_directories (connectors PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories (libconnectors.so PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})

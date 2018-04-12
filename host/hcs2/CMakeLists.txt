@@ -175,7 +175,7 @@ if (CROSSCOMPILE)
             -lws2_32
             nimbusLib
             ${litecore}
-            connectors
+            libconnectors.so
             )
 elseif( UNIX AND NOT APPLE AND NOT CROSSCOMPILE)
     message("LINKING: linux")
@@ -186,7 +186,7 @@ elseif( UNIX AND NOT APPLE AND NOT CROSSCOMPILE)
             -levent
             nimbusLib
             ${litecore}
-            connectors
+            libconnectors.so
             )
 elseif (APPLE)
     message("LINKING: mac")
@@ -200,7 +200,7 @@ elseif (APPLE)
             nimbusLib
             ${litecore}
             ${FOUNDATION_LIBRARY} ${IOKIT_LIBRARY}
-            connectors
+            libconnectors.so
             )
 
 else()
