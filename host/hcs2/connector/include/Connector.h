@@ -96,6 +96,7 @@ public:
 
     void windowsPlatformReadHandler();
     bool getPlatformID(std::string);
+    bool isPlatformConnected();
 
 private:
     struct sp_port *platform_socket_;

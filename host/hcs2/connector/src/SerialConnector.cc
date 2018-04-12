@@ -15,7 +15,12 @@
 
 using namespace std;
 using namespace rapidjson;
-// using namespace std::chrono_literals;
+
+// [HACK] The following varaible is used to enable the hack support for ST EVAL boards in
+// windows
+// 1 - enabled
+// 0 - disabled the hack, can support other platforms (Tested it with USB-PD and load board)
+#define ST_EVAL_BOARD_SUPPORT_ENABLED 1
 
 // The following variable is "strictly" used only for windows build.
 // since windows does not support libevent handling of serial devices,
@@ -39,45 +44,43 @@ SerialConnector::SerialConnector()
     read_socket_ = new zmq::socket_t(*context_,ZMQ_PULL);
     read_socket_->connect(SERIAL_SOCKET_ADDRESS);
 #endif
-
 }
 
 bool SerialConnector::isPlatformAvailable()
 {
-  // TODO [prasanth] add platform socket inside the class declaration
-  int i;
-  struct sp_port **ports;
-  sp_return port_list_error = sp_list_ports(&ports);
-  std::string usb_keyword;
-  // TODO [Prasanth] : The following TESTING section will look for a string pattern and try
-  // to open those that match. This will reduce the time taken for detecing the platform
+    // TODO [prasanth] add platform socket inside the class declaration
+    struct sp_port **ports;
+    sp_return port_list_error = sp_list_ports(&ports);
+    std::string usb_keyword;
+    // TODO [Prasanth] : The following TESTING section will look for a string pattern and try
+    // to open those that match. This will reduce the time taken for detecing the platform
 #define TESTING
 #ifdef TESTING
 #ifdef __APPLE__
-  usb_keyword = "usb";
+    usb_keyword = "usb";
 #elif __linux__
-  usb_keyword = "ACM";
+    usb_keyword = "ACM";
 #elif _WIN32
-  usb_keyword = "COM";
+    usb_keyword = "COM";
 #endif
 #endif
-  if (port_list_error == SP_OK) {
-      for (i = 0; ports[i]; i++) {
-          platform_port_name_ = sp_get_port_name(ports[i]);
-          size_t found = platform_port_name_.find(usb_keyword);
-          if (found!=std::string::npos) {
-              error = sp_get_port_by_name(platform_port_name_.c_str(), &platform_socket_);
-              if(error == SP_OK){
-                  sp_free_port_list(ports);
-                  return true;
-              }
-          }
-      }
-      sp_free_port_list(ports);
-  }
-  else {
-      return false;
-  }
+    if (port_list_error == SP_OK) {
+        for (int i = 0; ports[i]; i++) {
+            platform_port_name_ = sp_get_port_name(ports[i]);
+            size_t found = platform_port_name_.find(usb_keyword);
+            if (found!=std::string::npos) {
+                error = sp_get_port_by_name(platform_port_name_.c_str(), &platform_socket_);
+                if(error == SP_OK){
+                    sp_free_port_list(ports);
+                    return true;
+                }
+            }
+        }
+        sp_free_port_list(ports);
+    }
+    else {
+        return false;
+    }
 }
 // @f open
 // @b gets the port name and opens, if fail return false and if success return true
@@ -102,6 +105,7 @@ bool SerialConnector::open(std::string serial_port_name)
             sp_set_dtr(platform_socket_,SP_DTR_OFF);
             sp_set_parity(platform_socket_,SP_PARITY_NONE );
             sp_set_cts(platform_socket_,SP_CTS_IGNORE );
+
 #ifdef _WIN32
             windows_thread = new thread(&SerialConnector::windowsPlatformReadHandler,this);
             // adding timeout for the serial read during the platform ID session
@@ -120,7 +124,6 @@ bool SerialConnector::open(std::string serial_port_name)
                 sleep(1);
                 send(cmd);
                 // making the serial thread processing to start reading from the port
-                consumed_ = true;
                 producer_consumer_.notify_one();
                 string read_message;
                 // the read is done twice here based on our messaging architecture
@@ -179,7 +182,7 @@ bool SerialConnector::read(string &notification)
     char temp = '\0';
     while(temp != '\n') {
         temp = '\0';
-        sp_wait(ev, 250);
+        // sp_wait(ev, 250);
         error = sp_nonblocking_read(platform_socket_,&temp,1);
         if(error <= 0) {
             cout<<"Platform Disconnected\n";
@@ -283,24 +286,18 @@ void SerialConnector::windowsPlatformReadHandler()
     // This is to ensure the synchoronous activity between push and pull sockets
     unique_lock<mutex> lock_condition_variable(locker_);
     int number_of_misses = 0;
+    sp_new_event_set(&ev);
+    sp_add_port_events(ev, platform_socket_, SP_EVENT_RX_READY);
     while(true) {
         this->producer_consumer_.wait_for(lock_condition_variable,chrono::milliseconds(200), [this]{return consumed_;});
-        sp_new_event_set(&ev);
-        sp_add_port_events(ev, platform_socket_, SP_EVENT_RX_READY);
         vector<char> response;
         sp_return error;
         char temp = '\0';
         while(temp != '\n') {
             temp = '\0';
-
-            sp_wait(ev,serial_wait_timeout_);
+            sp_return serial_wait_ = sp_wait(ev,0);
             error = sp_nonblocking_read(platform_socket_,&temp,1);
-            cout<<"before wait "<<error<<endl;
-#ifdef _WIN32
             if(error <= -1) {
-#else
-            if(error <= 0) {
-#endif
                 // [TODO] [prasanth] think of better way to have serial disconnect logic
                 // Platform disconnect logic. Depends on the read and sp_wait
                 cout<<"Platform Disconnected\n";
@@ -309,22 +306,26 @@ void SerialConnector::windowsPlatformReadHandler()
                 close();
                 return;
             }
-#ifdef _WIN32
             if(error == 0) {
-                sleep(0.2);
-                // number_of_misses++;
-                // if(number_of_misses == 10 && !isPlatformAvailable()) {
-                //     cout<<"Platform Disconnected\n";
-                //     s_send(*write_socket_,"Platform_Disconnected");
-                //     // close the serial port
-                //     close();
-                //     return;
-                // }
-            }
+                sleep(0.02);
+// [HACK] [todo] [prasanth] : the following if stetment is required for only for ST eval boards in windows
+// On disconnecting the ST board from windows, the read() does not return negative value, instead returns zero.
+// We re counting the number of zeros and if it has 10 (2Sseconds), we are checking if it is motor board
+// and if yes we will write to the platform. The write will fail if the board is disconnected
+#if ST_EVAL_BOARD_SUPPORT_ENABLED
+                number_of_misses++;
+                if(number_of_misses == 10 && !isPlatformConnected()) {
+                    cout<<"Platform Disconnected\n";
+                    s_send(*write_socket_,"Platform_Disconnected");
+                    // close the serial port
+                    close();
+                    return;
+                }
 #endif
+            }
             if(temp !='\n' && temp!= NULL ) {
                 response.push_back(temp);
-                // number_of_misses = 0;
+                number_of_misses = 0;
             }
         }
         if(!response.empty()) {
@@ -360,4 +361,24 @@ bool SerialConnector::getPlatformID(std::string message)
         return true;
     }
     return false;
+}
+
+// @f isPlatformConnected
+// @b checks if platform is still connected by writing to it
+//
+// arguments:
+//  IN:
+//
+//  OUT: true if platform ID exists, false if it does not
+//
+//
+bool SerialConnector::isPlatformConnected ()
+{
+    string cmd = "{\"cmd\":\"request_platform_id\"}";
+    if(send(cmd)) {
+        return true;
+    }
+    else {
+      return false;
+    }
 }

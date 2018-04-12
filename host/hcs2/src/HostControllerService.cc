@@ -166,7 +166,7 @@ HcsError HostControllerService::setEventLoop()
         platform_handler = event_new(event_loop_base_,serial_connector_->getFileDescriptor(), EV_READ | EV_WRITE | EV_PERSIST,
                                 HostControllerService::platformCallback,this);
 #else
-        platform_handler = event_new(event_loop_base_,serial_connector_->getFileDescriptor(), EV_READ | EV_PERSIST,
+        platform_handler = event_new(event_loop_base_,serial_connector_->getFileDescriptor(), EV_READ | EV_ET | EV_PERSIST,
                                         HostControllerService::platformCallback,this);
 #endif
         event_add(platform_handler,NULL);
