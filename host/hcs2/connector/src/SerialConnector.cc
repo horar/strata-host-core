@@ -71,14 +71,17 @@ bool SerialConnector::isPlatformAvailable()
             if (found!=std::string::npos) {
                 error = sp_get_port_by_name(platform_port_name_.c_str(), &platform_socket_);
                 if(error == SP_OK){
+                    cout<<"found port "<<found<<" "<<platform_port_name_;
                     sp_free_port_list(ports);
                     return true;
                 }
             }
         }
         sp_free_port_list(ports);
+        return false;
     }
     else {
+        sp_free_port_list(ports);
         return false;
     }
 }
@@ -182,7 +185,7 @@ bool SerialConnector::read(string &notification)
     char temp = '\0';
     while(temp != '\n') {
         temp = '\0';
-        // sp_wait(ev, 250);
+        sp_wait(ev, 250);
         error = sp_nonblocking_read(platform_socket_,&temp,1);
         if(error <= 0) {
             cout<<"Platform Disconnected\n";

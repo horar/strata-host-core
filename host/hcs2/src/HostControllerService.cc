@@ -92,7 +92,7 @@ HcsError HostControllerService::init()
     // // TODO [prasanth] NIMBUS integration **Needs better organisation
     AttachmentObserver blobObserver((void *)client_connector_, (void *)&clientList);
     database_->Register(&blobObserver);
-    // openeing the socket to talk with the remote server
+    // // openeing the socket to talk with the remote server
     remote_connector_->setDealerID(dealer_remote_socket_id_);
     remote_connector_->open(hcs_remote_address_);
     // [TODO]: [prasanth] the following lines are used to handle the serial connect/disconnect
@@ -166,7 +166,7 @@ HcsError HostControllerService::setEventLoop()
         platform_handler = event_new(event_loop_base_,serial_connector_->getFileDescriptor(), EV_READ | EV_WRITE | EV_PERSIST,
                                 HostControllerService::platformCallback,this);
 #else
-        platform_handler = event_new(event_loop_base_,serial_connector_->getFileDescriptor(), EV_READ | EV_ET | EV_PERSIST,
+        platform_handler = event_new(event_loop_base_,serial_connector_->getFileDescriptor(), EV_READ  | EV_PERSIST,
                                         HostControllerService::platformCallback,this);
 #endif
         event_add(platform_handler,NULL);
@@ -214,7 +214,6 @@ void HostControllerService::testCallback(evutil_socket_t fd, short what, void* a
     if(hcs->port_disconnected_) {
         if(hcs->serial_connector_->isPlatformAvailable()) {
             event_base_loopbreak(hcs->event_loop_base_);
-            // hcs->serial_connector_->close();
           }
     }
 }
