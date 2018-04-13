@@ -20,7 +20,7 @@ using namespace std;
 //
 ZMQConnector::ZMQConnector(const string& type)
 {
-    cout<< "Creating ZMQ connector object for "<<type<<endl;
+    LOG_DEBUG(DEBUG,"Creating ZMQ connector object for %s\n",type.c_str());
     // zmq context creation
     context_ = new(zmq::context_t);
     connection_interface_ = type;
@@ -41,12 +41,12 @@ bool ZMQConnector::open(const string& ip_address)
     if(connection_interface_ == "remote") {
         socket_ = new zmq::socket_t(*context_,ZMQ_DEALER);
         try {
-            cout<<"Connecting to the remote server socket "<<ip_address<<"\n";
+            LOG_DEBUG(DEBUG,"Connecting to the remote server socket %s\n",ip_address.c_str());
             socket_->setsockopt(ZMQ_IDENTITY,dealer_id_.c_str(),dealer_id_.length());
             socket_->connect(ip_address.c_str());
         }
         catch (zmq::error_t& e) {
-            cout<<"Error in opeening remote";
+            LOG_DEBUG(DEBUG,"Error in opening remote\n",0);
             return false;
         }
     } else if(connection_interface_ == "local") {

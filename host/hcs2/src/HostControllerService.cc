@@ -18,7 +18,7 @@ using namespace std;
 
 AttachmentObserver::AttachmentObserver(void *client_socket,void *client_id_list)
 {
-    PDEBUG("Attaching the nimbus observer");
+    PDEBUG(PRINT_DEBUG,"Attaching the nimbus observer");
     client_connector_ = (Connector *)client_socket;
     client_list_ = (clientList *)client_id_list;
 }
@@ -30,7 +30,7 @@ void AttachmentObserver::DocumentChangeCallback(jsonString jsonBody) {
         client_connector_->send(jsonBody);
         // [prasanth] : comment the following PDEBUG for faster performance.
         // use it for debugging
-        // PDEBUG("[hcs to hcc]%s",jsonBody);
+        // PDEBUG(PRINT_DEBUG,"[hcs to hcc]%s",jsonBody);
         client_list_iterator++;
     }
 }
@@ -54,10 +54,10 @@ HostControllerService::HostControllerService(string configuration_file)
 {
     // config file parsing
     configuration_ = new ParseConfig(configuration_file);
-    PDEBUG("************************************************************");
-    PDEBUG("[TODO]: Need to change the config file parameters for new hcs");
+    PDEBUG(PRINT_DEBUG,"************************************************************");
+    PDEBUG(PRINT_DEBUG,"[TODO]: Need to change the config file parameters for new hcs");
     std::cout<<"CONFIG: \n"<< *configuration_ <<std::endl;
-    PDEBUG("************************************************************");
+    PDEBUG(PRINT_DEBUG,"************************************************************");
     //[TODO] [prasanth] : rename the terms and variables in config file and
     // parseconfig.cpp for easy understanding
     hcs_server_address_ = configuration_->GetSubscriberAddress();
@@ -130,7 +130,7 @@ HcsError HostControllerService::run()
     while(!openPlatform()) {
         sleep(0.2);
     }
-    PDEBUG("\033[1;32mPlatform detected\033[0m\n");
+    PDEBUG(PRINT_DEBUG,"\033[1;32mPlatform detected\033[0m\n");
     initializePlatform(); // init serial config
     port_disconnected_ = false;
     event_base_loopbreak(event_loop_base_);
@@ -151,14 +151,14 @@ HcsError HostControllerService::setEventLoop()
     while(client_list_iterator != clientList.end()) {
         client_connector_->setDealerID(*client_list_iterator);
         client_connector_->send(platformList);
-        PDEBUG("[hcs to hcc]%s",platformList.c_str());
+        PDEBUG(PRINT_DEBUG,"[hcs to hcc]%s",platformList.c_str());
         client_list_iterator++;
     }
-    PDEBUG("Starting the event");
+    PDEBUG(PRINT_DEBUG,"Starting the event");
     // creating a periodic event for test case
     event_loop_base_ = event_base_new();
     if (!event_loop_base_) {
-        PDEBUG("Could not create event base");
+        PDEBUG(PRINT_DEBUG,"Could not create event base");
 
         HcsError error = HcsError::EVENT_BASE_FAILURE;
         return error;
@@ -201,7 +201,7 @@ HcsError HostControllerService::setEventLoop()
       return error;
     }
     else {
-      PDEBUG("Base Failure");
+      PDEBUG(PRINT_DEBUG,"Base Failure");
       HcsError error = HcsError::EVENT_BASE_FAILURE;
       return error;
     }
@@ -251,18 +251,18 @@ void HostControllerService::serviceCallback(evutil_socket_t fd, short what, void
     if(hcs->client_connector_->read(read_message)) {
         dealer_id = hcs->client_connector_->getDealerID();
         if(!hcs->clientExistInList(dealer_id)) {
-            PDEBUG("Adding new client to list");
+            PDEBUG(PRINT_DEBUG,"Adding new client to list");
             hcs->clientList.push_back(dealer_id);
         }
         Document service_command;
         if (service_command.Parse(read_message.c_str()).HasParseError()) {
-            PDEBUG("ERROR: json parse error!");
+            PDEBUG(PRINT_DEBUG,"ERROR: json parse error!");
         }
 
         // TODO [ian] add this to a "command_filter" map to add more then just "db::cmd"
         if( service_command.HasMember("db::cmd") ) {
             if ( hcs->database_->Command( read_message.c_str() ) != NO_ERRORS ){
-                PDEBUG("ERROR: database failed failed!");
+                PDEBUG(PRINT_DEBUG,"ERROR: database failed failed!");
             }
         }
         else if(hcs->platform_client_mapping_.empty() || !hcs->clientExists(dealer_id)) {
@@ -274,10 +274,10 @@ void HostControllerService::serviceCallback(evutil_socket_t fd, short what, void
                 map_element.insert(map_element.begin(),selected_platform_info[0]);
                 map_element.insert(map_element.begin()+1,selected_platform_info[1]);
                 hcs->platform_client_mapping_.emplace(map_element,dealer_id);
-                PDEBUG("adding the %s uuid to multimap\n",selected_platform_info[0].c_str());
+                PDEBUG(PRINT_DEBUG,"adding the %s uuid to multimap\n",selected_platform_info[0].c_str());
             }
         } else {
-            PDEBUG("Dispatching message to platform/s\n");
+            PDEBUG(PRINT_DEBUG,"Dispatching message to platform/s\n");
             hcs->disptachMessageToPlatforms(dealer_id,read_message);
         }
     }
@@ -298,7 +298,7 @@ void HostControllerService::remoteCallback(evutil_socket_t fd, short what, void*
     HostControllerService *hcs = (HostControllerService*)args;
     string read_message;
     if (hcs->remote_connector_->read(read_message)) {
-        PDEBUG("remote message read %s",read_message.c_str());
+        PDEBUG(PRINT_DEBUG,"remote message read %s",read_message.c_str());
         hcs->remoteRouting(read_message);
     }
 }
@@ -318,7 +318,7 @@ void HostControllerService::platformCallback(evutil_socket_t fd, short what, voi
     HostControllerService *hcs = (HostControllerService*)args;
     string read_message = hcs->platformRead();
     if(read_message != "") {
-        PDEBUG("message being read %s\n",read_message.c_str());
+        PDEBUG(PRINT_DEBUG,"message being read %s\n",read_message.c_str());
         // [TODO] [prasanth] change the map value for platform from string to structure
         hcs->checkPlatformExist(read_message);
         //[TODO] [prasanth]: send data to the data bridge through multimap handle
@@ -402,7 +402,7 @@ std::vector<string> HostControllerService::initialCommandDispatch(const std::str
     Document service_command;
     // [TODO] [prasanth] : needs better organization
     if (service_command.Parse(command.c_str()).HasParseError()) {
-        PDEBUG("ERROR: json parse error!\n");
+        PDEBUG(PRINT_DEBUG,"ERROR: json parse error!\n");
         return selected_platform;
     }
     // state machine using switch statements
@@ -415,12 +415,12 @@ std::vector<string> HostControllerService::initialCommandDispatch(const std::str
                                             break;
         case CommandDispatcherMessages::REGISTER_CLIENT:
         case CommandDispatcherMessages::REQUEST_AVAILABLE_PLATFORMS:
-                                            PDEBUG("Sending the list of available platform");
+                                            PDEBUG(PRINT_DEBUG,"Sending the list of available platform");
                                             getPlatformListJson(platformList);
                                             client_connector_->send(platformList);
                                             break;
         case CommandDispatcherMessages::PLATFORM_SELECT:
-                                            PDEBUG("The client has selected a platform");
+                                            PDEBUG(PRINT_DEBUG,"The client has selected a platform");
                                             board_name = service_command["platform_uuid"].GetString();
                                             remote_status = service_command["remote"].GetString();
                                             selected_platform.insert(selected_platform.begin(),board_name);
@@ -445,24 +445,24 @@ bool HostControllerService::disptachMessageToPlatforms(const std::string& dealer
                             platform_client_mapping_.end();multimap_iterator_++) {
         if (multimap_iterator_->second == dealer_id) {
             // the following printing is strictly for testing only
-            PDEBUG("\033[1;4;31m[%s<-%s]\033[0m: %s\n",multimap_iterator_->first[0].c_str(),dealer_id.c_str(),read_message.c_str());
+            PDEBUG(PRINT_DEBUG,"\033[1;4;31m[%s<-%s]\033[0m: %s\n",multimap_iterator_->first[0].c_str(),dealer_id.c_str(),read_message.c_str());
             Document service_command;
             if(!read_message.empty()) {
                 if (service_command.Parse(read_message.c_str()).HasParseError()) {
-                    PDEBUG("ERROR: json parse error!\n");
+                    PDEBUG(PRINT_DEBUG,"ERROR: json parse error!\n");
                     return false;
                 }
             }
             if(service_command.HasMember("cmd")) {
                 string command = service_command["cmd"].GetString();
                 if(multimap_iterator_->first[1] == "connected") {
-                    PDEBUG("\033[1;4;31mlocal write %s\033[0m\n",multimap_iterator_->first[1].c_str());
+                    PDEBUG(PRINT_DEBUG,"\033[1;4;31mlocal write %s\033[0m\n",multimap_iterator_->first[1].c_str());
                     if(serial_connector_->send(read_message)) {
-                        PDEBUG("\033[1;4;33mWrite success %s\033[0m",read_message.c_str());
+                        PDEBUG(PRINT_DEBUG,"\033[1;4;33mWrite success %s\033[0m",read_message.c_str());
                     }
                 }
                 else if(multimap_iterator_->first[1] == "remote") {
-                    PDEBUG("\033[1;4;31mlocal write %s\033[0m\n",multimap_iterator_->first[1].c_str());
+                    PDEBUG(PRINT_DEBUG,"\033[1;4;31mlocal write %s\033[0m\n",multimap_iterator_->first[1].c_str());
                     remote_connector_->send(read_message);
                 }
             }
@@ -513,7 +513,7 @@ CommandDispatcherMessages HostControllerService::stringHash(const std::string& c
 //
 bool HostControllerService::parseAndGetPlatformId()
 {
-    PDEBUG("parseAndGetPlatformId\n");
+    PDEBUG(PRINT_DEBUG,"parseAndGetPlatformId\n");
     platform_details platform;
     platform.platform_uuid = serial_connector_->getPlatformUUID();
     platform.platform_verbose = serial_connector_->getDealerID();
@@ -523,7 +523,7 @@ bool HostControllerService::parseAndGetPlatformId()
         std::vector<string> map_element;
         map_element.insert(map_element.begin(),platform.platform_verbose);
         map_element.insert(map_element.begin()+1,"connected");
-        PDEBUG("[remote routing ] added into map");
+        PDEBUG(PRINT_DEBUG,"[remote routing ] added into map");
         platform_client_mapping_.emplace(map_element,"remote");
         g_platform_uuid_ = platform.platform_verbose;
     }
@@ -572,7 +572,7 @@ string HostControllerService::platformRead()
 
 void HostControllerService::platformDisconnectRoutine ()
 {
-    PDEBUG("Platform Disconnected\n");
+    PDEBUG(PRINT_DEBUG,"Platform Disconnected\n");
     port_disconnected_ = true;
     sendDisconnecttoUI();
     platform_uuid_.clear();
@@ -601,7 +601,7 @@ void HostControllerService::platformDisconnectRoutine ()
     while(client_list_iterator != clientList.end()) {
         client_connector_->setDealerID(*client_list_iterator);
         client_connector_->send(platformList);
-        PDEBUG("[hcs to hcc]%s",platformList.c_str());
+        PDEBUG(PRINT_DEBUG,"[hcs to hcc]%s",platformList.c_str());
         client_list_iterator++;
     }
     event_base_loopbreak(event_loop_base_);
@@ -754,7 +754,7 @@ void HostControllerService::remoteRouting(const std::string& message)
             client_connector_->setDealerID(dealer_id);
             client_connector_->send(message);
         } else if ((map_uuid[1] == "connected") && (dealer_id == "remote")) {
-            PDEBUG("Inside remote writing %s with dealer id %s",message.c_str(),dealer_id.c_str());
+            PDEBUG(PRINT_DEBUG,"Inside remote writing %s with dealer id %s",message.c_str(),dealer_id.c_str());
             serial_connector_->send(message);
         }
         multimap_iterator_++;

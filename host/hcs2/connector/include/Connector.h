@@ -42,6 +42,11 @@
 
 #endif
 
+// console prints
+#define DEBUG 0
+#define LOG_DEBUG(lvl, fmt, ...)						\
+	do { if (lvl>0) fprintf(stderr, fmt, __VA_ARGS__); } while (0)
+
 class Connector {
 public:
     Connector() {}

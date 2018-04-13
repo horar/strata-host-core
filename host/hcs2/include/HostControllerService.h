@@ -55,9 +55,9 @@
 // usage:1) PDEBUG("hello world",0);
 //       2) PDEBUG("the sum id %d",sum);
 // controller by "DEBUG" variable
-// DEBUG - 1 // print the message on Console
+// PRINT_DEBUG - 1 // print the message on Console
 //         0 // do not print the message
-#define DEBUG 1
+#define PRINT_DEBUG 1
 
 
 // Helper macro for stringifying JSON. The quotes for key and variable get passed down explicity
@@ -72,11 +72,11 @@ enum class HcsError{
 
 // Host Controller Service Command dipstach messages
 enum class CommandDispatcherMessages{
-	REQUEST_HCS_STATUS	= 0,
-	REQUEST_AVAILABLE_PLATFORMS = 1,
-	PLATFORM_SELECT		= 2,
+    REQUEST_HCS_STATUS	= 0,
+    REQUEST_AVAILABLE_PLATFORMS = 1,
+    PLATFORM_SELECT		= 2,
     REGISTER_CLIENT     = 3,
-	COMMAND_NOT_FOUND	= 10,
+    COMMAND_NOT_FOUND	= 10,
 };
 
 // struct that will be added to the list

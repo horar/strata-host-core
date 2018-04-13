@@ -35,7 +35,7 @@ using namespace rapidjson;
 //
 SerialConnector::SerialConnector()
 {
-    cout<<"Creating a Serial Connector Object"<<endl;
+    LOG_DEBUG(DEBUG,"Creating a Serial Connector Object\n",0);
 #ifdef _WIN32
     context_ = new(zmq::context_t);
     // creating the push socket and binding to a address
@@ -73,7 +73,6 @@ bool SerialConnector::isPlatformAvailable()
             if (found!=std::string::npos) {
                 error = sp_get_port_by_name(platform_port_name_.c_str(), &platform_socket_);
                 if(error == SP_OK){
-                    cout<<"found port "<<found<<" "<<platform_port_name_;
                     sp_free_port_list(ports);
                     return true;
                 }
@@ -103,7 +102,7 @@ bool SerialConnector::open(const std::string& serial_port_name)
     if (isPlatformAvailable()) {
         error = sp_open(platform_socket_, SP_MODE_READ_WRITE);
         if (error == SP_OK) {
-            cout << "SERIAL PORT OPEN SUCCESS: " << platform_port_name_ << endl;
+            LOG_DEBUG(DEBUG,"SERIAL PORT OPEN SUCCESS: %s\n",platform_port_name_.c_str());
             serial_port_settings serialport;
             sp_set_stopbits(platform_socket_,(int)SERIAL_PORT_CONFIGURATION::STOP_BIT);
             sp_set_bits(platform_socket_,(int)SERIAL_PORT_CONFIGURATION::DATA_BIT);
@@ -191,7 +190,7 @@ bool SerialConnector::read(string &notification)
         sp_wait(event_, 250);
         error = sp_nonblocking_read(platform_socket_,&temp,1);
         if(error <= 0) {
-            cout<<"Platform Disconnected\n";
+            LOG_DEBUG(DEBUG,"Platform Disconnected\n",0);
             dealer_id_.clear();
             return false;
         }
@@ -202,7 +201,7 @@ bool SerialConnector::read(string &notification)
     if(!response.empty()) {
         string read_message(response.begin(),response.end());
         notification = read_message;
-        cout << "Rx'ed message : "<<notification<<endl;
+        LOG_DEBUG(DEBUG,"Rx'ed message : %s\n",notification.c_str());
         response.clear();
         return true;
     }
@@ -215,7 +214,7 @@ bool SerialConnector::read(string &notification)
     zmq::poll (&items,1,10);
     if(items.revents & ZMQ_POLLIN) {
         notification = s_recv(*read_socket_);
-        cout << "Rx'ed message : "<<notification<<endl;
+        LOG_DEBUG(DEBUG,"Rx'ed message : %s\n",notification.c_str());
         if(notification == "Platform_Disconnected") {
             return false;
         }
@@ -249,7 +248,7 @@ bool SerialConnector::send(const std::string& message)
     if(sp_blocking_write(platform_socket_,(void *)message.c_str(),message.length(),10) >=0) {
 // [prasanth]: Platform uses new line as delimiter while reading. Hence sending a new line after message
         sp_blocking_write(platform_socket_,"\n",1,1);
-        cout << "write success "<<message<<endl;
+        LOG_DEBUG(DEBUG,"write success %s\n",message.c_str());
         return true;
     }
     return false;
@@ -307,7 +306,7 @@ void SerialConnector::windowsPlatformReadHandler()
             if(error <= -1) {
                 // [TODO] [prasanth] think of better way to have serial disconnect logic
                 // Platform disconnect logic. Depends on the read and sp_wait
-                cout<<"Platform Disconnected\n";
+                LOG_DEBUG(DEBUG,"Platform Disconnected\n",0);
                 s_send(*write_socket_,"Platform_Disconnected");
                 // close the serial port
                 close();
@@ -322,7 +321,7 @@ void SerialConnector::windowsPlatformReadHandler()
 #if ST_EVAL_BOARD_SUPPORT_ENABLED
                 number_of_misses++;
                 if(number_of_misses == 10 && !isPlatformConnected()) {
-                    cout<<"Platform Disconnected\n";
+                    LOG_DEBUG(DEBUG,"Platform Disconnected\n",0);
                     s_send(*write_socket_,"Platform_Disconnected");
                     // close the serial port
                     close();
@@ -354,7 +353,7 @@ void SerialConnector::windowsPlatformReadHandler()
 //
 bool SerialConnector::getPlatformID(std::string message)
 {
-    cout<<"platform id message "<<message<<endl;
+    LOG_DEBUG(DEBUG,"platform id message %s\n",message.c_str());
     Document platform_command;
     if (platform_command.Parse(message.c_str()).HasParseError()) {
         return false;
