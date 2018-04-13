@@ -116,8 +116,8 @@ public:
     // getter fucntions
 	void getPlatformListJson(std::string &);
 	// checker functions
-	bool clientExists(const std::string&);
-	bool checkPlatformExist(const std::string& message);
+    bool clientExists(const std::string&);
+    bool checkPlatformExist(const std::string& message);
     void remoteRouting(const std::string& message);
     bool clientExistInList(const std::string&);
 

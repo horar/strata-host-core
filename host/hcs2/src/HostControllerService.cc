@@ -54,10 +54,15 @@ HostControllerService::HostControllerService(string configuration_file)
 {
     // config file parsing
     configuration_ = new ParseConfig(configuration_file);
-    PDEBUG(PRINT_DEBUG,"************************************************************");
-    PDEBUG(PRINT_DEBUG,"[TODO]: Need to change the config file parameters for new hcs");
-    std::cout<<"CONFIG: \n"<< *configuration_ <<std::endl;
-    PDEBUG(PRINT_DEBUG,"************************************************************");
+    cout<<"************************************************************\n";
+    cout<<"CONFIG: \n"<< *configuration_ <<std::endl;
+    if(PRINT_DEBUG > 0) {
+        cout<< "Console print is enabled\n";
+    }
+    else {
+        cout<< "Console print is disabled\n";
+    }        
+    cout<<"************************************************************\n";
     //[TODO] [prasanth] : rename the terms and variables in config file and
     // parseconfig.cpp for easy understanding
     hcs_server_address_ = configuration_->GetSubscriberAddress();
