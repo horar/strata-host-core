@@ -75,7 +75,6 @@ int main(int argc, char *argv[])
         HostControllerService host_controller_service(configuration_file);
         // [TODO]: Needs Error handling
         host_controller_service.init();
-        // host_controller_service.run();
     }
     catch (const std::exception & e) {
         std::cout << "Host Controller Service failed to start: " << e.what() << std::endl;
