@@ -66,7 +66,7 @@
 
 // Internal error numbers for Host Controller Services
 enum class HcsError{
-    NO_ERROR          = 0,
+    NO_ERRORS          = 0,
     EVENT_BASE_FAILURE = 1,
 };
 

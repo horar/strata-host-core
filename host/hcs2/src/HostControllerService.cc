@@ -61,7 +61,7 @@ HostControllerService::HostControllerService(string configuration_file)
     }
     else {
         cout<< "Console print is disabled\n";
-    }        
+    }
     cout<<"************************************************************\n";
     //[TODO] [prasanth] : rename the terms and variables in config file and
     // parseconfig.cpp for easy understanding
@@ -111,7 +111,7 @@ HcsError HostControllerService::init()
     //addtion of event is not implemented successfully in hcs
     while((int)run());
 
-    HcsError error = HcsError::NO_ERROR;
+    HcsError error = HcsError::NO_ERRORS;
     return error;
 }
 
@@ -202,7 +202,7 @@ HcsError HostControllerService::setEventLoop()
     // dispatch all the events
     int event_base = event_base_dispatch(event_loop_base_);
     if(event_base == 0) {
-      HcsError error = HcsError::NO_ERROR;
+      HcsError error = HcsError::NO_ERRORS;
       return error;
     }
     else {
