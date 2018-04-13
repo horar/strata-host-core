@@ -62,6 +62,7 @@ class DocumentManager : public QObject
     Q_PROPERTY(QQmlListProperty<Document> layoutDocuments READ layoutDocuments NOTIFY layoutDocumentsChanged)
     Q_PROPERTY(QQmlListProperty<Document> testReportDocuments READ testReportDocuments NOTIFY testReportDocumentsChanged)
     Q_PROPERTY(QQmlListProperty<Document> targetedDocuments READ targetedDocuments NOTIFY targetedDocumentsChanged)
+    Q_PROPERTY(int revisionCount READ revisionCount NOTIFY revisionCountChanged )
 
 public:
     DocumentManager();
@@ -75,8 +76,11 @@ public:
     QQmlListProperty<Document> layoutDocuments() { return QQmlListProperty<Document>(this, layout_documents_); }
     QQmlListProperty<Document> testReportDocuments() { return QQmlListProperty<Document>(this, test_report_documents_); }
     QQmlListProperty<Document> targetedDocuments() { return QQmlListProperty<Document>(this, targeted_documents_); }
+    int revisionCount() { return revisionCount_; }
 
     bool updateDocuments(const QString set, const QList<QString> &documents);
+
+    Q_INVOKABLE void clearRevisionCount();
 
 signals:
     void schematicDocumentsChanged();
@@ -84,6 +88,7 @@ signals:
     void layoutDocumentsChanged();
     void testReportDocumentsChanged();
     void targetedDocumentsChanged();
+    void revisionCountChanged();
 
 private:
     CoreInterface *coreInterface_;
@@ -100,6 +105,9 @@ private:
     std::map<QString, DocumentSetPtr> document_sets_;
 
     DocumentSetPtr getDocumentSet(const QString &set);
+
+    // Count the amount of deployments that have been received
+    int revisionCount_;
 
     void init();
 

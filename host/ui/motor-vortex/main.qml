@@ -19,6 +19,12 @@ Window {
         console.log("Initializing")
         NavigationControl.init(flipable,controlContainer, contentContainer, statusBarContainer)
     }
+
+    onClosing: {
+        // End session with HCS
+        coreInterface.unregisterClient();
+    }
+
     ColumnLayout {
         spacing: 0
         anchors.fill: parent

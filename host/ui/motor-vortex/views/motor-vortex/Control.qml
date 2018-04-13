@@ -87,7 +87,7 @@ Item {
                 }
 
                 CircularGauge {
-                    id: tachMeterGauges
+                    id: tachMeterGauge
                     height: parent.height
                     anchors.centerIn: parent
                     minimumValue: 0; maximumValue: 100
@@ -150,13 +150,15 @@ Item {
                     anchors.centerIn: parent
 
                     function setMotorSpeedCommand(value) {
+                        var truncated_value = Math.floor(value * 4000 + 1500)
                         var setSpeedCmd ={
                             "cmd":"speed_input",
                             "payload": {
-                                "speed_target":value * 4000 + 1500
+                                "speed_target":truncated_value
                             }
                         }
                         // send set speed command to platform
+                        console.log("set value ",value * 4000 + 1500)
                         coreInterface.sendCommand(JSON.stringify(setSpeedCmd))
                     }
 
@@ -240,8 +242,8 @@ Item {
         anchors {top: controlSection.bottom
             topMargin: 50
             bottom: controlPage.bottom
-            verticalCenter: controlSection.verticalCenter
         }
+
         color: "white"
         width: controlPage.width
         // Phase U temperature

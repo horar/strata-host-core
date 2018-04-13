@@ -20,7 +20,7 @@ CoreInterface::CoreInterface(QObject *parent) : QObject(parent)
 
     // [TODO] [prasanth] : need to be added in a better place
     // json command to ask the list of available platforms from hcs
-    sendHandshake();
+    registerClient();
 
     // --------------------
     // Core Framework
@@ -107,7 +107,8 @@ void CoreInterface::notificationsThread()
 
         QString n(message.c_str());
 
-        qDebug() <<"[recv]" << n;
+        // Debug; Some messages are too long to print (ex: cloud images)
+        //qDebug() <<"[recv]" << n;
 
         QJsonDocument doc = QJsonDocument::fromJson(n.toUtf8());
         if(doc.isNull()) {
@@ -275,12 +276,21 @@ void CoreInterface::sendCommand(QString cmd)
     hcc->sendCmd(cmd.toStdString());
 }
 
-// @f sendHandshake
+// @f registerClient
 // @b send initial handshake to receive platform list
 //
-void CoreInterface::sendHandshake()
+void CoreInterface::registerClient()
 {
     std::string cmd= "{\"cmd\":\"register_client\"}";
+    hcc->sendCmd(cmd);
+}
+
+// @f unregisterClient
+// @b Unregister to remove any notifications from HCS
+//
+void CoreInterface::unregisterClient()
+{
+    std::string cmd= "{\"cmd\":\"unregister\"}";
     hcc->sendCmd(cmd);
 }
 
@@ -308,17 +318,14 @@ void CoreInterface::sendHandshake()
 //  }
 // }
 //
-void CoreInterface::cloudNotificationHandler(QJsonObject value)
+void CoreInterface::cloudNotificationHandler(QJsonObject payload)
 {
-    //qDebug("ImplementationInterfaceBinding::cloudNotificationHandler: CALLED");
-
     // data source type: document_set, chat, marketing et al
-    QJsonObject payload = value["cloud::notification"].toObject();
     string type = payload.value("type").toString().toStdString();
 
     auto handler = data_source_handlers_.find(type);
     if( handler == data_source_handlers_.end()) {
-        qCritical("CoreInterface::handleNotification"
+        qCritical("CoreInterface::cloudNotification"
                   " ERROR: no handler exits for %s !!", type.c_str ());
         return;
     }
