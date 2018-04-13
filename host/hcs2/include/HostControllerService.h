@@ -64,9 +64,13 @@
 #define WRAPQUOTE(key)  #key
 #define JSON_SINGLE_OBJECT(key, value)      "{" WRAPQUOTE(key) ":" WRAPQUOTE(value) "}"
 
+#if defined(NO_ERROR)
+#undef NO_ERROR
+#endif
+
 // Internal error numbers for Host Controller Services
 enum class HcsError{
-    NO_ERRORS          = 0,
+    NO_ERROR           = 0,
     EVENT_BASE_FAILURE = 1,
 };
 

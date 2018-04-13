@@ -111,7 +111,7 @@ HcsError HostControllerService::init()
     //addtion of event is not implemented successfully in hcs
     while((int)run());
 
-    HcsError error = HcsError::NO_ERRORS;
+    HcsError error = HcsError::NO_ERROR;
     return error;
 }
 
@@ -202,7 +202,7 @@ HcsError HostControllerService::setEventLoop()
     // dispatch all the events
     int event_base = event_base_dispatch(event_loop_base_);
     if(event_base == 0) {
-      HcsError error = HcsError::NO_ERRORS;
+      HcsError error = HcsError::NO_ERROR;
       return error;
     }
     else {
