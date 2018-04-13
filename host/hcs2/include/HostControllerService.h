@@ -102,20 +102,20 @@ public:
 	static void platformCallback(evutil_socket_t fd, short what, void* args);
     static void remoteCallback(evutil_socket_t fd, short what, void* args);
 
-	// utility functions
-	std::vector<std::string> initialCommandDispatch(const std::string& dealer_id,const std::string& command);
-	bool disptachMessageToPlatforms(const std::string& dealer_id,const std::string& command);
-	CommandDispatcherMessages stringHash(const std::string& command);
-	bool openPlatform(); // platform functions
-	void initializePlatform(); //platform functions
+    // utility functions
+    std::vector<std::string> initialCommandDispatch(const std::string& dealer_id,const std::string& command);
+    bool disptachMessageToPlatforms(const std::string& dealer_id,const std::string& command);
+    CommandDispatcherMessages stringHash(const std::string& command);
+    bool openPlatform(); // platform functions
+    void initializePlatform(); //platform functions
     void addToLocalPlatformList(remote_platforms);  // add the element to the list
 
-	std::string platformRead(); // this fucntion will be moved to usb connector
-	bool parseAndGetPlatformId(); // potential new class to parse and handle json messages
+    std::string platformRead(); // this fucntion will be moved to usb connector
+    bool parseAndGetPlatformId(); // potential new class to parse and handle json messages
 
     // getter fucntions
-	void getPlatformListJson(std::string &);
-	// checker functions
+    void getPlatformListJson(std::string &);
+    // checker functions
     bool clientExists(const std::string&);
     bool checkPlatformExist(const std::string& message);
     void remoteRouting(const std::string& message);
