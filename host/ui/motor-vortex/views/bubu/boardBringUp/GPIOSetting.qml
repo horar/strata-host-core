@@ -6,32 +6,42 @@ import QtGraphicalEffects 1.0
 import "qrc:/views/bubu/Control.js" as BubuControl
 
 
-Row {
+Rectangle {
     id: settingRow
     property string settingMessageOne: ""
     property string settingMessageTwo: ""
     property bool initialState: false
     property int switchAngle: 90
     property int bitNumber: 0
+    property string settingSwitchType:  ""
+    color: "transparent"
     /*
     Holds the state of the switch.
     */
     property bool stateOfTheSwitch: initialState
-    spacing: 10
-    signal activated()
 
     /*
     Check switch state and _setDirection_ accordingly.
     */
     function checkSwitchState()
     {
-        if(switchComponent.checked === true) {
-            stateOfTheSwitch = true;
-            BubuControl.setDirection("output");
+        if(settingSwitchType == "input_output") {
+            if(switchComponent.checked === true) {
+                stateOfTheSwitch = true;
+                BubuControl.setDirection("input");
+            }
+            else {
+                stateOfTheSwitch = false;
+                BubuControl.setDirection("output");
+            }
         }
-        else {
-            stateOfTheSwitch = false;
-            BubuControl.setDirection("input");
+        else  {
+            if(switchComponent.checked === true) {
+                BubuControl.setOutputValue("low");
+            }
+            else {
+                BubuControl.setOutputValue("high");
+            }
         }
     }
 
@@ -39,11 +49,9 @@ Row {
         id: switchComponent
         checkable: true
         checked: initialState
-
-        transform: Rotation {angle : switchAngle}
+        anchors.verticalCenter: settingRow
         onClicked: {
             BubuControl.setBit(bitNumber);
-            settingRow.activated();
             checkSwitchState();
             BubuControl.printCommand(); // For testing
         }
@@ -51,12 +59,9 @@ Row {
     }
 
     Text {
+        anchors.left: switchComponent.right
         width: settingRow.width - settingRow.spacing - switchComponent.width
         height: switchComponent.height
-        anchors { left: switchComponent.right
-            top: parent.top
-            topMargin: 10
-        }
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignLeft
         text: switchComponent.checked ? settingMessageOne : settingMessageTwo

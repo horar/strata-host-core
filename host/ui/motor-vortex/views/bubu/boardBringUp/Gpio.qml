@@ -6,6 +6,7 @@ import QtQuick.Controls 2.0
 import QtQuick.Controls.Styles 1.4
 import QtQuick.Layouts 1.3
 import QtQuick.Controls.Material 2.0
+import "qrc:/views/bubu/Control.js" as BubuControl
 
 
 Rectangle {
@@ -14,18 +15,6 @@ Rectangle {
     property var newTab:  gpioView
 
     anchors.fill:parent
-
-    function createTab(inTabName, inParent){
-        var component  = Qt.createComponent(inTabName);
-        var object = component.createObject(inParent);
-        return object
-    }
-
-    Component.onCompleted: {
-        currentTab = createTab("buttonView.qml", contentRectangle);
-        newTab = createTab("buttonView.qml",contentRectangle);
-    }
-
 
     ParallelAnimation{
         id: crosfadeTabs
@@ -45,46 +34,64 @@ Rectangle {
         }
     }
 
-
+   /*
+     Holds the animation for the ports
+   */
     ButtonGroup {
+        id: animateButton
         buttons: buttonRow.children
         onClicked: {
-            newTab = button.tabName
             crosfadeTabs.start()
-            currentTab = newTab
         }
     }
 
 
     Row {
         id:buttonRow
-        anchors.top: parent.top
-        anchors.topMargin: 40
-        anchors.horizontalCenter: parent.horizontalCenter
+        anchors { top: parent.top;topMargin: 40; horizontalCenter: parent.horizontalCenter }
         width: 600
         height: 40
 
         /* passing port name to set "port" member in setPort function */
-        SGLeftSegmentedButton{text:"Port A"; portName:"a"}
-        SGMiddleSegmentedButton{text:"Port B"; portName: "b"}
-        SGMiddleSegmentedButton{text:"Port C"; portName: "c"}
-        SGMiddleSegmentedButton{text:"Port D"; portName: "d"}
-        SGMiddleSegmentedButton{text:"Port E"; portName: "e"}
-        SGRightSegmentedButton{text:"Port F"; portName: "f"}
+        SGLeftSegmentedButton{text:"Port A"; portName:"a"; tabIndex: 0}
+        SGMiddleSegmentedButton{text:"Port B"; portName: "b"; tabIndex: 1}
+        SGMiddleSegmentedButton{text:"Port C"; portName: "c"; tabIndex: 2}
+        SGMiddleSegmentedButton{text:"Port D"; portName: "d"; tabIndex: 3}
+        SGMiddleSegmentedButton{text:"Port E"; portName: "e"; tabIndex: 4}
+        SGRightSegmentedButton{text:"Port F"; portName: "f"; tabIndex: 5}
 
     }
 
+    SwipeView {
+        id: bitView
+        anchors { left:parent.left
+            right:parent.right
+            bottom:parent.bottom
+            top:buttonRow.bottom
+        }
+        currentIndex: 0
+        onCurrentIndexChanged: {
+            console.log("index changed:", bitView.currentIndex);
+            buttonRow.children[bitView.currentIndex].checked = true;
 
-    Rectangle{
-        id:contentRectangle
-        anchors.left:parent.left
-        anchors.right:parent.right
-        anchors.bottom:parent.bottom
-        anchors.top:buttonRow.bottom
-        ButtonView{opacity: 1}
+        }
+        ButtonView { }
+        ButtonView { }
+        ButtonView { }
+        ButtonView { }
+        ButtonView { }
+        ButtonView { }
+    }
+
+    PageIndicator {
+        id: indicator
+        count: bitView.count
+        currentIndex: bitView.currentIndex
+        anchors.bottom: bitView.bottom
+        anchors.horizontalCenter: parent.horizontalCenter
+
     }
 }
-
 
 
 

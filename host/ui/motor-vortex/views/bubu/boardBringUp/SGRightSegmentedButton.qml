@@ -8,8 +8,9 @@ Button {
     height:40
     checkable:true
     text: "three"
-    property var tabName
+    property var tabName: ""
     property var portName: ""
+    property int tabIndex: 0
     property int smallFontSize: (Qt.platform.os === "osx") ? 12  : 10;
     property int mediumFontSize: (Qt.platform.os === "osx") ? 15  : 12;
     property int largeFontSize: (Qt.platform.os === "osx") ? 24  : 20;
@@ -52,19 +53,8 @@ Button {
     onClicked: {
         BubuControl.setPort(portName);
         BubuControl.printCommand();
+        bitView.currentIndex = tabIndex;
     }
-
-    function createTab(inTabName, inParent){
-        var component  = Qt.createComponent(inTabName);
-        var object = component.createObject(inParent);
-        return object
-    }
-
-    Component.onCompleted: {
-        tabName = createTab(tabName,contentRectangle);
-    }
-
-
 }
 
 

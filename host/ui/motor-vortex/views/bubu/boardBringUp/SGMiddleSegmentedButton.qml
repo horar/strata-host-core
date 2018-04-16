@@ -7,12 +7,13 @@ Button {
     checkable: true
     width:100
     height:40
-    property var tabName
+    property var tabName: ""
+    property int tabIndex: 0
     property int smallFontSize: (Qt.platform.os === "osx") ? 12  : 10;
     property int mediumFontSize: (Qt.platform.os === "osx") ? 15  : 12;
     property int largeFontSize: (Qt.platform.os === "osx") ? 24  : 20;
     property int extraLargeFontSize: (Qt.platform.os === "osx") ? 36  : 24;
-    property var portName: ""
+    property var portName: "a" //deflaut port is set to a
     font.pixelSize: mediumFontSize
     background: Canvas{
         id:middleButtonCanvas
@@ -45,16 +46,8 @@ Button {
     onClicked: {
         BubuControl.setPort(portName);
         BubuControl.printCommand();
-    }
+        bitView.currentIndex = tabIndex;
 
-    function createTab(inTabName, inParent){
-        var component  = Qt.createComponent(inTabName);
-        var object = component.createObject(inParent);
-        return object
-    }
-
-    Component.onCompleted: {
-        tabName = createTab(tabName,contentRectangle);
     }
 
 }

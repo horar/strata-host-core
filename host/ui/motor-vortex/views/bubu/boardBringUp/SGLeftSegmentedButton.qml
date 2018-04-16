@@ -6,7 +6,8 @@ Button {
     id:leftButton
     width:100
     height:40
-    property var tabName
+    property var tabName: ""
+    property int tabIndex: 0
     property var portName: ""
     property int smallFontSize: (Qt.platform.os === "osx") ? 12  : 10;
     property int mediumFontSize: (Qt.platform.os === "osx") ? 15  : 12;
@@ -48,16 +49,8 @@ Button {
     onClicked: {
         BubuControl.setPort(portName);
         BubuControl.printCommand();
+        bitView.currentIndex = tabIndex;
     }
 
-    function createTab(inTabName, inParent){
-        var component  = Qt.createComponent(inTabName);
-        var object = component.createObject(inParent);
-        return object
-    }
-
-    Component.onCompleted: {
-        tabName = createTab(tabName,contentRectangle);
-    }
 
 }

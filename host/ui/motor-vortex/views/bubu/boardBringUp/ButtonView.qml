@@ -1,87 +1,105 @@
 import QtQuick 2.0
 import QtQuick 2.7
 import QtQuick.Layouts 1.3
-import QtQuick.Controls 1.4
+//import QtQuick.Controls 2.3
 import QtGraphicalEffects 1.0
 import QtQuick.Controls.Styles 1.4
+import QtQuick.Controls 1.4
+
 
 Rectangle {
 
     id:buttonViewContainer
-    anchors.fill:parent
-
     property int smallFontSize: (Qt.platform.os === "osx") ? 12  : 10;
     property int mediumFontSize: (Qt.platform.os === "osx") ? 15  : 12;
     property int largeFontSize: (Qt.platform.os === "osx") ? 24  : 20;
     property int extraLargeFontSize: (Qt.platform.os === "osx") ? 36  : 24;
+    property string upChevron: "\u25b2"
+    ScrollView {
+        width: 1000; height: 500
+        anchors.centerIn: parent
+        clip: true
+        verticalScrollBarPolicy: Qt.ScrollBarAlwaysOn
 
 
-    Column {
-        spacing: 12
-        anchors { horizontalCenter: buttonViewContainer.horizontalCenter }
+        ListView {
+            model: 16
+            header: Rectangle {
+                width: 1000; height: 50
+                color: "light gray"
+                RowLayout {
+                    id: headersForSetting
+                    width: 1000; height: 40
+                    spacing: 6
 
+                    Rectangle {
+                        id: bitLabel
+                        width: 95
+                        height: 25
+                        color: "transparent"
+                        Text {
+                            width: 94
+                            height: 24
+                            text: qsTr("Bit")
+                            font.family: "helvetica"
+                            font.pointSize: largeFontSize
+                            horizontalAlignment: Text.AlignHCenter
+                        }
+                    }
+                    Rectangle {
+                        id: settingLabel
+                        width: 95
+                        height: 25
+                        color: "transparent"
+                        Text {
+                            width: 94
+                            height: 24
+                            text: qsTr("Setting")
+                            font.pointSize: largeFontSize
+                            font.family: "helvetica"
+                            horizontalAlignment: Text.AlignHCenter
+                        }
 
-        Row {
-            id: headersForSetting
-            width: 1000; height: 40
+                    }
+                    Rectangle {
+                        id: controlLabel
+                        width: 95
+                        height: 25
+                        color: "transparent"
+                        Text {
+                            width: 94
+                            height: 24
+                            text: qsTr("Control")
+                            font.pointSize: largeFontSize
+                            font.family: "helvetica"
+                            horizontalAlignment: Text.AlignHCenter
+                        }
 
-            Rectangle {width: 1000; height: 50; color: lightGreyColor
-
-                Label {
-                    id: bitLabel
-                    text: qsTr("Bit")
-                    font.pointSize: largeFontSize
-                    font.family: "helvetica"
-                    width: 58
-                    height: 25
-                    anchors { left: parent.left
-                        leftMargin: 50 }
-                }
-                Label {
-                    id: settingLabel
-                    text: qsTr("Setting")
-                    font.pointSize: largeFontSize
-                    font.family: "helvetica"
-                    anchors { left : bitLabel.right
-                        leftMargin: 50
                     }
 
-                }
-                Label {
-                    id: controlLabel
-                    text: qsTr("Control")
-                    font.pointSize: largeFontSize
-                    font.family: "helvetica"
-                    anchors { left : settingLabel.right
-                        leftMargin: 200
+                    Label {
+                        id: statusLabel
+                        text: qsTr("Status")
+                        font.pointSize: largeFontSize
+                        font.family: "helvetica"
                     }
-
-                }
-
-                Label {
-                    id: statusLabel
-                    text: qsTr("Status")
-                    font.pointSize: largeFontSize
-                    font.family: "helvetica"
-                    anchors { left : controlLabel.right
-                        leftMargin: 200
-                    }
-
                 }
             }
+
+            footer: Rectangle {
+                width: 1000; height: 50
+                color: "light gray"
+                Text {
+                    text: upChevron
+                    anchors.centerIn: parent
+                }
+            }
+
+            delegate:
+                SingleBitSettings { bitNum: index }
+
         }
-
-        SingleBitSettings { bitNum: 0}
-        SingleBitSettings { bitNum: 1}
-        SingleBitSettings { bitNum: 2}
-        SingleBitSettings { bitNum: 3}
-        SingleBitSettings { bitNum: 4}
-        SingleBitSettings { bitNum: 5}
-        SingleBitSettings { bitNum: 6}
-        SingleBitSettings { bitNum: 7}
-
     }
+
 }
-
-
 

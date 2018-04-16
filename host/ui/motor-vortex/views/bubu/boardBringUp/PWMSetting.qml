@@ -296,7 +296,7 @@ Rectangle{
 
             CircularSpinner {
                 x: 52
-                anchors.horizontalCenter: dutyCycleColumnhorizontalCenter
+                anchors.horizontalCenter: dutyCycleColumn.horizontalCenter
                 y: 299
                 width: 97
                 height: 60
