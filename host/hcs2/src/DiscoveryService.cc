@@ -56,17 +56,13 @@ remote_platforms DiscoveryService::getPlatforms()
 
     Document document;   // parse the json
     if (document.Parse(platform_list_json.c_str()).HasParseError()) {
-        std::cout<<"ERROR: json parse error!\n";
-        // return "NONE";
     }
 
     Value& platforms = document["platforms"];
-    std::cout<<"array size is "<<platforms.Size()<<std::endl;
     for(int i=0;i<platforms.Size();i++) {
         remote_platform_details platform_detail;
         platform_detail.platform_uuid = platforms[i]["UUID"].GetString();
         platform_detail.platform_verbose = platforms[i]["verbose"].GetString();
-        std::cout<<"platform uuid "<<platform_detail.platform_uuid<<std::endl;
         remote_platform.push_back(platform_detail);
     }
     return remote_platform;
@@ -109,6 +105,5 @@ std::string DiscoveryService::buildPlatformJson()
     StringBuffer strbuf;
     Writer<StringBuffer> writer(strbuf);
     document.Accept(writer);
-    std::cout<<"remote platforms "<<strbuf.GetString()<<std::endl;
     return strbuf.GetString();
 }

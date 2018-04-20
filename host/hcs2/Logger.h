@@ -12,12 +12,14 @@
 #define __EXTRACT_FILE(__path) (strrchr(__path, '/') ? strrchr(__path, '/') + 1 : __path)
 #define __FLE __EXTRACT_FILE(__FILE__)
 
-#define PDEBUG(__format, ...) do {\
-	struct timespec __time;\
-	clock_gettime(CLOCK_MONOTONIC, &__time);\
-	printf("%ld.%09ld:%d <%s:%s(%d)>: ", __time.tv_sec, __time.tv_nsec,getpid(),__FLE,__func__,__LINE__ );\
-	printf(__format,##__VA_ARGS__);\
-	printf("\n");\
+#define PDEBUG(log,__format, ...) do {\
+	if(log>0) {\
+		struct timespec __time;\
+		clock_gettime(CLOCK_MONOTONIC, &__time);\
+		printf("%ld.%09ld:%d <%s:%s(%d)>: ", __time.tv_sec, __time.tv_nsec,getpid(),__FLE,__func__,__LINE__ );\
+		printf(__format,##__VA_ARGS__);\
+		printf("\n");\
+	}\
 } while(0)
 
 

@@ -21,7 +21,14 @@ DocumentManager::DocumentManager()
 
 DocumentManager::DocumentManager(CoreInterface *coreInterface) : coreInterface_(coreInterface)
 {
-    qDebug("DocumentManager::DocumentManager() ctor: implInterfaceBinding");
+    qDebug("DocumentManager::DocumentManager() ctor: core interface");
+    /*
+        Register document handler with CoreInterface
+        This will also send a command to Nimbus
+    */
+    coreInterface->registerDataSourceHandler("document",
+                                            bind(&DocumentManager::dataSourceHandler,
+                                            this, placeholders::_1));
     init();
 }
 
@@ -47,6 +54,7 @@ void DocumentManager::init()
     document_sets_.emplace(make_pair(QString("test_report"), &test_report_documents_));
     document_sets_.emplace(make_pair(QString("targeted_content"), &targeted_documents_));
 
+    revisionCount_ = 0;
     // register w/ Implementation Interface for Docoument Data Source Updates
     // TODO [ian] change to "document" on cloud update
 
@@ -127,12 +135,20 @@ void DocumentManager::dataSourceHandler(QJsonObject data)
             //qDebug("fname=%s, data=%.200s", fname.toStdString().c_str(), data.toStdString().c_str());
         }
 
+
+
         // TODO: [ian] SUPER hack. Unable to call "emit" on dynamic document set.
         //   it may be possible to use QObject::connect to create a "dispatcher" type object
         //   to emit based on string set name
         //
         if( name == "schematic" ) {
             emit schematicDocumentsChanged();
+            /*
+                Increment our 'new rev' counter on schematic only;
+                This is a hack to avoid each document as a rev increment.
+            */
+            revisionCount_++;
+            emit revisionCountChanged();
         }
         else if( name == "assembly" ) {
             emit assemblyDocumentsChanged();
@@ -174,4 +190,9 @@ DocumentSetPtr DocumentManager::getDocumentSet(const QString &set)
     }
 
     return document_set->second;
+}
+
+void DocumentManager::clearRevisionCount() {
+    revisionCount_= 0;
+    emit revisionCountChanged();
 }

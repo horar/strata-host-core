@@ -44,35 +44,44 @@
 #include "ParseConfig.h"
 #include "Logger.h"
 #include "DiscoveryService.h"
+#include "Connector.h"
+
+// nimbus integration
+#include "nimbus.h"
+#include "observer.h"
 
 // Console print function
 // used in main.cc and host-controller-service.cc
 // usage:1) PDEBUG("hello world",0);
 //       2) PDEBUG("the sum id %d",sum);
 // controller by "DEBUG" variable
-// DEBUG - 1 // print the message on Console
+// PRINT_DEBUG - 1 // print the message on Console
 //         0 // do not print the message
-#define DEBUG 1
+#define PRINT_DEBUG 1
 
 
 // Helper macro for stringifying JSON. The quotes for key and variable get passed down explicity
 #define WRAPQUOTE(key)  #key
 #define JSON_SINGLE_OBJECT(key, value)      "{" WRAPQUOTE(key) ":" WRAPQUOTE(value) "}"
 
+#if defined(NO_ERROR)
+#undef NO_ERROR
+#endif
+
 // Internal error numbers for Host Controller Services
-typedef enum {
-    NO_ERROR          = 0,
+enum class HcsError{
+    NO_ERROR           = 0,
     EVENT_BASE_FAILURE = 1,
-} HcsError;
+};
 
 // Host Controller Service Command dipstach messages
-typedef enum{
-	request_hcs_status	= 0,
-	request_available_platforms = 1,
-	platform_select		= 2,
-    register_client     = 3,
-	command_not_found	= 10,
-}CommandDispatcherMessages;
+enum class CommandDispatcherMessages{
+    REQUEST_HCS_STATUS	= 0,
+    REQUEST_AVAILABLE_PLATFORMS = 1,
+    PLATFORM_SELECT		= 2,
+    REGISTER_CLIENT     = 3,
+    COMMAND_NOT_FOUND	= 10,
+};
 
 // struct that will be added to the list
 typedef struct{
@@ -97,34 +106,29 @@ public:
 	static void platformCallback(evutil_socket_t fd, short what, void* args);
     static void remoteCallback(evutil_socket_t fd, short what, void* args);
 
-	// utility functions
-	std::vector<std::string> initialCommandDispatch(std::string dealer_id,std::string command);
-	bool disptachMessageToPlatforms(std::string dealer_id,std::string command);
-	CommandDispatcherMessages stringHash(std::string command);
-	bool openPlatform(); // platform functions
-	void initializePlatform(); //platform functions
+    // utility functions
+    std::vector<std::string> initialCommandDispatch(const std::string& dealer_id,const std::string& command);
+    bool disptachMessageToPlatforms(const std::string& dealer_id,const std::string& command);
+    CommandDispatcherMessages stringHash(const std::string& command);
+    bool openPlatform(); // platform functions
+    void initializePlatform(); //platform functions
     void addToLocalPlatformList(remote_platforms);  // add the element to the list
 
-	std::string platformRead(); // this fucntion will be moved to usb connector
-	bool parseAndGetPlatformId(); // potential new class to parse and handle json messages
-
-	// sends the data from platform to client
-	bool sendToClient(std::string dealer_id, std::string message_to_send);
+    std::string platformRead(); // this fucntion will be moved to usb connector
+    bool parseAndGetPlatformId(); // potential new class to parse and handle json messages
 
     // getter fucntions
-    int getServerSocketFileDescriptor();
-    int getRemoteSocketFileDescriptor();
-	void getServerSocketEventReady();
-	std::string getPlatformListJson();
-	// checker functions
-	bool clientExists(std::string);
-	bool checkPlatformExist(std::string *,std::string message);
-    void remoteRouting(std::string message);
-    bool clientExistInList(std::string);
+    void getPlatformListJson(std::string &);
+    // checker functions
+    bool clientExists(const std::string&);
+    bool checkPlatformExist(const std::string& message);
+    void remoteRouting(const std::string& message);
+    bool clientExistInList(const std::string&);
 
     // thread to monitor the serial port
     void serialPortMonitor();
     void sendDisconnecttoUI();
+    void platformDisconnectRoutine();
 
     void sendtoMap();
     HcsError setEventLoop();
@@ -162,28 +166,21 @@ private:
 
     std::list<std::string> clientList;
 
-	// ********************** //
-	// lib serial port variables
-	struct sp_port *platform_socket_;
-    struct sp_event_set *ev;
-    sp_return error;
-	int serial_fd_;	//file descriptor for serial ports
-
     // Object for Discovery Service
     DiscoveryService discovery_service_;
 
-    // Strictly for testing alone
-    int usb_pd_target_voltage_ = 5; // to add to the multimap for testing case alone
-	int vortex_target_pwm_ = 1300;
     // zmq::message_t g_reply_;
 	std::string g_reply_,g_selected_platform_verbose_,g_dealer_id_;
 
-    std::thread *serial_monitor_thread;
-    std::thread *lib_event_thread;
-
     bool port_disconnected_;
 
-    // platform libevents
-    struct event *platform_handler;
+    // Connector objects
+    ConnectorFactory *connector_factory_;
+    Connector *client_connector_ ;
+    Connector *serial_connector_ ;
+    Connector *remote_connector_ ;
+
+    // Nimbus/database object
+    Nimbus * database_;
 };
 #endif

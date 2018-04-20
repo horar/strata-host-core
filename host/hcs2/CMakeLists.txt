@@ -10,7 +10,8 @@ string(ASCII 27 Esc)
 set(red "${Esc}[31m")
 set(reset_color "${Esc}[m")
 
-add_subdirectory("test")
+# Adding the connector code
+add_subdirectory("connector")
 
 if (CROSSCOMPILE)
     message("Building WINDOWS booo...")
@@ -59,6 +60,7 @@ include_directories(
         .
 		include
         include/ArduinoJson
+        connector/include
 		"${NIMBUS_DIR}"
 		"${SHARED_DIR}/cpp-base64"    		#cpp-base64 submodule
         "${SHARED_DIR}/rapidjson/include"   	#rapidjson submodule
@@ -132,6 +134,7 @@ elseif (APPLE)
     link_directories(${CMAKE_CURRENT_SOURCE_DIR}/../lib/macos/libserial)
     link_directories(${CMAKE_CURRENT_SOURCE_DIR}/../lib/macos/libzmq)
     link_directories(${CMAKE_CURRENT_SOURCE_DIR}/../lib/macos/litecore)
+
     # LiteCore for mac
     find_library(litecore STATIC NAMES LiteCore
             HINTS "${CMAKE_CURRENT_SOURCE_DIR}/../lib/macos/litecore")
@@ -163,7 +166,7 @@ add_executable(${HOST_CONTROLLER_SERVICE_BINARY_NAME} ${SOURCE})
 
 if (CROSSCOMPILE)
     message("LINKING: windows")
-    target_link_libraries(${HOST_CONTROLLER_SERVICE_BINARY_NAME}
+    target_link_libraries(${HOST_CONTROLLER_SERVICE_BINARY_NAME} LINK_PUBLIC
             -lzmq.dll
             -lstdc++
             -lpthread
@@ -172,30 +175,32 @@ if (CROSSCOMPILE)
             -lws2_32
             nimbusLib
             ${litecore}
+            libconnectors.so
             )
 elseif( UNIX AND NOT APPLE AND NOT CROSSCOMPILE)
     message("LINKING: linux")
-    target_link_libraries(${HOST_CONTROLLER_SERVICE_BINARY_NAME}
+    target_link_libraries(${HOST_CONTROLLER_SERVICE_BINARY_NAME} LINK_PUBLIC
             -lzmq
             -lstdc++
             -lpthread
             -levent
-            -lserialport
             nimbusLib
             ${litecore}
+            libconnectors.so
             )
 elseif (APPLE)
     message("LINKING: mac")
-    target_link_libraries(${HOST_CONTROLLER_SERVICE_BINARY_NAME}
+    target_link_libraries(${HOST_CONTROLLER_SERVICE_BINARY_NAME} LINK_PUBLIC
             -lzmq
             -lstdc++
             -lpthread
             -levent
             -lserialport
-            -lFleece
+            -lFleeceStatic
             nimbusLib
             ${litecore}
             ${FOUNDATION_LIBRARY} ${IOKIT_LIBRARY}
+            libconnectors.so
             )
 
 else()

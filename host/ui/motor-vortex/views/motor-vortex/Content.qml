@@ -2,15 +2,20 @@ import QtQuick 2.0
 import QtQuick.Controls 2.0
 import "."  //Import directory
 import "qrc:/js/navigation_control.js" as NavigationControl
+import tech.spyglass.DocumentManager 1.0
+import tech.spyglass.Document 1.0
 
 Rectangle {
+    id: view
     border.color: "black"
     border.width: 0
     anchors { fill: parent }
 
     SwipeView {
         id: swipeView
-        anchors{ fill: parent }
+        // Adjust Height for tabBar
+        width: parent.width
+        height: parent.height - tabBar.height
         currentIndex: tabBar.currentIndex
         PageSchematic { id: pageSchematic }
         PageLayout { id: pageLayout }
@@ -27,7 +32,7 @@ Rectangle {
 
         TabButton { text: "Schematic"
             Rectangle {
-                id: newSchematicDocuments
+                id: newSchematicBadge
                 width: parent.width<parent.height?parent.width/1.9:parent.height/1.8
                 height: width
                 color: "red"
@@ -37,19 +42,21 @@ Rectangle {
                 anchors.bottomMargin: -20
                 Text {
                     color: "white"
-                    text: "2"
+                    text: { return documentManager.revisionCount}
                     z:2
                     wrapMode: Text.WordWrap
                     anchors { fill: parent; centerIn: parent.Center }
                     horizontalAlignment: Text.AlignHCenter
                     verticalAlignment: Text.AlignVCenter
                 }
+                // Only show badge if rev is > 0
+                visible: documentManager.revisionCount ? true : false
             }
-            onClicked: newSchematicDocuments.visible = false
+            onClicked: documentManager.clearRevisionCount()
         }
         TabButton { text: "Layout"
             Rectangle {
-                id: newLayoutDocuments
+                id: newLayoutBadge
                 width: parent.width<parent.height?parent.width/1.9:parent.height/1.8
                 height: width
                 color: "red"
@@ -59,19 +66,21 @@ Rectangle {
                 anchors.bottomMargin: -20
                 Text {
                     color: "white"
-                    text: "3"
+                    text: { return documentManager.revisionCount}
                     z:2
                     wrapMode: Text.WordWrap
                     anchors { fill: parent; centerIn: parent.Center }
                     horizontalAlignment: Text.AlignHCenter
                     verticalAlignment: Text.AlignVCenter
                 }
+                // Only show badge if rev is > 0
+                visible: documentManager.revisionCount ? true : false
             }
-            onClicked: newLayoutDocuments.visible = false
+            onClicked: documentManager.clearRevisionCount()
         }
         TabButton { text: "Test Report"
             Rectangle {
-                id: newTestDocuments
+                id: newTestReportBadge
                 width: parent.width<parent.height?parent.width/1.9:parent.height/1.8
                 height: width
                 color: "red"
@@ -81,20 +90,22 @@ Rectangle {
                 anchors.bottomMargin: -20
                 Text {
                     color: "white"
-                    text: "5"
+                    text: { return documentManager.revisionCount}
                     z:2
                     wrapMode: Text.WordWrap
                     anchors { fill: parent; centerIn: parent.Center }
                     horizontalAlignment: Text.AlignHCenter
                     verticalAlignment: Text.AlignVCenter
                 }
+                // Only show badge if rev is > 0
+                visible: documentManager.revisionCount ? true : false
             }
-            onClicked: newTestDocuments.visible = false
+            onClicked: documentManager.clearRevisionCount()
         }
         TabButton { text: "System Content" }
         TabButton { text: "Coming Soon"
             Rectangle {
-                id: newComingSoonDocuments
+                id: newCommingSoonBadge
                 width: parent.width<parent.height?parent.width/1.9:parent.height/1.8
                 height: width
                 color: "red"
@@ -104,24 +115,30 @@ Rectangle {
                 anchors.bottomMargin: -20
                 Text {
                     color: "white"
-                    text: "2"
+                    text: { return documentManager.revisionCount}
                     z:2
                     wrapMode: Text.WordWrap
                     anchors { fill: parent; centerIn: parent.Center }
                     horizontalAlignment: Text.AlignHCenter
                     verticalAlignment: Text.AlignVCenter
                 }
+                // Only show badge if rev is > 0
+                visible: documentManager.revisionCount ? true : false
             }
-            onClicked: newComingSoonDocuments.visible = false
+            onClicked: documentManager.clearRevisionCount()
         }
     }
-    Image {
-        id: flipButton
-        source:"./images/icons/backIcon.svg"
-        anchors { bottom: parent.bottom; right: parent.right }
+    Rectangle{
         height: 40;width:40
+        anchors { bottom: view.bottom; right: view.right }
+        color: "white";
+        Image {
+            id: flipButton
+            source:"qrc:/views/motor-vortex/images/icons/backIcon.svg"
+            anchors { fill: parent }
+            height: 40;width:40
+        }
     }
-
     MouseArea {
         width: flipButton.width; height: flipButton.height
         anchors { bottom: parent.bottom; right: parent.right }

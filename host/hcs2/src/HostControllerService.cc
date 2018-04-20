@@ -14,6 +14,26 @@
 #include "HostControllerService.h"
 
 using namespace rapidjson;
+using namespace std;
+
+AttachmentObserver::AttachmentObserver(void *client_socket,void *client_id_list)
+{
+    PDEBUG(PRINT_DEBUG,"Attaching the nimbus observer");
+    client_connector_ = (Connector *)client_socket;
+    client_list_ = (clientList *)client_id_list;
+}
+
+void AttachmentObserver::DocumentChangeCallback(jsonString jsonBody) {
+    clientList::iterator client_list_iterator = client_list_->begin();
+    while(client_list_iterator != client_list_->end()) {
+        client_connector_->setDealerID(*client_list_iterator);
+        client_connector_->send(jsonBody);
+        // [prasanth] : comment the following PDEBUG for faster performance.
+        // use it for debugging
+        // PDEBUG(PRINT_DEBUG,"[hcs to hcc]%s",jsonBody);
+        client_list_iterator++;
+    }
+}
 /******************************************************************************/
 /*                                core functions                              */
 /******************************************************************************/
@@ -30,22 +50,32 @@ using namespace rapidjson;
 //  ERROR:
 //    exits if socket cannot be opened or incorrect socket address
 //
-HostControllerService::HostControllerService(std::string configuration_file)
+HostControllerService::HostControllerService(string configuration_file)
 {
     // config file parsing
     configuration_ = new ParseConfig(configuration_file);
-    PDEBUG("************************************************************");
-    PDEBUG("[TODO]: Need to change the config file parameters for new hcs");
-    std::cout<<"CONFIG: \n"<< *configuration_ <<std::endl;
-    PDEBUG("************************************************************");
+    cout<<"************************************************************\n";
+    cout<<"CONFIG: \n"<< *configuration_ <<std::endl;
+    if(PRINT_DEBUG > 0) {
+        cout<< "Console print is enabled\n";
+    }
+    else {
+        cout<< "Console print is disabled\n";
+    }
+    cout<<"************************************************************\n";
     //[TODO] [prasanth] : rename the terms and variables in config file and
     // parseconfig.cpp for easy understanding
     hcs_server_address_ = configuration_->GetSubscriberAddress();
     hcs_remote_address_ = configuration_->GetRemoteAddress();
-    // get the serial port numbers from config file and store it to a vector
-    serial_port_list_ = configuration_->GetSerialPorts();
     // get the dealer id for remote socket connection
     dealer_remote_socket_id_ = configuration_->GetDealerSocketID();
+    // creating the nimbus object
+    database_ = new Nimbus();
+    database_->Open(NIMBUS_TEST_PLATFORM_JSON);
+    // initializing the connectors
+    client_connector_ = connector_factory_->getConnector("client");
+    serial_connector_ = connector_factory_->getConnector("platform");
+    remote_connector_ = connector_factory_->getConnector("remote");
 }
 
 // @f init
@@ -54,8 +84,6 @@ HostControllerService::HostControllerService(std::string configuration_file)
 // arguments:
 //  IN:
 //   open : service socket
-//          nimbus [not yet]
-//          serial [not yet]
 //  OUT:
 //   void
 //
@@ -66,22 +94,25 @@ HcsError HostControllerService::init()
 {
     // zmq context creation
     socket_context_ = new(zmq::context_t);
-
-    // opening the server socket as router
-    server_socket_ = new zmq::socket_t(*socket_context_,ZMQ_ROUTER);
-    // binding the server socket to address in config file
-    server_socket_->bind(hcs_server_address_.c_str());
-
-    // opening the remote socket as dealer
-    remote_socket_ = new zmq::socket_t(*socket_context_,ZMQ_DEALER);
-    // setting the dealer id for the remote socket
-    remote_socket_->setsockopt(ZMQ_IDENTITY,dealer_remote_socket_id_.c_str(),dealer_remote_socket_id_.length());
-    remote_socket_->connect(hcs_remote_address_.c_str());
-
+    // opening the client socket to connect with UI
+    client_connector_->open(hcs_server_address_);
+    // registering the observer to the database
+    // // TODO [prasanth] NIMBUS integration **Needs better organisation
+    AttachmentObserver blobObserver((void *)client_connector_, (void *)&clientList);
+    database_->Register(&blobObserver);
+    // // openeing the socket to talk with the remote server
+    remote_connector_->setDealerID(dealer_remote_socket_id_);
+    remote_connector_->open(hcs_remote_address_);
+    // [TODO]: [prasanth] the following lines are used to handle the serial connect/disconnect
+    // This method will be removed once we get the serial to socket stuff in
     port_disconnected_ = true;
     setEventLoop();
-    while(run());
-    return NO_ERROR;
+    // [TODO] [prasanth] : This function run is coded in this, since the libevent dynamic
+    //addtion of event is not implemented successfully in hcs
+    while((int)run());
+
+    HcsError error = HcsError::NO_ERROR;
+    return error;
 }
 
 // @f run
@@ -96,88 +127,91 @@ HcsError HostControllerService::init()
 //  ERROR:
 //    exits if events cannot be dispatched or cannot be added to the base
 //
+
+// [TODO] [prasanth] : This function run is coded in this, since the libevent dynamic
+//addtion of event is not implemented successfully in hcs
 HcsError HostControllerService::run()
 {
-
     while(!openPlatform()) {
-        sleep(2);
+        sleep(0.2);
     }
-    PDEBUG("\033[1;32mPlatform detected\033[0m\n");
+    PDEBUG(PRINT_DEBUG,"\033[1;32mPlatform detected\033[0m\n");
     initializePlatform(); // init serial config
-    PDEBUG("platform handle value is %d",serial_fd_);
     port_disconnected_ = false;
     event_base_loopbreak(event_loop_base_);
     setEventLoop();
-    return EVENT_BASE_FAILURE;
+
+    HcsError error = HcsError::EVENT_BASE_FAILURE;
+    return error;
 }
 
 HcsError HostControllerService::setEventLoop()
 {
     // get the platform list from the discovery service
     // [TODO] [Prasanth] : Should be added dynamically
-    // remote_platforms remote_platform_list = discovery_service_.getPlatforms();
     addToLocalPlatformList(discovery_service_.getPlatforms());
-
-    std::string platformList = getPlatformListJson();
-    std::list<std::string>::iterator client_list_iterator = clientList.begin();
-    // std::string disconnect_message = "{\"notification\":{\"value\":\"platform_connection_change_notification\",\"payload\":{\"status\":\"disconnected\"}}}";
+    string platformList ;
+    getPlatformListJson(platformList);
+    std::list<string>::iterator client_list_iterator = clientList.begin();
     while(client_list_iterator != clientList.end()) {
-        std::string dealer_id = multimap_iterator_->second;
-        s_sendmore(*server_socket_,*client_list_iterator);
-        s_send(*server_socket_,platformList);
-        getServerSocketEventReady();
-        PDEBUG("[hcs to hcc]%s",platformList.c_str());
+        client_connector_->setDealerID(*client_list_iterator);
+        client_connector_->send(platformList);
+        PDEBUG(PRINT_DEBUG,"[hcs to hcc]%s",platformList.c_str());
         client_list_iterator++;
     }
+    PDEBUG(PRINT_DEBUG,"Starting the event");
     // creating a periodic event for test case
     event_loop_base_ = event_base_new();
     if (!event_loop_base_) {
-        PDEBUG("Could not create event base");
-        return EVENT_BASE_FAILURE;
+        PDEBUG(PRINT_DEBUG,"Could not create event base");
+
+        HcsError error = HcsError::EVENT_BASE_FAILURE;
+        return error;
     }
+
     struct event *periodic_event = event_new(event_loop_base_, -1, EV_TIMEOUT
                         | EV_PERSIST, HostControllerService::testCallback,this);
-    timeval seconds = {3, 0};
+    timeval seconds = {1, 0};
     event_add(periodic_event, &seconds);
-
-    // service handler
-    int server_socket_file_descriptor = getServerSocketFileDescriptor();
 
     // [prasanth] : Always add the serial port handling to event loop before socket
     // the socket event loop
     if(!port_disconnected_) {
-        sp_get_port_handle(platform_socket_,&serial_fd_);
-        PDEBUG("Serial fd %d\n",serial_fd_);
-
-        platform_handler = event_new(event_loop_base_, serial_fd_, EV_READ | EV_PERSIST,
+#ifdef _WIN32
+        struct event *platform_handler = event_new(event_loop_base_,serial_connector_->getFileDescriptor(), EV_READ | EV_WRITE | EV_PERSIST,
+                                HostControllerService::platformCallback,this);
+#else
+        struct event *platform_handler = event_new(event_loop_base_,serial_connector_->getFileDescriptor(), EV_READ  | EV_PERSIST,
                                         HostControllerService::platformCallback,this);
+#endif
         event_add(platform_handler,NULL);
     }
-
+    //
     // adding the service handler callback to the event loop
-    struct event *service_handler = event_new(event_loop_base_,server_socket_file_descriptor,
+    struct event *service_handler = event_new(event_loop_base_,client_connector_->getFileDescriptor(),
                         EV_READ | EV_WRITE | EV_PERSIST ,
                         HostControllerService::serviceCallback,this);
     event_add(service_handler,NULL);
-    unsigned int     zmq_events;
-    size_t           zmq_events_size  = sizeof(zmq_events);
-    server_socket_->getsockopt(ZMQ_EVENTS, &zmq_events, &zmq_events_size);
-
-    // remote handler
-    int remote_socket_file_descriptor = getRemoteSocketFileDescriptor();
-    // // adding the service handler callback to the event loop
-    // unsigned int     zmq_events;
-    // size_t           zmq_events_size  = sizeof(zmq_events);
-    // remote_socket_->getsockopt(ZMQ_EVENTS, &zmq_events, &zmq_events_size);
-
-    struct event *remote_handler = event_new(event_loop_base_,remote_socket_file_descriptor,
+    //
+    // // remote handler
+    struct event *remote_handler = event_new(event_loop_base_,remote_connector_->getFileDescriptor(),
                         EV_READ | EV_WRITE | EV_PERSIST ,
                         HostControllerService::remoteCallback,this);
     event_add(remote_handler,NULL);
 
     // dispatch all the events
-    event_base_dispatch(event_loop_base_);
+    int event_base = event_base_dispatch(event_loop_base_);
+    if(event_base == 0) {
+      HcsError error = HcsError::NO_ERROR;
+      return error;
+    }
+    else {
+      PDEBUG(PRINT_DEBUG,"Base Failure");
+      HcsError error = HcsError::EVENT_BASE_FAILURE;
+      return error;
+    }
 }
+
 /******************************************************************************/
 /*                         event callback functions                           */
 /******************************************************************************/
@@ -194,52 +228,16 @@ void HostControllerService::testCallback(evutil_socket_t fd, short what, void* a
 {
     // creating a periodic event for test case
     HostControllerService *hcs = (HostControllerService*)args;
-
     if(hcs->port_disconnected_) {
-        if(hcs->openPlatform())
+        if(hcs->serial_connector_->isPlatformAvailable()) {
             event_base_loopbreak(hcs->event_loop_base_);
-    }
-    // Following codes are strictly for testing only and hence written in stupid way
-    hcs->multimap_iterator_ = hcs->platform_client_mapping_.begin();
-    for(hcs->multimap_iterator_= hcs->platform_client_mapping_.begin();hcs->multimap_iterator_!=
-                            hcs->platform_client_mapping_.end();hcs->multimap_iterator_++) {
-        if (hcs->multimap_iterator_->first[0]=="simulated-udb-pd") {
-            // [prasanth] : sending the client id. s_sendmore is to say the client that
-            // we are sending multipart message and there is a message to follow
-            s_sendmore(*hcs->server_socket_,hcs->multimap_iterator_->second);
-            // s_sendmore(*hcs->server_socket_,"prasanth\n");
-            Document document;
-            // define the document as an object rather than an array
-            document.SetObject();
-            Document::AllocatorType& allocator = document.GetAllocator();
-            document.AddMember("command","usb-pd-power-notifications",allocator);
-            document.AddMember("target-voltage",hcs->usb_pd_target_voltage_,allocator);
-            StringBuffer strbuf;
-            Writer<StringBuffer> writer(strbuf);
-            document.Accept(writer);
-            s_send(*hcs->server_socket_,strbuf.GetString());
-
-            PDEBUG("\033[1;4;32m[%s->%s]\033[0m: %s\n",hcs->multimap_iterator_->first[0].c_str(),hcs->multimap_iterator_->second.c_str(),strbuf.GetString());
-        } else if (hcs->multimap_iterator_->first[0]=="simulated-motor-vortex") {
-            // [prasanth] : sending the client id. s_sendmore is to say the client that
-            // we are sending multipart message and there is a message to follow
-            s_sendmore(*hcs->server_socket_,hcs->multimap_iterator_->second);
-            Document document;
-            // define the document as an object rather than an array
-            document.SetObject();
-            Document::AllocatorType& allocator = document.GetAllocator();
-            document.AddMember("command","motor-pwm-notifications",allocator);
-            document.AddMember("target-motor-pwm",hcs->vortex_target_pwm_,allocator);
-            StringBuffer strbuf;
-            Writer<StringBuffer> writer(strbuf);
-            document.Accept(writer);
-            s_send(*hcs->server_socket_,strbuf.GetString());
-
-            PDEBUG("\033[1;4;32m[%s->%s]\033[0m: %s\n",hcs->multimap_iterator_->first[0].c_str(),hcs->multimap_iterator_->second.c_str(),strbuf.GetString());
-        }
+          }
     }
 }
 
+/******************************************************************************/
+/*                         event callback functions                           */
+/******************************************************************************/
 // @f service socket callback
 // @b will be invoked when the service socket reads a message
 //
@@ -253,48 +251,41 @@ void HostControllerService::serviceCallback(evutil_socket_t fd, short what, void
 {
     // [TODO] [prasanth] This is just a test case. will clean this as we proceed
     HostControllerService *hcs = (HostControllerService*)args;
-    std::string dealer_id;
-    std::string read_message;
-
-    // adding poller because, when hcs add the service back to event loop, the callback is fired
-    // [TODO] investigate and remove the need for polling
-    zmq::pollitem_t items = {*hcs->server_socket_, 0, ZMQ_POLLIN, 0 };
-    zmq::poll (&items,1,10);
-
-    if(items.revents & ZMQ_POLLIN) {
-        // reading the client/dealer socket id
-        dealer_id = s_recv(*hcs->server_socket_);
+    string dealer_id;
+    string read_message;
+    if(hcs->client_connector_->read(read_message)) {
+        dealer_id = hcs->client_connector_->getDealerID();
         if(!hcs->clientExistInList(dealer_id)) {
-            PDEBUG("Adding new client to list");
+            PDEBUG(PRINT_DEBUG,"Adding new client to list");
             hcs->clientList.push_back(dealer_id);
         }
-        PDEBUG("reading dealer id");
-        if(items.revents & ZMQ_POLLIN) {
-            // reading the message from client/dealer socket
-            read_message = s_recv(*hcs->server_socket_);
-            if(hcs->platform_client_mapping_.empty() || !hcs->clientExists(dealer_id)) {
-                std::vector<std::string> selected_platform_info = hcs->initialCommandDispatch(dealer_id,read_message);
-                // strictly for testing alone
-                if(!(selected_platform_info[0] == "NONE")) {
-                    // need to change the following lines to support struct
-                    std::vector<std::string> map_element;
-                    map_element.insert(map_element.begin(),selected_platform_info[0]);
-                    map_element.insert(map_element.begin()+1,selected_platform_info[1]);
-                    hcs->platform_client_mapping_.emplace(map_element,dealer_id);
-                    PDEBUG("adding the %s uuid to multimap\n",selected_platform_info[0].c_str());
-                }
-            } else {
-                PDEBUG("Dispatching message to platform/s\n");
-                hcs->disptachMessageToPlatforms(dealer_id,read_message);
+        Document service_command;
+        if (service_command.Parse(read_message.c_str()).HasParseError()) {
+            PDEBUG(PRINT_DEBUG,"ERROR: json parse error!");
+        }
+
+        // TODO [ian] add this to a "command_filter" map to add more then just "db::cmd"
+        if( service_command.HasMember("db::cmd") ) {
+            if ( hcs->database_->Command( read_message.c_str() ) != NO_ERRORS ){
+                PDEBUG(PRINT_DEBUG,"ERROR: database failed failed!");
             }
         }
+        else if(hcs->platform_client_mapping_.empty() || !hcs->clientExists(dealer_id)) {
+            std::vector<string> selected_platform_info = hcs->initialCommandDispatch(dealer_id,read_message);
+            // strictly for testing alone
+            if(!(selected_platform_info[0] == "NONE")) {
+                // need to change the following lines to support struct
+                std::vector<string> map_element;
+                map_element.insert(map_element.begin(),selected_platform_info[0]);
+                map_element.insert(map_element.begin()+1,selected_platform_info[1]);
+                hcs->platform_client_mapping_.emplace(map_element,dealer_id);
+                PDEBUG(PRINT_DEBUG,"adding the %s uuid to multimap\n",selected_platform_info[0].c_str());
+            }
+        } else {
+            PDEBUG(PRINT_DEBUG,"Dispatching message to platform/s\n");
+            hcs->disptachMessageToPlatforms(dealer_id,read_message);
+        }
     }
-    // [prasanth] : The following lines are required for the event handling
-    // to recognize the next read trigger
-
-    unsigned int     zmq_events;
-    size_t           zmq_events_size  = sizeof(zmq_events);
-    hcs->server_socket_->getsockopt(ZMQ_EVENTS, &zmq_events, &zmq_events_size);
 }
 
 // @f remote socket callback
@@ -309,29 +300,12 @@ void HostControllerService::serviceCallback(evutil_socket_t fd, short what, void
 void HostControllerService::remoteCallback(evutil_socket_t fd, short what, void* args)
 {
     // [TODO] [prasanth] This is just a test case. will clean this as we proceed
-    // PDEBUG("Inside remote callback\n");
     HostControllerService *hcs = (HostControllerService*)args;
-
-    std::string read_message;
-
-    // adding poller because, when hcs add the service back to event loop, the callback is fired
-    // [TODO] investigate and remove the need for polling
-    zmq::pollitem_t items = {*hcs->remote_socket_, 0, ZMQ_POLLIN, 0 };
-    zmq::poll (&items,1,10);
-
-    if(items.revents & ZMQ_POLLIN) {
-        // reading the message from client/dealer socket
-	      PDEBUG("check1");
-        read_message = s_recv(*hcs->remote_socket_);
-        PDEBUG("message read %s",read_message.c_str());
-        std::string dealer_id;
+    string read_message;
+    if (hcs->remote_connector_->read(read_message)) {
+        PDEBUG(PRINT_DEBUG,"remote message read %s",read_message.c_str());
         hcs->remoteRouting(read_message);
-	      PDEBUG("check2");
     }
-
-    unsigned int     zmq_events;
-    size_t           zmq_events_size  = sizeof(zmq_events);
-    hcs->remote_socket_->getsockopt(ZMQ_EVENTS, &zmq_events, &zmq_events_size);
 }
 
 // @f platform serial callback
@@ -346,26 +320,18 @@ void HostControllerService::remoteCallback(evutil_socket_t fd, short what, void*
 void HostControllerService::platformCallback(evutil_socket_t fd, short what, void* args)
 {
     // [TODO] [prasanth] This is just a test case. will clean this as we proceed
-    PDEBUG("Inside platform callback\n");
     HostControllerService *hcs = (HostControllerService*)args;
-    std::string read_message = hcs->platformRead();
-    // char buf[1024];
-    // sp_nonblocking_read(hcs->platform_socket_,buf,1024);
-    PDEBUG("message being read %s\n",read_message.c_str());
-    sp_flush(hcs->platform_socket_,SP_BUF_BOTH);
-    // [TODO] [prasanth] change the map value for platform from string to structure
-    std::string dealer_id;
-    if(hcs->checkPlatformExist(&dealer_id,read_message)) {
-        //hcs->sendToClient(dealer_id,read_message);
+    string read_message = hcs->platformRead();
+    if(read_message != "") {
+        PDEBUG(PRINT_DEBUG,"message being read %s\n",read_message.c_str());
+        // [TODO] [prasanth] change the map value for platform from string to structure
+        hcs->checkPlatformExist(read_message);
+        //[TODO] [prasanth]: send data to the data bridge through multimap handle
+        // for now we are restricting the send to platform only with remote dealer id "h1"
+        if(hcs->dealer_remote_socket_id_ == "h1") {
+            hcs->remote_connector_->send(read_message);
+        }
     }
-    else {
-        PDEBUG("\033[1;4;32mPLATFORM %s is not connected to any client\033[0m\n",hcs->g_platform_uuid_.c_str());
-    }
-    //[TODO] [prasanth]: send data to the data bridge through multimap handle
-    s_send(*hcs->remote_socket_,read_message);
-    unsigned int     zmq_events;
-    size_t           zmq_events_size  = sizeof(zmq_events);
-    hcs->remote_socket_->getsockopt(ZMQ_EVENTS, &zmq_events, &zmq_events_size);
 }
 
 /******************************************************************************/
@@ -384,34 +350,11 @@ void HostControllerService::platformCallback(evutil_socket_t fd, short what, voi
 //
 bool HostControllerService::openPlatform()
 {
-    static bool outputPortError = true;
-
-    if(serial_port_list_.empty()) {
-        std::cout << "ERROR: Please add serial port number in config file  !!!"<< std::endl;
-        return false;
+    string platform_port_name;
+    if(serial_connector_->open(platform_port_name)) {
+        port_disconnected_ = false;
+        return true;
     }
-    for (auto port : serial_port_list_) {
-        error = sp_get_port_by_name(port.c_str(), &platform_socket_);
-        if (error == SP_OK) {
-            error = sp_open(platform_socket_, SP_MODE_READ_WRITE);
-            if (error == SP_OK) {
-                std::cout << "SERIAL PORT OPEN SUCCESS: " << port << std::endl;
-                // Connector::messageProperty message;
-                // message.message = "{\"notification\":{\"value\":\"platform_connection_change_notification\",\"payload\":{\"status\":\"connected\"}}}";
-                // hostP.service->sendNotification(message, hostP.notify);
-                // Reset our flag to output errors when we disconnect
-                outputPortError = true;
-                port_disconnected_ = false;
-                return true;
-                // run();
-            }
-        }
-        else if(outputPortError) {
-            std::cout << "ERROR: Invalid Serial Port Number " << port <<" Please check the config file  !!!" << std::endl;
-        }
-    }
-    // Only output the error once
-    outputPortError = false;
     return false;
 }
 
@@ -426,24 +369,6 @@ bool HostControllerService::openPlatform()
 //
 void HostControllerService::initializePlatform()
 {
-    sp_set_stopbits(platform_socket_,1);
-    sp_set_bits(platform_socket_,8);
-    sp_set_rts(platform_socket_,SP_RTS_OFF);
-    sp_set_baudrate(platform_socket_,115200);
-    sp_set_dtr(platform_socket_,SP_DTR_OFF);
-    sp_set_parity(platform_socket_,SP_PARITY_NONE );
-    sp_set_cts(platform_socket_,SP_CTS_IGNORE );
-
-    // sending this json to platform to get the uuid
-    // [TODO] Only for intial phase. Future this should be added in better place and
-    // it also should wait for response and a timeout event to send it again if
-    // it didn't receive the uuid
-
-
-    // [TODO] [prasanth] move everything to platform callback
-    //std::vector<std::string> paltform_message;  // for this project
-    // std::string platform_id = parseAndGetPlatformId();
-    // [TODO] [prasanth] check for nullptr
     platform_details simulated_usb_pd,simulated_motor_vortex,sim_usb;
     simulated_usb_pd.platform_uuid = "P2.2018.1.1.0.0.c9060ff8-5c5e-4295-b95a-d857ee9a3671";
     simulated_usb_pd.platform_verbose = "USB PD Load Board";
@@ -471,41 +396,42 @@ void HostControllerService::initializePlatform()
 //  OUT:
 //
 //
-std::vector<std::string> HostControllerService::initialCommandDispatch(std::string dealer_id,std::string command)
+std::vector<string> HostControllerService::initialCommandDispatch(const std::string& dealer_id,const std::string& command)
 {
     // [TODO]: [prasanth] should be removed after bod demo
-    std::vector<std::string> selected_platform;
+    std::vector<string> selected_platform;
     selected_platform.insert(selected_platform.begin(),"NONE");
     selected_platform.insert(selected_platform.begin()+1,"NONE");
-
-    std::string board_name,remote_status ;
-
+    string board_name,remote_status ;
+    client_connector_->setDealerID(dealer_id);
     Document service_command;
     // [TODO] [prasanth] : needs better organization
     if (service_command.Parse(command.c_str()).HasParseError()) {
-        PDEBUG("ERROR: json parse error!\n");
+        PDEBUG(PRINT_DEBUG,"ERROR: json parse error!\n");
         return selected_platform;
     }
-
     // state machine using switch statements
-    switch(stringHash(service_command["cmd"].GetString())) {
-        case request_hcs_status:            s_sendmore(*server_socket_,dealer_id);
-                                            s_send(*server_socket_,JSON_SINGLE_OBJECT
+    string platformList;
+    CommandDispatcherMessages message = stringHash(service_command["cmd"].GetString());
+    switch(message) {
+        case CommandDispatcherMessages::REQUEST_HCS_STATUS:
+                                            client_connector_->send(JSON_SINGLE_OBJECT
                                                 ("hcs::notification","hcs_active"));
                                             break;
-        case register_client:
-        case request_available_platforms:   PDEBUG("Sending the list of available platform");
-                                            s_sendmore(*server_socket_,dealer_id);
-                                            s_send(*server_socket_,getPlatformListJson());
+        case CommandDispatcherMessages::REGISTER_CLIENT:
+        case CommandDispatcherMessages::REQUEST_AVAILABLE_PLATFORMS:
+                                            PDEBUG(PRINT_DEBUG,"Sending the list of available platform");
+                                            getPlatformListJson(platformList);
+                                            client_connector_->send(platformList);
                                             break;
-        case platform_select:               PDEBUG("The client has selected a platform");
+        case CommandDispatcherMessages::PLATFORM_SELECT:
+                                            PDEBUG(PRINT_DEBUG,"The client has selected a platform");
                                             board_name = service_command["platform_uuid"].GetString();
                                             remote_status = service_command["remote"].GetString();
                                             selected_platform.insert(selected_platform.begin(),board_name);
                                             selected_platform.insert(selected_platform.begin()+1,remote_status);
                                             return selected_platform;
     }
-    getServerSocketEventReady();
     return selected_platform;
 }
 
@@ -518,51 +444,31 @@ std::vector<std::string> HostControllerService::initialCommandDispatch(std::stri
 //  OUT: true if success,
 //       false if failure
 //
-bool HostControllerService::disptachMessageToPlatforms(std::string dealer_id,std::string read_message)
+bool HostControllerService::disptachMessageToPlatforms(const std::string& dealer_id,const std::string& read_message)
 {
-    // multimap_iterator_ = platform_client_mapping_.begin();
     for(multimap_iterator_= platform_client_mapping_.begin();multimap_iterator_!=
                             platform_client_mapping_.end();multimap_iterator_++) {
         if (multimap_iterator_->second == dealer_id) {
             // the following printing is strictly for testing only
-            PDEBUG("\033[1;4;31m[%s<-%s]\033[0m: %s\n",multimap_iterator_->first[0].c_str(),dealer_id.c_str(),read_message.c_str());
-            // send the message to multimap_iterator_->first (connected platforms)
-
-            // following code are strictly for testing Only
-
+            PDEBUG(PRINT_DEBUG,"\033[1;4;31m[%s<-%s]\033[0m: %s\n",multimap_iterator_->first[0].c_str(),dealer_id.c_str(),read_message.c_str());
             Document service_command;
             if(!read_message.empty()) {
                 if (service_command.Parse(read_message.c_str()).HasParseError()) {
-                    PDEBUG("ERROR: json parse error!\n");
+                    PDEBUG(PRINT_DEBUG,"ERROR: json parse error!\n");
                     return false;
                 }
             }
             if(service_command.HasMember("cmd")) {
-                std::string command = service_command["cmd"].GetString();
-                if(multimap_iterator_->first[0] == "simulated-usb-pd") {
-                    if(command == "set_target_voltage") {
-                        usb_pd_target_voltage_ = service_command["target_voltage"].GetInt();
+                string command = service_command["cmd"].GetString();
+                if(multimap_iterator_->first[1] == "connected") {
+                    PDEBUG(PRINT_DEBUG,"\033[1;4;31mlocal write %s\033[0m\n",multimap_iterator_->first[1].c_str());
+                    if(serial_connector_->send(read_message)) {
+                        PDEBUG(PRINT_DEBUG,"\033[1;4;33mWrite success %s\033[0m",read_message.c_str());
                     }
-                    return true;
-                } else if(multimap_iterator_->first[0] == "simulated-vortex-motor") {
-                    if(command == "set_target_pwm") {
-                        vortex_target_pwm_ = service_command["target_pwm"].GetInt();
-                    }
-                    return true;
-                } else if(multimap_iterator_->first[0] == "Vortex Fountain Motor Platform Board") {
-                    if(multimap_iterator_->first[1] == "connected") {
-                        PDEBUG("\033[1;4;31mlocal write %s\033[0m\n",multimap_iterator_->first[1].c_str());
-                        sp_flush(platform_socket_,SP_BUF_BOTH);
-                        read_message += "\n";
-                        sp_nonblocking_write(platform_socket_,(void *)read_message.c_str(),read_message.length());
-                    }
-                    else if(multimap_iterator_->first[1] == "remote") {
-                        PDEBUG("\033[1;4;31mlocal write %s\033[0m\n",multimap_iterator_->first[1].c_str());
-                        // sp_flush(platform_socket_,SP_BUF_BOTH);
-                        read_message += "\n";
-                        s_send(*remote_socket_,read_message);
-                        // sp_nonblocking_write(platform_socket_,(void *)read_message.c_str(),read_message.length());
-                    }
+                }
+                else if(multimap_iterator_->first[1] == "remote") {
+                    PDEBUG(PRINT_DEBUG,"\033[1;4;31mlocal write %s\033[0m\n",multimap_iterator_->first[1].c_str());
+                    remote_connector_->send(read_message);
                 }
             }
         }
@@ -579,18 +485,24 @@ bool HostControllerService::disptachMessageToPlatforms(std::string dealer_id,std
 //  OUT: hash(enum) for the string
 //
 //
-CommandDispatcherMessages HostControllerService::stringHash(std::string command)
+CommandDispatcherMessages HostControllerService::stringHash(const std::string& command)
 {
+    CommandDispatcherMessages message;
     if(command == "request_hcs_status") {
-        return request_hcs_status;
+        message = CommandDispatcherMessages::REQUEST_HCS_STATUS;
+        return message;
     } else if (command == "request_available_platforms") {
-        return request_available_platforms;
+        message = CommandDispatcherMessages::REQUEST_AVAILABLE_PLATFORMS;
+        return message;
     } else if (command == "platform_select") {
-        return platform_select;
+        message = CommandDispatcherMessages::PLATFORM_SELECT;
+        return message;
     } else if (command == "register_client") {
-        return register_client;
+        message = CommandDispatcherMessages::REGISTER_CLIENT;
+        return message;
     } else {
-        return command_not_found;
+        message = CommandDispatcherMessages::COMMAND_NOT_FOUND;
+        return message;
     }
 }
 
@@ -606,64 +518,20 @@ CommandDispatcherMessages HostControllerService::stringHash(std::string command)
 //
 bool HostControllerService::parseAndGetPlatformId()
 {
-    sp_flush(platform_socket_,SP_BUF_BOTH);
-    std::string cmd = "{\"cmd\":\"request_platform_id\"}\n";
-    sp_blocking_write(platform_socket_,(void *)cmd.c_str(),cmd.length(),5);
-
-    PDEBUG("parseAndGetPlatformId\n");
-
-    bool isPlatformId=false;
-    //
-    // // platform read will be handled by connector factory and will always be called libevents
-    while(!isPlatformId) {
-        // std::string ack_message = platformRead();
-        std::string platform_id_message = platformRead();
-
-        Document platform_command;
-        if (platform_command.Parse(platform_id_message.c_str()).HasParseError()) {
-            PDEBUG("ERROR: json parse error in Platform ID section!\n");
-            isPlatformId = false;
-        }
-
-        else if(platform_command.HasMember("notification")){
-            if (platform_command["notification"]["payload"].HasMember("verbose_name")) {
-              platform_details platform;
-              platform.platform_uuid = platform_command["notification"]["payload"]["platform_id"].GetString();
-              platform.platform_verbose = platform_command["notification"]["payload"]["verbose_name"].GetString();
-              platform.connection_status = "connected";    // [TODO] need some cool way to do it
-              PDEBUG("Platform UUID %s\n",platform.platform_uuid.c_str());
-              // [TODO] : add the platform element to the list
-              platform_uuid_.push_back(platform);
-
-              // [TODO] [prasanth] the following section is for mapping between remote and paltform
-              if(!clientExists("remote")) {
-                  std::vector<std::string> map_element;
-                  map_element.insert(map_element.begin(),platform.platform_verbose);
-                  map_element.insert(map_element.begin()+1,"connected");
-                  PDEBUG("[remote routing ] added into map");
-                  platform_client_mapping_.emplace(map_element,"remote");
-                  g_platform_uuid_ = platform.platform_verbose;
-              }
-              break;
-            }
-        }
+    PDEBUG(PRINT_DEBUG,"parseAndGetPlatformId\n");
+    platform_details platform;
+    platform.platform_uuid = serial_connector_->getPlatformUUID();
+    platform.platform_verbose = serial_connector_->getDealerID();
+    platform.connection_status = "connected";
+    platform_uuid_.push_back(platform);
+    if((!clientExists("remote"))&&(dealer_remote_socket_id_== "h1")) {
+        std::vector<string> map_element;
+        map_element.insert(map_element.begin(),platform.platform_verbose);
+        map_element.insert(map_element.begin()+1,"connected");
+        PDEBUG(PRINT_DEBUG,"[remote routing ] added into map");
+        platform_client_mapping_.emplace(map_element,"remote");
+        g_platform_uuid_ = platform.platform_verbose;
     }
-}
-
-// @f sendToClient
-// @b gets the message and the dealer id where to send
-//
-// arguments:
-//  IN: dealer_id and the message to send
-//
-//  OUT: bool true if it has platform id else false
-//
-//
-bool HostControllerService::sendToClient(std::string dealer_id, std::string message)
-{
-    s_sendmore(*server_socket_,dealer_id);
-    s_send(*server_socket_,message);
-    getServerSocketEventReady();
 }
 
 // @f addToLocalPlatformList
@@ -676,14 +544,6 @@ bool HostControllerService::sendToClient(std::string dealer_id, std::string mess
 //
 void HostControllerService::addToLocalPlatformList(remote_platforms remote_platform)
 {
-    for(auto platform_list_iterator = platform_uuid_.begin(); platform_list_iterator
-                                != platform_uuid_.end();platform_list_iterator++) {
-        platform_details platform = *platform_list_iterator;
-        if(platform.platform_uuid == remote_platform[0].platform_uuid) {
-            PDEBUG("local exists\n");
-            return;
-        }
-    }
     platform_details platform;
     platform.platform_uuid = remote_platform[0].platform_uuid;
     platform.platform_verbose = remote_platform[0].platform_verbose;
@@ -703,160 +563,79 @@ void HostControllerService::addToLocalPlatformList(remote_platforms remote_platf
 //  OUT: returns the received message
 //
 //
-std::string HostControllerService::platformRead()
+string HostControllerService::platformRead()
 {
-    // [TODO] [prasanth] : needs better code for reading from serial port
-    //  copied this section from current HCS
-
-    // setting the libserial port events
-    sp_new_event_set(&ev);
-    sp_add_port_events(ev, platform_socket_, SP_EVENT_RX_READY);
-
-    std::vector<char> response;
-    sp_return error;
-    char temp = '\0';
-    while(temp != '\n') {
-        sp_wait(ev, 0);
-        error = sp_nonblocking_read(platform_socket_,&temp,1);
-        if(error <= 0) {
-            PDEBUG("Platform Disconnected\n");
-            //return "disconnected";  // think about this
-            port_disconnected_ = true;
-
-            sendDisconnecttoUI();
-            platform_uuid_.clear();
-            platform_client_mapping_.clear();
-
-            // adding the remote platform
-            addToLocalPlatformList(discovery_service_.getPlatforms());
-
-            platform_details simulated_usb_pd,simulated_motor_vortex,sim_usb;
-            simulated_usb_pd.platform_uuid = "P2.2018.1.1.0.0.c9060ff8-5c5e-4295-b95a-d857ee9a3671";
-            simulated_usb_pd.platform_verbose = "USB PD Load Board";
-            simulated_usb_pd.connection_status = "view";
-
-            simulated_motor_vortex.platform_uuid = "motorvortex1";
-            simulated_motor_vortex.platform_verbose = "Vortex Fountain Motor Platform Board";
-            simulated_motor_vortex.connection_status = "view";
-
-            sim_usb.platform_uuid = "P2.2017.1.1.0.0.cbde0519-0f42-4431-a379-caee4a1494af";
-            sim_usb.platform_verbose = "USB PD";
-            sim_usb.connection_status = "view";
-
-            platform_uuid_.push_back(simulated_usb_pd);  // for testing alone
-            platform_uuid_.push_back(simulated_motor_vortex);
-            platform_uuid_.push_back(sim_usb);
-
-            std::string platformList = getPlatformListJson();
-            std::list<std::string>::iterator client_list_iterator = clientList.begin();
-            while(client_list_iterator != clientList.end()) {
-                // std::string dealer_id = multimap_iterator_->second;
-                s_sendmore(*server_socket_,*client_list_iterator);
-                s_send(*server_socket_,platformList);
-                getServerSocketEventReady();
-                PDEBUG("[hcs to hcc]%s",platformList.c_str());
-                client_list_iterator++;
-            }
-            event_del(platform_handler);
-            event_base_loopbreak(event_loop_base_);
-            port_disconnected_ = true;
-            setEventLoop();
-            break;
-        }
-        if(temp !='\n' && temp!=NULL) {
-            response.push_back(temp);
-        }
+    string notification;
+    if (serial_connector_->read(notification)) {
+        return notification;
     }
-    if(!response.empty()) {
-        std::string new_string(response.begin(),response.end());
-        PDEBUG("Rx'ed message : %s\n",new_string.c_str());
-        response.clear();
-        return new_string;
+    else {
+        platformDisconnectRoutine();
+        return "NULL";
     }
 }
+
+void HostControllerService::platformDisconnectRoutine ()
+{
+    PDEBUG(PRINT_DEBUG,"Platform Disconnected\n");
+    port_disconnected_ = true;
+    sendDisconnecttoUI();
+    platform_uuid_.clear();
+    platform_client_mapping_.clear();
+
+    platform_details simulated_usb_pd,simulated_motor_vortex,sim_usb;
+    simulated_usb_pd.platform_uuid = "P2.2018.1.1.0.0.c9060ff8-5c5e-4295-b95a-d857ee9a3671";
+    simulated_usb_pd.platform_verbose = "USB PD Load Board";
+    simulated_usb_pd.connection_status = "view";
+
+    simulated_motor_vortex.platform_uuid = "motorvortex1";
+    simulated_motor_vortex.platform_verbose = "Vortex Fountain Motor Platform Board";
+    simulated_motor_vortex.connection_status = "view";
+
+    sim_usb.platform_uuid = "P2.2017.1.1.0.0.cbde0519-0f42-4431-a379-caee4a1494af";
+    sim_usb.platform_verbose = "USB PD";
+    sim_usb.connection_status = "view";
+
+    platform_uuid_.push_back(simulated_usb_pd);  // for testing alone
+    platform_uuid_.push_back(simulated_motor_vortex);
+    platform_uuid_.push_back(sim_usb);
+
+    string platformList ;
+    getPlatformListJson(platformList);
+    std::list<string>::iterator client_list_iterator = clientList.begin();
+    while(client_list_iterator != clientList.end()) {
+        client_connector_->setDealerID(*client_list_iterator);
+        client_connector_->send(platformList);
+        PDEBUG(PRINT_DEBUG,"[hcs to hcc]%s",platformList.c_str());
+        client_list_iterator++;
+    }
+    event_base_loopbreak(event_loop_base_);
+    port_disconnected_ = true;
+    setEventLoop();
+}
+
 
 void HostControllerService::sendDisconnecttoUI()
 {
-    std::list<std::string>::iterator client_list_iterator = clientList.begin();
-    std::string disconnect_message = "{\"notification\":{\"value\":\"platform_connection_change_notification\",\"payload\":{\"status\":\"disconnected\"}}}";
+    std::list<string>::iterator client_list_iterator = clientList.begin();
+    string disconnect_message = "{\"notification\":{\"value\":\"platform_connection_change_notification\",\"payload\":{\"status\":\"disconnected\"}}}";
     while(client_list_iterator != clientList.end()) {
-        s_sendmore(*server_socket_,*client_list_iterator);
-        s_send(*server_socket_,disconnect_message);
-        getServerSocketEventReady();
+        client_connector_->setDealerID(*client_list_iterator);
+        client_connector_->send(disconnect_message);
         client_list_iterator++;
     }
-}
-/******************************************************************************/
-/*                              getter functions                              */
-/******************************************************************************/
-// @f getServiceSocketFileDescriptor
-// @b returns the file descriptor for the zeromq router socket
-//
-// arguments:
-//  IN:
-//
-//  OUT:
-//    router socket file descriptor
-//
-int HostControllerService::getServerSocketFileDescriptor()
-{
-    #ifdef _WIN32
-        unsigned long long int server_socket_file_descriptor=0;
-        size_t server_socket_file_descriptor_size = sizeof(server_socket_file_descriptor);
-    #else
-        int server_socket_file_descriptor=0;
-        size_t server_socket_file_descriptor_size = sizeof(server_socket_file_descriptor);
-    #endif
-    server_socket_->getsockopt(ZMQ_FD,&server_socket_file_descriptor,
-            &server_socket_file_descriptor_size);
-    return server_socket_file_descriptor;
-}
-
-int HostControllerService::getRemoteSocketFileDescriptor()
-{
-    #ifdef _WIN32
-        unsigned long long int remote_socket_file_descriptor=0;
-        size_t remote_socket_file_descriptor_size = sizeof(remote_socket_file_descriptor);
-    #else
-        int remote_socket_file_descriptor=0;
-        size_t remote_socket_file_descriptor_size = sizeof(remote_socket_file_descriptor);
-    #endif
-    remote_socket_->getsockopt(ZMQ_FD,&remote_socket_file_descriptor,
-            &remote_socket_file_descriptor_size);
-    return remote_socket_file_descriptor;
-}
-
-// @f getServerSocketEventReady
-// @b make the server ready for reading and triggering the next event
-//
-// arguments:
-//  IN:
-//
-//  OUT:
-//
-//
-void HostControllerService::getServerSocketEventReady()
-{
-    // [prasanth] : The following lines are required for the event handling
-    // to recognize the next read trigger
-    unsigned int     zmq_events;
-    size_t           zmq_events_size  = sizeof(zmq_events);
-    server_socket_->getsockopt(ZMQ_EVENTS, &zmq_events, &zmq_events_size);
-    unsigned int     zmq_events_remote;
-    size_t           zmq_events_size_remote  = sizeof(zmq_events_remote);
-    remote_socket_->getsockopt(ZMQ_EVENTS, &zmq_events_remote, &zmq_events_size_remote);
 }
 
 // @f getPlatformListJson
 // @b uses RapidJSON to create json message with list of available platforms
 //
 // arguments:
-//  IN:
+//  IN: string pointer that will store the platform list
 //
-//  OUT: string that is in json format and contains the list of available paltforms
+//  OUT:
 //
 //
-std::string HostControllerService::getPlatformListJson()
+void HostControllerService::getPlatformListJson(string &list)
 {
     // document is the root of a json message
     Document document;
@@ -865,7 +644,6 @@ std::string HostControllerService::getPlatformListJson()
     Value array(kArrayType);
     Document::AllocatorType& allocator = document.GetAllocator();
     // traversing through the list
-
     for(auto platform_list_iterator = platform_uuid_.begin(); platform_list_iterator
                                 != platform_uuid_.end();platform_list_iterator++) {
         platform_details platform = *platform_list_iterator;
@@ -884,13 +662,11 @@ std::string HostControllerService::getPlatformListJson()
     nested_object.SetObject();
     nested_object.AddMember("list",array,allocator);
     document.AddMember("hcs::notification",nested_object,allocator);
-    // document.AddMember("platforms",array,allocator);
     StringBuffer strbuf;
     Writer<StringBuffer> writer(strbuf);
     document.Accept(writer);
-    return strbuf.GetString();
+    list = strbuf.GetString();
 }
-
 
 /******************************************************************************/
 /*                              checker functions                              */
@@ -904,7 +680,7 @@ std::string HostControllerService::getPlatformListJson()
 //  OUT:
 //   true if it exists in map and false if it does not
 //
-bool HostControllerService::clientExists(std::string client_identifier)
+bool HostControllerService::clientExists(const string& client_identifier)
 {
     bool does_client_exist;
     multimap_iterator_ = platform_client_mapping_.begin();
@@ -927,10 +703,10 @@ bool HostControllerService::clientExists(std::string client_identifier)
 //  OUT:
 //   true if it exists in list and false if it does not
 //
-bool HostControllerService::clientExistInList(std::string client_identifier)
+bool HostControllerService::clientExistInList(const string& client_identifier)
 {
     bool does_client_exist;
-    std::list<std::string>::iterator client_list_iterator = clientList.begin();
+    std::list<string>::iterator client_list_iterator = clientList.begin();
     while(client_list_iterator != clientList.end()) {
         does_client_exist = (*client_list_iterator == client_identifier);
         if(does_client_exist) {
@@ -950,60 +726,41 @@ bool HostControllerService::clientExistInList(std::string client_identifier)
 //  OUT:
 //   true if it exists in map and false if it does not
 //
-bool HostControllerService::checkPlatformExist(std::string *dealer_id,std::string message)
+bool HostControllerService::checkPlatformExist(const std::string& message)
 {
-
     multimap_iterator_ = platform_client_mapping_.begin();
     while(multimap_iterator_ != platform_client_mapping_.end()) {
         bool does_platform_exist = false;
-        // does_platform_exist = (multimap_iterator_->first == g_platform_uuid_);
-        std::vector<std::string> map_uuid = multimap_iterator_->first;
-        // strictly for testing only
-        PDEBUG("[List of Platform]: %s\n",map_uuid[0].c_str());
-        PDEBUG("connected paltform uuid%s\n",g_platform_uuid_.c_str());
-        PDEBUG("[msg]%s",message.c_str());
-        (map_uuid[0] == "Vortex Fountain Motor Platform Board")?does_platform_exist = true : does_platform_exist = false;
-        PDEBUG("The comparison %d\n",(int)does_platform_exist);
-        if(does_platform_exist) {
-            *dealer_id = multimap_iterator_->second;
-            if(!message.empty()) {
-              s_sendmore(*server_socket_,*dealer_id);
-              s_send(*server_socket_,message);
-              getServerSocketEventReady();
-            }
+        std::vector<string> map_uuid = multimap_iterator_->first;
+        string dealer_id;
+        dealer_id = multimap_iterator_->second;
+        if(!message.empty()) {
+          client_connector_->setDealerID(dealer_id);
+          client_connector_->send(message);
         }
         multimap_iterator_++;
     }
     return true;
 }
 
-void HostControllerService::remoteRouting(std::string message)
+void HostControllerService::remoteRouting(const std::string& message)
 {
-    // sp_nonblocking_write(platform_socket_,(void *)message.c_str(),message.length());
-    std::string dealer_id;
+    string dealer_id;
     multimap_iterator_ = platform_client_mapping_.begin();
+    if(message.empty()) {
+        return;
+    }
     while(multimap_iterator_ != platform_client_mapping_.end()) {
         bool does_platform_exist = false;
-        // does_platform_exist = (multimap_iterator_->first == g_platform_uuid_);
-        std::vector<std::string> map_uuid = multimap_iterator_->first;
-        // strictly for testing only
-        PDEBUG("[List of Platform]: %s\n",map_uuid[0].c_str());
-        PDEBUG("connected paltform uuid%s\n",g_platform_uuid_.c_str());
-        PDEBUG("[msg]%s",message.c_str());
-        (map_uuid[0] == "Vortex Fountain Motor Platform Board")?does_platform_exist = true : does_platform_exist = false;
-        PDEBUG("The comparison %d\n",(int)does_platform_exist);
-        if(does_platform_exist) {
-            dealer_id = multimap_iterator_->second;
-            if(!message.empty()) {
-              if(map_uuid[1] == "remote") {
-                  s_sendmore(*server_socket_,dealer_id);
-                  s_send(*server_socket_,message);
-                  getServerSocketEventReady();
-              } else if (map_uuid[1] == "connected") {
-                  PDEBUG("Inside remote writing");
-                  sp_nonblocking_write(platform_socket_,(void *)message.c_str(),message.length());
-              }
-            }
+        std::vector<string> map_uuid = multimap_iterator_->first;
+        string dealer_id = multimap_iterator_->second;
+        dealer_id = multimap_iterator_->second;
+        if(map_uuid[1] == "remote") {
+            client_connector_->setDealerID(dealer_id);
+            client_connector_->send(message);
+        } else if ((map_uuid[1] == "connected") && (dealer_id == "remote")) {
+            PDEBUG(PRINT_DEBUG,"Inside remote writing %s with dealer id %s",message.c_str(),dealer_id.c_str());
+            serial_connector_->send(message);
         }
         multimap_iterator_++;
     }
