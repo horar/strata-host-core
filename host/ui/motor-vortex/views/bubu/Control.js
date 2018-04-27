@@ -24,16 +24,26 @@ var gpio_output = {
     }
 }
 
+var gpio_read = {
+    "cmd": "digital_pin_read",
+    "payload": {
+        "port": "",
+        "bit": "",
+    }
+}
+
 function setPort(port)
 {
     gpio_direction.payload.port = port;
     gpio_output.payload.port = port;
+    gpio_read.payload.port = port;
 }
 
 function setBit(bit)
 {
     gpio_direction.payload.bit = bit;
     gpio_output.payload.bit = bit;
+    gpio_read.payload.bit = bit;
 
 }
 
@@ -54,6 +64,16 @@ function printCommand()
 {
     console.log(JSON.stringify(gpio_direction));
     console.log(JSON.stringify(gpio_output));
+    console.log(JSON.stringify(gpio_read));
 }
 
+function getDirectionCommand()
+{
+    return JSON.stringify(gpio_direction);
+}
+
+function getOutputCommand()
+{
+    return JSON.stringify(gpio_output);
+}
 

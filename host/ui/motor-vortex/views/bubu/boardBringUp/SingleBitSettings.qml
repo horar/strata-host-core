@@ -5,8 +5,6 @@ import QtQuick.Controls.Styles 1.4
 import "qrc:/views/bubu/Control.js" as BubuControl
 
 
-
-
 Rectangle{
 
     width: 1000; height: 60
@@ -23,15 +21,18 @@ Rectangle{
             name: "input"
             when: inputOutput.stateOfTheSwitch === true
             PropertyChanges { target: highLow; visible: false}
+            PropertyChanges { target: lockimage; visible: true}
         },
 
         State {
             name: "output"
             when: inputOutput.stateOfTheSwitch === false
             PropertyChanges { target: highLow; visible: true}
+            PropertyChanges { target: lockimage; visible: false}
         }
 
     ]
+
 
     RowLayout {
         width: 800
@@ -54,7 +55,7 @@ Rectangle{
             id: inputOutputContainer
             width: 200; height: 50
             anchors { left : bitNumber.right
-                leftMargin: 100}
+                leftMargin: 120}
             color: "transparent"
             GPIOSetting {
                 id: inputOutput
@@ -73,7 +74,7 @@ Rectangle{
             id: highlowContainer
             width: 200; height: 50
             anchors { left : inputOutputContainer.right
-                leftMargin: 100}
+                leftMargin: 120}
             color: "transparent"
             GPIOSetting {
                 id: highLow
@@ -84,6 +85,12 @@ Rectangle{
                 settingMessageTwo: "High"
                 initialState: true
                 width: 200; height: 50
+            }
+
+            Image{
+                id: lockimage
+                width: 30; height: 40
+                source: "lock.svg"
             }
         }
         TextField {

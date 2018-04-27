@@ -95,5 +95,8 @@
         <file>js/metrics.js</file>
         <file>views/bubu/Control.js</file>
         <file>views/bubu/boardBringUp/SingleBitSettings.qml</file>
+        <file>views/bubu/boardBringUp/Signals.qml</file>
+        <file>views/bubu/boardBringUp/SingleBitPWMsettings.qml</file>
+        <file>views/bubu/boardBringUp/ButtonViewPwm.qml</file>
     </qresource>
 </RCC>

@@ -8,7 +8,7 @@ import QtQuick.Controls 1.4
 
 Rectangle {
 
-    id:buttonViewContainer
+    id:pwmbuttonViewContainer
     property int smallFontSize: (Qt.platform.os === "osx") ? 12  : 10;
     property int mediumFontSize: (Qt.platform.os === "osx") ? 15  : 12;
     property int largeFontSize: (Qt.platform.os === "osx") ? 24  : 20;
@@ -45,42 +45,49 @@ Rectangle {
                             horizontalAlignment: Text.AlignHCenter
                         }
                     }
+//                    Rectangle {
+//                        id: enabledLabel
+//                        width: 95
+//                        height: 25
+//                        color: "transparent"
+//                        Text {
+//                            width: 94
+//                            height: 24
+//                            text: qsTr("Enabled")
+//                            font.pointSize: largeFontSize
+//                            font.family: "helvetica"
+//                            horizontalAlignment: Text.AlignHCenter
+//                        }
+//                    }
                     Rectangle {
-                        id: settingLabel
+                        id: frequencyLabel
                         width: 95
                         height: 25
                         color: "transparent"
                         Text {
                             width: 94
                             height: 24
-                            text: qsTr("Direction")
+                            text: qsTr("Frequency (HZ)")
                             font.pointSize: largeFontSize
                             font.family: "helvetica"
                             horizontalAlignment: Text.AlignHCenter
                         }
 
                     }
+
                     Rectangle {
-                        id: controlLabel
+                        id: dutyCycleLabel
                         width: 95
                         height: 25
                         color: "transparent"
+
                         Text {
-                            width: 94
-                            height: 24
-                            text: qsTr("Control")
+                            id: statusLabel
+                            text: qsTr("Duty Cycle")
                             font.pointSize: largeFontSize
                             font.family: "helvetica"
                             horizontalAlignment: Text.AlignHCenter
                         }
-
-                    }
-
-                    Label {
-                        id: statusLabel
-                        text: qsTr("Status")
-                        font.pointSize: largeFontSize
-                        font.family: "helvetica"
                     }
                 }
             }
@@ -95,9 +102,8 @@ Rectangle {
             }
 
             delegate:
-                SingleBitSettings { bitNum: index }
+                SingleBitPWMsettings { bitNum: index }
 
         }
     }
 }
-

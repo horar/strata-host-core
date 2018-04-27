@@ -8,7 +8,6 @@ import QtQuick.Controls.Styles 1.4
 Rectangle{
     id:pwmSettingRectangle
     opacity: 1
-    anchors.fill:parent
 
     property int smallFontSize: (Qt.platform.os === "osx") ? 12  : 10;
     property int mediumFontSize: (Qt.platform.os === "osx") ? 15  : 12;

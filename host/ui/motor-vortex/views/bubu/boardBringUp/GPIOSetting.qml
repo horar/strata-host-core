@@ -29,18 +29,22 @@ Rectangle {
             if(switchComponent.checked === true) {
                 stateOfTheSwitch = true;
                 BubuControl.setDirection("input");
+                coreInterface.sendCommand(BubuControl.getDirectionCommand());
             }
             else {
                 stateOfTheSwitch = false;
                 BubuControl.setDirection("output");
+                coreInterface.sendCommand(BubuControl.getDirectionCommand());
             }
         }
         else  {
             if(switchComponent.checked === true) {
                 BubuControl.setOutputValue("low");
+                coreInterface.sendCommand(BubuControl.getOutputCommand());
             }
             else {
                 BubuControl.setOutputValue("high");
+                coreInterface.sendCommand(BubuControl.getOutputCommand());
             }
         }
     }
@@ -49,7 +53,7 @@ Rectangle {
         id: switchComponent
         checkable: true
         checked: initialState
-        anchors.verticalCenter: settingRow
+        anchors.verticalCenter: settingRow.verticalCenter
         onClicked: {
             BubuControl.setBit(bitNumber);
             checkSwitchState();

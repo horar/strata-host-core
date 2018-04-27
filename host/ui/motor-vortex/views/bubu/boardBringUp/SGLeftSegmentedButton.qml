@@ -6,6 +6,7 @@ Button {
     id:leftButton
     width:100
     height:40
+//    property var pinFunction: ""
     property var tabName: ""
     property int tabIndex: 0
     property var portName: ""
@@ -47,9 +48,11 @@ Button {
 
     }
     onClicked: {
+
         BubuControl.setPort(portName);
         BubuControl.printCommand();
         bitView.currentIndex = tabIndex;
+
     }
 
 

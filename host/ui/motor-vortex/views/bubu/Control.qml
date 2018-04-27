@@ -52,12 +52,20 @@ Rectangle {
             if (button.objectName == "serialBoardBringUpButton"){
 
                 newTab = serialView
+                serialView.visible = true
+
             }
             else if (button.objectName == "gpioBoardBringUpButton"){
                 newTab = gpioView
+                gpioView.visible = true
+                serialView.visible = false
+                pwmView.visible = false
+
+
             }
             else if (button.objectName == "pwmBoardBringUpButton"){
                 newTab = pwmView
+                pwmView.visible = true
             }
             crosfadeTabs.start()
             currentTab = newTab
@@ -73,18 +81,18 @@ Rectangle {
         SGLeftSegmentedButton{
             text:"serial" ;
             objectName: "serialBoardBringUpButton"
-            tabName:Serial{}
+            tabName:Serial{visible: false}
         }
 
         SGMiddleSegmentedButton{
             text:"gpio";
             objectName: "gpioBoardBringUpButton"
-            tabName:Gpio{}
+            tabName:Gpio{visible: false}
         }
         SGRightSegmentedButton{
             text:"pwm";
             objectName: "pwmBoardBringUpButton"
-            tabName:Pwm{}
+            tabName:Pwm{visible: false}
         }
     }
 

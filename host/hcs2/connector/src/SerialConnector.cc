@@ -21,7 +21,7 @@ using namespace rapidjson;
 // windows
 // 1 - enabled
 // 0 - disabled the hack, can support other platforms (Tested it with USB-PD and load board)
-#define ST_EVAL_BOARD_SUPPORT_ENABLED 1
+#define ST_EVAL_BOARD_SUPPORT_ENABLED 0
 
 // The following variable is "strictly" used only for windows build.
 // since windows does not support libevent handling of serial devices,
@@ -61,7 +61,7 @@ bool SerialConnector::isPlatformAvailable()
 #ifdef __APPLE__
     usb_keyword = "usb";
 #elif __linux__
-    usb_keyword = "ACM";
+    usb_keyword = "USB";
 #elif _WIN32
     usb_keyword = "COM";
 #endif

@@ -10,9 +10,11 @@ import "qrc:/views/bubu/Control.js" as BubuControl
 
 
 Rectangle {
+    id:gpioContainer
 
     property var currentTab : gpioView
     property var newTab:  gpioView
+
 
     anchors.fill:parent
 
@@ -48,7 +50,7 @@ Rectangle {
 
     Row {
         id:buttonRow
-        anchors { top: parent.top;topMargin: 40; horizontalCenter: parent.horizontalCenter }
+        anchors { top: gpioContainer.top;topMargin: 40; horizontalCenter: gpioContainer.horizontalCenter }
         width: 600
         height: 40
 
@@ -64,9 +66,9 @@ Rectangle {
 
     SwipeView {
         id: bitView
-        anchors { left:parent.left
-            right:parent.right
-            bottom:parent.bottom
+        anchors { left:gpioContainer.left
+            right:gpioContainer.right
+            bottom:gpioContainer.bottom
             top:buttonRow.bottom
         }
         currentIndex: 0
@@ -88,7 +90,7 @@ Rectangle {
         count: bitView.count
         currentIndex: bitView.currentIndex
         anchors.bottom: bitView.bottom
-        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.horizontalCenter: gpioContainer.horizontalCenter
 
     }
 }
