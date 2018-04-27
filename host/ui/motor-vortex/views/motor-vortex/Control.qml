@@ -8,12 +8,13 @@ import QtQuick.Extras 1.4
 import "qrc:/js/navigation_control.js" as NavigationControl
 
 
-Item {
+Rectangle {
     id: controlPage
     objectName: "control"
     anchors { fill: parent }
     // used to check whether the motor slider has been already updated from platform notification
     property var isMotorSliderUpdated: false;
+    color: "white"
 
     // Platform Implementation signals
     Connections {
