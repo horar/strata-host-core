@@ -12,57 +12,96 @@ Item {
     id: controlPage
     objectName: "control"
     anchors { fill: parent }
+    // used to check whether the motor slider has been already updated from platform notification
     property var isMotorSliderUpdated: false;
 
     // Platform Implementation signals
     Connections {
         target: coreInterface
         onNotification: {
+            /*
+                Motor vortex has a known issue by sending non-ascii charactors in json object
+                The following code is a hack.
+                See the bad JSON example below. The non asci charactor can show up in the key of the object or the value.
+                That's the reason there is a validation for object's key and value.
+                {
+                    "notification":{
+                        "value":"pi_stats",
+                        "payf���load":{
+                            "speed_target":1500,
+                            "current_speed":15f�20,
+                            "error":-20,
+                            "sum":-4.00e-4,
+                            "duty_now":0.19,
+                            "mode":"manual"
+                      }
+                }
+            */
+
             try {
                 /*
                     Attempt to parse JSON
                     Note: Motor platform sometimes has noise in json and can corrupt values
                 */
                 var notification = JSON.parse(payload)
+
+                //check if the object has valid payload key
+                if(notification.hasOwnProperty("payload")){
+                    var notificationPayload = notification.payload;
+
+                    //check if current_speed exists in the payload object. skip if corrupted.
+                    if(notificationPayload.hasOwnProperty("current_speed")){
+                        var current_speed = notification.payload.current_speed;
+
+                        //check if speed is a valid integer
+                        if(Number.isInteger(current_speed)){
+                            tachMeterGauge.value =Math.floor( ((current_speed - 1500) / 4000) * 100 )
+
+                            // just making sure the the slider is being set only once when the
+                            // platform send its current speed
+                            // Then the user will start controlling it. Hence there is no need to keep updating the slider
+                            // based on the platfrom notification's value
+                            if(!isMotorSliderUpdated){
+                                //set value only once and must be float from 0 to 1
+                                motorSpeedControl.value =( (current_speed-1500)/5500.0)
+                                isMotorSliderUpdated = !isMotorSliderUpdated
+                            }
+
+                        }else{
+                            console.log("Motor Platfrom Notification Error. Junk data found on current_speed ", current_speed)
+                        }
+                    }else {
+                        console.log("Motor Platfrom Notification Error. Can't find current_speed in payload object")
+                    }
+
+                    //check if mode exists in the payload object. skip if corrupted.
+                    if(notificationPayload.hasOwnProperty("mode")){
+                        //mode either set to be a manual or automation
+                        var systemMode = notification.payload.mode;
+                        if(systemMode ==="manual"){
+                            manualButton.checked = true;
+                            automaticButton.checked = false;
+                        }else if(systemMode ==="automation") {
+                            manualButton.checked = false;
+                            automaticButton.checked = true;
+                        }else{
+                            console.log("Motor Platfrom Notification Error. Junk data found on mode")
+                        }
+                    }else{
+                        console.log("Motor Platfrom Notification Error. can't find mode in payload object")
+                    }
+
+                }else{
+                    console.log("Motor Platfrom Notification Error. payload is corrupted")
+                }
             }
             catch(e)
             {
                 if ( e instanceof SyntaxError){
-                    console.log("Notification JSON is invalid. ignoring")
+                    console.log("Motor Platfrom Notification Error. Notification JSON is invalid, ignoring")
                 }
             }
 
-            //get speed value from json; check i
-            var speed = notification.payload.current_speed;
-            if(speed !== undefined){
-                tachMeterGauge.value = ((speed - 1500) / 4000) * 100
-            }
-            else
-            {
-                console.log("Junk data found on speed ", speed)
-            }
-
-            //system mode
-            var systemMode = notification.payload.mode;
-            if (systemMode !== undefined){
-                if(systemMode ==="manual"){
-                    manualButton.checked = true;
-                    automaticButton.checked = false;
-                }else if(systemMode ==="automation") {
-                    manualButton.checked = false;
-                    automaticButton.checked = true;
-                }
-            }
-            else
-            {
-                console.log("Junk data found on mode")
-            }
-
-            if(!isMotorSliderUpdated){
-                //set value only once
-                motorSpeedControl.value = (speed/5500.0)
-                isMotorSliderUpdated = !isMotorSliderUpdated
-            }
         }
     }
 
@@ -150,7 +189,7 @@ Item {
                     anchors.centerIn: parent
 
                     function setMotorSpeedCommand(value) {
-                        var truncated_value = Math.floor(value * 4000 + 1500)
+                        var truncated_value = Math.floor( (value * 4000) + 1500)
                         var setSpeedCmd ={
                             "cmd":"speed_input",
                             "payload": {
@@ -158,7 +197,7 @@ Item {
                             }
                         }
                         // send set speed command to platform
-                        console.log("set value ",value * 4000 + 1500)
+                        console.log("set value ", (value * 4000) + 1500)
                         coreInterface.sendCommand(JSON.stringify(setSpeedCmd))
                     }
 
