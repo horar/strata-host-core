@@ -50,12 +50,13 @@ else : macx : !win32 {
 else : win32 {
     message("Building on Windows")
     LIBS += -L$$PWD/../../lib/windows/zeromq/ -llibzmq
-    INCLUDEPATH += $$PWD/../../lib/windows/zeromq
-    DEPENDPATH += $$PWD/../../lib/windows/zeromq
-    INCLUDEPATH += $$PWD/../../lib/linux/include
+    INCLUDEPATH += $${HOST_ROOT}/lib/windows/zeromq
+    DEPENDPATH += $${HOST_ROOT}/lib/windows/zeromq
+    INCLUDEPATH += $${HOST_ROOT}/lib/linux/include
+    INCLUDEPATH += $${HOST_ROOT}/include/
+    INCLUDEPATH += $$PWD/PlatformInterface/
     INCLUDEPATH += $$PWD/include
-    INCLUDEPATH += $$PWD/PlatformInterface
-    DEPENDPATH += $$PWD/../../lib/linux/include
+    DEPENDPATH += $${HOST_ROOT}/lib/linux/include
 }
 else: message("UNKNOWN machine type. Build configuration failed !!!!")
 

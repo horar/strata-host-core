@@ -28,7 +28,13 @@ using namespace rapidjson;
 // the connector factory will create a seperate thread for serial read and
 // after reading a message will write it to a push socket
 // serial connector read will read the paltform message from pull socket
+// @ref 1) under "KNOWN BUGS/HACKS" section in Connector.h for more details
 #define SERIAL_SOCKET_ADDRESS "tcp://127.0.0.1:5567"
+
+// windows enablement requires sleep to avoid high CPU usgae, since sp_wait that waits
+// for read event always returns successfully even if there is no data to read.
+// @ref 5) under "KNOWN BUGS/HACKS" section in Connector.h for more details
+#define SERIAL_READ_SLEEP_IN_SECONDS 0.05
 
 // @f constructor
 // @b
@@ -113,6 +119,7 @@ bool SerialConnector::open(const std::string& serial_port_name)
             sp_set_cts(platform_socket_,serialport.cts_);
 
 #ifdef _WIN32
+            // @ref 1) under "KNOWN BUGS/HACKS" section in Connector.h for more details
             windows_thread_ = new thread(&SerialConnector::windowsPlatformReadHandler,this);
             // adding timeout for the serial read during the platform ID session
             // This timeout is mainly used for USB-PD Load Board
@@ -120,6 +127,7 @@ bool SerialConnector::open(const std::string& serial_port_name)
 #endif
             // getting the platform
             string cmd = "{\"cmd\":\"request_platform_id\"}";
+            send(cmd);
             // TODO [prasanth]: Take the following into a seperate thread
             // The following section will block other functionalities if it detects a port and waits for platform id
             // 5 Retries for parsing the platform ID
@@ -127,8 +135,9 @@ bool SerialConnector::open(const std::string& serial_port_name)
             // If negative, then scans the port and sends the platform ID
             // This is essential for platforms like USB_PD Load Board that takes 5 second to boot
             for (int i =0 ; i <=5; i++) {
-                sleep(1);
-                send(cmd);
+                // sleep for 50 milliseconds before reading from the platform
+                // This sleep time is proportional to the time taken for detecting the platforms
+                sleep(SERIAL_READ_SLEEP_IN_SECONDS);
                 // making the serial thread processing to start reading from the port
                 producer_consumer_.notify_one();
                 string read_message;
@@ -138,6 +147,7 @@ bool SerialConnector::open(const std::string& serial_port_name)
                 // will send an acknowledgement followed by the notification
                 // wiki link:
                 // https://ons-sec.atlassian.net/wiki/spaces/SPYG/pages/6815754/Platform+Command+Dispatcher
+                // // @ref 2) in KNOWN BUGS/HACKS in Connector.h
                 read(read_message);
                 if(getPlatformID(read_message)) {
                     serial_wait_timeout_ = 0;
@@ -207,6 +217,7 @@ bool SerialConnector::read(string &notification)
     }
     return false;
 #else
+    // @ref 1) under "KNOWN BUGS/HACKS" section in Connector.h for more details
     // This section is only for windows
     // it uses producer consumer model to read from a pull socket
     // unique_lock<mutex> lock_condition_variable(locker_);
@@ -286,6 +297,7 @@ int SerialConnector::getFileDescriptor()
 //  OUT: file descriptor
 //
 //
+// @ref 1) under "KNOWN BUGS/HACKS" section in Connector.h for more details
 void SerialConnector::windowsPlatformReadHandler()
 {
     // Producer Consumer model is used here.
@@ -295,12 +307,17 @@ void SerialConnector::windowsPlatformReadHandler()
     sp_new_event_set(&event_);
     sp_add_port_events(event_, platform_socket_, SP_EVENT_RX_READY);
     while(true) {
-        this->producer_consumer_.wait_for(lock_condition_variable,chrono::milliseconds(200), [this]{return consumed_;});
+        // [prasanth] : inducing a sleep for 100ms before read or read after getting signalled from pull socket
+        // 200ms timeout results in merging two messages from platform
+
+        // // @ref 5) under "KNOWN BUGS/HACKS" section in Connector.h for more details
+        this->producer_consumer_.wait_for(lock_condition_variable,chrono::milliseconds(100), [this]{return consumed_;});
         vector<char> response;
         sp_return error;
         char temp = '\0';
         while(temp != '\n') {
             temp = '\0';
+            // @ref 3) under "KNOWN BUGS/HACKS" section in Connector.h for more details
             sp_return serial_wait_ = sp_wait(event_,0);
             error = sp_nonblocking_read(platform_socket_,&temp,1);
             if(error <= -1) {
@@ -313,11 +330,13 @@ void SerialConnector::windowsPlatformReadHandler()
                 return;
             }
             if(error == 0) {
-                sleep(0.02);
+                sleep(SERIAL_READ_SLEEP_IN_SECONDS);
 // [HACK] [todo] [prasanth] : the following if stetment is required only for ST eval boards in windows
 // On disconnecting the ST board from windows, the read() does not return negative value, instead returns zero.
 // We are counting the number of zeros and if it has 10 (2Sseconds), we are checking if it is motor board
 // and if yes we will write to the platform. The write will fail if the board is disconnected
+
+// @ref 4) under "KNOWN BUGS/HACKS" section in Connector.h for more details
 #if ST_EVAL_BOARD_SUPPORT_ENABLED
                 number_of_misses++;
                 if(number_of_misses == 10 && !isPlatformConnected()) {

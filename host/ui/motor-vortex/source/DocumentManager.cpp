@@ -9,8 +9,7 @@
 #include <QJsonObject>
 #include <QJsonArray>
 
-#include "DocumentManager.h"
-
+#include "include/DocumentManager.h"
 using namespace std;
 
 DocumentManager::DocumentManager()
