@@ -55,9 +55,9 @@ Rectangle {
         checked: initialState
         anchors.verticalCenter: settingRow.verticalCenter
         onClicked: {
-            BubuControl.setBit(bitNumber);
+            BubuControl.setGpioBit(bitNumber);
             checkSwitchState();
-            BubuControl.printCommand(); // For testing
+            BubuControl.printGpioCommand();// For testing
         }
 
     }

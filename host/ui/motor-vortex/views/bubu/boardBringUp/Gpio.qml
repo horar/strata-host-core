@@ -14,9 +14,17 @@ Rectangle {
 
     property var currentTab : gpioView
     property var newTab:  gpioView
-
-
+//  visible: opacity > 0 // for testing
     anchors.fill:parent
+
+    function setCommands(pinFunction, portName, tabIndex)
+    {
+
+            BubuControl.setGpioPort(portName);
+            BubuControl.printGpioCommand();
+            bitView.currentIndex = tabIndex;
+
+    }
 
     ParallelAnimation{
         id: crosfadeTabs
@@ -55,12 +63,12 @@ Rectangle {
         height: 40
 
         /* passing port name to set "port" member in setPort function */
-        SGLeftSegmentedButton{text:"Port A"; portName:"a"; tabIndex: 0}
-        SGMiddleSegmentedButton{text:"Port B"; portName: "b"; tabIndex: 1}
-        SGMiddleSegmentedButton{text:"Port C"; portName: "c"; tabIndex: 2}
-        SGMiddleSegmentedButton{text:"Port D"; portName: "d"; tabIndex: 3}
-        SGMiddleSegmentedButton{text:"Port E"; portName: "e"; tabIndex: 4}
-        SGRightSegmentedButton{text:"Port F"; portName: "f"; tabIndex: 5}
+        SGLeftSegmentedButton{text:"Port A"; portName:"a"; tabIndex: 0; pinFunction: "gpio"; onClicked: setCommands(pinFunction, portName,tabIndex)}
+        SGMiddleSegmentedButton{text:"Port B"; portName: "b"; tabIndex: 1; pinFunction: "gpio"; onClicked: setCommands(pinFunction, portName,tabIndex)}
+        SGMiddleSegmentedButton{text:"Port C"; portName: "c"; tabIndex: 2; pinFunction: "gpio"; onClicked: setCommands(pinFunction, portName,tabIndex)}
+        SGMiddleSegmentedButton{text:"Port D"; portName: "d"; tabIndex: 3; pinFunction: "gpio"; onClicked: setCommands(pinFunction, portName,tabIndex)}
+        SGMiddleSegmentedButton{text:"Port E"; portName: "e"; tabIndex: 4; pinFunction: "gpio"; onClicked: setCommands(pinFunction, portName,tabIndex)}
+        SGRightSegmentedButton{text:"Port F"; portName: "f"; tabIndex: 5; pinFunction: "gpio"; onClicked: setCommands(pinFunction, portName,tabIndex)}
 
     }
 
@@ -73,9 +81,7 @@ Rectangle {
         }
         currentIndex: 0
         onCurrentIndexChanged: {
-            console.log("index changed:", bitView.currentIndex);
             buttonRow.children[bitView.currentIndex].checked = true;
-
         }
         ButtonView { }
         ButtonView { }

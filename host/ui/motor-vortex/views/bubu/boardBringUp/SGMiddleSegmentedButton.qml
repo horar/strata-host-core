@@ -7,7 +7,7 @@ Button {
     checkable: true
     width:100
     height:40
-//    property var pinFunction: ""
+    property var pinFunction: ""
     property var tabName: ""
     property int tabIndex: 0
     property int smallFontSize: (Qt.platform.os === "osx") ? 12  : 10;
@@ -43,12 +43,6 @@ Button {
 
     onCheckedChanged: {
         middleButtonCanvas.requestPaint()
-    }
-    onClicked: {
-            BubuControl.setPort(portName);
-            BubuControl.printCommand();
-            bitView.currentIndex = tabIndex;
-
     }
 
 }

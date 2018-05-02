@@ -50,13 +50,13 @@ Rectangle {
         onClicked: {
             //console.log("button clicked is ",button.objectName)
             if (button.objectName == "serialBoardBringUpButton"){
-
                 newTab = serialView
                 serialView.visible = true
 
             }
             else if (button.objectName == "gpioBoardBringUpButton"){
                 newTab = gpioView
+                //TO DO [Tanya] change this to set visible to the opacity
                 gpioView.visible = true
                 serialView.visible = false
                 pwmView.visible = false
@@ -81,18 +81,18 @@ Rectangle {
         SGLeftSegmentedButton{
             text:"serial" ;
             objectName: "serialBoardBringUpButton"
-            tabName:Serial{visible: false}
+            tabName:Serial{/*visible: false*/}
         }
 
         SGMiddleSegmentedButton{
             text:"gpio";
             objectName: "gpioBoardBringUpButton"
-            tabName:Gpio{visible: false}
+            tabName:Gpio{/*visible: false*/}
         }
         SGRightSegmentedButton{
             text:"pwm";
             objectName: "pwmBoardBringUpButton"
-            tabName:Pwm{visible: false}
+            tabName:Pwm{/*visible: false*/}
         }
     }
 

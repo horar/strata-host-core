@@ -75,7 +75,6 @@
         <file>images/paul_mascarenas.png</file>
         <file>images/phone-icon.png</file>
         <file>views/bubu/boardBringUp/Pwm.qml</file>
-        <file>views/bubu/boardBringUp/PWMSetting.qml</file>
         <file>views/bubu/boardBringUp/Serial.qml</file>
         <file>views/bubu/boardBringUp/ButtonView.qml</file>
         <file>views/bubu/boardBringUp/Gpio.qml</file>

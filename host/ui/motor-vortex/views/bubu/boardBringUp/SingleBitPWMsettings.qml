@@ -2,6 +2,7 @@ import QtQuick 2.0
 import QtQuick.Controls 2.0
 import QtQuick.Layouts 1.3
 import QtQuick.Controls.Styles 1.4
+import "qrc:/views/bubu/Control.js" as BubuControl
 
 
 Rectangle{
@@ -10,6 +11,16 @@ Rectangle{
     color: lightGreyColor
     property int bitNum: 0
     anchors.horizontalCenter: parent.horizontalCenter
+
+    //    function checkValueState (value) {
+
+    //        if(value === "") {
+    //            return;
+    //        }
+    //        else {
+    //            dutycycleSlider.value = value;
+    //        }
+    //    }
 
     RowLayout {
         width: 800
@@ -33,30 +44,54 @@ Rectangle{
             placeholderText: qsTr("10 Hz")
             anchors { left: bitNumber.right
                 leftMargin: 180 }
+            onEditingFinished: {
+                BubuControl.setPwmBit(bitNum);
+                BubuControl.setPwmFrequency(text);
+                BubuControl.printPwmCommand();
+            }
+
 
         }
 
         Rectangle {
-            id: dutyCyclleContainer
+            id: dutyCycleContainer
             width: 250
             height: 50
             anchors { left: frequency.right
-            leftMargin: 170}
+                leftMargin: 170}
             color: "transparent"
 
             Slider {
                 id: dutycycleSlider
                 from: 0
                 to: 100
-                value: dutyCycleValue.text
+
+                value: 0
+                onPressedChanged: {
+                    if(!pressed) {
+                        BubuControl.setPwmBit(bitNum);
+                        BubuControl.setDutyCycle(value);
+                        BubuControl.printPwmCommand();
+                    }
+                }
+                onValueChanged: dutyCycleValue.text = Math.round(dutycycleSlider.value)
 
             }
             TextField {
                 id: dutyCycleValue
-                width: 50
-                text: Math.round(dutycycleSlider.value)
+                width: 60
+                text: Math.round(dutycycleSlider.value);
+                validator:  IntValidator { bottom : 0
+                    top: 100
+                }
                 anchors { right: parent.right;
-                leftMargin: 20 }
+                    leftMargin: 40 }
+
+                onEditingFinished: {
+                    BubuControl.setPwmBit(bitNum);
+                    BubuControl.setDutyCycle(this.text);
+                    BubuControl.printPwmCommand();
+                }
             }
         }
     }

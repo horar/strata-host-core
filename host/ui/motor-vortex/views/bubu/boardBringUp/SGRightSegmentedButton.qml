@@ -8,7 +8,7 @@ Button {
     height:40
     checkable:true
     text: "three"
-//    property var pinFunction: ""
+    property var pinFunction: ""
     property var tabName: ""
     property var portName: ""
     property int tabIndex: 0
@@ -51,11 +51,6 @@ Button {
 
     }
 
-    onClicked: {
-            BubuControl.setPort(portName);
-            BubuControl.printCommand();
-            bitView.currentIndex = tabIndex;
-    }
 }
 
 

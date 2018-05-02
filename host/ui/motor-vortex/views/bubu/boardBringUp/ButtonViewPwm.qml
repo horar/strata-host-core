@@ -45,20 +45,6 @@ Rectangle {
                             horizontalAlignment: Text.AlignHCenter
                         }
                     }
-//                    Rectangle {
-//                        id: enabledLabel
-//                        width: 95
-//                        height: 25
-//                        color: "transparent"
-//                        Text {
-//                            width: 94
-//                            height: 24
-//                            text: qsTr("Enabled")
-//                            font.pointSize: largeFontSize
-//                            font.family: "helvetica"
-//                            horizontalAlignment: Text.AlignHCenter
-//                        }
-//                    }
                     Rectangle {
                         id: frequencyLabel
                         width: 95

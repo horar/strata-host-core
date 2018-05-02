@@ -7,7 +7,8 @@ import QtQuick.Controls.Styles 1.4
 Rectangle{
     id:serialTab
     objectName: "serialTab"
-    opacity: 1
+    visible: opacity > 0
+
     anchors.fill:parent
 
 

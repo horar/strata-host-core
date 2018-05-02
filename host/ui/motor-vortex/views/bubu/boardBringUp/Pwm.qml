@@ -5,14 +5,24 @@ import QtQuick 2.7
 import QtQuick.Controls 2.0
 import QtQuick.Controls.Styles 1.4
 import QtQuick.Layouts 1.3
-
+import "qrc:/views/bubu/Control.js" as BubuControl
 
 Rectangle {
     id: pwmOutline
     property var currentTab: pwmView
     property var newTab: pwmView
-
+//    visible: opacity > 0 //testing
     anchors.fill:parent
+
+    function setCommands(pinFunction, portName, tabIndex)
+    {
+        if(pinFunction === "pwm"){
+            BubuControl.setPwmPort(portName);
+            BubuControl.printPwmCommand();
+            pwmbitView.currentIndex = tabIndex;
+        }
+    }
+
 
     ParallelAnimation{
         id: crosfadeTabs
@@ -34,7 +44,7 @@ Rectangle {
 
     ButtonGroup {
 
-        buttons: buttonRow.children
+        buttons: pwmbuttonRow.children
         onClicked: {
             crosfadeTabs.start()
 
@@ -44,18 +54,16 @@ Rectangle {
 
     Row {
         id:pwmbuttonRow
-        anchors.horizontalCenter: pwmOutline.horizontalCenter
-        anchors.top: pwmOutline.top
+        anchors { top: pwmOutline.top;topMargin: 40; horizontalCenter: pwmOutline.horizontalCenter }
         width: 600
         height: 40
 
-
-        SGLeftSegmentedButton{text:"Port A";}
-        SGMiddleSegmentedButton{text:"Port B"; }
-        SGMiddleSegmentedButton{text:"Port C";}
-        SGMiddleSegmentedButton{text:"Port D";}
-        SGMiddleSegmentedButton{text:"Port E";}
-        SGRightSegmentedButton{text:"Port F";}
+        SGLeftSegmentedButton{text:"Port A"; portName:"a"; tabIndex: 0; pinFunction: "pwm";onClicked: setCommands(pinFunction, portName,tabIndex) }
+        SGMiddleSegmentedButton{text:"Port B"; portName: "b"; tabIndex: 1; pinFunction: "pwm";onClicked: setCommands(pinFunction, portName,tabIndex)}
+        SGMiddleSegmentedButton{text:"Port C";portName: "c"; tabIndex: 2; pinFunction: "pwm";onClicked: setCommands(pinFunction, portName,tabIndex)}
+        SGMiddleSegmentedButton{text:"Port D";portName: "d"; tabIndex: 3; pinFunction: "pwm";onClicked: setCommands(pinFunction, portName,tabIndex)}
+        SGMiddleSegmentedButton{text:"Port E";portName: "e"; tabIndex: 3; pinFunction: "pwm";onClicked: setCommands(pinFunction, portName,tabIndex)}
+        SGRightSegmentedButton{text:"Port F";portName: "f"; tabIndex: 3; pinFunction: "pwm";onClicked: setCommands(pinFunction, portName,tabIndex)}
 
     }
     SwipeView {
@@ -66,9 +74,17 @@ Rectangle {
             top:pwmbuttonRow.bottom
         }
         currentIndex: 0
-       ButtonViewPwm {}
-     //  PWMSetting { }
 
+        onCurrentIndexChanged: {
+            pwmbuttonRow.children[pwmbitView.currentIndex].checked = true;
+
+        }
+        ButtonViewPwm { }
+        ButtonViewPwm { }
+        ButtonViewPwm { }
+        ButtonViewPwm { }
+        ButtonViewPwm { }
+        ButtonViewPwm { }
     }
 
     PageIndicator {
