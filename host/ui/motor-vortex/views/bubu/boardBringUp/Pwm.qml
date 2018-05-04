@@ -16,11 +16,13 @@ Rectangle {
 
     function setCommands(pinFunction, portName, tabIndex)
     {
-        if(pinFunction === "pwm"){
+
             BubuControl.setPwmPort(portName);
-            BubuControl.printPwmCommand();
             pwmbitView.currentIndex = tabIndex;
-        }
+    }
+
+    Component.onCompleted: {
+        BubuControl.setPwmPort("A"); //Setting default port as "A"
     }
 
 
@@ -47,7 +49,6 @@ Rectangle {
         buttons: pwmbuttonRow.children
         onClicked: {
             crosfadeTabs.start()
-
         }
     }
 
@@ -62,15 +63,15 @@ Rectangle {
         SGMiddleSegmentedButton{text:"Port B"; portName: "b"; tabIndex: 1; pinFunction: "pwm";onClicked: setCommands(pinFunction, portName,tabIndex)}
         SGMiddleSegmentedButton{text:"Port C";portName: "c"; tabIndex: 2; pinFunction: "pwm";onClicked: setCommands(pinFunction, portName,tabIndex)}
         SGMiddleSegmentedButton{text:"Port D";portName: "d"; tabIndex: 3; pinFunction: "pwm";onClicked: setCommands(pinFunction, portName,tabIndex)}
-        SGMiddleSegmentedButton{text:"Port E";portName: "e"; tabIndex: 3; pinFunction: "pwm";onClicked: setCommands(pinFunction, portName,tabIndex)}
-        SGRightSegmentedButton{text:"Port F";portName: "f"; tabIndex: 3; pinFunction: "pwm";onClicked: setCommands(pinFunction, portName,tabIndex)}
+        SGMiddleSegmentedButton{text:"Port E";portName: "e"; tabIndex: 4; pinFunction: "pwm";onClicked: setCommands(pinFunction, portName,tabIndex)}
+        SGRightSegmentedButton{text:"Port F";portName: "f"; tabIndex: 5; pinFunction: "pwm";onClicked: setCommands(pinFunction, portName,tabIndex)}
 
     }
     SwipeView {
         id: pwmbitView
-        anchors { left:parent.left
-            right:parent.right
-            bottom:parent.bottom
+        anchors { left:pwmOutline.left
+            right:pwmOutline.right
+            bottom:pwmOutline.bottom
             top:pwmbuttonRow.bottom
         }
         currentIndex: 0

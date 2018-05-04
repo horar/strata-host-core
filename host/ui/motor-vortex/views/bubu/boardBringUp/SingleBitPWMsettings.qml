@@ -9,20 +9,20 @@ Rectangle{
 
     width: 1000; height: 60
     color: lightGreyColor
-    property int bitNum: 0
+    property int bitNum: 0 //Gets overloaded by delegate
     anchors.horizontalCenter: parent.horizontalCenter
 
-    //    function checkValueState (value) {
-
-    //        if(value === "") {
-    //            return;
-    //        }
-    //        else {
-    //            dutycycleSlider.value = value;
-    //        }
-    //    }
+    function prepareCommand()
+    {
+        BubuControl.setPwmBit(bitNum);
+        BubuControl.setPwmFrequency(frequency.text);
+        BubuControl.setDutyCycle(Math.round(dutycycleSlider.value));
+        BubuControl.printPwmCommand();
+        coreInterface.sendCommand(BubuControl.getPwmCommand());
+    }
 
     RowLayout {
+        id:rowContainer
         width: 800
         height: 50
         spacing: 6
@@ -45,12 +45,8 @@ Rectangle{
             anchors { left: bitNumber.right
                 leftMargin: 180 }
             onEditingFinished: {
-                BubuControl.setPwmBit(bitNum);
-                BubuControl.setPwmFrequency(text);
-                BubuControl.printPwmCommand();
+                prepareCommand();
             }
-
-
         }
 
         Rectangle {
@@ -65,32 +61,26 @@ Rectangle{
                 id: dutycycleSlider
                 from: 0
                 to: 100
-
                 value: 0
                 onPressedChanged: {
                     if(!pressed) {
-                        BubuControl.setPwmBit(bitNum);
-                        BubuControl.setDutyCycle(value);
-                        BubuControl.printPwmCommand();
+                        prepareCommand();
+
                     }
                 }
-                onValueChanged: dutyCycleValue.text = Math.round(dutycycleSlider.value)
-
             }
             TextField {
                 id: dutyCycleValue
-                width: 60
+                width: 50
                 text: Math.round(dutycycleSlider.value);
-                validator:  IntValidator { bottom : 0
-                    top: 100
-                }
+                validator:  IntValidator { bottom : 0;top: 100 }
                 anchors { right: parent.right;
                     leftMargin: 40 }
 
                 onEditingFinished: {
-                    BubuControl.setPwmBit(bitNum);
-                    BubuControl.setDutyCycle(this.text);
-                    BubuControl.printPwmCommand();
+                    dutycycleSlider.value = Math.round(dutyCycleValue.text)
+                    prepareCommand();
+
                 }
             }
         }

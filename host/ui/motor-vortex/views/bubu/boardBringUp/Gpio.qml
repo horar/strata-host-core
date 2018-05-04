@@ -19,11 +19,12 @@ Rectangle {
 
     function setCommands(pinFunction, portName, tabIndex)
     {
-
             BubuControl.setGpioPort(portName);
-            BubuControl.printGpioCommand();
             bitView.currentIndex = tabIndex;
+    }
 
+    Component.onCompleted: {
+        BubuControl.setGpioPort("A"); //Setting default port as "A"
     }
 
     ParallelAnimation{

@@ -116,3 +116,7 @@ function getOutputCommand()
     return JSON.stringify(gpio_output);
 }
 
+function getPwmCommand()
+{
+    return JSON.stringify(pwm_frequency_duty_cycle);
+}
