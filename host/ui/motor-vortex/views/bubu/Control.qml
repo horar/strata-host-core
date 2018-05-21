@@ -9,6 +9,7 @@ import "qrc:/js/navigation_control.js" as NavigationControl
 
 
 Rectangle {
+
     id: boardBringUP
     property string user_id
     property string platform_name
@@ -17,15 +18,12 @@ Rectangle {
     property int mediumLargeFontSize: (Qt.platform.os === "osx") ? 20  : 14;
     property int largeFontSize: (Qt.platform.os === "osx") ? 24  : 16;
     property int extraLargeFontSize: (Qt.platform.os === "osx") ? 36  : 24;
-    anchors{ fill:parent }
-    //color:lightGreyColor
-
     property color lightGreyColor: "#EBEAE9"
     property color mediumGreyColor: "#E4E3E2"
     property color darkGreyColor: "#DBDAD9"
-
     property var currentTab : serialView
     property var newTab : gpioView
+    anchors{ fill:parent }
 
     ParallelAnimation{
         id: crosfadeTabs
@@ -48,10 +46,11 @@ Rectangle {
     ButtonGroup {
         buttons: buttonRow.children
         onClicked: {
-            //console.log("button clicked is ",button.objectName)
             if (button.objectName == "serialBoardBringUpButton"){
                 newTab = serialView
                 serialView.visible = true
+                gpioView.visible = false
+                pwmView.visible = false
 
             }
             else if (button.objectName == "gpioBoardBringUpButton"){
@@ -106,7 +105,8 @@ Rectangle {
         Serial{
             id:serialView
             anchors.fill:parent
-            opacity:1.0
+            opacity: 1
+
         }
 
         Gpio{
