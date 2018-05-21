@@ -6,6 +6,8 @@ import QtQuick.Controls.Styles 1.4
 
 Rectangle{
     id:serialContainer
+    property string binaryConversion: ""
+    property int indexHolder: 0
     // visible: opacity > 0
     anchors.fill:parent
 
@@ -106,17 +108,52 @@ Rectangle{
         TextField {
             id: dataValue
             placeholderText: "0X22"
-            onEditingFinished: { var binaryCoversion =  hex2bin(text);
-                for (var i = 0; i < binaryCoversion.length; ++ i) {
-                    console.log( binaryCoversion.charAt(i));
-                    bitview.model
+            onEditingFinished: { binaryConversion =  hex2bin(text);
+                console.log("the binary conversion", binaryConversion);
+                console.log("binary length", binaryConversion.length)
+                /*
+                    iterating the string to set the list model
+                */
+                for (var i = 0; i < binaryConversion.length; i++) {
+                    binaryModal.get(i).value = binaryConversion.charAt(i);
+
                 }
             }
+
         }
+
 
         ListView {
             id: bitview
-            model: 10
+            model: ListModel{
+                id:binaryModal
+                ListElement{
+                    value:"0"
+                }
+                ListElement{
+                    value:"0"
+                }
+
+                ListElement{
+                    value:"0"
+                }
+                ListElement{
+                    value:"0"
+                }
+                ListElement{
+                    value:"0"
+                }
+                ListElement{
+                    value:"0"
+                }
+                ListElement{
+                    value:"0"
+                }
+                ListElement{
+                    value:"0"
+                }
+            }
+
             width: 250
             height: 40
             spacing: 30
@@ -126,8 +163,10 @@ Rectangle{
             orientation: ListView.Horizontal
 
             delegate: Rectangle  {
+                id: binaryContainer
                 TextField {
-                    placeholderText: "0"
+                    id: binaryNumber
+                    text: value
                     width: 30
                     height: 30
 
@@ -140,8 +179,8 @@ Rectangle{
         Button {
             text: "Write"
         }
-    }
 
+    }
 
     Button {
         id: addRow
