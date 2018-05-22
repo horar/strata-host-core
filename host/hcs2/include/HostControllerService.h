@@ -137,7 +137,8 @@ public:
 
     std::string platformRead(); // this fucntion will be moved to usb connector
     bool parseAndGetPlatformId(); // potential new class to parse and handle json messages
-
+    void parseHCSCommands(const std::string&); // function that parses the messages for hcs
+    
     // getter fucntions
     void getPlatformListJson(std::string &);
     // checker functions

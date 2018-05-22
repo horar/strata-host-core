@@ -221,7 +221,8 @@ Rectangle{
                         "text" : platform_list.list[i].verbose,
                         "verbose" : platform_list.list[i].verbose,
                         "name" : uuid_map[platform_list.list[i].uuid],
-                        "connection" : platform_list.list[i].connection
+                        "connection" : platform_list.list[i].connection,
+                        "uuid"  :   platform_list.list[i].uuid
                     }
 
                     // Append text to state the type of Connection
@@ -255,7 +256,7 @@ Rectangle{
 
                // For Demo purposes only; Immediately go to control
                var data = { platform_name: autoSelectedPlatform.name}
-               coreInterface.sendSelectedPlatform(autoSelectedPlatform.verbose, autoSelectedPlatform.connection)
+               coreInterface.sendSelectedPlatform(autoSelectedPlatform.uuid, autoSelectedPlatform.connection)
                NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT,data)
             }
             else if ( autoSelectEnabled == false){
@@ -281,20 +282,24 @@ Rectangle{
                 var connection = platformListModel.get(cbSelector.currentIndex).connection
                 var data = { platform_name: platformListModel.get(cbSelector.currentIndex).name}
 
+                // Clear all documents for contents
+                documentManager.clearDocumentSets();
+
                 if (connection === "view") {
                     // Go offline-mode
                     NavigationControl.updateState(NavigationControl.events.OFFLINE_MODE_EVENT, data)
                     NavigationControl.updateState(NavigationControl.events.TOGGLE_CONTROL_CONTENT)
+                    coreInterface.sendSelectedPlatform(platformListModel.get(cbSelector.currentIndex).uuid,platformListModel.get(cbSelector.currentIndex).connection)
                 }
                 else if(connection === "connected"){
                     NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT,data)
-                    coreInterface.sendSelectedPlatform(platformListModel.get(cbSelector.currentIndex).verbose,platformListModel.get(cbSelector.currentIndex).connection)
+                    coreInterface.sendSelectedPlatform(platformListModel.get(cbSelector.currentIndex).uuid,platformListModel.get(cbSelector.currentIndex).connection)
                 }
                 else if( connection === "remote"){
                     NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT,data)
                     // Call coreinterface connect()
                     console.log("calling the send");
-                    coreInterface.sendSelectedPlatform(platformListModel.get(cbSelector.currentIndex).verbose,platformListModel.get(cbSelector.currentIndex).connection)
+                    coreInterface.sendSelectedPlatform(platformListModel.get(cbSelector.currentIndex).uuid,platformListModel.get(cbSelector.currentIndex).connection)
                 }
 
 

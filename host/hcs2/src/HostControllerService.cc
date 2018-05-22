@@ -71,7 +71,6 @@ HostControllerService::HostControllerService(string configuration_file)
     dealer_remote_socket_id_ = configuration_->GetDealerSocketID();
     // creating the nimbus object
     database_ = new Nimbus();
-    database_->Open(NIMBUS_TEST_PLATFORM_JSON);
     // initializing the connectors
     client_connector_ = connector_factory_->getConnector("client");
     serial_connector_ = connector_factory_->getConnector("platform");
@@ -152,6 +151,22 @@ HcsError HostControllerService::setEventLoop()
     addToLocalPlatformList(discovery_service_.getPlatforms());
     string platformList ;
     getPlatformListJson(platformList);
+    platform_details simulated_usb_pd,simulated_motor_vortex,sim_usb;
+    simulated_usb_pd.platform_uuid = "P2.2018.1.1.0.0.c9060ff8-5c5e-4295-b95a-d857ee9a3671";
+    simulated_usb_pd.platform_verbose = "USB PD Load Board";
+    simulated_usb_pd.connection_status = "view";
+
+    simulated_motor_vortex.platform_uuid = "motorvortex1";
+    simulated_motor_vortex.platform_verbose = "Vortex Fountain Motor Platform Board";
+    simulated_motor_vortex.connection_status = "view";
+
+    sim_usb.platform_uuid = "P2.2017.1.1.0.0.cbde0519-0f42-4431-a379-caee4a1494af";
+    sim_usb.platform_verbose = "USB PD";
+    sim_usb.connection_status = "view";
+
+    platform_uuid_.push_back(simulated_usb_pd);  // for testing alone
+    platform_uuid_.push_back(simulated_motor_vortex);
+    platform_uuid_.push_back(sim_usb);
     std::list<string>::iterator client_list_iterator = clientList.begin();
     while(client_list_iterator != clientList.end()) {
         client_connector_->setDealerID(*client_list_iterator);
@@ -266,9 +281,14 @@ void HostControllerService::serviceCallback(evutil_socket_t fd, short what, void
 
         // TODO [ian] add this to a "command_filter" map to add more then just "db::cmd"
         if( service_command.HasMember("db::cmd") ) {
-            if ( hcs->database_->Command( read_message.c_str() ) != NO_ERRORS ){
-                PDEBUG(PRINT_DEBUG,"ERROR: database failed failed!");
-            }
+            // [TODO] [prasanth] : verify with Abe. Removing Open after nimbus initialization causes seg fault on this command
+            // Hence commeneted out
+            // if ( hcs->database_->Command( read_message.c_str() ) != NO_ERRORS ){
+            //     PDEBUG(PRINT_DEBUG,"ERROR: database failed failed!");
+            // }
+        }
+        else if( service_command.HasMember("hcs::cmd") ) {
+            hcs->parseHCSCommands(read_message);
         }
         else if(hcs->platform_client_mapping_.empty() || !hcs->clientExists(dealer_id)) {
             std::vector<string> selected_platform_info = hcs->initialCommandDispatch(dealer_id,read_message);
@@ -279,6 +299,24 @@ void HostControllerService::serviceCallback(evutil_socket_t fd, short what, void
                 map_element.insert(map_element.begin(),selected_platform_info[0]);
                 map_element.insert(map_element.begin()+1,selected_platform_info[1]);
                 hcs->platform_client_mapping_.emplace(map_element,dealer_id);
+                // constructing JSON for the database to open the channel based on selected platform
+                Document document;
+                document.SetObject();
+                Document::AllocatorType& allocator = document.GetAllocator();
+                Value platform_id(selected_platform_info[0].c_str(),allocator);
+                Value payload_object;
+                payload_object.SetObject();
+                payload_object.AddMember("db_name",platform_id,allocator);
+                document.AddMember("db::payload",payload_object,allocator);
+                document.AddMember("db::cmd","open",allocator);
+                StringBuffer strbuf;
+                Writer<StringBuffer> writer(strbuf);
+                document.Accept(writer);
+                PDEBUG(PRINT_DEBUG,"db::cmd %s\n",strbuf.GetString());
+                // sending the command to NIMBUS
+                if ( hcs->database_->Command( strbuf.GetString() ) != NO_ERRORS ){
+                    PDEBUG(PRINT_DEBUG,"ERROR: database failed failed!");
+                }
                 PDEBUG(PRINT_DEBUG,"adding the %s uuid to multimap\n",selected_platform_info[0].c_str());
             }
         } else {
@@ -534,6 +572,25 @@ bool HostControllerService::parseAndGetPlatformId()
     }
 }
 
+// @f parseHCSCommands
+// @b gets the json encoded string parses and routes to the appropriate routine
+//
+// arguments:
+//  IN: json encoded string {!!! Expects only the HCS spedific commands}
+//
+void HostControllerService::parseHCSCommands(const string &hcs_message)
+{
+    PDEBUG(PRINT_DEBUG,"parsing the commands for HCS from client %s\n",hcs_message.c_str());
+    Document hcs_command;
+    if (hcs_command.Parse(hcs_message.c_str()).HasParseError()) {
+        PDEBUG(PRINT_DEBUG,"json failed\n");
+        return;
+    }
+    else if(!(strcmp(hcs_command["hcs::cmd"].GetString(),"disconnect_platform"))) {
+        PDEBUG(PRINT_DEBUG,"User has requested to disconnect from platform\n");
+        platform_client_mapping_.clear();
+    }
+}
 // @f addToLocalPlatformList
 // @b checks the list of available platforms and adds the new platforms to the list from Discovery Service
 //
@@ -583,6 +640,8 @@ void HostControllerService::platformDisconnectRoutine ()
     platform_uuid_.clear();
     platform_client_mapping_.clear();
 
+    string platformList ;
+    getPlatformListJson(platformList);
     platform_details simulated_usb_pd,simulated_motor_vortex,sim_usb;
     simulated_usb_pd.platform_uuid = "P2.2018.1.1.0.0.c9060ff8-5c5e-4295-b95a-d857ee9a3671";
     simulated_usb_pd.platform_verbose = "USB PD Load Board";
@@ -599,9 +658,6 @@ void HostControllerService::platformDisconnectRoutine ()
     platform_uuid_.push_back(simulated_usb_pd);  // for testing alone
     platform_uuid_.push_back(simulated_motor_vortex);
     platform_uuid_.push_back(sim_usb);
-
-    string platformList ;
-    getPlatformListJson(platformList);
     std::list<string>::iterator client_list_iterator = clientList.begin();
     while(client_list_iterator != clientList.end()) {
         client_connector_->setDealerID(*client_list_iterator);
