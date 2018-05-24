@@ -15,11 +15,28 @@ Rectangle{
         return ("00000000" + (parseInt(hex, 16)).toString(2)).substr(-8);
     }
 
+    function isHex(str){
+        var hexValues = '0123456789ABCDEFabcdef'
+
+        for(var i = 0; i < str.length; ++i) {
+            if(!hexValues.includes(str[i])) {
+                return false;
+            }
+
+        }
+        return true;
+
+    }
+
     Text {
         id: i2cTitle
         text: "I2C Communication"
         font.family: "Helvetica"
         font.pointSize: 24
+        anchors {
+            left: parent.left
+            leftMargin: 10
+        }
     }
 
 
@@ -32,19 +49,51 @@ Rectangle{
         Text {
             id: selectChannel
             text: "Channel Select"
+            anchors {
+                left: parent.left
+                leftMargin: 10
+            }
         }
 
         ComboBox {
+            anchors{ left: selectChannel.right
+             leftMargin: 10
+            }
             model: ["I2C 1", "I2C 2", "I2C 3"]
+            onCurrentIndexChanged: {
+                if(currentIndex == 0) {
+                    sclkModel.model = ["PG 14","PB 6", "PB 8"]
+                    sdaModel.model = ["PG 13", "PB 7", "PB 9"]
+
+                }
+                if(currentIndex == 1){
+                    sclkModel.model = ["PF 1","PB 10", "PB 13"]
+                    sdaModel.model = ["PF 0", "PB 11", "PB 14"]
+
+                }
+
+                if(currentIndex == 2){
+                    sclkModel.model = ["PC 0","PG 7"]
+                    sdaModel.model = ["PC 1", "PG 8"]
+
+                }
+            }
+
         }
 
         Text {
             id: selectSDA
             text: "SDA"
+
         }
 
         ComboBox {
+             id: sdaModel
+             anchors{ left: selectSDA.right
+              leftMargin: 10
+             }
             model: ["First", "Second", "Third"]
+
         }
 
         Text {
@@ -53,6 +102,10 @@ Rectangle{
         }
 
         ComboBox {
+            id:sclkModel
+            anchors{ left: selectSCLK.right
+             leftMargin: 10
+            }
             model: ["First", "Second", "Third"]
 
         }
@@ -67,12 +120,18 @@ Rectangle{
         Text {
             id: slaveAddress
             text: "Slave Address"
+            anchors {
+                left: parent.left
+                leftMargin: 10
+            }
         }
 
         TextField {
             id: slaveAddressValue
+            anchors{ left: slaveAddress.right
+             leftMargin: 10
+            }
             placeholderText: "0XXX"
-
 
         }
 
@@ -82,6 +141,9 @@ Rectangle{
         }
         TextField {
             id: registerAddressValue
+            anchors{ left: registerAddress.right
+             leftMargin: 10
+            }
             placeholderText: "0X23"
 
         }
@@ -92,6 +154,9 @@ Rectangle{
         }
         TextField {
             id: busRateValue
+            anchors{ left: busRate.right
+             leftMargin: 10
+            }
             placeholderText: "0"
         }
     }
@@ -100,17 +165,30 @@ Rectangle{
         id: thirdRowSetting
         width : parent.width
         height: 100
+
         anchors.top: secondRowSetting.bottom
 
         Text {
-            text: "Data"
+            id: dataText
+            anchors {
+                left: parent.left
+                leftMargin: 10
+            }
+            text: "Data (Hex)"
         }
         TextField {
             id: dataValue
+            anchors{ left: dataText.right
+             leftMargin: 10
+
+            }
+
             placeholderText: "0X22"
-            onEditingFinished: { binaryConversion =  hex2bin(text);
-                console.log("the binary conversion", binaryConversion);
-                console.log("binary length", binaryConversion.length)
+            onEditingFinished: {
+
+                if(isHex(text) == true) {
+                binaryConversion =  hex2bin(text); }
+
                 /*
                     iterating the string to set the list model
                 */
@@ -171,12 +249,21 @@ Rectangle{
                     height: 30
 
                 }
+
             }
         }
         Button {
+            id: readButton
+            anchors { left : bitview.right
+            leftMargin: 20
+            }
             text: "Read"
         }
         Button {
+            id: writeButton
+            anchors { left : readButton.right
+            leftMargin: 20
+            }
             text: "Write"
         }
 
@@ -258,7 +345,7 @@ Rectangle{
     TableView {
         id: i2cTable
         width: 1000
-        height: 200
+        height: 300
         anchors.top: thirdRowSetting.bottom
 
         TableViewColumn {
