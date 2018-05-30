@@ -11,7 +11,7 @@ Window {
     SGSlider {
         id: sgSlider
         width: 400              // Default: 200
-        stepSize: 1.0           // Default: 1.0
+        stepSize: 2.0           // Default: 1.0
         value: 0.0              // Default: 0.0
         minimumValue: 0.0       // Default: 0.0
         maximumValue: 100.0     // Default: 100.0
