@@ -13,8 +13,8 @@ import QtQuick.Layouts 1.2
 Slider {
     id: sgSlider
 
-    maximumValue: 0
-    minimumValue: 20
+    maximumValue: 20
+    minimumValue: 0
     value: 0.00
     stepSize: 10
 
