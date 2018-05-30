@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/">
+        <file>main.qml</file>
+        <file>SGSlider.qml</file>
+        <file>images/sliderThumb.svg</file>
+        <file>images/sliderValue.svg</file>
+    </qresource>
+</RCC>
