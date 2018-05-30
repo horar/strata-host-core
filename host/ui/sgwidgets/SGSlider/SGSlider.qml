@@ -1,10 +1,11 @@
 import QtQuick 2.7
-import QtQuick.Controls 2.0
-import QtQuick.Layouts 1.3
 import QtQuick.Controls.Styles 1.4
-import QtPositioning 5.2
 import QtQuick.Controls 1.4
-import QtPositioning 5.2
+
+// Todo - Faller 5/30/18: encapsulate slider in a container to spec height so hover bubble/labels don't get cut off (?)
+
+// Note - Faller 5/30/18: there was some Controls 2.3 code (updated slider) in groove that was conflicting and doing nothing.
+//                        If this ever is converted to QC 2.3+, go find an old version that has this code to start from.
 
 Slider {
     id: sgSlider
@@ -14,7 +15,7 @@ Slider {
     value: 0.0
     stepSize: 1.0
 
-    //anchors.centerIn: parent
+    anchors.centerIn: parent
 
     property alias startLabel: startLabel.text
     property alias endLabel: endLabel.text
@@ -31,15 +32,17 @@ Slider {
         property bool hoverVisible: false
 
         groove: Rectangle {
-            y: sgSlider.topPadding + sgSlider.availableHeight / 2 - height / 2 - 24
+            Component.onCompleted: {console.log(sliderStyle.height)}
+            y: -2
             implicitWidth: 200; implicitHeight: 4
-            width: sgSlider.availableWidth; height: implicitHeight
+            width: sgSlider.width; height: implicitHeight
             radius: 2
-            color: "#bdbebf"
+            color: "#dddddd"
 
             Rectangle {
-                width: sgSlider.visualPosition * parent.width; height: parent.height
-                color: "yellow"
+                id: grooveFill
+                width: styleData.handlePosition; height: parent.height
+                color: "#888888"
                 radius: 2
             }
         }
@@ -48,14 +51,14 @@ Slider {
             id: valueIMG
             anchors { centerIn: parent }
             width: 22; height: 24
-
             source: "./images/sliderThumb.svg"
 
             Image {
                 id: handler
                 width: 22; height: 24
                 source: "./images/sliderValue.svg"
-                anchors.bottom: valueIMG.top
+                anchors.centerIn: parent
+                anchors.verticalCenterOffset: -19
                 opacity: hoverOpacity
 
                 Label {
@@ -64,8 +67,7 @@ Slider {
                     font.pointSize: 6
                     font.bold: true
                     anchors.centerIn:  handler
-                    anchors.verticalCenterOffset: -4
-
+                    anchors.verticalCenterOffset: -2
                 }
             }
         }
@@ -98,7 +100,7 @@ Slider {
     Label {
         id: startLabel
         anchors.top : parent.bottom
-        anchors.topMargin: 0.5
+        anchors.topMargin: -6.0
         font.pointSize: 12
         text: qsTr("0")
     }
@@ -107,7 +109,7 @@ Slider {
         id: endLabel
         anchors.right:parent.right
         anchors.top : parent.bottom
-        anchors.topMargin: 0.5
+        anchors.topMargin: -6.0
         font.pointSize: 12
         text: qsTr("100")
     }
