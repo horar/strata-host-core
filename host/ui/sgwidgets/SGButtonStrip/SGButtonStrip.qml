@@ -8,33 +8,40 @@ GridLayout {
     ButtonGroup { buttons: root.children}
     Button {
         id: button1
-        text: "test"
+        text: "AM"
         checked: true
         onClicked: { checked = true }
         background: Rectangle{
-            color: button1.checked ? "#999999" : "#cccccc"
-            radius: 25
-            implicitHeight: 50
+            gradient: Gradient {
+                GradientStop { position: 0.0; color: button1.checked ? "#bbbbbb" : "#ffffff" }
+                GradientStop { position: 1.0; color: button1.checked ? "#999999" : "#cccccc" }
+            }
+            radius: height/2
+            implicitHeight: 35
             implicitWidth: 100
 
             Rectangle{
                 height: parent.height
                 width: parent.width/2
                 anchors.right:parent.right
-                color: parent.color
+//                color: parent.color
+                gradient: parent.gradient
             }
         }
     }
 
     Button {
         id: buttonmid
-        text: "test"
+        text: "FM"
         onClicked: { checked = true }
 
         background: Rectangle{
-            color: buttonmid.checked ? "#999999" : "#cccccc"
+            gradient: Gradient {
+                GradientStop { position: 0.0; color: buttonmid.checked ? "#bbbbbb" : "#ffffff" }
+                GradientStop { position: 1.0; color: buttonmid.checked ? "#999999" : "#cccccc" }
+            }
             radius: 0
-            implicitHeight: 50
+            implicitHeight: 35
             implicitWidth: 100
 
 //            Rectangle{
@@ -48,13 +55,16 @@ GridLayout {
 
     Button {
         id: button2
-        text: "test"
+        text: "SAT"
         onClicked: { checked = true }
 
         background: Rectangle{
-            color: button2.checked ? "#999999" : "#cccccc"
-            radius: 25
-            implicitHeight: 50
+            gradient: Gradient {
+                GradientStop { position: 0.0; color: button2.checked ? "#bbbbbb" : "#ffffff" }
+                GradientStop { position: 1.0; color: button2.checked ? "#999999" : "#cccccc" }
+            }
+            radius: height/2
+            implicitHeight: 35
             implicitWidth: 100
 
             Rectangle{
@@ -62,6 +72,7 @@ GridLayout {
                 width: parent.width/2
                 anchors.left: parent.left
                 color: parent.color
+                gradient: parent.gradient
             }
         }
     }
