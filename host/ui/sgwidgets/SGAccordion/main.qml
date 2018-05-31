@@ -18,16 +18,16 @@ Window {
         height: mainWindow.height // Required
 
         // Accordion optional settings:
-        openCloseTime: 100              // default: 0 (instant open/closed)
-        statusIcon: "^"                 // default: "\u25B2"
-        textColor: "#000000"            // default: "#000000" (black)
-        bodyColor: "#edf7ff"            // default: "#ffffff" (white)
-        dividerColor: "#000000"         // default: "#dddddd" (grey)
-        dividerHeight: 1                // default: 1 (0 for no divider between SGAccordionItems)
-        headerOpenColorTop: "#eafffb"   // default: "#dbeffc" (light blue)
-        headerOpenColorBottom: "#c0e0db"   // default: "#bcdcf2" (darker blue)
-        headerClosedColorTop: "#ffffff" // default: "#fcfcfc" (light grey)
-        headerClosedColorBottom: "#f9f9f9" // default: "#f1f1f1" (darker grey)
+        openCloseTime: 100                  // default: 0 (instant open/closed)
+        statusIcon: "^"                     // default: "\u25B2"
+        textColor: "#000000"                // default: "#000000" (black)
+        bodyColor: "#edf7ff"                // default: "#ffffff" (white)
+        dividerColor: "#000000"             // default: "#dddddd" (grey)
+        dividerHeight: 1                    // default: 1 (0 for no divider between SGAccordionItems)
+        headerOpenColorTop: "#eafffb"       // default: "#dbeffc" (light blue)
+        headerOpenColorBottom: "#c0e0db"    // default: "#bcdcf2" (darker blue)
+        headerClosedColorTop: "#ffffff"     // default: "#fcfcfc" (light grey)
+        headerClosedColorBottom: "#f9f9f9"  // default: "#f1f1f1" (darker grey)
 
         // accordionItems contains a ColumnLayout as a container for SGAccordionItems
         accordionItems:   ColumnLayout { // must have ColumnLayout as container since loader works only with single widgets
