@@ -93,6 +93,10 @@
         <file>SGSpotlightText.qml</file>
         <file>images/ian.cain.jpg</file>
         <file>js/metrics.js</file>
+        <file>images/icons/remotecommunication.svg</file>
+        <file>images/icons/fail_x.svg</file>
+        <file>images/icons/success_check.svg</file>
+        <file>images/closeIcon.svg</file>
         <file>include/Modules/CircleBadge.qml</file>
         <file>views/bubu/images/icons/backIcon.svg</file>
         <file>views/bubu/images/icons/infoIcon.svg</file>

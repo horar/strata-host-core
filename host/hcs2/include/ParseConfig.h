@@ -27,7 +27,8 @@ public:
 
     const std::string &GetDatabaseServer() const { return database_server_; }
     const std::string &GetGatewaySync() const { return gateway_sync_; }
-    const std::string &GetDealerSocketID() const { return dealer_socket_id_; }
+    const std::string &GetDiscoveryServerID() const { return discovery_server_address_;}
+    const std::string &GetDiscoveryMonitorSubscriber() const { return discovery_server_notification_subscriber_address_; }
 
     friend std::ostream& operator<< (std::ostream& stream, const ParseConfig& config) {
         std::cout << "command_address: " << config.command_address_ << std::endl;
@@ -36,10 +37,11 @@ public:
         std::cout << "simulated_platform: " << (config.simulated_platform_ ? "TRUE":"FALSE") << std::endl;
         std::cout << "database_server: " << config.database_server_ << std::endl;
         std::cout << "gateway_sync: " << config.gateway_sync_<< std::endl;
+        std::cout << "discovery_server_address: "<< config.discovery_server_address_ << std::endl;
+        std::cout << "discovery_server_subscriber_address: "<< config.discovery_server_notification_subscriber_address_ << std::endl;
         for (auto &serial_port : config.serial_ports_) {
             std::cout << " + serial port: " << serial_port << std::endl;
         }
-        std::cout << "dealer_remote_socket_id: "<< config.dealer_socket_id_<<std::endl;
         for( auto &channel : config.channels_ ) {
             std::cout << " + channel: " << channel << std::endl;
         }
@@ -54,9 +56,10 @@ private:
     // database parameters
     std::string database_server_;
     std::string gateway_sync_;
-    // dealer socket id
-    std::string dealer_socket_id_;
-
+    // discovery server ip_address
+    std::string discovery_server_address_;
+    // discovery server notification subscriber address
+    std::string discovery_server_notification_subscriber_address_;
     // serial port number
     std::vector<std::string> serial_ports_;
 
