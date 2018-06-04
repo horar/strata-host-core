@@ -1,101 +1,74 @@
 import QtQuick 2.0
-import QtQuick.Controls 2.2
-import QtQuick.Layouts 1.3
+import QtQuick.Controls 2.0
 import "."  //Import directory
 import "qrc:/js/navigation_control.js" as NavigationControl
+import tech.spyglass.DocumentManager 1.0
+import tech.spyglass.Document 1.0
+import "qrc:/include/Modules/"      // On Semi QML Modules
 
 Rectangle {
+    id: view
+    border.color: "black"
+    border.width: 0
+    anchors { fill: parent }
 
-    id: content
-    anchors { fill: parent}
-
-    property string control_name:  "Bubu"
-
-    StackLayout{
-
-        anchors {
-           top: content.top
-           bottom: bar.top
-           centerIn: content
-        }
-        height: parent.height - bar.height
-
-        id: view
-        currentIndex: bar.currentIndex
-
-        Rectangle {
-            anchors {fill : parent}
-            color: "red"
-            Text{
-                anchors { centerIn: parent}
-                text: "Block Diagram"
-            }
-        }
-
-        Rectangle {
-            anchors {fill : parent}
-            color: "blue"
-            Text{
-                anchors { centerIn: parent}
-                text: "Assembly"
-            }
-        }
-
-        Rectangle {
-            anchors {fill : parent}
-            color: "teal"
-            Text{
-                anchors { centerIn: parent}
-                text: "Schematic"
-            }
-        }
-
-        Rectangle {
-            anchors {fill : parent}
-            color: "grey"
-            Text{
-                anchors { centerIn: parent}
-                text: "Layout"
-            }
-        }
-
-        Rectangle {
-            anchors {fill : parent}
-            color: "magenta"
-            Text{
-                anchors { centerIn: parent}
-                text: "Test Report"
-            }
-        }
-   }
-    TabBar{
-        id: bar
-        anchors { bottom: content.bottom }
+    SwipeView {
+        id: swipeView
+        // Adjust Height for tabBar
         width: parent.width
-        TabButton{
-            text: control_name + "-" + "Block Diagram"
-        }
-        TabButton {
-            text: control_name + "-" + "Assembly"
-        }
-        TabButton {
-            text: control_name + "-" +"Schematic"
-        }
-        TabButton {
-            text: control_name + "-" + "Layout"
-        }
-        TabButton {
-            text: control_name + "-" + "Test Report"
-        }
+        height: parent.height - tabBar.height
+        currentIndex: tabBar.currentIndex
+        PageSchematic { id: pageSchematic }
+        PageLayout { id: pageLayout }
+        PageTestReport { id: pageTestReport }
+        PageSystemContent { id: pageSystemContent}
+        PageComingSoon {id: pageComingSoonContent}
     }
 
+    TabBar {
+        id: tabBar
+
+        width: parent.width - flipButton.width
+        currentIndex: swipeView.currentIndex
+        anchors { bottom: parent.bottom;}
+
+        TabButton { text: "Schematic"
+           CircleBadge {
+               id: schematicBadge
+               revisionCount: documentManager.schematicRevisionCount
+           }
+           onClicked: documentManager.clearSchematicRevisionCount()
+        }
+        TabButton { text: "Layout"
+            CircleBadge {
+                id: layoutBadge
+                revisionCount: documentManager.layoutRevisionCount
+            }
+            onClicked: documentManager.clearLayoutRevisionCount()
+        }
+        TabButton { text: "Test Report"
+            CircleBadge {
+                id: testReportBadge
+                revisionCount: documentManager.testReportRevisionCount
+            }
+            onClicked: documentManager.clearTestReportRevisionCount()
+        }
+        TabButton { text: "System Content" }
+        TabButton { text: "Coming Soon"
+            CircleBadge {
+                id: targetedBadge
+                revisionCount: documentManager.targetedRevisionCount
+            }
+            onClicked: documentManager.clearTargetedRevisionCount()
+        }
+    }
     Rectangle{
         height: 40;width:40
-        anchors { bottom: content.bottom; right: content.right }
+        anchors { bottom: view.bottom; right: view.right }
         color: "white";
         Image {
             id: flipButton
-            source:"qrc:/views/motor-vortex/images/icons/backIcon.svg"
+            source:"qrc:/views/bubu/images/icons/backIcon.svg"
             anchors { fill: parent }
             height: 40;width:40
         }
@@ -108,5 +81,4 @@ Rectangle {
             NavigationControl.updateState(NavigationControl.events.TOGGLE_CONTROL_CONTENT)
         }
     }
-
 }

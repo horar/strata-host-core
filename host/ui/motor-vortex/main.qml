@@ -125,6 +125,9 @@ Window {
                      text: "Disconnect"
                      onClicked: {
                          NavigationControl.updateState(NavigationControl.events.PLATFORM_DISCONNECTED_EVENT, null)
+                         var disconnect_json = {"hcs::cmd":"disconnect_platform"}
+                         console.log("disonnecting the platform")
+                         coreInterface.sendCommand(JSON.stringify(disconnect_json))
                      }
                  }
 

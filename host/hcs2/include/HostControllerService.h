@@ -9,6 +9,27 @@
 
 * @copyright Copyright 2018 On Semiconductor
 */
+
+/**
+ * * @mainpage HostControllerService
+ *
+ * Introduction
+ * ============
+ * Host Controller Service(HCS) is the edge to the cloud in the "Spyglass" project.
+ * It communicates with cloud services, platform and client programs(UI, CLI).
+ *
+ * KNOWN BUGS/HACKS
+ * ================
+ * This section mentions about the technical bugs and our work around in detail
+ *
+ * 1) libevent read trigger fails sometimes for zeroMQ sockets (Techinal Hardship/HACK)
+ *      HCS uses libevent as eventing library. It requires READ event to instantiate the
+ * callback for zeromq sockets. But libevent fails to call the callbacks on READ event.
+ * Currently the workaround for this issue is to use read and write for callbacks. This will
+ * call the callbacks everytime (does not wait for a read event) and the callbacks uses poll
+ * on sockets to read.
+ *
+ */
 #ifndef HOST_CONTROLLER_SERVICE_H
 #define HOST_CONTROLLER_SERVICE_H
 
@@ -116,7 +137,8 @@ public:
 
     std::string platformRead(); // this fucntion will be moved to usb connector
     bool parseAndGetPlatformId(); // potential new class to parse and handle json messages
-
+    void parseHCSCommands(const std::string&); // function that parses the messages for hcs
+    
     // getter fucntions
     void getPlatformListJson(std::string &);
     // checker functions

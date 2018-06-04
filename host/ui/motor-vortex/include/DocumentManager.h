@@ -62,7 +62,11 @@ class DocumentManager : public QObject
     Q_PROPERTY(QQmlListProperty<Document> layoutDocuments READ layoutDocuments NOTIFY layoutDocumentsChanged)
     Q_PROPERTY(QQmlListProperty<Document> testReportDocuments READ testReportDocuments NOTIFY testReportDocumentsChanged)
     Q_PROPERTY(QQmlListProperty<Document> targetedDocuments READ targetedDocuments NOTIFY targetedDocumentsChanged)
-    Q_PROPERTY(int revisionCount READ revisionCount NOTIFY revisionCountChanged )
+    Q_PROPERTY(uint schematicRevisionCount MEMBER schematic_rev_count_ NOTIFY schematicRevisionCountChanged)
+    Q_PROPERTY(uint assemblyRevisionCount MEMBER assembly_rev_count_ NOTIFY assemblyRevisionCountChanged)
+    Q_PROPERTY(uint layoutRevisionCount MEMBER layout_rev_count_ NOTIFY layoutRevisionCountChanged)
+    Q_PROPERTY(uint testReportRevisionCount MEMBER testreport_rev_count_ NOTIFY testReportRevisionCountChanged)
+    Q_PROPERTY(uint targetedRevisionCount MEMBER targeted_rev_count_ NOTIFY targetedRevisionCountChanged)
 
 public:
     DocumentManager();
@@ -76,19 +80,30 @@ public:
     QQmlListProperty<Document> layoutDocuments() { return QQmlListProperty<Document>(this, layout_documents_); }
     QQmlListProperty<Document> testReportDocuments() { return QQmlListProperty<Document>(this, test_report_documents_); }
     QQmlListProperty<Document> targetedDocuments() { return QQmlListProperty<Document>(this, targeted_documents_); }
-    int revisionCount() { return revisionCount_; }
 
     bool updateDocuments(const QString set, const QList<QString> &documents);
 
-    Q_INVOKABLE void clearRevisionCount();
+    Q_INVOKABLE void clearSchematicRevisionCount();
+    Q_INVOKABLE void clearAssemblyRevisionCount();
+    Q_INVOKABLE void clearLayoutRevisionCount();
+    Q_INVOKABLE void clearTestReportRevisionCount();
+    Q_INVOKABLE void clearTargetedRevisionCount();
+    Q_INVOKABLE void clearDocumentSets();
 
 signals:
+    // Document Changes
     void schematicDocumentsChanged();
     void assemblyDocumentsChanged();
     void layoutDocumentsChanged();
     void testReportDocumentsChanged();
     void targetedDocumentsChanged();
-    void revisionCountChanged();
+
+    // Revision Count Changes
+    void schematicRevisionCountChanged(uint revisionCount);
+    void assemblyRevisionCountChanged(uint revisionCount);
+    void layoutRevisionCountChanged(uint revisionCount);
+    void testReportRevisionCountChanged(uint revisionCount);
+    void targetedRevisionCountChanged(uint revisionCount);
 
 private:
     CoreInterface *coreInterface_;
@@ -107,7 +122,11 @@ private:
     DocumentSetPtr getDocumentSet(const QString &set);
 
     // Count the amount of deployments that have been received
-    int revisionCount_;
+    uint schematic_rev_count_;
+    uint assembly_rev_count_;
+    uint layout_rev_count_;
+    uint testreport_rev_count_;
+    uint targeted_rev_count_;
 
     void init();
 

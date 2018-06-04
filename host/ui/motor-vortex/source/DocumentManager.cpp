@@ -9,8 +9,7 @@
 #include <QJsonObject>
 #include <QJsonArray>
 
-#include "DocumentManager.h"
-
+#include "include/DocumentManager.h"
 using namespace std;
 
 DocumentManager::DocumentManager()
@@ -54,7 +53,12 @@ void DocumentManager::init()
     document_sets_.emplace(make_pair(QString("test_report"), &test_report_documents_));
     document_sets_.emplace(make_pair(QString("targeted_content"), &targeted_documents_));
 
-    revisionCount_ = 0;
+    schematic_rev_count_ =  0;
+    assembly_rev_count_ =   0;
+    layout_rev_count_ =     0;
+    testreport_rev_count_ = 0;
+    targeted_rev_count_ =   0;
+
     // register w/ Implementation Interface for Docoument Data Source Updates
     // TODO [ian] change to "document" on cloud update
 
@@ -143,24 +147,24 @@ void DocumentManager::dataSourceHandler(QJsonObject data)
         //
         if( name == "schematic" ) {
             emit schematicDocumentsChanged();
-            /*
-                Increment our 'new rev' counter on schematic only;
-                This is a hack to avoid each document as a rev increment.
-            */
-            revisionCount_++;
-            emit revisionCountChanged();
+            emit schematicRevisionCountChanged(++schematic_rev_count_);
         }
         else if( name == "assembly" ) {
+
             emit assemblyDocumentsChanged();
+            emit assemblyRevisionCountChanged(++assembly_rev_count_);
         }
         else if( name == "layout" ) {
             emit layoutDocumentsChanged();
+            emit layoutRevisionCountChanged(++layout_rev_count_);
         }
         else if( name == "test_report" ) {
             emit testReportDocumentsChanged();
+            emit testReportRevisionCountChanged(++testreport_rev_count_);
         }
         else if( name == "targeted_content" ) {
             emit targetedDocumentsChanged();
+            emit targetedRevisionCountChanged(++targeted_rev_count_);
         }
         else {
             qCritical("DocumentManager::updateDocuments: invalid document name = '%s'", name.toStdString ().c_str ());
@@ -192,7 +196,36 @@ DocumentSetPtr DocumentManager::getDocumentSet(const QString &set)
     return document_set->second;
 }
 
-void DocumentManager::clearRevisionCount() {
-    revisionCount_= 0;
-    emit revisionCountChanged();
+void DocumentManager::clearDocumentSets()
+{
+    for (auto doc_iter = document_sets_.begin(); doc_iter!= document_sets_.end(); doc_iter++)
+    {
+        doc_iter->second->clear();
+    }
+
+}
+
+void DocumentManager::clearSchematicRevisionCount() {
+    schematic_rev_count_ = 0;
+    emit schematicRevisionCountChanged(schematic_rev_count_);
+}
+
+void DocumentManager::clearAssemblyRevisionCount() {
+    assembly_rev_count_ = 0;
+    emit assemblyRevisionCountChanged(assembly_rev_count_);
+}
+
+void DocumentManager::clearLayoutRevisionCount() {
+    layout_rev_count_ = 0;
+    emit layoutRevisionCountChanged(layout_rev_count_);
+}
+
+void DocumentManager::clearTestReportRevisionCount() {
+    testreport_rev_count_ = 0;
+    emit testReportRevisionCountChanged(testreport_rev_count_);
+}
+
+void DocumentManager::clearTargetedRevisionCount() {
+    targeted_rev_count_ = 0;
+    emit targetedRevisionCountChanged(targeted_rev_count_);
 }

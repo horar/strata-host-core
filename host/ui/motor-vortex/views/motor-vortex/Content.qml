@@ -4,6 +4,7 @@ import "."  //Import directory
 import "qrc:/js/navigation_control.js" as NavigationControl
 import tech.spyglass.DocumentManager 1.0
 import tech.spyglass.Document 1.0
+import "qrc:/include/Modules/"      // On Semi QML Modules
 
 Rectangle {
     id: view
@@ -26,106 +27,39 @@ Rectangle {
 
     TabBar {
         id: tabBar
+
         width: parent.width - flipButton.width
         currentIndex: swipeView.currentIndex
         anchors { bottom: parent.bottom;}
 
         TabButton { text: "Schematic"
-            Rectangle {
-                id: newSchematicBadge
-                width: parent.width<parent.height?parent.width/1.9:parent.height/1.8
-                height: width
-                color: "red"
-                radius: width*0.5
-                anchors.bottom: parent.top
-                anchors.right: parent.right
-                anchors.bottomMargin: -20
-                Text {
-                    color: "white"
-                    text: { return documentManager.revisionCount}
-                    z:2
-                    wrapMode: Text.WordWrap
-                    anchors { fill: parent; centerIn: parent.Center }
-                    horizontalAlignment: Text.AlignHCenter
-                    verticalAlignment: Text.AlignVCenter
-                }
-                // Only show badge if rev is > 0
-                visible: documentManager.revisionCount ? true : false
-            }
-            onClicked: documentManager.clearRevisionCount()
+           CircleBadge {
+               id: schematicBadge
+               revisionCount: documentManager.schematicRevisionCount
+           }
+           onClicked: documentManager.clearSchematicRevisionCount()
         }
         TabButton { text: "Layout"
-            Rectangle {
-                id: newLayoutBadge
-                width: parent.width<parent.height?parent.width/1.9:parent.height/1.8
-                height: width
-                color: "red"
-                radius: width*0.5
-                anchors.bottom: parent.top
-                anchors.right: parent.right
-                anchors.bottomMargin: -20
-                Text {
-                    color: "white"
-                    text: { return documentManager.revisionCount}
-                    z:2
-                    wrapMode: Text.WordWrap
-                    anchors { fill: parent; centerIn: parent.Center }
-                    horizontalAlignment: Text.AlignHCenter
-                    verticalAlignment: Text.AlignVCenter
-                }
-                // Only show badge if rev is > 0
-                visible: documentManager.revisionCount ? true : false
+            CircleBadge {
+                id: layoutBadge
+                revisionCount: documentManager.layoutRevisionCount
             }
-            onClicked: documentManager.clearRevisionCount()
+            onClicked: documentManager.clearLayoutRevisionCount()
         }
         TabButton { text: "Test Report"
-            Rectangle {
-                id: newTestReportBadge
-                width: parent.width<parent.height?parent.width/1.9:parent.height/1.8
-                height: width
-                color: "red"
-                radius: width*0.5
-                anchors.bottom: parent.top
-                anchors.right: parent.right
-                anchors.bottomMargin: -20
-                Text {
-                    color: "white"
-                    text: { return documentManager.revisionCount}
-                    z:2
-                    wrapMode: Text.WordWrap
-                    anchors { fill: parent; centerIn: parent.Center }
-                    horizontalAlignment: Text.AlignHCenter
-                    verticalAlignment: Text.AlignVCenter
-                }
-                // Only show badge if rev is > 0
-                visible: documentManager.revisionCount ? true : false
+            CircleBadge {
+                id: testReportBadge
+                revisionCount: documentManager.testReportRevisionCount
             }
-            onClicked: documentManager.clearRevisionCount()
+            onClicked: documentManager.clearTestReportRevisionCount()
         }
         TabButton { text: "System Content" }
         TabButton { text: "Coming Soon"
-            Rectangle {
-                id: newCommingSoonBadge
-                width: parent.width<parent.height?parent.width/1.9:parent.height/1.8
-                height: width
-                color: "red"
-                radius: width*0.5
-                anchors.bottom: parent.top
-                anchors.right: parent.right
-                anchors.bottomMargin: -20
-                Text {
-                    color: "white"
-                    text: { return documentManager.revisionCount}
-                    z:2
-                    wrapMode: Text.WordWrap
-                    anchors { fill: parent; centerIn: parent.Center }
-                    horizontalAlignment: Text.AlignHCenter
-                    verticalAlignment: Text.AlignVCenter
-                }
-                // Only show badge if rev is > 0
-                visible: documentManager.revisionCount ? true : false
+            CircleBadge {
+                id: targetedBadge
+                revisionCount: documentManager.targetedRevisionCount
             }
-            onClicked: documentManager.clearRevisionCount()
+            onClicked: documentManager.clearTargetedRevisionCount()
         }
     }
     Rectangle{
