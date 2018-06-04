@@ -15,6 +15,7 @@ Rectangle {
     property int bitNumber: 0
     property string settingSwitchType:  ""
     color: "transparent"
+
     /*
     Holds the state of the switch.
     */

@@ -44,6 +44,72 @@ var pwm_frequency_duty_cycle =  {
     }
 }
 
+/*
+  I2C Configure
+*/
+var i2c_configure = {
+    "cmd" : "i2c_configure",
+    "payload" : {
+        "bus_number" : "",
+        "bus_speed" :  "",
+    }
+}
+
+/*
+  I2C Write
+ */
+var i2c_write = {
+    "cmd" : "i2c_write",
+    "payload" : {
+        "bus_number" : "",
+        "slave_address" :  "",
+        "register_address": "",
+        "data": "",
+    }
+}
+
+/*
+  I2C Read
+*/
+var i2c_read = {
+    "cmd" : "i2c_read",
+    "payload" : {
+        "bus_number" : " ",
+        "slave_address" : " ",
+        "register_address ": " ",
+
+    }
+
+}
+
+function setI2cBusNumber(bus_number)
+{
+    i2c_configure.payload.bus_number = bus_number
+    i2c_write.payload.bus_number = bus_number
+    i2c_read.payload.bus_number = bus_number
+}
+
+function setI2cSlaveAddress(slave_address)
+{
+    i2c_write.payload.slave_address = slave_address
+    i2c_read.payload.slave_address = slave_address
+}
+function setI2cRegisterAddress(register_address)
+{
+    i2c_write.payload.register_address = register_address
+    i2c_read.payload.register_address = register_address
+}
+
+function setI2cData(data)
+{
+    i2c_write.payload.data = data
+}
+
+function setI2cBusSpeed(bus_speed)
+{
+    i2c_configure.payload.bus_speed = bus_speed
+}
+
 function setGpioPort(port)
 {
     gpio_direction.payload.port = port;
@@ -60,7 +126,7 @@ function setGpioBit(bit)
 
 function setDirection(direction)
 {
-    gpio_direction.payload.direction= direction;
+    gpio_direction.payload.direction = direction;
 }
 
 function setOutputValue(output_value)
@@ -103,6 +169,14 @@ function printGpioCommand()
 function printPwmCommand()
 {
     console.log(JSON.stringify(pwm_frequency_duty_cycle));
+
+}
+
+function printI2cCommand()
+{
+    console.log(JSON.stringify(i2c_configure));
+    console.log(JSON.stringify(i2c_write));
+    console.log(JSON.stringify(i2c_read));
 
 }
 

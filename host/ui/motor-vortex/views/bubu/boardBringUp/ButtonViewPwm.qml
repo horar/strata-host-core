@@ -9,11 +9,23 @@ import QtQuick.Controls 1.4
 Rectangle {
 
     id:pwmbuttonViewContainer
+    property variant holdDisableBits: [ ]
     property int smallFontSize: (Qt.platform.os === "osx") ? 12  : 10;
     property int mediumFontSize: (Qt.platform.os === "osx") ? 15  : 12;
     property int largeFontSize: (Qt.platform.os === "osx") ? 24  : 20;
     property int extraLargeFontSize: (Qt.platform.os === "osx") ? 36  : 24;
     property string upChevron: "\u25b2"
+
+    function checkBits(index) {
+        for(var i = 0; i < holdDisableBits.length; ++i){
+            if(index === holdDisableBits[i]){
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     ScrollView {
         width: 1000; height: 500
         anchors.centerIn: parent
@@ -73,6 +85,7 @@ Rectangle {
                             font.pointSize: largeFontSize
                             font.family: "helvetica"
                             horizontalAlignment: Text.AlignHCenter
+
                         }
                     }
                 }
@@ -88,8 +101,7 @@ Rectangle {
             }
 
             delegate:
-                SingleBitPWMsettings { bitNum: index }
-
+                SingleBitPWMsettings { bitNum: index; portsDisabled: checkBits(index) }
         }
     }
 }

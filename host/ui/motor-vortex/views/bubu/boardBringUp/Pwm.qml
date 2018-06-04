@@ -12,6 +12,11 @@ Rectangle {
     property var currentTab: pwmView
     property var newTab: pwmView
 //    visible: opacity > 0 //testing
+    property variant portAMapDisable: [12, 13]
+    property variant portBMapDisable: [2, 12, 15]
+    property variant portCMapDisable: [1,2,3,4,5,10,11,12,13,14,15]
+    property variant portEMapDisable: [1,2,3,4,5,6,7,9,15]
+  //  property type name: value
     anchors.fill:parent
 
     function setCommands(pinFunction, portName, tabIndex)
@@ -80,11 +85,11 @@ Rectangle {
             pwmbuttonRow.children[pwmbitView.currentIndex].checked = true;
 
         }
+        ButtonViewPwm { holdDisableBits: portAMapDisable }
+        ButtonViewPwm { holdDisableBits: portBMapDisable }
+        ButtonViewPwm { holdDisableBits: portCMapDisable }
         ButtonViewPwm { }
-        ButtonViewPwm { }
-        ButtonViewPwm { }
-        ButtonViewPwm { }
-        ButtonViewPwm { }
+        ButtonViewPwm { holdDisableBits: portEMapDisable }
         ButtonViewPwm { }
     }
 

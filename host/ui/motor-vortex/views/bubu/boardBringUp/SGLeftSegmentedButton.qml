@@ -18,6 +18,7 @@ Button {
     checkable: true
     checked:true
 
+
     font.pixelSize: mediumFontSize
     background: Canvas{
         id:leftButtonCanvas

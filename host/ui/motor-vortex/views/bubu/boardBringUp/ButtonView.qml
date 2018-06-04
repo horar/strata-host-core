@@ -14,6 +14,17 @@ Rectangle {
     property int largeFontSize: (Qt.platform.os === "osx") ? 24  : 20;
     property int extraLargeFontSize: (Qt.platform.os === "osx") ? 36  : 24;
     property string upChevron: "\u25b2"
+     property variant holdDisableBits: [ ]
+
+    function checkBits(index) {
+        for(var i = 0; i < holdDisableBits.length; ++i){
+            if(index === holdDisableBits[i]){
+                return true;
+            }
+        }
+
+        return false;
+    }
     ScrollView {
         width: 1000; height: 500
         anchors.centerIn: parent
@@ -95,7 +106,7 @@ Rectangle {
             }
 
             delegate:
-                SingleBitSettings { bitNum: index }
+                SingleBitSettings { bitNum: index; portsDisabled: checkBits(index)  }
 
         }
     }

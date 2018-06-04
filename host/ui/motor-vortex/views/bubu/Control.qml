@@ -23,7 +23,35 @@ Rectangle {
     property color darkGreyColor: "#DBDAD9"
     property var currentTab : serialView
     property var newTab : gpioView
+    property var acknowledge
+
     anchors{ fill:parent }
+
+    // Platform Implementation signals
+    Connections {
+        target: coreInterface
+        onNotification: {
+            try {
+                /*
+                    Attempt to parse JSON
+                */
+                var notification = JSON.parse(payload)
+            }
+            catch(e)
+            {
+                if ( e instanceof SyntaxError){
+                    console.log("Notification JSON is invalid. ignoring")
+                }
+            }
+
+            // check the command for the notification and call the function accordingly
+            if(notification.cmd === "i2c_read" || notification.cmd === "i2c_write") {
+                serialView.i2cAckParse(notification)
+            }
+
+
+        }
+    }
 
     ParallelAnimation{
         id: crosfadeTabs
@@ -78,20 +106,20 @@ Rectangle {
         anchors.topMargin: 15
 
         SGLeftSegmentedButton{
-            text:"serial" ;
+            text:"I2C" ;
             objectName: "serialBoardBringUpButton"
-            tabName:Serial{/*visible: false*/}
+            tabName:Serial{}
         }
 
         SGMiddleSegmentedButton{
             text:"gpio";
             objectName: "gpioBoardBringUpButton"
-            tabName:Gpio{/*visible: false*/}
+            tabName:Gpio{}
         }
         SGRightSegmentedButton{
             text:"pwm";
             objectName: "pwmBoardBringUpButton"
-            tabName:Pwm{/*visible: false*/}
+            tabName:Pwm{}
         }
     }
 
@@ -106,6 +134,7 @@ Rectangle {
             id:serialView
             anchors.fill:parent
             opacity: 1
+            i2c_ack: acknowledge
 
         }
 

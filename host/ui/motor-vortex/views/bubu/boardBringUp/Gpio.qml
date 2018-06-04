@@ -16,6 +16,11 @@ Rectangle {
     property var newTab:  gpioView
 //  visible: opacity > 0 // for testing
     anchors.fill:parent
+    property variant portAMapDisable: [0, 1, 2, 3, 4 ,5 ,6,7,8,9,10,11,12,13,14,15]
+    property variant portBMapDisable: [0, 1, 2, 3, 4 ,5 ,6,7,8,9,10,11,12,13,14,15]
+    property variant portCMapDisable: [0, 1, 2, 3, 4 ,5 ,6,7,8,9,10,11,12,13,14,15]
+    property variant portDMapDisable: [2]
+    property variant portHMapDisable: [0, 1]
 
     function setCommands(pinFunction, portName, tabIndex)
     {
@@ -68,8 +73,8 @@ Rectangle {
         SGMiddleSegmentedButton{text:"Port B"; portName: "b"; tabIndex: 1; pinFunction: "gpio"; onClicked: setCommands(pinFunction, portName,tabIndex)}
         SGMiddleSegmentedButton{text:"Port C"; portName: "c"; tabIndex: 2; pinFunction: "gpio"; onClicked: setCommands(pinFunction, portName,tabIndex)}
         SGMiddleSegmentedButton{text:"Port D"; portName: "d"; tabIndex: 3; pinFunction: "gpio"; onClicked: setCommands(pinFunction, portName,tabIndex)}
-        SGMiddleSegmentedButton{text:"Port E"; portName: "e"; tabIndex: 4; pinFunction: "gpio"; onClicked: setCommands(pinFunction, portName,tabIndex)}
-        SGRightSegmentedButton{text:"Port F"; portName: "f"; tabIndex: 5; pinFunction: "gpio"; onClicked: setCommands(pinFunction, portName,tabIndex)}
+      //  SGMiddleSegmentedButton{text:"Port E"; portName: "e"; tabIndex: 4; pinFunction: "gpio"; onClicked: setCommands(pinFunction, portName,tabIndex)}
+        SGRightSegmentedButton{text:"Port H"; portName: "f"; tabIndex: 4; pinFunction: "gpio"; onClicked: setCommands(pinFunction, portName,tabIndex)}
 
     }
 
@@ -84,12 +89,11 @@ Rectangle {
         onCurrentIndexChanged: {
             buttonRow.children[bitView.currentIndex].checked = true;
         }
-        ButtonView { }
-        ButtonView { }
-        ButtonView { }
-        ButtonView { }
-        ButtonView { }
-        ButtonView { }
+        ButtonView { holdDisableBits: portAMapDisable } // A
+        ButtonView { holdDisableBits: portBMapDisable} // B
+        ButtonView { holdDisableBits: portCMapDisable} // C
+        ButtonView { holdDisableBits: portDMapDisable }   // D
+        ButtonView { holdDisableBits: portHMapDisable} // H
     }
 
     PageIndicator {

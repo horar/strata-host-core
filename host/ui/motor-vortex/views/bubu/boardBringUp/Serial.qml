@@ -2,6 +2,7 @@ import QtQuick 2.0
 import QtQuick.Controls 1.4
 import QtQuick.Layouts 1.3
 import QtQuick.Controls.Styles 1.4
+import "qrc:/views/bubu/Control.js" as BubuControl
 
 
 Rectangle{
@@ -10,6 +11,22 @@ Rectangle{
     property int indexHolder: 0
     // visible: opacity > 0
     anchors.fill:parent
+    property string i2c_ack
+
+    function i2cAckParse(notification) {
+
+        var i2c_Ack = notification.payload.acknowledge;
+        // get I2c acknowledge
+        if(i2c_Ack !== undefined){
+            i2cAcknowledge.text = i2c_Ack
+        }
+        else
+        {
+            console.log("Junk data found", i2c_Ack);
+        }
+
+
+    }
 
     function hex2bin(hex){
         return ("00000000" + (parseInt(hex, 16)).toString(2)).substr(-8);
@@ -25,8 +42,9 @@ Rectangle{
 
         }
         return true;
-
     }
+
+
 
     Text {
         id: i2cTitle
@@ -56,8 +74,9 @@ Rectangle{
         }
 
         ComboBox {
+            id: i2cModel
             anchors{ left: selectChannel.right
-             leftMargin: 10
+                leftMargin: 10
             }
             model: ["I2C 1", "I2C 2", "I2C 3"]
             onCurrentIndexChanged: {
@@ -88,10 +107,10 @@ Rectangle{
         }
 
         ComboBox {
-             id: sdaModel
-             anchors{ left: selectSDA.right
-              leftMargin: 10
-             }
+            id: sdaModel
+            anchors{ left: selectSDA.right
+                leftMargin: 10
+            }
             model: ["First", "Second", "Third"]
 
         }
@@ -104,9 +123,22 @@ Rectangle{
         ComboBox {
             id:sclkModel
             anchors{ left: selectSCLK.right
-             leftMargin: 10
+                leftMargin: 10
             }
             model: ["First", "Second", "Third"]
+
+        }
+
+        Button {
+            id: i2cConfig
+            text : "Configure I2C"
+
+            onClicked: {
+                BubuControl.setI2cBusNumber(i2cModel.currentIndex+1);
+                BubuControl.setI2cBusSpeed(busRateValue.text);
+                BubuControl.printI2cCommand();
+
+            }
 
         }
     }
@@ -119,7 +151,7 @@ Rectangle{
 
         Text {
             id: slaveAddress
-            text: "Slave Address"
+            text: "Slave Address (Hex)"
             anchors {
                 left: parent.left
                 leftMargin: 10
@@ -129,22 +161,22 @@ Rectangle{
         TextField {
             id: slaveAddressValue
             anchors{ left: slaveAddress.right
-             leftMargin: 10
+                leftMargin: 10
             }
-            placeholderText: "0XXX"
+            text: "07"
 
         }
 
         Text {
             id: registerAddress
-            text: "Register Address"
+            text: "Register Address (Hex)"
         }
         TextField {
             id: registerAddressValue
             anchors{ left: registerAddress.right
-             leftMargin: 10
+                leftMargin: 10
             }
-            placeholderText: "0X23"
+            text: "10"
 
         }
 
@@ -155,7 +187,7 @@ Rectangle{
         TextField {
             id: busRateValue
             anchors{ left: busRate.right
-             leftMargin: 10
+                leftMargin: 10
             }
             placeholderText: "0"
         }
@@ -179,15 +211,15 @@ Rectangle{
         TextField {
             id: dataValue
             anchors{ left: dataText.right
-             leftMargin: 10
+                leftMargin: 10
 
             }
 
-            placeholderText: "0X22"
+            text: "21"
             onEditingFinished: {
 
                 if(isHex(text) == true) {
-                binaryConversion =  hex2bin(text); }
+                    binaryConversion =  hex2bin(text); }
 
                 /*
                     iterating the string to set the list model
@@ -255,16 +287,43 @@ Rectangle{
         Button {
             id: readButton
             anchors { left : bitview.right
-            leftMargin: 20
+                leftMargin: 20
             }
             text: "Read"
+            onClicked: {
+                BubuControl.setI2cBusNumber(i2cModel.currentIndex+1);
+                BubuControl.setI2cSlaveAddress(parseInt(slaveAddressValue.text, 16));
+                BubuControl.setI2cRegisterAddress(parseInt(registerAddressValue.text,16));
+                BubuControl.printI2cCommand();
+
+            }
+
         }
         Button {
             id: writeButton
             anchors { left : readButton.right
-            leftMargin: 20
+                leftMargin: 20
             }
             text: "Write"
+            onClicked: {
+                BubuControl.setI2cBusNumber(i2cModel.currentIndex+1);
+                BubuControl.setI2cSlaveAddress(parseInt(slaveAddressValue.text, 16));
+                BubuControl.setI2cRegisterAddress(parseInt(registerAddressValue.text,16));
+                BubuControl.setI2cData(parseInt(dataValue.text,16));
+                BubuControl.printI2cCommand();
+
+            }
+        }
+
+        TextField {
+            id: i2cAcknowledge
+            anchors { left : writeButton.right
+                leftMargin: 20
+            }
+            placeholderText: "ACK/NCK"
+
+
+
         }
 
     }
@@ -273,13 +332,50 @@ Rectangle{
         id: addRow
         text: "+"
         anchors.bottom: i2cTable.top
-        onClicked: tableModel.append({"serialNum": tableModel.count+1,
-                                         "slaveAddress": "0xab",
-                                         "registerAddress": "0xcd",
-                                         "data": "0x23",
-                                         "operation": "R",
-                                         "acknowledgement": "ACK/NAK" });
+        onClicked: {
+
+            tableModel.append({"serialNum": tableModel.count+1,
+                                  "slaveAddress": "0xab",
+                                  "registerAddress": "0xcd",
+                                  "data": "0x23",
+                                  "operation": "R",
+                                  "acknowledgement": "ACK/NAK" });
+        }
     }
+
+    Button {
+        id: exportButton
+        anchors { left : deleteRow.right
+            leftMargin: 20
+            bottom: i2cTable.top
+        }
+        text: "Export"
+        onClicked: {
+            /*
+              push all the table information in single JSON
+            */
+            var tableDataHolder = { ListModel : [ ] }
+            for (var i = 0; i < tableModel.count; ++i) {
+                tableDataHolder.ListModel.push(tableModel.get(i));
+
+            }
+
+            var table = JSON.stringify(tableDataHolder);
+            console.log(table);
+
+        }
+    }
+
+    Button {
+        id: importButton
+        anchors { left : exportButton.right
+            leftMargin: 20
+            bottom: i2cTable.top
+        }
+        text: "Import"
+    }
+
+
 
     Button {
         id: deleteRow
@@ -385,6 +481,14 @@ Rectangle{
         itemDelegate: {
             return editableDelegate;
         }
+    }
+
+    Button {
+        id: execute
+        anchors {
+            top: i2cTable.bottom
+        }
+        text: "Execute"
     }
 
 }
