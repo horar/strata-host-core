@@ -4,37 +4,37 @@ import QtQuick.Controls 2.2
 
 Window {
     visible: true
-    width: 640
-    height: 480
+    width: 300
+    height: 300
     title: qsTr("SGOutputLogBox Demo")
 
     SGOutputLogBox{
         // Anchors fill parent by default.
         id: logBox
-        title: ""   // Default: "" (title bar will not be visible with this string)
 
+        input: data.stream
 
+        // Optional SGOutputLogBox Settings:
+        title: "Message Log"            // Default: "" (title bar will not be visible when empty string)
+        titleTextColor: "#000000"       // Default: "#000000" (black)
+        titleBoxColor: "#eeeeee"        // Default: "#eeeeee" (light gray)
+        titleBoxBorderColor: "#dddddd"  // Default: "#dddddd" (light gray)
+        outputTextColor: "#777777"      // Default: "#000000" (black)
+        outputBoxColor: "#ffffff"       // Default: "#ffffff" (white)
+        outputBoxBorderColor: "#dddddd" // Default: "#dddddd" (light gray)
     }
 
-    // Debug button to start/stop data flow
-    Button {
-        text: data.running ? "stop" : "start"
-        anchors.right: parent.right
-        checkable: true
-        onClicked: data.running = !data.running
-    }
-
-    // Spit out data to output box on a timed interval
+    // Send demo data to output box on a timed interval
     Timer {
         id: data
-        property real stream
+        property string stream
         property real count: 0
         interval: 100
         running: true
         repeat: true
         onTriggered: {
             count += interval;
-            logBox.input = Date.now() + " Message " + count;
+            stream = Date.now() + " Message " + count/100;
         }
     }
 }
