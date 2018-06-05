@@ -95,7 +95,6 @@ ChartView {
         id: dataLine
         color: dataLineColor
         width: 2
-        Component.onCompleted: { color = dataLineColor } // Faller: there is a bug writing black to the color on loading, and it sets the default green color instead, so this is a workaround
     }
 
     Button {
