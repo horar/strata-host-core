@@ -33,7 +33,7 @@ Window {
             showOptions: true               // Default: false
         }
 
-    // Just a widget to fake a data stream with adjustible timing interval output
+    // Sends demo data stream with adjustible timing interval output
     Timer {
         id: data
         property real stream
