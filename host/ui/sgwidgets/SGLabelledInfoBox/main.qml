@@ -10,8 +10,15 @@ Window {
     SGLabelledInfoBox {
         id: labelledInfoBox
 
-        label: "Voltage:"
         info: data.stream + " v"
+        infoBoxWidth: 80            // Must be set by user based on their needs
+
+        // Optional configuration:
+        label: "Voltage:"               // Default: ""
+        infoBoxColor: "#eeeeee"         // Default: "#eeeeee" (light gray)
+        infoBoxBorderColor: "#cccccc"   // Default: "#cccccc" (light gray)
+        infoBoxBorderWidth: 1           // Default: 1 (assign 0 for no border)
+        onWidthChanged:  console.log(width + "   " + height)
     }
 
     // Sends demo data stream to infoBox

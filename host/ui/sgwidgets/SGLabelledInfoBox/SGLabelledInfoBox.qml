@@ -4,15 +4,19 @@ import QtQuick.Layouts 1.3
 Rectangle {
     id: root
 
-    anchors.fill: parent
-    //width: label.width
-    height: childrenRect.height
+    anchors {
+        fill: parent
+    }
 
     property string label: ""
     property string info: ""
+    property real infoBoxWidth: 50
+    property color infoBoxColor: "#eeeeee"
+    property color infoBoxBorderColor: "#cccccc"
+    property real infoBoxBorderWidth: 1
 
     onWidthChanged: {
-        if (labelText.width + infoContainer.width > root.width){
+        if (labelText.width + infoContainer.width > root.parent.width){
             grid.columns = 1;
             labelText.padding = 5;
         } else {
@@ -30,18 +34,18 @@ Rectangle {
             id: labelText
             width: contentWidth + padding * 2
             text: label
-            padding: 10
-            anchors.leftMargin: 30
+
+            Component.onCompleted: text == "" ? padding = 0 : padding = 10;
         }
 
         Rectangle {
             id: infoContainer
             height: 30
-            width: 100
-            color: "#eeeeee"
+            width: root.infoBoxWidth
+            color: root.infoBoxColor
             border {
-                color: "#000000"
-                width: 0
+                color: root.infoBoxBorderColor
+                width: root.infoBoxBorderWidth
             }
 
             TextInput {
@@ -52,6 +56,7 @@ Rectangle {
                     verticalCenter: parent.verticalCenter
                 }
                 text: info
+                selectByMouse: true
                 readOnly: true
             }
         }
