@@ -15,8 +15,8 @@ Window {
         model: radioModel
 
         // Optional Configuration:
-        exclusive: true             // Default: true
-//        orientation: Qt.Horizontal  // Default: Qt.vertical
+        exclusive: true             // Default: true (modifies exclusivity of the checked property)
+        orientation: Qt.Horizontal  // Default: Qt.vertical
         textColor: "#000000"        // Default: "#000000" (black)
         radioColor: "#000000"       // Default: "#000000" (black)
         backgroundColor: "salmon"   // Default: "#ffffff" (white)
@@ -38,21 +38,12 @@ Window {
 
             ListElement {
                 name: "Pseudo-Sinusoidal"
-//                disabled: true
+                disabled: true
             }
 
             ListElement {
                 name: "Exponential"
             }
         }
-    }
-
-    // Debug Text
-    Text {
-        anchors {
-            top: radioButtons.bottom
-        }
-        id: text
-        text: qsTr("width:" + radioButtons.width + " height:" + radioButtons.height)
     }
 }

@@ -4,19 +4,18 @@ import QtQuick.Layouts 1.3
 
 ListView {
     id: root
+    implicitWidth: contentItem.childrenRect.width
+    implicitHeight: contentItem.childrenRect.height
+    model: ["Option 1", "Option 2", "Option 3"]
+    interactive: false
+
     property alias model: root.model
     property alias exclusive: buttonGroup.exclusive
+
     property color textColor: "#000000"
     property color radioColor: "#000000"
     property color highlightColor: "transparent"
-    property color backgroundColor: "#000000"
-
-    implicitWidth: children[0].childrenRect.width
-    implicitHeight: children[0].childrenRect.height
-
-    model: ["Option 1", "Option 2", "Option 3"]
-    Component.onCompleted: console.log(children[0] === radioDelegate)
-    interactive: false
+    property color backgroundColor: "#ffffff"
 
     delegate: RadioDelegate {
         id: radioDelegate
@@ -24,11 +23,10 @@ ListView {
         checked: model.checked
         enabled: !model.disabled
         ButtonGroup.group: buttonGroup
-//        Component.onCompleted: console.log(childrenRect.height)
 
         contentItem: Text {
             anchors.left: radioDelegate.indicator.right
-            leftPadding: radioDelegate.spacing //+ radioDelegate.indicator.width
+            leftPadding: radioDelegate.spacing
             rightPadding: radioDelegate.spacing *2
             text: radioDelegate.text
             font: radioDelegate.font
@@ -42,7 +40,6 @@ ListView {
             implicitWidth: 26
             implicitHeight: 26
             x: radioDelegate.spacing
-            //x: radioDelegate.width - width - radioDelegate.rightPadding
             y: parent.height / 2 - height / 2
             radius: 13
             color: "transparent"
@@ -73,7 +70,7 @@ ListView {
         id: buttonGroup
     }
 
-    Rectangle {  // Background for whole
+    Rectangle {  // Background for whole item
         z: -1
         anchors {
             fill: parent
@@ -81,46 +78,3 @@ ListView {
         color: root.backgroundColor
     }
 }
-
-
-
-
-
-
-
-
-
-//GroupBox {
-//    anchors.fill: parent
-
-//    //set flat to be true, and fill with a white rectangle to hide the GroupBox background
-//    Rectangle {
-//        anchors.fill:parent
-//        color: "white"
-//        border.color: "black"
-//    }
-
-//    ColumnLayout {
-//        id: container
-//        anchors { centerIn: parent }
-
-//        ButtonGroup { buttons: container.children }
-//        RadioButton {
-//            text: "5 V"
-//            id: button
-//            checked: true
-//        }
-//        RadioButton {
-//            text: "9 V"
-
-//        }
-//        RadioButton {
-//            text: "12 V"
-
-//        }
-//        RadioButton {
-//            text: "15 V"
-//            checkable: false
-//        }
-//    }
-//}
