@@ -78,7 +78,7 @@ Window {
 
             SGAccordionItem {
                 open: false
-                title: "Default Accordion Style 1"
+                title: "Custom Accordion Style 1"
 
                 body: Item{
                     height: childrenRect.height

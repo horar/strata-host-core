@@ -123,12 +123,11 @@ ColumnLayout {
         id: container
         color: bodyColor
         Layout.fillWidth: true
-        anchors.top: titleBar.bottom
         implicitHeight: root.open ? childrenRect.height : 0
         clip: true
 
         Component.onCompleted: {
-            root.open ? root.opener() : root.closer(); // size is recalculated after body completed (due to problems with textWrap)
+            root.open ? root.opener() : root.closer(); // [Faller] size recalculated after body completed (textWrap doesn't calculate in time)
         }
 
         // Loads user defined widgets/content
@@ -141,11 +140,7 @@ ColumnLayout {
     Rectangle {
         id: divider
         Layout.fillWidth: true
-        anchors.top: container.bottom
         color: dividerColor
         height: dividerHeight
     }
 }
-
-
-
