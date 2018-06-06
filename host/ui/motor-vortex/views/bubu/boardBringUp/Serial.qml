@@ -137,6 +137,7 @@ Rectangle{
                 BubuControl.setI2cBusNumber(i2cModel.currentIndex+1);
                 BubuControl.setI2cBusSpeed(busRateValue.text);
                 BubuControl.printI2cCommand();
+                coreInterface.sendCommand(BubuControl.getI2cConfigure());
 
             }
 
@@ -295,6 +296,7 @@ Rectangle{
                 BubuControl.setI2cSlaveAddress(parseInt(slaveAddressValue.text, 16));
                 BubuControl.setI2cRegisterAddress(parseInt(registerAddressValue.text,16));
                 BubuControl.printI2cCommand();
+                coreInterface.sendCommand(BubuControl.getI2cRead());
 
             }
 
@@ -311,6 +313,7 @@ Rectangle{
                 BubuControl.setI2cRegisterAddress(parseInt(registerAddressValue.text,16));
                 BubuControl.setI2cData(parseInt(dataValue.text,16));
                 BubuControl.printI2cCommand();
+                coreInterface.sendCommand(BubuControl.getI2cRead());
 
             }
         }
@@ -321,9 +324,6 @@ Rectangle{
                 leftMargin: 20
             }
             placeholderText: "ACK/NCK"
-
-
-
         }
 
     }

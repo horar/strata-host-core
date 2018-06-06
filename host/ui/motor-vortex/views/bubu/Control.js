@@ -194,3 +194,18 @@ function getPwmCommand()
 {
     return JSON.stringify(pwm_frequency_duty_cycle);
 }
+
+function getI2cConfigure()
+{
+    return JSON.stringify(i2c_configure);
+}
+
+function getI2cWrite()
+{
+    return JSON.stringify(i2c_write);
+}
+
+function getI2cRead()
+{
+    return JSON.stringify(i2c_read);
+}

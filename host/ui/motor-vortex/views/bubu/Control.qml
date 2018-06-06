@@ -134,7 +134,6 @@ Rectangle {
             id:serialView
             anchors.fill:parent
             opacity: 1
-            i2c_ack: acknowledge
 
         }
 
