@@ -18,7 +18,6 @@ Window {
         infoBoxColor: "#eeeeee"         // Default: "#eeeeee" (light gray)
         infoBoxBorderColor: "#cccccc"   // Default: "#cccccc" (light gray)
         infoBoxBorderWidth: 1           // Default: 1 (assign 0 for no border)
-        onWidthChanged:  console.log(width + "   " + height)
     }
 
     // Sends demo data stream to infoBox

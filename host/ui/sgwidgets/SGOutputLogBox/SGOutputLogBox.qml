@@ -112,7 +112,7 @@ Rectangle {
     }
 
     Button {
-        visible: false
+        visible: true
         width: 30
         height: 30
         flat: true
