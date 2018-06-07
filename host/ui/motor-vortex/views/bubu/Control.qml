@@ -31,11 +31,25 @@ Rectangle {
     Connections {
         target: coreInterface
         onNotification: {
+
             try {
                 /*
                     Attempt to parse JSON
                 */
                 var notification = JSON.parse(payload)
+                console.log("in notification", notification.cmd);
+                console.log("in notification", JSON.stringify(notification));
+
+                // check the command for the notification and call the function accordingly
+                if(notification.value === "i2c_read") {
+
+                    serialView.i2cAckParse(notification)
+                    serialView.i2cReadDataParse(notification)
+                }
+                if(notification.value === "i2c_write") {
+                     serialView.i2cAckParse(notification)
+                }
+
             }
             catch(e)
             {
@@ -43,13 +57,6 @@ Rectangle {
                     console.log("Notification JSON is invalid. ignoring")
                 }
             }
-
-            // check the command for the notification and call the function accordingly
-            if(notification.cmd === "i2c_read" || notification.cmd === "i2c_write") {
-                serialView.i2cAckParse(notification)
-            }
-
-
         }
     }
 

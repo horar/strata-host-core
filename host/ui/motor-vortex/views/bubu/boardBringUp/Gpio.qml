@@ -16,11 +16,11 @@ Rectangle {
     property var newTab:  gpioView
 //  visible: opacity > 0 // for testing
     anchors.fill:parent
-    property variant portAMapDisable: [0, 1, 2, 3, 4 ,5 ,6,7,8,9,10,11,12,13,14,15]
-    property variant portBMapDisable: [0, 1, 2, 3, 4 ,5 ,6,7,8,9,10,11,12,13,14,15]
-    property variant portCMapDisable: [0, 1, 2, 3, 4 ,5 ,6,7,8,9,10,11,12,13,14,15]
-    property variant portDMapDisable: [2]
-    property variant portHMapDisable: [0, 1]
+    property variant portAMapDisable: []
+    property variant portBMapDisable: [10,11]
+    property variant portCMapDisable: [0,1,4,5]
+    property variant portDMapDisable: [0.1,3,4,5,6,7,8,9,10,11,12,13,14,15]
+    property variant portHMapDisable: [2,3,4,5,6,7,8,9,10,11,12,13,14,15]
 
     function setCommands(pinFunction, portName, tabIndex)
     {
@@ -29,7 +29,7 @@ Rectangle {
     }
 
     Component.onCompleted: {
-        BubuControl.setGpioPort("A"); //Setting default port as "A"
+        BubuControl.setGpioPort("a"); //Setting default port as "A"
     }
 
     ParallelAnimation{
@@ -74,7 +74,7 @@ Rectangle {
         SGMiddleSegmentedButton{text:"Port C"; portName: "c"; tabIndex: 2; pinFunction: "gpio"; onClicked: setCommands(pinFunction, portName,tabIndex)}
         SGMiddleSegmentedButton{text:"Port D"; portName: "d"; tabIndex: 3; pinFunction: "gpio"; onClicked: setCommands(pinFunction, portName,tabIndex)}
       //  SGMiddleSegmentedButton{text:"Port E"; portName: "e"; tabIndex: 4; pinFunction: "gpio"; onClicked: setCommands(pinFunction, portName,tabIndex)}
-        SGRightSegmentedButton{text:"Port H"; portName: "f"; tabIndex: 4; pinFunction: "gpio"; onClicked: setCommands(pinFunction, portName,tabIndex)}
+        SGRightSegmentedButton{text:"Port H"; portName: "h"; tabIndex: 4; pinFunction: "gpio"; onClicked: setCommands(pinFunction, portName,tabIndex)}
 
     }
 

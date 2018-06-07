@@ -15,8 +15,9 @@ Rectangle{
 
     function i2cAckParse(notification) {
 
-        var i2c_Ack = notification.payload.acknowledge;
+        var i2c_Ack = notification.payload.ack_or_nack;
         // get I2c acknowledge
+        console.log("in parse function");
         if(i2c_Ack !== undefined){
             i2cAcknowledge.text = i2c_Ack
         }
@@ -24,8 +25,19 @@ Rectangle{
         {
             console.log("Junk data found", i2c_Ack);
         }
+    }
 
+    function i2cReadDataParse(notification) {
 
+        var readData = notification.payload.read_data
+        // get I2c acknowledge
+        if(readData !== undefined){
+            dataValue.text = readData.toString(16);
+        }
+        else
+        {
+            console.log("Junk data found", readData);
+        }
     }
 
     function hex2bin(hex){
@@ -136,7 +148,6 @@ Rectangle{
             onClicked: {
                 BubuControl.setI2cBusNumber(i2cModel.currentIndex+1);
                 BubuControl.setI2cBusSpeed(busRateValue.text);
-                BubuControl.printI2cCommand();
                 coreInterface.sendCommand(BubuControl.getI2cConfigure());
 
             }
@@ -190,7 +201,7 @@ Rectangle{
             anchors{ left: busRate.right
                 leftMargin: 10
             }
-            placeholderText: "0"
+            text : "400000"
         }
     }
 
@@ -213,15 +224,24 @@ Rectangle{
             id: dataValue
             anchors{ left: dataText.right
                 leftMargin: 10
-
             }
 
             text: "21"
-            onEditingFinished: {
 
-                if(isHex(text) == true) {
-                    binaryConversion =  hex2bin(text); }
 
+        }
+
+        Button {
+            id: getBinaryConversion
+            text: "HexToBin"
+            anchors {
+                left: dataValue.right
+                leftMargin: 10
+            }
+
+            onClicked: {
+                if(isHex(dataValue.text) === true) {
+                    binaryConversion =  hex2bin(dataValue.text); }
                 /*
                     iterating the string to set the list model
                 */
@@ -230,7 +250,6 @@ Rectangle{
 
                 }
             }
-
         }
 
 
@@ -268,7 +287,7 @@ Rectangle{
             width: 250
             height: 40
             spacing: 30
-            anchors { left: dataValue.right
+            anchors { left: getBinaryConversion.right
                 leftMargin: 20
             }
             orientation: ListView.Horizontal
@@ -293,9 +312,9 @@ Rectangle{
             text: "Read"
             onClicked: {
                 BubuControl.setI2cBusNumber(i2cModel.currentIndex+1);
-                BubuControl.setI2cSlaveAddress(parseInt(slaveAddressValue.text, 16));
-                BubuControl.setI2cRegisterAddress(parseInt(registerAddressValue.text,16));
-                BubuControl.printI2cCommand();
+                BubuControl.setI2cSlaveAddressRead(parseInt(slaveAddressValue.text, 16));
+                BubuControl.setI2cRegisterAddressRead(parseInt(registerAddressValue.text,16));
+                BubuControl.printI2cCommandRead();
                 coreInterface.sendCommand(BubuControl.getI2cRead());
 
             }
@@ -309,11 +328,11 @@ Rectangle{
             text: "Write"
             onClicked: {
                 BubuControl.setI2cBusNumber(i2cModel.currentIndex+1);
-                BubuControl.setI2cSlaveAddress(parseInt(slaveAddressValue.text, 16));
-                BubuControl.setI2cRegisterAddress(parseInt(registerAddressValue.text,16));
+                BubuControl.setI2cSlaveAddressWrite(parseInt(slaveAddressValue.text, 16));
+                BubuControl.setI2cRegisterAddressWrite(parseInt(registerAddressValue.text,16));
                 BubuControl.setI2cData(parseInt(dataValue.text,16));
-                BubuControl.printI2cCommand();
-                coreInterface.sendCommand(BubuControl.getI2cRead());
+                BubuControl.printI2cCommandWrite();
+                coreInterface.sendCommand(BubuControl.getI2cWrite());
 
             }
         }

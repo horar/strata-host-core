@@ -16,7 +16,7 @@ Rectangle{
     function prepareCommand()
     {
         BubuControl.setPwmBit(bitNum);
-        BubuControl.setPwmFrequency(frequency.text);
+        BubuControl.setPwmFrequency(parseInt(frequency.text));
         BubuControl.setDutyCycle(Math.round(dutycycleSlider.value));
         BubuControl.printPwmCommand();
         coreInterface.sendCommand(BubuControl.getPwmCommand());
@@ -43,7 +43,7 @@ Rectangle{
 
         TextField {
             id: frequency
-            placeholderText: qsTr("10 Hz")
+            text: "10"
             anchors { left: bitNumber.right
                 leftMargin: 180 }
             onEditingFinished: {

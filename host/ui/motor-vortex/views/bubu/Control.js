@@ -51,7 +51,7 @@ var i2c_configure = {
     "cmd" : "i2c_configure",
     "payload" : {
         "bus_number" : "",
-        "bus_speed" :  "",
+        "i2c_frequency_set" :  "",
     }
 }
 
@@ -64,7 +64,7 @@ var i2c_write = {
         "bus_number" : "",
         "slave_address" :  "",
         "register_address": "",
-        "data": "",
+        "write_data": "",
     }
 }
 
@@ -76,11 +76,13 @@ var i2c_read = {
     "payload" : {
         "bus_number" : " ",
         "slave_address" : " ",
-        "register_address ": " ",
+        "register_address" : " ",
+        "read_format" : "extended",
 
     }
-
 }
+
+
 
 function setI2cBusNumber(bus_number)
 {
@@ -89,25 +91,44 @@ function setI2cBusNumber(bus_number)
     i2c_read.payload.bus_number = bus_number
 }
 
-function setI2cSlaveAddress(slave_address)
+function setI2cSlaveAddressRead(slave_address)
 {
-    i2c_write.payload.slave_address = slave_address
+
     i2c_read.payload.slave_address = slave_address
 }
-function setI2cRegisterAddress(register_address)
+
+function setI2cSlaveAddressWrite(slave_address)
+{
+    i2c_write.payload.slave_address = slave_address
+
+}
+
+function setI2cRegisterAddressWrite(register_address)
 {
     i2c_write.payload.register_address = register_address
-    i2c_read.payload.register_address = register_address
+
 }
+
+function setI2cRegisterAddressRead(register_address)
+{
+    i2c_read.payload.register_address = register_address
+
+}
+
 
 function setI2cData(data)
 {
-    i2c_write.payload.data = data
+    i2c_write.payload.write_data = data
 }
 
 function setI2cBusSpeed(bus_speed)
 {
     i2c_configure.payload.bus_speed = bus_speed
+}
+
+function setRead_format(read_format)
+{
+    i2c_configure.payload.read_format = read_format
 }
 
 function setGpioPort(port)
@@ -172,10 +193,16 @@ function printPwmCommand()
 
 }
 
-function printI2cCommand()
+function printI2cCommandWrite()
 {
-    console.log(JSON.stringify(i2c_configure));
+
     console.log(JSON.stringify(i2c_write));
+
+}
+
+function printI2cCommandRead()
+{
+
     console.log(JSON.stringify(i2c_read));
 
 }

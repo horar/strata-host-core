@@ -12,10 +12,12 @@ Rectangle {
     property var currentTab: pwmView
     property var newTab: pwmView
 //    visible: opacity > 0 //testing
-    property variant portAMapDisable: [12, 13]
-    property variant portBMapDisable: [2, 12, 15]
-    property variant portCMapDisable: [1,2,3,4,5,10,11,12,13,14,15]
-    property variant portEMapDisable: [1,2,3,4,5,6,7,9,15]
+    property variant portAMapDisable: [4, 12, 13, 14]
+    property variant portBMapDisable: [2, 12, 10, 11]
+    property variant portCMapDisable: [0,1,2,3,4,5,10,11,12,13,14,15]
+    property variant portDMapDisable: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
+    property variant portHMapDisable: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
+
   //  property type name: value
     anchors.fill:parent
 
@@ -27,7 +29,7 @@ Rectangle {
     }
 
     Component.onCompleted: {
-        BubuControl.setPwmPort("A"); //Setting default port as "A"
+        BubuControl.setPwmPort("a"); //Setting default port as "a"
     }
 
 
@@ -68,8 +70,8 @@ Rectangle {
         SGMiddleSegmentedButton{text:"Port B"; portName: "b"; tabIndex: 1; pinFunction: "pwm";onClicked: setCommands(pinFunction, portName,tabIndex)}
         SGMiddleSegmentedButton{text:"Port C";portName: "c"; tabIndex: 2; pinFunction: "pwm";onClicked: setCommands(pinFunction, portName,tabIndex)}
         SGMiddleSegmentedButton{text:"Port D";portName: "d"; tabIndex: 3; pinFunction: "pwm";onClicked: setCommands(pinFunction, portName,tabIndex)}
-        SGMiddleSegmentedButton{text:"Port E";portName: "e"; tabIndex: 4; pinFunction: "pwm";onClicked: setCommands(pinFunction, portName,tabIndex)}
-        SGRightSegmentedButton{text:"Port F";portName: "f"; tabIndex: 5; pinFunction: "pwm";onClicked: setCommands(pinFunction, portName,tabIndex)}
+    //    SGMiddleSegmentedButton{text:"Port E";portName: "e"; tabIndex: 4; pinFunction: "pwm";onClicked: setCommands(pinFunction, portName,tabIndex)}
+        SGRightSegmentedButton{text:"Port H";portName: "h"; tabIndex: 5; pinFunction: "pwm";onClicked: setCommands(pinFunction, portName,tabIndex)}
 
     }
     SwipeView {
@@ -88,9 +90,9 @@ Rectangle {
         ButtonViewPwm { holdDisableBits: portAMapDisable }
         ButtonViewPwm { holdDisableBits: portBMapDisable }
         ButtonViewPwm { holdDisableBits: portCMapDisable }
-        ButtonViewPwm { }
-        ButtonViewPwm { holdDisableBits: portEMapDisable }
-        ButtonViewPwm { }
+        ButtonViewPwm{ holdDisableBits: portDMapDisable }
+        ButtonViewPwm { holdDisableBits: portHMapDisable }
+
     }
 
     PageIndicator {

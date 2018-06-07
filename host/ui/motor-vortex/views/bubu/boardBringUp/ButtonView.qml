@@ -19,11 +19,11 @@ Rectangle {
     function checkBits(index) {
         for(var i = 0; i < holdDisableBits.length; ++i){
             if(index === holdDisableBits[i]){
-                return true;
+                return false;
             }
         }
 
-        return false;
+        return true;
     }
     ScrollView {
         width: 1000; height: 500
