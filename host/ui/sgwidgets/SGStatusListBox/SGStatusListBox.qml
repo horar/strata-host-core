@@ -70,10 +70,11 @@ Rectangle {
         }
 
         delegate: Text {
-            text: modelData
+            text: model.status // modelData
             color: root.statusTextColor
             font.family: "Courier"
         }
+
         highlightFollowsCurrentItem: true
         onContentHeightChanged: {
             if (running) { scroll() }

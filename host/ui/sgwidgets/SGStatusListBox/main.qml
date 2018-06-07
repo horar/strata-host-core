@@ -15,7 +15,7 @@ Window {
         model: demoModel
 
         // Optional SGOutputLogBox Settings:
-        title: "Message Log"            // Default: "" (title bar will not be visible when empty string)
+        title: "Status List"            // Default: "" (title bar will not be visible when empty string)
         titleTextColor: "#000000"       // Default: "#000000" (black)
         titleBoxColor: "#eeeeee"        // Default: "#eeeeee" (light gray)
         titleBoxBorderColor: "#dddddd"  // Default: "#dddddd" (light gray)
@@ -36,9 +36,7 @@ Window {
         text: "add to model"
         x: 200
         onClicked: {
-            //for (var i = 0; i<100; i++){
-                demoModel.append({ "status" : Date.now() + " fault" });
-           // }
+            demoModel.append({ "status" : Date.now() + " fault" });
         }
     }
 
@@ -47,11 +45,9 @@ Window {
         x: 200
         anchors.top: debugButton.bottom
         onClicked: {
-            //for (var i = 0; i<100; i++){
-                if (demoModel.count > 0) {
-                    demoModel.remove(demoModel.count-1);
-                }
-           // }
+            if (demoModel.count > 0) {
+                demoModel.remove(demoModel.count-1);
+            }
         }
     }
 }

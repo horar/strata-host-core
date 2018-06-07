@@ -21,12 +21,6 @@ Window {
         backgroundColor: "salmon"   // Default: "#ffffff" (white)
         highlightColor: "tomato"    // Default: "transparent"
 
-        Rectangle{
-            anchors.fill: parent
-            color: "#eeeeee"
-            z:-10
-        }
-
         ListModel {
             id: radioModel
 
