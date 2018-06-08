@@ -6,9 +6,10 @@
 	"host_controller_service": {
 		"command_address": "tcp://*:5564",     // hcs command address
 		"subscriber_address": "tcp://*:5563",  // client subscribe address
-		"remote_address": "tcp://70.89.191.58:5556",	  // remote address to connect to cobra
+		"remote_address": "tcp://70.89.191.58:8083",	  // remote address to connect to cobra
         	"simulated_platform":false,            // simulate platform hw
-			"hcs_remote_id":"h3"			//  dealer socket id for remote connection
+            "discovery_server_address": "tcp://70.89.191.58:8082",	// discovery service address
+            "discovery_activity_monitor_address": "tcp://70.89.191.58:5557"	// discovery service publisher for activity
 	},
 
     "database":{

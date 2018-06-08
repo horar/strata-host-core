@@ -90,6 +90,8 @@ set(SOURCE
         ${SOURCE}
         ${CMAKE_CURRENT_SOURCE_DIR}/src/SerialConnector.cc
         ${CMAKE_CURRENT_SOURCE_DIR}/src/ZMQConnector.cc
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/RequestReplyConnector.cc
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/PubSubConnector.cc
         )
 
 add_library(libconnectors.so ${SOURCE})

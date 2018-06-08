@@ -26,6 +26,9 @@ function login_result(response)
         Rest.jwt = response.token;
     }
     signals.loginResult(true)
+    // [TODO][prasanth]: jwt will be created/received in the hcs
+    // for now, jwt will be received in the UI and then sent to HCS
+    signals.loginJWT(response.token)
 }
 
 /*

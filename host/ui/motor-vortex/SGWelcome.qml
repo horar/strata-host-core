@@ -301,8 +301,6 @@ Rectangle{
                     console.log("calling the send");
                     coreInterface.sendSelectedPlatform(platformListModel.get(cbSelector.currentIndex).uuid,platformListModel.get(cbSelector.currentIndex).connection)
                 }
-
-
             }
         }
     }
