@@ -99,13 +99,14 @@ ChartView {
 
     Button {
         id: optionToggle
+        visible: rootChart.showOptions
         anchors {
             right: parent.right
             top: parent.top
             margins: 12
         }
         checkable: true
-        checked: options.visible
+        checked: false
         text: "Options"
         onClicked: {
             options.visible = !options.visible
@@ -114,7 +115,7 @@ ChartView {
 
     Item {
         id: options
-        visible: rootChart.showOptions
+        visible: false
         anchors {
             top: parent.top
             left: parent.left
