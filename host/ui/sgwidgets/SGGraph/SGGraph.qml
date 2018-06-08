@@ -12,9 +12,12 @@ ChartView {
     backgroundColor: "white"
     backgroundRoundness: 0
     anchors {
-        fill: parent
         margins: -12
     }
+
+    implicitWidth: 300
+    implicitHeight: 300
+
     margins {
         top: 5
         left: 5
