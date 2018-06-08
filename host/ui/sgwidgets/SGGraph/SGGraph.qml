@@ -164,11 +164,13 @@ ChartView {
                 if (rootChart.dataTime >= maxXValue - (rollingRange/2)){
                     valueAxisX.max = rootChart.dataTime + rollingRange/2;
                     valueAxisX.min = valueAxisX.max - rollingRange;
+                    if (dataLine.at(0).x < rootChart.dataTime - rollingRange/2) { dataLine.remove(0) } // Remove points that are outside of view
                 }
             } else {
                 if (rootChart.dataTime >= maxXValue){
                     valueAxisX.max = rootChart.dataTime;
                     valueAxisX.min = valueAxisX.max - rollingRange;
+                    if (dataLine.at(0).x < rootChart.dataTime - rollingRange/2) { dataLine.remove(0) }
                 }
             }
         }
