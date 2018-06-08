@@ -39,6 +39,10 @@ CoreInterface::CoreInterface(QObject *parent) : QObject(parent)
                                 bind(&CoreInterface::platformListHandler,
                                      this, placeholders::_1));
 
+    registerNotificationHandler("remote::notification",
+                                bind(&CoreInterface::remoteSetupHandler,
+                                     this, placeholders::_1));
+
     registerNotificationHandler("cloud::notification",
                                 bind(&CoreInterface::cloudNotificationHandler,
                                      this, placeholders::_1));
@@ -249,6 +253,68 @@ void CoreInterface::platformListHandler(QJsonObject payload)
         qDebug() << "initialHandshakeHandler: platform_list:" << platform_list_;
         emit platformListChanged(platform_list_);
     }
+}
+
+
+// @f remoteSetupHandler
+// @b handles the messages required for remote connection
+// advertise_platforms - gets the hcs token required for connection
+// get_platforms - TO indicate if the hcs token entered is valid
+void CoreInterface::remoteSetupHandler(QJsonObject payload)
+{
+    if( payload.contains("value") == false ) {
+        qCritical("CoreInterface::platformNotificationHandler()"
+                  " ERROR: no name for notification!!");
+        return;
+    }
+
+    if( payload.contains("payload") == false ) {
+        qCritical("CoreInterface::platformNotificationHandler()"
+                  " ERROR: no payload for notification!!");
+        return;
+    }
+    if(payload["value"].toString()=="advertise_platforms") {
+        qDebug("Parse success");
+        bool status = payload["payload"].toObject()["status"].toBool();
+        if(status) {
+            hcs_token_ = payload["payload"].toObject()["hcs_id"].toString();
+            qDebug()<<hcs_token_;
+        }
+        else {
+            hcs_token_ = "";
+        }
+        emit hcsTokenChanged(hcs_token_);
+    }
+    else if(payload["value"].toString()=="get_platforms") {
+        qDebug("Parse success");
+        bool status = payload["payload"].toObject()["status"].toBool();
+        if(status) {
+            qDebug("Remote response: token valid");
+        }
+        else {
+            qDebug("Remote response: token invalid");
+        }
+        emit remoteConnectionChanged(status);
+    }
+    else if(payload["value"].toString()=="remote_activity") {
+        qDebug("parse success");
+        remote_user_activity_ = payload["payload"].toObject()["user_name"].toString();
+        emit remoteActivityChanged(remote_user_activity_);
+        qDebug()<<remote_user_activity_;
+    }
+    else if(payload["value"].toString()=="remote_user_added") {
+        qDebug("parse success");
+        remote_user_ = payload["payload"].toObject()["user_name"].toString();
+        emit remoteUserAdded(remote_user_);
+        qDebug()<<remote_user_;
+    }
+    else if(payload["value"].toString()=="remote_user_removed") {
+        qDebug("parse success");
+        remote_user_ = payload["payload"].toObject()["user_name"].toString();
+        emit remoteUserRemoved(remote_user_);
+        qDebug()<<remote_user_;
+    }
+    qDebug()<< payload;
 }
 
 // @f sendSelectedPlatform

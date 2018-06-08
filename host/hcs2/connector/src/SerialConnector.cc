@@ -51,47 +51,55 @@ SerialConnector::SerialConnector()
     read_socket_ = new zmq::socket_t(*context_,ZMQ_PULL);
     read_socket_->connect(SERIAL_SOCKET_ADDRESS);
 #endif
+    LOG_DEBUG(DEBUG,"Creating thread for serial port scan\n",0);
+    open_platform_thread_ = new thread(&SerialConnector::openPlatform,this);
+    spyglass_platform_connected_ = false;
 }
 
-bool SerialConnector::isPlatformAvailable()
+// @f isPlatformAvailable
+// @b
+//
+void SerialConnector::openPlatform()
 {
     // TODO [prasanth] add platform socket inside the class declaration
     struct sp_port **ports;
     sp_return error;
-    sp_return port_list_error = sp_list_ports(&ports);
-    std::string usb_keyword;
-    // TODO [Prasanth] : The following TESTING section will look for a string pattern and try
-    // to open those that match. This will reduce the time taken for detecing the platform
+    while(true) {
+        sleep(2);
+        sp_return port_list_error = sp_list_ports(&ports);
+        std::string usb_keyword;
+        std::string platform_port_name;
+        // TODO [Prasanth] : The following TESTING section will look for a string pattern and try
+        // to open those that match. This will reduce the time taken for detecing the platform
 #define TESTING
 #ifdef TESTING
 #ifdef __APPLE__
-    usb_keyword = "usb";
+        usb_keyword = "usb";
 #elif __linux__
-    usb_keyword = "ACM";
+        usb_keyword = "ACM";
 #elif _WIN32
-    usb_keyword = "COM";
+        usb_keyword = "COM";
 #endif
 #endif
-    if (port_list_error == SP_OK) {
-        for (int i = 0; ports[i]; i++) {
-            platform_port_name_ = sp_get_port_name(ports[i]);
-            size_t found = platform_port_name_.find(usb_keyword);
-            if (found!=std::string::npos) {
-                error = sp_get_port_by_name(platform_port_name_.c_str(), &platform_socket_);
-                if(error == SP_OK){
-                    sp_free_port_list(ports);
-                    return true;
-                }
-            }
-        }
-        sp_free_port_list(ports);
-        return false;
-    }
-    else {
-        sp_free_port_list(ports);
-        return false;
-    }
+        if (port_list_error == SP_OK) {
+            for (int i = 0; ports[i]; i++) {
+                platform_port_name = sp_get_port_name(ports[i]);
+                size_t found = platform_port_name.find(usb_keyword);
+                if (found!=std::string::npos) {
+                    LOG_DEBUG(DEBUG,"opening port %s\n",platform_port_name.c_str());
+                    if (open(platform_port_name)) {
+                        sp_free_port_list(ports);
+                        // the flag that is being used by hcs to detect if spyglass platform is connected
+                        spyglass_platform_connected_ = true;
+                        return ;
+                    }   // end if - open platform
+                }   // end if - string pattern match
+            }   // end for - list of ports detected
+            sp_free_port_list(ports);
+        }   // end if - port list error
+    }   // end while
 }
+
 // @f open
 // @b gets the port name and opens, if fail return false and if success return true
 //
@@ -105,71 +113,76 @@ bool SerialConnector::isPlatformAvailable()
 bool SerialConnector::open(const std::string& serial_port_name)
 {
     sp_return error;
-    if (isPlatformAvailable()) {
-        error = sp_open(platform_socket_, SP_MODE_READ_WRITE);
-        if (error == SP_OK) {
-            LOG_DEBUG(DEBUG,"SERIAL PORT OPEN SUCCESS: %s\n",platform_port_name_.c_str());
-            serial_port_settings serialport;
-            sp_set_stopbits(platform_socket_,(int)SERIAL_PORT_CONFIGURATION::STOP_BIT);
-            sp_set_bits(platform_socket_,(int)SERIAL_PORT_CONFIGURATION::DATA_BIT);
-            sp_set_baudrate(platform_socket_,(int)SERIAL_PORT_CONFIGURATION::BAUD_RATE);
-            sp_set_rts(platform_socket_,serialport.rts_);
-            sp_set_dtr(platform_socket_,serialport.dtr_);
-            sp_set_parity(platform_socket_,serialport.parity_);
-            sp_set_cts(platform_socket_,serialport.cts_);
-
+    error = sp_get_port_by_name(serial_port_name.c_str(), &platform_socket_);
+    if(error != SP_OK) {
+        return false;
+    }
+    error = sp_open(platform_socket_, SP_MODE_READ_WRITE);
+    if (error == SP_OK) {
+        LOG_DEBUG(DEBUG,"SERIAL PORT OPEN SUCCESS: %s\n",serial_port_name.c_str());
+        serial_port_settings serialport;
+        sp_set_stopbits(platform_socket_,(int)SERIAL_PORT_CONFIGURATION::STOP_BIT);
+        sp_set_bits(platform_socket_,(int)SERIAL_PORT_CONFIGURATION::DATA_BIT);
+        sp_set_baudrate(platform_socket_,(int)SERIAL_PORT_CONFIGURATION::BAUD_RATE);
+        sp_set_rts(platform_socket_,serialport.rts_);
+        sp_set_dtr(platform_socket_,serialport.dtr_);
+        sp_set_parity(platform_socket_,serialport.parity_);
+        sp_set_cts(platform_socket_,serialport.cts_);
 #ifdef _WIN32
-            // @ref 1) under "KNOWN BUGS/HACKS" section in Connector.h for more details
-            windows_thread_ = new thread(&SerialConnector::windowsPlatformReadHandler,this);
-            // adding timeout for the serial read during the platform ID session
-            // This timeout is mainly used for USB-PD Load Board
-            serial_wait_timeout_ = 250;
+        // @ref 1) under "KNOWN BUGS/HACKS" section in Connector.h for more details
+        windows_thread_ = new thread(&SerialConnector::windowsPlatformReadHandler,this);
+        // adding timeout for the serial read during the platform ID session
+        // This timeout is mainly used for USB-PD Load Board
+        serial_wait_timeout_ = 250;
 #endif
-            // getting the platform
-            string cmd = "{\"cmd\":\"request_platform_id\"}";
-            send(cmd);
-            // TODO [prasanth]: Take the following into a seperate thread
-            // The following section will block other functionalities if it detects a port and waits for platform id
-            // 5 Retries for parsing the platform ID
-            // If valid Platform ID is read from platform, adds the platform handler to the event
-            // If negative, then scans the port and sends the platform ID
-            // This is essential for platforms like USB_PD Load Board that takes 5 second to boot
-            for (int i =0 ; i <=5; i++) {
-                // sleep for 50 milliseconds before reading from the platform
-                // This sleep time is proportional to the time taken for detecting the platforms
-                sleep(SERIAL_READ_SLEEP_IN_SECONDS);
-                // making the serial thread processing to start reading from the port
-                producer_consumer_.notify_one();
-                string read_message;
-                // the read is done twice here based on our messaging architecture
-                // we need to have the platform id to identify "spyglass" platforms
-                // on sending a command to the platform, the platform command dispatcher
-                // will send an acknowledgement followed by the notification
-                // wiki link:
-                // https://ons-sec.atlassian.net/wiki/spaces/SPYG/pages/6815754/Platform+Command+Dispatcher
-                // // @ref 2) in KNOWN BUGS/HACKS in Connector.h
-                read(read_message);
-                if(getPlatformID(read_message)) {
-                    serial_wait_timeout_ = 0;
-                    return true;
-                }
-                read(read_message);
-                if(getPlatformID(read_message)) {
-                    serial_wait_timeout_ = 0;
-                    return true;
-                }
+        // getting the platform
+        string cmd = "{\"cmd\":\"request_platform_id\"}";
+        send(cmd);
+        // TODO [prasanth]: Take the following into a seperate thread
+        // The following section will block other functionalities if it detects a port and waits for platform id
+        // 5 Retries for parsing the platform ID
+        // If valid Platform ID is read from platform, adds the platform handler to the event
+        // If negative, then scans the port and sends the platform ID
+        // This is essential for platforms like USB_PD Load Board that takes 5 second to boot
+        for (int i =0 ; i <=5; i++) {
+            // sleep for 50 milliseconds before reading from the platform
+            // This sleep time is proportional to the time taken for detecting the platforms
+            sleep(SERIAL_READ_SLEEP_IN_SECONDS);
+            // making the serial thread processing to start reading from the port
+            producer_consumer_.notify_one();
+            string read_message;
+            // the read is done twice here based on our messaging architecture
+            // we need to have the platform id to identify "spyglass" platforms
+            // on sending a command to the platform, the platform command dispatcher
+            // will send an acknowledgement followed by the notification
+            // wiki link:
+            // https://ons-sec.atlassian.net/wiki/spaces/SPYG/pages/6815754/Platform+Command+Dispatcher
+            // // @ref 2) in KNOWN BUGS/HACKS in Connector.h
+            read(read_message);
+            if(getPlatformID(read_message)) {
+                serial_wait_timeout_ = 0;
+                return true;
+            }
+            read(read_message);
+            if(getPlatformID(read_message)) {
+                serial_wait_timeout_ = 0;
+                return true;
             }
         }
     }
+    sp_close(platform_socket_);
     return false;
 }
 
-// @f close
-// @b closes the serial port connection
+// @f close the serial port
+// @b closes the serial port connection and then sans and opens spyglass powered platforms
 bool SerialConnector::close()
 {
     sp_close(platform_socket_);
-    platform_port_name_.clear();
+    spyglass_platform_connected_ = false;
+    open_platform_thread_->join();
+    delete open_platform_thread_;
+    open_platform_thread_ = new thread(&SerialConnector::openPlatform,this);
     return true;
 }
 
@@ -199,7 +212,10 @@ bool SerialConnector::read(string &notification)
         temp = '\0';
         sp_wait(event_, 250);
         error = sp_nonblocking_read(platform_socket_,&temp,1);
+        // [prasanth]: if the return value from read is less than 0, then the resource is unavailable
+        // but we are checking if it is equal to 0 for loadboard since it takes 5sec to load
         if(error <= 0) {
+            cout << "error number "<<error<<endl;
             LOG_DEBUG(DEBUG,"Platform Disconnected\n",0);
             dealer_id_.clear();
             return false;
@@ -215,7 +231,7 @@ bool SerialConnector::read(string &notification)
         response.clear();
         return true;
     }
-    return false;
+    return true;
 #else
     // @ref 1) under "KNOWN BUGS/HACKS" section in Connector.h for more details
     // This section is only for windows
@@ -306,6 +322,7 @@ void SerialConnector::windowsPlatformReadHandler()
     int number_of_misses = 0;
     sp_new_event_set(&event_);
     sp_add_port_events(event_, platform_socket_, SP_EVENT_RX_READY);
+    LOG_DEBUG(DEBUG,"Thread starts\n",0);
     while(true) {
         // [prasanth] : inducing a sleep for 100ms before read or read after getting signalled from pull socket
         // 200ms timeout results in merging two messages from platform
@@ -325,8 +342,6 @@ void SerialConnector::windowsPlatformReadHandler()
                 // Platform disconnect logic. Depends on the read and sp_wait
                 LOG_DEBUG(DEBUG,"Platform Disconnected\n",0);
                 s_send(*write_socket_,"Platform_Disconnected");
-                // close the serial port
-                close();
                 return;
             }
             if(error == 0) {
@@ -342,8 +357,6 @@ void SerialConnector::windowsPlatformReadHandler()
                 if(number_of_misses == 10 && !isPlatformConnected()) {
                     LOG_DEBUG(DEBUG,"Platform Disconnected\n",0);
                     s_send(*write_socket_,"Platform_Disconnected");
-                    // close the serial port
-                    close();
                     return;
                 }
 #endif

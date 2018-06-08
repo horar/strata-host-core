@@ -48,6 +48,20 @@ Rectangle {
                 failedLoginAnimation.start()
             }
         }
+        // [TODO][prasanth]: jwt will be created/received in the hcs
+        // for now, jwt will be received in the UI and then sent to HCS
+        onLoginJWT: {
+            console.log("JWT received",jwt_string)
+            var jwt_json = {
+                "hcs::cmd":"jwt_token",
+                "payload": {
+                    "jwt":jwt_string,
+                    "user_name":usernameField.text
+                }
+            }
+            console.log("sending the jwt json to hcs",JSON.stringify(jwt_json))
+            coreInterface.sendCommand(JSON.stringify(jwt_json))
+        }
 
     }
 

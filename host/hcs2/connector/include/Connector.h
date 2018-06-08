@@ -149,7 +149,9 @@
 #endif
 
 // console prints
-#define DEBUG 0
+// DEBUG is used for showing the debug print messages on console.
+// 0 - turn off debug and 1 - turn on debug
+#define DEBUG 1
 #define LOG_DEBUG(lvl, fmt, ...)						\
 	do { if (lvl>0) fprintf(stderr, fmt, __VA_ARGS__); } while (0)
 
@@ -162,7 +164,6 @@ public:
     virtual bool open(const std::string&) = 0;
     virtual bool close() = 0;
 
-    virtual bool isPlatformAvailable()= 0;
 
     // non-blocking calls
     virtual bool send(const std::string& message) = 0;
@@ -176,14 +177,19 @@ public:
 
     virtual int getFileDescriptor() = 0;
 
-    void setDealerID(std::string id) {dealer_id_ = id;}
-    std::string getDealerID() {return dealer_id_;}
-    std::string getPlatformUUID() { return platform_uuid_;}
+    void setDealerID(const std::string& id) {dealer_id_ = id;}
+    const std::string &getDealerID() const {return dealer_id_;}
+    const std::string &getPlatformUUID() const { return platform_uuid_;}
+    bool isSpyglassPlatform() { return spyglass_platform_connected_; }
+	void setConnectionState(bool connection_state) { connection_state_ = connection_state; }
+	bool isConnected() { return connection_state_; }
 protected:
     std::string dealer_id_;
     std::mutex locker_;
     std::string platform_uuid_;
     std::string server_;
+    bool spyglass_platform_connected_;	// flag used in hcs for checking if platform is available
+	bool connection_state_;
 private:
 };
 
@@ -196,7 +202,7 @@ public:
     bool open(const std::string&);
 
     bool close();
-    bool isPlatformAvailable();
+    void openPlatform();
 
     // non-blocking calls
     bool send(const std::string& message);
@@ -213,7 +219,10 @@ private:
     struct sp_port *platform_socket_;
     struct sp_event_set *event_;
     int serial_fd_;	//file descriptor for serial ports
-    std::thread *windows_thread_;
+#ifdef _WIN32
+    std::thread *windows_thread_; // this thread will be used only in windows for port read and write
+#endif
+    std::thread *open_platform_thread_; // thread to detect and open the spyglass platforms
     std::condition_variable producer_consumer_;
     std::string platform_port_name_;
     // two bool variables used for producer consumer model required for windows
@@ -236,8 +245,49 @@ public:
     virtual ~ZMQConnector() {}
 
     bool open(const std::string&);
-    bool isPlatformAvailable(){}
-    bool close(){}
+    bool close();
+
+    // non-blocking calls
+    bool send(const std::string& message);
+    bool read(std::string& notification);
+
+    int getFileDescriptor();
+
+private:
+    zmq::context_t* context_;
+    zmq::socket_t* socket_;
+    std::string connection_interface_;
+};
+
+class RequestReplyConnector : public Connector {
+public:
+    RequestReplyConnector() ;
+    RequestReplyConnector(const std::string&){}
+    virtual ~RequestReplyConnector() {}
+
+    bool open(const std::string&);
+    bool close();
+
+    // non-blocking calls
+    bool send(const std::string& message);
+    bool read(std::string& notification);
+
+    int getFileDescriptor();
+
+private:
+    zmq::context_t* context_;
+    zmq::socket_t* socket_;
+    std::string connection_interface_;
+};
+
+class PublisherSubscriberConnector : public Connector {
+public:
+  	PublisherSubscriberConnector() {}
+    PublisherSubscriberConnector(const std::string&);
+    virtual ~PublisherSubscriberConnector() {}
+
+    bool open(const std::string&);
+    bool close();
 
     // non-blocking calls
     bool send(const std::string& message);
@@ -255,14 +305,20 @@ class ConnectorFactory {
 public:
     static Connector *getConnector(const std::string& type) {
         std::cout << "ConnectorFactory::getConnector type:" << type << std::endl;
-        if( type == "client") {
-            return dynamic_cast<Connector*>(new ZMQConnector("local"));
+        if( type == "router") {
+            return dynamic_cast<Connector*>(new ZMQConnector("router"));
         }
-        else if( type == "remote") {
-            return dynamic_cast<Connector*>(new ZMQConnector("remote"));
+        else if( type == "dealer") {
+            return dynamic_cast<Connector*>(new ZMQConnector("dealer"));
         }
         else if( type == "platform") {
             return dynamic_cast<Connector*>(new SerialConnector);
+        }
+        else if( type == "request") {
+            return dynamic_cast<Connector*>(new  RequestReplyConnector);
+        }
+        else if( type == "subscriber") {
+            return dynamic_cast<Connector*>(new  PublisherSubscriberConnector("subscribe"));
         }
         else {
             std::cout << "ERROR: ConnectorFactory::getConnector - unknown interface. " << type << std::endl;
