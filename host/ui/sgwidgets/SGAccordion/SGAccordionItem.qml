@@ -3,12 +3,12 @@ import QtQuick.Layouts 1.3
 
 // SGAccordionItem is a clickable title bar that drops down an area that can be filled with items
 
-// Todo - David Faller 5/29/18: make title text and status icon responsive when title is long and accordion is narrow.
+// TODO - Faller 5/29/18: make title text and status icon responsive when title is long and accordion is narrow.
 
 ColumnLayout {
     id: root
     spacing: 0
-    width: scrollContainerWidth
+    Layout.fillWidth: true
     Layout.preferredHeight: titleBar.height + divider.height
 
     property alias body: body.sourceComponent
@@ -127,7 +127,7 @@ ColumnLayout {
         clip: true
 
         Component.onCompleted: {
-            root.open ? root.opener() : root.closer(); // [Faller] size recalculated after body completed (textWrap doesn't calculate in time)
+            root.open ? root.opener() : root.closer(); // [Faller] size recalculated after body completed (textWrap doesn't calculate in order)
         }
 
         // Loads user defined widgets/content

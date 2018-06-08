@@ -14,8 +14,13 @@ Window {
     // Custom styled Accordion with demo and default values for SGAccordion and SGAccordionItem
     SGAccordion {
         id: accordion1
-        width: mainWindow.width/2 // Required
-        height: mainWindow.height // Required
+
+        anchors {
+            left: mainWindow.left
+            top: mainWindow.top
+        }
+        width: mainWindow.width/2
+        height: mainWindow.height
 
         // Accordion optional settings:
         openCloseTime: 100                  // default: 0 (instant open/closed)
@@ -99,9 +104,14 @@ Window {
     // Default styled Accordion and SGAccordionItems
     SGAccordion {
         id: accordion2
-        width: mainWindow.width/2  // Required
-        height: mainWindow.height  // Required
-        x: (mainWindow.width/2)+1
+
+        anchors {
+            left: verticalDivider.left
+        }
+
+        width: mainWindow.width/2
+        height: mainWindow.height
+
 
         // accordionItems contains a ColumnLayout as a container for SGAccordionItems
         accordionItems:   ColumnLayout { // must have ColumnLayout as container since loader works only with single widgets
@@ -162,7 +172,9 @@ Window {
         width:1
         color:"black"
         height: mainWindow.height
-        x: mainWindow.width/2
+        anchors {
+            left: accordion1.right
+        }
     }
 
 //    Window {

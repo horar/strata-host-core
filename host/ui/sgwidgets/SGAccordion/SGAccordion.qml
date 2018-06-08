@@ -9,7 +9,8 @@ ScrollView {
     id: scrollContainer
     contentWidth: width
     contentHeight: accordionItems.height
-    height: parent.height
+    implicitHeight: 200
+    implicitWidth: 200
     clip: true
 
     property alias accordionItems : accordionItems.sourceComponent
