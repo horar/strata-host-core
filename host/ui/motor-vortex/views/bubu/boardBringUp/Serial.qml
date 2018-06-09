@@ -10,7 +10,7 @@ Rectangle{
     property string binaryConversion: ""
     property int indexHolder: 0
     // visible: opacity > 0
-    anchors.fill:parent
+    // anchors.fill:parent
     property string i2c_ack
 
     function i2cAckParse(notification) {
@@ -20,6 +20,12 @@ Rectangle{
         console.log("in parse function");
         if(i2c_Ack !== undefined){
             i2cAcknowledge.text = i2c_Ack
+            if(i2c_Ack === "ack") {
+                i2cAcknowledge.textColor = "green"
+            }
+            else {
+                i2cAcknowledge.textColor = "red"
+            }
         }
         else
         {
@@ -32,7 +38,19 @@ Rectangle{
         var readData = notification.payload.read_data
         // get I2c acknowledge
         if(readData !== undefined){
+            //
             dataValue.text = readData.toString(16);
+
+            //            if(isHex(dataValue.text) === true) {
+            //                binaryConversion =  hex2bin(dataValue.text); }
+            //            /*
+            //                iterating the string to set the list model
+            //            */
+            //            for (var i = 0; i < binaryConversion.length; i++) {
+            //                binaryModal.get(i).value = binaryConversion.charAt(i);
+
+            //            }
+
         }
         else
         {
@@ -93,19 +111,19 @@ Rectangle{
             model: ["I2C 1", "I2C 2", "I2C 3"]
             onCurrentIndexChanged: {
                 if(currentIndex == 0) {
-                    sclkModel.model = ["PG 14","PB 6", "PB 8"]
-                    sdaModel.model = ["PG 13", "PB 7", "PB 9"]
+                    sclkModel.model = ["PB 10"]
+                    sdaModel.model = ["PB 11"]
 
                 }
                 if(currentIndex == 1){
-                    sclkModel.model = ["PF 1","PB 10", "PB 13"]
-                    sdaModel.model = ["PF 0", "PB 11", "PB 14"]
+                    sclkModel.model = ["PC 0"]
+                    sdaModel.model = ["PC 1"]
 
                 }
 
                 if(currentIndex == 2){
-                    sclkModel.model = ["PC 0","PG 7"]
-                    sdaModel.model = ["PC 1", "PG 8"]
+                    sclkModel.model = ["PB 8"]
+                    sdaModel.model = ["PB 9"]
 
                 }
             }
@@ -227,29 +245,18 @@ Rectangle{
             }
 
             text: "21"
-
-
-        }
-
-        Button {
-            id: getBinaryConversion
-            text: "HexToBin"
-            anchors {
-                left: dataValue.right
-                leftMargin: 10
-            }
-
-            onClicked: {
+            onTextChanged: {
                 if(isHex(dataValue.text) === true) {
                     binaryConversion =  hex2bin(dataValue.text); }
-                /*
-                    iterating the string to set the list model
-                */
+                     /*
+                        iterating the string to set the list model
+                    */
                 for (var i = 0; i < binaryConversion.length; i++) {
                     binaryModal.get(i).value = binaryConversion.charAt(i);
 
                 }
             }
+
         }
 
 
@@ -343,6 +350,7 @@ Rectangle{
                 leftMargin: 20
             }
             placeholderText: "ACK/NCK"
+
         }
 
     }

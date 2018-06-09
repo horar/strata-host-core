@@ -22,7 +22,7 @@ Rectangle {
     property color mediumGreyColor: "#E4E3E2"
     property color darkGreyColor: "#DBDAD9"
     property var currentTab : serialView
-    property var newTab : gpioView
+    property var newTab : serialView
     property var acknowledge
 
     anchors{ fill:parent }
@@ -47,7 +47,7 @@ Rectangle {
                     serialView.i2cReadDataParse(notification)
                 }
                 if(notification.value === "i2c_write") {
-                     serialView.i2cAckParse(notification)
+                    serialView.i2cAckParse(notification)
                 }
 
             }
@@ -78,31 +78,12 @@ Rectangle {
         }
     }
 
+
+
     ButtonGroup {
         buttons: buttonRow.children
         onClicked: {
-            if (button.objectName == "serialBoardBringUpButton"){
-                newTab = serialView
-                serialView.visible = true
-                gpioView.visible = false
-                pwmView.visible = false
-
-            }
-            else if (button.objectName == "gpioBoardBringUpButton"){
-                newTab = gpioView
-                //TO DO [Tanya] change this to set visible to the opacity
-                gpioView.visible = true
-                serialView.visible = false
-                pwmView.visible = false
-
-
-            }
-            else if (button.objectName == "pwmBoardBringUpButton"){
-                newTab = pwmView
-                pwmView.visible = true
-            }
             crosfadeTabs.start()
-            currentTab = newTab
         }
     }
 
@@ -112,50 +93,49 @@ Rectangle {
         anchors.top: parent.top
         anchors.topMargin: 15
 
+
         SGLeftSegmentedButton{
-            text:"I2C" ;
+            text:"I2C"
             objectName: "serialBoardBringUpButton"
-            tabName:Serial{}
+            onClicked: { contentRectangle.currentIndex = 0; }
+
         }
 
         SGMiddleSegmentedButton{
-            text:"gpio";
+            text:"gpio"
             objectName: "gpioBoardBringUpButton"
-            tabName:Gpio{}
+            onClicked: { contentRectangle.currentIndex = 1; }
+
+
         }
         SGRightSegmentedButton{
-            text:"pwm";
+            text:"pwm"
             objectName: "pwmBoardBringUpButton"
-            tabName:Pwm{}
+            onClicked: { contentRectangle.currentIndex = 2; }
+
         }
     }
 
-    Rectangle{
+    SwipeView{
         id:contentRectangle
         anchors.left:parent.left
         anchors.right:parent.right
         anchors.bottom:parent.bottom
         anchors.top:buttonRow.bottom
 
-        Serial{
-            id:serialView
-            anchors.fill:parent
-            opacity: 1
+        currentIndex: 0
+
+        onCurrentIndexChanged: {
+            buttonRow.children[contentRectangle.currentIndex].checked = true;
 
         }
+        Serial{ id:serialView }
 
-        Gpio{
-            id:gpioView
-            anchors.fill:parent
-            opacity:0
-        }
+        Gpio{ id:gpioView }
 
-        Pwm{
-            id:pwmView
-            anchors.fill:parent
-            opacity:0
-        }
+        Pwm{ id:pwmView }
     }
+
 
     Rectangle{
         height: 40;width:40

@@ -15,7 +15,7 @@ Rectangle {
     property var currentTab : gpioView
     property var newTab:  gpioView
 //  visible: opacity > 0 // for testing
-    anchors.fill:parent
+  //  anchors.fill:parent
     property variant portAMapDisable: []
     property variant portBMapDisable: [10,11]
     property variant portCMapDisable: [0,1,4,5]
