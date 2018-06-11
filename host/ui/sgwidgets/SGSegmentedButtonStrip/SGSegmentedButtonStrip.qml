@@ -5,8 +5,8 @@ import QtQuick.Layouts 1.3
 Item {
     id: root
 
-    width: childrenRect.width
-    height: 30
+    implicitWidth: childrenRect.width
+    implicitHeight: 35
 
     property alias segmentedButtons : segmentedButtons.sourceComponent
 
