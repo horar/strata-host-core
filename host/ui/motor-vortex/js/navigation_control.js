@@ -7,7 +7,7 @@
     Data that will likely be needed for platform views
 */
 var context = {
-    "control_qml" : "",
+    "control_qml" : "basic",
     "user_id" : "",
     "platform_name" : "",
     "is_logged_in" : "false",
@@ -48,6 +48,7 @@ var events = {
     OFFLINE_MODE_EVENT:             7,
     NEW_PLATFORM_CONNECTED_EVENT:   8,
     TOGGLE_CONTROL_CONTENT:         9,
+    TOGGLE_ADVANCED_CONTROL:        10,
 }
 
 /*
@@ -327,6 +328,21 @@ function updateState(event, data)
                 flipable_parent_.flipped = !flipable_parent_.flipped
 
                 break;
+            case events.TOGGLE_ADVANCED_CONTROL:
+                if (context.control_qml === "basic"){
+                    var qml_advanced = getQMLFile(context.platform_name, "AdvancedControl")
+                    createView(qml_advanced, control_container_)
+                    context.control_qml = "advanced"
+                } else {
+                    var qml_control = getQMLFile(context.platform_name, "Control")
+                    createView(qml_control, control_container_)
+                    context.control_qml = "basic"
+                }
+
+                // Restart timer of control
+//                Metrics.restartTimer()
+                break;
+
             default:
                 globalEventHandler(event,data)
             break;

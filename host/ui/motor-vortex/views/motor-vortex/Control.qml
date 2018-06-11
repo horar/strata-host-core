@@ -6,6 +6,8 @@ import QtQuick.Controls.Styles 1.4
 import QtQuick.Extras 1.4
 //import tech.spyglass. 1.0
 import "qrc:/js/navigation_control.js" as NavigationControl
+import "qrc:/views/motor-vortex/sgwidgets"
+
 
 
 Rectangle {
@@ -116,13 +118,34 @@ Rectangle {
             id: layoutId
             anchors { fill: parent }
 
+            SGSegmentedButtonStrip {
+                id: advancedControlSelection
+                Layout.alignment: Qt.AlignTop | Qt.AlignHCenter
+
+                segmentedButtons: GridLayout {
+                    id: segmentedGrid
+                    columnSpacing: 2
+
+                    SGSegmentedButton {
+                        text: "Basic Control View"
+                        checked: true
+                    }
+                    SGSegmentedButton {
+                        text: "Advanced Control View"
+                        onClicked: {
+                            NavigationControl.updateState(NavigationControl.events.TOGGLE_ADVANCED_CONTROL)
+                        }
+                    }
+                }
+            }
+
             /*
               Created a rectangle as a container for the element inside which solves alignment in linux/mac
             */
             Rectangle {
                 id: meterGaugeContainer
                 width: parent.width;height: parent.height/1.5
-                anchors { top: layoutId.top
+                anchors { top: advancedControlSelection.bottom
                     topMargin: 10
                 }
 

@@ -2,13 +2,38 @@ import QtQuick 2.9
 import QtQuick.Window 2.2
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.2
+import "qrc:/js/navigation_control.js" as NavigationControl
 import "qrc:/views/motor-vortex/sgwidgets"
 
-Window {
-    visible: true
-    width: 1200
-    height: 765
-    title: qsTr("Advanced Motor Control")
+Rectangle {
+    id: advancedControl
+    anchors {
+        fill: parent
+    }
+
+    SGSegmentedButtonStrip {
+        id: advancedControlSelection
+        anchors {
+            top: advancedControl.top
+            horizontalCenter: parent.horizontalCenter
+        }
+
+        segmentedButtons: GridLayout {
+            id: segmentedGrid
+            columnSpacing: 2
+
+            SGSegmentedButton {
+                text: "Basic Control View"
+                onClicked: {
+                    NavigationControl.updateState(NavigationControl.events.TOGGLE_ADVANCED_CONTROL)
+                }
+            }
+            SGSegmentedButton {
+                text: "Advanced Control View"
+                checked: true
+            }
+        }
+    }
 
     Rectangle {
         id: leftSide
@@ -394,6 +419,20 @@ Window {
                     }
                 }
             }
+        }
+    }
+    Image {
+        id: flipButton
+        source:"./images/icons/infoIcon.svg"
+        anchors { bottom: parent.bottom; right: parent.right }
+        height: 40;width:40
+    }
+    MouseArea {
+        width: flipButton.width; height: flipButton.height
+        anchors { fill: flipButton }
+        visible: true
+        onClicked: {
+            NavigationControl.updateState(NavigationControl.events.TOGGLE_CONTROL_CONTENT)
         }
     }
 }
