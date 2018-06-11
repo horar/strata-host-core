@@ -10,14 +10,25 @@ Window {
     SGLabelledInfoBox {
         id: labelledInfoBox
 
-        info: data.stream + " v"
+        info: data.stream + " v"    // String to this to be displayed in box
         infoBoxWidth: 80            // Must be set by user based on their needs
 
         // Optional configuration:
-        label: "Voltage:"               // Default: ""
+        label: "Voltage:"               // Default: "" (if not entered, label will not appear)
+        labelLeft: false                // Default: True (if false, label will be on top)
         infoBoxColor: "#eeeeee"         // Default: "#eeeeee" (light gray)
         infoBoxBorderColor: "#cccccc"   // Default: "#cccccc" (light gray)
         infoBoxBorderWidth: 1           // Default: 1 (assign 0 for no border)
+    }
+
+    SGLabelledInfoBox {
+        infoBoxWidth: 75
+        label: "Speed:"
+        info: "40 rpm"
+
+        anchors {
+            top: labelledInfoBox.bottom
+        }
     }
 
     // Sends demo data stream to infoBox
