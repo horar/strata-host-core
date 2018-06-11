@@ -21,9 +21,11 @@ Window {
         activeColorBottom: "#999999"    // Default: "#999999"
         inactiveColorTop: "#dddddd"     // Default: "#dddddd"
         inactiveColorBottom: "#aaaaaa"  // Default: "#aaaaaa"
-        height: 35                      // Default: 35
+        buttonHeight: 35                // Default: 35
         radius: height/2                // Default: height/2
         exclusive: true                 // Default: true
+        title: "Button Description:"    // Default: "" (will not appear if not entered)
+        titleLeft: true                 // Default: true (true: title on left, false: title on top)
 
         segmentedButtons: GridLayout {
             id: grid
@@ -49,16 +51,6 @@ Window {
             SGSegmentedButton{
                 id: button4
                 text: qsTr("Button4")
-            }
-
-            SGSegmentedButton{
-                id: button5
-                text: qsTr("Button5")
-            }
-
-            SGSegmentedButton{
-                id: button6
-                text: qsTr("Button6")
             }
 
             SGSegmentedButton{
