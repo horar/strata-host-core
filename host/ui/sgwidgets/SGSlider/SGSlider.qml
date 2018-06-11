@@ -1,4 +1,4 @@
-import QtQuick 2.7
+import QtQuick 2.9
 import QtQuick.Controls.Styles 1.4
 import QtQuick.Controls 1.4
 
@@ -9,8 +9,8 @@ import QtQuick.Controls 1.4
 
 Item{
     id: container
-    width: 200
-    height: 28
+    implicitWidth: 200
+    implicitHeight: 28
 
     property alias startLabel: startLabel.text
     property alias endLabel: endLabel.text
@@ -40,8 +40,6 @@ Item{
             groove: Rectangle {
                 implicitWidth: container.width
                 implicitHeight: 4
-                width: container.width
-                height: implicitHeight
                 radius: 2
                 z:1
                 color: "#dddddd"
@@ -126,11 +124,11 @@ Item{
             // show slider dial when pressed, hide otherwise
             if (showDial){
                 if ( pressed ) {
-                    console.log("slider pressed. show dial.")
+//                    console.log("slider pressed. show dial.")
                     hoverShowAnimation.start()
                 }
                 else {
-                    console.log("slider released. hide dial.")
+//                    console.log("slider released. hide dial.")
                     hoverHideAnimation.start()
                 }
             }
