@@ -14,26 +14,25 @@ Window {
         model: radioModel
 
         // Optional Configuration:
-        label: "Radio buttons:"     // Default: "" (if not entered, label will not appear)
+        label: "Radio Buttons:"     // Default: "" (if not entered, label will not appear)
         labelLeft: false            // Default: true (if false, label will be on top)
         exclusive: true             // Default: true (modifies exclusivity of the checked property)
         orientation: Qt.Horizontal  // Default: Qt.vertical
         textColor: "#000000"        // Default: "#000000" (black)
         radioColor: "#000000"       // Default: "#000000" (black)
-        backgroundColor: "salmon"   // Default: "#ffffff" (white)
-        highlightColor: "tomato"    // Default: "transparent"
+        highlightColor: "lightgreen"    // Default: "transparent"
 
         ListModel {
             id: radioModel
 
             ListElement {
                 name: "Trapezoidal"
-                checked: true
+                checked: true               // One element pre-checked when exclusive
             }
 
             ListElement {
                 name: "Pseudo-Sinusoidal"
-                disabled: true
+                disabled: true              // Option to lock element
             }
 
             ListElement {

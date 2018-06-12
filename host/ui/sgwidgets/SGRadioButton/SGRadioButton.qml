@@ -17,7 +17,6 @@ Item {
     property color textColor: "#000000"
     property color radioColor: "#000000"
     property color highlightColor: "transparent"
-    property color backgroundColor: "#ffffff"
 
     Text {
         id: labelText
@@ -94,13 +93,5 @@ Item {
         ButtonGroup {
             id: buttonGroup
         }
-    }
-
-    Rectangle {  // Background for whole item
-        z: -1
-        anchors {
-            fill: parent
-        }
-        color: root.backgroundColor
     }
 }
