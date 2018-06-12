@@ -5,12 +5,13 @@ Rectangle {
     id: root
 
     property string label: ""
+    property bool labelLeft: true
     property string info: ""
     property real infoBoxWidth: 50
     property color infoBoxColor: "#eeeeee"
     property color infoBoxBorderColor: "#cccccc"
     property real infoBoxBorderWidth: 1
-    property bool labelLeft: true
+
 
     implicitHeight: labelLeft ? infoContainer.height : labelText.height + infoContainer.height + infoContainer.anchors.topMargin
     implicitWidth: labelLeft ? infoBoxWidth + labelText.width + infoContainer.anchors.leftMargin : Math.max(infoBoxWidth, labelText.width)

@@ -14,6 +14,8 @@ Window {
         model: radioModel
 
         // Optional Configuration:
+        label: "Radio buttons:"     // Default: "" (if not entered, label will not appear)
+        labelLeft: false            // Default: true (if false, label will be on top)
         exclusive: true             // Default: true (modifies exclusivity of the checked property)
         orientation: Qt.Horizontal  // Default: Qt.vertical
         textColor: "#000000"        // Default: "#000000" (black)

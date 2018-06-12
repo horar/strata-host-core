@@ -24,8 +24,8 @@ Window {
         buttonHeight: 35                // Default: 35
         radius: height/2                // Default: height/2
         exclusive: true                 // Default: true
-        title: "Button Description:"    // Default: "" (will not appear if not entered)
-        titleLeft: true                 // Default: true (true: title on left, false: title on top)
+        label: "Button Description:"    // Default: "" (will not appear if not entered)
+        labelLeft: false                 // Default: true (true: label on left, false: label on top)
 
         segmentedButtons: GridLayout {
             id: grid

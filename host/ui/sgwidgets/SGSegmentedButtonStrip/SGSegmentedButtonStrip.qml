@@ -17,15 +17,15 @@ Item {
     property string inactiveColorTop: "#dddddd"
     property string inactiveColorBottom: "#aaaaaa"
     property bool exclusive: true
-    property string title: ""
-    property bool titleLeft: true
+    property string label: ""
+    property bool labelLeft: true
 
     Text {
-        id: titleText
-        text: root.title
+        id: labelText
+        text: root.label
         width: contentWidth
-        height: root.titleLeft ? segmentedButtons.height : contentHeight
-        topPadding: root.titleLeft ? (segmentedButtons.height-contentHeight)/2 : 0
+        height: root.labelLeft ? segmentedButtons.height : contentHeight
+        topPadding: root.labelLeft ? (segmentedButtons.height-contentHeight)/2 : 0
         bottomPadding: topPadding
     }
 
@@ -37,10 +37,10 @@ Item {
     Loader {
         id: segmentedButtons
         anchors {
-            left: root.titleLeft ? titleText.right : titleText.left
-            top: root.titleLeft ? titleText.top : titleText.bottom
-            leftMargin: root.title === "" ? 0 : root.titleLeft ? 10 : 0
-            topMargin: root.title === "" ? 0 : root.titleLeft ? 0 : 5
+            left: root.labelLeft ? labelText.right : labelText.left
+            top: root.labelLeft ? labelText.top : labelText.bottom
+            leftMargin: root.label === "" ? 0 : root.labelLeft ? 10 : 0
+            topMargin: root.label === "" ? 0 : root.labelLeft ? 0 : 5
         }
 
         // Passthrough properties so segmentedButtons can get these

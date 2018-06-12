@@ -23,6 +23,7 @@ Window {
         endLabel: maximumValue      // Default: "100"
         decimalPlaces: 0            // Default: 0
         showDial: true              // Default: true
+
     }
 
     SGSlider {
