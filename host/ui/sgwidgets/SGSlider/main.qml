@@ -10,11 +10,12 @@ Window {
     title: qsTr("SGSlider Example")
 
     SGSlider {
-        id: sgSlider
+        id: sgSliderCustom
 
         // Optional configuration:
+        label: "Cats:"              // Default: "" (if not entered, label will not appear)
+        labelLeft: true             // Default: true
         width: parent.width         // Default: 200
-        height: 50                  // Default: 28 - slider is centered in height box
         stepSize: 2.0               // Default: 1.0
         value: 0.0                  // Default: 0.0
         minimumValue: 0.0           // Default: 0.0
@@ -23,13 +24,15 @@ Window {
         endLabel: maximumValue      // Default: "100"
         decimalPlaces: 0            // Default: 0
         showDial: true              // Default: true
-
+        grooveColor: "lightgreen"   // Default: "#dddddd"
+        grooveFillColor: "red"      // Default: "#888888"
     }
 
     SGSlider {
-        id: sgSlider1
+        id: sgSliderGeneric
         anchors {
-            top: sgSlider.bottom
+            top: sgSliderCustom.bottom
+            topMargin: 20
         }
     }
 }

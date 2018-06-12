@@ -21,7 +21,7 @@ Rectangle {
         text: label
         width: contentWidth
         height: root.labelLeft ? infoContainer.height : contentHeight
-        topPadding: root.labelLeft ? (infoContainer.height-contentHeight)/2 : 0
+        topPadding: root.label === "" ? 0 : root.labelLeft ? (infoContainer.height-contentHeight)/2 : 0
         bottomPadding: topPadding
     }
 

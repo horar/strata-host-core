@@ -25,7 +25,7 @@ Item {
         text: root.label
         width: contentWidth
         height: root.labelLeft ? segmentedButtons.height : contentHeight
-        topPadding: root.labelLeft ? (segmentedButtons.height-contentHeight)/2 : 0
+        topPadding: root.label === "" ? 0 : root.labelLeft ? (segmentedButtons.height-contentHeight)/2 : 0
         bottomPadding: topPadding
     }
 

@@ -10,13 +10,15 @@ Window {
     title: qsTr("SGButtonStrip Example")
 
     SGSegmentedButtonStrip {
-        id: seg1
+        id: segmentedButtonsExample
 
         anchors {
             centerIn: parent    // Example anchoring, spec something else for real use
         }
 
         // Optional configurations:
+        label: "Button Description:"    // Default: "" (will not appear if not entered)
+        labelLeft: false                // Default: true (true: label on left, false: label on top)
         activeColorTop: "#bbbbbb"       // Default: "#bbbbbb"
         activeColorBottom: "#999999"    // Default: "#999999"
         inactiveColorTop: "#dddddd"     // Default: "#dddddd"
@@ -24,37 +26,28 @@ Window {
         buttonHeight: 35                // Default: 35
         radius: height/2                // Default: height/2
         exclusive: true                 // Default: true
-        label: "Button Description:"    // Default: "" (will not appear if not entered)
-        labelLeft: false                 // Default: true (true: label on left, false: label on top)
 
         segmentedButtons: GridLayout {
-            id: grid
-
             columnSpacing: 2
 
             SGSegmentedButton{
-                id: button1
                 text: qsTr("Button1 longer text")
                 checked: true  // Sets default checked button when exclusive
             }
 
             SGSegmentedButton{
-                id: button2
                 text: qsTr("Button2")
             }
 
             SGSegmentedButton{
-                id: button3
                 text: qsTr("Button3")
             }
 
             SGSegmentedButton{
-                id: button4
                 text: qsTr("Button4")
             }
 
             SGSegmentedButton{
-                id: button7
                 text: qsTr("Button7")
             }
         }
