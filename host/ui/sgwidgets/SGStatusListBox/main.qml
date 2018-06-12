@@ -9,10 +9,10 @@ Window {
     title: qsTr("SGStatusListBox Demo")
 
     SGStatusListBox{
-        // Anchors fill parent by default.
         id: logBox
-
         model: demoModel
+
+        anchors { fill: parent } // Demo anchors
 
         // Optional SGOutputLogBox Settings:
         title: "Status List"            // Default: "" (title bar will not be visible when empty string)
