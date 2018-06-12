@@ -4,64 +4,54 @@ import QtQuick.Layouts 1.3
 Rectangle {
     id: root
 
-//    anchors {
-//        fill: parent
-//    }
-
-    width: childrenRect.width
-    height: childrenRect.height
-
     property string label: ""
+    property bool labelLeft: true
     property string info: ""
     property real infoBoxWidth: 50
     property color infoBoxColor: "#eeeeee"
     property color infoBoxBorderColor: "#cccccc"
     property real infoBoxBorderWidth: 1
 
-//    onWidthChanged: {
-//        if (labelText.width + infoContainer.width > root.parent.width){
-//            grid.columns = 1;
-//            labelText.padding = 5;
-//        } else {
-//            grid.columns = 2;
-//            labelText.padding = 10;
-//        }
-//    }
 
-    GridLayout{
-        id: grid
-        columnSpacing: 0
-        rowSpacing: 0
+    implicitHeight: labelLeft ? infoContainer.height : labelText.height + infoContainer.height + infoContainer.anchors.topMargin
+    implicitWidth: labelLeft ? infoBoxWidth + labelText.width + infoContainer.anchors.leftMargin : Math.max(infoBoxWidth, labelText.width)
 
-        Text {
-            id: labelText
-            width: contentWidth + padding * 2
-            text: label
+    Text {
+        id: labelText
+        text: label
+        width: contentWidth
+        height: root.labelLeft ? infoContainer.height : contentHeight
+        topPadding: root.label === "" ? 0 : root.labelLeft ? (infoContainer.height-contentHeight)/2 : 0
+        bottomPadding: topPadding
+    }
 
-            Component.onCompleted: text == "" ? padding = 0 : padding = 10;
+    Rectangle {
+        id: infoContainer
+        height: 30
+        width: root.infoBoxWidth
+        color: root.infoBoxColor
+        border {
+            color: root.infoBoxBorderColor
+            width: root.infoBoxBorderWidth
+        }
+        anchors {
+            left: root.labelLeft ? labelText.right : labelText.left
+            top: root.labelLeft ? labelText.top : labelText.bottom
+            leftMargin: root.label === "" ? 0 : root.labelLeft ? 10 : 0
+            topMargin: root.label === "" ? 0 : root.labelLeft ? 0 : 5
         }
 
-        Rectangle {
-            id: infoContainer
-            height: 30
-            width: root.infoBoxWidth
-            color: root.infoBoxColor
-            border {
-                color: root.infoBoxBorderColor
-                width: root.infoBoxBorderWidth
+        TextInput {
+            id: infoText
+            padding: 10
+            anchors {
+                right: parent.right
+                verticalCenter: parent.verticalCenter
             }
-
-            TextInput {
-                id: infoText
-                padding: 10
-                anchors {
-                    right: parent.right
-                    verticalCenter: parent.verticalCenter
-                }
-                text: info
-                selectByMouse: true
-                readOnly: true
-            }
+            text: info
+            selectByMouse: true
+            readOnly: true
+            font.family: "Courier" // Monospaced font for better text width uniformity
         }
     }
 }

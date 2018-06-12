@@ -38,7 +38,7 @@ Rectangle {
     Rectangle {
         id: leftSide
         width: 600
-        height: 500 //765
+        height: childrenRect.height
         anchors {
             left: parent.left
             verticalCenter: parent.verticalCenter
@@ -50,6 +50,7 @@ Rectangle {
             info: "12.3v"
             infoBoxWidth: 80
             anchors {
+                top: leftSide.top
                 horizontalCenter: vInGraph.horizontalCenter
             }
         }
@@ -60,6 +61,7 @@ Rectangle {
             info: "4050 rpm"
             infoBoxWidth: 80
             anchors {
+                top: leftSide.top
                 horizontalCenter: speedGraph.horizontalCenter
             }
         }
@@ -104,7 +106,7 @@ Rectangle {
     Rectangle {
         id: rightSide
         width: 600
-        height: 500 //765
+        height: childrenRect.height
         anchors {
             left: leftSide.right
             verticalCenter: parent.verticalCenter
@@ -122,6 +124,11 @@ Rectangle {
                 id: startStopButton
                 text: checked ? qsTr("Stop Motor") : qsTr("Start Motor")
                 checkable: true
+                background: Rectangle {
+                    color: startStopButton.checked ? "red" : "lightgreen"
+                    implicitWidth: 100
+                    implicitHeight: 40
+                }
             }
 
             Button {
@@ -131,13 +138,14 @@ Rectangle {
                     leftMargin: 20
                 }
                 text: qsTr("Reset")
+                Component.onCompleted: console.log(height + " " + width)
             }
         }
 
         Rectangle {
             id: speedControlContainer
             width: 500
-            height: 160
+            height: childrenRect.height + 20
             color: "#eeeeee"
             anchors {
                 horizontalCenter: rightSide.horizontalCenter
@@ -145,79 +153,58 @@ Rectangle {
                 topMargin: 20
             }
 
-            Item {
-                id: slidersText
-                width: 80
-                anchors {
-                    top: speedControlContainer.top
-                    left: speedControlContainer.left
-                    leftMargin: 20
-                }
-
-                Text{
-                    id: targetSpeedTitle
-                    text: "Target Speed:"
-                    anchors {
-                        top: slidersText.top
-                        topMargin: 10
-                    }
-                }
-
-                Text{
-                    id: rampRateTitle
-                    text: "Ramp Rate:"
-                    anchors {
-                        top: targetSpeedTitle.bottom
-                        topMargin: 20
-                    }
-                }
-            }
-
-            Item {
-                id: speedSliders
-                width: childrenRect.width
-                height: childrenRect.height
-                anchors {
-                    left: slidersText.right
-                    top: speedControlContainer.top
-                    leftMargin: 10
-                    rightMargin: 20
-                }
-
                 SGSlider {
                     id: targetSpeedSlider
+                    label: "Target Speed:"
                     width: 350
                     minimumValue: 1500
                     maximumValue: speedSafetyButton.checked ? 5500 : 10000
                     endLabel: speedSafetyButton.checked? maximumValue : "<font color='red''>"+ maximumValue +"</font>"
                     startLabel: minimumValue
+                    anchors {
+                        top: speedControlContainer.top
+                        topMargin: 10
+                        left: speedControlContainer.left
+                        leftMargin: 10
+                        right: speedControlContainer.right
+                        rightMargin: 10
+                    }
                 }
 
                 SGSlider {
                     id: rampRateSlider
+                    label: "Ramp Rate:"
                     width: 350
+                    value: 5
                     minimumValue: 0
                     maximumValue: 10
                     endLabel: maximumValue
                     startLabel: minimumValue
                     anchors {
                         top: targetSpeedSlider.bottom
-                        topMargin: 20
+                        topMargin: 10
+                        left: speedControlContainer.left
+                        leftMargin: 10
+                        right: speedControlContainer.right
+                        rightMargin: 10
                     }
                 }
-            }
 
             Item {
                 id: speedSafety
-                width: childrenRect.width
+                height: childrenRect.height
                 anchors {
-                    top: speedSliders.bottom
+                    top: rampRateSlider.bottom
                     topMargin: 20
-                    horizontalCenter: speedControlContainer.horizontalCenter
+                    left: speedControlContainer.left
+                    leftMargin: 10
+                    right: speedControlContainer.right
+                    rightMargin: 10
                 }
 
                 Button {
                     id: speedSafetyButton
+                    width: 120
                     anchors {
                         left: speedSafety.left
                     }
@@ -228,12 +215,13 @@ Rectangle {
 
                 Text {
                     id: speedWarning
-                    text: "<font color='red'><strong>Warning:</strong></font> Changing the direction of the pump will damage the pump. To access this feature, contact STRATA Team."
-                    width: 300
+                    text: "<font color='red'><strong>Warning:</strong></font> No safety limits may damage the demo setup"
                     wrapMode: Text.WordWrap
                     anchors {
                         left: speedSafetyButton.right
                         leftMargin: 20
+                        right: speedSafety.right
+                        verticalCenter: speedSafetyButton.verticalCenter
                     }
                 }
             }
@@ -242,7 +230,7 @@ Rectangle {
         Rectangle {
             id: driveModeContainer
             width: 500
-            height: 120
+            height: childrenRect.height + 10 // 10 for bottom margin
             color: "#eeeeee"
             anchors {
                 horizontalCenter: rightSide.horizontalCenter
@@ -250,45 +238,27 @@ Rectangle {
                 topMargin: 20
             }
 
-            Item {
-                id: driveModeControlRow
-                width: childrenRect.width
-                height: childrenRect.height
+            SGRadioButton {
+                id: driveModeRadios
+                model: radioModel1
+                label: "Drive Mode:"
                 anchors {
                     horizontalCenter: driveModeContainer.horizontalCenter
+                    top: driveModeContainer.top
                 }
+                exclusive: true
+                orientation: Qt.Horizontal
 
-                Text {
-                    width: contentWidth
-                    id: driveModeTitle
-                    text: qsTr("Drive Mode:")
-                    anchors {
-                        verticalCenter: driveModeRadios.verticalCenter
+                ListModel {
+                    id: radioModel1
+
+                    ListElement {
+                        name: "Trapezoidal"
+                        checked: true
                     }
-                }
 
-                SGRadioButton {
-                    id: driveModeRadios
-                    model: radioModel1
-                    anchors {
-                        left: driveModeTitle.right
-                    }
-                    exclusive: true
-                    orientation: Qt.Horizontal
-                    backgroundColor: driveModeContainer.color
-
-                    ListModel {
-                        id: radioModel1
-
-
-                        ListElement {
-                            name: "Trapezoidal"
-                            checked: true
-                        }
-
-                        ListElement {
-                            name: "Pseudo-Sinusoidal"
-                        }
+                    ListElement {
+                        name: "Pseudo-Sinusoidal"
                     }
                 }
             }
@@ -298,10 +268,8 @@ Rectangle {
                 width: childrenRect.width
                 height: childrenRect.height
                 anchors {
-                    top: driveModeControlRow.bottom
-                    topMargin: 20
+                    top: driveModeRadios.bottom
                     horizontalCenter: driveModeContainer.horizontalCenter
-
                 }
 
                 Text {
@@ -312,9 +280,12 @@ Rectangle {
                         verticalCenter: driveModeCombo.verticalCenter
                     }
                 }
+
                 ComboBox{
                     id: driveModeCombo
+                    model: ["7 Degrees", "14 Degrees"]
                     anchors {
+                        top: phaseAngleRow.top
                         left: phaseAngleTitle.right
                         leftMargin: 20
                     }
@@ -325,7 +296,7 @@ Rectangle {
         Rectangle {
             id: directionControlContainer
             width: 500
-            height: 120
+            height: childrenRect.height + 20
             color: "#eeeeee"
             anchors {
                 horizontalCenter: rightSide.horizontalCenter
@@ -333,73 +304,61 @@ Rectangle {
                 topMargin: 20
             }
 
-            Item {
-                id: directionControlRow
-                width: childrenRect.width
-                height: childrenRect.height
+            SGRadioButton {
+                id: directionRadios
+                model: radioModel
+                label: "Direction:"
                 anchors {
                     horizontalCenter: directionControlContainer.horizontalCenter
+                    top: directionControlContainer.top
+                    topMargin: 10
                 }
 
-                Text {
-                    width: contentWidth
-                    id: directionTitle
-                    text: qsTr("Direction:")
-                    anchors {
-                        verticalCenter: directionRadios.verticalCenter
-                    }
-                }
+                // Optional Configuration:
+                exclusive: true             // Default: true (modifies exclusivity of the checked property)
+                orientation: Qt.Horizontal  // Default: Qt.vertical
 
-                SGRadioButton {
-                    id: directionRadios
-                    model: radioModel
-                    anchors {
-                        left: directionTitle.right
-                    }
-
-                    // Optional Configuration:
-                    exclusive: true             // Default: true (modifies exclusivity of the checked property)
-                    orientation: Qt.Horizontal  // Default: Qt.vertical
-                    backgroundColor: directionControlContainer.color
-
-                    Connections {
-                        target: directionSafetyButton
-                        onCheckedChanged: {
-                            for (var i=0; i<radioModel.count; i++){
-                                if (radioModel.get(i).name === "Reverse"){
-                                    radioModel.get(i).disabled = !radioModel.get(i).disabled;
-                                }
+                Connections {
+                    target: directionSafetyButton
+                    onCheckedChanged: {
+                        for (var i=0; i<radioModel.count; i++){
+                            if (radioModel.get(i).name === "Reverse"){
+                                radioModel.get(i).disabled = !radioModel.get(i).disabled;
                             }
                         }
                     }
+                }
 
-                    ListModel {
-                        id: radioModel
+                ListModel {
+                    id: radioModel
 
-                        ListElement {
-                            name: "Forward"
-                            checked: true
-                        }
+                    ListElement {
+                        name: "Forward"
+                        checked: true
+                    }
 
-                        ListElement {
-                            name: "Reverse"
-                            disabled: true
-                        }
+                    ListElement {
+                        name: "Reverse"
+                        disabled: true
                     }
                 }
             }
 
             Item {
                 id: directionSafety
-                width: childrenRect.width
+                height: childrenRect.height
                 anchors {
-                    top: directionControlRow.bottom
-                    topMargin: 20
-                    horizontalCenter: directionControlContainer.horizontalCenter
+                    top: directionRadios.bottom
+                    topMargin: 10
+                    left: directionControlContainer.left
+                    leftMargin: 10
+                    right: directionControlContainer.right
+                    rightMargin: 10
                 }
 
                 Button {
                     id: directionSafetyButton
+                    width: 140
                     anchors {
                         left: directionSafety.left
                     }
@@ -410,23 +369,26 @@ Rectangle {
 
                 Text {
                     id: directionWarning
-                    text: "<font color='red'><strong>Warning:</strong></font> No safety limits may damage the demo setup"
-                    width: 200
+                    text: "<font color='red'><strong>Warning:</strong></font> Changing the direction of the pump will damage the pump. To access this feature, contact STRATA Team."
                     wrapMode: Text.WordWrap
                     anchors {
                         left: directionSafetyButton.right
                         leftMargin: 20
+                        right: directionSafety.right
+                        verticalCenter: directionSafetyButton.verticalCenter
                     }
                 }
             }
         }
     }
+
     Image {
         id: flipButton
         source:"./images/icons/infoIcon.svg"
         anchors { bottom: parent.bottom; right: parent.right }
         height: 40;width:40
     }
+
     MouseArea {
         width: flipButton.width; height: flipButton.height
         anchors { fill: flipButton }
@@ -436,3 +398,4 @@ Rectangle {
         }
     }
 }
+

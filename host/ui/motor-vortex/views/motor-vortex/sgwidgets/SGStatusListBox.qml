@@ -3,7 +3,6 @@ import QtQuick.Controls 2.2
 
 Rectangle {
     id: root
-    //anchors { fill: parent }
     color: statusBoxColor
     border {
         color: statusBoxBorderColor
@@ -30,8 +29,7 @@ Rectangle {
             right: parent.right
             top: parent.top
         }
-        height: 35
-        width: 40
+        implicitHeight: 35
         color: root.titleBoxColor
         border {
             color: root.titleBoxBorderColor
