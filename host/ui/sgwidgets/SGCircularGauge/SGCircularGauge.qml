@@ -31,7 +31,7 @@ Rectangle {
                 id: tickmarks
 //                color: styleData.value > gauge.value ? root.gaugeRearColor : (styleData.value > gauge.value-1 ? "red" : "#ff7777")
 //                color: styleData.value > gauge.value ? root.gaugeRearColor : root.gaugeFrontColor
-                color: styleData.value > gauge.value ? root.gaugeRearColor : lerpColor(Qt.rgba(0,.5,1,0), Qt.rgba(1, 0,0,1), styleData.value/200)
+                color: styleData.value > gauge.value ? root.gaugeRearColor : lerpColor(Qt.rgba(0,.75,1,1), Qt.rgba(1,0,0,1), styleData.value/gauge.maximumValue)
                 width: 3.75
                 height: 60
                 antialiasing: true
@@ -62,10 +62,43 @@ Rectangle {
         }
 
         Text {
+            id: gaugeValue
             text: root.value.toFixed(0)
-            anchors.centerIn: parent
+            anchors { centerIn: parent }
             font.family: digital.name
             font.pixelSize: 80
+        }
+        Text {
+            id: gaugeLabel
+            text: "RPM"
+            anchors {
+                top: gaugeValue.bottom
+                topMargin: -10
+                horizontalCenter: gaugeValue.horizontalCenter
+
+            }
+            font.pixelSize: 12
+            font.italic: true
+        }
+
+        CircularGauge {
+            id: ticksBackground
+            z: -1
+            width: parent.width
+            height: parent.height
+            anchors.centerIn: parent
+
+            minimumValue: root.minimumValue
+            maximumValue: root.maximumValue
+            style : CircularGaugeStyle {
+                tickmarkStepSize: 10
+                id: gaugeStyle2
+                needle: null
+                foreground: null
+                minorTickmark: null
+                tickmarkInset: -8
+                labelInset: -20
+            }
         }
     }
 
@@ -75,10 +108,14 @@ Rectangle {
     }
 
     function lerpColor (color1, color2, x){
-        return Qt.rgba(
-                    color1.r * (1 - x) + color2.r * x,
-                    color1.g * (1 - x) + color2.g * x,
-                    color1.b * (1 - x) + color2.b * x, 1
-                    );
+        if (Qt.colorEqual(color1, color2)){
+            return color1;
+        } else {
+            return Qt.rgba(
+                        color1.r * (1 - x) + color2.r * x,
+                        color1.g * (1 - x) + color2.g * x,
+                        color1.b * (1 - x) + color2.b * x, 1
+                        );
+        }
     }
 }

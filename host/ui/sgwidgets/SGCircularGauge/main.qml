@@ -9,7 +9,7 @@ Window {
 
     SGCircularGauge {
         id: sgCircularGauge
-        value: data.stream
+        value: 92
 
         anchors {
             centerIn: parent
@@ -22,13 +22,12 @@ Window {
         demoColor: true
     }
 
-
     // Sends demo data stream with adjustible timing interval output
     Timer {
         id: data
         property real stream
         property real count: 0
-        interval: 10
+        interval: 32  // 32 = 30fps
         running: true
         repeat: true
         onTriggered: {
