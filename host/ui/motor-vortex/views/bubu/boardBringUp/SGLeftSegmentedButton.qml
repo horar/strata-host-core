@@ -14,10 +14,8 @@ Button {
     property int mediumFontSize: (Qt.platform.os === "osx") ? 15  : 12;
     property int largeFontSize: (Qt.platform.os === "osx") ? 24  : 20;
     property int extraLargeFontSize: (Qt.platform.os === "osx") ? 36  : 24;
-
     checkable: true
     checked:true
-
 
     font.pixelSize: mediumFontSize
     background: Canvas{

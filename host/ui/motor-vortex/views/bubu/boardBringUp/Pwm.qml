@@ -11,19 +11,20 @@ Rectangle {
     id: pwmOutline
     property var currentTab: pwmView
     property var newTab: pwmView
-//    visible: opacity > 0 //testing
+    /*
+      List of disabled pin for pwm for each port
+    */
     property variant portAMapDisable: [4, 12, 13, 14]
     property variant portBMapDisable: [2, 12, 10, 11]
     property variant portCMapDisable: [0,1,2,3,4,5,10,11,12,13,14,15]
     property variant portDMapDisable: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
     property variant portHMapDisable: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
 
-  //  property type name: value
- //   anchors.fill:parent
-
-    function setCommands(pinFunction, portName, tabIndex)
+    /*
+      set Pwm port based on pin function
+    */
+    function setPwmPort(pinFunction, portName, tabIndex)
     {
-
             BubuControl.setPwmPort(portName);
             pwmbitView.currentIndex = tabIndex;
     }
@@ -52,7 +53,6 @@ Rectangle {
     }
 
     ButtonGroup {
-
         buttons: pwmbuttonRow.children
         onClicked: {
             crosfadeTabs.start()
@@ -62,18 +62,18 @@ Rectangle {
 
     Row {
         id:pwmbuttonRow
-        anchors { top: pwmOutline.top;topMargin: 40; horizontalCenter: pwmOutline.horizontalCenter }
+        anchors { top: pwmOutline.top; topMargin: 40; horizontalCenter: pwmOutline.horizontalCenter }
         width: 600
         height: 40
 
-        SGLeftSegmentedButton{text:"Port A"; portName:"a"; tabIndex: 0; pinFunction: "pwm";onClicked: setCommands(pinFunction, portName,tabIndex) }
-        SGMiddleSegmentedButton{text:"Port B"; portName: "b"; tabIndex: 1; pinFunction: "pwm";onClicked: setCommands(pinFunction, portName,tabIndex)}
-        SGMiddleSegmentedButton{text:"Port C";portName: "c"; tabIndex: 2; pinFunction: "pwm";onClicked: setCommands(pinFunction, portName,tabIndex)}
-        SGMiddleSegmentedButton{text:"Port D";portName: "d"; tabIndex: 3; pinFunction: "pwm";onClicked: setCommands(pinFunction, portName,tabIndex)}
-    //    SGMiddleSegmentedButton{text:"Port E";portName: "e"; tabIndex: 4; pinFunction: "pwm";onClicked: setCommands(pinFunction, portName,tabIndex)}
-        SGRightSegmentedButton{text:"Port H";portName: "h"; tabIndex: 5; pinFunction: "pwm";onClicked: setCommands(pinFunction, portName,tabIndex)}
+        SGLeftSegmentedButton{text:"Port A"; portName:"a"; tabIndex: 0; pinFunction: "pwm";onClicked: setPwmPort(pinFunction, portName,tabIndex) }
+        SGMiddleSegmentedButton{text:"Port B"; portName: "b"; tabIndex: 1; pinFunction: "pwm";onClicked: setPwmPort(pinFunction, portName,tabIndex)}
+        SGMiddleSegmentedButton{text:"Port C";portName: "c"; tabIndex: 2; pinFunction: "pwm";onClicked: setPwmPort(pinFunction, portName,tabIndex)}
+        SGMiddleSegmentedButton{text:"Port D";portName: "d"; tabIndex: 3; pinFunction: "pwm";onClicked: setPwmPort(pinFunction, portName,tabIndex)}
+        SGRightSegmentedButton{text:"Port H";portName: "h"; tabIndex: 5; pinFunction: "pwm";onClicked: setPwmPort(pinFunction, portName,tabIndex)}
 
     }
+
     SwipeView {
         id: pwmbitView
         anchors { left:pwmOutline.left
@@ -90,7 +90,7 @@ Rectangle {
         ButtonViewPwm { holdDisableBits: portAMapDisable }
         ButtonViewPwm { holdDisableBits: portBMapDisable }
         ButtonViewPwm { holdDisableBits: portCMapDisable }
-        ButtonViewPwm{ holdDisableBits: portDMapDisable }
+        ButtonViewPwm { holdDisableBits: portDMapDisable }
         ButtonViewPwm { holdDisableBits: portHMapDisable }
 
     }

@@ -13,7 +13,8 @@ Rectangle{
     anchors.horizontalCenter: parent.horizontalCenter
     property bool portsDisabled: true
 
-    function prepareCommand()
+
+    function setPWMCommand()
     {
         BubuControl.setPwmBit(bitNum);
         BubuControl.setPwmFrequency(parseInt(frequency.text));
@@ -47,7 +48,7 @@ Rectangle{
             anchors { left: bitNumber.right
                 leftMargin: 180 }
             onEditingFinished: {
-                prepareCommand();
+                setPWMCommand()
             }
         }
 
@@ -66,8 +67,7 @@ Rectangle{
                 value: 0
                 onPressedChanged: {
                     if(!pressed) {
-                        prepareCommand();
-
+                        setPWMCommand()
                     }
                 }
             }
@@ -81,8 +81,7 @@ Rectangle{
 
                 onEditingFinished: {
                     dutycycleSlider.value = Math.round(dutyCycleValue.text)
-                    prepareCommand();
-
+                    setPWMCommand()
                 }
             }
         }

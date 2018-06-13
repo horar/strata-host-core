@@ -75,7 +75,7 @@
         <file>images/paul_mascarenas.png</file>
         <file>images/phone-icon.png</file>
         <file>views/bubu/boardBringUp/Pwm.qml</file>
-        <file>views/bubu/boardBringUp/Serial.qml</file>
+        <file>views/bubu/boardBringUp/I2C.qml</file>
         <file>views/bubu/boardBringUp/ButtonView.qml</file>
         <file>views/bubu/boardBringUp/Gpio.qml</file>
         <file>views/bubu/boardBringUp/SGRightSegmentedButton.qml</file>
@@ -93,8 +93,7 @@
         <file>images/ian.cain.jpg</file>
         <file>js/metrics.js</file>
         <file>views/bubu/Control.js</file>
-        <file>views/bubu/boardBringUp/SingleBitSettings.qml</file>
-        <file>views/bubu/boardBringUp/Signals.qml</file>
+        <file>views/bubu/boardBringUp/SingleBitGPIOSettings.qml</file>
         <file>views/bubu/boardBringUp/SingleBitPWMsettings.qml</file>
         <file>views/bubu/boardBringUp/ButtonViewPwm.qml</file>
         <file>include/Modules/CircleBadge.qml</file>

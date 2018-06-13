@@ -9,15 +9,14 @@ Rectangle{
     id:serialContainer
     property string binaryConversion: ""
     property int indexHolder: 0
-    // visible: opacity > 0
-    // anchors.fill:parent
     property string i2c_ack
 
+    /*
+      Parse notification to check the acknowledge
+    */
     function i2cAckParse(notification) {
-
         var i2c_Ack = notification.payload.ack_or_nack;
-        // get I2c acknowledge
-        console.log("in parse function");
+
         if(i2c_Ack !== undefined){
             i2cAcknowledge.text = i2c_Ack
             if(i2c_Ack === "ack") {
@@ -33,35 +32,30 @@ Rectangle{
         }
     }
 
+    /*
+      Parse i2c notification to get read data
+    */
     function i2cReadDataParse(notification) {
-
         var readData = notification.payload.read_data
-        // get I2c acknowledge
+
         if(readData !== undefined){
-            //
             dataValue.text = readData.toString(16);
-
-            //            if(isHex(dataValue.text) === true) {
-            //                binaryConversion =  hex2bin(dataValue.text); }
-            //            /*
-            //                iterating the string to set the list model
-            //            */
-            //            for (var i = 0; i < binaryConversion.length; i++) {
-            //                binaryModal.get(i).value = binaryConversion.charAt(i);
-
-            //            }
-
         }
         else
         {
             console.log("Junk data found", readData);
         }
     }
-
+    /*
+      convert hexadecimal to binary
+    */
     function hex2bin(hex){
         return ("00000000" + (parseInt(hex, 16)).toString(2)).substr(-8);
     }
 
+    /*
+        validate the string to check if it's hex
+    */
     function isHex(str){
         var hexValues = '0123456789ABCDEFabcdef'
 
@@ -73,7 +67,6 @@ Rectangle{
         }
         return true;
     }
-
 
 
     Text {
@@ -164,6 +157,9 @@ Rectangle{
             text : "Configure I2C"
 
             onClicked: {
+                /*
+                  set I2c Configure command
+                */
                 BubuControl.setI2cBusNumber(i2cModel.currentIndex+1);
                 BubuControl.setI2cBusSpeed(busRateValue.text);
                 coreInterface.sendCommand(BubuControl.getI2cConfigure());
@@ -247,10 +243,11 @@ Rectangle{
             text: "21"
             onTextChanged: {
                 if(isHex(dataValue.text) === true) {
-                    binaryConversion =  hex2bin(dataValue.text); }
-                     /*
+                    binaryConversion =  hex2bin(dataValue.text);
+                }
+                /*
                         iterating the string to set the list model
-                    */
+                */
                 for (var i = 0; i < binaryConversion.length; i++) {
                     binaryModal.get(i).value = binaryConversion.charAt(i);
 
@@ -294,9 +291,7 @@ Rectangle{
             width: 250
             height: 40
             spacing: 30
-            anchors { left: getBinaryConversion.right
-                leftMargin: 20
-            }
+            anchors.leftMargin: 20
             orientation: ListView.Horizontal
 
             delegate: Rectangle  {
@@ -318,10 +313,12 @@ Rectangle{
             }
             text: "Read"
             onClicked: {
+                /*
+                  Set the I2c read command
+                */
                 BubuControl.setI2cBusNumber(i2cModel.currentIndex+1);
                 BubuControl.setI2cSlaveAddressRead(parseInt(slaveAddressValue.text, 16));
                 BubuControl.setI2cRegisterAddressRead(parseInt(registerAddressValue.text,16));
-                BubuControl.printI2cCommandRead();
                 coreInterface.sendCommand(BubuControl.getI2cRead());
 
             }
@@ -334,11 +331,13 @@ Rectangle{
             }
             text: "Write"
             onClicked: {
+                /*
+                  Set the I2c write command
+                */
                 BubuControl.setI2cBusNumber(i2cModel.currentIndex+1);
                 BubuControl.setI2cSlaveAddressWrite(parseInt(slaveAddressValue.text, 16));
                 BubuControl.setI2cRegisterAddressWrite(parseInt(registerAddressValue.text,16));
                 BubuControl.setI2cData(parseInt(dataValue.text,16));
-                BubuControl.printI2cCommandWrite();
                 coreInterface.sendCommand(BubuControl.getI2cWrite());
 
             }

@@ -14,13 +14,15 @@ Rectangle {
 
     property var currentTab : gpioView
     property var newTab:  gpioView
-//  visible: opacity > 0 // for testing
-  //  anchors.fill:parent
-    property variant portAMapDisable: []
+    /*
+      List of bits disabled for each port
+    */
+    property variant portAMapDisable: [ ]
     property variant portBMapDisable: [10,11]
     property variant portCMapDisable: [0,1,4,5]
     property variant portDMapDisable: [0.1,3,4,5,6,7,8,9,10,11,12,13,14,15]
     property variant portHMapDisable: [2,3,4,5,6,7,8,9,10,11,12,13,14,15]
+
 
     function setCommands(pinFunction, portName, tabIndex)
     {
@@ -68,12 +70,13 @@ Rectangle {
         width: 600
         height: 40
 
-        /* passing port name to set "port" member in setPort function */
+        /*
+            passing port name to set "port" member in setPort function
+*/
         SGLeftSegmentedButton{text:"Port A"; portName:"a"; tabIndex: 0; pinFunction: "gpio"; onClicked: setCommands(pinFunction, portName,tabIndex)}
         SGMiddleSegmentedButton{text:"Port B"; portName: "b"; tabIndex: 1; pinFunction: "gpio"; onClicked: setCommands(pinFunction, portName,tabIndex)}
         SGMiddleSegmentedButton{text:"Port C"; portName: "c"; tabIndex: 2; pinFunction: "gpio"; onClicked: setCommands(pinFunction, portName,tabIndex)}
-        SGMiddleSegmentedButton{text:"Port D"; portName: "d"; tabIndex: 3; pinFunction: "gpio"; onClicked: setCommands(pinFunction, portName,tabIndex)}
-      //  SGMiddleSegmentedButton{text:"Port E"; portName: "e"; tabIndex: 4; pinFunction: "gpio"; onClicked: setCommands(pinFunction, portName,tabIndex)}
+        SGMiddleSegmentedButton{text:"Port D"; portName: "d"; tabIndex: 3; pinFunction: "gpio"; onClicked: setCommands(pinFunction, portName,tabIndex)}     
         SGRightSegmentedButton{text:"Port H"; portName: "h"; tabIndex: 4; pinFunction: "gpio"; onClicked: setCommands(pinFunction, portName,tabIndex)}
 
     }

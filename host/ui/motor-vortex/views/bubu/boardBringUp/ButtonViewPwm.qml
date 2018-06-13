@@ -8,7 +8,7 @@ import QtQuick.Controls 1.4
 
 Rectangle {
 
-    id:pwmbuttonViewContainer
+    id: container
     property variant holdDisableBits: [ ]
     property int smallFontSize: (Qt.platform.os === "osx") ? 12  : 10;
     property int mediumFontSize: (Qt.platform.os === "osx") ? 15  : 12;
@@ -16,13 +16,15 @@ Rectangle {
     property int extraLargeFontSize: (Qt.platform.os === "osx") ? 36  : 24;
     property string upChevron: "\u25b2"
 
+    /*
+      checks if the bit is in disabled list
+    */
     function checkBits(index) {
         for(var i = 0; i < holdDisableBits.length; ++i){
             if(index === holdDisableBits[i]){
                 return false;
             }
         }
-
         return true;
     }
 
@@ -31,7 +33,6 @@ Rectangle {
         anchors.centerIn: parent
         clip: true
         verticalScrollBarPolicy: Qt.ScrollBarAlwaysOn
-
 
         ListView {
             model: 16
@@ -70,9 +71,7 @@ Rectangle {
                             font.family: "helvetica"
                             horizontalAlignment: Text.AlignHCenter
                         }
-
                     }
-
                     Rectangle {
                         id: dutyCycleLabel
                         width: 95

@@ -1,4 +1,3 @@
-
 import QtQuick 2.7
 import QtQuick.Controls 2.0
 import QtQuick.Controls.Styles 1.4
@@ -21,13 +20,15 @@ Rectangle {
     property color lightGreyColor: "#EBEAE9"
     property color mediumGreyColor: "#E4E3E2"
     property color darkGreyColor: "#DBDAD9"
-    property var currentTab : serialView
-    property var newTab : serialView
+    property var currentTab : i2CView
+    property var newTab : i2CView
     property var acknowledge
 
     anchors{ fill:parent }
 
-    // Platform Implementation signals
+    /*
+        Platform Implementation signals
+   */
     Connections {
         target: coreInterface
         onNotification: {
@@ -37,23 +38,22 @@ Rectangle {
                     Attempt to parse JSON
                 */
                 var notification = JSON.parse(payload)
-                console.log("in notification", notification.cmd);
-                console.log("in notification", JSON.stringify(notification));
 
-                // check the command for the notification and call the function accordingly
+                /*
+                      check and parse the command for the notification
+               */
                 if(notification.value === "i2c_read") {
-
-                    serialView.i2cAckParse(notification)
-                    serialView.i2cReadDataParse(notification)
+                    i2CView.i2cAckParse(notification)
+                    i2CView.i2cReadDataParse(notification)
                 }
                 if(notification.value === "i2c_write") {
-                    serialView.i2cAckParse(notification)
+                    i2CView.i2cAckParse(notification)
                 }
 
             }
             catch(e)
             {
-                if ( e instanceof SyntaxError){
+                if (e instanceof SyntaxError){
                     console.log("Notification JSON is invalid. ignoring")
                 }
             }
@@ -79,16 +79,27 @@ Rectangle {
     }
 
 
-
     ButtonGroup {
-        buttons: buttonRow.children
+        buttons: functionButton.children
         onClicked: {
-            crosfadeTabs.start()
+            {
+                if (button.objectName == "serialBoardBringUpButton"){
+                    newTab = i2CView
+                }
+                else if (button.objectName == "gpioBoardBringUpButton"){
+                    newTab = gpioView
+                }
+                else if (button.objectName == "pwmBoardBringUpButton"){
+                    newTab = pwmView
+                }
+                crosfadeTabs.start()
+                currentTab = newTab
+            }
         }
     }
 
     Row {
-        id:buttonRow
+        id:functionButton
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: parent.top
         anchors.topMargin: 15
@@ -121,15 +132,10 @@ Rectangle {
         anchors.left:parent.left
         anchors.right:parent.right
         anchors.bottom:parent.bottom
-        anchors.top:buttonRow.bottom
-
+        anchors.top:functionButton.bottom
         currentIndex: 0
 
-        onCurrentIndexChanged: {
-            buttonRow.children[contentRectangle.currentIndex].checked = true;
-
-        }
-        Serial{ id:serialView }
+        I2C{ id:i2CView }
 
         Gpio{ id:gpioView }
 
