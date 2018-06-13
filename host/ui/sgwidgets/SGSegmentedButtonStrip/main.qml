@@ -17,7 +17,7 @@ Window {
         }
 
         // Optional configurations:
-        label: "Button Description:"    // Default: "" (will not appear if not entered)
+        label: "Input:"    // Default: "" (will not appear if not entered)
         labelLeft: false                // Default: true (true: label on left, false: label on top)
         activeColorTop: "#bbbbbb"       // Default: "#bbbbbb"
         activeColorBottom: "#999999"    // Default: "#999999"
@@ -31,24 +31,24 @@ Window {
             columnSpacing: 2
 
             SGSegmentedButton{
-                text: qsTr("Button1 longer text")
+                text: qsTr("DVD")
                 checked: true  // Sets default checked button when exclusive
             }
 
             SGSegmentedButton{
-                text: qsTr("Button2")
+                text: qsTr("Blu-Ray")
             }
 
             SGSegmentedButton{
-                text: qsTr("Button3")
+                text: qsTr("VHS")
             }
 
             SGSegmentedButton{
-                text: qsTr("Button4")
+                text: qsTr("Radio")
             }
 
             SGSegmentedButton{
-                text: qsTr("Button7")
+                text: qsTr("Betamax")
             }
         }
     }
