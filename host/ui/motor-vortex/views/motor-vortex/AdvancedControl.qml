@@ -215,7 +215,7 @@ Rectangle {
 
                 Text {
                     id: speedWarning
-                    text: "<font color='red'><strong>Warning:</strong></font> No safety limits may damage the demo setup"
+                    text: "<font color='red'><strong>Warning:</strong></font> Turning off safety limits may damage the demo setup"
                     wrapMode: Text.WordWrap
                     anchors {
                         left: speedSafetyButton.right
@@ -322,9 +322,7 @@ Rectangle {
                     target: directionSafetyButton
                     onCheckedChanged: {
                         for (var i=0; i<radioModel.count; i++){
-                            if (radioModel.get(i).name === "Reverse"){
-                                radioModel.get(i).disabled = !radioModel.get(i).disabled;
-                            }
+                            radioModel.get(i).disabled = !radioModel.get(i).disabled;
                         }
                     }
                 }
@@ -335,6 +333,7 @@ Rectangle {
                     ListElement {
                         name: "Forward"
                         checked: true
+                        disabled: true
                     }
 
                     ListElement {
