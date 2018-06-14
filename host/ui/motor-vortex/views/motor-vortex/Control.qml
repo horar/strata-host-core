@@ -8,16 +8,10 @@ import QtQuick.Extras 1.4
 import "qrc:/js/navigation_control.js" as NavigationControl
 import "qrc:/views/motor-vortex/sgwidgets"
 
-
-
 Rectangle {
     id: controlNavigation
     anchors {
         fill: parent
-//        top: parent.top
-//        left: parent.left
-//        right: parent.right
-//        bottom: parent.bottom
     }
 
     TabBar {
@@ -29,23 +23,31 @@ Rectangle {
         }
 
         TabButton {
+            id: basicButton
             text: qsTr("Basic")
+            onClicked: controlContainer.currentIndex = 0
+        }
+
+        TabButton {
+            id: advancedButton
+            text: qsTr("Advanced")
             onClicked: controlContainer.currentIndex = 1
         }
+
         TabButton {
-            text: qsTr("Advanced")
-            onClicked: controlContainer.currentIndex = 2
-        }
-        TabButton {
+            id: faeButton
             text: qsTr("FAE Only")
-            onClicked: controlContainer.currentIndex = 3
+            onClicked: controlContainer.currentIndex = 2
+            background: Rectangle {
+                color: faeButton.down ? "#eeeeee" : faeButton.checked ? "white" : "tomato"
+            }
         }
     }
 
     SwipeView {
         id: controlContainer
 
-        currentIndex: 1
+        currentIndex: 0
         anchors {
             top: navTabs.bottom
             bottom: parent.bottom
@@ -54,23 +56,25 @@ Rectangle {
         }
 
         Item {
-            id: firstPage
-            Rectangle {
-                color: "tomato"
-                opacity: .15
-                anchors.fill: parent
-                z:20
-                Component.onCompleted: console.log("height: " + height + "\n     width:  " + width)
+            id: basicControl
+            BasicControl {
 
             }
         }
 
         Item {
-            id: secondPage
+            id: advancedControl
+            AdvancedControl {
+
+            }
+
         }
 
         Item {
-            id: thirdPage
+            id: faeControl
+            FAEControl {
+
+            }
         }
     }
 
@@ -78,12 +82,13 @@ Rectangle {
         id: flipButton
         source:"./images/icons/infoIcon.svg"
         anchors { bottom: parent.bottom; right: parent.right }
-        height: 40;width:40
+        height: 40; width:40
     }
     MouseArea {
         width: flipButton.width; height: flipButton.height
-        anchors { bottom: controlPage.bottom; right: controlPage.right }
+        anchors { fill: flipButton }
         visible: true
+        z: 20
         onClicked: {
             NavigationControl.updateState(NavigationControl.events.TOGGLE_CONTROL_CONTENT)
         }

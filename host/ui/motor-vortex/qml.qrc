@@ -187,5 +187,6 @@
         <file>views/motor-vortex/sgwidgets/SGStatusListBox.qml</file>
         <file>views/motor-vortex/AdvancedControl.qml</file>
         <file>views/motor-vortex/BasicControl.qml</file>
+        <file>views/motor-vortex/FAEControl.qml</file>
     </qresource>
 </RCC>

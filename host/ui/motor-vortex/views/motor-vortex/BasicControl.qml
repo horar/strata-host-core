@@ -118,36 +118,13 @@ Rectangle {
             id: layoutId
             anchors { fill: parent }
 
-            SGSegmentedButtonStrip {
-                id: advancedControlSelection
-                Layout.alignment: Qt.AlignTop | Qt.AlignHCenter
-
-                segmentedButtons: GridLayout {
-                    id: segmentedGrid
-                    columnSpacing: 2
-
-                    SGSegmentedButton {
-                        text: "Basic Control View"
-                        checked: true
-                    }
-                    SGSegmentedButton {
-                        text: "Advanced Control View"
-                        onClicked: {
-                            NavigationControl.updateState(NavigationControl.events.TOGGLE_ADVANCED_CONTROL)
-                        }
-                    }
-                }
-            }
-
             /*
               Created a rectangle as a container for the element inside which solves alignment in linux/mac
             */
             Rectangle {
                 id: meterGaugeContainer
                 width: parent.width;height: parent.height/1.5
-                anchors { top: advancedControlSelection.bottom
-                    topMargin: 10
-                }
+
 
                 CircularGauge {
                     id: tachMeterGauge
@@ -199,7 +176,7 @@ Rectangle {
                   Use a negative margin on slider to close the gap from meter gauge. The gap in the meter gauge occurs due to having a _semi-circle_ for the gauge
                   when it's allocated for the _full_ circle gauge.
                 */
-                anchors.topMargin: -50
+                anchors.topMargin: -meterGaugeContainer.height*.4
                 width: parent.width
                 height: parent.height/6
 
@@ -470,20 +447,6 @@ Rectangle {
                     text: "Phase W"
                 }
             }
-        }
-    }
-    Image {
-        id: flipButton
-        source:"./images/icons/infoIcon.svg"
-        anchors { bottom: parent.bottom; right: parent.right }
-        height: 40;width:40
-    }
-    MouseArea {
-        width: flipButton.width; height: flipButton.height
-        anchors { bottom: controlPage.bottom; right: controlPage.right }
-        visible: true
-        onClicked: {
-            NavigationControl.updateState(NavigationControl.events.TOGGLE_CONTROL_CONTENT)
         }
     }
 }
