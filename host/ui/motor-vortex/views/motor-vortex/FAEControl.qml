@@ -114,7 +114,6 @@ Rectangle {
                     leftMargin: 20
                 }
                 text: qsTr("Reset")
-                Component.onCompleted: console.log(height + " " + width)
             }
         }
 
