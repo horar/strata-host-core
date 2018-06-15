@@ -14,17 +14,17 @@ Rectangle {
     property int largeFontSize: (Qt.platform.os === "osx") ? 24  : 20;
     property int extraLargeFontSize: (Qt.platform.os === "osx") ? 36  : 24;
     property string upChevron: "\u25b2"
-    property variant holdDisableBits: [ ]
+    property variant listDisableBits: [ ]
 
     /*
         Check if the bit(index) is in disable bit list
     */
     function checkDisableBits(index) {
         /*
-            Iterate the holdDisableBits list and compare the index of each port
+            Iterate the listDisableBits list and compare the index of each port
         */
-        for(var i = 0; i < holdDisableBits.length; ++i){
-            if(index === holdDisableBits[i]){
+        for(var i = 0; i < listDisableBits.length; ++i){
+            if(index === listDisableBits[i]){
                 return false;
             }
         }

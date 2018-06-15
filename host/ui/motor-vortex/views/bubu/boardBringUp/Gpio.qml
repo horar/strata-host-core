@@ -10,7 +10,7 @@ import "qrc:/views/bubu/Control.js" as BubuControl
 
 
 Rectangle {
-    id:gpioContainer
+    id:container
 
     property var currentTab : gpioView
     property var newTab:  gpioView
@@ -31,7 +31,7 @@ Rectangle {
     }
 
     Component.onCompleted: {
-        BubuControl.setGpioPort("a"); //Setting default port as "A"
+        BubuControl.setGpioPort("a"); //Setting default port as "a"
     }
 
     ParallelAnimation{
@@ -66,13 +66,13 @@ Rectangle {
 
     Row {
         id:buttonRow
-        anchors { top: gpioContainer.top;topMargin: 40; horizontalCenter: gpioContainer.horizontalCenter }
+        anchors { top: container.top;topMargin: 40; horizontalCenter: container.horizontalCenter }
         width: 600
         height: 40
 
         /*
             passing port name to set "port" member in setPort function
-*/
+        */
         SGLeftSegmentedButton{text:"Port A"; portName:"a"; tabIndex: 0; pinFunction: "gpio"; onClicked: setCommands(pinFunction, portName,tabIndex)}
         SGMiddleSegmentedButton{text:"Port B"; portName: "b"; tabIndex: 1; pinFunction: "gpio"; onClicked: setCommands(pinFunction, portName,tabIndex)}
         SGMiddleSegmentedButton{text:"Port C"; portName: "c"; tabIndex: 2; pinFunction: "gpio"; onClicked: setCommands(pinFunction, portName,tabIndex)}
@@ -83,20 +83,20 @@ Rectangle {
 
     SwipeView {
         id: bitView
-        anchors { left:gpioContainer.left
-            right:gpioContainer.right
-            bottom:gpioContainer.bottom
+        anchors { left:container.left
+            right:container.right
+            bottom:container.bottom
             top:buttonRow.bottom
         }
         currentIndex: 0
         onCurrentIndexChanged: {
             buttonRow.children[bitView.currentIndex].checked = true;
         }
-        ButtonView { holdDisableBits: portAMapDisable } // A
-        ButtonView { holdDisableBits: portBMapDisable} // B
-        ButtonView { holdDisableBits: portCMapDisable} // C
-        ButtonView { holdDisableBits: portDMapDisable }   // D
-        ButtonView { holdDisableBits: portHMapDisable} // H
+        ButtonViewGPIO { listDisableBits: portAMapDisable } // A
+        ButtonViewGPIO { listDisableBits: portBMapDisable} // B
+        ButtonViewGPIO { listDisableBits: portCMapDisable} // C
+        ButtonViewGPIO { listDisableBits: portDMapDisable }   // D
+        ButtonViewGPIO { listDisableBits: portHMapDisable} // H
     }
 
     PageIndicator {
@@ -104,7 +104,7 @@ Rectangle {
         count: bitView.count
         currentIndex: bitView.currentIndex
         anchors.bottom: bitView.bottom
-        anchors.horizontalCenter: gpioContainer.horizontalCenter
+        anchors.horizontalCenter: container.horizontalCenter
 
     }
 }

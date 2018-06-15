@@ -76,7 +76,6 @@
         <file>images/phone-icon.png</file>
         <file>views/bubu/boardBringUp/Pwm.qml</file>
         <file>views/bubu/boardBringUp/I2C.qml</file>
-        <file>views/bubu/boardBringUp/ButtonView.qml</file>
         <file>views/bubu/boardBringUp/Gpio.qml</file>
         <file>views/bubu/boardBringUp/SGRightSegmentedButton.qml</file>
         <file>views/bubu/boardBringUp/SGMiddleSegmentedButton.qml</file>
@@ -173,5 +172,6 @@
         <file>views/usb-pd/PageSchematic.qml</file>
         <file>views/usb-pd/PageSystemContent.qml</file>
         <file>views/usb-pd/PageTestReport.qml</file>
+        <file>views/bubu/boardBringUp/ButtonViewGPIO.qml</file>
     </qresource>
 </RCC>
