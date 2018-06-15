@@ -8,7 +8,7 @@ import QtQuick.Controls 1.4
 Item{
     id: root
     implicitWidth: 200
-    implicitHeight: childrenRect.height
+    implicitHeight: root.labelLeft ? sgSlider.height : sgSlider.height + labelText.height
 
     property alias startLabel: startLabel.text
     property alias endLabel: endLabel.text
