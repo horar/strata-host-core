@@ -14,6 +14,7 @@ Canvas {
         showOn ? showAnimation.start() : hideAnimation.start()
     }
     opacity: 0
+    visible: false
     width: content.childrenRect.width + 20
     height: content.childrenRect.height + 30  // 30 because 10 padding*2 and 10 for pointer
     contextType: "2d"
@@ -50,11 +51,13 @@ Canvas {
 
     PropertyAnimation {
         id: showAnimation
+        onStarted: root.visible = true
         target: root; properties: "opacity"; from: root.opacity; to: 1; duration: 200
     }
 
     PropertyAnimation {
         id: hideAnimation
+        onStopped: root.visible = false
         target: root; properties: "opacity"; from: root.opacity; to: 0; duration: 100
     }
 }
