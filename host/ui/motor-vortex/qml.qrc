@@ -188,5 +188,6 @@
         <file>views/motor-vortex/AdvancedControl.qml</file>
         <file>views/motor-vortex/BasicControl.qml</file>
         <file>views/motor-vortex/FAEControl.qml</file>
+        <file>views/motor-vortex/sgwidgets/SGToolTipPopup.qml</file>
     </qresource>
 </RCC>

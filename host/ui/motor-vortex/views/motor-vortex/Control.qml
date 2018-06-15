@@ -48,6 +48,7 @@ Rectangle {
         id: controlContainer
 
         currentIndex: 0
+        interactive: false
         anchors {
             top: navTabs.bottom
             bottom: parent.bottom

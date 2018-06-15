@@ -10,7 +10,7 @@ Rectangle {
     anchors {
         fill: parent
     }
-
+    
     Rectangle {
         id: leftSide
         width: 600
@@ -19,8 +19,8 @@ Rectangle {
             left: parent.left
             verticalCenter: parent.verticalCenter
         }
-
-        SGLabelledInfoBox{
+        
+        SGLabelledInfoBox {
             id: vInBox
             label: "Vin:"
             info: "12.3v"
@@ -30,8 +30,8 @@ Rectangle {
                 horizontalCenter: vInGraph.horizontalCenter
             }
         }
-
-        SGLabelledInfoBox{
+        
+        SGLabelledInfoBox {
             id: speedBox
             label: "Current Speed:"
             info: "4050 rpm"
@@ -41,7 +41,7 @@ Rectangle {
                 horizontalCenter: speedGraph.horizontalCenter
             }
         }
-
+        
         SGGraph{
             id: vInGraph
             width: 300
@@ -53,7 +53,7 @@ Rectangle {
             xAxisTitle: "Seconds"
             yAxisTitle: "Voltage"
         }
-
+        
         SGGraph{
             id: speedGraph
             width: 300
@@ -66,7 +66,7 @@ Rectangle {
             xAxisTitle: "Seconds"
             yAxisTitle: "RPM"
         }
-
+        
         SGStatusListBox {
             id: faultBox
             title: "Faults:"
@@ -78,7 +78,7 @@ Rectangle {
             height: 200
         }
     }
-
+    
     Rectangle {
         id: rightSide
         width: 600
@@ -87,7 +87,7 @@ Rectangle {
             left: leftSide.right
             verticalCenter: parent.verticalCenter
         }
-
+        
         Item {
             id: buttonContainer
             width: childrenRect.width
@@ -95,7 +95,7 @@ Rectangle {
             anchors {
                 horizontalCenter: rightSide.horizontalCenter
             }
-
+            
             Button {
                 id: startStopButton
                 text: checked ? qsTr("Stop Motor") : qsTr("Start Motor")
@@ -106,7 +106,7 @@ Rectangle {
                     implicitHeight: 40
                 }
             }
-
+            
             Button {
                 id: resetButton
                 anchors {
@@ -117,7 +117,7 @@ Rectangle {
                 Component.onCompleted: console.log(height + " " + width)
             }
         }
-
+        
         Rectangle {
             id: speedControlContainer
             width: 500
@@ -128,77 +128,63 @@ Rectangle {
                 top: buttonContainer.bottom
                 topMargin: 20
             }
-
-                SGSlider {
-                    id: targetSpeedSlider
-                    label: "Target Speed:"
-                    width: 350
-                    minimumValue: 1500
-                    maximumValue: speedSafetyButton.checked ? 5500 : 10000
-                    endLabel: speedSafetyButton.checked? maximumValue : "<font color='red''>"+ maximumValue +"</font>"
-                    startLabel: minimumValue
-                    anchors {
-                        top: speedControlContainer.top
-                        topMargin: 10
-                        left: speedControlContainer.left
-                        leftMargin: 10
-                        right: speedControlContainer.right
-                        rightMargin: 10
-                    }
-                }
-
-                SGSlider {
-                    id: rampRateSlider
-                    label: "Ramp Rate:"
-                    width: 350
-                    value: 5
-                    minimumValue: 0
-                    maximumValue: 10
-                    endLabel: maximumValue
-                    startLabel: minimumValue
-                    anchors {
-                        top: targetSpeedSlider.bottom
-                        topMargin: 10
-                        left: speedControlContainer.left
-                        leftMargin: 10
-                        right: speedControlContainer.right
-                        rightMargin: 10
-                    }
-                }
-
-            Item {
-                id: speedSafety
-                height: childrenRect.height
+            
+            SGSlider {
+                id: targetSpeedSlider
+                label: "Target Speed:"
+                width: 350
+                minimumValue: 1500
+                maximumValue: 5500
+                endLabel: maximumValue
+                startLabel: minimumValue
                 anchors {
-                    top: rampRateSlider.bottom
-                    topMargin: 20
+                    top: speedControlContainer.top
+                    topMargin: 10
                     left: speedControlContainer.left
                     leftMargin: 10
                     right: speedControlContainer.right
                     rightMargin: 10
                 }
 
-                Button {
-                    id: speedSafetyButton
-                    width: 120
-                    anchors {
-                        left: speedSafety.left
-                    }
-                    text: checked ? qsTr("Safety Limits On") : qsTr("Safety Limits Off")
-                    checkable: true
-                    checked: true
+                MouseArea {
+                    id: targetSpeedSliderHover
+                    anchors { fill: targetSpeedSlider.children[0] }
+                    hoverEnabled: true
                 }
 
-                Text {
-                    id: speedWarning
-                    text: "<font color='red'><strong>Warning:</strong></font> Turning off safety limits may damage the demo setup"
-                    wrapMode: Text.WordWrap
+                SGToolTipPopup {
+                    id: sgToolTipPopup
+
+                    showOn: targetSpeedSliderHover.containsMouse
                     anchors {
-                        left: speedSafetyButton.right
-                        leftMargin: 20
-                        right: speedSafety.right
-                        verticalCenter: speedSafetyButton.verticalCenter
+                        bottom: targetSpeedSliderHover.top
+                        horizontalCenter: targetSpeedSliderHover.horizontalCenter
                     }
+                    color: "#0ce"   // Default: "#00ccee"
+
+                    content: Text {
+                        text: qsTr("To change values or remove safety\nlimits, contact your FAE.")
+                        color: "white"
+                    }
+                }
+            }
+
+            SGSlider {
+                id: rampRateSlider
+                label: "Ramp Rate:"
+                width: 350
+                value: 5
+                minimumValue: 0
+                maximumValue: 10
+                endLabel: maximumValue
+                startLabel: minimumValue
+                anchors {
+                    top: targetSpeedSlider.bottom
+                    topMargin: 10
+                    left: speedControlContainer.left
+                    leftMargin: 10
+                    right: speedControlContainer.right
+                    rightMargin: 10
                 }
             }
         }
@@ -272,7 +258,7 @@ Rectangle {
         Rectangle {
             id: directionControlContainer
             width: 500
-            height: childrenRect.height + 20
+            height: childrenRect.height + 20 - directionToolTip.height
             color: "#eeeeee"
             anchors {
                 horizontalCenter: rightSide.horizontalCenter
@@ -294,15 +280,6 @@ Rectangle {
                 exclusive: true             // Default: true (modifies exclusivity of the checked property)
                 orientation: Qt.Horizontal  // Default: Qt.vertical
 
-                Connections {
-                    target: directionSafetyButton
-                    onCheckedChanged: {
-                        for (var i=0; i<radioModel.count; i++){
-                            radioModel.get(i).disabled = !radioModel.get(i).disabled;
-                        }
-                    }
-                }
-
                 ListModel {
                     id: radioModel
 
@@ -319,39 +296,25 @@ Rectangle {
                 }
             }
 
-            Item {
-                id: directionSafety
-                height: childrenRect.height
+            MouseArea {
+                id: directionRadiosHover
+                anchors { fill: directionRadios }
+                hoverEnabled: true
+            }
+
+            SGToolTipPopup {
+                id: directionToolTip
+
+                showOn: directionRadiosHover.containsMouse
                 anchors {
-                    top: directionRadios.bottom
-                    topMargin: 10
-                    left: directionControlContainer.left
-                    leftMargin: 10
-                    right: directionControlContainer.right
-                    rightMargin: 10
+                    bottom: directionRadiosHover.top
+                    horizontalCenter: directionRadiosHover.horizontalCenter
                 }
+                color: "#0ce"   // Default: "#00ccee"
 
-                Button {
-                    id: directionSafetyButton
-                    width: 140
-                    anchors {
-                        left: directionSafety.left
-                    }
-                    text: checked ? qsTr("Direction Limits On") : qsTr("Direction Limits Off")
-                    checkable: true
-                    checked: true
-                }
-
-                Text {
-                    id: directionWarning
-                    text: "<font color='red'><strong>Warning:</strong></font> Changing the direction of the pump will damage the pump. To access this feature, contact STRATA Team."
-                    wrapMode: Text.WordWrap
-                    anchors {
-                        left: directionSafetyButton.right
-                        leftMargin: 20
-                        right: directionSafety.right
-                        verticalCenter: directionSafetyButton.verticalCenter
-                    }
+                content: Text {
+                    text: qsTr("Reversing direction will damage setup.\nTo remove safety limits, contact your FAE.")
+                    color: "white"
                 }
             }
         }
