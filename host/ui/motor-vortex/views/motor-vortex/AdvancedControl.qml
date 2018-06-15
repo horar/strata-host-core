@@ -159,7 +159,7 @@ Rectangle {
                         bottom: targetSpeedSliderHover.top
                         horizontalCenter: targetSpeedSliderHover.horizontalCenter
                     }
-                    color: "#0ce"   // Default: "#00ccee"
+                    color: "#0bd"   // Default: "#00ccee"
 
                     content: Text {
                         text: qsTr("To change values or remove safety\nlimits, contact your FAE.")
@@ -274,10 +274,8 @@ Rectangle {
                     top: directionControlContainer.top
                     topMargin: 10
                 }
-
-                // Optional Configuration:
-                exclusive: true             // Default: true (modifies exclusivity of the checked property)
-                orientation: Qt.Horizontal  // Default: Qt.vertical
+                exclusive: true
+                orientation: Qt.Horizontal
 
                 ListModel {
                     id: radioModel
@@ -309,7 +307,7 @@ Rectangle {
                     bottom: directionRadiosHover.top
                     horizontalCenter: directionRadiosHover.horizontalCenter
                 }
-                color: "#0ce"   // Default: "#00ccee"
+                color: "#0bd"   // Default: "#00ccee"
 
                 content: Text {
                     text: qsTr("Reversing direction will damage setup.\nTo remove safety limits, contact your FAE.")

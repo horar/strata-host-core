@@ -10,7 +10,10 @@ Canvas {
     property real radius: 5
     property color color: "#00ccee"
 
-    visible: showOn
+    onShowOnChanged: {
+        showOn ? showAnimation.start() : hideAnimation.start()
+    }
+    opacity: 0
     width: content.childrenRect.width + 20
     height: content.childrenRect.height + 30  // 30 because 10 padding*2 and 10 for pointer
     contextType: "2d"
@@ -43,6 +46,16 @@ Canvas {
             centerIn: parent
             verticalCenterOffset: -5  // To compensate for pointer
         }
+    }
+
+    PropertyAnimation {
+        id: showAnimation
+        target: root; properties: "opacity"; from: root.opacity; to: 1; duration: 200
+    }
+
+    PropertyAnimation {
+        id: hideAnimation
+        target: root; properties: "opacity"; from: root.opacity; to: 0; duration: 100
     }
 }
 
