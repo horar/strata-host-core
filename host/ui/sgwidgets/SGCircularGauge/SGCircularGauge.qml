@@ -13,10 +13,18 @@ Rectangle {
     property color gaugeFrontColor: "#aaddff"
     property bool demoColor: false
 
+    implicitWidth: 256
+    implicitHeight: 256
+
     CircularGauge {
         id: gauge
         value: (root.value-root.minimumValue)/(root.maximumValue-root.minimumValue)*200 // Normalize incoming values against 200 tickmarks
-        anchors.centerIn: parent
+        width: root.width > root.height ? root.height *.7 : root.width *.7
+        height: root.height > root.width ? root.width *.7 : root.height *.7
+        anchors {
+            centerIn: parent
+        }
+
         maximumValue: 200
         minimumValue: 0
 
@@ -29,36 +37,12 @@ Rectangle {
             minorTickmark: null
             tickmark: Rectangle {
                 id: tickmarks
-//                color: styleData.value > gauge.value ? root.gaugeRearColor : (styleData.value > gauge.value-1 ? "red" : "#ff7777")
-//                color: styleData.value > gauge.value ? root.gaugeRearColor : root.gaugeFrontColor
+//                color: styleData.value > gauge.value ? root.gaugeRearColor : (styleData.value > gauge.value-1 ? "red" : "root.gaugeFrontColor")
                 color: styleData.value > gauge.value ? root.gaugeRearColor : lerpColor(Qt.rgba(0,.75,1,1), Qt.rgba(1,0,0,1), styleData.value/gauge.maximumValue)
-                width: 3.75
-                height: 60
+                width: gauge.width / 68.26
+                height: gauge.width / 4.26
                 antialiasing: true
             }
-
-            //            tickmark: Canvas {
-//                id: canvas
-//                width: 8.9
-//                height: 60
-//                contextType: "2d"
-
-//                Connections {
-//                    target: gauge
-//                    onValueChanged: canvas.requestPaint()
-//                }
-
-//                onPaint: {
-//                    context.reset();
-//                    context.moveTo(1, 1);
-//                    context.lineTo(width, 1);
-//                    context.lineTo(width-2, height-1);
-//                    context.lineTo(2, height-1);
-//                    context.closePath();
-//                    context.fillStyle = styleData.value > gauge.value ? "#eeeeee" : ( styleData.value > gauge.value-1 ? "red" : "#ff7777")
-//                    context.fill();
-//                }
-//            }
         }
 
         Text {
@@ -66,18 +50,19 @@ Rectangle {
             text: root.value.toFixed(0)
             anchors { centerIn: parent }
             font.family: digital.name
-            font.pixelSize: 80
+            font.pointSize: gauge.width / 3.2
+            renderType: Text.NativeRendering
         }
         Text {
             id: gaugeLabel
             text: "RPM"
             anchors {
                 top: gaugeValue.bottom
-                topMargin: -10
+                topMargin: - gauge.width / 25.6
                 horizontalCenter: gaugeValue.horizontalCenter
 
             }
-            font.pixelSize: 12
+            font.pointSize: gauge.width / 21.3
             font.italic: true
         }
 
@@ -87,6 +72,7 @@ Rectangle {
             width: parent.width
             height: parent.height
             anchors.centerIn: parent
+            Component.onCompleted: console.log(width + " " + height)
 
             minimumValue: root.minimumValue
             maximumValue: root.maximumValue
@@ -96,8 +82,10 @@ Rectangle {
                 needle: null
                 foreground: null
                 minorTickmark: null
-                tickmarkInset: -8
-                labelInset: -20
+                tickmarkInset: -ticksBackground.width / 34
+                labelInset: -ticksBackground.width / 12.8
+                minimumValueAngle: -145.25
+                maximumValueAngle: 145.25
             }
         }
     }

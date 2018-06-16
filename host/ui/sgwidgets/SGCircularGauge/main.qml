@@ -3,23 +3,25 @@ import QtQuick.Window 2.2
 
 Window {
     visible: true
-    width: 640
-    height: 480
+    width: 400
+    height: 400
     title: qsTr("Hello World")
 
     SGCircularGauge {
         id: sgCircularGauge
-        value: 92
+        value: data.stream
 
         anchors {
-            centerIn: parent
+            fill: parent
         }
+
 
         maximumValue: 100
         minimumValue: 0
         gaugeRearColor: "#eeeeee"
         gaugeFrontColor: "lightgreen"
         demoColor: true
+        Component.onCompleted: console.log(width +  " " + height)
     }
 
     // Sends demo data stream with adjustible timing interval output
