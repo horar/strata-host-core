@@ -10,8 +10,9 @@ Rectangle {
     property real maximumValue: 100
     property real minimumValue: 0
     property color gaugeRearColor: "#eeeeee"
-    property color gaugeFrontColor: "#aaddff"
-    property bool demoColor: false
+    property color gaugeFrontColor1: Qt.rgba(0,.75,1,1)
+    property color gaugeFrontColor2: gaugeFrontColor1
+    property real tickmarkStepSize : 10
 
     implicitWidth: 256
     implicitHeight: 256
@@ -38,7 +39,7 @@ Rectangle {
             tickmark: Rectangle {
                 id: tickmarks
 //                color: styleData.value > gauge.value ? root.gaugeRearColor : (styleData.value > gauge.value-1 ? "red" : "root.gaugeFrontColor")
-                color: styleData.value > gauge.value ? root.gaugeRearColor : lerpColor(Qt.rgba(0,.75,1,1), Qt.rgba(1,0,0,1), styleData.value/gauge.maximumValue)
+                color: styleData.value > gauge.value ? root.gaugeRearColor : lerpColor(root.gaugeFrontColor1, root.gaugeFrontColor2, styleData.value/gauge.maximumValue)
                 width: gauge.width / 68.26
                 height: gauge.width / 4.26
                 antialiasing: true
@@ -72,12 +73,11 @@ Rectangle {
             width: parent.width
             height: parent.height
             anchors.centerIn: parent
-            Component.onCompleted: console.log(width + " " + height)
 
             minimumValue: root.minimumValue
             maximumValue: root.maximumValue
             style : CircularGaugeStyle {
-                tickmarkStepSize: 10
+                tickmarkStepSize: root.tickmarkStepSize
                 id: gaugeStyle2
                 needle: null
                 foreground: null

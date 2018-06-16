@@ -15,13 +15,13 @@ Window {
             fill: parent
         }
 
-
-        maximumValue: 100
+        // Optional Configuration:
         minimumValue: 0
+        maximumValue: 100000
+        tickmarkStepSize: 10000
         gaugeRearColor: "#eeeeee"
-        gaugeFrontColor: "lightgreen"
-        demoColor: true
-        Component.onCompleted: console.log(width +  " " + height)
+        gaugeFrontColor1: Qt.rgba(0,.75,1,1)
+        gaugeFrontColor2: Qt.rgba(1,0,0,1)
     }
 
     // Sends demo data stream with adjustible timing interval output
