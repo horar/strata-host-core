@@ -85,8 +85,7 @@ Rectangle {
                 minorTickmark: null
 
                 tickmarkInset: -ticksBackground.width / 34
-                labelInset: -ticksBackground.width / (15 - 1.2 * Math.max((root.maximumValue+ "").length, (root.minimumValue + "").length))  // Base label distance from gauge center on max/minValue
-                Component.onCompleted: console.log(labelInset)
+                labelInset: -ticksBackground.width / (12.8 - Math.max((root.maximumValue+ "").length, (root.minimumValue + "").length))  // Base label distance from gauge center on max/minValue
                 minimumValueAngle: -145.25
                 maximumValueAngle: 145.25
             }
