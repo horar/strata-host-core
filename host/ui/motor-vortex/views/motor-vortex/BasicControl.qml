@@ -105,94 +105,13 @@ Rectangle {
 
         }
     }
-
-    // Control Section
-    Rectangle {
-        id: controlSection
-        width: parent.width; height: parent.height * 0.5
-        color: "white"
-//        anchors {
-//            verticalCenter: parent.verticalCenter
-//        }
-
-        ColumnLayout {
-            id: layoutId
-            anchors { fill: parent }
-
-
-
-
-
-
-            /*
-              Created a rectangle as a container for the element inside which solves alignment in linux/mac
-            */
-            Rectangle {
-                id: buttonContainer
-                anchors.top : speedSliderContainer.bottom
-                width: parent.width
-                height: parent.height/3.5
-
-                ButtonGroup {
-                    buttons: buttonColumn.children
-                }
-
-                GroupBox {
-                    title: "<b><font color='red'>Operation Mode</b></font>"
-                    anchors.centerIn: parent
-                    Row {
-                        id: buttonColumn
-                        anchors {fill: parent}
-
-                        RadioButton {
-                            id:manualButton
-                            checked: true
-                            text: "Manual Control"
-
-                            onPressed: {
-                                console.log("MANUAL CONTROL")
-                                var systemModeCmd ={
-                                    "cmd":"set_system_mode",
-                                    "payload": {
-                                        "system_mode":"manual"
-                                    }
-                                }
-                                // send Manual mode command to platform
-                                coreInterface.sendCommand(JSON.stringify(systemModeCmd))
-                            }
-                        }
-
-                        RadioButton {
-                            id:automaticButton
-                            text: "Automatic Test Pattern"
-                            onPressed: {
-                                console.log("AUTOMATIC")
-                                var systemModeCmd ={
-                                    "cmd":"set_system_mode",
-                                    "payload": {
-                                        "system_mode":"automation"
-                                    }
-                                }
-                                // send Automation command to platform
-                                coreInterface.sendCommand(JSON.stringify(systemModeCmd))
-                            }
-                        }
-                    }
-                }
-            }
-        } // end Column Layout
-    } // end Control Section Rectangle
-
-
-
-
     // Control Section
     Rectangle {
         id: controlSection1
         width: parent.width-100
         height: parent.height / 2
         anchors {
-            top: controlSection.bottom
+            verticalCenter: parent.verticalCenter
             horizontalCenter: parent.horizontalCenter
         }
 
@@ -223,10 +142,10 @@ Rectangle {
             id: rightControl
             anchors {
                 left: leftControl.right
-                top: parent.top
+                verticalCenter: leftControl.verticalCenter
             }
             width: parent.width / 2
-            height: parent.height
+            height: motorSpeedControl.height + operationModeControl.height + 40
 
             SGSlider {
                 id: motorSpeedControl
@@ -234,7 +153,7 @@ Rectangle {
                 anchors {
                     horizontalCenter: parent.horizontalCenter
                 }
-                label: "Motor Speed:"
+                label: "<b>Motor Speed:</b>"
                 labelLeft: false
                 value: 1500
                 minimumValue: 1500
@@ -261,19 +180,38 @@ Rectangle {
             }
 
             SGRadioButton {
-                id: temp
+                id: operationModeControl
                 model: radioModel
                 anchors {
                     top: motorSpeedControl.bottom
-                    topMargin: 20
+                    topMargin: 40
                     left: motorSpeedControl.left
                 }
                 orientation: Qt.Horizontal
-                label: "Operation Mode:"
+                label: "<b>Operation Mode:</b>"
                 labelLeft: false
 
                 onButtonSelected: {
-                    console.log(selected)
+                    var systemModeCmd
+                    if (selected === "Manual Control"){
+                        console.log("MANUAL CONTROL")
+                         systemModeCmd ={
+                            "cmd":"set_system_mode",
+                            "payload": {
+                                "system_mode":"manual"
+                            }
+                        }
+                    } else if (selected === "Automatic Test Pattern"){
+                        console.log("AUTOMATIC")
+                        systemModeCmd ={
+                            "cmd":"set_system_mode",
+                            "payload": {
+                                "system_mode":"automation"
+                            }
+                        }
+                    }
+                    // send command to platform
+                    coreInterface.sendCommand(JSON.stringify(systemModeCmd))
                 }
 
                 ListModel {
@@ -293,8 +231,5 @@ Rectangle {
 
         }
     } // end Control Section Rectangle
-
-
-
 }
 
