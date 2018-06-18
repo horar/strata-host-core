@@ -138,7 +138,7 @@ Item{
             id: startLabel
             anchors.bottom : parent.bottom
             font.pointSize : 12
-            text: qsTr("0")
+            text: sgSlider.minimumValue
         }
 
         Label {
@@ -146,7 +146,7 @@ Item{
             anchors.right : parent.right
             anchors.bottom : parent.bottom
             font.pointSize: 12
-            text: qsTr("100")
+            text: sgSlider.maximumValue
         }
 
         PropertyAnimation {
