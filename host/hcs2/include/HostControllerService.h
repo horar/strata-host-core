@@ -18,6 +18,11 @@
  * Host Controller Service(HCS) is the edge to the cloud in the "Spyglass" project.
  * It communicates with cloud services, platform and client programs(UI, CLI).
  *
+ * Valuable Information
+ * ================
+ * 1) Libevent dynamic addition/removal of events is implemented using event_init,event_add and event_dispatch.
+ *    Dynamic addition and removal of events does not work using event_base_init, event_base_dispatch
+ *
  * KNOWN BUGS/HACKS
  * ================
  * This section mentions about the technical bugs and our work around in detail
@@ -80,6 +85,8 @@
 //         0 // do not print the message
 #define PRINT_DEBUG 1
 
+// set the length of hcs token
+#define HCSTOKEN_LENGTH 7
 
 // Helper macro for stringifying JSON. The quotes for key and variable get passed down explicity
 #define WRAPQUOTE(key)  #key
@@ -124,21 +131,23 @@ public:
     // libevent callbacks
     static void testCallback(evutil_socket_t fd, short what, void* args);
     static void serviceCallback(evutil_socket_t fd, short what, void* args);
-	static void platformCallback(evutil_socket_t fd, short what, void* args);
+    static void platformCallback(evutil_socket_t fd, short what, void* args);
     static void remoteCallback(evutil_socket_t fd, short what, void* args);
+    static void remoteActivityCallback(evutil_socket_t fd, short what, void* args);
 
     // utility functions
     std::vector<std::string> initialCommandDispatch(const std::string& dealer_id,const std::string& command);
-    bool disptachMessageToPlatforms(const std::string& dealer_id,const std::string& command);
+    bool disptachMessageToPlatforms(const std::string& dealer_id,std::string& command);
     CommandDispatcherMessages stringHash(const std::string& command);
     bool openPlatform(); // platform functions
     void initializePlatform(); //platform functions
     void addToLocalPlatformList(remote_platforms);  // add the element to the list
 
+    void generateHCSToken(std::string&, const int);
     std::string platformRead(); // this fucntion will be moved to usb connector
     bool parseAndGetPlatformId(); // potential new class to parse and handle json messages
     void parseHCSCommands(const std::string&); // function that parses the messages for hcs
-    
+
     // getter fucntions
     void getPlatformListJson(std::string &);
     // checker functions
@@ -152,8 +161,20 @@ public:
     void sendDisconnecttoUI();
     void platformDisconnectRoutine();
 
-    void sendtoMap();
+    // function that creates json using second parameter as notification and third as value
+    void constructJSON(std::string&, const std::string&, const std::string&);
+
+    // remote connection routine (with Discover Service)
+    void handleRemotePlatformRegistration(bool);
+    void handleRemoteGetPlatforms();
+    void handleRemoteConnection(const std::string&);
+    void handleRemoteActivity(const std::string&);
+    void startRemoteService(); // starts the remote service
+    void startActivityMonitorService(); // starts the subscriber service
+
     HcsError setEventLoop();
+    void appendUsername(std::string&); // appends the username to the input json message
+    void retrieveUsername(const std::string&);  // retrieves user name from the input json string
 private:
     // config file data members
     ParseConfig *configuration_;
@@ -163,8 +184,13 @@ private:
     std::string hcs_remote_address_;    // remote address
     zmq::socket_t* server_socket_;      // server socket
     zmq::socket_t* remote_socket_;      // remote socket
-	// getting serial port number from config file
-	std::vector<std::string> serial_port_list_;
+
+    // The following socket is for monitoring the activity from discovery service
+    std::string remote_discovery_monitor_; // monitor sokcet address
+    zmq::socket_t* remote_discovery_monitor_socket_;    // monitor socket
+
+    // getting serial port number from config file
+    std::vector<std::string> serial_port_list_;
     // getting the dealer id for remote connection
     std::string dealer_remote_socket_id_;
     // libevent data members
@@ -174,25 +200,23 @@ private:
     // for eg: client connected to two plat or plat connected to 2 clients
     // [TODO] [prasanth] create the multi map between UUID (string) and zmq ID(zmq_msg)
     // [testing alone] map created between int and zmq_msg
-
-    // typedef std::multimap<std::vector<std::string>,std::string> multimap;
-	typedef std::multimap<std::vector<std::string>,std::string> multimap;
+    typedef std::multimap<std::vector<std::string>,std::string> multimap;
 
     multimap platform_client_mapping_;
-	multimap::iterator multimap_iterator_;	// iterator for multimap
+    multimap::iterator multimap_iterator_;	// iterator for multimap
     // list to hold all the platform UUID
     // [testing alone] hold int
-	typedef std::list<platform_details> platformList;
+    typedef std::list<platform_details> platformList;
     platformList platform_uuid_;    // [TODO] : change the naming style
-	std::string g_platform_uuid_;	// global variable to stor connected uuid
+    std::string g_platform_uuid_;	// global variable to stor connected uuid
 
     std::list<std::string> clientList;
 
     // Object for Discovery Service
-    DiscoveryService discovery_service_;
+    DiscoveryService *discovery_service_;
 
     // zmq::message_t g_reply_;
-	std::string g_reply_,g_selected_platform_verbose_,g_dealer_id_;
+    std::string g_reply_,g_selected_platform_verbose_,g_dealer_id_;
 
     bool port_disconnected_;
 
@@ -201,8 +225,22 @@ private:
     Connector *client_connector_ ;
     Connector *serial_connector_ ;
     Connector *remote_connector_ ;
+    Connector *remote_activity_connector_;
 
     // Nimbus/database object
     Nimbus * database_;
+
+    // JWT for the client session
+    std::string JWT;
+    // bool remote_advertise;
+
+    struct event remote_handler_;
+    struct event periodic_event_;
+    struct event platform_handler_;
+    struct event service_handler_;
+    struct event activity_handler_;
+
+    std::string user_name_;
+
 };
 #endif

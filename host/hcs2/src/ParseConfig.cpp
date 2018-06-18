@@ -39,7 +39,8 @@ ParseConfig::ParseConfig(std::string file) :
     subscriber_address_ = hcs_config["subscriber_address"].GetString();
     command_address_ = hcs_config["command_address"].GetString();
     remote_address_ = hcs_config["remote_address"].GetString();
-
+    discovery_server_address_ = hcs_config["discovery_server_address"].GetString();
+    discovery_server_notification_subscriber_address_ = hcs_config["discovery_activity_monitor_address"].GetString();
     // get serial port number
     if(! hcs_config.HasMember("serial_port_number") ) {
         cout << "ERROR: No Serial port number is added in the host controller configuration parameters !!! \n";
@@ -61,9 +62,6 @@ ParseConfig::ParseConfig(std::string file) :
         simulated_platform_ = hcs_config["simulated_platform"].GetBool ();
     }
 
-    // get dealer socket id for remote connection
-    dealer_socket_id_ = hcs_config["hcs_remote_id"].GetString();
-    
     // database
     if( ! configuration.HasMember("database") ) {
         cout << "ERROR: No database configuration parameters !!! \n";

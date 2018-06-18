@@ -26,6 +26,9 @@
 #include <rapidjson/writer.h>
 #include <rapidjson/stringbuffer.h>
 
+// connector factory
+#include "Connector.h"
+
 //hardcoded json string
 #define PLATFORM_UUID "motorvortex1"
 #define PLATFORM_VERBOSE_NAME  "Vortex Fountain Motor Platform Board"
@@ -39,7 +42,7 @@ typedef std::vector<remote_platform_details> remote_platforms;
 class DiscoveryService {
 public:
     //Constructor
-    DiscoveryService();
+    DiscoveryService(const std::string&);
 
     // core functions
     remote_platforms getPlatforms();  // returns the json string of list of available platforms
@@ -50,7 +53,28 @@ public:
     // [TODO] [Prasanth] this fucntion is for building the json string
     // should be removed as we move forward
     std::string buildPlatformJson();
+
+    void setJWT(const std::string&); // to set the Java Web Token
+
+    // advertising platforms to discovery service
+    bool registerPlatform(const std::string&, const std::string&, const std::string&);
+    // removing the platform from discovery service
+    bool deregisterPlatform(const std::string&);
+    // get remote platform
+    bool getRemotePlatforms(remote_platforms&);
+    // establishing connection between two hcs
+    bool sendConnect(const std::string&, const std::string&);
+
+    bool disconnectUser(const std::string&,const std::string&);
+    bool disconnect(const std::string&);
+    // set and get hcs token for discovery service
+    void setHCSToken(const std::string& token) { hcs_token_ = token; }
+    const std::string &getHCSToken() const { return hcs_token_; }
 private:
+    std::string jwt_string_;
+    std::string hcs_token_;
+    ConnectorFactory *connector_factory_;
+    Connector *service_connector_ ;
 
 };
 #endif

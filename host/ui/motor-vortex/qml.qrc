@@ -95,6 +95,10 @@
         <file>views/bubu/boardBringUp/SingleBitGPIOSettings.qml</file>
         <file>views/bubu/boardBringUp/SingleBitPWMsettings.qml</file>
         <file>views/bubu/boardBringUp/ButtonViewPwm.qml</file>
+        <file>images/icons/remotecommunication.svg</file>
+        <file>images/icons/fail_x.svg</file>
+        <file>images/icons/success_check.svg</file>
+        <file>images/closeIcon.svg</file>
         <file>include/Modules/CircleBadge.qml</file>
         <file>views/bubu/images/icons/backIcon.svg</file>
         <file>views/bubu/images/icons/infoIcon.svg</file>
