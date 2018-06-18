@@ -10,60 +10,45 @@ Window {
     title: qsTr("SGButtonStrip Example")
 
     SGSegmentedButtonStrip {
-        id: seg1
+        id: segmentedButtonsExample
 
         anchors {
             centerIn: parent    // Example anchoring, spec something else for real use
         }
 
         // Optional configurations:
+        label: "Input:"    // Default: "" (will not appear if not entered)
+        labelLeft: false                // Default: true (true: label on left, false: label on top)
         activeColorTop: "#bbbbbb"       // Default: "#bbbbbb"
         activeColorBottom: "#999999"    // Default: "#999999"
         inactiveColorTop: "#dddddd"     // Default: "#dddddd"
         inactiveColorBottom: "#aaaaaa"  // Default: "#aaaaaa"
-        height: 35                      // Default: 35
+        buttonHeight: 35                // Default: 35
         radius: height/2                // Default: height/2
         exclusive: true                 // Default: true
 
         segmentedButtons: GridLayout {
-            id: grid
-
             columnSpacing: 2
 
             SGSegmentedButton{
-                id: button1
-                text: qsTr("Button1 longer text")
+                text: qsTr("DVD")
                 checked: true  // Sets default checked button when exclusive
             }
 
             SGSegmentedButton{
-                id: button2
-                text: qsTr("Button2")
+                text: qsTr("Blu-Ray")
             }
 
             SGSegmentedButton{
-                id: button3
-                text: qsTr("Button3")
+                text: qsTr("VHS")
             }
 
             SGSegmentedButton{
-                id: button4
-                text: qsTr("Button4")
+                text: qsTr("Radio")
             }
 
             SGSegmentedButton{
-                id: button5
-                text: qsTr("Button5")
-            }
-
-            SGSegmentedButton{
-                id: button6
-                text: qsTr("Button6")
-            }
-
-            SGSegmentedButton{
-                id: button7
-                text: qsTr("Button7")
+                text: qsTr("Betamax")
             }
         }
     }

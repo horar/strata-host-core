@@ -14,34 +14,47 @@ Window {
         model: radioModel
 
         // Optional Configuration:
+        label: "Radio Buttons:"     // Default: "" (if not entered, label will not appear)
+        labelLeft: true             // Default: true (if false, label will be on top)
         exclusive: true             // Default: true (modifies exclusivity of the checked property)
         orientation: Qt.Horizontal  // Default: Qt.vertical
         textColor: "#000000"        // Default: "#000000" (black)
         radioColor: "#000000"       // Default: "#000000" (black)
-        backgroundColor: "salmon"   // Default: "#ffffff" (white)
-        highlightColor: "tomato"    // Default: "transparent"
-
-        Rectangle{
-            anchors.fill: parent
-            color: "#eeeeee"
-            z:-10
-        }
+        highlightColor: "lightgrey" // Default: "transparent"
 
         ListModel {
             id: radioModel
 
             ListElement {
                 name: "Trapezoidal"
-                checked: true
+                checked: true               // One element pre-checked when exclusive
             }
 
             ListElement {
                 name: "Pseudo-Sinusoidal"
-                disabled: true
+                disabled: true              // Option to lock element
             }
 
             ListElement {
                 name: "Exponential"
+            }
+        }
+    }
+
+    // Example button showing one method to iterate through and lock/unlock radio buttons
+    Button {
+        anchors {
+            top: radioButtons.bottom
+            topMargin: 20
+        }
+        text: checked ? "Locked" : "Unlocked"
+        checked: true
+        checkable: true
+        onCheckedChanged: {
+            for (var i=0; i<radioModel.count; i++){
+                if (radioModel.get(i).name === "Pseudo-Sinusoidal"){
+                    radioModel.get(i).disabled = !radioModel.get(i).disabled;
+                }
             }
         }
     }

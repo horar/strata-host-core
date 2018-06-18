@@ -9,10 +9,10 @@ Window {
     title: qsTr("SGOutputLogBox Demo")
 
     SGOutputLogBox{
-        // Anchors fill parent by default.
         id: logBox
-
         input: data.stream
+
+        anchors { fill: parent }  // Demo anchors
 
         // Optional SGOutputLogBox Settings:
         title: "Message Log"            // Default: "" (title bar will not be visible when empty string)

@@ -3,7 +3,6 @@ import QtQuick.Controls 2.2
 
 Rectangle {
     id: root
-    anchors { fill: parent }
     color: statusBoxColor
     border {
         color: statusBoxBorderColor
@@ -30,8 +29,7 @@ Rectangle {
             right: parent.right
             top: parent.top
         }
-        height: 35
-        width: 40
+        implicitHeight: 35
         color: root.titleBoxColor
         border {
             color: root.titleBoxBorderColor
@@ -54,39 +52,6 @@ Rectangle {
         }
     }
 
-//    ScrollView {
-//        id: flickableContainer
-//        clip: true
-//        anchors {
-//            left: parent.left
-//            right: parent.right
-//            top: titleArea.visible ? titleArea.bottom : parent.top
-//            bottom: parent.bottom
-//        }
-
-//        Flickable {
-//            id: transcriptContainer
-
-//            anchors { fill:parent }
-//            contentHeight: transcript.height
-//            contentWidth: transcript.width
-
-//            TextEdit {
-//                id: transcript
-//                height: contentHeight + padding * 2
-//                width: root.parent.width
-//                readOnly: true
-//                selectByMouse: true
-//                selectByKeyboard: true
-//                font.family: "Courier"
-//                wrapMode: TextEdit.Wrap
-//                textFormat: Text.RichText
-//                text: ""
-//                padding: 10
-//            }
-//        }
-//    }
-
     ListView {
         id: statusList
         implicitWidth: contentItem.childrenRect.width
@@ -103,11 +68,11 @@ Rectangle {
         }
 
         delegate: Text {
-            text: modelData
-            color: "orangered"
+            text: model.status // modelData
+            color: root.statusTextColor
             font.family: "Courier"
-            //font.pointSize: smallFontSize
         }
+
         highlightFollowsCurrentItem: true
         onContentHeightChanged: {
             if (running) { scroll() }

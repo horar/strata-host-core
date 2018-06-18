@@ -6,16 +6,16 @@ Window {
     visible: true
     width: 300
     height: 300
-    title: qsTr("SGOutputLogBox Demo")
+    title: qsTr("SGStatusListBox Demo")
 
     SGStatusListBox{
-        // Anchors fill parent by default.
         id: logBox
-
         model: demoModel
 
+        anchors { fill: parent } // Demo anchors
+
         // Optional SGOutputLogBox Settings:
-        title: "Message Log"            // Default: "" (title bar will not be visible when empty string)
+        title: "Status List"            // Default: "" (title bar will not be visible when empty string)
         titleTextColor: "#000000"       // Default: "#000000" (black)
         titleBoxColor: "#eeeeee"        // Default: "#eeeeee" (light gray)
         titleBoxBorderColor: "#dddddd"  // Default: "#dddddd" (light gray)
@@ -31,40 +31,23 @@ Window {
         }
     }
 
-    // Send demo data to output box on a timed interval
-//    Timer {
-//        id: data
-//        property string stream
-//        property real count: 0
-//        interval: 100
-//        running: true
-//        repeat: true
-//        onTriggered: {
-//            count += interval;
-//            stream = Date.now() + " Message " + count/100;
-//        }
-//    }
-
     Button{
-        id: butt1
+        id: debugButton
         text: "add to model"
         x: 200
         onClicked: {
-            //for (var i = 0; i<100; i++){
-                demoModel.append({"status":Date.now() + " fault"});
-           // }
+            demoModel.append({ "status" : Date.now() + " fault" });
         }
     }
+
     Button{
         text: "remove from model"
         x: 200
-        anchors.top: butt1.bottom
+        anchors.top: debugButton.bottom
         onClicked: {
-            //for (var i = 0; i<100; i++){
-                if (demoModel.count > 0) {
-                    demoModel.remove(demoModel.count-1);
-                }
-           // }
+            if (demoModel.count > 0) {
+                demoModel.remove(demoModel.count-1);
+            }
         }
     }
 }

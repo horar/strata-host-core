@@ -12,6 +12,10 @@ Window {
             // https://stackoverflow.com/questions/34099236/qtquick-chartview-qml-object-seg-faults-causes-qml-engine-segfault-during-load
             id: graph
 
+            anchors {
+                fill: parent                // Set custom anchors for responsive sizing
+            }
+
             inputData: data.stream          // Set the graph's data source here
 
             // Optional graph settings:

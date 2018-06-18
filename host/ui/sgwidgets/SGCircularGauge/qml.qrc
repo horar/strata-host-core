@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/">
+        <file>main.qml</file>
+        <file>SGCircularGauge.qml</file>
+        <file>fonts/digitalseven.ttf</file>
+    </qresource>
+</RCC>

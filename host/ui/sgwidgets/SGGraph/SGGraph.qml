@@ -12,9 +12,12 @@ ChartView {
     backgroundColor: "white"
     backgroundRoundness: 0
     anchors {
-        fill: parent
         margins: -12
     }
+
+    implicitWidth: 300
+    implicitHeight: 300
+
     margins {
         top: 5
         left: 5
@@ -99,13 +102,14 @@ ChartView {
 
     Button {
         id: optionToggle
+        visible: rootChart.showOptions
         anchors {
             right: parent.right
             top: parent.top
             margins: 12
         }
         checkable: true
-        checked: options.visible
+        checked: false
         text: "Options"
         onClicked: {
             options.visible = !options.visible
@@ -114,7 +118,7 @@ ChartView {
 
     Item {
         id: options
-        visible: rootChart.showOptions
+        visible: false
         anchors {
             top: parent.top
             left: parent.left
@@ -164,11 +168,13 @@ ChartView {
                 if (rootChart.dataTime >= maxXValue - (rollingRange/2)){
                     valueAxisX.max = rootChart.dataTime + rollingRange/2;
                     valueAxisX.min = valueAxisX.max - rollingRange;
+                    if (dataLine.at(0).x < rootChart.dataTime - rollingRange/2) { dataLine.remove(0) } // Remove points that are outside of view
                 }
             } else {
                 if (rootChart.dataTime >= maxXValue){
                     valueAxisX.max = rootChart.dataTime;
                     valueAxisX.min = valueAxisX.max - rollingRange;
+                    if (dataLine.at(0).x < rootChart.dataTime - rollingRange/2) { dataLine.remove(0) }
                 }
             }
         }
