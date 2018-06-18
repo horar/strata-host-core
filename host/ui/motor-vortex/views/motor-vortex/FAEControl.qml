@@ -5,10 +5,65 @@ import QtQuick.Controls 2.2
 import "qrc:/js/navigation_control.js" as NavigationControl
 import "qrc:/views/motor-vortex/sgwidgets"
 
+
 Rectangle {
     id: advancedControl
     anchors {
         fill: parent
+    }
+
+    Rectangle {
+        id: warningBox
+        color: "red"
+        anchors {
+            bottom: leftSide.top
+            horizontalCenter: parent.horizontalCenter
+            bottomMargin: 20
+        }
+        width: warningText.contentWidth + 120
+        height: warningText.contentHeight + 40
+
+        Text {
+            id: warningText
+            anchors {
+                centerIn: parent
+            }
+            text: "<b>Restricted Access:</b> ON Semi Employees Only"
+            font.pointSize: 18
+            color: "white"
+        }
+
+        Text {
+            id: warningIcon1
+            anchors {
+                right: warningText.left
+                verticalCenter: warningText.verticalCenter
+                rightMargin: 10
+            }
+            text: "\ue80e"
+            font.family: icons.name
+            font.pointSize: 50
+            color: "white"
+        }
+
+        Text {
+            id: warningIcon2
+            anchors {
+                left: warningText.right
+                verticalCenter: warningText.verticalCenter
+                leftMargin: 10
+            }
+            text: "\ue80e"
+            font.family: icons.name
+            font.pointSize: 50
+            color: "white"
+        }
+
+        FontLoader {
+            id: icons
+            source: "sgwidgets/fonts/sgicons.ttf"
+        }
+
     }
 
     Rectangle {

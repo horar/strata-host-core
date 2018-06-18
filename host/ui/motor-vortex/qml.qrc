@@ -189,5 +189,7 @@
         <file>views/motor-vortex/BasicControl.qml</file>
         <file>views/motor-vortex/FAEControl.qml</file>
         <file>views/motor-vortex/sgwidgets/SGToolTipPopup.qml</file>
+        <file>views/motor-vortex/sgwidgets/fonts/digitalseven.ttf</file>
+        <file>views/motor-vortex/sgwidgets/SGCircularGauge.qml</file>
     </qresource>
 </RCC>

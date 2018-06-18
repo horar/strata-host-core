@@ -8,8 +8,6 @@ import QtQuick.Extras 1.4
 import "qrc:/js/navigation_control.js" as NavigationControl
 import "qrc:/views/motor-vortex/sgwidgets"
 
-
-
 Rectangle {
     id: controlPage
     objectName: "control"
@@ -58,15 +56,15 @@ Rectangle {
 
                         //check if speed is a valid integer
                         if(Number.isInteger(current_speed)){
-                            tachMeterGauge.value =Math.floor( ((current_speed - 1500) / 4000) * 100 )
+                            tachMeterGauge.value = current_speed
 
                             // just making sure the the slider is being set only once when the
                             // platform send its current speed
                             // Then the user will start controlling it. Hence there is no need to keep updating the slider
                             // based on the platfrom notification's value
                             if(!isMotorSliderUpdated){
-                                //set value only once and must be float from 0 to 1
-                                motorSpeedControl.value =( (current_speed-1500)/5500.0)
+                                //set value only once and must be float from 1500 to 5500
+                                motorSpeedControl.value =current_speed
                                 isMotorSliderUpdated = !isMotorSliderUpdated
                             }
 
@@ -113,109 +111,18 @@ Rectangle {
         id: controlSection
         width: parent.width; height: parent.height * 0.5
         color: "white"
+//        anchors {
+//            verticalCenter: parent.verticalCenter
+//        }
 
         ColumnLayout {
             id: layoutId
             anchors { fill: parent }
 
-            /*
-              Created a rectangle as a container for the element inside which solves alignment in linux/mac
-            */
-            Rectangle {
-                id: meterGaugeContainer
-                width: parent.width;height: parent.height/1.5
 
 
-                CircularGauge {
-                    id: tachMeterGauge
-                    height: parent.height
-                    anchors.centerIn: parent
-                    minimumValue: 0; maximumValue: 100
-                    stepSize: 1
 
-                    Behavior on value { NumberAnimation { duration: 1500 } }
 
-                    style: CircularGaugeStyle {
-                        minimumValueAngle: -90; maximumValueAngle: 90
-                        needle: Rectangle {
-                            y: outerRadius * 0.15
-                            implicitWidth: outerRadius * 0.03
-                            implicitHeight: outerRadius * 0.9
-                            antialiasing: true
-                            color: Qt.rgba(0.66, 0.3, 0, 1)
-                        }
-
-                        foreground: Item {
-                            Rectangle {
-                                width: outerRadius * 0.2
-                                height: width
-                                radius: width / 2
-                                color: "black"
-                                anchors.centerIn: parent
-
-                            }
-                        }
-                        tickmarkLabel:  Text {
-                            font.pixelSize: Math.max(6, outerRadius * 0.1)
-                            text: styleData.value
-                            color: styleData.value >= 80 ? "#e34c22" : "black"
-                            antialiasing: true
-                        }
-                    }
-
-                } // end CircularGauge
-            }
-
-            /*
-              Created a rectangle as a container for the element inside which solves alignment in linux/mac
-            */
-            Rectangle {
-                id: speedSliderContainer
-                anchors.top : meterGaugeContainer.bottom
-                /*
-                  Use a negative margin on slider to close the gap from meter gauge. The gap in the meter gauge occurs due to having a _semi-circle_ for the gauge
-                  when it's allocated for the _full_ circle gauge.
-                */
-                anchors.topMargin: -meterGaugeContainer.height*.4
-                width: parent.width
-                height: parent.height/6
-
-                Slider {
-                    id: motorSpeedControl
-                    from: 0; to: 1
-                    value: 0   // start value
-                    snapMode: Slider.SnapAlways
-                    stepSize : 0.05
-                    live: false
-                    anchors.centerIn: parent
-
-                    function setMotorSpeedCommand(value) {
-                        var truncated_value = Math.floor( (value * 4000) + 1500)
-                        var setSpeedCmd ={
-                            "cmd":"speed_input",
-                            "payload": {
-                                "speed_target":truncated_value
-                            }
-                        }
-                        // send set speed command to platform
-                        console.log("set value ", (value * 4000) + 1500)
-                        coreInterface.sendCommand(JSON.stringify(setSpeedCmd))
-                    }
-
-                    onMoved: {
-                        gauge1.value = position * 200  // TODO [ian] false temp values until hooked up
-                        gauge2.value = position * 200
-                        gauge3.value = position * 200
-                        setMotorSpeedCommand(position)
-                    }
-
-                    ToolTip {
-                        parent: motorSpeedControl.handle
-                        visible: motorSpeedControl.pressed
-                        text: motorSpeedControl.valueAt(motorSpeedControl.position).toFixed(1) * 5400
-                    }
-                }
-            }
 
             /*
               Created a rectangle as a container for the element inside which solves alignment in linux/mac
@@ -276,178 +183,114 @@ Rectangle {
         } // end Column Layout
     } // end Control Section Rectangle
 
-    // Environment Section
+
+
+
+    // Control Section
     Rectangle {
-        id: environmentSection
-        anchors {top: controlSection.bottom
-            topMargin: 50
-            bottom: controlPage.bottom
+        id: controlSection1
+        width: parent.width-100
+        height: parent.height / 2
+        anchors {
+            top: controlSection.bottom
+            horizontalCenter: parent.horizontalCenter
         }
 
-        color: "white"
-        width: controlPage.width
-        // Phase U temperature
-        RowLayout {
-            spacing: 180
-            ColumnLayout {
-                Layout.alignment: Qt.AlignCenter
-
-                width: environmentSection.width / 3;  height: environmentSection.height - 30
-                Gauge {
-                    id: gauge1
-                    width: parent.width; height: parent.height * 0.9
-                    anchors { fill: parent; margins: 10 }
-                    minimumValue: -40
-                    maximumValue: 200
-
-                    value: 20
-
-                    Behavior on value { NumberAnimation {duration: 6000 } }
-
-                    style: GaugeStyle {
-                        valueBar: Rectangle {
-                            implicitWidth: 16
-                            color: Qt.rgba(gauge1.value / gauge1.maximumValue, 0, 1 - gauge1.value / gauge1.maximumValue, 1)
-                        }
-
-                        tickmark: Item {
-                            implicitWidth: 18
-                            implicitHeight: 1
-
-                            Rectangle {
-                                color: "black"
-                                anchors.fill: parent
-                                anchors.leftMargin: 3
-                                anchors.rightMargin: 3
-                            }
-                        }
-
-                        minorTickmark: Item {
-                            implicitWidth: 8
-                            implicitHeight: 1
-
-                            Rectangle {
-                                color: "#cccccc"
-                                anchors.fill: parent
-                                anchors.leftMargin: 2
-                                anchors.rightMargin: 4
-                            }
-                        }
-                    }
-                }
-                Label {
-                    id: gaugeLabel1
-                    anchors {top: gauge1.bottom; left: parent.left; leftMargin: 5 }
-                    width: parent.width; height: parent.height * 0.1
-                    text: "Phase U"
-                }
+        Rectangle {
+            id: leftControl
+            anchors {
+                left: parent.left
+                top: parent.top
             }
+            width: parent.width / 2
+            height: parent.height
 
-            // Phase U temperature
-            ColumnLayout {
-                width: environmentSection.width / 3;  height: environmentSection.height - 30
-                Gauge {
-                    id: gauge2
-                    width: parent.width; height: parent.height * 0.9
-                    anchors.fill: parent
-                    anchors.margins: 10
-                    minimumValue: -40
-                    maximumValue: 200
-                    value: 20
-
-                    Behavior on value { NumberAnimation {duration: 2000 } }
-
-                    style: GaugeStyle {
-                        valueBar: Rectangle {
-                            implicitWidth: 16
-                            color: Qt.rgba(gauge2.value / gauge2.maximumValue, 0, 1 - gauge2.value / gauge2.maximumValue, 1)
-                        }
-
-                        tickmark: Item {
-                            implicitWidth: 18
-                            implicitHeight: 1
-
-                            Rectangle {
-                                color: "black"
-                                anchors.fill: parent
-                                anchors.leftMargin: 3
-                                anchors.rightMargin: 3
-                            }
-                        }
-
-                        minorTickmark: Item {
-                            implicitWidth: 8
-                            implicitHeight: 1
-
-                            Rectangle {
-                                color: "#cccccc"
-                                anchors.fill: parent
-                                anchors.leftMargin: 2
-                                anchors.rightMargin: 4
-                            }
-                        }
-                    }
+            SGCircularGauge {
+                id: tachMeterGauge
+                anchors {
+                    fill: parent
                 }
-                Label {
-                    id: gaugeLabel2
-                    anchors {top: gauge2.bottom; left: parent.left; leftMargin: 5 }
-                    width: parent.width; height: parent.height * 0.1
-                    text: "Phase V"
-                }
-            }
+                minimumValue: motorSpeedControl.minimumValue
+                maximumValue: motorSpeedControl.maximumValue
+                value: 1500
+                tickmarkStepSize: 500
 
-            // Phase W temperature
-            ColumnLayout {
-                width: environmentSection.width / 3;  height: environmentSection.height - 30
-                Gauge {
-                    id: gauge3
-                    width: parent.width; height: parent.height * 0.9
-                    anchors { fill: parent; margins: 10 }
-                    minimumValue: -40
-                    maximumValue: 200
-                    value: 20
-
-                    Behavior on value { NumberAnimation {duration: 4000 } }
-
-                    style: GaugeStyle {
-                        valueBar: Rectangle {
-                            implicitWidth: 16
-                            color: Qt.rgba(gauge3.value / gauge3.maximumValue, 0, 1 - gauge3.value / gauge3.maximumValue, 1)
-                        }
-
-                        tickmark: Item {
-                            implicitWidth: 18
-                            implicitHeight: 1
-
-                            Rectangle {
-                                color: "black"
-                                anchors.fill: parent
-                                anchors.leftMargin: 3
-                                anchors.rightMargin: 3
-                            }
-                        }
-
-                        minorTickmark: Item {
-                            implicitWidth: 8
-                            implicitHeight: 1
-
-                            Rectangle {
-                                color: "#cccccc"
-                                anchors.fill: parent
-                                anchors.leftMargin: 2
-                                anchors.rightMargin: 4
-                            }
-                        }
-                    }
-                }
-                Label {
-                    id: gaugeLabel3
-                    anchors {top: gauge3.bottom; left: parent.left; leftMargin: 5 }
-                    width: parent.width; height: parent.height * 0.1
-                    text: "Phase W"
-                }
+                Behavior on value { NumberAnimation { duration: 300 } }
             }
         }
-    }
+
+        Rectangle {
+            id: rightControl
+            anchors {
+                left: leftControl.right
+                top: parent.top
+            }
+            width: parent.width / 2
+            height: parent.height
+
+            SGSlider {
+                id: motorSpeedControl
+                width: parent.width * 0.75
+                anchors {
+                    horizontalCenter: parent.horizontalCenter
+                }
+                label: "Motor Speed:"
+                labelLeft: false
+                value: 1500
+                minimumValue: 1500
+                maximumValue: 5500
+                startLabel: minimumValue
+                endLabel: maximumValue
+
+                function setMotorSpeedCommand(value) {
+                    var truncated_value = Math.floor(value)
+                    var setSpeedCmd ={
+                        "cmd":"speed_input",
+                        "payload": {
+                            "speed_target":truncated_value
+                        }
+                    }
+                    // send set speed command to platform
+                    console.log ("set speed_target", truncated_value)
+                    coreInterface.sendCommand(JSON.stringify(setSpeedCmd))
+                }
+
+                onValueChanged: {
+                    setMotorSpeedCommand(value)
+                }
+            }
+
+            SGRadioButton {
+                id: temp
+                model: radioModel
+                anchors {
+                    top: motorSpeedControl.bottom
+                    topMargin: 20
+                    left: motorSpeedControl.left
+                }
+                orientation: Qt.Horizontal
+                label: "Operation Mode:"
+                labelLeft: false
+
+                ListModel {
+                    id: radioModel
+
+                    ListElement {
+                        name: "Manual Control"
+                        checked: true               // One element pre-checked when exclusive
+                    }
+
+                    ListElement {
+                        name: "Automatic Test Pattern"
+                    }
+                }
+            }
+
+
+        }
+    } // end Control Section Rectangle
+
+
+
 }
 

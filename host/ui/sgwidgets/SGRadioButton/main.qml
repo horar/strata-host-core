@@ -15,12 +15,14 @@ Window {
 
         // Optional Configuration:
         label: "Radio Buttons:"     // Default: "" (if not entered, label will not appear)
-        labelLeft: true             // Default: true (if false, label will be on top)
+        labelLeft: false             // Default: true (if false, label will be on top)
         exclusive: true             // Default: true (modifies exclusivity of the checked property)
         orientation: Qt.Horizontal  // Default: Qt.vertical
         textColor: "#000000"        // Default: "#000000" (black)
         radioColor: "#000000"       // Default: "#000000" (black)
         highlightColor: "lightgrey" // Default: "transparent"
+
+        onButtonSelected: console.log(selected, "is selected")
 
         ListModel {
             id: radioModel
