@@ -6,7 +6,7 @@ import "qrc:/views/bubu/Control.js" as BubuControl
 
 
 Rectangle{
-
+    id: container
     width: 1000; height: 60
     color: lightGreyColor
     property int bitNum: 0 //Gets overloaded by delegate

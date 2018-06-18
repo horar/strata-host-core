@@ -6,10 +6,9 @@ Button {
     id:leftButton
     width:100
     height:40
-    property var pinFunction: ""
-    property var tabName: ""
+    property string pinFunction: ""
     property int tabIndex: 0
-    property var portName: ""
+    property string portName: ""
     property int smallFontSize: (Qt.platform.os === "osx") ? 12  : 10;
     property int mediumFontSize: (Qt.platform.os === "osx") ? 15  : 12;
     property int largeFontSize: (Qt.platform.os === "osx") ? 24  : 20;

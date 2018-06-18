@@ -6,7 +6,7 @@ import "qrc:/views/bubu/Control.js" as BubuControl
 
 
 Rectangle{
-
+    id: container
     width: 1000; height: 60
     color: lightGreyColor
     property int bitNum: 0
@@ -15,7 +15,8 @@ Rectangle{
     /*
         Depending on the state of the switch(input/output) change the
         visibility of _highLow_ switch
-      */
+
+    */
     states: [
         State {
             name: "input"
@@ -58,6 +59,7 @@ Rectangle{
             anchors { left : bitNumber.right
                 leftMargin: 120}
             color: "transparent"
+
             GPIOSetting {
                 id: inputOutput
                 switchType: "input_output"
@@ -77,6 +79,7 @@ Rectangle{
             anchors { left : inputOutputContainer.right
                 leftMargin: 120}
             color: "transparent"
+
             GPIOSetting {
                 id: highLow
                 switchType: "low_high"
@@ -101,7 +104,6 @@ Rectangle{
 
         }
     }
-
 }
 
 

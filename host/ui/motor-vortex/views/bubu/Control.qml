@@ -145,9 +145,7 @@ Rectangle {
 
 
         I2C{ id:i2CView }
-
         Gpio{ id:gpioView }
-
         Pwm{ id:pwmView }
     }
 

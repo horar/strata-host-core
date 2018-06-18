@@ -54,7 +54,7 @@ Rectangle{
     }
 
     /*
-        validate the string to check if it's hex
+        validate the string to check if it's hexadecimal
     */
     function isHex(str){
         var hexValues = '0123456789ABCDEFabcdef'
@@ -165,7 +165,6 @@ Rectangle{
                 coreInterface.sendCommand(BubuControl.getI2cConfigure());
 
             }
-
         }
     }
 
@@ -247,19 +246,19 @@ Rectangle{
                 }
                 /*
                         Iterating the string to set the list model
+                        to display the binary number
                 */
                 for (var i = 0; i < binaryConversion.length; ++i) {
                     binaryModal.get(i).value = binaryConversion.charAt(i);
 
                 }
             }
-
         }
 
 
         ListView {
             id: bitview
-            model: ListModel{
+            model: ListModel {
                 id:binaryModal
                 ListElement{
                     value:"0"
@@ -313,7 +312,7 @@ Rectangle{
             text: "Read"
             onClicked: {
                 /*
-                  Set the I2c read command
+                  Set the I2C read command
                 */
                 BubuControl.setI2cBusNumber(i2cModel.currentIndex+1);
                 BubuControl.setI2cSlaveAddressRead(parseInt(slaveAddressValue.text, 16));
@@ -331,7 +330,7 @@ Rectangle{
             text: "Write"
             onClicked: {
                 /*
-                  Set the I2c write command
+                  Set the I2C write command
                 */
                 BubuControl.setI2cBusNumber(i2cModel.currentIndex+1);
                 BubuControl.setI2cSlaveAddressWrite(parseInt(slaveAddressValue.text, 16));
@@ -352,6 +351,7 @@ Rectangle{
         }
 
     }
+
     I2CTable {
         anchors.top: thirdRowSetting.bottom
     }

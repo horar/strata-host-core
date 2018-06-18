@@ -21,7 +21,8 @@ Rectangle {
     */
     function isBitEnabled(index) {
         /*
-            Iterate the _listDisableBits_ list and compare the index
+            Iterate the _listDisableBits_
+            list and compare the index
         */
         for(var i = 0; i < listDisableBits.length; ++i){
             if(index === listDisableBits[i]){
