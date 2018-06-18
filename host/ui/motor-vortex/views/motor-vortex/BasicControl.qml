@@ -272,6 +272,10 @@ Rectangle {
                 label: "Operation Mode:"
                 labelLeft: false
 
+                onButtonSelected: {
+                    console.log(selected)
+                }
+
                 ListModel {
                     id: radioModel
 

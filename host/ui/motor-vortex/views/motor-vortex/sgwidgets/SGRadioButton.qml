@@ -8,6 +8,8 @@ Item {
     implicitHeight: childrenRect.height
     implicitWidth: childrenRect.width
 
+    signal buttonSelected (string selected)
+
     property alias model: radioList.model
     property alias exclusive: buttonGroup.exclusive
     property alias orientation: radioList.orientation
@@ -26,7 +28,6 @@ Item {
         topPadding: root.label === "" ? 0 : root.labelLeft ? (radioList.height-contentHeight)/2 : 0
         bottomPadding: topPadding
     }
-
 
     ListView {
         id: radioList
@@ -47,6 +48,12 @@ Item {
             checked: model.checked
             enabled: !model.disabled
             ButtonGroup.group: buttonGroup
+
+            signal selected (string name)
+            onCheckedChanged: { if (radioDelegate.checked) selected(model.name) }
+            Component.onCompleted: {
+                selected.connect(root.buttonSelected)
+            }
 
             contentItem: Text {
                 anchors.left: radioDelegate.indicator.right
