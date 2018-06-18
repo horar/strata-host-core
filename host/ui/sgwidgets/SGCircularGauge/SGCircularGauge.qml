@@ -13,6 +13,7 @@ Rectangle {
     property color gaugeFrontColor1: Qt.rgba(0,.75,1,1)
     property color gaugeFrontColor2: gaugeFrontColor1
     property real tickmarkStepSize : 10
+    property string unitLabel: "RPM"
 
     implicitWidth: 256
     implicitHeight: 256
@@ -51,19 +52,19 @@ Rectangle {
             text: root.value.toFixed(0)
             anchors { centerIn: parent }
             font.family: digital.name
-            font.pointSize: gauge.width / 3.2
+            font.pixelSize: Math.min(gauge.width / 3, gauge.width/Math.max((root.maximumValue+ "").length, (root.minimumValue + "").length)) // Scale the gauge font based on what the largest or smallest number that might be displayed
             renderType: Text.NativeRendering
         }
         Text {
             id: gaugeLabel
-            text: "RPM"
+            text: unitLabel
             anchors {
                 top: gaugeValue.bottom
                 topMargin: - gauge.width / 25.6
                 horizontalCenter: gaugeValue.horizontalCenter
 
             }
-            font.pointSize: gauge.width / 21.3
+            font.pixelSize: gauge.width / 21.3
             font.italic: true
         }
 
@@ -82,8 +83,10 @@ Rectangle {
                 needle: null
                 foreground: null
                 minorTickmark: null
+
                 tickmarkInset: -ticksBackground.width / 34
-                labelInset: -ticksBackground.width / 12.8
+                labelInset: -ticksBackground.width / (15 - 1.2 * Math.max((root.maximumValue+ "").length, (root.minimumValue + "").length))  // Base label distance from gauge center on max/minValue
+                Component.onCompleted: console.log(labelInset)
                 minimumValueAngle: -145.25
                 maximumValueAngle: 145.25
             }

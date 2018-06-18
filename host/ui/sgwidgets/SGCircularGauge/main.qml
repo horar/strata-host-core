@@ -17,11 +17,12 @@ Window {
 
         // Optional Configuration:
         minimumValue: 0
-        maximumValue: 100000
-        tickmarkStepSize: 10000
+        maximumValue: 10000
+        tickmarkStepSize: 1000
         gaugeRearColor: "#eeeeee"
         gaugeFrontColor1: Qt.rgba(0,.75,1,1)
         gaugeFrontColor2: Qt.rgba(1,0,0,1)
+        unitLabel: "RPM"                        // Default: "RPM"
     }
 
     // Sends demo data stream with adjustible timing interval output
