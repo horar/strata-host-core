@@ -75,7 +75,7 @@ Rectangle{
         font.family: "Helvetica"
         font.pointSize: 24
         anchors {
-            left: parent.left
+            left: serialContainer.left
             leftMargin: 10
         }
     }
@@ -91,7 +91,7 @@ Rectangle{
             id: selectChannel
             text: "Channel Select"
             anchors {
-                left: parent.left
+                left: firstRowSetting.left
                 leftMargin: 10
             }
         }
@@ -179,7 +179,7 @@ Rectangle{
             id: slaveAddress
             text: "Slave Address (Hex)"
             anchors {
-                left: parent.left
+                left: secondRowSetting.left
                 leftMargin: 10
             }
         }
@@ -229,7 +229,7 @@ Rectangle{
         Text {
             id: dataText
             anchors {
-                left: parent.left
+                left: thirdRowSetting.left
                 leftMargin: 10
             }
             text: "Data (Hex)"
@@ -248,8 +248,8 @@ Rectangle{
                 /*
                         Iterating the string to set the list model
                 */
-                for (var i = 0; i < binaryConversion.length; i++) {
-                    binaryModal.get(i).value = binaryConversion.charAt(i);
+                for (var i = 0; i < binaryConversion.length; ++i) {
+                       binaryModal.get(i).value = binaryConversion.charAt(i);
 
                 }
             }
@@ -267,7 +267,6 @@ Rectangle{
                 ListElement{
                     value:"0"
                 }
-
                 ListElement{
                     value:"0"
                 }
@@ -359,7 +358,6 @@ Rectangle{
         text: "+"
         anchors.bottom: i2cTable.top
         onClicked: {
-
             tableModel.append({"serialNum": tableModel.count+1,
                                   "slaveAddress": "0xab",
                                   "registerAddress": "0xcd",
@@ -387,8 +385,6 @@ Rectangle{
             }
 
             var table = JSON.stringify(tableDataHolder);
-            console.log(table);
-
         }
     }
 
@@ -400,8 +396,6 @@ Rectangle{
         }
         text: "Import"
     }
-
-
 
     Button {
         id: deleteRow
@@ -423,6 +417,9 @@ Rectangle{
 
         }
     }
+    /*
+          Create the editable feild in the table
+    */
     Component {
         id: editableDelegate
         Item {
@@ -460,9 +457,9 @@ Rectangle{
                             onClicked: textinput.forceActiveFocus()
                         }
                     }
-                }
-            }
-        }
+                } //end of component
+            } // end of loader
+        } // end of item
     }
     TableView {
         id: i2cTable

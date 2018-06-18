@@ -8,7 +8,7 @@ import QtQuick.Layouts 1.3
 import "qrc:/views/bubu/Control.js" as BubuControl
 
 Rectangle {
-    id: pwmOutline
+    id: container
     property var currentTab: pwmView
     property var newTab: pwmView
     /*
@@ -29,8 +29,11 @@ Rectangle {
             pwmbitView.currentIndex = tabIndex;
     }
 
+    /*
+        Setting default port as "a"
+    */
     Component.onCompleted: {
-        BubuControl.setPwmPort("a"); //Setting default port as "a"
+        BubuControl.setPwmPort("a");
     }
 
 
@@ -62,9 +65,12 @@ Rectangle {
 
     Row {
         id:pwmbuttonRow
-        anchors { top: pwmOutline.top; topMargin: 40; horizontalCenter: pwmOutline.horizontalCenter }
+        anchors { top: container.top; topMargin: 40; horizontalCenter: container.horizontalCenter }
         width: 600
         height: 40
+        /*
+            passing port name to set "port" member in setPort function
+        */
 
         SGLeftSegmentedButton{text:"Port A"; portName:"a"; tabIndex: 0; pinFunction: "pwm";onClicked: setPwmPort(pinFunction, portName,tabIndex) }
         SGMiddleSegmentedButton{text:"Port B"; portName: "b"; tabIndex: 1; pinFunction: "pwm";onClicked: setPwmPort(pinFunction, portName,tabIndex)}
@@ -76,9 +82,9 @@ Rectangle {
 
     SwipeView {
         id: pwmbitView
-        anchors { left:pwmOutline.left
-            right:pwmOutline.right
-            bottom:pwmOutline.bottom
+        anchors { left:container.left
+            right:container.right
+            bottom:container.bottom
             top:pwmbuttonRow.bottom
         }
         currentIndex: 0
@@ -87,6 +93,9 @@ Rectangle {
             pwmbuttonRow.children[pwmbitView.currentIndex].checked = true;
 
         }
+        /*
+            view for the ports
+        */
         ButtonViewPwm { holdDisableBits: portAMapDisable }
         ButtonViewPwm { holdDisableBits: portBMapDisable }
         ButtonViewPwm { holdDisableBits: portCMapDisable }
@@ -100,7 +109,7 @@ Rectangle {
         count: pwmbitView.count
         currentIndex: pwmbitView.currentIndex
         anchors.bottom: pwmbitView.bottom
-        anchors.horizontalCenter: pwmOutline.horizontalCenter
+        anchors.horizontalCenter: container.horizontalCenter
 
     }
 

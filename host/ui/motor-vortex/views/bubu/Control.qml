@@ -22,7 +22,6 @@ Rectangle {
     property color darkGreyColor: "#DBDAD9"
     property var currentTab : i2CView
     property var newTab : i2CView
-    property var acknowledge
 
     anchors{ fill:parent }
 
@@ -108,21 +107,21 @@ Rectangle {
         SGLeftSegmentedButton{
             text:"I2C"
             objectName: "serialBoardBringUpButton"
-            onClicked: { contentRectangle.currentIndex = 0; }
+            onClicked: { contentRectangle.currentIndex = 0 }
 
         }
 
         SGMiddleSegmentedButton{
             text:"gpio"
             objectName: "gpioBoardBringUpButton"
-            onClicked: { contentRectangle.currentIndex = 1; }
+            onClicked: { contentRectangle.currentIndex = 1 }
 
 
         }
         SGRightSegmentedButton{
             text:"pwm"
             objectName: "pwmBoardBringUpButton"
-            onClicked: { contentRectangle.currentIndex = 2; }
+            onClicked: { contentRectangle.currentIndex = 2 }
 
         }
     }
@@ -134,6 +133,11 @@ Rectangle {
         anchors.bottom:parent.bottom
         anchors.top:functionButton.bottom
         currentIndex: 0
+
+        onCurrentIndexChanged: {
+            functionButton.children[contentRectangle.currentIndex].checked = true;
+        }
+
 
         I2C{ id:i2CView }
 

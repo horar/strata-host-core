@@ -23,7 +23,9 @@ Rectangle {
     property variant portDMapDisable: [0.1,3,4,5,6,7,8,9,10,11,12,13,14,15]
     property variant portHMapDisable: [2,3,4,5,6,7,8,9,10,11,12,13,14,15]
 
-
+    /*
+      set GPIO port based on pin function
+    */
     function setCommands(pinFunction, portName, tabIndex)
     {
             BubuControl.setGpioPort(portName);
@@ -92,11 +94,15 @@ Rectangle {
         onCurrentIndexChanged: {
             buttonRow.children[bitView.currentIndex].checked = true;
         }
-        ButtonViewGPIO { listDisableBits: portAMapDisable } // A
-        ButtonViewGPIO { listDisableBits: portBMapDisable} // B
-        ButtonViewGPIO { listDisableBits: portCMapDisable} // C
-        ButtonViewGPIO { listDisableBits: portDMapDisable }   // D
-        ButtonViewGPIO { listDisableBits: portHMapDisable} // H
+
+        /*
+            view for the ports
+        */
+        ButtonViewGPIO { listDisableBits: portAMapDisable }
+        ButtonViewGPIO { listDisableBits: portBMapDisable}
+        ButtonViewGPIO { listDisableBits: portCMapDisable}
+        ButtonViewGPIO { listDisableBits: portDMapDisable}
+        ButtonViewGPIO { listDisableBits: portHMapDisable}
     }
 
     PageIndicator {
