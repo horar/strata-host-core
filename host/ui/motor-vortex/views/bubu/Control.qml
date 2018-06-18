@@ -60,7 +60,7 @@ Rectangle {
             catch(e)
             {
                 if (e instanceof SyntaxError){
-                    console.log("Notification JSON is invalid. ignoring")
+                    console.log("Notification JSON is invalid,ignoring")
                 }
             }
         }

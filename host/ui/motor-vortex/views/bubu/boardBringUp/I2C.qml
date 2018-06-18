@@ -33,7 +33,7 @@ Rectangle{
     }
 
     /*
-      Parse i2c notification to get read data
+        Parse i2c notification to get read data
     */
     function i2cReadDataParse(notification) {
         var readData = notification.payload.read_data
@@ -47,7 +47,7 @@ Rectangle{
         }
     }
     /*
-      convert hexadecimal to binary
+        convert hexadecimal to binary
     */
     function hex2bin(hex){
         return ("00000000" + (parseInt(hex, 16)).toString(2)).substr(-8);
@@ -347,7 +347,6 @@ Rectangle{
                 leftMargin: 20
             }
             placeholderText: "ACK/NCK"
-
         }
 
     }
