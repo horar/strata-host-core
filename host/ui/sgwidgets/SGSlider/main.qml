@@ -11,6 +11,10 @@ Window {
 
     SGSlider {
         id: sgSliderCustom
+        anchors {
+            top: parent.top
+            topMargin: 20
+        }
 
         // Optional configuration:
         label: "Cats:"              // Default: "" (if not entered, label will not appear)
@@ -19,9 +23,9 @@ Window {
         stepSize: 2.0               // Default: 1.0
         value: 0.0                  // Default: 0.0
         minimumValue: 0.0           // Default: 0.0
-        maximumValue: 100000.0      // Default: 100.0
-        startLabel: minimumValue    // Default: "0"
-        endLabel: maximumValue      // Default: "100"
+        maximumValue: 10000.0       // Default: 100.0
+        startLabel: "0"             // Default: minimumValue
+        endLabel: "10000"           // Default: maximumValue
         decimalPlaces: 0            // Default: 0
         showDial: true              // Default: true
         grooveColor: "lightgreen"   // Default: "#dddddd"
