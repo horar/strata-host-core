@@ -17,8 +17,8 @@ Window {
 
         // Optional Configuration:
         minimumValue: 0
-        maximumValue: 10000
-        tickmarkStepSize: 1000
+        maximumValue: 100
+        tickmarkStepSize: 10
         gaugeRearColor: "#eeeeee"
         gaugeFrontColor1: Qt.rgba(0,.75,1,1)
         gaugeFrontColor2: Qt.rgba(1,0,0,1)
