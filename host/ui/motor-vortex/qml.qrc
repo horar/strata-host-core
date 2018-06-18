@@ -177,5 +177,6 @@
         <file>views/usb-pd/PageSystemContent.qml</file>
         <file>views/usb-pd/PageTestReport.qml</file>
         <file>views/bubu/boardBringUp/ButtonViewGPIO.qml</file>
+        <file>views/bubu/boardBringUp/I2CTable.qml</file>
     </qresource>
 </RCC>

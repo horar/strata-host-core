@@ -60,7 +60,7 @@ Rectangle{
             color: "transparent"
             GPIOSetting {
                 id: inputOutput
-                settingSwitchType: "input_output"
+                switchType: "input_output"
                 bitNumber: bitNum
                 switchAngle: 90
                 settingMessageOne: "Input"
@@ -79,7 +79,7 @@ Rectangle{
             color: "transparent"
             GPIOSetting {
                 id: highLow
-                settingSwitchType: "low_high"
+                switchType: "low_high"
                 bitNumber: bitNum
                 switchAngle: 90
                 settingMessageOne: "Low"

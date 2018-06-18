@@ -7,26 +7,22 @@ import "qrc:/views/bubu/Control.js" as BubuControl
 
 
 Rectangle {
-    id: settingRow
+    id: container
     property string settingMessageOne: ""
     property string settingMessageTwo: ""
     property bool initialState: false
     property int switchAngle: 90
     property int bitNumber: 0
-    property string settingSwitchType:  ""
+    property string switchType:  " "
     color: "transparent"
+    property bool stateOfTheSwitch: initialState //  Holds the state of the switch
 
     /*
-    Holds the state of the switch.
+         set the port data direction based on the switch type
     */
-    property bool stateOfTheSwitch: initialState
-
-    /*
-    Check switch state and _setDirection_ accordingly.
-    */
-    function checkSwitchState()
+    function setSwitchState()
     {
-        if(settingSwitchType == "input_output") {
+        if(switchType == "input_output") {
             if(switchComponent.checked === true) {
                 stateOfTheSwitch = true;
                 BubuControl.setDirection("input");
@@ -38,7 +34,7 @@ Rectangle {
                 coreInterface.sendCommand(BubuControl.getDirectionCommand());
             }
         }
-        else  {
+        else if(switchType ==  "low_high") {
             if(switchComponent.checked === true) {
                 BubuControl.setOutputValue("low");
                 coreInterface.sendCommand(BubuControl.getOutputCommand());
@@ -48,24 +44,26 @@ Rectangle {
                 coreInterface.sendCommand(BubuControl.getOutputCommand());
             }
         }
+        else {
+            console.log("switch type is undefinded");
+        }
     }
 
     Switch {
         id: switchComponent
         checkable: true
         checked: initialState
-        anchors.verticalCenter: settingRow.verticalCenter
+        anchors.verticalCenter: container.verticalCenter
         onClicked: {
             BubuControl.setGpioBit(bitNumber);
-            checkSwitchState();
-            BubuControl.printGpioCommand();// For testing
-        }
+            setSwitchState();
 
+        }
     }
 
     Text {
         anchors.left: switchComponent.right
-        width: settingRow.width - settingRow.spacing - switchComponent.width
+        width: container.width - container.spacing - switchComponent.width
         height: switchComponent.height
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignLeft

@@ -27,28 +27,35 @@ Rectangle {
 
     /*
         Platform Implementation signals
-   */
+    */
     Connections {
         target: coreInterface
         onNotification: {
-
             try {
                 /*
                     Attempt to parse JSON
                 */
                 var notification = JSON.parse(payload)
-
-                /*
+                if(notification.hasOwnProperty("payload")){
+                    /*
                       check and parse the command for the notification
-               */
-                if(notification.value === "i2c_read") {
-                    i2CView.i2cAckParse(notification)
-                    i2CView.i2cReadDataParse(notification)
-                }
-                if(notification.value === "i2c_write") {
-                    i2CView.i2cAckParse(notification)
-                }
+                      based on the notification value
+                     */
+                    if(notification.value === "i2c_read") {
+                        i2CView.i2cAckParse(notification)
+                        i2CView.i2cReadDataParse(notification)
+                    }
+                    else if(notification.value === "i2c_write") {
+                        i2CView.i2cAckParse(notification)
+                    }
+                    else {
+                        console.log("Error expected i2c_read or i2c_write but received", notification.value)
+                    }
 
+                }
+                else {
+                    conole.log("BUBU Notification Error. payload is corrupted");
+                }
             }
             catch(e)
             {
@@ -81,7 +88,6 @@ Rectangle {
     ButtonGroup {
         buttons: functionButton.children
         onClicked: {
-            {
                 if (button.objectName == "serialBoardBringUpButton"){
                     newTab = i2CView
                 }
@@ -93,7 +99,6 @@ Rectangle {
                 }
                 crosfadeTabs.start()
                 currentTab = newTab
-            }
         }
     }
 

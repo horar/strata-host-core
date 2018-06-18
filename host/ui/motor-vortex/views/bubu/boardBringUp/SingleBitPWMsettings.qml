@@ -19,7 +19,6 @@ Rectangle{
         BubuControl.setPwmBit(bitNum);
         BubuControl.setPwmFrequency(parseInt(frequency.text));
         BubuControl.setDutyCycle(Math.round(dutycycleSlider.value));
-        BubuControl.printPwmCommand();
         coreInterface.sendCommand(BubuControl.getPwmCommand());
     }
 

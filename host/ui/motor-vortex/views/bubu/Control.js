@@ -1,7 +1,7 @@
 .pragma library
 
 /*
-  GPIO direction command
+  GPIO direction
  */
 var gpio_direction = {
     "cmd" : "digital_pin_direction",
@@ -13,7 +13,7 @@ var gpio_direction = {
 }
 
 /*
-GPIO Set Output
+    GPIO output
 */
 var gpio_output = {
     "cmd":"digital_set_output",
@@ -23,7 +23,9 @@ var gpio_output = {
         "output_value": "",  // high or low
     }
 }
-
+/*
+    GPIO read
+*/
 var gpio_read = {
     "cmd": "digital_pin_read",
     "payload": {
@@ -162,7 +164,7 @@ function setPwmPort(port)
 
 function setPwmBit(bit)
 {
-     pwm_frequency_duty_cycle.payload.bit = bit;
+    pwm_frequency_duty_cycle.payload.bit = bit;
 }
 
 function setPwmFrequency(frequency)
@@ -175,37 +177,6 @@ function setDutyCycle(duty_cycle)
     pwm_frequency_duty_cycle.payload.duty_cycle = duty_cycle;
 }
 
-/*
-  For testing
-*/
-function printGpioCommand()
-{
-    console.log(JSON.stringify(gpio_direction));
-    console.log(JSON.stringify(gpio_output));
-    console.log(JSON.stringify(gpio_read));
-}
-/*
-  For testing
-*/
-function printPwmCommand()
-{
-    console.log(JSON.stringify(pwm_frequency_duty_cycle));
-
-}
-
-function printI2cCommandWrite()
-{
-
-    console.log(JSON.stringify(i2c_write));
-
-}
-
-function printI2cCommandRead()
-{
-
-    console.log(JSON.stringify(i2c_read));
-
-}
 
 function getDirectionCommand()
 {

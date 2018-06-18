@@ -14,14 +14,14 @@ Rectangle {
     property int largeFontSize: (Qt.platform.os === "osx") ? 24  : 20;
     property int extraLargeFontSize: (Qt.platform.os === "osx") ? 36  : 24;
     property string upChevron: "\u25b2"
-    property variant listDisableBits: [ ]
+    property variant listDisableBits: [ ] // holds the disabled bits
 
     /*
-        Check if the bit(index) is in disable bit list
+        Check if the bit is not disabled list
     */
-    function checkDisableBits(index) {
+    function isBitEnabled(index) {
         /*
-            Iterate the listDisableBits list and compare the index of each port
+            Iterate the _listDisableBits_ list and compare the index
         */
         for(var i = 0; i < listDisableBits.length; ++i){
             if(index === listDisableBits[i]){
@@ -37,7 +37,6 @@ Rectangle {
         anchors.centerIn: parent
         clip: true
         verticalScrollBarPolicy: Qt.ScrollBarAlwaysOn
-
 
         ListView {
             model: 16
@@ -115,8 +114,8 @@ Rectangle {
             delegate:
                 /*
                   16 bits each SingleBitSettings corresponds to individual bit settings
-                 */
-                SingleBitGPIOSettings { bitNum: index; portsDisabled: checkDisableBits(index)  }
+                */
+                SingleBitGPIOSettings { bitNum: index; portsDisabled: isBitEnabled(index)  }
 
         } //end of listView
     }

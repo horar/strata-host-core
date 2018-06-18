@@ -15,7 +15,7 @@ Rectangle {
     property var currentTab : gpioView
     property var newTab:  gpioView
     /*
-      List of bits disabled for each port
+       List of bits disabled for each port
     */
     property variant portAMapDisable: [ ]
     property variant portBMapDisable: [10,11]
@@ -26,10 +26,10 @@ Rectangle {
     /*
       set GPIO port based on pin function
     */
-    function setCommands(pinFunction, portName, tabIndex)
+    function setGPIOCommand(pinFunction, portName, tabIndex)
     {
-            BubuControl.setGpioPort(portName);
-            bitView.currentIndex = tabIndex;
+        BubuControl.setGpioPort(portName);
+        bitView.currentIndex = tabIndex;
     }
 
     Component.onCompleted: {
@@ -54,14 +54,14 @@ Rectangle {
         }
     }
 
-   /*
-     Holds the animation for the ports
+    /*
+         Holds the animation for the ports
    */
     ButtonGroup {
         id: animateButton
         buttons: buttonRow.children
         onClicked: {
-            crosfadeTabs.start()
+            crosfadeTabs.start() // start the animation
         }
     }
 
@@ -72,14 +72,11 @@ Rectangle {
         width: 600
         height: 40
 
-        /*
-            passing port name to set "port" member in setPort function
-        */
-        SGLeftSegmentedButton{text:"Port A"; portName:"a"; tabIndex: 0; pinFunction: "gpio"; onClicked: setCommands(pinFunction, portName,tabIndex)}
-        SGMiddleSegmentedButton{text:"Port B"; portName: "b"; tabIndex: 1; pinFunction: "gpio"; onClicked: setCommands(pinFunction, portName,tabIndex)}
-        SGMiddleSegmentedButton{text:"Port C"; portName: "c"; tabIndex: 2; pinFunction: "gpio"; onClicked: setCommands(pinFunction, portName,tabIndex)}
-        SGMiddleSegmentedButton{text:"Port D"; portName: "d"; tabIndex: 3; pinFunction: "gpio"; onClicked: setCommands(pinFunction, portName,tabIndex)}     
-        SGRightSegmentedButton{text:"Port H"; portName: "h"; tabIndex: 4; pinFunction: "gpio"; onClicked: setCommands(pinFunction, portName,tabIndex)}
+        SGLeftSegmentedButton{ text:"Port A"; portName:"a"; tabIndex: 0; pinFunction: "gpio"; onClicked: setGPIOCommand(pinFunction, portName,tabIndex)}
+        SGMiddleSegmentedButton{ text:"Port B"; portName: "b"; tabIndex: 1; pinFunction: "gpio"; onClicked: setGPIOCommand(pinFunction, portName,tabIndex)}
+        SGMiddleSegmentedButton{ text:"Port C"; portName: "c"; tabIndex: 2; pinFunction: "gpio"; onClicked: setGPIOCommand(pinFunction, portName,tabIndex)}
+        SGMiddleSegmentedButton{ text:"Port D"; portName: "d"; tabIndex: 3; pinFunction: "gpio"; onClicked: setGPIOCommand(pinFunction, portName,tabIndex)}
+        SGRightSegmentedButton{ text:"Port H"; portName: "h"; tabIndex: 4; pinFunction: "gpio"; onClicked: setGPIOCommand(pinFunction, portName,tabIndex)}
 
     }
 
@@ -99,10 +96,10 @@ Rectangle {
             view for the ports
         */
         ButtonViewGPIO { listDisableBits: portAMapDisable }
-        ButtonViewGPIO { listDisableBits: portBMapDisable}
-        ButtonViewGPIO { listDisableBits: portCMapDisable}
-        ButtonViewGPIO { listDisableBits: portDMapDisable}
-        ButtonViewGPIO { listDisableBits: portHMapDisable}
+        ButtonViewGPIO { listDisableBits: portBMapDisable }
+        ButtonViewGPIO { listDisableBits: portCMapDisable }
+        ButtonViewGPIO { listDisableBits: portDMapDisable }
+        ButtonViewGPIO { listDisableBits: portHMapDisable }
     }
 
     PageIndicator {
