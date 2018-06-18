@@ -25,8 +25,8 @@ Rectangle {
     */
     function setPwmPort(pinFunction, portName, tabIndex)
     {
-            BubuControl.setPwmPort(portName);
-            pwmbitView.currentIndex = tabIndex;
+        BubuControl.setPwmPort(portName);
+        pwmbitView.currentIndex = tabIndex;
     }
 
     /*

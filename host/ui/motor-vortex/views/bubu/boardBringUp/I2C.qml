@@ -249,7 +249,7 @@ Rectangle{
                         Iterating the string to set the list model
                 */
                 for (var i = 0; i < binaryConversion.length; ++i) {
-                       binaryModal.get(i).value = binaryConversion.charAt(i);
+                    binaryModal.get(i).value = binaryConversion.charAt(i);
 
                 }
             }
