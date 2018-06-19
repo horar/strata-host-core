@@ -20,8 +20,8 @@ Rectangle {
     /*
          set the port data direction based on the switch type
     */
-    function setSwitchState()
-    {
+    function setSwitchState() {
+
         if(switchType == "input_output") {
             if(switchComponent.checked === true) {
                 stateOfTheSwitch = true;

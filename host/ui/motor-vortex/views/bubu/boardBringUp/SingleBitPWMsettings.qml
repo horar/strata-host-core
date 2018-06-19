@@ -14,8 +14,8 @@ Rectangle{
     property bool portsDisabled: true
 
 
-    function setPWMCommand()
-    {
+    function setPWMCommand() {
+
         BubuControl.setPwmBit(bitNum);
         BubuControl.setPwmFrequency(parseInt(frequency.text));
         BubuControl.setDutyCycle(Math.round(dutycycleSlider.value));
@@ -45,7 +45,8 @@ Rectangle{
             id: frequency
             text: "10"
             anchors { left: bitNumber.right
-                leftMargin: 180 }
+                leftMargin: 180
+            }
             onEditingFinished: {
                 setPWMCommand()
             }
@@ -56,7 +57,8 @@ Rectangle{
             width: 250
             height: 50
             anchors { left: frequency.right
-                leftMargin: 170}
+                leftMargin: 170
+            }
             color: "transparent"
 
             Slider {
@@ -76,7 +78,8 @@ Rectangle{
                 text: Math.round(dutycycleSlider.value);
                 validator:  IntValidator { bottom : 0;top: 100 }
                 anchors { right: parent.right;
-                    leftMargin: 40 }
+                    leftMargin: 40
+                }
 
                 onEditingFinished: {
                     dutycycleSlider.value = Math.round(dutyCycleValue.text)

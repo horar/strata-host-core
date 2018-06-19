@@ -13,7 +13,7 @@ Button {
     property int mediumFontSize: (Qt.platform.os === "osx") ? 15  : 12;
     property int largeFontSize: (Qt.platform.os === "osx") ? 24  : 20;
     property int extraLargeFontSize: (Qt.platform.os === "osx") ? 36  : 24;
-    property var portName: "a" //deflaut port is set to a
+    property var portName: "a" //default port is set to "a"
     font.pixelSize: mediumFontSize
     background: Canvas{
         id:middleButtonCanvas

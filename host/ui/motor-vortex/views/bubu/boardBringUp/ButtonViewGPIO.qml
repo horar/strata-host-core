@@ -29,7 +29,6 @@ Rectangle {
                 return false;
             }
         }
-
         return true;
     }
 

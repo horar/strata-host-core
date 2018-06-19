@@ -5,7 +5,7 @@ import QtQuick.Controls.Styles 1.4
 import "qrc:/views/bubu/Control.js" as BubuControl
 
 
-Rectangle{
+Rectangle {
     id: container
     width: 1000; height: 60
     color: lightGreyColor
@@ -34,7 +34,6 @@ Rectangle{
 
     ]
 
-
     RowLayout {
         width: 800
         height: 50
@@ -57,7 +56,8 @@ Rectangle{
             id: inputOutputContainer
             width: 200; height: 50
             anchors { left : bitNumber.right
-                leftMargin: 120}
+                leftMargin: 120
+            }
             color: "transparent"
 
             GPIOSetting {
@@ -77,7 +77,8 @@ Rectangle{
             id: highlowContainer
             width: 200; height: 50
             anchors { left : inputOutputContainer.right
-                leftMargin: 120}
+                leftMargin: 120
+            }
             color: "transparent"
 
             GPIOSetting {

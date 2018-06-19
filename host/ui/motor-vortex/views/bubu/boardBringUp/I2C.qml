@@ -49,7 +49,7 @@ Rectangle{
     /*
         convert hexadecimal to binary
     */
-    function hex2bin(hex){
+    function hex2bin(hex) {
         return ("00000000" + (parseInt(hex, 16)).toString(2)).substr(-8);
     }
 
@@ -67,7 +67,6 @@ Rectangle{
         }
         return true;
     }
-
 
     Text {
         id: i2cTitle

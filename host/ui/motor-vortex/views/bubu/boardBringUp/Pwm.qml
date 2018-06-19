@@ -23,8 +23,7 @@ Rectangle {
     /*
       set Pwm port based on pin function
     */
-    function setPwmPort(pinFunction, portName, tabIndex)
-    {
+    function setPwmPort(pinFunction, portName, tabIndex) {
         BubuControl.setPwmPort(portName);
         pwmbitView.currentIndex = tabIndex;
     }
@@ -37,7 +36,7 @@ Rectangle {
     }
 
 
-    ParallelAnimation{
+    ParallelAnimation {
         id: crosfadeTabs
         OpacityAnimator{
             target: currentTab

@@ -117,7 +117,6 @@ function setI2cRegisterAddressRead(register_address)
 
 }
 
-
 function setI2cData(data)
 {
     i2c_write.payload.write_data = data

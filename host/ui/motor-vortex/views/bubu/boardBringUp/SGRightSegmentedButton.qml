@@ -7,9 +7,8 @@ Button {
     width:100
     height:40
     checkable:true
-    text: "three"
     property string pinFunction: ""
-    property string portName: ""
+    property string portName: "a" //default port is set to "a"
     property int tabIndex: 0
     property int smallFontSize: (Qt.platform.os === "osx") ? 12  : 10;
     property int mediumFontSize: (Qt.platform.os === "osx") ? 15  : 12;

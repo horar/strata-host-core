@@ -66,20 +66,20 @@ Rectangle {
         }
     }
 
-    ParallelAnimation{
+    ParallelAnimation {
         id: crosfadeTabs
         OpacityAnimator{
             target: currentTab
             from: 1
             to: 0
-            duration: 500
+            duration: 250
             running: false
         }
         OpacityAnimator{
             target: newTab
             from: 0
             to: 1
-            duration: 500
+            duration: 250
             running: false
         }
     }
@@ -131,7 +131,7 @@ Rectangle {
         }
     }
 
-    SwipeView{
+    SwipeView {
         id:contentRectangle
         anchors.left:parent.left
         anchors.right:parent.right
@@ -150,7 +150,7 @@ Rectangle {
     }
 
 
-    Rectangle{
+    Rectangle {
         height: 40;width:40
         anchors { bottom: boardBringUP.bottom; right: boardBringUP.right }
         color: "white";
