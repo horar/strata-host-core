@@ -85,8 +85,10 @@ ColumnLayout {
 
         Text {
             id: title
-            anchors.fill: parent
-            anchors.margins: 10
+            anchors{
+                fill: parent
+                margins: 10
+            }
             horizontalAlignment: Text.AlignLeft
             verticalAlignment: Text.AlignVCenter
             text: root.title
@@ -109,7 +111,7 @@ ColumnLayout {
         }
 
         MouseArea {
-            anchors.fill: parent
+            anchors { fill: parent }
             cursorShape: Qt.PointingHandCursor
             onClicked: {
                 root.open = !root.open;
