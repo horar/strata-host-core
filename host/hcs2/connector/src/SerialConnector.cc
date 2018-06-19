@@ -21,7 +21,7 @@ using namespace rapidjson;
 // windows
 // 1 - enabled
 // 0 - disabled the hack, can support other platforms (Tested it with USB-PD and load board)
-#define ST_EVAL_BOARD_SUPPORT_ENABLED 0
+#define ST_EVAL_BOARD_SUPPORT_ENABLED 1
 
 // The following variable is "strictly" used only for windows build.
 // since windows does not support libevent handling of serial devices,
