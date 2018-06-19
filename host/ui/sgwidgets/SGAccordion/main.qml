@@ -73,7 +73,9 @@ Window {
                         height: contentHeight + topPadding + bottomPadding
                         width: parent.width
                         z: 1
-                        anchors.top: text1.bottom
+                        anchors {
+                            top: text1.bottom
+                        }
                         padding: 10
                         wrapMode: Text.WordWrap
                         text: qsTr("DUMMY TEXT 2, consectetur adipiscing elit. Curabitur nec enim non tellus tincidunt iaculis. Suspendisse at aliquet nulla. Vivamus a metus malesuada, finibus odio a.")
@@ -105,9 +107,7 @@ Window {
     SGAccordion {
         id: accordion2
 
-        anchors {
-            left: verticalDivider.left
-        }
+        anchors { left: verticalDivider.left }
 
         width: mainWindow.width/2
         height: mainWindow.height
@@ -139,7 +139,7 @@ Window {
                         height: contentHeight + topPadding + bottomPadding
                         width: parent.width
                         z: 1
-                        anchors.top: text21.bottom
+                        anchors { top: text21.bottom }
                         padding: 10
                         wrapMode: Text.WordWrap
                         text: qsTr("DUMMY TEXT 2, consectetur adipiscing elit. Curabitur nec enim non tellus tincidunt iaculis. Suspendisse at aliquet nulla. Vivamus a metus malesuada, finibus odio a.")
@@ -172,9 +172,7 @@ Window {
         width:1
         color:"black"
         height: mainWindow.height
-        anchors {
-            left: accordion1.right
-        }
+        anchors { left: accordion1.right }
     }
 
 //    Window {
