@@ -1,17 +1,19 @@
 import QtQuick 2.0
 import QtQuick.Controls 2.0
+import "qrc:/views/bubu/Control.js" as BubuControl
 
 Button {
     id: middleButton
-    property var tabName
     checkable: true
     width:100
     height:40
+    property string pinFunction: ""
+    property int tabIndex: 0
     property int smallFontSize: (Qt.platform.os === "osx") ? 12  : 10;
     property int mediumFontSize: (Qt.platform.os === "osx") ? 15  : 12;
     property int largeFontSize: (Qt.platform.os === "osx") ? 24  : 20;
     property int extraLargeFontSize: (Qt.platform.os === "osx") ? 36  : 24;
-
+    property var portName: "a" //default port is set to "a"
     font.pixelSize: mediumFontSize
     background: Canvas{
         id:middleButtonCanvas
@@ -40,16 +42,6 @@ Button {
 
     onCheckedChanged: {
         middleButtonCanvas.requestPaint()
-    }
-
-    function createTab(inTabName, inParent){
-        var component  = Qt.createComponent(inTabName);
-        var object = component.createObject(inParent);
-        return object
-    }
-
-    Component.onCompleted: {
-        tabName = createTab(tabName,contentRectangle);
     }
 
 }
