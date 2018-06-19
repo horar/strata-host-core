@@ -17,7 +17,7 @@ Window {
         }
 
         // Optional configurations:
-        label: "Input:"    // Default: "" (will not appear if not entered)
+        label: "Input:"                 // Default: "" (will not appear if not entered)
         labelLeft: false                // Default: true (true: label on left, false: label on top)
         activeColorTop: "#bbbbbb"       // Default: "#bbbbbb"
         activeColorBottom: "#999999"    // Default: "#999999"

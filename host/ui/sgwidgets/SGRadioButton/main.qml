@@ -1,7 +1,7 @@
 import QtQuick 2.9
 import QtQuick.Window 2.2
-import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.2
+import QtQuick.Layouts 1.3
 
 Window {
     visible: true
@@ -9,55 +9,57 @@ Window {
     height: 480
     title: qsTr("SGRadioButton Example")
 
-    SGRadioButton {
-        id: radioButtons
-        model: radioModel
+    SGRadioButtonContainer {
+        id: buttons
 
-        // Optional Configuration:
-        label: "Radio Buttons:"     // Default: "" (if not entered, label will not appear)
-        labelLeft: false             // Default: true (if false, label will be on top)
-        exclusive: true             // Default: true (modifies exclusivity of the checked property)
-        orientation: Qt.Horizontal  // Default: Qt.vertical
-        textColor: "#000000"        // Default: "#000000" (black)
-        radioColor: "#000000"       // Default: "#000000" (black)
-        highlightColor: "lightgrey" // Default: "transparent"
+        // Optional configuration:
+        label: "Radio Buttons:" // Default: "" (will not appear if not entered)
+        labelLeft: true         // Default: true
+        textColor: "black"      // Default: "#000000"  (black)
+        radioColor: "black"     // Default: "#000000"  (black)
+        exclusive: true         // Default: true
 
-        onButtonSelected: console.log(selected, "is selected")
+        radioGroup: GridLayout {
+            columnSpacing: 10
+            rowSpacing: 10
+            columns: 1          // Comment this line for horizontal row layout
 
-        ListModel {
-            id: radioModel
+            // Optional properties to access specific buttons cleanly from outside (see example button at bottom)
+            property alias ps : ps
+            property alias trap: trap
+            property alias square: square
 
-            ListElement {
-                name: "Trapezoidal"
-                checked: true               // One element pre-checked when exclusive
+            SGRadioButton {
+                id: ps
+                text: "Pseudo-Sinusoidal"
+                checked: true
+                onCheckedChanged: { if (checked) console.log ( "PS Checked!") }
             }
 
-            ListElement {
-                name: "Pseudo-Sinusoidal"
-                disabled: true              // Option to lock element
+            SGRadioButton {
+                id: trap
+                text: "Trapezoidal"
+                onCheckedChanged: { if (checked) console.log ( "Trap Checked!") }
+                enabled: false
             }
 
-            ListElement {
-                name: "Exponential"
+            SGRadioButton {
+                id: square
+                text: "Square"
+                onCheckedChanged: { if (checked) console.log ( "Square Checked!") }
             }
         }
     }
 
-    // Example button showing one method to iterate through and lock/unlock radio buttons
+    // Example of how to access/set radio checked properties
     Button {
+        text: "Set Square"
         anchors {
-            top: radioButtons.bottom
+            top: buttons.bottom
             topMargin: 20
         }
-        text: checked ? "Locked" : "Unlocked"
-        checked: true
-        checkable: true
-        onCheckedChanged: {
-            for (var i=0; i<radioModel.count; i++){
-                if (radioModel.get(i).name === "Pseudo-Sinusoidal"){
-                    radioModel.get(i).disabled = !radioModel.get(i).disabled;
-                }
-            }
+        onClicked: {
+            buttons.radioButtons.square.checked = true
         }
     }
 }

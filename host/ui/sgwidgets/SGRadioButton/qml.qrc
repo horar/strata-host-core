@@ -2,5 +2,6 @@
     <qresource prefix="/">
         <file>main.qml</file>
         <file>SGRadioButton.qml</file>
+        <file>SGRadioButtonContainer.qml</file>
     </qresource>
 </RCC>
