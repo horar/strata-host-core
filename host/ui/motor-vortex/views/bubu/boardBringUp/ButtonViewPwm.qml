@@ -14,7 +14,7 @@ Rectangle {
     property int largeFontSize: (Qt.platform.os === "osx") ? 24  : 20;
     property int extraLargeFontSize: (Qt.platform.os === "osx") ? 36  : 24;
     property string upChevron: "\u25b2"
-     property variant holdDisableBits: [ ]
+     property variant holdDisableBits: [2,4,5]
 
     /*
       checks if the bit is in disabled list
@@ -103,7 +103,7 @@ Rectangle {
             }
 
             delegate:
-                SingleBitPWMsettings { bitNum: index; portsDisabled: isBitEnabled(index) }
+                SingleBitPWMsettings { bitNum: index; bitsEnabled: isBitEnabled(index) }
         }
     }
 }

@@ -11,7 +11,7 @@ Rectangle {
     color: lightGreyColor
     property int bitNum: 0
     anchors.horizontalCenter: parent.horizontalCenter
-    property bool portsDisabled: true
+    property bool bitsEnabled: true
     /*
         Depending on the state of the switch(input/output) change the
         visibility of _highLow_ switch
@@ -38,7 +38,7 @@ Rectangle {
         width: 800
         height: 50
         spacing: 6
-        enabled: portsDisabled
+        enabled: bitsEnabled
 
         Label {
             id: bitNumber

@@ -11,7 +11,7 @@ Rectangle{
     color: lightGreyColor
     property int bitNum: 0 //Gets overloaded by delegate
     anchors.horizontalCenter: parent.horizontalCenter
-    property bool portsDisabled: true
+    property bool bitsEnabled: true
 
 
     function setPWMCommand() {
@@ -27,7 +27,7 @@ Rectangle{
         width: 800
         height: 50
         spacing: 6
-        enabled: portsDisabled
+        enabled: bitsEnabled
 
         Label {
             id: bitNumber

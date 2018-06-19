@@ -14,7 +14,7 @@ Rectangle {
     property int largeFontSize: (Qt.platform.os === "osx") ? 24  : 20;
     property int extraLargeFontSize: (Qt.platform.os === "osx") ? 36  : 24;
     property string upChevron: "\u25b2"
-    property variant listDisableBits: [ ] // holds the disabled bits
+    property variant listDisableBits: [2,4,5] // holds the disabled bits
 
     /*
         Check if the bit is not disabled list
@@ -115,7 +115,7 @@ Rectangle {
                 /*
                   16 bits each SingleBitSettings corresponds to individual bit settings
                 */
-                SingleBitGPIOSettings { bitNum: index; portsDisabled: isBitEnabled(index)  }
+                SingleBitGPIOSettings { bitNum: index; bitsEnabled: isBitEnabled(index)  }
 
         } //end of listView
     }

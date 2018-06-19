@@ -75,7 +75,7 @@ Rectangle {
         SGMiddleSegmentedButton{text:"Port B"; portName: "b"; tabIndex: 1; pinFunction: "pwm";onClicked: setPwmPort(pinFunction, portName,tabIndex)}
         SGMiddleSegmentedButton{text:"Port C";portName: "c"; tabIndex: 2; pinFunction: "pwm";onClicked: setPwmPort(pinFunction, portName,tabIndex)}
         SGMiddleSegmentedButton{text:"Port D";portName: "d"; tabIndex: 3; pinFunction: "pwm";onClicked: setPwmPort(pinFunction, portName,tabIndex)}
-        SGRightSegmentedButton{text:"Port H";portName: "h"; tabIndex: 5; pinFunction: "pwm";onClicked: setPwmPort(pinFunction, portName,tabIndex)}
+        SGRightSegmentedButton{text:"Port H";portName: "h"; tabIndex: 4; pinFunction: "pwm";onClicked: setPwmPort(pinFunction, portName,tabIndex)}
 
     }
 
