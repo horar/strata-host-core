@@ -260,7 +260,7 @@ Rectangle {
         Rectangle {
             id: driveModeContainer
             width: 500
-            height: childrenRect.height + 10 // 10 for bottom margin
+            height: childrenRect.height + 20 // 20 for margina
             color: "#eeeeee"
             anchors {
                 horizontalCenter: rightSide.horizontalCenter
@@ -268,27 +268,34 @@ Rectangle {
                 topMargin: 20
             }
 
-            SGRadioButton {
+            SGRadioButtonContainer {
                 id: driveModeRadios
-                model: radioModel1
-                label: "Drive Mode:"
                 anchors {
                     horizontalCenter: driveModeContainer.horizontalCenter
                     top: driveModeContainer.top
+                    topMargin: 10
                 }
-                exclusive: true
-                orientation: Qt.Horizontal
+                label: "Drive Mode:"
 
-                ListModel {
-                    id: radioModel1
+                radioGroup: GridLayout {
+                    columnSpacing: 10
+                    rowSpacing: 10
 
-                    ListElement {
-                        name: "Trapezoidal"
+                    // Optional properties to access specific buttons cleanly from outside
+                    property alias ps : ps
+                    property alias trap: trap
+
+                    SGRadioButton {
+                        id: ps
+                        text: "Pseudo-Sinusoidal"
                         checked: true
+                        onCheckedChanged: { if (checked) console.log ( "PS Checked!") }
                     }
 
-                    ListElement {
-                        name: "Pseudo-Sinusoidal"
+                    SGRadioButton {
+                        id: trap
+                        text: "Trapezoidal"
+                        onCheckedChanged: { if (checked) console.log ( "Trap Checked!") }
                     }
                 }
             }
@@ -299,6 +306,7 @@ Rectangle {
                 height: childrenRect.height
                 anchors {
                     top: driveModeRadios.bottom
+                    topMargin: 10
                     horizontalCenter: driveModeContainer.horizontalCenter
                 }
 
@@ -334,41 +342,30 @@ Rectangle {
                 topMargin: 20
             }
 
-            SGRadioButton {
+            SGRadioButtonContainer {
                 id: directionRadios
-                model: radioModel
-                label: "Direction:"
                 anchors {
                     horizontalCenter: directionControlContainer.horizontalCenter
                     top: directionControlContainer.top
                     topMargin: 10
                 }
 
-                // Optional Configuration:
-                exclusive: true             // Default: true (modifies exclusivity of the checked property)
-                orientation: Qt.Horizontal  // Default: Qt.vertical
+                // Optional configuration:
+                label: "Direction:"
 
-                Connections {
-                    target: directionSafetyButton
-                    onCheckedChanged: {
-                        for (var i=0; i<radioModel.count; i++){
-                            radioModel.get(i).disabled = !radioModel.get(i).disabled;
-                        }
-                    }
-                }
+                radioGroup: GridLayout {
+                    columnSpacing: 10
+                    rowSpacing: 10
 
-                ListModel {
-                    id: radioModel
-
-                    ListElement {
-                        name: "Forward"
+                    SGRadioButton {
+                        text: "Forward"
                         checked: true
-                        disabled: true
+                        enabled: directionSafetyButton.checked
                     }
 
-                    ListElement {
-                        name: "Reverse"
-                        disabled: true
+                    SGRadioButton {
+                        text: "Reverse"
+                        enabled: directionSafetyButton.checked
                     }
                 }
             }

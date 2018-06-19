@@ -80,11 +80,11 @@ Rectangle {
                         //mode either set to be a manual or automation
                         var systemMode = notification.payload.mode;
                         if(systemMode ==="manual"){
-                            manualButton.checked = true;
-                            automaticButton.checked = false;
+                            operationModeControl.radioButtons.manual.checked = true;
+                            operationModeControl.radioButtons.automatic.checked = false;
                         }else if(systemMode ==="automation") {
-                            manualButton.checked = false;
-                            automaticButton.checked = true;
+                            operationModeControl.radioButtons.manual.checked = false;
+                            operationModeControl.radioButtons.automatic.checked = true;
                         }else{
                             console.log("Motor Platfrom Notification Error. Junk data found on mode")
                         }
@@ -129,9 +129,11 @@ Rectangle {
                 anchors {
                     fill: parent
                 }
+                gaugeFrontColor1: Qt.rgba(0,1,.25,1)
+                gaugeFrontColor2: Qt.rgba(1,0,0,1)
                 minimumValue: motorSpeedControl.minimumValue
                 maximumValue: motorSpeedControl.maximumValue
-                value: 1500
+                value: minimumValue
                 tickmarkStepSize: 500
 
                 Behavior on value { NumberAnimation { duration: 300 } }
@@ -179,57 +181,64 @@ Rectangle {
                 }
             }
 
-            SGRadioButton {
+            SGRadioButtonContainer {
                 id: operationModeControl
-                model: radioModel
                 anchors {
                     top: motorSpeedControl.bottom
                     topMargin: 40
                     left: motorSpeedControl.left
                 }
-                orientation: Qt.Horizontal
+
                 label: "<b>Operation Mode:</b>"
                 labelLeft: false
+                exclusive: true
 
-                onButtonSelected: {
-                    var systemModeCmd
-                    if (selected === "Manual Control"){
-                        console.log("MANUAL CONTROL")
-                         systemModeCmd ={
-                            "cmd":"set_system_mode",
-                            "payload": {
-                                "system_mode":"manual"
-                            }
-                        }
-                    } else if (selected === "Automatic Test Pattern"){
-                        console.log("AUTOMATIC")
-                        systemModeCmd ={
-                            "cmd":"set_system_mode",
-                            "payload": {
-                                "system_mode":"automation"
+                radioGroup: GridLayout {
+                    columnSpacing: 10
+                    rowSpacing: 10
+
+                    // Optional properties to access specific buttons cleanly from outside
+                    property alias manual : manual
+                    property alias automatic: automatic
+
+                    SGRadioButton {
+                        id: manual
+                        text: "Manual Control"
+                        checked: true
+                        onCheckedChanged: {
+                            if (checked) {
+                                console.log("MANUAL CONTROL")
+                                var systemModeCmd ={
+                                    "cmd":"set_system_mode",
+                                    "payload": {
+                                        "system_mode":"manual"
+                                    }
+                                }
+                                // send command to platform
+                                coreInterface.sendCommand(JSON.stringify(systemModeCmd))
                             }
                         }
                     }
-                    // send command to platform
-                    coreInterface.sendCommand(JSON.stringify(systemModeCmd))
-                }
 
-                ListModel {
-                    id: radioModel
-
-                    ListElement {
-                        name: "Manual Control"
-                        checked: true               // One element pre-checked when exclusive
-                    }
-
-                    ListElement {
-                        name: "Automatic Test Pattern"
+                    SGRadioButton {
+                        id: automatic
+                        text: "Automatic Demo Pattern"
+                        onCheckedChanged: {
+                            if (checked) {
+                                console.log("AUTOMATIC")
+                                var systemModeCmd ={
+                                    "cmd":"set_system_mode",
+                                    "payload": {
+                                        "system_mode":"automation"
+                                    }
+                                }
+                                // send command to platform
+                                coreInterface.sendCommand(JSON.stringify(systemModeCmd))
+                            }
+                        }
                     }
                 }
             }
-
-
         }
     } // end Control Section Rectangle
 }
-

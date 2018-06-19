@@ -58,24 +58,17 @@ Rectangle {
 
         Item {
             id: basicControl
-            BasicControl {
-
-            }
+            BasicControl {}
         }
 
         Item {
             id: advancedControl
-            AdvancedControl {
-
-            }
-
+            AdvancedControl {}
         }
 
         Item {
             id: faeControl
-            FAEControl {
-
-            }
+            FAEControl {}
         }
     }
 
@@ -85,6 +78,7 @@ Rectangle {
         anchors { bottom: parent.bottom; right: parent.right }
         height: 40; width:40
     }
+
     MouseArea {
         width: flipButton.width; height: flipButton.height
         anchors { fill: flipButton }
