@@ -116,11 +116,11 @@ Rectangle {
         if (Qt.colorEqual(color1, color2)){
             return color1;
         } else {
-            return Qt.rgba(
-                        color1.r * (1 - x) + color2.r * x,
-                        color1.g * (1 - x) + color2.g * x,
-                        color1.b * (1 - x) + color2.b * x, 1
-                        );
+            return Qt.hsva(
+                color1.hsvHue * (1 - x) + color2.hsvHue * x,
+                color1.hsvSaturation * (1 - x) + color2.hsvSaturation * x,
+                color1.hsvValue * (1 - x) + color2.hsvValue * x, 1
+                );
         }
     }
 }
