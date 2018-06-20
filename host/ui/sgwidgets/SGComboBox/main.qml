@@ -11,12 +11,28 @@ Window {
 
     SGComboBox {
         id: sgComboBox
+
+        model: ["Amps", "Volts", "Watts"]
+
+        // Optional Configuration:
+        width: 100
+        textColor: "black"
+        indicatorColor: "#aaa"
+        borderColor: "#aaa"
+        boxColor: "white"
+        dividers: true
+
+        // Signals:
+        onActivated: console.log("item " + index + " activated")
+        onCurrentTextChanged: console.log(currentText)
+        onCurrentIndexChanged: console.log(currentIndex)
     }
 
+    // Example button setting the index of the SGComboBox
+    // - note that it does not trigger an activated signal
     Button {
-        id: tester
-        y:200
+        text: "Select 3rd Entry"
+        y: 150
         onClicked: sgComboBox.currentIndex = 2
     }
-
 }
