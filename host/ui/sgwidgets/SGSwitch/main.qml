@@ -12,30 +12,15 @@ Window {
         id: sgSwitch
 
         // Optional Configuration:
-        label: "Switch:"
-        checkedLabel: "On"
-        uncheckedLabel: "Off"
+        label: "<b>Switch:</b>"
+        checkedLabel: "Switch On"
+        uncheckedLabel: "Switch Off"
         labelsInside: true
-
-
-
-        Rectangle {
-            color: "tomato"
-            opacity: .1
-            anchors {
-                fill: parent
-            }
-            z:20
-            Component.onCompleted: console.log("height: " + height + "\n     width:  " + width)
-        }
-    }
-
-    Button {
-       text: "whatever"
-       y:100
-       onClicked: {
-           //sgSwitch.vertical = !sgSwitch.vertical
-
-       }
+        switchWidth: 84                 // Default: 52 (change for long custom checkedLabels when labelsInside)
+        textColor: "black"
+        handleColor: "white"
+        grooveColor: "#ccc"
+        grooveFillColor: "#0cf"
+        labelLeft: false
     }
 }
