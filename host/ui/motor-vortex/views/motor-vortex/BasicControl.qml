@@ -141,6 +141,8 @@ Rectangle {
                 maximumValue: motorSpeedControl.maximumValue
                 value: minimumValue
                 tickmarkStepSize: 500
+                outerColor: "#999"
+                unitLabel: "RPM"
 
                 Behavior on value { NumberAnimation { duration: 300 } }
             }

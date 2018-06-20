@@ -9,7 +9,9 @@ Rectangle {
     property real value: 0
     property real maximumValue: 100
     property real minimumValue: 0
-    property color gaugeRearColor: "#eeeeee"
+    property color gaugeRearColor: "#ddd"
+    property color centerColor: "black"
+    property color outerColor: "#bbb"
     property color gaugeFrontColor1: Qt.rgba(0,.75,1,1)
     property color gaugeFrontColor2: gaugeFrontColor1
     property real tickmarkStepSize : 10
@@ -50,6 +52,7 @@ Rectangle {
         Text {
             id: gaugeValue
             text: root.value.toFixed(0)
+            color: root.centerColor
             anchors { centerIn: parent }
             font.family: digital.name
             font.pixelSize: Math.min(gauge.width / 3, gauge.width/Math.max((root.maximumValue+ "").length, (root.minimumValue + "").length)) // Scale the gauge font based on what the largest or smallest number that might be displayed
@@ -58,6 +61,7 @@ Rectangle {
         Text {
             id: gaugeLabel
             text: unitLabel
+            color: root.centerColor
             anchors {
                 top: gaugeValue.bottom
                 topMargin: - gauge.width / 25.6
@@ -74,20 +78,31 @@ Rectangle {
             width: parent.width
             height: parent.height
             anchors.centerIn: parent
-
             minimumValue: root.minimumValue
             maximumValue: root.maximumValue
+
             style : CircularGaugeStyle {
                 tickmarkStepSize: root.tickmarkStepSize
                 id: gaugeStyle2
                 needle: null
                 foreground: null
                 minorTickmark: null
-
                 tickmarkInset: -ticksBackground.width / 34
-                labelInset: -ticksBackground.width / (15 - 1.5 * Math.max((root.maximumValue+ "").length, (root.minimumValue + "").length))  // Base label distance from gauge center on max/minValue
+                labelInset: -ticksBackground.width / (12.8 - Math.max((root.maximumValue+ "").length, (root.minimumValue + "").length))  // Base label distance from gauge center on max/minValue
                 minimumValueAngle: -145.25
                 maximumValueAngle: 145.25
+                tickmarkLabel:  Text {
+                    font.pixelSize: Math.max(1, outerRadius * 0.125)
+                    text: styleData.value
+                    color: root.outerColor
+                    antialiasing: true
+                }
+                tickmark: Rectangle {
+                    color: root.outerColor
+                    width: gauge.width / 100
+                    height: gauge.width / 30
+                    antialiasing: true
+                }
             }
         }
     }
@@ -99,15 +114,14 @@ Rectangle {
 
     function lerpColor (color1, color2, x){
         if (Qt.colorEqual(color1, color2)){
-            console.log("colors same")
             return color1;
         } else {
-            console.log(color1.hsvHue )
             return Qt.hsva(
-                        color1.hsvHue * (1 - x) + color2.hsvHue * x,
-                        color1.hsvSaturation * (1 - x) + color2.hsvSaturation * x,
-                        color1.hsvValue * (1 - x) + color2.hsvValue * x, 1
-                        );
+                color1.hsvHue * (1 - x) + color2.hsvHue * x,
+                color1.hsvSaturation * (1 - x) + color2.hsvSaturation * x,
+                color1.hsvValue * (1 - x) + color2.hsvValue * x, 1
+                );
         }
     }
 }
+
