@@ -4,22 +4,31 @@ import QtQuick.Controls 2.0
 Item {
     id: root
 
+    signal released()
+    signal canceled()
+    signal clicked()
+    signal toggled()
+    signal press()
+    signal pressAndHold()
+
     property alias pressed: switchRoot.pressed
     property alias down: switchRoot.down
     property alias checked: switchRoot.checked
 
-    property real switchWidth: 52
     property real switchHeight: 26
-    property color textColor: "black"
+    property real fontSize: 10
+
+    // Optional Configurations:
+    property real switchWidth: 52
     property color handleColor: "white"
     property color grooveFillColor: "#0cf"
     property color grooveColor: "#ccc"
+    property color textColor: "black"
     property string label: ""
+    property bool labelLeft: true
     property string checkedLabel: ""
     property string uncheckedLabel: ""
     property bool labelsInside: true
-    property bool labelLeft: true
-    property real fontSize: 10
 
     implicitHeight: childrenRect.height
     implicitWidth: childrenRect.width
@@ -31,6 +40,7 @@ Item {
         height: root.labelLeft ? switchRoot.height : contentHeight
         topPadding: root.label === "" ? 0 : root.labelLeft ? (switchRoot.height-contentHeight)/2 : 0
         bottomPadding: topPadding
+        color: root.textColor
     }
 
     Text {
@@ -63,6 +73,13 @@ Item {
 
     Switch {
         id: switchRoot
+
+        onReleased: root.released()
+        onCanceled: root.canceled()
+        onClicked: root.clicked()
+        onToggled: root.toggled()
+        onPressed: root.press()
+        onPressAndHold: root.pressAndHold()
 
         anchors {
             left: uncheckedLabelText.right
@@ -102,6 +119,7 @@ Item {
                 height: parent.height
                 color: root.grooveFillColor
                 radius: height/2
+                clip:true
 
                 Behavior on width {
                     enabled: switchRoot.pressed ? false : true
