@@ -46,7 +46,7 @@ Item {
         id: labelText
         text: root.label
         width: contentWidth
-        height: root.labelLeft ? switchRoot.height : contentHeight
+        height: root.label === "" ? 0 : root.labelLeft ? switchRoot.height : contentHeight
         topPadding: root.label === "" ? 0 : root.labelLeft ? (switchRoot.height-contentHeight)/2 : 0
         bottomPadding: topPadding
         color: root.textColor

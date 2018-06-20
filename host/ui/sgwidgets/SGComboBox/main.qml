@@ -15,17 +15,21 @@ Window {
         model: ["Amps", "Volts", "Watts"]
 
         // Optional Configuration:
-        width: 100
-        textColor: "black"
-        indicatorColor: "#aaa"
-        borderColor: "#aaa"
-        boxColor: "white"
-        dividers: true
+        label: "<b>ComboBox:</b>"   // Default: "" (if not entered, label will not appear)
+        labelLeft: false            // Default: true
+        comboBoxWidth: 150          // Default: 120 (set depending on model info length)
+        textColor: "black"          // Default: "black"
+        indicatorColor: "#aaa"      // Default: "#aaa"
+        borderColor: "#aaa"         // Default: "#aaa"
+        boxColor: "white"           // Default: "white"
+        dividers: true              // Default: false
 
-        // Signals:
+        // Useful Signals:
         onActivated: console.log("item " + index + " activated")
-        onCurrentTextChanged: console.log(currentText)
-        onCurrentIndexChanged: console.log(currentIndex)
+        //onCurrentTextChanged: console.log(currentText)
+        //onCurrentIndexChanged: console.log(currentIndex)
+        //onPressedChanged: console.log("pressedchanged")
+        //onDownChanged: console.log("downchanged")
     }
 
     // Example button setting the index of the SGComboBox

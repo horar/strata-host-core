@@ -12,7 +12,7 @@ Window {
         id: sgSwitch
 
         // Optional Configuration:
-        label: "<b>Switch:</b>"         // Default: "" (if not entered, label will not appear)
+//        label: "<b>Switch:</b>"         // Default: "" (if not entered, label will not appear)
         labelLeft: false                // Default: true
         checkedLabel: "Switch On"       // Default: "" (if not entered, label will not appear)
         uncheckedLabel: "Switch Off"    // Default: "" (if not entered, label will not appear)
@@ -22,6 +22,17 @@ Window {
         handleColor: "white"            // Default: "white"
         grooveColor: "#ccc"             // Default: "#ccc"
         grooveFillColor: "#0cf"         // Default: "#0cf"
+
+        Rectangle {
+            color: "tomato"
+            opacity: .15
+            anchors {
+                fill: parent
+            }
+            z:20
+            Component.onCompleted: console.log("height: " + height + "\n     width:  " + width)
+
+        }
 
         // Usable Signals:
         onCheckedChanged: console.log("Checked toggled")

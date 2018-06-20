@@ -10,15 +10,34 @@ Item {
     property alias currentIndex: comboBox.currentIndex
     property alias currentText: comboBox.currentText
     property alias model: comboBox.model
+    property alias count: comboBox.count
+    property alias acceptableInput: comboBox.acceptableInput
+    property alias down: comboBox.down
+    property alias editable: comboBox.editable
+    property alias pressed: comboBox.pressed
 
+    property string label: ""
+    property bool labelLeft: true
     property color textColor: "black"
     property color indicatorColor: "#aaa"
     property color borderColor: "#aaa"
     property color boxColor: "white"
     property bool dividers: false
+    property real comboBoxHeight: 32
+    property real comboBoxWidth: 120
 
-    height: 32
-    width: 120
+    implicitHeight: labelLeft ? Math.max(labelText.height, comboBox.height) : labelText.height + comboBox.height + comboBox.anchors.topMargin
+    implicitWidth: labelLeft ? labelText.width + comboBox.width + comboBox.anchors.leftMargin : Math.max(labelText.width, comboBox.width)
+
+    Text {
+        id: labelText
+        text: root.label
+        width: contentWidth
+        height: root.label === "" ? 0 : root.labelLeft ? comboBox.height : contentHeight
+        topPadding: root.label === "" ? 0 : root.labelLeft ? (comboBox.height-contentHeight)/2 : 0
+        bottomPadding: topPadding
+        color: root.textColor
+    }
 
     ComboBox {
         id: comboBox
@@ -27,35 +46,68 @@ Item {
         onHighlighted: root.highlighted(index)
 
         model: ["First", "Second", "Third"]
-        height: root.height
+        height: root.comboBoxHeight
+        anchors {
+            left: root.labelLeft ? labelText.right : parent.left
+            leftMargin: root.label === "" ? 0 : root.labelLeft ? 10 : 0
+            top: root.labelLeft ? labelText.top : labelText.bottom
+            topMargin: root.label === "" ? 0 : root.labelLeft ? 0 : 5
+        }
+        width: root.comboBoxWidth
 
         indicator: Text {
             text: comboBox.popup.visible ? "\ue813" : "\ue810"
             font.family: sgicons.name
             color: comboBox.pressed ? colorMod(root.indicatorColor, .25) : root.indicatorColor
-            x: comboBox.width - width/2 - comboBox.height/2
+            //x: comboBox.width - width/2 - comboBox.height/2
             //y: comboBox.topPadding + (comboBox.availableHeight - height) / 2
             anchors {
                 verticalCenter: comboBox.verticalCenter
+                right: comboBox.right
+                rightMargin: comboBox.height/2 - width/2
             }
         }
 
-        contentItem: Text {
+        contentItem: TextField {
+            anchors {
+                left: comboBox.left
+                right: comboBox.right
+                rightMargin: comboBox.height
+                top: comboBox.top
+                bottom: comboBox.bottom
+            }
             leftPadding: 13
-            rightPadding: comboBox.indicator.width + comboBox.spacing
-            text: comboBox.displayText
+            rightPadding: 13
+
+            text: comboBox.editable ? comboBox.editText : comboBox.displayText
+            enabled: comboBox.editable
+            autoScroll: comboBox.editable
+            readOnly: comboBox.down
+//            inputMethodHints: comboBox.inputMethodHints
+//            validator: comboBox.validator
+
             font: comboBox.font
-            color: comboBox.pressed ? colorMod(root.textColor, .5) : root.textColor
+            color: root.textColor
+            selectionColor: comboBox.palette.highlight
+            selectedTextColor: comboBox.palette.highlightedText
             verticalAlignment: Text.AlignVCenter
-            elide: Text.ElideRight
+
+            background: Rectangle {
+                visible: comboBox.enabled && comboBox.editable && !comboBox.flat
+                border.width: parent && parent.activeFocus && !parent.readOnly ? 2 : 1
+                border.color: parent && parent.activeFocus && !parent.readOnly ? "#0cf" : root.borderColor
+                color: root.boxColor
+            }
+            onAccepted: parent.focus = false
         }
 
         background: Rectangle {
-            implicitWidth: root.width
-            height: root.height
+            implicitWidth: root.comboBoxWidth
+            height: root.comboBoxHeight
             border.color: comboBox.pressed ? colorMod(root.borderColor, .25) : root.borderColor
             border.width: comboBox.visualFocus ? 2 : 1
             radius: 2
+
         }
 
         popup: Popup {
@@ -82,7 +134,7 @@ Item {
         delegate: ItemDelegate {
             id: delegate
             width: comboBox.width
-            height: root.height
+            height: root.comboBoxHeight
             contentItem: Text {
                 text: modelData
                 color: root.textColor
@@ -94,7 +146,7 @@ Item {
 
             background: Rectangle {
                 implicitWidth: comboBox.width
-                implicitHeight: root.height
+                implicitHeight: root.comboBoxHeight
                 color: delegate.highlighted ? colorMod(root.boxColor, -0.05) : root.boxColor
 
                 Rectangle {
