@@ -9,17 +9,29 @@ Item {
     property alias checked: switchRoot.checked
 
     property real switchWidth: 52
+    property real switchHeight: 26
     property color textColor: "black"
     property color handleColor: "white"
     property color grooveFillColor: "#0cf"
-    property string label: "fgdfgd"
+    property color grooveColor: "#ccc"
+    property string label: ""
     property string checkedLabel: ""
     property string uncheckedLabel: ""
-    property bool labelsInside: false
+    property bool labelsInside: true
+    property bool labelLeft: true
     property real fontSize: 10
 
     implicitHeight: childrenRect.height
     implicitWidth: childrenRect.width
+
+    Text {
+        id: labelText
+        text: root.label
+        width: contentWidth
+        height: root.labelLeft ? switchRoot.height : contentHeight
+        topPadding: root.label === "" ? 0 : root.labelLeft ? (switchRoot.height-contentHeight)/2 : 0
+        bottomPadding: topPadding
+    }
 
     Text {
         id: uncheckedLabelText
@@ -27,9 +39,12 @@ Item {
         text: uncheckedLabel
         font.pixelSize: root.fontSize
         anchors {
-            left: parent.left
+            left: root.labelLeft ? labelText.right : labelText.left
+            leftMargin: root.label === "" ? 0 : root.labelLeft ? 10 : 0
             verticalCenter: switchRoot.verticalCenter
         }
+        color: root.textColor
+        width: root.labelsInside ? 0 : contentWidth
     }
 
     Text {
@@ -40,24 +55,20 @@ Item {
         anchors {
             left: switchRoot.right
             verticalCenter: switchRoot.verticalCenter
+            leftMargin: root.labelsInside ? 0 : 5
         }
+        color: root.textColor
+        width: root.labelsInside ? 0 : contentWidth
     }
 
     Switch {
         id: switchRoot
-        Rectangle {
-            color: "blue"
-            opacity: .15
-            anchors {
-                fill: parent
-            }
-            z:20
-            Component.onCompleted: console.log("height: " + height + "\n     width:  " + width)
-
-        }
 
         anchors {
             left: uncheckedLabelText.right
+            leftMargin: root.labelsInside ? 0 : 5
+            top: root.labelLeft ? labelText.top : labelText.bottom
+            topMargin: root.label === "" ? 0 : root.labelLeft ? 0 : 5
         }
         width: groove.width
         height: groove.height
@@ -66,10 +77,10 @@ Item {
         indicator: Rectangle {
             id: groove
             width: root.switchWidth
-            implicitHeight: 26
+            height: root.switchHeight
             y: parent.height / 2 - height / 2
             radius: 13
-            color: "#ddd"
+            color: root.grooveColor
 
             Text {
                 id: uncheckedText
@@ -81,7 +92,7 @@ Item {
                     rightMargin: 5
                 }
                 font.pixelSize: root.fontSize
-                text: qsTr("Off")
+                text: root.uncheckedLabel
             }
 
             Rectangle {
@@ -89,7 +100,7 @@ Item {
                 visible: width === handle.width ? false : true
                 width: ((switchRoot.visualPosition * parent.width) + (1-switchRoot.visualPosition) * handle.width)
                 height: parent.height
-                color: "#0cf"
+                color: root.grooveFillColor
                 radius: height/2
 
                 Behavior on width {
@@ -107,7 +118,7 @@ Item {
                         leftMargin: 5
                     }
                     font.pixelSize: root.fontSize
-                    text: qsTr("On")
+                    text: root.checkedLabel
                 }
             }
 
@@ -117,8 +128,16 @@ Item {
                 width: 26
                 height: 26
                 radius: 13
-                color: root.down ? "#eee" : "#fff"
-                border.color: root.checked? "#0ad" : "#999"
+                color: {
+                    root.down ?
+                        Qt.rgba(root.handleColor.r/1.1, root.handleColor.g/1.1, root.handleColor.b/1.1, 1) :
+                        root.handleColor
+                }
+                border.color: {
+                    root.checked ?
+                        Qt.rgba(root.grooveFillColor.r/1.5, root.grooveFillColor.g/1.5, root.grooveFillColor.b/1.5, 1) :
+                        Qt.rgba(root.grooveColor.r/1.5, root.grooveColor.g/1.5, root.grooveColor.b/1.5, 1)
+                }
 
                 Behavior on x {
                     enabled: switchRoot.pressed ? false : true
@@ -126,16 +145,5 @@ Item {
                 }
             }
         }
-
-        //    contentItem: Text {
-        //        width: contentWidth
-        //        visible: root.label === "" ? false : true
-        //        text: root.label
-        //        font: root.font
-        //        opacity: enabled ? 1.0 : 0.3
-        //        color: root.textColor
-        //        verticalAlignment: Text.AlignVCenter
-        //        leftPadding: root.label === "" ? 0 : root.indicator.width + root.spacing
-        //    }
     }
 }
