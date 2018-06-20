@@ -19,7 +19,9 @@ Window {
         minimumValue: 0
         maximumValue: 100
         tickmarkStepSize: 10
-        gaugeRearColor: "#eeeeee"
+        gaugeRearColor: "#ddd"
+        centerColor: "black"
+        outerColor: "#999"
         gaugeFrontColor1: Qt.rgba(0,.75,1,1)
         gaugeFrontColor2: Qt.rgba(1,0,0,1)
         unitLabel: "RPM"                        // Default: "RPM"
