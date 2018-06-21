@@ -9,7 +9,7 @@ Rectangle {
     property string info: ""
     property real infoBoxWidth: 50
     property color infoBoxColor: "#eeeeee"
-    property color infoBoxBorderColor: "#cccccc"
+    property color infoBoxBorderColor: "#999999"
     property real infoBoxBorderWidth: 1
 
 
@@ -20,7 +20,7 @@ Rectangle {
         id: labelText
         text: label
         width: contentWidth
-        height: root.labelLeft ? infoContainer.height : contentHeight
+        height: root.label === "" ? 0 : root.labelLeft ? infoContainer.height : contentHeight
         topPadding: root.label === "" ? 0 : root.labelLeft ? (infoContainer.height-contentHeight)/2 : 0
         bottomPadding: topPadding
     }
@@ -30,6 +30,7 @@ Rectangle {
         height: 30
         width: root.infoBoxWidth
         color: root.infoBoxColor
+        radius: 2
         border {
             color: root.infoBoxBorderColor
             width: root.infoBoxBorderWidth

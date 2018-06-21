@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/">
+        <file>main.qml</file>
+        <file>SGApplyInfoBox.qml</file>
+    </qresource>
+</RCC>
