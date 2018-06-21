@@ -18,8 +18,9 @@ Rectangle {
     property bool enabled: true
     property string buttonText: "Submit"
 
-    implicitHeight: labelLeft ? Math.max(infoContainer.height, applyButton.height) : labelText.height + infoContainer.height + infoContainer.anchors.topMargin
-    implicitWidth: labelLeft ? infoBoxWidth + labelText.width + infoContainer.anchors.leftMargin : Math.max(infoBoxWidth, labelText.width)
+    implicitHeight: labelLeft ? inputButtonContainer.height : labelText.height + inputButtonContainer.height + inputButtonContainer.anchors.topMargin
+    implicitWidth: labelLeft ? labelText.width + inputButtonContainer.width + inputButtonContainer.anchors.leftMargin :
+                               Math.max(inputButtonContainer.width, labelText.width)
 
     Text {
         id: labelText
@@ -33,58 +34,69 @@ Rectangle {
     }
 
     Rectangle {
-        id: infoContainer
-        height: 30
-        width: root.infoBoxWidth
-        color: root.infoBoxColor
-        radius: 2
-        border {
-            color: root.infoBoxBorderColor
-            width: root.infoBoxBorderWidth
-        }
+        id: inputButtonContainer
+        width: infoContainer.width + applyButton.width + applyButton.anchors.leftMargin
+        height: Math.max(infoContainer.height, applyButton.height)
+
         anchors {
             left: root.labelLeft ? labelText.right : labelText.left
             top: root.labelLeft ? labelText.top : labelText.bottom
             leftMargin: root.label === "" ? 0 : root.labelLeft ? 10 : 0
-            topMargin: root.label === "" ? 0 : root.labelLeft ? applyButton.height / 2 - infoContainer.height / 2  : applyButton.height / 2 - infoContainer.height / 2 +5
+            topMargin: root.label === "" ? 0 : root.labelLeft ? 0 : 5
         }
-        clip: true
 
-        TextInput {
-            id: infoText
-            padding: 10
+        Rectangle {
+            id: infoContainer
+            height: 30
+            width: root.infoBoxWidth
+            color: root.infoBoxColor
+            radius: 2
+            border {
+                color: root.infoBoxBorderColor
+                width: root.infoBoxBorderWidth
+            }
             anchors {
-                right: parent.right
-                verticalCenter: parent.verticalCenter
-                left: parent.left
+                left: inputButtonContainer.left
+                verticalCenter: inputButtonContainer.verticalCenter
             }
-            text: input
-            selectByMouse: true
-            readOnly: false
-            font.family: "Courier" // Monospaced font for better text width uniformity
-            horizontalAlignment: TextInput.AlignRight
-            validator: realNumberValidation ? validator : undefined
-            onAccepted: root.applied(infoText.text)
+            clip: true
+
+            TextInput {
+                id: infoText
+                padding: 10
+                anchors {
+                    right: parent.right
+                    verticalCenter: parent.verticalCenter
+                    left: parent.left
+                }
+                text: input
+                selectByMouse: true
+                readOnly: false
+                font.family: "Courier" // Monospaced font for better text width uniformity
+                horizontalAlignment: TextInput.AlignRight
+                validator: realNumberValidation ? validator : undefined
+                onAccepted: root.applied(infoText.text)
+                enabled: root.enabled
+                color: root.textColor
+                opacity: root.enabled ? 1 : 0.5
+
+                RegExpValidator {
+                    id: validator
+                    regExp: /[-+]?([0-9]*\.[0-9]+|[0-9]+)/
+                }
+            }
+        }
+
+        Button {
+            id: applyButton
+            text: root.buttonText
+            anchors {
+                left: infoContainer.right
+                leftMargin: 10
+                verticalCenter: infoContainer.verticalCenter
+            }
+            onClicked: root.applied(infoText.text)
             enabled: root.enabled
-            color: root.textColor
-            opacity: root.enabled ? 1 : 0.5
-
-            RegExpValidator {
-                id: validator
-                regExp: /[-+]?([0-9]*\.[0-9]+|[0-9]+)/
-            }
         }
-    }
-
-    Button {
-        id: applyButton
-        text: root.buttonText
-        anchors {
-            left: infoContainer.right
-            leftMargin: 10
-            verticalCenter: infoContainer.verticalCenter
-        }
-        onClicked: root.applied(infoText.text)
-        enabled: root.enabled
     }
 }

@@ -16,7 +16,7 @@ Window {
 
         // Optional configuration:
         label: "Voltage (volts):"       // Default: "" (if not entered, label will not appear)
-        labelLeft: true                 // Default: true (if false, label will be on top)
+        labelLeft: false                 // Default: true (if false, label will be on top)
         infoBoxColor: "#eee"            // Default: "#eeeeee" (light gray)
         infoBoxBorderColor: "#999"      // Default: "#999999" (dark gray)
         infoBoxBorderWidth: 1           // Default: 1 (assign 0 for no border)
