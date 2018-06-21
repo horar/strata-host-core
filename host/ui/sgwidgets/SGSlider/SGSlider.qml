@@ -28,7 +28,7 @@ Item{
         id: labelText
         text: root.label
         width: contentWidth
-        height: root.labelLeft ? sgSlider.height : contentHeight
+        height: root.label === "" ? 0 : root.labelLeft ? sgSlider.height : contentHeight
         topPadding: root.label === "" ? 0 : root.labelLeft ? (sgSlider.height-contentHeight)/2 : 0
         bottomPadding: topPadding
     }
