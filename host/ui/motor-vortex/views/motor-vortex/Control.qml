@@ -9,6 +9,7 @@ import "qrc:/js/navigation_control.js" as NavigationControl
 
 
 Rectangle {
+
     id: controlPage
     objectName: "control"
     anchors { fill: parent }

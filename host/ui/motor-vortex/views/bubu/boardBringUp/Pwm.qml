@@ -1,100 +1,116 @@
 import QtQuick 2.0
 import QtQuick.Layouts 1.3
-//import QtQuick.Controls 2.1
 import QtGraphicalEffects 1.0
 import QtQuick 2.7
 import QtQuick.Controls 2.0
 import QtQuick.Controls.Styles 1.4
 import QtQuick.Layouts 1.3
-//import QtQuick.Controls.Material 2.0
+import "qrc:/views/bubu/Control.js" as BubuControl
 
 Rectangle {
-
+    id: container
     property var currentTab: pwmView
     property var newTab: pwmView
-    Rectangle {
-        id: pwmOutline
-        anchors.fill:parent
+    /*
+      List of disabled pin for pwm for each port
+    */
+    property variant portAMapDisable: [4, 12, 13, 14]
+    property variant portBMapDisable: [2, 12, 10, 11]
+    property variant portCMapDisable: [0,1,2,3,4,5,10,11,12,13,14,15]
+    property variant portDMapDisable: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
+    property variant portHMapDisable: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
 
-        function createTab(inTabName, inParent){
-            var component  = Qt.createComponent(inTabName);
-            var object = component.createObject(inParent);
-            return object
+    /*
+      set Pwm port based on pin function
+    */
+    function setPwmPort(pinFunction, portName, tabIndex) {
+        BubuControl.setPwmPort(portName);
+        pwmbitView.currentIndex = tabIndex;
+    }
+
+    /*
+        Setting default port as "a"
+    */
+    Component.onCompleted: {
+        BubuControl.setPwmPort("a");
+    }
+
+
+    ParallelAnimation {
+        id: crosfadeTabs
+        OpacityAnimator{
+            target: currentTab
+            from: 1
+            to: 0
+            duration: 500
+            running: false
         }
-        Component.onCompleted: {
-            currentTab = createTab("PWMSetting.qml", contentRectangle);
-            currentTab.opacity = 1;
-
-            newTab = createTab("PWMSetting.qml",contentRectangle);
+        OpacityAnimator{
+            target: newTab
+            from: 0
+            to: 1
+            duration: 500
+            running: false
         }
+    }
 
-        ParallelAnimation{
-            id: crosfadeTabs
-            OpacityAnimator{
-                target: currentTab
-                from: 1
-                to: 0
-                duration: 500
-                running: false
-            }
-            OpacityAnimator{
-                target: newTab
-                from: 0
-                to: 1
-                duration: 500
-                running: false
-            }
+    ButtonGroup {
+        buttons: pwmbuttonRow.children
+        onClicked: {
+            crosfadeTabs.start()
         }
-
-        ButtonGroup {
-            buttons: buttonRow.children
-            onClicked: {
-                newTab = button.tabName
-                crosfadeTabs.start()
-                currentTab = newTab
-            }
-        }
+    }
 
 
-        Row {
-            id:buttonRow
-            anchors.horizontalCenter: pwmOutline.horizontalCenter
-            anchors.top: parent.top
-          //  anchors.topMargin: 10
-            width: 600
-            height: 65
+    Row {
+        id:pwmbuttonRow
+        anchors { top: container.top; topMargin: 40; horizontalCenter: container.horizontalCenter }
+        width: 600
+        height: 40
+        /*
+            passing port name to set "port" member in setPort function
+        */
 
-
-            SGLeftSegmentedButton{text:"Port A"; tabName:PWMSetting{}}
-            SGMiddleSegmentedButton{text:"Port B"; tabName:PWMSetting {}}
-            SGMiddleSegmentedButton{text:"Port C"; tabName:PWMSetting {}}
-            SGMiddleSegmentedButton{text:"Port D"; tabName:PWMSetting {}}
-            SGMiddleSegmentedButton{text:"Port E"; tabName:PWMSetting {}}
-            SGRightSegmentedButton{text:"Port F"; tabName:PWMSetting{}}
-
-        }
-        Rectangle{
-            id:contentRectangle
-            //x: 4
-            //y: 116
-            //width: 881
-            //height: 727
-
-//            anchors.rightMargin: 212
-//            anchors.bottomMargin: 73
-//            anchors.leftMargin: 138
-//            anchors.topMargin: -15
-            //z: 2
-            //color:  "#babdb6"
-            color:"red"
-            anchors.left:parent.left
-            anchors.right:parent.right
-            anchors.bottom:parent.bottom
-            anchors.top:buttonRow.bottom
-            PWMSetting{ opacity: 1 /*anchors.rightMargin: 175; anchors.bottomMargin: -37; anchors.leftMargin: -51; anchors.topMargin: 0*/}
-            PWMSetting{ opacity: 1}
-            PWMSetting{ opacity: 1}
-        }
+        SGLeftSegmentedButton{text:"Port A"; portName:"a"; tabIndex: 0; pinFunction: "pwm";onClicked: setPwmPort(pinFunction, portName,tabIndex) }
+        SGMiddleSegmentedButton{text:"Port B"; portName: "b"; tabIndex: 1; pinFunction: "pwm";onClicked: setPwmPort(pinFunction, portName,tabIndex)}
+        SGMiddleSegmentedButton{text:"Port C";portName: "c"; tabIndex: 2; pinFunction: "pwm";onClicked: setPwmPort(pinFunction, portName,tabIndex)}
+        SGMiddleSegmentedButton{text:"Port D";portName: "d"; tabIndex: 3; pinFunction: "pwm";onClicked: setPwmPort(pinFunction, portName,tabIndex)}
+        SGRightSegmentedButton{text:"Port H";portName: "h"; tabIndex: 4; pinFunction: "pwm";onClicked: setPwmPort(pinFunction, portName,tabIndex)}
 
     }
+
+    SwipeView {
+        id: pwmbitView
+        anchors { left:container.left
+            right:container.right
+            bottom:container.bottom
+            top:pwmbuttonRow.bottom
+        }
+        currentIndex: 0
+
+        onCurrentIndexChanged: {
+            pwmbuttonRow.children[pwmbitView.currentIndex].checked = true;
+
+        }
+        /*
+            view for the ports
+        */
+        ButtonViewPwm { holdDisableBits: portAMapDisable }
+        ButtonViewPwm { holdDisableBits: portBMapDisable }
+        ButtonViewPwm { holdDisableBits: portCMapDisable }
+        ButtonViewPwm { holdDisableBits: portDMapDisable }
+        ButtonViewPwm { holdDisableBits: portHMapDisable }
+
+    }
+
+    PageIndicator {
+        id: indicator
+        count: pwmbitView.count
+        currentIndex: pwmbitView.currentIndex
+        anchors.bottom: pwmbitView.bottom
+        anchors.horizontalCenter: container.horizontalCenter
+
+    }
+
 }
+
