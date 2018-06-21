@@ -76,7 +76,7 @@ void SerialConnector::openPlatform()
 #ifdef __APPLE__
         usb_keyword = "usb";
 #elif __linux__
-        usb_keyword = "ACM";
+    	usb_keyword = "USB";
 #elif _WIN32
         usb_keyword = "COM";
 #endif
