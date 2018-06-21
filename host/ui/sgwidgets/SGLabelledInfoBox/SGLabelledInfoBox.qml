@@ -8,8 +8,9 @@ Rectangle {
     property bool labelLeft: true
     property string info: ""
     property real infoBoxWidth: 50
+    property color textColor: "#000"
     property color infoBoxColor: "#eeeeee"
-    property color infoBoxBorderColor: "#999999"
+    property color infoBoxBorderColor: "#cccccc"
     property real infoBoxBorderWidth: 1
 
 
@@ -23,6 +24,7 @@ Rectangle {
         height: root.label === "" ? 0 : root.labelLeft ? infoContainer.height : contentHeight
         topPadding: root.label === "" ? 0 : root.labelLeft ? (infoContainer.height-contentHeight)/2 : 0
         bottomPadding: topPadding
+        color: root.textColor
     }
 
     Rectangle {
@@ -53,6 +55,7 @@ Rectangle {
             selectByMouse: true
             readOnly: true
             font.family: "Courier" // Monospaced font for better text width uniformity
+            color: root.textColor
         }
     }
 }

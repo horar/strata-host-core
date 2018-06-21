@@ -1,6 +1,6 @@
 <RCC>
     <qresource prefix="/">
         <file>main.qml</file>
-        <file>SGApplyInfoBox.qml</file>
+        <file>SGSubmitInfoBox.qml</file>
     </qresource>
 </RCC>

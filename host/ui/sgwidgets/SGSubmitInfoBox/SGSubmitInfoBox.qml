@@ -10,10 +10,13 @@ Rectangle {
     property bool labelLeft: true
     property string input: ""
     property real infoBoxWidth: 50
+    property color textColor: "#000"
     property color infoBoxColor: "#eee"
     property color infoBoxBorderColor: "#cccccc"
     property real infoBoxBorderWidth: 1
     property bool realNumberValidation: false
+    property bool enabled: true
+    property string buttonText: "Submit"
 
     implicitHeight: labelLeft ? Math.max(infoContainer.height, applyButton.height) : labelText.height + infoContainer.height + infoContainer.anchors.topMargin
     implicitWidth: labelLeft ? infoBoxWidth + labelText.width + infoContainer.anchors.leftMargin : Math.max(infoBoxWidth, labelText.width)
@@ -25,6 +28,8 @@ Rectangle {
         height: root.label === "" ? 0 : root.labelLeft ? infoContainer.height : contentHeight
         topPadding: root.label === "" ? 0 : root.labelLeft ? (Math.max(infoContainer.height, applyButton.height) - contentHeight) / 2 : 0
         bottomPadding: topPadding
+        color: root.textColor
+        opacity: root.enabled ? 1 : 0.5
     }
 
     Rectangle {
@@ -60,6 +65,9 @@ Rectangle {
             horizontalAlignment: TextInput.AlignRight
             validator: realNumberValidation ? validator : undefined
             onAccepted: root.applied(infoText.text)
+            enabled: root.enabled
+            color: root.textColor
+            opacity: root.enabled ? 1 : 0.5
 
             RegExpValidator {
                 id: validator
@@ -70,12 +78,13 @@ Rectangle {
 
     Button {
         id: applyButton
-        text: "Apply"
+        text: root.buttonText
         anchors {
             left: infoContainer.right
             leftMargin: 10
             verticalCenter: infoContainer.verticalCenter
         }
         onClicked: root.applied(infoText.text)
+        enabled: root.enabled
     }
 }

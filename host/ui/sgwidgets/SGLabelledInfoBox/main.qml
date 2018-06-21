@@ -19,6 +19,7 @@ Window {
         infoBoxColor: "lightgreen"      // Default: "#eeeeee" (light gray)
         infoBoxBorderColor: "green"     // Default: "#cccccc" (light gray)
         infoBoxBorderWidth: 1           // Default: 1 (assign 0 for no border)
+        textColor: "black"              // Default: "black" (colors label as well as text in box
     }
 
     SGLabelledInfoBox {
