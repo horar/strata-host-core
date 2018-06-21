@@ -74,14 +74,14 @@ Rectangle {
                 readOnly: false
                 font.family: "Courier" // Monospaced font for better text width uniformity
                 horizontalAlignment: TextInput.AlignRight
-                validator: realNumberValidation ? validator : undefined
+                validator: realNumberValidation ? realNumberValidator : null
                 onAccepted: root.applied(infoText.text)
                 enabled: root.enabled
                 color: root.textColor
                 opacity: root.enabled ? 1 : 0.5
 
                 RegExpValidator {
-                    id: validator
+                    id: realNumberValidator
                     regExp: /[-+]?([0-9]*\.[0-9]+|[0-9]+)/
                 }
             }
