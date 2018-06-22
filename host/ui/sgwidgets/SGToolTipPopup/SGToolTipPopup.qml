@@ -15,8 +15,8 @@ Canvas {
     }
     opacity: 0
     visible: false
-    width: content.childrenRect.width + 20
-    height: content.childrenRect.height + 30  // 30 because 10 padding*2 and 10 for pointer
+    implicitWidth: content.childrenRect.width + 20
+    implicitHeight: content.childrenRect.height + 30  // 30 because 10 padding*2 and 10 for pointer
     contextType: "2d"
 
     onPaint: {

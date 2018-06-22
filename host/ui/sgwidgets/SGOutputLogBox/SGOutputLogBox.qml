@@ -17,8 +17,10 @@ Rectangle {
     property color outputTextColor: "#000000"
     property color outputBoxColor: "#ffffff"
     property color outputBoxBorderColor: "#dddddd"
-
     property bool running: true
+
+    implicitHeight: 200
+    implicitWidth: 300
 
     Rectangle {
         id: titleArea
@@ -42,7 +44,7 @@ Rectangle {
                 fill: parent
             }
             padding: 10
-            font.family: sgicons.name
+//            font.family: sgicons.name
         }
 
         Component.onCompleted: {
@@ -106,7 +108,7 @@ Rectangle {
     // Debug button to start/stop logging data
     FontLoader {
         id: sgicons
-        source: "sgicons.ttf"
+        source: "fonts/sgicons.ttf"
     }
 
     Button {

@@ -12,7 +12,12 @@ Window {
         id: logBox
         model: demoModel
 
-        anchors { fill: parent } // Demo anchors
+        // Demo Anchors
+        anchors {
+            top: parent.top
+            left: parent.left
+            right: parent.right
+        }
 
         // Optional SGOutputLogBox Settings:
         title: "Status List"            // Default: "" (title bar will not be visible when empty string)
@@ -34,7 +39,11 @@ Window {
     Button{
         id: debugButton
         text: "add to model"
-        x: 200
+        anchors {
+            bottom: parent.bottom
+            left: parent.left
+        }
+
         onClicked: {
             demoModel.append({ "status" : Date.now() + " fault" });
         }
@@ -43,7 +52,10 @@ Window {
     Button{
         text: "remove from model"
         x: 200
-        anchors.top: debugButton.bottom
+        anchors {
+            bottom: debugButton.bottom
+            left: debugButton.right
+        }
         onClicked: {
             if (demoModel.count > 0) {
                 demoModel.remove(demoModel.count-1);
