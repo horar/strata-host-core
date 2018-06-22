@@ -7,18 +7,21 @@ Item {
 
     implicitWidth: childrenRect.width
     implicitHeight: childrenRect.height
+    enabled: true
 
     property alias segmentedButtons : segmentedButtons.sourceComponent
 
     property real buttonHeight: 35
     property real radius: buttonHeight/2
-    property string activeColorTop: "#bbbbbb"
-    property string activeColorBottom: "#999999"
-    property string inactiveColorTop: "#dddddd"
-    property string inactiveColorBottom: "#aaaaaa"
+    property color activeColorTop: "#bbbbbb"
+    property color activeColorBottom: "#999999"
+    property color inactiveColorTop: "#dddddd"
+    property color inactiveColorBottom: "#aaaaaa"
     property bool exclusive: true
     property string label: ""
     property bool labelLeft: true
+    property color textColor: "black"
+    property color activeTextColor: "white"
 
     Text {
         id: labelText
@@ -27,6 +30,7 @@ Item {
         height: root.label === "" ? 0 :root.labelLeft ? segmentedButtons.height : contentHeight
         topPadding: root.label === "" ? 0 : root.labelLeft ? (segmentedButtons.height-contentHeight)/2 : 0
         bottomPadding: topPadding
+        color: root.textColor
     }
 
     ButtonGroup{
@@ -46,9 +50,12 @@ Item {
         // Passthrough properties so segmentedButtons can get these
         property real masterHeight: buttonHeight
         property real masterRadius: radius
-        property string masterActiveColorTop: activeColorTop
-        property string masterActiveColorBottom: activeColorBottom
-        property string masterInactiveColorTop: inactiveColorTop
-        property string masterInactiveColorBottom: inactiveColorBottom
+        property color masterActiveColorTop: activeColorTop
+        property color masterActiveColorBottom: activeColorBottom
+        property color masterInactiveColorTop: inactiveColorTop
+        property color masterInactiveColorBottom: inactiveColorBottom
+        property color masterTextColor: textColor
+        property color masterActiveTextColor: activeTextColor
+        property bool masterEnabled: enabled
     }
 }

@@ -26,6 +26,8 @@ Window {
         buttonHeight: 35                // Default: 35
         radius: height/2                // Default: height/2
         exclusive: true                 // Default: true
+        textColor: "black"              // Default: "black"
+        enabled: true                  // Default: true
 
         segmentedButtons: GridLayout {
             columnSpacing: 2

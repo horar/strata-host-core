@@ -15,16 +15,16 @@ ColumnLayout {
 
     property string title: "panel"
     property bool open: false
-    property string dividerColor: accordionDividerColor
+    property color dividerColor: accordionDividerColor
     property int dividerHeight: accordionDividerHeight
     property int openCloseTime: accordionOpenCloseTime
     property string statusIcon: accordionStatusIcon
-    property string textColor: accordionTextColor
-    property string bodyColor: accordionBodyColor
-    property string headerOpenColorTop: accordionHeaderOpenColorTop
-    property string headerOpenColorBottom: accordionHeaderOpenColorBottom
-    property string headerClosedColorTop: accordionHeaderClosedColorTop
-    property string headerClosedColorBottom: accordionHeaderClosedColorBottom
+    property color textColor: accordionTextColor
+    property color bodyColor: accordionBodyColor
+    property color headerOpenColorTop: accordionHeaderOpenColorTop
+    property color headerOpenColorBottom: accordionHeaderOpenColorBottom
+    property color headerClosedColorTop: accordionHeaderClosedColorTop
+    property color headerClosedColorBottom: accordionHeaderClosedColorBottom
 
     onWidthChanged: {
         if (root.open) root.opener();

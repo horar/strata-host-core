@@ -16,6 +16,7 @@ Window {
         labelLeft: false        // Default: true
         status: "off"           // Default: "off"
         lightSize: 50           // Default: 50
+        textColor: "black"           // Default: "black"
 
         // Useful Signals:
         onStatusChanged: console.log("Changed to " + status)

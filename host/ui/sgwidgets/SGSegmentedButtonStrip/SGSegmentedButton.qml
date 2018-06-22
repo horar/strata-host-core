@@ -5,6 +5,7 @@ Button {
     id: root
     text: qsTr("Button")
     checkable: true
+    enabled: masterEnabled
 
     // Figures out which button this instance is
     Component.onCompleted: {
@@ -27,10 +28,12 @@ Button {
     }
 
     property real radius: masterRadius
-    property string activeColorTop: masterActiveColorTop
-    property string activeColorBottom: masterActiveColorBottom
-    property string inactiveColorTop: masterInactiveColorTop
-    property string inactiveColorBottom: masterInactiveColorBottom
+    property color activeColorTop: masterActiveColorTop
+    property color activeColorBottom: masterActiveColorBottom
+    property color inactiveColorTop: masterInactiveColorTop
+    property color inactiveColorBottom: masterInactiveColorBottom
+    property color textColor: masterTextColor
+    property color textActiveColor: masterActiveTextColor
 
     background: Rectangle{
         id: buttonStyle
@@ -41,15 +44,27 @@ Button {
         radius: root.radius
         implicitHeight: masterHeight
         implicitWidth: 70
+        opacity: root.enabled ? 1.0 : 0.3
+        layer.enabled: true
 
         Rectangle{
             id: flatSide
             height: parent.height
             width: parent.width/2
+
             gradient: Gradient {
                 GradientStop { position: 0.0; color: root.checked ? activeColorTop : inactiveColorTop }
                 GradientStop { position: 1.0; color: root.checked ? activeColorBottom : inactiveColorBottom }
             }
         }
+    }
+
+    contentItem: Text {
+        text: root.text
+        opacity: root.enabled ? 1.0 : 0.3
+        color: root.checked ? root.textActiveColor : root.textColor
+        horizontalAlignment: Text.AlignHCenter
+        verticalAlignment: Text.AlignVCenter
+        elide: Text.ElideRight
     }
 }

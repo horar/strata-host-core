@@ -23,6 +23,7 @@ Item{
     property bool showDial: true
     property color grooveColor: "#dddddd"
     property color grooveFillColor: "#888888"
+    property color textColor: "#000000"
 
     Text {
         id: labelText
@@ -31,6 +32,7 @@ Item{
         height: root.label === "" ? 0 : root.labelLeft ? sgSlider.height : contentHeight
         topPadding: root.label === "" ? 0 : root.labelLeft ? (sgSlider.height-contentHeight)/2 : 0
         bottomPadding: topPadding
+        color: root.textColor
     }
 
     Slider {
@@ -139,6 +141,7 @@ Item{
             anchors.bottom : parent.bottom
             font.pointSize : 12
             text: sgSlider.minimumValue
+            color: root.textColor
         }
 
         Label {
@@ -147,6 +150,7 @@ Item{
             anchors.bottom : parent.bottom
             font.pointSize: 12
             text: sgSlider.maximumValue
+            color: root.textColor
         }
 
         PropertyAnimation {

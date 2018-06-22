@@ -9,6 +9,7 @@ Item {
     property string label: ""
     property bool labelLeft: true
     property real lightSize : 50
+    property color textColor : "black"
 
     implicitHeight: labelLeft ? Math.max(labelText.height, lightSize) : labelText.height + lightSize + statusLight.anchors.topMargin
     implicitWidth: labelLeft ? labelText.width + lightSize + statusLight.anchors.leftMargin : Math.max(labelText.width, lightSize)
@@ -20,6 +21,7 @@ Item {
         height: root.label === "" ? 0 : root.labelLeft ? statusLight.height : contentHeight
         topPadding: root.label === "" ? 0 : root.labelLeft ? (statusLight.height-contentHeight)/2 : 0
         bottomPadding: topPadding
+        color: root.textColor
     }
 
     Image {
