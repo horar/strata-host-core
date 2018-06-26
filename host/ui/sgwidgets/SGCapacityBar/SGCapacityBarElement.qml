@@ -2,11 +2,14 @@ import QtQuick 2.9
 
 Rectangle {
     id: root
+
+    property real value: 50
+    property real minimumValue: masterMinimumValue
+    property real maximumValue: masterMaximumValue
+    property real capacityBarWidth: masterWidth
+
     color: "blue"
-    anchors {
-        bottom: parent.bottom
-    }
-    width: parent.width
-    height: parent.height/2
+    width: (root.value-root.minimumValue)/(root.maximumValue-root.minimumValue)*capacityBarWidth
+    height: parent.height
 }
 

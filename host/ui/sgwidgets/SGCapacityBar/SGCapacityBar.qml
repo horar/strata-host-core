@@ -5,21 +5,20 @@ import QtQuick.Controls.Styles 1.4
 Item {
     id: root
 
-    property real input: 50
-
     // Optional Configurations:
     property string label: ""
     property bool labelLeft: true
     property color textColor: "black"
 
-    property real thresholdValue: 80
+    property bool showThreshold: false
+    property real thresholdValue: 0
     property real minimumValue: 0
     property real maximumValue: 100
-    property real threshold: 0
 
     property alias gaugeElements : gaugeElements.sourceComponent
 
-
+    implicitWidth: 300
+    implicitHeight: 10
 
     Text {
         id: labelText
@@ -32,79 +31,100 @@ Item {
     }
 
     Rectangle {
-        id: capacityBar
+        id: capacityBarContainer
         anchors {
             left: root.labelLeft ? labelText.right : parent.left
             leftMargin: root.label === "" ? 0 : root.labelLeft ? 10 : 0
             top: root.labelLeft ? labelText.top : labelText.bottom
             topMargin: root.label === "" ? 0 : root.labelLeft ? 0 : 5
         }
-        color: "lightgreen"
-        width: 200
-        height: 32
+        color: "mintcream"
+        width: gauge.width
+        height: gauge.height + capacityBar.height
+
+        Rectangle {
+            id: capacityBar
+            height: 32
+            anchors {
+                top: capacityBarContainer.top
+                right: capacityBarContainer.right
+                rightMargin: 12
+                left: capacityBarContainer.left
+                leftMargin: 12
+            }
+            color: "#252838"
+            border {
+                width: 1
+                color: colorMod(capacityBar.color, -0.1)
+            }
 
 
-//        Rectangle {
-//            id: threshold
-//            anchors {
-//                top: capacityBar.top
-//                bottom: capacityBar.bottom
+            Rectangle {
+                id: threshold
+                visible: root.showThreshold
+                anchors {
+                    top: capacityBar.top
+                    topMargin: 1
+                    bottom: capacityBar.bottom
+                    bottomMargin: 1
+                    right: capacityBar.right
+                    rightMargin: 1
+                }
+                color: "#961b1e"
+                width: (1 - (root.thresholdValue / root.maximumValue)) * capacityBar.width
+                //(root.thresholdValue-root.minimumValue)/(root.maximumValue-root.minimumValue)*300
+            }
+        }
+
+        Loader {
+            id: gaugeElements
+
+            property real masterMinimumValue: root.minimumValue
+            property real masterMaximumValue: root.maximumValue
+            property real masterWidth: capacityBar.width
+
+            anchors {
+                top: capacityBar.top
+                topMargin: 1
+                bottom: capacityBar.bottom
+                bottomMargin: 1
+                left: capacityBar.left
+                leftMargin: 1
 //                right: capacityBar.right
-//            }
-//        }
+//                rightMargin: 1
+            }
+            width: childrenRect.width
+            Component.onCompleted: console.log(childrenRect.width)
+        }
 
         Gauge {
             id: gauge
-            value: root.input
             tickmarkStepSize: 20
             minorTickmarkCount: 1
             font.pixelSize: 15
-            anchors.centerIn: parent
-            anchors.horizontalCenterOffset: -4
+            anchors {
+                top: capacityBar.bottom
+                topMargin: 1
+                left: capacityBarContainer.left
+            }
             orientation: Qt.Horizontal
+            width: root.width
+
+            Rectangle {   // TODO Faller - Remove debug layer
+                color: "tomato"
+                opacity: .1
+                anchors {
+                    fill: parent
+                }
+                z:20
+            }
 
             style: GaugeStyle {
                 valueBar: Rectangle {
-                    id: gaugeValueBar
-                    implicitWidth: 28
-                    color: "yellow"
-
-                    Loader {
-                        id: gaugeElements
-                        anchors {
-                            fill: parent
-                        }
-                    }
-
-
+                    implicitWidth: 0
                 }
 
-                background: Rectangle {
-                    id: gaugeBackground
-                    anchors {
-                        fill: parent
-                    }
-                    color: "lightgray"
-                    border {
-                        width: 1
-                        color: colorMod(capacityBar.color, -0.5)
-                    }
-
-                    Rectangle {
-                        id: gaugeThreshold
-                        color: "red"
-                        anchors {
-                            top: gaugeBackground.top
-                            topMargin: 1
-                            right: gaugeBackground.right
-                            rightMargin: 1
-                            left: gaugeBackground.left
-                            leftMargin: 1
-                        }
-                        height: root.maximumValue - root.thresholdValue
-                    }
-                }
-
+                background: null
                 foreground: null
 
                 tickmark: Item {
@@ -113,10 +133,10 @@ Item {
 
                     Rectangle {
                         x: control.tickmarkAlignment === Qt.AlignLeft
-                           || control.tickmarkAlignment === Qt.AlignTop ? parent.implicitWidth : -28
-                        width: 28
+                           || control.tickmarkAlignment === Qt.AlignTop ? parent.implicitWidth : 0
+                        width: 8
                         height: parent.height
-                        color: "#ffffff"
+                        color: "#999"
                     }
                 }
 
@@ -126,10 +146,10 @@ Item {
 
                     Rectangle {
                         x: control.tickmarkAlignment === Qt.AlignLeft
-                           || control.tickmarkAlignment === Qt.AlignTop ? parent.implicitWidth : -28
-                        width: 28
+                           || control.tickmarkAlignment === Qt.AlignTop ? parent.implicitWidth : 0
+                        width: 8
                         height: parent.height
-                        color: "#ffffff"
+                        color: "#999"
                     }
                 }
             }
