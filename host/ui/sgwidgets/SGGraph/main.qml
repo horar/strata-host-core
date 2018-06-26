@@ -16,7 +16,7 @@ Window {
                 fill: parent                // Set custom anchors for responsive sizing
             }
 
-            inputData: data.stream          // Set the graph's data source here
+            inputData: graphData.stream          // Set the graph's data source here
 
             // Optional graph settings:
             title: "Graph"                  // Default: empty
@@ -39,7 +39,7 @@ Window {
 
     // Sends demo data stream with adjustible timing interval output
     Timer {
-        id: data
+        id: graphData
         property real stream
         property real count: 0
         interval: 100
