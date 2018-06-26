@@ -5,20 +5,24 @@ import QtQuick.Controls.Styles 1.4
 Item {
     id: root
 
+    signal overThreshold()
+
     // Optional Configurations:
     property string label: ""
     property bool labelLeft: true
     property color textColor: "black"
-
     property bool showThreshold: false
-    property real thresholdValue: 0
+    property real thresholdValue: maximumValue
     property real minimumValue: 0
     property real maximumValue: 100
+    property real barWidth: 300
 
     property alias gaugeElements : gaugeElements.sourceComponent
 
-    implicitWidth: 300
-    implicitHeight: 10
+    property bool thresholdExceeded: false
+
+    implicitWidth: root.labelLeft ? labelText.width + capacityBarContainer.anchors.leftMargin + capacityBarContainer.width : Math.max(labelText.width, capacityBarContainer.width)
+    implicitHeight: root.labelLeft ? Math.max(labelText.height, capacityBarContainer.height) :labelText.height + capacityBarContainer.anchors.topMargin + capacityBarContainer.height
 
     Text {
         id: labelText
@@ -38,8 +42,7 @@ Item {
             top: root.labelLeft ? labelText.top : labelText.bottom
             topMargin: root.label === "" ? 0 : root.labelLeft ? 0 : 5
         }
-        color: "mintcream"
-        width: gauge.width
+        implicitWidth: root.barWidth
         height: gauge.height + capacityBar.height
 
         Rectangle {
@@ -48,16 +51,16 @@ Item {
             anchors {
                 top: capacityBarContainer.top
                 right: capacityBarContainer.right
-                rightMargin: 12
+                rightMargin: 10
                 left: capacityBarContainer.left
-                leftMargin: 12
+                leftMargin: anchors.rightMargin + 1
             }
             color: "#252838"
             border {
                 width: 1
                 color: colorMod(capacityBar.color, -0.1)
             }
-
+            clip: true
 
             Rectangle {
                 id: threshold
@@ -74,58 +77,63 @@ Item {
                 width: (1 - (root.thresholdValue / root.maximumValue)) * capacityBar.width
                 //(root.thresholdValue-root.minimumValue)/(root.maximumValue-root.minimumValue)*300
             }
-        }
 
-        Loader {
-            id: gaugeElements
+            Loader {
+                id: gaugeElements
 
-            property real masterMinimumValue: root.minimumValue
-            property real masterMaximumValue: root.maximumValue
-            property real masterWidth: capacityBar.width
+                property real masterMinimumValue: root.minimumValue
+                property real masterMaximumValue: root.maximumValue
+                property real masterWidth: capacityBar.width
+                property real totalValue: gaugeElements.item.totalValue
 
-            anchors {
-                top: capacityBar.top
-                topMargin: 1
-                bottom: capacityBar.bottom
-                bottomMargin: 1
-                left: capacityBar.left
-                leftMargin: 1
-//                right: capacityBar.right
-//                rightMargin: 1
+                anchors {
+                    top: capacityBar.top
+                    topMargin: 1
+                    bottom: capacityBar.bottom
+                    bottomMargin: 1
+                    left: capacityBar.left
+                    leftMargin: 1
+                }
+
+                onTotalValueChanged: {
+                    if (totalValue > capacityBar.width - threshold.width && !root.thresholdExceeded) {
+                        root.overThreshold()
+                        root.thresholdExceeded = true
+                    } else if (totalValue < capacityBar.width - threshold.width && root.thresholdExceeded) {
+                        root.thresholdExceeded = false
+                    }
+                }
             }
-            width: childrenRect.width
-            Component.onCompleted: console.log(childrenRect.width)
         }
+
+
 
         Gauge {
             id: gauge
-            tickmarkStepSize: 20
-            minorTickmarkCount: 1
-            font.pixelSize: 15
+            width: capacityBarContainer.width
             anchors {
-                top: capacityBar.bottom
-                topMargin: 1
-                left: capacityBarContainer.left
-            }
+                 top: capacityBar.bottom
+                 topMargin: 0
+                 left: capacityBarContainer.left
+             }
             orientation: Qt.Horizontal
-            width: root.width
 
-            Rectangle {   // TODO Faller - Remove debug layer
-                color: "tomato"
-                opacity: .1
-                anchors {
-                    fill: parent
-                }
-                z:20
-            }
+            tickmarkStepSize: (maximumValue-minimumValue)/5
+            minorTickmarkCount: 1
+            maximumValue: root.maximumValue
+            minimumValue: root.minimumValue
 
             style: GaugeStyle {
+                background: null
+                foreground: null
                 valueBar: Rectangle {
                     implicitWidth: 0
                 }
 
-                background: null
-                foreground: null
+                tickmarkLabel: Text {
+                    text: styleData.value.toFixed(0)
+                    color: root.textColor
+                }
 
                 tickmark: Item {
                     implicitWidth: 8
@@ -147,7 +155,7 @@ Item {
                     Rectangle {
                         x: control.tickmarkAlignment === Qt.AlignLeft
                            || control.tickmarkAlignment === Qt.AlignTop ? parent.implicitWidth : 0
-                        width: 8
+                        width: 4
                         height: parent.height
                         color: "#999"
                     }
