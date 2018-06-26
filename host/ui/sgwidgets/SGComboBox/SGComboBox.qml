@@ -170,7 +170,7 @@ Item {
         source: "fonts/sgicons.ttf"
     }
 
-    // Add increment to color (within range of 0-1)
+    // Add increment to color (within range of 0-1) add to lighten, subtract to darken
     function colorMod (color, increment) {
         return Qt.rgba(color.r + increment, color.g + increment, color.b + increment, 1 )
     }
