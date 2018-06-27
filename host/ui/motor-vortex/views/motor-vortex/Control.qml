@@ -13,6 +13,45 @@ Rectangle {
     anchors {
         fill: parent
     }
+    Connections {
+        target: coreInterface
+        onNotification: {
+            try {
+                /*
+                        Attempt to parse JSON
+                */
+                var notification = JSON.parse(payload)
+                if(notification.hasOwnProperty("payload")){
+                    /*
+                          check and parse the command for the notification
+                          based on the notification value
+                    */
+                    if(notification.value === "pi_stats") {
+                        advanceView.parseCurrentSpeed(notification)
+                    }
+                    else if(notification.value === "input_voltage_notification")
+                    {
+                        advanceView.parseVin(notification)
+                    }
+
+                    else
+                    {
+                        console.log("Error expected i2c_read or i2c_write but received", notification.value)
+                    }
+
+                }
+                else {
+                    conole.log("Notification Error. payload is corrupted");
+                }
+            }
+            catch(e)
+            {
+                if (e instanceof SyntaxError){
+                    console.log("Notification JSON is invalid,ignoring")
+                }
+            }
+        }
+    }
 
     TabBar {
         id: navTabs
@@ -58,12 +97,12 @@ Rectangle {
 
         Item {
             id: basicControl
-            BasicControl {}
+            BasicControl {id: basicView}
         }
 
         Item {
             id: advancedControl
-            AdvancedControl {}
+            AdvancedControl {id: advanceView}
         }
 
         Item {

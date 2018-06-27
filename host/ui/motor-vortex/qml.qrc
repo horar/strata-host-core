@@ -192,5 +192,7 @@
         <file>views/motor-vortex/sgwidgets/fonts/digitalseven.ttf</file>
         <file>views/motor-vortex/sgwidgets/SGCircularGauge.qml</file>
         <file>views/motor-vortex/sgwidgets/SGRadioButtonContainer.qml</file>
+        <file>views/motor-vortex/Control.js</file>
+        <file>../../../../../Downloads/SGComboBox/SGComboBox.qml</file>
     </qresource>
 </RCC>

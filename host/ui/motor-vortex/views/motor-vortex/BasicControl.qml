@@ -7,7 +7,7 @@ import QtQuick.Extras 1.4
 //import tech.spyglass. 1.0
 import "qrc:/js/navigation_control.js" as NavigationControl
 import "qrc:/views/motor-vortex/sgwidgets"
-
+import "qrc:/views/motor-vortex/Control.js" as MotorControl
 Rectangle {
     id: controlPage
     objectName: "control"
@@ -15,6 +15,11 @@ Rectangle {
     // used to check whether the motor slider has been already updated from platform notification
     property bool isMotorSliderUpdated: false;
     color: "white"
+
+    Component.onCompleted: {
+        MotorControl.setSystemModeSelection("manual");
+        MotorControl.printsystemModeSelection();
+    }
 
     // Platform Implementation signals
     Connections {
@@ -45,6 +50,7 @@ Rectangle {
                     Note: Motor platform sometimes has noise in json and can corrupt values
                 */
                 var notification = JSON.parse(payload)
+                console.log("here is the payload", payload)
 
                 //check if the object has valid payload key
                 if(notification.hasOwnProperty("payload")){
@@ -165,15 +171,11 @@ Rectangle {
 
                 function setMotorSpeedCommand(value) {
                     var truncated_value = Math.floor(value)
-                    var setSpeedCmd ={
-                        "cmd":"speed_input",
-                        "payload": {
-                            "speed_target":truncated_value
-                        }
-                    }
+                    MotorControl.setTarget(truncated_value)
+                    MotorControl.printsystemModeSelection()
                     // send set speed command to platform
                     console.log ("set speed_target", truncated_value)
-                    coreInterface.sendCommand(JSON.stringify(setSpeedCmd))
+                    coreInterface.sendCommand(MotorControl.getSpeedInput())
                 }
 
                 onValueChanged: {
@@ -207,15 +209,10 @@ Rectangle {
                         checked: true
                         onCheckedChanged: {
                             if (checked) {
-                                console.log("MANUAL CONTROL")
-                                var systemModeCmd ={
-                                    "cmd":"set_system_mode",
-                                    "payload": {
-                                        "system_mode":"manual"
-                                    }
-                                }
+                                MotorControl.setSystemModeSelection("manual");
+                                MotorControl.printsystemModeSelection()
                                 // send command to platform
-                                coreInterface.sendCommand(JSON.stringify(systemModeCmd))
+                                coreInterface.sendCommand(MotorControl.getSystemModeSelection())
                             }
                         }
                     }
@@ -225,15 +222,10 @@ Rectangle {
                         text: "Automatic Demo Pattern"
                         onCheckedChanged: {
                             if (checked) {
-                                console.log("AUTOMATIC")
-                                var systemModeCmd ={
-                                    "cmd":"set_system_mode",
-                                    "payload": {
-                                        "system_mode":"automation"
-                                    }
-                                }
+                                MotorControl.setSystemModeSelection("automation");
+                                MotorControl.printsystemModeSelection()
                                 // send command to platform
-                                coreInterface.sendCommand(JSON.stringify(systemModeCmd))
+                                coreInterface.sendCommand(MotorControl.getSystemModeSelection())
                             }
                         }
                     }
