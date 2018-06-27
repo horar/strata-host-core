@@ -24,45 +24,32 @@ Window {
 
 
     Button {
-        id: green
-        y: 200
-        text: "Green"
-        onClicked: sgStatusLight.status = "green"
-    }
-
-    Button {
-        id: red
+        id: switchStatus
         anchors {
-            top: green.bottom
+            top: sgStatusLight.bottom
+            topMargin: 50
         }
-        text: "Red"
-        onClicked: sgStatusLight.status = "red"
-    }
-
-    Button {
-        id: yellow
-        anchors {
-            top: red.bottom
+        property real status: 0
+        text: "Switch Status"
+        onClicked: {
+            if (status > 3) { status = 0 } else { status++ }
+            switch (status) {
+                case 1:
+                    sgStatusLight.status = "green"
+                    break;
+                case 2:
+                    sgStatusLight.status = "yellow"
+                    break;
+                case 3:
+                    sgStatusLight.status = "orange"
+                    break;
+                case 4:
+                    sgStatusLight.status = "red"
+                    break;
+                default:
+                    sgStatusLight.status = "off"
+                    break;
+            }
         }
-        text: "Yellow"
-        onClicked: sgStatusLight.status = "yellow"
-    }
-
-    Button {
-        id: orange
-        anchors {
-            top: yellow.bottom
-        }
-        text: "Orange"
-        onClicked: sgStatusLight.status = "orange"
-    }
-
-    Button {
-        id: off
-        anchors {
-            top: orange.bottom
-        }
-        text: "Off"
-        onClicked: sgStatusLight.status = "off"
     }
 }

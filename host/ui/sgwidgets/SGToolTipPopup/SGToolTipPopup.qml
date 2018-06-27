@@ -13,6 +13,7 @@ Canvas {
     onShowOnChanged: {
         showOn ? showAnimation.start() : hideAnimation.start()
     }
+    z:50
     opacity: 0
     visible: false
     implicitWidth: content.childrenRect.width + 20

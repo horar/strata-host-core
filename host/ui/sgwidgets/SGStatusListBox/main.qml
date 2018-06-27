@@ -19,7 +19,7 @@ Window {
             right: parent.right
         }
 
-        // Optional SGOutputLogBox Settings:
+        // Optional Configuration:
         title: "Status List"            // Default: "" (title bar will not be visible when empty string)
         titleTextColor: "#000000"       // Default: "#000000" (black)
         titleBoxColor: "#eeeeee"        // Default: "#eeeeee" (light gray)

@@ -11,12 +11,12 @@ Window {
     SGSubmitInfoBox {
         id: applyInfoBox
 
-        input: "6"    // String to this to be displayed in box
+        input: "6"                  // Default string to be displayed in box
         infoBoxWidth: 80            // Must be set by user based on their needs
 
         // Optional configuration:
         label: "Voltage (volts):"       // Default: "" (if not entered, label will not appear)
-        labelLeft: false                 // Default: true (if false, label will be on top)
+        labelLeft: false                // Default: true (if false, label will be on top)
         infoBoxColor: "#eee"            // Default: "#eeeeee" (light gray)
         infoBoxBorderColor: "#999"      // Default: "#999999" (dark gray)
         infoBoxBorderWidth: 1           // Default: 1 (assign 0 for no border)
