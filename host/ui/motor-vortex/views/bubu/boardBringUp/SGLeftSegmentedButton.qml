@@ -1,16 +1,18 @@
 import QtQuick 2.0
 import QtQuick.Controls 2.0
+import "qrc:/views/bubu/Control.js" as BubuControl
 
 Button {
     id:leftButton
     width:100
     height:40
-    property var tabName
+    property string pinFunction: ""
+    property int tabIndex: 0
+    property string portName: "a" //default port is set to "a"
     property int smallFontSize: (Qt.platform.os === "osx") ? 12  : 10;
     property int mediumFontSize: (Qt.platform.os === "osx") ? 15  : 12;
     property int largeFontSize: (Qt.platform.os === "osx") ? 24  : 20;
     property int extraLargeFontSize: (Qt.platform.os === "osx") ? 36  : 24;
-
     checkable: true
     checked:true
 
@@ -40,18 +42,8 @@ Button {
     }
 
     onCheckedChanged: {
-        leftButtonCanvas.requestPaint()
-        //console.log("marking canvas as dirty")
+        leftButtonCanvas.requestPaint();
+
     }
 
-    function createTab(inTabName, inParent){
-        var component  = Qt.createComponent(inTabName);
-        var object = component.createObject(inParent);
-        return object
-    }
-
-    Component.onCompleted: {
-        console.log("PWM setting", tabName);
-        tabName = createTab(tabName,contentRectangle);
-    }
 }
