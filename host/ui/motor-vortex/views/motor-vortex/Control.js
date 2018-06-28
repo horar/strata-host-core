@@ -1,4 +1,12 @@
 .pragma library
+//.import Qt.tech.spyglass.CoreInterface 1.0 as CoreInterface
+var LocalCoreInterface = null
+
+function setCoreInterface(coreInt)
+{
+    LocalCoreInterface = coreInt;
+    console.log("heyyy dude I'm in abc function");
+}
 
 /*
   Platform Identification Request
@@ -45,7 +53,7 @@ var set_drive_mode = {
 var set_phase_angle = {
     "cmd":"set_phase_angle",
     "payload":{
-        "phase_angle": "" ,   //Value varies from 0to 15. The numbers represent 0 degrees to 28.125 degrees
+        "phase_angle": "" ,   //Value varies from 0 to 15. The numbers represent 0 degrees to 28.125 degrees
     }
 }
 /*
@@ -69,16 +77,43 @@ var set_reset_mcu = {
 function setMotorOnOff(enabled)
 {
     set_motor_on_off.payload.enable = enabled;
+    LocalCoreInterface.sendCommand(getMotorstate());
 }
 
 function setPhaseAngle(phase_angle)
 {
     set_phase_angle.payload.phase_angle = phase_angle;
+    LocalCoreInterface.sendCommand(getSetPhaseAngle());
 }
 
 function setDriveMode(drive_mode)
 {
     set_drive_mode.payload.drive_mode = drive_mode
+    LocalCoreInterface.sendCommand(getDriveMode());
+}
+
+function setSystemModeSelection(system_mode)
+{
+    system_mode_selection.payload.system_mode = system_mode;
+    LocalCoreInterface.sendCommand(getSystemModeSelection());
+}
+
+function setTarget(speed_target)
+{
+    speed_input.payload.speed_target = speed_target
+    LocalCoreInterface.sendCommand(getSpeedInput());
+}
+
+function setReset()
+{
+     LocalCoreInterface.sendCommand(getResetcmd());
+}
+
+function printsystemModeSelection()
+{
+    console.log(JSON.stringify(system_mode_selection))
+    console.log("core", LocalCoreInterface)
+//    console.log("core real", coreInterface)
 }
 
 function printDriveMode()
@@ -86,24 +121,9 @@ function printDriveMode()
     console.log(JSON.stringify(set_drive_mode))
 }
 
-function setSystemModeSelection(system_mode)
-{
-    system_mode_selection.payload.system_mode = system_mode
-}
-
-function printsystemModeSelection()
-{
-    console.log(JSON.stringify(system_mode_selection))
-}
-
 function printPhaseAngle()
 {
     console.log(JSON.stringify(set_phase_angle))
-}
-
-function setTarget(speed_target)
-{
-    speed_input.payload.speed_target = speed_target
 }
 
 function printSpeedInput()
@@ -115,7 +135,6 @@ function printSetMotorState()
 {
     console.log(JSON.stringify(set_motor_on_off))
 }
-
 
 function getSystemModeSelection()
 {

@@ -37,7 +37,7 @@ Item{
         id: sgSlider
 
         property real hoverOpacity: 0
-
+        updateValueWhileDragging: false
         height: 30
         minimumValue: 0.0
         maximumValue: 100.0

@@ -7,12 +7,17 @@ import QtQuick.Extras 1.4
 //import tech.spyglass. 1.0
 import "qrc:/js/navigation_control.js" as NavigationControl
 import "qrc:/views/motor-vortex/sgwidgets"
-
+import "qrc:/views/motor-vortex/Control.js" as MotorControl
 Rectangle {
     id: controlNavigation
     anchors {
         fill: parent
     }
+
+    Component.onCompleted: {
+         MotorControl.setCoreInterface(coreInterface);
+    }
+
     Connections {
         target: coreInterface
         onNotification: {
@@ -27,11 +32,13 @@ Rectangle {
                           based on the notification value
                     */
                     if(notification.value === "pi_stats") {
-                        advanceView.parseCurrentSpeed(notification)
+                        advanceView.parseCurrentSpeed(notification);
+                        faeView.parseCurrentSpeed(notification);
                     }
                     else if(notification.value === "input_voltage_notification")
                     {
-                        advanceView.parseVin(notification)
+                        advanceView.parseVin(notification);
+                        faeView.parseVin(notification);
                     }
 
                     else
@@ -97,17 +104,17 @@ Rectangle {
 
         Item {
             id: basicControl
-            BasicControl {id: basicView}
+            BasicControl {id: basicView }
         }
 
         Item {
             id: advancedControl
-            AdvancedControl {id: advanceView}
+            AdvancedControl {id: advanceView }
         }
 
         Item {
             id: faeControl
-            FAEControl {}
+            FAEControl {id : faeView }
         }
     }
 

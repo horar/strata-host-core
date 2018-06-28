@@ -4,12 +4,51 @@ import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.2
 import "qrc:/js/navigation_control.js" as NavigationControl
 import "qrc:/views/motor-vortex/sgwidgets"
-
+import "qrc:/views/motor-vortex/Control.js" as MotorControl
 
 Rectangle {
     id: advancedControl
     anchors {
         fill: parent
+    }
+    function parseCurrentSpeed(notification)
+    {
+        var periodic_current_speed = notification.payload.current_speed;
+
+        if(periodic_current_speed !== undefined)
+        {
+            speedBox.info = periodic_current_speed;
+        }
+        else
+        {
+            console.log("Junk data found", periodic_current_speed);
+        }
+    }
+
+    function parseVin(notification)
+    {
+        var input_voltage =  notification.payload.vin;
+
+        if(input_voltage !== undefined)
+        {
+            vInBox.info = input_voltage;
+        }
+        else
+        {
+            console.log("Junk data found", input_voltage);
+        }
+    }
+
+    Component.onCompleted:  {
+        /*
+          Setting the deflaut to be trapezoidal
+        */
+        MotorControl.setDriveMode(parseInt("0"));
+        MotorControl.printDriveMode();
+        MotorControl.setPhaseAngle(parseInt("15"));
+        MotorControl.printPhaseAngle();
+       // coreInterface.sendCommand(MotorControl.getDriveMode());
+        //coreInterface.sendCommand(MotorControl.getSetPhaseAngle());
     }
 
     Rectangle {
@@ -107,6 +146,8 @@ Rectangle {
             showOptions: false
             xAxisTitle: "Seconds"
             yAxisTitle: "Voltage"
+            inputData: vInBox.info
+            maxYValue: 15
         }
 
         SGGraph{
@@ -120,6 +161,8 @@ Rectangle {
             showOptions: false
             xAxisTitle: "Seconds"
             yAxisTitle: "RPM"
+            inputData: speedBox.info
+            maxYValue: 6500
         }
 
         SGStatusListBox {
@@ -153,12 +196,24 @@ Rectangle {
 
             Button {
                 id: startStopButton
-                text: checked ? qsTr("Stop Motor") : qsTr("Start Motor")
+                text: checked ? qsTr("Start Motor") : qsTr("Stop Motor")
                 checkable: true
                 background: Rectangle {
-                    color: startStopButton.checked ? "red" : "lightgreen"
+                    color: startStopButton.checked ? "lightgreen" : "red"
                     implicitWidth: 100
                     implicitHeight: 40
+                }
+                onClicked: {
+                    if(checked) {
+                        MotorControl.setMotorOnOff(parseInt("0"));
+                        MotorControl.printSetMotorState();
+                     //   coreInterface.sendCommand(MotorControl.getMotorstate());
+                    }
+                    else {
+                        MotorControl.setMotorOnOff(parseInt("1"));
+                        MotorControl.printSetMotorState();
+                    //    coreInterface.sendCommand(MotorControl.getMotorstate());
+                    }
                 }
             }
 
@@ -169,6 +224,58 @@ Rectangle {
                     leftMargin: 20
                 }
                 text: qsTr("Reset")
+                onClicked: {
+                    coreInterface.sendCommand(MotorControl.getResetcmd());
+                }
+            }
+        }
+
+        SGRadioButtonContainer {
+            id: operationModeControl
+            anchors {
+                top: ssButtonContainer.bottom
+                topMargin: 40
+                left: ssButtonContainer.left
+            }
+
+            label: "<b>Operation Mode:</b>"
+            labelLeft: false
+            exclusive: true
+
+            radioGroup: GridLayout {
+                columnSpacing: 10
+                rowSpacing: 10
+
+                // Optional properties to access specific buttons cleanly from outside
+                property alias manual : manual
+                property alias automatic: automatic
+
+                SGRadioButton {
+                    id: manual
+                    text: "Manual Control"
+                    checked: true
+                    onCheckedChanged: {
+                        if (checked) {
+                            MotorControl.setSystemModeSelection("manual");
+                            MotorControl.printsystemModeSelection()
+                            // send command to platform
+                           // coreInterface.sendCommand(MotorControl.getSystemModeSelection())
+                        }
+                    }
+                }
+
+                SGRadioButton {
+                    id: automatic
+                    text: "Automatic Demo Pattern"
+                    onCheckedChanged: {
+                        if (checked) {
+                            MotorControl.setSystemModeSelection("automation");
+                            MotorControl.printsystemModeSelection()
+                            // send command to platform
+                            //coreInterface.sendCommand(MotorControl.getSystemModeSelection())
+                        }
+                    }
+                }
             }
         }
 
@@ -179,7 +286,7 @@ Rectangle {
             color: speedSafetyButton.checked ? "#ffb4aa" : "#eeeeee"
             anchors {
                 horizontalCenter: rightSide.horizontalCenter
-                top: ssButtonContainer.bottom
+                top: operationModeControl.bottom
                 topMargin: 20
             }
 
@@ -199,6 +306,18 @@ Rectangle {
                     right: speedControlContainer.right
                     rightMargin: 10
                 }
+                function setMotorSpeedCommand(value) {
+                    var truncated_value = Math.floor(value)
+                    MotorControl.setTarget(truncated_value)
+                    MotorControl.printsystemModeSelection()
+                    // send set speed command to platform
+                    console.log ("set speed_target", truncated_value)
+                  //  coreInterface.sendCommand(MotorControl.getSpeedInput())
+                }
+                onValueChanged: {
+                    setMotorSpeedCommand(value)
+                }
+
             }
 
             SGSlider {
@@ -289,174 +408,202 @@ Rectangle {
                         id: ps
                         text: "Pseudo-Sinusoidal"
                         checked: true
-                        onCheckedChanged: { if (checked) console.log ( "PS Checked!") }
+                        onCheckedChanged: {
+                            if (checked) {
+                                console.log ( "PS Checked!")
+                                MotorControl.setDriveMode(parseInt("1"));
+                                MotorControl.printDriveMode();
+                            //   coreInterface.sendCommand(MotorControl.getDriveMode())
+                            }
+                        }
+
+                        SGRadioButton {
+                            id: trap
+                            text: "Trapezoidal"
+                            onCheckedChanged: { if (checked) {
+                                    console.log ( "Trap Checked!")
+                                    MotorControl.setDriveMode(parseInt("0"));
+                                    MotorControl.printDriveMode();
+                                 //   coreInterface.sendCommand(MotorControl.getDriveMode());
+                                }
+                            }
+                        }
                     }
 
-                    SGRadioButton {
-                        id: trap
-                        text: "Trapezoidal"
-                        onCheckedChanged: { if (checked) console.log ( "Trap Checked!") }
+                    Item {
+                        id: phaseAngleRow
+                        width: childrenRect.width
+                        height: childrenRect.height
+                        anchors {
+                            top: driveModeRadios.bottom
+                            topMargin: 10
+                            horizontalCenter: driveModeContainer.horizontalCenter
+                        }
+
+                        Text {
+                            width: contentWidth
+                            id: phaseAngleTitle
+                            text: qsTr("Phase Angle:")
+                            anchors {
+                                verticalCenter: driveModeCombo.verticalCenter
+                            }
+                        }
+
+                        ComboBox{
+                            id: driveModeCombo
+                            model: ["0", "1.875", "3.75","5.625","7.5", "9.375", "11.25","13.125", "15", "16.875", "18.75", "20.625", "22.5" , "24.375" , "26.25" , "28.125"]
+                            anchors {
+                                top: phaseAngleRow.top
+                                left: phaseAngleTitle.right
+                                leftMargin: 20
+                            }
+                            onCurrentIndexChanged: {
+                                console.log("index of the combo box", currentIndex)
+                                MotorControl.setPhaseAngle(parseInt(currentIndex));
+                                MotorControl.printPhaseAngle();
+                              //  coreInterface.sendCommand(MotorControl.getSetPhaseAngle());
+                            }
+                        }
+                    }
+                }
+
+                Rectangle {
+                    id: directionControlContainer
+                    width: 500
+                    height: childrenRect.height + 20
+                    color: directionSafetyButton.checked ? "#ffb4aa" : "#eeeeee"
+                    anchors {
+                        horizontalCenter: rightSide.horizontalCenter
+                        top: driveModeContainer.bottom
+                        topMargin: 20
+                    }
+
+                    SGRadioButtonContainer {
+                        id: directionRadios
+                        anchors {
+                            horizontalCenter: directionControlContainer.horizontalCenter
+                            top: directionControlContainer.top
+                            topMargin: 10
+                        }
+
+                        // Optional configuration:
+                        label: "Direction:"
+
+                        radioGroup: GridLayout {
+                            columnSpacing: 10
+                            rowSpacing: 10
+
+                            SGRadioButton {
+                                text: "Forward"
+                                checked: true
+                                enabled: directionSafetyButton.checked
+                            }
+
+                            SGRadioButton {
+                                text: "Reverse"
+                                enabled: directionSafetyButton.checked
+                            }
+                        }
+                    }
+
+                    Item {
+                        id: directionSafety
+                        height: childrenRect.height
+                        anchors {
+                            top: directionRadios.bottom
+                            topMargin: 10
+                            left: directionControlContainer.left
+                            leftMargin: 10
+                            right: directionControlContainer.right
+                            rightMargin: 10
+                        }
+
+                        Button {
+                            id: directionSafetyButton
+                            width: 185
+                            anchors {
+                                left: directionSafety.left
+                            }
+                            text: checked ? "Turn Direction Lock On" : "<font color='red'><b>Turn Direction Lock Off</b></font>"
+                            checkable: true
+                            checked: false
+                            onClicked: if (checked) directionPopup.open()
+                        }
+
+                        Text {
+                            id: directionWarning
+                            text: "<font color='red'><strong>Warning:</strong></font> Changing the direction of the motor will damage the pump."
+                            wrapMode: Text.WordWrap
+                            anchors {
+                                left: directionSafetyButton.right
+                                leftMargin: 20
+                                right: directionSafety.right
+                                verticalCenter: directionSafetyButton.verticalCenter
+                            }
+                        }
                     }
                 }
             }
 
-            Item {
-                id: phaseAngleRow
-                width: childrenRect.width
-                height: childrenRect.height
-                anchors {
-                    top: driveModeRadios.bottom
-                    topMargin: 10
-                    horizontalCenter: driveModeContainer.horizontalCenter
+            Dialog {
+                id: speedPopup
+                x: 0; y: 0
+              //  x: Math.round((advancedControl.width - width) / 2)
+             //     y: Math.round((advancedControl.height - height) / 2)
+
+                width: 350
+                height: speedPopupText.height + footer.height + padding * 2
+                modal: true
+                focus: true
+                closePolicy: Popup.CloseOnEscape
+                padding: 20
+                background: Rectangle {
+                    border.width: 0
+                    color: "red"
+
                 }
+                standardButtons: Dialog.Ok | Dialog.Cancel
+                onRejected: { speedSafetyButton.checked = false }
 
                 Text {
-                    width: contentWidth
-                    id: phaseAngleTitle
-                    text: qsTr("Phase Angle:")
-                    anchors {
-                        verticalCenter: driveModeCombo.verticalCenter
-                    }
-                }
-
-                ComboBox{
-                    id: driveModeCombo
-                    model: ["7 Degrees", "14 Degrees"]
-                    anchors {
-                        top: phaseAngleRow.top
-                        left: phaseAngleTitle.right
-                        leftMargin: 20
-                    }
-                }
-            }
-        }
-
-        Rectangle {
-            id: directionControlContainer
-            width: 500
-            height: childrenRect.height + 20
-            color: directionSafetyButton.checked ? "#ffb4aa" : "#eeeeee"
-            anchors {
-                horizontalCenter: rightSide.horizontalCenter
-                top: driveModeContainer.bottom
-                topMargin: 20
-            }
-
-            SGRadioButtonContainer {
-                id: directionRadios
-                anchors {
-                    horizontalCenter: directionControlContainer.horizontalCenter
-                    top: directionControlContainer.top
-                    topMargin: 10
-                }
-
-                // Optional configuration:
-                label: "Direction:"
-
-                radioGroup: GridLayout {
-                    columnSpacing: 10
-                    rowSpacing: 10
-
-                    SGRadioButton {
-                        text: "Forward"
-                        checked: true
-                        enabled: directionSafetyButton.checked
-                    }
-
-                    SGRadioButton {
-                        text: "Reverse"
-                        enabled: directionSafetyButton.checked
-                    }
-                }
-            }
-
-            Item {
-                id: directionSafety
-                height: childrenRect.height
-                anchors {
-                    top: directionRadios.bottom
-                    topMargin: 10
-                    left: directionControlContainer.left
-                    leftMargin: 10
-                    right: directionControlContainer.right
-                    rightMargin: 10
-                }
-
-                Button {
-                    id: directionSafetyButton
-                    width: 185
-                    anchors {
-                        left: directionSafety.left
-                    }
-                    text: checked ? "Turn Direction Lock On" : "<font color='red'><b>Turn Direction Lock Off</b></font>"
-                    checkable: true
-                    checked: false
-                    onClicked: if (checked) directionPopup.open()
-                }
-
-                Text {
-                    id: directionWarning
-                    text: "<font color='red'><strong>Warning:</strong></font> Changing the direction of the motor will damage the pump."
+                    id: speedPopupText
+                    width: speedPopup.width - speedPopup.padding * 2
+                    height: contentHeight
                     wrapMode: Text.WordWrap
-                    anchors {
-                        left: directionSafetyButton.right
-                        leftMargin: 20
-                        right: directionSafety.right
-                        verticalCenter: directionSafetyButton.verticalCenter
-                    }
+                    text: "<font color='red'><strong>Warning:</strong></font> The demo setup may be damaged if run beyond the safety limits. Are you sure you'd like to turn off the limits?"
+                }
+                Component.onCompleted: {
+                    console.log("directionPop", directionPopup.x, directionPopup.y);
                 }
             }
-        }
-    }
 
-    Dialog {
-        id: speedPopup
-        x: Math.round((advancedControl.width - width) / 2)
-        y: Math.round((advancedControl.height - height) / 2)
-        width: 350
-        height: speedPopupText.height + footer.height + padding * 2
-        modal: true
-        focus: true
-        closePolicy: Popup.CloseOnEscape
-        padding: 20
-        background: Rectangle {
-            border.width: 0
-        }
-        standardButtons: Dialog.Ok | Dialog.Cancel
-        onRejected: { speedSafetyButton.checked = false }
+            Dialog {
+                id: directionPopup
+                x: 0; y: 0
+//                x: Math.round((advancedControl.width - width) / 2)
+//                y: Math.round((advancedControl.height - height) / 2)
+                width: 350
+                height: directionPopupText.height + footer.height + padding * 2
+                modal: true
+                focus: true
+                closePolicy: Popup.CloseOnEscape
+                padding: 20
+                background: Rectangle {
+                    border.width: 0
+                }
+                standardButtons: Dialog.Ok | Dialog.Cancel
+                onRejected: { directionSafetyButton.checked = false }
 
-        Text {
-            id: speedPopupText
-            width: speedPopup.width - speedPopup.padding * 2
-            height: contentHeight
-            wrapMode: Text.WordWrap
-            text: "<font color='red'><strong>Warning:</strong></font> The demo setup may be damaged if run beyond the safety limits. Are you sure you'd like to turn off the limits?"
-        }
-    }
+                Text {
+                    id: directionPopupText
+                    width: directionPopup.width - directionPopup.padding * 2
+                    height: contentHeight
+                    wrapMode: Text.WordWrap
+                    text: "<font color='red'><strong>Warning:</strong></font> The pump will be damaged if run in reverse. Are you sure you'd like to turn off the direction lock?"
+                }
 
-    Dialog {
-        id: directionPopup
-        x: Math.round((advancedControl.width - width) / 2)
-        y: Math.round((advancedControl.height - height) / 2)
-        width: 350
-        height: directionPopupText.height + footer.height + padding * 2
-        modal: true
-        focus: true
-        closePolicy: Popup.CloseOnEscape
-        padding: 20
-        background: Rectangle {
-            border.width: 0
+            }
         }
-        standardButtons: Dialog.Ok | Dialog.Cancel
-        onRejected: { directionSafetyButton.checked = false }
 
-        Text {
-            id: directionPopupText
-            width: directionPopup.width - directionPopup.padding * 2
-            height: contentHeight
-            wrapMode: Text.WordWrap
-            text: "<font color='red'><strong>Warning:</strong></font> The pump will be damaged if run in reverse. Are you sure you'd like to turn off the direction lock?"
-        }
     }
 }
-

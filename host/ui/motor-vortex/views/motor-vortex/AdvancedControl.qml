@@ -48,8 +48,8 @@ Rectangle {
         MotorControl.printDriveMode();
         MotorControl.setPhaseAngle(parseInt("15"));
         MotorControl.printPhaseAngle();
-        coreInterface.sendCommand(MotorControl.getDriveMode());
-        coreInterface.sendCommand(MotorControl.getSetPhaseAngle());
+        //coreInterface.sendCommand(MotorControl.getDriveMode());
+        //coreInterface.sendCommand(MotorControl.getSetPhaseAngle());
     }
     
     Rectangle {
@@ -154,12 +154,12 @@ Rectangle {
                     if(checked) {
                         MotorControl.setMotorOnOff(parseInt("0"));
                         MotorControl.printSetMotorState();
-                        coreInterface.sendCommand(MotorControl.getMotorstate());
+                    //    coreInterface.sendCommand(MotorControl.getMotorstate());
                     }
                     else {
                         MotorControl.setMotorOnOff(parseInt("1"));
                         MotorControl.printSetMotorState();
-                        coreInterface.sendCommand(MotorControl.getMotorstate());
+                     //   coreInterface.sendCommand(MotorControl.getMotorstate());
                     }
                 }
             }
@@ -172,7 +172,9 @@ Rectangle {
                 }
                 text: qsTr("Reset")
                 onClicked: {
-                    coreInterface.sendCommand(MotorControl.getResetcmd());
+
+                    MotorControl.setReset()
+                  //  coreInterface.sendCommand(MotorControl.getResetcmd());
                 }
             }
         }
@@ -206,7 +208,7 @@ Rectangle {
                             MotorControl.setSystemModeSelection("manual");
                             MotorControl.printsystemModeSelection()
                             // send command to platform
-                            coreInterface.sendCommand(MotorControl.getSystemModeSelection())
+                        //    coreInterface.sendCommand(MotorControl.getSystemModeSelection())
                         }
                     }
                 }
@@ -219,7 +221,7 @@ Rectangle {
                             MotorControl.setSystemModeSelection("automation");
                             MotorControl.printsystemModeSelection()
                             // send command to platform
-                            coreInterface.sendCommand(MotorControl.getSystemModeSelection())
+                        //    coreInterface.sendCommand(MotorControl.getSystemModeSelection())
                         }
                     }
                 }
@@ -260,7 +262,7 @@ Rectangle {
                     MotorControl.printsystemModeSelection()
                     // send set speed command to platform
                     console.log ("set speed_target", truncated_value)
-                    coreInterface.sendCommand(MotorControl.getSpeedInput())
+                   // coreInterface.sendCommand(MotorControl.getSpeedInput())
                 }
                 onValueChanged: {
                     setMotorSpeedCommand(value)
@@ -346,7 +348,7 @@ Rectangle {
                                 console.log ( "PS Checked!")
                                 MotorControl.setDriveMode(parseInt("1"));
                                 MotorControl.printDriveMode();
-                                coreInterface.sendCommand(MotorControl.getDriveMode());
+                              //  coreInterface.sendCommand(MotorControl.getDriveMode());
 
                             }
                         }
@@ -360,7 +362,7 @@ Rectangle {
                                 console.log ( "Trap Checked!")
                                 MotorControl.setDriveMode(parseInt("0"));
                                 MotorControl.printDriveMode();
-                                coreInterface.sendCommand(MotorControl.getDriveMode());
+                            //    coreInterface.sendCommand(MotorControl.getDriveMode());
                             }
                         }
                     }
@@ -387,8 +389,6 @@ Rectangle {
 
                     ComboBox{
                         id: driveModeCombo
-                     //   height: 50
-
                         model: ["0", "1.875", "3.75","5.625","7.5", "9.375", "11.25","13.125", "15", "16.875", "18.75", "20.625", "22.5" , "24.375" , "26.25" , "28.125"]
                         anchors {
                             top: phaseAngleRow.top
@@ -399,7 +399,7 @@ Rectangle {
                             console.log("index of the combo box", currentIndex)
                             MotorControl.setPhaseAngle(parseInt(currentIndex));
                             MotorControl.printPhaseAngle();
-                            coreInterface.sendCommand(MotorControl.getSetPhaseAngle());
+                          //  coreInterface.sendCommand(MotorControl.getSetPhaseAngle());
                         }
                     }
 

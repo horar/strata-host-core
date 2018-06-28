@@ -17,6 +17,7 @@ Rectangle {
     color: "white"
 
     Component.onCompleted: {
+
         MotorControl.setSystemModeSelection("manual");
         MotorControl.printsystemModeSelection();
     }
@@ -177,8 +178,11 @@ Rectangle {
                     MotorControl.printsystemModeSelection()
                     // send set speed command to platform
                     console.log ("set speed_target", truncated_value)
-                    coreInterface.sendCommand(MotorControl.getSpeedInput())
+                   // coreInterface.sendCommand(MotorControl.getSpeedInput())
                 }
+
+
+
 
                 onValueChanged: {
                     setMotorSpeedCommand(value)
@@ -214,7 +218,8 @@ Rectangle {
                                 MotorControl.setSystemModeSelection("manual");
                                 MotorControl.printsystemModeSelection()
                                 // send command to platform
-                                coreInterface.sendCommand(MotorControl.getSystemModeSelection())
+
+                               // coreInterface.sendCommand(MotorControl.getSystemModeSelection())
                             }
                         }
                     }
@@ -227,7 +232,7 @@ Rectangle {
                                 MotorControl.setSystemModeSelection("automation");
                                 MotorControl.printsystemModeSelection()
                                 // send command to platform
-                                coreInterface.sendCommand(MotorControl.getSystemModeSelection())
+                               // coreInterface.sendCommand(MotorControl.getSystemModeSelection())
                             }
                         }
                     }

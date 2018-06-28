@@ -20,10 +20,10 @@ Window {
         NavigationControl.init(flipable,controlContainer, contentContainer, statusBarContainer)
 
         // Faller Debug Code - REMOVE LATER
-        var data = { user_id: "Guest" }
-        NavigationControl.updateState(NavigationControl.events.LOGIN_SUCCESSFUL_EVENT,data)
-        data = { platform_name: "motor-vortex"}
-        NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT, data)
+//        var data = { user_id: "Guest" }
+//        NavigationControl.updateState(NavigationControl.events.LOGIN_SUCCESSFUL_EVENT,data)
+//        data = { platform_name: "motor-vortex"}
+//        NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT, data)
     }
 
     onClosing: {
