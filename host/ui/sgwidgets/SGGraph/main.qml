@@ -1,5 +1,6 @@
 import QtQuick 2.9
 import QtQuick.Window 2.2
+import QtQuick.Controls 2.2
 
 Window {
     visible: true
@@ -35,6 +36,7 @@ Window {
         showXGrids: false               // Default: false
         showYGrids: true                // Default: false
         showOptions: true               // Default: false
+        repeatingData: false            // default: false (!!Resource Heavy!! - last data point will repeat itself until new data is graphed)
     }
 
     // Sends demo data stream with adjustible timing interval output

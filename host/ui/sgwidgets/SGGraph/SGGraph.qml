@@ -26,6 +26,7 @@ ChartView {
     }
 
     property alias series: dataLine
+    property alias repeatingData: dataRepeater.running
 
     property int textSize: 14
     property color dataLineColor: Qt.rgba(0, 0, 0, 1)
@@ -50,7 +51,7 @@ ChartView {
     property real inputData
     property real dataTime: 0
     property real time: Date.now()
-
+    property real lastDataTime
 
     // Define x-axis to be used with the series instead of default one
     ValueAxis {
@@ -151,7 +152,33 @@ ChartView {
         }
     }
 
-    onInputDataChanged: {
+    Timer {
+        id: dataRepeater
+        interval: 100
+        running: false
+        repeat: true
+        onTriggered: {
+            if ( Date.now() - lastDataTime > 100 ) { appendData() } // Don't append data if the last data point was within the timer interval
+        }
+    }
+
+    onInputDataChanged: { appendData() }
+
+    onRollingChanged: {
+        valueAxisX.min = minXValue;
+        valueAxisX.max = maxXValue;
+        valueAxisY.applyNiceNumbers();  // Automatically determine axis ticks
+        valueAxisX.applyNiceNumbers();
+        rootChart.rolling ? valueAxisX.labelFormat = "%.2f" : valueAxisX.labelFormat = "%.0f";
+    }
+
+    Component.onCompleted: {
+        valueAxisY.applyNiceNumbers();  // Automatically determine axis ticks
+        valueAxisX.applyNiceNumbers();
+        rootChart.rollingRange = maxXValue - minXValue;
+    }
+
+    function appendData() {
         //console.log(valueAxisX.max + "  " + valueAxisX.min + "  " + dataTime);
         if (!rolling){
             rootChart.dataTime += calculateDataInterval();
@@ -178,20 +205,7 @@ ChartView {
                 }
             }
         }
-    }
-
-    onRollingChanged: {
-        valueAxisX.min = minXValue;
-        valueAxisX.max = maxXValue;
-        valueAxisY.applyNiceNumbers();  // Automatically determine axis ticks
-        valueAxisX.applyNiceNumbers();
-        rootChart.rolling ? valueAxisX.labelFormat = "%.2f" : valueAxisX.labelFormat = "%.0f";
-    }
-
-    Component.onCompleted: {
-        valueAxisY.applyNiceNumbers();  // Automatically determine axis ticks
-        valueAxisX.applyNiceNumbers();
-        rootChart.rollingRange = maxXValue - minXValue;
+        lastDataTime = Date.now()
     }
 
     function calculateDataInterval(){
