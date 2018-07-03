@@ -193,8 +193,8 @@ Rectangle {
                     top: motorSpeedControl.bottom
                     topMargin: 40
                     left: motorSpeedControl.left
+                    right: motorSpeedControl.right
                 }
-                sliderWidth: 300
                 label: "<b>Set LED Color:</b>"
                 labelLeft: false
             }

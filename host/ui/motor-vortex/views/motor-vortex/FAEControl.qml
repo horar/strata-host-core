@@ -537,8 +537,9 @@ Rectangle {
                     verticalCenter: whiteButton.verticalCenter
                     left: ledControlContainer.left
                     leftMargin: 10
+                    right: whiteButton.left
+                    rightMargin: 10
                 }
-                sliderWidth: 275
                 onValueChanged: console.log("Color set to ", value)
             }
 
