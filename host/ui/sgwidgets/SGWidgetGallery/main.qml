@@ -34,15 +34,15 @@ Window {
         height: mainWindow.height
 
         // accordionItems contains a ColumnLayout as a container for SGAccordionItems
-        accordionItems:   ColumnLayout { // must have ColumnLayout as container since loader works only with single widgets
+        accordionItems:   Column { // must have ColumnLayout as container since loader works only with single widgets
             spacing: 0
 
             SGAccordionItem {
                 title: "SG Switch"
                 open: false
 
-                // body contains SGAccordionItem content
-                body: Item {  // must have some Item as container for multiple widgets since loader only works with single widgets
+                // contents contains SGAccordionItem content
+                contents: Item {  // must have some Item as container for multiple widgets since loader only works with single widgets
                     height: childrenRect.height + 40
 
                     SGSwitch {
@@ -71,7 +71,7 @@ Window {
                 open: false
                 title: "SG Tool Tip Popup"
 
-                body: Item{
+                contents: Item{
                     height: childrenRect.height + 70
 
                     Rectangle {
@@ -128,7 +128,7 @@ Window {
                 open: false
                 title: "SG Slider"
 
-                body: Item{
+                contents: Item{
                     height: childrenRect.height + 40
 
                     SGSlider {
@@ -153,7 +153,7 @@ Window {
                 open: false
                 title: "SG Radio Button"
 
-                body: Item{
+                contents: Item{
                     height: childrenRect.height + 40
 
                     SGRadioButtonContainer {
@@ -207,7 +207,7 @@ Window {
                 open: false
                 title: "SG Segmented Button Strip"
 
-                body: Item{
+                contents: Item{
                     height: childrenRect.height + 40
 
                     SGSegmentedButtonStrip {
@@ -256,7 +256,7 @@ Window {
                 open: false
                 title: "SG Status Light"
 
-                body: Item{
+                contents: Item{
                     height: childrenRect.height + 40
 
                     SGStatusLight {
@@ -313,7 +313,7 @@ Window {
                 open: false
                 title: "SG Submit Info Box"
 
-                body: Item{
+                contents: Item{
                     height: childrenRect.height + 40
 
                     SGSubmitInfoBox {
@@ -344,7 +344,7 @@ Window {
                 open: false
                 title: "SG Status List Box"
 
-                body: Item{
+                contents: Item{
                     height: childrenRect.height + 40
                     SGStatusListBox{
                         id: logBox
@@ -401,7 +401,7 @@ Window {
                 open: false
                 title: "SG Popout"
 
-                body: Item{
+                contents: Item{
                     height: childrenRect.height + 40
 
                     SGPopout {
@@ -421,7 +421,7 @@ Window {
                 open: false
                 title: "SG Labelled Info Box"
 
-                body: Item{
+                contents: Item{
                     height: childrenRect.height + 40
 
                     SGLabelledInfoBox {
@@ -443,7 +443,7 @@ Window {
                 open: false
                 title: "SG Graph"
 
-                body: Item{
+                contents: Item{
                     height: childrenRect.height + 40
 
                     SGGraph {
@@ -506,7 +506,7 @@ Window {
                 open: false
                 title: "SG Combo Box"
 
-                body: Item{
+                contents: Item{
                     height: childrenRect.height + 40
 
                     SGComboBox {
@@ -537,7 +537,7 @@ Window {
                 open: false
                 title: "SG Circular Gauge"
 
-                body: Item{
+                contents: Item{
                     height: childrenRect.height + 40
 
                     SGCircularGauge {
@@ -581,7 +581,7 @@ Window {
                 open: false
                 title: "SG Capacity Bar"
 
-                body: Item{
+                contents: Item{
                     height: childrenRect.height + 40
 
                     SGCapacityBar {
