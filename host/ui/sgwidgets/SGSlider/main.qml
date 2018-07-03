@@ -31,6 +31,7 @@ Window {
         grooveColor: "lightgreen"   // Default: "#dddddd"
         grooveFillColor: "red"      // Default: "#888888"
         textColor: "black"          // Default: "black"
+        updateValueWhileDragging: true // Default: true
     }
 
     SGSlider {

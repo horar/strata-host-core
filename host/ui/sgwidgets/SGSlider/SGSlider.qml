@@ -16,6 +16,7 @@ Item{
     property alias minimumValue: sgSlider.minimumValue
     property alias value: sgSlider.value
     property alias stepSize: sgSlider.stepSize
+    property alias updateValueWhileDragging: sgSlider.updateValueWhileDragging
 
     property string label: ""
     property bool labelLeft: true
@@ -45,6 +46,9 @@ Item{
         maximumValue: 100.0
         value: 0.0
         stepSize: 1.0
+        enabled: root.enabled
+        opacity: root.enabled ? 1 : .5
+        layer.enabled: root.enabled ? false : true
         anchors {
             left: root.labelLeft ? labelText.right : labelText.left
             top: root.labelLeft ? labelText.top : labelText.bottom
