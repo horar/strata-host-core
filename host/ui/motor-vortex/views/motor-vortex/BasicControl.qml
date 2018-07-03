@@ -171,6 +171,7 @@ Rectangle {
                 maximumValue: 5500
                 startLabel: minimumValue
                 endLabel: maximumValue
+                showDial: false
 
                 function setMotorSpeedCommand(value) {
                     var truncated_value = Math.floor(value)
@@ -186,10 +187,22 @@ Rectangle {
                 }
             }
 
+            SGHueSlider {
+                id: hueSlider
+                anchors {
+                    top: motorSpeedControl.bottom
+                    topMargin: 40
+                    left: motorSpeedControl.left
+                }
+                sliderWidth: 300
+                label: "<b>Set LED Color:</b>"
+                labelLeft: false
+            }
+
             SGRadioButtonContainer {
                 id: operationModeControl
                 anchors {
-                    top: motorSpeedControl.bottom
+                    top: hueSlider.bottom
                     topMargin: 40
                     left: motorSpeedControl.left
                 }

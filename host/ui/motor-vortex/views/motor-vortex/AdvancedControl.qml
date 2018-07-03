@@ -95,6 +95,7 @@ Rectangle {
             yAxisTitle: "Voltage"
             inputData: vInBox.info
             maxYValue: 15
+            repeatingData: true
         }
         
         SGGraph{
@@ -110,6 +111,7 @@ Rectangle {
             yAxisTitle: "RPM"
             inputData: speedBox.info
             maxYValue: 6500
+            repeatingData: true
         }
         
         SGStatusListBox {
@@ -284,6 +286,7 @@ Rectangle {
                 }
                 onValueChanged: {
                     setMotorSpeedCommand(value)
+                    setSpeed.input = value
                 }
 
                 MouseArea {
@@ -338,6 +341,7 @@ Rectangle {
                     rightMargin: 10
                 }
                 showDial: false
+                onValueChanged: { setRampRate.input = value }
             }
 
             SGSubmitInfoBox {

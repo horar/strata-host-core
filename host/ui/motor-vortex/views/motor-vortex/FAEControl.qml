@@ -150,6 +150,7 @@ Rectangle {
             yAxisTitle: "Voltage"
             inputData: vInBox.info
             maxYValue: 15
+            repeatingData: true
         }
 
         SGGraph{
@@ -165,6 +166,7 @@ Rectangle {
             yAxisTitle: "RPM"
             inputData: speedBox.info
             maxYValue: 6500
+            repeatingData: true
         }
 
         SGStatusListBox {
@@ -319,6 +321,7 @@ Rectangle {
                 maximumValue: speedSafetyButton.checked ? 10000 : 5500
                 endLabel: speedSafetyButton.checked? "<font color='red'><b>"+ maximumValue +"</b></font>" : maximumValue
                 startLabel: minimumValue
+                showDial: false
                 anchors {
                     verticalCenter: setSpeed.verticalCenter
                     left: speedControlContainer.left
@@ -336,6 +339,7 @@ Rectangle {
                 }
                 onValueChanged: {
                     setMotorSpeedCommand(value)
+                    setSpeed.input = value
                 }
             }
 
@@ -368,6 +372,8 @@ Rectangle {
                     rightMargin: 10
                 }
                 showDial: false
+                onValueChanged: { setRampRate.input = value }
+
             }
 
             SGSubmitInfoBox {
