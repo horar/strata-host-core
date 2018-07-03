@@ -21,6 +21,7 @@ Rectangle {
     implicitHeight: labelLeft ? inputButtonContainer.height : labelText.height + inputButtonContainer.height + inputButtonContainer.anchors.topMargin
     implicitWidth: labelLeft ? labelText.width + inputButtonContainer.width + inputButtonContainer.anchors.leftMargin :
                                Math.max(inputButtonContainer.width, labelText.width)
+    color: "transparent"
 
     Text {
         id: labelText
@@ -37,7 +38,7 @@ Rectangle {
         id: inputButtonContainer
         width: infoContainer.width + applyButton.width + applyButton.anchors.leftMargin
         height: Math.max(infoContainer.height, applyButton.height)
-
+        color: "transparent"
         anchors {
             left: root.labelLeft ? labelText.right : labelText.left
             top: root.labelLeft ? labelText.top : labelText.bottom

@@ -7,7 +7,6 @@ Window {
     height: 480
     title: qsTr("SGSubmitInfoBox Demo")
 
-
     SGSubmitInfoBox {
         id: applyInfoBox
 
