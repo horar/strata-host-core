@@ -5,16 +5,15 @@ import QtGraphicalEffects 1.0
 Item {
     id: root
 
-    property real value: 0.5
+    property real value: 128
 
     property string label: ""
     property bool labelLeft: true
     property color textColor : "black"
-    property real sliderWidth: 300
     property real sliderHeight: 28
 
     implicitHeight: labelLeft ? Math.max(labelText.height, sliderHeight) : labelText.height + sliderHeight + hueSlider.anchors.topMargin
-    implicitWidth: labelLeft ? labelText.width + sliderWidth + hueSlider.anchors.leftMargin : Math.max(labelText.width, sliderWidth)
+    implicitWidth: 300
 
     Text {
         id: labelText
@@ -28,11 +27,15 @@ Item {
 
     Slider {
         id: hueSlider
+        padding: 0
+        value: root.value/255
+        height: root.sliderHeight
         anchors {
             left: root.labelLeft ? labelText.right : labelText.left
             top: root.labelLeft ? labelText.top : labelText.bottom
             leftMargin: root.label === "" ? 0 : root.labelLeft ? 10 : 0
             topMargin: root.label === "" ? 0 : root.labelLeft ? 0 : 5
+            right: root.right
         }
 
         onPressedChanged: {
@@ -40,11 +43,6 @@ Item {
                 root.value = Math.floor(value * 255)
             }
         }
-
-        padding: 0
-        value: 0.5
-        width: root.sliderWidth
-        height: root.sliderHeight
 
         background: Rectangle {
             y: 4
