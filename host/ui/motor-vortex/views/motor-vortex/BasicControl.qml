@@ -187,22 +187,10 @@ Rectangle {
                 }
             }
 
-            SGHueSlider {
-                id: hueSlider
-                anchors {
-                    top: motorSpeedControl.bottom
-                    topMargin: 40
-                    left: motorSpeedControl.left
-                    right: motorSpeedControl.right
-                }
-                label: "<b>Set LED Color:</b>"
-                labelLeft: false
-            }
-
             SGRadioButtonContainer {
                 id: operationModeControl
                 anchors {
-                    top: hueSlider.bottom
+                    top: motorSpeedControl.bottom
                     topMargin: 40
                     left: motorSpeedControl.left
                 }

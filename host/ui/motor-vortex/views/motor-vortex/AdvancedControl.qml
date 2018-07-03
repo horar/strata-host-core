@@ -488,6 +488,38 @@ Rectangle {
                     rightMargin: 10
                 }
             }
+
+            SGSlider {
+                id: ledPulseFrequency
+                label: "LED Pulse Frequency:"
+                value: 50
+                minimumValue: 2
+                maximumValue: 152
+                startLabel: "2"
+                endLabel: "152"
+                anchors {
+                    verticalCenter: setLedPulse.verticalCenter
+                    left: ledControlContainer.left
+                    leftMargin: 10
+                    right: setLedPulse.left
+                    rightMargin: 10
+                }
+                showDial: false
+
+                onValueChanged: { setLedPulse.input = value }
+            }
+
+            SGSubmitInfoBox {
+                id: setLedPulse
+                infoBoxColor: "white"
+                anchors {
+                    top: whiteButton.bottom
+                    topMargin: 10
+                    right: ledControlContainer.right
+                    rightMargin: 10
+                }
+                onApplied: { ledPulseFrequency.value = parseInt(value, 10) }
+            }
         }
 
         Rectangle {
