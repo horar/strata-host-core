@@ -150,16 +150,22 @@ Rectangle {
                     implicitWidth: 100
                     implicitHeight: 40
                 }
+                contentItem: Text {
+                    text: startStopButton.text
+                    color: startStopButton.checked ? "black" : "white"
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCenter
+                }
                 onClicked: {
                     if(checked) {
                         MotorControl.setMotorOnOff(parseInt("0"));
                         MotorControl.printSetMotorState();
-                    //    coreInterface.sendCommand(MotorControl.getMotorstate());
+                        //    coreInterface.sendCommand(MotorControl.getMotorstate());
                     }
                     else {
                         MotorControl.setMotorOnOff(parseInt("1"));
                         MotorControl.printSetMotorState();
-                     //   coreInterface.sendCommand(MotorControl.getMotorstate());
+                        //   coreInterface.sendCommand(MotorControl.getMotorstate());
                     }
                 }
             }
@@ -174,54 +180,66 @@ Rectangle {
                 onClicked: {
 
                     MotorControl.setReset()
-                  //  coreInterface.sendCommand(MotorControl.getResetcmd());
+                    //  coreInterface.sendCommand(MotorControl.getResetcmd());
                 }
             }
         }
 
-        SGRadioButtonContainer {
-            id: operationModeControl
+        Rectangle {
+            id: operationModeControlContainer
+            width: 500
+            height: childrenRect.height + 20
+            color: "#eeeeee"
             anchors {
+                horizontalCenter: rightSide.horizontalCenter
                 top: buttonContainer.bottom
-                topMargin: 40
-                left: buttonContainer.left
+                topMargin: 20
             }
 
-            label: "<b>Operation Mode:</b>"
-            labelLeft: false
-            exclusive: true
-
-            radioGroup: GridLayout {
-                columnSpacing: 10
-                rowSpacing: 10
-
-                // Optional properties to access specific buttons cleanly from outside
-                property alias manual : manual
-                property alias automatic: automatic
-
-                SGRadioButton {
-                    id: manual
-                    text: "Manual Control"
-                    checked: true
-                    onCheckedChanged: {
-                        if (checked) {
-                            MotorControl.setSystemModeSelection("manual");
-                            MotorControl.printsystemModeSelection()
-                            // send command to platform
-                        //    coreInterface.sendCommand(MotorControl.getSystemModeSelection())
-                        }
-                    }
+            SGRadioButtonContainer {
+                id: operationModeControl
+                anchors {
+                    top: operationModeControlContainer.top
+                    topMargin: 10
+                    horizontalCenter: operationModeControlContainer.horizontalCenter
                 }
 
-                SGRadioButton {
-                    id: automatic
-                    text: "Automatic Demo Pattern"
-                    onCheckedChanged: {
-                        if (checked) {
-                            MotorControl.setSystemModeSelection("automation");
-                            MotorControl.printsystemModeSelection()
-                            // send command to platform
-                        //    coreInterface.sendCommand(MotorControl.getSystemModeSelection())
+                label: "Operation Mode:"
+                labelLeft: true
+                exclusive: true
+
+                radioGroup: GridLayout {
+                    columnSpacing: 10
+                    rowSpacing: 10
+
+                    // Optional properties to access specific buttons cleanly from outside
+                    property alias manual : manual
+                    property alias automatic: automatic
+
+                    SGRadioButton {
+                        id: manual
+                        text: "Manual Control"
+                        checked: true
+                        onCheckedChanged: {
+                            if (checked) {
+                                MotorControl.setSystemModeSelection("manual");
+                                MotorControl.printsystemModeSelection()
+                                // send command to platform
+                                //    coreInterface.sendCommand(MotorControl.getSystemModeSelection())
+                            }
+                        }
+                    }
+
+                    SGRadioButton {
+                        id: automatic
+                        text: "Automatic Demo Pattern"
+                        onCheckedChanged: {
+                            if (checked) {
+                                MotorControl.setSystemModeSelection("automation");
+                                MotorControl.printsystemModeSelection()
+                                // send command to platform
+                                //    coreInterface.sendCommand(MotorControl.getSystemModeSelection())
+                            }
                         }
                     }
                 }
@@ -235,7 +253,7 @@ Rectangle {
             color: "#eeeeee"
             anchors {
                 horizontalCenter: rightSide.horizontalCenter
-                top: operationModeControl.bottom
+                top: operationModeControlContainer.bottom
                 topMargin: 20
             }
 
@@ -262,7 +280,7 @@ Rectangle {
                     MotorControl.printsystemModeSelection()
                     // send set speed command to platform
                     console.log ("set speed_target", truncated_value)
-                   // coreInterface.sendCommand(MotorControl.getSpeedInput())
+                    // coreInterface.sendCommand(MotorControl.getSpeedInput())
                 }
                 onValueChanged: {
                     setMotorSpeedCommand(value)
@@ -348,7 +366,7 @@ Rectangle {
                                 console.log ( "PS Checked!")
                                 MotorControl.setDriveMode(parseInt("1"));
                                 MotorControl.printDriveMode();
-                              //  coreInterface.sendCommand(MotorControl.getDriveMode());
+                                //  coreInterface.sendCommand(MotorControl.getDriveMode());
 
                             }
                         }
@@ -362,109 +380,133 @@ Rectangle {
                                 console.log ( "Trap Checked!")
                                 MotorControl.setDriveMode(parseInt("0"));
                                 MotorControl.printDriveMode();
-                            //    coreInterface.sendCommand(MotorControl.getDriveMode());
+                                //    coreInterface.sendCommand(MotorControl.getDriveMode());
                             }
                         }
                     }
                 }
+            }
 
-                Item {
-                    id: phaseAngleRow
-                    width: childrenRect.width
-                    height: childrenRect.height
+            Item {
+                id: phaseAngleRow
+                width: childrenRect.width
+                height: childrenRect.height
+                anchors {
+                    top: driveModeRadios.bottom
+                    topMargin: 20
+                    horizontalCenter: driveModeContainer.horizontalCenter
+                }
+
+                Text {
+                    width: contentWidth
+                    id: phaseAngleTitle
+                    text: qsTr("Phase Angle:")
                     anchors {
-                        top: driveModeRadios.bottom
-                        horizontalCenter: driveModeContainer.horizontalCenter
+                        verticalCenter: driveModeCombo.verticalCenter
+                    }
+                }
+
+                ComboBox{
+                    id: driveModeCombo
+                    model: ["0", "1.875", "3.75","5.625","7.5", "9.375", "11.25","13.125", "15", "16.875", "18.75", "20.625", "22.5" , "24.375" , "26.25" , "28.125"]
+                    anchors {
+                        top: phaseAngleRow.top
+                        left: phaseAngleTitle.right
+                        leftMargin: 20
+                    }
+                    onCurrentIndexChanged: {
+                        console.log("index of the combo box", currentIndex)
+                        MotorControl.setPhaseAngle(parseInt(currentIndex));
+                        MotorControl.printPhaseAngle();
+                        //  coreInterface.sendCommand(MotorControl.getSetPhaseAngle());
+                    }
+                }
+            }
+        }
+
+        Rectangle {
+            id: ledControlContainer
+            width: 500
+            height: childrenRect.height + 20
+            color: "#eeeeee"
+            anchors {
+                horizontalCenter: rightSide.horizontalCenter
+                top: driveModeContainer.bottom
+                topMargin: 20
+            }
+
+            SGHueSlider {
+                id: hueSlider
+                label: "Set LED color:"
+                labelLeft: true
+                anchors {
+                    top: ledControlContainer.top
+                    topMargin: 10
+                    horizontalCenter: ledControlContainer.horizontalCenter
+                }
+                sliderWidth: 350
+                onValueChanged: console.log("Color set to ", value)
+            }
+        }
+
+        Rectangle {
+            id: directionControlContainer
+            width: 500
+            height: childrenRect.height + 20 - directionToolTip.height
+            color: "#eeeeee"
+            anchors {
+                horizontalCenter: rightSide.horizontalCenter
+                top: ledControlContainer.bottom
+                topMargin: 20
+            }
+
+            SGRadioButtonContainer {
+                id: directionRadios
+                anchors {
+                    horizontalCenter: directionControlContainer.horizontalCenter
+                    top: directionControlContainer.top
+                    topMargin: 10
+                }
+
+                // Optional configuration:
+                label: "Direction:"
+
+                radioGroup: GridLayout {
+                    columnSpacing: 10
+                    rowSpacing: 10
+
+                    SGRadioButton {
+                        text: "Forward"
+                        checked: true
+                        enabled: false
                     }
 
-                    Text {
-                        width: contentWidth
-                        id: phaseAngleTitle
-                        text: qsTr("Phase Angle:")
-                        anchors {
-                            verticalCenter: driveModeCombo.verticalCenter
-                        }
+                    SGRadioButton {
+                        text: "Reverse"
+                        enabled: false
                     }
-
-
-                    ComboBox{
-                        id: driveModeCombo
-                        model: ["0", "1.875", "3.75","5.625","7.5", "9.375", "11.25","13.125", "15", "16.875", "18.75", "20.625", "22.5" , "24.375" , "26.25" , "28.125"]
-                        anchors {
-                            top: phaseAngleRow.top
-                            left: phaseAngleTitle.right
-                            leftMargin: 20
-                        }
-                        onCurrentIndexChanged: {
-                            console.log("index of the combo box", currentIndex)
-                            MotorControl.setPhaseAngle(parseInt(currentIndex));
-                            MotorControl.printPhaseAngle();
-                          //  coreInterface.sendCommand(MotorControl.getSetPhaseAngle());
-                        }
-                    }
-
                 }
             }
 
-            Rectangle {
-                id: directionControlContainer
-                width: 500
-                height: childrenRect.height + 20 - directionToolTip.height
-                color: "#eeeeee"
+            MouseArea {
+                id: directionRadiosHover
+                anchors { fill: directionRadios }
+                hoverEnabled: true
+            }
+
+            SGToolTipPopup {
+                id: directionToolTip
+
+                showOn: directionRadiosHover.containsMouse
                 anchors {
-                    horizontalCenter: rightSide.horizontalCenter
-                    top: driveModeContainer.bottom
-                    topMargin: 20
+                    bottom: directionRadiosHover.top
+                    horizontalCenter: directionRadiosHover.horizontalCenter
                 }
+                color: "#0bd"   // Default: "#00ccee"
 
-                SGRadioButtonContainer {
-                    id: directionRadios
-                    anchors {
-                        horizontalCenter: directionControlContainer.horizontalCenter
-                        top: directionControlContainer.top
-                        topMargin: 10
-                    }
-
-                    // Optional configuration:
-                    label: "Direction:"
-
-                    radioGroup: GridLayout {
-                        columnSpacing: 10
-                        rowSpacing: 10
-
-                        SGRadioButton {
-                            text: "Forward"
-                            checked: true
-                            enabled: false
-                        }
-
-                        SGRadioButton {
-                            text: "Reverse"
-                            enabled: false
-                        }
-                    }
-                }
-
-                MouseArea {
-                    id: directionRadiosHover
-                    anchors { fill: directionRadios }
-                    hoverEnabled: true
-                }
-
-                SGToolTipPopup {
-                    id: directionToolTip
-
-                    showOn: directionRadiosHover.containsMouse
-                    anchors {
-                        bottom: directionRadiosHover.top
-                        horizontalCenter: directionRadiosHover.horizontalCenter
-                    }
-                    color: "#0bd"   // Default: "#00ccee"
-
-                    content: Text {
-                        text: qsTr("Reversing direction will damage setup.\nTo remove safety limits, contact your FAE.")
-                        color: "white"
-                    }
+                content: Text {
+                    text: qsTr("Reversing direction will damage setup.\nTo remove safety limits, contact your FAE.")
+                    color: "white"
                 }
             }
         }

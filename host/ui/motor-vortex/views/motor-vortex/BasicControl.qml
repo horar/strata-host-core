@@ -9,7 +9,7 @@ import "qrc:/js/navigation_control.js" as NavigationControl
 import "qrc:/views/motor-vortex/sgwidgets"
 import "qrc:/views/motor-vortex/Control.js" as MotorControl
 Rectangle {
-    id: controlPage
+    id: basicControl
     objectName: "control"
     anchors { fill: parent }
     // used to check whether the motor slider has been already updated from platform notification
@@ -180,9 +180,6 @@ Rectangle {
                     console.log ("set speed_target", truncated_value)
                    // coreInterface.sendCommand(MotorControl.getSpeedInput())
                 }
-
-
-
 
                 onValueChanged: {
                     setMotorSpeedCommand(value)
