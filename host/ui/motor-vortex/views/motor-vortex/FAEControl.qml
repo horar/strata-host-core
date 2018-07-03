@@ -320,11 +320,10 @@ Rectangle {
                 endLabel: speedSafetyButton.checked? "<font color='red'><b>"+ maximumValue +"</b></font>" : maximumValue
                 startLabel: minimumValue
                 anchors {
-                    top: speedControlContainer.top
-                    topMargin: 10
+                    verticalCenter: setSpeed.verticalCenter
                     left: speedControlContainer.left
                     leftMargin: 10
-                    right: speedControlContainer.right
+                    right: setSpeed.left
                     rightMargin: 10
                 }
                 function setMotorSpeedCommand(value) {
@@ -338,7 +337,18 @@ Rectangle {
                 onValueChanged: {
                     setMotorSpeedCommand(value)
                 }
+            }
 
+            SGSubmitInfoBox {
+                id: setSpeed
+                infoBoxColor: "white"
+                anchors {
+                    top: speedControlContainer.top
+                    topMargin: 10
+                    right: speedControlContainer.right
+                    rightMargin: 10
+                }
+                onApplied: { targetSpeedSlider.value = parseInt(value, 10) }
             }
 
             SGSlider {
@@ -351,21 +361,33 @@ Rectangle {
                 endLabel: maximumValue
                 startLabel: minimumValue
                 anchors {
-                    top: targetSpeedSlider.bottom
-                    topMargin: 10
+                    verticalCenter: setRampRate.verticalCenter
                     left: speedControlContainer.left
                     leftMargin: 10
+                    right: setRampRate.left
+                    rightMargin: 10
+                }
+                showDial: false
+            }
+
+            SGSubmitInfoBox {
+                id: setRampRate
+                infoBoxColor: "white"
+                anchors {
+                    top: setSpeed.bottom
+                    topMargin: 10
                     right: speedControlContainer.right
                     rightMargin: 10
                 }
+                onApplied: { rampRateSlider.value = parseInt(value, 10) }
             }
 
             Item {
                 id: speedSafety
                 height: childrenRect.height
                 anchors {
-                    top: rampRateSlider.bottom
-                    topMargin: 20
+                    top: setRampRate.bottom
+                    topMargin: 10
                     left: speedControlContainer.left
                     leftMargin: 10
                     right: speedControlContainer.right

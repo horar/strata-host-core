@@ -318,7 +318,7 @@ Rectangle {
                     right: speedControlContainer.right
                     rightMargin: 10
                 }
-                onApplied: { setSpeed.value = parseInt(value, 10) }
+                onApplied: { targetSpeedSlider.value = parseInt(value, 10) }
             }
 
             SGSlider {
@@ -338,7 +338,6 @@ Rectangle {
                     rightMargin: 10
                 }
                 showDial: false
-
             }
 
             SGSubmitInfoBox {
