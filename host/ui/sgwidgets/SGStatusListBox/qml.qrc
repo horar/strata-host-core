@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/">
+        <file>main.qml</file>
+        <file>SGStatusListBox.qml</file>
+        <file>fonts/sgicons.ttf</file>
+    </qresource>
+</RCC>

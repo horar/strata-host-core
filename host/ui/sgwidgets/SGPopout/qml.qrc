@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/">
+        <file>main.qml</file>
+        <file>fonts/sgicons.ttf</file>
+        <file>SGPopout.qml</file>
+        <file>SGGraph.qml</file>
+    </qresource>
+</RCC>
