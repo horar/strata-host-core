@@ -34,6 +34,10 @@ Item {
         id: sgSlider
 
         property real hoverOpacity: 0
+
+        enabled: root.enabled
+        opacity: root.enabled ? 1 : .5
+        layer.enabled: true
         updateValueWhileDragging: false
         height: 30
         minimumValue: 0.0

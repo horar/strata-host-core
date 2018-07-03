@@ -83,7 +83,7 @@ Rectangle {
                     }
 
                     //check if mode exists in the payload object. skip if corrupted.
-                    if(notificationPayload.hasOwnProperty("mode")){
+                    if(notificationPayload.hasOwnProperty("system_mode")){
                         //mode either set to be a manual or automation
                         var systemMode = notification.payload.mode;
                         if(systemMode ==="manual"){
@@ -215,6 +215,16 @@ Rectangle {
                             if (checked) {
                                 MotorControl.setSystemModeSelection("manual");
                                 MotorControl.printsystemModeSelection()
+                                motorSpeedControl.enabled = true
+
+                                // When going back to manual mode, resend last manual speed command
+                                var truncated_value = Math.floor(motorSpeedControl.value)
+                                MotorControl.setTarget(truncated_value)
+                                MotorControl.printsystemModeSelection()
+                                // send set speed command to platform
+                                console.log ("set speed_target", truncated_value)
+                               // coreInterface.sendCommand(MotorControl.getSpeedInput())
+
                                 // send command to platform
 
                                // coreInterface.sendCommand(MotorControl.getSystemModeSelection())
@@ -229,6 +239,8 @@ Rectangle {
                             if (checked) {
                                 MotorControl.setSystemModeSelection("automation");
                                 MotorControl.printsystemModeSelection()
+                                motorSpeedControl.enabled = false
+
                                 // send command to platform
                                // coreInterface.sendCommand(MotorControl.getSystemModeSelection())
                             }
