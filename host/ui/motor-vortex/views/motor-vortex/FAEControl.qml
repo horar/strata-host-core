@@ -506,12 +506,24 @@ Rectangle {
                 label: "Set LED color:"
                 labelLeft: true
                 anchors {
+                    verticalCenter: whiteButton.verticalCenter
+                    left: ledControlContainer.left
+                    leftMargin: 10
+                }
+                sliderWidth: 275
+                onValueChanged: console.log("Color set to ", value)
+            }
+
+            Button {
+                id: whiteButton
+                checkable: false
+                text: "White"
+                anchors {
                     top: ledControlContainer.top
                     topMargin: 10
-                    horizontalCenter: ledControlContainer.horizontalCenter
+                    right: ledControlContainer.right
+                    rightMargin: 10
                 }
-                sliderWidth: 350
-                onValueChanged: console.log("Color set to ", value)
             }
         }
 
