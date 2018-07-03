@@ -198,5 +198,6 @@
         <file>views/bubu/boardBringUp/ButtonViewGPIO.qml</file>
         <file>views/bubu/boardBringUp/I2CTable.qml</file>
         <file>views/motor-vortex/sgwidgets/SGHueSlider.qml</file>
+        <file>views/motor-vortex/sgwidgets/SGSubmitInfoBox.qml</file>
     </qresource>
 </RCC>

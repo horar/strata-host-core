@@ -266,13 +266,13 @@ Rectangle {
                 endLabel: maximumValue
                 startLabel: minimumValue
                 anchors {
-                    top: speedControlContainer.top
-                    topMargin: 10
+                    verticalCenter: setSpeed.verticalCenter
                     left: speedControlContainer.left
                     leftMargin: 10
-                    right: speedControlContainer.right
+                    right: setSpeed.left
                     rightMargin: 10
                 }
+                showDial: false
 
                 function setMotorSpeedCommand(value) {
                     var truncated_value = Math.floor(value)
@@ -309,6 +309,18 @@ Rectangle {
                 }
             }
 
+            SGSubmitInfoBox {
+                id: setSpeed
+                infoBoxColor: "white"
+                anchors {
+                    top: speedControlContainer.top
+                    topMargin: 10
+                    right: speedControlContainer.right
+                    rightMargin: 10
+                }
+                onApplied: { setSpeed.value = parseInt(value, 10) }
+            }
+
             SGSlider {
                 id: rampRateSlider
                 label: "Ramp Rate:"
@@ -319,13 +331,26 @@ Rectangle {
                 endLabel: maximumValue
                 startLabel: minimumValue
                 anchors {
-                    top: targetSpeedSlider.bottom
-                    topMargin: 10
+                    verticalCenter: setRampRate.verticalCenter
                     left: speedControlContainer.left
                     leftMargin: 10
+                    right: setRampRate.left
+                    rightMargin: 10
+                }
+                showDial: false
+
+            }
+
+            SGSubmitInfoBox {
+                id: setRampRate
+                infoBoxColor: "white"
+                anchors {
+                    top: setSpeed.bottom
+                    topMargin: 10
                     right: speedControlContainer.right
                     rightMargin: 10
                 }
+                onApplied: { rampRateSlider.value = parseInt(value, 10) }
             }
         }
 
@@ -393,7 +418,7 @@ Rectangle {
                 height: childrenRect.height
                 anchors {
                     top: driveModeRadios.bottom
-                    topMargin: 20
+                    topMargin: 10
                     horizontalCenter: driveModeContainer.horizontalCenter
                 }
 
