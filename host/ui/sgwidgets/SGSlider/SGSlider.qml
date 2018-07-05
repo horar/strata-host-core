@@ -1,6 +1,7 @@
 import QtQuick 2.9
 import QtQuick.Controls.Styles 1.4
 import QtQuick.Controls 1.4
+import QtQuick.Controls 2.3
 
 // Note - Faller 5/30/18: there was some Controls 2.3 code (updated slider) in groove that was conflicting and doing nothing.
 //                        If this ever is converted to QC 2.3+, go find an old version that has this code to start from.
