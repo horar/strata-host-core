@@ -72,7 +72,7 @@ Window {
                 title: "SG Tool Tip Popup"
 
                 contents: Item{
-                    height: childrenRect.height + 70
+                    height: childrenRect.height + 40
 
                     Rectangle {
                         id: hoverContainer
@@ -82,9 +82,9 @@ Window {
 
                         anchors {
                             top: parent.top
-                            topMargin: 50
+                            topMargin: 20
                             left:parent.left
-                            leftMargin: 50
+                            leftMargin: 40
                         }
 
                         Text {
@@ -140,11 +140,11 @@ Window {
                             leftMargin: 20
                         }
 
-                        label: "Cats:"              // Default: "" (if not entered, label will not appear)
+                        label: "RPM:"              // Default: "" (if not entered, label will not appear)
                         labelLeft: false             // Default: true
                         width: 300
-                        grooveColor: "lightgreen"   // Default: "#dddddd"
-                        grooveFillColor: "red"      // Default: "#888888"
+                        grooveColor: "#ddd"   // Default: "#dddddd"
+                        grooveFillColor: "lightgreen"      // Default: "#888888"
                     }
                 }
             }
@@ -568,6 +568,7 @@ Window {
                         id: gaugecontrol
                         label: "Demo Control:"
                         labelLeft: false
+                        live: true
                         anchors {
                             left: sgCircularGauge.right
                             leftMargin: 40
