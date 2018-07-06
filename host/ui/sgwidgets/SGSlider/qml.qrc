@@ -6,6 +6,5 @@
         <file>images/sliderValue.svg</file>
         <file>images/sliderHandle.svg</file>
         <file>images/sliderHandleActive.svg</file>
-        <file>SSlider.qml</file>
     </qresource>
 </RCC>
