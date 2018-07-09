@@ -139,6 +139,7 @@ Item{
             anchors.bottom : parent.bottom
             font.pointSize : 12
             text: sgSlider.minimumValue
+            color: root.textColor
         }
 
         Label {
@@ -147,6 +148,7 @@ Item{
             anchors.bottom : parent.bottom
             font.pointSize: 12
             text: sgSlider.maximumValue
+            color: root.textColor
         }
 
         PropertyAnimation {

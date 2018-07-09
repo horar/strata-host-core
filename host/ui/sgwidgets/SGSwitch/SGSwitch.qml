@@ -30,14 +30,23 @@ Item {
     property string uncheckedLabel: ""
     property bool labelsInside: true
 
-    implicitHeight: childrenRect.height
-    implicitWidth: childrenRect.width
+    implicitHeight: root.labelLeft ? switchRoot.height : labelText.height + switchRoot.height + switchRoot.anchors.topMargin
+    implicitWidth: { root.labelLeft ?
+                        root.labelsInside ?
+                            labelText.width + switchRoot.width + uncheckedLabelText.anchors.leftMargin :
+                            labelText.width + switchRoot.width + uncheckedLabelText.width + checkedLabelText.width +
+                                uncheckedLabelText.anchors.leftMargin + checkedLabelText.anchors.leftMargin + switchRoot.anchors.leftMargin :
+                         root.labelsInside ?
+                            switchRoot.width :
+                            Math.max(labelText.width, switchRoot.width + uncheckedLabelText.width + checkedLabelText.width +
+                                uncheckedLabelText.anchors.leftMargin + checkedLabelText.anchors.leftMargin + switchRoot.anchors.leftMargin)
+    }
 
     Text {
         id: labelText
         text: root.label
         width: contentWidth
-        height: root.labelLeft ? switchRoot.height : contentHeight
+        height: root.label === "" ? 0 : root.labelLeft ? switchRoot.height : contentHeight
         topPadding: root.label === "" ? 0 : root.labelLeft ? (switchRoot.height-contentHeight)/2 : 0
         bottomPadding: topPadding
         color: root.textColor
@@ -146,16 +155,8 @@ Item {
                 width: 26
                 height: 26
                 radius: 13
-                color: {
-                    root.down ?
-                        Qt.rgba(root.handleColor.r/1.1, root.handleColor.g/1.1, root.handleColor.b/1.1, 1) :
-                        root.handleColor
-                }
-                border.color: {
-                    root.checked ?
-                        Qt.rgba(root.grooveFillColor.r/1.5, root.grooveFillColor.g/1.5, root.grooveFillColor.b/1.5, 1) :
-                        Qt.rgba(root.grooveColor.r/1.5, root.grooveColor.g/1.5, root.grooveColor.b/1.5, 1)
-                }
+                color: root.down ? colorMod(root.handleColor, 1.1) : root.handleColor
+                border.color: root.checked ? colorMod(root.grooveFillColor, 1.5) : colorMod(root.grooveColor, 1.5)
 
                 Behavior on x {
                     enabled: switchRoot.pressed ? false : true
@@ -164,4 +165,11 @@ Item {
             }
         }
     }
+
+    // Lighten or darken a color based on a factor
+    function colorMod (color, factor) {
+        return Qt.rgba(color.r/factor, color.g/factor, color.b/factor, 1 )
+    }
 }
+
+

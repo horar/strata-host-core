@@ -9,7 +9,7 @@ import "qrc:/js/navigation_control.js" as NavigationControl
 import "qrc:/views/motor-vortex/sgwidgets"
 import "qrc:/views/motor-vortex/Control.js" as MotorControl
 Rectangle {
-    id: basicControl
+    id: controlPage
     objectName: "control"
     anchors { fill: parent }
     // used to check whether the motor slider has been already updated from platform notification
@@ -83,7 +83,7 @@ Rectangle {
                     }
 
                     //check if mode exists in the payload object. skip if corrupted.
-                    if(notificationPayload.hasOwnProperty("system_mode")){
+                    if(notificationPayload.hasOwnProperty("mode")){
                         //mode either set to be a manual or automation
                         var systemMode = notification.payload.mode;
                         if(systemMode ==="manual"){
@@ -171,15 +171,11 @@ Rectangle {
                 maximumValue: 5500
                 startLabel: minimumValue
                 endLabel: maximumValue
-                showDial: false
 
                 function setMotorSpeedCommand(value) {
                     var truncated_value = Math.floor(value)
                     MotorControl.setTarget(truncated_value)
-                    MotorControl.printsystemModeSelection()
-                    // send set speed command to platform
-                    console.log ("set speed_target", truncated_value)
-                   // coreInterface.sendCommand(MotorControl.getSpeedInput())
+                    MotorControl.printsystemModeSelection() 
                 }
 
                 onValueChanged: {
@@ -215,19 +211,6 @@ Rectangle {
                             if (checked) {
                                 MotorControl.setSystemModeSelection("manual");
                                 MotorControl.printsystemModeSelection()
-                                motorSpeedControl.enabled = true
-
-                                // When going back to manual mode, resend last manual speed command
-                                var truncated_value = Math.floor(motorSpeedControl.value)
-                                MotorControl.setTarget(truncated_value)
-                                MotorControl.printsystemModeSelection()
-                                // send set speed command to platform
-                                console.log ("set speed_target", truncated_value)
-                               // coreInterface.sendCommand(MotorControl.getSpeedInput())
-
-                                // send command to platform
-
-                               // coreInterface.sendCommand(MotorControl.getSystemModeSelection())
                             }
                         }
                     }
@@ -239,10 +222,6 @@ Rectangle {
                             if (checked) {
                                 MotorControl.setSystemModeSelection("automation");
                                 MotorControl.printsystemModeSelection()
-                                motorSpeedControl.enabled = false
-
-                                // send command to platform
-                               // coreInterface.sendCommand(MotorControl.getSystemModeSelection())
                             }
                         }
                     }

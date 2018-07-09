@@ -20,9 +20,10 @@ Item {
         id: labelText
         text: root.label
         width: implicitWidth
-        height: contentHeight
+        height: root.label === "" ? 0 : contentHeight
         topPadding: root.label === "" ? 0 : root.labelLeft ? 5 : 0
         bottomPadding: topPadding
+        color: root.textColor
     }
 
     ButtonGroup{

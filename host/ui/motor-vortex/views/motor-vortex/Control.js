@@ -74,6 +74,22 @@ var set_reset_mcu = {
     "cmd":"reset_mcu"
 }
 
+/*
+  set_ramp_rate
+*/
+var set_ramp_rate = {
+    "cmd": "set_ramp_rate",
+    "payload" : {
+        "ramp_rate": ""
+    }
+}
+
+function setRampRate(ramp_rate)
+{
+    set_ramp_rate.payload.ramp_rate = ramp_rate;
+    LocalCoreInterface.sendCommand(getRampRate());
+}
+
 function setMotorOnOff(enabled)
 {
     set_motor_on_off.payload.enable = enabled;
@@ -106,14 +122,13 @@ function setTarget(speed_target)
 
 function setReset()
 {
-     LocalCoreInterface.sendCommand(getResetcmd());
+    LocalCoreInterface.sendCommand(getResetcmd());
 }
 
 function printsystemModeSelection()
 {
     console.log(JSON.stringify(system_mode_selection))
     console.log("core", LocalCoreInterface)
-//    console.log("core real", coreInterface)
 }
 
 function printDriveMode()
@@ -134,6 +149,11 @@ function printSpeedInput()
 function printSetMotorState()
 {
     console.log(JSON.stringify(set_motor_on_off))
+}
+
+function printSetRampRate()
+{
+    console.log(JSON.stringify(set_ramp_rate))
 }
 
 function getSystemModeSelection()
@@ -163,6 +183,11 @@ function getMotorstate()
 function getResetcmd()
 {
     return JSON.stringify(set_reset_mcu)
+}
+
+function getRampRate()
+{
+    return JSON.stringify(set_ramp_rate)
 }
 
 

@@ -39,6 +39,25 @@ Rectangle {
         }
     }
 
+    function parseSystemError(notification)
+    {
+        var system_error = notification.payload.system_error
+        if(system_error !== undefined)
+        {
+
+            // set the status list box ask david
+          for ( var i = 0; i < system_error.length; ++i)
+           {
+            demoModel.append({ "status" : system_error[i] });
+           }
+        }
+        else
+        {
+            console.log("Junk data found", system_error);
+        }
+    }
+
+
     Component.onCompleted:  {
         /*
           Setting the deflaut to be trapezoidal
@@ -150,7 +169,6 @@ Rectangle {
             yAxisTitle: "Voltage"
             inputData: vInBox.info
             maxYValue: 15
-            repeatingData: true
         }
 
         SGGraph{
@@ -166,7 +184,6 @@ Rectangle {
             yAxisTitle: "RPM"
             inputData: speedBox.info
             maxYValue: 6500
-            repeatingData: true
         }
 
         SGStatusListBox {
@@ -178,6 +195,14 @@ Rectangle {
             }
             width: 500
             height: 200
+            model: demoModel
+        }
+
+        ListModel {
+            id: demoModel
+            ListElement {
+                status: ""
+            }
         }
     }
 
@@ -218,12 +243,11 @@ Rectangle {
                     if(checked) {
                         MotorControl.setMotorOnOff(parseInt("0"));
                         MotorControl.printSetMotorState();
-                        //   coreInterface.sendCommand(MotorControl.getMotorstate());
+
                     }
                     else {
                         MotorControl.setMotorOnOff(parseInt("1"));
                         MotorControl.printSetMotorState();
-                        //    coreInterface.sendCommand(MotorControl.getMotorstate());
                     }
                 }
             }
@@ -321,79 +345,55 @@ Rectangle {
                 maximumValue: speedSafetyButton.checked ? 10000 : 5500
                 endLabel: speedSafetyButton.checked? "<font color='red'><b>"+ maximumValue +"</b></font>" : maximumValue
                 startLabel: minimumValue
-                showDial: false
                 anchors {
-                    verticalCenter: setSpeed.verticalCenter
+                    top: speedControlContainer.top
+                    topMargin: 10
                     left: speedControlContainer.left
                     leftMargin: 10
-                    right: setSpeed.left
+                    right: speedControlContainer.right
                     rightMargin: 10
                 }
                 function setMotorSpeedCommand(value) {
                     var truncated_value = Math.floor(value)
                     MotorControl.setTarget(truncated_value)
                     MotorControl.printsystemModeSelection()
-                    // send set speed command to platform
-                    console.log ("set speed_target", truncated_value)
-                    //  coreInterface.sendCommand(MotorControl.getSpeedInput())
                 }
                 onValueChanged: {
                     setMotorSpeedCommand(value)
-                    setSpeed.input = value
                 }
-            }
 
-            SGSubmitInfoBox {
-                id: setSpeed
-                infoBoxColor: "white"
-                anchors {
-                    top: speedControlContainer.top
-                    topMargin: 10
-                    right: speedControlContainer.right
-                    rightMargin: 10
-                }
-                onApplied: { targetSpeedSlider.value = parseInt(value, 10) }
             }
 
             SGSlider {
                 id: rampRateSlider
                 label: "Ramp Rate:"
                 width: 350
-                value: 5
+                value: 3
                 minimumValue: 0
-                maximumValue: 10
+                maximumValue: 6
                 endLabel: maximumValue
                 startLabel: minimumValue
                 anchors {
-                    verticalCenter: setRampRate.verticalCenter
+                    top: targetSpeedSlider.bottom
+                    topMargin: 10
                     left: speedControlContainer.left
                     leftMargin: 10
-                    right: setRampRate.left
-                    rightMargin: 10
-                }
-                showDial: false
-                onValueChanged: { setRampRate.input = value }
-
-            }
-
-            SGSubmitInfoBox {
-                id: setRampRate
-                infoBoxColor: "white"
-                anchors {
-                    top: setSpeed.bottom
-                    topMargin: 10
                     right: speedControlContainer.right
                     rightMargin: 10
                 }
-                onApplied: { rampRateSlider.value = parseInt(value, 10) }
+                onValueChanged: {
+                    MotorControl.setRampRate(rampRateSlider.value);
+                    MotorControl.printSetRampRate();
+
+                }
             }
 
             Item {
                 id: speedSafety
                 height: childrenRect.height
                 anchors {
-                    top: setRampRate.bottom
-                    topMargin: 10
+                    top: rampRateSlider.bottom
+                    topMargin: 20
                     left: speedControlContainer.left
                     leftMargin: 10
                     right: speedControlContainer.right
@@ -502,6 +502,7 @@ Rectangle {
 
                 ComboBox{
                     id: driveModeCombo
+                    currentIndex: 15
                     model: ["0", "1.875", "3.75","5.625","7.5", "9.375", "11.25","13.125", "15", "16.875", "18.75", "20.625", "22.5" , "24.375" , "26.25" , "28.125"]
                     anchors {
                         top: phaseAngleRow.top
@@ -512,7 +513,6 @@ Rectangle {
                         console.log("index of the combo box", currentIndex)
                         MotorControl.setPhaseAngle(parseInt(currentIndex));
                         MotorControl.printPhaseAngle();
-                        //  coreInterface.sendCommand(MotorControl.getSetPhaseAngle());
                     }
                 }
             }
@@ -537,9 +537,8 @@ Rectangle {
                     verticalCenter: whiteButton.verticalCenter
                     left: ledControlContainer.left
                     leftMargin: 10
-                    right: whiteButton.left
-                    rightMargin: 10
                 }
+
                 onValueChanged: console.log("Color set to ", value)
             }
 
@@ -553,37 +552,6 @@ Rectangle {
                     right: ledControlContainer.right
                     rightMargin: 10
                 }
-            }
-
-            SGSlider {
-                id: ledPulseFrequency
-                label: "LED Pulse Frequency:"
-                value: 50
-                minimumValue: 2
-                maximumValue: 152
-                startLabel: "2"
-                endLabel: "152"
-                anchors {
-                    verticalCenter: setLedPulse.verticalCenter
-                    left: ledControlContainer.left
-                    leftMargin: 10
-                    right: setLedPulse.left
-                    rightMargin: 10
-                }
-                showDial: false
-                onValueChanged: { setLedPulse.input = value }
-            }
-
-            SGSubmitInfoBox {
-                id: setLedPulse
-                infoBoxColor: "white"
-                anchors {
-                    top: whiteButton.bottom
-                    topMargin: 10
-                    right: ledControlContainer.right
-                    rightMargin: 10
-                }
-                onApplied: { ledPulseFrequency.value = parseInt(value, 10) }
             }
         }
 
