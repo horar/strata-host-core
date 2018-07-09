@@ -176,14 +176,7 @@ Rectangle {
                     var truncated_value = Math.floor(value)
                     MotorControl.setTarget(truncated_value)
                     MotorControl.printsystemModeSelection()
-                    // send set speed command to platform
-                    console.log ("set speed_target", truncated_value)
-                    // coreInterface.sendCommand(MotorControl.getSpeedInput())
                 }
-
-
-
-
                 onValueChanged: {
                     setMotorSpeedCommand(value)
                 }
@@ -217,9 +210,6 @@ Rectangle {
                             if (checked) {
                                 MotorControl.setSystemModeSelection("manual");
                                 MotorControl.printsystemModeSelection()
-                                // send command to platform
-
-                                // coreInterface.sendCommand(MotorControl.getSystemModeSelection())
                             }
                         }
                     }
@@ -231,8 +221,6 @@ Rectangle {
                             if (checked) {
                                 MotorControl.setSystemModeSelection("automation");
                                 MotorControl.printsystemModeSelection()
-                                // send command to platform
-                                // coreInterface.sendCommand(MotorControl.getSystemModeSelection())
                             }
                         }
                     }

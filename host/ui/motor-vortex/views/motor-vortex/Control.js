@@ -125,38 +125,6 @@ function setReset()
     LocalCoreInterface.sendCommand(getResetcmd());
 }
 
-function printsystemModeSelection()
-{
-    console.log(JSON.stringify(system_mode_selection))
-    console.log("core", LocalCoreInterface)
-    //    console.log("core real", coreInterface)
-}
-
-function printDriveMode()
-{
-    console.log(JSON.stringify(set_drive_mode))
-}
-
-function printPhaseAngle()
-{
-    console.log(JSON.stringify(set_phase_angle))
-}
-
-function printSpeedInput()
-{
-    console.log(JSON.stringify(speed_input))
-}
-
-function printSetMotorState()
-{
-    console.log(JSON.stringify(set_motor_on_off))
-}
-
-function printSetRampRate()
-{
-    console.log(JSON.stringify(set_ramp_rate))
-}
-
 function getSystemModeSelection()
 {
     return JSON.stringify(system_mode_selection)
