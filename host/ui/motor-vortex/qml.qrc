@@ -176,7 +176,28 @@
         <file>views/usb-pd/PageSchematic.qml</file>
         <file>views/usb-pd/PageSystemContent.qml</file>
         <file>views/usb-pd/PageTestReport.qml</file>
+        <file>views/motor-vortex/sgwidgets/fonts/sgicons.ttf</file>
+        <file>views/motor-vortex/sgwidgets/images/sliderHandle.svg</file>
+        <file>views/motor-vortex/sgwidgets/images/sliderHandleActive.svg</file>
+        <file>views/motor-vortex/sgwidgets/images/sliderValue.svg</file>
+        <file>views/motor-vortex/sgwidgets/SGGraph.qml</file>
+        <file>views/motor-vortex/sgwidgets/SGLabelledInfoBox.qml</file>
+        <file>views/motor-vortex/sgwidgets/SGRadioButton.qml</file>
+        <file>views/motor-vortex/sgwidgets/SGSegmentedButton.qml</file>
+        <file>views/motor-vortex/sgwidgets/SGSegmentedButtonStrip.qml</file>
+        <file>views/motor-vortex/sgwidgets/SGSlider.qml</file>
+        <file>views/motor-vortex/sgwidgets/SGStatusListBox.qml</file>
+        <file>views/motor-vortex/AdvancedControl.qml</file>
+        <file>views/motor-vortex/BasicControl.qml</file>
+        <file>views/motor-vortex/FAEControl.qml</file>
+        <file>views/motor-vortex/sgwidgets/SGToolTipPopup.qml</file>
+        <file>views/motor-vortex/sgwidgets/fonts/digitalseven.ttf</file>
+        <file>views/motor-vortex/sgwidgets/SGCircularGauge.qml</file>
+        <file>views/motor-vortex/sgwidgets/SGRadioButtonContainer.qml</file>
+        <file>views/motor-vortex/Control.js</file>
         <file>views/bubu/boardBringUp/ButtonViewGPIO.qml</file>
         <file>views/bubu/boardBringUp/I2CTable.qml</file>
+        <file>views/motor-vortex/sgwidgets/SGHueSlider.qml</file>
+        <file>views/motor-vortex/sgwidgets/SGSubmitInfoBox.qml</file>
     </qresource>
 </RCC>
