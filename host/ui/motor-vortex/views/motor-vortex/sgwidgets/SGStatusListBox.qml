@@ -45,12 +45,16 @@ Rectangle {
             }
             padding: 10
             font.family: sgicons.name
+
         }
 
-        Component.onCompleted: {
-            if (title.text === ""){ titleArea.visible = false }
-        }
+//        Component.onCompleted: {
+//            if (title.text === ""){
+//                titleArea.visible = false }
+//        }
+
     }
+
 
     ListView {
         id: statusList
@@ -77,6 +81,7 @@ Rectangle {
         onContentHeightChanged: {
             if (running) { scroll() }
         }
+
     }
 
     // Make sure focus follows current transcript messages when window is full

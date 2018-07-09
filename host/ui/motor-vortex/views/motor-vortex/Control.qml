@@ -40,15 +40,21 @@ Rectangle {
                         advanceView.parseVin(notification);
                         faeView.parseVin(notification);
                     }
+                    else if( notification.value === "system_error")
+                    {
+
+                        advanceView.parseSystemError(notification);
+                        faeView.parseSystemError(notification);
+                    }
 
                     else
                     {
-                        console.log("Error expected i2c_read or i2c_write but received", notification.value)
+                        console.log("Error expected pi_stats,input_voltage_notification or system_error but received", notification.value)
                     }
 
                 }
                 else {
-                    conole.log("Notification Error. payload is corrupted");
+                    console.log("Notification Error. payload is corrupted");
                 }
             }
             catch(e)

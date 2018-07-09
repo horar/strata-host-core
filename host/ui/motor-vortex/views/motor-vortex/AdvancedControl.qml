@@ -40,16 +40,34 @@ Rectangle {
         }
     }
 
+
+    function parseSystemError(notification)
+    {
+        var system_error = notification.payload.system_error
+        if(system_error !== undefined)
+        {
+
+            // set the status list box ask david
+          for ( var i = 0; i < system_error.length; ++i)
+           {
+            demoModel.append({ "status" : system_error[i] });
+           }
+        }
+        else
+        {
+            console.log("Junk data found", system_error);
+        }
+    }
+
+
     Component.onCompleted:  {
         /*
           Setting the deflaut to be trapezoidal
         */
         MotorControl.setDriveMode(parseInt("0"));
         MotorControl.printDriveMode();
-        MotorControl.setPhaseAngle(parseInt("15"));
+        MotorControl.setPhaseAngle(parseInt("28.125"));
         MotorControl.printPhaseAngle();
-        //coreInterface.sendCommand(MotorControl.getDriveMode());
-        //coreInterface.sendCommand(MotorControl.getSetPhaseAngle());
     }
     
     Rectangle {
@@ -123,6 +141,13 @@ Rectangle {
             }
             width: 500
             height: 200
+            model: demoModel
+        }
+        ListModel {
+            id: demoModel
+            ListElement {
+                status: ""
+            }
         }
     }
     
@@ -162,12 +187,12 @@ Rectangle {
                     if(checked) {
                         MotorControl.setMotorOnOff(parseInt("0"));
                         MotorControl.printSetMotorState();
-                        //    coreInterface.sendCommand(MotorControl.getMotorstate());
+
                     }
                     else {
                         MotorControl.setMotorOnOff(parseInt("1"));
                         MotorControl.printSetMotorState();
-                        //   coreInterface.sendCommand(MotorControl.getMotorstate());
+
                     }
                 }
             }
@@ -180,9 +205,7 @@ Rectangle {
                 }
                 text: qsTr("Reset")
                 onClicked: {
-
-                    MotorControl.setReset()
-                    //  coreInterface.sendCommand(MotorControl.getResetcmd());
+                    MotorControl.setReset();
                 }
             }
         }
@@ -226,8 +249,7 @@ Rectangle {
                             if (checked) {
                                 MotorControl.setSystemModeSelection("manual");
                                 MotorControl.printsystemModeSelection()
-                                // send command to platform
-                                //    coreInterface.sendCommand(MotorControl.getSystemModeSelection())
+
                             }
                         }
                     }
@@ -239,8 +261,7 @@ Rectangle {
                             if (checked) {
                                 MotorControl.setSystemModeSelection("automation");
                                 MotorControl.printsystemModeSelection()
-                                // send command to platform
-                                //    coreInterface.sendCommand(MotorControl.getSystemModeSelection())
+
                             }
                         }
                     }
@@ -268,10 +289,13 @@ Rectangle {
                 endLabel: maximumValue
                 startLabel: minimumValue
                 anchors {
-                    verticalCenter: setSpeed.verticalCenter
+                  //  verticalCenter: setSpeed.verticalCenter
+                    top: speedControlContainer.top
+                    topMargin: 10
                     left: speedControlContainer.left
                     leftMargin: 10
-                    right: setSpeed.left
+                   // right: setSpeed.left
+                    right: speedControlContainer.right
                     rightMargin: 10
                 }
                 showDial: false
@@ -280,9 +304,6 @@ Rectangle {
                     var truncated_value = Math.floor(value)
                     MotorControl.setTarget(truncated_value)
                     MotorControl.printsystemModeSelection()
-                    // send set speed command to platform
-                    console.log ("set speed_target", truncated_value)
-                    // coreInterface.sendCommand(MotorControl.getSpeedInput())
                 }
                 onValueChanged: {
                     setMotorSpeedCommand(value)
@@ -312,48 +333,29 @@ Rectangle {
                 }
             }
 
-            SGSubmitInfoBox {
-                id: setSpeed
-                infoBoxColor: "white"
-                anchors {
-                    top: speedControlContainer.top
-                    topMargin: 10
-                    right: speedControlContainer.right
-                    rightMargin: 10
-                }
-                onApplied: { targetSpeedSlider.value = parseInt(value, 10) }
-            }
 
             SGSlider {
                 id: rampRateSlider
                 label: "Ramp Rate:"
                 width: 350
-                value: 5
+                value: 1
                 minimumValue: 0
-                maximumValue: 10
+                maximumValue:6
                 endLabel: maximumValue
                 startLabel: minimumValue
                 anchors {
-                    verticalCenter: setRampRate.verticalCenter
+                    top: targetSpeedSlider.bottom
+                    topMargin: 10
                     left: speedControlContainer.left
                     leftMargin: 10
-                    right: setRampRate.left
                     rightMargin: 10
                 }
                 showDial: false
-                onValueChanged: { setRampRate.input = value }
-            }
+                onValueChanged: {
+                    MotorControl.setRampRate(rampRateSlider.value);
+                    MotorControl.printSetRampRate();
 
-            SGSubmitInfoBox {
-                id: setRampRate
-                infoBoxColor: "white"
-                anchors {
-                    top: setSpeed.bottom
-                    topMargin: 10
-                    right: speedControlContainer.right
-                    rightMargin: 10
                 }
-                onApplied: { rampRateSlider.value = parseInt(value, 10) }
             }
         }
 
@@ -391,11 +393,8 @@ Rectangle {
                         checked: true
                         onCheckedChanged: {
                             if (checked) {
-                                console.log ( "PS Checked!")
                                 MotorControl.setDriveMode(parseInt("1"));
                                 MotorControl.printDriveMode();
-                                //  coreInterface.sendCommand(MotorControl.getDriveMode());
-
                             }
                         }
                     }
@@ -405,10 +404,9 @@ Rectangle {
                         text: "Trapezoidal"
                         onCheckedChanged: {
                             if (checked) {
-                                console.log ( "Trap Checked!")
                                 MotorControl.setDriveMode(parseInt("0"));
                                 MotorControl.printDriveMode();
-                                //    coreInterface.sendCommand(MotorControl.getDriveMode());
+
                             }
                         }
                     }
@@ -436,17 +434,18 @@ Rectangle {
 
                 ComboBox{
                     id: driveModeCombo
+                    currentIndex: 15
                     model: ["0", "1.875", "3.75","5.625","7.5", "9.375", "11.25","13.125", "15", "16.875", "18.75", "20.625", "22.5" , "24.375" , "26.25" , "28.125"]
                     anchors {
                         top: phaseAngleRow.top
                         left: phaseAngleTitle.right
                         leftMargin: 20
                     }
+
                     onCurrentIndexChanged: {
-                        console.log("index of the combo box", currentIndex)
                         MotorControl.setPhaseAngle(parseInt(currentIndex));
                         MotorControl.printPhaseAngle();
-                        //  coreInterface.sendCommand(MotorControl.getSetPhaseAngle());
+
                     }
                 }
             }

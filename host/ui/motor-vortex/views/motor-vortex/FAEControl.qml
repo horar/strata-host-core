@@ -39,6 +39,25 @@ Rectangle {
         }
     }
 
+    function parseSystemError(notification)
+    {
+        var system_error = notification.payload.system_error
+        if(system_error !== undefined)
+        {
+
+            // set the status list box ask david
+          for ( var i = 0; i < system_error.length; ++i)
+           {
+            demoModel.append({ "status" : system_error[i] });
+           }
+        }
+        else
+        {
+            console.log("Junk data found", system_error);
+        }
+    }
+
+
     Component.onCompleted:  {
         /*
           Setting the deflaut to be trapezoidal
@@ -47,8 +66,7 @@ Rectangle {
         MotorControl.printDriveMode();
         MotorControl.setPhaseAngle(parseInt("15"));
         MotorControl.printPhaseAngle();
-        // coreInterface.sendCommand(MotorControl.getDriveMode());
-        //coreInterface.sendCommand(MotorControl.getSetPhaseAngle());
+
     }
 
 
@@ -178,6 +196,14 @@ Rectangle {
             }
             width: 500
             height: 200
+            model: demoModel
+        }
+
+        ListModel {
+            id: demoModel
+            ListElement {
+                status: ""
+            }
         }
     }
 
@@ -333,9 +359,6 @@ Rectangle {
                     var truncated_value = Math.floor(value)
                     MotorControl.setTarget(truncated_value)
                     MotorControl.printsystemModeSelection()
-                    // send set speed command to platform
-                    console.log ("set speed_target", truncated_value)
-                    //  coreInterface.sendCommand(MotorControl.getSpeedInput())
                 }
                 onValueChanged: {
                     setMotorSpeedCommand(value)
@@ -359,9 +382,9 @@ Rectangle {
                 id: rampRateSlider
                 label: "Ramp Rate:"
                 width: 350
-                value: 5
+                value: 1
                 minimumValue: 0
-                maximumValue: 10
+                maximumValue: 6
                 endLabel: maximumValue
                 startLabel: minimumValue
                 anchors {
@@ -372,20 +395,13 @@ Rectangle {
                     rightMargin: 10
                 }
                 showDial: false
-                onValueChanged: { setRampRate.input = value }
 
-            }
+                onValueChanged: {
+                    setRampRate.input = value
+                    MotorControl.setRampRate(rampRateSlider.value);
+                    MotorControl.printSetRampRate();
 
-            SGSubmitInfoBox {
-                id: setRampRate
-                infoBoxColor: "white"
-                anchors {
-                    top: setSpeed.bottom
-                    topMargin: 10
-                    right: speedControlContainer.right
-                    rightMargin: 10
                 }
-                onApplied: { rampRateSlider.value = parseInt(value, 10) }
             }
 
             Item {
