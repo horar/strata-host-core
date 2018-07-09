@@ -1,11 +1,11 @@
 .pragma library
-//.import Qt.tech.spyglass.CoreInterface 1.0 as CoreInterface
+
 var LocalCoreInterface = null
 
 function setCoreInterface(coreInt)
 {
     LocalCoreInterface = coreInt;
-    console.log("heyyy dude I'm in abc function");
+
 }
 
 /*
