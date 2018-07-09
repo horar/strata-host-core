@@ -513,7 +513,6 @@ Rectangle {
                         console.log("index of the combo box", currentIndex)
                         MotorControl.setPhaseAngle(parseInt(currentIndex));
                         MotorControl.printPhaseAngle();
-                        //  coreInterface.sendCommand(MotorControl.getSetPhaseAngle());
                     }
                 }
             }
