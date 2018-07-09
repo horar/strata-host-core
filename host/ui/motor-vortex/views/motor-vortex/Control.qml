@@ -15,9 +15,8 @@ Rectangle {
     }
 
     Component.onCompleted: {
-         MotorControl.setCoreInterface(coreInterface);
+        MotorControl.setCoreInterface(coreInterface);
     }
-
     Connections {
         target: coreInterface
         onNotification: {

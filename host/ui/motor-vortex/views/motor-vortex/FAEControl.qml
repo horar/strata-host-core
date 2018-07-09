@@ -243,12 +243,11 @@ Rectangle {
                     if(checked) {
                         MotorControl.setMotorOnOff(parseInt("0"));
                         MotorControl.printSetMotorState();
-                        //   coreInterface.sendCommand(MotorControl.getMotorstate());
+
                     }
                     else {
                         MotorControl.setMotorOnOff(parseInt("1"));
                         MotorControl.printSetMotorState();
-                        //    coreInterface.sendCommand(MotorControl.getMotorstate());
                     }
                 }
             }
@@ -503,6 +502,7 @@ Rectangle {
 
                 ComboBox{
                     id: driveModeCombo
+                    currentIndex: 15
                     model: ["0", "1.875", "3.75","5.625","7.5", "9.375", "11.25","13.125", "15", "16.875", "18.75", "20.625", "22.5" , "24.375" , "26.25" , "28.125"]
                     anchors {
                         top: phaseAngleRow.top

@@ -129,7 +129,6 @@ function printsystemModeSelection()
 {
     console.log(JSON.stringify(system_mode_selection))
     console.log("core", LocalCoreInterface)
-    //    console.log("core real", coreInterface)
 }
 
 function printDriveMode()

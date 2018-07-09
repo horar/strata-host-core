@@ -211,9 +211,6 @@ Rectangle {
                             if (checked) {
                                 MotorControl.setSystemModeSelection("manual");
                                 MotorControl.printsystemModeSelection()
-                                // send command to platform
-
-                                // coreInterface.sendCommand(MotorControl.getSystemModeSelection())
                             }
                         }
                     }
@@ -225,7 +222,6 @@ Rectangle {
                             if (checked) {
                                 MotorControl.setSystemModeSelection("automation");
                                 MotorControl.printsystemModeSelection()
-
                             }
                         }
                     }
