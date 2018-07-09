@@ -289,12 +289,10 @@ Rectangle {
                 endLabel: maximumValue
                 startLabel: minimumValue
                 anchors {
-                  //  verticalCenter: setSpeed.verticalCenter
                     top: speedControlContainer.top
                     topMargin: 10
                     left: speedControlContainer.left
                     leftMargin: 10
-                   // right: setSpeed.left
                     right: speedControlContainer.right
                     rightMargin: 10
                 }
@@ -338,7 +336,7 @@ Rectangle {
                 id: rampRateSlider
                 label: "Ramp Rate:"
                 width: 350
-                value: 1
+                value: 3
                 minimumValue: 0
                 maximumValue:6
                 endLabel: maximumValue

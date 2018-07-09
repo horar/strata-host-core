@@ -66,7 +66,8 @@ Rectangle {
         MotorControl.printDriveMode();
         MotorControl.setPhaseAngle(parseInt("15"));
         MotorControl.printPhaseAngle();
-
+        // coreInterface.sendCommand(MotorControl.getDriveMode());
+        //coreInterface.sendCommand(MotorControl.getSetPhaseAngle());
     }
 
 
@@ -168,7 +169,6 @@ Rectangle {
             yAxisTitle: "Voltage"
             inputData: vInBox.info
             maxYValue: 15
-            repeatingData: true
         }
 
         SGGraph{
@@ -184,7 +184,6 @@ Rectangle {
             yAxisTitle: "RPM"
             inputData: speedBox.info
             maxYValue: 6500
-            repeatingData: true
         }
 
         SGStatusListBox {
@@ -347,12 +346,12 @@ Rectangle {
                 maximumValue: speedSafetyButton.checked ? 10000 : 5500
                 endLabel: speedSafetyButton.checked? "<font color='red'><b>"+ maximumValue +"</b></font>" : maximumValue
                 startLabel: minimumValue
-                showDial: false
                 anchors {
-                    verticalCenter: setSpeed.verticalCenter
+                    top: speedControlContainer.top
+                    topMargin: 10
                     left: speedControlContainer.left
                     leftMargin: 10
-                    right: setSpeed.left
+                    right: speedControlContainer.right
                     rightMargin: 10
                 }
                 function setMotorSpeedCommand(value) {
@@ -362,42 +361,28 @@ Rectangle {
                 }
                 onValueChanged: {
                     setMotorSpeedCommand(value)
-                    setSpeed.input = value
                 }
-            }
 
-            SGSubmitInfoBox {
-                id: setSpeed
-                infoBoxColor: "white"
-                anchors {
-                    top: speedControlContainer.top
-                    topMargin: 10
-                    right: speedControlContainer.right
-                    rightMargin: 10
-                }
-                onApplied: { targetSpeedSlider.value = parseInt(value, 10) }
             }
 
             SGSlider {
                 id: rampRateSlider
                 label: "Ramp Rate:"
                 width: 350
-                value: 1
+                value: 3
                 minimumValue: 0
                 maximumValue: 6
                 endLabel: maximumValue
                 startLabel: minimumValue
                 anchors {
-                    verticalCenter: setRampRate.verticalCenter
+                    top: targetSpeedSlider.bottom
+                    topMargin: 10
                     left: speedControlContainer.left
                     leftMargin: 10
-                    right: setRampRate.left
+                    right: speedControlContainer.right
                     rightMargin: 10
                 }
-                showDial: false
-
                 onValueChanged: {
-                    setRampRate.input = value
                     MotorControl.setRampRate(rampRateSlider.value);
                     MotorControl.printSetRampRate();
 
@@ -408,8 +393,8 @@ Rectangle {
                 id: speedSafety
                 height: childrenRect.height
                 anchors {
-                    top: setRampRate.bottom
-                    topMargin: 10
+                    top: rampRateSlider.bottom
+                    topMargin: 20
                     left: speedControlContainer.left
                     leftMargin: 10
                     right: speedControlContainer.right
@@ -553,9 +538,8 @@ Rectangle {
                     verticalCenter: whiteButton.verticalCenter
                     left: ledControlContainer.left
                     leftMargin: 10
-                    right: whiteButton.left
-                    rightMargin: 10
                 }
+
                 onValueChanged: console.log("Color set to ", value)
             }
 
@@ -569,37 +553,6 @@ Rectangle {
                     right: ledControlContainer.right
                     rightMargin: 10
                 }
-            }
-
-            SGSlider {
-                id: ledPulseFrequency
-                label: "LED Pulse Frequency:"
-                value: 50
-                minimumValue: 2
-                maximumValue: 152
-                startLabel: "2"
-                endLabel: "152"
-                anchors {
-                    verticalCenter: setLedPulse.verticalCenter
-                    left: ledControlContainer.left
-                    leftMargin: 10
-                    right: setLedPulse.left
-                    rightMargin: 10
-                }
-                showDial: false
-                onValueChanged: { setLedPulse.input = value }
-            }
-
-            SGSubmitInfoBox {
-                id: setLedPulse
-                infoBoxColor: "white"
-                anchors {
-                    top: whiteButton.bottom
-                    topMargin: 10
-                    right: ledControlContainer.right
-                    rightMargin: 10
-                }
-                onApplied: { ledPulseFrequency.value = parseInt(value, 10) }
             }
         }
 
