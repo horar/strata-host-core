@@ -36,10 +36,10 @@ Item {
         property real hoverOpacity: 0
         updateValueWhileDragging: false
         height: 30
-        minimumValue: 0.0
-        maximumValue: 100.0
+        minimumValue: 1
+        maximumValue: 10
         value: 0.0
-        stepSize: 1.0
+        stepSize: 1
         anchors {
             left: root.labelLeft ? labelText.right : labelText.left
             top: root.labelLeft ? labelText.top : labelText.bottom
