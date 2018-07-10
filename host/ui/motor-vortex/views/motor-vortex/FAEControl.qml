@@ -11,33 +11,36 @@ Rectangle {
     anchors {
         fill: parent
     }
-    function parseCurrentSpeed(notification)
-    {
-        var periodic_current_speed = notification.payload.current_speed;
 
-        if(periodic_current_speed !== undefined)
-        {
-            speedBox.info = periodic_current_speed;
-        }
-        else
-        {
-            console.log("Junk data found", periodic_current_speed);
-        }
-    }
+// TODO - Faller: Remove this old PlatInt code before merge back to dev,
+//                leaving for reference while updating to new PI
+//    function parseCurrentSpeed(notification)
+//    {
+//        var periodic_current_speed = notification.payload.current_speed;
 
-    function parseVin(notification)
-    {
-        var input_voltage =  notification.payload.vin;
+//        if(periodic_current_speed !== undefined)
+//        {
+//            speedBox.info = periodic_current_speed;
+//        }
+//        else
+//        {
+//            console.log("Junk data found", periodic_current_speed);
+//        }
+//    }
 
-        if(input_voltage !== undefined)
-        {
-            vInBox.info = input_voltage;
-        }
-        else
-        {
-            console.log("Junk data found", input_voltage);
-        }
-    }
+//    function parseVin(notification)
+//    {
+//        var input_voltage =  notification.payload.vin;
+
+//        if(input_voltage !== undefined)
+//        {
+//            vInBox.info = input_voltage;
+//        }
+//        else
+//        {
+//            console.log("Junk data found", input_voltage);
+//        }
+//    }
 
     function parseSystemError(notification)
     {

@@ -12,33 +12,35 @@ Rectangle {
         fill: parent
     }
 
-    function parseCurrentSpeed(notification)
-    {
-        var periodic_current_speed = notification.payload.current_speed;
+// TODO - Faller: Remove this old PlatInt code before merge back to dev,
+//                leaving for reference while updating to new PI
+//    function parseCurrentSpeed(notification)
+//    {
+//        var periodic_current_speed = notification.payload.current_speed;
 
-        if(periodic_current_speed !== undefined)
-        {
-            speedBox.info = periodic_current_speed;
-        }
-        else
-        {
-            console.log("Junk data found", periodic_current_speed);
-        }
-    }
+//        if(periodic_current_speed !== undefined)
+//        {
+//            speedBox.info = periodic_current_speed;
+//        }
+//        else
+//        {
+//            console.log("Junk data found", periodic_current_speed);
+//        }
+//    }
 
-    function parseVin(notification)
-    {
-        var input_voltage =  notification.payload.vin;
+//    function parseVin(notification)
+//    {
+//        var input_voltage =  notification.payload.vin;
 
-        if(input_voltage !== undefined)
-        {
-            vInBox.info = input_voltage;
-        }
-        else
-        {
-            console.log("Junk data found", input_voltage);
-        }
-    }
+//        if(input_voltage !== undefined)
+//        {
+//            vInBox.info = input_voltage;
+//        }
+//        else
+//        {
+//            console.log("Junk data found", input_voltage);
+//        }
+//    }
 
 
     function parseSystemError(notification)
@@ -62,7 +64,7 @@ Rectangle {
 
     Component.onCompleted:  {
         /*
-          Setting the deflaut to be trapezoidal
+          Setting the default to be trapezoidal
         */
         MotorControl.setDriveMode(parseInt("0"));
         MotorControl.printDriveMode();
@@ -82,7 +84,7 @@ Rectangle {
         SGLabelledInfoBox {
             id: vInBox
             label: "Vin:"
-            info: "12.3v"
+            info: platformInterface.input_voltage_notification.vin + "v"
             infoBoxWidth: 80
             anchors {
                 top: leftSide.top
@@ -93,7 +95,7 @@ Rectangle {
         SGLabelledInfoBox {
             id: speedBox
             label: "Current Speed:"
-            info: "4050 rpm"
+            info: platformInterface.pi_stats.current_speed + " rpm"
             infoBoxWidth: 80
             anchors {
                 top: leftSide.top
@@ -111,7 +113,7 @@ Rectangle {
             showOptions: false
             xAxisTitle: "Seconds"
             yAxisTitle: "Voltage"
-            inputData: vInBox.info
+            inputData: platformInterface.input_voltage_notification.vin
             maxYValue: 15
             repeatingData: true
         }
@@ -127,7 +129,7 @@ Rectangle {
             showOptions: false
             xAxisTitle: "Seconds"
             yAxisTitle: "RPM"
-            inputData: speedBox.info
+            inputData: platformInterface.pi_stats.current_speed
             maxYValue: 6500
             repeatingData: true
         }
@@ -143,6 +145,7 @@ Rectangle {
             height: 200
             model: demoModel
         }
+
         ListModel {
             id: demoModel
             ListElement {
