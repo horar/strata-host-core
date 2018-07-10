@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/">
+        <file>main.qml</file>
+        <file>sgwidgets/SGGraph.qml</file>
+        <file>views/AdvancedControl.qml</file>
+        <file>views/BasicControl.qml</file>
+    </qresource>
+</RCC>
