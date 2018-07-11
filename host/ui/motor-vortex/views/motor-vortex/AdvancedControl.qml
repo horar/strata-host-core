@@ -18,7 +18,7 @@ Rectangle {
         platformInterface.set_phase_angle.update(parseInt(15));
 
     }
-    
+
     Rectangle {
         id: leftSide
         width: 600
@@ -27,7 +27,7 @@ Rectangle {
             left: parent.left
             verticalCenter: parent.verticalCenter
         }
-        
+
         SGLabelledInfoBox {
             id: vInBox
             label: "Vin:"
@@ -38,7 +38,7 @@ Rectangle {
                 horizontalCenter: vInGraph.horizontalCenter
             }
         }
-        
+
         SGLabelledInfoBox {
             id: speedBox
             label: "Current Speed:"
@@ -49,7 +49,7 @@ Rectangle {
                 horizontalCenter: speedGraph.horizontalCenter
             }
         }
-        
+
         SGGraph{
             id: vInGraph
             width: 300
@@ -64,7 +64,7 @@ Rectangle {
             maxYValue: 15
             repeatingData: true
         }
-        
+
         SGGraph{
             id: speedGraph
             width: 300
@@ -80,7 +80,7 @@ Rectangle {
             maxYValue: 6500
             repeatingData: true
         }
-        
+
         SGStatusListBox {
             id: faultBox
             title: "Faults:"
@@ -90,22 +90,25 @@ Rectangle {
             }
             width: 500
             height: 200
-            model: demoModel
+            model: faultModel
 
-            property var errorArray: platformInterface.system_error.error_and_warnings
-            onErrorArrayChanged: {
-                faultModel.clear()
-                for (var i in errorArray){
-                    demoModel.append({ status : errorArray[i] })
-                }
+
+        }
+
+        property var errorArray: platformInterface.system_error.error_and_warnings
+        onErrorArrayChanged: {
+            faultModel.clear()
+            for (var i in errorArray){
+                faultModel.append({ status : errorArray[i] })
             }
         }
 
         ListModel {
             id: faultModel
+
         }
     }
-    
+
     Rectangle {
         id: rightSide
         width: 600
@@ -114,7 +117,7 @@ Rectangle {
             left: leftSide.right
             verticalCenter: parent.verticalCenter
         }
-        
+
         Item {
             id: buttonContainer
             width: childrenRect.width
@@ -122,7 +125,7 @@ Rectangle {
             anchors {
                 horizontalCenter: rightSide.horizontalCenter
             }
-            
+
             Button {
                 id: startStopButton
                 text: checked ? qsTr("Start Motor") : qsTr("Stop Motor")
@@ -147,7 +150,7 @@ Rectangle {
                     }
                 }
             }
-            
+
             Button {
                 id: resetButton
                 anchors {
@@ -198,7 +201,7 @@ Rectangle {
                         checked: true
                         onCheckedChanged: {
                             if (checked) {
-                                    platformInterface.system_mode_selection.update("manual")
+                                platformInterface.system_mode_selection.update("manual")
                             }
                         }
                     }
@@ -216,7 +219,7 @@ Rectangle {
                 }
             }
         }
-        
+
         Rectangle {
             id: speedControlContainer
             width: 500
@@ -379,7 +382,7 @@ Rectangle {
                     }
 
                     onCurrentIndexChanged: {
-                       platformInterface.set_phase_angle.update(parseInt(currentIndex));
+                        platformInterface.set_phase_angle.update(parseInt(currentIndex));
 
                     }
                 }
@@ -440,7 +443,9 @@ Rectangle {
                 }
                 showDial: false
 
-                onValueChanged: { setLedPulse.input = value }
+                onValueChanged: { setLedPulse.input = value
+                    platformInterface.set_blink0_frequency.update(value);
+                }
             }
 
             SGSubmitInfoBox {

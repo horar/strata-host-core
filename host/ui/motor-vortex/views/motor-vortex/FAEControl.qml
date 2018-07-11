@@ -12,25 +12,6 @@ Rectangle {
         fill: parent
     }
 
-    function parseSystemError()
-    {
-
-        var system_error = platformInterface.system_error.error_and_warnings
-        if(system_error !== undefined)
-        {
-
-            // set the status list box ask david
-          for ( var i = 0; i < system_error.length; ++i)
-           {
-            demoModel.append({ "status" : system_error[i] });
-           }
-        }
-        else
-        {
-            console.log("Junk data found", system_error);
-        }
-    }
-
 
     Component.onCompleted:  {
         /*
@@ -40,8 +21,6 @@ Rectangle {
         platformInterface.set_phase_angle.update(parseInt(15));
 
     }
-
-
 
     Rectangle {
         id: leftSide
@@ -140,6 +119,7 @@ Rectangle {
             yAxisTitle: "Voltage"
             inputData: platformInterface.input_voltage_notification.vin
             maxYValue: 15
+            repeatingData: true
         }
 
         SGGraph{
@@ -155,6 +135,7 @@ Rectangle {
             yAxisTitle: "RPM"
             inputData: platformInterface.pi_stats.current_speed
             maxYValue: 6500
+            repeatingData: true
         }
 
         SGStatusListBox {
@@ -166,14 +147,20 @@ Rectangle {
             }
             width: 500
             height: 200
-            model: demoModel
+            model: faultModel
+        }
+
+        property var errorArray: platformInterface.system_error.error_and_warnings
+        onErrorArrayChanged: {
+            faultModel.clear()
+            for (var i in errorArray){
+                faultModel.append({ status : errorArray[i] })
+            }
         }
 
         ListModel {
-            id: demoModel
-            ListElement {
-                status: ""
-            }
+            id: faultModel
+
         }
     }
 
@@ -215,7 +202,7 @@ Rectangle {
                         platformInterface.set_motor_on_off.update(parseInt("0"))
                     }
                     else {
-                         platformInterface.set_motor_on_off.update(parseInt("1"))
+                        platformInterface.set_motor_on_off.update(parseInt("1"))
                     }
                 }
             }
@@ -228,7 +215,7 @@ Rectangle {
                 }
                 text: qsTr("Reset")
                 onClicked: {
-                     platformInterface.set_reset_mcu.update()
+                    platformInterface.set_reset_mcu.update()
                 }
             }
         }
@@ -280,11 +267,8 @@ Rectangle {
                         text: "Automatic Demo Pattern"
                         onCheckedChanged: {
                             if (checked) {
-                                 platformInterface.system_mode_selection.update("automation")
-//                                MotorControl.setSystemModeSelection("automation");
-//                                MotorControl.printsystemModeSelection()
-                                // send command to platform
-                                //coreInterface.sendCommand(MotorControl.getSystemModeSelection())
+                                platformInterface.system_mode_selection.update("automation")
+
                             }
                         }
                     }
@@ -319,13 +303,9 @@ Rectangle {
                     right: speedControlContainer.right
                     rightMargin: 10
                 }
-//                function setMotorSpeedCommand(value) {
-//                    var truncated_value = Math.floor(value)
-//                    MotorControl.setTarget(truncated_value)
-//                    MotorControl.printsystemModeSelection()
-//                }
+
                 onValueChanged: {
-                     platformInterface.motor_speed.update(value);
+                    platformInterface.motor_speed.update(value);
                 }
 
             }
@@ -349,8 +329,6 @@ Rectangle {
                 }
                 onValueChanged: {
                     platformInterface.set_ramp_rate.update(rampRateSlider.value)
-//                    MotorControl.setRampRate(rampRateSlider.value);
-//                    MotorControl.printSetRampRate();
 
                 }
             }
@@ -426,7 +404,7 @@ Rectangle {
                         checked: true
                         onCheckedChanged: {
                             if (checked) {
-                               platformInterface.set_drive_mode.update(parseInt("1"))
+                                platformInterface.set_drive_mode.update(parseInt("1"))
                             }
                         }
                     }
@@ -436,7 +414,7 @@ Rectangle {
                         text: "Trapezoidal"
                         onCheckedChanged: {
                             if (checked) {
-                              platformInterface.set_drive_mode.update(parseInt("0"))
+                                platformInterface.set_drive_mode.update(parseInt("0"))
                             }
                         }
                     }
@@ -464,6 +442,7 @@ Rectangle {
 
                 ComboBox{
                     id: driveModeCombo
+                    ScrollBar.vertical: ScrollBar { }
                     currentIndex: 15
                     model: ["0", "1.875", "3.75","5.625","7.5", "9.375", "11.25","13.125", "15", "16.875", "18.75", "20.625", "22.5" , "24.375" , "26.25" , "28.125"]
                     anchors {
@@ -499,7 +478,7 @@ Rectangle {
                     leftMargin: 10
                 }
 
-                onValueChanged: console.log("Color set to ", value)
+                onValueChanged: platformInterface.set_color_mixing.update(color1,color_value1,color2,color_value2)
             }
 
             Button {

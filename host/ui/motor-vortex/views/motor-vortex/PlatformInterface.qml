@@ -248,7 +248,27 @@ Item {
                                         send: function () { CorePlatformInterface.send(this) },
                                         show: function () { CorePlatformInterface.show(this) }
                                     })
-                                        
+    /*
+      set Blink0 Frequency
+     */
+    property var set_blink0_frequency: ({
+                                        "cmd":"set_blink0_frequency",
+                                            "payload":{
+                                                        "blink0_frequency": 2
+                                            },
+                                        // Update will set and send in one shot
+                                        update: function (blink_0_frequency) {
+                                            this.set(blink_0_frequency)
+                                            CorePlatformInterface.send(this)
+                                        },
+                                        set: function (blink_0_frequency) {
+                                            this.payload.blink0_frequency = blink_0_frequency
+
+                                        },
+                                        send: function () { CorePlatformInterface.send(this) },
+                                        show: function () { CorePlatformInterface.show(this) }
+                                    })
+
     // -------------------  end commands
 
     // NOTE:

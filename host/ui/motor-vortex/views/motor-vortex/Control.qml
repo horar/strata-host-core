@@ -18,59 +18,6 @@ Rectangle {
         id: platformInterface
     }
 
-// TODO - Faller: Remove this old PlatInt code before merge back to dev,
-//                leaving for reference while updating to new PI
-//    Component.onCompleted: {
-//        MotorControl.setCoreInterface(coreInterface);
-//    }
-//    Connections {
-//        target: coreInterface
-//        onNotification: {
-//            try {
-//                /*
-//                        Attempt to parse JSON
-//                */
-//                var notification = JSON.parse(payload)
-//                if(notification.hasOwnProperty("payload")){
-//                    /*
-//                          check and parse the command for the notification
-//                          based on the notification value
-//                    */
-//                    if(notification.value === "pi_stats") {
-//                        advanceView.parseCurrentSpeed(notification);
-//                        faeView.parseCurrentSpeed(notification);
-//                    }
-//                    else if(notification.value === "input_voltage_notification")
-//                    {
-//                        advanceView.parseVin(notification);
-//                        faeView.parseVin(notification);
-//                    }
-//                    else if( notification.value === "system_error")
-//                    {
-
-//                        advanceView.parseSystemError(notification);
-//                        faeView.parseSystemError(notification);
-//                    }
-
-//                    else
-//                    {
-//                        console.log("Error expected pi_stats,input_voltage_notification or system_error but received", notification.value)
-//                    }
-
-//                }
-//                else {
-//                    console.log("Notification Error. payload is corrupted");
-//                }
-//            }
-//            catch(e)
-//            {
-//                if (e instanceof SyntaxError){
-//                    console.log("Notification JSON is invalid,ignoring")
-//                }
-//            }
-//        }
-//    }
-
     TabBar {
         id: navTabs
         anchors {
@@ -90,7 +37,6 @@ Rectangle {
             text: qsTr("Advanced")
             onClicked: {
                 controlContainer.currentIndex = 1
-
             }
         }
 
@@ -98,7 +44,6 @@ Rectangle {
             id: faeButton
             text: qsTr("FAE Only")
             onClicked: {
-                faeView.parseSystemError()
                 controlContainer.currentIndex = 2
             }
             background: Rectangle {
