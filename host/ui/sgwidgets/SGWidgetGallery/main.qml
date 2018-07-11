@@ -18,6 +18,9 @@ import "qrc:/../SGStatusListBox/"
 import "qrc:/../SGSubmitInfoBox/"
 import "qrc:/../SGToolTipPopup/"
 import "qrc:/../SGCapacityBar/"
+import "qrc:/../SGHueSlider/"
+import "qrc:/../SGRGBSlider/"
+import "qrc:/../SGDrawerMenu/"
 
 Window {
     id: mainWindow
@@ -27,10 +30,79 @@ Window {
     title: qsTr("SpyGlass Widget Gallery")
 
 
+    SGDrawerMenu {
+        id: sgDrawerMenu
+        z:20
+
+        drawerMenuItems: Item {
+
+            SGDrawerMenuItem {
+                label: "Users"
+                icon:"\u0045"
+                contentDrawerWidth: 250
+                drawerContent: Text {
+                    text: "<b>Users</b>"
+                    font {
+                        pixelSize: 50
+                    }
+                    color: "#fff"
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCenter
+                }
+            }
+
+            SGDrawerMenuItem {
+                label: "Chat"
+                icon:"\u003B"
+                drawerColor: "lightsalmon"
+                drawerContent: Text {
+                    text: "<b>Chat</b>"
+                    font {
+                        pixelSize: 50
+                    }
+                    color: "#fff"
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCenter
+                }
+            }
+
+            SGDrawerMenuItem {
+                label: "Help"
+                icon:"\ue808"
+                drawerColor: "burlywood"
+                contentDrawerWidth: 400
+                drawerContent: Text {
+                    text: "<b>Help</b>"
+                    font {
+                        pixelSize: 50
+                    }
+                    color: "#fff"
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCenter
+                }
+            }
+
+            SGDrawerMenuItem {
+                drawerColor: "lightgreen"
+                divider: false
+                contentDrawerWidth: 350
+                drawerContent: Text {
+                    text: "<b>Settings</b>"
+                    font {
+                        pixelSize: 50
+                    }
+                    color: "#fff"
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCenter
+                }
+            }
+        }
+    }
+
     SGAccordion {
         id: accordion
 
-        width: mainWindow.width
+        width: mainWindow.width - sgDrawerMenu.hintWidth
         height: mainWindow.height
 
         // accordionItems contains a ColumnLayout as a container for SGAccordionItems
@@ -643,6 +715,43 @@ Window {
                             count += interval;
                             stream1 = Math.sin(count/500)*10+50;
                             stream2 = Math.sin((count-800)/500)*10+25;
+                        }
+                    }
+                }
+            }
+
+            SGAccordionItem {
+                open: false
+                title: "SG Hue Slider"
+
+                contents: Item{
+                    height: childrenRect.height + 40
+
+                    SGHueSlider {
+                        anchors {
+                            top: parent.top
+                            topMargin: 20
+                            left:parent.left
+                            leftMargin: 20
+                        }
+                        onValueChanged: console.log(color1, color_value1, color2, color_value2)
+                    }
+                }
+            }
+
+            SGAccordionItem {
+                open: false
+                title: "SG RGB Slider"
+
+                contents: Item{
+                    height: childrenRect.height + 40
+
+                    SGRGBSlider {
+                        anchors {
+                            top: parent.top
+                            topMargin: 20
+                            left:parent.left
+                            leftMargin: 20
                         }
                     }
                 }

@@ -100,5 +100,22 @@
         <file>../SGToolTipPopup/qml.qrc</file>
         <file>../SGToolTipPopup/SGToolTipPopup.pro</file>
         <file>../SGToolTipPopup/SGToolTipPopup.qml</file>
+        <file>../SGDrawerMenu/fonts/sgicons.ttf</file>
+        <file>../SGDrawerMenu/main.cpp</file>
+        <file>../SGDrawerMenu/main.qml</file>
+        <file>../SGDrawerMenu/qml.qrc</file>
+        <file>../SGDrawerMenu/SGDrawerMenu.pro</file>
+        <file>../SGDrawerMenu/SGDrawerMenu.qml</file>
+        <file>../SGDrawerMenu/SGDrawerMenuItem.qml</file>
+        <file>../SGHueSlider/main.cpp</file>
+        <file>../SGHueSlider/main.qml</file>
+        <file>../SGHueSlider/qml.qrc</file>
+        <file>../SGHueSlider/SGHueSlider.pro</file>
+        <file>../SGHueSlider/SGHueSlider.qml</file>
+        <file>../SGRGBSlider/main.cpp</file>
+        <file>../SGRGBSlider/main.qml</file>
+        <file>../SGRGBSlider/qml.qrc</file>
+        <file>../SGRGBSlider/SGRGBSlider.pro</file>
+        <file>../SGRGBSlider/SGRGBSlider.qml</file>
     </qresource>
 </RCC>
