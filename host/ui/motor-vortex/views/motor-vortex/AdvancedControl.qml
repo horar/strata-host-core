@@ -12,28 +12,6 @@ Rectangle {
         fill: parent
     }
 
-    function parseSystemError()
-    {
-
-        var system_error = platformInterface.system_error.error_and_warnings
-
-        console.log(system_error);
-        if(system_error !== undefined)
-        {
-
-            // set the status list box ask david
-            for ( var i = 0; i < system_error.length; ++i)
-            {
-                demoModel.append({ "status" : system_error[i] });
-            }
-        }
-        else
-        {
-            console.log("Junk data found", system_error);
-        }
-    }
-
-
     Component.onCompleted:  {
 
         platformInterface.system_mode_selection.update("manual");
@@ -113,15 +91,18 @@ Rectangle {
             width: 500
             height: 200
             model: demoModel
-            onModelChanged: parseSystemError();
+
+            property var errorArray: platformInterface.system_error.error_and_warnings
+            onErrorArrayChanged: {
+                faultModel.clear()
+                for (var i in errorArray){
+                    demoModel.append({ status : errorArray[i] })
+                }
+            }
         }
 
         ListModel {
-            id: demoModel
-            ListElement {
-                status: ""
-            }
-
+            id: faultModel
         }
     }
     

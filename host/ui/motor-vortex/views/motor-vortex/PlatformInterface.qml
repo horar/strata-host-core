@@ -34,9 +34,8 @@ Item {
 
     property var system_error: {
         "error_and_warnings" : [ ]
-
-
     }
+
 
     // -------------------  end notification messages
 
