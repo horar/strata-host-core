@@ -32,6 +32,9 @@ Item {
         "vin": 12
     }
 
+    // @notification system_error
+    // @description: updates faults in AdvancedControl and FAEControl
+    //
     property var system_error: {
         "error_and_warnings" : [ ]
     }
