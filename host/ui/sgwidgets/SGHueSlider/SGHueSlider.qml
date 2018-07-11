@@ -6,11 +6,15 @@ Item {
     id: root
 
     property real value: 128
-
+    property string color1: "red"
+    property string color2: "green"
+    property int color_value1: 0
+    property int color_value2: 0
     property string label: ""
     property bool labelLeft: true
     property color textColor : "black"
     property real sliderHeight: 28
+    property var rgbArray: [0,0,0]
 
     implicitHeight: labelLeft ? Math.max(labelText.height, sliderHeight) : labelText.height + sliderHeight + hueSlider.anchors.topMargin
     implicitWidth: 300
@@ -105,7 +109,25 @@ Item {
         }
     }
 
-    //onValueChanged: console.log(hsvToRgb(hueSlider.value, 1, 1))
+    onValueChanged: {
+        rgbArray = hsvToRgb(hueSlider.value, 1, 1)
+         if (rgbArray[0] === '0') {
+             color1 = "green"
+             color_value1 = rgbArray[1]
+             color2 = "blue"
+             color_value2 = rgbArray[2]
+         } else if (rgbArray[1] === '0') {
+             color1 = "red"
+             color_value1 = rgbArray[0]
+             color2 = "blue"
+             color_value2 = rgbArray[2]
+         } else {
+             color1 = "red"
+             color_value1 = rgbArray[0]
+             color2 = "green"
+             color_value2 = rgbArray[1]
+         }
+    }
 
     function hsvToRgb(h, s, v){
         var r, g, b;

@@ -17,6 +17,6 @@ Window {
         value: 128                      // Default: 128 (0-255 for hue)
 
         // Useful Signals:
-        onValueChanged: console.log("Slider stopped at: ", value)
+        onValueChanged: console.log(color1, color_value1, color2, color_value2)
     }
 }
