@@ -56,6 +56,5 @@ Window {
             id: advancedControl
             visible: false
         }
-
     }
 }

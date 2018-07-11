@@ -24,5 +24,7 @@
         <file>sgwidgets/SGSubmitInfoBox.qml</file>
         <file>sgwidgets/SGSwitch.qml</file>
         <file>sgwidgets/SGToolTipPopup.qml</file>
+        <file>sgwidgets/SGLayoutDebug.qml</file>
+        <file>views/images/basic-background.png</file>
     </qresource>
 </RCC>
