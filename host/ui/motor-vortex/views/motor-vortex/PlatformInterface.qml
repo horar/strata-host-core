@@ -18,11 +18,11 @@ Item {
     //
     property var pi_stats : {
         "speed_target": 1500,
-        "current_speed": 1500,
-        "error": 0,
-        "sum": 0.5,
-        "duty_now": 0.5,
-        "mode": "manual"  // "manual" "automation"
+                "current_speed": 1500,
+                "error": 0,
+                "sum": 0.5,
+                "duty_now": 0.5,
+                "mode": "manual"  // "manual" "automation"
     }
 
     // @notification input_voltage_notification
@@ -30,6 +30,12 @@ Item {
     //
     property var input_voltage_notification : {
         "vin": 12
+    }
+
+    property var system_error: {
+        "error_and_warnings" : [ ]
+
+
     }
 
     // -------------------  end notification messages
@@ -57,6 +63,193 @@ Item {
                                     show: function () { CorePlatformInterface.show(this) }
                                 })
 
+
+
+    /*
+       system_mode_selection Command
+     */
+    property var system_mode_selection: ({
+                                      "cmd" : "set_system_mode",
+                                      "payload": {
+                                          "system_mode":" " // "automation" or "manual"
+                                      },
+
+                                      // Update will set and send in one shot
+                                      update: function (system_mode) {
+                                          this.set(system_mode)
+                                          CorePlatformInterface.send(this)
+                                      },
+                                      // Set can set single or multiple properties before sending to platform
+                                      set: function (system_mode) {
+                                          this.payload.system_mode = system_mode;
+                                      },
+                                      send: function () { CorePlatformInterface.send(this) },
+                                      show: function () { CorePlatformInterface.show(this) }
+
+
+
+                                  })
+    /*
+      set_drive_mode
+    */
+    property var set_drive_mode: ({
+                                      "cmd" : "set_drive_mode",
+                                      "payload": {
+                                          "drive_mode" : " ",
+                                      },
+
+                                      // Update will set and send in one shot
+                                      update: function (drive_mode) {
+                                          this.set(drive_mode)
+                                          CorePlatformInterface.send(this)
+                                      },
+                                      // Set can set single or multiple properties before sending to platform
+                                      set: function (drive_mode) {
+                                          this.payload.drive_mode = drive_mode;
+                                      },
+                                      send: function () { CorePlatformInterface.send(this) },
+                                      show: function () { CorePlatformInterface.show(this) }
+
+
+
+                                  })
+    /*
+      Set Phase Angle
+    */
+    property var set_phase_angle: ({
+                                       "cmd" : "set_phase_angle",
+                                       "payload": {
+                                           "phase_angle" : 0,
+                                       },
+
+                                       // Update will set and send in one shot
+                                       update: function (phase_angle) {
+                                           this.set(phase_angle)
+                                           CorePlatformInterface.send(this)
+                                       },
+                                       // Set can set single or multiple properties before sending to platform
+                                       set: function (phase_angle) {
+                                           this.payload.phase_angle = phase_angle;
+                                       },
+                                       send: function () { CorePlatformInterface.send(this) },
+                                       show: function () { CorePlatformInterface.show(this) }
+
+                                   })
+
+
+    /*
+      Set Motor State
+    */
+    property var set_motor_on_off: ({
+                                        "cmd" : "set_motor_on_off",
+                                        "payload": {
+                                            "enable": 0,
+                                        },
+
+                                        // Update will set and send in one shot
+                                        update: function (enabled) {
+                                            this.set(enabled)
+                                            CorePlatformInterface.send(this)
+                                        },
+                                        // Set can set single or multiple properties before sending to platform
+                                        set: function (enabled) {
+                                            this.payload.enable = enabled;
+                                        },
+                                        send: function () { CorePlatformInterface.send(this) },
+                                        show: function () { CorePlatformInterface.show(this) }
+
+                                    })
+
+    /*
+      Set Ramp Rate
+    */
+    property var set_ramp_rate: ({
+                                     "cmd": "set_ramp_rate",
+                                     "payload" : {
+                                         "ramp_rate": ""
+                                     },
+
+                                     // Update will set and send in one shot
+                                     update: function (ramp_rate) {
+                                         this.set(ramp_rate)
+                                         CorePlatformInterface.send(this)
+                                     },
+                                     // Set can set single or multiple properties before sending to platform
+                                     set: function (ramp_rate) {
+                                         this.payload.ramp_rate = ramp_rate;
+                                         
+                                     },
+                                     send: function () { CorePlatformInterface.send(this) },
+                                     show: function () { CorePlatformInterface.show(this) }
+
+                                 })
+
+    /*
+      Set Reset mcu
+    */
+    property var set_reset_mcu: ({
+                                     "cmd": "reset_mcu",
+                                     // Update will send in one shot
+                                     update: function () {
+                                         CorePlatformInterface.send(this)
+                                     },
+                                     send: function () { CorePlatformInterface.send(this) },
+                                     show: function () { CorePlatformInterface.show(this) }
+
+                                 })
+
+    /*
+      Set LED Color Mixing
+    */
+    property var set_color_mixing : ({
+                                         "cmd":"set_color_mixing",
+                                             "payload":{
+                                                         "color1": "red", // color can be "red"/"green"/"blue"
+                                                         "color_value1": 120 ,// color_value varies from 0 to 255
+                                                         "color2": "green", // color can be "red"/"green"/"blue"
+                                                         "color_value2": 10, // color_value varies from 0 to 255
+                                             },
+                                         // Update will set and send in one shot
+                                         update: function (color_1,color_value_1,color_2,color_value_2) {
+                                             this.set(color_1,color_value_1,color_2,color_value_2)
+                                             CorePlatformInterface.send(this)
+                                         },
+                                         // Set can set single or multiple properties before sending to platform
+                                         set: function (color_1,color_value_1,color_2,color_value_2) {
+                                             this.payload.color1 = color_1;
+                                             this.payload.color_value1 = color_value_1;
+                                             this.payload.color2 = color_2;
+                                             this.payload.color_value2 = color_value_2;
+                                         },
+                                         send: function () { CorePlatformInterface.send(this) },
+                                         show: function () { CorePlatformInterface.show(this) }
+                                         
+                                     })
+                                    
+    /*
+      Set Single Color LED
+    */
+    
+    property var set_single_color: ({
+                                        "cmd":"set_single_color",
+                                            "payload":{
+                                                        "color": "red" ,// color can be "red"/"green"/"blue"
+                                                        "color_value": 120, // color_value varies from 0 to 255 
+                                            },
+                                        // Update will set and send in one shot
+                                        update: function (color,color_value) {
+                                            this.set(color,color_value)
+                                            CorePlatformInterface.send(this)
+                                        },
+                                        set: function (color,color_value) {
+                                            this.payload.color = color;
+                                            this.payload.color_value = color_value;
+                                            
+                                        },
+                                        send: function () { CorePlatformInterface.send(this) },
+                                        show: function () { CorePlatformInterface.show(this) }
+                                    })
+                                        
     // -------------------  end commands
 
     // NOTE:
@@ -71,14 +264,14 @@ Item {
     Connections {
         target: coreInterface
         onNotification: {
-            data_source_handler(payload)
+            CorePlatformInterface.data_source_handler(payload)
         }
     }
 
 
 
 
-/*    // DEBUG - TODO: Faller - Remove before merging back to Dev
+    /*    // DEBUG - TODO: Faller - Remove before merging back to Dev
     Window {
         id: debug
         visible: true

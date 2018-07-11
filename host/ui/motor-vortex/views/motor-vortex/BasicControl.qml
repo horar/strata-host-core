@@ -7,7 +7,7 @@ import QtQuick.Extras 1.4
 //import tech.spyglass. 1.0
 import "qrc:/js/navigation_control.js" as NavigationControl
 import "qrc:/views/motor-vortex/sgwidgets"
-import "qrc:/views/motor-vortex/Control.js" as MotorControl
+
 Rectangle {
     id: controlPage
     objectName: "control"
@@ -17,9 +17,7 @@ Rectangle {
     color: "white"
 
     Component.onCompleted: {
-
-        MotorControl.setSystemModeSelection("manual");
-        MotorControl.printsystemModeSelection();
+        platformInterface.set_drive_mode.update("manual")
     }
 
 // TODO - Faller: Remove this old PlatInt code before merge back to dev,
@@ -176,11 +174,11 @@ Rectangle {
                 startLabel: minimumValue
                 endLabel: maximumValue
 
-                function setMotorSpeedCommand(value) {
-                    var truncated_value = Math.floor(value)
-                    MotorControl.setTarget(truncated_value)
-                    MotorControl.printsystemModeSelection() 
-                }
+//                function setMotorSpeedCommand(value) {
+//                    var truncated_value = Math.floor(value)
+//                    MotorControl.setTarget(truncated_value)
+//                    MotorControl.printsystemModeSelection()
+//                }
 
                 onValueChanged: {
                     platformInterface.motor_speed.update(value);
@@ -213,8 +211,7 @@ Rectangle {
                         checked: true
                         onCheckedChanged: {
                             if (checked) {
-                                MotorControl.setSystemModeSelection("manual");
-                                MotorControl.printsystemModeSelection()
+                                 platformInterface.system_mode_selection.update("manual")
                             }
                         }
                     }
@@ -224,8 +221,7 @@ Rectangle {
                         text: "Automatic Demo Pattern"
                         onCheckedChanged: {
                             if (checked) {
-                                MotorControl.setSystemModeSelection("automation");
-                                MotorControl.printsystemModeSelection()
+                                platformInterface.system_mode_selection.update("automation")
                             }
                         }
                     }

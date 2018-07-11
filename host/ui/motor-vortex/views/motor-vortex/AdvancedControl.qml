@@ -12,48 +12,20 @@ Rectangle {
         fill: parent
     }
 
-// TODO - Faller: Remove this old PlatInt code before merge back to dev,
-//                leaving for reference while updating to new PI
-//    function parseCurrentSpeed(notification)
-//    {
-//        var periodic_current_speed = notification.payload.current_speed;
-
-//        if(periodic_current_speed !== undefined)
-//        {
-//            speedBox.info = periodic_current_speed;
-//        }
-//        else
-//        {
-//            console.log("Junk data found", periodic_current_speed);
-//        }
-//    }
-
-//    function parseVin(notification)
-//    {
-//        var input_voltage =  notification.payload.vin;
-
-//        if(input_voltage !== undefined)
-//        {
-//            vInBox.info = input_voltage;
-//        }
-//        else
-//        {
-//            console.log("Junk data found", input_voltage);
-//        }
-//    }
-
-
-    function parseSystemError(notification)
+    function parseSystemError()
     {
-        var system_error = notification.payload.system_error
+
+        var system_error = platformInterface.system_error.error_and_warnings
+
+        console.log(system_error);
         if(system_error !== undefined)
         {
 
             // set the status list box ask david
-          for ( var i = 0; i < system_error.length; ++i)
-           {
-            demoModel.append({ "status" : system_error[i] });
-           }
+            for ( var i = 0; i < system_error.length; ++i)
+            {
+                demoModel.append({ "status" : system_error[i] });
+            }
         }
         else
         {
@@ -63,13 +35,10 @@ Rectangle {
 
 
     Component.onCompleted:  {
-        /*
-          Setting the default to be trapezoidal
-        */
-        MotorControl.setDriveMode(parseInt("0"));
-        MotorControl.printDriveMode();
-        MotorControl.setPhaseAngle(parseInt("28.125"));
-        MotorControl.printPhaseAngle();
+
+        platformInterface.system_mode_selection.update("manual");
+        platformInterface.set_phase_angle.update(parseInt(15));
+
     }
     
     Rectangle {
@@ -144,6 +113,7 @@ Rectangle {
             width: 500
             height: 200
             model: demoModel
+            onModelChanged: parseSystemError();
         }
 
         ListModel {
@@ -151,6 +121,7 @@ Rectangle {
             ListElement {
                 status: ""
             }
+
         }
     }
     
@@ -188,14 +159,10 @@ Rectangle {
                 }
                 onClicked: {
                     if(checked) {
-                        MotorControl.setMotorOnOff(parseInt("0"));
-                        MotorControl.printSetMotorState();
-
+                        platformInterface.set_motor_on_off.update(0)
                     }
                     else {
-                        MotorControl.setMotorOnOff(parseInt("1"));
-                        MotorControl.printSetMotorState();
-
+                        platformInterface.set_motor_on_off.update(1)
                     }
                 }
             }
@@ -208,7 +175,7 @@ Rectangle {
                 }
                 text: qsTr("Reset")
                 onClicked: {
-                    MotorControl.setReset();
+                    platformInterface.set_reset_mcu.update()
                 }
             }
         }
@@ -250,9 +217,7 @@ Rectangle {
                         checked: true
                         onCheckedChanged: {
                             if (checked) {
-                                MotorControl.setSystemModeSelection("manual");
-                                MotorControl.printsystemModeSelection()
-
+                                    platformInterface.system_mode_selection.update("manual")
                             }
                         }
                     }
@@ -262,8 +227,7 @@ Rectangle {
                         text: "Automatic Demo Pattern"
                         onCheckedChanged: {
                             if (checked) {
-                                MotorControl.setSystemModeSelection("automation");
-                                MotorControl.printsystemModeSelection()
+                                platformInterface.system_mode_selection.update("automation")
 
                             }
                         }
@@ -301,14 +265,8 @@ Rectangle {
                 }
                 showDial: false
 
-                function setMotorSpeedCommand(value) {
-                    var truncated_value = Math.floor(value)
-                    MotorControl.setTarget(truncated_value)
-                    MotorControl.printsystemModeSelection()
-                }
                 onValueChanged: {
-                    setMotorSpeedCommand(value)
-                    setSpeed.input = value
+                    platformInterface.motor_speed.update(value);
                 }
 
                 MouseArea {
@@ -353,9 +311,7 @@ Rectangle {
                 }
                 showDial: false
                 onValueChanged: {
-                    MotorControl.setRampRate(rampRateSlider.value);
-                    MotorControl.printSetRampRate();
-
+                    platformInterface.set_ramp_rate.update(rampRateSlider.value)
                 }
             }
         }
@@ -394,8 +350,7 @@ Rectangle {
                         checked: true
                         onCheckedChanged: {
                             if (checked) {
-                                MotorControl.setDriveMode(parseInt("1"));
-                                MotorControl.printDriveMode();
+                                platformInterface.set_drive_mode.update(parseInt("1"))
                             }
                         }
                     }
@@ -405,8 +360,7 @@ Rectangle {
                         text: "Trapezoidal"
                         onCheckedChanged: {
                             if (checked) {
-                                MotorControl.setDriveMode(parseInt("0"));
-                                MotorControl.printDriveMode();
+                                platformInterface.set_drive_mode.update(parseInt("0"))
 
                             }
                         }
@@ -444,8 +398,7 @@ Rectangle {
                     }
 
                     onCurrentIndexChanged: {
-                        MotorControl.setPhaseAngle(parseInt(currentIndex));
-                        MotorControl.printPhaseAngle();
+                       platformInterface.set_phase_angle.update(parseInt(currentIndex));
 
                     }
                 }
@@ -474,7 +427,7 @@ Rectangle {
                     right: whiteButton.left
                     rightMargin: 10
                 }
-                onValueChanged: console.log("Color set to ", value)
+                onValueChanged: platformInterface.set_color_mixing.update(color1,color_value1,color2,color_value2)
             }
 
             Button {

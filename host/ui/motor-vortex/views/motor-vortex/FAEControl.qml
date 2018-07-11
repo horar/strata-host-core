@@ -12,39 +12,10 @@ Rectangle {
         fill: parent
     }
 
-// TODO - Faller: Remove this old PlatInt code before merge back to dev,
-//                leaving for reference while updating to new PI
-//    function parseCurrentSpeed(notification)
-//    {
-//        var periodic_current_speed = notification.payload.current_speed;
-
-//        if(periodic_current_speed !== undefined)
-//        {
-//            speedBox.info = periodic_current_speed;
-//        }
-//        else
-//        {
-//            console.log("Junk data found", periodic_current_speed);
-//        }
-//    }
-
-//    function parseVin(notification)
-//    {
-//        var input_voltage =  notification.payload.vin;
-
-//        if(input_voltage !== undefined)
-//        {
-//            vInBox.info = input_voltage;
-//        }
-//        else
-//        {
-//            console.log("Junk data found", input_voltage);
-//        }
-//    }
-
-    function parseSystemError(notification)
+    function parseSystemError()
     {
-        var system_error = notification.payload.system_error
+
+        var system_error = platformInterface.system_error.error_and_warnings
         if(system_error !== undefined)
         {
 
@@ -65,12 +36,9 @@ Rectangle {
         /*
           Setting the deflaut to be trapezoidal
         */
-        MotorControl.setDriveMode(parseInt("0"));
-        MotorControl.printDriveMode();
-        MotorControl.setPhaseAngle(parseInt("15"));
-        MotorControl.printPhaseAngle();
-        // coreInterface.sendCommand(MotorControl.getDriveMode());
-        //coreInterface.sendCommand(MotorControl.getSetPhaseAngle());
+        platformInterface.set_drive_mode.update("manual");
+        platformInterface.set_phase_angle.update(parseInt(15));
+
     }
 
 
@@ -139,7 +107,7 @@ Rectangle {
         SGLabelledInfoBox{
             id: vInBox
             label: "Vin:"
-            info: "12.3v"
+            info: platformInterface.input_voltage_notification.vin + "v"
             infoBoxWidth: 80
             anchors {
                 top: warningBox.bottom
@@ -151,7 +119,7 @@ Rectangle {
         SGLabelledInfoBox{
             id: speedBox
             label: "Current Speed:"
-            info: "4050 rpm"
+            info: platformInterface.pi_stats.current_speed + " rpm"
             infoBoxWidth: 80
             anchors {
                 top: warningBox.bottom
@@ -170,7 +138,7 @@ Rectangle {
             showOptions: false
             xAxisTitle: "Seconds"
             yAxisTitle: "Voltage"
-            inputData: vInBox.info
+            inputData: platformInterface.input_voltage_notification.vin
             maxYValue: 15
         }
 
@@ -185,7 +153,7 @@ Rectangle {
             showOptions: false
             xAxisTitle: "Seconds"
             yAxisTitle: "RPM"
-            inputData: speedBox.info
+            inputData: platformInterface.pi_stats.current_speed
             maxYValue: 6500
         }
 
@@ -244,13 +212,10 @@ Rectangle {
 
                 onClicked: {
                     if(checked) {
-                        MotorControl.setMotorOnOff(parseInt("0"));
-                        MotorControl.printSetMotorState();
-
+                        platformInterface.set_motor_on_off.update(parseInt("0"))
                     }
                     else {
-                        MotorControl.setMotorOnOff(parseInt("1"));
-                        MotorControl.printSetMotorState();
+                         platformInterface.set_motor_on_off.update(parseInt("1"))
                     }
                 }
             }
@@ -263,7 +228,7 @@ Rectangle {
                 }
                 text: qsTr("Reset")
                 onClicked: {
-                    coreInterface.sendCommand(MotorControl.getResetcmd());
+                     platformInterface.set_reset_mcu.update()
                 }
             }
         }
@@ -305,10 +270,7 @@ Rectangle {
                         checked: true
                         onCheckedChanged: {
                             if (checked) {
-                                MotorControl.setSystemModeSelection("manual");
-                                MotorControl.printsystemModeSelection()
-                                // send command to platform
-                                // coreInterface.sendCommand(MotorControl.getSystemModeSelection())
+                                platformInterface.system_mode_selection.update("manual")
                             }
                         }
                     }
@@ -318,8 +280,9 @@ Rectangle {
                         text: "Automatic Demo Pattern"
                         onCheckedChanged: {
                             if (checked) {
-                                MotorControl.setSystemModeSelection("automation");
-                                MotorControl.printsystemModeSelection()
+                                 platformInterface.system_mode_selection.update("automation")
+//                                MotorControl.setSystemModeSelection("automation");
+//                                MotorControl.printsystemModeSelection()
                                 // send command to platform
                                 //coreInterface.sendCommand(MotorControl.getSystemModeSelection())
                             }
@@ -356,13 +319,13 @@ Rectangle {
                     right: speedControlContainer.right
                     rightMargin: 10
                 }
-                function setMotorSpeedCommand(value) {
-                    var truncated_value = Math.floor(value)
-                    MotorControl.setTarget(truncated_value)
-                    MotorControl.printsystemModeSelection()
-                }
+//                function setMotorSpeedCommand(value) {
+//                    var truncated_value = Math.floor(value)
+//                    MotorControl.setTarget(truncated_value)
+//                    MotorControl.printsystemModeSelection()
+//                }
                 onValueChanged: {
-                    setMotorSpeedCommand(value)
+                     platformInterface.motor_speed.update(value);
                 }
 
             }
@@ -385,8 +348,9 @@ Rectangle {
                     rightMargin: 10
                 }
                 onValueChanged: {
-                    MotorControl.setRampRate(rampRateSlider.value);
-                    MotorControl.printSetRampRate();
+                    platformInterface.set_ramp_rate.update(rampRateSlider.value)
+//                    MotorControl.setRampRate(rampRateSlider.value);
+//                    MotorControl.printSetRampRate();
 
                 }
             }
@@ -462,10 +426,7 @@ Rectangle {
                         checked: true
                         onCheckedChanged: {
                             if (checked) {
-                                console.log ( "PS Checked!")
-                                MotorControl.setDriveMode(parseInt("1"));
-                                MotorControl.printDriveMode();
-                                //   coreInterface.sendCommand(MotorControl.getDriveMode())
+                               platformInterface.set_drive_mode.update(parseInt("1"))
                             }
                         }
                     }
@@ -473,11 +434,9 @@ Rectangle {
                     SGRadioButton {
                         id: trap
                         text: "Trapezoidal"
-                        onCheckedChanged: { if (checked) {
-                                console.log ( "Trap Checked!")
-                                MotorControl.setDriveMode(parseInt("0"));
-                                MotorControl.printDriveMode();
-                                //   coreInterface.sendCommand(MotorControl.getDriveMode());
+                        onCheckedChanged: {
+                            if (checked) {
+                              platformInterface.set_drive_mode.update(parseInt("0"))
                             }
                         }
                     }
@@ -513,9 +472,7 @@ Rectangle {
                         leftMargin: 20
                     }
                     onCurrentIndexChanged: {
-                        console.log("index of the combo box", currentIndex)
-                        MotorControl.setPhaseAngle(parseInt(currentIndex));
-                        MotorControl.printPhaseAngle();
+                        platformInterface.set_phase_angle.update(parseInt(currentIndex));
                     }
                 }
             }

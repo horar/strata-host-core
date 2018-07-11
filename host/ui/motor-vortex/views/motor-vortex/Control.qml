@@ -88,15 +88,22 @@ Rectangle {
         TabButton {
             id: advancedButton
             text: qsTr("Advanced")
-            onClicked: controlContainer.currentIndex = 1
+            onClicked: {
+                controlContainer.currentIndex = 1
+
+            }
         }
 
         TabButton {
             id: faeButton
             text: qsTr("FAE Only")
-            onClicked: controlContainer.currentIndex = 2
+            onClicked: {
+                faeView.parseSystemError()
+                controlContainer.currentIndex = 2
+            }
             background: Rectangle {
                 color: faeButton.down ? "#eeeeee" : faeButton.checked ? "white" : "tomato"
+
             }
         }
     }

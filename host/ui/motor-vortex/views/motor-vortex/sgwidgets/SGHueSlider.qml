@@ -6,11 +6,15 @@ Item {
     id: root
 
     property real value: 128
-
+    property string color1: "red"
+    property string color2: "green"
+    property int color_value1: 0
+    property int color_value2: 0
     property string label: ""
     property bool labelLeft: true
     property color textColor : "black"
     property real sliderHeight: 28
+    property var rgbArray: [0,0,0]
 
     implicitHeight: labelLeft ? Math.max(labelText.height, sliderHeight) : labelText.height + sliderHeight + hueSlider.anchors.topMargin
     implicitWidth: 300
@@ -105,16 +109,45 @@ Item {
         }
     }
 
-    function lerpColor (color1, color2, x){
-        if (Qt.colorEqual(color1, color2)){
-            return color1;
-        } else {
-            return Qt.hsva(
-                color1.hsvHue * (1 - x) + color2.hsvHue * x,
-                color1.hsvSaturation * (1 - x) + color2.hsvSaturation * x,
-                color1.hsvValue * (1 - x) + color2.hsvValue * x, 1
-                );
+    onValueChanged: {
+        rgbArray = hsvToRgb(hueSlider.value, 1, 1)
+         if (rgbArray[0] === '0') {
+             color1 = "green"
+             color_value1 = rgbArray[1]
+             color2 = "blue"
+             color_value2 = rgbArray[2]
+         } else if (rgbArray[1] === '0') {
+             color1 = "red"
+             color_value1 = rgbArray[0]
+             color2 = "blue"
+             color_value2 = rgbArray[2]
+         } else {
+             color1 = "red"
+             color_value1 = rgbArray[0]
+             color2 = "green"
+             color_value2 = rgbArray[1]
+         }
+    }
+
+    function hsvToRgb(h, s, v){
+        var r, g, b;
+
+        var i = Math.floor(h * 6);
+        var f = h * 6 - i;
+        var p = v * (1 - s);
+        var q = v * (1 - f * s);
+        var t = v * (1 - (1 - f) * s);
+
+        switch(i % 6){
+            case 0: r = v; g = t; b = p; break;
+            case 1: r = q; g = v; b = p; break;
+            case 2: r = p; g = v; b = t; break;
+            case 3: r = p; g = q; b = v; break;
+            case 4: r = t; g = p; b = v; break;
+            case 5: r = v; g = p; b = q; break;
         }
+
+        return [(r * 255).toFixed(0), (g * 255).toFixed(0), (b * 255).toFixed(0)];
     }
 
 }
