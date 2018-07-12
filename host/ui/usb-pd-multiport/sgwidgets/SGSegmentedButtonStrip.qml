@@ -30,7 +30,7 @@ Item {
         height: root.label === "" ? 0 :root.labelLeft ? segmentedButtons.height : contentHeight
         topPadding: root.label === "" ? 0 : root.labelLeft ? (segmentedButtons.height-contentHeight)/2 : 0
         bottomPadding: topPadding
-        color: root.textColor
+        color: "black"
     }
 
     ButtonGroup{

@@ -11,99 +11,56 @@ Item {
         fill: parent
     }
 
-    Item {
-        id: leftColumn
-        height: parent.height
-        width: 400
-
-        SGAccordion {
-            id: settingsAccordion
-            anchors {
-                left: leftColumn.left
-                right: leftColumn.right
-                top: leftColumn.top
-            }
-            height: leftColumn.height * 0.75
-
-            accordionItems: Column {
-                SGAccordionItem {
-                    title: "System Settings"
-                    open: true
-                    contents: SystemSettings {
-                        //
-                    }
-                }
-
-                SGAccordionItem {
-                    title: "Port 1 Settings"
-                    open: true
-                    contents: PortSettings {
-                        //
-                    }
-                }
-
-                SGAccordionItem {
-                    title: "Port 2 Settings"
-                    contents: PortSettings {
-                        //
-                    }
-                }
-
-                SGAccordionItem {
-                    title: "Port 3 Settings"
-                    contents: PortSettings {
-                        //
-                    }
-                }
-
-                SGAccordionItem {
-                    title: "Port 4 Settings"
-                    contents: PortSettings {
-                        //
-                    }
-                }
-            }
-
-            SGLayoutDebug {
-                visible: debugLayout
-            }
-
-
-            SGDivider {
-                placement: "bottom"
-            }
-        }
-
-        Item {
-            id: messagesContainer
-            anchors {
-                top: settingsAccordion.bottom
-                left: leftColumn.left
-                right: leftColumn.right
-                bottom: leftColumn.bottom
-            }
-
-
-
-            SGLayoutDebug {
-                visible: debugLayout
-            }
-        }
-
-        SGDivider {
-            placement: "right"
-        }
-    }
-
-    Item {
-        id: rightColumn
+    SGAccordion {
+        id: settingsAccordion
         anchors {
-            left: leftColumn.right
-            right: root.right
-            top: root.top
-            bottom: root.bottom
+            fill: root
         }
 
+        accordionItems: Column {
+            SGAccordionItem {
+                title: "<b>Overview</b>"
+                open: false
+                contents: Item {}
+            }
+
+            SGAccordionItem {
+                title: "<b>System Settings</b>"
+                open: true
+                contents: System {
+                    //
+                }
+            }
+
+            SGAccordionItem {
+                title: "<b>Port 1</b>"
+                open: true
+                contents: Port {
+                    //
+                }
+            }
+
+            SGAccordionItem {
+                title: "<b>Port 2</b>"
+                contents: Port {
+                    //
+                }
+            }
+
+            SGAccordionItem {
+                title: "<b>Port 3</b>"
+                contents: Port {
+                    //
+                }
+            }
+
+            SGAccordionItem {
+                title: "<b>Port 4</b>"
+                contents: Port {
+                    //
+                }
+            }
+        }
 
         SGLayoutDebug {
             visible: debugLayout

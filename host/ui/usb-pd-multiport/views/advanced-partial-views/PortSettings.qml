@@ -3,7 +3,7 @@ import "qrc:/sgwidgets"
 
 Item {
     id: root
-    height: 400
+    height: parent.height
     anchors {
         left: parent.left
         right: parent.right
@@ -13,7 +13,7 @@ Item {
         id: controlMargins
         anchors {
             fill: parent
-            margins: 20
+            margins: 15
         }
 
         SGComboBox {
@@ -48,14 +48,11 @@ Item {
             }
         }
 
-        Rectangle {
+        SGDivider {
             id: div1
-            height: 1
-            width: parent.width
-            color: "#ddd"
             anchors {
                 top: currentLimit.bottom
-                topMargin: 20
+                topMargin: 15
             }
         }
 
@@ -67,7 +64,7 @@ Item {
             }
             anchors {
                 top: div1.bottom
-                topMargin: 20
+                topMargin: 15
             }
         }
 
@@ -116,14 +113,12 @@ Item {
         }
 
 
-        Rectangle {
+        SGDivider {
             id: div2
             height: 1
-            width: parent.width
-            color: "#ddd"
             anchors {
                 top: bias.bottom
-                topMargin: 20
+                topMargin: 15
             }
         }
 
@@ -135,7 +130,7 @@ Item {
             }
             anchors {
                 top: div2.bottom
-                topMargin: 20
+                topMargin: 15
             }
         }
     }

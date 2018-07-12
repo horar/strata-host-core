@@ -152,8 +152,8 @@ Item {
             Rectangle {
                 id: handle
                 x: ((switchRoot.visualPosition * parent.width) + (1-switchRoot.visualPosition) * width) - width
-                width: 26
-                height: 26
+                width: root.switchHeight
+                height: root.switchHeight
                 radius: 13
                 color: root.down ? colorMod(root.handleColor, 1.1) : root.handleColor
                 border.color: root.checked ? colorMod(root.grooveFillColor, 1.5) : colorMod(root.grooveColor, 1.5)
