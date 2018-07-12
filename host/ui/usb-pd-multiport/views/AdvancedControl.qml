@@ -5,7 +5,7 @@ import "qrc:/views/advanced-partial-views"
 Item {
     id: root
 
-    property bool debugLayout: true
+    property bool debugLayout: false
 
     anchors {
         fill: parent
@@ -25,25 +25,73 @@ Item {
             }
             height: leftColumn.height * 0.75
 
-            SGAccordionItem {
-            //
+            accordionItems: Column {
+                SGAccordionItem {
+                    title: "System Settings"
+                    open: true
+                    contents: SystemSettings {
+                        //
+                    }
+                }
+
+                SGAccordionItem {
+                    title: "Port 1 Settings"
+                    open: true
+                    contents: PortSettings {
+                        //
+                    }
+                }
+
+                SGAccordionItem {
+                    title: "Port 2 Settings"
+                    contents: PortSettings {
+                        //
+                    }
+                }
+
+                SGAccordionItem {
+                    title: "Port 3 Settings"
+                    contents: PortSettings {
+                        //
+                    }
+                }
+
+                SGAccordionItem {
+                    title: "Port 4 Settings"
+                    contents: PortSettings {
+                        //
+                    }
+                }
             }
-            SGAccordionItem {
-                //
+
+            SGLayoutDebug {
+                visible: debugLayout
             }
-            SGAccordionItem {
-                //
-            }
-            SGAccordionItem {
-                //
-            }
-            SGAccordionItem {
-                //
+
+
+            SGDivider {
+                placement: "bottom"
             }
         }
 
-        SGLayoutDebug {
-            visible: debugLayout
+        Item {
+            id: messagesContainer
+            anchors {
+                top: settingsAccordion.bottom
+                left: leftColumn.left
+                right: leftColumn.right
+                bottom: leftColumn.bottom
+            }
+
+
+
+            SGLayoutDebug {
+                visible: debugLayout
+            }
+        }
+
+        SGDivider {
+            placement: "right"
         }
     }
 

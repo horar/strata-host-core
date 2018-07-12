@@ -30,5 +30,7 @@
         <file>views/basic-partial-views/PortInfo.qml</file>
         <file>views/advanced-partial-views/PortInfo.qml</file>
         <file>views/advanced-partial-views/PortSettings.qml</file>
+        <file>views/advanced-partial-views/SystemSettings.qml</file>
+        <file>sgwidgets/SGDivider.qml</file>
     </qresource>
 </RCC>
