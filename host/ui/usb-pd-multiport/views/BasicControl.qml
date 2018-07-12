@@ -1,7 +1,7 @@
 import QtQuick 2.9
 import "qrc:/sgwidgets"
 import "qrc:/views/images"
-import "qrc:/views/partial-views"
+import "qrc:/views/basic-partial-views"
 
 Item {
     id: root
@@ -16,8 +16,6 @@ Item {
 
     width: parent.width / parent.height > initialAspectRatio ? parent.height * initialAspectRatio : parent.width
     height: parent.width / parent.height < initialAspectRatio ? parent.width / initialAspectRatio : parent.height
-
-    onWidthChanged: {console.log(parent.width / parent.height < initialAspectRatio)}
 
     Image {
         id: name
