@@ -50,11 +50,17 @@ Window {
         BasicControl {
             id: basicControl
             visible: true
+            property real initialAspectRatio
         }
 
         AdvancedControl {
             id: advancedControl
             visible: false
+            property real initialAspectRatio
         }
+    }
+
+    Component.onCompleted: {
+        advancedControl.initialAspectRatio = basicControl.initialAspectRatio = controlContainer.width / controlContainer.height
     }
 }

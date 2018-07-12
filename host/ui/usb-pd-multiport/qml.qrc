@@ -26,5 +26,7 @@
         <file>sgwidgets/SGToolTipPopup.qml</file>
         <file>sgwidgets/SGLayoutDebug.qml</file>
         <file>views/images/basic-background.png</file>
+        <file>main.cpp</file>
+        <file>views/partial-views/PortInfo.qml</file>
     </qresource>
 </RCC>
