@@ -5,34 +5,31 @@ import QtGraphicalEffects 1.0
 Item {
     id: root
 
-    property real value: 128
-    property string color1: "red"
-    property string color2: "green"
-    property int color_value1: 0
-    property int color_value2: 0
+    property real value: 0
+    property var currentColor: hToRgb(value)
+
     property string label: ""
     property bool labelLeft: true
     property color textColor : "black"
     property real sliderHeight: 28
-    property var rgbArray: [0,0,0]
 
-    implicitHeight: labelLeft ? Math.max(labelText.height, sliderHeight) : labelText.height + sliderHeight + hueSlider.anchors.topMargin
+    implicitHeight: labelLeft ? Math.max(labelText.height, sliderHeight) : labelText.height + sliderHeight + rgbSlider.anchors.topMargin
     implicitWidth: 300
 
     Text {
         id: labelText
         text: root.label
         width: contentWidth
-        height: root.label === "" ? 0 : root.labelLeft ? hueSlider.height : contentHeight
-        topPadding: root.label === "" ? 0 : root.labelLeft ? (hueSlider.height-contentHeight)/2 : 0
+        height: root.label === "" ? 0 : root.labelLeft ? rgbSlider.height : contentHeight
+        topPadding: root.label === "" ? 0 : root.labelLeft ? (rgbSlider.height-contentHeight)/2 : 0
         bottomPadding: topPadding
         color: root.textColor
     }
 
     Slider {
-        id: hueSlider
+        id: rgbSlider
         padding: 0
-        value: root.value/255
+        value: root.value
         height: root.sliderHeight
         anchors {
             left: root.labelLeft ? labelText.right : labelText.left
@@ -43,15 +40,16 @@ Item {
         }
 
         onPressedChanged: {
-            if (!hueSlider.pressed) {
-                root.value = Math.floor(value * 255)
+            if (!rgbSlider.pressed) {
+                root.value = value //Math.floor(value * 255)
             }
         }
 
         background: Rectangle {
             y: 4
-            width: hueSlider.width
-            height: hueSlider.height-8
+            x: 5
+            width: rgbSlider.width-10
+            height: rgbSlider.height-8
             radius: 5
             layer.enabled: true
             layer.effect: LinearGradient {
@@ -59,18 +57,17 @@ Item {
                 end: Qt.point(width, 0)
                 gradient: Gradient {
                     GradientStop { position: 0.0; color: Qt.hsva(0.0,1,1,1) }
-                    GradientStop { position: 0.1667; color: Qt.hsva(0.1667,1,1,1) }
-                    GradientStop { position: 0.3333; color: Qt.hsva(0.3333,1,1,1) }
-                    GradientStop { position: 0.5; color: Qt.hsva(0.5,1,1,1) }
-                    GradientStop { position: 0.6667; color: Qt.hsva(0.6667,1,1,1) }
-                    GradientStop { position: 0.8333; color: Qt.hsva(0.8333,1,1,1) }
-                    GradientStop { position: 1.0; color: Qt.hsva(1.0,1,1,1) }
+                    GradientStop { position: 0.3333; color: Qt.hsva(0.0,1,0,1) }
+                    GradientStop { position: 0.3334; color: Qt.hsva(0.3333,1,1,1) }
+                    GradientStop { position: 0.6667; color: Qt.hsva(0.3333,1,0,1) }
+                    GradientStop { position: 0.6668; color: Qt.hsva(0.6667,1,1,1) }
+                    GradientStop { position: 1.0; color: Qt.hsva(0.6667,1,0,1) }
                 }
             }
         }
 
         handle: Item {
-            x: hueSlider.leftPadding + hueSlider.visualPosition * (hueSlider.availableWidth - width)
+            x: rgbSlider.leftPadding + rgbSlider.visualPosition * (rgbSlider.availableWidth - width)
             y: 0
             width: 12
             height: sliderHeight
@@ -110,41 +107,24 @@ Item {
     }
 
     onValueChanged: {
-        rgbArray = hsvToRgb(hueSlider.value, 1, 1)
-         if (rgbArray[0] === '0') {
-             color1 = "green"
-             color_value1 = rgbArray[1]
-             color2 = "blue"
-             color_value2 = rgbArray[2]
-         } else if (rgbArray[1] === '0') {
-             color1 = "red"
-             color_value1 = rgbArray[0]
-             color2 = "blue"
-             color_value2 = rgbArray[2]
-         } else {
-             color1 = "red"
-             color_value1 = rgbArray[0]
-             color2 = "green"
-             color_value2 = rgbArray[1]
-         }
+        root.currentColor = hToRgb(root.value)
     }
 
-    function hsvToRgb(h, s, v){
+    // Dumbed down version of hsvToRgb function to match simpler RGB gradient slider
+    function hToRgb(h){
         var r, g, b;
 
-        var i = Math.floor(h * 6);
-        var f = h * 6 - i;
-        var p = v * (1 - s);
-        var q = v * (1 - f * s);
-        var t = v * (1 - (1 - f) * s);
-
-        switch(i % 6){
-            case 0: r = v; g = t; b = p; break;
-            case 1: r = q; g = v; b = p; break;
-            case 2: r = p; g = v; b = t; break;
-            case 3: r = p; g = q; b = v; break;
-            case 4: r = t; g = p; b = v; break;
-            case 5: r = v; g = p; b = q; break;
+        var i = Math.floor(h * 3);
+        var f = h * 3 - i;
+        var q = 1 - f;
+        if (i < 3){
+            switch(i % 3){
+                case 0: r = q; g = 0; b = 0; break;
+                case 1: r = 0; g = q; b = 0; break;
+                case 2: r = 0; g = 0; b = q; break;
+            }
+        } else {
+            r = 0; g = 0; b = 0;
         }
 
         return [(r * 255).toFixed(0), (g * 255).toFixed(0), (b * 255).toFixed(0)];

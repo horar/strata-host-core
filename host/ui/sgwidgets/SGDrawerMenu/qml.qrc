@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/">
+        <file>main.qml</file>
+        <file>SGDrawerMenu.qml</file>
+        <file>fonts/sgicons.ttf</file>
+        <file>SGDrawerMenuItem.qml</file>
+    </qresource>
+</RCC>
