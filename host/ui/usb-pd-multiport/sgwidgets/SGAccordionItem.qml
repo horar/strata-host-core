@@ -105,7 +105,7 @@ Rectangle {
         anchors { bottom: root.bottom}
         width: root.width
         height: 1
-        color: headerOpenColor
+        color: "#fff"
     }
 
     NumberAnimation {
