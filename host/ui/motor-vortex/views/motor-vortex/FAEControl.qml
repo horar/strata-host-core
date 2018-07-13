@@ -255,16 +255,18 @@ Rectangle {
                         id: manual
                         text: "Manual Control"
                         checked: true
-                        onCheckedChanged: {
-                            if (checked) {
+                        onClicked: {
+                            if(checked) {
                                 platformInterface.system_mode_selection.update("manual")
                             }
                         }
+
                     }
 
                     SGRadioButton {
                         id: automatic
                         text: "Automatic Demo Pattern"
+
                         onCheckedChanged: {
                             if (checked) {
                                 platformInterface.system_mode_selection.update("automation")
@@ -295,19 +297,32 @@ Rectangle {
                 maximumValue: speedSafetyButton.checked ? 10000 : 5500
                 endLabel: speedSafetyButton.checked? "<font color='red'><b>"+ maximumValue +"</b></font>" : maximumValue
                 startLabel: minimumValue
+                showDial: false
                 anchors {
-                    top: speedControlContainer.top
-                    topMargin: 10
+                    verticalCenter: setSpeed.verticalCenter
                     left: speedControlContainer.left
                     leftMargin: 10
-                    right: speedControlContainer.right
+                    right: setSpeed.left
                     rightMargin: 10
                 }
 
                 onValueChanged: {
                     platformInterface.motor_speed.update(value);
+                    setSpeed.input = value
                 }
 
+            }
+            SGSubmitInfoBox {
+                id: setSpeed
+                infoBoxColor: "white"
+                anchors {
+                    top: speedControlContainer.top
+                    topMargin: 10
+                    right: speedControlContainer.right
+                    rightMargin: 10
+                }
+                buttonVisible: false
+                onApplied: { targetSpeedSlider.value = parseInt(value, 10) }
             }
 
             SGSlider {
@@ -320,17 +335,29 @@ Rectangle {
                 endLabel: maximumValue
                 startLabel: minimumValue
                 anchors {
-                    top: targetSpeedSlider.bottom
-                    topMargin: 10
+                    verticalCenter: setRampRate.verticalCenter
                     left: speedControlContainer.left
                     leftMargin: 10
+                    right: setRampRate.left
+                    rightMargin: 10
+                }
+                showDial: false
+                onValueChanged: {
+                    platformInterface.set_ramp_rate.update(rampRateSlider.value)
+                    setRampRate.input = value
+                }
+            }
+            SGSubmitInfoBox {
+                id: setRampRate
+                infoBoxColor: "white"
+                anchors {
+                    top: setSpeed.bottom
+                    topMargin: 10
                     right: speedControlContainer.right
                     rightMargin: 10
                 }
-                onValueChanged: {
-                    platformInterface.set_ramp_rate.update(rampRateSlider.value)
-
-                }
+                buttonVisible: false
+                onApplied: { rampRateSlider.value = parseInt(value, 10) }
             }
 
             Item {
@@ -475,6 +502,8 @@ Rectangle {
                     verticalCenter: whiteButton.verticalCenter
                     left: ledControlContainer.left
                     leftMargin: 10
+                    right: whiteButton.left
+                    rightMargin: 10
                 }
 
                 onValueChanged: platformInterface.set_color_mixing.update(color1,color_value1,color2,color_value2)
@@ -490,6 +519,38 @@ Rectangle {
                     right: ledControlContainer.right
                     rightMargin: 10
                 }
+            }
+
+            SGSlider {
+                id: ledPulseFrequency
+                label: "LED Pulse Frequency:"
+                value: 50
+                minimumValue: 2
+                maximumValue: 152
+                startLabel: "2"
+                endLabel: "152"
+                anchors {
+                    verticalCenter: setLedPulse.verticalCenter
+                    left: ledControlContainer.left
+                    leftMargin: 10
+                    right: setLedPulse.left
+                    rightMargin: 10
+                }
+                showDial: false
+                onValueChanged: { setLedPulse.input = value }
+            }
+
+            SGSubmitInfoBox {
+                id: setLedPulse
+                infoBoxColor: "white"
+                anchors {
+                    top: whiteButton.bottom
+                    topMargin: 10
+                    right: ledControlContainer.right
+                    rightMargin: 10
+                }
+                buttonVisible: false
+                onApplied: { ledPulseFrequency.value = parseInt(value, 10) }
             }
         }
 

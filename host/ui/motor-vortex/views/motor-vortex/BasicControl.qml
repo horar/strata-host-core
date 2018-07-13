@@ -20,98 +20,6 @@ Rectangle {
         platformInterface.set_drive_mode.update("manual")
     }
 
-// TODO - Faller: Remove this old PlatInt code before merge back to dev,
-//                leaving for reference while updating to new PI
-//    // Platform Implementation signals
-//    Connections {
-//        target: coreInterface
-//        onNotification: {
-//            /*
-//                Motor vortex has a known issue by sending non-ascii charactors in json object
-//                The following code is a hack.
-//                See the bad JSON example below. The non asci charactor can show up in the key of the object or the value.
-//                That's the reason there is a validation for object's key and value.
-//                {
-//                    "notification":{
-//                        "value":"pi_stats",
-//                        "payf���load":{
-//                            "speed_target":1500,
-//                            "current_speed":15f�20,
-//                            "error":-20,
-//                            "sum":-4.00e-4,
-//                            "duty_now":0.19,
-//                            "mode":"manual"
-//                      }
-//                }
-//            */
-
-//            try {
-//                /*
-//                    Attempt to parse JSON
-//                    Note: Motor platform sometimes has noise in json and can corrupt values
-//                */
-//                var notification = JSON.parse(payload)
-//                console.log("here is the payload", payload)
-
-//                //check if the object has valid payload key
-//                if(notification.hasOwnProperty("payload")){
-//                    var notificationPayload = notification.payload;
-
-//                    //check if current_speed exists in the payload object. skip if corrupted.
-//                    if(notificationPayload.hasOwnProperty("current_speed")){
-//                        var current_speed = notification.payload.current_speed;
-
-//                        //check if speed is a valid integer
-//                        if(Number.isInteger(current_speed)){
-//                            tachMeterGauge.value = current_speed
-
-//                            // just making sure the the slider is being set only once when the
-//                            // platform send its current speed
-//                            // Then the user will start controlling it. Hence there is no need to keep updating the slider
-//                            // based on the platfrom notification's value
-//                            if(!isMotorSliderUpdated){
-//                                //set value only once and must be float from 1500 to 5500
-//                                motorSpeedControl.value =current_speed
-//                                isMotorSliderUpdated = !isMotorSliderUpdated
-//                            }
-
-//                        }else{
-//                            console.log("Motor Platfrom Notification Error. Junk data found on current_speed ", current_speed)
-//                        }
-//                    }else {
-//                        console.log("Motor Platfrom Notification Error. Can't find current_speed in payload object")
-//                    }
-
-//                    //check if mode exists in the payload object. skip if corrupted.
-//                    if(notificationPayload.hasOwnProperty("mode")){
-//                        //mode either set to be a manual or automation
-//                        var systemMode = notification.payload.mode;
-//                        if(systemMode ==="manual"){
-//                            operationModeControl.radioButtons.manual.checked = true;
-//                            operationModeControl.radioButtons.automatic.checked = false;
-//                        }else if(systemMode ==="automation") {
-//                            operationModeControl.radioButtons.manual.checked = false;
-//                            operationModeControl.radioButtons.automatic.checked = true;
-//                        }else{
-//                            console.log("Motor Platfrom Notification Error. Junk data found on mode")
-//                        }
-//                    }else{
-//                        console.log("Motor Platfrom Notification Error. can't find mode in payload object")
-//                    }
-
-//                }else{
-//                    console.log("Motor Platfrom Notification Error. payload is corrupted")
-//                }
-//            }
-//            catch(e)
-//            {
-//                if ( e instanceof SyntaxError){
-//                    console.log("Motor Platfrom Notification Error. Notification JSON is invalid, ignoring")
-//                }
-//            }
-
-//        }
-//    }
 
     // Control Section
     Rectangle {
@@ -173,17 +81,27 @@ Rectangle {
                 maximumValue: 5500
                 startLabel: minimumValue
                 endLabel: maximumValue
-
-//                function setMotorSpeedCommand(value) {
-//                    var truncated_value = Math.floor(value)
-//                    MotorControl.setTarget(truncated_value)
-//                    MotorControl.printsystemModeSelection()
-//                }
+                showDial:  false
 
                 onValueChanged: {
                     platformInterface.motor_speed.update(value);
+                    setSpeed.input = value
                 }
             }
+
+            SGSubmitInfoBox {
+                id: setSpeed
+                infoBoxColor: "white"
+                buttonVisible: false
+                anchors {
+                    top: rightControl.top
+                    topMargin: 10
+                    right: rightControl.right
+                    rightMargin: 10
+                }
+                onApplied: { motorSpeedControl.value = parseInt(value, 10) }
+            }
+
 
             SGRadioButtonContainer {
                 id: operationModeControl
@@ -211,7 +129,7 @@ Rectangle {
                         checked: true
                         onCheckedChanged: {
                             if (checked) {
-                                 platformInterface.system_mode_selection.update("manual")
+                                platformInterface.system_mode_selection.update("manual")
                             }
                         }
                     }

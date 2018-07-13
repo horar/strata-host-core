@@ -195,5 +195,6 @@
         <file>views/motor-vortex/sgwidgets/SGSubmitInfoBox.qml</file>
         <file>views/motor-vortex/PlatformInterface.qml</file>
         <file>js/core_platform_interface.js</file>
+        <file>views/motor-vortex/sgwidgets/SGRGBSlider.qml</file>
     </qresource>
 </RCC>

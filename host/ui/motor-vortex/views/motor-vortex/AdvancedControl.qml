@@ -19,6 +19,8 @@ Rectangle {
 
     }
 
+
+
     Rectangle {
         id: leftSide
         width: 600
@@ -130,6 +132,13 @@ Rectangle {
                 id: startStopButton
                 text: checked ? qsTr("Start Motor") : qsTr("Stop Motor")
                 checkable: true
+                property var motorOff: platformInterface.motor_off.enable;
+
+                onMotorOffChanged: {
+                    if(motorOff === "off") {
+                             startStopButton.checked = true;
+                    }
+                }
                 background: Rectangle {
                     color: startStopButton.checked ? "lightgreen" : "red"
                     implicitWidth: 100
@@ -240,17 +249,17 @@ Rectangle {
                 endLabel: maximumValue
                 startLabel: minimumValue
                 anchors {
-                    top: speedControlContainer.top
-                    topMargin: 10
+                    verticalCenter: setSpeed.verticalCenter
                     left: speedControlContainer.left
                     leftMargin: 10
-                    right: speedControlContainer.right
+                    right: setSpeed.left
                     rightMargin: 10
                 }
                 showDial: false
 
                 onValueChanged: {
                     platformInterface.motor_speed.update(value);
+                    setSpeed.input = value
                 }
 
                 MouseArea {
@@ -276,6 +285,19 @@ Rectangle {
                 }
             }
 
+            SGSubmitInfoBox {
+                id: setSpeed
+                infoBoxColor: "white"
+                anchors {
+                    top: speedControlContainer.top
+                    topMargin: 10
+                    right: speedControlContainer.right
+                    rightMargin: 10
+                }
+                buttonVisible: false
+                onApplied: { targetSpeedSlider.value = parseInt(value, 10) }
+            }
+
 
             SGSlider {
                 id: rampRateSlider
@@ -296,7 +318,20 @@ Rectangle {
                 showDial: false
                 onValueChanged: {
                     platformInterface.set_ramp_rate.update(rampRateSlider.value)
+                    setRampRate.input = value
                 }
+            }
+            SGSubmitInfoBox {
+                id: setRampRate
+                infoBoxColor: "white"
+                anchors {
+                    top: setSpeed.bottom
+                    topMargin: 10
+                    right: speedControlContainer.right
+                    rightMargin: 10
+                }
+                buttonVisible: false
+                onApplied: { rampRateSlider.value = parseInt(value, 10) }
             }
         }
 
@@ -382,17 +417,19 @@ Rectangle {
                     }
 
                     onCurrentIndexChanged: {
-                        platformInterface.set_phase_angle.update(parseInt(currentIndex));
+                        platformInterface.set_phase_angle.update(currentIndex);
 
                     }
                 }
             }
         }
 
+
+
         Rectangle {
             id: ledControlContainer
             width: 500
-            height: childrenRect.height + 20
+            height: childrenRect.height + 50
             color: "#eeeeee"
             anchors {
                 horizontalCenter: rightSide.horizontalCenter
@@ -410,21 +447,71 @@ Rectangle {
                     leftMargin: 10
                     right: whiteButton.left
                     rightMargin: 10
+                    top: ledControlContainer.top
+                    topMargin: 20
                 }
                 onValueChanged: platformInterface.set_color_mixing.update(color1,color_value1,color2,color_value2)
             }
+            Rectangle {
+                id: buttonControlContainer
+                color: "transparent"
+                anchors{
+                    top: hueSlider.bottom
+                    topMargin: 30
+                    horizontalCenter: ledControlContainer.horizontalCenter
+                    horizontalCenterOffset: 40
+                }
+                width: 300; height: 50
+                Button {
+                    id: whiteButton
+                    checkable: false
+                    text: "White"
+                    onClicked: {
+                        platformInterface.set_led_outputs_on_off.update("white")
+                    }
+                }
 
-            Button {
-                id: whiteButton
-                checkable: false
-                text: "White"
-                anchors {
-                    top: ledControlContainer.top
-                    topMargin: 10
-                    right: ledControlContainer.right
-                    rightMargin: 10
+                Button {
+                    id: turnOff
+                    checkable: false
+                    text: "TurnOff"
+                    anchors {
+                        left: whiteButton.right
+                        leftMargin: 30
+                    }
+                    onClicked: {
+                        platformInterface.set_led_outputs_on_off.update("off")
+                    }
                 }
             }
+        }
+        Rectangle {
+            id: ledSecondContainer
+            width: 500
+            height: childrenRect.height + 30
+            color: "#eeeeee"
+
+            anchors {
+                horizontalCenter: rightSide.horizontalCenter
+                top: ledControlContainer.bottom
+                topMargin: 20
+            }
+
+
+            SGRGBSlider {
+                id: singleColorSlider
+                label: "Single LED color:"
+                labelLeft: true
+                anchors {
+                    top: ledSecondContainer.top
+                    topMargin: 10
+                    left: ledSecondContainer.left
+                    leftMargin: 10
+                }
+                onValueChanged: platformInterface.set_single_color.update(color, color_value)
+            }
+
+
 
             SGSlider {
                 id: ledPulseFrequency
@@ -435,15 +522,17 @@ Rectangle {
                 startLabel: "2"
                 endLabel: "152"
                 anchors {
-                    verticalCenter: setLedPulse.verticalCenter
-                    left: ledControlContainer.left
+                    left: ledSecondContainer.left
                     leftMargin: 10
+                    top: singleColorSlider.bottom
+                    topMargin: 20
                     right: setLedPulse.left
                     rightMargin: 10
                 }
                 showDial: false
 
-                onValueChanged: { setLedPulse.input = value
+                onValueChanged: {
+                    setLedPulse.input = value
                     platformInterface.set_blink0_frequency.update(value);
                 }
             }
@@ -452,13 +541,18 @@ Rectangle {
                 id: setLedPulse
                 infoBoxColor: "white"
                 anchors {
-                    top: whiteButton.bottom
-                    topMargin: 10
-                    right: ledControlContainer.right
+                    right: ledSecondContainer.right
                     rightMargin: 10
+                    verticalCenter: ledPulseFrequency.verticalCenter
                 }
-                onApplied: { ledPulseFrequency.value = parseInt(value, 10) }
+                buttonVisible: false
+                onApplied:  {
+                    ledPulseFrequency.value = parseInt(value, 10)
+
+                }
             }
+
+
         }
 
         Rectangle {
@@ -468,7 +562,7 @@ Rectangle {
             color: "#eeeeee"
             anchors {
                 horizontalCenter: rightSide.horizontalCenter
-                top: ledControlContainer.bottom
+                top: ledSecondContainer.bottom
                 topMargin: 20
             }
 

@@ -39,6 +39,10 @@ Item {
         "error_and_warnings" : [ ]
     }
 
+    property var motor_off: {
+        "enable" : ""
+    }
+
 
     // -------------------  end notification messages
 
@@ -271,6 +275,29 @@ Item {
                                         send: function () { CorePlatformInterface.send(this) },
                                         show: function () { CorePlatformInterface.show(this) }
                                     })
+
+    /*
+      set_led_output_on_off
+     */
+    property var set_led_outputs_on_off:({
+                                            "cmd":"set_led_outputs_on_off",
+                                                "payload":{
+                                                            "led_output": "white"       // "white" for turning all LEDs ON
+                                                                                        // "off" to turn off all the LEDs.
+                                                },
+                                            update: function (led_output) {
+                                                this.set(led_output)
+                                                CorePlatformInterface.send(this)
+                                            },
+                                            set: function (led_output) {
+                                                this.payload.led_output = led_output
+
+                                            },
+                                            send: function () { CorePlatformInterface.send(this) },
+                                            show: function () { CorePlatformInterface.show(this) }
+
+                                        })
+
 
     // -------------------  end commands
 
