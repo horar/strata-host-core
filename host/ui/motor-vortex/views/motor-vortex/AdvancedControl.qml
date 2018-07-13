@@ -211,6 +211,7 @@ Rectangle {
                         onCheckedChanged: {
                             if (checked) {
                                 platformInterface.system_mode_selection.update("manual")
+
                             }
                         }
                     }
@@ -551,8 +552,6 @@ Rectangle {
 
                 }
             }
-
-
         }
 
         Rectangle {

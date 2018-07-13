@@ -43,6 +43,10 @@ Item {
         "enable" : ""
     }
 
+    property var set_mode: {
+        "system_mode" : ""
+    }
+
 
     // -------------------  end notification messages
 

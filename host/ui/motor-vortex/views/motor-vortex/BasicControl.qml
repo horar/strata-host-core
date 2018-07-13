@@ -123,6 +123,17 @@ Rectangle {
                     property alias manual : manual
                     property alias automatic: automatic
 
+                    property var systemMode: platformInterface.set_mode.system_mode
+
+                    onSystemModeChanged: {
+                        if(systemMode === "manual") {
+                            manual.checked = true;
+                        }
+                        else {
+                            automatic.checked = true;
+                        }
+                    }
+
                     SGRadioButton {
                         id: manual
                         text: "Manual Control"
