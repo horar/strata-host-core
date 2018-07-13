@@ -38,5 +38,6 @@
         <file>views/advanced-partial-views/PortStats.qml</file>
         <file>views/images/icon-usb-disconnected.svg</file>
         <file>views/images/icon-voltage.svg</file>
+        <file>views/advanced-partial-views/PortStatBox.qml</file>
     </qresource>
 </RCC>
