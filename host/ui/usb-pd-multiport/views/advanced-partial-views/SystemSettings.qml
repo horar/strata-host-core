@@ -128,151 +128,6 @@ Item {
                 }
             }
 
-            SGDivider {
-                id: div1
-                anchors {
-                    top: tempFault.bottom
-                    topMargin: 15
-                }
-            }
-
-            Text {
-                id: inputFoldback
-                text: "<b>Input Foldback:</b>"
-                font {
-                    pixelSize: 16
-                }
-                anchors {
-                    top: div1.bottom
-                    topMargin: 15
-                }
-            }
-
-            SGSwitch {
-                id: inputFoldbackSwitch
-                anchors {
-                    right: parent.right
-                    verticalCenter: inputFoldback.verticalCenter
-                }
-                checkedLabel: "On"
-                uncheckedLabel: "Off"
-                switchHeight: 20
-                switchWidth: 46
-            }
-
-            SGSlider {
-                id: foldbackLimit
-                label: "Start limiting at:"
-                anchors {
-                    left: parent.left
-                    top: inputFoldback.bottom
-                    topMargin: 10
-                    right: foldbackLimitInput.left
-                    rightMargin: 10
-                }
-            }
-
-            SGSubmitInfoBox {
-                id: foldbackLimitInput
-                buttonVisible: false
-                anchors {
-                    verticalCenter: foldbackLimit.verticalCenter
-                    right: parent.right
-                }
-            }
-
-            SGComboBox {
-                id: limitOutput
-                label: "Limit board output to:"
-                model: ["45 W","stuff"]
-                anchors {
-                    left: parent.left
-                    top: foldbackLimit.bottom
-                    topMargin: 10
-                }
-            }
-        }
-
-        SGLayoutDivider {
-            position: "right"
-        }
-    }
-
-    Item {
-        id: rightColumn
-        anchors {
-            left: leftColumn.right
-            top: parent.top
-            bottom: parent.bottom
-            right: parent.right
-        }
-
-
-        Item {
-            id: margins2
-            anchors {
-                fill: parent
-                margins: 15
-            }
-            Text {
-                id: tempFoldback
-                text: "<b>Temperature Foldback:</b>"
-                font {
-                    pixelSize: 16
-                }
-            }
-
-            SGSwitch {
-                id: tempFoldbackSwitch
-                anchors {
-                    right: parent.right
-                    verticalCenter: tempFoldback.verticalCenter
-                }
-                checkedLabel: "On"
-                uncheckedLabel: "Off"
-                switchHeight: 20
-                switchWidth: 46
-            }
-
-            SGSlider {
-                id: foldbackTemp
-                label: "When board temperature reaches:"
-                anchors {
-                    left: parent.left
-                    top: tempFoldback.bottom
-                    topMargin: 10
-                    right: foldbackTempInput.left
-                    rightMargin: 10
-                }
-            }
-
-            SGSubmitInfoBox {
-                id: foldbackTempInput
-                buttonVisible: false
-                anchors {
-                    verticalCenter: foldbackTemp.verticalCenter
-                    right: parent.right
-                }
-            }
-
-            SGComboBox {
-                id: limitOutput2
-                label: "Limit board output to:"
-                model: ["45 W","stuff"]
-                anchors {
-                    left: parent.left
-                    top: foldbackTemp.bottom
-                    topMargin: 10
-                }
-            }
-
-            SGDivider {
-                id: div2
-                anchors {
-                    top: limitOutput2.bottom
-                    topMargin: 15
-                }
-            }
 
             SGSegmentedButtonStrip {
                 id: powerNegotiation
@@ -286,8 +141,8 @@ Item {
                 radius: 4
                 buttonHeight: 25
                 anchors {
-                    top: div2.bottom
-                    topMargin: 15
+                    top: tempFault.bottom
+                    topMargin: 10
                 }
 
                 segmentedButtons: GridLayout {
@@ -365,6 +220,145 @@ Item {
                     SGSegmentedButton{
                         text: qsTr("OFF")
                     }
+                }
+            }
+        }
+
+        SGLayoutDivider {
+            position: "right"
+        }
+    }
+
+    Item {
+        id: rightColumn
+        anchors {
+            left: leftColumn.right
+            top: parent.top
+            bottom: parent.bottom
+            right: parent.right
+        }
+
+
+        Item {
+            id: margins2
+            anchors {
+                fill: parent
+                margins: 15
+            }
+
+            Text {
+                id: inputFoldback
+                text: "<b>Input Foldback:</b>"
+                font {
+                    pixelSize: 16
+                }
+            }
+
+            SGSwitch {
+                id: inputFoldbackSwitch
+                anchors {
+                    right: parent.right
+                    verticalCenter: inputFoldback.verticalCenter
+                }
+                checkedLabel: "On"
+                uncheckedLabel: "Off"
+                switchHeight: 20
+                switchWidth: 46
+            }
+
+            SGSlider {
+                id: foldbackLimit
+                label: "Start limiting at:"
+                anchors {
+                    left: parent.left
+                    top: inputFoldback.bottom
+                    topMargin: 10
+                    right: foldbackLimitInput.left
+                    rightMargin: 10
+                }
+            }
+
+            SGSubmitInfoBox {
+                id: foldbackLimitInput
+                buttonVisible: false
+                anchors {
+                    verticalCenter: foldbackLimit.verticalCenter
+                    right: parent.right
+                }
+            }
+
+            SGComboBox {
+                id: limitOutput
+                label: "Limit board output to:"
+                model: ["45 W","stuff"]
+                anchors {
+                    left: parent.left
+                    top: foldbackLimit.bottom
+                    topMargin: 10
+                }
+            }
+
+            SGDivider {
+                id: div1
+                anchors {
+                    top: limitOutput.bottom
+                    topMargin: 15
+                }
+            }
+
+            Text {
+                id: tempFoldback
+                text: "<b>Temperature Foldback:</b>"
+                font {
+                    pixelSize: 16
+                }
+                anchors {
+                    top: div1.bottom
+                    topMargin: 15
+                }
+            }
+
+            SGSwitch {
+                id: tempFoldbackSwitch
+                anchors {
+                    right: parent.right
+                    verticalCenter: tempFoldback.verticalCenter
+                }
+                checkedLabel: "On"
+                uncheckedLabel: "Off"
+                switchHeight: 20
+                switchWidth: 46
+            }
+
+            SGSlider {
+                id: foldbackTemp
+                label: "When board temperature reaches:"
+                anchors {
+                    left: parent.left
+                    top: tempFoldback.bottom
+                    topMargin: 10
+                    right: foldbackTempInput.left
+                    rightMargin: 10
+                }
+            }
+
+            SGSubmitInfoBox {
+                id: foldbackTempInput
+                buttonVisible: false
+                anchors {
+                    verticalCenter: foldbackTemp.verticalCenter
+                    right: parent.right
+                }
+            }
+
+            SGComboBox {
+                id: limitOutput2
+                label: "Limit board output to:"
+                model: ["45 W","stuff"]
+                anchors {
+                    left: parent.left
+                    top: foldbackTemp.bottom
+                    topMargin: 10
                 }
             }
         }

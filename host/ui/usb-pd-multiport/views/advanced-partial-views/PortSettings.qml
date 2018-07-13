@@ -1,4 +1,5 @@
 import QtQuick 2.9
+import QtQuick.Layouts 1.3
 import "qrc:/sgwidgets"
 
 Item {
@@ -131,6 +132,59 @@ Item {
             anchors {
                 top: div2.bottom
                 topMargin: 15
+            }
+        }
+
+        SGSegmentedButtonStrip {
+            id: faultProtection
+            anchors {
+                left: advertisedVoltages.right
+                leftMargin: 10
+                verticalCenter: advertisedVoltages.verticalCenter
+            }
+            activeColorTop: "#666"
+            activeColorBottom: "#666"
+            inactiveColorTop: "#dddddd"
+            inactiveColorBottom: "#dddddd"
+            textColor: "#666"
+            activeTextColor: "white"
+            radius: 4
+            buttonHeight: 25
+
+            segmentedButtons: GridLayout {
+                columnSpacing: 2
+
+                SGSegmentedButton{
+                    text: qsTr("5V, 3A")
+                }
+
+                SGSegmentedButton{
+                    text: qsTr("7V, 3A")
+                }
+
+                SGSegmentedButton{
+                    text: qsTr("8V, 3A")
+                }
+
+                SGSegmentedButton{
+                    text: qsTr("9V, 3A")
+                    enabled: false
+                }
+
+                SGSegmentedButton{
+                    text: qsTr("12V, 3A")
+                    enabled: false
+                }
+
+                SGSegmentedButton{
+                    text: qsTr("15V, 3A")
+                    enabled: false
+                }
+
+                SGSegmentedButton{
+                    text: qsTr("20V, 3A")
+                    enabled: false
+                }
             }
         }
     }

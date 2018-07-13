@@ -35,5 +35,8 @@
         <file>views/advanced-partial-views/System.qml</file>
         <file>sgwidgets/SGLayoutDivider.qml</file>
         <file>sgwidgets/SGDivider.qml</file>
+        <file>views/advanced-partial-views/PortStats.qml</file>
+        <file>views/images/icon-usb-disconnected.svg</file>
+        <file>views/images/icon-voltage.svg</file>
     </qresource>
 </RCC>

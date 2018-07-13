@@ -7,7 +7,7 @@ Item {
     property bool debugLayout: true
 
     width: parent.width
-    height: 310
+    height: 290
 
     SystemSettings {
     }

@@ -5,9 +5,10 @@ Item {
     id: root
 
     property bool debugLayout: true
+    property int portNumber: 1
 
     width: parent.width
-    height: 400
+    height: 288
 
     PortInfo {
         id: portInfo

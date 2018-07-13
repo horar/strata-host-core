@@ -11,19 +11,31 @@ Item {
         fill: parent
     }
 
+    Item {
+        id: overview
+        height: 300
+        width: root.width
+
+        Text {
+            id: temp
+            text: qsTr("Overview Goes Here")
+            anchors.centerIn: parent
+        }
+
+        SGLayoutDivider {
+            position: "bottom"
+        }
+    }
+
     SGAccordion {
         id: settingsAccordion
         anchors {
-            fill: root
+            top: overview.bottom
+            bottom: root.bottom
         }
+        width: root.width
 
         accordionItems: Column {
-            SGAccordionItem {
-                title: "<b>Overview</b>"
-                open: false
-                contents: Item {}
-            }
-
             SGAccordionItem {
                 title: "<b>System Settings</b>"
                 open: true
@@ -36,28 +48,31 @@ Item {
                 title: "<b>Port 1</b>"
                 open: true
                 contents: Port {
-                    //
+                    portNumber: 1
                 }
             }
 
             SGAccordionItem {
                 title: "<b>Port 2</b>"
+                open: true
                 contents: Port {
-                    //
+                    portNumber: 2
                 }
             }
 
             SGAccordionItem {
                 title: "<b>Port 3</b>"
+                open: true
                 contents: Port {
-                    //
+                    portNumber: 3
                 }
             }
 
             SGAccordionItem {
                 title: "<b>Port 4</b>"
+                open: true
                 contents: Port {
-                    //
+                    portNumber: 4
                 }
             }
         }
