@@ -124,7 +124,7 @@ Item {
                         id: check
                         color: "white"
                         text: sgSlider.value.toFixed(decimalPlaces)
-                        font.pointSize: 8
+                        font.pixelSize: 8
                         anchors.centerIn:  handler
                         anchors.verticalCenterOffset: -3
                         onTextChanged: {
@@ -138,7 +138,7 @@ Item {
         Label {
             id: startLabel
             anchors.bottom : parent.bottom
-            font.pointSize : 12
+            font.pixelSize : 12
             text: qsTr("0")
         }
 
@@ -146,7 +146,7 @@ Item {
             id: endLabel
             anchors.right : parent.right
             anchors.bottom : parent.bottom
-            font.pointSize: 12
+            font.pixelSize: 12
             text: qsTr("100")
         }
 

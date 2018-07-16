@@ -48,7 +48,7 @@ Rectangle {
                     centerIn: parent
                 }
                 text: "<b>Restricted Access:</b> ON Semi Employees Only"
-                font.pointSize: 18
+                font.pixelSize: 18
                 color: "white"
             }
 
@@ -61,7 +61,7 @@ Rectangle {
                 }
                 text: "\ue80e"
                 font.family: icons.name
-                font.pointSize: 50
+                font.pixelSize: 50
                 color: "white"
             }
 
@@ -74,7 +74,7 @@ Rectangle {
                 }
                 text: "\ue80e"
                 font.family: icons.name
-                font.pointSize: 50
+                font.pixelSize: 50
                 color: "white"
             }
 
