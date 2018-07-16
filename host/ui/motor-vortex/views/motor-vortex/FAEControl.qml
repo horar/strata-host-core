@@ -301,11 +301,9 @@ Rectangle {
                 id: targetSpeedSlider
                 label: "Target Speed:"
                 width: 350
-                minimumValue: speedSafetyButton.checked ? 0 : 1500
-                maximumValue: speedSafetyButton.checked ? 10000 : 5500
-                endLabel: speedSafetyButton.checked? "<font color='red'><b>"+ maximumValue +"</b></font>" : maximumValue
-                startLabel: minimumValue
-                showDial: false
+                from: speedSafetyButton.checked ? 0 : 1500
+                to: speedSafetyButton.checked ? 10000 : 5500
+                endLabel: speedSafetyButton.checked? "<font color='red'><b>"+ to +"</b></font>" : to
                 anchors {
                     verticalCenter: setSpeed.verticalCenter
                     left: speedControlContainer.left
@@ -315,11 +313,11 @@ Rectangle {
                 }
 
                 onValueChanged: {
-                    platformInterface.motor_speed.update(value);
-                    setSpeed.input = value
+                    platformInterface.motor_speed.update(value.toFixed(0));
+                    setSpeed.input = value.toFixed(0)
                 }
-
             }
+
             SGSubmitInfoBox {
                 id: setSpeed
                 infoBoxColor: "white"
@@ -331,6 +329,7 @@ Rectangle {
                 }
                 buttonVisible: false
                 onApplied: { targetSpeedSlider.value = parseInt(value, 10) }
+                input: targetSpeedSlider.value
             }
 
             SGSlider {
@@ -338,10 +337,8 @@ Rectangle {
                 label: "Ramp Rate:"
                 width: 350
                 value: 3
-                minimumValue: 0
-                maximumValue: 6
-                endLabel: maximumValue
-                startLabel: minimumValue
+                from : 0
+                to: 6
                 anchors {
                     verticalCenter: setRampRate.verticalCenter
                     left: speedControlContainer.left
@@ -349,12 +346,12 @@ Rectangle {
                     right: setRampRate.left
                     rightMargin: 10
                 }
-                showDial: false
                 onValueChanged: {
-                    platformInterface.set_ramp_rate.update(rampRateSlider.value)
-                    setRampRate.input = value
+                    platformInterface.set_ramp_rate.update(rampRateSlider.value.toFixed(0))
+                    setRampRate.input = value.toFixed(0)
                 }
             }
+
             SGSubmitInfoBox {
                 id: setRampRate
                 infoBoxColor: "white"
@@ -366,6 +363,7 @@ Rectangle {
                 }
                 buttonVisible: false
                 onApplied: { rampRateSlider.value = parseInt(value, 10) }
+                input: rampRateSlider.value
             }
 
             Item {
@@ -510,7 +508,7 @@ Rectangle {
                     verticalCenter: whiteButton.verticalCenter
                     left: ledControlContainer.left
                     leftMargin: 10
-                    right: whiteButton.left
+                    right: ledControlContainer.right
                     rightMargin: 10
                     top: ledControlContainer.top
                     topMargin: 10
@@ -573,6 +571,8 @@ Rectangle {
                     topMargin: 10
                     left: ledSecondContainer.left
                     leftMargin: 10
+                    right: ledSecondContainer.right
+                    rightMargin: 10
                 }
                 onValueChanged: platformInterface.set_single_color.update(color, color_value)
             }
@@ -581,10 +581,8 @@ Rectangle {
                 id: ledPulseFrequency
                 label: "LED Pulse Frequency:"
                 value: 50
-                minimumValue: 2
-                maximumValue: 152
-                startLabel: "2"
-                endLabel: "152"
+                from: 2
+                to: 152
                 anchors {
                     left: ledSecondContainer.left
                     leftMargin: 10
@@ -593,11 +591,10 @@ Rectangle {
                     right: setLedPulse.left
                     rightMargin: 10
                 }
-                showDial: false
 
                 onValueChanged: {
-                    setLedPulse.input = value
-                    platformInterface.set_blink0_frequency.update(value);
+                    setLedPulse.input = value.toFixed(0)
+                    platformInterface.set_blink0_frequency.update(value.toFixed(0));
                 }
             }
 
@@ -612,8 +609,8 @@ Rectangle {
                 buttonVisible: false
                 onApplied:  {
                     ledPulseFrequency.value = parseInt(value, 10)
-
                 }
+                input: ledPulseFrequency.value
             }
         }
 

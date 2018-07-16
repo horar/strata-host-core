@@ -24,7 +24,7 @@ Rectangle {
     // Control Section
     Rectangle {
         id: controlSection1
-        width: parent.width-100
+        width: leftControl.width + rightControl.width
         height: parent.height / 2
         anchors {
             verticalCenter: parent.verticalCenter
@@ -37,7 +37,7 @@ Rectangle {
                 left: parent.left
                 top: parent.top
             }
-            width: parent.width / 2
+            width: height
             height: parent.height
 
             SGCircularGauge {
@@ -47,8 +47,8 @@ Rectangle {
                 }
                 gaugeFrontColor1: Qt.rgba(0,1,.25,1)
                 gaugeFrontColor2: Qt.rgba(1,0,0,1)
-                minimumValue: motorSpeedControl.minimumValue
-                maximumValue: motorSpeedControl.maximumValue
+                minimumValue: motorSpeedControl.from
+                maximumValue: motorSpeedControl.to
                 tickmarkStepSize: 500
                 outerColor: "#999"
                 unitLabel: "RPM"
@@ -63,29 +63,29 @@ Rectangle {
             id: rightControl
             anchors {
                 left: leftControl.right
+                leftMargin: 50
                 verticalCenter: leftControl.verticalCenter
             }
-            width: parent.width / 2
+            width: 400
             height: motorSpeedControl.height + operationModeControl.height + 40
 
             SGSlider {
                 id: motorSpeedControl
-                width: parent.width * 0.75
                 anchors {
-                    horizontalCenter: parent.horizontalCenter
+                    left: rightControl.left
+                    right: setSpeed.left
+                    rightMargin: 10
+                    top: rightControl.top
                 }
                 label: "<b>Motor Speed:</b>"
                 labelLeft: false
                 value: 1500
-                minimumValue: 1500
-                maximumValue: 5500
-                startLabel: minimumValue
-                endLabel: maximumValue
-                showDial:  false
+                from: 1500
+                to: 5500
 
                 onValueChanged: {
-                    platformInterface.motor_speed.update(value);
-                    setSpeed.input = value
+                    platformInterface.motor_speed.update(value.toFixed(0));
+                    setSpeed.input = value.toFixed(0)
                 }
             }
 
@@ -94,12 +94,12 @@ Rectangle {
                 infoBoxColor: "white"
                 buttonVisible: false
                 anchors {
-                    top: rightControl.top
-                    topMargin: 10
+                    verticalCenter: motorSpeedControl.verticalCenter
                     right: rightControl.right
                     rightMargin: 10
                 }
                 onApplied: { motorSpeedControl.value = parseInt(value, 10) }
+                input: motorSpeedControl.value
             }
 
 

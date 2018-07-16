@@ -247,10 +247,8 @@ Rectangle {
                 id: targetSpeedSlider
                 label: "Target Speed:"
                 width: 350
-                minimumValue: 1500
-                maximumValue: 5500
-                endLabel: maximumValue
-                startLabel: minimumValue
+                from : 1500
+                to: 5500
                 anchors {
                     verticalCenter: setSpeed.verticalCenter
                     left: speedControlContainer.left
@@ -258,11 +256,10 @@ Rectangle {
                     right: setSpeed.left
                     rightMargin: 10
                 }
-                showDial: false
 
                 onValueChanged: {
-                    platformInterface.motor_speed.update(value);
-                    setSpeed.input = value
+                    platformInterface.motor_speed.update(value.toFixed(0));
+                    setSpeed.input = value.toFixed(0)
                 }
 
                 MouseArea {
@@ -305,25 +302,23 @@ Rectangle {
             SGSlider {
                 id: rampRateSlider
                 label: "Ramp Rate:"
-                width: 350
                 value: 3
-                minimumValue: 0
-                maximumValue:6
-                endLabel: maximumValue
-                startLabel: minimumValue
+                from: 0
+                to:6
                 anchors {
                     top: targetSpeedSlider.bottom
                     topMargin: 10
                     left: speedControlContainer.left
                     leftMargin: 10
+                    right: setRampRate.left
                     rightMargin: 10
                 }
-                showDial: false
                 onValueChanged: {
-                    platformInterface.set_ramp_rate.update(rampRateSlider.value)
-                    setRampRate.input = value
+                    platformInterface.set_ramp_rate.update(rampRateSlider.value.toFixed(0))
+                    setRampRate.input = value.toFixed(0)
                 }
             }
+
             SGSubmitInfoBox {
                 id: setRampRate
                 infoBoxColor: "white"
@@ -335,6 +330,7 @@ Rectangle {
                 }
                 buttonVisible: false
                 onApplied: { rampRateSlider.value = parseInt(value, 10) }
+                input: rampRateSlider.value
             }
         }
 
@@ -479,7 +475,7 @@ Rectangle {
                 Button {
                     id: turnOff
                     checkable: false
-                    text: "TurnOff"
+                    text: "Turn Off"
                     anchors {
                         left: whiteButton.right
                         leftMargin: 30
@@ -522,10 +518,8 @@ Rectangle {
                 id: ledPulseFrequency
                 label: "LED Pulse Frequency:"
                 value: 50
-                minimumValue: 2
-                maximumValue: 152
-                startLabel: "2"
-                endLabel: "152"
+                from: 2
+                to: 152
                 anchors {
                     left: ledSecondContainer.left
                     leftMargin: 10
@@ -534,11 +528,10 @@ Rectangle {
                     right: setLedPulse.left
                     rightMargin: 10
                 }
-                showDial: true
 
                 onValueChanged: {
-                    setLedPulse.input = value
-                    platformInterface.set_blink0_frequency.update(value);
+                    setLedPulse.input = value.toFixed(0)
+                    platformInterface.set_blink0_frequency.update(value.toFixed(0));
                 }
             }
 
@@ -553,8 +546,8 @@ Rectangle {
                 buttonVisible: false
                 onApplied:  {
                     ledPulseFrequency.value = parseInt(value, 10)
-
                 }
+                input: ledPulseFrequency.value
             }
         }
 
