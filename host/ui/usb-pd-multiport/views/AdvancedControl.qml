@@ -11,16 +11,9 @@ Item {
         fill: parent
     }
 
-    Item {
+    Overview {
         id: overview
-        height: 300
-        width: root.width
-
-        Text {
-            id: temp
-            text: qsTr("Overview Goes Here")
-            anchors.centerIn: parent
-        }
+        height: 310
 
         SGLayoutDivider {
             position: "bottom"
@@ -73,6 +66,7 @@ Item {
                 open: true
                 contents: Port {
                     portNumber: 4
+                    portConnected: false
                 }
             }
         }

@@ -6,6 +6,7 @@ Item {
 
     property bool debugLayout: true
     property int portNumber: 1
+    property alias portConnected: portInfo.portConnected
 
     width: parent.width
     height: 288

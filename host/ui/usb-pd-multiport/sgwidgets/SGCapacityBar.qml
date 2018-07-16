@@ -47,7 +47,7 @@ Item {
 
         Rectangle {
             id: capacityBar
-            height: 32
+            height: 15
             anchors {
                 top: capacityBarContainer.top
                 right: capacityBarContainer.right

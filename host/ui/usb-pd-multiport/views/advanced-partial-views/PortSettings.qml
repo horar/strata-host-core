@@ -156,34 +156,41 @@ Item {
 
                 SGSegmentedButton{
                     text: qsTr("5V, 3A")
+                    checkable: false
                 }
 
                 SGSegmentedButton{
                     text: qsTr("7V, 3A")
+                    checkable: false
                 }
 
                 SGSegmentedButton{
                     text: qsTr("8V, 3A")
+                    checkable: false
                 }
 
                 SGSegmentedButton{
                     text: qsTr("9V, 3A")
                     enabled: false
+                    checkable: false
                 }
 
                 SGSegmentedButton{
                     text: qsTr("12V, 3A")
                     enabled: false
+                    checkable: false
                 }
 
                 SGSegmentedButton{
                     text: qsTr("15V, 3A")
                     enabled: false
+                    checkable: false
                 }
 
                 SGSegmentedButton{
                     text: qsTr("20V, 3A")
                     enabled: false
+                    checkable: false
                 }
             }
         }

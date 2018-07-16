@@ -35,9 +35,15 @@
         <file>views/advanced-partial-views/System.qml</file>
         <file>sgwidgets/SGLayoutDivider.qml</file>
         <file>sgwidgets/SGDivider.qml</file>
-        <file>views/advanced-partial-views/PortStats.qml</file>
         <file>views/images/icon-usb-disconnected.svg</file>
         <file>views/images/icon-voltage.svg</file>
         <file>views/advanced-partial-views/PortStatBox.qml</file>
+        <file>views/images/icon-temp.svg</file>
+        <file>views/images/icon-max.svg</file>
+        <file>views/images/icon-efficiency.svg</file>
+        <file>views/advanced-partial-views/Overview.qml</file>
+        <file>sgwidgets/SGOutputLogBox.qml</file>
+        <file>sgwidgets/SGStatusListBox.qml</file>
+        <file>views/advanced-partial-views/PortInfoMini.qml</file>
     </qresource>
 </RCC>
