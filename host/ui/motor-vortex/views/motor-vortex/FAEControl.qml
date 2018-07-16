@@ -236,7 +236,7 @@ Rectangle {
             anchors {
                 horizontalCenter: rightSide.horizontalCenter
                 top: ssButtonContainer.bottom
-                topMargin: 20
+                topMargin: 10
             }
 
             SGRadioButtonContainer {
@@ -294,7 +294,7 @@ Rectangle {
             anchors {
                 horizontalCenter: rightSide.horizontalCenter
                 top: operationModeControlContainer.bottom
-                topMargin: 20
+                topMargin: 10
             }
 
             SGSlider {
@@ -373,7 +373,7 @@ Rectangle {
                 height: childrenRect.height
                 anchors {
                     top: rampRateSlider.bottom
-                    topMargin: 20
+                    topMargin: 10
                     left: speedControlContainer.left
                     leftMargin: 10
                     right: speedControlContainer.right
@@ -413,7 +413,7 @@ Rectangle {
             anchors {
                 horizontalCenter: rightSide.horizontalCenter
                 top: speedControlContainer.bottom
-                topMargin: 20
+                topMargin: 10
             }
 
             SGRadioButtonContainer {
@@ -517,16 +517,17 @@ Rectangle {
                 }
                 onValueChanged: platformInterface.set_color_mixing.update(color1,color_value1,color2,color_value2)
             }
-            Rectangle {
+
+            Item {
                 id: buttonControlContainer
-                color: "transparent"
                 anchors{
                     top: hueSlider.bottom
-                    topMargin: 30
+                    topMargin: 10
                     horizontalCenter: ledControlContainer.horizontalCenter
                     horizontalCenterOffset: 40
                 }
                 width: 300; height: 50
+
                 Button {
                     id: whiteButton
                     checkable: false
@@ -539,7 +540,7 @@ Rectangle {
                 Button {
                     id: turnOff
                     checkable: false
-                    text: "TurnOff"
+                    text: "Turn Off"
                     anchors {
                         left: whiteButton.right
                         leftMargin: 30
@@ -550,18 +551,18 @@ Rectangle {
                 }
             }
         }
+
         Rectangle {
             id: ledSecondContainer
             width: 500
-            height: childrenRect.height + 30
+            height: childrenRect.height + 20
             color: "#eeeeee"
 
             anchors {
                 horizontalCenter: rightSide.horizontalCenter
                 top: ledControlContainer.bottom
-                topMargin: 20
+                topMargin: 10
             }
-
 
             SGRGBSlider {
                 id: singleColorSlider
@@ -576,8 +577,6 @@ Rectangle {
                 onValueChanged: platformInterface.set_single_color.update(color, color_value)
             }
 
-
-
             SGSlider {
                 id: ledPulseFrequency
                 label: "LED Pulse Frequency:"
@@ -590,7 +589,7 @@ Rectangle {
                     left: ledSecondContainer.left
                     leftMargin: 10
                     top: singleColorSlider.bottom
-                    topMargin: 20
+                    topMargin: 10
                     right: setLedPulse.left
                     rightMargin: 10
                 }
@@ -621,11 +620,12 @@ Rectangle {
         Rectangle {
             id: directionControlContainer
             width: 500
-            height: childrenRect.height + 20 - directionToolTip.height
+            height: childrenRect.height + 20
             color: directionSafetyButton.checked ? "#ffb4aa" : "#eeeeee"
             anchors {
                 horizontalCenter: rightSide.horizontalCenter
                 top: ledSecondContainer.bottom
+                topMargin: 10
             }
 
             SGRadioButtonContainer {

@@ -432,7 +432,7 @@ Rectangle {
         Rectangle {
             id: ledControlContainer
             width: 500
-            height: childrenRect.height + 50
+            height: childrenRect.height + 10
             color: "#eeeeee"
             anchors {
                 horizontalCenter: rightSide.horizontalCenter
@@ -448,23 +448,25 @@ Rectangle {
                     verticalCenter: whiteButton.verticalCenter
                     left: ledControlContainer.left
                     leftMargin: 10
-                    right: whiteButton.left
+                    right: ledControlContainer.right
                     rightMargin: 10
                     top: ledControlContainer.top
-                    topMargin: 20
+                    topMargin: 10
                 }
                 onValueChanged: platformInterface.set_color_mixing.update(color1,color_value1,color2,color_value2)
             }
+
             Rectangle {
                 id: buttonControlContainer
                 color: "transparent"
                 anchors{
                     top: hueSlider.bottom
-                    topMargin: 30
+                    topMargin: 10
                     horizontalCenter: ledControlContainer.horizontalCenter
                     horizontalCenterOffset: 40
                 }
                 width: 300; height: 50
+
                 Button {
                     id: whiteButton
                     checkable: false
@@ -488,10 +490,11 @@ Rectangle {
                 }
             }
         }
+
         Rectangle {
             id: ledSecondContainer
             width: 500
-            height: childrenRect.height + 30
+            height: childrenRect.height + 20
             color: "#eeeeee"
 
             anchors {
@@ -499,7 +502,6 @@ Rectangle {
                 top: ledControlContainer.bottom
                 topMargin: 20
             }
-
 
             SGRGBSlider {
                 id: singleColorSlider
@@ -510,11 +512,11 @@ Rectangle {
                     topMargin: 10
                     left: ledSecondContainer.left
                     leftMargin: 10
+                    right: ledSecondContainer.right
+                    rightMargin: 10
                 }
                 onValueChanged: platformInterface.set_single_color.update(color, color_value)
             }
-
-
 
             SGSlider {
                 id: ledPulseFrequency
@@ -528,11 +530,11 @@ Rectangle {
                     left: ledSecondContainer.left
                     leftMargin: 10
                     top: singleColorSlider.bottom
-                    topMargin: 20
+                    topMargin: 10
                     right: setLedPulse.left
                     rightMargin: 10
                 }
-                showDial: false
+                showDial: true
 
                 onValueChanged: {
                     setLedPulse.input = value
