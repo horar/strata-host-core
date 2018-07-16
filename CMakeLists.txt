@@ -1560,7 +1560,8 @@ add_executable(spyglass
         platform/applications/USB-PD-Load-Board/src/main.cpp
         platform/applications/USB-PD-Load-Board/src/usb-pd-platform.cpp
         platform/applications/USB-PD-Load-Board/test/main.cpp
-        platform/applications/VORTEX-FOUNTAIN/include/onplatform.h
+        platform/applications/vortex-fountain/include/PinMap.h
+        platform/applications/USB-PD-100W/include/onplatform.h
         platform/applications/VORTEX-FOUNTAIN/include/program_main.h
         platform/applications/VORTEX-FOUNTAIN/src/main.cpp
         platform/applications/VORTEX-FOUNTAIN/src/program_main.cpp
