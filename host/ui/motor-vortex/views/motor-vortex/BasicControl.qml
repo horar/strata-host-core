@@ -12,9 +12,9 @@ Rectangle {
     id: controlPage
     objectName: "control"
     anchors { fill: parent }
-    // used to check whether the motor slider has been already updated from platform notification
-    property bool isMotorSliderUpdated: false;
     color: "white"
+
+    property alias motorSpeedSliderValue: motorSpeedControl.value
 
     Component.onCompleted: {
         platformInterface.set_drive_mode.update("manual")

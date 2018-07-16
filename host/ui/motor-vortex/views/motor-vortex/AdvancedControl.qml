@@ -12,6 +12,8 @@ Rectangle {
         fill: parent
     }
 
+    property alias motorSpeedSliderValue: targetSpeedSlider.value
+
     Component.onCompleted:  {
 
         platformInterface.system_mode_selection.update("manual");

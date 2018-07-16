@@ -12,6 +12,7 @@ Rectangle {
         fill: parent
     }
 
+    property alias motorSpeedSliderValue: targetSpeedSlider.value
 
     Component.onCompleted:  {
         /*

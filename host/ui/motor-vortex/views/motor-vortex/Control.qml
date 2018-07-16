@@ -29,7 +29,14 @@ Rectangle {
         TabButton {
             id: basicButton
             text: qsTr("Basic")
-            onClicked: controlContainer.currentIndex = 0
+            onClicked: {
+                if (controlContainer.currentIndex === 1){
+                    basicView.motorSpeedSliderValue = advanceView.motorSpeedSliderValue
+                } else {
+                    basicView.motorSpeedSliderValue = faeView.motorSpeedSliderValue
+                }
+                controlContainer.currentIndex = 0
+            }
         }
 
         TabButton {
