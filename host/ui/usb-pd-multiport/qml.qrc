@@ -32,7 +32,6 @@
         <file>views/advanced-partial-views/PortSettings.qml</file>
         <file>views/advanced-partial-views/SystemSettings.qml</file>
         <file>views/advanced-partial-views/Port.qml</file>
-        <file>views/advanced-partial-views/System.qml</file>
         <file>sgwidgets/SGLayoutDivider.qml</file>
         <file>sgwidgets/SGDivider.qml</file>
         <file>views/images/icon-usb-disconnected.svg</file>

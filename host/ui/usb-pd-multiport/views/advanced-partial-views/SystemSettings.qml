@@ -4,7 +4,7 @@ import "qrc:/sgwidgets"
 
 Item {
     id: root
-    height: parent.height
+    height: 275
     width: parent.width
     anchors {
         left: parent.left
@@ -37,6 +37,10 @@ Item {
                 activeTextColor: "white"
                 radius: 4
                 buttonHeight: 25
+                anchors {
+                    left: margins1.left
+                    leftMargin: 0
+                }
 
                 segmentedButtons: GridLayout {
                     columnSpacing: 2
@@ -52,11 +56,129 @@ Item {
                 }
             }
 
+
             SGSegmentedButtonStrip {
-                id: faultProtection
+                id: powerNegotiation
+                label: "Power Negotiation:"
+                activeColorTop: "#666"
+                activeColorBottom: "#666"
+                inactiveColorTop: "#dddddd"
+                inactiveColorBottom: "#dddddd"
+                textColor: "#666"
+                activeTextColor: "white"
+                radius: 4
+                buttonHeight: 25
                 anchors {
                     top: dataConfig.bottom
                     topMargin: 10
+                    left: margins1.left
+                    leftMargin: 3
+                }
+
+                segmentedButtons: GridLayout {
+                    columnSpacing: 2
+
+                    SGSegmentedButton{
+                        text: qsTr("Dynamic")
+                        checked: true  // Sets default checked button when exclusive
+                    }
+
+                    SGSegmentedButton{
+                        text: qsTr("FCFS")
+                    }
+
+                    SGSegmentedButton{
+                        text: qsTr("Priority")
+                    }
+                }
+            }
+
+            SGDivider {
+                id: leftDiv1
+                anchors {
+                    top: powerNegotiation.bottom
+                    topMargin: 10
+                }
+            }
+
+            SGSegmentedButtonStrip {
+                id: sleepMode
+                label: "Sleep Mode:"
+                activeColorTop: "#666"
+                activeColorBottom: "#666"
+                inactiveColorTop: "#dddddd"
+                inactiveColorBottom: "#dddddd"
+                textColor: "#666"
+                activeTextColor: "white"
+                radius: 4
+                buttonHeight: 25
+                anchors {
+                    top: leftDiv1.bottom
+                    topMargin: 10
+                    left: margins1.left
+                    leftMargin: 20
+                }
+
+                segmentedButtons: GridLayout {
+                    columnSpacing: 2
+
+                    SGSegmentedButton{
+                        text: qsTr("Manual")
+                        checked: true  // Sets default checked button when exclusive
+                    }
+
+                    SGSegmentedButton{
+                        text: qsTr("Automatic")
+                    }
+                }
+            }
+
+            SGSegmentedButtonStrip {
+                id: manualSleep
+                label: "Manual Sleep:"
+                activeColorTop: "#666"
+                activeColorBottom: "#666"
+                inactiveColorTop: "#dddddd"
+                inactiveColorBottom: "#dddddd"
+                textColor: "#666"
+                activeTextColor: "white"
+                radius: 4
+                buttonHeight: 25
+                anchors {
+                    top: sleepMode.top
+                    left: sleepMode.right
+                    leftMargin: 50
+                }
+
+                segmentedButtons: GridLayout {
+                    columnSpacing: 2
+
+                    SGSegmentedButton{
+                        text: qsTr("ON")
+                        checked: true  // Sets default checked button when exclusive
+                    }
+
+                    SGSegmentedButton{
+                        text: qsTr("OFF")
+                    }
+                }
+            }
+
+            SGDivider {
+                id: leftDiv2
+                anchors {
+                    top: sleepMode.bottom
+                    topMargin: 10
+                }
+            }
+
+            SGSegmentedButtonStrip {
+                id: faultProtection
+                anchors {
+                    top: leftDiv2.bottom
+                    topMargin: 10
+                    left: margins1.left
+                    leftMargin: 0
                 }
                 label: "Fault Protection:"
                 activeColorTop: "#666"
@@ -90,7 +212,8 @@ Item {
                 id: inputFault
                 label: "Fault when input falls below:"
                 anchors {
-                    left: parent.left
+                    left: margins1.left
+                    leftMargin: 28
                     top: faultProtection.bottom
                     topMargin: 10
                     right: inputFaultInput.left
@@ -125,101 +248,6 @@ Item {
                 anchors {
                     verticalCenter: tempFault.verticalCenter
                     right: parent.right
-                }
-            }
-
-
-            SGSegmentedButtonStrip {
-                id: powerNegotiation
-                label: "Power Negotiation:"
-                activeColorTop: "#666"
-                activeColorBottom: "#666"
-                inactiveColorTop: "#dddddd"
-                inactiveColorBottom: "#dddddd"
-                textColor: "#666"
-                activeTextColor: "white"
-                radius: 4
-                buttonHeight: 25
-                anchors {
-                    top: tempFault.bottom
-                    topMargin: 10
-                }
-
-                segmentedButtons: GridLayout {
-                    columnSpacing: 2
-
-                    SGSegmentedButton{
-                        text: qsTr("Dynamic")
-                        checked: true  // Sets default checked button when exclusive
-                    }
-
-                    SGSegmentedButton{
-                        text: qsTr("FCFS")
-                    }
-
-                    SGSegmentedButton{
-                        text: qsTr("Priority")
-                    }
-                }
-            }
-
-            SGSegmentedButtonStrip {
-                id: sleepMode
-                label: "Sleep Mode:"
-                activeColorTop: "#666"
-                activeColorBottom: "#666"
-                inactiveColorTop: "#dddddd"
-                inactiveColorBottom: "#dddddd"
-                textColor: "#666"
-                activeTextColor: "white"
-                radius: 4
-                buttonHeight: 25
-                anchors {
-                    top: powerNegotiation.bottom
-                    topMargin: 10
-                }
-
-                segmentedButtons: GridLayout {
-                    columnSpacing: 2
-
-                    SGSegmentedButton{
-                        text: qsTr("Manual")
-                        checked: true  // Sets default checked button when exclusive
-                    }
-
-                    SGSegmentedButton{
-                        text: qsTr("Automatic")
-                    }
-                }
-            }
-
-            SGSegmentedButtonStrip {
-                id: manualSleep
-                label: "Manual Sleep:"
-                activeColorTop: "#666"
-                activeColorBottom: "#666"
-                inactiveColorTop: "#dddddd"
-                inactiveColorBottom: "#dddddd"
-                textColor: "#666"
-                activeTextColor: "white"
-                radius: 4
-                buttonHeight: 25
-                anchors {
-                    top: sleepMode.bottom
-                    topMargin: 10
-                }
-
-                segmentedButtons: GridLayout {
-                    columnSpacing: 2
-
-                    SGSegmentedButton{
-                        text: qsTr("ON")
-                        checked: true  // Sets default checked button when exclusive
-                    }
-
-                    SGSegmentedButton{
-                        text: qsTr("OFF")
-                    }
                 }
             }
         }

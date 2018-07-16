@@ -32,7 +32,7 @@ Item {
             SGAccordionItem {
                 title: "<b>System Settings</b>"
                 open: true
-                contents: System {
+                contents: SystemSettings {
                     //
                 }
             }
