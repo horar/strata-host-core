@@ -74,7 +74,10 @@ Rectangle {
                 text: input
                 selectByMouse: true
                 readOnly: false
-                font.family: "Courier" // Monospaced font for better text width uniformity
+                font {
+                    pixelSize: 12
+                    family: "Courier" // Monospaced font for better text width uniformity
+                }
                 horizontalAlignment: TextInput.AlignRight
                 validator: realNumberValidation ? realNumberValidator : null
                 onAccepted: root.applied(infoText.text)

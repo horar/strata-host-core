@@ -51,7 +51,10 @@ Rectangle {
             text: info
             selectByMouse: true
             readOnly: true
-            font.family: "Courier" // Monospaced font for better text width uniformity
+            font {
+                pixelSize: 12
+                family: "Courier" // Monospaced font for better text width uniformity
+            }
         }
     }
 }
