@@ -1,176 +1,142 @@
 import QtQuick 2.9
-import QtQuick.Controls.Styles 1.4
-import QtQuick.Controls 1.4
+import QtQuick.Controls 2.3
 
 Item {
     id: root
-    implicitWidth: 200
-    implicitHeight: root.labelLeft ? sgSlider.height : sgSlider.height + labelText.height
 
+    implicitWidth: 200
+    implicitHeight: root.labelLeft ? sgSlider.height : sgSlider.height + labelText.height + sgSlider.anchors.topMargin
+
+    signal moved()
+
+    property alias from: sgSlider.from
+    property alias to: sgSlider.to
+    property alias value: sgSlider.value
+    property alias position: sgSlider.position
+    property alias live: sgSlider.live
+    property alias pressed: sgSlider.pressed
+    property alias snapMode: sgSlider.snapMode
+    property alias stepSize: sgSlider.stepSize
+    property alias orientation: sgSlider.orientation
     property alias startLabel: startLabel.text
     property alias endLabel: endLabel.text
-    property alias maximumValue: sgSlider.maximumValue
-    property alias minimumValue: sgSlider.minimumValue
-    property alias value: sgSlider.value
-    property alias stepSize: sgSlider.stepSize
 
-    property string label: ""
-    property bool labelLeft: true
-    property int decimalPlaces: 0
-    property bool showDial: true
+    property bool showToolTip: true
     property color grooveColor: "#dddddd"
     property color grooveFillColor: "#888888"
+    property color textColor: "#000000"
+    property string label: ""
+    property bool labelLeft: true
+    property int toolTipDecimalPlaces: 0
 
     Text {
         id: labelText
         text: root.label
         width: contentWidth
-        height: root.labelLeft ? sgSlider.height : contentHeight
+        height: root.label === "" ? 0 : root.labelLeft ? sgSlider.height : contentHeight
         topPadding: root.label === "" ? 0 : root.labelLeft ? (sgSlider.height-contentHeight)/2 : 0
         bottomPadding: topPadding
+        color: root.textColor
     }
 
     Slider {
         id: sgSlider
-
-        property real hoverOpacity: 0
-
-        enabled: root.enabled
-        opacity: root.enabled ? 1 : .5
-        layer.enabled: true
-        updateValueWhileDragging: false
-        height: 30
-        minimumValue: 1
-        maximumValue: 10
-        value: 0.0
-        stepSize: 1
+        value: 50
+        from: 0
+        to: 100
+        live: false
+        implicitWidth: root.labelLeft ? root.width - labelText.width - sgSlider.anchors.leftMargin : root.width
+        implicitHeight: startLabel.text === "" && endLabel.text === "" ? handleImg.height : handleImg.height + Math.max(startLabel.height, endLabel.height)
+        padding: 0
         anchors {
             left: root.labelLeft ? labelText.right : labelText.left
             top: root.labelLeft ? labelText.top : labelText.bottom
             leftMargin: root.label === "" ? 0 : root.labelLeft ? 10 : 0
             topMargin: root.label === "" ? 0 : root.labelLeft ? 0 : 5
         }
+        enabled: root.enabled
+        opacity: root.enabled ? 1 : .5
+        layer.enabled: root.enabled ? false : true
 
-        style: SliderStyle {
-            id: sliderStyle
-            property real offset: -8
+        background: Rectangle {
+            id: groove
+            y: handleImg.height / 2 - height / 2
+            width: sgSlider.width
+            implicitHeight: 4
+            height: implicitHeight
+            radius: 2
+            color: root.grooveColor
 
-            groove: Rectangle {
-                id: groove
-                implicitWidth: root.labelLeft ? root.width - labelText.width - sgSlider.anchors.leftMargin : root.width
-                implicitHeight: 4
-                radius: height/2
-                y: sliderStyle.offset
-                z: 1
-                color: root.grooveColor
-
-                Rectangle {
-                    id: grooveShadow
-                    width: parent.width-parent.radius*2
-                    height: 1
-                    z: 2
-                    color: Qt.rgba(groove.color.r/1.3, groove.color.g/1.3, groove.color.b/1.3, 1)
-                    anchors {
-                        top: parent.top
-                        horizontalCenter: parent.horizontalCenter
-                    }
-                }
-
-                Rectangle {
-                    id: grooveFill
-                    width: styleData.handlePosition
-                    height: parent.height
-                    anchors {
-                        left: parent.left
-                        top: parent.top
-                    }
-                    z:3
-                    color: grooveFillColor
-                    radius: height/2
-
-                    Rectangle {
-                        id: fillShadow
-                        width: parent.width-parent.radius*2
-                        height: 1
-                        color: Qt.rgba(grooveFill.color.r/1.3, grooveFill.color.g/1.3, grooveFill.color.b/1.3, 1)
-                        y: groove.y
-                        z:4
-                        anchors {
-                            top: parent.top
-                            horizontalCenter: parent.horizontalCenter
-                        }
-                    }
-                }
+            Rectangle {
+                id: grooveFill
+                width: sgSlider.visualPosition * parent.width
+                height: parent.height
+                color: root.grooveFillColor
+                radius: 2
             }
 
-            handle: Image {
-                id: valueIMG
-                y: sliderStyle.offset
-                width: 34.3
-                height: 18.6
-                source: sgSlider.pressed ? "./images/sliderHandleActive.svg" : "./images/sliderHandle.svg"
-                mipmap: true
+            // TODO: Faller - fix up the following repeater to make tickmarks at user specified intervals
+//            Repeater {
+//                id: tickRepeater
+//                model: 9
 
-                Image {
-                    id: handler
-                    width: 2
-                    height: 24
-                    source: "./images/sliderValue.svg"
-                    anchors.centerIn: parent
-                    anchors.verticalCenterOffset: sliderStyle.offset-8
-                    opacity: sgSlider.hoverOpacity
+//                Rectangle {
+//                    id: tickMarks
+//                    color: "#ddd"
+//                    height: 6
+//                    width: 1
+//                    anchors {
+//                        top: groove.bottom
+//                        topMargin: 2
+//                    }
+//                    z: -1
+//                    x: (index + 1) * (sgSlider.width - sgSlider.handle.width) / 10 + sgSlider.handle.width/2
+//                }
+//            }
+        }
 
-                    Label {
-                        id: check
-                        color: "white"
-                        text: sgSlider.value.toFixed(decimalPlaces)
-                        font.pixelSize: 8
-                        anchors.centerIn:  handler
-                        anchors.verticalCenterOffset: -3
-                        onTextChanged: {
-                            handler.width = check.width + 12;
-                        }
-                    }
-                }
+        handle: Image {
+            id: handleImg
+            x: sgSlider.visualPosition * (sgSlider.width - width + 4) - 2
+            width: 32
+            height: 16
+            source: sgSlider.pressed ? "./images/sliderHandleActive.svg" : "./images/sliderHandle.svg"
+            mipmap: true
+        }
+
+        ToolTip {
+            id: toolTip
+            parent: sgSlider.handle
+            visible: root.showToolTip ? sgSlider.pressed : false
+            text: (sgSlider.valueAt(sgSlider.position)).toFixed(root.toolTipDecimalPlaces)
+
+            contentItem: Text {
+                color: root.textColor
+                text: toolTip.text
+            }
+
+            background: Rectangle {
+                id: toolTipBackground
+                color: "#ddd"
+                radius: 2
             }
         }
 
         Label {
             id: startLabel
             anchors.bottom : parent.bottom
-            font.pixelSize : 12
-            text: qsTr("0")
+            font.pointSize : 12
+            text: sgSlider.from
+            color: root.textColor
         }
 
         Label {
             id: endLabel
             anchors.right : parent.right
             anchors.bottom : parent.bottom
-            font.pixelSize: 12
-            text: qsTr("100")
-        }
-
-        PropertyAnimation {
-            id: hoverShowAnimation
-            target: sgSlider; properties: "hoverOpacity"; from: sgSlider.hoverOpacity; to: 1; duration: 100
-        }
-
-        PropertyAnimation {
-            id: hoverHideAnimation
-            target: sgSlider; properties: "hoverOpacity"; from: sgSlider.hoverOpacity; to: 0; duration: 100
-        }
-
-        // Monitor slider pressed
-        onPressedChanged: {
-            // Show slider dial when pressed, hide otherwise
-            if (showDial){
-                if ( pressed ) {
-                    hoverShowAnimation.start()
-                }
-                else {
-                    hoverHideAnimation.start()
-                }
-            }
+            font.pointSize: 12
+            text: sgSlider.to
+            color: root.textColor
         }
     }
 }
