@@ -143,7 +143,6 @@ Item {
         z: 2
 
         Component.onCompleted: {
-            var widths = []
             for (var child_id in drawerMenuItems.children[0].children) {
                 drawerMenuItems.children[0].children[child_id].menuItem.parent = menuItems
                 drawerMenuItems.children[0].children[child_id].opened.connect(opener)

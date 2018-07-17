@@ -27,7 +27,7 @@ Window {
         radius: height/2                // Default: height/2
         exclusive: true                 // Default: true
         textColor: "black"              // Default: "black"
-        enabled: true                  // Default: true
+        enabled: true                   // Default: true
 
         segmentedButtons: GridLayout {
             columnSpacing: 2
@@ -53,5 +53,8 @@ Window {
                 text: qsTr("Betamax")
             }
         }
+
+        // Helpful signals:
+        //onNothingCheckedChanged: console.log("nothingChecked changed!")  // For non-exclusive buttons, alerts when the status of "no buttons are checked" changes
     }
 }
