@@ -167,7 +167,7 @@ Item {
                 top: portGraphs.top
                 bottom: portGraphs.bottom
             }
-            width: Math.min( height, portGraphs.width /  Math.max(1, graphSelector.howManyChecked) )
+            width: portGraphs.width /  Math.max(1, graphSelector.howManyChecked)
             yAxisTitle: "Test"
             xAxisTitle: "Test"
         }
@@ -181,7 +181,7 @@ Item {
                 bottom: portGraphs.bottom
 //                left: graph1.right
             }
-            width: Math.min( height, portGraphs.width /  Math.max(1, graphSelector.howManyChecked) )
+            width: portGraphs.width /  Math.max(1, graphSelector.howManyChecked)
             yAxisTitle: "Test"
             xAxisTitle: "Test"
         }
@@ -195,7 +195,7 @@ Item {
                 bottom: portGraphs.bottom
 //                left: graph2.right
             }
-            width: Math.min( height, portGraphs.width /  Math.max(1, graphSelector.howManyChecked) )
+            width: portGraphs.width /  Math.max(1, graphSelector.howManyChecked)
             yAxisTitle: "Test"
             xAxisTitle: "Test"
         }
@@ -209,7 +209,7 @@ Item {
                 bottom: portGraphs.bottom
 //                left: graph3.right
             }
-            width: Math.min( height, portGraphs.width /  Math.max(1, graphSelector.howManyChecked) )
+            width: portGraphs.width /  Math.max(1, graphSelector.howManyChecked)
             yAxisTitle: "Test"
             xAxisTitle: "Test"
         }
@@ -223,7 +223,7 @@ Item {
                 bottom: portGraphs.bottom
 //                left: graph4.right
             }
-            width: Math.min( height, portGraphs.width /  Math.max(1, graphSelector.howManyChecked) )
+            width: portGraphs.width /  Math.max(1, graphSelector.howManyChecked)
             yAxisTitle: "Test"
             xAxisTitle: "Test"
         }
@@ -237,7 +237,7 @@ Item {
                 bottom: portGraphs.bottom
                 //                left: graph4.right
             }
-            width: Math.min( height, portGraphs.width /  Math.max(1, graphSelector.howManyChecked) )
+            width: portGraphs.width /  Math.max(1, graphSelector.howManyChecked)
             yAxisTitle: "Test"
             xAxisTitle: "Test"
         }
