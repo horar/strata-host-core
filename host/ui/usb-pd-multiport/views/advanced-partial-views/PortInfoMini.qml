@@ -1,17 +1,31 @@
 import QtQuick 2.9
+import "qrc:/sgwidgets"
 
 Item {
     id: root
 
     property bool portConnected: true
     property int portNum: 1
-    property color statBoxColor: "#2eb457"
+    property color portColor: "#2eb457"
 
     implicitWidth: 175
 
     Text {
         id: portNumber
         text: "<b>Port " + root.portNum + ":</b>"
+        font {
+            pixelSize: 15
+        }
+        color: portConnected ? "black" : "#ccc"
+    }
+
+    SGDivider {
+        id: div1
+        color: "#ccc"
+        anchors {
+            top: portNumber.bottom
+            topMargin: 2
+        }
     }
 
     Item {
@@ -19,7 +33,8 @@ Item {
         visible: !root.portConnected
 
         anchors {
-            top: portNumber.bottom
+            top: div1.bottom
+            topMargin: 8
             bottom: root.bottom
             right: root.right
             left: root.left
@@ -32,13 +47,14 @@ Item {
             width: height * 0.6925
             anchors {
                 centerIn: parent
-                verticalCenterOffset: -10
+                verticalCenterOffset: -connectionText.font.pixelSize / 2
+
             }
         }
 
         Text {
             id: connectionText
-            color: "red"
+            color: "#ccc"
             text: "<b>Port Disconnected</b>"
             anchors {
                 top: connectionIcon.bottom
@@ -51,15 +67,17 @@ Item {
     Column {
         id: column1
         visible: root.portConnected
-        width: root.width
+        width: root.width / 2 - 2
         spacing: 2
         anchors {
-            top: portNumber.bottom
+            top: div1.bottom
+            topMargin: 8
         }
 
-        property real sbHeight: 30
-        property real sbValueSize: 12
-        property real sbLabelSize: 7
+        property real sbHeight: 50
+        property real sbValueSize: 24
+        property real sbLabelSize: 9
+        property real bottomMargin: 4
 
         PortStatBox {
             label: "PROFILE"
@@ -68,7 +86,9 @@ Item {
             height: column1.sbHeight
             valueSize: column1.sbValueSize
             labelSize: column1.sbLabelSize
-            color: root.statBoxColor
+            color: root.portColor
+            bottomMargin: column1.bottomMargin
+
         }
 
         PortStatBox {
@@ -78,7 +98,8 @@ Item {
             height: column1.sbHeight
             valueSize: column1.sbValueSize
             labelSize: column1.sbLabelSize
-            color: root.statBoxColor
+            color: root.portColor
+            bottomMargin: column1.bottomMargin
         }
 
         PortStatBox {
@@ -88,7 +109,8 @@ Item {
             height: column1.sbHeight
             valueSize: column1.sbValueSize
             labelSize: column1.sbLabelSize
-            color: root.statBoxColor
+            color: root.portColor
+            bottomMargin: column1.bottomMargin
         }
 
         PortStatBox {
@@ -98,7 +120,20 @@ Item {
             height: column1.sbHeight
             valueSize: column1.sbValueSize
             labelSize: column1.sbLabelSize
-            color: root.statBoxColor
+            color: root.portColor
+            bottomMargin: column1.bottomMargin
+        }
+    }
+
+    Column {
+        id: column2
+        visible: root.portConnected
+        width: root.width / 2 - 2
+        spacing: 2
+        anchors {
+            left: column1.right
+            leftMargin: 2
+            top: column1.top
         }
 
         PortStatBox {
@@ -108,7 +143,8 @@ Item {
             height: column1.sbHeight
             valueSize: column1.sbValueSize
             labelSize: column1.sbLabelSize
-            color: root.statBoxColor
+            color: root.portColor
+            bottomMargin: column1.bottomMargin
         }
 
         PortStatBox {
@@ -118,7 +154,8 @@ Item {
             height: column1.sbHeight
             valueSize: column1.sbValueSize
             labelSize: column1.sbLabelSize
-            color: root.statBoxColor
+            color: root.portColor
+            bottomMargin: column1.bottomMargin
         }
 
         PortStatBox {
@@ -128,7 +165,8 @@ Item {
             height: column1.sbHeight
             valueSize: column1.sbValueSize
             labelSize: column1.sbLabelSize
-            color: root.statBoxColor
+            color: root.portColor
+            bottomMargin: column1.bottomMargin
         }
     }
 }

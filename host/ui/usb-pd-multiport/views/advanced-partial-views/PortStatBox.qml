@@ -13,6 +13,7 @@ Rectangle {
     property string icon: "/views/images/icon-voltage.svg"
     property real labelSize: 9
     property real valueSize: 30
+    property real bottomMargin: 0
     property color textColor: "white"
 
     Text {
@@ -36,7 +37,7 @@ Rectangle {
         text: "<b>" + root.value + "</b>"
         anchors {
             bottom: parent.bottom
-            bottomMargin: 0
+            bottomMargin: root.bottomMargin
             left: parent.left
             leftMargin: 5
         }

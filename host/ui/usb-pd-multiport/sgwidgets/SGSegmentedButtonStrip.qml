@@ -22,6 +22,7 @@ Item {
     property bool labelLeft: true
     property color textColor: "black"
     property color activeTextColor: "white"
+    property real buttonImplicitWidth: 70
 
     Text {
         id: labelText
@@ -50,6 +51,7 @@ Item {
         // Passthrough properties so segmentedButtons can get these
         property real masterHeight: buttonHeight
         property real masterRadius: radius
+        property real masterButtonImplicitWidth: buttonImplicitWidth
         property color masterActiveColorTop: activeColorTop
         property color masterActiveColorBottom: activeColorBottom
         property color masterInactiveColorTop: inactiveColorTop

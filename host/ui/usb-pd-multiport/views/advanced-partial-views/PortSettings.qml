@@ -4,11 +4,6 @@ import "qrc:/sgwidgets"
 
 Item {
     id: root
-    height: parent.height
-    anchors {
-        left: parent.left
-        right: parent.right
-    }
 
     Item {
         id: controlMargins

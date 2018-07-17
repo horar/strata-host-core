@@ -42,6 +42,7 @@ Item {
                 open: true
                 contents: Port {
                     portNumber: 1
+                    portColor: "#30a2db"
                 }
             }
 
@@ -50,6 +51,7 @@ Item {
                 open: true
                 contents: Port {
                     portNumber: 2
+                    portColor: "#3bb539"
                 }
             }
 
@@ -58,6 +60,7 @@ Item {
                 open: true
                 contents: Port {
                     portNumber: 3
+                    portColor: "#d68f14"
                 }
             }
 
@@ -67,6 +70,7 @@ Item {
                 contents: Port {
                     portNumber: 4
                     portConnected: false
+                    portColor: "#2348cd"
                 }
             }
         }

@@ -12,17 +12,20 @@ ChartView {
     backgroundColor: "white"
     backgroundRoundness: 0
     anchors {
-        margins: -12
+        topMargin: -10
+        leftMargin: -20
+        rightMargin: -10
+        bottomMargin: -10
     }
 
     implicitWidth: 300
     implicitHeight: 300
 
     margins {
-        top: 5
-        left: 5
-        right: 5
-        bottom: 5
+        top: 0
+        left: 0
+        right: 0
+        bottom: 0
     }
 
     property alias series: dataLine

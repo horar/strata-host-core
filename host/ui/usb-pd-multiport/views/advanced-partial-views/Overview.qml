@@ -33,17 +33,17 @@ Item {
                     property real totalValue: childrenRect.width // Necessary for over threshold detection signal
 
                     SGCapacityBarElement{
-                        color: miniInfo1.statBoxColor
+                        color: miniInfo1.portColor
                         value: 20
                     }
 
                     SGCapacityBarElement{
-                        color: miniInfo2.statBoxColor
+                        color: miniInfo2.portColor
                         value: 20
                     }
 
                     SGCapacityBarElement{
-                        color: miniInfo3.statBoxColor
+                        color: miniInfo3.portColor
                         value: 20
                     }
                 }
@@ -54,11 +54,12 @@ Item {
                 portNum: 1
                 anchors {
                     top: capacityBar.bottom
+                    topMargin: 10
                     left: margins.left
                     bottom: margins.bottom
                 }
                 width: margins.width / 4 - 15
-                statBoxColor: "#30a2db"
+                portColor: "#30a2db"
             }
 
             PortInfoMini {
@@ -66,12 +67,13 @@ Item {
                 portNum: 2
                 anchors {
                     top: capacityBar.bottom
+                    topMargin: 10
                     left: miniInfo1.right
                     leftMargin: 20
                     bottom: margins.bottom
                 }
                 width: margins.width / 4 - 15
-                statBoxColor: "#3bb539"
+                portColor: "#3bb539"
             }
 
             PortInfoMini {
@@ -79,12 +81,13 @@ Item {
                 portNum: 3
                 anchors {
                     top: capacityBar.bottom
+                    topMargin: 10
                     left: miniInfo2.right
                     leftMargin: 20
                     bottom: margins.bottom
                 }
                 width: margins.width / 4 - 15
-                statBoxColor: "#d68f14"
+                portColor: "#d68f14"
             }
 
             PortInfoMini {
@@ -92,6 +95,7 @@ Item {
                 portNum: 4
                 anchors {
                     top: capacityBar.bottom
+                    topMargin: 10
                     left: miniInfo3.right
                     leftMargin: 20
                     bottom: margins.bottom
