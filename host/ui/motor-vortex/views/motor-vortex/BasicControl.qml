@@ -16,6 +16,7 @@ Rectangle {
 
     property alias motorSpeedSliderValue: motorSpeedControl.value
 
+
     Component.onCompleted: {
         platformInterface.system_mode_selection.update("manual")
     }
@@ -123,7 +124,7 @@ Rectangle {
                     property alias manual : manual
                     property alias automatic: automatic
 
-                    property var systemMode: platformInterface.set_mode.system_mode
+                   property var systemMode: platformInterface.set_mode.system_mode
 
                     onSystemModeChanged: {
                         if(systemMode === "manual") {

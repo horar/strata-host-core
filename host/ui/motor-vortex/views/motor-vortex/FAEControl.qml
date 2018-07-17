@@ -13,6 +13,10 @@ Rectangle {
     }
 
     property alias motorSpeedSliderValue: targetSpeedSlider.value
+    property alias rampRateSlider: rampRateSlider.value
+    property alias phaseAngle: phaseAngleRow.phaseAngleValue
+    property alias ledSlider: ledControlContainer.ledLocalHolder
+    property alias singleLEDSlider: ledSecondContainer.ledSingleLocalHolder
 
     Component.onCompleted:  {
         /*
@@ -20,6 +24,7 @@ Rectangle {
         */
         platformInterface.set_drive_mode.update("manual");
         platformInterface.set_phase_angle.update(parseInt(15));
+        console.log("phase angle", phaseAngle)
 
     }
 
@@ -153,7 +158,6 @@ Rectangle {
 
         property var errorArray: platformInterface.system_error.error_and_warnings
         onErrorArrayChanged: {
-//            faultModel.clear()
             for (var i in errorArray){
                 faultModel.append({ status : errorArray[i] })
             }
@@ -259,6 +263,17 @@ Rectangle {
                     // Optional properties to access specific buttons cleanly from outside
                     property alias manual : manual
                     property alias automatic: automatic
+
+                    property var systemMode: platformInterface.set_mode.system_mode
+
+                     onSystemModeChanged: {
+                         if(systemMode === "manual") {
+                             manual.checked = true;
+                         }
+                         else {
+                             automatic.checked = true;
+                         }
+                     }
 
                     SGRadioButton {
                         id: manual
@@ -459,6 +474,7 @@ Rectangle {
                 id: phaseAngleRow
                 width: childrenRect.width
                 height: childrenRect.height
+                property int phaseAngleValue: phaseAngle
                 anchors {
                     top: driveModeRadios.bottom
                     topMargin: 10
@@ -476,15 +492,17 @@ Rectangle {
 
                 ComboBox{
                     id: driveModeCombo
-                    currentIndex: 15
+                    currentIndex: phaseAngleRow.phaseAngleValue
                     model: ["0", "1.875", "3.75","5.625","7.5", "9.375", "11.25","13.125", "15", "16.875", "18.75", "20.625", "22.5" , "24.375" , "26.25" , "28.125"]
                     anchors {
                         top: phaseAngleRow.top
                         left: phaseAngleTitle.right
                         leftMargin: 20
                     }
+
                     onCurrentIndexChanged: {
-                        platformInterface.set_phase_angle.update(parseInt(currentIndex));
+                        platformInterface.set_phase_angle.update((currentIndex));
+                        phaseAngleRow.phaseAngleValue =  driveModeCombo.currentIndex;
                     }
                 }
             }
@@ -495,6 +513,9 @@ Rectangle {
             width: 500
             height: childrenRect.height + 10
             color: "#eeeeee"
+            property int ledLocalHolder: ledSlider
+            onLedLocalHolderChanged: hueSlider.value = ledSlider
+
             anchors {
                 horizontalCenter: rightSide.horizontalCenter
                 top: driveModeContainer.bottom
@@ -505,6 +526,7 @@ Rectangle {
                 id: hueSlider
                 label: "Set LED color:"
                 labelLeft: true
+                value: 128//ledControlContainer.ledLocalHolder
                 anchors {
                     verticalCenter: whiteButton.verticalCenter
                     left: ledControlContainer.left
@@ -514,7 +536,13 @@ Rectangle {
                     top: ledControlContainer.top
                     topMargin: 10
                 }
-                onValueChanged: platformInterface.set_color_mixing.update(color1,color_value1,color2,color_value2)
+                onValueChanged: {
+
+                    platformInterface.set_color_mixing.update(color1,color_value1,color2,color_value2)
+                    ledControlContainer.ledLocalHolder = hueSlider.value
+
+                     console.log("in fae",ledControlContainer.ledLocalHolder);
+                }
             }
 
             Item {
@@ -556,7 +584,8 @@ Rectangle {
             width: 500
             height: childrenRect.height + 20
             color: "#eeeeee"
-
+            property int ledSingleLocalHolder: singleLEDSlider
+            onLedSingleLocalHolderChanged: singleColorSlider.value = singleLEDSlider
             anchors {
                 horizontalCenter: rightSide.horizontalCenter
                 top: ledControlContainer.bottom
@@ -575,7 +604,11 @@ Rectangle {
                     right: ledSecondContainer.right
                     rightMargin: 10
                 }
-                onValueChanged: platformInterface.set_single_color.update(color, color_value)
+                onValueChanged: {
+
+                    platformInterface.set_single_color.update(color, color_value)
+                    ledSecondContainer.ledSingleLocalHolder = singleColorSlider.value
+                }
             }
 
             SGSlider {

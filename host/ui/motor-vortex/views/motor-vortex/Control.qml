@@ -43,6 +43,20 @@ Rectangle {
             id: advancedButton
             text: qsTr("Advanced")
             onClicked: {
+                if(controlContainer.currentIndex === 0) {
+                    advanceView.motorSpeedSliderValue = basicView.motorSpeedSliderValue
+
+                }
+                else {
+                    advanceView.motorSpeedSliderValue = faeView.motorSpeedSliderValue
+                    advanceView.rampRateSlider = faeView.rampRateSlider
+                    advanceView.phaseAngle = faeView.phaseAngle
+                    advanceView.ledSlider = faeView.ledSlider
+                    advanceView.singleLEDSlider = faeView.singleLEDSlider
+
+
+                }
+
                 controlContainer.currentIndex = 1
             }
         }
@@ -51,6 +65,18 @@ Rectangle {
             id: faeButton
             text: qsTr("FAE Only")
             onClicked: {
+                if(controlContainer.currentIndex === 0) {
+                    faeView.motorSpeedSliderValue = basicView.motorSpeedSliderValue
+                }
+                else {
+                    faeView.motorSpeedSliderValue = advanceView.motorSpeedSliderValue
+                    faeView.rampRateSlider = advanceView.rampRateSlider
+                    faeView.phaseAngle = advanceView.phaseAngle
+                    faeView.ledSlider = advanceView.ledSlider
+                    faeView.singleLEDSlider = advanceView.singleLEDSlider
+
+                }
+
                 controlContainer.currentIndex = 2
             }
             background: Rectangle {
