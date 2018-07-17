@@ -6,6 +6,7 @@ Button {
     text: qsTr("Button")
     checkable: true
     enabled: masterEnabled
+    hoverEnabled: masterHoverEnabled
 
     // Figures out which button this instance is
     Component.onCompleted: {
@@ -28,19 +29,14 @@ Button {
     }
 
     property real radius: masterRadius
-    property color activeColorTop: masterActiveColorTop
-    property color activeColorBottom: masterActiveColorBottom
-    property color inactiveColorTop: masterInactiveColorTop
-    property color inactiveColorBottom: masterInactiveColorBottom
+    property color activeColor: masterActiveColor
+    property color inactiveColor: masterInactiveColor
     property color textColor: masterTextColor
     property color textActiveColor: masterActiveTextColor
 
     background: Rectangle{
         id: buttonStyle
-        gradient: Gradient {
-            GradientStop { position: 0.0; color: root.checked ? activeColorTop : inactiveColorTop }
-            GradientStop { position: 1.0; color: root.checked ? activeColorBottom : inactiveColorBottom }
-        }
+        color: root.hovered ? Qt.rgba( (activeColor.r + inactiveColor.r) / 2, (activeColor.g + inactiveColor.g) / 2, (activeColor.b + inactiveColor.b) / 2, 1) : root.checked ? activeColor : inactiveColor
         radius: root.radius
         implicitHeight: masterHeight
         implicitWidth: masterButtonImplicitWidth
@@ -51,11 +47,7 @@ Button {
             id: flatSide
             height: parent.height
             width: parent.width/2
-
-            gradient: Gradient {
-                GradientStop { position: 0.0; color: root.checked ? activeColorTop : inactiveColorTop }
-                GradientStop { position: 1.0; color: root.checked ? activeColorBottom : inactiveColorBottom }
-            }
+            color: parent.color
         }
     }
 

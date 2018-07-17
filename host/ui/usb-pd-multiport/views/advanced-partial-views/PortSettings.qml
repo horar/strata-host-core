@@ -146,14 +146,11 @@ Item {
                 leftMargin: 10
                 verticalCenter: advertisedVoltages.verticalCenter
             }
-            activeColorTop: "#666"
-            activeColorBottom: "#666"
-            inactiveColorTop: "#dddddd"
-            inactiveColorBottom: "#dddddd"
             textColor: "#666"
             activeTextColor: "white"
             radius: 4
             buttonHeight: 25
+            hoverEnabled: false
 
             segmentedButtons: GridLayout {
                 columnSpacing: 2

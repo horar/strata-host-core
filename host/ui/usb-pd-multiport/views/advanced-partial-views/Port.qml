@@ -35,10 +35,6 @@ Item {
             bottomMargin: 15
             horizontalCenter: portInfo.horizontalCenter
         }
-        activeColorTop: "#666"
-        activeColorBottom: "#666"
-        inactiveColorTop: "#dddddd"
-        inactiveColorBottom: "#dddddd"
         textColor: "#666"
         activeTextColor: "white"
         radius: 4

@@ -29,10 +29,8 @@ Item {
             SGSegmentedButtonStrip {
                 id: dataConfig
                 label: "Data Configuration:"
-                activeColorTop: "#666"
-                activeColorBottom: "#666"
-                inactiveColorTop: "#dddddd"
-                inactiveColorBottom: "#dddddd"
+                activeColor: "#666"
+                inactiveColor: "#dddddd"
                 textColor: "#666"
                 activeTextColor: "white"
                 radius: 4
@@ -60,10 +58,8 @@ Item {
             SGSegmentedButtonStrip {
                 id: powerNegotiation
                 label: "Power Negotiation:"
-                activeColorTop: "#666"
-                activeColorBottom: "#666"
-                inactiveColorTop: "#dddddd"
-                inactiveColorBottom: "#dddddd"
+                activeColor: "#666"
+                inactiveColor: "#dddddd"
                 textColor: "#666"
                 activeTextColor: "white"
                 radius: 4
@@ -104,11 +100,6 @@ Item {
             SGSegmentedButtonStrip {
                 id: sleepMode
                 label: "Sleep Mode:"
-                activeColorTop: "#666"
-                activeColorBottom: "#666"
-                inactiveColorTop: "#dddddd"
-                inactiveColorBottom: "#dddddd"
-                textColor: "#666"
                 activeTextColor: "white"
                 radius: 4
                 buttonHeight: 25
@@ -144,10 +135,6 @@ Item {
             SGSegmentedButtonStrip {
                 id: manualSleep
                 label: "Manual Sleep:"
-                activeColorTop: "#666"
-                activeColorBottom: "#666"
-                inactiveColorTop: "#dddddd"
-                inactiveColorBottom: "#dddddd"
                 textColor: "#666"
                 activeTextColor: "white"
                 radius: 4
@@ -189,10 +176,6 @@ Item {
                     leftMargin: 89
                 }
                 label: "Fault Protection:"
-                activeColorTop: "#666"
-                activeColorBottom: "#666"
-                inactiveColorTop: "#dddddd"
-                inactiveColorBottom: "#dddddd"
                 textColor: "#666"
                 activeTextColor: "white"
                 radius: 4
