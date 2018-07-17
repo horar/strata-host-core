@@ -101,7 +101,7 @@ Rectangle {
 
         property var errorArray: platformInterface.system_error.error_and_warnings
         onErrorArrayChanged: {
-            faultModel.clear()
+//            faultModel.clear()
             for (var i in errorArray){
                 faultModel.append({ status : errorArray[i] })
             }
@@ -158,6 +158,7 @@ Rectangle {
                     }
                     else {
                         platformInterface.set_motor_on_off.update(1)
+                        faultModel.clear();
                     }
                 }
             }

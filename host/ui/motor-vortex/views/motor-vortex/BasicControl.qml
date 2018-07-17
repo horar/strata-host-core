@@ -17,7 +17,7 @@ Rectangle {
     property alias motorSpeedSliderValue: motorSpeedControl.value
 
     Component.onCompleted: {
-        platformInterface.set_drive_mode.update("manual")
+        platformInterface.system_mode_selection.update("manual")
     }
 
 
