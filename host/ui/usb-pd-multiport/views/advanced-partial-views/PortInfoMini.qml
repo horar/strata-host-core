@@ -112,17 +112,6 @@ Item {
             color: root.portColor
             bottomMargin: column1.bottomMargin
         }
-
-        PortStatBox {
-            label: "POWER OUT"
-            value: "7.8 W"
-            icon: "/views/images/icon-voltage.svg"
-            height: column1.sbHeight
-            valueSize: column1.sbValueSize
-            labelSize: column1.sbLabelSize
-            color: root.portColor
-            bottomMargin: column1.bottomMargin
-        }
     }
 
     Column {
@@ -159,14 +148,32 @@ Item {
         }
 
         PortStatBox {
-            label: "EFFICIENCY"
-            value: "92 %"
-            icon: "/views/images/icon-efficiency.svg"
+            label: "POWER OUT"
+            value: "7.8 W"
+            icon: "/views/images/icon-voltage.svg"
             height: column1.sbHeight
             valueSize: column1.sbValueSize
             labelSize: column1.sbLabelSize
             color: root.portColor
             bottomMargin: column1.bottomMargin
+        }
+    }
+
+    PortStatBox {
+        label: "EFFICIENCY"
+        visible: root.portConnected
+        value: "92 %"
+        icon: "/views/images/icon-efficiency.svg"
+        height: column1.sbHeight
+        width: column1.width
+        valueSize: column1.sbValueSize
+        labelSize: column1.sbLabelSize
+        color: root.portColor
+        bottomMargin: column1.bottomMargin
+        anchors {
+            top: column1.bottom
+            topMargin: 2
+            horizontalCenter: column1.right
         }
     }
 }
