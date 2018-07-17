@@ -46,6 +46,22 @@ Item {
                 }
             }
 
+//            SGAccordionItem {
+//                title: "<b>Port 2</b>"
+//                open: true
+//                contents: SGPopout {
+//                    id: popout3
+//                    title: "Popout 3"
+////                    overlaycolor: "lightgreen"
+//                    unpoppedWidth: parent.width
+////                    unpoppedHeight:
+//                    content: Port {
+//                        portNumber: 2
+//                        portColor: "#3bb539"
+//                    }
+//                }
+//            }
+
             SGAccordionItem {
                 title: "<b>Port 2</b>"
                 open: true

@@ -8,8 +8,10 @@ Rectangle {
 
     property alias content: content.sourceComponent
 
+    Component.onCompleted: console.log(content.height + "")
+
     property real unpoppedWidth: 200
-    property real unpoppedHeight: 100
+    property real unpoppedHeight: content.childrenRect.height + topBar.height
     property string title: "Popout Container"
     property color overlaycolor: "tomato"
     property variant clickPos: "1,1" // @disable-check M311 // Ignore 'use string' (M311) QtCreator warning
@@ -28,16 +30,6 @@ Rectangle {
         border {
             width: 1
             color: "#ccc"
-        }
-
-        // TODO - Faller : remove this overlay that is just to highlight each popout box by color
-        Rectangle {
-            color: root.overlaycolor
-            opacity: .05
-            anchors {
-                fill: parent
-            }
-            z:20
         }
 
         states: [
@@ -200,6 +192,7 @@ Rectangle {
                             popout.state = "unpopped"
                             popoutWindow.visible = false
                         }
+                        console.log(popout.state, content.height, content.children[0].height)
                     }
                 }
             }
@@ -212,15 +205,15 @@ Rectangle {
                 top: topBar.bottom
                 left: popout.left
                 right: popout.right
-                bottom: popout.bottom
+//                bottom: popout.bottom
                 margins: 1
             }
+            height: content.height
 
             Loader {
                 id: content
-                anchors {
-                    fill: parent
-                }
+                width: parent.width
+                height: popout.state === "popped" ? 0 : children[0].height
             }
         }
     }

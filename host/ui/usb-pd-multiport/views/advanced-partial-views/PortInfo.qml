@@ -39,6 +39,7 @@ Item {
                 anchors {
                     verticalCenter: statsContainer.verticalCenter
                 }
+                color: root.portConnected ? "black" : "#bbb"
             }
 
             Rectangle {

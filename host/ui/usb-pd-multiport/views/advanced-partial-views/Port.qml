@@ -13,7 +13,7 @@ Item {
     property bool showGraphs: false
 
     width: parent.width
-    height: root.showGraphs ? portSettings.height + portGraphs.height : portSettings.height
+    height: graphSelector.nothingChecked ? portSettings.height : portSettings.height + portGraphs.height
 
     //TODO - Faller: when port is disconnected, close graphs
 
@@ -54,31 +54,73 @@ Item {
             SGSegmentedButton{
                 text: qsTr("Vout")
                 enabled: root.portConnected
+                onCheckedChanged: {
+                    if (checked) {
+                        graph1.visible = true
+                    } else {
+                        graph1.visible = false
+                    }
+                }
             }
 
             SGSegmentedButton{
                 text: qsTr("Iout")
                 enabled: root.portConnected
+                onCheckedChanged: {
+                    if (checked) {
+                        graph2.visible = true
+                    } else {
+                        graph2.visible = false
+                    }
+                }
             }
 
             SGSegmentedButton{
                 text: qsTr("Iin")
                 enabled: root.portConnected
+                onCheckedChanged: {
+                    if (checked) {
+                        graph3.visible = true
+                    } else {
+                        graph3.visible = false
+                    }
+                }
             }
 
             SGSegmentedButton{
                 text: qsTr("Pout")
                 enabled: root.portConnected
+                onCheckedChanged: {
+                    if (checked) {
+                        graph4.visible = true
+                    } else {
+                        graph4.visible = false
+                    }
+                }
            }
 
             SGSegmentedButton{
                 text: qsTr("Pin")
                 enabled: root.portConnected
+                onCheckedChanged: {
+                    if (checked) {
+                        graph5.visible = true
+                    } else {
+                        graph5.visible = false
+                    }
+                }
             }
 
             SGSegmentedButton{
                 text: qsTr("η")
                 enabled: root.portConnected
+                onCheckedChanged: {
+                    if (checked) {
+                        graph6.visible = true
+                    } else {
+                        graph6.visible = false
+                    }
+                }
             }
         }
     }
@@ -98,7 +140,7 @@ Item {
         }
     }
 
-    Item {
+    Row {
         id: portGraphs
         anchors {
             top: portSettings.bottom
@@ -111,6 +153,7 @@ Item {
         SGGraph {
             id: graph1
             title: "Voltage Out"
+            visible: false
             anchors {
                 top: portGraphs.top
                 bottom: portGraphs.bottom
@@ -123,10 +166,11 @@ Item {
         SGGraph {
             id: graph2
             title: "Current Out"
+            visible: false
             anchors {
                 top: portGraphs.top
                 bottom: portGraphs.bottom
-                left: graph1.right
+//                left: graph1.right
             }
             width: height
             yAxisTitle: "Test"
@@ -136,10 +180,11 @@ Item {
         SGGraph {
             id: graph3
             title: "Current In"
+            visible: false
             anchors {
                 top: portGraphs.top
                 bottom: portGraphs.bottom
-                left: graph2.right
+//                left: graph2.right
             }
             width: height
             yAxisTitle: "Test"
@@ -149,10 +194,11 @@ Item {
         SGGraph {
             id: graph4
             title: "Power Out"
+            visible: false
             anchors {
                 top: portGraphs.top
                 bottom: portGraphs.bottom
-                left: graph3.right
+//                left: graph3.right
             }
             width: height
             yAxisTitle: "Test"
@@ -162,10 +208,25 @@ Item {
         SGGraph {
             id: graph5
             title: "Power In"
+            visible: false
             anchors {
                 top: portGraphs.top
                 bottom: portGraphs.bottom
-                left: graph4.right
+//                left: graph4.right
+            }
+            width: height
+            yAxisTitle: "Test"
+            xAxisTitle: "Test"
+        }
+
+        SGGraph {
+            id: graph6
+            title: "Efficiency"
+            visible: false
+            anchors {
+                top: portGraphs.top
+                bottom: portGraphs.bottom
+                //                left: graph4.right
             }
             width: height
             yAxisTitle: "Test"
