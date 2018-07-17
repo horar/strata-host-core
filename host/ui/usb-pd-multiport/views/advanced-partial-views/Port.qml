@@ -42,6 +42,7 @@ Item {
         exclusive: false
         buttonImplicitWidth: 50
         enabled: root.portConnected
+        property int howManyChecked: 0
 
         segmentedButtons: GridLayout {
             columnSpacing: 2
@@ -53,8 +54,10 @@ Item {
                 onCheckedChanged: {
                     if (checked) {
                         graph1.visible = true
+                        graphSelector.howManyChecked++
                     } else {
                         graph1.visible = false
+                        graphSelector.howManyChecked--
                     }
                 }
             }
@@ -65,8 +68,10 @@ Item {
                 onCheckedChanged: {
                     if (checked) {
                         graph2.visible = true
+                        graphSelector.howManyChecked++
                     } else {
                         graph2.visible = false
+                        graphSelector.howManyChecked--
                     }
                 }
             }
@@ -77,8 +82,10 @@ Item {
                 onCheckedChanged: {
                     if (checked) {
                         graph3.visible = true
+                        graphSelector.howManyChecked++
                     } else {
                         graph3.visible = false
+                        graphSelector.howManyChecked--
                     }
                 }
             }
@@ -89,8 +96,10 @@ Item {
                 onCheckedChanged: {
                     if (checked) {
                         graph4.visible = true
+                        graphSelector.howManyChecked++
                     } else {
                         graph4.visible = false
+                        graphSelector.howManyChecked--
                     }
                 }
            }
@@ -101,8 +110,10 @@ Item {
                 onCheckedChanged: {
                     if (checked) {
                         graph5.visible = true
+                        graphSelector.howManyChecked++
                     } else {
                         graph5.visible = false
+                        graphSelector.howManyChecked--
                     }
                 }
             }
@@ -113,8 +124,10 @@ Item {
                 onCheckedChanged: {
                     if (checked) {
                         graph6.visible = true
+                        graphSelector.howManyChecked++
                     } else {
                         graph6.visible = false
+                        graphSelector.howManyChecked--
                     }
                 }
             }
@@ -154,7 +167,7 @@ Item {
                 top: portGraphs.top
                 bottom: portGraphs.bottom
             }
-            width: height
+            width: Math.min( height, portGraphs.width /  Math.max(1, graphSelector.howManyChecked) )
             yAxisTitle: "Test"
             xAxisTitle: "Test"
         }
@@ -168,7 +181,7 @@ Item {
                 bottom: portGraphs.bottom
 //                left: graph1.right
             }
-            width: height
+            width: Math.min( height, portGraphs.width /  Math.max(1, graphSelector.howManyChecked) )
             yAxisTitle: "Test"
             xAxisTitle: "Test"
         }
@@ -182,7 +195,7 @@ Item {
                 bottom: portGraphs.bottom
 //                left: graph2.right
             }
-            width: height
+            width: Math.min( height, portGraphs.width /  Math.max(1, graphSelector.howManyChecked) )
             yAxisTitle: "Test"
             xAxisTitle: "Test"
         }
@@ -196,7 +209,7 @@ Item {
                 bottom: portGraphs.bottom
 //                left: graph3.right
             }
-            width: height
+            width: Math.min( height, portGraphs.width /  Math.max(1, graphSelector.howManyChecked) )
             yAxisTitle: "Test"
             xAxisTitle: "Test"
         }
@@ -210,7 +223,7 @@ Item {
                 bottom: portGraphs.bottom
 //                left: graph4.right
             }
-            width: height
+            width: Math.min( height, portGraphs.width /  Math.max(1, graphSelector.howManyChecked) )
             yAxisTitle: "Test"
             xAxisTitle: "Test"
         }
@@ -224,7 +237,7 @@ Item {
                 bottom: portGraphs.bottom
                 //                left: graph4.right
             }
-            width: height
+            width: Math.min( height, portGraphs.width /  Math.max(1, graphSelector.howManyChecked) )
             yAxisTitle: "Test"
             xAxisTitle: "Test"
         }

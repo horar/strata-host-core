@@ -14,8 +14,8 @@ ChartView {
     anchors {
         topMargin: -10
         leftMargin: -20
-        rightMargin: -10
-        bottomMargin: -10
+        rightMargin: -20
+        bottomMargin: 0
     }
 
     implicitWidth: 300
