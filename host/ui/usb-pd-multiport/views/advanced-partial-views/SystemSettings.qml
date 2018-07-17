@@ -304,6 +304,10 @@ Item {
                     right: foldbackLimitInput.left
                     rightMargin: 10
                 }
+                from: 0
+                to: 32
+                startLabel: "0 V"
+                endLabel: "32 V"
             }
 
             SGSubmitInfoBox {
@@ -313,6 +317,8 @@ Item {
                     verticalCenter: foldbackLimit.verticalCenter
                     right: parent.right
                 }
+                input: foldbackLimit.value.toFixed(0)
+                onApplied: foldbackLimit.value = value
             }
 
             SGComboBox {

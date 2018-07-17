@@ -2,21 +2,22 @@ import QtQuick 2.9
 import QtQuick.Window 2.10
 import QtQuick.Controls 2.3
 import QtQuick.Layouts 1.0
+import "qrc:/views/advanced-partial-views"
 
 Rectangle {
     id: root
 
-    property alias content: content.sourceComponent
-
-    Component.onCompleted: console.log(content.height + "")
-
-    property real unpoppedWidth: 200
-    property real unpoppedHeight: content.childrenRect.height + topBar.height
-    property string title: "Popout Container"
+    property real unpoppedWidth: parent.width
+    property real unpoppedHeight: port.height + topBar.height
+    property string title: "<b>Port " + portNumber + "</b>"
     property color overlaycolor: "tomato"
     property variant clickPos: "1,1" // @disable-check M311 // Ignore 'use string' (M311) QtCreator warning
     property bool firstPop: true
     property bool popped: false
+
+    property alias portNumber: port.portNumber
+    property alias portConnected: port.portConnected
+    property alias portColor: port.portColor
 
     implicitWidth: unpoppedWidth
     implicitHeight: unpoppedHeight
@@ -26,7 +27,7 @@ Rectangle {
         anchors {
             fill: parent
         }
-        color: "#eee"
+        color: "#fff"
         border {
             width: 1
             color: "#ccc"
@@ -73,6 +74,8 @@ Rectangle {
                 onRunningChanged: {
                     if (popoutAnimation.running){
                         root.popped = true
+                    } else {
+                        root.height = 0
                     }
                 }
             },
@@ -112,12 +115,13 @@ Rectangle {
                 left: parent.left
             }
             width: parent.width
-            height: 32
-            color: popout.color
+            height: popout.state === "popped" ? 32 : 0
+            color: "#eee"
             border {
                 width: 1
                 color: "#ccc"
             }
+            visible: popout.state === "popped"
 
             Text {
                 id: title
@@ -180,7 +184,7 @@ Rectangle {
                         if (popout.state === "unpopped" | popout.state === "" ){
                             if (root.firstPop) {
                                 popoutWindow.width = root.unpoppedWidth
-                                popoutWindow.height = root.unpoppedHeight
+                                //popoutWindow.height = root.unpoppedHeight
                                 var globalPosition = mapToGlobal(mouse.x, mouse.y)
                                 popoutWindow.x = globalPosition.x - popoutWindow.width / 2;
                                 popoutWindow.y = globalPosition.y - topBar.height / 2;
@@ -192,8 +196,8 @@ Rectangle {
                             popout.state = "unpopped"
                             popoutWindow.visible = false
                         }
-                        console.log(popout.state, content.height, content.children[0].height)
                     }
+                    cursorShape: Qt.PointingHandCursor
                 }
             }
         }
@@ -205,15 +209,12 @@ Rectangle {
                 top: topBar.bottom
                 left: popout.left
                 right: popout.right
-//                bottom: popout.bottom
                 margins: 1
             }
-            height: content.height
+            height: port.height
 
-            Loader {
-                id: content
-                width: parent.width
-                height: popout.state === "popped" ? 0 : children[0].height
+            Port {
+                id: port
             }
         }
     }
@@ -222,6 +223,7 @@ Rectangle {
         id: popoutWindow
         visible: false
         flags: Qt.Tool | Qt.FramelessWindowHint
+        height: port.height + topBar.height
 
         Rectangle {
             id: poppedWindow
@@ -249,7 +251,7 @@ Rectangle {
             onPositionChanged: {
                 var delta = Qt.point(mouse.x-root.clickPos.x, mouse.y-root.clickPos.y)
                 popoutWindow.width += delta.x;
-                popoutWindow.height += delta.y;
+                //popoutWindow.height += delta.y;
             }
 
             Text {
@@ -267,6 +269,75 @@ Rectangle {
                     family: sgicons.name
                 }
             }
+        }
+    }
+
+    Rectangle {
+        id: popper2
+        height: 32
+        width: 150
+        z:20
+        anchors {
+            top: root.top
+            right: root.right
+        }
+        color: "#eee"
+        border {
+            width: 1
+            color: "#ccc"
+        }
+        visible: popout.state !== "popped"
+
+        Text {
+            id: popper2text
+            text: "Pop out this port"
+            font {
+//                pixelSize: 18
+            }
+            anchors {
+                right: popper2Icon.left
+                verticalCenter: parent.verticalCenter
+                rightMargin: 12
+            }
+            color: "#888"
+        }
+
+        Text {
+            id: popper2Icon
+            rotation: popout.state === "unpopped" | popout.state === ""  ? 0 : 180
+            text: popout.state === "unpopped" | popout.state === ""  ? "\u0038" : "\u0037"
+            font {
+                pixelSize: 18
+                family: sgicons.name
+            }
+            anchors {
+                right: parent.right
+                verticalCenter: parent.verticalCenter
+                rightMargin: parent.height/2-width/2
+            }
+            color: "#888"
+        }
+
+        MouseArea {
+            anchors.fill: parent;
+            onClicked: {
+                if (popout.state === "unpopped" | popout.state === "" ){
+                    if (root.firstPop) {
+                        popoutWindow.width = root.unpoppedWidth
+                        //popoutWindow.height = root.unpoppedHeight
+                        var globalPosition = mapToGlobal(mouse.x, mouse.y)
+                        popoutWindow.x = globalPosition.x - popoutWindow.width / 2;
+                        popoutWindow.y = globalPosition.y - topBar.height / 2;
+                        root.firstPop = false
+                    }
+                    popout.state = "popped"
+                    popoutWindow.visible = true
+                } else {
+                    popout.state = "unpopped"
+                    popoutWindow.visible = false
+                }
+            }
+            cursorShape: Qt.PointingHandCursor
         }
     }
 
