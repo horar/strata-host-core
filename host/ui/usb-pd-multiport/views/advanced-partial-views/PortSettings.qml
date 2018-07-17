@@ -18,15 +18,17 @@ Item {
             model: ["100 W", "example", "example"]
             anchors {
                 left: parent.left
+                leftMargin: 23
                 top: parent.top
             }
         }
 
         SGSlider {
             id: currentLimit
-            label: "Current Limit:"
+            label: "Current limit:"
             anchors {
                 left: parent.left
+                leftMargin: 61
                 top: maxPowerOutput.bottom
                 topMargin: 10
                 right: currentLimitInput.left
@@ -42,6 +44,8 @@ Item {
                 verticalCenter: currentLimit.verticalCenter
                 right: parent.right
             }
+            input: currentLimit.value.toFixed(0)
+            onApplied: currentLimit.value = value
         }
 
         SGDivider {
@@ -84,6 +88,8 @@ Item {
                 verticalCenter: increment.verticalCenter
                 right: parent.right
             }
+            input: increment.value.toFixed(0)
+            onApplied: increment.value = value
         }
 
         SGSlider {
@@ -91,6 +97,7 @@ Item {
             label: "Bias output by:"
             anchors {
                 left: parent.left
+                leftMargin: 50
                 top: increment.bottom
                 topMargin: 10
                 right: biasInput.left
@@ -106,6 +113,8 @@ Item {
                 verticalCenter: bias.verticalCenter
                 right: parent.right
             }
+            input: bias.value.toFixed(0)
+            onApplied: bias.value = value
         }
 
 

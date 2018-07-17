@@ -39,7 +39,7 @@ Item {
                 buttonHeight: 25
                 anchors {
                     left: margins1.left
-                    leftMargin: 0
+                    leftMargin: 72
                 }
 
                 segmentedButtons: GridLayout {
@@ -72,7 +72,7 @@ Item {
                     top: dataConfig.bottom
                     topMargin: 10
                     left: margins1.left
-                    leftMargin: 3
+                    leftMargin: 75
                 }
 
                 segmentedButtons: GridLayout {
@@ -129,6 +129,14 @@ Item {
 
                     SGSegmentedButton{
                         text: qsTr("Automatic")
+                        onCheckedChanged: {
+                            if (checked) {
+                                manualSleep.enabled = false
+                            } else {
+                                manualSleep.enabled = true
+                            }
+
+                        }
                     }
                 }
             }
@@ -178,7 +186,7 @@ Item {
                     top: leftDiv2.bottom
                     topMargin: 10
                     left: margins1.left
-                    leftMargin: 0
+                    leftMargin: 89
                 }
                 label: "Fault Protection:"
                 activeColorTop: "#666"
@@ -210,15 +218,20 @@ Item {
 
             SGSlider {
                 id: inputFault
-                label: "Fault when input falls below:"
+                label: "Fault when input below:"
                 anchors {
                     left: margins1.left
-                    leftMargin: 28
+                    leftMargin: 45
                     top: faultProtection.bottom
                     topMargin: 10
                     right: inputFaultInput.left
                     rightMargin: 10
                 }
+                from: 0
+                to: 32
+                startLabel: "0V"
+                endLabel: "32V"
+                value: 0
             }
 
             SGSubmitInfoBox {
@@ -228,11 +241,13 @@ Item {
                     verticalCenter: inputFault.verticalCenter
                     right: parent.right
                 }
+                input: inputFault.value.toFixed(0)
+                onApplied: inputFault.value = value
             }
 
             SGSlider {
                 id: tempFault
-                label: "Fault when temperature reaches:"
+                label: "Fault when temperature above:"
                 anchors {
                     left: parent.left
                     top: inputFault.bottom
@@ -240,6 +255,11 @@ Item {
                     right: tempFaultInput.left
                     rightMargin: 10
                 }
+                from: 25
+                to: 200
+                startLabel: "25°C"
+                endLabel: "200°C"
+                value: 25
             }
 
             SGSubmitInfoBox {
@@ -249,6 +269,8 @@ Item {
                     verticalCenter: tempFault.verticalCenter
                     right: parent.right
                 }
+                input: tempFault.value.toFixed(0)
+                onApplied: tempFault.value = value
             }
         }
 
@@ -296,9 +318,11 @@ Item {
 
             SGSlider {
                 id: foldbackLimit
-                label: "Start limiting at:"
+                label: "Limit below:"
+                value: 0
                 anchors {
                     left: parent.left
+                    leftMargin: 61
                     top: inputFoldback.bottom
                     topMargin: 10
                     right: foldbackLimitInput.left
@@ -306,8 +330,8 @@ Item {
                 }
                 from: 0
                 to: 32
-                startLabel: "0 V"
-                endLabel: "32 V"
+                startLabel: "0V"
+                endLabel: "32V"
             }
 
             SGSubmitInfoBox {
@@ -323,7 +347,7 @@ Item {
 
             SGComboBox {
                 id: limitOutput
-                label: "Limit board output to:"
+                label: "Limit output power to:"
                 model: ["45 W","stuff"]
                 anchors {
                     left: parent.left
@@ -366,14 +390,20 @@ Item {
 
             SGSlider {
                 id: foldbackTemp
-                label: "When board temperature reaches:"
+                label: "Limit above:"
                 anchors {
                     left: parent.left
+                    leftMargin: 60
                     top: tempFoldback.bottom
                     topMargin: 10
                     right: foldbackTempInput.left
                     rightMargin: 10
                 }
+                from: 25
+                to: 200
+                startLabel: "25°C"
+                endLabel: "200°C"
+                value: 25
             }
 
             SGSubmitInfoBox {
@@ -383,11 +413,13 @@ Item {
                     verticalCenter: foldbackTemp.verticalCenter
                     right: parent.right
                 }
+                input: foldbackTemp.value.toFixed(0)
+                onApplied: foldbackTemp.value = value
             }
 
             SGComboBox {
                 id: limitOutput2
-                label: "Limit board output to:"
+                label: "Limit output power to:"
                 model: ["45 W","stuff"]
                 anchors {
                     left: parent.left

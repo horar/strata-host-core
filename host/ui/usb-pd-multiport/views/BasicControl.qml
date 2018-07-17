@@ -36,7 +36,7 @@ Item {
 
         Rectangle {
             id: combinedPortStats
-            color: "white"
+            color: "#eee"
             anchors {
                 top: inputColumn.top
                 topMargin: 55 * ratioCalc
@@ -53,7 +53,7 @@ Item {
 
         Rectangle {
             id: inputConversionStats
-            color: "white"
+            color: combinedPortStats.color
             anchors {
                 top: combinedPortStats.bottom
                 topMargin: 20 * ratioCalc
@@ -138,6 +138,36 @@ Item {
         anchors {
             left: portColumn.right
             leftMargin: 160 * ratioCalc
+        }
+
+        Column {
+            anchors {
+                top: parent.top
+                topMargin: 55 * ratioCalc
+            }
+
+            width: parent.width
+            spacing: 20
+
+            DeviceInfo {
+                height: portInfo1.height
+                width: parent.width
+            }
+
+            DeviceInfo {
+                height: portInfo1.height
+                width: parent.width
+            }
+
+            DeviceInfo {
+                height: portInfo1.height
+                width: parent.width
+            }
+
+            DeviceInfo {
+                height: portInfo1.height
+                width: parent.width
+            }
         }
 
         SGLayoutDebug {

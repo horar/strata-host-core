@@ -2,10 +2,10 @@ import QtQuick 2.0
 
 Rectangle {
     id: root
-    color: "#eee"
+    color: "lightsalmon"
 
     Text {
-        text: "Port info goes here"
+        text: "Device info goes here"
         anchors.centerIn: parent
     }
 
