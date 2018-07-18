@@ -6,7 +6,7 @@ ChartView {
     id: rootChart
     title: ""
     titleColor: textColor
-    titleFont.pointSize: textSize
+    titleFont.pixelSize: textSize
     legend { visible:false }
     antialiasing: true
     backgroundColor: "white"
@@ -57,7 +57,7 @@ ChartView {
     ValueAxis {
         id: valueAxisX
         titleText: "<span style='color:"+textColor+"'>"+xAxisTitle+"</span>"
-        titleFont.pointSize: rootChart.textSize*.8
+        titleFont.pixelSize: rootChart.textSize*.8
         min: minXValue
         max: maxXValue
         color: axesColor
@@ -65,14 +65,14 @@ ChartView {
         gridLineColor: rootChart.gridLineColor
 //        tickCount: 11  //  applyNiceNumbers() takes care of this based on range
         labelFormat: "%.0f"
-        labelsFont.pointSize: rootChart.textSize*.8
+        labelsFont.pixelSize: rootChart.textSize*.8
         labelsColor: textColor
     }
 
     ValueAxis {
         id: valueAxisY
         titleText: "<span style='color:"+textColor+"'>"+yAxisTitle+"</span>"
-        titleFont.pointSize: rootChart.textSize*.8
+        titleFont.pixelSize: rootChart.textSize*.8
         min: minYValue
         max: maxYValue
         color: axesColor
@@ -80,7 +80,7 @@ ChartView {
         gridLineColor: rootChart.gridLineColor
 //        tickCount: 6  //  applyNiceNumbers() takes care of this based on range
         labelFormat: "%.0f"
-        labelsFont.pointSize: rootChart.textSize*.8
+        labelsFont.pixelSize: rootChart.textSize*.8
         labelsColor: textColor
     }
 
