@@ -17,6 +17,7 @@ Rectangle {
     property alias phaseAngle: phaseAngleRow.phaseAngleValue
     property alias ledSlider: hueSlider.value
     property alias singleLEDSlider: singleColorSlider.value
+    property alias ledPulseSlider: ledPulseFrequency.value
 
     Component.onCompleted:  {
         /*

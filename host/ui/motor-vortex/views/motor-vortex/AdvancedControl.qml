@@ -17,6 +17,7 @@ Rectangle {
     property alias phaseAngle: phaseAngleRow.phaseAngleValue
     property alias ledSlider: hueSlider.value
     property alias singleLEDSlider: singleColorSlider.value
+    property alias ledPulseSlider: ledPulseFrequency.value
 
     Component.onCompleted:  {
         platformInterface.system_mode_selection.update("manual");
@@ -102,7 +103,7 @@ Rectangle {
 
         property var errorArray: platformInterface.system_error.error_and_warnings
         onErrorArrayChanged: {
-//            faultModel.clear()
+//
             for (var i in errorArray){
                 faultModel.append({ status : errorArray[i] })
             }
