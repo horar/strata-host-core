@@ -48,9 +48,9 @@ Rectangle {
                 }
                 gaugeFrontColor1: Qt.rgba(0,1,.25,1)
                 gaugeFrontColor2: Qt.rgba(1,0,0,1)
-                minimumValue: motorSpeedControl.from
-                maximumValue: motorSpeedControl.to
-                tickmarkStepSize: 500
+                minimumValue: 0
+                maximumValue: 8000
+                tickmarkStepSize: 1000
                 outerColor: "#999"
                 unitLabel: "RPM"
 

@@ -18,7 +18,7 @@ Item {
     //
     property var pi_stats : {
         "speed_target": 1500,
-                "current_speed": 1500,
+                "current_speed": 0,
                 "error": 0,
                 "sum": 0.5,
                 "duty_now": 0.5,
