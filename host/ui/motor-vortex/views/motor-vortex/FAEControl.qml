@@ -90,8 +90,8 @@ Rectangle {
 
         SGLabelledInfoBox{
             id: vInBox
-            label: "Vin:"
-            info: platformInterface.input_voltage_notification.vin + "v"
+            label: "Vin (volts):"
+            info: platformInterface.input_voltage_notification.vin
             infoBoxWidth: 80
             anchors {
                 top: warningBox.bottom
@@ -102,9 +102,9 @@ Rectangle {
 
         SGLabelledInfoBox{
             id: speedBox
-            label: "Current Speed:"
-            info: platformInterface.pi_stats.current_speed + " rpm"
-            infoBoxWidth: 80
+            label: "Current Speed (rpm):"
+            info: platformInterface.pi_stats.current_speed
+            infoBoxWidth: 100
             anchors {
                 top: warningBox.bottom
                 topMargin: 20
@@ -345,6 +345,7 @@ Rectangle {
                 buttonVisible: false
                 onApplied: { targetSpeedSlider.value = parseInt(value, 10) }
                 input: targetSpeedSlider.value
+                infoBoxWidth: 80
             }
 
             SGSlider {
@@ -379,6 +380,7 @@ Rectangle {
                 buttonVisible: false
                 onApplied: { rampRateSlider.value = parseInt(value, 10) }
                 input: rampRateSlider.value
+                infoBoxWidth: 80
             }
 
             Item {
@@ -633,6 +635,7 @@ Rectangle {
                     ledPulseFrequency.value = parseInt(value, 10)
                 }
                 input: ledPulseFrequency.value
+                infoBoxWidth: 80
             }
         }
 
