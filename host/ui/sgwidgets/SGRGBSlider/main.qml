@@ -16,7 +16,6 @@ Window {
         width: 300                      // Default: 300 (includes label, if present)
 
         // Useful Signals:
-        onCurrentColorChanged: console.log("Current RGB color is",currentColor)
-        //onValueChanged: console.log("Slider stopped at: ", value)
+         onValueChanged: console.log("Color:", color, "Color_Value:", color_value)
     }
 }

@@ -15,6 +15,7 @@ Item {
     property color textColor : "black"
     property real sliderHeight: 28
     property var rgbArray: [0,0,0]
+    property bool powerSave: false
 
     implicitHeight: labelLeft ? Math.max(labelText.height, sliderHeight) : labelText.height + sliderHeight + hueSlider.anchors.topMargin
     implicitWidth: 300
@@ -110,26 +111,46 @@ Item {
     }
 
     onValueChanged: {
-        rgbArray = hsvToRgb(hueSlider.value, 1, 1)
-         if (rgbArray[0] === '0') {
-             color1 = "green"
-             color_value1 = rgbArray[1]
-             color2 = "blue"
-             color_value2 = rgbArray[2]
-         } else if (rgbArray[1] === '0') {
-             color1 = "red"
-             color_value1 = rgbArray[0]
-             color2 = "blue"
-             color_value2 = rgbArray[2]
-         } else {
-             color1 = "red"
-             color_value1 = rgbArray[0]
-             color2 = "green"
-             color_value2 = rgbArray[1]
-         }
+        if (powerSave) {
+            rgbArray = hueToRgbPowerSave(hueSlider.value)
+        } else {
+            rgbArray = hsvToRgb(hueSlider.value, 1, 1)
+        }
+
+        if (rgbArray[0] === '0') {
+            color1 = "green"
+            color_value1 = rgbArray[1]
+            color2 = "blue"
+            color_value2 = rgbArray[2]
+        } else if (rgbArray[1] === '0') {
+            color1 = "red"
+            color_value1 = rgbArray[0]
+            color2 = "blue"
+            color_value2 = rgbArray[2]
+        } else {
+            color1 = "red"
+            color_value1 = rgbArray[0]
+            color2 = "green"
+            color_value2 = rgbArray[1]
+        }
     }
 
-    function hsvToRgb(h, s, v){
+    function hueToRgbPowerSave (h) {  // PowerSave mode for mixing 2 colors (max 255 value between 2 colors)
+        var r, g, b;
+
+        var i = Math.floor(h * 3);
+        var f = h * 3 - i;
+
+        switch(i % 3){
+            case 0: r = 1-f; g = f; b = 0; break;
+            case 1: r = 0; g = 1-f; b = f; break;
+            case 2: r = f; g = 0; b = 1-f; break;
+        }
+
+        return [(r * 255).toFixed(0), (g * 255).toFixed(0), (b * 255).toFixed(0)];
+    }
+
+    function hsvToRgb(h, s, v){  // Regular RGB color mixing mode
         var r, g, b;
 
         var i = Math.floor(h * 6);

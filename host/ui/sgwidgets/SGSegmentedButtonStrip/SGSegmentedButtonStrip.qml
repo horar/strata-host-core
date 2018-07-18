@@ -22,6 +22,8 @@ Item {
     property bool labelLeft: true
     property color textColor: "black"
     property color activeTextColor: "white"
+    property real buttonImplicitWidth: 70
+    property bool nothingChecked: true
 
     Text {
         id: labelText
@@ -50,6 +52,7 @@ Item {
         // Passthrough properties so segmentedButtons can get these
         property real masterHeight: buttonHeight
         property real masterRadius: radius
+        property real masterButtonImplicitWidth: buttonImplicitWidth
         property color masterActiveColorTop: activeColorTop
         property color masterActiveColorBottom: activeColorBottom
         property color masterInactiveColorTop: inactiveColorTop
@@ -57,5 +60,28 @@ Item {
         property color masterTextColor: textColor
         property color masterActiveTextColor: activeTextColor
         property bool masterEnabled: enabled
+
+        Component.onCompleted: {
+            if (exclusive === false){
+                for (var child_id in segmentedButtons.children[0].children) {
+                    segmentedButtons.children[0].children[child_id].checkedChanged.connect(checked)
+                }
+            }
+        }
+
+        function checked () {
+            for (var child_id in segmentedButtons.children[0].children) {
+                if (segmentedButtons.children[0].children[child_id].checked){
+                    root.nothingChecked = false
+                    break
+                } else if (child_id === "" + (segmentedButtons.children[0].children.length - 1)) {
+                    root.nothingChecked = true
+                }
+            }
+        }
+    }
+
+    Component.onCompleted: {
+        segmentedButtons.checked()
     }
 }

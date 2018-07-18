@@ -6,8 +6,9 @@ Item {
     id: root
 
     property real value: 0
-    property var currentColor: hToRgb(value)
-
+    property var rgbArray: hToRgb(value)
+    property string color: "red"
+    property int color_value: 0
     property string label: ""
     property bool labelLeft: true
     property color textColor : "black"
@@ -107,8 +108,18 @@ Item {
     }
 
     onValueChanged: {
-        root.currentColor = hToRgb(root.value)
-    }
+        root.rgbArray = hToRgb(root.value)
+        if (rgbArray[0] !== '0') {
+            color = "red"
+            color_value = rgbArray[0]
+        } else if (rgbArray[1] !== '0') {
+            color = "green"
+            color_value = rgbArray[1]
+        } else {
+            color = "blue"
+            color_value = rgbArray[2]
+        }
+   }
 
     // Dumbed down version of hsvToRgb function to match simpler RGB gradient slider
     function hToRgb(h){

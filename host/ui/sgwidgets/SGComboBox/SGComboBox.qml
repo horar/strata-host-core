@@ -69,11 +69,8 @@ Item {
 
         contentItem: TextField {
             anchors {
-                left: comboBox.left
-                right: comboBox.right
+                fill: parent
                 rightMargin: comboBox.height
-                top: comboBox.top
-                bottom: comboBox.bottom
             }
             leftPadding: 13
             rightPadding: 0

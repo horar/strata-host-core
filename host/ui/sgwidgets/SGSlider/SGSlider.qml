@@ -125,7 +125,7 @@ Item {
         Label {
             id: startLabel
             anchors.bottom : parent.bottom
-            font.pointSize : 12
+            font.pixelSize : 12
             text: sgSlider.from
             color: root.textColor
         }
@@ -134,7 +134,7 @@ Item {
             id: endLabel
             anchors.right : parent.right
             anchors.bottom : parent.bottom
-            font.pointSize: 12
+            font.pixelSize: 12
             text: sgSlider.to
             color: root.textColor
         }

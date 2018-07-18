@@ -43,7 +43,7 @@ Button {
         }
         radius: root.radius
         implicitHeight: masterHeight
-        implicitWidth: 70
+        implicitWidth: masterButtonImplicitWidth
         opacity: root.enabled ? 1.0 : 0.3
         layer.enabled: true
 
