@@ -65,11 +65,12 @@ Rectangle {
             anchors { fill: parent }
             cursorShape: Qt.PointingHandCursor
             onClicked: {
-                root.open = !root.open
-                if (!root.open) {
+                if (root.open) {
                     closeContent.start()
+                    root.open = !root.open
                 } else {
                     openContent.start()
+                    root.open = !root.open
                 }
             }
         }
@@ -78,12 +79,17 @@ Rectangle {
     Rectangle {
         id: contentContainer
         width: root.width
-        height: root.open ? contents.height : 0
+        height: 0
         color: root.contentsColor
         anchors {
             top: titleBar.bottom
         }
-        Component.onCompleted: { height = height } // Unbind so animations work after first load
+
+        Component.onCompleted: {
+            if (root.open) {
+                bindHeight()  // If open, bind height to contents.height so contents can dynamically resize the accordionItem
+            }
+        }
 
         Loader {
             id: contents
@@ -111,7 +117,7 @@ Rectangle {
         to: 0
         duration: openCloseTime
         onStopped: {
-            contentContainer.height = 0 // Break binding so it stays 0 when closed
+            contentContainer.height = 0  // Bind height to 0 so any content resizing while closed doesn't resize the accordionItem
         }
     }
 
@@ -123,7 +129,12 @@ Rectangle {
         to: contents.height
         duration: openCloseTime
         onStopped: {
-            contentContainer.height = Qt.binding(function() { return contents.height })  // Rebind contentContainer.height to contents height since animations break this and the contents may change height
+            bindHeight()  // Rebind to contents.height while open so contents can dynamically resize the accordionItem
         }
+    }
+
+    function bindHeight() {
+        contentContainer.height = Qt.binding(function() { return contents.height })
+        return
     }
 }
