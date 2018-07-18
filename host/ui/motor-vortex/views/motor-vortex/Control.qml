@@ -52,6 +52,7 @@ Rectangle {
                     advanceView.phaseAngle = faeView.phaseAngle
                     advanceView.ledSlider = faeView.ledSlider
                     advanceView.singleLEDSlider = faeView.singleLEDSlider
+                    advanceView.ledPulseSlider = faeView.ledPulseSlider
                 }
                 controlContainer.currentIndex = 1
             }
@@ -70,6 +71,7 @@ Rectangle {
                     faeView.phaseAngle = advanceView.phaseAngle
                     faeView.ledSlider = advanceView.ledSlider
                     faeView.singleLEDSlider = advanceView.singleLEDSlider
+                    faeView.ledPulseSlider = advanceView.ledPulseSlider
                 }
                 controlContainer.currentIndex = 2
             }
