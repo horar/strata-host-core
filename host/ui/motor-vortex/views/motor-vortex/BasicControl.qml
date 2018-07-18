@@ -101,6 +101,7 @@ Rectangle {
                 }
                 onApplied: { motorSpeedControl.value = parseInt(value, 10) }
                 input: motorSpeedControl.value
+                infoBoxWidth: 80
             }
 
 
