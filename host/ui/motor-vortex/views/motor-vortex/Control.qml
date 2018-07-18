@@ -45,7 +45,6 @@ Rectangle {
             onClicked: {
                 if(controlContainer.currentIndex === 0) {
                     advanceView.motorSpeedSliderValue = basicView.motorSpeedSliderValue
-
                 }
                 else {
                     advanceView.motorSpeedSliderValue = faeView.motorSpeedSliderValue
@@ -53,10 +52,7 @@ Rectangle {
                     advanceView.phaseAngle = faeView.phaseAngle
                     advanceView.ledSlider = faeView.ledSlider
                     advanceView.singleLEDSlider = faeView.singleLEDSlider
-
-
                 }
-
                 controlContainer.currentIndex = 1
             }
         }
@@ -74,14 +70,11 @@ Rectangle {
                     faeView.phaseAngle = advanceView.phaseAngle
                     faeView.ledSlider = advanceView.ledSlider
                     faeView.singleLEDSlider = advanceView.singleLEDSlider
-
                 }
-
                 controlContainer.currentIndex = 2
             }
             background: Rectangle {
                 color: faeButton.down ? "#eeeeee" : faeButton.checked ? "white" : "tomato"
-
             }
         }
     }

@@ -15,8 +15,8 @@ Rectangle {
     property alias motorSpeedSliderValue: targetSpeedSlider.value
     property alias rampRateSlider: rampRateSlider.value
     property alias phaseAngle: phaseAngleRow.phaseAngleValue
-    property alias ledSlider: ledControlContainer.ledLocalHolder
-    property alias singleLEDSlider: ledSecondContainer.ledSingleLocalHolder
+    property alias ledSlider: hueSlider.value
+    property alias singleLEDSlider: singleColorSlider.value
 
     Component.onCompleted:  {
         /*
@@ -25,7 +25,6 @@ Rectangle {
         platformInterface.set_drive_mode.update("manual");
         platformInterface.set_phase_angle.update(parseInt(15));
         console.log("phase angle", phaseAngle)
-
     }
 
     Rectangle {
@@ -513,9 +512,6 @@ Rectangle {
             width: 500
             height: childrenRect.height + 10
             color: "#eeeeee"
-            property int ledLocalHolder: ledSlider
-            onLedLocalHolderChanged: hueSlider.value = ledSlider
-
             anchors {
                 horizontalCenter: rightSide.horizontalCenter
                 top: driveModeContainer.bottom
@@ -526,7 +522,7 @@ Rectangle {
                 id: hueSlider
                 label: "Set LED color:"
                 labelLeft: true
-                value: 128//ledControlContainer.ledLocalHolder
+                value: 128
                 anchors {
                     verticalCenter: whiteButton.verticalCenter
                     left: ledControlContainer.left
@@ -537,11 +533,7 @@ Rectangle {
                     topMargin: 10
                 }
                 onValueChanged: {
-
                     platformInterface.set_color_mixing.update(color1,color_value1,color2,color_value2)
-                    ledControlContainer.ledLocalHolder = hueSlider.value
-
-                     console.log("in fae",ledControlContainer.ledLocalHolder);
                 }
             }
 
@@ -584,8 +576,6 @@ Rectangle {
             width: 500
             height: childrenRect.height + 20
             color: "#eeeeee"
-            property int ledSingleLocalHolder: singleLEDSlider
-            onLedSingleLocalHolderChanged: singleColorSlider.value = singleLEDSlider
             anchors {
                 horizontalCenter: rightSide.horizontalCenter
                 top: ledControlContainer.bottom
@@ -605,9 +595,7 @@ Rectangle {
                     rightMargin: 10
                 }
                 onValueChanged: {
-
                     platformInterface.set_single_color.update(color, color_value)
-                    ledSecondContainer.ledSingleLocalHolder = singleColorSlider.value
                 }
             }
 

@@ -215,9 +215,9 @@ Item {
                                          "cmd":"set_color_mixing",
                                              "payload":{
                                                          "color1": "red", // color can be "red"/"green"/"blue"
-                                                         "color_value1": 120 ,// color_value varies from 0 to 255
+                                                         "color_value1": 128,// color_value varies from 0 to 255
                                                          "color2": "green", // color can be "red"/"green"/"blue"
-                                                         "color_value2": 10, // color_value varies from 0 to 255
+                                                         "color_value2": 127, // color_value varies from 0 to 255
                                              },
                                          // Update will set and send in one shot
                                          update: function (color_1,color_value_1,color_2,color_value_2) {

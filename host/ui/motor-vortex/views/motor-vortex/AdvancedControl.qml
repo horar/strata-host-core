@@ -15,19 +15,14 @@ Rectangle {
     property alias motorSpeedSliderValue: targetSpeedSlider.value
     property alias rampRateSlider: rampRateSlider.value
     property alias phaseAngle: phaseAngleRow.phaseAngleValue
-    property alias ledSlider: ledControlContainer.ledLocalHolder
-    property alias singleLEDSlider: ledSecondContainer.ledSingleLocalHolder
+    property alias ledSlider: hueSlider.value
+    property alias singleLEDSlider: singleColorSlider.value
 
     Component.onCompleted:  {
-
         platformInterface.system_mode_selection.update("manual");
         platformInterface.set_phase_angle.update(parseInt(15));
         phaseAngle = 15
-
-
     }
-
-
 
     Rectangle {
         id: leftSide
@@ -449,8 +444,6 @@ Rectangle {
             width: 500
             height: childrenRect.height + 10
             color: "#eeeeee"
-            property int ledLocalHolder: ledSlider
-            onLedLocalHolderChanged: hueSlider.value = ledSlider
             anchors {
                 horizontalCenter: rightSide.horizontalCenter
                 top: driveModeContainer.bottom
@@ -473,10 +466,7 @@ Rectangle {
                 }
 
                 onValueChanged: {
-
                     platformInterface.set_color_mixing.update(color1,color_value1,color2,color_value2)
-                    ledControlContainer.ledLocalHolder = hueSlider.value
-                    console.log("in advanced",ledControlContainer.ledLocalHolder);
                 }
             }
 
@@ -520,12 +510,6 @@ Rectangle {
             width: 500
             height: childrenRect.height + 20
             color: "#eeeeee"
-            property int ledSingleLocalHolder: singleLEDSlider
-            onLedSingleLocalHolderChanged: {
-                console.log(singleLEDSlider )
-                singleColorSlider.value = singleLEDSlider
-            }
-
             anchors {
                 horizontalCenter: rightSide.horizontalCenter
                 top: ledControlContainer.bottom
@@ -546,10 +530,7 @@ Rectangle {
                     rightMargin: 10
                 }
                 onValueChanged: {
-
                     platformInterface.set_single_color.update(color, color_value)
-                    ledSecondContainer.ledSingleLocalHolder = singleColorSlider.value
-                    console.log("in advance", ledSecondContainer.ledSingleLocalHolder)
                 }
             }
 

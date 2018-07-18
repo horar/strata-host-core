@@ -112,9 +112,9 @@ Item {
 
     onValueChanged: {
         if (powerSave) {
-            rgbArray = hueToRgbPowerSave(hueSlider.value)
+            rgbArray = hueToRgbPowerSave(value/255)
         } else {
-            rgbArray = hsvToRgb(hueSlider.value, 1, 1)
+            rgbArray = hsvToRgb(value/255, 1, 1)
         }
 
         if (rgbArray[0] === '0') {
