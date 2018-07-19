@@ -116,6 +116,22 @@ Rectangle {
         }
         clip:true
 
+        onWidthChanged: {
+            if (width < 1200) {
+                ScrollBar.horizontal.policy = ScrollBar.AlwaysOn
+            } else {
+                ScrollBar.horizontal.policy = ScrollBar.AlwaysOff
+            }
+        }
+
+        onHeightChanged: {
+            if (height < 725) {
+                ScrollBar.vertical.policy = ScrollBar.AlwaysOn
+            } else {
+                ScrollBar.vertical.policy = ScrollBar.AlwaysOff
+            }
+        }
+
         BasicControl {
             id: basicView
             visible: true
