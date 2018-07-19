@@ -25,56 +25,28 @@ Item {
         source: "images/basic-background.png"
     }
 
-    AnimatedImage {
-        id: animation
-        property bool pluggedIn: false
-        source: "images/cord.gif"
-        height: 81 * ratioCalc
-        width: 350 * ratioCalc
-        playing: false
+    PlugAnimation {
+        id: port1Animation
         x: 748 * ratioCalc
         y: 83 * ratioCalc
-        onCurrentFrameChanged: {
-            if (currentFrame === frameCount-1) {
-                playing = false
-            }
-        }
+    }
 
-        Rectangle {
-            id: coverup1
-            width: 8 * ratioCalc
-            height: 50 * ratioCalc
-            color: "#bab9bc"
-            anchors {
-                left: animation.left
-                leftMargin: 10 * ratioCalc
-                bottom: animation.bottom
-                bottomMargin: 0
-            }
+    PlugAnimation {
+        id: port2Animation
+        x: 748 * ratioCalc
+        y: 275 * ratioCalc
+    }
 
-            Rectangle {
-                color: "black"
-                opacity: .25
-                width: 2 * ratioCalc
-                height: 23 * ratioCalc
-                anchors {
-                    left: parent.right
-                    verticalCenter: parent.verticalCenter
-                    verticalCenterOffset: 2
-                }
-            }
+    PlugAnimation {
+        id: port3Animation
+        x: 748 * ratioCalc
+        y: 467 * ratioCalc
+    }
 
-            Rectangle {
-                id: coverup2
-                width: 9 * ratioCalc
-                height: 50 * ratioCalc
-                color: "#d1d1d4"
-                anchors {
-                    right: parent.left
-                    verticalCenter: parent.verticalCenter
-                }
-            }
-        }
+    PlugAnimation {
+        id: port4Animation
+        x: 748 * ratioCalc
+        y: 659 * ratioCalc
     }
 
     Item {
@@ -204,29 +176,28 @@ Item {
             }
 
             width: parent.width - (100 * ratioCalc)
-            spacing: 20
+            spacing: 20 * ratioCalc
 
             DeviceInfo {
                 height: portInfo1.height
                 width: parent.width
+
                 MouseArea {
                     anchors {
                         fill: parent
                     }
                     onClicked: {
-                        if (!animation.pluggedIn) {
-                            animation.source = "images/cord.gif"
-                            animation.currentFrame = 0
-                            animation.playing = true
-                            animation.pluggedIn = !animation.pluggedIn
+                        if (!port1Animation.pluggedIn) {
+                            port1Animation.source = "images/cord.gif"
+                            port1Animation.currentFrame = 0
+                            port1Animation.playing = true
+                            port1Animation.pluggedIn = !port1Animation.pluggedIn
                         } else {
-                            animation.source = "images/cordReverse.gif"
-                            animation.currentFrame = 0
-                            animation.playing = true
-                            animation.pluggedIn = !animation.pluggedIn
+                            port1Animation.source = "images/cordReverse.gif"
+                            port1Animation.currentFrame = 0
+                            port1Animation.playing = true
+                            port1Animation.pluggedIn = !port1Animation.pluggedIn
                         }
-
-
                     }
                 }
             }
@@ -234,16 +205,73 @@ Item {
             DeviceInfo {
                 height: portInfo1.height
                 width: parent.width
+
+                MouseArea {
+                    anchors {
+                        fill: parent
+                    }
+                    onClicked: {
+                        if (!port2Animation.pluggedIn) {
+                            port2Animation.source = "images/cord.gif"
+                            port2Animation.currentFrame = 0
+                            port2Animation.playing = true
+                            port2Animation.pluggedIn = !port2Animation.pluggedIn
+                        } else {
+                            port2Animation.source = "images/cordReverse.gif"
+                            port2Animation.currentFrame = 0
+                            port2Animation.playing = true
+                            port2Animation.pluggedIn = !port2Animation.pluggedIn
+                        }
+                    }
+                }
             }
 
             DeviceInfo {
                 height: portInfo1.height
                 width: parent.width
+
+                MouseArea {
+                    anchors {
+                        fill: parent
+                    }
+                    onClicked: {
+                        if (!port3Animation.pluggedIn) {
+                            port3Animation.source = "images/cord.gif"
+                            port3Animation.currentFrame = 0
+                            port3Animation.playing = true
+                            port3Animation.pluggedIn = !port3Animation.pluggedIn
+                        } else {
+                            port3Animation.source = "images/cordReverse.gif"
+                            port3Animation.currentFrame = 0
+                            port3Animation.playing = true
+                            port3Animation.pluggedIn = !port3Animation.pluggedIn
+                        }
+                    }
+                }
             }
 
             DeviceInfo {
                 height: portInfo1.height
                 width: parent.width
+
+                MouseArea {
+                    anchors {
+                        fill: parent
+                    }
+                    onClicked: {
+                        if (!port4Animation.pluggedIn) {
+                            port4Animation.source = "images/cord.gif"
+                            port4Animation.currentFrame = 0
+                            port4Animation.playing = true
+                            port4Animation.pluggedIn = !port4Animation.pluggedIn
+                        } else {
+                            port4Animation.source = "images/cordReverse.gif"
+                            port4Animation.currentFrame = 0
+                            port4Animation.playing = true
+                            port4Animation.pluggedIn = !port4Animation.pluggedIn
+                        }
+                    }
+                }
             }
         }
 

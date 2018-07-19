@@ -49,5 +49,6 @@
         <file>views/basic-partial-views/PortStatBox.qml</file>
         <file>views/images/cord.gif</file>
         <file>views/images/cordReverse.gif</file>
+        <file>views/basic-partial-views/PlugAnimation.qml</file>
     </qresource>
 </RCC>
