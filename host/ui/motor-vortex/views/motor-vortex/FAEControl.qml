@@ -27,6 +27,7 @@ Rectangle {
         rampRateSliderValue = 3
         phaseAngle = 15
         faultModel.clear()
+        faeControl.driveModeSignal("Trapezoidal")
     }
 
     Component.onCompleted:  {

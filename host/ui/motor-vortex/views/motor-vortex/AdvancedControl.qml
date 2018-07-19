@@ -27,9 +27,7 @@ Rectangle {
         rampRateSliderValue = 3
         phaseAngle = 15
         faultModel.clear()
-        trap.checked = true;
-     //   ps.checked = false;
-
+        advancedControl.driveModeSignal("Trapezoidal")
     }
 
     Component.onCompleted:  {
