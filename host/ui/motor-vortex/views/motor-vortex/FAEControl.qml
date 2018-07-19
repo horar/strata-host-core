@@ -650,8 +650,8 @@ Rectangle {
             SGSlider {
                 id: ledPulseFrequency
                 label: "LED Pulse Frequency:"
-                value: 50
-                from: 2
+                value: 152
+                from: 1
                 to: 152
                 anchors {
                     left: ledSecondContainer.left

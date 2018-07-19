@@ -585,8 +585,8 @@ Rectangle {
             SGSlider {
                 id: ledPulseFrequency
                 label: "LED Pulse Frequency:"
-                value: 50
-                from: 2
+                value: 152
+                from: 1
                 to: 152
                 anchors {
                     left: ledSecondContainer.left
@@ -600,6 +600,7 @@ Rectangle {
                 onValueChanged: {
                     setLedPulse.input = value.toFixed(0)
                     platformInterface.set_blink0_frequency.update(value.toFixed(0));
+
                 }
             }
 
