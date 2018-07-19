@@ -537,7 +537,7 @@ Rectangle {
                     }
                 }
 
-                ComboBox{
+                SGComboBox{
                     id: driveModeCombo
                     currentIndex: 15
                     model: ["0", "1.875", "3.75","5.625","7.5", "9.375", "11.25","13.125", "15", "16.875", "18.75", "20.625", "22.5" , "24.375" , "26.25" , "28.125"]
@@ -548,8 +548,7 @@ Rectangle {
                     }
 
                     onCurrentIndexChanged: {
-                        platformInterface.set_phase_angle.update((currentIndex));
-
+                        platformInterface.set_phase_angle.update(currentIndex);
                     }
                 }
             }
