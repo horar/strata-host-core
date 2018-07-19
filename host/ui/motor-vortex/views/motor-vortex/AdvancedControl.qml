@@ -80,6 +80,7 @@ Rectangle {
             inputData: platformInterface.input_voltage_notification.vin
             maxYValue: 15
             repeatingData: true
+            rolling: true
         }
 
         SGGraph{
@@ -96,6 +97,8 @@ Rectangle {
             inputData: startStopButton.checked ? 0 : platformInterface.pi_stats.current_speed
             maxYValue: 6500
             repeatingData: true
+            rolling: true
+
         }
 
         SGStatusListBox {
