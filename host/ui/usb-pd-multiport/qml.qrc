@@ -50,5 +50,6 @@
         <file>views/images/cord.gif</file>
         <file>views/images/cordReverse.gif</file>
         <file>views/basic-partial-views/PlugAnimation.qml</file>
+        <file>views/basic-partial-views/GraphDrawer.qml</file>
     </qresource>
 </RCC>

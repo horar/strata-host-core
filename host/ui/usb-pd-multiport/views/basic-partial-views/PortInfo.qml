@@ -20,7 +20,7 @@ Rectangle {
             fill: parent
             topMargin: 15
             leftMargin: 15
-            rightMargin: 15
+            rightMargin: 0
             bottomMargin: 15
         }
 
@@ -43,6 +43,17 @@ Rectangle {
                     verticalCenter: statsContainer.verticalCenter
                 }
                 color: root.portConnected ? "black" : "#bbb"
+            }
+
+            Button {
+                id: showGraphs
+                text: "Graphs"
+                anchors {
+                    bottom: parent.bottom
+                    horizontalCenter: portTitle.horizontalCenter
+                }
+                height: 20
+                width: 60
             }
 
             Rectangle {

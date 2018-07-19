@@ -25,6 +25,10 @@ Item {
         source: "images/basic-background.png"
     }
 
+    GraphDrawer {
+        z:10
+    }
+
     PlugAnimation {
         id: port1Animation
         x: 748 * ratioCalc
