@@ -13,7 +13,7 @@ Rectangle {
     }
 
     property alias motorSpeedSliderValue: targetSpeedSlider.value
-    property alias rampRateSlider: rampRateSlider.value
+    property alias rampRateSliderValue: rampRateSlider.value
     property alias phaseAngle: phaseAngleRow.phaseAngleValue
     property alias ledSlider: hueSlider.value
     property alias singleLEDSlider: singleColorSlider.value
@@ -21,6 +21,16 @@ Rectangle {
 
     signal motorStateSignal() // signal is called when the motor is off
     signal driveModeSignal(var mode_type)
+
+    function resetData(){
+        motorSpeedSliderValue = 1500
+        rampRateSliderValue = 3
+        phaseAngle = 15
+        faultModel.clear()
+        trap.checked = true;
+     //   ps.checked = false;
+
+    }
 
     Component.onCompleted:  {
         phaseAngle = 15
@@ -163,6 +173,7 @@ Rectangle {
                     onMotorStateSignal: {
                         console.log("signal called");
                         startStopButton.checked = false;
+                        faultModel.clear()
                     }
                 }
                 onClicked: {
@@ -189,6 +200,7 @@ Rectangle {
                 text: qsTr("Reset")
                 onClicked: {
                     platformInterface.set_reset_mcu.update()
+                    resetData()
                 }
             }
         }

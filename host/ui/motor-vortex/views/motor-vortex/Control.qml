@@ -49,7 +49,7 @@ Rectangle {
                 }
                 else {
                     advanceView.motorSpeedSliderValue = faeView.motorSpeedSliderValue
-                    advanceView.rampRateSlider = faeView.rampRateSlider
+                    advanceView.rampRateSliderValue = faeView.rampRateSliderValue
                     advanceView.phaseAngle = faeView.phaseAngle
                     advanceView.ledSlider = faeView.ledSlider
                     advanceView.singleLEDSlider = faeView.singleLEDSlider
@@ -68,7 +68,7 @@ Rectangle {
                 }
                 else {
                     faeView.motorSpeedSliderValue = advanceView.motorSpeedSliderValue
-                    faeView.rampRateSlider = advanceView.rampRateSlider
+                    faeView.rampRateSliderValue = advanceView.rampRateSliderValue
                     faeView.phaseAngle = advanceView.phaseAngle
                     faeView.ledSlider = advanceView.ledSlider
                     faeView.singleLEDSlider = advanceView.singleLEDSlider
