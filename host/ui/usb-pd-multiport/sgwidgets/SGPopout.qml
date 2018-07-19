@@ -275,7 +275,7 @@ Rectangle {
     Rectangle {
         id: popper2
         height: 32
-        width: 150
+        width: 170
         z:20
         anchors {
             top: root.top
@@ -290,7 +290,7 @@ Rectangle {
 
         Text {
             id: popper2text
-            text: "Pop out this port"
+            text: "Open in new window"
             font {
 //                pixelSize: 18
             }

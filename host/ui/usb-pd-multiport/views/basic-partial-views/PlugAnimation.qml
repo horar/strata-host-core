@@ -1,6 +1,6 @@
 import QtQuick 2.9
 import "qrc:/views/images"
-import "/views/basic-partial-views/DeviceInfo" as Devize
+import "qrc:/views/basic-partial-views"
 
 AnimatedImage {
     id: root
