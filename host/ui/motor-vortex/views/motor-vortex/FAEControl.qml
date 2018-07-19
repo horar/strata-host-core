@@ -262,7 +262,7 @@ Rectangle {
             id: operationModeControlContainer
             width: 500
             height: childrenRect.height + 20
-            color: speedSafetyButton.checked ? "#ffb4aa" : "#eeeeee"
+            color: "#eeeeee"
             anchors {
                 horizontalCenter: rightSide.horizontalCenter
                 top: ssButtonContainer.bottom
@@ -379,8 +379,9 @@ Rectangle {
                 label: "Ramp Rate:"
                 width: 350
                 value: 3
-                from : 0
-                to: 6
+                from: speedSafetyButton.checked ? 0 : 2
+                to: speedSafetyButton.checked ? 6 : 4
+                endLabel: speedSafetyButton.checked? "<font color='red'><b>"+ to +"</b></font>" : to
                 anchors {
                     verticalCenter: setRampRate.verticalCenter
                     left: speedControlContainer.left

@@ -343,8 +343,8 @@ Rectangle {
                 id: rampRateSlider
                 label: "Ramp Rate:"
                 value: 3
-                from: 0
-                to:6
+                from: 2
+                to:4
                 anchors {
                     top: targetSpeedSlider.bottom
                     topMargin: 10
