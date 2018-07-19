@@ -23,9 +23,12 @@ Rectangle {
         /*
           Setting the deflaut to be trapezoidal
         */
-        platformInterface.set_drive_mode.update("manual");
+        phaseAngle = 15
+        platformInterface.set_system_mode.update("manual");
         platformInterface.set_phase_angle.update(parseInt(15));
         console.log("phase angle", phaseAngle)
+        platformInterface.set_drive_mode.update(parseInt(0));
+
     }
 
     Rectangle {
@@ -214,6 +217,7 @@ Rectangle {
                         platformInterface.set_motor_on_off.update(parseInt("0"))
                     }
                     else {
+                        platformInterface.motor_speed.update(targetSpeedSlider.value.toFixed(0));
                         platformInterface.set_motor_on_off.update(parseInt("1"))
                         faultModel.clear();
                     }
@@ -452,7 +456,6 @@ Rectangle {
                     SGRadioButton {
                         id: ps
                         text: "Pseudo-Sinusoidal"
-                        checked: true
                         onCheckedChanged: {
                             if (checked) {
                                 platformInterface.set_drive_mode.update(parseInt("1"))
@@ -463,6 +466,7 @@ Rectangle {
                     SGRadioButton {
                         id: trap
                         text: "Trapezoidal"
+                        checked: true
                         onCheckedChanged: {
                             if (checked) {
                                 platformInterface.set_drive_mode.update(parseInt("0"))

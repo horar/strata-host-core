@@ -19,10 +19,13 @@ Rectangle {
     property alias singleLEDSlider: singleColorSlider.value
     property alias ledPulseSlider: ledPulseFrequency.value
 
+
+
     Component.onCompleted:  {
+        phaseAngle = 15
         platformInterface.system_mode_selection.update("manual");
         platformInterface.set_phase_angle.update(parseInt(15));
-        phaseAngle = 15
+        platformInterface.set_drive_mode.update(parseInt(0));
     }
 
     Rectangle {
@@ -141,6 +144,7 @@ Rectangle {
                 onMotorOffChanged: {
                     if(motorOff === "off") {
                         startStopButton.checked = true;
+
                     }
                 }
                 background: Rectangle {
@@ -159,8 +163,10 @@ Rectangle {
                         platformInterface.set_motor_on_off.update(0)
                     }
                     else {
+                        platformInterface.motor_speed.update(targetSpeedSlider.value.toFixed(0));
                         platformInterface.set_motor_on_off.update(1)
                         faultModel.clear();
+
                     }
                 }
             }
@@ -381,7 +387,6 @@ Rectangle {
                     SGRadioButton {
                         id: ps
                         text: "Pseudo-Sinusoidal"
-                        checked: true
                         onCheckedChanged: {
                             if (checked) {
                                 platformInterface.set_drive_mode.update(parseInt("1"))
@@ -392,6 +397,7 @@ Rectangle {
                     SGRadioButton {
                         id: trap
                         text: "Trapezoidal"
+                        checked: true
                         onCheckedChanged: {
                             if (checked) {
                                 platformInterface.set_drive_mode.update(parseInt("0"))

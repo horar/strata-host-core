@@ -29,7 +29,7 @@ Item {
     // @description: updates voltage
     //
     property var input_voltage_notification : {
-        "vin": 12
+        "vin": 0
     }
 
     // @notification system_error
