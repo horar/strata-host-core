@@ -19,7 +19,7 @@ Rectangle {
     property alias singleLEDSlider: singleColorSlider.value
     property alias ledPulseSlider: ledPulseFrequency.value
 
-
+    signal motorStateSignal(); // signal is called when the motor is off
 
     Component.onCompleted:  {
         phaseAngle = 15
@@ -106,7 +106,6 @@ Rectangle {
 
         property var errorArray: platformInterface.system_error.error_and_warnings
         onErrorArrayChanged: {
-//
             for (var i in errorArray){
                 faultModel.append({ status : errorArray[i] })
             }
@@ -158,13 +157,22 @@ Rectangle {
                     horizontalAlignment: Text.AlignHCenter
                     verticalAlignment: Text.AlignVCenter
                 }
+                Connections {
+                    target: faeView
+                    onMotorStateSignal: {
+                        console.log("signal called");
+                        startStopButton.checked = false;
+                    }
+                }
                 onClicked: {
                     if(checked) {
                         platformInterface.set_motor_on_off.update(0)
+
                     }
                     else {
                         platformInterface.motor_speed.update(targetSpeedSlider.value.toFixed(0));
                         platformInterface.set_motor_on_off.update(1)
+                        motorStateSignal();
                         faultModel.clear();
 
                     }

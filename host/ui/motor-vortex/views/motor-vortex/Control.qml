@@ -18,6 +18,7 @@ Rectangle {
         id: platformInterface
     }
 
+
     TabBar {
         id: navTabs
         anchors {

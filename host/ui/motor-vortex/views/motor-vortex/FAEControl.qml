@@ -19,6 +19,7 @@ Rectangle {
     property alias singleLEDSlider: singleColorSlider.value
     property alias ledPulseSlider: ledPulseFrequency.value
 
+    signal motorStateSignal();
     Component.onCompleted:  {
         /*
           Setting the deflaut to be trapezoidal
@@ -211,6 +212,13 @@ Rectangle {
                     horizontalAlignment: Text.AlignHCenter
                     verticalAlignment: Text.AlignVCenter
                 }
+                Connections {
+                    target: advanceView
+                    onMotorStateSignal: {
+                        console.log("signal called");
+                        startStopButton.checked = false;
+                    }
+                }
 
                 onClicked: {
                     if(checked) {
@@ -219,6 +227,7 @@ Rectangle {
                     else {
                         platformInterface.motor_speed.update(targetSpeedSlider.value.toFixed(0));
                         platformInterface.set_motor_on_off.update(parseInt("1"))
+                        motorStateSignal();
                         faultModel.clear();
                     }
                 }
