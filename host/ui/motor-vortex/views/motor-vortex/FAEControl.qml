@@ -8,9 +8,8 @@ import "qrc:/views/motor-vortex/Control.js" as MotorControl
 
 Rectangle {
     id: faeControl
-    anchors {
-        fill: parent
-    }
+    width: 1200
+    height: 725
 
     property alias motorSpeedSliderValue: targetSpeedSlider.value
     property alias rampRateSliderValue: rampRateSlider.value
@@ -766,8 +765,8 @@ Rectangle {
 
     Dialog {
         id: speedPopup
-        x: Math.round((advancedControl.width - width) / 2)
-        y: Math.round((advancedControl.height - height) / 2)
+        x: Math.round((faeControl.width - width) / 2)
+        y: Math.round((faeControl.height - height) / 2)
         width: 350
         height: speedPopupText.height + footer.height + padding * 2
         modal: true

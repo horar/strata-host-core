@@ -11,7 +11,8 @@ import "qrc:/views/motor-vortex/sgwidgets"
 Rectangle {
     id: controlPage
     objectName: "control"
-    anchors { fill: parent }
+    width: 1200
+    height: 725
     color: "white"
 
     property alias motorSpeedSliderValue: motorSpeedControl.value

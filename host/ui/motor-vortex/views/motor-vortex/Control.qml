@@ -18,7 +18,6 @@ Rectangle {
         id: platformInterface
     }
 
-
     TabBar {
         id: navTabs
         anchors {
@@ -82,31 +81,54 @@ Rectangle {
         }
     }
 
-    SwipeView {
+    ScrollView {
         id: controlContainer
 
-        currentIndex: 0
-        interactive: false
+        property int currentIndex: 0
+
+        onCurrentIndexChanged: {
+            switch (currentIndex){
+                case 0:
+                    basicView.visible = true
+                    advanceView.visible = false
+                    faeView.visible = false
+                    break;
+                case 1:
+                    basicView.visible = false
+                    advanceView.visible = true
+                    faeView.visible = false
+                    break;
+                case 2:
+                    basicView.visible = false
+                    advanceView.visible = false
+                    faeView.visible = true
+                    break;
+            }
+        }
+
+        contentWidth: 1200
+        contentHeight: 725
         anchors {
             top: navTabs.bottom
             bottom: parent.bottom
             right: parent.right
             left: parent.left
         }
+        clip:true
 
-        Item {
-            id: basicControl
-            BasicControl {id: basicView }
+        BasicControl {
+            id: basicView
+            visible: true
         }
 
-        Item {
-            id: advancedControl
-            AdvancedControl {id: advanceView }
+        AdvancedControl {
+            id: advanceView
+            visible: false
         }
 
-        Item {
-            id: faeControl
-            FAEControl {id : faeView }
+        FAEControl {
+            id : faeView
+            visible: false
         }
     }
 

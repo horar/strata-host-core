@@ -8,9 +8,8 @@ import "qrc:/views/motor-vortex/Control.js" as MotorControl
 
 Rectangle {
     id: advancedControl
-    anchors {
-        fill: parent
-    }
+    width: 1200
+    height: 725
 
     property alias motorSpeedSliderValue: targetSpeedSlider.value
     property alias rampRateSliderValue: rampRateSlider.value
