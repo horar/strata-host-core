@@ -14,7 +14,7 @@ Rectangle {
 
     property alias motorSpeedSliderValue: targetSpeedSlider.value
     property alias rampRateSliderValue: rampRateSlider.value
-    property alias phaseAngle: phaseAngleRow.phaseAngleValue
+    property alias phaseAngle: driveModeCombo.currentIndex
     property alias ledSlider: hueSlider.value
     property alias singleLEDSlider: singleColorSlider.value
     property alias ledPulseSlider: ledPulseFrequency.value
@@ -292,11 +292,11 @@ Rectangle {
                     property var systemMode: platformInterface.set_mode.system_mode
 
                     onSystemModeChanged: {
-                        if(systemMode === "manual") {
-                            manual.checked = true;
+                        if(systemMode === "automation") {
+                            automatic.checked = true;
                         }
                         else {
-                            automatic.checked = true;
+                            manual.checked = true;
                         }
                     }
 
@@ -521,7 +521,7 @@ Rectangle {
                 id: phaseAngleRow
                 width: childrenRect.width
                 height: childrenRect.height
-                property int phaseAngleValue: phaseAngle
+
                 anchors {
                     top: driveModeRadios.bottom
                     topMargin: 10
@@ -539,7 +539,7 @@ Rectangle {
 
                 ComboBox{
                     id: driveModeCombo
-                    currentIndex: phaseAngleRow.phaseAngleValue
+                    currentIndex: 15
                     model: ["0", "1.875", "3.75","5.625","7.5", "9.375", "11.25","13.125", "15", "16.875", "18.75", "20.625", "22.5" , "24.375" , "26.25" , "28.125"]
                     anchors {
                         top: phaseAngleRow.top
@@ -549,7 +549,7 @@ Rectangle {
 
                     onCurrentIndexChanged: {
                         platformInterface.set_phase_angle.update((currentIndex));
-                        phaseAngleRow.phaseAngleValue =  driveModeCombo.currentIndex;
+
                     }
                 }
             }

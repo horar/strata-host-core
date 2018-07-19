@@ -128,11 +128,11 @@ Rectangle {
                    property var systemMode: platformInterface.set_mode.system_mode
 
                     onSystemModeChanged: {
-                        if(systemMode === "manual") {
-                            manual.checked = true;
+                        if(systemMode === "automation") {
+                            automatic.checked = true;
                         }
                         else {
-                            automatic.checked = true;
+                            manual.checked = true;
                         }
                     }
 
