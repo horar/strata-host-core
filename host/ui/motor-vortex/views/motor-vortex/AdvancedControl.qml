@@ -19,7 +19,8 @@ Rectangle {
     property alias singleLEDSlider: singleColorSlider.value
     property alias ledPulseSlider: ledPulseFrequency.value
 
-    signal motorStateSignal(); // signal is called when the motor is off
+    signal motorStateSignal() // signal is called when the motor is off
+    signal driveModeSignal(var mode_type)
 
     Component.onCompleted:  {
         phaseAngle = 15
@@ -392,12 +393,30 @@ Rectangle {
                     property alias ps : ps
                     property alias trap: trap
 
+                    Connections {
+                        target: faeView
+                        onDriveModeSignal: {
+                            console.log("mode type", mode_type)
+                            if(mode_type == "Trapezoidal"){
+                                trap.checked = true;
+                                ps.checked = false;
+                            }
+
+                            else {
+                                trap.checked = false;
+                                ps.checked = true;
+                            }
+
+                        }
+                    }
+
                     SGRadioButton {
                         id: ps
                         text: "Pseudo-Sinusoidal"
                         onCheckedChanged: {
                             if (checked) {
                                 platformInterface.set_drive_mode.update(parseInt("1"))
+                                driveModeSignal("Pseudo-Sinusoidal");
                             }
                         }
                     }
@@ -409,6 +428,7 @@ Rectangle {
                         onCheckedChanged: {
                             if (checked) {
                                 platformInterface.set_drive_mode.update(parseInt("0"))
+                                driveModeSignal("Trapezoidal");
 
                             }
                         }

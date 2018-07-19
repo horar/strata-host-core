@@ -19,7 +19,9 @@ Rectangle {
     property alias singleLEDSlider: singleColorSlider.value
     property alias ledPulseSlider: ledPulseFrequency.value
 
-    signal motorStateSignal();
+    signal motorStateSignal()
+    signal driveModeSignal(var mode_type)
+
     Component.onCompleted:  {
         /*
           Setting the deflaut to be trapezoidal
@@ -198,7 +200,7 @@ Rectangle {
 
                 onMotorOffChanged: {
                     if(motorOff === "off") {
-                             startStopButton.checked = true;
+                        startStopButton.checked = true;
                     }
                 }
                 background: Rectangle {
@@ -279,14 +281,14 @@ Rectangle {
 
                     property var systemMode: platformInterface.set_mode.system_mode
 
-                     onSystemModeChanged: {
-                         if(systemMode === "manual") {
-                             manual.checked = true;
-                         }
-                         else {
-                             automatic.checked = true;
-                         }
-                     }
+                    onSystemModeChanged: {
+                        if(systemMode === "manual") {
+                            manual.checked = true;
+                        }
+                        else {
+                            automatic.checked = true;
+                        }
+                    }
 
                     SGRadioButton {
                         id: manual
@@ -454,6 +456,8 @@ Rectangle {
                 }
                 label: "Drive Mode:"
 
+
+
                 radioGroup: GridLayout {
                     columnSpacing: 10
                     rowSpacing: 10
@@ -462,12 +466,29 @@ Rectangle {
                     property alias ps : ps
                     property alias trap: trap
 
+                    Connections {
+                        target: advanceView
+                        onDriveModeSignal: {
+                            console.log("mode type", mode_type)
+                            if(mode_type == "Trapezoidal"){
+                                trap.checked = true;
+                                ps.checked = false;
+                            }
+
+                            else {
+                                trap.checked = false;
+                                ps.checked = true;
+                            }
+
+                        }
+                    }
                     SGRadioButton {
                         id: ps
                         text: "Pseudo-Sinusoidal"
                         onCheckedChanged: {
                             if (checked) {
                                 platformInterface.set_drive_mode.update(parseInt("1"))
+                                driveModeSignal("Pseudo-Sinusoidal");
                             }
                         }
                     }
@@ -479,6 +500,7 @@ Rectangle {
                         onCheckedChanged: {
                             if (checked) {
                                 platformInterface.set_drive_mode.update(parseInt("0"))
+                                driveModeSignal("Trapezoidal");
                             }
                         }
                     }
