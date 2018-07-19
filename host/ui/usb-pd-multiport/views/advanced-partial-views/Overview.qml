@@ -27,6 +27,9 @@ Item {
                 //label: "Power Stackup:"
                 labelLeft: false
                 barWidth: margins.width
+                maximumValue: 200
+                showThreshold: true
+                thresholdValue: 180
 
                 gaugeElements: Row {
                     id: container
@@ -34,17 +37,17 @@ Item {
 
                     SGCapacityBarElement{
                         color: miniInfo1.portColor
-                        value: 20
+                        value: 40
                     }
 
                     SGCapacityBarElement{
                         color: miniInfo2.portColor
-                        value: 20
+                        value: 40
                     }
 
                     SGCapacityBarElement{
                         color: miniInfo3.portColor
-                        value: 20
+                        value: 40
                     }
                 }
             }
@@ -59,7 +62,7 @@ Item {
                     bottom: margins.bottom
                 }
                 width: margins.width / 4 - 15
-                portColor: "#30a2db"
+                portColor: "#4eafe0"
             }
 
             PortInfoMini {
@@ -73,7 +76,7 @@ Item {
                     bottom: margins.bottom
                 }
                 width: margins.width / 4 - 15
-                portColor: "#3bb539"
+                portColor: "#69db67"
             }
 
             PortInfoMini {
@@ -87,7 +90,7 @@ Item {
                     bottom: margins.bottom
                 }
                 width: margins.width / 4 - 15
-                portColor: "#d68f14"
+                portColor: "#e09a69"
             }
 
             PortInfoMini {
@@ -130,7 +133,6 @@ Item {
             }
             width: rightColumn.width
             title: "Fault History:"
-
         }
     }
 }

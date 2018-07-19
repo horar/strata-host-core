@@ -13,7 +13,7 @@ Rectangle {
     property string unit: "V"
     property string icon: "/views/images/icon-voltage.svg"
     property real labelSize: 9
-    property real valueSize: 30
+    property real valueSize: 22
     property real unitSize: 12
     property real bottomMargin: 0
     property color textColor: "#555"
@@ -85,7 +85,7 @@ Rectangle {
         text: root.unit
         anchors {
             bottom: valueText.bottom
-            bottomMargin: 4
+            bottomMargin: 2
             left: valueText.right
             leftMargin: 5
         }

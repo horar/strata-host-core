@@ -43,6 +43,16 @@ Item {
             }
 
             Rectangle {
+                color: portColor
+                visible: portConnected
+                anchors {
+                    top: portTitle.bottom
+                }
+                height: 10
+                width: portTitle.width
+            }
+
+            Rectangle {
                 id: divider
                 width: 1
                 height: statsContainer.height
@@ -108,30 +118,34 @@ Item {
 
                     PortStatBox {
                         label: "PROFILE"
-                        value: "20 V"
+                        value: "20"
                         icon: "/views/images/icon-voltage.svg"
-                        color: root.portColor
+                        portColor: root.portColor
+                        unit: "V"
                     }
 
                     PortStatBox {
                         label: "MAX CAPACITY"
-                        value: "100 W"
+                        value: "100"
                         icon: "/views/images/icon-max.svg"
-                        color: root.portColor
+                        portColor: root.portColor
+                        unit: "W"
                     }
 
                     PortStatBox {
                         label: "POWER IN"
-                        value: "9 W"
+                        value: "9"
                         icon: "/views/images/icon-voltage.svg"
-                        color: root.portColor
+                        portColor: root.portColor
+                        unit: "W"
                     }
 
                     PortStatBox {
                         label: "POWER OUT"
-                        value: "7.8 W"
+                        value: "7.8"
                         icon: "/views/images/icon-voltage.svg"
-                        color: root.portColor
+                        portColor: root.portColor
+                        unit: "W"
                     }
 
                 }
@@ -147,26 +161,28 @@ Item {
                     spacing: column1.spacing
                     width: stats.width/2 - 2
 
-
                     PortStatBox {
                         label: "VOLTAGE OUT"
-                        value: "20.4 V"
+                        value: "20.4"
                         icon: "/views/images/icon-voltage.svg"
-                        color: root.portColor
+                        portColor: root.portColor
+                        unit: "V"
                     }
 
                     PortStatBox {
                         label: "TEMPERATURE"
-                        value: "36 °C"
+                        value: "36"
                         icon: "/views/images/icon-temp.svg"
-                        color: root.portColor
+                        portColor: root.portColor
+                        unit: "°C"
                     }
 
                     PortStatBox {
                         label: "EFFICIENCY"
-                        value: "92 %"
+                        value: "92"
                         icon: "/views/images/icon-efficiency.svg"
-                        color: root.portColor
+                        portColor: root.portColor
+                        unit: "%"
                     }
                 }
             }

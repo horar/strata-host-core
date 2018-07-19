@@ -10,21 +10,56 @@ Item {
 
     implicitWidth: 175
 
-    Text {
-        id: portNumber
-        text: "<b>Port " + root.portNum + ":</b>"
-        font {
-            pixelSize: 15
-        }
-        color: portConnected ? "black" : "#ccc"
-    }
+    Rectangle {
+        id: portNumberContainer
+        width: parent.width
+        height: portNumber.height + 10
+        color: "#f4f4f4"
 
-    SGDivider {
-        id: div1
-        color: "#ccc"
-        anchors {
-            top: portNumber.bottom
-            topMargin: 2
+        Text {
+            id: portNumber
+            text: "<b>PORT " + root.portNum + ":</b>"
+            font {
+                pixelSize: 15
+            }
+            color: portConnected ? "#555" : "#aaa"
+            anchors {
+                top: portNumberContainer.top
+                topMargin: 5
+                left: portNumberContainer.left
+                leftMargin: 5
+            }
+        }
+
+        SGDivider {
+            width: parent.width
+            color: "#999"
+            anchors {
+                bottom: parent.bottom
+            }
+            z:0
+        }
+
+        Canvas {
+            anchors {
+                fill: parent
+            }
+            visible: portConnected
+            contextType: "2d"
+
+            onPaint: {
+                context.reset();
+                context.lineWidth = 1
+                context.fillStyle = portColor;
+
+                context.beginPath();
+                context.moveTo(width * 0.75, 0);
+                context.lineTo(width, 0);
+                context.lineTo(width, height);
+                context.lineTo(width * 0.75 - height, height);
+                context.closePath();
+                context.fill();
+            }
         }
     }
 
@@ -33,7 +68,7 @@ Item {
         visible: !root.portConnected
 
         anchors {
-            top: div1.bottom
+            top: portNumberContainer.bottom
             topMargin: 8
             bottom: root.bottom
             right: root.right
@@ -70,7 +105,7 @@ Item {
         width: root.width / 2 - 2
         spacing: 2
         anchors {
-            top: div1.bottom
+            top: portNumberContainer.bottom
             topMargin: 8
         }
 
@@ -79,37 +114,40 @@ Item {
         property real sbLabelSize: 9
         property real bottomMargin: 4
 
-        PortStatBox {
+        PortStatBoxMini {
             label: "PROFILE"
-            value: "20 V"
+            value: "20"
             icon: "/views/images/icon-voltage.svg"
             height: column1.sbHeight
             valueSize: column1.sbValueSize
             labelSize: column1.sbLabelSize
-            color: root.portColor
+            portColor: root.portColor
+            unit: "V"
             bottomMargin: column1.bottomMargin
 
         }
 
-        PortStatBox {
+        PortStatBoxMini {
             label: "MAX CAPACITY"
-            value: "100 W"
+            value: "100"
             icon: "/views/images/icon-max.svg"
             height: column1.sbHeight
             valueSize: column1.sbValueSize
             labelSize: column1.sbLabelSize
-            color: root.portColor
+            portColor: root.portColor
+            unit: "W"
             bottomMargin: column1.bottomMargin
         }
 
-        PortStatBox {
+        PortStatBoxMini {
             label: "POWER IN"
-            value: "9 W"
+            value: "9"
             icon: "/views/images/icon-voltage.svg"
             height: column1.sbHeight
             valueSize: column1.sbValueSize
             labelSize: column1.sbLabelSize
-            color: root.portColor
+            portColor: root.portColor
+            unit: "W"
             bottomMargin: column1.bottomMargin
         }
     }
@@ -125,50 +163,54 @@ Item {
             top: column1.top
         }
 
-        PortStatBox {
+        PortStatBoxMini {
             label: "VOLTAGE OUT"
-            value: "20.4 V"
+            value: "20.4"
             icon: "/views/images/icon-voltage.svg"
             height: column1.sbHeight
             valueSize: column1.sbValueSize
             labelSize: column1.sbLabelSize
-            color: root.portColor
+            portColor: root.portColor
+            unit: "V"
             bottomMargin: column1.bottomMargin
         }
 
-        PortStatBox {
+        PortStatBoxMini {
             label: "TEMPERATURE"
-            value: "36 °C"
+            value: "36"
             icon: "/views/images/icon-temp.svg"
             height: column1.sbHeight
             valueSize: column1.sbValueSize
             labelSize: column1.sbLabelSize
-            color: root.portColor
+            portColor: root.portColor
+            unit: "°C"
             bottomMargin: column1.bottomMargin
         }
 
-        PortStatBox {
+        PortStatBoxMini {
             label: "POWER OUT"
-            value: "7.8 W"
+            value: "7.8"
             icon: "/views/images/icon-voltage.svg"
             height: column1.sbHeight
             valueSize: column1.sbValueSize
             labelSize: column1.sbLabelSize
-            color: root.portColor
+            portColor: root.portColor
+            unit: "W"
             bottomMargin: column1.bottomMargin
         }
     }
 
-    PortStatBox {
+    PortStatBoxMini {
         label: "EFFICIENCY"
         visible: root.portConnected
-        value: "92 %"
+        value: "92"
         icon: "/views/images/icon-efficiency.svg"
         height: column1.sbHeight
         width: column1.width
         valueSize: column1.sbValueSize
         labelSize: column1.sbLabelSize
-        color: root.portColor
+        portColor: root.portColor
+        unit: "%"
         bottomMargin: column1.bottomMargin
         anchors {
             top: column1.bottom

@@ -19,20 +19,6 @@ Rectangle {
     property color textColor: "#555"
     property color portColor: "#2eb457"
 
-    Image {
-        id: iconImage
-        source: root.icon
-        opacity: 0.05
-        height: root.height * 0.9
-        width: height
-        anchors {
-            verticalCenter: parent.verticalCenter
-            right: parent.right
-            rightMargin: root.height * 0.05
-        }
-        mipmap: true
-    }
-
     Item {
         id: labelBar
         width: parent.width
@@ -57,7 +43,7 @@ Rectangle {
             id: underline
             color: "#ccc"
             height: 1
-            width: labelText.width + 6
+            width: parent.width
             anchors {
                 bottom: parent.bottom
             }
@@ -85,7 +71,7 @@ Rectangle {
         text: root.unit
         anchors {
             bottom: valueText.bottom
-            bottomMargin: 4
+            bottomMargin: 3
             left: valueText.right
             leftMargin: 5
         }
@@ -93,4 +79,17 @@ Rectangle {
             pixelSize: root.unitSize
         }
     }
+
+//    Image {
+//        id: iconImage
+//        source: root.icon
+//        opacity: 0.2
+//        height: root.height * 1.5
+//        width: height
+//        anchors {
+//            verticalCenter: parent.verticalCenter
+//            right: parent.right
+//            rightMargin: 5
+//        }
+//    }
 }

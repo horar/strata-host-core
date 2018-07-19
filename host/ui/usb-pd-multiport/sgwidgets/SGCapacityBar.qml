@@ -110,7 +110,7 @@ Item {
 
         Gauge {
             id: gauge
-            width: capacityBarContainer.width
+            width: capacityBarContainer.width + 0.5
             anchors {
                  top: capacityBar.bottom
                  topMargin: 0

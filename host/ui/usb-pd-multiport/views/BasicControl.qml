@@ -25,6 +25,58 @@ Item {
         source: "images/basic-background.png"
     }
 
+    AnimatedImage {
+        id: animation
+        property bool pluggedIn: false
+        source: "images/cord.gif"
+        height: 81 * ratioCalc
+        width: 350 * ratioCalc
+        playing: false
+        x: 748 * ratioCalc
+        y: 83 * ratioCalc
+        onCurrentFrameChanged: {
+            if (currentFrame === frameCount-1) {
+                playing = false
+            }
+        }
+
+        Rectangle {
+            id: coverup1
+            width: 8 * ratioCalc
+            height: 50 * ratioCalc
+            color: "#bab9bc"
+            anchors {
+                left: animation.left
+                leftMargin: 10 * ratioCalc
+                bottom: animation.bottom
+                bottomMargin: 0
+            }
+
+            Rectangle {
+                color: "black"
+                opacity: .25
+                width: 2 * ratioCalc
+                height: 23 * ratioCalc
+                anchors {
+                    left: parent.right
+                    verticalCenter: parent.verticalCenter
+                    verticalCenterOffset: 2
+                }
+            }
+
+            Rectangle {
+                id: coverup2
+                width: 9 * ratioCalc
+                height: 50 * ratioCalc
+                color: "#d1d1d4"
+                anchors {
+                    right: parent.left
+                    verticalCenter: parent.verticalCenter
+                }
+            }
+        }
+    }
+
     Item {
         id: inputColumn
         width: 310 * ratioCalc
@@ -91,6 +143,7 @@ Item {
                 left: portColumn.left
                 right: portColumn.right
             }
+            portNumber: 1
         }
 
         PortInfo {
@@ -102,6 +155,7 @@ Item {
                 left: portColumn.left
                 right: portColumn.right
             }
+            portNumber: 2
         }
 
         PortInfo {
@@ -113,6 +167,7 @@ Item {
                 left: portColumn.left
                 right: portColumn.right
             }
+            portNumber: 3
         }
 
         PortInfo {
@@ -124,6 +179,7 @@ Item {
                 left: portColumn.left
                 right: portColumn.right
             }
+            portNumber: 4
         }
 
         SGLayoutDebug {
@@ -144,14 +200,35 @@ Item {
             anchors {
                 top: parent.top
                 topMargin: 55 * ratioCalc
+                right: parent.right
             }
 
-            width: parent.width
+            width: parent.width - (100 * ratioCalc)
             spacing: 20
 
             DeviceInfo {
                 height: portInfo1.height
                 width: parent.width
+                MouseArea {
+                    anchors {
+                        fill: parent
+                    }
+                    onClicked: {
+                        if (!animation.pluggedIn) {
+                            animation.source = "images/cord.gif"
+                            animation.currentFrame = 0
+                            animation.playing = true
+                            animation.pluggedIn = !animation.pluggedIn
+                        } else {
+                            animation.source = "images/cordReverse.gif"
+                            animation.currentFrame = 0
+                            animation.playing = true
+                            animation.pluggedIn = !animation.pluggedIn
+                        }
+
+
+                    }
+                }
             }
 
             DeviceInfo {

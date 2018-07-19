@@ -170,6 +170,7 @@ Item {
             width: portGraphs.width /  Math.max(1, graphSelector.howManyChecked)
             yAxisTitle: "Test"
             xAxisTitle: "Test"
+            repeatingData: visible
         }
 
         SGGraph {
@@ -184,6 +185,7 @@ Item {
             width: portGraphs.width /  Math.max(1, graphSelector.howManyChecked)
             yAxisTitle: "Test"
             xAxisTitle: "Test"
+            repeatingData: visible
         }
 
         SGGraph {
@@ -198,6 +200,7 @@ Item {
             width: portGraphs.width /  Math.max(1, graphSelector.howManyChecked)
             yAxisTitle: "Test"
             xAxisTitle: "Test"
+            repeatingData: visible
         }
 
         SGGraph {
@@ -212,6 +215,7 @@ Item {
             width: portGraphs.width /  Math.max(1, graphSelector.howManyChecked)
             yAxisTitle: "Test"
             xAxisTitle: "Test"
+            repeatingData: visible
         }
 
         SGGraph {
@@ -226,6 +230,7 @@ Item {
             width: portGraphs.width /  Math.max(1, graphSelector.howManyChecked)
             yAxisTitle: "Test"
             xAxisTitle: "Test"
+            repeatingData: visible
         }
 
         SGGraph {
@@ -240,6 +245,7 @@ Item {
             width: portGraphs.width /  Math.max(1, graphSelector.howManyChecked)
             yAxisTitle: "Test"
             xAxisTitle: "Test"
+            repeatingData: visible
         }
     }
 }

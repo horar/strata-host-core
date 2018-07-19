@@ -59,7 +59,7 @@ Item {
                 title: "<b>Port 3</b>"
                 open: true
                 contents: SGPopout {
-                    portNumber: 13
+                    portNumber: 3
                     portColor: "#d68f14"
                 }
             }

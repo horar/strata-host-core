@@ -101,6 +101,7 @@ Item {
                 id: sleepMode
                 label: "Sleep Mode:"
                 activeTextColor: "white"
+                textColor: "#666"
                 radius: 4
                 buttonHeight: 25
                 anchors {
