@@ -22,6 +22,7 @@ Rectangle {
     signal driveModeSignal(var mode_type)
 
     function resetData(){
+        manual.checked = true;
         motorSpeedSliderValue = 1500
         rampRateSliderValue = 3
         phaseAngle = 15
