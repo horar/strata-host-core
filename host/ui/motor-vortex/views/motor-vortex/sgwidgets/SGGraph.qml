@@ -26,7 +26,6 @@ ChartView {
     }
 
     property alias series: dataLine
-    property alias repeatingData: dataRepeater.running
 
     property int textSize: 14
     property color dataLineColor: Qt.rgba(0, 0, 0, 1)
@@ -44,14 +43,17 @@ ChartView {
     property bool showYGrids: false
 
     property bool showOptions: false
-    property bool rolling: false
-    property real rollingRange
-    property bool rollingCentered: false
+    property real rollingWindow
+    property bool centered: false
+    property bool throttlePlotting: true
 
+    property bool repeatOldData: true
     property real inputData
     property real dataTime: 0
-    property real time: Date.now()
-    property real lastDataTime
+    property real graphTime: 0
+    property real lastInputTime: Date.now()
+    property real lastPlottedTime: Date.now()
+    property real lastRedrawTime: Date.now()
 
     // Define x-axis to be used with the series instead of default one
     ValueAxis {
@@ -64,7 +66,7 @@ ChartView {
         gridVisible: showXGrids
         gridLineColor: rootChart.gridLineColor
 //        tickCount: 11  //  applyNiceNumbers() takes care of this based on range
-        labelFormat: "%.0f"
+        labelFormat: "%.1f"
         labelsFont.pixelSize: rootChart.textSize*.8
         labelsColor: textColor
     }
@@ -127,91 +129,100 @@ ChartView {
         }
 
         Button {
-            id: rollingToggle
-            checkable: true
-            checked: rootChart.rolling
-            text: rootChart.rolling ? "Rolling On" : "Rolling Off"
-            onClicked: {
-                rootChart.rolling = !rootChart.rolling
-                if (!rootChart.rolling) { rootChart.rollingCentered = false; }
-            }
-        }
-
-        Button {
-            id: rollingCenteredToggle
+            id: centeredToggle
             anchors {
-                left: rollingToggle.right
+                left: parent.left
             }
             checkable: true
-            checked: rootChart.rollingCentered
-            text: rootChart.rollingCentered ? "Centered On" : "Centered Off"
+            checked: rootChart.centered
+            text: rootChart.centered ? "Centered On" : "Centered Off"
             onClicked: {
-                rootChart.rollingCentered = !rootChart.rollingCentered
-                if (rootChart.rollingCentered) { rootChart.rolling = true; }
+                rootChart.centered = !rootChart.centered
             }
         }
     }
 
+    // If unthrottled, rolling graph redraws can bog down CPU when there are many data points are being plotted
+    // Timer limits graph redraw to 10 times per second (rather than with every incoming data point)
     Timer {
-        id: dataRepeater
+        id: redrawTimer
         interval: 100
+        running: true
+        repeat: true
+        onTriggered: {
+            redrawGraph()
+        }
+    }
+
+    // If repeatOldData is true, plot the last data point again if a new point hasn't been plotted in 200ms
+    Timer {
+        id: repeatTimer
+        interval: 200
         running: false
         repeat: true
         onTriggered: {
-            if ( Date.now() - lastDataTime > 100 ) { appendData() } // Don't append data if the last data point was within the timer interval
+            if (timeSinceLastPlot() > 200) {
+                appendData()
+            }
         }
     }
 
-    onInputDataChanged: { appendData() }
-
-    onRollingChanged: {
-        valueAxisX.min = minXValue;
-        valueAxisX.max = maxXValue;
-        valueAxisY.applyNiceNumbers();  // Automatically determine axis ticks
-        valueAxisX.applyNiceNumbers();
-        rootChart.rolling ? valueAxisX.labelFormat = "%.2f" : valueAxisX.labelFormat = "%.0f";
+    onInputDataChanged: {
+        if ( !throttlePlotting ){
+            appendData()
+        } else if (timeSinceLastPlot() >= 100) { // Under throttle condition: Won't plot unless it has been 100ms since last plot
+            appendData()
+        }
     }
 
     Component.onCompleted: {
         valueAxisY.applyNiceNumbers();  // Automatically determine axis ticks
         valueAxisX.applyNiceNumbers();
-        rootChart.rollingRange = maxXValue - minXValue;
+        rootChart.rollingWindow = maxXValue - minXValue;
+        if ( repeatOldData ) {
+            repeatTimer.running = true
+        }
     }
 
     function appendData() {
-        //console.log(valueAxisX.max + "  " + valueAxisX.min + "  " + dataTime);
-        if (!rolling){
-            rootChart.dataTime += calculateDataInterval();
-            dataLine.append(rootChart.dataTime, inputData);
-            if (rootChart.dataTime >= maxXValue){
-                rootChart.dataTime = minXValue;
-                dataLine.clear();
-                dataLine.append(rootChart.dataTime, inputData);
-            }
-        } else {
-            rootChart.dataTime += calculateDataInterval();
-            dataLine.append(rootChart.dataTime, inputData);
-            if (rollingCentered){
-                if (rootChart.dataTime >= maxXValue - (rollingRange/2)){
-                    valueAxisX.max = rootChart.dataTime + rollingRange/2;
-                    valueAxisX.min = valueAxisX.max - rollingRange;
-                    if (dataLine.at(0).x < rootChart.dataTime - rollingRange/2) { dataLine.remove(0) } // Remove points that are outside of view
-                }
-            } else {
-                if (rootChart.dataTime >= maxXValue){
-                    valueAxisX.max = rootChart.dataTime;
-                    valueAxisX.min = valueAxisX.max - rollingRange;
-                    if (dataLine.at(0).x < rootChart.dataTime - rollingRange/2) { dataLine.remove(0) }
-                }
-            }
-        }
-        lastDataTime = Date.now()
+        rootChart.dataTime += timeSinceLastInputData();
+        lastPlottedTime = Date.now()
+        dataLine.append(rootChart.dataTime, inputData);
     }
 
-    function calculateDataInterval(){
-        var tick = Date.now();
-        var seconds = (tick - time)/1000;
-        time = tick;
+    function redrawGraph() {
+        rootChart.graphTime += timeSinceLastRedraw();
+        if (centered){
+            valueAxisX.max = rootChart.graphTime + rollingWindow/2;
+        } else {
+            valueAxisX.max = rootChart.graphTime
+        }
+        valueAxisX.min = valueAxisX.max - rollingWindow;
+        trimData()
+    }
+
+    // Remove points that are outside of view to save memory
+    function trimData() {
+        if (dataLine.at(0).x < rootChart.dataTime - rollingWindow * 1.1) {
+            dataLine.remove(0)
+            trimData() // Recurse to remove other points that may remain due centered view change
+        }
+        return
+    }
+
+    function timeSinceLastInputData(){
+        var seconds = (Date.now() - lastInputTime)/1000;
+        lastInputTime = Date.now();
+        return seconds;
+    }
+
+    function timeSinceLastPlot(){
+        return Date.now() - lastPlottedTime;
+    }
+
+    function timeSinceLastRedraw(){
+        var seconds = (Date.now() - lastRedrawTime) / 1000;
+        lastRedrawTime = Date.now()
         return seconds;
     }
 }

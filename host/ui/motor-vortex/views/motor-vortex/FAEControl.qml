@@ -138,7 +138,6 @@ Rectangle {
             yAxisTitle: "Voltage"
             inputData: platformInterface.input_voltage_notification.vin
             maxYValue: 15
-            repeatingData: true
         }
 
         SGGraph{
@@ -154,7 +153,6 @@ Rectangle {
             yAxisTitle: "RPM"
             inputData: platformInterface.pi_stats.current_speed
             maxYValue: 6500
-            repeatingData: true
         }
 
         SGStatusListBox {
