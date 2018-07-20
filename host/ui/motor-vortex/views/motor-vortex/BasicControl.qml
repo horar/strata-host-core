@@ -17,16 +17,14 @@ Rectangle {
 
     property alias motorSpeedSliderValue: motorSpeedControl.value
 
-
     Component.onCompleted: {
         platformInterface.system_mode_selection.update("manual")
     }
 
-
     // Control Section
     Rectangle {
         id: controlSection1
-        width: leftControl.width + rightControl.width
+        width: leftControl.width + rightControl.width + rightControl.anchors.leftMargin
         height: parent.height / 2
         anchors {
             verticalCenter: parent.verticalCenter
@@ -158,6 +156,60 @@ Rectangle {
                         }
                     }
                 }
+            }
+        }
+
+        Rectangle {
+            id: warningBox
+            color: "red"
+            anchors {
+                bottom: rightControl.top
+                horizontalCenter: rightControl.horizontalCenter
+                bottomMargin: 30
+            }
+            width: warningText.contentWidth + 100
+            height: warningText.contentHeight + 40
+            visible: platformInterface.system_error.error_and_warnings === [ ]
+
+            Text {
+                id: warningText
+                anchors {
+                    centerIn: parent
+                }
+                text: "See Advanced Controls for Current Fault Status"
+                font.pixelSize: 12
+                color: "white"
+            }
+
+            Text {
+                id: warningIcon1
+                anchors {
+                    right: warningText.left
+                    verticalCenter: warningText.verticalCenter
+                    rightMargin: 10
+                }
+                text: "\ue80e"
+                font.family: icons.name
+                font.pixelSize: 40
+                color: "white"
+            }
+
+            Text {
+                id: warningIcon2
+                anchors {
+                    left: warningText.right
+                    verticalCenter: warningText.verticalCenter
+                    leftMargin: 10
+                }
+                text: "\ue80e"
+                font.family: icons.name
+                font.pixelSize: 40
+                color: "white"
+            }
+
+            FontLoader {
+                id: icons
+                source: "sgwidgets/fonts/sgicons.ttf"
             }
         }
     } // end Control Section Rectangle
