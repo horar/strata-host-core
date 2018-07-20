@@ -36,7 +36,7 @@ Window {
         showXGrids: false               // Default: false
         showYGrids: true                // Default: false
         showOptions: true               // Default: false
-        repeatingData: false            // default: false (!!Resource Heavy!! - last data point will repeat itself until new data is graphed)
+        throttlePlotting: false         // Default: true - Only plots data every 100ms to save CPU & memory resources, otherwise plots whenever inputData changes
     }
 
     // Sends demo data stream with adjustible timing interval output
@@ -44,7 +44,7 @@ Window {
         id: graphData
         property real stream
         property real count: 0
-        interval: 100
+        interval: 10
         running: true
         repeat: true
         onTriggered: {
