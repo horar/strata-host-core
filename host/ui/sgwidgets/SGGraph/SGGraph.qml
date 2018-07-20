@@ -51,8 +51,7 @@ ChartView {
     property real inputData
     property real dataTime: 0
     property real graphTime: 0
-    property real time: Date.now()
-    property real dataTimeInterval
+    property real lastInputTime: Date.now()
     property real lastPlottedTime: Date.now()
     property real lastRedrawTime: Date.now()
 
@@ -162,7 +161,7 @@ ChartView {
         running: false
         repeat: true
         onTriggered: {
-            if (calculateTimeSinceLastPlot() > 200) {
+            if (timeSinceLastPlot() > 200) {
                 appendData()
             }
         }
@@ -171,7 +170,7 @@ ChartView {
     onInputDataChanged: {
         if ( !throttlePlotting ){
             appendData()
-        } else if (calculateTimeSinceLastPlot() >= 100) { // Under throttle condition: Won't plot unless it has been 100ms since last plot
+        } else if (timeSinceLastPlot() >= 100) { // Under throttle condition: Won't plot unless it has been 100ms since last plot
             appendData()
         }
     }
@@ -186,7 +185,7 @@ ChartView {
     }
 
     function appendData() {
-        rootChart.dataTime += calculateDataInterval();
+        rootChart.dataTime += timeSinceLastInputData();
         lastPlottedTime = Date.now()
         dataLine.append(rootChart.dataTime, inputData);
     }
@@ -211,13 +210,13 @@ ChartView {
         return
     }
 
-    function calculateDataInterval(){
-        var seconds = (Date.now() - time)/1000;
-        time = Date.now();
+    function timeSinceLastInputData(){
+        var seconds = (Date.now() - lastInputTime)/1000;
+        lastInputTime = Date.now();
         return seconds;
     }
 
-    function calculateTimeSinceLastPlot(){
+    function timeSinceLastPlot(){
         return Date.now() - lastPlottedTime;
     }
 
