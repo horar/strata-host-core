@@ -15,8 +15,6 @@ Item {
     width: parent.width
     height: graphSelector.nothingChecked ? portSettings.height : portSettings.height + portGraphs.height
 
-    //TODO - Faller: when port is disconnected, close graphs
-
     PortInfo {
         id: portInfo
         anchors {
@@ -170,7 +168,7 @@ Item {
             width: portGraphs.width /  Math.max(1, graphSelector.howManyChecked)
             yAxisTitle: "Test"
             xAxisTitle: "Test"
-            repeatingData: visible
+            repeatOldData: visible
         }
 
         SGGraph {
@@ -185,7 +183,7 @@ Item {
             width: portGraphs.width /  Math.max(1, graphSelector.howManyChecked)
             yAxisTitle: "Test"
             xAxisTitle: "Test"
-            repeatingData: visible
+            repeatOldData: visible
         }
 
         SGGraph {
@@ -200,7 +198,7 @@ Item {
             width: portGraphs.width /  Math.max(1, graphSelector.howManyChecked)
             yAxisTitle: "Test"
             xAxisTitle: "Test"
-            repeatingData: visible
+            repeatOldData: visible
         }
 
         SGGraph {
@@ -215,7 +213,7 @@ Item {
             width: portGraphs.width /  Math.max(1, graphSelector.howManyChecked)
             yAxisTitle: "Test"
             xAxisTitle: "Test"
-            repeatingData: visible
+            repeatOldData: visible
         }
 
         SGGraph {
@@ -230,7 +228,7 @@ Item {
             width: portGraphs.width /  Math.max(1, graphSelector.howManyChecked)
             yAxisTitle: "Test"
             xAxisTitle: "Test"
-            repeatingData: visible
+            repeatOldData: visible
         }
 
         SGGraph {
@@ -245,7 +243,7 @@ Item {
             width: portGraphs.width /  Math.max(1, graphSelector.howManyChecked)
             yAxisTitle: "Test"
             xAxisTitle: "Test"
-            repeatingData: visible
+            repeatOldData: visible
         }
     }
 }
