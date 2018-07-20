@@ -26,7 +26,8 @@ Item {
     }
 
     GraphDrawer {
-        z:10
+        id: graphDrawer
+        z: 10
     }
 
     PlugAnimation {
@@ -91,7 +92,7 @@ Item {
             height: 428 * ratioCalc
 
             Text {
-                text: "Input power conversion info goes here"
+                text: "No compatible input power conversion device connected"
                 anchors.centerIn: parent
             }
         }
@@ -120,6 +121,9 @@ Item {
                 right: portColumn.right
             }
             portNumber: 1
+            onShowGraph: {
+                graphDrawer.state = "open"
+            }
         }
 
         PortInfo {
@@ -132,6 +136,9 @@ Item {
                 right: portColumn.right
             }
             portNumber: 2
+            onShowGraph: {
+                graphDrawer.state = "open"
+            }
         }
 
         PortInfo {
@@ -144,6 +151,9 @@ Item {
                 right: portColumn.right
             }
             portNumber: 3
+            onShowGraph: {
+                graphDrawer.state = "open"
+            }
         }
 
         PortInfo {
@@ -156,6 +166,9 @@ Item {
                 right: portColumn.right
             }
             portNumber: 4
+            onShowGraph: {
+                graphDrawer.state = "open"
+            }
         }
 
         SGLayoutDebug {

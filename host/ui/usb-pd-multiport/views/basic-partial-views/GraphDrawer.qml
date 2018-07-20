@@ -4,11 +4,10 @@ import QtQuick.Controls 2.2
 Item {
     id:root
 
-    property alias drawerMenuItems: drawerMenuItems.sourceComponent
-
     property real slideDuration: 200
     property real menuWidth: 450
-    property real hintWidth: 20
+    property real hintWidth: 0 //20
+    property alias state: menuContainer.state
 
     anchors {
         fill: parent
@@ -21,6 +20,14 @@ Item {
         x: root.width-hintWidth
         z: 3
         color: "#282a2b"
+
+        MouseArea {
+            // This blocks all mouseEvents from propagating through the menu to stuff below
+            anchors { fill: parent }
+            hoverEnabled: true
+            preventStealing: true
+            propagateComposedEvents: false
+        }
 
         Column  {
             id: menuItems
@@ -130,95 +137,15 @@ Item {
                 }
             }
         ]
-    }
 
-    Loader {
-        id: drawerMenuItems
-
-        property color menuContainerColor: menuContainer.color
-        property real slideDuration: root.slideDuration
-
-        height: root.height
-        x: menuContainer.x
-        z: 2
-
-        Component.onCompleted: {
-            for (var child_id in drawerMenuItems.children[0].children) {
-                drawerMenuItems.children[0].children[child_id].menuItem.parent = menuItems
-                drawerMenuItems.children[0].children[child_id].opened.connect(opener)
-                drawerMenuItems.children[0].children[child_id].closed.connect(closer)
+        Text {
+            text: "<b>Graphs Here</b>"
+            font {
+                pixelSize: 50
             }
-        }
-
-        states: [
-            State {
-                name: "open"
-            },
-            State {
-                name: "closed"
-            }
-        ]
-
-        transitions: [ Transition {
-                from: "*"
-                to: "open"
-                NumberAnimation {
-                    target: drawerMenuItems
-                    property: "x"
-                    duration: root.slideDuration
-                    from: drawerMenuItems.x
-                    to: menuContainer.x - drawerMenuItems.width
-                }
-                onRunningChanged: {
-                    if (running){
-                        //
-                    }
-                }
-            },
-            Transition {
-                from: "open"
-                to: "closed"
-                NumberAnimation {
-                    target: drawerMenuItems
-                    property: "x"
-                    duration: root.slideDuration
-                    to: root.width-hintWidth
-                    from: drawerMenuItems.x
-                }
-                onRunningChanged: {
-                    if (!running){
-                        for (var child_id in drawerMenuItems.children[0].children) {
-                            drawerMenuItems.children[0].children[child_id].state = "closed"
-                        }
-                        drawerMenuItems.x = Qt.binding(function() { return menuContainer.x})
-                    }
-                }
-            }
-        ]
-
-        // Function called on opened() from menuItems, closes all other menuItems
-        function opener(label, width){
-            drawerMenuItems.width = width
-            if (drawerMenuItems.state === "open") {
-                drawerMenuItems.x = menuContainer.x - drawerMenuItems.width
-            } else {
-                drawerMenuItems.state = "open"
-            }
-            for (var child_id in drawerMenuItems.children[0].children) {
-                if (drawerMenuItems.children[0].children[child_id].label !== label){
-                    drawerMenuItems.children[0].children[child_id].state = "closed"
-                    drawerMenuItems.children[0].children[child_id].triOpacity = 0
-                } else {
-                    drawerMenuItems.children[0].children[child_id].state = "open"
-                }
-            }
-        }
-
-        // Function called on closed() from menuItems, closes all menuItems
-        function closer(){
-            drawerMenuItems.state = "closed"
-            for (var child_id in drawerMenuItems.children[0].children) {
-                    drawerMenuItems.children[0].children[child_id].fadeTri.start()
+            color: "#fff"
+            anchors {
+                centerIn: parent
             }
         }
     }
@@ -229,13 +156,13 @@ Item {
             left: root.left
             top: root.top
             bottom: root.bottom
-            right: drawerMenuItems.left
+            right: menuContainer.left
         }
-        hoverEnabled: true
+        //hoverEnabled: true
         visible: false
-        onEntered: {
+        onClicked: {
             menuContainer.state = "closed"
-            drawerMenuItems.closer()
+            //drawerMenuItems.closer()
         }
     }
 

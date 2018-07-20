@@ -10,6 +10,8 @@ Rectangle {
     property color portColor: "#30a2db"
     property int portNumber: 1
 
+    signal showGraph()
+
     color: "white"
 
     width: 400
@@ -54,6 +56,7 @@ Rectangle {
                 }
                 height: 20
                 width: 60
+                onClicked: root.showGraph()
             }
 
             Rectangle {
