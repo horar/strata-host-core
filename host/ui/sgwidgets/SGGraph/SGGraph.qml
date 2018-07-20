@@ -43,16 +43,17 @@ ChartView {
     property bool showYGrids: false
 
     property bool showOptions: false
-    property real rollingRange
+    property real rollingWindow
     property bool centered: false
     property bool throttlePlotting: true
 
+    property bool repeatOldData: true
     property real inputData
     property real dataTime: 0
     property real time: Date.now()
     property real dataTimeInterval
-    property real lastPlottedTime: time
-
+    property real lastPlottedTime: Date.now()
+    property real lastRedrawTime: Date.now()
 
     // Define x-axis to be used with the series instead of default one
     ValueAxis {
@@ -141,76 +142,49 @@ ChartView {
         }
     }
 
-    Timer {
-        id: throttleTimer
-        interval: 100
-        running: false
-        repeat: true
-        onTriggered: {
-            appendThrottledData()
-            redrawGraph()
-        }
-    }
-
-    // If unthrottled and data points are coming in FAST (every <50ms) and dataLine has many to manage (300+), rolling graph redraws are very cpu costly.
-    // This timer limits how many times per second the graph is redrawn rather than with every incoming data point
-    Timer {
-        id: graphRedrawTimer
-        interval: 100
-        running: true
-        repeat: true
-        onTriggered: {
-            console.log( dataLine.count)
-            redrawGraph()
-        }
-    }
-
     onInputDataChanged: {
         if ( !throttlePlotting ){
-            appendUnthrottledData()
-        } else {
-            if (calculateTimeSinceLastPlot() > .1) {
-                appendUnthrottledData()
+            appendData()
+
+            // If unthrottled and data points are coming in FAST (every <50ms) and dataLine has many to manage (300+), rolling graph redraws can bog down CPU
+            // This timer limits how many times per second the graph is redrawn rather than with every incoming data point
+            if (calculateTimeSinceLastRedraw() >= 0.1) {
+                redrawGraph()
             }
+        } else if (calculateTimeSinceLastPlot() >= 0.1){
+            appendData()
+            redrawGraph()
         }
     }
 
     Component.onCompleted: {
         valueAxisY.applyNiceNumbers();  // Automatically determine axis ticks
         valueAxisX.applyNiceNumbers();
-        rootChart.rollingRange = maxXValue - minXValue;
-//        if ( !throttlePlotting ) {
-//            throttleTimer.running = false
-//            dataTimeInterval = throttleTimer.interval / 1000
-//        } else {
-//            graphRedrawTimer.running = false
+        rootChart.rollingWindow = maxXValue - minXValue;
+//        if ( repeatOldData ) {
+//            graphRedrawTimer.running = true
 //        }
     }
 
-    function appendThrottledData() {
-        rootChart.dataTime += dataTimeInterval;
-        dataLine.append(rootChart.dataTime, inputData);
-        lastPlottedTime = Date.now()
-    }
-
-    function appendUnthrottledData() {
+    function appendData() {
         rootChart.dataTime += calculateDataInterval();
         dataLine.append(rootChart.dataTime, inputData);
         lastPlottedTime = Date.now()
-
     }
 
     function redrawGraph() {
+        console.log( dataLine.count )
+        lastRedrawTime = Date.now()
         if (centered){
-            if (rootChart.dataTime >= maxXValue - (rollingRange/2)){
-                valueAxisX.max = rootChart.dataTime + rollingRange/2;
-                valueAxisX.min = valueAxisX.max - rollingRange;
+            if (rootChart.dataTime >= maxXValue - (rollingWindow/2)){
+                valueAxisX.max = rootChart.dataTime + rollingWindow/2;
+                valueAxisX.min = valueAxisX.max - rollingWindow;
                 trimData()
             }
         } else {
             if (rootChart.dataTime >= maxXValue){
                 valueAxisX.max = rootChart.dataTime;
-                valueAxisX.min = valueAxisX.max - rollingRange;
+                valueAxisX.min = valueAxisX.max - rollingWindow;
                 trimData()
             }
         }
@@ -218,7 +192,7 @@ ChartView {
 
     // Remove points that are outside of view to save memory
     function trimData() {
-        if (dataLine.at(0).x < rootChart.dataTime - rollingRange * 1.01) {
+        if (dataLine.at(0).x < rootChart.dataTime - rollingWindow * 1.1) {
             dataLine.remove(0)
             trimData() // Recurse to remove other points that may remain due centered view change
         }
@@ -233,5 +207,9 @@ ChartView {
 
     function calculateTimeSinceLastPlot(){
         return (Date.now() - lastPlottedTime)/1000;
+    }
+
+    function calculateTimeSinceLastRedraw(){
+        return (Date.now() - lastRedrawTime)/1000;
     }
 }

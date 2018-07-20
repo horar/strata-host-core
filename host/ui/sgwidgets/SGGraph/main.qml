@@ -36,7 +36,8 @@ Window {
         showXGrids: false               // Default: false
         showYGrids: true                // Default: false
         showOptions: true               // Default: false
-        throttlePlotting: false         // Default: true - Only plots data every 100ms to save CPU & memory resources, otherwise plots whenever inputData changes
+        throttlePlotting: true          // Default: true - Plots new data at a max of 100ms to save CPU & memory resources, otherwise plots points whenever inputData changes
+        repeatOldData: true             // Default: true -
     }
 
     // Sends demo data stream with adjustible timing interval output
@@ -44,7 +45,7 @@ Window {
         id: graphData
         property real stream
         property real count: 0
-        interval: 10
+        interval: 100
         running: true
         repeat: true
         onTriggered: {
