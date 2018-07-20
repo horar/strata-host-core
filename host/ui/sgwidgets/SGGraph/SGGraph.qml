@@ -26,6 +26,8 @@ ChartView {
     }
 
     property alias series: dataLine
+    property alias running: redrawTimer.running
+    property alias repeatOldData: repeatTimer.running
 
     property int textSize: 14
     property color dataLineColor: Qt.rgba(0, 0, 0, 1)
@@ -47,7 +49,6 @@ ChartView {
     property bool centered: false
     property bool throttlePlotting: true
 
-    property bool repeatOldData: true
     property real inputData
     property real dataTime: 0
     property real graphTime: 0
@@ -147,7 +148,7 @@ ChartView {
     Timer {
         id: redrawTimer
         interval: 100
-        running: true
+        running: root.visible
         repeat: true
         onTriggered: {
             redrawGraph()
@@ -158,7 +159,7 @@ ChartView {
     Timer {
         id: repeatTimer
         interval: 200
-        running: false
+        running: root.visible
         repeat: true
         onTriggered: {
             if (timeSinceLastPlot() > 200) {
@@ -179,9 +180,6 @@ ChartView {
         valueAxisY.applyNiceNumbers();  // Automatically determine axis ticks
         valueAxisX.applyNiceNumbers();
         rootChart.rollingWindow = maxXValue - minXValue;
-        if ( repeatOldData ) {
-            repeatTimer.running = true
-        }
     }
 
     function appendData() {
