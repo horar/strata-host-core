@@ -82,39 +82,12 @@ Rectangle {
     }
 
     ScrollView {
-        id: controlContainer
-
-        property int currentIndex: 0
-
-        onCurrentIndexChanged: {
-            switch (currentIndex){
-                case 0:
-                    basicView.visible = true
-                    advanceView.visible = false
-                    faeView.visible = false
-                    break;
-                case 1:
-                    basicView.visible = false
-                    advanceView.visible = true
-                    faeView.visible = false
-                    break;
-                case 2:
-                    basicView.visible = false
-                    advanceView.visible = false
-                    faeView.visible = true
-                    break;
-            }
-        }
-
-        contentWidth: 1200
-        contentHeight: 725
         anchors {
             top: navTabs.bottom
             bottom: parent.bottom
             right: parent.right
             left: parent.left
         }
-        clip:true
 
         onWidthChanged: {
             if (width < 1200) {
@@ -132,19 +105,53 @@ Rectangle {
             }
         }
 
-        BasicControl {
-            id: basicView
-            visible: true
-        }
+        Flickable {
+            id: controlContainer
 
-        AdvancedControl {
-            id: advanceView
-            visible: false
-        }
+            property int currentIndex: 0
 
-        FAEControl {
-            id : faeView
-            visible: false
+            onCurrentIndexChanged: {
+                switch (currentIndex){
+                case 0:
+                    basicView.visible = true
+                    advanceView.visible = false
+                    faeView.visible = false
+                    break;
+                case 1:
+                    basicView.visible = false
+                    advanceView.visible = true
+                    faeView.visible = false
+                    break;
+                case 2:
+                    basicView.visible = false
+                    advanceView.visible = false
+                    faeView.visible = true
+                    break;
+                }
+            }
+
+            boundsBehavior: Flickable.StopAtBounds
+            contentWidth: 1200
+            contentHeight: 725
+            anchors {
+                fill: parent
+            }
+            clip: true
+
+            BasicControl {
+                id: basicView
+                visible: true
+            }
+
+            AdvancedControl {
+                id: advanceView
+                visible: false
+            }
+
+            FAEControl {
+                id : faeView
+                visible: false
+            }
         }
     }
 
