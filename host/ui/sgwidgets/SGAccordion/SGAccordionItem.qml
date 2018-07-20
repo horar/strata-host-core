@@ -1,148 +1,140 @@
-import QtQuick 2.7
+import QtQuick 2.9
 import QtQuick.Layouts 1.3
 
 // SGAccordionItem is a clickable title bar that drops down an area that can be filled with items
 
-// TODO - Faller 5/29/18: make title text and status icon responsive when title is long and accordion is narrow.
-
-ColumnLayout {
+Rectangle {
     id: root
-    spacing: 0
-    Layout.fillWidth: true
-    Layout.preferredHeight: titleBar.height + divider.height
+    height: titleBar.height + contentContainer.height + divider.height
+    width: scrollContainerWidth
+    clip: true
 
-    property alias body: body.sourceComponent
+    property alias contents: contents.sourceComponent
 
-    property string title: "panel"
+    property string title: "Default Title Text"
     property bool open: false
-    property color dividerColor: accordionDividerColor
-    property int dividerHeight: accordionDividerHeight
     property int openCloseTime: accordionOpenCloseTime
     property string statusIcon: accordionStatusIcon
-    property color textColor: accordionTextColor
-    property color bodyColor: accordionBodyColor
-    property color headerOpenColorTop: accordionHeaderOpenColorTop
-    property color headerOpenColorBottom: accordionHeaderOpenColorBottom
-    property color headerClosedColorTop: accordionHeaderClosedColorTop
-    property color headerClosedColorBottom: accordionHeaderClosedColorBottom
-
-    onWidthChanged: {
-        if (root.open) root.opener();
-    }
-
-    ParallelAnimation {
-        id: closeContent
-        NumberAnimation {
-            target: container
-            property: "implicitHeight";
-            to: 0;
-            duration: openCloseTime;
-        }
-        NumberAnimation {
-            target: root
-            property: "Layout.preferredHeight";
-            to: titleBar.height + divider.height;
-            duration: openCloseTime;
-        }
-    }
-
-    ParallelAnimation {
-        id: openContent
-        NumberAnimation {
-            target: container
-            property: "implicitHeight";
-            to: container.childrenRect.height;
-            duration: openCloseTime;
-        }
-        NumberAnimation {
-            target: root
-            property: "Layout.preferredHeight";
-            to: container.childrenRect.height + titleBar.height + divider.height;
-            duration: openCloseTime;
-        }
-    }
-
-    function opener() // opens instantly without animation
-    {
-        container.implicitHeight = container.childrenRect.height;
-        root.Layout.preferredHeight = container.implicitHeight + titleBar.height+ divider.height;
-    }
-
-    function closer() // closes instantly without animation
-    {
-        container.implicitHeight = 0;
-        root.Layout.preferredHeight = titleBar.height + divider.height;
-    }
+    property color textOpenColor: accordionTextOpenColor
+    property color textClosedColor: accordionTextClosedColor
+    property color contentsColor: accordionContentsColor
+    property color headerOpenColor: accordionHeaderOpenColor
+    property color headerClosedColor: accordionHeaderClosedColor
 
     Rectangle {
         id: titleBar
-        Layout.fillWidth: true
-        height: 30
-        gradient:  Gradient {
-            GradientStop { position: 0.0; color: root.open ? headerOpenColorTop : headerClosedColorTop }
-            GradientStop { position: 1.0; color: root.open ? headerOpenColorBottom : headerClosedColorBottom }
-        }
+        width: root.width
+        height: 32
+        color: root.open ? headerOpenColor : headerClosedColor
 
         Text {
-            id: title
-            anchors{
-                fill: parent
-                margins: 10
+            id: titleText
+            text: title
+            elide: Text.ElideRight
+            color: root.open ? root.textOpenColor : root.textClosedColor
+            anchors {
+                verticalCenter: titleBar.verticalCenter
+                left: titleBar.left
+                leftMargin: 10
+                right: minMaxContainer.left
             }
-            horizontalAlignment: Text.AlignLeft
-            verticalAlignment: Text.AlignVCenter
-            text: root.title
-            color: root.textColor
         }
 
-        Text {
-            id: icon
-            anchors{
-                right: parent.right
-                top: parent.top
-                bottom: parent.bottom
-                margins: 10
+        Item {
+            id: minMaxContainer
+            width: titleBar.height
+            height: width
+            anchors {
+               right: titleBar.right
             }
-            horizontalAlignment: Text.AlignRight
-            verticalAlignment: Text.AlignVCenter
-            text: statusIcon
-            rotation: root.open ? 0 : "180"
-            color: root.textColor
+
+            Text {
+                id: minMaxIcon
+                color: root.open ? root.textOpenColor : root.textClosedColor
+                text: statusIcon
+                rotation: root.open ? 180 : 0
+                anchors {
+                    verticalCenter: minMaxContainer.verticalCenter
+                    horizontalCenter: minMaxContainer.horizontalCenter
+                }
+            }
         }
 
         MouseArea {
+            id: titleBarClick
             anchors { fill: parent }
             cursorShape: Qt.PointingHandCursor
             onClicked: {
-                root.open = !root.open;
-                root.open ? openContent.start() : closeContent.start();
+                if (root.open) {
+                    closeContent.start()
+                    root.open = !root.open
+                } else {
+                    openContent.start()
+                    root.open = !root.open
+                }
             }
         }
     }
 
-    // body of accordionItem
     Rectangle {
-        id: container
-        color: bodyColor
-        Layout.fillWidth: true
-        implicitHeight: root.open ? childrenRect.height : 0
-        clip: true
-
-        Component.onCompleted: {
-            root.open ? root.opener() : root.closer(); // [Faller] size recalculated after body completed (textWrap doesn't calculate in order)
+        id: contentContainer
+        width: root.width
+        height: 0
+        color: root.contentsColor
+        anchors {
+            top: titleBar.bottom
         }
 
-        // Loads user defined widgets/content
+        Component.onCompleted: {
+            if (root.open) {
+                bindHeight()  // If open, bind height to contents.height so contents can dynamically resize the accordionItem
+            }
+        }
+
         Loader {
-            id: body
-            width: root.width
+            id: contents
+            anchors {
+                top: contentContainer.top
+                left: contentContainer.left
+                right: contentContainer.right
+            }
         }
     }
 
     Rectangle {
         id: divider
-        Layout.fillWidth: true
-        color: dividerColor
-        height: dividerHeight
+        anchors { bottom: root.bottom }
+        width: root.width
+        height: 1
+        color: "#fff"
+    }
+
+    NumberAnimation {
+        id: closeContent
+        target: contentContainer
+        property: "height"
+        from: contentContainer.height
+        to: 0
+        duration: openCloseTime
+        onStopped: {
+            contentContainer.height = 0  // Bind height to 0 so any content resizing while closed doesn't resize the accordionItem
+        }
+    }
+
+    NumberAnimation {
+        id: openContent
+        target: contentContainer
+        property: "height"
+        from: 0
+        to: contents.height
+        duration: openCloseTime
+        onStopped: {
+            bindHeight()  // Rebind to contents.height while open so contents can dynamically resize the accordionItem
+        }
+    }
+
+    function bindHeight() {
+        contentContainer.height = Qt.binding(function() { return contents.height })
+        return
     }
 }

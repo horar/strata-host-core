@@ -18,6 +18,9 @@ import "qrc:/../SGStatusListBox/"
 import "qrc:/../SGSubmitInfoBox/"
 import "qrc:/../SGToolTipPopup/"
 import "qrc:/../SGCapacityBar/"
+import "qrc:/../SGHueSlider/"
+import "qrc:/../SGRGBSlider/"
+import "qrc:/../SGDrawerMenu/"
 
 Window {
     id: mainWindow
@@ -27,22 +30,91 @@ Window {
     title: qsTr("SpyGlass Widget Gallery")
 
 
+    SGDrawerMenu {
+        id: sgDrawerMenu
+        z:20
+
+        drawerMenuItems: Item {
+
+            SGDrawerMenuItem {
+                label: "Users"
+                icon:"\u0045"
+                contentDrawerWidth: 250
+                drawerContent: Text {
+                    text: "<b>Users</b>"
+                    font {
+                        pixelSize: 50
+                    }
+                    color: "#fff"
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCenter
+                }
+            }
+
+            SGDrawerMenuItem {
+                label: "Chat"
+                icon:"\u003B"
+                drawerColor: "lightsalmon"
+                drawerContent: Text {
+                    text: "<b>Chat</b>"
+                    font {
+                        pixelSize: 50
+                    }
+                    color: "#fff"
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCenter
+                }
+            }
+
+            SGDrawerMenuItem {
+                label: "Help"
+                icon:"\ue808"
+                drawerColor: "burlywood"
+                contentDrawerWidth: 400
+                drawerContent: Text {
+                    text: "<b>Help</b>"
+                    font {
+                        pixelSize: 50
+                    }
+                    color: "#fff"
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCenter
+                }
+            }
+
+            SGDrawerMenuItem {
+                drawerColor: "lightgreen"
+                divider: false
+                contentDrawerWidth: 350
+                drawerContent: Text {
+                    text: "<b>Settings</b>"
+                    font {
+                        pixelSize: 50
+                    }
+                    color: "#fff"
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCenter
+                }
+            }
+        }
+    }
+
     SGAccordion {
         id: accordion
 
-        width: mainWindow.width
+        width: mainWindow.width - sgDrawerMenu.hintWidth
         height: mainWindow.height
 
         // accordionItems contains a ColumnLayout as a container for SGAccordionItems
-        accordionItems:   ColumnLayout { // must have ColumnLayout as container since loader works only with single widgets
+        accordionItems:   Column { // must have ColumnLayout as container since loader works only with single widgets
             spacing: 0
 
             SGAccordionItem {
                 title: "SG Switch"
                 open: false
 
-                // body contains SGAccordionItem content
-                body: Item {  // must have some Item as container for multiple widgets since loader only works with single widgets
+                // contents contains SGAccordionItem content
+                contents: Item {  // must have some Item as container for multiple widgets since loader only works with single widgets
                     height: childrenRect.height + 40
 
                     SGSwitch {
@@ -71,8 +143,8 @@ Window {
                 open: false
                 title: "SG Tool Tip Popup"
 
-                body: Item{
-                    height: childrenRect.height + 70
+                contents: Item{
+                    height: childrenRect.height + 40
 
                     Rectangle {
                         id: hoverContainer
@@ -82,9 +154,9 @@ Window {
 
                         anchors {
                             top: parent.top
-                            topMargin: 50
+                            topMargin: 20
                             left:parent.left
-                            leftMargin: 50
+                            leftMargin: 40
                         }
 
                         Text {
@@ -128,7 +200,7 @@ Window {
                 open: false
                 title: "SG Slider"
 
-                body: Item{
+                contents: Item{
                     height: childrenRect.height + 40
 
                     SGSlider {
@@ -140,11 +212,11 @@ Window {
                             leftMargin: 20
                         }
 
-                        label: "Cats:"              // Default: "" (if not entered, label will not appear)
+                        label: "RPM:"              // Default: "" (if not entered, label will not appear)
                         labelLeft: false             // Default: true
                         width: 300
-                        grooveColor: "lightgreen"   // Default: "#dddddd"
-                        grooveFillColor: "red"      // Default: "#888888"
+                        grooveColor: "#ddd"   // Default: "#dddddd"
+                        grooveFillColor: "lightgreen"      // Default: "#888888"
                     }
                 }
             }
@@ -153,7 +225,7 @@ Window {
                 open: false
                 title: "SG Radio Button"
 
-                body: Item{
+                contents: Item{
                     height: childrenRect.height + 40
 
                     SGRadioButtonContainer {
@@ -207,7 +279,7 @@ Window {
                 open: false
                 title: "SG Segmented Button Strip"
 
-                body: Item{
+                contents: Item{
                     height: childrenRect.height + 40
 
                     SGSegmentedButtonStrip {
@@ -256,7 +328,7 @@ Window {
                 open: false
                 title: "SG Status Light"
 
-                body: Item{
+                contents: Item{
                     height: childrenRect.height + 40
 
                     SGStatusLight {
@@ -313,7 +385,7 @@ Window {
                 open: false
                 title: "SG Submit Info Box"
 
-                body: Item{
+                contents: Item{
                     height: childrenRect.height + 40
 
                     SGSubmitInfoBox {
@@ -344,7 +416,7 @@ Window {
                 open: false
                 title: "SG Status List Box"
 
-                body: Item{
+                contents: Item{
                     height: childrenRect.height + 40
                     SGStatusListBox{
                         id: logBox
@@ -401,7 +473,7 @@ Window {
                 open: false
                 title: "SG Popout"
 
-                body: Item{
+                contents: Item{
                     height: childrenRect.height + 40
 
                     SGPopout {
@@ -421,7 +493,7 @@ Window {
                 open: false
                 title: "SG Labelled Info Box"
 
-                body: Item{
+                contents: Item{
                     height: childrenRect.height + 40
 
                     SGLabelledInfoBox {
@@ -443,7 +515,7 @@ Window {
                 open: false
                 title: "SG Graph"
 
-                body: Item{
+                contents: Item{
                     height: childrenRect.height + 40
 
                     SGGraph {
@@ -506,7 +578,7 @@ Window {
                 open: false
                 title: "SG Combo Box"
 
-                body: Item{
+                contents: Item{
                     height: childrenRect.height + 40
 
                     SGComboBox {
@@ -537,7 +609,7 @@ Window {
                 open: false
                 title: "SG Circular Gauge"
 
-                body: Item{
+                contents: Item{
                     height: childrenRect.height + 40
 
                     SGCircularGauge {
@@ -568,6 +640,7 @@ Window {
                         id: gaugecontrol
                         label: "Demo Control:"
                         labelLeft: false
+                        live: true
                         anchors {
                             left: sgCircularGauge.right
                             leftMargin: 40
@@ -581,7 +654,7 @@ Window {
                 open: false
                 title: "SG Capacity Bar"
 
-                body: Item{
+                contents: Item{
                     height: childrenRect.height + 40
 
                     SGCapacityBar {
@@ -642,6 +715,43 @@ Window {
                             count += interval;
                             stream1 = Math.sin(count/500)*10+50;
                             stream2 = Math.sin((count-800)/500)*10+25;
+                        }
+                    }
+                }
+            }
+
+            SGAccordionItem {
+                open: false
+                title: "SG Hue Slider"
+
+                contents: Item{
+                    height: childrenRect.height + 40
+
+                    SGHueSlider {
+                        anchors {
+                            top: parent.top
+                            topMargin: 20
+                            left:parent.left
+                            leftMargin: 20
+                        }
+                        onValueChanged: console.log(color1, color_value1, color2, color_value2)
+                    }
+                }
+            }
+
+            SGAccordionItem {
+                open: false
+                title: "SG RGB Slider"
+
+                contents: Item{
+                    height: childrenRect.height + 40
+
+                    SGRGBSlider {
+                        anchors {
+                            top: parent.top
+                            topMargin: 20
+                            left:parent.left
+                            leftMargin: 20
                         }
                     }
                 }
