@@ -148,7 +148,7 @@ ChartView {
     Timer {
         id: redrawTimer
         interval: 100
-        running: root.visible
+        running: rootChart.visible
         repeat: true
         onTriggered: {
             redrawGraph()
@@ -159,7 +159,7 @@ ChartView {
     Timer {
         id: repeatTimer
         interval: 200
-        running: root.visible
+        running: rootChart.visible
         repeat: true
         onTriggered: {
             if (timeSinceLastPlot() > 200) {
