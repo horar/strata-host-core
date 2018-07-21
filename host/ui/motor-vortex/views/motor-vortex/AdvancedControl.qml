@@ -28,6 +28,7 @@ Rectangle {
         phaseAngle = 15
         faultModel.clear()
         advancedControl.driveModeSignal("Trapezoidal")
+        motorStateSignal()
     }
 
     Component.onCompleted:  {

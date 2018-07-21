@@ -27,6 +27,7 @@ Rectangle {
         phaseAngle = 15
         faultModel.clear()
         faeControl.driveModeSignal("Trapezoidal")
+        motorStateSignal()
     }
 
     Component.onCompleted:  {
