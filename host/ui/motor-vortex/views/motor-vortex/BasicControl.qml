@@ -169,7 +169,9 @@ Rectangle {
             }
             width: warningText.contentWidth + 100
             height: warningText.contentHeight + 40
-            visible: platformInterface.system_error.error_and_warnings === [ ]
+
+            property var errorArray: platformInterface.system_error.error_and_warnings
+            visible: errorArray.length !== 0  // only show this warning when there are active faults according to the platform
 
             Text {
                 id: warningText
