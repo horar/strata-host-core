@@ -53,9 +53,11 @@ Rectangle {
                 outerColor: "#999"
                 unitLabel: "RPM"
 
-                value:  platformInterface.pi_stats.current_speed
+                value:  motorOff === "off" ? 0 : platformInterface.pi_stats.current_speed
 
                 Behavior on value { NumberAnimation { duration: 300 } }
+
+                property var motorOff: platformInterface.motor_off.enable;
             }
         }
 
