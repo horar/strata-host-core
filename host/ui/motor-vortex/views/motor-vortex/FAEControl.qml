@@ -7,13 +7,12 @@ import "qrc:/views/motor-vortex/sgwidgets"
 
 Rectangle {
     id: faeControl
-    anchors {
-        fill: parent
-    }
+    width: 1200
+    height: 725
 
     property alias motorSpeedSliderValue: targetSpeedSlider.value
     property alias rampRateSliderValue: rampRateSlider.value
-    property alias phaseAngle: phaseAngleRow.phaseAngleValue
+    property alias phaseAngle: driveModeCombo.currentIndex
     property alias ledSlider: hueSlider.value
     property alias singleLEDSlider: singleColorSlider.value
     property alias ledPulseSlider: ledPulseFrequency.value
@@ -22,6 +21,7 @@ Rectangle {
     signal driveModeSignal(var mode_type)
 
     function resetData(){
+        manual.checked = true;
         motorSpeedSliderValue = 1500
         rampRateSliderValue = 3
         phaseAngle = 15
@@ -138,7 +138,6 @@ Rectangle {
             yAxisTitle: "Voltage"
             inputData: platformInterface.input_voltage_notification.vin
             maxYValue: 15
-            repeatingData: true
         }
 
         SGGraph{
@@ -154,7 +153,6 @@ Rectangle {
             yAxisTitle: "RPM"
             inputData: platformInterface.pi_stats.current_speed
             maxYValue: 6500
-            repeatingData: true
         }
 
         SGStatusListBox {
@@ -261,7 +259,7 @@ Rectangle {
             id: operationModeControlContainer
             width: 500
             height: childrenRect.height + 20
-            color: speedSafetyButton.checked ? "#ffb4aa" : "#eeeeee"
+            color: "#eeeeee"
             anchors {
                 horizontalCenter: rightSide.horizontalCenter
                 top: ssButtonContainer.bottom
@@ -291,11 +289,11 @@ Rectangle {
                     property var systemMode: platformInterface.set_mode.system_mode
 
                     onSystemModeChanged: {
-                        if(systemMode === "manual") {
-                            manual.checked = true;
+                        if(systemMode === "automation") {
+                            automatic.checked = true;
                         }
                         else {
-                            automatic.checked = true;
+                            manual.checked = true;
                         }
                     }
 
@@ -378,8 +376,9 @@ Rectangle {
                 label: "Ramp Rate:"
                 width: 350
                 value: 3
-                from : 0
-                to: 6
+                from: speedSafetyButton.checked ? 0 : 2
+                to: speedSafetyButton.checked ? 6 : 4
+                endLabel: speedSafetyButton.checked? "<font color='red'><b>"+ to +"</b></font>" : to
                 anchors {
                     verticalCenter: setRampRate.verticalCenter
                     left: speedControlContainer.left
@@ -520,7 +519,7 @@ Rectangle {
                 id: phaseAngleRow
                 width: childrenRect.width
                 height: childrenRect.height
-                property int phaseAngleValue: phaseAngle
+
                 anchors {
                     top: driveModeRadios.bottom
                     topMargin: 10
@@ -536,9 +535,9 @@ Rectangle {
                     }
                 }
 
-                ComboBox{
+                SGComboBox{
                     id: driveModeCombo
-                    currentIndex: phaseAngleRow.phaseAngleValue
+                    currentIndex: 15
                     model: ["0", "1.875", "3.75","5.625","7.5", "9.375", "11.25","13.125", "15", "16.875", "18.75", "20.625", "22.5" , "24.375" , "26.25" , "28.125"]
                     anchors {
                         top: phaseAngleRow.top
@@ -547,8 +546,7 @@ Rectangle {
                     }
 
                     onCurrentIndexChanged: {
-                        platformInterface.set_phase_angle.update((currentIndex));
-                        phaseAngleRow.phaseAngleValue =  driveModeCombo.currentIndex;
+                        platformInterface.set_phase_angle.update(currentIndex);
                     }
                 }
             }
@@ -649,8 +647,8 @@ Rectangle {
             SGSlider {
                 id: ledPulseFrequency
                 label: "LED Pulse Frequency:"
-                value: 50
-                from: 2
+                value: 152
+                from: 1
                 to: 152
                 anchors {
                     left: ledSecondContainer.left
@@ -764,8 +762,8 @@ Rectangle {
 
     Dialog {
         id: speedPopup
-        x: Math.round((advancedControl.width - width) / 2)
-        y: Math.round((advancedControl.height - height) / 2)
+        x: Math.round((faeControl.width - width) / 2)
+        y: Math.round((faeControl.height - height) / 2)
         width: 350
         height: speedPopupText.height + footer.height + padding * 2
         modal: true

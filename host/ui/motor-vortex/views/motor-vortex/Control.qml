@@ -18,7 +18,6 @@ Rectangle {
         id: platformInterface
     }
 
-
     TabBar {
         id: navTabs
         anchors {
@@ -82,11 +81,7 @@ Rectangle {
         }
     }
 
-    SwipeView {
-        id: controlContainer
-
-        currentIndex: 0
-        interactive: false
+    ScrollView {
         anchors {
             top: navTabs.bottom
             bottom: parent.bottom
@@ -94,19 +89,69 @@ Rectangle {
             left: parent.left
         }
 
-        Item {
-            id: basicControl
-            BasicControl {id: basicView }
+        onWidthChanged: {
+            if (width < 1200) {
+                ScrollBar.horizontal.policy = ScrollBar.AlwaysOn
+            } else {
+                ScrollBar.horizontal.policy = ScrollBar.AlwaysOff
+            }
         }
 
-        Item {
-            id: advancedControl
-            AdvancedControl {id: advanceView }
+        onHeightChanged: {
+            if (height < 725) {
+                ScrollBar.vertical.policy = ScrollBar.AlwaysOn
+            } else {
+                ScrollBar.vertical.policy = ScrollBar.AlwaysOff
+            }
         }
 
-        Item {
-            id: faeControl
-            FAEControl {id : faeView }
+        Flickable {
+            id: controlContainer
+
+            property int currentIndex: 0
+
+            onCurrentIndexChanged: {
+                switch (currentIndex){
+                case 0:
+                    basicView.visible = true
+                    advanceView.visible = false
+                    faeView.visible = false
+                    break;
+                case 1:
+                    basicView.visible = false
+                    advanceView.visible = true
+                    faeView.visible = false
+                    break;
+                case 2:
+                    basicView.visible = false
+                    advanceView.visible = false
+                    faeView.visible = true
+                    break;
+                }
+            }
+
+            boundsBehavior: Flickable.StopAtBounds
+            contentWidth: 1200
+            contentHeight: 725
+            anchors {
+                fill: parent
+            }
+            clip: true
+
+            BasicControl {
+                id: basicView
+                visible: true
+            }
+
+            AdvancedControl {
+                id: advanceView
+                visible: false
+            }
+
+            FAEControl {
+                id : faeView
+                visible: false
+            }
         }
     }
 

@@ -11,21 +11,20 @@ import "qrc:/views/motor-vortex/sgwidgets"
 Rectangle {
     id: controlPage
     objectName: "control"
-    anchors { fill: parent }
+    width: 1200
+    height: 725
     color: "white"
 
     property alias motorSpeedSliderValue: motorSpeedControl.value
-
 
     Component.onCompleted: {
         platformInterface.system_mode_selection.update("manual")
     }
 
-
     // Control Section
     Rectangle {
         id: controlSection1
-        width: leftControl.width + rightControl.width
+        width: leftControl.width + rightControl.width + rightControl.anchors.leftMargin
         height: parent.height / 2
         anchors {
             verticalCenter: parent.verticalCenter
@@ -128,11 +127,11 @@ Rectangle {
                    property var systemMode: platformInterface.set_mode.system_mode
 
                     onSystemModeChanged: {
-                        if(systemMode === "manual") {
-                            manual.checked = true;
+                        if(systemMode === "automation") {
+                            automatic.checked = true;
                         }
                         else {
-                            automatic.checked = true;
+                            manual.checked = true;
                         }
                     }
 
@@ -157,6 +156,60 @@ Rectangle {
                         }
                     }
                 }
+            }
+        }
+
+        Rectangle {
+            id: warningBox
+            color: "red"
+            anchors {
+                bottom: rightControl.top
+                horizontalCenter: rightControl.horizontalCenter
+                bottomMargin: 30
+            }
+            width: warningText.contentWidth + 100
+            height: warningText.contentHeight + 40
+            visible: platformInterface.system_error.error_and_warnings === [ ]
+
+            Text {
+                id: warningText
+                anchors {
+                    centerIn: parent
+                }
+                text: "See Advanced Controls for Current Fault Status"
+                font.pixelSize: 12
+                color: "white"
+            }
+
+            Text {
+                id: warningIcon1
+                anchors {
+                    right: warningText.left
+                    verticalCenter: warningText.verticalCenter
+                    rightMargin: 10
+                }
+                text: "\ue80e"
+                font.family: icons.name
+                font.pixelSize: 40
+                color: "white"
+            }
+
+            Text {
+                id: warningIcon2
+                anchors {
+                    left: warningText.right
+                    verticalCenter: warningText.verticalCenter
+                    leftMargin: 10
+                }
+                text: "\ue80e"
+                font.family: icons.name
+                font.pixelSize: 40
+                color: "white"
+            }
+
+            FontLoader {
+                id: icons
+                source: "sgwidgets/fonts/sgicons.ttf"
             }
         }
     } // end Control Section Rectangle
