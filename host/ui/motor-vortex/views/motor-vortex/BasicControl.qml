@@ -16,6 +16,7 @@ Rectangle {
     color: "white"
 
     property alias motorSpeedSliderValue: motorSpeedControl.value
+    property alias warningVisible: warningBox.visible
 
     Component.onCompleted: {
         platformInterface.system_mode_selection.update("manual")
@@ -53,11 +54,9 @@ Rectangle {
                 outerColor: "#999"
                 unitLabel: "RPM"
 
-                value:  motorOff === "off" ? 0 : platformInterface.pi_stats.current_speed
+                value: platformInterface.pi_stats.current_speed
 
                 Behavior on value { NumberAnimation { duration: 300 } }
-
-                property var motorOff: platformInterface.motor_off.enable;
             }
         }
 
@@ -171,9 +170,7 @@ Rectangle {
             }
             width: warningText.contentWidth + 100
             height: warningText.contentHeight + 40
-
-            property var errorArray: platformInterface.system_error.error_and_warnings
-            visible: errorArray.length !== 0  // only show this warning when there are active faults according to the platform
+            visible: false
 
             Text {
                 id: warningText

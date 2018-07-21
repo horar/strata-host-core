@@ -146,11 +146,13 @@ Rectangle {
             AdvancedControl {
                 id: advanceView
                 visible: false
+                property alias basicView: basicView
             }
 
             FAEControl {
                 id : faeView
                 visible: false
+                property alias basicView: basicView
             }
         }
     }
