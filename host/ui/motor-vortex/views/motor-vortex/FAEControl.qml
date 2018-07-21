@@ -177,7 +177,7 @@ Rectangle {
         ListModel {
             id: faultModel
             onCountChanged: {
-                if (faultCount === 0) {
+                if (faultModel.count === 0) {
                     basicView.warningVisible = false
                 } else {
                     basicView.warningVisible = true
