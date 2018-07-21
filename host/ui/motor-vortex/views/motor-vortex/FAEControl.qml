@@ -4,7 +4,6 @@ import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.2
 import "qrc:/js/navigation_control.js" as NavigationControl
 import "qrc:/views/motor-vortex/sgwidgets"
-import "qrc:/views/motor-vortex/Control.js" as MotorControl
 
 Rectangle {
     id: faeControl
@@ -36,9 +35,9 @@ Rectangle {
         */
         phaseAngle = 15
         platformInterface.set_system_mode.update("manual");
-        platformInterface.set_phase_angle.update(parseInt(15));
+        platformInterface.set_phase_angle.update(15);
         console.log("phase angle", phaseAngle)
-        platformInterface.set_drive_mode.update(parseInt(0));
+        platformInterface.set_drive_mode.update(0);
 
     }
 
@@ -233,11 +232,11 @@ Rectangle {
 
                 onClicked: {
                     if(checked) {
-                        platformInterface.set_motor_on_off.update(parseInt("0"))
+                        platformInterface.set_motor_on_off.update(0)
                     }
                     else {
                         platformInterface.motor_speed.update(targetSpeedSlider.value.toFixed(0));
-                        platformInterface.set_motor_on_off.update(parseInt("1"))
+                        platformInterface.set_motor_on_off.update(1)
                         motorStateSignal();
                         faultModel.clear();
                     }
@@ -497,7 +496,7 @@ Rectangle {
                         text: "Pseudo-Sinusoidal"
                         onCheckedChanged: {
                             if (checked) {
-                                platformInterface.set_drive_mode.update(parseInt("1"))
+                                platformInterface.set_drive_mode.update(1)
                                 driveModeSignal("Pseudo-Sinusoidal");
                             }
                         }
@@ -509,7 +508,7 @@ Rectangle {
                         checked: true
                         onCheckedChanged: {
                             if (checked) {
-                                platformInterface.set_drive_mode.update(parseInt("0"))
+                                platformInterface.set_drive_mode.update(0)
                                 driveModeSignal("Trapezoidal");
                             }
                         }

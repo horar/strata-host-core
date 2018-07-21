@@ -4,7 +4,7 @@ import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.2
 import "qrc:/js/navigation_control.js" as NavigationControl
 import "qrc:/views/motor-vortex/sgwidgets"
-import "qrc:/views/motor-vortex/Control.js" as MotorControl
+
 
 Rectangle {
     id: advancedControl
@@ -33,8 +33,8 @@ Rectangle {
     Component.onCompleted:  {
         phaseAngle = 15
         platformInterface.system_mode_selection.update("manual");
-        platformInterface.set_phase_angle.update(parseInt(15));
-        platformInterface.set_drive_mode.update(parseInt(0));
+        platformInterface.set_phase_angle.update(5);
+        platformInterface.set_drive_mode.update(0);
     }
 
     Rectangle {
@@ -425,7 +425,7 @@ Rectangle {
                         text: "Pseudo-Sinusoidal"
                         onCheckedChanged: {
                             if (checked) {
-                                platformInterface.set_drive_mode.update(parseInt("1"))
+                                platformInterface.set_drive_mode.update(1)
                                 driveModeSignal("Pseudo-Sinusoidal");
                             }
                         }
@@ -437,7 +437,7 @@ Rectangle {
                         checked: true
                         onCheckedChanged: {
                             if (checked) {
-                                platformInterface.set_drive_mode.update(parseInt("0"))
+                                platformInterface.set_drive_mode.update(0)
                                 driveModeSignal("Trapezoidal");
 
                             }
