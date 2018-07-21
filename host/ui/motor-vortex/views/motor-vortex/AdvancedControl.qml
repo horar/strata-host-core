@@ -93,8 +93,10 @@ Rectangle {
             showOptions: false
             xAxisTitle: "Seconds"
             yAxisTitle: "RPM"
-            inputData: startStopButton.checked ? 0 : platformInterface.pi_stats.current_speed
+            inputData: motorOff === "off" ? 0 : platformInterface.pi_stats.current_speed
             maxYValue: 6500
+
+            property var motorOff: platformInterface.motor_off.enable;
         }
 
         SGStatusListBox {
