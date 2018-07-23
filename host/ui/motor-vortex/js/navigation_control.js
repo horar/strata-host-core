@@ -167,6 +167,7 @@ function globalEventHandler(event,data)
 
         // Remove StatusBar at Login
         removeView(status_bar_container_)
+        status_bar_container_.visible = false
         break;
 
     case events.LOGOUT_EVENT:
@@ -237,6 +238,7 @@ function updateState(event, data)
                 navigation_state_ = states.CONTROL_STATE
 
                 // Update StatusBar
+                status_bar_container_.visible = true
                 createView(screens.STATUS_BAR, status_bar_container_)
                 // Update Control by next state
                 updateState(events.SHOW_CONTROL_EVENT,null)

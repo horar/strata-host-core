@@ -1,6 +1,6 @@
 import QtQuick 2.10
 import QtQuick.Window 2.10
-import QtQuick.Controls 1.4
+import QtQuick.Controls 2.3
 import QtQuick.Layouts 1.3
 import "js/navigation_control.js" as NavigationControl
 
@@ -25,141 +25,125 @@ Window {
         coreInterface.unregisterClient();
     }
 
-    ColumnLayout {
+    Column {
+        id: view
         spacing: 0
         anchors.fill: parent
-        id: view
+
         Rectangle {
             id: statusBarContainer
-            Layout.alignment : Qt.AlignTop
-            Layout.preferredHeight: .05 * parent.height
-            Layout.preferredWidth: parent.width
+            height: visible ? 45 : 0
+            width: parent.width
         }
 
         Flipable {
-             id: flipable
-             Layout.preferredHeight: {
-                 if (commandBar.visible){
-                     return .85 * parent.height
-                 }
-                 else {
-                     return .95 * parent.height
-                 }
+            id: flipable
+            height: commandBar.visible ? parent.height - statusBarContainer.height - commandBar.height : parent.height - statusBarContainer.height
+            width: parent.width
+
+            property bool flipped: false
+
+            front: SGControlContainer { id: controlContainer }
+            back: SGContentContainer { id: contentContainer }
+
+            transform: Rotation {
+                id: rotation
+                origin {
+                    x: flipable.width/2;
+                    y: flipable.height/2
+                }
+                axis {
+                    x: 0;
+                    y: -1;
+                    z: 0
+                }    // set axis.y to 1 to rotate around y-axis
+
+                angle: 0    // the default angle
             }
-             Layout.preferredWidth: parent.width
-             anchors.top: statusBarContainer.bottom
 
-             property bool flipped: false
+            states: State {
+                name: "back"
+                PropertyChanges { target: rotation; angle: 180 }
+                when: flipable.flipped
+            }
 
-             front: SGControlContainer{ id: controlContainer}
-             back: SGContentContainer { id: contentContainer }
+            transitions: Transition {
+                NumberAnimation { target: rotation; property: "angle"; duration: 2000 }
+            }
+        }
 
-             transform: Rotation {
-                 id: rotation
-                 origin {
-                         x: flipable.width/2;
-                         y: flipable.height/2
-                         }
-                 axis {
-                         x: 0;
-                         y: -1;
-                         z: 0
-                      }    // set axis.y to 1 to rotate around y-axis
+        // Debug commands for simulation
+        Rectangle {
+            id: commandBar
+            visible: showDebugCommandBar
+            width: parent.width
+            height: .05 * parent.height
+            color: "lightgrey"
 
-                 angle: 0    // the default angle
-             }
-
-             states: State {
-                 name: "back"
-                 PropertyChanges { target: rotation; angle: 180 }
-                 when: flipable.flipped
-             }
-
-             transitions: Transition {
-                 NumberAnimation { target: rotation; property: "angle"; duration: 2000 }
-             }
-         }
-         // Debug commands for simulation
-         Rectangle {
-
-             id: commandBar
-             visible: showDebugCommandBar
-             width: parent.width
-             Layout.alignment: Qt.AlignBottom
-             Layout.preferredHeight: .10 * parent.height
-             Layout.preferredWidth: parent.width
-             anchors.top: flipable.bottom
-
-             color: "lightgrey"
-             // Simulate Platform events
-             GridLayout {
-                 anchors.centerIn: parent
-                 Text {
-                     id: commandLabel
-                     text: qsTr("Commands")
-                 }
-                 Button {
-                     text: "USB-PD"
-                     onClicked: {
-                         var data = { platform_name: "usb-pd"}
-                         NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT, data)
-                     }
-                 }
-                 Button {
-                     text: "BuBU Interface"
-                     onClicked: {
-                         var data = { platform_name: "bubu"}
-                         NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT, data)
-                     }
-                 }
-                 Button {
-                     text: "Motor Vortex"
-                     onClicked: {
+            // Simulate Platform events
+            GridLayout {
+                anchors.centerIn: parent
+                Text {
+                    id: commandLabel
+                    text: qsTr("Commands")
+                }
+                Button {
+                    text: "USB-PD"
+                    onClicked: {
+                        var data = { platform_name: "usb-pd"}
+                        NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT, data)
+                    }
+                }
+                Button {
+                    text: "BuBU Interface"
+                    onClicked: {
+                        var data = { platform_name: "bubu"}
+                        NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT, data)
+                    }
+                }
+                Button {
+                    text: "Motor Vortex"
+                    onClicked: {
                         var data = { platform_name: "motor-vortex"}
-                         NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT, data)
-                     }
-                 }
+                        NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT, data)
+                    }
+                }
 
-             // UI events
-                 Button {
-                     text: "Disconnect"
-                     onClicked: {
-                         NavigationControl.updateState(NavigationControl.events.PLATFORM_DISCONNECTED_EVENT, null)
-                         var disconnect_json = {"hcs::cmd":"disconnect_platform"}
-                         console.log("disonnecting the platform")
-                         coreInterface.sendCommand(JSON.stringify(disconnect_json))
-                     }
-                 }
-
-                 Button {
-                     text: "Logout"
-                     onClicked: {
-                         NavigationControl.updateState(NavigationControl.events.LOGOUT_EVENT,null)
-                     }
-                 }
-                 Button {
-                     text: "Toggle Content/Control"
-                     onClicked: {
-                         NavigationControl.updateState(NavigationControl.events.TOGGLE_CONTROL_CONTENT)
-                     }
-                 }
-
-                 Button {
-                     text: "Login as guest"
-                     onClicked: {
-                         var data = { user_id: "Guest" }
-                         NavigationControl.updateState(NavigationControl.events.LOGIN_SUCCESSFUL_EVENT,data)
-
-                     }
-                 }
-                 }
-
-
-             }
+                // UI events
+                Button {
+                    text: "Disconnect"
+                    onClicked: {
+                        NavigationControl.updateState(NavigationControl.events.PLATFORM_DISCONNECTED_EVENT, null)
+                        var disconnect_json = {"hcs::cmd":"disconnect_platform"}
+                        console.log("disonnecting the platform")
+                        coreInterface.sendCommand(JSON.stringify(disconnect_json))
+                    }
+                }
+                Button {
+                    text: "Logout"
+                    onClicked: {
+                        NavigationControl.updateState(NavigationControl.events.LOGOUT_EVENT,null)
+                    }
+                }
+                Button {
+                    text: "Toggle Content/Control"
+                    onClicked: {
+                        NavigationControl.updateState(NavigationControl.events.TOGGLE_CONTROL_CONTENT)
+                    }
+                }
+                Button {
+                    text: "Login as guest"
+                    onClicked: {
+                        var data = { user_id: "Guest" }
+                        NavigationControl.updateState(NavigationControl.events.LOGIN_SUCCESSFUL_EVENT,data)
+                    }
+                }
+            }
+        }
     }
 
-    // Listen into Core Interface which gives us the platform changes
 
+    // Listen into Core Interface which gives us the platform changes
     Connections {
         target: coreInterface
         onPlatformIDChanged: {
@@ -190,6 +174,4 @@ Window {
             }
         }
     }
-
-
 }
