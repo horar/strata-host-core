@@ -167,6 +167,7 @@ public:
 
     // non-blocking calls
     virtual bool send(const std::string& message) = 0;
+    virtual bool sendSmallChunks(const std::string& message, const unsigned int chunk_limit)=0;
     virtual bool read(std::string& notification) = 0;
 
     friend std::ostream& operator<< (std::ostream& stream, const Connector & c) {
@@ -206,6 +207,7 @@ public:
 
     // non-blocking calls
     bool send(const std::string& message);
+    bool sendSmallChunks(const std::string& message, const unsigned int chunk_limit);
 
     bool read(std::string& notification);
 
@@ -249,6 +251,7 @@ public:
 
     // non-blocking calls
     bool send(const std::string& message);
+    bool sendSmallChunks(const std::string& message, const unsigned int chunk_limit);
     bool read(std::string& notification);
 
     int getFileDescriptor();
@@ -270,6 +273,7 @@ public:
 
     // non-blocking calls
     bool send(const std::string& message);
+    bool sendSmallChunks(const std::string& message, const unsigned int chunk_limit);
     bool read(std::string& notification);
 
     int getFileDescriptor();
@@ -291,6 +295,7 @@ public:
 
     // non-blocking calls
     bool send(const std::string& message);
+    bool sendSmallChunks(const std::string& message, const unsigned int chunk_limit);
     bool read(std::string& notification);
 
     int getFileDescriptor();
