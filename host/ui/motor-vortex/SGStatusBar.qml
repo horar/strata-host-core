@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.3
 import "js/navigation_control.js" as NavigationControl
 
+
 Rectangle {
     id: container
     anchors.fill: parent
@@ -144,6 +145,7 @@ Rectangle {
                     "hcs::cmd":"remote_disconnect",
                 }
                 coreInterface.sendCommand(JSON.stringify(remote_disconnect_json))
+
                 console.log("UI -> HCS ", JSON.stringify(remote_disconnect_json));
             }
        }
@@ -796,6 +798,14 @@ Rectangle {
                     text: qsTr("Log out")
                     onClicked: {
                         NavigationControl.updateState(NavigationControl.events.LOGOUT_EVENT)
+                        remoteConnectContainer.state = "default"
+                        // sending remote disconnect message to hcs
+                        var remote_disconnect_json = {
+                            "hcs::cmd":"remote_disconnect",
+                        }
+                        coreInterface.sendCommand(JSON.stringify(remote_disconnect_json))
+
+                        console.log("UI -> HCS ", JSON.stringify(remote_disconnect_json))
                     }
                 }
 
