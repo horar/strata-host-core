@@ -7,62 +7,15 @@ import QtQuick.Extras 1.4
 //import tech.spyglass. 1.0
 import "qrc:/js/navigation_control.js" as NavigationControl
 import "qrc:/views/motor-vortex/sgwidgets"
-import "qrc:/views/motor-vortex/Control.js" as MotorControl
+
 Rectangle {
     id: controlNavigation
     anchors {
         fill: parent
     }
 
-    Component.onCompleted: {
-        MotorControl.setCoreInterface(coreInterface);
-    }
-    Connections {
-        target: coreInterface
-        onNotification: {
-            try {
-                /*
-                        Attempt to parse JSON
-                */
-                var notification = JSON.parse(payload)
-                if(notification.hasOwnProperty("payload")){
-                    /*
-                          check and parse the command for the notification
-                          based on the notification value
-                    */
-                    if(notification.value === "pi_stats") {
-                        advanceView.parseCurrentSpeed(notification);
-                        faeView.parseCurrentSpeed(notification);
-                    }
-                    else if(notification.value === "input_voltage_notification")
-                    {
-                        advanceView.parseVin(notification);
-                        faeView.parseVin(notification);
-                    }
-                    else if( notification.value === "system_error")
-                    {
-
-                        advanceView.parseSystemError(notification);
-                        faeView.parseSystemError(notification);
-                    }
-
-                    else
-                    {
-                        console.log("Error expected pi_stats,input_voltage_notification or system_error but received", notification.value)
-                    }
-
-                }
-                else {
-                    console.log("Notification Error. payload is corrupted");
-                }
-            }
-            catch(e)
-            {
-                if (e instanceof SyntaxError){
-                    console.log("Notification JSON is invalid,ignoring")
-                }
-            }
-        }
+    PlatformInterface {
+        id: platformInterface
     }
 
     TabBar {
@@ -76,30 +29,59 @@ Rectangle {
         TabButton {
             id: basicButton
             text: qsTr("Basic")
-            onClicked: controlContainer.currentIndex = 0
+            onClicked: {
+                if (controlContainer.currentIndex === 1){
+                    basicView.motorSpeedSliderValue = advanceView.motorSpeedSliderValue
+                } else {
+                    basicView.motorSpeedSliderValue = faeView.motorSpeedSliderValue
+                }
+                controlContainer.currentIndex = 0
+            }
         }
 
         TabButton {
             id: advancedButton
             text: qsTr("Advanced")
-            onClicked: controlContainer.currentIndex = 1
+            onClicked: {
+                if(controlContainer.currentIndex === 0) {
+                    advanceView.motorSpeedSliderValue = basicView.motorSpeedSliderValue
+                }
+                else {
+                    advanceView.motorSpeedSliderValue = faeView.motorSpeedSliderValue
+                    advanceView.rampRateSliderValue = faeView.rampRateSliderValue
+                    advanceView.phaseAngle = faeView.phaseAngle
+                    advanceView.ledSlider = faeView.ledSlider
+                    advanceView.singleLEDSlider = faeView.singleLEDSlider
+                    advanceView.ledPulseSlider = faeView.ledPulseSlider
+                }
+                controlContainer.currentIndex = 1
+            }
         }
 
         TabButton {
             id: faeButton
             text: qsTr("FAE Only")
-            onClicked: controlContainer.currentIndex = 2
+            onClicked: {
+                if(controlContainer.currentIndex === 0) {
+                    faeView.motorSpeedSliderValue = basicView.motorSpeedSliderValue
+                }
+                else {
+                    faeView.motorSpeedSliderValue = advanceView.motorSpeedSliderValue
+                    faeView.rampRateSliderValue = advanceView.rampRateSliderValue
+                    faeView.phaseAngle = advanceView.phaseAngle
+                    faeView.ledSlider = advanceView.ledSlider
+                    faeView.singleLEDSlider = advanceView.singleLEDSlider
+                    faeView.ledPulseSlider = advanceView.ledPulseSlider
+                }
+                controlContainer.currentIndex = 2
+            }
             background: Rectangle {
                 color: faeButton.down ? "#eeeeee" : faeButton.checked ? "white" : "tomato"
             }
         }
     }
 
-    SwipeView {
-        id: controlContainer
-
-        currentIndex: 0
-        interactive: false
+    ScrollView {
         anchors {
             top: navTabs.bottom
             bottom: parent.bottom
@@ -107,19 +89,71 @@ Rectangle {
             left: parent.left
         }
 
-        Item {
-            id: basicControl
-            BasicControl {id: basicView }
+        onWidthChanged: {
+            if (width < 1200) {
+                ScrollBar.horizontal.policy = ScrollBar.AlwaysOn
+            } else {
+                ScrollBar.horizontal.policy = ScrollBar.AlwaysOff
+            }
         }
 
-        Item {
-            id: advancedControl
-            AdvancedControl {id: advanceView }
+        onHeightChanged: {
+            if (height < 725) {
+                ScrollBar.vertical.policy = ScrollBar.AlwaysOn
+            } else {
+                ScrollBar.vertical.policy = ScrollBar.AlwaysOff
+            }
         }
 
-        Item {
-            id: faeControl
-            FAEControl {id : faeView }
+        Flickable {
+            id: controlContainer
+
+            property int currentIndex: 0
+
+            onCurrentIndexChanged: {
+                switch (currentIndex){
+                case 0:
+                    basicView.visible = true
+                    advanceView.visible = false
+                    faeView.visible = false
+                    break;
+                case 1:
+                    basicView.visible = false
+                    advanceView.visible = true
+                    faeView.visible = false
+                    break;
+                case 2:
+                    basicView.visible = false
+                    advanceView.visible = false
+                    faeView.visible = true
+                    break;
+                }
+            }
+
+            boundsBehavior: Flickable.StopAtBounds
+            contentWidth: 1200
+            contentHeight: 725
+            anchors {
+                fill: parent
+            }
+            clip: true
+
+            BasicControl {
+                id: basicView
+                visible: true
+            }
+
+            AdvancedControl {
+                id: advanceView
+                visible: false
+                property alias basicView: basicView
+            }
+
+            FAEControl {
+                id : faeView
+                visible: false
+                property alias basicView: basicView
+            }
         }
     }
 

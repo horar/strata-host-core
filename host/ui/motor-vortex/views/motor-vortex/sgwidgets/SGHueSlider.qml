@@ -6,14 +6,19 @@ Item {
     id: root
 
     property real value: 128
-
+    property string color1: "red"
+    property string color2: "green"
+    property int color_value1: 0
+    property int color_value2: 0
     property string label: ""
     property bool labelLeft: true
     property color textColor : "black"
     property real sliderHeight: 28
+    property var rgbArray: [0,0,0]
+    property bool powerSave: true
 
     implicitHeight: labelLeft ? Math.max(labelText.height, sliderHeight) : labelText.height + sliderHeight + hueSlider.anchors.topMargin
-    implicitWidth: 300
+    implicitWidth: 450
 
     Text {
         id: labelText
@@ -105,16 +110,65 @@ Item {
         }
     }
 
-    function lerpColor (color1, color2, x){
-        if (Qt.colorEqual(color1, color2)){
-            return color1;
+    onValueChanged: {
+        if (powerSave) {
+            rgbArray = hueToRgbPowerSave(value/255)
         } else {
-            return Qt.hsva(
-                color1.hsvHue * (1 - x) + color2.hsvHue * x,
-                color1.hsvSaturation * (1 - x) + color2.hsvSaturation * x,
-                color1.hsvValue * (1 - x) + color2.hsvValue * x, 1
-                );
+            rgbArray = hsvToRgb(value/255, 1, 1)
         }
+
+        if (rgbArray[0] === '0') {
+            color1 = "green"
+            color_value1 = rgbArray[1]
+            color2 = "blue"
+            color_value2 = rgbArray[2]
+        } else if (rgbArray[1] === '0') {
+            color1 = "blue"
+            color_value1 = rgbArray[2]
+            color2 = "red"
+            color_value2 = rgbArray[0]
+        } else {
+            color1 = "red"
+            color_value1 = rgbArray[0]
+            color2 = "green"
+            color_value2 = rgbArray[1]
+        }
+    }
+
+    function hueToRgbPowerSave (h) {  // PowerSave mode for mixing 2 colors (max 255 value between 2 colors)
+        var r, g, b;
+
+        var i = Math.floor(h * 3);
+        var f = h * 3 - i;
+
+        switch(i % 3){
+            case 0: r = 1-f; g = f; b = 0; break;
+            case 1: r = 0; g = 1-f; b = f; break;
+            case 2: r = f; g = 0; b = 1-f; break;
+        }
+
+        return [(r * 255).toFixed(0), (g * 255).toFixed(0), (b * 255).toFixed(0)];
+    }
+
+    function hsvToRgb(h, s, v){  // Regular RGB color mixing mode
+        var r, g, b;
+
+        var i = Math.floor(h * 6);
+        var f = h * 6 - i;
+        var p = v * (1 - s);
+        var q = v * (1 - f * s);
+        var t = v * (1 - (1 - f) * s);
+
+        switch(i % 6){
+            case 0: r = v; g = t; b = p; break;
+            case 1: r = q; g = v; b = p; break;
+            case 2: r = p; g = v; b = t; break;
+            case 3: r = p; g = q; b = v; break;
+            case 4: r = t; g = p; b = v; break;
+            case 5: r = v; g = p; b = q; break;
+        }
+
+        return [(r * 255).toFixed(0), (g * 255).toFixed(0), (b * 255).toFixed(0)];
     }
 
 }

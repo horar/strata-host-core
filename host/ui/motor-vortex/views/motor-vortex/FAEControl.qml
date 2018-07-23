@@ -4,73 +4,43 @@ import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.2
 import "qrc:/js/navigation_control.js" as NavigationControl
 import "qrc:/views/motor-vortex/sgwidgets"
-import "qrc:/views/motor-vortex/Control.js" as MotorControl
 
 Rectangle {
     id: faeControl
-    anchors {
-        fill: parent
+    width: 1200
+    height: 725
+
+    property alias motorSpeedSliderValue: targetSpeedSlider.value
+    property alias rampRateSliderValue: rampRateSlider.value
+    property alias phaseAngle: driveModeCombo.currentIndex
+    property alias ledSlider: hueSlider.value
+    property alias singleLEDSlider: singleColorSlider.value
+    property alias ledPulseSlider: ledPulseFrequency.value
+
+    signal motorStateSignal()
+    signal driveModeSignal(var mode_type)
+
+    function resetData(){
+        startStopButton.checked = false
+        motorSpeedSliderValue = 1500
+        rampRateSliderValue = 3
+        phaseAngle = 15
+        faultModel.clear()
+        faeControl.driveModeSignal("Trapezoidal")
+        motorStateSignal()
     }
-    function parseCurrentSpeed(notification)
-    {
-        var periodic_current_speed = notification.payload.current_speed;
-
-        if(periodic_current_speed !== undefined)
-        {
-            speedBox.info = periodic_current_speed;
-        }
-        else
-        {
-            console.log("Junk data found", periodic_current_speed);
-        }
-    }
-
-    function parseVin(notification)
-    {
-        var input_voltage =  notification.payload.vin;
-
-        if(input_voltage !== undefined)
-        {
-            vInBox.info = input_voltage;
-        }
-        else
-        {
-            console.log("Junk data found", input_voltage);
-        }
-    }
-
-    function parseSystemError(notification)
-    {
-        var system_error = notification.payload.system_error
-        if(system_error !== undefined)
-        {
-
-            // set the status list box ask david
-          for ( var i = 0; i < system_error.length; ++i)
-           {
-            demoModel.append({ "status" : system_error[i] });
-           }
-        }
-        else
-        {
-            console.log("Junk data found", system_error);
-        }
-    }
-
 
     Component.onCompleted:  {
         /*
           Setting the deflaut to be trapezoidal
         */
-        MotorControl.setDriveMode(parseInt("0"));
-        MotorControl.printDriveMode();
-        MotorControl.setPhaseAngle(parseInt("15"));
-        MotorControl.printPhaseAngle();
-        // coreInterface.sendCommand(MotorControl.getDriveMode());
-        //coreInterface.sendCommand(MotorControl.getSetPhaseAngle());
+        phaseAngle = 15
+        platformInterface.set_system_mode.update("manual");
+        platformInterface.set_phase_angle.update(15);
+        console.log("phase angle", phaseAngle)
+        platformInterface.set_drive_mode.update(0);
+
     }
-
-
 
     Rectangle {
         id: leftSide
@@ -97,7 +67,7 @@ Rectangle {
                     centerIn: parent
                 }
                 text: "<b>Restricted Access:</b> ON Semi Employees Only"
-                font.pointSize: 18
+                font.pixelSize: 18
                 color: "white"
             }
 
@@ -110,7 +80,7 @@ Rectangle {
                 }
                 text: "\ue80e"
                 font.family: icons.name
-                font.pointSize: 50
+                font.pixelSize: 50
                 color: "white"
             }
 
@@ -123,7 +93,7 @@ Rectangle {
                 }
                 text: "\ue80e"
                 font.family: icons.name
-                font.pointSize: 50
+                font.pixelSize: 50
                 color: "white"
             }
 
@@ -135,8 +105,8 @@ Rectangle {
 
         SGLabelledInfoBox{
             id: vInBox
-            label: "Vin:"
-            info: "12.3v"
+            label: "Vin (volts):"
+            info: platformInterface.input_voltage_notification.vin
             infoBoxWidth: 80
             anchors {
                 top: warningBox.bottom
@@ -147,9 +117,9 @@ Rectangle {
 
         SGLabelledInfoBox{
             id: speedBox
-            label: "Current Speed:"
-            info: "4050 rpm"
-            infoBoxWidth: 80
+            label: "Current Speed (rpm):"
+            info: platformInterface.pi_stats.current_speed
+            infoBoxWidth: 100
             anchors {
                 top: warningBox.bottom
                 topMargin: 20
@@ -167,7 +137,7 @@ Rectangle {
             showOptions: false
             xAxisTitle: "Seconds"
             yAxisTitle: "Voltage"
-            inputData: vInBox.info
+            inputData: platformInterface.input_voltage_notification.vin
             maxYValue: 15
         }
 
@@ -182,7 +152,7 @@ Rectangle {
             showOptions: false
             xAxisTitle: "Seconds"
             yAxisTitle: "RPM"
-            inputData: speedBox.info
+            inputData: platformInterface.pi_stats.current_speed
             maxYValue: 6500
         }
 
@@ -195,13 +165,24 @@ Rectangle {
             }
             width: 500
             height: 200
-            model: demoModel
+            model: faultModel
+        }
+
+        property var errorArray: platformInterface.system_error.error_and_warnings
+        onErrorArrayChanged: {
+            for (var i in errorArray){
+                faultModel.append({ status : errorArray[i] })
+            }
         }
 
         ListModel {
-            id: demoModel
-            ListElement {
-                status: ""
+            id: faultModel
+            onCountChanged: {
+                if (faultModel.count === 0) {
+                    basicView.warningVisible = false
+                } else {
+                    basicView.warningVisible = true
+                }
             }
         }
     }
@@ -227,6 +208,13 @@ Rectangle {
                 id: startStopButton
                 text: checked ? qsTr("Start Motor") : qsTr("Stop Motor")
                 checkable: true
+                property var motorOff: platformInterface.motor_off.enable;
+
+                onMotorOffChanged: {
+                    if(motorOff === "off") {
+                        startStopButton.checked = true;
+                    }
+                }
                 background: Rectangle {
                     color: startStopButton.checked ? "lightgreen" : "red"
                     implicitWidth: 100
@@ -238,16 +226,24 @@ Rectangle {
                     horizontalAlignment: Text.AlignHCenter
                     verticalAlignment: Text.AlignVCenter
                 }
+                Connections {
+                    target: advanceView
+                    onMotorStateSignal: {
+                        console.log("signal called");
+                        startStopButton.checked = false;
+                        faultModel.clear()
+                    }
+                }
 
                 onClicked: {
                     if(checked) {
-                        MotorControl.setMotorOnOff(parseInt("0"));
-                        MotorControl.printSetMotorState();
-
+                        platformInterface.set_motor_on_off.update(0)
                     }
                     else {
-                        MotorControl.setMotorOnOff(parseInt("1"));
-                        MotorControl.printSetMotorState();
+                        platformInterface.motor_speed.update(targetSpeedSlider.value.toFixed(0));
+                        platformInterface.set_motor_on_off.update(1)
+                        motorStateSignal();
+                        faultModel.clear();
                     }
                 }
             }
@@ -260,7 +256,8 @@ Rectangle {
                 }
                 text: qsTr("Reset")
                 onClicked: {
-                    coreInterface.sendCommand(MotorControl.getResetcmd());
+                    platformInterface.set_reset_mcu.update()
+                    resetData()
                 }
             }
         }
@@ -269,11 +266,11 @@ Rectangle {
             id: operationModeControlContainer
             width: 500
             height: childrenRect.height + 20
-            color: speedSafetyButton.checked ? "#ffb4aa" : "#eeeeee"
+            color: "#eeeeee"
             anchors {
                 horizontalCenter: rightSide.horizontalCenter
                 top: ssButtonContainer.bottom
-                topMargin: 20
+                topMargin: 10
             }
 
             SGRadioButtonContainer {
@@ -296,29 +293,37 @@ Rectangle {
                     property alias manual : manual
                     property alias automatic: automatic
 
+                    property var systemMode: platformInterface.set_mode.system_mode
+
+                    onSystemModeChanged: {
+                        if(systemMode === "automation") {
+                            automatic.checked = true;
+                        }
+                        else {
+                            manual.checked = true;
+                        }
+                    }
+
                     SGRadioButton {
                         id: manual
                         text: "Manual Control"
                         checked: true
-                        onCheckedChanged: {
-                            if (checked) {
-                                MotorControl.setSystemModeSelection("manual");
-                                MotorControl.printsystemModeSelection()
-                                // send command to platform
-                                // coreInterface.sendCommand(MotorControl.getSystemModeSelection())
+                        onClicked: {
+                            if(checked) {
+                                platformInterface.system_mode_selection.update("manual")
                             }
                         }
+
                     }
 
                     SGRadioButton {
                         id: automatic
                         text: "Automatic Demo Pattern"
+
                         onCheckedChanged: {
                             if (checked) {
-                                MotorControl.setSystemModeSelection("automation");
-                                MotorControl.printsystemModeSelection()
-                                // send command to platform
-                                //coreInterface.sendCommand(MotorControl.getSystemModeSelection())
+                                platformInterface.system_mode_selection.update("automation")
+
                             }
                         }
                     }
@@ -334,34 +339,43 @@ Rectangle {
             anchors {
                 horizontalCenter: rightSide.horizontalCenter
                 top: operationModeControlContainer.bottom
-                topMargin: 20
+                topMargin: 10
             }
 
             SGSlider {
                 id: targetSpeedSlider
                 label: "Target Speed:"
                 width: 350
-                minimumValue: speedSafetyButton.checked ? 0 : 1500
-                maximumValue: speedSafetyButton.checked ? 10000 : 5500
-                endLabel: speedSafetyButton.checked? "<font color='red'><b>"+ maximumValue +"</b></font>" : maximumValue
-                startLabel: minimumValue
+                from: speedSafetyButton.checked ? 0 : 1500
+                to: speedSafetyButton.checked ? 10000 : 5500
+                endLabel: speedSafetyButton.checked? "<font color='red'><b>"+ to +"</b></font>" : to
+                anchors {
+                    verticalCenter: setSpeed.verticalCenter
+                    left: speedControlContainer.left
+                    leftMargin: 10
+                    right: setSpeed.left
+                    rightMargin: 10
+                }
+
+                onValueChanged: {
+                    platformInterface.motor_speed.update(value.toFixed(0));
+                    setSpeed.input = value.toFixed(0)
+                }
+            }
+
+            SGSubmitInfoBox {
+                id: setSpeed
+                infoBoxColor: "white"
                 anchors {
                     top: speedControlContainer.top
                     topMargin: 10
-                    left: speedControlContainer.left
-                    leftMargin: 10
                     right: speedControlContainer.right
                     rightMargin: 10
                 }
-                function setMotorSpeedCommand(value) {
-                    var truncated_value = Math.floor(value)
-                    MotorControl.setTarget(truncated_value)
-                    MotorControl.printsystemModeSelection()
-                }
-                onValueChanged: {
-                    setMotorSpeedCommand(value)
-                }
-
+                buttonVisible: false
+                onApplied: { targetSpeedSlider.value = parseInt(value, 10) }
+                input: targetSpeedSlider.value
+                infoBoxWidth: 80
             }
 
             SGSlider {
@@ -369,23 +383,35 @@ Rectangle {
                 label: "Ramp Rate:"
                 width: 350
                 value: 3
-                minimumValue: 0
-                maximumValue: 6
-                endLabel: maximumValue
-                startLabel: minimumValue
+                from: speedSafetyButton.checked ? 0 : 2
+                to: speedSafetyButton.checked ? 6 : 4
+                endLabel: speedSafetyButton.checked? "<font color='red'><b>"+ to +"</b></font>" : to
                 anchors {
-                    top: targetSpeedSlider.bottom
-                    topMargin: 10
+                    verticalCenter: setRampRate.verticalCenter
                     left: speedControlContainer.left
                     leftMargin: 10
-                    right: speedControlContainer.right
+                    right: setRampRate.left
                     rightMargin: 10
                 }
                 onValueChanged: {
-                    MotorControl.setRampRate(rampRateSlider.value);
-                    MotorControl.printSetRampRate();
-
+                    platformInterface.set_ramp_rate.update(rampRateSlider.value.toFixed(0))
+                    setRampRate.input = value.toFixed(0)
                 }
+            }
+
+            SGSubmitInfoBox {
+                id: setRampRate
+                infoBoxColor: "white"
+                anchors {
+                    top: setSpeed.bottom
+                    topMargin: 10
+                    right: speedControlContainer.right
+                    rightMargin: 10
+                }
+                buttonVisible: false
+                onApplied: { rampRateSlider.value = parseInt(value, 10) }
+                input: rampRateSlider.value
+                infoBoxWidth: 80
             }
 
             Item {
@@ -393,7 +419,7 @@ Rectangle {
                 height: childrenRect.height
                 anchors {
                     top: rampRateSlider.bottom
-                    topMargin: 20
+                    topMargin: 10
                     left: speedControlContainer.left
                     leftMargin: 10
                     right: speedControlContainer.right
@@ -433,7 +459,7 @@ Rectangle {
             anchors {
                 horizontalCenter: rightSide.horizontalCenter
                 top: speedControlContainer.bottom
-                topMargin: 20
+                topMargin: 10
             }
 
             SGRadioButtonContainer {
@@ -445,6 +471,8 @@ Rectangle {
                 }
                 label: "Drive Mode:"
 
+
+
                 radioGroup: GridLayout {
                     columnSpacing: 10
                     rowSpacing: 10
@@ -453,16 +481,29 @@ Rectangle {
                     property alias ps : ps
                     property alias trap: trap
 
+                    Connections {
+                        target: advanceView
+                        onDriveModeSignal: {
+                            console.log("mode type", mode_type)
+                            if(mode_type == "Trapezoidal"){
+                                trap.checked = true;
+                                ps.checked = false;
+                            }
+
+                            else {
+                                trap.checked = false;
+                                ps.checked = true;
+                            }
+
+                        }
+                    }
                     SGRadioButton {
                         id: ps
                         text: "Pseudo-Sinusoidal"
-                        checked: true
                         onCheckedChanged: {
                             if (checked) {
-                                console.log ( "PS Checked!")
-                                MotorControl.setDriveMode(parseInt("1"));
-                                MotorControl.printDriveMode();
-                                //   coreInterface.sendCommand(MotorControl.getDriveMode())
+                                platformInterface.set_drive_mode.update(1)
+                                driveModeSignal("Pseudo-Sinusoidal");
                             }
                         }
                     }
@@ -470,11 +511,11 @@ Rectangle {
                     SGRadioButton {
                         id: trap
                         text: "Trapezoidal"
-                        onCheckedChanged: { if (checked) {
-                                console.log ( "Trap Checked!")
-                                MotorControl.setDriveMode(parseInt("0"));
-                                MotorControl.printDriveMode();
-                                //   coreInterface.sendCommand(MotorControl.getDriveMode());
+                        checked: true
+                        onCheckedChanged: {
+                            if (checked) {
+                                platformInterface.set_drive_mode.update(0)
+                                driveModeSignal("Trapezoidal");
                             }
                         }
                     }
@@ -485,6 +526,7 @@ Rectangle {
                 id: phaseAngleRow
                 width: childrenRect.width
                 height: childrenRect.height
+
                 anchors {
                     top: driveModeRadios.bottom
                     topMargin: 10
@@ -500,7 +542,7 @@ Rectangle {
                     }
                 }
 
-                ComboBox{
+                SGComboBox{
                     id: driveModeCombo
                     currentIndex: 15
                     model: ["0", "1.875", "3.75","5.625","7.5", "9.375", "11.25","13.125", "15", "16.875", "18.75", "20.625", "22.5" , "24.375" , "26.25" , "28.125"]
@@ -509,10 +551,9 @@ Rectangle {
                         left: phaseAngleTitle.right
                         leftMargin: 20
                     }
+
                     onCurrentIndexChanged: {
-                        console.log("index of the combo box", currentIndex)
-                        MotorControl.setPhaseAngle(parseInt(currentIndex));
-                        MotorControl.printPhaseAngle();
+                        platformInterface.set_phase_angle.update(currentIndex);
                     }
                 }
             }
@@ -521,37 +562,130 @@ Rectangle {
         Rectangle {
             id: ledControlContainer
             width: 500
-            height: childrenRect.height + 20
+            height: childrenRect.height + 10
             color: "#eeeeee"
             anchors {
                 horizontalCenter: rightSide.horizontalCenter
                 top: driveModeContainer.bottom
-                topMargin: 20
+                topMargin: 10
             }
 
             SGHueSlider {
                 id: hueSlider
                 label: "Set LED color:"
                 labelLeft: true
+                value: 128
                 anchors {
                     verticalCenter: whiteButton.verticalCenter
                     left: ledControlContainer.left
                     leftMargin: 10
-                }
-
-                onValueChanged: console.log("Color set to ", value)
-            }
-
-            Button {
-                id: whiteButton
-                checkable: false
-                text: "White"
-                anchors {
-                    top: ledControlContainer.top
-                    topMargin: 10
                     right: ledControlContainer.right
                     rightMargin: 10
+                    top: ledControlContainer.top
+                    topMargin: 10
                 }
+                onValueChanged: {
+                    platformInterface.set_color_mixing.update(color1,color_value1,color2,color_value2)
+                }
+            }
+
+            Item {
+                id: buttonControlContainer
+                anchors{
+                    top: hueSlider.bottom
+                    topMargin: 10
+                    horizontalCenter: ledControlContainer.horizontalCenter
+                    horizontalCenterOffset: 40
+                }
+                width: 300; height: 50
+
+                Button {
+                    id: whiteButton
+                    checkable: false
+                    text: "White"
+                    onClicked: {
+                        platformInterface.set_led_outputs_on_off.update("white")
+                    }
+                }
+
+                Button {
+                    id: turnOff
+                    checkable: false
+                    text: "Turn Off"
+                    anchors {
+                        left: whiteButton.right
+                        leftMargin: 30
+                    }
+                    onClicked: {
+                        platformInterface.set_led_outputs_on_off.update("off")
+                    }
+                }
+            }
+        }
+
+        Rectangle {
+            id: ledSecondContainer
+            width: 500
+            height: childrenRect.height + 20
+            color: "#eeeeee"
+            anchors {
+                horizontalCenter: rightSide.horizontalCenter
+                top: ledControlContainer.bottom
+                topMargin: 10
+            }
+
+            SGRGBSlider {
+                id: singleColorSlider
+                label: "Single LED color:"
+                labelLeft: true
+                anchors {
+                    top: ledSecondContainer.top
+                    topMargin: 10
+                    left: ledSecondContainer.left
+                    leftMargin: 10
+                    right: ledSecondContainer.right
+                    rightMargin: 10
+                }
+                onValueChanged: {
+                    platformInterface.set_single_color.update(color, color_value)
+                }
+            }
+
+            SGSlider {
+                id: ledPulseFrequency
+                label: "LED Pulse Frequency:"
+                value: 152
+                from: 1
+                to: 152
+                anchors {
+                    left: ledSecondContainer.left
+                    leftMargin: 10
+                    top: singleColorSlider.bottom
+                    topMargin: 10
+                    right: setLedPulse.left
+                    rightMargin: 10
+                }
+
+                onValueChanged: {
+                    setLedPulse.input = value.toFixed(0)
+                    platformInterface.set_blink0_frequency.update(value.toFixed(0));
+                }
+            }
+
+            SGSubmitInfoBox {
+                id: setLedPulse
+                infoBoxColor: "white"
+                anchors {
+                    right: ledSecondContainer.right
+                    rightMargin: 10
+                    verticalCenter: ledPulseFrequency.verticalCenter
+                }
+                buttonVisible: false
+                onApplied:  {
+                    ledPulseFrequency.value = parseInt(value, 10)
+                }
+                input: ledPulseFrequency.value
+                infoBoxWidth: 80
             }
         }
 
@@ -562,8 +696,8 @@ Rectangle {
             color: directionSafetyButton.checked ? "#ffb4aa" : "#eeeeee"
             anchors {
                 horizontalCenter: rightSide.horizontalCenter
-                top: ledControlContainer.bottom
-                topMargin: 20
+                top: ledSecondContainer.bottom
+                topMargin: 10
             }
 
             SGRadioButtonContainer {
@@ -635,8 +769,8 @@ Rectangle {
 
     Dialog {
         id: speedPopup
-        x: Math.round((advancedControl.width - width) / 2)
-        y: Math.round((advancedControl.height - height) / 2)
+        x: Math.round((faeControl.width - width) / 2)
+        y: Math.round((faeControl.height - height) / 2)
         width: 350
         height: speedPopupText.height + footer.height + padding * 2
         modal: true
