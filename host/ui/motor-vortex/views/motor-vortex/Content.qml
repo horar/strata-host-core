@@ -20,9 +20,9 @@ Rectangle {
         currentIndex: tabBar.currentIndex
         PageSchematic { id: pageSchematic }
         PageLayout { id: pageLayout }
-        PageTestReport { id: pageTestReport }
-        PageSystemContent { id: pageSystemContent}
-        PageComingSoon {id: pageComingSoonContent}
+        //PageTestReport { id: pageTestReport }
+      //  PageSystemContent { id: pageSystemContent}
+//        PageComingSoon {id: pageComingSoonContent}
     }
 
     TabBar {
@@ -46,15 +46,16 @@ Rectangle {
             }
             onClicked: documentManager.clearLayoutRevisionCount()
         }
-        TabButton { text: "Test Report"
-            CircleBadge {
-                id: testReportBadge
-                revisionCount: documentManager.testReportRevisionCount
-            }
-            onClicked: documentManager.clearTestReportRevisionCount()
-        }
-        TabButton { text: "System Content" }
+//        TabButton { text: "Test Report"
+//            CircleBadge {
+//                id: testReportBadge
+//                revisionCount: documentManager.testReportRevisionCount
+//            }
+//            onClicked: documentManager.clearTestReportRevisionCount()
+//        }
+//        TabButton { text: "System Content" }
         TabButton { text: "Coming Soon"
+            enabled: false
             CircleBadge {
                 id: targetedBadge
                 revisionCount: documentManager.targetedRevisionCount

@@ -33,4 +33,32 @@ Rectangle {
         }
         ScrollBar.vertical: ScrollBar { }
     } // end ListView
+
+    // Temporary hack crap for demo only:
+    ListModel {
+        id: images
+        ListElement {data: "qrc:/images/ian.cain.jpg" }
+        ListElement {data: "qrc:/images/david_somo.png" }
+    }
+
+    ListView {
+        visible: Qt.platform.os !== "osx"
+        anchors.fill: parent
+        snapMode: ListView.NoSnap
+        focus: true
+        clip: true
+        add: Transition { NumberAnimation { properties: "x,y"; from: 100; duration: 1000 } }
+
+        model: images
+
+        delegate: Rectangle {
+            width: container.width; height: container.height
+            Image {
+                anchors.fill: parent
+                fillMode: Image.PreserveAspectFit
+                source: model.data
+           }
+        }
+        ScrollBar.vertical: ScrollBar {}
+    }
 }
