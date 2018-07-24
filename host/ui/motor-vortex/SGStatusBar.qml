@@ -656,7 +656,7 @@ Rectangle {
                     id: platformOptionsMenu
                     y: platformOptionsButton.height
                     padding: 0
-                    width: 150
+                    width: 170
                     height: 80
                     background: Rectangle {
                         color: container.color
@@ -670,21 +670,23 @@ Rectangle {
                         width: platMenuColumn.width
 
                         SGMenuItem {
-                            text: qsTr("View Platform Controls")
+                            text: NavigationControl.flipable_parent_.flipped === true ? qsTr("View Platform Controls") : qsTr("View Platform Content")
                             onClicked: {
                                 platformOptionsMenu.close()
+                                NavigationControl.updateState(NavigationControl.events.TOGGLE_CONTROL_CONTENT)
                             }
                             width: parent.width
                             buttonColor: !this.hovered ? container.color : this.pressed ? Qt.darker(container.color, 3) : Qt.darker(container.color, 2)
                         }
 
                         SGMenuItem {
-                            text: qsTr("View Platform Content")
+                            text: qsTr("Select Another Platform")
                             onClicked: {
                                 platformOptionsMenu.close()
                             }
                             width: parent.width
-                            buttonColor: !this.hovered ? container.color : this.pressed ? Qt.darker(container.color, 3) : Qt.darker(container.color, 2)                        }
+                            buttonColor: !this.hovered ? container.color : this.pressed ? Qt.darker(container.color, 3) : Qt.darker(container.color, 2)
+                        }
                     }
                 }
             }
@@ -702,7 +704,7 @@ Rectangle {
                     id: remoteSupportMenu
                     y: remoteSupportButton.height
                     padding: 0
-                    width: 250
+                    width: 180
                     height: 80
                     background: Rectangle {
                         color: container.color
