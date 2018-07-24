@@ -401,11 +401,12 @@ Rectangle {
                 }
                 onClicked: {
                     advertiseButton.checked = !advertiseButton.checked
+                    var advertise
                     if(advertiseButton.checked) {
-                        var advertise=true
+                        advertise = true
                     }
                     else {
-                        var advertise= false
+                        advertise = false
                         remote_activity_label.visible = false
                         remote_user_container.visible = false
                         remote_user_label.visible = false
@@ -424,9 +425,9 @@ Rectangle {
         }
 
         Label {
-            id:supportPhoneNumber
+            id: supportPhoneNumber
             anchors {
-                top:advertiseButton.bottom
+                top: advertiseButton.bottom
                 horizontalCenter: parent.horizontalCenter
                 margins: 30
             }
@@ -437,9 +438,9 @@ Rectangle {
         }
 
         Label {
-            id:hcs_token
+            id: hcs_token
             anchors {
-                top:supportPhoneNumber.bottom
+                top: supportPhoneNumber.bottom
                 horizontalCenter: parent.horizontalCenter
                 margins: 30
             }

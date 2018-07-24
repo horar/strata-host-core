@@ -114,7 +114,7 @@ Rectangle{
             Image {
                 id: user_img
                 width: 135
-                height: 153
+                height: 1.1333 * width
                 anchors {
                     top : userContainer.top
                     horizontalCenter: welcomeMessage.horizontalCenter
@@ -126,7 +126,7 @@ Rectangle{
             Rectangle {
                 id: mask
                 width: 135
-                height: 135
+                height: width
                 radius: width/2
                 visible: false
             }
@@ -158,7 +158,7 @@ Rectangle{
 
         Rectangle {
             id: divider
-            color: "#aaa"
+            color: "#999"
             anchors {
                 left: userContainer.right
                 leftMargin: 30
@@ -176,14 +176,14 @@ Rectangle{
                 leftMargin: 30
             }
             height: strataLogo.height + platformSelector.height + platformSelector.anchors.topMargin + cbSelector.height + cbSelector.anchors.topMargin
-            width: strataLogo.width
+            width: cbSelector.width
 
             Image {
                 id: strataLogo
-                width: 350
-                height: 175
+                width: 2 * height
+                height: upperContainer.height > 264 ? 175 : 100
                 anchors {
-                    horizontalCenter: platformContainer.horizontalCenter
+                    horizontalCenter: cbSelector.horizontalCenter
                 }
                 source: "qrc:/views/motor-vortex/images/strata-logo.svg"
                 mipmap: true;
@@ -199,7 +199,7 @@ Rectangle{
                 anchors {
                     top: strataLogo.bottom
                     topMargin: 20
-                    horizontalCenter: strataLogo.horizontalCenter
+                    horizontalCenter: cbSelector.horizontalCenter
                 }
             }
 
@@ -323,7 +323,7 @@ Rectangle{
                 anchors {
                     top: platformSelector.bottom
                     topMargin: 10
-                    horizontalCenter: platformSelector.horizontalCenter
+                    left: platformContainer.left
                 }
                 comboBoxWidth: 350
                 textRole: "text"
@@ -382,22 +382,81 @@ Rectangle{
             height: lowerContainer.height * 0.86
             width: height / 0.53
             clip: true
+
             SwipeView {
                 id: adSwipe
                 anchors { fill: parent }
+
                 Image {
-                    id: ad1
                     source: "qrc:/views/motor-vortex/images/demo-ads/1.png"
+
+                    MouseArea {
+                        anchors {
+                            fill: parent
+                        }
+                        hoverEnabled: true
+                        cursorShape: Qt.PointingHandCursor
+                    }
                 }
+
                 Image {
                     source: "qrc:/views/motor-vortex/images/demo-ads/2.png"
+
+                    MouseArea {
+                        anchors {
+                            fill: parent
+                        }
+                        hoverEnabled: true
+                        cursorShape: Qt.PointingHandCursor
+                    }
                 }
+
                 Image {
                     source: "qrc:/views/motor-vortex/images/demo-ads/3.png"
+
+                    MouseArea {
+                        anchors {
+                            fill: parent
+                        }
+                        hoverEnabled: true
+                        cursorShape: Qt.PointingHandCursor
+                    }
                 }
+
                 Image {
                     source: "qrc:/views/motor-vortex/images/demo-ads/4.png"
+
+                    MouseArea {
+                        anchors {
+                            fill: parent
+                        }
+                        hoverEnabled: true
+                        cursorShape: Qt.PointingHandCursor
+                    }
                 }
+            }
+
+            Timer {
+                interval: 3000
+                running: true
+                repeat: true
+                onTriggered: {
+                    if (adSwipe.currentIndex < 3) {
+                        adSwipe.currentIndex++
+                    } else {
+                        adSwipe.currentIndex = 0
+                    }
+                }
+            }
+
+            PageIndicator {
+                id: indicator
+
+                count: adSwipe.count
+                currentIndex: adSwipe.currentIndex
+
+                anchors.bottom: adSwipe.bottom
+                anchors.horizontalCenter: adSwipe.horizontalCenter
             }
         }
     }

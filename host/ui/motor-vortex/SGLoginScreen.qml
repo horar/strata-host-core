@@ -80,8 +80,8 @@ Rectangle {
 
     Image {
         id: strataLogo
-        width: 400
-        height: 200
+        width: 2 * height
+        height: container.height < 560 ? 125 : 200
         anchors {
             horizontalCenter: container.horizontalCenter
             bottom: spyglassTextRect.top
@@ -97,7 +97,7 @@ Rectangle {
         anchors {
             horizontalCenter: container.horizontalCenter;
             verticalCenter: container.verticalCenter;
-            verticalCenterOffset: 50
+            verticalCenterOffset:  container.height < 560 ? 25 : 50
         }
     }
 
@@ -132,9 +132,11 @@ Rectangle {
         width: 147; height: 15
         color: "#aeaeae"
         text: qsTr("Searching for hardware")
-        anchors { horizontalCenter: container.horizontalCenter
+        anchors {
+            horizontalCenter: container.horizontalCenter
             top: spyglassTextRect.bottom
-            topMargin: 25}
+            topMargin: 25
+        }
         horizontalAlignment: Text.AlignHCenter
         fontSizeMode: Text.Fit
         opacity: 0
@@ -143,9 +145,11 @@ Rectangle {
     BusyIndicator {
         id: busyIndicator
         x: 301; y: 264
-        anchors {horizontalCenter: container.horizontalCenter
+        anchors {
+            horizontalCenter: container.horizontalCenter
             top: searchingText.bottom
-            topMargin: 25}
+            topMargin: 25
+        }
         font { pixelSize: 8 }
         opacity:0
     }
