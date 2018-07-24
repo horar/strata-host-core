@@ -98,7 +98,7 @@ Rectangle{
             right: container.right
             top: container.top
         }
-        height: container.height * .5
+        height: container.height * 0.5
         z: 2
 
         Item {
@@ -370,7 +370,7 @@ Rectangle{
             right: container.right
             bottom: container.bottom
         }
-        height: container.height * .5
+        height: container.height * 0.5
         z: 1
 
         Item {

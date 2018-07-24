@@ -3,6 +3,7 @@ import QtQuick.Controls.Styles 1.4
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.3
 import "js/navigation_control.js" as NavigationControl
+import "qrc:/statusbar-partial-views"
 
 Rectangle {
     id: container
@@ -12,8 +13,7 @@ Rectangle {
     property string user_id: ""
     property bool is_logged_in: false
     property string generalTitle: "Guest"
-    //property color backgroundColor: "#0c54e5"
-    property color backgroundColor: "#C0C0C0"
+    property color backgroundColor: "#666"
 
     color: backgroundColor
 
@@ -91,12 +91,12 @@ Rectangle {
     }
 
     function find(model, remote_user_name) {
-      for(var i = 0; i < model.count; ++i) {
-          if (remote_user_name === model.get(i).name) {
-              return i
-          }
-      }
-      return null
+        for(var i = 0; i < model.count; ++i) {
+            if (remote_user_name === model.get(i).name) {
+                return i
+            }
+        }
+        return null
     }
 
     Popup {
@@ -128,13 +128,13 @@ Rectangle {
             }
         }
 
-       Connections {
+        Connections {
             target: tryAgainButton
             onClicked: {
                 remoteConnectContainer.state = "default"
             }
-       }
-       Connections {
+        }
+        Connections {
             target: disconnectButton
             onClicked: {
                 remoteConnectContainer.state = "default"
@@ -145,15 +145,15 @@ Rectangle {
                 coreInterface.sendCommand(JSON.stringify(remote_disconnect_json))
                 console.log("UI -> HCS ", JSON.stringify(remote_disconnect_json));
             }
-       }
-       Connections {
+        }
+        Connections {
             target: coreInterface
             onPlatformStateChanged: {
                 remoteConnectContainer.state = "default"
             }
-       }
+        }
 
-       Connections {
+        Connections {
             target: coreInterface
             onRemoteConnectionChanged:{
                 if ( remoteConnectContainer.state === "connecting") {
@@ -167,7 +167,7 @@ Rectangle {
                     }
                 }
             }
-       }
+        }
 
         Rectangle {
             id: remoteConnectContainer
@@ -182,7 +182,7 @@ Rectangle {
                     PropertyChanges { target: tokenBusyIndicator; visible: false}
                     PropertyChanges { target: tryAgainButton; visible: false }
                     PropertyChanges { target: disconnectButton; visible: false}
-                   },
+                },
                 State {
                     name: "connecting"
                     // Show BusyIndicator and 'connecting' text
@@ -194,7 +194,7 @@ Rectangle {
 
                     // Start timer
                     PropertyChanges { target: tokenBusyTimer; running: true;}
-                   },
+                },
                 State {
                     name: "timeout"
                     // Show timeout
@@ -206,7 +206,7 @@ Rectangle {
 
                     // Show button to try again
                     PropertyChanges { target: tryAgainButton; visible: true }
-                   },
+                },
                 State {
                     name: "success"
                     // Show timeout
@@ -219,7 +219,7 @@ Rectangle {
                     // Show Disconnect
                     PropertyChanges { target: disconnectButton; visible: true}
 
-                   },
+                },
 
                 State {
                     name: "error"
@@ -244,7 +244,7 @@ Rectangle {
                 running: false
                 repeat: false
                 onTriggered: {
-                  // Show failure
+                    // Show failure
                 }
             }
 
@@ -457,39 +457,10 @@ Rectangle {
         }
     }
 
-    Image {
-        id: user_img
-        anchors { left: container.left }
-        horizontalAlignment: Image.AlignLeft
-        verticalAlignment: Image.AlignTop
-        sourceSize.width: 1024; sourceSize.height: 1024
-
-        height: parent.height
-        fillMode: Image.PreserveAspectFit
-        source: "qrc:/images/" + getUserImage(user_id)
-    }
-
-    Label {
-        id: userNameLabel
-
-        anchors {
-            left: user_img.right;
-            leftMargin: 10;
-            verticalCenter: container.verticalCenter;
-            verticalCenterOffset: 10
-        }
-
-        height: parent.height
-        text:  getUserName(user_id)
-        font.pointSize: Qt.platform.os == "osx"? 13 :8
-        font.bold: true
-        color: "white"
-    }
-
     Label {
         id:remote_user_label
         anchors {
-            left: settingsToolButton.right;
+            left: toolbar.left
             verticalCenter: container.verticalCenter;
             verticalCenterOffset: 10
         }
@@ -545,23 +516,23 @@ Rectangle {
                             visible: false
                         }
                         MouseArea {
-                                anchors.fill: remote_user_img
-                                hoverEnabled: true
-                                onEntered: { close_icon.visible = true }
-                                onExited: { close_icon.visible = false }
-                                onClicked: {
-                                    var remote_json = {
-                                        "hcs::cmd":"disconnect_remote_user",
-                                        "payload": {
-                                            "user_name":name
-                                        }
+                            anchors.fill: remote_user_img
+                            hoverEnabled: true
+                            onEntered: { close_icon.visible = true }
+                            onExited: { close_icon.visible = false }
+                            onClicked: {
+                                var remote_json = {
+                                    "hcs::cmd":"disconnect_remote_user",
+                                    "payload": {
+                                        "user_name":name
                                     }
-                                    console.log("disconnecting user",JSON.stringify(remote_json))
-                                    coreInterface.sendCommand(JSON.stringify(remote_json))
-//                                    remoteUserModel.remove(remote_user_list_view.currentIndex,1)
-
                                 }
+                                console.log("disconnecting user",JSON.stringify(remote_json))
+                                coreInterface.sendCommand(JSON.stringify(remote_json))
+                                //                                    remoteUserModel.remove(remote_user_list_view.currentIndex,1)
+
                             }
+                        }
                     }
                     Label {
                         id:remote_user_name
@@ -606,25 +577,25 @@ Rectangle {
     }
 
     Connections {
-         target: coreInterface
-         onPlatformStateChanged: {
-             remote_user_container.visible = false;
-             remote_user_label.visible = false;
-             tokenField.text = "";
- // send "close remote advertise to hcs to close the remote socket"
-             if(advertiseButton.checked) {
+        target: coreInterface
+        onPlatformStateChanged: {
+            remote_user_container.visible = false;
+            remote_user_label.visible = false;
+            tokenField.text = "";
+            // send "close remote advertise to hcs to close the remote socket"
+            if(advertiseButton.checked) {
                 remoteUserModel.clear()
                 advertiseButton.checked = false;
-                 var remote_json = {
-                     "hcs::cmd":"advertise",
-                     "payload": {
-                         "advertise_platforms":false
-                     }
-                 }
-                 console.log("asking hcs to advertise the platforms",JSON.stringify(remote_json))
-                 coreInterface.sendCommand(JSON.stringify(remote_json))
-             }
-         }
+                var remote_json = {
+                    "hcs::cmd":"advertise",
+                    "payload": {
+                        "advertise_platforms":false
+                    }
+                }
+                console.log("asking hcs to advertise the platforms",JSON.stringify(remote_json))
+                coreInterface.sendCommand(JSON.stringify(remote_json))
+            }
+        }
     }
 
     Label {
@@ -660,6 +631,113 @@ Rectangle {
         }
     }
 
+    ToolBar {
+        id: toolBar
+        anchors {
+            left: container.left
+        }
+        background: Rectangle {
+            color: container.color
+            height: container.height
+        }
+
+        Row {
+            SGToolButton {
+                id: platformOptionsButton
+                text: qsTr("Platform Options")
+                width: 150
+                onPressed: {
+                    platformOptionsMenu.open()
+                }
+                buttonColor: platformOptionsButton.hovered || platformOptionsMenu.visible ? Qt.darker(container.color) : container.color
+
+
+                Popup {
+                    id: platformOptionsMenu
+                    y: platformOptionsButton.height
+                    padding: 0
+                    width: 150
+                    height: 80
+                    background: Rectangle {
+                        color: container.color
+                        border {
+                            width: 0
+                        }
+                    }
+
+                    contentItem: Column {
+                        id: platMenuColumn
+                        width: platMenuColumn.width
+
+                        SGMenuItem {
+                            text: qsTr("View Platform Controls")
+                            onClicked: {
+                                platformOptionsMenu.close()
+                            }
+                            width: parent.width
+                            buttonColor: !this.hovered ? container.color : this.pressed ? Qt.darker(container.color, 3) : Qt.darker(container.color, 2)
+                        }
+
+                        SGMenuItem {
+                            text: qsTr("View Platform Content")
+                            onClicked: {
+                                platformOptionsMenu.close()
+                            }
+                            width: parent.width
+                            buttonColor: !this.hovered ? container.color : this.pressed ? Qt.darker(container.color, 3) : Qt.darker(container.color, 2)                        }
+                    }
+                }
+            }
+
+            SGToolButton {
+                id: remoteSupportButton
+                text: qsTr("Remote Support")
+                width: 150
+                onPressed: {
+                    remoteSupportMenu.open()
+                }
+                buttonColor: remoteSupportButton.hovered || remoteSupportMenu.visible ? Qt.darker(container.color) : container.color
+
+                Popup {
+                    id: remoteSupportMenu
+                    y: remoteSupportButton.height
+                    padding: 0
+                    width: 250
+                    height: 80
+                    background: Rectangle {
+                        color: container.color
+                        border {
+                            width: 0
+                        }
+                    }
+
+                    contentItem: Column {
+                        id: remoteMenuColumn
+                        width: remoteSupportMenu.width
+
+                        SGMenuItem {
+                            text: qsTr("Remote Support FAE")
+                            onClicked: {
+                                remoteSupportMenu.close()
+                                remoteSupportConnect.open()
+                            }
+                            width: parent.width
+                            buttonColor: !this.hovered ? container.color : this.pressed ? Qt.darker(container.color, 3) : Qt.darker(container.color, 2)                        }
+
+                        SGMenuItem {
+                            text: qsTr("Remote Support CUSTOMER")
+                            onClicked: {
+                                remoteSupportMenu.close()
+                                remoteSupportRequest.open()
+                            }
+                            width: parent.width
+                            buttonColor: !this.hovered ? container.color : this.pressed ? Qt.darker(container.color, 3) : Qt.darker(container.color, 2)                        }
+                    }
+                }
+            }
+        }
+    }
+
     Item {
         id: profileIconContainer
         anchors {
@@ -692,8 +770,6 @@ Rectangle {
                     pixelSize: profileIconHover.containsMouse ? 24 : 20
                 }
             }
-
-
         }
 
         MouseArea {
@@ -730,209 +806,123 @@ Rectangle {
                     context.lineTo(width, height);
                     context.lineTo(0, height);
                     context.closePath();
-                    context.fillStyle = "lightgreen";
+                    context.fillStyle = "#00b842";
                     context.fill();
                 }
             }
 
             contentItem:
                 Column {
-                    id: column
-                    width: profileMenu.width
+                width: profileMenu.width
 
-                    Button {
-                        id: button1
-                        text: qsTr("My Profile")
-                        width: profileMenu.width
-
-                        onClicked: profilePopup.open();
-//                        opacity:.25
-
-                        contentItem: Text {
-                            text: button1.text
-                            opacity: enabled ? 1.0 : 0.3
-                            color: "white"
-                            horizontalAlignment: Text.AlignLeft
-                            verticalAlignment: Text.AlignVCenter
-                            elide: Text.ElideRight
-                        }
-
-                        background: Rectangle {
-                            implicitWidth: 100
-                            implicitHeight: 40
-                            opacity: enabled ? 1 : 0.3
-                            radius: 2
-                            color: "grey"
-                        }
+                SGMenuItem {
+                    text: qsTr("My Profile")
+                    onClicked: {
+                        profileMenu.close()
+                        profilePopup.open();
                     }
+                }
 
-                    Button {
-                        text: qsTr("Log out")
-                        width: profileMenu.width
-//                        opacity:.25
-
-
-                        onClicked: {
-                            NavigationControl.updateState(NavigationControl.events.LOGOUT_EVENT)
-                        }
-
+                SGMenuItem {
+                    text: qsTr("Log Out")
+                    onClicked: {
+                        profileMenu.close()
+                        NavigationControl.updateState(NavigationControl.events.LOGOUT_EVENT)
+                    }
                 }
             }
         }
     }
 
-    ToolButton {
-        id: settingsToolButton
+    Popup {
+        id: profilePopup
+        width: 500
+        height: 500
+        modal: true
+        focus: true
+        x: 200; y: 200
+        Rectangle {
+            id: popupContainer
+            anchors.fill: parent
+            width: profilePopup.width;height: profilePopup.height
+            color: "lightgray"
 
-        anchors { left: userNameLabel.right;  leftMargin: 10 }
-        width: 30; height: parent.height
-        onClicked: settingsMenu.open()
-        opacity: 1
-
-        Label {
-            anchors { fill: parent }
-
-            text: qsTr("\u22EE")
-            elide: Label.ElideRight
-            horizontalAlignment: Qt.AlignHCenter
-            verticalAlignment: Qt.AlignVCenter
-            Layout.fillWidth: true
-            font.pixelSize: 20
-            font.bold: true
-            color: "black"
-
-            background: Rectangle {
-                anchors { fill: parent }
-                color: backgroundColor
-            }
-
-        }
-
-        Popup {
-            id: profilePopup
-            width: 500
-            height: 500
-            modal: true
-            focus: true
-            x: 200; y: 200
             Rectangle {
-                id: popupContainer
-                anchors.fill: parent
-                width: profilePopup.width;height: profilePopup.height
-                color: "lightgray"
+                id: title
+                height: 30
+                width: popupContainer.width
+                anchors.top: popupContainer.top
+                color: "gray"
 
-                Rectangle {
-                    id: title
-                    height: 30
-                    width: popupContainer.width
-                    anchors.top: popupContainer.top
-                    color: "gray"
-
-                    Label {
-                        id: profileTitle
-                        anchors {
-                            left: title.left
-                            leftMargin: 10
-                        }
-                        text: "My Profile"
-                        font.pointSize: 10
-                        font.bold: true
-                    }
-                }
-
-                Image {
-                    id: profile_image
-                    anchors { horizontalCenter: popupContainer.horizontalCenter
-                        top: popupContainer.top
-                        topMargin: 60
-                    }
-                    width: 100; height: 100
-                    fillMode: Image.PreserveAspectFit
-                    source: "qrc:/images/" + getUserImage(user_id)
-                }
                 Label {
-                    id:profile_userId
-                    text: getUserName(user_id)
+                    id: profileTitle
                     anchors {
-                        top: profile_image.bottom
-                        topMargin: 5
-                        horizontalCenter: popupContainer.horizontalCenter
-
+                        left: title.left
+                        leftMargin: 10
                     }
-                    font.pointSize: 15
+                    text: "My Profile"
+                    font.pointSize: 10
                     font.bold: true
-                    color: "black"
                 }
-
-                Label {
-                    id: profile_username
-                    anchors {
-                        top: profile_userId.bottom
-                        horizontalCenter: popupContainer.horizontalCenter
-
-                    }
-                    text: getUserName(user_id) + "@onsemi.com"
-                    anchors.horizontalCenterOffset: 1
-                    //anchors.topMargin: 18
-                    font.pointSize: 15
-                    font.bold: true
-                    color: "black"
-                }
-
-                Label {
-                    id: email
-                    text : getJobTitle(user_id)
-                    anchors.top: profile_username.bottom
-                    anchors.topMargin: 5
-                    anchors.horizontalCenter:  popupContainer.horizontalCenter
-                }
-
-                Label {
-                    id: cusomerSupport
-                    text: "Customer Support: 1800-onsemi-support"
-                    anchors.top: email.bottom
-                    anchors.topMargin: 5
-                    anchors.horizontalCenter:  popupContainer.horizontalCenter
-                }
-
             }
-            closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
+
+            Image {
+                id: profile_image
+                anchors { horizontalCenter: popupContainer.horizontalCenter
+                    top: popupContainer.top
+                    topMargin: 60
+                }
+                width: 100; height: 100
+                fillMode: Image.PreserveAspectFit
+                source: "qrc:/images/" + getUserImage(user_id)
+            }
+            Label {
+                id:profile_userId
+                text: getUserName(user_id)
+                anchors {
+                    top: profile_image.bottom
+                    topMargin: 5
+                    horizontalCenter: popupContainer.horizontalCenter
+
+                }
+                font.pointSize: 15
+                font.bold: true
+                color: "black"
+            }
+
+            Label {
+                id: profile_username
+                anchors {
+                    top: profile_userId.bottom
+                    horizontalCenter: popupContainer.horizontalCenter
+
+                }
+                text: getUserName(user_id) + "@onsemi.com"
+                anchors.horizontalCenterOffset: 1
+                //anchors.topMargin: 18
+                font.pointSize: 15
+                font.bold: true
+                color: "black"
+            }
+
+            Label {
+                id: email
+                text : getJobTitle(user_id)
+                anchors.top: profile_username.bottom
+                anchors.topMargin: 5
+                anchors.horizontalCenter:  popupContainer.horizontalCenter
+            }
+
+            Label {
+                id: cusomerSupport
+                text: "Customer Support: 1800-onsemi-support"
+                anchors.top: email.bottom
+                anchors.topMargin: 5
+                anchors.horizontalCenter:  popupContainer.horizontalCenter
+            }
+
         }
-
-        Menu {
-            id: settingsMenu
-            title: "setting"
-            y: settingsToolButton.y + settingsToolButton.height //To move the drop down menu below the setting icon
-
-            MenuItem {
-                text: qsTr("Log out")
-                onClicked: {
-                    NavigationControl.updateState(NavigationControl.events.LOGOUT_EVENT)
-                }
-            }
-
-            MenuItem {
-                text: qsTr("Remote Support FAE")
-
-                onClicked: {
-                    remoteSupportConnect.open()
-
-                }
-            }
-
-            MenuItem {
-                text: qsTr("Remote Support CUSTOMER")
-
-                onClicked: {
-                    remoteSupportRequest.open()
-                }
-            }
-
-            MenuItem {
-                text: qsTr("My Profile")
-                onClicked: profilePopup.open();
-            }
-        }
+        closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
     }
 
     FontLoader {

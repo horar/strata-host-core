@@ -5,7 +5,6 @@ import QtQuick.Layouts 1.3
 import "js/navigation_control.js" as NavigationControl
 
 Window {
-
     id: mainWindow
     visible: true
     width: 1200
@@ -32,7 +31,7 @@ Window {
 
         Rectangle {
             id: statusBarContainer
-            height: visible ? 45 : 0
+            height: visible ? 40 : 0
             width: parent.width
         }
 
