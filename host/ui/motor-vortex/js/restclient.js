@@ -1,5 +1,5 @@
 .pragma library
-var url = "http://cobra.spyglass.tech:8081/";
+var url = "http://18.222.75.160/";
 // jwt will be set after successful login
 var jwt = '';
 var xhr = function(method, endpoint, data, callback,errorCallback) {

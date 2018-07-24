@@ -219,7 +219,7 @@ bool SerialConnector::read(string &notification)
 
         // [prasanth]: if the return value from read is less than 0, then the resource is unavailable
         // but we are checking if it is equal to 0 for loadboard since it takes 5sec to load
-        if(error <= 0) {
+        if(error < 0) {
             cout << "error number "<<error<<endl;
             LOG_DEBUG(DEBUG,"Platform Disconnected:%c\n",temp);
             dealer_id_.clear();

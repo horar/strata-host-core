@@ -17,7 +17,7 @@ Rectangle {
         /*
             Point to the specific listModel from documentManager here
         */
-        model: documentManager.layoutDocuments
+        model: documentManager.targetedDocuments
         focus: true
         clip: true
         add: Transition { NumberAnimation { properties: "x,y"; from: 100; duration: 1000 } }
@@ -33,5 +33,4 @@ Rectangle {
         }
         ScrollBar.vertical: ScrollBar { }
     } // end ListView
-
 }

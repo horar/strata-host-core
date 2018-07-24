@@ -17,7 +17,7 @@ Rectangle {
         /*
             Point to the specific listModel from documentManager here
         */
-        model: documentManager.layoutDocuments
+        model: documentManager.testReportDocuments
         focus: true
         clip: true
         add: Transition { NumberAnimation { properties: "x,y"; from: 100; duration: 1000 } }
@@ -31,7 +31,6 @@ Rectangle {
                 source: "data:image/png;base64," + model.data
            }
         }
-        ScrollBar.vertical: ScrollBar { }
+        ScrollBar.vertical: ScrollBar {}
     } // end ListView
-
 }

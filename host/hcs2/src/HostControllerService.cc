@@ -700,12 +700,14 @@ void HostControllerService::handleRemotePlatformRegistration(bool remote_adverti
         client_connector_->send(strbuf.GetString());
     }
     else {
-        bool status = discovery_service_->deregisterPlatform(g_dealer_id_);
-        event_del(&remote_handler_);
-        event_del(&activity_handler_);
-        string disconnect_message = "{\"notification\":{\"value\":\"platform_connection_change_notification\",\"payload\":{\"status\":\"disconnected\"}}}";
-        remote_connector_->send(disconnect_message);
-        remote_connector_->close();
+        if(remote_connector_->isConnected()) {
+            bool status = discovery_service_->deregisterPlatform(g_dealer_id_);
+            event_del(&remote_handler_);
+            event_del(&activity_handler_);
+            string disconnect_message = "{\"notification\":{\"value\":\"platform_connection_change_notification\",\"payload\":{\"status\":\"disconnected\"}}}";
+            remote_connector_->send(disconnect_message);
+            remote_connector_->close();
+        }
     }
 }
 
@@ -866,8 +868,7 @@ string HostControllerService::platformRead()
 void HostControllerService::platformDisconnectRoutine ()
 {
     PDEBUG(PRINT_DEBUG,"Platform Disconnected\n");
-    sendDisconnecttoUI();
-
+    cout<<"platform_id " << g_dealer_id_<<endl;
     if(remote_connector_->isConnected()) {
         bool status = discovery_service_->deregisterPlatform(g_dealer_id_);
         event_del(&remote_handler_);
@@ -876,7 +877,7 @@ void HostControllerService::platformDisconnectRoutine ()
         remote_connector_->send(disconnect_message);
         remote_connector_->close();
     }
-
+    sendDisconnecttoUI();
     platform_uuid_.clear();
     platform_client_mapping_.clear();
 

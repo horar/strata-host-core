@@ -33,5 +33,4 @@ Rectangle {
         }
         ScrollBar.vertical: ScrollBar { }
     } // end ListView
-
 }

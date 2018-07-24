@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.3
 import "js/navigation_control.js" as NavigationControl
 
+
 Rectangle {
     id: container
     anchors.fill: parent
@@ -11,6 +12,7 @@ Rectangle {
     // Context properties that get passed when created dynamically
     property string user_id: ""
     property bool is_logged_in: false
+    property bool is_remote_connected: false
     property string generalTitle: "Guest"
     //property color backgroundColor: "#0c54e5"
     property color backgroundColor: "#C0C0C0"
@@ -144,6 +146,7 @@ Rectangle {
                     "hcs::cmd":"remote_disconnect",
                 }
                 coreInterface.sendCommand(JSON.stringify(remote_disconnect_json))
+
                 console.log("UI -> HCS ", JSON.stringify(remote_disconnect_json));
             }
        }
@@ -162,6 +165,7 @@ Rectangle {
                     // Successful remote connection
                     if (result === true){
                         remoteConnectContainer.state = "success"
+                        is_remote_connected = true
                     }
                     else {
                         remoteConnectContainer.state = "error"
@@ -796,6 +800,16 @@ Rectangle {
                     text: qsTr("Log out")
                     onClicked: {
                         NavigationControl.updateState(NavigationControl.events.LOGOUT_EVENT)
+                        remoteConnectContainer.state = "default"
+                        if(is_remote_connected) {
+                            // sending remote disconnect message to hcs
+                            var remote_disconnect_json = {
+                                "hcs::cmd":"remote_disconnect",
+                            }
+                            coreInterface.sendCommand(JSON.stringify(remote_disconnect_json))
+
+                            console.log("UI -> HCS ", JSON.stringify(remote_disconnect_json))
+                        }
                     }
                 }
 
