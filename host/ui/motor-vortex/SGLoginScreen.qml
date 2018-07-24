@@ -71,7 +71,7 @@ Rectangle {
     //-----------------------------------------------------------
     Image {
         id: background
-        source: "qrc:/views/motor-vortex/images/login-background.svg"
+        source: "qrc:/images/login-background.svg"
         height: 1080
         width: 1920
         x: (parent.width - width)/2
@@ -86,7 +86,7 @@ Rectangle {
             horizontalCenter: container.horizontalCenter
             bottom: spyglassTextRect.top
         }
-        source: "qrc:/views/motor-vortex/images/strata-logo.svg"
+        source: "qrc:/images/strata-logo.svg"
         mipmap: true;
     }
 
@@ -114,7 +114,7 @@ Rectangle {
 
         Image {
             id: onSemiLogo
-            source: "qrc:/views/motor-vortex/images/on-semi-logo.png"
+            source: "qrc:/images/on-semi-logo.png"
             anchors {
                 left: onSemiHeader.left
                 leftMargin: 25
@@ -392,11 +392,11 @@ Rectangle {
 
     FontLoader {
         id: franklinGothicBook
-        source: "qrc:/views/motor-vortex/fonts/FranklinGothicBook.otf"
+        source: "qrc:/fonts/FranklinGothicBook.otf"
     }
 
     FontLoader {
         id: franklinGothicBold
-        source: "qrc:/views/motor-vortex/fonts/FranklinGothicBold.ttf"
+        source: "qrc:/fonts/FranklinGothicBold.ttf"
     }
 }

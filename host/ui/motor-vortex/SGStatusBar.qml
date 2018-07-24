@@ -937,11 +937,11 @@ Rectangle {
 
     FontLoader {
         id: franklinGothicBook
-        source: "qrc:/views/motor-vortex/fonts/FranklinGothicBook.otf"
+        source: "qrc:/fonts/FranklinGothicBook.otf"
     }
 
     FontLoader {
         id: franklinGothicBold
-        source: "qrc:/views/motor-vortex/fonts/FranklinGothicBold.ttf"
+        source: "qrc:/fonts/FranklinGothicBold.ttf"
     }
 }

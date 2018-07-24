@@ -38,7 +38,7 @@ Window {
 
         Flipable {
             id: flipable
-            height: commandBar.visible ? parent.height - statusBarContainer.height - commandBar.height : parent.height - statusBarContainer.height
+            height: parent.height - statusBarContainer.height
             width: parent.width
 
             property bool flipped: false
@@ -71,77 +71,79 @@ Window {
                 NumberAnimation { target: rotation; property: "angle"; duration: 2000 }
             }
         }
+    }
 
-        // Debug commands for simulation
-        Rectangle {
-            id: commandBar
-            visible: showDebugCommandBar
-            width: parent.width
-            height: 44
-            color: "lightgrey"
+    // Debug commands for simulation
+    Rectangle {
+        id: commandBar
+        visible: showDebugCommandBar
+        width: parent.width
+        height: 44
+        color: "lightgrey"
+        anchors {
+            bottom: parent.bottom
+        }
 
-            // Simulate Platform events
-            GridLayout {
-                anchors.centerIn: parent
-                Text {
-                    id: commandLabel
-                    text: qsTr("Commands")
+        // Simulate Platform events
+        GridLayout {
+            anchors.centerIn: parent
+            Text {
+                id: commandLabel
+                text: qsTr("Commands")
+            }
+            Button {
+                text: "USB-PD"
+                onClicked: {
+                    var data = { platform_name: "usb-pd"}
+                    NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT, data)
                 }
-                Button {
-                    text: "USB-PD"
-                    onClicked: {
-                        var data = { platform_name: "usb-pd"}
-                        NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT, data)
-                    }
+            }
+            Button {
+                text: "BuBU Interface"
+                onClicked: {
+                    var data = { platform_name: "bubu"}
+                    NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT, data)
                 }
-                Button {
-                    text: "BuBU Interface"
-                    onClicked: {
-                        var data = { platform_name: "bubu"}
-                        NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT, data)
-                    }
+            }
+            Button {
+                text: "Motor Vortex"
+                onClicked: {
+                    var data = { platform_name: "motor-vortex"}
+                    NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT, data)
                 }
-                Button {
-                    text: "Motor Vortex"
-                    onClicked: {
-                        var data = { platform_name: "motor-vortex"}
-                        NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT, data)
-                    }
-                }
+            }
 
-                // UI events
-                Button {
-                    text: "Disconnect"
-                    onClicked: {
-                        NavigationControl.updateState(NavigationControl.events.PLATFORM_DISCONNECTED_EVENT, null)
-                        var disconnect_json = {"hcs::cmd":"disconnect_platform"}
-                        console.log("disonnecting the platform")
-                        coreInterface.sendCommand(JSON.stringify(disconnect_json))
-                    }
+            // UI events
+            Button {
+                text: "Disconnect"
+                onClicked: {
+                    NavigationControl.updateState(NavigationControl.events.PLATFORM_DISCONNECTED_EVENT, null)
+                    var disconnect_json = {"hcs::cmd":"disconnect_platform"}
+                    console.log("disonnecting the platform")
+                    coreInterface.sendCommand(JSON.stringify(disconnect_json))
                 }
-                Button {
-                    text: "Logout"
-                    onClicked: {
-                        NavigationControl.updateState(NavigationControl.events.LOGOUT_EVENT,null)
-                    }
+            }
+            Button {
+                text: "Logout"
+                onClicked: {
+                    NavigationControl.updateState(NavigationControl.events.LOGOUT_EVENT,null)
                 }
-                Button {
-                    text: "Toggle Content/Control"
-                    onClicked: {
-                        NavigationControl.updateState(NavigationControl.events.TOGGLE_CONTROL_CONTENT)
-                    }
+            }
+            Button {
+                text: "Toggle Content/Control"
+                onClicked: {
+                    NavigationControl.updateState(NavigationControl.events.TOGGLE_CONTROL_CONTENT)
                 }
-                Button {
-                    text: "Login as guest"
-                    onClicked: {
-                        var data = { user_id: "Guest" }
-                        NavigationControl.updateState(NavigationControl.events.LOGIN_SUCCESSFUL_EVENT,data)
-                    }
+            }
+            Button {
+                text: "Login as guest"
+                onClicked: {
+                    var data = { user_id: "Guest" }
+                    NavigationControl.updateState(NavigationControl.events.LOGIN_SUCCESSFUL_EVENT,data)
                 }
             }
         }
     }
-
 
     // Listen into Core Interface which gives us the platform changes
     Connections {

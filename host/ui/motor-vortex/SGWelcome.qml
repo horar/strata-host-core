@@ -84,7 +84,7 @@ Rectangle{
 
     Image {
         id: background
-        source: "qrc:/views/motor-vortex/images/login-background.svg"
+        source: "qrc:/images/login-background.svg"
         height: 1080
         width: 1920
         x: (parent.width - width)/2
@@ -185,7 +185,7 @@ Rectangle{
                 anchors {
                     horizontalCenter: cbSelector.horizontalCenter
                 }
-                source: "qrc:/views/motor-vortex/images/strata-logo.svg"
+                source: "qrc:/images/strata-logo.svg"
                 mipmap: true;
             }
 
@@ -388,7 +388,7 @@ Rectangle{
                 anchors { fill: parent }
 
                 Image {
-                    source: "qrc:/views/motor-vortex/images/demo-ads/1.png"
+                    source: "qrc:/images/demo-ads/1.png"
 
                     MouseArea {
                         anchors {
@@ -400,7 +400,7 @@ Rectangle{
                 }
 
                 Image {
-                    source: "qrc:/views/motor-vortex/images/demo-ads/2.png"
+                    source: "qrc:/images/demo-ads/2.png"
 
                     MouseArea {
                         anchors {
@@ -412,7 +412,7 @@ Rectangle{
                 }
 
                 Image {
-                    source: "qrc:/views/motor-vortex/images/demo-ads/3.png"
+                    source: "qrc:/images/demo-ads/3.png"
 
                     MouseArea {
                         anchors {
@@ -424,7 +424,7 @@ Rectangle{
                 }
 
                 Image {
-                    source: "qrc:/views/motor-vortex/images/demo-ads/4.png"
+                    source: "qrc:/images/demo-ads/4.png"
 
                     MouseArea {
                         anchors {
@@ -463,11 +463,11 @@ Rectangle{
 
     FontLoader {
         id: franklinGothicBook
-        source: "qrc:/views/motor-vortex/fonts/FranklinGothicBook.otf"
+        source: "qrc:/fonts/FranklinGothicBook.otf"
     }
 
     FontLoader {
         id: franklinGothicBold
-        source: "qrc:/views/motor-vortex/fonts/FranklinGothicBold.ttf"
+        source: "qrc:/fonts/FranklinGothicBold.ttf"
     }
 }
