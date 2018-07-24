@@ -251,7 +251,7 @@ public:
 
     // non-blocking calls
     bool send(const std::string& message);
-    bool sendSmallChunks(const std::string& message, const unsigned int chunk_limit);
+    bool sendSmallChunks(const std::string& message, const unsigned int chunk_limit){}
     bool read(std::string& notification);
 
     int getFileDescriptor();
@@ -273,7 +273,7 @@ public:
 
     // non-blocking calls
     bool send(const std::string& message);
-    bool sendSmallChunks(const std::string& message, const unsigned int chunk_limit);
+    bool sendSmallChunks(const std::string& message, const unsigned int chunk_limit){}
     bool read(std::string& notification);
 
     int getFileDescriptor();
@@ -295,7 +295,7 @@ public:
 
     // non-blocking calls
     bool send(const std::string& message);
-    bool sendSmallChunks(const std::string& message, const unsigned int chunk_limit);
+    bool sendSmallChunks(const std::string& message, const unsigned int chunk_limit){}
     bool read(std::string& notification);
 
     int getFileDescriptor();
