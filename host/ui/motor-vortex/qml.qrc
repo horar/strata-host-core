@@ -198,6 +198,13 @@
         <file>views/motor-vortex/sgwidgets/SGComboBox.qml</file>
         <file>views/motor-vortex/images/login-background.svg</file>
         <file>views/motor-vortex/images/on-semi-logo.png</file>
-        <file>views/motor-vortex/images/strata_logo.svg</file>
+        <file>views/motor-vortex/fonts/FranklinGothicBold.ttf</file>
+        <file>views/motor-vortex/fonts/FranklinGothicBook.otf</file>
+        <file>views/motor-vortex/fonts/FranklinGothicMedium.otf</file>
+        <file>views/motor-vortex/images/strata-logo.svg</file>
+        <file>views/motor-vortex/images/demo-ads/1.png</file>
+        <file>views/motor-vortex/images/demo-ads/2.png</file>
+        <file>views/motor-vortex/images/demo-ads/3.png</file>
+        <file>views/motor-vortex/images/demo-ads/4.png</file>
     </qresource>
 </RCC>

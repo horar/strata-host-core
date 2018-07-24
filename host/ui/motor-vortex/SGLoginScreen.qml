@@ -86,7 +86,7 @@ Rectangle {
             horizontalCenter: container.horizontalCenter
             bottom: spyglassTextRect.top
         }
-        source: "qrc:/views/motor-vortex/images/strata_logo.svg"
+        source: "qrc:/views/motor-vortex/images/strata-logo.svg"
         mipmap: true;
     }
 
@@ -169,14 +169,19 @@ Rectangle {
             height: 38
             focus: true
             placeholderText: qsTr("Username")
-            Material.accent: Material.Grey
             cursorPosition: 3
             anchors {
                 top: loginRectangle.top
                 left: loginRectangle.left
                 right: loginRectangle.right
             }
-            font.pointSize: Qt.platform.os == "osx"? 13 : 8
+            font {
+                pixelSize: 15
+                family: franklinGothicBook.name
+            }
+            background: Rectangle {
+                border.color: usernameField.activeFocus ? "#219647" : "#ddd"
+            }
 
             Keys.onPressed: {
                 hideFailedLoginAnimation.start()
@@ -200,8 +205,13 @@ Rectangle {
             activeFocusOnTab: true
             placeholderText: qsTr("Password")
             echoMode: TextInput.Password
-            Material.accent: Material.Grey
-            font.pointSize: Qt.platform.os == "osx"? 13 : 8
+            font {
+                pixelSize: 15
+                family: franklinGothicBook.name
+            }
+            background: Rectangle {
+                border.color: passwordField.activeFocus ? "#219647" : "#ddd"
+            }
 
             Keys.onPressed: {
                 hideFailedLoginAnimation.start()
@@ -235,13 +245,15 @@ Rectangle {
 
             Text{
                 id:loginErrorText
-                font.family: "helvetica"
-                font.bold:true
-                font.pointSize: (Qt.platform.os == "osx") ? 13 : 8
+                font {
+                    pixelSize: 10
+                    family: franklinGothicBold.name
+                }
                 wrapMode: Label.WordWrap
                 anchors {
                     left: alertIcon.right
                     right: loginErrorRect.right
+                    rightMargin: 5
                     verticalCenter: loginErrorRect.verticalCenter
                 }
                 horizontalAlignment:Text.AlignHCenter
@@ -259,19 +271,22 @@ Rectangle {
             }
             width: 184; height: 38
             text:"Login"
-            Material.elevation: 6
-            Material.background: loginButton.down ? Qt.darker("#2eb457") : "#2eb457"
+
+            background: Rectangle {
+                color: loginButton.down ? "#666" : "#888"
+            }
 
             contentItem: Text {
                 text: loginButton.text
-                font.family: "helvetica"
                 opacity: enabled ? 1.0 : 0.3
-                color: loginButton.down ? "white" : "white"
+                color: "white"
                 horizontalAlignment: Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter
                 elide: Text.ElideRight
-                font.pointSize: Qt.platform.os != "osx"? 10 :13
-                font.bold:true
+                font {
+                    pixelSize: 15
+                    family: franklinGothicBold.name
+                }
             }
 
             /* OnClicked is handled in Connections section above */
@@ -370,12 +385,14 @@ Rectangle {
             duration: 1
         }
     }
+
+    FontLoader {
+        id: franklinGothicBook
+        source: "qrc:/views/motor-vortex/fonts/FranklinGothicBook.otf"
+    }
+
+    FontLoader {
+        id: franklinGothicBold
+        source: "qrc:/views/motor-vortex/fonts/FranklinGothicBold.ttf"
+    }
 }
-
-
-
-
-
-
-
-

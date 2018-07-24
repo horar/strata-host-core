@@ -60,7 +60,6 @@ Rectangle {
         }
     }
 
-
     function getUserName(user_name){
         var user_lower = user_name.toLowerCase()
         if(userNames.hasOwnProperty(user_lower)){

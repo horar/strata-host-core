@@ -77,7 +77,7 @@ Window {
             id: commandBar
             visible: showDebugCommandBar
             width: parent.width
-            height: .05 * parent.height
+            height: 44
             color: "lightgrey"
 
             // Simulate Platform events
