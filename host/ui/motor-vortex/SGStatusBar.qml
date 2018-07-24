@@ -660,13 +660,125 @@ Rectangle {
         }
     }
 
-    Image {
-        height: parent.height
-        anchors { right: parent.right }
-        horizontalAlignment: Image.AlignLeft
-        verticalAlignment: Image.AlignTop
-        fillMode: Image.PreserveAspectFit
-        source: "qrc:/images/icons/onLogoGrey.svg"
+    Item {
+        id: profileIconContainer
+        anchors {
+            right: container.right
+            rightMargin: 20
+            top: container.top
+            bottom: container.bottom
+        }
+        width: height
+
+        Rectangle {
+            id: profileIcon
+            anchors {
+                centerIn: profileIconContainer
+            }
+            height: profileIconHover.containsMouse ? profileIconContainer.height : profileIconContainer.height - 6
+            width: height
+            radius: height / 2
+            color: "#00b842"
+
+            Text {
+                id: profileInitial
+                text: getUserName(user_id).charAt(0)
+                color: "white"
+                anchors {
+                    centerIn: profileIcon
+                }
+                font {
+                    family: franklinGothicBold.name
+                    pixelSize: profileIconHover.containsMouse ? 24 : 20
+                }
+            }
+
+
+        }
+
+        MouseArea {
+            id: profileIconHover
+            hoverEnabled: true
+            anchors {
+                fill: profileIconContainer
+            }
+            onPressed: {
+                profileMenu.open()
+            }
+        }
+
+        Popup {
+            id: profileMenu
+            x: -width + profileIconContainer.width
+            y: profileIconContainer.height
+            padding: 0
+            topPadding: 10
+            width: 150
+            background: Canvas {
+                width: profileMenu.width
+                height: profileMenu.contentItem.height + 10
+
+                onPaint: {
+                    var context = getContext("2d");
+                    context.reset();
+                    context.beginPath();
+                    context.moveTo(0, 10);
+                    context.lineTo(width - (profileIconContainer.width/2)-10, 10);
+                    context.lineTo(width - profileIconContainer.width/2, 0);
+                    context.lineTo(width - (profileIconContainer.width/2)+10, 10);
+                    context.lineTo(width, 10);
+                    context.lineTo(width, height);
+                    context.lineTo(0, height);
+                    context.closePath();
+                    context.fillStyle = "lightgreen";
+                    context.fill();
+                }
+            }
+
+            contentItem:
+                Column {
+                    id: column
+                    width: profileMenu.width
+
+                    Button {
+                        id: button1
+                        text: qsTr("My Profile")
+                        width: profileMenu.width
+
+                        onClicked: profilePopup.open();
+//                        opacity:.25
+
+                        contentItem: Text {
+                            text: button1.text
+                            opacity: enabled ? 1.0 : 0.3
+                            color: "white"
+                            horizontalAlignment: Text.AlignLeft
+                            verticalAlignment: Text.AlignVCenter
+                            elide: Text.ElideRight
+                        }
+
+                        background: Rectangle {
+                            implicitWidth: 100
+                            implicitHeight: 40
+                            opacity: enabled ? 1 : 0.3
+                            radius: 2
+                            color: "grey"
+                        }
+                    }
+
+                    Button {
+                        text: qsTr("Log out")
+                        width: profileMenu.width
+//                        opacity:.25
+
+
+                        onClicked: {
+                            NavigationControl.updateState(NavigationControl.events.LOGOUT_EVENT)
+                        }
+
+                }
+            }
+        }
     }
 
     ToolButton {
@@ -787,41 +899,49 @@ Rectangle {
             closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
         }
 
-            Menu {
-                id: settingsMenu
-                title: "setting"
-                y: settingsToolButton.y + settingsToolButton.height //To move the drop down menu below the setting icon
+        Menu {
+            id: settingsMenu
+            title: "setting"
+            y: settingsToolButton.y + settingsToolButton.height //To move the drop down menu below the setting icon
 
-                MenuItem {
-                    text: qsTr("Log out")
-                    onClicked: {
-                        NavigationControl.updateState(NavigationControl.events.LOGOUT_EVENT)
-                    }
+            MenuItem {
+                text: qsTr("Log out")
+                onClicked: {
+                    NavigationControl.updateState(NavigationControl.events.LOGOUT_EVENT)
                 }
-
-                MenuItem {
-                    text: qsTr("Remote Support FAE")
-
-                    onClicked: {
-                        remoteSupportConnect.open()
-
-                    }
-                }
-
-                MenuItem {
-                    text: qsTr("Remote Support CUSTOMER")
-
-                    onClicked: {
-                        remoteSupportRequest.open()
-                    }
-                }
-
-                MenuItem {
-                    text: qsTr("My Profile")
-                    onClicked: profilePopup.open();
-                }
-
             }
 
+            MenuItem {
+                text: qsTr("Remote Support FAE")
+
+                onClicked: {
+                    remoteSupportConnect.open()
+
+                }
+            }
+
+            MenuItem {
+                text: qsTr("Remote Support CUSTOMER")
+
+                onClicked: {
+                    remoteSupportRequest.open()
+                }
+            }
+
+            MenuItem {
+                text: qsTr("My Profile")
+                onClicked: profilePopup.open();
+            }
+        }
+    }
+
+    FontLoader {
+        id: franklinGothicBook
+        source: "qrc:/views/motor-vortex/fonts/FranklinGothicBook.otf"
+    }
+
+    FontLoader {
+        id: franklinGothicBold
+        source: "qrc:/views/motor-vortex/fonts/FranklinGothicBold.ttf"
     }
 }
