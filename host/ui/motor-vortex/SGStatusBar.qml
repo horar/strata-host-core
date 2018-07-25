@@ -791,7 +791,7 @@ Rectangle {
             y: profileIconContainer.height
             padding: 0
             topPadding: 10
-            width: 150
+            width: 100
             background: Canvas {
                 width: profileMenu.width
                 height: profileMenu.contentItem.height + 10
@@ -823,6 +823,7 @@ Rectangle {
                         profileMenu.close()
                         profilePopup.open();
                     }
+                    width: profileMenu.width
                 }
 
                 SGMenuItem {
@@ -831,6 +832,7 @@ Rectangle {
                         profileMenu.close()
                         NavigationControl.updateState(NavigationControl.events.LOGOUT_EVENT)
                     }
+                    width: profileMenu.width
                 }
             }
         }

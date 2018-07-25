@@ -142,6 +142,27 @@ Window {
                 }
             }
         }
+        Button {
+            text: "X"
+            height: 30
+            width: height
+            onClicked: showDebugCommandBar = false
+            anchors {
+                right: commandBar.right
+            }
+        }
+    }
+
+    Button {
+        text: "^"
+        height: 30
+        width: height
+        visible: !showDebugCommandBar
+        onClicked: showDebugCommandBar = true
+        anchors {
+            right: parent.right
+            bottom: parent.bottom
+        }
     }
 
     // Listen into Core Interface which gives us the platform changes
