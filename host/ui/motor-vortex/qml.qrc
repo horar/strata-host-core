@@ -209,5 +209,6 @@
         <file>images/strata-logo.svg</file>
         <file>statusbar-partial-views/SGMenuItem.qml</file>
         <file>statusbar-partial-views/SGToolButton.qml</file>
+        <file>statusbar-partial-views/SGTabButton.qml</file>
     </qresource>
 </RCC>

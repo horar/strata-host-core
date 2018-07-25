@@ -2,6 +2,7 @@ import QtQuick 2.10 // to support scale animator
 import QtQuick.Controls.Styles 1.4
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.3
+import QtQuick.Window 2.3 // for debug window, can be cut out for release
 import "js/navigation_control.js" as NavigationControl
 import "qrc:/statusbar-partial-views"
 
@@ -460,7 +461,7 @@ Rectangle {
     Label {
         id:remote_user_label
         anchors {
-            left: toolbar.left
+            left: toolBar.right
             verticalCenter: container.verticalCenter;
             verticalCenterOffset: 10
         }
@@ -470,7 +471,7 @@ Rectangle {
         font.pointSize: Qt.platform.os == "osx"? 13 :8
         font.bold: true
         color: "white"
-        visible:false
+        visible: false
     }
 
     ListModel {
@@ -478,13 +479,13 @@ Rectangle {
     }
 
     Rectangle {
+        id: remote_user_container
         anchors {
             left: remote_user_label.right
             leftMargin: 10
         }
         height: parent.height
-        width: parent.width*0.6
-        id: remote_user_container
+        width: parent.width*0.25
         visible:false
         color: container.backgroundColor
         Component {
@@ -600,11 +601,11 @@ Rectangle {
 
     Label {
         id:remote_activity_label
-        anchors { left: remote_user_container.right;  leftMargin: 15 ;
-            verticalCenter: container.verticalCenter;
-            verticalCenterOffset: 10
+        anchors {
+            left: remote_user_container.right
+            leftMargin: 15
+            verticalCenter: container.verticalCenter
         }
-        height: parent.height
         text: ""
         font.pointSize: Qt.platform.os == "osx"? 13 :8
         font.bold: true
@@ -704,8 +705,9 @@ Rectangle {
                     id: remoteSupportMenu
                     y: remoteSupportButton.height
                     padding: 0
-                    width: 180
-                    height: 80
+                    width: 400
+                    height: 300
+
                     background: Rectangle {
                         color: container.color
                         border {
@@ -713,28 +715,90 @@ Rectangle {
                         }
                     }
 
-                    contentItem: Column {
-                        id: remoteMenuColumn
+                    contentItem: Item {
+                        id: remoteMenuContent
                         width: remoteSupportMenu.width
+                        height: remoteSupportMenu.height
 
-                        SGMenuItem {
-                            text: qsTr("Remote Support FAE")
-                            onClicked: {
-                                remoteSupportMenu.close()
-                                remoteSupportConnect.open()
+                        TabBar {
+                            id: remoteMenuSelector
+                            width: remoteMenuContent.width
+                            background: Rectangle {
+                                color: "black"
                             }
-                            width: parent.width
-                            buttonColor: !this.hovered ? container.color : this.pressed ? Qt.darker(container.color, 3) : Qt.darker(container.color, 2)                        }
 
-                        SGMenuItem {
-                            text: qsTr("Remote Support CUSTOMER")
-                            onClicked: {
-                                remoteSupportMenu.close()
-                                remoteSupportRequest.open()
+                            SGTabButton {
+                                text: qsTr("Invite to Connect")
+                                onClicked: {
+                                    remoteInviteContainer.visible = true
+                                    remoteConnectionContainer.visible = false
+                                }
+                                buttonColor: checked ? container.color : Qt.darker(container.color)
                             }
-                            width: parent.width
-                            buttonColor: !this.hovered ? container.color : this.pressed ? Qt.darker(container.color, 3) : Qt.darker(container.color, 2)                        }
+
+                            SGTabButton {
+                                text: qsTr("Connect to Remote")
+                                onClicked: {
+                                    remoteInviteContainer.visible = false
+                                    remoteConnectionContainer.visible = true
+                                }
+                                buttonColor: checked ? container.color : Qt.darker(container.color)
+                            }
+                        }
+
+                        Item {
+                            id: remoteInviteContainer
+                            anchors {
+                                top: remoteMenuSelector.bottom
+                                bottom: remoteMenuContent.bottom
+                            }
+                            width: remoteMenuContent.width
+                            visible: true
+                            Text {
+                                text: qsTr("INVITE")
+                                anchors.centerIn: parent
+                            }
+                        }
+
+                        Item {
+                            id: remoteConnectionContainer
+                            anchors {
+                                top: remoteMenuSelector.bottom
+                                bottom: remoteMenuContent.bottom
+                            }
+                            width: remoteMenuContent.width
+                            visible: false
+                            Text {
+                                text: qsTr("CONNECT TO")
+                                anchors.centerIn: parent
+                            }
+                        }
                     }
+
+//                        Column {
+//                        id: remoteMenuColumn
+//                        width: remoteSupportMenu.width
+
+//                        SGMenuItem {
+//                            text: qsTr("Remote Support FAE")
+//                            onClicked: {
+//                                remoteSupportMenu.close()
+//                                remoteSupportConnect.open()
+//                            }
+//                            width: parent.width
+//                            buttonColor: !this.hovered ? container.color : this.pressed ? Qt.darker(container.color, 3) : Qt.darker(container.color, 2)
+//                        }
+
+//                        SGMenuItem {
+//                            text: qsTr("Remote Support CUSTOMER")
+//                            onClicked: {
+//                                remoteSupportMenu.close()
+//                                remoteSupportRequest.open()
+//                            }
+//                            width: parent.width
+//                            buttonColor: !this.hovered ? container.color : this.pressed ? Qt.darker(container.color, 3) : Qt.darker(container.color, 2)
+//                        }
+//                    }
                 }
             }
         }
@@ -937,5 +1001,26 @@ Rectangle {
     FontLoader {
         id: franklinGothicBold
         source: "qrc:/fonts/FranklinGothicBold.ttf"
+    }
+
+    Window {
+        id: debugWindow
+        visible:true
+        height: 400
+        width: 400
+        x:1520
+        y:500
+
+        Button {
+            text: "show/hide user label and container"
+            onClicked: {
+                remote_user_container.visible = !remote_user_container.visible
+                remote_user_label.visible = !remote_user_label.visible
+                remote_activity_label.visible = true;
+                remote_activity_label.text= "controlled by test";
+                activityMonitorTimer.start();
+            }
+        }
+
     }
 }
