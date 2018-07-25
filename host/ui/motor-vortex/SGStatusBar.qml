@@ -14,7 +14,7 @@ Rectangle {
     property string user_id: ""
     property bool is_logged_in: false
     property string generalTitle: "Guest"
-    property color backgroundColor: "#666"
+    property color backgroundColor: "#3a3a3a"
 
     color: backgroundColor
 
@@ -650,7 +650,7 @@ Rectangle {
                 onPressed: {
                     platformOptionsMenu.open()
                 }
-                buttonColor: platformOptionsButton.hovered || platformOptionsMenu.visible ? Qt.darker(container.color) : container.color
+                buttonColor: platformOptionsButton.hovered || platformOptionsMenu.visible ? Qt.lighter(container.color) : container.color
 
 
                 Popup {
@@ -677,7 +677,7 @@ Rectangle {
                                 NavigationControl.updateState(NavigationControl.events.TOGGLE_CONTROL_CONTENT)
                             }
                             width: parent.width
-                            buttonColor: !this.hovered ? container.color : this.pressed ? Qt.darker(container.color, 3) : Qt.darker(container.color, 2)
+                            buttonColor: !this.hovered ? container.color : this.pressed ? Qt.lighter(container.color, 2) : Qt.lighter(container.color)
                         }
 
                         SGMenuItem {
@@ -686,7 +686,7 @@ Rectangle {
                                 platformOptionsMenu.close()
                             }
                             width: parent.width
-                            buttonColor: !this.hovered ? container.color : this.pressed ? Qt.darker(container.color, 3) : Qt.darker(container.color, 2)
+                            buttonColor: !this.hovered ? container.color : this.pressed ? Qt.lighter(container.color, 2) : Qt.lighter(container.color)
                         }
                     }
                 }
@@ -699,7 +699,7 @@ Rectangle {
                 onPressed: {
                     remoteSupportMenu.open()
                 }
-                buttonColor: remoteSupportButton.hovered || remoteSupportMenu.visible ? Qt.darker(container.color) : container.color
+                buttonColor: remoteSupportButton.hovered || remoteSupportMenu.visible ? Qt.lighter(container.color) : container.color
 
                 Popup {
                     id: remoteSupportMenu
@@ -709,7 +709,7 @@ Rectangle {
                     height: 300
 
                     background: Rectangle {
-                        color: container.color
+                        color: Qt.lighter(container.color)
                         border {
                             width: 0
                         }
@@ -733,7 +733,7 @@ Rectangle {
                                     remoteInviteContainer.visible = true
                                     remoteConnectionContainer.visible = false
                                 }
-                                buttonColor: checked ? container.color : Qt.darker(container.color)
+                                buttonColor: checked ? Qt.lighter(container.color) : container.color
                             }
 
                             SGTabButton {
@@ -742,7 +742,7 @@ Rectangle {
                                     remoteInviteContainer.visible = false
                                     remoteConnectionContainer.visible = true
                                 }
-                                buttonColor: checked ? container.color : Qt.darker(container.color)
+                                buttonColor: checked ? Qt.lighter(container.color) : container.color
                             }
                         }
 
@@ -754,10 +754,8 @@ Rectangle {
                             }
                             width: remoteMenuContent.width
                             visible: true
-                            Text {
-                                text: qsTr("INVITE")
-                                anchors.centerIn: parent
-                            }
+                            SGRemoteInvite {}
+
                         }
 
                         Item {

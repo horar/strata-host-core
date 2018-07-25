@@ -11,7 +11,7 @@ ToolButton {
         id: backRect
         implicitWidth: 40
         implicitHeight: 40
-        color: root.hovered ? Qt.darker("#666") : "#666"
+        color: root.hovered ? "#666" : Qt.darker("#666")
         opacity: enabled ? 1 : 0.3
 //        visible: control.down || (control.enabled && (control.checked || control.highlighted))
     }
