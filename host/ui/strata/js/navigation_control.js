@@ -99,7 +99,7 @@ function init(flipable_parent, control_parent, content_parent, bar_parent)
 */
 function createView(name, parent)
 {
-    console.log("createObject: name =", name, ", parameters =", JSON.stringify(context))
+    console.log("createView: name =", name, ", parameters =", JSON.stringify(context))
 
     var component = Qt.createComponent(name, QtQuickModule.Component.PreferSynchronous, parent);
 
@@ -285,7 +285,7 @@ function updateState(event, data)
 
             case events.NEW_PLATFORM_CONNECTED_EVENT:
                 // Cache platform name until we are ready to view
-                console.log("data:", data.platform_name)
+                console.log("new platform connected data:", data.platform_name)
                 context.platform_name = data.platform_name
                 context.platform_state = true;
                 // Refresh

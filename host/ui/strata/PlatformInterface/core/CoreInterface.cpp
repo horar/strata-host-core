@@ -157,7 +157,7 @@ void CoreInterface::platformIDNotificationHandler(QJsonObject payload)
 {
     if (payload.contains("platform_id")) {
         QString platform_id = payload["platform_id"].toString();
-        //qDebug() << "Received platform_id = " << platform_id;
+        qDebug() << "Received platform_id = " << platform_id;
 
         if(platform_id_ != platform_id ) {
             platform_id_ = platform_id;

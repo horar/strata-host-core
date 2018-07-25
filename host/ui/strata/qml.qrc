@@ -328,5 +328,6 @@
         <file>views/usb-pd-multiport/views/BasicControl.qml</file>
         <file>views/usb-pd-multiport/Content.qml</file>
         <file>views/usb-pd-multiport/Control.qml</file>
+        <file>views/usb-pd-multiport/PlatformInterface.qml</file>
     </qresource>
 </RCC>
