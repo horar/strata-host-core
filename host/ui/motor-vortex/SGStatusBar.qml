@@ -595,11 +595,27 @@ Rectangle {
         }
     }
 
-    Label {
-        id:remote_activity_label
+    Text {
+        id: remote_activity_icon
+        text: qsTr("\u0027")
         anchors {
             left: toolBar.right
             leftMargin: 15
+            verticalCenter: container.verticalCenter
+        }
+        color: "#00b842"
+        font {
+            family: sgicons.name
+            pixelSize: 20
+        }
+        visible: remote_activity_label.visible
+    }
+
+    Label {
+        id:remote_activity_label
+        anchors {
+            left: remote_activity_icon.right
+            leftMargin: 10
             verticalCenter: container.verticalCenter
         }
         text: ""
@@ -607,19 +623,6 @@ Rectangle {
         color: "white"
     }
 
-    Text {
-        anchors {
-            horizontalCenter: container.horizontalCenter
-            verticalCenter: container.verticalCenter
-        }
-        text: "\u0027"
-        font {
-            family: "sgicons"
-            pixelSize: 18
-        }
-        color: "white"
-        renderType: Text.NativeRendering
-    }
 
     Connections {
         target: coreInterface
@@ -1221,7 +1224,7 @@ Rectangle {
             onClicked: {
                 remoteUserModel.append({"name":"David Faller" })
                 remote_activity_label.visible = true;
-                remote_activity_label.text= "Controlled by test";
+                remote_activity_label.text= "Controlled by David Faller";
                 activityMonitorTimer.start();
             }
         }
@@ -1233,7 +1236,6 @@ Rectangle {
             }
             onClicked: {
                 remoteUserModel.clear()
-
             }
         }
     }

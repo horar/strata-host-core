@@ -143,23 +143,15 @@ Window {
             }
         }
         Button {
-            text: "\u0021"
+            text: "X"
             height: 30
             width: height
             onClicked: showDebugCommandBar = false
             anchors {
                 right: commandBar.right
             }
-            font {
-//                family: sgicons.name
-            }
         }
     }
-
-//    FontLoader {
-//        id: sgicons
-//        source: "qrc:/fonts/sgicons.ttf"
-//    }
 
     Button {
         text: "^"
