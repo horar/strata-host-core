@@ -113,7 +113,7 @@ Rectangle{
 
             Image {
                 id: user_img
-                width: 135
+                sourceSize.width: 135
                 height: 1.1333 * width
                 anchors {
                     top : userContainer.top
@@ -385,7 +385,9 @@ Rectangle{
 
             SwipeView {
                 id: adSwipe
-                anchors { fill: parent }
+                anchors {
+                    fill: parent
+                }
 
                 Image {
                     source: "qrc:/images/demo-ads/1.png"

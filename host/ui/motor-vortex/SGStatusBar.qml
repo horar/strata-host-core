@@ -2,6 +2,7 @@ import QtQuick 2.10 // to support scale animator
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.3
 import QtQuick.Window 2.3 // for debug window, can be cut out for release
+import QtGraphicalEffects 1.0
 import "js/navigation_control.js" as NavigationControl
 import "qrc:/statusbar-partial-views"
 
@@ -99,468 +100,6 @@ Rectangle {
         return null
     }
 
-//    Popup {
-//        id: remoteSupportConnect
-//        x: 400; y: 200
-//        width: 400; height: 200
-//        modal: true
-//        focus: true
-//        closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
-
-//        onOpened: {
-//            console.log("opened!")
-//        }
-
-//        // Connections for internal event handling
-//        Connections{
-//            target: submitTokenButton
-//            onClicked: {
-//                // Send command to CoreInterface
-//                // Go to connecting
-//                remoteConnectContainer.state = "connecting"
-//            }
-//        }
-
-//        Connections{
-//            target: tokenBusyTimer
-//            onTriggered: {
-//                remoteConnectContainer.state = "timeout"
-//            }
-//        }
-
-//        Connections {
-//            target: tryAgainButton
-//            onClicked: {
-//                remoteConnectContainer.state = "default"
-//            }
-//        }
-//        Connections {
-//            target: disconnectButton
-//            onClicked: {
-//                remoteConnectContainer.state = "default"
-//                // sending remote disconnect message to hcs
-//                var remote_disconnect_json = {
-//                    "hcs::cmd":"remote_disconnect",
-//                }
-//                coreInterface.sendCommand(JSON.stringify(remote_disconnect_json))
-//                console.log("UI -> HCS ", JSON.stringify(remote_disconnect_json));
-//            }
-//        }
-//        Connections {
-//            target: coreInterface
-//            onPlatformStateChanged: {
-//                remoteConnectContainer.state = "default"
-//            }
-//        }
-
-//        Connections {
-//            target: coreInterface
-//            onRemoteConnectionChanged:{
-//                if ( remoteConnectContainer.state === "connecting") {
-
-//                    // Successful remote connection
-//                    if (result === true){
-//                        remoteConnectContainer.state = "success"
-//                    }
-//                    else {
-//                        remoteConnectContainer.state = "error"
-//                    }
-//                }
-//            }
-//        }
-
-//        Rectangle {
-//            id: remoteConnectContainer
-//            anchors.fill: parent
-//            state: "default"
-//            states: [
-//                State {
-//                    name: "default"
-//                    // Show button and textfield
-//                    PropertyChanges { target: tokenLabel; text: "Enter remote token"; visible: true}
-//                    PropertyChanges { target: tokenInput; visible: true}
-//                    PropertyChanges { target: tokenBusyIndicator; visible: false}
-//                    PropertyChanges { target: tryAgainButton; visible: false }
-//                    PropertyChanges { target: disconnectButton; visible: false}
-//                },
-//                State {
-//                    name: "connecting"
-//                    // Show BusyIndicator and 'connecting' text
-//                    PropertyChanges { target: tokenLabel; text: "Attempting to connect to server"; visible: true}
-//                    PropertyChanges { target: tokenBusyIndicator; visible: true}
-
-//                    // Hide input
-//                    PropertyChanges { target: tokenInput; visible: false}
-
-//                    // Start timer
-//                    PropertyChanges { target: tokenBusyTimer; running: true;}
-//                },
-//                State {
-//                    name: "timeout"
-//                    // Show timeout
-//                    PropertyChanges { target: tokenLabel; text: "Connection to server timed out"; visible: true}
-//                    PropertyChanges { target: statusImage; source: "qrc:/images/icons/fail_x.svg"; visible: true}
-
-//                    // Hide BusyIndicator
-//                    PropertyChanges { target: tokenBusyIndicator; visible: false}
-
-//                    // Show button to try again
-//                    PropertyChanges { target: tryAgainButton; visible: true }
-//                },
-//                State {
-//                    name: "success"
-//                    // Show timeout
-//                    PropertyChanges { target: tokenLabel; text: "Connection successful. Remote device listed."; visible: true}
-//                    PropertyChanges { target: statusImage; source: "qrc:/images/icons/success_check.svg"; visible: true}
-
-//                    // Hide BusyIndicator
-//                    PropertyChanges { target: tokenBusyIndicator; visible: false}
-
-//                    // Show Disconnect
-//                    PropertyChanges { target: disconnectButton; visible: true}
-
-//                },
-
-//                State {
-//                    name: "error"
-//                    // Show error
-//                    PropertyChanges { target: tokenLabel; text: "Error with server connection"; visible: true}
-//                    PropertyChanges { target: statusImage; source: "qrc:/images/icons/fail_x.svg"; visible: true}
-
-//                    // Hide BusyIndicator
-//                    PropertyChanges { target: tokenBusyIndicator; visible: false}
-
-//                    // Show button to try again
-//                    PropertyChanges { target: tryAgainButton; visible: true }
-//                }
-
-//            ]
-
-//            // Timer to timeout busy animation
-//            Timer {
-//                // 3 second timeout for response
-//                id: tokenBusyTimer
-//                interval: 3000
-//                running: false
-//                repeat: false
-//                onTriggered: {
-//                    // Show failure
-//                }
-//            }
-
-//            ColumnLayout{
-//                anchors.fill: parent
-
-//                spacing: 2
-//                // Show busy
-//                Rectangle {
-//                    Layout.alignment: Qt.AlignTop
-//                    width: tokenBusyIndicator.width
-//                    height: tokenBusyIndicator.height
-//                    anchors.horizontalCenter: parent.horizontalCenter
-
-//                    BusyIndicator {
-//                        id: tokenBusyIndicator
-//                        // Bind to Timer
-//                        running: tokenBusyTimer.running
-//                        anchors.fill: parent
-//                    }
-
-//                    Image{
-//                        id: statusImage
-//                        width: parent.width
-//                        height: parent.height
-//                        fillMode: Image.PreserveAspectFit
-//                        source: ""
-//                    }
-//                }
-
-//                Label {
-//                    id: tokenLabel
-//                    height: 30
-//                    text: "Enter remote token"
-//                    font.pointSize: 15
-//                    font.bold: true
-//                    color: "dark blue"
-//                    Layout.alignment: Qt.AlignCenter
-//                }
-//                Button {
-//                    id: tryAgainButton
-//                    text: "Try Again"
-//                    Layout.alignment: Qt.AlignCenter
-//                    anchors.horizontalCenter: parent.horizontalCenter
-//                    visible: false
-//                }
-//                Button {
-//                    id: disconnectButton
-//                    text: "Disconnect"
-//                    Layout.alignment: Qt.AlignCenter
-//                    anchors.horizontalCenter: parent.horizontalCenter
-//                    visible: false
-//                }
-
-//                Rectangle{
-//                    id: tokenInput
-//                    width: 300
-//                    height: 50
-//                    // Default visibility is false; state changes will make it visible
-//                    visible: { console.log("created"); return false}
-
-//                    Layout.alignment: Qt.AlignBottom
-//                    anchors.horizontalCenter: parent.horizontalCenter
-//                    TextField {
-//                        id: tokenField
-//                        width: 184; height: 38
-//                        selectByMouse: true
-//                        focus: true
-//                        placeholderText: qsTr("TOKEN")
-//                        cursorPosition: 1
-//                        font.pointSize: Qt.platform.os == "osx"? 13 :8
-//                        Keys.onReturnPressed:{
-//                            console.log("TOKEN: ", text);
-//                        }
-//                    }
-//                    Button{
-//                        id: submitTokenButton
-//                        text: "Submit"
-//                        width: 80; height: 38
-//                        anchors{
-//                            left:tokenField.right
-//                        }
-//                        onClicked: {
-//                            console.log("sending token:", tokenField.text);
-//                            var remote_json = {
-//                                "hcs::cmd":"get_platforms",
-//                                "payload": {
-//                                    "hcs_token":tokenField.text
-//                                }
-//                            }
-//                            coreInterface.sendCommand(JSON.stringify(remote_json))
-//                            console.log("UI -> HCS ", JSON.stringify(remote_json));
-//                        }
-
-//                    }
-//                }
-
-//            }
-//        }
-//    }
-
-
-    ///////////////////////////////////// moved to remoteinvitecontainer
-//    Popup {
-//        id: remoteSupportRequest
-//        x: 400; y: 200
-//        width: 400; height: 400
-//        modal: true
-//        focus: true
-//        closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
-
-//        Rectangle{
-//            id:advertiseButton;
-//            width: 100;
-//            height: 100;
-//            anchors {
-//                horizontalCenter: parent.horizontalCenter
-//                margins: 30
-//            }
-//            property bool checked: false
-//            border.color: "black";
-//            border.width: 2;
-//            color: advertiseButton.checked ? "lightgreen":"lightgrey"
-//            Image{
-//                id:remoteButtonImage
-//                source: "qrc:/images/icons/remotecommunication.svg"
-//                height: advertiseButton.height
-//                width: advertiseButton.width
-//            }
-//            ScaleAnimator {
-//                id: increaseOnMouseEnter
-//                target: advertiseButton;
-//                from: 1;
-//                to: 1.2;
-//                duration: 200
-//                running: false
-//            }
-//            ScaleAnimator {
-//                id: decreaseOnMouseExit
-//                target: advertiseButton;
-//                from: 1.2;
-//                to: 1;
-//                duration: 200
-//                running: false
-//            }
-//            MouseArea {
-//                id: imageMouse
-//                anchors.fill: advertiseButton
-//                hoverEnabled: true
-//                cursorShape: Qt.PointingHandCursor
-//                onEntered:{
-//                    increaseOnMouseEnter.start()
-//                }
-//                onExited:{
-//                    decreaseOnMouseExit.start()
-//                }
-//                onClicked: {
-//                    advertiseButton.checked = !advertiseButton.checked
-//                    var advertise
-//                    if(advertiseButton.checked) {
-//                        advertise = true
-//                    }
-//                    else {
-//                        advertise = false
-//                        remote_activity_label.visible = false
-//                        remote_user_container.visible = false
-//                        remote_user_label.visible = false
-//                        remoteUserModel.clear()
-//                    }
-//                    var remote_json = {
-//                        "hcs::cmd":"advertise",
-//                        "payload": {
-//                            "advertise_platforms":advertise
-//                        }
-//                    }
-//                    console.log("asking hcs to advertise the platforms",JSON.stringify(remote_json))
-//                    coreInterface.sendCommand(JSON.stringify(remote_json))
-//                }
-//            }
-//        }
-
-//        Label {
-//            id: supportPhoneNumber
-//            anchors {
-//                top: advertiseButton.bottom
-//                horizontalCenter: parent.horizontalCenter
-//                margins: 30
-//            }
-//            text: advertiseButton.checked ? "click the button to turn off remote control":"click the button to turn on remote control"
-//            font.pointSize: Qt.platform.os == "osx"? 13 :8
-//            font.bold: true
-//            color: "black"
-//        }
-
-//        Label {
-//            id: hcs_token
-//            anchors {
-//                top: supportPhoneNumber.bottom
-//                horizontalCenter: parent.horizontalCenter
-//                margins: 30
-//            }
-//            text: advertiseButton.checked ? coreInterface.hcs_token_:""
-//            font.pointSize: Qt.platform.os == "osx"? 13 :8
-//            font.bold: true
-//            color: "black"
-//        }
-//        Connections {
-//            target: coreInterface
-//            onPlatformStateChanged: {
-//                remoteButton.checked = false
-//            }
-//        }
-//    }
-
-
-    //////////////////////////////////// moved to remoteInviteRight
-//    Label {
-//        id:remote_user_label
-//        anchors {
-//            left: toolBar.right
-//            verticalCenter: container.verticalCenter;
-//            verticalCenterOffset: 10
-//        }
-
-//        height: parent.height
-//        text:  "Remote User/s:"
-//        font.pointSize: Qt.platform.os == "osx"? 13 :8
-//        font.bold: true
-//        color: "white"
-//        visible: false
-//    }
-
-//    ListModel {
-//        id: remoteUserModel
-//    }
-
-//    Rectangle {
-//        id: remote_user_container
-//        anchors {
-//            left: remote_user_label.right
-//            leftMargin: 10
-//        }
-//        height: parent.height
-//        width: parent.width*0.25
-//        visible:false
-//        color: container.backgroundColor
-//        Component {
-//            id: remoteUserDelegate
-//            Item {
-//                width: remote_user_container.width*0.1
-//                height: remote_user_container.height
-//                Rectangle{
-//                    Image {
-//                        id: remote_user_img
-//                        anchors {
-//                            horizontalCenter: parent.horizontalCenter
-//                        }
-
-//                        sourceSize.width: 1024;
-//                        height: remote_user_container.height*.7
-//                        fillMode: Image.PreserveAspectFit
-//                        source: "qrc:/images/blank_avatar.png"
-//                        Image {
-//                            id: close_icon
-//                            anchors {
-//                                top: parent.top
-//                                left: parent.left
-//                            }
-//                            height: parent.height*0.5
-//                            width:parent.width*0.5
-//                            fillMode: Image.PreserveAspectFit
-//                            source: "qrc:/images/closeIcon.svg"
-//                            visible: false
-//                        }
-//                        MouseArea {
-//                            anchors.fill: remote_user_img
-//                            hoverEnabled: true
-//                            onEntered: { close_icon.visible = true }
-//                            onExited: { close_icon.visible = false }
-//                            onClicked: {
-//                                var remote_json = {
-//                                    "hcs::cmd":"disconnect_remote_user",
-//                                    "payload": {
-//                                        "user_name":name
-//                                    }
-//                                }
-//                                console.log("disconnecting user",JSON.stringify(remote_json))
-//                                coreInterface.sendCommand(JSON.stringify(remote_json))
-//                                //                                    remoteUserModel.remove(remote_user_list_view.currentIndex,1)
-//                            }
-//                        }
-//                    }
-//                    Label {
-//                        id:remote_user_name
-//                        anchors {
-//                            top: remote_user_img.bottom
-//                            horizontalCenter: parent.horizontalCenter;
-//                        }
-//                        text:  name
-//                        font.pointSize: Qt.platform.os == "osx"? 13 :8
-//                        font.bold: true
-//                        color: "white"
-//                    }
-//                }
-//            }
-//        }
-//        ListView {
-//            id: remote_user_list_view
-//            anchors.fill: remote_user_container
-//            model: remoteUserModel
-//            delegate: remoteUserDelegate
-//            orientation: ListView.Horizontal
-//            focus: true
-//        }
-//    }
-
     Connections {
         target: coreInterface
         onRemoteUserAdded: {
@@ -598,7 +137,7 @@ Rectangle {
         id: remote_activity_icon
         text: qsTr("\u0027")
         anchors {
-            left: toolBar.right
+            left: remote_user_icons.right
             leftMargin: 15
             verticalCenter: container.verticalCenter
         }
@@ -614,7 +153,7 @@ Rectangle {
         id:remote_activity_label
         anchors {
             left: remote_activity_icon.right
-            leftMargin: 10
+            leftMargin: 5
             verticalCenter: container.verticalCenter
         }
         text: ""
@@ -876,7 +415,7 @@ Rectangle {
 
                                     Text {
                                         id: name
-                                        text: qsTr("Connected Users:")
+                                        text: qsTr("Connected Users")
                                         anchors {
                                             verticalCenter: parent.verticalCenter
                                             left: parent.left
@@ -921,8 +460,7 @@ Rectangle {
                                                     leftMargin: 4
                                                     topMargin: 4
                                                 }
-                                                sourceSize.width: 1024;
-                                                height: 46
+                                                sourceSize.height: 46
                                                 fillMode: Image.PreserveAspectFit
                                                 source: "qrc:/images/blank_avatar.png"
                                             }
@@ -1202,7 +740,7 @@ Rectangle {
                             Item {
                                 id: tokenInput
                                 width: tokenField.width + submitTokenButton.width + submitTokenButton.anchors.leftMargin
-                                height: tokenfield.height
+                                height: tokenField.height
                                 // Default visibility is false; state changes will make it visible
                                 visible: { console.log("created"); return false}
                                 anchors {
@@ -1228,7 +766,7 @@ Rectangle {
                                     id: submitTokenButton
                                     text: "Submit"
                                     width: 80
-                                    height: tokenfield.height
+                                    height: tokenField.height
                                     anchors{
                                         left: tokenField.right
                                         leftMargin: 10
@@ -1247,16 +785,61 @@ Rectangle {
                                     }
                                 }
                             }
-
-
-
-
-
-
                         }
                     }
                 }
             }
+        }
+    }
+
+
+    Component {
+        id: remoteUserIconDelegate
+
+        Item {
+            width: remote_user_img.width
+            height: 40
+
+            Image {
+                id: remote_user_img
+                sourceSize.height: 40
+                fillMode: Image.PreserveAspectFit
+                source: "qrc:/images/blank_avatar.png"
+                visible: false
+            }
+
+            Rectangle {
+                id: mask
+                width: remote_user_img.width
+                height: width
+                radius: width/2
+                visible: false
+            }
+
+            OpacityMask {
+                height: mask.width
+                width: mask.height
+                source: remote_user_img
+                maskSource: mask
+            }
+        }
+    }
+
+    Row {
+        id: remote_user_icons
+        anchors {
+            left: toolBar.right
+            leftMargin: 15
+        }
+        width: childrenRect.width
+        height: 40
+        y: 2
+        spacing: -16
+        layoutDirection: Qt.RightToLeft
+
+        Repeater {
+            model: remoteUserModel
+            delegate: remoteUserIconDelegate
         }
     }
 
@@ -1364,7 +947,8 @@ Rectangle {
         height: 500
         modal: true
         focus: true
-        x: 200; y: 200
+        x: container.width/2 - profilePopup.width/2
+        y: 200
         Rectangle {
             id: popupContainer
             anchors.fill: parent
@@ -1499,6 +1083,23 @@ Rectangle {
                 remote_activity_label.visible = true;
                 remote_activity_label.text= "Controlled by David Faller";
                 activityMonitorTimer.start();
+            }
+        }
+        Text {
+            id: debugtext
+            anchors {
+                top: whatever3.bottom
+            }
+            text: "platform_state:" + NavigationControl.context.platform_state
+        }
+        Button {
+            id: whatever4
+            text: "update state"
+            anchors {
+                top: debugtext.bottom
+            }
+            onClicked: {
+                debugtext.text = "platform_state:" + NavigationControl.context.platform_state
             }
         }
     }
