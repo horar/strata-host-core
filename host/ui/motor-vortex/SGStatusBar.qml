@@ -1,5 +1,4 @@
 import QtQuick 2.10 // to support scale animator
-import QtQuick.Controls.Styles 1.4
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.3
 import QtQuick.Window 2.3 // for debug window, can be cut out for release
@@ -100,252 +99,252 @@ Rectangle {
         return null
     }
 
-    Popup {
-        id: remoteSupportConnect
-        x: 400; y: 200
-        width: 400; height: 200
-        modal: true
-        focus: true
-        closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
+//    Popup {
+//        id: remoteSupportConnect
+//        x: 400; y: 200
+//        width: 400; height: 200
+//        modal: true
+//        focus: true
+//        closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
 
-        onOpened: {
-            console.log("opened!")
-        }
+//        onOpened: {
+//            console.log("opened!")
+//        }
 
-        // Connections for internal event handling
-        Connections{
-            target: submitTokenButton
-            onClicked: {
-                // Send command to CoreInterface
-                // Go to connecting
-                remoteConnectContainer.state = "connecting"
-            }
-        }
+//        // Connections for internal event handling
+//        Connections{
+//            target: submitTokenButton
+//            onClicked: {
+//                // Send command to CoreInterface
+//                // Go to connecting
+//                remoteConnectContainer.state = "connecting"
+//            }
+//        }
 
-        Connections{
-            target: tokenBusyTimer
-            onTriggered: {
-                remoteConnectContainer.state = "timeout"
-            }
-        }
+//        Connections{
+//            target: tokenBusyTimer
+//            onTriggered: {
+//                remoteConnectContainer.state = "timeout"
+//            }
+//        }
 
-        Connections {
-            target: tryAgainButton
-            onClicked: {
-                remoteConnectContainer.state = "default"
-            }
-        }
-        Connections {
-            target: disconnectButton
-            onClicked: {
-                remoteConnectContainer.state = "default"
-                // sending remote disconnect message to hcs
-                var remote_disconnect_json = {
-                    "hcs::cmd":"remote_disconnect",
-                }
-                coreInterface.sendCommand(JSON.stringify(remote_disconnect_json))
-                console.log("UI -> HCS ", JSON.stringify(remote_disconnect_json));
-            }
-        }
-        Connections {
-            target: coreInterface
-            onPlatformStateChanged: {
-                remoteConnectContainer.state = "default"
-            }
-        }
+//        Connections {
+//            target: tryAgainButton
+//            onClicked: {
+//                remoteConnectContainer.state = "default"
+//            }
+//        }
+//        Connections {
+//            target: disconnectButton
+//            onClicked: {
+//                remoteConnectContainer.state = "default"
+//                // sending remote disconnect message to hcs
+//                var remote_disconnect_json = {
+//                    "hcs::cmd":"remote_disconnect",
+//                }
+//                coreInterface.sendCommand(JSON.stringify(remote_disconnect_json))
+//                console.log("UI -> HCS ", JSON.stringify(remote_disconnect_json));
+//            }
+//        }
+//        Connections {
+//            target: coreInterface
+//            onPlatformStateChanged: {
+//                remoteConnectContainer.state = "default"
+//            }
+//        }
 
-        Connections {
-            target: coreInterface
-            onRemoteConnectionChanged:{
-                if ( remoteConnectContainer.state === "connecting") {
+//        Connections {
+//            target: coreInterface
+//            onRemoteConnectionChanged:{
+//                if ( remoteConnectContainer.state === "connecting") {
 
-                    // Successful remote connection
-                    if (result === true){
-                        remoteConnectContainer.state = "success"
-                    }
-                    else {
-                        remoteConnectContainer.state = "error"
-                    }
-                }
-            }
-        }
+//                    // Successful remote connection
+//                    if (result === true){
+//                        remoteConnectContainer.state = "success"
+//                    }
+//                    else {
+//                        remoteConnectContainer.state = "error"
+//                    }
+//                }
+//            }
+//        }
 
-        Rectangle {
-            id: remoteConnectContainer
-            anchors.fill: parent
-            state: "default"
-            states: [
-                State {
-                    name: "default"
-                    // Show button and textfield
-                    PropertyChanges { target: tokenLabel; text: "Enter remote token"; visible: true}
-                    PropertyChanges { target: tokenInput; visible: true}
-                    PropertyChanges { target: tokenBusyIndicator; visible: false}
-                    PropertyChanges { target: tryAgainButton; visible: false }
-                    PropertyChanges { target: disconnectButton; visible: false}
-                },
-                State {
-                    name: "connecting"
-                    // Show BusyIndicator and 'connecting' text
-                    PropertyChanges { target: tokenLabel; text: "Attempting to connect to server"; visible: true}
-                    PropertyChanges { target: tokenBusyIndicator; visible: true}
+//        Rectangle {
+//            id: remoteConnectContainer
+//            anchors.fill: parent
+//            state: "default"
+//            states: [
+//                State {
+//                    name: "default"
+//                    // Show button and textfield
+//                    PropertyChanges { target: tokenLabel; text: "Enter remote token"; visible: true}
+//                    PropertyChanges { target: tokenInput; visible: true}
+//                    PropertyChanges { target: tokenBusyIndicator; visible: false}
+//                    PropertyChanges { target: tryAgainButton; visible: false }
+//                    PropertyChanges { target: disconnectButton; visible: false}
+//                },
+//                State {
+//                    name: "connecting"
+//                    // Show BusyIndicator and 'connecting' text
+//                    PropertyChanges { target: tokenLabel; text: "Attempting to connect to server"; visible: true}
+//                    PropertyChanges { target: tokenBusyIndicator; visible: true}
 
-                    // Hide input
-                    PropertyChanges { target: tokenInput; visible: false}
+//                    // Hide input
+//                    PropertyChanges { target: tokenInput; visible: false}
 
-                    // Start timer
-                    PropertyChanges { target: tokenBusyTimer; running: true;}
-                },
-                State {
-                    name: "timeout"
-                    // Show timeout
-                    PropertyChanges { target: tokenLabel; text: "Connection to server timed out"; visible: true}
-                    PropertyChanges { target: statusImage; source: "qrc:/images/icons/fail_x.svg"; visible: true}
+//                    // Start timer
+//                    PropertyChanges { target: tokenBusyTimer; running: true;}
+//                },
+//                State {
+//                    name: "timeout"
+//                    // Show timeout
+//                    PropertyChanges { target: tokenLabel; text: "Connection to server timed out"; visible: true}
+//                    PropertyChanges { target: statusImage; source: "qrc:/images/icons/fail_x.svg"; visible: true}
 
-                    // Hide BusyIndicator
-                    PropertyChanges { target: tokenBusyIndicator; visible: false}
+//                    // Hide BusyIndicator
+//                    PropertyChanges { target: tokenBusyIndicator; visible: false}
 
-                    // Show button to try again
-                    PropertyChanges { target: tryAgainButton; visible: true }
-                },
-                State {
-                    name: "success"
-                    // Show timeout
-                    PropertyChanges { target: tokenLabel; text: "Connection successful. Remote device listed."; visible: true}
-                    PropertyChanges { target: statusImage; source: "qrc:/images/icons/success_check.svg"; visible: true}
+//                    // Show button to try again
+//                    PropertyChanges { target: tryAgainButton; visible: true }
+//                },
+//                State {
+//                    name: "success"
+//                    // Show timeout
+//                    PropertyChanges { target: tokenLabel; text: "Connection successful. Remote device listed."; visible: true}
+//                    PropertyChanges { target: statusImage; source: "qrc:/images/icons/success_check.svg"; visible: true}
 
-                    // Hide BusyIndicator
-                    PropertyChanges { target: tokenBusyIndicator; visible: false}
+//                    // Hide BusyIndicator
+//                    PropertyChanges { target: tokenBusyIndicator; visible: false}
 
-                    // Show Disconnect
-                    PropertyChanges { target: disconnectButton; visible: true}
+//                    // Show Disconnect
+//                    PropertyChanges { target: disconnectButton; visible: true}
 
-                },
+//                },
 
-                State {
-                    name: "error"
-                    // Show error
-                    PropertyChanges { target: tokenLabel; text: "Error with server connection"; visible: true}
-                    PropertyChanges { target: statusImage; source: "qrc:/images/icons/fail_x.svg"; visible: true}
+//                State {
+//                    name: "error"
+//                    // Show error
+//                    PropertyChanges { target: tokenLabel; text: "Error with server connection"; visible: true}
+//                    PropertyChanges { target: statusImage; source: "qrc:/images/icons/fail_x.svg"; visible: true}
 
-                    // Hide BusyIndicator
-                    PropertyChanges { target: tokenBusyIndicator; visible: false}
+//                    // Hide BusyIndicator
+//                    PropertyChanges { target: tokenBusyIndicator; visible: false}
 
-                    // Show button to try again
-                    PropertyChanges { target: tryAgainButton; visible: true }
-                }
+//                    // Show button to try again
+//                    PropertyChanges { target: tryAgainButton; visible: true }
+//                }
 
-            ]
+//            ]
 
-            // Timer to timeout busy animation
-            Timer {
-                // 3 second timeout for response
-                id: tokenBusyTimer
-                interval: 3000
-                running: false
-                repeat: false
-                onTriggered: {
-                    // Show failure
-                }
-            }
+//            // Timer to timeout busy animation
+//            Timer {
+//                // 3 second timeout for response
+//                id: tokenBusyTimer
+//                interval: 3000
+//                running: false
+//                repeat: false
+//                onTriggered: {
+//                    // Show failure
+//                }
+//            }
 
-            ColumnLayout{
-                anchors.fill: parent
+//            ColumnLayout{
+//                anchors.fill: parent
 
-                spacing: 2
-                // Show busy
-                Rectangle {
-                    Layout.alignment: Qt.AlignTop
-                    width: tokenBusyIndicator.width
-                    height: tokenBusyIndicator.height
-                    anchors.horizontalCenter: parent.horizontalCenter
+//                spacing: 2
+//                // Show busy
+//                Rectangle {
+//                    Layout.alignment: Qt.AlignTop
+//                    width: tokenBusyIndicator.width
+//                    height: tokenBusyIndicator.height
+//                    anchors.horizontalCenter: parent.horizontalCenter
 
-                    BusyIndicator {
-                        id: tokenBusyIndicator
-                        // Bind to Timer
-                        running: tokenBusyTimer.running
-                        anchors.fill: parent
-                    }
+//                    BusyIndicator {
+//                        id: tokenBusyIndicator
+//                        // Bind to Timer
+//                        running: tokenBusyTimer.running
+//                        anchors.fill: parent
+//                    }
 
-                    Image{
-                        id: statusImage
-                        width: parent.width
-                        height: parent.height
-                        fillMode: Image.PreserveAspectFit
-                        source: ""
-                    }
-                }
+//                    Image{
+//                        id: statusImage
+//                        width: parent.width
+//                        height: parent.height
+//                        fillMode: Image.PreserveAspectFit
+//                        source: ""
+//                    }
+//                }
 
-                Label {
-                    id: tokenLabel
-                    height: 30
-                    text: "Enter remote token"
-                    font.pointSize: 15
-                    font.bold: true
-                    color: "dark blue"
-                    Layout.alignment: Qt.AlignCenter
-                }
-                Button {
-                    id: tryAgainButton
-                    text: "Try Again"
-                    Layout.alignment: Qt.AlignCenter
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    visible: false
-                }
-                Button {
-                    id: disconnectButton
-                    text: "Disconnect"
-                    Layout.alignment: Qt.AlignCenter
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    visible: false
-                }
+//                Label {
+//                    id: tokenLabel
+//                    height: 30
+//                    text: "Enter remote token"
+//                    font.pointSize: 15
+//                    font.bold: true
+//                    color: "dark blue"
+//                    Layout.alignment: Qt.AlignCenter
+//                }
+//                Button {
+//                    id: tryAgainButton
+//                    text: "Try Again"
+//                    Layout.alignment: Qt.AlignCenter
+//                    anchors.horizontalCenter: parent.horizontalCenter
+//                    visible: false
+//                }
+//                Button {
+//                    id: disconnectButton
+//                    text: "Disconnect"
+//                    Layout.alignment: Qt.AlignCenter
+//                    anchors.horizontalCenter: parent.horizontalCenter
+//                    visible: false
+//                }
 
-                Rectangle{
-                    id: tokenInput
-                    width: 300
-                    height: 50
-                    // Default visibility is false; state changes will make it visible
-                    visible: { console.log("created"); return false}
+//                Rectangle{
+//                    id: tokenInput
+//                    width: 300
+//                    height: 50
+//                    // Default visibility is false; state changes will make it visible
+//                    visible: { console.log("created"); return false}
 
-                    Layout.alignment: Qt.AlignBottom
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    TextField {
-                        id: tokenField
-                        width: 184; height: 38
-                        selectByMouse: true
-                        focus: true
-                        placeholderText: qsTr("TOKEN")
-                        cursorPosition: 1
-                        font.pointSize: Qt.platform.os == "osx"? 13 :8
-                        Keys.onReturnPressed:{
-                            console.log("TOKEN: ", text);
-                        }
-                    }
-                    Button{
-                        id: submitTokenButton
-                        text: "Submit"
-                        width: 80; height: 38
-                        anchors{
-                            left:tokenField.right
-                        }
-                        onClicked: {
-                            console.log("sending token:", tokenField.text);
-                            var remote_json = {
-                                "hcs::cmd":"get_platforms",
-                                "payload": {
-                                    "hcs_token":tokenField.text
-                                }
-                            }
-                            coreInterface.sendCommand(JSON.stringify(remote_json))
-                            console.log("UI -> HCS ", JSON.stringify(remote_json));
-                        }
+//                    Layout.alignment: Qt.AlignBottom
+//                    anchors.horizontalCenter: parent.horizontalCenter
+//                    TextField {
+//                        id: tokenField
+//                        width: 184; height: 38
+//                        selectByMouse: true
+//                        focus: true
+//                        placeholderText: qsTr("TOKEN")
+//                        cursorPosition: 1
+//                        font.pointSize: Qt.platform.os == "osx"? 13 :8
+//                        Keys.onReturnPressed:{
+//                            console.log("TOKEN: ", text);
+//                        }
+//                    }
+//                    Button{
+//                        id: submitTokenButton
+//                        text: "Submit"
+//                        width: 80; height: 38
+//                        anchors{
+//                            left:tokenField.right
+//                        }
+//                        onClicked: {
+//                            console.log("sending token:", tokenField.text);
+//                            var remote_json = {
+//                                "hcs::cmd":"get_platforms",
+//                                "payload": {
+//                                    "hcs_token":tokenField.text
+//                                }
+//                            }
+//                            coreInterface.sendCommand(JSON.stringify(remote_json))
+//                            console.log("UI -> HCS ", JSON.stringify(remote_json));
+//                        }
 
-                    }
-                }
+//                    }
+//                }
 
-            }
-        }
-    }
+//            }
+//        }
+//    }
 
 
     ///////////////////////////////////// moved to remoteinvitecontainer
@@ -743,7 +742,7 @@ Rectangle {
                                 text: qsTr("Invite to Connect")
                                 onClicked: {
                                     remoteInviteContainer.visible = true
-                                    remoteConnectionContainer.visible = false
+                                    remoteConnectContainer.visible = false
                                 }
                                 buttonColor: checked ? Qt.lighter(container.color) : container.color
                             }
@@ -752,7 +751,7 @@ Rectangle {
                                 text: qsTr("Connect to Remote")
                                 onClicked: {
                                     remoteInviteContainer.visible = false
-                                    remoteConnectionContainer.visible = true
+                                    remoteConnectContainer.visible = true
                                 }
                                 buttonColor: checked ? Qt.lighter(container.color) : container.color
                                 enabled: !remoteToggle.checked
@@ -988,17 +987,267 @@ Rectangle {
                         }
 
                         Item {
-                            id: remoteConnectionContainer
+                            id: remoteConnectContainer
                             anchors {
                                 top: remoteMenuSelector.bottom
                                 bottom: remoteMenuContent.bottom
                             }
                             width: remoteMenuContent.width
                             visible: false
-                            Text {
-                                text: qsTr("CONNECT TO")
-                                anchors.centerIn: parent
+
+                            state: "default"
+                            states: [
+                                State {
+                                    name: "default"
+                                    // Show button and textfield
+                                    PropertyChanges { target: tokenLabel; text: "Enter remote token:"; visible: true}
+                                    PropertyChanges { target: tokenInput; visible: true}
+                                    PropertyChanges { target: tokenBusyIndicator; visible: false}
+                                    PropertyChanges { target: tryAgainButton; visible: false }
+                                    PropertyChanges { target: disconnectButton; visible: false}
+                                },
+                                State {
+                                    name: "connecting"
+                                    // Show BusyIndicator and 'connecting' text
+                                    PropertyChanges { target: tokenLabel; text: "Attempting to connect to server"; visible: true}
+                                    PropertyChanges { target: tokenBusyIndicator; visible: true}
+
+                                    // Hide input
+                                    PropertyChanges { target: tokenInput; visible: false}
+
+                                    // Start timer
+                                    PropertyChanges { target: tokenBusyTimer; running: true;}
+                                },
+                                State {
+                                    name: "timeout"
+                                    // Show timeout
+                                    PropertyChanges { target: tokenLabel; text: "Connection to server timed out"; visible: true}
+                                    PropertyChanges { target: statusImage; source: "qrc:/images/icons/fail_x.svg"; visible: true}
+
+                                    // Hide BusyIndicator
+                                    PropertyChanges { target: tokenBusyIndicator; visible: false}
+
+                                    // Show button to try again
+                                    PropertyChanges { target: tryAgainButton; visible: true }
+                                },
+                                State {
+                                    name: "success"
+                                    // Show timeout
+                                    PropertyChanges { target: tokenLabel; text: "Connection successful. Remote device listed."; visible: true}
+                                    PropertyChanges { target: statusImage; source: "qrc:/images/icons/success_check.svg"; visible: true}
+
+                                    // Hide BusyIndicator
+                                    PropertyChanges { target: tokenBusyIndicator; visible: false}
+
+                                    // Show Disconnect
+                                    PropertyChanges { target: disconnectButton; visible: true}
+
+                                },
+                                State {
+                                    name: "error"
+                                    // Show error
+                                    PropertyChanges { target: tokenLabel; text: "Error with server connection"; visible: true}
+                                    PropertyChanges { target: statusImage; source: "qrc:/images/icons/fail_x.svg"; visible: true}
+
+                                    // Hide BusyIndicator
+                                    PropertyChanges { target: tokenBusyIndicator; visible: false}
+
+                                    // Show button to try again
+                                    PropertyChanges { target: tryAgainButton; visible: true }
+                                }
+                            ]
+
+
+                            // Connections for internal event handling
+                            Connections{
+                                target: submitTokenButton
+                                onClicked: {
+                                    // Send command to CoreInterface
+                                    // Go to connecting
+                                    remoteConnectContainer.state = "connecting"
+                                }
                             }
+
+                            Connections{
+                                target: tokenBusyTimer
+                                onTriggered: {
+                                    remoteConnectContainer.state = "timeout"
+                                }
+                            }
+
+                            Connections {
+                                target: tryAgainButton
+                                onClicked: {
+                                    remoteConnectContainer.state = "default"
+                                }
+                            }
+
+                            Connections {
+                                target: disconnectButton
+                                onClicked: {
+                                    remoteConnectContainer.state = "default"
+                                    // sending remote disconnect message to hcs
+                                    var remote_disconnect_json = {
+                                        "hcs::cmd":"remote_disconnect",
+                                    }
+                                    coreInterface.sendCommand(JSON.stringify(remote_disconnect_json))
+                                    console.log("UI -> HCS ", JSON.stringify(remote_disconnect_json));
+                                }
+                            }
+
+                            Connections {
+                                target: coreInterface
+                                onPlatformStateChanged: {
+                                    remoteConnectContainer.state = "default"
+                                }
+                            }
+
+                            Connections {
+                                target: coreInterface
+                                onRemoteConnectionChanged:{
+                                    if ( remoteConnectContainer.state === "connecting") {
+
+                                        // Successful remote connection
+                                        if (result === true){
+                                            remoteConnectContainer.state = "success"
+                                        }
+                                        else {
+                                            remoteConnectContainer.state = "error"
+                                        }
+                                    }
+                                }
+                            }
+
+
+                            // Timer to timeout busy animation
+                            Timer {
+                                // 3 second timeout for response
+                                id: tokenBusyTimer
+                                interval: 3000
+                                running: false
+                                repeat: false
+                                onTriggered: {
+                                    // Show failure
+                                }
+                            }
+
+                            // Show busy
+                            Item {
+                                id: busyIndicatorContainer
+                                width: tokenBusyTimer.running || statusImage.visible ? 75 : 0
+                                height: tokenBusyTimer.running || statusImage.visible ? 75 : 0
+                                anchors {
+                                    horizontalCenter: parent.horizontalCenter
+                                    top: parent.top
+                                    topMargin: height === 0 ? 0 : 30
+                                }
+
+                                BusyIndicator {
+                                    id: tokenBusyIndicator
+                                    // Bind to Timer
+                                    running: tokenBusyTimer.running
+                                    anchors.fill: parent
+                                }
+
+                                Image{
+                                    id: statusImage
+                                    width: parent.width
+                                    height: parent.height
+                                    fillMode: Image.PreserveAspectFit
+                                    source: ""
+                                    visible: false
+                                }
+                            }
+
+                            Label {
+                                id: tokenLabel
+                                height: 30
+                                text: "Enter remote token:"
+                                font {
+                                    family: franklinGothicBold.name
+                                }
+                                color: "white"
+                                anchors {
+                                    top: busyIndicatorContainer.bottom
+                                    topMargin: busyIndicatorContainer.height === 0 ? 50 : 0
+                                    horizontalCenter: remoteConnectContainer.horizontalCenter
+                                }
+                            }
+
+                            Button {
+                                id: tryAgainButton
+                                text: "Try Again"
+                                anchors {
+                                    top: tokenLabel.bottom
+                                    horizontalCenter: remoteConnectContainer.horizontalCenter
+                                }
+                                visible: false
+                            }
+
+                            Button {
+                                id: disconnectButton
+                                text: "Disconnect"
+                                anchors {
+                                    top: tokenLabel.bottom
+                                    horizontalCenter: remoteConnectContainer.horizontalCenter
+                                }
+                                visible: false
+                            }
+
+                            Item {
+                                id: tokenInput
+                                width: tokenField.width + submitTokenButton.width + submitTokenButton.anchors.leftMargin
+                                height: tokenfield.height
+                                // Default visibility is false; state changes will make it visible
+                                visible: { console.log("created"); return false}
+                                anchors {
+                                    top: tokenLabel.bottom
+                                    horizontalCenter: remoteConnectContainer.horizontalCenter
+                                }
+
+
+                                TextField {
+                                    id: tokenField
+                                    selectByMouse: true
+                                    focus: true
+                                    placeholderText: qsTr("Token (ex: DMI2UE1N)")
+                                    cursorPosition: 1
+                                    Keys.onReturnPressed: {
+                                        console.log("TOKEN: ", text);
+                                    }
+
+
+                                }
+
+                                Button{
+                                    id: submitTokenButton
+                                    text: "Submit"
+                                    width: 80
+                                    height: tokenfield.height
+                                    anchors{
+                                        left: tokenField.right
+                                        leftMargin: 10
+                                    }
+
+                                    onClicked: {
+                                        console.log("sending token:", tokenField.text);
+                                        var remote_json = {
+                                            "hcs::cmd":"get_platforms",
+                                            "payload": {
+                                                "hcs_token": tokenField.text
+                                            }
+                                        }
+                                        coreInterface.sendCommand(JSON.stringify(remote_json))
+                                        console.log("UI -> HCS ", JSON.stringify(remote_json));
+                                    }
+                                }
+                            }
+
+
+
+
+
+
                         }
                     }
                 }

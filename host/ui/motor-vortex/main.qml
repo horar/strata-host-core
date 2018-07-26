@@ -67,7 +67,7 @@ Window {
             }
 
             transitions: Transition {
-                NumberAnimation { target: rotation; property: "angle"; duration: 2000 }
+                NumberAnimation { target: rotation; property: "angle"; duration: 500 }
             }
         }
     }
