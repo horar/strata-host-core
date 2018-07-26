@@ -347,226 +347,225 @@ Rectangle {
         }
     }
 
-    Popup {
-        id: remoteSupportRequest
-        x: 400; y: 200
-        width: 400; height: 400
-        modal: true
-        focus: true
-        closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
 
-        Rectangle{
-            id:advertiseButton;
-            width: 100;
-            height: 100;
-            anchors {
-                horizontalCenter: parent.horizontalCenter
-                margins: 30
-            }
-            property bool checked: false
-            border.color: "black";
-            border.width: 2;
-            color: advertiseButton.checked ? "lightgreen":"lightgrey"
-            Image{
-                id:remoteButtonImage
-                source: "qrc:/images/icons/remotecommunication.svg"
-                height: advertiseButton.height
-                width: advertiseButton.width
-            }
-            ScaleAnimator {
-                id: increaseOnMouseEnter
-                target: advertiseButton;
-                from: 1;
-                to: 1.2;
-                duration: 200
-                running: false
-            }
-            ScaleAnimator {
-                id: decreaseOnMouseExit
-                target: advertiseButton;
-                from: 1.2;
-                to: 1;
-                duration: 200
-                running: false
-            }
-            MouseArea {
-                id: imageMouse
-                anchors.fill: advertiseButton
-                hoverEnabled: true
-                cursorShape: Qt.PointingHandCursor
-                onEntered:{
-                    increaseOnMouseEnter.start()
-                }
-                onExited:{
-                    decreaseOnMouseExit.start()
-                }
-                onClicked: {
-                    advertiseButton.checked = !advertiseButton.checked
-                    var advertise
-                    if(advertiseButton.checked) {
-                        advertise = true
-                    }
-                    else {
-                        advertise = false
-                        remote_activity_label.visible = false
-                        remote_user_container.visible = false
-                        remote_user_label.visible = false
-                        remoteUserModel.clear()
-                    }
-                    var remote_json = {
-                        "hcs::cmd":"advertise",
-                        "payload": {
-                            "advertise_platforms":advertise
-                        }
-                    }
-                    console.log("asking hcs to advertise the platforms",JSON.stringify(remote_json))
-                    coreInterface.sendCommand(JSON.stringify(remote_json))
-                }
-            }
-        }
+    ///////////////////////////////////// moved to remoteinvitecontainer
+//    Popup {
+//        id: remoteSupportRequest
+//        x: 400; y: 200
+//        width: 400; height: 400
+//        modal: true
+//        focus: true
+//        closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
 
-        Label {
-            id: supportPhoneNumber
-            anchors {
-                top: advertiseButton.bottom
-                horizontalCenter: parent.horizontalCenter
-                margins: 30
-            }
-            text: advertiseButton.checked ? "click the button to turn off remote control":"click the button to turn on remote control"
-            font.pointSize: Qt.platform.os == "osx"? 13 :8
-            font.bold: true
-            color: "black"
-        }
+//        Rectangle{
+//            id:advertiseButton;
+//            width: 100;
+//            height: 100;
+//            anchors {
+//                horizontalCenter: parent.horizontalCenter
+//                margins: 30
+//            }
+//            property bool checked: false
+//            border.color: "black";
+//            border.width: 2;
+//            color: advertiseButton.checked ? "lightgreen":"lightgrey"
+//            Image{
+//                id:remoteButtonImage
+//                source: "qrc:/images/icons/remotecommunication.svg"
+//                height: advertiseButton.height
+//                width: advertiseButton.width
+//            }
+//            ScaleAnimator {
+//                id: increaseOnMouseEnter
+//                target: advertiseButton;
+//                from: 1;
+//                to: 1.2;
+//                duration: 200
+//                running: false
+//            }
+//            ScaleAnimator {
+//                id: decreaseOnMouseExit
+//                target: advertiseButton;
+//                from: 1.2;
+//                to: 1;
+//                duration: 200
+//                running: false
+//            }
+//            MouseArea {
+//                id: imageMouse
+//                anchors.fill: advertiseButton
+//                hoverEnabled: true
+//                cursorShape: Qt.PointingHandCursor
+//                onEntered:{
+//                    increaseOnMouseEnter.start()
+//                }
+//                onExited:{
+//                    decreaseOnMouseExit.start()
+//                }
+//                onClicked: {
+//                    advertiseButton.checked = !advertiseButton.checked
+//                    var advertise
+//                    if(advertiseButton.checked) {
+//                        advertise = true
+//                    }
+//                    else {
+//                        advertise = false
+//                        remote_activity_label.visible = false
+//                        remote_user_container.visible = false
+//                        remote_user_label.visible = false
+//                        remoteUserModel.clear()
+//                    }
+//                    var remote_json = {
+//                        "hcs::cmd":"advertise",
+//                        "payload": {
+//                            "advertise_platforms":advertise
+//                        }
+//                    }
+//                    console.log("asking hcs to advertise the platforms",JSON.stringify(remote_json))
+//                    coreInterface.sendCommand(JSON.stringify(remote_json))
+//                }
+//            }
+//        }
 
-        Label {
-            id: hcs_token
-            anchors {
-                top: supportPhoneNumber.bottom
-                horizontalCenter: parent.horizontalCenter
-                margins: 30
-            }
-            text: advertiseButton.checked ? coreInterface.hcs_token_:""
-            font.pointSize: Qt.platform.os == "osx"? 13 :8
-            font.bold: true
-            color: "black"
-        }
-        Connections {
-            target: coreInterface
-            onPlatformStateChanged: {
-                remoteButton.checked = false
-            }
-        }
-    }
+//        Label {
+//            id: supportPhoneNumber
+//            anchors {
+//                top: advertiseButton.bottom
+//                horizontalCenter: parent.horizontalCenter
+//                margins: 30
+//            }
+//            text: advertiseButton.checked ? "click the button to turn off remote control":"click the button to turn on remote control"
+//            font.pointSize: Qt.platform.os == "osx"? 13 :8
+//            font.bold: true
+//            color: "black"
+//        }
 
-    Label {
-        id:remote_user_label
-        anchors {
-            left: toolBar.right
-            verticalCenter: container.verticalCenter;
-            verticalCenterOffset: 10
-        }
+//        Label {
+//            id: hcs_token
+//            anchors {
+//                top: supportPhoneNumber.bottom
+//                horizontalCenter: parent.horizontalCenter
+//                margins: 30
+//            }
+//            text: advertiseButton.checked ? coreInterface.hcs_token_:""
+//            font.pointSize: Qt.platform.os == "osx"? 13 :8
+//            font.bold: true
+//            color: "black"
+//        }
+//        Connections {
+//            target: coreInterface
+//            onPlatformStateChanged: {
+//                remoteButton.checked = false
+//            }
+//        }
+//    }
 
-        height: parent.height
-        text:  "Remote User/s:"
-        font.pointSize: Qt.platform.os == "osx"? 13 :8
-        font.bold: true
-        color: "white"
-        visible: false
-    }
 
-    ListModel {
-        id: remoteUserModel
-    }
+    //////////////////////////////////// moved to remoteInviteRight
+//    Label {
+//        id:remote_user_label
+//        anchors {
+//            left: toolBar.right
+//            verticalCenter: container.verticalCenter;
+//            verticalCenterOffset: 10
+//        }
 
-    Rectangle {
-        id: remote_user_container
-        anchors {
-            left: remote_user_label.right
-            leftMargin: 10
-        }
-        height: parent.height
-        width: parent.width*0.25
-        visible:false
-        color: container.backgroundColor
-        Component {
-            id: remoteUserDelegate
-            Item {
-                width: remote_user_container.width*0.1
-                height: remote_user_container.height
-                Rectangle{
-                    Image {
-                        id: remote_user_img
-                        anchors {
-                            horizontalCenter: parent.horizontalCenter
-                        }
+//        height: parent.height
+//        text:  "Remote User/s:"
+//        font.pointSize: Qt.platform.os == "osx"? 13 :8
+//        font.bold: true
+//        color: "white"
+//        visible: false
+//    }
 
-                        sourceSize.width: 1024;
-                        height: remote_user_container.height*.7
-                        fillMode: Image.PreserveAspectFit
-                        source: "qrc:/images/blank_avatar.png"
-                        Image {
-                            id: close_icon
-                            anchors {
-                                top: parent.top
-                                left: parent.left
-                            }
-                            height: parent.height*0.5
-                            width:parent.width*0.5
-                            fillMode: Image.PreserveAspectFit
-                            source: "qrc:/images/closeIcon.svg"
-                            visible: false
-                        }
-                        MouseArea {
-                            anchors.fill: remote_user_img
-                            hoverEnabled: true
-                            onEntered: { close_icon.visible = true }
-                            onExited: { close_icon.visible = false }
-                            onClicked: {
-                                var remote_json = {
-                                    "hcs::cmd":"disconnect_remote_user",
-                                    "payload": {
-                                        "user_name":name
-                                    }
-                                }
-                                console.log("disconnecting user",JSON.stringify(remote_json))
-                                coreInterface.sendCommand(JSON.stringify(remote_json))
-                                //                                    remoteUserModel.remove(remote_user_list_view.currentIndex,1)
+//    ListModel {
+//        id: remoteUserModel
+//    }
 
-                            }
-                        }
-                    }
-                    Label {
-                        id:remote_user_name
-                        anchors {
-                            top: remote_user_img.bottom
-                            horizontalCenter: parent.horizontalCenter;
-                        }
-                        text:  name
-                        font.pointSize: Qt.platform.os == "osx"? 13 :8
-                        font.bold: true
-                        color: "white"
-                    }
+//    Rectangle {
+//        id: remote_user_container
+//        anchors {
+//            left: remote_user_label.right
+//            leftMargin: 10
+//        }
+//        height: parent.height
+//        width: parent.width*0.25
+//        visible:false
+//        color: container.backgroundColor
+//        Component {
+//            id: remoteUserDelegate
+//            Item {
+//                width: remote_user_container.width*0.1
+//                height: remote_user_container.height
+//                Rectangle{
+//                    Image {
+//                        id: remote_user_img
+//                        anchors {
+//                            horizontalCenter: parent.horizontalCenter
+//                        }
 
-                }
-            }
-
-        }
-        ListView {
-            id: remote_user_list_view
-            anchors.fill: remote_user_container
-            model: remoteUserModel
-            delegate: remoteUserDelegate
-            orientation: ListView.Horizontal
-            focus: true
-        }
-    }
+//                        sourceSize.width: 1024;
+//                        height: remote_user_container.height*.7
+//                        fillMode: Image.PreserveAspectFit
+//                        source: "qrc:/images/blank_avatar.png"
+//                        Image {
+//                            id: close_icon
+//                            anchors {
+//                                top: parent.top
+//                                left: parent.left
+//                            }
+//                            height: parent.height*0.5
+//                            width:parent.width*0.5
+//                            fillMode: Image.PreserveAspectFit
+//                            source: "qrc:/images/closeIcon.svg"
+//                            visible: false
+//                        }
+//                        MouseArea {
+//                            anchors.fill: remote_user_img
+//                            hoverEnabled: true
+//                            onEntered: { close_icon.visible = true }
+//                            onExited: { close_icon.visible = false }
+//                            onClicked: {
+//                                var remote_json = {
+//                                    "hcs::cmd":"disconnect_remote_user",
+//                                    "payload": {
+//                                        "user_name":name
+//                                    }
+//                                }
+//                                console.log("disconnecting user",JSON.stringify(remote_json))
+//                                coreInterface.sendCommand(JSON.stringify(remote_json))
+//                                //                                    remoteUserModel.remove(remote_user_list_view.currentIndex,1)
+//                            }
+//                        }
+//                    }
+//                    Label {
+//                        id:remote_user_name
+//                        anchors {
+//                            top: remote_user_img.bottom
+//                            horizontalCenter: parent.horizontalCenter;
+//                        }
+//                        text:  name
+//                        font.pointSize: Qt.platform.os == "osx"? 13 :8
+//                        font.bold: true
+//                        color: "white"
+//                    }
+//                }
+//            }
+//        }
+//        ListView {
+//            id: remote_user_list_view
+//            anchors.fill: remote_user_container
+//            model: remoteUserModel
+//            delegate: remoteUserDelegate
+//            orientation: ListView.Horizontal
+//            focus: true
+//        }
+//    }
 
     Connections {
         target: coreInterface
         onRemoteUserAdded: {
-            remote_user_container.visible = true;
             remoteUserModel.append({"name":user_name, "active":false})
-            remote_user_label.visible = true;
         }
     }
 
@@ -580,13 +579,10 @@ Rectangle {
     Connections {
         target: coreInterface
         onPlatformStateChanged: {
-            remote_user_container.visible = false;
-            remote_user_label.visible = false;
             tokenField.text = "";
             // send "close remote advertise to hcs to close the remote socket"
-            if(advertiseButton.checked) {
-                remoteUserModel.clear()
-                advertiseButton.checked = false;
+            if (remoteToggle.checked) {
+                remoteToggle.checked = false;
                 var remote_json = {
                     "hcs::cmd":"advertise",
                     "payload": {
@@ -602,21 +598,34 @@ Rectangle {
     Label {
         id:remote_activity_label
         anchors {
-            left: remote_user_container.right
+            left: toolBar.right
             leftMargin: 15
             verticalCenter: container.verticalCenter
         }
         text: ""
-        font.pointSize: Qt.platform.os == "osx"? 13 :8
-        font.bold: true
+        visible: false
         color: "white"
+    }
+
+    Text {
+        anchors {
+            horizontalCenter: container.horizontalCenter
+            verticalCenter: container.verticalCenter
+        }
+        text: "\u0027"
+        font {
+            family: "sgicons"
+            pixelSize: 18
+        }
+        color: "white"
+        renderType: Text.NativeRendering
     }
 
     Connections {
         target: coreInterface
         onRemoteActivityChanged: {
             remote_activity_label.visible = true;
-            remote_activity_label.text= "controlled by "+ coreInterface.remote_user_activity_;
+            remote_activity_label.text= "Controlled by "+ coreInterface.remote_user_activity_;
             activityMonitorTimer.start();
         }
     }
@@ -628,7 +637,7 @@ Rectangle {
         running: false
         repeat: false
         onTriggered: {
-            remote_activity_label.text="";
+            remote_activity_label.visible = false;
         }
     }
 
@@ -705,8 +714,8 @@ Rectangle {
                     id: remoteSupportMenu
                     y: remoteSupportButton.height
                     padding: 0
-                    width: 400
-                    height: 300
+                    width: 500
+                    height: 250
 
                     background: Rectangle {
                         color: Qt.lighter(container.color)
@@ -743,6 +752,7 @@ Rectangle {
                                     remoteConnectionContainer.visible = true
                                 }
                                 buttonColor: checked ? Qt.lighter(container.color) : container.color
+                                enabled: !remoteToggle.checked
                             }
                         }
 
@@ -751,11 +761,227 @@ Rectangle {
                             anchors {
                                 top: remoteMenuSelector.bottom
                                 bottom: remoteMenuContent.bottom
+                                right: remoteMenuContent.right
+                                left: remoteMenuContent.left
                             }
                             width: remoteMenuContent.width
                             visible: true
-                            SGRemoteInvite {}
 
+                            Item {
+                                id: remoteInviteLeft
+                                width: 270
+                                anchors {
+                                    margins: 15
+                                    top: parent.top
+                                    bottom: parent.bottom
+                                    left: parent.left
+                                }
+
+                                Image {
+                                    id: remoteImage
+                                    source: remoteToggle.checked ? "qrc:/images/icons/remote-unlocked.png" : "qrc:/images/icons/remote-locked.png"
+                                    anchors {
+                                        horizontalCenter: parent.horizontalCenter
+                                        top: parent.top
+                                    }
+                                }
+
+                                SGSwitch {
+                                    id: remoteToggle
+                                    anchors {
+                                        top: remoteImage.bottom
+                                        topMargin: 15
+                                        horizontalCenter: parent.horizontalCenter
+                                    }
+                                    label: "Remote Support Access:"
+                                    labelLeft: true
+                                    checkedLabel: "Enabled"
+                                    uncheckedLabel: "Disabled"
+                                    labelsInside: true
+                                    switchWidth: 77
+                                    textColor: "white"
+                                    grooveFillColor: "#00b842"
+                                    grooveColor: "#777"
+
+                                    onCheckedChanged: {
+                                        var advertise
+                                        if(remoteToggle.checked) {
+                                            advertise = true
+                                        }
+                                        else {
+                                            advertise = false
+                                            remoteUserModel.clear()
+                                        }
+                                        var remote_json = {
+                                            "hcs::cmd":"advertise",
+                                            "payload": {
+                                                "advertise_platforms":advertise
+                                            }
+                                        }
+                                        console.log("asking hcs to advertise the platforms",JSON.stringify(remote_json))
+                                        coreInterface.sendCommand(JSON.stringify(remote_json))
+                                    }
+                                }
+
+                                Label {
+                                    id: hcs_token
+                                    anchors {
+                                        top: remoteToggle.bottom
+                                        horizontalCenter: parent.horizontalCenter
+                                        topMargin: 25
+                                    }
+                                    text: remoteToggle.checked ? "Your remote token is: " + coreInterface.hcs_token_ : "Enable to generate remote token"
+                                    font {
+                                        family: franklinGothicBook.name
+                                    }
+                                    color: "white"
+                                }
+
+                                Connections {
+                                    target: coreInterface
+                                    onPlatformStateChanged: {
+                                        remoteToggle.checked = false
+                                    }
+                                }
+                            }
+
+                            Item {
+                                id: remoteInviteRight
+                                anchors {
+                                    left: remoteInviteLeft.right
+                                    top: parent.top
+                                    bottom: parent.bottom
+                                    right: parent.right
+                                    leftMargin: 15
+                                    topMargin: 10
+                                    rightMargin: 5
+                                }
+
+                                Rectangle {
+                                    id: connectedUsersTitle
+                                    anchors {
+                                        left: parent.left
+                                        right: parent.right
+                                        top: parent.top
+                                    }
+                                    height: 30
+                                    color: remoteToggle.checked ? Qt.darker(container.color, 1.25) : container.color
+
+                                    Text {
+                                        id: name
+                                        text: qsTr("Connected Users:")
+                                        anchors {
+                                            verticalCenter: parent.verticalCenter
+                                            left: parent.left
+                                            leftMargin: 10
+                                            verticalCenterOffset: 2
+                                        }
+                                        color: remoteToggle.checked ? "white" : "grey"
+                                        font {
+                                            family: franklinGothicBook.name
+                                        }
+                                    }
+                                }
+
+                                Rectangle {
+                                    id: connectedUsersContainer
+                                    color: remoteToggle.checked ? container.color : Qt.lighter(container.color, 1.25)
+                                    anchors {
+                                        left: parent.left
+                                        right: parent.right
+                                        top: connectedUsersTitle.bottom
+                                        topMargin: 2
+                                        bottom: parent.bottom
+                                        bottomMargin: 10
+                                    }
+
+                                    ListModel {
+                                        id: remoteUserModel
+                                    }
+
+                                    Component {
+                                        id: remoteUserDelegate
+
+                                        Item {
+                                            width: connectedUsersContainer.width
+                                            height: 50
+
+                                            Image {
+                                                id: remote_user_img
+                                                anchors {
+                                                    left: parent.left
+                                                    top: parent.top
+                                                    leftMargin: 4
+                                                    topMargin: 4
+                                                }
+                                                sourceSize.width: 1024;
+                                                height: 46
+                                                fillMode: Image.PreserveAspectFit
+                                                source: "qrc:/images/blank_avatar.png"
+                                            }
+
+                                            Label {
+                                                id:remote_user_name
+                                                anchors {
+                                                    left: remote_user_img.right
+                                                    verticalCenter: parent.verticalCenter
+                                                    leftMargin: 10
+                                                    right: close_icon.left
+                                                }
+                                                text: name
+                                                font {
+                                                    family: franklinGothicBold.name
+                                                }
+                                                color: "white"
+                                                elide: Text.ElideRight
+                                            }
+
+                                            Image {
+                                                id: close_icon
+                                                anchors {
+                                                    verticalCenter: parent.verticalCenter
+                                                    right: parent.right
+                                                    rightMargin: 5
+                                                }
+                                                height: parent.height - 30
+                                                width: height
+                                                fillMode: Image.PreserveAspectFit
+                                                source: "qrc:/images/closeIcon.svg"
+                                            }
+
+                                            MouseArea {
+                                                anchors {
+                                                    fill: close_icon
+                                                }
+                                                hoverEnabled: true
+                                                onClicked: {
+                                                    var remote_json = {
+                                                        "hcs::cmd":"disconnect_remote_user",
+                                                        "payload": {
+                                                            "user_name":name
+                                                        }
+                                                    }
+                                                    console.log("disconnecting user",JSON.stringify(remote_json))
+                                                    coreInterface.sendCommand(JSON.stringify(remote_json))
+                                                    //  remoteUserModel.remove(remote_user_list_view.currentIndex,1)
+                                                }
+                                                cursorShape: Qt.PointingHandCursor
+                                            }
+                                        }
+                                    }
+
+                                    ListView {
+                                        id: remote_user_list_view
+                                        anchors {
+                                            fill: connectedUsersContainer
+                                        }
+                                        model: remoteUserModel
+                                        delegate: remoteUserDelegate
+                                        focus: true
+                                        clip: true
+                                    }
+                                }
+                            }
                         }
 
                         Item {
@@ -772,31 +998,6 @@ Rectangle {
                             }
                         }
                     }
-
-//                        Column {
-//                        id: remoteMenuColumn
-//                        width: remoteSupportMenu.width
-
-//                        SGMenuItem {
-//                            text: qsTr("Remote Support FAE")
-//                            onClicked: {
-//                                remoteSupportMenu.close()
-//                                remoteSupportConnect.open()
-//                            }
-//                            width: parent.width
-//                            buttonColor: !this.hovered ? container.color : this.pressed ? Qt.darker(container.color, 3) : Qt.darker(container.color, 2)
-//                        }
-
-//                        SGMenuItem {
-//                            text: qsTr("Remote Support CUSTOMER")
-//                            onClicked: {
-//                                remoteSupportMenu.close()
-//                                remoteSupportRequest.open()
-//                            }
-//                            width: parent.width
-//                            buttonColor: !this.hovered ? container.color : this.pressed ? Qt.darker(container.color, 3) : Qt.darker(container.color, 2)
-//                        }
-//                    }
                 }
             }
         }
@@ -1001,6 +1202,11 @@ Rectangle {
         source: "qrc:/fonts/FranklinGothicBold.ttf"
     }
 
+    FontLoader {
+        id: sgicons
+        source: "qrc:/fonts/sgicons.ttf"
+    }
+
     Window {
         id: debugWindow
         visible:true
@@ -1010,15 +1216,25 @@ Rectangle {
         y:500
 
         Button {
-            text: "show/hide user label and container"
+            id: whatever
+            text: "add user to model"
             onClicked: {
-                remote_user_container.visible = !remote_user_container.visible
-                remote_user_label.visible = !remote_user_label.visible
+                remoteUserModel.append({"name":"David Faller" })
                 remote_activity_label.visible = true;
-                remote_activity_label.text= "controlled by test";
+                remote_activity_label.text= "Controlled by test";
                 activityMonitorTimer.start();
             }
         }
+        Button {
+            id: whatever2
+            text: "clear model"
+            anchors {
+                top: whatever.bottom
+            }
+            onClicked: {
+                remoteUserModel.clear()
 
+            }
+        }
     }
 }

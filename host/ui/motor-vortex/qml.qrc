@@ -210,9 +210,9 @@
         <file>statusbar-partial-views/SGMenuItem.qml</file>
         <file>statusbar-partial-views/SGToolButton.qml</file>
         <file>statusbar-partial-views/SGTabButton.qml</file>
-        <file>statusbar-partial-views/SGRemoteInvite.qml</file>
         <file>statusbar-partial-views/SGSwitch.qml</file>
         <file>images/icons/remote-locked.png</file>
         <file>images/icons/remote-unlocked.png</file>
+        <file>fonts/sgicons.ttf</file>
     </qresource>
 </RCC>

@@ -51,11 +51,11 @@ Item {
         bottomPadding: topPadding
         color: root.textColor
         font {
-            family: franklinGothicBold.name
+            family: franklinGothicBook.name
         }
         FontLoader {
-            id: franklinGothicBoold
-            source: "qrc:/fonts/FranklinGothicBold.otf"
+            id: franklinGothicBook
+            source: "qrc:/fonts/FranklinGothicBook.otf"
         }
     }
 
