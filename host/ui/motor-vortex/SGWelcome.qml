@@ -396,6 +396,9 @@ Rectangle{
                         }
                         hoverEnabled: true
                         cursorShape: Qt.PointingHandCursor
+                        onClicked: {
+                            Qt.openUrlExternally("http://www.onsemi.com");
+                        }
                     }
                 }
 
@@ -408,6 +411,9 @@ Rectangle{
                         }
                         hoverEnabled: true
                         cursorShape: Qt.PointingHandCursor
+                        onClicked: {
+                            Qt.openUrlExternally("http://www.onsemi.com");
+                        }
                     }
                 }
 
@@ -420,6 +426,9 @@ Rectangle{
                         }
                         hoverEnabled: true
                         cursorShape: Qt.PointingHandCursor
+                        onClicked: {
+                            Qt.openUrlExternally("http://www.onsemi.com");
+                        }
                     }
                 }
 
@@ -432,6 +441,9 @@ Rectangle{
                         }
                         hoverEnabled: true
                         cursorShape: Qt.PointingHandCursor
+                        onClicked: {
+                            Qt.openUrlExternally("http://www.onsemi.com");
+                        }
                     }
                 }
             }

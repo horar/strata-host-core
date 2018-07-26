@@ -1467,9 +1467,9 @@ Rectangle {
     Window {
         id: debugWindow
         visible:true
-        height: 400
-        width: 400
-        x:1520
+        height: 200
+        width: 200
+        x:1620
         y:500
 
         Button {
@@ -1477,9 +1477,6 @@ Rectangle {
             text: "add user to model"
             onClicked: {
                 remoteUserModel.append({"name":"David Faller" })
-                remote_activity_label.visible = true;
-                remote_activity_label.text= "Controlled by David Faller";
-                activityMonitorTimer.start();
             }
         }
         Button {
@@ -1490,6 +1487,18 @@ Rectangle {
             }
             onClicked: {
                 remoteUserModel.clear()
+            }
+        }
+        Button {
+            id: whatever3
+            text: "remote activity"
+            anchors {
+                top: whatever2.bottom
+            }
+            onClicked: {
+                remote_activity_label.visible = true;
+                remote_activity_label.text= "Controlled by David Faller";
+                activityMonitorTimer.start();
             }
         }
     }
