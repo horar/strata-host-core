@@ -695,6 +695,11 @@ Rectangle {
                             text: qsTr("Select Another Platform")
                             onClicked: {
                                 platformOptionsMenu.close()
+
+                                NavigationControl.updateState(NavigationControl.events.PLATFORM_DISCONNECTED_EVENT, null)
+                                var disconnect_json = {"hcs::cmd":"disconnect_platform"}
+                                console.log("disonnecting the platform")
+                                coreInterface.sendCommand(JSON.stringify(disconnect_json))
                             }
                             width: parent.width
                             buttonColor: !this.hovered ? container.color : this.pressed ? Qt.lighter(container.color, 2) : Qt.lighter(container.color)

@@ -22,7 +22,7 @@ var screens = {
     LOGIN_SCREEN: "qrc:/SGLoginScreen.qml",
     WELCOME_SCREEN : "qrc:/SGWelcome.qml",
     CONTENT_SCREEN : "qrc:/Content.qml",
-    STATUS_BAR:     "qrc:/SGStatusBar.qml"
+    STATUS_BAR: "qrc:/SGStatusBar.qml"
 }
 
 /*
