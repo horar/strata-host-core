@@ -202,7 +202,6 @@ Rectangle {
                 }
                 buttonColor: platformOptionsButton.hovered || platformOptionsMenu.visible ? Qt.lighter(container.color) : container.color
 
-
                 Popup {
                     id: platformOptionsMenu
                     y: platformOptionsButton.height
@@ -858,7 +857,7 @@ Rectangle {
         id: remote_user_icons
         anchors {
             left: toolBar.right
-            leftMargin: 15
+            leftMargin: 18
         }
         width: icon_repeater.count * 19 + 16
         height: 40
@@ -975,33 +974,62 @@ Rectangle {
     Popup {
         id: profilePopup
         width: 500
-        height: 500
+        height: 175 + profile_image.height
         modal: true
         focus: true
         x: container.width/2 - profilePopup.width/2
-        y: 200
+        y: container.parent.windowHeight/2 - profilePopup.height/2
+        padding: 0
+        closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
+
         Rectangle {
             id: popupContainer
             anchors.fill: parent
-            width: profilePopup.width;height: profilePopup.height
-            color: "lightgray"
+            width: profilePopup.width
+            height: profilePopup.height
+            color: Qt.lighter("#3a3a3a")
 
             Rectangle {
                 id: title
                 height: 30
                 width: popupContainer.width
                 anchors.top: popupContainer.top
-                color: "gray"
+                color: "#3a3a3a"
 
                 Label {
                     id: profileTitle
                     anchors {
                         left: title.left
                         leftMargin: 10
+                        verticalCenter: title.verticalCenter
                     }
                     text: "My Profile"
-                    font.pointSize: 10
-                    font.bold: true
+                    font {
+                        family: franklinGothicBold.name
+                    }
+                    color: "white"
+                }
+
+                Text {
+                    id: close_profile
+                    text: "\ue805"
+                    color: "white"
+                    font {
+                        family: sgicons.name
+                        pixelSize: 20
+                    }
+                    anchors {
+                        right: title.right
+                        verticalCenter: title.verticalCenter
+                        rightMargin: 10
+                    }
+
+                    MouseArea {
+                        anchors {
+                            fill: parent
+                        }
+                        onClicked: profilePopup.close()
+                    }
                 }
             }
 
@@ -1009,12 +1037,13 @@ Rectangle {
                 id: profile_image
                 anchors { horizontalCenter: popupContainer.horizontalCenter
                     top: popupContainer.top
-                    topMargin: 60
+                    topMargin: 50
                 }
-                width: 100; height: 100
+                sourceSize.width: 200
                 fillMode: Image.PreserveAspectFit
                 source: "qrc:/images/" + getUserImage(user_id)
             }
+
             Label {
                 id:profile_userId
                 text: getUserName(user_id)
@@ -1024,44 +1053,59 @@ Rectangle {
                     horizontalCenter: popupContainer.horizontalCenter
 
                 }
-                font.pointSize: 15
-                font.bold: true
-                color: "black"
+                font {
+                    pixelSize: 25
+                    family: franklinGothicBold.name
+                }
+                color: "white"
             }
 
             Label {
-                id: profile_username
+                id: profile_email
                 anchors {
                     top: profile_userId.bottom
                     horizontalCenter: popupContainer.horizontalCenter
-
+                    horizontalCenterOffset: 1
+                    topMargin: 5
                 }
                 text: getUserName(user_id) + "@onsemi.com"
-                anchors.horizontalCenterOffset: 1
-                //anchors.topMargin: 18
-                font.pointSize: 15
-                font.bold: true
-                color: "black"
+                font {
+                    pixelSize: 15
+                    family: franklinGothicBook.name
+                }
+                color: "white"
             }
 
             Label {
-                id: email
+                id: jobTitle
                 text : getJobTitle(user_id)
-                anchors.top: profile_username.bottom
-                anchors.topMargin: 5
-                anchors.horizontalCenter:  popupContainer.horizontalCenter
+                anchors {
+                    top: profile_email.bottom
+                    topMargin: 5
+                    horizontalCenter:  popupContainer.horizontalCenter
+                }
+                color: "white"
+                font {
+                    pixelSize: 15
+                    family: franklinGothicBook.name
+                }
             }
 
             Label {
                 id: cusomerSupport
                 text: "Customer Support: 1800-onsemi-support"
-                anchors.top: email.bottom
-                anchors.topMargin: 5
-                anchors.horizontalCenter:  popupContainer.horizontalCenter
+                anchors{
+                    top: jobTitle.bottom
+                    topMargin: 10
+                    horizontalCenter:  popupContainer.horizontalCenter
+                }
+                color: "white"
+                font {
+                    pixelSize: 15
+                    family: franklinGothicBook.name
+                }
             }
-
         }
-        closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
     }
 
     FontLoader {
@@ -1083,54 +1127,68 @@ Rectangle {
         id: debugWindow
         visible:true
         height: 200
-        width: 200
+        width: 300
         x:1620
         y:500
 
-        Button {
-            id: whatever
-            text: "add user to model"
-            onClicked: {
-                remoteUserModel.append({"name":"David Faller" })
+        Column {
+            id: debug1
+            Button {
+                text: "add user to model"
+                onClicked: {
+                    remoteUserModel.append({"name":"David Faller" })
+                }
+            }
+            Button {
+                text: "clear model"
+                onClicked: {
+                    remoteUserModel.clear()
+                }
+            }
+            Button {
+                text: "remote activity"
+                onClicked: {
+                    remote_activity_label.visible = true;
+                    remote_activity_label.text= "Controlled by David Faller";
+                    activityMonitorTimer.start();
+                }
+            }
+            Text {
+                id:debugtext
+                text: "platform_state:" + NavigationControl.context.platform_state
+            }
+            Button {
+                text: "update state"
+                onClicked: {
+                    debugtext.text = "platform_state:" + NavigationControl.context.platform_state
+                }
             }
         }
-        Button {
-            id: whatever2
-            text: "clear model"
+
+        Column {
+            id: debug2
             anchors {
-                top: whatever.bottom
+                left: debug1.right
+                leftMargin: 10
             }
-            onClicked: {
-                remoteUserModel.clear()
+
+            Button {
+                text: "new plat connect MV"
+                onClicked: {
+                    var data = { platform_name: "motor-vortex"}
+                    NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT, data)
+                }
             }
-        }
-        Button {
-            id: whatever3
-            text: "remote activity"
-            anchors {
-                top: whatever2.bottom
-            }
-            onClicked: {
-                remote_activity_label.visible = true;
-                remote_activity_label.text= "Controlled by David Faller";
-                activityMonitorTimer.start();
-            }
-        }
-        Text {
-            id: debugtext
-            anchors {
-                top: whatever3.bottom
-            }
-            text: "platform_state:" + NavigationControl.context.platform_state
-        }
-        Button {
-            id: whatever4
-            text: "update state"
-            anchors {
-                top: debugtext.bottom
-            }
-            onClicked: {
-                debugtext.text = "platform_state:" + NavigationControl.context.platform_state
+
+            Button {
+                text: "disconnect"
+                onClicked: {
+
+                    NavigationControl.updateState(NavigationControl.events.PLATFORM_DISCONNECTED_EVENT, null)
+                    var disconnect_json = {"hcs::cmd":"disconnect_platform"}
+                    console.log("disonnecting the platform")
+                    coreInterface.sendCommand(JSON.stringify(disconnect_json))
+                }
             }
         }
     }

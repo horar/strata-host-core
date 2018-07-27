@@ -33,6 +33,8 @@ Window {
             id: statusBarContainer
             height: visible ? 40 : 0
             width: parent.width
+
+            property real windowHeight: mainWindow.height  // for centering popups spawned from the statusbar
         }
 
         Flipable {
