@@ -53,7 +53,7 @@ Rectangle {
     SwipeView {
         id: swipeView
         anchors {
-            top: tabbar.bottom
+            top: tabBar.bottom
             right: parent.right
             left: parent.left
             bottom: parent.bottom
