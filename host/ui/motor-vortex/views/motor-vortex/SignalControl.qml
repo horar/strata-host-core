@@ -27,7 +27,7 @@ Item {
             console.log("in signal control")
         }
 
-        property int singleLEDSlider :  0
+        property real singleLEDSlider :  0
 
 
 
