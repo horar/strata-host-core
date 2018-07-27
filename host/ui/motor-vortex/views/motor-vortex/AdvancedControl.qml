@@ -15,7 +15,7 @@ Rectangle {
    // property alias rampRateSliderValue: rampRateSlider.value
    // property alias phaseAngle: driveModeCombo.currentIndex
     //property alias ledSlider: hueSlider.value
-    property alias singleLEDSlider: singleColorSlider.value
+   // property alias singleLEDSlider: singleColorSlider.value
     property alias ledPulseSlider: ledPulseFrequency.value
 
     signal motorStateSignal() // signal is called when the motor is off
@@ -528,7 +528,7 @@ Rectangle {
                 onValueChanged: {
                     console.log(" in advance")
                     platformInterface.set_color_mixing.update(color1,color_value1,color2,color_value2)
-                    signalControl.ledSlider = hueSlider.value
+                    signalControl.ledSlider = value
                 }
             }
 
@@ -571,6 +571,7 @@ Rectangle {
             id: ledSecondContainer
             width: 500
             height: childrenRect.height + 20
+
             color: "#eeeeee"
             anchors {
                 horizontalCenter: rightSide.horizontalCenter
@@ -582,7 +583,7 @@ Rectangle {
                 id: singleColorSlider
                 label: "Single LED color:"
                 labelLeft: true
-                value: 0
+                value: signalControl.singleLEDSlider
                 anchors {
                     top: ledSecondContainer.top
                     topMargin: 10
@@ -593,6 +594,7 @@ Rectangle {
                 }
                 onValueChanged: {
                     platformInterface.set_single_color.update(color, color_value)
+                    signalControl.singleLEDSlider = value
                 }
             }
 

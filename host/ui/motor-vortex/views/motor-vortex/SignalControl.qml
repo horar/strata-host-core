@@ -27,6 +27,8 @@ Item {
             console.log("in signal control")
         }
 
+        property int singleLEDSlider :  0
+
 
 
 

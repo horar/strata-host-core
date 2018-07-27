@@ -14,7 +14,7 @@ Rectangle {
   //  property alias rampRateSliderValue: rampRateSlider.value
   //  property alias phaseAngle: driveModeCombo.currentIndex
   //  property alias ledSlider: hueSlider.value
-    property alias singleLEDSlider: singleColorSlider.value
+ //   property alias singleLEDSlider: singleColorSlider.value
     property alias ledPulseSlider: ledPulseFrequency.value
 
     signal motorStateSignal()
@@ -652,6 +652,7 @@ Rectangle {
                 id: singleColorSlider
                 label: "Single LED color:"
                 labelLeft: true
+                value: signalControl.singleLEDSlider
                 anchors {
                     top: ledSecondContainer.top
                     topMargin: 10
@@ -662,6 +663,7 @@ Rectangle {
                 }
                 onValueChanged: {
                     platformInterface.set_single_color.update(color, color_value)
+                    signalControl.singleLEDSlider = value
                 }
             }
 
