@@ -153,7 +153,7 @@ Rectangle{
         Connections {
             target: coreInterface
             onPlatformListChanged: {
-                console.log("platform list updated: ", list)
+                //console.log("platform list updated: ", list)
                 platformSelectorContainer.populatePlatforms(list)
             }
         }
@@ -162,7 +162,7 @@ Rectangle{
             id: platformListModel
 
             Component.onCompleted: {
-                console.log("platformListModel:Component.onCompleted:");
+                //console.log("platformListModel:Component.onCompleted:");
                 platformSelectorContainer.populatePlatforms(coreInterface.platform_list_)
             }
 
@@ -215,7 +215,7 @@ Rectangle{
 
             // Parse JSON
             try {
-                console.log("populatePlaforms: ", platform_list_json)
+                //console.log("populatePlaforms: ", platform_list_json)
                 var platform_list = JSON.parse(platform_list_json)
 
                 for (var i = 0; i < platform_list.list.length; i ++){

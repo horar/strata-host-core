@@ -33,38 +33,42 @@ Rectangle {
         anchors { bottom: parent.bottom;}
 
         TabButton { text: "Schematic"
+            id:schematicTabButton
            CircleBadge {
                id: schematicBadge
-               anchors.bottom: tabBar.top
-               anchors.right: tabBar.right
+               anchors.bottom: schematicTabButton.top
+               anchors.right: schematicTabButton.right
                revisionCount: documentManager.schematicRevisionCount
            }
            onClicked: documentManager.clearSchematicRevisionCount()
         }
         TabButton { text: "Layout"
+            id:layoutTabButton
             CircleBadge {
                 id: layoutBadge
-                anchors.bottom: tabBar.top
-                anchors.right: tabBar.right
+                anchors.bottom: layoutTabButton.top
+                anchors.right: layoutTabButton.right
                 revisionCount: documentManager.layoutRevisionCount
             }
             onClicked: documentManager.clearLayoutRevisionCount()
         }
         TabButton { text: "Test Report"
+            id:testReportTabButton
             CircleBadge {
                 id: testReportBadge
-                anchors.bottom: tabBar.top
-                anchors.right: tabBar.right
+                anchors.bottom: testReportTabButton.top
+                anchors.right: testReportTabButton.right
                 revisionCount: documentManager.testReportRevisionCount
             }
             onClicked: documentManager.clearTestReportRevisionCount()
         }
         TabButton { text: "System Content" }
         TabButton { text: "Coming Soon"
+            id: comingSoonTabButton
             CircleBadge {
                 id: targetedBadge
-                anchors.bottom: tabBar.top
-                anchors.right: tabBar.right
+                anchors.bottom: comingSoonTabButton.top
+                anchors.right: comingSoonTabButton.right
                 revisionCount: documentManager.targetedRevisionCount
             }
             onClicked: documentManager.clearTargetedRevisionCount()

@@ -14,7 +14,7 @@ using namespace Spyglass;
 
 CoreInterface::CoreInterface(QObject *parent) : QObject(parent)
 {
-    qDebug() << "CoreInterface::CoreInterfaceQObject *parent) : QObject(parent) CTOR\n";
+    //qDebug() << "CoreInterface::CoreInterfaceQObject *parent) : QObject(parent) CTOR\n";
 
     hcc = new HostControllerClient;
 
@@ -63,7 +63,7 @@ CoreInterface::CoreInterface(QObject *parent) : QObject(parent)
 
 CoreInterface::~CoreInterface()
 {
-    qDebug() << "CoreInterface::~CoreInterface() DTOR\n";
+    //qDebug() << "CoreInterface::~CoreInterface() DTOR\n";
 
     hcc->notificationSocket->close();
     hcc->sendCmdSocket->close();
@@ -78,7 +78,7 @@ CoreInterface::~CoreInterface()
 //
 void CoreInterface::notificationsThread()
 {
-    qDebug () << "CoreInterface::notificationsThread - notification handling.";
+    //qDebug () << "CoreInterface::notificationsThread - notification handling.";
     notification_thread_running_ = true;
 
     while(notification_thread_running_) {
@@ -157,7 +157,7 @@ void CoreInterface::platformIDNotificationHandler(QJsonObject payload)
 {
     if (payload.contains("platform_id")) {
         QString platform_id = payload["platform_id"].toString();
-        qDebug() << "Received platform_id = " << platform_id;
+        //qDebug() << "Received platform_id = " << platform_id;
 
         if(platform_id_ != platform_id ) {
             platform_id_ = platform_id;
@@ -250,7 +250,7 @@ void CoreInterface::platformListHandler(QJsonObject payload)
 
     if( platform_list_ != strJson_list ) {
         platform_list_ = strJson_list;
-        qDebug() << "initialHandshakeHandler: platform_list:" << platform_list_;
+        //qDebug() << "initialHandshakeHandler: platform_list:" << platform_list_;
         emit platformListChanged(platform_list_);
     }
 }
@@ -274,11 +274,11 @@ void CoreInterface::remoteSetupHandler(QJsonObject payload)
         return;
     }
     if(payload["value"].toString()=="advertise_platforms") {
-        qDebug("Parse success");
+        //qDebug("Parse success");
         bool status = payload["payload"].toObject()["status"].toBool();
         if(status) {
             hcs_token_ = payload["payload"].toObject()["hcs_id"].toString();
-            qDebug()<<hcs_token_;
+            //qDebug()<<hcs_token_;
         }
         else {
             hcs_token_ = "";
@@ -286,35 +286,35 @@ void CoreInterface::remoteSetupHandler(QJsonObject payload)
         emit hcsTokenChanged(hcs_token_);
     }
     else if(payload["value"].toString()=="get_platforms") {
-        qDebug("Parse success");
+        //qDebug("Parse success");
         bool status = payload["payload"].toObject()["status"].toBool();
         if(status) {
-            qDebug("Remote response: token valid");
+            //qDebug("Remote response: token valid");
         }
         else {
-            qDebug("Remote response: token invalid");
+            //qDebug("Remote response: token invalid");
         }
         emit remoteConnectionChanged(status);
     }
     else if(payload["value"].toString()=="remote_activity") {
-        qDebug("parse success");
+        //qDebug("parse success");
         remote_user_activity_ = payload["payload"].toObject()["user_name"].toString();
         emit remoteActivityChanged(remote_user_activity_);
-        qDebug()<<remote_user_activity_;
+        //qDebug()<<remote_user_activity_;
     }
     else if(payload["value"].toString()=="remote_user_added") {
-        qDebug("parse success");
+        //qDebug("parse success");
         remote_user_ = payload["payload"].toObject()["user_name"].toString();
         emit remoteUserAdded(remote_user_);
-        qDebug()<<remote_user_;
+        //qDebug()<<remote_user_;
     }
     else if(payload["value"].toString()=="remote_user_removed") {
-        qDebug("parse success");
+        //qDebug("parse success");
         remote_user_ = payload["payload"].toObject()["user_name"].toString();
         emit remoteUserRemoved(remote_user_);
-        qDebug()<<remote_user_;
+        //qDebug()<<remote_user_;
     }
-    qDebug()<< payload;
+    //qDebug()<< payload;
 }
 
 // @f sendSelectedPlatform
@@ -330,7 +330,7 @@ void CoreInterface::sendSelectedPlatform(QString verbose, QString connection_sta
 
     QJsonDocument doc(cmdMessageObject);
     QString strJson(doc.toJson(QJsonDocument::Compact));
-    qDebug()<<"parse to send"<<strJson;
+    //qDebug()<<"parse to send"<<strJson;
     hcc->sendCmd(strJson.toStdString());
 }
 
@@ -402,8 +402,8 @@ void CoreInterface::cloudNotificationHandler(QJsonObject payload)
 
 bool CoreInterface::registerNotificationHandler(std::string notification, NotificationHandler handler)
 {
-    qDebug("CoreInterface::registerNotificationHandler:"
-              "source=%s", notification.c_str());
+    //qDebug("CoreInterface::registerNotificationHandler:"
+    //          "source=%s", notification.c_str());
 
     auto search = notification_handlers_.find(notification);
     if( search != notification_handlers_.end()) {

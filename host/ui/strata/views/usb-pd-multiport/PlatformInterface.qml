@@ -324,7 +324,7 @@ Item {
     Connections {
         target: coreInterface
         onNotification: {
-            console.log("**** Notification Received *****",payload);
+            //console.log("**** Notification Received *****",payload);
             CorePlatformInterface.data_source_handler(payload)
         }
     }
