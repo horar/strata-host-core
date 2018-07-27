@@ -11,10 +11,10 @@ Rectangle {
     width: 1200
     height: 725
 
-    property alias motorSpeedSliderValue: targetSpeedSlider.value
-    property alias rampRateSliderValue: rampRateSlider.value
-    property alias phaseAngle: driveModeCombo.currentIndex
-    property alias ledSlider: hueSlider.value
+    //  property alias motorSpeedSliderValue: targetSpeedSlider.value
+   // property alias rampRateSliderValue: rampRateSlider.value
+   // property alias phaseAngle: driveModeCombo.currentIndex
+    //property alias ledSlider: hueSlider.value
     property alias singleLEDSlider: singleColorSlider.value
     property alias ledPulseSlider: ledPulseFrequency.value
 
@@ -23,8 +23,8 @@ Rectangle {
 
     function resetData(){
         startStopButton.checked = false
-        motorSpeedSliderValue = 1500
-        rampRateSliderValue = 3
+        signalControl.motorSpeedSliderValue = 1500
+        signalControl.rampRateSliderValue = 3
         phaseAngle = 15
         faultModel.clear()
         advancedControl.driveModeSignal("Trapezoidal")
@@ -32,7 +32,7 @@ Rectangle {
     }
 
     Component.onCompleted:  {
-        phaseAngle = 15
+        signalControl.phaseAngle = 15
         platformInterface.system_mode_selection.update("manual");
         platformInterface.set_phase_angle.update(5);
         platformInterface.set_drive_mode.update(0);
@@ -293,6 +293,7 @@ Rectangle {
                 width: 350
                 from : 1500
                 to: 5500
+                value : signalControl.motorSpeedSliderValue
                 anchors {
                     verticalCenter: setSpeed.verticalCenter
                     left: speedControlContainer.left
@@ -302,8 +303,11 @@ Rectangle {
                 }
 
                 onValueChanged: {
-                    platformInterface.motor_speed.update(value.toFixed(0));
+
+
                     setSpeed.input = value.toFixed(0)
+                    signalControl.motorSpeedSliderValue = value.toFixed(0)
+                    console.log("in advance", targetSpeedSlider.value)
                 }
 
                 MouseArea {
@@ -339,7 +343,9 @@ Rectangle {
                     rightMargin: 10
                 }
                 buttonVisible: false
-                onApplied: { targetSpeedSlider.value = parseInt(value, 10) }
+                onApplied: {
+                    signalControl.motorSpeedSliderValue = parseInt(value, 10)
+                }
                 infoBoxWidth: 80
             }
 
@@ -347,7 +353,7 @@ Rectangle {
             SGSlider {
                 id: rampRateSlider
                 label: "Ramp Rate:"
-                value: 3
+                value: signalControl.rampRateSliderValue
                 from: 2
                 to:4
                 anchors {
@@ -359,8 +365,9 @@ Rectangle {
                     rightMargin: 10
                 }
                 onValueChanged: {
-                    platformInterface.set_ramp_rate.update(rampRateSlider.value.toFixed(0))
+
                     setRampRate.input = value.toFixed(0)
+                    signalControl.rampRateSliderValue = value.toFixed(0)
                 }
             }
 
@@ -374,7 +381,9 @@ Rectangle {
                     rightMargin: 10
                 }
                 buttonVisible: false
-                onApplied: { rampRateSlider.value = parseInt(value, 10) }
+                onApplied: {
+                    signalControl.rampRateSliderValue = parseInt(value, 10)
+                }
                 input: rampRateSlider.value
                 infoBoxWidth: 80
             }
@@ -474,7 +483,7 @@ Rectangle {
 
                 SGComboBox {
                     id: driveModeCombo
-                    currentIndex: 15
+                    currentIndex: signalControl.phaseAngle
                     model: ["0", "1.875", "3.75","5.625","7.5", "9.375", "11.25","13.125", "15", "16.875", "18.75", "20.625", "22.5" , "24.375" , "26.25" , "28.125"]
                     anchors {
                         top: phaseAngleRow.top
@@ -483,7 +492,8 @@ Rectangle {
                     }
 
                     onCurrentIndexChanged: {
-                        platformInterface.set_phase_angle.update(currentIndex);
+                        signalControl.phaseAngle = currentIndex;
+
                     }
                 }
             }
@@ -504,7 +514,7 @@ Rectangle {
                 id: hueSlider
                 label: "Set LED color:"
                 labelLeft: true
-                value: 128
+                value: signalControl.ledSlider
                 anchors {
                     verticalCenter: whiteButton.verticalCenter
                     left: ledControlContainer.left
@@ -516,7 +526,9 @@ Rectangle {
                 }
 
                 onValueChanged: {
+                    console.log(" in advance")
                     platformInterface.set_color_mixing.update(color1,color_value1,color2,color_value2)
+                    signalControl.ledSlider = hueSlider.value
                 }
             }
 

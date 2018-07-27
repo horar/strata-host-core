@@ -15,7 +15,7 @@ Rectangle {
     height: 725
     color: "white"
 
-    property alias motorSpeedSliderValue: motorSpeedControl.value
+    //property alias motorSpeedSliderValue: motorSpeedControl.value
     property alias warningVisible: warningBox.visible
 
     Component.onCompleted: {
@@ -80,13 +80,16 @@ Rectangle {
                 }
                 label: "<b>Motor Speed:</b>"
                 labelLeft: false
-                value: 1500
+                value: signalControl.motorSpeedSliderValue
                 from: 1500
                 to: 5500
 
                 onValueChanged: {
-                    platformInterface.motor_speed.update(value.toFixed(0));
+              //      platformInterface.motor_speed.update(value.toFixed(0));
+
                     setSpeed.input = value.toFixed(0)
+                    signalControl.motorSpeedSliderValue = value.toFixed(0)
+                    console.log("in basic", motorSpeedControl.value)
                 }
             }
 
@@ -99,7 +102,9 @@ Rectangle {
                     right: rightControl.right
                     rightMargin: 10
                 }
-                onApplied: { motorSpeedControl.value = parseInt(value, 10) }
+                onApplied: {
+                    signalControl.motorSpeedSliderValue = parseInt(value, 10)
+                }
                 input: motorSpeedControl.value
                 infoBoxWidth: 80
             }
