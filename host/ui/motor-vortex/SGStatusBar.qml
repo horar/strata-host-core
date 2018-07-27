@@ -8,7 +8,7 @@ import "qrc:/statusbar-partial-views"
 
 Rectangle {
     id: container
-    anchors.fill: parent
+    anchors { fill: parent }
 
     // Context properties that get passed when created dynamically
     property string user_id: ""
@@ -797,8 +797,15 @@ Rectangle {
         id: remoteUserIconDelegate
 
         Item {
-            width: remote_user_img.width
+            id: remote_icon_container
+            width: remote_user_hover.containsMouse ? remote_user_img.width + 18 : remote_user_img.width
             height: 40
+            clip: false
+
+            Behavior on width { NumberAnimation {
+                    duration: 50
+                }
+            }
 
             Image {
                 id: remote_user_img
@@ -806,6 +813,9 @@ Rectangle {
                 fillMode: Image.PreserveAspectFit
                 source: "qrc:/images/blank_avatar.png"
                 visible: false
+                anchors {
+                    right: remote_icon_container.right
+                }
             }
 
             Rectangle {
@@ -814,6 +824,9 @@ Rectangle {
                 height: width
                 radius: width/2
                 visible: false
+                anchors {
+                    right: remote_icon_container.right
+                }
             }
 
             OpacityMask {
@@ -821,6 +834,22 @@ Rectangle {
                 width: mask.height
                 source: remote_user_img
                 maskSource: mask
+                anchors {
+                    right: remote_icon_container.right
+                }
+
+                ToolTip {
+                    text: model.name
+                    visible: remote_user_hover.containsMouse
+                }
+            }
+
+            MouseArea {
+                id: remote_user_hover
+                anchors {
+                    fill: parent
+                }
+                hoverEnabled: true
             }
         }
     }
@@ -831,13 +860,15 @@ Rectangle {
             left: toolBar.right
             leftMargin: 15
         }
-        width: childrenRect.width
+        width: icon_repeater.count * 19 + 16
         height: 40
         y: 2
         spacing: -16
         layoutDirection: Qt.RightToLeft
+        clip: false
 
         Repeater {
+            id: icon_repeater
             model: remoteUserModel
             delegate: remoteUserIconDelegate
         }
