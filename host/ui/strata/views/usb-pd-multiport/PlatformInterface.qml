@@ -13,23 +13,30 @@ Item {
     //  the properties of the message must match with the UI elements using them
     //  document all messages to clearly indicate to the UI layer proper names
 
-    // @notification pi_stats
-    // @description: show motor statistics.
+    // @notification request_usb_power_notification
+    // @description: shows relevant data for a single port.
     //
-    property var pi_stats : {
-        "speed_target": 1500,
-                "current_speed": 0,
-                "error": 0,
-                "sum": 0.5,
-                "duty_now": 0.5,
-                "mode": "manual"  // "manual" "automation"
+    property var request_usb_power_notification : {
+        "port": 1,
+        "device": "PD",
+        "advertised_maximum_current": 0.0,
+        "negotiated_current": 0.0,
+        "negotiated_voltage": 0.0,
+        "input_voltage": 0.0,
+        "output_voltage":0.0,
+        "input_current": 0.0,
+        "temperature": 0.0,
+        "maximum_power":0.0
     }
 
-    // @notification input_voltage_notification
-    // @description: updates voltage
+
+
+    // @notification usb_pd_port_connect
+    // @description: sent when a device is connected or disconnected
     //
-    property var input_voltage_notification : {
-        "vin": 0
+    property var usb_pd_port_connect : {
+        "port_id": "USB_C_port_1",
+        "connection_state":"connected"
     }
 
     // @notification system_error

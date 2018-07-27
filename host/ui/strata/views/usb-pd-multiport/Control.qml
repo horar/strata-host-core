@@ -9,6 +9,10 @@ Item {
     objectName: "control"
     anchors { fill: parent }
 
+    PlatformInterface {
+        id: platformInterface
+    }
+
     TabBar {
         id: navTabs
         anchors {

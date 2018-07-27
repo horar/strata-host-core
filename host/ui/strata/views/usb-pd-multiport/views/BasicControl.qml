@@ -119,7 +119,74 @@ Item {
                 left: portColumn.left
                 right: portColumn.right
             }
+
+
             portNumber: 1
+            advertisedVoltage:{
+                if (platformInterface.request_usb_power_notification.port === 1){
+                    return platformInterface.request_usb_power_notification.negotiated_voltage
+                }
+                else{
+                    return portInfo1.advertisedVoltage;
+                }
+            }
+            maxPower:{
+                if (platformInterface.request_usb_power_notification.port === 1){
+                   return platformInterface.request_usb_power_notification.negotiated_voltage * platformInterface.request_usb_power_notification.negotiated_current
+                }
+                else{
+                    return portInfo1.maxPower;
+                }
+            }
+            inputPower:{
+                if (platformInterface.request_usb_power_notification.port === 1){
+                    return platformInterface.request_usb_power_notification.input_voltage * platformInterface.request_usb_power_notification.input_current
+                }
+                else{
+                    return portInfo1.inputPower;
+                }
+            }
+            outputPower:{
+                if (platformInterface.request_usb_power_notification.port === 1){
+                    return platformInterface.request_usb_power_notification.output_voltage * platformInterface.request_usb_power_notification.output_current
+                }
+                else{
+                    return portInfo1.outputPower;
+                }
+            }
+            outputVoltage:{
+                if (platformInterface.request_usb_power_notification.port === 1){
+                    return Math.round(platformInterface.request_usb_power_notification.output_voltage *100)/100
+                }
+                else{
+                    return portInfo1.outputVoltage;
+                }
+            }
+            portTemperature:{
+                if (platformInterface.request_usb_power_notification.port === 1){
+                    return platformInterface.request_usb_power_notification.temperature
+                }
+                else{
+                    return portInfo1.portTemperature;
+                }
+            }
+            efficency: {
+                var theInputPower = platformInterface.request_usb_power_notification.input_voltage * platformInterface.request_usb_power_notification.input_current;
+                var theOutputPower = platformInterface.request_usb_power_notification.output_voltage * platformInterface.request_usb_power_notification.output_current;
+
+                if (platformInterface.request_usb_power_notification.port === 1){
+                    if (theInputPower == 0){    //division by 0 would normally give "nan"
+                        return "—"
+                    }
+                    else{
+                        return theOutputPower/theInputPower
+                    }
+                }
+                else{
+                    return portInfo1.efficency;
+                }
+            }
+
             onShowGraph: {
                 graphDrawer.state = "open"
             }
@@ -135,6 +202,70 @@ Item {
                 right: portColumn.right
             }
             portNumber: 2
+            advertisedVoltage:{
+                if (platformInterface.request_usb_power_notification.port === 2){
+                    return platformInterface.request_usb_power_notification.negotiated_voltage
+                }
+                else{
+                    return portInfo2.advertisedVoltage;
+                }
+            }
+            maxPower:{
+                if (platformInterface.request_usb_power_notification.port === 2){
+                    return platformInterface.request_usb_power_notification.negotiated_voltage * platformInterface.request_usb_power_notification.negotiated_current
+                }
+                else{
+                    return portInfo2.maxPower;
+                }
+            }
+            inputPower:{
+                if (platformInterface.request_usb_power_notification.port === 2){
+                    return platformInterface.request_usb_power_notification.input_voltage * platformInterface.request_usb_power_notification.input_current
+                }
+                else{
+                    return portInfo2.inputPower;
+                }
+            }
+            outputPower:{
+                if (platformInterface.request_usb_power_notification.port === 2){
+                    return platformInterface.request_usb_power_notification.output_voltage * platformInterface.request_usb_power_notification.output_current
+                }
+                else{
+                    return portInfo2.outputPower;
+                }
+            }
+            outputVoltage:{
+                if (platformInterface.request_usb_power_notification.port === 2){
+                    return Math.round(platformInterface.request_usb_power_notification.output_voltage *100)/100
+                }
+                else{
+                    return portInfo2.outputVoltage;
+                }
+            }
+            portTemperature:{
+                if (platformInterface.request_usb_power_notification.port === 2){
+                    return platformInterface.request_usb_power_notification.temperature
+                }
+                else{
+                    return portInfo2.portTemperature;
+                }
+            }
+            efficency: {
+                var theInputPower = platformInterface.request_usb_power_notification.input_voltage * platformInterface.request_usb_power_notification.input_current;
+                var theOutputPower = platformInterface.request_usb_power_notification.output_voltage * platformInterface.request_usb_power_notification.output_current
+
+                if (platformInterface.request_usb_power_notification.port === 2){
+                    if (theInputPower == 0){    //division by 0 would normally give "nan"
+                        return "—"
+                    }
+                    else{
+                        return theOutputPower/theInputPower
+                    }
+                }
+                else{
+                    return portInfo2.efficency
+                }
+            }
             onShowGraph: {
                 graphDrawer.state = "open"
             }
@@ -150,6 +281,70 @@ Item {
                 right: portColumn.right
             }
             portNumber: 3
+            advertisedVoltage:{
+                if (platformInterface.request_usb_power_notification.port === 3){
+                    return platformInterface.request_usb_power_notification.negotiated_voltage
+                }
+                else{
+                    return portInfo3.advertisedVoltage;
+                }
+                }
+            maxPower:{
+                if (platformInterface.request_usb_power_notification.port === 3){
+                    platformInterface.request_usb_power_notification.negotiated_voltage * platformInterface.request_usb_power_notification.negotiated_current
+                }
+                else{
+                    return portInfo3.maxPower;
+                }
+            }
+            inputPower:{
+                if (platformInterface.request_usb_power_notification.port === 3){
+                    return platformInterface.request_usb_power_notification.input_voltage * platformInterface.request_usb_power_notification.input_current
+                }
+                else{
+                    return portInfo3.inputPower;
+                }
+            }
+            outputPower:{
+                if (platformInterface.request_usb_power_notification.port === 3){
+                    return platformInterface.request_usb_power_notification.output_voltage * platformInterface.request_usb_power_notification.output_current
+                }
+                else{
+                    return portInfo3.outputPower;
+                }
+            }
+            outputVoltage:{
+                if (platformInterface.request_usb_power_notification.port === 3){
+                    return Math.round(platformInterface.request_usb_power_notification.output_voltage *100)/100
+                }
+                else{
+                    return portInfo3.outputVoltage;
+                }
+            }
+            portTemperature:{
+                if (platformInterface.request_usb_power_notification.port === 3){
+                    return platformInterface.request_usb_power_notification.temperature
+                }
+                else{
+                    return portInfo3.portTemperature;
+                }
+            }
+            efficency: {
+                var theInputPower = platformInterface.request_usb_power_notification.input_voltage * platformInterface.request_usb_power_notification.input_current;
+                var theOutputPower = platformInterface.request_usb_power_notification.output_voltage * platformInterface.request_usb_power_notification.output_current
+
+                if (platformInterface.request_usb_power_notification.port === 3){
+                    if (theInputPower == 0){    //division by 0 would normally give "nan"
+                        return "—"
+                    }
+                    else{
+                        return theOutputPower/theInputPower
+                    }
+                }
+                else{
+                  return portInfo3.efficency;
+                    }
+            }
             onShowGraph: {
                 graphDrawer.state = "open"
             }
@@ -165,6 +360,69 @@ Item {
                 right: portColumn.right
             }
             portNumber: 4
+            advertisedVoltage:{
+                if (platformInterface.request_usb_power_notification.port === 4){
+                    return platformInterface.request_usb_power_notification.negotiated_voltage;
+                }
+                else{
+                   return portInfo4.advertisedVoltage;
+                }
+            }
+            maxPower:{
+                if (platformInterface.request_usb_power_notification.port === 4){
+                    return platformInterface.request_usb_power_notification.negotiated_voltage * platformInterface.request_usb_power_notification.negotiated_current
+                }
+                else{
+                    return portInfo4.maxPower;
+                }
+            }
+            inputPower:{
+                if (platformInterface.request_usb_power_notification.port === 4){
+                    return platformInterface.request_usb_power_notification.input_voltage * platformInterface.request_usb_power_notification.input_current
+                }
+                else{
+                   return portInfo4.inputPower;
+                }
+            }
+            outputPower:{
+                if (platformInterface.request_usb_power_notification.port === 4){
+                    return platformInterface.request_usb_power_notification.output_voltage * platformInterface.request_usb_power_notification.output_current
+                }
+                else{
+                   return portInfo4.outputPower;
+                }
+            }
+            outputVoltage:{
+                if (platformInterface.request_usb_power_notification.port === 4){
+                    return Math.round(platformInterface.request_usb_power_notification.output_voltage *100)/100
+                }
+                else{
+                   return portInfo4.outputVoltage;
+                }
+            }
+            portTemperature:{
+                if (platformInterface.request_usb_power_notification.port === 4){
+                    return platformInterface.request_usb_power_notification.temperature
+                }
+                else{
+                   return portInfo4.portTemperature;
+                }
+            }
+            efficency: {
+                var theInputPower = platformInterface.request_usb_power_notification.input_voltage * platformInterface.request_usb_power_notification.input_current;
+                var theOutputPower = platformInterface.request_usb_power_notification.output_voltage * platformInterface.request_usb_power_notification.output_current
+
+                if (platformInterface.request_usb_power_notification.port === 4)
+                    if (theInputPower == 0){    //division by 0 would normally give "nan"
+                        return "—"
+                    }
+                    else{
+                        return theOutputPower/theInputPower
+                    }
+                else{
+                    return portInfo4.efficency;
+                }
+            }
             onShowGraph: {
                 graphDrawer.state = "open"
             }
@@ -202,6 +460,27 @@ Item {
                     anchors {
                         fill: parent
                     }
+
+                    property var deviceConnected: platformInterface.usb_pd_port_connect.connection_state
+
+                     onDeviceConnectedChanged: {
+                         if (platformInterface.usb_pd_port_connect.connection_state.port_id === "USB_C_port_1"){
+                             if (platformInterface.usb_pd_port_connect.connection_state === "connected"){
+                                 port1Animation.source = "images/cord.gif"
+                                 port1Animation.currentFrame = 0
+                                 port1Animation.playing = true
+                                 port1Animation.pluggedIn = !port1Animation.pluggedIn
+                             }
+                             else{
+                                 port1Animation.source = "images/cordReverse.gif"
+                                 port1Animation.currentFrame = 0
+                                 port1Animation.playing = true
+                                 port1Animation.pluggedIn = !port1Animation.pluggedIn
+                             }
+                         }
+
+                    }
+
                     onClicked: {
                         if (!port1Animation.pluggedIn) {
                             port1Animation.source = "images/cord.gif"

@@ -26,7 +26,7 @@ Rectangle {
         height: root.height * 0.9
         width: height
         anchors {
-            verticalCenter: parent.verticalCenter
+            verticalCenter: root.verticalCenter
             right: parent.right
             rightMargin: root.height * 0.05
         }
