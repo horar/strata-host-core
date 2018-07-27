@@ -7,7 +7,7 @@ import tech.spyglass.Document 1.0
 import "qrc:/include/Modules/"      // On Semi QML Modules
 
 Rectangle {
-    id: view
+    id: contentView
     border.color: "black"
     border.width: 0
     anchors { fill: parent }
@@ -30,11 +30,13 @@ Rectangle {
 
         width: parent.width - flipButton.width
         currentIndex: swipeView.currentIndex
-        anchors { bottom: parent.bottom;}
+        anchors { bottom: contentView.bottom;}
 
         TabButton { text: "Schematic"
            CircleBadge {
                id: schematicBadge
+               anchors.bottom: tabBar.top
+               anchors.right: tabBar.right
                revisionCount: documentManager.schematicRevisionCount
            }
            onClicked: documentManager.clearSchematicRevisionCount()
@@ -42,6 +44,8 @@ Rectangle {
         TabButton { text: "Layout"
             CircleBadge {
                 id: layoutBadge
+                anchors.bottom: tabBar.top
+                anchors.right: tabBar.right
                 revisionCount: documentManager.layoutRevisionCount
             }
             onClicked: documentManager.clearLayoutRevisionCount()
@@ -58,6 +62,8 @@ Rectangle {
             enabled: false
             CircleBadge {
                 id: targetedBadge
+                anchors.bottom: tabBar.top
+                anchors.right: tabBar.right
                 revisionCount: documentManager.targetedRevisionCount
             }
             onClicked: documentManager.clearTargetedRevisionCount()
@@ -65,7 +71,7 @@ Rectangle {
     }
     Rectangle{
         height: 40;width:40
-        anchors { bottom: view.bottom; right: view.right }
+        anchors { bottom: contentView.bottom; right: contentView.right }
         color: "white";
         Image {
             id: flipButton
@@ -76,7 +82,7 @@ Rectangle {
     }
     MouseArea {
         width: flipButton.width; height: flipButton.height
-        anchors { bottom: parent.bottom; right: parent.right }
+        anchors { bottom: contentView.bottom; right: contentView.right }
         visible: true
         onClicked: {
             NavigationControl.updateState(NavigationControl.events.TOGGLE_CONTROL_CONTENT)

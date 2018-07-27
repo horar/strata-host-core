@@ -9,8 +9,7 @@ Item {
     property real ratioCalc: root.width / 1200
 
     anchors {
-//        fill: parent
-        horizontalCenter: parent.horizontalCenter
+        //horizontalCenter: root.horizontalCenter   //can't anchor to yourself what is this supposed to be?
     }
 
     width: parent.width / parent.height > initialAspectRatio ? parent.height * initialAspectRatio : parent.width
@@ -444,9 +443,9 @@ Item {
 
         Column {
             anchors {
-                top: parent.top
+                top: deviceColumn.top
                 topMargin: 55 * ratioCalc
-                right: parent.right
+                right: deviceColumn.right
             }
 
             width: parent.width - (100 * ratioCalc)

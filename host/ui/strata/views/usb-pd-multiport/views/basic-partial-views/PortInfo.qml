@@ -60,7 +60,7 @@ Rectangle {
                 id: showGraphs
                 text: "Graphs"
                 anchors {
-                    bottom: parent.bottom
+                    bottom: statsContainer.bottom
                     horizontalCenter: portTitle.horizontalCenter
                 }
                 height: 20

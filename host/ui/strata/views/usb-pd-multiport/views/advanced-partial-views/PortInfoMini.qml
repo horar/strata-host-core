@@ -35,7 +35,7 @@ Item {
             width: parent.width
             color: "#999"
             anchors {
-                bottom: parent.bottom
+                bottom: portNumberContainer.bottom
             }
             z:0
         }

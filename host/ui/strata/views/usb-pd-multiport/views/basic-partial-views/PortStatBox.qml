@@ -27,7 +27,7 @@ Rectangle {
         width: height
         anchors {
             verticalCenter: root.verticalCenter
-            right: parent.right
+            right: root.right
             rightMargin: root.height * 0.05
         }
         mipmap: true
@@ -43,9 +43,9 @@ Rectangle {
             color: "#777"
             text: "<b>" + root.label + "</b>"
             anchors {
-                top: parent.top
+                top: labelBar.top
                 topMargin: 2
-                left: parent.left
+                left: labelBar.left
                 leftMargin: 3
             }
             font {
@@ -59,7 +59,7 @@ Rectangle {
             height: 1
             width: labelText.width + 6
             anchors {
-                bottom: parent.bottom
+                bottom: labelBar.bottom
             }
         }
     }
@@ -69,9 +69,9 @@ Rectangle {
         color: textColor
         text: "<b>" + root.value + "</b>"
         anchors {
-            bottom: parent.bottom
+            bottom: root.bottom
             bottomMargin: root.bottomMargin
-            left: parent.left
+            left: root.left
             leftMargin: 5
         }
         font {

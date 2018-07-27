@@ -14,7 +14,6 @@ Rectangle {
     property bool is_logged_in: false
     property bool is_remote_connected: false
     property string generalTitle: "Guest"
-    //property color backgroundColor: "#0c54e5"
     property color backgroundColor: "#C0C0C0"
 
     color: backgroundColor
@@ -254,6 +253,7 @@ Rectangle {
             }
 
             ColumnLayout{
+                id: remoteColumn
                 anchors.fill: parent
 
                 spacing: 2
@@ -262,7 +262,7 @@ Rectangle {
                     Layout.alignment: Qt.AlignTop
                     width: tokenBusyIndicator.width
                     height: tokenBusyIndicator.height
-                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.horizontalCenter: remoteColumn.horizontalCenter
 
                     BusyIndicator {
                         id: tokenBusyIndicator
@@ -293,14 +293,14 @@ Rectangle {
                     id: tryAgainButton
                     text: "Try Again"
                     Layout.alignment: Qt.AlignCenter
-                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.horizontalCenter: remoteColumn.horizontalCenter
                     visible: false
                 }
                 Button {
                     id: disconnectButton
                     text: "Disconnect"
                     Layout.alignment: Qt.AlignCenter
-                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.horizontalCenter: remoteColumn.horizontalCenter
                     visible: false
                 }
 
@@ -312,7 +312,7 @@ Rectangle {
                     visible: { console.log("created"); return false}
 
                     Layout.alignment: Qt.AlignBottom
-                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.horizontalCenter: remoteColumn.horizontalCenter
                     TextField {
                         id: tokenField
                         width: 184; height: 38
@@ -364,7 +364,7 @@ Rectangle {
             width: 100;
             height: 100;
             anchors {
-                horizontalCenter: parent.horizontalCenter
+                horizontalCenter: remoteSupportRequest.horizontalCenter
                 margins: 30
             }
             property bool checked: false
@@ -406,11 +406,13 @@ Rectangle {
                 }
                 onClicked: {
                     advertiseButton.checked = !advertiseButton.checked
+                    var advertise;
+
                     if(advertiseButton.checked) {
-                        var advertise=true
+                        advertise = true
                     }
                     else {
-                        var advertise= false
+                        advertise = false
                         remote_activity_label.visible = false
                         remote_user_container.visible = false
                         remote_user_label.visible = false
@@ -432,7 +434,7 @@ Rectangle {
             id:supportPhoneNumber
             anchors {
                 top:advertiseButton.bottom
-                horizontalCenter: parent.horizontalCenter
+                horizontalCenter: remoteSupportRequest.horizontalCenter
                 margins: 30
             }
             text: advertiseButton.checked ? "click the button to turn off remote control":"click the button to turn on remote control"
@@ -445,7 +447,7 @@ Rectangle {
             id:hcs_token
             anchors {
                 top:supportPhoneNumber.bottom
-                horizontalCenter: parent.horizontalCenter
+                horizontalCenter: remoteSupportRequest.horizontalCenter
                 margins: 30
             }
             text: advertiseButton.checked ? coreInterface.hcs_token_:""
@@ -511,13 +513,13 @@ Rectangle {
     }
 
     Rectangle {
+        id: remote_user_container
         anchors {
             left: remote_user_label.right
             leftMargin: 10
         }
         height: parent.height
         width: parent.width*0.6
-        id: remote_user_container
         visible:false
         color: container.backgroundColor
         Component {
@@ -665,8 +667,8 @@ Rectangle {
     }
 
     Image {
-        height: parent.height
-        anchors { right: parent.right }
+        height: container.height
+        anchors { right: container.right }
         horizontalAlignment: Image.AlignLeft
         verticalAlignment: Image.AlignTop
         fillMode: Image.PreserveAspectFit

@@ -35,6 +35,8 @@ Rectangle {
         TabButton { text: "Schematic"
            CircleBadge {
                id: schematicBadge
+               anchors.bottom: tabBar.top
+               anchors.right: tabBar.right
                revisionCount: documentManager.schematicRevisionCount
            }
            onClicked: documentManager.clearSchematicRevisionCount()
@@ -42,6 +44,8 @@ Rectangle {
         TabButton { text: "Layout"
             CircleBadge {
                 id: layoutBadge
+                anchors.bottom: tabBar.top
+                anchors.right: tabBar.right
                 revisionCount: documentManager.layoutRevisionCount
             }
             onClicked: documentManager.clearLayoutRevisionCount()
@@ -49,6 +53,8 @@ Rectangle {
         TabButton { text: "Test Report"
             CircleBadge {
                 id: testReportBadge
+                anchors.bottom: tabBar.top
+                anchors.right: tabBar.right
                 revisionCount: documentManager.testReportRevisionCount
             }
             onClicked: documentManager.clearTestReportRevisionCount()
@@ -57,6 +63,8 @@ Rectangle {
         TabButton { text: "Coming Soon"
             CircleBadge {
                 id: targetedBadge
+                anchors.bottom: tabBar.top
+                anchors.right: tabBar.right
                 revisionCount: documentManager.targetedRevisionCount
             }
             onClicked: documentManager.clearTargetedRevisionCount()

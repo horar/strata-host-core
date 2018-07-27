@@ -8,10 +8,10 @@ Item {
     Item{
         id: leftColumn
         anchors {
-            left: parent.left
-            top: parent.top
+            left: root.left
+            top: root.top
             right: rightColumn.left
-            bottom: parent.bottom
+            bottom: root.bottom
         }
 
         Item {
@@ -112,9 +112,9 @@ Item {
     Item{
         id: rightColumn
         anchors {
-            right: parent.right
-            top: parent.top
-            bottom: parent.bottom
+            right: root.right
+            top: root.top
+            bottom: root.bottom
         }
         width: root.width/3
 
