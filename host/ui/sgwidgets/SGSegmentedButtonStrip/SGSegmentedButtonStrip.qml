@@ -22,6 +22,7 @@ Item {
     property color activeTextColor: "white"
     property real buttonImplicitWidth: 70
     property bool nothingChecked: true
+    property bool hoverEnabled: true
 
     Text {
         id: labelText
@@ -56,6 +57,7 @@ Item {
         property color masterTextColor: textColor
         property color masterActiveTextColor: activeTextColor
         property bool masterEnabled: enabled
+        property bool masterHoverEnabled: hoverEnabled
 
         Component.onCompleted: {
             if (exclusive === false){
