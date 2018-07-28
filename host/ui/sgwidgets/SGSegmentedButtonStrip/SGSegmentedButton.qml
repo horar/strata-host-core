@@ -6,6 +6,7 @@ Button {
     text: qsTr("Button")
     checkable: true
     enabled: masterEnabled
+    hoverEnabled: masterHoverEnabled
 
     // Figures out which button this instance is
     Component.onCompleted: {
@@ -35,7 +36,7 @@ Button {
 
     background: Rectangle{
         id: buttonStyle
-        color: root.checked ? activeColor : inactiveColor
+        color: root.hovered ? Qt.rgba( (activeColor.r + inactiveColor.r) / 2, (activeColor.g + inactiveColor.g) / 2, (activeColor.b + inactiveColor.b) / 2, 1) : root.checked ? activeColor : inactiveColor
         radius: root.radius
         implicitHeight: masterHeight
         implicitWidth: masterButtonImplicitWidth
@@ -46,7 +47,7 @@ Button {
             id: flatSide
             height: parent.height
             width: parent.width/2
-            color: root.checked ? activeColor : inactiveColor
+            color: parent.color
         }
     }
 
