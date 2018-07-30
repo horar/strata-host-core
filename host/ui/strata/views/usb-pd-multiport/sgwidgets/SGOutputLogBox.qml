@@ -29,7 +29,7 @@ Rectangle {
             right: root.right
             top: root.top
         }
-        implicitHeight: 35
+        implicitHeight: visible ? 35 : 0
         color: root.titleBoxColor
         border {
             color: root.titleBoxBorderColor
@@ -58,7 +58,7 @@ Rectangle {
         anchors {
             left: root.left
             right: root.right
-            top: titleArea.visible ? titleArea.bottom : root.top
+            top: titleArea.bottom
             bottom: root.bottom
         }
 
