@@ -182,10 +182,159 @@ Rectangle {
         }
     }
 
+    SGComboBox {
+        id: cbSelector
+        anchors {
+            verticalCenter: container.verticalCenter
+            left: container.left
+            leftMargin: 3
+        }
+        comboBoxWidth: 250
+        textRole: "text"
+        TextMetrics { id: textMetrics }
+        model: platformListModel
+
+        onActivated: {
+            /*
+           Determine action depending on what type of 'connection' is used
+        */
+
+            var connection = platformListModel.get(cbSelector.currentIndex).connection
+            var data = { platform_name: platformListModel.get(cbSelector.currentIndex).name}
+
+            // Clear all documents for contents
+            documentManager.clearDocumentSets();
+
+            if (connection === "view") {
+                // Go offline-mode
+                NavigationControl.updateState(NavigationControl.events.OFFLINE_MODE_EVENT, data)
+                NavigationControl.updateState(NavigationControl.events.TOGGLE_CONTROL_CONTENT)
+                coreInterface.sendSelectedPlatform(platformListModel.get(cbSelector.currentIndex).uuid,platformListModel.get(cbSelector.currentIndex).connection)
+            }
+            else if(connection === "connected"){
+                NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT,data)
+                coreInterface.sendSelectedPlatform(platformListModel.get(cbSelector.currentIndex).uuid,platformListModel.get(cbSelector.currentIndex).connection)
+            }
+            else if( connection === "remote"){
+                NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT,data)
+                // Call coreinterface connect()
+                console.log("calling the send");
+                coreInterface.sendSelectedPlatform(platformListModel.get(cbSelector.currentIndex).uuid,platformListModel.get(cbSelector.currentIndex).connection)
+            }
+        }
+    }
+
+    ListModel {
+        id: platformListModel
+
+        Component.onCompleted: {
+            console.log("platformListModel:Component.onCompleted:");
+            container.populatePlatforms(coreInterface.platform_list_)
+        }
+
+        // DEBUG hard code model data for testing
+        //            ListElement {
+        //                text: "Motor Vortex"
+        //                name: "motor-vortex" // folder name of qml
+        //                verbose: "motor-vortex"
+        //                connection: "local"
+        //            }
+
+        //            ListElement {
+        //                text: "USB PD"
+        //                name: "bubu"
+        //                verbose: "usb-pd"
+        //                connection: "local"
+        //            }
+    }
+
+    function updateComboWidth(newModel) {
+        // Update our width depending on the children text size
+        var maxWidth = 0
+        textMetrics.font = cbSelector.font
+        for(var i = 0; i < newModel.count; i++){
+            textMetrics.text = newModel.get(i).text
+            maxWidth = Math.max(textMetrics.width, maxWidth)
+        }
+        // Add some padding for the selector arrows
+        cbSelector.width = maxWidth + 60
+    }
+
+    function populatePlatforms(platform_list_json) {
+        var autoSelectEnabled = true
+        var autoSelectedPlatform = null
+
+        // Map out UUID->platform name
+        // Lookup table
+        //  platform_id -> local qml directory holding interface
+        var uuid_map = {
+            "P2.2017.1.1.0.0.cbde0519-0f42-4431-a379-caee4a1494af" : "usb-pd",
+            //"P2.2017.1.1.0.0.cbde0519-0f42-4431-a379-caee4a1494af" : "motor-vortex",
+            "P2.2018.1.1.0.0.c9060ff8-5c5e-4295-b95a-d857ee9a3671" : "bubu",
+            "motorvortex1" : "motor-vortex"
+        }
+
+        platformListModel.clear()
+
+        // Parse JSON
+        try {
+            console.log("populatePlaforms: ", platform_list_json)
+            var platform_list = JSON.parse(platform_list_json)
+
+            for (var i = 0; i < platform_list.list.length; i ++){
+                // Extract platform verbose name and UUID
+                var platform_info = {
+                    "text" : platform_list.list[i].verbose,
+                    "verbose" : platform_list.list[i].verbose,
+                    "name" : uuid_map[platform_list.list[i].uuid],
+                    "connection" : platform_list.list[i].connection,
+                    "uuid"  :   platform_list.list[i].uuid
+                }
+
+                // Append text to state the type of Connection
+                if(platform_list.list[i].connection === "remote"){
+                    platform_info.text += " (Remote)"
+                }
+                else if (platform_list.list[i].connection === "view"){
+                    platform_info.text += " (View-only)"
+                }
+                else {
+                    platform_info.text += " (Connected)"
+                    // copy "connected" platform; Note: this will auto select the last listed "connected" platform
+                    autoSelectedPlatform = platform_info
+                }
+
+                // Add to the model
+                // TODO update width of text here instead of adding to model and then re-reading model and updating
+                platformListModel.append(platform_info)
+            }
+
+        }
+        catch(err) {
+            console.log("CoreInterface error: ", err.toString())
+            platformListModel.clear()
+            platformListModel.append({ text: "No Platforms Available" } )
+        }
+
+        // Auto Select "connected" platform
+        if ( autoSelectEnabled && autoSelectedPlatform) {
+            console.log("Auto selecting connected platform: ", autoSelectedPlatform.name)
+
+            // For Demo purposes only; Immediately go to control
+            var data = { platform_name: autoSelectedPlatform.name}
+            coreInterface.sendSelectedPlatform(autoSelectedPlatform.uuid, autoSelectedPlatform.connection)
+            NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT,data)
+        }
+        else if ( autoSelectEnabled == false){
+            console.log("Auto selecting disabled.")
+        }
+    }
+
     ToolBar {
         id: toolBar
         anchors {
-            left: container.left
+            left: cbSelector.right
+            leftMargin: 10
         }
         background: Rectangle {
             color: container.color
@@ -194,56 +343,25 @@ Rectangle {
 
         Row {
             SGToolButton {
-                id: platformOptionsButton
-                text: qsTr("Platform Options")
+                id: platformControlsButton
+                text: qsTr("Platform Controls")
                 width: 150
-                onPressed: {
-                    platformOptionsMenu.open()
-                }
-                buttonColor: platformOptionsButton.hovered || platformOptionsMenu.visible ? Qt.lighter(container.color) : container.color
+                buttonColor: hovered || checked ? Qt.lighter(container.color) : container.color
+                checkable: true
+                checked: NavigationControl.flipable_parent_.flipped === false
+                onClicked: NavigationControl.updateState(NavigationControl.events.TOGGLE_CONTROL_CONTENT)
+                enabled: NavigationControl.context.platform_state
+            }
 
-                Popup {
-                    id: platformOptionsMenu
-                    y: platformOptionsButton.height
-                    padding: 0
-                    width: 170
-                    height: 80
-                    background: Rectangle {
-                        color: container.color
-                        border {
-                            width: 0
-                        }
-                    }
-
-                    contentItem: Column {
-                        id: platMenuColumn
-                        width: platMenuColumn.width
-
-                        SGMenuItem {
-                            text: NavigationControl.flipable_parent_.flipped === true ? qsTr("View Platform Controls") : qsTr("View Platform Content")
-                            onClicked: {
-                                platformOptionsMenu.close()
-                                NavigationControl.updateState(NavigationControl.events.TOGGLE_CONTROL_CONTENT)
-                            }
-                            width: parent.width
-                            buttonColor: !this.hovered ? container.color : this.pressed ? Qt.lighter(container.color, 2) : Qt.lighter(container.color)
-                        }
-
-                        SGMenuItem {
-                            text: qsTr("Select Another Platform")
-                            onClicked: {
-                                platformOptionsMenu.close()
-
-                                NavigationControl.updateState(NavigationControl.events.PLATFORM_DISCONNECTED_EVENT, null)
-                                var disconnect_json = {"hcs::cmd":"disconnect_platform"}
-                                console.log("disonnecting the platform")
-                                coreInterface.sendCommand(JSON.stringify(disconnect_json))
-                            }
-                            width: parent.width
-                            buttonColor: !this.hovered ? container.color : this.pressed ? Qt.lighter(container.color, 2) : Qt.lighter(container.color)
-                        }
-                    }
-                }
+            SGToolButton {
+                id: platformContentButton
+                text: qsTr("Platform Content")
+                width: 150
+                buttonColor: hovered || checked ? Qt.lighter(container.color) : container.color
+                checkable: true
+                checked: !platformControlsButton.checked
+                onClicked: NavigationControl.updateState(NavigationControl.events.TOGGLE_CONTROL_CONTENT)
+                enabled: NavigationControl.context.platform_state
             }
 
             SGToolButton {
@@ -414,7 +532,7 @@ Rectangle {
 
                                     Text {
                                         id: name
-                                        text: qsTr("Connected Users")
+                                        text: remoteUserModel.count === 0 ? qsTr("No Connected Users") : qsTr("Connected Users")
                                         anchors {
                                             verticalCenter: parent.verticalCenter
                                             left: parent.left

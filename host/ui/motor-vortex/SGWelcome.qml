@@ -327,7 +327,7 @@ Rectangle{
                 }
                 comboBoxWidth: 350
                 textRole: "text"
-                TextMetrics{ id: textMetrics}
+                TextMetrics { id: textMetrics }
 
                 model: platformListModel
 

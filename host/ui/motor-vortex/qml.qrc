@@ -214,5 +214,6 @@
         <file>images/icons/remote-locked.png</file>
         <file>images/icons/remote-unlocked.png</file>
         <file>fonts/sgicons.ttf</file>
+        <file>statusbar-partial-views/SGComboBox.qml</file>
     </qresource>
 </RCC>
