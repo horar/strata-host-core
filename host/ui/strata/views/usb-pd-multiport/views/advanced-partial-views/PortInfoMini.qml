@@ -4,7 +4,7 @@ import "qrc:/views/usb-pd-multiport/sgwidgets"
 Item {
     id: root
 
-    property bool portConnected: true
+    property bool portConnected: false
     property int portNum: 1
     property color portColor: "#2eb457"
 
@@ -125,7 +125,7 @@ Item {
         PortStatBoxMini {
             id: theNegotiatedVoltage
             label: "PROFILE"
-            value: "20"
+            value: ""
             icon: "../images/icon-voltage.svg"
             height: column1.sbHeight
             valueSize: column1.sbValueSize
@@ -139,7 +139,7 @@ Item {
         PortStatBoxMini {
             id: theMaxWattage
             label: "MAX CAPACITY"
-            value: "100"
+            value: ""
             icon: "../images/icon-max.svg"
             height: column1.sbHeight
             valueSize: column1.sbValueSize
@@ -152,7 +152,7 @@ Item {
         PortStatBoxMini {
             id:theInputPower
             label: "POWER IN"
-            value: "9"
+            value: ""
             icon: "../images/icon-voltage.svg"
             height: column1.sbHeight
             valueSize: column1.sbValueSize
@@ -177,7 +177,7 @@ Item {
         PortStatBoxMini {
             id:theOutputVoltage
             label: "VOLTAGE OUT"
-            value: "20.4"
+            value: ""
             icon: "../images/icon-voltage.svg"
             height: column1.sbHeight
             valueSize: column1.sbValueSize
@@ -190,7 +190,7 @@ Item {
         PortStatBoxMini {
             id:thePortTemperature
             label: "TEMPERATURE"
-            value: "36"
+            value: ""
             icon: "../images/icon-temp.svg"
             height: column1.sbHeight
             valueSize: column1.sbValueSize
@@ -203,7 +203,7 @@ Item {
         PortStatBoxMini {
             id:theOutputPower
             label: "POWER OUT"
-            value: "7.8"
+            value: ""
             icon: "../images/icon-voltage.svg"
             height: column1.sbHeight
             valueSize: column1.sbValueSize
@@ -218,7 +218,7 @@ Item {
         id:thePortEfficency
         label: "EFFICIENCY"
         visible: root.portConnected
-        value: "92"
+        value: ""
         icon: "../images/icon-efficiency.svg"
         height: column1.sbHeight
         width: column1.width
