@@ -29,12 +29,13 @@ Rectangle {
             right: parent.right
             top: parent.top
         }
-        implicitHeight: 35
+        height: visible ? 35 : 0
         color: root.titleBoxColor
         border {
             color: root.titleBoxBorderColor
             width: 1
         }
+        visible: title.text !== ""
 
         Text {
             id: title
@@ -44,11 +45,6 @@ Rectangle {
                 fill: parent
             }
             padding: 10
-//            font.family: sgicons.name
-        }
-
-        Component.onCompleted: {
-            if (title.text === ""){ titleArea.visible = false }
         }
     }
 
@@ -58,7 +54,7 @@ Rectangle {
         anchors {
             left: parent.left
             right: parent.right
-            top: titleArea.visible ? titleArea.bottom : parent.top
+            top: titleArea.bottom
             bottom: parent.bottom
         }
 
