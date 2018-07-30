@@ -88,11 +88,8 @@ Window {
 
         // Simulate Platform events
         GridLayout {
+            columns: 10
             anchors.centerIn: parent
-            Text {
-                id: commandLabel
-                text: qsTr("Commands")
-            }
             Button {
                 text: "USB-PD"
                 onClicked: {
@@ -111,6 +108,13 @@ Window {
                 text: "Motor Vortex"
                 onClicked: {
                     var data = { platform_name: "motor-vortex"}
+                    NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT, data)
+                }
+            }
+            Button {
+                text: "Entice RGB Test"
+                onClicked: {
+                    var data = { platform_name: "entice_rgb"}
                     NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT, data)
                 }
             }

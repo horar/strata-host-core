@@ -6,6 +6,7 @@ import QtGraphicalEffects 1.0
 import "js/navigation_control.js" as NavigationControl
 import "qrc:/statusbar-partial-views"
 
+
 Rectangle {
     id: container
     anchors { fill: parent }
@@ -13,6 +14,7 @@ Rectangle {
     // Context properties that get passed when created dynamically
     property string user_id: ""
     property bool is_logged_in: false
+    property bool is_remote_connected: false
     property string generalTitle: "Guest"
     property color backgroundColor: "#3a3a3a"
 
