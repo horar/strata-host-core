@@ -15,6 +15,7 @@ Item {
     property alias down: comboBox.down
     property alias editable: comboBox.editable
     property alias pressed: comboBox.pressed
+    property alias textRole: comboBox.textRole
 
     property string label: ""
     property bool labelLeft: true

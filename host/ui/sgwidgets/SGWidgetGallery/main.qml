@@ -728,6 +728,8 @@ Window {
                     height: childrenRect.height + 40
 
                     SGHueSlider {
+                        label: "Hue Slider"
+                        labelLeft: false
                         anchors {
                             top: parent.top
                             topMargin: 20
@@ -747,6 +749,8 @@ Window {
                     height: childrenRect.height + 40
 
                     SGRGBSlider {
+                        label: "RGB Slider"
+                        labelLeft: false
                         anchors {
                             top: parent.top
                             topMargin: 20

@@ -21,6 +21,7 @@ Canvas {
     contextType: "2d"
 
     onPaint: {
+        var context = getContext("2d")
         context.reset();
         context.beginPath();
 //        context.shadowColor = "#000"  // Broken in qml 5.x according to https://qmlbook.github.io/ch07/index.html

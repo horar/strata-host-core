@@ -329,5 +329,24 @@
         <file>views/usb-pd-multiport/Content.qml</file>
         <file>views/usb-pd-multiport/Control.qml</file>
         <file>views/usb-pd-multiport/PlatformInterface.qml</file>
+        <file>fonts/FranklinGothicBold.ttf</file>
+        <file>fonts/FranklinGothicBook.otf</file>
+        <file>fonts/FranklinGothicMedium.otf</file>
+        <file>fonts/sgicons.ttf</file>
+        <file>images/demo-ads/1.png</file>
+        <file>images/demo-ads/2.png</file>
+        <file>images/demo-ads/3.png</file>
+        <file>images/demo-ads/4.png</file>
+        <file>images/icons/remote-locked.png</file>
+        <file>images/icons/remote-unlocked.png</file>
+        <file>images/blank_avatar_old.png</file>
+        <file>images/login-background.svg</file>
+        <file>images/on-semi-logo.png</file>
+        <file>images/strata-logo.svg</file>
+        <file>statusbar-partial-views/SGComboBox.qml</file>
+        <file>statusbar-partial-views/SGMenuItem.qml</file>
+        <file>statusbar-partial-views/SGSwitch.qml</file>
+        <file>statusbar-partial-views/SGTabButton.qml</file>
+        <file>statusbar-partial-views/SGToolButton.qml</file>
     </qresource>
 </RCC>

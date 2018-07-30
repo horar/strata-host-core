@@ -8,42 +8,31 @@ import "qrc:/include/Modules/"      // On Semi QML Modules
 
 Rectangle {
     id: view
-    border.color: "black"
-    border.width: 0
     anchors { fill: parent }
-
-    SwipeView {
-        id: swipeView
-        // Adjust Height for tabBar
-        width: parent.width
-        height: parent.height - tabBar.height
-        currentIndex: tabBar.currentIndex
-        PageSchematic { id: pageSchematic }
-        PageLayout { id: pageLayout }
-        //PageTestReport { id: pageTestReport }
-      //  PageSystemContent { id: pageSystemContent}
-//        PageComingSoon {id: pageComingSoonContent}
-    }
 
     TabBar {
         id: tabBar
-
-        width: parent.width - flipButton.width
         currentIndex: swipeView.currentIndex
-        anchors { bottom: parent.bottom;}
+        anchors {
+            top: parent.top
+            right: parent.right
+            left: parent.left
+        }
 
         TabButton { text: "Schematic"
             id:schematicTabButton
-           CircleBadge {
-               id: schematicBadge
-               anchors.bottom: schematicTabButton.top
-               anchors.right: schematicTabButton.right
-               revisionCount: documentManager.schematicRevisionCount
-           }
-           onClicked: documentManager.clearSchematicRevisionCount()
+
+            CircleBadge {
+                id: schematicBadge
+                anchors.bottom: schematicTabButton.top
+                anchors.right: schematicTabButton.right
+                revisionCount: documentManager.schematicRevisionCount
+            }
+            onClicked: documentManager.clearSchematicRevisionCount()
         }
         TabButton { text: "Layout"
             id:layoutTabButton
+
             CircleBadge {
                 id: layoutBadge
                 anchors.bottom: layoutTabButton.top
@@ -63,6 +52,7 @@ Rectangle {
         TabButton { text: "Coming Soon"
             id:comingSoonTabButton
             enabled: false
+
             CircleBadge {
                 id: targetedBadge
                 anchors.bottom: comingSoonTabButton.top
@@ -72,23 +62,20 @@ Rectangle {
             onClicked: documentManager.clearTargetedRevisionCount()
         }
     }
-    Rectangle{
-        height: 40;width:40
-        anchors { bottom: view.bottom; right: view.right }
-        color: "white";
-        Image {
-            id: flipButton
-            source:"qrc:/views/motor-vortex/images/icons/backIcon.svg"
-            anchors { fill: parent }
-            height: 40;width:40
+
+    SwipeView {
+        id: swipeView
+        anchors {
+            top: tabBar.bottom
+            right: parent.right
+            left: parent.left
+            bottom: parent.bottom
         }
-    }
-    MouseArea {
-        width: flipButton.width; height: flipButton.height
-        anchors { bottom: parent.bottom; right: parent.right }
-        visible: true
-        onClicked: {
-            NavigationControl.updateState(NavigationControl.events.TOGGLE_CONTROL_CONTENT)
-        }
+        currentIndex: tabBar.currentIndex
+        PageSchematic { id: pageSchematic }
+        PageLayout { id: pageLayout }
+        PageTestReport { id: pageTestReport }
+        PageSystemContent { id: pageSystemContent}
+        PageComingSoon {id: pageComingSoonContent}
     }
 }

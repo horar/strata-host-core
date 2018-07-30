@@ -18,6 +18,7 @@ Window {
         uncheckedLabel: "Switch Off"    // Default: "" (if not entered, label will not appear)
         labelsInside: true              // Default: true
         switchWidth: 84                 // Default: 52 (change for long custom checkedLabels when labelsInside)
+        switchHeight: 26                // Default: 26
         textColor: "black"              // Default: "black"
         handleColor: "white"            // Default: "white"
         grooveColor: "#ccc"             // Default: "#ccc"
