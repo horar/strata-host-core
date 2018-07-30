@@ -131,7 +131,7 @@ Item {
             }
             maxPower:{
                 if (platformInterface.request_usb_power_notification.port === 1){
-                   return platformInterface.request_usb_power_notification.negotiated_voltage * platformInterface.request_usb_power_notification.negotiated_current
+                   return Math.round(platformInterface.request_usb_power_notification.negotiated_voltage * platformInterface.request_usb_power_notification.negotiated_current *100)/100
                 }
                 else{
                     return portInfo1.maxPower;
@@ -211,7 +211,7 @@ Item {
             }
             maxPower:{
                 if (platformInterface.request_usb_power_notification.port === 2){
-                    return platformInterface.request_usb_power_notification.negotiated_voltage * platformInterface.request_usb_power_notification.negotiated_current
+                    return Math.round(platformInterface.request_usb_power_notification.negotiated_voltage * platformInterface.request_usb_power_notification.negotiated_current *100)/100
                 }
                 else{
                     return portInfo2.maxPower;
@@ -243,7 +243,7 @@ Item {
             }
             portTemperature:{
                 if (platformInterface.request_usb_power_notification.port === 2){
-                    return platformInterface.request_usb_power_notification.temperature
+                    return platformInterface.request_usb_power_notification.temperature;
                 }
                 else{
                     return portInfo2.portTemperature;
@@ -290,7 +290,7 @@ Item {
                 }
             maxPower:{
                 if (platformInterface.request_usb_power_notification.port === 3){
-                    platformInterface.request_usb_power_notification.negotiated_voltage * platformInterface.request_usb_power_notification.negotiated_current
+                    return Math.round(platformInterface.request_usb_power_notification.negotiated_voltage * platformInterface.request_usb_power_notification.negotiated_current *100)/100
                 }
                 else{
                     return portInfo3.maxPower;
@@ -369,7 +369,7 @@ Item {
             }
             maxPower:{
                 if (platformInterface.request_usb_power_notification.port === 4){
-                    return platformInterface.request_usb_power_notification.negotiated_voltage * platformInterface.request_usb_power_notification.negotiated_current
+                    return Math.round(platformInterface.request_usb_power_notification.negotiated_voltage * platformInterface.request_usb_power_notification.negotiated_current *100)/100
                 }
                 else{
                     return portInfo4.maxPower;
@@ -461,23 +461,34 @@ Item {
                     }
 
                     property var deviceConnected: platformInterface.usb_pd_port_connect.connection_state
+                    property var deviceDisconnected: platformInterface.usb_pd_port_disconnect.connection_state
 
                      onDeviceConnectedChanged: {
-                         if (platformInterface.usb_pd_port_connect.connection_state.port_id === "USB_C_port_1"){
+                         //console.log("device connected message received in basicControl. Port=",platformInterface.usb_pd_port_connect.port_id,
+                         //            "state=",platformInterface.usb_pd_port_connect.connection_state);
+
+                         if (platformInterface.usb_pd_port_connect.port_id === "USB_C_port_1"){
                              if (platformInterface.usb_pd_port_connect.connection_state === "connected"){
                                  port1Animation.source = "images/cord.gif"
                                  port1Animation.currentFrame = 0
                                  port1Animation.playing = true
                                  port1Animation.pluggedIn = !port1Animation.pluggedIn
                              }
-                             else{
+                         }
+                     }
+
+                     onDeviceDisconnectedChanged:{
+                         console.log("device disconnected message received in basicControl. Port=",platformInterface.usb_pd_port_disconnect.port_id,
+                                     "state=",platformInterface.usb_pd_port_disconnect.connection_state);
+
+                         if (platformInterface.usb_pd_port_disconnect.port_id === "USB_C_port_1"){
+                             if (platformInterface.usb_pd_port_disconnect.connection_state === "disconnected"){
                                  port1Animation.source = "images/cordReverse.gif"
                                  port1Animation.currentFrame = 0
                                  port1Animation.playing = true
                                  port1Animation.pluggedIn = !port1Animation.pluggedIn
                              }
                          }
-
                     }
 
                     onClicked: {
@@ -504,6 +515,37 @@ Item {
                     anchors {
                         fill: parent
                     }
+
+                    property var deviceConnected: platformInterface.usb_pd_port_connect.connection_state
+                    property var deviceDisconnected: platformInterface.usb_pd_port_disconnect.connection_state
+
+                     onDeviceConnectedChanged: {
+                         //console.log("device connected message received in basicControl. Port=",platformInterface.usb_pd_port_connect.port_id,
+                         //            "state=",platformInterface.usb_pd_port_connect.connection_state);
+
+                         if (platformInterface.usb_pd_port_connect.port_id === "USB_C_port_2"){
+                             if (platformInterface.usb_pd_port_connect.connection_state === "connected"){
+                                 port2Animation.source = "images/cord.gif"
+                                 port2Animation.currentFrame = 0
+                                 port2Animation.playing = true
+                                 port2Animation.pluggedIn = !port2Animation.pluggedIn
+                             }
+                         }
+                     }
+
+                     onDeviceDisconnectedChanged:{
+                         //console.log("device disconnected message received in basicControl. Port=",platformInterface.usb_pd_port_disconnect.port_id,
+                          //           "state=",platformInterface.usb_pd_port_disconnect.connection_state);
+
+                         if (platformInterface.usb_pd_port_disconnect.port_id === "USB_C_port_2"){
+                             if (platformInterface.usb_pd_port_disconnect.connection_state === "disconnected"){
+                                 port2Animation.source = "images/cordReverse.gif"
+                                 port2Animation.currentFrame = 0
+                                 port2Animation.playing = true
+                                 port2Animation.pluggedIn = !port2Animation.pluggedIn
+                             }
+                         }
+                    }
                     onClicked: {
                         if (!port2Animation.pluggedIn) {
                             port2Animation.source = "images/cord.gif"
@@ -528,6 +570,37 @@ Item {
                     anchors {
                         fill: parent
                     }
+
+                    property var deviceConnected: platformInterface.usb_pd_port_connect.connection_state
+                    property var deviceDisconnected: platformInterface.usb_pd_port_disconnect.connection_state
+
+                     onDeviceConnectedChanged: {
+                         //console.log("device connected message received in basicControl. Port=",platformInterface.usb_pd_port_connect.port_id,
+                         //            "state=",platformInterface.usb_pd_port_connect.connection_state);
+
+                         if (platformInterface.usb_pd_port_connect.port_id === "USB_C_port_3"){
+                             if (platformInterface.usb_pd_port_connect.connection_state === "connected"){
+                                 port3Animation.source = "images/cord.gif"
+                                 port3Animation.currentFrame = 0
+                                 port3Animation.playing = true
+                                 port3Animation.pluggedIn = !port3Animation.pluggedIn
+                             }
+                         }
+                     }
+
+                     onDeviceDisconnectedChanged:{
+                         //console.log("device disconnected message received in basicControl. Port=",platformInterface.usb_pd_port_disconnect.port_id,
+                          //           "state=",platformInterface.usb_pd_port_disconnect.connection_state);
+
+                         if (platformInterface.usb_pd_port_disconnect.port_id === "USB_C_port_3"){
+                             if (platformInterface.usb_pd_port_disconnect.connection_state === "disconnected"){
+                                 port3Animation.source = "images/cordReverse.gif"
+                                 port3Animation.currentFrame = 0
+                                 port3Animation.playing = true
+                                 port3Animation.pluggedIn = !port3Animation.pluggedIn
+                             }
+                         }
+                    }
                     onClicked: {
                         if (!port3Animation.pluggedIn) {
                             port3Animation.source = "images/cord.gif"
@@ -551,6 +624,37 @@ Item {
                 MouseArea {
                     anchors {
                         fill: parent
+                    }
+
+                    property var deviceConnected: platformInterface.usb_pd_port_connect.connection_state
+                    property var deviceDisconnected: platformInterface.usb_pd_port_disconnect.connection_state
+
+                     onDeviceConnectedChanged: {
+                         //console.log("device connected message received in basicControl. Port=",platformInterface.usb_pd_port_connect.port_id,
+                         //            "state=",platformInterface.usb_pd_port_connect.connection_state);
+
+                         if (platformInterface.usb_pd_port_connect.port_id === "USB_C_port_4"){
+                             if (platformInterface.usb_pd_port_connect.connection_state === "connected"){
+                                 port4Animation.source = "images/cord.gif"
+                                 port4Animation.currentFrame = 0
+                                 port4Animation.playing = true
+                                 port4Animation.pluggedIn = !port4Animation.pluggedIn
+                             }
+                         }
+                     }
+
+                     onDeviceDisconnectedChanged:{
+                         console.log("device disconnected message received in basicControl. Port=",platformInterface.usb_pd_port_disconnect.port_id,
+                                     "state=",platformInterface.usb_pd_port_disconnect.connection_state);
+
+                         if (platformInterface.usb_pd_port_disconnect.port_id === "USB_C_port_4"){
+                             if (platformInterface.usb_pd_port_disconnect.connection_state === "disconnected"){
+                                 port4Animation.source = "images/cordReverse.gif"
+                                 port4Animation.currentFrame = 0
+                                 port4Animation.playing = true
+                                 port4Animation.pluggedIn = !port4Animation.pluggedIn
+                             }
+                         }
                     }
                     onClicked: {
                         if (!port4Animation.pluggedIn) {

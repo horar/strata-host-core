@@ -35,8 +35,16 @@ Item {
     // @description: sent when a device is connected or disconnected
     //
     property var usb_pd_port_connect : {
-        "port_id": "USB_C_port_1",
-        "connection_state":"connected"
+        "port_id": "unknown",
+        "connection_state":"unknown"
+    }
+//    onUsb_pd_port_connectChanged: {
+//        console.log("usb_pd_port_connect changed. port_id=",usb_pd_port_connect.port_id," connection_state=",usb_pd_port_connect.connection_state);
+//    }
+
+    property var usb_pd_port_disconnect:{
+        "port_id": "unknown",
+        "connection_state": "unknown"
     }
 
     // @notification system_error
