@@ -43,6 +43,7 @@ Item {
             contextType: "2d"
 
             onPaint: {
+                var context = getContext("2d")
                 context.reset();
                 context.beginPath();
                 context.moveTo(0, 0);
@@ -113,6 +114,14 @@ Item {
         width: 300
         height: root.height
         visible: false
+
+        MouseArea {
+            // This blocks all mouseEvents from propagating through the menu to stuff below
+            anchors { fill: parent }
+            hoverEnabled: true
+            preventStealing: true
+            propagateComposedEvents: false
+        }
 
         Loader {
             id: drawerContent
