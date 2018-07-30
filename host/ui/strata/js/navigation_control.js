@@ -64,11 +64,11 @@ var flipable_parent_= null
 */
 var PREFIX = "qrc:/views/"
 function getQMLFile(platform_name, filename) {
-    console.log(platform_name, "-", filename, "qml file requested.")
+    //console.log(platform_name, "-", filename, "qml file requested.")
 
     // Build the file name - ./view/<platform_name>/filename.qml
     if (filename.search(".qml") < 0){
-        console.log("adding extension to filename: ", filename)
+        //console.log("adding extension to filename: ", filename)
         filename = filename + ".qml"
     }
 

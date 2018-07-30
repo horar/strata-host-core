@@ -8,6 +8,14 @@ Item {
     property int portNum: 1
     property color portColor: "#2eb457"
 
+    property alias negotiatedVoltage : theNegotiatedVoltage.value
+    property alias maxPower: theMaxWattage.value
+    property alias inputPower: theInputPower.value
+    property alias outputVoltage: theOutputVoltage.value
+    property alias portTemperature: thePortTemperature.value
+    property alias outputPower: theOutputPower.value
+    property alias portEfficency: thePortEfficency.value
+
     implicitWidth: 175
 
     Rectangle {
@@ -115,6 +123,7 @@ Item {
         property real bottomMargin: 4
 
         PortStatBoxMini {
+            id: theNegotiatedVoltage
             label: "PROFILE"
             value: "20"
             icon: "../images/icon-voltage.svg"
@@ -128,6 +137,7 @@ Item {
         }
 
         PortStatBoxMini {
+            id: theMaxWattage
             label: "MAX CAPACITY"
             value: "100"
             icon: "../images/icon-max.svg"
@@ -140,6 +150,7 @@ Item {
         }
 
         PortStatBoxMini {
+            id:theInputPower
             label: "POWER IN"
             value: "9"
             icon: "../images/icon-voltage.svg"
@@ -164,6 +175,7 @@ Item {
         }
 
         PortStatBoxMini {
+            id:theOutputVoltage
             label: "VOLTAGE OUT"
             value: "20.4"
             icon: "../images/icon-voltage.svg"
@@ -176,6 +188,7 @@ Item {
         }
 
         PortStatBoxMini {
+            id:thePortTemperature
             label: "TEMPERATURE"
             value: "36"
             icon: "../images/icon-temp.svg"
@@ -188,6 +201,7 @@ Item {
         }
 
         PortStatBoxMini {
+            id:theOutputPower
             label: "POWER OUT"
             value: "7.8"
             icon: "../images/icon-voltage.svg"
@@ -201,6 +215,7 @@ Item {
     }
 
     PortStatBoxMini {
+        id:thePortEfficency
         label: "EFFICIENCY"
         visible: root.portConnected
         value: "92"

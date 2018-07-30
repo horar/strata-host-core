@@ -478,8 +478,6 @@ Item {
                      }
 
                      onDeviceDisconnectedChanged:{
-                         console.log("device disconnected message received in basicControl. Port=",platformInterface.usb_pd_port_disconnect.port_id,
-                                     "state=",platformInterface.usb_pd_port_disconnect.connection_state);
 
                          if (platformInterface.usb_pd_port_disconnect.port_id === "USB_C_port_1"){
                              if (platformInterface.usb_pd_port_disconnect.connection_state === "disconnected"){
@@ -644,8 +642,8 @@ Item {
                      }
 
                      onDeviceDisconnectedChanged:{
-                         console.log("device disconnected message received in basicControl. Port=",platformInterface.usb_pd_port_disconnect.port_id,
-                                     "state=",platformInterface.usb_pd_port_disconnect.connection_state);
+                         //console.log("device disconnected message received in basicControl. Port=",platformInterface.usb_pd_port_disconnect.port_id,
+                         //            "state=",platformInterface.usb_pd_port_disconnect.connection_state);
 
                          if (platformInterface.usb_pd_port_disconnect.port_id === "USB_C_port_4"){
                              if (platformInterface.usb_pd_port_disconnect.connection_state === "disconnected"){
