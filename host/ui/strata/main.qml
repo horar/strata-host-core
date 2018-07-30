@@ -118,6 +118,13 @@ Window {
                     NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT, data)
                 }
             }
+            Button {
+                text: "USB-PD 4 Ports"
+                onClicked: {
+                    var data = { platform_name: "usb-pd-multiport"}
+                    NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT, data)
+                }
+            }
 
             // UI events
             Button {
