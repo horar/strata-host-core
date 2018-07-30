@@ -26,7 +26,7 @@ Rectangle {
         width: root.width > root.height ? root.height *.7 : root.width *.7
         height: root.height > root.width ? root.width *.7 : root.height *.7
         anchors {
-            centerIn: parent
+            centerIn: root
         }
 
         maximumValue: 200
@@ -53,7 +53,7 @@ Rectangle {
             id: gaugeValue
             text: root.value.toFixed(0)
             color: root.centerColor
-            anchors { centerIn: parent }
+            anchors { centerIn: gauge }
             font.family: digital.name
             font.pixelSize: Math.min(gauge.width / 3, gauge.width/Math.max((root.maximumValue+ "").length, (root.minimumValue + "").length)) // Scale the gauge font based on what the largest or smallest number that might be displayed
             renderType: Text.NativeRendering
@@ -75,9 +75,11 @@ Rectangle {
         CircularGauge {
             id: ticksBackground
             z: -1
-            width: parent.width
-            height: parent.height
-            anchors.centerIn: parent
+            width: gauge.width
+            height: gauge.height
+            anchors {
+              centerIn: gauge
+            }
             minimumValue: root.minimumValue
             maximumValue: root.maximumValue
 
