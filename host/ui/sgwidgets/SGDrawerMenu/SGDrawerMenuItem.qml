@@ -43,6 +43,7 @@ Item {
             contextType: "2d"
 
             onPaint: {
+                var context = getContext("2d")
                 context.reset();
                 context.beginPath();
                 context.moveTo(0, 0);

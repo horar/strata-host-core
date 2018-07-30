@@ -81,6 +81,7 @@ Item {
                 contextType: "2d"
 
                 onPaint: {
+                    var context = getContext("2d")
                     context.reset();
                     context.lineWidth = 1
                     context.strokeStyle = "#888"
