@@ -5,7 +5,7 @@ import QtGraphicalEffects 1.0
 Item {
     id: root
 
-    property real value: 0
+    property alias value: rgbSlider.value
     property var rgbArray: hToRgb(value)
     property string color: "red"
     property int color_value: 0
@@ -15,7 +15,7 @@ Item {
     property real sliderHeight: 28
 
     implicitHeight: labelLeft ? Math.max(labelText.height, sliderHeight) : labelText.height + sliderHeight + rgbSlider.anchors.topMargin
-    implicitWidth: 300
+    implicitWidth: 450
 
     Text {
         id: labelText
@@ -30,7 +30,7 @@ Item {
     Slider {
         id: rgbSlider
         padding: 0
-        value: root.value
+        value: 0
         height: root.sliderHeight
         anchors {
             left: root.labelLeft ? labelText.right : labelText.left
@@ -39,12 +39,7 @@ Item {
             topMargin: root.label === "" ? 0 : root.labelLeft ? 0 : 5
             right: root.right
         }
-
-        onPressedChanged: {
-            if (!rgbSlider.pressed) {
-                root.value = value //Math.floor(value * 255)
-            }
-        }
+        live: false
 
         background: Rectangle {
             y: 4
@@ -81,6 +76,7 @@ Item {
                 contextType: "2d"
 
                 onPaint: {
+                    var context = getContext("2d")
                     context.reset();
                     context.lineWidth = 1
                     context.strokeStyle = "#888"

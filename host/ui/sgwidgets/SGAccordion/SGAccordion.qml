@@ -18,6 +18,7 @@ Item {
     property color textClosedColor: "#000"
     property color headerOpenColor: "#666"
     property color headerClosedColor: "#eee"
+    property color dividerColor: "#fff"
 
     ScrollView {
         id: scrollContainer
@@ -41,6 +42,7 @@ Item {
             property color accordionContentsColor: contentsColor
             property color accordionHeaderOpenColor: headerOpenColor
             property color accordionHeaderClosedColor: headerClosedColor
+            property color accordionDividerColor: dividerColor
         }
     }
 }

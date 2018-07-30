@@ -5,7 +5,7 @@ import QtGraphicalEffects 1.0
 Item {
     id: root
 
-    property real value: 128
+    property alias value: hueSlider.value
     property string color1: "red"
     property string color2: "green"
     property int color_value1: 0
@@ -18,7 +18,7 @@ Item {
     property bool powerSave: false
 
     implicitHeight: labelLeft ? Math.max(labelText.height, sliderHeight) : labelText.height + sliderHeight + hueSlider.anchors.topMargin
-    implicitWidth: 300
+    implicitWidth: 450
 
     Text {
         id: labelText
@@ -33,7 +33,7 @@ Item {
     Slider {
         id: hueSlider
         padding: 0
-        value: root.value/255
+        value: 128
         height: root.sliderHeight
         anchors {
             left: root.labelLeft ? labelText.right : labelText.left
@@ -42,12 +42,9 @@ Item {
             topMargin: root.label === "" ? 0 : root.labelLeft ? 0 : 5
             right: root.right
         }
-
-        onPressedChanged: {
-            if (!hueSlider.pressed) {
-                root.value = Math.floor(value * 255)
-            }
-        }
+        live: false
+        from: 0
+        to: 255
 
         background: Rectangle {
             y: 4
@@ -84,6 +81,7 @@ Item {
                 contextType: "2d"
 
                 onPaint: {
+                    var context = getContext("2d")
                     context.reset();
                     context.lineWidth = 1
                     context.strokeStyle = "#888"
@@ -112,9 +110,9 @@ Item {
 
     onValueChanged: {
         if (powerSave) {
-            rgbArray = hueToRgbPowerSave(hueSlider.value)
+            rgbArray = hueToRgbPowerSave(value/255)
         } else {
-            rgbArray = hsvToRgb(hueSlider.value, 1, 1)
+            rgbArray = hsvToRgb(value/255, 1, 1)
         }
 
         if (rgbArray[0] === '0') {
@@ -123,10 +121,10 @@ Item {
             color2 = "blue"
             color_value2 = rgbArray[2]
         } else if (rgbArray[1] === '0') {
-            color1 = "red"
-            color_value1 = rgbArray[0]
-            color2 = "blue"
-            color_value2 = rgbArray[2]
+            color1 = "blue"
+            color_value1 = rgbArray[2]
+            color2 = "red"
+            color_value2 = rgbArray[0]
         } else {
             color1 = "red"
             color_value1 = rgbArray[0]

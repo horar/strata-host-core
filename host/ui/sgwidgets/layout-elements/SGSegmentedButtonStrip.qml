@@ -13,8 +13,8 @@ Item {
 
     property real buttonHeight: 35
     property real radius: buttonHeight/2
-    property color activeColor: "#999"
-    property color inactiveColor: "#ddd"
+    property color activeColor: "#666"
+    property color inactiveColor: "#dddddd"
     property bool exclusive: true
     property string label: ""
     property bool labelLeft: true
@@ -31,7 +31,7 @@ Item {
         height: root.label === "" ? 0 :root.labelLeft ? segmentedButtons.height : contentHeight
         topPadding: root.label === "" ? 0 : root.labelLeft ? (segmentedButtons.height-contentHeight)/2 : 0
         bottomPadding: topPadding
-        color: root.textColor
+        color: "black"
     }
 
     ButtonGroup{
