@@ -350,7 +350,6 @@ Rectangle {
                 checkable: true
                 checked: NavigationControl.flipable_parent_.flipped === false
                 onClicked: NavigationControl.updateState(NavigationControl.events.TOGGLE_CONTROL_CONTENT)
-                enabled: NavigationControl.context.platform_state
             }
 
             SGToolButton {
@@ -361,7 +360,6 @@ Rectangle {
                 checkable: true
                 checked: !platformControlsButton.checked
                 onClicked: NavigationControl.updateState(NavigationControl.events.TOGGLE_CONTROL_CONTENT)
-                enabled: NavigationControl.context.platform_state
             }
 
             SGToolButton {
@@ -1243,11 +1241,12 @@ Rectangle {
 
     Window {
         id: debugWindow
-        visible:true
+        visible: container.parent.showDebug
         height: 200
         width: 300
-        x:1620
-        y:500
+        x: 1620
+        y: 500
+        title: "SGStatusBar.qml Debug Controls"
 
         Column {
             id: debug1

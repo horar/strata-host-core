@@ -12,7 +12,7 @@ Window {
     title: qsTr("Encore Design Suite")
 
     // Debug option(s)
-    property bool showDebugCommandBar: true
+    property bool showDebugCommandBar: false
 
     Component.onCompleted: {
         console.log("Initializing")
@@ -35,6 +35,7 @@ Window {
             width: parent.width
 
             property real windowHeight: mainWindow.height  // for centering popups spawned from the statusbar
+            property bool showDebug: showDebugCommandBar  // for linking debug in status bar to the debug bar
         }
 
         Flipable {
@@ -156,9 +157,9 @@ Window {
     }
 
     Button {
-        text: "^"
+        text: "DEBUG"
         height: 30
-        width: height
+        width: 70
         visible: !showDebugCommandBar
         onClicked: showDebugCommandBar = true
         anchors {
