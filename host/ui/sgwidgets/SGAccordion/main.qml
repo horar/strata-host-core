@@ -21,6 +21,7 @@ Window {
         textClosedColor: "#000"     // Default: "black"
         headerOpenColor: "#666"     // Default: "#666" (dark gray)
         headerClosedColor: "#eee"   // Default: "#eee" (light gray)
+        dividerColor: "#fff"        // Default: "#fff" (white)
 
         accordionItems: Column {
             SGAccordionItem {

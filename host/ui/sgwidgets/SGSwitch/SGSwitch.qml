@@ -15,11 +15,11 @@ Item {
     property alias down: switchRoot.down
     property alias checked: switchRoot.checked
 
-    property real switchHeight: 26
     property real fontSize: 10
 
     // Optional Configurations:
     property real switchWidth: 52
+    property real switchHeight: 26
     property color handleColor: "white"
     property color grooveFillColor: "#0cf"
     property color grooveColor: "#ccc"
@@ -152,8 +152,8 @@ Item {
             Rectangle {
                 id: handle
                 x: ((switchRoot.visualPosition * parent.width) + (1-switchRoot.visualPosition) * width) - width
-                width: 26
-                height: 26
+                width: switchHeight
+                height: width
                 radius: 13
                 color: root.down ? colorMod(root.handleColor, 1.1) : root.handleColor
                 border.color: root.checked ? colorMod(root.grooveFillColor, 1.5) : colorMod(root.grooveColor, 1.5)
