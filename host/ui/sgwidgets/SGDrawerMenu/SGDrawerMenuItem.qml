@@ -114,6 +114,14 @@ Item {
         height: root.height
         visible: false
 
+        MouseArea {
+            // This blocks all mouseEvents from propagating through the menu to stuff below
+            anchors { fill: parent }
+            hoverEnabled: true
+            preventStealing: true
+            propagateComposedEvents: false
+        }
+
         Loader {
             id: drawerContent
             anchors {

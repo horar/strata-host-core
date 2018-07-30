@@ -22,6 +22,14 @@ Item {
         z: 3
         color: "#282a2b"
 
+        MouseArea {
+            // This blocks all mouseEvents from propagating through the menu to stuff below
+            anchors { fill: parent }
+            hoverEnabled: true
+            preventStealing: true
+            propagateComposedEvents: false
+        }
+
         Column  {
             id: menuItems
             width: parent.width
