@@ -15,7 +15,6 @@ Item {
     property alias down: comboBox.down
     property alias editable: comboBox.editable
     property alias pressed: comboBox.pressed
-    property alias textRole: comboBox.textRole
 
     property string label: ""
     property bool labelLeft: true
@@ -50,7 +49,7 @@ Item {
         model: ["First", "Second", "Third"]
         height: root.comboBoxHeight
         anchors {
-            left: root.labelLeft ? labelText.right : root.left
+            left: root.labelLeft ? labelText.right : parent.left
             leftMargin: root.label === "" ? 0 : root.labelLeft ? 10 : 0
             top: root.labelLeft ? labelText.top : labelText.bottom
             topMargin: root.label === "" ? 0 : root.labelLeft ? 0 : 5

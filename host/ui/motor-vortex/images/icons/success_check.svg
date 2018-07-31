@@ -1,75 +1,19 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Created with Inkscape (http://www.inkscape.org/) -->
-
-<svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="189.74406mm"
-   height="162.52977mm"
-   viewBox="0 0 189.74406 162.52977"
-   version="1.1"
-   id="svg8"
-   inkscape:version="0.92.2 5c3e80d, 2017-08-06"
-   sodipodi:docname="success_check.svg">
-  <defs
-     id="defs2" />
-  <sodipodi:namedview
-     id="base"
-     pagecolor="#ffffff"
-     bordercolor="#666666"
-     borderopacity="1.0"
-     inkscape:pageopacity="0.0"
-     inkscape:pageshadow="2"
-     inkscape:zoom="0.65"
-     inkscape:cx="314.11388"
-     inkscape:cy="436.96475"
-     inkscape:document-units="mm"
-     inkscape:current-layer="layer1"
-     showgrid="false"
-     inkscape:window-width="1440"
-     inkscape:window-height="796"
-     inkscape:window-x="0"
-     inkscape:window-y="1159"
-     inkscape:window-maximized="1" />
-  <metadata
-     id="metadata5">
-    <rdf:RDF>
-      <cc:Work
-         rdf:about="">
-        <dc:format>image/svg+xml</dc:format>
-        <dc:type
-           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
-      </cc:Work>
-    </rdf:RDF>
-  </metadata>
-  <g
-     inkscape:label="Layer 1"
-     inkscape:groupmode="layer"
-     id="layer1"
-     transform="translate(-11.339285,-53.583336)">
-    <rect
-       style="fill:#27cd27;fill-opacity:1;stroke-width:0.26458332"
-       id="rect4740"
-       width="189.74406"
-       height="162.52977"
-       x="11.339285"
-       y="53.583336" />
-    <path
-       style="fill:none;stroke:#000000;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       d="M 41.577382,132.20238 78.619048,150.34524 179.91667,71.726189 81.642857,189.65476 Z"
-       id="path4742"
-       inkscape:connector-curvature="0" />
-    <path
-       style="fill:#e3e3e3;fill-opacity:1;stroke-width:2.85714293"
-       d="m 235.88871,610.21829 c -39.65778,-56.81048 -71.73052,-103.66631 -71.27276,-104.12408 0.45777,-0.45777 30.53064,13.66445 66.8286,31.38271 l 65.9963,32.21501 182.01432,-141.32755 c 100.10789,-77.73015 182.4478,-140.86534 182.97757,-140.30041 0.91969,0.98072 -338.91396,409.85932 -349.39243,420.37946 -4.82727,4.84648 -8.17929,0.57886 -77.1516,-98.22514 z"
-       id="path4744"
-       inkscape:connector-curvature="0"
-       transform="scale(0.26458333)" />
-  </g>
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 22.1.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1"
+	 id="svg8" inkscape:version="0.92.2 5c3e80d, 2017-08-06" sodipodi:docname="success_check.svg" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" xmlns:svg="http://www.w3.org/2000/svg"
+	 xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 100 100"
+	 style="enable-background:new 0 0 100 100;" xml:space="preserve">
+<style type="text/css">
+	.st0{fill:#00B842;}
+	.st1{fill:#FFFFFF;}
+</style>
+<sodipodi:namedview  bordercolor="#666666" borderopacity="1.0" id="base" inkscape:current-layer="layer1" inkscape:cx="314.11388" inkscape:cy="436.96475" inkscape:document-units="mm" inkscape:pageopacity="0.0" inkscape:pageshadow="2" inkscape:window-height="796" inkscape:window-maximized="1" inkscape:window-width="1440" inkscape:window-x="0" inkscape:window-y="1159" inkscape:zoom="0.65" pagecolor="#ffffff" showgrid="false">
+	</sodipodi:namedview>
+<circle class="st0" cx="50" cy="50" r="43.9"/>
+<g>
+	<path class="st1" d="M82.2,36.6c0,1.1-0.4,2.1-1.2,3L43.7,76.8c-0.8,0.8-1.8,1.2-3,1.2c-1.1,0-2.1-0.4-3-1.2L16.2,55.3
+		c-0.8-0.8-1.2-1.8-1.2-3c0-1.1,0.4-2.1,1.2-3l5.9-5.9c0.8-0.8,1.8-1.2,3-1.2c1.1,0,2.1,0.4,3,1.2l12.7,12.8l28.4-28.5
+		c0.8-0.8,1.8-1.2,3-1.2c1.1,0,2.1,0.4,3,1.2l5.9,5.9C81.8,34.4,82.2,35.4,82.2,36.6z"/>
+</g>
 </svg>
