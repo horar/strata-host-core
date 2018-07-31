@@ -117,7 +117,7 @@ bool PublisherSubscriberConnector::read(string& message)
     else {
         return false;
     }
-    LOG_DEBUG(DEBUG,"[Socket] Rx'ed message : %s\n",message.c_str());
+    LOG_DEBUG(DEBUG,"[Socket] Rx'ed message pub sub: %s\n",message.c_str());
     unsigned int     zmq_events;
     size_t           zmq_events_size  = sizeof(zmq_events);
     socket_->getsockopt(ZMQ_EVENTS, &zmq_events, &zmq_events_size);
