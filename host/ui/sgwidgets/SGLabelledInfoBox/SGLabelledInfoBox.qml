@@ -43,6 +43,7 @@ Rectangle {
             leftMargin: root.label === "" ? 0 : root.labelLeft ? 10 : 0
             topMargin: root.label === "" ? 0 : root.labelLeft ? 0 : 5
         }
+        clip: true
 
         TextInput {
             id: infoText
@@ -54,7 +55,10 @@ Rectangle {
             text: info
             selectByMouse: true
             readOnly: true
-            font.family: "Courier" // Monospaced font for better text width uniformity
+            font {
+              family: "Courier" // Monospaced font for better text width uniformity
+              pixelSize: (Qt.platform.os === "osx") ? 12 : 10;
+            }
             color: root.textColor
         }
     }

@@ -15,6 +15,7 @@ Item {
     property alias down: comboBox.down
     property alias editable: comboBox.editable
     property alias pressed: comboBox.pressed
+    property alias textRole: comboBox.textRole
 
     property string label: ""
     property bool labelLeft: true
@@ -25,6 +26,7 @@ Item {
     property bool dividers: false
     property real comboBoxHeight: 32
     property real comboBoxWidth: 120
+    property real popupHeight: 300
 
     implicitHeight: labelLeft ? Math.max(labelText.height, comboBox.height) : labelText.height + comboBox.height + comboBox.anchors.topMargin
     implicitWidth: labelLeft ? labelText.width + comboBox.width + comboBox.anchors.leftMargin : Math.max(labelText.width, comboBox.width)
@@ -59,8 +61,6 @@ Item {
             text: comboBox.popup.visible ? "\ue813" : "\ue810"
             font.family: sgicons.name
             color: comboBox.pressed ? colorMod(root.indicatorColor, .25) : root.indicatorColor
-            //x: comboBox.width - width/2 - comboBox.height/2
-            //y: comboBox.topPadding + (comboBox.availableHeight - height) / 2
             anchors {
                 verticalCenter: comboBox.verticalCenter
                 right: comboBox.right
@@ -70,14 +70,11 @@ Item {
 
         contentItem: TextField {
             anchors {
-                left: comboBox.left
-                right: comboBox.right
+                fill: parent
                 rightMargin: comboBox.height
-                top: comboBox.top
-                bottom: comboBox.bottom
             }
             leftPadding: 13
-            rightPadding: 13
+            rightPadding: 0
 
             text: comboBox.editable ? comboBox.editText : comboBox.displayText
             enabled: comboBox.editable
@@ -113,7 +110,7 @@ Item {
         popup: Popup {
             y: comboBox.height - 1
             width: comboBox.width
-            implicitHeight: contentItem.implicitHeight + ( 2 * padding )
+            implicitHeight: Math.min(contentItem.implicitHeight + ( 2 * padding ), root.popupHeight)
             padding: 1
 
             contentItem: ListView {
@@ -122,7 +119,9 @@ Item {
                 model: comboBox.popup.visible ? comboBox.delegateModel : null
                 currentIndex: comboBox.highlightedIndex
 
-                ScrollIndicator.vertical: ScrollIndicator { }
+                ScrollIndicator.vertical: ScrollIndicator {
+                    active: true
+                }
             }
 
             background: Rectangle {
@@ -134,7 +133,9 @@ Item {
         delegate: ItemDelegate {
             id: delegate
             width: comboBox.width
-            height: root.comboBoxHeight
+            height: root.comboBoxHeight // Add/Subtract from this to modify list item heights in popup
+            topPadding: 0
+            bottomPadding: 0
             contentItem: Text {
                 text: modelData
                 color: root.textColor
@@ -146,12 +147,11 @@ Item {
 
             background: Rectangle {
                 implicitWidth: comboBox.width
-                implicitHeight: root.comboBoxHeight
                 color: delegate.highlighted ? colorMod(root.boxColor, -0.05) : root.boxColor
 
                 Rectangle {
                     id: delegateDivider
-                    visible: root.dividers
+                    visible: root.dividers && index !== comboBox.count - 1
                     width: parent.width - 20
                     height: 1
                     color: colorMod(root.boxColor, -0.05)
@@ -161,7 +161,6 @@ Item {
                     }
                 }
             }
-
         }
     }
 
