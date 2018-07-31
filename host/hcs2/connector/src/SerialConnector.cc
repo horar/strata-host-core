@@ -21,7 +21,7 @@ using namespace rapidjson;
 // windows
 // 1 - enabled
 // 0 - disabled the hack, can support other platforms (Tested it with USB-PD and load board)
-#define ST_EVAL_BOARD_SUPPORT_ENABLED 1
+#define ST_EVAL_BOARD_SUPPORT_ENABLED 0
 
 // The following variable is "strictly" used only for windows build.
 // since windows does not support libevent handling of serial devices,
@@ -64,6 +64,8 @@ void SerialConnector::openPlatform()
     // TODO [prasanth] add platform socket inside the class declaration
     struct sp_port **ports;
     sp_return error;
+    LOG_DEBUG(DEBUG,"In openPlatform thread\n",0);
+
     while(true) {
         sleep(2);
         sp_return port_list_error = sp_list_ports(&ports);
@@ -76,7 +78,7 @@ void SerialConnector::openPlatform()
 #ifdef __APPLE__
         usb_keyword = "usb";
 #elif __linux__
-    	usb_keyword = "USB";
+        usb_keyword = "USB";
 #elif _WIN32
         usb_keyword = "COM";
 #endif
@@ -212,11 +214,14 @@ bool SerialConnector::read(string &notification)
         temp = '\0';
         sp_wait(event_, 250);
         error = sp_nonblocking_read(platform_socket_,&temp,1);
+
+        // LOG_DEBUG(DEBUG,"Temp:%c\n",temp);
+
         // [prasanth]: if the return value from read is less than 0, then the resource is unavailable
         // but we are checking if it is equal to 0 for loadboard since it takes 5sec to load
         if(error < 0) {
             cout << "error number "<<error<<endl;
-            LOG_DEBUG(DEBUG,"Platform Disconnected\n",0);
+            LOG_DEBUG(DEBUG,"Platform Disconnected:%c\n",temp);
             dealer_id_.clear();
             return false;
         }
@@ -278,6 +283,42 @@ bool SerialConnector::send(const std::string& message)
         LOG_DEBUG(DEBUG,"write success %s\n",message.c_str());
         return true;
     }
+    return false;
+}
+
+// @f sendSmallChunks
+// @b Sends large data in smaller chunks to the connected device to prevent serial buffer overflow.
+//
+// arguments:
+//  IN: string to be written
+//  IN: chunk limit
+//  OUT: true if success and false if fail
+//
+//
+bool SerialConnector::sendSmallChunks(const std::string& message, const unsigned int chunk_limit)
+{
+    sp_flush(platform_socket_,SP_BUF_BOTH);
+
+    for(int i = 0; i < message.length() ; i+=chunk_limit){
+
+      // Get substring
+      string small_chunks = message.substr(i, chunk_limit);
+
+      if(sp_blocking_write(platform_socket_,(void *)small_chunks.c_str(),small_chunks.length(),10) < 1) {
+        return false;
+      }
+
+      LOG_DEBUG(DEBUG,"write success %s\n",small_chunks.c_str());
+
+      // Wait before sending the next chunk of data. Otherwise, bytes will be lost
+      this_thread::sleep_for (std::chrono::milliseconds(5));
+    }
+
+    // Send new line charactor
+    if(sp_blocking_write(platform_socket_,"\n",1,1) > 0){
+      return true;
+    }
+
     return false;
 }
 

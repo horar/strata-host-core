@@ -16,6 +16,7 @@ Rectangle {
     property real infoBoxBorderWidth: 1
     property bool realNumberValidation: false
     property bool enabled: true
+    property bool buttonVisible: true
     property string buttonText: "Submit"
 
     implicitHeight: labelLeft ? inputButtonContainer.height : labelText.height + inputButtonContainer.height + inputButtonContainer.anchors.topMargin
@@ -36,8 +37,8 @@ Rectangle {
 
     Rectangle {
         id: inputButtonContainer
-        width: infoContainer.width + applyButton.width + applyButton.anchors.leftMargin
-        height: Math.max(infoContainer.height, applyButton.height)
+        width: root.buttonVisible ? infoContainer.width + applyButton.width + applyButton.anchors.leftMargin : infoContainer.width
+        height: root.buttonVisible ? Math.max(infoContainer.height, applyButton.height) : infoContainer.height
         color: "transparent"
         anchors {
             left: root.labelLeft ? labelText.right : labelText.left
@@ -73,7 +74,10 @@ Rectangle {
                 text: input
                 selectByMouse: true
                 readOnly: false
-                font.family: "Courier" // Monospaced font for better text width uniformity
+                font {
+                  family: "Courier" // Monospaced font for better text width uniformity
+                  pixelSize: (Qt.platform.os === "osx") ? 12 : 10;
+                }
                 horizontalAlignment: TextInput.AlignRight
                 validator: realNumberValidation ? realNumberValidator : null
                 onAccepted: root.applied(infoText.text)
@@ -90,6 +94,7 @@ Rectangle {
 
         Button {
             id: applyButton
+            visible: root.buttonVisible
             text: root.buttonText
             anchors {
                 left: infoContainer.right

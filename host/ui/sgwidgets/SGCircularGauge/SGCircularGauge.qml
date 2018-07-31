@@ -42,7 +42,7 @@ Rectangle {
             tickmark: Rectangle {
                 id: tickmarks
 //                color: styleData.value > gauge.value ? root.gaugeRearColor : (styleData.value > gauge.value-1 ? "red" : "root.gaugeFrontColor")
-                color: styleData.value > gauge.value ? root.gaugeRearColor : lerpColor(root.gaugeFrontColor1, root.gaugeFrontColor2, styleData.value/gauge.maximumValue)
+                color: styleData.value >= gauge.value ? root.gaugeRearColor : lerpColor(root.gaugeFrontColor1, root.gaugeFrontColor2, styleData.value/gauge.maximumValue)
                 width: gauge.width / 68.26
                 height: gauge.width / 4.26
                 antialiasing: true
