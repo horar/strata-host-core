@@ -223,4 +223,9 @@ ChartView {
         lastRedrawTime = Date.now()
         return seconds;
     }
+
+    function reset(){
+        rootChart.graphTime = rootChart.dataTime = 0
+        dataLine.clear()
+    }
 }
