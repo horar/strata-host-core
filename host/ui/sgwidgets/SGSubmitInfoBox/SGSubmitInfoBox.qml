@@ -6,10 +6,10 @@ Rectangle {
 
     signal applied(string value)
 
-    property string label: ""
+    property alias label: labelText.text
     property bool labelLeft: true
-    property string input: ""
-    property real infoBoxWidth: 50
+    property alias input: infoText.text
+    property alias infoBoxWidth: infoContainer.width
     property color textColor: "#000"
     property color infoBoxColor: "#eee"
     property color infoBoxBorderColor: "#cccccc"
@@ -17,7 +17,9 @@ Rectangle {
     property bool realNumberValidation: false
     property bool enabled: true
     property bool buttonVisible: true
-    property string buttonText: "Submit"
+    property alias buttonText: applyButton.text
+    property alias overrideLabelWidth: labelText.width
+    property alias readOnly: infoText.readOnly
 
     implicitHeight: labelLeft ? inputButtonContainer.height : labelText.height + inputButtonContainer.height + inputButtonContainer.anchors.topMargin
     implicitWidth: labelLeft ? labelText.width + inputButtonContainer.width + inputButtonContainer.anchors.leftMargin :
@@ -26,7 +28,7 @@ Rectangle {
 
     Text {
         id: labelText
-        text: label
+        text: ""
         width: contentWidth
         height: root.label === "" ? 0 : root.labelLeft ? infoContainer.height : contentHeight
         topPadding: root.label === "" ? 0 : root.labelLeft ? (Math.max(infoContainer.height, applyButton.height) - contentHeight) / 2 : 0
@@ -50,12 +52,12 @@ Rectangle {
         Rectangle {
             id: infoContainer
             height: 30
-            width: root.infoBoxWidth
-            color: root.infoBoxColor
+            width: 50
+            color: infoBoxColor
             radius: 2
             border {
-                color: root.infoBoxBorderColor
-                width: root.infoBoxBorderWidth
+                color: infoBoxBorderColor
+                width: infoBoxBorderWidth
             }
             anchors {
                 left: inputButtonContainer.left
@@ -71,7 +73,7 @@ Rectangle {
                     verticalCenter: parent.verticalCenter
                     left: parent.left
                 }
-                text: input
+                text: ""
                 selectByMouse: true
                 readOnly: false
                 font {
@@ -95,7 +97,7 @@ Rectangle {
         Button {
             id: applyButton
             visible: root.buttonVisible
-            text: root.buttonText
+            text: "Submit"
             anchors {
                 left: infoContainer.right
                 leftMargin: 10
@@ -103,6 +105,7 @@ Rectangle {
             }
             onClicked: root.applied(infoText.text)
             enabled: root.enabled
+            height: visible ? 40 : 0
         }
     }
 }
