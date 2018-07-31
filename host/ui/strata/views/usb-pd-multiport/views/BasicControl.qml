@@ -31,25 +31,25 @@ Item {
     PlugAnimation {
         id: port1Animation
         x: 748 * ratioCalc
-        y: 83 * ratioCalc
+        y: 63 * ratioCalc
     }
 
     PlugAnimation {
         id: port2Animation
         x: 748 * ratioCalc
-        y: 275 * ratioCalc
+        y: 255 * ratioCalc
     }
 
     PlugAnimation {
         id: port3Animation
         x: 748 * ratioCalc
-        y: 467 * ratioCalc
+        y: 447 * ratioCalc
     }
 
     PlugAnimation {
         id: port4Animation
         x: 748 * ratioCalc
-        y: 659 * ratioCalc
+        y: 639 * ratioCalc
     }
 
     Item {
@@ -66,7 +66,7 @@ Item {
             color: "#eee"
             anchors {
                 top: inputColumn.top
-                topMargin: 55 * ratioCalc
+                topMargin: 35 * ratioCalc
                 left: inputColumn.left
                 right: inputColumn.right
             }
@@ -114,7 +114,7 @@ Item {
             height: 172 * ratioCalc
             anchors {
                 top: portColumn.top
-                topMargin: 55 * ratioCalc
+                topMargin: 35 * ratioCalc
                 left: portColumn.left
                 right: portColumn.right
             }
@@ -444,7 +444,7 @@ Item {
         Column {
             anchors {
                 top: deviceColumn.top
-                topMargin: 55 * ratioCalc
+                topMargin: 35 * ratioCalc
                 right: deviceColumn.right
             }
 

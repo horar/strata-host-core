@@ -120,8 +120,8 @@ Item {
                 visible: uncheckedLabel === "" ? false : root.labelsInside
                 color: "white"
                 anchors {
-                    verticalCenter: parent.verticalCenter
-                    right: parent.right
+                    verticalCenter: groove.verticalCenter
+                    right: groove.right
                     rightMargin: 5
                 }
                 font.pixelSize: root.fontSize
@@ -131,8 +131,8 @@ Item {
             Rectangle {
                 id: grooveFill
                 visible: width === handle.width ? false : true
-                width: ((switchRoot.visualPosition * parent.width) + (1-switchRoot.visualPosition) * handle.width)
-                height: parent.height
+                width: ((switchRoot.visualPosition * groove.width) + (1-switchRoot.visualPosition) * handle.width)
+                height: groove.height
                 color: root.grooveFillColor
                 radius: height/2
                 clip:true
@@ -147,8 +147,8 @@ Item {
                     visible: checkedLabel === "" ? false : root.labelsInside
                     color: "white"
                     anchors {
-                        verticalCenter: parent.verticalCenter
-                        left: parent.left
+                        verticalCenter: grooveFill.verticalCenter
+                        left: grooveFill.left
                         leftMargin: 5
                     }
                     font.pixelSize: root.fontSize
@@ -158,7 +158,7 @@ Item {
 
             Rectangle {
                 id: handle
-                x: ((switchRoot.visualPosition * parent.width) + (1-switchRoot.visualPosition) * width) - width
+                x: ((switchRoot.visualPosition * groove.width) + (1-switchRoot.visualPosition) * width) - width
                 width: 26
                 height: 26
                 radius: 13

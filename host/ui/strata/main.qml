@@ -12,7 +12,7 @@ Window {
     title: qsTr("Encore Design Suite")
 
     // Debug option(s)
-    property bool showDebugCommandBar: false
+    property bool showDebugCommandBar: true
 
     Component.onCompleted: {
         console.log("Initializing")
@@ -35,7 +35,7 @@ Window {
             width: parent.width
 
             property real windowHeight: mainWindow.height  // for centering popups spawned from the statusbar
-            property bool showDebug: showDebugCommandBar  // for linking debug in status bar to the debug bar
+            property bool showDebug: false  // for linking debug in statusbar to the debug bar
         }
 
         Flipable {
@@ -80,7 +80,7 @@ Window {
         id: commandBar
         visible: showDebugCommandBar
         width: parent.width
-        height: 44
+        height: childrenRect.height
         color: "lightgrey"
         anchors {
             bottom: parent.bottom
@@ -89,7 +89,7 @@ Window {
         // Simulate Platform events
         GridLayout {
             columns: 10
-            anchors.centerIn: parent
+            anchors { horizontalCenter: commandBar.horizontalCenter }
             Button {
                 text: "USB-PD"
                 onClicked: {
@@ -118,8 +118,27 @@ Window {
                     NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT, data)
                 }
             }
+            Button {
+                text: "USB-PD 4 Ports"
+                onClicked: {
+                    var data = { platform_name: "usb-pd-multiport"}
+                    NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT, data)
+                }
+            }
 
             // UI events
+            Button {
+                text: "Toggle Content/Control"
+                onClicked: {
+                    NavigationControl.updateState(NavigationControl.events.TOGGLE_CONTROL_CONTENT)
+                }
+            }
+            Button {
+                text: "Statusbar Debug"
+                onClicked: {
+                    statusBarContainer.showDebug = !statusBarContainer.showDebug
+                }
+            }
             Button {
                 text: "Disconnect"
                 onClicked: {
@@ -136,12 +155,6 @@ Window {
                 }
             }
             Button {
-                text: "Toggle Content/Control"
-                onClicked: {
-                    NavigationControl.updateState(NavigationControl.events.TOGGLE_CONTROL_CONTENT)
-                }
-            }
-            Button {
                 text: "Login as guest"
                 onClicked: {
                     var data = { user_id: "Guest" }
@@ -149,15 +162,18 @@ Window {
                 }
             }
         }
-        Button {
-            text: "X"
-            height: 30
-            width: height
-            onClicked: showDebugCommandBar = false
-            anchors {
-                right: commandBar.right
-            }
+    }
+
+    Button {
+        text: "X"
+        height: 30
+        width: height
+        onClicked: showDebugCommandBar = false
+        anchors {
+            right: commandBar.right
+            bottom: commandBar.top
         }
+        visible: commandBar.visible
     }
 
     Button {

@@ -436,17 +436,17 @@ Rectangle {
                                 width: 270
                                 anchors {
                                     margins: 15
-                                    top: parent.top
-                                    bottom: parent.bottom
-                                    left: parent.left
+                                    top: remoteInviteContainer.top
+                                    bottom: remoteInviteContainer.bottom
+                                    left: remoteInviteContainer.left
                                 }
 
                                 Image {
                                     id: remoteImage
                                     source: remoteToggle.checked ? "qrc:/images/icons/remote-unlocked.png" : "qrc:/images/icons/remote-locked.png"
                                     anchors {
-                                        horizontalCenter: parent.horizontalCenter
-                                        top: parent.top
+                                        horizontalCenter: remoteInviteLeft.horizontalCenter
+                                        top: remoteInviteLeft.top
                                     }
                                 }
 
@@ -455,7 +455,7 @@ Rectangle {
                                     anchors {
                                         top: remoteImage.bottom
                                         topMargin: 15
-                                        horizontalCenter: parent.horizontalCenter
+                                        horizontalCenter: remoteInviteLeft.horizontalCenter
                                     }
                                     label: "Remote Support Access:"
                                     labelLeft: true
@@ -491,7 +491,7 @@ Rectangle {
                                     id: hcs_token
                                     anchors {
                                         top: remoteToggle.bottom
-                                        horizontalCenter: parent.horizontalCenter
+                                        horizontalCenter: remoteInviteLeft.horizontalCenter
                                         topMargin: 25
                                     }
                                     text: remoteToggle.checked ? "Your remote token is: " + coreInterface.hcs_token_ : "Enable to generate remote token"
@@ -513,9 +513,9 @@ Rectangle {
                                 id: remoteInviteRight
                                 anchors {
                                     left: remoteInviteLeft.right
-                                    top: parent.top
-                                    bottom: parent.bottom
-                                    right: parent.right
+                                    top: remoteInviteContainer.top
+                                    bottom: remoteInviteContainer.bottom
+                                    right: remoteInviteContainer.right
                                     leftMargin: 15
                                     topMargin: 10
                                     rightMargin: 5
@@ -524,9 +524,9 @@ Rectangle {
                                 Rectangle {
                                     id: connectedUsersTitle
                                     anchors {
-                                        left: parent.left
-                                        right: parent.right
-                                        top: parent.top
+                                        left: remoteInviteRight.left
+                                        right: remoteInviteRight.right
+                                        top: remoteInviteRight.top
                                     }
                                     height: 30
                                     color: remoteToggle.checked ? Qt.darker(container.color, 1.25) : container.color
@@ -535,8 +535,8 @@ Rectangle {
                                         id: name
                                         text: remoteUserModel.count === 0 ? qsTr("No Connected Users") : qsTr("Connected Users")
                                         anchors {
-                                            verticalCenter: parent.verticalCenter
-                                            left: parent.left
+                                            verticalCenter: connectedUsersTitle.verticalCenter
+                                            left: connectedUsersTitle.left
                                             leftMargin: 10
                                             verticalCenterOffset: 2
                                         }
@@ -551,11 +551,11 @@ Rectangle {
                                     id: connectedUsersContainer
                                     color: remoteToggle.checked ? container.color : Qt.lighter(container.color, 1.25)
                                     anchors {
-                                        left: parent.left
-                                        right: parent.right
+                                        left: remoteInviteRight.left
+                                        right: remoteInviteRight.right
                                         top: connectedUsersTitle.bottom
                                         topMargin: 2
-                                        bottom: parent.bottom
+                                        bottom: remoteInviteRight.bottom
                                         bottomMargin: 10
                                     }
 
@@ -567,14 +567,15 @@ Rectangle {
                                         id: remoteUserDelegate
 
                                         Item {
+                                            id: remoteUserDelegateContainer
                                             width: connectedUsersContainer.width
                                             height: 50
 
                                             Image {
                                                 id: remote_user_img
                                                 anchors {
-                                                    left: parent.left
-                                                    top: parent.top
+                                                    left: remoteUserDelegateContainer.left
+                                                    top: remoteUserDelegateContainer.top
                                                     leftMargin: 4
                                                     topMargin: 4
                                                 }
@@ -798,8 +799,8 @@ Rectangle {
                                 width: tokenBusyTimer.running || statusImage.visible ? 75 : 0
                                 height: tokenBusyTimer.running || statusImage.visible ? 75 : 0
                                 anchors {
-                                    horizontalCenter: parent.horizontalCenter
-                                    top: parent.top
+                                    horizontalCenter: remoteConnectContainer.horizontalCenter
+                                    top: remoteConnectContainer.top
                                     topMargin: height === 0 ? 0 : 30
                                 }
 
