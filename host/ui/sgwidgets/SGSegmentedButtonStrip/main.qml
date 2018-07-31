@@ -19,15 +19,14 @@ Window {
         // Optional configurations:
         label: "Input:"                 // Default: "" (will not appear if not entered)
         labelLeft: false                // Default: true (true: label on left, false: label on top)
-        activeColorTop: "#bbbbbb"       // Default: "#bbbbbb"
-        activeColorBottom: "#999999"    // Default: "#999999"
-        inactiveColorTop: "#dddddd"     // Default: "#dddddd"
-        inactiveColorBottom: "#aaaaaa"  // Default: "#aaaaaa"
+        activeColor: "#999"             // Default: "#999"
+        inactiveColor: "#ddd"           // Default: "#ddd"
         buttonHeight: 35                // Default: 35
-        radius: height/2                // Default: height/2
+        radius: 5                       // Default: height/2
         exclusive: true                 // Default: true
         textColor: "black"              // Default: "black"
-        enabled: true                  // Default: true
+        enabled: true                   // Default: true
+        activeTextColor: "white"        // Default: "white"
 
         segmentedButtons: GridLayout {
             columnSpacing: 2
@@ -52,6 +51,13 @@ Window {
             SGSegmentedButton{
                 text: qsTr("Betamax")
             }
+
+            SGSegmentedButton{
+                text: qsTr("8-track")
+            }
         }
+
+        // Helpful signals:
+        //onNothingCheckedChanged: console.log("nothingChecked changed!")  // For non-exclusive buttons, alerts when the status of "no buttons are checked" changes
     }
 }

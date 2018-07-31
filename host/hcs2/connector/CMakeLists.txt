@@ -94,11 +94,11 @@ set(SOURCE
         ${CMAKE_CURRENT_SOURCE_DIR}/src/PubSubConnector.cc
         )
 
-add_library(libconnectors.so ${SOURCE})
+add_library(connector  ${SOURCE})
 
 if (CROSSCOMPILE)
     message("LINKING: windows")
-    target_link_libraries(libconnectors.so
+    target_link_libraries(connector
             -lzmq.dll
             -lstdc++
             -lpthread
@@ -107,7 +107,7 @@ if (CROSSCOMPILE)
             )
 elseif( UNIX AND NOT APPLE AND NOT CROSSCOMPILE)
     message("LINKING: linux")
-    target_link_libraries(libconnectors.so
+    target_link_libraries(connector
             -lzmq
             -lstdc++
             -lpthread
@@ -115,7 +115,7 @@ elseif( UNIX AND NOT APPLE AND NOT CROSSCOMPILE)
             )
 elseif (APPLE)
     message("LINKING: mac")
-    target_link_libraries(libconnectors.so
+    target_link_libraries(connector
             -lzmq
             -lstdc++
             -lpthread
@@ -126,4 +126,4 @@ else()
     message("ERROR: unsupported operating system !")
 endif ()
 
-target_include_directories (libconnectors.so PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories (connector PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})

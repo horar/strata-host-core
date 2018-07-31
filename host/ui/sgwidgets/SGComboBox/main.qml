@@ -23,6 +23,7 @@ Window {
         borderColor: "#aaa"         // Default: "#aaa"
         boxColor: "white"           // Default: "white"
         dividers: true              // Default: false
+        popupHeight: 300            // Default: 300 (sets max height for popup if model is lengthy)
 
         // Useful Signals:
         onActivated: console.log("item " + index + " activated")

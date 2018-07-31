@@ -76,7 +76,10 @@ Rectangle {
                 readOnly: true
                 selectByMouse: true
                 selectByKeyboard: true
-                font.family: "Courier"
+                font {
+                  family: "Courier" // Monospaced font for better text width uniformity
+                  pixelSize: (Qt.platform.os === "osx") ? 12 : 10;
+                }
                 wrapMode: TextEdit.Wrap
                 textFormat: Text.RichText
                 text: ""
