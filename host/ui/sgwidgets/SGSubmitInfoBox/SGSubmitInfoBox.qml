@@ -11,7 +11,7 @@ Rectangle {
     property alias value: infoText.text
     property alias infoBoxWidth: infoContainer.width
     property color textColor: "#000"
-    property color infoBoxColor: "#eee"
+    property color infoBoxColor: infoText.readOnly ? "transparent" : "#eee"
     property color infoBoxBorderColor: "#cccccc"
     property real infoBoxBorderWidth: 1
     property bool realNumberValidation: false
@@ -53,8 +53,8 @@ Rectangle {
 
         Rectangle {
             id: infoContainer
-            height: 30
-            width: 50
+            height: 25
+            width: 60
             color: infoBoxColor
             radius: 2
             border {
