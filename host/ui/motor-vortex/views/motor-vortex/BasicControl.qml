@@ -15,7 +15,7 @@ Rectangle {
     height: 725
     color: "white"
 
-    //property alias motorSpeedSliderValue: motorSpeedControl.value
+
     property alias warningVisible: warningBox.visible
 
     Component.onCompleted: {

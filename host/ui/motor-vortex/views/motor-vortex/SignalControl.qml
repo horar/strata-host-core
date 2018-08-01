@@ -29,6 +29,39 @@ Item {
 
         property real singleLEDSlider :  0
 
+        property int ledPulseSlider: 150
+
+       onLedPulseSliderChanged:  {
+            platformInterface.set_blink0_frequency.update(ledPulseSlider)
+        }
+
+       property bool driveModePseudoSinusoidal: false
+
+       onDriveModePseudoSinusoidalChanged: {
+           console.log("in the drive mode pse")
+          platformInterface.set_drive_mode.update(1)
+       }
+
+       property bool driveModePseudoTrapezoidal: true
+
+       onDriveModePseudoTrapezoidalChanged: {
+           console.log("in the drive mode trap")
+           platformInterface.set_drive_mode.update(0)
+       }
+
+       property bool motorState: true
+
+       onMotorStateChanged: {
+            console.log("in motor state")
+           if(motorState == true) {
+                platformInterface.set_motor_on_off.update(0)
+           }
+           else  {
+                platformInterface.motor_speed.update(motorSpeedSliderValue);
+               platformInterface.set_motor_on_off.update(1)
+           }
+
+       }
 
 
 

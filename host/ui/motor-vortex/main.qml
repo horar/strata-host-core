@@ -3,6 +3,7 @@ import QtQuick.Window 2.10
 import QtQuick.Controls 1.4
 import QtQuick.Layouts 1.3
 import "js/navigation_control.js" as NavigationControl
+import Qt.labs.settings 1.0
 
 Window {
 
@@ -12,8 +13,28 @@ Window {
     height: 900
     title: qsTr("Encore Design Suite")
 
+
     // Debug option(s)
     property bool showDebugCommandBar: true
+
+    property bool is_remote_connected: false
+
+    Connections {
+         target: coreInterface
+         onRemoteConnectionChanged:{
+             if ( remoteConnectContainer.state === "connecting") {
+
+                 // Successful remote connection
+                 if (result === true){
+                     remoteConnectContainer.state = "success"
+                     is_remote_connected = true
+                 }
+                 else {
+                     remoteConnectContainer.state = "error"
+                 }
+             }
+         }
+    }
 
     Component.onCompleted: {
         console.log("Initializing")
@@ -21,6 +42,15 @@ Window {
     }
 
     onClosing: {
+        if(is_remote_connected) {
+            // sending remote disconnect message to hcs
+            var remote_disconnect_json = {
+                "hcs::cmd":"remote_disconnect",
+            }
+            coreInterface.sendCommand(JSON.stringify(remote_disconnect_json))
+
+            console.log("UI -> HCS ", JSON.stringify(remote_disconnect_json))
+        }
         // End session with HCS
         coreInterface.unregisterClient();
     }

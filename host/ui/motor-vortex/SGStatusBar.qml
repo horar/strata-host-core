@@ -801,6 +801,7 @@ Rectangle {
                     onClicked: {
                         NavigationControl.updateState(NavigationControl.events.LOGOUT_EVENT)
                         remoteConnectContainer.state = "default"
+
                         if(is_remote_connected) {
                             // sending remote disconnect message to hcs
                             var remote_disconnect_json = {

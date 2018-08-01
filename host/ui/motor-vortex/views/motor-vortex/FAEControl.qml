@@ -10,25 +10,14 @@ Rectangle {
     width: 1200
     height: 725
 
-   // property alias motorSpeedSliderValue: targetSpeedSlider.value
-  //  property alias rampRateSliderValue: rampRateSlider.value
-  //  property alias phaseAngle: driveModeCombo.currentIndex
-  //  property alias ledSlider: hueSlider.value
- //   property alias singleLEDSlider: singleColorSlider.value
-    property alias ledPulseSlider: ledPulseFrequency.value
-
-    signal motorStateSignal()
-    signal driveModeSignal(var mode_type)
 
     function resetData(){
         startStopButton.checked = false
-       // motorSpeedSliderValue = 1500
-        signalControl.motorSpeedSliderValue = 1500
-        signalControl.rampRateSliderValue = 3
-        signalControl.phaseAngle = 15
+        targetSpeedSlider.value = 1500
+        rampRateSlider.value = 3
+        driveModeCombo.currentIndex = 15
         faultModel.clear()
-        faeControl.driveModeSignal("Trapezoidal")
-        motorStateSignal()
+        signalControl.driveModePseudoTrapezoidal = true
     }
 
     Component.onCompleted:  {
@@ -38,7 +27,6 @@ Rectangle {
         signalControl.phaseAngle = 15
         platformInterface.set_system_mode.update("manual");
         platformInterface.set_phase_angle.update(15);
-        console.log("phase angle", phaseAngle)
         platformInterface.set_drive_mode.update(0);
 
     }
@@ -208,6 +196,7 @@ Rectangle {
             Button {
                 id: startStopButton
                 text: checked ? qsTr("Start Motor") : qsTr("Stop Motor")
+                checked: signalControl.motorState
                 checkable: true
                 property var motorOff: platformInterface.motor_off.enable;
 
@@ -227,25 +216,9 @@ Rectangle {
                     horizontalAlignment: Text.AlignHCenter
                     verticalAlignment: Text.AlignVCenter
                 }
-                Connections {
-                    target: advanceView
-                    onMotorStateSignal: {
-                        console.log("signal called");
-                        startStopButton.checked = false;
-                        faultModel.clear()
-                    }
-                }
 
                 onClicked: {
-                    if(checked) {
-                        platformInterface.set_motor_on_off.update(0)
-                    }
-                    else {
-                        platformInterface.motor_speed.update(targetSpeedSlider.value.toFixed(0));
-                        platformInterface.set_motor_on_off.update(1)
-                        motorStateSignal();
-                        faultModel.clear();
-                    }
+                      signalControl.motorState = checked
                 }
             }
 
@@ -360,7 +333,7 @@ Rectangle {
                 }
 
                 onValueChanged: {
-                   // platformInterface.motor_speed.update(value.toFixed(0));
+                    // platformInterface.motor_speed.update(value.toFixed(0));
                     setSpeed.input = value.toFixed(0)
                     signalControl.motorSpeedSliderValue = value.toFixed(0)
                     console.log("in fae", targetSpeedSlider.value)
@@ -492,42 +465,21 @@ Rectangle {
                     property alias ps : ps
                     property alias trap: trap
 
-                    Connections {
-                        target: advanceView
-                        onDriveModeSignal: {
-                            console.log("mode type", mode_type)
-                            if(mode_type == "Trapezoidal"){
-                                trap.checked = true;
-                                ps.checked = false;
-                            }
-
-                            else {
-                                trap.checked = false;
-                                ps.checked = true;
-                            }
-
-                        }
-                    }
                     SGRadioButton {
                         id: ps
                         text: "Pseudo-Sinusoidal"
+                        checked: signalControl.driveModePseudoSinusoidal
                         onCheckedChanged: {
-                            if (checked) {
-                                platformInterface.set_drive_mode.update(1)
-                                driveModeSignal("Pseudo-Sinusoidal");
-                            }
+                            signalControl.driveModePseudoSinusoidal = checked
                         }
                     }
 
                     SGRadioButton {
                         id: trap
                         text: "Trapezoidal"
-                        checked: true
+                        checked: signalControl.driveModePseudoTrapezoidal
                         onCheckedChanged: {
-                            if (checked) {
-                                platformInterface.set_drive_mode.update(0)
-                                driveModeSignal("Trapezoidal");
-                            }
+                            signalControl.driveModePseudoTrapezoidal = checked
                         }
                     }
                 }
@@ -670,7 +622,7 @@ Rectangle {
             SGSlider {
                 id: ledPulseFrequency
                 label: "LED Pulse Frequency:"
-                value: 152
+                value: signalControl.ledPulseSlider
                 from: 1
                 to: 152
                 anchors {
@@ -684,7 +636,7 @@ Rectangle {
 
                 onValueChanged: {
                     setLedPulse.input = value.toFixed(0)
-                    platformInterface.set_blink0_frequency.update(value.toFixed(0));
+                    signalControl.ledPulseSlider = value.toFixed(0)
                 }
             }
 
@@ -698,7 +650,7 @@ Rectangle {
                 }
                 buttonVisible: false
                 onApplied:  {
-                    ledPulseFrequency.value = parseInt(value, 10)
+                    signalControl.ledPulseSlider =  parseInt(value, 10)
                 }
                 input: ledPulseFrequency.value
                 infoBoxWidth: 80

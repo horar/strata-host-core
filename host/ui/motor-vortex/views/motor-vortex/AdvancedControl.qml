@@ -11,24 +11,15 @@ Rectangle {
     width: 1200
     height: 725
 
-    //  property alias motorSpeedSliderValue: targetSpeedSlider.value
-   // property alias rampRateSliderValue: rampRateSlider.value
-   // property alias phaseAngle: driveModeCombo.currentIndex
-    //property alias ledSlider: hueSlider.value
-   // property alias singleLEDSlider: singleColorSlider.value
-    property alias ledPulseSlider: ledPulseFrequency.value
-
-    signal motorStateSignal() // signal is called when the motor is off
-    signal driveModeSignal(var mode_type)
-
     function resetData(){
+
         startStopButton.checked = false
-        signalControl.motorSpeedSliderValue = 1500
-        signalControl.rampRateSliderValue = 3
-        phaseAngle = 15
+        targetSpeedSlider.value = 1500
+        rampRateSlider.value = 3
+        driveModeCombo.currentIndex = 15
         faultModel.clear()
-        advancedControl.driveModeSignal("Trapezoidal")
-        motorStateSignal()
+        signalControl.driveModePseudoTrapezoidal = true
+
     }
 
     Component.onCompleted:  {
@@ -152,6 +143,7 @@ Rectangle {
                 id: startStopButton
                 text: checked ? qsTr("Start Motor") : qsTr("Stop Motor")
                 checkable: true
+                checked: signalControl.motorState
                 property var motorOff: platformInterface.motor_off.enable;
 
                 onMotorOffChanged: {
@@ -171,26 +163,9 @@ Rectangle {
                     horizontalAlignment: Text.AlignHCenter
                     verticalAlignment: Text.AlignVCenter
                 }
-                Connections {
-                    target: faeView
-                    onMotorStateSignal: {
-                        console.log("signal called");
-                        startStopButton.checked = false;
-                        faultModel.clear()
-                    }
-                }
+
                 onClicked: {
-                    if(checked) {
-                        platformInterface.set_motor_on_off.update(0)
-
-                    }
-                    else {
-                        platformInterface.motor_speed.update(targetSpeedSlider.value.toFixed(0));
-                        platformInterface.set_motor_on_off.update(1)
-                        motorStateSignal();
-                        faultModel.clear();
-
-                    }
+                   signalControl.motorState = checked
                 }
             }
 
@@ -303,8 +278,6 @@ Rectangle {
                 }
 
                 onValueChanged: {
-
-
                     setSpeed.input = value.toFixed(0)
                     signalControl.motorSpeedSliderValue = value.toFixed(0)
                     console.log("in advance", targetSpeedSlider.value)
@@ -417,44 +390,23 @@ Rectangle {
                     property alias ps : ps
                     property alias trap: trap
 
-                    Connections {
-                        target: faeView
-                        onDriveModeSignal: {
-                            console.log("mode type", mode_type)
-                            if(mode_type == "Trapezoidal"){
-                                trap.checked = true;
-                                ps.checked = false;
-                            }
-
-                            else {
-                                trap.checked = false;
-                                ps.checked = true;
-                            }
-
-                        }
-                    }
 
                     SGRadioButton {
                         id: ps
                         text: "Pseudo-Sinusoidal"
+                        checked: signalControl.driveModePseudoSinusoidal
                         onCheckedChanged: {
-                            if (checked) {
-                                platformInterface.set_drive_mode.update(1)
-                                driveModeSignal("Pseudo-Sinusoidal");
-                            }
+                            signalControl.driveModePseudoSinusoidal = checked
                         }
                     }
 
                     SGRadioButton {
                         id: trap
                         text: "Trapezoidal"
-                        checked: true
+                        checked: signalControl.driveModePseudoTrapezoidal
                         onCheckedChanged: {
-                            if (checked) {
-                                platformInterface.set_drive_mode.update(0)
-                                driveModeSignal("Trapezoidal");
+                            signalControl.driveModePseudoTrapezoidal = checked
 
-                            }
                         }
                     }
                 }
@@ -601,7 +553,7 @@ Rectangle {
             SGSlider {
                 id: ledPulseFrequency
                 label: "LED Pulse Frequency:"
-                value: 152
+                value: signalControl.ledPulseSlider
                 from: 1
                 to: 152
                 anchors {
@@ -615,7 +567,7 @@ Rectangle {
 
                 onValueChanged: {
                     setLedPulse.input = value.toFixed(0)
-                    platformInterface.set_blink0_frequency.update(value.toFixed(0));
+                    signalControl.ledPulseSlider = value.toFixed(0)
 
                 }
             }
@@ -630,7 +582,7 @@ Rectangle {
                 }
                 buttonVisible: false
                 onApplied:  {
-                    ledPulseFrequency.value = parseInt(value, 10)
+                    signalControl.ledPulseSlider =  parseInt(value, 10)
                 }
                 input: ledPulseFrequency.value
                 infoBoxWidth: 80
