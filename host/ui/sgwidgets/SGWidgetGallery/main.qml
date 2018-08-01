@@ -401,10 +401,12 @@ Window {
                         input: "6"    // String to this to be displayed in box
                         infoBoxWidth: 80            // Must be set by user based on their needs
 
-                        label: "Voltage (volts):"       // Default: "" (if not entered, label will not appear)
+                        label: "Voltage:"       // Default: "" (if not entered, label will not appear)
                         labelLeft: false                 // Default: true (if false, label will be on top)
                         realNumberValidation: true      // Default: false (set true to restrict enterable values to real numbers)
                         buttonText: "Apply"
+                        showButton: true
+                        unit: "V"
 
                         onApplied: console.log("Applied string value is " + value)
                     }

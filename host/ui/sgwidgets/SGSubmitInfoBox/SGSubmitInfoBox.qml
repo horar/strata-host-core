@@ -16,10 +16,11 @@ Rectangle {
     property real infoBoxBorderWidth: 1
     property bool realNumberValidation: false
     property bool enabled: true
-    property bool buttonVisible: true
+    property alias showButton: applyButton.visible
     property alias buttonText: applyButton.text
     property alias overrideLabelWidth: labelText.width
     property alias readOnly: infoText.readOnly
+    property alias unit: unit.text
 
     implicitHeight: labelLeft ? inputButtonContainer.height : labelText.height + inputButtonContainer.height + inputButtonContainer.anchors.topMargin
     implicitWidth: labelLeft ? labelText.width + inputButtonContainer.width + inputButtonContainer.anchors.leftMargin :
@@ -35,12 +36,13 @@ Rectangle {
         bottomPadding: topPadding
         color: root.textColor
         opacity: root.enabled ? 1 : 0.5
+        horizontalAlignment: Text.AlignRight
     }
 
     Rectangle {
         id: inputButtonContainer
-        width: root.buttonVisible ? infoContainer.width + applyButton.width + applyButton.anchors.leftMargin : infoContainer.width
-        height: root.buttonVisible ? Math.max(infoContainer.height, applyButton.height) : infoContainer.height
+        width: root.showButton ? infoContainer.width + applyButton.width + applyButton.anchors.leftMargin : infoContainer.width
+        height: root.showButton ? Math.max(infoContainer.height, applyButton.height) : infoContainer.height
         color: "transparent"
         anchors {
             left: root.labelLeft ? labelText.right : labelText.left
@@ -94,13 +96,23 @@ Rectangle {
             }
         }
 
-        Button {
-            id: applyButton
-            visible: root.buttonVisible
-            text: "Submit"
+        Text {
+            id: unit
+            text: ""
             anchors {
                 left: infoContainer.right
-                leftMargin: 10
+                leftMargin: text === "" ? 0 : 5
+                verticalCenter: infoContainer.verticalCenter
+            }
+        }
+
+        Button {
+            id: applyButton
+            visible: false
+            text: "Submit"
+            anchors {
+                left: unit.right
+                leftMargin: unit.text === "" ? 10 : 20
                 verticalCenter: infoContainer.verticalCenter
             }
             onClicked: root.applied(infoText.text)
