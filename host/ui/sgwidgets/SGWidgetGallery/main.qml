@@ -398,7 +398,7 @@ Window {
                             leftMargin: 20
                         }
 
-                        input: "6"    // String to this to be displayed in box
+                        value: "6"    // String to this to be displayed in box
                         infoBoxWidth: 80            // Must be set by user based on their needs
 
                         label: "Voltage:"       // Default: "" (if not entered, label will not appear)

@@ -10,7 +10,7 @@ Window {
     SGSubmitInfoBox {
         id: applyInfoBox
 
-        input: "6"                  // Default string to be displayed in box
+        value: "6"                  // Default string to be displayed in box
         infoBoxWidth: 80            // Must be set by user based on their needs
 
         // Optional configuration:

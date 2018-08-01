@@ -8,7 +8,7 @@ Rectangle {
 
     property alias label: labelText.text
     property bool labelLeft: true
-    property alias input: infoText.text
+    property alias value: infoText.text
     property alias infoBoxWidth: infoContainer.width
     property color textColor: "#000"
     property color infoBoxColor: "#eee"
