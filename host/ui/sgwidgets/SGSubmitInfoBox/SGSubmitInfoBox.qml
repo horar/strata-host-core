@@ -37,6 +37,7 @@ Rectangle {
         color: root.textColor
         opacity: root.enabled ? 1 : 0.5
         horizontalAlignment: Text.AlignRight
+        visible: text !== ""
     }
 
     Rectangle {
@@ -104,6 +105,7 @@ Rectangle {
                 leftMargin: text === "" ? 0 : 5
                 verticalCenter: infoContainer.verticalCenter
             }
+            visible: text !== ""
         }
 
         Button {
