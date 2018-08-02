@@ -13,6 +13,7 @@ Rectangle {
     property string user_id: ""
     property bool is_logged_in: false
     property bool is_remote_connected: false
+    property bool is_remote_advertised: false
     property string generalTitle: "Guest"
     //property color backgroundColor: "#0c54e5"
     property color backgroundColor: "#C0C0C0"

@@ -22,18 +22,16 @@ Window {
     Connections {
          target: coreInterface
          onRemoteConnectionChanged:{
-             if ( remoteConnectContainer.state === "connecting") {
 
                  // Successful remote connection
                  if (result === true){
-                     remoteConnectContainer.state = "success"
                      is_remote_connected = true
                  }
                  else {
-                     remoteConnectContainer.state = "error"
+                     is_remote_connected = false
                  }
              }
-         }
+
     }
 
     Component.onCompleted: {
