@@ -408,10 +408,10 @@ Rectangle {
                 onClicked: {
                     advertiseButton.checked = !advertiseButton.checked
                     if(advertiseButton.checked) {
-                        var advertise=true
+                       is_remote_advertised =true
                     }
                     else {
-                        var advertise= false
+                        is_remote_advertised= false
                         remote_activity_label.visible = false
                         remote_user_container.visible = false
                         remote_user_label.visible = false
@@ -420,7 +420,7 @@ Rectangle {
                     var remote_json = {
                         "hcs::cmd":"advertise",
                         "payload": {
-                            "advertise_platforms":advertise
+                            "advertise_platforms":is_remote_advertised
                         }
                     }
                     console.log("asking hcs to advertise the platforms",JSON.stringify(remote_json))
@@ -811,6 +811,17 @@ Rectangle {
                             coreInterface.sendCommand(JSON.stringify(remote_disconnect_json))
 
                             console.log("UI -> HCS ", JSON.stringify(remote_disconnect_json))
+                        }
+                        if(is_remote_advertised){
+                            is_remote_advertised = false
+                            var remote_json = {
+                                "hcs::cmd":"advertise",
+                                "payload": {
+                                    "advertise_platforms":is_remote_advertised
+                                }
+                            }
+                            console.log("asking hcs to advertise the platforms",JSON.stringify(remote_json))
+                            coreInterface.sendCommand(JSON.stringify(remote_json))
                         }
                     }
                 }
