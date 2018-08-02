@@ -277,5 +277,6 @@
         <file>views/entice_rgb/sgwidgets/images/sliderValue.svg</file>
         <file>views/entice_rgb/sgwidgets/fonts/digitalseven.ttf</file>
         <file>views/entice_rgb/sgwidgets/fonts/sgicons.ttf</file>
+        <file>views/motor-vortex/SignalControl.qml</file>
     </qresource>
 </RCC>

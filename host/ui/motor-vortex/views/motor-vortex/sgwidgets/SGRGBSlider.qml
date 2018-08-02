@@ -5,7 +5,7 @@ import QtGraphicalEffects 1.0
 Item {
     id: root
 
-    property real value: 0
+    property alias value: rgbSlider.value
     property var rgbArray: hToRgb(value)
     property string color: "red"
     property int color_value: 0
@@ -30,7 +30,7 @@ Item {
     Slider {
         id: rgbSlider
         padding: 0
-        value: root.value
+        value: 0
         height: root.sliderHeight
         anchors {
             left: root.labelLeft ? labelText.right : labelText.left
@@ -39,12 +39,7 @@ Item {
             topMargin: root.label === "" ? 0 : root.labelLeft ? 0 : 5
             right: root.right
         }
-
-        onPressedChanged: {
-            if (!rgbSlider.pressed) {
-                root.value = value //Math.floor(value * 255)
-            }
-        }
+        live: false
 
         background: Rectangle {
             y: 4

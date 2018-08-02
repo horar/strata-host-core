@@ -356,7 +356,7 @@ void CoreInterface::registerClient()
 //
 void CoreInterface::unregisterClient()
 {
-    std::string cmd= "{\"cmd\":\"unregister\"}";
+    std::string cmd= "{\"hcs::cmd\":\"unregister\"}";
     hcc->sendCmd(cmd);
 }
 
