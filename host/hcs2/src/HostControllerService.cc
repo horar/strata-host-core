@@ -642,7 +642,7 @@ void HostControllerService::parseHCSCommands(const string &hcs_message)
     // handle remote disconnect from FAE
     else if(!(strcmp(hcs_command["hcs::cmd"].GetString(),"remote_disconnect"))) {
         // FAE when opts out of remote connection, the "disconnect" string is sent to bridge service
-        if(remote_connector_->isConnected()) {
+        // if(remote_connector_->isConnected()) {
             remote_connector_->send("disconnect");
             discovery_service_->disconnect(g_platform_uuid_);
             sendDisconnecttoUI();
@@ -651,7 +651,7 @@ void HostControllerService::parseHCSCommands(const string &hcs_message)
             event_del(&remote_handler_);
             event_del(&activity_handler_);
             remote_connector_->close();
-        }
+        // }
     }
     // disconnect a particular user
     else if(!(strcmp(hcs_command["hcs::cmd"].GetString(),"disconnect_remote_user"))) {
@@ -663,6 +663,10 @@ void HostControllerService::parseHCSCommands(const string &hcs_message)
     }
     else if(!(strcmp(hcs_command["hcs::cmd"].GetString(),"disconnect_platform"))) {
         PDEBUG(PRINT_DEBUG,"User has requested to disconnect from platform\n");
+        platform_client_mapping_.clear();
+    }
+    else if(!(strcmp(hcs_command["hcs::cmd"].GetString(),"unregister"))) {
+        PDEBUG(PRINT_DEBUG,"User has disconnected\n");
         platform_client_mapping_.clear();
     }
 }
