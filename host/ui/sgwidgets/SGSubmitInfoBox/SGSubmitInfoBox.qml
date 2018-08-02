@@ -11,7 +11,7 @@ Rectangle {
     property alias value: infoText.text
     property alias infoBoxWidth: infoContainer.width
     property color textColor: "#000"
-    property color infoBoxColor: infoText.readOnly ? "transparent" : "#eee"
+    property color infoBoxColor: infoText.readOnly ? "#eee" : "transparent"
     property color infoBoxBorderColor: "#cccccc"
     property real infoBoxBorderWidth: 1
     property bool realNumberValidation: false
@@ -93,6 +93,15 @@ Rectangle {
                 RegExpValidator {
                     id: realNumberValidator
                     regExp: /[-+]?([0-9]*\.[0-9]+|[0-9]+)/
+                }
+
+                MouseArea {
+                    visible: !infoText.readOnly
+                    anchors {
+                        fill: infoText
+                    }
+                    cursorShape: Qt.IBeamCursor
+                    acceptedButtons: Qt.NoButton
                 }
             }
         }
