@@ -340,7 +340,8 @@ Item {
                 startLabel: "0V"
                 endLabel: "20V"
                 //copy the current values for other stuff, and add the new slider value for the limit.
-                onValueChanged: platformInterface.set_input_voltage_foldback.update(platformInterface.foldback_input_voltage_limiting_event.input_voltage_foldback_enabled, value,
+                onValueChanged: platformInterface.set_input_voltage_foldback.update(platformInterface.foldback_input_voltage_limiting_event.input_voltage_foldback_enabled,
+                                 value,
                                 platformInterface.foldback_input_voltage_limiting_event.foldback_minimum_voltage_power)
             }
 
@@ -411,6 +412,9 @@ Item {
                 switchHeight: 20
                 switchWidth: 46
                 checked: platformInterface.foldback_temperature_limiting_event.temperature_foldback_enabled
+                onCheckedChanged: platformInterface.set_temperature_foldback.update(tempFoldbackSwitch.checked,
+                                                                                    platformInterface.foldback_temperature_limiting_event.foldback_maximum_temperature,
+                                                                                    platformInterface.foldback_temperature_limiting_event.foldback_maximum_temperature_power)
             }
 
             SGSlider {
@@ -428,9 +432,10 @@ Item {
                 to: 200
                 startLabel: "25°C"
                 endLabel: "200°C"
-                value: platformInterface.foldback_temperature_limiting_event.temperature_foldback_enabled
-                onValueChanged: platformInterface.set_temperature_foldback.update(platformInterface.foldback_temperature_limiting_event.enabled, foldbackTemp.value,
-                                                                                    platformInterface.foldback_temperature_limiting_event.power)
+                value: platformInterface.foldback_temperature_limiting_event.foldback_maximum_temperature
+                onValueChanged: platformInterface.set_temperature_foldback.update(platformInterface.foldback_temperature_limiting_event.temperature_foldback_enabled,
+                                                                                  foldbackTemp.value,
+                                                                                  platformInterface.foldback_temperature_limiting_event.foldback_maximum_temperature_power)
 
             }
 
@@ -455,11 +460,11 @@ Item {
                     topMargin: 10
                 }
                 //when changing the value
-                onActivated: platformInterface.set_temperature_foldback.update(platformInterface.foldback_temperature_limiting_event.enabled,
-                                                                                 platformInterface.foldback_temperature_limiting_event.temperature,
+                onActivated: platformInterface.set_temperature_foldback.update(platformInterface.foldback_temperature_limiting_event.temperature_foldback_enabled,
+                                                                                 platformInterface.foldback_temperature_limiting_event.foldback_maximum_temperature,
                                                                                  limitOutput2.displayText)
 
-                property var currentFoldbackOuput: platformInterface.foldback_temperature_limiting_event.foldback_maximum_temperature
+                property var currentFoldbackOuput: platformInterface.foldback_temperature_limiting_event.foldback_maximum_temperature_power
 
                 onCurrentFoldbackOuputChanged: {
                     limitOutput2.currentIndex = limitOutput2.comboBox.find( parseInt (platformInterface.foldback_temperature_limiting_event.foldback_maximum_temperature_power))
