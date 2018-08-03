@@ -63,6 +63,8 @@ Item {
            "maximum_temperature":191                             // Temperature limit in degrees C
     }
 
+        //consider the values held by this property to be the master ones, which will be current when needed for calling
+        //the API to set the input voltage foldback
     property var foldback_input_voltage_limiting_event:{
             "input_voltage":0,
             "foldback_minimum_voltage":0,
@@ -89,6 +91,7 @@ Item {
     onFoldback_input_voltage_limiting_refreshChanged: {
         console.log("input voltage refresh notification. minimum voltage = ",foldback_input_voltage_limiting_refresh.foldback_minimum_voltage);
 
+            //update the variables for foldback limiting
         foldback_input_voltage_limiting_event.input_voltage = foldback_input_voltage_limiting_refresh.input_voltage;
         foldback_input_voltage_limiting_event.foldback_minimum_voltage = foldback_input_voltage_limiting_refresh.foldback_minimum_voltage;
         foldback_input_voltage_limiting_event.foldback_minimum_voltage_power = foldback_input_voltage_limiting_refresh.foldback_minimum_voltage_power;
@@ -96,6 +99,8 @@ Item {
         foldback_input_voltage_limiting_event.input_voltage_foldback_active = foldback_input_voltage_limiting_refresh.input_voltage_foldback_active;
     }
 
+    //consider the values held by this property to be the master ones, which will be current when needed for calling
+    //the API to set the input temperature foldback
     property var foldback_temperature_limiting_event:{
             "port":1,
             "current_temperature":0,
@@ -117,6 +122,7 @@ Item {
     }
     //keep the refresh and event notification properties in synch
     onFoldback_temperature_limiting_refreshChanged: {
+        //update the corresponding variables
         foldback_temperature_limiting_event.port = foldback_input_voltage_limiting_refresh.port;
         foldback_temperature_limiting_event.current_temperature = foldback_temperature_limiting_refresh.current_temperature;
         foldback_temperature_limiting_event.foldback_maximum_temperature = foldback_temperature_limiting_refresh.foldback_maximum_temperature;
@@ -237,6 +243,10 @@ Item {
                         "power":45      // in Watts
                        },
                    update: function(enabled,temperature,watts){
+                       //update the variables for this action
+                       foldback_temperature_limiting_event.foldback_maximum_temperature = temperature;
+                       foldback_temperature_limiting_event.foldback_maximum_temperature_power = watts;
+                       foldback_temperature_limiting_event.temperature_foldback_enabled = enabled;
                         this.set(enabled,temperature,watts)
                         CorePlatformInterface.send(this)
                         },

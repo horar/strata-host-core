@@ -22,6 +22,70 @@ Item {
             top: root.top
             bottom: graphSelector.top
         }
+        advertisedVoltage:{
+            if (platformInterface.request_usb_power_notification.port === portNumber){
+                return platformInterface.request_usb_power_notification.negotiated_voltage
+            }
+            else{
+                return portInfo.advertisedVoltage;
+            }
+        }
+        maxPower:{
+            if (platformInterface.request_usb_power_notification.port === portNumber){
+               return Math.round(platformInterface.request_usb_power_notification.negotiated_voltage * platformInterface.request_usb_power_notification.negotiated_current *100)/100
+            }
+            else{
+                return portInfo.maxPower;
+            }
+        }
+        inputPower:{
+            if (platformInterface.request_usb_power_notification.port === portNumber){
+                return platformInterface.request_usb_power_notification.input_voltage * platformInterface.request_usb_power_notification.input_current
+            }
+            else{
+                return portInfo.inputPower;
+            }
+        }
+        outputPower:{
+            if (platformInterface.request_usb_power_notification.port === portNumber){
+                return platformInterface.request_usb_power_notification.output_voltage * platformInterface.request_usb_power_notification.output_current
+            }
+            else{
+                return portInfo.outputPower;
+            }
+        }
+        outputVoltage:{
+            if (platformInterface.request_usb_power_notification.port === portNumber){
+                return Math.round(platformInterface.request_usb_power_notification.output_voltage *100)/100
+            }
+            else{
+                return portInfo.outputVoltage;
+            }
+        }
+        portTemperature:{
+            if (platformInterface.request_usb_power_notification.port === portNumber){
+                return platformInterface.request_usb_power_notification.temperature
+            }
+            else{
+                return portInfo.portTemperature;
+            }
+        }
+        efficency: {
+            var theInputPower = platformInterface.request_usb_power_notification.input_voltage * platformInterface.request_usb_power_notification.input_current;
+            var theOutputPower = platformInterface.request_usb_power_notification.output_voltage * platformInterface.request_usb_power_notification.output_current;
+
+            if (platformInterface.request_usb_power_notification.port === portNumber){
+                if (theInputPower == 0){    //division by 0 would normally give "nan"
+                    return "—"
+                }
+                else{
+                    return theOutputPower/theInputPower
+                }
+            }
+            else{
+                return portInfo.efficency;
+            }
+        }
     }
 
     SGSegmentedButtonStrip {
