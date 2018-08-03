@@ -47,28 +47,212 @@ Item {
         "connection_state": "unknown"
     }
 
-    // @notification system_error
-    // @description: updates faults in AdvancedControl and FAEControl
-    //
-    property var system_error: {
-        "error_and_warnings" : [ ]
-    }
-
-    property var motor_off: {
-        "enable" : ""
-    }
-
-    property var set_mode: {
-        "system_mode" : ""
+    property var usb_pd_protection_action:{
+         "action":"shutdown"     // or "nothing" or "retry"
     }
 
 
-    // -------------------  end notification messages
+   property var input_under_voltage_notification:{
+          "state":"below",                                        // if the input voltage decreases to below the voltage limit, "above" otherwise.
+          "minimum_voltage":0                                     // Voltage limit in volts
+    }
 
+   property var over_temperature_notification:{
+           "port":"USB_C_port_1",                                // or any USB C port
+           "state":"above",                                      // if the temperature crossed from under temperature to over temperature, "below" otherwise.
+           "maximum_temperature":191                             // Temperature limit in degrees C
+    }
 
-    // -------------------
-    // Commands
-    //
+    property var foldback_input_voltage_limiting_event:{
+            "input_voltage":0,
+            "foldback_minimum_voltage":0,
+            "foldback_minimum_voltage_power":0,
+            "input_voltage_foldback_enabled":false,
+            "input_voltage_foldback_active":true
+    }
+    onFoldback_input_voltage_limiting_eventChanged: {
+        console.log("input voltage event notification. values are ",foldback_input_voltage_limiting_refresh.foldback_minimum_voltage,
+                                                                    foldback_input_voltage_limiting_refresh.foldback_minimum_voltage_power,
+                                                                    foldback_input_voltage_limiting_refresh.input_voltage_foldback_enabled,
+                                                                    foldback_input_voltage_limiting_refresh.input_voltage_foldback_active);
+        }
+
+    property var foldback_input_voltage_limiting_refresh:{
+            "input_voltage":0,
+            "foldback_minimum_voltage":0,
+            "foldback_minimum_voltage_power":0,
+            "input_voltage_foldback_enabled":false,
+            "input_voltage_foldback_active":true
+    }
+
+    //keep the refresh and event notification properties in synch
+    onFoldback_input_voltage_limiting_refreshChanged: {
+        console.log("input voltage refresh notification. minimum voltage = ",foldback_input_voltage_limiting_refresh.foldback_minimum_voltage);
+
+        foldback_input_voltage_limiting_event.input_voltage = foldback_input_voltage_limiting_refresh.input_voltage;
+        foldback_input_voltage_limiting_event.foldback_minimum_voltage = foldback_input_voltage_limiting_refresh.foldback_minimum_voltage;
+        foldback_input_voltage_limiting_event.foldback_minimum_voltage_power = foldback_input_voltage_limiting_refresh.foldback_minimum_voltage_power;
+        foldback_input_voltage_limiting_event.input_voltage_foldback_enabled = foldback_input_voltage_limiting_refresh.input_voltage_foldback_enabled;
+        foldback_input_voltage_limiting_event.input_voltage_foldback_active = foldback_input_voltage_limiting_refresh.input_voltage_foldback_active;
+    }
+
+    property var foldback_temperature_limiting_event:{
+            "port":1,
+            "current_temperature":0,
+            "foldback_maximum_temperature":0,
+            "foldback_maximum_temperature_power":0,
+            "temperature_foldback_enabled":true,
+            "temperature_foldback_active":true,
+            "maximum_power":0
+    }
+
+    property var foldback_temperature_limiting_refresh:{
+            "port":1,
+            "current_temperature":0,
+            "foldback_maximum_temperature":0,
+            "foldback_maximum_temperature_power":0,
+            "temperature_foldback_enabled":true,
+            "temperature_foldback_active":true,
+            "maximum_power":0
+    }
+    //keep the refresh and event notification properties in synch
+    onFoldback_temperature_limiting_refreshChanged: {
+        foldback_temperature_limiting_event.port = foldback_input_voltage_limiting_refresh.port;
+        foldback_temperature_limiting_event.current_temperature = foldback_temperature_limiting_refresh.current_temperature;
+        foldback_temperature_limiting_event.foldback_maximum_temperature = foldback_temperature_limiting_refresh.foldback_maximum_temperature;
+        foldback_temperature_limiting_event.foldback_maximum_temperature_power = foldback_temperature_limiting_refresh.foldback_maximum_temperature_power;
+        foldback_temperature_limiting_event.temperature_foldback_enabled = foldback_temperature_limiting_refresh.temperature_foldback_enabled;
+        foldback_temperature_limiting_event.temperature_foldback_active = foldback_temperature_limiting_refresh.temperature_foldback_active;
+        foldback_temperature_limiting_event.maximum_power = foldback_temperature_limiting_refresh.maximum_power;
+    }
+
+    // --------------------------------------------------------------------------------------------
+    //          Commands
+    //--------------------------------------------------------------------------------------------
+
+   property var refresh:({
+                "cmd":"request_platform_refresh",
+                "payload":{
+                 },
+                send: function(){
+                     CorePlatformInterface.send(this)
+                }
+    })
+
+    property var set_protection_action:({
+                "cmd":"request_protection_action",
+                "payload":{
+                        "action":"shutdown"         // "shutdown" or "retry" or "nothing"
+                     },
+                update: function(protectionAction){
+                    this.set(protectionAction)
+                    CorePlatformInterface.send(this)
+                },
+                set: function(protectionAction){
+                    this.payload.action = protectionAction;
+                },
+                send: function(){
+                    CorePlatformInterface.send(this)
+                },
+                show: function(){
+                    CorePlatformInterface.show(this)
+                }
+    })
+    
+    property var set_minimum_input_voltage:({
+               "cmd":"request_set_minimum_voltage",
+               "payload":{
+                    "value":0    // 0 - 20v
+               },
+                update: function(minimumVoltage){
+                    this.set(minimumVoltage)
+                    CorePlatformInterface.send(this)
+                },
+                set: function(minimumVoltage){
+                    this.payload.value = minimumVoltage;
+                },
+                send: function(){
+                    CorePlatformInterface.send(this)
+                },
+                show: function(){
+                    CorePlatformInterface.show(this)
+                }
+    })
+
+    property var set_maximum_temperature :({
+                "cmd":"request_set_maximum_temperature",
+                "payload":{
+                       "value":200    // 0 - 127 degrees C
+                 },
+                 update: function(maximumTemperature){
+                      this.set(maximumTemperature)
+                      CorePlatformInterface.send(this)
+                      },
+                 set: function(maximumTemperature){
+                      this.payload.value = maximumTemperature;
+                      },
+                 send: function(){
+                       CorePlatformInterface.send(this)
+                      },
+                show: function(){
+                      CorePlatformInterface.show(this)
+                      }
+    })
+
+    property var  set_input_voltage_foldback:({
+                  "cmd":"request_voltage_foldback",
+                  "payload":{
+                        "enabled":false,  // or true
+                        "voltage":0,    // in Volts
+                         "power":45      // in Watts
+                       },
+                   update: function(enabled,voltage,watts){
+                       console.log("input voltage foldback update: enabled=",enabled,"voltage=",voltage,"watts=",watts);
+                       //set the notification property values, as the platform won't send a notification in response to this
+                       //command, and those properties are used by controls to see what the value of other controls should be.
+                       foldback_input_voltage_limiting_event.input_voltage_foldback_enabled = enabled;
+                       foldback_input_voltage_limiting_event.foldback_minimum_voltage = voltage;
+                       foldback_input_voltage_limiting_event.foldback_minimum_voltage_power = watts;
+                        this.set(enabled,voltage,watts)
+                        CorePlatformInterface.send(this)
+                        },
+                   set: function(enabled,voltage,watts){
+                        this.payload.enabled = enabled;
+                        this.payload.voltage = voltage;
+                        this.payload.power = watts;
+                        },
+                   send: function(){
+                        CorePlatformInterface.send(this)
+                        },
+                   show: function(){
+                        CorePlatformInterface.show(this)
+                        }
+    })
+
+    property var  set_temperature_foldback:({
+                  "cmd":"request_temperature_foldback",
+                  "payload":{
+                        "enabled":false,  // or true
+                        "temperature":0,    // in °C
+                        "power":45      // in Watts
+                       },
+                   update: function(enabled,temperature,watts){
+                        this.set(enabled,temperature,watts)
+                        CorePlatformInterface.send(this)
+                        },
+                   set: function(enabled,temperature,watts){
+                        this.payload.enabled = enabled;
+                        this.payload.temperature = temperature;
+                        this.payload.power = watts;
+                        },
+                   send: function(){
+                        CorePlatformInterface.send(this)
+                        },
+                   show: function(){
+                        CorePlatformInterface.show(this)
+                        }
+    })
+
     property var motor_speed : ({
                                     "cmd" : "speed_input",
                                     "payload": {
@@ -332,7 +516,9 @@ Item {
     Connections {
         target: coreInterface
         onNotification: {
-            //console.log("**** Notification Received *****",payload);
+            if (!payload.includes("request_usb_power_notification")){
+                console.log("**** Notification",payload);
+            }
             CorePlatformInterface.data_source_handler(payload)
         }
     }

@@ -129,10 +129,11 @@ void CoreInterface::notificationsThread()
             continue;
         }
 
+        //[TODO: ack responses to setting a parameter have both an "ack" and a "payload", which generates an error here. How should that be fixed?]
         QStringList keys = notification_json.keys();
         if( keys.size() != 1 ) {
-            qCritical()<<"ERROR: void CoreInterface::notificationsThreadHandle():"
-                         " More then one key in notification message. Violates message architecture.";
+            //qCritical()<<"ERROR: void CoreInterface::notificationsThreadHandle():"
+            //             " More then one key in notification message. Violates message architecture.";
             continue;
         }
 
