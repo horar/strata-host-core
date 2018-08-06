@@ -218,7 +218,10 @@ Rectangle {
                 }
 
                 onClicked: {
-                      signalControl.motorState = checked
+                    signalControl.motorState = checked
+                    if(checked == true) {
+                        faultModel.clear();
+                    }
                 }
             }
 

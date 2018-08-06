@@ -166,6 +166,10 @@ Rectangle {
 
                 onClicked: {
                    signalControl.motorState = checked
+
+                    if(checked == true) {
+                         faultModel.clear();
+                    }
                 }
             }
 
@@ -396,7 +400,7 @@ Rectangle {
                         text: "Pseudo-Sinusoidal"
                         checked: signalControl.driveModePseudoSinusoidal
                         onCheckedChanged: {
-                            signalControl.driveModePseudoSinusoidal = checked
+                            signalControl.driveModePseudoSinusoidal = ps.checked
                         }
                     }
 
@@ -405,7 +409,7 @@ Rectangle {
                         text: "Trapezoidal"
                         checked: signalControl.driveModePseudoTrapezoidal
                         onCheckedChanged: {
-                            signalControl.driveModePseudoTrapezoidal = checked
+                            signalControl.driveModePseudoTrapezoidal = trap.checked
 
                         }
                     }
