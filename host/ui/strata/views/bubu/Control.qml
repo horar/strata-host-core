@@ -104,8 +104,8 @@ Rectangle {
 
     Row {
         id:functionButton
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.top: parent.top
+        anchors.horizontalCenter: boardBringUP.horizontalCenter
+        anchors.top: boardBringUP.top
         anchors.topMargin: 15
 
 

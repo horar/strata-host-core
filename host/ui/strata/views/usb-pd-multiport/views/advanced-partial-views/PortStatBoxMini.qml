@@ -29,9 +29,9 @@ Rectangle {
             color: "#777"
             text: "<b>" + root.label + "</b>"
             anchors {
-                top: parent.top
+                top: labelBar.top
                 topMargin: 2
-                left: parent.left
+                left: labelBar.left
                 leftMargin: 3
             }
             font {
@@ -43,9 +43,9 @@ Rectangle {
             id: underline
             color: "#ccc"
             height: 1
-            width: parent.width
+            width: labelBar.width
             anchors {
-                bottom: parent.bottom
+                bottom: labelBar.bottom
             }
         }
     }
@@ -55,9 +55,9 @@ Rectangle {
         color: textColor
         text: "<b>" + root.value + "</b>"
         anchors {
-            bottom: parent.bottom
+            bottom: root.bottom
             bottomMargin: root.bottomMargin
-            left: parent.left
+            left: root.left
             leftMargin: 5
         }
         font {

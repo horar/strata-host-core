@@ -5,16 +5,20 @@ import "qrc:/views/usb-pd-multiport/sgwidgets"
 import "qrc:/views/usb-pd-multiport/views"
 
 Item {
-    id: root
+    id: controlView
     objectName: "control"
     anchors { fill: parent }
+
+    PlatformInterface {
+        id: platformInterface
+    }
 
     TabBar {
         id: navTabs
         anchors {
-            top: parent.top
-            left: parent.left
-            right: parent.right
+            top: controlView.top
+            left: controlView.left
+            right: controlView.right
         }
 
         TabButton {
@@ -40,9 +44,9 @@ Item {
         id: controlContainer
         anchors {
             top: navTabs.bottom
-            bottom: parent.bottom
-            right: parent.right
-            left: parent.left
+            bottom: controlView.bottom
+            right: controlView.right
+            left: controlView.left
         }
 
         BasicControl {
@@ -60,5 +64,8 @@ Item {
 
     Component.onCompleted: {
         advancedControl.initialAspectRatio = basicControl.initialAspectRatio = controlContainer.width / controlContainer.height
+
+        //console.log("Refreshing")
+        platformInterface.refresh.send() //ask the platform for all the current values
     }
 }

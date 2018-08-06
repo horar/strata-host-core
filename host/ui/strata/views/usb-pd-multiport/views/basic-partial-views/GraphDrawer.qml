@@ -32,7 +32,7 @@ Item {
         Column  {
             id: menuItems
             width: parent.width
-            anchors { verticalCenter: parent.verticalCenter }
+            anchors { verticalCenter: menuContainer.verticalCenter }
             visible: false
         }
 
