@@ -197,12 +197,16 @@ Rectangle {
                 id: startStopButton
                 text: checked ? qsTr("Start Motor") : qsTr("Stop Motor")
                 checked: signalControl.motorState
-                checkable: true
+
                 property var motorOff: platformInterface.motor_off.enable;
 
                 onMotorOffChanged: {
                     if(motorOff === "off") {
+                        console.log("in motorOFF in fae")
                         startStopButton.checked = true;
+                    }
+                    else {
+                        startStopButton.checked = false
                     }
                 }
                 background: Rectangle {
@@ -217,12 +221,21 @@ Rectangle {
                     verticalAlignment: Text.AlignVCenter
                 }
 
-                onClicked: {
+                onCheckedChanged: {
                     signalControl.motorState = checked
-                    if(checked == true) {
+                    console.log("in fae", startStopButton.checked)
+                    if(checked == false) {
                         faultModel.clear();
                     }
                 }
+
+//                onClicked: {
+//                    //signalControl.motorState = startStopButton.checked
+//                    console.log("in fae",startStopButton.checked )
+//                    if(checked == true) {
+//                        faultModel.clear();
+//                    }
+//                }
             }
 
             Button {

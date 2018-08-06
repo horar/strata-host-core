@@ -56,7 +56,7 @@ Item {
 
     onMotorStateChanged: {
         console.log("in motor state")
-        if(motorState == true) {
+        if(motorState === true) {
             platformInterface.set_motor_on_off.update(0)
         }
         else  {

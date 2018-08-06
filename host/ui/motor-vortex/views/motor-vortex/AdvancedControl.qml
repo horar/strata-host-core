@@ -148,8 +148,11 @@ Rectangle {
 
                 onMotorOffChanged: {
                     if(motorOff === "off") {
-                        startStopButton.checked = true;
+                        startStopButton.checked = true
 
+                    }
+                    else {
+                        startStopButton.checked = false
                     }
                 }
                 background: Rectangle {
@@ -164,10 +167,10 @@ Rectangle {
                     verticalAlignment: Text.AlignVCenter
                 }
 
-                onClicked: {
-                   signalControl.motorState = checked
-
-                    if(checked == true) {
+                onCheckedChanged: {
+                    signalControl.motorState = checked
+                     console.log("in advance", startStopButton.checked)
+                    if(checked == false) {
                          faultModel.clear();
                     }
                 }
@@ -183,6 +186,7 @@ Rectangle {
                 onClicked: {
                     platformInterface.set_reset_mcu.update()
                     resetData()
+
                 }
             }
         }
