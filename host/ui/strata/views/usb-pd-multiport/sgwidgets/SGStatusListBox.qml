@@ -28,11 +28,11 @@ Rectangle {
     Rectangle {
         id: titleArea
         anchors {
-            left: parent.left
-            right: parent.right
-            top: parent.top
+            left: root.left
+            right: root.right
+            top: root.top
         }
-        implicitHeight: 35
+        implicitHeight: visible ? 35 :0
         color: root.titleBoxColor
         border {
             color: root.titleBoxBorderColor
@@ -58,14 +58,13 @@ Rectangle {
         id: statusList
         implicitWidth: contentItem.childrenRect.width
         implicitHeight: contentItem.childrenRect.height
-        //interactive: false
         clip: true
 
         anchors {
-            left: parent.left
-            right: parent.right
-            top: titleArea.visible ? titleArea.bottom : parent.top
-            bottom: parent.bottom
+            left: root.left
+            right: root.right
+            top: titleArea.bottom
+            bottom: root.bottom
             margins: 10
         }
 

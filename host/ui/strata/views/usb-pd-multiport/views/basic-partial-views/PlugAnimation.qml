@@ -32,8 +32,8 @@ AnimatedImage {
             width: 2 * ratioCalc
             height: 23 * ratioCalc
             anchors {
-                left: parent.right
-                verticalCenter: parent.verticalCenter
+                left: coverup1.right
+                verticalCenter: coverup1.verticalCenter
                 verticalCenterOffset: 2
             }
         }
@@ -44,8 +44,8 @@ AnimatedImage {
             height: 50 * ratioCalc
             color: "#d1d1d4"
             anchors {
-                right: parent.left
-                verticalCenter: parent.verticalCenter
+                right: coverup1.left
+                verticalCenter: coverup1.verticalCenter
             }
         }
     }
