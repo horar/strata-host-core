@@ -274,6 +274,7 @@ Rectangle {
             //"P2.2017.1.1.0.0.cbde0519-0f42-4431-a379-caee4a1494af" : "motor-vortex",
             "P2.2018.1.1.0.0.c9060ff8-5c5e-4295-b95a-d857ee9a3671" : "bubu",
             "SEC.2018.004.1.1.0.2.20180710161919.1bfacee3-fb60-471d-98f8-fe597bb222cd" : "usb-pd-multiport",
+            "SEC.2018.004.1.0.1.0.20180717143337.6828783d-b672-4fd5-b66b-370a41c035d2" : "usb-pd-multiport",    //david's new board
             "motorvortex1" : "motor-vortex"
         }
 
@@ -281,8 +282,10 @@ Rectangle {
 
         // Parse JSON
         try {
-            console.log("populatePlaforms: ", platform_list_json)
+            console.log("populatePlatforms: ", platform_list_json)
             var platform_list = JSON.parse(platform_list_json)
+
+            console.log("number of platforms in list:",platform_list.list.length);
 
             for (var i = 0; i < platform_list.list.length; i ++){
                 // Extract platform verbose name and UUID
@@ -293,19 +296,25 @@ Rectangle {
                     "connection" : platform_list.list[i].connection,
                     "uuid"  :   platform_list.list[i].uuid
                 }
+                console.log("looking at platform number ",i);
+                console.log("platform=",platform_info.text," connection type = ",platform_list[i].connection);
 
                 // Append text to state the type of Connection
-                if(platform_list.list[i].connection === "remote"){
+                if(platform_info.connection === "remote"){
                     platform_info.text += " (Remote)"
                 }
-                else if (platform_list.list[i].connection === "view"){
+                else if (platform_info.connection === "view"){
                     platform_info.text += " (View-only)"
                 }
-                else {
+                else if (platform_info.connection === "connected"){
                     platform_info.text += " (Connected)"
                     // copy "connected" platform; Note: this will auto select the last listed "connected" platform
+                    console.log("autoconnect =",platform_info.text);
                     autoSelectedPlatform = platform_info
                 }
+                else{
+                    console.log("unknown connection type for ",platform_info.text," ",platform_info.connection);
+                    }
 
                 // Add to the model
                 // TODO update width of text here instead of adding to model and then re-reading model and updating
