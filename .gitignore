@@ -35,3 +35,7 @@ tags
 cmake-build-debug
 *.config
 platform/tools/arm-gcc-toolchain/*
+platform/mbed-os/sources/*
+platform/applications/*/bin/*
+platform/applications/*/release/*
+*.jlink
