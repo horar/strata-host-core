@@ -187,15 +187,29 @@ Item {
 
                     SGSegmentedButton{
                         text: qsTr("Shutdown")
-                        checked: true  // Sets default checked button when exclusive
+                        checked: platformInterface.usb_pd_protection_action.action === "shutdown"
+
+                        onClicked: {
+                            platformInterface.set_protection_action.update("shutdown");
+                        }
                     }
 
                     SGSegmentedButton{
                         text: qsTr("Retry")
+                        checked: platformInterface.usb_pd_protection_action.action === "retry"
+
+                        onClicked: {
+                            platformInterface.set_protection_action.update("retry");
+                        }
                     }
 
                     SGSegmentedButton{
                         text: qsTr("None")
+                        checked: platformInterface.usb_pd_protection_action.action === "nothing"
+
+                        onClicked: {
+                            platformInterface.set_protection_action.update("nothing");
+                        }
                     }
                 }
             }
@@ -212,10 +226,13 @@ Item {
                     rightMargin: 10
                 }
                 from: 0
-                to: 32
+                to: 20
                 startLabel: "0V"
-                endLabel: "32V"
-                value: 0
+                endLabel: "20V"
+                value: platformInterface.input_under_voltage_notification.minimum_voltage
+                onValueChanged: {
+                    platformInterface.set_minimum_input_voltage.update(value);
+                }
             }
 
             SGSubmitInfoBox {
@@ -239,11 +256,14 @@ Item {
                     right: tempFaultInput.left
                     rightMargin: 10
                 }
-                from: 25
-                to: 200
-                startLabel: "25°C"
-                endLabel: "200°C"
-                value: 25
+                from: -64
+                to: 191
+                startLabel: "-64°C"
+                endLabel: "191°C"
+                value: platformInterface.over_temperature_notification.maximum_temperature
+                onValueChanged: {
+                    platformInterface.set_minimum_input_voltage.update(value);
+                }
             }
 
             SGSubmitInfoBox {
@@ -298,12 +318,15 @@ Item {
                 uncheckedLabel: "Off"
                 switchHeight: 20
                 switchWidth: 46
+                checked: platformInterface.foldback_input_voltage_limiting_event.input_voltage_foldback_enabled
+                onCheckedChanged: platformInterface.set_input_voltage_foldback.update(checked, platformInterface.foldback_input_voltage_limiting_event.foldback_minimum_voltage,
+                                platformInterface.foldback_input_voltage_limiting_event.foldback_minimum_voltage_power)
             }
 
             SGSlider {
                 id: foldbackLimit
                 label: "Limit below:"
-                value: 0
+                value: platformInterface.foldback_input_voltage_limiting_event.foldback_minimum_voltage
                 anchors {
                     left: parent.left
                     leftMargin: 61
@@ -313,9 +336,13 @@ Item {
                     rightMargin: 10
                 }
                 from: 0
-                to: 32
+                to: 20
                 startLabel: "0V"
-                endLabel: "32V"
+                endLabel: "20V"
+                //copy the current values for other stuff, and add the new slider value for the limit.
+                onValueChanged: platformInterface.set_input_voltage_foldback.update(platformInterface.foldback_input_voltage_limiting_event.input_voltage_foldback_enabled,
+                                 value,
+                                platformInterface.foldback_input_voltage_limiting_event.foldback_minimum_voltage_power)
             }
 
             SGSubmitInfoBox {
@@ -332,12 +359,26 @@ Item {
             SGComboBox {
                 id: limitOutput
                 label: "Limit output power to:"
-                model: ["45 W","stuff"]
+                model: ["15","27", "36", "45","60","100"]
                 anchors {
                     left: parent.left
                     top: foldbackLimit.bottom
                     topMargin: 10
                 }
+                //when changing the value
+                onActivated: {
+                    console.log("setting input power foldback to ",limitOutput.comboBox.currentText);
+                    platformInterface.set_input_voltage_foldback.update(platformInterface.foldback_input_voltage_limiting_event.input_voltage_foldback_enabled,
+                                                                        platformInterface.foldback_input_voltage_limiting_event.foldback_minimum_voltage,
+                                                                                 limitOutput.comboBox.currentText)
+                }
+
+                property var currentFoldbackOuput: platformInterface.foldback_input_voltage_limiting_event.foldback_minimum_voltage_power
+                onCurrentFoldbackOuputChanged: {
+                    limitOutput.currentIndex = limitOutput.comboBox.find( parseInt (platformInterface.foldback_input_voltage_limiting_event.foldback_minimum_voltage_power))
+                }
+
+
             }
 
             SGDivider {
@@ -370,6 +411,10 @@ Item {
                 uncheckedLabel: "Off"
                 switchHeight: 20
                 switchWidth: 46
+                checked: platformInterface.foldback_temperature_limiting_event.temperature_foldback_enabled
+                onCheckedChanged: platformInterface.set_temperature_foldback.update(tempFoldbackSwitch.checked,
+                                                                                    platformInterface.foldback_temperature_limiting_event.foldback_maximum_temperature,
+                                                                                    platformInterface.foldback_temperature_limiting_event.foldback_maximum_temperature_power)
             }
 
             SGSlider {
@@ -387,7 +432,11 @@ Item {
                 to: 200
                 startLabel: "25°C"
                 endLabel: "200°C"
-                value: 25
+                value: platformInterface.foldback_temperature_limiting_event.foldback_maximum_temperature
+                onValueChanged: platformInterface.set_temperature_foldback.update(platformInterface.foldback_temperature_limiting_event.temperature_foldback_enabled,
+                                                                                  foldbackTemp.value,
+                                                                                  platformInterface.foldback_temperature_limiting_event.foldback_maximum_temperature_power)
+
             }
 
             SGSubmitInfoBox {
@@ -404,11 +453,21 @@ Item {
             SGComboBox {
                 id: limitOutput2
                 label: "Limit output power to:"
-                model: ["45 W","stuff"]
+                model: ["15","27", "36", "45","60","100"]
                 anchors {
                     left: parent.left
                     top: foldbackTemp.bottom
                     topMargin: 10
+                }
+                //when changing the value
+                onActivated: platformInterface.set_temperature_foldback.update(platformInterface.foldback_temperature_limiting_event.temperature_foldback_enabled,
+                                                                                 platformInterface.foldback_temperature_limiting_event.foldback_maximum_temperature,
+                                                                                 limitOutput2.displayText)
+
+                property var currentFoldbackOuput: platformInterface.foldback_temperature_limiting_event.foldback_maximum_temperature_power
+
+                onCurrentFoldbackOuputChanged: {
+                    limitOutput2.currentIndex = limitOutput2.comboBox.find( parseInt (platformInterface.foldback_temperature_limiting_event.foldback_maximum_temperature_power))
                 }
             }
         }

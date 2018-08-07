@@ -37,7 +37,7 @@ Item {
     Rectangle {
         id: capacityBarContainer
         anchors {
-            left: root.labelLeft ? labelText.right : parent.left
+            left: root.labelLeft ? labelText.right : root.left
             leftMargin: root.label === "" ? 0 : root.labelLeft ? 10 : 0
             top: root.labelLeft ? labelText.top : labelText.bottom
             topMargin: root.label === "" ? 0 : root.labelLeft ? 0 : 5
