@@ -408,14 +408,17 @@ Rectangle {
                 onClicked: {
                     advertiseButton.checked = !advertiseButton.checked
                     if(advertiseButton.checked) {
-                       is_remote_advertised =true
+                       is_remote_advertised = true
+                       tokenTimer.start()
                     }
                     else {
+                        hcs_token.text = ""
                         is_remote_advertised= false
                         remote_activity_label.visible = false
                         remote_user_container.visible = false
                         remote_user_label.visible = false
                         remoteUserModel.clear()
+
                     }
                     var remote_json = {
                         "hcs::cmd":"advertise",
@@ -449,7 +452,7 @@ Rectangle {
                 horizontalCenter: parent.horizontalCenter
                 margins: 30
             }
-            text: advertiseButton.checked ? coreInterface.hcs_token_:""
+            text: ""
             font.pointSize: Qt.platform.os == "osx"? 13 :8
             font.bold: true
             color: "black"
@@ -460,6 +463,26 @@ Rectangle {
                 remoteButton.checked = false
             }
         }
+
+        Timer {
+            // 3 second timeout for response
+            id: tokenTimer
+            interval: 3000
+            running: false
+            repeat: false
+            onTriggered: {
+                hcs_token.text = "error"
+
+            }
+        }
+        Connections {
+            target: coreInterface
+            onHcsTokenChanged: {
+              hcs_token.text =  coreInterface.hcs_token_
+              tokenTimer.stop()
+            }
+        }
+
     }
 
     Image {
