@@ -6,7 +6,7 @@ import "qrc:/views/usb-pd-multiport/sgwidgets"
 Item {
     id: root
 
-    property bool portConnected: true
+    property bool portConnected: false
     property color portColor: "#30a2db"
 
     property alias advertisedVoltage: advertisedVoltageBox.value
@@ -19,9 +19,11 @@ Item {
 
     property var deviceConnected: platformInterface.usb_pd_port_connect.connection_state
     property var deviceDisconnected: platformInterface.usb_pd_port_disconnect.connection_state
+    property string portName: "USB_C_port_" + portNumber
 
     onDeviceConnectedChanged: {
-        if (platformInterface.usb_pd_port_connect.port_id === "USB_C_port_1"){
+
+        if (platformInterface.usb_pd_port_connect.port_id === portName){
             if (platformInterface.usb_pd_port_connect.connection_state === "connected"){
                 root.portConnected = true;
             }
@@ -29,7 +31,7 @@ Item {
     }
 
     onDeviceDisconnectedChanged: {
-        if (platformInterface.usb_pd_port_disconnect.port_id === "USB_C_port_1"){
+        if (platformInterface.usb_pd_port_disconnect.port_id === portName){
             if (platformInterface.usb_pd_port_disconnect.connection_state === "disconnected"){
                 root.portConnected = false;
             }
