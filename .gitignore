@@ -1,6 +1,3 @@
-*/Debug/*
-Debug*
-*/Release/*
 platform/cli/USB-PD/BUILD/*
 *build*/
 *BUILD*/
@@ -36,6 +33,8 @@ cmake-build-debug
 *.config
 platform/tools/arm-gcc-toolchain/*
 platform/mbed-os/sources/*
-platform/applications/*/bin/*
 platform/applications/*/release/*
+platform/applications/*/debug/*
+!platform/applications/*/release/CMakeLists.txt
+!platform/applications/*/debug/CMakeLists.txt
 *.jlink
