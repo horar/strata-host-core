@@ -53,7 +53,15 @@ Item {
 
     // -------------------
     // Commands
-    //
+    // TO SEND A COMMAND DO THE FOLLOWING:
+    // EXAMPLE: To send the motor speed: platformInterface.motor_speed.update(motorSpeedSliderValue)
+    // where motorSpeedSliderValue is the value set as speed and send to platform.
+    // motor_speed is the command and update is the function in the command which sends the
+    // notification
+
+    // TO SYNCHRONIZE THE SPEED ON ALL THE VIEW DO THE FOLLOWING:
+    // EXAMPLE: platformInterface.motorSpeedSliderValue
+
     property var motor_speed : ({
                                     "cmd" : "speed_input",
                                     "payload": {
@@ -320,6 +328,75 @@ Item {
             CorePlatformInterface.data_source_handler(payload)
         }
     }
+
+    //-------------------------------------
+    //
+    // add all syncrhonized controls here
+    //-----------------------------------------
+    property int motorSpeedSliderValue: 1500
+
+    onMotorSpeedSliderValueChanged: {
+        motor_speed.update(motorSpeedSliderValue)
+    }
+
+    property int rampRateSliderValue: 3
+
+    onRampRateSliderValueChanged: {
+        set_ramp_rate.update(rampRateSliderValue)
+    }
+
+    property int phaseAngle : 15
+
+    onPhaseAngleChanged: {
+        set_phase_angle.update(phaseAngle)
+    }
+
+    property int ledSlider: 128
+
+    onLedSliderChanged: {
+        console.log("in signal control")
+    }
+
+    property real singleLEDSlider :  0
+
+    property int ledPulseSlider: 150
+
+    onLedPulseSliderChanged:  {
+        set_blink0_frequency.update(ledPulseSlider)
+    }
+
+    property bool driveModePseudoSinusoidal: false
+
+    onDriveModePseudoSinusoidalChanged: {
+
+        if(driveModePseudoSinusoidal == true) {
+            set_drive_mode.update(1)
+        }
+    }
+
+    property bool driveModePseudoTrapezoidal: true
+
+    onDriveModePseudoTrapezoidalChanged: {
+        if(driveModePseudoTrapezoidal == true) {
+           set_drive_mode.update(0)
+        }
+    }
+
+    property bool motorState: false
+
+    onMotorStateChanged: {
+        console.log("in motor state")
+        if(motorState === true) {
+            set_motor_on_off.update(0)
+        }
+        else  {
+            motor_speed.update(motorSpeedSliderValue);
+            set_motor_on_off.update(1);
+
+        }
+
+    }
+
 
 
 

@@ -18,12 +18,12 @@ Rectangle {
         rampRateSlider.value = 3
         driveModeCombo.currentIndex = 15
         faultModel.clear()
-        signalControl.driveModePseudoTrapezoidal = true
+        platformInterface.driveModePseudoTrapezoidal = true
 
     }
 
     Component.onCompleted:  {
-        signalControl.phaseAngle = 15
+        platformInterface.phaseAngle = 15
         platformInterface.system_mode_selection.update("manual");
         platformInterface.set_phase_angle.update(5);
         platformInterface.set_drive_mode.update(0);
@@ -143,7 +143,7 @@ Rectangle {
                 id: startStopButton
                 text: checked ? qsTr("Start Motor") : qsTr("Stop Motor")
                 checkable: true
-                checked: signalControl.motorState
+                checked: platformInterface.motorState
                 property var motorOff: platformInterface.motor_off.enable;
 
                 onMotorOffChanged: {
@@ -168,7 +168,7 @@ Rectangle {
                 }
 
                 onCheckedChanged: {
-                    signalControl.motorState = checked
+                    platformInterface.motorState = checked
                      console.log("in advance", startStopButton.checked)
                     if(checked == false) {
                          faultModel.clear();
@@ -276,7 +276,7 @@ Rectangle {
                 width: 350
                 from : 1500
                 to: 5500
-                value : signalControl.motorSpeedSliderValue
+                value : platformInterface.motorSpeedSliderValue
                 anchors {
                     verticalCenter: setSpeed.verticalCenter
                     left: speedControlContainer.left
@@ -287,7 +287,7 @@ Rectangle {
 
                 onValueChanged: {
                     setSpeed.input = value.toFixed(0)
-                    signalControl.motorSpeedSliderValue = value.toFixed(0)
+                    platformInterface.motorSpeedSliderValue = value.toFixed(0)
                     console.log("in advance", targetSpeedSlider.value)
                 }
 
@@ -325,7 +325,7 @@ Rectangle {
                 }
                 buttonVisible: false
                 onApplied: {
-                    signalControl.motorSpeedSliderValue = parseInt(value, 10)
+                   platformInterface.motorSpeedSliderValue = parseInt(value, 10)
                 }
                 infoBoxWidth: 80
             }
@@ -334,7 +334,7 @@ Rectangle {
             SGSlider {
                 id: rampRateSlider
                 label: "Ramp Rate:"
-                value: signalControl.rampRateSliderValue
+                value: platformInterface.rampRateSliderValue
                 from: 2
                 to:4
                 anchors {
@@ -348,7 +348,7 @@ Rectangle {
                 onValueChanged: {
 
                     setRampRate.input = value.toFixed(0)
-                    signalControl.rampRateSliderValue = value.toFixed(0)
+                    platformInterface.rampRateSliderValue = value.toFixed(0)
                 }
             }
 
@@ -363,7 +363,7 @@ Rectangle {
                 }
                 buttonVisible: false
                 onApplied: {
-                    signalControl.rampRateSliderValue = parseInt(value, 10)
+                    platformInterface.rampRateSliderValue = parseInt(value, 10)
                 }
                 input: rampRateSlider.value
                 infoBoxWidth: 80
@@ -402,18 +402,18 @@ Rectangle {
                     SGRadioButton {
                         id: ps
                         text: "Pseudo-Sinusoidal"
-                        checked: signalControl.driveModePseudoSinusoidal
+                        checked: platformInterface.driveModePseudoSinusoidal
                         onCheckedChanged: {
-                            signalControl.driveModePseudoSinusoidal = ps.checked
+                            platformInterface.driveModePseudoSinusoidal = ps.checked
                         }
                     }
 
                     SGRadioButton {
                         id: trap
                         text: "Trapezoidal"
-                        checked: signalControl.driveModePseudoTrapezoidal
+                        checked: platformInterface.driveModePseudoTrapezoidal
                         onCheckedChanged: {
-                            signalControl.driveModePseudoTrapezoidal = trap.checked
+                            platformInterface.driveModePseudoTrapezoidal = trap.checked
 
                         }
                     }
@@ -443,7 +443,7 @@ Rectangle {
 
                 SGComboBox {
                     id: driveModeCombo
-                    currentIndex: signalControl.phaseAngle
+                    currentIndex: platformInterface.phaseAngle
                     model: ["0", "1.875", "3.75","5.625","7.5", "9.375", "11.25","13.125", "15", "16.875", "18.75", "20.625", "22.5" , "24.375" , "26.25" , "28.125"]
                     anchors {
                         top: phaseAngleRow.top
@@ -452,7 +452,7 @@ Rectangle {
                     }
 
                     onCurrentIndexChanged: {
-                        signalControl.phaseAngle = currentIndex;
+                        platformInterface.phaseAngle = currentIndex;
 
                     }
                 }
@@ -474,7 +474,7 @@ Rectangle {
                 id: hueSlider
                 label: "Set LED color:"
                 labelLeft: true
-                value: signalControl.ledSlider
+                value: platformInterface.ledSlider
                 anchors {
                     verticalCenter: whiteButton.verticalCenter
                     left: ledControlContainer.left
@@ -488,7 +488,7 @@ Rectangle {
                 onValueChanged: {
                     console.log(" in advance")
                     platformInterface.set_color_mixing.update(color1,color_value1,color2,color_value2)
-                    signalControl.ledSlider = value
+                    platformInterface.ledSlider = value
                 }
             }
 
@@ -543,7 +543,7 @@ Rectangle {
                 id: singleColorSlider
                 label: "Single LED color:"
                 labelLeft: true
-                value: signalControl.singleLEDSlider
+                value: platformInterface.singleLEDSlider
                 anchors {
                     top: ledSecondContainer.top
                     topMargin: 10
@@ -554,14 +554,14 @@ Rectangle {
                 }
                 onValueChanged: {
                     platformInterface.set_single_color.update(color, color_value)
-                    signalControl.singleLEDSlider = value
+                    platformInterface.singleLEDSlider = value
                 }
             }
 
             SGSlider {
                 id: ledPulseFrequency
                 label: "LED Pulse Frequency:"
-                value: signalControl.ledPulseSlider
+                value: platformInterface.ledPulseSlider
                 from: 1
                 to: 152
                 anchors {
@@ -575,7 +575,7 @@ Rectangle {
 
                 onValueChanged: {
                     setLedPulse.input = value.toFixed(0)
-                    signalControl.ledPulseSlider = value.toFixed(0)
+                    platformInterface.ledPulseSlider = value.toFixed(0)
 
                 }
             }
@@ -590,7 +590,7 @@ Rectangle {
                 }
                 buttonVisible: false
                 onApplied:  {
-                    signalControl.ledPulseSlider =  parseInt(value, 10)
+                   platformInterface.ledPulseSlider =  parseInt(value, 10)
                 }
                 input: ledPulseFrequency.value
                 infoBoxWidth: 80

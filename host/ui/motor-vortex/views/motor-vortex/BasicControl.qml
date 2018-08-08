@@ -80,15 +80,14 @@ Rectangle {
                 }
                 label: "<b>Motor Speed:</b>"
                 labelLeft: false
-                value: signalControl.motorSpeedSliderValue
+                value: platformInterface.motorSpeedSliderValue
                 from: 1500
                 to: 5500
 
                 onValueChanged: {
-              //      platformInterface.motor_speed.update(value.toFixed(0));
 
                     setSpeed.input = value.toFixed(0)
-                    signalControl.motorSpeedSliderValue = value.toFixed(0)
+                    platformInterface.motorSpeedSliderValue = value.toFixed(0)
                     console.log("in basic", motorSpeedControl.value)
                 }
             }
@@ -103,7 +102,7 @@ Rectangle {
                     rightMargin: 10
                 }
                 onApplied: {
-                    signalControl.motorSpeedSliderValue = parseInt(value, 10)
+                    platformInterface.motorSpeedSliderValue = parseInt(value, 10)
                 }
                 input: motorSpeedControl.value
                 infoBoxWidth: 80
