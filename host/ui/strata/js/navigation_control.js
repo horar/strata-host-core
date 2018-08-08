@@ -22,7 +22,7 @@ var screens = {
     LOGIN_SCREEN: "qrc:/SGLoginScreen.qml",
     WELCOME_SCREEN : "qrc:/SGWelcome.qml",
     CONTENT_SCREEN : "qrc:/Content.qml",
-    STATUS_BAR:     "qrc:/SGStatusBar.qml"
+    STATUS_BAR: "qrc:/SGStatusBar.qml"
 }
 
 /*
@@ -64,11 +64,11 @@ var flipable_parent_= null
 */
 var PREFIX = "qrc:/views/"
 function getQMLFile(platform_name, filename) {
-    console.log(platform_name, "-", filename, "qml file requested.")
+    //console.log(platform_name, "-", filename, "qml file requested.")
 
     // Build the file name - ./view/<platform_name>/filename.qml
     if (filename.search(".qml") < 0){
-        console.log("adding extension to filename: ", filename)
+        //console.log("adding extension to filename: ", filename)
         filename = filename + ".qml"
     }
 
@@ -99,7 +99,7 @@ function init(flipable_parent, control_parent, content_parent, bar_parent)
 */
 function createView(name, parent)
 {
-    console.log("createObject: name =", name, ", parameters =", JSON.stringify(context))
+    //console.log("createView: name =", name, ", parameters =", JSON.stringify(context))
 
     var component = Qt.createComponent(name, QtQuickModule.Component.PreferSynchronous, parent);
 
@@ -115,7 +115,7 @@ function createView(name, parent)
         output an error. When it errors the child will eventually get destroyed on subsequent view creation
         TODO: Modify autoselect so it doesn't try to destroy itself on load.
     */
-    try{
+    try {
         // Remove children from container before creating another instance
         removeView(parent)
     }
@@ -123,13 +123,10 @@ function createView(name, parent)
         console.log("ERROR: Could not destroy child")
     }
 
-
     var object = component.createObject(parent,context)
     if (object === null) {
         console.log("Error creating object: name=", name, ", parameters=", JSON.stringify(context));
     }
-
-
 
     return object;
 }
@@ -140,12 +137,11 @@ function createView(name, parent)
 function removeView(parent)
 {
     if (parent.children.length > 0){
-        console.log("Destroying view")
+        //console.log("Destroying view")
         for (var x in parent.children){
             parent.children[x].destroy()
         }
     }
-
 }
 
 /*
@@ -158,7 +154,7 @@ function globalEventHandler(event,data)
     switch(event)
     {
     case events.PROMPT_LOGIN_EVENT:
-        console.log("Updated state to Login:", states.LOGIN_STATE)
+        //console.log("Updated state to Login:", states.LOGIN_STATE)
         navigation_state_ = states.LOGIN_STATE
 
         // Update both containers; Login blocks both
@@ -167,28 +163,30 @@ function globalEventHandler(event,data)
 
         // Remove StatusBar at Login
         removeView(status_bar_container_)
+        status_bar_container_.visible = false
         break;
 
     case events.LOGOUT_EVENT:
         context.is_logged_in = false;
 
         // Show Login Screen
-        console.log("Logging user out. Displaying Login screen")
+        //console.log("Logging user out. Displaying Login screen")
         updateState(events.PROMPT_LOGIN_EVENT)
         break;
 
     case events.NEW_PLATFORM_CONNECTED_EVENT:
         // Cache platform name until we are ready to view
-        console.log("Platform connected. Caching platform: ", data.platform_name)
+        //console.log("Platform connected. Caching platform: ", data.platform_name)
         context.platform_name = data.platform_name
         context.platform_state = true;
         break;
 
     case events.PLATFORM_DISCONNECTED_EVENT:
         // Disconnected
-        console.log("Platform disconnected")
+        //console.log("Platform disconnected")
         context.platform_state = false;
         break;
+
     default:
         console.log("Unhandled signal, ", event, " in state ", navigation_state_)
         break;
@@ -214,7 +212,7 @@ function updateState(event)
 */
 function updateState(event, data)
 {
-    console.log("Received event: ", event)
+    //console.log("Received event: ", event)
 
     switch(navigation_state_){
         case states.UNINITIALIZED:
@@ -237,6 +235,7 @@ function updateState(event, data)
                 navigation_state_ = states.CONTROL_STATE
 
                 // Update StatusBar
+                status_bar_container_.visible = true
                 createView(screens.STATUS_BAR, status_bar_container_)
                 // Update Control by next state
                 updateState(events.SHOW_CONTROL_EVENT,null)
@@ -264,28 +263,26 @@ function updateState(event, data)
                 else {
                     // Disconnected; Show detection page
                     createView(screens.WELCOME_SCREEN, control_container_)
-
                 }
 
                 // Show content when we have a platform name; doesn't have to be actively connected
                 if(context.platform_name !== ""){
                     var qml_content = getQMLFile(context.platform_name, "Content")
                     var contentObject = createView(qml_content, content_container_)
+
                     // Insert Listener
                     Metrics.injectEventToTree(contentObject)
                     Metrics.restartTimer()
-
                 }
                 else {
                     // Otherwise; no platform has been connected or chosen
                     createView(screens.WELCOME_SCREEN, content_container_)
                 }
-
                 break;
 
             case events.NEW_PLATFORM_CONNECTED_EVENT:
                 // Cache platform name until we are ready to view
-                console.log("data:", data.platform_name)
+                console.log("new platform connected data:", data.platform_name)
                 context.platform_name = data.platform_name
                 context.platform_state = true;
                 // Refresh
@@ -299,6 +296,7 @@ function updateState(event, data)
 
             case events.PLATFORM_DISCONNECTED_EVENT:
                 context.platform_state = false;
+                context.platform_name = "";
                 // Refresh
                 updateState(events.SHOW_CONTROL_EVENT)
                 break;
@@ -310,6 +308,7 @@ function updateState(event, data)
                 context.platform_state = false;
                 updateState(events.SHOW_CONTROL_EVENT)
                 break;
+
             case events.TOGGLE_CONTROL_CONTENT:
                 // Send request to metrics service when entering and leaving platform control view
                 var pageName = '';
@@ -336,7 +335,6 @@ function updateState(event, data)
         default:
             globalEventHandler(event,data)
             break;
-
     }
 }
 

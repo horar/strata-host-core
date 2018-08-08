@@ -22,7 +22,7 @@ var screens = {
     LOGIN_SCREEN: "qrc:/SGLoginScreen.qml",
     WELCOME_SCREEN : "qrc:/SGWelcome.qml",
     CONTENT_SCREEN : "qrc:/Content.qml",
-    STATUS_BAR:     "qrc:/SGStatusBar.qml"
+    STATUS_BAR: "qrc:/SGStatusBar.qml"
 }
 
 /*
@@ -115,7 +115,7 @@ function createView(name, parent)
         output an error. When it errors the child will eventually get destroyed on subsequent view creation
         TODO: Modify autoselect so it doesn't try to destroy itself on load.
     */
-    try{
+    try {
         // Remove children from container before creating another instance
         removeView(parent)
     }
@@ -123,13 +123,10 @@ function createView(name, parent)
         console.log("ERROR: Could not destroy child")
     }
 
-
     var object = component.createObject(parent,context)
     if (object === null) {
         console.log("Error creating object: name=", name, ", parameters=", JSON.stringify(context));
     }
-
-
 
     return object;
 }
@@ -145,7 +142,6 @@ function removeView(parent)
             parent.children[x].destroy()
         }
     }
-
 }
 
 /*
@@ -167,6 +163,7 @@ function globalEventHandler(event,data)
 
         // Remove StatusBar at Login
         removeView(status_bar_container_)
+        status_bar_container_.visible = false
         break;
 
     case events.LOGOUT_EVENT:
@@ -189,6 +186,7 @@ function globalEventHandler(event,data)
         console.log("Platform disconnected")
         context.platform_state = false;
         break;
+
     default:
         console.log("Unhandled signal, ", event, " in state ", navigation_state_)
         break;
@@ -237,6 +235,7 @@ function updateState(event, data)
                 navigation_state_ = states.CONTROL_STATE
 
                 // Update StatusBar
+                status_bar_container_.visible = true
                 createView(screens.STATUS_BAR, status_bar_container_)
                 // Update Control by next state
                 updateState(events.SHOW_CONTROL_EVENT,null)
@@ -264,23 +263,21 @@ function updateState(event, data)
                 else {
                     // Disconnected; Show detection page
                     createView(screens.WELCOME_SCREEN, control_container_)
-
                 }
 
                 // Show content when we have a platform name; doesn't have to be actively connected
                 if(context.platform_name !== ""){
                     var qml_content = getQMLFile(context.platform_name, "Content")
                     var contentObject = createView(qml_content, content_container_)
+
                     // Insert Listener
                     Metrics.injectEventToTree(contentObject)
                     Metrics.restartTimer()
-
                 }
                 else {
                     // Otherwise; no platform has been connected or chosen
                     createView(screens.WELCOME_SCREEN, content_container_)
                 }
-
                 break;
 
             case events.NEW_PLATFORM_CONNECTED_EVENT:
@@ -299,6 +296,7 @@ function updateState(event, data)
 
             case events.PLATFORM_DISCONNECTED_EVENT:
                 context.platform_state = false;
+                context.platform_name = "";
                 // Refresh
                 updateState(events.SHOW_CONTROL_EVENT)
                 break;
@@ -310,6 +308,7 @@ function updateState(event, data)
                 context.platform_state = false;
                 updateState(events.SHOW_CONTROL_EVENT)
                 break;
+
             case events.TOGGLE_CONTROL_CONTENT:
                 // Send request to metrics service when entering and leaving platform control view
                 var pageName = '';
@@ -336,7 +335,6 @@ function updateState(event, data)
         default:
             globalEventHandler(event,data)
             break;
-
     }
 }
 

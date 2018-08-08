@@ -17,11 +17,12 @@ Rectangle {
     /*
        List of bits disabled for each port
     */
-    property variant portAMapDisable: [ ]
-    property variant portBMapDisable: [10,11]
-    property variant portCMapDisable: [0,1,4,5]
-    property variant portDMapDisable: [0.1,3,4,5,6,7,8,9,10,11,12,13,14,15]
-    property variant portHMapDisable: [2,3,4,5,6,7,8,9,10,11,12,13,14,15]
+    property variant portAMapDisable: []
+    property variant portBMapDisable: []
+    property variant portCMapDisable: []
+    property variant portDMapDisable: []
+    property variant portEMapDisable: []
+    property variant portHMapDisable: []
 
     /*
       set GPIO port based on pin function
@@ -76,7 +77,8 @@ Rectangle {
         SGMiddleSegmentedButton{ text:"Port B"; portName: "b"; tabIndex: 1; pinFunction: "gpio"; onClicked: setGPIOCommand(pinFunction, portName,tabIndex)}
         SGMiddleSegmentedButton{ text:"Port C"; portName: "c"; tabIndex: 2; pinFunction: "gpio"; onClicked: setGPIOCommand(pinFunction, portName,tabIndex)}
         SGMiddleSegmentedButton{ text:"Port D"; portName: "d"; tabIndex: 3; pinFunction: "gpio"; onClicked: setGPIOCommand(pinFunction, portName,tabIndex)}
-        SGRightSegmentedButton{ text:"Port H"; portName: "h"; tabIndex: 4; pinFunction: "gpio"; onClicked: setGPIOCommand(pinFunction, portName,tabIndex)}
+        SGMiddleSegmentedButton{ text:"Port E"; portName: "e"; tabIndex: 4; pinFunction: "gpio"; onClicked: setGPIOCommand(pinFunction, portName,tabIndex)}
+        SGRightSegmentedButton{ text:"Port H"; portName: "h"; tabIndex: 5; pinFunction: "gpio"; onClicked: setGPIOCommand(pinFunction, portName,tabIndex)}
 
     }
 
@@ -99,6 +101,7 @@ Rectangle {
         ButtonViewGPIO { listDisableBits: portBMapDisable }
         ButtonViewGPIO { listDisableBits: portCMapDisable }
         ButtonViewGPIO { listDisableBits: portDMapDisable }
+        ButtonViewGPIO { listDisableBits: portEMapDisable }
         ButtonViewGPIO { listDisableBits: portHMapDisable }
     }
 

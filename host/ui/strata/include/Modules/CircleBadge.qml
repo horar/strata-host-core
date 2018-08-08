@@ -10,8 +10,8 @@ Rectangle {
     height: width
     color: "red"
     radius: width*0.5
-    anchors.bottom: parent.top
-    anchors.right: parent.right
+    //anchors.bottom: parent.top
+    //anchors.right: parent.right
     anchors.bottomMargin: -20
 
     // Only show badge if rev is > 0
@@ -22,7 +22,7 @@ Rectangle {
         color: "white"
         z:2
         wrapMode: Text.WordWrap
-        anchors { fill: parent; centerIn: parent.Center }
+        anchors { fill: parent }
         horizontalAlignment: Text.AlignHCenter
         verticalAlignment: Text.AlignVCenter
         }
