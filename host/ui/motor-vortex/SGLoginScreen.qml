@@ -399,4 +399,20 @@ Rectangle {
         id: franklinGothicBold
         source: "qrc:/fonts/FranklinGothicBold.ttf"
     }
+
+    Text {
+        text: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuv1234567890"
+        font {
+            family: franklinGothicBold.name
+        }
+        visible: false
+    }
+
+    Text {
+        text: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuv1234567890"
+        font {
+            family: franklinGothicBook.name
+        }
+        visible: false
+    }
 }
