@@ -169,9 +169,9 @@ Rectangle {
 
                 onCheckedChanged: {
                     platformInterface.motorState = checked
-                     console.log("in advance", startStopButton.checked)
+                    console.log("in advance", startStopButton.checked)
                     if(checked == false) {
-                         faultModel.clear();
+                        faultModel.clear();
                     }
                 }
             }
@@ -276,7 +276,10 @@ Rectangle {
                 width: 350
                 from : 1500
                 to: 5500
-                value : platformInterface.motorSpeedSliderValue
+                value :
+                   platformInterface.motorSpeedSliderValue
+
+
                 anchors {
                     verticalCenter: setSpeed.verticalCenter
                     left: speedControlContainer.left
@@ -287,6 +290,7 @@ Rectangle {
 
                 onValueChanged: {
                     setSpeed.input = value.toFixed(0)
+
                     platformInterface.motorSpeedSliderValue = value.toFixed(0)
                     console.log("in advance", targetSpeedSlider.value)
                 }
@@ -325,7 +329,7 @@ Rectangle {
                 }
                 buttonVisible: false
                 onApplied: {
-                   platformInterface.motorSpeedSliderValue = parseInt(value, 10)
+                    platformInterface.motorSpeedSliderValue = parseInt(value, 10)
                 }
                 infoBoxWidth: 80
             }
@@ -590,7 +594,7 @@ Rectangle {
                 }
                 buttonVisible: false
                 onApplied:  {
-                   platformInterface.ledPulseSlider =  parseInt(value, 10)
+                    platformInterface.ledPulseSlider =  parseInt(value, 10)
                 }
                 input: ledPulseFrequency.value
                 infoBoxWidth: 80

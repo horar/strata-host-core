@@ -328,7 +328,15 @@ Rectangle {
                 id: targetSpeedSlider
                 label: "Target Speed:"
                 width: 350
-                value: platformInterface.motorSpeedSliderValue
+                value:  if(value <= 5500) {
+                            return platformInterface.motorSpeedSliderValue
+                        }
+                        else {
+                            platformInterface.motorSpeedSliderValue = 5500
+                            return platformInterface.motorSpeedSliderValueForFae
+                        }
+
+
                 from: speedSafetyButton.checked ? 0 : 1500
                 to: speedSafetyButton.checked ? 10000 : 5500
                 endLabel: speedSafetyButton.checked? "<font color='red'><b>"+ to +"</b></font>" : to
@@ -342,7 +350,13 @@ Rectangle {
 
                 onValueChanged: {
                     setSpeed.input = value.toFixed(0)
-                    platformInterface.motorSpeedSliderValue = value.toFixed(0)
+                    if(value <= 5500) {
+                        platformInterface.motorSpeedSliderValue = value.toFixed(0)
+                    }
+                    else {
+                        platformInterface.motorSpeedSliderValueForFae = value.toFixed(0)
+                    }
+
                     console.log("in fae", targetSpeedSlider.value)
 
                 }
@@ -370,7 +384,16 @@ Rectangle {
                 id: rampRateSlider
                 label: "Ramp Rate:"
                 width: 350
-                value:  platformInterface.rampRateSliderValue
+                value:
+                    if( value <= 4) {
+                        return platformInterface.rampRateSliderValue;
+                    }
+                    else {
+                             platformInterface.rampRateSliderValue = 4
+                            return platformInterface.rampRateSliderValueForFae;
+
+                     }
+
                 from: speedSafetyButton.checked ? 0 : 2
                 to: speedSafetyButton.checked ? 6 : 4
                 endLabel: speedSafetyButton.checked? "<font color='red'><b>"+ to +"</b></font>" : to
@@ -382,9 +405,13 @@ Rectangle {
                     rightMargin: 10
                 }
                 onValueChanged: {
-
                     setRampRate.input = value.toFixed(0)
-                    platformInterface.rampRateSliderValue = value.toFixed(0)
+                    if(value <= 4) {
+                        platformInterface.rampRateSliderValue = value.toFixed(0)
+                    }
+                    else {
+                        platformInterface.rampRateSliderValueForFae = value.toFixed(0)
+                    }
                 }
             }
 

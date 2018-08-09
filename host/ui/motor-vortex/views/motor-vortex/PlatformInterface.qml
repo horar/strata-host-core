@@ -339,10 +339,22 @@ Item {
         motor_speed.update(motorSpeedSliderValue)
     }
 
+    property int motorSpeedSliderValueForFae: 5501
+
+    onMotorSpeedSliderValueForFaeChanged: {
+        motor_speed.update(motorSpeedSliderValueForFae)
+    }
+
     property int rampRateSliderValue: 3
 
     onRampRateSliderValueChanged: {
         set_ramp_rate.update(rampRateSliderValue)
+    }
+
+    property int rampRateSliderValueForFae: 3
+
+    onRampRateSliderValueForFaeChanged: {
+        set_ramp_rate.update(rampRateSliderValueForFae)
     }
 
     property int phaseAngle : 15

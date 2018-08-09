@@ -296,6 +296,5 @@
         <file>images/icons/remote-unlocked.png</file>
         <file>fonts/sgicons.ttf</file>
         <file>statusbar-partial-views/SGComboBox.qml</file>
-        <file>views/motor-vortex/SignalControl.qml</file>
     </qresource>
 </RCC>
