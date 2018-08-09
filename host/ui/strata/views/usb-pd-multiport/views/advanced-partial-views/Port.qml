@@ -32,7 +32,7 @@ Item {
         }
         maxPower:{
             if (platformInterface.request_usb_power_notification.port === portNumber){
-               return Math.round(platformInterface.request_usb_power_notification.negotiated_voltage * platformInterface.request_usb_power_notification.negotiated_current *100)/100
+               return Math.round(maximum_power *100)/100
             }
             else{
                 return portInfo.maxPower;
