@@ -72,7 +72,10 @@ Rectangle {
         delegate: Text {
             text: model.status // modelData
             color: root.statusTextColor
-            font.family: "Courier"
+            font {
+              family: "Courier" // Monospaced font for better text width uniformity
+              pixelSize: (Qt.platform.os === "osx") ? 12 : 10;
+            }
         }
 
         highlightFollowsCurrentItem: true

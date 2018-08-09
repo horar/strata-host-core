@@ -106,6 +106,8 @@ HcsError HostControllerService::init()
     // [TODO]: [prasanth] the following lines are used to handle the serial connect/disconnect
     // This method will be removed once we get the serial to socket stuff in
     port_disconnected_ = true;
+    // setting the remote connector state as false
+    remote_connector_->setConnectionState(false);
     setEventLoop();
     // [TODO] [prasanth] : This function run is coded in this, since the libevent dynamic
     //addtion of event is not implemented successfully in hcs
@@ -640,14 +642,16 @@ void HostControllerService::parseHCSCommands(const string &hcs_message)
     // handle remote disconnect from FAE
     else if(!(strcmp(hcs_command["hcs::cmd"].GetString(),"remote_disconnect"))) {
         // FAE when opts out of remote connection, the "disconnect" string is sent to bridge service
-        remote_connector_->send("disconnect");
-        discovery_service_->disconnect(g_platform_uuid_);
-        sendDisconnecttoUI();
-        platform_uuid_.remove_if([](platform_details remote){ return remote.connection_status == "remote"; });
-        platform_client_mapping_.clear();
-        event_del(&remote_handler_);
-        event_del(&activity_handler_);
-        remote_connector_->close();
+        // if(remote_connector_->isConnected()) {
+            remote_connector_->send("disconnect");
+            discovery_service_->disconnect(g_platform_uuid_);
+            sendDisconnecttoUI();
+            platform_uuid_.remove_if([](platform_details remote){ return remote.connection_status == "remote"; });
+            platform_client_mapping_.clear();
+            event_del(&remote_handler_);
+            event_del(&activity_handler_);
+            remote_connector_->close();
+        // }
     }
     // disconnect a particular user
     else if(!(strcmp(hcs_command["hcs::cmd"].GetString(),"disconnect_remote_user"))) {
@@ -659,6 +663,10 @@ void HostControllerService::parseHCSCommands(const string &hcs_message)
     }
     else if(!(strcmp(hcs_command["hcs::cmd"].GetString(),"disconnect_platform"))) {
         PDEBUG(PRINT_DEBUG,"User has requested to disconnect from platform\n");
+        platform_client_mapping_.clear();
+    }
+    else if(!(strcmp(hcs_command["hcs::cmd"].GetString(),"unregister"))) {
+        PDEBUG(PRINT_DEBUG,"User has disconnected\n");
         platform_client_mapping_.clear();
     }
 }
@@ -700,12 +708,14 @@ void HostControllerService::handleRemotePlatformRegistration(bool remote_adverti
         client_connector_->send(strbuf.GetString());
     }
     else {
-        bool status = discovery_service_->deregisterPlatform(g_dealer_id_);
-        event_del(&remote_handler_);
-        event_del(&activity_handler_);
-        string disconnect_message = "{\"notification\":{\"value\":\"platform_connection_change_notification\",\"payload\":{\"status\":\"disconnected\"}}}";
-        remote_connector_->send(disconnect_message);
-        remote_connector_->close();
+        if(remote_connector_->isConnected()) {
+            bool status = discovery_service_->deregisterPlatform(g_dealer_id_);
+            event_del(&remote_handler_);
+            event_del(&activity_handler_);
+            string disconnect_message = "{\"notification\":{\"value\":\"platform_connection_change_notification\",\"payload\":{\"status\":\"disconnected\"}}}";
+            remote_connector_->send(disconnect_message);
+            remote_connector_->close();
+        }
     }
 }
 
@@ -866,8 +876,7 @@ string HostControllerService::platformRead()
 void HostControllerService::platformDisconnectRoutine ()
 {
     PDEBUG(PRINT_DEBUG,"Platform Disconnected\n");
-    sendDisconnecttoUI();
-
+    cout<<"platform_id " << g_dealer_id_<<endl;
     if(remote_connector_->isConnected()) {
         bool status = discovery_service_->deregisterPlatform(g_dealer_id_);
         event_del(&remote_handler_);
@@ -876,7 +885,7 @@ void HostControllerService::platformDisconnectRoutine ()
         remote_connector_->send(disconnect_message);
         remote_connector_->close();
     }
-
+    sendDisconnecttoUI();
     platform_uuid_.clear();
     platform_client_mapping_.clear();
 

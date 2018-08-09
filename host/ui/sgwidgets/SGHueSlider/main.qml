@@ -8,10 +8,15 @@ Window {
     title: qsTr("SGHueSlider Demo")
 
     SGHueSlider{
-        label: "<b>Color Picker:</b>"
-        labelLeft: true
-        sliderWidth: 300
-        value: 0.5
-        onValueChanged: console.log("Slider stopped at: ", value)
+        id: hueSlider
+
+        // Optional Configuration:
+        label: "<b>Color Picker:</b>"   // Default: "" (if not entered, label will not appear)
+        labelLeft: false                // Default: true
+        width: 300                      // Default: 300 (includes label, if present)
+        value: 128                      // Default: 128 (0-255 for hue)
+
+        // Useful Signals:
+        onValueChanged: console.log(color1, color_value1, color2, color_value2)
     }
 }
