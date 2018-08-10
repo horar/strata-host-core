@@ -8,7 +8,7 @@ import "qrc:/../SGSlider/"
 import "qrc:/../SGSegmentedButtonStrip/"
 import "qrc:/../SGCircularGauge/"
 import "qrc:/../SGComboBox/"
-import "qrc:/../SGGraph/"
+import "qrc:/../SGGraphTimed/"
 import "qrc:/../SGLabelledInfoBox/"
 import "qrc:/../SGOutputLogBox/"
 import "qrc:/../SGPopout/"
@@ -515,15 +515,15 @@ Window {
 
             SGAccordionItem {
                 open: false
-                title: "SG Graph"
+                title: "SG Graph Timed"
 
                 contents: Item{
                     height: childrenRect.height + 40
 
-                    SGGraph {
+                    SGGraphTimed {
                         // ChartView needs to be run in a QApplication, not the default QGuiApplication
                         // https://stackoverflow.com/questions/34099236/qtquick-chartview-qml-object-seg-faults-causes-qml-engine-segfault-during-load
-                        id: graph
+                        id: graphtimed
 
                         anchors {
                             top: parent.top
@@ -554,9 +554,9 @@ Window {
                         label: "Demo Data"
                         checked: false
                         anchors {
-                            left: graph.right
+                            left: graphtimed.right
                             leftMargin: 40
-                            verticalCenter: graph.verticalCenter
+                            verticalCenter: graphtimed.verticalCenter
                         }
                     }
 

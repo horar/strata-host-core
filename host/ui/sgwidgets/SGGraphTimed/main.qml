@@ -8,7 +8,7 @@ Window {
     height: 480
     title: qsTr("SGGraph Example")
 
-    SGGraph {
+    SGGraphTimed {
         // ChartView needs to be run in a QApplication, not the default QGuiApplication
         // https://stackoverflow.com/questions/34099236/qtquick-chartview-qml-object-seg-faults-causes-qml-engine-segfault-during-load
         id: graph
