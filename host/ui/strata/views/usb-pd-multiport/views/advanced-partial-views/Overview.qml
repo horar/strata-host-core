@@ -130,7 +130,7 @@ Item {
                 }
                 maxPower:{
                     if (platformInterface.request_usb_power_notification.port === 1){
-                       return Math.round(platformInterface.maximum_power *100)/100
+                       return Math.round(platformInterface.request_usb_power_notification.maximum_power *100)/100
                     }
                     else{
                         return miniInfo1.maxPower;
@@ -230,7 +230,7 @@ Item {
                 }
                 maxPower:{
                     if (platformInterface.request_usb_power_notification.port === 2){
-                       return Math.round(platformInterface.maximum_power *100)/100
+                       return Math.round(platformInterface.request_usb_power_notification.maximum_power *100)/100
                     }
                     else{
                         return miniInfo2.maxPower;
@@ -329,7 +329,7 @@ Item {
                 }
                 maxPower:{
                     if (platformInterface.request_usb_power_notification.port === 3){
-                       return Math.round(platformInterface.maximum_power *100)/100
+                       return Math.round(platformInterface.request_usb_power_notification.maximum_power *100)/100
                     }
                     else{
                         return miniInfo3.maxPower;
@@ -428,7 +428,7 @@ Item {
                 }
                 maxPower:{
                     if (platformInterface.request_usb_power_notification.port === 4){
-                       return Math.round(platformInterface.maximum_power *100)/100
+                       return Math.round(platformInterface.request_usb_power_notification.maximum_power *100)/100
                     }
                     else{
                         return miniInfo4.maxPower;
