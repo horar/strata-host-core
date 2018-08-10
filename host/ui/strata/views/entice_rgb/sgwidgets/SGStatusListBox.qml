@@ -44,8 +44,6 @@ Rectangle {
                 fill: parent
             }
             padding: 10
-            font.family: sgicons.name
-
         }
 
 //        Component.onCompleted: {
