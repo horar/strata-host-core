@@ -15,7 +15,7 @@ Item {
     property alias down: comboBox.down
     property alias editable: comboBox.editable
     property alias pressed: comboBox.pressed
-    property alias comboBox: comboBox
+    property alias textRole: comboBox.textRole
 
     property string label: ""
     property bool labelLeft: true
@@ -50,7 +50,7 @@ Item {
         model: ["First", "Second", "Third"]
         height: root.comboBoxHeight
         anchors {
-            left: root.labelLeft ? labelText.right : parent.left
+            left: root.labelLeft ? labelText.right : root.left
             leftMargin: root.label === "" ? 0 : root.labelLeft ? 10 : 0
             top: root.labelLeft ? labelText.top : labelText.bottom
             topMargin: root.label === "" ? 0 : root.labelLeft ? 0 : 5
@@ -166,7 +166,7 @@ Item {
 
     FontLoader {
         id: sgicons
-        source: "fonts/sgicons.ttf"
+        source: "../fonts/sgicons.ttf"
     }
 
     // Add increment to color (within range of 0-1) add to lighten, subtract to darken

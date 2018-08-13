@@ -37,7 +37,7 @@ Item {
     }
 
     function getObject() {
-          console.log("component url:", textAnimation.url)
+          //console.log("component url:", textAnimation.url)
           var dynamicObject = textAnimation.createObject(this)
           return dynamicObject;
       }

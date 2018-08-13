@@ -9,6 +9,34 @@ Item {
     property bool portConnected: true
     property color portColor: "#30a2db"
 
+    property alias advertisedVoltage: advertisedVoltageBox.value
+    property alias maxPower: maxPowerBox.value
+    property alias inputPower: inputPowerBox.value
+    property alias outputPower: outputPowerBox.value
+    property alias outputVoltage: outputVoltageBox.value
+    property alias portTemperature: portTemperatureBox.value
+    property alias efficency: efficencyBox.value
+
+    property var deviceConnected: platformInterface.usb_pd_port_connect.connection_state
+    property var deviceDisconnected: platformInterface.usb_pd_port_disconnect.connection_state
+
+    onDeviceConnectedChanged: {
+        if (platformInterface.usb_pd_port_connect.port_id === "USB_C_port_1"){
+            if (platformInterface.usb_pd_port_connect.connection_state === "connected"){
+                root.portConnected = true;
+            }
+        }
+    }
+
+    onDeviceDisconnectedChanged: {
+        if (platformInterface.usb_pd_port_disconnect.port_id === "USB_C_port_1"){
+            if (platformInterface.usb_pd_port_disconnect.connection_state === "disconnected"){
+                root.portConnected = false;
+            }
+
+        }
+    }
+
     width: 400
 
     Item {
@@ -117,32 +145,36 @@ Item {
                     spacing: 3
 
                     PortStatBox {
+                        id:advertisedVoltageBox
                         label: "PROFILE"
-                        value: "20"
+                        value: ""
                         icon: "../images/icon-voltage.svg"
                         portColor: root.portColor
                         unit: "V"
                     }
 
                     PortStatBox {
+                        id: maxPowerBox
                         label: "MAX CAPACITY"
-                        value: "100"
+                        value: ""
                         icon: "../images/icon-max.svg"
                         portColor: root.portColor
                         unit: "W"
                     }
 
                     PortStatBox {
+                        id:inputPowerBox
                         label: "POWER IN"
-                        value: "9"
+                        value: ""
                         icon: "../images/icon-voltage.svg"
                         portColor: root.portColor
                         unit: "W"
                     }
 
                     PortStatBox {
+                        id: outputPowerBox
                         label: "POWER OUT"
-                        value: "7.8"
+                        value: ""
                         icon: "../images/icon-voltage.svg"
                         portColor: root.portColor
                         unit: "W"
@@ -162,24 +194,27 @@ Item {
                     width: stats.width/2 - 2
 
                     PortStatBox {
+                        id:outputVoltageBox
                         label: "VOLTAGE OUT"
-                        value: "20.4"
+                        value: ""
                         icon: "../images/icon-voltage.svg"
                         portColor: root.portColor
                         unit: "V"
                     }
 
                     PortStatBox {
+                        id:portTemperatureBox
                         label: "TEMPERATURE"
-                        value: "36"
+                        value: ""
                         icon: "../images/icon-temp.svg"
                         portColor: root.portColor
                         unit: "°C"
                     }
 
                     PortStatBox {
+                        id:efficencyBox
                         label: "EFFICIENCY"
-                        value: "92"
+                        value: ""
                         icon: "../images/icon-efficiency.svg"
                         portColor: root.portColor
                         unit: "%"
