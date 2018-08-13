@@ -35,10 +35,10 @@ ChartView {
     property color axesColor: Qt.rgba(.2, .2, .2, 1)
     property color gridLineColor: Qt.rgba(.8, .8, .8, 1)
     property color textColor: Qt.rgba(0, 0, 0, 1)
-    property int minYValue: 0
-    property int maxYValue: 10
-    property int minXValue: 0
-    property int maxXValue: 10
+    property real minYValue: 0
+    property real maxYValue: 10
+    property real minXValue: 0
+    property real maxXValue: 10
     property string xAxisTitle: ""
     property string yAxisTitle: ""
     property bool showXGrids: false
@@ -222,5 +222,10 @@ ChartView {
         var seconds = (Date.now() - lastRedrawTime) / 1000;
         lastRedrawTime = Date.now()
         return seconds;
+    }
+
+    function reset(){
+        rootChart.graphTime = rootChart.dataTime = 0
+        dataLine.clear()
     }
 }

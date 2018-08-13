@@ -37,7 +37,7 @@ Item {
     Rectangle {
         id: capacityBarContainer
         anchors {
-            left: root.labelLeft ? labelText.right : parent.left
+            left: root.labelLeft ? labelText.right : root.left
             leftMargin: root.label === "" ? 0 : root.labelLeft ? 10 : 0
             top: root.labelLeft ? labelText.top : labelText.bottom
             topMargin: root.label === "" ? 0 : root.labelLeft ? 0 : 5
@@ -136,27 +136,29 @@ Item {
                 }
 
                 tickmark: Item {
+                  id: majorTickmark
                     implicitWidth: 8
                     implicitHeight: 2
 
                     Rectangle {
                         x: control.tickmarkAlignment === Qt.AlignLeft
-                           || control.tickmarkAlignment === Qt.AlignTop ? parent.implicitWidth : 0
+                           || control.tickmarkAlignment === Qt.AlignTop ? majorTickmark.implicitWidth : 0
                         width: 8
-                        height: parent.height
+                        height: majorTickmark.height
                         color: "#999"
                     }
                 }
 
                 minorTickmark: Item {
+                  id: minorTickmarks
                     implicitWidth: 8
                     implicitHeight: 1
 
                     Rectangle {
                         x: control.tickmarkAlignment === Qt.AlignLeft
-                           || control.tickmarkAlignment === Qt.AlignTop ? parent.implicitWidth : 0
+                           || control.tickmarkAlignment === Qt.AlignTop ? minorTickmarks.implicitWidth : 0
                         width: 4
-                        height: parent.height
+                        height: minorTickmarks.height
                         color: "#999"
                     }
                 }

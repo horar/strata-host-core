@@ -25,11 +25,6 @@
         <file>../SGComboBox/qml.qrc</file>
         <file>../SGComboBox/SGComboBox.pro</file>
         <file>../SGComboBox/SGComboBox.qml</file>
-        <file>../SGGraph/main.cpp</file>
-        <file>../SGGraph/main.qml</file>
-        <file>../SGGraph/qml.qrc</file>
-        <file>../SGGraph/SGGraph.pro</file>
-        <file>../SGGraph/SGGraph.qml</file>
         <file>../SGLabelledInfoBox/main.cpp</file>
         <file>../SGLabelledInfoBox/main.qml</file>
         <file>../SGLabelledInfoBox/qml.qrc</file>
@@ -117,5 +112,20 @@
         <file>../SGRGBSlider/qml.qrc</file>
         <file>../SGRGBSlider/SGRGBSlider.pro</file>
         <file>../SGRGBSlider/SGRGBSlider.qml</file>
+        <file>../SGGraphStatic/main.cpp</file>
+        <file>../SGGraphStatic/main.qml</file>
+        <file>../SGGraphStatic/qml.qrc</file>
+        <file>../SGGraphStatic/SGGraphStatic.pro</file>
+        <file>../SGGraphStatic/SGGraphStatic.qml</file>
+        <file>../SGGraphTimed/main.cpp</file>
+        <file>../SGGraphTimed/main.qml</file>
+        <file>../SGGraphTimed/qml.qrc</file>
+        <file>../SGGraphTimed/SGGraphTimed.pro</file>
+        <file>../SGGraphTimed/SGGraphTimed.qml</file>
+        <file>../SGPeekThroughOverlay/images/corner-fade.png</file>
+        <file>../SGPeekThroughOverlay/images/side-fade.png</file>
+        <file>../SGPeekThroughOverlay/images/top-fade.png</file>
+        <file>../SGPeekThroughOverlay/main.qml</file>
+        <file>../SGPeekThroughOverlay/SGPeekThroughOverlay.qml</file>
     </qresource>
 </RCC>
