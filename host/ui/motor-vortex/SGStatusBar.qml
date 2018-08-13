@@ -226,6 +226,14 @@ Rectangle {
         }
     }
 
+    Connections {
+        target: coreInterface
+        onPlatformListChanged: {
+            console.log("platform list updated: ", list)
+            platformContainer.populatePlatforms(list)
+        }
+    }
+
     ListModel {
         id: platformListModel
 
