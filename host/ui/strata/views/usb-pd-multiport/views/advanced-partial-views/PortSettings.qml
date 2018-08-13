@@ -31,7 +31,7 @@ Item {
             //notification of a change from elsewhere
             property var currentMaximumPower: platformInterface.usb_pd_maximum_power.current_max_power
             onCurrentMaximumPowerChanged: {
-                if (platformInterface.usb_pd_maximum_power.port_id === port){
+                if (platformInterface.usb_pd_maximum_power.port === port){
                     maxPowerOutput.currentIndex = maxPowerOutput.comboBox.find( parseInt (platformInterface.usb_pd_maximum_power.current_max_power))
                 }
 
@@ -93,6 +93,8 @@ Item {
             id: increment
             label: "For every increment of:"
             value:platformInterface.get_cable_loss_compensation.output_current
+            from:0
+            to:3
             anchors {
                 left: parent.left
                 top: cableCompensation.bottom
@@ -100,9 +102,11 @@ Item {
                 right: incrementInput.left
                 rightMargin: 10
             }
-            onValueChanged: platformInterface.set_cable_loss_compensation.update(port,
-                                                                                 increment.value,
-                                                                                 platformInterface.get_cable_loss_compensation.bias_voltage)
+            onMoved:{
+                platformInterface.set_cable_loss_compensation.update(portNumber,
+                                                                     increment.value,
+                                                                     platformInterface.get_cable_loss_compensation.bias_voltage)
+            }
 
         }
 
@@ -121,6 +125,8 @@ Item {
             id: bias
             label: "Bias output by:"
             value:platformInterface.get_cable_loss_compensation.bias_voltage
+            from:0
+            to:2
             anchors {
                 left: parent.left
                 leftMargin: 50
@@ -129,9 +135,11 @@ Item {
                 right: biasInput.left
                 rightMargin: 10
             }
-            onValueChanged: platformInterface.set_cable_loss_compensation.update(port,
-                                                                                 platformInterface.get_cable_loss_compensation.output_current,
-                                                                                 bias.value)
+            onMoved: {
+                platformInterface.set_cable_loss_compensation.update(portNumber,
+                                                                     platformInterface.get_cable_loss_compensation.output_current,
+                                                                     bias.value)
+            }
 
         }
 

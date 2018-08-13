@@ -73,10 +73,11 @@ Item {
             "input_voltage_foldback_active":true
     }
     onFoldback_input_voltage_limiting_eventChanged: {
-//        console.log("input voltage event notification. values are ",foldback_input_voltage_limiting_refresh.foldback_minimum_voltage,
-//                                                                    foldback_input_voltage_limiting_refresh.foldback_minimum_voltage_power,
-//                                                                    foldback_input_voltage_limiting_refresh.input_voltage_foldback_enabled,
-//                                                                    foldback_input_voltage_limiting_refresh.input_voltage_foldback_active);
+        console.log("input voltage foldback values updated");
+        console.log("input voltage event notification. values are ",foldback_input_voltage_limiting_refresh.foldback_minimum_voltage,
+                                                                    foldback_input_voltage_limiting_refresh.foldback_minimum_voltage_power,
+                                                                    foldback_input_voltage_limiting_refresh.input_voltage_foldback_enabled,
+                                                                    foldback_input_voltage_limiting_refresh.input_voltage_foldback_active);
         }
 
     property var foldback_input_voltage_limiting_refresh:{
@@ -89,14 +90,16 @@ Item {
 
     //keep the refresh and event notification properties in synch
     onFoldback_input_voltage_limiting_refreshChanged: {
-        //console.log("input voltage refresh notification. minimum voltage = ",foldback_input_voltage_limiting_refresh.foldback_minimum_voltage);
+        console.log("input voltage refresh notification. minimum voltage = ",foldback_input_voltage_limiting_refresh.foldback_minimum_voltage);
 
             //update the variables for foldback limiting
-        foldback_input_voltage_limiting_event.input_voltage = foldback_input_voltage_limiting_refresh.input_voltage;
-        foldback_input_voltage_limiting_event.foldback_minimum_voltage = foldback_input_voltage_limiting_refresh.foldback_minimum_voltage;
-        foldback_input_voltage_limiting_event.foldback_minimum_voltage_power = foldback_input_voltage_limiting_refresh.foldback_minimum_voltage_power;
-        foldback_input_voltage_limiting_event.input_voltage_foldback_enabled = foldback_input_voltage_limiting_refresh.input_voltage_foldback_enabled;
-        foldback_input_voltage_limiting_event.input_voltage_foldback_active = foldback_input_voltage_limiting_refresh.input_voltage_foldback_active;
+        platformInterface.foldback_input_voltage_limiting_event.input_voltage = foldback_input_voltage_limiting_refresh.input_voltage;
+
+        platformInterface.foldback_input_voltage_limiting_event.foldback_minimum_voltage = foldback_input_voltage_limiting_refresh.foldback_minimum_voltage;
+        console.log(" foldback minimum voltage = ",platformInterface.foldback_input_voltage_limiting_event.foldback_minimum_voltage);
+        platformInterface.foldback_input_voltage_limiting_event.foldback_minimum_voltage_power = foldback_input_voltage_limiting_refresh.foldback_minimum_voltage_power;
+        platformInterface.foldback_input_voltage_limiting_event.input_voltage_foldback_enabled = foldback_input_voltage_limiting_refresh.input_voltage_foldback_enabled;
+        platformInterface.foldback_input_voltage_limiting_event.input_voltage_foldback_active = foldback_input_voltage_limiting_refresh.input_voltage_foldback_active;
     }
 
     //consider the values held by this property to be the master ones, which will be current when needed for calling
@@ -338,13 +341,17 @@ Item {
                         "output_current":0,         // amps
                         "bias_voltage":0            // Volts
                       },
-                      update: function (port, outputCurrent,biasVoltage){
-                          this.set(port,outputCurrent,biasVoltage);
-                          //console.log("sending output_current cmd ", JSON.stringify(this));
-                          //CorePlatformInterface.send(this);
+                      update: function (portNumber, outputCurrent,biasVoltage){
+//                          console.log("set_cable_loss_compensation.port=",portNumber);
+//                          console.log("set_cable_loss_compensation.output_current=",outputCurrent);
+//                          console.log("set_cable_loss_compensation.bias_voltage=",biasVoltage);
+
+                          this.set(portNumber,outputCurrent,biasVoltage);
+                          //console.log("sending set_cable_loss_compensation cmd ", JSON.stringify(this));
+                          CorePlatformInterface.send(this);
                           },
-                      set: function(port,outputCurrent,biasVoltage){
-                           this.payload.port = port;
+                      set: function(portNumber,outputCurrent,biasVoltage){
+                           this.payload.port = portNumber;
 
                            this.payload.output_current = outputCurrent;
                            this.payload.bias_voltage = biasVoltage;
