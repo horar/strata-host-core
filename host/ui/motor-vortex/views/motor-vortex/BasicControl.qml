@@ -108,7 +108,6 @@ Rectangle {
                 infoBoxWidth: 80
             }
 
-
             SGRadioButtonContainer {
                 id: operationModeControl
                 anchors {

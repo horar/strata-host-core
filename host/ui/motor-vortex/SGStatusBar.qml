@@ -227,6 +227,14 @@ Rectangle {
         }
     }
 
+    Connections {
+        target: coreInterface
+        onPlatformListChanged: {
+            console.log("platform list updated: ", list)
+            container.populatePlatforms(list)
+        }
+    }
+
     ListModel {
         id: platformListModel
 
@@ -476,8 +484,9 @@ Rectangle {
                                             tokenTimer.start()
                                         }
                                         else {
-                                            hcs_token.text= ""
+                                            hcs_token_status.text= "Enable to generate remote token"
                                             advertise = false
+                                            hcs_token.text = ""
                                             remoteUserModel.clear()
                                         }
                                         var remote_json = {
@@ -491,18 +500,60 @@ Rectangle {
                                     }
                                 }
 
-                                Label {
-                                    id: hcs_token
+                                Row {
+                                    id: tokenRow
                                     anchors {
                                         top: remoteToggle.bottom
                                         horizontalCenter: remoteInviteLeft.horizontalCenter
-                                        topMargin: 25
+                                        topMargin: 20
                                     }
-                                    //  text: remoteToggle.checked ? "Your remote token is: " + coreInterface.hcs_token_ : "Enable to generate remote token"
-                                    font {
-                                        family: franklinGothicBook.name
+
+
+                                    Item {
+                                        id: tokenStatusContainer
+                                        height: 25
+                                        width: hcs_token_status.width
+
+                                        TextEdit {
+                                            id: hcs_token_status
+                                            text: "Enable to generate remote token"
+                                            font {
+                                                family: franklinGothicBook.name
+                                            }
+                                            color: "white"
+                                            readOnly: true
+                                            anchors {
+                                                topMargin: 7
+                                                top: tokenStatusContainer.top
+                                            }
+                                        }
                                     }
-                                    color: "white"
+
+                                    Rectangle {
+                                        id: tokenContainer
+                                        visible: hcs_token.text !== ""
+                                        height: 25
+                                        color: "#ddd"
+                                        width: 100
+
+                                        TextEdit {
+                                            id: hcs_token
+                                            visible: text !== ""
+                                            text: ""
+                                            readOnly: true
+                                            font {
+                                                family: inconsolata.name
+                                                pixelSize: 20
+                                            }
+                                            selectByMouse: true
+
+                                            anchors {
+                                                centerIn: tokenContainer
+                                            }
+                                        }
+                                    }
+
+
                                 }
 
                                 Connections {
@@ -518,19 +569,24 @@ Rectangle {
                                     interval: 3000
                                     running: false
                                     repeat: false
+                                    onRunningChanged: {
+                                        if (running) {
+                                            hcs_token_status.text = "Generating token..."
+                                        }
+                                    }
                                     onTriggered: {
-                                        hcs_token.text = "error"
-
+                                        hcs_token_status.text = "Error: HCS timed out"
                                     }
                                 }
+
                                 Connections {
                                     target: coreInterface
                                     onHcsTokenChanged: {
                                         hcs_token.text =  coreInterface.hcs_token_
+                                        hcs_token_status.text = "Your remote token is: "
                                         tokenTimer.stop()
                                     }
                                 }
-
                             }
 
                             Item {
@@ -1293,6 +1349,11 @@ Rectangle {
     FontLoader {
         id: sgicons
         source: "qrc:/fonts/sgicons.ttf"
+    }
+
+    FontLoader {
+        id: inconsolata
+        source: "qrc:/fonts/Inconsolata.otf"
     }
 
     Window {
