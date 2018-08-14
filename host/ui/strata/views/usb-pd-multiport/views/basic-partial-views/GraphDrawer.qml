@@ -103,6 +103,7 @@ Item {
                         remainderHover.visible = true
                     } else {
                         menuItems.visible = true
+                        clearGraphData();
                     }
                 }
             },
@@ -140,6 +141,10 @@ Item {
             }
         ]
 
+        function clearGraphData(){
+
+        }
+
         SGGraph{
             id:voltageGraph
             anchors.left: menuContainer.left
@@ -174,7 +179,7 @@ Item {
             underDataColor: "transparent"   // Default: Qt.rgba(.5, .5, .5, .3) (transparent gray)
             backgroundColor: "black"        // Default: #ffffff (white)
             minYValue: 0                    // Default: 0
-            maxYValue: 25                   // Default: 10
+            maxYValue: 22                   // Default: 10
             minXValue: 0                    // Default: 0
             maxXValue: 5                    // Default: 10
             showXGrids: false               // Default: false
@@ -221,7 +226,7 @@ Item {
             underDataColor: "transparent"   // Default: Qt.rgba(.5, .5, .5, .3) (transparent gray)
             backgroundColor: "black"        // Default: #ffffff (white)
             minYValue: 0                    // Default: 0
-            maxYValue: 120                   // Default: 10
+            maxYValue: 110                   // Default: 10
             minXValue: 0                    // Default: 0
             maxXValue: 5                    // Default: 10
             showXGrids: false               // Default: false
