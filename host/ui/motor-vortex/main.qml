@@ -13,6 +13,7 @@ Window {
 
     // Debug option(s)
     property bool showDebugCommandBar: false
+    property bool is_remote_connected: false
 
     Component.onCompleted: {
         console.log("Initializing")
@@ -20,6 +21,24 @@ Window {
     }
 
     onClosing: {
+        if(is_remote_connected) {
+            // sending remote disconnect message to hcs
+            var remote_disconnect_json = {
+                "hcs::cmd":"remote_disconnect",
+            }
+            coreInterface.sendCommand(JSON.stringify(remote_disconnect_json))
+
+            console.log("UI -> HCS ", JSON.stringify(remote_disconnect_json))
+        }
+
+        var remote_json = {
+            "hcs::cmd":"advertise",
+            "payload": {
+                "advertise_platforms":false
+            }
+        }
+        console.log("asking hcs to advertise the platforms",JSON.stringify(remote_json))
+        coreInterface.sendCommand(JSON.stringify(remote_json))
         // End session with HCS
         coreInterface.unregisterClient();
     }
@@ -133,6 +152,9 @@ Window {
                 text: "Logout"
                 onClicked: {
                     NavigationControl.updateState(NavigationControl.events.LOGOUT_EVENT,null)
+                    var disconnect_json = {"hcs::cmd":"disconnect_platform"}
+                    console.log("disonnecting the platform")
+                    coreInterface.sendCommand(JSON.stringify(disconnect_json))
                 }
             }
             Button {

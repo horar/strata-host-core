@@ -15,6 +15,7 @@ Rectangle {
     property string user_id: ""
     property bool is_logged_in: false
     property bool is_remote_connected: false
+    property bool is_remote_advertised: false
     property string generalTitle: "Guest"
     property color backgroundColor: "#3a3a3a"
 
@@ -471,6 +472,7 @@ Rectangle {
                                         var advertise
                                         if(remoteToggle.checked) {
                                             advertise = true
+                                            is_remote_connected = true
                                             tokenTimer.start()
                                         }
                                         else {
@@ -496,7 +498,7 @@ Rectangle {
                                         horizontalCenter: remoteInviteLeft.horizontalCenter
                                         topMargin: 25
                                     }
-                                  //  text: remoteToggle.checked ? "Your remote token is: " + coreInterface.hcs_token_ : "Enable to generate remote token"
+                                    //  text: remoteToggle.checked ? "Your remote token is: " + coreInterface.hcs_token_ : "Enable to generate remote token"
                                     font {
                                         family: franklinGothicBook.name
                                     }
@@ -794,6 +796,7 @@ Rectangle {
                                         // Successful remote connection
                                         if (result === true){
                                             remoteConnectContainer.state = "success"
+                                            is_remote_connected = true
                                         }
                                         else {
                                             remoteConnectContainer.state = "error"
@@ -1106,6 +1109,33 @@ Rectangle {
                     onClicked: {
                         profileMenu.close()
                         NavigationControl.updateState(NavigationControl.events.LOGOUT_EVENT)
+                        remoteConnectContainer.state = "default"
+
+
+                        if(is_remote_connected) {
+                            // sending remote disconnect message to hcs
+                            var remote_disconnect_json = {
+                                "hcs::cmd":"remote_disconnect",
+                            }
+                            coreInterface.sendCommand(JSON.stringify(remote_disconnect_json))
+
+                            console.log("UI -> HCS ", JSON.stringify(remote_disconnect_json))
+                        }
+
+                        if(is_remote_advertised){
+                            is_remote_advertised = false
+                            var remote_json = {
+                                "hcs::cmd":"advertise",
+                                "payload": {
+                                    "advertise_platforms":is_remote_advertised
+                                }
+                            }
+                            console.log("asking hcs to advertise the platforms",JSON.stringify(remote_json))
+                            coreInterface.sendCommand(JSON.stringify(remote_json))
+                        }
+
+
+
                     }
                     width: profileMenu.width
                 }

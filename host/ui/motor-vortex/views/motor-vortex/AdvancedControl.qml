@@ -276,10 +276,25 @@ Rectangle {
                 width: 350
                 from : 1500
                 to: 5500
+
                 value :
-                   platformInterface.motorSpeedSliderValue
+                {
+                    console.log("kdjsfk1111")
+                    if(platformInterface.motorSpeedSliderValue < 1500 ){
+                        console.log("kdjsfk222",platformInterface.motorSpeedSliderValue)
+                        return 1500
+                    }
+                    if( platformInterface.motorSpeedSliderValue > 5500 ) {
+                        console.log("kdjsfk3333",platformInterface.motorSpeedSliderValue)
+
+                        return 5500
+                    }
 
 
+                    console.log("kdjsfk444",platformInterface.motorSpeedSliderValue)
+                    return platformInterface.motorSpeedSliderValue
+
+                }
                 anchors {
                     verticalCenter: setSpeed.verticalCenter
                     left: speedControlContainer.left
@@ -289,10 +304,17 @@ Rectangle {
                 }
 
                 onValueChanged: {
-                    setSpeed.input = value.toFixed(0)
-
-                    platformInterface.motorSpeedSliderValue = value.toFixed(0)
                     console.log("in advance", targetSpeedSlider.value)
+                    platformInterface.motorSpeedSliderValue
+                    .
+                    console.log("in value change",platformInterface.motorSpeedSliderValue )
+                   // setSpeed.input = value.toFixed(0)
+                    if(targetSpeedSlider.value <= 5500 && targetSpeedSlider.value >= 1500 ) {
+                        console.log("in advance", targetSpeedSlider.value)
+                        platformInterface.motorSpeedSliderValue = value.toFixed(0)
+                    }
+
+
                 }
 
                 MouseArea {
@@ -338,7 +360,11 @@ Rectangle {
             SGSlider {
                 id: rampRateSlider
                 label: "Ramp Rate:"
-                value: platformInterface.rampRateSliderValue
+                value:{
+
+                    platformInterface.rampRateSliderValue
+
+                 }
                 from: 2
                 to:4
                 anchors {
@@ -350,7 +376,6 @@ Rectangle {
                     rightMargin: 10
                 }
                 onValueChanged: {
-
                     setRampRate.input = value.toFixed(0)
                     platformInterface.rampRateSliderValue = value.toFixed(0)
                 }

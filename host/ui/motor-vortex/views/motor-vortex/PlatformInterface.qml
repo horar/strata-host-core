@@ -87,26 +87,26 @@ Item {
        system_mode_selection Command
      */
     property var system_mode_selection: ({
-                                      "cmd" : "set_system_mode",
-                                      "payload": {
-                                          "system_mode":" " // "automation" or "manual"
-                                      },
+                                             "cmd" : "set_system_mode",
+                                             "payload": {
+                                                 "system_mode":" " // "automation" or "manual"
+                                             },
 
-                                      // Update will set and send in one shot
-                                      update: function (system_mode) {
-                                          this.set(system_mode)
-                                          CorePlatformInterface.send(this)
-                                      },
-                                      // Set can set single or multiple properties before sending to platform
-                                      set: function (system_mode) {
-                                          this.payload.system_mode = system_mode;
-                                      },
-                                      send: function () { CorePlatformInterface.send(this) },
-                                      show: function () { CorePlatformInterface.show(this) }
+                                             // Update will set and send in one shot
+                                             update: function (system_mode) {
+                                                 this.set(system_mode)
+                                                 CorePlatformInterface.send(this)
+                                             },
+                                             // Set can set single or multiple properties before sending to platform
+                                             set: function (system_mode) {
+                                                 this.payload.system_mode = system_mode;
+                                             },
+                                             send: function () { CorePlatformInterface.send(this) },
+                                             show: function () { CorePlatformInterface.show(this) }
 
 
 
-                                  })
+                                         })
     /*
       set_drive_mode
     */
@@ -221,12 +221,12 @@ Item {
     */
     property var set_color_mixing : ({
                                          "cmd":"set_color_mixing",
-                                             "payload":{
-                                                         "color1": "red", // color can be "red"/"green"/"blue"
-                                                         "color_value1": 128,// color_value varies from 0 to 255
-                                                         "color2": "green", // color can be "red"/"green"/"blue"
-                                                         "color_value2": 127, // color_value varies from 0 to 255
-                                             },
+                                         "payload":{
+                                             "color1": "red", // color can be "red"/"green"/"blue"
+                                             "color_value1": 128,// color_value varies from 0 to 255
+                                             "color2": "green", // color can be "red"/"green"/"blue"
+                                             "color_value2": 127, // color_value varies from 0 to 255
+                                         },
                                          // Update will set and send in one shot
                                          update: function (color_1,color_value_1,color_2,color_value_2) {
                                              this.set(color_1,color_value_1,color_2,color_value_2)
@@ -243,17 +243,17 @@ Item {
                                          show: function () { CorePlatformInterface.show(this) }
                                          
                                      })
-                                    
+
     /*
       Set Single Color LED
     */
     
     property var set_single_color: ({
                                         "cmd":"set_single_color",
-                                            "payload":{
-                                                        "color": "red" ,// color can be "red"/"green"/"blue"
-                                                        "color_value": 120, // color_value varies from 0 to 255 
-                                            },
+                                        "payload":{
+                                            "color": "red" ,// color can be "red"/"green"/"blue"
+                                            "color_value": 120, // color_value varies from 0 to 255
+                                        },
                                         // Update will set and send in one shot
                                         update: function (color,color_value) {
                                             this.set(color,color_value)
@@ -271,44 +271,44 @@ Item {
       set Blink0 Frequency
      */
     property var set_blink0_frequency: ({
-                                        "cmd":"set_blink0_frequency",
+                                            "cmd":"set_blink0_frequency",
                                             "payload":{
-                                                        "blink0_frequency": 2
+                                                "blink0_frequency": 2
                                             },
-                                        // Update will set and send in one shot
-                                        update: function (blink_0_frequency) {
-                                            this.set(blink_0_frequency)
-                                            CorePlatformInterface.send(this)
-                                        },
-                                        set: function (blink_0_frequency) {
-                                            this.payload.blink0_frequency = blink_0_frequency
+                                            // Update will set and send in one shot
+                                            update: function (blink_0_frequency) {
+                                                this.set(blink_0_frequency)
+                                                CorePlatformInterface.send(this)
+                                            },
+                                            set: function (blink_0_frequency) {
+                                                this.payload.blink0_frequency = blink_0_frequency
 
-                                        },
-                                        send: function () { CorePlatformInterface.send(this) },
-                                        show: function () { CorePlatformInterface.show(this) }
-                                    })
+                                            },
+                                            send: function () { CorePlatformInterface.send(this) },
+                                            show: function () { CorePlatformInterface.show(this) }
+                                        })
 
     /*
       set_led_output_on_off
      */
     property var set_led_outputs_on_off:({
-                                            "cmd":"set_led_outputs_on_off",
-                                                "payload":{
-                                                            "led_output": "white"       // "white" for turning all LEDs ON
-                                                                                        // "off" to turn off all the LEDs.
-                                                },
-                                            update: function (led_output) {
-                                                this.set(led_output)
-                                                CorePlatformInterface.send(this)
-                                            },
-                                            set: function (led_output) {
-                                                this.payload.led_output = led_output
+                                             "cmd":"set_led_outputs_on_off",
+                                             "payload":{
+                                                 "led_output": "white"       // "white" for turning all LEDs ON
+                                                 // "off" to turn off all the LEDs.
+                                             },
+                                             update: function (led_output) {
+                                                 this.set(led_output)
+                                                 CorePlatformInterface.send(this)
+                                             },
+                                             set: function (led_output) {
+                                                 this.payload.led_output = led_output
 
-                                            },
-                                            send: function () { CorePlatformInterface.send(this) },
-                                            show: function () { CorePlatformInterface.show(this) }
+                                             },
+                                             send: function () { CorePlatformInterface.send(this) },
+                                             show: function () { CorePlatformInterface.show(this) }
 
-                                        })
+                                         })
 
 
     // -------------------  end commands
@@ -336,13 +336,7 @@ Item {
     property int motorSpeedSliderValue: 1500
 
     onMotorSpeedSliderValueChanged: {
-        motor_speed.update(motorSpeedSliderValue)
-    }
-
-    property int motorSpeedSliderValueForFae: 5501
-
-    onMotorSpeedSliderValueForFaeChanged: {
-        motor_speed.update(motorSpeedSliderValueForFae)
+            motor_speed.update(motorSpeedSliderValue)
     }
 
     property int rampRateSliderValue: 3
@@ -390,7 +384,7 @@ Item {
 
     onDriveModePseudoTrapezoidalChanged: {
         if(driveModePseudoTrapezoidal == true) {
-           set_drive_mode.update(0)
+            set_drive_mode.update(0)
         }
     }
 

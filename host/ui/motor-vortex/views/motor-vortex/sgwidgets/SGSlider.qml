@@ -41,7 +41,7 @@ Item {
 
     Slider {
         id: sgSlider
-        value: 50
+       // value: 50
         from: 0
         to: 100
         live: false
