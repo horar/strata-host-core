@@ -209,6 +209,7 @@ Item {
             }
 
             onShowGraph: {
+                graphDrawer.portNumber = portNumber;
                 graphDrawer.state = "open"
             }
         }
@@ -313,6 +314,7 @@ Item {
             }
 
             onShowGraph: {
+                graphDrawer.portNumber = portNumber;
                 graphDrawer.state = "open"
             }
         }
@@ -416,6 +418,7 @@ Item {
                  }
             }
             onShowGraph: {
+                graphDrawer.portNumber = portNumber;
                 graphDrawer.state = "open"
             }
         }
@@ -519,6 +522,7 @@ Item {
             }
 
             onShowGraph: {
+                graphDrawer.portNumber = portNumber;
                 graphDrawer.state = "open"
             }
         }
