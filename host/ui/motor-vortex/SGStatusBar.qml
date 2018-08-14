@@ -582,9 +582,15 @@ Rectangle {
                                 Connections {
                                     target: coreInterface
                                     onHcsTokenChanged: {
+
                                         hcs_token.text =  coreInterface.hcs_token_
-                                        hcs_token_status.text = "Your remote token is: "
-                                        tokenTimer.stop()
+                                        if(hcs_token.text === "") {
+                                            return;
+                                        }
+                                        else {
+                                            hcs_token_status.text = "Your remote token is: "
+                                            tokenTimer.stop()
+                                        }
                                     }
                                 }
                             }
