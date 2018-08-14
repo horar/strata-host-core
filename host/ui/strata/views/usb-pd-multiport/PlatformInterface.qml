@@ -25,6 +25,7 @@ Item {
         "input_voltage": 0.0,
         "output_voltage":0.0,
         "input_current": 0.0,
+        "output_current":0.0,
         "temperature": 0.0,
         "maximum_power":0.0
     }
