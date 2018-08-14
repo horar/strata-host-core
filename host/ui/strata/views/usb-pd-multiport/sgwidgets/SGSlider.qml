@@ -145,12 +145,8 @@ Item {
                 root.moved()
             }
         }
-        onValueChanged: {
-            console.log("SGSlider value changed to ",value);
-        }
 
-//        onMoved:{
-//            root.moved()
-//        }
+
+
     }
 }
