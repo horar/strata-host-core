@@ -20,6 +20,22 @@ Window {
         NavigationControl.init(flipable,controlContainer, contentContainer, statusBarContainer)
     }
 
+    Connections {
+        target: coreInterface
+
+        onRemoteConnectionChanged:{
+
+            // Successful remote connection
+            if (result === true){
+                is_remote_connected = true
+            }
+            else {
+                is_remote_connected = false
+            }
+        }
+
+    }
+
     onClosing: {
         if(is_remote_connected) {
             // sending remote disconnect message to hcs

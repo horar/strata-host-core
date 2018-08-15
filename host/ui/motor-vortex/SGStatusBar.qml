@@ -562,7 +562,22 @@ Rectangle {
                                         remoteToggle.checked = false
                                     }
                                 }
+                                Connections {
+                                    target: coreInterface
+                                    onRemoteConnectionChanged:{
+                                        if ( remoteConnectContainer.state === "connecting") {
 
+                                            // Successful remote connection
+                                            if (result === true){
+                                                remoteConnectContainer.state = "success"
+                                                is_remote_connected = true
+                                            }
+                                            else {
+                                                remoteConnectContainer.state = "error"
+                                            }
+                                        }
+                                    }
+                                }
                                 Timer {
                                     // 3 second timeout for response
                                     id: tokenTimer
