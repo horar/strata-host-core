@@ -339,6 +339,7 @@ Item {
             motor_speed.update(motorSpeedSliderValue)
     }
 
+    property bool sliderUpdateSignal: false
     property int rampRateSliderValue: 3
 
     onRampRateSliderValueChanged: {

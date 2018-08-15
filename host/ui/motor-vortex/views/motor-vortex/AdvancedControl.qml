@@ -304,11 +304,8 @@ Rectangle {
                 }
 
                 onValueChanged: {
-                    console.log("in advance", targetSpeedSlider.value)
 
-
-                    console.log("in value change",platformInterface.motorSpeedSliderValue)
-                     setSpeed.input = value.toFixed(0)
+                    setSpeed.input = value.toFixed(0)
                     var current_slider_value = value.toFixed(0)
 
                     // Don't change if FAE safety limit is enabled
@@ -371,7 +368,14 @@ Rectangle {
                 label: "Ramp Rate:"
                 value:{
 
-                    platformInterface.rampRateSliderValue
+                    if(platformInterface.rampRateSliderValue < 2) {
+                        return 2
+                    }
+                    if(platformInterface.rampRateSliderValue > 4) {
+                        return 4
+                    }
+
+                    return platformInterface.rampRateSliderValue
 
                 }
                 from: 2
@@ -386,7 +390,20 @@ Rectangle {
                 }
                 onValueChanged: {
                     setRampRate.input = value.toFixed(0)
-                    platformInterface.rampRateSliderValue = value.toFixed(0)
+                    var current_slider_value = value.toFixed(0)
+
+
+                    // Don't change if FAE safety limit is enabled
+                    if(current_slider_value >= 4 && platformInterface.rampRateSliderValue >= 4){
+                        console.log("Do nothing")
+                    }
+
+                    else if(current_slider_value <= 2 && platformInterface.rampRateSliderValue <= 2){
+                        console.log("Do nothing")
+                    }
+                    else {
+                        platformInterface.rampRateSliderValue = current_slider_value
+                    }
                 }
             }
 

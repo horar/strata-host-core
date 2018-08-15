@@ -432,7 +432,12 @@ Rectangle {
                     }
                     text: checked ? "Turn Safety Limits On" : "<font color='red'><b>Turn Safety Limits Off</b></font>"
                     checkable: true
-                    onClicked: if (checked) speedPopup.open()
+                    onClicked: {
+                        if (checked) {
+                                   speedPopup.open()
+                                   platformInterface.sliderUpdateSignal = true
+                           }
+                    }
                 }
 
                 Text {
