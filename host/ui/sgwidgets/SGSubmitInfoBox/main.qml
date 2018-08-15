@@ -10,7 +10,7 @@ Window {
     SGSubmitInfoBox {
         id: applyInfoBox
 
-        input: "6"                  // Default string to be displayed in box
+        value: "6"                  // Default string to be displayed in box
         infoBoxWidth: 80            // Must be set by user based on their needs
 
         // Optional configuration:
@@ -22,7 +22,10 @@ Window {
         realNumberValidation: true      // Default: false (set true to restrict enterable values to real numbers)
         textColor: "black"              // Default: "black" (colors label as well as text in box
         enabled: true                   // Default: true
-        buttonText: "Apply"
+        buttonText: "Apply"             // Default: "submit"
+        showButton: true                // Default: false
+        unit: "V"                       // Default: ""
+//        overrideLabelWidth: 100       // Default: label contents width - this is useful for lining up lots of these vertically, set them all to the same value
 
         // Useful Signals:
         onApplied: console.log("Applied string value is " + value)

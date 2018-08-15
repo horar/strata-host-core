@@ -2,7 +2,7 @@ import QtQuick 2.9
 import "qrc:/views/usb-pd-multiport/sgwidgets"
 import "qrc:/views/usb-pd-multiport/views/advanced-partial-views"
 
-Item {
+Rectangle {
     id: root
 
     property bool debugLayout: false

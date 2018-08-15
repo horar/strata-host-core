@@ -118,8 +118,7 @@ Item {
                 left: portColumn.left
                 right: portColumn.right
             }
-
-
+            portConnected: false
             portNumber: 1
             advertisedVoltage:{
                 if (platformInterface.request_usb_power_notification.port === 1){
@@ -131,7 +130,7 @@ Item {
             }
             maxPower:{
                 if (platformInterface.request_usb_power_notification.port === 1){
-                   return Math.round(platformInterface.request_usb_power_notification.negotiated_voltage * platformInterface.request_usb_power_notification.negotiated_current *100)/100
+                   return Math.round(platformInterface.request_usb_power_notification.maximum_power *100)/100
                 }
                 else{
                     return portInfo1.maxPower;
@@ -139,7 +138,7 @@ Item {
             }
             inputPower:{
                 if (platformInterface.request_usb_power_notification.port === 1){
-                    return platformInterface.request_usb_power_notification.input_voltage * platformInterface.request_usb_power_notification.input_current
+                    return Math.round(platformInterface.request_usb_power_notification.input_voltage * platformInterface.request_usb_power_notification.input_current * 100)/100
                 }
                 else{
                     return portInfo1.inputPower;
@@ -147,7 +146,7 @@ Item {
             }
             outputPower:{
                 if (platformInterface.request_usb_power_notification.port === 1){
-                    return platformInterface.request_usb_power_notification.output_voltage * platformInterface.request_usb_power_notification.output_current
+                    return Math.round(platformInterface.request_usb_power_notification.output_voltage * platformInterface.request_usb_power_notification.output_current * 100)/100
                 }
                 else{
                     return portInfo1.outputPower;
@@ -178,7 +177,7 @@ Item {
                         return "—"
                     }
                     else{
-                        return theOutputPower/theInputPower
+                        return Math.round((theOutputPower/theInputPower) * 100)/100
                     }
                 }
                 else{
@@ -186,7 +185,31 @@ Item {
                 }
             }
 
+            property var deviceConnected: platformInterface.usb_pd_port_connect.connection_state
+            property var deviceDisconnected: platformInterface.usb_pd_port_disconnect.connection_state
+
+             onDeviceConnectedChanged: {
+                 console.log("device connected message received in basicControl. Port=",platformInterface.usb_pd_port_connect.port_id,
+                             "state=",platformInterface.usb_pd_port_connect.connection_state);
+
+                 if (platformInterface.usb_pd_port_connect.port_id === "USB_C_port_1"){
+                     if (platformInterface.usb_pd_port_connect.connection_state === "connected"){
+                         portInfo1.portConnected = true;
+                     }
+                 }
+             }
+
+             onDeviceDisconnectedChanged:{
+
+                 if (platformInterface.usb_pd_port_disconnect.port_id === "USB_C_port_1"){
+                     if (platformInterface.usb_pd_port_disconnect.connection_state === "disconnected"){
+                         portInfo1.portConnected = false;
+                     }
+                 }
+            }
+
             onShowGraph: {
+                graphDrawer.portNumber = portNumber;
                 graphDrawer.state = "open"
             }
         }
@@ -201,6 +224,7 @@ Item {
                 right: portColumn.right
             }
             portNumber: 2
+            portConnected: false
             advertisedVoltage:{
                 if (platformInterface.request_usb_power_notification.port === 2){
                     return platformInterface.request_usb_power_notification.negotiated_voltage
@@ -211,7 +235,7 @@ Item {
             }
             maxPower:{
                 if (platformInterface.request_usb_power_notification.port === 2){
-                    return Math.round(platformInterface.request_usb_power_notification.negotiated_voltage * platformInterface.request_usb_power_notification.negotiated_current *100)/100
+                    return Math.round(platformInterface.request_usb_power_notification.maximum_power *100)/100
                 }
                 else{
                     return portInfo2.maxPower;
@@ -219,7 +243,7 @@ Item {
             }
             inputPower:{
                 if (platformInterface.request_usb_power_notification.port === 2){
-                    return platformInterface.request_usb_power_notification.input_voltage * platformInterface.request_usb_power_notification.input_current
+                    return Math.round(platformInterface.request_usb_power_notification.input_voltage * platformInterface.request_usb_power_notification.input_current *100)/100
                 }
                 else{
                     return portInfo2.inputPower;
@@ -227,7 +251,7 @@ Item {
             }
             outputPower:{
                 if (platformInterface.request_usb_power_notification.port === 2){
-                    return platformInterface.request_usb_power_notification.output_voltage * platformInterface.request_usb_power_notification.output_current
+                    return Math.round(platformInterface.request_usb_power_notification.output_voltage * platformInterface.request_usb_power_notification.output_current *100)/100
                 }
                 else{
                     return portInfo2.outputPower;
@@ -258,14 +282,39 @@ Item {
                         return "—"
                     }
                     else{
-                        return theOutputPower/theInputPower
+                        return Math.round((theOutputPower/theInputPower) *100)/100
                     }
                 }
                 else{
                     return portInfo2.efficency
                 }
             }
+
+            property var deviceConnected: platformInterface.usb_pd_port_connect.connection_state
+            property var deviceDisconnected: platformInterface.usb_pd_port_disconnect.connection_state
+
+             onDeviceConnectedChanged: {
+                 console.log("device connected message received in basicControl. Port=",platformInterface.usb_pd_port_connect.port_id,
+                             "state=",platformInterface.usb_pd_port_connect.connection_state);
+
+                 if (platformInterface.usb_pd_port_connect.port_id === "USB_C_port_2"){
+                     if (platformInterface.usb_pd_port_connect.connection_state === "connected"){
+                         portInfo2.portConnected = true;
+                     }
+                 }
+             }
+
+             onDeviceDisconnectedChanged:{
+
+                 if (platformInterface.usb_pd_port_disconnect.port_id === "USB_C_port_2"){
+                     if (platformInterface.usb_pd_port_disconnect.connection_state === "disconnected"){
+                         portInfo2.portConnected = false;
+                     }
+                 }
+            }
+
             onShowGraph: {
+                graphDrawer.portNumber = portNumber;
                 graphDrawer.state = "open"
             }
         }
@@ -280,6 +329,7 @@ Item {
                 right: portColumn.right
             }
             portNumber: 3
+            portConnected: false
             advertisedVoltage:{
                 if (platformInterface.request_usb_power_notification.port === 3){
                     return platformInterface.request_usb_power_notification.negotiated_voltage
@@ -290,7 +340,7 @@ Item {
                 }
             maxPower:{
                 if (platformInterface.request_usb_power_notification.port === 3){
-                    return Math.round(platformInterface.request_usb_power_notification.negotiated_voltage * platformInterface.request_usb_power_notification.negotiated_current *100)/100
+                    return Math.round(platformInterface.request_usb_power_notification.maximum_power *100)/100
                 }
                 else{
                     return portInfo3.maxPower;
@@ -298,7 +348,7 @@ Item {
             }
             inputPower:{
                 if (platformInterface.request_usb_power_notification.port === 3){
-                    return platformInterface.request_usb_power_notification.input_voltage * platformInterface.request_usb_power_notification.input_current
+                    return Math.round(platformInterface.request_usb_power_notification.input_voltage * platformInterface.request_usb_power_notification.input_current *100)/100
                 }
                 else{
                     return portInfo3.inputPower;
@@ -306,7 +356,7 @@ Item {
             }
             outputPower:{
                 if (platformInterface.request_usb_power_notification.port === 3){
-                    return platformInterface.request_usb_power_notification.output_voltage * platformInterface.request_usb_power_notification.output_current
+                    return Math.round(platformInterface.request_usb_power_notification.output_voltage * platformInterface.request_usb_power_notification.output_current *100)/100
                 }
                 else{
                     return portInfo3.outputPower;
@@ -337,14 +387,38 @@ Item {
                         return "—"
                     }
                     else{
-                        return theOutputPower/theInputPower
+                        return Math.round((theOutputPower/theInputPower) *100)/100
                     }
                 }
                 else{
                   return portInfo3.efficency;
                     }
             }
+
+            property var deviceConnected: platformInterface.usb_pd_port_connect.connection_state
+            property var deviceDisconnected: platformInterface.usb_pd_port_disconnect.connection_state
+
+             onDeviceConnectedChanged: {
+                 console.log("device connected message received in basicControl. Port=",platformInterface.usb_pd_port_connect.port_id,
+                             "state=",platformInterface.usb_pd_port_connect.connection_state);
+
+                 if (platformInterface.usb_pd_port_connect.port_id === "USB_C_port_3"){
+                     if (platformInterface.usb_pd_port_connect.connection_state === "connected"){
+                         portInfo3.portConnected = true;
+                     }
+                 }
+             }
+
+             onDeviceDisconnectedChanged:{
+
+                 if (platformInterface.usb_pd_port_disconnect.port_id === "USB_C_port_3"){
+                     if (platformInterface.usb_pd_port_disconnect.connection_state === "disconnected"){
+                         portInfo3.portConnected = false;
+                     }
+                 }
+            }
             onShowGraph: {
+                graphDrawer.portNumber = portNumber;
                 graphDrawer.state = "open"
             }
         }
@@ -359,6 +433,7 @@ Item {
                 right: portColumn.right
             }
             portNumber: 4
+            portConnected: false
             advertisedVoltage:{
                 if (platformInterface.request_usb_power_notification.port === 4){
                     return platformInterface.request_usb_power_notification.negotiated_voltage;
@@ -369,7 +444,7 @@ Item {
             }
             maxPower:{
                 if (platformInterface.request_usb_power_notification.port === 4){
-                    return Math.round(platformInterface.request_usb_power_notification.negotiated_voltage * platformInterface.request_usb_power_notification.negotiated_current *100)/100
+                    return Math.round(platformInterface.request_usb_power_notification.maximum_power *100)/100
                 }
                 else{
                     return portInfo4.maxPower;
@@ -377,7 +452,7 @@ Item {
             }
             inputPower:{
                 if (platformInterface.request_usb_power_notification.port === 4){
-                    return platformInterface.request_usb_power_notification.input_voltage * platformInterface.request_usb_power_notification.input_current
+                    return Math.round(platformInterface.request_usb_power_notification.input_voltage * platformInterface.request_usb_power_notification.input_current *100)/100
                 }
                 else{
                    return portInfo4.inputPower;
@@ -385,7 +460,7 @@ Item {
             }
             outputPower:{
                 if (platformInterface.request_usb_power_notification.port === 4){
-                    return platformInterface.request_usb_power_notification.output_voltage * platformInterface.request_usb_power_notification.output_current
+                    return Math.round(platformInterface.request_usb_power_notification.output_voltage * platformInterface.request_usb_power_notification.output_current *100)/100
                 }
                 else{
                    return portInfo4.outputPower;
@@ -416,13 +491,38 @@ Item {
                         return "—"
                     }
                     else{
-                        return theOutputPower/theInputPower
+                        return Math.round((theOutputPower/theInputPower) *100)/100
                     }
                 else{
                     return portInfo4.efficency;
                 }
             }
+
+            property var deviceConnected: platformInterface.usb_pd_port_connect.connection_state
+            property var deviceDisconnected: platformInterface.usb_pd_port_disconnect.connection_state
+
+             onDeviceConnectedChanged: {
+                 console.log("device connected message received in basicControl. Port=",platformInterface.usb_pd_port_connect.port_id,
+                             "state=",platformInterface.usb_pd_port_connect.connection_state);
+
+                 if (platformInterface.usb_pd_port_connect.port_id === "USB_C_port_4"){
+                     if (platformInterface.usb_pd_port_connect.connection_state === "connected"){
+                         portInfo4.portConnected = true;
+                     }
+                 }
+             }
+
+             onDeviceDisconnectedChanged:{
+
+                 if (platformInterface.usb_pd_port_disconnect.port_id === "USB_C_port_4"){
+                     if (platformInterface.usb_pd_port_disconnect.connection_state === "disconnected"){
+                         portInfo4.portConnected = false;
+                     }
+                 }
+            }
+
             onShowGraph: {
+                graphDrawer.portNumber = portNumber;
                 graphDrawer.state = "open"
             }
         }

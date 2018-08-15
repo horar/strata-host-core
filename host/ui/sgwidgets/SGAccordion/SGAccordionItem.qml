@@ -63,7 +63,7 @@ Rectangle {
 
         MouseArea {
             id: titleBarClick
-            anchors { fill: parent }
+            anchors { fill: titleBar }
             cursorShape: Qt.PointingHandCursor
             onClicked: {
                 if (root.open) {

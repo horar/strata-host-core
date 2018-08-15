@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/">
+        <file>main.qml</file>
+        <file>SGGraphStatic.qml</file>
+    </qresource>
+</RCC>

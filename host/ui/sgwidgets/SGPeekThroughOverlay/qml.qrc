@@ -1,0 +1,9 @@
+<RCC>
+    <qresource prefix="/">
+        <file>main.qml</file>
+        <file>images/corner-fade.png</file>
+        <file>images/side-fade.png</file>
+        <file>images/top-fade.png</file>
+        <file>SGPeekThroughOverlay.qml</file>
+    </qresource>
+</RCC>
