@@ -36,7 +36,7 @@ Item {
     // @description: sent when a device is connected or disconnected
     //
     property var usb_pd_port_connect : {
-        "port_id": "unknown",
+        "port_id": "",
         "connection_state":"unknown"
     }
     onUsb_pd_port_connectChanged: {
@@ -169,6 +169,15 @@ Item {
     // --------------------------------------------------------------------------------------------
     //          Commands
     //--------------------------------------------------------------------------------------------
+
+    property var requestPlatformId:({
+                 "cmd":"request_platform_id",
+                 "payload":{
+                  },
+                 send: function(){
+                      CorePlatformInterface.send(this)
+                 }
+     })
 
    property var refresh:({
                 "cmd":"request_platform_refresh",
