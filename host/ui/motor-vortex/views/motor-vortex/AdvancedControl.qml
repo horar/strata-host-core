@@ -284,7 +284,7 @@ Rectangle {
                         console.log("kdjsfk222",platformInterface.motorSpeedSliderValue)
                         return 1500
                     }
-                    if( platformInterface.motorSpeedSliderValue > 5500 ) {
+                    if( platformInterface.motorSpeedSliderValue >= 5500 ) {
                         console.log("kdjsfk3333",platformInterface.motorSpeedSliderValue)
 
                         return 5500
@@ -305,15 +305,24 @@ Rectangle {
 
                 onValueChanged: {
                     console.log("in advance", targetSpeedSlider.value)
-                    platformInterface.motorSpeedSliderValue
-                    .
-                    console.log("in value change",platformInterface.motorSpeedSliderValue )
-                   // setSpeed.input = value.toFixed(0)
-                    if(targetSpeedSlider.value <= 5500 && targetSpeedSlider.value >= 1500 ) {
-                        console.log("in advance", targetSpeedSlider.value)
-                        platformInterface.motorSpeedSliderValue = value.toFixed(0)
+
+
+                    console.log("in value change",platformInterface.motorSpeedSliderValue)
+                     setSpeed.input = value.toFixed(0)
+                    var current_slider_value = value.toFixed(0)
+
+                    // Don't change if FAE safety limit is enabled
+                    if(current_slider_value >= 5500 && platformInterface.motorSpeedSliderValue >=5500){
+                        console.log("Do nothing")
                     }
 
+                    else if(current_slider_value <= 1500 && platformInterface.motorSpeedSliderValue <= 1500){
+                        console.log("Do nothing")
+                    }
+                    else{
+
+                        platformInterface.motorSpeedSliderValue = current_slider_value
+                    }
 
                 }
 
@@ -364,7 +373,7 @@ Rectangle {
 
                     platformInterface.rampRateSliderValue
 
-                 }
+                }
                 from: 2
                 to:4
                 anchors {

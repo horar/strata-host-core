@@ -80,15 +80,41 @@ Rectangle {
                 }
                 label: "<b>Motor Speed:</b>"
                 labelLeft: false
-                value: platformInterface.motorSpeedSliderValue
+                value:
+                {
+
+                    if(platformInterface.motorSpeedSliderValue < 1500 ){
+                        return 1500
+                    }
+                    if( platformInterface.motorSpeedSliderValue >= 5500 ) {
+                        return 5500
+                    }
+
+
+                    console.log("kdjsfk444",platformInterface.motorSpeedSliderValue)
+                    return platformInterface.motorSpeedSliderValue
+
+                }
                 from: 1500
                 to: 5500
 
                 onValueChanged: {
 
                     setSpeed.input = value.toFixed(0)
-                    platformInterface.motorSpeedSliderValue = value.toFixed(0)
-                    console.log("in basic", motorSpeedControl.value)
+                    var current_slider_value = value.toFixed(0)
+
+                    // Don't change if FAE safety limit is enabled
+                    if(current_slider_value >= 5500 && platformInterface.motorSpeedSliderValue >=5500){
+                        console.log("Do nothing")
+                    }
+
+                    else if(current_slider_value <= 1500 && platformInterface.motorSpeedSliderValue <= 1500){
+                        console.log("Do nothing")
+                    }
+                    else{
+
+                        platformInterface.motorSpeedSliderValue = current_slider_value
+                    }
                 }
             }
 
@@ -128,7 +154,7 @@ Rectangle {
                     property alias manual : manual
                     property alias automatic: automatic
 
-                   property var systemMode: platformInterface.set_mode.system_mode
+                    property var systemMode: platformInterface.set_mode.system_mode
 
                     onSystemModeChanged: {
                         if(systemMode === "automation") {
