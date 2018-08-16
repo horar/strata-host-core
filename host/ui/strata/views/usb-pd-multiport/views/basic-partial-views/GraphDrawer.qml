@@ -103,7 +103,7 @@ Item {
                         remainderHover.visible = true
                     } else {
                         menuItems.visible = true
-                        clearGraphData();
+                        //clearGraphData();
                     }
                 }
             },
@@ -141,8 +141,9 @@ Item {
             }
         ]
 
+        //clear out the old data in the graph when the drawer is opened
         function clearGraphData(){
-
+            //voltageGraph.
         }
 
         SGGraph{
@@ -186,7 +187,7 @@ Item {
             showYGrids: true                // Default: false
             showOptions: true               // Default: false - shows an options button to toggle centered
             throttlePlotting: true          // Default: true - Plots new data no more than every 100ms to save CPU & memory resources, otherwise points plotted on every inputData change
-            repeatOldData: false            // Default: visible - If no new data has been sent after 200ms, graph will plot a new point at the current time with the last input value
+            repeatOldData: true            // Default: visible - If no new data has been sent after 200ms, graph will plot a new point at the current time with the last input value
                                                             //  by default matches visibility of graph, so it doesn't waste CPU in the background.
         }
 
@@ -233,7 +234,7 @@ Item {
             showYGrids: true                // Default: false
             showOptions: true               // Default: false - shows an options button to toggle centered
             throttlePlotting: true          // Default: true - Plots new data no more than every 100ms to save CPU & memory resources, otherwise points plotted on every inputData change
-            repeatOldData: false            // Default: visible - If no new data has been sent after 200ms, graph will plot a new point at the current time with the last input value
+            repeatOldData: true            // Default: visible - If no new data has been sent after 200ms, graph will plot a new point at the current time with the last input value
                                                             //  by default matches visibility of graph, so it doesn't waste CPU in the background.
         }
         SGGraph{
@@ -247,7 +248,7 @@ Item {
             property real count: 0
             property real interval: 10 // 10 Hz?
 
-            property var powerInfo: platformInterface.request_usb_power_notification.output_voltage
+            property var powerInfo: platformInterface.request_usb_power_notification
             onPowerInfoChanged:{
                 //console.log("new power notification for port ",portNumber);
                 if (platformInterface.request_usb_power_notification.port === portNumber){
@@ -277,22 +278,12 @@ Item {
             showYGrids: true                // Default: false
             showOptions: true               // Default: false - shows an options button to toggle centered
             throttlePlotting: true          // Default: true - Plots new data no more than every 100ms to save CPU & memory resources, otherwise points plotted on every inputData change
-            repeatOldData: false            // Default: visible - If no new data has been sent after 200ms, graph will plot a new point at the current time with the last input value
+            repeatOldData: true            // Default: visible - If no new data has been sent after 200ms, graph will plot a new point at the current time with the last input value
                                                             //  by default matches visibility of graph, so it doesn't waste CPU in the background.
-
 
         }
 
-//        Text {
-//            text: "<b>Graphs Here</b>"
-//            font {
-//                pixelSize: 50
-//            }
-//            color: "#fff"
-//            anchors {
-//                centerIn: parent
-//            }
-//        }
+
     }
 
     MouseArea{
