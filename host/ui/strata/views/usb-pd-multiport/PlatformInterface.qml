@@ -166,6 +166,19 @@ Item {
                                              // "maximum_current":3.0,      // Amps
     }
 
+    property var request_reset_notification :{
+         "reset_status":true                   // only one value : true since only sent at the start
+    }
+
+    //when the platform sends a reset notification, the host must make a platformId call to initialize communication
+    //and a Refresh() command to synchronize settings with the platform
+    onRequest_reset_notificationChanged: {
+
+        console.log("Requesting platform Id and Refreshing")
+        platformInterface.requestPlatformId.send()
+        platformInterface.refresh.send() //ask the platform for all the current values
+    }
+
     // --------------------------------------------------------------------------------------------
     //          Commands
     //--------------------------------------------------------------------------------------------
