@@ -480,7 +480,7 @@ Rectangle {
                                         var advertise
                                         if(remoteToggle.checked) {
                                             advertise = true
-                                            is_remote_connected = true
+                                            is_remote_advertised = true
                                             tokenTimer.start()
                                         }
                                         else {
@@ -590,7 +590,7 @@ Rectangle {
                                         }
                                     }
                                     onTriggered: {
-                                        hcs_token_status.text = "Error: HCS timed out"
+                                        hcs_token_status.text = "Error: Cannot generate token"
                                     }
                                 }
 
