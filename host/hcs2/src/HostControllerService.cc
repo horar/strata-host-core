@@ -106,6 +106,9 @@ HcsError HostControllerService::init()
     // [TODO]: [prasanth] the following lines are used to handle the serial connect/disconnect
     // This method will be removed once we get the serial to socket stuff in
     port_disconnected_ = true;
+    //  Setting the connection state to false at start for both remote and client
+    remote_connector_->setConnectionState(false);
+    client_connector_->setConnectionState(false);
     setEventLoop();
     // [TODO] [prasanth] : This function run is coded in this, since the libevent dynamic
     //addtion of event is not implemented successfully in hcs
