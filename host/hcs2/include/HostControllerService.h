@@ -83,7 +83,7 @@
 // controller by "DEBUG" variable
 // PRINT_DEBUG - 1 // print the message on Console
 //         0 // do not print the message
-#define PRINT_DEBUG 1
+#define PRINT_DEBUG 0
 
 // set the length of hcs token
 #define HCSTOKEN_LENGTH 7
