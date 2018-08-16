@@ -479,8 +479,9 @@ Rectangle {
                                     grooveColor: "#777"
 
                                     onCheckedChanged: {
-                                        var advertise
+                                        var advertise;
                                         if(remoteToggle.checked) {
+
                                             advertise = true
                                             is_remote_advertised = true
                                             tokenTimer.start()

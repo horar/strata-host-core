@@ -3,6 +3,7 @@ import QtQuick.Window 2.10
 import QtQuick.Controls 2.3
 import QtQuick.Layouts 1.3
 import "js/navigation_control.js" as NavigationControl
+import "js/login.js" as Authenticator
 
 Window {
     id: mainWindow
@@ -15,10 +16,12 @@ Window {
     property bool showDebugCommandBar: false
     property bool is_remote_connected: false
 
+
     Component.onCompleted: {
         console.log("Initializing")
         NavigationControl.init(flipable,controlContainer, contentContainer, statusBarContainer)
     }
+
 
     Connections {
         target: coreInterface
@@ -33,7 +36,6 @@ Window {
                 is_remote_connected = false
             }
         }
-
     }
 
     onClosing: {
@@ -184,6 +186,15 @@ Window {
                 onClicked: {
                     var data = { user_id: "Guest" }
                     NavigationControl.updateState(NavigationControl.events.LOGIN_SUCCESSFUL_EVENT,data)
+                    var jwt_json = {
+                        "hcs::cmd":"jwt_token",
+                        "payload": {
+                            "jwt":"",
+                            "user_name": ""
+                        }
+                    }
+                    console.log("sending the jwt json to hcs",JSON.stringify(jwt_json))
+                    coreInterface.sendCommand(JSON.stringify(jwt_json))
                 }
             }
         }

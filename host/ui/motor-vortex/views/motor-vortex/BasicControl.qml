@@ -78,6 +78,8 @@ Rectangle {
                     rightMargin: 10
                     top: rightControl.top
                 }
+                from: 1500
+                to: 4100
                 label: "<b>Motor Speed:</b>"
                 labelLeft: false
                 value:
@@ -90,20 +92,17 @@ Rectangle {
                         return 5500
                     }
 
-
-                    console.log("kdjsfk444",platformInterface.motorSpeedSliderValue)
                     return platformInterface.motorSpeedSliderValue
 
                 }
-                from: 1500
-                to: 5500
+
 
                 onValueChanged: {
 
                     setSpeed.input = value.toFixed(0)
                     var current_slider_value = value.toFixed(0)
 
-                   //  Don't change if FAE safety limit is enabled
+                    //  Don't change if FAE safety limit is enabled
                     if(current_slider_value >= 5500 && platformInterface.motorSpeedSliderValue >=5500){
                         console.log("Do nothing")
                     }
@@ -111,9 +110,7 @@ Rectangle {
                     else if(current_slider_value <= 1500 && platformInterface.motorSpeedSliderValue <= 1500){
                         console.log("Do nothing")
                     }
-//                    if(platformInterface.sliderUpdateSignal == true){
-//                        console.log("Do nothing")
-//                    }
+
 
                     else{
 

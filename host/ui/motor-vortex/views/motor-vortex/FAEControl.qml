@@ -191,19 +191,20 @@ Rectangle {
             height: childrenRect.height
             anchors {
                 horizontalCenter: rightSide.horizontalCenter
+
             }
 
             Button {
                 id: startStopButton
                 text: checked ? qsTr("Start Motor") : qsTr("Stop Motor")
                 checked: platformInterface.motorState
-
+                checkable: true
                 property var motorOff: platformInterface.motor_off.enable;
 
                 onMotorOffChanged: {
                     if(motorOff === "off") {
                         console.log("in motorOFF in fae")
-                        startStopButton.checked = true;
+                        startStopButton.checked = true
                     }
                     else {
                         startStopButton.checked = false
@@ -223,7 +224,6 @@ Rectangle {
 
                 onCheckedChanged: {
                     platformInterface.motorState = checked
-                    console.log("in fae", startStopButton.checked)
                     if(checked == false) {
                         faultModel.clear();
                     }
@@ -329,11 +329,11 @@ Rectangle {
                 label: "Target Speed:"
                 width: 350
                 value: {
-                    console.log("faeeeee111111")
+
                     platformInterface.motorSpeedSliderValue
                  }
                 from: speedSafetyButton.checked ? 0 : 1500
-                to: speedSafetyButton.checked ? 10000 : 5500
+                to: speedSafetyButton.checked ? 10000 : 4100
                 endLabel: speedSafetyButton.checked? "<font color='red'><b>"+ to +"</b></font>" : to
                 anchors {
                     verticalCenter: setSpeed.verticalCenter
@@ -346,7 +346,6 @@ Rectangle {
                 onValueChanged: {
 
                     setSpeed.input = value.toFixed(0)
-                    console.log("in fae", targetSpeedSlider.value)
                     platformInterface.motorSpeedSliderValue = value.toFixed(0)
 
 

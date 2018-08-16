@@ -397,12 +397,18 @@ Item {
             set_motor_on_off.update(0)
         }
         else  {
+            /*
+              Tanya: To fast on mac and we lose the first command send.
+              Works on Windows. Would need a Timer in Mac
+            */
             motor_speed.update(motorSpeedSliderValue);
             set_motor_on_off.update(1);
 
         }
 
     }
+
+    property bool advertise;
 
 
 

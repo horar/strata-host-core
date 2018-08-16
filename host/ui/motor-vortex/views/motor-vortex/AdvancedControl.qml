@@ -275,23 +275,17 @@ Rectangle {
                 label: "Target Speed:"
                 width: 350
                 from : 1500
-                to: 5500
+                to: 4100
 
                 value :
                 {
-                    console.log("kdjsfk1111")
                     if(platformInterface.motorSpeedSliderValue < 1500 ){
-                        console.log("kdjsfk222",platformInterface.motorSpeedSliderValue)
                         return 1500
                     }
                     if( platformInterface.motorSpeedSliderValue >= 5500 ) {
-                        console.log("kdjsfk3333",platformInterface.motorSpeedSliderValue)
 
                         return 5500
                     }
-
-
-                    console.log("kdjsfk444",platformInterface.motorSpeedSliderValue)
                     return platformInterface.motorSpeedSliderValue
 
                 }
