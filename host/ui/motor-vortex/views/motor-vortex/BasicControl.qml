@@ -18,6 +18,7 @@ Rectangle {
 
     property alias warningVisible: warningBox.visible
 
+
     Component.onCompleted: {
         platformInterface.system_mode_selection.update("manual")
     }
@@ -111,9 +112,7 @@ Rectangle {
                         console.log("Do nothing")
                     }
 
-
                     else{
-
                         platformInterface.motorSpeedSliderValue = current_slider_value
                     }
                 }
@@ -173,6 +172,8 @@ Rectangle {
                         onCheckedChanged: {
                             if (checked) {
                                 platformInterface.system_mode_selection.update("manual")
+                                motorSpeedControl.sliderEnable = true
+                                motorSpeedControl.opacity = 1.0
                             }
                         }
                     }
@@ -183,6 +184,9 @@ Rectangle {
                         onCheckedChanged: {
                             if (checked) {
                                 platformInterface.system_mode_selection.update("automation")
+                                motorSpeedControl.sliderEnable = false
+                                motorSpeedControl.opacity = 0.5
+
                             }
                         }
                     }

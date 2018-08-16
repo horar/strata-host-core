@@ -487,7 +487,7 @@ Rectangle {
                                             tokenTimer.start()
                                         }
                                         else {
-                                            hcs_token_status.text= "Enable to generate remote token"
+                                            hcs_token_status.text= qsTr("Enable to generate remote token")
                                             advertise = false
                                             hcs_token.text = ""
                                             remoteUserModel.clear()
@@ -519,7 +519,7 @@ Rectangle {
 
                                         TextEdit {
                                             id: hcs_token_status
-                                            text: "Enable to generate remote token"
+                                            text: qsTr("Enable to generate remote token")
                                             font {
                                                 family: franklinGothicBook.name
                                             }
@@ -593,7 +593,7 @@ Rectangle {
                                         }
                                     }
                                     onTriggered: {
-                                        hcs_token_status.text = "Error: Cannot generate token"
+                                        hcs_token_status.text = qsTr("Error: Cannot generate token")
                                     }
                                 }
 
@@ -606,7 +606,7 @@ Rectangle {
                                             return;
                                         }
                                         else {
-                                            hcs_token_status.text = "Your remote token is: "
+                                            hcs_token_status.text = qsTr("Your remote token is: ")
                                             tokenTimer.stop()
                                         }
                                     }
@@ -731,7 +731,7 @@ Rectangle {
                                                     }
                                                     console.log("disconnecting user",JSON.stringify(remote_json))
                                                     coreInterface.sendCommand(JSON.stringify(remote_json))
-                                                    //  remoteUserModel.remove(remote_user_list_view.currentIndex,1)
+
                                                 }
                                                 cursorShape: Qt.PointingHandCursor
                                             }

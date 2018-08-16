@@ -25,6 +25,7 @@ Item {
                 "mode": "manual"  // "manual" "automation"
     }
 
+
     // @notification input_voltage_notification
     // @description: updates voltage
     //
