@@ -25,13 +25,13 @@ Item {
             //when changing the value
             onActivated: {
                 console.log("setting max power to ",maxPowerOutput.comboBox.currentText);
-                platformInterface.set_usb_pd_maximum_power.update(port,maxPowerOutput.comboBox.currentText)
+                platformInterface.set_usb_pd_maximum_power.update(portNumber,maxPowerOutput.comboBox.currentText)
             }
 
             //notification of a change from elsewhere
             property var currentMaximumPower: platformInterface.usb_pd_maximum_power.current_max_power
             onCurrentMaximumPowerChanged: {
-                if (platformInterface.usb_pd_maximum_power.port === port){
+                if (platformInterface.usb_pd_maximum_power.port === portNumber){
                     maxPowerOutput.currentIndex = maxPowerOutput.comboBox.find( parseInt (platformInterface.usb_pd_maximum_power.current_max_power))
                 }
 
@@ -177,7 +177,7 @@ Item {
         }
 
         SGSegmentedButtonStrip {
-            id: faultProtection
+            id: faultProtectionButtonStrip
             anchors {
                 left: advertisedVoltages.right
                 leftMargin: 10
@@ -189,74 +189,94 @@ Item {
             buttonHeight: 25
             hoverEnabled: false
 
+            Component.onCompleted: {
+
+               // console.log(faultProtectionButtonStrip.children)
+                for (var i=0; i< faultProtectionButtonStrip.children.length; i++) {
+                    console.log("button strip has ",faultProtectionButtonStrip.children.length,"children");
+                    console.log("advertized voltages child ",faultProtectionButtonStrip.children[i].id);
+                }
+            }
+
             property var sourceCapabilities: platformInterface.usb_pd_advertised_voltages_notification.settings
 
             onSourceCapabilitiesChanged:{
-                if (platformInterface.usb_pd_advertised_voltages_notification.port === port){
+
+                console.log("updating advertised voltages for port ",portNumber)
+                //the strip's first child is the Grid layout. The children of that layout are the buttons in
+                //question. This makes accessing the buttons a little bit cumbersome since they're loaded dynamically.
+                if (platformInterface.usb_pd_advertised_voltages_notification.port === portNumber){
                     //disable all the possibilities
-                    setting7.enabled = false;
-                    setting6.enabled = false;
-                    setting5.enabled = false;
-                    setting4.enabled = false;
-                    setting3.enabled = false;
-                    setting2.enabled = false;
-                    setting1.enabled = false;
+//                    faultProtectionButtonStrip.children[0].children[6].enabled = false;
+//                    faultProtectionButtonStrip.children[0].children[5].enabled = false;
+//                    faultProtectionButtonStrip.children[0].children[4].enabled = false;
+//                    faultProtectionButtonStrip.children[0].children[3].enabled = false;
+//                    faultProtectionButtonStrip.children[0].children[2].enabled = false;
+//                    faultProtectionButtonStrip.children[0].children[1].enabled = false;
+//                    faultProtectionButtonStrip.children[0].children[0].enabled = false;
+//                    setting6.enabled = false;
+//                    setting5.enabled = false;
+//                    setting4.enabled = false;
+//                    setting3.enabled = false;
+//                    setting2.enabled = false;
+//                    setting1.enabled = false;
 
                     var numberOfSettings = platformInterface.usb_pd_advertised_voltages_notification.number_of_settings;
                     if (numberOfSettings >= 7){
-                        setting7.enabled = true;
-                        setting7.text = platformInterface.usb_pd_advertised_voltages_notification.settings[7].voltage;
-                        setting7.text += "V, ";
-                        setting7.text += platformInterface.usb_pd_advertised_voltages_notification.settings[7].maximum_current;
-                        setting7.text += "A";
+//                        faultProtectionButtonStrip.children[0].children[6].enabled = true;
+//                        faultProtectionButtonStrip.children[0].children[6].text = platformInterface.usb_pd_advertised_voltages_notification.settings[7].voltage;
+//                        faultProtectionButtonStrip.children[0].children[6].text += "V, ";
+//                        faultProtectionButtonStrip.children[0].children[6].text += platformInterface.usb_pd_advertised_voltages_notification.settings[7].maximum_current;
+//                        faultProtectionButtonStrip.children[0].children[6].text += "A";
                     }
                     if (numberOfSettings >= 6){
-                        setting6.enabled = true;
-                        setting6.text = platformInterface.usb_pd_advertised_voltages_notification.settings[6].voltage;
-                        setting6.text += "V, ";
-                        setting6.text += platformInterface.usb_pd_advertised_voltages_notification.settings[6].maximum_current;
-                        setting6.text += "A";
+//                        faultProtectionButtonStrip.children[0].children[5].enabled = true;
+//                        faultProtectionButtonStrip.children[0].children[5].text = platformInterface.usb_pd_advertised_voltages_notification.settings[6].voltage;
+//                        faultProtectionButtonStrip.children[0].children[5].text += "V, ";
+//                        faultProtectionButtonStrip.children[0].children[5].text += platformInterface.usb_pd_advertised_voltages_notification.settings[6].maximum_current;
+//                        faultProtectionButtonStrip.children[0].children[5].text += "A";
                     }
                     if (numberOfSettings >= 5){
-                        setting5.enabled = true;
-                        setting5.text = platformInterface.usb_pd_advertised_voltages_notification.settings[5].voltage;
-                        setting5.text += "V, ";
-                        setting5.text += platformInterface.usb_pd_advertised_voltages_notification.settings[5].maximum_current;
-                        setting5.text += "A";
+//                        faultProtectionButtonStrip.children[0].children[4].enabled = true;
+//                        faultProtectionButtonStrip.children[0].children[4].text = platformInterface.usb_pd_advertised_voltages_notification.settings[5].voltage;
+//                        faultProtectionButtonStrip.children[0].children[4].text += "V, ";
+//                        faultProtectionButtonStrip.children[0].children[4].text += platformInterface.usb_pd_advertised_voltages_notification.settings[5].maximum_current;
+//                        faultProtectionButtonStrip.children[0].children[4].text += "A";
                     }
                     if (numberOfSettings >= 4){
-                        setting4.enabled = true;
-                        setting4.text = platformInterface.usb_pd_advertised_voltages_notification.settings[4].voltage;
-                        setting4.text += "V, ";
-                        setting4.text += platformInterface.usb_pd_advertised_voltages_notification.settings[4].maximum_current;
-                        setting4.text += "A";
+//                        setting4.enabled = true;
+//                        setting4.text = platformInterface.usb_pd_advertised_voltages_notification.settings[4].voltage;
+//                        setting4.text += "V, ";
+//                        setting4.text += platformInterface.usb_pd_advertised_voltages_notification.settings[4].maximum_current;
+//                        setting4.text += "A";
                     }
                     if (numberOfSettings >= 3){
-                        setting3.enabled = true;
-                        setting3.text = platformInterface.usb_pd_advertised_voltages_notification.settings[3].voltage;
-                        setting3.text += "V, ";
-                        setting3.text += platformInterface.usb_pd_advertised_voltages_notification.settings[3].maximum_current;
-                        setting3.text += "A";
+//                        setting3.enabled = true;
+//                        setting3.text = platformInterface.usb_pd_advertised_voltages_notification.settings[3].voltage;
+//                        setting3.text += "V, ";
+//                        setting3.text += platformInterface.usb_pd_advertised_voltages_notification.settings[3].maximum_current;
+//                        setting3.text += "A";
                     }
                     if (numberOfSettings >= 2){
-                        setting2.enabled = true;
-                        setting7.text = platformInterface.usb_pd_advertised_voltages_notification.settings[2].voltage;
-                        setting7.text += "V, ";
-                        setting7.text += platformInterface.usb_pd_advertised_voltages_notification.settings[2].maximum_current;
-                        setting7.text += "A";
+//                        setting2.enabled = true;
+//                        setting2.text = platformInterface.usb_pd_advertised_voltages_notification.settings[2].voltage;
+//                        setting2.text += "V, ";
+//                        setting2.text += platformInterface.usb_pd_advertised_voltages_notification.settings[2].maximum_current;
+//                        setting2.text += "A";
                     }
                     if (numberOfSettings >= 2){
-                        setting1.enabled = true;
-                        setting1.text = platformInterface.usb_pd_advertised_voltages_notification[1].voltage;
-                        setting1.text += "V, ";
-                        setting1.text += platformInterface.usb_pd_advertised_voltages_notification[1].maximum_current;
-                        setting1.text += "A";
+//                        setting1.enabled = true;
+//                        setting1.text = platformInterface.usb_pd_advertised_voltages_notification[1].voltage;
+//                        setting1.text += "V, ";
+//                        setting1.text += platformInterface.usb_pd_advertised_voltages_notification[1].maximum_current;
+//                        setting1.text += "A";
                     }
 
                 }
             }
 
             segmentedButtons: GridLayout {
+                id:advertisedVoltageGridLayout
                 columnSpacing: 2
 
                 SGSegmentedButton{
