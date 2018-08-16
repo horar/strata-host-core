@@ -120,6 +120,8 @@ Rectangle {
     Connections {
         target: coreInterface
         onPlatformStateChanged: {
+            //resetting the remote connection state
+            is_remote_connected = false;
             tokenField.text = "";
             // send "close remote advertise to hcs to close the remote socket"
             if (remoteToggle.checked) {
@@ -1190,6 +1192,7 @@ Rectangle {
 
 
                         if(is_remote_connected) {
+                            is_remote_connected = false //resetting the remote connection state
                             // sending remote disconnect message to hcs
                             var remote_disconnect_json = {
                                 "hcs::cmd":"remote_disconnect",
