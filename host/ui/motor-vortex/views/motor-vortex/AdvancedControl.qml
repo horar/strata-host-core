@@ -24,7 +24,7 @@ Rectangle {
 
     Component.onCompleted:  {
         platformInterface.phaseAngle = 15
-        platformInterface.system_mode_selection.update("manual");
+ //       platformInterface.system_mode_selection.update("manual");
         platformInterface.set_phase_angle.update(5);
         platformInterface.set_drive_mode.update(0);
     }
@@ -222,43 +222,43 @@ Rectangle {
                     property alias manual : manual
                     property alias automatic: automatic
 
-                    property var systemMode: platformInterface.set_mode.system_mode
+//                    property var systemMode: platformInterface.set_mode.system_mode
 
-                    onSystemModeChanged: {
+//                    onSystemModeChanged: {
 
-                        if(systemMode === "automation") {
-                            automatic.checked = true;
-                        }
-                        else {
-                            manual.checked = true;
-                        }
-                    }
+//                        if(systemMode === "automation") {
+//                            automatic.checked = true;
+//                        }
+//                        else {
+//                            manual.checked = true;
+//                        }
+//                    }
 
                     SGRadioButton {
                         id: manual
                         text: "Manual Control"
-                        checked: true
+                        checked: platformInterface.systemModeManual
                         onCheckedChanged: {
-                            if (checked) {
-                                platformInterface.system_mode_selection.update("manual")
-                                targetSpeedSlider.value = 1500
+                                console.log("manu 2")
+                                platformInterface.systemModeManual = manual.checked
                                 targetSpeedSlider.sliderEnable = true
                                 targetSpeedSlider.opacity = 1.0
 
-                            }
+
                         }
                     }
 
                     SGRadioButton {
                         id: automatic
                         text: "Automatic Demo Pattern"
+                        checked: platformInterface.systemModeAuto
                         onCheckedChanged: {
-                            if (checked) {
-                                platformInterface.system_mode_selection.update("automation")
+                                console.log("auto 1")
+                                platformInterface.systemModeAuto = automatic.checked
                                 targetSpeedSlider.sliderEnable = false
                                 targetSpeedSlider.opacity = 0.5
 
-                            }
+
                         }
                     }
                 }

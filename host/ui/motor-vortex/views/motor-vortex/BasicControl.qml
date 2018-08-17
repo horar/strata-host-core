@@ -19,9 +19,10 @@ Rectangle {
     property alias warningVisible: warningBox.visible
 
 
-    Component.onCompleted: {
-        platformInterface.system_mode_selection.update("manual")
-    }
+//    Component.onCompleted: {
+////        platformInterface.system_mode_selection.update("manual")
+
+//    }
 
     // Control Section
     Rectangle {
@@ -154,42 +155,40 @@ Rectangle {
                     property alias manual : manual
                     property alias automatic: automatic
 
-                    property var systemMode: platformInterface.set_mode.system_mode
+//                    property var systemMode: platformInterface.set_mode.system_mode
 
-                    onSystemModeChanged: {
-                        if(systemMode === "automation") {
-                            automatic.checked = true;
-                        }
-                        else {
-                            manual.checked = true;
-                        }
-                    }
+//                    onSystemModeChanged: {
+//                        if(systemMode === "automation") {
+//                            console.log("system mode change")
+//                            automatic.checked = true;
+//                        }
+//                        else {
+//                            manual.checked = true;
+//                        }
+//                    }
 
                     SGRadioButton {
                         id: manual
                         text: "Manual Control"
-                        checked: true
+                        checked: platformInterface.systemModeManual
                         onCheckedChanged: {
-                            if (checked) {
-                                console.log("jshdf");
-                                motorSpeedControl.value = 1500
-                                platformInterface.system_mode_selection.update("manual")                      
+                                console.log("manu 1",checked)
+                                platformInterface.systemModeManual = manual.checked
                                 motorSpeedControl.sliderEnable = true
                                 motorSpeedControl.opacity = 1.0
-                            }
+
                         }
                     }
 
                     SGRadioButton {
                         id: automatic
                         text: "Automatic Demo Pattern"
+                        checked: platformInterface.systemModeAuto
                         onCheckedChanged: {
-                            if (checked) {
-                                platformInterface.system_mode_selection.update("automation")
+                                 console.log("auto 1",checked)
+                                platformInterface.systemModeAuto = automatic.checked
                                 motorSpeedControl.sliderEnable = false
                                 motorSpeedControl.opacity = 0.5
-
-                            }
                         }
                     }
                 }
