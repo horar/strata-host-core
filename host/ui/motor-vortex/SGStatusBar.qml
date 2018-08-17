@@ -524,19 +524,20 @@ Rectangle {
                                         height: 25
                                         width: hcs_token_status.width
 
-                                        TextEdit {
+                                        Text {
                                             id: hcs_token_status
-                                            text: qsTr("Enable to generate remote token")
+                                            text : qsTr("Enable to generate remote token")
                                             font {
                                                 family: franklinGothicBook.name
                                             }
                                             color: "white"
-                                            readOnly: true
+                                            //readOnly: true
                                             anchors {
                                                 topMargin: 7
                                                 top: tokenStatusContainer.top
                                             }
                                         }
+
                                     }
 
                                     Rectangle {
