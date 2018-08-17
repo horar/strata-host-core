@@ -203,6 +203,10 @@ Rectangle {
             /*
            Determine action depending on what type of 'connection' is used
         */
+            NavigationControl.updateState(NavigationControl.events.PLATFORM_DISCONNECTED_EVENT, null)
+            var disconnect_json = {"hcs::cmd":"disconnect_platform"}
+            console.log("disonnecting the platform")
+            coreInterface.sendCommand(JSON.stringify(disconnect_json))
 
             var connection = platformListModel.get(cbSelector.currentIndex).connection
             var data = { platform_name: platformListModel.get(cbSelector.currentIndex).name}
@@ -215,6 +219,7 @@ Rectangle {
                 NavigationControl.updateState(NavigationControl.events.OFFLINE_MODE_EVENT, data)
                 NavigationControl.updateState(NavigationControl.events.TOGGLE_CONTROL_CONTENT)
                 coreInterface.sendSelectedPlatform(platformListModel.get(cbSelector.currentIndex).uuid,platformListModel.get(cbSelector.currentIndex).connection)
+
             }
             else if(connection === "connected"){
                 NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT,data)
