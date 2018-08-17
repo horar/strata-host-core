@@ -336,6 +336,12 @@ Rectangle{
                    Determine action depending on what type of 'connection' is used
                 */
 
+
+                    NavigationControl.updateState(NavigationControl.events.PLATFORM_DISCONNECTED_EVENT, null)
+                    var disconnect_json = {"hcs::cmd":"disconnect_platform"}
+                    console.log("disonnecting the platform")
+                    coreInterface.sendCommand(JSON.stringify(disconnect_json))
+
                     var connection = platformListModel.get(cbSelector.currentIndex).connection
                     var data = { platform_name: platformListModel.get(cbSelector.currentIndex).name}
 
