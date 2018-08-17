@@ -58,6 +58,7 @@ bool PublisherSubscriberConnector::open(const string& ip_address)
             return false;
         }
     }
+    connection_state_ = true;
     return true;
 }
 
@@ -67,6 +68,7 @@ bool PublisherSubscriberConnector::open(const string& ip_address)
 bool PublisherSubscriberConnector::close()
 {
     socket_->close();
+    connection_state_ = false;
     return true;
 }
 

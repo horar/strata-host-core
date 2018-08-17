@@ -109,6 +109,7 @@ HcsError HostControllerService::init()
     //  Setting the connection state to false at start for both remote and client
     remote_connector_->setConnectionState(false);
     client_connector_->setConnectionState(false);
+    remote_activity_connector_->setConnectionState(false);
     setEventLoop();
     // [TODO] [prasanth] : This function run is coded in this, since the libevent dynamic
     //addtion of event is not implemented successfully in hcs
@@ -652,7 +653,9 @@ void HostControllerService::parseHCSCommands(const string &hcs_message)
         platform_uuid_.remove_if([](platform_details remote){ return remote.connection_status == "remote"; });
         platform_client_mapping_.clear();
         event_del(&remote_handler_);
-        event_del(&activity_handler_);
+        if(remote_activity_connector_->isConnected()) {
+            event_del(&activity_handler_);
+        }
         remote_connector_->close();
     }
     // disconnect a particular user
