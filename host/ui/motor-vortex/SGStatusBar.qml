@@ -589,7 +589,7 @@ Rectangle {
                                     repeat: false
                                     onRunningChanged: {
                                         if (running) {
-                                            hcs_token_status.text = "Generating token..."
+                                            hcs_token_status.text = qsTr("Generating token...")
                                         }
                                     }
                                     onTriggered: {

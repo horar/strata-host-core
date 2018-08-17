@@ -241,6 +241,9 @@ Rectangle {
                         onCheckedChanged: {
                             if (checked) {
                                 platformInterface.system_mode_selection.update("manual")
+                                targetSpeedSlider.value = 1500
+                                targetSpeedSlider.sliderEnable = true
+                                targetSpeedSlider.opacity = 1.0
 
                             }
                         }
@@ -252,6 +255,8 @@ Rectangle {
                         onCheckedChanged: {
                             if (checked) {
                                 platformInterface.system_mode_selection.update("automation")
+                                targetSpeedSlider.sliderEnable = false
+                                targetSpeedSlider.opacity = 0.5
 
                             }
                         }

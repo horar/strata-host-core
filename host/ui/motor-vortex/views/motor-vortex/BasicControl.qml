@@ -86,7 +86,7 @@ Rectangle {
                 value:
                 {
 
-                    if(platformInterface.motorSpeedSliderValue < 1500 ){
+                    if(platformInterface.motorSpeedSliderValue <= 1500 ){
                         return 1500
                     }
                     if( platformInterface.motorSpeedSliderValue >= 5500 ) {
@@ -171,7 +171,9 @@ Rectangle {
                         checked: true
                         onCheckedChanged: {
                             if (checked) {
-                                platformInterface.system_mode_selection.update("manual")
+                                console.log("jshdf");
+                                motorSpeedControl.value = 1500
+                                platformInterface.system_mode_selection.update("manual")                      
                                 motorSpeedControl.sliderEnable = true
                                 motorSpeedControl.opacity = 1.0
                             }
