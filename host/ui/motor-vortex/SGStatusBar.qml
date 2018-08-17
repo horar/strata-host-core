@@ -418,6 +418,11 @@ Rectangle {
                                     remoteConnectContainer.visible = false
                                 }
                                 buttonColor: checked ? Qt.lighter(container.color) : container.color
+                                enabled : {
+                                    console.log(is_remote_connected)
+                                    !is_remote_connected
+                                 }
+
                             }
 
                             SGTabButton {
@@ -729,7 +734,7 @@ Rectangle {
                                                             "user_name":name
                                                         }
                                                     }
-                                                    console.log("disconnecting user",JSON.stringify(remote_json))
+                                                    console.log("necting user",JSON.stringify(remote_json))
                                                     coreInterface.sendCommand(JSON.stringify(remote_json))
 
                                                 }
@@ -770,7 +775,7 @@ Rectangle {
                                     PropertyChanges { target: tokenInput; visible: true}
                                     PropertyChanges { target: tokenBusyIndicator; visible: false}
                                     PropertyChanges { target: tryAgainButton; visible: false }
-                                    PropertyChanges { target: disconnectButton; visible: false}
+                                    PropertyChanges { target: nectButton; visible: false}
                                 },
                                 State {
                                     name: "connecting"
@@ -805,8 +810,8 @@ Rectangle {
                                     // Hide BusyIndicator
                                     PropertyChanges { target: tokenBusyIndicator; visible: false}
 
-                                    // Show Disconnect
-                                    PropertyChanges { target: disconnectButton; visible: true}
+                                    // Show nect
+                                    PropertyChanges { target: nectButton; visible: true}
 
                                 },
                                 State {
@@ -849,15 +854,15 @@ Rectangle {
                             }
 
                             Connections {
-                                target: disconnectButton
+                                target: nectButton
                                 onClicked: {
                                     remoteConnectContainer.state = "default"
-                                    // sending remote disconnect message to hcs
-                                    var remote_disconnect_json = {
-                                        "hcs::cmd":"remote_disconnect",
+                                    // sending remote nect message to hcs
+                                    var remote_nect_json = {
+                                        "hcs::cmd":"remote_nect",
                                     }
-                                    coreInterface.sendCommand(JSON.stringify(remote_disconnect_json))
-                                    console.log("UI -> HCS ", JSON.stringify(remote_disconnect_json));
+                                    coreInterface.sendCommand(JSON.stringify(remote_nect_json))
+                                    console.log("UI -> HCS ", JSON.stringify(remote_nect_json));
                                 }
                             }
 
@@ -959,6 +964,9 @@ Rectangle {
                                     horizontalCenter: remoteConnectContainer.horizontalCenter
                                 }
                                 visible: false
+                                onClicked: {
+                                    is_remote_connected = false
+                                }
                             }
 
                             Item {

@@ -241,6 +241,8 @@ Rectangle {
                         onCheckedChanged: {
                                 console.log("manu 2")
                                 platformInterface.systemModeManual = manual.checked
+                               platformInterface.motorSpeedSliderValue = 1500
+
                                 targetSpeedSlider.sliderEnable = true
                                 targetSpeedSlider.opacity = 1.0
 
@@ -281,16 +283,16 @@ Rectangle {
                 label: "Target Speed:"
                 width: 350
                 from : 1500
-                to: 4100
+                to: 4000
 
                 value :
                 {
                     if(platformInterface.motorSpeedSliderValue < 1500 ){
                         return 1500
                     }
-                    if( platformInterface.motorSpeedSliderValue >= 5500 ) {
+                    if( platformInterface.motorSpeedSliderValue >= 4000 ) {
 
-                        return 5500
+                        return 4000
                     }
                     return platformInterface.motorSpeedSliderValue
 
@@ -309,7 +311,7 @@ Rectangle {
                     var current_slider_value = value.toFixed(0)
 
                     // Don't change if FAE safety limit is enabled
-                    if(current_slider_value >= 5500 && platformInterface.motorSpeedSliderValue >=5500){
+                    if(current_slider_value >= 4000 && platformInterface.motorSpeedSliderValue >= 4000){
                         console.log("Do nothing")
                     }
 

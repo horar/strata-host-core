@@ -395,13 +395,14 @@ Item {
     onSystemModeManualChanged: {
         console.log("manual mode")
             system_mode_selection.update("manual")
-            motor_speed.update(1500)
+
     }
 
     property bool systemModeAuto: false
 
     onSystemModeAutoChanged: {
             system_mode_selection.update("automation")
+
     }
 
     property bool motorState: false

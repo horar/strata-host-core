@@ -293,6 +293,7 @@ Rectangle {
                         onCheckedChanged: {
                                  console.log("manu 3")
                                 platformInterface.systemModeManual = manual.checked
+                                platformInterface.motorSpeedSliderValue = 1500
                                 targetSpeedSlider.sliderEnable = true
                                 targetSpeedSlider.opacity = 1.0
 
@@ -337,7 +338,7 @@ Rectangle {
                     platformInterface.motorSpeedSliderValue
                  }
                 from: speedSafetyButton.checked ? 0 : 1500
-                to: speedSafetyButton.checked ? 10000 : 4100
+                to: speedSafetyButton.checked ? 10000 : 4000
                 endLabel: speedSafetyButton.checked? "<font color='red'><b>"+ to +"</b></font>" : to
                 anchors {
                     verticalCenter: setSpeed.verticalCenter

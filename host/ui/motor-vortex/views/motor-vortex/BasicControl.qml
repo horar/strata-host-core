@@ -81,7 +81,7 @@ Rectangle {
                     top: rightControl.top
                 }
                 from: 1500
-                to: 4100
+                to: 4000
                 label: "<b>Motor Speed:</b>"
                 labelLeft: false
                 value:
@@ -90,8 +90,8 @@ Rectangle {
                     if(platformInterface.motorSpeedSliderValue <= 1500 ){
                         return 1500
                     }
-                    if( platformInterface.motorSpeedSliderValue >= 5500 ) {
-                        return 5500
+                    if( platformInterface.motorSpeedSliderValue >= 4000 ) {
+                        return 4000
                     }
 
                     return platformInterface.motorSpeedSliderValue
@@ -105,7 +105,7 @@ Rectangle {
                     var current_slider_value = value.toFixed(0)
 
                     //  Don't change if FAE safety limit is enabled
-                    if(current_slider_value >= 5500 && platformInterface.motorSpeedSliderValue >=5500){
+                    if(current_slider_value >= 4000 && platformInterface.motorSpeedSliderValue >= 4000){
                         console.log("Do nothing")
                     }
 
@@ -172,8 +172,8 @@ Rectangle {
                         text: "Manual Control"
                         checked: platformInterface.systemModeManual
                         onCheckedChanged: {
-                                console.log("manu 1",checked)
                                 platformInterface.systemModeManual = manual.checked
+                                platformInterface.motorSpeedSliderValue = 1500
                                 motorSpeedControl.sliderEnable = true
                                 motorSpeedControl.opacity = 1.0
 
@@ -185,7 +185,7 @@ Rectangle {
                         text: "Automatic Demo Pattern"
                         checked: platformInterface.systemModeAuto
                         onCheckedChanged: {
-                                 console.log("auto 1",checked)
+
                                 platformInterface.systemModeAuto = automatic.checked
                                 motorSpeedControl.sliderEnable = false
                                 motorSpeedControl.opacity = 0.5
