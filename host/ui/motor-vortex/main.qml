@@ -10,7 +10,7 @@ Window {
     visible: true
     width: 1200
     height: 900
-    title: qsTr("Encore Design Suite")
+    title: qsTr("Strata")
 
     // Debug option(s)
     property bool showDebugCommandBar: false
