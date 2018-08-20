@@ -837,19 +837,23 @@ Rectangle {
 
                             // Connections for internal event handling
                             Connections{
-                                target: submitTokenButton
-                                 onReturnPressed : {
-                                     remoteConnectContainer.state = "connecting"
-                                 }
+                                target: tokenField
+                                onAccepted: {
+                                    remoteConnectContainer.state = "connecting"
+                                }
+
+
+
 
                             }
 
-                            // Connections for internal event handling
+
                             Connections{
-                                target: tokenField
+                                target: submitTokenButton
                                 onClicked: {
                                     // Send command to CoreInterface
                                     // Go to connecting
+
                                     remoteConnectContainer.state = "connecting"
                                 }
                             }
@@ -864,6 +868,7 @@ Rectangle {
                             Connections {
                                 target: tryAgainButton
                                 onClicked: {
+                                    console.log("try again")
                                     remoteConnectContainer.state = "default"
                                 }
                             }
@@ -1002,13 +1007,14 @@ Rectangle {
                                     focus: true
                                     placeholderText: qsTr("Token (ex: DMI2UE1N)")
                                     cursorPosition: 1
-                                    Keys.onReturnPressed: {
+
+                                    onAccepted: {
                                         console.log("TOKEN: ", text);
                                         console.log("sending token:", tokenField.text);
                                         var remote_json = {
                                             "hcs::cmd":"get_platforms",
                                             "payload": {
-                                                "hcs_token": tokenField.text
+                                                "hcs_token": tokenField.text.toUpperCase()
                                             }
                                         }
                                         coreInterface.sendCommand(JSON.stringify(remote_json))
@@ -1032,7 +1038,7 @@ Rectangle {
                                         var remote_json = {
                                             "hcs::cmd":"get_platforms",
                                             "payload": {
-                                                "hcs_token": tokenField.text
+                                                "hcs_token": tokenField.text.toUpperCase()
                                             }
                                         }
                                         coreInterface.sendCommand(JSON.stringify(remote_json))
