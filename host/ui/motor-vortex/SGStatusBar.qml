@@ -995,8 +995,6 @@ Rectangle {
                                     cursorPosition: 1
                                     Keys.onReturnPressed: {
                                         console.log("TOKEN: ", text);
-                                    }
-                                    Keys.onEnterPressed: {
                                         console.log("sending token:", tokenField.text);
                                         var remote_json = {
                                             "hcs::cmd":"get_platforms",
@@ -1007,7 +1005,6 @@ Rectangle {
                                         coreInterface.sendCommand(JSON.stringify(remote_json))
                                         console.log("UI -> HCS ", JSON.stringify(remote_json));
                                     }
-
 
                                 }
 
