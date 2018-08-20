@@ -838,6 +838,15 @@ Rectangle {
                             // Connections for internal event handling
                             Connections{
                                 target: submitTokenButton
+                                 onReturnPressed : {
+                                     remoteConnectContainer.state = "connecting"
+                                 }
+
+                            }
+
+                            // Connections for internal event handling
+                            Connections{
+                                target: tokenField
                                 onClicked: {
                                     // Send command to CoreInterface
                                     // Go to connecting
