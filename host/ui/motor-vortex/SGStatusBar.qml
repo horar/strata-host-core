@@ -194,10 +194,12 @@ Rectangle {
             left: container.left
             leftMargin: 3
         }
+
         comboBoxWidth: 250
         textRole: "text"
         TextMetrics { id: textMetrics }
         model: platformListModel
+
 
         onActivated: {
             /*
@@ -244,6 +246,7 @@ Rectangle {
 
     ListModel {
         id: platformListModel
+
 
         Component.onCompleted: {
             console.log("platformListModel:Component.onCompleted:");
@@ -992,6 +995,17 @@ Rectangle {
                                     cursorPosition: 1
                                     Keys.onReturnPressed: {
                                         console.log("TOKEN: ", text);
+                                    }
+                                    Keys.onEnterPressed: {
+                                        console.log("sending token:", tokenField.text);
+                                        var remote_json = {
+                                            "hcs::cmd":"get_platforms",
+                                            "payload": {
+                                                "hcs_token": tokenField.text
+                                            }
+                                        }
+                                        coreInterface.sendCommand(JSON.stringify(remote_json))
+                                        console.log("UI -> HCS ", JSON.stringify(remote_json));
                                     }
 
 
