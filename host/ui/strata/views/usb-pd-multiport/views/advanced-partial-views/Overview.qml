@@ -177,7 +177,8 @@ Item {
                             return "—"
                         }
                         else{
-                            return Math.round((theOutputPower/theInputPower) *100)/100
+                            //return Math.round((theOutputPower/theInputPower) *100)/100
+                            return "—"
                         }
                     }
                     else{
@@ -277,7 +278,8 @@ Item {
                             return "—"
                         }
                         else{
-                            return Math.round((theOutputPower/theInputPower) *100)/100;
+                            //return Math.round((theOutputPower/theInputPower) *100)/100;
+                            return "—"
                         }
                     }
                     else{
@@ -376,7 +378,8 @@ Item {
                             return "—"
                         }
                         else{
-                            return math.round((theOutputPower/theInputPower) *100)/100
+                            //return math.round((theOutputPower/theInputPower) *100)/100
+                            return "—"
                         }
                     }
                     else{
@@ -475,7 +478,8 @@ Item {
                             return "—"
                         }
                         else{
-                            return Math.round((theOutputPower/theInputPower)*100)/100
+                            //return Math.round((theOutputPower/theInputPower)*100)/100
+                            return "—"
                         }
                     }
                     else{

@@ -79,7 +79,8 @@ Item {
                     return "—"
                 }
                 else{
-                    return Math.round((theOutputPower/theInputPower)*100)/100
+                    //return Math.round((theOutputPower/theInputPower)*100)/100
+                    return "—"
                 }
             }
             else{
@@ -230,8 +231,28 @@ Item {
                 bottom: portGraphs.bottom
             }
             width: portGraphs.width /  Math.max(1, graphSelector.howManyChecked)
-            yAxisTitle: "Test"
-            xAxisTitle: "Test"
+            yAxisTitle: "V"
+            xAxisTitle: "Seconds"
+            minYValue: 0                    // Default: 0
+            maxYValue: 22                   // Default: 10
+            minXValue: 0                    // Default: 0
+            maxXValue: 5                    // Default: 10
+
+            property real stream
+            property real count: 0
+            property real interval: 10 // 10 Hz?
+
+            property var powerInfo: platformInterface.request_usb_power_notification.output_voltage
+            onPowerInfoChanged:{
+                //console.log("new power notification for port ",portNumber);
+                if (platformInterface.request_usb_power_notification.port === portNumber){
+                    //console.log("voltage=",platformInterface.request_usb_power_notification.output_voltage," count=",count);
+                    count += interval;
+                    stream = platformInterface.request_usb_power_notification.output_voltage
+                }
+            }
+
+            inputData: stream          // Set the graph's data source here
         }
 
         SGGraph {
@@ -244,8 +265,29 @@ Item {
 //                left: graph1.right
             }
             width: portGraphs.width /  Math.max(1, graphSelector.howManyChecked)
-            yAxisTitle: "Test"
-            xAxisTitle: "Test"
+            yAxisTitle: "A"
+            xAxisTitle: "Seconds"
+
+            minYValue: 0                    // Default: 0
+            maxYValue: 6                   // Default: 10
+            minXValue: 0                    // Default: 0
+            maxXValue: 5                    // Default: 10
+
+            property real stream
+            property real count: 0
+            property real interval: 10 // 10 Hz?
+
+            property var powerInfo: platformInterface.request_usb_power_notification.output_voltage
+            onPowerInfoChanged:{
+                //console.log("new power notification for port ",portNumber);
+                if (platformInterface.request_usb_power_notification.port === portNumber){
+                    //console.log("voltage=",platformInterface.request_usb_power_notification.output_voltage," count=",count);
+                    count += interval;
+                    stream = platformInterface.request_usb_power_notification.output_current
+                }
+            }
+
+            inputData: stream          // Set the graph's data source here
         }
 
         SGGraph {
@@ -258,8 +300,29 @@ Item {
 //                left: graph2.right
             }
             width: portGraphs.width /  Math.max(1, graphSelector.howManyChecked)
-            yAxisTitle: "Test"
-            xAxisTitle: "Test"
+            yAxisTitle: "A"
+            xAxisTitle: "Seconds"
+
+            minYValue: 0                    // Default: 0
+            maxYValue: 6                   // Default: 10
+            minXValue: 0                    // Default: 0
+            maxXValue: 5                    // Default: 10
+
+            property real stream
+            property real count: 0
+            property real interval: 10 // 10 Hz?
+
+            property var powerInfo: platformInterface.request_usb_power_notification.output_voltage
+            onPowerInfoChanged:{
+                //console.log("new power notification for port ",portNumber);
+                if (platformInterface.request_usb_power_notification.port === portNumber){
+                    //console.log("voltage=",platformInterface.request_usb_power_notification.output_voltage," count=",count);
+                    count += interval;
+                    stream = platformInterface.request_usb_power_notification.input_current
+                }
+            }
+
+            inputData: stream          // Set the graph's data source here
         }
 
         SGGraph {
@@ -272,8 +335,29 @@ Item {
 //                left: graph3.right
             }
             width: portGraphs.width /  Math.max(1, graphSelector.howManyChecked)
-            yAxisTitle: "Test"
-            xAxisTitle: "Test"
+            yAxisTitle: "W"
+            xAxisTitle: "Seconds"
+            minYValue: 0                    // Default: 0
+            maxYValue: 110                   // Default: 10
+            minXValue: 0                    // Default: 0
+            maxXValue: 5                    // Default: 10
+
+            property real stream
+            property real count: 0
+            property real interval: 10 // 10 Hz?
+
+            property var powerInfo: platformInterface.request_usb_power_notification.output_voltage
+            onPowerInfoChanged:{
+                //console.log("new power notification for port ",portNumber);
+                if (platformInterface.request_usb_power_notification.port === portNumber){
+                    //console.log("voltage=",platformInterface.request_usb_power_notification.output_voltage," count=",count);
+                    count += interval;
+                    stream = platformInterface.request_usb_power_notification.output_voltage *
+                            platformInterface.request_usb_power_notification.output_current;
+                }
+            }
+
+            inputData: stream          // Set the graph's data source here
         }
 
         SGGraph {
@@ -286,8 +370,29 @@ Item {
 //                left: graph4.right
             }
             width: portGraphs.width /  Math.max(1, graphSelector.howManyChecked)
-            yAxisTitle: "Test"
-            xAxisTitle: "Test"
+            yAxisTitle: "W"
+            xAxisTitle: "Seconds"
+            minYValue: 0                    // Default: 0
+            maxYValue: 110                   // Default: 10
+            minXValue: 0                    // Default: 0
+            maxXValue: 5                    // Default: 10
+
+            property real stream
+            property real count: 0
+            property real interval: 10 // 10 Hz?
+
+            property var powerInfo: platformInterface.request_usb_power_notification.output_voltage
+            onPowerInfoChanged:{
+                //console.log("new power notification for port ",portNumber);
+                if (platformInterface.request_usb_power_notification.port === portNumber){
+                    //console.log("voltage=",platformInterface.request_usb_power_notification.output_voltage," count=",count);
+                    count += interval;
+                    stream = platformInterface.request_usb_power_notification.input_voltage *
+                            platformInterface.request_usb_power_notification.input_current;
+                }
+            }
+
+            inputData: stream          // Set the graph's data source here
         }
 
         SGGraph {
@@ -300,8 +405,40 @@ Item {
                 //                left: graph4.right
             }
             width: portGraphs.width /  Math.max(1, graphSelector.howManyChecked)
-            yAxisTitle: "Test"
-            xAxisTitle: "Test"
+            yAxisTitle: "Percent"
+            xAxisTitle: "Seconds"
+
+            minYValue: 0                    // Default: 0
+            maxYValue: 100                   // Default: 10
+            minXValue: 0                    // Default: 0
+            maxXValue: 5                    // Default: 10
+
+            property real stream
+            property real count: 0
+            property real interval: 10 // 10 Hz?
+            property real inputPower: 0
+            property real outputPower: 0
+
+            property var powerInfo: platformInterface.request_usb_power_notification.output_voltage
+            onPowerInfoChanged:{
+                //console.log("new power notification for port ",portNumber);
+                if (platformInterface.request_usb_power_notification.port === portNumber){
+                    //console.log("voltage=",platformInterface.request_usb_power_notification.output_voltage," count=",count);
+                    count += interval;
+                    inputPower = platformInterface.request_usb_power_notification.input_voltage *
+                            platformInterface.request_usb_power_notification.input_current;
+                    outputPower = platformInterface.request_usb_power_notification.output_voltage *
+                            platformInterface.request_usb_power_notification.output_current;
+                    //console.log("inputPower=",inputPower," outputPower=",outputPower,(outputPower/inputPower)*100);
+                    if (inputPower == 0)
+                        stream = 0;
+                    else{
+                        stream = (outputPower/inputPower)*100;
+                    }
+                }
+            }
+
+            inputData: stream          // Set the graph's data source here
         }
     }
 }
