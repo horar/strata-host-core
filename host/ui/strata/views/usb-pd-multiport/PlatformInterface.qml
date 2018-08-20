@@ -58,6 +58,12 @@ Item {
           "minimum_voltage":0                                     // Voltage limit in volts
     }
 
+//    onInput_under_voltage_notificationChanged: {
+//        console.log("input voltage is",input_under_voltage_notification.state,
+//                    " minimum voltage = ",input_under_voltage_notification.minimum_voltage);
+
+//    }
+
    property var over_temperature_notification:{
            "port":"USB_C_port_1",                                // or any USB C port
            "state":"above",                                      // if the temperature crossed from under temperature to over temperature, "below" otherwise.
@@ -173,11 +179,11 @@ Item {
     //when the platform sends a reset notification, the host must make a platformId call to initialize communication
     //and a Refresh() command to synchronize settings with the platform
     onRequest_reset_notificationChanged: {
-
         console.log("Requesting platform Id and Refreshing")
         platformInterface.requestPlatformId.send()
         platformInterface.refresh.send() //ask the platform for all the current values
     }
+
 
     // --------------------------------------------------------------------------------------------
     //          Commands
