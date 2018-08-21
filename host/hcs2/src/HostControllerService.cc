@@ -647,16 +647,19 @@ void HostControllerService::parseHCSCommands(const string &hcs_message)
     // handle remote disconnect from FAE
     else if(!(strcmp(hcs_command["hcs::cmd"].GetString(),"remote_disconnect"))) {
         // FAE when opts out of remote connection, the "disconnect" string is sent to bridge service
-        remote_connector_->send("disconnect");
-        discovery_service_->disconnect(g_platform_uuid_);
-        sendDisconnecttoUI();
-        platform_uuid_.remove_if([](platform_details remote){ return remote.connection_status == "remote"; });
-        platform_client_mapping_.clear();
-        event_del(&remote_handler_);
-        if(remote_activity_connector_->isConnected()) {
-            event_del(&activity_handler_);
+        if(remote_connector_->isConnected()) {
+            remote_connector_->send("disconnect");
+            discovery_service_->disconnect(g_platform_uuid_);
+            sendDisconnecttoUI();
+            // platformDisconnectRoutine();
+            platform_uuid_.remove_if([](platform_details remote){ return remote.connection_status == "remote"; });
+            platform_client_mapping_.clear();
+            event_del(&remote_handler_);
+            if(remote_activity_connector_->isConnected()) {
+                event_del(&activity_handler_);
+            }
+            remote_connector_->close();
         }
-        remote_connector_->close();
     }
     // disconnect a particular user
     else if(!(strcmp(hcs_command["hcs::cmd"].GetString(),"disconnect_remote_user"))) {
@@ -738,7 +741,7 @@ void HostControllerService::handleRemoteGetPlatforms()
         remote_platforms remote_platform;
         get_platform_success = discovery_service_->getRemotePlatforms(remote_platform);
         if(get_platform_success) {
-            remote_connector_->setConnectionState(false);
+            remote_connector_->setConnectionState(true);
             startRemoteService();
             addToLocalPlatformList(remote_platform);
             string platformList ;
@@ -921,13 +924,15 @@ void HostControllerService::platformDisconnectRoutine ()
         PDEBUG(PRINT_DEBUG,"[hcs to hcc]%s",platformList.c_str());
         client_list_iterator++;
     }
-    event_del(&platform_handler_);
-    port_disconnected_ = true;
-    // close the serial port
-    serial_connector_->close();
-    // clear global for storing the platform id
-    g_dealer_id_.clear();
-    g_selected_platform_verbose_.clear();
+    if (!port_disconnected_){
+        event_del(&platform_handler_);
+        port_disconnected_ = true;
+        // close the serial port
+        serial_connector_->close();
+        // clear global for storing the platform id
+        g_dealer_id_.clear();
+        g_selected_platform_verbose_.clear();
+    }
 }
 
 // @f sendDisconnecttoUI
