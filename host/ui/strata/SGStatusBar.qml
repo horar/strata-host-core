@@ -360,20 +360,24 @@ Rectangle {
                 id: platformControlsButton
                 text: qsTr("Platform Controls")
                 width: 150
-                buttonColor: hovered || checked ? Qt.lighter(container.color) : container.color
-                checkable: true
-                checked: NavigationControl.flipable_parent_.flipped === false
-                onClicked: NavigationControl.updateState(NavigationControl.events.TOGGLE_CONTROL_CONTENT)
+                buttonColor: hovered || !NavigationControl.flipable_parent_.flipped ? Qt.lighter(container.color) : container.color
+                onClicked: {
+                    if (NavigationControl.flipable_parent_.flipped) {
+                        NavigationControl.updateState(NavigationControl.events.TOGGLE_CONTROL_CONTENT)
+                    }
+                }
             }
 
             SGToolButton {
                 id: platformContentButton
                 text: qsTr("Platform Content")
                 width: 150
-                buttonColor: hovered || checked ? Qt.lighter(container.color) : container.color
-                checkable: true
-                checked: !platformControlsButton.checked
-                onClicked: NavigationControl.updateState(NavigationControl.events.TOGGLE_CONTROL_CONTENT)
+                buttonColor: hovered || NavigationControl.flipable_parent_.flipped ? Qt.lighter(container.color) : container.color
+                onClicked: {
+                    if (!NavigationControl.flipable_parent_.flipped) {
+                        NavigationControl.updateState(NavigationControl.events.TOGGLE_CONTROL_CONTENT)
+                    }
+                }
             }
 
             SGToolButton {
