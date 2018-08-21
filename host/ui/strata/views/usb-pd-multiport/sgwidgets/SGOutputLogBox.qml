@@ -86,12 +86,17 @@ Rectangle {
     }
 
     onInputChanged: {
-        if (running) {append(outputTextColor, input)}
+        if (running) {
+            append(outputTextColor, input)
+        }
     }
 
     // Appends message in color to transcript
     function append(color, message) {
-        transcript.insert(transcript.length, (transcript.cursorPosition == 0 ? "" :"<br>") + "<span style='color:" + color + ";'>" + message +"</span>");
+        if (transcript.text.length != 0){
+            transcript.text+= "<br>"
+        }
+        transcript.text+= "<span style='color:" + color + ";'>" + message +"</span>";
         scroll();
     }
 

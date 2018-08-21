@@ -65,8 +65,7 @@ Item {
     Component.onCompleted: {
         advancedControl.initialAspectRatio = basicControl.initialAspectRatio = controlContainer.width / controlContainer.height
 
-        console.log("Requesting platform Id and Refreshing")
-        platformInterface.requestPlatformId.send()
+        console.log("Requesting platform Refresh")
         platformInterface.refresh.send() //ask the platform for all the current values
 
     }
