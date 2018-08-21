@@ -973,6 +973,7 @@ Rectangle {
                             Button {
                                 id: tryAgainButton
                                 text: "Try Again"
+                                focus: true
                                 anchors {
                                     top: tokenLabel.bottom
                                     horizontalCenter: remoteConnectContainer.horizontalCenter
@@ -1013,6 +1014,7 @@ Rectangle {
                                     cursorPosition: 1
 
                                     onAccepted: {
+                                        focus = false
                                         console.log("TOKEN: ", text);
                                         console.log("sending token:", tokenField.text);
                                         var remote_json = {
