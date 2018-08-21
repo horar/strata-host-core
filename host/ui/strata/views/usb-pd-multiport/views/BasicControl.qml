@@ -8,10 +8,6 @@ Item {
     property bool debugLayout: false
     property real ratioCalc: root.width / 1200
 
-    anchors {
-        //horizontalCenter: root.horizontalCenter   //can't anchor to yourself what is this supposed to be?
-    }
-
     width: parent.width / parent.height > initialAspectRatio ? parent.height * initialAspectRatio : parent.width
     height: parent.width / parent.height < initialAspectRatio ? parent.width / initialAspectRatio : parent.height
 
@@ -25,6 +21,7 @@ Item {
 
     GraphDrawer {
         id: graphDrawer
+        width:0
         z: 10
     }
 

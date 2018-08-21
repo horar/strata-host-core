@@ -30,6 +30,11 @@ Item {
         "maximum_power":0.0
     }
 
+    onRequest_usb_power_notificationChanged: {
+//        console.log("output voltage=",request_usb_power_notification.output_voltage,
+//                    "output current=",request_usb_power_notification.output_current,
+//                    "power=",request_usb_power_notification.output_voltage * request_usb_power_notification.output_current);
+    }
 
 
     // @notification usb_pd_port_connect
@@ -80,11 +85,11 @@ Item {
             "input_voltage_foldback_active":true
     }
     onFoldback_input_voltage_limiting_eventChanged: {
-        console.log("input voltage foldback values updated");
-        console.log("input voltage event notification. values are ",foldback_input_voltage_limiting_refresh.foldback_minimum_voltage,
-                                                                    foldback_input_voltage_limiting_refresh.foldback_minimum_voltage_power,
-                                                                    foldback_input_voltage_limiting_refresh.input_voltage_foldback_enabled,
-                                                                    foldback_input_voltage_limiting_refresh.input_voltage_foldback_active);
+//        console.log("input voltage foldback values updated");
+//        console.log("input voltage event notification. values are ",foldback_input_voltage_limiting_refresh.foldback_minimum_voltage,
+//                                                                    foldback_input_voltage_limiting_refresh.foldback_minimum_voltage_power,
+//                                                                    foldback_input_voltage_limiting_refresh.input_voltage_foldback_enabled,
+//                                                                    foldback_input_voltage_limiting_refresh.input_voltage_foldback_active);
         }
 
     property var foldback_input_voltage_limiting_refresh:{
@@ -97,7 +102,7 @@ Item {
 
     //keep the refresh and event notification properties in synch
     onFoldback_input_voltage_limiting_refreshChanged: {
-        console.log("input voltage refresh notification. minimum voltage = ",foldback_input_voltage_limiting_refresh.foldback_minimum_voltage);
+        //console.log("input voltage refresh notification. minimum voltage = ",foldback_input_voltage_limiting_refresh.foldback_minimum_voltage);
 
             //update the variables for foldback limiting
         platformInterface.foldback_input_voltage_limiting_event.input_voltage = foldback_input_voltage_limiting_refresh.input_voltage;

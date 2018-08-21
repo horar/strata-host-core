@@ -141,11 +141,6 @@ Item {
             }
         ]
 
-        //clear out the old data in the graph when the drawer is opened
-        function clearGraphData(){
-            //voltageGraph.
-        }
-
         SGGraph{
             id:voltageGraph
             anchors.left: menuContainer.left
