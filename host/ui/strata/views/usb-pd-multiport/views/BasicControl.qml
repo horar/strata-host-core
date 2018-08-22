@@ -21,7 +21,6 @@ Item {
 
     GraphDrawer {
         id: graphDrawer
-        width:0
         z: 10
     }
 
@@ -208,7 +207,7 @@ Item {
 
             onShowGraph: {
                 graphDrawer.portNumber = portNumber;
-                graphDrawer.state = "open"
+                graphDrawer.open();
             }
         }
 
@@ -314,7 +313,7 @@ Item {
 
             onShowGraph: {
                 graphDrawer.portNumber = portNumber;
-                graphDrawer.state = "open"
+                graphDrawer.open();
             }
         }
 
@@ -419,7 +418,7 @@ Item {
             }
             onShowGraph: {
                 graphDrawer.portNumber = portNumber;
-                graphDrawer.state = "open"
+                graphDrawer.open();
             }
         }
 
@@ -524,7 +523,7 @@ Item {
 
             onShowGraph: {
                 graphDrawer.portNumber = portNumber;
-                graphDrawer.state = "open"
+                graphDrawer.open();
             }
         }
 
