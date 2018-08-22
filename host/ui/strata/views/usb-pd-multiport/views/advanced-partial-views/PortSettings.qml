@@ -15,17 +15,36 @@ Item {
         SGComboBox {
             id: maxPowerOutput
             label: "Max Power Output:"
-            model: ["100 W", "example", "example"]
+            model: ["15","27", "36", "45","60","100"]
             anchors {
                 left: parent.left
                 leftMargin: 23
                 top: parent.top
             }
+
+            //when changing the value
+            onActivated: {
+                console.log("setting max power to ",maxPowerOutput.comboBox.currentText);
+                platformInterface.set_usb_pd_maximum_power.update(portNumber,maxPowerOutput.comboBox.currentText)
+            }
+
+            //notification of a change from elsewhere
+            property var currentMaximumPower: platformInterface.usb_pd_maximum_power.current_max_power
+            onCurrentMaximumPowerChanged: {
+                if (platformInterface.usb_pd_maximum_power.port === portNumber){
+                    maxPowerOutput.currentIndex = maxPowerOutput.comboBox.find( parseInt (platformInterface.usb_pd_maximum_power.current_max_power))
+                }
+
+            }
+
+
         }
+
 
         SGSlider {
             id: currentLimit
             label: "Current limit:"
+            value: platformInterface.request_over_current_protection_notification.current_limit
             anchors {
                 left: parent.left
                 leftMargin: 61
@@ -34,6 +53,8 @@ Item {
                 right: currentLimitInput.left
                 rightMargin: 10
             }
+
+            onValueChanged: platformInterface.set_over_current_protection.update(port, value)
 
         }
 
@@ -71,12 +92,20 @@ Item {
         SGSlider {
             id: increment
             label: "For every increment of:"
+            value:platformInterface.get_cable_loss_compensation.output_current
+            from:0
+            to:3
             anchors {
                 left: parent.left
                 top: cableCompensation.bottom
                 topMargin: 10
                 right: incrementInput.left
                 rightMargin: 10
+            }
+            onMoved:{
+                platformInterface.set_cable_loss_compensation.update(portNumber,
+                                                                     increment.value,
+                                                                     platformInterface.get_cable_loss_compensation.bias_voltage)
             }
 
         }
@@ -95,6 +124,9 @@ Item {
         SGSlider {
             id: bias
             label: "Bias output by:"
+            value:platformInterface.get_cable_loss_compensation.bias_voltage
+            from:0
+            to:2
             anchors {
                 left: parent.left
                 leftMargin: 50
@@ -102,6 +134,11 @@ Item {
                 topMargin: 10
                 right: biasInput.left
                 rightMargin: 10
+            }
+            onMoved: {
+                platformInterface.set_cable_loss_compensation.update(portNumber,
+                                                                     platformInterface.get_cable_loss_compensation.output_current,
+                                                                     bias.value)
             }
 
         }
@@ -140,7 +177,7 @@ Item {
         }
 
         SGSegmentedButtonStrip {
-            id: faultProtection
+            id: faultProtectionButtonStrip
             anchors {
                 left: advertisedVoltages.right
                 leftMargin: 10
@@ -152,45 +189,124 @@ Item {
             buttonHeight: 25
             hoverEnabled: false
 
+            property var sourceCapabilities: platformInterface.usb_pd_advertised_voltages_notification.settings
+
+            onSourceCapabilitiesChanged:{
+
+                //the strip's first child is the Grid layout. The children of that layout are the buttons in
+                //question. This makes accessing the buttons a little bit cumbersome since they're loaded dynamically.
+                if (platformInterface.usb_pd_advertised_voltages_notification.port === portNumber){
+                    //console.log("updating advertised voltages for port ",portNumber)
+                    //disable all the possibilities
+                    faultProtectionButtonStrip.buttonList[0].children[6].enabled = false;
+                    faultProtectionButtonStrip.buttonList[0].children[5].enabled = false;
+                    faultProtectionButtonStrip.buttonList[0].children[4].enabled = false;
+                    faultProtectionButtonStrip.buttonList[0].children[3].enabled = false;
+                    faultProtectionButtonStrip.buttonList[0].children[2].enabled = false;
+                    faultProtectionButtonStrip.buttonList[0].children[1].enabled = false;
+                    faultProtectionButtonStrip.buttonList[0].children[0].enabled = false;
+
+                    var numberOfSettings = platformInterface.usb_pd_advertised_voltages_notification.number_of_settings;
+                    if (numberOfSettings >= 7){
+                        faultProtectionButtonStrip.buttonList[0].children[6].enabled = true;
+                        faultProtectionButtonStrip.buttonList[0].children[6].text = platformInterface.usb_pd_advertised_voltages_notification.settings[6].voltage;
+                        faultProtectionButtonStrip.buttonList[0].children[6].text += "V, ";
+                        faultProtectionButtonStrip.buttonList[0].children[6].text += platformInterface.usb_pd_advertised_voltages_notification.settings[6].maximum_current;
+                        faultProtectionButtonStrip.buttonList[0].children[6].text += "A";
+                    }
+                    if (numberOfSettings >= 6){
+                        faultProtectionButtonStrip.buttonList[0].children[5].enabled = true;
+                        faultProtectionButtonStrip.buttonList[0].children[5].text = platformInterface.usb_pd_advertised_voltages_notification.settings[5].voltage;
+                        faultProtectionButtonStrip.buttonList[0].children[5].text += "V, ";
+                        faultProtectionButtonStrip.buttonList[0].children[5].text += platformInterface.usb_pd_advertised_voltages_notification.settings[5].maximum_current;
+                        faultProtectionButtonStrip.buttonList[0].children[5].text += "A";
+                    }
+                    if (numberOfSettings >= 5){
+                        faultProtectionButtonStrip.buttonList[0].children[4].enabled = true;
+                        faultProtectionButtonStrip.buttonList[0].children[4].text = platformInterface.usb_pd_advertised_voltages_notification.settings[4].voltage;
+                        faultProtectionButtonStrip.buttonList[0].children[4].text += "V, ";
+                        faultProtectionButtonStrip.buttonList[0].children[4].text += platformInterface.usb_pd_advertised_voltages_notification.settings[4].maximum_current;
+                        faultProtectionButtonStrip.buttonList[0].children[4].text += "A";
+                    }
+                    if (numberOfSettings >= 4){
+                        faultProtectionButtonStrip.buttonList[0].children[3].enabled = true;
+                        faultProtectionButtonStrip.buttonList[0].children[3].text = platformInterface.usb_pd_advertised_voltages_notification.settings[3].voltage;
+                        faultProtectionButtonStrip.buttonList[0].children[3].text += "V, ";
+                        faultProtectionButtonStrip.buttonList[0].children[3].text += platformInterface.usb_pd_advertised_voltages_notification.settings[3].maximum_current;
+                        faultProtectionButtonStrip.buttonList[0].children[3].text += "A";
+                    }
+                    if (numberOfSettings >= 3){
+                        faultProtectionButtonStrip.buttonList[0].children[2].enabled = true;
+                        faultProtectionButtonStrip.buttonList[0].children[2].text = platformInterface.usb_pd_advertised_voltages_notification.settings[2].voltage;
+                        faultProtectionButtonStrip.buttonList[0].children[2].text += "V, ";
+                        faultProtectionButtonStrip.buttonList[0].children[2].text += platformInterface.usb_pd_advertised_voltages_notification.settings[2].maximum_current;
+                        faultProtectionButtonStrip.buttonList[0].children[2].text += "A";
+                    }
+                    if (numberOfSettings >= 2){
+                        faultProtectionButtonStrip.buttonList[0].children[1].enabled = true;
+                        faultProtectionButtonStrip.buttonList[0].children[1].text = platformInterface.usb_pd_advertised_voltages_notification.settings[1].voltage;
+                        faultProtectionButtonStrip.buttonList[0].children[1].text += "V, ";
+                        faultProtectionButtonStrip.buttonList[0].children[1].text += platformInterface.usb_pd_advertised_voltages_notification.settings[1].maximum_current;
+                        faultProtectionButtonStrip.buttonList[0].children[1].text += "A";
+                    }
+                    if (numberOfSettings >= 1){
+                        faultProtectionButtonStrip.buttonList[0].children[0].enabled = true;
+                        faultProtectionButtonStrip.buttonList[0].children[0].text = platformInterface.usb_pd_advertised_voltages_notification.settings[0].voltage;
+                        faultProtectionButtonStrip.buttonList[0].children[0].text += "V, ";
+                        faultProtectionButtonStrip.buttonList[0].children[0].text += platformInterface.usb_pd_advertised_voltages_notification.settings[0].maximum_current;
+                        faultProtectionButtonStrip.buttonList[0].children[0].text += "A";
+                    }
+
+                }
+            }
+
             segmentedButtons: GridLayout {
+                id:advertisedVoltageGridLayout
                 columnSpacing: 2
 
                 SGSegmentedButton{
-                    text: qsTr("5V, 3A")
+                    id: setting1
+                    //text: qsTr("5V, 3A")
                     checkable: false
                 }
 
                 SGSegmentedButton{
-                    text: qsTr("7V, 3A")
+                    id: setting2
+                    //text: qsTr("7V, 3A")
                     checkable: false
                 }
 
                 SGSegmentedButton{
-                    text: qsTr("8V, 3A")
+                    id:setting3
+                    //text: qsTr("8V, 3A")
                     checkable: false
                 }
 
                 SGSegmentedButton{
-                    text: qsTr("9V, 3A")
-                    enabled: false
+                    id:setting4
+                    //text: qsTr("9V, 3A")
+                    //enabled: false
                     checkable: false
                 }
 
                 SGSegmentedButton{
-                    text: qsTr("12V, 3A")
-                    enabled: false
+                    id:setting5
+                    //text: qsTr("12V, 3A")
+                    //enabled: false
                     checkable: false
                 }
 
                 SGSegmentedButton{
-                    text: qsTr("15V, 3A")
-                    enabled: false
+                    id:setting6
+                    //text: qsTr("15V, 3A")
+                    //enabled: false
                     checkable: false
                 }
 
                 SGSegmentedButton{
-                    text: qsTr("20V, 3A")
-                    enabled: false
+                    id:setting7
+                    //text: qsTr("20V, 3A")
+                    //enabled: false
                     checkable: false
                 }
             }

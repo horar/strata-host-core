@@ -3,23 +3,60 @@ import QtQuick.Window 2.10
 import QtQuick.Controls 2.3
 import QtQuick.Layouts 1.3
 import "js/navigation_control.js" as NavigationControl
+import "js/login.js" as Authenticator
 
 Window {
     id: mainWindow
     visible: true
     width: 1200
     height: 900
-    title: qsTr("Encore Design Suite")
+    title: qsTr("Strata")
 
     // Debug option(s)
     property bool showDebugCommandBar: false
+    property bool is_remote_connected: false
+
 
     Component.onCompleted: {
         console.log("Initializing")
         NavigationControl.init(flipable,controlContainer, contentContainer, statusBarContainer)
     }
 
+
+    Connections {
+        target: coreInterface
+
+        onRemoteConnectionChanged:{
+
+            // Successful remote connection
+            if (result === true){
+                is_remote_connected = true
+            }
+            else {
+                is_remote_connected = false
+            }
+        }
+    }
+
     onClosing: {
+        if(is_remote_connected) {
+            // sending remote disconnect message to hcs
+            var remote_disconnect_json = {
+                "hcs::cmd":"remote_disconnect",
+            }
+            coreInterface.sendCommand(JSON.stringify(remote_disconnect_json))
+
+            console.log("UI -> HCS ", JSON.stringify(remote_disconnect_json))
+        }
+
+        var remote_json = {
+            "hcs::cmd":"advertise",
+            "payload": {
+                "advertise_platforms":false
+            }
+        }
+        console.log("asking hcs to advertise the platforms",JSON.stringify(remote_json))
+        coreInterface.sendCommand(JSON.stringify(remote_json))
         // End session with HCS
         coreInterface.unregisterClient();
     }
@@ -133,6 +170,9 @@ Window {
                 text: "Logout"
                 onClicked: {
                     NavigationControl.updateState(NavigationControl.events.LOGOUT_EVENT,null)
+                    var disconnect_json = {"hcs::cmd":"disconnect_platform"}
+                    console.log("disonnecting the platform")
+                    coreInterface.sendCommand(JSON.stringify(disconnect_json))
                 }
             }
             Button {
@@ -146,6 +186,15 @@ Window {
                 onClicked: {
                     var data = { user_id: "Guest" }
                     NavigationControl.updateState(NavigationControl.events.LOGIN_SUCCESSFUL_EVENT,data)
+                    var jwt_json = {
+                        "hcs::cmd":"jwt_token",
+                        "payload": {
+                            "jwt":"",
+                            "user_name": ""
+                        }
+                    }
+                    console.log("sending the jwt json to hcs",JSON.stringify(jwt_json))
+                    coreInterface.sendCommand(JSON.stringify(jwt_json))
                 }
             }
         }

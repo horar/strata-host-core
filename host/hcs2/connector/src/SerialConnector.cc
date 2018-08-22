@@ -369,7 +369,11 @@ void SerialConnector::windowsPlatformReadHandler()
         // 200ms timeout results in merging two messages from platform
 
         // // @ref 5) under "KNOWN BUGS/HACKS" section in Connector.h for more details
-        this->producer_consumer_.wait_for(lock_condition_variable,chrono::milliseconds(100), [this]{return consumed_;});
+        // // HACK
+        // // Windows usb-pd 4 port two messages gets merged with each other if there is a delay of 100ms
+        // // commenting out the delay to support usb-pd 4 port
+        // // But this will increase the cpu frequency
+        // this->producer_consumer_.wait_for(lock_condition_variable,chrono::milliseconds(100), [this]{return consumed_;});
         vector<char> response;
         sp_return error;
         char temp = '\0';

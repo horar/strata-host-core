@@ -25,22 +25,28 @@ Item {
         "input_voltage": 0.0,
         "output_voltage":0.0,
         "input_current": 0.0,
+        "output_current":0.0,
         "temperature": 0.0,
         "maximum_power":0.0
     }
 
+    onRequest_usb_power_notificationChanged: {
+//        console.log("output voltage=",request_usb_power_notification.output_voltage,
+//                    "output current=",request_usb_power_notification.output_current,
+//                    "power=",request_usb_power_notification.output_voltage * request_usb_power_notification.output_current);
+    }
 
 
     // @notification usb_pd_port_connect
     // @description: sent when a device is connected or disconnected
     //
     property var usb_pd_port_connect : {
-        "port_id": "unknown",
+        "port_id": "",
         "connection_state":"unknown"
     }
-//    onUsb_pd_port_connectChanged: {
-//        console.log("usb_pd_port_connect changed. port_id=",usb_pd_port_connect.port_id," connection_state=",usb_pd_port_connect.connection_state);
-//    }
+    onUsb_pd_port_connectChanged: {
+        console.log("usb_pd_port_connect changed. port_id=",usb_pd_port_connect.port_id," connection_state=",usb_pd_port_connect.connection_state);
+    }
 
     property var usb_pd_port_disconnect:{
         "port_id": "unknown",
@@ -56,6 +62,12 @@ Item {
           "state":"below",                                        // if the input voltage decreases to below the voltage limit, "above" otherwise.
           "minimum_voltage":0                                     // Voltage limit in volts
     }
+
+//    onInput_under_voltage_notificationChanged: {
+//        console.log("input voltage is",input_under_voltage_notification.state,
+//                    " minimum voltage = ",input_under_voltage_notification.minimum_voltage);
+
+//    }
 
    property var over_temperature_notification:{
            "port":"USB_C_port_1",                                // or any USB C port
@@ -73,10 +85,11 @@ Item {
             "input_voltage_foldback_active":true
     }
     onFoldback_input_voltage_limiting_eventChanged: {
-        console.log("input voltage event notification. values are ",foldback_input_voltage_limiting_refresh.foldback_minimum_voltage,
-                                                                    foldback_input_voltage_limiting_refresh.foldback_minimum_voltage_power,
-                                                                    foldback_input_voltage_limiting_refresh.input_voltage_foldback_enabled,
-                                                                    foldback_input_voltage_limiting_refresh.input_voltage_foldback_active);
+//        console.log("input voltage foldback values updated");
+//        console.log("input voltage event notification. values are ",foldback_input_voltage_limiting_refresh.foldback_minimum_voltage,
+//                                                                    foldback_input_voltage_limiting_refresh.foldback_minimum_voltage_power,
+//                                                                    foldback_input_voltage_limiting_refresh.input_voltage_foldback_enabled,
+//                                                                    foldback_input_voltage_limiting_refresh.input_voltage_foldback_active);
         }
 
     property var foldback_input_voltage_limiting_refresh:{
@@ -89,33 +102,35 @@ Item {
 
     //keep the refresh and event notification properties in synch
     onFoldback_input_voltage_limiting_refreshChanged: {
-        console.log("input voltage refresh notification. minimum voltage = ",foldback_input_voltage_limiting_refresh.foldback_minimum_voltage);
+        //console.log("input voltage refresh notification. minimum voltage = ",foldback_input_voltage_limiting_refresh.foldback_minimum_voltage);
 
             //update the variables for foldback limiting
-        foldback_input_voltage_limiting_event.input_voltage = foldback_input_voltage_limiting_refresh.input_voltage;
-        foldback_input_voltage_limiting_event.foldback_minimum_voltage = foldback_input_voltage_limiting_refresh.foldback_minimum_voltage;
-        foldback_input_voltage_limiting_event.foldback_minimum_voltage_power = foldback_input_voltage_limiting_refresh.foldback_minimum_voltage_power;
-        foldback_input_voltage_limiting_event.input_voltage_foldback_enabled = foldback_input_voltage_limiting_refresh.input_voltage_foldback_enabled;
-        foldback_input_voltage_limiting_event.input_voltage_foldback_active = foldback_input_voltage_limiting_refresh.input_voltage_foldback_active;
+        platformInterface.foldback_input_voltage_limiting_event.input_voltage = foldback_input_voltage_limiting_refresh.input_voltage;
+
+        platformInterface.foldback_input_voltage_limiting_event.foldback_minimum_voltage = foldback_input_voltage_limiting_refresh.foldback_minimum_voltage;
+        console.log(" foldback minimum voltage = ",platformInterface.foldback_input_voltage_limiting_event.foldback_minimum_voltage);
+        platformInterface.foldback_input_voltage_limiting_event.foldback_minimum_voltage_power = foldback_input_voltage_limiting_refresh.foldback_minimum_voltage_power;
+        platformInterface.foldback_input_voltage_limiting_event.input_voltage_foldback_enabled = foldback_input_voltage_limiting_refresh.input_voltage_foldback_enabled;
+        platformInterface.foldback_input_voltage_limiting_event.input_voltage_foldback_active = foldback_input_voltage_limiting_refresh.input_voltage_foldback_active;
     }
 
     //consider the values held by this property to be the master ones, which will be current when needed for calling
     //the API to set the input temperature foldback
     property var foldback_temperature_limiting_event:{
-            "port":1,
+            "port":0,
             "current_temperature":0,
-            "foldback_maximum_temperature":0,
-            "foldback_maximum_temperature_power":0,
+            "foldback_maximum_temperature":200,
+            "foldback_maximum_temperature_power":15,
             "temperature_foldback_enabled":true,
             "temperature_foldback_active":true,
             "maximum_power":0
     }
 
     property var foldback_temperature_limiting_refresh:{
-            "port":1,
+            "port":0,
             "current_temperature":0,
-            "foldback_maximum_temperature":0,
-            "foldback_maximum_temperature_power":0,
+            "foldback_maximum_temperature":200,
+            "foldback_maximum_temperature_power":15,
             "temperature_foldback_enabled":true,
             "temperature_foldback_active":true,
             "maximum_power":0
@@ -132,9 +147,61 @@ Item {
         foldback_temperature_limiting_event.maximum_power = foldback_temperature_limiting_refresh.maximum_power;
     }
 
+    property var usb_pd_maximum_power:{
+        "port":0,                            // up to maximum number of ports
+        "current_max_power":0,               // 15 | 27 | 36 | 45 | 60 | 100
+        "default_max_power":0,               // 15 | 27 | 36 | 45 | 60 | 100
+        "commanded_max_power":0
+    }
+
+    property var request_over_current_protection_notification:{
+        "port":0,                           // 1, 2, ... maximum port number
+        "current_limit":0,                  // amps - output current  exceeds this level
+        "exceeds_limit":false,              // or false
+        "action":"nothing",                 // "retry" or "shutdown" or "nothing"
+        "enabled":false                     // or false
+    }
+
+    property var get_cable_loss_compensation:{
+        "port":0,                           // Same port as in the command above.
+        "output_current":0,                 // Amps
+        "bias_voltage":0,                   // Volts
+    }
+
+    property var usb_pd_advertised_voltages_notification:{
+        "port":0,                            // The port number that this applies to
+        "maximum_power":45,                  // watts
+        "number_of_settings":7,              // 1-7
+        "settings":[]                        // each setting object includes
+                                             // "voltage":5,                // Volts
+                                             // "maximum_current":3.0,      // Amps
+    }
+
+    property var request_reset_notification :{
+         "reset_status":true                   // only one value : true since only sent at the start
+    }
+
+    //when the platform sends a reset notification, the host must make a platformId call to initialize communication
+    //and a Refresh() command to synchronize settings with the platform
+    onRequest_reset_notificationChanged: {
+        console.log("Requesting platform Id and Refreshing")
+        platformInterface.requestPlatformId.send()
+        platformInterface.refresh.send() //ask the platform for all the current values
+    }
+
+
     // --------------------------------------------------------------------------------------------
     //          Commands
     //--------------------------------------------------------------------------------------------
+
+    property var requestPlatformId:({
+                 "cmd":"request_platform_id",
+                 "payload":{
+                  },
+                 send: function(){
+                      CorePlatformInterface.send(this)
+                 }
+     })
 
    property var refresh:({
                 "cmd":"request_platform_refresh",
@@ -263,254 +330,69 @@ Item {
                         }
     })
 
-    property var motor_speed : ({
-                                    "cmd" : "speed_input",
-                                    "payload": {
-                                        "speed_target": 1500 // default value
-                                    },
+    property var set_usb_pd_maximum_power : ({
+                    "cmd":"request_usb_pd_maximum_power",
+                    "payload":{
+                         "port":0,      // up to maximum number of ports
+                         "watts":0      // 15 | 27 | 36 | 45 | 60 | 100
+                         },
+                    update: function (port, watts){
+                        this.set(port,watts);
+                        CorePlatformInterface.send(this);
+                    },
+                    set: function(port,watts){
+                        this.payload.port = port;
+                        this.payload.watts = watts;
+                    },
+                    send: function () { CorePlatformInterface.send(this) },
+                    show: function () { CorePlatformInterface.show(this) }
+    })
 
-                                    // Update will set and send in one shot
-                                    update: function (speed) {
-                                        this.set(speed)
-                                        CorePlatformInterface.send(this)
-                                    },
-                                    // Set can set single or multiple properties before sending to platform
-                                    set: function (speed) {
-                                        this.payload.speed_target = speed;
-                                    },
-                                    send: function () { CorePlatformInterface.send(this) },
-                                    show: function () { CorePlatformInterface.show(this) }
-                                })
+    property var set_over_current_protection:({
+                    "cmd":"request_over_current_protection",
+                    "payload":{
+                        "port":0,                    // 1, 2, 3, ... up to maximum number of ports
+                        "enabled":true,           // or false
+                        "maximum_current":0,    // amps
+                      },
+                      update: function (port, maxCurrent){
+                          this.set(port,maxCurrent);
+//                          CorePlatformInterface.send(this);
+                          },
+                      set: function(port,maxCurrent){
+                           this.payload.port = port;
+                           this.payload.enabled = true;    //the UI currently has no way to disable over current protection
+                           this.payload.maximum_current = maxCurrent;
+                                                  },
+                      send: function () { CorePlatformInterface.send(this) },
+                      show: function () { CorePlatformInterface.show(this) }
+    })
 
+    property var set_cable_loss_compensation:({
+                    "cmd":"set_cable_loss_compensation",
+                    "payload":{
+                        "port":1,                   // 1, 2, 3, ... up to maximum number of ports
+                        "output_current":0,         // amps
+                        "bias_voltage":0            // Volts
+                      },
+                      update: function (portNumber, outputCurrent,biasVoltage){
+//                          console.log("set_cable_loss_compensation.port=",portNumber);
+//                          console.log("set_cable_loss_compensation.output_current=",outputCurrent);
+//                          console.log("set_cable_loss_compensation.bias_voltage=",biasVoltage);
 
+                          this.set(portNumber,outputCurrent,biasVoltage);
+                          //console.log("sending set_cable_loss_compensation cmd ", JSON.stringify(this));
+                          CorePlatformInterface.send(this);
+                          },
+                      set: function(portNumber,outputCurrent,biasVoltage){
+                           this.payload.port = portNumber;
 
-    /*
-       system_mode_selection Command
-     */
-    property var system_mode_selection: ({
-                                      "cmd" : "set_system_mode",
-                                      "payload": {
-                                          "system_mode":" " // "automation" or "manual"
-                                      },
-
-                                      // Update will set and send in one shot
-                                      update: function (system_mode) {
-                                          this.set(system_mode)
-                                          CorePlatformInterface.send(this)
-                                      },
-                                      // Set can set single or multiple properties before sending to platform
-                                      set: function (system_mode) {
-                                          this.payload.system_mode = system_mode;
-                                      },
-                                      send: function () { CorePlatformInterface.send(this) },
-                                      show: function () { CorePlatformInterface.show(this) }
-
-
-
-                                  })
-    /*
-      set_drive_mode
-    */
-    property var set_drive_mode: ({
-                                      "cmd" : "set_drive_mode",
-                                      "payload": {
-                                          "drive_mode" : " ",
-                                      },
-
-                                      // Update will set and send in one shot
-                                      update: function (drive_mode) {
-                                          this.set(drive_mode)
-                                          CorePlatformInterface.send(this)
-                                      },
-                                      // Set can set single or multiple properties before sending to platform
-                                      set: function (drive_mode) {
-                                          this.payload.drive_mode = drive_mode;
-                                      },
-                                      send: function () { CorePlatformInterface.send(this) },
-                                      show: function () { CorePlatformInterface.show(this) }
-
-
-
-                                  })
-    /*
-      Set Phase Angle
-    */
-    property var set_phase_angle: ({
-                                       "cmd" : "set_phase_angle",
-                                       "payload": {
-                                           "phase_angle" : 0,
-                                       },
-
-                                       // Update will set and send in one shot
-                                       update: function (phase_angle) {
-                                           this.set(phase_angle)
-                                           CorePlatformInterface.send(this)
-                                       },
-                                       // Set can set single or multiple properties before sending to platform
-                                       set: function (phase_angle) {
-                                           this.payload.phase_angle = phase_angle;
-                                       },
-                                       send: function () { CorePlatformInterface.send(this) },
-                                       show: function () { CorePlatformInterface.show(this) }
-
-                                   })
-
-
-    /*
-      Set Motor State
-    */
-    property var set_motor_on_off: ({
-                                        "cmd" : "set_motor_on_off",
-                                        "payload": {
-                                            "enable": 0,
-                                        },
-
-                                        // Update will set and send in one shot
-                                        update: function (enabled) {
-                                            this.set(enabled)
-                                            CorePlatformInterface.send(this)
-                                        },
-                                        // Set can set single or multiple properties before sending to platform
-                                        set: function (enabled) {
-                                            this.payload.enable = enabled;
-                                        },
-                                        send: function () { CorePlatformInterface.send(this) },
-                                        show: function () { CorePlatformInterface.show(this) }
-
-                                    })
-
-    /*
-      Set Ramp Rate
-    */
-    property var set_ramp_rate: ({
-                                     "cmd": "set_ramp_rate",
-                                     "payload" : {
-                                         "ramp_rate": ""
-                                     },
-
-                                     // Update will set and send in one shot
-                                     update: function (ramp_rate) {
-                                         this.set(ramp_rate)
-                                         CorePlatformInterface.send(this)
-                                     },
-                                     // Set can set single or multiple properties before sending to platform
-                                     set: function (ramp_rate) {
-                                         this.payload.ramp_rate = ramp_rate;
-                                         
-                                     },
-                                     send: function () { CorePlatformInterface.send(this) },
-                                     show: function () { CorePlatformInterface.show(this) }
-
-                                 })
-
-    /*
-      Set Reset mcu
-    */
-    property var set_reset_mcu: ({
-                                     "cmd": "reset_mcu",
-                                     // Update will send in one shot
-                                     update: function () {
-                                         CorePlatformInterface.send(this)
-                                     },
-                                     send: function () { CorePlatformInterface.send(this) },
-                                     show: function () { CorePlatformInterface.show(this) }
-
-                                 })
-
-    /*
-      Set LED Color Mixing
-    */
-    property var set_color_mixing : ({
-                                         "cmd":"set_color_mixing",
-                                             "payload":{
-                                                         "color1": "red", // color can be "red"/"green"/"blue"
-                                                         "color_value1": 128,// color_value varies from 0 to 255
-                                                         "color2": "green", // color can be "red"/"green"/"blue"
-                                                         "color_value2": 127, // color_value varies from 0 to 255
-                                             },
-                                         // Update will set and send in one shot
-                                         update: function (color_1,color_value_1,color_2,color_value_2) {
-                                             this.set(color_1,color_value_1,color_2,color_value_2)
-                                             CorePlatformInterface.send(this)
-                                         },
-                                         // Set can set single or multiple properties before sending to platform
-                                         set: function (color_1,color_value_1,color_2,color_value_2) {
-                                             this.payload.color1 = color_1;
-                                             this.payload.color_value1 = color_value_1;
-                                             this.payload.color2 = color_2;
-                                             this.payload.color_value2 = color_value_2;
-                                         },
-                                         send: function () { CorePlatformInterface.send(this) },
-                                         show: function () { CorePlatformInterface.show(this) }
-                                         
-                                     })
-                                    
-    /*
-      Set Single Color LED
-    */
-    
-    property var set_single_color: ({
-                                        "cmd":"set_single_color",
-                                            "payload":{
-                                                        "color": "red" ,// color can be "red"/"green"/"blue"
-                                                        "color_value": 120, // color_value varies from 0 to 255 
-                                            },
-                                        // Update will set and send in one shot
-                                        update: function (color,color_value) {
-                                            this.set(color,color_value)
-                                            CorePlatformInterface.send(this)
-                                        },
-                                        set: function (color,color_value) {
-                                            this.payload.color = color;
-                                            this.payload.color_value = color_value;
-                                            
-                                        },
-                                        send: function () { CorePlatformInterface.send(this) },
-                                        show: function () { CorePlatformInterface.show(this) }
-                                    })
-    /*
-      set Blink0 Frequency
-     */
-    property var set_blink0_frequency: ({
-                                        "cmd":"set_blink0_frequency",
-                                            "payload":{
-                                                        "blink0_frequency": 2
-                                            },
-                                        // Update will set and send in one shot
-                                        update: function (blink_0_frequency) {
-                                            this.set(blink_0_frequency)
-                                            CorePlatformInterface.send(this)
-                                        },
-                                        set: function (blink_0_frequency) {
-                                            this.payload.blink0_frequency = blink_0_frequency
-
-                                        },
-                                        send: function () { CorePlatformInterface.send(this) },
-                                        show: function () { CorePlatformInterface.show(this) }
-                                    })
-
-    /*
-      set_led_output_on_off
-     */
-    property var set_led_outputs_on_off:({
-                                            "cmd":"set_led_outputs_on_off",
-                                                "payload":{
-                                                            "led_output": "white"       // "white" for turning all LEDs ON
-                                                                                        // "off" to turn off all the LEDs.
-                                                },
-                                            update: function (led_output) {
-                                                this.set(led_output)
-                                                CorePlatformInterface.send(this)
-                                            },
-                                            set: function (led_output) {
-                                                this.payload.led_output = led_output
-
-                                            },
-                                            send: function () { CorePlatformInterface.send(this) },
-                                            show: function () { CorePlatformInterface.show(this) }
-
-                                        })
-
+                           this.payload.output_current = outputCurrent;
+                           this.payload.bias_voltage = biasVoltage;
+                                                  },
+                      send: function () { CorePlatformInterface.send(this) },
+                      show: function () { CorePlatformInterface.show(this) }
+    })
 
     // -------------------  end commands
 

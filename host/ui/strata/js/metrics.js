@@ -37,7 +37,7 @@ function injectEventToTree(obj) {
 
     }
 
-    if (obj.children) {
+    if (obj && obj.children) {
 
         for (var i = 0; i < obj.children.length; i++) {
             injectEventToTree(obj.children[i])
@@ -61,8 +61,8 @@ function onTabBarCompletedListenerFunction(object) {
 
 // Given qml object and name, it check whether name is matching object type
 function qmltypeof(obj, className) {
-  var str = obj.toString();
-  return str.indexOf(className + "(") === 0 || str.indexOf(className + "_QML") === 0;
+  //var str = obj.toString();
+  //return str.indexOf(className + "(") === 0 || str.indexOf(className + "_QML") === 0;
 }
 
 /*

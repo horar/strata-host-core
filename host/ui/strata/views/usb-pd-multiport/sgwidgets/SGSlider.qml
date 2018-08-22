@@ -93,6 +93,7 @@ Item {
 //                    x: (index + 1) * (sgSlider.width - sgSlider.handle.width) / 10 + sgSlider.handle.width/2
 //                }
 //            }
+
         }
 
         handle: Image {
@@ -138,5 +139,14 @@ Item {
             text: sgSlider.to
             color: root.textColor
         }
+
+        onPressedChanged: {
+            if (!pressed){
+                root.moved()
+            }
+        }
+
+
+
     }
 }

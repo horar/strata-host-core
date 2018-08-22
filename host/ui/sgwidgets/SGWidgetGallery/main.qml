@@ -8,7 +8,8 @@ import "qrc:/../SGSlider/"
 import "qrc:/../SGSegmentedButtonStrip/"
 import "qrc:/../SGCircularGauge/"
 import "qrc:/../SGComboBox/"
-import "qrc:/../SGGraph/"
+import "qrc:/../SGGraphTimed/"
+import "qrc:/../SGGraphStatic/"
 import "qrc:/../SGLabelledInfoBox/"
 import "qrc:/../SGOutputLogBox/"
 import "qrc:/../SGPopout/"
@@ -398,13 +399,15 @@ Window {
                             leftMargin: 20
                         }
 
-                        input: "6"    // String to this to be displayed in box
+                        value: "6"    // String to this to be displayed in box
                         infoBoxWidth: 80            // Must be set by user based on their needs
 
-                        label: "Voltage (volts):"       // Default: "" (if not entered, label will not appear)
+                        label: "Voltage:"       // Default: "" (if not entered, label will not appear)
                         labelLeft: false                 // Default: true (if false, label will be on top)
                         realNumberValidation: true      // Default: false (set true to restrict enterable values to real numbers)
                         buttonText: "Apply"
+                        showButton: true
+                        unit: "V"
 
                         onApplied: console.log("Applied string value is " + value)
                     }
@@ -513,15 +516,15 @@ Window {
 
             SGAccordionItem {
                 open: false
-                title: "SG Graph"
+                title: "SG Graph Timed"
 
                 contents: Item{
                     height: childrenRect.height + 40
 
-                    SGGraph {
+                    SGGraphTimed {
                         // ChartView needs to be run in a QApplication, not the default QGuiApplication
                         // https://stackoverflow.com/questions/34099236/qtquick-chartview-qml-object-seg-faults-causes-qml-engine-segfault-during-load
-                        id: graph
+                        id: graphtimed
 
                         anchors {
                             top: parent.top
@@ -545,6 +548,8 @@ Window {
                         showXGrids: false               // Default: false
                         showYGrids: true                // Default: false
                         showOptions: false               // Default: false
+                        running: graphSwitch.checked
+                        repeatOldData: false
                     }
 
                     SGSwitch {
@@ -552,9 +557,9 @@ Window {
                         label: "Demo Data"
                         checked: false
                         anchors {
-                            left: graph.right
+                            left: graphtimed.right
                             leftMargin: 40
-                            verticalCenter: graph.verticalCenter
+                            verticalCenter: graphtimed.verticalCenter
                         }
                     }
 
@@ -569,6 +574,48 @@ Window {
                         onTriggered: {
                             count += interval;
                             stream = Math.sin(count/500)*10+10;
+                        }
+                    }
+                }
+            }
+            SGAccordionItem {
+                open: false
+                title: "SG Graph Static"
+
+                contents: Item{
+                    height: childrenRect.height + 40
+
+                    SGGraphStatic {
+                        // ChartView needs to be run in a QApplication, not the default QGuiApplication
+                        // https://stackoverflow.com/questions/34099236/qtquick-chartview-qml-object-seg-faults-causes-qml-engine-segfault-during-load
+                        id: graphstatic
+
+                        anchors {
+                            top: parent.top
+                            topMargin: 20
+                            left:parent.left
+                            leftMargin: 20
+                        }
+
+                        height: 300
+                        width: 300
+
+                        // Optional graph settings:
+                        title: "Graph"                  // Default: empty
+                        xAxisTitle: "X axis"           // Default: empty
+                        yAxisTitle: "Why axis"          // Default: empty
+                        dataLineColor: "cyan"          // Default: #000000 (black)
+                        minYValue: 0                    // Default: 0
+                        maxYValue: 20                   // Default: 10
+                        minXValue: 0                    // Default: 0
+                        maxXValue: 20                    // Default: 10
+                        showXGrids: false               // Default: false
+                        showYGrids: true                // Default: false
+
+                        Component.onCompleted: {
+                            for (var i = 0; i < 20; i=(i+.1)){
+                                series1.append(i, Math.sin(i) * 5 +10)
+                            }
                         }
                     }
                 }
