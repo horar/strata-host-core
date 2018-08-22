@@ -54,7 +54,7 @@ Item {
                 rightMargin: 10
             }
 
-            onValueChanged: platformInterface.set_over_current_protection.update(port, value)
+            onValueChanged: platformInterface.set_over_current_protection.update(portNumber, value)
 
         }
 
