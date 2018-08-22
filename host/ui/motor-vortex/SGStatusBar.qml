@@ -15,6 +15,7 @@ Rectangle {
     property string user_id: ""
     property bool is_logged_in: false
     property bool is_remote_connected: false
+    property bool is_remote_advertised: false
     property string generalTitle: "Guest"
     property color backgroundColor: "#3a3a3a"
 
@@ -119,6 +120,8 @@ Rectangle {
     Connections {
         target: coreInterface
         onPlatformStateChanged: {
+            //resetting the remote connection state
+            is_remote_connected = false;
             tokenField.text = "";
             // send "close remote advertise to hcs to close the remote socket"
             if (remoteToggle.checked) {
@@ -191,15 +194,21 @@ Rectangle {
             left: container.left
             leftMargin: 3
         }
+
         comboBoxWidth: 250
         textRole: "text"
         TextMetrics { id: textMetrics }
         model: platformListModel
 
+
         onActivated: {
             /*
            Determine action depending on what type of 'connection' is used
         */
+            NavigationControl.updateState(NavigationControl.events.PLATFORM_DISCONNECTED_EVENT, null)
+            var disconnect_json = {"hcs::cmd":"disconnect_platform"}
+            console.log("disonnecting the platform")
+            coreInterface.sendCommand(JSON.stringify(disconnect_json))
 
             var connection = platformListModel.get(cbSelector.currentIndex).connection
             var data = { platform_name: platformListModel.get(cbSelector.currentIndex).name}
@@ -212,6 +221,7 @@ Rectangle {
                 NavigationControl.updateState(NavigationControl.events.OFFLINE_MODE_EVENT, data)
                 NavigationControl.updateState(NavigationControl.events.TOGGLE_CONTROL_CONTENT)
                 coreInterface.sendSelectedPlatform(platformListModel.get(cbSelector.currentIndex).uuid,platformListModel.get(cbSelector.currentIndex).connection)
+
             }
             else if(connection === "connected"){
                 NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT,data)
@@ -226,8 +236,17 @@ Rectangle {
         }
     }
 
+    Connections {
+        target: coreInterface
+        onPlatformListChanged: {
+            console.log("platform list updated: ", list)
+            container.populatePlatforms(list)
+        }
+    }
+
     ListModel {
         id: platformListModel
+
 
         Component.onCompleted: {
             console.log("platformListModel:Component.onCompleted:");
@@ -273,6 +292,7 @@ Rectangle {
             "P2.2017.1.1.0.0.cbde0519-0f42-4431-a379-caee4a1494af" : "usb-pd",
             //"P2.2017.1.1.0.0.cbde0519-0f42-4431-a379-caee4a1494af" : "motor-vortex",
             "P2.2018.1.1.0.0.c9060ff8-5c5e-4295-b95a-d857ee9a3671" : "bubu",
+            "SEC.2018.004.1.1.0.2.20180710161919.1bfacee3-fb60-471d-98f8-fe597bb222cd" : "usb-pd-multiport",
             "motorvortex1" : "motor-vortex"
         }
 
@@ -348,20 +368,24 @@ Rectangle {
                 id: platformControlsButton
                 text: qsTr("Platform Controls")
                 width: 150
-                buttonColor: hovered || checked ? Qt.lighter(container.color) : container.color
-                checkable: true
-                checked: NavigationControl.flipable_parent_.flipped === false
-                onClicked: NavigationControl.updateState(NavigationControl.events.TOGGLE_CONTROL_CONTENT)
+                buttonColor: hovered || !NavigationControl.flipable_parent_.flipped ? Qt.lighter(container.color) : container.color
+                onClicked: {
+                    if (NavigationControl.flipable_parent_.flipped) {
+                        NavigationControl.updateState(NavigationControl.events.TOGGLE_CONTROL_CONTENT)
+                    }
+                }
             }
 
             SGToolButton {
                 id: platformContentButton
                 text: qsTr("Platform Content")
                 width: 150
-                buttonColor: hovered || checked ? Qt.lighter(container.color) : container.color
-                checkable: true
-                checked: !platformControlsButton.checked
-                onClicked: NavigationControl.updateState(NavigationControl.events.TOGGLE_CONTROL_CONTENT)
+                buttonColor: hovered || NavigationControl.flipable_parent_.flipped ? Qt.lighter(container.color) : container.color
+                onClicked: {
+                    if (!NavigationControl.flipable_parent_.flipped) {
+                        NavigationControl.updateState(NavigationControl.events.TOGGLE_CONTROL_CONTENT)
+                    }
+                }
             }
 
             SGToolButton {
@@ -406,6 +430,8 @@ Rectangle {
                                     remoteConnectContainer.visible = false
                                 }
                                 buttonColor: checked ? Qt.lighter(container.color) : container.color
+                                enabled : !is_remote_connected
+
                             }
 
                             SGTabButton {
@@ -435,17 +461,17 @@ Rectangle {
                                 width: 270
                                 anchors {
                                     margins: 15
-                                    top: parent.top
-                                    bottom: parent.bottom
-                                    left: parent.left
+                                    top: remoteInviteContainer.top
+                                    bottom: remoteInviteContainer.bottom
+                                    left: remoteInviteContainer.left
                                 }
 
                                 Image {
                                     id: remoteImage
                                     source: remoteToggle.checked ? "qrc:/images/icons/remote-unlocked.png" : "qrc:/images/icons/remote-locked.png"
                                     anchors {
-                                        horizontalCenter: parent.horizontalCenter
-                                        top: parent.top
+                                        horizontalCenter: remoteInviteLeft.horizontalCenter
+                                        top: remoteInviteLeft.top
                                     }
                                 }
 
@@ -454,7 +480,7 @@ Rectangle {
                                     anchors {
                                         top: remoteImage.bottom
                                         topMargin: 15
-                                        horizontalCenter: parent.horizontalCenter
+                                        horizontalCenter: remoteInviteLeft.horizontalCenter
                                     }
                                     label: "Remote Support Access:"
                                     labelLeft: true
@@ -467,12 +493,17 @@ Rectangle {
                                     grooveColor: "#777"
 
                                     onCheckedChanged: {
-                                        var advertise
+                                        var advertise;
                                         if(remoteToggle.checked) {
+
                                             advertise = true
+                                            is_remote_advertised = true
+                                            tokenTimer.start()
                                         }
                                         else {
+                                            hcs_token_status.text= qsTr("Enable to generate remote token")
                                             advertise = false
+                                            hcs_token.text = ""
                                             remoteUserModel.clear()
                                         }
                                         var remote_json = {
@@ -486,18 +517,61 @@ Rectangle {
                                     }
                                 }
 
-                                Label {
-                                    id: hcs_token
+                                Row {
+                                    id: tokenRow
                                     anchors {
                                         top: remoteToggle.bottom
-                                        horizontalCenter: parent.horizontalCenter
-                                        topMargin: 25
+                                        horizontalCenter: remoteInviteLeft.horizontalCenter
+                                        topMargin: 20
                                     }
-                                    text: remoteToggle.checked ? "Your remote token is: " + coreInterface.hcs_token_ : "Enable to generate remote token"
-                                    font {
-                                        family: franklinGothicBook.name
+
+
+                                    Item {
+                                        id: tokenStatusContainer
+                                        height: 25
+                                        width: hcs_token_status.width
+
+                                        Text {
+                                            id: hcs_token_status
+                                            text : qsTr("Enable to generate remote token")
+                                            font {
+                                                family: franklinGothicBook.name
+                                            }
+                                            color: "white"
+                                            //readOnly: true
+                                            anchors {
+                                                topMargin: 7
+                                                top: tokenStatusContainer.top
+                                            }
+                                        }
+
                                     }
-                                    color: "white"
+
+                                    Rectangle {
+                                        id: tokenContainer
+                                        visible: hcs_token.text !== ""
+                                        height: 25
+                                        color: "#ddd"
+                                        width: 100
+
+                                        TextEdit {
+                                            id: hcs_token
+                                            visible: text !== ""
+                                            text: ""
+                                            readOnly: true
+                                            font {
+                                                family: inconsolata.name
+                                                pixelSize: 20
+                                            }
+                                            selectByMouse: true
+
+                                            anchors {
+                                                centerIn: tokenContainer
+                                            }
+                                        }
+                                    }
+
+
                                 }
 
                                 Connections {
@@ -506,15 +580,61 @@ Rectangle {
                                         remoteToggle.checked = false
                                     }
                                 }
+                                Connections {
+                                    target: coreInterface
+                                    onRemoteConnectionChanged:{
+                                        if ( remoteConnectContainer.state === "connecting") {
+
+                                            // Successful remote connection
+                                            if (result === true){
+                                                remoteConnectContainer.state = "success"
+                                                is_remote_connected = true
+                                            }
+                                            else {
+                                                remoteConnectContainer.state = "error"
+                                            }
+                                        }
+                                    }
+                                }
+                                Timer {
+                                    // 3 second timeout for response
+                                    id: tokenTimer
+                                    interval: 3000
+                                    running: false
+                                    repeat: false
+                                    onRunningChanged: {
+                                        if (running) {
+                                            hcs_token_status.text = qsTr("Generating token...")
+                                        }
+                                    }
+                                    onTriggered: {
+                                        hcs_token_status.text = qsTr("Error: Cannot generate token")
+                                    }
+                                }
+
+                                Connections {
+                                    target: coreInterface
+                                    onHcsTokenChanged: {
+
+                                        hcs_token.text =  coreInterface.hcs_token_
+                                        if(hcs_token.text === "") {
+                                            return;
+                                        }
+                                        else {
+                                            hcs_token_status.text = qsTr("Your remote token is: ")
+                                            tokenTimer.stop()
+                                        }
+                                    }
+                                }
                             }
 
                             Item {
                                 id: remoteInviteRight
                                 anchors {
                                     left: remoteInviteLeft.right
-                                    top: parent.top
-                                    bottom: parent.bottom
-                                    right: parent.right
+                                    top: remoteInviteContainer.top
+                                    bottom: remoteInviteContainer.bottom
+                                    right: remoteInviteContainer.right
                                     leftMargin: 15
                                     topMargin: 10
                                     rightMargin: 5
@@ -523,9 +643,9 @@ Rectangle {
                                 Rectangle {
                                     id: connectedUsersTitle
                                     anchors {
-                                        left: parent.left
-                                        right: parent.right
-                                        top: parent.top
+                                        left: remoteInviteRight.left
+                                        right: remoteInviteRight.right
+                                        top: remoteInviteRight.top
                                     }
                                     height: 30
                                     color: remoteToggle.checked ? Qt.darker(container.color, 1.25) : container.color
@@ -534,8 +654,8 @@ Rectangle {
                                         id: name
                                         text: remoteUserModel.count === 0 ? qsTr("No Connected Users") : qsTr("Connected Users")
                                         anchors {
-                                            verticalCenter: parent.verticalCenter
-                                            left: parent.left
+                                            verticalCenter: connectedUsersTitle.verticalCenter
+                                            left: connectedUsersTitle.left
                                             leftMargin: 10
                                             verticalCenterOffset: 2
                                         }
@@ -550,11 +670,11 @@ Rectangle {
                                     id: connectedUsersContainer
                                     color: remoteToggle.checked ? container.color : Qt.lighter(container.color, 1.25)
                                     anchors {
-                                        left: parent.left
-                                        right: parent.right
+                                        left: remoteInviteRight.left
+                                        right: remoteInviteRight.right
                                         top: connectedUsersTitle.bottom
                                         topMargin: 2
-                                        bottom: parent.bottom
+                                        bottom: remoteInviteRight.bottom
                                         bottomMargin: 10
                                     }
 
@@ -566,14 +686,15 @@ Rectangle {
                                         id: remoteUserDelegate
 
                                         Item {
+                                            id: remoteUserDelegateContainer
                                             width: connectedUsersContainer.width
                                             height: 50
 
                                             Image {
                                                 id: remote_user_img
                                                 anchors {
-                                                    left: parent.left
-                                                    top: parent.top
+                                                    left: remoteUserDelegateContainer.left
+                                                    top: remoteUserDelegateContainer.top
                                                     leftMargin: 4
                                                     topMargin: 4
                                                 }
@@ -625,7 +746,7 @@ Rectangle {
                                                     }
                                                     console.log("disconnecting user",JSON.stringify(remote_json))
                                                     coreInterface.sendCommand(JSON.stringify(remote_json))
-                                                    //  remoteUserModel.remove(remote_user_list_view.currentIndex,1)
+
                                                 }
                                                 cursorShape: Qt.PointingHandCursor
                                             }
@@ -720,10 +841,18 @@ Rectangle {
 
                             // Connections for internal event handling
                             Connections{
+                                target: tokenField
+                                onAccepted: {
+                                    remoteConnectContainer.state = "connecting"
+                                }
+                            }
+
+                            Connections{
                                 target: submitTokenButton
                                 onClicked: {
                                     // Send command to CoreInterface
                                     // Go to connecting
+
                                     remoteConnectContainer.state = "connecting"
                                 }
                             }
@@ -738,6 +867,7 @@ Rectangle {
                             Connections {
                                 target: tryAgainButton
                                 onClicked: {
+                                    console.log("try again")
                                     remoteConnectContainer.state = "default"
                                 }
                             }
@@ -770,6 +900,7 @@ Rectangle {
                                         // Successful remote connection
                                         if (result === true){
                                             remoteConnectContainer.state = "success"
+                                            is_remote_connected = true
                                         }
                                         else {
                                             remoteConnectContainer.state = "error"
@@ -797,8 +928,8 @@ Rectangle {
                                 width: tokenBusyTimer.running || statusImage.visible ? 75 : 0
                                 height: tokenBusyTimer.running || statusImage.visible ? 75 : 0
                                 anchors {
-                                    horizontalCenter: parent.horizontalCenter
-                                    top: parent.top
+                                    horizontalCenter: remoteConnectContainer.horizontalCenter
+                                    top: remoteConnectContainer.top
                                     topMargin: height === 0 ? 0 : 30
                                 }
 
@@ -837,6 +968,7 @@ Rectangle {
                             Button {
                                 id: tryAgainButton
                                 text: "Try Again"
+                                focus: true
                                 anchors {
                                     top: tokenLabel.bottom
                                     horizontalCenter: remoteConnectContainer.horizontalCenter
@@ -852,6 +984,9 @@ Rectangle {
                                     horizontalCenter: remoteConnectContainer.horizontalCenter
                                 }
                                 visible: false
+                                onClicked: {
+                                    is_remote_connected = false
+                                }
                             }
 
                             Item {
@@ -872,10 +1007,21 @@ Rectangle {
                                     focus: true
                                     placeholderText: qsTr("Token (ex: DMI2UE1N)")
                                     cursorPosition: 1
-                                    Keys.onReturnPressed: {
-                                        console.log("TOKEN: ", text);
-                                    }
+                                    font.capitalization: Font.AllUppercase
 
+                                    onAccepted: {
+                                        focus = false
+                                        console.log("TOKEN: ", text);
+                                        console.log("sending token:", tokenField.text);
+                                        var remote_json = {
+                                            "hcs::cmd":"get_platforms",
+                                            "payload": {
+                                                "hcs_token": tokenField.text.toUpperCase()
+                                            }
+                                        }
+                                        coreInterface.sendCommand(JSON.stringify(remote_json))
+                                        console.log("UI -> HCS ", JSON.stringify(remote_json));
+                                    }
 
                                 }
 
@@ -888,13 +1034,14 @@ Rectangle {
                                         left: tokenField.right
                                         leftMargin: 10
                                     }
+                                    font.capitalization: Font.AllUppercase
 
                                     onClicked: {
                                         console.log("sending token:", tokenField.text);
                                         var remote_json = {
                                             "hcs::cmd":"get_platforms",
                                             "payload": {
-                                                "hcs_token": tokenField.text
+                                                "hcs_token": tokenField.text.toUpperCase()
                                             }
                                         }
                                         coreInterface.sendCommand(JSON.stringify(remote_json))
@@ -1082,6 +1229,31 @@ Rectangle {
                     onClicked: {
                         profileMenu.close()
                         NavigationControl.updateState(NavigationControl.events.LOGOUT_EVENT)
+                        remoteConnectContainer.state = "default"
+
+                        if(is_remote_connected) {
+                            is_remote_connected = false //resetting the remote connection state
+                            // sending remote disconnect message to hcs
+                            var remote_disconnect_json = {
+                                "hcs::cmd":"remote_disconnect",
+                            }
+                            coreInterface.sendCommand(JSON.stringify(remote_disconnect_json))
+
+                            console.log("UI -> HCS ", JSON.stringify(remote_disconnect_json))
+                        }
+
+                        if(is_remote_advertised){
+                            is_remote_advertised = false
+                            var remote_json = {
+                                "hcs::cmd":"advertise",
+                                "payload": {
+                                    "advertise_platforms":is_remote_advertised
+                                }
+                            }
+                            console.log("asking hcs to advertise the platforms",JSON.stringify(remote_json))
+                            coreInterface.sendCommand(JSON.stringify(remote_json))
+                        }
+
                     }
                     width: profileMenu.width
                 }
@@ -1239,6 +1411,11 @@ Rectangle {
     FontLoader {
         id: sgicons
         source: "qrc:/fonts/sgicons.ttf"
+    }
+
+    FontLoader {
+        id: inconsolata
+        source: "qrc:/fonts/Inconsolata.otf"
     }
 
     Window {
