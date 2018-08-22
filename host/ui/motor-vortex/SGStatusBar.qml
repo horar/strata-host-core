@@ -1012,6 +1012,9 @@ Rectangle {
                                     focus: true
                                     placeholderText: qsTr("Token (ex: DMI2UE1N)")
                                     cursorPosition: 1
+                                    font.capitalization: Font.AllUppercase
+
+
 
                                     onAccepted: {
                                         focus = false
@@ -1038,6 +1041,8 @@ Rectangle {
                                         left: tokenField.right
                                         leftMargin: 10
                                     }
+                                    font.capitalization: Font.AllUppercase
+
 
                                     onClicked: {
                                         console.log("sending token:", tokenField.text);

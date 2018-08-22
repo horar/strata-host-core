@@ -33,14 +33,7 @@ Rectangle {
             }
             onClicked: documentManager.clearLayoutRevisionCount()
         }
-//        TabButton { text: "Test Report"
-//            CircleBadge {
-//                id: testReportBadge
-//                revisionCount: documentManager.testReportRevisionCount
-//            }
-//            onClicked: documentManager.clearTestReportRevisionCount()
-//        }
-//        TabButton { text: "System Content" }
+
         TabButton { text: "Coming Soon"
             enabled: false
             CircleBadge {

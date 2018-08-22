@@ -21,11 +21,8 @@ Rectangle {
     }
 
     Component.onCompleted:  {
-        /*
-          Setting the deflaut to be trapezoidal
-        */
+
         platformInterface.phaseAngle = 15
-     //   platformInterface.set_system_mode.update("manual");
         platformInterface.set_phase_angle.update(15);
         platformInterface.set_drive_mode.update(0);
 
@@ -191,7 +188,6 @@ Rectangle {
             height: childrenRect.height
             anchors {
                 horizontalCenter: rightSide.horizontalCenter
-
             }
 
             Button {
@@ -203,7 +199,6 @@ Rectangle {
 
                 onMotorOffChanged: {
                     if(motorOff === "off") {
-                        console.log("in motorOFF in fae")
                         startStopButton.checked = true
                     }
                     else {
@@ -275,27 +270,15 @@ Rectangle {
                     property alias manual : manual
                     property alias automatic: automatic
 
-//                    property var systemMode: platformInterface.set_mode.system_mode
-
-//                    onSystemModeChanged: {
-//                        if(systemMode === "automation") {
-//                            automatic.checked = true;
-//                        }
-//                        else {
-//                            manual.checked = true;
-//                        }
-//                    }
-
                     SGRadioButton {
                         id: manual
                         text: "Manual Control"
                         checked: platformInterface.systemModeManual
                         onCheckedChanged: {
-                                 console.log("manu 3")
-                                platformInterface.systemModeManual = manual.checked
-                                platformInterface.motorSpeedSliderValue = 1500
-                                targetSpeedSlider.sliderEnable = true
-                                targetSpeedSlider.opacity = 1.0
+                            platformInterface.systemModeManual = manual.checked
+                            platformInterface.motorSpeedSliderValue = 1500
+                            targetSpeedSlider.sliderEnable = true
+                            targetSpeedSlider.opacity = 1.0
 
                         }
 
@@ -306,12 +289,9 @@ Rectangle {
                         text: "Automatic Demo Pattern"
                         checked: platformInterface.systemModeAuto
                         onCheckedChanged: {
-                                console.log("auto 1")
-                                platformInterface.systemModeAuto = automatic.checked
-                                targetSpeedSlider.sliderEnable = false
-                                targetSpeedSlider.opacity = 0.5
-
-
+                            platformInterface.systemModeAuto = automatic.checked
+                            targetSpeedSlider.sliderEnable = false
+                            targetSpeedSlider.opacity = 0.5
                         }
                     }
                 }
@@ -333,10 +313,7 @@ Rectangle {
                 id: targetSpeedSlider
                 label: "Target Speed:"
                 width: 350
-                value: {
-
-                    platformInterface.motorSpeedSliderValue
-                 }
+                value: platformInterface.motorSpeedSliderValue
                 from: speedSafetyButton.checked ? 0 : 1500
                 to: speedSafetyButton.checked ? 10000 : 4000
                 endLabel: speedSafetyButton.checked? "<font color='red'><b>"+ to +"</b></font>" : to
@@ -348,12 +325,9 @@ Rectangle {
                     rightMargin: 10
                 }
 
-                onValueChanged: {
-
+                onValueChanged:{
                     setSpeed.input = value.toFixed(0)
                     platformInterface.motorSpeedSliderValue = value.toFixed(0)
-
-
                 }
             }
 
@@ -379,9 +353,6 @@ Rectangle {
                 label: "Ramp Rate:"
                 width: 350
                 value: platformInterface.rampRateSliderValue
-
-
-
                 from: speedSafetyButton.checked ? 0 : 2
                 to: speedSafetyButton.checked ? 6 : 4
                 endLabel: speedSafetyButton.checked? "<font color='red'><b>"+ to +"</b></font>" : to
@@ -438,9 +409,9 @@ Rectangle {
                     checkable: true
                     onClicked: {
                         if (checked) {
-                                   speedPopup.open()
-                                   platformInterface.sliderUpdateSignal = true
-                           }
+                            speedPopup.open()
+                            platformInterface.sliderUpdateSignal = true
+                        }
                     }
                 }
 

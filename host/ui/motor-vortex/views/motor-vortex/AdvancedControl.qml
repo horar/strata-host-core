@@ -24,7 +24,6 @@ Rectangle {
 
     Component.onCompleted:  {
         platformInterface.phaseAngle = 15
- //       platformInterface.system_mode_selection.update("manual");
         platformInterface.set_phase_angle.update(5);
         platformInterface.set_drive_mode.update(0);
     }
@@ -221,18 +220,6 @@ Rectangle {
                     // Optional properties to access specific buttons cleanly from outside
                     property alias manual : manual
                     property alias automatic: automatic
-
-//                    property var systemMode: platformInterface.set_mode.system_mode
-
-//                    onSystemModeChanged: {
-
-//                        if(systemMode === "automation") {
-//                            automatic.checked = true;
-//                        }
-//                        else {
-//                            manual.checked = true;
-//                        }
-//                    }
 
                     SGRadioButton {
                         id: manual

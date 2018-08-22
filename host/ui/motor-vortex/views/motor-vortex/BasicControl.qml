@@ -18,12 +18,6 @@ Rectangle {
 
     property alias warningVisible: warningBox.visible
 
-
-//    Component.onCompleted: {
-////        platformInterface.system_mode_selection.update("manual")
-
-//    }
-
     // Control Section
     Rectangle {
         id: controlSection1
@@ -154,18 +148,6 @@ Rectangle {
                     // Optional properties to access specific buttons cleanly from outside
                     property alias manual : manual
                     property alias automatic: automatic
-
-//                    property var systemMode: platformInterface.set_mode.system_mode
-
-//                    onSystemModeChanged: {
-//                        if(systemMode === "automation") {
-//                            console.log("system mode change")
-//                            automatic.checked = true;
-//                        }
-//                        else {
-//                            manual.checked = true;
-//                        }
-//                    }
 
                     SGRadioButton {
                         id: manual
