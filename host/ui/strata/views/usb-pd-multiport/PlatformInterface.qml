@@ -189,6 +189,18 @@ Item {
         platformInterface.refresh.send() //ask the platform for all the current values
     }
 
+    //this call doesn't exist yet in the API. This is a placeholder
+    property var power_negotiation_notification :{
+         "negotiationType":"dynamic"           // or "firstComeFirstServed" or "priority"
+    }
+
+    property var sleep_mode_notification :{
+         "mode":"manual"           // or "automatic"
+    }
+
+    property var manual_sleep_mode_notification :{
+         "mode":"on"           // or "off"
+    }
 
     // --------------------------------------------------------------------------------------------
     //          Commands
@@ -357,7 +369,7 @@ Item {
                       },
                       update: function (port, maxCurrent){
                           this.set(port,maxCurrent);
-//                          CorePlatformInterface.send(this);
+                          CorePlatformInterface.send(this);
                           },
                       set: function(port,maxCurrent){
                            this.payload.port = port;
@@ -393,6 +405,56 @@ Item {
                       send: function () { CorePlatformInterface.send(this) },
                       show: function () { CorePlatformInterface.show(this) }
     })
+
+    //this command doesn't exist yet in the API. This is a placeholder
+    property var set_power_negotiation:({
+                    "cmd":"set_power_negotiation",
+                    "payload":{
+                        "negotiationType":"dynamic",    // or firstComeFirstServed or priority
+                      },
+                      update: function (type){
+                          this.set(type);
+                          //CorePlatformInterface.send(this);
+                          },
+                      set: function(type){
+                           this.payload.negotiationType = type;
+                           },
+                      send: function () { CorePlatformInterface.send(this) },
+                      show: function () { CorePlatformInterface.show(this) }
+    })
+
+    property var set_sleep_mode:({
+                    "cmd":"set_sleep_mode",
+                    "payload":{
+                        "mode":"manual",    // or automatic
+                      },
+                      update: function (mode){
+                          this.set(mode);
+                          //CorePlatformInterface.send(this);
+                          },
+                      set: function(mode){
+                           this.payload.mode = mode;
+                           },
+                      send: function () { CorePlatformInterface.send(this) },
+                      show: function () { CorePlatformInterface.show(this) }
+    })
+
+    property var set_manual_sleep_mode:({
+                    "cmd":"set_manual_sleep_mode",
+                    "payload":{
+                        "mode":"on",    // or off
+                      },
+                      update: function (mode){
+                          this.set(mode);
+                          //CorePlatformInterface.send(this);
+                          },
+                      set: function(mode){
+                           this.payload.mode = mode;
+                           },
+                      send: function () { CorePlatformInterface.send(this) },
+                      show: function () { CorePlatformInterface.show(this) }
+    })
+
 
     // -------------------  end commands
 

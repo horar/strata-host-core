@@ -26,9 +26,11 @@ Item {
                 margins: 15
             }
 
+            //the USB-PD multiport board doesn't support data, so this control is superfulous
             SGSegmentedButtonStrip {
                 id: dataConfig
                 label: "Data Configuration:"
+                visible: false
                 activeColor: "#666"
                 inactiveColor: "#dddddd"
                 textColor: "#666"
@@ -74,17 +76,51 @@ Item {
                 segmentedButtons: GridLayout {
                     columnSpacing: 2
 
+                    property var negotiationTypeChanged: platformInterface.power_negotiation_notification.negotiationType
+
+                    onNegotiationTypeChangedChanged:{
+                        if (platformInterface.power_negotiation_notification.negotiationType === "dynamic"){
+                            dynamicNegotiationButton.checked = true;
+                            fcfsNegotiationButton.checked = false;
+                            priorityNegotiationButton.checked = false;
+                        }
+                        else if (platformInterface.power_negotiation_notification.negotiationType === "firstComeFirstServed"){
+                            dynamicNegotiationButton.checked = false;
+                            fcfsNegotiationButton.checked = true;
+                            priorityNegotiationButton.checked = false;
+                        }
+                        else if (platformInterface.power_negotiation_notification.negotiationType === "priority"){
+                            dynamicNegotiationButton.checked = false;
+                            fcfsNegotiationButton.checked = false;
+                            priorityNegotiationButton.checked = true;
+                        }
+
+
+                    }
+
                     SGSegmentedButton{
+                        id:dynamicNegotiationButton
                         text: qsTr("Dynamic")
                         checked: true  // Sets default checked button when exclusive
+                        onClicked: {
+                            platformInterface.set_power_negotiation.update("dynamic");
+                        }
                     }
 
                     SGSegmentedButton{
+                        id:fcfsNegotiationButton
                         text: qsTr("FCFS")
+                        onClicked: {
+                            platformInterface.set_power_negotiation.update("firstComeFirstServed");
+                        }
                     }
 
                     SGSegmentedButton{
+                        id:priorityNegotiationButton
                         text: qsTr("Priority")
+                        onClicked: {
+                            platformInterface.set_power_negotiation.update("priority");
+                        }
                     }
                 }
             }
@@ -111,15 +147,36 @@ Item {
                     leftMargin: 20
                 }
 
+
+
                 segmentedButtons: GridLayout {
                     columnSpacing: 2
 
-                    SGSegmentedButton{
-                        text: qsTr("Manual")
-                        checked: true  // Sets default checked button when exclusive
+                    property var sleepMode: platformInterface.sleep_mode_notification.mode
+
+                    onSleepModeChanged:{
+                        if (platformInterface.sleep_mode_notification.mode === "manual"){
+                            manualSleepModeButton.checked = true;
+                            automaticSleepModeButton.checked = false;
+                        }
+                        else if (platformInterface.sleep_mode_notification.mode === "automatic"){
+                            manualSleepModeButton.checked = false;
+                            automaticSleepModeButton.checked = true;
+                        }
                     }
 
                     SGSegmentedButton{
+                        id:manualSleepModeButton
+                        text: qsTr("Manual")
+                        checked: true  // Sets default checked button when exclusive
+
+                        onClicked: {
+                            platformInterface.set_sleep_mode.update("manual");
+                        }
+                    }
+
+                    SGSegmentedButton{
+                        id:automaticSleepModeButton
                         text: qsTr("Automatic")
                         onCheckedChanged: {
                             if (checked) {
@@ -128,6 +185,10 @@ Item {
                                 manualSleep.enabled = true
                             }
 
+                        }
+
+                        onClicked: {
+                            platformInterface.set_sleep_mode.update("automatic");
                         }
                     }
                 }
@@ -149,13 +210,36 @@ Item {
                 segmentedButtons: GridLayout {
                     columnSpacing: 2
 
-                    SGSegmentedButton{
-                        text: qsTr("ON")
-                        checked: true  // Sets default checked button when exclusive
+                    property var manualSleepMode: platformInterface.manual_sleep_mode_notification.mode
+
+                    onManualSleepModeChanged:{
+                        if (platformInterface.manual_sleep_mode_notification.mode ==="on"){
+                            manualSleepOnButton.checked = true;
+                            manualSleepOffButton.checked = false;
+                        }
+                        else if (platformInterface.manual_sleep_mode_notification.mode ==="off"){
+                            manualSleepOnButton.checked = false;
+                            manualSleepOffButton.checked = true;
+                        }
                     }
 
                     SGSegmentedButton{
+                        id:manualSleepOnButton
+                        text: qsTr("ON")
+                        checked: true  // Sets default checked button when exclusive
+
+                        onClicked: {
+                            platformInterface.set_manual_sleep_mode.update("on");
+                        }
+                    }
+
+                    SGSegmentedButton{
+                        id:manualSleepOffButton
                         text: qsTr("OFF")
+
+                        onClicked: {
+                            platformInterface.set_manual_sleep_mode.update("off");
+                        }
                     }
                 }
             }
