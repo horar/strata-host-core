@@ -219,7 +219,6 @@ Rectangle {
             if (connection === "view") {
                 // Go offline-mode
                 NavigationControl.updateState(NavigationControl.events.OFFLINE_MODE_EVENT, data)
-                NavigationControl.updateState(NavigationControl.events.TOGGLE_CONTROL_CONTENT)
                 coreInterface.sendSelectedPlatform(platformListModel.get(cbSelector.currentIndex).uuid,platformListModel.get(cbSelector.currentIndex).connection)
 
             }
@@ -388,6 +387,13 @@ Rectangle {
                 }
             }
 
+            Rectangle {
+                id: buttonDivider1
+                width: 1
+                height: toolBar.height
+                color: container.color
+            }
+
             SGToolButton {
                 id: remoteSupportButton
                 text: qsTr("Remote Support")
@@ -397,9 +403,24 @@ Rectangle {
                 }
                 buttonColor: remoteSupportButton.hovered || remoteSupportMenu.visible ? Qt.lighter(container.color) : container.color
 
+                Text {
+                    id: remoteSupportPopupIndicator
+                    text: "\ue810"
+                    font {
+                        family: sgicons.name
+                    }
+                    visible: remoteSupportMenu.visible
+                    anchors {
+                        bottom: remoteSupportButton.bottom
+                        horizontalCenter: remoteSupportButton.horizontalCenter
+                    }
+                    color: container.color
+                }
+
                 Popup {
                     id: remoteSupportMenu
                     y: remoteSupportButton.height
+                    x: container.width > toolBar.x + remoteSupportButton.x + width ? 0 : container.width > toolBar.x + remoteSupportButton.x + remoteSupportButton.width ? container.width - toolBar.x -remoteSupportButton.x - width/*- (width / 2) + (remoteSupportButton.width / 2)*/ : - width + remoteSupportButton.width
                     padding: 0
                     width: 500
                     height: 250
@@ -651,7 +672,7 @@ Rectangle {
                                     color: remoteToggle.checked ? Qt.darker(container.color, 1.25) : container.color
 
                                     Text {
-                                        id: name
+                                        id: connectedUsersTitleText
                                         text: remoteUserModel.count === 0 ? qsTr("No Connected Users") : qsTr("Connected Users")
                                         anchors {
                                             verticalCenter: connectedUsersTitle.verticalCenter
@@ -863,6 +884,7 @@ Rectangle {
                                     remoteConnectContainer.state = "timeout"
                                 }
                             }
+
 
                             Connections {
                                 target: tryAgainButton
