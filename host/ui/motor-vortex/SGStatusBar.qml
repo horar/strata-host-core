@@ -845,12 +845,7 @@ Rectangle {
                                 onAccepted: {
                                     remoteConnectContainer.state = "connecting"
                                 }
-
-
-
-
                             }
-
 
                             Connections{
                                 target: submitTokenButton
@@ -1014,8 +1009,6 @@ Rectangle {
                                     cursorPosition: 1
                                     font.capitalization: Font.AllUppercase
 
-
-
                                     onAccepted: {
                                         focus = false
                                         console.log("TOKEN: ", text);
@@ -1042,7 +1035,6 @@ Rectangle {
                                         leftMargin: 10
                                     }
                                     font.capitalization: Font.AllUppercase
-
 
                                     onClicked: {
                                         console.log("sending token:", tokenField.text);
@@ -1239,7 +1231,6 @@ Rectangle {
                         NavigationControl.updateState(NavigationControl.events.LOGOUT_EVENT)
                         remoteConnectContainer.state = "default"
 
-
                         if(is_remote_connected) {
                             is_remote_connected = false //resetting the remote connection state
                             // sending remote disconnect message to hcs
@@ -1262,8 +1253,6 @@ Rectangle {
                             console.log("asking hcs to advertise the platforms",JSON.stringify(remote_json))
                             coreInterface.sendCommand(JSON.stringify(remote_json))
                         }
-
-
 
                     }
                     width: profileMenu.width
