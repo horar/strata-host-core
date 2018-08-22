@@ -582,11 +582,11 @@ Item {
                     faultHistory.input = stateMessage;
 
                 }
-                else{                                       //remove input voltage message from list
-                    stateMessage = "Input voltage fault ended at ";
-                    stateMessage += platformInterface.input_under_voltage_notification.minimum_voltage;
-                    stateMessage += " V";
-                    faultHistory.input = stateMessage;
+                else{
+//                    stateMessage = "Input voltage fault ended at ";
+//                    stateMessage += platformInterface.input_under_voltage_notification.minimum_voltage;
+//                    stateMessage += " V";
+//                    faultHistory.input = stateMessage;
                 }
             }
 
@@ -598,12 +598,12 @@ Item {
                     stateMessage += " °C";
                     faultHistory.input = stateMessage;
                 }
-                else{                                       //remove temp message for the correct port from list
-                    stateMessage = platformInterface.over_temperature_notification.port
-                    stateMessage += " temperature went below ";
-                    stateMessage += platformInterface.over_temperature_notification.maximum_temperature;
-                    stateMessage += " °C";
-                    faultHistory.input = stateMessage;
+                else{
+//                    stateMessage = platformInterface.over_temperature_notification.port
+//                    stateMessage += " temperature went below ";
+//                    stateMessage += platformInterface.over_temperature_notification.maximum_temperature;
+//                    stateMessage += " °C";
+//                    faultHistory.input = stateMessage;
                 }
 
 
