@@ -42,7 +42,7 @@ Item {
                                 return platformInterface.request_usb_power_notification.output_voltage * platformInterface.request_usb_power_notification.output_current
                             }
                             else{
-                               return 0;//port1BarElement.value;
+                               return port1BarElement.value;
                             }
                         }
                     }
