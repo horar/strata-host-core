@@ -296,5 +296,6 @@
         <file>images/icons/remote-unlocked.png</file>
         <file>fonts/sgicons.ttf</file>
         <file>statusbar-partial-views/SGComboBox.qml</file>
+        <file>fonts/Inconsolata.otf</file>
     </qresource>
 </RCC>

@@ -42,7 +42,7 @@ Item {
                                 return platformInterface.request_usb_power_notification.output_voltage * platformInterface.request_usb_power_notification.output_current
                             }
                             else{
-                               return 0;//port1BarElement.value;
+                               return port1BarElement.value;
                             }
                         }
                     }
@@ -504,7 +504,61 @@ Item {
             height: rightColumn.height/2
             width: rightColumn.width
             title: "Current Faults:"
+            model: faultListModel
+
+            property var underVoltageEvent: platformInterface.input_under_voltage_notification
+            property var overTempEvent: platformInterface.over_temperature_notification
+            property string stateMessage:""
+
+            onUnderVoltageEventChanged: {
+                if (underVoltageEvent.state === "below"){   //add input voltage message to list
+                    stateMessage = "Input is below ";
+                    stateMessage += platformInterface.input_under_voltage_notification.minimum_voltage;
+                    stateMessage += " V";
+                    //if there's already an input voltage fault in the list, remove it (there can only be one at a time)
+                    for(var i = 0; i < faultListModel.count; ++i){
+                        var theItem = faultListModel.get(i);
+                        if (theItem.type === "voltage"){
+                            faultListModel.remove(i);
+                        }
+                    }
+                    faultListModel.append({"type":"voltage", "port":0, "status":stateMessage});
+
+                }
+                else{                                       //remove input voltage message from list
+                    for(var j = 0; j < faultListModel.count; ++j){
+                        var theListItem = faultListModel.get(j);
+                        if (theListItem.type === "voltage"){
+                            faultListModel.remove(j);
+                        }
+                    }
+                }
+            }
+
+            onOverTempEventChanged: {
+                if (underVoltageEvent.state === "above"){   //add temp  message to list
+                    stateMessage = platformInterface.over_temperature_notification.port
+                    stateMessage += " temperature is above ";
+                    stateMessage += platformInterface.over_temperature_notification.maximum_temperature;
+                    stateMessage += " °C";
+                    faultListModel.append({"type":"temperature", "port":platformInterface.over_temperature_notification.port, "status":stateMessage});
+                }
+                else{                                       //remove temp message for the correct port from list
+                    for(var i = 0; i < faultListModel.count; ++i){
+                        var theItem = faultListModel.get(i);
+                        if (theItem.type === "temperature" && theItem.port === platformInterface.over_temperature_notification.port){
+                            faultListModel.remove(i);
+                        }
+                    }
+                }
+            }
+
+            ListModel{
+                id:faultListModel
+            }
         }
+
+
 
         SGOutputLogBox {
             id: faultHistory
@@ -514,6 +568,46 @@ Item {
             }
             width: rightColumn.width
             title: "Fault History:"
+
+            property var underVoltageEvent: platformInterface.input_under_voltage_notification
+            property var overTempEvent: platformInterface.over_temperature_notification
+            property string stateMessage:""
+
+            onUnderVoltageEventChanged: {
+                if (underVoltageEvent.state === "below"){   //add input voltage message to list
+                    stateMessage = "Input is below ";
+                    stateMessage += platformInterface.input_under_voltage_notification.minimum_voltage;
+                    stateMessage += " V";
+                    console.log("adding message to fault history",stateMessage);
+                    faultHistory.input = stateMessage;
+
+                }
+                else{
+//                    stateMessage = "Input voltage fault ended at ";
+//                    stateMessage += platformInterface.input_under_voltage_notification.minimum_voltage;
+//                    stateMessage += " V";
+//                    faultHistory.input = stateMessage;
+                }
+            }
+
+            onOverTempEventChanged: {
+                if (underVoltageEvent.state === "above"){   //add temp  message to list
+                    stateMessage = platformInterface.over_temperature_notification.port
+                    stateMessage += " temperature is above ";
+                    stateMessage += platformInterface.over_temperature_notification.maximum_temperature;
+                    stateMessage += " °C";
+                    faultHistory.input = stateMessage;
+                }
+                else{
+//                    stateMessage = platformInterface.over_temperature_notification.port
+//                    stateMessage += " temperature went below ";
+//                    stateMessage += platformInterface.over_temperature_notification.maximum_temperature;
+//                    stateMessage += " °C";
+//                    faultHistory.input = stateMessage;
+                }
+
+
+            }
         }
     }
 }

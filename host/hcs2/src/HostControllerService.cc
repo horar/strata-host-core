@@ -106,8 +106,10 @@ HcsError HostControllerService::init()
     // [TODO]: [prasanth] the following lines are used to handle the serial connect/disconnect
     // This method will be removed once we get the serial to socket stuff in
     port_disconnected_ = true;
-    // setting the remote connector state as false
+    //  Setting the connection state to false at start for both remote and client
     remote_connector_->setConnectionState(false);
+    client_connector_->setConnectionState(false);
+    remote_activity_connector_->setConnectionState(false);
     setEventLoop();
     // [TODO] [prasanth] : This function run is coded in this, since the libevent dynamic
     //addtion of event is not implemented successfully in hcs
@@ -433,6 +435,9 @@ bool HostControllerService::openPlatform()
 //
 void HostControllerService::initializePlatform()
 {
+    // clearing the list
+    platform_uuid_.clear();
+
     platform_details simulated_usb_pd,simulated_motor_vortex,sim_usb;
     simulated_usb_pd.platform_uuid = "P2.2018.1.1.0.0.c9060ff8-5c5e-4295-b95a-d857ee9a3671";
     simulated_usb_pd.platform_verbose = "USB PD Load Board";
@@ -642,16 +647,19 @@ void HostControllerService::parseHCSCommands(const string &hcs_message)
     // handle remote disconnect from FAE
     else if(!(strcmp(hcs_command["hcs::cmd"].GetString(),"remote_disconnect"))) {
         // FAE when opts out of remote connection, the "disconnect" string is sent to bridge service
-        // if(remote_connector_->isConnected()) {
+        if(remote_connector_->isConnected()) {
             remote_connector_->send("disconnect");
             discovery_service_->disconnect(g_platform_uuid_);
             sendDisconnecttoUI();
+            // platformDisconnectRoutine();
             platform_uuid_.remove_if([](platform_details remote){ return remote.connection_status == "remote"; });
             platform_client_mapping_.clear();
             event_del(&remote_handler_);
-            event_del(&activity_handler_);
+            if(remote_activity_connector_->isConnected()) {
+                event_del(&activity_handler_);
+            }
             remote_connector_->close();
-        // }
+        }
     }
     // disconnect a particular user
     else if(!(strcmp(hcs_command["hcs::cmd"].GetString(),"disconnect_remote_user"))) {
@@ -733,7 +741,7 @@ void HostControllerService::handleRemoteGetPlatforms()
         remote_platforms remote_platform;
         get_platform_success = discovery_service_->getRemotePlatforms(remote_platform);
         if(get_platform_success) {
-            remote_connector_->setConnectionState(false);
+            remote_connector_->setConnectionState(true);
             startRemoteService();
             addToLocalPlatformList(remote_platform);
             string platformList ;
@@ -876,7 +884,8 @@ string HostControllerService::platformRead()
 void HostControllerService::platformDisconnectRoutine ()
 {
     PDEBUG(PRINT_DEBUG,"Platform Disconnected\n");
-    cout<<"platform_id " << g_dealer_id_<<endl;
+    sendDisconnecttoUI();
+
     if(remote_connector_->isConnected()) {
         bool status = discovery_service_->deregisterPlatform(g_dealer_id_);
         event_del(&remote_handler_);
@@ -885,12 +894,12 @@ void HostControllerService::platformDisconnectRoutine ()
         remote_connector_->send(disconnect_message);
         remote_connector_->close();
     }
-    sendDisconnecttoUI();
+
     platform_uuid_.clear();
     platform_client_mapping_.clear();
 
     string platformList ;
-    getPlatformListJson(platformList);
+
     platform_details simulated_usb_pd,simulated_motor_vortex,sim_usb;
     simulated_usb_pd.platform_uuid = "P2.2018.1.1.0.0.c9060ff8-5c5e-4295-b95a-d857ee9a3671";
     simulated_usb_pd.platform_verbose = "USB PD Load Board";
@@ -907,6 +916,7 @@ void HostControllerService::platformDisconnectRoutine ()
     platform_uuid_.push_back(simulated_usb_pd);  // for testing alone
     platform_uuid_.push_back(simulated_motor_vortex);
     platform_uuid_.push_back(sim_usb);
+    getPlatformListJson(platformList);
     std::list<string>::iterator client_list_iterator = clientList.begin();
     while(client_list_iterator != clientList.end()) {
         client_connector_->setDealerID(*client_list_iterator);
@@ -914,13 +924,15 @@ void HostControllerService::platformDisconnectRoutine ()
         PDEBUG(PRINT_DEBUG,"[hcs to hcc]%s",platformList.c_str());
         client_list_iterator++;
     }
-    event_del(&platform_handler_);
-    port_disconnected_ = true;
-    // close the serial port
-    serial_connector_->close();
-    // clear global for storing the platform id
-    g_dealer_id_.clear();
-    g_selected_platform_verbose_.clear();
+    if (!port_disconnected_){
+        event_del(&platform_handler_);
+        port_disconnected_ = true;
+        // close the serial port
+        serial_connector_->close();
+        // clear global for storing the platform id
+        g_dealer_id_.clear();
+        g_selected_platform_verbose_.clear();
+    }
 }
 
 // @f sendDisconnecttoUI

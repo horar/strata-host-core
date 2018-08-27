@@ -5,6 +5,7 @@ import "qrc:/js/navigation_control.js" as NavigationControl
 import tech.spyglass.DocumentManager 1.0
 import tech.spyglass.Document 1.0
 import "qrc:/include/Modules/"      // On Semi QML Modules
+import "qrc:/views/efficiency-simulator/"      // Effi
 
 Rectangle {
     id: view
@@ -49,6 +50,7 @@ Rectangle {
 //            onClicked: documentManager.clearTestReportRevisionCount()
 //        }
 //        TabButton { text: "System Content" }
+        TabButton { text: "Efficiency Simulator" }
         TabButton { text: "Coming Soon"
             id:comingSoonTabButton
             enabled: false
@@ -72,8 +74,13 @@ Rectangle {
             bottom: parent.bottom
         }
         currentIndex: tabBar.currentIndex
+        interactive: false
         PageSchematic { id: pageSchematic }
         PageLayout { id: pageLayout }
+        EfficiencySimulator {
+            width: view.width
+            height: view.width-topBar.height
+        }
         PageTestReport { id: pageTestReport }
         PageSystemContent { id: pageSystemContent}
         PageComingSoon {id: pageComingSoonContent}

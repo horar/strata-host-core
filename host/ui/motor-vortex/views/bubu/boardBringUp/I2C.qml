@@ -100,22 +100,22 @@ Rectangle{
             anchors{ left: selectChannel.right
                 leftMargin: 10
             }
-            model: ["I2C 1", "I2C 2", "I2C 3"]
+            model: ["I2C 0", "I2C 1", "I2C 2"]
             onCurrentIndexChanged: {
                 if(currentIndex == 0) {
-                    sclkModel.model = ["PB 10"]
-                    sdaModel.model = ["PB 11"]
+                    sclkModel.model = ["PC 7"]
+                    sdaModel.model = ["PC 6"]
 
                 }
                 if(currentIndex == 1){
-                    sclkModel.model = ["PC 0"]
-                    sdaModel.model = ["PC 1"]
+                    sclkModel.model = ["PE 1"]
+                    sdaModel.model = ["PE 0"]
 
                 }
 
                 if(currentIndex == 2){
-                    sclkModel.model = ["PB 8"]
-                    sdaModel.model = ["PB 9"]
+                    sclkModel.model = ["PE 11"]
+                    sdaModel.model = ["PE 10"]
 
                 }
             }

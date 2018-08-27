@@ -16,6 +16,7 @@ Item {
     property alias editable: comboBox.editable
     property alias pressed: comboBox.pressed
     property alias textRole: comboBox.textRole
+    property alias overrideLabelWidth: labelText.width
 
     property string label: ""
     property bool labelLeft: true
@@ -39,6 +40,7 @@ Item {
         topPadding: root.label === "" ? 0 : root.labelLeft ? (comboBox.height-contentHeight)/2 : 0
         bottomPadding: topPadding
         color: root.textColor
+        horizontalAlignment: Text.AlignRight
     }
 
     ComboBox {
@@ -137,7 +139,7 @@ Item {
             topPadding: 0
             bottomPadding: 0
             contentItem: Text {
-                text: modelData
+                text: comboBox.textRole ? (Array.isArray(comboBox.model) ? modelData[comboBox.textRole] : model[comboBox.textRole]) : modelData
                 color: root.textColor
                 font: comboBox.font
                 elide: Text.ElideRight
@@ -166,7 +168,7 @@ Item {
 
     FontLoader {
         id: sgicons
-        source: "../fonts/sgicons.ttf"
+        source: "qrc:/fonts/sgicons.ttf"
     }
 
     // Add increment to color (within range of 0-1) add to lighten, subtract to darken

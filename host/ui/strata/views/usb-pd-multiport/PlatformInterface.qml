@@ -30,6 +30,11 @@ Item {
         "maximum_power":0.0
     }
 
+    onRequest_usb_power_notificationChanged: {
+//        console.log("output voltage=",request_usb_power_notification.output_voltage,
+//                    "output current=",request_usb_power_notification.output_current,
+//                    "power=",request_usb_power_notification.output_voltage * request_usb_power_notification.output_current);
+    }
 
 
     // @notification usb_pd_port_connect
@@ -58,6 +63,12 @@ Item {
           "minimum_voltage":0                                     // Voltage limit in volts
     }
 
+//    onInput_under_voltage_notificationChanged: {
+//        console.log("input voltage is",input_under_voltage_notification.state,
+//                    " minimum voltage = ",input_under_voltage_notification.minimum_voltage);
+
+//    }
+
    property var over_temperature_notification:{
            "port":"USB_C_port_1",                                // or any USB C port
            "state":"above",                                      // if the temperature crossed from under temperature to over temperature, "below" otherwise.
@@ -74,11 +85,11 @@ Item {
             "input_voltage_foldback_active":true
     }
     onFoldback_input_voltage_limiting_eventChanged: {
-        console.log("input voltage foldback values updated");
-        console.log("input voltage event notification. values are ",foldback_input_voltage_limiting_refresh.foldback_minimum_voltage,
-                                                                    foldback_input_voltage_limiting_refresh.foldback_minimum_voltage_power,
-                                                                    foldback_input_voltage_limiting_refresh.input_voltage_foldback_enabled,
-                                                                    foldback_input_voltage_limiting_refresh.input_voltage_foldback_active);
+//        console.log("input voltage foldback values updated");
+//        console.log("input voltage event notification. values are ",foldback_input_voltage_limiting_refresh.foldback_minimum_voltage,
+//                                                                    foldback_input_voltage_limiting_refresh.foldback_minimum_voltage_power,
+//                                                                    foldback_input_voltage_limiting_refresh.input_voltage_foldback_enabled,
+//                                                                    foldback_input_voltage_limiting_refresh.input_voltage_foldback_active);
         }
 
     property var foldback_input_voltage_limiting_refresh:{
@@ -91,7 +102,7 @@ Item {
 
     //keep the refresh and event notification properties in synch
     onFoldback_input_voltage_limiting_refreshChanged: {
-        console.log("input voltage refresh notification. minimum voltage = ",foldback_input_voltage_limiting_refresh.foldback_minimum_voltage);
+        //console.log("input voltage refresh notification. minimum voltage = ",foldback_input_voltage_limiting_refresh.foldback_minimum_voltage);
 
             //update the variables for foldback limiting
         platformInterface.foldback_input_voltage_limiting_event.input_voltage = foldback_input_voltage_limiting_refresh.input_voltage;
@@ -173,10 +184,22 @@ Item {
     //when the platform sends a reset notification, the host must make a platformId call to initialize communication
     //and a Refresh() command to synchronize settings with the platform
     onRequest_reset_notificationChanged: {
-
         console.log("Requesting platform Id and Refreshing")
         platformInterface.requestPlatformId.send()
         platformInterface.refresh.send() //ask the platform for all the current values
+    }
+
+    //this call doesn't exist yet in the API. This is a placeholder
+    property var power_negotiation_notification :{
+         "negotiationType":"dynamic"           // or "firstComeFirstServed" or "priority"
+    }
+
+    property var sleep_mode_notification :{
+         "mode":"manual"           // or "automatic"
+    }
+
+    property var manual_sleep_mode_notification :{
+         "mode":"on"           // or "off"
     }
 
     // --------------------------------------------------------------------------------------------
@@ -346,7 +369,7 @@ Item {
                       },
                       update: function (port, maxCurrent){
                           this.set(port,maxCurrent);
-//                          CorePlatformInterface.send(this);
+                          CorePlatformInterface.send(this);
                           },
                       set: function(port,maxCurrent){
                            this.payload.port = port;
@@ -382,6 +405,56 @@ Item {
                       send: function () { CorePlatformInterface.send(this) },
                       show: function () { CorePlatformInterface.show(this) }
     })
+
+    //this command doesn't exist yet in the API. This is a placeholder
+    property var set_power_negotiation:({
+                    "cmd":"set_power_negotiation",
+                    "payload":{
+                        "negotiationType":"dynamic",    // or firstComeFirstServed or priority
+                      },
+                      update: function (type){
+                          this.set(type);
+                          //CorePlatformInterface.send(this);
+                          },
+                      set: function(type){
+                           this.payload.negotiationType = type;
+                           },
+                      send: function () { CorePlatformInterface.send(this) },
+                      show: function () { CorePlatformInterface.show(this) }
+    })
+
+    property var set_sleep_mode:({
+                    "cmd":"set_sleep_mode",
+                    "payload":{
+                        "mode":"manual",    // or automatic
+                      },
+                      update: function (mode){
+                          this.set(mode);
+                          //CorePlatformInterface.send(this);
+                          },
+                      set: function(mode){
+                           this.payload.mode = mode;
+                           },
+                      send: function () { CorePlatformInterface.send(this) },
+                      show: function () { CorePlatformInterface.show(this) }
+    })
+
+    property var set_manual_sleep_mode:({
+                    "cmd":"set_manual_sleep_mode",
+                    "payload":{
+                        "mode":"on",    // or off
+                      },
+                      update: function (mode){
+                          this.set(mode);
+                          //CorePlatformInterface.send(this);
+                          },
+                      set: function(mode){
+                           this.payload.mode = mode;
+                           },
+                      send: function () { CorePlatformInterface.send(this) },
+                      show: function () { CorePlatformInterface.show(this) }
+    })
+
 
     // -------------------  end commands
 
