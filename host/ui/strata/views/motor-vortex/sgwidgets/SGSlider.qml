@@ -28,6 +28,8 @@ Item {
     property string label: ""
     property bool labelLeft: true
     property int toolTipDecimalPlaces: 0
+    property bool sliderEnable: true
+    property real sliderOpacity: 1.0
 
     Text {
         id: labelText
@@ -41,21 +43,22 @@ Item {
 
     Slider {
         id: sgSlider
-        value: 50
+       // value: 50
         from: 0
         to: 100
         live: false
         implicitWidth: root.labelLeft ? root.width - labelText.width - sgSlider.anchors.leftMargin : root.width
         implicitHeight: startLabel.text === "" && endLabel.text === "" ? handleImg.height : handleImg.height + Math.max(startLabel.height, endLabel.height)
         padding: 0
+        opacity: sliderOpacity
         anchors {
             left: root.labelLeft ? labelText.right : labelText.left
             top: root.labelLeft ? labelText.top : labelText.bottom
             leftMargin: root.label === "" ? 0 : root.labelLeft ? 10 : 0
             topMargin: root.label === "" ? 0 : root.labelLeft ? 0 : 5
         }
-        enabled: root.enabled
-        opacity: root.enabled ? 1 : .5
+        enabled: sliderEnable /*root.enabled*/
+        //opacity: root.enabled ? 1 : .5
         layer.enabled: root.enabled ? false : true
 
         background: Rectangle {

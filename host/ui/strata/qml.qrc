@@ -343,11 +343,15 @@
         <file>images/login-background.svg</file>
         <file>images/on-semi-logo.png</file>
         <file>images/strata-logo.svg</file>
-        <file>statusbar-partial-views/SGComboBox.qml</file>
         <file>statusbar-partial-views/SGMenuItem.qml</file>
+        <file>fonts/Inconsolata.otf</file>
+        <file>statusbar-partial-views/SGComboBox.qml</file>
         <file>statusbar-partial-views/SGSwitch.qml</file>
         <file>statusbar-partial-views/SGTabButton.qml</file>
         <file>statusbar-partial-views/SGToolButton.qml</file>
+        <file>SGLogin.qml</file>
+        <file>SGRegistration.qml</file>
+        <file>images/icons/on.ico</file>
         <file>views/efficiency-simulator/images/circuit.png</file>
         <file>views/efficiency-simulator/sgwidgets/fonts/sgicons.ttf</file>
         <file>views/efficiency-simulator/sgwidgets/SGColumnDivider.qml</file>

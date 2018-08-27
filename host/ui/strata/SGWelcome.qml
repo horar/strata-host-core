@@ -2,7 +2,7 @@ import QtQuick 2.7
 import QtQuick.Controls 2.3
 import QtQuick.Controls.Styles 1.4
 import QtGraphicalEffects 1.0
-import "qrc:/views/motor-vortex/sgwidgets"
+import "qrc:/statusbar-partial-views"
 import "js/navigation_control.js" as NavigationControl
 
 Rectangle{
@@ -341,6 +341,12 @@ Rectangle{
                     /*
                    Determine action depending on what type of 'connection' is used
                 */
+
+
+                    NavigationControl.updateState(NavigationControl.events.PLATFORM_DISCONNECTED_EVENT, null)
+                    var disconnect_json = {"hcs::cmd":"disconnect_platform"}
+                    console.log("disonnecting the platform")
+                    coreInterface.sendCommand(JSON.stringify(disconnect_json))
 
                     var connection = platformListModel.get(cbSelector.currentIndex).connection
                     var data = { platform_name: platformListModel.get(cbSelector.currentIndex).name}
