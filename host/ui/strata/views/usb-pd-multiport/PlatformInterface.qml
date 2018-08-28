@@ -69,6 +69,10 @@ Item {
 
 //    }
 
+    property var set_maximum_temperature_notification:{
+            "maximum_temperature":0                         // degrees C
+            }
+
    property var over_temperature_notification:{
            "port":"USB_C_port_1",                                // or any USB C port
            "state":"above",                                      // if the temperature crossed from under temperature to over temperature, "below" otherwise.
@@ -84,13 +88,14 @@ Item {
             "input_voltage_foldback_enabled":false,
             "input_voltage_foldback_active":true
     }
-    onFoldback_input_voltage_limiting_eventChanged: {
+
+//  onFoldback_input_voltage_limiting_eventChanged: {
 //        console.log("input voltage foldback values updated");
 //        console.log("input voltage event notification. values are ",foldback_input_voltage_limiting_refresh.foldback_minimum_voltage,
 //                                                                    foldback_input_voltage_limiting_refresh.foldback_minimum_voltage_power,
 //                                                                    foldback_input_voltage_limiting_refresh.input_voltage_foldback_enabled,
 //                                                                    foldback_input_voltage_limiting_refresh.input_voltage_foldback_active);
-        }
+//        }
 
     property var foldback_input_voltage_limiting_refresh:{
             "input_voltage":0,
@@ -101,18 +106,18 @@ Item {
     }
 
     //keep the refresh and event notification properties in synch
-    onFoldback_input_voltage_limiting_refreshChanged: {
-        //console.log("input voltage refresh notification. minimum voltage = ",foldback_input_voltage_limiting_refresh.foldback_minimum_voltage);
+//    onFoldback_input_voltage_limiting_refreshChanged: {
+//        //console.log("input voltage refresh notification. minimum voltage = ",foldback_input_voltage_limiting_refresh.foldback_minimum_voltage);
 
-            //update the variables for foldback limiting
-        platformInterface.foldback_input_voltage_limiting_event.input_voltage = foldback_input_voltage_limiting_refresh.input_voltage;
+//            //update the variables for foldback limiting
+//        platformInterface.foldback_input_voltage_limiting_event.input_voltage = foldback_input_voltage_limiting_refresh.input_voltage;
 
-        platformInterface.foldback_input_voltage_limiting_event.foldback_minimum_voltage = foldback_input_voltage_limiting_refresh.foldback_minimum_voltage;
-        console.log(" foldback minimum voltage = ",platformInterface.foldback_input_voltage_limiting_event.foldback_minimum_voltage);
-        platformInterface.foldback_input_voltage_limiting_event.foldback_minimum_voltage_power = foldback_input_voltage_limiting_refresh.foldback_minimum_voltage_power;
-        platformInterface.foldback_input_voltage_limiting_event.input_voltage_foldback_enabled = foldback_input_voltage_limiting_refresh.input_voltage_foldback_enabled;
-        platformInterface.foldback_input_voltage_limiting_event.input_voltage_foldback_active = foldback_input_voltage_limiting_refresh.input_voltage_foldback_active;
-    }
+//        platformInterface.foldback_input_voltage_limiting_event.foldback_minimum_voltage = foldback_input_voltage_limiting_refresh.foldback_minimum_voltage;
+//        console.log(" foldback minimum voltage = ",platformInterface.foldback_input_voltage_limiting_event.foldback_minimum_voltage);
+//        platformInterface.foldback_input_voltage_limiting_event.foldback_minimum_voltage_power = foldback_input_voltage_limiting_refresh.foldback_minimum_voltage_power;
+//        platformInterface.foldback_input_voltage_limiting_event.input_voltage_foldback_enabled = foldback_input_voltage_limiting_refresh.input_voltage_foldback_enabled;
+//        platformInterface.foldback_input_voltage_limiting_event.input_voltage_foldback_active = foldback_input_voltage_limiting_refresh.input_voltage_foldback_active;
+//    }
 
     //consider the values held by this property to be the master ones, which will be current when needed for calling
     //the API to set the input temperature foldback
@@ -136,16 +141,16 @@ Item {
             "maximum_power":0
     }
     //keep the refresh and event notification properties in synch
-    onFoldback_temperature_limiting_refreshChanged: {
-        //update the corresponding variables
-        foldback_temperature_limiting_event.port = foldback_input_voltage_limiting_refresh.port;
-        foldback_temperature_limiting_event.current_temperature = foldback_temperature_limiting_refresh.current_temperature;
-        foldback_temperature_limiting_event.foldback_maximum_temperature = foldback_temperature_limiting_refresh.foldback_maximum_temperature;
-        foldback_temperature_limiting_event.foldback_maximum_temperature_power = foldback_temperature_limiting_refresh.foldback_maximum_temperature_power;
-        foldback_temperature_limiting_event.temperature_foldback_enabled = foldback_temperature_limiting_refresh.temperature_foldback_enabled;
-        foldback_temperature_limiting_event.temperature_foldback_active = foldback_temperature_limiting_refresh.temperature_foldback_active;
-        foldback_temperature_limiting_event.maximum_power = foldback_temperature_limiting_refresh.maximum_power;
-    }
+//    onFoldback_temperature_limiting_refreshChanged: {
+//        //update the corresponding variables
+//        foldback_temperature_limiting_event.port = foldback_input_voltage_limiting_refresh.port;
+//        foldback_temperature_limiting_event.current_temperature = foldback_temperature_limiting_refresh.current_temperature;
+//        foldback_temperature_limiting_event.foldback_maximum_temperature = foldback_temperature_limiting_refresh.foldback_maximum_temperature;
+//        foldback_temperature_limiting_event.foldback_maximum_temperature_power = foldback_temperature_limiting_refresh.foldback_maximum_temperature_power;
+//        foldback_temperature_limiting_event.temperature_foldback_enabled = foldback_temperature_limiting_refresh.temperature_foldback_enabled;
+//        foldback_temperature_limiting_event.temperature_foldback_active = foldback_temperature_limiting_refresh.temperature_foldback_active;
+//        foldback_temperature_limiting_event.maximum_power = foldback_temperature_limiting_refresh.maximum_power;
+//    }
 
     property var usb_pd_maximum_power:{
         "port":0,                            // up to maximum number of ports
@@ -190,15 +195,15 @@ Item {
     }
 
     //this call doesn't exist yet in the API. This is a placeholder
-    property var power_negotiation_notification :{
-         "negotiationType":"dynamic"           // or "firstComeFirstServed" or "priority"
+    property var power_negotiation :{
+         "negotiation_type":"dynamic"           // or "first_come_first_served" or "priority"
     }
 
-    property var sleep_mode_notification :{
+    property var sleep_mode :{
          "mode":"manual"           // or "automatic"
     }
 
-    property var manual_sleep_mode_notification :{
+    property var manual_sleep_mode :{
          "mode":"on"           // or "off"
     }
 
@@ -410,14 +415,14 @@ Item {
     property var set_power_negotiation:({
                     "cmd":"set_power_negotiation",
                     "payload":{
-                        "negotiationType":"dynamic",    // or firstComeFirstServed or priority
+                    "negotiation_type":"dynamic",    // or firstComeFirstServed or priority
                       },
                       update: function (type){
                           this.set(type);
-                          //CorePlatformInterface.send(this);
+                          CorePlatformInterface.send(this);
                           },
                       set: function(type){
-                           this.payload.negotiationType = type;
+                           this.payload.negotiation_type = type;
                            },
                       send: function () { CorePlatformInterface.send(this) },
                       show: function () { CorePlatformInterface.show(this) }
@@ -430,7 +435,7 @@ Item {
                       },
                       update: function (mode){
                           this.set(mode);
-                          //CorePlatformInterface.send(this);
+                          CorePlatformInterface.send(this);
                           },
                       set: function(mode){
                            this.payload.mode = mode;
@@ -446,7 +451,7 @@ Item {
                       },
                       update: function (mode){
                           this.set(mode);
-                          //CorePlatformInterface.send(this);
+                          CorePlatformInterface.send(this);
                           },
                       set: function(mode){
                            this.payload.mode = mode;
