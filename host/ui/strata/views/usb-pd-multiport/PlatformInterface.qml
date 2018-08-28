@@ -69,6 +69,10 @@ Item {
 
 //    }
 
+    property var set_maximum_temperature_notification:{
+            "maximum_temperature":0                         // degrees C
+            }
+
    property var over_temperature_notification:{
            "port":"USB_C_port_1",                                // or any USB C port
            "state":"above",                                      // if the temperature crossed from under temperature to over temperature, "below" otherwise.
@@ -191,15 +195,15 @@ Item {
     }
 
     //this call doesn't exist yet in the API. This is a placeholder
-    property var power_negotiation_notification :{
-         "negotiationType":"dynamic"           // or "firstComeFirstServed" or "priority"
+    property var power_negotiation :{
+         "negotiation_type":"dynamic"           // or "first_come_first_served" or "priority"
     }
 
-    property var sleep_mode_notification :{
+    property var sleep_mode :{
          "mode":"manual"           // or "automatic"
     }
 
-    property var manual_sleep_mode_notification :{
+    property var manual_sleep_mode :{
          "mode":"on"           // or "off"
     }
 
@@ -411,14 +415,14 @@ Item {
     property var set_power_negotiation:({
                     "cmd":"set_power_negotiation",
                     "payload":{
-                        "negotiationType":"dynamic",    // or firstComeFirstServed or priority
+                    "negotiation_type":"dynamic",    // or firstComeFirstServed or priority
                       },
                       update: function (type){
                           this.set(type);
-                          //CorePlatformInterface.send(this);
+                          CorePlatformInterface.send(this);
                           },
                       set: function(type){
-                           this.payload.negotiationType = type;
+                           this.payload.negotiation_type = type;
                            },
                       send: function () { CorePlatformInterface.send(this) },
                       show: function () { CorePlatformInterface.show(this) }
@@ -431,7 +435,7 @@ Item {
                       },
                       update: function (mode){
                           this.set(mode);
-                          //CorePlatformInterface.send(this);
+                          CorePlatformInterface.send(this);
                           },
                       set: function(mode){
                            this.payload.mode = mode;
@@ -447,7 +451,7 @@ Item {
                       },
                       update: function (mode){
                           this.set(mode);
-                          //CorePlatformInterface.send(this);
+                          CorePlatformInterface.send(this);
                           },
                       set: function(mode){
                            this.payload.mode = mode;
