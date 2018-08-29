@@ -37,7 +37,6 @@ Item {
                 anchors {
                     fill: parent
                 }
-                visible: portConnected
                 contextType: "2d"
 
                 property real slideWidth: circuit1Button.checked ? 0.15 : 0
@@ -69,7 +68,6 @@ Item {
                 anchors {
                     fill: parent
                 }
-                visible: portConnected
                 contextType: "2d"
 
                 property real slideWidth: circuit2Button.checked ? 0.15 : 0

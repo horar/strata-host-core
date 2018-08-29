@@ -5,7 +5,7 @@ import "qrc:/js/navigation_control.js" as NavigationControl
 import tech.spyglass.DocumentManager 1.0
 import tech.spyglass.Document 1.0
 import "qrc:/include/Modules/"      // On Semi QML Modules
-import "qrc:/views/efficiency-simulator/"      // Effi
+import "qrc:/views/efficiency-simulator/"
 
 Rectangle {
     id: view
@@ -15,13 +15,14 @@ Rectangle {
         id: tabBar
         currentIndex: swipeView.currentIndex
         anchors {
-            top: parent.top
-            right: parent.right
-            left: parent.left
+            top: view.top
+            right: view.right
+            left: view.left
         }
 
-        TabButton { text: "Schematic"
+        TabButton {
             id:schematicTabButton
+            text: "Schematic"
 
             CircleBadge {
                 id: schematicBadge
@@ -31,8 +32,10 @@ Rectangle {
             }
             onClicked: documentManager.clearSchematicRevisionCount()
         }
-        TabButton { text: "Layout"
+
+        TabButton {
             id:layoutTabButton
+            text: "Layout"
 
             CircleBadge {
                 id: layoutBadge
@@ -42,17 +45,16 @@ Rectangle {
             }
             onClicked: documentManager.clearLayoutRevisionCount()
         }
-//        TabButton { text: "Test Report"
-//            CircleBadge {
-//                id: testReportBadge
-//                revisionCount: documentManager.testReportRevisionCount
-//            }
-//            onClicked: documentManager.clearTestReportRevisionCount()
-//        }
+
 //        TabButton { text: "System Content" }
-        TabButton { text: "Efficiency Simulator" }
-        TabButton { text: "Coming Soon"
+
+        TabButton {
+            text: "Efficiency Simulator"
+        }
+
+        TabButton {
             id:comingSoonTabButton
+            text: "Coming Soon"
             enabled: false
 
             CircleBadge {
@@ -69,9 +71,9 @@ Rectangle {
         id: swipeView
         anchors {
             top: tabBar.bottom
-            right: parent.right
-            left: parent.left
-            bottom: parent.bottom
+            right: view.right
+            left: view.left
+            bottom: view.bottom
         }
         currentIndex: tabBar.currentIndex
         interactive: false
@@ -79,10 +81,9 @@ Rectangle {
         PageLayout { id: pageLayout }
         EfficiencySimulator {
             width: view.width
-            height: view.width-topBar.height
+            height: view.height - tabBar.height
         }
-        PageTestReport { id: pageTestReport }
-        PageSystemContent { id: pageSystemContent}
+//        PageSystemContent { id: pageSystemContent}
         PageComingSoon {id: pageComingSoonContent}
     }
 }
