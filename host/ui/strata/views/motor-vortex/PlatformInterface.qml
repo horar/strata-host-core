@@ -359,11 +359,13 @@ Item {
         set_phase_angle.update(phaseAngle)
     }
 
-    property int ledSlider: 128
+    property real ledSlider: 128
 
     onLedSliderChanged: {
         console.log("in signal control")
     }
+
+    property bool turnOffChecked: false
 
     property real singleLEDSlider :  0
 
@@ -419,9 +421,7 @@ Item {
             */
             motor_speed.update(motorSpeedSliderValue);
             set_motor_on_off.update(1);
-
         }
-
     }
 
     property bool advertise;
