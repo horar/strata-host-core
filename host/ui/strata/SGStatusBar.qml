@@ -523,16 +523,15 @@ Rectangle {
 
                                     onCheckedChanged: {
                                         var advertise;
-                                        if(remoteToggle.checked) {
-
+                                        if (remoteToggle.checked) {
                                             advertise = true
                                             is_remote_advertised = true
                                             tokenTimer.start()
-                                        }
-                                        else {
+                                        } else {
                                             hcs_token_status.text= qsTr("Enable to generate remote token")
                                             advertise = false
                                             hcs_token.text = ""
+                                            tokenTimer.running = false
                                             remoteUserModel.clear()
                                         }
                                         var remote_json = {
@@ -609,6 +608,7 @@ Rectangle {
                                         remoteToggle.checked = false
                                     }
                                 }
+
                                 Connections {
                                     target: coreInterface
                                     onRemoteConnectionChanged:{
@@ -625,6 +625,7 @@ Rectangle {
                                         }
                                     }
                                 }
+
                                 Timer {
                                     // 3 second timeout for response
                                     id: tokenTimer
@@ -637,7 +638,8 @@ Rectangle {
                                         }
                                     }
                                     onTriggered: {
-                                        hcs_token_status.text = qsTr("Error: Cannot generate token")
+                                        remoteToggle.checked = false
+                                        hcs_token_status.text = qsTr("ERROR: Generation failed, enable to retry")
                                     }
                                 }
 
