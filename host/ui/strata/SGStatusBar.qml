@@ -4,6 +4,7 @@ import QtQuick.Controls 2.3
 import QtQuick.Window 2.3 // for debug window, can be cut out for release
 import QtGraphicalEffects 1.0
 import "js/navigation_control.js" as NavigationControl
+import "qrc:/js/platform_selection.js" as PlatformSelection
 import "qrc:/statusbar-partial-views"
 
 
@@ -187,175 +188,13 @@ Rectangle {
         }
     }
 
-    SGComboBox {
+    SGPlatformSelector {
         id: cbSelector
+        comboBoxWidth: 250
         anchors {
             verticalCenter: container.verticalCenter
             left: container.left
             leftMargin: 3
-        }
-
-        comboBoxWidth: 250
-        textRole: "text"
-        TextMetrics { id: textMetrics }
-        model: platformListModel
-
-
-        onActivated: {
-            /*
-           Determine action depending on what type of 'connection' is used
-        */
-            NavigationControl.updateState(NavigationControl.events.PLATFORM_DISCONNECTED_EVENT, null)
-            var disconnect_json = {"hcs::cmd":"disconnect_platform"}
-            console.log("disonnecting the platform")
-            coreInterface.sendCommand(JSON.stringify(disconnect_json))
-
-            var connection = platformListModel.get(cbSelector.currentIndex).connection
-            var data = { platform_name: platformListModel.get(cbSelector.currentIndex).name}
-
-            // Clear all documents for contents
-            documentManager.clearDocumentSets();
-
-            if (connection === "view") {
-                // Go offline-mode
-                NavigationControl.updateState(NavigationControl.events.OFFLINE_MODE_EVENT, data)
-                coreInterface.sendSelectedPlatform(platformListModel.get(cbSelector.currentIndex).uuid,platformListModel.get(cbSelector.currentIndex).connection)
-
-            }
-            else if(connection === "connected"){
-                NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT,data)
-                coreInterface.sendSelectedPlatform(platformListModel.get(cbSelector.currentIndex).uuid,platformListModel.get(cbSelector.currentIndex).connection)
-            }
-            else if( connection === "remote"){
-                NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT,data)
-                // Call coreinterface connect()
-                console.log("calling the send");
-                coreInterface.sendSelectedPlatform(platformListModel.get(cbSelector.currentIndex).uuid,platformListModel.get(cbSelector.currentIndex).connection)
-            }
-        }
-    }
-
-    Connections {
-        target: coreInterface
-        onPlatformListChanged: {
-            console.log("platform list updated: ", list)
-            container.populatePlatforms(list)
-        }
-    }
-
-    ListModel {
-        id: platformListModel
-
-
-        Component.onCompleted: {
-            console.log("platformListModel:Component.onCompleted:");
-            container.populatePlatforms(coreInterface.platform_list_)
-        }
-
-        // DEBUG hard code model data for testing
-        //            ListElement {
-        //                text: "Motor Vortex"
-        //                name: "motor-vortex" // folder name of qml
-        //                verbose: "motor-vortex"
-        //                connection: "local"
-        //            }
-
-        //            ListElement {
-        //                text: "USB PD"
-        //                name: "bubu"
-        //                verbose: "usb-pd"
-        //                connection: "local"
-        //            }
-    }
-
-    function updateComboWidth(newModel) {
-        // Update our width depending on the children text size
-        var maxWidth = 0
-        textMetrics.font = cbSelector.font
-        for(var i = 0; i < newModel.count; i++){
-            textMetrics.text = newModel.get(i).text
-            maxWidth = Math.max(textMetrics.width, maxWidth)
-        }
-        // Add some padding for the selector arrows
-        cbSelector.width = maxWidth + 60
-    }
-
-    function populatePlatforms(platform_list_json) {
-        var autoSelectEnabled = true
-        var autoSelectedPlatform = null
-
-        // Map out UUID->platform name
-        // Lookup table
-        //  platform_id -> local qml directory holding interface
-        var uuid_map = {
-            "P2.2017.1.1.0.0.cbde0519-0f42-4431-a379-caee4a1494af" : "usb-pd",
-            //"P2.2017.1.1.0.0.cbde0519-0f42-4431-a379-caee4a1494af" : "motor-vortex",
-            "P2.2018.1.1.0.0.c9060ff8-5c5e-4295-b95a-d857ee9a3671" : "bubu",
-            "SEC.2018.004.1.1.0.2.20180710161919.1bfacee3-fb60-471d-98f8-fe597bb222cd" : "usb-pd-multiport",
-            "SEC.2018.004.1.0.1.0.20180717143337.6828783d-b672-4fd5-b66b-370a41c035d2" : "usb-pd-multiport",    //david's new board
-            "P2.2018.0.0.0.0.00000000-0000-0000-0000-000000000000" : "usb-pd-multiport",
-            "SEC.2017.038.0.0.0.0.20190816120000.cbde0519-0f42-4431-a379-caee4a1494af": "usb-pd-multiport",
-            "motorvortex1" : "motor-vortex"
-        }
-
-        platformListModel.clear()
-
-        // Parse JSON
-        try {
-            console.log("populatePlaforms: ", platform_list_json)
-            var platform_list = JSON.parse(platform_list_json)
-
-            console.log("number of platforms in list:",platform_list.list.length);
-
-            for (var i = 0; i < platform_list.list.length; i ++){
-                // Extract platform verbose name and UUID
-                var platform_info = {
-                    "text" : platform_list.list[i].verbose,
-                    "verbose" : platform_list.list[i].verbose,
-                    "name" : uuid_map[platform_list.list[i].uuid],
-                    "connection" : platform_list.list[i].connection,
-                    "uuid"  :   platform_list.list[i].uuid
-                }
-
-                // Append text to state the type of Connection
-                if(platform_info.connection === "remote"){
-                    platform_info.text += " (Remote)"
-                }
-                else if (platform_info.connection === "view"){
-                    platform_info.text += " (View-only)"
-                }
-                else if (platform_info.connection === "connected"){
-                    platform_info.text += " (Connected)"
-                    // copy "connected" platform; Note: this will auto select the last listed "connected" platform
-                    console.log("autoconnect =",platform_info.text);
-                    autoSelectedPlatform = platform_info
-                } else {
-                    console.log("unknown connection type for ",platform_info.text," ",platform_info.connection);
-                }
-
-                // Add to the model
-                // TODO update width of text here instead of adding to model and then re-reading model and updating
-                platformListModel.append(platform_info)
-            }
-
-        }
-        catch(err) {
-            console.log("CoreInterface error: ", err.toString())
-            platformListModel.clear()
-            platformListModel.append({ text: "No Platforms Available" } )
-        }
-
-        // Auto Select "connected" platform
-        if ( autoSelectEnabled && autoSelectedPlatform) {
-            console.log("Auto selecting connected platform: ", autoSelectedPlatform.name)
-
-            // For Demo purposes only; Immediately go to control
-            var data = { platform_name: autoSelectedPlatform.name}
-            coreInterface.sendSelectedPlatform(autoSelectedPlatform.uuid, autoSelectedPlatform.connection)
-            NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT,data)
-        }
-        else if ( autoSelectEnabled == false){
-            console.log("Auto selecting disabled.")
         }
     }
 
@@ -376,6 +215,7 @@ Rectangle {
                 text: qsTr("Platform Controls")
                 width: 150
                 buttonColor: hovered || !NavigationControl.flipable_parent_.flipped ? Qt.lighter(container.color) : container.color
+                enabled: PlatformSelection.platformListModel.selectedConnection !== "view" && PlatformSelection.platformListModel.selectedConnection !== ""
                 onClicked: {
                     if (NavigationControl.flipable_parent_.flipped) {
                         NavigationControl.updateState(NavigationControl.events.TOGGLE_CONTROL_CONTENT)
@@ -388,6 +228,7 @@ Rectangle {
                 text: qsTr("Platform Content")
                 width: 150
                 buttonColor: hovered || NavigationControl.flipable_parent_.flipped ? Qt.lighter(container.color) : container.color
+                enabled: PlatformSelection.platformListModel.selectedConnection !== ""
                 onClicked: {
                     if (!NavigationControl.flipable_parent_.flipped) {
                         NavigationControl.updateState(NavigationControl.events.TOGGLE_CONTROL_CONTENT)
@@ -460,7 +301,6 @@ Rectangle {
                                 }
                                 buttonColor: checked ? Qt.lighter(container.color) : container.color
                                 enabled : !is_remote_connected
-
                             }
 
                             SGTabButton {
@@ -484,6 +324,59 @@ Rectangle {
                             }
                             width: remoteMenuContent.width
                             visible: true
+
+                            Item {
+                                id: noConnectedPlatContainer
+                                anchors {
+                                    fill: remoteInviteContainer
+                                }
+                                z:10
+                                visible: PlatformSelection.platformListModel.selectedConnection !== "connected"
+
+                                onVisibleChanged: {
+                                    if (visible) {
+                                        remoteToggle.checked = false
+                                    }
+                                }
+
+                                Rectangle {
+                                    id: noConnectedPlatWarning
+                                    color: container.color
+                                    anchors {
+                                        centerIn: noConnectedPlatContainer
+                                    }
+                                    z:12
+                                    width: noConnectedPlatText.width + 20
+                                    height: noConnectedPlatText.height + 20
+
+                                    TextEdit {
+                                        id: noConnectedPlatText
+                                        anchors {
+                                            centerIn: noConnectedPlatWarning
+                                        }
+                                        text: "Select a Connected Platform to\n Enable Incoming Remote Connections"
+                                        color: "white"
+                                        readOnly: true
+                                        horizontalAlignment: TextEdit.AlignHCenter
+                                    }
+                                }
+
+                                Rectangle {
+                                    id: noConnectedPlatOverlay
+                                    color: Qt.lighter(container.color)
+                                    opacity: .8
+                                    anchors {
+                                        fill: noConnectedPlatContainer
+                                    }
+                                    z:11
+
+                                    MouseArea {
+                                        anchors {
+                                            fill: noConnectedPlatOverlay
+                                        }
+                                    }
+                                }
+                            }
 
                             Item {
                                 id: remoteInviteLeft
@@ -1480,14 +1373,17 @@ Rectangle {
                     activityMonitorTimer.start();
                 }
             }
-            Text {
-                id:debugtext
-                text: "platform_state:" + NavigationControl.context.platform_state
-            }
             Button {
-                text: "update state"
+                text: "add plat to combobox"
                 onClicked: {
-                    debugtext.text = "platform_state:" + NavigationControl.context.platform_state
+                    var platform_info = {
+                        "text" : "Fake Platform 9000 (Connected)",
+                        "verbose" : "Fake Platform 9000 (Connected)",
+                        "name" : "motor-vortex",
+                        "connection" : "connected",
+                        "uuid" : "motorvortex1"
+                    }
+                    PlatformSelection.platformListModel.append(platform_info)
                 }
             }
         }
@@ -1500,22 +1396,29 @@ Rectangle {
             }
 
             Button {
-                text: "new plat connect MV"
+                text: "spoof plat list, autoconnect"
                 onClicked: {
-                    var data = { platform_name: "motor-vortex"}
-                    NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT, data)
+                    var data = '{
+                        "list":
+                            [ { "connection":"view",
+                                "uuid":"P2.2018.1.1.0.0.c9060ff8-5c5e-4295-b95a-d857ee9a3671",
+                                "verbose":"USB PD Load Board"},
+                              { "connection":"view",
+                                "uuid":"motorvortex1",
+                                "verbose":"Vortex Fountain Motor Platform Board"},
+                              { "connection":"view",
+                                "uuid":"P2.2017.1.1.0.0.cbde0519-0f42-4431-a379-caee4a1494af",
+                                "verbose":"USB PD"},
+                              { "connection":"connected",
+                                "uuid":"motorvortex1",
+                                "verbose":"Fake Motor Vortex AutoConnect"} ]
+                        }'
+                    PlatformSelection.populatePlatforms(data)
                 }
             }
-
-            Button {
-                text: "disconnect"
-                onClicked: {
-
-                    NavigationControl.updateState(NavigationControl.events.PLATFORM_DISCONNECTED_EVENT, null)
-                    var disconnect_json = {"hcs::cmd":"disconnect_platform"}
-                    console.log("disonnecting the platform")
-                    coreInterface.sendCommand(JSON.stringify(disconnect_json))
-                }
+            Text {
+                id: name
+                text: qsTr(PlatformSelection.platformListModel.selectedConnection)
             }
         }
     }

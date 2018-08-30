@@ -367,5 +367,7 @@
         <file>views/efficiency-simulator/Mosfets.qml</file>
         <file>views/efficiency-simulator/EfficiencySimulator.qml</file>
         <file>views/efficiency-simulator/GraphAndCircuit.qml</file>
+        <file>statusbar-partial-views/SGPlatformSelector.qml</file>
+        <file>js/platform_selection.js</file>
     </qresource>
 </RCC>

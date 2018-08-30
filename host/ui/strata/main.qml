@@ -3,6 +3,7 @@ import QtQuick.Window 2.10
 import QtQuick.Controls 2.3
 import QtQuick.Layouts 1.3
 import "js/navigation_control.js" as NavigationControl
+import "qrc:/js/platform_selection.js" as PlatformSelection
 import "js/login.js" as Authenticator
 
 Window {
@@ -27,7 +28,6 @@ Window {
         target: coreInterface
 
         onRemoteConnectionChanged:{
-
             // Successful remote connection
             if (result === true){
                 is_remote_connected = true
@@ -107,7 +107,7 @@ Window {
             }
 
             transitions: Transition {
-                NumberAnimation { target: rotation; property: "angle"; duration: 500 }
+                NumberAnimation { target: rotation; property: "angle"; duration: 400 }
             }
         }
     }
@@ -224,6 +224,29 @@ Window {
             bottom: parent.bottom
         }
     }
+
+    ListModel {
+        id: platformListModel
+
+        // These properties are here (not in platform_selection.js) so they generate their built in signals
+        property int currentIndex: 0
+        property string selectedConnection: "" // Signal that determines UI behaviors
+
+        Component.onCompleted: {
+//            console.log("platformListModel component completed");
+            if (!PlatformSelection.isInitialized) { PlatformSelection.initialize(this, coreInterface, documentManager) }
+            PlatformSelection.populatePlatforms(coreInterface.platform_list_)
+        }
+    }
+
+    Connections {
+        target: coreInterface
+        onPlatformListChanged: {
+            //console.log("platform list updated: ", list)
+            PlatformSelection.populatePlatforms(list)
+        }
+    }
+
 
     // Listen into Core Interface which gives us the platform changes
     Connections {
