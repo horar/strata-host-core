@@ -162,6 +162,14 @@ Window {
                     NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT, data)
                 }
             }
+            Button {
+                text: "Logic gate"
+                onClicked: {
+                    var data = { platform_name: "logic-gate"}
+                    NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT, data)
+                }
+            }
+
 
             // UI events
             Button {
@@ -235,7 +243,8 @@ Window {
                 "SEC.2018.004.1.1.0.2.20180710161919.1bfacee3-fb60-471d-98f8-fe597bb222cd" : "usb-pd-multiport", //using USB-PD card to masquarade as multiport until hardware is available
                 "P2.2017.1.1.0.0.cbde0519-0f42-4431-a379-caee4a1494af" : "motor-vortex",
                 "P2.2018.1.1.0.0.c9060ff8-5c5e-4295-b95a-d857ee9a3671" : "bubu",
-                "motorvortex1" : "motor-vortex"
+                "motorvortex1" : "motor-vortex",
+
             }
 
             // Send update to NavigationControl

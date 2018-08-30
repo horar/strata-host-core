@@ -295,7 +295,9 @@ Rectangle {
             "SEC.2018.004.1.0.1.0.20180717143337.6828783d-b672-4fd5-b66b-370a41c035d2" : "usb-pd-multiport",    //david's new board
             "P2.2018.0.0.0.0.00000000-0000-0000-0000-000000000000" : "usb-pd-multiport",
             "SEC.2017.038.0.0.0.0.20190816120000.cbde0519-0f42-4431-a379-caee4a1494af": "usb-pd-multiport",
-            "motorvortex1" : "motor-vortex"
+            "motorvortex1" : "motor-vortex",
+             "SEC.2018.0.0.0.0.00000000-0000-0000-0000-000000000000" : "logic-gate"
+
         }
 
         platformListModel.clear()

@@ -264,7 +264,8 @@ Rectangle{
                     "SEC.2018.004.1.1.0.2.20180710161919.1bfacee3-fb60-471d-98f8-fe597bb222cd" : "usb-pd-multiport",
                     "SEC.2018.004.1.0.1.0.20180717143337.6828783d-b672-4fd5-b66b-370a41c035d2" : "usb-pd-multiport",    //david's new board
                     "P2.2018.0.0.0.0.00000000-0000-0000-0000-000000000000" : "usb-pd-multiport",
-                    "SEC.2017.038.0.0.0.0.20190816120000.cbde0519-0f42-4431-a379-caee4a1494af": "usb-pd-multiport"
+                    "SEC.2017.038.0.0.0.0.20190816120000.cbde0519-0f42-4431-a379-caee4a1494af": "usb-pd-multiport",
+                    "SEC.2018.0.0.0.0.00000000-0000-0000-0000-000000000000" : "logic-gate"
                 }
 
                 platformListModel.clear()
@@ -287,13 +288,17 @@ Rectangle{
                         // Append text to state the type of Connection
                         if(platform_list.list[i].connection === "remote"){
                             platform_info.text += " (Remote)"
+                            console.log("1")
                         }
                         else if (platform_list.list[i].connection === "view"){
                             platform_info.text += " (View-only)"
+                            console.log("1")
+
                         }
                         else {
                             platform_info.text += " (Connected)"
                             // copy "connected" platform; Note: this will auto select the last listed "connected" platform
+                            console.log("ppinfo",platform_info)
                             autoSelectedPlatform = platform_info
                         }
 
