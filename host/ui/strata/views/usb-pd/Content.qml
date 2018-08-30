@@ -26,7 +26,7 @@ Rectangle {
 
             CircleBadge {
                 id: schematicBadge
-                anchors.bottom: schematicTabButton.top
+                anchors.top: schematicTabButton.top
                 anchors.right: schematicTabButton.right
                 revisionCount: documentManager.schematicRevisionCount
             }
@@ -39,7 +39,7 @@ Rectangle {
 
             CircleBadge {
                 id: layoutBadge
-                anchors.bottom: layoutTabButton.top
+                anchors.top: layoutTabButton.top
                 anchors.right: layoutTabButton.right
                 revisionCount: documentManager.layoutRevisionCount
             }
@@ -53,7 +53,7 @@ Rectangle {
             CircleBadge {
                 id: testReportBadge
                 revisionCount: documentManager.testReportRevisionCount
-                anchors.bottom: testReportTabButton.top
+                anchors.top: testReportTabButton.top
                 anchors.right: testReportTabButton.right
             }
             onClicked: documentManager.clearTestReportRevisionCount()
@@ -69,7 +69,7 @@ Rectangle {
 
             CircleBadge {
                 id: targetedBadge
-                anchors.bottom: comingSoonTabButton.top
+                anchors.top: comingSoonTabButton.top
                 anchors.right: comingSoonTabButton.right
                 revisionCount: documentManager.targetedRevisionCount
             }
