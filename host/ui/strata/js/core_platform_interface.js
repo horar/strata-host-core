@@ -6,13 +6,13 @@
 function data_source_handler (payload) {
     try {
         var notification = JSON.parse(payload)
-        //console.log("payload: ", payload)
+        console.log("payload: ", payload)
 
         if (notification.hasOwnProperty("payload")) {
             var notification_key = notification.value
             platformInterface[notification_key] = Object.create(notification["payload"]);
 
-            //console.log("data_source_handler: signalling -> notification key:", notification_key);
+            console.log("data_source_handler: signalling -> notification key:", notification_key);
 
         }
         else {

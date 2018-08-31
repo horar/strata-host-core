@@ -25,14 +25,14 @@ Item {
                 "mode": "manual"  // "manual" "automation"
     }
 
-//    property var nL7SZ97_read_io: {
+//    property var nl7sz97_read_io: {
 //        "a":1,
 //        "b":0,
 //        "c":1,
 //        "y":1
 //    }
 
-    property var nL7SZ58_read_io: {
+    property var nl7sz58_io_state: {
         "a":1,
         "b":0,
         "c":1,
@@ -334,7 +334,7 @@ Item {
 
 
     property var write_io: ({
-                            "cmd":"NL7SZ58_write_io",
+                            "cmd":"nl7sz58_write_io",
                             "payload":{
                                     "a":1,
                                     "b":0,
@@ -358,9 +358,19 @@ Item {
                             })
     
     
-    
+    property var read_io: ({
+                            "cmd":"nl7sz58_read_io",
+                            update: function () {
+                                CorePlatformInterface.send(this)
+                            },
+                            send: function () { CorePlatformInterface.send(this) },
+                            show: function () { CorePlatformInterface.show(this) }
+
+                           })
+
+
     property var nand: ({
-                            "cmd":"NL7SZ58_nand",
+                            "cmd":"nl7sz58_nand",
                             update: function () {
                                 CorePlatformInterface.send(this)
                             },
@@ -371,7 +381,7 @@ Item {
 
 
     property var and_nb : ({
-                               "cmd":"NL7SZ58_and_nb",
+                               "cmd":"nl7sz58_and_nb",
                                update: function () {
                                    CorePlatformInterface.send(this)
                                },
@@ -380,7 +390,7 @@ Item {
 
                            })
     property var and_nc: ({
-                              "cmd":"NL7SZ58_and_nc",
+                              "cmd":"nl7sz58_and_nc",
                               update: function () {
                                   CorePlatformInterface.send(this)
                               },
@@ -389,7 +399,7 @@ Item {
 
 
                           })
-    property var or:( {"cmd":"NL7SZ58_or",
+    property var or:( {"cmd":"nl7sz58_or",
                          update: function () {
                              CorePlatformInterface.send(this)
                          },
@@ -398,14 +408,14 @@ Item {
 
 
                      })
-    property var xor : ({"cmd":"NL7SZ58_xor",
+    property var xor : ({"cmd":"nl7sz58_xor",
                             update: function () {
                                 CorePlatformInterface.send(this)
                             },
                             send: function () { CorePlatformInterface.send(this) },
                             show: function () { CorePlatformInterface.show(this) }
                         })
-    property var  buffer:  ({"cmd":"NL7SZ58_buffer",
+    property var  buffer:  ({"cmd":"nl7sz58_buffer",
                                 update: function () {
                                     CorePlatformInterface.send(this)
                                 },
@@ -413,7 +423,7 @@ Item {
                                 show: function () { CorePlatformInterface.show(this) }
                             })
 
-    property var inverter: ({"cmd":"NL7SZ58_inverter",
+    property var inverter: ({"cmd":"nl7sz58_inverter",
                                 update: function () {
                                     CorePlatformInterface.send(this)
                                 },

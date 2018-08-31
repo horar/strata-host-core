@@ -13,13 +13,32 @@ Rectangle {
         fill: parent
     }
 
+    function read_state() {
+        console.log("inread")
+         inputOneToggle.checked = false;
+         inputTwoToggle.checked = false;
+         platformInterface.read_io.update();
+         platformInterface.read_io.show();
+        console.log(JSON.stringify(platformInterface.nl7sz58_io_state.a))
+    }
+
     function checkState( ) {
-        var value_a = platformInterface.nL7SZ58_read_io.a;
-        console.log("value a", value_a)
-        var value_b = platformInterface.nL7SZ58_read_io.b;
-        var value_c = platformInterface.nL7SZ58_read_io.c;
-        var value_y = platformInterface.nL7SZ58_read_io.y;
-        if(value_a === 1) {
+
+
+
+
+        var value_a = platformInterface.nl7sz58_io_state.a;
+        var value_b = platformInterface.nl7sz58_io_state.b;
+        var value_c = platformInterface.nl7sz58_io_state.c;
+        var value_y = platformInterface.nl7sz58_io_state.y;
+        console.log("a ", value_a)
+         console.log("b ", value_b)
+         console.log("c ", value_c)
+        // console.log("d ", value_)
+
+
+
+        if(  value_a === 1) {
             inputOneToggle.checked = true
         }
         else inputOneToggle.checked = false
@@ -54,7 +73,11 @@ Rectangle {
         Component.onCompleted: {
 
             gateImageSource =  "qrc:/views/logic-gate/images/nand.png"
-            inputName = "A"
+            platformInterface.nand.update()
+            read_state();
+            checkState();
+
+           // inputName = "A"
         }
         segmentedButtons: GridLayout {
             columnSpacing: 1
@@ -63,11 +86,48 @@ Rectangle {
                 text: qsTr("NAND")
                 checked: true  // Sets default checked button when exclusive
                 onClicked: {
-                    platformInterface.nand.update()
-                    gateImageSource = "qrc:/views/logic-gate/images/nand.png"
-                    inputName = "A"
 
-                    checkState();
+                    platformInterface.nand.update();
+                    platformInterface.nand.show();
+                    platformInterface.read_io.update();
+                    platformInterface.read_io.show();
+                    console.log("uI", JSON.stringify(platformInterface.nl7sz58_io_state))
+                    console.log("uI", JSON.stringify(platformInterface.pi_stats))
+
+
+                    var value_a = platformInterface.nl7sz58_io_state.a;
+                    var value_b = platformInterface.nl7sz58_io_state.b;
+                    var value_c = platformInterface.nl7sz58_io_state.c;
+                    var value_y = platformInterface.nl7sz58_io_state.y;
+                    console.log("a ", value_a)
+                    console.log("b ", value_b)
+                    console.log("c ", value_c)
+                   // var notification = JSON.parse(platformInterface.nl7sz58_io_state)
+                  //  console.log("uI", JSON.stringify(platformInterface.pi_stats))
+
+                    if(  value_a === 1) {
+                        inputOneToggle.checked = true
+                    }
+                    else inputOneToggle.checked = false
+
+                    if(value_b === 1) {
+                        inputTwoToggle.checked = true
+                    }
+                    else inputTwoToggle.checked = false
+
+
+                    if(value_y === 1) {
+                        sgStatusLight.status = "green"
+                    }
+                    else sgStatusLight.status = "off"
+
+                  //  console.log()
+
+
+
+                    gateImageSource = "qrc:/views/logic-gate/images/nand.png"
+
+
 
 
 
@@ -80,9 +140,13 @@ Rectangle {
                 text: qsTr("AND NOTB")
                 onClicked: {
                     platformInterface.and_nb.update();
+
                     gateImageSource = "qrc:/views/logic-gate/images/nand_nb.png"
-                    inputName = "A"
-                     checkState();
+                   // inputName = "A"
+                    inputOneToggle.checked = false;
+                    inputTwoToggle.checked = false;
+                     read_state()
+                    checkState();
 
 
                 }
@@ -93,8 +157,11 @@ Rectangle {
                 onClicked: {
                     platformInterface.and_nc.update();
                     gateImageSource = "qrc:/views/logic-gate/images/and_nc.png"
-                    inputName = "B"
-                     checkState();
+                  //  inputName = "B"
+                    inputOneToggle.checked = false;
+                    inputTwoToggle.checked = false;
+                     read_state()
+                    checkState();
 
                 }
             }
@@ -103,8 +170,11 @@ Rectangle {
                 onClicked: {
                     platformInterface.or.update();
                     gateImageSource = "qrc:/views/logic-gate/images/or.png"
-                    inputName = "B"
-                     checkState();
+                    //inputName = "B"
+                    inputOneToggle.checked = false;
+                    inputTwoToggle.checked = false;
+                     read_state()
+                    checkState();
 
                 }
             }
@@ -113,8 +183,11 @@ Rectangle {
                 onClicked: {
                     platformInterface.xor.update();
                     gateImageSource = "qrc:/views/logic-gate/images/xor.png"
-                    inputName = "A"
-                     checkState();
+                  //  inputName = "A"
+                    inputOneToggle.checked = false;
+                    inputTwoToggle.checked = false;
+                     read_state()
+                    checkState();
 
 
                 }
@@ -124,11 +197,14 @@ Rectangle {
                 onClicked: {
                     platformInterface.inverter.update();
                     inputName = "A and C"
+                    inputOneToggle.checked = false;
+                    inputTwoToggle.checked = false;
                     gateImageSource = "qrc:/views/logic-gate/images/inverter.png"
                     //                    horizontalLine.opacity = 1
                     //                    textForInput.opacity = 1
                     //                    inputTwoToggle.opacity = 0
-                     checkState();
+                     read_state()
+                    checkState();
 
 
 
@@ -143,7 +219,8 @@ Rectangle {
                     //                    horizontalLine.opacity = 1
                     //                    textForInput.opacity = 1
                     //                    inputTwoToggle.opacity = 0
-                     checkState();
+                     read_state();
+                    checkState();
 
                 }
             }
@@ -181,13 +258,15 @@ Rectangle {
                 }
 
                 transform: Rotation { origin.x: 25; origin.y: 25; angle: 270 }
-                onCheckedChanged: {
-                    var value_a = platformInterface.nL7SZ58_read_io.a;
-                    var value_b = platformInterface.nL7SZ58_read_io.b;
-                    var value_c = platformInterface.nL7SZ58_read_io.c;
-                    var value_y = platformInterface.nL7SZ58_read_io.y;
+                onClicked: {
+                    console.log("on click of the switch")
+                    platformInterface.read_io.update();
+                    var value_a = platformInterface.nl7sz58_io_state.a;
+                    var value_b = platformInterface.nl7sz58_io_state.b;
+                    var value_c = platformInterface.nl7sz58_io_state.c;
+                    var value_y = platformInterface.nl7sz58_io_state.y;
                     if(inputOneToggle.checked)  {
-                        platformInterface.write_io.update("1", value_b, value_c, value_y)
+                        platformInterface.write_io.update(1, value_b, value_c, value_y)
                         platformInterface.write_io.show();
 
                     }
@@ -195,7 +274,10 @@ Rectangle {
                         platformInterface.write_io.update(0, value_b, value_c, value_y)
                         platformInterface.write_io.show();
                     }
+
                 }
+
+
 
             }
 
@@ -234,21 +316,26 @@ Rectangle {
 
                 }
 
-                onCheckedChanged: {
-                    var value_a = platformInterface.nL7SZ58_read_io.a;
-                    var value_b = platformInterface.nL7SZ58_read_io.b;
-                    var value_c = platformInterface.nL7SZ58_read_io.c;
-                    var value_y = platformInterface.nL7SZ58_read_io.y;
-                    if(inputTwoToggle.checked)  {
-                        platformInterface.write_io.update(value_a, 1, value_c, value_y)
+                onClicked: {
+                    console.log("on click of the switch")
+                    platformInterface.read_io.update();
+                    var value_a = platformInterface.nl7sz58_io_state.a;
+                    var value_b = platformInterface.nl7sz58_io_state.b;
+                    var value_c = platformInterface.nl7sz58_io_state.c;
+                    var value_y = platformInterface.nl7sz58_io_state.y;
+                    if(inputOneToggle.checked)  {
+                        platformInterface.write_io.update(1, value_b, value_c, value_y)
                         platformInterface.write_io.show();
 
                     }
                     else {
-                        platformInterface.write_io.update(value_a, 0, value_c, value_y)
+                        platformInterface.write_io.update(0, value_b, value_c, value_y)
                         platformInterface.write_io.show();
                     }
+
                 }
+
+
 
 
                 transform: Rotation { origin.x: 25; origin.y: 25; angle: 270 }
