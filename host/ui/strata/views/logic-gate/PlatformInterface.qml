@@ -25,6 +25,20 @@ Item {
                 "mode": "manual"  // "manual" "automation"
     }
 
+//    property var nL7SZ97_read_io: {
+//        "a":1,
+//        "b":0,
+//        "c":1,
+//        "y":1
+//    }
+
+    property var nL7SZ58_read_io: {
+        "a":1,
+        "b":0,
+        "c":1,
+        "y":1
+    }
+
 
     // @notification input_voltage_notification
     // @description: updates voltage
@@ -318,6 +332,33 @@ Item {
       Logic Gate Commands
     *********/
 
+
+    property var write_io: ({
+                            "cmd":"NL7SZ58_write_io",
+                            "payload":{
+                                    "a":1,
+                                    "b":0,
+                                    "c":1
+                                },
+                                update: function (a,b,c) {
+                                    this.set(a,b,c)
+                                    CorePlatformInterface.send(this)
+                                },
+                                set: function (a,b,c) {
+                                    this.payload.a = a
+                                    this.payload.b = b
+                                    this.payload.c = c
+
+                                },
+                                send: function () { CorePlatformInterface.send(this) },
+                                show: function () { CorePlatformInterface.show(this) }
+
+
+
+                            })
+    
+    
+    
     property var nand: ({
                             "cmd":"NL7SZ58_nand",
                             update: function () {
@@ -325,10 +366,6 @@ Item {
                             },
                             send: function () { CorePlatformInterface.send(this) },
                             show: function () { CorePlatformInterface.show(this) }
-
-
-
-
 
                         })
 

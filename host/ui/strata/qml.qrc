@@ -384,5 +384,22 @@
         <file>views/logic-gate/sgwidgets/images/sliderValue.svg</file>
         <file>views/logic-gate/sgwidgets/SGSegmentedButton.qml</file>
         <file>views/logic-gate/sgwidgets/SGSegmentedButtonStrip.qml</file>
+        <file>views/logic-gate/sgwidgets/images/And B.png</file>
+        <file>views/logic-gate/sgwidgets/images/And C.png</file>
+        <file>views/logic-gate/sgwidgets/images/Buffer.png</file>
+        <file>views/logic-gate/sgwidgets/images/inverter.png</file>
+        <file>views/logic-gate/sgwidgets/images/nand-icon.png</file>
+        <file>views/logic-gate/sgwidgets/images/OR.png</file>
+        <file>views/logic-gate/images/and_nc.png</file>
+        <file>views/logic-gate/images/buffer.png</file>
+        <file>views/logic-gate/images/nand.png</file>
+        <file>views/logic-gate/images/nand_nb.png</file>
+        <file>views/logic-gate/images/inverter.png</file>
+        <file>views/logic-gate/images/or.png</file>
+        <file>views/logic-gate/images/xor.png</file>
+        <file>views/logic-gate/sgwidgets/SGStatusLight.qml</file>
+        <file>views/logic-gate/sgwidgets/SGSwitch.qml</file>
+        <file>views/logic-gate/sgwidgets/images/greenStatusLight.svg</file>
+        <file>views/logic-gate/sgwidgets/images/offStatusLight.svg</file>
     </qresource>
 </RCC>
