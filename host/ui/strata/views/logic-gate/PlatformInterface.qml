@@ -13,25 +13,6 @@ Item {
     //  the properties of the message must match with the UI elements using them
     //  document all messages to clearly indicate to the UI layer proper names
 
-    // @notification pi_stats
-    // @description: show motor statistics.
-    //
-    property var pi_stats : {
-        "speed_target": 1500,
-                "current_speed": 0,
-                "error": 0,
-                "sum": 0.5,
-                "duty_now": 0.5,
-                "mode": "manual"  // "manual" "automation"
-    }
-
-//    property var nl7sz97_read_io: {
-//        "a":1,
-//        "b":0,
-//        "c":1,
-//        "y":1
-//    }
-
     property var nl7sz58_io_state: {
         "a":1,
         "b":0,
@@ -41,27 +22,6 @@ Item {
 
 
     // @notification input_voltage_notification
-    // @description: updates voltage
-    //
-    property var input_voltage_notification : {
-        "vin": 0
-    }
-
-    // @notification system_error
-    // @description: updates faults in AdvancedControl and FAEControl
-    //
-    property var system_error: {
-        "error_and_warnings" : [ ]
-    }
-
-    property var motor_off: {
-        "enable" : ""
-    }
-
-    property var set_mode: {
-        "system_mode" : ""
-    }
-
 
     // -------------------  end notification messages
 
@@ -447,6 +407,7 @@ Item {
     Connections {
         target: coreInterface
         onNotification: {
+            console.log("when in connection")
             CorePlatformInterface.data_source_handler(payload)
         }
     }

@@ -9,50 +9,119 @@ Rectangle {
     id: container
     property string gateImageSource
     property string inputName
+    property var value_A
+    property var value_B
+    property var value_C
+    property var value_Y
+
     anchors {
         fill: parent
     }
 
+    property var valueB: platformInterface.nl7sz58_io_state.b
+
+
+    onValueBChanged: {
+        console.log("change in b")
+        if( valueB === 1) {
+            inputTwoToggle.checked = true
+        }
+        else {
+            console.log("switch 1 is off")
+            inputTwoToggle.checked = false
+        }
+
+    }
+
+    property var valueA: platformInterface.nl7sz58_io_state.a
+
+
+    onValueAChanged: {
+
+        console.log("change in a")
+
+        if( valueA === 1) {
+            inputOneToggle.checked = true
+
+        }
+        else {
+            console.log("switch 2 is off")
+            inputOneToggle.checked = false
+
+        }
+
+    }
+
+    property var valueY:  platformInterface.nl7sz58_io_state.y
+
+    onValueYChanged: {
+
+        console.log("change in y")
+
+        if(valueY === 1) {
+            sgStatusLight.status = "green"
+        }
+        else sgStatusLight.status = "off"
+    }
+
     function read_state() {
         console.log("inread")
-         inputOneToggle.checked = false;
-         inputTwoToggle.checked = false;
-         platformInterface.read_io.update();
-         platformInterface.read_io.show();
-        console.log(JSON.stringify(platformInterface.nl7sz58_io_state.a))
+        platformInterface.read_io.update();
+        platformInterface.read_io.show();
+
     }
 
     function checkState( ) {
 
 
 
+        console.log("the value of noti a before", platformInterface.nl7sz58_io_state.a)
+        console.log("the value of noti b before ", platformInterface.nl7sz58_io_state.b)
 
-        var value_a = platformInterface.nl7sz58_io_state.a;
-        var value_b = platformInterface.nl7sz58_io_state.b;
-        var value_c = platformInterface.nl7sz58_io_state.c;
-        var value_y = platformInterface.nl7sz58_io_state.y;
-        console.log("a ", value_a)
-         console.log("b ", value_b)
-         console.log("c ", value_c)
-        // console.log("d ", value_)
+        //  valueA = platformInterface.nl7sz58_io_state.a;
+        //  valueB = platformInterface.nl7sz58_io_state.b;
 
+        console.log("the value of noti a after", platformInterface.nl7sz58_io_state.a)
+        console.log("the value of noti b after ", platformInterface.nl7sz58_io_state.b)
 
-
-        if(  value_a === 1) {
-            inputOneToggle.checked = true
-        }
-        else inputOneToggle.checked = false
-
-        if(value_b === 1) {
-            inputTwoToggle.checked = true
-        }
-        else inputTwoToggle.checked = false
+        //valueC = platformInterface.nl7sz58_io_state.c;
+        //valueY = platformInterface.nl7sz58_io_state.y;
 
 
-        if(value_y === 1) {
-            sgStatusLight.status = "green"
-        }
-        else sgStatusLight.status = "off"
+        console.log("one toggle", inputOneToggle.checked)
+
+
+        //        property var valueA: platformInterface.nl7sz58_io_state.a
+
+
+        //        onValueAChanged: {
+        //            if( valueA === 1) {
+        //                inputOneToggle.checked = true
+        //            }
+        //            else {
+        //                console.log("switch 1 is off")
+        //                inputOneToggle.checked = false
+        //            }
+
+        //        }
+
+
+        //        onValueBchanged: {
+
+        //            if(valueB === 1) {
+        //                inputTwoToggle.checked = true
+        //            }
+        //            else  {
+        //                console.log("switch 2 is off")
+        //                inputTwoToggle.checked = false
+        //            }
+
+        //        }
+
+        //        if(value_y === 1) {
+        //            sgStatusLight.status = "green"
+        //        }
+        //        else sgStatusLight.status = "off"
     }
 
     SGSegmentedButtonStrip {
@@ -73,11 +142,12 @@ Rectangle {
         Component.onCompleted: {
 
             gateImageSource =  "qrc:/views/logic-gate/images/nand.png"
-            platformInterface.nand.update()
+            platformInterface.nand.update();
             read_state();
-            checkState();
 
-           // inputName = "A"
+          //  checkState();
+
+            // inputName = "A"
         }
         segmentedButtons: GridLayout {
             columnSpacing: 1
@@ -87,51 +157,10 @@ Rectangle {
                 checked: true  // Sets default checked button when exclusive
                 onClicked: {
 
-                    platformInterface.nand.update();
-                    platformInterface.nand.show();
-                    platformInterface.read_io.update();
-                    platformInterface.read_io.show();
-                    console.log("uI", JSON.stringify(platformInterface.nl7sz58_io_state))
-                    console.log("uI", JSON.stringify(platformInterface.pi_stats))
-
-
-                    var value_a = platformInterface.nl7sz58_io_state.a;
-                    var value_b = platformInterface.nl7sz58_io_state.b;
-                    var value_c = platformInterface.nl7sz58_io_state.c;
-                    var value_y = platformInterface.nl7sz58_io_state.y;
-                    console.log("a ", value_a)
-                    console.log("b ", value_b)
-                    console.log("c ", value_c)
-                   // var notification = JSON.parse(platformInterface.nl7sz58_io_state)
-                  //  console.log("uI", JSON.stringify(platformInterface.pi_stats))
-
-                    if(  value_a === 1) {
-                        inputOneToggle.checked = true
-                    }
-                    else inputOneToggle.checked = false
-
-                    if(value_b === 1) {
-                        inputTwoToggle.checked = true
-                    }
-                    else inputTwoToggle.checked = false
-
-
-                    if(value_y === 1) {
-                        sgStatusLight.status = "green"
-                    }
-                    else sgStatusLight.status = "off"
-
-                  //  console.log()
-
-
-
                     gateImageSource = "qrc:/views/logic-gate/images/nand.png"
-
-
-
-
-
-
+                    platformInterface.nand.update();
+                    read_state()
+                    // checkState()
                 }
 
             }
@@ -139,14 +168,15 @@ Rectangle {
             SGSegmentedButton{
                 text: qsTr("AND NOTB")
                 onClicked: {
-                    platformInterface.and_nb.update();
+
 
                     gateImageSource = "qrc:/views/logic-gate/images/nand_nb.png"
-                   // inputName = "A"
+                    // inputName = "A"
                     inputOneToggle.checked = false;
                     inputTwoToggle.checked = false;
-                     read_state()
-                    checkState();
+                    platformInterface.and_nb.update();
+                    read_state()
+                    //  checkState();
 
 
                 }
@@ -157,11 +187,11 @@ Rectangle {
                 onClicked: {
                     platformInterface.and_nc.update();
                     gateImageSource = "qrc:/views/logic-gate/images/and_nc.png"
-                  //  inputName = "B"
+                    //  inputName = "B"
                     inputOneToggle.checked = false;
                     inputTwoToggle.checked = false;
-                     read_state()
-                    checkState();
+                    read_state()
+                    //    checkState();
 
                 }
             }
@@ -173,8 +203,8 @@ Rectangle {
                     //inputName = "B"
                     inputOneToggle.checked = false;
                     inputTwoToggle.checked = false;
-                     read_state()
-                    checkState();
+                    read_state()
+                    //   checkState();
 
                 }
             }
@@ -183,11 +213,11 @@ Rectangle {
                 onClicked: {
                     platformInterface.xor.update();
                     gateImageSource = "qrc:/views/logic-gate/images/xor.png"
-                  //  inputName = "A"
+                    //  inputName = "A"
                     inputOneToggle.checked = false;
                     inputTwoToggle.checked = false;
-                     read_state()
-                    checkState();
+                    read_state()
+                    //  checkState();
 
 
                 }
@@ -203,8 +233,8 @@ Rectangle {
                     //                    horizontalLine.opacity = 1
                     //                    textForInput.opacity = 1
                     //                    inputTwoToggle.opacity = 0
-                     read_state()
-                    checkState();
+                    read_state()
+                    //  checkState();
 
 
 
@@ -219,8 +249,8 @@ Rectangle {
                     //                    horizontalLine.opacity = 1
                     //                    textForInput.opacity = 1
                     //                    inputTwoToggle.opacity = 0
-                     read_state();
-                    checkState();
+                    read_state();
+                    //   checkState();
 
                 }
             }
@@ -258,22 +288,26 @@ Rectangle {
                 }
 
                 transform: Rotation { origin.x: 25; origin.y: 25; angle: 270 }
+
                 onClicked: {
-                    console.log("on click of the switch")
-                    platformInterface.read_io.update();
-                    var value_a = platformInterface.nl7sz58_io_state.a;
-                    var value_b = platformInterface.nl7sz58_io_state.b;
-                    var value_c = platformInterface.nl7sz58_io_state.c;
-                    var value_y = platformInterface.nl7sz58_io_state.y;
+                    console.log("on click of the switch 1 ")
+
+                    //   platformInterface.read_io.update()
                     if(inputOneToggle.checked)  {
-                        platformInterface.write_io.update(1, value_b, value_c, value_y)
-                        platformInterface.write_io.show();
+
+                        platformInterface.write_io.update(1, platformInterface.nl7sz58_io_state.b, platformInterface.nl7sz58_io_state.c)
+                        platformInterface.write_io.show()
+                        valueA = 1
+                        read_state()
 
                     }
                     else {
-                        platformInterface.write_io.update(0, value_b, value_c, value_y)
-                        platformInterface.write_io.show();
+                        platformInterface.write_io.update(0, platformInterface.nl7sz58_io_state.b, platformInterface.nl7sz58_io_state.c)
+                        platformInterface.write_io.show()
+                        valueA = 0
+                        read_state()
                     }
+
 
                 }
 
@@ -316,22 +350,31 @@ Rectangle {
 
                 }
 
+
+
+
                 onClicked: {
-                    console.log("on click of the switch")
-                    platformInterface.read_io.update();
-                    var value_a = platformInterface.nl7sz58_io_state.a;
-                    var value_b = platformInterface.nl7sz58_io_state.b;
-                    var value_c = platformInterface.nl7sz58_io_state.c;
-                    var value_y = platformInterface.nl7sz58_io_state.y;
-                    if(inputOneToggle.checked)  {
-                        platformInterface.write_io.update(1, value_b, value_c, value_y)
-                        platformInterface.write_io.show();
+                    console.log("on click of the switch 2")
+                    //   platformInterface.read_io.update();
+
+                    if(inputTwoToggle.checked)  {
+
+                        platformInterface.write_io.update(platformInterface.nl7sz58_io_state.a, 1, platformInterface.nl7sz58_io_state.c,  platformInterface.nl7sz58_io_state.y)
+                        platformInterface.write_io.show()
+                        valueB = 1
+                        read_state()
+
 
                     }
                     else {
-                        platformInterface.write_io.update(0, value_b, value_c, value_y)
-                        platformInterface.write_io.show();
+                        platformInterface.write_io.update(platformInterface.nl7sz58_io_state.a, 0, platformInterface.nl7sz58_io_state.c,  platformInterface.nl7sz58_io_state.y)
+                        platformInterface.write_io.show()
+                        valueB = 0
+                        read_state()
+
                     }
+
+
 
                 }
 
@@ -396,12 +439,15 @@ Rectangle {
                 textColor: "black"           // Default: "black"
 
                 status : "off"
-            }
 
+
+            }
         }
 
     }
+
 }
+
 
 //        Column {
 
