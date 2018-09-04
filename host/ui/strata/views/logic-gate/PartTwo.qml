@@ -9,9 +9,9 @@ Rectangle {
     id: container
     property string gateImageSource
     property string inputName
-    property string value_A: A
-    property string value_B: B
-    property string value_C: C
+    property string value_A: "A"
+    property string value_B: "B"
+    property string value_C: "C"
 
     anchors {
         fill: parent
@@ -100,9 +100,9 @@ Rectangle {
 
             gateImageSource =  "qrc:/views/logic-gate/images/nl7sz97/mux.png"
             platformInterface.mux_97.update();
-            value_A = "B"
-            value_B = "A"
-            value_C = "C"
+//            value_A = "B"
+//            value_B = "A"
+//            value_C = "C"
             read_state();
 
 
@@ -117,9 +117,9 @@ Rectangle {
 
                     gateImageSource = "qrc:/views/logic-gate/images/nl7sz97/mux.png"
                     platformInterface.mux_97.update();
-                    value_A = "B"
-                    value_B = "A"
-                    value_C = "C"
+//                    value_A = "B"
+//                    value_B = "A"
+//                    value_C = "C"
                     read_state()
                     // checkState()
                 }
@@ -132,9 +132,9 @@ Rectangle {
 
                     gateImageSource = "qrc:/views/logic-gate/images/nl7sz97/and.png"
                     platformInterface.and_97.update();
-                    value_A = "B"
-                    value_B = "A"
-                    value_C = "C"
+//                    value_A = "B"
+//                    value_B = "A"
+//                    value_C = "C"
                     read_state()
                     //  checkState();
 
@@ -148,9 +148,9 @@ Rectangle {
                     platformInterface.or_nc_97.update();
                     gateImageSource = "qrc:/views/logic-gate/images/nl7sz97/or_nc.png"
                     //  inputName = "B"
-                    value_A = "A"
-                    value_B = "C"
-                    value_C = "B"
+//                    value_A = "A"
+//                    value_B = "C"
+//                    value_C = "B"
 
                     read_state()
                     //    checkState();
@@ -162,9 +162,9 @@ Rectangle {
                 onClicked: {
                     platformInterface.and_nc_97.update();
                     gateImageSource = "qrc:/views/logic-gate/images/nl7sz97/and_nc.png"
-                    value_A = "B"
-                    value_B = "C"
-                    value_C = "A"
+//                    value_A = "B"
+//                    value_B = "C"
+//                    value_C = "A"
 
                     read_state()
                     //   checkState();
@@ -177,9 +177,9 @@ Rectangle {
                     platformInterface.or_97.update();
                     gateImageSource = "qrc:/views/logic-gate/images/nl7sz97/or.png"
                     //  inputName = "A"
-                    value_A = "B"
-                    value_B = "C"
-                    value_C = "A"
+//                    value_A = "B"
+//                    value_B = "C"
+//                    value_C = "A"
 
                     read_state()
                     //  checkState();

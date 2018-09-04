@@ -9,9 +9,9 @@ Rectangle {
     id: container
     property string gateImageSource
     property string inputName
-    property var value_A: A
-    property var value_B: B
-    property var value_C: C
+    property string value_A: "A"
+    property string value_B: "B"
+    property string value_C: "C"
 
 
     anchors {
@@ -106,9 +106,9 @@ Rectangle {
 
             gateImageSource =  "qrc:/views/logic-gate/images/nl7sz58/nand.png"
             platformInterface.nand.update();
-            value_A = "B"
-            value_B = "C"
-            value_C = "A"
+//            value_A = "B"
+//            value_B = "C"
+//            value_C = "A"
             read_state();
 
         }
@@ -122,9 +122,9 @@ Rectangle {
 
                     gateImageSource = "qrc:/views/logic-gate/images/nl7sz58/nand.png"
                     platformInterface.nand.update();
-                    value_A = "B"
-                    value_B = "C"
-                    value_C = "A"
+//                    value_A = "B"
+//                    value_B = "C"
+//                    value_C = "A"
                     read_state()
 
                 }
@@ -139,9 +139,9 @@ Rectangle {
                     gateImageSource = "qrc:/views/logic-gate/images/nl7sz58/nand_nb.png"
 
                     platformInterface.and_nb.update();
-                    value_A = "B"
-                    value_B = "C"
-                    value_C = "A"
+//                    value_A = "B"
+//                    value_B = "C"
+//                    value_C = "A"
                     read_state()
                     //  checkState();
 
@@ -156,9 +156,9 @@ Rectangle {
                     gateImageSource = "qrc:/views/logic-gate/images/nl7sz58/and_nc.png"
 
                     read_state()
-                    value_A = "A"
-                    value_B = "C"
-                    value_C = "B"
+//                    value_A = "A"
+//                    value_B = "C"
+//                    value_C = "B"
 
                 }
             }
@@ -169,9 +169,9 @@ Rectangle {
                     gateImageSource = "qrc:/views/logic-gate/images/nl7sz58/or.png"
 
                     read_state()
-                    value_A = "A"
-                    value_B = "C"
-                    value_C = "B"
+//                    value_A = "A"
+//                    value_B = "C"
+//                    value_C = "B"
 
 
                 }
@@ -183,9 +183,9 @@ Rectangle {
                     gateImageSource = "qrc:/views/logic-gate/images/nl7sz58/xor.png"
 
                     read_state()
-                    value_A = "B"
-                    value_B = "C"
-                    value_C = "A"
+//                    value_A = "B"
+//                    value_B = "C"
+//                    value_C = "A"
 
 
 
