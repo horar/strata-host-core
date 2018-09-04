@@ -9,10 +9,9 @@ Rectangle {
     id: container
     property string gateImageSource
     property string inputName
-    property var value_A
-    property var value_B
-    property var value_C
-    property var value_Y
+    property string value_A: A
+    property string value_B: B
+    property string value_C: C
 
     anchors {
         fill: parent
@@ -85,59 +84,6 @@ Rectangle {
 
     }
 
-//    function checkState( ) {
-
-
-
-//        console.log("the value of noti a before", platformInterface.nl7sz97_io_state.a)
-//        console.log("the value of noti b before ", platformInterface.nl7sz97_io_state.b)
-
-//        //  valueA = platformInterface.nl7sz58_io_state.a;
-//        //  valueB = platformInterface.nl7sz58_io_state.b;
-
-//        console.log("the value of noti a after", platformInterface.nl7sz97_io_state.a)
-//        console.log("the value of noti b after ", platformInterface.nl7sz97_io_state.b)
-
-//        //valueC = platformInterface.nl7sz58_io_state.c;
-//        //valueY = platformInterface.nl7sz58_io_state.y;
-
-
-//        console.log("one toggle", inputOneToggle.checked)
-
-
-//        //        property var valueA: platformInterface.nl7sz58_io_state.a
-
-
-//        //        onValueAChanged: {
-//        //            if( valueA === 1) {
-//        //                inputOneToggle.checked = true
-//        //            }
-//        //            else {
-//        //                console.log("switch 1 is off")
-//        //                inputOneToggle.checked = false
-//        //            }
-
-//        //        }
-
-
-//        //        onValueBchanged: {
-
-//        //            if(valueB === 1) {
-//        //                inputTwoToggle.checked = true
-//        //            }
-//        //            else  {
-//        //                console.log("switch 2 is off")
-//        //                inputTwoToggle.checked = false
-//        //            }
-
-//        //        }
-
-//        //        if(value_y === 1) {
-//        //            sgStatusLight.status = "green"
-//        //        }
-//        //        else sgStatusLight.status = "off"
-//    }
-
     SGSegmentedButtonStrip {
         id: logicSelection
 
@@ -154,11 +100,12 @@ Rectangle {
 
             gateImageSource =  "qrc:/views/logic-gate/images/nl7sz97/mux.png"
             platformInterface.mux_97.update();
+            value_A = "B"
+            value_B = "A"
+            value_C = "C"
             read_state();
 
-          //  checkState();
 
-            // inputName = "A"
         }
         segmentedButtons: GridLayout {
             columnSpacing: 1
@@ -170,6 +117,9 @@ Rectangle {
 
                     gateImageSource = "qrc:/views/logic-gate/images/nl7sz97/mux.png"
                     platformInterface.mux_97.update();
+                    value_A = "B"
+                    value_B = "A"
+                    value_C = "C"
                     read_state()
                     // checkState()
                 }
@@ -180,11 +130,11 @@ Rectangle {
                 text: qsTr("AND")
                 onClicked: {
 
-
                     gateImageSource = "qrc:/views/logic-gate/images/nl7sz97/and.png"
-                    // inputName = "A"
-
                     platformInterface.and_97.update();
+                    value_A = "B"
+                    value_B = "A"
+                    value_C = "C"
                     read_state()
                     //  checkState();
 
@@ -198,6 +148,9 @@ Rectangle {
                     platformInterface.or_nc_97.update();
                     gateImageSource = "qrc:/views/logic-gate/images/nl7sz97/or_nc.png"
                     //  inputName = "B"
+                    value_A = "A"
+                    value_B = "C"
+                    value_C = "B"
 
                     read_state()
                     //    checkState();
@@ -209,7 +162,9 @@ Rectangle {
                 onClicked: {
                     platformInterface.and_nc_97.update();
                     gateImageSource = "qrc:/views/logic-gate/images/nl7sz97/and_nc.png"
-                    //inputName = "B"
+                    value_A = "B"
+                    value_B = "C"
+                    value_C = "A"
 
                     read_state()
                     //   checkState();
@@ -222,6 +177,9 @@ Rectangle {
                     platformInterface.or_97.update();
                     gateImageSource = "qrc:/views/logic-gate/images/nl7sz97/or.png"
                     //  inputName = "A"
+                    value_A = "B"
+                    value_B = "C"
+                    value_C = "A"
 
                     read_state()
                     //  checkState();
@@ -233,17 +191,11 @@ Rectangle {
                 text: qsTr("Inverter")
                 onClicked: {
                     platformInterface.inverter_97.update();
-                    inputName = "A and C"
+
 
                     gateImageSource = "qrc:/views/logic-gate/images/nl7sz58/inverter.png"
-                    //                    horizontalLine.opacity = 1
-                    //                    textForInput.opacity = 1
-                    //                    inputTwoToggle.opacity = 0
                     read_state()
                     //  checkState();
-
-
-
                 }
             }
             SGSegmentedButton{
@@ -320,7 +272,7 @@ Rectangle {
 
             Text {
                 id: inputOne
-                text: "A"
+                text: value_A
                 font.bold: true
                 font.pointSize: 30
                 anchors {
@@ -386,7 +338,7 @@ Rectangle {
 
             Text {
                 id: inputTwo
-                text: "B"
+                text: value_B
                 font.bold: true
                 font.pointSize: 30
                 anchors {
@@ -465,7 +417,7 @@ Rectangle {
 
 
                 // Optional Configuration:
-                label: "<b>C</b>" // Default: "" (if not entered, label will not appear)
+                label: value_C // Default: "" (if not entered, label will not appear)
                 labelLeft: false        // Default: true
                 // status: "off"           // Default: "off"
                 lightSize: 50           // Default: 50

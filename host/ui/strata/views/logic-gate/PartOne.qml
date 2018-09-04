@@ -9,10 +9,10 @@ Rectangle {
     id: container
     property string gateImageSource
     property string inputName
-    property var value_A
-    property var value_B
-    property var value_C
-    property var value_Y
+    property var value_A: A
+    property var value_B: B
+    property var value_C: C
+
 
     anchors {
         fill: parent
@@ -85,58 +85,7 @@ Rectangle {
 
     }
 
-    function checkState( ) {
 
-
-
-        console.log("the value of noti a before", platformInterface.nl7sz58_io_state.a)
-        console.log("the value of noti b before ", platformInterface.nl7sz58_io_state.b)
-
-        //  valueA = platformInterface.nl7sz58_io_state.a;
-        //  valueB = platformInterface.nl7sz58_io_state.b;
-
-        console.log("the value of noti a after", platformInterface.nl7sz58_io_state.a)
-        console.log("the value of noti b after ", platformInterface.nl7sz58_io_state.b)
-
-        //valueC = platformInterface.nl7sz58_io_state.c;
-        //valueY = platformInterface.nl7sz58_io_state.y;
-
-
-        console.log("one toggle", inputOneToggle.checked)
-
-
-        //        property var valueA: platformInterface.nl7sz58_io_state.a
-
-
-        //        onValueAChanged: {
-        //            if( valueA === 1) {
-        //                inputOneToggle.checked = true
-        //            }
-        //            else {
-        //                console.log("switch 1 is off")
-        //                inputOneToggle.checked = false
-        //            }
-
-        //        }
-
-
-        //        onValueBchanged: {
-
-        //            if(valueB === 1) {
-        //                inputTwoToggle.checked = true
-        //            }
-        //            else  {
-        //                console.log("switch 2 is off")
-        //                inputTwoToggle.checked = false
-        //            }
-
-        //        }
-
-        //        if(value_y === 1) {
-        //            sgStatusLight.status = "green"
-        //        }
-        //        else sgStatusLight.status = "off"
-    }
 
     SGSegmentedButtonStrip {
         id: logicSelection
@@ -157,11 +106,11 @@ Rectangle {
 
             gateImageSource =  "qrc:/views/logic-gate/images/nl7sz58/nand.png"
             platformInterface.nand.update();
+            value_A = "B"
+            value_B = "C"
+            value_C = "A"
             read_state();
 
-          //  checkState();
-
-            // inputName = "A"
         }
         segmentedButtons: GridLayout {
             columnSpacing: 1
@@ -173,8 +122,11 @@ Rectangle {
 
                     gateImageSource = "qrc:/views/logic-gate/images/nl7sz58/nand.png"
                     platformInterface.nand.update();
+                    value_A = "B"
+                    value_B = "C"
+                    value_C = "A"
                     read_state()
-                    // checkState()
+
                 }
 
             }
@@ -185,10 +137,11 @@ Rectangle {
 
 
                     gateImageSource = "qrc:/views/logic-gate/images/nl7sz58/nand_nb.png"
-                    // inputName = "A"
-                    inputOneToggle.checked = false;
-                    inputTwoToggle.checked = false;
+
                     platformInterface.and_nb.update();
+                    value_A = "B"
+                    value_B = "C"
+                    value_C = "A"
                     read_state()
                     //  checkState();
 
@@ -201,11 +154,11 @@ Rectangle {
                 onClicked: {
                     platformInterface.and_nc.update();
                     gateImageSource = "qrc:/views/logic-gate/images/nl7sz58/and_nc.png"
-                    //  inputName = "B"
-                    inputOneToggle.checked = false;
-                    inputTwoToggle.checked = false;
+
                     read_state()
-                    //    checkState();
+                    value_A = "A"
+                    value_B = "C"
+                    value_C = "B"
 
                 }
             }
@@ -214,11 +167,12 @@ Rectangle {
                 onClicked: {
                     platformInterface.or.update();
                     gateImageSource = "qrc:/views/logic-gate/images/nl7sz58/or.png"
-                    //inputName = "B"
-                    inputOneToggle.checked = false;
-                    inputTwoToggle.checked = false;
+
                     read_state()
-                    //   checkState();
+                    value_A = "A"
+                    value_B = "C"
+                    value_C = "B"
+
 
                 }
             }
@@ -227,11 +181,12 @@ Rectangle {
                 onClicked: {
                     platformInterface.xor.update();
                     gateImageSource = "qrc:/views/logic-gate/images/nl7sz58/xor.png"
-                    //  inputName = "A"
-                    inputOneToggle.checked = false;
-                    inputTwoToggle.checked = false;
+
                     read_state()
-                    //  checkState();
+                    value_A = "B"
+                    value_B = "C"
+                    value_C = "A"
+
 
 
                 }
@@ -331,7 +286,7 @@ Rectangle {
 
             Text {
                 id: inputOne
-                text: "A"
+                text: value_A
                 font.bold: true
                 font.pointSize: 30
                 anchors {
@@ -352,8 +307,6 @@ Rectangle {
             anchors {
                 left: logicContainer.left
                 top: inputToggleContainer.bottom
-
-
             }
 
             SGSwitch {
@@ -363,9 +316,6 @@ Rectangle {
                     topMargin: 30
 
                 }
-
-
-
 
                 onClicked: {
                     console.log("on click of the switch 2")
@@ -390,14 +340,13 @@ Rectangle {
 
                 }
 
-
                 transform: Rotation { origin.x: 25; origin.y: 25; angle: 270 }
 
             }
 
             Text {
                 id: inputTwo
-                text: "B"
+                text: value_B
                 font.bold: true
                 font.pointSize: 30
                 anchors {
@@ -426,15 +375,10 @@ Rectangle {
             id: thirdInput
             width: 50
             height: 50
-            //color: "green"
-
             anchors {
                 left: gatesImage.right
                 top: inputToggleContainer.top
                 topMargin: 50
-                //  horizontalCenter: parent.horizontalCenter
-
-
 
             }
             SGStatusLight {
@@ -447,7 +391,6 @@ Rectangle {
                 // status: "off"           // Default: "off"
                 lightSize: 50           // Default: 50
                 textColor: "black"           // Default: "black"
-
                 status : "off"
 
 
@@ -458,25 +401,17 @@ Rectangle {
             id: fourInput
             width: 50
             height: 50
-            //color: "green"
 
             anchors {
-
                 top: gatesImage.bottom
-
-             //   topMargin: 50
                 horizontalCenter: gatesImage.horizontalCenter
-
-
-
-
             }
             SGStatusLight {
                 id: sgStatusLightTwo
 
 
                 // Optional Configuration:
-                label: "<b>C</b>" // Default: "" (if not entered, label will not appear)
+                label: value_C // Default: "" (if not entered, label will not appear)
                 labelLeft: false        // Default: true
                 // status: "off"           // Default: "off"
                 lightSize: 50           // Default: 50
