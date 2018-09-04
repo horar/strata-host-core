@@ -68,7 +68,7 @@ Rectangle {
 
     onValueCChanged: {
 
-        console.log("change in y")
+        console.log("change in c")
 
         if(valueC === 1) {
             sgStatusLightTwo.status = "green"
@@ -153,7 +153,7 @@ Rectangle {
         Component.onCompleted: {
 
             gateImageSource =  "qrc:/views/logic-gate/images/nl7sz97/mux.png"
-            platformInterface.mux.update();
+            platformInterface.mux_97.update();
             read_state();
 
           //  checkState();
@@ -198,8 +198,7 @@ Rectangle {
                     platformInterface.or_nc_97.update();
                     gateImageSource = "qrc:/views/logic-gate/images/nl7sz97/or_nc.png"
                     //  inputName = "B"
-                    inputOneToggle.checked = false;
-                    inputTwoToggle.checked = false;
+
                     read_state()
                     //    checkState();
 
@@ -211,8 +210,7 @@ Rectangle {
                     platformInterface.and_nc_97.update();
                     gateImageSource = "qrc:/views/logic-gate/images/nl7sz97/and_nc.png"
                     //inputName = "B"
-                    inputOneToggle.checked = false;
-                    inputTwoToggle.checked = false;
+
                     read_state()
                     //   checkState();
 
@@ -224,8 +222,7 @@ Rectangle {
                     platformInterface.or_97.update();
                     gateImageSource = "qrc:/views/logic-gate/images/nl7sz97/or.png"
                     //  inputName = "A"
-                    inputOneToggle.checked = false;
-                    inputTwoToggle.checked = false;
+
                     read_state()
                     //  checkState();
 
@@ -237,8 +234,7 @@ Rectangle {
                 onClicked: {
                     platformInterface.inverter_97.update();
                     inputName = "A and C"
-                    inputOneToggle.checked = false;
-                    inputTwoToggle.checked = false;
+
                     gateImageSource = "qrc:/views/logic-gate/images/nl7sz58/inverter.png"
                     //                    horizontalLine.opacity = 1
                     //                    textForInput.opacity = 1
@@ -300,7 +296,7 @@ Rectangle {
                 transform: Rotation { origin.x: 25; origin.y: 25; angle: 270 }
 
                 onClicked: {
-                    console.log("on click of the switch 1 ")
+                    console.log("checked ",inputOneToggle.checked )
 
                     //   platformInterface.read_io.update()
                     if(inputOneToggle.checked)  {
@@ -367,7 +363,7 @@ Rectangle {
                     if(inputTwoToggle.checked)  {
 
                         platformInterface.write_io_97.update(platformInterface.nl7sz97_io_state.a, 1, platformInterface.nl7sz97_io_state.c,  platformInterface.nl7sz97_io_state.y)
-                        platformInterface.write_io.show()
+                        platformInterface.write_io_97.show()
                         valueB = 1
                         read_state()
 
