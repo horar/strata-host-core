@@ -390,16 +390,23 @@
         <file>views/logic-gate/sgwidgets/images/inverter.png</file>
         <file>views/logic-gate/sgwidgets/images/nand-icon.png</file>
         <file>views/logic-gate/sgwidgets/images/OR.png</file>
-        <file>views/logic-gate/images/and_nc.png</file>
-        <file>views/logic-gate/images/buffer.png</file>
-        <file>views/logic-gate/images/nand.png</file>
-        <file>views/logic-gate/images/nand_nb.png</file>
-        <file>views/logic-gate/images/inverter.png</file>
-        <file>views/logic-gate/images/or.png</file>
-        <file>views/logic-gate/images/xor.png</file>
         <file>views/logic-gate/sgwidgets/SGStatusLight.qml</file>
         <file>views/logic-gate/sgwidgets/SGSwitch.qml</file>
         <file>views/logic-gate/sgwidgets/images/greenStatusLight.svg</file>
         <file>views/logic-gate/sgwidgets/images/offStatusLight.svg</file>
+        <file>views/logic-gate/images/nl7sz97/and.png</file>
+        <file>views/logic-gate/images/nl7sz97/and_nc.png</file>
+        <file>views/logic-gate/images/nl7sz97/buffer.png</file>
+        <file>views/logic-gate/images/nl7sz97/inverter.png</file>
+        <file>views/logic-gate/images/nl7sz97/mux.png</file>
+        <file>views/logic-gate/images/nl7sz97/or.png</file>
+        <file>views/logic-gate/images/nl7sz97/or_nc.png</file>
+        <file>views/logic-gate/images/nl7sz58/and_nc.png</file>
+        <file>views/logic-gate/images/nl7sz58/buffer.png</file>
+        <file>views/logic-gate/images/nl7sz58/inverter.png</file>
+        <file>views/logic-gate/images/nl7sz58/nand.png</file>
+        <file>views/logic-gate/images/nl7sz58/nand_nb.png</file>
+        <file>views/logic-gate/images/nl7sz58/or.png</file>
+        <file>views/logic-gate/images/nl7sz58/xor.png</file>
     </qresource>
 </RCC>

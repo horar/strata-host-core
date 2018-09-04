@@ -21,6 +21,14 @@ Item {
     }
 
 
+    property var nl7sz97_io_state: {
+        "a":1,
+        "b":0,
+        "c":1,
+        "y":1
+    }
+
+
     // @notification input_voltage_notification
 
     // -------------------  end notification messages
@@ -37,253 +45,6 @@ Item {
     // TO SYNCHRONIZE THE SPEED ON ALL THE VIEW DO THE FOLLOWING:
     // EXAMPLE: platformInterface.motorSpeedSliderValue
 
-    property var motor_speed : ({
-                                    "cmd" : "speed_input",
-                                    "payload": {
-                                        "speed_target": 1500 // default value
-                                    },
-
-                                    // Update will set and send in one shot
-                                    update: function (speed) {
-                                        this.set(speed)
-                                        CorePlatformInterface.send(this)
-                                    },
-                                    // Set can set single or multiple properties before sending to platform
-                                    set: function (speed) {
-                                        this.payload.speed_target = speed;
-                                    },
-                                    send: function () { CorePlatformInterface.send(this) },
-                                    show: function () { CorePlatformInterface.show(this) }
-                                })
-
-
-
-    /*
-       system_mode_selection Command
-     */
-    property var system_mode_selection: ({
-                                             "cmd" : "set_system_mode",
-                                             "payload": {
-                                                 "system_mode":" " // "automation" or "manual"
-                                             },
-
-                                             // Update will set and send in one shot
-                                             update: function (system_mode) {
-                                                 this.set(system_mode)
-                                                 CorePlatformInterface.send(this)
-                                             },
-                                             // Set can set single or multiple properties before sending to platform
-                                             set: function (system_mode) {
-                                                 this.payload.system_mode = system_mode;
-                                             },
-                                             send: function () { CorePlatformInterface.send(this) },
-                                             show: function () { CorePlatformInterface.show(this) }
-
-
-
-                                         })
-    /*
-      set_drive_mode
-    */
-    property var set_drive_mode: ({
-                                      "cmd" : "set_drive_mode",
-                                      "payload": {
-                                          "drive_mode" : " ",
-                                      },
-
-                                      // Update will set and send in one shot
-                                      update: function (drive_mode) {
-                                          this.set(drive_mode)
-                                          CorePlatformInterface.send(this)
-                                      },
-                                      // Set can set single or multiple properties before sending to platform
-                                      set: function (drive_mode) {
-                                          this.payload.drive_mode = drive_mode;
-                                      },
-                                      send: function () { CorePlatformInterface.send(this) },
-                                      show: function () { CorePlatformInterface.show(this) }
-
-
-
-                                  })
-    /*
-      Set Phase Angle
-    */
-    property var set_phase_angle: ({
-                                       "cmd" : "set_phase_angle",
-                                       "payload": {
-                                           "phase_angle" : 0,
-                                       },
-
-                                       // Update will set and send in one shot
-                                       update: function (phase_angle) {
-                                           this.set(phase_angle)
-                                           CorePlatformInterface.send(this)
-                                       },
-                                       // Set can set single or multiple properties before sending to platform
-                                       set: function (phase_angle) {
-                                           this.payload.phase_angle = phase_angle;
-                                       },
-                                       send: function () { CorePlatformInterface.send(this) },
-                                       show: function () { CorePlatformInterface.show(this) }
-
-                                   })
-
-
-    /*
-      Set Motor State
-    */
-    property var set_motor_on_off: ({
-                                        "cmd" : "set_motor_on_off",
-                                        "payload": {
-                                            "enable": 0,
-                                        },
-
-                                        // Update will set and send in one shot
-                                        update: function (enabled) {
-                                            this.set(enabled)
-                                            CorePlatformInterface.send(this)
-                                        },
-                                        // Set can set single or multiple properties before sending to platform
-                                        set: function (enabled) {
-                                            this.payload.enable = enabled;
-                                        },
-                                        send: function () { CorePlatformInterface.send(this) },
-                                        show: function () { CorePlatformInterface.show(this) }
-
-                                    })
-
-    /*
-      Set Ramp Rate
-    */
-    property var set_ramp_rate: ({
-                                     "cmd": "set_ramp_rate",
-                                     "payload" : {
-                                         "ramp_rate": ""
-                                     },
-
-                                     // Update will set and send in one shot
-                                     update: function (ramp_rate) {
-                                         this.set(ramp_rate)
-                                         CorePlatformInterface.send(this)
-                                     },
-                                     // Set can set single or multiple properties before sending to platform
-                                     set: function (ramp_rate) {
-                                         this.payload.ramp_rate = ramp_rate;
-                                         
-                                     },
-                                     send: function () { CorePlatformInterface.send(this) },
-                                     show: function () { CorePlatformInterface.show(this) }
-
-                                 })
-
-    /*
-      Set Reset mcu
-    */
-    property var set_reset_mcu: ({
-                                     "cmd": "reset_mcu",
-                                     // Update will send in one shot
-                                     update: function () {
-                                         CorePlatformInterface.send(this)
-                                     },
-                                     send: function () { CorePlatformInterface.send(this) },
-                                     show: function () { CorePlatformInterface.show(this) }
-
-                                 })
-
-    /*
-      Set LED Color Mixing
-    */
-    property var set_color_mixing : ({
-                                         "cmd":"set_color_mixing",
-                                         "payload":{
-                                             "color1": "red", // color can be "red"/"green"/"blue"
-                                             "color_value1": 128,// color_value varies from 0 to 255
-                                             "color2": "green", // color can be "red"/"green"/"blue"
-                                             "color_value2": 127, // color_value varies from 0 to 255
-                                         },
-                                         // Update will set and send in one shot
-                                         update: function (color_1,color_value_1,color_2,color_value_2) {
-                                             this.set(color_1,color_value_1,color_2,color_value_2)
-                                             CorePlatformInterface.send(this)
-                                         },
-                                         // Set can set single or multiple properties before sending to platform
-                                         set: function (color_1,color_value_1,color_2,color_value_2) {
-                                             this.payload.color1 = color_1;
-                                             this.payload.color_value1 = color_value_1;
-                                             this.payload.color2 = color_2;
-                                             this.payload.color_value2 = color_value_2;
-                                         },
-                                         send: function () { CorePlatformInterface.send(this) },
-                                         show: function () { CorePlatformInterface.show(this) }
-                                         
-                                     })
-
-    /*
-      Set Single Color LED
-    */
-    
-    property var set_single_color: ({
-                                        "cmd":"set_single_color",
-                                        "payload":{
-                                            "color": "red" ,// color can be "red"/"green"/"blue"
-                                            "color_value": 120, // color_value varies from 0 to 255
-                                        },
-                                        // Update will set and send in one shot
-                                        update: function (color,color_value) {
-                                            this.set(color,color_value)
-                                            CorePlatformInterface.send(this)
-                                        },
-                                        set: function (color,color_value) {
-                                            this.payload.color = color;
-                                            this.payload.color_value = color_value;
-                                            
-                                        },
-                                        send: function () { CorePlatformInterface.send(this) },
-                                        show: function () { CorePlatformInterface.show(this) }
-                                    })
-    /*
-      set Blink0 Frequency
-     */
-    property var set_blink0_frequency: ({
-                                            "cmd":"set_blink0_frequency",
-                                            "payload":{
-                                                "blink0_frequency": 2
-                                            },
-                                            // Update will set and send in one shot
-                                            update: function (blink_0_frequency) {
-                                                this.set(blink_0_frequency)
-                                                CorePlatformInterface.send(this)
-                                            },
-                                            set: function (blink_0_frequency) {
-                                                this.payload.blink0_frequency = blink_0_frequency
-
-                                            },
-                                            send: function () { CorePlatformInterface.send(this) },
-                                            show: function () { CorePlatformInterface.show(this) }
-                                        })
-
-    /*
-      set_led_output_on_off
-     */
-    property var set_led_outputs_on_off:({
-                                             "cmd":"set_led_outputs_on_off",
-                                             "payload":{
-                                                 "led_output": "white"       // "white" for turning all LEDs ON
-                                                 // "off" to turn off all the LEDs.
-                                             },
-                                             update: function (led_output) {
-                                                 this.set(led_output)
-                                                 CorePlatformInterface.send(this)
-                                             },
-                                             set: function (led_output) {
-                                                 this.payload.led_output = led_output
-
-                                             },
-                                             send: function () { CorePlatformInterface.send(this) },
-                                             show: function () { CorePlatformInterface.show(this) }
-
-                                         })
 
 
 
@@ -390,6 +151,100 @@ Item {
                                 send: function () { CorePlatformInterface.send(this) },
                                 show: function () { CorePlatformInterface.show(this) }
                             })
+
+    /******
+      NL7SZ97 logic gate
+    *******/
+
+    property var write_io_97: ({
+                            "cmd":"nl7sz97_write_io",
+                            "payload":{
+                                    "a":1,
+                                    "b":0,
+                                    "c":1
+                                },
+                                update: function (a,b,c) {
+                                    this.set(a,b,c)
+                                    CorePlatformInterface.send(this)
+                                },
+                                set: function (a,b,c) {
+                                    this.payload.a = a
+                                    this.payload.b = b
+                                    this.payload.c = c
+
+                                },
+                                send: function () { CorePlatformInterface.send(this) },
+                                show: function () { CorePlatformInterface.show(this) }
+
+
+
+                            })
+
+
+    property var read_io_97: ({
+                            "cmd":"nl7sz97_read_io",
+                            update: function () {
+                                CorePlatformInterface.send(this)
+                            },
+                            send: function () { CorePlatformInterface.send(this) },
+                            show: function () { CorePlatformInterface.show(this) }
+
+                           })
+
+    property var mux_97 : ({"cmd":"nl7sz97_mux",
+                                update: function () {
+                                    CorePlatformInterface.send(this)
+                                },
+                                send: function () { CorePlatformInterface.send(this) },
+                                show: function () { CorePlatformInterface.show(this) }
+                            })
+
+    property var and_97 : ({"cmd":"nl7sz97_and",
+                                update: function () {
+                                    CorePlatformInterface.send(this)
+                                },
+                                send: function () { CorePlatformInterface.send(this) },
+                                show: function () { CorePlatformInterface.show(this) }
+                            })
+    property var or_nc_97 : ({"cmd":"nl7sz97_or_nc",
+                                update: function () {
+                                    CorePlatformInterface.send(this)
+                                },
+                                send: function () { CorePlatformInterface.send(this) },
+                                show: function () { CorePlatformInterface.show(this) }
+                            })
+    property var and_nc_97 : ({"cmd":"nl7sz97_and_nc",
+                                update: function () {
+                                    CorePlatformInterface.send(this)
+                                },
+                                send: function () { CorePlatformInterface.send(this) },
+                                show: function () { CorePlatformInterface.show(this) }
+                            })
+    property var or_97: ({"cmd":"nl7sz97_or",
+                                update: function () {
+                                    CorePlatformInterface.send(this)
+                                },
+                                send: function () { CorePlatformInterface.send(this) },
+                                show: function () { CorePlatformInterface.show(this) }
+                            })
+    property var  buffer_97:  ({"cmd":"nl7sz97_buffer",
+                                update: function () {
+                                    CorePlatformInterface.send(this)
+                                },
+                                send: function () { CorePlatformInterface.send(this) },
+                                show: function () { CorePlatformInterface.show(this) }
+                            })
+
+    property var inverter_97: ({"cmd":"nl7sz97_inverter",
+                                update: function () {
+                                    CorePlatformInterface.send(this)
+                                },
+                                send: function () { CorePlatformInterface.send(this) },
+                                show: function () { CorePlatformInterface.show(this) }
+                            })
+
+
+
 
 
 

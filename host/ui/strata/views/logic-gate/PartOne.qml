@@ -64,6 +64,20 @@ Rectangle {
         else sgStatusLight.status = "off"
     }
 
+    property var valueC:  platformInterface.nl7sz58_io_state.c
+
+    onValueCChanged: {
+
+        console.log("change in y")
+
+        if(valueC === 1) {
+            sgStatusLightTwo.status = "green"
+        }
+        else sgStatusLightTwo.status = "off"
+    }
+
+
+
     function read_state() {
         console.log("inread")
         platformInterface.read_io.update();
@@ -141,7 +155,7 @@ Rectangle {
 
         Component.onCompleted: {
 
-            gateImageSource =  "qrc:/views/logic-gate/images/nand.png"
+            gateImageSource =  "qrc:/views/logic-gate/images/nl7sz58/nand.png"
             platformInterface.nand.update();
             read_state();
 
@@ -157,7 +171,7 @@ Rectangle {
                 checked: true  // Sets default checked button when exclusive
                 onClicked: {
 
-                    gateImageSource = "qrc:/views/logic-gate/images/nand.png"
+                    gateImageSource = "qrc:/views/logic-gate/images/nl7sz58/nand.png"
                     platformInterface.nand.update();
                     read_state()
                     // checkState()
@@ -170,7 +184,7 @@ Rectangle {
                 onClicked: {
 
 
-                    gateImageSource = "qrc:/views/logic-gate/images/nand_nb.png"
+                    gateImageSource = "qrc:/views/logic-gate/images/nl7sz58/nand_nb.png"
                     // inputName = "A"
                     inputOneToggle.checked = false;
                     inputTwoToggle.checked = false;
@@ -186,7 +200,7 @@ Rectangle {
                 text: qsTr("AND NOTC")
                 onClicked: {
                     platformInterface.and_nc.update();
-                    gateImageSource = "qrc:/views/logic-gate/images/and_nc.png"
+                    gateImageSource = "qrc:/views/logic-gate/images/nl7sz58/and_nc.png"
                     //  inputName = "B"
                     inputOneToggle.checked = false;
                     inputTwoToggle.checked = false;
@@ -199,7 +213,7 @@ Rectangle {
                 text: qsTr("OR")
                 onClicked: {
                     platformInterface.or.update();
-                    gateImageSource = "qrc:/views/logic-gate/images/or.png"
+                    gateImageSource = "qrc:/views/logic-gate/images/nl7sz58/or.png"
                     //inputName = "B"
                     inputOneToggle.checked = false;
                     inputTwoToggle.checked = false;
@@ -212,7 +226,7 @@ Rectangle {
                 text: qsTr("XOR")
                 onClicked: {
                     platformInterface.xor.update();
-                    gateImageSource = "qrc:/views/logic-gate/images/xor.png"
+                    gateImageSource = "qrc:/views/logic-gate/images/nl7sz58/xor.png"
                     //  inputName = "A"
                     inputOneToggle.checked = false;
                     inputTwoToggle.checked = false;
@@ -229,7 +243,7 @@ Rectangle {
                     inputName = "A and C"
                     inputOneToggle.checked = false;
                     inputTwoToggle.checked = false;
-                    gateImageSource = "qrc:/views/logic-gate/images/inverter.png"
+                    gateImageSource = "qrc:/views/logic-gate/images/nl7sz58/inverter.png"
                     //                    horizontalLine.opacity = 1
                     //                    textForInput.opacity = 1
                     //                    inputTwoToggle.opacity = 0
@@ -245,7 +259,7 @@ Rectangle {
                 onClicked: {
                     platformInterface.buffer.update();
                     inputName = "B = C"
-                    gateImageSource = "qrc:/views/logic-gate/images/buffer.png"
+                    gateImageSource = "qrc:/views/logic-gate/images/nl7sz58/buffer.png"
                     //                    horizontalLine.opacity = 1
                     //                    textForInput.opacity = 1
                     //                    inputTwoToggle.opacity = 0
@@ -374,11 +388,7 @@ Rectangle {
 
                     }
 
-
-
                 }
-
-
 
 
                 transform: Rotation { origin.x: 25; origin.y: 25; angle: 270 }
@@ -433,6 +443,40 @@ Rectangle {
 
                 // Optional Configuration:
                 label: "<b>Y</b>" // Default: "" (if not entered, label will not appear)
+                labelLeft: false        // Default: true
+                // status: "off"           // Default: "off"
+                lightSize: 50           // Default: 50
+                textColor: "black"           // Default: "black"
+
+                status : "off"
+
+
+            }
+        }
+
+        Rectangle {
+            id: fourInput
+            width: 50
+            height: 50
+            //color: "green"
+
+            anchors {
+
+                top: gatesImage.bottom
+
+             //   topMargin: 50
+                horizontalCenter: gatesImage.horizontalCenter
+
+
+
+
+            }
+            SGStatusLight {
+                id: sgStatusLightTwo
+
+
+                // Optional Configuration:
+                label: "<b>C</b>" // Default: "" (if not entered, label will not appear)
                 labelLeft: false        // Default: true
                 // status: "off"           // Default: "off"
                 lightSize: 50           // Default: 50
