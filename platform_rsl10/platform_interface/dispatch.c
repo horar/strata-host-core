@@ -8,6 +8,14 @@
 #include <printf.h>
 #include "cJSON.h"
 
+enum {BAD_JSON, COMMAND_NOT_FOUND, COMMAND_VALID};
+
+const char *response_string[] = {
+        "{\"nak\":\"\",\"payload\":{\"return_value\":false,\"return_string\":\"json error: badly formatted json\"}}",
+        "{\"notification\":\"payload\":{\"return_string\":\"error: command not found\"}}",
+        "{\"ack\":\"\", \"payload\":{\"return_value\":true,\"return_string\":\"Command Valid\"}"
+};
+
 /* An example of json format
    * payload arguments could be anything you want
    * this examples have a number and string arguments
@@ -18,15 +26,15 @@
 */
 
 /* ----------------------------------------------------------------------------
- * Function      : void dispatch(char * data, functions function_map1[], int size);
+ * Function      : void dispatch(char * data, command_handler command_handlers[], int size);
  * ----------------------------------------------------------------------------
  * Description   : check for proper json command, command validation, call the
- *                 right function for each command by calling function_call function.
+ *                 right function for each command by calling call_command_handler function.
  *                 The function takes three arguments. First, data pointer which
  *                 contains the json command in each node. Second, functions lists
  *                 for each command. Third is the size of the function_map[] array.
  * ------------------------------------------------------------------------- */
-void dispatch(char * data, functions function_map1[], int size)
+void dispatch(char * data, command_handler command_handlers[], int size)
 {
     char *parse_string = data;
     printf("parsing string is %s \n", parse_string);
@@ -34,15 +42,7 @@ void dispatch(char * data, functions function_map1[], int size)
     cJSON *json = NULL;
     cJSON *cmd = NULL;
     cJSON *payload = NULL;
-
-    // It will parse the JSON and allocate a tree of cJSON items that represents it.
     json = cJSON_Parse(parse_string);
-
-    /* used to print out the parsed json
-    char *string = cJSON_Print(json);
-
-    printf("cJSON parsed is: %s\n", string);
-    */
 
     // check for proper json string code goes here before cJSON_GetObjectItem gets called
     if (json == NULL)
@@ -51,8 +51,12 @@ void dispatch(char * data, functions function_map1[], int size)
         if (error_ptr != NULL)
         {
             printf("%s %s", error_ptr, "is invalid json\n");
+            response_string[BAD_JSON]; // emit json not valid
         }
-        goto end;
+        /* warning: memory is allocated to store the parsed JSON and
+         * must be freed by cJSON_Delete(json); to prevent memory lea */
+        cJSON_Delete(json);
+        return;
     }
 
     cmd = cJSON_GetObjectItem(json, "cmd");
@@ -60,39 +64,43 @@ void dispatch(char * data, functions function_map1[], int size)
 
     if (cmd == NULL)
     {
-        goto end;
+        /* warning: memory is allocated to store the parsed JSON and
+         * must be freed by cJSON_Delete(json); to prevent memory lea */
+        cJSON_Delete(json);
+        return;
     }
 
     char *cmd_value = cmd->valuestring;
 
     /* check for command type and call the right function if exist */
-    function_call(cmd_value, payload, function_map1, size);
+    call_command_handler(cmd_value, payload, command_handlers, size);
 
-    end:
-    /* Delete a cJSON structure. */
+    /* warning: memory is allocated to store the parsed JSON and
+         * must be freed by cJSON_Delete(json); to prevent memory lea */
     cJSON_Delete(json);
 }
 /* ----------------------------------------------------------------------------
- * Function      : void function_call(char *name, cJSON *payload_value, functions *function_map1, int size);
+ * Function      : void call_command_handler(char *name, cJSON *payload_value, command_handler *command_handlers, int size);
  * ----------------------------------------------------------------------------
  * Description   : call the right function for each command.
  *                 The function takes four arguments. First, name pointer which
  *                 contains string name of the function. Second, payload value for each command.
  *                 third, functions lists for each command. Fourth is the size of the function_map[] array.
  * ------------------------------------------------------------------------- */
-void function_call(char *name, cJSON *payload_value, functions *function_map1, int size)
+void call_command_handler(char *name, cJSON *payload_value, command_handler *command_handlers, int size)
 {
     printf("Size of the function_map  %u\n", size);
-    //for (int i = 0; i < (sizeof(function_map1) / sizeof(function_map1[0])); i++)
+
     for (int i = 0; i < size; i++)
     {
-        if (!strcmp(function_map1[i].name, name))
+        if (!strcmp(command_handlers[i].name, name))
         {
-            function_map1[i].fp(payload_value);
-            return;
+            response_string[COMMAND_VALID]; //emit ack
+            command_handlers[i].fp(payload_value);
         }
     }
     printf("%s %s \n", name, "function doesn't exist");
+    response_string[COMMAND_NOT_FOUND]; //emit command not found
 }
 
 // Below are the lists of functions used for each command specified

@@ -38,57 +38,55 @@ void push(char *data, linked_list *list) {
     }
     if (list->size > 1)
     {
-        list->old_tail = list->tail;
+        list->temp = list->tail;
         list->tail = new_node;
-        list->old_tail->next =  new_node;
+        list->temp->next =  new_node;
 
     }
     list->size++;
 
 }
-/* ----------------------------------------------------------------------------
- * Function      : void print_list(linked_list *list);
- * ----------------------------------------------------------------------------
- * Description   : print out the list for debugging purposes.
- * ------------------------------------------------------------------------- */
+
+//Function      : void print_list(linked_list *list);
+//Description   : print out the list for debugging purposes.
 void print_list(linked_list *list)
 {
     printf("Current liked list size %d \n", list->size);
     printf("The list consists of ");
-    list->traverse = list->head;
-    while (list->traverse != NULL)
+    list->temp = list->head;
+    while (list->temp != NULL)
     {
-        printf(" %s %s ", list->traverse->data, "-->");
-        list->traverse = list->traverse->next;
+        printf(" %s %s ", list->temp->data, "-->");
+        list->temp = list->temp->next;
     }
     printf("NULL\n");
 }
 /* ----------------------------------------------------------------------------
- * Function      : execute(linked_list *list, functions function_map1[], int size);
+ * Function      : execute(linked_list *list, command_handler command_handlers[], int size);
  * ----------------------------------------------------------------------------
  * Description   : call dispatch function to dispatch commands on the queue.
  * ------------------------------------------------------------------------- */
-void execute(linked_list *list, functions function_map1[], int size)
+void execute(linked_list *list, command_handler command_handlers[], int size)
 {
-    dispatch(list->head->data, function_map1, size);
-    pop(list, function_map1, size);
+    dispatch(list->head->data, command_handlers, size);
+    pop(list, command_handlers, size);
 }
 /* ----------------------------------------------------------------------------
- * Function      : pop(linked_list *list, functions *function_map, int size);
+ * Function      : pop(linked_list *list, command_handler *command_handlers, int size);
  * ----------------------------------------------------------------------------
  * Description   : remove commands already executed
  * ------------------------------------------------------------------------- */
-void pop(linked_list *list, functions *function_map, int size)
+void pop(linked_list *list, command_handler *command_handlers, int size)
 {
     if (list->head)
     {
 
-        list->new_head = list->head->next;
+        list->temp = list->head->next;
         free(list->head);
-        list->head = list->new_head;
+        list->head = list->temp;
         list->size--;
         print_list(list);
-        execute(list,function_map, size);
+        execute(list,command_handlers, size);
 
     }
 }

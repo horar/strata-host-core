@@ -15,9 +15,7 @@ typedef struct node{
 typedef struct {
     node *head;
     node *tail;
-    node *old_tail; // we use this when we add to keep track of the list
-    node *new_head; // we use this when we remove to keep pointing to the current head of the list
-    node *traverse; // we use this pointer to traverse through the list and print it out
+    node *temp; // used when add, remove, and print out the list
     int size;
 }linked_list;
 
@@ -26,13 +24,13 @@ typedef struct
     char  *name;
     void (*fp)(cJSON *payload_value);
 
-}functions;
+}command_handler;
 
 void list_init();
 void push(char *data, linked_list *list);
 void print_list(linked_list *list);
-void pop(linked_list *list, functions *function_map, int size);
-void execute(linked_list *list, functions function_map1[], int size);
+void pop(linked_list *list, command_handler *command_handlers, int size);
+void execute(linked_list *list, command_handler command_handlers[], int size);
 
 
 

@@ -6,8 +6,11 @@
 #include "queue.h"
 #include "dispatch.h"
 
+
+#define ARRAY_SIZE(array)  sizeof(array) / sizeof(array[0]);
+
 /* *
- * Lists of the functions that will be used for dispatching
+ * Lists of the command_handler that will be used for dispatching
  * commands. Each sub array in function_map[] will have the
  * command in a string format followed by the function that
  * will be declared and defined in dispatch.h and
@@ -15,7 +18,7 @@
  * name of the function.
  * */
 
-functions function_map[] = {
+command_handler command_handlers[] = {
         {"request_platform_id", request_platform_id},
         {"request_echo", request_echo},
         {"general_purpose", general_purpose},
@@ -32,7 +35,7 @@ functions function_map[] = {
  * ------------------------------------------------------------------------- */
 void list_init(){
 
-    int function_map_size = sizeof(function_map) / sizeof(function_map[0]);
+    int command_handlers_size = ARRAY_SIZE(command_handlers);
 
     linked_list *list = (linked_list*)malloc(sizeof(linked_list));
 
@@ -49,7 +52,7 @@ void list_init(){
 
     print_list(list);
 
-    execute(list, function_map, function_map_size);
+    execute(list, command_handlers, command_handlers_size);
 
 }
 
