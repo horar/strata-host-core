@@ -23,16 +23,27 @@ function populatePlatforms(platform_list_json) {
     //  platform_id -> local qml directory holding interface
     //to enable a new board UI to be shown, this list has to be edited to include the exact UUID for the boad.
     //the other half of the map will be the name of the directory that will be used to show the initial screen (e.g. usb-pd/Control.qml)
+//    var uuid_map = {
+//        "P2.2017.1.1.0.0.cbde0519-0f42-4431-a379-caee4a1494af" : "usb-pd",
+//        //"P2.2017.1.1.0.0.cbde0519-0f42-4431-a379-caee4a1494af" : "motor-vortex",
+//        "P2.2018.1.1.0.0.c9060ff8-5c5e-4295-b95a-d857ee9a3671" : "bubu",
+//        "motorvortex1" : "motor-vortex",
+//        "SEC.2018.004.1.1.0.2.20180710161919.1bfacee3-fb60-471d-98f8-fe597bb222cd" : "usb-pd-multiport",
+//        "SEC.2018.004.1.0.1.0.20180717143337.6828783d-b672-4fd5-b66b-370a41c035d2" : "usb-pd-multiport",    //david ralley's new board
+//        "P2.2018.0.0.0.0.00000000-0000-0000-0000-000000000000" : "usb-pd-multiport",
+//        "SEC.2017.038.0.0.0.0.20190816120000.cbde0519-0f42-4431-a379-caee4a1494af": "usb-pd-multiport",
+//        "SEC.2017.038.0.0.cbde0519-0f42-4431-a379-caee4a1494af": "usb-pd-multiport",
+//        "SEC.2017.038.0.0.0.1.20180906131412.cbde0519-0f42-4431-a379-caee4a1494af": "usb-pd-multiport"
+//    }
+
     var uuid_map = {
-        "P2.2017.1.1.0.0.cbde0519-0f42-4431-a379-caee4a1494af" : "usb-pd",
-        //"P2.2017.1.1.0.0.cbde0519-0f42-4431-a379-caee4a1494af" : "motor-vortex",
-        "P2.2018.1.1.0.0.c9060ff8-5c5e-4295-b95a-d857ee9a3671" : "bubu",
+        "P2.2017.1.1" : "usb-pd",
+        "P2.2018.1.1" : "bubu",
         "motorvortex1" : "motor-vortex",
-        "SEC.2018.004.1.1.0.2.20180710161919.1bfacee3-fb60-471d-98f8-fe597bb222cd" : "usb-pd-multiport",
-        "SEC.2018.004.1.0.1.0.20180717143337.6828783d-b672-4fd5-b66b-370a41c035d2" : "usb-pd-multiport",    //david ralley's new board
-        "P2.2018.0.0.0.0.00000000-0000-0000-0000-000000000000" : "usb-pd-multiport",
-        "SEC.2017.038.0.0.0.0.20190816120000.cbde0519-0f42-4431-a379-caee4a1494af": "usb-pd-multiport",
-        "SEC.2017.038.0.0.cbde0519-0f42-4431-a379-caee4a1494af": "usb-pd-multiport"
+        "SEC.2018.004.1.1" : "usb-pd-multiport",
+        "SEC.2018.004.1.0" : "usb-pd-multiport",    //david ralley's new board
+        "P2.2018.0.0.0" : "usb-pd-multiport",       //uninitialized board
+        "SEC.2017.038.0.0": "usb-pd-multiport"
     }
 
     platformListModel.clear()
@@ -44,11 +55,21 @@ function populatePlatforms(platform_list_json) {
         console.log("number of platforms in list:",platform_list.list.length);
 
         for (var i = 0; i < platform_list.list.length; i ++){
+
+            //extract the platform identifier (without firmware or uuid) for matching
+            var pattern = new RegExp('^[A-Z0-9]+\.[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+');
+            var theString = platform_list.list[i].uuid;
+            var platformType = String(theString).match(pattern);
+            console.log("looking at platform ",platform_list.list[i].uuid);
+            if (platformType){
+                console.log("platform name matched pattern:",platformType);
+            }
+
             // Extract platform verbose name and UUID
             var platform_info = {
                 "text" : platform_list.list[i].verbose,
                 "verbose" : platform_list.list[i].verbose,
-                "name" : uuid_map[platform_list.list[i].uuid],
+                "name" : uuid_map[platformType],    //this will return the name used to bring up the UI
                 "connection" : platform_list.list[i].connection,
                 "uuid"  :   platform_list.list[i].uuid
             }
@@ -63,7 +84,7 @@ function populatePlatforms(platform_list_json) {
             else if (platform_info.connection === "connected"){
                 platform_info.text += " (Connected)"
                 // copy "connected" platform; Note: this will auto select the last listed "connected" platform
-                console.log("autoconnect =",platform_info.text);
+                console.log("autoconnect =",platform_info.name);
                 console.log("the platform name is",platform_info.uuid);
                 autoSelectedPlatform = platform_info
                 autoSelectedIndex = i+1 //+1 due to default "select a platform entry"
