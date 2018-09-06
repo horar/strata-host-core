@@ -99,7 +99,7 @@ int main(int argc, char *argv[])
 
             // Start HCS
             //hcsProcess->setProcessChannelMode(QProcess::ForwardedChannels);
-            hcsProcess->start(hcsPath,arguments, QIODevice::ReadWrite);
+//            hcsProcess->start(hcsPath,arguments, QIODevice::ReadWrite);
         }
         else {
             hcs_started = false;

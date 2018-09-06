@@ -28,7 +28,7 @@ Rectangle {
 
         TabButton {
             id: basicButton
-            text: qsTr("NL7SZ58")
+            text: qsTr("NL7SZ97")
             onClicked: {
                 controlContainer.currentIndex = 0
             }
@@ -36,7 +36,7 @@ Rectangle {
 
         TabButton {
             id: advancedButton
-            text: qsTr("NL7SZ97 ")
+            text: qsTr("NL7SZ58")
             onClicked: {
 
                 controlContainer.currentIndex = 1
@@ -103,9 +103,7 @@ Rectangle {
           PartOne {
               id: partOne
               visible: true
-              Component.onCompleted: {
-                  console.log("hghg")
-              }
+
 
           }
 
