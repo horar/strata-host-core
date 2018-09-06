@@ -863,7 +863,6 @@ Item {
     function dataUpdate() {
         if (root.ready) {
             root.update()
-            console.log("updating!")
         }
     }
 }
