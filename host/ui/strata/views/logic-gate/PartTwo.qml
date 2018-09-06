@@ -129,8 +129,11 @@ Rectangle {
                     gateImageSource = "qrc:/views/logic-gate/images/nl7sz58/nand.png"
                     platformInterface.nand.update();
                     value_A = "B"
+                    value_AIn = platformInterface.nl7sz58_io_state.b
                     value_B = "C"
+                    value_BIn = platformInterface.nl7sz58_io_state.c
                     value_C = "A"
+                    value_CIn = platformInterface.nl7sz58_io_state.a
                     read_state()
 
                 }
@@ -146,8 +149,11 @@ Rectangle {
 
                     platformInterface.and_nb.update();
                     value_A = "B"
+                    value_AIn = platformInterface.nl7sz58_io_state.b
                     value_B = "C"
+                    value_BIn = platformInterface.nl7sz58_io_state.c
                     value_C = "A"
+                    value_CIn = platformInterface.nl7sz58_io_state.a
                     read_state()
                     //  checkState();
 
@@ -163,8 +169,11 @@ Rectangle {
 
                     read_state()
                     value_A = "A"
+                    value_AIn = platformInterface.nl7sz58_io_state.b
                     value_B = "C"
+                    value_BIn = platformInterface.nl7sz58_io_state.c
                     value_C = "B"
+                    value_CIn = platformInterface.nl7sz58_io_state.b
 
                 }
             }
@@ -176,8 +185,11 @@ Rectangle {
 
                     read_state()
                     value_A = "A"
+                    value_AIn = platformInterface.nl7sz58_io_state.b
                     value_B = "C"
+                    value_BIn = platformInterface.nl7sz58_io_state.c
                     value_C = "B"
+                    value_CIn = platformInterface.nl7sz58_io_state.b
 
 
                 }
@@ -190,8 +202,11 @@ Rectangle {
 
                     read_state()
                     value_A = "B"
+                    value_AIn = platformInterface.nl7sz58_io_state.b
                     value_B = "C"
+                    value_BIn = platformInterface.nl7sz58_io_state.c
                     value_C = "A"
+                    value_CIn = platformInterface.nl7sz58_io_state.a
 
 
 
