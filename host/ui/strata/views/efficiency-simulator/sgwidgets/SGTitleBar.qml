@@ -2,10 +2,11 @@ import QtQuick 2.9
 
 Rectangle {
     id: root
-    anchors {
-        left: parent.left
-        right: parent.right
-    }
+//    anchors {
+//        left: parent.left
+//        right: parent.right
+//    }
+    width: parent.width
     height: 30
     color: "#ddd"
     border {

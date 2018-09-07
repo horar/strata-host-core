@@ -178,5 +178,3 @@ Item {
         return Qt.rgba(color.r/factor, color.g/factor, color.b/factor, 1 )
     }
 }
-
-

@@ -167,8 +167,8 @@ ChartView {
         id: resetZoom
         visible: rootChart.scrollTotal !== 0
         anchors {
-            right: parent.right
-            top: parent.top
+            right: rootChart.right
+            top: rootChart.top
             margins: 12
         }
         text: "Reset Zoom"

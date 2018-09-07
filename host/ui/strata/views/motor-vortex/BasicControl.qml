@@ -15,36 +15,32 @@ Rectangle {
     height: 725
     color: "white"
 
-    property alias motorSpeedSliderValue: motorSpeedControl.value
-    property alias warningVisible: warningBox.visible
 
-    Component.onCompleted: {
-        platformInterface.system_mode_selection.update("manual")
-    }
+    property alias warningVisible: warningBox.visible
 
     // Control Section
     Rectangle {
         id: controlSection1
         width: leftControl.width + rightControl.width + rightControl.anchors.leftMargin
-        height: parent.height / 2
+        height: controlPage.height / 2
         anchors {
-            verticalCenter: parent.verticalCenter
-            horizontalCenter: parent.horizontalCenter
+            verticalCenter: controlPage.verticalCenter
+            horizontalCenter: controlPage.horizontalCenter
         }
 
         Rectangle {
             id: leftControl
             anchors {
-                left: parent.left
-                top: parent.top
+                left: controlSection1.left
+                top: controlSection1.top
             }
             width: height
-            height: parent.height
+            height: controlSection1.height
 
             SGCircularGauge {
                 id: tachMeterGauge
                 anchors {
-                    fill: parent
+                    fill: leftControl
                 }
                 gaugeFrontColor1: Qt.rgba(0,1,.25,1)
                 gaugeFrontColor2: Qt.rgba(1,0,0,1)
@@ -78,15 +74,42 @@ Rectangle {
                     rightMargin: 10
                     top: rightControl.top
                 }
+                from: 1500
+                to: 4000
                 label: "<b>Motor Speed:</b>"
                 labelLeft: false
-                value: 1500
-                from: 1500
-                to: 5500
+                value:
+                {
+
+                    if(platformInterface.motorSpeedSliderValue <= 1500 ){
+                        return 1500
+                    }
+                    if( platformInterface.motorSpeedSliderValue >= 4000 ) {
+                        return 4000
+                    }
+
+                    return platformInterface.motorSpeedSliderValue
+
+                }
+
 
                 onValueChanged: {
-                    platformInterface.motor_speed.update(value.toFixed(0));
+
                     setSpeed.input = value.toFixed(0)
+                    var current_slider_value = value.toFixed(0)
+
+                    //  Don't change if FAE safety limit is enabled
+                    if(current_slider_value >= 4000 && platformInterface.motorSpeedSliderValue >= 4000){
+                        console.log("Do nothing")
+                    }
+
+                    else if(current_slider_value <= 1500 && platformInterface.motorSpeedSliderValue <= 1500){
+                        console.log("Do nothing")
+                    }
+
+                    else{
+                        platformInterface.motorSpeedSliderValue = current_slider_value
+                    }
                 }
             }
 
@@ -99,11 +122,12 @@ Rectangle {
                     right: rightControl.right
                     rightMargin: 10
                 }
-                onApplied: { motorSpeedControl.value = parseInt(value, 10) }
+                onApplied: {
+                    platformInterface.motorSpeedSliderValue = parseInt(value, 10)
+                }
                 input: motorSpeedControl.value
                 infoBoxWidth: 80
             }
-
 
             SGRadioButtonContainer {
                 id: operationModeControl
@@ -125,35 +149,28 @@ Rectangle {
                     property alias manual : manual
                     property alias automatic: automatic
 
-                   property var systemMode: platformInterface.set_mode.system_mode
-
-                    onSystemModeChanged: {
-                        if(systemMode === "automation") {
-                            automatic.checked = true;
-                        }
-                        else {
-                            manual.checked = true;
-                        }
-                    }
-
                     SGRadioButton {
                         id: manual
                         text: "Manual Control"
-                        checked: true
+                        checked: platformInterface.systemModeManual
                         onCheckedChanged: {
-                            if (checked) {
-                                platformInterface.system_mode_selection.update("manual")
-                            }
+                                platformInterface.systemModeManual = manual.checked
+                                platformInterface.motorSpeedSliderValue = 1500
+                                motorSpeedControl.sliderEnable = true
+                                motorSpeedControl.opacity = 1.0
+
                         }
                     }
 
                     SGRadioButton {
                         id: automatic
                         text: "Automatic Demo Pattern"
+                        checked: platformInterface.systemModeAuto
                         onCheckedChanged: {
-                            if (checked) {
-                                platformInterface.system_mode_selection.update("automation")
-                            }
+
+                                platformInterface.systemModeAuto = automatic.checked
+                                motorSpeedControl.sliderEnable = false
+                                motorSpeedControl.opacity = 0.5
                         }
                     }
                 }
@@ -175,7 +192,7 @@ Rectangle {
             Text {
                 id: warningText
                 anchors {
-                    centerIn: parent
+                    centerIn: warningBox
                 }
                 text: "See Advanced Controls for Current Fault Status"
                 font.pixelSize: 12

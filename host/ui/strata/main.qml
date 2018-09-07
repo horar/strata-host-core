@@ -3,6 +3,8 @@ import QtQuick.Window 2.10
 import QtQuick.Controls 2.3
 import QtQuick.Layouts 1.3
 import "js/navigation_control.js" as NavigationControl
+import "qrc:/js/platform_selection.js" as PlatformSelection
+import "js/login.js" as Authenticator
 
 Window {
     id: mainWindow
@@ -12,14 +14,49 @@ Window {
     title: qsTr("Strata")
 
     // Debug option(s)
-    property bool showDebugCommandBar: true
+    property bool showDebugCommandBar: false
+    property bool is_remote_connected: false
+
 
     Component.onCompleted: {
         console.log("Initializing")
         NavigationControl.init(flipable,controlContainer, contentContainer, statusBarContainer)
     }
 
+
+    Connections {
+        target: coreInterface
+
+        onRemoteConnectionChanged:{
+            // Successful remote connection
+            if (result === true){
+                is_remote_connected = true
+            }
+            else {
+                is_remote_connected = false
+            }
+        }
+    }
+
     onClosing: {
+        if(is_remote_connected) {
+            // sending remote disconnect message to hcs
+            var remote_disconnect_json = {
+                "hcs::cmd":"remote_disconnect",
+            }
+            coreInterface.sendCommand(JSON.stringify(remote_disconnect_json))
+
+            console.log("UI -> HCS ", JSON.stringify(remote_disconnect_json))
+        }
+
+        var remote_json = {
+            "hcs::cmd":"advertise",
+            "payload": {
+                "advertise_platforms":false
+            }
+        }
+        console.log("asking hcs to advertise the platforms",JSON.stringify(remote_json))
+        coreInterface.sendCommand(JSON.stringify(remote_json))
         // End session with HCS
         coreInterface.unregisterClient();
     }
@@ -35,7 +72,7 @@ Window {
             width: parent.width
 
             property real windowHeight: mainWindow.height  // for centering popups spawned from the statusbar
-            property bool showDebug: false  // for linking debug in statusbar to the debug bar
+            property bool showDebug: showDebugCommandBar  // for linking debug in status bar to the debug bar
         }
 
         Flipable {
@@ -70,7 +107,7 @@ Window {
             }
 
             transitions: Transition {
-                NumberAnimation { target: rotation; property: "angle"; duration: 500 }
+                NumberAnimation { target: rotation; property: "angle"; duration: 400 }
             }
         }
     }
@@ -187,6 +224,29 @@ Window {
             bottom: parent.bottom
         }
     }
+
+    ListModel {
+        id: platformListModel
+
+        // These properties are here (not in platform_selection.js) so they generate their built in signals
+        property int currentIndex: 0
+        property string selectedConnection: "" // Signal that determines UI behaviors
+
+        Component.onCompleted: {
+//            console.log("platformListModel component completed");
+            if (!PlatformSelection.isInitialized) { PlatformSelection.initialize(this, coreInterface, documentManager) }
+            PlatformSelection.populatePlatforms(coreInterface.platform_list_)
+        }
+    }
+
+    Connections {
+        target: coreInterface
+        onPlatformListChanged: {
+            //console.log("platform list updated: ", list)
+            PlatformSelection.populatePlatforms(list)
+        }
+    }
+
 
     // Listen into Core Interface which gives us the platform changes
     Connections {

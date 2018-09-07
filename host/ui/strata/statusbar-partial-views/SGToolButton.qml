@@ -27,4 +27,9 @@ ToolButton {
         verticalAlignment: Text.AlignVCenter
         elide: Text.ElideRight
     }
+
+    FontLoader {
+        id: franklinGothicBook
+        source: "qrc:/fonts/FranklinGothicBook.otf"
+    }
 }

@@ -11,8 +11,8 @@ Rectangle {
 
     property string input: ""
     property string title: qsTr("")
-    property color titleTextColor: "#000000"
-    property color titleBoxColor: "#eeeeee"
+    property alias titleTextColor: title.color
+    property alias titleBoxColor: titleArea.color
     property color titleBoxBorderColor: "#dddddd"
     property color outputTextColor: "#000000"
     property color outputBoxColor: "#ffffff"
@@ -30,7 +30,7 @@ Rectangle {
             top: parent.top
         }
         height: visible ? 35 : 0
-        color: root.titleBoxColor
+        color: "#eeeeee"
         border {
             color: root.titleBoxBorderColor
             width: 1
@@ -40,7 +40,7 @@ Rectangle {
         Text {
             id: title
             text: root.title
-            color: root.titleTextColor
+            color: "#000000"
             anchors {
                 fill: parent
             }
@@ -111,7 +111,7 @@ Rectangle {
     }
 
     Button {
-        visible: true
+        visible: false
         width: 30
         height: 30
         flat: true
