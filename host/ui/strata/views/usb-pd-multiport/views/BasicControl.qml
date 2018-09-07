@@ -1,4 +1,5 @@
 import QtQuick 2.9
+import QtGraphicalEffects 1.0
 import "qrc:/views/usb-pd-multiport/sgwidgets"
 import "qrc:/views/usb-pd-multiport/views/basic-partial-views"
 
@@ -85,10 +86,84 @@ Item {
             }
             height: 428 * ratioCalc
 
-            Text {
-                text: "No compatible input power conversion device connected"
-                anchors.centerIn: parent
+            property bool inputPowerConnected: false
+
+            Rectangle{
+                id:topBackgroundRect
+                color:"#ddd"
+                anchors.top:inputConversionStats.top
+                anchors.left:inputConversionStats.left
+                anchors.right:inputConversionStats.right
+                height:inputConversionStats.height/6
             }
+
+            Text{
+                id:powerConverterText
+                text:"POWER CONVERTER"
+                font.pointSize: 17
+                color: "#bbb"
+                anchors.top: inputConversionStats.top
+                anchors.topMargin:10
+                anchors.horizontalCenter: inputConversionStats.horizontalCenter
+            }
+
+            Text{
+                id:converterNameText
+                text:"ON Semiconductor NCP4060A"
+                visible: inputConversionStats.inputPowerConnected
+                font.pointSize: 20
+                //color: "#bbb"
+                anchors.top: powerConverterText.bottom
+                anchors.horizontalCenter: inputConversionStats.horizontalCenter
+            }
+
+            PortStatBox {
+                id:maxPowerBox
+                label: "MAX CAPACITY"
+                value: "100"
+                icon: "../images/icon-max.svg"
+                //portColor: root.portColor
+                valueSize: 32
+                unit: "W"
+                anchors.top: topBackgroundRect.bottom
+                anchors.topMargin: 20
+                anchors.horizontalCenter: inputConversionStats.horizontalCenter
+                height: inputConversionStats.height/8
+                width: inputConversionStats.width/2
+                visible: inputConversionStats.inputPowerConnected
+            }
+
+            PortStatBox {
+                id:voltageOutBox
+                label: "VOLTAGE OUTPUT"
+                value: "100"
+                icon: "../images/icon-voltage.svg"
+                //portColor: root.portColor
+                valueSize: 32
+                unit: "V"
+                anchors.top: maxPowerBox.bottom
+                anchors.topMargin: 20
+                anchors.horizontalCenter: inputConversionStats.horizontalCenter
+                height: inputConversionStats.height/8
+                width: inputConversionStats.width/2
+                visible: inputConversionStats.inputPowerConnected
+            }
+
+            Image{
+                id:powerConverterIcon
+                source:"./images/powerconverter.png"
+                opacity:.5
+                fillMode:Image.PreserveAspectFit
+                anchors.top:voltageOutBox.bottom
+                anchors.topMargin:40
+                anchors.bottom:inputConversionStats.bottom
+                anchors.bottomMargin:40
+                anchors.left:inputConversionStats.left
+                anchors.right: inputConversionStats.right
+            }
+
+
+
         }
 
         SGLayoutDebug {

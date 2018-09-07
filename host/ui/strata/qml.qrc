@@ -369,5 +369,6 @@
         <file>views/efficiency-simulator/GraphAndCircuit.qml</file>
         <file>statusbar-partial-views/SGPlatformSelector.qml</file>
         <file>js/platform_selection.js</file>
+        <file>views/usb-pd-multiport/views/images/powerconverter.png</file>
     </qresource>
 </RCC>
