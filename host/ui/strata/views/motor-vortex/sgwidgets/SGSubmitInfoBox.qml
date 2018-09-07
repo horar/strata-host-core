@@ -67,9 +67,9 @@ Rectangle {
                 id: infoText
                 padding: 10
                 anchors {
-                    right: parent.right
-                    verticalCenter: parent.verticalCenter
-                    left: parent.left
+                    right: infoContainer.right
+                    verticalCenter: infoContainer.verticalCenter
+                    left: infoContainer.left
                 }
                 text: input
                 selectByMouse: true

@@ -33,8 +33,8 @@ Rectangle {
         width: 600
         height: childrenRect.height
         anchors {
-            left: parent.left
-            verticalCenter: parent.verticalCenter
+            left: advancedControl.left
+            verticalCenter: advancedControl.verticalCenter
         }
 
         SGLabelledInfoBox {
@@ -93,7 +93,7 @@ Rectangle {
             title: "Faults:"
             anchors {
                 top: speedGraph.bottom
-                horizontalCenter: parent.horizontalCenter
+                horizontalCenter: leftSide.horizontalCenter
             }
             width: 500
             height: 200
@@ -127,7 +127,7 @@ Rectangle {
         height: childrenRect.height
         anchors {
             left: leftSide.right
-            verticalCenter: parent.verticalCenter
+            verticalCenter: advancedControl.verticalCenter
         }
 
         Item {

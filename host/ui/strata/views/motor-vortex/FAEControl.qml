@@ -33,8 +33,8 @@ Rectangle {
         width: 600
         height: childrenRect.height
         anchors {
-            left: parent.left
-            verticalCenter: parent.verticalCenter
+            left: faeControl.left
+            verticalCenter: faeControl.verticalCenter
         }
 
         Rectangle {
@@ -50,7 +50,7 @@ Rectangle {
             Text {
                 id: warningText
                 anchors {
-                    centerIn: parent
+                    centerIn: warningBox
                 }
                 text: "<b>Restricted Access:</b> ON Semi Employees Only"
                 font.pixelSize: 18
@@ -147,7 +147,7 @@ Rectangle {
             title: "Faults:"
             anchors {
                 top: speedGraph.bottom
-                horizontalCenter: parent.horizontalCenter
+                horizontalCenter: leftSide.horizontalCenter
             }
             width: 500
             height: 200
@@ -179,7 +179,7 @@ Rectangle {
         height: childrenRect.height
         anchors {
             left: leftSide.right
-            verticalCenter: parent.verticalCenter
+            verticalCenter: faeControl.verticalCenter
         }
 
         Item {
