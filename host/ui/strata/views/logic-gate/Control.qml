@@ -33,6 +33,7 @@ Rectangle {
             onClicked: {
                 platformInterface.off_led.update()
                 controlContainer.currentIndex = 0
+
             }
         }
 
@@ -79,23 +80,24 @@ Rectangle {
             onCurrentIndexChanged: {
                 switch (currentIndex){
                 case 0:
+                    console.log("in view one")
                     partOne.visible = true
                     partTwo.visible = false
-                     platformInterface.off_led.update()
+                    platformInterface.off_led.update()
                     platformInterface.mux_97.update();
-                    platformInterface.read_io.update()
                     partOne.currentIndex = 0
 
 
                     break;
                 case 1:
+                     console.log("in view two")
                     partOne.visible = false
                     partTwo.visible = true
                     platformInterface.off_97_led.update()
                     platformInterface.nand.update();
                     platformInterface.read_io.update()
                     partTwo.currentIndex = 0
-
+                    partOne.tabIndex = 0
                     break;
 
                 }
@@ -109,12 +111,9 @@ Rectangle {
             }
             clip: true
 
-
-
           PartOne {
               id: partOne
               visible: true
-
 
           }
 

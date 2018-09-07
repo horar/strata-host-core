@@ -174,6 +174,9 @@ Rectangle {
         Component.onCompleted: {
 
             gateImageSource =  "qrc:/views/logic-gate/images/nl7sz58/nand.png"
+            sgStatusLightInputTwo.opacity = 0
+            inputTwo.opacity = 1
+            inputTwoToggle.opacity = 1
             //            platformInterface.nand.update();
 
             //            read_state()
@@ -205,6 +208,9 @@ Rectangle {
                     currentIndex = 0
                     gateImageSource = "qrc:/views/logic-gate/images/nl7sz58/nand.png"
                     platformInterface.nand.update();
+                    sgStatusLightInputTwo.opacity = 0
+                    inputTwo.opacity = 1
+                    inputTwoToggle.opacity = 1
 
                     //    read_state()
 

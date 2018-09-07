@@ -5,6 +5,8 @@ Button {
     id: root
     text: qsTr("Button")
     checkable: true
+    enabled: masterEnabled
+    hoverEnabled: masterHoverEnabled
 
     // Figures out which button this instance is
     Component.onCompleted: {
@@ -27,29 +29,43 @@ Button {
     }
 
     property real radius: masterRadius
-    property string activeColorTop: masterActiveColorTop
-    property string activeColorBottom: masterActiveColorBottom
-    property string inactiveColorTop: masterInactiveColorTop
-    property string inactiveColorBottom: masterInactiveColorBottom
+    property color activeColor: masterActiveColor
+    property color inactiveColor: masterInactiveColor
+    property color textColor: masterTextColor
+    property color textActiveColor: masterActiveTextColor
+    property int index: 0
+
+    signal indexUpdate(int index)
 
     background: Rectangle{
         id: buttonStyle
-        gradient: Gradient {
-            GradientStop { position: 0.0; color: root.checked ? activeColorTop : inactiveColorTop }
-            GradientStop { position: 1.0; color: root.checked ? activeColorBottom : inactiveColorBottom }
-        }
+        color: root.hovered ? Qt.rgba( (activeColor.r + inactiveColor.r) / 2, (activeColor.g + inactiveColor.g) / 2, (activeColor.b + inactiveColor.b) / 2, 1) : root.checked ? activeColor : inactiveColor
         radius: root.radius
         implicitHeight: masterHeight
-        implicitWidth: 70
+        implicitWidth: masterButtonImplicitWidth
+        opacity: root.enabled ? 1.0 : 0.3
+        layer.enabled: true
 
         Rectangle{
             id: flatSide
             height: parent.height
             width: parent.width/2
-            gradient: Gradient {
-                GradientStop { position: 0.0; color: root.checked ? activeColorTop : inactiveColorTop }
-                GradientStop { position: 1.0; color: root.checked ? activeColorBottom : inactiveColorBottom }
-            }
+            color: parent.color
+        }
+    }
+
+    contentItem: Text {
+        text: root.text
+        opacity: root.enabled ? 1.0 : 0.3
+        color: root.checked ? root.textActiveColor : root.textColor
+        horizontalAlignment: Text.AlignHCenter
+        verticalAlignment: Text.AlignVCenter
+        elide: Text.ElideRight
+    }
+
+    onCheckedChanged: {
+        if (checked) {
+            indexUpdate(root.index)
         }
     }
 }

@@ -17,6 +17,7 @@ Rectangle {
     property var value_BIn
     property var value_CIn
     property var currentIndex: 0
+    property var tabIndex: logicSelection.index
 
 
     Component.onCompleted: {
@@ -29,13 +30,13 @@ Rectangle {
         sgStatusLightInputTwo.opacity = 0
         inputTwo.opacity = 1
         inputTwoToggle.opacity = 1
-        value_A = "B"
-        value_AIn = platformInterface.nl7sz97_io_state.b
-        value_B = "A"
-        value_BIn = platformInterface.nl7sz97_io_state.a
-        value_C = "C"
-        value_CIn = platformInterface.nl7sz97_io_state.c
-        read_state();
+//        value_A = "B"
+//        value_AIn = platformInterface.nl7sz97_io_state.b
+//        value_B = "A"
+//        value_BIn = platformInterface.nl7sz97_io_state.a
+//        value_C = "C"
+//        value_CIn = platformInterface.nl7sz97_io_state.c
+//        read_state();
     }
 
 
@@ -189,6 +190,13 @@ Rectangle {
         radius: 4
         buttonHeight: 25
         visible: true
+        index: tabIndex
+        onIndexChanged: {
+            if(index === 0) {
+                muxgate.checked = true
+            }
+        }
+
         anchors {
             top: parent.top
             topMargin: 40
@@ -196,9 +204,11 @@ Rectangle {
         }
 
         segmentedButtons: GridLayout {
+            id: gatesSelection
             columnSpacing: 1
 
             SGSegmentedButton{
+                id: muxgate
                 text: qsTr("MUX")
                 checked: true  // Sets default checked button when exclusive
                 onClicked: {
@@ -210,10 +220,11 @@ Rectangle {
                     sgStatusLightInputTwo.opacity = 0
                     inputTwo.opacity = 1
                     inputTwoToggle.opacity = 1
-
                     currentIndex = 0
+                    tabIndex = logicSelection.index
 
                 }
+
 
             }
 
@@ -230,6 +241,7 @@ Rectangle {
                     inputTwo.opacity = 1
                     inputTwoToggle.opacity = 1
                     currentIndex = 1
+                    tabIndex = logicSelection.index
                 }
             }
 
@@ -245,6 +257,7 @@ Rectangle {
                     inputTwo.opacity = 1
                     inputTwoToggle.opacity = 1
                     currentIndex = 2
+                    tabIndex = logicSelection.index
 
                 }
             }
@@ -260,6 +273,7 @@ Rectangle {
                     inputTwo.opacity = 1
                     inputTwoToggle.opacity = 1
                     currentIndex = 3
+                    tabIndex = logicSelection.index
                 }
             }
             SGSegmentedButton{
@@ -274,6 +288,7 @@ Rectangle {
                     inputTwo.opacity = 1
                     inputTwoToggle.opacity = 1
                     currentIndex = 4
+                    tabIndex = logicSelection.index
 
                 }
             }
@@ -288,6 +303,7 @@ Rectangle {
                     inputTwo.opacity = 0
                     inputTwoToggle.opacity = 0
                     currentIndex = 5
+                    tabIndex = logicSelection.index
                     gateImageSource = "qrc:/views/logic-gate/images/nl7sz58/inverter.png"
 
 
@@ -306,10 +322,14 @@ Rectangle {
                     inputTwo.opacity = 0
                     inputTwoToggle.opacity = 0
                     currentIndex = 6
+                    tabIndex = logicSelection.index
 
                 }
             }
+
+
         }
+
     }
 
     Rectangle {
@@ -328,9 +348,8 @@ Rectangle {
             id: inputToggleContainer
             width: 100
             height: 100
-            color: "green"
 
-            anchors {
+           anchors {
                 left: logicContainer.left
                 top: logicContainer.top
 
@@ -506,8 +525,6 @@ Rectangle {
             id: thirdInput
             width: 50
             height: 50
-            //color: "green"
-
             anchors {
                 left: gatesImage.right
                 top: inputToggleContainer.top

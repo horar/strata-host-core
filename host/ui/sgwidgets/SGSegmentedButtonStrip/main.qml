@@ -59,6 +59,6 @@ Window {
 
         // Helpful signals:
         //onNothingCheckedChanged: console.log("nothingChecked changed!")  // For non-exclusive buttons, alerts when the status of "no buttons are checked" changes
-        //onIndexChanged: console.log("index is now", index)  // For exclusive buttons, alerts the index of the last clicked button
+        onIndexChanged: console.log("index is now", index)  // For exclusive buttons, alerts the index of the last clicked button
     }
 }
