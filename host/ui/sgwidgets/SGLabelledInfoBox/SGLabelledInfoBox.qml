@@ -13,7 +13,6 @@ Rectangle {
     property color infoBoxBorderColor: "#cccccc"
     property real infoBoxBorderWidth: 1
 
-
     implicitHeight: labelLeft ? infoContainer.height : labelText.height + infoContainer.height + infoContainer.anchors.topMargin
     implicitWidth: labelLeft ? infoBoxWidth + labelText.width + infoContainer.anchors.leftMargin : Math.max(infoBoxWidth, labelText.width)
 

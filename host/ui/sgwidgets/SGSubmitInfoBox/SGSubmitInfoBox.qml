@@ -21,6 +21,8 @@ Rectangle {
     property alias overrideLabelWidth: labelText.width
     property alias readOnly: infoText.readOnly
     property alias unit: unit.text
+    property real floatValue: { return parseFloat(infoText.text) }
+    property int intValue: { return parseInt(infoText.text) }
 
     implicitHeight: labelLeft ? inputButtonContainer.height : labelText.height + inputButtonContainer.height + inputButtonContainer.anchors.topMargin
     implicitWidth: labelLeft ? labelText.width + inputButtonContainer.width + inputButtonContainer.anchors.leftMargin :
@@ -89,6 +91,7 @@ Rectangle {
                 enabled: root.enabled
                 color: root.textColor
                 opacity: root.enabled ? 1 : 0.5
+                onEditingFinished: { if (!root.showButton) { root.applied(infoText.text) } }
 
                 RegExpValidator {
                     id: realNumberValidator

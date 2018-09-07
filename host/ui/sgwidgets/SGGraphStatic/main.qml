@@ -22,7 +22,8 @@ Window {
         xAxisTitle: "X axis"           // Default: empty
         yAxisTitle: "Why axis"          // Default: empty
         textColor: "#ffffff"            // Default: #000000 (black) - Must use hex colors for this property
-        dataLineColor: "white"          // Default: #000000 (black)
+        dataLine1Color: "white"          // Default: #000000 (black)
+        dataLine2Color: "blue"          // Default: #000000 (black)
         axesColor: "#cccccc"            // Default: Qt.rgba(.2, .2, .2, 1) (dark gray)
         gridLineColor: "#666666"        // Default: Qt.rgba(.8, .8, .8, 1) (light gray)
         backgroundColor: "black"        // Default: #ffffff (white)
