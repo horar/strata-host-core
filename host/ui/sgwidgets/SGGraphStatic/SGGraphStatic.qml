@@ -29,7 +29,8 @@ ChartView {
     property alias series2: dataLine2
 
     property int textSize: 14
-    property color dataLineColor: Qt.rgba(0, 0, 0, 1)
+    property alias dataLine1Color: dataLine1.color
+    property alias dataLine2Color: dataLine2.color
     property color axesColor: Qt.rgba(.2, .2, .2, 1)
     property color gridLineColor: Qt.rgba(.8, .8, .8, 1)
     property color textColor: Qt.rgba(0, 0, 0, 1)
@@ -88,8 +89,8 @@ ChartView {
     LineSeries {
         // Data line
         id: dataLine1
-        name: "Circuit 1"
-        color: dataLineColor
+        name: "Line 1"
+        color: Qt.rgba(0, 0, 0, 1)
         width: 2
         axisX: valueAxisX
         axisY: valueAxisY
@@ -97,9 +98,9 @@ ChartView {
 
     LineSeries {
         // Data line
-        name: "Circuit 2"
         id: dataLine2
-        color: "red"
+        name: "Line 2"
+        color: Qt.rgba(0, 0, 0, 1)
         width: 2
         axisX: valueAxisX
         axisY: valueAxisY

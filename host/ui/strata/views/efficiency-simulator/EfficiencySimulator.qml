@@ -6,13 +6,14 @@ import "calculation.js" as Calc
 import "component_source.js" as ComponentSource
 
 Item {
+    id: root
 
     GraphAndCircuit {
         id: efficiency
         anchors {
-            top: parent.top
-            left: parent.left
-            right: parent.right
+            top: root.top
+            left: root.left
+            right: root.right
         }
         height: 350
         dataLine1Color: "tomato"
@@ -23,8 +24,8 @@ Item {
         id: bar
         anchors {
             top: efficiency.bottom
-            left: parent.left
-            right: parent.right
+            left: root.left
+            right: root.right
         }
         currentIndex: 0
 
@@ -35,9 +36,8 @@ Item {
             Canvas {
                 id: circuit1Color
                 anchors {
-                    fill: parent
+                    fill: circuit1Button
                 }
-                visible: portConnected
                 contextType: "2d"
 
                 property real slideWidth: circuit1Button.checked ? 0.15 : 0
@@ -67,9 +67,8 @@ Item {
             Canvas {
                 id: circuit2Color
                 anchors {
-                    fill: parent
+                    fill: circuit2Button
                 }
-                visible: portConnected
                 contextType: "2d"
 
                 property real slideWidth: circuit2Button.checked ? 0.15 : 0
@@ -153,9 +152,9 @@ Item {
         currentIndex: bar.currentIndex
         anchors {
             top: bar.bottom
-            bottom: parent.bottom
-            left: parent.left
-            right: parent.right
+            bottom: root.bottom
+            left: root.left
+            right: root.right
         }
         property int previousIndex: 0
         onCurrentIndexChanged: {

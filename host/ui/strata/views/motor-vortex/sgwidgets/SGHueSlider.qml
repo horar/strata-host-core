@@ -6,10 +6,10 @@ Item {
     id: root
 
     property alias value: hueSlider.value
-    property string color1: "red"
-    property string color2: "green"
-    property int color_value1: 0
-    property int color_value2: 0
+    property string color1: "green"
+    property string color2: "blue"
+    property int color_value1: 128
+    property int color_value2: 128
     property string label: ""
     property bool labelLeft: true
     property color textColor : "black"

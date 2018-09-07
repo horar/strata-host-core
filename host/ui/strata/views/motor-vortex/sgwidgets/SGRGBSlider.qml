@@ -8,7 +8,7 @@ Item {
     property alias value: rgbSlider.value
     property var rgbArray: hToRgb(value)
     property string color: "red"
-    property int color_value: 0
+    property int color_value: 255
     property string label: ""
     property bool labelLeft: true
     property color textColor : "black"

@@ -33,8 +33,8 @@ Rectangle {
         width: 600
         height: childrenRect.height
         anchors {
-            left: parent.left
-            verticalCenter: parent.verticalCenter
+            left: faeControl.left
+            verticalCenter: faeControl.verticalCenter
         }
 
         Rectangle {
@@ -50,7 +50,7 @@ Rectangle {
             Text {
                 id: warningText
                 anchors {
-                    centerIn: parent
+                    centerIn: warningBox
                 }
                 text: "<b>Restricted Access:</b> ON Semi Employees Only"
                 font.pixelSize: 18
@@ -147,7 +147,7 @@ Rectangle {
             title: "Faults:"
             anchors {
                 top: speedGraph.bottom
-                horizontalCenter: parent.horizontalCenter
+                horizontalCenter: leftSide.horizontalCenter
             }
             width: 500
             height: 200
@@ -179,7 +179,7 @@ Rectangle {
         height: childrenRect.height
         anchors {
             left: leftSide.right
-            verticalCenter: parent.verticalCenter
+            verticalCenter: faeControl.verticalCenter
         }
 
         Item {
@@ -511,7 +511,6 @@ Rectangle {
 
                     onCurrentIndexChanged: {
                         platformInterface.phaseAngle = currentIndex;
-
                     }
                 }
             }
@@ -544,8 +543,9 @@ Rectangle {
                 }
                 onValueChanged: {
                     console.log(" in fae")
-                    platformInterface.set_color_mixing.update(color1,color_value1,color2,color_value2)
-                    platformInterface.ledSlider = value.toFixed(0)
+                    platformInterface.set_color_mixing.update(hueSlider.color1, hueSlider.color_value1, hueSlider.color2, hueSlider.color_value2)
+                    platformInterface.ledSlider = value
+                    platformInterface.turnOffChecked = false
                 }
             }
 
@@ -565,20 +565,28 @@ Rectangle {
                     text: "White"
                     onClicked: {
                         platformInterface.set_led_outputs_on_off.update("white")
+                        platformInterface.turnOffChecked = false
                     }
                 }
 
                 Button {
                     id: turnOff
-                    checkable: false
-                    text: "Turn Off"
+                    checkable: true
+                    text: checked ? "Turn On" : "Turn Off"
                     anchors {
                         left: whiteButton.right
                         leftMargin: 30
                     }
                     onClicked: {
-                        platformInterface.set_led_outputs_on_off.update("off")
+                        if (checked) {
+                            platformInterface.set_led_outputs_on_off.update("off")
+                            platformInterface.turnOffChecked = true
+                        } else {
+                            platformInterface.set_color_mixing.update(hueSlider.color1, hueSlider.color_value1, hueSlider.color2, hueSlider.color_value2)
+                            platformInterface.turnOffChecked = false
+                        }
                     }
+                    checked: platformInterface.turnOffChecked
                 }
             }
         }
@@ -608,8 +616,9 @@ Rectangle {
                     rightMargin: 10
                 }
                 onValueChanged: {
-                    platformInterface.set_single_color.update(color, color_value)
+                    platformInterface.set_single_color.update(singleColorSlider.color, singleColorSlider.color_value)
                     platformInterface.singleLEDSlider = value
+                    platformInterface.turnOffChecked = false
                 }
             }
 
@@ -627,10 +636,13 @@ Rectangle {
                     right: setLedPulse.left
                     rightMargin: 10
                 }
+                stepSize: 1.0
 
                 onValueChanged: {
-                    setLedPulse.input = value.toFixed(0)
-                    platformInterface.ledPulseSlider = value.toFixed(0)
+                    platformInterface.set_single_color.update(singleColorSlider.color, singleColorSlider.color_value)
+                    setLedPulse.input = value
+                    platformInterface.ledPulseSlider = value
+                    platformInterface.turnOffChecked = false
                 }
             }
 
@@ -644,7 +656,7 @@ Rectangle {
                 }
                 buttonVisible: false
                 onApplied:  {
-                    platformInterface.ledPulseSlider =  parseInt(value, 10)
+                    platformInterface.ledPulseSlider = parseInt(value, 10)
                 }
                 input: ledPulseFrequency.value
                 infoBoxWidth: 80

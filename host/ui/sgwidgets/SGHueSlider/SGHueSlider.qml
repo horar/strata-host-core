@@ -45,6 +45,8 @@ Item {
         live: false
         from: 0
         to: 255
+        enabled: root.enabled
+        opacity: enabled ? 1 : 0.5
 
         background: Rectangle {
             y: 4

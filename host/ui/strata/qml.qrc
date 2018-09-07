@@ -408,5 +408,7 @@
         <file>views/logic-gate/images/nl7sz58/nand_nb.png</file>
         <file>views/logic-gate/images/nl7sz58/or.png</file>
         <file>views/logic-gate/images/nl7sz58/xor.png</file>
+        <file>statusbar-partial-views/SGPlatformSelector.qml</file>
+        <file>js/platform_selection.js</file>
     </qresource>
 </RCC>
