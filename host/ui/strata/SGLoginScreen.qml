@@ -186,6 +186,7 @@ Rectangle {
             background: Rectangle {
                 border.color: usernameField.activeFocus ? "#219647" : "#ddd"
             }
+            selectByMouse: true
 
             Keys.onPressed: {
                 hideFailedLoginAnimation.start()
@@ -216,6 +217,8 @@ Rectangle {
             background: Rectangle {
                 border.color: passwordField.activeFocus ? "#219647" : "#ddd"
             }
+            selectByMouse: true
+            KeyNavigation.tab: loginButton
 
             Keys.onPressed: {
                 hideFailedLoginAnimation.start()
@@ -275,9 +278,11 @@ Rectangle {
             }
             width: 184; height: 38
             text:"Login"
+            activeFocusOnTab: true
 
             background: Rectangle {
                 color: loginButton.down ? "#666" : "#888"
+                border.color: loginButton.activeFocus ? "#219647" : "transparent"
             }
 
             contentItem: Text {
@@ -291,6 +296,10 @@ Rectangle {
                     pixelSize: 15
                     family: franklinGothicBold.name
                 }
+            }
+
+            Keys.onReturnPressed:{
+                loginButton.clicked()
             }
 
             /* OnClicked is handled in Connections section above */

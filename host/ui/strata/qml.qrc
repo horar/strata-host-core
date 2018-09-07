@@ -349,7 +349,6 @@
         <file>statusbar-partial-views/SGSwitch.qml</file>
         <file>statusbar-partial-views/SGTabButton.qml</file>
         <file>statusbar-partial-views/SGToolButton.qml</file>
-        <file>SGLogin.qml</file>
         <file>SGRegistration.qml</file>
         <file>images/icons/on.ico</file>
         <file>views/efficiency-simulator/images/circuit.png</file>
