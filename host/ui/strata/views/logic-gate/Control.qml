@@ -18,6 +18,7 @@ Rectangle {
         id: platformInterface
     }
 
+
     TabBar {
         id: navTabs
         anchors {
@@ -30,6 +31,7 @@ Rectangle {
             id: basicButton
             text: qsTr("NL7SZ97")
             onClicked: {
+                platformInterface.off_led.update()
                 controlContainer.currentIndex = 0
             }
         }
@@ -38,7 +40,6 @@ Rectangle {
             id: advancedButton
             text: qsTr("NL7SZ58")
             onClicked: {
-
                 controlContainer.currentIndex = 1
             }
         }
@@ -80,11 +81,21 @@ Rectangle {
                 case 0:
                     partOne.visible = true
                     partTwo.visible = false
+                     platformInterface.off_led.update()
+                    platformInterface.mux_97.update();
+                    platformInterface.read_io.update()
+                    partOne.currentIndex = 0
+
 
                     break;
                 case 1:
                     partOne.visible = false
                     partTwo.visible = true
+                    platformInterface.off_97_led.update()
+                    platformInterface.nand.update();
+                    platformInterface.read_io.update()
+                    partTwo.currentIndex = 0
+
                     break;
 
                 }
@@ -110,6 +121,8 @@ Rectangle {
           PartTwo {
               id: partTwo
               visible: false
+
+
           }
         }
     }

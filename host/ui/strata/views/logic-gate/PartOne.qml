@@ -13,26 +13,121 @@ Rectangle {
     property string value_B: "B"
     property string value_C: "C"
 
+    property var value_AIn
+    property var value_BIn
+    property var value_CIn
+    property var currentIndex: 0
+
+
+    Component.onCompleted: {
+
+        gateImageSource =  "qrc:/views/logic-gate/images/nl7sz97/mux.png"
+        platformInterface.mux_97.update();
+        sgStatusLightTwo.opacity = 0
+        toggleSwitch1.opacity = 1
+        inputT.opacity = 1
+        sgStatusLightInputTwo.opacity = 0
+        inputTwo.opacity = 1
+        inputTwoToggle.opacity = 1
+        value_A = "B"
+        value_AIn = platformInterface.nl7sz97_io_state.b
+        value_B = "A"
+        value_BIn = platformInterface.nl7sz97_io_state.a
+        value_C = "C"
+        value_CIn = platformInterface.nl7sz97_io_state.c
+        read_state();
+    }
+
+
     anchors {
         fill: parent
     }
 
-    property var valueB: platformInterface.nl7sz97_io_state.b
+    property var test_case: platformInterface.nl7sz97_io_state
+
+    onTest_caseChanged : {
+        if(currentIndex == 0) {
+            value_A = "B"
+            value_AIn = platformInterface.nl7sz97_io_state.b
+            value_B = "A"
+            value_BIn = platformInterface.nl7sz97_io_state.a
+            value_C = "C"
+            value_CIn = platformInterface.nl7sz97_io_state.c
+        }
+        if(currentIndex == 1) {
+            value_A = "A"
+            value_AIn = platformInterface.nl7sz97_io_state.a
+            value_B = "C"
+            value_BIn = platformInterface.nl7sz97_io_state.c
+            value_C = "B"
+            value_CIn = platformInterface.nl7sz97_io_state.b
+
+        }
+        if(currentIndex == 2) {
+            value_A = "A"
+            value_AIn = platformInterface.nl7sz97_io_state.a
+            value_B = "C"
+            value_BIn = platformInterface.nl7sz97_io_state.c
+            value_C = "B"
+            value_CIn = platformInterface.nl7sz97_io_state.b
+        }
+        if(currentIndex == 3) {
+
+            value_A = "B"
+            value_AIn = platformInterface.nl7sz97_io_state.b
+            value_B = "C"
+            value_BIn = platformInterface.nl7sz97_io_state.c
+            value_C = "A"
+            value_CIn = platformInterface.nl7sz97_io_state.a
+        }
+
+        if(currentIndex == 4) {
+            value_A = "B"
+            value_AIn = platformInterface.nl7sz97_io_state.b
+            value_B = "C"
+            value_BIn = platformInterface.nl7sz97_io_state.c
+            value_C = "A"
+            value_CIn = platformInterface.nl7sz97_io_state.a
+
+        }
+        if(currentIndex == 5) {
+            value_A = "C"
+            value_AIn = platformInterface.nl7sz97_io_state.c
+            value_B = "A"
+            value_BIn = platformInterface.nl7sz97_io_state.a
+            value_C = "B"
+            value_CIn = platformInterface.nl7sz97_io_state.b
+
+        }
+        if(currentIndex == 6) {
+            value_A = "B"
+            value_AIn = platformInterface.nl7sz97_io_state.b
+            value_B = "A"
+            value_BIn = platformInterface.nl7sz97_io_state.a
+            value_C = "C"
+            value_CIn = platformInterface.nl7sz97_io_state.c
+
+        }
+    }
+
+    property var valueB: value_BIn
 
 
     onValueBChanged: {
         console.log("change in b")
         if( valueB === 1) {
             inputTwoToggle.checked = true
+             sgStatusLightInputTwo.status = "green"
         }
         else {
             console.log("switch 1 is off")
             inputTwoToggle.checked = false
+              sgStatusLightInputTwo.status = "off"
         }
 
     }
 
-    property var valueA: platformInterface.nl7sz97_io_state.a
+    property var valueA:value_AIn
 
 
     onValueAChanged: {
@@ -42,13 +137,14 @@ Rectangle {
         if( valueA === 1) {
             inputOneToggle.checked = true
 
+
         }
         else {
             console.log("switch 2 is off")
             inputOneToggle.checked = false
 
-        }
 
+        }
     }
 
     property var valueY:  platformInterface.nl7sz97_io_state.y
@@ -63,7 +159,7 @@ Rectangle {
         else sgStatusLight.status = "off"
     }
 
-    property var valueC:  platformInterface.nl7sz97_io_state.c
+    property var valueC: value_CIn
 
     onValueCChanged: {
 
@@ -71,17 +167,14 @@ Rectangle {
 
         if(valueC === 1) {
             sgStatusLightTwo.status = "green"
-            toggleSwicth1.checked = true
-
+            toggleSwitch1.checked = true
         }
         else {
             sgStatusLightTwo.status = "off"
-            toggleSwicth1.checked = false
+            toggleSwitch1.checked = false
 
         }
     }
-
-
 
     function read_state() {
         console.log("inread")
@@ -102,17 +195,6 @@ Rectangle {
             horizontalCenter: parent.horizontalCenter
         }
 
-        Component.onCompleted: {
-
-            gateImageSource =  "qrc:/views/logic-gate/images/nl7sz97/mux.png"
-            platformInterface.mux_97.update();
-            sgStatusLightTwo.opacity = 0
-            toggleSwicth1.opacity = 1
-            inputT.opacity = 1
-            read_state();
-
-
-        }
         segmentedButtons: GridLayout {
             columnSpacing: 1
 
@@ -120,14 +202,17 @@ Rectangle {
                 text: qsTr("MUX")
                 checked: true  // Sets default checked button when exclusive
                 onClicked: {
-
                     gateImageSource = "qrc:/views/logic-gate/images/nl7sz97/mux.png"
                     platformInterface.mux_97.update();
                     sgStatusLightTwo.opacity = 0
-                    toggleSwicth1.opacity = 1
+                    toggleSwitch1.opacity = 1
                     inputT.opacity = 1
-                    read_state()
-                    // checkState()
+                    sgStatusLightInputTwo.opacity = 0
+                    inputTwo.opacity = 1
+                    inputTwoToggle.opacity = 1
+
+                    currentIndex = 0
+
                 }
 
             }
@@ -139,12 +224,12 @@ Rectangle {
                     gateImageSource = "qrc:/views/logic-gate/images/nl7sz97/and.png"
                     platformInterface.and_97.update();
                     sgStatusLightTwo.opacity = 1
-                    toggleSwicth1.opacity = 0
+                    toggleSwitch1.opacity = 0
                     inputT.opacity = 0
-                    read_state()
-                    //  checkState();
-
-
+                    sgStatusLightInputTwo.opacity = 0
+                    inputTwo.opacity = 1
+                    inputTwoToggle.opacity = 1
+                    currentIndex = 1
                 }
             }
 
@@ -154,10 +239,12 @@ Rectangle {
                     platformInterface.or_nc_97.update();
                     gateImageSource = "qrc:/views/logic-gate/images/nl7sz97/or_nc.png"
                     sgStatusLightTwo.opacity = 1
-                    toggleSwicth1.opacity = 0
+                    toggleSwitch1.opacity = 0
                     inputT.opacity = 0
-                    read_state()
-                    //    checkState();
+                    sgStatusLightInputTwo.opacity = 0
+                    inputTwo.opacity = 1
+                    inputTwoToggle.opacity = 1
+                    currentIndex = 2
 
                 }
             }
@@ -167,12 +254,12 @@ Rectangle {
                     platformInterface.and_nc_97.update();
                     gateImageSource = "qrc:/views/logic-gate/images/nl7sz97/and_nc.png"
                     sgStatusLightTwo.opacity = 1
-                    toggleSwicth1.opacity = 0
+                    toggleSwitch1.opacity = 0
                     inputT.opacity = 0
-
-                    read_state()
-
-
+                    sgStatusLightInputTwo.opacity = 0
+                    inputTwo.opacity = 1
+                    inputTwoToggle.opacity = 1
+                    currentIndex = 3
                 }
             }
             SGSegmentedButton{
@@ -181,12 +268,12 @@ Rectangle {
                     platformInterface.or_97.update();
                     gateImageSource = "qrc:/views/logic-gate/images/nl7sz97/or.png"
                     sgStatusLightTwo.opacity = 1
-                    toggleSwicth1.opacity = 0
+                    toggleSwitch1.opacity = 0
                     inputT.opacity = 0
-
-                    read_state()
-                    //  checkState();
-
+                    sgStatusLightInputTwo.opacity = 0
+                    inputTwo.opacity = 1
+                    inputTwoToggle.opacity = 1
+                    currentIndex = 4
 
                 }
             }
@@ -195,13 +282,15 @@ Rectangle {
                 onClicked: {
                     platformInterface.inverter_97.update();
                     sgStatusLightTwo.opacity = 1
-                    toggleSwicth1.opacity = 0
+                    toggleSwitch1.opacity = 0
                     inputT.opacity = 0
-
-
+                    sgStatusLightInputTwo.opacity = 1
+                    inputTwo.opacity = 0
+                    inputTwoToggle.opacity = 0
+                    currentIndex = 5
                     gateImageSource = "qrc:/views/logic-gate/images/nl7sz58/inverter.png"
-                    read_state()
-                    //  checkState();
+
+
                 }
             }
             SGSegmentedButton{
@@ -211,10 +300,12 @@ Rectangle {
                     inputName = "B = C"
                     gateImageSource = "qrc:/views/logic-gate/images/nl7sz58/buffer.png"
                     sgStatusLightTwo.opacity = 1
-                    toggleSwicth1.opacity = 0
+                    toggleSwitch1.opacity = 0
                     inputT.opacity = 0
-                    read_state();
-                    //   checkState();
+                    sgStatusLightInputTwo.opacity = 1
+                    inputTwo.opacity = 0
+                    inputTwoToggle.opacity = 0
+                    currentIndex = 6
 
                 }
             }
@@ -227,7 +318,6 @@ Rectangle {
 
         width: parent.width/2
         height: parent.height/2
-        color: "red"
 
         anchors{
             verticalCenter: parent.verticalCenter
@@ -238,11 +328,12 @@ Rectangle {
             id: inputToggleContainer
             width: 100
             height: 100
+            color: "green"
 
             anchors {
                 left: logicContainer.left
                 top: logicContainer.top
-//                topMargin: 20
+
             }
 
             SGSwitch {
@@ -255,26 +346,50 @@ Rectangle {
                 transform: Rotation { origin.x: 25; origin.y: 25; angle: 270 }
 
                 onClicked: {
-                    console.log("checked ",inputOneToggle.checked )
+                    console.log("on click of the switch 2")
+                    //   platformInterface.read_io.update();
 
-                    //   platformInterface.read_io.update()
-                    if(inputOneToggle.checked)  {
+                    if(inputOne.text === "A") {
+                        console.log("in the switch 2 in A in switch one ")
+                        if(inputOneToggle.checked)  {
+                            platformInterface.write_io_97.update(1, platformInterface.nl7sz97_io_state.b, platformInterface.nl7sz97_io_state.c)
+                            platformInterface.write_io_97.show()
 
-                        platformInterface.write_io_97.update(1, platformInterface.nl7sz97_io_state.b, platformInterface.nl7sz97_io_state.c)
-                        platformInterface.write_io_97.show()
-                        valueA = 1
-                        read_state()
+                        }
+                        else {
+                            platformInterface.write_io_97.update(0,platformInterface.nl7sz97_io_state.b, platformInterface.nl7sz97_io_state.c)
+                            platformInterface.write_io_97.show()
 
+                        }
                     }
-                    else {
-                        platformInterface.write_io_97.update(0, platformInterface.nl7sz97_io_state.b, platformInterface.nl7sz97_io_state.c)
-                        platformInterface.write_io_97.show()
-                        valueA = 0
-                        read_state()
-                    }
 
+                    else if(inputOne.text === "B") {
+                        console.log("in the switch 2 in B in switch one ")
+                        if(inputOneToggle.checked)  {
+
+                            platformInterface.write_io_97.update(platformInterface.nl7sz97_io_state.a, 1 , platformInterface.nl7sz97_io_state.c)
+                            platformInterface.write_io_97.show()
+
+                        }
+                        else {
+                            platformInterface.write_io_97.update(platformInterface.nl7sz97_io_state.a, 0 , platformInterface.nl7sz97_io_state.c)
+                            platformInterface.write_io_97.show()
+
+                        }
+                    }
+                    else if(inputOne.text === "C") {
+                        if(inputOneToggle.checked)  {
+                            platformInterface.write_io_97.update( platformInterface.nl7sz97_io_state.a, platformInterface.nl7sz97_io_state.b, 1)
+                            platformInterface.write_io_97.show()
+
+                        }
+                        else {
+                            platformInterface.write_io_97.update(platformInterface.nl7sz97_io_state.a, platformInterface.nl7sz97_io_state.b, 0)
+                            platformInterface.write_io_97.show()
+
+                        }
+                    }
                 }
-
             }
 
             Text {
@@ -287,9 +402,7 @@ Rectangle {
                     horizontalCenter: parent.horizontalCenter
                     verticalCenter: parent.verticalCenter
                 }
-
             }
-
         }
 
         Rectangle {
@@ -300,8 +413,6 @@ Rectangle {
             anchors {
                 left: logicContainer.left
                 top: inputToggleContainer.bottom
-
-
             }
 
             SGSwitch {
@@ -313,31 +424,46 @@ Rectangle {
                 }
 
                 onClicked: {
-                    console.log("on click of the switch 2")
-                    //   platformInterface.read_io.update();
 
-                    if(inputTwoToggle.checked)  {
+                    if(inputTwo.text === "A") {
+                        console.log("in the switch 2 in A ")
+                        if(inputTwoToggle.checked)  {
+                            platformInterface.write_io_97.update(1, platformInterface.nl7sz97_io_state.b, platformInterface.nl7sz97_io_state.c)
+                            platformInterface.write_io_97.show()
 
-                        platformInterface.write_io_97.update(platformInterface.nl7sz97_io_state.a, 1, platformInterface.nl7sz97_io_state.c,  platformInterface.nl7sz97_io_state.y)
-                        platformInterface.write_io_97.show()
-                        valueB = 1
-                        read_state()
+                        }
+                        else {
+                            platformInterface.write_io_97.update(0,platformInterface.nl7sz97_io_state.b, platformInterface.nl7sz97_io_state.c)
+                            platformInterface.write_io_97.show()
 
-
-                    }
-                    else {
-                        platformInterface.write_io_97.update(platformInterface.nl7sz97_io_state.a, 0, platformInterface.nl7sz97_io_state.c,  platformInterface.nl7sz97_io_state.y)
-                        platformInterface.write_io_97.show()
-                        valueB = 0
-                        read_state()
-
+                        }
                     }
 
+                    else if(inputTwo.text === "B") {
+                        console.log("in the switch 2 in B ")
+                        if(inputTwoToggle.checked)  {
+                            platformInterface.write_io_97.update(platformInterface.nl7sz97_io_state.a, 1,platformInterface.nl7sz97_io_state.c)
+                            platformInterface.write_io_97.show()
+
+                        }
+                        else {
+                            platformInterface.write_io_97.update(platformInterface.nl7sz97_io_state.a, 0,platformInterface.nl7sz97_io_state.c)
+                            platformInterface.write_io_97.show()
+                        }
+                    }
+                    else if(inputTwo.text === "C") {
+                        if(inputTwoToggle.checked)  {
+                            platformInterface.write_io_97.update(platformInterface.nl7sz97_io_state.a,platformInterface.nl7sz97_io_state.b,1)
+                            platformInterface.write_io_97.show()
+                        }
+                        else {
+                            platformInterface.write_io_97.update(platformInterface.nl7sz97_io_state.a, platformInterface.nl7sz97_io_state.b,0)
+                            platformInterface.write_io_97.show()
+
+                        }
+                    }
                 }
-
-
                 transform: Rotation { origin.x: 25; origin.y: 25; angle: 270 }
-
             }
 
             Text {
@@ -350,12 +476,21 @@ Rectangle {
                     horizontalCenter: parent.horizontalCenter
                     verticalCenter: parent.verticalCenter
                 }
+            }
+            SGStatusLight {
+                id: sgStatusLightInputTwo
+                // Optional Configuration:
+                label: "<b>" + value_B + "</b>" // Default: "" (if not entered, label will not appear)
+                labelLeft: false        // Default: true
+                // status: "off"           // Default: "off"
+                lightSize: 50           // Default: 50
+                textColor: "black"           // Default: "black"
+                status : "off"
+
 
             }
 
         }
-
-
 
         Image {
             id: gatesImage
@@ -377,22 +512,16 @@ Rectangle {
                 left: gatesImage.right
                 top: inputToggleContainer.top
                 topMargin: 50
-                //  horizontalCenter: parent.horizontalCenter
-
-
 
             }
             SGStatusLight {
                 id: sgStatusLight
-
-
                 // Optional Configuration:
                 label: "<b>Y</b>" // Default: "" (if not entered, label will not appear)
                 labelLeft: false        // Default: true
                 // status: "off"           // Default: "off"
                 lightSize: 50           // Default: 50
                 textColor: "black"           // Default: "black"
-
                 status : "off"
 
 
@@ -404,7 +533,6 @@ Rectangle {
             width: 50
             height: 50
 
-
             anchors {
 
                 top: gatesImage.bottom
@@ -414,19 +542,15 @@ Rectangle {
             }
             SGStatusLight {
                 id: sgStatusLightTwo
-
-
                 // Optional Configuration:
                 label: value_C // Default: "" (if not entered, label will not appear)
                 labelLeft: false        // Default: true
                 // status: "off"           // Default: "off"
                 lightSize: 50           // Default: 50
                 textColor: "black"           // Default: "black"
-
                 status : "off"
 
             }
-
 
             Text {
                 id: inputT
@@ -441,35 +565,51 @@ Rectangle {
                 }
             }
             SGSwitch {
-                id: toggleSwicth1
+                id: toggleSwitch1
                 anchors{
                     left: inputT.right
 
                 }
 
+
                 onClicked: {
-                    console.log("on click of the switch 2")
-                    //   platformInterface.read_io.update();
+                    if(inputT.text === "A") {
+                        if(toggleSwitch1.checked)  {
+                            platformInterface.write_io_97.update(1, platformInterface.nl7sz97_io_state.b, platformInterface.nl7sz97_io_state.c)
+                            platformInterface.write_io_97.show()
 
-                    if(toggleSwicth.checked)  {
+                        }
+                        else {
+                            platformInterface.write_io_97.update(0,platformInterface.nl7sz97_io_state.b, platformInterface.nl7sz97_io_state.c)
+                            platformInterface.write_io_97.show()
 
-                        platformInterface.write_io_97.update(platformInterface.nl7sz97_io_state.a,  platformInterface.nl7sz97_io_state.b, 1 , platformInterface.nl7sz97_io_state.y)
-                        platformInterface.write_io_97.show()
-                        valueC = 1
-                        read_state()
-
-
-                    }
-                    else {
-                        platformInterface.write_io_97.update(platformInterface.nl7sz97_io_state.a, platformInterface.nl7sz97_io_state.b, 0,  platformInterface.nl7sz97_io_state.y)
-                        platformInterface.write_io_97.show()
-                        valueC = 0
-                        read_state()
-
+                        }
                     }
 
+                    else if(inputT.text === "B") {
+                        if(toggleSwitch1.checked)  {
+                            platformInterface.write_io_97.update( platformInterface.nl7sz97_io_state.a, 1, platformInterface.nl7sz97_io_state.c)
+                            platformInterface.write_io_97.show()
+
+                        }
+                        else {
+                            platformInterface.write_io_97.update( platformInterface.nl7sz97_io_state.a, 0, platformInterface.nl7sz97_io_state.c)
+                            platformInterface.write_io_97.show()
+                        }
+                    }
+                    else if(inputT.text === "C") {
+                        if(toggleSwitch1.checked)  {
+
+                            platformInterface.write_io_97.update( platformInterface.nl7sz97_io_state.a, platformInterface.nl7sz97_io_state.b, 1)
+                            platformInterface.write_io_97.show()
+
+                        }
+                        else {
+                            platformInterface.write_io_97.update(platformInterface.nl7sz97_io_state.a, platformInterface.nl7sz97_io_state.b,0)
+                            platformInterface.write_io_97.show()
+                        }
+                    }
                 }
-
 
                 transform: Rotation { origin.x: 25; origin.y: 25; angle: 270 }
 
@@ -482,93 +622,6 @@ Rectangle {
 }
 
 
-//        Column {
-
-//            id:inputSymbol
-//            anchors {
-//                horizontalCenter: parent.horizontalCenter
-//            }
-//            Image {
-//                id: gatesImage
-//                source: gateImageSource
-
-//                fillMode: Image.PreserveAspectFit
-////                width: logicContainer.width/1.5
-////                height: logicContainer.height/2
-
-//            }
-
-//            Rectangle {
-//                id: horizontalLine
-//                width: 10
-//                height: 100
-//                border.color: "black"
-//                border.width: 5
-//                radius: 50
-//                anchors.horizontalCenter: parent.horizontalCenter
-//            }
-
-
-
-//            Rectangle {
-
-//                width: 50
-//                height: 20
-//                anchors.horizontalCenter: parent.horizontalCenter
-
-//                Text {
-//                    id: textForInput
-//                    text: inputName
-//                    font.bold: true
-//                    font.pointSize: 30
-//                    anchors.horizontalCenter: parent.horizontalCenter
-
-//                }
-
-//                RadioButton {
-//                    checked: true
-//                    width: 50; height: 20
-//                    anchors {
-//                        left: textForInput.right
-
-//                    }
-//                    text: ""
-
-//                }
-//            }
-
-//            //            Rectangle {
-//            //                width: 50
-//            //                height: 20
-//            //                anchors.horizontalCenter: parent.horizontalCenter
-
-//            //                Text {
-//            //                    id: textForInput2
-//            //                    text: inputName
-//            //                    font.bold: true
-//            //                    font.pointSize: 30
-//            //                    anchors.horizontalCenter: parent.horizontalCenter
-
-//            //                }
-
-//            //                RadioButton {
-//            //                    checked: true
-//            //                    width: 50; height: 20
-//            //                    anchors {
-//            //                        top:
-//            //                        left: textForInput2.right
-
-//            //                    }
-//            //                    text: ""
-
-//            //                }
-//            //            }
-//        }
-
-
-
-
-//    }
 
 
 

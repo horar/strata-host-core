@@ -13,7 +13,7 @@ Rectangle {
 
     TabBar {
         id: tabBar
-        currentIndex: swipeView.currentIndex
+        //currentIndex: swipeView.currentIndex
         anchors {
             top: parent.top
             right: parent.right
@@ -65,24 +65,24 @@ Rectangle {
         }
     }
 
-    SwipeView {
-        id: swipeView
-        anchors {
-            top: tabBar.bottom
-            right: parent.right
-            left: parent.left
-            bottom: parent.bottom
-        }
-        currentIndex: tabBar.currentIndex
-        interactive: false
-        PageSchematic { id: pageSchematic }
-        PageLayout { id: pageLayout }
-        EfficiencySimulator {
-            width: view.width
-            height: view.width-topBar.height
-        }
-        PageTestReport { id: pageTestReport }
-        PageSystemContent { id: pageSystemContent}
-        PageComingSoon {id: pageComingSoonContent}
-    }
+//    SwipeView {
+//        id: swipeView
+//        anchors {
+//            top: tabBar.bottom
+//            right: parent.right
+//            left: parent.left
+//            bottom: parent.bottom
+//        }
+//        currentIndex: tabBar.currentIndex
+//        interactive: false
+//        PageSchematic { id: pageSchematic }
+//        PageLayout { id: pageLayout }
+//        EfficiencySimulator {
+//            width: view.width
+//            height: view.width-topBar.height
+//        }
+//        PageTestReport { id: pageTestReport }
+//        PageSystemContent { id: pageSystemContent}
+//        PageComingSoon {id: pageComingSoonContent}
+//    }
 }

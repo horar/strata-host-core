@@ -14,9 +14,9 @@ Item {
     //  document all messages to clearly indicate to the UI layer proper names
 
     property var nl7sz58_io_state: {
-        "a":1,
-        "b":0,
-        "c":1,
+        "a":0,
+        "b":1,
+        "c":0,
         "y":1
     }
 
@@ -88,6 +88,14 @@ Item {
                             show: function () { CorePlatformInterface.show(this) }
 
                            })
+
+    property var off_led : ({"cmd":"nl7sz58_off",
+                                update: function () {
+                                    CorePlatformInterface.send(this)
+                                },
+                                send: function () { CorePlatformInterface.send(this) },
+                                show: function () { CorePlatformInterface.show(this) }
+                            })
 
 
     property var nand: ({
@@ -190,6 +198,15 @@ Item {
                             show: function () { CorePlatformInterface.show(this) }
 
                            })
+
+
+    property var off_97_led : ({"cmd":"nl7sz97_off",
+                                update: function () {
+                                    CorePlatformInterface.send(this)
+                                },
+                                send: function () { CorePlatformInterface.send(this) },
+                                show: function () { CorePlatformInterface.show(this) }
+                            })
 
     property var mux_97 : ({"cmd":"nl7sz97_mux",
                                 update: function () {
