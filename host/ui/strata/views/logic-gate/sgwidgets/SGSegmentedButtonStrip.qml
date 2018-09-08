@@ -25,6 +25,7 @@ Item {
     property bool hoverEnabled: true
     property int index: 0
 
+
     Text {
         id: labelText
         text: root.label
@@ -87,7 +88,10 @@ Item {
         function indexUpdate (index) {
             root.index = index
         }
+
+
     }
+
 
     Component.onCompleted: {
         segmentedButtons.checked()

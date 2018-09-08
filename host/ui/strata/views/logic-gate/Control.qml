@@ -42,6 +42,7 @@ Rectangle {
             text: qsTr("NL7SZ58")
             onClicked: {
                 controlContainer.currentIndex = 1
+                partOne.tabIndex = 0
             }
         }
 

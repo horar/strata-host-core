@@ -65,23 +65,23 @@ Rectangle {
             value_B = "C"
             value_BIn = platformInterface.nl7sz58_io_state.c
             value_C = "A"
-            value_CIn = platformInterface.nl7sz58_io_state.a
+            value_CIn = platformInterface.nl7sz58_io_state.b
 
         }
         if(currentIndex == 5) {
-            value_A = "A"
-            value_AIn = platformInterface.nl7sz58_io_state.a
-            value_B = "B"
-            value_BIn = platformInterface.nl7sz58_io_state.b
+            value_A = "B"
+            value_AIn = platformInterface.nl7sz58_io_state.b
+            value_B = "A"
+            value_BIn = platformInterface.nl7sz58_io_state.a
             value_C = "C"
             value_CIn = platformInterface.nl7sz58_io_state.c
 
         }
         if(currentIndex == 6) {
-            value_A = "B"
-            value_AIn = platformInterface.nl7sz58_io_state.b
-            value_B = "A"
-            value_BIn = platformInterface.nl7sz58_io_state.a
+            value_A = "A"
+            value_AIn = platformInterface.nl7sz58_io_state.a
+            value_B = "B"
+            value_BIn = platformInterface.nl7sz58_io_state.b
             value_C = "C"
             value_CIn = platformInterface.nl7sz58_io_state.c
 
@@ -277,7 +277,6 @@ Rectangle {
                     sgStatusLightInputTwo.opacity = 0
                     inputTwo.opacity = 1
                     inputTwoToggle.opacity = 1
-
                     currentIndex = 4
 
                 }
@@ -443,7 +442,7 @@ Rectangle {
                     }
                     if(inputTwo.text === "C") {
                         if(inputTwoToggle.checked)  {
-                            platformInterface.write_io.update(platformInterface.nl7sz58_io_state.a,platformInterface.nl7sz58_io_state.b,1 )
+                            platformInterface.write_io.update(platformInterface.nl7sz58_io_state.a,platformInterface.nl7sz58_io_state.b,1)
                             platformInterface.write_io.show()
                         }
                         else {

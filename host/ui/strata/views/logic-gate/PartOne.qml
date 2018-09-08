@@ -191,11 +191,7 @@ Rectangle {
         buttonHeight: 25
         visible: true
         index: tabIndex
-        onIndexChanged: {
-            if(index === 0) {
-                muxgate.checked = true
-            }
-        }
+
 
         anchors {
             top: parent.top
@@ -224,6 +220,7 @@ Rectangle {
                     tabIndex = logicSelection.index
 
                 }
+
 
 
             }
