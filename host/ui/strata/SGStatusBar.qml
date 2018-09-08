@@ -308,6 +308,7 @@ Rectangle {
                                 onClicked: {
                                     remoteInviteContainer.visible = false
                                     remoteConnectContainer.visible = true
+                                    tokenField.forceActiveFocus();
                                 }
                                 buttonColor: checked ? Qt.lighter(container.color) : container.color
                                 enabled: !remoteToggle.checked

@@ -349,7 +349,6 @@
         <file>statusbar-partial-views/SGSwitch.qml</file>
         <file>statusbar-partial-views/SGTabButton.qml</file>
         <file>statusbar-partial-views/SGToolButton.qml</file>
-        <file>SGLogin.qml</file>
         <file>SGRegistration.qml</file>
         <file>images/icons/on.ico</file>
         <file>views/efficiency-simulator/images/circuit.png</file>
@@ -410,5 +409,6 @@
         <file>views/logic-gate/images/nl7sz58/xor.png</file>
         <file>statusbar-partial-views/SGPlatformSelector.qml</file>
         <file>js/platform_selection.js</file>
+        <file>views/usb-pd-multiport/views/images/powerconverter.png</file>
     </qresource>
 </RCC>
