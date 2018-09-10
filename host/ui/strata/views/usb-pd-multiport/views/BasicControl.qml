@@ -92,21 +92,21 @@ Item {
             PortStatBox {
 
                 property var port1Voltage:{
-                    if (request_usb_power_notification.port ===1)
-                        port1Voltage = request_usb_power_notification.input_voltage;
+                    if (platformInterface.request_usb_power_notification.port ===1)
+                        port1Voltage = platformInterface.request_usb_power_notification.input_voltage;
                 }
 
                 property var port2Voltage:{
-                    if (request_usb_power_notification.port ===2)
-                        port2Voltage = request_usb_power_notification.input_voltage;
+                    if (platformInterface.request_usb_power_notification.port ===2)
+                        port2Voltage = platformInterface.request_usb_power_notification.input_voltage;
                 }
                 property var port3Voltage:{
-                    if (request_usb_power_notification.port ===3)
-                        port3Voltage = request_usb_power_notification.input_voltage;
+                    if (platformInterface.request_usb_power_notification.port ===3)
+                        port3Voltage = platformInterface.request_usb_power_notification.input_voltage;
                 }
                 property var port4Voltage:{
-                    if (request_usb_power_notification.port ===4)
-                        port3Voltage = request_usb_power_notification.input_voltage;
+                    if (platformInterface.request_usb_power_notification.port ===4)
+                        port3Voltage = platformInterface.request_usb_power_notification.input_voltage;
                 }
 
 
@@ -115,7 +115,6 @@ Item {
                 value: "20" //port1Voltage + port2Voltage + port3Voltage + port4Voltage
                 valueSize: 32
                 icon: "../images/icon-voltage.svg"
-                portColor: root.portColor
                 unit: "V"
                 anchors.top: combinedStatsBackgroundRect.bottom
                 anchors.topMargin: 20
@@ -127,21 +126,21 @@ Item {
             PortStatBox {
 
                 property var port1Power:{
-                    if (request_usb_power_notification.port ===1)
-                        port1Power = request_usb_power_notification.input_power;
+                    if (platformInterface.request_usb_power_notification.port ===1)
+                        port1Power = platformInterface.request_usb_power_notification.input_power;
                 }
 
                 property var port2Power:{
-                    if (request_usb_power_notification.port ===2)
-                        port2Power = request_usb_power_notification.input_power;
+                    if (platformInterface.request_usb_power_notification.port ===2)
+                        port2Power = platformInterface.request_usb_power_notification.input_power;
                 }
                 property var port3Power:{
-                    if (request_usb_power_notification.port ===3)
-                        port3Power = request_usb_power_notification.input_power;
+                    if (platformInterface.request_usb_power_notification.port ===3)
+                        port3Power = platformInterface.request_usb_power_notification.input_power;
                 }
                 property var port4Power:{
-                    if (request_usb_power_notification.port ===4)
-                        port4Power = request_usb_power_notification.input_power;
+                    if (platformInterface.request_usb_power_notification.port ===4)
+                        port4Power = platformInterface.request_usb_power_notification.input_power;
                 }
 
                 id:combinedInputPowerBox
@@ -149,7 +148,6 @@ Item {
                 value: "18" //port1Power + port2Power + port3Power + port4Power
                 valueSize: 32
                 icon: "../images/icon-voltage.svg"
-                portColor: root.portColor
                 unit: "W"
                 anchors.top: combinedInputVoltageBox.bottom
                 anchors.topMargin: 20
