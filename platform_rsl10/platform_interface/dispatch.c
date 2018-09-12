@@ -43,8 +43,7 @@ int g_command_handlers_size = ARRAY_SIZE(command_handlers);
  * check for proper json command and command validation, call the
  * right function for each command by calling call_command_handler function.
  **/
-void dispatch(char * data)
-{
+void dispatch(char * data) {
     char *parse_string = data;
     printf("parsing string is %s \n", parse_string);
 
@@ -60,7 +59,7 @@ void dispatch(char * data)
         if (error_ptr != NULL)
         {
             printf("%s %s", error_ptr, "is invalid json\n");
-            //response_string[BAD_JSON]; //emit json not valid
+            response_string[BAD_JSON]; //emit json not valid
         }
         /* warning: memory is allocated to store the parsed JSON and
          * must be freed by cJSON_Delete(json); to prevent memory lea */
@@ -89,25 +88,23 @@ void dispatch(char * data)
     cJSON_Delete(json);
 }
 
-void call_command_handler(char *name, cJSON *payload_value)
-{
+void call_command_handler(char *name, cJSON *payload_value) {
     printf("Size of the command_handlers  %u\n", g_command_handlers_size);
 
     for (int i = 0; i < g_command_handlers_size; i++) {
         if (!strcmp(command_handlers[i].name, name)) {
-//            response_string[COMMAND_VALID]; //emit ack
+            response_string[COMMAND_VALID]; //emit ack
             command_handlers[i].fp(payload_value);
             return;
         }
     }
       printf("%s %s \n", name, "command doesn't exist");
-////    response_string[COMMAND_NOT_FOUND]; //emit command not found
+      response_string[COMMAND_NOT_FOUND]; //emit command not found
 }
 
-// Below are the lists of functions used for each command specified
+// Below are the lists of functions used for each command
 
-void request_platform_id (cJSON *payload_value)
-{
+void request_platform_id (cJSON *payload_value) {
     printf("confirm execution of platform_id_command or echo command \n");
     /* call a send response function
      * In case of RSL-10 will be something
@@ -118,8 +115,7 @@ void request_platform_id (cJSON *payload_value)
      */
 }
 
-void request_echo (cJSON *payload_value)
-{
+void request_echo (cJSON *payload_value) {
     printf("confirm execution of echo command \n");
     /* In case of RSL-10 will be something
      * you could echo whatever you received from rx uart
@@ -127,8 +123,7 @@ void request_echo (cJSON *payload_value)
      */
 }
 
-void general_purpose (cJSON *payload_value)
-{
+void general_purpose (cJSON *payload_value) {
     cJSON *number_argument = NULL;
     cJSON *string_argument = NULL;
 

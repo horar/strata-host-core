@@ -7,7 +7,7 @@
 
 #include "cJSON.h"
 
-typedef struct node{
+typedef struct node {
     char *data;
     struct node *next;
 } node_t;
@@ -17,21 +17,19 @@ typedef struct {
     node_t *tail;
     node_t *temp; // used when add, remove, and print out the list
     size_t size;
-}linked_list_t;
+}queue_t;
 
-typedef struct
-{
+typedef struct {
     char  *name;
     void (*fp)(cJSON *payload_value);
-
 }command_handler_t;
 
 void list_init(void);
 void push(char *data);
-void print_list(void);
 void pop(void);
 void execute(void);
 
-
+// helper function
+void print_list(void);
 
 #endif //PLATFORM_INTERFACE_QUEUE_H

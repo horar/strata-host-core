@@ -10,9 +10,9 @@
 
 
 
-int main( )
-{
+int main( ) {
     list_init();
+
     push("{\"cmd\":\"request_platform_id\"}");
     push("{\"cmd\" : \"whatever\", \"payload\" : {\"number_argument\" : 1, \"string_argument\" : \"0x000000FF\"}}");
     push("{\"cmd\" : \"general_purpose\", \"payload\" : {\"number_argument\" : 1, \"string_argument\" : \"0x000000FF\"}}");
@@ -21,7 +21,7 @@ int main( )
 
     print_list();
 
-    while (g_list != NULL){
+    while (g_queue != NULL) {
         execute();
     }
 
