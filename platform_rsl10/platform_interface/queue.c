@@ -7,86 +7,81 @@
 #include "queue.h"
 #include "dispatch.h"
 
-/* ----------------------------------------------------------------------------
- * Function      : void push(char *data, linked_list *list);
- * ----------------------------------------------------------------------------
- * Description   : Add a new element at the end of the list if a list already exist.
- *                 otherwise, it will add the first element. It takes two arguments,
- *                 first, will be a pointer to data, which will be the json command
- *                 and second is a pointer to the list itself to store the data in
- *                 each node.
- * ------------------------------------------------------------------------- */
-void push(char *data, linked_list *list) {
 
-    node *new_node = (node*)malloc(sizeof(node));
+void list_init(){
+
+    g_list = (linked_list_t*)malloc(sizeof(linked_list_t));
+
+    g_list->head = NULL;
+    g_list->tail = NULL;
+    g_list->size = 0;
+
+}
+
+void push(char *data) {
+
+    node_t *new_node = (node_t*)malloc(sizeof(node_t));
 
     new_node->data = data;
     new_node->next = NULL;
 
 
-    if (list->head == NULL)
+    if (g_list->head == NULL)
     {
-        list->size = 0;
-        list->head = list->tail = new_node;
+        g_list->size = 0;
+        g_list->head = g_list->tail = new_node;
 
     }
-    if (list->size == 1)
+    if (g_list->size == 1)
     {
 
-        list->tail = new_node;
-        list->head->next = list->tail;
+        g_list->tail = new_node;
+        g_list->head->next = g_list->tail;
     }
-    if (list->size > 1)
+    if (g_list->size > 1)
     {
-        list->temp = list->tail;
-        list->tail = new_node;
-        list->temp->next =  new_node;
+        g_list->temp = g_list->tail;
+        g_list->tail = new_node;
+        g_list->temp->next =  new_node;
 
     }
-    list->size++;
+    g_list->size++;
 
 }
 
-//Function      : void print_list(linked_list *list);
-//Description   : print out the list for debugging purposes.
-void print_list(linked_list *list)
+void print_list()
 {
-    printf("Current liked list size %d \n", list->size);
-    printf("The list consists of ");
-    list->temp = list->head;
-    while (list->temp != NULL)
+    printf("Current liked g_list size %zu \n", g_list->size);
+    printf("The g_list consists of ");
+    g_list->temp = g_list->head;
+    while (g_list->temp != NULL)
     {
-        printf(" %s %s ", list->temp->data, "-->");
-        list->temp = list->temp->next;
+        printf(" %s %s ", g_list->temp->data, "-->");
+        g_list->temp = g_list->temp->next;
     }
     printf("NULL\n");
 }
-/* ----------------------------------------------------------------------------
- * Function      : execute(linked_list *list, command_handler command_handlers[], int size);
- * ----------------------------------------------------------------------------
- * Description   : call dispatch function to dispatch commands on the queue.
- * ------------------------------------------------------------------------- */
-void execute(linked_list *list, command_handler command_handlers[], int size)
+/**
+ * call dispatch function to dispatch commands on the queue & remove it after
+ * it being executed by calling pop function
+ **/
+void execute()
 {
-    dispatch(list->head->data, command_handlers, size);
-    pop(list, command_handlers, size);
+    dispatch(g_list->head->data);
+    pop();
 }
-/* ----------------------------------------------------------------------------
- * Function      : pop(linked_list *list, command_handler *command_handlers, int size);
- * ----------------------------------------------------------------------------
- * Description   : remove commands already executed
- * ------------------------------------------------------------------------- */
-void pop(linked_list *list, command_handler *command_handlers, int size)
+
+void pop()
 {
-    if (list->head)
+    if (g_list->head)
     {
 
-        list->temp = list->head->next;
-        free(list->head);
-        list->head = list->temp;
-        list->size--;
-        print_list(list);
-        execute(list,command_handlers, size);
+        g_list->temp = g_list->head->next;
+        free(g_list->head);
+        g_list->head = g_list->temp;
+        g_list->size--;
+        print_list();
 
     }
 }
+

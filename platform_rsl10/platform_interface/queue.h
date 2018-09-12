@@ -8,29 +8,29 @@
 #include "cJSON.h"
 
 typedef struct node{
-    char *data;  // to do: needs to be dynamic
+    char *data;
     struct node *next;
-} node;
+} node_t;
 
 typedef struct {
-    node *head;
-    node *tail;
-    node *temp; // used when add, remove, and print out the list
-    int size;
-}linked_list;
+    node_t *head;
+    node_t *tail;
+    node_t *temp; // used when add, remove, and print out the list
+    size_t size;
+}linked_list_t;
 
 typedef struct
 {
     char  *name;
     void (*fp)(cJSON *payload_value);
 
-}command_handler;
+}command_handler_t;
 
-void list_init();
-void push(char *data, linked_list *list);
-void print_list(linked_list *list);
-void pop(linked_list *list, command_handler *command_handlers, int size);
-void execute(linked_list *list, command_handler command_handlers[], int size);
+void list_init(void);
+void push(char *data);
+void print_list(void);
+void pop(void);
+void execute(void);
 
 
 

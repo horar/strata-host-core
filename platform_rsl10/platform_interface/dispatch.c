@@ -8,13 +8,27 @@
 #include <printf.h>
 #include "cJSON.h"
 
-enum {BAD_JSON, COMMAND_NOT_FOUND, COMMAND_VALID};
-
 const char *response_string[] = {
         "{\"nak\":\"\",\"payload\":{\"return_value\":false,\"return_string\":\"json error: badly formatted json\"}}",
         "{\"notification\":\"payload\":{\"return_string\":\"error: command not found\"}}",
         "{\"ack\":\"\", \"payload\":{\"return_value\":true,\"return_string\":\"Command Valid\"}"
 };
+/* *
+ * Lists of the command_handler that will be used for dispatching
+ * commands. Each sub array in function_map[] will have the
+ * command in a string format followed by the function that
+ * will be declared and defined in dispatch.h and
+ * dispatch.c respectively. Command argument will be the
+ * name of the function.
+ * */
+
+command_handler_t command_handlers[] = {
+        {"request_platform_id", request_platform_id},
+        {"request_echo", request_echo},
+        {"general_purpose", general_purpose},
+};
+
+int g_command_handlers_size = ARRAY_SIZE(command_handlers);
 
 /* An example of json format
    * payload arguments could be anything you want
@@ -25,16 +39,11 @@ const char *response_string[] = {
      "{\"cmd\" : \"whatever\"}"
 */
 
-/* ----------------------------------------------------------------------------
- * Function      : void dispatch(char * data, command_handler command_handlers[], int size);
- * ----------------------------------------------------------------------------
- * Description   : check for proper json command, command validation, call the
- *                 right function for each command by calling call_command_handler function.
- *                 The function takes three arguments. First, data pointer which
- *                 contains the json command in each node. Second, functions lists
- *                 for each command. Third is the size of the function_map[] array.
- * ------------------------------------------------------------------------- */
-void dispatch(char * data, command_handler command_handlers[], int size)
+/**
+ * check for proper json command and command validation, call the
+ * right function for each command by calling call_command_handler function.
+ **/
+void dispatch(char * data)
 {
     char *parse_string = data;
     printf("parsing string is %s \n", parse_string);
@@ -51,7 +60,7 @@ void dispatch(char * data, command_handler command_handlers[], int size)
         if (error_ptr != NULL)
         {
             printf("%s %s", error_ptr, "is invalid json\n");
-            response_string[BAD_JSON]; // emit json not valid
+            //response_string[BAD_JSON]; //emit json not valid
         }
         /* warning: memory is allocated to store the parsed JSON and
          * must be freed by cJSON_Delete(json); to prevent memory lea */
@@ -73,34 +82,26 @@ void dispatch(char * data, command_handler command_handlers[], int size)
     char *cmd_value = cmd->valuestring;
 
     /* check for command type and call the right function if exist */
-    call_command_handler(cmd_value, payload, command_handlers, size);
+    call_command_handler(cmd_value, payload);
 
     /* warning: memory is allocated to store the parsed JSON and
          * must be freed by cJSON_Delete(json); to prevent memory lea */
     cJSON_Delete(json);
 }
-/* ----------------------------------------------------------------------------
- * Function      : void call_command_handler(char *name, cJSON *payload_value, command_handler *command_handlers, int size);
- * ----------------------------------------------------------------------------
- * Description   : call the right function for each command.
- *                 The function takes four arguments. First, name pointer which
- *                 contains string name of the function. Second, payload value for each command.
- *                 third, functions lists for each command. Fourth is the size of the function_map[] array.
- * ------------------------------------------------------------------------- */
-void call_command_handler(char *name, cJSON *payload_value, command_handler *command_handlers, int size)
-{
-    printf("Size of the function_map  %u\n", size);
 
-    for (int i = 0; i < size; i++)
-    {
-        if (!strcmp(command_handlers[i].name, name))
-        {
-            response_string[COMMAND_VALID]; //emit ack
+void call_command_handler(char *name, cJSON *payload_value)
+{
+    printf("Size of the command_handlers  %u\n", g_command_handlers_size);
+
+    for (int i = 0; i < g_command_handlers_size; i++) {
+        if (!strcmp(command_handlers[i].name, name)) {
+//            response_string[COMMAND_VALID]; //emit ack
             command_handlers[i].fp(payload_value);
+            return;
         }
     }
-    printf("%s %s \n", name, "function doesn't exist");
-    response_string[COMMAND_NOT_FOUND]; //emit command not found
+      printf("%s %s \n", name, "command doesn't exist");
+////    response_string[COMMAND_NOT_FOUND]; //emit command not found
 }
 
 // Below are the lists of functions used for each command specified
