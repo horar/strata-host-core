@@ -531,8 +531,9 @@ Rectangle {
 
                 onValueChanged: {
                     console.log(" in advance")
-                    platformInterface.set_color_mixing.update(color1,color_value1,color2,color_value2)
+                    platformInterface.set_color_mixing.update(hueSlider.color1, hueSlider.color_value1, hueSlider.color2, hueSlider.color_value2)
                     platformInterface.ledSlider = value
+                    turnOff.checked = false
                 }
             }
 
@@ -553,19 +554,24 @@ Rectangle {
                     text: "White"
                     onClicked: {
                         platformInterface.set_led_outputs_on_off.update("white")
+                        turnOff.checked = false
                     }
                 }
 
                 Button {
                     id: turnOff
-                    checkable: false
-                    text: "Turn Off"
+                    checkable: true
+                    text: checked ? "Turn On" : "Turn Off"
                     anchors {
                         left: whiteButton.right
                         leftMargin: 30
                     }
                     onClicked: {
-                        platformInterface.set_led_outputs_on_off.update("off")
+                        if (checked) {
+                            platformInterface.set_led_outputs_on_off.update("off")
+                        } else {
+                            platformInterface.set_color_mixing.update(hueSlider.color1, hueSlider.color_value1, hueSlider.color2, hueSlider.color_value2)
+                        }
                     }
                 }
             }
@@ -597,8 +603,9 @@ Rectangle {
                     rightMargin: 10
                 }
                 onValueChanged: {
-                    platformInterface.set_single_color.update(color, color_value)
+                    platformInterface.set_single_color.update(singleColorSlider.color, singleColorSlider.color_value)
                     platformInterface.singleLEDSlider = value
+                    turnOff.checked = false
                 }
             }
 
@@ -616,11 +623,12 @@ Rectangle {
                     right: setLedPulse.left
                     rightMargin: 10
                 }
+                stepSize: 1.0
 
                 onValueChanged: {
-                    setLedPulse.input = value.toFixed(0)
-                    platformInterface.ledPulseSlider = value.toFixed(0)
-
+                    platformInterface.set_single_color.update(singleColorSlider.color, singleColorSlider.color_value)
+                    setLedPulse.input = value
+                    platformInterface.ledPulseSlider = value
                 }
             }
 
@@ -634,7 +642,7 @@ Rectangle {
                 }
                 buttonVisible: false
                 onApplied:  {
-                    platformInterface.ledPulseSlider =  parseInt(value, 10)
+                    platformInterface.ledPulseSlider = parseInt(value, 10)
                 }
                 input: ledPulseFrequency.value
                 infoBoxWidth: 80

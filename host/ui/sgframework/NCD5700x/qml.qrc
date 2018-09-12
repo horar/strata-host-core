@@ -1,0 +1,18 @@
+<RCC>
+    <qresource prefix="/">
+        <file>main.qml</file>
+        <file>images/greenStatusLight.svg</file>
+        <file>images/offStatusLight.svg</file>
+        <file>images/orangeStatusLight.svg</file>
+        <file>images/redStatusLight.svg</file>
+        <file>images/sliderHandle.svg</file>
+        <file>images/sliderHandleActive.svg</file>
+        <file>images/sliderThumb.svg</file>
+        <file>images/sliderValue.svg</file>
+        <file>images/yellowStatusLight.svg</file>
+        <file>SGGraph.qml</file>
+        <file>SGSlider.qml</file>
+        <file>SGStatusLight.qml</file>
+        <file>SGSubmitInfoBox.qml</file>
+    </qresource>
+</RCC>

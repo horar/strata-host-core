@@ -2,7 +2,7 @@ import QtQuick 2.7
 import QtQuick.Controls 2.3
 import QtQuick.Controls.Styles 1.4
 import QtGraphicalEffects 1.0
-import "qrc:/views/motor-vortex/sgwidgets"
+import "qrc:/statusbar-partial-views"
 import "js/navigation_control.js" as NavigationControl
 
 Rectangle{
@@ -203,128 +203,7 @@ Rectangle{
                 }
             }
 
-            Connections {
-                target: coreInterface
-                onPlatformListChanged: {
-                    //console.log("platform list updated: ", list)
-                    platformContainer.populatePlatforms(list)
-                }
-            }
-
-            ListModel {
-                id: platformListModel
-
-                Component.onCompleted: {
-                    //console.log("platformListModel:Component.onCompleted:");
-                    platformContainer.populatePlatforms(coreInterface.platform_list_)
-                }
-
-                // DEBUG hard code model data for testing
-                //            ListElement {
-                //                text: "Motor Vortex"
-                //                name: "motor-vortex" // folder name of qml
-                //                verbose: "motor-vortex"
-                //                connection: "local"
-                //            }
-
-                //            ListElement {
-                //                text: "USB PD"
-                //                name: "bubu"
-                //                verbose: "usb-pd"
-                //                connection: "local"
-                //            }
-            }
-
-            function updateComboWidth(newModel) {
-                // Update our width depending on the children text size
-                var maxWidth = 0
-                textMetrics.font = cbSelector.font
-                for(var i = 0; i < newModel.count; i++){
-                    textMetrics.text = newModel.get(i).text
-                    maxWidth = Math.max(textMetrics.width, maxWidth)
-                }
-                // Add some padding for the selector arrows
-                cbSelector.width = maxWidth + 60
-            }
-
-            function populatePlatforms(platform_list_json) {
-                var autoSelectEnabled = true
-                var autoSelectedPlatform = null
-
-                // Map out UUID->platform name
-                // Lookup table
-                //  platform_id -> local qml directory holding interface
-                 //to enable a new board UI to be shown, this list has to be edited to include the exact UUID for the boad.
-                //the other half of the map will be the name of the directory that will be used to show the initial screen (e.g. usb-pd/Control.qml)
-                var uuid_map = {
-                    "P2.2017.1.1.0.0.cbde0519-0f42-4431-a379-caee4a1494af" : "usb-pd",
-                    //"P2.2017.1.1.0.0.cbde0519-0f42-4431-a379-caee4a1494af" : "motor-vortex",
-                    "P2.2018.1.1.0.0.c9060ff8-5c5e-4295-b95a-d857ee9a3671" : "bubu",
-                    "motorvortex1" : "motor-vortex",
-                    "SEC.2018.004.1.1.0.2.20180710161919.1bfacee3-fb60-471d-98f8-fe597bb222cd" : "usb-pd-multiport",
-                    "SEC.2018.004.1.0.1.0.20180717143337.6828783d-b672-4fd5-b66b-370a41c035d2" : "usb-pd-multiport",    //david's new board
-                    "P2.2018.0.0.0.0.00000000-0000-0000-0000-000000000000" : "usb-pd-multiport",
-                    "SEC.2017.038.0.0.0.0.20190816120000.cbde0519-0f42-4431-a379-caee4a1494af": "usb-pd-multiport"
-                }
-
-                platformListModel.clear()
-
-                // Parse JSON
-                try {
-                    console.log("populatePlaforms: ", platform_list_json)
-                    var platform_list = JSON.parse(platform_list_json)
-
-                    for (var i = 0; i < platform_list.list.length; i ++){
-                        // Extract platform verbose name and UUID
-                        var platform_info = {
-                            "text" : platform_list.list[i].verbose,
-                            "verbose" : platform_list.list[i].verbose,
-                            "name" : uuid_map[platform_list.list[i].uuid],
-                            "connection" : platform_list.list[i].connection,
-                            "uuid"  :   platform_list.list[i].uuid
-                        }
-
-                        // Append text to state the type of Connection
-                        if(platform_list.list[i].connection === "remote"){
-                            platform_info.text += " (Remote)"
-                        }
-                        else if (platform_list.list[i].connection === "view"){
-                            platform_info.text += " (View-only)"
-                        }
-                        else {
-                            platform_info.text += " (Connected)"
-                            // copy "connected" platform; Note: this will auto select the last listed "connected" platform
-                            autoSelectedPlatform = platform_info
-                        }
-
-                        // Add to the model
-                        // TODO update width of text here instead of adding to model and then re-reading model and updating
-                        platformListModel.append(platform_info)
-                    }
-
-                }
-                catch(err) {
-                    console.log("CoreInterface error: ", err.toString())
-                    platformListModel.clear()
-                    platformListModel.append({ text: "No Platforms Available" } )
-                }
-
-                // Auto Select "connected" platform
-                if ( autoSelectEnabled && autoSelectedPlatform) {
-                    console.log("Auto selecting connected platform: ", autoSelectedPlatform.name)
-
-                    // For Demo purposes only; Immediately go to control
-                    var data = { platform_name: autoSelectedPlatform.name}
-                    coreInterface.sendSelectedPlatform(autoSelectedPlatform.uuid, autoSelectedPlatform.connection)
-                    NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT,data)
-                }
-                else if ( autoSelectEnabled == false){
-                    console.log("Auto selecting disabled.")
-                }
-
-            }
-
-            SGComboBox {
+            SGPlatformSelector {
                 id: cbSelector
                 anchors {
                     top: platformSelector.bottom
@@ -332,39 +211,6 @@ Rectangle{
                     left: platformContainer.left
                 }
                 comboBoxWidth: 350
-                textRole: "text"
-                TextMetrics { id: textMetrics }
-
-                model: platformListModel
-
-                onActivated: {
-                    /*
-                   Determine action depending on what type of 'connection' is used
-                */
-
-                    var connection = platformListModel.get(cbSelector.currentIndex).connection
-                    var data = { platform_name: platformListModel.get(cbSelector.currentIndex).name}
-
-                    // Clear all documents for contents
-                    documentManager.clearDocumentSets();
-
-                    if (connection === "view") {
-                        // Go offline-mode
-                        NavigationControl.updateState(NavigationControl.events.OFFLINE_MODE_EVENT, data)
-                        NavigationControl.updateState(NavigationControl.events.TOGGLE_CONTROL_CONTENT)
-                        coreInterface.sendSelectedPlatform(platformListModel.get(cbSelector.currentIndex).uuid,platformListModel.get(cbSelector.currentIndex).connection)
-                    }
-                    else if(connection === "connected"){
-                        NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT,data)
-                        coreInterface.sendSelectedPlatform(platformListModel.get(cbSelector.currentIndex).uuid,platformListModel.get(cbSelector.currentIndex).connection)
-                    }
-                    else if( connection === "remote"){
-                        NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT,data)
-                        // Call coreinterface connect()
-                        console.log("calling the send");
-                        coreInterface.sendSelectedPlatform(platformListModel.get(cbSelector.currentIndex).uuid,platformListModel.get(cbSelector.currentIndex).connection)
-                    }
-                }
             }
         }
     }

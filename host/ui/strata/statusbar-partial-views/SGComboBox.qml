@@ -135,14 +135,15 @@ Item {
         delegate: ItemDelegate {
             id: delegate
             width: comboBox.width
-            height: root.comboBoxHeight // Add/Subtract from this to modify list item heights in popup
+            height: Math.max (root.comboBoxHeight, contentItem.implicitHeight + 10)  // Add/Subtract from this to modify list item heights in popup
             topPadding: 0
             bottomPadding: 0
             contentItem: Text {
                 text: comboBox.textRole ? (Array.isArray(comboBox.model) ? modelData[comboBox.textRole] : model[comboBox.textRole]) : modelData
                 color: root.textColor
                 font: comboBox.font
-                elide: Text.ElideRight
+//                elide: Text.ElideRight
+                wrapMode: Text.Wrap
                 verticalAlignment: Text.AlignVCenter
             }
             highlighted: comboBox.highlightedIndex === index
