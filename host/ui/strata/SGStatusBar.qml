@@ -19,8 +19,10 @@ Rectangle {
     property bool is_remote_advertised: false
     property string generalTitle: "Guest"
     property color backgroundColor: "#3a3a3a"
+    property color menuColor: "#33b13b"
+    property color alternateColor1: "#575757"
 
-    color: backgroundColor
+    color: "black"
 
     function getWidth(string) {
         return (string.match(/width=\"([0-9]+)\"/))
@@ -188,21 +190,10 @@ Rectangle {
         }
     }
 
-    SGPlatformSelector {
-        id: cbSelector
-        comboBoxWidth: 250
-        anchors {
-            verticalCenter: container.verticalCenter
-            left: container.left
-            leftMargin: 3
-        }
-    }
-
     ToolBar {
         id: toolBar
         anchors {
-            left: cbSelector.right
-            leftMargin: 10
+            left: container.left
         }
         background: Rectangle {
             color: container.color
@@ -210,30 +201,71 @@ Rectangle {
         }
 
         Row {
+            Item {
+                id: logoContainer
+                height: toolBar.height
+                width: 65
+
+                Image {
+                    source: "qrc:/images/strata-logo-reverse.svg"
+                    height: 30
+                    width: 60
+                    mipmap: true
+                    anchors {
+                        verticalCenter: logoContainer.verticalCenter
+                        right: logoContainer.right
+                    }
+                }
+            }
+
+            Item {
+                id: cbSelectorContainer
+                width: 270
+                height: toolBar.height
+
+                SGPlatformSelector {
+                    id: cbSelector
+                    comboBoxWidth: 250
+                    anchors {
+                        verticalCenter: cbSelectorContainer.verticalCenter
+                        horizontalCenter: cbSelectorContainer.horizontalCenter
+                    }
+                }
+            }
+
             SGToolButton {
                 id: platformControlsButton
                 text: qsTr("Platform Controls")
                 width: 150
-                buttonColor: hovered || !NavigationControl.flipable_parent_.flipped ? Qt.lighter(container.color) : container.color
+                buttonColor: hovered || !NavigationControl.flipable_parent_.flipped ? menuColor : container.color
                 enabled: PlatformSelection.platformListModel.selectedConnection !== "view" && PlatformSelection.platformListModel.selectedConnection !== ""
                 onClicked: {
                     if (NavigationControl.flipable_parent_.flipped) {
                         NavigationControl.updateState(NavigationControl.events.TOGGLE_CONTROL_CONTENT)
                     }
                 }
+                iconCharacter: "\u003a"
+            }
+
+            Rectangle {
+                id: buttonDivider2
+                width: 1
+                height: toolBar.height
+                color: container.color
             }
 
             SGToolButton {
                 id: platformContentButton
                 text: qsTr("Platform Content")
                 width: 150
-                buttonColor: hovered || NavigationControl.flipable_parent_.flipped ? Qt.lighter(container.color) : container.color
+                buttonColor: hovered || NavigationControl.flipable_parent_.flipped ? menuColor : container.color
                 enabled: PlatformSelection.platformListModel.selectedConnection !== ""
                 onClicked: {
                     if (!NavigationControl.flipable_parent_.flipped) {
                         NavigationControl.updateState(NavigationControl.events.TOGGLE_CONTROL_CONTENT)
                     }
                 }
+                iconCharacter: "\uf15b"
             }
 
             Rectangle {
@@ -250,7 +282,8 @@ Rectangle {
                 onPressed: {
                     remoteSupportMenu.open()
                 }
-                buttonColor: remoteSupportButton.hovered || remoteSupportMenu.visible ? Qt.lighter(container.color) : container.color
+                buttonColor: remoteSupportButton.hovered || remoteSupportMenu.visible ? menuColor : container.color
+                iconCharacter: "\u0043"
 
                 Text {
                     id: remoteSupportPopupIndicator
@@ -274,8 +307,21 @@ Rectangle {
                     width: 500
                     height: 250
 
+                    DropShadow {
+                        width: remoteSupportMenu.width
+                        height: remoteSupportMenu.height
+                        horizontalOffset: 1
+                        verticalOffset: 1
+                        radius: 8.0
+                        samples: 15
+                        color: "#88000000"
+                        source: remoteSupportMenu.background
+                        z: -1
+                        cached: true
+                    }
+
                     background: Rectangle {
-                        color: Qt.lighter(container.color)
+                        color: alternateColor1
                         border {
                             width: 0
                         }
@@ -299,7 +345,7 @@ Rectangle {
                                     remoteInviteContainer.visible = true
                                     remoteConnectContainer.visible = false
                                 }
-                                buttonColor: checked ? Qt.lighter(container.color) : container.color
+                                buttonColor: checked ? alternateColor1 : backgroundColor
                                 enabled : !is_remote_connected
                             }
 
@@ -310,7 +356,7 @@ Rectangle {
                                     remoteConnectContainer.visible = true
                                     tokenField.forceActiveFocus();
                                 }
-                                buttonColor: checked ? Qt.lighter(container.color) : container.color
+                                buttonColor: checked ? alternateColor1 : backgroundColor
                                 enabled: !remoteToggle.checked
                             }
                         }
@@ -342,7 +388,7 @@ Rectangle {
 
                                 Rectangle {
                                     id: noConnectedPlatWarning
-                                    color: container.color
+                                    color: backgroundColor
                                     anchors {
                                         centerIn: noConnectedPlatContainer
                                     }
@@ -364,7 +410,7 @@ Rectangle {
 
                                 Rectangle {
                                     id: noConnectedPlatOverlay
-                                    color: Qt.lighter(container.color)
+                                    color: alternateColor1
                                     opacity: .8
                                     anchors {
                                         fill: noConnectedPlatContainer
@@ -573,7 +619,7 @@ Rectangle {
                                         top: remoteInviteRight.top
                                     }
                                     height: 30
-                                    color: remoteToggle.checked ? Qt.darker(container.color, 1.25) : container.color
+                                    color: remoteToggle.checked ? Qt.darker(backgroundColor, 1.25) : backgroundColor
 
                                     Text {
                                         id: connectedUsersTitleText
@@ -593,7 +639,7 @@ Rectangle {
 
                                 Rectangle {
                                     id: connectedUsersContainer
-                                    color: remoteToggle.checked ? container.color : Qt.lighter(container.color, 1.25)
+                                    color: remoteToggle.checked ? backgroundColor : "#484848"
                                     anchors {
                                         left: remoteInviteRight.left
                                         right: remoteInviteRight.right
@@ -1068,7 +1114,7 @@ Rectangle {
         id: profileIconContainer
         anchors {
             right: container.right
-            rightMargin: 20
+            rightMargin: 2
             top: container.top
             bottom: container.bottom
         }
@@ -1202,7 +1248,7 @@ Rectangle {
             id: popupContainer
             width: profilePopup.width
             height: profilePopup.height
-            color: Qt.lighter("#3a3a3a")
+            color: alternateColor1
 
             Rectangle {
                 id: title

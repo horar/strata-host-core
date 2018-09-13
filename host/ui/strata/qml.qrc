@@ -368,6 +368,9 @@
         <file>views/efficiency-simulator/GraphAndCircuit.qml</file>
         <file>statusbar-partial-views/SGPlatformSelector.qml</file>
         <file>js/platform_selection.js</file>
+        <file>images/strata-logo-reverse.svg</file>
+        <file>views/motor-vortex/sgwidgets/SGToolButton.qml</file>
+        <file>views/motor-vortex/DownloadsDrawer.qml</file>
         <file>views/usb-pd-multiport/views/images/powerconverter.png</file>
     </qresource>
 </RCC>
