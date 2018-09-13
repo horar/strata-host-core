@@ -6,7 +6,7 @@ import QtQuick.Controls.Styles 1.4
 import QtQuick.Extras 1.4
 //import tech.spyglass. 1.0
 import "qrc:/js/navigation_control.js" as NavigationControl
-import "qrc:/views/motor-vortex/sgwidgets"
+import "qrc:/views/logic-gate/sgwidgets"
 
 Rectangle {
     id: controlNavigation
@@ -87,8 +87,6 @@ Rectangle {
                     platformInterface.off_led.update()
                     platformInterface.mux_97.update();
                     partOne.currentIndex = 0
-
-
                     break;
                 case 1:
                      console.log("in view two")

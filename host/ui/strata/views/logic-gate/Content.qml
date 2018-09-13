@@ -65,6 +65,7 @@ Rectangle {
         }
     }
 
+
 //    SwipeView {
 //        id: swipeView
 //        anchors {
