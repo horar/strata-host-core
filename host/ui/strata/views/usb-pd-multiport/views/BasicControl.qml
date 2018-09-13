@@ -69,9 +69,94 @@ Item {
             }
             height: 300 * ratioCalc
 
-            Text {
-                text: "Combined port stats go here"
-                anchors.centerIn: parent
+            Rectangle{
+                id:combinedStatsBackgroundRect
+                color:"#ddd"
+                anchors.top:combinedPortStats.top
+                anchors.left:combinedPortStats.left
+                anchors.right:combinedPortStats.right
+                height:combinedPortStats.height/6
+
+                Text{
+                    id:combinedStatsText
+                    text:"COMBINED PORT STATISTICS"
+                    font.pointSize: 17
+                    color: "#bbb"
+                    anchors.centerIn: combinedStatsBackgroundRect
+                }
+            }
+
+
+
+
+            PortStatBox {
+
+                property var port1Voltage:{
+                    if (request_usb_power_notification.port ===1)
+                        port1Voltage = request_usb_power_notification.input_voltage;
+                }
+
+                property var port2Voltage:{
+                    if (request_usb_power_notification.port ===2)
+                        port2Voltage = request_usb_power_notification.input_voltage;
+                }
+                property var port3Voltage:{
+                    if (request_usb_power_notification.port ===3)
+                        port3Voltage = request_usb_power_notification.input_voltage;
+                }
+                property var port4Voltage:{
+                    if (request_usb_power_notification.port ===4)
+                        port3Voltage = request_usb_power_notification.input_voltage;
+                }
+
+
+                id:combinedInputVoltageBox
+                label: "INPUT VOLTAGE"
+                value: "20" //port1Voltage + port2Voltage + port3Voltage + port4Voltage
+                valueSize: 32
+                icon: "../images/icon-voltage.svg"
+                portColor: root.portColor
+                unit: "V"
+                anchors.top: combinedStatsBackgroundRect.bottom
+                anchors.topMargin: 20
+                anchors.horizontalCenter: combinedPortStats.horizontalCenter
+                height: combinedPortStats.height/5
+                width: combinedPortStats.width/2
+            }
+
+            PortStatBox {
+
+                property var port1Power:{
+                    if (request_usb_power_notification.port ===1)
+                        port1Power = request_usb_power_notification.input_power;
+                }
+
+                property var port2Power:{
+                    if (request_usb_power_notification.port ===2)
+                        port2Power = request_usb_power_notification.input_power;
+                }
+                property var port3Power:{
+                    if (request_usb_power_notification.port ===3)
+                        port3Power = request_usb_power_notification.input_power;
+                }
+                property var port4Power:{
+                    if (request_usb_power_notification.port ===4)
+                        port4Power = request_usb_power_notification.input_power;
+                }
+
+                id:combinedInputPowerBox
+                label: "INPUT POWER"
+                value: "18" //port1Power + port2Power + port3Power + port4Power
+                valueSize: 32
+                icon: "../images/icon-voltage.svg"
+                portColor: root.portColor
+                unit: "W"
+                anchors.top: combinedInputVoltageBox.bottom
+                anchors.topMargin: 20
+                anchors.horizontalCenter: combinedPortStats.horizontalCenter
+                height: combinedPortStats.height/5
+                width: combinedPortStats.width/2
+                //visible: combinedPortStats.inputPowerConnected
             }
         }
 
@@ -86,7 +171,7 @@ Item {
             }
             height: 428 * ratioCalc
 
-            property bool inputPowerConnected: false
+            property bool inputPowerConnected: true
 
             Rectangle{
                 id:topBackgroundRect
@@ -120,7 +205,7 @@ Item {
             PortStatBox {
                 id:maxPowerBox
                 label: "MAX CAPACITY"
-                value: "100"
+                value: "200"
                 icon: "../images/icon-max.svg"
                 //portColor: root.portColor
                 valueSize: 32

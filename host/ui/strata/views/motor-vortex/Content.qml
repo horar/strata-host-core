@@ -6,84 +6,129 @@ import tech.spyglass.DocumentManager 1.0
 import tech.spyglass.Document 1.0
 import "qrc:/include/Modules/"      // On Semi QML Modules
 import "qrc:/views/efficiency-simulator/"
+import "qrc:/views/motor-vortex/sgwidgets"
 
 Rectangle {
     id: view
     anchors { fill: parent }
 
-    TabBar {
-        id: tabBar
-        currentIndex: swipeView.currentIndex
+    Item {
+        id: barContainer
+        height: tabBar.height
         anchors {
             top: view.top
             right: view.right
             left: view.left
         }
 
-        TabButton {
-            id:schematicTabButton
-            text: "Schematic"
+        SGToolButton {
+            id: downloadButton
+            text: "Downloads"
+            iconCharacter: "\ue80b"
 
-            CircleBadge {
-                id: schematicBadge
-                anchors.top: schematicTabButton.top
-                anchors.right: schematicTabButton.right
-                revisionCount: documentManager.schematicRevisionCount
+            onClicked: {
+                if (!downloadDrawer.visible) {
+                    downloadDrawer.open()
+                }
             }
-            onClicked: documentManager.clearSchematicRevisionCount()
         }
 
-        TabButton {
-            id:layoutTabButton
-            text: "Layout"
-
-            CircleBadge {
-                id: layoutBadge
-                anchors.top: layoutTabButton.top
-                anchors.right: layoutTabButton.right
-                revisionCount: documentManager.layoutRevisionCount
+        Rectangle {
+            id: div1
+            anchors {
+                left: downloadButton.right
             }
-            onClicked: documentManager.clearLayoutRevisionCount()
+            width: 1
+            height: tabBar.height
+            color: "white"
         }
 
-//        TabButton { text: "System Content" }
-
-        TabButton {
-            text: "Efficiency Simulator"
-        }
-
-        TabButton {
-            id:comingSoonTabButton
-            text: "Coming Soon"
-            enabled: false
-
-            CircleBadge {
-                id: targetedBadge
-                anchors.top: comingSoonTabButton.top
-                anchors.right: comingSoonTabButton.right
-                revisionCount: documentManager.targetedRevisionCount
+        TabBar {
+            id: tabBar
+            currentIndex: swipeView.currentIndex
+            anchors {
+                right: barContainer.right
+                left: div1.right
             }
-            onClicked: documentManager.clearTargetedRevisionCount()
+
+            TabButton {
+                id:schematicTabButton
+                text: "Schematic"
+
+                CircleBadge {
+                    id: schematicBadge
+                    anchors.top: schematicTabButton.top
+                    anchors.right: schematicTabButton.right
+                    revisionCount: documentManager.schematicRevisionCount
+                }
+                onClicked: documentManager.clearSchematicRevisionCount()
+            }
+
+            TabButton {
+                id:layoutTabButton
+                text: "Layout"
+
+                CircleBadge {
+                    id: layoutBadge
+                    anchors.top: layoutTabButton.top
+                    anchors.right: layoutTabButton.right
+                    revisionCount: documentManager.layoutRevisionCount
+                }
+                onClicked: documentManager.clearLayoutRevisionCount()
+            }
+
+            //        TabButton { text: "System Content" }
+
+            TabButton {
+                text: "Efficiency Simulator"
+            }
+
+            TabButton {
+                id:comingSoonTabButton
+                text: "Coming Soon"
+                enabled: false
+
+                CircleBadge {
+                    id: targetedBadge
+                    anchors.top: comingSoonTabButton.top
+                    anchors.right: comingSoonTabButton.right
+                    revisionCount: documentManager.targetedRevisionCount
+                }
+                onClicked: documentManager.clearTargetedRevisionCount()
+            }
         }
     }
 
-    SwipeView {
-        id: swipeView
+    Item {
+        id: contentContainer
         anchors {
-            top: tabBar.bottom
+            top: barContainer.bottom
             right: view.right
             left: view.left
             bottom: view.bottom
         }
-        currentIndex: tabBar.currentIndex
-        interactive: false
-        PageSchematic { id: pageSchematic }
-        PageLayout { id: pageLayout }
-        EfficiencySimulator {
-            width: view.width
-            height: view.height - tabBar.height
+
+        DownloadsDrawer {
+            id: downloadDrawer
+            height: contentContainer.height
+            y: barContainer.height + view.parent.parent.statusBarHeight
         }
-//        PageSystemContent { id: pageSystemContent}
-        PageComingSoon {id: pageComingSoonContent}
+
+        SwipeView {
+            id: swipeView
+            anchors {
+                fill: contentContainer
+            }
+            currentIndex: tabBar.currentIndex
+            interactive: false
+            PageSchematic { id: pageSchematic }
+            PageLayout { id: pageLayout }
+            EfficiencySimulator {
+                width: view.width
+                height: view.height - tabBar.height
+            }
+            //        PageSystemContent { id: pageSystemContent}
+            PageComingSoon {id: pageComingSoonContent}
+        }
     }
 }

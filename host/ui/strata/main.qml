@@ -81,6 +81,7 @@ Window {
             width: parent.width
 
             property bool flipped: false
+            property real statusBarHeight: statusBarContainer.height // for spawning drawers in right position
 
             front: SGControlContainer { id: controlContainer }
             back: SGContentContainer { id: contentContainer }
