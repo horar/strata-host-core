@@ -3,5 +3,6 @@
         <file>main.qml</file>
         <file>SGStatusListBox.qml</file>
         <file>fonts/sgicons.ttf</file>
+        <file>SGSubmitInfoBox.qml</file>
     </qresource>
 </RCC>

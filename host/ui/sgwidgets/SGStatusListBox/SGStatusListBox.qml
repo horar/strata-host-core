@@ -70,8 +70,8 @@ Rectangle {
             text: model.status // modelData
             color: root.statusTextColor
             font {
-              family: "Courier" // Monospaced font for better text width uniformity
-              pixelSize: (Qt.platform.os === "osx") ? 12 : 10;
+                family: "Courier" // Monospaced font for better text width uniformity
+                pixelSize: (Qt.platform.os === "osx") ? 12 : 10;
             }
         }
 
@@ -95,18 +95,72 @@ Rectangle {
         source: "fonts/sgicons.ttf"
     }
 
-//    Button {
-//        visible: false
-//        width: 30
-//        height: 30
-//        flat: true
-//        text: "\ue800"
-//        font.family: sgicons.name
-//        anchors {
-//            right: flickableContainer.right
-//            top: flickableContainer.top
-//        }
-//        checkable: true
-//        onClicked: root.running = !root.running
-//    }
+    //    Button {
+    //        visible: false
+    //        width: 30
+    //        height: 30
+    //        flat: true
+    //        text: "\ue800"
+    //        font.family: sgicons.name
+    //        anchors {
+    //            right: flickableContainer.right
+    //            top: flickableContainer.top
+    //        }
+    //        checkable: true
+    //        onClicked: root.running = !root.running
+    //    }
+
+    Rectangle {
+        id: filterContainer
+        width: 100
+        height: 30
+        anchors {
+            top: titleArea.bottom
+            right: titleArea.right
+        }
+        color: "#eee"
+        visible: false
+
+        SGSubmitInfoBox {
+            id: filterBox
+            infoBoxColor: "#fff"
+            infoBoxWidth: 80
+            anchors {
+                top: filterContainer.top
+                left: filterContainer.left
+                bottom: filterContainer.bottom
+                margins: 3
+            }
+            placeholderText: "Filter..."
+            leftJustify: true
+
+            onApplied: {
+                for (var i = 0; i< statusList.children[0].children.length; i++) {
+                    statusList.children[0].children[i].visible = true
+                    statusList.children[0].children[i].height = 12
+                    if (statusList.children[0].children[i].text) {
+                        if ( !statusList.children[0].children[i].text.includes(value)) {
+                            statusList.children[0].children[i].visible = false
+                            statusList.children[0].children[i].height = 0
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    Shortcut {
+        sequence: StandardKey.Find
+        onActivated: {
+            filterContainer.visible = true
+            filterBox.textInput.forceActiveFocus()
+        }
+    }
+
+    Shortcut {
+        sequence: StandardKey.Cancel
+        onActivated: {
+            filterContainer.visible = false
+        }
+    }
 }

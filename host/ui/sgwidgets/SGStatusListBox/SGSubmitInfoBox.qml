@@ -15,7 +15,6 @@ Rectangle {
     property color infoBoxBorderColor: "#cccccc"
     property real infoBoxBorderWidth: 1
     property bool realNumberValidation: false
-    property bool enabled: true
     property alias showButton: applyButton.visible
     property alias buttonText: applyButton.text
     property alias overrideLabelWidth: labelText.width
