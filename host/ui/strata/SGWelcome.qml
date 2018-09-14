@@ -67,7 +67,7 @@ Rectangle{
     ////                            },
     ////                            {
     ////                                "verbose":"motor-vortex",
-    ////                                "uuid":"motorvortex1",
+    ////                                "uuid":"SEC.2017.004.2.0.0.1c9f3822-b865-11e8-b42a-47f5c5ed4fc3",
     ////                                "connection":"connected"
     ////                            }];
 

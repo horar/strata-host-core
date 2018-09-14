@@ -139,6 +139,9 @@ Item {
                 platformInterface.set_cable_loss_compensation.update(portNumber,
                                                                      platformInterface.get_cable_loss_compensation.output_current,
                                                                      bias.value)
+//                platformInterface.set_cable_loss_compensation.update(portNumber,
+//                                                                     platformInterface.get_cable_loss_compensation.output_current,
+//                                                                     bias.value)
             }
 
         }

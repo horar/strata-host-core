@@ -151,7 +151,7 @@
 // console prints
 // DEBUG is used for showing the debug print messages on console.
 // 0 - turn off debug and 1 - turn on debug
-#define DEBUG 0
+#define DEBUG 1
 #define LOG_DEBUG(lvl, fmt, ...)						\
 	do { if (lvl>0) fprintf(stderr, fmt, __VA_ARGS__); } while (0)
 
