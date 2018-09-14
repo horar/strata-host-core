@@ -26,11 +26,11 @@ function populatePlatforms(platform_list_json) {
 
 
     var uuid_map = {
-        "P2.2017.1.1" : "usb-pd",
-        "P2.2018.1.1" : "bubu",
-        "motorvortex1" : "motor-vortex",
+        "P2.2017.1.1.0" : "usb-pd",
+        "P2.2018.1.1.0" : "bubu",
+        "SEC.2017.004.2.0" : "motor-vortex",
         "SEC.2018.004.1.1" : "usb-pd-multiport",
-        "SEC.2018.004.1.0" : "usb-pd-multiport",    //david ralley's new board
+        //"SEC.2018.004.1.0" : "usb-pd-multiport",    //david ralley's new board
         "P2.2018.0.0.0" : "usb-pd-multiport",       //uninitialized board
         "SEC.2017.038.0.0": "usb-pd-multiport"
     }
@@ -48,8 +48,9 @@ function populatePlatforms(platform_list_json) {
             //extract the platform identifier (without firmware or uuid) for matching
             var pattern = new RegExp('^[A-Z0-9]+\.[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+');
             var theString = platform_list.list[i].uuid;
-            var platformType = String(theString).match(pattern);
-//            console.log("looking at platform ",platform_list.list[i].uuid);
+            //console.log("the UUID String=",theString)
+            var platformType = theString!== null ? String(theString).match(pattern)[0] : "";
+            console.log("looking at platform ",platform_list.list[i].uuid);
 //            if (platformType){
 //                console.log("platform name matched pattern:",platformType);
 //            }
@@ -62,6 +63,14 @@ function populatePlatforms(platform_list_json) {
                 "connection" : platform_list.list[i].connection,
                 "uuid"  :   platform_list.list[i].uuid
             }
+
+//            console.log("platform list item:",i);
+//            console.log("text:",platform_info.text);
+//            console.log("verbose:",platform_info.verbose);
+//            console.log("platform type:",platformType);
+//            console.log("name:",platform_info.name);
+//            console.log("connection:",platform_info.connection);
+//            console.log("uuid:",platform_info.uuid);
 
             // Append text to state the type of Connection
             if(platform_info.connection === "remote"){
@@ -122,12 +131,14 @@ function sendSelection (currentIndex) {
 
     var connection = platformListModel.get(currentIndex).connection
     var data = { platform_name: platformListModel.get(currentIndex).name}
+    console.log("setting data platform_name to",data.platform_name);
 
     // Clear all documents for contents
     documentManager.clearDocumentSets();
 
     if (connection === "view") {
         platformListModel.selectedConnection = "view"
+        console.log("menu item selected for platform:",platformListModel.get(currentIndex).uuid, platformListModel.get(currentIndex).connection);
         // Go offline-mode
         NavigationControl.updateState(NavigationControl.events.OFFLINE_MODE_EVENT, data)
         coreInterface.sendSelectedPlatform(platformListModel.get(currentIndex).uuid,platformListModel.get(currentIndex).connection)

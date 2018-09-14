@@ -72,7 +72,7 @@ Window {
             width: parent.width
 
             property real windowHeight: mainWindow.height  // for centering popups spawned from the statusbar
-            property bool showDebug: showDebugCommandBar  // for linking debug in status bar to the debug bar
+            property bool showDebug: false;//showDebugCommandBar  // for linking debug in status bar to the debug bar
         }
 
         Flipable {
@@ -259,7 +259,7 @@ Window {
                 "SEC.2018.004.1.1.0.2.20180710161919.1bfacee3-fb60-471d-98f8-fe597bb222cd" : "usb-pd-multiport", //using USB-PD card to masquarade as multiport until hardware is available
                 "P2.2017.1.1.0.0.cbde0519-0f42-4431-a379-caee4a1494af" : "motor-vortex",
                 "P2.2018.1.1.0.0.c9060ff8-5c5e-4295-b95a-d857ee9a3671" : "bubu",
-                "motorvortex1" : "motor-vortex"
+                "SEC.2017.004.2.0.0.1c9f3822-b865-11e8-b42a-47f5c5ed4fc3" : "motor-vortex"
             }
 
             // Send update to NavigationControl
