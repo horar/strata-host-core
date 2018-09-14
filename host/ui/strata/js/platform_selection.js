@@ -28,10 +28,10 @@ function populatePlatforms(platform_list_json) {
     var uuid_map = {
         "P2.2017.1.1.0" : "usb-pd",
         "P2.2018.1.1.0" : "bubu",
-        "SEC.2017.004.2.0.0" : "motor-vortex",
-        "SEC.2018.004.1.1.0" : "usb-pd-multiport",
-        "SEC.2018.004.1.0.0" : "usb-pd-multiport",    //david ralley's new board
-        "P2.2018.0.0.0.0" : "usb-pd-multiport",       //uninitialized board
+        "SEC.2017.004.2.0" : "motor-vortex",
+        "SEC.2018.004.1.1" : "usb-pd-multiport",
+        //"SEC.2018.004.1.0" : "usb-pd-multiport",    //david ralley's new board
+        "P2.2018.0.0.0" : "usb-pd-multiport",       //uninitialized board
         "SEC.2017.038.0.0": "usb-pd-multiport"
     }
 
@@ -50,7 +50,7 @@ function populatePlatforms(platform_list_json) {
             var theString = platform_list.list[i].uuid;
             //console.log("the UUID String=",theString)
             var platformType = theString!== null ? String(theString).match(pattern)[0] : "";
-//            console.log("looking at platform ",platform_list.list[i].uuid);
+            console.log("looking at platform ",platform_list.list[i].uuid);
 //            if (platformType){
 //                console.log("platform name matched pattern:",platformType);
 //            }
