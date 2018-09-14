@@ -80,7 +80,7 @@ Item {
                 Text{
                     id:combinedStatsText
                     text:"COMBINED PORT STATISTICS"
-                    font.pointSize: 17
+                    font.pixelSize: 17
                     color: "#bbb"
                     anchors.centerIn: combinedStatsBackgroundRect
                 }
@@ -183,7 +183,7 @@ Item {
             Text{
                 id:powerConverterText
                 text:"POWER CONVERTER"
-                font.pointSize: 17
+                font.pixelSize: 17
                 color: "#bbb"
                 anchors.top: inputConversionStats.top
                 anchors.topMargin:10
@@ -194,7 +194,7 @@ Item {
                 id:converterNameText
                 text:"ON Semiconductor NCP4060A"
                 visible: inputConversionStats.inputPowerConnected
-                font.pointSize: 20
+                font.pixelSize: 20
                 //color: "#bbb"
                 anchors.top: powerConverterText.bottom
                 anchors.horizontalCenter: inputConversionStats.horizontalCenter
@@ -344,8 +344,8 @@ Item {
             property var deviceDisconnected: platformInterface.usb_pd_port_disconnect.connection_state
 
              onDeviceConnectedChanged: {
-                 console.log("device connected message received in basicControl. Port=",platformInterface.usb_pd_port_connect.port_id,
-                             "state=",platformInterface.usb_pd_port_connect.connection_state);
+//                 console.log("device connected message received in basicControl. Port=",platformInterface.usb_pd_port_connect.port_id,
+//                             "state=",platformInterface.usb_pd_port_connect.connection_state);
 
                  if (platformInterface.usb_pd_port_connect.port_id === "USB_C_port_1"){
                      if (platformInterface.usb_pd_port_connect.connection_state === "connected"){
@@ -450,8 +450,8 @@ Item {
             property var deviceDisconnected: platformInterface.usb_pd_port_disconnect.connection_state
 
              onDeviceConnectedChanged: {
-                 console.log("device connected message received in basicControl. Port=",platformInterface.usb_pd_port_connect.port_id,
-                             "state=",platformInterface.usb_pd_port_connect.connection_state);
+//                 console.log("device connected message received in basicControl. Port=",platformInterface.usb_pd_port_connect.port_id,
+//                             "state=",platformInterface.usb_pd_port_connect.connection_state);
 
                  if (platformInterface.usb_pd_port_connect.port_id === "USB_C_port_2"){
                      if (platformInterface.usb_pd_port_connect.connection_state === "connected"){
@@ -556,8 +556,8 @@ Item {
             property var deviceDisconnected: platformInterface.usb_pd_port_disconnect.connection_state
 
              onDeviceConnectedChanged: {
-                 console.log("device connected message received in basicControl. Port=",platformInterface.usb_pd_port_connect.port_id,
-                             "state=",platformInterface.usb_pd_port_connect.connection_state);
+//                 console.log("device connected message received in basicControl. Port=",platformInterface.usb_pd_port_connect.port_id,
+//                             "state=",platformInterface.usb_pd_port_connect.connection_state);
 
                  if (platformInterface.usb_pd_port_connect.port_id === "USB_C_port_3"){
                      if (platformInterface.usb_pd_port_connect.connection_state === "connected"){
@@ -660,8 +660,8 @@ Item {
             property var deviceDisconnected: platformInterface.usb_pd_port_disconnect.connection_state
 
              onDeviceConnectedChanged: {
-                 console.log("device connected message received in basicControl. Port=",platformInterface.usb_pd_port_connect.port_id,
-                             "state=",platformInterface.usb_pd_port_connect.connection_state);
+//                 console.log("device connected message received in basicControl. Port=",platformInterface.usb_pd_port_connect.port_id,
+//                             "state=",platformInterface.usb_pd_port_connect.connection_state);
 
                  if (platformInterface.usb_pd_port_connect.port_id === "USB_C_port_4"){
                      if (platformInterface.usb_pd_port_connect.connection_state === "connected"){
