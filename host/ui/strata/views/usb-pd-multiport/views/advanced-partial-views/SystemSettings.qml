@@ -26,36 +26,35 @@ Item {
                 margins: 15
             }
 
-            //the USB-PD multiport board doesn't support data, so this control is superfulous
-            SGSegmentedButtonStrip {
-                id: dataConfig
-                label: "Data Configuration:"
-                visible: false
-                activeColor: "#666"
-                inactiveColor: "#dddddd"
-                textColor: "#666"
-                activeTextColor: "white"
-                radius: 4
-                buttonHeight: 25
+            SGSlider {
+                id: maximumBoardPower
+                label: "Maximum Power:"
                 anchors {
                     left: margins1.left
                     leftMargin: 72
+                    right: maximumBoardPowerInput.left
+                    rightMargin: 10
                 }
-
-                segmentedButtons: GridLayout {
-                    columnSpacing: 2
-
-                    SGSegmentedButton{
-                        text: qsTr("Charge Only")
-                        checked: true  // Sets default checked button when exclusive
-                    }
-
-                    SGSegmentedButton{
-                        text: qsTr("Something Else")
-                    }
+                from: 30
+                to: 200
+                startLabel: "30W"
+                endLabel: "200W"
+                //value: platformInterface.input_under_voltage_notification.minimum_voltage
+                onMoved: {
+                    //platformInterface.set_minimum_input_voltage.update(value);
                 }
             }
 
+            SGSubmitInfoBox {
+                id: maximumBoardPowerInput
+                buttonVisible: false
+                anchors {
+                    verticalCenter: maximumBoardPower.verticalCenter
+                    right: parent.right
+                }
+                //input: inputFault.value.toFixed(0)
+                //onApplied: platformInterface.set_minimum_input_voltage.update(input);   // slider will be updated via notification
+            }
 
             SGSegmentedButtonStrip {
                 id: powerNegotiation
@@ -67,7 +66,7 @@ Item {
                 radius: 4
                 buttonHeight: 25
                 anchors {
-                    top: dataConfig.bottom
+                    top: maximumBoardPower.bottom
                     topMargin: 10
                     left: margins1.left
                     leftMargin: 75
