@@ -73,43 +73,6 @@ Rectangle {
                     portColor: "#2348cd"
                 }
             }
-
-//            SGAccordionItem {
-//                title: "<b>Port 1</b>"
-//                open: true
-//                contents: Port {
-//                    portNumber: 1
-//                    portColor: "#30a2db"
-//                }
-//            }
-
-//            SGAccordionItem {
-//                title: "<b>Port 2</b>"
-//                open: true
-//                contents: Port {
-//                    portNumber: 2
-//                    portColor: "#3bb539"
-//                }
-//            }
-
-//            SGAccordionItem {
-//                title: "<b>Port 3</b>"
-//                open: true
-//                contents: Port {
-//                    portNumber: 3
-//                    portColor: "#d68f14"
-//                }
-//            }
-
-//            SGAccordionItem {
-//                title: "<b>Port 4</b>"
-//                open: true
-//                contents: Port {
-//                    portNumber: 4
-//                    portConnected: false
-//                    portColor: "#2348cd"
-//                }
-//            }
         }
 
         SGLayoutDebug {

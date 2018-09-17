@@ -26,6 +26,7 @@ Item {
         contentWidth: width
         contentHeight: accordionItems.height
         clip: true
+        ScrollBar.vertical.policy: ScrollBar.AlwaysOn
 
         // Loads user defined AccordionItems
         Loader {
