@@ -76,20 +76,20 @@ Item {
                 segmentedButtons: GridLayout {
                     columnSpacing: 2
 
-                    property var negotiationTypeChanged: platformInterface.power_negotiation_notification.negotiationType
+                    property var negotiationTypeChanged: platformInterface.power_negotiation.negotiation_type
 
                     onNegotiationTypeChangedChanged:{
-                        if (platformInterface.power_negotiation_notification.negotiationType === "dynamic"){
+                        if (platformInterface.power_negotiation.negotiation_type === "dynamic"){
                             dynamicNegotiationButton.checked = true;
                             fcfsNegotiationButton.checked = false;
                             priorityNegotiationButton.checked = false;
                         }
-                        else if (platformInterface.power_negotiation_notification.negotiationType === "firstComeFirstServed"){
+                        else if (platformInterface.power_negotiation.negotiation_type === "first_come_first_served"){
                             dynamicNegotiationButton.checked = false;
                             fcfsNegotiationButton.checked = true;
                             priorityNegotiationButton.checked = false;
                         }
-                        else if (platformInterface.power_negotiation_notification.negotiationType === "priority"){
+                        else if (platformInterface.power_negotiation.negotiation_type === "priority"){
                             dynamicNegotiationButton.checked = false;
                             fcfsNegotiationButton.checked = false;
                             priorityNegotiationButton.checked = true;
@@ -111,7 +111,7 @@ Item {
                         id:fcfsNegotiationButton
                         text: qsTr("FCFS")
                         onClicked: {
-                            platformInterface.set_power_negotiation.update("firstComeFirstServed");
+                            platformInterface.set_power_negotiation.update("first_come_first_served");
                         }
                     }
 
@@ -152,14 +152,14 @@ Item {
                 segmentedButtons: GridLayout {
                     columnSpacing: 2
 
-                    property var sleepMode: platformInterface.sleep_mode_notification.mode
+                    property var sleepMode: platformInterface.sleep_mode.mode
 
                     onSleepModeChanged:{
-                        if (platformInterface.sleep_mode_notification.mode === "manual"){
+                        if (platformInterface.sleep_mode.mode === "manual"){
                             manualSleepModeButton.checked = true;
                             automaticSleepModeButton.checked = false;
                         }
-                        else if (platformInterface.sleep_mode_notification.mode === "automatic"){
+                        else if (platformInterface.sleep_mode.mode === "automatic"){
                             manualSleepModeButton.checked = false;
                             automaticSleepModeButton.checked = true;
                         }
@@ -210,14 +210,14 @@ Item {
                 segmentedButtons: GridLayout {
                     columnSpacing: 2
 
-                    property var manualSleepMode: platformInterface.manual_sleep_mode_notification.mode
+                    property var manualSleepMode: platformInterface.manual_sleep_mode.mode
 
                     onManualSleepModeChanged:{
-                        if (platformInterface.manual_sleep_mode_notification.mode ==="on"){
+                        if (platformInterface.manual_sleep_mode.mode ==="on"){
                             manualSleepOnButton.checked = true;
                             manualSleepOffButton.checked = false;
                         }
-                        else if (platformInterface.manual_sleep_mode_notification.mode ==="off"){
+                        else if (platformInterface.manual_sleep_mode.mode ==="off"){
                             manualSleepOnButton.checked = false;
                             manualSleepOffButton.checked = true;
                         }
@@ -327,7 +327,7 @@ Item {
                     right: parent.right
                 }
                 input: inputFault.value.toFixed(0)
-                onApplied: inputFault.value = value
+                onApplied: platformInterface.set_minimum_input_voltage.update(input);   // slider will be updated via notification
             }
 
             SGSlider {
@@ -344,9 +344,9 @@ Item {
                 to: 191
                 startLabel: "-64°C"
                 endLabel: "191°C"
-                value: platformInterface.over_temperature_notification.maximum_temperature
+                value: platformInterface.set_maximum_temperature_notification.maximum_temperature
                 onMoved: {
-                    platformInterface.set_minimum_input_voltage.update(value);
+                    platformInterface.set_maximum_temperature.update(value);
                 }
             }
 
@@ -358,7 +358,7 @@ Item {
                     right: parent.right
                 }
                 input: tempFault.value.toFixed(0)
-                onApplied: tempFault.value = value
+                onApplied: platformInterface.set_maximum_temperature.update(input); // slider will be updated via notification
             }
         }
 
@@ -437,7 +437,9 @@ Item {
                     right: parent.right
                 }
                 input: foldbackLimit.value.toFixed(0)
-                onApplied: foldbackLimit.value = value
+                onApplied: platformInterface.set_input_voltage_foldback.update(platformInterface.foldback_input_voltage_limiting_event.input_voltage_foldback_enabled,
+                                                                               input,
+                                                                              platformInterface.foldback_input_voltage_limiting_event.foldback_minimum_voltage_power)
             }
 
             SGComboBox {
@@ -538,7 +540,9 @@ Item {
                     right: parent.right
                 }
                 input: foldbackTemp.value.toFixed(0)
-                onApplied: foldbackTemp.value = value
+                onApplied: platformInterface.set_temperature_foldback.update(platformInterface.foldback_temperature_limiting_event.temperature_foldback_enabled,
+                                                                             input,
+                                                                             platformInterface.foldback_temperature_limiting_event.foldback_maximum_temperature_power)
             }
 
             SGComboBox {

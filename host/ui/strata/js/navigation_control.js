@@ -158,8 +158,8 @@ function globalEventHandler(event,data)
         navigation_state_ = states.LOGIN_STATE
 
         // Update both containers; Login blocks both
-        createView(screens.LOGIN_SCREEN, control_container_)
         createView(screens.LOGIN_SCREEN, content_container_)
+        createView(screens.LOGIN_SCREEN, control_container_)
 
         // Remove StatusBar at Login
         removeView(status_bar_container_)

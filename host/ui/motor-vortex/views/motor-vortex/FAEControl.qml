@@ -545,7 +545,7 @@ Rectangle {
                 onValueChanged: {
                     console.log(" in fae")
                     platformInterface.set_color_mixing.update(color1,color_value1,color2,color_value2)
-                    platformInterface.ledSlider = value.toFixed(0)
+                    platformInterface.ledSlider = value
                 }
             }
 

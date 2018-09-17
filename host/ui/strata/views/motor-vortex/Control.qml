@@ -18,23 +18,19 @@ Rectangle {
         id: platformInterface
     }
 
+
     TabBar {
         id: navTabs
         anchors {
-            top: parent.top
-            left: parent.left
-            right: parent.right
+            top: controlNavigation.top
+            left: controlNavigation.left
+            right: controlNavigation.right
         }
 
         TabButton {
             id: basicButton
             text: qsTr("Basic")
             onClicked: {
-                if (controlContainer.currentIndex === 1){
-                    basicView.motorSpeedSliderValue = advanceView.motorSpeedSliderValue
-                } else {
-                    basicView.motorSpeedSliderValue = faeView.motorSpeedSliderValue
-                }
                 controlContainer.currentIndex = 0
             }
         }
@@ -43,17 +39,7 @@ Rectangle {
             id: advancedButton
             text: qsTr("Advanced")
             onClicked: {
-                if(controlContainer.currentIndex === 0) {
-                    advanceView.motorSpeedSliderValue = basicView.motorSpeedSliderValue
-                }
-                else {
-                    advanceView.motorSpeedSliderValue = faeView.motorSpeedSliderValue
-                    advanceView.rampRateSliderValue = faeView.rampRateSliderValue
-                    advanceView.phaseAngle = faeView.phaseAngle
-                    advanceView.ledSlider = faeView.ledSlider
-                    advanceView.singleLEDSlider = faeView.singleLEDSlider
-                    advanceView.ledPulseSlider = faeView.ledPulseSlider
-                }
+
                 controlContainer.currentIndex = 1
             }
         }
@@ -62,17 +48,6 @@ Rectangle {
             id: faeButton
             text: qsTr("FAE Only")
             onClicked: {
-                if(controlContainer.currentIndex === 0) {
-                    faeView.motorSpeedSliderValue = basicView.motorSpeedSliderValue
-                }
-                else {
-                    faeView.motorSpeedSliderValue = advanceView.motorSpeedSliderValue
-                    faeView.rampRateSliderValue = advanceView.rampRateSliderValue
-                    faeView.phaseAngle = advanceView.phaseAngle
-                    faeView.ledSlider = advanceView.ledSlider
-                    faeView.singleLEDSlider = advanceView.singleLEDSlider
-                    faeView.ledPulseSlider = advanceView.ledPulseSlider
-                }
                 controlContainer.currentIndex = 2
             }
             background: Rectangle {
@@ -82,11 +57,12 @@ Rectangle {
     }
 
     ScrollView {
+        id: scrollView
         anchors {
             top: navTabs.bottom
-            bottom: parent.bottom
-            right: parent.right
-            left: parent.left
+            bottom: controlNavigation.bottom
+            right: controlNavigation.right
+            left: controlNavigation.left
         }
 
         onWidthChanged: {
@@ -134,7 +110,7 @@ Rectangle {
             contentWidth: 1200
             contentHeight: 725
             anchors {
-                fill: parent
+                fill: scrollView
             }
             clip: true
 
