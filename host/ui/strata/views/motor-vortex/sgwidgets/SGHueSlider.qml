@@ -5,11 +5,11 @@ import QtGraphicalEffects 1.0
 Item {
     id: root
 
-    property real value: 128
-    property string color1: "red"
-    property string color2: "green"
-    property int color_value1: 0
-    property int color_value2: 0
+    property alias value: hueSlider.value
+    property string color1: "green"
+    property string color2: "blue"
+    property int color_value1: 128
+    property int color_value2: 128
     property string label: ""
     property bool labelLeft: true
     property color textColor : "black"
@@ -33,7 +33,7 @@ Item {
     Slider {
         id: hueSlider
         padding: 0
-        value: root.value/255
+        value: 128
         height: root.sliderHeight
         anchors {
             left: root.labelLeft ? labelText.right : labelText.left
@@ -42,12 +42,9 @@ Item {
             topMargin: root.label === "" ? 0 : root.labelLeft ? 0 : 5
             right: root.right
         }
-
-        onPressedChanged: {
-            if (!hueSlider.pressed) {
-                root.value = Math.floor(value * 255)
-            }
-        }
+        live: false
+        from: 0
+        to: 255
 
         background: Rectangle {
             y: 4

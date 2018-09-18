@@ -359,7 +359,7 @@ Item {
         set_phase_angle.update(phaseAngle)
     }
 
-    property int ledSlider: 128
+    property real ledSlider: 128
 
     onLedSliderChanged: {
         console.log("in signal control")

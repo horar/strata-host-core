@@ -8,7 +8,7 @@ Rectangle {
 
     property string label: ""
     property bool labelLeft: true
-    property string input: ""
+    property alias input: infoText.text
     property real infoBoxWidth: 50
     property color textColor: "#000"
     property color infoBoxColor: "#eee"
@@ -71,7 +71,7 @@ Rectangle {
                     verticalCenter: parent.verticalCenter
                     left: parent.left
                 }
-                text: input
+                text: ""
                 selectByMouse: true
                 readOnly: false
                 font.family: "Courier" // Monospaced font for better text width uniformity

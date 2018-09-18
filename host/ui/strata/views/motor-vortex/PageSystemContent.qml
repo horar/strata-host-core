@@ -7,7 +7,6 @@ import QtQuick.Controls.Styles 1.4
 Item {
     property var currentSystemModel: powerStagesModel
     property var currentSchematic: "images/system_content/PowerStageSchematic.png"
-    //property var currentVPModel: vpModel2
     property var currentBlockDiagram: "./images/system_content/USB-PD_blockDiagram_PowerStage1Highlighted.png"
     id: systemContentView
     Text {
