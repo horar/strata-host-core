@@ -452,7 +452,7 @@ Item {
                 }
                 //when changing the value
                 onActivated: {
-                    //console.log("setting input power foldback to ",limitOutput.comboBox.currentText);
+                    console.log("setting input power foldback to ",limitOutput.comboBox.currentText);
                     platformInterface.set_input_voltage_foldback.update(platformInterface.foldback_input_voltage_limiting_event.input_voltage_foldback_enabled,
                                                                         platformInterface.foldback_input_voltage_limiting_event.foldback_minimum_voltage,
                                                                                  limitOutput.comboBox.currentText)
@@ -558,7 +558,7 @@ Item {
                     console.log("sending temp foldback update command from limitOutputComboBox");
                     platformInterface.set_temperature_foldback.update(platformInterface.foldback_temperature_limiting_event.temperature_foldback_enabled,
                                                                                  platformInterface.foldback_temperature_limiting_event.foldback_maximum_temperature,
-                                                                                 limitOutput2.displayText)
+                                                                                 limitOutput2.currentText)
                 }
 
                 property var currentFoldbackOuput: platformInterface.foldback_temperature_limiting_event.foldback_maximum_temperature_power
