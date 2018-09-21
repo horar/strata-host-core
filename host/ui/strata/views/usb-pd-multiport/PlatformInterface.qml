@@ -189,8 +189,7 @@ Item {
     //when the platform sends a reset notification, the host must make a platformId call to initialize communication
     //and a Refresh() command to synchronize settings with the platform
     onRequest_reset_notificationChanged: {
-        console.log("Requesting platform Id and Refreshing")
-        platformInterface.requestPlatformId.send()
+        console.log("Requesting Refresh")
         platformInterface.refresh.send() //ask the platform for all the current values
     }
 
@@ -205,6 +204,10 @@ Item {
 
     property var manual_sleep_mode :{
          "mode":"on"           // or "off"
+    }
+
+    property var maximum_board_power :{
+         "watts":30          // 30-300
     }
 
     // --------------------------------------------------------------------------------------------
@@ -328,9 +331,9 @@ Item {
                        },
                    update: function(enabled,temperature,watts){
                        //update the variables for this action
-                       foldback_temperature_limiting_event.foldback_maximum_temperature = temperature;
-                       foldback_temperature_limiting_event.foldback_maximum_temperature_power = watts;
-                       foldback_temperature_limiting_event.temperature_foldback_enabled = enabled;
+//                       foldback_temperature_limiting_event.foldback_maximum_temperature = temperature;
+//                       foldback_temperature_limiting_event.foldback_maximum_temperature_power = watts;
+//                       foldback_temperature_limiting_event.temperature_foldback_enabled = enabled;
                         this.set(enabled,temperature,watts)
                         CorePlatformInterface.send(this)
                         },
@@ -370,7 +373,7 @@ Item {
                     "payload":{
                         "port":0,                    // 1, 2, 3, ... up to maximum number of ports
                         "enabled":true,           // or false
-                        "maximum_current":0,    // amps
+                        "maximum_current":12,    // amps
                       },
                       update: function (port, maxCurrent){
                           this.set(port,maxCurrent);
@@ -392,10 +395,10 @@ Item {
                         "output_current":0,         // amps
                         "bias_voltage":0            // Volts
                       },
-                      update: function (portNumber, outputCurrent,biasVoltage){
-//                          console.log("set_cable_loss_compensation.port=",portNumber);
-//                          console.log("set_cable_loss_compensation.output_current=",outputCurrent);
-//                          console.log("set_cable_loss_compensation.bias_voltage=",biasVoltage);
+                      update: function (portNumber, outputCurrent, biasVoltage){
+                          console.log("set_cable_loss_compensation.port=",portNumber);
+                          console.log("set_cable_loss_compensation.output_current=",outputCurrent);
+                          console.log("set_cable_loss_compensation.bias_voltage=",biasVoltage);
 
                           this.set(portNumber,outputCurrent,biasVoltage);
                           //console.log("sending set_cable_loss_compensation cmd ", JSON.stringify(this));
@@ -411,7 +414,6 @@ Item {
                       show: function () { CorePlatformInterface.show(this) }
     })
 
-    //this command doesn't exist yet in the API. This is a placeholder
     property var set_power_negotiation:({
                     "cmd":"set_power_negotiation",
                     "payload":{
@@ -460,6 +462,21 @@ Item {
                       show: function () { CorePlatformInterface.show(this) }
     })
 
+    property var set_maximum_board_power:({
+                    "cmd":"set_maximum_board_power",
+                    "payload":{
+                        "watts":0      // value between 30 and 200
+                      },
+                      update: function (inPower){
+                          this.set(inPower);
+                          CorePlatformInterface.send(this);
+                          },
+                      set: function(power){
+                           this.payload.watts = power;
+                           },
+                      send: function () { CorePlatformInterface.send(this) },
+                      show: function () { CorePlatformInterface.show(this) }
+    })
 
     // -------------------  end commands
 

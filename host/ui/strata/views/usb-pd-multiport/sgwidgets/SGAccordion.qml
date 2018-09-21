@@ -18,6 +18,7 @@ Item {
     property color textClosedColor: "#000"
     property color headerOpenColor: "#666"
     property color headerClosedColor: "#eee"
+    property int scrollBarPolicy: ScrollBar.AlwaysOn
 
     ScrollView {
         id: scrollContainer
@@ -26,6 +27,7 @@ Item {
         contentWidth: width
         contentHeight: accordionItems.height
         clip: true
+        ScrollBar.vertical.policy: scrollBarPolicy
 
         // Loads user defined AccordionItems
         Loader {
