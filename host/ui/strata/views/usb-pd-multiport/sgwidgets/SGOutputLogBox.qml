@@ -25,11 +25,11 @@ Rectangle {
     Rectangle {
         id: titleArea
         anchors {
-            left: parent.left
-            right: parent.right
-            top: parent.top
+            left: root.left
+            right: root.right
+            top: root.top
         }
-        implicitHeight: 35
+        implicitHeight: visible ? 35 : 0
         color: root.titleBoxColor
         border {
             color: root.titleBoxBorderColor
@@ -56,10 +56,10 @@ Rectangle {
         id: flickableContainer
         clip: true
         anchors {
-            left: parent.left
-            right: parent.right
-            top: titleArea.visible ? titleArea.bottom : parent.top
-            bottom: parent.bottom
+            left: root.left
+            right: root.right
+            top: titleArea.bottom
+            bottom: root.bottom
         }
 
         Flickable {
@@ -72,7 +72,7 @@ Rectangle {
             TextEdit {
                 id: transcript
                 height: contentHeight + padding * 2
-                width: root.parent.width
+                width: transcriptContainer.width
                 readOnly: true
                 selectByMouse: true
                 selectByKeyboard: true
@@ -86,12 +86,17 @@ Rectangle {
     }
 
     onInputChanged: {
-        if (running) {append(outputTextColor, input)}
+        if (running) {
+            append(outputTextColor, input)
+        }
     }
 
     // Appends message in color to transcript
     function append(color, message) {
-        transcript.insert(transcript.length, (transcript.cursorPosition == 0 ? "" :"<br>") + "<span style='color:" + color + ";'>" + message +"</span>");
+        if (transcript.text.length != 0){
+            transcript.text+= "<br>"
+        }
+        transcript.text+= "<span style='color:" + color + ";'>" + message +"</span>";
         scroll();
     }
 

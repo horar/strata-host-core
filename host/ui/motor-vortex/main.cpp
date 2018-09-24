@@ -72,6 +72,9 @@ int main(int argc, char *argv[])
 
 #if _WIN32 && QT_NO_DEBUG
     // Do some last minute clean-up; Terminate HCS
+    // [prasanth]: Added delay because UI should send remote diconnect to HCS and then to
+    // discovery service. Closing without delay drops the message
+    Sleep(3000);
     qDebug() << "Killing HCS";
     hcsProcess->kill();
 #endif

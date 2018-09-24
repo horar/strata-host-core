@@ -10,6 +10,15 @@ Rectangle {
     property color portColor: "#30a2db"
     property int portNumber: 1
 
+    property alias advertisedVoltage: advertisedVoltageBox.value
+    property alias maxPower: maxPowerBox.value
+    property alias inputPower: inputPowerBox.value
+    property alias outputPower: outputPowerBox.value
+    property alias outputVoltage: outputVoltageBox.value
+    property alias portTemperature: portTemperatureBox.value
+    property alias efficency: efficencyBox.value
+
+
     signal showGraph()
 
     color: "white"
@@ -51,7 +60,7 @@ Rectangle {
                 id: showGraphs
                 text: "Graphs"
                 anchors {
-                    bottom: parent.bottom
+                    bottom: statsContainer.bottom
                     horizontalCenter: portTitle.horizontalCenter
                 }
                 height: 20
@@ -124,8 +133,9 @@ Rectangle {
                     spacing: 3
 
                     PortStatBox {
+                        id:advertisedVoltageBox
                         label: "PROFILE"
-                        value: "20"
+                        //value: "20"
                         icon: "../images/icon-voltage.svg"
                         portColor: root.portColor
                         unit: "V"
@@ -133,8 +143,9 @@ Rectangle {
                     }
 
                     PortStatBox {
+                        id:maxPowerBox
                         label: "MAX CAPACITY"
-                        value: "100"
+                        //value: "100"
                         icon: "../images/icon-max.svg"
                         portColor: root.portColor
                         unit: "W"
@@ -142,8 +153,9 @@ Rectangle {
                     }
 
                     PortStatBox {
+                        id:inputPowerBox
                         label: "POWER IN"
-                        value: "9"
+                        //value: "9"
                         icon: "../images/icon-voltage.svg"
                         portColor: root.portColor
                         unit: "W"
@@ -151,8 +163,9 @@ Rectangle {
                     }
 
                     PortStatBox {
+                        id:outputPowerBox
                         label: "POWER OUT"
-                        value: "7.8"
+                        //value: "7.8"
                         icon: "../images/icon-voltage.svg"
                         portColor: root.portColor
                         unit: "W"
@@ -173,8 +186,9 @@ Rectangle {
                     width: stats.width/2 - 2
 
                     PortStatBox {
+                        id:outputVoltageBox
                         label: "VOLTAGE OUT"
-                        value: "20.4"
+                        //value: "20.4"
                         icon: "../images/icon-voltage.svg"
                         portColor: root.portColor
                         unit: "V"
@@ -182,8 +196,9 @@ Rectangle {
                     }
 
                     PortStatBox {
+                        id:portTemperatureBox
                         label: "TEMPERATURE"
-                        value: "36"
+                        //value: "36"
                         icon: "../images/icon-temp.svg"
                         portColor: root.portColor
                         unit: "°C"
@@ -191,8 +206,9 @@ Rectangle {
                     }
 
                     PortStatBox {
+                        id:efficencyBox
                         label: "EFFICIENCY"
-                        value: "92"
+                        //value: "92"
                         icon: "../images/icon-efficiency.svg"
                         portColor: root.portColor
                         unit: "%"

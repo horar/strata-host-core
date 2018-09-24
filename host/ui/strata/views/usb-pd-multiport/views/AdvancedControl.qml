@@ -1,8 +1,9 @@
 import QtQuick 2.9
+import QtQuick.Controls 2.2
 import "qrc:/views/usb-pd-multiport/sgwidgets"
 import "qrc:/views/usb-pd-multiport/views/advanced-partial-views"
 
-Item {
+Rectangle {
     id: root
 
     property bool debugLayout: false
@@ -27,6 +28,7 @@ Item {
             bottom: root.bottom
         }
         width: root.width
+        scrollBarPolicy: ScrollBar.AlwaysOn
 
         accordionItems: Column {
             SGAccordionItem {
@@ -73,43 +75,6 @@ Item {
                     portColor: "#2348cd"
                 }
             }
-
-//            SGAccordionItem {
-//                title: "<b>Port 1</b>"
-//                open: true
-//                contents: Port {
-//                    portNumber: 1
-//                    portColor: "#30a2db"
-//                }
-//            }
-
-//            SGAccordionItem {
-//                title: "<b>Port 2</b>"
-//                open: true
-//                contents: Port {
-//                    portNumber: 2
-//                    portColor: "#3bb539"
-//                }
-//            }
-
-//            SGAccordionItem {
-//                title: "<b>Port 3</b>"
-//                open: true
-//                contents: Port {
-//                    portNumber: 3
-//                    portColor: "#d68f14"
-//                }
-//            }
-
-//            SGAccordionItem {
-//                title: "<b>Port 4</b>"
-//                open: true
-//                contents: Port {
-//                    portNumber: 4
-//                    portConnected: false
-//                    portColor: "#2348cd"
-//                }
-//            }
         }
 
         SGLayoutDebug {

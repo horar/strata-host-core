@@ -36,6 +36,11 @@ using namespace rapidjson;
 // @ref 5) under "KNOWN BUGS/HACKS" section in Connector.h for more details
 #define SERIAL_READ_SLEEP_IN_SECONDS 0.05
 
+// Currently the Strata platforms are identified automatically using Platform_ID notification
+// and this is done synchoronously. Increasing the number of retries to 15 is usefull for
+// 4port since it has lot of periodic notifications and it affects the discovery procedure
+#define PLATFORM_ID_RETRY 15
+
 // @f constructor
 // @b
 //
@@ -146,7 +151,7 @@ bool SerialConnector::open(const std::string& serial_port_name)
         // If valid Platform ID is read from platform, adds the platform handler to the event
         // If negative, then scans the port and sends the platform ID
         // This is essential for platforms like USB_PD Load Board that takes 5 second to boot
-        for (int i =0 ; i <=5; i++) {
+        for (int i =0 ; i <=PLATFORM_ID_RETRY; i++) {
             // sleep for 50 milliseconds before reading from the platform
             // This sleep time is proportional to the time taken for detecting the platforms
             sleep(SERIAL_READ_SLEEP_IN_SECONDS);
@@ -369,10 +374,15 @@ void SerialConnector::windowsPlatformReadHandler()
         // 200ms timeout results in merging two messages from platform
 
         // // @ref 5) under "KNOWN BUGS/HACKS" section in Connector.h for more details
-        this->producer_consumer_.wait_for(lock_condition_variable,chrono::milliseconds(100), [this]{return consumed_;});
+        // // HACK
+        // // Windows usb-pd 4 port two messages gets merged with each other if there is a delay of 100ms
+        // // commenting out the delay to support usb-pd 4 port
+        // // But this will increase the cpu frequency
+        // this->producer_consumer_.wait_for(lock_condition_variable,chrono::milliseconds(100), [this]{return consumed_;});
         vector<char> response;
         sp_return error;
         char temp = '\0';
+
         while(temp != '\n') {
             temp = '\0';
             // @ref 3) under "KNOWN BUGS/HACKS" section in Connector.h for more details

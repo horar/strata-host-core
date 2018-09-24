@@ -11,8 +11,8 @@ Rectangle {
 
     property string input: ""
     property string title: qsTr("")
-    property color titleTextColor: "#000000"
-    property color titleBoxColor: "#eeeeee"
+    property alias titleTextColor: title.color
+    property alias titleBoxColor: titleArea.color
     property color titleBoxBorderColor: "#dddddd"
     property color outputTextColor: "#000000"
     property color outputBoxColor: "#ffffff"
@@ -29,26 +29,22 @@ Rectangle {
             right: parent.right
             top: parent.top
         }
-        implicitHeight: 35
-        color: root.titleBoxColor
+        height: visible ? 35 : 0
+        color: "#eeeeee"
         border {
             color: root.titleBoxBorderColor
             width: 1
         }
+        visible: title.text !== ""
 
         Text {
             id: title
             text: root.title
-            color: root.titleTextColor
+            color: "#000000"
             anchors {
                 fill: parent
             }
             padding: 10
-//            font.family: sgicons.name
-        }
-
-        Component.onCompleted: {
-            if (title.text === ""){ titleArea.visible = false }
         }
     }
 
@@ -58,7 +54,7 @@ Rectangle {
         anchors {
             left: parent.left
             right: parent.right
-            top: titleArea.visible ? titleArea.bottom : parent.top
+            top: titleArea.bottom
             bottom: parent.bottom
         }
 
@@ -115,7 +111,7 @@ Rectangle {
     }
 
     Button {
-        visible: true
+        visible: false
         width: 30
         height: 30
         flat: true

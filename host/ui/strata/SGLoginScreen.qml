@@ -12,6 +12,7 @@ Rectangle {
     anchors { fill: parent }
     visible: true
     property bool showLoginOnCompletion: false
+    clip: true
 
     Component.onCompleted: {
         //spotlightAnimation.start();
@@ -69,31 +70,57 @@ Rectangle {
     //Elements common to both the connection and login screens
     //-----------------------------------------------------------
     Image {
-        id: onLogo
-        width: 80; height: 80
-        anchors{horizontalCenter: container.horizontalCenter
-            bottom:spyglassTextRect.top}
-        source: "../images/icons/onLogoGrey.svg"
+        id: background
+        source: "qrc:/images/login-background.svg"
+        height: 1080
+        width: 1920
+        x: (parent.width - width)/2
+        y: (parent.height - height)/2
+    }
+
+    Image {
+        id: strataLogo
+        width: 2 * height
+        height: container.height < 560 ? 125 : 200
+        anchors {
+            horizontalCenter: container.horizontalCenter
+            bottom: spyglassTextRect.top
+        }
+        source: "qrc:/images/strata-logo.svg"
         mipmap: true;
     }
 
     Rectangle {
         id: spyglassTextRect
-        height: 31
+        height: 0
         color: "#ffffff"
-        anchors.horizontalCenterOffset: -45
-        anchors { horizontalCenter: container.horizontalCenter;
+        anchors {
+            horizontalCenter: container.horizontalCenter;
             verticalCenter: container.verticalCenter;
-            verticalCenterOffset: -97}
+            verticalCenterOffset:  container.height < 560 ? 25 : 50
+        }
     }
 
-    SGSpotlightText {
-        titleName: "Encore Design Suite"
-        fadeInTime: 1000
-        fadeOutTime: 4000
-        anchors { top: onLogo.bottom;
-                  topMargin: 10
-                  horizontalCenter: onLogo.horizontalCenter}
+    Rectangle {
+        id: onSemiHeader
+        color: "#235a92"
+        anchors {
+            top: container.top
+            left: container.left
+            right: container.right
+        }
+        height: 130
+        clip: true
+
+        Image {
+            id: onSemiLogo
+            source: "qrc:/images/on-semi-logo.png"
+            anchors {
+                left: onSemiHeader.left
+                leftMargin: 25
+                verticalCenter: onSemiHeader.verticalCenter
+            }
+        }
     }
 
     //-----------------------------------------------------------
@@ -105,19 +132,24 @@ Rectangle {
         width: 147; height: 15
         color: "#aeaeae"
         text: qsTr("Searching for hardware")
-        anchors { horizontalCenter: container.horizontalCenter
+        anchors {
+            horizontalCenter: container.horizontalCenter
             top: spyglassTextRect.bottom
-            topMargin: 25}
+            topMargin: 25
+        }
         horizontalAlignment: Text.AlignHCenter
         fontSizeMode: Text.Fit
         opacity: 0
     }
+
     BusyIndicator {
         id: busyIndicator
         x: 301; y: 264
-        anchors {horizontalCenter: container.horizontalCenter
+        anchors {
+            horizontalCenter: container.horizontalCenter
             top: searchingText.bottom
-            topMargin: 25}
+            topMargin: 25
+        }
         font { pixelSize: 8 }
         opacity:0
     }
@@ -126,50 +158,35 @@ Rectangle {
     // login screen elements
     //-----------------------------------------------------------
 
-    Rectangle {
+    Item {
         id: loginRectangle
-        x: 225; y: 213
-        width: 200; height: 155
-        color: "#ffffff"
-        border { color: "black"; width: 1 }
-        anchors { horizontalCenter: container.horizontalCenter;
+        width: 184
+        height: 125
+        anchors {
+            horizontalCenter: container.horizontalCenter;
             top: spyglassTextRect.bottom
-            topMargin: 15}
-
-
-
-        Rectangle {
-            id: headerBackground
-            x: 1; y: 1
-            width: 198; height: 29
-            color: "#aeaeae"
-        }
-
-        Text {
-            id: loginHeaderText
-            x: 1; y: 9
-            width: 185; height: 15
-            color: "#ffffff"
-            text: qsTr("Login to your account")
-            font { bold: true }
-            font.pointSize: Qt.platform.os == "osx"? 13 :8
-            anchors { horizontalCenterOffset: 1; horizontalCenter: loginErrorRect.horizontalCenter }
-            horizontalAlignment: Text.AlignHCenter
+            topMargin: 15
         }
 
         TextField {
             id: usernameField
-            width: 184; height: 38
+            height: 38
             focus: true
-            placeholderText: qsTr(" Username")
-            Material.accent: Material.Grey
+            placeholderText: qsTr("Username")
             cursorPosition: 3
-            anchors.top: loginHeaderText.bottom
-            anchors.topMargin: 10
-            anchors.left: parent.left
-            anchors.leftMargin: 10
-            anchors.centerIn: loginHeaderText.Center
-            font.pointSize: Qt.platform.os == "osx"? 13 :8
+            anchors {
+                top: loginRectangle.top
+                left: loginRectangle.left
+                right: loginRectangle.right
+            }
+            font {
+                pixelSize: 15
+                family: franklinGothicBook.name
+            }
+            background: Rectangle {
+                border.color: usernameField.activeFocus ? "#219647" : "#ddd"
+            }
+            selectByMouse: true
 
             Keys.onPressed: {
                 hideFailedLoginAnimation.start()
@@ -183,17 +200,25 @@ Rectangle {
 
         TextField {
             id: passwordField
-            anchors.top: usernameField.bottom
-            anchors.topMargin: 2
-            anchors.left: parent.left
-            anchors.leftMargin: 10
-            anchors.centerIn: usernameField.Center
-            width: 184; height: 38
+            anchors{
+                top: usernameField.bottom
+                topMargin: 2
+                left: loginRectangle.left
+                right: loginRectangle.right
+            }
+            height: 38
             activeFocusOnTab: true
-            placeholderText: qsTr(" Password")
+            placeholderText: qsTr("Password")
             echoMode: TextInput.Password
-            Material.accent: Material.Grey
-            font.pointSize: Qt.platform.os == "osx"? 13 :8
+            font {
+                pixelSize: 15
+                family: franklinGothicBook.name
+            }
+            background: Rectangle {
+                border.color: passwordField.activeFocus ? "#219647" : "#ddd"
+            }
+            selectByMouse: true
+            KeyNavigation.tab: loginButton
 
             Keys.onPressed: {
                 hideFailedLoginAnimation.start()
@@ -206,13 +231,15 @@ Rectangle {
 
         Rectangle{
             id:loginErrorRect
-            x:8; y:111
-            width: 184; height:48
+            width: loginRectangle.width
+            height: 48
             color:"red"
             opacity: 0.0
-            anchors { left: loginRectangle.left
-                      leftMargin: 10 }
-
+            anchors {
+                horizontalCenter: loginRectangle.horizontalCenter
+                top: passwordField.bottom
+                topMargin: 5
+            }
 
             Image{
                 id:alertIcon
@@ -225,54 +252,58 @@ Rectangle {
 
             Text{
                 id:loginErrorText
-                font.family: "helvetica"
-                font.bold:true
-                font.pointSize: (Qt.platform.os == "osx") ? 13 : 8
+                font {
+                    pixelSize: 10
+                    family: franklinGothicBold.name
+                }
                 wrapMode: Label.WordWrap
                 anchors {
                     left: alertIcon.right
                     right: loginErrorRect.right
+                    rightMargin: 5
                     verticalCenter: loginErrorRect.verticalCenter
                 }
                 horizontalAlignment:Text.AlignHCenter
                 text: "Your username or password are incorrect"
                 color: "white"
             }
-
-
         }
 
         Button {
             id: loginButton
-            anchors{bottom:loginRectangle.bottom
-                bottomMargin: 4
-                left: loginRectangle.left
-                leftMargin: 10
-               centerIn: passwordField.Center
-
+            anchors {
+                bottom: loginRectangle.bottom
+                topMargin: 2
+                horizontalCenter: loginRectangle.horizontalCenter
             }
             width: 184; height: 38
             text:"Login"
-            Material.elevation: 6
-            Material.background: loginButton.down ? Qt.darker("#2eb457") : "#2eb457"
+            activeFocusOnTab: true
+
+            background: Rectangle {
+                color: loginButton.down ? "#666" : "#888"
+                border.color: loginButton.activeFocus ? "#219647" : "transparent"
+            }
 
             contentItem: Text {
                 text: loginButton.text
-                font.family: "helvetica"
                 opacity: enabled ? 1.0 : 0.3
-                color: loginButton.down ? "white" : "white"
+                color: "white"
                 horizontalAlignment: Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter
                 elide: Text.ElideRight
-                font.pointSize: Qt.platform.os != "osx"? 10 :13
-                font.bold:true
+                font {
+                    pixelSize: 15
+                    family: franklinGothicBold.name
+                }
+            }
+
+            Keys.onReturnPressed:{
+                loginButton.clicked()
             }
 
             /* OnClicked is handled in Connections section above */
-
         }
-
-
     }
 
     SequentialAnimation{
@@ -282,14 +313,14 @@ Rectangle {
         NumberAnimation {
             target: loginRectangle
             property: "height"
-            to: 200
-            duration: 500
+            to: 175
+            duration: 200
         }
         NumberAnimation{
             target:loginErrorRect
             property:"opacity"
             to: 1
-            duration: 500
+            duration: 200
         }
     }
 
@@ -301,17 +332,16 @@ Rectangle {
             target:loginErrorRect
             property:"opacity"
             to: 0
-            duration: 500
+            duration: 200
         }
 
         NumberAnimation {
             target: loginRectangle
             property: "height"
             // Go back to original height
-            to: 155
-            duration: 500
+            to: 125
+            duration: 200
         }
-
     }
 
     SequentialAnimation{
@@ -327,18 +357,21 @@ Rectangle {
                 duration: 1000
             }
         }
+
         ParallelAnimation{
             //reveal the connection screen elements
             NumberAnimation{
                 target: searchingText;
                 property: "opacity";
                 to: 1;
-                duration: 1000 }
+                duration: 1000
+            }
             NumberAnimation{
                 target: busyIndicator;
                 property: "opacity";
                 to: 1;
-                duration: 1000 }
+                duration: 1000
+            }
         }
     }
 
@@ -349,31 +382,49 @@ Rectangle {
             target: loginRectangle;
             property: "opacity";
             to: 0;
-            duration: 1 }
+            duration: 1
+        }
         //reveal the connection screen elements
         NumberAnimation{
             target: searchingText;
             property: "opacity";
             to: 1;
-            duration: 1 }
+            duration: 1
+        }
         NumberAnimation{
             target: busyIndicator;
             property: "opacity";
             to: 1;
-            duration: 1 }
+            duration: 1
+        }
     }
 
-    Item{
-        property int fadeInTime: 1000
-        property int fadeOutTime: 1000
-        property int interLetterDelayTime: 500
+    FontLoader {
+        id: franklinGothicBook
+        source: "qrc:/fonts/FranklinGothicBook.otf"
+    }
+
+    FontLoader {
+        id: franklinGothicBold
+        source: "qrc:/fonts/FranklinGothicBold.ttf"
+    }
+
+
+    // These text boxes are HACK solution to get around an issue on windows builds where the glyphs loaded in this file were the ONLY glyphs that appeared in subsequent views.
+    // the effects of this bug are documented here: https://bugreports.qt.io/browse/QTBUG-62578 - our instance of this issue was not random as described, however.  --Faller
+    Text {
+        text: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890:./\\{}()[]-=+_!@#$%^&*`~<>?\"\'"
+        font {
+            family: franklinGothicBold.name
+        }
+        visible: false
+    }
+
+    Text {
+        text:  "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890:./\\{}()[]-=+_!@#$%^&*`~<>?\"\'"
+        font {
+            family: franklinGothicBook.name
+        }
+        visible: false
     }
 }
-
-
-
-
-
-
-
-

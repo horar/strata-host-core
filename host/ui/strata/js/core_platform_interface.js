@@ -12,7 +12,7 @@ function data_source_handler (payload) {
             var notification_key = notification.value
             platformInterface[notification_key] = Object.create(notification["payload"]);
 
-            console.log("data_source_handler: signalling -> notification key:", notification_key);
+            //console.log("data_source_handler: signalling -> notification key:", notification_key);
 
         }
         else {
@@ -21,7 +21,7 @@ function data_source_handler (payload) {
     }
     catch (e) {
         if (e instanceof SyntaxError){
-            console.log("Motor Platfrom Notification Error. Notification JSON is invalid, ignoring")
+            console.log("Multiport Notification Error. Notification JSON is invalid, ignoring")
         }
     }
 }

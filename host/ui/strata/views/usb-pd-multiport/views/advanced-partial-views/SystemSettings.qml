@@ -26,34 +26,35 @@ Item {
                 margins: 15
             }
 
-            SGSegmentedButtonStrip {
-                id: dataConfig
-                label: "Data Configuration:"
-                activeColor: "#666"
-                inactiveColor: "#dddddd"
-                textColor: "#666"
-                activeTextColor: "white"
-                radius: 4
-                buttonHeight: 25
+            SGSlider {
+                id: maximumBoardPower
+                label: "Maximum Power:"
                 anchors {
                     left: margins1.left
                     leftMargin: 72
+                    right: maximumBoardPowerInput.left
+                    rightMargin: 10
                 }
-
-                segmentedButtons: GridLayout {
-                    columnSpacing: 2
-
-                    SGSegmentedButton{
-                        text: qsTr("Charge Only")
-                        checked: true  // Sets default checked button when exclusive
-                    }
-
-                    SGSegmentedButton{
-                        text: qsTr("Something Else")
-                    }
+                from: 30
+                to: 200
+                startLabel: "30W"
+                endLabel: "200W"
+                //value: platformInterface.input_under_voltage_notification.minimum_voltage
+                onMoved: {
+                    //platformInterface.set_minimum_input_voltage.update(value);
                 }
             }
 
+            SGSubmitInfoBox {
+                id: maximumBoardPowerInput
+                buttonVisible: false
+                anchors {
+                    verticalCenter: maximumBoardPower.verticalCenter
+                    right: parent.right
+                }
+                //input: inputFault.value.toFixed(0)
+                //onApplied: platformInterface.set_minimum_input_voltage.update(input);   // slider will be updated via notification
+            }
 
             SGSegmentedButtonStrip {
                 id: powerNegotiation
@@ -65,7 +66,7 @@ Item {
                 radius: 4
                 buttonHeight: 25
                 anchors {
-                    top: dataConfig.bottom
+                    top: maximumBoardPower.bottom
                     topMargin: 10
                     left: margins1.left
                     leftMargin: 75
@@ -74,17 +75,51 @@ Item {
                 segmentedButtons: GridLayout {
                     columnSpacing: 2
 
+                    property var negotiationTypeChanged: platformInterface.power_negotiation.negotiation_type
+
+                    onNegotiationTypeChangedChanged:{
+                        if (platformInterface.power_negotiation.negotiation_type === "dynamic"){
+                            dynamicNegotiationButton.checked = true;
+                            fcfsNegotiationButton.checked = false;
+                            priorityNegotiationButton.checked = false;
+                        }
+                        else if (platformInterface.power_negotiation.negotiation_type === "first_come_first_served"){
+                            dynamicNegotiationButton.checked = false;
+                            fcfsNegotiationButton.checked = true;
+                            priorityNegotiationButton.checked = false;
+                        }
+                        else if (platformInterface.power_negotiation.negotiation_type === "priority"){
+                            dynamicNegotiationButton.checked = false;
+                            fcfsNegotiationButton.checked = false;
+                            priorityNegotiationButton.checked = true;
+                        }
+
+
+                    }
+
                     SGSegmentedButton{
+                        id:dynamicNegotiationButton
                         text: qsTr("Dynamic")
                         checked: true  // Sets default checked button when exclusive
+                        onClicked: {
+                            platformInterface.set_power_negotiation.update("dynamic");
+                        }
                     }
 
                     SGSegmentedButton{
+                        id:fcfsNegotiationButton
                         text: qsTr("FCFS")
+                        onClicked: {
+                            platformInterface.set_power_negotiation.update("first_come_first_served");
+                        }
                     }
 
                     SGSegmentedButton{
+                        id:priorityNegotiationButton
                         text: qsTr("Priority")
+                        onClicked: {
+                            platformInterface.set_power_negotiation.update("priority");
+                        }
                     }
                 }
             }
@@ -111,15 +146,36 @@ Item {
                     leftMargin: 20
                 }
 
+
+
                 segmentedButtons: GridLayout {
                     columnSpacing: 2
 
-                    SGSegmentedButton{
-                        text: qsTr("Manual")
-                        checked: true  // Sets default checked button when exclusive
+                    property var sleepMode: platformInterface.sleep_mode.mode
+
+                    onSleepModeChanged:{
+                        if (platformInterface.sleep_mode.mode === "manual"){
+                            manualSleepModeButton.checked = true;
+                            automaticSleepModeButton.checked = false;
+                        }
+                        else if (platformInterface.sleep_mode.mode === "automatic"){
+                            manualSleepModeButton.checked = false;
+                            automaticSleepModeButton.checked = true;
+                        }
                     }
 
                     SGSegmentedButton{
+                        id:manualSleepModeButton
+                        text: qsTr("Manual")
+                        checked: true  // Sets default checked button when exclusive
+
+                        onClicked: {
+                            platformInterface.set_sleep_mode.update("manual");
+                        }
+                    }
+
+                    SGSegmentedButton{
+                        id:automaticSleepModeButton
                         text: qsTr("Automatic")
                         onCheckedChanged: {
                             if (checked) {
@@ -128,6 +184,10 @@ Item {
                                 manualSleep.enabled = true
                             }
 
+                        }
+
+                        onClicked: {
+                            platformInterface.set_sleep_mode.update("automatic");
                         }
                     }
                 }
@@ -149,13 +209,36 @@ Item {
                 segmentedButtons: GridLayout {
                     columnSpacing: 2
 
-                    SGSegmentedButton{
-                        text: qsTr("ON")
-                        checked: true  // Sets default checked button when exclusive
+                    property var manualSleepMode: platformInterface.manual_sleep_mode.mode
+
+                    onManualSleepModeChanged:{
+                        if (platformInterface.manual_sleep_mode.mode ==="on"){
+                            manualSleepOnButton.checked = true;
+                            manualSleepOffButton.checked = false;
+                        }
+                        else if (platformInterface.manual_sleep_mode.mode ==="off"){
+                            manualSleepOnButton.checked = false;
+                            manualSleepOffButton.checked = true;
+                        }
                     }
 
                     SGSegmentedButton{
+                        id:manualSleepOnButton
+                        text: qsTr("ON")
+                        checked: true  // Sets default checked button when exclusive
+
+                        onClicked: {
+                            platformInterface.set_manual_sleep_mode.update("on");
+                        }
+                    }
+
+                    SGSegmentedButton{
+                        id:manualSleepOffButton
                         text: qsTr("OFF")
+
+                        onClicked: {
+                            platformInterface.set_manual_sleep_mode.update("off");
+                        }
                     }
                 }
             }
@@ -187,15 +270,29 @@ Item {
 
                     SGSegmentedButton{
                         text: qsTr("Shutdown")
-                        checked: true  // Sets default checked button when exclusive
+                        checked: platformInterface.usb_pd_protection_action.action === "shutdown"
+
+                        onClicked: {
+                            platformInterface.set_protection_action.update("shutdown");
+                        }
                     }
 
                     SGSegmentedButton{
                         text: qsTr("Retry")
+                        checked: platformInterface.usb_pd_protection_action.action === "retry"
+
+                        onClicked: {
+                            platformInterface.set_protection_action.update("retry");
+                        }
                     }
 
                     SGSegmentedButton{
                         text: qsTr("None")
+                        checked: platformInterface.usb_pd_protection_action.action === "nothing"
+
+                        onClicked: {
+                            platformInterface.set_protection_action.update("nothing");
+                        }
                     }
                 }
             }
@@ -212,10 +309,13 @@ Item {
                     rightMargin: 10
                 }
                 from: 0
-                to: 32
+                to: 20
                 startLabel: "0V"
-                endLabel: "32V"
-                value: 0
+                endLabel: "20V"
+                value: platformInterface.input_under_voltage_notification.minimum_voltage
+                onMoved: {
+                    platformInterface.set_minimum_input_voltage.update(value);
+                }
             }
 
             SGSubmitInfoBox {
@@ -226,7 +326,7 @@ Item {
                     right: parent.right
                 }
                 input: inputFault.value.toFixed(0)
-                onApplied: inputFault.value = value
+                onApplied: platformInterface.set_minimum_input_voltage.update(input);   // slider will be updated via notification
             }
 
             SGSlider {
@@ -239,11 +339,14 @@ Item {
                     right: tempFaultInput.left
                     rightMargin: 10
                 }
-                from: 25
-                to: 200
-                startLabel: "25°C"
-                endLabel: "200°C"
-                value: 25
+                from: -64
+                to: 191
+                startLabel: "-64°C"
+                endLabel: "191°C"
+                value: platformInterface.set_maximum_temperature_notification.maximum_temperature
+                onMoved: {
+                    platformInterface.set_maximum_temperature.update(value);
+                }
             }
 
             SGSubmitInfoBox {
@@ -254,7 +357,7 @@ Item {
                     right: parent.right
                 }
                 input: tempFault.value.toFixed(0)
-                onApplied: tempFault.value = value
+                onApplied: platformInterface.set_maximum_temperature.update(input); // slider will be updated via notification
             }
         }
 
@@ -298,12 +401,15 @@ Item {
                 uncheckedLabel: "Off"
                 switchHeight: 20
                 switchWidth: 46
+                checked: platformInterface.foldback_input_voltage_limiting_event.input_voltage_foldback_enabled
+                onToggled: platformInterface.set_input_voltage_foldback.update(checked, platformInterface.foldback_input_voltage_limiting_event.foldback_minimum_voltage,
+                                platformInterface.foldback_input_voltage_limiting_event.foldback_minimum_voltage_power)
             }
 
             SGSlider {
                 id: foldbackLimit
                 label: "Limit below:"
-                value: 0
+                value: platformInterface.foldback_input_voltage_limiting_event.foldback_minimum_voltage
                 anchors {
                     left: parent.left
                     leftMargin: 61
@@ -313,9 +419,13 @@ Item {
                     rightMargin: 10
                 }
                 from: 0
-                to: 32
+                to: 20
                 startLabel: "0V"
-                endLabel: "32V"
+                endLabel: "20V"
+                //copy the current values for other stuff, and add the new slider value for the limit.
+                onMoved: platformInterface.set_input_voltage_foldback.update(platformInterface.foldback_input_voltage_limiting_event.input_voltage_foldback_enabled,
+                                 value,
+                                platformInterface.foldback_input_voltage_limiting_event.foldback_minimum_voltage_power)
             }
 
             SGSubmitInfoBox {
@@ -326,18 +436,35 @@ Item {
                     right: parent.right
                 }
                 input: foldbackLimit.value.toFixed(0)
-                onApplied: foldbackLimit.value = value
+                onApplied: platformInterface.set_input_voltage_foldback.update(platformInterface.foldback_input_voltage_limiting_event.input_voltage_foldback_enabled,
+                                                                               input,
+                                                                              platformInterface.foldback_input_voltage_limiting_event.foldback_minimum_voltage_power)
             }
 
             SGComboBox {
                 id: limitOutput
                 label: "Limit output power to:"
-                model: ["45 W","stuff"]
+                model: ["15","27", "36", "45","60","100"]
                 anchors {
                     left: parent.left
                     top: foldbackLimit.bottom
                     topMargin: 10
                 }
+                //when changing the value
+                onActivated: {
+                    console.log("setting input power foldback to ",limitOutput.comboBox.currentText);
+                    platformInterface.set_input_voltage_foldback.update(platformInterface.foldback_input_voltage_limiting_event.input_voltage_foldback_enabled,
+                                                                        platformInterface.foldback_input_voltage_limiting_event.foldback_minimum_voltage,
+                                                                                 limitOutput.comboBox.currentText)
+                }
+
+                property var currentFoldbackOuput: platformInterface.foldback_input_voltage_limiting_event.foldback_minimum_voltage_power
+                onCurrentFoldbackOuputChanged: {
+                    //console.log("got a new min power setting",platformInterface.foldback_input_voltage_limiting_event.foldback_minimum_voltage_power);
+                    limitOutput.currentIndex = limitOutput.comboBox.find( parseInt (platformInterface.foldback_input_voltage_limiting_event.foldback_minimum_voltage_power))
+                }
+
+
             }
 
             SGDivider {
@@ -370,6 +497,13 @@ Item {
                 uncheckedLabel: "Off"
                 switchHeight: 20
                 switchWidth: 46
+                checked: platformInterface.foldback_temperature_limiting_event.temperature_foldback_enabled
+                onToggled:{
+                    console.log("sending temp foldback update command from tempFoldbackSwitch");
+                    platformInterface.set_temperature_foldback.update(tempFoldbackSwitch.checked,
+                                                                                    platformInterface.foldback_temperature_limiting_event.foldback_maximum_temperature,
+                                                                                    platformInterface.foldback_temperature_limiting_event.foldback_maximum_temperature_power);
+                }
             }
 
             SGSlider {
@@ -387,7 +521,14 @@ Item {
                 to: 200
                 startLabel: "25°C"
                 endLabel: "200°C"
-                value: 25
+                value: platformInterface.foldback_temperature_limiting_event.foldback_maximum_temperature
+                onMoved:{
+                    console.log("sending temp foldback update command from foldbackTempSlider");
+                    platformInterface.set_temperature_foldback.update(platformInterface.foldback_temperature_limiting_event.temperature_foldback_enabled,
+                                                                                  foldbackTemp.value,
+                                                                                  platformInterface.foldback_temperature_limiting_event.foldback_maximum_temperature_power)
+                }
+
             }
 
             SGSubmitInfoBox {
@@ -398,17 +539,32 @@ Item {
                     right: parent.right
                 }
                 input: foldbackTemp.value.toFixed(0)
-                onApplied: foldbackTemp.value = value
+                onApplied: platformInterface.set_temperature_foldback.update(platformInterface.foldback_temperature_limiting_event.temperature_foldback_enabled,
+                                                                             input,
+                                                                             platformInterface.foldback_temperature_limiting_event.foldback_maximum_temperature_power)
             }
 
             SGComboBox {
                 id: limitOutput2
                 label: "Limit output power to:"
-                model: ["45 W","stuff"]
+                model: ["15","27", "36", "45","60","100"]
                 anchors {
                     left: parent.left
                     top: foldbackTemp.bottom
                     topMargin: 10
+                }
+                //when the value is changed by the user
+                onActivated: {
+                    console.log("sending temp foldback update command from limitOutputComboBox");
+                    platformInterface.set_temperature_foldback.update(platformInterface.foldback_temperature_limiting_event.temperature_foldback_enabled,
+                                                                                 platformInterface.foldback_temperature_limiting_event.foldback_maximum_temperature,
+                                                                                 limitOutput2.currentText)
+                }
+
+                property var currentFoldbackOuput: platformInterface.foldback_temperature_limiting_event.foldback_maximum_temperature_power
+
+                onCurrentFoldbackOuputChanged: {
+                    limitOutput2.currentIndex = limitOutput2.comboBox.find( parseInt (platformInterface.foldback_temperature_limiting_event.foldback_maximum_temperature_power))
                 }
             }
         }

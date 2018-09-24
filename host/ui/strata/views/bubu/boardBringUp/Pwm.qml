@@ -14,11 +14,12 @@ Rectangle {
     /*
       List of disabled pin for pwm for each port
     */
-    property variant portAMapDisable: [4, 12, 13, 14]
-    property variant portBMapDisable: [2, 12, 10, 11]
-    property variant portCMapDisable: [0,1,2,3,4,5,10,11,12,13,14,15]
-    property variant portDMapDisable: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
-    property variant portHMapDisable: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
+    property variant portAMapDisable: []
+    property variant portBMapDisable: []
+    property variant portCMapDisable: []
+    property variant portDMapDisable: []
+    property variant portEMapDisable: []
+    property variant portHMapDisable: []
 
     /*
       set Pwm port based on pin function
@@ -75,7 +76,8 @@ Rectangle {
         SGMiddleSegmentedButton{text:"Port B"; portName: "b"; tabIndex: 1; pinFunction: "pwm";onClicked: setPwmPort(pinFunction, portName,tabIndex)}
         SGMiddleSegmentedButton{text:"Port C";portName: "c"; tabIndex: 2; pinFunction: "pwm";onClicked: setPwmPort(pinFunction, portName,tabIndex)}
         SGMiddleSegmentedButton{text:"Port D";portName: "d"; tabIndex: 3; pinFunction: "pwm";onClicked: setPwmPort(pinFunction, portName,tabIndex)}
-        SGRightSegmentedButton{text:"Port H";portName: "h"; tabIndex: 4; pinFunction: "pwm";onClicked: setPwmPort(pinFunction, portName,tabIndex)}
+        SGMiddleSegmentedButton{text:"Port E";portName: "e"; tabIndex: 4; pinFunction: "pwm";onClicked: setPwmPort(pinFunction, portName,tabIndex) }
+        SGRightSegmentedButton{text:"Port H";portName: "h"; tabIndex: 5; pinFunction: "pwm";onClicked: setPwmPort(pinFunction, portName,tabIndex)}
 
     }
 
@@ -99,6 +101,7 @@ Rectangle {
         ButtonViewPwm { holdDisableBits: portBMapDisable }
         ButtonViewPwm { holdDisableBits: portCMapDisable }
         ButtonViewPwm { holdDisableBits: portDMapDisable }
+        ButtonViewPwm { holdDisableBits: portEMapDisable }
         ButtonViewPwm { holdDisableBits: portHMapDisable }
 
     }
@@ -113,4 +116,5 @@ Rectangle {
     }
 
 }
+
 
