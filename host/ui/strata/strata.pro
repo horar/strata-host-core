@@ -16,13 +16,15 @@ QML_IMPORT_PATH =
 # Additional import path used to resolve QML modules just for Qt Quick Designer
 QML_DESIGNER_IMPORT_PATH =
 
-
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 DISTFILES +=
+
+//This line needed after installing Xcode 11
+//QMAKE_MAC_SDK = macosx10.14
 
 # set root host build path
 HOST_ROOT = ../../../host
@@ -47,6 +49,7 @@ else : macx : !win32 {
     INCLUDEPATH += $${HOST_ROOT}/include
     INCLUDEPATH += $$PWD/PlatformInterface
     INCLUDEPATH += $$PWD/include
+
 }
 
 # windows
