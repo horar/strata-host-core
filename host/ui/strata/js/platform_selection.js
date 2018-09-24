@@ -148,17 +148,17 @@ function sendSelection (currentIndex) {
     }
     else if (connection === "connected"){
         platformListModel.selectedConnection = "connected"
-        NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT,data)
         coreInterface.sendSelectedPlatform(platformListModel.get(currentIndex).uuid,platformListModel.get(currentIndex).connection)
+        NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT,data)
         if (NavigationControl.flipable_parent_.flipped) {
             NavigationControl.updateState(NavigationControl.events.TOGGLE_CONTROL_CONTENT)
         }
     }
     else if (connection === "remote"){
         platformListModel.selectedConnection = "remote"
-        NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT,data)
         // Call coreinterface connect()
         coreInterface.sendSelectedPlatform(platformListModel.get(currentIndex).uuid,platformListModel.get(currentIndex).connection)
+        NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT,data)
         if (NavigationControl.flipable_parent_.flipped) {
             NavigationControl.updateState(NavigationControl.events.TOGGLE_CONTROL_CONTENT)
         }
