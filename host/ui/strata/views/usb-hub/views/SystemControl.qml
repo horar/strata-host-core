@@ -1,7 +1,8 @@
 import QtQuick 2.9
 import QtGraphicalEffects 1.0
 import QtQuick.Layouts 1.3
-import "qrc:/views/usb-pd-multiport/sgwidgets"
+import QtQuick.Controls 1.4
+import "qrc:/views/usb-hub/sgwidgets"
 
 Item {
     id: systemControls
@@ -14,6 +15,11 @@ Item {
 
     anchors {
         fill: parent
+    }
+    Rectangle{
+        id:background
+        color: "#145A74"
+        anchors.fill:systemControls
     }
 
     Column{
@@ -32,13 +38,13 @@ Item {
         Rectangle{
             id:powerGroup
             color:"lightYellow"
-            height:150
+            height:200
             width: controlColumn.width
             radius:5
 
             Text {
                 id: powerLabel
-                text: "<b>Power</b>"
+                text: "Power Management"
                 font {
                     pixelSize: 24
                 }
@@ -50,88 +56,88 @@ Item {
                 }
             }
 
-            SGSegmentedButtonStrip {
-                id: powerNegotiation
-                label: "Power Negotiation:"
-                activeColor: "#666"
-                inactiveColor: "#dddddd"
-                textColor: "#666"
-                activeTextColor: "white"
-                radius: 4
-                buttonHeight: 25
+            Text{
+                id: powerNegotiationLabel
+                text: "Negotiation Scheme:"
                 anchors {
                     left: powerGroup.left
-                    leftMargin: 60
+                    leftMargin: 95
                     top: powerLabel.bottom
                     topMargin: 10
                 }
+            }
+            ColumnLayout{
+                id:powerNegotiationColumn
+                anchors.left: powerNegotiationLabel.right
+                anchors.leftMargin: 10
+                anchors.top: powerNegotiationLabel.top
 
-                segmentedButtons: GridLayout {
-                    columnSpacing: 2
+                property var negotiationTypeChanged: platformInterface.power_negotiation.negotiation_type
 
-                    property var negotiationTypeChanged: platformInterface.power_negotiation.negotiation_type
-
-                    onNegotiationTypeChangedChanged:{
-                        if (platformInterface.power_negotiation.negotiation_type === "dynamic"){
-                            dynamicNegotiationButton.checked = true;
-                            fcfsNegotiationButton.checked = false;
-                            priorityNegotiationButton.checked = false;
-                        }
-                        else if (platformInterface.power_negotiation.negotiation_type === "first_come_first_served"){
-                            dynamicNegotiationButton.checked = false;
-                            fcfsNegotiationButton.checked = true;
-                            priorityNegotiationButton.checked = false;
-                        }
-                        else if (platformInterface.power_negotiation.negotiation_type === "priority"){
-                            dynamicNegotiationButton.checked = false;
-                            fcfsNegotiationButton.checked = false;
-                            priorityNegotiationButton.checked = true;
-                        }
-
-
+                onNegotiationTypeChangedChanged:{
+                    if (platformInterface.power_negotiation.negotiation_type === "dynamic"){
+                        dynamicNegotiationButton.checked = true;
+                        //fcfsNegotiationButton.checked = false;
+                        //priorityNegotiationButton.checked = false;
+                    }
+                    else if (platformInterface.power_negotiation.negotiation_type === "first_come_first_served"){
+                        //dynamicNegotiationButton.checked = false;
+                        fcfsNegotiationButton.checked = true;
+                        //priorityNegotiationButton.checked = false;
+                    }
+                    else if (platformInterface.power_negotiation.negotiation_type === "priority"){
+                        //dynamicNegotiationButton.checked = false;
+                        //fcfsNegotiationButton.checked = false;
+                        priorityNegotiationButton.checked = true;
                     }
 
-                    SGSegmentedButton{
-                        id:dynamicNegotiationButton
-                        text: qsTr("Dynamic")
-                        checked: true  // Sets default checked button when exclusive
-                        onClicked: {
-                            platformInterface.set_power_negotiation.update("dynamic");
-                        }
-                    }
 
-                    SGSegmentedButton{
-                        id:fcfsNegotiationButton
-                        text: qsTr("FCFS")
-                        onClicked: {
-                            platformInterface.set_power_negotiation.update("first_come_first_served");
-                        }
-                    }
+                }
 
-                    SGSegmentedButton{
-                        id:priorityNegotiationButton
-                        text: qsTr("Priority")
-                        onClicked: {
-                            platformInterface.set_power_negotiation.update("priority");
-                        }
+                RadioButton {
+                    id: dynamicNegotiationButton
+                    text: "Dynamic"
+                    checked: true
+                    //radioColor: "#145A74"
+                    onClicked: {
+                        platformInterface.set_power_negotiation.update("dynamic");
+                    }
+                }
+                RadioButton {
+                    id: fcfsNegotiationButton
+                    text: "First Come First Serve"
+                    //radioColor: "#145A74"
+                    onClicked: {
+                        platformInterface.set_power_negotiation.update("first_come_first_served");
+                    }
+                }
+                RadioButton {
+                    id: priorityNegotiationButton
+                    text: "Priority"
+                    //radioColor: "#145A74"
+                    onClicked: {
+                        platformInterface.set_power_negotiation.update("priority");
                     }
                 }
             }
 
+
+
+
             SGSlider {
                 id: maximumBoardPower
                 label: "Maximum Power:"
-                width: 450
+                width: 390
                 anchors {
                     left: powerGroup.left
-                    leftMargin: 70
-                    top:powerNegotiation.bottom
+                    leftMargin: 115
+                    top:powerNegotiationColumn.bottom
                     topMargin: 20
                 }
                 from: 30
                 to: 200
-                startLabel: "30W"
-                endLabel: "200W"
+                startLabel: "38W"
+                endLabel: "100W"
                     //value: platformInterface.input_under_voltage_notification.minimum_voltage
                 onMoved: {
                     //platformInterface.set_minimum_input_voltage.update(value);
@@ -154,12 +160,13 @@ Item {
         Rectangle{
             id:faultGroup
             color:"lightYellow"
-            height:150
+            height:200
             width: parent.width
+            radius: 5
 
             Text {
                 id: faultLabel
-                text: "<b>Faults</b>"
+                text: "Faults"
                 font {
                     pixelSize: 24
                 }
@@ -171,69 +178,70 @@ Item {
                 }
             }
 
-            SGSegmentedButtonStrip {
-                id: faultProtection
+            Text{
+                id: faultProtectionLabel
+                text: "Protection:"
                 anchors {
+                    left: faultGroup.left
+                    leftMargin: 155
                     top: faultLabel.bottom
                     topMargin: 10
-                    left: faultGroup.left
-                    leftMargin: 100
                 }
-                label: "Fault Protection:"
-                textColor: "#666"
-                activeTextColor: "white"
-                radius: 4
-                buttonHeight: 25
+            }
+            ColumnLayout{
+                id:faultProtectionColumn
+                anchors.left: faultProtectionLabel.right
+                anchors.leftMargin: 10
+                anchors.top: faultProtectionLabel.top
+                ExclusiveGroup { id: faultProtectionGroup }
 
-                segmentedButtons: GridLayout {
-                    columnSpacing: 2
-
-                    SGSegmentedButton{
-                        text: qsTr("Shutdown")
-                        checked: platformInterface.usb_pd_protection_action.action === "shutdown"
-
-                        onClicked: {
-                            platformInterface.set_protection_action.update("shutdown");
-                        }
+                RadioButton {
+                    id: shutdownProtectionButton
+                    text: "Shutdown"
+                    exclusiveGroup: faultProtectionGroup
+                    checked: platformInterface.usb_pd_protection_action.action === "shutdown"
+                    onClicked: {
+                        platformInterface.set_protection_action.update("shutdown");
                     }
+                }
+                RadioButton {
+                    id: retryProtectinButton
+                    text: "Retry"
+                    exclusiveGroup: faultProtectionGroup
+                    checked: platformInterface.usb_pd_protection_action.action === "retry"
 
-                    SGSegmentedButton{
-                        text: qsTr("Retry")
-                        checked: platformInterface.usb_pd_protection_action.action === "retry"
-
-                        onClicked: {
-                            platformInterface.set_protection_action.update("retry");
-                        }
+                    onClicked: {
+                        platformInterface.set_protection_action.update("retry");
                     }
+                }
+                RadioButton {
+                    id: noProtectionButton
+                    text: "None"
+                    exclusiveGroup: faultProtectionGroup
+                    checked: platformInterface.usb_pd_protection_action.action === "nothing"
 
-                    SGSegmentedButton{
-                        text: qsTr("None")
-                        checked: platformInterface.usb_pd_protection_action.action === "nothing"
-
-                        onClicked: {
-                            platformInterface.set_protection_action.update("nothing");
-                        }
+                    onClicked: {
+                        platformInterface.set_protection_action.update("nothing");
                     }
                 }
             }
 
 
-
             SGSlider {
                 id: tempFault
-                label: "Fault when temperature above:"
-                width:450
+                label: "Fault when temperature is above:"
+                width:490
                 anchors {
                     left: parent.left
-                    leftMargin: 40
-                    top: faultProtection.bottom
+                    leftMargin: 20
+                    top: faultProtectionColumn.bottom
                     topMargin: 10
 
                 }
-                from: -64
-                to: 191
-                startLabel: "-64°C"
-                endLabel: "191°C"
+                from: -20
+                to: 125
+                startLabel: "-20°C"
+                endLabel: "125°C"
                 value: platformInterface.set_maximum_temperature_notification.maximum_temperature
                 onMoved: {
                     platformInterface.set_maximum_temperature.update(value);
@@ -256,13 +264,13 @@ Item {
         Rectangle{
             id:foldbackGroup
             color:"lightYellow"
-            height:150
+            height:220
             width: parent.width
             radius:5
 
             Text {
-                id: tempFoldback
-                text: "<b>Temperature Foldback</b>"
+                id: tempFoldbackLabel
+                text: "Temperature Foldback"
                 font {
                     pixelSize: 24
                 }
@@ -274,14 +282,27 @@ Item {
                 }
             }
 
+            Text{
+                id: temperatureFoldbackActiveLabel
+                text: "Active:"
+                anchors {
+                    left: foldbackGroup.left
+                    leftMargin: 180
+                    top: tempFoldbackLabel.bottom
+                    topMargin: 10
+                }
+            }
+
             SGSwitch {
                 id: tempFoldbackSwitch
                 anchors {
-                    right: parent.right
-                    verticalCenter: tempFoldback.verticalCenter
+                    left: temperatureFoldbackActiveLabel.right
+                    leftMargin: 10
+                    verticalCenter: temperatureFoldbackActiveLabel.verticalCenter
                 }
-                checkedLabel: "On"
-                uncheckedLabel: "Off"
+                //checkedLabel: "On"
+                //uncheckedLabel: "Off"
+                grooveFillColor: "#145A74"
                 switchHeight: 20
                 switchWidth: 46
                 checked: platformInterface.foldback_temperature_limiting_event.temperature_foldback_enabled
@@ -295,18 +316,18 @@ Item {
 
             SGSlider {
                 id: foldbackTemp
-                label: "Limit above:"
-                width:400
+                label: "When temperature is above:"
+                width:460
                 anchors {
                     left: parent.left
-                    leftMargin: 60
-                    top: tempFoldback.bottom
+                    leftMargin: 50
+                    top: temperatureFoldbackActiveLabel.bottom
                     topMargin: 10
                 }
-                from: 25
-                to: 200
-                startLabel: "25°C"
-                endLabel: "200°C"
+                from: 0
+                to: 125
+                startLabel: "0°C"
+                endLabel: "125°C"
                 value: platformInterface.foldback_temperature_limiting_event.foldback_maximum_temperature
                 onMoved:{
                     console.log("sending temp foldback update command from foldbackTempSlider");
@@ -317,6 +338,7 @@ Item {
 
             }
 
+
             SGSubmitInfoBox {
                 id: foldbackTempInput
                 buttonVisible: false
@@ -325,35 +347,96 @@ Item {
                     left:foldbackTemp.right
                     leftMargin: 10
                 }
-                input: foldbackTemp.value.toFixed(0)
-                onApplied: platformInterface.set_temperature_foldback.update(platformInterface.foldback_temperature_limiting_event.temperature_foldback_enabled,
-                                                                             input,
-                                                                             platformInterface.foldback_temperature_limiting_event.foldback_maximum_temperature_power)
+//                input: foldbackTemp.value.toFixed(0)
+//                platformInterface.set_temperature_foldback.update(platformInterface.foldback_temperature_limiting_event.temperature_foldback_enabled,
+//                                                                  platformInterface.foldback_temperature_limiting_event.foldback_maximum_temperature,
+//                                                                  limitOutput2.currentText)
             }
 
-            SGComboBox {
-                id: limitOutput2
-                label: "Limit output power to:"
-                model: ["15","27", "36", "45","60","100"]
+            SGSlider {
+                id: foldbackTempLimit
+                label: "Cut port output power by:"
+                width:445
                 anchors {
                     left: parent.left
-                    leftMargin: 50
+                    leftMargin: 65
                     top: foldbackTemp.bottom
                     topMargin: 10
                 }
-                //when the value is changed by the user
-                onActivated: {
-                    console.log("sending temp foldback update command from limitOutputComboBox");
-                    platformInterface.set_temperature_foldback.update(platformInterface.foldback_temperature_limiting_event.temperature_foldback_enabled,
-                                                                      platformInterface.foldback_temperature_limiting_event.foldback_maximum_temperature,
-                                                                      limitOutput2.currentText)
-                }
+                from: 1
+                to: 100
+                startLabel: "0%"
+                endLabel: "99%"
 
                 property var currentFoldbackOuput: platformInterface.foldback_temperature_limiting_event.foldback_maximum_temperature_power
 
                 onCurrentFoldbackOuputChanged: {
-                    limitOutput2.currentIndex = limitOutput2.comboBox.find( parseInt (platformInterface.foldback_temperature_limiting_event.foldback_maximum_temperature_power))
+                    //limitOutput2.currentIndex = limitOutput2.comboBox.find( parseInt (platformInterface.foldback_temperature_limiting_event.foldback_maximum_temperature_power))
                 }
+
+
+                value: platformInterface.foldback_temperature_limiting_event.foldback_maximum_temperature
+                onMoved:{
+//                    console.log("sending temp foldback update command from foldbackTempSlider");
+//                    platformInterface.set_temperature_foldback.update(platformInterface.foldback_temperature_limiting_event.temperature_foldback_enabled,
+//                                                                      platformInterface.foldback_temperature_limiting_event.foldback_maximum_temperature,
+//                                                                      limitOutput2.currentText);
+                }
+
+            }
+
+            SGSubmitInfoBox {
+                id: foldbackTempLimitInput
+                buttonVisible: false
+                anchors {
+                    verticalCenter: foldbackTempLimit.verticalCenter
+                    left:foldbackTempLimit.right
+                    leftMargin: 10
+                }
+//                input: foldbackTemp.value.toFixed(0)
+//                platformInterface.set_temperature_foldback.update(platformInterface.foldback_temperature_limiting_event.temperature_foldback_enabled,
+//                                                                  platformInterface.foldback_temperature_limiting_event.foldback_maximum_temperature,
+//                                                                  limitOutput2.currentText)
+            }
+
+
+
+            SGSlider {
+                id: tempFoldbackHysteresis
+                label: "End limiting on a decrease of:"
+                width:467
+                anchors {
+                    left: parent.left
+                    leftMargin: 43
+                    top: foldbackTempLimit.bottom
+                    topMargin: 10
+                }
+                from: 25
+                to: 200
+                startLabel: "1°C"
+                endLabel: "10°C"
+                value: platformInterface.foldback_temperature_limiting_event.foldback_maximum_temperature
+                onMoved:{
+                    //console.log("sending temp foldback update command from foldbackTempSlider");
+                    //platformInterface.set_temperature_foldback.update(platformInterface.foldback_temperature_limiting_event.temperature_foldback_enabled,
+                    //                                                  foldbackTemp.value,
+                    //                                                  platformInterface.foldback_temperature_limiting_event.foldback_maximum_temperature_power)
+                }
+
+            }
+
+            SGSubmitInfoBox {
+                id: tempFoldbackHysteresisInput
+                buttonVisible: false
+                anchors {
+                    verticalCenter: tempFoldbackHysteresis.verticalCenter
+                    left:tempFoldbackHysteresis.right
+                    leftMargin: 10
+                }
+                //input: foldbackTemp.value.toFixed(0)
+                //onApplied: platformInterface.set_temperature_foldback.update(platformInterface.foldback_temperature_limiting_event.temperature_foldback_enabled,
+                //                                                             input,
+                //                                                             platformInterface.foldback_temperature_limiting_event.foldback_maximum_temperature_power)
             }
     }
 
