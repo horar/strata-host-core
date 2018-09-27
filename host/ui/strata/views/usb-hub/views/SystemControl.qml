@@ -1,7 +1,7 @@
 import QtQuick 2.9
 import QtGraphicalEffects 1.0
 import QtQuick.Layouts 1.3
-import QtQuick.Controls 1.4
+import QtQuick.Controls 2.1
 import "qrc:/views/usb-hub/sgwidgets"
 
 Item {
@@ -71,6 +71,8 @@ Item {
                 anchors.left: powerNegotiationLabel.right
                 anchors.leftMargin: 10
                 anchors.top: powerNegotiationLabel.top
+                anchors.topMargin: -5
+                spacing: -5
 
                 property var negotiationTypeChanged: platformInterface.power_negotiation.negotiation_type
 
@@ -98,7 +100,16 @@ Item {
                     id: dynamicNegotiationButton
                     text: "Dynamic"
                     checked: true
-                    //radioColor: "#145A74"
+                    indicator: Rectangle{
+                        width: 14
+                        height: 14
+                        x: 6
+                        y: 6
+                        radius: 7
+                        border.color: dynamicNegotiationButton.down ? "lightgrey" : "black"
+                        color: dynamicNegotiationButton.checked ? "#145A74": "ivory"
+                    }
+
                     onClicked: {
                         platformInterface.set_power_negotiation.update("dynamic");
                     }
@@ -106,7 +117,15 @@ Item {
                 RadioButton {
                     id: fcfsNegotiationButton
                     text: "First Come First Serve"
-                    //radioColor: "#145A74"
+                    indicator: Rectangle{
+                        width: 14
+                        height: 14
+                        x: 6
+                        y: 6
+                        radius: 7
+                        border.color: fcfsNegotiationButton.down ? "#17a81a" : "black"
+                        color: fcfsNegotiationButton.checked ? "#145A74": "ivory"
+                    }
                     onClicked: {
                         platformInterface.set_power_negotiation.update("first_come_first_served");
                     }
@@ -114,7 +133,15 @@ Item {
                 RadioButton {
                     id: priorityNegotiationButton
                     text: "Priority"
-                    //radioColor: "#145A74"
+                    indicator: Rectangle{
+                        width: 14
+                        height: 14
+                        x: 6
+                        y: 6
+                        radius: 7
+                        border.color: priorityNegotiationButton.down ? "#17a81a" : "black"
+                        color: priorityNegotiationButton.checked ? "#145A74": "ivory"
+                    }
                     onClicked: {
                         platformInterface.set_power_negotiation.update("priority");
                     }
@@ -132,7 +159,7 @@ Item {
                     left: powerGroup.left
                     leftMargin: 115
                     top:powerNegotiationColumn.bottom
-                    topMargin: 20
+                    topMargin: 10
                 }
                 from: 30
                 to: 200
@@ -193,13 +220,22 @@ Item {
                 anchors.left: faultProtectionLabel.right
                 anchors.leftMargin: 10
                 anchors.top: faultProtectionLabel.top
-                ExclusiveGroup { id: faultProtectionGroup }
+                anchors.topMargin: -5
+                spacing: -5
 
                 RadioButton {
                     id: shutdownProtectionButton
                     text: "Shutdown"
-                    exclusiveGroup: faultProtectionGroup
                     checked: platformInterface.usb_pd_protection_action.action === "shutdown"
+                    indicator: Rectangle{
+                        width: 14
+                        height: 14
+                        x: 6
+                        y: 6
+                        radius: 7
+                        border.color: shutdownProtectionButton.down ? "lightgrey" : "black"
+                        color: shutdownProtectionButton.checked ? "#145A74": "ivory"
+                    }
                     onClicked: {
                         platformInterface.set_protection_action.update("shutdown");
                     }
@@ -207,8 +243,16 @@ Item {
                 RadioButton {
                     id: retryProtectinButton
                     text: "Retry"
-                    exclusiveGroup: faultProtectionGroup
                     checked: platformInterface.usb_pd_protection_action.action === "retry"
+                    indicator: Rectangle{
+                        width: 14
+                        height: 14
+                        x: 6
+                        y: 6
+                        radius: 7
+                        border.color: retryProtectinButton.down ? "lightgrey" : "black"
+                        color: retryProtectinButton.checked ? "#145A74": "ivory"
+                    }
 
                     onClicked: {
                         platformInterface.set_protection_action.update("retry");
@@ -217,8 +261,16 @@ Item {
                 RadioButton {
                     id: noProtectionButton
                     text: "None"
-                    exclusiveGroup: faultProtectionGroup
                     checked: platformInterface.usb_pd_protection_action.action === "nothing"
+                    indicator: Rectangle{
+                        width: 14
+                        height: 14
+                        x: 6
+                        y: 6
+                        radius: 7
+                        border.color: noProtectionButton.down ? "lightgrey" : "black"
+                        color: noProtectionButton.checked ? "#145A74": "ivory"
+                    }
 
                     onClicked: {
                         platformInterface.set_protection_action.update("nothing");
