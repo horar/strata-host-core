@@ -12,6 +12,11 @@ Rectangle {
         fill: parent
     }
 
+    Image{
+        source:"./images/FourPortWireframeAdvancedView.png"
+        anchors.fill:root
+    }
+
     Text{
         id:placeholderText
         text: "hub advanced view"

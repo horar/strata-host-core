@@ -13,6 +13,11 @@ Item {
     height: parent.width / parent.height < initialAspectRatio ? parent.width / initialAspectRatio : parent.height
 
 
+    Image{
+        source:"./images/FourPortWireframeBasicView.png"
+        anchors.fill:root
+    }
+
     Text{
         id:placeholderText
         text: "hub basic view"
