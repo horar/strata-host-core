@@ -9,7 +9,7 @@ RadioButton {
 
     text: "Radio Button"
     implicitWidth: buttonText.implicitWidth + buttonText.anchors.leftMargin + indicator.width
-    implicitHeight: 26
+    implicitHeight: Math.max(root.indicator.height, buttonText.height)
 
     contentItem: buttonText
 
@@ -27,22 +27,27 @@ RadioButton {
     }
 
     indicator: Rectangle {
-        implicitWidth: 26
-        implicitHeight: 26
-        y: root.height / 2 - height / 2
-        radius: 13
+        id: outerRadio
+        implicitWidth: radioButtonSize
+        implicitHeight: implicitWidth
+//        y: root.height / 2 - height / 2
+        radius: width/2
         color: "transparent"
         opacity: enabled ? 1.0 : 0.3
-        border.color: root.down ? radioColor : radioColor
+        border.width: 1
+        border.color: radioColor
 
         Rectangle {
-            implicitWidth: 14
-            implicitHeight: 14
-            x: 6
-            y: 6
-            radius: 7
+            id: innerRadio
+            implicitWidth: outerRadio.width * 0.6
+            implicitHeight: implicitWidth
+            anchors {
+                horizontalCenter: outerRadio.horizontalCenter
+                verticalCenter: outerRadio.verticalCenter
+            }
+            radius: width / 2
             opacity: enabled ? 1.0 : 0.3
-            color: root.down ? radioColor : radioColor
+            color: radioColor
             visible: root.checked
         }
     }

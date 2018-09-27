@@ -25,9 +25,9 @@ Rectangle {
     Rectangle {
         id: titleArea
         anchors {
-            left: parent.left
-            right: parent.right
-            top: parent.top
+            left: root.left
+            right: root.right
+            top: root.top
         }
         height: visible ? 35 : 0
         color: "#eeeeee"
@@ -42,7 +42,7 @@ Rectangle {
             text: root.title
             color: "#000000"
             anchors {
-                fill: parent
+                fill: titleArea
             }
             padding: 10
         }
@@ -52,16 +52,16 @@ Rectangle {
         id: flickableContainer
         clip: true
         anchors {
-            left: parent.left
-            right: parent.right
+            left: root.left
+            right: root.right
             top: titleArea.bottom
-            bottom: parent.bottom
+            bottom: root.bottom
         }
 
         Flickable {
             id: transcriptContainer
 
-            anchors { fill:parent }
+            anchors { fill: flickableContainer }
             contentHeight: transcript.height
             contentWidth: transcript.width
 
@@ -73,8 +73,8 @@ Rectangle {
                 selectByMouse: true
                 selectByKeyboard: true
                 font {
-                  family: "Courier" // Monospaced font for better text width uniformity
-                  pixelSize: (Qt.platform.os === "osx") ? 12 : 10;
+                    family: inconsolata.name // inconsolata is monospaced and has clear chars for O/0 etc
+                    pixelSize: (Qt.platform.os === "osx") ? 12 : 10;
                 }
                 wrapMode: TextEdit.Wrap
                 textFormat: Text.RichText
@@ -102,26 +102,13 @@ Rectangle {
         }
     }
 
-
-
-    // Debug button to start/stop logging data
     FontLoader {
         id: sgicons
         source: "fonts/sgicons.ttf"
     }
 
-    Button {
-        visible: false
-        width: 30
-        height: 30
-        flat: true
-        text: "\ue800"
-        font.family: sgicons.name
-        anchors {
-            right: flickableContainer.right
-            top: flickableContainer.top
-        }
-        checkable: true
-        onClicked: root.running = !root.running
+    FontLoader {
+        id: inconsolata
+        source: "fonts/Inconsolata.otf"
     }
 }

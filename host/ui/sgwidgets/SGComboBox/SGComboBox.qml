@@ -149,18 +149,19 @@ Item {
             highlighted: comboBox.highlightedIndex === index
 
             background: Rectangle {
+                id: delegateBackground
                 implicitWidth: comboBox.width
                 color: delegate.highlighted ? colorMod(root.boxColor, -0.05) : root.boxColor
 
                 Rectangle {
                     id: delegateDivider
                     visible: root.dividers && index !== comboBox.count - 1
-                    width: parent.width - 20
+                    width: delegateBackground.width - 20
                     height: 1
                     color: colorMod(root.boxColor, -0.05)
                     anchors {
-                        bottom: parent.bottom
-                        horizontalCenter: parent.horizontalCenter
+                        bottom: delegateBackground.bottom
+                        horizontalCenter: delegateBackground.horizontalCenter
                     }
                 }
             }

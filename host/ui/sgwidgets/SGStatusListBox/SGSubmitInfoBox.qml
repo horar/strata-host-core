@@ -10,12 +10,12 @@ Rectangle {
     property bool labelLeft: true
     property alias value: infoText.text
     property alias infoBoxWidth: infoContainer.width
+    property alias infoBoxHeight: infoContainer.height
     property color textColor: "#000"
     property color infoBoxColor: infoText.readOnly ? "#eee" : "transparent"
     property color infoBoxBorderColor: "#cccccc"
     property real infoBoxBorderWidth: 1
     property bool realNumberValidation: false
-    property bool enabled: true
     property alias showButton: applyButton.visible
     property alias buttonText: applyButton.text
     property alias overrideLabelWidth: labelText.width
@@ -85,8 +85,8 @@ Rectangle {
                 selectByMouse: true
                 readOnly: false
                 font {
-                    family: inconsolata.name // inconsolata is monospaced and has clear chars for O/0 etc
-                    pixelSize: (Qt.platform.os === "osx") ? 12 : 10;
+                  family: "Courier" // Monospaced font for better text width uniformity
+                  pixelSize: (Qt.platform.os === "osx") ? 12 : 10;
                 }
                 horizontalAlignment: leftJustify ? TextInput.AlignLeft : TextInput.AlignRight
                 validator: realNumberValidation ? realNumberValidator : null
@@ -151,10 +151,5 @@ Rectangle {
             enabled: root.enabled
             height: visible ? 40 : 0
         }
-    }
-
-    FontLoader {
-        id: inconsolata
-        source: "fonts/Inconsolata.otf"
     }
 }
