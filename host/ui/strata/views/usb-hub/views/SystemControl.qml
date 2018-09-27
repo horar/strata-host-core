@@ -61,7 +61,7 @@ Item {
                 text: "Negotiation Scheme:"
                 anchors {
                     left: powerGroup.left
-                    leftMargin: 95
+                    leftMargin: 112
                     top: powerLabel.bottom
                     topMargin: 10
                 }
@@ -154,10 +154,10 @@ Item {
             SGSlider {
                 id: maximumBoardPower
                 label: "Maximum Power:"
-                width: 390
+                width: 375
                 anchors {
                     left: powerGroup.left
-                    leftMargin: 115
+                    leftMargin: 135
                     top:powerNegotiationColumn.bottom
                     topMargin: 10
                 }
@@ -210,7 +210,7 @@ Item {
                 text: "Protection:"
                 anchors {
                     left: faultGroup.left
-                    leftMargin: 155
+                    leftMargin: 170
                     top: faultLabel.bottom
                     topMargin: 10
                 }
@@ -282,10 +282,10 @@ Item {
             SGSlider {
                 id: tempFault
                 label: "Fault when temperature is above:"
-                width:490
+                width:480
                 anchors {
                     left: parent.left
-                    leftMargin: 20
+                    leftMargin: 35
                     top: faultProtectionColumn.bottom
                     topMargin: 10
 
@@ -339,7 +339,7 @@ Item {
                 text: "Active:"
                 anchors {
                     left: foldbackGroup.left
-                    leftMargin: 180
+                    leftMargin: 195
                     top: tempFoldbackLabel.bottom
                     topMargin: 10
                 }
@@ -352,8 +352,6 @@ Item {
                     leftMargin: 10
                     verticalCenter: temperatureFoldbackActiveLabel.verticalCenter
                 }
-                //checkedLabel: "On"
-                //uncheckedLabel: "Off"
                 grooveFillColor: "#145A74"
                 switchHeight: 20
                 switchWidth: 46
@@ -368,11 +366,11 @@ Item {
 
             SGSlider {
                 id: foldbackTemp
-                label: "When temperature is above:"
-                width:460
+                label: "When any port temperature is above:"
+                width:510
                 anchors {
                     left: parent.left
-                    leftMargin: 50
+                    leftMargin: 10
                     top: temperatureFoldbackActiveLabel.bottom
                     topMargin: 10
                 }
@@ -407,11 +405,11 @@ Item {
 
             SGSlider {
                 id: foldbackTempLimit
-                label: "Cut port output power by:"
-                width:445
+                label: "Cut the port output power by:"
+                width:465
                 anchors {
                     left: parent.left
-                    leftMargin: 65
+                    leftMargin: 55
                     top: foldbackTemp.bottom
                     topMargin: 10
                 }
@@ -456,10 +454,10 @@ Item {
             SGSlider {
                 id: tempFoldbackHysteresis
                 label: "End limiting on a decrease of:"
-                width:467
+                width:465
                 anchors {
                     left: parent.left
-                    leftMargin: 43
+                    leftMargin: 55
                     top: foldbackTempLimit.bottom
                     topMargin: 10
                 }
