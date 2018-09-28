@@ -24,6 +24,10 @@ typedef struct {
     void (*fp)(cJSON *payload_value);
 }command_handler_t;
 
+// global queue, g indicates global
+queue_t *g_queue;
+
+
 void list_init(void);
 void push(char *data);
 void pop(void);

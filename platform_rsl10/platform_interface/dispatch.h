@@ -12,8 +12,6 @@
 #define ARRAY_SIZE(array)  sizeof(array) / sizeof(array[0]);
 // enum used for response messages
 enum {BAD_JSON, COMMAND_NOT_FOUND, COMMAND_VALID};
-// global queue, g indicates global
-queue_t *g_queue;
 
 
 void dispatch(char *data);
