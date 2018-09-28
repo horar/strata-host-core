@@ -9,6 +9,7 @@ Item {
 
     property alias radioGroup : radioButtons.sourceComponent
     property alias radioButtons: radioButtons.item
+    property alias radioButtonSize: radioButtons.radioButtonSize
 
     property color textColor: "#000000"
     property color radioColor: "#000000"
@@ -27,7 +28,7 @@ Item {
     }
 
     ButtonGroup{
-        buttons: root.children[0].children
+        buttons: radioButtons.children[0].children
         exclusive: root.exclusive
     }
 
@@ -42,5 +43,6 @@ Item {
 
         property color masterTextColor: textColor
         property color masterRadioColor: radioColor
+        property real radioButtonSize: 20
     }
 }

@@ -33,6 +33,9 @@ Button {
     property color inactiveColor: masterInactiveColor
     property color textColor: masterTextColor
     property color textActiveColor: masterActiveTextColor
+    property int index: 0
+
+    signal indexUpdate(int index)
 
     background: Rectangle{
         id: buttonStyle
@@ -45,9 +48,9 @@ Button {
 
         Rectangle{
             id: flatSide
-            height: parent.height
-            width: parent.width/2
-            color: parent.color
+            height: buttonStyle.height
+            width: buttonStyle.width/2
+            color: buttonStyle.color
         }
     }
 
@@ -58,5 +61,11 @@ Button {
         horizontalAlignment: Text.AlignHCenter
         verticalAlignment: Text.AlignVCenter
         elide: Text.ElideRight
+    }
+
+    onCheckedChanged: {
+        if (checked) {
+            indexUpdate(root.index)
+        }
     }
 }

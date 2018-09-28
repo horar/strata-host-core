@@ -124,7 +124,7 @@ Item {
         anchors {
             left: header.left
             right: header.right
-            bottom: parent.bottom
+            bottom: root.bottom
             top: header.bottom
         }
         model: driverModel

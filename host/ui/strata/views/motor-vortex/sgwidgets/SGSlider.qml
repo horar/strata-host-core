@@ -59,7 +59,9 @@ Item {
         }
         enabled: sliderEnable /*root.enabled*/
         //opacity: root.enabled ? 1 : .5
-        layer.enabled: root.enabled ? false : true
+        layer {
+            enabled: !root.enabled
+        }
 
         background: Rectangle {
             id: groove
@@ -72,8 +74,8 @@ Item {
 
             Rectangle {
                 id: grooveFill
-                width: sgSlider.visualPosition * parent.width
-                height: parent.height
+                width: sgSlider.visualPosition * groove.width
+                height: groove.height
                 color: root.grooveFillColor
                 radius: 2
             }
@@ -127,7 +129,7 @@ Item {
 
         Label {
             id: startLabel
-            anchors.bottom : parent.bottom
+            anchors.bottom : sgSlider.bottom
             font.pointSize : 12
             text: sgSlider.from
             color: root.textColor
@@ -135,8 +137,8 @@ Item {
 
         Label {
             id: endLabel
-            anchors.right : parent.right
-            anchors.bottom : parent.bottom
+            anchors.right : sgSlider.right
+            anchors.bottom : sgSlider.bottom
             font.pointSize: 12
             text: sgSlider.to
             color: root.textColor

@@ -1,4 +1,5 @@
 import QtQuick 2.9
+import QtGraphicalEffects 1.0
 import "qrc:/views/usb-pd-multiport/sgwidgets"
 import "qrc:/views/usb-pd-multiport/views/basic-partial-views"
 
@@ -68,9 +69,92 @@ Item {
             }
             height: 300 * ratioCalc
 
-            Text {
-                text: "Combined port stats go here"
-                anchors.centerIn: parent
+            Rectangle{
+                id:combinedStatsBackgroundRect
+                color:"#ddd"
+                anchors.top:combinedPortStats.top
+                anchors.left:combinedPortStats.left
+                anchors.right:combinedPortStats.right
+                height:combinedPortStats.height/6
+
+                Text{
+                    id:combinedStatsText
+                    text:"COMBINED PORT STATISTICS"
+                    font.pixelSize: 17
+                    color: "#bbb"
+                    anchors.centerIn: combinedStatsBackgroundRect
+                }
+            }
+
+
+
+
+            PortStatBox {
+
+                property var inputVoltage:platformInterface.request_usb_power_notification.input_voltage;
+                property real port1Voltage:0;
+                property real port2Voltage:0;
+                property real port3Voltage:0;
+                property real port4Voltage:0;
+
+                onInputVoltageChanged: {
+                     if (platformInterface.request_usb_power_notification.port ===1)
+                         port1Voltage = platformInterface.request_usb_power_notification.input_voltage;
+                     else if (platformInterface.request_usb_power_notification.port ===2)
+                         port2Voltage = platformInterface.request_usb_power_notification.input_voltage;
+                     else if (platformInterface.request_usb_power_notification.port ===3)
+                         port3Voltage = platformInterface.request_usb_power_notification.input_voltage;
+                     else if (platformInterface.request_usb_power_notification.port ===4)
+                         port4Voltage = platformInterface.request_usb_power_notification.input_voltage;
+                }
+
+                id:combinedInputVoltageBox
+                label: "INPUT VOLTAGE"
+                value: Math.round((port1Voltage + port2Voltage + port3Voltage + port4Voltage) *100)/100
+                valueSize: 32
+                icon: "../images/icon-voltage.svg"
+                unit: "V"
+                anchors.top: combinedStatsBackgroundRect.bottom
+                anchors.topMargin: 20
+                anchors.horizontalCenter: combinedPortStats.horizontalCenter
+                height: combinedPortStats.height/5
+                width: combinedPortStats.width/2
+            }
+
+            PortStatBox {
+
+                property var inputVoltage: platformInterface.request_usb_power_notification.input_voltage;
+                property var inputCurrent: platformInterface.request_usb_power_notification.input_current;
+                property real inputPower: inputVoltage * inputCurrent;
+
+                property real port1Power:0;
+                property real port2Power:0;
+                property real port3Power:0;
+                property real port4Power:0;
+
+                onInputPowerChanged: {
+                    if (platformInterface.request_usb_power_notification.port ===1)
+                        port1Power = inputPower;
+                    else if (platformInterface.request_usb_power_notification.port ===2)
+                        port2Power = inputPower;
+                    else if (platformInterface.request_usb_power_notification.port ===3)
+                        port3Power = inputPower;
+                    else if (platformInterface.request_usb_power_notification.port ===4)
+                        port4Power = inputPower;
+                }
+
+                id:combinedInputPowerBox
+                label: "INPUT POWER"
+                value: Math.round((port1Power + port2Power + port3Power + port4Power) *100)/100
+                valueSize: 32
+                icon: "../images/icon-voltage.svg"
+                unit: "W"
+                anchors.top: combinedInputVoltageBox.bottom
+                anchors.topMargin: 20
+                anchors.horizontalCenter: combinedPortStats.horizontalCenter
+                height: combinedPortStats.height/5
+                width: combinedPortStats.width/2
+                //visible: combinedPortStats.inputPowerConnected
             }
         }
 
@@ -85,10 +169,84 @@ Item {
             }
             height: 428 * ratioCalc
 
-            Text {
-                text: "No compatible input power conversion device connected"
-                anchors.centerIn: parent
+            property bool inputPowerConnected: true
+
+            Rectangle{
+                id:topBackgroundRect
+                color:"#ddd"
+                anchors.top:inputConversionStats.top
+                anchors.left:inputConversionStats.left
+                anchors.right:inputConversionStats.right
+                height:inputConversionStats.height/6
             }
+
+            Text{
+                id:powerConverterText
+                text:"POWER CONVERTER"
+                font.pixelSize: 17
+                color: "#bbb"
+                anchors.top: inputConversionStats.top
+                anchors.topMargin:10
+                anchors.horizontalCenter: inputConversionStats.horizontalCenter
+            }
+
+            Text{
+                id:converterNameText
+                text:"ON Semiconductor NCP4060A"
+                visible: inputConversionStats.inputPowerConnected
+                font.pixelSize: 20
+                //color: "#bbb"
+                anchors.top: powerConverterText.bottom
+                anchors.horizontalCenter: inputConversionStats.horizontalCenter
+            }
+
+            PortStatBox {
+                id:maxPowerBox
+                label: "MAX CAPACITY"
+                value: "200"
+                icon: "../images/icon-max.svg"
+                //portColor: root.portColor
+                valueSize: 32
+                unit: "W"
+                anchors.top: topBackgroundRect.bottom
+                anchors.topMargin: 20
+                anchors.horizontalCenter: inputConversionStats.horizontalCenter
+                height: inputConversionStats.height/8
+                width: inputConversionStats.width/2
+                visible: inputConversionStats.inputPowerConnected
+            }
+
+            PortStatBox {
+                id:voltageOutBox
+                label: "VOLTAGE OUTPUT"
+                value: "100"
+                icon: "../images/icon-voltage.svg"
+                //portColor: root.portColor
+                valueSize: 32
+                unit: "V"
+                anchors.top: maxPowerBox.bottom
+                anchors.topMargin: 20
+                anchors.horizontalCenter: inputConversionStats.horizontalCenter
+                height: inputConversionStats.height/8
+                width: inputConversionStats.width/2
+                visible: inputConversionStats.inputPowerConnected
+            }
+
+            Image{
+                id:powerConverterIcon
+                source:"./images/powerconverter.png"
+                opacity:.5
+                fillMode:Image.PreserveAspectFit
+                anchors.top:voltageOutBox.bottom
+                anchors.topMargin:40
+                anchors.bottom:inputConversionStats.bottom
+                anchors.bottomMargin:40
+                anchors.left:inputConversionStats.left
+                anchors.right: inputConversionStats.right
+            }
+
+
+
         }
 
         SGLayoutDebug {
@@ -158,7 +316,7 @@ Item {
             }
             portTemperature:{
                 if (platformInterface.request_usb_power_notification.port === 1){
-                    return platformInterface.request_usb_power_notification.temperature
+                    return Math.round(platformInterface.request_usb_power_notification.temperature*10)/10
                 }
                 else{
                     return portInfo1.portTemperature;
@@ -186,8 +344,8 @@ Item {
             property var deviceDisconnected: platformInterface.usb_pd_port_disconnect.connection_state
 
              onDeviceConnectedChanged: {
-                 console.log("device connected message received in basicControl. Port=",platformInterface.usb_pd_port_connect.port_id,
-                             "state=",platformInterface.usb_pd_port_connect.connection_state);
+//                 console.log("device connected message received in basicControl. Port=",platformInterface.usb_pd_port_connect.port_id,
+//                             "state=",platformInterface.usb_pd_port_connect.connection_state);
 
                  if (platformInterface.usb_pd_port_connect.port_id === "USB_C_port_1"){
                      if (platformInterface.usb_pd_port_connect.connection_state === "connected"){
@@ -264,7 +422,7 @@ Item {
             }
             portTemperature:{
                 if (platformInterface.request_usb_power_notification.port === 2){
-                    return platformInterface.request_usb_power_notification.temperature;
+                    return Math.round(platformInterface.request_usb_power_notification.temperature*10)/10;
                 }
                 else{
                     return portInfo2.portTemperature;
@@ -292,8 +450,8 @@ Item {
             property var deviceDisconnected: platformInterface.usb_pd_port_disconnect.connection_state
 
              onDeviceConnectedChanged: {
-                 console.log("device connected message received in basicControl. Port=",platformInterface.usb_pd_port_connect.port_id,
-                             "state=",platformInterface.usb_pd_port_connect.connection_state);
+//                 console.log("device connected message received in basicControl. Port=",platformInterface.usb_pd_port_connect.port_id,
+//                             "state=",platformInterface.usb_pd_port_connect.connection_state);
 
                  if (platformInterface.usb_pd_port_connect.port_id === "USB_C_port_2"){
                      if (platformInterface.usb_pd_port_connect.connection_state === "connected"){
@@ -370,7 +528,7 @@ Item {
             }
             portTemperature:{
                 if (platformInterface.request_usb_power_notification.port === 3){
-                    return platformInterface.request_usb_power_notification.temperature
+                    return Math.round(platformInterface.request_usb_power_notification.temperature*10)/10;
                 }
                 else{
                     return portInfo3.portTemperature;
@@ -398,8 +556,8 @@ Item {
             property var deviceDisconnected: platformInterface.usb_pd_port_disconnect.connection_state
 
              onDeviceConnectedChanged: {
-                 console.log("device connected message received in basicControl. Port=",platformInterface.usb_pd_port_connect.port_id,
-                             "state=",platformInterface.usb_pd_port_connect.connection_state);
+//                 console.log("device connected message received in basicControl. Port=",platformInterface.usb_pd_port_connect.port_id,
+//                             "state=",platformInterface.usb_pd_port_connect.connection_state);
 
                  if (platformInterface.usb_pd_port_connect.port_id === "USB_C_port_3"){
                      if (platformInterface.usb_pd_port_connect.connection_state === "connected"){
@@ -475,7 +633,7 @@ Item {
             }
             portTemperature:{
                 if (platformInterface.request_usb_power_notification.port === 4){
-                    return platformInterface.request_usb_power_notification.temperature
+                    return Math.round(platformInterface.request_usb_power_notification.temperature*10)/10;
                 }
                 else{
                    return portInfo4.portTemperature;
@@ -502,8 +660,8 @@ Item {
             property var deviceDisconnected: platformInterface.usb_pd_port_disconnect.connection_state
 
              onDeviceConnectedChanged: {
-                 console.log("device connected message received in basicControl. Port=",platformInterface.usb_pd_port_connect.port_id,
-                             "state=",platformInterface.usb_pd_port_connect.connection_state);
+//                 console.log("device connected message received in basicControl. Port=",platformInterface.usb_pd_port_connect.port_id,
+//                             "state=",platformInterface.usb_pd_port_connect.connection_state);
 
                  if (platformInterface.usb_pd_port_connect.port_id === "USB_C_port_4"){
                      if (platformInterface.usb_pd_port_connect.connection_state === "connected"){
