@@ -22,36 +22,43 @@ void list_init()
 void push(char *data)
 {
         printf("PUSH: Size of DATA is: %lu\n", strlen(data));
+        memory_pool_handle_t b = 0;
         node_t *new_node;
-        memory_pool_acquire((memory_pool_handle_t *)&new_node);
+        printf("PUSH: value of b before is: %p\n", b);
+        memory_pool_acquire(&b);
+        printf("PUSH: value of b after is: %p\n", b);
 
+        new_node = b;
+        printf("PUSH: value of new_node is: %p\n", new_node);
+//        new_node->data = data;
+//        new_node->next = NULL;
         //printf("PUSH: value of magic node is: %x\n", g_pool.pool->magic);
 
-        new_node->data = data; //set_data(data,(memory_pool_handle_t )new_node);
-        printf("PUSH: Size of DATA is: %lu\n", strlen(new_node->data));
-        //new_node->next = NULL;
-
-        if (g_queue->head == NULL) {
-            g_queue->size = 0;
-            g_queue->head = g_queue->tail = new_node;
-            printf("PUSH: address of g_queue head is %p\n", g_queue->head);
-
-        if (g_queue->size == 1) {
-
-            g_queue->tail = new_node;
-            g_queue->head->next = g_queue->tail;
-            printf("PUSH: address of g_queue tail is %p\n", g_queue->tail);
-        }
-        if (g_queue->size > 1) {
-            g_queue->temp = g_queue->tail;
-            g_queue->tail = new_node;
-            g_queue->temp->next =  new_node;
-            printf("PUSH: address of g_queue old_tail is %p\n", g_queue->temp);
-            printf("PUSH: address of g_queue new_tail is %p\n", g_queue->tail);
-        }
-    }
-    memory_pool_release(new_node);
-    g_queue->size++;
+//        new_node->data = data; //set_data(data,(memory_pool_handle_t )new_node);
+//        printf("PUSH: Size of DATA is: %lu\n", strlen(new_node->data));
+//        //new_node->next = NULL;
+//
+//        if (g_queue->head == NULL) {
+//            g_queue->size = 0;
+//            g_queue->head = g_queue->tail = new_node;
+//            printf("PUSH: address of g_queue head is %p\n", g_queue->head);
+//
+//        if (g_queue->size == 1) {
+//
+//            g_queue->tail = new_node;
+//            g_queue->head->next = g_queue->tail;
+//            printf("PUSH: address of g_queue tail is %p\n", g_queue->tail);
+//        }
+//        if (g_queue->size > 1) {
+//            g_queue->temp = g_queue->tail;
+//            g_queue->tail = new_node;
+//            g_queue->temp->next =  new_node;
+//            printf("PUSH: address of g_queue old_tail is %p\n", g_queue->temp);
+//            printf("PUSH: address of g_queue new_tail is %p\n", g_queue->tail);
+//        }
+//    }
+//    memory_pool_release(new_node);
+//    g_queue->size++;
 }
 
 /**

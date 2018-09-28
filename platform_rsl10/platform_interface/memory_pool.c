@@ -97,6 +97,7 @@ bool memory_pool_acquire(memory_pool_handle_t *handle)
     }
     // unsigned int 64
     *handle = (memory_pool_handle_t) g_pool.top;   // give them bottom of stack
+    printf("MEMORY POOL ACQUIRE: address of g_pool.top is: = %p\n", g_pool.top);
     g_pool.top->inuse = true;
     g_pool.top = g_pool.top->next;               // pop stack item
     g_pool.available --;
