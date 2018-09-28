@@ -9,7 +9,7 @@
 #include "memory_pool.h"
 
 typedef struct node {
-    memory_pool_handle_t data;
+    char *data;
     struct node *next;
 } node_t;
 

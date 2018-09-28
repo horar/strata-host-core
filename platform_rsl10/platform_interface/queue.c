@@ -21,14 +21,14 @@ void list_init()
 
 void push(char *data)
 {
-        printf("PUSH: Size of DATA is: %d\n", strlen(data));
+        printf("PUSH: Size of DATA is: %lu\n", strlen(data));
         node_t *new_node;
         memory_pool_acquire((memory_pool_handle_t *)&new_node);
 
         //printf("PUSH: value of magic node is: %x\n", g_pool.pool->magic);
 
         new_node->data = data; //set_data(data,(memory_pool_handle_t )new_node);
-        printf("PUSH: Size of DATA is: %d\n", strlen(new_node->data));
+        printf("PUSH: Size of DATA is: %lu\n", strlen(new_node->data));
         //new_node->next = NULL;
 
         if (g_queue->head == NULL) {
