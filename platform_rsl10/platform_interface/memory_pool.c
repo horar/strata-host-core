@@ -32,13 +32,20 @@ bool memory_pool_init()
     for( n = 0; n < number_of_blocks; ++n ) {
 
         memory_pool_node_t * node = (memory_pool_node_t *) malloc (sizeof(memory_pool_node_t));
-        if( node == NULL) printf("OOM ERROR.\n");
+        if( node == NULL){
+            printf("OOM ERROR.\n");
+            return false;
+        }
 
         node->data =  (char *)malloc ((block_size));
-        if( node->data == NULL) printf("OOM ERROR.\n");
+        if( node->data == NULL) {
+            printf("OOM ERROR.\n");
+            return false;
+        }
 
         node->magic = NODE_MAGIC;  // set the magic for data integrity checks
         node->size = block_size;
+        printf("MEMORY POOL ININT: value of magic node is: %x\n", node->magic);
         node->inuse = false;
         node->prev = NULL;   // may not need to be double linked
         node->next = NULL;
@@ -94,7 +101,8 @@ bool memory_pool_acquire(memory_pool_handle_t *handle)
     g_pool.top = g_pool.top->next;               // pop stack item
     g_pool.available --;
 
-    printf("memory_pool_acquire: handle = 0x%llx\n", *handle);
+    printf("MEMORY POOL ACQUIRE: value of magic node is: %x\n", g_pool.top->magic);
+    printf("MEMORY POOL ACQUIRE: handle = 0x%llx\n", *handle);
     return true;
 }
 
@@ -106,7 +114,7 @@ bool memory_pool_release(memory_pool_handle_t handle)
     }
 
     memory_pool_node_t * node = (memory_pool_node_t *)handle;
-    printf("content of node->magic is %x\n", node->magic);
+    printf("MEMORY_POOL_RELEASE: content of node->magic is %x\n", node->magic);
     if( node->magic != NODE_MAGIC ) {
         printf("memory_pool_release: ERROR: bad handle magic. You lost the magic\n");
         return false;

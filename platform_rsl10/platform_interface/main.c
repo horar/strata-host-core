@@ -13,17 +13,20 @@ int main( ) {
 //    push("{\"cmd\":\"request_platform_id\"}");
 //    push("{\"cmd\" : \"whatever\", \"payload\" : {\"number_argument\" : 1, \"string_argument\" : \"0x000000FF\"}}");
 //    push("{\"cmd\" : \"general_purpose\", \"payload\" : {\"number_argument\" : 1, \"string_argument\" : \"0x000000FF\"}}");
-//    push("{\"cmd\":\"request_echo\"}");
-    push("Hello world!");
+    push("{\"cmd\":\"request_echo\"}");
+    //push("Hello world!");
 //    memory_pool_dump();
-    push("{\"cmd\" : \"general_purpose\", \"payload\" : {\"number_argument\" : 1, \"string_argument\" : \"0x000000FF\"}}");
+    //push("{\"cmd\" : \"general_purpose\", \"payload\" : {\"number_argument\" : 1, \"string_argument\" : \"0x000000FF\"}}");
 
 //    memory_pool_dump();
-    print_list();
+   // print_list();
     memory_pool_dump();
-    while (g_queue->head != NULL) {
-        execute();
-    }
-    memory_pool_dump();
+//    while (g_queue->head != NULL) {
+//        execute();
+//    }
+    //memory_pool_dump();
+    printf("MAIN: content of g_queue head is %s\n", g_queue->head->data);
+
+    printf("END\n");
     return 0;
 }

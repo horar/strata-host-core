@@ -21,24 +21,21 @@ void list_init()
 
 void push(char *data)
 {
-    node_t *new_node;
-    bool rv = memory_pool_acquire((memory_pool_handle_t*)&new_node);
+        printf("PUSH: Size of DATA is: %d\n", strlen(data));
+        node_t *new_node;
+        memory_pool_acquire((memory_pool_handle_t *)&new_node);
 
-    if(!rv){
-        printf("PUSH: acquire failed\n");
-        return;
-    }
-    else{
+        //printf("PUSH: value of magic node is: %x\n", g_pool.pool->magic);
 
-        new_node->data =data;
-        new_node->next = NULL;
+        new_node->data = data; //set_data(data,(memory_pool_handle_t )new_node);
+        printf("PUSH: Size of DATA is: %d\n", strlen(new_node->data));
+        //new_node->next = NULL;
 
         if (g_queue->head == NULL) {
             g_queue->size = 0;
             g_queue->head = g_queue->tail = new_node;
+            printf("PUSH: address of g_queue head is %p\n", g_queue->head);
 
-        printf("PUSH: address of g_queue head is %p\n", g_queue->head);
-        }
         if (g_queue->size == 1) {
 
             g_queue->tail = new_node;
@@ -53,6 +50,7 @@ void push(char *data)
             printf("PUSH: address of g_queue new_tail is %p\n", g_queue->tail);
         }
     }
+    memory_pool_release(new_node);
     g_queue->size++;
 }
 
@@ -71,7 +69,7 @@ void pop()
     if (g_queue->head) {
 
         g_queue->temp = g_queue->head->next;
-        memory_pool_release((memory_pool_handle_t*)g_queue->head);
+      //  memory_pool_release((memory_pool_handle_t*)g_queue->head);
         g_queue->head = g_queue->temp;
         g_queue->size--;
         print_list();

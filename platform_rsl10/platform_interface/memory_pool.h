@@ -24,6 +24,7 @@ typedef struct memory_pool_node {
     char *data;
     bool inuse;      // true = currently allocated
 
+    struct memory_pool_node * temp;
     struct memory_pool_node * prev;
     struct memory_pool_node * next;
 
@@ -79,10 +80,11 @@ static inline size_t memory_pool_available()
     return g_pool.available;
 }
 
-static inline void set_data(void *data, memory_pool_handle_t *handle){
+static inline void *set_data(char *data, memory_pool_handle_t handle){
 
     printf("SET_DATA: content of data is: %s\n", data);
     ((memory_pool_node_t*)handle)->data = data;
+    return ((memory_pool_node_t*)handle)->data;
 }
 
 #endif /* mem_pool_h */
