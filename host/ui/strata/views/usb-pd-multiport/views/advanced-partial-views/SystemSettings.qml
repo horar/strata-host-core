@@ -39,9 +39,11 @@ Item {
                 to: 200
                 startLabel: "30W"
                 endLabel: "200W"
-                //value: platformInterface.input_under_voltage_notification.minimum_voltage
+                value: platformInterface.maximum_board_power.watts
                 onMoved: {
-                    //platformInterface.set_minimum_input_voltage.update(value);
+                    //we'll need to address how to handle this when there are devices attached, as that would trigger
+                    //renegotiation with all devices
+                    platformInterface.set_maximum_board_power.update(value);
                 }
             }
 
