@@ -14,8 +14,10 @@ int main( ) {
 //    push("{\"cmd\" : \"whatever\", \"payload\" : {\"number_argument\" : 1, \"string_argument\" : \"0x000000FF\"}}");
 //    push("{\"cmd\" : \"general_purpose\", \"payload\" : {\"number_argument\" : 1, \"string_argument\" : \"0x000000FF\"}}");
     push("{\"cmd\":\"request_echo\"}");
-    //push("Hello world!");
+    push("Hello world!");
 //    memory_pool_dump();
+  //  push("{\"cmd\" : \"general_purpose\", \"payload\" : {\"number_argument\" : 1, \"string_argument\" : \"0x000000FF\"}}");
+//    push("{\"cmd\" : \"general_purpose\", \"payload\" : {\"number_argument\" : 1, \"string_argument\" : \"0x000000FF\"}}");
     //push("{\"cmd\" : \"general_purpose\", \"payload\" : {\"number_argument\" : 1, \"string_argument\" : \"0x000000FF\"}}");
 
 //    memory_pool_dump();
@@ -25,8 +27,8 @@ int main( ) {
 //        execute();
 //    }
     //memory_pool_dump();
-    printf("MAIN: content of g_queue head is %s\n", g_queue->head->data);
-
+   // printf("MAIN: content of g_queue head is %s\n", g_queue->head->data);
+    print_list();
     printf("END\n");
     return 0;
 }

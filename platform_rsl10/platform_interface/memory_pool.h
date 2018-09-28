@@ -21,7 +21,7 @@ typedef uint64_t memory_pool_handle_t;
 typedef struct memory_pool_node {
     uint32_t magic;      // NODE_MAGIC = 0xBAADA555
     size_t size;
-    char *data;
+    void *data;
     bool inuse;      // true = currently allocated
 
     struct memory_pool_node * temp;
@@ -80,11 +80,8 @@ static inline size_t memory_pool_available()
     return g_pool.available;
 }
 
-static inline void *set_data(char *data, memory_pool_handle_t handle){
-
-    printf("SET_DATA: content of data is: %s\n", data);
+static inline void set_data(void *data, memory_pool_handle_t handle){
     ((memory_pool_node_t*)handle)->data = data;
-    return ((memory_pool_node_t*)handle)->data;
 }
 
 #endif /* mem_pool_h */

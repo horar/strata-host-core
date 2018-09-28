@@ -102,7 +102,7 @@ bool memory_pool_acquire(memory_pool_handle_t *handle)
     g_pool.top = g_pool.top->next;               // pop stack item
     g_pool.available --;
 
-    printf("MEMORY POOL ACQUIRE: value of magic node is: %x\n", g_pool.top->magic);
+//    printf("MEMORY POOL ACQUIRE: value of magic node is: %x\n", g_pool.top->magic);
     printf("MEMORY POOL ACQUIRE: handle = 0x%llx\n", *handle);
     return true;
 }
