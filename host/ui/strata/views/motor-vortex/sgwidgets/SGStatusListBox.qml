@@ -25,9 +25,9 @@ Rectangle {
     Rectangle {
         id: titleArea
         anchors {
-            left: parent.left
-            right: parent.right
-            top: parent.top
+            left: root.left
+            right: root.right
+            top: root.top
         }
         implicitHeight: 35
         color: root.titleBoxColor
@@ -41,7 +41,7 @@ Rectangle {
             text: root.title
             color: root.titleTextColor
             anchors {
-                fill: parent
+                fill: titleArea
             }
             padding: 10
         }
@@ -62,10 +62,10 @@ Rectangle {
         clip: true
 
         anchors {
-            left: parent.left
-            right: parent.right
-            top: titleArea.visible ? titleArea.bottom : parent.top
-            bottom: parent.bottom
+            left: root.left
+            right: root.right
+            top: titleArea.visible ? titleArea.bottom : root.top
+            bottom: root.bottom
             margins: 10
         }
 

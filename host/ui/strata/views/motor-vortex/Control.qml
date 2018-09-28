@@ -22,9 +22,9 @@ Rectangle {
     TabBar {
         id: navTabs
         anchors {
-            top: parent.top
-            left: parent.left
-            right: parent.right
+            top: controlNavigation.top
+            left: controlNavigation.left
+            right: controlNavigation.right
         }
 
         TabButton {
@@ -57,11 +57,12 @@ Rectangle {
     }
 
     ScrollView {
+        id: scrollView
         anchors {
             top: navTabs.bottom
-            bottom: parent.bottom
-            right: parent.right
-            left: parent.left
+            bottom: controlNavigation.bottom
+            right: controlNavigation.right
+            left: controlNavigation.left
         }
 
         onWidthChanged: {
@@ -109,7 +110,7 @@ Rectangle {
             contentWidth: 1200
             contentHeight: 725
             anchors {
-                fill: parent
+                fill: scrollView
             }
             clip: true
 

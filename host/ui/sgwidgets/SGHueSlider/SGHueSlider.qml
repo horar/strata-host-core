@@ -45,6 +45,8 @@ Item {
         live: false
         from: 0
         to: 255
+        enabled: root.enabled
+        opacity: enabled ? 1 : 0.5
 
         background: Rectangle {
             y: 4
@@ -68,6 +70,7 @@ Item {
         }
 
         handle: Item {
+            id: handle
             x: hueSlider.leftPadding + hueSlider.visualPosition * (hueSlider.availableWidth - width)
             y: 0
             width: 12
@@ -76,8 +79,8 @@ Item {
             Canvas {
                 z:50
                 visible: true
-                implicitWidth: parent.width
-                implicitHeight: parent.height
+                implicitWidth: handle.width
+                implicitHeight: handle.height
                 contextType: "2d"
 
                 onPaint: {

@@ -16,18 +16,19 @@ Item {
     property alias checked: switchRoot.checked
 
     property real fontSize: 10
+    opacity: enabled ? 1 : 0.2
 
     // Optional Configurations:
-    property real switchWidth: 52
-    property real switchHeight: 26
+    property alias switchWidth: groove.width
+    property alias switchHeight: groove.height
     property color handleColor: "white"
-    property color grooveFillColor: "#0cf"
-    property color grooveColor: "#ccc"
+    property alias grooveFillColor: grooveFill.color
+    property color grooveColor: groove.color
     property color textColor: "black"
-    property string label: ""
+    property alias label: labelText.text
     property bool labelLeft: true
-    property string checkedLabel: ""
-    property string uncheckedLabel: ""
+    property alias checkedLabel: checkedLabelText.text
+    property alias uncheckedLabel: uncheckedLabelText.text
     property bool labelsInside: true
 
     implicitHeight: root.labelLeft ? switchRoot.height : labelText.height + switchRoot.height + switchRoot.anchors.topMargin
@@ -44,18 +45,18 @@ Item {
 
     Text {
         id: labelText
-        text: root.label
+        text: ""
         width: contentWidth
-        height: root.label === "" ? 0 : root.labelLeft ? switchRoot.height : contentHeight
-        topPadding: root.label === "" ? 0 : root.labelLeft ? (switchRoot.height-contentHeight)/2 : 0
+        height: text === "" ? 0 : root.labelLeft ? switchRoot.height : contentHeight
+        topPadding: text === "" ? 0 : root.labelLeft ? (switchRoot.height-contentHeight)/2 : 0
         bottomPadding: topPadding
         color: root.textColor
     }
 
     Text {
         id: uncheckedLabelText
-        visible: uncheckedLabel === "" ? false : !root.labelsInside
-        text: uncheckedLabel
+        visible: text === "" ? false : !root.labelsInside
+        text: ""
         font.pixelSize: root.fontSize
         anchors {
             left: root.labelLeft ? labelText.right : labelText.left
@@ -68,8 +69,8 @@ Item {
 
     Text {
         id: checkedLabelText
-        visible: uncheckedLabel === "" ? false : !root.labelsInside
-        text: checkedLabel
+        visible: text === "" ? false : !root.labelsInside
+        text: ""
         font.pixelSize: root.fontSize
         anchors {
             left: switchRoot.right
@@ -102,19 +103,19 @@ Item {
 
         indicator: Rectangle {
             id: groove
-            width: root.switchWidth
-            height: root.switchHeight
+            width: 52
+            height: 26
             y: parent.height / 2 - height / 2
             radius: 13
-            color: root.grooveColor
+            color: "#ccc"
 
             Text {
                 id: uncheckedText
                 visible: uncheckedLabel === "" ? false : root.labelsInside
                 color: "white"
                 anchors {
-                    verticalCenter: parent.verticalCenter
-                    right: parent.right
+                    verticalCenter: groove.verticalCenter
+                    right: groove.right
                     rightMargin: 5
                 }
                 font.pixelSize: root.fontSize
@@ -124,9 +125,9 @@ Item {
             Rectangle {
                 id: grooveFill
                 visible: width === handle.width ? false : true
-                width: ((switchRoot.visualPosition * parent.width) + (1-switchRoot.visualPosition) * handle.width)
-                height: parent.height
-                color: root.grooveFillColor
+                width: ((switchRoot.visualPosition * groove.width) + (1-switchRoot.visualPosition) * handle.width)
+                height: groove.height
+                color: "#0cf"
                 radius: height/2
                 clip:true
 
@@ -140,8 +141,8 @@ Item {
                     visible: checkedLabel === "" ? false : root.labelsInside
                     color: "white"
                     anchors {
-                        verticalCenter: parent.verticalCenter
-                        left: parent.left
+                        verticalCenter: grooveFill.verticalCenter
+                        left: grooveFill.left
                         leftMargin: 5
                     }
                     font.pixelSize: root.fontSize
@@ -151,8 +152,8 @@ Item {
 
             Rectangle {
                 id: handle
-                x: ((switchRoot.visualPosition * parent.width) + (1-switchRoot.visualPosition) * width) - width
-                width: switchHeight
+                x: ((switchRoot.visualPosition * groove.width) + (1-switchRoot.visualPosition) * width) - width
+                width: groove.height
                 height: width
                 radius: 13
                 color: root.down ? colorMod(root.handleColor, 1.1) : root.handleColor
@@ -171,5 +172,3 @@ Item {
         return Qt.rgba(color.r/factor, color.g/factor, color.b/factor, 1 )
     }
 }
-
-

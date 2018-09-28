@@ -9,9 +9,7 @@ Rectangle {
     width: parent.width < parent.height ? parent.width/1.9 : parent.height/1.8
     height: width
     color: "red"
-    radius: width*0.5
-    //anchors.bottom: parent.top
-    //anchors.right: parent.right
+    radius: width * 0.5
     anchors.bottomMargin: -20
 
     // Only show badge if rev is > 0
@@ -25,13 +23,12 @@ Rectangle {
         anchors { fill: parent }
         horizontalAlignment: Text.AlignHCenter
         verticalAlignment: Text.AlignVCenter
-        }
-
+    }
 
     NumberAnimation on width {
         running: badgeCircle.revisionCount ? true: false
         from: 0; to: parent.width < parent.height ? parent.width/1.9 : parent.height/1.8
-        duration: 500
+        duration: 200
         onStarted: {
             badgeText.text = ""
         }
@@ -40,4 +37,4 @@ Rectangle {
             badgeText.text = badgeCircle.revisionCount
         }
     }
- }
+}

@@ -32,6 +32,7 @@ Window {
         grooveColor: "#ddd"         // Default: "#dddddd"
         grooveFillColor: "lightgreen"// Default: "#888888"
         live: false                 // Default: false (will only send valueChanged signal when slider is released)
+        labelTopAligned: true       // Default: false (only applies to label on left of slider, decides vertical centering of label)
 
         // Useful signals:
         onValueChanged: console.log("Slider value is now: ", value)

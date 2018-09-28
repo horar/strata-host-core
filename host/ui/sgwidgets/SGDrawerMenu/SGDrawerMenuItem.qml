@@ -26,7 +26,7 @@ Item {
     Rectangle {
         id: menuItem
 
-        width: parent.width
+        width: parent.width // must be parent here because parent is changed
         height: 80
         color: menuItemMouse.containsMouse ? "#333" : colorMod(menuContainerColor, -triangle.opacity / 30)
 
@@ -96,7 +96,7 @@ Item {
 
         MouseArea {
             id: menuItemMouse
-            anchors { fill: parent }
+            anchors { fill: menuItem }
             hoverEnabled: true
             onClicked: {
                 if (root.state === "open") {
@@ -117,7 +117,7 @@ Item {
 
         MouseArea {
             // This blocks all mouseEvents from propagating through the menu to stuff below
-            anchors { fill: parent }
+            anchors { fill: contentDrawer }
             hoverEnabled: true
             preventStealing: true
             propagateComposedEvents: false
@@ -126,7 +126,7 @@ Item {
         Loader {
             id: drawerContent
             anchors {
-                fill: parent
+                fill: contentDrawer
             }
         }
     }

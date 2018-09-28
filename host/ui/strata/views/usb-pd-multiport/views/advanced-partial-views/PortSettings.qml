@@ -54,7 +54,7 @@ Item {
                 rightMargin: 10
             }
 
-            onValueChanged: platformInterface.set_over_current_protection.update(portNumber, value)
+            onMoved: platformInterface.set_over_current_protection.update(portNumber, value)
 
         }
 
@@ -103,6 +103,7 @@ Item {
                 rightMargin: 10
             }
             onMoved:{
+                //console.log("sending values from increment slider:",portNumber, increment.value, platformInterface.get_cable_loss_compensation.bias_voltage);
                 platformInterface.set_cable_loss_compensation.update(portNumber,
                                                                      increment.value,
                                                                      platformInterface.get_cable_loss_compensation.bias_voltage)
@@ -214,6 +215,10 @@ Item {
                         faultProtectionButtonStrip.buttonList[0].children[6].text += platformInterface.usb_pd_advertised_voltages_notification.settings[6].maximum_current;
                         faultProtectionButtonStrip.buttonList[0].children[6].text += "A";
                     }
+                    else{
+                        faultProtectionButtonStrip.buttonList[0].children[6].text = "NA";
+                    }
+
                     if (numberOfSettings >= 6){
                         faultProtectionButtonStrip.buttonList[0].children[5].enabled = true;
                         faultProtectionButtonStrip.buttonList[0].children[5].text = platformInterface.usb_pd_advertised_voltages_notification.settings[5].voltage;
@@ -221,6 +226,10 @@ Item {
                         faultProtectionButtonStrip.buttonList[0].children[5].text += platformInterface.usb_pd_advertised_voltages_notification.settings[5].maximum_current;
                         faultProtectionButtonStrip.buttonList[0].children[5].text += "A";
                     }
+                    else{
+                        faultProtectionButtonStrip.buttonList[0].children[5].text = "NA";
+                    }
+
                     if (numberOfSettings >= 5){
                         faultProtectionButtonStrip.buttonList[0].children[4].enabled = true;
                         faultProtectionButtonStrip.buttonList[0].children[4].text = platformInterface.usb_pd_advertised_voltages_notification.settings[4].voltage;
@@ -228,6 +237,10 @@ Item {
                         faultProtectionButtonStrip.buttonList[0].children[4].text += platformInterface.usb_pd_advertised_voltages_notification.settings[4].maximum_current;
                         faultProtectionButtonStrip.buttonList[0].children[4].text += "A";
                     }
+                    else{
+                        faultProtectionButtonStrip.buttonList[0].children[4].text = "NA";
+                    }
+
                     if (numberOfSettings >= 4){
                         faultProtectionButtonStrip.buttonList[0].children[3].enabled = true;
                         faultProtectionButtonStrip.buttonList[0].children[3].text = platformInterface.usb_pd_advertised_voltages_notification.settings[3].voltage;
@@ -235,6 +248,10 @@ Item {
                         faultProtectionButtonStrip.buttonList[0].children[3].text += platformInterface.usb_pd_advertised_voltages_notification.settings[3].maximum_current;
                         faultProtectionButtonStrip.buttonList[0].children[3].text += "A";
                     }
+                    else{
+                        faultProtectionButtonStrip.buttonList[0].children[3].text = "NA";
+                    }
+
                     if (numberOfSettings >= 3){
                         faultProtectionButtonStrip.buttonList[0].children[2].enabled = true;
                         faultProtectionButtonStrip.buttonList[0].children[2].text = platformInterface.usb_pd_advertised_voltages_notification.settings[2].voltage;
@@ -242,6 +259,10 @@ Item {
                         faultProtectionButtonStrip.buttonList[0].children[2].text += platformInterface.usb_pd_advertised_voltages_notification.settings[2].maximum_current;
                         faultProtectionButtonStrip.buttonList[0].children[2].text += "A";
                     }
+                    else{
+                        faultProtectionButtonStrip.buttonList[0].children[2].text = "NA";
+                    }
+
                     if (numberOfSettings >= 2){
                         faultProtectionButtonStrip.buttonList[0].children[1].enabled = true;
                         faultProtectionButtonStrip.buttonList[0].children[1].text = platformInterface.usb_pd_advertised_voltages_notification.settings[1].voltage;
@@ -249,12 +270,19 @@ Item {
                         faultProtectionButtonStrip.buttonList[0].children[1].text += platformInterface.usb_pd_advertised_voltages_notification.settings[1].maximum_current;
                         faultProtectionButtonStrip.buttonList[0].children[1].text += "A";
                     }
+                    else{
+                        faultProtectionButtonStrip.buttonList[0].children[1].text = "NA";
+                    }
+
                     if (numberOfSettings >= 1){
                         faultProtectionButtonStrip.buttonList[0].children[0].enabled = true;
                         faultProtectionButtonStrip.buttonList[0].children[0].text = platformInterface.usb_pd_advertised_voltages_notification.settings[0].voltage;
                         faultProtectionButtonStrip.buttonList[0].children[0].text += "V, ";
                         faultProtectionButtonStrip.buttonList[0].children[0].text += platformInterface.usb_pd_advertised_voltages_notification.settings[0].maximum_current;
                         faultProtectionButtonStrip.buttonList[0].children[0].text += "A";
+                    }
+                    else{
+                        faultProtectionButtonStrip.buttonList[0].children[1].text = "NA";
                     }
 
                 }

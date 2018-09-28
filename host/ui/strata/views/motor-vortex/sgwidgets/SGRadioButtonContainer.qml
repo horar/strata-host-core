@@ -23,10 +23,11 @@ Item {
         height: contentHeight
         topPadding: root.label === "" ? 0 : root.labelLeft ? 5 : 0
         bottomPadding: topPadding
+        color: textColor
     }
 
     ButtonGroup{
-        buttons: root.children[0].children
+        buttons: radioButtons.children[0].children
         exclusive: root.exclusive
     }
 

@@ -22,25 +22,25 @@ Rectangle {
     Rectangle {
         id: controlSection1
         width: leftControl.width + rightControl.width + rightControl.anchors.leftMargin
-        height: parent.height / 2
+        height: controlPage.height / 2
         anchors {
-            verticalCenter: parent.verticalCenter
-            horizontalCenter: parent.horizontalCenter
+            verticalCenter: controlPage.verticalCenter
+            horizontalCenter: controlPage.horizontalCenter
         }
 
         Rectangle {
             id: leftControl
             anchors {
-                left: parent.left
-                top: parent.top
+                left: controlSection1.left
+                top: controlSection1.top
             }
             width: height
-            height: parent.height
+            height: controlSection1.height
 
             SGCircularGauge {
                 id: tachMeterGauge
                 anchors {
-                    fill: parent
+                    fill: leftControl
                 }
                 gaugeFrontColor1: Qt.rgba(0,1,.25,1)
                 gaugeFrontColor2: Qt.rgba(1,0,0,1)
@@ -192,7 +192,7 @@ Rectangle {
             Text {
                 id: warningText
                 anchors {
-                    centerIn: parent
+                    centerIn: warningBox
                 }
                 text: "See Advanced Controls for Current Fault Status"
                 font.pixelSize: 12

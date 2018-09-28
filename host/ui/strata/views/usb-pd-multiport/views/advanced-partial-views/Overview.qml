@@ -154,7 +154,7 @@ Item {
                 }
                 portTemperature:{
                     if (platformInterface.request_usb_power_notification.port === 1){
-                        return platformInterface.request_usb_power_notification.temperature
+                        return Math.round(platformInterface.request_usb_power_notification.temperature * 10)/10;
                     }
                     else{
                         return miniInfo1.portTemperature;
@@ -255,7 +255,7 @@ Item {
                 }
                 portTemperature:{
                     if (platformInterface.request_usb_power_notification.port === 2){
-                        return platformInterface.request_usb_power_notification.temperature
+                        return Math.round(platformInterface.request_usb_power_notification.temperature * 10)/10;
                     }
                     else{
                         return miniInfo2.portTemperature;
@@ -355,7 +355,7 @@ Item {
                 }
                 portTemperature:{
                     if (platformInterface.request_usb_power_notification.port === 3){
-                        return platformInterface.request_usb_power_notification.temperature
+                        return Math.round(platformInterface.request_usb_power_notification.temperature*10)/10;
                     }
                     else{
                         return miniInfo3.portTemperature;
@@ -455,7 +455,7 @@ Item {
                 }
                 portTemperature:{
                     if (platformInterface.request_usb_power_notification.port === 4){
-                        return platformInterface.request_usb_power_notification.temperature
+                        return Math.round(platformInterface.request_usb_power_notification.temperature*10)/10;
                     }
                     else{
                         return miniInfo4.portTemperature;

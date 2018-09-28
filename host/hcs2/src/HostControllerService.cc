@@ -158,7 +158,7 @@ HcsError HostControllerService::setEventLoop()
     simulated_usb_pd.platform_verbose = "USB PD Load Board";
     simulated_usb_pd.connection_status = "view";
 
-    simulated_motor_vortex.platform_uuid = "motorvortex1";
+    simulated_motor_vortex.platform_uuid = "SEC.2017.004.2.0.0.1c9f3822-b865-11e8-b42a-47f5c5ed4fc3";
     simulated_motor_vortex.platform_verbose = "Vortex Fountain Motor Platform Board";
     simulated_motor_vortex.connection_status = "view";
 
@@ -443,7 +443,7 @@ void HostControllerService::initializePlatform()
     simulated_usb_pd.platform_verbose = "USB PD Load Board";
     simulated_usb_pd.connection_status = "view";
 
-    simulated_motor_vortex.platform_uuid = "motorvortex1";
+    simulated_motor_vortex.platform_uuid = "SEC.2017.004.2.0.0.1c9f3822-b865-11e8-b42a-47f5c5ed4fc3";
     simulated_motor_vortex.platform_verbose = "Vortex Fountain Motor Platform Board";
     simulated_motor_vortex.connection_status = "view";
 
@@ -905,7 +905,7 @@ void HostControllerService::platformDisconnectRoutine ()
     simulated_usb_pd.platform_verbose = "USB PD Load Board";
     simulated_usb_pd.connection_status = "view";
 
-    simulated_motor_vortex.platform_uuid = "motorvortex1";
+    simulated_motor_vortex.platform_uuid = "SEC.2017.004.2.0.0.1c9f3822-b865-11e8-b42a-47f5c5ed4fc3";
     simulated_motor_vortex.platform_verbose = "Vortex Fountain Motor Platform Board";
     simulated_motor_vortex.connection_status = "view";
 
