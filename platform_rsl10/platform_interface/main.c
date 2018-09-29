@@ -13,7 +13,7 @@ int main( ) {
 //    push("{\"cmd\":\"request_platform_id\"}");
 //    push("{\"cmd\" : \"whatever\", \"payload\" : {\"number_argument\" : 1, \"string_argument\" : \"0x000000FF\"}}");
 //    push("{\"cmd\" : \"general_purpose\", \"payload\" : {\"number_argument\" : 1, \"string_argument\" : \"0x000000FF\"}}");
-    push("{\"cmd\":\"request_echo\"}");
+  //  push("{\"cmd\":\"request_echo\"}");
     push("Hello world!");
 //    memory_pool_dump();
   //  push("{\"cmd\" : \"general_purpose\", \"payload\" : {\"number_argument\" : 1, \"string_argument\" : \"0x000000FF\"}}");

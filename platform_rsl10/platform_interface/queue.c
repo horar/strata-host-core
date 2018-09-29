@@ -30,15 +30,11 @@ void push(char *data)
         new_node = b;
         printf("PUSH: value of new_node is: %p\n", new_node);
         new_node->data = data;
-        new_node->next = NULL;
-        set_data(new_node,b);
+        new_node->next = NULL; // this line for some reasons misses up the memory pool values
+        printf("PUSH: value of new_node after setting data is: %p\n", new_node);
+        set_data(new_node->data,b);
 
-    //printf("PUSH: value of magic node is: %x\n", g_pool.pool->magic);
 
-//        new_node->data = data; //set_data(data,(memory_pool_handle_t )new_node);
-//        printf("PUSH: Size of DATA is: %lu\n", strlen(new_node->data));
-//        //new_node->next = NULL;
-//
         if (g_queue->head == NULL) {
             g_queue->size = 0;
             g_queue->head = g_queue->tail = new_node;
@@ -58,8 +54,8 @@ void push(char *data)
             printf("PUSH: address of g_queue old_tail is %p\n", g_queue->temp);
             printf("PUSH: address of g_queue new_tail is %p\n", g_queue->tail);
         }
-//    }
     g_queue->size++;
+    //memory_pool_release(b);
 }
 
 /**
