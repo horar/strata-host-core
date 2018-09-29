@@ -1,7 +1,7 @@
 import QtQuick 2.9
 import QtGraphicalEffects 1.0
-import "qrc:/views/usb-pd-multiport/sgwidgets"
-import "qrc:/views/usb-pd-multiport/views/basic-partial-views"
+import "qrc:/views/usb-hub/sgwidgets"
+import "qrc:/views/usb-hub/views/basic-partial-views"
 
 Item {
     id: root
@@ -13,17 +13,50 @@ Item {
     height: parent.width / parent.height < initialAspectRatio ? parent.width / initialAspectRatio : parent.height
 
 
+
+    Rectangle{
+        id:background
+        anchors.fill:parent
+        color:"#145A74"
+    }
+
+    Rectangle{
+        id:deviceBackground
+        color:"darkgrey"
+        radius:5
+        height:(7*parent.height)/16
+        anchors.left:parent.left
+        anchors.leftMargin: 12
+        anchors.right: parent.right
+        anchors.rightMargin: 12
+        anchors.top:parent.top
+        anchors.topMargin: (3*parent.height)/32
+
+        PortInfo{
+            id:upstreamPort
+            portName:"Upstream"
+            anchors.left: parent.left
+            anchors.leftMargin: 10
+            anchors.top:parent.top
+            anchors.topMargin: 10
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 5
+            width:160
+        }
+    }
+
     Image{
         source:"./images/FourPortWireframeBasicView.png"
         anchors.fill:root
+        opacity: .2
     }
 
-    Text{
-        id:placeholderText
-        text: "hub basic view"
-        anchors.centerIn: root
-        font.pixelSize: 24
-    }
+//    Text{
+//        id:placeholderText
+//        text: "hub basic view"
+//        anchors.centerIn: root
+//        font.pixelSize: 24
+//    }
 
 
 

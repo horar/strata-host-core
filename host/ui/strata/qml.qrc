@@ -406,5 +406,17 @@
         <file>views/usb-hub/views/SystemControl.qml</file>
         <file>views/usb-hub/views/images/FourPortWireframeAdvancedView.png</file>
         <file>views/usb-hub/views/images/FourPortWireframeBasicView.png</file>
+        <file>views/usb-hub/views/basic-partial-views/DeviceInfo.qml</file>
+        <file>views/usb-hub/views/basic-partial-views/PlugAnimation.qml</file>
+        <file>views/usb-hub/views/basic-partial-views/PortInfo.qml</file>
+        <file>views/usb-hub/views/basic-partial-views/PortStatBox.qml</file>
+        <file>views/usb-hub/views/images/basic-background.png</file>
+        <file>views/usb-hub/views/images/cord.gif</file>
+        <file>views/usb-hub/views/images/cordReverse.gif</file>
+        <file>views/usb-hub/views/images/icon-efficiency.svg</file>
+        <file>views/usb-hub/views/images/icon-max.svg</file>
+        <file>views/usb-hub/views/images/icon-temp.svg</file>
+        <file>views/usb-hub/views/images/icon-usb-disconnected.svg</file>
+        <file>views/usb-hub/views/images/icon-voltage.svg</file>
     </qresource>
 </RCC>
