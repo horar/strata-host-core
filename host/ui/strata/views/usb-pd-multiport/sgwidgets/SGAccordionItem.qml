@@ -20,6 +20,7 @@ Rectangle {
     property color contentsColor: accordionContentsColor
     property color headerOpenColor: accordionHeaderOpenColor
     property color headerClosedColor: accordionHeaderClosedColor
+    property alias dividerColor: divider.color
 
     Rectangle {
         id: titleBar
@@ -62,7 +63,7 @@ Rectangle {
 
         MouseArea {
             id: titleBarClick
-            anchors { fill: parent }
+            anchors { fill: titleBar }
             cursorShape: Qt.PointingHandCursor
             onClicked: {
                 if (root.open) {
@@ -106,7 +107,7 @@ Rectangle {
         anchors { bottom: root.bottom }
         width: root.width
         height: 1
-        color: "#fff"
+        color: accordionDividerColor
     }
 
     NumberAnimation {

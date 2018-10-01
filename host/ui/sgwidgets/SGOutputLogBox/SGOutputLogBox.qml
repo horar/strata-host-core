@@ -1,4 +1,4 @@
-import QtQuick 2.11
+import QtQuick 2.9
 import QtQuick.Controls 2.2
 
 Rectangle {
@@ -68,7 +68,7 @@ Rectangle {
             TextEdit {
                 id: transcript
                 height: contentHeight + padding * 2
-                width: root.parent.width
+                width: root.width
                 readOnly: true
                 selectByMouse: true
                 selectByKeyboard: true
