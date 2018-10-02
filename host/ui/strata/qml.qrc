@@ -418,5 +418,12 @@
         <file>views/usb-hub/views/images/icon-temp.svg</file>
         <file>views/usb-hub/views/images/icon-usb-disconnected.svg</file>
         <file>views/usb-hub/views/images/icon-voltage.svg</file>
+        <file>views/usb-hub/views/basic-partial-views/AudioPortInfo.qml</file>
+        <file>views/usb-hub/views/basic-partial-views/VideoPortInfo.qml</file>
+        <file>views/usb-hub/views/images/penguin.mp4</file>
+        <file>views/usb-hub/views/images/headphonesIcon.png</file>
+        <file>views/usb-hub/views/images/screen.png</file>
+        <file>views/usb-hub/views/images/soundwave.png</file>
+        <file>views/usb-hub/views/images/videoIcon.png</file>
     </qresource>
 </RCC>

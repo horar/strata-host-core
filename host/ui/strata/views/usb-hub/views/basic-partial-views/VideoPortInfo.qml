@@ -1,6 +1,7 @@
 import QtQuick 2.9
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.2
+import QtMultimedia 5.8
 import "qrc:/views/usb-pd-multiport/sgwidgets"
 
 Rectangle {
@@ -64,92 +65,46 @@ Rectangle {
         }
     }
 
-    PortStatBox{
-        id:outputVoltageBox
-        anchors.left:parent.left
-        anchors.leftMargin: 10
-        anchors.top: titleBackground.bottom
-        anchors.topMargin: 8
-        anchors.right: parent.right
-        anchors.rightMargin: 10
-        height:40
-        label: "VOLTAGE OUT"
-        color:"transparent"
+    Rectangle{
+        id:backgroundRect
+        color:"lightgrey"
+        border.color:"black"
+        border.width: 1
+        height:100
+        anchors.left:root.left
+        anchors.leftMargin: 2
+        anchors.right: root.right
+        anchors.rightMargin: 2
+        anchors.verticalCenter: root.verticalCenter
     }
 
-    PortStatBox{
-        id:maxPowerBox
-        anchors.left:parent.left
-        anchors.leftMargin: 10
-        anchors.top: outputVoltageBox.bottom
-        anchors.topMargin: 8
-        anchors.right: parent.right
-        anchors.rightMargin: 10
-        height:40
-        label: "MAXIMUM POWER"
-        unit: "W"
-        color:"transparent"
-        icon: "../images/icon-max.svg"
+    Image{
+        id:placeholderImage
+        width:150
+        height:112.5
+        source: "../images/screen.png"
+        anchors.centerIn: root
+        fillMode:Image.PreserveAspectFit
     }
 
-    PortStatBox{
-        id:powerInBox
-        anchors.left:parent.left
-        anchors.leftMargin: 10
-        anchors.top: maxPowerBox.bottom
-        anchors.topMargin: 8
-        anchors.right: parent.right
-        anchors.rightMargin: 10
-        height:40
-        label: "POWER IN"
-        unit:"W"
-        color:"transparent"
-        icon: "../images/icon-voltage.svg"
-    }
+    Video {
+        id: video
+//        width : 150
+//        height : 112.5
+        source: "../images/penguin.mp4"
+        anchors.centerIn: root
 
-    PortStatBox{
-        id:powerOutBox
-        anchors.left:parent.left
-        anchors.leftMargin: 10
-        anchors.top: powerInBox.bottom
-        anchors.topMargin: 8
-        anchors.right: parent.right
-        anchors.rightMargin: 10
-        height:40
-        label: "POWER OUT"
-        unit:"W"
-        color:"transparent"
-        icon: "../images/icon-voltage.svg"
-    }
+        MouseArea {
+            anchors.fill: parent
+            onClicked: {
+                video.play()
+            }
+        }
 
-    PortStatBox{
-        id:temperatureBox
-        anchors.left:parent.left
-        anchors.leftMargin: 10
-        anchors.top: powerOutBox.bottom
-        anchors.topMargin: 8
-        anchors.right: parent.right
-        anchors.rightMargin: 10
-        height:40
-        label: "TEMPERATURE"
-        unit:"°C"
-        color:"transparent"
-        icon: "../images/icon-temp.svg"
-    }
-
-    PortStatBox{
-        id:efficencyBox
-        anchors.left:parent.left
-        anchors.leftMargin: 10
-        anchors.top: temperatureBox.bottom
-        anchors.topMargin: 8
-        anchors.right: parent.right
-        anchors.rightMargin: 10
-        height:40
-        label: "EFFICENCY"
-        unit:"%"
-        color:"transparent"
-        icon: "../images/icon-efficiency.svg"
+        focus: true
+        Keys.onSpacePressed: video.playbackState == MediaPlayer.PlayingState ? video.pause() : video.play()
+        Keys.onLeftPressed: video.seek(video.position - 5000)
+        Keys.onRightPressed: video.seek(video.position + 5000)
     }
 }
     /*

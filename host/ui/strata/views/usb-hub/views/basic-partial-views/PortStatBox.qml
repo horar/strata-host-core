@@ -22,7 +22,7 @@ Rectangle {
     Image {
         id: iconImage
         source: root.icon
-        opacity: 0.05
+        opacity: 0.1
         height: root.height * 0.9
         width: height
         anchors {

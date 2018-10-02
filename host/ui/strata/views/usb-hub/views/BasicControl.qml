@@ -36,7 +36,79 @@ Item {
             id:upstreamPort
             portName:"Upstream"
             anchors.left: parent.left
-            anchors.leftMargin: 10
+            anchors.leftMargin: 7
+            anchors.top:parent.top
+            anchors.topMargin: 10
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 5
+            width:160
+        }
+
+        PortInfo{
+            id:port1
+            portName:"Port 1"
+            anchors.left: upstreamPort.right
+            anchors.leftMargin: 7
+            anchors.top:parent.top
+            anchors.topMargin: 10
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 5
+            width:160
+        }
+
+        PortInfo{
+            id:port2
+            portName:"Port 2"
+            anchors.left: port1.right
+            anchors.leftMargin: 7
+            anchors.top:parent.top
+            anchors.topMargin: 10
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 5
+            width:160
+        }
+
+        PortInfo{
+            id:port3
+            portName:"Port 3"
+            anchors.left: port2.right
+            anchors.leftMargin: 7
+            anchors.top:parent.top
+            anchors.topMargin: 10
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 5
+            width:160
+        }
+
+        PortInfo{
+            id:port4
+            portName:"Port 4"
+            anchors.left: port3.right
+            anchors.leftMargin: 7
+            anchors.top:parent.top
+            anchors.topMargin: 10
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 5
+            width:160
+        }
+
+        VideoPortInfo{
+            id:displayPort
+            portName:"DisplayPort"
+            anchors.left: port4.right
+            anchors.leftMargin: 7
+            anchors.top:parent.top
+            anchors.topMargin: 10
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 5
+            width:160
+        }
+
+        AudioPortInfo{
+            id:audioPort
+            portName:"Audio"
+            anchors.left: displayPort.right
+            anchors.leftMargin: 7
             anchors.top:parent.top
             anchors.topMargin: 10
             anchors.bottom: parent.bottom
@@ -45,10 +117,81 @@ Item {
         }
     }
 
+    DeviceInfo{
+        id:upstreamDevice
+        anchors.top:deviceBackground.bottom
+        anchors.topMargin: 95
+        anchors.left:parent.left
+        anchors.leftMargin: 20
+        height:145
+        width:160
+    }
+
+    DeviceInfo{
+        id:port1Device
+        anchors.top:deviceBackground.bottom
+        anchors.topMargin: 95
+        anchors.left:upstreamDevice.right
+        anchors.leftMargin: 7
+        height:145
+        width:160
+    }
+
+    DeviceInfo{
+        id:port2Device
+        anchors.top:deviceBackground.bottom
+        anchors.topMargin: 95
+        anchors.left:port1Device.right
+        anchors.leftMargin: 7
+        height:145
+        width:160
+    }
+
+    DeviceInfo{
+        id:port3Device
+        anchors.top:deviceBackground.bottom
+        anchors.topMargin: 95
+        anchors.left:port2Device.right
+        anchors.leftMargin: 7
+        height:145
+        width:160
+    }
+
+    DeviceInfo{
+        id:port4Device
+        anchors.top:deviceBackground.bottom
+        anchors.topMargin: 95
+        anchors.left:port3Device.right
+        anchors.leftMargin: 7
+        height:145
+        width:160
+    }
+
+    Image{
+        id:videoIcon
+        source:"./images/videoIcon.png"
+        anchors.verticalCenter: port4Device.verticalCenter
+        anchors.left:port4Device.right
+        anchors.leftMargin: 40
+        fillMode:Image.PreserveAspectFit
+    }
+
+    Image{
+        id:audioIcon
+        source:"./images/headphonesIcon.png"
+        anchors.verticalCenter: port4Device.verticalCenter
+        anchors.left:videoIcon.right
+        anchors.leftMargin: 80
+        fillMode:Image.PreserveAspectFit
+    }
+
+
+
     Image{
         source:"./images/FourPortWireframeBasicView.png"
         anchors.fill:root
         opacity: .2
+        visible: false
     }
 
 //    Text{

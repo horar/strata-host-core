@@ -64,92 +64,13 @@ Rectangle {
         }
     }
 
-    PortStatBox{
-        id:outputVoltageBox
-        anchors.left:parent.left
-        anchors.leftMargin: 10
-        anchors.top: titleBackground.bottom
-        anchors.topMargin: 8
-        anchors.right: parent.right
-        anchors.rightMargin: 10
-        height:40
-        label: "VOLTAGE OUT"
-        color:"transparent"
-    }
-
-    PortStatBox{
-        id:maxPowerBox
-        anchors.left:parent.left
-        anchors.leftMargin: 10
-        anchors.top: outputVoltageBox.bottom
-        anchors.topMargin: 8
-        anchors.right: parent.right
-        anchors.rightMargin: 10
-        height:40
-        label: "MAXIMUM POWER"
-        unit: "W"
-        color:"transparent"
-        icon: "../images/icon-max.svg"
-    }
-
-    PortStatBox{
-        id:powerInBox
-        anchors.left:parent.left
-        anchors.leftMargin: 10
-        anchors.top: maxPowerBox.bottom
-        anchors.topMargin: 8
-        anchors.right: parent.right
-        anchors.rightMargin: 10
-        height:40
-        label: "POWER IN"
-        unit:"W"
-        color:"transparent"
-        icon: "../images/icon-voltage.svg"
-    }
-
-    PortStatBox{
-        id:powerOutBox
-        anchors.left:parent.left
-        anchors.leftMargin: 10
-        anchors.top: powerInBox.bottom
-        anchors.topMargin: 8
-        anchors.right: parent.right
-        anchors.rightMargin: 10
-        height:40
-        label: "POWER OUT"
-        unit:"W"
-        color:"transparent"
-        icon: "../images/icon-voltage.svg"
-    }
-
-    PortStatBox{
-        id:temperatureBox
-        anchors.left:parent.left
-        anchors.leftMargin: 10
-        anchors.top: powerOutBox.bottom
-        anchors.topMargin: 8
-        anchors.right: parent.right
-        anchors.rightMargin: 10
-        height:40
-        label: "TEMPERATURE"
-        unit:"°C"
-        color:"transparent"
-        icon: "../images/icon-temp.svg"
-    }
-
-    PortStatBox{
-        id:efficencyBox
-        anchors.left:parent.left
-        anchors.leftMargin: 10
-        anchors.top: temperatureBox.bottom
-        anchors.topMargin: 8
-        anchors.right: parent.right
-        anchors.rightMargin: 10
-        height:40
-        label: "EFFICENCY"
-        unit:"%"
-        color:"transparent"
-        icon: "../images/icon-efficiency.svg"
+    Image{
+        id:placeholderImage
+        width:150
+        height:112.5
+        source: "../images/soundwave.png"
+        anchors.centerIn: root
+        fillMode:Image.PreserveAspectFit
     }
 }
     /*
