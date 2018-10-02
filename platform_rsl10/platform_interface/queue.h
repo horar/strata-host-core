@@ -6,7 +6,6 @@
 #define PLATFORM_INTERFACE_QUEUE_H
 
 #include "cJSON.h"
-#include "memory_pool.h"
 
 typedef struct node {
     char *data;

@@ -27,7 +27,7 @@ bool memory_pool_init()
     g_pool = (memory_pool_t){0};   // zero/null all elements of pool structure
     int n =0;
 
-    printf("memory_pool_init(number_of_blocks=%zu, block_size=%zu)\n", number_of_blocks, block_size);
+    printf("MEMORY POOL INIT:(number_of_blocks=%zu, block_size=%zu)\n", number_of_blocks, block_size);
 
     for( n = 0; n < number_of_blocks; ++n ) {
 
@@ -37,7 +37,7 @@ bool memory_pool_init()
             return false;
         }
 
-        node->data =  (char *)malloc ((block_size));
+        node->data = malloc ((block_size));
         if( node->data == NULL) {
             printf("OOM ERROR.\n");
             return false;
@@ -45,7 +45,7 @@ bool memory_pool_init()
 
         node->magic = NODE_MAGIC;  // set the magic for data integrity checks
         node->size = block_size;
-        printf("MEMORY POOL ININT: value of magic node is: %x\n", node->magic);
+        printf("MEMORY POOL INIT: value of magic node is: %x\n", node->magic);
         node->inuse = false;
         node->prev = NULL;   // may not need to be double linked
         node->next = NULL;
@@ -55,7 +55,7 @@ bool memory_pool_init()
             g_pool.top = node;
             last = node;
 
-            printf("memory_pool_init (if g_pool.pool == NULL) : i=%d, node=%p block_size=%zu, data=%p, prev=%p, next=%p, g_pool.top=%p\n",
+            printf("MEMORY POOL INIT: (if g_pool.pool == NULL) : i=%d, node=%p block_size=%zu, data=%p, prev=%p, next=%p, g_pool.top=%p\n",
                    n, node, node->size, node->data, node->prev, node->next, g_pool.top);
             continue;
         }
@@ -65,11 +65,11 @@ bool memory_pool_init()
         last = node;
 
         // DEBUG : TODO remove
-        printf("memory_pool_init: i=%d, node=%p block_size=%zu, data=%p, prev=%p, next=%p\n",
+        printf("MEMORY POOL INIT: i=%d, node=%p block_size=%zu, data=%p, prev=%p, next=%p\n",
                n, node, node->size, node->data, node->prev, node->next);
     }
 
-    printf ("memory_pool_init: g_pool.top = %p\n", g_pool.top );
+    printf ("MEMORY POOL INIT: g_pool.top = %p\n", g_pool.top );
     g_pool.number_of_blocks = number_of_blocks;
     g_pool.block_size = block_size;
     g_pool.available = number_of_blocks;

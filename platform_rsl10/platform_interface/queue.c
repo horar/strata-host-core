@@ -22,17 +22,24 @@ void list_init()
 void push(char *data)
 {
         printf("PUSH: Size of DATA is: %lu\n", strlen(data));
+
         memory_pool_handle_t b = 0;
         node_t *new_node;
+
         printf("PUSH: value of b before is: %p\n", b);
         memory_pool_acquire(&b);
+
         printf("PUSH: value of b after is: %p\n", b);
         new_node = b;
         printf("PUSH: value of new_node is: %p\n", new_node);
+
+
         new_node->data = data;
         new_node->next = NULL; // this line for some reasons misses up the memory pool values
+
         printf("PUSH: value of new_node after setting data is: %p\n", new_node);
-        set_data(new_node->data,b);
+        // save the new node into void data pointer of memory_pool_node struct
+        set_data(new_node,b);
 
 
         if (g_queue->head == NULL) {

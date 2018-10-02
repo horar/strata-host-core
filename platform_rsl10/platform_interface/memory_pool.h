@@ -23,8 +23,7 @@ typedef struct memory_pool_node {
     size_t size;
     void *data;
     bool inuse;      // true = currently allocated
-
-    struct memory_pool_node * temp;
+            node_t *temp;
     struct memory_pool_node * prev;
     struct memory_pool_node * next;
 
@@ -83,5 +82,4 @@ static inline size_t memory_pool_available()
 static inline void set_data(void *data, memory_pool_handle_t handle){
     ((memory_pool_node_t*)handle)->data = data;
 }
-
 #endif /* mem_pool_h */
