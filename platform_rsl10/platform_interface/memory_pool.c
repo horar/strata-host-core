@@ -18,9 +18,22 @@
 //
 #include "memory_pool.h"
 
+typedef struct memory_pool {
+    size_t number_of_blocks; // number of blocks
+    size_t block_size;   // size of each block
+    size_t available;
+
+    memory_pool_node_t * pool;
+    memory_pool_node_t * top;
+
+} memory_pool_t;
+
+// static to keep private to this C file. g_* to indicate it is a global
+static memory_pool_t g_pool;
+
 bool memory_pool_init()
 {
-    size_t number_of_blocks = 5, block_size = 200;
+    size_t number_of_blocks = 5, block_size = 130;
 
     memory_pool_node_t *last;
     // Mus - compound literals
@@ -38,6 +51,8 @@ bool memory_pool_init()
         }
 
         node->data = malloc ((block_size));
+        printf("node->data: %p\n", node->data);
+
         if( node->data == NULL) {
             printf("OOM ERROR.\n");
             return false;
@@ -45,7 +60,6 @@ bool memory_pool_init()
 
         node->magic = NODE_MAGIC;  // set the magic for data integrity checks
         node->size = block_size;
-        printf("MEMORY POOL INIT: value of magic node is: %x\n", node->magic);
         node->inuse = false;
         node->prev = NULL;   // may not need to be double linked
         node->next = NULL;
@@ -55,8 +69,8 @@ bool memory_pool_init()
             g_pool.top = node;
             last = node;
 
-            printf("MEMORY POOL INIT: (if g_pool.pool == NULL) : i=%d, node=%p block_size=%zu, data=%p, prev=%p, next=%p, g_pool.top=%p\n",
-                   n, node, node->size, node->data, node->prev, node->next, g_pool.top);
+            printf("MEMORY POOL INIT: i=%d, node=%p block_size=%zu, data=%p, prev=%p, next=%p, magic = 0x%x\n",
+                   n, node, node->size, node->data, node->prev, node->next, node->magic);
             continue;
         }
         // add new node to stack
@@ -65,8 +79,8 @@ bool memory_pool_init()
         last = node;
 
         // DEBUG : TODO remove
-        printf("MEMORY POOL INIT: i=%d, node=%p block_size=%zu, data=%p, prev=%p, next=%p\n",
-               n, node, node->size, node->data, node->prev, node->next);
+        printf("MEMORY POOL INIT: i=%d, node=%p block_size=%zu, data=%p, prev=%p, next=%p, magic = 0x%x\n",
+               n, node, node->size, node->data, node->prev, node->next, node->magic);
     }
 
     printf ("MEMORY POOL INIT: g_pool.top = %p\n", g_pool.top );
@@ -79,12 +93,12 @@ bool memory_pool_init()
 
 void memory_pool_dump()
 {
-    printf("memory_pool_dump(number_of_blocks=%zu, available=%zu, block_size=%zu)\n",
-           g_pool.number_of_blocks, g_pool.available, g_pool.block_size);
+    printf("memory_pool_dump(number_of_blocks=%zu, available=%zu, block_size=%zu, magic = 0x%x)\n",
+           g_pool.number_of_blocks, g_pool.available, g_pool.block_size, g_pool.pool->magic);
 
     memory_pool_node_t * node = g_pool.pool;
     for(int n = 0; node != NULL; ++n ) {
-        printf("memory_pool_dump POOL: i=%d, inuse=%s, node=%p block_size=%zu, data=%s, prev=%p, next=%p\n",
+        printf("memory_pool_dump POOL: i=%d, inuse=%s, node=%p block_size=%zu, data=%p, prev=%p, next=%p\n",
                n, node->inuse ? "true":"false", node, node->size, node->data, node->prev, node->next);
         node = node->next;
     }
