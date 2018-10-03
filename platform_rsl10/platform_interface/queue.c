@@ -32,18 +32,16 @@ void push(char *data)
         printf("PUSH: value of b after is: %p\n", b);
         new_node = set_data(b);
         printf("PUSH: value of new_node is: %p\n", new_node);
-        printf("**** data origin %p\n",&data);
-        printf("**** new_node data %p\n",&new_node->data);
-        //new_node->data = "\0";
-        //printf("**** new_node data %p\n",new_node->data);
-//        strcpy(*(new_node->data), *data);
-        memcpy(&new_node->data, &data, strlen(data));
-        printf("data after memcpy %s\n",new_node->data);
-        //new_node->data = data;
-        new_node->next = NULL;
 
+
+        strcpy(new_node->data, data);
+        new_node->next = NULL;
+        /*
+         * we could you use memcpy if we do not want to specify the size of the array
+        ** memcpy(&new_node->data, &data, strlen(data));
+         */
         printf("PUSH: value of new_node after setting data is: %p\n", new_node);
-        printf("PUSH: size of new_node: %d\n", sizeof(new_node->data));
+        printf("PUSH: size of new_node: %ld\n", sizeof(new_node->data));
 
         if (g_queue->head == NULL) {
             g_queue->size = 0;

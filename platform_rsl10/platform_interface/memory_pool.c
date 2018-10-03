@@ -18,21 +18,12 @@
 //
 #include "memory_pool.h"
 
-typedef struct memory_pool {
-    size_t number_of_blocks; // number of blocks
-    size_t block_size;   // size of each block
-    size_t available;
 
-    memory_pool_node_t * pool;
-    memory_pool_node_t * top;
-
-} memory_pool_t;
-
-// static to keep private to this C file. g_* to indicate it is a global
-static memory_pool_t g_pool;
 
 bool memory_pool_init()
 {
+    // if you change block_size make sure to change data array size in queue.h as well
+    // to block_size - 8
     size_t number_of_blocks = 5, block_size = 130;
 
     memory_pool_node_t *last;
@@ -51,7 +42,6 @@ bool memory_pool_init()
         }
 
         node->data = malloc ((block_size));
-        printf("node->data: %p\n", node->data);
 
         if( node->data == NULL) {
             printf("OOM ERROR.\n");
@@ -98,8 +88,8 @@ void memory_pool_dump()
 
     memory_pool_node_t * node = g_pool.pool;
     for(int n = 0; node != NULL; ++n ) {
-        printf("memory_pool_dump POOL: i=%d, inuse=%s, node=%p block_size=%zu, data=%p, prev=%p, next=%p\n",
-               n, node->inuse ? "true":"false", node, node->size, node->data, node->prev, node->next);
+        printf("memory_pool_dump POOL: i=%d, inuse=%s, node=%p block_size=%zu, data=%p, prev=%p, next=%p, magic = 0x%x\n",
+               n, node->inuse ? "true":"false", node, node->size, node->data, node->prev, node->next, node->magic);
         node = node->next;
     }
 }

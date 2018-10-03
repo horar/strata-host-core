@@ -8,7 +8,7 @@
 #include "cJSON.h"
 
 typedef struct node {
-    char *data;
+    char data[122];
     struct node *next;
 } node_t;
 

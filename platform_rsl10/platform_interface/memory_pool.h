@@ -28,6 +28,19 @@ typedef struct memory_pool_node {
 
 } memory_pool_node_t;
 
+typedef struct memory_pool {
+    size_t number_of_blocks; // number of blocks
+    size_t block_size;   // size of each block
+    size_t available;
+
+    memory_pool_node_t * pool;
+    memory_pool_node_t * top;
+
+} memory_pool_t;
+
+// static to keep private to this C file. g_* to indicate it is a global
+static memory_pool_t g_pool;
+
 //* function declaration */
 bool memory_pool_init();
 void memory_pool_dump();
