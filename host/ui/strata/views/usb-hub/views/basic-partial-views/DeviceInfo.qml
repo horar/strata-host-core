@@ -1,24 +1,74 @@
-import QtQuick 2.0
+import QtQuick 2.9
 //import "qrc:/views/usb-hub/sgwidgets"
 import QtQuick.Controls 2.3
 
 Rectangle {
     id: root
-    color: "white"
+    color: connected ? "white" : "darkGrey"
+    border.color: connected ? "transparent" : "black"
     radius:5
 
+    property bool connected: false
     property alias source: sourceIndicator.checked
     property alias sink: sinkIndicator.checked
     property alias fastRoleSwap: fastRoleSwapIndicator.checked
     property alias superspeed: superspeedIndicator.checked
     property alias extendedSink: extendedSinkIndicator.checked
 
+    onConnectedChanged:{
+        if (connected){
+            showStats.start()
+            showIndicators.start()
+        }
+         else{
+            hideStats.start()
+            hideIndicators.start()
+        }
+    }
+
+    OpacityAnimator {
+        id: hideStats
+        target: deviceInfoColumn
+        from: 1
+        to: 0
+        duration: 1000
+    }
+
+    OpacityAnimator {
+        id: showStats
+        target: deviceInfoColumn
+        from: 0
+        to: 1
+        duration: 1000
+    }
+
+    OpacityAnimator {
+        id: hideIndicators
+        target: deviceStatusColumn
+        from: 1
+        to: 0
+        duration: 1000
+    }
+
+    OpacityAnimator {
+        id: showIndicators
+        target: deviceStatusColumn
+        from: 0
+        to: 1
+        duration: 1000
+    }
+
+
+
     Rectangle{
         id:titleBackground
         color:"lightgrey"
         anchors.top: root.top
+        anchors.topMargin: !connected ? 2 : 0
         anchors.left:root.left
+        anchors.leftMargin: !connected ? 2 : 0
         anchors.right: root.right
+        anchors.rightMargin: !connected ? 2 : 0
         height: (2*root.height)/16
         radius:5
     }
@@ -36,13 +86,14 @@ Rectangle {
 
     Column{
         id:deviceInfoColumn
+        opacity: 0
         anchors.top:squareBottomBackground.bottom
         anchors.topMargin: 10
-        anchors.left:parent.left
+        anchors.left:root.left
         anchors.leftMargin: 10
-        anchors.right:parent.right
+        anchors.right:root.right
         anchors.rightMargin: 18
-        anchors.bottom:parent.bottom
+        anchors.bottom:root.bottom
 
         spacing: 5
 
@@ -65,11 +116,12 @@ Rectangle {
 
     Column{
         id:deviceStatusColumn
+        opacity: 0
         anchors.top:squareBottomBackground.bottom
         anchors.topMargin: 10
         anchors.left:deviceInfoColumn.right
-        anchors.right:parent.right
-        anchors.bottom:parent.bottom
+        anchors.right:root.right
+        anchors.bottom:root.bottom
 
         spacing: -4
 

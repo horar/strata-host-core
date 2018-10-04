@@ -9,7 +9,7 @@ Rectangle {
     property bool portConnected: true
     property bool isUSBAPort: false     //used to hide information not available for USB-A ports
     property color portColor: "#30a2db"
-    property int portNumber: 1
+    property int portNumber: 0
     property alias portName: portTitle.text
     property alias portSubtitle: portSubtitle.text
 
@@ -19,6 +19,30 @@ Rectangle {
     property alias outputPower: powerOutBox.value
     property alias portTemperature: temperatureBox.value
     property alias efficency: efficencyBox.value
+
+    onPortConnectedChanged:{
+        if (portConnected)
+            hideStats.start()
+         else
+            showStats.start()
+    }
+
+    OpacityAnimator {
+        id: hideStats
+        target: connectionContainer
+        from: 1
+        to: 0
+        duration: 1000
+    }
+
+    OpacityAnimator {
+        id: showStats
+        target: connectionContainer
+        from: 0
+        to: 1
+        duration: 1000
+    }
+
 
 
     signal showGraph()
@@ -53,8 +77,8 @@ Rectangle {
         Text {
             id: portTitle
             text: "foo"
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.verticalCenter: parent.verticalCenter
+            anchors.horizontalCenter: titleBackground.horizontalCenter
+            anchors.verticalCenter: titleBackground.verticalCenter
             font {
                 pixelSize: 20
             }
@@ -64,7 +88,7 @@ Rectangle {
         Text {
             id: portSubtitle
             text: ""
-            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.horizontalCenter: titleBackground.horizontalCenter
             anchors.top: portTitle.bottom
             anchors.topMargin: -5
             font {
@@ -77,11 +101,11 @@ Rectangle {
 
     PortStatBox{
         id:outputVoltageBox
-        anchors.left:parent.left
+        anchors.left:root.left
         anchors.leftMargin: 10
         anchors.top: titleBackground.bottom
         anchors.topMargin: 8
-        anchors.right: parent.right
+        anchors.right: root.right
         anchors.rightMargin: 10
         height:40
         label: "VOLTAGE OUT"
@@ -90,11 +114,11 @@ Rectangle {
 
     PortStatBox{
         id:maxPowerBox
-        anchors.left:parent.left
+        anchors.left:root.left
         anchors.leftMargin: 10
         anchors.top: outputVoltageBox.bottom
         anchors.topMargin: 8
-        anchors.right: parent.right
+        anchors.right: root.right
         anchors.rightMargin: 10
         height:40
         label: "MAXIMUM POWER"
@@ -105,11 +129,11 @@ Rectangle {
 
     PortStatBox{
         id:powerInBox
-        anchors.left:parent.left
+        anchors.left:root.left
         anchors.leftMargin: 10
         anchors.top: maxPowerBox.bottom
         anchors.topMargin: 8
-        anchors.right: parent.right
+        anchors.right: root.right
         anchors.rightMargin: 10
         height:40
         label: "POWER IN"
@@ -121,11 +145,11 @@ Rectangle {
 
     PortStatBox{
         id:powerOutBox
-        anchors.left:parent.left
+        anchors.left:root.left
         anchors.leftMargin: 10
         anchors.top: powerInBox.bottom
         anchors.topMargin: 8
-        anchors.right: parent.right
+        anchors.right: root.right
         anchors.rightMargin: 10
         height:40
         label: "POWER OUT"
@@ -136,11 +160,11 @@ Rectangle {
 
     PortStatBox{
         id:temperatureBox
-        anchors.left:parent.left
+        anchors.left:root.left
         anchors.leftMargin: 10
         anchors.top: powerOutBox.bottom
         anchors.topMargin: 8
-        anchors.right: parent.right
+        anchors.right: root.right
         anchors.rightMargin: 10
         height:40
         label: "TEMPERATURE"
@@ -151,11 +175,11 @@ Rectangle {
 
     PortStatBox{
         id:efficencyBox
-        anchors.left:parent.left
+        anchors.left:root.left
         anchors.leftMargin: 10
         anchors.top: temperatureBox.bottom
         anchors.topMargin: 8
-        anchors.right: parent.right
+        anchors.right: root.right
         anchors.rightMargin: 10
         height:40
         label: "EFFICENCY"
@@ -167,7 +191,7 @@ Rectangle {
 
     Rectangle {
         id: connectionContainer
-        visible: !root.portConnected
+        opacity: 0
 
         anchors {
             top:titleBackground.bottom

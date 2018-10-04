@@ -12,21 +12,36 @@ Rectangle {
     property int portNumber: 1
     property alias portName: portTitle.text
 
-//    property alias advertisedVoltage: advertisedVoltageBox.value
-//    property alias maxPower: maxPowerBox.value
-//    property alias inputPower: inputPowerBox.value
-//    property alias outputPower: outputPowerBox.value
-//    property alias outputVoltage: outputVoltageBox.value
-//    property alias portTemperature: portTemperatureBox.value
-//    property alias efficency: efficencyBox.value
-
-
     signal showGraph()
-
     color: "lightgoldenrodyellow"
     radius: 5
     border.color: "black"
     width: 150
+
+    onPortConnectedChanged:{
+        if (portConnected)
+            hideStats.start()
+         else
+            showStats.start()
+    }
+
+    OpacityAnimator {
+        id: hideStats
+        target: connectionContainer
+        from: 1
+        to: 0
+        duration: 1000
+    }
+
+    OpacityAnimator {
+        id: showStats
+        target: connectionContainer
+        from: 0
+        to: 1
+        duration: 1000
+    }
+
+
 
     Rectangle{
         id:titleBackground
@@ -53,8 +68,8 @@ Rectangle {
         Text {
             id: portTitle
             text: "foo"
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.verticalCenter: parent.verticalCenter
+            anchors.horizontalCenter: titleBackground.horizontalCenter
+            anchors.verticalCenter: titleBackground.verticalCenter
             font {
                 pixelSize: 20
             }
@@ -109,7 +124,7 @@ Rectangle {
 
     Rectangle {
         id: connectionContainer
-        visible: !root.portConnected
+        opacity: 1
 
         anchors {
             top:titleBackground.bottom
