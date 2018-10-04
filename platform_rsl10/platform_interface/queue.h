@@ -10,6 +10,7 @@
 typedef struct node {
     char data[122];
     struct node *next;
+    uint64_t node_handle;
 } node_t;
 
 typedef struct {

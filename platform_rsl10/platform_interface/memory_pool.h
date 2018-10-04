@@ -5,8 +5,8 @@
 //  Copyright © 2018 Mustafa Alshehab. All rights reserved.
 //
 
-#ifndef mem_pool_h
-#define mem_pool_h
+#ifndef PLATFORM_INTERFACE_MEMORY_POOL_H
+#define PLATFORM_INTERFACE_MEMORY_POOL_H
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -35,6 +35,7 @@ typedef struct memory_pool {
 
     memory_pool_node_t * pool;
     memory_pool_node_t * top;
+    memory_pool_node_t * temp;
 
 } memory_pool_t;
 

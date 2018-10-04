@@ -14,8 +14,9 @@
 // Strategy:
 // stack object to manage memory blocks
 // acquire = pop_front  (acquire block off the first/bottom of stack)
-// release = push_back  (release block by putting on back/bottom of stack)
+// release = push_back  (release block by putting on back/top of stack)
 //
+#include <memory.h>
 #include "memory_pool.h"
 
 
@@ -23,8 +24,8 @@
 bool memory_pool_init()
 {
     // if you change block_size make sure to change data array size in queue.h as well
-    // to block_size - 8
-    size_t number_of_blocks = 5, block_size = 130;
+    // to block_size - 16
+    size_t number_of_blocks = 5, block_size = 138;
 
     memory_pool_node_t *last;
     // Mus - compound literals
@@ -99,11 +100,12 @@ bool memory_pool_acquire(memory_pool_handle_t *handle)
         printf("memory_pool_acquire: ERROR: no available memory blocks\n");
         return false;
     }
-    // unsigned int 64
-    *handle = (memory_pool_handle_t) g_pool.top;   // give them bottom of stack
-    printf("MEMORY POOL ACQUIRE: address of g_pool.top is: = %p\n", g_pool.top);
-    g_pool.top->inuse = true;
-    g_pool.top = g_pool.top->next;               // pop stack item
+    g_pool.temp = g_pool.top;
+    while (g_pool.temp->inuse){
+        g_pool.temp = g_pool.temp->next;
+    }
+    *handle = (memory_pool_handle_t) g_pool.temp;
+    g_pool.temp->inuse = true;
     g_pool.available --;
 
 //    printf("MEMORY POOL ACQUIRE: value of magic node is: %x\n", g_pool.top->magic);
@@ -126,12 +128,8 @@ bool memory_pool_release(memory_pool_handle_t handle)
     }
 
     printf("memory_pool_release: handle = 0x%llx\n", handle);
-
-    // push on stack
-    node->prev = NULL;
-    node->next = g_pool.top;
     node->inuse = false;
-    g_pool.top = node;
+    memset(node->data,0,strlen(node->data));
     g_pool.available ++;
 
     return true;
