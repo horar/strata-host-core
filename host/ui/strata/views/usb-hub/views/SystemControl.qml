@@ -173,7 +173,7 @@ Item {
 
             SGSubmitInfoBox {
                 id: maximumBoardPowerInput
-                buttonVisible: false
+                showButton: false
                 anchors {
                     verticalCenter: maximumBoardPower.verticalCenter
                     left: maximumBoardPower.right
@@ -302,13 +302,13 @@ Item {
 
             SGSubmitInfoBox {
                 id: tempFaultInput
-                buttonVisible: false
+                showButton: false
                 anchors {
                     verticalCenter: tempFault.verticalCenter
                     left:tempFault.right
                     leftMargin: 10
                 }
-                input: tempFault.value.toFixed(0)
+                value: tempFault.value.toFixed(0)
                 onApplied: platformInterface.set_maximum_temperature.update(input); // slider will be updated via notification
             }
         }
@@ -391,7 +391,7 @@ Item {
 
             SGSubmitInfoBox {
                 id: foldbackTempInput
-                buttonVisible: false
+                showButton: false
                 anchors {
                     verticalCenter: foldbackTemp.verticalCenter
                     left:foldbackTemp.right
@@ -437,7 +437,7 @@ Item {
 
             SGSubmitInfoBox {
                 id: foldbackTempLimitInput
-                buttonVisible: false
+                showButton: false
                 anchors {
                     verticalCenter: foldbackTempLimit.verticalCenter
                     left:foldbackTempLimit.right
@@ -477,7 +477,7 @@ Item {
 
             SGSubmitInfoBox {
                 id: tempFoldbackHysteresisInput
-                buttonVisible: false
+                showButton: false
                 anchors {
                     verticalCenter: tempFoldbackHysteresis.verticalCenter
                     left:tempFoldbackHysteresis.right

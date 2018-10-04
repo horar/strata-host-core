@@ -21,6 +21,7 @@ Item {
     property alias startLabel: startLabel.text
     property alias endLabel: endLabel.text
 
+    property bool labelTopAligned: false
     property bool showToolTip: true
     property color grooveColor: "#dddddd"
     property color grooveFillColor: "#888888"
@@ -34,7 +35,7 @@ Item {
         text: root.label
         width: contentWidth
         height: root.label === "" ? 0 : root.labelLeft ? sgSlider.height : contentHeight
-        topPadding: root.label === "" ? 0 : root.labelLeft ? (sgSlider.height-contentHeight)/2 : 0
+        topPadding: root.label === "" ? 0 : root.labelLeft ? labelTopAligned ? 0 : (sgSlider.height-contentHeight)/2 : 0
         bottomPadding: topPadding
         color: root.textColor
     }
@@ -69,8 +70,8 @@ Item {
 
             Rectangle {
                 id: grooveFill
-                width: sgSlider.visualPosition * parent.width
-                height: parent.height
+                width: sgSlider.visualPosition * groove.width
+                height: groove.height
                 color: root.grooveFillColor
                 radius: 2
             }
@@ -93,7 +94,6 @@ Item {
 //                    x: (index + 1) * (sgSlider.width - sgSlider.handle.width) / 10 + sgSlider.handle.width/2
 //                }
 //            }
-
         }
 
         handle: Image {
@@ -125,28 +125,19 @@ Item {
 
         Label {
             id: startLabel
-            anchors.bottom : parent.bottom
-            font.pointSize : 12
+            anchors.bottom : sgSlider.bottom
+            font.pixelSize : 12
             text: sgSlider.from
             color: root.textColor
         }
 
         Label {
             id: endLabel
-            anchors.right : parent.right
-            anchors.bottom : parent.bottom
-            font.pointSize: 12
+            anchors.right : sgSlider.right
+            anchors.bottom : sgSlider.bottom
+            font.pixelSize: 12
             text: sgSlider.to
             color: root.textColor
         }
-
-        onPressedChanged: {
-            if (!pressed){
-                root.moved()
-            }
-        }
-
-
-
     }
 }
