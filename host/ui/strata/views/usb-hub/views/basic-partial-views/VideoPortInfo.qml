@@ -106,6 +106,46 @@ Rectangle {
         Keys.onLeftPressed: video.seek(video.position - 5000)
         Keys.onRightPressed: video.seek(video.position + 5000)
     }
+
+    Rectangle {
+        id: connectionContainer
+        visible: !root.portConnected
+
+        anchors {
+            top:titleBackground.bottom
+            left:root.left
+            leftMargin: 2
+            right:root.right
+            rightMargin: 2
+            bottom:root.bottom
+            bottomMargin: 2
+        }
+
+        Image {
+            id: connectionIcon
+            source: "../images/icon-usb-disconnected.svg"
+            height: connectionContainer.height/4
+            width: height * 0.6925
+            anchors {
+                centerIn: parent
+                verticalCenterOffset: -connectionText.font.pixelSize / 2
+            }
+        }
+
+        Text {
+            id: connectionText
+            color: "#ccc"
+            text: "<b>Port Disconnected</b>"
+            anchors {
+                top: connectionIcon.bottom
+                topMargin: 5
+                horizontalCenter: connectionIcon.horizontalCenter
+            }
+            font {
+                pixelSize: 14
+            }
+        }
+    }
 }
     /*
     Item {

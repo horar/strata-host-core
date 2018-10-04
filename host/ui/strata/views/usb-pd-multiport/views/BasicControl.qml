@@ -110,7 +110,7 @@ Item {
 
                 id:combinedInputVoltageBox
                 label: "INPUT VOLTAGE"
-                value: Math.round((port1Voltage + port2Voltage + port3Voltage + port4Voltage) *100)/100
+                value: Math.round((port1Voltage) *100)/100
                 valueSize: 32
                 icon: "../images/icon-voltage.svg"
                 unit: "V"

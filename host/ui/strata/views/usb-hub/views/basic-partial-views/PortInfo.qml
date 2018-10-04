@@ -7,17 +7,18 @@ Rectangle {
     id: root
 
     property bool portConnected: true
+    property bool isUSBAPort: false     //used to hide information not available for USB-A ports
     property color portColor: "#30a2db"
     property int portNumber: 1
     property alias portName: portTitle.text
+    property alias portSubtitle: portSubtitle.text
 
-//    property alias advertisedVoltage: advertisedVoltageBox.value
-//    property alias maxPower: maxPowerBox.value
-//    property alias inputPower: inputPowerBox.value
-//    property alias outputPower: outputPowerBox.value
-//    property alias outputVoltage: outputVoltageBox.value
-//    property alias portTemperature: portTemperatureBox.value
-//    property alias efficency: efficencyBox.value
+    property alias outputVoltage: outputVoltageBox.value
+    property alias maxPower: maxPowerBox.value
+    property alias inputPower: powerInBox.value
+    property alias outputPower: powerOutBox.value
+    property alias portTemperature: temperatureBox.value
+    property alias efficency: efficencyBox.value
 
 
     signal showGraph()
@@ -57,10 +58,20 @@ Rectangle {
             font {
                 pixelSize: 20
             }
-            anchors {
-                verticalCenter: statsContainer.verticalCenter
-            }
+
             color: root.portConnected ? "black" : "#bbb"
+        }
+        Text {
+            id: portSubtitle
+            text: ""
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.top: portTitle.bottom
+            anchors.topMargin: -5
+            font {
+                pixelSize: 12
+            }
+
+            color: "darkGrey"
         }
     }
 
@@ -105,6 +116,7 @@ Rectangle {
         unit:"W"
         color:"transparent"
         icon: "../images/icon-voltage.svg"
+        visible: !isUSBAPort
     }
 
     PortStatBox{
@@ -150,6 +162,47 @@ Rectangle {
         unit:"%"
         color:"transparent"
         icon: "../images/icon-efficiency.svg"
+        visible: !isUSBAPort
+    }
+
+    Rectangle {
+        id: connectionContainer
+        visible: !root.portConnected
+
+        anchors {
+            top:titleBackground.bottom
+            left:root.left
+            leftMargin: 2
+            right:root.right
+            rightMargin: 2
+            bottom:root.bottom
+            bottomMargin: 2
+        }
+
+        Image {
+            id: connectionIcon
+            source: "../images/icon-usb-disconnected.svg"
+            height: connectionContainer.height/4
+            width: height * 0.6925
+            anchors {
+                centerIn: parent
+                verticalCenterOffset: -connectionText.font.pixelSize / 2
+            }
+        }
+
+        Text {
+            id: connectionText
+            color: "#ccc"
+            text: "<b>Port Disconnected</b>"
+            anchors {
+                top: connectionIcon.bottom
+                topMargin: 5
+                horizontalCenter: connectionIcon.horizontalCenter
+            }
+            font {
+                pixelSize: 14
+            }
+        }
     }
 }
     /*

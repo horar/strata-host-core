@@ -60,6 +60,22 @@ Item {
         anchors.bottomMargin: -20
     }
 
+    PlugAnimation {
+        id: displayPortAnimation
+        anchors.horizontalCenter: videoIcon.horizontalCenter
+        anchors.horizontalCenterOffset: 10
+        anchors.bottom: videoIcon.verticalCenter
+        anchors.bottomMargin: -20
+    }
+
+    PlugAnimation {
+        id: audioAnimation
+        anchors.horizontalCenter: audioIcon.horizontalCenter
+        anchors.horizontalCenterOffset: 10
+        anchors.bottom: audioIcon.verticalCenter
+        anchors.bottomMargin: -20
+    }
+
     Rectangle{
         id:deviceBackground
         color:"darkgrey"
@@ -75,6 +91,8 @@ Item {
         PortInfo{
             id:upstreamPort
             portName:"Upstream"
+            portNumber:1
+            portConnected: false
             anchors.left: parent.left
             anchors.leftMargin: 7
             anchors.top:parent.top
@@ -87,6 +105,8 @@ Item {
         PortInfo{
             id:port1
             portName:"Port 1"
+            portNumber:2
+            portConnected: false
             anchors.left: upstreamPort.right
             anchors.leftMargin: 7
             anchors.top:parent.top
@@ -99,6 +119,8 @@ Item {
         PortInfo{
             id:port2
             portName:"Port 2"
+            portNumber:3
+            portConnected: false
             anchors.left: port1.right
             anchors.leftMargin: 7
             anchors.top:parent.top
@@ -111,6 +133,8 @@ Item {
         PortInfo{
             id:port3
             portName:"Port 3"
+            portNumber:4
+            portConnected: false
             anchors.left: port2.right
             anchors.leftMargin: 7
             anchors.top:parent.top
@@ -123,6 +147,10 @@ Item {
         PortInfo{
             id:port4
             portName:"Port 4"
+            portSubtitle: "USB-A"
+            portNumber:5
+            portConnected: false
+            isUSBAPort: true
             anchors.left: port3.right
             anchors.leftMargin: 7
             anchors.top:parent.top
@@ -135,6 +163,7 @@ Item {
         VideoPortInfo{
             id:displayPort
             portName:"DisplayPort"
+            portConnected: false
             anchors.left: port4.right
             anchors.leftMargin: 7
             anchors.top:parent.top
@@ -147,6 +176,7 @@ Item {
         AudioPortInfo{
             id:audioPort
             portName:"Audio"
+            portConnected: false
             anchors.left: displayPort.right
             anchors.leftMargin: 7
             anchors.top:parent.top
@@ -175,11 +205,13 @@ Item {
                     upstreamAnimation.currentFrame = 0
                     upstreamAnimation.playing = true
                     upstreamAnimation.pluggedIn = !upstreamAnimation.pluggedIn
+                    upstreamPort.portConnected = true
                 } else {
                     upstreamAnimation.source = "images/cordReverse.gif"
                     upstreamAnimation.currentFrame = 0
                     upstreamAnimation.playing = true
                     upstreamAnimation.pluggedIn = !upstreamAnimation.pluggedIn
+                    upstreamPort.portConnected = false
                 }
             }
         }
@@ -204,11 +236,13 @@ Item {
                     port1Animation.currentFrame = 0
                     port1Animation.playing = true
                     port1Animation.pluggedIn = !port1Animation.pluggedIn
+                    port1.portConnected = true
                 } else {
                     port1Animation.source = "images/cordReverse.gif"
                     port1Animation.currentFrame = 0
                     port1Animation.playing = true
                     port1Animation.pluggedIn = !port1Animation.pluggedIn
+                    port1.portConnected = false
                 }
             }
         }
@@ -234,11 +268,13 @@ Item {
                     port2Animation.currentFrame = 0
                     port2Animation.playing = true
                     port2Animation.pluggedIn = !port2Animation.pluggedIn
+                    port2.portConnected = true
                 } else {
                     port2Animation.source = "images/cordReverse.gif"
                     port2Animation.currentFrame = 0
                     port2Animation.playing = true
                     port2Animation.pluggedIn = !port2Animation.pluggedIn
+                    port2.portConnected = false
                 }
             }
         }
@@ -262,11 +298,13 @@ Item {
                     port3Animation.currentFrame = 0
                     port3Animation.playing = true
                     port3Animation.pluggedIn = !port3Animation.pluggedIn
+                    port3.portConnected = true
                 } else {
                     port3Animation.source = "images/cordReverse.gif"
                     port3Animation.currentFrame = 0
                     port3Animation.playing = true
                     port3Animation.pluggedIn = !port3Animation.pluggedIn
+                    port3.portConnected = false
                 }
             }
         }
@@ -290,11 +328,13 @@ Item {
                     port4Animation.currentFrame = 0
                     port4Animation.playing = true
                     port4Animation.pluggedIn = !port4Animation.pluggedIn
+                    port4.portConnected = true
                 } else {
                     port4Animation.source = "images/cordReverse.gif"
                     port4Animation.currentFrame = 0
                     port4Animation.playing = true
                     port4Animation.pluggedIn = !port4Animation.pluggedIn
+                    port4.portConnected = false
                 }
             }
         }
@@ -307,6 +347,26 @@ Item {
         anchors.left:port4Device.right
         anchors.leftMargin: 40
         fillMode:Image.PreserveAspectFit
+
+        MouseArea{
+            anchors.fill: parent
+
+            onClicked: {
+                if (!displayPortAnimation.pluggedIn) {
+                    displayPortAnimation.source = "images/cord.gif"
+                    displayPortAnimation.currentFrame = 0
+                    displayPortAnimation.playing = true
+                    displayPortAnimation.pluggedIn = !displayPortAnimation.pluggedIn
+                    displayPort.portConnected = true
+                } else {
+                    displayPortAnimation.source = "images/cordReverse.gif"
+                    displayPortAnimation.currentFrame = 0
+                    displayPortAnimation.playing = true
+                    displayPortAnimation.pluggedIn = !displayPortAnimation.pluggedIn
+                    displayPort.portConnected = false
+                }
+            }
+        }
     }
 
     Image{
@@ -316,6 +376,26 @@ Item {
         anchors.left:videoIcon.right
         anchors.leftMargin: 80
         fillMode:Image.PreserveAspectFit
+
+        MouseArea{
+            anchors.fill: parent
+
+            onClicked: {
+                if (!audioAnimation.pluggedIn) {
+                    audioAnimation.source = "images/cord.gif"
+                    audioAnimation.currentFrame = 0
+                    audioAnimation.playing = true
+                    audioAnimation.pluggedIn = !audioAnimation.pluggedIn
+                    audioPort.portConnected = true
+                } else {
+                    audioAnimation.source = "images/cordReverse.gif"
+                    audioAnimation.currentFrame = 0
+                    audioAnimation.playing = true
+                    audioAnimation.pluggedIn = !audioAnimation.pluggedIn
+                    audioPort.portConnected = false
+                }
+            }
+        }
     }
 
 
