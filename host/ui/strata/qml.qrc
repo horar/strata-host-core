@@ -406,6 +406,7 @@
         <file>views/usb-hub/views/SystemControl.qml</file>
         <file>views/usb-hub/views/images/FourPortWireframeAdvancedView.png</file>
         <file>views/usb-hub/views/images/FourPortWireframeBasicView.png</file>
+	<file>views/usb-hub/sgwidgets/fonts/Inconsolata.otf</file>
         <file>views/usb-pd-multiport/sgwidgets/fonts/Inconsolata.otf</file>
         <file>views/usb-hub/views/basic-partial-views/DeviceInfo.qml</file>
         <file>views/usb-hub/views/basic-partial-views/PlugAnimation.qml</file>
@@ -426,6 +427,5 @@
         <file>views/usb-hub/views/images/screen.png</file>
         <file>views/usb-hub/views/images/soundwave.png</file>
         <file>views/usb-hub/views/images/videoIcon.png</file>
-        <file>views/usb-hub/sgwidgets/fonts/Inconsolata.otf</file>
     </qresource>
 </RCC>
