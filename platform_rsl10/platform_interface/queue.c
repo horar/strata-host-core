@@ -27,15 +27,15 @@ void push(char *data)
         static memory_pool_handle_t temp_handle = 0;
         node_t *new_node;
 
-        printf("PUSH: value of temp_handle before is: %p\n", temp_handle);
+        printf("PUSH: value of temp_handle before acquire is: %p\n", temp_handle);
         bool rv = memory_pool_acquire(&temp_handle);
         if (!rv){
-
+            printf("PUSH: Fail to acquire\n");
             return;
         }
         else {
 
-            printf("PUSH: value of temp_handle after is: %p\n", temp_handle);
+            printf("PUSH: value of temp_handle after acquire is: %p\n", temp_handle);
             new_node = set_data(temp_handle);
             printf("PUSH: value of new_node is: %p\n", new_node);
 
@@ -45,7 +45,8 @@ void push(char *data)
             new_node->node_handle = temp_handle;
 
             /*
-             * we could you use memcpy if we do not want to specify the size of the array
+             * we could you use memcpy if we do not want to specify the size of
+             * the array of data inside node struct
             ** memcpy(&new_node->data, &data, strlen(data));
              */
 

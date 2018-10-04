@@ -58,6 +58,7 @@ bool memory_pool_init()
         if( g_pool.pool == NULL ) {
             g_pool.pool = node;  // pool is empty set first node
             g_pool.top = node;
+            g_pool.temp = g_pool.top;
             last = node;
 
             printf("MEMORY POOL INIT: i=%d, node=%p block_size=%zu, data=%p, prev=%p, next=%p, magic = 0x%x\n",
@@ -96,21 +97,30 @@ void memory_pool_dump()
 }
 bool memory_pool_acquire(memory_pool_handle_t *handle)
 {
-    if( g_pool.top == NULL ) {
-        printf("memory_pool_acquire: ERROR: no available memory blocks\n");
-        return false;
+    if( g_pool.temp == NULL ) {
+        g_pool.temp = g_pool.top;
+        if (g_pool.temp->inuse){
+            printf("memory_pool_acquire: ERROR: no available memory blocks\n");
+            return false;
+        }else{
+            *handle = (memory_pool_handle_t) g_pool.temp;
+            g_pool.temp->inuse = true;
+            g_pool.temp = g_pool.temp->next;
+            g_pool.available --;
+            printf("MEMORY POOL ACQUIRE: handle = 0x%llx\n", *handle);
+            return true;
+        }
     }
-    g_pool.temp = g_pool.top;
-    while (g_pool.temp->inuse){
+    while (!g_pool.temp->inuse){
+        *handle = (memory_pool_handle_t) g_pool.temp;
+        g_pool.temp->inuse = true;
         g_pool.temp = g_pool.temp->next;
-    }
-    *handle = (memory_pool_handle_t) g_pool.temp;
-    g_pool.temp->inuse = true;
-    g_pool.available --;
+        g_pool.available --;
 
-//    printf("MEMORY POOL ACQUIRE: value of magic node is: %x\n", g_pool.top->magic);
-    printf("MEMORY POOL ACQUIRE: handle = 0x%llx\n", *handle);
-    return true;
+        printf("MEMORY POOL ACQUIRE: handle = 0x%llx\n", *handle);
+        return true;
+    }
+    return false;
 }
 
 bool memory_pool_release(memory_pool_handle_t handle)
