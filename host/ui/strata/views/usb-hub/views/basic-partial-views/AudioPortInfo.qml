@@ -65,8 +65,8 @@ Rectangle {
         Text {
             id: portTitle
             text: "foo"
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.verticalCenter: parent.verticalCenter
+            anchors.horizontalCenter: titleBackground.horizontalCenter
+            anchors.verticalCenter: titleBackground.verticalCenter
             font {
                 pixelSize: 20
             }
