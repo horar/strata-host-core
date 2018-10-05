@@ -18,6 +18,7 @@ Window {
         textColor: "black"      // Default: "#000000"  (black)
         radioColor: "black"     // Default: "#000000"  (black)
         exclusive: true         // Default: true
+        radioButtonSize: 20     // Default: 20 (can also be individually set for buttons)
 
         radioGroup: GridLayout {
             columnSpacing: 10

@@ -3,5 +3,6 @@
         <file>main.qml</file>
         <file>SGOutputLogBox.qml</file>
         <file>fonts/sgicons.ttf</file>
+        <file>fonts/Inconsolata.otf</file>
     </qresource>
 </RCC>

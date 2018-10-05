@@ -60,12 +60,12 @@ Item {
 
         SGSubmitInfoBox {
             id: currentLimitInput
-            buttonVisible: false
+            showButton: false
             anchors {
                 verticalCenter: currentLimit.verticalCenter
                 right: parent.right
             }
-            input: currentLimit.value.toFixed(0)
+            value: currentLimit.value.toFixed(0)
             onApplied: currentLimit.value = value
         }
 
@@ -113,12 +113,12 @@ Item {
 
         SGSubmitInfoBox {
             id: incrementInput
-            buttonVisible: false
+            showButton: false
             anchors {
                 verticalCenter: increment.verticalCenter
                 right: parent.right
             }
-            input: increment.value.toFixed(0)
+            value: increment.value.toFixed(0)
             onApplied: increment.value = value
         }
 
@@ -146,12 +146,12 @@ Item {
 
         SGSubmitInfoBox {
             id: biasInput
-            buttonVisible: false
+            showButton: false
             anchors {
                 verticalCenter: bias.verticalCenter
                 right: parent.right
             }
-            input: bias.value.toFixed(0)
+            value: bias.value.toFixed(0)
             onApplied: bias.value = value
         }
 
