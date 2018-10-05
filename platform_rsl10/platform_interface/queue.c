@@ -27,18 +27,13 @@ void push(char *data)
         static memory_pool_handle_t temp_handle = 0;
         node_t *new_node;
 
-        printf("PUSH: value of temp_handle before acquire is: %p\n", temp_handle);
         bool rv = memory_pool_acquire(&temp_handle);
         if (!rv){
             printf("PUSH: Fail to acquire\n");
             return;
         }
         else {
-
-            printf("PUSH: value of temp_handle after acquire is: %p\n", temp_handle);
             new_node = set_data(temp_handle);
-            printf("PUSH: value of new_node is: %p\n", new_node);
-
 
             strcpy(new_node->data, data);
             new_node->next = NULL;
@@ -50,27 +45,20 @@ void push(char *data)
             ** memcpy(&new_node->data, &data, strlen(data));
              */
 
-            printf("PUSH: value of new_node after setting data is: %p\n", new_node);
-            printf("PUSH: size of new_node data: %ld\n", sizeof(new_node->data));
-
             if (g_queue->head == NULL) {
                 g_queue->size = 0;
                 g_queue->head = g_queue->tail = new_node;
-                printf("PUSH: address of g_queue head is %p\n", g_queue->head);
             }
 
             if (g_queue->size == 1) {
 
                 g_queue->tail = new_node;
                 g_queue->head->next = g_queue->tail;
-                printf("PUSH: address of g_queue tail is %p\n", g_queue->tail);
             }
             if (g_queue->size > 1) {
                 g_queue->temp = g_queue->tail;
                 g_queue->tail = new_node;
                 g_queue->temp->next = new_node;
-                printf("PUSH: address of g_queue old_tail is %p\n", g_queue->temp);
-                printf("PUSH: address of g_queue new_tail is %p\n", g_queue->tail);
             }
             g_queue->size++;
         }
@@ -89,7 +77,6 @@ void execute()
 void pop()
 {
     if (g_queue->head) {
-
         g_queue->temp = g_queue->head->next;
         memory_pool_release(g_queue->head->node_handle);
         g_queue->head = g_queue->temp;
@@ -109,3 +96,11 @@ void print_list()
     }
     printf("NULL\n");
 }
+//void queue_destroy(){
+//    while (g_queue->head){
+//        g_queue->temp = g_queue->head;
+//        g_queue->head = g_queue->temp->next;
+//        free(g_queue->temp);
+//    }
+//    free(g_queue->head);
+//}

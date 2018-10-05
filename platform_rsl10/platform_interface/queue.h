@@ -6,9 +6,10 @@
 #define PLATFORM_INTERFACE_QUEUE_H
 
 #include "cJSON.h"
+#include <stdlib.h>
 
 typedef struct node {
-    char data[122];
+    char data[128];
     struct node *next;
     uint64_t node_handle;
 } node_t;
@@ -33,6 +34,7 @@ void list_init(void);
 void push(char *data);
 void pop(void);
 void execute(void);
+void queue_destroy(void);
 
 // helper function
 void print_list(void);

@@ -25,7 +25,7 @@ bool memory_pool_init()
 {
     // if you change block_size make sure to change data array size in queue.h as well
     // to block_size - 16
-    size_t number_of_blocks = 5, block_size = 138;
+    size_t number_of_blocks = 5, block_size = 144;
 
     memory_pool_node_t *last;
     // Mus - compound literals
@@ -100,7 +100,6 @@ bool memory_pool_acquire(memory_pool_handle_t *handle)
     if( g_pool.temp == NULL ) {
         g_pool.temp = g_pool.top;
         if (g_pool.temp->inuse){
-            printf("memory_pool_acquire: ERROR: no available memory blocks\n");
             return false;
         }else{
             *handle = (memory_pool_handle_t) g_pool.temp;
@@ -120,6 +119,7 @@ bool memory_pool_acquire(memory_pool_handle_t *handle)
         printf("MEMORY POOL ACQUIRE: handle = 0x%llx\n", *handle);
         return true;
     }
+    printf("memory_pool_acquire: ERROR: no available memory blocks\n");
     return false;
 }
 
@@ -131,7 +131,7 @@ bool memory_pool_release(memory_pool_handle_t handle)
     }
 
     memory_pool_node_t * node = (memory_pool_node_t *)handle;
-    printf("MEMORY_POOL_RELEASE: content of node->magic is %x\n", node->magic);
+
     if( node->magic != NODE_MAGIC ) {
         printf("memory_pool_release: ERROR: bad handle magic. You lost the magic\n");
         return false;
