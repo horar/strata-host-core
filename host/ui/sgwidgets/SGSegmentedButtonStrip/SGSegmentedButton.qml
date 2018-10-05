@@ -48,9 +48,9 @@ Button {
 
         Rectangle{
             id: flatSide
-            height: parent.height
-            width: parent.width/2
-            color: parent.color
+            height: buttonStyle.height
+            width: buttonStyle.width/2
+            color: buttonStyle.color
         }
     }
 

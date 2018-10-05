@@ -23,8 +23,8 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 DISTFILES +=
 
-//This line needed after installing Xcode 11
-//QMAKE_MAC_SDK = macosx10.14
+# This line needed after installing Xcode 11
+#QMAKE_MAC_SDK = macosx10.14
 
 # set root host build path
 HOST_ROOT = ../../../host

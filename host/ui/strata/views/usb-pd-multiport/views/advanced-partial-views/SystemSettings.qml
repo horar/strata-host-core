@@ -39,15 +39,17 @@ Item {
                 to: 200
                 startLabel: "30W"
                 endLabel: "200W"
-                //value: platformInterface.input_under_voltage_notification.minimum_voltage
+                value: platformInterface.maximum_board_power.watts
                 onMoved: {
-                    //platformInterface.set_minimum_input_voltage.update(value);
+                    //we'll need to address how to handle this when there are devices attached, as that would trigger
+                    //renegotiation with all devices
+                    platformInterface.set_maximum_board_power.update(value);
                 }
             }
 
             SGSubmitInfoBox {
                 id: maximumBoardPowerInput
-                buttonVisible: false
+                showButton: false
                 anchors {
                     verticalCenter: maximumBoardPower.verticalCenter
                     right: parent.right
@@ -320,12 +322,12 @@ Item {
 
             SGSubmitInfoBox {
                 id: inputFaultInput
-                buttonVisible: false
+                showButton: false
                 anchors {
                     verticalCenter: inputFault.verticalCenter
                     right: parent.right
                 }
-                input: inputFault.value.toFixed(0)
+                value: inputFault.value.toFixed(0)
                 onApplied: platformInterface.set_minimum_input_voltage.update(input);   // slider will be updated via notification
             }
 
@@ -351,12 +353,12 @@ Item {
 
             SGSubmitInfoBox {
                 id: tempFaultInput
-                buttonVisible: false
+                showButton: false
                 anchors {
                     verticalCenter: tempFault.verticalCenter
                     right: parent.right
                 }
-                input: tempFault.value.toFixed(0)
+                value: tempFault.value.toFixed(0)
                 onApplied: platformInterface.set_maximum_temperature.update(input); // slider will be updated via notification
             }
         }
@@ -430,12 +432,12 @@ Item {
 
             SGSubmitInfoBox {
                 id: foldbackLimitInput
-                buttonVisible: false
+                showButton: false
                 anchors {
                     verticalCenter: foldbackLimit.verticalCenter
                     right: parent.right
                 }
-                input: foldbackLimit.value.toFixed(0)
+                value: foldbackLimit.value.toFixed(0)
                 onApplied: platformInterface.set_input_voltage_foldback.update(platformInterface.foldback_input_voltage_limiting_event.input_voltage_foldback_enabled,
                                                                                input,
                                                                               platformInterface.foldback_input_voltage_limiting_event.foldback_minimum_voltage_power)
@@ -533,12 +535,12 @@ Item {
 
             SGSubmitInfoBox {
                 id: foldbackTempInput
-                buttonVisible: false
+                showButton: false
                 anchors {
                     verticalCenter: foldbackTemp.verticalCenter
                     right: parent.right
                 }
-                input: foldbackTemp.value.toFixed(0)
+                value: foldbackTemp.value.toFixed(0)
                 onApplied: platformInterface.set_temperature_foldback.update(platformInterface.foldback_temperature_limiting_event.temperature_foldback_enabled,
                                                                              input,
                                                                              platformInterface.foldback_temperature_limiting_event.foldback_maximum_temperature_power)

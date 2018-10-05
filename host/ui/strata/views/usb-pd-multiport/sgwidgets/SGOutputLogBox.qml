@@ -11,8 +11,8 @@ Rectangle {
 
     property string input: ""
     property string title: qsTr("")
-    property color titleTextColor: "#000000"
-    property color titleBoxColor: "#eeeeee"
+    property alias titleTextColor: title.color
+    property alias titleBoxColor: titleArea.color
     property color titleBoxBorderColor: "#dddddd"
     property color outputTextColor: "#000000"
     property color outputBoxColor: "#ffffff"
@@ -29,26 +29,22 @@ Rectangle {
             right: root.right
             top: root.top
         }
-        implicitHeight: visible ? 35 : 0
-        color: root.titleBoxColor
+        height: visible ? 35 : 0
+        color: "#eeeeee"
         border {
             color: root.titleBoxBorderColor
             width: 1
         }
+        visible: title.text !== ""
 
         Text {
             id: title
             text: root.title
-            color: root.titleTextColor
+            color: "#000000"
             anchors {
-                fill: parent
+                fill: titleArea
             }
             padding: 10
-//            font.family: sgicons.name
-        }
-
-        Component.onCompleted: {
-            if (title.text === ""){ titleArea.visible = false }
         }
     }
 
@@ -65,18 +61,21 @@ Rectangle {
         Flickable {
             id: transcriptContainer
 
-            anchors { fill:parent }
+            anchors { fill: flickableContainer }
             contentHeight: transcript.height
             contentWidth: transcript.width
 
             TextEdit {
                 id: transcript
                 height: contentHeight + padding * 2
-                width: transcriptContainer.width
+                width: root.width
                 readOnly: true
                 selectByMouse: true
                 selectByKeyboard: true
-                font.family: "Courier"
+                font {
+                    family: inconsolata.name // inconsolata is monospaced and has clear chars for O/0 etc
+                    pixelSize: (Qt.platform.os === "osx") ? 12 : 10;
+                }
                 wrapMode: TextEdit.Wrap
                 textFormat: Text.RichText
                 text: ""
@@ -86,17 +85,12 @@ Rectangle {
     }
 
     onInputChanged: {
-        if (running) {
-            append(outputTextColor, input)
-        }
+        if (running) {append(outputTextColor, input)}
     }
 
     // Appends message in color to transcript
     function append(color, message) {
-        if (transcript.text.length != 0){
-            transcript.text+= "<br>"
-        }
-        transcript.text+= "<span style='color:" + color + ";'>" + message +"</span>";
+        transcript.insert(transcript.length, (transcript.cursorPosition == 0 ? "" :"<br>") + "<span style='color:" + color + ";'>" + message +"</span>");
         scroll();
     }
 
@@ -108,26 +102,13 @@ Rectangle {
         }
     }
 
-
-
-    // Debug button to start/stop logging data
     FontLoader {
         id: sgicons
         source: "fonts/sgicons.ttf"
     }
 
-    Button {
-        visible: true
-        width: 30
-        height: 30
-        flat: true
-        text: "\ue800"
-        font.family: sgicons.name
-        anchors {
-            right: flickableContainer.right
-            top: flickableContainer.top
-        }
-        checkable: true
-        onClicked: root.running = !root.running
+    FontLoader {
+        id: inconsolata
+        source: "fonts/Inconsolata.otf"
     }
 }

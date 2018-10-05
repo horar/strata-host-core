@@ -127,5 +127,9 @@
         <file>../SGPeekThroughOverlay/images/top-fade.png</file>
         <file>../SGPeekThroughOverlay/main.qml</file>
         <file>../SGPeekThroughOverlay/SGPeekThroughOverlay.qml</file>
+        <file>../SGStatusListBox/SGSubmitInfoBox.qml</file>
+        <file>main.cpp</file>
+        <file>../SGStatusListBox/fonts/Inconsolata.otf</file>
+        <file>../SGSubmitInfoBox/fonts/Inconsolata.otf</file>
     </qresource>
 </RCC>
