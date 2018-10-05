@@ -110,7 +110,7 @@ Item {
 
                 id:combinedInputVoltageBox
                 label: "INPUT VOLTAGE"
-                value: Math.round((port1Voltage + port2Voltage + port3Voltage + port4Voltage) *100)/100
+                value: Math.round((port1Voltage) *100)/100
                 valueSize: 32
                 icon: "../images/icon-voltage.svg"
                 unit: "V"
@@ -128,24 +128,17 @@ Item {
                 property real inputPower: inputVoltage * inputCurrent;
 
                 property real port1Power:0;
-                property real port2Power:0;
-                property real port3Power:0;
-                property real port4Power:0;
 
                 onInputPowerChanged: {
+                    //only check one of the ports for power, since the input power should be the same on all
+                    //four ports.
                     if (platformInterface.request_usb_power_notification.port ===1)
                         port1Power = inputPower;
-                    else if (platformInterface.request_usb_power_notification.port ===2)
-                        port2Power = inputPower;
-                    else if (platformInterface.request_usb_power_notification.port ===3)
-                        port3Power = inputPower;
-                    else if (platformInterface.request_usb_power_notification.port ===4)
-                        port4Power = inputPower;
                 }
 
                 id:combinedInputPowerBox
                 label: "INPUT POWER"
-                value: Math.round((port1Power + port2Power + port3Power + port4Power) *100)/100
+                value: Math.round((port1Power) *100)/100
                 valueSize: 32
                 icon: "../images/icon-voltage.svg"
                 unit: "W"
