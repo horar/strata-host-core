@@ -91,35 +91,34 @@ Rectangle {
         anchors.right: root.right
         anchors.rightMargin: 2
         anchors.verticalCenter: root.verticalCenter
-    }
 
-    Image{
-        id:placeholderImage
-        width:150
-        height:112.5
-        source: "../images/screen.png"
-        anchors.centerIn: root
-        fillMode:Image.PreserveAspectFit
-    }
+        Video {
+            id: video
+            width : backgroundRect.width - 4
+            height : backgroundRect.height - 4
+            anchors.centerIn: backgroundRect
+            fillMode: VideoOutput.PreserveAspectFit
+            source: "../images/penguin.mp4"
+            autoPlay: true
 
-    Video {
-        id: video
-//        width : 150
-//        height : 112.5
-        source: "../images/penguin.mp4"
-        anchors.centerIn: root
-
-        MouseArea {
-            anchors.fill: parent
-            onClicked: {
-                video.play()
+            Component.onCompleted: {
+                //move into the video so there' a screen to see
+                video.seek(100)
+                video.pause()
             }
-        }
 
-        focus: true
-        Keys.onSpacePressed: video.playbackState == MediaPlayer.PlayingState ? video.pause() : video.play()
-        Keys.onLeftPressed: video.seek(video.position - 5000)
-        Keys.onRightPressed: video.seek(video.position + 5000)
+            MouseArea {
+                anchors.fill: video
+                onClicked: {
+                    video.play()
+                }
+            }
+
+            focus: true
+            Keys.onSpacePressed: video.playbackState == MediaPlayer.PlayingState ? video.pause() : video.play()
+            Keys.onLeftPressed: video.seek(video.position - 5000)
+            Keys.onRightPressed: video.seek(video.position + 5000)
+        }
     }
 
     Rectangle {
