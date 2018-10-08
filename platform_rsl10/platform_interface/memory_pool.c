@@ -20,6 +20,32 @@
 #include "memory_pool.h"
 
 
+#define NODE_MAGIC 0xBAADA555
+
+typedef struct memory_pool_node {
+    uint32_t magic;      // NODE_MAGIC = 0xBAADA555
+    size_t size;
+    void *data;
+    bool inuse;      // true = currently allocated
+    struct memory_pool_node * prev;
+    struct memory_pool_node * next;
+
+} memory_pool_node_t;
+
+typedef struct memory_pool {
+    size_t number_of_blocks; // number of blocks
+    size_t block_size;   // size of each block
+    size_t available;
+
+    memory_pool_node_t * pool;
+    memory_pool_node_t * top;
+    memory_pool_node_t * temp;
+
+} memory_pool_t;
+
+// static to keep private to this C file. g_* to indicate it is a global
+static memory_pool_t g_pool;
+
 
 bool memory_pool_init()
 {
@@ -163,3 +189,34 @@ void memory_pool_destroy()
     g_pool = (memory_pool_t){0};
 }
 
+// accessors
+// prevent memory pool clients from directly accessing internal state
+// prevents clients from breaking memory pool
+// allows memory pool to changing internal state without breaking API
+
+void * memory_pool_data(memory_pool_handle_t handle )
+{
+    return ((memory_pool_node_t*)handle)->data;
+}
+
+size_t memory_pool_size(memory_pool_handle_t handle )
+{
+    return ((memory_pool_node_t*)handle)->size;
+}
+
+bool memory_pool_valid(memory_pool_handle_t handle )
+{
+    if( ((memory_pool_node_t*)handle)->magic == NODE_MAGIC || handle != 0 )
+        return true;
+
+    return false;
+}
+
+size_t memory_pool_available()
+{
+    return g_pool.available;
+}
+
+void *set_data( memory_pool_handle_t handle){
+    return ((memory_pool_node_t*)handle)->data;
+}

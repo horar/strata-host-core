@@ -96,11 +96,8 @@ void print_list()
     }
     printf("NULL\n");
 }
-//void queue_destroy(){
-//    while (g_queue->head){
-//        g_queue->temp = g_queue->head;
-//        g_queue->head = g_queue->temp->next;
-//        free(g_queue->temp);
-//    }
-//    free(g_queue->head);
-//}
+void queue_destroy(){
+
+    memory_pool_destroy();
+    free(g_queue);
+}

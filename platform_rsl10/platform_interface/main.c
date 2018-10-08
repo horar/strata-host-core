@@ -10,12 +10,11 @@ int main( ) {
     memory_pool_init();
     list_init();
 
-   push("{\"cmd\":\"request_platform_id\"}");
-//    push("{\"cmd\" : \"whatever\", \"payload\" : {\"number_argument\" : 1, \"string_argument\" : \"0x000000FF\"}}");
-    push("{\"cmd\" : \"general_purpose\", \"payload\" : {\"number_argument\" : 1, \"string_argument\" : \"0x000000FF\"}}");
+    push("{\"cmd\":\"request_platform_id\"}");
+    push("{\"cmd\" : \"whatever\"}");
     push("{\"cmd\":\"request_echo\"}");
     push("Hello world!");
-    push("{\"cmd\" : \"general_purpose\", \"payload\" : {\"number_argument\" : 1, \"string_argument\" : \"0x000000FF\"}}");
+    push("{\"cmd\" : \"general_purpose\"}");
 
     memory_pool_dump();
     pop();
@@ -26,18 +25,20 @@ int main( ) {
     push("{\"cmd\" : \"test1\", \"payload\" : {\"number_argument\" : 1, \"string_argument\" : \"0x000000FF\"}}");
     pop();
     pop();
-    push("{\"cmd\" : \"general_purpose\", \"payload\" : {\"number_argument\" : 1, \"string_argument\" : \"0x000000FF\"}}");
+    push("{\"cmd\" : \"Walter\", \"payload\" : {\"number_argument\" : 1, \"string_argument\" : \"0x000000FF\"}}");
     push("{\"cmd\":\"request_echo\"}");
     push("Hello world!");
     memory_pool_dump();
-    push("{\"cmd\" : \"Ali\", \"payload\" : {\"number_argument\" : 1, \"string_argument\" : \"0x000000FF\"}}");
+    push("{\"cmd\" : \"Hi there\", \"payload\" : {\"number_argument\" : 1, \"string_argument\" : \"0x000000FF\"}}");
+
     while (g_queue->head != NULL) {
         pop();
     }
-    push("{\"cmd\" : \"general_purpose\", \"payload\" : {\"number_argument\" : 1, \"string_argument\" : \"0x000000FF\"}}");
+    push("{\"cmd\" : \"GM\", \"payload\" : {\"number_argument\" : 1, \"string_argument\" : \"0x000000FF\"}}");
+
     memory_pool_dump();
-    memory_pool_destroy();
-   free(g_queue);
+    //free queue and memory pool memory
+    queue_destroy();
     printf("END\n");
     return 0;
 }
