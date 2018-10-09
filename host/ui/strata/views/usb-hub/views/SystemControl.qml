@@ -284,7 +284,7 @@ Item {
                 label: "Fault when temperature is above:"
                 width:480
                 anchors {
-                    left: parent.left
+                    left: faultProtectionColumn.left
                     leftMargin: 35
                     top: faultProtectionColumn.bottom
                     topMargin: 10
@@ -369,7 +369,7 @@ Item {
                 label: "When any port temperature is above:"
                 width:510
                 anchors {
-                    left: parent.left
+                    left: foldbackGroup.left
                     leftMargin: 10
                     top: temperatureFoldbackActiveLabel.bottom
                     topMargin: 10
@@ -408,7 +408,7 @@ Item {
                 label: "Cut the port output power by:"
                 width:465
                 anchors {
-                    left: parent.left
+                    left: foldbackGroup.left
                     leftMargin: 55
                     top: foldbackTemp.bottom
                     topMargin: 10
@@ -456,7 +456,7 @@ Item {
                 label: "End limiting on a decrease of:"
                 width:465
                 anchors {
-                    left: parent.left
+                    left: foldbackGroup.left
                     leftMargin: 55
                     top: foldbackTempLimit.bottom
                     topMargin: 10

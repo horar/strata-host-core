@@ -57,7 +57,7 @@ Item {
         anchors.horizontalCenter: port4Device.horizontalCenter
         anchors.horizontalCenterOffset: 10
         anchors.bottom: port4Device.verticalCenter
-        anchors.bottomMargin: -20
+        anchors.bottomMargin: -10
     }
 
     PlugAnimation {
@@ -332,14 +332,14 @@ Item {
 
             onClicked: {
                 if (!port4Animation.pluggedIn) {
-                    port4Animation.source = "images/cord.gif"
+                    port4Animation.source = "images/usbACord.gif"
                     port4Animation.currentFrame = 0
                     port4Animation.playing = true
                     port4Animation.pluggedIn = !port4Animation.pluggedIn
                     port4.portConnected = true
                     port4Device.connected = true
                 } else {
-                    port4Animation.source = "images/cordReverse.gif"
+                    port4Animation.source = "images/usbACordReverse.gif"
                     port4Animation.currentFrame = 0
                     port4Animation.playing = true
                     port4Animation.pluggedIn = !port4Animation.pluggedIn
