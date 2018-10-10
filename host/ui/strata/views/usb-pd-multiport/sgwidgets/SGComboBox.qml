@@ -15,6 +15,8 @@ Item {
     property alias down: comboBox.down
     property alias editable: comboBox.editable
     property alias pressed: comboBox.pressed
+    property alias textRole: comboBox.textRole
+    property alias overrideLabelWidth: labelText.width
     property alias comboBox: comboBox
 
     property string label: ""
@@ -39,6 +41,7 @@ Item {
         topPadding: root.label === "" ? 0 : root.labelLeft ? (comboBox.height-contentHeight)/2 : 0
         bottomPadding: topPadding
         color: root.textColor
+        horizontalAlignment: Text.AlignRight
     }
 
     ComboBox {
@@ -50,7 +53,7 @@ Item {
         model: ["First", "Second", "Third"]
         height: root.comboBoxHeight
         anchors {
-            left: root.labelLeft ? labelText.right : parent.left
+            left: root.labelLeft ? labelText.right : root.left
             leftMargin: root.label === "" ? 0 : root.labelLeft ? 10 : 0
             top: root.labelLeft ? labelText.top : labelText.bottom
             topMargin: root.label === "" ? 0 : root.labelLeft ? 0 : 5
@@ -133,31 +136,33 @@ Item {
         delegate: ItemDelegate {
             id: delegate
             width: comboBox.width
-            height: root.comboBoxHeight // Add/Subtract from this to modify list item heights in popup
+            height: Math.max (root.comboBoxHeight, contentItem.implicitHeight + 10)  // Add/Subtract from this to modify list item heights in popup
             topPadding: 0
             bottomPadding: 0
             contentItem: Text {
-                text: modelData
+                text: comboBox.textRole ? (Array.isArray(comboBox.model) ? modelData[comboBox.textRole] : model[comboBox.textRole]) : modelData
                 color: root.textColor
                 font: comboBox.font
-                elide: Text.ElideRight
+//                elide: Text.ElideRight
+                wrapMode: Text.Wrap
                 verticalAlignment: Text.AlignVCenter
             }
             highlighted: comboBox.highlightedIndex === index
 
             background: Rectangle {
+                id: delegateBackground
                 implicitWidth: comboBox.width
                 color: delegate.highlighted ? colorMod(root.boxColor, -0.05) : root.boxColor
 
                 Rectangle {
                     id: delegateDivider
                     visible: root.dividers && index !== comboBox.count - 1
-                    width: parent.width - 20
+                    width: delegateBackground.width - 20
                     height: 1
                     color: colorMod(root.boxColor, -0.05)
                     anchors {
-                        bottom: parent.bottom
-                        horizontalCenter: parent.horizontalCenter
+                        bottom: delegateBackground.bottom
+                        horizontalCenter: delegateBackground.horizontalCenter
                     }
                 }
             }

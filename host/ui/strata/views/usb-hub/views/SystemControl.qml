@@ -173,7 +173,7 @@ Item {
 
             SGSubmitInfoBox {
                 id: maximumBoardPowerInput
-                buttonVisible: false
+                showButton: false
                 anchors {
                     verticalCenter: maximumBoardPower.verticalCenter
                     left: maximumBoardPower.right
@@ -284,7 +284,7 @@ Item {
                 label: "Fault when temperature is above:"
                 width:480
                 anchors {
-                    left: parent.left
+                    left: faultProtectionColumn.left
                     leftMargin: 35
                     top: faultProtectionColumn.bottom
                     topMargin: 10
@@ -302,13 +302,13 @@ Item {
 
             SGSubmitInfoBox {
                 id: tempFaultInput
-                buttonVisible: false
+                showButton: false
                 anchors {
                     verticalCenter: tempFault.verticalCenter
                     left:tempFault.right
                     leftMargin: 10
                 }
-                input: tempFault.value.toFixed(0)
+                value: tempFault.value.toFixed(0)
                 onApplied: platformInterface.set_maximum_temperature.update(input); // slider will be updated via notification
             }
         }
@@ -369,7 +369,7 @@ Item {
                 label: "When any port temperature is above:"
                 width:510
                 anchors {
-                    left: parent.left
+                    left: foldbackGroup.left
                     leftMargin: 10
                     top: temperatureFoldbackActiveLabel.bottom
                     topMargin: 10
@@ -391,7 +391,7 @@ Item {
 
             SGSubmitInfoBox {
                 id: foldbackTempInput
-                buttonVisible: false
+                showButton: false
                 anchors {
                     verticalCenter: foldbackTemp.verticalCenter
                     left:foldbackTemp.right
@@ -408,7 +408,7 @@ Item {
                 label: "Cut the port output power by:"
                 width:465
                 anchors {
-                    left: parent.left
+                    left: foldbackGroup.left
                     leftMargin: 55
                     top: foldbackTemp.bottom
                     topMargin: 10
@@ -437,7 +437,7 @@ Item {
 
             SGSubmitInfoBox {
                 id: foldbackTempLimitInput
-                buttonVisible: false
+                showButton: false
                 anchors {
                     verticalCenter: foldbackTempLimit.verticalCenter
                     left:foldbackTempLimit.right
@@ -456,7 +456,7 @@ Item {
                 label: "End limiting on a decrease of:"
                 width:465
                 anchors {
-                    left: parent.left
+                    left: foldbackGroup.left
                     leftMargin: 55
                     top: foldbackTempLimit.bottom
                     topMargin: 10
@@ -477,7 +477,7 @@ Item {
 
             SGSubmitInfoBox {
                 id: tempFoldbackHysteresisInput
-                buttonVisible: false
+                showButton: false
                 anchors {
                     verticalCenter: tempFoldbackHysteresis.verticalCenter
                     left:tempFoldbackHysteresis.right

@@ -8,14 +8,14 @@ Item {
     signal overThreshold()
 
     // Optional Configurations:
-    property string label: ""
+    property alias label: labelText.text
     property bool labelLeft: true
     property color textColor: "black"
     property bool showThreshold: false
     property real thresholdValue: maximumValue
-    property real minimumValue: 0
-    property real maximumValue: 100
-    property real barWidth: 300
+    property alias minimumValue: gauge.minimumValue
+    property alias maximumValue: gauge.maximumValue
+    property alias barWidth: capacityBarContainer.implicitWidth
 
     property alias gaugeElements : gaugeElements.sourceComponent
 
@@ -26,7 +26,7 @@ Item {
 
     Text {
         id: labelText
-        text: root.label
+        text: ""
         width: contentWidth
         height: root.label === "" ? 0 : root.labelLeft ? capacityBar.height : contentHeight
         topPadding: root.label === "" ? 0 : root.labelLeft ? (capacityBar.height-contentHeight)/2 : 0
@@ -42,7 +42,7 @@ Item {
             top: root.labelLeft ? labelText.top : labelText.bottom
             topMargin: root.label === "" ? 0 : root.labelLeft ? 0 : 5
         }
-        implicitWidth: root.barWidth
+        implicitWidth: 300
         height: gauge.height + capacityBar.height
 
         Rectangle {
@@ -75,14 +75,13 @@ Item {
                 }
                 color: "#961b1e"
                 width: (1 - (root.thresholdValue / root.maximumValue)) * capacityBar.width
-                //(root.thresholdValue-root.minimumValue)/(root.maximumValue-root.minimumValue)*300
             }
 
             Loader {
                 id: gaugeElements
 
-                property real masterMinimumValue: root.minimumValue
-                property real masterMaximumValue: root.maximumValue
+                property real masterMinimumValue: gauge.minimumValue
+                property real masterMaximumValue: gauge.maximumValue
                 property real masterWidth: capacityBar.width
                 property real totalValue: gaugeElements.item.totalValue
 
@@ -110,7 +109,7 @@ Item {
 
         Gauge {
             id: gauge
-            width: capacityBarContainer.width + 0.5
+            width: capacityBarContainer.width
             anchors {
                  top: capacityBar.bottom
                  topMargin: 0
@@ -120,8 +119,8 @@ Item {
 
             tickmarkStepSize: (maximumValue-minimumValue)/5
             minorTickmarkCount: 1
-            maximumValue: root.maximumValue
-            minimumValue: root.minimumValue
+            maximumValue: 100
+            minimumValue: 0
 
             style: GaugeStyle {
                 background: null
@@ -136,27 +135,29 @@ Item {
                 }
 
                 tickmark: Item {
+                  id: majorTickmark
                     implicitWidth: 8
                     implicitHeight: 2
 
                     Rectangle {
                         x: control.tickmarkAlignment === Qt.AlignLeft
-                           || control.tickmarkAlignment === Qt.AlignTop ? parent.implicitWidth : 0
+                           || control.tickmarkAlignment === Qt.AlignTop ? majorTickmark.implicitWidth : 0
                         width: 8
-                        height: parent.height
+                        height: majorTickmark.height
                         color: "#999"
                     }
                 }
 
                 minorTickmark: Item {
+                  id: minorTickmarks
                     implicitWidth: 8
                     implicitHeight: 1
 
                     Rectangle {
                         x: control.tickmarkAlignment === Qt.AlignLeft
-                           || control.tickmarkAlignment === Qt.AlignTop ? parent.implicitWidth : 0
+                           || control.tickmarkAlignment === Qt.AlignTop ? minorTickmarks.implicitWidth : 0
                         width: 4
-                        height: parent.height
+                        height: minorTickmarks.height
                         color: "#999"
                     }
                 }

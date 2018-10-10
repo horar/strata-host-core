@@ -1,7 +1,7 @@
 import QtQuick 2.9
 import QtGraphicalEffects 1.0
-import "qrc:/views/usb-pd-multiport/sgwidgets"
-import "qrc:/views/usb-pd-multiport/views/basic-partial-views"
+import "qrc:/views/usb-hub/sgwidgets"
+import "qrc:/views/usb-hub/views/basic-partial-views"
 
 Item {
     id: root
@@ -13,17 +13,418 @@ Item {
     height: parent.width / parent.height < initialAspectRatio ? parent.width / initialAspectRatio : parent.height
 
 
+
+    Rectangle{
+        id:background
+        anchors.fill:parent
+        color:"#145A74"
+    }
+
+    PlugAnimation {
+        id: upstreamAnimation
+        anchors.horizontalCenter: upstreamDevice.horizontalCenter
+        anchors.horizontalCenterOffset: 10
+        anchors.bottom: upstreamDevice.verticalCenter
+        anchors.bottomMargin: -20
+    }
+
+    PlugAnimation {
+        id: port1Animation
+        anchors.horizontalCenter: port1Device.horizontalCenter
+        anchors.horizontalCenterOffset: 10
+        anchors.bottom: port1Device.verticalCenter
+        anchors.bottomMargin: -20
+    }
+
+    PlugAnimation {
+        id: port2Animation
+        anchors.horizontalCenter: port2Device.horizontalCenter
+        anchors.horizontalCenterOffset: 10
+        anchors.bottom: port2Device.verticalCenter
+        anchors.bottomMargin: -20
+    }
+
+    PlugAnimation {
+        id: port3Animation
+        anchors.horizontalCenter: port3Device.horizontalCenter
+        anchors.horizontalCenterOffset: 10
+        anchors.bottom: port3Device.verticalCenter
+        anchors.bottomMargin: -20
+    }
+
+    PlugAnimation {
+        id: port4Animation
+        anchors.horizontalCenter: port4Device.horizontalCenter
+        anchors.horizontalCenterOffset: 10
+        anchors.bottom: port4Device.verticalCenter
+        anchors.bottomMargin: -10
+    }
+
+    PlugAnimation {
+        id: displayPortAnimation
+        anchors.horizontalCenter: videoIcon.horizontalCenter
+        anchors.horizontalCenterOffset: 10
+        anchors.bottom: videoIcon.verticalCenter
+        anchors.bottomMargin: -20
+    }
+
+    PlugAnimation {
+        id: audioAnimation
+        anchors.horizontalCenter: audioIcon.horizontalCenter
+        anchors.horizontalCenterOffset: 10
+        anchors.bottom: audioIcon.verticalCenter
+        anchors.bottomMargin: -20
+    }
+
+    Rectangle{
+        id:deviceBackground
+        color:"darkgrey"
+        radius:5
+        height:(7*parent.height)/16
+        anchors.left:root.left
+        anchors.leftMargin: 12
+        anchors.right: root.right
+        anchors.rightMargin: 12
+        anchors.top:root.top
+        anchors.topMargin: (3*root.height)/32
+
+        PortInfo{
+            id:upstreamPort
+            portName:"Upstream"
+            portNumber:1
+            portConnected: false
+            anchors.left: deviceBackground.left
+            anchors.leftMargin: 7
+            anchors.top:deviceBackground.top
+            anchors.topMargin: 10
+            anchors.bottom: deviceBackground.bottom
+            anchors.bottomMargin: 5
+            width:160
+        }
+
+        PortInfo{
+            id:port1
+            portName:"Port 1"
+            portNumber:2
+            portConnected: false
+            anchors.left: upstreamPort.right
+            anchors.leftMargin: 7
+            anchors.top:deviceBackground.top
+            anchors.topMargin: 10
+            anchors.bottom: deviceBackground.bottom
+            anchors.bottomMargin: 5
+            width:160
+        }
+
+        PortInfo{
+            id:port2
+            portName:"Port 2"
+            portNumber:3
+            portConnected: false
+            anchors.left: port1.right
+            anchors.leftMargin: 7
+            anchors.top:deviceBackground.top
+            anchors.topMargin: 10
+            anchors.bottom: deviceBackground.bottom
+            anchors.bottomMargin: 5
+            width:160
+        }
+
+        PortInfo{
+            id:port3
+            portName:"Port 3"
+            portNumber:4
+            portConnected: false
+            anchors.left: port2.right
+            anchors.leftMargin: 7
+            anchors.top:deviceBackground.top
+            anchors.topMargin: 10
+            anchors.bottom: deviceBackground.bottom
+            anchors.bottomMargin: 5
+            width:160
+        }
+
+        PortInfo{
+            id:port4
+            portName:"Port 4"
+            portSubtitle: "USB-A"
+            portNumber:5
+            portConnected: false
+            isUSBAPort: true
+            anchors.left: port3.right
+            anchors.leftMargin: 7
+            anchors.top:deviceBackground.top
+            anchors.topMargin: 10
+            anchors.bottom: deviceBackground.bottom
+            anchors.bottomMargin: 5
+            width:160
+        }
+
+        VideoPortInfo{
+            id:displayPort
+            portName:"DisplayPort"
+            portConnected: false
+            anchors.left: port4.right
+            anchors.leftMargin: 7
+            anchors.top:deviceBackground.top
+            anchors.topMargin: 10
+            anchors.bottom: deviceBackground.bottom
+            anchors.bottomMargin: 5
+            width:160
+        }
+
+        AudioPortInfo{
+            id:audioPort
+            portName:"Audio"
+            portConnected: false
+            anchors.left: displayPort.right
+            anchors.leftMargin: 7
+            anchors.top:deviceBackground.top
+            anchors.topMargin: 10
+            anchors.bottom: deviceBackground.bottom
+            anchors.bottomMargin: 5
+            width:160
+        }
+    }
+
+    DeviceInfo{
+        id:upstreamDevice
+        anchors.top:deviceBackground.bottom
+        anchors.topMargin: 95
+        anchors.left:root.left
+        anchors.leftMargin: 20
+        height:145
+        width:160
+
+        MouseArea{
+            anchors.fill: parent
+
+            onClicked: {
+                if (!upstreamAnimation.pluggedIn) {
+                    upstreamAnimation.source = "images/cord.gif"
+                    upstreamAnimation.currentFrame = 0
+                    upstreamAnimation.playing = true
+                    upstreamAnimation.pluggedIn = !upstreamAnimation.pluggedIn
+                    upstreamPort.portConnected = true
+                    upstreamDevice.connected = true
+                } else {
+                    upstreamAnimation.source = "images/cordReverse.gif"
+                    upstreamAnimation.currentFrame = 0
+                    upstreamAnimation.playing = true
+                    upstreamAnimation.pluggedIn = !upstreamAnimation.pluggedIn
+                    upstreamPort.portConnected = false
+                    upstreamDevice.connected = false
+                }
+            }
+        }
+
+    }
+
+    DeviceInfo{
+        id:port1Device
+        anchors.top:deviceBackground.bottom
+        anchors.topMargin: 95
+        anchors.left:upstreamDevice.right
+        anchors.leftMargin: 7
+        height:145
+        width:160
+
+        MouseArea{
+            anchors.fill: parent
+
+            onClicked: {
+                if (!port1Animation.pluggedIn) {
+                    port1Animation.source = "images/cord.gif"
+                    port1Animation.currentFrame = 0
+                    port1Animation.playing = true
+                    port1Animation.pluggedIn = !port1Animation.pluggedIn
+                    port1.portConnected = true
+                    port1Device.connected = true
+                } else {
+                    port1Animation.source = "images/cordReverse.gif"
+                    port1Animation.currentFrame = 0
+                    port1Animation.playing = true
+                    port1Animation.pluggedIn = !port1Animation.pluggedIn
+                    port1.portConnected = false
+                    port1Device.connected = false
+                }
+            }
+        }
+
+
+    }
+
+    DeviceInfo{
+        id:port2Device
+        anchors.top:deviceBackground.bottom
+        anchors.topMargin: 95
+        anchors.left:port1Device.right
+        anchors.leftMargin: 7
+        height:145
+        width:160
+
+        MouseArea{
+            anchors.fill: parent
+
+            onClicked: {
+                if (!port2Animation.pluggedIn) {
+                    port2Animation.source = "images/cord.gif"
+                    port2Animation.currentFrame = 0
+                    port2Animation.playing = true
+                    port2Animation.pluggedIn = !port2Animation.pluggedIn
+                    port2.portConnected = true
+                    port2Device.connected = true
+                } else {
+                    port2Animation.source = "images/cordReverse.gif"
+                    port2Animation.currentFrame = 0
+                    port2Animation.playing = true
+                    port2Animation.pluggedIn = !port2Animation.pluggedIn
+                    port2.portConnected = false
+                    port2Device.connected = false
+                }
+            }
+        }
+    }
+
+    DeviceInfo{
+        id:port3Device
+        anchors.top:deviceBackground.bottom
+        anchors.topMargin: 95
+        anchors.left:port2Device.right
+        anchors.leftMargin: 7
+        height:145
+        width:160
+
+        MouseArea{
+            anchors.fill: parent
+
+            onClicked: {
+                if (!port3Animation.pluggedIn) {
+                    port3Animation.source = "images/cord.gif"
+                    port3Animation.currentFrame = 0
+                    port3Animation.playing = true
+                    port3Animation.pluggedIn = !port3Animation.pluggedIn
+                    port3.portConnected = true
+                    port3Device.connected = true
+                } else {
+                    port3Animation.source = "images/cordReverse.gif"
+                    port3Animation.currentFrame = 0
+                    port3Animation.playing = true
+                    port3Animation.pluggedIn = !port3Animation.pluggedIn
+                    port3.portConnected = false
+                    port3Device.connected = false
+                }
+            }
+        }
+    }
+
+    DeviceInfo{
+        id:port4Device
+        anchors.top:deviceBackground.bottom
+        anchors.topMargin: 95
+        anchors.left:port3Device.right
+        anchors.leftMargin: 7
+        height:145
+        width:160
+
+        MouseArea{
+            anchors.fill: parent
+
+            onClicked: {
+                if (!port4Animation.pluggedIn) {
+                    port4Animation.source = "images/usbACord.gif"
+                    port4Animation.currentFrame = 0
+                    port4Animation.playing = true
+                    port4Animation.pluggedIn = !port4Animation.pluggedIn
+                    port4.portConnected = true
+                    port4Device.connected = true
+                } else {
+                    port4Animation.source = "images/usbACordReverse.gif"
+                    port4Animation.currentFrame = 0
+                    port4Animation.playing = true
+                    port4Animation.pluggedIn = !port4Animation.pluggedIn
+                    port4.portConnected = false
+                    port4Device.connected = false
+                }
+            }
+        }
+    }
+
+    Image{
+        id:videoIcon
+        source:"./images/videoIcon.png"
+        anchors.verticalCenter: port4Device.verticalCenter
+        anchors.left:port4Device.right
+        anchors.leftMargin: 40
+        fillMode:Image.PreserveAspectFit
+        opacity: displayPort.portConnected ? 1 : .5
+
+        MouseArea{
+            anchors.fill: parent
+
+            onClicked: {
+                if (!displayPortAnimation.pluggedIn) {
+                    displayPortAnimation.source = "images/cord.gif"
+                    displayPortAnimation.currentFrame = 0
+                    displayPortAnimation.playing = true
+                    displayPortAnimation.pluggedIn = !displayPortAnimation.pluggedIn
+                    displayPort.portConnected = true
+                } else {
+                    displayPortAnimation.source = "images/cordReverse.gif"
+                    displayPortAnimation.currentFrame = 0
+                    displayPortAnimation.playing = true
+                    displayPortAnimation.pluggedIn = !displayPortAnimation.pluggedIn
+                    displayPort.portConnected = false
+                }
+            }
+        }
+    }
+
+    Image{
+        id:audioIcon
+        source:"./images/headphonesIcon.png"
+        anchors.verticalCenter: port4Device.verticalCenter
+        anchors.left:videoIcon.right
+        anchors.leftMargin: 80
+        fillMode:Image.PreserveAspectFit
+        opacity: audioPort.portConnected ? 1 : .5
+
+        MouseArea{
+            anchors.fill: parent
+
+            onClicked: {
+                if (!audioAnimation.pluggedIn) {
+                    audioAnimation.source = "images/cord.gif"
+                    audioAnimation.currentFrame = 0
+                    audioAnimation.playing = true
+                    audioAnimation.pluggedIn = !audioAnimation.pluggedIn
+                    audioPort.portConnected = true
+                } else {
+                    audioAnimation.source = "images/cordReverse.gif"
+                    audioAnimation.currentFrame = 0
+                    audioAnimation.playing = true
+                    audioAnimation.pluggedIn = !audioAnimation.pluggedIn
+                    audioPort.portConnected = false
+                }
+            }
+        }
+    }
+
+
+
     Image{
         source:"./images/FourPortWireframeBasicView.png"
         anchors.fill:root
+        opacity: .2
+        visible: false
     }
 
-    Text{
-        id:placeholderText
-        text: "hub basic view"
-        anchors.centerIn: root
-        font.pixelSize: 24
-    }
+//    Text{
+//        id:placeholderText
+//        text: "hub basic view"
+//        anchors.centerIn: root
+//        font.pixelSize: 24
+//    }
 
 
 
