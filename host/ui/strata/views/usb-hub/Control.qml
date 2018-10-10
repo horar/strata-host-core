@@ -35,8 +35,9 @@ Item {
             id: advancedButton
             text: qsTr("Advanced")
             onClicked: {
-                basicControl.visible = false
-                advancedControl.visible = true
+                basicControl.transitionToAdvancedView()
+                //basicControl.visible = false
+                //advancedControl.visible = true
                 systemControl.visible = false;
             }
         }

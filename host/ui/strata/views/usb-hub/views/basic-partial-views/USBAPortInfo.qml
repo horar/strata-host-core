@@ -7,28 +7,26 @@ Rectangle {
     id: root
 
     property bool portConnected: true
+    property bool isUSBAPort: true     //used to hide information not available for USB-A ports
     property color portColor: "#30a2db"
-    property int portNumber: 1
+    property int portNumber: 0
     property alias portName: portTitle.text
+    property alias portSubtitle: portSubtitle.text
+
+    property alias outputVoltage: outputVoltageBox.value
+    property alias maxPower: maxPowerBox.value
+    property alias inputPower: powerInBox.value
+    property alias outputPower: powerOutBox.value
+    property alias portTemperature: temperatureBox.value
 
     property int basicTitleBackgroundHeight: (2*root.height)/16;
-    property int advancedTitleBackgroundHeight: advancedAudioPortHeight/4
-    signal showGraph()
-
-    color: "lightgoldenrodyellow"
-    radius: 5
-    border.color: "black"
-    width: 150
+    property int advancedTitleBackgroundHeight: advancedDisplayPortPortHeight/4
 
     onPortConnectedChanged:{
-        if (portConnected){
+        if (portConnected)
             hideStats.start()
-            audioDataTimer.start()
-        }
-         else{
+         else
             showStats.start()
-            audioDataTimer.stop()
-        }
     }
 
     OpacityAnimator {
@@ -47,7 +45,21 @@ Rectangle {
         duration: 1000
     }
 
+
+
+    signal showGraph()
+
+    color: "lightgoldenrodyellow"
+    radius: 5
+    border.color: "black"
+    width: 150
+
     function transitionToAdvancedView(){
+        outputVoltageBox.anchors.topMargin = 3;
+        maxPowerBox.anchors.topMargin = 3;
+        powerInBox.anchors.topMargin = 3;
+        powerOutBox.anchors.topMargin = 3;
+        temperatureBox.anchors.topMargin = 3;
         portToAdvanced.start()
     }
 
@@ -61,32 +73,27 @@ Rectangle {
             to:advancedTitleBackgroundHeight
             duration: tabTransitionTime
         }
+
         PropertyAnimation{
-            target:volumneText
+            target:powerInBox
+            property: "height"
+            to:-5
+            duration: tabTransitionTime
+        }
+
+        PropertyAnimation{
+            target:portSubtitle
+            property: "opacity"
+            to:0
+            duration: tabTransitionTime
+        }
+
+        PropertyAnimation{
+            target:chargingRectangle
             property: "opacity"
             to:1
             duration: tabTransitionTime
         }
-        PropertyAnimation{
-            target:volumeSlider
-            property: "opacity"
-            to:1
-            duration: tabTransitionTime
-        }
-
-
-    }
-
-    Timer{
-        //generate sample data to drive the audio graph when a
-        //device is connected. This is for testing, and will be removed when real audio data is available
-        id:audioDataTimer
-        interval: 500
-        repeat: true
-        onTriggered: {
-            var sampleValue = Math.random();
-        }
-
     }
 
     Rectangle{
@@ -98,7 +105,7 @@ Rectangle {
         anchors.leftMargin: 1
         anchors.right: root.right
         anchors.rightMargin: 1
-        height:basicTitleBackgroundHeight
+        height: (2*root.height)/16
         radius:5
 
         Rectangle{
@@ -119,52 +126,138 @@ Rectangle {
             font {
                 pixelSize: 20
             }
-            anchors {
-                verticalCenter: statsContainer.verticalCenter
-            }
+
             color: root.portConnected ? "black" : "#bbb"
+        }
+        Text {
+            id: portSubtitle
+            text: ""
+            anchors.horizontalCenter: titleBackground.horizontalCenter
+            anchors.top: portTitle.bottom
+            anchors.topMargin: -5
+            font {
+                pixelSize: 12
+            }
+
+            color: "darkGrey"
         }
     }
 
-    Image{
-        id:placeholderImage
-        source: "../images/soundwave.png"
-        anchors.verticalCenter: root.verticalCenter
+    PortStatBox{
+        id:outputVoltageBox
         anchors.left:root.left
-        anchors.right:root.right
-        fillMode:Image.PreserveAspectFit
-    }
-
-    AudioGraph{
-        id:audioWaveform
-        visible: false
-    }
-
-    Text{
-        id:volumneText
-        text:"VOLUME:"
-        anchors.top: placeholderImage.bottom
-        anchors.left: root.left
-        anchors.right:root.right
         anchors.leftMargin: 10
-        opacity:0
-    }
-
-    SGSlider{
-        id:volumeSlider
-        startLabel: ""
-        endLabel: ""
-        anchors.top: volumneText.bottom
-        anchors.left: root.left
-        anchors.leftMargin: 10
-        anchors.right:root.right
+        anchors.top: titleBackground.bottom
+        anchors.topMargin: 8
+        anchors.right: root.right
         anchors.rightMargin: 10
-        opacity:0
+        height:40
+        label: "VOLTAGE OUT"
+        color:"transparent"
+    }
+
+    PortStatBox{
+        id:maxPowerBox
+        anchors.left:root.left
+        anchors.leftMargin: 10
+        anchors.top: outputVoltageBox.bottom
+        anchors.topMargin: 8
+        anchors.right: root.right
+        anchors.rightMargin: 10
+        height:40
+        label: "MAXIMUM POWER"
+        unit: "W"
+        color:"transparent"
+        icon: "../images/icon-max.svg"
+    }
+
+    PortStatBox{
+        id:powerInBox
+        anchors.left:root.left
+        anchors.leftMargin: 10
+        anchors.top: maxPowerBox.bottom
+        anchors.topMargin: 8
+        anchors.right: root.right
+        anchors.rightMargin: 10
+        height:40
+        label: "POWER IN"
+        unit:"W"
+        color:"transparent"
+        icon: "../images/icon-voltage.svg"
+        visible: !isUSBAPort
+    }
+
+    PortStatBox{
+        id:powerOutBox
+        anchors.left:root.left
+        anchors.leftMargin: 10
+        anchors.top: powerInBox.bottom
+        anchors.topMargin: 8
+        anchors.right: root.right
+        anchors.rightMargin: 10
+        height:40
+        label: "POWER OUT"
+        unit:"W"
+        color:"transparent"
+        icon: "../images/icon-voltage.svg"
+    }
+
+    PortStatBox{
+        id:temperatureBox
+        anchors.left:root.left
+        anchors.leftMargin: 10
+        anchors.top: powerOutBox.bottom
+        anchors.topMargin: 8
+        anchors.right: root.right
+        anchors.rightMargin: 10
+        height:40
+        label: "TEMPERATURE"
+        unit:"°C"
+        color:"transparent"
+        icon: "../images/icon-temp.svg"
+    }
+
+    Rectangle{
+        id:chargingRectangle
+        anchors.left:root.left
+        anchors.top: temperatureBox.bottom
+        anchors.topMargin: 3
+        anchors.right: root.right
+        anchors.rightMargin: 10
+        height:20
+        opacity: 0
+        color:"transparent"
+
+        Text {
+            id:chargingText
+            text: "CHARGING"
+            anchors.left:chargingRectangle.left
+            anchors.leftMargin: 10
+            anchors.verticalCenter: chargingRectangle.verticalCenter
+        }
+
+        RadioButton {
+            id: chargingIndicator
+            anchors.right:chargingRectangle.right
+            anchors.rightMargin: 61
+            anchors.verticalCenter: chargingRectangle.verticalCenter
+            height:15
+            autoExclusive : false
+            indicator: Rectangle{
+                implicitWidth: 15
+                implicitHeight: 15
+                x: chargingIndicator.x
+                y: chargingIndicator.y
+                radius: 7
+                color: chargingIndicator.checked ? "green": "white"
+                border.color: chargingIndicator.checked ? "black": "grey"
+            }
+        }
     }
 
     Rectangle {
         id: connectionContainer
-        opacity: 1
+        opacity: 0
 
         anchors {
             top:titleBackground.bottom
