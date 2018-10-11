@@ -1,222 +1,259 @@
 /*
- * author: iancain
+ * Author:
+ * Ian Cain         date: 10/1/2018
+ * Updated:
+ * Mustafa Alshehab date: 10/10/2018
  */
 
-// Memory pool of fixed sized blocks
-// Objective: speed operations of malloc/free and adapt idiomatically and separate memory
-//           management from other data storage patterns such as linked lists, stacks,
-//           double buffer
-// Limitations: Fixed sized memory blocks. Due to the O(1) requirement only fixed sized
-//                memory allocation can be performed. Memory fragmentation and
-//                collection/collating operations are not desired due to performance demands
-//
-// Support O(1) operation in acquire and release operations
-// Strategy:
-// stack object to manage memory blocks
-// acquire = pop_front  (acquire block off the first/bottom of stack)
-// release = push_back  (release block by putting on back/top of stack)
-//
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
 #include <memory.h>
 #include "memory_pool.h"
 
+/* MACROS for debug purposes */
+#define DEBUG_MESSAGES 1  // 1 to enable debug/error print messages
 
+#if DEBUG_MESSAGES
+#define MAX_MSG_SIZE 500
+  #define FLE (strrchr(__FILE__, '/') ? strrchr(__FILE__, '/') + 1 : __FILE__)
+  #define LOG_DEBUG(format, args...) do { \
+    char msg[MAX_MSG_SIZE]; \
+    sprintf(msg,format,##args);  \
+    printf("<%s:%s(%d)> %s\n",FLE,__func__,__LINE__,msg); \
+  } while(0)
+  #define LOG_ERROR(format, args...) do { \
+    char msg[MAX_MSG_SIZE]; \
+    sprintf(msg,format,##args);  \
+    printf("<%s:%s(%d)> ERROR: %s\n",FLE,__func__,__LINE__,msg); \
+  } while(0)
+#else
+#define LOG_DEBUG(format, args...)
+#define LOG_ERROR(format, args...)
+#endif
+
+#define BREAK_IF(exp, format,args...) \
+    { if(exp) { \
+    LOG_ERROR(format, ##args); \
+    break; \
+    } \
+  }
+// HTODB = header to data block
+//     converts header pointer to container data block
+//
+#define MEMORY_POOL_HTODB(_header_, _block_size_) ((void *)_header_ - _block_size_)
+
+// DBTOH = data block to header
+//     convert data block pointer to point to embedded header information block
+//
+#define MEMORY_POOL_DBTOH(_data_block_, _block_size_) ((memory_pool_block_header_t *)(_data_block_ + _block_size_))
+
+// magic value to check for data corruption
 #define NODE_MAGIC 0xBAADA555
 
-typedef struct memory_pool_node {
-    uint32_t magic;      // NODE_MAGIC = 0xBAADA555
+// PRIVATE: declared inside *.c file
+typedef struct memory_pool_block_header {
+
+    uint32_t magic;      // NODE_MAGIC
     size_t size;
-    void *data;
-    bool inuse;      // true = currently allocated
-    struct memory_pool_node * prev;
-    struct memory_pool_node * next;
+    bool inuse;      // true = currently allocated. Protects against double free.
 
-} memory_pool_node_t;
+    struct memory_pool_block_header * next;
+} memory_pool_block_header_t;
 
-typedef struct memory_pool {
-    size_t number_of_blocks; // number of blocks
+struct memory_pool {
+
+    size_t count;         // total elements
     size_t block_size;   // size of each block
     size_t available;
+    struct memory_pool_block_header * pool;   // working pool
+    void ** shadow;    // shadow stack for destroy/book keeping
+};
 
-    memory_pool_node_t * pool;
-    memory_pool_node_t * top;
-    memory_pool_node_t * temp;
-
-} memory_pool_t;
-
-// static to keep private to this C file. g_* to indicate it is a global
-static memory_pool_t g_pool;
-
-
-bool memory_pool_init()
+memory_pool_t * memory_pool_init(size_t count, size_t block_size)
 {
-    // if you change block_size make sure to change data array size in queue.h as well
-    // to block_size - 16
-    size_t number_of_blocks = 5, block_size = 144;
+    memory_pool_t *mp = NULL;
+    memory_pool_block_header_t * last;
+    void * block = NULL;
+    size_t n = 0;
 
-    memory_pool_node_t *last;
-    // Mus - compound literals
-    g_pool = (memory_pool_t){0};   // zero/null all elements of pool structure
-    int n =0;
+    mp = (memory_pool_t*) malloc (sizeof(memory_pool_t));
+    if( mp == NULL ) {
+        LOG_ERROR("unable to malloc memory_pool_t. OOM");
+        return NULL;
+    }
 
-    printf("MEMORY POOL INIT:(number_of_blocks=%zu, block_size=%zu)\n", number_of_blocks, block_size);
+    mp->pool = NULL;
+    mp->block_size = 0;
+    mp->available = 0;
+    mp->count = 0;
 
-    for( n = 0; n < number_of_blocks; ++n ) {
+    // create shadow array of data blocks for memory clean up during destory
+    mp->shadow = (void**) malloc(sizeof(void *) * count);
+    if( mp->shadow == NULL ) {
+        LOG_ERROR("unable to malloc shadow. OOM");
+        return NULL;
+    }
 
-        memory_pool_node_t * node = (memory_pool_node_t *) malloc (sizeof(memory_pool_node_t));
-        if( node == NULL){
-            printf("OOM ERROR.\n");
-            return false;
-        }
+    for( n = 0; n < count; ++n ) {
+        // allocate data block
+        //   data block size + header siz
+        //
+        size_t total_size = block_size + sizeof(memory_pool_block_header_t);
+        block = malloc (total_size);
+        BREAK_IF( block == NULL, "OOM ERROR.");
 
-        node->data = malloc ((block_size));
+        mp->shadow[n] = block;  // save shadow
 
-        if( node->data == NULL) {
-            printf("OOM ERROR.\n");
-            return false;
-        }
+        // move to end of data block to create header
+        //
+        memory_pool_block_header_t *header = MEMORY_POOL_DBTOH(block, block_size);
+        header->magic = NODE_MAGIC;  // set the magic for data integrity checks
+        header->size = block_size;
+        header->inuse = false;
+        header->next = NULL;
 
-        node->magic = NODE_MAGIC;  // set the magic for data integrity checks
-        node->size = block_size;
-        node->inuse = false;
-        node->prev = NULL;   // may not need to be double linked
-        node->next = NULL;
+        if( mp->pool == NULL ) {
+            mp->pool = header;  // pool is empty set first node
+            last = header;
 
-        if( g_pool.pool == NULL ) {
-            g_pool.pool = node;  // pool is empty set first node
-            g_pool.top = node;
-            g_pool.temp = g_pool.top;
-            last = node;
-
-            printf("MEMORY POOL INIT: i=%d, node=%p block_size=%zu, data=%p, prev=%p, next=%p, magic = 0x%x\n",
-                   n, node, node->size, node->data, node->prev, node->next, node->magic);
+            LOG_DEBUG("MEMORY_POOL: i=%zu, data=%p, header=%p, block_size=%zu, next=%p",
+                      n, block, header, header->size, header->next);
             continue;
         }
+
         // add new node to stack
-        last->next = node;
-        node->prev = last;
-        last = node;
+        last->next = header;
+        last = header;
 
-        // DEBUG : TODO remove
-        printf("MEMORY POOL INIT: i=%d, node=%p block_size=%zu, data=%p, prev=%p, next=%p, magic = 0x%x\n",
-               n, node, node->size, node->data, node->prev, node->next, node->magic);
+        LOG_DEBUG("MEMORY_POOL: i=%zu, data=%p, header=%p, block_size=%zu, next=%p",
+                  n, block, header, header->size, header->next);
     }
 
-    printf ("MEMORY POOL INIT: g_pool.top = %p\n", g_pool.top );
-    g_pool.number_of_blocks = number_of_blocks;
-    g_pool.block_size = block_size;
-    g_pool.available = number_of_blocks;
+    LOG_DEBUG("memory_pool_init(mp=%p, count=%zu, block_size=%zu)", mp, count, block_size);
 
-    return n == number_of_blocks ? true : false;
+    mp->count = count;
+    mp->block_size = block_size;
+    mp->available = count;
+
+    return n == count ? mp : NULL;
 }
 
-void memory_pool_dump()
+bool memory_pool_destroy(memory_pool_t *mp)
 {
-    printf("memory_pool_dump(number_of_blocks=%zu, available=%zu, block_size=%zu, magic = 0x%x)\n",
-           g_pool.number_of_blocks, g_pool.available, g_pool.block_size, g_pool.pool->magic);
-
-    memory_pool_node_t * node = g_pool.pool;
-    for(int n = 0; node != NULL; ++n ) {
-        printf("memory_pool_dump POOL: i=%d, inuse=%s, node=%p block_size=%zu, data=%p, prev=%p, next=%p, magic = 0x%x\n",
-               n, node->inuse ? "true":"false", node, node->size, node->data, node->prev, node->next, node->magic);
-        node = node->next;
-    }
-}
-bool memory_pool_acquire(memory_pool_handle_t *handle)
-{
-    if( g_pool.temp == NULL ) {
-        g_pool.temp = g_pool.top;
-        if (g_pool.temp->inuse){
-            return false;
-        }else{
-            *handle = (memory_pool_handle_t) g_pool.temp;
-            g_pool.temp->inuse = true;
-            g_pool.temp = g_pool.temp->next;
-            g_pool.available --;
-            printf("MEMORY POOL ACQUIRE: handle = 0x%llx\n", *handle);
-            return true;
-        }
-    }
-    while (!g_pool.temp->inuse){
-        *handle = (memory_pool_handle_t) g_pool.temp;
-        g_pool.temp->inuse = true;
-        g_pool.temp = g_pool.temp->next;
-        g_pool.available --;
-
-        printf("MEMORY POOL ACQUIRE: handle = 0x%llx\n", *handle);
-        return true;
-    }
-    printf("memory_pool_acquire: ERROR: no available memory blocks\n");
-    return false;
-}
-
-bool memory_pool_release(memory_pool_handle_t handle)
-{
-    if( handle == 0 ) {
-        printf("memory_pool_release: ERROR: bad handle. NULL\n");
+    if( mp == NULL ) {
+        LOG_ERROR(" memory_pool handle == NULL");
         return false;
     }
 
-    memory_pool_node_t * node = (memory_pool_node_t *)handle;
+    LOG_DEBUG("mp = %p, count=%zu, block_size=%zu)", mp, mp->count, mp->block_size);
 
-    if( node->magic != NODE_MAGIC ) {
-        printf("memory_pool_release: ERROR: bad handle magic. You lost the magic\n");
-        return false;
+    for(size_t n = 0; n < mp->count; ++n ) {
+        LOG_DEBUG(" + block: i=%zu, data=%p", n, mp->shadow[n]);
+        memory_pool_block_header_t * header = MEMORY_POOL_DBTOH(mp->shadow[n], mp->block_size);
+
+        header->magic = 0;  // lose the magic
+        header->size = 0;
+        header->inuse = 0;
+
+        free(mp->shadow[n]);
     }
 
-    printf("memory_pool_release: handle = 0x%llx\n", handle);
-    node->inuse = false;
-    memset(node->data,0,strlen(node->data));
-    g_pool.available ++;
+    mp->count = 0;
+    mp->block_size = 0;
+    mp->available = 0;
+    free(mp->shadow);
+    free(mp);
 
     return true;
 }
 
-void memory_pool_destroy()
+void * memory_pool_acquire(memory_pool_t * mp)
 {
-    memory_pool_node_t * node = g_pool.pool;
-    for(int n = 0; node != NULL; ++n ) {
-        printf("memory_pool_destroy: i=%d, node=0x%p block_size=%zu, data=0x%p, prev=0x%p, next=0x%p\n",
-               n, node, node->size, node->data, node->prev, node->next);
-
-        memory_pool_node_t * tmp = node; // save off node to free memory
-        node = node->next;
-
-        tmp->magic = 0;  // lose the magic
-        free(tmp->data);
-        free(tmp);
+    if( mp == NULL ) {
+        LOG_ERROR(" memory pool invalid.");
+        return false;
     }
 
-    g_pool = (memory_pool_t){0};
+    if( ! mp->available ) {
+        LOG_ERROR(" mp=%p, memory pool empty.", mp);
+        return false;
+    }
+
+    memory_pool_block_header_t *header = mp->pool;
+
+    // get data block from header
+    void * data = MEMORY_POOL_HTODB(header, mp->block_size);
+
+    mp->pool->inuse = true;
+    mp->pool = mp->pool->next;               // pop stack item
+    mp->available --;
+    LOG_DEBUG(" mp=%p, data=%p", mp, data);
+    return data;
 }
 
-// accessors
-// prevent memory pool clients from directly accessing internal state
-// prevents clients from breaking memory pool
-// allows memory pool to changing internal state without breaking API
-
-void * memory_pool_data(memory_pool_handle_t handle )
+bool memory_pool_release(memory_pool_t *mp, void * data)
 {
-    return ((memory_pool_node_t*)handle)->data;
+
+    if( mp == NULL ) {
+        LOG_ERROR(" memory pool invalid.");
+        return false;
+    }
+
+    if( data == NULL ) {
+        LOG_ERROR("ERROR: memory_pool_release: bad handle. NULL");
+        return false;
+    }
+
+    memory_pool_block_header_t * header = MEMORY_POOL_DBTOH(data, mp->block_size);
+
+    if( ! header->inuse ) {
+        LOG_ERROR("mp=%p, data=%p, double release of data block", mp, data);
+        return false;
+    }
+
+    if( header->magic != NODE_MAGIC ) {
+        LOG_ERROR("bad handle magic. You lost the magic");
+        return false;
+    }
+
+    LOG_DEBUG("data=%p, header=%p, block_size=%zu, next=%p", data, header, header->size, header->next);
+
+    // push on stack
+    header->next = mp->pool;
+    header->inuse = false;
+
+    mp->pool = header;
+    mp->available ++;
+
+    return true;
 }
 
-size_t memory_pool_size(memory_pool_handle_t handle )
+size_t memory_pool_available(memory_pool_t *mp)
 {
-    return ((memory_pool_node_t*)handle)->size;
+    if( mp == NULL ) {
+        LOG_ERROR("memory pool invalid");
+        return 0;
+    }
+    return mp->available;
 }
 
-bool memory_pool_valid(memory_pool_handle_t handle )
+void memory_pool_dump(memory_pool_t *mp)
 {
-    if( ((memory_pool_node_t*)handle)->magic == NODE_MAGIC || handle != 0 )
-        return true;
+    if( mp == NULL ) {
+        LOG_ERROR(" memory pool invalid");
+        return;
+    }
 
-    return false;
-}
+    LOG_DEBUG("mp = %p, count=%zu, available=%zu, block_size=%zu)",
+              mp, mp->count, mp->available, mp->block_size);
 
-size_t memory_pool_available()
-{
-    return g_pool.available;
-}
+    memory_pool_block_header_t * header = mp->pool;
 
-void *set_data( memory_pool_handle_t handle){
-    return ((memory_pool_node_t*)handle)->data;
+    for( size_t n = 0; n < mp->available; ++n, header = header->next ) {
+        void * data_block = MEMORY_POOL_HTODB(header, mp->block_size);
+        LOG_DEBUG(" + block: data=%p, shadow=%p, header=%p, inuse=%s, block_size=%zu, next=%p, magic %x",
+                  data_block, mp->shadow[n], header, header->inuse ? "TRUE":"FALSE", header->size, header->next, header->magic);
+
+    }
 }

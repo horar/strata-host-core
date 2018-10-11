@@ -7,11 +7,11 @@
 
 #include "cJSON.h"
 #include <stdlib.h>
+#include "memory_pool.h"
 
 typedef struct node {
-    char data[128];
+    char *data;
     struct node *next;
-    uint64_t node_handle;
 } node_t;
 
 typedef struct {
@@ -28,7 +28,7 @@ typedef struct {
 
 // global queue, g indicates global
 queue_t *g_queue;
-
+memory_pool_t *pool;
 
 void list_init(void);
 void push(char *data);

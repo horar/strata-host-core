@@ -7,8 +7,6 @@
 #include <memory.h>
 #include "queue.h"
 #include "dispatch.h"
-#include "memory_pool.h"
-
 
 
 void list_init()
@@ -18,50 +16,40 @@ void list_init()
     g_queue->head = NULL;
     g_queue->tail = NULL;
     g_queue->size = 0;
+
+    size_t size = 128 + sizeof(node_t);
+    pool = memory_pool_init(5,size);
 }
 
 void push(char *data)
 {
-        printf("PUSH: Size of DATA is: %lu\n", strlen(data));
+    node_t *new_node = (node_t*)memory_pool_acquire(pool);
 
-        static memory_pool_handle_t temp_handle = 0;
-        node_t *new_node;
+    //memcpy(&new_node->data, &data, strlen(data));
+    new_node->data = data;
+    new_node->next = NULL;
+    /*
+     * we could you use strncpy if we want to specify the size of
+     * the array of data inside node struct
+    ** strncpy(new_node->data, data, strlen(data));
+     */
 
-        bool rv = memory_pool_acquire(&temp_handle);
-        if (!rv){
-            printf("PUSH: Fail to acquire\n");
-            return;
-        }
-        else {
-            new_node = set_data(temp_handle);
+    if (g_queue->head == NULL) {
+        g_queue->size = 0;
+        g_queue->head = g_queue->tail = new_node;
+    }
 
-            strcpy(new_node->data, data);
-            new_node->next = NULL;
-            new_node->node_handle = temp_handle;
+    if (g_queue->size == 1) {
 
-            /*
-             * we could you use memcpy if we do not want to specify the size of
-             * the array of data inside node struct
-            ** memcpy(&new_node->data, &data, strlen(data));
-             */
-
-            if (g_queue->head == NULL) {
-                g_queue->size = 0;
-                g_queue->head = g_queue->tail = new_node;
-            }
-
-            if (g_queue->size == 1) {
-
-                g_queue->tail = new_node;
-                g_queue->head->next = g_queue->tail;
-            }
-            if (g_queue->size > 1) {
-                g_queue->temp = g_queue->tail;
-                g_queue->tail = new_node;
-                g_queue->temp->next = new_node;
-            }
-            g_queue->size++;
-        }
+        g_queue->tail = new_node;
+        g_queue->head->next = g_queue->tail;
+    }
+    if (g_queue->size > 1) {
+        g_queue->temp = g_queue->tail;
+        g_queue->tail = new_node;
+        g_queue->temp->next = new_node;
+    }
+    g_queue->size++;
 }
 
 /**
@@ -78,7 +66,7 @@ void pop()
 {
     if (g_queue->head) {
         g_queue->temp = g_queue->head->next;
-        memory_pool_release(g_queue->head->node_handle);
+        memory_pool_release(pool,g_queue->head);
         g_queue->head = g_queue->temp;
         g_queue->size--;
         print_list();
@@ -98,6 +86,6 @@ void print_list()
 }
 void queue_destroy(){
 
-    memory_pool_destroy();
+    memory_pool_destroy(pool);
     free(g_queue);
 }
