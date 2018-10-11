@@ -18,17 +18,23 @@ Rectangle {
     property var currentIndex: 0
     property var tabIndex: logicSelection.index
 
-
-    Component.onCompleted: {
-
-        gateImageSource =  "qrc:/views/logic-gate/images/nl7sz97/mux.png"
+    function resetToIndex0(){
+        gateImageSource = "qrc:/views/logic-gate/images/nl7sz97/mux.png"
         platformInterface.mux_97.update();
+        /*
+          Changing the setting of the page based on which gate it is
+        */
         sgStatusLightTwo.opacity = 0
         toggleSwitch1.opacity = 1
         inputThirdText.opacity = 1
         sgStatusLightInputB.opacity = 0
         inputTwoText.opacity = 1
         inputTwoToggle.opacity = 1
+        logicSelection.index = 0
+     }
+
+    Component.onCompleted: {
+        resetToIndex0();
     }
 
 

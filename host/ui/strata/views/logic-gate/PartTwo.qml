@@ -17,6 +17,14 @@ Rectangle {
     property var value_CNoti
     property var currentIndex: 0
 
+    function resetToIndex0(){
+        gateImageSource = "qrc:/views/logic-gate/images/nl7sz58/nand.png"
+        platformInterface.nand.update();
+        sgStatusLightInputTwo.opacity = 0
+        inputTwoText.opacity = 1
+        inputTwoToggle.opacity = 1
+        logicSelectionList.index = 0
+    }
 
     anchors {
         fill: parent
@@ -140,10 +148,7 @@ Rectangle {
         }
 
         Component.onCompleted: {
-            gateImageSource =  "qrc:/views/logic-gate/images/nl7sz58/nand.png"
-            sgStatusLightInputTwo.opacity = 0
-            inputTwoText.opacity = 1
-            inputTwoToggle.opacity = 1
+            resetToIndex0();
         }
         segmentedButtons: GridLayout {
             columnSpacing: 1

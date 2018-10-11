@@ -18,7 +18,6 @@ Rectangle {
         id: platformInterface
     }
 
-
     TabBar {
         id: navTabs
         anchors {
@@ -78,6 +77,20 @@ Rectangle {
 
             property int currentIndex: 0
 
+            Timer{
+                id: timer
+                interval: 300;
+                repeat:false;
+                onTriggered:
+                    if(controlContainer.currentIndex == 0){
+                        partOne.resetToIndex0()
+                    }
+                    else if(controlContainer.currentIndex == 1){
+                        partTwo.resetToIndex0()
+                    }
+            }
+
+
             onCurrentIndexChanged: {
                 switch (currentIndex){
                 case 0:
@@ -85,18 +98,14 @@ Rectangle {
                     partOne.visible = true
                     partTwo.visible = false
                     platformInterface.off_led.update()
-                    platformInterface.mux_97.update();
-                    partOne.currentIndex = 0
+                    timer.start()
                     break;
                 case 1:
                      console.log("in view two")
                     partOne.visible = false
                     partTwo.visible = true
                     platformInterface.off_97_led.update()
-                    platformInterface.nand.update();
-                    platformInterface.read_io.update()
-                    partTwo.currentIndex = 0
-                    partOne.tabIndex = 0
+                    timer.start()
                     break;
 
                 }

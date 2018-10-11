@@ -23,8 +23,13 @@ Item {
     property real buttonImplicitWidth: 70
     property bool nothingChecked: true
     property bool hoverEnabled: true
-    property int index: 0
 
+    property int index: 0
+    onIndexChanged: {
+        if (exclusive) {
+            segmentedButtons.children[0].children[index].checked = true
+        }
+    }
 
     Text {
         id: labelText
@@ -88,10 +93,7 @@ Item {
         function indexUpdate (index) {
             root.index = index
         }
-
-
     }
-
 
     Component.onCompleted: {
         segmentedButtons.checked()
