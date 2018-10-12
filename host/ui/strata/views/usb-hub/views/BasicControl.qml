@@ -9,6 +9,7 @@ Item {
     property bool debugLayout: false
     property real ratioCalc: root.width / 1200
     property int tabTransitionTime: 1000
+    property int tabTransitionTimePhase2: 1000
     property int basicPortWidth: 160
     property int advancedPortWidth: 240
     property int advancedDeviceWidth: 240
@@ -16,7 +17,7 @@ Item {
     property int advancedUSBAPortHeight: 240
     property int advancedAudioPortHeight: 150
     property int advancedDisplayPortPortHeight: 140
-    property int advancedTopMargin: 20
+    property int advancedTopMargin: 10
 
     width: parent.width / parent.height > initialAspectRatio ? parent.height * initialAspectRatio : parent.width
     height: parent.width / parent.height < initialAspectRatio ? parent.width / initialAspectRatio : parent.height
@@ -101,6 +102,10 @@ Item {
         devicesToAdvanced.start();
         audioPort.transitionToAdvancedView();
         displayPort.transitionToAdvancedView();
+        upstreamPort.transitionToAdvancedView();
+        port1.transitionToAdvancedView();
+        port2.transitionToAdvancedView();
+        port3.transitionToAdvancedView();
         port4.transitionToAdvancedView();
 
     }
@@ -119,7 +124,7 @@ Item {
         PropertyAnimation{
             target:deviceBackground
             property: "height"
-            to: (11*parent.height)/16
+            to: (23*parent.height)/32
             duration: tabTransitionTime
         }
     }
@@ -638,13 +643,13 @@ Item {
 
             onClicked: {
                 if (!displayPortAnimation.pluggedIn) {
-                    displayPortAnimation.source = "images/cord.gif"
+                    displayPortAnimation.source = "images/DisplayPortAnim.gif"
                     displayPortAnimation.currentFrame = 0
                     displayPortAnimation.playing = true
                     displayPortAnimation.pluggedIn = !displayPortAnimation.pluggedIn
                     displayPort.portConnected = true
                 } else {
-                    displayPortAnimation.source = "images/cordReverse.gif"
+                    displayPortAnimation.source = "images/DisplayPortAnimReverse.gif"
                     displayPortAnimation.currentFrame = 0
                     displayPortAnimation.playing = true
                     displayPortAnimation.pluggedIn = !displayPortAnimation.pluggedIn
@@ -668,13 +673,13 @@ Item {
 
             onClicked: {
                 if (!audioAnimation.pluggedIn) {
-                    audioAnimation.source = "images/cord.gif"
+                    audioAnimation.source = "images/AudioAnim.gif"
                     audioAnimation.currentFrame = 0
                     audioAnimation.playing = true
                     audioAnimation.pluggedIn = !audioAnimation.pluggedIn
                     audioPort.portConnected = true
                 } else {
-                    audioAnimation.source = "images/cordReverse.gif"
+                    audioAnimation.source = "images/AudioAnimReverse.gif"
                     audioAnimation.currentFrame = 0
                     audioAnimation.playing = true
                     audioAnimation.pluggedIn = !audioAnimation.pluggedIn

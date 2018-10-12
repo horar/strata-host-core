@@ -432,5 +432,10 @@
         <file>views/usb-hub/views/basic-partial-views/AudioGraph.qml</file>
         <file>views/usb-hub/views/basic-partial-views/USBAPortInfo.qml</file>
         <file>views/usb-pd/views/images/basic-background-2port.png</file>
+        <file>views/usb-hub/views/basic-partial-views/AdvancedPortControls.qml</file>
+        <file>views/usb-hub/views/images/AudioAnim.gif</file>
+        <file>views/usb-hub/views/images/AudioAnimReverse.gif</file>
+        <file>views/usb-hub/views/images/DisplayPortAnim.gif</file>
+        <file>views/usb-hub/views/images/DisplayPortAnimReverse.gif</file>
     </qresource>
 </RCC>
