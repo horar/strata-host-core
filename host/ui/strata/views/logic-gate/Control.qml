@@ -25,6 +25,19 @@ Rectangle {
             left: parent.left
             right: parent.right
         }
+        //Timer added as firmware can't recieve back to back 2 commands.
+        Timer{
+            id: timer
+            interval: 400;
+            repeat:false;
+            onTriggered:
+                if(controlContainer.currentIndex == 0){
+                    partOne.resetToIndex0()
+                }
+                else if(controlContainer.currentIndex == 1){
+                    partTwo.resetToIndex0()
+                }
+        }
 
         TabButton {
             id: basicButton
@@ -32,7 +45,12 @@ Rectangle {
             onClicked: {
                 platformInterface.off_led.update()
                 controlContainer.currentIndex = 0
-
+                console.log("in view one")
+                partOne.visible = true
+                partTwo.visible = false
+                timer.start()
+//                partOne.resetToIndex0()
+                platformInterface.mux_97.update();
             }
         }
 
@@ -40,12 +58,17 @@ Rectangle {
             id: advancedButton
             text: qsTr("NL7SZ58")
             onClicked: {
+                platformInterface.off_97_led.update()
                 controlContainer.currentIndex = 1
-                partOne.tabIndex = 0
+//                partOne.tabIndex = 0
+                console.log("in view two")
+                partOne.visible = false
+                partTwo.visible = true
+                timer.start()
+//                partTwo.resetToIndex0()
+                platformInterface.nand.update()
             }
         }
-
-
     }
 
     ScrollView {
@@ -77,39 +100,24 @@ Rectangle {
 
             property int currentIndex: 0
 
-            Timer{
-                id: timer
-                interval: 300;
-                repeat:false;
-                onTriggered:
-                    if(controlContainer.currentIndex == 0){
-                        partOne.resetToIndex0()
-                    }
-                    else if(controlContainer.currentIndex == 1){
-                        partTwo.resetToIndex0()
-                    }
-            }
-
-
-            onCurrentIndexChanged: {
-                switch (currentIndex){
-                case 0:
-                    console.log("in view one")
-                    partOne.visible = true
-                    partTwo.visible = false
-                    platformInterface.off_led.update()
-                    timer.start()
-                    break;
-                case 1:
-                     console.log("in view two")
-                    partOne.visible = false
-                    partTwo.visible = true
-                    platformInterface.off_97_led.update()
-                    timer.start()
-                    break;
-
-                }
-            }
+//            onCurrentIndexChanged: {
+//                switch (currentIndex){
+//                case 0:
+//                    console.log("in view one")
+//                    partOne.visible = true
+//                    partTwo.visible = false
+//                    platformInterface.off_led.update()
+//                    timer.start()
+//                    break;
+//                case 1:
+//                     console.log("in view two")
+//                    partOne.visible = false
+//                    partTwo.visible = true
+//                    platformInterface.off_97_led.update()
+//                    timer.start()
+//                    break;
+//                }
+//            }
 
             boundsBehavior: Flickable.StopAtBounds
             contentWidth: 1200
