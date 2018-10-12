@@ -15,15 +15,20 @@ Rectangle {
     property var value_ANoti
     property var value_BNoti
     property var value_CNoti
-    property var currentIndex: 0
+    property int currentIndex: 0
 
     function resetToIndex0(){
         gateImageSource = "qrc:/views/logic-gate/images/nl7sz58/nand.png"
-        platformInterface.nand.update();
-        sgStatusLightInputTwo.opacity = 0
-        inputTwoText.opacity = 1
-        inputTwoToggle.opacity = 1
-        logicSelectionList.index = 0
+        inputAToggleContainer.anchors.topMargin = 10
+        inputBToggleContainer.anchors.topMargin = 10
+        inputBToggleContainer.anchors.leftMargin = 0
+        thirdInput.anchors.topMargin = 80
+        // Input 2 Container
+        sgStatusLightInputTwo.visible = false
+        inputTwoText.visible = true
+        inputTwoToggle.visible = true
+        currentIndex = 0
+//        platformInterface.nand.update();
     }
 
     anchors {
@@ -157,13 +162,17 @@ Rectangle {
                 text: qsTr("NAND")
                 checked: true  // Sets default checked button when exclusive
                 onClicked: {
-                    currentIndex = 0
                     gateImageSource = "qrc:/views/logic-gate/images/nl7sz58/nand.png"
+                    inputAToggleContainer.anchors.topMargin = 10
+                    inputBToggleContainer.anchors.topMargin = 10
+                    inputBToggleContainer.anchors.leftMargin = 0
+                    thirdInput.anchors.topMargin = 80
+                    // Input 2 Container
+                    sgStatusLightInputTwo.visible = false
+                    inputTwoText.visible = true
+                    inputTwoToggle.visible = true
+                    currentIndex = 0
                     platformInterface.nand.update();
-                    sgStatusLightInputTwo.opacity = 0
-                    inputTwoText.opacity = 1
-                    inputTwoToggle.opacity = 1
-
                 }
             }
 
@@ -171,70 +180,98 @@ Rectangle {
                 text: qsTr("AND NOTB")
                 onClicked: {
                     gateImageSource = "qrc:/views/logic-gate/images/nl7sz58/nand_nb.png"
-                    platformInterface.and_nb.update();
-                    sgStatusLightInputTwo.opacity = 0
-                    inputTwoText.opacity = 1
-                    inputTwoToggle.opacity = 1
+                    inputAToggleContainer.anchors.topMargin = 10
+                    inputBToggleContainer.anchors.topMargin = 10
+                    inputBToggleContainer.anchors.leftMargin = 0
+                    thirdInput.anchors.topMargin = 80
+                    // Input 2 Container
+                    sgStatusLightInputTwo.visible = false
+                    inputTwoText.visible = true
+                    inputTwoToggle.visible = true
                     currentIndex = 1;
+                    platformInterface.and_nb.update();
                 }
             }
 
             SGSegmentedButton{
                 text: qsTr("AND NOTC")
                 onClicked: {
-                    platformInterface.and_nc.update();
                     gateImageSource = "qrc:/views/logic-gate/images/nl7sz58/and_nc.png"
-                    sgStatusLightInputTwo.opacity = 0
-                    inputTwoText.opacity = 1
-                    inputTwoToggle.opacity = 1
-                    currentIndex = 2     
+                    inputAToggleContainer.anchors.topMargin = 10
+                    inputBToggleContainer.anchors.topMargin = 10
+                    inputBToggleContainer.anchors.leftMargin = 0
+                    thirdInput.anchors.topMargin = 80
+                    // Input 2 Container
+                    sgStatusLightInputTwo.visible = false
+                    inputTwoText.visible = true
+                    inputTwoToggle.visible = true
+                    currentIndex = 2
+                    platformInterface.and_nc.update();
                 }
             }
             SGSegmentedButton{
                 text: qsTr("OR")
                 onClicked: {
-                    platformInterface.or.update();
                     gateImageSource = "qrc:/views/logic-gate/images/nl7sz58/or.png"
-                    sgStatusLightInputTwo.opacity = 0
-                    inputTwoText.opacity = 1
-                    inputTwoToggle.opacity = 1
+                    inputAToggleContainer.anchors.topMargin = 10
+                    inputBToggleContainer.anchors.topMargin = 20
+                    inputBToggleContainer.anchors.leftMargin = 0
+                    thirdInput.anchors.topMargin = 80
+                    // Input 2 Container
+                    sgStatusLightInputTwo.visible = false
+                    inputTwoText.visible = true
+                    inputTwoToggle.visible = true
                     currentIndex = 3
+                    platformInterface.or.update();
                 }
             }
             SGSegmentedButton{
                 text: qsTr("XOR")
                 onClicked: {
-                    platformInterface.xor.update();
                     gateImageSource = "qrc:/views/logic-gate/images/nl7sz58/xor.png"
-                    sgStatusLightInputTwo.opacity = 0
-                    inputTwoText.opacity = 1
-                    inputTwoToggle.opacity = 1
+                    inputAToggleContainer.anchors.topMargin = 10
+                    inputBToggleContainer.anchors.topMargin = 20
+                    inputBToggleContainer.anchors.leftMargin = 0
+                    thirdInput.anchors.topMargin = 80
+                    // Input 2 Container
+                    sgStatusLightInputTwo.visible = false
+                    inputTwoText.visible = true
+                    inputTwoToggle.visible = true
                     currentIndex = 4
-
+                    platformInterface.xor.update();
                 }
             }
             SGSegmentedButton{
                 text: qsTr("Inverter")
                 onClicked: {
-                    platformInterface.inverter.update()
                     gateImageSource = "qrc:/views/logic-gate/images/nl7sz58/inverter.png"
-                    sgStatusLightInputTwo.opacity = 1
-                    inputTwoText.opacity = 0
-                    inputTwoToggle.opacity = 0
+                    inputAToggleContainer.anchors.topMargin = 70
+                    inputBToggleContainer.anchors.topMargin = 70
+                    inputBToggleContainer.anchors.leftMargin = 150
+                    thirdInput.anchors.topMargin = 20
+                    // Input 2 Container
+                    sgStatusLightInputTwo.visible = true
+                    inputTwoText.visible = false
+                    inputTwoToggle.visible = false
                     currentIndex = 5
-
+                    platformInterface.inverter.update()
                 }
             }
             SGSegmentedButton{
                 text: qsTr("Buffer")
                 onClicked: {
-                    platformInterface.buffer.update();
-                    inputName = "B = C"
+//                    inputName = "B = C"
                     gateImageSource = "qrc:/views/logic-gate/images/nl7sz58/buffer.png"
-                    sgStatusLightInputTwo.opacity = 1
-                    inputTwoText.opacity = 0
-                    inputTwoToggle.opacity = 0
+                    inputAToggleContainer.anchors.topMargin = 70
+                    inputBToggleContainer.anchors.topMargin = 70
+                    inputBToggleContainer.anchors.leftMargin = 150
+                    thirdInput.anchors.topMargin = 20
+                    // Input 2 Container
+                    sgStatusLightInputTwo.visible = true
+                    inputTwoText.visible = false
+                    inputTwoToggle.visible = false
                     currentIndex = 6
+                    platformInterface.buffer.update();
                 }
             }
         }
@@ -250,7 +287,6 @@ Rectangle {
             verticalCenter: parent.verticalCenter
             horizontalCenter: parent.horizontalCenter
         }
-
         Rectangle {
             id: inputAToggleContainer
             width: 100
@@ -335,7 +371,6 @@ Rectangle {
                 left: logicContainer.left
                 top: inputAToggleContainer.bottom
             }
-
             SGSwitch {
                 id: inputTwoToggle
                 anchors{
@@ -397,7 +432,7 @@ Rectangle {
                 id: sgStatusLightInputTwo
                 // Optional Configuration:
                 label: "<b>" + value_B + "</b>" // Default: "" (if not entered, label will not appear)
-                labelLeft: false        // Default: true
+//                labelLeft: false        // Default: true
                 // status: "off"           // Default: "off"
                 lightSize: 50           // Default: 50
                 textColor: "black"           // Default: "black"
@@ -422,12 +457,21 @@ Rectangle {
             anchors {
                 left: gatesImage.right
                 top: inputAToggleContainer.top
-                topMargin: 50
+                topMargin: 70
             }
+//            Rectangle{
+//                color: "green"
+//                opacity: .15
+//                anchors{
+//                    fill: parent
+//                }
+//                z:20
+//            }
+
             SGStatusLight {
                 id: sgStatusLight
                 label: "<b>Y</b>" // Default: "" (if not entered, label will not appear)
-                labelLeft: false        // Default: true
+//                labelLeft: false        // Default: true
                 // status: "off"           // Default: "off"
                 lightSize: 50           // Default: 50
                 textColor: "black"           // Default: "black"
@@ -441,15 +485,26 @@ Rectangle {
             anchors {
                 top: gatesImage.bottom
                 horizontalCenter: gatesImage.horizontalCenter
+                horizontalCenterOffset: -30
             }
+//            Rectangle{
+//                color: "red"
+//                opacity: .15
+//                anchors{
+//                    fill: parent
+//                }
+//                z:20
+//            }
+
             SGStatusLight {
                 id: sgStatusLightTwo
                 label: value_C // Default: "" (if not entered, label will not appear)
-                labelLeft: false        // Default: true
+//                labelLeft: false        // Default: true
                 // status: "off"           // Default: "off"
                 lightSize: 50           // Default: 50
                 textColor: "black"           // Default: "black"
                 status : "off"
+
             }
         }
     }
