@@ -28,6 +28,7 @@ Rectangle {
         inputTwoText.visible = true
         inputTwoToggle.visible = true
         currentIndex = 0
+        logicSelectionList.index = 0
 //        platformInterface.nand.update();
     }
 

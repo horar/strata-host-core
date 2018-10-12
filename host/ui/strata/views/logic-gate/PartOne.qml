@@ -34,6 +34,7 @@ Rectangle {
         inputThirdText.visible = true
         platformInterface.mux_97.update();
         currentIndex = 0
+        logicSelection.index = 0
 //        platformInterface.mux_97.update();
      }
 
