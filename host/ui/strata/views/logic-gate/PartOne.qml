@@ -15,28 +15,32 @@ Rectangle {
     property var value_ANoti
     property var value_BNoti
     property var value_CNoti
-    property var currentIndex: 0
-    property var tabIndex: logicSelection.index
+    property int currentIndex: 0
+//    property var tabIndex: logicSelection.index
 
     function resetToIndex0(){
         gateImageSource = "qrc:/views/logic-gate/images/nl7sz97/mux.png"
+        inputAToggleContainer.anchors.topMargin = -10
+        inputBToggleContainer.anchors.topMargin = 50
+        inputBToggleContainer.anchors.leftMargin = 0
+        thirdInput.anchors.topMargin = 100
+        //Input 2 container
+        sgStatusLightInputB.visible = false
+        inputTwoText.visible = true
+        inputTwoToggle.visible = true
+        //Input 3 container
+        sgStatusLightTwo.visible = false
+        toggleSwitch1.visible = true
+        inputThirdText.visible = true
         platformInterface.mux_97.update();
-        /*
-          Changing the setting of the page based on which gate it is
-        */
-        sgStatusLightTwo.opacity = 0
-        toggleSwitch1.opacity = 1
-        inputThirdText.opacity = 1
-        sgStatusLightInputB.opacity = 0
-        inputTwoText.opacity = 1
-        inputTwoToggle.opacity = 1
-        logicSelection.index = 0
+        currentIndex = 0
+//        platformInterface.mux_97.update();
      }
 
     Component.onCompleted: {
         resetToIndex0();
+        platformInterface.mux_97.update();
     }
-
 
     anchors {
         fill: parent
@@ -45,7 +49,7 @@ Rectangle {
     property var io_state: platformInterface.nl7sz97_io_state
 
     onIo_stateChanged : {
-        if(currentIndex == 0) {
+        if(currentIndex == 0) { //NL7SZ97 MUX
             value_A = "B"
             value_ANoti = platformInterface.nl7sz97_io_state.b
             value_B = "A"
@@ -53,16 +57,7 @@ Rectangle {
             value_C = "C"
             value_CNoti = platformInterface.nl7sz97_io_state.c
         }
-        if(currentIndex == 1) {
-            value_A = "A"
-            value_ANoti = platformInterface.nl7sz97_io_state.a
-            value_B = "C"
-            value_BNoti = platformInterface.nl7sz97_io_state.c
-            value_C = "B"
-            value_CNoti = platformInterface.nl7sz97_io_state.b
-
-        }
-        if(currentIndex == 2) {
+        if(currentIndex == 1) { //NL7SZ97 AND
             value_A = "A"
             value_ANoti = platformInterface.nl7sz97_io_state.a
             value_B = "C"
@@ -70,7 +65,15 @@ Rectangle {
             value_C = "B"
             value_CNoti = platformInterface.nl7sz97_io_state.b
         }
-        if(currentIndex == 3) {
+        if(currentIndex == 2) { //NL7SZ97 OR NOTC
+            value_A = "A"
+            value_ANoti = platformInterface.nl7sz97_io_state.a
+            value_B = "C"
+            value_BNoti = platformInterface.nl7sz97_io_state.c
+            value_C = "B"
+            value_CNoti = platformInterface.nl7sz97_io_state.b
+        }
+        if(currentIndex == 3) { //NL7SZ97 AND NOTC
 
             value_A = "B"
             value_ANoti = platformInterface.nl7sz97_io_state.b
@@ -79,8 +82,7 @@ Rectangle {
             value_C = "A"
             value_CNoti = platformInterface.nl7sz97_io_state.a
         }
-
-        if(currentIndex == 4) {
+        if(currentIndex == 4) { //NL7SZ97 OR
             value_A = "B"
             value_ANoti = platformInterface.nl7sz97_io_state.b
             value_B = "C"
@@ -89,7 +91,7 @@ Rectangle {
             value_CNoti = platformInterface.nl7sz97_io_state.a
 
         }
-        if(currentIndex == 5) {
+        if(currentIndex == 5) { //NL7SZ97 Inverter
             value_A = "C"
             value_ANoti = platformInterface.nl7sz97_io_state.c
             value_B = "A"
@@ -98,7 +100,7 @@ Rectangle {
             value_CNoti = platformInterface.nl7sz97_io_state.b
 
         }
-        if(currentIndex == 6) {
+        if(currentIndex == 6) { //NL7SZ97 Buffer
             value_A = "B"
             value_ANoti = platformInterface.nl7sz97_io_state.b
             value_B = "A"
@@ -109,8 +111,8 @@ Rectangle {
         }
     }
 
+    // For the Selector Input LED
     property var valueB: value_BNoti
-
 
     onValueBChanged: {
         if( valueB === 1) {
@@ -128,7 +130,6 @@ Rectangle {
     property var valueA: value_ANoti
 
     onValueAChanged: {
-
         if( valueA === 1) {
             inputOneToggle.checked = true
         }
@@ -138,6 +139,7 @@ Rectangle {
         }
     }
 
+    // For output Y
     property var valueY:  platformInterface.nl7sz97_io_state.y
 
     onValueYChanged: {
@@ -151,9 +153,7 @@ Rectangle {
     property var valueC: value_CNoti
 
     onValueCChanged: {
-
         console.log("change in c")
-
         if(valueC === 1) {
             sgStatusLightTwo.status = "green"
             toggleSwitch1.checked = true
@@ -161,7 +161,6 @@ Rectangle {
         else {
             sgStatusLightTwo.status = "off"
             toggleSwitch1.checked = false
-
         }
     }
 
@@ -169,7 +168,6 @@ Rectangle {
         console.log("inread")
         platformInterface.read_io_97.update();
         platformInterface.read_io_97.show();
-
     }
 
     SGSegmentedButtonStrip {
@@ -178,7 +176,6 @@ Rectangle {
         buttonHeight: 25
         visible: true
         index: tabIndex
-
 
         anchors {
             top: parent.top
@@ -189,26 +186,30 @@ Rectangle {
         segmentedButtons: GridLayout {
             id: gatesSelection
             columnSpacing: 1
-
+            /*
+              Changing the setting of the page based on which gate it is
+            */
             SGSegmentedButton{
                 id: muxgate
                 text: qsTr("MUX")
                 checked: true  // Sets default checked button when exclusive
                 onClicked: {
                     gateImageSource = "qrc:/views/logic-gate/images/nl7sz97/mux.png"
+                    inputAToggleContainer.anchors.topMargin = -10
+                    inputBToggleContainer.anchors.topMargin = 50
+                    inputBToggleContainer.anchors.leftMargin = 0
+                    thirdInput.anchors.topMargin = 100
+                    //Input 2 container
+                    sgStatusLightInputB.visible = false
+                    inputTwoText.visible = true
+                    inputTwoToggle.visible = true
+                    //Input 3 container
+                    sgStatusLightTwo.visible = false
+                    toggleSwitch1.visible = true
+                    inputThirdText.visible = true
                     platformInterface.mux_97.update();
-                    /*
-                      Changing the setting of the page based on which gate it is
-                    */
-                    sgStatusLightTwo.opacity = 0
-                    toggleSwitch1.opacity = 1
-                    inputThirdText.opacity = 1
-                    sgStatusLightInputB.opacity = 0
-                    inputTwoText.opacity = 1
-                    inputTwoToggle.opacity = 1
                     currentIndex = 0
-                    tabIndex = logicSelection.index
-
+//                    tabIndex = logicSelection.index
                 }
             }
 
@@ -216,97 +217,132 @@ Rectangle {
                 text: qsTr("AND")
                 onClicked: {
                     gateImageSource = "qrc:/views/logic-gate/images/nl7sz97/and.png"
-                    platformInterface.and_97.update();
-                    sgStatusLightTwo.opacity = 1
-                    toggleSwitch1.opacity = 0
-                    inputThirdText.opacity = 0
-                    sgStatusLightInputB.opacity = 0
-                    inputTwoText.opacity = 1
-                    inputTwoToggle.opacity = 1
+                    inputAToggleContainer.anchors.topMargin = 10
+                    inputBToggleContainer.anchors.topMargin = 10
+                    inputBToggleContainer.anchors.leftMargin = 0
+                    thirdInput.anchors.topMargin = 80
+                    //Input 2 container
+                    sgStatusLightInputB.visible = false
+                    inputTwoText.visible = true
+                    inputTwoToggle.visible = true
+                    //Input 3 container
+                    sgStatusLightTwo.visible = true
+                    toggleSwitch1.visible = false
+                    inputThirdText.visible = true
+
                     currentIndex = 1
-                    tabIndex = logicSelection.index
+//                    tabIndex = logicSelection.index
+                    platformInterface.and_97.update();
                 }
             }
 
             SGSegmentedButton{
                 text: qsTr("OR NOTC")
                 onClicked: {
-                    platformInterface.or_nc_97.update();
                     gateImageSource = "qrc:/views/logic-gate/images/nl7sz97/or_nc.png"
-                    sgStatusLightTwo.opacity = 1
-                    toggleSwitch1.opacity = 0
-                    inputThirdText.opacity = 0
-                    sgStatusLightInputB.opacity = 0
-                    inputTwoText.opacity = 1
-                    inputTwoToggle.opacity = 1
+                    inputAToggleContainer.anchors.topMargin = 10
+                    inputBToggleContainer.anchors.topMargin = 20
+                    inputBToggleContainer.anchors.leftMargin = 0
+                    thirdInput.anchors.topMargin = 80
+                    //Input 2 container
+                    sgStatusLightInputB.visible = false
+                    inputTwoText.visible = true
+                    inputTwoToggle.visible = true
+                    //Input 3 container
+                    sgStatusLightTwo.visible = true
+                    toggleSwitch1.visible = false
+                    inputThirdText.visible = true
                     currentIndex = 2
-                    tabIndex = logicSelection.index
+//                    tabIndex = logicSelection.index
+                    platformInterface.or_nc_97.update();
 
                 }
             }
             SGSegmentedButton{
                 text: qsTr("AND NOTC")
                 onClicked: {
-                    platformInterface.and_nc_97.update();
                     gateImageSource = "qrc:/views/logic-gate/images/nl7sz97/and_nc.png"
-                    sgStatusLightTwo.opacity = 1
-                    toggleSwitch1.opacity = 0
-                    inputThirdText.opacity = 0
-                    sgStatusLightInputB.opacity = 0
-                    inputTwoText.opacity = 1
-                    inputTwoToggle.opacity = 1
+                    inputAToggleContainer.anchors.topMargin = 10
+                    inputBToggleContainer.anchors.topMargin = 10
+                    inputBToggleContainer.anchors.leftMargin = 0
+                    thirdInput.anchors.topMargin = 80
+                    //Input 2 container
+                    sgStatusLightInputB.visible = false
+                    inputTwoText.visible = true
+                    inputTwoToggle.visible = true
+                    //Input 3 container
+                    sgStatusLightTwo.visible = true
+                    toggleSwitch1.visible = false
+                    inputThirdText.visible = visible
                     currentIndex = 3
-                    tabIndex = logicSelection.index
+//                    tabIndex = logicSelection.index
+                    platformInterface.and_nc_97.update();
                 }
             }
             SGSegmentedButton{
                 text: qsTr("OR")
                 onClicked: {
-                    platformInterface.or_97.update();
                     gateImageSource = "qrc:/views/logic-gate/images/nl7sz97/or.png"
-                    sgStatusLightTwo.opacity = 1
-                    toggleSwitch1.opacity = 0
-                    inputThirdText.opacity = 0
-                    sgStatusLightInputB.opacity = 0
-                    inputTwoText.opacity = 1
-                    inputTwoToggle.opacity = 1
+                    inputAToggleContainer.anchors.topMargin = 10
+                    inputBToggleContainer.anchors.topMargin = 20
+                    inputBToggleContainer.anchors.leftMargin = 0
+                    thirdInput.anchors.topMargin = 80
+                    //Input 2 container
+                    sgStatusLightInputB.visible = false
+                    inputTwoText.visible = true
+                    inputTwoToggle.visible = true
+                    //Input 3 container
+                    sgStatusLightTwo.visible = true
+                    toggleSwitch1.visible = false
+                    inputThirdText.visible = true
                     currentIndex = 4
-                    tabIndex = logicSelection.index
-
+//                    tabIndex = logicSelection.index
+                    platformInterface.or_97.update();
                 }
             }
             SGSegmentedButton{
                 text: qsTr("Inverter")
                 onClicked: {
-                    platformInterface.inverter_97.update();
-                    sgStatusLightTwo.opacity = 1
-                    toggleSwitch1.opacity = 0
-                    inputThirdText.opacity = 0
-                    sgStatusLightInputB.opacity = 1
-                    inputTwoText.opacity = 0
-                    inputTwoToggle.opacity = 0
-                    currentIndex = 5
-                    tabIndex = logicSelection.index
                     gateImageSource = "qrc:/views/logic-gate/images/nl7sz58/inverter.png"
+                    inputAToggleContainer.anchors.topMargin = 70
+                    inputBToggleContainer.anchors.topMargin = 70
+                    inputBToggleContainer.anchors.leftMargin = 150
+                    thirdInput.anchors.topMargin = 20
+                    //Input 2 container
+                    sgStatusLightInputB.visible = true
+                    inputTwoText.visible = false
+                    inputTwoToggle.visible = false
+                    //Input 3 container
+                    sgStatusLightTwo.visible = true
+                    toggleSwitch1.visible = false
+                    inputThirdText.visible = true
+                    currentIndex = 5
+//                    tabIndex = logicSelection.index
 
+                    platformInterface.inverter_97.update();
 
                 }
             }
             SGSegmentedButton{
                 text: qsTr("Buffer")
                 onClicked: {
-                    platformInterface.buffer_97.update();
-                    inputName = "B = C"
+//                    inputName = "B = C"
                     gateImageSource = "qrc:/views/logic-gate/images/nl7sz58/buffer.png"
-                    sgStatusLightTwo.opacity = 1
-                    toggleSwitch1.opacity = 0
-                    inputThirdText.opacity = 0
-                    sgStatusLightInputB.opacity = 1
-                    inputTwoText.opacity = 0
-                    inputTwoToggle.opacity = 0
+                    inputAToggleContainer.anchors.topMargin = 70
+                    inputBToggleContainer.anchors.topMargin = 70
+                    inputBToggleContainer.anchors.leftMargin = 150
+                    thirdInput.anchors.topMargin = 20
+                    //Input 2 container
+                    sgStatusLightInputB.visible = true
+                    inputTwoText.visible = false
+                    inputTwoToggle.visible = false
+                    //Input 3 container
+                    sgStatusLightTwo.visible = true
+                    toggleSwitch1.visible = false
+                    inputThirdText.visible = true
                     currentIndex = 6
-                    tabIndex = logicSelection.index
-
+//                    tabIndex = logicSelection.index
+                    platformInterface.buffer_97.update();
                 }
             }
         }
@@ -411,7 +447,6 @@ Rectangle {
                 anchors{
                     top: parent.top
                     topMargin: 30
-
                 }
 
                 onClicked: {
@@ -470,11 +505,11 @@ Rectangle {
                 id: sgStatusLightInputB
                 // Optional Configuration:
                 label: "<b>" + value_B + "</b>" // Default: "" (if not entered, label will not appear)
-                labelLeft: false        // Default: true
-                // status: "off"           // Default: "off"
+//                labelLeft: false        // Default: true
+//                status: "off"           // Default: "off"
                 lightSize: 50           // Default: 50
                 textColor: "black"           // Default: "black"
-                status : "off"
+                status: off
             }
 
         }
@@ -503,12 +538,10 @@ Rectangle {
                 id: sgStatusLight
                 // Optional Configuration:
                 label: "<b>Y</b>" // Default: "" (if not entered, label will not appear)
-                labelLeft: false        // Default: true
+//                labelLeft: false        // Default: true
                 lightSize: 50           // Default: 50
                 textColor: "black"           // Default: "black"
                 status : "off"
-
-
             }
         }
 
@@ -520,19 +553,18 @@ Rectangle {
             anchors {
                 top: gatesImage.bottom
                 horizontalCenter: gatesImage.horizontalCenter
-                horizontalCenterOffset: -10
-
+                horizontalCenterOffset: -30
             }
+
             SGStatusLight {
                 id: sgStatusLightTwo
                 // Optional Configuration:
                 label: value_C // Default: "" (if not entered, label will not appear)
-                labelLeft: false        // Default: true
+//                labelLeft: false        // Default: true
                 // status: "off"           // Default: "off"
                 lightSize: 50           // Default: 50
                 textColor: "black"           // Default: "black"
                 status : "off"
-
             }
 
             Text {
@@ -553,18 +585,15 @@ Rectangle {
                     left: inputThirdText.right
                 }
 
-
                 onClicked: {
                     if(inputThirdText.text === "A") {
                         if(toggleSwitch1.checked)  {
                             platformInterface.write_io_97.update(1, platformInterface.nl7sz97_io_state.b, platformInterface.nl7sz97_io_state.c)
                             platformInterface.write_io_97.show()
-
                         }
                         else {
                             platformInterface.write_io_97.update(0,platformInterface.nl7sz97_io_state.b, platformInterface.nl7sz97_io_state.c)
                             platformInterface.write_io_97.show()
-
                         }
                     }
 
@@ -572,7 +601,6 @@ Rectangle {
                         if(toggleSwitch1.checked)  {
                             platformInterface.write_io_97.update( platformInterface.nl7sz97_io_state.a, 1, platformInterface.nl7sz97_io_state.c)
                             platformInterface.write_io_97.show()
-
                         }
                         else {
                             platformInterface.write_io_97.update( platformInterface.nl7sz97_io_state.a, 0, platformInterface.nl7sz97_io_state.c)
