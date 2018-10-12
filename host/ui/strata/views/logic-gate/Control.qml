@@ -28,7 +28,7 @@ Rectangle {
         //Timer added as firmware can't recieve back to back 2 commands.
         Timer{
             id: timer
-            interval: 400;
+            interval: 200;
             repeat:false;
             onTriggered:
                 if(controlContainer.currentIndex == 0){
