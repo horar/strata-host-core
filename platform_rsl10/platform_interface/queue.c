@@ -17,16 +17,15 @@ void list_init()
     g_queue->tail = NULL;
     g_queue->size = 0;
 
-    size_t size = 128 + sizeof(node_t);
-    pool = memory_pool_init(5,size);
+    pool = memory_pool_init(5, sizeof(node_t));
 }
 
 void push(char *data)
 {
     node_t *new_node = (node_t*)memory_pool_acquire(pool);
 
-    //memcpy(&new_node->data, &data, strlen(data));
-    new_node->data = data;
+    memcpy(new_node->data, data, strlen(data));
+    //new_node->data = data;
     new_node->next = NULL;
     /*
      * we could you use strncpy if we want to specify the size of

@@ -9,13 +9,14 @@
 int main( ) {
     //initialize queue and memory pool memory
     list_init();
-    push("{\"cmd\":\"request_platform_id\"}");
+    push("{\"cmd\":\"request_platform_id\", \"{\\\"nak\\\":\\\"\\\",\\\"payload\\\":{\\\"return_value\\\":false,\\\"return_string\\\":\\\"json error: this now should be the maximum length\\\"}}\"}");
     memory_pool_dump(pool);
     push("{\"cmd\" : \"whatever\"}");
     push("{\"cmd\":\"request_echo\"}");
     push("Hello world!");
     push("{\"cmd\" : \"general_purpose\"}");
     memory_pool_dump(pool);
+    print_list();
     while (g_queue->head != NULL) {
         execute();
     }

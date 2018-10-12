@@ -188,7 +188,7 @@ void * memory_pool_acquire(memory_pool_t * mp)
     mp->pool->inuse = true;
     mp->pool = mp->pool->next;               // pop stack item
     mp->available --;
-    LOG_DEBUG(" mp=%p, data=%p", mp, data);
+    LOG_DEBUG(" mp=%p, data=%p, magic =%x", mp, data, header->magic);
     return data;
 }
 

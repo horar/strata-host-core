@@ -10,7 +10,7 @@
 #include "memory_pool.h"
 
 typedef struct node {
-    char *data;
+    char data[128];
     struct node *next;
 } node_t;
 
