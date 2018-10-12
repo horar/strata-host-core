@@ -15,7 +15,7 @@
 #define DEBUG_MESSAGES 1  // 1 to enable debug/error print messages
 
 #if DEBUG_MESSAGES
-#define MAX_MSG_SIZE 500
+  #define MAX_MSG_SIZE 500
   #define FLE (strrchr(__FILE__, '/') ? strrchr(__FILE__, '/') + 1 : __FILE__)
   #define LOG_DEBUG(format, args...) do { \
     char msg[MAX_MSG_SIZE]; \

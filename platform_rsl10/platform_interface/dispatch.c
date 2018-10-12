@@ -113,9 +113,7 @@ void request_platform_id (cJSON *payload_value) {
      * for echo you could echo whatever you received from rx uart
      * UART->TX_DATA = uart_rx_buffer;
      */
-    if (payload_value == NULL) {
-        return;
-    }
+
 }
 
 void request_echo (cJSON *payload_value) {
@@ -124,9 +122,6 @@ void request_echo (cJSON *payload_value) {
      * you could echo whatever you received from rx uart
      * UART->TX_DATA = uart_rx_buffer;
      */
-    if (payload_value == NULL) {
-        return;
-    }
 }
 
 void general_purpose (cJSON *payload_value) {

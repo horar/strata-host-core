@@ -8,7 +8,7 @@
 
 int main( ) {
     //initialize queue and memory pool memory
-    list_init();
+    queue_memory_pool_init();
     push("{\"cmd\":\"request_platform_id\", \"{\\\"nak\\\":\\\"\\\",\\\"payload\\\":{\\\"return_value\\\":false,\\\"return_string\\\":\\\"json error: this now should be the maximum length\\\"}}\"}");
     memory_pool_dump(pool);
     push("{\"cmd\" : \"whatever\"}");
@@ -22,7 +22,7 @@ int main( ) {
     }
     memory_pool_dump(pool);
     //free queue and memory pool memory
-    queue_destroy();
+    queue_memory_pool_destroy();
     printf("END\n");
     return 0;
 }

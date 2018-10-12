@@ -9,7 +9,7 @@
 #include "dispatch.h"
 
 
-void list_init()
+void gueue_memory_pool_init()
 {
     g_queue = (queue_t*)malloc(sizeof(queue_t));
 
@@ -19,7 +19,13 @@ void list_init()
 
     pool = memory_pool_init(5, sizeof(node_t));
 }
-
+/**
+* Add a new element at the end of the list if a list already exist.
+* otherwise, it will add the first element. It takes two arguments,
+* first, will be a pointer to data, which will be the json command
+* and second is a pointer to the list itself to store the data in
+* each node.
+**/
 void push(char *data)
 {
     node_t *new_node = (node_t*)memory_pool_acquire(pool);
@@ -83,7 +89,7 @@ void print_list()
     }
     printf("NULL\n");
 }
-void queue_destroy(){
+void queue_memory_pool_destroy(){
 
     memory_pool_destroy(pool);
     free(g_queue);

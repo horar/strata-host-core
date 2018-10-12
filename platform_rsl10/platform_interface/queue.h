@@ -30,11 +30,11 @@ typedef struct {
 queue_t *g_queue;
 memory_pool_t *pool;
 
-void list_init(void);
+void queue_memory_pool_init(void);
 void push(char *data);
 void pop(void);
 void execute(void);
-void queue_destroy(void);
+void queue_memory_pool_destroy(void);
 
 // helper function
 void print_list(void);
