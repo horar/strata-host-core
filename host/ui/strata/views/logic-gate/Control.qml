@@ -48,8 +48,7 @@ Rectangle {
                 console.log("in view one")
                 partOne.visible = true
                 partTwo.visible = false
-                timer.start()
-//                partOne.resetToIndex0()
+                timer.start()   //At the end of the timer, reset function will be called
                 platformInterface.mux_97.update();
             }
         }
@@ -60,12 +59,10 @@ Rectangle {
             onClicked: {
                 platformInterface.off_97_led.update()
                 controlContainer.currentIndex = 1
-//                partOne.tabIndex = 0
                 console.log("in view two")
                 partOne.visible = false
                 partTwo.visible = true
-                timer.start()
-//                partTwo.resetToIndex0()
+                timer.start()   //At the end of the timer, reset function will be called
                 platformInterface.nand.update()
             }
         }
@@ -100,25 +97,6 @@ Rectangle {
 
             property int currentIndex: 0
 
-//            onCurrentIndexChanged: {
-//                switch (currentIndex){
-//                case 0:
-//                    console.log("in view one")
-//                    partOne.visible = true
-//                    partTwo.visible = false
-//                    platformInterface.off_led.update()
-//                    timer.start()
-//                    break;
-//                case 1:
-//                     console.log("in view two")
-//                    partOne.visible = false
-//                    partTwo.visible = true
-//                    platformInterface.off_97_led.update()
-//                    timer.start()
-//                    break;
-//                }
-//            }
-
             boundsBehavior: Flickable.StopAtBounds
             contentWidth: 1200
             contentHeight: 725
@@ -127,18 +105,15 @@ Rectangle {
             }
             clip: true
 
-          PartOne {
-              id: partOne
-              visible: true
+            PartOne {
+                id: partOne
+                visible: true
+            }
 
-          }
-
-          PartTwo {
-              id: partTwo
-              visible: false
-
-
-          }
+            PartTwo {
+                id: partTwo
+                visible: false
+            }
         }
     }
 }
