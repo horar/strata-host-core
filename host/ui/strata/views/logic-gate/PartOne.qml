@@ -1,14 +1,11 @@
 import QtQuick 2.9
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 1.4
-
 import "qrc:/views/logic-gate/sgwidgets"
-
 
 Rectangle {
     id: container
     property string gateImageSource
-    property string inputName
     property string value_A: "A"
     property string value_B: "B"
     property string value_C: "C"
@@ -16,8 +13,8 @@ Rectangle {
     property var value_BNoti
     property var value_CNoti
     property int currentIndex: 0
-//    property var tabIndex: logicSelection.index
 
+    //Reset view for the nl7sz97 tab
     function resetToIndex0(){
         gateImageSource = "qrc:/views/logic-gate/images/nl7sz97/mux.png"
         inputAToggleContainer.anchors.topMargin = -10
@@ -32,10 +29,10 @@ Rectangle {
         sgStatusLightTwo.visible = false
         toggleSwitch1.visible = true
         inputThirdText.visible = true
-        platformInterface.mux_97.update();
         currentIndex = 0
-//        platformInterface.mux_97.update();
-     }
+        logicSelection.index = 0
+        platformInterface.mux_97.update();
+    }
 
     Component.onCompleted: {
         resetToIndex0();
@@ -57,6 +54,7 @@ Rectangle {
             value_C = "C"
             value_CNoti = platformInterface.nl7sz97_io_state.c
         }
+
         if(currentIndex == 1) { //NL7SZ97 AND
             value_A = "A"
             value_ANoti = platformInterface.nl7sz97_io_state.a
@@ -65,6 +63,7 @@ Rectangle {
             value_C = "B"
             value_CNoti = platformInterface.nl7sz97_io_state.b
         }
+
         if(currentIndex == 2) { //NL7SZ97 OR NOTC
             value_A = "A"
             value_ANoti = platformInterface.nl7sz97_io_state.a
@@ -73,6 +72,7 @@ Rectangle {
             value_C = "B"
             value_CNoti = platformInterface.nl7sz97_io_state.b
         }
+
         if(currentIndex == 3) { //NL7SZ97 AND NOTC
 
             value_A = "B"
@@ -82,6 +82,7 @@ Rectangle {
             value_C = "A"
             value_CNoti = platformInterface.nl7sz97_io_state.a
         }
+
         if(currentIndex == 4) { //NL7SZ97 OR
             value_A = "B"
             value_ANoti = platformInterface.nl7sz97_io_state.b
@@ -89,8 +90,8 @@ Rectangle {
             value_BNoti = platformInterface.nl7sz97_io_state.c
             value_C = "A"
             value_CNoti = platformInterface.nl7sz97_io_state.a
-
         }
+
         if(currentIndex == 5) { //NL7SZ97 Inverter
             value_A = "C"
             value_ANoti = platformInterface.nl7sz97_io_state.c
@@ -98,8 +99,8 @@ Rectangle {
             value_BNoti = platformInterface.nl7sz97_io_state.a
             value_C = "B"
             value_CNoti = platformInterface.nl7sz97_io_state.b
-
         }
+
         if(currentIndex == 6) { //NL7SZ97 Buffer
             value_A = "B"
             value_ANoti = platformInterface.nl7sz97_io_state.b
@@ -107,28 +108,25 @@ Rectangle {
             value_BNoti = platformInterface.nl7sz97_io_state.a
             value_C = "C"
             value_CNoti = platformInterface.nl7sz97_io_state.c
-
         }
     }
 
-    // For the Selector Input LED
+    // For the Selector Input LED Input 2
     property var valueB: value_BNoti
-
     onValueBChanged: {
         if( valueB === 1) {
             inputTwoToggle.checked = true
-             sgStatusLightInputB.status = "green"
+            sgStatusLightInputB.status = "green"
         }
         else {
             console.log("switch 1 is off")
             inputTwoToggle.checked = false
-              sgStatusLightInputB.status = "off"
+            sgStatusLightInputB.status = "off"
         }
-
     }
 
+    // For the Selector switch Input 1
     property var valueA: value_ANoti
-
     onValueAChanged: {
         if( valueA === 1) {
             inputOneToggle.checked = true
@@ -139,19 +137,17 @@ Rectangle {
         }
     }
 
-    // For output Y
+    // For output Y LED
     property var valueY:  platformInterface.nl7sz97_io_state.y
-
     onValueYChanged: {
-
         if(valueY === 1) {
             sgStatusLight.status = "green"
         }
         else sgStatusLight.status = "off"
     }
 
+     // For the Selector LED Input 3
     property var valueC: value_CNoti
-
     onValueCChanged: {
         console.log("change in c")
         if(valueC === 1) {
@@ -189,7 +185,7 @@ Rectangle {
             /*
               Changing the setting of the page based on which gate it is
             */
-            SGSegmentedButton{
+            SGSegmentedButton{  //nl7sz97 Mux
                 id: muxgate
                 text: qsTr("MUX")
                 checked: true  // Sets default checked button when exclusive
@@ -209,11 +205,10 @@ Rectangle {
                     inputThirdText.visible = true
                     platformInterface.mux_97.update();
                     currentIndex = 0
-//                    tabIndex = logicSelection.index
                 }
             }
 
-            SGSegmentedButton{
+            SGSegmentedButton{  //nl7sz97 And
                 text: qsTr("AND")
                 onClicked: {
                     gateImageSource = "qrc:/views/logic-gate/images/nl7sz97/and.png"
@@ -229,14 +224,12 @@ Rectangle {
                     sgStatusLightTwo.visible = true
                     toggleSwitch1.visible = false
                     inputThirdText.visible = true
-
-                    currentIndex = 1
-//                    tabIndex = logicSelection.index
                     platformInterface.and_97.update();
+                    currentIndex = 1
                 }
             }
 
-            SGSegmentedButton{
+            SGSegmentedButton{  //nl7sz97 OR gate with Not C
                 text: qsTr("OR NOTC")
                 onClicked: {
                     gateImageSource = "qrc:/views/logic-gate/images/nl7sz97/or_nc.png"
@@ -253,12 +246,12 @@ Rectangle {
                     toggleSwitch1.visible = false
                     inputThirdText.visible = true
                     currentIndex = 2
-//                    tabIndex = logicSelection.index
                     platformInterface.or_nc_97.update();
 
                 }
             }
-            SGSegmentedButton{
+
+            SGSegmentedButton{  //nl7sz97 And gate with Not C
                 text: qsTr("AND NOTC")
                 onClicked: {
                     gateImageSource = "qrc:/views/logic-gate/images/nl7sz97/and_nc.png"
@@ -275,11 +268,11 @@ Rectangle {
                     toggleSwitch1.visible = false
                     inputThirdText.visible = visible
                     currentIndex = 3
-//                    tabIndex = logicSelection.index
                     platformInterface.and_nc_97.update();
                 }
             }
-            SGSegmentedButton{
+
+            SGSegmentedButton{  //nl7sz97 OR gate
                 text: qsTr("OR")
                 onClicked: {
                     gateImageSource = "qrc:/views/logic-gate/images/nl7sz97/or.png"
@@ -296,11 +289,11 @@ Rectangle {
                     toggleSwitch1.visible = false
                     inputThirdText.visible = true
                     currentIndex = 4
-//                    tabIndex = logicSelection.index
                     platformInterface.or_97.update();
                 }
             }
-            SGSegmentedButton{
+
+            SGSegmentedButton{  //nl7sz97 Inverter
                 text: qsTr("Inverter")
                 onClicked: {
                     gateImageSource = "qrc:/views/logic-gate/images/nl7sz58/inverter.png"
@@ -317,16 +310,14 @@ Rectangle {
                     toggleSwitch1.visible = false
                     inputThirdText.visible = true
                     currentIndex = 5
-//                    tabIndex = logicSelection.index
-
                     platformInterface.inverter_97.update();
 
                 }
             }
-            SGSegmentedButton{
+
+            SGSegmentedButton{  //nl7sz97 Buffer
                 text: qsTr("Buffer")
                 onClicked: {
-//                    inputName = "B = C"
                     gateImageSource = "qrc:/views/logic-gate/images/nl7sz58/buffer.png"
                     inputAToggleContainer.anchors.topMargin = 70
                     inputBToggleContainer.anchors.topMargin = 70
@@ -341,12 +332,10 @@ Rectangle {
                     toggleSwitch1.visible = false
                     inputThirdText.visible = true
                     currentIndex = 6
-//                    tabIndex = logicSelection.index
                     platformInterface.buffer_97.update();
                 }
             }
         }
-
     }
 
     Rectangle {
@@ -359,18 +348,17 @@ Rectangle {
             horizontalCenter: parent.horizontalCenter
         }
 
-        Rectangle {
+        Rectangle { //Input 1 Container
             id: inputAToggleContainer
             width: 100
             height: 100
 
-           anchors {
+            anchors {
                 left: logicContainer.left
                 top: logicContainer.top
-
             }
 
-            SGSwitch {
+            SGSwitch {  //Input 1 switch
                 id: inputOneToggle
                 anchors{
                     top: parent.top
@@ -393,33 +381,29 @@ Rectangle {
 
                     else if(inputOneText.text === "B") {
                         if(inputOneToggle.checked)  {
-
                             platformInterface.write_io_97.update(platformInterface.nl7sz97_io_state.a, 1 , platformInterface.nl7sz97_io_state.c)
                             platformInterface.write_io_97.show()
-
                         }
                         else {
                             platformInterface.write_io_97.update(platformInterface.nl7sz97_io_state.a, 0 , platformInterface.nl7sz97_io_state.c)
                             platformInterface.write_io_97.show()
-
                         }
                     }
+
                     else if(inputOneText.text === "C") {
                         if(inputOneToggle.checked)  {
                             platformInterface.write_io_97.update( platformInterface.nl7sz97_io_state.a, platformInterface.nl7sz97_io_state.b, 1)
                             platformInterface.write_io_97.show()
-
                         }
                         else {
                             platformInterface.write_io_97.update(platformInterface.nl7sz97_io_state.a, platformInterface.nl7sz97_io_state.b, 0)
                             platformInterface.write_io_97.show()
-
-                        }
+                       }
                     }
                 }
             }
 
-            Text {
+            Text {  //Input 1 text
                 id: inputOneText
                 text: value_A
                 font.bold: true
@@ -432,7 +416,7 @@ Rectangle {
             }
         }
 
-        Rectangle {
+        Rectangle { //Input 2 Container
             id: inputBToggleContainer
             width: 100
             height: 100
@@ -442,7 +426,7 @@ Rectangle {
                 top: inputAToggleContainer.bottom
             }
 
-            SGSwitch {
+            SGSwitch {  //Input 2 switch
                 id: inputTwoToggle
                 anchors{
                     top: parent.top
@@ -450,17 +434,14 @@ Rectangle {
                 }
 
                 onClicked: {
-
                     if(inputTwoText.text === "A") {
                         if(inputTwoToggle.checked)  {
                             platformInterface.write_io_97.update(1, platformInterface.nl7sz97_io_state.b, platformInterface.nl7sz97_io_state.c)
                             platformInterface.write_io_97.show()
-
                         }
                         else {
                             platformInterface.write_io_97.update(0,platformInterface.nl7sz97_io_state.b, platformInterface.nl7sz97_io_state.c)
                             platformInterface.write_io_97.show()
-
                         }
                     }
 
@@ -468,13 +449,13 @@ Rectangle {
                         if(inputTwoToggle.checked)  {
                             platformInterface.write_io_97.update(platformInterface.nl7sz97_io_state.a, 1,platformInterface.nl7sz97_io_state.c)
                             platformInterface.write_io_97.show()
-
                         }
                         else {
                             platformInterface.write_io_97.update(platformInterface.nl7sz97_io_state.a, 0,platformInterface.nl7sz97_io_state.c)
                             platformInterface.write_io_97.show()
                         }
                     }
+
                     else if(inputTwoText.text === "C") {
                         if(inputTwoToggle.checked)  {
                             platformInterface.write_io_97.update(platformInterface.nl7sz97_io_state.a,platformInterface.nl7sz97_io_state.b,1)
@@ -483,14 +464,13 @@ Rectangle {
                         else {
                             platformInterface.write_io_97.update(platformInterface.nl7sz97_io_state.a, platformInterface.nl7sz97_io_state.b,0)
                             platformInterface.write_io_97.show()
-
                         }
                     }
                 }
                 transform: Rotation { origin.x: 25; origin.y: 25; angle: 270 }
             }
 
-            Text {
+            Text {  //Input 2 text
                 id: inputTwoText
                 text: value_B
                 font.bold: true
@@ -501,20 +481,17 @@ Rectangle {
                     verticalCenter: parent.verticalCenter
                 }
             }
-            SGStatusLight {
+
+            SGStatusLight { //Input 2 Status Light
                 id: sgStatusLightInputB
-                // Optional Configuration:
                 label: "<b>" + value_B + "</b>" // Default: "" (if not entered, label will not appear)
-//                labelLeft: false        // Default: true
-//                status: "off"           // Default: "off"
-                lightSize: 50           // Default: 50
-                textColor: "black"           // Default: "black"
+                lightSize: 50
+                textColor: "black"
                 status: off
             }
-
         }
 
-        Image {
+        Image { //Center gate picture
             id: gatesImage
             source: gateImageSource
             anchors {
@@ -524,7 +501,7 @@ Rectangle {
             fillMode: Image.PreserveAspectFit
         }
 
-        Rectangle {
+        Rectangle { //Output Container
             id: thirdInput
             width: 50
             height: 50
@@ -532,20 +509,18 @@ Rectangle {
                 left: gatesImage.right
                 top: inputAToggleContainer.top
                 topMargin: 50
-
             }
-            SGStatusLight {
+
+            SGStatusLight { //Output status light
                 id: sgStatusLight
-                // Optional Configuration:
                 label: "<b>Y</b>" // Default: "" (if not entered, label will not appear)
-//                labelLeft: false        // Default: true
-                lightSize: 50           // Default: 50
-                textColor: "black"           // Default: "black"
+                lightSize: 50
+                textColor: "black"
                 status : "off"
             }
         }
 
-        Rectangle {
+        Rectangle { //Input 3 Conatiner
             id: inputCToggleContainer
             width: 50
             height: 50
@@ -556,18 +531,16 @@ Rectangle {
                 horizontalCenterOffset: -30
             }
 
-            SGStatusLight {
+            SGStatusLight { //Input 3 status light
                 id: sgStatusLightTwo
                 // Optional Configuration:
                 label: value_C // Default: "" (if not entered, label will not appear)
-//                labelLeft: false        // Default: true
-                // status: "off"           // Default: "off"
-                lightSize: 50           // Default: 50
-                textColor: "black"           // Default: "black"
+                lightSize: 50
+                textColor: "black"
                 status : "off"
             }
 
-            Text {
+            Text {  //Input 3 text
                 id: inputThirdText
                 text: value_C
                 font.bold: true
@@ -576,10 +549,10 @@ Rectangle {
                     left: parent.left
                     horizontalCenter: parent.horizontalCenter
                     verticalCenter: parent.verticalCenter
-
                 }
             }
-            SGSwitch {
+
+            SGSwitch {  //Input 3 switch
                 id: toggleSwitch1
                 anchors{
                     left: inputThirdText.right
@@ -607,12 +580,12 @@ Rectangle {
                             platformInterface.write_io_97.show()
                         }
                     }
+
                     else if(inputThirdText.text === "C") {
                         if(toggleSwitch1.checked)  {
 
                             platformInterface.write_io_97.update( platformInterface.nl7sz97_io_state.a, platformInterface.nl7sz97_io_state.b, 1)
                             platformInterface.write_io_97.show()
-
                         }
                         else {
                             platformInterface.write_io_97.update(platformInterface.nl7sz97_io_state.a, platformInterface.nl7sz97_io_state.b,0)
@@ -622,13 +595,9 @@ Rectangle {
                 }
 
                 transform: Rotation { origin.x: 25; origin.y: 25; angle: 270 }
-
             }
-
         }
-
     }
-
 }
 
 

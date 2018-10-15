@@ -26,36 +26,37 @@ Item {
                 margins: 15
             }
 
-            //the USB-PD multiport board doesn't support data, so this control is superfulous
-            SGSegmentedButtonStrip {
-                id: dataConfig
-                label: "Data Configuration:"
-                visible: false
-                activeColor: "#666"
-                inactiveColor: "#dddddd"
-                textColor: "#666"
-                activeTextColor: "white"
-                radius: 4
-                buttonHeight: 25
+            SGSlider {
+                id: maximumBoardPower
+                label: "Maximum Power:"
                 anchors {
                     left: margins1.left
                     leftMargin: 72
+                    right: maximumBoardPowerInput.left
+                    rightMargin: 10
                 }
-
-                segmentedButtons: GridLayout {
-                    columnSpacing: 2
-
-                    SGSegmentedButton{
-                        text: qsTr("Charge Only")
-                        checked: true  // Sets default checked button when exclusive
-                    }
-
-                    SGSegmentedButton{
-                        text: qsTr("Something Else")
-                    }
+                from: 30
+                to: 200
+                startLabel: "30W"
+                endLabel: "200W"
+                value: platformInterface.maximum_board_power.watts
+                onMoved: {
+                    //we'll need to address how to handle this when there are devices attached, as that would trigger
+                    //renegotiation with all devices
+                    platformInterface.set_maximum_board_power.update(value);
                 }
             }
 
+            SGSubmitInfoBox {
+                id: maximumBoardPowerInput
+                showButton: false
+                anchors {
+                    verticalCenter: maximumBoardPower.verticalCenter
+                    right: parent.right
+                }
+                //input: inputFault.value.toFixed(0)
+                //onApplied: platformInterface.set_minimum_input_voltage.update(input);   // slider will be updated via notification
+            }
 
             SGSegmentedButtonStrip {
                 id: powerNegotiation
@@ -67,7 +68,7 @@ Item {
                 radius: 4
                 buttonHeight: 25
                 anchors {
-                    top: dataConfig.bottom
+                    top: maximumBoardPower.bottom
                     topMargin: 10
                     left: margins1.left
                     leftMargin: 75
@@ -321,12 +322,12 @@ Item {
 
             SGSubmitInfoBox {
                 id: inputFaultInput
-                buttonVisible: false
+                showButton: false
                 anchors {
                     verticalCenter: inputFault.verticalCenter
                     right: parent.right
                 }
-                input: inputFault.value.toFixed(0)
+                value: inputFault.value.toFixed(0)
                 onApplied: platformInterface.set_minimum_input_voltage.update(input);   // slider will be updated via notification
             }
 
@@ -352,12 +353,12 @@ Item {
 
             SGSubmitInfoBox {
                 id: tempFaultInput
-                buttonVisible: false
+                showButton: false
                 anchors {
                     verticalCenter: tempFault.verticalCenter
                     right: parent.right
                 }
-                input: tempFault.value.toFixed(0)
+                value: tempFault.value.toFixed(0)
                 onApplied: platformInterface.set_maximum_temperature.update(input); // slider will be updated via notification
             }
         }
@@ -431,12 +432,12 @@ Item {
 
             SGSubmitInfoBox {
                 id: foldbackLimitInput
-                buttonVisible: false
+                showButton: false
                 anchors {
                     verticalCenter: foldbackLimit.verticalCenter
                     right: parent.right
                 }
-                input: foldbackLimit.value.toFixed(0)
+                value: foldbackLimit.value.toFixed(0)
                 onApplied: platformInterface.set_input_voltage_foldback.update(platformInterface.foldback_input_voltage_limiting_event.input_voltage_foldback_enabled,
                                                                                input,
                                                                               platformInterface.foldback_input_voltage_limiting_event.foldback_minimum_voltage_power)
@@ -453,7 +454,7 @@ Item {
                 }
                 //when changing the value
                 onActivated: {
-                    //console.log("setting input power foldback to ",limitOutput.comboBox.currentText);
+                    console.log("setting input power foldback to ",limitOutput.comboBox.currentText);
                     platformInterface.set_input_voltage_foldback.update(platformInterface.foldback_input_voltage_limiting_event.input_voltage_foldback_enabled,
                                                                         platformInterface.foldback_input_voltage_limiting_event.foldback_minimum_voltage,
                                                                                  limitOutput.comboBox.currentText)
@@ -534,12 +535,12 @@ Item {
 
             SGSubmitInfoBox {
                 id: foldbackTempInput
-                buttonVisible: false
+                showButton: false
                 anchors {
                     verticalCenter: foldbackTemp.verticalCenter
                     right: parent.right
                 }
-                input: foldbackTemp.value.toFixed(0)
+                value: foldbackTemp.value.toFixed(0)
                 onApplied: platformInterface.set_temperature_foldback.update(platformInterface.foldback_temperature_limiting_event.temperature_foldback_enabled,
                                                                              input,
                                                                              platformInterface.foldback_temperature_limiting_event.foldback_maximum_temperature_power)
@@ -559,7 +560,7 @@ Item {
                     console.log("sending temp foldback update command from limitOutputComboBox");
                     platformInterface.set_temperature_foldback.update(platformInterface.foldback_temperature_limiting_event.temperature_foldback_enabled,
                                                                                  platformInterface.foldback_temperature_limiting_event.foldback_maximum_temperature,
-                                                                                 limitOutput2.displayText)
+                                                                                 limitOutput2.currentText)
                 }
 
                 property var currentFoldbackOuput: platformInterface.foldback_temperature_limiting_event.foldback_maximum_temperature_power

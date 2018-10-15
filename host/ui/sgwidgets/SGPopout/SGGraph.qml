@@ -104,8 +104,8 @@ ChartView {
         id: optionToggle
         visible: rootChart.showOptions
         anchors {
-            right: parent.right
-            top: parent.top
+            right: rootChart.right
+            top: rootChart.top
             margins: 12
         }
         checkable: true
@@ -120,8 +120,8 @@ ChartView {
         id: options
         visible: false
         anchors {
-            top: parent.top
-            left: parent.left
+            top: rootChart.top
+            left: rootChart.left
             margins: 12
         }
 

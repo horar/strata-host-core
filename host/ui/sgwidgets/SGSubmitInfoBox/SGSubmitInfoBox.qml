@@ -21,8 +21,11 @@ Rectangle {
     property alias overrideLabelWidth: labelText.width
     property alias readOnly: infoText.readOnly
     property alias unit: unit.text
+    property alias textInput: infoText
     property real floatValue: { return parseFloat(infoText.text) }
     property int intValue: { return parseInt(infoText.text) }
+    property alias placeholderText: placeholder.text
+    property bool leftJustify: false
 
     implicitHeight: labelLeft ? inputButtonContainer.height : labelText.height + inputButtonContainer.height + inputButtonContainer.anchors.topMargin
     implicitWidth: labelLeft ? labelText.width + inputButtonContainer.width + inputButtonContainer.anchors.leftMargin :
@@ -72,20 +75,20 @@ Rectangle {
 
             TextInput {
                 id: infoText
-                padding: 10
+                padding: 5
                 anchors {
-                    right: parent.right
-                    verticalCenter: parent.verticalCenter
-                    left: parent.left
+                    right: infoContainer.right
+                    verticalCenter: infoContainer.verticalCenter
+                    left: infoContainer.left
                 }
                 text: ""
                 selectByMouse: true
                 readOnly: false
                 font {
-                  family: "Courier" // Monospaced font for better text width uniformity
-                  pixelSize: (Qt.platform.os === "osx") ? 12 : 10;
+                    family: inconsolata.name // inconsolata is monospaced and has clear chars for O/0 etc
+                    pixelSize: (Qt.platform.os === "osx") ? 12 : 10;
                 }
-                horizontalAlignment: TextInput.AlignRight
+                horizontalAlignment: leftJustify ? TextInput.AlignLeft : TextInput.AlignRight
                 validator: realNumberValidation ? realNumberValidator : null
                 onAccepted: root.applied(infoText.text)
                 enabled: root.enabled
@@ -105,6 +108,21 @@ Rectangle {
                     }
                     cursorShape: Qt.IBeamCursor
                     acceptedButtons: Qt.NoButton
+                }
+
+                Text {
+                    id: placeholder
+                    text: ""
+                    color: "#bbb"
+                    visible: infoText.text === ""
+                    anchors {
+                        verticalCenter: infoText.verticalCenter
+                        right: infoText.right
+                        rightMargin: 5
+                        left: infoText.left
+                        leftMargin: 5
+                    }
+                    horizontalAlignment: leftJustify ? TextInput.AlignLeft : TextInput.AlignRight
                 }
             }
         }
@@ -133,5 +151,10 @@ Rectangle {
             enabled: root.enabled
             height: visible ? 40 : 0
         }
+    }
+
+    FontLoader {
+        id: inconsolata
+        source: "fonts/Inconsolata.otf"
     }
 }
