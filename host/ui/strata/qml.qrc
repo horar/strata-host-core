@@ -413,5 +413,62 @@
         <file>views/motor-vortex/sgwidgets/SGToolButton.qml</file>
         <file>views/motor-vortex/DownloadsDrawer.qml</file>
         <file>views/usb-pd-multiport/views/images/powerconverter.png</file>
+        <file>views/usb-hub/sgwidgets/fonts/sgicons.ttf</file>
+        <file>views/usb-hub/sgwidgets/images/sliderHandle.svg</file>
+        <file>views/usb-hub/sgwidgets/images/sliderHandleActive.svg</file>
+        <file>views/usb-hub/sgwidgets/images/sliderThumb.svg</file>
+        <file>views/usb-hub/sgwidgets/images/sliderValue.svg</file>
+        <file>views/usb-hub/sgwidgets/SGAccordion.qml</file>
+        <file>views/usb-hub/sgwidgets/SGAccordionItem.qml</file>
+        <file>views/usb-hub/sgwidgets/SGCapacityBar.qml</file>
+        <file>views/usb-hub/sgwidgets/SGCapacityBarElement.qml</file>
+        <file>views/usb-hub/sgwidgets/SGComboBox.qml</file>
+        <file>views/usb-hub/sgwidgets/SGDivider.qml</file>
+        <file>views/usb-hub/sgwidgets/SGGraph.qml</file>
+        <file>views/usb-hub/sgwidgets/SGLabelledInfoBox.qml</file>
+        <file>views/usb-hub/sgwidgets/SGLayoutDebug.qml</file>
+        <file>views/usb-hub/sgwidgets/SGLayoutDivider.qml</file>
+        <file>views/usb-hub/sgwidgets/SGOutputLogBox.qml</file>
+        <file>views/usb-hub/sgwidgets/SGPopout.qml</file>
+        <file>views/usb-hub/sgwidgets/SGRadioButton.qml</file>
+        <file>views/usb-hub/sgwidgets/SGRadioButtonContainer.qml</file>
+        <file>views/usb-hub/sgwidgets/SGSegmentedButton.qml</file>
+        <file>views/usb-hub/sgwidgets/SGSegmentedButtonStrip.qml</file>
+        <file>views/usb-hub/sgwidgets/SGSlider.qml</file>
+        <file>views/usb-hub/sgwidgets/SGStatusListBox.qml</file>
+        <file>views/usb-hub/sgwidgets/SGSubmitInfoBox.qml</file>
+        <file>views/usb-hub/sgwidgets/SGSwitch.qml</file>
+        <file>views/usb-hub/sgwidgets/SGToolTipPopup.qml</file>
+        <file>views/usb-hub/Content.qml</file>
+        <file>views/usb-hub/Control.qml</file>
+        <file>views/usb-hub/PlatformInterface.qml</file>
+        <file>views/usb-hub/views/AdvancedControl.qml</file>
+        <file>views/usb-hub/views/BasicControl.qml</file>
+        <file>views/usb-hub/views/SystemControl.qml</file>
+        <file>views/usb-hub/views/images/FourPortWireframeAdvancedView.png</file>
+        <file>views/usb-hub/views/images/FourPortWireframeBasicView.png</file>
+        <file>views/usb-hub/sgwidgets/fonts/Inconsolata.otf</file>
+        <file>views/usb-pd-multiport/sgwidgets/fonts/Inconsolata.otf</file>
+        <file>views/usb-hub/views/basic-partial-views/DeviceInfo.qml</file>
+        <file>views/usb-hub/views/basic-partial-views/PlugAnimation.qml</file>
+        <file>views/usb-hub/views/basic-partial-views/PortInfo.qml</file>
+        <file>views/usb-hub/views/basic-partial-views/PortStatBox.qml</file>
+        <file>views/usb-hub/views/images/basic-background.png</file>
+        <file>views/usb-hub/views/images/cord.gif</file>
+        <file>views/usb-hub/views/images/cordReverse.gif</file>
+        <file>views/usb-hub/views/images/icon-efficiency.svg</file>
+        <file>views/usb-hub/views/images/icon-max.svg</file>
+        <file>views/usb-hub/views/images/icon-temp.svg</file>
+        <file>views/usb-hub/views/images/icon-usb-disconnected.svg</file>
+        <file>views/usb-hub/views/images/icon-voltage.svg</file>
+        <file>views/usb-hub/views/basic-partial-views/AudioPortInfo.qml</file>
+        <file>views/usb-hub/views/basic-partial-views/VideoPortInfo.qml</file>
+        <file>views/usb-hub/views/images/penguin.mp4</file>
+        <file>views/usb-hub/views/images/headphonesIcon.png</file>
+        <file>views/usb-hub/views/images/screen.png</file>
+        <file>views/usb-hub/views/images/soundwave.png</file>
+        <file>views/usb-hub/views/images/videoIcon.png</file>
+        <file>views/usb-hub/views/images/usbACord.gif</file>
+        <file>views/usb-hub/views/images/usbACordReverse.gif</file>
     </qresource>
 </RCC>

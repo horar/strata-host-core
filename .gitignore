@@ -1,6 +1,7 @@
 platform/cli/USB-PD/BUILD/*
 *build*/
 *BUILD*/
+*bin*/
 *man*/
 *.pro.user*
 *.pro.user
@@ -38,3 +39,4 @@ platform/applications/*/debug/*
 !platform/applications/*/release/CMakeLists.txt
 !platform/applications/*/debug/CMakeLists.txt
 *.jlink
+.DS_Store

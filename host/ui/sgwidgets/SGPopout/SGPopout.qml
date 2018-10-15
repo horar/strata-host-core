@@ -22,7 +22,7 @@ Rectangle {
     Rectangle {
         id: popout
         anchors {
-            fill: parent
+            fill: parent  // must fill parent because the parentChange is how this works
         }
         color: "#eee"
         border {
@@ -35,7 +35,7 @@ Rectangle {
             color: root.overlaycolor
             opacity: .05
             anchors {
-                fill: parent
+                fill: popout
             }
             z:20
         }
@@ -116,10 +116,10 @@ Rectangle {
         Rectangle {
             id: topBar
             anchors {
-                top: parent.top
-                left: parent.left
+                top: popout.top
+                left: popout.left
             }
-            width: parent.width
+            width: popout.width
             height: 32
             color: popout.color
             border {
@@ -131,8 +131,8 @@ Rectangle {
                 id: title
                 text: root.title
                 anchors {
-                    verticalCenter: parent.verticalCenter
-                    left: parent.left
+                    verticalCenter: topBar.verticalCenter
+                    left: topBar.left
                     leftMargin: 13
                 }
             }
@@ -140,7 +140,7 @@ Rectangle {
             MouseArea {
                 enabled: popout.state === "popped"
                 anchors {
-                    fill: parent
+                    fill: topBar
                 }
 
                 onPressed: {
@@ -177,13 +177,13 @@ Rectangle {
                         family: sgicons.name
                     }
                     anchors {
-                        centerIn: parent
+                        centerIn: popper
                     }
                     color: "#888"
                 }
 
                 MouseArea {
-                    anchors.fill: parent;
+                    anchors.fill: popper;
                     onClicked: {
                         if (popout.state === "unpopped" | popout.state === "" ){
                             if (root.firstPop) {
@@ -219,7 +219,7 @@ Rectangle {
             Loader {
                 id: content
                 anchors {
-                    fill: parent
+                    fill: popoutContent
                 }
             }
         }
@@ -233,7 +233,7 @@ Rectangle {
         Rectangle {
             id: poppedWindow
             anchors {
-                fill: parent
+                fill: parent  // must fill parent because window
             }
             color: "white"
         }
@@ -241,8 +241,8 @@ Rectangle {
         MouseArea {
             id: resize
             anchors {
-                right: parent.right
-                bottom: parent.bottom
+                right: poppedWindow.right
+                bottom: poppedWindow.bottom
             }
             width: 15
             height: 15
@@ -265,9 +265,9 @@ Rectangle {
                 rotation: -45
                 opacity: 0.15
                 anchors {
-                    right: parent.right
+                    right: resize.right
                     rightMargin: 4
-                    bottom: parent.bottom
+                    bottom: resize.bottom
                 }
                 font {
                     pixelSize: 18

@@ -24,7 +24,7 @@ Item {
 
         MouseArea {
             // This blocks all mouseEvents from propagating through the menu to stuff below
-            anchors { fill: parent }
+            anchors { fill: menuContainer }
             hoverEnabled: true
             preventStealing: true
             propagateComposedEvents: false
@@ -32,8 +32,8 @@ Item {
 
         Column  {
             id: menuItems
-            width: parent.width
-            anchors { verticalCenter: parent.verticalCenter }
+            width: menuContainer.width
+            anchors { verticalCenter: menuContainer.verticalCenter }
             visible: false
         }
 
@@ -55,7 +55,7 @@ Item {
         MouseArea{
             id: menuHover
             anchors {
-                fill:parent
+                fill: menuContainer
             }
             hoverEnabled: true
             onEntered: {

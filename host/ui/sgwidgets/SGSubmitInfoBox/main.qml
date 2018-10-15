@@ -10,7 +10,7 @@ Window {
     SGSubmitInfoBox {
         id: applyInfoBox
 
-        value: "6"                  // Default string to be displayed in box
+        value: ""                  // Default string to be displayed in box
         infoBoxWidth: 80            // Must be set by user based on their needs
 
         // Optional configuration:
@@ -25,9 +25,13 @@ Window {
         buttonText: "Apply"             // Default: "submit"
         showButton: true                // Default: false
         unit: "V"                       // Default: ""
+        placeholderText: "Type..." // Default: ""
+        leftJustify: false              // Default: false (justifies text in the input to the left)
 //        overrideLabelWidth: 100       // Default: label contents width - this is useful for lining up lots of these vertically, set them all to the same value
 
         // Useful Signals:
         onApplied: console.log("Applied string value is " + value)
     }
+
+    Component.onCompleted: applyInfoBox.textInput.forceActiveFocus()
 }
