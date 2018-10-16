@@ -17,7 +17,7 @@ Item {
             top: parent.top
             bottom: parent.bottom
         }
-        width: parent.width/2
+        width: parent.width/3
 
         Item {
             id: margins1
@@ -31,7 +31,7 @@ Item {
                 label: "Maximum Power:"
                 anchors {
                     left: margins1.left
-                    leftMargin: 72
+                    leftMargin: 0
                     right: maximumBoardPowerInput.left
                     rightMargin: 10
                 }
@@ -54,82 +54,17 @@ Item {
                     verticalCenter: maximumBoardPower.verticalCenter
                     right: parent.right
                 }
+                infoBoxWidth: 40
                 //input: inputFault.value.toFixed(0)
                 //onApplied: platformInterface.set_minimum_input_voltage.update(input);   // slider will be updated via notification
             }
 
-            SGSegmentedButtonStrip {
-                id: powerNegotiation
-                label: "Power Negotiation:"
-                activeColor: "#666"
-                inactiveColor: "#dddddd"
-                textColor: "#666"
-                activeTextColor: "white"
-                radius: 4
-                buttonHeight: 25
-                anchors {
-                    top: maximumBoardPower.bottom
-                    topMargin: 10
-                    left: margins1.left
-                    leftMargin: 75
-                }
 
-                segmentedButtons: GridLayout {
-                    columnSpacing: 2
-
-                    property var negotiationTypeChanged: platformInterface.power_negotiation.negotiation_type
-
-                    onNegotiationTypeChangedChanged:{
-                        if (platformInterface.power_negotiation.negotiation_type === "dynamic"){
-                            dynamicNegotiationButton.checked = true;
-                            fcfsNegotiationButton.checked = false;
-                            priorityNegotiationButton.checked = false;
-                        }
-                        else if (platformInterface.power_negotiation.negotiation_type === "first_come_first_served"){
-                            dynamicNegotiationButton.checked = false;
-                            fcfsNegotiationButton.checked = true;
-                            priorityNegotiationButton.checked = false;
-                        }
-                        else if (platformInterface.power_negotiation.negotiation_type === "priority"){
-                            dynamicNegotiationButton.checked = false;
-                            fcfsNegotiationButton.checked = false;
-                            priorityNegotiationButton.checked = true;
-                        }
-
-
-                    }
-
-                    SGSegmentedButton{
-                        id:dynamicNegotiationButton
-                        text: qsTr("Dynamic")
-                        checked: true  // Sets default checked button when exclusive
-                        onClicked: {
-                            platformInterface.set_power_negotiation.update("dynamic");
-                        }
-                    }
-
-                    SGSegmentedButton{
-                        id:fcfsNegotiationButton
-                        text: qsTr("FCFS")
-                        onClicked: {
-                            platformInterface.set_power_negotiation.update("first_come_first_served");
-                        }
-                    }
-
-                    SGSegmentedButton{
-                        id:priorityNegotiationButton
-                        text: qsTr("Priority")
-                        onClicked: {
-                            platformInterface.set_power_negotiation.update("priority");
-                        }
-                    }
-                }
-            }
 
             SGDivider {
                 id: leftDiv1
                 anchors {
-                    top: powerNegotiation.bottom
+                    top: maximumBoardPower.bottom
                     topMargin: 10
                 }
             }
@@ -145,7 +80,7 @@ Item {
                     top: leftDiv1.bottom
                     topMargin: 10
                     left: margins1.left
-                    leftMargin: 20
+                    leftMargin: 115
                 }
 
 
@@ -203,9 +138,10 @@ Item {
                 radius: 4
                 buttonHeight: 25
                 anchors {
-                    top: sleepMode.top
-                    left: sleepMode.right
-                    leftMargin: 50
+                    top: sleepMode.bottom
+                    topMargin: 10
+                    left: margins1.left
+                    leftMargin: 105
                 }
 
                 segmentedButtons: GridLayout {
@@ -248,7 +184,7 @@ Item {
             SGDivider {
                 id: leftDiv2
                 anchors {
-                    top: sleepMode.bottom
+                    top: manualSleep.bottom
                     topMargin: 10
                 }
             }
@@ -259,13 +195,16 @@ Item {
                     top: leftDiv2.bottom
                     topMargin: 10
                     left: margins1.left
-                    leftMargin: 89
+                    leftMargin: 90
+                    right: margins1.right
+                    rightMargin: 10
                 }
                 label: "Fault Protection:"
                 textColor: "#666"
                 activeTextColor: "white"
                 radius: 4
                 buttonHeight: 25
+                buttonImplicitWidth:0
 
                 segmentedButtons: GridLayout {
                     columnSpacing: 2
@@ -327,6 +266,7 @@ Item {
                     verticalCenter: inputFault.verticalCenter
                     right: parent.right
                 }
+                infoBoxWidth: 40
                 value: inputFault.value.toFixed(0)
                 onApplied: platformInterface.set_minimum_input_voltage.update(input);   // slider will be updated via notification
             }
@@ -358,6 +298,7 @@ Item {
                     verticalCenter: tempFault.verticalCenter
                     right: parent.right
                 }
+                infoBoxWidth: 40
                 value: tempFault.value.toFixed(0)
                 onApplied: platformInterface.set_maximum_temperature.update(input); // slider will be updated via notification
             }
@@ -369,13 +310,13 @@ Item {
     }
 
     Item {
-        id: rightColumn
+        id: middleColumn
         anchors {
             left: leftColumn.right
             top: parent.top
             bottom: parent.bottom
-            right: parent.right
         }
+        width: parent.width/3
 
 
         Item {
@@ -437,6 +378,7 @@ Item {
                     verticalCenter: foldbackLimit.verticalCenter
                     right: parent.right
                 }
+                infoBoxWidth: 40
                 value: foldbackLimit.value.toFixed(0)
                 onApplied: platformInterface.set_input_voltage_foldback.update(platformInterface.foldback_input_voltage_limiting_event.input_voltage_foldback_enabled,
                                                                                input,
@@ -452,6 +394,7 @@ Item {
                     top: foldbackLimit.bottom
                     topMargin: 10
                 }
+                comboBoxWidth: 60
                 //when changing the value
                 onActivated: {
                     console.log("setting input power foldback to ",limitOutput.comboBox.currentText);
@@ -540,6 +483,7 @@ Item {
                     verticalCenter: foldbackTemp.verticalCenter
                     right: parent.right
                 }
+                infoBoxWidth: 40
                 value: foldbackTemp.value.toFixed(0)
                 onApplied: platformInterface.set_temperature_foldback.update(platformInterface.foldback_temperature_limiting_event.temperature_foldback_enabled,
                                                                              input,
@@ -555,6 +499,7 @@ Item {
                     top: foldbackTemp.bottom
                     topMargin: 10
                 }
+                comboBoxWidth: 60
                 //when the value is changed by the user
                 onActivated: {
                     console.log("sending temp foldback update command from limitOutputComboBox");
@@ -568,6 +513,127 @@ Item {
                 onCurrentFoldbackOuputChanged: {
                     limitOutput2.currentIndex = limitOutput2.comboBox.find( parseInt (platformInterface.foldback_temperature_limiting_event.foldback_maximum_temperature_power))
                 }
+            }
+        }
+}
+
+    Item{
+        id: rightColumn
+        anchors {
+            right: root.right
+            top: root.top
+            bottom: root.bottom
+        }
+        width: root.width/3
+
+        SGStatusListBox {
+            id: currentFaults
+            height: rightColumn.height/2
+            width: rightColumn.width
+            title: "Current Faults:"
+            model: faultListModel
+
+            property var underVoltageEvent: platformInterface.input_under_voltage_notification
+            property var overTempEvent: platformInterface.over_temperature_notification
+            property string stateMessage:""
+
+            onUnderVoltageEventChanged: {
+                if (underVoltageEvent.state === "below"){   //add input voltage message to list
+                    stateMessage = "Input is below ";
+                    stateMessage += platformInterface.input_under_voltage_notification.minimum_voltage;
+                    stateMessage += " V";
+                    //if there's already an input voltage fault in the list, remove it (there can only be one at a time)
+                    for(var i = 0; i < faultListModel.count; ++i){
+                        var theItem = faultListModel.get(i);
+                        if (theItem.type === "voltage"){
+                            faultListModel.remove(i);
+                        }
+                    }
+                    faultListModel.append({"type":"voltage", "port":0, "status":stateMessage});
+
+                }
+                else{                                       //remove input voltage message from list
+                    for(var j = 0; j < faultListModel.count; ++j){
+                        var theListItem = faultListModel.get(j);
+                        if (theListItem.type === "voltage"){
+                            faultListModel.remove(j);
+                        }
+                    }
+                }
+            }
+
+            onOverTempEventChanged: {
+                if (underVoltageEvent.state === "above"){   //add temp  message to list
+                    stateMessage = platformInterface.over_temperature_notification.port
+                    stateMessage += " temperature is above ";
+                    stateMessage += platformInterface.over_temperature_notification.maximum_temperature;
+                    stateMessage += " °C";
+                    faultListModel.append({"type":"temperature", "port":platformInterface.over_temperature_notification.port, "status":stateMessage});
+                }
+                else{                                       //remove temp message for the correct port from list
+                    for(var i = 0; i < faultListModel.count; ++i){
+                        var theItem = faultListModel.get(i);
+                        if (theItem.type === "temperature" && theItem.port === platformInterface.over_temperature_notification.port){
+                            faultListModel.remove(i);
+                        }
+                    }
+                }
+            }
+
+            ListModel{
+                id:faultListModel
+            }
+        }
+
+
+
+        SGOutputLogBox {
+            id: faultHistory
+            height: rightColumn.height/2
+            anchors {
+                top: currentFaults.bottom
+            }
+            width: rightColumn.width
+            title: "Fault History:"
+
+            property var underVoltageEvent: platformInterface.input_under_voltage_notification
+            property var overTempEvent: platformInterface.over_temperature_notification
+            property string stateMessage:""
+
+            onUnderVoltageEventChanged: {
+                if (underVoltageEvent.state === "below"){   //add input voltage message to list
+                    stateMessage = "Input is below ";
+                    stateMessage += platformInterface.input_under_voltage_notification.minimum_voltage;
+                    stateMessage += " V";
+                    console.log("adding message to fault history",stateMessage);
+                    faultHistory.input = stateMessage;
+
+                }
+                else{
+//                    stateMessage = "Input voltage fault ended at ";
+//                    stateMessage += platformInterface.input_under_voltage_notification.minimum_voltage;
+//                    stateMessage += " V";
+//                    faultHistory.input = stateMessage;
+                }
+            }
+
+            onOverTempEventChanged: {
+                if (underVoltageEvent.state === "above"){   //add temp  message to list
+                    stateMessage = platformInterface.over_temperature_notification.port
+                    stateMessage += " temperature is above ";
+                    stateMessage += platformInterface.over_temperature_notification.maximum_temperature;
+                    stateMessage += " °C";
+                    faultHistory.input = stateMessage;
+                }
+                else{
+//                    stateMessage = platformInterface.over_temperature_notification.port
+//                    stateMessage += " temperature went below ";
+//                    stateMessage += platformInterface.over_temperature_notification.maximum_temperature;
+//                    stateMessage += " °C";
+//                    faultHistory.input = stateMessage;
+                }
+
+
             }
         }
     }

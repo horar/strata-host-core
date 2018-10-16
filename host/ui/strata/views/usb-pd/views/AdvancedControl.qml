@@ -12,19 +12,10 @@ Rectangle {
         fill: parent
     }
 
-    Overview {
-        id: overview
-        height: 310
-
-        SGLayoutDivider {
-            position: "bottom"
-        }
-    }
-
     SGAccordion {
         id: settingsAccordion
         anchors {
-            top: overview.bottom
+            top: root.top
             bottom: root.bottom
         }
         width: root.width
@@ -54,25 +45,6 @@ Rectangle {
                 contents: SGPopout {
                     portNumber: 2
                     portColor: "#3bb539"
-                }
-            }
-
-            SGAccordionItem {
-                title: "<b>Port 3</b>"
-                open: true
-                contents: SGPopout {
-                    portNumber: 3
-                    portColor: "#d68f14"
-                }
-            }
-
-            SGAccordionItem {
-                title: "<b>Port 4</b>"
-                open: true
-                contents: SGPopout {
-                    portNumber: 4
-                    portConnected: false
-                    portColor: "#2348cd"
                 }
             }
         }

@@ -32,26 +32,16 @@ Item {
     PlugAnimation {
         id: port1Animation
         x: 748 * ratioCalc
-        y: 63 * ratioCalc
+        y: 170 * ratioCalc
     }
+
 
     PlugAnimation {
         id: port2Animation
         x: 748 * ratioCalc
-        y: 255 * ratioCalc
+        y: 535 * ratioCalc
     }
 
-    PlugAnimation {
-        id: port3Animation
-        x: 748 * ratioCalc
-        y: 447 * ratioCalc
-    }
-
-    PlugAnimation {
-        id: port4Animation
-        x: 748 * ratioCalc
-        y: 639 * ratioCalc
-    }
 
     Item {
         id: inputColumn
@@ -67,11 +57,11 @@ Item {
             color: "#eee"
             anchors {
                 top: inputColumn.top
-                topMargin: 45 * ratioCalc
+                topMargin: 55 * ratioCalc
                 left: inputColumn.left
                 right: inputColumn.right
             }
-            height: 300 * ratioCalc
+            height: 285 * ratioCalc
 
             Rectangle{
                 id:combinedStatsBackgroundRect
@@ -158,7 +148,7 @@ Item {
                 left: inputColumn.left
                 right: inputColumn.right
             }
-            height: 428 * ratioCalc
+            height: 405 * ratioCalc
 
             property bool inputPowerConnected: true
 
@@ -259,7 +249,7 @@ Item {
             height: 344 * ratioCalc
             anchors {
                 top: portColumn.top
-                topMargin: 45 * ratioCalc
+                topMargin: 54 * ratioCalc
                 left: portColumn.left
                 right: portColumn.right
             }
@@ -365,7 +355,7 @@ Item {
             height: portInfo1.height
             anchors {
                 top: portInfo1.bottom
-                topMargin: 20 * ratioCalc
+                topMargin: 23 * ratioCalc
                 left: portColumn.left
                 right: portColumn.right
             }
@@ -468,7 +458,7 @@ Item {
 
 
     }
-/*
+
     Item {
         id: deviceColumn
         width: 280 * ratioCalc
@@ -596,121 +586,7 @@ Item {
                     }
                 }
             }
+}
 
-            DeviceInfo {
-                height: portInfo1.height
-                width: parent.width
-
-                MouseArea {
-                    anchors {
-                        fill: parent
-                    }
-
-                    property var deviceConnected: platformInterface.usb_pd_port_connect.connection_state
-                    property var deviceDisconnected: platformInterface.usb_pd_port_disconnect.connection_state
-
-                     onDeviceConnectedChanged: {
-                         //console.log("device connected message received in basicControl. Port=",platformInterface.usb_pd_port_connect.port_id,
-                         //            "state=",platformInterface.usb_pd_port_connect.connection_state);
-
-                         if (platformInterface.usb_pd_port_connect.port_id === "USB_C_port_3"){
-                             if (platformInterface.usb_pd_port_connect.connection_state === "connected"){
-                                 port3Animation.source = "images/cord.gif"
-                                 port3Animation.currentFrame = 0
-                                 port3Animation.playing = true
-                                 port3Animation.pluggedIn = !port3Animation.pluggedIn
-                             }
-                         }
-                     }
-
-                     onDeviceDisconnectedChanged:{
-                         //console.log("device disconnected message received in basicControl. Port=",platformInterface.usb_pd_port_disconnect.port_id,
-                          //           "state=",platformInterface.usb_pd_port_disconnect.connection_state);
-
-                         if (platformInterface.usb_pd_port_disconnect.port_id === "USB_C_port_3"){
-                             if (platformInterface.usb_pd_port_disconnect.connection_state === "disconnected"){
-                                 port3Animation.source = "images/cordReverse.gif"
-                                 port3Animation.currentFrame = 0
-                                 port3Animation.playing = true
-                                 port3Animation.pluggedIn = !port3Animation.pluggedIn
-                             }
-                         }
-                    }
-                    onClicked: {
-                        if (!port3Animation.pluggedIn) {
-                            port3Animation.source = "images/cord.gif"
-                            port3Animation.currentFrame = 0
-                            port3Animation.playing = true
-                            port3Animation.pluggedIn = !port3Animation.pluggedIn
-                        } else {
-                            port3Animation.source = "images/cordReverse.gif"
-                            port3Animation.currentFrame = 0
-                            port3Animation.playing = true
-                            port3Animation.pluggedIn = !port3Animation.pluggedIn
-                        }
-                    }
-                }
-            }
-
-            DeviceInfo {
-                height: portInfo1.height
-                width: parent.width
-
-                MouseArea {
-                    anchors {
-                        fill: parent
-                    }
-
-                    property var deviceConnected: platformInterface.usb_pd_port_connect.connection_state
-                    property var deviceDisconnected: platformInterface.usb_pd_port_disconnect.connection_state
-
-                     onDeviceConnectedChanged: {
-                         //console.log("device connected message received in basicControl. Port=",platformInterface.usb_pd_port_connect.port_id,
-                         //            "state=",platformInterface.usb_pd_port_connect.connection_state);
-
-                         if (platformInterface.usb_pd_port_connect.port_id === "USB_C_port_4"){
-                             if (platformInterface.usb_pd_port_connect.connection_state === "connected"){
-                                 port4Animation.source = "images/cord.gif"
-                                 port4Animation.currentFrame = 0
-                                 port4Animation.playing = true
-                                 port4Animation.pluggedIn = !port4Animation.pluggedIn
-                             }
-                         }
-                     }
-
-                     onDeviceDisconnectedChanged:{
-                         //console.log("device disconnected message received in basicControl. Port=",platformInterface.usb_pd_port_disconnect.port_id,
-                         //            "state=",platformInterface.usb_pd_port_disconnect.connection_state);
-
-                         if (platformInterface.usb_pd_port_disconnect.port_id === "USB_C_port_4"){
-                             if (platformInterface.usb_pd_port_disconnect.connection_state === "disconnected"){
-                                 port4Animation.source = "images/cordReverse.gif"
-                                 port4Animation.currentFrame = 0
-                                 port4Animation.playing = true
-                                 port4Animation.pluggedIn = !port4Animation.pluggedIn
-                             }
-                         }
-                    }
-                    onClicked: {
-                        if (!port4Animation.pluggedIn) {
-                            port4Animation.source = "images/cord.gif"
-                            port4Animation.currentFrame = 0
-                            port4Animation.playing = true
-                            port4Animation.pluggedIn = !port4Animation.pluggedIn
-                        } else {
-                            port4Animation.source = "images/cordReverse.gif"
-                            port4Animation.currentFrame = 0
-                            port4Animation.playing = true
-                            port4Animation.pluggedIn = !port4Animation.pluggedIn
-                        }
-                    }
-                }
-            }
-        }
-
-        SGLayoutDebug {
-            visible: debugLayout
-        }
     }
-    */
 }
