@@ -63,6 +63,7 @@ Item {
         }
 
         handle: Item {
+            id: handle
             x: rgbSlider.leftPadding + rgbSlider.visualPosition * (rgbSlider.availableWidth - width)
             y: 0
             width: 12
@@ -71,8 +72,8 @@ Item {
             Canvas {
                 z:50
                 visible: true
-                implicitWidth: parent.width
-                implicitHeight: parent.height
+                implicitWidth: handle.width
+                implicitHeight: handle.height
                 contextType: "2d"
 
                 onPaint: {

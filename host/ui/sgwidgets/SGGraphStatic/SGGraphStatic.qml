@@ -122,6 +122,7 @@ ChartView {
             fill: rootChart
         }
         property variant clickPos: "1,1" // @disable-check M311 // Ignore 'use string' (M311) QtCreator warning
+        preventStealing: true
 
         onWheel: {
             scrollTotal -= wheel.angleDelta.y *0.001
@@ -167,8 +168,8 @@ ChartView {
         id: resetZoom
         visible: rootChart.scrollTotal !== 0
         anchors {
-            right: parent.right
-            top: parent.top
+            right: rootChart.right
+            top: rootChart.top
             margins: 12
         }
         text: "Reset Zoom"

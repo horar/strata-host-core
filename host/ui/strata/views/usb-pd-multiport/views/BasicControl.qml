@@ -90,29 +90,20 @@ Item {
 
 
             PortStatBox {
+                property var inputVoltage:platformInterface.request_usb_power_notification.input_voltage;
 
-                property var port1Voltage:{
-                    if (platformInterface.request_usb_power_notification.port ===1)
-                        port1Voltage = platformInterface.request_usb_power_notification.input_voltage;
+                onInputVoltageChanged: {
+                    portVoltage = platformInterface.request_usb_power_notification.input_voltage;
                 }
-
-                property var port2Voltage:{
-                    if (platformInterface.request_usb_power_notification.port ===2)
-                        port2Voltage = platformInterface.request_usb_power_notification.input_voltage;
-                }
-                property var port3Voltage:{
-                    if (platformInterface.request_usb_power_notification.port ===3)
-                        port3Voltage = platformInterface.request_usb_power_notification.input_voltage;
-                }
-                property var port4Voltage:{
-                    if (platformInterface.request_usb_power_notification.port ===4)
-                        port3Voltage = platformInterface.request_usb_power_notification.input_voltage;
-                }
-
 
                 id:combinedInputVoltageBox
                 label: "INPUT VOLTAGE"
-                value: "20" //port1Voltage + port2Voltage + port3Voltage + port4Voltage
+                value: {
+                    if (port1Voltage != 0)
+                        Math.round((port1Voltage) *100)/100
+                      else
+                        "0.00"
+                }
                 valueSize: 32
                 icon: "../images/icon-voltage.svg"
                 unit: "V"
@@ -125,27 +116,22 @@ Item {
 
             PortStatBox {
 
-                property var port1Power:{
-                    if (platformInterface.request_usb_power_notification.port ===1)
-                        port1Power = platformInterface.request_usb_power_notification.input_power;
-                }
+                property var inputVoltage: platformInterface.request_usb_power_notification.input_voltage;
+                property var inputCurrent: platformInterface.request_usb_power_notification.input_current;
+                property real inputPower: inputVoltage * inputCurrent;
 
-                property var port2Power:{
-                    if (platformInterface.request_usb_power_notification.port ===2)
-                        port2Power = platformInterface.request_usb_power_notification.input_power;
-                }
-                property var port3Power:{
-                    if (platformInterface.request_usb_power_notification.port ===3)
-                        port3Power = platformInterface.request_usb_power_notification.input_power;
-                }
-                property var port4Power:{
-                    if (platformInterface.request_usb_power_notification.port ===4)
-                        port4Power = platformInterface.request_usb_power_notification.input_power;
+                property real port1Power:0;
+
+                onInputPowerChanged: {
+                    //only check one of the ports for power, since the input power should be the same on all
+                    //four ports.
+                    if (platformInterface.request_usb_power_notification.port ===1)
+                        port1Power = inputPower;
                 }
 
                 id:combinedInputPowerBox
                 label: "INPUT POWER"
-                value: "18" //port1Power + port2Power + port3Power + port4Power
+                value: Math.round((port1Power) *100)/100
                 valueSize: 32
                 icon: "../images/icon-voltage.svg"
                 unit: "W"
