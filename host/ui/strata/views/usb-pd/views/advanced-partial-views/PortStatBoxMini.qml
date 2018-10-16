@@ -1,5 +1,5 @@
 import QtQuick 2.9
-//import "qrc:/views/usb-pd-multiport/sgwidgets"
+import "../../sgwidgets"
 
 Rectangle {
     id: root
@@ -13,48 +13,11 @@ Rectangle {
     property string unit: "V"
     property string icon: "../images/icon-voltage.svg"
     property real labelSize: 9
-    property real valueSize: 22
+    property real valueSize: 30
     property real unitSize: 12
     property real bottomMargin: 0
     property color textColor: "#555"
     property color portColor: "#2eb457"
-
-     function transitionToAdvancedView(){
-         shrinkIcon.start()
-     }
-
-     ParallelAnimation{
-         id: shrinkIcon
-         running: false
-
-         PropertyAnimation {
-             target: iconImage
-             property: "height"
-             to: root.height * 0.65
-             duration: tabTransitionTime
-         }
-
-         PropertyAnimation {
-             target: iconImage
-             property: "anchors.verticalCenterOffset"
-             to: 5
-             duration: tabTransitionTime
-         }
-     }
-
-    Image {
-        id: iconImage
-        source: root.icon
-        opacity: 0.1
-        height: root.height * 0.9
-        width: height
-        anchors {
-            verticalCenter: root.verticalCenter
-            right: root.right
-            rightMargin: root.height * 0.05
-        }
-        mipmap: true
-    }
 
     Item {
         id: labelBar
@@ -80,7 +43,7 @@ Rectangle {
             id: underline
             color: "#ccc"
             height: 1
-            width: labelText.width + 6
+            width: labelBar.width
             anchors {
                 bottom: labelBar.bottom
             }
@@ -108,7 +71,7 @@ Rectangle {
         text: root.unit
         anchors {
             bottom: valueText.bottom
-            bottomMargin: 2
+            bottomMargin: 3
             left: valueText.right
             leftMargin: 5
         }
@@ -116,4 +79,17 @@ Rectangle {
             pixelSize: root.unitSize
         }
     }
+
+//    Image {
+//        id: iconImage
+//        source: root.icon
+//        opacity: 0.2
+//        height: root.height * 1.5
+//        width: height
+//        anchors {
+//            verticalCenter: parent.verticalCenter
+//            right: parent.right
+//            rightMargin: 5
+//        }
+//    }
 }
