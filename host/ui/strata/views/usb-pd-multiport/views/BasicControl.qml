@@ -91,6 +91,7 @@ Item {
 
             PortStatBox {
                 property var inputVoltage:platformInterface.request_usb_power_notification.input_voltage;
+                property real portVoltage : 0
 
                 onInputVoltageChanged: {
                     portVoltage = platformInterface.request_usb_power_notification.input_voltage;
@@ -99,8 +100,8 @@ Item {
                 id:combinedInputVoltageBox
                 label: "INPUT VOLTAGE"
                 value: {
-                    if (port1Voltage != 0)
-                        Math.round((port1Voltage) *100)/100
+                    if (portVoltage != 0)
+                        Math.round((portVoltage) *100)/100
                       else
                         "0.00"
                 }

@@ -203,6 +203,7 @@ Rectangle{
                 }
             }
 
+
             SGPlatformSelector {
                 id: cbSelector
                 anchors {

@@ -112,7 +112,7 @@ void CoreInterface::notificationsThread()
         QString n(message.c_str());
 
         // Debug; Some messages are too long to print (ex: cloud images)
-        //qDebug() <<"[recv]" << n;
+        qDebug() <<"[recv]" << n;
 
         QJsonDocument doc = QJsonDocument::fromJson(n.toUtf8());
         if(doc.isNull()) {

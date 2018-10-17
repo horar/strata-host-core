@@ -46,26 +46,16 @@ Rectangle {
             onClicked: documentManager.clearLayoutRevisionCount()
         }
 
+//        TabButton { text: "System Content" }
+
         TabButton {
-            id:testReportTabButton
-            text: "Test Report"
-
-            CircleBadge {
-                id: testReportBadge
-                revisionCount: documentManager.testReportRevisionCount
-                anchors.top: testReportTabButton.top
-                anchors.right: testReportTabButton.right
-            }
-            onClicked: documentManager.clearTestReportRevisionCount()
+            text: "Efficiency Simulator"
         }
-
-        TabButton { text: "System Content" }
-
-        TabButton { text: "Efficiency Simulator" }
 
         TabButton {
             id:comingSoonTabButton
             text: "Coming Soon"
+            enabled: false
 
             CircleBadge {
                 id: targetedBadge
@@ -87,15 +77,13 @@ Rectangle {
         }
         currentIndex: tabBar.currentIndex
         interactive: false
-
-        PageSchematic { id: pageSchematic }
-        PageLayout { id: pageLayout }
-        PageTestReport { id: pageTestReport }
-        PageSystemContent { id: pageSystemContent}
+        Item { id: pageSchematic }
+        Item { id: pageLayout }
         EfficiencySimulator {
             width: view.width
             height: view.height - tabBar.height
         }
-        PageComingSoon {id: pageComingSoonContent}
+//        PageSystemContent { id: pageSystemContent}
+//        PageComingSoon {id: pageComingSoonContent}
     }
 }
