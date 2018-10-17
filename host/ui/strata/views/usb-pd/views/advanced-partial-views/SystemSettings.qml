@@ -72,6 +72,7 @@ Item {
             SGSegmentedButtonStrip {
                 id: sleepMode
                 label: "Sleep Mode:"
+                labelFontSize: 12
                 activeTextColor: "white"
                 textColor: "#666"
                 radius: 4
@@ -133,6 +134,7 @@ Item {
             SGSegmentedButtonStrip {
                 id: manualSleep
                 label: "Manual Sleep:"
+                labelFontSize: 12
                 textColor: "#666"
                 activeTextColor: "white"
                 radius: 4
@@ -200,6 +202,7 @@ Item {
                     rightMargin: 10
                 }
                 label: "Fault Protection:"
+                labelFontSize: 12
                 textColor: "#666"
                 activeTextColor: "white"
                 radius: 4

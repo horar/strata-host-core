@@ -19,6 +19,7 @@ Item {
     property bool exclusive: true
     property string label: ""
     property bool labelLeft: true
+    property int labelFontSize: 16
     property color textColor: "black"
     property color activeTextColor: "white"
     property real buttonImplicitWidth: 70
@@ -33,6 +34,9 @@ Item {
         topPadding: root.label === "" ? 0 : root.labelLeft ? (segmentedButtons.height-contentHeight)/2 : 0
         bottomPadding: topPadding
         color: "black"
+        font {
+            pixelSize: root.labelFontSize
+        }
     }
 
     ButtonGroup{
