@@ -31,12 +31,12 @@ Rectangle {
         inputThirdText.visible = true
         currentIndex = 0
         logicSelection.index = 0
+        platformInterface.off_led.update();
         platformInterface.mux_97.update();
     }
 
     Component.onCompleted: {
         resetToIndex0();
-        platformInterface.mux_97.update();
     }
 
     anchors {

@@ -25,31 +25,18 @@ Rectangle {
             left: parent.left
             right: parent.right
         }
-        //Timer added as firmware can't recieve back to back 2 commands.
-        Timer{
-            id: timer
-            interval: 200;
-            repeat:false;
-            onTriggered:
-                if(controlContainer.currentIndex == 0){
-                    partOne.resetToIndex0()
-                }
-                else if(controlContainer.currentIndex == 1){
-                    partTwo.resetToIndex0()
-                }
-        }
 
         TabButton {
             id: basicButton
             text: qsTr("NL7SZ97")
             onClicked: {
-                platformInterface.off_led.update()
+//                platformInterface.off_led.update()
                 controlContainer.currentIndex = 0
                 console.log("in view one")
                 partOne.visible = true
                 partTwo.visible = false
-                timer.start()   //At the end of the timer, reset function will be called
-                platformInterface.mux_97.update();
+                partOne.resetToIndex0();
+//                platformInterface.mux_97.update();
             }
         }
 
@@ -62,7 +49,7 @@ Rectangle {
                 console.log("in view two")
                 partOne.visible = false
                 partTwo.visible = true
-                timer.start()   //At the end of the timer, reset function will be called
+                partTwo.resetToIndex0()
                 platformInterface.nand.update()
             }
         }
