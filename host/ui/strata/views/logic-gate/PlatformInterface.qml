@@ -20,7 +20,6 @@ Item {
                                         "y":1
     }
 
-
     property var nl7sz97_io_state: {
                                         "a":1,
                                         "b":0,
@@ -44,13 +43,9 @@ Item {
     // TO SYNCHRONIZE THE SPEED ON ALL THE VIEW DO THE FOLLOWING:
     // EXAMPLE: platformInterface.motorSpeedSliderValue
 
-
-
-
     /*********
       Logic Gate Commands
     *********/
-
 
     property var write_io: ({
                                 "cmd":"nl7sz58_write_io",
@@ -249,120 +244,22 @@ Item {
                                    show: function () { CorePlatformInterface.show(this) }
                                })
 
-
     // -------------------  end commands
 
-//    // NOTE:
-//    //  All internal property names for PlatformInterface must avoid name collisions with notification/cmd message properties.
-//    //   naming convention to avoid name collisions;
-//    // property var _name
+    // NOTE:
+    //  All internal property names for PlatformInterface must avoid name collisions with notification/cmd message properties.
+    //   naming convention to avoid name collisions;
+    // property var _name
 
 
-//    // -------------------------------------------------------------------
-//    // Connect to CoreInterface notification signals
-//    //
-//    Connections {
-//        target: coreInterface
-//        onNotification: {
-//            console.log("when in connection")
-//            CorePlatformInterface.data_source_handler(payload)
-//        }
-//    }
-
-//    //-------------------------------------
-//    //
-//    // add all syncrhonized controls here
-//    //-----------------------------------------
-//    property int motorSpeedSliderValue: 1500
-
-//    onMotorSpeedSliderValueChanged: {
-//        motor_speed.update(motorSpeedSliderValue)
-//    }
-
-//    property bool sliderUpdateSignal: false
-//    property int rampRateSliderValue: 3
-
-//    onRampRateSliderValueChanged: {
-//        set_ramp_rate.update(rampRateSliderValue)
-//    }
-
-//    property int rampRateSliderValueForFae: 3
-
-//    onRampRateSliderValueForFaeChanged: {
-//        set_ramp_rate.update(rampRateSliderValueForFae)
-//    }
-
-//    property int phaseAngle : 15
-
-//    onPhaseAngleChanged: {
-//        set_phase_angle.update(phaseAngle)
-//    }
-
-//    property int ledSlider: 128
-
-//    onLedSliderChanged: {
-//        console.log("in signal control")
-//    }
-
-//    property real singleLEDSlider :  0
-
-//    property int ledPulseSlider: 150
-
-//    onLedPulseSliderChanged:  {
-//        set_blink0_frequency.update(ledPulseSlider)
-//    }
-
-//    property bool driveModePseudoSinusoidal: false
-
-//    onDriveModePseudoSinusoidalChanged: {
-
-//        if(driveModePseudoSinusoidal == true) {
-//            set_drive_mode.update(1)
-//        }
-//    }
-
-//    property bool driveModePseudoTrapezoidal: true
-
-//    onDriveModePseudoTrapezoidalChanged: {
-//        if(driveModePseudoTrapezoidal == true) {
-//            set_drive_mode.update(0)
-//        }
-//    }
-
-//    property bool systemModeManual: true
-
-//    onSystemModeManualChanged: {
-//        console.log("manual mode")
-//        system_mode_selection.update("manual")
-
-//    }
-
-//    property bool systemModeAuto: false
-
-//    onSystemModeAutoChanged: {
-//        system_mode_selection.update("automation")
-
-//    }
-
-//    property bool motorState: false
-
-//    onMotorStateChanged: {
-//        console.log("in motor state")
-//        if(motorState === true) {
-//            set_motor_on_off.update(0)
-//        }
-//        else  {
-//            /*
-//              Tanya: To fast on mac and we lose the first command send.
-//              Works on Windows. Would need a Timer in Mac
-//            */
-//            motor_speed.update(motorSpeedSliderValue);
-//            set_motor_on_off.update(1);
-
-//        }
-
-//    }
-
-//    property bool advertise;
-
+    // -------------------------------------------------------------------
+    // Connect to CoreInterface notification signals
+    //
+    Connections {
+        target: coreInterface
+        onNotification: {
+            console.log("when in connection")
+            CorePlatformInterface.data_source_handler(payload)
+        }
+    }
 }
