@@ -50,8 +50,21 @@ function populatePlatforms(platform_list_json) {
             var pattern = new RegExp('^[A-Z0-9]+\.[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+');
             var theString = platform_list.list[i].uuid;
             //console.log("the UUID String=",theString)
-            var platformType = theString!== null ? String(theString).match(pattern)[0] : "";
+            if(theString !== null){
+                if(pattern.test(theString)) {
+                    var platformType = String(theString).match(pattern)[0]
+                }
+                else{   //If there is invalid uuid just pass the iteration.
+                    console.log("platform uuid does not match the pattern");
+                    continue
+                }
+            }
+            else{   //If the uuid is null just pass the iteration.
+                console.log("platform uuid string is null");
+                continue
+            }
             console.log("looking at platform ",platform_list.list[i].uuid);
+
 //            if (platformType){
 //                console.log("platform name matched pattern:",platformType);
 //            }
