@@ -119,7 +119,7 @@ Rectangle {
             sgStatusLightInputB.status = "green"
         }
         else {
-            console.log("switch 1 is off")
+//            console.log("switch 1 is off")
             inputTwoToggle.checked = false
             sgStatusLightInputB.status = "off"
         }
@@ -132,7 +132,7 @@ Rectangle {
             inputOneToggle.checked = true
         }
         else {
-            console.log("switch 2 is off")
+//            console.log("switch 2 is off")
             inputOneToggle.checked = false
         }
     }
@@ -149,7 +149,7 @@ Rectangle {
      // For the Selector LED Input 3
     property var valueC: value_CNoti
     onValueCChanged: {
-        console.log("change in c")
+//        console.log("change in c")
         if(valueC === 1) {
             sgStatusLightTwo.status = "green"
             toggleSwitch1.checked = true
@@ -161,7 +161,7 @@ Rectangle {
     }
 
     function read_state() {
-        console.log("inread")
+//        console.log("inread")
         platformInterface.read_io_97.update();
         platformInterface.read_io_97.show();
     }

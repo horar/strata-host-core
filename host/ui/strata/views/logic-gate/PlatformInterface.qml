@@ -64,7 +64,6 @@ Item {
                                     this.payload.c = c
                                 },
                                 send: function () { CorePlatformInterface.send(this) },
-                                show: function () { CorePlatformInterface.show(this) }
                             })
 
 
@@ -74,7 +73,6 @@ Item {
                                    CorePlatformInterface.send(this)
                                },
                                send: function () { CorePlatformInterface.send(this) },
-                               show: function () { CorePlatformInterface.show(this) }
                            })
 
     property var off_led : ({
@@ -83,7 +81,6 @@ Item {
                                     CorePlatformInterface.send(this)
                                 },
                                 send: function () { CorePlatformInterface.send(this) },
-                                show: function () { CorePlatformInterface.show(this) }
                             })
 
     property var nand: ({
@@ -92,7 +89,6 @@ Item {
                                 CorePlatformInterface.send(this)
                             },
                             send: function () { CorePlatformInterface.send(this) },
-                            show: function () { CorePlatformInterface.show(this) }
                         })
 
 
@@ -102,7 +98,6 @@ Item {
                                    CorePlatformInterface.send(this)
                                },
                                send: function () { CorePlatformInterface.send(this) },
-                               show: function () { CorePlatformInterface.show(this) }
                            })
 
     property var and_nc: ({
@@ -111,7 +106,6 @@ Item {
                                   CorePlatformInterface.send(this)
                               },
                               send: function () { CorePlatformInterface.send(this) },
-                              show: function () { CorePlatformInterface.show(this) }
                           })
 
     property var or:( {"cmd":"nl7sz58_or",
@@ -119,7 +113,6 @@ Item {
                              CorePlatformInterface.send(this)
                          },
                          send: function () { CorePlatformInterface.send(this) },
-                         show: function () { CorePlatformInterface.show(this) }
                      })
 
     property var xor : ({"cmd":"nl7sz58_xor",
@@ -127,7 +120,6 @@ Item {
                                 CorePlatformInterface.send(this)
                             },
                             send: function () { CorePlatformInterface.send(this) },
-                            show: function () { CorePlatformInterface.show(this) }
                         })
 
     property var  buffer:  ({"cmd":"nl7sz58_buffer",
@@ -135,7 +127,6 @@ Item {
                                     CorePlatformInterface.send(this)
                                 },
                                 send: function () { CorePlatformInterface.send(this) },
-                                show: function () { CorePlatformInterface.show(this) }
                             })
 
     property var inverter: ({"cmd":"nl7sz58_inverter",
@@ -143,7 +134,6 @@ Item {
                                     CorePlatformInterface.send(this)
                                 },
                                 send: function () { CorePlatformInterface.send(this) },
-                                show: function () { CorePlatformInterface.show(this) }
                             })
 
     /******
@@ -168,7 +158,6 @@ Item {
 
                                    },
                                    send: function () { CorePlatformInterface.send(this) },
-                                   show: function () { CorePlatformInterface.show(this) }
                                })
 
     property var read_io_97: ({
@@ -177,7 +166,6 @@ Item {
                                       CorePlatformInterface.send(this)
                                   },
                                   send: function () { CorePlatformInterface.send(this) },
-                                  show: function () { CorePlatformInterface.show(this) }
                               })
 
     property var off_97_led : ({"cmd":"nl7sz97_off",
@@ -185,7 +173,6 @@ Item {
                                        CorePlatformInterface.send(this)
                                    },
                                    send: function () { CorePlatformInterface.send(this) },
-                                   show: function () { CorePlatformInterface.show(this) }
                                })
 
     property var mux_97 : ({"cmd":"nl7sz97_mux",
@@ -193,7 +180,6 @@ Item {
                                    CorePlatformInterface.send(this)
                                },
                                send: function () { CorePlatformInterface.send(this) },
-                               show: function () { CorePlatformInterface.show(this) }
                            })
 
     property var and_97 : ({"cmd":"nl7sz97_and",
@@ -201,7 +187,6 @@ Item {
                                    CorePlatformInterface.send(this)
                                },
                                send: function () { CorePlatformInterface.send(this) },
-                               show: function () { CorePlatformInterface.show(this) }
                            })
 
     property var or_nc_97 : ({"cmd":"nl7sz97_or_nc",
@@ -209,7 +194,6 @@ Item {
                                      CorePlatformInterface.send(this)
                                  },
                                  send: function () { CorePlatformInterface.send(this) },
-                                 show: function () { CorePlatformInterface.show(this) }
                              })
 
     property var and_nc_97 : ({"cmd":"nl7sz97_and_nc",
@@ -217,7 +201,6 @@ Item {
                                       CorePlatformInterface.send(this)
                                   },
                                   send: function () { CorePlatformInterface.send(this) },
-                                  show: function () { CorePlatformInterface.show(this) }
                               })
 
     property var or_97: ({"cmd":"nl7sz97_or",
@@ -225,7 +208,6 @@ Item {
                                  CorePlatformInterface.send(this)
                              },
                              send: function () { CorePlatformInterface.send(this) },
-                             show: function () { CorePlatformInterface.show(this) }
                          })
 
     property var  buffer_97:  ({"cmd":"nl7sz97_buffer",
@@ -233,7 +215,6 @@ Item {
                                        CorePlatformInterface.send(this)
                                    },
                                    send: function () { CorePlatformInterface.send(this) },
-                                   show: function () { CorePlatformInterface.show(this) }
                                })
 
     property var inverter_97: ({"cmd":"nl7sz97_inverter",
@@ -241,7 +222,6 @@ Item {
                                        CorePlatformInterface.send(this)
                                    },
                                    send: function () { CorePlatformInterface.send(this) },
-                                   show: function () { CorePlatformInterface.show(this) }
                                })
 
     // -------------------  end commands
@@ -258,7 +238,7 @@ Item {
     Connections {
         target: coreInterface
         onNotification: {
-            console.log("when in connection")
+//            console.log("when in connection")
             CorePlatformInterface.data_source_handler(payload)
         }
     }
