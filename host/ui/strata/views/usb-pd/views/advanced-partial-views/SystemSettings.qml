@@ -26,173 +26,24 @@ Item {
                 margins: 15
             }
 
-            SGSlider {
-                id: maximumBoardPower
-                label: "Maximum Power:"
+
+
+            Text {
+                id: faultText
+                text: "<b>Faults</b>"
+                font {
+                    pixelSize: 16
+                }
                 anchors {
-                    left: margins1.left
-                    leftMargin: 0
-                    right: maximumBoardPowerInput.left
-                    rightMargin: 10
-                }
-                from: 30
-                to: 200
-                startLabel: "30W"
-                endLabel: "200W"
-                value: platformInterface.maximum_board_power.watts
-                onMoved: {
-                    //we'll need to address how to handle this when there are devices attached, as that would trigger
-                    //renegotiation with all devices
-                    platformInterface.set_maximum_board_power.update(value);
-                }
-            }
-
-            SGSubmitInfoBox {
-                id: maximumBoardPowerInput
-                showButton: false
-                anchors {
-                    verticalCenter: maximumBoardPower.verticalCenter
-                    right: parent.right
-                }
-                infoBoxWidth: 40
-                //input: inputFault.value.toFixed(0)
-                //onApplied: platformInterface.set_minimum_input_voltage.update(input);   // slider will be updated via notification
-            }
-
-
-
-            SGDivider {
-                id: leftDiv1
-                anchors {
-                    top: maximumBoardPower.bottom
-                    topMargin: 10
-                }
-            }
-
-            SGSegmentedButtonStrip {
-                id: sleepMode
-                label: "Sleep Mode:"
-                activeTextColor: "white"
-                textColor: "#666"
-                radius: 4
-                buttonHeight: 25
-                anchors {
-                    top: leftDiv1.bottom
-                    topMargin: 10
-                    left: margins1.left
-                    leftMargin: 115
-                }
-
-
-
-                segmentedButtons: GridLayout {
-                    columnSpacing: 2
-
-                    property var sleepMode: platformInterface.sleep_mode.mode
-
-                    onSleepModeChanged:{
-                        if (platformInterface.sleep_mode.mode === "manual"){
-                            manualSleepModeButton.checked = true;
-                            automaticSleepModeButton.checked = false;
-                        }
-                        else if (platformInterface.sleep_mode.mode === "automatic"){
-                            manualSleepModeButton.checked = false;
-                            automaticSleepModeButton.checked = true;
-                        }
-                    }
-
-                    SGSegmentedButton{
-                        id:manualSleepModeButton
-                        text: qsTr("Manual")
-                        checked: true  // Sets default checked button when exclusive
-
-                        onClicked: {
-                            platformInterface.set_sleep_mode.update("manual");
-                        }
-                    }
-
-                    SGSegmentedButton{
-                        id:automaticSleepModeButton
-                        text: qsTr("Automatic")
-                        onCheckedChanged: {
-                            if (checked) {
-                                manualSleep.enabled = false
-                            } else {
-                                manualSleep.enabled = true
-                            }
-
-                        }
-
-                        onClicked: {
-                            platformInterface.set_sleep_mode.update("automatic");
-                        }
-                    }
-                }
-            }
-
-            SGSegmentedButtonStrip {
-                id: manualSleep
-                label: "Manual Sleep:"
-                textColor: "#666"
-                activeTextColor: "white"
-                radius: 4
-                buttonHeight: 25
-                anchors {
-                    top: sleepMode.bottom
-                    topMargin: 10
-                    left: margins1.left
-                    leftMargin: 105
-                }
-
-                segmentedButtons: GridLayout {
-                    columnSpacing: 2
-
-                    property var manualSleepMode: platformInterface.manual_sleep_mode.mode
-
-                    onManualSleepModeChanged:{
-                        if (platformInterface.manual_sleep_mode.mode ==="on"){
-                            manualSleepOnButton.checked = true;
-                            manualSleepOffButton.checked = false;
-                        }
-                        else if (platformInterface.manual_sleep_mode.mode ==="off"){
-                            manualSleepOnButton.checked = false;
-                            manualSleepOffButton.checked = true;
-                        }
-                    }
-
-                    SGSegmentedButton{
-                        id:manualSleepOnButton
-                        text: qsTr("ON")
-                        checked: true  // Sets default checked button when exclusive
-
-                        onClicked: {
-                            platformInterface.set_manual_sleep_mode.update("on");
-                        }
-                    }
-
-                    SGSegmentedButton{
-                        id:manualSleepOffButton
-                        text: qsTr("OFF")
-
-                        onClicked: {
-                            platformInterface.set_manual_sleep_mode.update("off");
-                        }
-                    }
-                }
-            }
-
-            SGDivider {
-                id: leftDiv2
-                anchors {
-                    top: manualSleep.bottom
-                    topMargin: 10
+                    top: margins1.top
+                    topMargin: 30
                 }
             }
 
             SGSegmentedButtonStrip {
                 id: faultProtection
                 anchors {
-                    top: leftDiv2.bottom
+                    top: faultText.bottom
                     topMargin: 10
                     left: margins1.left
                     leftMargin: 90
@@ -200,6 +51,7 @@ Item {
                     rightMargin: 10
                 }
                 label: "Fault Protection:"
+                labelFontSize: 12
                 textColor: "#666"
                 activeTextColor: "white"
                 radius: 4
@@ -254,7 +106,7 @@ Item {
                 startLabel: "0V"
                 endLabel: "20V"
                 value: platformInterface.input_under_voltage_notification.minimum_voltage
-                onMoved: {
+                onValueChanged: {
                     platformInterface.set_minimum_input_voltage.update(value);
                 }
             }
@@ -268,7 +120,7 @@ Item {
                 }
                 infoBoxWidth: 40
                 value: inputFault.value.toFixed(0)
-                onApplied: platformInterface.set_minimum_input_voltage.update(input);   // slider will be updated via notification
+                onApplied: platformInterface.set_minimum_input_voltage.update(value);   // slider will be updated via notification
             }
 
             SGSlider {
@@ -286,7 +138,7 @@ Item {
                 startLabel: "-64°C"
                 endLabel: "191°C"
                 value: platformInterface.set_maximum_temperature_notification.maximum_temperature
-                onMoved: {
+                onSliderMoved: {
                     platformInterface.set_maximum_temperature.update(value);
                 }
             }
@@ -300,7 +152,7 @@ Item {
                 }
                 infoBoxWidth: 40
                 value: tempFault.value.toFixed(0)
-                onApplied: platformInterface.set_maximum_temperature.update(input); // slider will be updated via notification
+                onApplied: platformInterface.set_maximum_temperature.update(value); // slider will be updated via notification
             }
         }
 
@@ -328,7 +180,7 @@ Item {
 
             Text {
                 id: inputFoldback
-                text: "<b>Input Foldback:</b>"
+                text: "<b>Input Foldback</b>"
                 font {
                     pixelSize: 16
                 }
@@ -366,7 +218,7 @@ Item {
                 startLabel: "0V"
                 endLabel: "20V"
                 //copy the current values for other stuff, and add the new slider value for the limit.
-                onMoved: platformInterface.set_input_voltage_foldback.update(platformInterface.foldback_input_voltage_limiting_event.input_voltage_foldback_enabled,
+                onSliderMoved: platformInterface.set_input_voltage_foldback.update(platformInterface.foldback_input_voltage_limiting_event.input_voltage_foldback_enabled,
                                  value,
                                 platformInterface.foldback_input_voltage_limiting_event.foldback_minimum_voltage_power)
             }
@@ -381,7 +233,7 @@ Item {
                 infoBoxWidth: 40
                 value: foldbackLimit.value.toFixed(0)
                 onApplied: platformInterface.set_input_voltage_foldback.update(platformInterface.foldback_input_voltage_limiting_event.input_voltage_foldback_enabled,
-                                                                               input,
+                                                                               value,
                                                                               platformInterface.foldback_input_voltage_limiting_event.foldback_minimum_voltage_power)
             }
 
@@ -405,7 +257,7 @@ Item {
 
                 property var currentFoldbackOuput: platformInterface.foldback_input_voltage_limiting_event.foldback_minimum_voltage_power
                 onCurrentFoldbackOuputChanged: {
-                    //console.log("got a new min power setting",platformInterface.foldback_input_voltage_limiting_event.foldback_minimum_voltage_power);
+                    console.log("got a new min power setting",platformInterface.foldback_input_voltage_limiting_event.foldback_minimum_voltage_power);
                     limitOutput.currentIndex = limitOutput.comboBox.find( parseInt (platformInterface.foldback_input_voltage_limiting_event.foldback_minimum_voltage_power))
                 }
 
@@ -422,7 +274,7 @@ Item {
 
             Text {
                 id: tempFoldback
-                text: "<b>Temperature Foldback:</b>"
+                text: "<b>Temperature Foldback</b>"
                 font {
                     pixelSize: 16
                 }
@@ -467,7 +319,7 @@ Item {
                 startLabel: "25°C"
                 endLabel: "200°C"
                 value: platformInterface.foldback_temperature_limiting_event.foldback_maximum_temperature
-                onMoved:{
+                onSliderMoved:{
                     console.log("sending temp foldback update command from foldbackTempSlider");
                     platformInterface.set_temperature_foldback.update(platformInterface.foldback_temperature_limiting_event.temperature_foldback_enabled,
                                                                                   foldbackTemp.value,
@@ -486,7 +338,7 @@ Item {
                 infoBoxWidth: 40
                 value: foldbackTemp.value.toFixed(0)
                 onApplied: platformInterface.set_temperature_foldback.update(platformInterface.foldback_temperature_limiting_event.temperature_foldback_enabled,
-                                                                             input,
+                                                                             value,
                                                                              platformInterface.foldback_temperature_limiting_event.foldback_maximum_temperature_power)
             }
 
