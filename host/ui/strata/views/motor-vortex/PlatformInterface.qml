@@ -430,33 +430,12 @@ Item {
 
 
 
-    /*    // DEBUG - TODO: Faller - Remove before merging back to Dev
+    /*    // DEBUG Window for testing motor vortex UI without a platform
     Window {
         id: debug
         visible: true
         width: 200
         height: 200
-
-        // This button sends 2 notifications in 1 JSON, future possible implementation
-        Button {
-            id: button1
-            text: "send pi_stats and voltage"
-            onClicked: {
-                CorePlatformInterface.data_source_handler('{
-                                        "input_voltage_notification": {
-                                            "vin": '+ (Math.random()*5+10).toFixed(2) +'
-                                        },
-                                        "pi_stats": {
-                                            "speed_target": 3216,
-                                            "current_speed": '+ (Math.random()*2000+3000).toFixed(0) +',
-                                            "error": -1104,
-                                            "sum": -0.01,
-                                            "duty_now": 0.67,
-                                            "mode": "manual"
-                                        }
-                                    }')
-            }
-        }
 
         Button {
             id: button2
