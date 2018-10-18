@@ -54,7 +54,7 @@ Item {
                 rightMargin: 10
             }
 
-            onMoved: platformInterface.set_over_current_protection.update(portNumber, value)
+            onSliderMoved: platformInterface.set_over_current_protection.update(portNumber, value)
 
         }
 
@@ -79,7 +79,7 @@ Item {
 
         Text {
             id: cableCompensation
-            text: "<b>Cable Compensation:</b>"
+            text: "<b>Cable Compensation</b>"
             font {
                 pixelSize: 16
             }
@@ -102,7 +102,7 @@ Item {
                 right: incrementInput.left
                 rightMargin: 10
             }
-            onMoved:{
+            onSliderMoved:{
                 //console.log("sending values from increment slider:",portNumber, increment.value, platformInterface.get_cable_loss_compensation.bias_voltage);
                 platformInterface.set_cable_loss_compensation.update(portNumber,
                                                                      increment.value,
@@ -136,7 +136,7 @@ Item {
                 right: biasInput.left
                 rightMargin: 10
             }
-            onMoved: {
+            onSliderMoved: {
                 platformInterface.set_cable_loss_compensation.update(portNumber,
                                                                      platformInterface.get_cable_loss_compensation.output_current,
                                                                      bias.value)

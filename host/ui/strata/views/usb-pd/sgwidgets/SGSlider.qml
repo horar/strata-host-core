@@ -7,7 +7,7 @@ Item {
     implicitWidth: 200
     implicitHeight: root.labelLeft ? sgSlider.height : sgSlider.height + labelText.height + sgSlider.anchors.topMargin
 
-    signal moved()
+    signal sliderMoved()
 
     property alias from: sgSlider.from
     property alias to: sgSlider.to
@@ -59,6 +59,10 @@ Item {
         opacity: root.enabled ? 1 : .5
         layer.enabled: root.enabled ? false : true
 
+        onMoved:{
+            root.sliderMoved()
+        }
+
         background: Rectangle {
             id: groove
             y: handleImg.height / 2 - height / 2
@@ -94,6 +98,8 @@ Item {
 //                    x: (index + 1) * (sgSlider.width - sgSlider.handle.width) / 10 + sgSlider.handle.width/2
 //                }
 //            }
+
+
         }
 
         handle: Image {

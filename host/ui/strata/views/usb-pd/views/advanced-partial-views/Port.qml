@@ -109,7 +109,7 @@ Item {
 
         Text {
             id: advertisedVoltagesText
-            text: "<b>Advertised Voltages:</b>"
+            text: "<b>Advertised Voltages</b>"
             font {
                 pixelSize: 16
             }
@@ -157,7 +157,7 @@ Item {
                     if (numberOfSettings >= 7){
                         faultProtectionButtonStrip.buttonList[0].children[6].enabled = true;
                         faultProtectionButtonStrip.buttonList[0].children[6].text = platformInterface.usb_pd_advertised_voltages_notification.settings[6].voltage;
-                        faultProtectionButtonStrip.buttonList[0].children[6].text += "V,\n ";
+                        faultProtectionButtonStrip.buttonList[0].children[6].text += "V\n ";
                         faultProtectionButtonStrip.buttonList[0].children[6].text += platformInterface.usb_pd_advertised_voltages_notification.settings[6].maximum_current;
                         faultProtectionButtonStrip.buttonList[0].children[6].text += "A";
                     }
@@ -168,7 +168,7 @@ Item {
                     if (numberOfSettings >= 6){
                         faultProtectionButtonStrip.buttonList[0].children[5].enabled = true;
                         faultProtectionButtonStrip.buttonList[0].children[5].text = platformInterface.usb_pd_advertised_voltages_notification.settings[5].voltage;
-                        faultProtectionButtonStrip.buttonList[0].children[5].text += "V,\n ";
+                        faultProtectionButtonStrip.buttonList[0].children[5].text += "V\n ";
                         faultProtectionButtonStrip.buttonList[0].children[5].text += platformInterface.usb_pd_advertised_voltages_notification.settings[5].maximum_current;
                         faultProtectionButtonStrip.buttonList[0].children[5].text += "A";
                     }
@@ -179,7 +179,7 @@ Item {
                     if (numberOfSettings >= 5){
                         faultProtectionButtonStrip.buttonList[0].children[4].enabled = true;
                         faultProtectionButtonStrip.buttonList[0].children[4].text = platformInterface.usb_pd_advertised_voltages_notification.settings[4].voltage;
-                        faultProtectionButtonStrip.buttonList[0].children[4].text += "V,\n ";
+                        faultProtectionButtonStrip.buttonList[0].children[4].text += "V\n ";
                         faultProtectionButtonStrip.buttonList[0].children[4].text += platformInterface.usb_pd_advertised_voltages_notification.settings[4].maximum_current;
                         faultProtectionButtonStrip.buttonList[0].children[4].text += "A";
                     }
@@ -190,7 +190,7 @@ Item {
                     if (numberOfSettings >= 4){
                         faultProtectionButtonStrip.buttonList[0].children[3].enabled = true;
                         faultProtectionButtonStrip.buttonList[0].children[3].text = platformInterface.usb_pd_advertised_voltages_notification.settings[3].voltage;
-                        faultProtectionButtonStrip.buttonList[0].children[3].text += "V,\n ";
+                        faultProtectionButtonStrip.buttonList[0].children[3].text += "V\n ";
                         faultProtectionButtonStrip.buttonList[0].children[3].text += platformInterface.usb_pd_advertised_voltages_notification.settings[3].maximum_current;
                         faultProtectionButtonStrip.buttonList[0].children[3].text += "A";
                     }
@@ -201,7 +201,7 @@ Item {
                     if (numberOfSettings >= 3){
                         faultProtectionButtonStrip.buttonList[0].children[2].enabled = true;
                         faultProtectionButtonStrip.buttonList[0].children[2].text = platformInterface.usb_pd_advertised_voltages_notification.settings[2].voltage;
-                        faultProtectionButtonStrip.buttonList[0].children[2].text += "V,\n ";
+                        faultProtectionButtonStrip.buttonList[0].children[2].text += "V\n ";
                         faultProtectionButtonStrip.buttonList[0].children[2].text += platformInterface.usb_pd_advertised_voltages_notification.settings[2].maximum_current;
                         faultProtectionButtonStrip.buttonList[0].children[2].text += "A";
                     }
@@ -212,7 +212,7 @@ Item {
                     if (numberOfSettings >= 2){
                         faultProtectionButtonStrip.buttonList[0].children[1].enabled = true;
                         faultProtectionButtonStrip.buttonList[0].children[1].text = platformInterface.usb_pd_advertised_voltages_notification.settings[1].voltage;
-                        faultProtectionButtonStrip.buttonList[0].children[1].text += "V,\n ";
+                        faultProtectionButtonStrip.buttonList[0].children[1].text += "V\n ";
                         faultProtectionButtonStrip.buttonList[0].children[1].text += platformInterface.usb_pd_advertised_voltages_notification.settings[1].maximum_current;
                         faultProtectionButtonStrip.buttonList[0].children[1].text += "A";
                     }
@@ -223,7 +223,7 @@ Item {
                     if (numberOfSettings >= 1){
                         faultProtectionButtonStrip.buttonList[0].children[0].enabled = true;
                         faultProtectionButtonStrip.buttonList[0].children[0].text = platformInterface.usb_pd_advertised_voltages_notification.settings[0].voltage;
-                        faultProtectionButtonStrip.buttonList[0].children[0].text += "V,\n ";
+                        faultProtectionButtonStrip.buttonList[0].children[0].text += "V\n ";
                         faultProtectionButtonStrip.buttonList[0].children[0].text += platformInterface.usb_pd_advertised_voltages_notification.settings[0].maximum_current;
                         faultProtectionButtonStrip.buttonList[0].children[0].text += "A";
                     }
@@ -288,7 +288,7 @@ Item {
 
         SGSegmentedButtonStrip {
             id: graphSelector
-            label: "<b>Show Graphs:</b>"
+            label: "<b>Show Graphs</b>"
             labelLeft: false
             labelFontSize: 16
             anchors {
