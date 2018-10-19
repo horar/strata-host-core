@@ -1,9 +1,9 @@
-QT += quick qml webview webengine opengl charts
 CONFIG += c++11 resources_big
 TEMPLATE = app
 TARGET = Strata
 
 DEFINES += QT_DEPRECATED_WARNINGS
+QT += quick qml webview webengine charts
 
 RESOURCES += qml.qrc
 
