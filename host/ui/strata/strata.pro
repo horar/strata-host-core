@@ -1,5 +1,7 @@
 TEMPLATE = app
 TARGET = Strata
+win32:VERSION = 1.0.0.0 # major.minor.patch.build
+else:VERSION = 1.0.0    # major.minor.patch
 
 QT += quick qml webview webengine charts
 CONFIG += c++1z strict_c++ resources_big
