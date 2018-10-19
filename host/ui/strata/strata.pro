@@ -2,15 +2,15 @@ CONFIG += c++11 resources_big
 TEMPLATE = app
 TARGET = Strata
 
-DEFINES += QT_DEPRECATED_WARNINGS
 QT += quick qml webview webengine charts
 
-RESOURCES += qml.qrc
 
-DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 # Windows Icon
 win32: RC_ICONS = images/icons/on.ico
+
+DEFINES += QT_DEPRECATED_WARNINGS
+DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 # Additional import path used to resolve QML modules in Qt Creator's code model
 QML_IMPORT_PATH =
@@ -24,9 +24,6 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 DISTFILES +=
-
-# This line needed after installing Xcode 11
-#QMAKE_MAC_SDK = macosx10.14
 
 # set root host build path
 HOST_ROOT = ../../../host
@@ -42,9 +39,9 @@ unix : !macx : !win32 {
     DEPENDPATH += $${HOST_ROOT}/lib/linux/include
 }
 
-# mac (not iOS)
+# macOS (not iOS)
 else : macx : !win32 {
-    message("Building on OSX")
+    message("Building on macOS")
     LIBS += -L$${HOST_ROOT}/lib/macos/libzmq -lzmq
     DEPENDPATH += $${HOST_ROOT}/include/macos
     INCLUDEPATH += $${HOST_ROOT}/include/macos/libzmq
@@ -85,3 +82,5 @@ HEADERS += PlatformInterface/core/CoreInterface.h \
 SOURCES += main.cpp \
     PlatformInterface/core/CoreInterface.cpp \
     source/DocumentManager.cpp
+
+RESOURCES += qml.qrc
