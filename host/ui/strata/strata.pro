@@ -14,6 +14,9 @@ win32: RC_ICONS = images/icons/on.ico
 # Minimum supported macOS version (Qt allows 10.11; but libzmq requires 10.13)
 QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.13
 
+# App ID
+macx: QMAKE_TARGET_BUNDLE_PREFIX = com.onsemi.spyglass
+
 DEFINES += QT_DEPRECATED_WARNINGS
 DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
