@@ -84,9 +84,9 @@ Item {
     property var foldback_input_voltage_limiting_event:{
             "input_voltage":0,
             "foldback_minimum_voltage":0,
-            "foldback_minimum_voltage_power":0,
+            "foldback_minimum_voltage_power":15,
             "input_voltage_foldback_enabled":false,
-            "input_voltage_foldback_active":true
+            "input_voltage_foldback_active":false
     }
 
 //  onFoldback_input_voltage_limiting_eventChanged: {
@@ -100,24 +100,24 @@ Item {
     property var foldback_input_voltage_limiting_refresh:{
             "input_voltage":0,
             "foldback_minimum_voltage":0,
-            "foldback_minimum_voltage_power":0,
+            "foldback_minimum_voltage_power":15,
             "input_voltage_foldback_enabled":false,
-            "input_voltage_foldback_active":true
+            "input_voltage_foldback_active":false
     }
 
     //keep the refresh and event notification properties in synch
-//    onFoldback_input_voltage_limiting_refreshChanged: {
-//        //console.log("input voltage refresh notification. minimum voltage = ",foldback_input_voltage_limiting_refresh.foldback_minimum_voltage);
+    onFoldback_input_voltage_limiting_refreshChanged: {
+        //console.log("input voltage refresh notification. minimum voltage = ",foldback_input_voltage_limiting_refresh.foldback_minimum_voltage);
 
-//            //update the variables for foldback limiting
-//        platformInterface.foldback_input_voltage_limiting_event.input_voltage = foldback_input_voltage_limiting_refresh.input_voltage;
+            //update the variables for foldback limiting
+        platformInterface.foldback_input_voltage_limiting_event.input_voltage = foldback_input_voltage_limiting_refresh.input_voltage;
 
-//        platformInterface.foldback_input_voltage_limiting_event.foldback_minimum_voltage = foldback_input_voltage_limiting_refresh.foldback_minimum_voltage;
-//        console.log(" foldback minimum voltage = ",platformInterface.foldback_input_voltage_limiting_event.foldback_minimum_voltage);
-//        platformInterface.foldback_input_voltage_limiting_event.foldback_minimum_voltage_power = foldback_input_voltage_limiting_refresh.foldback_minimum_voltage_power;
-//        platformInterface.foldback_input_voltage_limiting_event.input_voltage_foldback_enabled = foldback_input_voltage_limiting_refresh.input_voltage_foldback_enabled;
-//        platformInterface.foldback_input_voltage_limiting_event.input_voltage_foldback_active = foldback_input_voltage_limiting_refresh.input_voltage_foldback_active;
-//    }
+        platformInterface.foldback_input_voltage_limiting_event.foldback_minimum_voltage = foldback_input_voltage_limiting_refresh.foldback_minimum_voltage;
+        platformInterface.foldback_input_voltage_limiting_event.foldback_minimum_voltage_power = foldback_input_voltage_limiting_refresh.foldback_minimum_voltage_power;
+        console.log(" foldback minimum power = ",platformInterface.foldback_input_voltage_limiting_event.foldback_minimum_voltage_power);
+        platformInterface.foldback_input_voltage_limiting_event.input_voltage_foldback_enabled = foldback_input_voltage_limiting_refresh.input_voltage_foldback_enabled;
+        platformInterface.foldback_input_voltage_limiting_event.input_voltage_foldback_active = foldback_input_voltage_limiting_refresh.input_voltage_foldback_active;
+    }
 
     //consider the values held by this property to be the master ones, which will be current when needed for calling
     //the API to set the input temperature foldback
@@ -141,16 +141,16 @@ Item {
             "maximum_power":0
     }
     //keep the refresh and event notification properties in synch
-//    onFoldback_temperature_limiting_refreshChanged: {
-//        //update the corresponding variables
-//        foldback_temperature_limiting_event.port = foldback_input_voltage_limiting_refresh.port;
-//        foldback_temperature_limiting_event.current_temperature = foldback_temperature_limiting_refresh.current_temperature;
-//        foldback_temperature_limiting_event.foldback_maximum_temperature = foldback_temperature_limiting_refresh.foldback_maximum_temperature;
-//        foldback_temperature_limiting_event.foldback_maximum_temperature_power = foldback_temperature_limiting_refresh.foldback_maximum_temperature_power;
-//        foldback_temperature_limiting_event.temperature_foldback_enabled = foldback_temperature_limiting_refresh.temperature_foldback_enabled;
-//        foldback_temperature_limiting_event.temperature_foldback_active = foldback_temperature_limiting_refresh.temperature_foldback_active;
-//        foldback_temperature_limiting_event.maximum_power = foldback_temperature_limiting_refresh.maximum_power;
-//    }
+    onFoldback_temperature_limiting_refreshChanged: {
+        //update the corresponding variables
+        foldback_temperature_limiting_event.port = foldback_input_voltage_limiting_refresh.port;
+        foldback_temperature_limiting_event.current_temperature = foldback_temperature_limiting_refresh.current_temperature;
+        foldback_temperature_limiting_event.foldback_maximum_temperature = foldback_temperature_limiting_refresh.foldback_maximum_temperature;
+        foldback_temperature_limiting_event.foldback_maximum_temperature_power = foldback_temperature_limiting_refresh.foldback_maximum_temperature_power;
+        foldback_temperature_limiting_event.temperature_foldback_enabled = foldback_temperature_limiting_refresh.temperature_foldback_enabled;
+        foldback_temperature_limiting_event.temperature_foldback_active = foldback_temperature_limiting_refresh.temperature_foldback_active;
+        foldback_temperature_limiting_event.maximum_power = foldback_temperature_limiting_refresh.maximum_power;
+    }
 
     property var usb_pd_maximum_power:{
         "port":0,                            // up to maximum number of ports
@@ -468,6 +468,7 @@ Item {
                         "watts":0      // value between 30 and 200
                       },
                       update: function (inPower){
+                          console.log("setting max power to ",inPower);
                           this.set(inPower);
                           CorePlatformInterface.send(this);
                           },
