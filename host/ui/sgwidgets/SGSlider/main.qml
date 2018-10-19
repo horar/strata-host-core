@@ -36,6 +36,7 @@ Window {
 
         // Useful signals:
         onValueChanged: console.log("Slider value is now: ", value)
-        //onPressedChanged: console.log("Slider pressed"
+        //onPressedChanged: console.log("Slider pressed")
+        //onMoved: console.log("Slider moved")  // This signal sends notifications for every user movement, unaffected by live
     }
 }
