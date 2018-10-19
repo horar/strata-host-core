@@ -7,10 +7,11 @@ QT += quick qml webview webengine charts
 CONFIG += c++1z strict_c++ resources_big
 CONFIG += warn_on
 
-
-
-# Windows Icon
+# Application icon
 win32: RC_ICONS = images/icons/on.ico
+macx: ICON = resources/icons/app/onLogoGreen.icns
+
+
 # Minimum supported macOS version (Qt allows 10.11; but libzmq requires 10.13)
 QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.13
 
