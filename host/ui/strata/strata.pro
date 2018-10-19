@@ -1,8 +1,8 @@
-CONFIG += c++11 resources_big
 TEMPLATE = app
 TARGET = Strata
 
 QT += quick qml webview webengine charts
+CONFIG += c++1z strict_c++ resources_big
 CONFIG += warn_on
 
 
