@@ -8,7 +8,7 @@ CONFIG += c++1z strict_c++ resources_big
 CONFIG += warn_on
 
 # Application icon
-win32: RC_ICONS = images/icons/on.ico
+win32: RC_ICONS = resources/icons/app/on.ico
 macx: ICON = resources/icons/app/onLogoGreen.icns
 
 
