@@ -3,6 +3,7 @@ TEMPLATE = app
 TARGET = Strata
 
 QT += quick qml webview webengine charts
+CONFIG += warn_on
 
 
 
