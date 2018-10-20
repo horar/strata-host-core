@@ -85,8 +85,8 @@ Rectangle {
                 selectByMouse: true
                 readOnly: false
                 font {
-                  family: "Courier" // Monospaced font for better text width uniformity
-                  pixelSize: (Qt.platform.os === "osx") ? 12 : 10;
+                    family: inconsolata.name // inconsolata is monospaced and has clear chars for O/0 etc
+                    pixelSize: (Qt.platform.os === "osx") ? 12 : 10;
                 }
                 horizontalAlignment: leftJustify ? TextInput.AlignLeft : TextInput.AlignRight
                 validator: realNumberValidation ? realNumberValidator : null
@@ -151,5 +151,10 @@ Rectangle {
             enabled: root.enabled
             height: visible ? 40 : 0
         }
+    }
+
+    FontLoader {
+        id: inconsolata
+        source: "fonts/Inconsolata.otf"
     }
 }
