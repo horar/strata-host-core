@@ -2,7 +2,8 @@ platform/cli/USB-PD/BUILD/*
 *build*/
 *BUILD*/
 *bin*/
-*man*/
+#LANJ: clashes with CommandDispatche for example !
+#*man*/
 *.pro.user*
 *.pro.user
 *.exe
