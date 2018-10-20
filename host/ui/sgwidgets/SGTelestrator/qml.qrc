@@ -4,5 +4,6 @@
         <file>SGColorChip.qml</file>
         <file>SGLineThickness.qml</file>
         <file>SGTelestrator.qml</file>
+        <file>Server.qml</file>
     </qresource>
 </RCC>

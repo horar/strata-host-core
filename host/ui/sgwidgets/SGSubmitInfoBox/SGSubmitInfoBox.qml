@@ -10,12 +10,12 @@ Rectangle {
     property bool labelLeft: true
     property alias value: infoText.text
     property alias infoBoxWidth: infoContainer.width
+    property alias infoBoxHeight: infoContainer.height
     property color textColor: "#000"
     property color infoBoxColor: infoText.readOnly ? "#eee" : "transparent"
     property color infoBoxBorderColor: "#cccccc"
     property real infoBoxBorderWidth: 1
     property bool realNumberValidation: false
-    property bool enabled: true
     property alias showButton: applyButton.visible
     property alias buttonText: applyButton.text
     property alias overrideLabelWidth: labelText.width

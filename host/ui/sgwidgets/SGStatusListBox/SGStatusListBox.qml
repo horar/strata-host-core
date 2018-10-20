@@ -75,10 +75,12 @@ Rectangle {
             }
             selectByMouse: true
             readOnly: true
+            wrapMode: Text.WrapAnywhere
+            width: statusList.width
         }
 
         highlightFollowsCurrentItem: true
-        onContentHeightChanged: {
+        onCountChanged: {
             if (running) { scroll() }
         }
     }

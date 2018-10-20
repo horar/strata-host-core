@@ -2,7 +2,7 @@ import QtQuick 2.9
 import QtQuick.Window 2.10
 import QtQuick.Controls 2.3
 import QtQuick.Layouts 1.0
-import "qrc:/views/usb-pd-multiport/views/advanced-partial-views"
+import "qrc:/views/usb-pd/views/advanced-partial-views"
 
 Rectangle {
     id: root
