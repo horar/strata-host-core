@@ -12,8 +12,6 @@
 #include <QtQml/QQmlEngine>
 #include <QtCore/QDir>
 #include "QtDebug"
-#include "QtOpenGL"
-#include <QGLContext>
 #include <QProcess>
 
 #include <PlatformInterface/core/CoreInterface.h>
