@@ -3,9 +3,26 @@ import QtQuick.Controls 2.3
 
 Item {
     id: root
-    anchors.fill: parent
 
     property var paths: ({ "pathList": [], "count": 0 })
+
+    Connections {
+        target: server
+        onNewPathChanged: {
+            if ( paths.pathList[paths.count] !== server.newPath ) {
+                paths.pathList[paths.count] = server.newPath
+                paths.count++
+                canvas.requestPaint()
+            }
+        }
+    }
+
+    Connections {
+        target: server
+        onClearView: {
+            root.clear()
+        }
+    }
 
     Rectangle {
         id: canvasContainer
@@ -22,6 +39,8 @@ Item {
             property int startY;
             property int finishX;
             property int finishY;
+            property bool arrowMode: false
+            property bool boxMode: false
             property color currentColor: "#000"
             property real lineThickness: 5
 
@@ -71,7 +90,25 @@ Item {
                         canvas.finishX = mouseX;
                         canvas.finishY = mouseY;
 
-                        root.paths.pathList[root.paths.count].path = root.paths.pathList[root.paths.count].path.concat(" L " + canvas.finishX + " " + canvas.finishY)
+                        if (canvas.arrowMode) {
+                            var xx = Math.round(canvas.finishX + 0.25*( (canvas.startX - canvas.finishX) * 0.7071068 + (canvas.startY - canvas.finishY) * 0.7071068 ))
+                            var yy = Math.round(canvas.finishY + 0.25*( (canvas.startY - canvas.finishY) * 0.7071068 - (canvas.startX - canvas.finishX) * 0.7071068 ))
+                            var xxx = Math.round(canvas.finishX + 0.25*( (canvas.startX - canvas.finishX) * 0.7071068 - (canvas.startY - canvas.finishY) * 0.7071068 ))
+                            var yyy = Math.round(canvas.finishY + 0.25*( (canvas.startY - canvas.finishY) * 0.7071068 + (canvas.startX - canvas.finishX) * 0.7071068 ))
+
+                            root.paths.pathList[root.paths.count].path = "M " + canvas.startX + " " + canvas.startY +
+                                    " L " + canvas.finishX + " " + canvas.finishY +
+                                    " L " + xx + " " + yy +
+                                    " M " + canvas.finishX + " " + canvas.finishY +
+                                    " L " + xxx + " " + yyy
+                        } else if (canvas.boxMode) {
+                            root.paths.pathList[root.paths.count].path = "M " + canvas.startX + " " + canvas.startY +
+                                    " L " + canvas.startX + " " + canvas.finishY +
+                                    " L " + canvas.finishX + " " + canvas.finishY +
+                                    " L " + canvas.finishX + " " + canvas.startY + " z"
+                        } else {
+                            root.paths.pathList[root.paths.count].path = root.paths.pathList[root.paths.count].path.concat(" L " + canvas.finishX + " " + canvas.finishY)
+                        }
 
                         canvas.requestPaint();
                         skipCounter = 1
@@ -81,8 +118,9 @@ Item {
                 }
 
                 onReleased: {
+                    console.log("JSON sent: ", JSON.stringify(root.paths.pathList[root.paths.count]))
+                    server.newPath = root.paths.pathList[root.paths.count];
                     root.paths.count++
-                    // Send paths to server here, not updated live as beign drawn
                 }
             }
         }
@@ -170,18 +208,57 @@ Item {
                     lineThickness: 12
                     onClicked: canvas.lineThickness = thickness;
                 }
+
+                SGLineThickness {
+                    lineThickness: 15
+                    onClicked: canvas.lineThickness = thickness;
+                }
+
+                SGLineThickness {
+                    lineThickness: 18
+                    onClicked: canvas.lineThickness = thickness;
+                }
+            }
+
+
+            Row {
+                Button {
+                    checkable: true
+                    checked: canvas.boxMode
+                    onClicked: {
+                        canvas.boxMode = !canvas.boxMode
+                        if (canvas.arrowMode && canvas.boxMode) { canvas.arrowMode = false }
+                    }
+                    text: "Box Mode"
+                }
+            }
+
+            Row {
+                Button {
+                    checkable: true
+                    checked: canvas.arrowMode
+                    onClicked: {
+                        canvas.arrowMode = !canvas.arrowMode
+                        if (canvas.boxMode && canvas.arrowMode) { canvas.boxMode = false }
+                    }
+                    text: "Arrow Mode"
+                }
             }
 
             Row {
                 Button {
                     onClicked: {
-                        root.paths.pathList = []
-                        root.paths.count = 0
-                        canvas.requestPaint()
+                        server.clearView()
                     }
                     text: "Clear All"
                 }
             }
         }
+    }
+
+    function clear () {
+        root.paths.pathList = []
+        root.paths.count = 0
+        canvas.requestPaint()
     }
 }
