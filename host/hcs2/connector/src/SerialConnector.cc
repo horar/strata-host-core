@@ -135,6 +135,8 @@ bool SerialConnector::open(const std::string& serial_port_name)
         sp_set_dtr(platform_socket_,serialport.dtr_);
         sp_set_parity(platform_socket_,serialport.parity_);
         sp_set_cts(platform_socket_,serialport.cts_);
+        sp_flush(platform_socket_,SP_BUF_BOTH);
+
 #ifdef _WIN32
         // @ref 1) under "KNOWN BUGS/HACKS" section in Connector.h for more details
         windows_thread_ = new thread(&SerialConnector::windowsPlatformReadHandler,this);
@@ -281,7 +283,6 @@ bool SerialConnector::read(string &notification)
 bool SerialConnector::send(const std::string& message)
 {
     // adding a new line to the message to be sent, since platform uses gets and it needs a newline
-    sp_flush(platform_socket_,SP_BUF_BOTH);
     if(sp_blocking_write(platform_socket_,(void *)message.c_str(),message.length(),10) >=0) {
 // [prasanth]: Platform uses new line as delimiter while reading. Hence sending a new line after message
         sp_blocking_write(platform_socket_,"\n",1,1);

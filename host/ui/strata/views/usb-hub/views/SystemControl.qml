@@ -284,7 +284,7 @@ Item {
                 label: "Fault when temperature is above:"
                 width:480
                 anchors {
-                    left: faultProtectionColumn.left
+                    left: faultGroup.left
                     leftMargin: 35
                     top: faultProtectionColumn.bottom
                     topMargin: 10

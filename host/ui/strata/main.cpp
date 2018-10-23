@@ -12,8 +12,6 @@
 #include <QtQml/QQmlEngine>
 #include <QtCore/QDir>
 #include "QtDebug"
-#include "QtOpenGL"
-#include <QGLContext>
 #include <QProcess>
 
 #include <PlatformInterface/core/CoreInterface.h>
@@ -98,7 +96,7 @@ int main(int argc, char *argv[])
             arguments << "-f" << HCS_CONFIG_PATH;
 
             // Start HCS
-            //hcsProcess->setProcessChannelMode(QProcess::ForwardedChannels);
+        //    hcsProcess->setProcessChannelMode(QProcess::ForwardedChannels);
             hcsProcess->start(hcsPath,arguments, QIODevice::ReadWrite);
         }
         else {

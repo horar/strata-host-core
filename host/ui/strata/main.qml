@@ -163,6 +163,14 @@ Window {
                     NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT, data)
                 }
             }
+            Button {
+                text: "Logic gate"
+                onClicked: {
+                    var data = { platform_name: "logic-gate"}
+                    NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT, data)
+                }
+            }
+
 
             // UI events
             Button {
