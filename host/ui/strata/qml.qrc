@@ -309,7 +309,7 @@
         <file>statusbar-partial-views/SGTabButton.qml</file>
         <file>statusbar-partial-views/SGToolButton.qml</file>
         <file>SGRegistration.qml</file>
-        <file>images/icons/on.ico</file>
+        <file>resources/icons/app/on.ico</file>
         <file>views/efficiency-simulator/images/circuit.png</file>
         <file>views/efficiency-simulator/sgwidgets/fonts/sgicons.ttf</file>
         <file>views/efficiency-simulator/sgwidgets/SGColumnDivider.qml</file>
