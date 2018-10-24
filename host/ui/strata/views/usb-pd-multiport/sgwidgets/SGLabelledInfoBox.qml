@@ -13,7 +13,6 @@ Rectangle {
     property color infoBoxBorderColor: "#cccccc"
     property real infoBoxBorderWidth: 1
 
-
     implicitHeight: labelLeft ? infoContainer.height : labelText.height + infoContainer.height + infoContainer.anchors.topMargin
     implicitWidth: labelLeft ? infoBoxWidth + labelText.width + infoContainer.anchors.leftMargin : Math.max(infoBoxWidth, labelText.width)
 
@@ -43,18 +42,22 @@ Rectangle {
             leftMargin: root.label === "" ? 0 : root.labelLeft ? 10 : 0
             topMargin: root.label === "" ? 0 : root.labelLeft ? 0 : 5
         }
+        clip: true
 
         TextInput {
             id: infoText
             padding: 10
             anchors {
-                right: parent.right
-                verticalCenter: parent.verticalCenter
+                right: infoContainer.right
+                verticalCenter: infoContainer.verticalCenter
             }
             text: info
             selectByMouse: true
             readOnly: true
-            font.family: "Courier" // Monospaced font for better text width uniformity
+            font {
+              family: "Courier" // Monospaced font for better text width uniformity
+              pixelSize: (Qt.platform.os === "osx") ? 12 : 10;
+            }
             color: root.textColor
         }
     }

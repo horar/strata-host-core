@@ -604,7 +604,7 @@ Window {
                         title: "Graph"                  // Default: empty
                         xAxisTitle: "X axis"           // Default: empty
                         yAxisTitle: "Why axis"          // Default: empty
-                        dataLineColor: "cyan"          // Default: #000000 (black)
+                        dataLine1Color: "cyan"          // Default: #000000 (black)
                         minYValue: 0                    // Default: 0
                         maxYValue: 20                   // Default: 10
                         minXValue: 0                    // Default: 0

@@ -21,6 +21,7 @@ Item {
     property alias startLabel: startLabel.text
     property alias endLabel: endLabel.text
 
+    property bool labelTopAligned: false
     property bool showToolTip: true
     property color grooveColor: "#dddddd"
     property color grooveFillColor: "#888888"
@@ -34,7 +35,7 @@ Item {
         text: root.label
         width: contentWidth
         height: root.label === "" ? 0 : root.labelLeft ? sgSlider.height : contentHeight
-        topPadding: root.label === "" ? 0 : root.labelLeft ? (sgSlider.height-contentHeight)/2 : 0
+        topPadding: root.label === "" ? 0 : root.labelLeft ? labelTopAligned ? 0 : (sgSlider.height-contentHeight)/2 : 0
         bottomPadding: topPadding
         color: root.textColor
     }
@@ -57,6 +58,7 @@ Item {
         enabled: root.enabled
         opacity: root.enabled ? 1 : .5
         layer.enabled: root.enabled ? false : true
+        onMoved: root.moved()
 
         background: Rectangle {
             id: groove
@@ -69,8 +71,8 @@ Item {
 
             Rectangle {
                 id: grooveFill
-                width: sgSlider.visualPosition * parent.width
-                height: parent.height
+                width: sgSlider.visualPosition * groove.width
+                height: groove.height
                 color: root.grooveFillColor
                 radius: 2
             }
@@ -124,7 +126,7 @@ Item {
 
         Label {
             id: startLabel
-            anchors.bottom : parent.bottom
+            anchors.bottom : sgSlider.bottom
             font.pixelSize : 12
             text: sgSlider.from
             color: root.textColor
@@ -132,8 +134,8 @@ Item {
 
         Label {
             id: endLabel
-            anchors.right : parent.right
-            anchors.bottom : parent.bottom
+            anchors.right : sgSlider.right
+            anchors.bottom : sgSlider.bottom
             font.pixelSize: 12
             text: sgSlider.to
             color: root.textColor

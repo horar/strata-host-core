@@ -28,9 +28,9 @@ Rectangle {
     Rectangle {
         id: titleArea
         anchors {
-            left: parent.left
-            right: parent.right
-            top: parent.top
+            left: root.left
+            right: root.right
+            top: root.top
         }
         height: visible ? 35 : 0
         color: root.titleBoxColor
@@ -45,7 +45,7 @@ Rectangle {
             text: root.title
             color: root.titleTextColor
             anchors {
-                fill: parent
+                fill: titleArea
             }
             padding: 10
         }
@@ -59,24 +59,28 @@ Rectangle {
         clip: true
 
         anchors {
-            left: parent.left
-            right: parent.right
+            left: root.left
+            right: root.right
             top: titleArea.bottom
-            bottom: parent.bottom
+            bottom: root.bottom
             margins: 10
         }
 
-        delegate: Text {
+        delegate: TextEdit {
             text: model.status // modelData
             color: root.statusTextColor
             font {
-              family: "Courier" // Monospaced font for better text width uniformity
-              pixelSize: (Qt.platform.os === "osx") ? 12 : 10;
+                family: inconsolata.name  // inconsolata is monospaced and has clear chars for O/0 etc
+                pixelSize: (Qt.platform.os === "osx") ? 12 : 10;
             }
+            selectByMouse: true
+            readOnly: true
+            wrapMode: Text.WrapAnywhere
+            width: statusList.width
         }
 
         highlightFollowsCurrentItem: true
-        onContentHeightChanged: {
+        onCountChanged: {
             if (running) { scroll() }
         }
     }
@@ -89,24 +93,146 @@ Rectangle {
         }
     }
 
-    // Debug button to start/stop logging data
+    Rectangle {
+        id: filterContainer
+        width: 105
+        height: 0
+        anchors {
+            top: titleArea.bottom
+            right: titleArea.right
+        }
+        color: "#eee"
+        visible: true
+        clip: true
+
+        PropertyAnimation {
+            id: openFilter
+            target: filterContainer
+            property: "height"
+            from: 0
+            to: 30
+            duration: 100
+        }
+
+        PropertyAnimation {
+            id: closeFilter
+            target: filterContainer
+            property: "height"
+            from: 30
+            to: 0
+            duration: 100
+        }
+
+        SGSubmitInfoBox {
+            id: filterBox
+            infoBoxColor: "#fff"
+            infoBoxWidth: 80
+            anchors {
+                left: filterContainer.left
+                bottom: filterContainer.bottom
+                leftMargin: 3
+                bottomMargin: 3
+            }
+            infoBoxHeight: 24
+            placeholderText: "Filter..."
+            leftJustify: true
+
+            onApplied: {
+                var caseInsensitiveFilter = new RegExp(value, 'i')
+                for (var i = 0; i< statusList.children[0].children.length; i++) {
+                    statusList.children[0].children[i].visible = true
+                    statusList.children[0].children[i].height = 14
+                    if (statusList.children[0].children[i].text) {
+                        if ( !caseInsensitiveFilter.test (statusList.children[0].children[i].text)) {
+                            statusList.children[0].children[i].visible = false
+                            statusList.children[0].children[i].height = 0
+                        }
+                    }
+                }
+            }
+
+            Text {
+                id: textClear
+                font {
+                    family: sgicons.name
+                }
+                color: "grey"
+                text: "\ue824"
+                anchors {
+                    right: filterBox.right
+                    verticalCenter: filterBox.verticalCenter
+                    verticalCenterOffset: 1
+                    rightMargin: 3
+                }
+                visible: filterBox.value !== ""
+
+                MouseArea {
+                    id: textClearButton
+                    anchors {
+                        fill: textClear
+                    }
+                    onClicked: {
+                        filterBox.value = ""
+                        filterBox.applied ("")
+                    }
+                }
+            }
+        }
+
+        Text {
+            id: filterSearch
+            font {
+                family: sgicons.name
+            }
+            color: "grey"
+            text: "\ue801"
+            anchors {
+                left: filterBox.right
+                verticalCenter: filterBox.verticalCenter
+                verticalCenterOffset: 1
+                leftMargin: 5
+            }
+
+            MouseArea {
+                id: filterSearchButton
+                anchors {
+                    fill: filterSearch
+                }
+                onClicked: {
+                    filterBox.applied (filterBox.value)
+                }
+            }
+        }
+    }
+
+    Shortcut {
+        sequence: StandardKey.Find
+        onActivated: {
+            if ( filterContainer.height === 0 ){
+                openFilter.start()
+            }
+            filterBox.textInput.forceActiveFocus()
+        }
+    }
+
+    Shortcut {
+        sequence: StandardKey.Cancel
+        onActivated: {
+            if ( filterContainer.height === 30 ){
+                closeFilter.start()
+            }
+            filterBox.value = ""
+            filterBox.applied ("")
+        }
+    }
+
     FontLoader {
         id: sgicons
         source: "fonts/sgicons.ttf"
     }
 
-//    Button {
-//        visible: false
-//        width: 30
-//        height: 30
-//        flat: true
-//        text: "\ue800"
-//        font.family: sgicons.name
-//        anchors {
-//            right: flickableContainer.right
-//            top: flickableContainer.top
-//        }
-//        checkable: true
-//        onClicked: root.running = !root.running
-//    }
+    FontLoader {
+        id: inconsolata
+        source: "fonts/Inconsolata.otf"
+    }
 }
