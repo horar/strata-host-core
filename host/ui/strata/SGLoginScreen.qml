@@ -6,6 +6,7 @@ import QtQuick.Controls.Styles 1.4
 import "js/navigation_control.js" as NavigationControl
 import "js/login.js" as Authenticator
 import "js/restclient.js" as Rest
+import fonts 1.0
 
 Rectangle {
     id: container
@@ -181,7 +182,7 @@ Rectangle {
             }
             font {
                 pixelSize: 15
-                family: franklinGothicBook.name
+                family: Fonts.franklinGothicBook
             }
             background: Rectangle {
                 border.color: usernameField.activeFocus ? "#219647" : "#ddd"
@@ -212,7 +213,7 @@ Rectangle {
             echoMode: TextInput.Password
             font {
                 pixelSize: 15
-                family: franklinGothicBook.name
+                family: Fonts.franklinGothicBook
             }
             background: Rectangle {
                 border.color: passwordField.activeFocus ? "#219647" : "#ddd"
@@ -254,7 +255,7 @@ Rectangle {
                 id:loginErrorText
                 font {
                     pixelSize: 10
-                    family: franklinGothicBold.name
+                    family: Fonts.franklinGothicBold
                 }
                 wrapMode: Label.WordWrap
                 anchors {
@@ -294,7 +295,7 @@ Rectangle {
                 elide: Text.ElideRight
                 font {
                     pixelSize: 15
-                    family: franklinGothicBold.name
+                    family: Fonts.franklinGothicBold
                 }
             }
 
@@ -399,23 +400,13 @@ Rectangle {
         }
     }
 
-    FontLoader {
-        id: franklinGothicBook
-        source: "qrc:/fonts/FranklinGothicBook.otf"
-    }
-
-    FontLoader {
-        id: franklinGothicBold
-        source: "qrc:/fonts/FranklinGothicBold.ttf"
-    }
-
-
     // These text boxes are HACK solution to get around an issue on windows builds where the glyphs loaded in this file were the ONLY glyphs that appeared in subsequent views.
     // the effects of this bug are documented here: https://bugreports.qt.io/browse/QTBUG-62578 - our instance of this issue was not random as described, however.  --Faller
+    // Update 10/23/2018: This may have been solved by moving to a singleton font loader.
     Text {
         text: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890:./\\{}()[]-=+_!@#$%^&*`~<>?\"\'"
         font {
-            family: franklinGothicBold.name
+            family: Fonts.franklinGothicBold
         }
         visible: false
     }
@@ -423,7 +414,7 @@ Rectangle {
     Text {
         text:  "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890:./\\{}()[]-=+_!@#$%^&*`~<>?\"\'"
         font {
-            family: franklinGothicBook.name
+            family: Fonts.franklinGothicBook
         }
         visible: false
     }

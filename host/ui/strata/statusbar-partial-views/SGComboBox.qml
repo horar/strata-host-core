@@ -1,5 +1,6 @@
 import QtQuick 2.9
 import QtQuick.Controls 2.3
+import fonts 1.0
 
 Item {
     id: root
@@ -61,7 +62,7 @@ Item {
 
         indicator: Text {
             text: comboBox.popup.visible ? "\ue813" : "\ue810"
-            font.family: sgicons.name
+            font.family: Fonts.sgicons
             color: comboBox.pressed ? colorMod(root.indicatorColor, .25) : root.indicatorColor
             anchors {
                 verticalCenter: comboBox.verticalCenter
@@ -165,11 +166,6 @@ Item {
                 }
             }
         }
-    }
-
-    FontLoader {
-        id: sgicons
-        source: "qrc:/fonts/sgicons.ttf"
     }
 
     // Add increment to color (within range of 0-1) add to lighten, subtract to darken

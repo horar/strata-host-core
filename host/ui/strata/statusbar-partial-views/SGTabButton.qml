@@ -1,5 +1,6 @@
 import QtQuick 2.9
 import QtQuick.Controls 2.3
+import fonts 1.0
 
 TabButton {
     id: root
@@ -19,17 +20,12 @@ TabButton {
     contentItem: Text {
         text: root.text
         font {
-            family: franklinGothicBook.name
+            family: Fonts.franklinGothicBook
         }
         opacity: enabled ? 1.0 : 0.3
         color: "white"
         horizontalAlignment: Text.AlignHCenter
         verticalAlignment: Text.AlignVCenter
         elide: Text.ElideRight
-    }
-
-    FontLoader {
-        id: franklinGothicBook
-        source: "qrc:/fonts/FranklinGothicBook.otf"
     }
 }

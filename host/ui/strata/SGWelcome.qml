@@ -4,6 +4,7 @@ import QtQuick.Controls.Styles 1.4
 import QtGraphicalEffects 1.0
 import "qrc:/statusbar-partial-views"
 import "js/navigation_control.js" as NavigationControl
+import fonts 1.0
 
 Rectangle{
     id:container
@@ -149,7 +150,7 @@ Rectangle{
                     topMargin: 0
                 }
                 font {
-                    family: franklinGothicBold.name
+                    family: Fonts.franklinGothicBold
                     pixelSize: 32
                 }
                 text: getUserName(user_id)
@@ -194,7 +195,7 @@ Rectangle{
                 text: "SELECT PLATFORM:"
                 font {
                     pixelSize: 20
-                    family: franklinGothicBold.name
+                    family: Fonts.franklinGothicBold
                 }
                 anchors {
                     top: strataLogo.bottom
@@ -326,15 +327,5 @@ Rectangle{
                 anchors.horizontalCenter: adSwipe.horizontalCenter
             }
         }
-    }
-
-    FontLoader {
-        id: franklinGothicBook
-        source: "qrc:/fonts/FranklinGothicBook.otf"
-    }
-
-    FontLoader {
-        id: franklinGothicBold
-        source: "qrc:/fonts/FranklinGothicBold.ttf"
     }
 }

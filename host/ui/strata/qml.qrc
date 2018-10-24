@@ -79,7 +79,6 @@
         <file>SGStatusBar.qml</file>
         <file>images/icons/SettingIcon.svg</file>
         <file>images/icons/whiteAlertIcon.svg</file>
-        <file>SGSpotlightText.qml</file>
         <file>images/ian.cain.jpg</file>
         <file>js/metrics.js</file>
         <file>views/bubu/Control.js</file>
@@ -490,5 +489,6 @@
         <file>views/usb-pd/Content.qml</file>
         <file>views/usb-pd/Control.qml</file>
         <file>views/usb-pd/views/images/basic-twoPortBackground.png</file>
+        <file>fonts/Fonts.qml</file>
     </qresource>
 </RCC>
