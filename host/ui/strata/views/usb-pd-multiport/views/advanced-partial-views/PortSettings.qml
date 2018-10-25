@@ -108,7 +108,7 @@ Item {
             onMoved:{
                 //console.log("sending values from increment slider:",portNumber, increment.value, platformInterface.get_cable_loss_compensation.bias_voltage);
                 platformInterface.set_cable_loss_compensation.update(portNumber,
-                                                                     increment.value,
+                                                                     value,
                                                                      platformInterface.get_cable_loss_compensation.bias_voltage)
             }
 
@@ -123,7 +123,7 @@ Item {
             }
             value: platformInterface.get_cable_loss_compensation.output_current
             onApplied: platformInterface.set_cable_loss_compensation.update(portNumber,
-                                                                            parseFloat(value),
+                                                                            incrementInput.floatValue,
                                                                             platformInterface.get_cable_loss_compensation.bias_voltage)
         }
 

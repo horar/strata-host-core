@@ -239,55 +239,7 @@ Item {
                 }
             }
 
-//            SGSegmentedButtonStrip {
-//                id: manualSleep
-//                label: "Manual Sleep:"
-//                textColor: "#666"
-//                activeTextColor: "white"
-//                radius: 4
-//                buttonHeight: 25
-//                anchors {
-//                    top: sleepMode.top
-//                    left: sleepMode.right
-//                    leftMargin: 50
-//                }
 
-//                segmentedButtons: GridLayout {
-//                    columnSpacing: 2
-
-//                    property var manualSleepMode: platformInterface.manual_sleep_mode.mode
-
-//                    onManualSleepModeChanged:{
-//                        if (platformInterface.manual_sleep_mode.mode ==="on"){
-//                            manualSleepOnButton.checked = true;
-//                            manualSleepOffButton.checked = false;
-//                        }
-//                        else if (platformInterface.manual_sleep_mode.mode ==="off"){
-//                            manualSleepOnButton.checked = false;
-//                            manualSleepOffButton.checked = true;
-//                        }
-//                    }
-
-//                    SGSegmentedButton{
-//                        id:manualSleepOnButton
-//                        text: qsTr("ON")
-//                        checked: true  // Sets default checked button when exclusive
-
-//                        onClicked: {
-//                            platformInterface.set_manual_sleep_mode.update("on");
-//                        }
-//                    }
-
-//                    SGSegmentedButton{
-//                        id:manualSleepOffButton
-//                        text: qsTr("OFF")
-
-//                        onClicked: {
-//                            platformInterface.set_manual_sleep_mode.update("off");
-//                        }
-//                    }
-//                }
-//            }
 
             SGDivider {
                 id: leftDiv2
