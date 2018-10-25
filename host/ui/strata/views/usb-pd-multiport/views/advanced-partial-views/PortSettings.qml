@@ -54,7 +54,7 @@ Item {
                 rightMargin: 10
             }
 
-            onMoved: platformInterface.set_over_current_protection.update(portNumber, value)
+            onValueChanged: platformInterface.set_over_current_protection.update(portNumber, value)
 
         }
 
@@ -65,8 +65,8 @@ Item {
                 verticalCenter: currentLimit.verticalCenter
                 right: parent.right
             }
-            value: currentLimit.value.toFixed(0)
-            onApplied: currentLimit.value = value
+            value: platformInterface.request_over_current_protection_notification.current_limit
+            onApplied: platformInterface.set_over_current_protection.update(portNumber, value)
         }
 
         SGDivider {
@@ -102,7 +102,7 @@ Item {
                 right: incrementInput.left
                 rightMargin: 10
             }
-            onMoved:{
+            onValueChanged:{
                 //console.log("sending values from increment slider:",portNumber, increment.value, platformInterface.get_cable_loss_compensation.bias_voltage);
                 platformInterface.set_cable_loss_compensation.update(portNumber,
                                                                      increment.value,
@@ -118,8 +118,10 @@ Item {
                 verticalCenter: increment.verticalCenter
                 right: parent.right
             }
-            value: increment.value.toFixed(0)
-            onApplied: increment.value = value
+            value: platformInterface.get_cable_loss_compensation.output_current
+            onApplied: platformInterface.set_cable_loss_compensation.update(portNumber,
+                                                                            incrementInput.value,
+                                                                            platformInterface.get_cable_loss_compensation.bias_voltage)
         }
 
         SGSlider {
@@ -136,10 +138,10 @@ Item {
                 right: biasInput.left
                 rightMargin: 10
             }
-            onMoved: {
+            onValueChanged: {
                 platformInterface.set_cable_loss_compensation.update(portNumber,
                                                                      platformInterface.get_cable_loss_compensation.output_current,
-                                                                     bias.value)
+                                                                     value)
             }
 
         }
@@ -151,8 +153,13 @@ Item {
                 verticalCenter: bias.verticalCenter
                 right: parent.right
             }
-            value: bias.value.toFixed(0)
-            onApplied: bias.value = value
+            value: platformInterface.get_cable_loss_compensation.bias_voltage
+            onApplied:{
+                console.log("input bias value sent from textInput")
+                platformInterface.set_cable_loss_compensation.update(portNumber,
+                                                                            platformInterface.get_cable_loss_compensation.output_current,
+                                                                            value)
+            }
         }
 
 

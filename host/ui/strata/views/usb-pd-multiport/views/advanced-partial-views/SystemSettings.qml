@@ -31,16 +31,16 @@ Item {
                 label: "Maximum Power:"
                 anchors {
                     left: margins1.left
-                    leftMargin: 72
+                    leftMargin: 20
                     right: maximumBoardPowerInput.left
-                    rightMargin: 10
+                    rightMargin: 30
                 }
                 from: 30
                 to: 200
                 startLabel: "30W"
                 endLabel: "200W"
                 value: platformInterface.maximum_board_power.watts
-                onMoved: {
+                onValueChanged: {
                     //we'll need to address how to handle this when there are devices attached, as that would trigger
                     //renegotiation with all devices
                     platformInterface.set_maximum_board_power.update(value);
@@ -54,85 +54,136 @@ Item {
                     verticalCenter: maximumBoardPower.verticalCenter
                     right: parent.right
                 }
-                //input: inputFault.value.toFixed(0)
-                //onApplied: platformInterface.set_minimum_input_voltage.update(input);   // slider will be updated via notification
+                value: platformInterface.maximum_board_power.watts
+                onApplied: {
+                    platformInterface.set_minimum_input_voltage.update(value);   // slider will be updated via notification
+                }
             }
 
-            SGSegmentedButtonStrip {
-                id: powerNegotiation
-                label: "Power Negotiation:"
-                activeColor: "#666"
-                inactiveColor: "#dddddd"
-                textColor: "#666"
-                activeTextColor: "white"
-                radius: 4
-                buttonHeight: 25
+            Text{
+                id: powerNegotiationTitleText
+                text: "Power Negotiation:"
                 anchors {
                     top: maximumBoardPower.bottom
                     topMargin: 10
                     left: margins1.left
-                    leftMargin: 75
-                }
-
-                segmentedButtons: GridLayout {
-                    columnSpacing: 2
-
-                    property var negotiationTypeChanged: platformInterface.power_negotiation.negotiation_type
-
-                    onNegotiationTypeChangedChanged:{
-                        if (platformInterface.power_negotiation.negotiation_type === "dynamic"){
-                            dynamicNegotiationButton.checked = true;
-                            fcfsNegotiationButton.checked = false;
-                            priorityNegotiationButton.checked = false;
-                        }
-                        else if (platformInterface.power_negotiation.negotiation_type === "first_come_first_served"){
-                            dynamicNegotiationButton.checked = false;
-                            fcfsNegotiationButton.checked = true;
-                            priorityNegotiationButton.checked = false;
-                        }
-                        else if (platformInterface.power_negotiation.negotiation_type === "priority"){
-                            dynamicNegotiationButton.checked = false;
-                            fcfsNegotiationButton.checked = false;
-                            priorityNegotiationButton.checked = true;
-                        }
-
-
-                    }
-
-                    SGSegmentedButton{
-                        id:dynamicNegotiationButton
-                        text: qsTr("Dynamic")
-                        checked: true  // Sets default checked button when exclusive
-                        onClicked: {
-                            platformInterface.set_power_negotiation.update("dynamic");
-                        }
-                    }
-
-                    SGSegmentedButton{
-                        id:fcfsNegotiationButton
-                        text: qsTr("FCFS")
-                        onClicked: {
-                            platformInterface.set_power_negotiation.update("first_come_first_served");
-                        }
-                    }
-
-                    SGSegmentedButton{
-                        id:priorityNegotiationButton
-                        text: qsTr("Priority")
-                        onClicked: {
-                            platformInterface.set_power_negotiation.update("priority");
-                        }
-                    }
+                    leftMargin: 10
                 }
             }
 
-            SGDivider {
-                id: leftDiv1
+            Text{
+                id: powerNegotiationText
+                text: "First come, first served"
+                color:"darkgrey"
                 anchors {
-                    top: powerNegotiation.bottom
+                    top: maximumBoardPower.bottom
                     topMargin: 10
+                    left: powerNegotiationTitleText.right
+                    leftMargin: 5
                 }
             }
+
+            Text{
+                id: assuredPortText
+                text: "Assure Port 1 power:"
+                anchors {
+                    right: assuredPortSwitch.left
+                    rightMargin: 10
+                    verticalCenter: powerNegotiationText.verticalCenter
+                }
+            }
+
+            SGSwitch {
+                id: assuredPortSwitch
+                anchors {
+                    right: margins1.right
+                    rightMargin: 10
+                    verticalCenter: assuredPortText.verticalCenter
+                }
+                checkedLabel: "On"
+                uncheckedLabel: "Off"
+                switchHeight: 20
+                switchWidth: 46
+
+                checked: platformInterface.set_assured_power_port.enabled
+                onToggled: platformInterface.set_assured_power_port.update(checked, 1)  //we're only allowing port 1 to be assured
+            }
+
+//            SGSegmentedButtonStrip {
+//                id: powerNegotiation
+//                label: "Power Negotiation:"
+//                activeColor: "#666"
+//                inactiveColor: "#dddddd"
+//                textColor: "#666"
+//                activeTextColor: "white"
+//                radius: 4
+//                buttonHeight: 25
+//                anchors {
+//                    top: maximumBoardPower.bottom
+//                    topMargin: 10
+//                    left: margins1.left
+//                    leftMargin: 75
+//                }
+
+//                segmentedButtons: GridLayout {
+//                    columnSpacing: 2
+
+//                    property var negotiationTypeChanged: platformInterface.power_negotiation.negotiation_type
+
+//                    onNegotiationTypeChangedChanged:{
+//                        if (platformInterface.power_negotiation.negotiation_type === "dynamic"){
+//                            dynamicNegotiationButton.checked = true;
+//                            fcfsNegotiationButton.checked = false;
+//                            priorityNegotiationButton.checked = false;
+//                        }
+//                        else if (platformInterface.power_negotiation.negotiation_type === "first_come_first_served"){
+//                            dynamicNegotiationButton.checked = false;
+//                            fcfsNegotiationButton.checked = true;
+//                            priorityNegotiationButton.checked = false;
+//                        }
+//                        else if (platformInterface.power_negotiation.negotiation_type === "priority"){
+//                            dynamicNegotiationButton.checked = false;
+//                            fcfsNegotiationButton.checked = false;
+//                            priorityNegotiationButton.checked = true;
+//                        }
+
+
+//                    }
+
+//                    SGSegmentedButton{
+//                        id:dynamicNegotiationButton
+//                        text: qsTr("Dynamic")
+//                        checked: true  // Sets default checked button when exclusive
+//                        onClicked: {
+//                            platformInterface.set_power_negotiation.update("dynamic");
+//                        }
+//                    }
+
+//                    SGSegmentedButton{
+//                        id:fcfsNegotiationButton
+//                        text: qsTr("FCFS")
+//                        onClicked: {
+//                            platformInterface.set_power_negotiation.update("first_come_first_served");
+//                        }
+//                    }
+
+//                    SGSegmentedButton{
+//                        id:priorityNegotiationButton
+//                        text: qsTr("Priority")
+//                        onClicked: {
+//                            platformInterface.set_power_negotiation.update("priority");
+//                        }
+//                    }
+//                }
+//            }
+
+//            SGDivider {
+//                id: leftDiv1
+//                anchors {
+//                    top: assuredPortText.bottom
+//                    topMargin: 10
+//                }
+//            }
 
             SGSegmentedButtonStrip {
                 id: sleepMode
@@ -142,10 +193,10 @@ Item {
                 radius: 4
                 buttonHeight: 25
                 anchors {
-                    top: leftDiv1.bottom
+                    top: powerNegotiationTitleText.bottom
                     topMargin: 10
                     left: margins1.left
-                    leftMargin: 20
+                    leftMargin: 50
                 }
 
 
@@ -168,7 +219,7 @@ Item {
 
                     SGSegmentedButton{
                         id:manualSleepModeButton
-                        text: qsTr("Manual")
+                        text: qsTr("Off")
                         checked: true  // Sets default checked button when exclusive
 
                         onClicked: {
@@ -195,55 +246,55 @@ Item {
                 }
             }
 
-            SGSegmentedButtonStrip {
-                id: manualSleep
-                label: "Manual Sleep:"
-                textColor: "#666"
-                activeTextColor: "white"
-                radius: 4
-                buttonHeight: 25
-                anchors {
-                    top: sleepMode.top
-                    left: sleepMode.right
-                    leftMargin: 50
-                }
+//            SGSegmentedButtonStrip {
+//                id: manualSleep
+//                label: "Manual Sleep:"
+//                textColor: "#666"
+//                activeTextColor: "white"
+//                radius: 4
+//                buttonHeight: 25
+//                anchors {
+//                    top: sleepMode.top
+//                    left: sleepMode.right
+//                    leftMargin: 50
+//                }
 
-                segmentedButtons: GridLayout {
-                    columnSpacing: 2
+//                segmentedButtons: GridLayout {
+//                    columnSpacing: 2
 
-                    property var manualSleepMode: platformInterface.manual_sleep_mode.mode
+//                    property var manualSleepMode: platformInterface.manual_sleep_mode.mode
 
-                    onManualSleepModeChanged:{
-                        if (platformInterface.manual_sleep_mode.mode ==="on"){
-                            manualSleepOnButton.checked = true;
-                            manualSleepOffButton.checked = false;
-                        }
-                        else if (platformInterface.manual_sleep_mode.mode ==="off"){
-                            manualSleepOnButton.checked = false;
-                            manualSleepOffButton.checked = true;
-                        }
-                    }
+//                    onManualSleepModeChanged:{
+//                        if (platformInterface.manual_sleep_mode.mode ==="on"){
+//                            manualSleepOnButton.checked = true;
+//                            manualSleepOffButton.checked = false;
+//                        }
+//                        else if (platformInterface.manual_sleep_mode.mode ==="off"){
+//                            manualSleepOnButton.checked = false;
+//                            manualSleepOffButton.checked = true;
+//                        }
+//                    }
 
-                    SGSegmentedButton{
-                        id:manualSleepOnButton
-                        text: qsTr("ON")
-                        checked: true  // Sets default checked button when exclusive
+//                    SGSegmentedButton{
+//                        id:manualSleepOnButton
+//                        text: qsTr("ON")
+//                        checked: true  // Sets default checked button when exclusive
 
-                        onClicked: {
-                            platformInterface.set_manual_sleep_mode.update("on");
-                        }
-                    }
+//                        onClicked: {
+//                            platformInterface.set_manual_sleep_mode.update("on");
+//                        }
+//                    }
 
-                    SGSegmentedButton{
-                        id:manualSleepOffButton
-                        text: qsTr("OFF")
+//                    SGSegmentedButton{
+//                        id:manualSleepOffButton
+//                        text: qsTr("OFF")
 
-                        onClicked: {
-                            platformInterface.set_manual_sleep_mode.update("off");
-                        }
-                    }
-                }
-            }
+//                        onClicked: {
+//                            platformInterface.set_manual_sleep_mode.update("off");
+//                        }
+//                    }
+//                }
+//            }
 
             SGDivider {
                 id: leftDiv2
@@ -315,7 +366,7 @@ Item {
                 startLabel: "0V"
                 endLabel: "20V"
                 value: platformInterface.input_under_voltage_notification.minimum_voltage
-                onMoved: {
+                onValueChanged: {
                     platformInterface.set_minimum_input_voltage.update(value);
                 }
             }
@@ -327,8 +378,8 @@ Item {
                     verticalCenter: inputFault.verticalCenter
                     right: parent.right
                 }
-                value: inputFault.value.toFixed(0)
-                onApplied: platformInterface.set_minimum_input_voltage.update(input);   // slider will be updated via notification
+                value: platformInterface.input_under_voltage_notification.minimum_voltage
+                onApplied: platformInterface.set_minimum_input_voltage.update(value);   // slider will be updated via notification
             }
 
             SGSlider {
@@ -346,7 +397,7 @@ Item {
                 startLabel: "-64°C"
                 endLabel: "191°C"
                 value: platformInterface.set_maximum_temperature_notification.maximum_temperature
-                onMoved: {
+                onValueChanged: {
                     platformInterface.set_maximum_temperature.update(value);
                 }
             }
@@ -358,8 +409,11 @@ Item {
                     verticalCenter: tempFault.verticalCenter
                     right: parent.right
                 }
-                value: tempFault.value.toFixed(0)
-                onApplied: platformInterface.set_maximum_temperature.update(input); // slider will be updated via notification
+                value: platformInterface.set_maximum_temperature_notification.maximum_temperature
+                onApplied:{
+                    console.log("temp fault value onApplied");
+                    platformInterface.set_maximum_temperature.update(value); // slider will be updated via notification
+                }
             }
         }
 
@@ -425,7 +479,7 @@ Item {
                 startLabel: "0V"
                 endLabel: "20V"
                 //copy the current values for other stuff, and add the new slider value for the limit.
-                onMoved: platformInterface.set_input_voltage_foldback.update(platformInterface.foldback_input_voltage_limiting_event.input_voltage_foldback_enabled,
+                onValueChanged: platformInterface.set_input_voltage_foldback.update(platformInterface.foldback_input_voltage_limiting_event.input_voltage_foldback_enabled,
                                  value,
                                 platformInterface.foldback_input_voltage_limiting_event.foldback_minimum_voltage_power)
             }
@@ -437,9 +491,9 @@ Item {
                     verticalCenter: foldbackLimit.verticalCenter
                     right: parent.right
                 }
-                value: foldbackLimit.value.toFixed(0)
+                value: platformInterface.foldback_input_voltage_limiting_event.foldback_minimum_voltage
                 onApplied: platformInterface.set_input_voltage_foldback.update(platformInterface.foldback_input_voltage_limiting_event.input_voltage_foldback_enabled,
-                                                                               input,
+                                                                               value,
                                                                               platformInterface.foldback_input_voltage_limiting_event.foldback_minimum_voltage_power)
             }
 
@@ -524,7 +578,7 @@ Item {
                 startLabel: "25°C"
                 endLabel: "200°C"
                 value: platformInterface.foldback_temperature_limiting_event.foldback_maximum_temperature
-                onMoved:{
+                onValueChanged:{
                     console.log("sending temp foldback update command from foldbackTempSlider");
                     platformInterface.set_temperature_foldback.update(platformInterface.foldback_temperature_limiting_event.temperature_foldback_enabled,
                                                                                   foldbackTemp.value,
@@ -540,9 +594,9 @@ Item {
                     verticalCenter: foldbackTemp.verticalCenter
                     right: parent.right
                 }
-                value: foldbackTemp.value.toFixed(0)
+                value: platformInterface.foldback_temperature_limiting_event.foldback_maximum_temperature
                 onApplied: platformInterface.set_temperature_foldback.update(platformInterface.foldback_temperature_limiting_event.temperature_foldback_enabled,
-                                                                             input,
+                                                                             value,
                                                                              platformInterface.foldback_temperature_limiting_event.foldback_maximum_temperature_power)
             }
 

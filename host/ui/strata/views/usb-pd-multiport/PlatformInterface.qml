@@ -210,6 +210,12 @@ Item {
          "watts":30          // 30-300
     }
 
+    property var assured_power_port:{
+        "port":1,          // port to enable/disable for assured power
+        "enabled":true,     // or 'false' if disabling assured port
+        "power":100        // watts available to the port
+    }
+
     // --------------------------------------------------------------------------------------------
     //          Commands
     //--------------------------------------------------------------------------------------------
@@ -473,6 +479,25 @@ Item {
                           },
                       set: function(power){
                            this.payload.watts = power;
+                           },
+                      send: function () { CorePlatformInterface.send(this) },
+                      show: function () { CorePlatformInterface.show(this) }
+    })
+
+    property var set_assured_power_port:({
+                    "cmd":"set_assured_power_port",
+                    "payload":{
+                        "port":1,
+                        "enabled":true
+                      },
+                      update: function (inEnabled, inPort){
+                          console.log("setting assured port power to ",inEnabled,"on port",inPort);
+                          this.set(inEnabled, inPort);
+                          CorePlatformInterface.send(this);
+                          },
+                      set: function(inEnabled, inPort){
+                           this.payload.enabled = inEnabled;
+                           this.payload.port = inPort;
                            },
                       send: function () { CorePlatformInterface.send(this) },
                       show: function () { CorePlatformInterface.show(this) }
