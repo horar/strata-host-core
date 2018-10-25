@@ -59,6 +59,12 @@ Item {
         opacity: root.enabled ? 1 : .5
         layer.enabled: root.enabled ? false : true
 
+        onPressedChanged: {
+            if (!pressed){
+                root.moved(value)
+            }
+        }
+
         background: Rectangle {
             id: groove
             y: handleImg.height / 2 - height / 2

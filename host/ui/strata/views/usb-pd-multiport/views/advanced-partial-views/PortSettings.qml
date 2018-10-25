@@ -54,7 +54,7 @@ Item {
                 rightMargin: 10
             }
 
-            onValueChanged: platformInterface.set_over_current_protection.update(portNumber, value)
+            onMoved: platformInterface.set_over_current_protection.update(portNumber, value)
 
         }
 
@@ -66,7 +66,10 @@ Item {
                 right: parent.right
             }
             value: platformInterface.request_over_current_protection_notification.current_limit
-            onApplied: platformInterface.set_over_current_protection.update(portNumber, value)
+            onApplied:{
+                var currentValue = parseFloat(value)
+                platformInterface.set_over_current_protection.update(portNumber, currentValue)
+            }
         }
 
         SGDivider {
@@ -102,7 +105,7 @@ Item {
                 right: incrementInput.left
                 rightMargin: 10
             }
-            onValueChanged:{
+            onMoved:{
                 //console.log("sending values from increment slider:",portNumber, increment.value, platformInterface.get_cable_loss_compensation.bias_voltage);
                 platformInterface.set_cable_loss_compensation.update(portNumber,
                                                                      increment.value,
@@ -120,7 +123,7 @@ Item {
             }
             value: platformInterface.get_cable_loss_compensation.output_current
             onApplied: platformInterface.set_cable_loss_compensation.update(portNumber,
-                                                                            incrementInput.value,
+                                                                            parseFloat(value),
                                                                             platformInterface.get_cable_loss_compensation.bias_voltage)
         }
 
@@ -138,7 +141,7 @@ Item {
                 right: biasInput.left
                 rightMargin: 10
             }
-            onValueChanged: {
+            onMoved: {
                 platformInterface.set_cable_loss_compensation.update(portNumber,
                                                                      platformInterface.get_cable_loss_compensation.output_current,
                                                                      value)
@@ -156,9 +159,10 @@ Item {
             value: platformInterface.get_cable_loss_compensation.bias_voltage
             onApplied:{
                 console.log("input bias value sent from textInput")
+                var currentValue = parseFloat(value)
                 platformInterface.set_cable_loss_compensation.update(portNumber,
                                                                             platformInterface.get_cable_loss_compensation.output_current,
-                                                                            value)
+                                                                            currentValue)
             }
         }
 

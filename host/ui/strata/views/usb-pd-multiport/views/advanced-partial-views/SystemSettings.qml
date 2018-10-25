@@ -40,7 +40,7 @@ Item {
                 startLabel: "30W"
                 endLabel: "200W"
                 value: platformInterface.maximum_board_power.watts
-                onValueChanged: {
+                onMoved: {
                     //we'll need to address how to handle this when there are devices attached, as that would trigger
                     //renegotiation with all devices
                     platformInterface.set_maximum_board_power.update(value);
@@ -56,7 +56,9 @@ Item {
                 }
                 value: platformInterface.maximum_board_power.watts
                 onApplied: {
-                    platformInterface.set_minimum_input_voltage.update(value);   // slider will be updated via notification
+                    //console.log("sending max power from text input", value)
+                    var currentValue = parseFloat(value)
+                    platformInterface.set_maximum_board_power.update(currentValue);   // slider will be updated via notification
                 }
             }
 
@@ -207,7 +209,7 @@ Item {
                     property var sleepMode: platformInterface.sleep_mode.mode
 
                     onSleepModeChanged:{
-                        if (platformInterface.sleep_mode.mode === "manual"){
+                        if (platformInterface.sleep_mode.mode === "off"){
                             manualSleepModeButton.checked = true;
                             automaticSleepModeButton.checked = false;
                         }
@@ -223,22 +225,13 @@ Item {
                         checked: true  // Sets default checked button when exclusive
 
                         onClicked: {
-                            platformInterface.set_sleep_mode.update("manual");
+                            platformInterface.set_sleep_mode.update("off");
                         }
                     }
 
                     SGSegmentedButton{
                         id:automaticSleepModeButton
                         text: qsTr("Automatic")
-                        onCheckedChanged: {
-                            if (checked) {
-                                manualSleep.enabled = false
-                            } else {
-                                manualSleep.enabled = true
-                            }
-
-                        }
-
                         onClicked: {
                             platformInterface.set_sleep_mode.update("automatic");
                         }
@@ -366,7 +359,7 @@ Item {
                 startLabel: "0V"
                 endLabel: "20V"
                 value: platformInterface.input_under_voltage_notification.minimum_voltage
-                onValueChanged: {
+                onMoved: {
                     platformInterface.set_minimum_input_voltage.update(value);
                 }
             }
@@ -379,7 +372,10 @@ Item {
                     right: parent.right
                 }
                 value: platformInterface.input_under_voltage_notification.minimum_voltage
-                onApplied: platformInterface.set_minimum_input_voltage.update(value);   // slider will be updated via notification
+                onApplied:{
+                    var currentValue = parseFloat(value)
+                    platformInterface.set_minimum_input_voltage.update(currentValue);   // slider will be updated via notification
+                }
             }
 
             SGSlider {
@@ -397,7 +393,7 @@ Item {
                 startLabel: "-64°C"
                 endLabel: "191°C"
                 value: platformInterface.set_maximum_temperature_notification.maximum_temperature
-                onValueChanged: {
+                onMoved: {
                     platformInterface.set_maximum_temperature.update(value);
                 }
             }
@@ -412,7 +408,8 @@ Item {
                 value: platformInterface.set_maximum_temperature_notification.maximum_temperature
                 onApplied:{
                     console.log("temp fault value onApplied");
-                    platformInterface.set_maximum_temperature.update(value); // slider will be updated via notification
+                    var currentValue = parseFloat(value)
+                    platformInterface.set_maximum_temperature.update(currentValue); // slider will be updated via notification
                 }
             }
         }
@@ -479,7 +476,7 @@ Item {
                 startLabel: "0V"
                 endLabel: "20V"
                 //copy the current values for other stuff, and add the new slider value for the limit.
-                onValueChanged: platformInterface.set_input_voltage_foldback.update(platformInterface.foldback_input_voltage_limiting_event.input_voltage_foldback_enabled,
+                onMoved: platformInterface.set_input_voltage_foldback.update(platformInterface.foldback_input_voltage_limiting_event.input_voltage_foldback_enabled,
                                  value,
                                 platformInterface.foldback_input_voltage_limiting_event.foldback_minimum_voltage_power)
             }
@@ -493,7 +490,7 @@ Item {
                 }
                 value: platformInterface.foldback_input_voltage_limiting_event.foldback_minimum_voltage
                 onApplied: platformInterface.set_input_voltage_foldback.update(platformInterface.foldback_input_voltage_limiting_event.input_voltage_foldback_enabled,
-                                                                               value,
+                                                                              parseFloat(value),
                                                                               platformInterface.foldback_input_voltage_limiting_event.foldback_minimum_voltage_power)
             }
 
@@ -578,7 +575,7 @@ Item {
                 startLabel: "25°C"
                 endLabel: "200°C"
                 value: platformInterface.foldback_temperature_limiting_event.foldback_maximum_temperature
-                onValueChanged:{
+                onMoved:{
                     console.log("sending temp foldback update command from foldbackTempSlider");
                     platformInterface.set_temperature_foldback.update(platformInterface.foldback_temperature_limiting_event.temperature_foldback_enabled,
                                                                                   foldbackTemp.value,
@@ -596,7 +593,7 @@ Item {
                 }
                 value: platformInterface.foldback_temperature_limiting_event.foldback_maximum_temperature
                 onApplied: platformInterface.set_temperature_foldback.update(platformInterface.foldback_temperature_limiting_event.temperature_foldback_enabled,
-                                                                             value,
+                                                                             parseFloat(value),
                                                                              platformInterface.foldback_temperature_limiting_event.foldback_maximum_temperature_power)
             }
 
