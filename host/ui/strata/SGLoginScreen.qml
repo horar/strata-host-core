@@ -6,7 +6,7 @@ import QtQuick.Controls.Styles 1.4
 import "js/navigation_control.js" as NavigationControl
 import "js/login.js" as Authenticator
 import "js/restclient.js" as Rest
-import fonts 1.0
+import Fonts 1.0
 
 Rectangle {
     id: container

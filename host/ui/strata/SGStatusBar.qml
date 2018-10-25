@@ -6,7 +6,7 @@ import QtGraphicalEffects 1.0
 import "js/navigation_control.js" as NavigationControl
 import "qrc:/js/platform_selection.js" as PlatformSelection
 import "qrc:/statusbar-partial-views"
-import fonts 1.0
+import Fonts 1.0
 
 Rectangle {
     id: container
