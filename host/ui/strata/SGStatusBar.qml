@@ -6,7 +6,7 @@ import QtGraphicalEffects 1.0
 import "js/navigation_control.js" as NavigationControl
 import "qrc:/js/platform_selection.js" as PlatformSelection
 import "qrc:/statusbar-partial-views"
-
+import fonts 1.0
 
 Rectangle {
     id: container
@@ -151,7 +151,7 @@ Rectangle {
         }
         color: "#00b842"
         font {
-            family: sgicons.name
+            family: Fonts.sgicons
             pixelSize: 20
         }
         visible: remote_activity_label.visible
@@ -289,7 +289,7 @@ Rectangle {
                     id: remoteSupportPopupIndicator
                     text: "\ue810"
                     font {
-                        family: sgicons.name
+                        family: Fonts.sgicons
                     }
                     visible: remoteSupportMenu.visible
                     anchors {
@@ -503,7 +503,7 @@ Rectangle {
                                             id: hcs_token_status
                                             text : qsTr("Enable to generate remote token")
                                             font {
-                                                family: franklinGothicBook.name
+                                                family: Fonts.franklinGothicBook
                                             }
                                             color: "white"
                                             //readOnly: true
@@ -528,7 +528,7 @@ Rectangle {
                                             text: ""
                                             readOnly: true
                                             font {
-                                                family: inconsolata.name
+                                                family: Fonts.inconsolata
                                                 pixelSize: 20
                                             }
                                             selectByMouse: true
@@ -632,7 +632,7 @@ Rectangle {
                                         }
                                         color: remoteToggle.checked ? "white" : "grey"
                                         font {
-                                            family: franklinGothicBook.name
+                                            family: Fonts.franklinGothicBook
                                         }
                                     }
                                 }
@@ -684,7 +684,7 @@ Rectangle {
                                                 }
                                                 text: name
                                                 font {
-                                                    family: franklinGothicBold.name
+                                                    family: Fonts.franklinGothicBold
                                                 }
                                                 color: "white"
                                                 elide: Text.ElideRight
@@ -927,7 +927,7 @@ Rectangle {
                                 height: 30
                                 text: "Enter remote token:"
                                 font {
-                                    family: franklinGothicBold.name
+                                    family: Fonts.franklinGothicBold
                                 }
                                 color: "white"
                                 anchors {
@@ -1138,7 +1138,7 @@ Rectangle {
                     centerIn: profileIcon
                 }
                 font {
-                    family: franklinGothicBold.name
+                    family: Fonts.franklinGothicBold
                     pixelSize: profileIconHover.containsMouse ? 24 : 20
                 }
             }
@@ -1266,7 +1266,7 @@ Rectangle {
                     }
                     text: "My Profile"
                     font {
-                        family: franklinGothicBold.name
+                        family: Fonts.franklinGothicBold
                     }
                     color: "white"
                 }
@@ -1276,7 +1276,7 @@ Rectangle {
                     text: "\ue805"
                     color: "white"
                     font {
-                        family: sgicons.name
+                        family: Fonts.sgicons
                         pixelSize: 20
                     }
                     anchors {
@@ -1316,7 +1316,7 @@ Rectangle {
                 }
                 font {
                     pixelSize: 25
-                    family: franklinGothicBold.name
+                    family: Fonts.franklinGothicBold
                 }
                 color: "white"
             }
@@ -1332,7 +1332,7 @@ Rectangle {
                 text: getUserName(user_id) + "@onsemi.com"
                 font {
                     pixelSize: 15
-                    family: franklinGothicBook.name
+                    family: Fonts.franklinGothicBook
                 }
                 color: "white"
             }
@@ -1348,7 +1348,7 @@ Rectangle {
                 color: "white"
                 font {
                     pixelSize: 15
-                    family: franklinGothicBook.name
+                    family: Fonts.franklinGothicBook
                 }
             }
 
@@ -1363,30 +1363,10 @@ Rectangle {
                 color: "white"
                 font {
                     pixelSize: 15
-                    family: franklinGothicBook.name
+                    family: Fonts.franklinGothicBook
                 }
             }
         }
-    }
-
-    FontLoader {
-        id: franklinGothicBook
-        source: "qrc:/fonts/FranklinGothicBook.otf"
-    }
-
-    FontLoader {
-        id: franklinGothicBold
-        source: "qrc:/fonts/FranklinGothicBold.ttf"
-    }
-
-    FontLoader {
-        id: sgicons
-        source: "qrc:/fonts/sgicons.ttf"
-    }
-
-    FontLoader {
-        id: inconsolata
-        source: "qrc:/fonts/Inconsolata.otf"
     }
 
     Window {

@@ -1,5 +1,6 @@
 import QtQuick 2.9
 import QtQuick.Controls 2.0
+import fonts 1.0
 
 Item {
     id: root
@@ -51,11 +52,7 @@ Item {
         bottomPadding: topPadding
         color: root.textColor
         font {
-            family: franklinGothicBook.name
-        }
-        FontLoader {
-            id: franklinGothicBook
-            source: "qrc:/fonts/FranklinGothicBook.otf"
+            family: Fonts.franklinGothicBook
         }
     }
 
