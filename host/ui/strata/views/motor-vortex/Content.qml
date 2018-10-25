@@ -77,6 +77,11 @@ Rectangle {
                 onClicked: documentManager.clearLayoutRevisionCount()
             }
 
+            TabButton {
+                id: ibdTabButton
+                text: "Block Diagrams"
+            }
+
             //        TabButton { text: "System Content" }
 
             TabButton {
@@ -123,6 +128,7 @@ Rectangle {
             interactive: false
             PageSchematic { id: pageSchematic }
             PageLayout { id: pageLayout }
+            PageInteractiveBlockDiagrams { id: pageInteractiveBlockDiagrams }
             EfficiencySimulator {
                 width: view.width
                 height: view.height - tabBar.height

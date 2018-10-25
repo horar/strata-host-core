@@ -1,5 +1,6 @@
 import QtQuick 2.9
 import QtQuick.Controls 2.3
+import Fonts 1.0
 
 ToolButton {
     id: root
@@ -32,7 +33,7 @@ ToolButton {
                 id: buttonIcon
                 text: root.iconCharacter
                 font {
-                    family: sgicons.name
+                    family: Fonts.sgicons
                     pixelSize: 20
                 }
                 color: "white"
@@ -49,7 +50,7 @@ ToolButton {
                 id: buttonText
                 text: root.text
                 font {
-                    family: franklinGothicBook.name
+                    family: Fonts.franklinGothicBook
                 }
                 opacity: enabled ? 1.0 : 0.3
                 color: "white"
@@ -58,15 +59,5 @@ ToolButton {
                 }
             }
         }
-    }
-
-    FontLoader {
-        id: franklinGothicBook
-        source: "qrc:/fonts/FranklinGothicBook.otf"
-    }
-
-    FontLoader {
-        id: sgicons
-        source: "qrc:/fonts/sgicons.ttf"
     }
 }

@@ -79,7 +79,6 @@
         <file>SGStatusBar.qml</file>
         <file>images/icons/SettingIcon.svg</file>
         <file>images/icons/whiteAlertIcon.svg</file>
-        <file>SGSpotlightText.qml</file>
         <file>images/ian.cain.jpg</file>
         <file>js/metrics.js</file>
         <file>views/bubu/Control.js</file>
@@ -309,7 +308,7 @@
         <file>statusbar-partial-views/SGTabButton.qml</file>
         <file>statusbar-partial-views/SGToolButton.qml</file>
         <file>SGRegistration.qml</file>
-        <file>images/icons/on.ico</file>
+        <file>resources/icons/app/on.ico</file>
         <file>views/efficiency-simulator/images/circuit.png</file>
         <file>views/efficiency-simulator/sgwidgets/fonts/sgicons.ttf</file>
         <file>views/efficiency-simulator/sgwidgets/SGColumnDivider.qml</file>
@@ -490,5 +489,15 @@
         <file>views/usb-pd/Content.qml</file>
         <file>views/usb-pd/Control.qml</file>
         <file>views/usb-pd/views/images/basic-twoPortBackground.png</file>
+        <file>fonts/Fonts.qml</file>
+        <file>statusbar-partial-views/SGProfilePopup.qml</file>
+        <file>statusbar-partial-views/SGSubmitInfoBox.qml</file>
+        <file>statusbar-partial-views/SGProfileUpdate.qml</file>
+        <file>statusbar-partial-views/SGAnalyticsPopup.qml</file>
+        <file>statusbar-partial-views/SGStatusListBox.qml</file>
+        <file>statusbar-partial-views/SGFeedbackPopup.qml</file>
+        <file>statusbar-partial-views/SGConfirmationPopup.qml</file>
+        <file>views/motor-vortex/PageInteractiveBlockDiagrams.qml</file>
+        <file>views/motor-vortex/InteractiveBlockDiagramDemo.html</file>
     </qresource>
 </RCC>
