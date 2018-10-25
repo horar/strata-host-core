@@ -5,7 +5,6 @@ import Fonts 1.0
 Button {
     id: root
     text: qsTr("Button Text")
-   // width: profileMenu.width
     hoverEnabled: true
 
     property alias buttonColor: backRect.color

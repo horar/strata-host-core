@@ -490,5 +490,14 @@
         <file>views/usb-pd/Control.qml</file>
         <file>views/usb-pd/views/images/basic-twoPortBackground.png</file>
         <file>fonts/Fonts.qml</file>
+        <file>statusbar-partial-views/SGProfilePopup.qml</file>
+        <file>statusbar-partial-views/SGSubmitInfoBox.qml</file>
+        <file>statusbar-partial-views/SGProfileUpdate.qml</file>
+        <file>statusbar-partial-views/SGAnalyticsPopup.qml</file>
+        <file>statusbar-partial-views/SGStatusListBox.qml</file>
+        <file>statusbar-partial-views/SGFeedbackPopup.qml</file>
+        <file>statusbar-partial-views/SGConfirmationPopup.qml</file>
+        <file>views/motor-vortex/PageInteractiveBlockDiagrams.qml</file>
+        <file>views/motor-vortex/InteractiveBlockDiagramDemo.html</file>
     </qresource>
 </RCC>

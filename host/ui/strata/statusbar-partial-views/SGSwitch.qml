@@ -15,6 +15,8 @@ Item {
     property alias pressed: switchRoot.pressed
     property alias down: switchRoot.down
     property alias checked: switchRoot.checked
+    property alias overrideLabelWidth: labelText.width
+
 
     property real switchHeight: 26
     property real fontSize: 10
