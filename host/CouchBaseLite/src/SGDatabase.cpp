@@ -14,7 +14,6 @@
 #define DEBUG(...) printf("SGDatabase: "); printf(__VA_ARGS__)
 using namespace std;
 SGDatabase::SGDatabase(const std::string db_name) {
-    // TODO: Check if db_name is empty
     open(db_name);
 
 }
