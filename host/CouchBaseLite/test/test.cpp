@@ -2,10 +2,10 @@
 // Created by Luay Alshawi on 10/25/18.
 //
 #include <iostream>
-#include "CBLDatabase.h"
+#include "SGDatabase.h"
 using namespace std;
 int main(){
 
-    CBLDatabase cblDatabase("mydb");
+    SGDatabase sgDatabase("mydb");
     return 0;
 }

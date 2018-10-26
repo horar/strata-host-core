@@ -1,8 +1,6 @@
-#ifndef CBLDATABASE_H
-#define CBLDATABASE_H
 /**
 ******************************************************************************
-* @file CBLDatabase .H
+* @file SGDatabase .H
 * @author Luay Alshawi
 * $Rev: 1 $
 * $Date:
@@ -11,18 +9,21 @@
 * @copyright Copyright 2018 On Semiconductor
 */
 
+#ifndef SGDDATABASE_H
+#define SGDDATABASE_H
+
 #include<string>
 #include "c4Database.h"
 #include "c4.hh"
 
 #define NO_CB_ERROR     0      // Declare value rather than use a magic number
 
-class CBLDatabase {
+class SGDatabase {
 
 public:
-    CBLDatabase(const std::string db_name);
+    SGDatabase(const std::string db_name);
 
-    virtual ~CBLDatabase();
+    virtual ~SGDatabase();
 
 private:
 
@@ -36,4 +37,4 @@ private:
 };
 
 
-#endif //CBLDATABASE_H
+#endif //SGDDATABASE_H

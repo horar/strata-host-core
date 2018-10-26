@@ -83,7 +83,8 @@ if (litecoreRest)
 endif()
 
 set(LIB_SOURCES
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/CBLDatabase.cpp)
+		${CMAKE_CURRENT_SOURCE_DIR}/src/SGDatabase.cpp)
+
 # Make couchbase-lite-cpp a library;
 add_library(couchbase-lite-cpp STATIC ${LIB_SOURCES})
 # We only need litecore library linked
