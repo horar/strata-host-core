@@ -9,7 +9,7 @@
 #include "dispatch.h"
 
 
-void gueue_memory_pool_init()
+void queue_memory_pool_init()
 {
     g_queue = (queue_t*)malloc(sizeof(queue_t));
 

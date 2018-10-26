@@ -12,7 +12,7 @@
 #include "memory_pool.h"
 
 /* MACROS for debug purposes */
-#define DEBUG_MESSAGES 1  // 1 to enable debug/error print messages
+#define DEBUG_MESSAGES 0  // 1 to enable debug/error print messages
 
 #if DEBUG_MESSAGES
   #define MAX_MSG_SIZE 500
