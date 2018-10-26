@@ -62,7 +62,7 @@ echo "This will take a few minutes (3-5ish)."
 echo "Don't worry, this is just a one time thing."
 $COMMENT_RESET
 cd ../../build_cmake/scripts/
-sudo ./build_unix.sh
+sudo ./build_macos.sh
 ###     Completion          ###
 $COMMENT_TPUT
 echo "Complete!"
