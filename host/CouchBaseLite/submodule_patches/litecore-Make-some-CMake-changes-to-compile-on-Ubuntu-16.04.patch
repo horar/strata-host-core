@@ -1,0 +1,107 @@
+From 4fa96225285fb47380144e0e3edeb6dea80cf270 Mon Sep 17 00:00:00 2001
+From: Abe Lopez <abe.lopez@onsemi.com>
+Date: Fri, 20 Oct 2017 11:23:57 -0700
+Subject: [PATCH] Make some CMake changes to compile on Ubuntu 16.04
+
+---
+ CMakeLists.txt | 44 ++++++++++++++++++++++----------------------
+ 1 file changed, 22 insertions(+), 22 deletions(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index e9b45ee..86a5790 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -4,10 +4,10 @@ project (LiteCore)
+ 
+ ### BUILD SETTINGS:
+ 
+-set(COMPILE_FLAGS   "${COMPILE_FLAGS}   -Wall -Werror")
++set(COMPILE_FLAGS   "${COMPILE_FLAGS}   -std=c++11 -pthread -stdlib=libstdc++ -Wall -Werror")
+ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+ set(CMAKE_CXX_STANDARD_REQUIRED ON)
+-set(CMAKE_CXX_STANDARD 11)
++#set(CMAKE_CXX_STANDARD 11)
+ set(CMAKE_C_STANDARD_REQUIRED ON)
+ set(CMAKE_C_STANDARD 11)
+ 
+@@ -40,7 +40,7 @@ if(MSVC)
+ endif()
+ 
+ if("${CMAKE_SYSTEM_NAME}" STREQUAL "Linux")
+-    add_definitions(-DLITECORE_USES_ICU=1)
++    add_definitions(-DLITECORE_USES_ICU=0)
+ 
+     # Enable relative RPATHs for installed bits
+     set (CMAKE_INSTALL_RPATH "\$ORIGIN")
+@@ -48,26 +48,26 @@ if("${CMAKE_SYSTEM_NAME}" STREQUAL "Linux")
+     if(NOT "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+         message(FATAL_ERROR "${CMAKE_CXX_COMPILER_ID} is not supported for building!")
+     endif()
+-    find_library(LIBCXX_LIB c++)
+-    if (NOT LIBCXX_LIB)
+-        message(FATAL_ERROR "libc++ not found")
+-    endif()
+-    message("Found libc++ at ${LIBCXX_LIB}")
+-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")
++    #find_library(LIBCXX_LIB stdc++)
++    #if (NOT LIBCXX_LIB)
++    #    message(FATAL_ERROR "libc++ not found")
++    #endif()
++    #message("Found libc++ at ${LIBCXX_LIB}")
++    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -pthread -stdlib=libstdc++") #change to libstdc++
+ 
+     find_library(LIBCXXABI_LIB c++abi)
+     if (NOT LIBCXXABI_LIB)
+         message(FATAL_ERROR "libc++abi not found")
+     endif()
+     message("Found libc++abi at ${LIBCXXABI_LIB}")
+-    find_path(LIBCXX_INCLUDE c++/v1/string
+-        HINTS "${CMAKE_BINARY_DIR}/tlm/deps/libcxx.exploded"
+-        PATH_SUFFIXES include)
+-    if (NOT LIBCXX_INCLUDE)
+-        message(FATAL_ERROR "libc++ header files not found")
+-    endif()
+-    message("Using libc++ header files in ${LIBCXX_INCLUDE}")
+-    include_directories("${LIBCXX_INCLUDE}/c++/v1")
++    #find_path(LIBCXX_INCLUDE c++/v1/string
++        #HINTS "${CMAKE_BINARY_DIR}/tlm/deps/libcxx.exploded"
++        #PATH_SUFFIXES include)
++    #if (NOT LIBCXX_INCLUDE)
++        #message(FATAL_ERROR "libc++ header files not found")
++    #endif()
++    #message("Using libc++ header files in ${LIBCXX_INCLUDE}")
++    #include_directories("${LIBCXX_INCLUDE}/c++/v1")
+     find_library(ICU4C_COMMON icuuc)
+     if (NOT ICU4C_COMMON)
+         message(FATAL_ERROR "libicuuc not found")
+@@ -81,7 +81,7 @@ if("${CMAKE_SYSTEM_NAME}" STREQUAL "Linux")
+     find_path(LIBICU_INCLUDE unicode/ucol.h
+         HINTS "${CMAKE_BINARY_DIR}/tlm/deps/icu4c.exploded"
+         PATH_SUFFIXES include)
+-    if (NOT LIBCXX_INCLUDE)
++    if (NOT LIBICU_INCLUDE)
+         message(FATAL_ERROR "libicu header files not found")
+     endif()
+     message("Using libicu header files in ${LIBICU_INCLUDE}")
+@@ -212,14 +212,14 @@ elseif(UNIX AND NOT APPLE)
+   endif()
+ endif()
+ 
+-if("${CMAKE_SYSTEM_NAME}" STREQUAL "Linux")
++#if("${CMAKE_SYSTEM_NAME}" STREQUAL "Linux")
+     # libc++ is special - clang will introduce an implicit -lc++ when it is used.
+     # That means we need to tell the linker the path to the directory containing
+     # libc++.so rather than just linking the .so directly. This must be done
+     # *before* the target declaration as it affects all subsequent targets.
+-    get_filename_component (LIBCXX_LIBDIR "${LIBCXX_LIB}" DIRECTORY)
+-    link_directories (${LIBCXX_LIBDIR})
+-endif()
++#    get_filename_component (LIBCXX_LIBDIR "${LIBCXX_LIB}" DIRECTORY)
++#    link_directories (${LIBCXX_LIBDIR})
++#endif()
+ 
+ add_library(LiteCoreStatic STATIC ${ALL_SRC_FILES})
+ target_compile_definitions(LiteCoreStatic PRIVATE -DLITECORE_IMPL)
+-- 
+2.7.4
+

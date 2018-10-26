@@ -1,0 +1,47 @@
+From 714fdb31d7bc05ba85f064668c1bd2012c52aea9 Mon Sep 17 00:00:00 2001
+From: Abe Lopez <abe.lopez@onsemi.com>
+Date: Tue, 7 Nov 2017 14:01:25 -0800
+Subject: [PATCH] Add condition_variable include
+
+---
+ src/util/Timer.hh | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/src/util/Timer.hh b/src/util/Timer.hh
+index f394742..8d85fa2 100644
+--- a/src/util/Timer.hh
++++ b/src/util/Timer.hh
+@@ -14,6 +14,7 @@
+ #include <mutex>
+ #include <thread>
+ #include <vector>
++#include <condition_variable>
+ 
+ namespace litecore { namespace actor {
+ 
+@@ -33,7 +34,7 @@ namespace litecore { namespace actor {
+ 
+         /** Destructs a timer. If the timer was scheduled, and the destructor is called just as
+             it fires, it is possible for the callback to be running (on another thread) while this
+-            thread is in the destructor; but in that case the destructor will not return until 
++            thread is in the destructor; but in that case the destructor will not return until
+             after the callback completes. */
+         ~Timer() {
+             stop();
+@@ -70,11 +71,11 @@ namespace litecore { namespace actor {
+         class Manager {
+         public:
+             using map = std::map<time, Timer*>;
+-            
++
+             Manager();
+             void setFireTime(Timer*, time);
+             void unschedule(Timer*);
+-            
++
+         private:
+             bool _unschedule(Timer*);
+             void run();
+-- 
+2.7.4
+
