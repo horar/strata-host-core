@@ -9,19 +9,29 @@
 * @copyright Copyright 2018 On Semiconductor
 */
 
-#ifndef SGDDATABASE_H
-#define SGDDATABASE_H
+#ifndef SGDATABASE_H
+#define SGDATABASE_H
 
-#include<string>
-#include "c4Database.h"
-#include "c4.hh"
+#include <string>
+#include <thread>         // std::thread
+#include <mutex>          // std::mutex
+#include "c4.h"
+#include "SGDocument.h"
 
+#ifndef NO_CB_ERROR
 #define NO_CB_ERROR     0      // Declare value rather than use a magic number
-
+#endif
 class SGDatabase {
 
 public:
     SGDatabase(const std::string db_name);
+
+    C4Database *getC4db() const;
+
+    void save(class SGDocument *doc);
+    bool deleteDocument(class SGDocument *doc);
+
+    C4Document* getDocumentById(const std::string &docId);
 
     virtual ~SGDatabase();
 
@@ -34,6 +44,8 @@ private:
 
     void open(const std::string db_name);
     void close();
+
+    std::mutex          db_lock_;
 };
 
 
