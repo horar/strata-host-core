@@ -1,0 +1,59 @@
+From 5ec481115ef93c8a527045b2f46d84354610b42f Mon Sep 17 00:00:00 2001
+From: Abe Lopez <abe.lopez@onsemi.com>
+Date: Fri, 3 Nov 2017 18:24:48 -0700
+Subject: [PATCH] HACK: Remove abstract call as GCC complains.
+
+This is hack to get gcc to compile couchbase. It works but needs looking into.
+---
+ Fleece/FleeceCpp.hh | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
+
+diff --git a/Fleece/FleeceCpp.hh b/Fleece/FleeceCpp.hh
+index 583d221..b7548d5 100644
+--- a/Fleece/FleeceCpp.hh
++++ b/Fleece/FleeceCpp.hh
+@@ -41,13 +41,13 @@ namespace fleeceapi {
+ 
+     static inline bool operator== (FLSliceResult sr, FLSlice s) {return (FLSlice)sr == s;}
+     static inline bool operator!= (FLSliceResult sr, FLSlice s) {return !(sr ==s);}
+-    
++
+ 
+     class Value {
+     public:
+         static Value fromData(FLSlice data)          {return Value(FLValue_FromData(data));}
+         static Value fromTrustedData(FLSlice data)   {return Value(FLValue_FromTrustedData(data));}
+-        
++
+         Value()                                         { }
+         Value(FLValue v)                                :_val(v) { }
+         operator FLValue const ()                       {return _val;}
+@@ -117,8 +117,8 @@ namespace fleeceapi {
+ 
+         FLKeyPath _path;
+     };
+-    
+-    
++
++
+     class Array : public Value {
+     public:
+         Array()                                         :Value() { }
+@@ -236,10 +236,10 @@ namespace fleeceapi {
+         explicit AllocedDict(fleece::slice s)
+         :AllocedDict(alloc_slice(s)) { }
+ 
+-        AllocedDict(const AllocedDict &d)
+-        :Dict(d)
+-        ,alloc_slice(d)
+-        { }
++        // AllocedDict(const AllocedDict &d)
++        // :Dict(d)
++        // ,alloc_slice(fleece::alloc_slice* &d)
++        // { }
+ 
+         const alloc_slice& data() const                 {return *this;}
+     };
+-- 
+2.7.4
+
