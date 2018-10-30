@@ -1,0 +1,174 @@
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+    <title>Interactive Block Diagrams</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <style> .d-none {
+      display: none!important;
+    }
+    </style>
+    <script>
+    $(document).ready(function() {
+      $("area").on("click", function(event) {
+        showFlyout(event, this, $(this).attr("data-block-id"));
+      })
+    })
+
+    function showFlyout(event, item, id) {
+      $("#myModal .modal-title").html($("#" + id + ".prodTaxFlyout .header").html());
+      $("#myModal .modal-body").html($("#" + id + ".prodTaxFlyout .flyoutBody").html());
+
+      $("#myModal").show();
+      var modalTop = event.clientY - ($("#myModal .modal-content").height() / 2);
+      if (modalTop + $("#myModal .modal-content").height() + 5 > $(window).height()) {
+        modalTop = $(window).height() - $("#myModal .modal-content").height() - 5;
+        if($("#navigation").css('position') == 'fixed') {
+          modalTop -= $("#navigation").height();
+        }
+      }
+      if(modalTop < 0) {
+        modalTop = 0;
+      }
+      console.log( $("#myModal .modal-content").height());
+      $("#myModal").hide();
+
+      $('#myModal .modal-content').css('position', 'absolute');
+      $('#myModal .modal-content').css('top',  modalTop + 'px' );
+      $('#myModal').modal('show');
+    }
+    </script>
+
+    </head>
+    <body>
+    <div class="container">
+    <img id="diagramImage" src="http://www.onsemi.com/site/images/applications/152_NotLogged_en-us.jpg" usemap="#diagramMap" border="0"/><map name="diagramMap">
+					    	<area shape="rect" href="javascript:void(0)" coords="374,194 436,228" data-block-id="12425"/>
+					        	
+					    	<area shape="rect" href="javascript:void(0)" coords="374,283 436,318" data-block-id="12424"/>
+					        	
+					    	<area shape="rect" href="javascript:void(0)" coords="255,194 316,228" data-block-id="12421"/>
+					        	
+					    	<area shape="rect" href="javascript:void(0)" coords="477,283 538,318" data-block-id="12427"/>
+					        	
+					    	<area shape="rect" href="javascript:void(0)" coords="477,361 538,401" data-block-id="12426"/>
+					        	
+					    	<area shape="rect" href="javascript:void(0)" coords="681,194 744,228" data-block-id="12428"/>
+					        	
+					    	</map><div id="flyouts" class="d-none">
+    <div class="prodTaxFlyout" id="12425">
+	        <div class="header">
+	                Recommended parts for 
+	                Transceiver</div>
+            <div class="flyoutBody">
+
+	            <p>
+	                                <a href="http://www.onsemi.com/PowerSolutions/parametrics.do?id=178&amp;blockId=12425&amp;appId=15068" class="taxonomyLink">
+	                                    Wired Transceivers &amp; Modems</a>
+	                       </p>
+	                    </div>
+		</div>
+    <div class="prodTaxFlyout" id="12424">
+	        <div class="header">
+	                Recommended parts for 
+	                Supervisory</div>
+            <div class="flyoutBody">
+
+	            <p>
+	                                <a href="http://www.onsemi.com/PowerSolutions/parametrics.do?id=694&amp;blockId=12424&amp;appId=15068" class="taxonomyLink">
+	                                    Voltage Supervisors</a>
+	                       </p>
+	                    </div>
+		</div>
+    <div class="prodTaxFlyout" id="12421">
+	        <div class="header">
+	                Recommended parts for 
+	                I/O Protection</div>
+            <div class="flyoutBody">
+
+	            <p>
+	                                <a href="http://www.onsemi.com/PowerSolutions/parametrics.do?id=248&amp;blockId=12421&amp;appId=15068" class="taxonomyLink">
+	                                    ESD Protection Diodes</a>
+	                       </p>
+	                    <p>
+	                                <a href="http://www.onsemi.com/PowerSolutions/parametrics.do?id=809&amp;blockId=12421&amp;appId=15068" class="taxonomyLink">
+	                                    MOSFETs</a>
+	                       </p>
+	                    <p>
+	                                <a href="http://www.onsemi.com/PowerSolutions/parametrics.do?id=830&amp;blockId=12421&amp;appId=15068" class="taxonomyLink">
+	                                    Zener Diodes</a>
+	                       </p>
+	                    </div>
+		</div>
+    <div class="prodTaxFlyout" id="12427">
+	        <div class="header">
+	                Recommended parts for 
+	                Watch Dog</div>
+            <div class="flyoutBody">
+
+	            <p>
+	                                <a href="http://www.onsemi.com/PowerSolutions/parametrics.do?id=149&amp;blockId=12427&amp;appId=15068" class="taxonomyLink">
+	                                    Converters</a>
+	                       </p>
+	                    <p>
+	                                <a href="http://www.onsemi.com/PowerSolutions/parametrics.do?id=694&amp;blockId=12427&amp;appId=15068" class="taxonomyLink">
+	                                    Voltage Supervisors</a>
+	                       </p>
+	                    <p>
+	                                <a href="http://www.onsemi.com/PowerSolutions/parametrics.do?id=366&amp;blockId=12427&amp;appId=15068" class="taxonomyLink">
+	                                    LDO Regulators &amp; Linear Voltage Regulators</a>
+	                       </p>
+	                    </div>
+		</div>
+    <div class="prodTaxFlyout" id="12426">
+	        <div class="header">
+	                Recommended parts for 
+	                Voltage Regulation (Linear, Switching)</div>
+            <div class="flyoutBody">
+
+	            <p>
+	                                <a href="http://www.onsemi.com/PowerSolutions/parametrics.do?id=149&amp;blockId=12426&amp;appId=15068" class="taxonomyLink">
+	                                    Converters</a>
+	                       </p>
+	                    <p>
+	                                <a href="http://www.onsemi.com/PowerSolutions/parametrics.do?id=366&amp;blockId=12426&amp;appId=15068" class="taxonomyLink">
+	                                    LDO Regulators &amp; Linear Voltage Regulators</a>
+	                       </p>
+	                    </div>
+		</div>
+    <div class="prodTaxFlyout" id="12428">
+	        <div class="header">
+	                Recommended parts for 
+	                Thermal Management</div>
+            <div class="flyoutBody">
+
+	            <p>
+	                                <a href="http://www.onsemi.com/PowerSolutions/parametrics.do?id=2127&amp;blockId=12428&amp;appId=15068" class="taxonomyLink">
+	                                    Temperature Sensors</a>
+	                       </p>
+	                    </div>
+		</div>
+    </div>
+    <div class="modal fade bd-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true" id="myModal">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    	<span aria-hidden="true">×</span>
+                	</button>
+                </div>
+                <div class="modal-body">
+            	</div>
+        	</div>
+    	</div>
+    </div>
+
+  </div>
+  </body>
+  </html>
+  

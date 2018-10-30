@@ -1,6 +1,6 @@
 import QtQuick 2.9
 import QtQuick.Controls 2.0
-import fonts 1.0
+import Fonts 1.0
 
 Item {
     id: root
@@ -15,6 +15,8 @@ Item {
     property alias pressed: switchRoot.pressed
     property alias down: switchRoot.down
     property alias checked: switchRoot.checked
+    property alias overrideLabelWidth: labelText.width
+
 
     property real switchHeight: 26
     property real fontSize: 10

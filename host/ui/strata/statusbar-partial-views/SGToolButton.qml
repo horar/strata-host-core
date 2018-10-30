@@ -1,6 +1,6 @@
 import QtQuick 2.9
 import QtQuick.Controls 2.3
-import fonts 1.0
+import Fonts 1.0
 
 ToolButton {
     id: root
@@ -33,7 +33,7 @@ ToolButton {
                 id: buttonIcon
                 text: root.iconCharacter
                 font {
-                    family: fonts.sgicons
+                    family: Fonts.sgicons
                     pixelSize: 20
                 }
                 color: "white"
