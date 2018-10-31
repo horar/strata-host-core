@@ -1198,15 +1198,6 @@ Rectangle {
                 }
 
                 SGMenuItem {
-                    text: qsTr("Analytics")
-                    onClicked: {
-                        profileMenu.close()
-                        analyticsPopup.open();
-                    }
-                    width: profileMenu.width
-                }
-
-                SGMenuItem {
                     text: qsTr("Feedback")
                     onClicked: {
                         profileMenu.close()
@@ -1216,6 +1207,7 @@ Rectangle {
                 }
 
                 Rectangle {
+                    id: menuDivider
                     color: "white"
                     opacity: .4
                     height: 1
@@ -1264,13 +1256,6 @@ Rectangle {
 
     SGProfilePopup {
         id: profilePopup
-
-        x: container.width/2 - profilePopup.width/2
-        y: container.parent.windowHeight/2 - profilePopup.height/2
-    }
-
-    SGAnalyticsPopup {
-        id: analyticsPopup
 
         x: container.width/2 - profilePopup.width/2
         y: container.parent.windowHeight/2 - profilePopup.height/2
