@@ -36,9 +36,9 @@ Item {
                     rightMargin: 30
                 }
                 from: 30
-                to: 200
+                to: 400
                 startLabel: "30W"
-                endLabel: "200W"
+                endLabel: "400W"
                 value: platformInterface.maximum_board_power.watts
                 onMoved: {
                     //we'll need to address how to handle this when there are devices attached, as that would trigger
@@ -57,7 +57,7 @@ Item {
                 value: platformInterface.maximum_board_power.watts
                 onApplied: {
                     //console.log("sending max power from text input", value)
-                    var currentValue = parseFloat(value)
+                    var currentValue = maximumBoardPowerInput.floatValue
                     platformInterface.set_maximum_board_power.update(currentValue);   // slider will be updated via notification
                 }
             }
@@ -107,7 +107,7 @@ Item {
                 switchHeight: 20
                 switchWidth: 46
 
-                checked: platformInterface.set_assured_power_port.enabled
+                checked: platformInterface.assured_power_port.enabled
                 onToggled: platformInterface.set_assured_power_port.update(checked, 1)  //we're only allowing port 1 to be assured
             }
 
@@ -194,6 +194,7 @@ Item {
                 textColor: "#666"
                 radius: 4
                 buttonHeight: 25
+                enabled: false
                 anchors {
                     top: powerNegotiationTitleText.bottom
                     topMargin: 10
@@ -551,8 +552,9 @@ Item {
 
             SGComboBox {
                 id: limitOutput2
-                label: "Limit output power to:"
-                model: ["15","27", "36", "45","60","100"]
+                label: "Reduce output power to:"
+                model: ["10","15", "25", "50","75","90"]
+                comboBoxWidth: 60
                 anchors {
                     left: parent.left
                     top: foldbackTemp.bottom
@@ -570,6 +572,16 @@ Item {
 
                 onCurrentFoldbackOuputChanged: {
                     limitOutput2.currentIndex = limitOutput2.comboBox.find( parseInt (platformInterface.foldback_temperature_limiting_event.foldback_maximum_temperature_power))
+                }
+            }
+
+            Text{
+                id:percentLabel
+                text:"percent"
+                anchors{
+                    left:limitOutput2.right
+                    leftMargin: 5
+                    verticalCenter: limitOutput2.verticalCenter
                 }
             }
         }

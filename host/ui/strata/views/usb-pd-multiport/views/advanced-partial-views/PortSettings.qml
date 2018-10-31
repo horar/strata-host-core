@@ -24,8 +24,8 @@ Item {
 
             //when changing the value
             onActivated: {
-                console.log("setting max power to ",maxPowerOutput.comboBox.currentText);
-                platformInterface.set_usb_pd_maximum_power.update(portNumber,maxPowerOutput.comboBox.currentText)
+                console.log("setting max power to ",parseInt(maxPowerOutput.comboBox.currentText));
+                platformInterface.set_usb_pd_maximum_power.update(portNumber,parseInt(maxPowerOutput.comboBox.currentText))
             }
 
             //notification of a change from elsewhere
@@ -95,7 +95,7 @@ Item {
         SGSlider {
             id: increment
             label: "For every increment of:"
-            value:platformInterface.get_cable_loss_compensation.output_current
+            value:platformInterface.set_cable_loss_compensation.output_current
             from:0
             to:3
             anchors {
@@ -106,10 +106,10 @@ Item {
                 rightMargin: 10
             }
             onMoved:{
-                //console.log("sending values from increment slider:",portNumber, increment.value, platformInterface.get_cable_loss_compensation.bias_voltage);
-                platformInterface.set_cable_loss_compensation.update(portNumber,
+                console.log("sending values from increment slider:",portNumber, increment.value, platformInterface.set_cable_loss_compensation.bias_voltage);
+                platformInterface.set_cable_compensation.update(portNumber,
                                                                      value,
-                                                                     platformInterface.get_cable_loss_compensation.bias_voltage)
+                                                                     platformInterface.set_cable_loss_compensation.bias_voltage)
             }
 
         }
@@ -121,16 +121,16 @@ Item {
                 verticalCenter: increment.verticalCenter
                 right: parent.right
             }
-            value: platformInterface.get_cable_loss_compensation.output_current
-            onApplied: platformInterface.set_cable_loss_compensation.update(portNumber,
+            value: platformInterface.set_cable_loss_compensation.output_current
+            onApplied: platformInterface.set_cable_compensation.update(portNumber,
                                                                             incrementInput.floatValue,
-                                                                            platformInterface.get_cable_loss_compensation.bias_voltage)
+                                                                            platformInterface.set_cable_loss_compensation.bias_voltage)
         }
 
         SGSlider {
             id: bias
             label: "Bias output by:"
-            value:platformInterface.get_cable_loss_compensation.bias_voltage
+            value:platformInterface.set_cable_loss_compensation.bias_voltage
             from:0
             to:2
             anchors {
@@ -142,8 +142,8 @@ Item {
                 rightMargin: 10
             }
             onMoved: {
-                platformInterface.set_cable_loss_compensation.update(portNumber,
-                                                                     platformInterface.get_cable_loss_compensation.output_current,
+                platformInterface.set_cable_compensation.update(portNumber,
+                                                                     platformInterface.set_cable_loss_compensation.output_current,
                                                                      value)
             }
 
@@ -156,12 +156,11 @@ Item {
                 verticalCenter: bias.verticalCenter
                 right: parent.right
             }
-            value: platformInterface.get_cable_loss_compensation.bias_voltage
+            value: platformInterface.set_cable_loss_compensation.bias_voltage
             onApplied:{
-                console.log("input bias value sent from textInput")
                 var currentValue = parseFloat(value)
-                platformInterface.set_cable_loss_compensation.update(portNumber,
-                                                                            platformInterface.get_cable_loss_compensation.output_current,
+                platformInterface.set_cable_compensation.update(portNumber,
+                                                                            platformInterface.set_cable_loss_compensation.output_current,
                                                                             currentValue)
             }
         }

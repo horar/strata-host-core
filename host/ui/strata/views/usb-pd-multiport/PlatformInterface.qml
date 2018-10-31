@@ -18,7 +18,7 @@ Item {
     //
     property var request_usb_power_notification : {
         "port": 1,
-        "device": "PD",
+        "device": "PD",      // or "non-PD", or "none" if disconnected
         "advertised_maximum_current": 0.0,
         "negotiated_current": 0.0,
         "negotiated_voltage": 0.0,
@@ -167,7 +167,7 @@ Item {
         "enabled":false                     // or false
     }
 
-    property var get_cable_loss_compensation:{
+    property var set_cable_loss_compensation:{
         "port":0,                           // Same port as in the command above.
         "output_current":0,                 // Amps
         "bias_voltage":0,                   // Volts
@@ -216,6 +216,12 @@ Item {
         "power":100        // watts available to the port
     }
 
+    property var usb_pd_negotiated_contract_notification:{
+        "port":1,              // or any USB C port id
+        "voltage":12,          // One of the available voltages
+        "maximum_current":100  // in milliamps
+    }
+
     // --------------------------------------------------------------------------------------------
     //          Commands
     //--------------------------------------------------------------------------------------------
@@ -228,6 +234,8 @@ Item {
                       CorePlatformInterface.send(this)
                  }
      })
+
+
 
    property var refresh:({
                 "cmd":"request_platform_refresh",
@@ -394,17 +402,38 @@ Item {
                       show: function () { CorePlatformInterface.show(this) }
     })
 
-    property var set_cable_loss_compensation:({
+//    property var set_cable_compensation:({
+//                     "cmd":"set_cable_loss_compensation",
+//                     "payload":{
+//                        "port":1,                   // 1, 2, 3, ... up to maximum number of ports
+//                         "output_current":0,         // amps
+//                          "bias_voltage":0,            // Volts
+//                       },
+//                      update: function (portNumber, outputCurrent, biasVoltage){
+//                          this.set(portNumber,outputCurrent,biasVoltage);
+//                          //console.log("sending set_cable_loss_compensation cmd ", JSON.stringify(this));
+//                          CorePlatformInterface.send(this);
+//                        },
+//                      set: function(portNumber,outputCurrent,biasVoltage){
+//                               this.payload.port = portNumber;
+//                               this.payload.output_current = outputCurrent;
+//                               this.payload.bias_voltage = biasVoltage;
+//                        },
+//})
+
+
+    property var set_cable_compensation:({
                     "cmd":"set_cable_loss_compensation",
                     "payload":{
                         "port":1,                   // 1, 2, 3, ... up to maximum number of ports
                         "output_current":0,         // amps
-                        "bias_voltage":0            // Volts
+                        "bias_voltage":0,            // Volts
                       },
                       update: function (portNumber, outputCurrent, biasVoltage){
-                          //console.log("set_cable_loss_compensation.port=",portNumber);
-                          //console.log("set_cable_loss_compensation.output_current=",outputCurrent);
-                          //console.log("set_cable_loss_compensation.bias_voltage=",biasVoltage);
+                          //adding back these console messages will cause an error when the update function is called.
+                          console.log("set_cable_loss_compensation.port=",portNumber);
+                          console.log("set_cable_loss_compensation.output_current=",outputCurrent);
+                          console.log("set_cable_loss_compensation.bias_voltage=",biasVoltage);
 
                           this.set(portNumber,outputCurrent,biasVoltage);
                           //console.log("sending set_cable_loss_compensation cmd ", JSON.stringify(this));
@@ -412,13 +441,13 @@ Item {
                           },
                       set: function(portNumber,outputCurrent,biasVoltage){
                            this.payload.port = portNumber;
-
                            this.payload.output_current = outputCurrent;
                            this.payload.bias_voltage = biasVoltage;
-                                                  },
+                          },
                       send: function () { CorePlatformInterface.send(this) },
                       show: function () { CorePlatformInterface.show(this) }
     })
+
 
     property var set_power_negotiation:({
                     "cmd":"set_power_negotiation",
@@ -435,6 +464,8 @@ Item {
                       send: function () { CorePlatformInterface.send(this) },
                       show: function () { CorePlatformInterface.show(this) }
     })
+
+
 
     property var set_sleep_mode:({
                     "cmd":"set_sleep_mode",
