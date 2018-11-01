@@ -6,7 +6,7 @@ import QtGraphicalEffects 1.0
 import "js/navigation_control.js" as NavigationControl
 import "qrc:/js/platform_selection.js" as PlatformSelection
 import "qrc:/statusbar-partial-views"
-
+import Fonts 1.0
 
 Rectangle {
     id: container
@@ -151,7 +151,7 @@ Rectangle {
         }
         color: "#00b842"
         font {
-            family: sgicons.name
+            family: Fonts.sgicons
             pixelSize: 20
         }
         visible: remote_activity_label.visible
@@ -289,7 +289,7 @@ Rectangle {
                     id: remoteSupportPopupIndicator
                     text: "\ue810"
                     font {
-                        family: sgicons.name
+                        family: Fonts.sgicons
                     }
                     visible: remoteSupportMenu.visible
                     anchors {
@@ -503,7 +503,7 @@ Rectangle {
                                             id: hcs_token_status
                                             text : qsTr("Enable to generate remote token")
                                             font {
-                                                family: franklinGothicBook.name
+                                                family: Fonts.franklinGothicBook
                                             }
                                             color: "white"
                                             //readOnly: true
@@ -528,7 +528,7 @@ Rectangle {
                                             text: ""
                                             readOnly: true
                                             font {
-                                                family: inconsolata.name
+                                                family: Fonts.inconsolata
                                                 pixelSize: 20
                                             }
                                             selectByMouse: true
@@ -632,7 +632,7 @@ Rectangle {
                                         }
                                         color: remoteToggle.checked ? "white" : "grey"
                                         font {
-                                            family: franklinGothicBook.name
+                                            family: Fonts.franklinGothicBook
                                         }
                                     }
                                 }
@@ -684,7 +684,7 @@ Rectangle {
                                                 }
                                                 text: name
                                                 font {
-                                                    family: franklinGothicBold.name
+                                                    family: Fonts.franklinGothicBold
                                                 }
                                                 color: "white"
                                                 elide: Text.ElideRight
@@ -927,7 +927,7 @@ Rectangle {
                                 height: 30
                                 text: "Enter remote token:"
                                 font {
-                                    family: franklinGothicBold.name
+                                    family: Fonts.franklinGothicBold
                                 }
                                 color: "white"
                                 anchors {
@@ -1138,7 +1138,7 @@ Rectangle {
                     centerIn: profileIcon
                 }
                 font {
-                    family: franklinGothicBold.name
+                    family: Fonts.franklinGothicBold
                     pixelSize: profileIconHover.containsMouse ? 24 : 20
                 }
             }
@@ -1185,6 +1185,7 @@ Rectangle {
 
             contentItem:
                 Column {
+                id: profileColumn
                 width: profileMenu.width
 
                 SGMenuItem {
@@ -1194,6 +1195,26 @@ Rectangle {
                         profilePopup.open();
                     }
                     width: profileMenu.width
+                }
+
+                SGMenuItem {
+                    text: qsTr("Feedback")
+                    onClicked: {
+                        profileMenu.close()
+                        feedbackPopup.open();
+                    }
+                    width: profileMenu.width
+                }
+
+                Rectangle {
+                    id: menuDivider
+                    color: "white"
+                    opacity: .4
+                    height: 1
+                    width: profileMenu.width - 20
+                    anchors {
+                        horizontalCenter: profileColumn.horizontalCenter
+                    }
                 }
 
                 SGMenuItem {
@@ -1233,160 +1254,18 @@ Rectangle {
         }
     }
 
-    Popup {
+    SGProfilePopup {
         id: profilePopup
-        width: 500
-        height: 175 + profile_image.height
-        modal: true
-        focus: true
+
         x: container.width/2 - profilePopup.width/2
         y: container.parent.windowHeight/2 - profilePopup.height/2
-        padding: 0
-        closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
-
-        Rectangle {
-            id: popupContainer
-            width: profilePopup.width
-            height: profilePopup.height
-            color: alternateColor1
-
-            Rectangle {
-                id: title
-                height: 30
-                width: popupContainer.width
-                anchors.top: popupContainer.top
-                color: "#3a3a3a"
-
-                Label {
-                    id: profileTitle
-                    anchors {
-                        left: title.left
-                        leftMargin: 10
-                        verticalCenter: title.verticalCenter
-                    }
-                    text: "My Profile"
-                    font {
-                        family: franklinGothicBold.name
-                    }
-                    color: "white"
-                }
-
-                Text {
-                    id: close_profile
-                    text: "\ue805"
-                    color: "white"
-                    font {
-                        family: sgicons.name
-                        pixelSize: 20
-                    }
-                    anchors {
-                        right: title.right
-                        verticalCenter: title.verticalCenter
-                        rightMargin: 10
-                    }
-
-                    MouseArea {
-                        anchors {
-                            fill: close_profile
-                        }
-                        onClicked: profilePopup.close()
-                    }
-                }
-            }
-
-            Image {
-                id: profile_image
-                anchors { horizontalCenter: popupContainer.horizontalCenter
-                    top: popupContainer.top
-                    topMargin: 50
-                }
-                sourceSize.width: 200
-                fillMode: Image.PreserveAspectFit
-                source: "qrc:/images/" + getUserImage(user_id)
-            }
-
-            Label {
-                id:profile_userId
-                text: getUserName(user_id)
-                anchors {
-                    top: profile_image.bottom
-                    topMargin: 5
-                    horizontalCenter: popupContainer.horizontalCenter
-
-                }
-                font {
-                    pixelSize: 25
-                    family: franklinGothicBold.name
-                }
-                color: "white"
-            }
-
-            Label {
-                id: profile_email
-                anchors {
-                    top: profile_userId.bottom
-                    horizontalCenter: popupContainer.horizontalCenter
-                    horizontalCenterOffset: 1
-                    topMargin: 5
-                }
-                text: getUserName(user_id) + "@onsemi.com"
-                font {
-                    pixelSize: 15
-                    family: franklinGothicBook.name
-                }
-                color: "white"
-            }
-
-            Label {
-                id: jobTitle
-                text : getJobTitle(user_id)
-                anchors {
-                    top: profile_email.bottom
-                    topMargin: 5
-                    horizontalCenter:  popupContainer.horizontalCenter
-                }
-                color: "white"
-                font {
-                    pixelSize: 15
-                    family: franklinGothicBook.name
-                }
-            }
-
-            Label {
-                id: cusomerSupport
-                text: "Customer Support: 1800-onsemi-support"
-                anchors{
-                    top: jobTitle.bottom
-                    topMargin: 10
-                    horizontalCenter:  popupContainer.horizontalCenter
-                }
-                color: "white"
-                font {
-                    pixelSize: 15
-                    family: franklinGothicBook.name
-                }
-            }
-        }
     }
 
-    FontLoader {
-        id: franklinGothicBook
-        source: "qrc:/fonts/FranklinGothicBook.otf"
-    }
+    SGFeedbackPopup {
+        id: feedbackPopup
 
-    FontLoader {
-        id: franklinGothicBold
-        source: "qrc:/fonts/FranklinGothicBold.ttf"
-    }
-
-    FontLoader {
-        id: sgicons
-        source: "qrc:/fonts/sgicons.ttf"
-    }
-
-    FontLoader {
-        id: inconsolata
-        source: "qrc:/fonts/Inconsolata.otf"
+        x: container.width/2 - profilePopup.width/2
+        y: container.parent.windowHeight/2 - profilePopup.height/2
     }
 
     Window {
