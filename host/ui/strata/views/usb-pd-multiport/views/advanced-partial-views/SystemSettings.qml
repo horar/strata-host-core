@@ -36,10 +36,15 @@ Item {
                     rightMargin: 30
                 }
                 from: 30
-                to: 400
+                to: 200
                 startLabel: "30W"
-                endLabel: "400W"
+                endLabel: "200W"
                 value: platformInterface.maximum_board_power.watts
+
+                Component.onCompleted:{
+                    value = maximumBoardPower.to;   //set the slider to max value initially
+                }
+
                 onMoved: {
                     //we'll need to address how to handle this when there are devices attached, as that would trigger
                     //renegotiation with all devices
