@@ -298,14 +298,9 @@ Item {
                 }
             }
             maxPower:{
-                if (platformInterface.usb_pd_negotiated_contract_notification.port === 1){
-
-                   var voltage = platformInterface.usb_pd_negotiated_contract_notification.voltage;
-                   var amperage = platformInterface.usb_pd_negotiated_contract_notification.maximum_current;
-                    // console.log("volts=",voltage, "amps=",amperage);
-
-                   return Math.round(voltage * amperage *100)/100;
-                   //return Math.round(platformInterface.request_usb_power_notification.maximum_power *100)/100
+                if (platformInterface.request_usb_power_notification.port === 1){
+                    console.log("basic screen port 1 max capacity:",platformInterface.request_usb_power_notification.maximum_power)
+                     return Math.round(platformInterface.request_usb_power_notification.maximum_power *100)/100;
                 }
                 else{
                     return portInfo1.maxPower;
@@ -410,13 +405,8 @@ Item {
                 }
             }
             maxPower:{
-                if (platformInterface.usb_pd_negotiated_contract_notification.port === 2){
-                    var voltage = platformInterface.usb_pd_negotiated_contract_notification.voltage;
-                    var amperage = platformInterface.usb_pd_negotiated_contract_notification.maximum_current;
-                      //console.log("volts=",voltage, "amps=",amperage);
-
-                    return Math.round(voltage * amperage *100)/100;
-                    //return Math.round(platformInterface.request_usb_power_notification.maximum_power *100)/100
+                if (platformInterface.request_usb_power_notification.port === 2){
+                    return Math.round(platformInterface.request_usb_power_notification.maximum_power *100)/100;
                 }
                 else{
                     return portInfo2.maxPower;
@@ -521,13 +511,8 @@ Item {
                 }
                 }
             maxPower:{
-                if (platformInterface.usb_pd_negotiated_contract_notification.port === 3){
-                    var voltage = platformInterface.usb_pd_negotiated_contract_notification.voltage;
-                    var amperage = platformInterface.usb_pd_negotiated_contract_notification.maximum_current;
-                      //console.log("volts=",voltage, "amps=",amperage);
-
-                    return Math.round(voltage * amperage *100)/100;
-                    //return Math.round(platformInterface.request_usb_power_notification.maximum_power *100)/100
+                if (platformInterface.request_usb_power_notification.port === 3){
+                    return Math.round(platformInterface.request_usb_power_notification.maximum_power *100)/100;
                 }
                 else{
                     return portInfo3.maxPower;
@@ -631,13 +616,8 @@ Item {
                 }
             }
             maxPower:{
-                if (platformInterface.usb_pd_negotiated_contract_notification.port === 4){
-                    var voltage = platformInterface.usb_pd_negotiated_contract_notification.voltage;
-                    var amperage = platformInterface.usb_pd_negotiated_contract_notification.maximum_current;
-                      //console.log("volts=",voltage, "amps=",amperage);
-
-                    return Math.round(voltage * amperage *100)/100;
-                    //return Math.round(platformInterface.request_usb_power_notification.maximum_power *100)/100
+                if (platformInterface.request_usb_power_notification.port === 4){
+                    return Math.round(platformInterface.request_usb_power_notification.maximum_power *100)/100;
                 }
                 else{
                     return portInfo4.maxPower;
