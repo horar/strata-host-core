@@ -114,6 +114,10 @@ Item {
 
                 checked: platformInterface.assured_power_port.enabled
                 onToggled: platformInterface.set_assured_power_port.update(checked, 1)  //we're only allowing port 1 to be assured
+
+                Component.onCompleted: {
+                    assuredPortSwitch.checked =  false
+                }
             }
 
 //            SGSegmentedButtonStrip {

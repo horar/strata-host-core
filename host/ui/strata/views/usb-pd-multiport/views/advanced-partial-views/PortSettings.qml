@@ -30,10 +30,10 @@ Item {
 
             //notification of a change from elsewhere
             //NB this info comes from the periodic power notification, not from the usb_pd_maximum_power notificaiton
-            property var currentMaximumPower: platformInterface.request_usb_power_notification.maximum_power
+            property var currentMaximumPower: platformInterface.usb_pd_maximum_power.commanded_max_power
             onCurrentMaximumPowerChanged: {
                 if (platformInterface.usb_pd_maximum_power.port === portNumber){
-                    maxPowerOutput.currentIndex = maxPowerOutput.comboBox.find( parseInt (platformInterface.usb_pd_maximum_power.current_max_power))
+                    maxPowerOutput.currentIndex = maxPowerOutput.comboBox.find( parseInt (platformInterface.usb_pd_maximum_power.commanded_max_power))
                 }
 
             }
