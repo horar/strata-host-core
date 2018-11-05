@@ -60,6 +60,7 @@ Rectangle {
         powerOutBox.transitionToAdvancedView()
         temperatureBox.transitionToAdvancedView()
         efficencyBox.transitionToAdvancedView()
+
     }
 
     SequentialAnimation{
@@ -98,14 +99,20 @@ Rectangle {
             }
         }   //phase 1 transition
 
-        //after the stats boxes are rearranged, and the port resized, fade in the advanced controls
-        PropertyAnimation {
-            id: fadeInAdvancedControls
-            target: advancedControls
-            property: "opacity"
-            to: 1
-            duration: tabTransitionTimePhase2
+        onStopped: {
+            advancedControls.transitionToAdvancedView();
         }
+
+        //after the stats boxes are rearranged, and the port resized, fade in the advanced controls
+//        PropertyAnimation {
+//            id: fadeInAdvancedControls
+//            target: advancedControls
+//            property: "opacity"
+//            to: 1
+//            duration: tabTransitionTimePhase2
+//        }
+
+
     }
 
 

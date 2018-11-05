@@ -24,15 +24,16 @@ Item {
 
             //when changing the value
             onActivated: {
-                console.log("setting max power to ",maxPowerOutput.comboBox.currentText);
-                platformInterface.set_usb_pd_maximum_power.update(portNumber,maxPowerOutput.comboBox.currentText)
+                console.log("setting max power to ",parseInt(maxPowerOutput.comboBox.currentText));
+                platformInterface.set_usb_pd_maximum_power.update(portNumber,parseInt(maxPowerOutput.comboBox.currentText))
             }
 
             //notification of a change from elsewhere
-            property var currentMaximumPower: platformInterface.usb_pd_maximum_power.current_max_power
+            //NB this info comes from the periodic power notification, not from the usb_pd_maximum_power notificaiton
+            property var currentMaximumPower: platformInterface.usb_pd_maximum_power.commanded_max_power
             onCurrentMaximumPowerChanged: {
                 if (platformInterface.usb_pd_maximum_power.port === portNumber){
-                    maxPowerOutput.currentIndex = maxPowerOutput.comboBox.find( parseInt (platformInterface.usb_pd_maximum_power.current_max_power))
+                    maxPowerOutput.currentIndex = maxPowerOutput.comboBox.find( parseInt (platformInterface.usb_pd_maximum_power.commanded_max_power))
                 }
 
             }
@@ -65,8 +66,11 @@ Item {
                 verticalCenter: currentLimit.verticalCenter
                 right: parent.right
             }
-            value: currentLimit.value.toFixed(0)
-            onApplied: currentLimit.value = value
+            value: platformInterface.request_over_current_protection_notification.current_limit
+            onApplied:{
+                var currentValue = parseFloat(value)
+                platformInterface.set_over_current_protection.update(portNumber, currentValue)
+            }
         }
 
         SGDivider {
@@ -92,7 +96,7 @@ Item {
         SGSlider {
             id: increment
             label: "For every increment of:"
-            value:platformInterface.get_cable_loss_compensation.output_current
+            value:platformInterface.set_cable_loss_compensation.output_current
             from:0
             to:3
             anchors {
@@ -103,10 +107,10 @@ Item {
                 rightMargin: 10
             }
             onMoved:{
-                //console.log("sending values from increment slider:",portNumber, increment.value, platformInterface.get_cable_loss_compensation.bias_voltage);
-                platformInterface.set_cable_loss_compensation.update(portNumber,
-                                                                     increment.value,
-                                                                     platformInterface.get_cable_loss_compensation.bias_voltage)
+                console.log("sending values from increment slider:",portNumber, increment.value, platformInterface.set_cable_loss_compensation.bias_voltage);
+                platformInterface.set_cable_compensation.update(portNumber,
+                                                                     value,
+                                                                     platformInterface.set_cable_loss_compensation.bias_voltage)
             }
 
         }
@@ -118,14 +122,16 @@ Item {
                 verticalCenter: increment.verticalCenter
                 right: parent.right
             }
-            value: increment.value.toFixed(0)
-            onApplied: increment.value = value
+            value: platformInterface.set_cable_loss_compensation.output_current
+            onApplied: platformInterface.set_cable_compensation.update(portNumber,
+                                                                            incrementInput.floatValue,
+                                                                            platformInterface.set_cable_loss_compensation.bias_voltage)
         }
 
         SGSlider {
             id: bias
             label: "Bias output by:"
-            value:platformInterface.get_cable_loss_compensation.bias_voltage
+            value:platformInterface.set_cable_loss_compensation.bias_voltage
             from:0
             to:2
             anchors {
@@ -137,9 +143,9 @@ Item {
                 rightMargin: 10
             }
             onMoved: {
-                platformInterface.set_cable_loss_compensation.update(portNumber,
-                                                                     platformInterface.get_cable_loss_compensation.output_current,
-                                                                     bias.value)
+                platformInterface.set_cable_compensation.update(portNumber,
+                                                                     platformInterface.set_cable_loss_compensation.output_current,
+                                                                     value)
             }
 
         }
@@ -151,8 +157,13 @@ Item {
                 verticalCenter: bias.verticalCenter
                 right: parent.right
             }
-            value: bias.value.toFixed(0)
-            onApplied: bias.value = value
+            value: platformInterface.set_cable_loss_compensation.bias_voltage
+            onApplied:{
+                var currentValue = parseFloat(value)
+                platformInterface.set_cable_compensation.update(portNumber,
+                                                                            platformInterface.set_cable_loss_compensation.output_current,
+                                                                            currentValue)
+            }
         }
 
 

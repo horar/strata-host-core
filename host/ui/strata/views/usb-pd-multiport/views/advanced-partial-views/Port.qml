@@ -31,8 +31,9 @@ Item {
             }
         }
         maxPower:{
+            //labeled "max capacity" in the UI, this is the wattage agreed to by the platform and device
             if (platformInterface.request_usb_power_notification.port === portNumber){
-               return Math.round(platformInterface.request_usb_power_notification.maximum_power *100)/100
+               return Math.round(platformInterface.request_usb_power_notification.maximum_power *100)/100;
             }
             else{
                 return portInfo.maxPower;
