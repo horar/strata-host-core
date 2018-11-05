@@ -273,6 +273,9 @@ Item {
                 if (platformInterface.request_usb_power_notification.port === 1){
                    return Math.round(platformInterface.request_usb_power_notification.maximum_power *100)/100
                 }
+                else if (!portInfo1.portConnected){
+                    return "—"  //show a dash on disconnect, so cached value won't show on connect
+                }
                 else{
                     return portInfo1.maxPower;
                 }
@@ -378,6 +381,9 @@ Item {
             maxPower:{
                 if (platformInterface.request_usb_power_notification.port === 2){
                     return Math.round(platformInterface.request_usb_power_notification.maximum_power *100)/100
+                }
+                else if (!portInfo2.portConnected){
+                    return "—"  //show a dash on disconnect, so cached value won't show on connect
                 }
                 else{
                     return portInfo2.maxPower;
@@ -485,6 +491,9 @@ Item {
                 if (platformInterface.request_usb_power_notification.port === 3){
                     return Math.round(platformInterface.request_usb_power_notification.maximum_power *100)/100
                 }
+                else if (!portInfo3.portConnected){
+                    return "—"  //show a dash on disconnect, so cached value won't show on connect
+                }
                 else{
                     return portInfo3.maxPower;
                 }
@@ -589,6 +598,9 @@ Item {
             maxPower:{
                 if (platformInterface.request_usb_power_notification.port === 4){
                     return Math.round(platformInterface.request_usb_power_notification.maximum_power *100)/100
+                }
+                else if (!portInfo4.portConnected){
+                    return "—"  //show a dash on disconnect, so cached value won't show on connect
                 }
                 else{
                     return portInfo4.maxPower;
