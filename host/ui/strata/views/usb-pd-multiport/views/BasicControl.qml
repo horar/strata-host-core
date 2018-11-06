@@ -156,7 +156,8 @@ Item {
             }
             height: 428 * ratioCalc
 
-            property bool inputPowerConnected: true
+            property bool inputPowerConnected:  platformInterface.ac_power_supply_connection.state === "connected"
+            //property bool inputPowerConnected: true
 
             Rectangle{
                 id:topBackgroundRect

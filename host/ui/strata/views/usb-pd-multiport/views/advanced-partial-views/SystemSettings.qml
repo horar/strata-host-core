@@ -36,9 +36,9 @@ Item {
                     rightMargin: 10
                 }
                 from: 30
-                to: 200
+                to: platformInterface.ac_power_supply_connection.power
                 startLabel: "30W"
-                endLabel: "200W"
+                endLabel: platformInterface.ac_power_supply_connection.power+"W"
                 value: platformInterface.maximum_board_power.watts
                 onMoved: {
                     //we'll need to address how to handle this when there are devices attached, as that would trigger

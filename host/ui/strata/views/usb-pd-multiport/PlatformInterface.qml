@@ -210,6 +210,11 @@ Item {
          "watts":30          // 30-300
     }
 
+    property var ac_power_supply_connection:{
+        "state":"connected",  // or "disconnected"
+        "power":200          // maximum supply power in watts
+    }
+
     // --------------------------------------------------------------------------------------------
     //          Commands
     //--------------------------------------------------------------------------------------------

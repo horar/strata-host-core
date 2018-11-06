@@ -26,9 +26,9 @@ Item {
                 width: margins.width
                 labelLeft: false
                 barWidth: margins.width
-                maximumValue: 200
+                maximumValue: platformInterface.ac_power_supply_connection.power
                 showThreshold: true
-                thresholdValue: 180
+                thresholdValue: (.9 * platformInterface.ac_power_supply_connection.power)
 
                 gaugeElements: Row {
                     id: container
