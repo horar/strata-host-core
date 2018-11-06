@@ -31,7 +31,7 @@ public:
     void save(class SGDocument *doc);
     bool deleteDocument(class SGDocument *doc);
 
-    C4Document* getDocumentById(const std::string &docId);
+    C4Document* getDocumentById(const std::string &doc_id);
 
     virtual ~SGDatabase();
 
