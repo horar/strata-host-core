@@ -4,27 +4,12 @@ import QtQuick.Layouts 1.3
 import Fonts 1.0
 import QtGraphicalEffects 1.0
 
-Popup {
+Item {
     id: root
-    width: container.width * 0.8
-    height: container.parent.windowHeight * 0.8
-    modal: true
-    focus: true
-    padding: 0
-    closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
-
-    DropShadow {
-        width: root.width
-        height: root.height
-        horizontalOffset: 1
-        verticalOffset: 3
-        radius: 15.0
-        samples: 30
-        color: "#cc000000"
-        source: root.background
-        z: -1
-        cached: true
+    anchors {
+        fill: profileStack
     }
+    clip: true
 
     Item {
         id: popupContainer
@@ -32,71 +17,10 @@ Popup {
         height: root.height
         clip: true
 
-        Image {
-            id: background
-            source: "qrc:/images/login-background.svg"
-            height: 1080
-            width: 1920
-            x: (popupContainer.width - width)/2
-            y: (popupContainer.height - height)/2
-        }
-
-        Rectangle {
-            id: title
-            height: 30
-            width: popupContainer.width
-            anchors {
-                top: popupContainer.top
-            }
-            color: "lightgrey"
-
-            Label {
-                id: popupTitle
-                anchors {
-                    left: title.left
-                    leftMargin: 10
-                    verticalCenter: title.verticalCenter
-                }
-                text: "Analytics"
-                font {
-                    family: Fonts.franklinGothicBold
-                }
-                color: "black"
-            }
-
-            Text {
-                id: closer
-                text: "\ue805"
-                color: closeHover.containsMouse ? "#eee" : "white"
-                font {
-                    family: Fonts.sgicons
-                    pixelSize: 20
-                }
-                anchors {
-                    right: title.right
-                    verticalCenter: title.verticalCenter
-                    rightMargin: 10
-                }
-
-                MouseArea {
-                    id: closeHover
-                    anchors {
-                        fill: closer
-                    }
-                    onClicked: root.close()
-                    hoverEnabled: true
-                    cursorShape: Qt.PointingHandCursor
-                }
-            }
-        }
-
         ScrollView {
             id: scrollView
             anchors {
-                top: title.bottom
-                left: popupContainer.left
-                right: popupContainer.right
-                bottom: popupContainer.bottom
+                fill: popupContainer
             }
 
             contentHeight: contentContainer.height
@@ -216,7 +140,7 @@ Popup {
                             anchors {
                                 top: analyticsLogTitle.bottom
                             }
-                            height: Math.max(popupContainer.height - title.height - analyticsTextContainer.height - analyticsLogTitle.height - 60, 200)
+                            height: Math.max(popupContainer.height - analyticsTextContainer.height - analyticsLogTitle.height - 90 - backButton.height, 200)
 
                             model: ListModel{
                                 id: fakeTempModel
@@ -249,6 +173,18 @@ Popup {
                                     status: "10/1/2018 – USB-PD 2 Port UUID Block Diagram – NCP163 select"
                                 }
                             }
+                        }
+
+
+                    }
+
+                    Button {
+                        id: backButton
+                        text: "Return to Profile"
+                        width: 200
+                        onClicked: profileStack.currentIndex = 0
+                        anchors {
+                            horizontalCenter: mainColumn.horizontalCenter
                         }
                     }
                 }
