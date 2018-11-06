@@ -9,35 +9,25 @@
 * @copyright Copyright 2018 On Semiconductor
 */
 #include <string>
-#include "c4Document+Fleece.h"
 #include "SGDocument.h"
-#define DEBUG(...) printf("SGDocument: "); printf(__VA_ARGS__)
 
+#define DEBUG(...) printf("SGDocument: "); printf(__VA_ARGS__)
+using fleece::impl::Value;
 SGDocument::SGDocument() {
     c4db_       = NULL;
     c4document_ = NULL;
     id_         = "";
 }
+SGDocument::~SGDocument() {
+    c4doc_free(c4document_);
+}
+
 SGDocument::SGDocument(SGDatabase *database, std::string docId) {
-    c4db_       = database->getC4db();
-    c4document_ = database->getDocumentById(docId);
-    id_         = docId;
-    if(c4document_ !=NULL){
-        DEBUG("SGDocument\n");
-        C4Error c4error;
-        C4String revid = c4document_->revID;
-        std::string revid_str = std::string((const char *)revid.buf, revid.size);
-
-        C4String fleece_body_data = c4document_->selectedRev.body;
-        C4SliceResult body = c4doc_bodyAsJSON(c4document_,false,&c4error);
-
-        // Set the document body content to the internal body_
-        body_ = std::string((char*)body.buf, body.size);
-
-        DEBUG("revision:%s\n", revid_str.c_str());
-        return;
+    setC4Document(database, docId);
+    if(body_.length() > 0){
+        //setDict(Value::fromData(fleece::slice(body_))->asDict());
+        //mutable_dict_ =
     }
-    DEBUG("c4document_ is null\n");
 }
 const std::string &SGDocument::getId() const {
     return id_;
@@ -60,6 +50,47 @@ const std::string &SGDocument::getBody() const {
 
 void SGDocument::setBody(const std::string &body) {
     body_ = body;
+}
+
+bool SGDocument::setC4Document(class SGDatabase *database, std::string docId) {
+    c4db_       = database->getC4db();
+    c4document_ = database->getDocumentById(docId);
+    id_         = docId;
+    if(c4document_ !=NULL){
+        DEBUG("SGDocument\n");
+        C4Error c4error;
+        C4String rev_id = c4document_->revID;
+        std::string rev_id_str = std::string((const char *)rev_id.buf, rev_id.size);
+
+        C4SliceResult fleece_body = c4doc_bodyAsJSON(c4document_,false,&c4error);
+
+        // Set the document body content to the internal body_
+        setBody(std::string((char*)fleece_body.buf, fleece_body.size));
+
+        // Clean up. Deallocate fleece body
+        c4slice_free(fleece_body);
+
+        // TODO: Luay: Check for the body type. We are expecting the body to be in dictionary format (key,value) but this is not guaranteed!
+        mutable_dict_ = fleece::impl::MutableDict::newDict(Value::fromData(c4document_->selectedRev.body)->asDict());
+
+        DEBUG("body: %s,object member counts:%d, revision:%s\n",getBody().c_str(),mutable_dict_->count(), rev_id_str.c_str());
+        return true;
+    }
+    // Init a new mutable dict
+    mutable_dict_ = fleece::impl::MutableDict::newDict();
+    DEBUG("c4document_ is null\n");
+    return false;
+}
+
+const fleece::impl::Value *SGDocument::get(const std::string &keyToFind) {
+    return mutable_dict_->get(keyToFind);
+}
+
+bool SGDocument::empty() {
+    return mutable_dict_->empty();
+}
+C4Document *SGDocument::getC4document() const {
+    return c4document_;
 }
 
 

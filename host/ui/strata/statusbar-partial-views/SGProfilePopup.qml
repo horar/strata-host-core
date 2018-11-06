@@ -358,28 +358,68 @@ Popup {
                                     }
                                 }
 
-                                Button {
-                                    id: privacyButton
+                                Grid {
+                                    id: privacyRow
+                                    columns: buttonContainer.width + privacyRow.spacing + clearDataContainer.width > privacyContainer.width ? 1 : 2
                                     anchors {
                                         horizontalCenter: privacyColumn.horizontalCenter
                                     }
-                                    text: "<b>Purge all Profile and Personal info from Strata Databases</b>"
+                                    spacing: 20
+                                    horizontalItemAlignment: Grid.AlignHCenter
 
-                                    onClicked: {
-                                        privacyConfirmation.open()
+                                    Item {
+                                        id: buttonContainer
+                                        height: analyicsShow.height
+                                        width: analyicsShow.width + privacyRow.spacing + policyShow.width
+                                        Button {
+                                            id: analyicsShow
+                                            onClicked: profileStack.currentIndex = 2
+                                            text: "View Analytics"
+                                        }
+
+                                        Button {
+                                            id: policyShow
+                                            onClicked: profileStack.currentIndex = 3
+                                            text: "View Privacy Policy"
+                                            anchors {
+                                                right: buttonContainer.right
+                                            }
+                                        }
                                     }
-                                }
 
-                                Text {
-                                    id: privacyWarning
-                                    text: "<font color='red'><strong>Warning:</strong></font> this action will result in unrecoverable loss of data"
-                                    wrapMode: Text.WordWrap
-                                    anchors {
-                                        horizontalCenter: privacyColumn.horizontalCenter
+                                    Item {
+                                        id: clearDataContainer
+                                        width: privacyButton.width
+                                        height: clearDataColumn.height
+
+                                        Column {
+                                            id: clearDataColumn
+                                            spacing: 10
+
+                                            Button {
+                                                id: privacyButton
+                                                anchors {
+                                                    horizontalCenter: clearDataColumn.horizontalCenter
+                                                }
+                                                text: "<b>Purge all Profile and Personal info from Strata Databases</b>"
+
+                                                onClicked: {
+                                                    privacyConfirmation.open()
+                                                }
+                                            }
+
+                                            Text {
+                                                id: privacyWarning
+                                                text: "<font color='red'><strong>Warning:</strong></font> this action will result in unrecoverable loss of data"
+                                                wrapMode: Text.WordWrap
+                                                anchors {
+                                                    horizontalCenter: clearDataColumn.horizontalCenter
+                                                }
+                                            }
+                                        }
                                     }
                                 }
                             }
-
                         }
 
                         Text {
@@ -401,6 +441,15 @@ Popup {
             SGProfileUpdate {
 
             }
+
+            SGAnalyticsPopup {
+
+            }
+
+            SGPrivacyPolicy {
+
+            }
+
         }
     }
 

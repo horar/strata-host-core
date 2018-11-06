@@ -90,11 +90,17 @@ Rectangle {
                 }
                 horizontalAlignment: leftJustify ? TextInput.AlignLeft : TextInput.AlignRight
                 validator: realNumberValidation ? realNumberValidator : null
-                onAccepted: root.applied(infoText.text)
+//                onAccepted: {
+//                    console.log("sgsubmitinfobox onAccepted triggered")
+//                    root.applied(infoText.text)
+//                }
                 enabled: root.enabled
                 color: root.textColor
                 opacity: root.enabled ? 1 : 0.5
-                onEditingFinished: { if (!root.showButton) { root.applied(infoText.text) } }
+                onEditingFinished: {
+                    if (!root.showButton) {
+                        root.applied(infoText.text)
+                    } }
 
                 RegExpValidator {
                     id: realNumberValidator

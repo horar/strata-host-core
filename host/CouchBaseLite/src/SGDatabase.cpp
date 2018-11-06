@@ -9,21 +9,22 @@
 * @copyright Copyright 2018 On Semiconductor
 */
 #include <iostream>
-#include "Fleece.hh"
-#include "FleeceCpp.hh"
-#include "Fleece.h"
+#include "FleeceImpl.hh"
+#include "MutableArray.hh"
+#include "MutableDict.hh"
+#include "Doc.hh"
 #include "c4Document+Fleece.h"
 #include "SGDatabase.h"
 #include "SGDocument.h"
 
 using namespace std;
-using namespace fleeceapi;
+using namespace fleece;
+using namespace fleece::impl;
 
 #define DEBUG(...) printf("SGDatabase: "); printf(__VA_ARGS__)
 
 SGDatabase::SGDatabase(const std::string db_name) {
     open(db_name);
-
 }
 
 SGDatabase::~SGDatabase() {
@@ -41,6 +42,7 @@ void SGDatabase::open(const std::string db_name) {
 
     // Check for empty db name
     if (db_name.length() == 0){
+        DEBUG("DB name can't be empty! \n");
         return;
     }
     /*
@@ -73,16 +75,14 @@ void SGDatabase::open(const std::string db_name) {
 * @brief Close the local database if it's open
 */
 void SGDatabase::close() {
-
     db_lock_.lock();
     DEBUG("Calling close\n");
 
     c4db_close(c4db_, &c4error_);
     c4db_free(c4db_);
+
     DEBUG("Leaving close\n");
-
     db_lock_.unlock();
-
 }
 
 C4Database *SGDatabase::getC4db() const {
@@ -95,97 +95,60 @@ C4Database *SGDatabase::getC4db() const {
 */
 void SGDatabase::save(SGDocument *doc) {
     db_lock_.lock();
+    c4db_beginTransaction(c4db_, &c4error_);
+    DEBUG("Calling save\n");
 
     // Set error code 0.
     c4error_.code = 0;
 
-    DEBUG("Calling save\n");
-    FLError             fl_error = (FLError)0;
-    FLSliceResult       fleece_result;
+    C4Document *c4doc = doc->getC4document();
 
-    // This is a hard coded value. This used to insert t the docment.
-    // This API for creating key/value will be in SGDocument Soon!!!
-    std::string         json_data = R"foo({"name":"luay","age":100})foo";
+    // Encode document mutable dictionary to fleece format
+    Encoder encoder;
+    encoder.writeValue(doc->mutable_dict_);
+    alloc_slice fleece_data = encoder.finish();
 
-    //TODO: get c4doc from the SGDocument object
-    C4Document          *c4doc = getDocumentById(doc->getId());
-    if( !doc->exist() ){
+    if( c4doc == NULL ){
         // Document does not exist. Creating a new one
-        DEBUG("Creating new document\n");
-
-        fleece_result = fleeceapi::Encoder::convertJSON(c4str(json_data.c_str()), &fl_error);
-
-        if (fl_error != NO_CB_ERROR) {
-            DEBUG("Fleece encoding failed: %d.\n", fl_error);
-        }
-
-        C4String docId;
-        docId = c4str(doc->getId().c_str());
-        DEBUG("data:%s.\n",  json_data.c_str());
+        DEBUG("Creating a new document\n");
 
         C4RevisionFlags revisionFlags = kRevNew | kRevHasAttachments;
+        C4String docId = c4str(doc->getId().c_str());
 
-        c4db_beginTransaction(c4db_, &c4error_);
-        c4doc_create(c4db_, docId, (C4Slice) fleece_result, revisionFlags,&c4error_);
-        if (c4error_.code !=NO_CB_ERROR && (c4error_.code < kC4NumErrorCodesPlus1)){
-            DEBUG("Error Code:%d.\n",  c4error_.code);
+        C4Document *newdoc = c4doc_create(c4db_, docId, fleece_data, revisionFlags,&c4error_);
+        if (c4error_.code != NO_CB_ERROR && (c4error_.code < kC4NumErrorCodesPlus1) ) {
+            DEBUG("Could not insert the body of new document. Error Code:%d.\n",  c4error_.code);
+        }else{
+            doc->c4document_ = newdoc;
         }
-        c4db_endTransaction(c4db_, true, &c4error_);
+
     }else{
         // Docuement exist. Make modifications to the body
-        DEBUG("document Exist\n");
+        DEBUG("document Exist. Working on updating the document: %s\n", doc->getId().c_str());
+        C4String rev_id = c4doc->revID;
+        std::string rev_id_string = std::string((const char *) rev_id.buf, rev_id.size);
+        DEBUG("REV id: %s\n", rev_id_string.c_str());
 
-        C4String fleece_body_data = c4doc->selectedRev.body;
-        C4SliceResult body = c4doc_bodyAsJSON(c4doc,false,&c4error_);
-        std::string string_body = string((char*)body.buf, body.size);
-        DEBUG("Read data %s\n", string_body.c_str());
+        C4Document *newdoc = c4doc_update(c4doc, fleece_data, c4doc->selectedRev.flags, &c4error_);
 
-        // Fleece value of read body from the document
-        FLValue flValue = FLValue_FromData(fleece_body_data);
+        if (c4error_.code != NO_CB_ERROR && (c4error_.code < kC4NumErrorCodesPlus1) ) {
+            C4SliceResult sliceResult = c4error_getDescription(c4error_);
+            string slice2string = string((char*)sliceResult.buf,sliceResult.size);
 
-        FLDict dict = FLValue_AsDict(flValue);
+            DEBUG("Could not update the body of an existing document.\n");
+            DEBUG("Error Msg:%s\n", slice2string.c_str());
 
-        DEBUG("Keys Count:%d\n", FLDict_Count(dict));
+            // free sliceResult
+            c4slice_free(sliceResult);
 
-        Dict dict1 = Value::fromData(fleece_body_data).asDict();
-        Value name_str = dict1.get("name");
-        Value age_str = dict1.get("age");
-        DEBUG("key: name, value:%s\n", name_str.asstring().c_str());
-        DEBUG("key: age, value:%d\n", age_str.asInt());
-
-        Value val_fleece_body(flValue);
-
-
-        // These are just test fleece
-        Encoder encoder;
-
-        encoder.beginDict();
-        encoder.writeValue(val_fleece_body);
-        encoder.writeKey(c4str("new-double-key"));
-        encoder.writeDouble(2.2221);
-        encoder.writeKey(c4str("age2"));
-        encoder.writeInt(age_str.asInt() + 1);
-        //encoder.convertJSON((FLSlice)body);
-        encoder.endDict();
-
-        FLError flError;
-        FLSliceResult new_encoded_fleece = encoder.finish(&flError);
-
-        if(flError != kFLNoError && flError <=kFLSharedKeysStateError){
-            DEBUG("Encoder failed: Error %d\n",flError);
         }else{
-            //To make update to existing document: PUT request
-            c4db_beginTransaction(c4db_, &c4error_);
-            c4doc = c4doc_update(c4doc, (FLSlice)new_encoded_fleece, c4doc->selectedRev.flags, &c4error_);
-            c4db_endTransaction(c4db_, true, &c4error_);
-            if (c4error_.code !=NO_CB_ERROR && (c4error_.code < kC4NumErrorCodesPlus1)){
-                DEBUG("Update field - Error Code:%d.\n",  c4error_.code);
-            }
+            // All good
+            doc->c4document_ = newdoc;
         }
-
     }
 
     DEBUG("Leaving save\n");
+    c4db_endTransaction(c4db_, true, &c4error_);
 
     db_lock_.unlock();
 
@@ -194,19 +157,19 @@ void SGDatabase::save(SGDocument *doc) {
 * @brief return C4Document if there is such a document exist in the DB, otherwise return null
 * @param docId The document id
 */
-C4Document *SGDatabase::getDocumentById(const std::string &docId) {
-    C4Document      *c4doc;
-    C4Error         error;
+C4Document *SGDatabase::getDocumentById(const std::string &doc_id) {
+    C4Document *c4doc;
+    C4Error error;
 
-    DEBUG("START getDocumentById: %s\n", docId.c_str());
+    DEBUG("START getDocumentById: %s\n", doc_id.c_str());
 
     c4db_beginTransaction(c4db_, &error);
-    c4doc = c4doc_get(c4db_, c4str(docId.c_str()), true, &error);
+    c4doc = c4doc_get(c4db_, c4str(doc_id.c_str()), true, &error);
     c4db_endTransaction(c4db_, true, &error);
     if (error.code !=NO_CB_ERROR && (error.code < kC4NumErrorCodesPlus1)){
         DEBUG("Error Code:%d.\n",  error.code);
     }
-    DEBUG("END getDocumentById: %s\n", docId.c_str());
+    DEBUG("END getDocumentById: %s\n", doc_id.c_str());
 
     return c4doc;
 }
@@ -215,22 +178,22 @@ C4Document *SGDatabase::getDocumentById(const std::string &docId) {
 * @param SGDocument The document object
 */
 bool SGDatabase::deleteDocument(class SGDocument *doc) {
-    C4Error         error;
+    C4Error error;
     c4db_beginTransaction(c4db_, &error);
 
-    const char *docId = doc->getId().c_str();
-    DEBUG("START deleteDocument: %s\n", docId);
+    const char *doc_id = doc->getId().c_str();
+    DEBUG("START deleteDocument: %s\n", doc_id);
 
-    bool result = c4db_purgeDoc(c4db_, c4str(docId), &error);
+    bool result = c4db_purgeDoc(c4db_, c4str(doc_id), &error);
 
     if (result) {
-        DEBUG("Document %s deleted\n", docId);
+        DEBUG("Document %s deleted\n", doc_id);
         // TODO: Do we need to have a delete flag in the document?
         doc->setId("");
     }
 
+    DEBUG("END deleteDocument: %s\n", doc_id);
     c4db_endTransaction(c4db_, true, &error);
-    DEBUG("END deleteDocument: %s\n", docId);
 
     return result;
 }
