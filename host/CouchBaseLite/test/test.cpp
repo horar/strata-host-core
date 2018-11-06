@@ -6,26 +6,67 @@
 
 #include "SGDatabase.h"
 #include "SGDocument.h"
+#include "SGMutableDict.h"
+#include "SGMutableDocument.h"
+#include "FleeceImpl.hh"
+#include "MutableArray.hh"
+#include "MutableDict.hh"
+#include "Doc.hh"
 using namespace std;
+using namespace fleece;
+using namespace fleece::impl;
+#define DEBUG(...) printf("TEST SGLiteCore: "); printf(__VA_ARGS__)
+
 int main(){
 
-    SGDatabase sgDatabase("mydb");
-    std::this_thread::sleep_for (std::chrono::milliseconds(5000));
+    SGDatabase sgDatabase("local_test_db");
 
-    SGDocument usbPDDocument(&sgDatabase, "usb-pd");
-    SGDocument newdocument(&sgDatabase, "newdocuemtn");
+    SGMutableDocument usbPDDocument(&sgDatabase, "usb-pd6");
 
-    // Create document if does not exist
-    // TODO: This can also save document changes
+
+
+    DEBUG("document Id: %s, body: %s\n", usbPDDocument.getId().c_str(), usbPDDocument.getBody().c_str());
+
+    usbPDDocument.set("number", 30);
+    usbPDDocument.set("name", "hello"_sl);
+
+
+    string name_key = "name";
+
+    const Value *name_value = usbPDDocument.get(name_key);
+    if(name_value){
+
+        if(name_value->type() == kString){
+
+            string name_string = name_value->toString().asString();
+
+            DEBUG("name:%s\n", name_string.c_str());
+        }else{
+            DEBUG("name_value is not a string!\n");
+        }
+
+    }else{
+        DEBUG("There is no such key called: %s\n", name_key.c_str());
+    }
+
     sgDatabase.save(&usbPDDocument);
 
-    sgDatabase.save(&newdocument);
+    string whatever_key = "game";
 
-    cout << "document: body" << usbPDDocument.getBody() << endl;
+    const Value *whatever_value_key = usbPDDocument.get(whatever_key);
+    if(whatever_value_key){
+
+        if(whatever_value_key->type() == kNumber){
+            usbPDDocument.set(whatever_key, usbPDDocument.get(whatever_key)->asInt() + 1);
+        }else{
+            DEBUG("Warning: No such key:%s exist\n",whatever_key.c_str());
+        }
+    }
+
+    sgDatabase.save(&usbPDDocument);
 
     sgDatabase.deleteDocument(&usbPDDocument);
 
-    std::this_thread::sleep_for (std::chrono::milliseconds(5000));
 
     return 0;
 }
