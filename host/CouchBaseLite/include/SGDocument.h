@@ -12,19 +12,29 @@
 #define SGDOCUMENT_H
 
 #include <string>
-//#include "c4Document.h"
+#include "SGDict.h"
 #include "SGDatabase.h"
-
-class SGDocument {
+#include "c4Document+Fleece.h"
+#include "FleeceImpl.hh"
+#include "MutableArray.hh"
+#include "MutableDict.hh"
+class SGDocument{
 public:
     SGDocument();
+
+    virtual ~SGDocument();
+
     SGDocument(class SGDatabase *database, std::string docId);
+
+    C4Document *getC4document() const;
+
     const std::string &getId() const;
     void setId(const std::string &id);
     const std::string &getBody() const;
     void setBody(const std::string &body_);
 
-
+    bool empty();
+    const fleece::impl::Value* get(const std::string &keyToFind);
 
     // Check if document exist in DB
     bool exist();
@@ -32,11 +42,15 @@ public:
 private:
     C4Database*     c4db_;
     C4Document*     c4document_;
+private:
 
     // Document ID
     std::string     id_;
     std::string     body_;
-
+    friend class    SGDatabase;
+protected:
+    bool setC4Document(class SGDatabase *database, std::string docId);
+    fleece::Retained<fleece::impl::MutableDict> mutable_dict_;
 };
 
 
