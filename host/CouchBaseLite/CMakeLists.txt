@@ -27,7 +27,10 @@ include_directories( ${CMAKE_CURRENT_SOURCE_DIR}
 					"${SHARED_DIR}/rapidjson/include"		#rapidjson submodule
 					"${CB_DIR}/C"
 					"${CB_DIR}/C/include"
-					"${CB_DIR}/vendor/fleece/Fleece"
+                    "${CB_DIR}/vendor/fleece/API"
+					"${CB_DIR}/vendor/fleece/Fleece/Core"
+					"${CB_DIR}/vendor/fleece/Fleece/Mutable"
+					"${CB_DIR}/vendor/fleece/Fleece/Support"
 					"${CB_DIR}/LiteCore/Database"
 					"${CB_LIB_DIR}"
 					)
@@ -68,6 +71,9 @@ else("${CMAKE_SYSTEM_NAME}" STREQUAL "Linux")
 	find_library(litecoreRest STATIC
 					NAME LiteCoreREST 		# Name has caps in linux
 					HINTS "${CB_DIR}/build_cmake/macos")
+	find_library(FleeceStatic STATIC
+			NAME FleeceStatic 		# Name has caps in linux
+			HINTS "${CB_DIR}/build_cmake/macos/vendor/fleece")
 	# Couchbase requires this
 	find_library(libdl dl)
 endif()
@@ -85,16 +91,20 @@ endif()
 set(LIB_SOURCES
 		${CMAKE_CURRENT_SOURCE_DIR}/src/SGDatabase.cpp
 		${CMAKE_CURRENT_SOURCE_DIR}/src/SGDocument.cpp
-)
+		${CMAKE_CURRENT_SOURCE_DIR}/src//SGMutableDocument.cpp)
 
 # Make couchbase-lite-cpp a library;
 add_library(couchbase-lite-cpp STATIC ${LIB_SOURCES})
 # We only need litecore library linked
-target_link_libraries(couchbase-lite-cpp ${litecore} ${libdl})
+target_link_libraries(couchbase-lite-cpp ${litecore} ${libdl} ${FleeceStatic})
 
 # Compile source/s
 set(SOURCES ${SHARED_DIR}/cpp-base64/base64.cpp test/test.cpp)
 
 #executable
 add_executable (couchbase_lite_cpp_test ${SOURCES})
-target_link_libraries(couchbase_lite_cpp_test couchbase-lite-cpp )
+target_link_libraries(couchbase_lite_cpp_test couchbase-lite-cpp ${FleeceStatic})
+
+#executable
+add_executable (couchbase_lite_cpp_fleece_test test/fleece_test.cpp)
+target_link_libraries(couchbase_lite_cpp_fleece_test ${litecore} ${libdl} ${FleeceStatic})
