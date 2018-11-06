@@ -54,8 +54,11 @@ Item {
                     verticalCenter: maximumBoardPower.verticalCenter
                     right: parent.right
                 }
-                //input: inputFault.value.toFixed(0)
-                //onApplied: platformInterface.set_minimum_input_voltage.update(input);   // slider will be updated via notification
+                label: platformInterface.maximum_board_power.watts
+
+                onApplied: {
+                    platformInterface.set_maximum_board_power.update(maximumBoardPowerInput.intValue);
+                }
             }
 
             SGSegmentedButtonStrip {
