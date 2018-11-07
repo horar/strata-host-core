@@ -65,8 +65,8 @@ Item {
                 verticalCenter: currentLimit.verticalCenter
                 right: parent.right
             }
-            value: currentLimit.value.toFixed(0)
-            onApplied: currentLimit.value = value
+            value: platformInterface.request_over_current_protection_notification.current_limit.toFixed(0)
+            onApplied: platformInterface.set_over_current_protection.update(portNumber, intValue)
         }
 
         SGDivider {
@@ -118,8 +118,10 @@ Item {
                 verticalCenter: increment.verticalCenter
                 right: parent.right
             }
-            value: increment.value.toFixed(0)
-            onApplied: increment.value = value
+            value: platformInterface.get_cable_loss_compensation.output_current.toFixed(0)
+            onApplied: platformInterface.set_cable_loss_compensation.update(portNumber,
+                           intValue,
+                           platformInterface.get_cable_loss_compensation.bias_voltage)
         }
 
         SGSlider {
@@ -151,8 +153,10 @@ Item {
                 verticalCenter: bias.verticalCenter
                 right: parent.right
             }
-            value: bias.value.toFixed(0)
-            onApplied: bias.value = value
+            value: platformInterface.get_cable_loss_compensation.bias_voltage.toFixed(0)
+            onApplied: platformInterface.set_cable_loss_compensation.update(portNumber,
+                                                                            platformInterface.get_cable_loss_compensation.output_current,
+                                                                            intValue)
         }
 
 
