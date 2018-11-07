@@ -12,20 +12,22 @@ Rectangle {
     height: 725
 
     function resetData(){
-
         startStopButton.checked = false
         targetSpeedSlider.value = 1500
         rampRateSlider.value = 3
         driveModeCombo.currentIndex = 15
         faultModel.clear()
         platformInterface.driveModePseudoTrapezoidal = true
-
+        platformInterface.systemModeManual = true
+        platformInterface.systemModeAuto = false
+//        platformInterface.system_mode_selection.update("manual")
     }
 
     Component.onCompleted:  {
         platformInterface.phaseAngle = 15
-        platformInterface.set_phase_angle.update(5);
+        platformInterface.set_phase_angle.update(15);
         platformInterface.set_drive_mode.update(0);
+        platformInterface.system_mode_selection.update("manual");
     }
 
     Rectangle {
@@ -220,7 +222,6 @@ Rectangle {
                     // Optional properties to access specific buttons cleanly from outside
                     property alias manual : manual
                     property alias automatic: automatic
-
                     SGRadioButton {
                         id: manual
                         text: "Manual Control"
@@ -232,9 +233,8 @@ Rectangle {
 
                                 targetSpeedSlider.sliderEnable = true
                                 targetSpeedSlider.opacity = 1.0
-
-
                         }
+
                     }
 
                     SGRadioButton {
