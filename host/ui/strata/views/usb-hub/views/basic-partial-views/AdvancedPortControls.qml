@@ -6,6 +6,72 @@ import "qrc:/views/usb-pd-multiport/sgwidgets"
 Item {
     id:advanceControlsView
 
+    property int buildInTime: 500
+
+    function transitionToAdvancedView(){
+        //set the opacity of the view to be seen, but set the opacity of the parts to 0
+        advanceControlsView.opacity = 1;
+        topDivider.opacity = 0;
+        maxOutputPower.opacity = 0;
+        currentLimitText.opacity = 0;
+        currentLimitSlider.opacity = 0
+        cableCompensationText.opacity = 0
+        outputBiasText.opacity = 0;
+        cableCompensationDivider.opacity = 0;
+        cableCompensationHeaderText.opacity = 0
+        cableCompensationIncrementSlider.opacity = 0
+        outputBiasSlider.opacity = 0;
+
+        graphDivider.opacity = 0
+        showGraphText.opacity = 0;
+        graphSelector.opacity = 0;
+        capabilitiesDivider.opacity = 0;
+        sourceCapabilitiesText.opacity = 0;
+        sourceCapabilitiesButtonStrip.opacity = 0;
+
+        advancedPortControlsBuildIn.start()
+    }
+
+    SequentialAnimation{
+        id: advancedPortControlsBuildIn
+        running: false
+
+        PropertyAnimation {
+            targets: [topDivider, maxOutputPower, currentLimitText, currentLimitSlider ]
+            property: "opacity"
+            from: 0
+            to: 1
+            duration: buildInTime
+        }
+
+        PropertyAnimation {
+            targets: [cableCompensationDivider,cableCompensationHeaderText,cableCompensationText, outputBiasText, cableCompensationIncrementSlider,outputBiasSlider]
+            property: "opacity"
+            to: 1
+            duration: buildInTime
+        }
+
+        PropertyAnimation {
+            id: fadeInGraphsSection
+            targets: [graphDivider,showGraphText,graphSelector]
+            property: "opacity"
+            to: 1
+            duration: buildInTime
+        }
+        PropertyAnimation {
+            id: fadeInSourceCapibilitiesSection
+            targets: [capabilitiesDivider,sourceCapabilitiesText,sourceCapabilitiesButtonStrip]
+            property: "opacity"
+            to: 1
+            duration: buildInTime
+        }
+
+        onStopped: {
+            //console.log("finished advanced build-in")
+        }
+
+    }
+
     Rectangle{
         id:topDivider
         anchors.left: advanceControlsView.left
@@ -306,7 +372,7 @@ Item {
     }
 
     Rectangle{
-        id:capibilitiesDivider
+        id:capabilitiesDivider
         anchors.left: advanceControlsView.left
         anchors.right:advanceControlsView.right
         anchors.top: graphSelector.bottom
@@ -322,7 +388,7 @@ Item {
         anchors {
             left: advanceControlsView.left
             leftMargin: 10
-            top: capibilitiesDivider.bottom
+            top: capabilitiesDivider.bottom
             topMargin: 3
             right: advanceControlsView.right
             rightMargin: 10

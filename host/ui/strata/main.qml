@@ -194,12 +194,12 @@ Window {
                     coreInterface.sendCommand(JSON.stringify(disconnect_json))
                 }
             }
-            Button {
-                text: "Logout"
-                onClicked: {
-                    NavigationControl.updateState(NavigationControl.events.LOGOUT_EVENT,null)
-                }
-            }
+//            Button {
+//                text: "Logout"
+//                onClicked: {
+//                    NavigationControl.updateState(NavigationControl.events.LOGOUT_EVENT,null)
+//                }
+//            }
             Button {
                 text: "Login as guest"
                 onClicked: {
