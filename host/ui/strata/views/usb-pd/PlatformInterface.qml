@@ -300,7 +300,7 @@ Item {
                          "power":45      // in Watts
                        },
                    update: function(enabled,voltage,watts){
-                       console.log("input voltage foldback update: enabled=",enabled,"voltage=",voltage,"watts=",watts);
+                       //console.log("input voltage foldback update: enabled=",enabled,"voltage=",voltage,"watts=",watts);
                        //set the notification property values, as the platform won't send a notification in response to this
                        //command, and those properties are used by controls to see what the value of other controls should be.
                        foldback_input_voltage_limiting_event.input_voltage_foldback_enabled = enabled;
