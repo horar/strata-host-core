@@ -46,7 +46,7 @@ Window {
         id: graphData
         property real stream
         property real count: 0
-        interval: 100
+        interval: 10
         running: true
         repeat: true
         onTriggered: {

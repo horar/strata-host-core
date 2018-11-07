@@ -2,5 +2,7 @@
     <qresource prefix="/">
         <file>main.qml</file>
         <file>SGGraphTimed.qml</file>
+        <file>pointreplacer.h</file>
+        <file>pointreplacer.cpp</file>
     </qresource>
 </RCC>
