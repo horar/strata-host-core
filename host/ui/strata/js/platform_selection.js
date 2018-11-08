@@ -31,6 +31,7 @@ function populatePlatforms(platform_list_json) {
         "SEC.2017.004.2.0" : "motor-vortex",
         "SEC.2018.004.0.1" : "usb-pd",
         "SEC.2018.004.1.1" : "usb-pd",
+        "SEC.2018.004.1.2" : "usb-pd",
         "P2.2018.0.0.0" : "usb-pd-multiport",       //uninitialized board
         "SEC.2017.038.0.0": "usb-pd-multiport",
         "SEC.2018.018.0.0" : "logic-gate",

@@ -184,7 +184,8 @@ Item {
             }
             height: 428 * ratioCalc
 
-            property bool inputPowerConnected: true
+            property bool inputPowerConnected:  platformInterface.ac_power_supply_connection.state === "connected"
+            //property bool inputPowerConnected: true
 
             Rectangle{
                 id:topBackgroundRect
@@ -303,6 +304,9 @@ Item {
                     var current = platformInterface.request_usb_power_notification.negotiated_current;
                     return Math.round(voltage*current *100)/100;
                 }
+                else if (!portInfo1.portConnected){
+                    return "—"  //show a dash on disconnect, so cached value won't show on connect
+                }
                 else{
                     return portInfo1.maxPower;
                 }
@@ -410,6 +414,9 @@ Item {
                     var voltage = platformInterface.request_usb_power_notification.negotiated_voltage;
                     var current = platformInterface.request_usb_power_notification.negotiated_current;
                     return Math.round(voltage*current *100)/100;
+                }
+                else if (!portInfo2.portConnected){
+                    return "—"  //show a dash on disconnect, so cached value won't show on connect
                 }
                 else{
                     return portInfo2.maxPower;
@@ -519,6 +526,9 @@ Item {
                     var current = platformInterface.request_usb_power_notification.negotiated_current;
                     return Math.round(voltage*current *100)/100;
                 }
+                else if (!portInfo3.portConnected){
+                    return "—"  //show a dash on disconnect, so cached value won't show on connect
+                }
                 else{
                     return portInfo3.maxPower;
                 }
@@ -625,6 +635,9 @@ Item {
                     var voltage = platformInterface.request_usb_power_notification.negotiated_voltage;
                     var current = platformInterface.request_usb_power_notification.negotiated_current;
                     return Math.round(voltage*current *100)/100;
+                }
+                else if (!portInfo4.portConnected){
+                    return "—"  //show a dash on disconnect, so cached value won't show on connect
                 }
                 else{
                     return portInfo4.maxPower;

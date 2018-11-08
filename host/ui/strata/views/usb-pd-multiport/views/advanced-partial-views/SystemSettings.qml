@@ -36,9 +36,9 @@ Item {
                     rightMargin: 30
                 }
                 from: 30
-                to: 200
+                to: platformInterface.ac_power_supply_connection.power
                 startLabel: "30W"
-                endLabel: "200W"
+                endLabel: platformInterface.ac_power_supply_connection.power+"W"
                 value: platformInterface.maximum_board_power.watts
 
                 Component.onCompleted:{
@@ -59,11 +59,13 @@ Item {
                     verticalCenter: maximumBoardPower.verticalCenter
                     right: parent.right
                 }
-                value: platformInterface.maximum_board_power.watts
+
+                label: platformInterface.maximum_board_power.watts
+
                 onApplied: {
-                    //console.log("sending max power from text input", value)
-                    var currentValue = maximumBoardPowerInput.floatValue
-                    platformInterface.set_maximum_board_power.update(currentValue);   // slider will be updated via notification
+                    platformInterface.set_maximum_board_power.update(maximumBoardPowerInput.intValue);
+
+                value: platformInterface.maximum_board_power.watts
                 }
             }
 

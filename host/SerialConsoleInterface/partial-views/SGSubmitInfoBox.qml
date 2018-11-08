@@ -64,7 +64,7 @@ Rectangle {
             color: infoBoxColor
             radius: 2
             border {
-                color: infoBoxBorderColor
+                color: root.enabled && infoText.focus ? "lightskyblue" : infoBoxBorderColor
                 width: infoBoxBorderWidth
             }
             anchors {
@@ -90,7 +90,7 @@ Rectangle {
                 }
                 horizontalAlignment: leftJustify ? TextInput.AlignLeft : TextInput.AlignRight
                 validator: realNumberValidation ? realNumberValidator : null
-                //onAccepted: root.applied(infoText.text)
+                onAccepted: root.applied(infoText.text)
                 enabled: root.enabled
                 color: root.textColor
                 opacity: root.enabled ? 1 : 0.5
@@ -147,7 +147,7 @@ Rectangle {
                 leftMargin: unit.text === "" ? 10 : 20
                 verticalCenter: infoContainer.verticalCenter
             }
-            //onClicked: root.applied(infoText.text)
+            onClicked: root.applied(infoText.text)
             enabled: root.enabled
             height: visible ? 40 : 0
         }
