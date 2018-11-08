@@ -239,7 +239,7 @@ bool SerialConnector::read(string &notification)
     if(!response.empty()) {
         string read_message(response.begin(),response.end());
         notification = read_message;
-        LOG_DEBUG(DEBUG,"Rx'ed message : %s\n",notification.c_str());
+        //LOG_DEBUG(DEBUG,"Rx'ed message : %s\n",notification.c_str());
         response.clear();
         return true;
     }
@@ -253,7 +253,7 @@ bool SerialConnector::read(string &notification)
     zmq::poll (&items,1,10);
     if(items.revents & ZMQ_POLLIN) {
         notification = s_recv(*read_socket_);
-        LOG_DEBUG(DEBUG,"Rx'ed message : %s\n",notification.c_str());
+        //LOG_DEBUG(DEBUG,"Rx'ed message : %s\n",notification.c_str());
         if(notification == "Platform_Disconnected") {
             return false;
         }
