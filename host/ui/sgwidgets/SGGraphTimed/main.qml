@@ -32,7 +32,7 @@ Window {
         minYValue: 0                    // Default: 0
         maxYValue: 20                   // Default: 10
         minXValue: 0                    // Default: 0
-        maxXValue: 5                    // Default: 10
+        maxXValue: 5                    // Default: 5
         showXGrids: false               // Default: false
         showYGrids: true                // Default: false
         showOptions: true               // Default: false - shows an options button to toggle centered
@@ -54,4 +54,6 @@ Window {
             stream = Math.sin(count/500)*3+10;
         }
     }
+
+    PerformanceTest {}
 }

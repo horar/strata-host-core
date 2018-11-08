@@ -37,7 +37,7 @@ ChartView {
     property real minYValue: 0
     property real maxYValue: 10
     property real minXValue: 0
-    property real maxXValue: 10
+    property real maxXValue: 5
     property string xAxisTitle: ""
     property string yAxisTitle: ""
     property bool showXGrids: false
@@ -50,6 +50,10 @@ ChartView {
     property real lastInputTime: Date.now()
     property real lastPlottedTime: Date.now()
     property real lastRedrawTime: Date.now()
+
+    onVisibleChanged: {
+            dataLine.clear()
+    }
 
     // Define x-axis to be used with the series instead of default one
     ValueAxis {
@@ -141,7 +145,7 @@ ChartView {
     // If repeatOldData is true, plot the last data point again if a new point hasn't been plotted in 200ms
     Timer {
         id: repeatTimer
-        interval: 100
+        interval: 200
         running: rootChart.visible
         repeat: true
         onTriggered: {
@@ -154,9 +158,9 @@ ChartView {
     onInputDataChanged: {
         if (rootChart.visible) {
             var timeDiffSeconds = timeSinceLastPlot() / 1000
-            if ( !throttlePlotting ){  // Unthrottled plots every point
+            if ( !throttlePlotting ){  // Unthrottled plots every point, NOT RECOMMENDED
                 appendData(timeDiffSeconds)
-            } else if (timeDiffSeconds >= 0.1) { // Under throttle condition: Won't plot unless it has been 100ms since last plot
+            } else if (timeDiffSeconds >= (maxXValue - minXValue)/50) { // When throttled, plots a point every 50th of the min/max X time interval
                 appendData(timeDiffSeconds)
             }
         }
@@ -169,7 +173,7 @@ ChartView {
 
     function appendData(timeDiffSeconds) {
         trimData()
-        console.log(dataLine.count)
+//        console.log(dataLine.count)
 
         for (var i = 0; i<dataLine.count; i++) {
             var point = dataLine.at(i)
