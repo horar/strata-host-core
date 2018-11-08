@@ -36,7 +36,7 @@ Window {
         showXGrids: false               // Default: false
         showYGrids: true                // Default: false
         showOptions: false              // Default: false - shows an options button which currently serves no function
-        throttlePlotting: true          // Default: true - Only plots every 100ms or more to save resources, false plots on every inputData change (NOT RECOMMENDED)
+        throttlePlotting: true          // Default: true - Restricts plotting to every 100ms or more to save resources, false plots on every inputData change (NOT RECOMMENDED)
         repeatOldData: visible          // Default: visible - If no new data has been sent after 200ms, graph will plot a new point at the current time with the last input value
                                         //          *by default matches visibility of graph, so it doesn't waste resources in the background.
     }
