@@ -104,6 +104,8 @@ Item {
             }
             onSliderMoved:{
                 //console.log("sending values from increment slider:",portNumber, increment.value, platformInterface.get_cable_loss_compensation.bias_voltage);
+                //this code is generating "TypeError: Property 'update' of object [object Object] is not a function"
+                //errors for some reason. Same for other controls changing cable compensation values
                 platformInterface.set_cable_loss_compensation.update(portNumber,
                                                                      increment.value,
                                                                      platformInterface.get_cable_loss_compensation.bias_voltage)
