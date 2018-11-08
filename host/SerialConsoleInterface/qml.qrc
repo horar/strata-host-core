@@ -1,0 +1,28 @@
+<RCC>
+    <qresource prefix="/">
+        <file>main.qml</file>
+        <file>js/core_platform_interface.js</file>
+        <file>partial-views/SGPlatformTab.qml</file>
+        <file>partial-views/SGPlatformContent.qml</file>
+        <file>PlatformInterface.qml</file>
+        <file>fonts/Inconsolata.otf</file>
+        <file>fonts/sgicons.ttf</file>
+        <file>main.cpp</file>
+        <file>PlatformController.cpp</file>
+        <file>PlatformController.h</file>
+        <file>fonts/Fonts.qml</file>
+        <file>partial-views/SGSideDrawer.qml</file>
+        <file>partial-views/SGStatusListBox.qml</file>
+        <file>partial-views/SGSubmitInfoBox.qml</file>
+        <file>partial-views/SGCommandHistory.qml</file>
+        <file>partial-views/images/greenStatusLight.svg</file>
+        <file>partial-views/images/offStatusLight.svg</file>
+        <file>partial-views/images/orangeStatusLight.svg</file>
+        <file>partial-views/images/redStatusLight.svg</file>
+        <file>partial-views/images/yellowStatusLight.svg</file>
+        <file>partial-views/SGStatusLight.qml</file>
+    </qresource>
+    <qresource prefix="/" lang="qml"/>
+    <qresource prefix="/js"/>
+    <qresource prefix="/js" lang="javascript"/>
+</RCC>
