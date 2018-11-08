@@ -26,12 +26,15 @@ function populatePlatforms(platform_list_json) {
 
 
     var uuid_map = {
-        "P2.2017.1.1.0" : "usb-pd",
+        "P2.2017.1.1.0" : "usb-pd",             //original version
         "P2.2018.1.1.0" : "bubu",
         "SEC.2017.004.2.0" : "motor-vortex",
-        "SEC.2018.004.1.1" : "usb-pd-multiport",
+        "SEC.2018.004.0.1" : "usb-pd",
+        "SEC.2018.004.1.1" : "usb-pd",
+        "SEC.2018.004.1.2" : "usb-pd",
         "P2.2018.0.0.0" : "usb-pd-multiport",       //uninitialized board
         "SEC.2017.038.0.0": "usb-pd-multiport",
+        "SEC.2018.018.0.0" : "logic-gate",
         "SEC.2018.001.0.0": "usb-hub"
     }
 
@@ -49,8 +52,21 @@ function populatePlatforms(platform_list_json) {
             var pattern = new RegExp('^[A-Z0-9]+\.[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+');
             var theString = platform_list.list[i].uuid;
             //console.log("the UUID String=",theString)
-            var platformType = theString!== null ? String(theString).match(pattern)[0] : "";
+            if(theString !== null){
+                if(pattern.test(theString)) {
+                    var platformType = String(theString).match(pattern)[0]
+                }
+                else{   //If there is invalid uuid just pass the iteration.
+                    console.log("platform uuid does not match the pattern");
+                    continue
+                }
+            }
+            else{   //If the uuid is null just pass the iteration.
+                console.log("platform uuid string is null");
+                continue
+            }
             console.log("looking at platform ",platform_list.list[i].uuid);
+
 //            if (platformType){
 //                console.log("platform name matched pattern:",platformType);
 //            }

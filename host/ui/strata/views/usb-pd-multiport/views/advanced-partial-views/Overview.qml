@@ -26,9 +26,9 @@ Item {
                 width: margins.width
                 labelLeft: false
                 barWidth: margins.width
-                maximumValue: 200
+                maximumValue: platformInterface.ac_power_supply_connection.power
                 showThreshold: true
-                thresholdValue: 180
+                thresholdValue: (.9 * platformInterface.ac_power_supply_connection.power)
 
                 gaugeElements: Row {
                     id: container
@@ -130,8 +130,13 @@ Item {
                 }
                 maxPower:{
                     if (platformInterface.request_usb_power_notification.port === 1){
-                       return Math.round(platformInterface.request_usb_power_notification.maximum_power *100)/100
+                        var voltage = platformInterface.request_usb_power_notification.negotiated_voltage;
+                        var current = platformInterface.request_usb_power_notification.negotiated_current;
+                        return Math.round(voltage*current *100)/100;
                     }
+                    else if (!miniInfo1.portConnected){
+                       return "—"  //show a dash on disconnect, so cached value won't show on connect
+                     }
                     else{
                         return miniInfo1.maxPower;
                     }
@@ -231,8 +236,13 @@ Item {
                 }
                 maxPower:{
                     if (platformInterface.request_usb_power_notification.port === 2){
-                       return Math.round(platformInterface.request_usb_power_notification.maximum_power *100)/100
+                        var voltage = platformInterface.request_usb_power_notification.negotiated_voltage;
+                        var current = platformInterface.request_usb_power_notification.negotiated_current;
+                        return Math.round(voltage*current *100)/100;
                     }
+                    else if (!miniInfo2.portConnected){
+                       return "—"  //show a dash on disconnect, so cached value won't show on connect
+                     }
                     else{
                         return miniInfo2.maxPower;
                     }
@@ -331,8 +341,13 @@ Item {
                 }
                 maxPower:{
                     if (platformInterface.request_usb_power_notification.port === 3){
-                       return Math.round(platformInterface.request_usb_power_notification.maximum_power *100)/100
+                        var voltage = platformInterface.request_usb_power_notification.negotiated_voltage;
+                        var current = platformInterface.request_usb_power_notification.negotiated_current;
+                        return Math.round(voltage*current *100)/100;
                     }
+                    else if (!miniInfo3.portConnected){
+                       return "—"  //show a dash on disconnect, so cached value won't show on connect
+                     }
                     else{
                         return miniInfo3.maxPower;
                     }
@@ -366,7 +381,7 @@ Item {
                         return Math.round(platformInterface.request_usb_power_notification.output_voltage * platformInterface.request_usb_power_notification.output_current *100)/100
                     }
                     else{
-                        return miniInfo1.outputPower;
+                        return miniInfo3.outputPower;
                     }
                 }
                 portEfficency: {
@@ -431,8 +446,13 @@ Item {
                 }
                 maxPower:{
                     if (platformInterface.request_usb_power_notification.port === 4){
-                       return Math.round(platformInterface.request_usb_power_notification.maximum_power *100)/100
+                        var voltage = platformInterface.request_usb_power_notification.negotiated_voltage;
+                        var current = platformInterface.request_usb_power_notification.negotiated_current;
+                        return Math.round(voltage*current *100)/100;
                     }
+                    else if (!miniInfo4.portConnected){
+                       return "—"  //show a dash on disconnect, so cached value won't show on connect
+                     }
                     else{
                         return miniInfo4.maxPower;
                     }
@@ -541,7 +561,7 @@ Item {
                     stateMessage += " temperature is above ";
                     stateMessage += platformInterface.over_temperature_notification.maximum_temperature;
                     stateMessage += " °C";
-                    faultListModel.append({"type":"temperature", "port":platformInterface.over_temperature_notification.port, "status":stateMessage});
+                    faultListModel.append({"type":"temperature", "port":Number(platformInterface.over_temperature_notification.port), "status":stateMessage});
                 }
                 else{                                       //remove temp message for the correct port from list
                     for(var i = 0; i < faultListModel.count; ++i){

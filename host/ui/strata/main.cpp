@@ -12,8 +12,6 @@
 #include <QtQml/QQmlEngine>
 #include <QtCore/QDir>
 #include "QtDebug"
-#include "QtOpenGL"
-#include <QGLContext>
 #include <QProcess>
 
 #include <PlatformInterface/core/CoreInterface.h>
@@ -32,6 +30,7 @@ int main(int argc, char *argv[])
     qmlRegisterType<CoreInterface>("tech.spyglass.CoreInterface",1,0,"CoreInterface");
     qmlRegisterType<DocumentManager>("tech.spyglass.DocumentManager", 1, 0, "DocumentManager");
     qmlRegisterType<Document>("tech.spyglass.Document", 1, 0, "Document");
+    qmlRegisterSingletonType(QUrl("qrc:/fonts/Fonts.qml"), "Fonts", 1, 0, "Fonts");
 
     CoreInterface *coreInterface = new CoreInterface();
     DocumentManager* documentManager = new DocumentManager(coreInterface);
@@ -98,7 +97,7 @@ int main(int argc, char *argv[])
             arguments << "-f" << HCS_CONFIG_PATH;
 
             // Start HCS
-            //hcsProcess->setProcessChannelMode(QProcess::ForwardedChannels);
+        //    hcsProcess->setProcessChannelMode(QProcess::ForwardedChannels);
             hcsProcess->start(hcsPath,arguments, QIODevice::ReadWrite);
         }
         else {

@@ -128,13 +128,13 @@ Window {
         GridLayout {
             columns: 10
             anchors { horizontalCenter: commandBar.horizontalCenter }
-            Button {
-                text: "USB-PD"
-                onClicked: {
-                    var data = { platform_name: "usb-pd"}
-                    NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT, data)
-                }
-            }
+//            Button {
+//                text: "USB-PD"
+//                onClicked: {
+//                    var data = { platform_name: "usb-pd"}
+//                    NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT, data)
+//                }
+//            }
             Button {
                 text: "BuBU Interface"
                 onClicked: {
@@ -163,6 +163,14 @@ Window {
                     NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT, data)
                 }
             }
+            Button {
+                text: "Logic gate"
+                onClicked: {
+                    var data = { platform_name: "logic-gate"}
+                    NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT, data)
+                }
+            }
+
 
             // UI events
             Button {
@@ -186,12 +194,12 @@ Window {
                     coreInterface.sendCommand(JSON.stringify(disconnect_json))
                 }
             }
-            Button {
-                text: "Logout"
-                onClicked: {
-                    NavigationControl.updateState(NavigationControl.events.LOGOUT_EVENT,null)
-                }
-            }
+//            Button {
+//                text: "Logout"
+//                onClicked: {
+//                    NavigationControl.updateState(NavigationControl.events.LOGOUT_EVENT,null)
+//                }
+//            }
             Button {
                 text: "Login as guest"
                 onClicked: {

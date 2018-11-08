@@ -91,6 +91,7 @@ Item {
 
             PortStatBox {
                 property var inputVoltage:platformInterface.request_usb_power_notification.input_voltage;
+                property real portVoltage : 0
 
                 onInputVoltageChanged: {
                     portVoltage = platformInterface.request_usb_power_notification.input_voltage;
@@ -99,8 +100,8 @@ Item {
                 id:combinedInputVoltageBox
                 label: "INPUT VOLTAGE"
                 value: {
-                    if (port1Voltage != 0)
-                        Math.round((port1Voltage) *100)/100
+                    if (portVoltage != 0)
+                        Math.round((portVoltage) *100)/100
                       else
                         "0.00"
                 }
@@ -121,17 +122,45 @@ Item {
                 property real inputPower: inputVoltage * inputCurrent;
 
                 property real port1Power:0;
+                property real port2Power:0;
+                property real port3Power:0;
+                property real port4Power:0;
+                property real combinedPortPower: 0
 
                 onInputPowerChanged: {
-                    //only check one of the ports for power, since the input power should be the same on all
-                    //four ports.
-                    if (platformInterface.request_usb_power_notification.port ===1)
+                    if (platformInterface.request_usb_power_notification.port ===1 &&
+                        platformInterface.request_usb_power_notification.device !== "none")
                         port1Power = inputPower;
+                    else if (platformInterface.request_usb_power_notification.port ===2 &&
+                             platformInterface.request_usb_power_notification.device !== "none")
+                        port2Power = inputPower;
+                    else if (platformInterface.request_usb_power_notification.port ===3 &&
+                             platformInterface.request_usb_power_notification.device !== "none")
+                        port3Power = inputPower;
+                    else if (platformInterface.request_usb_power_notification.port ===4 &&
+                             platformInterface.request_usb_power_notification.device !== "none")
+                        port4Power = inputPower;
+
+                    //clear the last power value for the port if the port has just been disconnected
+                    if (platformInterface.request_usb_power_notification.port ===1 &&
+                        platformInterface.request_usb_power_notification.device === "none")
+                        port1Power = 0;
+                    else if (platformInterface.request_usb_power_notification.port ===2 &&
+                             platformInterface.request_usb_power_notification.device === "none")
+                        port2Power = 0;
+                    else if (platformInterface.request_usb_power_notification.port ===3 &&
+                             platformInterface.request_usb_power_notification.device === "none")
+                        port3Power = 0;
+                    else if (platformInterface.request_usb_power_notification.port ===4 &&
+                             platformInterface.request_usb_power_notification.device === "none")
+                        port4Power = 0;
+
+                    combinedPortPower = port1Power + port2Power + port3Power + port4Power;
                 }
 
                 id:combinedInputPowerBox
                 label: "INPUT POWER"
-                value: Math.round((port1Power) *100)/100
+                value: Math.round((combinedPortPower) *100)/100
                 valueSize: 32
                 icon: "../images/icon-voltage.svg"
                 unit: "W"
@@ -155,7 +184,8 @@ Item {
             }
             height: 428 * ratioCalc
 
-            property bool inputPowerConnected: true
+            property bool inputPowerConnected:  platformInterface.ac_power_supply_connection.state === "connected"
+            //property bool inputPowerConnected: true
 
             Rectangle{
                 id:topBackgroundRect
@@ -178,7 +208,7 @@ Item {
 
             Text{
                 id:converterNameText
-                text:"ON Semiconductor NCP4060A"
+                text:"200W LLC w/ PFC"
                 visible: inputConversionStats.inputPowerConnected
                 font.pixelSize: 20
                 //color: "#bbb"
@@ -270,7 +300,12 @@ Item {
             }
             maxPower:{
                 if (platformInterface.request_usb_power_notification.port === 1){
-                   return Math.round(platformInterface.request_usb_power_notification.maximum_power *100)/100
+                    var voltage = platformInterface.request_usb_power_notification.negotiated_voltage;
+                    var current = platformInterface.request_usb_power_notification.negotiated_current;
+                    return Math.round(voltage*current *100)/100;
+                }
+                else if (!portInfo1.portConnected){
+                    return "—"  //show a dash on disconnect, so cached value won't show on connect
                 }
                 else{
                     return portInfo1.maxPower;
@@ -376,7 +411,12 @@ Item {
             }
             maxPower:{
                 if (platformInterface.request_usb_power_notification.port === 2){
-                    return Math.round(platformInterface.request_usb_power_notification.maximum_power *100)/100
+                    var voltage = platformInterface.request_usb_power_notification.negotiated_voltage;
+                    var current = platformInterface.request_usb_power_notification.negotiated_current;
+                    return Math.round(voltage*current *100)/100;
+                }
+                else if (!portInfo2.portConnected){
+                    return "—"  //show a dash on disconnect, so cached value won't show on connect
                 }
                 else{
                     return portInfo2.maxPower;
@@ -482,7 +522,12 @@ Item {
                 }
             maxPower:{
                 if (platformInterface.request_usb_power_notification.port === 3){
-                    return Math.round(platformInterface.request_usb_power_notification.maximum_power *100)/100
+                    var voltage = platformInterface.request_usb_power_notification.negotiated_voltage;
+                    var current = platformInterface.request_usb_power_notification.negotiated_current;
+                    return Math.round(voltage*current *100)/100;
+                }
+                else if (!portInfo3.portConnected){
+                    return "—"  //show a dash on disconnect, so cached value won't show on connect
                 }
                 else{
                     return portInfo3.maxPower;
@@ -587,7 +632,12 @@ Item {
             }
             maxPower:{
                 if (platformInterface.request_usb_power_notification.port === 4){
-                    return Math.round(platformInterface.request_usb_power_notification.maximum_power *100)/100
+                    var voltage = platformInterface.request_usb_power_notification.negotiated_voltage;
+                    var current = platformInterface.request_usb_power_notification.negotiated_current;
+                    return Math.round(voltage*current *100)/100;
+                }
+                else if (!portInfo4.portConnected){
+                    return "—"  //show a dash on disconnect, so cached value won't show on connect
                 }
                 else{
                     return portInfo4.maxPower;

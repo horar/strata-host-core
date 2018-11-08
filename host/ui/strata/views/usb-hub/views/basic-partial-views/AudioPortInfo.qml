@@ -10,6 +10,9 @@ Rectangle {
     property color portColor: "#30a2db"
     property int portNumber: 1
     property alias portName: portTitle.text
+
+    property int basicTitleBackgroundHeight: (2*root.height)/16;
+    property int advancedTitleBackgroundHeight: advancedAudioPortHeight/4
     signal showGraph()
 
     color: "lightgoldenrodyellow"
@@ -18,10 +21,14 @@ Rectangle {
     width: 150
 
     onPortConnectedChanged:{
-        if (portConnected)
+        if (portConnected){
             hideStats.start()
-         else
+            audioDataTimer.start()
+        }
+         else{
             showStats.start()
+            audioDataTimer.stop()
+        }
     }
 
     OpacityAnimator {
@@ -40,6 +47,48 @@ Rectangle {
         duration: 1000
     }
 
+    function transitionToAdvancedView(){
+        portToAdvanced.start()
+    }
+
+    ParallelAnimation{
+        id: portToAdvanced
+        running: false
+
+        PropertyAnimation{
+            target:titleBackground
+            property: "height"
+            to:advancedTitleBackgroundHeight
+            duration: tabTransitionTime
+        }
+        PropertyAnimation{
+            target:volumneText
+            property: "opacity"
+            to:1
+            duration: tabTransitionTime
+        }
+        PropertyAnimation{
+            target:volumeSlider
+            property: "opacity"
+            to:1
+            duration: tabTransitionTime
+        }
+
+
+    }
+
+    Timer{
+        //generate sample data to drive the audio graph when a
+        //device is connected. This is for testing, and will be removed when real audio data is available
+        id:audioDataTimer
+        interval: 500
+        repeat: true
+        onTriggered: {
+            var sampleValue = Math.random();
+        }
+
+    }
+
     Rectangle{
         id:titleBackground
         color:"lightgrey"
@@ -49,7 +98,7 @@ Rectangle {
         anchors.leftMargin: 1
         anchors.right: root.right
         anchors.rightMargin: 1
-        height: (2*root.height)/16
+        height:basicTitleBackgroundHeight
         radius:5
 
         Rectangle{
@@ -79,11 +128,38 @@ Rectangle {
 
     Image{
         id:placeholderImage
-        width:150
-        height:112.5
         source: "../images/soundwave.png"
-        anchors.centerIn: root
+        anchors.verticalCenter: root.verticalCenter
+        anchors.left:root.left
+        anchors.right:root.right
         fillMode:Image.PreserveAspectFit
+    }
+
+    AudioGraph{
+        id:audioWaveform
+        visible: false
+    }
+
+    Text{
+        id:volumneText
+        text:"VOLUME:"
+        anchors.top: placeholderImage.bottom
+        anchors.left: root.left
+        anchors.right:root.right
+        anchors.leftMargin: 10
+        opacity:0
+    }
+
+    SGSlider{
+        id:volumeSlider
+        startLabel: ""
+        endLabel: ""
+        anchors.top: volumneText.bottom
+        anchors.left: root.left
+        anchors.leftMargin: 10
+        anchors.right:root.right
+        anchors.rightMargin: 10
+        opacity:0
     }
 
     Rectangle {

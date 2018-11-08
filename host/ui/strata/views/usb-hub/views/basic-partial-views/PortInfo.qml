@@ -43,6 +43,79 @@ Rectangle {
         duration: 1000
     }
 
+    function transitionToAdvancedView(){
+
+        //break the anchors needed to move port stats
+        powerOutBox.anchors.top = undefined
+        powerOutBox.anchors.left = undefined
+        powerOutBox.anchors.right = undefined
+        temperatureBox.anchors.left = powerOutBox.left
+        temperatureBox.anchors.right = powerOutBox.right
+        efficencyBox.anchors.left = powerOutBox.left
+        efficencyBox.anchors.right = powerOutBox.right
+        portToAdvanced.start()
+        outputVoltageBox.transitionToAdvancedView()
+        maxPowerBox.transitionToAdvancedView()
+        powerInBox.transitionToAdvancedView()
+        powerOutBox.transitionToAdvancedView()
+        temperatureBox.transitionToAdvancedView()
+        efficencyBox.transitionToAdvancedView()
+
+    }
+
+    SequentialAnimation{
+        id: portToAdvanced
+
+        ParallelAnimation{
+            id: rearrangeStatsBoxes
+            running: false
+
+            PropertyAnimation {
+                target: outputVoltageBox
+                property: "anchors.rightMargin"
+                to: 120
+                duration: tabTransitionTime
+            }
+
+            PropertyAnimation {
+                target: powerOutBox
+                property: "x"
+                to: (root.width)/2 + 40
+                duration: tabTransitionTime
+            }
+
+            PropertyAnimation {
+                target: powerOutBox
+                property: "width"
+                to: 110
+                duration: tabTransitionTime
+            }
+
+            PropertyAnimation {
+                target: powerOutBox
+                property: "y"
+                to: titleBackground.y + titleBackground.height + 8
+                duration: tabTransitionTime
+            }
+        }   //phase 1 transition
+
+        onStopped: {
+            advancedControls.transitionToAdvancedView();
+        }
+
+        //after the stats boxes are rearranged, and the port resized, fade in the advanced controls
+//        PropertyAnimation {
+//            id: fadeInAdvancedControls
+//            target: advancedControls
+//            property: "opacity"
+//            to: 1
+//            duration: tabTransitionTimePhase2
+//        }
+
+
+    }
+
+
 
 
     signal showGraph()
@@ -61,7 +134,7 @@ Rectangle {
         anchors.leftMargin: 1
         anchors.right: root.right
         anchors.rightMargin: 1
-        height: (2*root.height)/16
+        height: 50//(2*root.height)/16
         radius:5
 
         Rectangle{
@@ -80,7 +153,7 @@ Rectangle {
             anchors.horizontalCenter: titleBackground.horizontalCenter
             anchors.verticalCenter: titleBackground.verticalCenter
             font {
-                pixelSize: 20
+                pixelSize: 28
             }
 
             color: root.portConnected ? "black" : "#bbb"
@@ -114,12 +187,10 @@ Rectangle {
 
     PortStatBox{
         id:maxPowerBox
-        anchors.left:root.left
-        anchors.leftMargin: 10
+        anchors.left:outputVoltageBox.left
         anchors.top: outputVoltageBox.bottom
         anchors.topMargin: 8
-        anchors.right: root.right
-        anchors.rightMargin: 10
+        anchors.right: outputVoltageBox.right
         height:40
         label: "MAXIMUM POWER"
         unit: "W"
@@ -129,12 +200,10 @@ Rectangle {
 
     PortStatBox{
         id:powerInBox
-        anchors.left:root.left
-        anchors.leftMargin: 10
+        anchors.left:outputVoltageBox.left
         anchors.top: maxPowerBox.bottom
         anchors.topMargin: 8
-        anchors.right: root.right
-        anchors.rightMargin: 10
+        anchors.right: outputVoltageBox.right
         height:40
         label: "POWER IN"
         unit:"W"
@@ -145,12 +214,10 @@ Rectangle {
 
     PortStatBox{
         id:powerOutBox
-        anchors.left:root.left
-        anchors.leftMargin: 10
+        anchors.left:outputVoltageBox.left
         anchors.top: powerInBox.bottom
         anchors.topMargin: 8
-        anchors.right: root.right
-        anchors.rightMargin: 10
+        anchors.right: outputVoltageBox.right
         height:40
         label: "POWER OUT"
         unit:"W"
@@ -160,12 +227,10 @@ Rectangle {
 
     PortStatBox{
         id:temperatureBox
-        anchors.left:root.left
-        anchors.leftMargin: 10
+        anchors.left:outputVoltageBox.left
         anchors.top: powerOutBox.bottom
         anchors.topMargin: 8
-        anchors.right: root.right
-        anchors.rightMargin: 10
+        anchors.right: outputVoltageBox.right
         height:40
         label: "TEMPERATURE"
         unit:"°C"
@@ -175,18 +240,27 @@ Rectangle {
 
     PortStatBox{
         id:efficencyBox
-        anchors.left:root.left
-        anchors.leftMargin: 10
+        anchors.left:outputVoltageBox.left
         anchors.top: temperatureBox.bottom
         anchors.topMargin: 8
-        anchors.right: root.right
-        anchors.rightMargin: 10
+        anchors.right: outputVoltageBox.right
         height:40
         label: "EFFICENCY"
         unit:"%"
         color:"transparent"
         icon: "../images/icon-efficiency.svg"
         visible: !isUSBAPort
+    }
+
+    AdvancedPortControls{
+        id:advancedControls
+        anchors.top: powerInBox.bottom
+        anchors.left: root.left
+        anchors.leftMargin: 1
+        anchors.right: root.right
+        anchors.rightMargin: 1
+        anchors.bottom: root.bottom
+        opacity: 0
     }
 
     Rectangle {

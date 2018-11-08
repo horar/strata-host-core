@@ -18,7 +18,7 @@ Item {
     //
     property var request_usb_power_notification : {
         "port": 1,
-        "device": "PD",
+        "device": "PD",      // or "non-PD", or "none" if disconnected
         "advertised_maximum_current": 0.0,
         "negotiated_current": 0.0,
         "negotiated_voltage": 0.0,
@@ -167,7 +167,7 @@ Item {
         "enabled":false                     // or false
     }
 
-    property var get_cable_loss_compensation:{
+    property var set_cable_loss_compensation:{
         "port":0,                           // Same port as in the command above.
         "output_current":0,                 // Amps
         "bias_voltage":0,                   // Volts
@@ -210,6 +210,25 @@ Item {
          "watts":30          // 30-300
     }
 
+
+    property var ac_power_supply_connection:{
+        "state":"connected",  // or "disconnected"
+        "power":200          // maximum supply power in watts
+    }
+
+    property var assured_power_port:{
+        "port":1,          // port to enable/disable for assured power
+        "enabled":true,     // or 'false' if disabling assured port
+        "power":100        // watts available to the port
+    }
+
+    property var usb_pd_negotiated_contract_notification:{
+        "port":1,              // or any USB C port id
+        "voltage":12,          // One of the available voltages
+        "maximum_current":100  // in milliamps
+
+    }
+
     // --------------------------------------------------------------------------------------------
     //          Commands
     //--------------------------------------------------------------------------------------------
@@ -222,6 +241,8 @@ Item {
                       CorePlatformInterface.send(this)
                  }
      })
+
+
 
    property var refresh:({
                 "cmd":"request_platform_refresh",
@@ -251,7 +272,7 @@ Item {
                     CorePlatformInterface.show(this)
                 }
     })
-    
+
     property var set_minimum_input_voltage:({
                "cmd":"request_set_minimum_voltage",
                "payload":{
@@ -388,14 +409,35 @@ Item {
                       show: function () { CorePlatformInterface.show(this) }
     })
 
-    property var set_cable_loss_compensation:({
+//    property var set_cable_compensation:({
+//                     "cmd":"set_cable_loss_compensation",
+//                     "payload":{
+//                        "port":1,                   // 1, 2, 3, ... up to maximum number of ports
+//                         "output_current":0,         // amps
+//                          "bias_voltage":0,            // Volts
+//                       },
+//                      update: function (portNumber, outputCurrent, biasVoltage){
+//                          this.set(portNumber,outputCurrent,biasVoltage);
+//                          //console.log("sending set_cable_loss_compensation cmd ", JSON.stringify(this));
+//                          CorePlatformInterface.send(this);
+//                        },
+//                      set: function(portNumber,outputCurrent,biasVoltage){
+//                               this.payload.port = portNumber;
+//                               this.payload.output_current = outputCurrent;
+//                               this.payload.bias_voltage = biasVoltage;
+//                        },
+//})
+
+
+    property var set_cable_compensation:({
                     "cmd":"set_cable_loss_compensation",
                     "payload":{
                         "port":1,                   // 1, 2, 3, ... up to maximum number of ports
                         "output_current":0,         // amps
-                        "bias_voltage":0            // Volts
+                        "bias_voltage":0,            // Volts
                       },
                       update: function (portNumber, outputCurrent, biasVoltage){
+                          //adding back these console messages will cause an error when the update function is called.
                           console.log("set_cable_loss_compensation.port=",portNumber);
                           console.log("set_cable_loss_compensation.output_current=",outputCurrent);
                           console.log("set_cable_loss_compensation.bias_voltage=",biasVoltage);
@@ -406,13 +448,13 @@ Item {
                           },
                       set: function(portNumber,outputCurrent,biasVoltage){
                            this.payload.port = portNumber;
-
                            this.payload.output_current = outputCurrent;
                            this.payload.bias_voltage = biasVoltage;
-                                                  },
+                          },
                       send: function () { CorePlatformInterface.send(this) },
                       show: function () { CorePlatformInterface.show(this) }
     })
+
 
     property var set_power_negotiation:({
                     "cmd":"set_power_negotiation",
@@ -429,6 +471,8 @@ Item {
                       send: function () { CorePlatformInterface.send(this) },
                       show: function () { CorePlatformInterface.show(this) }
     })
+
+
 
     property var set_sleep_mode:({
                     "cmd":"set_sleep_mode",
@@ -478,6 +522,25 @@ Item {
                       show: function () { CorePlatformInterface.show(this) }
     })
 
+    property var set_assured_power_port:({
+                    "cmd":"set_assured_power_port",
+                    "payload":{
+                        "port":1,
+                        "enabled":true
+                      },
+                      update: function (inEnabled, inPort){
+                          console.log("setting assured port power to ",inEnabled,"on port",inPort);
+                          this.set(inEnabled, inPort);
+                          CorePlatformInterface.send(this);
+                          },
+                      set: function(inEnabled, inPort){
+                           this.payload.enabled = inEnabled;
+                           this.payload.port = inPort;
+                           },
+                      send: function () { CorePlatformInterface.send(this) },
+                      show: function () { CorePlatformInterface.show(this) }
+    })
+
     // -------------------  end commands
 
     // NOTE:
@@ -498,68 +561,4 @@ Item {
             CorePlatformInterface.data_source_handler(payload)
         }
     }
-
-
-
-
-    /*    // DEBUG - TODO: Faller - Remove before merging back to Dev
-    Window {
-        id: debug
-        visible: true
-        width: 200
-        height: 200
-
-        // This button sends 2 notifications in 1 JSON, future possible implementation
-        Button {
-            id: button1
-            text: "send pi_stats and voltage"
-            onClicked: {
-                CorePlatformInterface.data_source_handler('{
-                                        "input_voltage_notification": {
-                                            "vin": '+ (Math.random()*5+10).toFixed(2) +'
-                                        },
-                                        "pi_stats": {
-                                            "speed_target": 3216,
-                                            "current_speed": '+ (Math.random()*2000+3000).toFixed(0) +',
-                                            "error": -1104,
-                                            "sum": -0.01,
-                                            "duty_now": 0.67,
-                                            "mode": "manual"
-                                        }
-                                    }')
-            }
-        }
-
-        Button {
-            id: button2
-            anchors { top: button1.bottom }
-            text: "send vin"
-            onClicked: {
-                CorePlatformInterface.data_source_handler('{
-                    "value":"pi_stats",
-                    "payload":{
-                                "speed_target":3216,
-                                "current_speed": '+ (Math.random()*2000+3000).toFixed(0) +',
-                                "error":-1104,
-                                "sum":-0.01,
-                                "duty_now":0.67,
-                                "mode":"manual"
-                               }
-                             }')
-            }
-        }
-        Button {
-            anchors { top: button2.bottom }
-            text: "send"
-            onClicked: {
-                CorePlatformInterface.data_source_handler('{
-                            "value":"input_voltage_notification",
-                            "payload":{
-                                     "vin":'+ (Math.random()*5+10).toFixed(2) +'
-                            }
-                    }
-            ')
-            }
-        }
-    }*/
 }

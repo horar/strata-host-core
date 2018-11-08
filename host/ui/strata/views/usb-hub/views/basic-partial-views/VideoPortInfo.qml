@@ -11,6 +11,8 @@ Rectangle {
     property color portColor: "#30a2db"
     property int portNumber: 1
     property alias portName: portTitle.text
+    property int basicTitleBackgroundHeight: (2*root.height)/16;
+    property int advancedTitleBackgroundHeight: advancedDisplayPortPortHeight/4
 
     signal showGraph()
     color: "lightgoldenrodyellow"
@@ -41,6 +43,37 @@ Rectangle {
         duration: 1000
     }
 
+    function transitionToAdvancedView(){
+
+        portToAdvanced.start()
+    }
+
+    ParallelAnimation{
+        id: portToAdvanced
+        running: false
+
+        PropertyAnimation{
+            target:titleBackground
+            property: "height"
+            to:advancedTitleBackgroundHeight
+            duration: tabTransitionTime
+        }
+
+        PropertyAnimation {
+            target: backgroundRect
+            property: "opacity"
+            from: 1
+            to: 0
+            duration: tabTransitionTime
+        }
+
+        PropertyAnimation {
+            target: video
+            property: "anchors.verticalCenterOffset"
+            to: 20
+            duration: tabTransitionTime
+        }
+    }
 
 
     Rectangle{
@@ -91,35 +124,36 @@ Rectangle {
         anchors.right: root.right
         anchors.rightMargin: 2
         anchors.verticalCenter: root.verticalCenter
-
-        Video {
-            id: video
-            width : backgroundRect.width - 4
-            height : backgroundRect.height - 4
-            anchors.centerIn: backgroundRect
-            fillMode: VideoOutput.PreserveAspectFit
-            source: "../images/penguin.mp4"
-            autoPlay: true
-
-            Component.onCompleted: {
-                //move into the video so there' a screen to see
-                video.seek(100)
-                video.pause()
-            }
-
-            MouseArea {
-                anchors.fill: video
-                onClicked: {
-                    video.play()
-                }
-            }
-
-            focus: true
-            Keys.onSpacePressed: video.playbackState == MediaPlayer.PlayingState ? video.pause() : video.play()
-            Keys.onLeftPressed: video.seek(video.position - 5000)
-            Keys.onRightPressed: video.seek(video.position + 5000)
-        }
     }
+    Video {
+        id: video
+        width : backgroundRect.width - 4
+        height : backgroundRect.height - 4
+        anchors.verticalCenter: root.verticalCenter
+        anchors.horizontalCenter: root.horizontalCenter
+        fillMode: VideoOutput.PreserveAspectFit
+        source: "../images/penguin.mp4"
+        autoPlay: true
+
+        Component.onCompleted: {
+            //move into the video so there' a screen to see
+            video.seek(100)
+            video.pause()
+        }
+
+        MouseArea {
+            anchors.fill: video
+            onClicked: {
+                video.play()
+            }
+        }
+
+        focus: true
+        Keys.onSpacePressed: video.playbackState == MediaPlayer.PlayingState ? video.pause() : video.play()
+        Keys.onLeftPressed: video.seek(video.position - 5000)
+        Keys.onRightPressed: video.seek(video.position + 5000)
+    }
+
 
     Rectangle {
         id: connectionContainer

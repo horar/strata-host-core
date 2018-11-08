@@ -9,6 +9,7 @@ Drawer {
     implicitWidth: 350
     dragMargin: 0
     edge: Qt.LeftEdge
+    modal: false
 
     background: Rectangle {
         color: Qt.darker("#666")
