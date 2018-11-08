@@ -31,14 +31,14 @@ Window {
         backgroundColor: "black"        // Default: #ffffff (white)
         minYValue: 0                    // Default: 0
         maxYValue: 20                   // Default: 10
-        minXValue: 0                    // Default: 0
-        maxXValue: 5                    // Default: 5
+        minXValue: -5                   // Default: 0
+        maxXValue: 0                    // Default: 5
         showXGrids: false               // Default: false
         showYGrids: true                // Default: false
-        showOptions: true               // Default: false - shows an options button to toggle centered
-        throttlePlotting: true          // Default: true - Plots new data no more than every 100ms to save CPU & memory resources, otherwise points plotted on every inputData change
-        repeatOldData: false            // Default: visible - If no new data has been sent after 200ms, graph will plot a new point at the current time with the last input value
-                                                        //  by default matches visibility of graph, so it doesn't waste CPU in the background.
+        showOptions: false              // Default: false - shows an options button which currently serves no function
+        throttlePlotting: true          // Default: true - Only plots every 100ms or more to save resources, false plots on every inputData change (NOT RECOMMENDED)
+        repeatOldData: visible          // Default: visible - If no new data has been sent after 200ms, graph will plot a new point at the current time with the last input value
+                                        //          *by default matches visibility of graph, so it doesn't waste resources in the background.
     }
 
     // Sends demo data stream with adjustible timing interval output
@@ -55,5 +55,5 @@ Window {
         }
     }
 
-    PerformanceTest {}
+//    PerformanceTest {}  // Runs 8 graphs concurrently for perfomance testing
 }
