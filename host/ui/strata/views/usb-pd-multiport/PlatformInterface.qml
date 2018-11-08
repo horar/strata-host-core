@@ -272,7 +272,7 @@ Item {
                     CorePlatformInterface.show(this)
                 }
     })
-    
+
     property var set_minimum_input_voltage:({
                "cmd":"request_set_minimum_voltage",
                "payload":{

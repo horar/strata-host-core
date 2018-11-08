@@ -121,17 +121,12 @@ Item {
                 verticalCenter: increment.verticalCenter
                 right: parent.right
             }
-<<<<<<< Updated upstream
+
             value: platformInterface.get_cable_loss_compensation.output_current.toFixed(0)
             onApplied: platformInterface.set_cable_loss_compensation.update(portNumber,
                            intValue,
                            platformInterface.get_cable_loss_compensation.bias_voltage)
-=======
-            value: platformInterface.set_cable_loss_compensation.output_current
-            onApplied: platformInterface.set_cable_compensation.update(portNumber,
-                                                                            incrementInput.floatValue,
-                                                                            platformInterface.set_cable_loss_compensation.bias_voltage)
->>>>>>> Stashed changes
+
         }
 
         SGSlider {
@@ -163,20 +158,11 @@ Item {
                 verticalCenter: bias.verticalCenter
                 right: parent.right
             }
-<<<<<<< Updated upstream
+
             value: platformInterface.get_cable_loss_compensation.bias_voltage.toFixed(0)
             onApplied: platformInterface.set_cable_loss_compensation.update(portNumber,
                                                                             platformInterface.get_cable_loss_compensation.output_current,
                                                                             intValue)
-=======
-            value: platformInterface.set_cable_loss_compensation.bias_voltage
-            onApplied:{
-                var currentValue = parseFloat(value)
-                platformInterface.set_cable_compensation.update(portNumber,
-                                                                            platformInterface.set_cable_loss_compensation.output_current,
-                                                                            currentValue)
-            }
->>>>>>> Stashed changes
         }
 
 
