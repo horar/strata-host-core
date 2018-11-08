@@ -19,7 +19,6 @@ Rectangle {
         platformInterface.driveModePseudoTrapezoidal = true
         platformInterface.systemModeManual = true
         platformInterface.systemModeAuto = false
-        platformInterface.system_mode_selection.update("manual")
     }
 
     Component.onCompleted:  {
@@ -195,8 +194,8 @@ Rectangle {
                 text: checked ? qsTr("Start Motor") : qsTr("Stop Motor")
                 checked: platformInterface.motorState
                 checkable: true
-                property var motorOff: platformInterface.motor_off.enable;
 
+                property var motorOff: platformInterface.motor_off.enable;
                 onMotorOffChanged: {
                     if(motorOff === "off") {
                         startStopButton.checked = true
@@ -205,11 +204,13 @@ Rectangle {
                         startStopButton.checked = false
                     }
                 }
+
                 background: Rectangle {
                     color: startStopButton.checked ? "lightgreen" : "red"
                     implicitWidth: 100
                     implicitHeight: 40
                 }
+
                 contentItem: Text {
                     text: startStopButton.text
                     color: startStopButton.checked ? "black" : "white"
@@ -265,22 +266,44 @@ Rectangle {
                 radioGroup: GridLayout {
                     columnSpacing: 10
                     rowSpacing: 10
-
                     // Optional properties to access specific buttons cleanly from outside
                     property alias manual : manual
                     property alias automatic: automatic
+
+                    property bool signal_system_mode: true
+                    property var systemMode: platformInterface.set_mode.system_mode;
+                    onSystemModeChanged: {
+                        if(systemMode === "manual") {
+                            signal_system_mode = false
+                            manual.checked = true
+//                            targetSpeedSlider.value = 1500
+//                            targetSpeedSlider.sliderEnable = true
+//                            targetSpeedSlider.opacity = 1.0
+                            signal_system_mode = true
+                        }
+                        else if(systemMode === "automation"){
+                            signal_system_mode = false
+                            automatic.checked = true
+//                            targetSpeedSlider.value = 1500
+//                            targetSpeedSlider.sliderEnable = false
+//                            targetSpeedSlider.opacity = 0.3
+                            signal_system_mode = true
+                        }
+                    }
+
                     SGRadioButton {
                         id: manual
                         text: "Manual Control"
                         checked: platformInterface.systemModeManual
                         onCheckedChanged: {
-                            platformInterface.systemModeManual = manual.checked
-                            platformInterface.motorSpeedSliderValue = 1500
-                            targetSpeedSlider.sliderEnable = true
-                            targetSpeedSlider.opacity = 1.0
-
+                            if(signal_system_mode){
+                                console.log("manu 2 fae")
+                                platformInterface.systemModeManual = manual.checked
+ }                               platformInterface.motorSpeedSliderValue = 1500
+                                targetSpeedSlider.sliderEnable = true
+                                targetSpeedSlider.opacity = 1.0
+//                            }
                         }
-
                     }
 
                     SGRadioButton {
@@ -288,9 +311,12 @@ Rectangle {
                         text: "Automatic Demo Pattern"
                         checked: platformInterface.systemModeAuto
                         onCheckedChanged: {
-                            platformInterface.systemModeAuto = automatic.checked
-                            targetSpeedSlider.sliderEnable = false
-                            targetSpeedSlider.opacity = 0.5
+                            if(signal_system_mode){
+                                console.log("auto 2 fae")
+                                platformInterface.systemModeAuto = automatic.checked
+}                                targetSpeedSlider.sliderEnable = false
+                                targetSpeedSlider.opacity = 0.5
+//                            }
                         }
                     }
                 }
@@ -365,7 +391,6 @@ Rectangle {
                 onValueChanged: {
                     setRampRate.input = value.toFixed(0)
                     platformInterface.rampRateSliderValue = value.toFixed(0)
-
                 }
             }
 
@@ -448,8 +473,6 @@ Rectangle {
                 }
                 label: "Drive Mode:"
 
-
-
                 radioGroup: GridLayout {
                     columnSpacing: 10
                     rowSpacing: 10
@@ -482,7 +505,6 @@ Rectangle {
                 id: phaseAngleRow
                 width: childrenRect.width
                 height: childrenRect.height
-
                 anchors {
                     top: driveModeRadios.bottom
                     topMargin: 10
@@ -540,6 +562,7 @@ Rectangle {
                     top: ledControlContainer.top
                     topMargin: 10
                 }
+
                 onValueChanged: {
                     console.log(" in fae")
                     platformInterface.set_color_mixing.update(hueSlider.color1, hueSlider.color_value1, hueSlider.color2, hueSlider.color_value2)
@@ -576,6 +599,7 @@ Rectangle {
                         left: whiteButton.right
                         leftMargin: 30
                     }
+
                     onClicked: {
                         if (checked) {
                             platformInterface.set_led_outputs_on_off.update("off")
@@ -614,6 +638,7 @@ Rectangle {
                     right: ledSecondContainer.right
                     rightMargin: 10
                 }
+
                 onValueChanged: {
                     platformInterface.set_single_color.update(singleColorSlider.color, singleColorSlider.color_value)
                     platformInterface.singleLEDSlider = value
@@ -680,10 +705,8 @@ Rectangle {
                     top: directionControlContainer.top
                     topMargin: 10
                 }
-
                 // Optional configuration:
                 label: "Direction:"
-
                 radioGroup: GridLayout {
                     columnSpacing: 10
                     rowSpacing: 10

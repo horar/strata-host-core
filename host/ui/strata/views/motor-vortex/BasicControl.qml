@@ -15,9 +15,7 @@ Rectangle {
     height: 725
     color: "white"
 
-
     property alias warningVisible: warningBox.visible
-
     // Control Section
     Rectangle {
         id: controlSection1
@@ -49,9 +47,7 @@ Rectangle {
                 tickmarkStepSize: 1000
                 outerColor: "#999"
                 unitLabel: "RPM"
-
                 value: platformInterface.pi_stats.current_speed
-
                 Behavior on value { NumberAnimation { duration: 300 } }
             }
         }
@@ -80,33 +76,25 @@ Rectangle {
                 labelLeft: false
                 value:
                 {
-
                     if(platformInterface.motorSpeedSliderValue <= 1500 ){
                         return 1500
                     }
                     if( platformInterface.motorSpeedSliderValue >= 4000 ) {
                         return 4000
                     }
-
                     return platformInterface.motorSpeedSliderValue
-
                 }
 
-
                 onValueChanged: {
-
                     setSpeed.input = value.toFixed(0)
                     var current_slider_value = value.toFixed(0)
-
                     //  Don't change if FAE safety limit is enabled
                     if(current_slider_value >= 4000 && platformInterface.motorSpeedSliderValue >= 4000){
                         console.log("Do nothing")
                     }
-
                     else if(current_slider_value <= 1500 && platformInterface.motorSpeedSliderValue <= 1500){
                         console.log("Do nothing")
                     }
-
                     else{
                         platformInterface.motorSpeedSliderValue = current_slider_value
                     }
@@ -144,21 +132,42 @@ Rectangle {
                 radioGroup: GridLayout {
                     columnSpacing: 10
                     rowSpacing: 10
-
                     // Optional properties to access specific buttons cleanly from outside
                     property alias manual : manual
                     property alias automatic: automatic
+
+                    property bool signal_system_mode: true
+                    property var systemMode: platformInterface.set_mode.system_mode;
+                    onSystemModeChanged: {
+                        if(systemMode === "manual") {
+                            signal_system_mode = false
+                            manual.checked = true
+//                            targetSpeedSlider.value = 1500
+//                            targetSpeedSlider.sliderEnable = true
+//                            targetSpeedSlider.opacity = 1.0
+                            signal_system_mode = true
+                        }
+                        else if(systemMode === "automation"){
+                            signal_system_mode = false
+                            automatic.checked = true
+//                            targetSpeedSlider.value = 1500
+//                            targetSpeedSlider.sliderEnable = false
+//                            targetSpeedSlider.opacity = 0.3
+                            signal_system_mode = true
+                        }
+                    }
 
                     SGRadioButton {
                         id: manual
                         text: "Manual Control"
                         checked: platformInterface.systemModeManual
                         onCheckedChanged: {
+                            if(signal_system_mode){
                                 platformInterface.systemModeManual = manual.checked
-                                platformInterface.motorSpeedSliderValue = 1500
+}                                platformInterface.motorSpeedSliderValue = 1500
                                 motorSpeedControl.sliderEnable = true
                                 motorSpeedControl.opacity = 1.0
-
+//                            }
                         }
                     }
 
@@ -167,10 +176,12 @@ Rectangle {
                         text: "Automatic Demo Pattern"
                         checked: platformInterface.systemModeAuto
                         onCheckedChanged: {
-
+                            if(signal_system_mode){
                                 platformInterface.systemModeAuto = automatic.checked
+}
                                 motorSpeedControl.sliderEnable = false
                                 motorSpeedControl.opacity = 0.5
+//                            }
                         }
                     }
                 }

@@ -5,7 +5,6 @@ import QtQuick.Controls 2.2
 import "qrc:/js/navigation_control.js" as NavigationControl
 import "qrc:/views/motor-vortex/sgwidgets"
 
-
 Rectangle {
     id: advancedControl
     width: 1200
@@ -20,7 +19,6 @@ Rectangle {
         platformInterface.driveModePseudoTrapezoidal = true
         platformInterface.systemModeManual = true
         platformInterface.systemModeAuto = false
-//        platformInterface.system_mode_selection.update("manual")
     }
 
     Component.onCompleted:  {
@@ -145,22 +143,23 @@ Rectangle {
                 text: checked ? qsTr("Start Motor") : qsTr("Stop Motor")
                 checkable: true
                 checked: platformInterface.motorState
-                property var motorOff: platformInterface.motor_off.enable;
 
+                property var motorOff: platformInterface.motor_off.enable;
                 onMotorOffChanged: {
                     if(motorOff === "off") {
                         startStopButton.checked = true
-
                     }
                     else {
                         startStopButton.checked = false
                     }
                 }
+
                 background: Rectangle {
                     color: startStopButton.checked ? "lightgreen" : "red"
                     implicitWidth: 100
                     implicitHeight: 40
                 }
+
                 contentItem: Text {
                     text: startStopButton.text
                     color: startStopButton.checked ? "black" : "white"
@@ -187,7 +186,6 @@ Rectangle {
                 onClicked: {
                     platformInterface.set_reset_mcu.update()
                     resetData()
-
                 }
             }
         }
@@ -214,27 +212,47 @@ Rectangle {
                 label: "Operation Mode:"
                 labelLeft: true
                 exclusive: true
-
                 radioGroup: GridLayout {
                     columnSpacing: 10
                     rowSpacing: 10
-
                     // Optional properties to access specific buttons cleanly from outside
                     property alias manual : manual
                     property alias automatic: automatic
+
+                    property bool signal_system_mode: true
+                    property var systemMode: platformInterface.set_mode.system_mode;
+                    onSystemModeChanged: {
+                        if(systemMode === "manual") {
+                            signal_system_mode = false
+                            manual.checked = true
+//                            targetSpeedSlider.value = 1500
+//                            targetSpeedSlider.sliderEnable = true
+//                            targetSpeedSlider.opacity = 1.0
+                            signal_system_mode = true
+                        }
+                        else if(systemMode === "automation"){
+                            signal_system_mode = false
+                            automatic.checked = true
+//                            targetSpeedSlider.value = 1500
+//                            targetSpeedSlider.sliderEnable = false
+//                            targetSpeedSlider.opacity = 0.3
+                            signal_system_mode = true
+                        }
+                    }
+
                     SGRadioButton {
                         id: manual
                         text: "Manual Control"
                         checked: platformInterface.systemModeManual
                         onCheckedChanged: {
-                                console.log("manu 2")
+                            if(signal_system_mode){
+                                console.log("manu 2 adv")
                                 platformInterface.systemModeManual = manual.checked
-                               platformInterface.motorSpeedSliderValue = 1500
-
+}                                platformInterface.motorSpeedSliderValue = 1500
                                 targetSpeedSlider.sliderEnable = true
                                 targetSpeedSlider.opacity = 1.0
+//                            }
                         }
-
                     }
 
                     SGRadioButton {
@@ -242,12 +260,12 @@ Rectangle {
                         text: "Automatic Demo Pattern"
                         checked: platformInterface.systemModeAuto
                         onCheckedChanged: {
-                                console.log("auto 1")
+                            if(signal_system_mode){
+                                console.log("auto 1 adv")
                                 platformInterface.systemModeAuto = automatic.checked
-                                targetSpeedSlider.sliderEnable = false
+}                                targetSpeedSlider.sliderEnable = false
                                 targetSpeedSlider.opacity = 0.5
-
-
+//                            }
                         }
                     }
                 }
@@ -284,6 +302,7 @@ Rectangle {
                     return platformInterface.motorSpeedSliderValue
 
                 }
+
                 anchors {
                     verticalCenter: setSpeed.verticalCenter
                     left: speedControlContainer.left
@@ -293,7 +312,6 @@ Rectangle {
                 }
 
                 onValueChanged: {
-
                     setSpeed.input = value.toFixed(0)
                     var current_slider_value = value.toFixed(0)
 
@@ -301,7 +319,6 @@ Rectangle {
                     if(current_slider_value >= 4000 && platformInterface.motorSpeedSliderValue >= 4000){
                         console.log("Do nothing")
                     }
-
                     else if(current_slider_value <= 1500 && platformInterface.motorSpeedSliderValue <= 1500){
                         console.log("Do nothing")
                     }
@@ -309,7 +326,6 @@ Rectangle {
 
                         platformInterface.motorSpeedSliderValue = current_slider_value
                     }
-
                 }
 
                 MouseArea {
@@ -320,7 +336,6 @@ Rectangle {
 
                 SGToolTipPopup {
                     id: sgToolTipPopup
-
                     showOn: targetSpeedSliderHover.containsMouse
                     anchors {
                         bottom: targetSpeedSliderHover.top
@@ -351,21 +366,17 @@ Rectangle {
                 infoBoxWidth: 80
             }
 
-
             SGSlider {
                 id: rampRateSlider
                 label: "Ramp Rate:"
                 value:{
-
                     if(platformInterface.rampRateSliderValue < 2) {
                         return 2
                     }
                     if(platformInterface.rampRateSliderValue > 4) {
                         return 4
                     }
-
                     return platformInterface.rampRateSliderValue
-
                 }
                 from: 2
                 to:4
@@ -381,12 +392,10 @@ Rectangle {
                     setRampRate.input = value.toFixed(0)
                     var current_slider_value = value.toFixed(0)
 
-
                     // Don't change if FAE safety limit is enabled
                     if(current_slider_value >= 4 && platformInterface.rampRateSliderValue >= 4){
                         console.log("Do nothing")
                     }
-
                     else if(current_slider_value <= 2 && platformInterface.rampRateSliderValue <= 2){
                         console.log("Do nothing")
                     }
@@ -433,7 +442,6 @@ Rectangle {
                     topMargin: 10
                 }
                 label: "Drive Mode:"
-
                 radioGroup: GridLayout {
                     columnSpacing: 10
                     rowSpacing: 10
@@ -441,8 +449,6 @@ Rectangle {
                     // Optional properties to access specific buttons cleanly from outside
                     property alias ps : ps
                     property alias trap: trap
-
-
                     SGRadioButton {
                         id: ps
                         text: "Pseudo-Sinusoidal"
@@ -458,7 +464,6 @@ Rectangle {
                         checked: platformInterface.driveModePseudoTrapezoidal
                         onCheckedChanged: {
                             platformInterface.driveModePseudoTrapezoidal = trap.checked
-
                         }
                     }
                 }
@@ -468,8 +473,6 @@ Rectangle {
                 id: phaseAngleRow
                 width: childrenRect.width
                 height: childrenRect.height
-
-
                 anchors {
                     top: driveModeRadios.bottom
                     topMargin: 10
@@ -565,6 +568,7 @@ Rectangle {
                         left: whiteButton.right
                         leftMargin: 30
                     }
+
                     onClicked: {
                         if (checked) {
                             platformInterface.set_led_outputs_on_off.update("off")
@@ -583,7 +587,6 @@ Rectangle {
             id: ledSecondContainer
             width: 500
             height: childrenRect.height + 20
-
             color: "#eeeeee"
             anchors {
                 horizontalCenter: rightSide.horizontalCenter
@@ -673,7 +676,6 @@ Rectangle {
 
                 // Optional configuration:
                 label: "Direction:"
-
                 radioGroup: GridLayout {
                     columnSpacing: 10
                     rowSpacing: 10
