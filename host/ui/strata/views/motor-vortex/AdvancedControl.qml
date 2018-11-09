@@ -12,13 +12,10 @@ Rectangle {
 
     function resetData(){
         startStopButton.checked = false
-        targetSpeedSlider.value = 1500
         rampRateSlider.value = 3
         driveModeCombo.currentIndex = 15
         faultModel.clear()
         platformInterface.driveModePseudoTrapezoidal = true
-        platformInterface.systemModeManual = true
-        platformInterface.systemModeAuto = false
     }
 
     Component.onCompleted:  {
@@ -98,8 +95,6 @@ Rectangle {
             width: 500
             height: 200
             model: faultModel
-
-
         }
 
         property var errorArray: platformInterface.system_error.error_and_warnings
@@ -184,8 +179,8 @@ Rectangle {
                 }
                 text: qsTr("Reset")
                 onClicked: {
-                    platformInterface.set_reset_mcu.update()
                     resetData()
+                    platformInterface.set_reset_mcu.update()
                 }
             }
         }
@@ -219,54 +214,31 @@ Rectangle {
                     property alias manual : manual
                     property alias automatic: automatic
 
-                    property bool signal_system_mode: true
-                    property var systemMode: platformInterface.set_mode.system_mode;
-                    onSystemModeChanged: {
-                        if(systemMode === "manual") {
-                            signal_system_mode = false
-                            manual.checked = true
-//                            targetSpeedSlider.value = 1500
-//                            targetSpeedSlider.sliderEnable = true
-//                            targetSpeedSlider.opacity = 1.0
-                            signal_system_mode = true
-                        }
-                        else if(systemMode === "automation"){
-                            signal_system_mode = false
-                            automatic.checked = true
-//                            targetSpeedSlider.value = 1500
-//                            targetSpeedSlider.sliderEnable = false
-//                            targetSpeedSlider.opacity = 0.3
-                            signal_system_mode = true
-                        }
-                    }
-
                     SGRadioButton {
                         id: manual
                         text: "Manual Control"
-                        checked: platformInterface.systemModeManual
+                        checked: platformInterface.systemMode
                         onCheckedChanged: {
-                            if(signal_system_mode){
-                                console.log("manu 2 adv")
-                                platformInterface.systemModeManual = manual.checked
-}                                platformInterface.motorSpeedSliderValue = 1500
+                            if (checked) {
+                                console.log("manu adv")
+                                platformInterface.systemMode = true
+                                platformInterface.motorSpeedSliderValue = 1500
                                 targetSpeedSlider.sliderEnable = true
                                 targetSpeedSlider.opacity = 1.0
-//                            }
+                            }
+                            else {
+                                console.log("auto adv")
+                                platformInterface.systemMode = false
+                                targetSpeedSlider.sliderEnable = false
+                                targetSpeedSlider.opacity = 0.5
+                            }
                         }
                     }
 
                     SGRadioButton {
                         id: automatic
                         text: "Automatic Demo Pattern"
-                        checked: platformInterface.systemModeAuto
-                        onCheckedChanged: {
-                            if(signal_system_mode){
-                                console.log("auto 1 adv")
-                                platformInterface.systemModeAuto = automatic.checked
-}                                targetSpeedSlider.sliderEnable = false
-                                targetSpeedSlider.opacity = 0.5
-//                            }
-                        }
+                        checked : !manual.checked
                     }
                 }
             }
@@ -290,9 +262,17 @@ Rectangle {
                 from : 1500
                 to: 4000
 
+                anchors {
+                    verticalCenter: setSpeed.verticalCenter
+                    left: speedControlContainer.left
+                    leftMargin: 10
+                    right: setSpeed.left
+                    rightMargin: 10
+                }
+
                 value :
                 {
-                    if(platformInterface.motorSpeedSliderValue < 1500 ){
+                    if(platformInterface.motorSpeedSliderValue <= 1500 ){
                         return 1500
                     }
                     if( platformInterface.motorSpeedSliderValue >= 4000 ) {
@@ -301,14 +281,6 @@ Rectangle {
                     }
                     return platformInterface.motorSpeedSliderValue
 
-                }
-
-                anchors {
-                    verticalCenter: setSpeed.verticalCenter
-                    left: speedControlContainer.left
-                    leftMargin: 10
-                    right: setSpeed.left
-                    rightMargin: 10
                 }
 
                 onValueChanged: {
@@ -323,7 +295,6 @@ Rectangle {
                         console.log("Do nothing")
                     }
                     else{
-
                         platformInterface.motorSpeedSliderValue = current_slider_value
                     }
                 }

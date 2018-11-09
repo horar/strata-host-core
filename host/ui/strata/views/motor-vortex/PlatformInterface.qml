@@ -21,8 +21,7 @@ Item {
                 "current_speed": 0,
                 "error": 0,
                 "sum": 0.5,
-                "duty_now": 0.5,
-                "mode": "manual"  // "manual" "automation"
+                "duty_now": 0.5
     }
 
     // @notification input_voltage_notification
@@ -45,6 +44,22 @@ Item {
 
     property var set_mode: {
         "system_mode" : ""
+    }
+
+    // System mode radio buttons can be set by the user on UI or from the notification as well.
+    // This is because system mode setting is tied to a harware switch on the platform.
+    // Following property allows us to update the RadioButtons based on the notification and
+    // not get stuck in the recursive loop.
+    property var systemModeNotification: platformInterface.set_mode.system_mode;
+    onSystemModeNotificationChanged: {
+        if(systemModeNotification === "manual") {
+            systemMode = true
+            console.log("platform setting Manual")
+        }
+        else if(systemModeNotification === "automation"){
+            systemMode = false
+            console.log("platform setting Auto")
+        }
     }
 
     // -------------------  end notification messages
@@ -353,30 +368,26 @@ Item {
 
     property bool driveModePseudoSinusoidal: false
     onDriveModePseudoSinusoidalChanged: {
-        if(driveModePseudoSinusoidal == true) {
+        if(driveModePseudoSinusoidal === true) {
             set_drive_mode.update(1)
         }
     }
 
     property bool driveModePseudoTrapezoidal: true
     onDriveModePseudoTrapezoidalChanged: {
-        if(driveModePseudoTrapezoidal == true) {
+        if(driveModePseudoTrapezoidal === true) {
             set_drive_mode.update(0)
         }
     }
 
-    property bool systemModeManual: true
-    onSystemModeManualChanged: {
-        if(systemModeManual){
-            console.log("manual mode")
+    property bool systemMode: true
+    onSystemModeChanged: {
+        if(systemMode){
+            console.log("manual signal mode")
             system_mode_selection.update("manual")
         }
-    }
-
-    property bool systemModeAuto: false
-    onSystemModeAutoChanged: {
-        if (systemModeAuto) {
-            console.log("auto mode")
+        else{
+            console.log("auto signal mode")
             system_mode_selection.update("automation")
         }
     }
