@@ -11,7 +11,7 @@ Window {
     visible: true
     width: 1200
     height: 900
-    title: qsTr("Strata")
+    title: qsTr("ON Semiconductor: Strata Developer Studio")
 
     // Debug option(s)
     property bool showDebugCommandBar: false
