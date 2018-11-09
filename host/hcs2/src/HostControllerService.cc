@@ -24,14 +24,12 @@ AttachmentObserver::AttachmentObserver(void *client_socket,void *client_id_list)
 }
 
 void AttachmentObserver::DocumentChangeCallback(jsonString jsonBody) {
-    clientList::iterator client_list_iterator = client_list_->begin();
-    while(client_list_iterator != client_list_->end()) {
-        client_connector_->setDealerID(*client_list_iterator);
+    for(auto it = client_list_->begin(); it != client_list_->end(); ++it) {
+        client_connector_->setDealerID(*it);
         client_connector_->send(jsonBody);
         // [prasanth] : comment the following PDEBUG for faster performance.
         // use it for debugging
         // PDEBUG(PRINT_DEBUG,"[hcs to hcc]%s",jsonBody);
-        client_list_iterator++;
     }
 }
 /******************************************************************************/
