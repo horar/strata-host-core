@@ -31,7 +31,7 @@ using namespace std;
 //
 DiscoveryService::DiscoveryService(const std::string& server_address)
 {
-    service_connector_ = connector_factory_->getConnector("request");
+    service_connector_ = ConnectorFactory::getConnector("request");
     service_connector_->open(server_address);
 }
 
@@ -208,6 +208,7 @@ bool DiscoveryService::deregisterPlatform(const string& platform_id)
     string read_message;
     service_connector_->read(read_message);
     cout << " [Disc service] read message "<< read_message << endl;
+    return true;
 }
 
 // @f get remote platform

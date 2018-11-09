@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 3.5.1)
-project(connectors)
+
+project(connector VERSION 1.0)
 
 # The version number
 set(HostControllerService_VERSION_MAJOR 1)
@@ -13,11 +14,11 @@ set(red "${Esc}[31m")
 set(reset_color "${Esc}[m")
 
 if (CROSSCOMPILE)
-    message("Building WINDOWS booo...")
+    message("Building WINDOWS")
 elseif (UNIX AND NOT APPLE AND NOT CROSSCOMPILE)
-    message("Building LINUX yea...")
+    message("Building LINUX")
 elseif (APPLE)
-    message("Building MAC yea...")
+    message("Building MAC")
 else()
     message("ERROR: unsupported operating system !")
 endif ()
@@ -39,9 +40,6 @@ elseif (APPLE)
 else()
     message("ERROR: unsupported operating system !")
 endif ()
-
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "lib/")
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "lib/")
 
 if (CROSSCOMPILE)
     # --- WINDOWS
@@ -86,15 +84,13 @@ else()
     message("ERROR: unsupported operating system !")
 endif ()
 
-set(SOURCE
-        ${SOURCE}
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/SerialConnector.cc
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/ZMQConnector.cc
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/RequestReplyConnector.cc
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/PubSubConnector.cc
-        )
-
-add_library(connector  ${SOURCE})
+add_library(connector
+    src/Connector_impl.cpp
+    src/SerialConnector.cc
+    src/ZMQConnector.cc
+    src/RequestReplyConnector.cc
+    src/PubSubConnector.cc
+)
 
 if (CROSSCOMPILE)
     message("LINKING: windows")
@@ -126,4 +122,4 @@ else()
     message("ERROR: unsupported operating system !")
 endif ()
 
-target_include_directories (connector PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(connector PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)

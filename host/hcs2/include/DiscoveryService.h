@@ -73,8 +73,8 @@ public:
 private:
     std::string jwt_string_;
     std::string hcs_token_;
-    ConnectorFactory *connector_factory_;
-    Connector *service_connector_ ;
 
+    Connector *service_connector_ ;
 };
+
 #endif

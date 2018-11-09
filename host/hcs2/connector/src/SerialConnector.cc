@@ -11,7 +11,7 @@
 * @copyright Copyright 2018 On Semiconductor
 */
 
-#include "Connector.h"
+#include "Connector_impl.h"
 #include "SerialPortConfiguration.h"
 
 using namespace std;
@@ -413,7 +413,7 @@ void SerialConnector::windowsPlatformReadHandler()
                 }
 #endif
             }
-            if(temp !='\n' && temp!= NULL ) {
+            if(temp != '\n' && temp != '\0') {
                 response.push_back(temp);
                 number_of_misses = 0;
             }
@@ -462,13 +462,8 @@ bool SerialConnector::getPlatformID(std::string message)
 //  OUT: true if platform ID exists, false if it does not
 //
 //
-bool SerialConnector::isPlatformConnected ()
+bool SerialConnector::isPlatformConnected()
 {
-    string cmd = "{\"cmd\":\"request_platform_id\"}";
-    if(send(cmd)) {
-        return true;
-    }
-    else {
-      return false;
-    }
+    string cmd("{\"cmd\":\"request_platform_id\"}");
+    return send(cmd);
 }

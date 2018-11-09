@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5.1)
-project(HostControllerService)
+project(HostControllerService VERSION 1.0)
 
 # The version number
 set(HostControllerService_VERSION_MAJOR 1)
@@ -14,11 +14,11 @@ set(reset_color "${Esc}[m")
 add_subdirectory("connector")
 
 if (CROSSCOMPILE)
-    message("Building WINDOWS booo...")
+    message("Building WINDOWS")
 elseif (UNIX AND NOT APPLE AND NOT CROSSCOMPILE)
-    message("Building LINUX yea...")
+    message("Building LINUX")
 elseif (APPLE)
-    message("Building MAC yea...")
+    message("Building MAC")
 else()
     message("ERROR: unsupported operating system !")
 endif ()
@@ -44,8 +44,9 @@ else()
 endif ()
 
 set(HOST_CONTROLLER_SERVICE_BINARY_NAME "hcs")
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "lib/")
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "lib/")
+# set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "lib/")
+# set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "lib/")
+
 set(NIMBUS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../cloud")
 set(SHARED_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../shared")
 set(CB_DIR "${NIMBUS_DIR}/couchbase-lite-core")
@@ -151,14 +152,12 @@ endif ()
 
 set(SOURCE
         ${SOURCE}
-        #${CMAKE_CURRENT_SOURCE_DIR}/src/ConnectFactory.cpp
-        #${CMAKE_CURRENT_SOURCE_DIR}/src/USBConnector.cpp
-        #${CMAKE_CURRENT_SOURCE_DIR}/src/ZeroMQConnector.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/HostControllerService.cc
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/DiscoveryService.cc
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cc
+        src/HostControllerService.cc
+        src/DiscoveryService.cc
+        src/main.cc
+        src/ParseConfig.cpp
         ${SHARED_DIR}/cpp-base64/base64.cpp
-        src/ParseConfig.cpp)
+)
 
 #add_library(usbconnector STATIC ${CMAKE_CURRENT_SOURCE_DIR}/src/USBConnector.cpp)
 
@@ -197,10 +196,13 @@ elseif (APPLE)
             -levent
             -lserialport
             -lFleeceStatic
-            nimbusLib
             ${litecore}
-            ${FOUNDATION_LIBRARY} ${IOKIT_LIBRARY}
+            )
+
+    target_link_libraries(${HOST_CONTROLLER_SERVICE_BINARY_NAME} PRIVATE
             connector
+            nimbusLib
+            ${FOUNDATION_LIBRARY} ${IOKIT_LIBRARY}
             )
 
 else()

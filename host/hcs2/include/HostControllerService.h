@@ -221,7 +221,6 @@ private:
     bool port_disconnected_;
 
     // Connector objects
-    ConnectorFactory *connector_factory_;
     Connector *client_connector_ ;
     Connector *serial_connector_ ;
     Connector *remote_connector_ ;
