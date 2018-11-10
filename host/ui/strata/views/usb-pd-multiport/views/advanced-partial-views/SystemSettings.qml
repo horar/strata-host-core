@@ -4,7 +4,7 @@ import "qrc:/views/usb-pd-multiport/sgwidgets"
 
 Item {
     id: root
-    height: 335
+    height: 375
     width: parent.width
     anchors {
         left: parent.left
@@ -66,15 +66,26 @@ Item {
             SGSubmitInfoBox {
                 id: maximumBoardPowerInput
                 showButton: false
+                infoBoxWidth: 30
                 anchors {
                     verticalCenter: maximumBoardPower.verticalCenter
                     verticalCenterOffset: -7
-                    right: parent.right
+                    right: maximumBoardPowerUnits.left
+                    rightMargin: 5
                 }
                 onApplied: {
                     platformInterface.set_maximum_board_power.update(maximumBoardPowerInput.intValue);
 
                 value: platformInterface.maximum_board_power.watts
+                }
+            }
+
+            Text{
+                id: maximumBoardPowerUnits
+                text: "W"
+                anchors {
+                    right: parent.right
+                    verticalCenter: maximumBoardPowerInput.verticalCenter
                 }
             }
 
@@ -132,6 +143,38 @@ Item {
                 }
             }
 
+            SGComboBox {
+                id: assuredMaxPowerOutput
+                label: "Maximum Assured Power:"
+                model: ["15","27", "36", "45","60","100"]
+                comboBoxHeight: 25
+                comboBoxWidth: 60
+                anchors {
+
+                    top: assuredPortText.top
+                    topMargin: 30
+                    left: margins1.left
+                    leftMargin: 53
+                }
+
+                //when changing the value
+                onActivated: {
+                    console.log("setting max power to ",parseInt(assuredMaxPowerOutput.comboBox.currentText));
+                    platformInterface.set_usb_pd_maximum_power.update(1,parseInt(assuredMaxPowerOutput.comboBox.currentText))
+                }
+
+                //notification of a change from elsewhere
+                property var currentMaximumPower: platformInterface.usb_pd_maximum_power.commanded_max_power
+                onCurrentMaximumPowerChanged: {
+                    if (platformInterface.usb_pd_maximum_power.port === 1){
+                        assuredMaxPowerOutput.currentIndex = assuredMaxPowerOutput.comboBox.find( parseInt (platformInterface.usb_pd_maximum_power.commanded_max_power))
+                    }
+
+                }
+
+
+            }
+
 
 
             SGSegmentedButtonStrip {
@@ -141,10 +184,9 @@ Item {
                 textColor: "#666"
                 radius: 4
                 buttonHeight: 25
-                //enabled: false
                 anchors {
-                    top: assuredPortText.bottom
-                    topMargin: 15
+                    top: assuredMaxPowerOutput.bottom
+                    topMargin: 10
                     left: margins1.left
                     leftMargin: 132
                 }
@@ -418,6 +460,8 @@ Item {
                 id: limitOutput
                 label: "Limit output power to:"
                 model: ["15","27", "36", "45","60","100"]
+                comboBoxHeight: 25
+                comboBoxWidth: 70
                 anchors {
                     left: parent.left
                     leftMargin:30
@@ -530,6 +574,7 @@ Item {
                 id: limitOutput2
                 label: "Reduce output power to:"
                 model: ["10","15", "25", "50","75","90"]
+                comboBoxHeight: 25
                 comboBoxWidth: 60
                 anchors {
                     left: parent.left
