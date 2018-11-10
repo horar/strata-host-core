@@ -15,9 +15,7 @@ Rectangle {
     height: 725
     color: "white"
 
-
     property alias warningVisible: warningBox.visible
-
     // Control Section
     Rectangle {
         id: controlSection1
@@ -49,9 +47,7 @@ Rectangle {
                 tickmarkStepSize: 1000
                 outerColor: "#999"
                 unitLabel: "RPM"
-
                 value: platformInterface.pi_stats.current_speed
-
                 Behavior on value { NumberAnimation { duration: 300 } }
             }
         }
@@ -80,33 +76,25 @@ Rectangle {
                 labelLeft: false
                 value:
                 {
-
                     if(platformInterface.motorSpeedSliderValue <= 1500 ){
                         return 1500
                     }
                     if( platformInterface.motorSpeedSliderValue >= 4000 ) {
                         return 4000
                     }
-
                     return platformInterface.motorSpeedSliderValue
-
                 }
 
-
                 onValueChanged: {
-
                     setSpeed.input = value.toFixed(0)
                     var current_slider_value = value.toFixed(0)
-
                     //  Don't change if FAE safety limit is enabled
                     if(current_slider_value >= 4000 && platformInterface.motorSpeedSliderValue >= 4000){
                         console.log("Do nothing")
                     }
-
                     else if(current_slider_value <= 1500 && platformInterface.motorSpeedSliderValue <= 1500){
                         console.log("Do nothing")
                     }
-
                     else{
                         platformInterface.motorSpeedSliderValue = current_slider_value
                     }
@@ -144,7 +132,6 @@ Rectangle {
                 radioGroup: GridLayout {
                     columnSpacing: 10
                     rowSpacing: 10
-
                     // Optional properties to access specific buttons cleanly from outside
                     property alias manual : manual
                     property alias automatic: automatic
@@ -152,26 +139,28 @@ Rectangle {
                     SGRadioButton {
                         id: manual
                         text: "Manual Control"
-                        checked: platformInterface.systemModeManual
+                        checked: platformInterface.systemMode
                         onCheckedChanged: {
-                                platformInterface.systemModeManual = manual.checked
+                            if (checked) {
+                                console.log("manu adv")
+                                platformInterface.systemMode = true
                                 platformInterface.motorSpeedSliderValue = 1500
                                 motorSpeedControl.sliderEnable = true
                                 motorSpeedControl.opacity = 1.0
-
+                            }
+                            else {
+                                console.log("auto adv")
+                                platformInterface.systemMode = false
+                                motorSpeedControl.sliderEnable = false
+                                motorSpeedControl.opacity = 0.5
+                            }
                         }
                     }
 
                     SGRadioButton {
                         id: automatic
                         text: "Automatic Demo Pattern"
-                        checked: platformInterface.systemModeAuto
-                        onCheckedChanged: {
-
-                                platformInterface.systemModeAuto = automatic.checked
-                                motorSpeedControl.sliderEnable = false
-                                motorSpeedControl.opacity = 0.5
-                        }
+                        checked : !manual.checked
                     }
                 }
             }

@@ -10,10 +10,8 @@ Rectangle {
     width: 1200
     height: 725
 
-
     function resetData(){
         startStopButton.checked = false
-        targetSpeedSlider.value = 1500
         rampRateSlider.value = 3
         driveModeCombo.currentIndex = 15
         faultModel.clear()
@@ -21,11 +19,9 @@ Rectangle {
     }
 
     Component.onCompleted:  {
-
         platformInterface.phaseAngle = 15
         platformInterface.set_phase_angle.update(15);
         platformInterface.set_drive_mode.update(0);
-
     }
 
     Rectangle {
@@ -195,8 +191,8 @@ Rectangle {
                 text: checked ? qsTr("Start Motor") : qsTr("Stop Motor")
                 checked: platformInterface.motorState
                 checkable: true
-                property var motorOff: platformInterface.motor_off.enable;
 
+                property var motorOff: platformInterface.motor_off.enable;
                 onMotorOffChanged: {
                     if(motorOff === "off") {
                         startStopButton.checked = true
@@ -205,11 +201,13 @@ Rectangle {
                         startStopButton.checked = false
                     }
                 }
+
                 background: Rectangle {
                     color: startStopButton.checked ? "lightgreen" : "red"
                     implicitWidth: 100
                     implicitHeight: 40
                 }
+
                 contentItem: Text {
                     text: startStopButton.text
                     color: startStopButton.checked ? "black" : "white"
@@ -233,8 +231,8 @@ Rectangle {
                 }
                 text: qsTr("Reset")
                 onClicked: {
-                    platformInterface.set_reset_mcu.update()
                     resetData()
+                    platformInterface.set_reset_mcu.update()
                 }
             }
         }
@@ -265,7 +263,6 @@ Rectangle {
                 radioGroup: GridLayout {
                     columnSpacing: 10
                     rowSpacing: 10
-
                     // Optional properties to access specific buttons cleanly from outside
                     property alias manual : manual
                     property alias automatic: automatic
@@ -273,26 +270,28 @@ Rectangle {
                     SGRadioButton {
                         id: manual
                         text: "Manual Control"
-                        checked: platformInterface.systemModeManual
+                        checked: platformInterface.systemMode
                         onCheckedChanged: {
-                            platformInterface.systemModeManual = manual.checked
-                            platformInterface.motorSpeedSliderValue = 1500
-                            targetSpeedSlider.sliderEnable = true
-                            targetSpeedSlider.opacity = 1.0
-
+                            if (checked) {
+                                console.log("manu adv")
+                                platformInterface.systemMode = true
+                                platformInterface.motorSpeedSliderValue = 1500
+                                targetSpeedSlider.sliderEnable = true
+                                targetSpeedSlider.opacity = 1.0
+                            }
+                            else {
+                                    console.log("auto adv")
+                                    platformInterface.systemMode = false
+                                    targetSpeedSlider.sliderEnable = false
+                                    targetSpeedSlider.opacity = 0.5
+                            }
                         }
-
                     }
 
                     SGRadioButton {
                         id: automatic
                         text: "Automatic Demo Pattern"
-                        checked: platformInterface.systemModeAuto
-                        onCheckedChanged: {
-                            platformInterface.systemModeAuto = automatic.checked
-                            targetSpeedSlider.sliderEnable = false
-                            targetSpeedSlider.opacity = 0.5
-                        }
+                        checked : !manual.checked
                     }
                 }
             }
@@ -366,7 +365,6 @@ Rectangle {
                 onValueChanged: {
                     setRampRate.input = value.toFixed(0)
                     platformInterface.rampRateSliderValue = value.toFixed(0)
-
                 }
             }
 
@@ -449,8 +447,6 @@ Rectangle {
                 }
                 label: "Drive Mode:"
 
-
-
                 radioGroup: GridLayout {
                     columnSpacing: 10
                     rowSpacing: 10
@@ -483,7 +479,6 @@ Rectangle {
                 id: phaseAngleRow
                 width: childrenRect.width
                 height: childrenRect.height
-
                 anchors {
                     top: driveModeRadios.bottom
                     topMargin: 10
@@ -541,6 +536,7 @@ Rectangle {
                     top: ledControlContainer.top
                     topMargin: 10
                 }
+
                 onValueChanged: {
                     console.log(" in fae")
                     platformInterface.set_color_mixing.update(hueSlider.color1, hueSlider.color_value1, hueSlider.color2, hueSlider.color_value2)
@@ -577,6 +573,7 @@ Rectangle {
                         left: whiteButton.right
                         leftMargin: 30
                     }
+
                     onClicked: {
                         if (checked) {
                             platformInterface.set_led_outputs_on_off.update("off")
@@ -615,6 +612,7 @@ Rectangle {
                     right: ledSecondContainer.right
                     rightMargin: 10
                 }
+
                 onValueChanged: {
                     platformInterface.set_single_color.update(singleColorSlider.color, singleColorSlider.color_value)
                     platformInterface.singleLEDSlider = value
@@ -681,10 +679,8 @@ Rectangle {
                     top: directionControlContainer.top
                     topMargin: 10
                 }
-
                 // Optional configuration:
                 label: "Direction:"
-
                 radioGroup: GridLayout {
                     columnSpacing: 10
                     rowSpacing: 10
