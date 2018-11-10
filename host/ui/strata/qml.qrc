@@ -445,6 +445,7 @@
         <file>statusbar-partial-views/SGConfirmationPopup.qml</file>
         <file>views/motor-vortex/PageInteractiveBlockDiagrams.qml</file>
         <file>views/motor-vortex/InteractiveBlockDiagramDemo.html</file>
+        <file>views/SGPdfViewer/SGPdfViewer.qml</file>
         <file>statusbar-partial-views/SGPrivacyPolicy.qml</file>
     </qresource>
 </RCC>
