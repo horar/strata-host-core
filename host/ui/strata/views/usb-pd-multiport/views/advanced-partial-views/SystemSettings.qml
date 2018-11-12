@@ -149,6 +149,8 @@ Item {
                 model: ["15","27", "36", "45","60","100"]
                 comboBoxHeight: 25
                 comboBoxWidth: 60
+                enabled: !assuredPortSwitch.checked
+                textColor: !assuredPortSwitch.checked ? "black" : "grey"
                 anchors {
 
                     top: assuredPortText.top
