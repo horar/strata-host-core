@@ -36,10 +36,14 @@ Item {
 
                     SGCapacityBarElement{
                         id: port1BarElement
-                        color: miniInfo1.portColor
+                        color: Qt.lighter(miniInfo1.portColor)
                         value: {
                             if (platformInterface.request_usb_power_notification.port === 1){
-                                return platformInterface.request_usb_power_notification.output_voltage * platformInterface.request_usb_power_notification.output_current
+                                if (platformInterface.request_usb_power_notification.device !== "none")
+                                    return platformInterface.request_usb_power_notification.maximum_power
+                                  else
+                                    return 0
+                                //return platformInterface.request_usb_power_notification.output_voltage * platformInterface.request_usb_power_notification.output_current
                             }
                             else{
                                return port1BarElement.value;
@@ -52,7 +56,12 @@ Item {
                         color: miniInfo2.portColor
                         value: {
                             if (platformInterface.request_usb_power_notification.port === 2){
-                                return platformInterface.request_usb_power_notification.output_voltage * platformInterface.request_usb_power_notification.output_current
+                                //console.log("port two max power =",platformInterface.request_usb_power_notification.maximum_power)
+                                if (platformInterface.request_usb_power_notification.device !== "none")
+                                    return platformInterface.request_usb_power_notification.maximum_power
+                                  else
+                                    return 0
+                                //return platformInterface.request_usb_power_notification.output_voltage * platformInterface.request_usb_power_notification.output_current
                             }
                             else{
                                return port2BarElement.value;
@@ -65,7 +74,11 @@ Item {
                         color: miniInfo3.portColor
                         value: {
                             if (platformInterface.request_usb_power_notification.port === 3){
-                                return platformInterface.request_usb_power_notification.output_voltage * platformInterface.request_usb_power_notification.output_current
+                                if (platformInterface.request_usb_power_notification.device !== "none")
+                                    return platformInterface.request_usb_power_notification.maximum_power
+                                  else
+                                    return 0
+                                //return platformInterface.request_usb_power_notification.output_voltage * platformInterface.request_usb_power_notification.output_current
                             }
                             else{
                                return port3BarElement.value;
@@ -78,7 +91,11 @@ Item {
                         color: miniInfo4.portColor
                         value: {
                             if (platformInterface.request_usb_power_notification.port === 4){
-                                return platformInterface.request_usb_power_notification.output_voltage * platformInterface.request_usb_power_notification.output_current
+                                if (platformInterface.request_usb_power_notification.device !== "none")
+                                    return platformInterface.request_usb_power_notification.maximum_power
+                                  else
+                                    return 0
+                                //return platformInterface.request_usb_power_notification.output_voltage * platformInterface.request_usb_power_notification.output_current
                             }
                             else{
                                return port4BarElement.value;
