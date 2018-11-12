@@ -311,15 +311,26 @@ Item {
             SGSubmitInfoBox {
                 id: inputFaultInput
                 showButton: false
+                infoBoxWidth: 30
                 anchors {
                     verticalCenter: inputFault.verticalCenter
                     verticalCenterOffset: -7
-                    right: parent.right
+                    right: inputFaultUnits.left
+                    rightMargin: 5
                 }
                 value: platformInterface.input_under_voltage_notification.minimum_voltage
                 onApplied:{
                     var currentValue = parseFloat(value)
                     platformInterface.set_minimum_input_voltage.update(currentValue);   // slider will be updated via notification
+                }
+            }
+
+            Text{
+                id: inputFaultUnits
+                text: "V"
+                anchors {
+                    right: parent.right
+                    verticalCenter: inputFaultInput.verticalCenter
                 }
             }
 
@@ -348,16 +359,27 @@ Item {
             SGSubmitInfoBox {
                 id: tempFaultInput
                 showButton: false
+                infoBoxWidth: 30
                 anchors {
                     verticalCenter: tempFault.verticalCenter
                     verticalCenterOffset: -7
-                    right: parent.right
+                    right: tempFaultUnits.left
+                    rightMargin: 5
                 }
                 value: platformInterface.set_maximum_temperature_notification.maximum_temperature
                 onApplied:{
                     console.log("temp fault value onApplied");
                     var currentValue = parseFloat(value)
                     platformInterface.set_maximum_temperature.update(currentValue); // slider will be updated via notification
+                }
+            }
+
+            Text{
+                id: tempFaultUnits
+                text: "°C"
+                anchors {
+                    right: parent.right
+                    verticalCenter: tempFaultInput.verticalCenter
                 }
             }
         }
@@ -445,15 +467,26 @@ Item {
             SGSubmitInfoBox {
                 id: foldbackLimitInput
                 showButton: false
+                infoBoxWidth: 30
                 anchors {
                     verticalCenter: foldbackLimit.verticalCenter
                     verticalCenterOffset: -7
-                    right: parent.right
+                    right: foldbackLimitUnits.left
+                    rightMargin: 5
                 }
                 value: platformInterface.foldback_input_voltage_limiting_event.foldback_minimum_voltage
                 onApplied: platformInterface.set_input_voltage_foldback.update(platformInterface.foldback_input_voltage_limiting_event.input_voltage_foldback_enabled,
                                                                               parseFloat(value),
                                                                               platformInterface.foldback_input_voltage_limiting_event.foldback_minimum_voltage_power)
+            }
+
+            Text{
+                id: foldbackLimitUnits
+                text: "V"
+                anchors {
+                    right: parent.right
+                    verticalCenter: foldbackLimitInput.verticalCenter
+                }
             }
 
             SGComboBox {
@@ -559,15 +592,26 @@ Item {
             SGSubmitInfoBox {
                 id: foldbackTempInput
                 showButton: false
+                infoBoxWidth: 30
                 anchors {
                     verticalCenter: foldbackTemp.verticalCenter
                     verticalCenterOffset: -7
-                    right: parent.right
+                    right: foldbackTempUnits.left
+                    rightMargin: 5
                 }
                 value: platformInterface.foldback_temperature_limiting_event.foldback_maximum_temperature
                 onApplied: platformInterface.set_temperature_foldback.update(platformInterface.foldback_temperature_limiting_event.temperature_foldback_enabled,
                                                                              parseFloat(value),
                                                                              platformInterface.foldback_temperature_limiting_event.foldback_maximum_temperature_power)
+            }
+
+            Text{
+                id: foldbackTempUnits
+                text: "°C"
+                anchors {
+                    right: parent.right
+                    verticalCenter: foldbackTempInput.verticalCenter
+                }
             }
 
             SGComboBox {
