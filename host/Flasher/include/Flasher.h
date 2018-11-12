@@ -32,7 +32,7 @@ class Flasher{
 
 public:
   Flasher();
-  Flasher(const SerialConnector *s);
+  Flasher(const Connector *s);
   virtual ~Flasher();
 
   int flash(const std::string &input_firmware);
@@ -52,7 +52,7 @@ private:
   bool write(std::string);
   int read();
 
-  SerialConnector *serial_;
+  Connector *serial_;
 
   // Hold status if serial was initialized in the flasher
   bool can_deallocate_serial_;

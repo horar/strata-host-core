@@ -29,25 +29,28 @@ using namespace std;
 /** Flasher default Constructor.
 * @brief init SerialConnector and set can_delete_serial to true since serial initialized in the Flasher.
 */
-Flasher::Flasher(){
-  serial_ = new SerialConnector();
+Flasher::Flasher()
+{
+  serial_ = ConnectorFactory::getConnector("platform");
   can_deallocate_serial_ = true;
   cout << "Flasher: ctor" << endl;
 }
-Flasher::~Flasher(){
+
+Flasher::~Flasher()
+{
   if(can_deallocate_serial_){
     delete serial_;
   }
   cout << "Flasher: dtor" << endl;
-
 }
 
 /** Flasher setSerialConnector.
 * @brief Set SerialConnector
 * @param source The string to be converted to hex.
 */
-Flasher::Flasher(const SerialConnector *s){
-  serial_ = (SerialConnector *)s;
+Flasher::Flasher(const Connector *s)
+{
+  serial_ = const_cast<Connector*>(s);
   can_deallocate_serial_ = false;
 }
 
@@ -56,14 +59,16 @@ Flasher::Flasher(const SerialConnector *s){
 * @param data The data to be sent through serial.
 * @return true on success, false otherwise.
 */
-bool Flasher::write(string data){
+bool Flasher::write(string data)
+{
   return serial_->send(data);
 }
 
 /** Flasher read.
 * @brief Read data from serial using SerialConnector API.
 */
-int Flasher::read(){
+int Flasher::read()
+{
   string read;
   serial_->read(read);
 
