@@ -25,8 +25,6 @@ set(CMAKE_AUTORCC ON)
 
 include(FeatureSummary)
 
-add_subdirectory(${HOST_PATH}/Flasher ${CMAKE_CURRENT_BINARY_DIR}/Flasher)
-
 find_package(Qt5 5.11 REQUIRED COMPONENTS
     Core
     Quick
@@ -59,7 +57,7 @@ target_link_libraries(${PROJECT_NAME}
     Qt5::Quick
 
     connector
-    #flasher
+    flasher
 
     ${IOKIT_LIB}
     ${FOUNDATION_LIB}
@@ -67,25 +65,8 @@ target_link_libraries(${PROJECT_NAME}
 
 # FIXME: don't hardcode includes from 3rd party libs!!
 target_include_directories(${PROJECT_NAME} SYSTEM
-    PRIVATE ${HOST_PATH}/hcs2/connector/include
-    PRIVATE ${HOST_PATH}/hcs2/include
-    PRIVATE ${HOST_PATH}/hcs2/
-    PRIVATE ${HOST_PATH}/include/macos/libserial
-    PRIVATE ${HOST_PATH}/include/macos/libzmq
-    PRIVATE ${SHARED_DIR}/rapidjson/include/
-    PRIVATE ${SHARED_DIR}/bootloader/include
     PRIVATE ${HOST_PATH}/include/
 )
-
-# FIXME: don't hardcode libraries from 3rd party libs!!
-if(APPLE)
-    target_link_libraries(${PROJECT_NAME}
-    -L${HOST_PATH}/lib/macos/libzmq/
-    zmq
-    -L${HOST_PATH}/lib/macos/libserial
-    serialport
-    )
-endif()
 
 target_compile_options(${PROJECT_NAME}
     PRIVATE $<$<CXX_COMPILER_ID:AppleClang>:-Wall -Wextra>
