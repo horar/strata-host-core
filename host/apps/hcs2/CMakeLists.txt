@@ -45,8 +45,8 @@ endif ()
 # set(HOST_CONTROLLER_SERVICE_BINARY_NAME "hcs")
 # set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "lib/")
 # set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "lib/")
-set(NIMBUS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../cloud")
-set(SHARED_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../shared")
+set(NIMBUS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../../cloud")
+set(SHARED_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../../shared")
 set(CB_DIR "${NIMBUS_DIR}/couchbase-lite-core")
 set(CB_LIB_DIR "${CB_DIR}/build_cmake/unix")
 
@@ -102,12 +102,9 @@ if (CROSSCOMPILE)
     add_definitions(-DNIMBUS_SCHEMA_PATH="nimbus_command_schema.json")
 endif ()
 
-#add_library(usbconnector STATIC ${CMAKE_CURRENT_SOURCE_DIR}/src/USBConnector.cpp)
-
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include
     ${CMAKE_CURRENT_SOURCE_DIR}   # for logger
 )
-
 
 add_executable(${PROJECT_NAME}
     src/HostControllerService.cc
