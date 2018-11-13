@@ -97,4 +97,5 @@ SOURCES += main.cpp \
     PlatformInterface/core/CoreInterface.cpp \
     source/DocumentManager.cpp
 
-RESOURCES += qml.qrc
+RESOURCES += qml.qrc \
+    views/SGPdfViewer/pdfjs.qrc

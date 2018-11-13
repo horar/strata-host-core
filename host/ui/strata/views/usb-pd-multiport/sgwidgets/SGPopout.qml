@@ -18,6 +18,7 @@ Rectangle {
     property alias portNumber: port.portNumber
     property alias portConnected: port.portConnected
     property alias portColor: port.portColor
+    property alias enableAssuredPower: port.enableAssuredPower
 
     implicitWidth: unpoppedWidth
     implicitHeight: unpoppedHeight

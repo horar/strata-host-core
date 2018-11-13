@@ -210,6 +210,12 @@ Item {
          "watts":30          // 30-300
     }
 
+
+    property var ac_power_supply_connection:{
+        "state":"connected",  // or "disconnected"
+        "power":200          // maximum supply power in watts
+    }
+
     property var assured_power_port:{
         "port":1,          // port to enable/disable for assured power
         "enabled":true,     // or 'false' if disabling assured port
@@ -220,6 +226,7 @@ Item {
         "port":1,              // or any USB C port id
         "voltage":12,          // One of the available voltages
         "maximum_current":100  // in milliamps
+
     }
 
     // --------------------------------------------------------------------------------------------
@@ -265,7 +272,7 @@ Item {
                     CorePlatformInterface.show(this)
                 }
     })
-    
+
     property var set_minimum_input_voltage:({
                "cmd":"request_set_minimum_voltage",
                "payload":{

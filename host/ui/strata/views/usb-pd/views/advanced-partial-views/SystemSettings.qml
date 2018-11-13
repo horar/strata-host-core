@@ -106,7 +106,7 @@ Item {
                 startLabel: "0V"
                 endLabel: "20V"
                 value: platformInterface.input_under_voltage_notification.minimum_voltage
-                onValueChanged: {
+                onSliderMoved: {
                     platformInterface.set_minimum_input_voltage.update(value);
                 }
             }
@@ -119,8 +119,8 @@ Item {
                     right: parent.right
                 }
                 infoBoxWidth: 40
-                value: inputFault.value.toFixed(0)
-                onApplied: platformInterface.set_minimum_input_voltage.update(value);   // slider will be updated via notification
+                value: platformInterface.input_under_voltage_notification.minimum_voltage.toFixed(0)
+                onApplied: platformInterface.set_minimum_input_voltage.update(inputFaultInput.intValue);
             }
 
             SGSlider {
@@ -152,7 +152,7 @@ Item {
                 }
                 infoBoxWidth: 40
                 value: tempFault.value.toFixed(0)
-                onApplied: platformInterface.set_maximum_temperature.update(value); // slider will be updated via notification
+                onApplied: platformInterface.set_maximum_temperature.update(intValue); // slider will be updated via notification
             }
         }
 
@@ -231,9 +231,9 @@ Item {
                     right: parent.right
                 }
                 infoBoxWidth: 40
-                value: foldbackLimit.value.toFixed(0)
+                value: platformInterface.foldback_input_voltage_limiting_event.foldback_minimum_voltage.toFixed(0)
                 onApplied: platformInterface.set_input_voltage_foldback.update(platformInterface.foldback_input_voltage_limiting_event.input_voltage_foldback_enabled,
-                                                                               value,
+                                                                               intValue,
                                                                               platformInterface.foldback_input_voltage_limiting_event.foldback_minimum_voltage_power)
             }
 
@@ -336,9 +336,9 @@ Item {
                     right: parent.right
                 }
                 infoBoxWidth: 40
-                value: foldbackTemp.value.toFixed(0)
+                value: platformInterface.foldback_temperature_limiting_event.foldback_maximum_temperature.toFixed(0)
                 onApplied: platformInterface.set_temperature_foldback.update(platformInterface.foldback_temperature_limiting_event.temperature_foldback_enabled,
-                                                                             value,
+                                                                             intValue,
                                                                              platformInterface.foldback_temperature_limiting_event.foldback_maximum_temperature_power)
             }
 

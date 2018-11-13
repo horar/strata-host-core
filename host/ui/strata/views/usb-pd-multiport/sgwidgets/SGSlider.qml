@@ -59,10 +59,9 @@ Item {
         opacity: root.enabled ? 1 : .5
         layer.enabled: root.enabled ? false : true
 
-        onPressedChanged: {
-            if (!pressed){
-                root.moved(value)
-            }
+        onPressedChanged:{
+            if (!pressed)
+                root.moved()    //send a moved message when the user releases the slider thumb
         }
 
         background: Rectangle {
@@ -81,6 +80,8 @@ Item {
                 color: root.grooveFillColor
                 radius: 2
             }
+
+
 
             // TODO: Faller - fix up the following repeater to make tickmarks at user specified intervals
 //            Repeater {

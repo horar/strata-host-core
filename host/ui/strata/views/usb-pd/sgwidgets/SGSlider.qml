@@ -59,8 +59,10 @@ Item {
         opacity: root.enabled ? 1 : .5
         layer.enabled: root.enabled ? false : true
 
-        onMoved:{
-            root.sliderMoved()
+        onPressedChanged:{
+            if (!pressed){
+                root.sliderMoved()
+            }
         }
 
         background: Rectangle {

@@ -4,7 +4,7 @@ import "qrc:/views/usb-pd-multiport/sgwidgets"
 
 Item {
     id: root
-    height: 275
+    height: 375
     width: parent.width
     anchors {
         left: parent.left
@@ -26,19 +26,30 @@ Item {
                 margins: 15
             }
 
+            Text {
+                id: powerManagement
+                text: "<b>Power Management</b>"
+                font {
+                    pixelSize: 16
+                }
+            }
+
             SGSlider {
                 id: maximumBoardPower
-                label: "Maximum Power:"
+                label: "Maximum System Power:"
                 anchors {
+                    top: powerManagement.bottom
+                    topMargin: 15
                     left: margins1.left
-                    leftMargin: 20
+                    leftMargin: 55
                     right: maximumBoardPowerInput.left
-                    rightMargin: 30
+                    rightMargin: 10
                 }
                 from: 30
-                to: 200
+                to: platformInterface.ac_power_supply_connection.power
                 startLabel: "30W"
-                endLabel: "200W"
+                endLabel: platformInterface.ac_power_supply_connection.power+"W"
+                labelTopAligned: true
                 value: platformInterface.maximum_board_power.watts
 
                 Component.onCompleted:{
@@ -55,15 +66,26 @@ Item {
             SGSubmitInfoBox {
                 id: maximumBoardPowerInput
                 showButton: false
+                infoBoxWidth: 30
                 anchors {
                     verticalCenter: maximumBoardPower.verticalCenter
-                    right: parent.right
+                    verticalCenterOffset: -7
+                    right: maximumBoardPowerUnits.left
+                    rightMargin: 5
                 }
-                value: platformInterface.maximum_board_power.watts
                 onApplied: {
-                    //console.log("sending max power from text input", value)
-                    var currentValue = maximumBoardPowerInput.floatValue
-                    platformInterface.set_maximum_board_power.update(currentValue);   // slider will be updated via notification
+                    platformInterface.set_maximum_board_power.update(maximumBoardPowerInput.intValue);
+
+                value: platformInterface.maximum_board_power.watts
+                }
+            }
+
+            Text{
+                id: maximumBoardPowerUnits
+                text: "W"
+                anchors {
+                    right: parent.right
+                    verticalCenter: maximumBoardPowerInput.verticalCenter
                 }
             }
 
@@ -74,19 +96,19 @@ Item {
                     top: maximumBoardPower.bottom
                     topMargin: 10
                     left: margins1.left
-                    leftMargin: 10
+                    leftMargin: 92
                 }
             }
 
             Text{
                 id: powerNegotiationText
                 text: "First come, first served"
-                color:"darkgrey"
+                color:"dimgray"
                 anchors {
                     top: maximumBoardPower.bottom
                     topMargin: 10
                     left: powerNegotiationTitleText.right
-                    leftMargin: 5
+                    leftMargin: 10
                 }
             }
 
@@ -94,17 +116,18 @@ Item {
                 id: assuredPortText
                 text: "Assure Port 1 power:"
                 anchors {
-                    right: assuredPortSwitch.left
-                    rightMargin: 10
-                    verticalCenter: powerNegotiationText.verticalCenter
+                    top: powerNegotiationText.bottom
+                    topMargin:15
+                    left: margins1.left
+                    leftMargin: 82
                 }
             }
 
             SGSwitch {
                 id: assuredPortSwitch
                 anchors {
-                    right: margins1.right
-                    rightMargin: 10
+                    left: assuredPortText.right
+                    leftMargin: 10
                     verticalCenter: assuredPortText.verticalCenter
                 }
                 checkedLabel: "On"
@@ -120,81 +143,41 @@ Item {
                 }
             }
 
-//            SGSegmentedButtonStrip {
-//                id: powerNegotiation
-//                label: "Power Negotiation:"
-//                activeColor: "#666"
-//                inactiveColor: "#dddddd"
-//                textColor: "#666"
-//                activeTextColor: "white"
-//                radius: 4
-//                buttonHeight: 25
-//                anchors {
-//                    top: maximumBoardPower.bottom
-//                    topMargin: 10
-//                    left: margins1.left
-//                    leftMargin: 75
-//                }
+            SGComboBox {
+                id: assuredMaxPowerOutput
+                label: "Maximum Assured Power:"
+                model: ["15","27", "36", "45","60","100"]
+                comboBoxHeight: 25
+                comboBoxWidth: 60
+                enabled: !assuredPortSwitch.checked
+                textColor: !assuredPortSwitch.checked ? "black" : "grey"
+                anchors {
 
-//                segmentedButtons: GridLayout {
-//                    columnSpacing: 2
+                    top: assuredPortText.top
+                    topMargin: 30
+                    left: margins1.left
+                    leftMargin: 53
+                }
 
-//                    property var negotiationTypeChanged: platformInterface.power_negotiation.negotiation_type
+                //when changing the value
+                onActivated: {
+                    console.log("setting max power to ",parseInt(assuredMaxPowerOutput.comboBox.currentText));
+                    platformInterface.set_usb_pd_maximum_power.update(1,parseInt(assuredMaxPowerOutput.comboBox.currentText))
+                }
 
-//                    onNegotiationTypeChangedChanged:{
-//                        if (platformInterface.power_negotiation.negotiation_type === "dynamic"){
-//                            dynamicNegotiationButton.checked = true;
-//                            fcfsNegotiationButton.checked = false;
-//                            priorityNegotiationButton.checked = false;
-//                        }
-//                        else if (platformInterface.power_negotiation.negotiation_type === "first_come_first_served"){
-//                            dynamicNegotiationButton.checked = false;
-//                            fcfsNegotiationButton.checked = true;
-//                            priorityNegotiationButton.checked = false;
-//                        }
-//                        else if (platformInterface.power_negotiation.negotiation_type === "priority"){
-//                            dynamicNegotiationButton.checked = false;
-//                            fcfsNegotiationButton.checked = false;
-//                            priorityNegotiationButton.checked = true;
-//                        }
+                //notification of a change from elsewhere
+                property var currentMaximumPower: platformInterface.usb_pd_maximum_power.commanded_max_power
+                onCurrentMaximumPowerChanged: {
+                    if (platformInterface.usb_pd_maximum_power.port === 1){
+                        assuredMaxPowerOutput.currentIndex = assuredMaxPowerOutput.comboBox.find( parseInt (platformInterface.usb_pd_maximum_power.commanded_max_power))
+                    }
+
+                }
 
 
-//                    }
+            }
 
-//                    SGSegmentedButton{
-//                        id:dynamicNegotiationButton
-//                        text: qsTr("Dynamic")
-//                        checked: true  // Sets default checked button when exclusive
-//                        onClicked: {
-//                            platformInterface.set_power_negotiation.update("dynamic");
-//                        }
-//                    }
 
-//                    SGSegmentedButton{
-//                        id:fcfsNegotiationButton
-//                        text: qsTr("FCFS")
-//                        onClicked: {
-//                            platformInterface.set_power_negotiation.update("first_come_first_served");
-//                        }
-//                    }
-
-//                    SGSegmentedButton{
-//                        id:priorityNegotiationButton
-//                        text: qsTr("Priority")
-//                        onClicked: {
-//                            platformInterface.set_power_negotiation.update("priority");
-//                        }
-//                    }
-//                }
-//            }
-
-//            SGDivider {
-//                id: leftDiv1
-//                anchors {
-//                    top: assuredPortText.bottom
-//                    topMargin: 10
-//                }
-//            }
 
             SGSegmentedButtonStrip {
                 id: sleepMode
@@ -203,12 +186,11 @@ Item {
                 textColor: "#666"
                 radius: 4
                 buttonHeight: 25
-                enabled: false
                 anchors {
-                    top: powerNegotiationTitleText.bottom
+                    top: assuredMaxPowerOutput.bottom
                     topMargin: 10
                     left: margins1.left
-                    leftMargin: 50
+                    leftMargin: 132
                 }
 
 
@@ -250,22 +232,23 @@ Item {
             }
 
 
-
-            SGDivider {
-                id: leftDiv2
-                anchors {
-                    top: sleepMode.bottom
-                    topMargin: 10
+            Text {
+                id: faultHeader
+                text: "<b>Faults</b>"
+                font {
+                    pixelSize: 16
                 }
+                anchors.top: sleepMode.bottom
+                anchors.topMargin: 10
             }
 
             SGSegmentedButtonStrip {
                 id: faultProtection
                 anchors {
-                    top: leftDiv2.bottom
+                    top: faultHeader.bottom
                     topMargin: 10
                     left: margins1.left
-                    leftMargin: 89
+                    leftMargin: 109
                 }
                 label: "Fault Protection:"
                 textColor: "#666"
@@ -310,7 +293,7 @@ Item {
                 label: "Fault when input below:"
                 anchors {
                     left: margins1.left
-                    leftMargin: 45
+                    leftMargin: 65
                     top: faultProtection.bottom
                     topMargin: 10
                     right: inputFaultInput.left
@@ -320,6 +303,7 @@ Item {
                 to: 20
                 startLabel: "0V"
                 endLabel: "20V"
+                labelTopAligned: true
                 value: platformInterface.input_under_voltage_notification.minimum_voltage
                 onMoved: {
                     platformInterface.set_minimum_input_voltage.update(value);
@@ -329,9 +313,12 @@ Item {
             SGSubmitInfoBox {
                 id: inputFaultInput
                 showButton: false
+                infoBoxWidth: 30
                 anchors {
                     verticalCenter: inputFault.verticalCenter
-                    right: parent.right
+                    verticalCenterOffset: -7
+                    right: inputFaultUnits.left
+                    rightMargin: 5
                 }
                 value: platformInterface.input_under_voltage_notification.minimum_voltage
                 onApplied:{
@@ -340,11 +327,21 @@ Item {
                 }
             }
 
+            Text{
+                id: inputFaultUnits
+                text: "V"
+                anchors {
+                    right: parent.right
+                    verticalCenter: inputFaultInput.verticalCenter
+                }
+            }
+
             SGSlider {
                 id: tempFault
                 label: "Fault when temperature above:"
                 anchors {
                     left: parent.left
+                    leftMargin:20
                     top: inputFault.bottom
                     topMargin: 10
                     right: tempFaultInput.left
@@ -354,6 +351,7 @@ Item {
                 to: 191
                 startLabel: "-64°C"
                 endLabel: "191°C"
+                labelTopAligned: true
                 value: platformInterface.set_maximum_temperature_notification.maximum_temperature
                 onMoved: {
                     platformInterface.set_maximum_temperature.update(value);
@@ -363,15 +361,27 @@ Item {
             SGSubmitInfoBox {
                 id: tempFaultInput
                 showButton: false
+                infoBoxWidth: 30
                 anchors {
                     verticalCenter: tempFault.verticalCenter
-                    right: parent.right
+                    verticalCenterOffset: -7
+                    right: tempFaultUnits.left
+                    rightMargin: 5
                 }
                 value: platformInterface.set_maximum_temperature_notification.maximum_temperature
                 onApplied:{
                     console.log("temp fault value onApplied");
                     var currentValue = parseFloat(value)
                     platformInterface.set_maximum_temperature.update(currentValue); // slider will be updated via notification
+                }
+            }
+
+            Text{
+                id: tempFaultUnits
+                text: "°C"
+                anchors {
+                    right: parent.right
+                    verticalCenter: tempFaultInput.verticalCenter
                 }
             }
         }
@@ -400,17 +410,29 @@ Item {
 
             Text {
                 id: inputFoldback
-                text: "<b>Input Foldback:</b>"
+                text: "<b>Input Foldback</b>"
                 font {
                     pixelSize: 16
+                }
+            }
+
+            Text{
+                id: inputFoldbackStatus
+                text: "Active:"
+                anchors {
+                    top: inputFoldback.bottom
+                    topMargin:15
+                    left: margins2.left
+                    leftMargin: 122
                 }
             }
 
             SGSwitch {
                 id: inputFoldbackSwitch
                 anchors {
-                    right: parent.right
-                    verticalCenter: inputFoldback.verticalCenter
+                    left: inputFoldbackStatus.right
+                    leftMargin: 10
+                    verticalCenter: inputFoldbackStatus.verticalCenter
                 }
                 checkedLabel: "On"
                 uncheckedLabel: "Off"
@@ -427,9 +449,9 @@ Item {
                 value: platformInterface.foldback_input_voltage_limiting_event.foldback_minimum_voltage
                 anchors {
                     left: parent.left
-                    leftMargin: 61
-                    top: inputFoldback.bottom
-                    topMargin: 10
+                    leftMargin: 91
+                    top: inputFoldbackStatus.bottom
+                    topMargin: 15
                     right: foldbackLimitInput.left
                     rightMargin: 10
                 }
@@ -437,6 +459,7 @@ Item {
                 to: 20
                 startLabel: "0V"
                 endLabel: "20V"
+                labelTopAligned: true
                 //copy the current values for other stuff, and add the new slider value for the limit.
                 onMoved: platformInterface.set_input_voltage_foldback.update(platformInterface.foldback_input_voltage_limiting_event.input_voltage_foldback_enabled,
                                  value,
@@ -446,9 +469,12 @@ Item {
             SGSubmitInfoBox {
                 id: foldbackLimitInput
                 showButton: false
+                infoBoxWidth: 30
                 anchors {
                     verticalCenter: foldbackLimit.verticalCenter
-                    right: parent.right
+                    verticalCenterOffset: -7
+                    right: foldbackLimitUnits.left
+                    rightMargin: 5
                 }
                 value: platformInterface.foldback_input_voltage_limiting_event.foldback_minimum_voltage
                 onApplied: platformInterface.set_input_voltage_foldback.update(platformInterface.foldback_input_voltage_limiting_event.input_voltage_foldback_enabled,
@@ -456,12 +482,24 @@ Item {
                                                                               platformInterface.foldback_input_voltage_limiting_event.foldback_minimum_voltage_power)
             }
 
+            Text{
+                id: foldbackLimitUnits
+                text: "V"
+                anchors {
+                    right: parent.right
+                    verticalCenter: foldbackLimitInput.verticalCenter
+                }
+            }
+
             SGComboBox {
                 id: limitOutput
                 label: "Limit output power to:"
                 model: ["15","27", "36", "45","60","100"]
+                comboBoxHeight: 25
+                comboBoxWidth: 70
                 anchors {
                     left: parent.left
+                    leftMargin:30
                     top: foldbackLimit.bottom
                     topMargin: 10
                 }
@@ -482,31 +520,37 @@ Item {
 
             }
 
-            SGDivider {
-                id: div1
+
+
+            Text {
+                id: tempFoldback
+                text: "<b>Temperature Foldback</b>"
+                font {
+                    pixelSize: 16
+                }
                 anchors {
                     top: limitOutput.bottom
                     topMargin: 15
                 }
             }
 
-            Text {
-                id: tempFoldback
-                text: "<b>Temperature Foldback:</b>"
-                font {
-                    pixelSize: 16
-                }
+            Text{
+                id: temperatureFoldbackStatus
+                text: "Active:"
                 anchors {
-                    top: div1.bottom
-                    topMargin: 15
+                    top: tempFoldback.bottom
+                    topMargin:15
+                    left: margins2.left
+                    leftMargin: 120
                 }
             }
 
             SGSwitch {
                 id: tempFoldbackSwitch
                 anchors {
-                    right: parent.right
-                    verticalCenter: tempFoldback.verticalCenter
+                    left: temperatureFoldbackStatus.right
+                    leftMargin: 10
+                    verticalCenter: temperatureFoldbackStatus.verticalCenter
                 }
                 checkedLabel: "On"
                 uncheckedLabel: "Off"
@@ -526,8 +570,8 @@ Item {
                 label: "Limit above:"
                 anchors {
                     left: parent.left
-                    leftMargin: 60
-                    top: tempFoldback.bottom
+                    leftMargin: 87
+                    top: temperatureFoldbackStatus.bottom
                     topMargin: 10
                     right: foldbackTempInput.left
                     rightMargin: 10
@@ -536,6 +580,7 @@ Item {
                 to: 200
                 startLabel: "25°C"
                 endLabel: "200°C"
+                labelTopAligned: true
                 value: platformInterface.foldback_temperature_limiting_event.foldback_maximum_temperature
                 onMoved:{
                     console.log("sending temp foldback update command from foldbackTempSlider");
@@ -549,9 +594,12 @@ Item {
             SGSubmitInfoBox {
                 id: foldbackTempInput
                 showButton: false
+                infoBoxWidth: 30
                 anchors {
                     verticalCenter: foldbackTemp.verticalCenter
-                    right: parent.right
+                    verticalCenterOffset: -7
+                    right: foldbackTempUnits.left
+                    rightMargin: 5
                 }
                 value: platformInterface.foldback_temperature_limiting_event.foldback_maximum_temperature
                 onApplied: platformInterface.set_temperature_foldback.update(platformInterface.foldback_temperature_limiting_event.temperature_foldback_enabled,
@@ -559,13 +607,24 @@ Item {
                                                                              platformInterface.foldback_temperature_limiting_event.foldback_maximum_temperature_power)
             }
 
+            Text{
+                id: foldbackTempUnits
+                text: "°C"
+                anchors {
+                    right: parent.right
+                    verticalCenter: foldbackTempInput.verticalCenter
+                }
+            }
+
             SGComboBox {
                 id: limitOutput2
                 label: "Reduce output power to:"
                 model: ["10","15", "25", "50","75","90"]
+                comboBoxHeight: 25
                 comboBoxWidth: 60
                 anchors {
                     left: parent.left
+                    leftMargin: 10
                     top: foldbackTemp.bottom
                     topMargin: 10
                 }

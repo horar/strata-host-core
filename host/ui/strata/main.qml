@@ -11,7 +11,7 @@ Window {
     visible: true
     width: 1200
     height: 900
-    title: qsTr("Strata")
+    title: qsTr("ON Semiconductor: Strata Developer Studio")
 
     // Debug option(s)
     property bool showDebugCommandBar: false
@@ -128,13 +128,13 @@ Window {
         GridLayout {
             columns: 10
             anchors { horizontalCenter: commandBar.horizontalCenter }
-            Button {
-                text: "USB-PD"
-                onClicked: {
-                    var data = { platform_name: "usb-pd"}
-                    NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT, data)
-                }
-            }
+//            Button {
+//                text: "USB-PD"
+//                onClicked: {
+//                    var data = { platform_name: "usb-pd"}
+//                    NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT, data)
+//                }
+//            }
             Button {
                 text: "BuBU Interface"
                 onClicked: {
