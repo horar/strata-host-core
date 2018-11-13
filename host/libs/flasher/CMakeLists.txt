@@ -4,17 +4,17 @@ project(flasher VERSION 1.0)
 
 set(CMAKE_CXX_STANDARD 11)
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include
-    ${CMAKE_SOURCE_DIR}/../shared/bootloader/include
-)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
+
+#Hack: for bootloader library
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../../../shared/bootloader shared/bootloader )
 
 add_library(${PROJECT_NAME}
     src/Flasher.cpp
 )
 
-target_link_libraries(${PROJECT_NAME} PUBLIC connector)
+target_link_libraries(${PROJECT_NAME} PUBLIC connector bootloader)
 
 target_include_directories(${PROJECT_NAME}
     PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
-    PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../../../shared/bootloader/include
 )

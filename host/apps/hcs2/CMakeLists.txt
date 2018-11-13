@@ -45,6 +45,7 @@ endif ()
 # set(HOST_CONTROLLER_SERVICE_BINARY_NAME "hcs")
 # set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "lib/")
 # set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "lib/")
+
 set(NIMBUS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../../cloud")
 set(SHARED_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../../shared")
 set(CB_DIR "${NIMBUS_DIR}/couchbase-lite-core")
@@ -52,28 +53,49 @@ set(CB_LIB_DIR "${CB_DIR}/build_cmake/unix")
 
 # Compiler definitions for file locations #
 # Schema json file
-add_definitions(-DNIMBUS_SCHEMA_PATH="${CMAKE_CURRENT_SOURCE_DIR}/../../cloud/nimbus_command_schema.json")
+add_definitions(-DNIMBUS_SCHEMA_PATH="${NIMBUS_DIR}/nimbus_command_schema.json")
 
 # TODO:
 # Add headers and Library for Nimbus
-# include_directories(
-#        .
-#		include
-#        include/ArduinoJson
-#        connector/include
-#		"${NIMBUS_DIR}"
-#		"${SHARED_DIR}/cpp-base64"    		#cpp-base64 submodule
-#        "${SHARED_DIR}/rapidjson/include"   	#rapidjson submodule
-#		"${CB_DIR}/C"
-#		"${CB_DIR}/C/include"
-#		"${CB_DIR}/vendor/fleece/Fleece"
-#		"${CB_DIR}/LiteCore/Database"
-#		"${CB_DIR}/build_cmake/unix"
-#		"${CB_LIB_DIR}"
-#		)
-#
-#add_library(nimbusLib STATIC 	${NIMBUS_DIR}/nimbus_internal.cc
-#				${NIMBUS_DIR}/couchbase_helper.cpp )
+include_directories(
+      .
+		include
+    include/ArduinoJson
+
+		"${NIMBUS_DIR}"
+		"${SHARED_DIR}/cpp-base64"    		#cpp-base64 submodule
+    "${SHARED_DIR}/rapidjson/include"   	#rapidjson submodule
+		"${CB_DIR}/C"
+		"${CB_DIR}/C/include"
+		"${CB_DIR}/vendor/fleece/Fleece"
+		"${CB_DIR}/LiteCore/Database"
+		"${CB_DIR}/build_cmake/unix"
+		"${CB_LIB_DIR}"
+)
+
+if (APPLE)
+    #--- Mac OSX
+    message("INCLUDE/LITECORE: mac")
+
+    # Target Files
+    link_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../lib/macos/litecore)
+
+    # LiteCore for mac
+    find_library(litecore STATIC NAMES LiteCore
+            HINTS "${CMAKE_CURRENT_SOURCE_DIR}/../../lib/macos/litecore")
+    if (litecore)
+        message("Found litecore library")
+    else ()
+        # Make this Red so its hard to miss
+        message("${red} !! Litecore library is missing. Run configure script in cloud/submodule_patches/ !! ${reset_color}")
+    endif ()
+endif()
+
+
+add_library(nimbusLib STATIC 	${NIMBUS_DIR}/nimbus_internal.cc
+				${NIMBUS_DIR}/couchbase_helper.cpp )
+
+target_link_libraries(nimbusLib PUBLIC -lFleeceStatic ${litecore} )
 
 
 if (CROSSCOMPILE)
@@ -100,10 +122,14 @@ if (CROSSCOMPILE)
     # Overwrite definition for schema; Release backports look in the same folder
     remove_definitions(-DNIMBUS_SCHEMA_PATH)
     add_definitions(-DNIMBUS_SCHEMA_PATH="nimbus_command_schema.json")
-endif ()
+
+else() #CROSSCOMPILE
+
+find_package(Libevent2)
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include
     ${CMAKE_CURRENT_SOURCE_DIR}   # for logger
+    ${LIBEVENT2_INCLUDE_DIR}
 )
 
 add_executable(${PROJECT_NAME}
@@ -111,61 +137,16 @@ add_executable(${PROJECT_NAME}
     src/DiscoveryService.cc
     src/ParseConfig.cpp
     src/main.cc
-    ${SHARED_DIR}/cpp-base64/base64.cpp
-
-    #   ${CMAKE_CURRENT_SOURCE_DIR}/src/ConnectFactory.cpp
-    #   ${CMAKE_CURRENT_SOURCE_DIR}/src/USBConnector.cpp
-    #   ${CMAKE_CURRENT_SOURCE_DIR}/src/ZeroMQConnector.cpp
+    ${SHARED_DIR}/cpp-base64/base64.cpp  #FIXME:
 )
 
 target_link_libraries(${PROJECT_NAME}
-    connector
+    PRIVATE connector nimbusLib
 )
 
-# target_link_libraries(${PROJECT_NAME}
-#    LINK_PUBLIC -lzmq
-#                -lstdc++
-#                -lpthread
-#                -levent
-#                -lserialport
-#                -lFleeceStatic
-#)
+target_link_libraries(${PROJECT_NAME}
+    PRIVATE ${FOUNDATION_LIBRARY} ${IOKIT_LIBRARY}
+    PRIVATE ${LIBEVENT2_LIBRARIES}
+)
 
-#
-# LINK_PUBLIC
-#        nimbusLib
-#        ${litecore}
-#        ${FOUNDATION_LIBRARY} ${IOKIT_LIBRARY}
-#        )
-#
-
-if (CROSSCOMPILE)
-    message("LINKING: windows")
-    target_link_libraries(${PROJECT_NAME} LINK_PUBLIC
-            -lzmq.dll
-            -lstdc++
-            -lpthread
-            -levent
-            -lserialport.dll
-            -lws2_32
-            nimbusLib
-            ${litecore}
-            connector
-            )
-elseif( UNIX AND NOT APPLE AND NOT CROSSCOMPILE)
-    message("LINKING: linux")
-    target_link_libraries(${PROJECT_NAME} LINK_PUBLIC
-            -lzmq
-            -lstdc++
-            -lpthread
-            -levent
-            nimbusLib
-            ${litecore}
-            connector
-            )
-elseif (APPLE)
-
-
-else()
-    message("ERROR: unsupported operating system !")
-endif ()
+endif()  #CROSSCOMPILE

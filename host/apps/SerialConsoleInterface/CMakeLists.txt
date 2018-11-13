@@ -11,9 +11,6 @@ project(SerialConsoleInterface
     VERSION 0.0.0
 )
 
-set(HOST_PATH "${CMAKE_SOURCE_DIR}/..")
-set(SHARED_DIR "${HOST_PATH}/../shared")
-
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 set(CMAKE_CXX_STANDARD 17)
@@ -61,11 +58,6 @@ target_link_libraries(${PROJECT_NAME}
 
     ${IOKIT_LIB}
     ${FOUNDATION_LIB}
-)
-
-# FIXME: don't hardcode includes from 3rd party libs!!
-target_include_directories(${PROJECT_NAME} SYSTEM
-    PRIVATE ${HOST_PATH}/include/
 )
 
 target_compile_options(${PROJECT_NAME}
