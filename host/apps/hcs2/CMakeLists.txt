@@ -141,10 +141,10 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include
 )
 
 add_executable(${PROJECT_NAME}
-    src/HostControllerService.cc
-    src/DiscoveryService.cc
+    src/HostControllerService.cpp
+    src/DiscoveryService.cpp
     src/ParseConfig.cpp
-    src/main.cc
+    src/main.cpp
 )
 
 target_link_libraries(${PROJECT_NAME}

@@ -45,15 +45,15 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include
 )
 
 add_library(connector
-    src/SerialConnector.cc
-    src/PubSubConnector.cc
-    src/RequestReplyConnector.cc
-    src/ZMQConnector.cc
+    src/SerialConnector.cpp
+    src/PubSubConnector.cpp
+    src/RequestReplyConnector.cpp
+    src/ZMQConnector.cpp
 )
 
 target_link_libraries(connector
-      ${SERIAL_PORT_LIBRARIES}
-      ${ZEROMQ_LIBRARIES}
+      PUBLIC ${SERIAL_PORT_LIBRARIES}
+      PUBLIC ${ZEROMQ_LIBRARIES}
 )
 
 if (CROSSCOMPILE)
