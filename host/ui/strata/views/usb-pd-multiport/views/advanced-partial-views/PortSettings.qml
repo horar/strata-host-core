@@ -5,6 +5,8 @@ import "qrc:/views/usb-pd-multiport/sgwidgets"
 Item {
     id: root
 
+    property bool assuredPortPowerEnabled: true
+
     Item {
         id: controlMargins
         anchors {
@@ -12,14 +14,50 @@ Item {
             margins: 15
         }
 
+        Text{
+            id: assuredPortText
+            text: "Assure Port power:"
+            anchors {
+                top:parent.top
+                left: parent.left
+                leftMargin: 45
+            }
+        }
+
+        SGSwitch {
+            id: assuredPortSwitch
+            anchors {
+                left: assuredPortText.right
+                leftMargin: 10
+                verticalCenter: assuredPortText.verticalCenter
+            }
+            enabled: assuredPortPowerEnabled
+            checkedLabel: "On"
+            uncheckedLabel: "Off"
+            switchHeight: 20
+            switchWidth: 46
+
+            checked: platformInterface.assured_power_port.enabled
+            onToggled: platformInterface.set_assured_power_port.update(checked, portNumber)  //we're only allowing port 1 to be assured
+
+            Component.onCompleted: {
+                assuredPortSwitch.checked =  false
+            }
+        }
+
         SGComboBox {
             id: maxPowerOutput
             label: "Max Power Output:"
             model: ["15","27", "36", "45","60","100"]
+            enabled: !assuredPortSwitch.checked
+            textColor: !assuredPortSwitch.checked ? "black" : "grey"
+            comboBoxHeight: 25
+            comboBoxWidth: 60
             anchors {
                 left: parent.left
-                leftMargin: 23
-                top: parent.top
+                leftMargin: 48
+                top: assuredPortSwitch.bottom
+                topMargin: 10
             }
 
             //when changing the value
@@ -37,18 +75,20 @@ Item {
                 }
 
             }
-
-
         }
+
 
 
         SGSlider {
             id: currentLimit
             label: "Current limit:"
             value: platformInterface.request_over_current_protection_notification.current_limit
+            labelTopAligned: true
+            startLabel: "0A"
+            endLabel: "100A"
             anchors {
                 left: parent.left
-                leftMargin: 61
+                leftMargin: 86
                 top: maxPowerOutput.bottom
                 topMargin: 10
                 right: currentLimitInput.left
@@ -62,14 +102,26 @@ Item {
         SGSubmitInfoBox {
             id: currentLimitInput
             showButton: false
+            infoBoxWidth: 30
             anchors {
                 verticalCenter: currentLimit.verticalCenter
-                right: parent.right
+                verticalCenterOffset: -7
+                right: currentLimitInputUnits.left
+                rightMargin: 5
             }
 
             value: platformInterface.request_over_current_protection_notification.current_limit.toFixed(0)
             onApplied: platformInterface.set_over_current_protection.update(portNumber, intValue)
 
+        }
+
+        Text{
+            id: currentLimitInputUnits
+            text: "A"
+            anchors {
+                right: parent.right
+                verticalCenter: currentLimitInput.verticalCenter
+            }
         }
 
         SGDivider {
@@ -98,8 +150,12 @@ Item {
             value:platformInterface.set_cable_loss_compensation.output_current
             from:0
             to:3
+            labelTopAligned: true
+            startLabel: "0A"
+            endLabel: "3A"
             anchors {
                 left: parent.left
+                leftMargin: 25
                 top: cableCompensation.bottom
                 topMargin: 10
                 right: incrementInput.left
@@ -117,9 +173,12 @@ Item {
         SGSubmitInfoBox {
             id: incrementInput
             showButton: false
+            infoBoxWidth: 30
             anchors {
                 verticalCenter: increment.verticalCenter
-                right: parent.right
+                verticalCenterOffset: -7
+                right: incrementInputUnits.left
+                rightMargin: 5
             }
 
             value: platformInterface.get_cable_loss_compensation.output_current.toFixed(0)
@@ -129,15 +188,27 @@ Item {
 
         }
 
+        Text{
+            id: incrementInputUnits
+            text: "A"
+            anchors {
+                right: parent.right
+                verticalCenter: incrementInput.verticalCenter
+            }
+        }
+
         SGSlider {
             id: bias
             label: "Bias output by:"
             value:platformInterface.set_cable_loss_compensation.bias_voltage
             from:0
             to:2
+            labelTopAligned: true
+            startLabel: "0mV"
+            endLabel: "2mV"
             anchors {
                 left: parent.left
-                leftMargin: 50
+                leftMargin: 75
                 top: increment.bottom
                 topMargin: 10
                 right: biasInput.left
@@ -154,15 +225,27 @@ Item {
         SGSubmitInfoBox {
             id: biasInput
             showButton: false
+            infoBoxWidth: 30
             anchors {
                 verticalCenter: bias.verticalCenter
-                right: parent.right
+                verticalCenterOffset: -7
+                right: biasInputUnits.left
+                rightMargin: 5
             }
 
             value: platformInterface.get_cable_loss_compensation.bias_voltage.toFixed(0)
             onApplied: platformInterface.set_cable_loss_compensation.update(portNumber,
                                                                             platformInterface.get_cable_loss_compensation.output_current,
                                                                             intValue)
+        }
+
+        Text{
+            id: biasInputUnits
+            text: "mV"
+            anchors {
+                right: parent.right
+                verticalCenter: biasInput.verticalCenter
+            }
         }
 
 

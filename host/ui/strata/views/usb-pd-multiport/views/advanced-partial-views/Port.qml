@@ -11,6 +11,7 @@ Item {
     property alias portConnected: portInfo.portConnected
     property alias portColor: portInfo.portColor
     property bool showGraphs: false
+    property alias enableAssuredPower: portSettings.assuredPortPowerEnabled
 
     width: parent.width
     height: graphSelector.nothingChecked ? portSettings.height : portSettings.height + portGraphs.height
