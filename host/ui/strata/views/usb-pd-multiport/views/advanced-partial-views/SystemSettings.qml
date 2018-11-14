@@ -1,5 +1,6 @@
 import QtQuick 2.9
 import QtQuick.Layouts 1.3
+import QtQuick.Controls 2.3
 import "qrc:/views/usb-pd-multiport/sgwidgets"
 
 Item {
@@ -68,12 +69,9 @@ Item {
                         }
                     }
 
-                    console.log("updating connection", port1connected, port2connected, port3connected, port4connected)
+                    //console.log("updating connection", port1connected, port2connected, port3connected, port4connected)
                     deviceConnected = port1connected || port2connected || port3connected || port4connected;
-                    if (!deviceConnected)
-                        console.log("connect. no device connected")
-                      else
-                        console.log("connect. device connected")
+
                 }
 
                 onDeviceIsDisconnectedChanged: {
@@ -97,17 +95,14 @@ Item {
                             port4connected = false;
                         }
                     }
-                    console.log("updating connection", port1connected, port2connected, port3connected, port4connected)
+                    //console.log("updating connection", port1connected, port2connected, port3connected, port4connected)
                     deviceConnected = port1connected || port2connected || port3connected || port4connected;
-                    if (!deviceConnected)
-                        console.log("disconnect. no device connected")
-                      else
-                        console.log("disconnect. device connected")
                 }
 
                 id: maximumBoardPower
                 label: "Maximum System Power:"
                 enabled: deviceConnected ? true : false  //slider enabled if nothing is plugged in
+                hover:true
                 anchors {
                     top: powerManagement.bottom
                     topMargin: 15
@@ -122,6 +117,10 @@ Item {
                 endLabel: platformInterface.ac_power_supply_connection.power+"W"
                 labelTopAligned: true
                 value: platformInterface.maximum_board_power.watts
+
+                disabledTip.text: "System power can only be changed\n when all devices are unplugged"
+
+
 
                 Component.onCompleted:{
                     value = maximumBoardPower.to;   //set the slider to max value initially

@@ -46,9 +46,39 @@ Item {
         }
 
         SGComboBox {
+
+            property variant maxPowerOptions
+            property int maxPower: platformInterface.request_usb_power_notification.maximum_power
+
+            onMaxPowerChanged:{
+                if (platformInterface.request_usb_power_notification.port === portNumber){
+                    if (maxPower >= 100){
+                        maxPowerOptions = ["15","27", "36", "45","60","100"];
+                    }
+                    else if (maxPower >=60){
+                        maxPowerOptions = ["15","27", "36", "45","60"];
+                    }
+                    else if (maxPower >=45){
+                        maxPowerOptions = ["15","27", "36", "45"];
+                    }
+                    else if (maxPower >=36){
+                        maxPowerOptions = ["15","27", "36"];
+                    }
+                    else if (maxPower >=27){
+                        maxPowerOptions = ["15","27"];
+                    }
+                    else if (maxPower >=15){
+                        maxPowerOptions = ["15"];
+                    }
+                    else{
+                        maxPowerOptions = [];
+                    }
+                }
+            }
+
             id: maxPowerOutput
             label: "Max Power Output:"
-            model: ["15","27", "36", "45","60","100"]
+            model: maxPowerOptions
             enabled: !assuredPortSwitch.checked
             textColor: !assuredPortSwitch.checked ? "black" : "grey"
             comboBoxHeight: 25
