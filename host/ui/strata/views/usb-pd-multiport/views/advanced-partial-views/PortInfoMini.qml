@@ -68,6 +68,26 @@ Item {
                 context.closePath();
                 context.fill();
             }
+
+
+        }
+
+        Text{
+
+            property bool assuredPowerActive: platformInterface.assured_power_port.enabled
+            property bool thisIsPort1: (root.portNum === 1)
+
+            text: thisIsPort1 ?"Assured" :"Not assured"
+            font {
+                pixelSize: 10
+            }
+            color: "white"
+            visible: assuredPowerActive ? true : false
+            anchors {
+                right: portNumberContainer.right
+                rightMargin: 5
+                verticalCenter: portNumberContainer.verticalCenter
+            }
         }
     }
 
