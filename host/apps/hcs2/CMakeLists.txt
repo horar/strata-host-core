@@ -125,7 +125,7 @@ if (CROSSCOMPILE)
 
 else() #CROSSCOMPILE
 
-find_package(Libevent2)
+find_package(Libevent2 REQUIRED)
 
 # Base64 library (external)
 

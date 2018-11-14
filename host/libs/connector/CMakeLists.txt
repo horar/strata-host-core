@@ -7,8 +7,8 @@ set(HostControllerService_VERSION_MINOR 0)
 
 set(CMAKE_CXX_STANDARD 11)
 
-find_package(SerialPort)
-find_package(ZeroMQ)
+find_package(SerialPort REQUIRED)
+find_package(ZeroMQ REQUIRED)
 
 set(EXT_LIBS_PATH ${CMAKE_SOURCE_DIR}/ext_libs)
 set(SHARED_DIR ${CMAKE_SOURCE_DIR}/../shared)

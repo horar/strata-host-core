@@ -2,6 +2,13 @@
 # https://github.com/sipwise/sems/blob/master/cmake/FindLibevent2.cmake
 #
 
+set(EXT_LIBS_PATH ${CMAKE_SOURCE_DIR}/ext_libs)
+
+# TODO: add other platforms...
+if (APPLE)
+  set(PLATFORM_TYPE "mac")
+endif()
+
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
 	FIND_PATH(LIBEVENT2_INCLUDE_DIR event2/event.h)
 
@@ -14,13 +21,13 @@ if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
 		FIND_LIBRARY(LIBEVENT2_LIBRARIES NAMES libevent-x86-v120-mt-2_1_4_0 event libevent )
 	endif()
 else()
-	FIND_PATH(LIBEVENT2_INCLUDE_DIR event2/event.h HINTS /usr/include/event2 )
+	FIND_PATH(LIBEVENT2_INCLUDE_DIR event2/event.h HINTS ${EXT_LIBS_PATH}/libevent/include /usr/include/event2 )
 
 	# -levent -levent_core -levent_extra
 
-	FIND_LIBRARY(LIBEVENT2_LIBRARIES NAMES event libevent )
-	FIND_LIBRARY(LIBEVENT2_CORE_LIBRARIES NAMES event_core libevent_core )
-	FIND_LIBRARY(LIBEVENT2_EXTRA_LIBRARIES NAMES event_extra libevent_extra )
+	FIND_LIBRARY(LIBEVENT2_LIBRARIES NAMES event libevent HINTS ${EXT_LIBS_PATH}/libevent/lib/${PLATFORM_TYPE} )
+	FIND_LIBRARY(LIBEVENT2_CORE_LIBRARIES NAMES event_core libevent_core HINTS ${EXT_LIBS_PATH}/libevent/lib/${PLATFORM_TYPE} )
+	FIND_LIBRARY(LIBEVENT2_EXTRA_LIBRARIES NAMES event_extra libevent_extra HINTS ${EXT_LIBS_PATH}/libevent/lib/${PLATFORM_TYPE} )
 endif()
 
 
