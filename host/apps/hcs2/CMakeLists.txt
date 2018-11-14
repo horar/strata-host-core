@@ -127,6 +127,14 @@ else() #CROSSCOMPILE
 
 find_package(Libevent2)
 
+# Base64 library (external)
+
+add_library(libBase64 ${SHARED_DIR}/cpp-base64/base64.cpp)
+
+target_include_directories(libBase64 PUBLIC ${SHARED_DIR}/cpp-base64)
+
+# HostControllerService ----------------------------------------------------------
+
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include
     ${CMAKE_CURRENT_SOURCE_DIR}   # for logger
     ${LIBEVENT2_INCLUDE_DIR}
@@ -137,11 +145,10 @@ add_executable(${PROJECT_NAME}
     src/DiscoveryService.cc
     src/ParseConfig.cpp
     src/main.cc
-    ${SHARED_DIR}/cpp-base64/base64.cpp  #FIXME:
 )
 
 target_link_libraries(${PROJECT_NAME}
-    PRIVATE connector nimbusLib
+    PRIVATE connector nimbusLib libBase64
 )
 
 target_link_libraries(${PROJECT_NAME}
