@@ -38,20 +38,17 @@ Item {
             switchWidth: 46
 
             checked: platformInterface.assured_power_port.enabled
-            onToggled: platformInterface.set_assured_power_port.update(checked, portNumber)  //we're only allowing port 1 to be assured
-
-            Component.onCompleted: {
-                assuredPortSwitch.checked =  false
-            }
+            onToggled: platformInterface.set_assured_power_port.update(checked, portNumber)  //we're only allowing port 1 to be assured            
         }
 
         SGComboBox {
 
             property variant maxPowerOptions
-            property int maxPower: platformInterface.request_usb_power_notification.maximum_power
+            property int maxPower: platformInterface.usb_pd_maximum_power.commanded_max_power
 
+            //limit the options for power usage to be less than the max power allocated for this port
             onMaxPowerChanged:{
-                if (platformInterface.request_usb_power_notification.port === portNumber){
+                if (platformInterface.usb_pd_maximum_power.port === portNumber){
                     if (maxPower >= 100){
                         maxPowerOptions = ["15","27", "36", "45","60","100"];
                     }
@@ -100,6 +97,7 @@ Item {
             //NB this info comes from the periodic power notification, not from the usb_pd_maximum_power notificaiton
             property var currentMaximumPower: platformInterface.usb_pd_maximum_power.commanded_max_power
             onCurrentMaximumPowerChanged: {
+                console.log("got a new commanded max power for port",platformInterface.usb_pd_maximum_power.port)
                 if (platformInterface.usb_pd_maximum_power.port === portNumber){
                     maxPowerOutput.currentIndex = maxPowerOutput.comboBox.find( parseInt (platformInterface.usb_pd_maximum_power.commanded_max_power))
                 }
@@ -211,10 +209,10 @@ Item {
                 rightMargin: 5
             }
 
-            value: platformInterface.get_cable_loss_compensation.output_current.toFixed(0)
+            value: platformInterface.set_cable_loss_compensation.output_current.toFixed(0)
             onApplied: platformInterface.set_cable_loss_compensation.update(portNumber,
                            intValue,
-                           platformInterface.get_cable_loss_compensation.bias_voltage)
+                           platformInterface.set_cable_loss_compensation.bias_voltage)
 
         }
 
@@ -263,9 +261,9 @@ Item {
                 rightMargin: 5
             }
 
-            value: platformInterface.get_cable_loss_compensation.bias_voltage.toFixed(0)
+            value: platformInterface.set_cable_loss_compensation.bias_voltage.toFixed(0)
             onApplied: platformInterface.set_cable_loss_compensation.update(portNumber,
-                                                                            platformInterface.get_cable_loss_compensation.output_current,
+                                                                            platformInterface.set_cable_loss_compensation.output_current,
                                                                             intValue)
         }
 

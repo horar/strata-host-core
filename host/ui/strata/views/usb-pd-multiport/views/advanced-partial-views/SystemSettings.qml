@@ -99,9 +99,11 @@ Item {
                     deviceConnected = port1connected || port2connected || port3connected || port4connected;
                 }
 
+                property var currentMaxPower: platformInterface.maximum_board_power.watts
+
                 id: maximumBoardPower
                 label: "Maximum System Power:"
-                enabled: deviceConnected ? true : false  //slider enabled if nothing is plugged in
+                enabled: !deviceConnected ? true : false  //slider enabled if nothing is plugged in
                 hover:true
                 anchors {
                     top: powerManagement.bottom
@@ -116,19 +118,16 @@ Item {
                 startLabel: "30W"
                 endLabel: platformInterface.ac_power_supply_connection.power+"W"
                 labelTopAligned: true
-                value: platformInterface.maximum_board_power.watts
+                value: currentMaxPower
 
-                disabledTip.text: "System power can only be changed\n when all devices are unplugged"
-
-
-
-                Component.onCompleted:{
-                    value = maximumBoardPower.to;   //set the slider to max value initially
+                onValueChanged:{
+                    console.log("setting slider max system power to",value)
                 }
 
+                //disabledTip.text: "System power can only be changed\n when all devices are unplugged"
+
                 onMoved: {
-                    //we'll need to address how to handle this when there are devices attached, as that would trigger
-                    //renegotiation with all devices
+                    //the control will be disabled if there are devices plugged in
                     platformInterface.set_maximum_board_power.update(value);
                 }
             }
@@ -146,8 +145,11 @@ Item {
                 }
                 onApplied: {
                     platformInterface.set_maximum_board_power.update(maximumBoardPowerInput.intValue);
+                    }
+                value: Math.round(platformInterface.maximum_board_power.watts)
 
-                value: platformInterface.maximum_board_power.watts
+                onValueChanged:{
+                    console.log("setting text max system power to",value)
                 }
             }
 
@@ -392,7 +394,7 @@ Item {
                     right: inputFaultUnits.left
                     rightMargin: 5
                 }
-                value: platformInterface.input_under_voltage_notification.minimum_voltage
+                value: Math.round(platformInterface.input_under_voltage_notification.minimum_voltage)
                 onApplied:{
                     var currentValue = parseFloat(value)
                     platformInterface.set_minimum_input_voltage.update(currentValue);   // slider will be updated via notification
@@ -440,9 +442,9 @@ Item {
                     right: tempFaultUnits.left
                     rightMargin: 5
                 }
-                value: platformInterface.set_maximum_temperature_notification.maximum_temperature
+                value: Math.round(platformInterface.set_maximum_temperature_notification.maximum_temperature)
                 onApplied:{
-                    console.log("temp fault value onApplied");
+                    //console.log("temp fault value onApplied");
                     var currentValue = parseFloat(value)
                     platformInterface.set_maximum_temperature.update(currentValue); // slider will be updated via notification
                 }
