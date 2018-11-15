@@ -25,13 +25,74 @@ Item {
         }
 
         SGSwitch {
+            property bool port1connected:false
+            property bool port2connected:false
+            property bool port3connected:false
+            property bool port4connected:false
+            property bool deviceConnected:false
+            property var deviceIsConnected: platformInterface.usb_pd_port_connect.connection_state
+            property var deviceIsDisconnected: platformInterface.usb_pd_port_disconnect.connection_state
+
+            onDeviceIsConnectedChanged: {
+
+                if (platformInterface.usb_pd_port_connect.port_id === "USB_C_port_1"){
+                    if (platformInterface.usb_pd_port_connect.connection_state === "connected"){
+                        port1connected = true;
+                    }
+                }
+                else if (platformInterface.usb_pd_port_connect.port_id === "USB_C_port_2"){
+                    if (platformInterface.usb_pd_port_connect.connection_state === "connected"){
+                        port2connected = true;
+                    }
+                }
+                else if (platformInterface.usb_pd_port_connect.port_id === 3){
+                    if (platformInterface.usb_pd_port_connect.connection_state === "USB_C_port_3"){
+                        port3connected = true;
+                    }
+                }
+                else if (platformInterface.usb_pd_port_connect.port_id === 4){
+                    if (platformInterface.usb_pd_port_connect.connection_state === "USB_C_port_4"){
+                        port4connected = true;
+                    }
+                }
+
+                //console.log("updating connection", port1connected, port2connected, port3connected, port4connected)
+                deviceConnected = port1connected || port2connected || port3connected || port4connected;
+
+            }
+
+            onDeviceIsDisconnectedChanged: {
+                if (platformInterface.usb_pd_port_disconnect.port_id === "USB_C_port_1"){
+                    if (platformInterface.usb_pd_port_disconnect.connection_state === "disconnected"){
+                        port1connected = false;
+                    }
+                }
+                else if (platformInterface.usb_pd_port_disconnect.port_id === "USB_C_port_2"){
+                    if (platformInterface.usb_pd_port_disconnect.connection_state === "disconnected"){
+                        port2connected = false;
+                    }
+                }
+                else if (platformInterface.usb_pd_port_disconnect.port_id === "USB_C_port_3"){
+                    if (platformInterface.usb_pd_port_disconnect.connection_state === "disconnected"){
+                        port3connected = false;
+                    }
+                }
+                else if (platformInterface.usb_pd_port_disconnect.port_id === "USB_C_port_4"){
+                    if (platformInterface.usb_pd_port_disconnect.connection_state === "disconnected"){
+                        port4connected = false;
+                    }
+                }
+                //console.log("updating connection", port1connected, port2connected, port3connected, port4connected)
+                deviceConnected = port1connected || port2connected || port3connected || port4connected;
+            }
+
             id: assuredPortSwitch
             anchors {
                 left: assuredPortText.right
                 leftMargin: 10
                 verticalCenter: assuredPortText.verticalCenter
             }
-            enabled: assuredPortPowerEnabled
+            enabled: assuredPortPowerEnabled && !deviceConnected
             checkedLabel: "On"
             uncheckedLabel: "Off"
             switchHeight: 20
@@ -70,6 +131,9 @@ Item {
                     else{
                         maxPowerOptions = [];
                     }
+
+                    //console.log("got a new commanded max power for port",platformInterface.usb_pd_maximum_power.port)
+                    maxPowerOutput.currentIndex = maxPowerOutput.comboBox.find( parseInt (platformInterface.usb_pd_maximum_power.commanded_max_power))
                 }
             }
 
@@ -95,14 +159,15 @@ Item {
 
             //notification of a change from elsewhere
             //NB this info comes from the periodic power notification, not from the usb_pd_maximum_power notificaiton
-            property var currentMaximumPower: platformInterface.usb_pd_maximum_power.commanded_max_power
-            onCurrentMaximumPowerChanged: {
-                console.log("got a new commanded max power for port",platformInterface.usb_pd_maximum_power.port)
-                if (platformInterface.usb_pd_maximum_power.port === portNumber){
-                    maxPowerOutput.currentIndex = maxPowerOutput.comboBox.find( parseInt (platformInterface.usb_pd_maximum_power.commanded_max_power))
-                }
+//            property var currentMaximumPower: platformInterface.usb_pd_maximum_power.commanded_max_power
+//            onCurrentMaximumPowerChanged: {
+//                if (platformInterface.usb_pd_maximum_power.port === portNumber){
+//                    console.log("got a new commanded max power for port",platformInterface.usb_pd_maximum_power.port)
+//                    maxPowerOutput.currentIndex = maxPowerOutput.comboBox.find( parseInt (platformInterface.usb_pd_maximum_power.commanded_max_power))
+//                    console.log("set port power to index",maxPowerOutput.currentIndex)
+//                }
 
-            }
+//            }
         }
 
 

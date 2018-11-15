@@ -37,7 +37,6 @@ Item {
 
             SGSlider {
 
-                //property var portDevice: platformInterface.device
                 property bool port1connected:false
                 property bool port2connected:false
                 property bool port3connected:false
@@ -120,12 +119,6 @@ Item {
                 labelTopAligned: true
                 value: currentMaxPower
 
-                onValueChanged:{
-                    console.log("setting slider max system power to",value)
-                }
-
-                //disabledTip.text: "System power can only be changed\n when all devices are unplugged"
-
                 onMoved: {
                     //the control will be disabled if there are devices plugged in
                     platformInterface.set_maximum_board_power.update(value);
@@ -147,10 +140,6 @@ Item {
                     platformInterface.set_maximum_board_power.update(maximumBoardPowerInput.intValue);
                     }
                 value: Math.round(platformInterface.maximum_board_power.watts)
-
-                onValueChanged:{
-                    console.log("setting text max system power to",value)
-                }
             }
 
             Text{
@@ -198,7 +187,69 @@ Item {
             }
 
             SGSwitch {
+                property bool port1connected:false
+                property bool port2connected:false
+                property bool port3connected:false
+                property bool port4connected:false
+                property bool deviceConnected:false
+                property var deviceIsConnected: platformInterface.usb_pd_port_connect.connection_state
+                property var deviceIsDisconnected: platformInterface.usb_pd_port_disconnect.connection_state
+
+                onDeviceIsConnectedChanged: {
+
+                    if (platformInterface.usb_pd_port_connect.port_id === "USB_C_port_1"){
+                        if (platformInterface.usb_pd_port_connect.connection_state === "connected"){
+                            port1connected = true;
+                        }
+                    }
+                    else if (platformInterface.usb_pd_port_connect.port_id === "USB_C_port_2"){
+                        if (platformInterface.usb_pd_port_connect.connection_state === "connected"){
+                            port2connected = true;
+                        }
+                    }
+                    else if (platformInterface.usb_pd_port_connect.port_id === 3){
+                        if (platformInterface.usb_pd_port_connect.connection_state === "USB_C_port_3"){
+                            port3connected = true;
+                        }
+                    }
+                    else if (platformInterface.usb_pd_port_connect.port_id === 4){
+                        if (platformInterface.usb_pd_port_connect.connection_state === "USB_C_port_4"){
+                            port4connected = true;
+                        }
+                    }
+
+                    //console.log("updating connection", port1connected, port2connected, port3connected, port4connected)
+                    deviceConnected = port1connected || port2connected || port3connected || port4connected;
+
+                }
+
+                onDeviceIsDisconnectedChanged: {
+                    if (platformInterface.usb_pd_port_disconnect.port_id === "USB_C_port_1"){
+                        if (platformInterface.usb_pd_port_disconnect.connection_state === "disconnected"){
+                            port1connected = false;
+                        }
+                    }
+                    else if (platformInterface.usb_pd_port_disconnect.port_id === "USB_C_port_2"){
+                        if (platformInterface.usb_pd_port_disconnect.connection_state === "disconnected"){
+                            port2connected = false;
+                        }
+                    }
+                    else if (platformInterface.usb_pd_port_disconnect.port_id === "USB_C_port_3"){
+                        if (platformInterface.usb_pd_port_disconnect.connection_state === "disconnected"){
+                            port3connected = false;
+                        }
+                    }
+                    else if (platformInterface.usb_pd_port_disconnect.port_id === "USB_C_port_4"){
+                        if (platformInterface.usb_pd_port_disconnect.connection_state === "disconnected"){
+                            port4connected = false;
+                        }
+                    }
+                    //console.log("updating connection", port1connected, port2connected, port3connected, port4connected)
+                    deviceConnected = port1connected || port2connected || port3connected || port4connected;
+                }
+
                 id: assuredPortSwitch
+                enabled: !deviceConnected
                 anchors {
                     left: assuredPortText.right
                     leftMargin: 10
