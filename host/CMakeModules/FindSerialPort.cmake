@@ -14,6 +14,10 @@ set(EXT_LIBS_PATH ${CMAKE_SOURCE_DIR}/ext_libs)
 # TODO: add other platforms...
 if (APPLE)
   set(PLATFORM_TYPE "mac")
+elseif(UNIX AND NOT APPLE AND NOT CROSSCOMPILE)
+  set(PLATFORM_TYPE "linux")
+elseif (CROSSCOMPILE)
+  message(FATAL_ERROR "Not unsupported yet!")
 endif()
 
 find_library( SERIAL_PORT_LIBRARIES NAMES "serialport" PATHS ${EXT_LIBS_PATH}/libserial/lib/${PLATFORM_TYPE} )

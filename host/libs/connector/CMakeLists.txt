@@ -71,5 +71,6 @@ target_include_directories(connector
     PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
     PUBLIC ${SERIAL_PORT_INCLUDE_DIR}
     PUBLIC ${EXT_LIBS_PATH}/zmq/include
+    PUBLIC ${ZEROMQ_INCLUDE_DIR}
     PUBLIC ${SHARED_DIR}/rapidjson/include
 )

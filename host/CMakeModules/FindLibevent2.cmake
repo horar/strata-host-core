@@ -7,7 +7,12 @@ set(EXT_LIBS_PATH ${CMAKE_SOURCE_DIR}/ext_libs)
 # TODO: add other platforms...
 if (APPLE)
   set(PLATFORM_TYPE "mac")
+elseif(UNIX AND NOT APPLE AND NOT CROSSCOMPILE)
+  set(PLATFORM_TYPE "linux")
+elseif (CROSSCOMPILE)
+  message(FATAL_ERROR "Not unsupported yet!")
 endif()
+
 
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
 	FIND_PATH(LIBEVENT2_INCLUDE_DIR event2/event.h)
