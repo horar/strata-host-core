@@ -1,5 +1,6 @@
 import QtQuick 2.9
 import QtQuick.Layouts 1.3
+import QtQuick.Controls 2.3
 import "qrc:/views/usb-pd-multiport/sgwidgets"
 
 Item {
@@ -35,8 +36,74 @@ Item {
             }
 
             SGSlider {
+
+                property bool port1connected:false
+                property bool port2connected:false
+                property bool port3connected:false
+                property bool port4connected:false
+                property bool deviceConnected:false
+                property var deviceIsConnected: platformInterface.usb_pd_port_connect.connection_state
+                property var deviceIsDisconnected: platformInterface.usb_pd_port_disconnect.connection_state
+
+                onDeviceIsConnectedChanged: {
+
+                    if (platformInterface.usb_pd_port_connect.port_id === "USB_C_port_1"){
+                        if (platformInterface.usb_pd_port_connect.connection_state === "connected"){
+                            port1connected = true;
+                        }
+                    }
+                    else if (platformInterface.usb_pd_port_connect.port_id === "USB_C_port_2"){
+                        if (platformInterface.usb_pd_port_connect.connection_state === "connected"){
+                            port2connected = true;
+                        }
+                    }
+                    else if (platformInterface.usb_pd_port_connect.port_id === 3){
+                        if (platformInterface.usb_pd_port_connect.connection_state === "USB_C_port_3"){
+                            port3connected = true;
+                        }
+                    }
+                    else if (platformInterface.usb_pd_port_connect.port_id === 4){
+                        if (platformInterface.usb_pd_port_connect.connection_state === "USB_C_port_4"){
+                            port4connected = true;
+                        }
+                    }
+
+                    //console.log("updating connection", port1connected, port2connected, port3connected, port4connected)
+                    deviceConnected = port1connected || port2connected || port3connected || port4connected;
+
+                }
+
+                onDeviceIsDisconnectedChanged: {
+                    if (platformInterface.usb_pd_port_disconnect.port_id === "USB_C_port_1"){
+                        if (platformInterface.usb_pd_port_disconnect.connection_state === "disconnected"){
+                            port1connected = false;
+                        }
+                    }
+                    else if (platformInterface.usb_pd_port_disconnect.port_id === "USB_C_port_2"){
+                        if (platformInterface.usb_pd_port_disconnect.connection_state === "disconnected"){
+                            port2connected = false;
+                        }
+                    }
+                    else if (platformInterface.usb_pd_port_disconnect.port_id === "USB_C_port_3"){
+                        if (platformInterface.usb_pd_port_disconnect.connection_state === "disconnected"){
+                            port3connected = false;
+                        }
+                    }
+                    else if (platformInterface.usb_pd_port_disconnect.port_id === "USB_C_port_4"){
+                        if (platformInterface.usb_pd_port_disconnect.connection_state === "disconnected"){
+                            port4connected = false;
+                        }
+                    }
+                    //console.log("updating connection", port1connected, port2connected, port3connected, port4connected)
+                    deviceConnected = port1connected || port2connected || port3connected || port4connected;
+                }
+
+                property var currentMaxPower: platformInterface.maximum_board_power.watts
+
                 id: maximumBoardPower
                 label: "Maximum System Power:"
+                enabled: !deviceConnected ? true : false  //slider enabled if nothing is plugged in
+                hover:true
                 anchors {
                     top: powerManagement.bottom
                     topMargin: 15
@@ -50,15 +117,10 @@ Item {
                 startLabel: "30W"
                 endLabel: platformInterface.ac_power_supply_connection.power+"W"
                 labelTopAligned: true
-                value: platformInterface.maximum_board_power.watts
-
-                Component.onCompleted:{
-                    value = maximumBoardPower.to;   //set the slider to max value initially
-                }
+                value: currentMaxPower
 
                 onMoved: {
-                    //we'll need to address how to handle this when there are devices attached, as that would trigger
-                    //renegotiation with all devices
+                    //the control will be disabled if there are devices plugged in
                     platformInterface.set_maximum_board_power.update(value);
                 }
             }
@@ -67,6 +129,7 @@ Item {
                 id: maximumBoardPowerInput
                 showButton: false
                 infoBoxWidth: 30
+                enabled: maximumBoardPower.enabled
                 anchors {
                     verticalCenter: maximumBoardPower.verticalCenter
                     verticalCenterOffset: -7
@@ -75,14 +138,14 @@ Item {
                 }
                 onApplied: {
                     platformInterface.set_maximum_board_power.update(maximumBoardPowerInput.intValue);
-
-                value: platformInterface.maximum_board_power.watts
-                }
+                    }
+                value: Math.round(platformInterface.maximum_board_power.watts)
             }
 
             Text{
                 id: maximumBoardPowerUnits
                 text: "W"
+                color: maximumBoardPower.enabled ? "black" : "grey"
                 anchors {
                     right: parent.right
                     verticalCenter: maximumBoardPowerInput.verticalCenter
@@ -124,7 +187,69 @@ Item {
             }
 
             SGSwitch {
+                property bool port1connected:false
+                property bool port2connected:false
+                property bool port3connected:false
+                property bool port4connected:false
+                property bool deviceConnected:false
+                property var deviceIsConnected: platformInterface.usb_pd_port_connect.connection_state
+                property var deviceIsDisconnected: platformInterface.usb_pd_port_disconnect.connection_state
+
+                onDeviceIsConnectedChanged: {
+
+                    if (platformInterface.usb_pd_port_connect.port_id === "USB_C_port_1"){
+                        if (platformInterface.usb_pd_port_connect.connection_state === "connected"){
+                            port1connected = true;
+                        }
+                    }
+                    else if (platformInterface.usb_pd_port_connect.port_id === "USB_C_port_2"){
+                        if (platformInterface.usb_pd_port_connect.connection_state === "connected"){
+                            port2connected = true;
+                        }
+                    }
+                    else if (platformInterface.usb_pd_port_connect.port_id === 3){
+                        if (platformInterface.usb_pd_port_connect.connection_state === "USB_C_port_3"){
+                            port3connected = true;
+                        }
+                    }
+                    else if (platformInterface.usb_pd_port_connect.port_id === 4){
+                        if (platformInterface.usb_pd_port_connect.connection_state === "USB_C_port_4"){
+                            port4connected = true;
+                        }
+                    }
+
+                    //console.log("updating connection", port1connected, port2connected, port3connected, port4connected)
+                    deviceConnected = port1connected || port2connected || port3connected || port4connected;
+
+                }
+
+                onDeviceIsDisconnectedChanged: {
+                    if (platformInterface.usb_pd_port_disconnect.port_id === "USB_C_port_1"){
+                        if (platformInterface.usb_pd_port_disconnect.connection_state === "disconnected"){
+                            port1connected = false;
+                        }
+                    }
+                    else if (platformInterface.usb_pd_port_disconnect.port_id === "USB_C_port_2"){
+                        if (platformInterface.usb_pd_port_disconnect.connection_state === "disconnected"){
+                            port2connected = false;
+                        }
+                    }
+                    else if (platformInterface.usb_pd_port_disconnect.port_id === "USB_C_port_3"){
+                        if (platformInterface.usb_pd_port_disconnect.connection_state === "disconnected"){
+                            port3connected = false;
+                        }
+                    }
+                    else if (platformInterface.usb_pd_port_disconnect.port_id === "USB_C_port_4"){
+                        if (platformInterface.usb_pd_port_disconnect.connection_state === "disconnected"){
+                            port4connected = false;
+                        }
+                    }
+                    //console.log("updating connection", port1connected, port2connected, port3connected, port4connected)
+                    deviceConnected = port1connected || port2connected || port3connected || port4connected;
+                }
+
                 id: assuredPortSwitch
+                enabled: !deviceConnected
                 anchors {
                     left: assuredPortText.right
                     leftMargin: 10
@@ -320,7 +445,7 @@ Item {
                     right: inputFaultUnits.left
                     rightMargin: 5
                 }
-                value: platformInterface.input_under_voltage_notification.minimum_voltage
+                value: Math.round(platformInterface.input_under_voltage_notification.minimum_voltage)
                 onApplied:{
                     var currentValue = parseFloat(value)
                     platformInterface.set_minimum_input_voltage.update(currentValue);   // slider will be updated via notification
@@ -368,9 +493,9 @@ Item {
                     right: tempFaultUnits.left
                     rightMargin: 5
                 }
-                value: platformInterface.set_maximum_temperature_notification.maximum_temperature
+                value: Math.round(platformInterface.set_maximum_temperature_notification.maximum_temperature)
                 onApplied:{
-                    console.log("temp fault value onApplied");
+                    //console.log("temp fault value onApplied");
                     var currentValue = parseFloat(value)
                     platformInterface.set_maximum_temperature.update(currentValue); // slider will be updated via notification
                 }
