@@ -73,6 +73,66 @@ Item {
         }
 
         Text{
+            property bool port1connected:false
+            property bool port2connected:false
+            property bool port3connected:false
+            property bool port4connected:false
+            property bool deviceConnected:false
+            property var deviceIsConnected: platformInterface.usb_pd_port_connect.connection_state
+            property var deviceIsDisconnected: platformInterface.usb_pd_port_disconnect.connection_state
+
+            onDeviceIsConnectedChanged: {
+
+                if (platformInterface.usb_pd_port_connect.port_id === "USB_C_port_1"){
+                    if (platformInterface.usb_pd_port_connect.connection_state === "connected"){
+                        port1connected = true;
+                    }
+                }
+                else if (platformInterface.usb_pd_port_connect.port_id === "USB_C_port_2"){
+                    if (platformInterface.usb_pd_port_connect.connection_state === "connected"){
+                        port2connected = true;
+                    }
+                }
+                else if (platformInterface.usb_pd_port_connect.port_id === 3){
+                    if (platformInterface.usb_pd_port_connect.connection_state === "USB_C_port_3"){
+                        port3connected = true;
+                    }
+                }
+                else if (platformInterface.usb_pd_port_connect.port_id === 4){
+                    if (platformInterface.usb_pd_port_connect.connection_state === "USB_C_port_4"){
+                        port4connected = true;
+                    }
+                }
+
+                //console.log("updating connection", port1connected, port2connected, port3connected, port4connected)
+                deviceConnected = port1connected || port2connected || port3connected || port4connected;
+
+            }
+
+            onDeviceIsDisconnectedChanged: {
+                if (platformInterface.usb_pd_port_disconnect.port_id === "USB_C_port_1"){
+                    if (platformInterface.usb_pd_port_disconnect.connection_state === "disconnected"){
+                        port1connected = false;
+                    }
+                }
+                else if (platformInterface.usb_pd_port_disconnect.port_id === "USB_C_port_2"){
+                    if (platformInterface.usb_pd_port_disconnect.connection_state === "disconnected"){
+                        port2connected = false;
+                    }
+                }
+                else if (platformInterface.usb_pd_port_disconnect.port_id === "USB_C_port_3"){
+                    if (platformInterface.usb_pd_port_disconnect.connection_state === "disconnected"){
+                        port3connected = false;
+                    }
+                }
+                else if (platformInterface.usb_pd_port_disconnect.port_id === "USB_C_port_4"){
+                    if (platformInterface.usb_pd_port_disconnect.connection_state === "disconnected"){
+                        port4connected = false;
+                    }
+                }
+                //console.log("updating connection", port1connected, port2connected, port3connected, port4connected)
+                deviceConnected = port1connected || port2connected || port3connected || port4connected;
+            }
 
             property bool assuredPowerActive: platformInterface.assured_power_port.enabled
             property bool thisIsPort1: (root.portNum === 1)
@@ -82,7 +142,7 @@ Item {
                 pixelSize: 10
             }
             color: "white"
-            visible: assuredPowerActive ? true : false
+            visible: (assuredPowerActive && deviceConnected) ? true : false
             anchors {
                 right: portNumberContainer.right
                 rightMargin: 5
