@@ -16,27 +16,8 @@ set(EXT_LIBS_PATH ${CMAKE_SOURCE_DIR}/ext_libs)
 
 if (CROSSCOMPILE)
     message("TOOL CHAIN: windows")
-    SET(CMAKE_TOOLCHAIN_FILE ./cmake/x86_64.cmake)
-    SET(CMAKE_CXX_FLAGS "-v -std=gnu++11 -static-libstdc++ -static-libgcc -static")
-endif ()
-
-
-if (CROSSCOMPILE)
-    # --- WINDOWS
-    message("INCLUDE/LITECORE: windows")
-    include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
-    # --- WINDOWS
-    message("INCLUDE/LITECORE: windows")
-
-    # LibEvent
-    link_directories(${CMAKE_CURRENT_SOURCE_DIR}/../lib/cross-lib/bin)
-    link_directories(${CMAKE_CURRENT_SOURCE_DIR}/../lib/cross-lib/lib)
-    include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../lib/cross-lib/include)
-    include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../include)
-    include_directories(${SHARED_DIR}/rapidjson/include)
-    # ZMQ
-    link_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../lib/windows/zeromq)
-endif ()
+#    SET(CMAKE_TOOLCHAIN_FILE ./cmake/x86_64.cmake)
+endif()
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include
       ${SERIALPORT_INCLUDE_DIR}
@@ -57,17 +38,6 @@ target_link_libraries(connector
       PUBLIC ${ZEROMQ_LIBRARIES}
       -lpthread
 )
-
-if (CROSSCOMPILE)
-    message("LINKING: windows")
-    target_link_libraries(connector
-            -lzmq.dll
-            -lstdc++
-            -lpthread
-            -lserialport.dll
-            -lws2_32
-            )
-endif ()
 
 target_include_directories(connector
     PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include

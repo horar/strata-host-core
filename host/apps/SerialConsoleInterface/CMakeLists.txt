@@ -22,10 +22,11 @@ set(CMAKE_AUTORCC ON)
 
 include(FeatureSummary)
 
-find_package(Qt5 5.11 REQUIRED COMPONENTS
-    Core
-    Quick
-)
+find_package(Qt5 5.11 COMPONENTS Core Gui Network Quick REQUIRED)
+if (NOT Qt5_FOUND)
+    message(FATAL_ERROR "Qt5 not found!")
+endif()
+
 if(APPLE)
     find_library(IOKIT_LIB IOKit REQUIRED)
     if (NOT IOKIT_LIB)
@@ -52,13 +53,16 @@ add_executable(${PROJECT_NAME} WIN32
 target_link_libraries(${PROJECT_NAME}
     Qt5::Core
     Qt5::Quick
-
     connector
     flasher
-
-    ${IOKIT_LIB}
-    ${FOUNDATION_LIB}
 )
+
+if (APPLE)
+    target_link_libraries(${PROJECT_NAME}
+        ${IOKIT_LIB}
+        ${FOUNDATION_LIB}
+    )
+endif()
 
 target_compile_options(${PROJECT_NAME}
     PRIVATE $<$<CXX_COMPILER_ID:AppleClang>:-Wall -Wextra>

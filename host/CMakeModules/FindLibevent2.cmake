@@ -10,7 +10,7 @@ if (APPLE)
 elseif(UNIX AND NOT APPLE AND NOT CROSSCOMPILE)
   set(PLATFORM_TYPE "linux")
 elseif (CROSSCOMPILE)
-  message(FATAL_ERROR "Not unsupported yet!")
+  set(PLATFORM_TYPE "cross-lib")
 endif()
 
 

@@ -13,11 +13,11 @@ set(red "${Esc}[31m")
 set(reset_color "${Esc}[m")
 
 if (CROSSCOMPILE)
-    message("Building WINDOWS booo...")
+    message("Building WINDOWS")
 elseif (UNIX AND NOT APPLE AND NOT CROSSCOMPILE)
-    message("Building LINUX yea...")
+    message("Building LINUX")
 elseif (APPLE)
-    message("Building MAC yea...")
+    message("Building MAC")
 else()
     message("ERROR: unsupported operating system !")
 endif ()
@@ -106,6 +106,24 @@ elseif (UNIX AND NOT APPLE AND NOT CROSSCOMPILE)
         # Make this Red so its hard to miss
         message("${red} !! Litecore library is missing. Run configure script in cloud/submodule_patches/ !! ${reset_color}")
     endif ()
+elseif (CROSSCOMPILE)
+
+    # --- WINDOWS
+    message("INCLUDE/LITECORE: windows")
+
+    # Litecore; Only link LiteCore to HCS. The others will cause problems on crosscompile.
+    # Currently they are not needed.
+    find_library(litecore NAMES LiteCore HINTS "${NIMBUS_DIR}/bin/x64")
+    find_library(litecoreREST NAMES LiteCoreREST HINTS "${NIMBUS_DIR}/bin/x64")
+    find_library(fleece NAMES FleeceStatic HINTS "${NIMBUS_DIR}/bin/x64")
+    message("Using litecore at: ${litecore}")
+    message("Using litecoreREST at: ${litecoreREST}")
+    message("Using fleece at: ${fleece}")
+
+    # Overwrite definition for schema; Release backports look in the same folder
+    remove_definitions(-DNIMBUS_SCHEMA_PATH)
+    add_definitions(-DNIMBUS_SCHEMA_PATH="nimbus_command_schema.json")
+
 else()
     message(FATAL_ERROR "Unknown operating system!")
 endif()
