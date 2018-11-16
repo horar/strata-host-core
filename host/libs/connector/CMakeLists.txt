@@ -6,6 +6,7 @@ set(HostControllerService_VERSION_MAJOR 1)
 set(HostControllerService_VERSION_MINOR 0)
 
 set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(SerialPort REQUIRED)
 find_package(ZeroMQ REQUIRED)
@@ -38,7 +39,7 @@ if (CROSSCOMPILE)
 endif ()
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include
-      ${SERIAL_PORT_INCLUDE_DIR}
+      ${SERIALPORT_INCLUDE_DIR}
       ${ZEROMQ_INCLUDE_DIR}
       ${EXT_LIBS_PATH}/zmq/include      # This is hack
       ${SHARED_DIR}/rapidjson/include
@@ -52,7 +53,7 @@ add_library(connector
 )
 
 target_link_libraries(connector
-      PUBLIC ${SERIAL_PORT_LIBRARIES}
+      PUBLIC ${SERIALPORT_LIBRARIES}
       PUBLIC ${ZEROMQ_LIBRARIES}
       -lpthread
 )
@@ -70,7 +71,7 @@ endif ()
 
 target_include_directories(connector
     PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
-    PUBLIC ${SERIAL_PORT_INCLUDE_DIR}
+    PUBLIC ${SERIALPORT_INCLUDE_DIR}
     PUBLIC ${EXT_LIBS_PATH}/zmq/include
     PUBLIC ${ZEROMQ_INCLUDE_DIR}
     PUBLIC ${SHARED_DIR}/rapidjson/include

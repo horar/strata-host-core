@@ -22,20 +22,26 @@ endif()
 
 find_library( ZEROMQ_LIBRARIES NAMES "zmq" PATHS ${EXT_LIBS_PATH}/libzmq/lib/${PLATFORM_TYPE} )
 find_path( ZEROMQ_INCLUDE_DIR "zmq.h" PATHS ${EXT_LIBS_PATH}/libzmq/include )
-if( NOT ZEROMQ_INCLUDE_DIR )
-   message( FATAL_ERROR "ZeroMQ includes not found")
-endif()
-if( NOT ZEROMQ_LIBRARIES )
-   message( FATAL_ERROR "ZeroMQ libraries not found")
+
+if (ZEROMQ_INCLUDE_DIR AND ZEROMQ_LIBRARIES)
+  set(ZEROMQ_FOUND TRUE)
 endif()
 
-message( STATUS "ZeroMQ found at ${ZEROMQ_LIBRARIES}" )
-message( STATUS "ZeroMQ headers found at ${ZEROMQ_INCLUDE_DIR}" )
+if (ZEROMQ_FOUND)
 
-add_library( ZeroMQ UNKNOWN IMPORTED )
-set_property( TARGET ZeroMQ PROPERTY IMPORTED_LOCATION "${ZEROMQ_LIBRARIES}" )
-set_property( TARGET ZeroMQ PROPERTY INTERFACE_INCLUDE_DIRECTORIES "${ZEROMQ_INCLUDE_DIR}" )
+  message( STATUS "ZeroMQ found at ${ZEROMQ_LIBRARIES}" )
+  message( STATUS "ZeroMQ headers found at ${ZEROMQ_INCLUDE_DIR}" )
 
-mark_as_advanced(
-    ZEROMQ_LIBRARIES
-    ZEROMQ_INCLUDE_DIR )
+  add_library( ZeroMQ UNKNOWN IMPORTED )
+  set_property( TARGET ZeroMQ PROPERTY IMPORTED_LOCATION "${ZEROMQ_LIBRARIES}" )
+  set_property( TARGET ZeroMQ PROPERTY INTERFACE_INCLUDE_DIRECTORIES "${ZEROMQ_INCLUDE_DIR}" )
+
+  mark_as_advanced(
+      ZEROMQ_LIBRARIES
+      ZEROMQ_INCLUDE_DIR )
+else()
+  if (ZeroMQ_FIND_REQUIRED)
+    message(FATAL_ERROR "Could NOT find ZeroMQ development files: ${ZEROMQ_INCLUDE_DIR} :: ${ZEROMQ_LIBRARIES}")
+  endif()
+
+endif()
