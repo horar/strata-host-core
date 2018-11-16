@@ -10,9 +10,9 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(SerialPort REQUIRED)
 find_package(ZeroMQ REQUIRED)
+find_package(RapidJSON REQUIRED)
 
 set(EXT_LIBS_PATH ${CMAKE_SOURCE_DIR}/ext_libs)
-set(SHARED_DIR ${CMAKE_SOURCE_DIR}/../shared)
 
 if (CROSSCOMPILE)
     message("TOOL CHAIN: windows")
@@ -42,7 +42,7 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include
       ${SERIALPORT_INCLUDE_DIR}
       ${ZEROMQ_INCLUDE_DIR}
       ${EXT_LIBS_PATH}/zmq/include      # This is hack
-      ${SHARED_DIR}/rapidjson/include
+      ${RAPIDJSON_INCLUDE_DIR}
 )
 
 add_library(connector
@@ -74,5 +74,5 @@ target_include_directories(connector
     PUBLIC ${SERIALPORT_INCLUDE_DIR}
     PUBLIC ${EXT_LIBS_PATH}/zmq/include
     PUBLIC ${ZEROMQ_INCLUDE_DIR}
-    PUBLIC ${SHARED_DIR}/rapidjson/include
+    PUBLIC ${RAPIDJSON_INCLUDE_DIR}
 )
