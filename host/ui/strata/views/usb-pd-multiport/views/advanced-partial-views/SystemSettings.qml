@@ -35,6 +35,43 @@ Item {
                 }
             }
 
+            Button{
+                //a rectangle to cover the max power slider when it's disabled, so we can still show a
+                //tooltip explaining *why* its disabled.
+                id:toolTipMask
+                //color:"transparent"
+                //border.color:"red"
+                hoverEnabled: true
+                z:1
+                visible:!maximumBoardPower.enabled
+                background: Rectangle{
+                    color:"transparent"
+                }
+
+                anchors {
+                    top: powerManagement.bottom
+                    topMargin: 15
+                    left: margins1.left
+                    leftMargin: 55
+                    right: maximumBoardPowerUnits.left
+                    rightMargin: 5
+                    bottom:maximumBoardPower.bottom
+                }
+
+                ToolTip{
+                    id:maxPowerToolTip
+                    visible:toolTipMask.hovered
+                    text:"System Power can not be changed when devices are connected"
+                    delay:500
+                    timeout:2000
+
+                    background: Rectangle {
+                        color: "#eee"
+                        radius: 2
+                    }
+                }
+            }
+
             SGSlider {
 
                 property bool port1connected:false
@@ -103,7 +140,6 @@ Item {
                 id: maximumBoardPower
                 label: "Maximum System Power:"
                 enabled: !deviceConnected ? true : false  //slider enabled if nothing is plugged in
-                hover:true
                 anchors {
                     top: powerManagement.bottom
                     topMargin: 15
@@ -172,6 +208,39 @@ Item {
                     topMargin: 10
                     left: powerNegotiationTitleText.right
                     leftMargin: 10
+                }
+            }
+
+
+            Button{
+                //a rectangle to cover the max power popup when it's disabled, so we can still show a
+                //tooltip explaining *why* its disabled.
+                id:toolTipAssuredPowerMask
+                hoverEnabled: true
+                z:1
+                visible:!maximumBoardPower.enabled
+                background: Rectangle{
+                    color:"transparent"
+                }
+
+                anchors {
+                    left: assuredPortSwitch.left
+                    top: assuredPortSwitch.top
+                    bottom:assuredPortSwitch.bottom
+                    right: assuredPortSwitch.right
+                }
+
+                ToolTip{
+                    id:assuredPowerToolTip
+                    visible:toolTipAssuredPowerMask.hovered
+                    text:"Assured Power can not be changed when devices are connected"
+                    delay:500
+                    timeout:2000
+
+                    background: Rectangle {
+                        color: "#eee"
+                        radius: 2
+                    }
                 }
             }
 
