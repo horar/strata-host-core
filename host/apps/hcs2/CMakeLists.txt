@@ -89,14 +89,35 @@ if (APPLE)
         # Make this Red so its hard to miss
         message("${red} !! Litecore library is missing. Run configure script in cloud/submodule_patches/ !! ${reset_color}")
     endif ()
-endif()
 
+elseif (UNIX AND NOT APPLE AND NOT CROSSCOMPILE)
+    #--- Linux
+    message("INCLUDE/LITECORE: linux")
+
+    # Target Files
+    link_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../lib/linux/litecore)
+
+    # LiteCore for mac
+    find_library(litecore STATIC NAMES LiteCore
+            HINTS "${CMAKE_CURRENT_SOURCE_DIR}/../../../cloud/couchbase-lite-core/build_cmake/unix")
+    if (litecore)
+        message("Found litecore library")
+    else ()
+        # Make this Red so its hard to miss
+        message("${red} !! Litecore library is missing. Run configure script in cloud/submodule_patches/ !! ${reset_color}")
+    endif ()
+else()
+    message(FATAL_ERROR "Unknown operating system!")
+endif()
 
 add_library(nimbusLib STATIC 	${NIMBUS_DIR}/nimbus_internal.cc
 				${NIMBUS_DIR}/couchbase_helper.cpp )
 
-target_link_libraries(nimbusLib PUBLIC -lFleeceStatic ${litecore} )
-
+if (APPLE)
+  target_link_libraries(nimbusLib PUBLIC -lFleeceStatic ${litecore} )
+elseif (UNIX AND NOT APPLE AND NOT CROSSCOMPILE)
+  target_link_libraries(nimbusLib PUBLIC ${litecore} )
+endif()
 
 if (CROSSCOMPILE)
     # --- WINDOWS
@@ -149,11 +170,14 @@ add_executable(${PROJECT_NAME}
 
 target_link_libraries(${PROJECT_NAME}
     PRIVATE connector nimbusLib libBase64
-)
-
-target_link_libraries(${PROJECT_NAME}
-    PRIVATE ${FOUNDATION_LIBRARY} ${IOKIT_LIBRARY}
     PRIVATE ${LIBEVENT2_LIBRARIES}
 )
+
+if (APPLE)
+    target_link_libraries(${PROJECT_NAME}
+        PRIVATE ${FOUNDATION_LIBRARY} ${IOKIT_LIBRARY}
+    )
+endif()
+
 
 endif()  #CROSSCOMPILE

@@ -54,6 +54,7 @@ add_library(connector
 target_link_libraries(connector
       PUBLIC ${SERIAL_PORT_LIBRARIES}
       PUBLIC ${ZEROMQ_LIBRARIES}
+      -lpthread
 )
 
 if (CROSSCOMPILE)
