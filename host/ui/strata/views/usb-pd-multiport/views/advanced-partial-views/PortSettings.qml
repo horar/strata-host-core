@@ -1,5 +1,6 @@
 import QtQuick 2.9
 import QtQuick.Layouts 1.3
+import QtQuick.Controls 2.3
 import "qrc:/views/usb-pd-multiport/sgwidgets"
 
 Item {
@@ -21,6 +22,38 @@ Item {
                 top:parent.top
                 left: parent.left
                 leftMargin: 45
+            }
+        }
+
+        Button{
+            //a rectangle to cover the max power popup when it's disabled, so we can still show a
+            //tooltip explaining *why* its disabled.
+            id:toolTipMask
+            hoverEnabled: true
+            z:1
+            visible:!assuredPortSwitch.checked
+            background: Rectangle{
+                color:"transparent"
+            }
+
+            anchors {
+                left: maxPowerOutput.left
+                top: assuredPortSwitch.top
+                bottom:maxPowerOutput.bottom
+                right: maxPowerOutput.right
+            }
+
+            ToolTip{
+                id:maxPowerToolTip
+                visible:toolTipMask.hovered
+                text:"Port Power can not be changed when devices are connected"
+                delay:500
+                timeout:2000
+
+                background: Rectangle {
+                    color: "#eee"
+                    radius: 2
+                }
             }
         }
 
