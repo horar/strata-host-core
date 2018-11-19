@@ -26,6 +26,8 @@ Rectangle {
     property int intValue: { return parseInt(infoText.text) }
     property alias placeholderText: placeholder.text
     property bool leftJustify: false
+    property int minimumValue:30        //min and max values for validation
+    property int maximumValue: 200
 
     implicitHeight: labelLeft ? inputButtonContainer.height : labelText.height + inputButtonContainer.height + inputButtonContainer.anchors.topMargin
     implicitWidth: labelLeft ? labelText.width + inputButtonContainer.width + inputButtonContainer.anchors.leftMargin :
@@ -89,7 +91,8 @@ Rectangle {
                   pixelSize: (Qt.platform.os === "osx") ? 12 : 10;
                 }
                 horizontalAlignment: leftJustify ? TextInput.AlignLeft : TextInput.AlignRight
-                validator: realNumberValidation ? realNumberValidator : null
+                validator: intNumberValidator
+                //validator: realNumberValidation ? realNumberValidator : null
 //                onAccepted: {
 //                    console.log("sgsubmitinfobox onAccepted triggered")
 //                    root.applied(infoText.text)
@@ -101,6 +104,12 @@ Rectangle {
                     if (!root.showButton) {
                         root.applied(infoText.text)
                     } }
+
+                IntValidator{
+                    id:intNumberValidator
+                    bottom:minimumValue
+                    top:maximumValue
+                }
 
                 RegExpValidator {
                     id: realNumberValidator

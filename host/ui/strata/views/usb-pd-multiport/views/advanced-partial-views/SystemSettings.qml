@@ -166,6 +166,8 @@ Item {
                 showButton: false
                 infoBoxWidth: 30
                 enabled: maximumBoardPower.enabled
+                minimumValue: 30
+                maximumValue: platformInterface.ac_power_supply_connection.power
                 anchors {
                     verticalCenter: maximumBoardPower.verticalCenter
                     verticalCenterOffset: -7
