@@ -35,6 +35,11 @@ DiscoveryService::DiscoveryService(const std::string& server_address)
     service_connector_->open(server_address);
 }
 
+DiscoveryService::~DiscoveryService()
+{
+    delete service_connector_;
+}
+
 // @f getPlatforms
 // @b returns the json string of list of available platforms
 //

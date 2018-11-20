@@ -915,14 +915,14 @@ void HostControllerService::platformDisconnectRoutine ()
     platform_uuid_.push_back(simulated_motor_vortex);
     platform_uuid_.push_back(sim_usb);
     getPlatformListJson(platformList);
-    std::list<string>::iterator client_list_iterator = clientList.begin();
-    while(client_list_iterator != clientList.end()) {
-        client_connector_->setDealerID(*client_list_iterator);
+
+    for(auto it = clientList.begin(); it != clientList.end(); ++it) {
+        client_connector_->setDealerID(*it);
         client_connector_->send(platformList);
         PDEBUG(PRINT_DEBUG,"[hcs to hcc]%s",platformList.c_str());
-        ++client_list_iterator;
     }
-    if (!port_disconnected_){
+
+    if (!port_disconnected_) {
         event_del(&platform_handler_);
         port_disconnected_ = true;
         // close the serial port
@@ -938,12 +938,10 @@ void HostControllerService::platformDisconnectRoutine ()
 //
 void HostControllerService::sendDisconnecttoUI()
 {
-    std::list<string>::iterator client_list_iterator = clientList.begin();
     string disconnect_message = "{\"notification\":{\"value\":\"platform_connection_change_notification\",\"payload\":{\"status\":\"disconnected\"}}}";
-    while(client_list_iterator != clientList.end()) {
-        client_connector_->setDealerID(*client_list_iterator);
+    for(auto it = clientList.begin(); it != clientList.end(); ++it) {
+        client_connector_->setDealerID(*it);
         client_connector_->send(disconnect_message);
-        ++client_list_iterator;
     }
 }
 
@@ -1003,16 +1001,12 @@ void HostControllerService::getPlatformListJson(string &list)
 //
 bool HostControllerService::clientExists(const string& client_identifier)
 {
-    bool does_client_exist;
-    multimap_iterator_ = platform_client_mapping_.begin();
-    while(multimap_iterator_ != platform_client_mapping_.end()) {
-        does_client_exist = (multimap_iterator_->second == client_identifier);
-        if(does_client_exist) {
-            break;
+    for(auto it = platform_client_mapping_.begin(); it != platform_client_mapping_.end(); ++it) {
+        if (it->second == client_identifier) {
+            return true;
         }
-        ++multimap_iterator_;
     }
-    return does_client_exist;
+    return false;
 }
 
 // @f clientExistsinList
@@ -1026,16 +1020,12 @@ bool HostControllerService::clientExists(const string& client_identifier)
 //
 bool HostControllerService::clientExistInList(const string& client_identifier)
 {
-    bool does_client_exist;
-    std::list<string>::iterator client_list_iterator = clientList.begin();
-    while(client_list_iterator != clientList.end()) {
-        does_client_exist = (*client_list_iterator == client_identifier);
-        if(does_client_exist) {
-            break;
+    for(auto it = clientList.begin(); it != clientList.end(); ++it) {
+        if (*it == client_identifier) {
+            return true;
         }
-        ++client_list_iterator;
     }
-    return does_client_exist;
+    return false;
 }
 
 // @f checkPlatformExist
@@ -1049,16 +1039,15 @@ bool HostControllerService::clientExistInList(const string& client_identifier)
 //
 bool HostControllerService::checkPlatformExist(const std::string& message)
 {
-    multimap_iterator_ = platform_client_mapping_.begin();
-    while(multimap_iterator_ != platform_client_mapping_.end()) {
-        bool does_platform_exist = false;
+    for(auto it = platform_client_mapping_.begin(); it != platform_client_mapping_.end(); ++it) {
+
+        // bool does_platform_exist = false;
         std::vector<string> map_uuid = multimap_iterator_->first;
         string dealer_id = multimap_iterator_->second;
         if(!message.empty()) {
           client_connector_->setDealerID(dealer_id);
           client_connector_->send(message);
         }
-        ++multimap_iterator_;
     }
     return true;
 }
@@ -1099,7 +1088,7 @@ void HostControllerService::remoteRouting(const std::string& message)
         } // end if the json has the required key-value
     }
     while(multimap_iterator_ != platform_client_mapping_.end()) {
-        bool does_platform_exist = false;
+        // bool does_platform_exist = false;
         std::vector<string> map_uuid = multimap_iterator_->first;
         string dealer_id = multimap_iterator_->second;
         if(map_uuid[1] == "remote") {

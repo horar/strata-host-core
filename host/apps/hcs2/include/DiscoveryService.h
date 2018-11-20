@@ -43,6 +43,7 @@ class DiscoveryService {
 public:
     //Constructor
     DiscoveryService(const std::string&);
+    ~DiscoveryService();
 
     // core functions
     remote_platforms getPlatforms();  // returns the json string of list of available platforms
