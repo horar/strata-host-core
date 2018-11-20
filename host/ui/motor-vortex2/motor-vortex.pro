@@ -42,19 +42,21 @@ HOST_ROOT = ../../../host
 # linux
 unix : !macx : !win32 {
     message("Building on Linux")
-    LIBS += -L$${HOST_ROOT}/lib/linux/lib/ -lzmq
-    INCLUDEPATH += $${HOST_ROOT}/lib/linux/include
-    INCLUDEPATH += $${HOST_ROOT}/include
+    LIBS += -L$${HOST_ROOT}/ext_libs/libzmq/lib/linux -lzmq
+    INCLUDEPATH += $${HOST_ROOT}/libs/HostControllerClient/include/
+    INCLUDEPATH += $${HOST_ROOT}/ext_libs/zmq/include
+    INCLUDEPATH += $${HOST_ROOT}/ext_libs/libzmq/include
     DEPENDPATH += $${HOST_ROOT}/lib/linux/include
 }
 
 # mac (not iOS)
 else : macx : !win32 {
     message("Building on OSX")
-    LIBS += -L$${HOST_ROOT}/lib/macos/libzmq -lzmq
+    LIBS += -L$${HOST_ROOT}/ext_libs/libzmq/lib/mac -lzmq
     DEPENDPATH += $${HOST_ROOT}/include/macos
-    INCLUDEPATH += $${HOST_ROOT}/include/macos/libzmq
-    INCLUDEPATH += $${HOST_ROOT}/include
+    INCLUDEPATH += $${HOST_ROOT}/libs/HostControllerClient/include/
+    INCLUDEPATH += $${HOST_ROOT}/ext_libs/zmq/include
+    INCLUDEPATH += $${HOST_ROOT}/ext_libs/libzmq/include
 }
 
 # windows
@@ -79,10 +81,10 @@ HEADERS += PlaformInterface/CoreInterface.h \
            PlatformInterface/PlatformInterface.h \
            DocumentManager.h \
            DataCollector.h \
-           $${HOST_ROOT}/include/HostControllerClient.hpp \
-           $${HOST_ROOT}/include/zhelpers.hpp \
-           $${HOST_ROOT}/include/zmq.hpp \
-           $${HOST_ROOT}/include/zmq_addon.hpp \
+           $${HOST_ROOT}/libs/HostControllerClient/include/HostControllerClient.hpp \
+           $${HOST_ROOT}/ext_libs/zmq/include/zhelpers.hpp \
+           $${HOST_ROOT}/ext_libs/zmq/include/zmq.hpp \
+           $${HOST_ROOT}/ext_libs/zmq/include/zmq_addon.hpp \
 
 SOURCES += main.cpp \
            PlatformInterface/CoreInterface.cpp \
