@@ -334,9 +334,6 @@ Item {
                 checked: platformInterface.assured_power_port.enabled
                 onToggled: platformInterface.set_assured_power_port.update(checked, 1)  //we're only allowing port 1 to be assured
 
-                Component.onCompleted: {
-                    assuredPortSwitch.checked =  false
-                }
             }
 
             SGComboBox {
@@ -510,6 +507,8 @@ Item {
                 id: inputFaultInput
                 showButton: false
                 infoBoxWidth: 30
+                minimumValue: 0
+                maximumValue: 20
                 anchors {
                     verticalCenter: inputFault.verticalCenter
                     verticalCenterOffset: -7
@@ -517,10 +516,7 @@ Item {
                     rightMargin: 5
                 }
                 value: Math.round(platformInterface.input_under_voltage_notification.minimum_voltage)
-                onApplied:{
-                    var currentValue = parseFloat(value)
-                    platformInterface.set_minimum_input_voltage.update(currentValue);   // slider will be updated via notification
-                }
+                onApplied:platformInterface.set_minimum_input_voltage.update(value);   // slider will be updated via notification
             }
 
             Text{
@@ -558,6 +554,8 @@ Item {
                 id: tempFaultInput
                 showButton: false
                 infoBoxWidth: 30
+                minimumValue: -64
+                maximumValue: 191
                 anchors {
                     verticalCenter: tempFault.verticalCenter
                     verticalCenterOffset: -7
@@ -666,15 +664,17 @@ Item {
                 id: foldbackLimitInput
                 showButton: false
                 infoBoxWidth: 30
+                minimumValue: 0
+                maximumValue: 20
                 anchors {
                     verticalCenter: foldbackLimit.verticalCenter
                     verticalCenterOffset: -7
                     right: foldbackLimitUnits.left
                     rightMargin: 5
                 }
-                value: platformInterface.foldback_input_voltage_limiting_event.foldback_minimum_voltage
+                value: Math.round(platformInterface.foldback_input_voltage_limiting_event.foldback_minimum_voltage)
                 onApplied: platformInterface.set_input_voltage_foldback.update(platformInterface.foldback_input_voltage_limiting_event.input_voltage_foldback_enabled,
-                                                                              parseFloat(value),
+                                                                              parseInt(value),
                                                                               platformInterface.foldback_input_voltage_limiting_event.foldback_minimum_voltage_power)
             }
 
@@ -797,7 +797,7 @@ Item {
                     right: foldbackTempUnits.left
                     rightMargin: 5
                 }
-                value: platformInterface.foldback_temperature_limiting_event.foldback_maximum_temperature
+                value: Math.round(platformInterface.foldback_temperature_limiting_event.foldback_maximum_temperature)
                 onApplied: platformInterface.set_temperature_foldback.update(platformInterface.foldback_temperature_limiting_event.temperature_foldback_enabled,
                                                                              parseFloat(value),
                                                                              platformInterface.foldback_temperature_limiting_event.foldback_maximum_temperature_power)
@@ -815,7 +815,7 @@ Item {
             SGComboBox {
                 id: limitOutput2
                 label: "Reduce output power to:"
-                model: ["10","15", "25", "50","75","90"]
+                model: ["10","15", "25", "45","75","90"]
                 comboBoxHeight: 25
                 comboBoxWidth: 60
                 anchors {

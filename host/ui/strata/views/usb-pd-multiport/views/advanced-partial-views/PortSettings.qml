@@ -31,7 +31,7 @@ Item {
             id:toolTipMask
             hoverEnabled: true
             z:1
-            visible:!assuredPortSwitch.checked
+            visible:!assuredPortSwitch.enabled
             background: Rectangle{
                 color:"transparent"
             }
@@ -137,7 +137,7 @@ Item {
 
         SGComboBox {
 
-            property variant maxPowerOptions
+            property variant maxPowerOptions: ["15","27", "36", "45","60","100"]
             property int maxPower: platformInterface.usb_pd_maximum_power.commanded_max_power
 
             //limit the options for power usage to be less than the max power allocated for this port
@@ -165,7 +165,7 @@ Item {
                         maxPowerOptions = [];
                     }
 
-                    //console.log("got a new commanded max power for port",platformInterface.usb_pd_maximum_power.port)
+                    console.log("got a new commanded max power for port",platformInterface.usb_pd_maximum_power.port)
                     maxPowerOutput.currentIndex = maxPowerOutput.comboBox.find( parseInt (platformInterface.usb_pd_maximum_power.commanded_max_power))
                 }
             }
@@ -300,6 +300,8 @@ Item {
             id: incrementInput
             showButton: false
             infoBoxWidth: 30
+            minimumValue: 0
+            maximumValue: 3
             anchors {
                 verticalCenter: increment.verticalCenter
                 verticalCenterOffset: -7
@@ -352,6 +354,8 @@ Item {
             id: biasInput
             showButton: false
             infoBoxWidth: 30
+            minimumValue: 0
+            maximumValue: 2
             anchors {
                 verticalCenter: bias.verticalCenter
                 verticalCenterOffset: -7
