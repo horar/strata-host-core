@@ -1,5 +1,5 @@
 #include "ImplementationInterfaceBinding.h"
-#include "../../../include/zhelpers.hpp"
+#include <zhelpers.hpp>
 
 /*!
  * Constructor initialization
@@ -306,7 +306,7 @@ QVariantMap ImplementationInterfaceBinding::validateJsonReply(const QVariantMap 
 void ImplementationInterfaceBinding::notificationsThreadHandle() {
     //read series of files each loop
     emit platformStateChanged(platformState);
-    hcc::HostControllerClient hcc_object;
+    Spyglass::HostControllerClient hcc_object;
     qDebug () << "Thread Created for notification ";
     while(1) {
 
