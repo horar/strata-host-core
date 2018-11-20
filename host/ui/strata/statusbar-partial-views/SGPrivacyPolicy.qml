@@ -59,7 +59,16 @@ Item {
                                 fill: webContainer
                                 margins: 1
                             }
-                            url: "http://www.onsemi.com/PowerSolutions/content.do?id=1109"
+                            url: ""  // URL set to load upon first load of profilePopup
+
+                            Connections {
+                                target: profilePopup
+                                onVisibleChanged: {
+                                    if (profilePopup.visible) {
+                                        webView.url = "http://www.onsemi.com/PowerSolutions/content.do?id=1109"
+                                    }
+                                }
+                            }
                         }
                     }
 
