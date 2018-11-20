@@ -1,7 +1,6 @@
 platform/cli/USB-PD/BUILD/*
 *build*/
 *BUILD*/
-*man*/
 *.pro.user*
 *.pro.user
 *.exe
