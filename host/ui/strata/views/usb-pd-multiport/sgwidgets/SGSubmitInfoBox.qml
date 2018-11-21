@@ -91,7 +91,7 @@ Rectangle {
                   pixelSize: (Qt.platform.os === "osx") ? 12 : 10;
                 }
                 horizontalAlignment: leftJustify ? TextInput.AlignLeft : TextInput.AlignRight
-                validator: intNumberValidator
+                validator: numberValidator
                 //validator: realNumberValidation ? realNumberValidator : null
 //                onAccepted: {
 //                    console.log("sgsubmitinfobox onAccepted triggered")
@@ -105,8 +105,9 @@ Rectangle {
                         root.applied(infoText.text)
                     } }
 
-                IntValidator{
-                    id:intNumberValidator
+                DoubleValidator{
+                    id:numberValidator
+                    decimals:1
                     bottom:minimumValue
                     top:maximumValue
                 }
