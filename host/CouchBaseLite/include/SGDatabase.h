@@ -24,7 +24,8 @@
 class SGDatabase {
 
 public:
-    SGDatabase(const std::string db_name);
+    SGDatabase();
+    SGDatabase(const std::string& db_name);
 
     C4Database *getC4db() const;
 
@@ -41,11 +42,11 @@ private:
     C4DatabaseConfig    c4db_config_;
     C4Error             c4error_;
     std::string         db_name_;
+    std::mutex          db_lock_;
 
     void open(const std::string db_name);
     void close();
 
-    std::mutex          db_lock_;
 };
 
 

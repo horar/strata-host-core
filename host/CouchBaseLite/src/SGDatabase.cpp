@@ -22,8 +22,8 @@ using namespace fleece;
 using namespace fleece::impl;
 
 #define DEBUG(...) printf("SGDatabase: "); printf(__VA_ARGS__)
-
-SGDatabase::SGDatabase(const std::string db_name) {
+SGDatabase::SGDatabase() {}
+SGDatabase::SGDatabase(const std::string& db_name) {
     open(db_name);
 }
 
@@ -54,7 +54,7 @@ void SGDatabase::open(const std::string db_name) {
 
     // Configure database attributes
     // This is the default DB configuration taken from the Java bindings
-    c4db_config_.flags          = kC4DB_Create;// | kC4DB_AutoCompact | kC4DB_SharedKeys;
+    c4db_config_.flags          = kC4DB_Create | kC4DB_AutoCompact | kC4DB_SharedKeys;
     c4db_config_.storageEngine  = kC4SQLiteStorageEngine;
     c4db_config_.versioning     = kC4RevisionTrees;
     c4db_config_.encryptionKey.algorithm    = kC4EncryptionNone;
@@ -112,7 +112,7 @@ void SGDatabase::save(SGDocument *doc) {
         // Document does not exist. Creating a new one
         DEBUG("Creating a new document\n");
 
-        C4RevisionFlags revisionFlags = kRevNew | kRevHasAttachments;
+        C4RevisionFlags revisionFlags = kRevNew;
         C4String docId = c4str(doc->getId().c_str());
 
         C4Document *newdoc = c4doc_create(c4db_, docId, fleece_data, revisionFlags,&c4error_);
