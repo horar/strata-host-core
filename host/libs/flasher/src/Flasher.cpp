@@ -38,7 +38,7 @@ Flasher::Flasher()
 
 Flasher::~Flasher()
 {
-  if(can_deallocate_serial_){
+  if(can_deallocate_serial_) {
     delete serial_;
   }
   cout << "Flasher: dtor" << endl;
@@ -48,9 +48,9 @@ Flasher::~Flasher()
 * @brief Set SerialConnector
 * @param source The string to be converted to hex.
 */
-Flasher::Flasher(const Connector *s)
+Flasher::Flasher(Connector* s)
 {
-  serial_ = const_cast<Connector*>(s);
+  serial_ = s;
   can_deallocate_serial_ = false;
 }
 
@@ -59,7 +59,7 @@ Flasher::Flasher(const Connector *s)
 * @param data The data to be sent through serial.
 * @return true on success, false otherwise.
 */
-bool Flasher::write(string data)
+bool Flasher::write(const string& data)
 {
   return serial_->send(data);
 }
@@ -85,8 +85,8 @@ int Flasher::read()
 * @param status The bootloader status.
 * @return true on success, false otherwise.
 */
-int Flasher::writeFirmwareInfoBlock(unsigned int firmware_size, unsigned int checksum, unsigned int status){
-
+int Flasher::writeFirmwareInfoBlock(unsigned int firmware_size, unsigned int checksum, unsigned int status)
+{
   cout << "Sending checksum" << endl;
   struct FirmwareInformationBlock firmware_information_block;
   char send_buffer[ 2*sizeof(firmware_information_block) +1 ];
@@ -109,7 +109,8 @@ int Flasher::writeFirmwareInfoBlock(unsigned int firmware_size, unsigned int che
 * @brief Wait for a platfrom to be connected and send firmware_update command to the platfrom's firmware.
 * @return true on success, false otherwise.
 */
-bool Flasher::isPlatfromConnected(){
+bool Flasher::isPlatfromConnected()
+{
   // Fimrware update command to be sent to the platfrom core.
   string firmware_update_json = R"({'cmd':'firmware_update'})";
   // Wait for a platfrom to be connected. Pooling!!!
@@ -132,7 +133,8 @@ bool Flasher::isPlatfromConnected(){
     // Already in bootloader mode. Do nothing
     cout << "Platform in bootloader mode. Flashing Process is about to start." << endl;
 
-  }else{
+  }
+  else{
     // Enter bootloader mode.
     if(!write(firmware_update_json)){
       return false;
@@ -152,8 +154,8 @@ bool Flasher::isPlatfromConnected(){
 * @param input_firmware The firmware path to be flashed to the bootloader.
 * @return true on success, false otherwise.
 */
-int Flasher::flash(const std::string &input_firmware){
-
+int Flasher::flash(const std::string &input_firmware)
+{
   // This is a blocking function and has a timeout.
   bool res = isPlatfromConnected();
   if(!res){
@@ -271,8 +273,8 @@ int Flasher::flash(const std::string &input_firmware){
 * @return total read bytes from the bootloader.
 */
 // TODO: rollback should be a stand alone and should get firmware size from the bootloader.
-unsigned int Flasher::rollback(unsigned int fsize){
-
+unsigned int Flasher::rollback(unsigned int fsize)
+{
   // saves data read from flash (platfrom) to this file
   FILE *debug_file = fopen(BINARY_TEMP_OUTPUT_FILENAME, "wb");
   if (debug_file == NULL){
@@ -372,8 +374,8 @@ unsigned int Flasher::rollback(unsigned int fsize){
 * @param filname_one The firmware path.
 * @param filname_two The read firmware path.
 */
-uint32_t Flasher::isChecksumMatch(const std::string &filname_one, const std::string &filname_two){
-
+uint32_t Flasher::isChecksumMatch(const std::string &filname_one, const std::string &filname_two)
+{
   unsigned int checksum_file_one = getFileChecksum(filname_one);
   unsigned int checksum_file_two = getFileChecksum(filname_two);
 
@@ -404,7 +406,8 @@ uint32_t Flasher::rawBytesChecksum(unsigned char *buffer, size_t length)
 * @brief Return the sum from the given binary file. Positive number for checksum, -1 for error.
 * @param filname The firmware path.
 */
-uint32_t Flasher::getFileChecksum(const std::string &filname){
+uint32_t Flasher::getFileChecksum(const std::string &filname)
+{
 	FILE * file;
 	long file_size;
 	char * buffer;
