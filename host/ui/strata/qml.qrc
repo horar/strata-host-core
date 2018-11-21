@@ -447,5 +447,6 @@
         <file>views/motor-vortex/InteractiveBlockDiagramDemo.html</file>
         <file>views/SGPdfViewer/SGPdfViewer.qml</file>
         <file>statusbar-partial-views/SGPrivacyPolicy.qml</file>
+        <file>statusbar-partial-views/SGGreenButton.qml</file>
     </qresource>
 </RCC>

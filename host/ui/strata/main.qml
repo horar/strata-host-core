@@ -227,6 +227,7 @@ Window {
         height: 30
         width: 70
         visible: !showDebugCommandBar
+        opacity: 0.5
         onClicked: showDebugCommandBar = true
         anchors {
             right: parent.right

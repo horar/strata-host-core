@@ -292,36 +292,42 @@ Popup {
                                 columns: 3
                                 spacing: 2
 
-                                Button {
+                                SGGreenButton {
                                     text: "Connectivity, Custom, and SoC"
                                     width: (prefsGrid.width - prefsGrid.spacing * (prefsGrid.columns - 1)) / 3
+                                    checkable: true
                                 }
 
-                                Button {
+                                SGGreenButton {
                                     text: "Sensors"
                                     width: (prefsGrid.width - prefsGrid.spacing * (prefsGrid.columns - 1)) / 3
+                                    checkable: true
                                 }
 
-                                Button {
+                                SGGreenButton {
                                     text: "Power Management"
-                                    enabled: false
+                                    checked: true
                                     width: (prefsGrid.width - prefsGrid.spacing * (prefsGrid.columns - 1)) / 3
+                                    checkable: true
                                 }
 
-                                Button {
+                                SGGreenButton {
                                     text: "Analog, Log, and Timing"
                                     width: (prefsGrid.width - prefsGrid.spacing * (prefsGrid.columns - 1)) / 3
+                                    checkable: true
                                 }
 
-                                Button {
+                                SGGreenButton {
                                     text: "Discrete"
-                                    enabled: false
+                                    checked: true
                                     width: (prefsGrid.width - prefsGrid.spacing * (prefsGrid.columns - 1)) / 3
+                                    checkable: true
                                 }
 
-                                Button {
+                                SGGreenButton {
                                     text: "Optoelectronics"
                                     width: (prefsGrid.width - prefsGrid.spacing * (prefsGrid.columns - 1)) / 3
+                                    checkable: true
                                 }
                             }
                         }

@@ -93,6 +93,9 @@ signals:
     // Platform Framework Signals
     void notification(QString payload);
 
+    // Sends notifications to analytics log to populate with fake data
+    void pretendMetrics(QString message);  // TODO: remove this when metrics.js is fully functioning.
+
 private:
 
     // ---

@@ -70,6 +70,14 @@ Item {
                                 }
                             }
                         }
+
+                        MouseArea {
+                            // Blocks interactivity with webView
+                            anchors { fill: webContainer }
+                            hoverEnabled: true
+                            preventStealing: true
+                            propagateComposedEvents: false
+                        }
                     }
 
                     Button {

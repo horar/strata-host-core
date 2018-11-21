@@ -1,6 +1,7 @@
 import QtQuick 2.9
 import QtQuick.Controls 2.3
 import Fonts 1.0
+import QtQuick.Dialogs 1.3
 
 ScrollView {
     id: scrollView
@@ -46,7 +47,7 @@ ScrollView {
                         id: updateTitle
                         text: "Update Profile Information:"
                         font {
-                            pixelSize: 25
+                            pixelSize: 20
                             family: Fonts.franklinGothicBold
                         }
                         anchors {
@@ -90,6 +91,67 @@ ScrollView {
                     }
 
                     Row {
+                        anchors {
+                            horizontalCenter: subColumn1.horizontalCenter
+                        }
+                        spacing: 20
+
+                        Column {
+                            id: imageColumn
+                            spacing: 20
+                            anchors {
+                                verticalCenter: profile_image.verticalCenter
+                            }
+
+                            Button {
+                                text: "Select New Image"
+                                onClicked: fileDialog.visible = true
+                                anchors {
+                                    horizontalCenter: imageColumn.horizontalCenter
+                                }
+                            }
+
+                            Text {
+                                text: "File Selected:"
+                                visible: selectedImage.text != ""
+                                anchors {
+                                    horizontalCenter: imageColumn.horizontalCenter
+                                }
+                            }
+
+                            Text {
+                                id: selectedImage
+                                width: 150
+                                elide: Text.ElideLeft
+                                anchors {
+                                    horizontalCenter: imageColumn.horizontalCenter
+                                }
+                            }
+                        }
+
+                        FileDialog {
+                            id: fileDialog
+                            title: "Please choose a file"
+                            folder: shortcuts.home
+                            selectMultiple: false
+                            onAccepted: {
+                                selectedImage.text = fileDialog.fileUrl
+                    //            console.log("You chose: " + fileDialog.fileUrl)
+                            }
+                            onRejected: {
+                    //            console.log("Canceled")
+                            }
+                        }
+
+                        Image {
+                            id: profile_image
+                            sourceSize.height: 150
+                            fillMode: Image.PreserveAspectFit
+                            source: "qrc:/images/" + getUserImage(user_id)
+                        }
+                    }
+
+                    Row {
                         spacing: 20
                         anchors {
                             horizontalCenter: subColumn1.horizontalCenter
@@ -128,6 +190,18 @@ ScrollView {
                         horizontalCenter: passwordContainer.horizontalCenter
                     }
                     spacing: 15
+
+                    Text {
+                        id: updatePass
+                        text: "Update Password:"
+                        font {
+                            pixelSize: 20
+                            family: Fonts.franklinGothicBold
+                        }
+                        anchors {
+                            horizontalCenter: subColumn2.horizontalCenter
+                        }
+                    }
 
                     SGSubmitInfoBox {
                         label: "Current Password:"
