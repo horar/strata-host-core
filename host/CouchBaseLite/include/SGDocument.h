@@ -12,7 +12,6 @@
 #define SGDOCUMENT_H
 
 #include <string>
-#include "SGDict.h"
 #include "SGDatabase.h"
 #include "c4Document+Fleece.h"
 #include "FleeceImpl.hh"
