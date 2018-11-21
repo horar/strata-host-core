@@ -10,7 +10,9 @@
 */
 #ifndef SGMUTABLEDOCUMENT_H
 #define SGMUTABLEDOCUMENT_H
+
 #include "SGDocument.h"
+
 class SGMutableDocument: public SGDocument{
 public:
     SGMutableDocument(class SGDatabase *database, std::string docId);
