@@ -190,7 +190,7 @@ Window {
                 onClicked: {
                     NavigationControl.updateState(NavigationControl.events.PLATFORM_DISCONNECTED_EVENT, null)
                     var disconnect_json = {"hcs::cmd":"disconnect_platform"}
-                    console.log("disonnecting the platform")
+                    console.log("disconnecting the platform")
                     coreInterface.sendCommand(JSON.stringify(disconnect_json))
                 }
             }
@@ -280,14 +280,6 @@ Window {
         }
         onPlatformStateChanged: {
             console.log("Main: PlatformStateChanged: ", platform_connected_state)
-
-            if(platform_connected_state) {
-                // Show control as we have connected
-                //NavigationControl.updateState(NavigationControl.events.PLATFORM_CONNECTED_EVENT)
-            }
-            else if (!platform_connected_state){
-                NavigationControl.updateState(NavigationControl.events.PLATFORM_DISCONNECTED_EVENT)
-            }
         }
     }
 }

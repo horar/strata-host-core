@@ -70,8 +70,8 @@ int main(int argc, char *argv[])
         #ifdef Q_OS_MACOS
         // We are pretty deep in the directory. Ex. ui/build-xxx-Release/spyglass.app/Contents/MacOs
         #define HOST_ROOT_PATH      (app.applicationDirPath() + "/../../../../../")
-        #define HCS_PATH            HOST_ROOT_PATH + "hcs2/build/hcs"
-        #define HCS_CONFIG_PATH     HOST_ROOT_PATH + "hcs2/files/conf/host_controller_service.config_template"
+        #define HCS_PATH            HOST_ROOT_PATH + "apps/hcs2/build/hcs"
+        #define HCS_CONFIG_PATH     HOST_ROOT_PATH + "apps/hcs2/files/conf/host_controller_service.config_template"
         #endif
 
         #ifdef Q_OS_LINUX
