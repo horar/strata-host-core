@@ -5,6 +5,7 @@ var isInitialized = false
 var platformListModel
 var coreInterface
 var documentManager
+var selectedPlatform = { "uuid":"", "verbose":"", "connection":"" }
 
 function initialize (newModel, newCoreInterface, newDocumentManager) {
     isInitialized = true
@@ -24,13 +25,13 @@ function populatePlatforms(platform_list_json) {
     //to enable a new model of board UI to be shown, this list has to be edited
     //the other half of the map will be the name of the directory that will be used to show the initial screen (e.g. usb-pd/Control.qml)
 
-
     var uuid_map = {
         "P2.2017.1.1.0" : "usb-pd",             //original version
         "P2.2018.1.1.0" : "bubu",
         "SEC.2017.004.2.0" : "motor-vortex",
         "SEC.2018.004.0.1" : "usb-pd",
         "SEC.2018.004.1.1" : "usb-pd",
+        "SEC.2018.004.1.2" : "usb-pd",
         "P2.2018.0.0.0" : "usb-pd-multiport",       //uninitialized board
         "SEC.2017.038.0.0": "usb-pd-multiport",
         "SEC.2018.018.0.0" : "logic-gate",
@@ -38,6 +39,7 @@ function populatePlatforms(platform_list_json) {
     }
 
     platformListModel.clear()
+    platformListModel.currentIndex = -1
     platformListModel.append({ "text" : "Select a Platform..." })
     // Parse JSON
     try {
@@ -106,6 +108,13 @@ function populatePlatforms(platform_list_json) {
 
             // Add to the model
             platformListModel.append(platform_info)
+
+            // If the previously selected platform is still available, set the currentIndex to match
+            if (selectedPlatform.uuid === platform_info.uuid &&
+                    selectedPlatform.verbose === platform_info.verbose &&
+                    selectedPlatform.connection === platform_info.connection) {
+                platformListModel.currentIndex = (platformListModel.count - 1)
+            }
         }
     }
     catch(err) {
@@ -115,27 +124,25 @@ function populatePlatforms(platform_list_json) {
         platformListModel.append({ "text" : "No Platforms Available" } )
     }
 
-    // Auto Select "connected" platform
+    // If no previous SelectedPlatform matched, reset to default state
+    if (platformListModel.currentIndex === -1) {
+        sendSelection(0)
+    }
+
+    // Auto Select newly connected platform
     if ( autoSelectEnabled && autoSelectedPlatform) {
         console.log("Auto selecting connected platform: ", autoSelectedPlatform.name)
         sendSelection( autoSelectedIndex )
-
-
-        // For Demo purposes only; Immediately go to control
-//        var data = { platform_name: autoSelectedPlatform.name}
-//        coreInterface.sendSelectedPlatform(autoSelectedPlatform.uuid, autoSelectedPlatform.connection)
-//        NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT,data)
-//        platformListModel.currentIndex = autoSelectedIndex
-//        platformListModel.selectedConnection = "connected"
-    }
-    else if ( autoSelectEnabled == false){
-        console.log("Auto selecting disabled.")
     }
 }
 
 function sendSelection (currentIndex) {
     platformListModel.currentIndex = currentIndex
     platformListModel.selectedConnection = ""
+    selectedPlatform.uuid = platformListModel.get(currentIndex).uuid
+    selectedPlatform.verbose = platformListModel.get(currentIndex).verbose
+    selectedPlatform.connection = platformListModel.get(currentIndex).connection
+
     /*
         Determine action depending on what type of 'connection' is used
     */
@@ -156,14 +163,14 @@ function sendSelection (currentIndex) {
         console.log("menu item selected for platform:",platformListModel.get(currentIndex).uuid, platformListModel.get(currentIndex).connection);
         // Go offline-mode
         NavigationControl.updateState(NavigationControl.events.OFFLINE_MODE_EVENT, data)
-        coreInterface.sendSelectedPlatform(platformListModel.get(currentIndex).uuid,platformListModel.get(currentIndex).connection)
+        coreInterface.sendSelectedPlatform(platformListModel.get(currentIndex).uuid, platformListModel.get(currentIndex).connection)
         if (!NavigationControl.flipable_parent_.flipped) {
             NavigationControl.updateState(NavigationControl.events.TOGGLE_CONTROL_CONTENT)
         }
     }
     else if (connection === "connected"){
         platformListModel.selectedConnection = "connected"
-        coreInterface.sendSelectedPlatform(platformListModel.get(currentIndex).uuid,platformListModel.get(currentIndex).connection)
+        coreInterface.sendSelectedPlatform(platformListModel.get(currentIndex).uuid, platformListModel.get(currentIndex).connection)
         NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT,data)
         if (NavigationControl.flipable_parent_.flipped) {
             NavigationControl.updateState(NavigationControl.events.TOGGLE_CONTROL_CONTENT)
@@ -172,7 +179,7 @@ function sendSelection (currentIndex) {
     else if (connection === "remote"){
         platformListModel.selectedConnection = "remote"
         // Call coreinterface connect()
-        coreInterface.sendSelectedPlatform(platformListModel.get(currentIndex).uuid,platformListModel.get(currentIndex).connection)
+        coreInterface.sendSelectedPlatform(platformListModel.get(currentIndex).uuid, platformListModel.get(currentIndex).connection)
         NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT,data)
         if (NavigationControl.flipable_parent_.flipped) {
             NavigationControl.updateState(NavigationControl.events.TOGGLE_CONTROL_CONTENT)

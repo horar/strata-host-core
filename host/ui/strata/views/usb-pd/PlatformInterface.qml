@@ -210,6 +210,19 @@ Item {
          "watts":30          // 30-300
     }
 
+    property var ac_power_supply_connection:{
+        "state":"connected",  // or "disconnected"
+        "power":200          // maximum supply power in watts
+    }
+
+    property var assured_power_port:{
+        "port":1,          // port to enable/disable for assured power
+        "enabled":true,     // or 'false' if disabling assured port
+        "port":1,              // or any USB C port id
+        "voltage":12,          // One of the available voltages
+        "maximum_current":100  // in milliamps
+    }
+
     // --------------------------------------------------------------------------------------------
     //          Commands
     //--------------------------------------------------------------------------------------------
@@ -300,7 +313,7 @@ Item {
                          "power":45      // in Watts
                        },
                    update: function(enabled,voltage,watts){
-                       console.log("input voltage foldback update: enabled=",enabled,"voltage=",voltage,"watts=",watts);
+                       //console.log("input voltage foldback update: enabled=",enabled,"voltage=",voltage,"watts=",watts);
                        //set the notification property values, as the platform won't send a notification in response to this
                        //command, and those properties are used by controls to see what the value of other controls should be.
                        foldback_input_voltage_limiting_event.input_voltage_foldback_enabled = enabled;

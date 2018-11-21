@@ -27,12 +27,14 @@ qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
+# set root host build path
+HOST_ROOT = ../../../host
 
 HEADERS +=ImplementationInterfaceBinding/ImplementationInterfaceBinding.h \
-        $${PWD}/../../include/HostControllerClient.hpp\
-        $${PWD}/../../include/zhelpers.hpp \
-        $${PWD}/../../include/zmq.hpp \
-        $${PWD}/../../include/zmq_addon.hpp
+        $${HOST_ROOT}/libs/HostControllerClient/include/HostControllerClient.hpp \
+        $${HOST_ROOT}/ext_libs/zmq/include/zhelpers.hpp \
+        $${HOST_ROOT}/ext_libs/zmq/include/zmq.hpp \
+        $${HOST_ROOT}/ext_libs/zmq/include/zmq_addon.hpp
 
 SOURCES += main.cpp \
     ImplementationInterfaceBinding/ImplementationInterfaceBinding.cpp \
@@ -52,18 +54,20 @@ HOST_ROOT = ../..
 # linux
 unix : !macx : !win32 {
     message("Building on Linux")
-    LIBS += -L$$PWD/../../lib/linux/lib/ -lzmq
-    INCLUDEPATH += $$PWD/../../lib/linux/include
-    INCLUDEPATH += $$PWD/../../lib/linux/include
-    DEPENDPATH += $$PWD/../../lib/linux/include
+    LIBS += -L$${HOST_ROOT}/ext_libs/libzmq/lib/linux -lzmq
+    INCLUDEPATH += $${HOST_ROOT}/libs/HostControllerClient/include/
+    INCLUDEPATH += $${HOST_ROOT}/ext_libs/zmq/include
+    INCLUDEPATH += $${HOST_ROOT}/ext_libs/libzmq/include
 }
 
 # mac (not iOS)
 else : macx : !win32 {
     message("Building on OSX")
-    LIBS += -L$${HOST_ROOT}/lib/mac/zeromq/4.2.2/lib -lzmq
-    DEPENDPATH += $${HOST_ROOT}/lib/mac/zeromq/4.2.2
-    INCLUDEPATH += $${HOST_ROOT}/lib/mac/zeromq/4.2.2/include/
+    LIBS += -L$${HOST_ROOT}/ext_libs/libzmq/lib/mac -lzmq
+#    DEPENDPATH += $${HOST_ROOT}/lib/mac/zeromq/4.2.2
+    INCLUDEPATH += $${HOST_ROOT}/libs/HostControllerClient/include/
+    INCLUDEPATH += $${HOST_ROOT}/ext_libs/zmq/include
+    INCLUDEPATH += $${HOST_ROOT}/ext_libs/libzmq/include
 }
 
 # windows
@@ -83,4 +87,3 @@ message(Current Build Directory: $$PWD);
 message(Include Path: $$INCLUDEPATH);
 message(Depend Path: $$DEPENDPATH);
 message("done");
-

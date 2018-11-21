@@ -111,11 +111,15 @@ void CoreInterface::notificationsThread()
 
         QString n(message.c_str());
 
+
+
         // Debug; Some messages are too long to print (ex: cloud images)
         if (n.length() < 500) {
           qDebug() <<"[recv]" << n;
+          emit pretendMetrics(n); // TODO: remove this (see pretendMetrics in CoreInterface.H)
         } else {
           qDebug() <<"[recv] Unprinted: Long Data Message Over 500 Chars";
+          emit pretendMetrics("Cloud file download, over 500 chars"); // TODO: remove this (see pretendMetrics in CoreInterface.H)
         }
 
         QJsonDocument doc = QJsonDocument::fromJson(n.toUtf8());

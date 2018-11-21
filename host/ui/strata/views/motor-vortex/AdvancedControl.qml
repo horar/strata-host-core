@@ -5,27 +5,24 @@ import QtQuick.Controls 2.2
 import "qrc:/js/navigation_control.js" as NavigationControl
 import "qrc:/views/motor-vortex/sgwidgets"
 
-
 Rectangle {
     id: advancedControl
     width: 1200
     height: 725
 
     function resetData(){
-
         startStopButton.checked = false
-        targetSpeedSlider.value = 1500
         rampRateSlider.value = 3
         driveModeCombo.currentIndex = 15
         faultModel.clear()
         platformInterface.driveModePseudoTrapezoidal = true
-
     }
 
     Component.onCompleted:  {
         platformInterface.phaseAngle = 15
-        platformInterface.set_phase_angle.update(5);
+        platformInterface.set_phase_angle.update(15);
         platformInterface.set_drive_mode.update(0);
+        platformInterface.system_mode_selection.update("manual");
     }
 
     Rectangle {
@@ -98,8 +95,6 @@ Rectangle {
             width: 500
             height: 200
             model: faultModel
-
-
         }
 
         property var errorArray: platformInterface.system_error.error_and_warnings
@@ -143,22 +138,23 @@ Rectangle {
                 text: checked ? qsTr("Start Motor") : qsTr("Stop Motor")
                 checkable: true
                 checked: platformInterface.motorState
-                property var motorOff: platformInterface.motor_off.enable;
 
+                property var motorOff: platformInterface.motor_off.enable;
                 onMotorOffChanged: {
                     if(motorOff === "off") {
                         startStopButton.checked = true
-
                     }
                     else {
                         startStopButton.checked = false
                     }
                 }
+
                 background: Rectangle {
                     color: startStopButton.checked ? "lightgreen" : "red"
                     implicitWidth: 100
                     implicitHeight: 40
                 }
+
                 contentItem: Text {
                     text: startStopButton.text
                     color: startStopButton.checked ? "black" : "white"
@@ -183,9 +179,8 @@ Rectangle {
                 }
                 text: qsTr("Reset")
                 onClicked: {
-                    platformInterface.set_reset_mcu.update()
                     resetData()
-
+                    platformInterface.set_reset_mcu.update()
                 }
             }
         }
@@ -212,11 +207,9 @@ Rectangle {
                 label: "Operation Mode:"
                 labelLeft: true
                 exclusive: true
-
                 radioGroup: GridLayout {
                     columnSpacing: 10
                     rowSpacing: 10
-
                     // Optional properties to access specific buttons cleanly from outside
                     property alias manual : manual
                     property alias automatic: automatic
@@ -224,31 +217,28 @@ Rectangle {
                     SGRadioButton {
                         id: manual
                         text: "Manual Control"
-                        checked: platformInterface.systemModeManual
+                        checked: platformInterface.systemMode
                         onCheckedChanged: {
-                                console.log("manu 2")
-                                platformInterface.systemModeManual = manual.checked
-                               platformInterface.motorSpeedSliderValue = 1500
-
+                            if (checked) {
+                                console.log("manu adv")
+                                platformInterface.systemMode = true
+                                platformInterface.motorSpeedSliderValue = 1500
                                 targetSpeedSlider.sliderEnable = true
                                 targetSpeedSlider.opacity = 1.0
-
-
+                            }
+                            else {
+                                console.log("auto adv")
+                                platformInterface.systemMode = false
+                                targetSpeedSlider.sliderEnable = false
+                                targetSpeedSlider.opacity = 0.5
+                            }
                         }
                     }
 
                     SGRadioButton {
                         id: automatic
                         text: "Automatic Demo Pattern"
-                        checked: platformInterface.systemModeAuto
-                        onCheckedChanged: {
-                                console.log("auto 1")
-                                platformInterface.systemModeAuto = automatic.checked
-                                targetSpeedSlider.sliderEnable = false
-                                targetSpeedSlider.opacity = 0.5
-
-
-                        }
+                        checked : !manual.checked
                     }
                 }
             }
@@ -272,9 +262,17 @@ Rectangle {
                 from : 1500
                 to: 4000
 
+                anchors {
+                    verticalCenter: setSpeed.verticalCenter
+                    left: speedControlContainer.left
+                    leftMargin: 10
+                    right: setSpeed.left
+                    rightMargin: 10
+                }
+
                 value :
                 {
-                    if(platformInterface.motorSpeedSliderValue < 1500 ){
+                    if(platformInterface.motorSpeedSliderValue <= 1500 ){
                         return 1500
                     }
                     if( platformInterface.motorSpeedSliderValue >= 4000 ) {
@@ -284,16 +282,8 @@ Rectangle {
                     return platformInterface.motorSpeedSliderValue
 
                 }
-                anchors {
-                    verticalCenter: setSpeed.verticalCenter
-                    left: speedControlContainer.left
-                    leftMargin: 10
-                    right: setSpeed.left
-                    rightMargin: 10
-                }
 
                 onValueChanged: {
-
                     setSpeed.input = value.toFixed(0)
                     var current_slider_value = value.toFixed(0)
 
@@ -301,15 +291,12 @@ Rectangle {
                     if(current_slider_value >= 4000 && platformInterface.motorSpeedSliderValue >= 4000){
                         console.log("Do nothing")
                     }
-
                     else if(current_slider_value <= 1500 && platformInterface.motorSpeedSliderValue <= 1500){
                         console.log("Do nothing")
                     }
                     else{
-
                         platformInterface.motorSpeedSliderValue = current_slider_value
                     }
-
                 }
 
                 MouseArea {
@@ -320,7 +307,6 @@ Rectangle {
 
                 SGToolTipPopup {
                     id: sgToolTipPopup
-
                     showOn: targetSpeedSliderHover.containsMouse
                     anchors {
                         bottom: targetSpeedSliderHover.top
@@ -351,21 +337,17 @@ Rectangle {
                 infoBoxWidth: 80
             }
 
-
             SGSlider {
                 id: rampRateSlider
                 label: "Ramp Rate:"
                 value:{
-
                     if(platformInterface.rampRateSliderValue < 2) {
                         return 2
                     }
                     if(platformInterface.rampRateSliderValue > 4) {
                         return 4
                     }
-
                     return platformInterface.rampRateSliderValue
-
                 }
                 from: 2
                 to:4
@@ -381,12 +363,10 @@ Rectangle {
                     setRampRate.input = value.toFixed(0)
                     var current_slider_value = value.toFixed(0)
 
-
                     // Don't change if FAE safety limit is enabled
                     if(current_slider_value >= 4 && platformInterface.rampRateSliderValue >= 4){
                         console.log("Do nothing")
                     }
-
                     else if(current_slider_value <= 2 && platformInterface.rampRateSliderValue <= 2){
                         console.log("Do nothing")
                     }
@@ -433,7 +413,6 @@ Rectangle {
                     topMargin: 10
                 }
                 label: "Drive Mode:"
-
                 radioGroup: GridLayout {
                     columnSpacing: 10
                     rowSpacing: 10
@@ -441,8 +420,6 @@ Rectangle {
                     // Optional properties to access specific buttons cleanly from outside
                     property alias ps : ps
                     property alias trap: trap
-
-
                     SGRadioButton {
                         id: ps
                         text: "Pseudo-Sinusoidal"
@@ -458,7 +435,6 @@ Rectangle {
                         checked: platformInterface.driveModePseudoTrapezoidal
                         onCheckedChanged: {
                             platformInterface.driveModePseudoTrapezoidal = trap.checked
-
                         }
                     }
                 }
@@ -468,8 +444,6 @@ Rectangle {
                 id: phaseAngleRow
                 width: childrenRect.width
                 height: childrenRect.height
-
-
                 anchors {
                     top: driveModeRadios.bottom
                     topMargin: 10
@@ -565,6 +539,7 @@ Rectangle {
                         left: whiteButton.right
                         leftMargin: 30
                     }
+
                     onClicked: {
                         if (checked) {
                             platformInterface.set_led_outputs_on_off.update("off")
@@ -583,7 +558,6 @@ Rectangle {
             id: ledSecondContainer
             width: 500
             height: childrenRect.height + 20
-
             color: "#eeeeee"
             anchors {
                 horizontalCenter: rightSide.horizontalCenter
@@ -673,7 +647,6 @@ Rectangle {
 
                 // Optional configuration:
                 label: "Direction:"
-
                 radioGroup: GridLayout {
                     columnSpacing: 10
                     rowSpacing: 10

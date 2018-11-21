@@ -1,9 +1,6 @@
 platform/cli/USB-PD/BUILD/*
 *build*/
 *BUILD*/
-*bin*/
-#LANJ: clashes with CommandDispatche for example !
-#*man*/
 *.pro.user*
 *.pro.user
 *.exe
@@ -40,4 +37,5 @@ platform/applications/*/debug/*
 !platform/applications/*/release/CMakeLists.txt
 !platform/applications/*/debug/CMakeLists.txt
 *.jlink
-.DS_Store
+*.DS_Store
+

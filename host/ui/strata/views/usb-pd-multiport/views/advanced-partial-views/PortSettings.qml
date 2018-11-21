@@ -5,6 +5,8 @@ import "qrc:/views/usb-pd-multiport/sgwidgets"
 Item {
     id: root
 
+    property bool assuredPortPowerEnabled: true
+
     Item {
         id: controlMargins
         anchors {
@@ -12,14 +14,141 @@ Item {
             margins: 15
         }
 
+        Text{
+            id: assuredPortText
+            text: "Assure Port power:"
+            anchors {
+                top:parent.top
+                left: parent.left
+                leftMargin: 45
+            }
+        }
+
+        SGSwitch {
+            property bool port1connected:false
+            property bool port2connected:false
+            property bool port3connected:false
+            property bool port4connected:false
+            property bool deviceConnected:false
+            property var deviceIsConnected: platformInterface.usb_pd_port_connect.connection_state
+            property var deviceIsDisconnected: platformInterface.usb_pd_port_disconnect.connection_state
+
+            onDeviceIsConnectedChanged: {
+
+                if (platformInterface.usb_pd_port_connect.port_id === "USB_C_port_1"){
+                    if (platformInterface.usb_pd_port_connect.connection_state === "connected"){
+                        port1connected = true;
+                    }
+                }
+                else if (platformInterface.usb_pd_port_connect.port_id === "USB_C_port_2"){
+                    if (platformInterface.usb_pd_port_connect.connection_state === "connected"){
+                        port2connected = true;
+                    }
+                }
+                else if (platformInterface.usb_pd_port_connect.port_id === 3){
+                    if (platformInterface.usb_pd_port_connect.connection_state === "USB_C_port_3"){
+                        port3connected = true;
+                    }
+                }
+                else if (platformInterface.usb_pd_port_connect.port_id === 4){
+                    if (platformInterface.usb_pd_port_connect.connection_state === "USB_C_port_4"){
+                        port4connected = true;
+                    }
+                }
+
+                //console.log("updating connection", port1connected, port2connected, port3connected, port4connected)
+                deviceConnected = port1connected || port2connected || port3connected || port4connected;
+
+            }
+
+            onDeviceIsDisconnectedChanged: {
+                if (platformInterface.usb_pd_port_disconnect.port_id === "USB_C_port_1"){
+                    if (platformInterface.usb_pd_port_disconnect.connection_state === "disconnected"){
+                        port1connected = false;
+                    }
+                }
+                else if (platformInterface.usb_pd_port_disconnect.port_id === "USB_C_port_2"){
+                    if (platformInterface.usb_pd_port_disconnect.connection_state === "disconnected"){
+                        port2connected = false;
+                    }
+                }
+                else if (platformInterface.usb_pd_port_disconnect.port_id === "USB_C_port_3"){
+                    if (platformInterface.usb_pd_port_disconnect.connection_state === "disconnected"){
+                        port3connected = false;
+                    }
+                }
+                else if (platformInterface.usb_pd_port_disconnect.port_id === "USB_C_port_4"){
+                    if (platformInterface.usb_pd_port_disconnect.connection_state === "disconnected"){
+                        port4connected = false;
+                    }
+                }
+                //console.log("updating connection", port1connected, port2connected, port3connected, port4connected)
+                deviceConnected = port1connected || port2connected || port3connected || port4connected;
+            }
+
+            id: assuredPortSwitch
+            anchors {
+                left: assuredPortText.right
+                leftMargin: 10
+                verticalCenter: assuredPortText.verticalCenter
+            }
+            enabled: assuredPortPowerEnabled && !deviceConnected
+            checkedLabel: "On"
+            uncheckedLabel: "Off"
+            switchHeight: 20
+            switchWidth: 46
+
+            checked: platformInterface.assured_power_port.enabled
+            onToggled: platformInterface.set_assured_power_port.update(checked, portNumber)  //we're only allowing port 1 to be assured            
+        }
+
         SGComboBox {
+
+            property variant maxPowerOptions
+            property int maxPower: platformInterface.usb_pd_maximum_power.commanded_max_power
+
+            //limit the options for power usage to be less than the max power allocated for this port
+            onMaxPowerChanged:{
+                if (platformInterface.usb_pd_maximum_power.port === portNumber){
+                    if (maxPower >= 100){
+                        maxPowerOptions = ["15","27", "36", "45","60","100"];
+                    }
+                    else if (maxPower >=60){
+                        maxPowerOptions = ["15","27", "36", "45","60"];
+                    }
+                    else if (maxPower >=45){
+                        maxPowerOptions = ["15","27", "36", "45"];
+                    }
+                    else if (maxPower >=36){
+                        maxPowerOptions = ["15","27", "36"];
+                    }
+                    else if (maxPower >=27){
+                        maxPowerOptions = ["15","27"];
+                    }
+                    else if (maxPower >=15){
+                        maxPowerOptions = ["15"];
+                    }
+                    else{
+                        maxPowerOptions = [];
+                    }
+
+                    //console.log("got a new commanded max power for port",platformInterface.usb_pd_maximum_power.port)
+                    maxPowerOutput.currentIndex = maxPowerOutput.comboBox.find( parseInt (platformInterface.usb_pd_maximum_power.commanded_max_power))
+                }
+            }
+
             id: maxPowerOutput
             label: "Max Power Output:"
-            model: ["15","27", "36", "45","60","100"]
+            model: maxPowerOptions
+            enabled: !assuredPortSwitch.checked
+            textColor: !assuredPortSwitch.checked ? "black" : "grey"
+            comboBoxHeight: 25
+            comboBoxWidth: 60
             anchors {
                 left: parent.left
-                leftMargin: 23
-                top: parent.top
+                leftMargin: 48
+                top: assuredPortSwitch.bottom
+                topMargin: 10
             }
 
             //when changing the value
@@ -30,25 +159,29 @@ Item {
 
             //notification of a change from elsewhere
             //NB this info comes from the periodic power notification, not from the usb_pd_maximum_power notificaiton
-            property var currentMaximumPower: platformInterface.usb_pd_maximum_power.commanded_max_power
-            onCurrentMaximumPowerChanged: {
-                if (platformInterface.usb_pd_maximum_power.port === portNumber){
-                    maxPowerOutput.currentIndex = maxPowerOutput.comboBox.find( parseInt (platformInterface.usb_pd_maximum_power.commanded_max_power))
-                }
+//            property var currentMaximumPower: platformInterface.usb_pd_maximum_power.commanded_max_power
+//            onCurrentMaximumPowerChanged: {
+//                if (platformInterface.usb_pd_maximum_power.port === portNumber){
+//                    console.log("got a new commanded max power for port",platformInterface.usb_pd_maximum_power.port)
+//                    maxPowerOutput.currentIndex = maxPowerOutput.comboBox.find( parseInt (platformInterface.usb_pd_maximum_power.commanded_max_power))
+//                    console.log("set port power to index",maxPowerOutput.currentIndex)
+//                }
 
-            }
-
-
+//            }
         }
+
 
 
         SGSlider {
             id: currentLimit
             label: "Current limit:"
             value: platformInterface.request_over_current_protection_notification.current_limit
+            labelTopAligned: true
+            startLabel: "0A"
+            endLabel: "100A"
             anchors {
                 left: parent.left
-                leftMargin: 61
+                leftMargin: 86
                 top: maxPowerOutput.bottom
                 topMargin: 10
                 right: currentLimitInput.left
@@ -62,14 +195,25 @@ Item {
         SGSubmitInfoBox {
             id: currentLimitInput
             showButton: false
+            infoBoxWidth: 30
             anchors {
                 verticalCenter: currentLimit.verticalCenter
-                right: parent.right
+                verticalCenterOffset: -7
+                right: currentLimitInputUnits.left
+                rightMargin: 5
             }
-            value: platformInterface.request_over_current_protection_notification.current_limit
-            onApplied:{
-                var currentValue = parseFloat(value)
-                platformInterface.set_over_current_protection.update(portNumber, currentValue)
+
+            value: platformInterface.request_over_current_protection_notification.current_limit.toFixed(0)
+            onApplied: platformInterface.set_over_current_protection.update(portNumber, intValue)
+
+        }
+
+        Text{
+            id: currentLimitInputUnits
+            text: "A"
+            anchors {
+                right: parent.right
+                verticalCenter: currentLimitInput.verticalCenter
             }
         }
 
@@ -99,8 +243,12 @@ Item {
             value:platformInterface.set_cable_loss_compensation.output_current
             from:0
             to:3
+            labelTopAligned: true
+            startLabel: "0A"
+            endLabel: "3A"
             anchors {
                 left: parent.left
+                leftMargin: 25
                 top: cableCompensation.bottom
                 topMargin: 10
                 right: incrementInput.left
@@ -118,14 +266,28 @@ Item {
         SGSubmitInfoBox {
             id: incrementInput
             showButton: false
+            infoBoxWidth: 30
             anchors {
                 verticalCenter: increment.verticalCenter
-                right: parent.right
+                verticalCenterOffset: -7
+                right: incrementInputUnits.left
+                rightMargin: 5
             }
-            value: platformInterface.set_cable_loss_compensation.output_current
-            onApplied: platformInterface.set_cable_compensation.update(portNumber,
-                                                                            incrementInput.floatValue,
-                                                                            platformInterface.set_cable_loss_compensation.bias_voltage)
+
+            value: platformInterface.set_cable_loss_compensation.output_current.toFixed(0)
+            onApplied: platformInterface.set_cable_loss_compensation.update(portNumber,
+                           intValue,
+                           platformInterface.set_cable_loss_compensation.bias_voltage)
+
+        }
+
+        Text{
+            id: incrementInputUnits
+            text: "A"
+            anchors {
+                right: parent.right
+                verticalCenter: incrementInput.verticalCenter
+            }
         }
 
         SGSlider {
@@ -134,9 +296,12 @@ Item {
             value:platformInterface.set_cable_loss_compensation.bias_voltage
             from:0
             to:2
+            labelTopAligned: true
+            startLabel: "0mV"
+            endLabel: "2mV"
             anchors {
                 left: parent.left
-                leftMargin: 50
+                leftMargin: 75
                 top: increment.bottom
                 topMargin: 10
                 right: biasInput.left
@@ -153,16 +318,26 @@ Item {
         SGSubmitInfoBox {
             id: biasInput
             showButton: false
+            infoBoxWidth: 30
             anchors {
                 verticalCenter: bias.verticalCenter
-                right: parent.right
+                verticalCenterOffset: -7
+                right: biasInputUnits.left
+                rightMargin: 5
             }
-            value: platformInterface.set_cable_loss_compensation.bias_voltage
-            onApplied:{
-                var currentValue = parseFloat(value)
-                platformInterface.set_cable_compensation.update(portNumber,
+
+            value: platformInterface.set_cable_loss_compensation.bias_voltage.toFixed(0)
+            onApplied: platformInterface.set_cable_loss_compensation.update(portNumber,
                                                                             platformInterface.set_cable_loss_compensation.output_current,
-                                                                            currentValue)
+                                                                            intValue)
+        }
+
+        Text{
+            id: biasInputUnits
+            text: "mV"
+            anchors {
+                right: parent.right
+                verticalCenter: biasInput.verticalCenter
             }
         }
 
