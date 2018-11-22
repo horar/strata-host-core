@@ -39,7 +39,7 @@ typedef struct {
 } remote_platform_details;
 typedef std::vector<remote_platform_details> remote_platforms;
 
-class DiscoveryService {
+class DiscoveryService final {
 public:
     //Constructor
     DiscoveryService(const std::string&);

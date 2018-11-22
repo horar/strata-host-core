@@ -34,12 +34,10 @@ int main(int argc, char *argv[])
 	}
 
 	char *firmware_file_path = argv[1];
-	int res;
 
 #if MANUAL_OPEN_PORT
 	Connector* serialConnector = ConnectorFactory::getConnector("platform");
-	res = serialConnector->open("/dev/cu.usbserial-DB00VFH8");
-	if(!res) {
+	if(!serialConnector->open("/dev/cu.usbserial-DB00VFH8")) {
 		return 0;
 	}
 	Flasher flasher(serialConnector);
@@ -48,7 +46,7 @@ int main(int argc, char *argv[])
 #endif
 
 	cout << "START: flash" <<endl;
-	res = flasher.flash(firmware_file_path);
+	int res = flasher.flash(firmware_file_path);
 	cout << "Flasher Return Status:" << ( res ? "true": "false" ) << endl;
  	cout << "END: flash" <<endl;
 

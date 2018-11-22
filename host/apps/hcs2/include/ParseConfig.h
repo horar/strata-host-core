@@ -13,7 +13,7 @@
 #include <vector>
 #include <sstream>
 
-class ParseConfig {
+class ParseConfig final {
 public:
     ParseConfig(std::string file);
     ~ParseConfig();
