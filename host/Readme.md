@@ -2,7 +2,7 @@
 
 ## How to build applications
 
-### Installing prerequisites in Linux
+### Installing prerequisites in Linux (Ubuntu 18.04)
 
 ```
 sudo apt-get update
@@ -29,7 +29,7 @@ export Qt5_DIR=<QT installed directory>/5.11.2/clang_64/lib/cmake/Qt5
 
 or for Linux:
 ```
-export Qt5_DIR=<QT installed directory>/5.11.2/clang_64/lib/cmake/Qt5
+export Qt5_DIR=<QT installed directory>/5.11.2/gcc_64/lib/cmake/Qt5
 ```
 
 
