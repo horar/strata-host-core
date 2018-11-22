@@ -34,7 +34,7 @@ export Qt5_DIR=<QT installed directory>/5.11.2/clang_64/lib/cmake/Qt5
 
 
 ### Compilation for Linux and MacOS
-In host folder run commands in console:
+In 'host' folder run commands in console:
 
 ```
 mkdir build
