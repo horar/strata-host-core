@@ -1,10 +1,19 @@
-Spyglass platform applications located in/platform/applications
+MUST DO BEFORE BUILD:
+======================
+
+Spyglass platform applications located in /platform/applications/
 require MBed Operating System libraries and its dependencies.
 
-How to set up your MBed OS enviroment is explained in README file located in /platform/tools/MbedOSBuilder
+Dependencies of Mbed OS:
 
+mbed CLI + python utilities
+gcc arm toolchain
 
-#This process must be executed before building any platform application!
+How to set up your MBed OS enviroment is explained in MbedOSBuilder README file
+located in /platform/tools/MbedOSBuilder
+
+This process must be executed before building any platform application!
+=========================================================================
 
 
 HOW TO BUILD:
@@ -19,7 +28,7 @@ Windows: cmake .. -G"MinGW Makefiles" -Dproject_name="water-heater"
 cmake .. .. -Dproject_name="water-heater" -DMBED_OS_CHECKOUT=True
 
 
-Where water-heater is the project name located in the platform/applications directory
+Where water-heater is the project name located in the platform/applications/ directory
 and for now we support build of this project only.
 
-USP-PD-100W comming soon.
+USP-PD-4-port comming soon.

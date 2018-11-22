@@ -6,3 +6,6 @@ add_subdirectory(libs)
 
 # applications
 add_subdirectory(apps)
+
+
+add_subdirectory(research_spikes)
