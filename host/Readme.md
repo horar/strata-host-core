@@ -34,6 +34,11 @@ export Qt5_DIR=<QT installed directory>/5.11.2/gcc_64/lib/cmake/Qt5
 
 
 ### Compilation for Linux and MacOS
+Before you run compilation make sure you have updated git branch and git submodules as well. For git submodules update:
+```
+git submodule update --init --recursive
+```
+
 In 'host' folder run commands in console:
 
 ```
