@@ -160,6 +160,7 @@ public:
     void serialPortMonitor();
     void sendDisconnecttoUI();
     void platformDisconnectRoutine();
+    void sendMessageToUI(const std::string& message);
 
     // function that creates json using second parameter as notification and third as value
     void constructJSON(std::string&, const std::string&, const std::string&);
@@ -200,10 +201,9 @@ private:
     // for eg: client connected to two plat or plat connected to 2 clients
     // [TODO] [prasanth] create the multi map between UUID (string) and zmq ID(zmq_msg)
     // [testing alone] map created between int and zmq_msg
-    typedef std::multimap<std::vector<std::string>,std::string> multimap;
+    typedef std::multimap<std::vector<std::string>,std::string> client_platform_multimap;
+    client_platform_multimap platform_client_mapping_;
 
-    multimap platform_client_mapping_;
-    multimap::iterator multimap_iterator_;	// iterator for multimap
     // list to hold all the platform UUID
     // [testing alone] hold int
     typedef std::list<platform_details> platformList;
@@ -221,7 +221,6 @@ private:
     bool port_disconnected_;
 
     // Connector objects
-    ConnectorFactory *connector_factory_;
     Connector *client_connector_ ;
     Connector *serial_connector_ ;
     Connector *remote_connector_ ;

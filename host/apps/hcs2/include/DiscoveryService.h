@@ -39,10 +39,11 @@ typedef struct {
 } remote_platform_details;
 typedef std::vector<remote_platform_details> remote_platforms;
 
-class DiscoveryService {
+class DiscoveryService final {
 public:
     //Constructor
     DiscoveryService(const std::string&);
+    ~DiscoveryService();
 
     // core functions
     remote_platforms getPlatforms();  // returns the json string of list of available platforms
@@ -73,8 +74,8 @@ public:
 private:
     std::string jwt_string_;
     std::string hcs_token_;
-    ConnectorFactory *connector_factory_;
-    Connector *service_connector_ ;
 
+    Connector *service_connector_ ;
 };
+
 #endif

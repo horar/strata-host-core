@@ -49,17 +49,17 @@ private:
     static std::string toString(const QString& s);
     static QString toQString(const std::string &s);
 
-    std::unique_ptr<SerialConnector> serial_{std::make_unique<SerialConnector>()};
+    std::unique_ptr<Connector> serial_;
     std::thread reader_;
     std::thread connector_;
     std::shared_mutex quitMutex_;
-    bool platformConnected_{false};
-    QString verboseName_{QStringLiteral("No Platform Connected")};
+    bool platformConnected_;
+    QString verboseName_;
     QString platformID_;
     QString notification_;
     QJsonObject payload_;
 
-    bool aboutToQuit_{false};
+    bool aboutToQuit_;
 };
 
 #endif // PLATFORMCONTROLLER_H

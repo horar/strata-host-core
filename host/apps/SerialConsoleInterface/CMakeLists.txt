@@ -44,7 +44,7 @@ set(QML_IMPORT_PATH "${QML_DIRS}"
     CACHE STRING "Qt Creator extra qml import paths" FORCE
 )
 
-add_executable(${PROJECT_NAME} WIN32
+add_executable(${PROJECT_NAME}
     main.cpp
     PlatformController.cpp
     qml.qrc

@@ -11,7 +11,7 @@
 * @copyright Copyright 2018 On Semiconductor
 */
 
-#include "Connector.h"
+#include "Connector_impl.h"
 #include "ZMQSocketConfiguration.h"
 
 using namespace std;
@@ -19,7 +19,7 @@ using namespace std;
 // @f constructor
 // @b creates the context for the socket
 //
-RequestReplyConnector::RequestReplyConnector()
+RequestReplyConnector::RequestReplyConnector() : Connector()
 {
     LOG_DEBUG(DEBUG,"Creating Discovery Service connector object\n",0);
     // zmq context creation

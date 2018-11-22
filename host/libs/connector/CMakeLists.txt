@@ -27,6 +27,7 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include
 )
 
 add_library(connector
+    src/Connector_impl.cpp
     src/SerialConnector.cpp
     src/PubSubConnector.cpp
     src/RequestReplyConnector.cpp
