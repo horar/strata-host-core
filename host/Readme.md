@@ -33,6 +33,14 @@ export Qt5_DIR=<QT installed directory>/5.11.2/gcc_64/lib/cmake/Qt5
 ```
 
 
+second option is to install QT trough brew.
+```
+brew install --force-bottle qt5
+```
+
+and the cmake finds this installation and uses it.
+
+
 ### Compilation for Linux and MacOS
 Before you run compilation make sure you have updated git branch and git submodules as well. For git submodules update:
 ```
