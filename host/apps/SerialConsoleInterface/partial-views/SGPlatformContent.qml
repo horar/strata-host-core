@@ -200,7 +200,7 @@ Item {
                     //CoreCommands Inserting on every Platform
                     Component.onCompleted:
                     {
-                        cmdHistoryList.insert(0, { "status" : platformInterface.coreCommands[1][0] })
+                        cmdHistoryList.insert(0, { "status" : platformInterface.coreCommands[1][0], type : "core"})
                     }
 
                     ListModel {

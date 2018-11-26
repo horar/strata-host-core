@@ -136,7 +136,7 @@ function saveAndSendCommand(command) {
     var currentRowColor = "black"
     try {
         JSON.parse(command)
-        cmdHistoryList.insert(0, { "status" : command })
+        cmdHistoryList.insert(0, { "status" : command , type : "previous"})
         platformController.sendCommand(command, boardId)
     } catch(e) {
         currentRowColor = "red"
@@ -152,7 +152,7 @@ function insertPlatformCommands(inputlist,outputlist) {
     for( var i=0; i < inputlist.length ; ++i )
     {
         console.log("test"+inputlist[i])
-        outputlist.insert(i,{ "status" : inputlist[i]})
+        outputlist.insert(i,{ "status" : inputlist[i], type : "platform"})
     }
 
 }
