@@ -1,7 +1,7 @@
 #include "PlatformController.h"
-#include <iostream>
-
+#include "Connector.h"
 #include <QDebug>
+#include <iostream>
 
 using namespace std;
 

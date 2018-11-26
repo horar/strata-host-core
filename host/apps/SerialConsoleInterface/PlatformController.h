@@ -1,8 +1,6 @@
 #ifndef PLATFORMCONTROLLER_H
 #define PLATFORMCONTROLLER_H
 
-#include "Connector.h"
-
 #include <QObject>
 #include <thread>
 #include <shared_mutex>
