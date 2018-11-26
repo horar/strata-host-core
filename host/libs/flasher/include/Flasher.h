@@ -32,8 +32,8 @@ class Flasher{
 
 public:
   Flasher();
-  Flasher(const SerialConnector *s);
-  virtual ~Flasher();
+  Flasher(Connector* s);
+  ~Flasher();
 
   int flash(const std::string &input_firmware);
   unsigned int rollback(unsigned int);
@@ -49,10 +49,10 @@ private:
   bool isPlatfromConnected();
 
   // Serial API
-  bool write(std::string);
+  bool write(const std::string& );
   int read();
 
-  SerialConnector *serial_;
+  Connector *serial_;
 
   // Hold status if serial was initialized in the flasher
   bool can_deallocate_serial_;

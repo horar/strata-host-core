@@ -5,12 +5,18 @@
 
 using namespace std;
 
+
 //hardcoded platform commands
 static auto stop_periodic=R"({"cmd":"stop_periodic","payload":{"function":"test"}})";
 static auto start_periodic=R"({"cmd":"start_periodic","payload":{"function":"test"}})";
 static auto update_periodic=R"({"cmd":"update_periodic","payload":{"function":"test"}})";
 
-PlatformController::PlatformController(QObject *parent): QObject(parent)
+PlatformController::PlatformController(QObject *parent): QObject(parent),
+    serial_(ConnectorFactory::getConnector("platform")),
+    platformConnected_(false),
+    verboseName_(QStringLiteral("No Platform Connected")),
+    aboutToQuit_(false)
+
 {
 
     qDebug() << Q_FUNC_INFO << "PLATFORM CONTROLLER: STARTING CONNECTOR";
@@ -146,7 +152,7 @@ void PlatformController::readWorker()
                     std::shared_lock lock(quitMutex_);
                     if (aboutToQuit_) return;
                 }
-                sleep(1);
+                this_thread::sleep_for(chrono::seconds(1));
             }
             if(this->platformConnected_)
             {

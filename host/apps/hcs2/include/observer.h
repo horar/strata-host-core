@@ -21,6 +21,7 @@ class AttachmentObserver : public Observer {
 public:
     AttachmentObserver() {};
     AttachmentObserver(void *client_socket,void *client_id_list);
+    ~AttachmentObserver(){};
 
     void SyncStatusCallback(NimbusSyncInfo info) {
     }
@@ -30,7 +31,6 @@ public:
 
     void DocumentChangeCallback(jsonString jsonBody);
 
-    ~AttachmentObserver(){};
 private:
     typedef std::list<std::string> clientList;
     clientList *client_list_;

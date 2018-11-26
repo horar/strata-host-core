@@ -121,49 +121,18 @@
 #ifndef CONNECTOR_H__
 #define CONNECTOR_H__
 
-#include <iostream>
 #include <string>
-#include <stdlib.h>
-
-#include <libserialport.h>
-#include <thread>
+#include <iostream>
 #include <mutex>
-#include <condition_variable>
-#include <cstdio>
-#include <cstring>
-#include <vector>
-#include <chrono>
-
-#include "zmq.hpp"
-#include "zmq_addon.hpp"
-#include "zhelpers.hpp"
-#include <fcntl.h>   // File control definitions
-#include <errno.h>   // Error number definitions
-
-#include "rapidjson/document.h"
-
-#ifdef _WIN32
-#include <winsock2.h>
-#include <windows.h>
-#define sleep(n) Sleep(n*1000);
-#endif
-
-// console prints
-// DEBUG is used for showing the debug print messages on console.
-// 0 - turn off debug and 1 - turn on debug
-#define DEBUG 1
-#define LOG_DEBUG(lvl, fmt, ...)						\
-	do { if (lvl>0) fprintf(stderr, fmt, __VA_ARGS__); } while (0)
 
 class Connector {
 public:
-    Connector() {}
-    Connector(const std::string&) {}
-    virtual ~Connector() {}
+    Connector() = default;
+    Connector(const std::string&) {};
+    virtual ~Connector() = default;
 
     virtual bool open(const std::string&) = 0;
     virtual bool close() = 0;
-
 
     // non-blocking calls
     virtual bool send(const std::string& message) = 0;
@@ -178,163 +147,24 @@ public:
 
     virtual int getFileDescriptor() = 0;
 
-    void setDealerID(const std::string& id) {dealer_id_ = id;}
-    const std::string &getDealerID() const {return dealer_id_;}
+    void setDealerID(const std::string& id) { dealer_id_ = id; }
+    const std::string &getDealerID() const { return dealer_id_;}
     const std::string &getPlatformUUID() const { return platform_uuid_;}
-    bool isSpyglassPlatform() { return spyglass_platform_connected_; }
-	void setConnectionState(bool connection_state) { connection_state_ = connection_state; }
-	bool isConnected() { return connection_state_; }
+    bool isSpyglassPlatform() const { return spyglass_platform_connected_; }
+		void setConnectionState(bool connection_state) { connection_state_ = connection_state; }
+		bool isConnected() const { return connection_state_; }
+
 protected:
     std::string dealer_id_;
     std::mutex locker_;
     std::string platform_uuid_;
     std::string server_;
     bool spyglass_platform_connected_;	// flag used in hcs for checking if platform is available
-	bool connection_state_;
-private:
+		bool connection_state_;
 };
 
-class SerialConnector : public Connector {
-public:
-    SerialConnector();
-    SerialConnector(const std::string&){}
-    virtual ~SerialConnector(){}
-
-    bool open(const std::string&);
-
-    bool close();
-    void openPlatform();
-
-    // non-blocking calls
-    bool send(const std::string& message);
-    bool sendSmallChunks(const std::string& message, const unsigned int chunk_limit);
-
-    bool read(std::string& notification);
-
-    int getFileDescriptor();
-
-    void windowsPlatformReadHandler();
-    bool getPlatformID(std::string);
-    bool isPlatformConnected();
-
-private:
-    struct sp_port *platform_socket_;
-    struct sp_event_set *event_;
-    int serial_fd_;	//file descriptor for serial ports
-#ifdef _WIN32
-    std::thread *windows_thread_; // this thread will be used only in windows for port read and write
-#endif
-    std::thread *open_platform_thread_; // thread to detect and open the spyglass platforms
-    std::condition_variable producer_consumer_;
-    std::string platform_port_name_;
-    // two bool variables used for producer consumer model required for windows
-    bool produced_;
-    bool consumed_;
-    // integer variable used for wait timeout // required only for serial to socket
-    int serial_wait_timeout_;
-
-// #ifdef _WIN32
-    zmq::context_t* context_;
-    zmq::socket_t* write_socket_;   // After serial port read, writes to this socket
-    zmq::socket_t* read_socket_;
-// #endif
+namespace ConnectorFactory {
+		Connector* getConnector(const std::string& type);
 };
 
-class ZMQConnector : public Connector {
-public:
-    ZMQConnector() {}
-    ZMQConnector(const std::string&);
-    virtual ~ZMQConnector() {}
-
-    bool open(const std::string&);
-    bool close();
-
-    // non-blocking calls
-    bool send(const std::string& message);
-    bool sendSmallChunks(const std::string& message, const unsigned int chunk_limit){}
-    bool read(std::string& notification);
-
-    int getFileDescriptor();
-
-private:
-    zmq::context_t* context_;
-    zmq::socket_t* socket_;
-    std::string connection_interface_;
-};
-
-class RequestReplyConnector : public Connector {
-public:
-    RequestReplyConnector() ;
-    RequestReplyConnector(const std::string&){}
-    virtual ~RequestReplyConnector() {}
-
-    bool open(const std::string&);
-    bool close();
-
-    // non-blocking calls
-    bool send(const std::string& message);
-    bool sendSmallChunks(const std::string& message, const unsigned int chunk_limit){}
-    bool read(std::string& notification);
-
-    int getFileDescriptor();
-
-private:
-    zmq::context_t* context_;
-    zmq::socket_t* socket_;
-    std::string connection_interface_;
-};
-
-class PublisherSubscriberConnector : public Connector {
-public:
-  	PublisherSubscriberConnector() {}
-    PublisherSubscriberConnector(const std::string&);
-    virtual ~PublisherSubscriberConnector() {}
-
-    bool open(const std::string&);
-    bool close();
-
-    // non-blocking calls
-    bool send(const std::string& message);
-    bool sendSmallChunks(const std::string& message, const unsigned int chunk_limit){}
-    bool read(std::string& notification);
-
-    int getFileDescriptor();
-
-private:
-    zmq::context_t* context_;
-    zmq::socket_t* socket_;
-    std::string connection_interface_;
-};
-
-class ConnectorFactory {
-public:
-    static Connector *getConnector(const std::string& type) {
-        std::cout << "ConnectorFactory::getConnector type:" << type << std::endl;
-        if( type == "router") {
-            return dynamic_cast<Connector*>(new ZMQConnector("router"));
-        }
-        else if( type == "dealer") {
-            return dynamic_cast<Connector*>(new ZMQConnector("dealer"));
-        }
-        else if( type == "platform") {
-            return dynamic_cast<Connector*>(new SerialConnector);
-        }
-        else if( type == "request") {
-            return dynamic_cast<Connector*>(new  RequestReplyConnector);
-        }
-        else if( type == "subscriber") {
-            return dynamic_cast<Connector*>(new  PublisherSubscriberConnector("subscribe"));
-        }
-        else {
-            std::cout << "ERROR: ConnectorFactory::getConnector - unknown interface. " << type << std::endl;
-        }
-        return nullptr;
-    }
-
-private:
-    // TODO use = delete
-    ConnectorFactory() { std::cout << "ConnectorFactory: CTOR\n"; }
-    virtual ~ConnectorFactory() { std::cout << "ConnectorFactory: DTOR\n"; }
-
-};
 #endif

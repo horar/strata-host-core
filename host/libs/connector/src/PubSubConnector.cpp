@@ -11,7 +11,7 @@
 * @copyright Copyright 2018 On Semiconductor
 */
 
-#include "Connector.h"
+#include "Connector_impl.h"
 
 using namespace std;
 
@@ -145,4 +145,5 @@ bool PublisherSubscriberConnector::send(const string& message)
     unsigned int     zmq_events;
     size_t           zmq_events_size  = sizeof(zmq_events);
     socket_->getsockopt(ZMQ_EVENTS, &zmq_events, &zmq_events_size);
+    return true;
 }

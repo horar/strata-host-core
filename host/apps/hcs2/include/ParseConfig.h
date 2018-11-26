@@ -13,11 +13,10 @@
 #include <vector>
 #include <sstream>
 
-class ParseConfig {
+class ParseConfig final {
 public:
-
     ParseConfig(std::string file);
-    virtual ~ParseConfig();
+    ~ParseConfig();
 
     const std::string &GetCommandAddress() const { return command_address_; }
     const std::string &GetSubscriberAddress() const { return subscriber_address_; }
