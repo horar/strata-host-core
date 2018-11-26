@@ -1,15 +1,15 @@
 #ifndef PLATFORMCONTROLLER_H
 #define PLATFORMCONTROLLER_H
 
-#include "Connector.h"
-
 #include <QObject>
 #include <thread>
 #include <shared_mutex>
 #include <memory>
 #include <QJsonObject>
+#include <QJsonArray>
 #include <QJsonDocument>
 
+class Connector;
 class PlatformController:public QObject
 {
     Q_OBJECT
@@ -58,7 +58,7 @@ private:
     QString platformID_;
     QString notification_;
     QJsonObject payload_;
-
+    QJsonArray platformCommands_;
     bool aboutToQuit_;
 };
 

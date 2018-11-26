@@ -57,12 +57,32 @@ make
 ```
 
 
+
+###Serial Console Interface macOS deployment
+Optionally create simple app DMG with all dependant libraries
+
+```
+    cd spyglass/host/build/apps/SerialConsoleInterface
+    macdeployqt SerialConsoleInterface.app/ -dmg -qmldir=../../../apps/SerialConsoleInterface/
+
+```
+
+or on Xcode build
+
+```
+    cd spyglass/host/build/apps/SerialConsoleInterface
+    macdeployqt Release\SerialConsoleInterface.app/ -dmg -qmldir=../../../apps/SerialConsoleInterface/
+
+```
+DMG file with application will be created inside the directory:
+spyglass/host/build/apps/SerialConsoleInterface
+
 ####Windows
+
+### Compilation for Windows
+To start a build run cmd in a console: windows_build.sh in host folder
 
 We are currently cross compiling for windows from linux. Hence downloading mingw toolchain is essential. In linux terminal please follow these steps
 ```
 sudo apt-get install mingw-w64
 ```
-
-### Compilation for Windows
-To start a build run cmd in a console: windows_build.sh in host folder

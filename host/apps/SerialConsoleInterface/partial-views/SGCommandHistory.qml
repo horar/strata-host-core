@@ -32,6 +32,8 @@ Rectangle {
     implicitHeight: 200
     implicitWidth: 300
 
+
+
     Rectangle {
         id: titleArea
         anchors {
@@ -57,6 +59,20 @@ Rectangle {
             padding: 10
         }
     }
+    // The delegate for each section header
+        Component {
+            id: sectionHeading
+            Rectangle {
+                width: parent.width
+                height: childrenRect.height
+                //color: "lightsteelblue"
+
+                Text {
+                    text: section
+                    font.bold: true
+                }
+            }
+        }
 
     ListView {
         id: statusList
@@ -66,6 +82,10 @@ Rectangle {
         clip: true
         currentIndex: -1
         verticalLayoutDirection: ListView.BottomToTop
+        section.property: "type"
+        section.criteria: ViewSection.FullString
+        section.delegate: sectionHeading
+
 
         anchors {
             left: root.left
@@ -100,6 +120,8 @@ Rectangle {
                     root.visible = false
                 }
             }
+
+
 
             Rectangle {
                 id: highlight
