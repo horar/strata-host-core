@@ -437,12 +437,17 @@ void SerialConnector::windowsPlatformReadHandler()
 //
 bool SerialConnector::getPlatformID(std::string message)
 {
+    // TODO: Fix this code, it cannot handle garbled input or wrong syntax (Juraj)
+
     LOG_DEBUG(DEBUG,"platform id message %s\n",message.c_str());
     Document platform_command;
     if (platform_command.Parse(message.c_str()).HasParseError()) {
         return false;
     }
     if (!(platform_command.HasMember("notification"))) {
+        return false;
+    }
+    if (!(platform_command["notification"].IsObject())) {
         return false;
     }
     if (platform_command["notification"]["payload"].HasMember("verbose_name")) {
