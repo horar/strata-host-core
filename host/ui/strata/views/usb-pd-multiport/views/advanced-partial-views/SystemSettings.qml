@@ -35,6 +35,43 @@ Item {
                 }
             }
 
+            Button{
+                //a rectangle to cover the max power slider when it's disabled, so we can still show a
+                //tooltip explaining *why* its disabled.
+                id:toolTipMask
+                //color:"transparent"
+                //border.color:"red"
+                hoverEnabled: true
+                z:1
+                visible:!maximumBoardPower.enabled
+                background: Rectangle{
+                    color:"transparent"
+                }
+
+                anchors {
+                    top: powerManagement.bottom
+                    topMargin: 15
+                    left: margins1.left
+                    leftMargin: 55
+                    right: maximumBoardPowerUnits.left
+                    rightMargin: 5
+                    bottom:maximumBoardPower.bottom
+                }
+
+                ToolTip{
+                    id:maxPowerToolTip
+                    visible:toolTipMask.hovered
+                    text:"System Power can not be changed when devices are connected"
+                    delay:500
+                    timeout:2000
+
+                    background: Rectangle {
+                        color: "#eee"
+                        radius: 2
+                    }
+                }
+            }
+
             SGSlider {
 
                 property bool port1connected:false
@@ -103,7 +140,6 @@ Item {
                 id: maximumBoardPower
                 label: "Maximum System Power:"
                 enabled: !deviceConnected ? true : false  //slider enabled if nothing is plugged in
-                hover:true
                 anchors {
                     top: powerManagement.bottom
                     topMargin: 15
@@ -130,6 +166,8 @@ Item {
                 showButton: false
                 infoBoxWidth: 30
                 enabled: maximumBoardPower.enabled
+                minimumValue: 30
+                maximumValue: platformInterface.ac_power_supply_connection.power
                 anchors {
                     verticalCenter: maximumBoardPower.verticalCenter
                     verticalCenterOffset: -7
@@ -172,6 +210,39 @@ Item {
                     topMargin: 10
                     left: powerNegotiationTitleText.right
                     leftMargin: 10
+                }
+            }
+
+
+            Button{
+                //a rectangle to cover the max power popup when it's disabled, so we can still show a
+                //tooltip explaining *why* its disabled.
+                id:toolTipAssuredPowerMask
+                hoverEnabled: true
+                z:1
+                visible:!maximumBoardPower.enabled
+                background: Rectangle{
+                    color:"transparent"
+                }
+
+                anchors {
+                    left: assuredPortSwitch.left
+                    top: assuredPortSwitch.top
+                    bottom:assuredPortSwitch.bottom
+                    right: assuredPortSwitch.right
+                }
+
+                ToolTip{
+                    id:assuredPowerToolTip
+                    visible:toolTipAssuredPowerMask.hovered
+                    text:"Assured Power can not be changed when devices are connected"
+                    delay:500
+                    timeout:2000
+
+                    background: Rectangle {
+                        color: "#eee"
+                        radius: 2
+                    }
                 }
             }
 
@@ -263,9 +334,6 @@ Item {
                 checked: platformInterface.assured_power_port.enabled
                 onToggled: platformInterface.set_assured_power_port.update(checked, 1)  //we're only allowing port 1 to be assured
 
-                Component.onCompleted: {
-                    assuredPortSwitch.checked =  false
-                }
             }
 
             SGComboBox {
@@ -439,6 +507,8 @@ Item {
                 id: inputFaultInput
                 showButton: false
                 infoBoxWidth: 30
+                minimumValue: 0
+                maximumValue: 20
                 anchors {
                     verticalCenter: inputFault.verticalCenter
                     verticalCenterOffset: -7
@@ -446,10 +516,7 @@ Item {
                     rightMargin: 5
                 }
                 value: Math.round(platformInterface.input_under_voltage_notification.minimum_voltage)
-                onApplied:{
-                    var currentValue = parseFloat(value)
-                    platformInterface.set_minimum_input_voltage.update(currentValue);   // slider will be updated via notification
-                }
+                onApplied:platformInterface.set_minimum_input_voltage.update(value);   // slider will be updated via notification
             }
 
             Text{
@@ -487,6 +554,8 @@ Item {
                 id: tempFaultInput
                 showButton: false
                 infoBoxWidth: 30
+                minimumValue: -64
+                maximumValue: 191
                 anchors {
                     verticalCenter: tempFault.verticalCenter
                     verticalCenterOffset: -7
@@ -595,15 +664,17 @@ Item {
                 id: foldbackLimitInput
                 showButton: false
                 infoBoxWidth: 30
+                minimumValue: 0
+                maximumValue: 20
                 anchors {
                     verticalCenter: foldbackLimit.verticalCenter
                     verticalCenterOffset: -7
                     right: foldbackLimitUnits.left
                     rightMargin: 5
                 }
-                value: platformInterface.foldback_input_voltage_limiting_event.foldback_minimum_voltage
+                value: Math.round(platformInterface.foldback_input_voltage_limiting_event.foldback_minimum_voltage)
                 onApplied: platformInterface.set_input_voltage_foldback.update(platformInterface.foldback_input_voltage_limiting_event.input_voltage_foldback_enabled,
-                                                                              parseFloat(value),
+                                                                              parseInt(value),
                                                                               platformInterface.foldback_input_voltage_limiting_event.foldback_minimum_voltage_power)
             }
 
@@ -726,7 +797,7 @@ Item {
                     right: foldbackTempUnits.left
                     rightMargin: 5
                 }
-                value: platformInterface.foldback_temperature_limiting_event.foldback_maximum_temperature
+                value: Math.round(platformInterface.foldback_temperature_limiting_event.foldback_maximum_temperature)
                 onApplied: platformInterface.set_temperature_foldback.update(platformInterface.foldback_temperature_limiting_event.temperature_foldback_enabled,
                                                                              parseFloat(value),
                                                                              platformInterface.foldback_temperature_limiting_event.foldback_maximum_temperature_power)
@@ -744,7 +815,7 @@ Item {
             SGComboBox {
                 id: limitOutput2
                 label: "Reduce output power to:"
-                model: ["10","15", "25", "50","75","90"]
+                model: ["10","15", "25", "45","75","90"]
                 comboBoxHeight: 25
                 comboBoxWidth: 60
                 anchors {

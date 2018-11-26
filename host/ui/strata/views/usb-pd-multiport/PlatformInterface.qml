@@ -206,6 +206,10 @@ Item {
          "mode":"on"           // or "off"
     }
 
+    property var sleep_state :{
+         "state":"awake",    // or "asleep"
+    }
+
     property var maximum_board_power :{
          "watts":30          // 30-300
     }
