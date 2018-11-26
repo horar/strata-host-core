@@ -63,7 +63,7 @@ Optionally create simple app DMG with all dependant libraries
 
 ```
     cd spyglass/host/build/apps/SerialConsoleInterface
-    macdeployqt SerialConsoleInterface.app/ -dmg -qmldir=../SerialConsoleInterface/
+    macdeployqt SerialConsoleInterface.app/ -dmg -qmldir=../../../apps/SerialConsoleInterface/
 
 ```
 
@@ -71,10 +71,10 @@ or on Xcode build
 
 ```
     cd spyglass/host/build/apps/SerialConsoleInterface
-    macdeployqt Release\SerialConsoleInterface.app/ -dmg -qmldir=../SerialConsoleInterface/
+    macdeployqt Release\SerialConsoleInterface.app/ -dmg -qmldir=../../../apps/SerialConsoleInterface/
 
 ```
-DMG file with application will be created inside the directory: 
+DMG file with application will be created inside the directory:
 spyglass/host/build/apps/SerialConsoleInterface
 
 ####Windows
