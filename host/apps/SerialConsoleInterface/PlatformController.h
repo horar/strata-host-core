@@ -11,6 +11,7 @@
 #include <QJsonArray>
 #include <QJsonDocument>
 
+class Connector;
 class PlatformController:public QObject
 {
     Q_OBJECT
