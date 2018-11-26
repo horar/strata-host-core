@@ -32,6 +32,8 @@ Rectangle {
     implicitHeight: 200
     implicitWidth: 300
 
+
+
     Rectangle {
         id: titleArea
         anchors {
@@ -67,6 +69,7 @@ Rectangle {
         currentIndex: -1
         verticalLayoutDirection: ListView.BottomToTop
 
+
         anchors {
             left: root.left
             right: root.right
@@ -100,6 +103,8 @@ Rectangle {
                     root.visible = false
                 }
             }
+
+
 
             Rectangle {
                 id: highlight

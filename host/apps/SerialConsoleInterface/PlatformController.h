@@ -8,6 +8,7 @@
 #include <shared_mutex>
 #include <memory>
 #include <QJsonObject>
+#include <QJsonArray>
 #include <QJsonDocument>
 
 class PlatformController:public QObject
@@ -58,7 +59,7 @@ private:
     QString platformID_;
     QString notification_;
     QJsonObject payload_;
-
+    QJsonArray platformCommands_;
     bool aboutToQuit_{false};
 };
 

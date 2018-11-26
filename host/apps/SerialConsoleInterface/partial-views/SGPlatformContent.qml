@@ -17,7 +17,9 @@ Item {
     property alias logBoxList: logBoxList
     property alias tempList: tempList
     property alias logBox: logBox
+    property alias historyList: cmdHistoryList
     property int tabNumber
+
 
     SGSideDrawer {
         id: sidebar
@@ -195,6 +197,11 @@ Item {
                         right: cmdInput.right
                     }
                     height: Math.min(150, historyBox.contentHeight + 20)
+                    //CoreCommands Inserting on every Platform
+                    Component.onCompleted:
+                    {
+                        cmdHistoryList.insert(0, { "status" : platformInterface.coreCommands[1][0] })
+                    }
 
                     ListModel {
                         id: cmdHistoryList

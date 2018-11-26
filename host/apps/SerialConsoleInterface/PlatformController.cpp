@@ -5,6 +5,11 @@
 
 using namespace std;
 
+//hardcoded platform commands
+static auto stop_periodic=R"({"cmd":"stop_periodic","payload":{"function":"test"}})";
+static auto start_periodic=R"({"cmd":"start_periodic","payload":{"function":"test"}})";
+static auto update_periodic=R"({"cmd":"update_periodic","payload":{"function":"test"}})";
+
 PlatformController::PlatformController(QObject *parent): QObject(parent)
 {
 
@@ -111,6 +116,12 @@ void PlatformController::setPlatformConnected(bool platformConnected)
     payload_["platformID"] = platformID_;
     payload_["connected"] = platformConnected_;
     payload_["verboseName"] = verboseName_;
+
+    //hardcoded platform commands
+    platformCommands_.push_back(stop_periodic);
+    platformCommands_.push_back(start_periodic);
+    platformCommands_.push_back(update_periodic);
+    payload_.insert("platformCommands",platformCommands_);
     QJsonDocument doc(payload_);
     emit platformConnectedChanged(doc.toJson(QJsonDocument::Compact));
 }
