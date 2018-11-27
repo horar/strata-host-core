@@ -2,5 +2,6 @@
     <qresource prefix="/">
         <file>main.qml</file>
         <file>SGGraphTimed.qml</file>
+        <file>PerformanceTest.qml</file>
     </qresource>
 </RCC>
