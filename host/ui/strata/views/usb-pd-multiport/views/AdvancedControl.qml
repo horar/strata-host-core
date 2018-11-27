@@ -12,6 +12,8 @@ Rectangle {
         fill: parent
     }
 
+
+
     Overview {
         id: overview
         height: 310
@@ -54,6 +56,7 @@ Rectangle {
                 contents: SGPopout {
                     portNumber: 2
                     portColor: "#3bb539"
+                    enableAssuredPower: false
                 }
             }
 
@@ -63,6 +66,7 @@ Rectangle {
                 contents: SGPopout {
                     portNumber: 3
                     portColor: "#d68f14"
+                    enableAssuredPower: false
                 }
             }
 
@@ -73,6 +77,7 @@ Rectangle {
                     portNumber: 4
                     portConnected: false
                     portColor: "#2348cd"
+                    enableAssuredPower: false
                 }
             }
         }

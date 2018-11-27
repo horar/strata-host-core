@@ -11,7 +11,7 @@ Window {
     visible: true
     width: 1200
     height: 900
-    title: qsTr("Strata")
+    title: qsTr("ON Semiconductor: Strata Developer Studio")
 
     // Debug option(s)
     property bool showDebugCommandBar: false
@@ -38,7 +38,7 @@ Window {
         }
     }
 
-    onClosing: {
+    onClosing: {    // @disable-check M16
         if(is_remote_connected) {
             // sending remote disconnect message to hcs
             var remote_disconnect_json = {
@@ -59,6 +59,11 @@ Window {
         coreInterface.sendCommand(JSON.stringify(remote_json))
         // End session with HCS
         coreInterface.unregisterClient();
+
+        // Destruct components dynamically created by NavigationControl
+        NavigationControl.removeView(statusBarContainer)
+        NavigationControl.removeView(controlContainer)
+        NavigationControl.removeView(contentContainer)
     }
 
     Column {
@@ -190,7 +195,7 @@ Window {
                 onClicked: {
                     NavigationControl.updateState(NavigationControl.events.PLATFORM_DISCONNECTED_EVENT, null)
                     var disconnect_json = {"hcs::cmd":"disconnect_platform"}
-                    console.log("disonnecting the platform")
+                    console.log("disconnecting the platform")
                     coreInterface.sendCommand(JSON.stringify(disconnect_json))
                 }
             }
@@ -227,6 +232,7 @@ Window {
         height: 30
         width: 70
         visible: !showDebugCommandBar
+        opacity: 0.5
         onClicked: showDebugCommandBar = true
         anchors {
             right: parent.right
@@ -279,14 +285,6 @@ Window {
         }
         onPlatformStateChanged: {
             console.log("Main: PlatformStateChanged: ", platform_connected_state)
-
-            if(platform_connected_state) {
-                // Show control as we have connected
-                //NavigationControl.updateState(NavigationControl.events.PLATFORM_CONNECTED_EVENT)
-            }
-            else if (!platform_connected_state){
-                NavigationControl.updateState(NavigationControl.events.PLATFORM_DISCONNECTED_EVENT)
-            }
         }
     }
 }

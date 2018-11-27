@@ -93,13 +93,16 @@ signals:
     // Platform Framework Signals
     void notification(QString payload);
 
+    // Sends notifications to analytics log to populate with fake data
+    void pretendMetrics(QString message);  // TODO: remove this when metrics.js is fully functioning.
+
 private:
 
     // ---
     // Core Framework
     QString platform_id_;
     bool platform_state_;         // TODO [ian] change variable name to platform_connected_state
-    QString platform_list_;       // [TODO] [prasanth] change the name to more proper
+    QString platform_list_{"{}"};       // [TODO] [prasanth] change the name to more proper
     QString hcs_token_;
     QString remote_user_activity_;
     bool remote_connection_result_;

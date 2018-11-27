@@ -59,6 +59,37 @@ Item {
             id: advancedControl
             visible: false
             property real initialAspectRatio
+        }        
+    }
+
+    Rectangle{
+        id:sleepScrim
+        anchors.fill:parent
+        color:"white"
+        opacity: .75
+        visible:true
+        z:1
+
+        property var sleepState: platformInterface.sleep_state.state
+
+        onSleepStateChanged: {
+            console.log("sleep state changed to",sleepState)
+            if (sleepState === "asleep"){
+                sleepScrim.visible = true
+            }
+            else{
+                sleepScrim.visible = false
+            }
+        }
+
+        Text{
+            id:sleepMessage
+            anchors.centerIn:parent
+            text:"plug in device to wake board"
+            color:"darkgrey"
+            font.family:"helvetica"
+            font.pixelSize: 72
+            font.bold:true
         }
     }
 

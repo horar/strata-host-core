@@ -1,0 +1,76 @@
+diff --git a/web/viewer.css b/web/viewer.css
+index 72230783..ad616f89 100644
+--- a/web/viewer.css
++++ b/web/viewer.css
+@@ -843,16 +843,31 @@ html[dir='rtl'] .toolbarButton.pageDown::before {
+   content: url(images/toolbarButton-presentationMode.png);
+ }
+ 
++.toolbarButton.presentationMode,
++.secondaryToolbarButton.presentationMode {
++  display: none !important;
++}
++
+ .toolbarButton.print::before,
+ .secondaryToolbarButton.print::before {
+   content: url(images/toolbarButton-print.png);
+ }
+ 
++.toolbarButton.print,
++.secondaryToolbarButton.print {
++  display: none !important;
++}
++
+ .toolbarButton.openFile::before,
+ .secondaryToolbarButton.openFile::before {
+   content: url(images/toolbarButton-openFile.png);
+ }
+ 
++.toolbarButton.openFile,
++.secondaryToolbarButton.openFile {
++  display: none !important;
++}
++
+ .toolbarButton.download::before,
+ .secondaryToolbarButton.download::before {
+   content: url(images/toolbarButton-download.png);
+@@ -864,6 +879,7 @@ html[dir='rtl'] .toolbarButton.pageDown::before {
+   outline: none;
+   padding-top: 4px;
+   text-decoration: none;
++  display: none !important;
+ }
+ .secondaryToolbarButton.bookmark {
+   padding-top: 5px;
+@@ -1656,16 +1672,31 @@ html[dir='rtl'] #documentPropertiesOverlay .row > * {
+     content: url(images/toolbarButton-presentationMode@2x.png);
+   }
+ 
++  .toolbarButton.presentationMode,
++  .secondaryToolbarButton.presentationMode {
++    display: none !important;
++  }
++
+   .toolbarButton.print::before,
+   .secondaryToolbarButton.print::before {
+     content: url(images/toolbarButton-print@2x.png);
+   }
+ 
++  .toolbarButton.print,
++  .secondaryToolbarButton.print {
++    display: none !important;
++  }
++
+   .toolbarButton.openFile::before,
+   .secondaryToolbarButton.openFile::before {
+     content: url(images/toolbarButton-openFile@2x.png);
+   }
+ 
++  .toolbarButton.openFile,
++  .secondaryToolbarButton.openFile {
++    display: none !important;
++  }
++
+   .toolbarButton.download::before,
+   .secondaryToolbarButton.download::before {
+     content: url(images/toolbarButton-download@2x.png);

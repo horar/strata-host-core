@@ -21,10 +21,8 @@ Item {
                 "current_speed": 0,
                 "error": 0,
                 "sum": 0.5,
-                "duty_now": 0.5,
-                "mode": "manual"  // "manual" "automation"
+                "duty_now": 0.5
     }
-
 
     // @notification input_voltage_notification
     // @description: updates voltage
@@ -48,6 +46,21 @@ Item {
         "system_mode" : ""
     }
 
+    // System mode radio buttons can be set by the user on UI or from the notification as well.
+    // This is because system mode setting is tied to a harware switch on the platform.
+    // Following property allows us to update the RadioButtons based on the notification and
+    // not get stuck in the recursive loop.
+    property var systemModeNotification: platformInterface.set_mode.system_mode;
+    onSystemModeNotificationChanged: {
+        if(systemModeNotification === "manual") {
+            systemMode = true
+            console.log("platform setting Manual")
+        }
+        else if(systemModeNotification === "automation"){
+            systemMode = false
+            console.log("platform setting Auto")
+        }
+    }
 
     // -------------------  end notification messages
 
@@ -82,8 +95,6 @@ Item {
                                     show: function () { CorePlatformInterface.show(this) }
                                 })
 
-
-
     /*
        system_mode_selection Command
      */
@@ -104,10 +115,8 @@ Item {
                                              },
                                              send: function () { CorePlatformInterface.send(this) },
                                              show: function () { CorePlatformInterface.show(this) }
-
-
-
                                          })
+
     /*
       set_drive_mode
     */
@@ -128,10 +137,8 @@ Item {
                                       },
                                       send: function () { CorePlatformInterface.send(this) },
                                       show: function () { CorePlatformInterface.show(this) }
-
-
-
                                   })
+
     /*
       Set Phase Angle
     */
@@ -196,11 +203,9 @@ Item {
                                      // Set can set single or multiple properties before sending to platform
                                      set: function (ramp_rate) {
                                          this.payload.ramp_rate = ramp_rate;
-                                         
                                      },
                                      send: function () { CorePlatformInterface.send(this) },
                                      show: function () { CorePlatformInterface.show(this) }
-
                                  })
 
     /*
@@ -214,8 +219,8 @@ Item {
                                      },
                                      send: function () { CorePlatformInterface.send(this) },
                                      show: function () { CorePlatformInterface.show(this) }
-
                                  })
+
 
     /*
       Set LED Color Mixing
@@ -242,13 +247,11 @@ Item {
                                          },
                                          send: function () { CorePlatformInterface.send(this) },
                                          show: function () { CorePlatformInterface.show(this) }
-                                         
                                      })
 
     /*
       Set Single Color LED
     */
-    
     property var set_single_color: ({
                                         "cmd":"set_single_color",
                                         "payload":{
@@ -263,11 +266,11 @@ Item {
                                         set: function (color,color_value) {
                                             this.payload.color = color;
                                             this.payload.color_value = color_value;
-                                            
                                         },
                                         send: function () { CorePlatformInterface.send(this) },
                                         show: function () { CorePlatformInterface.show(this) }
                                     })
+
     /*
       set Blink0 Frequency
      */
@@ -283,7 +286,6 @@ Item {
                                             },
                                             set: function (blink_0_frequency) {
                                                 this.payload.blink0_frequency = blink_0_frequency
-
                                             },
                                             send: function () { CorePlatformInterface.send(this) },
                                             show: function () { CorePlatformInterface.show(this) }
@@ -304,15 +306,13 @@ Item {
                                              },
                                              set: function (led_output) {
                                                  this.payload.led_output = led_output
-
                                              },
                                              send: function () { CorePlatformInterface.send(this) },
                                              show: function () { CorePlatformInterface.show(this) }
-
                                          })
 
-
     // -------------------  end commands
+
 
     // NOTE:
     //  All internal property names for PlatformInterface must avoid name collisions with notification/cmd message properties.
@@ -322,7 +322,7 @@ Item {
 
     // -------------------------------------------------------------------
     // Connect to CoreInterface notification signals
-    //
+    // -------------------------------------------------------------------
     Connections {
         target: coreInterface
         onNotification: {
@@ -331,84 +331,68 @@ Item {
     }
 
     //-------------------------------------
-    //
     // add all syncrhonized controls here
     //-----------------------------------------
     property int motorSpeedSliderValue: 1500
-
     onMotorSpeedSliderValueChanged: {
-            motor_speed.update(motorSpeedSliderValue)
+        motor_speed.update(motorSpeedSliderValue)
     }
 
     property bool sliderUpdateSignal: false
     property int rampRateSliderValue: 3
-
     onRampRateSliderValueChanged: {
         set_ramp_rate.update(rampRateSliderValue)
     }
 
     property int rampRateSliderValueForFae: 3
-
     onRampRateSliderValueForFaeChanged: {
         set_ramp_rate.update(rampRateSliderValueForFae)
     }
 
     property int phaseAngle : 15
-
     onPhaseAngleChanged: {
         set_phase_angle.update(phaseAngle)
     }
 
     property real ledSlider: 128
-
     onLedSliderChanged: {
         console.log("in signal control")
     }
 
     property bool turnOffChecked: false
-
     property real singleLEDSlider :  0
-
     property int ledPulseSlider: 150
-
     onLedPulseSliderChanged:  {
         set_blink0_frequency.update(ledPulseSlider)
     }
 
     property bool driveModePseudoSinusoidal: false
-
     onDriveModePseudoSinusoidalChanged: {
-
-        if(driveModePseudoSinusoidal == true) {
+        if(driveModePseudoSinusoidal === true) {
             set_drive_mode.update(1)
         }
     }
 
     property bool driveModePseudoTrapezoidal: true
-
     onDriveModePseudoTrapezoidalChanged: {
-        if(driveModePseudoTrapezoidal == true) {
+        if(driveModePseudoTrapezoidal === true) {
             set_drive_mode.update(0)
         }
     }
 
-    property bool systemModeManual: true
-
-    onSystemModeManualChanged: {
-        console.log("manual mode")
+    property bool systemMode: true
+    onSystemModeChanged: {
+        if(systemMode){
+            console.log("manual signal mode")
             system_mode_selection.update("manual")
-
-    }
-
-    property bool systemModeAuto: false
-
-    onSystemModeAutoChanged: {
+        }
+        else{
+            console.log("auto signal mode")
             system_mode_selection.update("automation")
-
+        }
     }
 
     property bool motorState: false
-
     onMotorStateChanged: {
         console.log("in motor state")
         if(motorState === true) {
@@ -425,10 +409,6 @@ Item {
     }
 
     property bool advertise;
-
-
-
-
 
     /*    // DEBUG Window for testing motor vortex UI without a platform
     Window {
