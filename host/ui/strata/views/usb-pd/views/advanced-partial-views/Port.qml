@@ -440,7 +440,7 @@ Item {
             minXValue: 0                    // Default: 0
             maxXValue: 5                    // Default: 10
 
-            property real stream
+            property real stream: 0
             property real count: 0
             property real interval: 10 // 10 Hz?
 
@@ -475,7 +475,7 @@ Item {
             minXValue: 0                    // Default: 0
             maxXValue: 5                    // Default: 10
 
-            property real stream
+            property real stream: 0
             property real count: 0
             property real interval: 10 // 10 Hz?
 
@@ -510,7 +510,7 @@ Item {
             minXValue: 0                    // Default: 0
             maxXValue: 5                    // Default: 10
 
-            property real stream
+            property real stream: 0
             property real count: 0
             property real interval: 10 // 10 Hz?
 
@@ -544,7 +544,7 @@ Item {
             minXValue: 0                    // Default: 0
             maxXValue: 5                    // Default: 10
 
-            property real stream
+            property real stream: 0
             property real count: 0
             property real interval: 10 // 10 Hz?
 
@@ -579,7 +579,7 @@ Item {
             minXValue: 0                    // Default: 0
             maxXValue: 5                    // Default: 10
 
-            property real stream
+            property real stream: 0
             property real count: 0
             property real interval: 10 // 10 Hz?
 
@@ -615,7 +615,7 @@ Item {
             minXValue: 0                    // Default: 0
             maxXValue: 5                    // Default: 10
 
-            property real stream
+            property real stream: 0
             property real count: 0
             property real interval: 10 // 10 Hz?
             property real inputPower: 0

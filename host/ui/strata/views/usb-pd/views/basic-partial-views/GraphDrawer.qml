@@ -143,7 +143,7 @@ Drawer {
             anchors.top: menuContainer.top
             height: root.graphHeight
 
-            property real stream
+            property real stream: 0
             property real count: 0
             property real interval: 10 // 10 Hz?
 
@@ -184,7 +184,7 @@ Drawer {
             anchors.top: voltageGraph.bottom
             height: root.graphHeight
 
-            property real stream
+            property real stream: 0
             property real count: 0
             property real interval: 10 // 10 Hz?
 
@@ -226,7 +226,7 @@ Drawer {
             anchors.top: powerGraph.bottom
             height: root.graphHeight
 
-            property real stream
+            property real stream: 0
             property real count: 0
             property real interval: 10 // 10 Hz?
 

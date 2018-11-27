@@ -46,7 +46,7 @@ ChartView {
     property bool showOptions: false
     property bool throttlePlotting: true
 
-    property real inputData
+    property real inputData: 0
     property real lastInputTime: Date.now()
     property real lastPlottedTime: Date.now()
     property real lastRedrawTime: Date.now()
@@ -150,7 +150,7 @@ ChartView {
         repeat: true
         onTriggered: {
             if (timeSinceLastPlot() > interval) {
-                appendData()
+                appendData(timeSinceLastPlot() / 1000)
             }
         }
     }
