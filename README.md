@@ -1,1 +1,5 @@
-Spyglass Cloud by ON Semiconductor
+Spyglass Project Infrastructure:
+
+Platform
+Host
+Cloud

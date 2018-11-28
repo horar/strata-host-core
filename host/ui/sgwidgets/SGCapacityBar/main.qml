@@ -28,11 +28,13 @@ Window {
             SGCapacityBarElement{
                 color: "#7bdeff"
                 value: graphData.stream1
+                secondaryValue: graphData.secondaryStream1 // Optional second bar within the element, displays values smaller than primary value in a lighter shade
             }
 
             SGCapacityBarElement{
                 color: "#c6e78f"
                 value: graphData.stream2
+                secondaryValue: graphData.secondaryStream2
             }
         }
 
@@ -45,6 +47,8 @@ Window {
         id: graphData
         property real stream1
         property real stream2
+        property real secondaryStream1
+        property real secondaryStream2
         property real count: 0
         interval: 100
         running: true
@@ -53,6 +57,8 @@ Window {
             count += interval;
             stream1 = Math.sin(count/500)*10+50;
             stream2 = Math.sin((count-800)/500)*10+25;
+            secondaryStream2 = Math.sin(count/500)*10+10;
+            secondaryStream1 = Math.sin((count-800)/500)*10+10;
         }
     }
 }

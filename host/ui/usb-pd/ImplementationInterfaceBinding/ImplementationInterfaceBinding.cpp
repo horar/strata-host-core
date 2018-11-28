@@ -1,5 +1,5 @@
 #include "ImplementationInterfaceBinding.h"
-#include "../../../include/zhelpers.hpp"    // TODO [ian] next guy/gal that uses a relative file location is going to get the Walk of Shame
+#include <zhelpers.hpp>
 
 using namespace std;
 using namespace Spyglass;

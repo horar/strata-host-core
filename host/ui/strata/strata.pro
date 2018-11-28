@@ -45,21 +45,23 @@ HOST_ROOT = ../../../host
 # linux
 unix : !macx : !win32 {
     message("Building on Linux")
-    LIBS += -L$${HOST_ROOT}/lib/linux/lib/ -lzmq
-    INCLUDEPATH += $${HOST_ROOT}/lib/linux/include
-    INCLUDEPATH += $${HOST_ROOT}/include
-    INCLUDEPATH += $$PWD/include
+    LIBS += -L$${HOST_ROOT}/ext_libs/libzmq/lib/linux/ -lzmq
+    DEPENDPATH += $${HOST_ROOT}/ext_libs/libzmq/include
+    INCLUDEPATH += $${HOST_ROOT}/libs/HostControllerClient/include/
+    INCLUDEPATH += $${HOST_ROOT}/ext_libs/zmq/include
+    INCLUDEPATH += $${HOST_ROOT}/ext_libs/libzmq/include
     INCLUDEPATH += $$PWD/PlatformInterface
-    DEPENDPATH += $${HOST_ROOT}/lib/linux/include
 }
 
 # macOS (not iOS)
 else : macx : !win32 {
     message("Building on macOS")
-    LIBS += -L$${HOST_ROOT}/lib/macos/libzmq -lzmq
-    DEPENDPATH += $${HOST_ROOT}/include/macos
+    LIBS += -L$${HOST_ROOT}/ext_libs/libzmq/lib/mac/ -lzmq
+    DEPENDPATH += $${HOST_ROOT}/ext_libs/libzmq/include
     INCLUDEPATH += $${HOST_ROOT}/include/macos/libzmq
-    INCLUDEPATH += $${HOST_ROOT}/include
+    INCLUDEPATH += $${HOST_ROOT}/libs/HostControllerClient/include/
+    INCLUDEPATH += $${HOST_ROOT}/ext_libs/zmq/include
+    INCLUDEPATH += $${HOST_ROOT}/ext_libs/libzmq/include
     INCLUDEPATH += $$PWD/PlatformInterface
     INCLUDEPATH += $$PWD/include
 
@@ -69,10 +71,12 @@ else : macx : !win32 {
 else : win32 {
     message("Building on Windows")
     LIBS += -L$$PWD/../../lib/windows/zeromq/ -llibzmq
-    INCLUDEPATH += $${HOST_ROOT}/lib/windows/zeromq
-    DEPENDPATH += $${HOST_ROOT}/lib/windows/zeromq
+    INCLUDEPATH += $${HOST_ROOT}/ext_libs/libzmq/include
+    DEPENDPATH += $${HOST_ROOT}/ext_libs/libzmq/include
     INCLUDEPATH += $${HOST_ROOT}/lib/linux/include
-    INCLUDEPATH += $${HOST_ROOT}/include/
+    INCLUDEPATH += $${HOST_ROOT}/libs/HostControllerClient/include/
+    INCLUDEPATH += $${HOST_ROOT}/ext_libs/zmq/include
+    INCLUDEPATH += $${HOST_ROOT}/ext_libs/libzmq/include
     INCLUDEPATH += $$PWD/PlatformInterface/
     INCLUDEPATH += $$PWD/include
     DEPENDPATH += $${HOST_ROOT}/lib/linux/include
@@ -88,10 +92,10 @@ message("DONE");
 
 HEADERS += PlatformInterface/core/CoreInterface.h \
     include/DocumentManager.h \
-    $${HOST_ROOT}/include/HostControllerClient.hpp \
-    $${HOST_ROOT}/include/zhelpers.hpp \
-    $${HOST_ROOT}/include/zmq.hpp \
-    $${HOST_ROOT}/include/zmq_addon.hpp
+    $${HOST_ROOT}/libs/HostControllerClient/include/HostControllerClient.hpp \
+    $${HOST_ROOT}/ext_libs/zmq/include/zhelpers.hpp \
+    $${HOST_ROOT}/ext_libs/zmq/include/zmq.hpp \
+    $${HOST_ROOT}/ext_libs/zmq/include/zmq_addon.hpp
 
 SOURCES += main.cpp \
     PlatformInterface/core/CoreInterface.cpp \

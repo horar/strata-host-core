@@ -102,6 +102,14 @@ Item {
                                 uncheckedLabel: "OFF"
                                 labelsInside: false
                                 label: "Analytics Collection:"
+                                onCheckedChanged: {
+                                    if (!checked && analyticsLog) {
+                                        analyticsModel.clear()
+                                        analyticsLog.enabled = false
+                                    } else if (analyticsLog) {
+                                        analyticsLog.enabled = true
+                                    }
+                                }
                             }
 
                         }
@@ -111,6 +119,18 @@ Item {
                         id: analyticsLogContainer
                         width: mainColumn.width
                         height: analyticsLogTitle.height + analyticsLog.height
+
+
+                        Rectangle {
+                            id: disabled
+                            color: "lightgrey"
+                            opacity: 0.5
+                            anchors {
+                                fill: analyticsLogContainer
+                            }
+                            z:20
+                            visible: !analyticsLog.enabled
+                        }
 
                         Rectangle {
                             id: analyticsLogTitle
@@ -142,40 +162,28 @@ Item {
                             }
                             height: Math.max(popupContainer.height - analyticsTextContainer.height - analyticsLogTitle.height - 90 - backButton.height, 200)
 
-                            model: ListModel{
-                                id: fakeTempModel
+                            model: analyticsModel
+                        }
 
-                                ListElement {
-                                    status: "10/1/2018 – USB-PD 2 Port UUID connection"
-                                }
+                        // Listeners to populate analytics log with demo data since metrics isn't fully functional
+                        // TODO: remove this in place of metrics.js data
+                        Connections {
+                            target: coreInterface
 
-                                ListElement {
-                                    status: "10/1/2018 – USB-PD 2 Port UUID system update"
-                                }
-
-                                ListElement {
-                                    status: "10/1/2018 – USB-PD 2 Port UUID Controls-Basic operation start"
-                                }
-
-                                ListElement {
-                                    status: "10/1/2018 – USB-PD 2 Port UUID Controls-Advanced operation start"
-                                }
-
-                                ListElement {
-                                    status: "10/1/2018 – USB-PD 2 Port UUID Block Diagram view"
-                                }
-
-                                ListElement {
-                                    status: "10/1/2018 – USB-PD 2 Port UUID Block Diagram – NCV81599 select"
-                                }
-
-                                ListElement {
-                                    status: "10/1/2018 – USB-PD 2 Port UUID Block Diagram – NCP163 select"
+                            onPretendMetrics: {
+                                var d = new Date();
+                                if (analyticsSwitch.checked) {
+                                    analyticsModel.append({"status": "[" +d + "] " + message.substring(0, 40)})
                                 }
                             }
                         }
 
-
+                        ListModel{
+                            id: analyticsModel
+//                            ListElement {
+//                                status: "10/1/2018 – USB-PD 2 Port UUID connection"
+//                            }
+                        }
                     }
 
                     Button {

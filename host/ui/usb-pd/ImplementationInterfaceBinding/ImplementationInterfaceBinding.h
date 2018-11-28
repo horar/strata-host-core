@@ -17,7 +17,7 @@
 #include <map>
 #include <functional>
 #include <stdlib.h>
-#include "../../../include/HostControllerClient.hpp"  // TODO [ian] FIX THIS ... locally referenced files
+#include <HostControllerClient.hpp>
 #include <QMap>
 
 // To simulate the data
