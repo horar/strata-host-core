@@ -13,6 +13,7 @@
 
 #define DEBUG(...) printf("SGDocument: "); printf(__VA_ARGS__)
 using fleece::impl::Value;
+
 SGDocument::SGDocument() {
     c4db_       = NULL;
     c4document_ = NULL;
@@ -22,12 +23,8 @@ SGDocument::~SGDocument() {
     c4doc_free(c4document_);
 }
 
-SGDocument::SGDocument(SGDatabase *database, std::string docId) {
+SGDocument::SGDocument(SGDatabase *database, const std::string &docId) {
     setC4Document(database, docId);
-    if(body_.length() > 0){
-        //setDict(Value::fromData(fleece::slice(body_))->asDict());
-        //mutable_dict_ =
-    }
 }
 const std::string &SGDocument::getId() const {
     return id_;
@@ -37,6 +34,9 @@ void SGDocument::setId(const std::string &id) {
     id_ = id;
 }
 
+/** SGDocument exist.
+* @brief Check if the document exist in the DB.
+*/
 bool SGDocument::exist() {
     if (c4document_ == NULL){
         return false;
@@ -52,7 +52,13 @@ void SGDocument::setBody(const std::string &body) {
     body_ = body;
 }
 
-bool SGDocument::setC4Document(class SGDatabase *database, std::string docId) {
+/** SGDocument setC4Document.
+* @brief Open a document and sets its body to to the existing mutable_dict, if the document exist. Otherwise init mutable_dict_
+ * NOTE: This is not a public function, it's protected!
+* @param database The reference to the opened SGDatabase.
+* @param docId The reference to the docId to be opened.
+*/
+bool SGDocument::setC4Document(SGDatabase *database,const std::string &docId) {
     c4db_       = database->getC4db();
     c4document_ = database->getDocumentById(docId);
     id_         = docId;
@@ -82,6 +88,10 @@ bool SGDocument::setC4Document(class SGDatabase *database, std::string docId) {
     return false;
 }
 
+/** SGDocument get.
+* @brief MutableDict wrapper to access document data.
+* @param keyToFind The reference to the key.
+*/
 const fleece::impl::Value *SGDocument::get(const std::string &keyToFind) {
     return mutable_dict_->get(keyToFind);
 }

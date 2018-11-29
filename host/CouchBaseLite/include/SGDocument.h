@@ -23,7 +23,7 @@ public:
 
     virtual ~SGDocument();
 
-    SGDocument(class SGDatabase *database, std::string docId);
+    SGDocument(class SGDatabase *database, const std::string &docId);
 
     C4Document *getC4document() const;
 
@@ -48,7 +48,7 @@ private:
     std::string     body_;
     friend class    SGDatabase;
 protected:
-    bool setC4Document(class SGDatabase *database, std::string docId);
+    bool setC4Document(SGDatabase *database, const std::string &docId);
     fleece::Retained<fleece::impl::MutableDict> mutable_dict_;
 };
 
