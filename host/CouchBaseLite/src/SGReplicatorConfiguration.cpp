@@ -72,8 +72,10 @@ fleece::Retained<fleece::impl::MutableDict> SGReplicatorConfiguration::effective
         // This will add authentication options to the fleece dictionary.
         authenticator_->authenticate(options_);
     }
-
     // Here we can process more options and add it to options_
+
+    //If >=1, notify on every doc; if >=2, on every attachment (int)
+    options_->set( slice(kC4ReplicatorOptionProgressLevel), 1);
 
     return options_;
 }

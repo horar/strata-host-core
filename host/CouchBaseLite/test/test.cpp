@@ -27,8 +27,8 @@ void onStatusChanged(SGReplicator::ActivityLevel level, SGReplicatorProgress pro
     }
     DEBUG("Replicator Activity Level: %s %f %\n", activity_level_string[level], progress_percentage);
 }
-void onDocumentError(bool pushing, std::string doc_id, std::string error_message, bool transient){
-    DEBUG("onDocumentError: pushing: %d, Doc Id: %s, error message: %s, transient:%d\n", pushing, doc_id.c_str(), error_message.c_str(), transient);
+void onDocumentEnded(bool pushing, std::string doc_id, std::string error_message, bool is_error,bool transient){
+    DEBUG("onDocumentError: pushing: %d, Doc Id: %s, is error: %d, error message: %s, transient:%d\n", pushing, doc_id.c_str(), is_error, error_message.c_str(), transient);
 }
 int main(){
 
@@ -97,7 +97,7 @@ int main(){
 
 
     replicator.addChangeListener(onStatusChanged);
-    replicator.addDocumentErrorListener(onDocumentError);
+    replicator.addDocumentEndedListener(onDocumentEnded);
 
     replicator.start();
     DEBUG("About to stop the replicator thread\n");

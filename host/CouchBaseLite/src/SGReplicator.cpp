@@ -177,26 +177,25 @@ void SGReplicator::addChangeListener(const std::function<void(SGReplicator::Acti
 }
 
 /** SGReplicator addDocumentErrorListener.
-* @brief Adds the callback function to the replicator's onDocumentEnded event.
+* @brief Adds the callback function to the replicator's onDocumentEnded event. (This can notifiy for error and also for added Doc to local DB)
 * @param callback The callback function.
 */
-void SGReplicator::addDocumentErrorListener(const std::function<void(bool, std::string, std::string, bool)> &callback) {
+void SGReplicator::addDocumentEndedListener(const std::function<void(bool pushing, std::string doc_id, std::string error_message, bool is_error,bool error_is_transient)> &callback) {
     on_document_error_callback = callback;
-//TODO: Fix me. This has changed in the couchbase core and this no longer works!
-//    replicator_parameters_.onDocumentEnded = [](C4Replicator* C4NONNULL,
-//                                                bool pushing,
-//                                                C4String docID,
-//                                                C4String docProperty,
-//                                                C4BlobKey blobKey,
-//                                                uint64_t bytesComplete,
-//                                                uint64_t bytesTotal,
-//                                                C4Error error,
-//                                                void *context){
-//
-//        string doc_id = string((char *)docID.buf, docID.size);
-//        char error_message[200];
-//        c4error_getDescriptionC(error, error_message, sizeof(error_message));
-//
-//        ((SGReplicator*)context)->on_document_error_callback(pushing, doc_id, error_message, transient);
-//    };
+    replicator_parameters_.onDocumentEnded = [](C4Replicator* C4NONNULL,
+                                                bool pushing,
+                                                C4HeapString docID,
+                                                C4HeapString revID,
+                                                C4RevisionFlags flags,
+                                                C4Error error,
+                                                bool errorIsTransient,
+                                                void *context){
+
+        string doc_id = string((char *)docID.buf, docID.size);
+        char error_message[200];
+        c4error_getDescriptionC(error, error_message, sizeof(error_message));
+        DEBUG("Error code: %d\n", error.code);
+
+        ((SGReplicator*)context)->on_document_error_callback(pushing, doc_id, error_message, error.code > 0 ,errorIsTransient);
+    };
 }
