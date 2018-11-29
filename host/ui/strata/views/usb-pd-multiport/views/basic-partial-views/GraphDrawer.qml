@@ -140,7 +140,7 @@ Drawer {
             anchors.top: menuContainer.top
             height: root.graphHeight
 
-            property real stream: 0
+            property real stream :0
             property real count: 0
             property real interval: 10 // 10 Hz?
 
