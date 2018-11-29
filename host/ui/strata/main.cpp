@@ -13,6 +13,7 @@
 #include <QtCore/QDir>
 #include "QtDebug"
 #include <QProcess>
+#include <QSettings>
 
 #include <PlatformInterface/core/CoreInterface.h>
 
@@ -29,6 +30,9 @@ int main(int argc, char *argv[])
     if (!chromiumFlags.contains("disable-web-security")) {
         qputenv("QTWEBENGINE_CHROMIUM_FLAGS", chromiumFlags + " --disable-web-security");
     }
+
+    QSettings::setDefaultFormat(QSettings::IniFormat);
+    QCoreApplication::setOrganizationName(QStringLiteral("On Semiconductor"));
 
     QApplication app(argc, argv);
     QQmlApplicationEngine engine;

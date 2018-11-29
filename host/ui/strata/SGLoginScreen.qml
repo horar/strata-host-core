@@ -3,10 +3,12 @@ import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.0
 import QtQuick.Controls.Material 2.2
 import QtQuick.Controls.Styles 1.4
+import Qt.labs.settings 1.0
 import "js/navigation_control.js" as NavigationControl
 import "js/login.js" as Authenticator
 import "js/restclient.js" as Rest
 import Fonts 1.0
+import "qrc:/statusbar-partial-views"
 
 Rectangle {
     id: container
@@ -44,6 +46,8 @@ Rectangle {
             if(result){
                 var data = { user_id: usernameField.text }
                 NavigationControl.updateState(NavigationControl.events.LOGIN_SUCCESSFUL_EVENT,data)
+
+                usernameField.updateModel()
             }
             else{
                 //Show the failed animation
@@ -169,25 +173,42 @@ Rectangle {
             topMargin: 15
         }
 
-        TextField {
+        SGComboBox {
             id: usernameField
-            height: 38
+
+            comboBoxHeight: 38
             focus: true
-            placeholderText: qsTr("Username")
-            cursorPosition: 3
+            property string text: currentText
+            onEditTextChanged: text = editText
+            onCurrentIndexChanged: text = currentText
+
+            editable: true
+            borderColor: "#ddd"
+            model: ListModel {}
+            placeholderText: "Username"
+
+            Component.onCompleted: {
+                var userNames = JSON.parse(userNameFieldSettings.userNameStore)
+                for (var i = 0; i < userNames.length; ++i) {
+                    model.append(userNames[i])
+                }
+                currentIndex = userNameFieldSettings.userNameIndex
+            }
+            Component.onDestruction: {
+                var userNames = []
+                for (var i = 0; i < model.count; ++i) {
+                    userNames.push(model.get(i))
+                }
+                userNameFieldSettings.userNameStore = JSON.stringify(userNames)
+                userNameFieldSettings.userNameIndex = currentIndex
+            }
+
             anchors {
                 top: loginRectangle.top
                 left: loginRectangle.left
                 right: loginRectangle.right
             }
-            font {
-                pixelSize: 15
-                family: Fonts.franklinGothicBook
-            }
-            background: Rectangle {
-                border.color: usernameField.activeFocus ? "#219647" : "#ddd"
-            }
-            selectByMouse: true
+            comboBoxWidth: loginRectangle.width
 
             Keys.onPressed: {
                 hideFailedLoginAnimation.start()
@@ -196,6 +217,25 @@ Rectangle {
             //handle a return key click, which is the equivalent of the login button being clicked
             Keys.onReturnPressed:{
                 loginButton.clicked()
+            }
+
+            function updateModel() {
+                if (find(text) === -1) {
+                    model.append({text: text})
+                    currentIndex = find(text)
+                }
+            }
+
+            font {
+                pixelSize: 15
+                family: Fonts.franklinGothicBook
+            }
+
+            Settings {
+                id: userNameFieldSettings
+
+                property string userNameStore: "{}"
+                property int userNameIndex: -1
             }
         }
 
