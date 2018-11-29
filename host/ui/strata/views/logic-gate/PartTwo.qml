@@ -323,7 +323,6 @@ Rectangle {
                     if(inputOneText.text === "B" ) {
                         // When the function is XOR (index = 4) A = B
                         if(currentIndex === 4) {
-                            console.log("in index 4")
                             if(inputOneToggle.checked)  {
                                 platformInterface.write_io.update(1,1, platformInterface.nl7sz58_io_state.c)
                             }
