@@ -314,33 +314,40 @@ Rectangle {
                     if(inputOneText.text === "A") {
                         if(inputOneToggle.checked)  {
                             platformInterface.write_io.update(1, platformInterface.nl7sz58_io_state.b, platformInterface.nl7sz58_io_state.c)
-                            platformInterface.write_io.show()
                         }
                         else {
                             platformInterface.write_io.update(0, platformInterface.nl7sz58_io_state.b, platformInterface.nl7sz58_io_state.c)
-                            platformInterface.write_io.show()
                         }
                     }
 
-                    if(inputOneText.text === "B") {
-                        if(inputOneToggle.checked)  {
-                            platformInterface.write_io.update(platformInterface.nl7sz58_io_state.a,1, platformInterface.nl7sz58_io_state.c)
-                            platformInterface.write_io.show()
+                    if(inputOneText.text === "B" ) {
+                        // When the function is XOR (index = 4) A = B
+                        if(currentIndex === 4) {
+                            if(inputOneToggle.checked)  {
+                                platformInterface.write_io.update(1,1, platformInterface.nl7sz58_io_state.c)
+                            }
+                            else {
+                                platformInterface.write_io.update(0,0, platformInterface.nl7sz58_io_state.c)
+                            }
                         }
+
                         else {
-                            platformInterface.write_io.update(platformInterface.nl7sz58_io_state.a,0, platformInterface.nl7sz58_io_state.c)
-                            platformInterface.write_io.show()
+                            if(inputOneToggle.checked)  {
+                                console.log("in the else case of its")
+                                platformInterface.write_io.update(platformInterface.nl7sz58_io_state.a,1, platformInterface.nl7sz58_io_state.c)
+                            }
+                            else {
+                                platformInterface.write_io.update(platformInterface.nl7sz58_io_state.a,0, platformInterface.nl7sz58_io_state.c)
+                            }
                         }
                     }
 
                     if(inputOneText.text === "C") {
                         if(inputOneToggle.checked)  {
                             platformInterface.write_io.update(platformInterface.nl7sz58_io_state.a,platformInterface.nl7sz58_io_state.b,1)
-                            platformInterface.write_io.show()
                         }
                         else {
                             platformInterface.write_io.update(platformInterface.nl7sz58_io_state.a, platformInterface.nl7sz58_io_state.b,0)
-                            platformInterface.write_io.show()
                         }
                     }
                 }
@@ -377,36 +384,30 @@ Rectangle {
                 }
 
                 onClicked: {
-                    if(inputTwoText.text === "A") {
+                    if( inputTwoText.text === "A") {
                         if(inputTwoToggle.checked)  {
                             platformInterface.write_io.update(1,platformInterface.nl7sz58_io_state.b, platformInterface.nl7sz58_io_state.c)
-                            platformInterface.write_io.show()
                         }
                         else {
                             platformInterface.write_io.update(0,platformInterface.nl7sz58_io_state.b, platformInterface.nl7sz58_io_state.c)
-                            platformInterface.write_io.show()
                         }
                     }
 
                     if(inputTwoText.text === "B") {
                         if(inputTwoToggle.checked)  {
                             platformInterface.write_io.update(platformInterface.nl7sz58_io_state.a, 1, platformInterface.nl7sz58_io_state.c)
-                            platformInterface.write_io.show()
                         }
                         else {
                             platformInterface.write_io.update(platformInterface.nl7sz58_io_state.a, 0, platformInterface.nl7sz58_io_state.c)
-                            platformInterface.write_io.show()
                         }
                     }
 
                     if(inputTwoText.text === "C") {
                         if(inputTwoToggle.checked)  {
                             platformInterface.write_io.update(platformInterface.nl7sz58_io_state.a,platformInterface.nl7sz58_io_state.b,1)
-                            platformInterface.write_io.show()
                         }
                         else {
                             platformInterface.write_io.update(platformInterface.nl7sz58_io_state.a,platformInterface.nl7sz58_io_state.b,0)
-                            platformInterface.write_io.show()
                         }
                     }
                 }
