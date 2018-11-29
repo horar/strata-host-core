@@ -42,7 +42,7 @@ public:
     bool start();
     bool stop();
     void addChangeListener(const std::function<void(SGReplicator::ActivityLevel, SGReplicatorProgress)>& callback);
-    void addDocumentErrorListener(const std::function<void(bool, std::string, std::string, bool)>& callback );
+    void addDocumentEndedListener(const std::function<void(bool pushing, std::string doc_id, std::string error_message, bool is_error,bool error_is_transient)>& callback );
 
 
 private:
@@ -51,7 +51,7 @@ private:
     C4ReplicatorParameters replicator_parameters_;
 
     std::function<void(SGReplicator::ActivityLevel, SGReplicatorProgress progress)> on_status_changed_callback_;
-    std::function<void(bool, std::string, std::string, bool)> on_document_error_callback;
+    std::function<void(bool pushing, std::string doc_id, std::string error_message, bool is_error,bool error_is_transient)> on_document_error_callback;
 
     std::thread replicator_thread_;
     std::promise<void> replicator_exit_signal;
