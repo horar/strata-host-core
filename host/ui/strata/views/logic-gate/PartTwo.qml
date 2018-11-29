@@ -322,32 +322,26 @@ Rectangle {
                         }
                     }
 
-                        // input two container
                     if(inputOneText.text === "B" ) {
-
                         // When the function is XOR (index = 4) A = B
                         if(currentIndex === 4) {
                             if(inputOneToggle.checked)  {
                                 platformInterface.write_io.update(1,1, platformInterface.nl7sz58_io_state.c)
                                 platformInterface.write_io.show()
                             }
-
                             else {
                                 platformInterface.write_io.update(0,0, platformInterface.nl7sz58_io_state.c)
                                 platformInterface.write_io.show()
                             }
                         }
-
                         if(inputOneToggle.checked)  {
                             platformInterface.write_io.update(platformInterface.nl7sz58_io_state.a,1, platformInterface.nl7sz58_io_state.c)
                             platformInterface.write_io.show()
                         }
                         else {
-
                             platformInterface.write_io.update(platformInterface.nl7sz58_io_state.a,0, platformInterface.nl7sz58_io_state.c)
                             platformInterface.write_io.show()
                         }
-
                     }
 
                     if(inputOneText.text === "C") {
