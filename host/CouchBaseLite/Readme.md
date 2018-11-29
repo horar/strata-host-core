@@ -3,7 +3,7 @@ This library depends on couchbase-lite-core.
 Note: This is tested on Mac OS.
 Please run the following to build couchbase-lite-core. 
 ```
-cd couchbase-lite-core/build_cmake
+cd couchbase-lite-core/build_cmake/scripts
 ./build_macos.sh
 ```
 
