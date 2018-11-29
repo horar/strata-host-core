@@ -127,6 +127,7 @@ set(LIB_SOURCES
 		${CMAKE_CURRENT_SOURCE_DIR}/src/SGReplicator.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/SGURLEndpoint.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/SGReplicatorConfiguration.cpp
+		${CMAKE_CURRENT_SOURCE_DIR}/src/SGBasicAuthenticator.cpp
         ${CB_DIR}/Replicator/CivetWebSocket.cc
 		)
 

@@ -14,11 +14,11 @@
 
 #include "SGDatabase.h"
 #include "SGURLEndpoint.h"
-
+#include "SGAuthenticator.h"
 class SGReplicatorConfiguration {
 public:
     SGReplicatorConfiguration();
-    SGReplicatorConfiguration(class SGDatabase *db, SGURLEndpoint *url_endpoint);
+    SGReplicatorConfiguration(SGDatabase *db, SGURLEndpoint *url_endpoint);
     enum ReplicatorType{
         kPushAndPull = 0,
         kPush,
@@ -31,18 +31,27 @@ public:
 
     void setDatabase(const SGDatabase &database_);
 
-    const class SGURLEndpoint *getUrlEndpoint() const;
+    const SGURLEndpoint *getUrlEndpoint() const;
 
-    void setUrlEndpoint_(class SGURLEndpoint *url_endpoint_);
+    void setUrlEndpoint_(SGURLEndpoint *url_endpoint_);
 
     ReplicatorType getReplicatorType() const;
 
-    void setReplicatorType(ReplicatorType replicator_type_);
+    void setReplicatorType(ReplicatorType replicator_type);
+
+    void setAuthenticator(const SGAuthenticator *authenticator);
+    const SGAuthenticator* getAuthenticator() const;
+
+    fleece::Retained<fleece::impl::MutableDict> effectiveOptions();
 
 private:
     C4Database          *database_;
     class SGURLEndpoint *url_endpoint_;
-    ReplicatorType     replicator_type_;
+    ReplicatorType      replicator_type_;
+    SGAuthenticator     *authenticator_;
+
+    //Holds all extra configuration for the replicator
+    fleece::Retained<fleece::impl::MutableDict> options_;
 };
 
 

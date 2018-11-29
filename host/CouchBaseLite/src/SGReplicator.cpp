@@ -68,6 +68,12 @@ bool SGReplicator::_start(std::future<void> future_obj){
     C4Error c4error;
     c4socket_registerFactory(C4CivetWebSocketFactory);
 
+    Encoder encoder;
+
+    encoder.writeValue(replicator_configuration_->effectiveOptions());
+    alloc_slice fleece_data = encoder.finish();
+    replicator_parameters_.optionsDictFleece = fleece_data;
+
     // TODO: Luay, provide callback interface to these functions.
     // Callback functions
     replicator_parameters_.validationFunc = [](C4String docID, C4RevisionFlags ref, FLDict body, void *context){
@@ -76,6 +82,9 @@ bool SGReplicator::_start(std::future<void> future_obj){
         string doc_id = string((char *)docID.buf, docID.size);
         string body_json = string((char *)f.buf, f.size);
         DEBUG("Doc ID: %s, received body json:%s\n",doc_id.c_str(), body_json.c_str());
+
+        //dispatch_register listener
+
         return true;
     };
     replicator_parameters_.pushFilter = [](C4String docID, C4RevisionFlags ref, FLDict body, void *context){
@@ -108,6 +117,7 @@ bool SGReplicator::_start(std::future<void> future_obj){
 
         return false;
     }
+    //TODO: Remove this. This is only used because we don't want to exit the program. Since replicator stuff are async and work on the background!
     while ( (c4repl_getStatus(c4replicator_).level != kC4Stopped) && future_obj.wait_for(std::chrono::milliseconds(1)) == std::future_status::timeout){
         this_thread::sleep_for(chrono::milliseconds(1000));
     }
@@ -146,14 +156,23 @@ void SGReplicator::setReplicatorType(SGReplicatorConfiguration::ReplicatorType r
 * @param callback The callback function.
 */
 void SGReplicator::addChangeListener(const std::function<void(SGReplicator::ActivityLevel, SGReplicatorProgress progress)>& callback) {
+    //TODO: push to List of callbacks listening
     on_status_changed_callback_ = callback;
+
     replicator_parameters_.onStatusChanged = [](C4Replicator *, C4ReplicatorStatus replicator_status, void *context){
         DEBUG("onStatusChanged\n");
         SGReplicatorProgress progress;
         progress.total = replicator_status.progress.unitsTotal;
         progress.completed = replicator_status.progress.unitsCompleted;
         progress.document_count = replicator_status.progress.documentCount;
+
+        //This is blocking
         ((SGReplicator*)context)->on_status_changed_callback_((SGReplicator::ActivityLevel) replicator_status.level, progress);
+        //TODO: notify change listeners
+        //((SGReplicator*)context)->notifyChangeListeners((SGReplicator::ActivityLevel) replicator_status.level, progress);
+        //TODO: Walk registered listening callback passing each level and propgress
+        // Use/pass EV_SIGNAL
+        //Dispatched as an event loop
     };
 }
 
@@ -163,17 +182,21 @@ void SGReplicator::addChangeListener(const std::function<void(SGReplicator::Acti
 */
 void SGReplicator::addDocumentErrorListener(const std::function<void(bool, std::string, std::string, bool)> &callback) {
     on_document_error_callback = callback;
-    replicator_parameters_.onDocumentEnded = [](C4Replicator *repl,
-                                                bool pushing,
-                                                C4String docID,
-                                                C4Error error,
-                                                bool transient,
-                                                void *context){
-
-        string doc_id = string((char *)docID.buf, docID.size);
-        char error_message[200];
-        c4error_getDescriptionC(error, error_message, sizeof(error_message));
-
-        ((SGReplicator*)context)->on_document_error_callback(pushing, doc_id, error_message, transient);
-    };
+//TODO: Fix me. This has changed in the couchbase core and this no longer works!
+//    replicator_parameters_.onDocumentEnded = [](C4Replicator* C4NONNULL,
+//                                                bool pushing,
+//                                                C4String docID,
+//                                                C4String docProperty,
+//                                                C4BlobKey blobKey,
+//                                                uint64_t bytesComplete,
+//                                                uint64_t bytesTotal,
+//                                                C4Error error,
+//                                                void *context){
+//
+//        string doc_id = string((char *)docID.buf, docID.size);
+//        char error_message[200];
+//        c4error_getDescriptionC(error, error_message, sizeof(error_message));
+//
+//        ((SGReplicator*)context)->on_document_error_callback(pushing, doc_id, error_message, transient);
+//    };
 }
