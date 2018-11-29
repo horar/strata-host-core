@@ -133,9 +133,6 @@ Drawer {
             }
         }
 
-
-
-
         SGGraph{
             id:voltageGraph
             anchors.left: menuContainer.left
@@ -143,7 +140,7 @@ Drawer {
             anchors.top: menuContainer.top
             height: root.graphHeight
 
-            property real stream
+            property real stream :0
             property real count: 0
             property real interval: 10 // 10 Hz?
 
@@ -175,12 +172,7 @@ Drawer {
             maxXValue: 5                    // Default: 10
             showXGrids: false               // Default: false
             showYGrids: true                // Default: false
-            showOptions: true               // Default: false - shows an options button to toggle centered
-            throttlePlotting: true          // Default: true - Plots new data no more than every 100ms to save CPU & memory resources, otherwise points plotted on every inputData change
-            repeatOldData: true            // Default: visible - If no new data has been sent after 200ms, graph will plot a new point at the current time with the last input value
-                                                            //  by default matches visibility of graph, so it doesn't waste CPU in the background.
         }
-
 
         SGGraph{
             id:powerGraph
@@ -189,7 +181,7 @@ Drawer {
             anchors.top: voltageGraph.bottom
             height: root.graphHeight
 
-            property real stream
+            property real stream: 0
             property real count: 0
             property real interval: 10 // 10 Hz?
 
@@ -222,11 +214,8 @@ Drawer {
             maxXValue: 5                    // Default: 10
             showXGrids: false               // Default: false
             showYGrids: true                // Default: false
-            showOptions: true               // Default: false - shows an options button to toggle centered
-            throttlePlotting: true          // Default: true - Plots new data no more than every 100ms to save CPU & memory resources, otherwise points plotted on every inputData change
-            repeatOldData: true            // Default: visible - If no new data has been sent after 200ms, graph will plot a new point at the current time with the last input value
-                                                            //  by default matches visibility of graph, so it doesn't waste CPU in the background.
         }
+
         SGGraph{
             id:temperatureGraph
             anchors.left: menuContainer.left
@@ -234,7 +223,7 @@ Drawer {
             anchors.top: powerGraph.bottom
             height: root.graphHeight
 
-            property real stream
+            property real stream: 0
             property real count: 0
             property real interval: 10 // 10 Hz?
 
@@ -266,14 +255,7 @@ Drawer {
             maxXValue: 5                   // Default: 10
             showXGrids: false               // Default: false
             showYGrids: true                // Default: false
-            showOptions: true               // Default: false - shows an options button to toggle centered
-            throttlePlotting: true          // Default: true - Plots new data no more than every 100ms to save CPU & memory resources, otherwise points plotted on every inputData change
-            repeatOldData: true            // Default: visible - If no new data has been sent after 200ms, graph will plot a new point at the current time with the last input value
-                                                            //  by default matches visibility of graph, so it doesn't waste CPU in the background.
-
         }
-
-
     }
 
     MouseArea{
