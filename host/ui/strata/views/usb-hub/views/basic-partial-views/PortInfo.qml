@@ -115,7 +115,66 @@ Rectangle {
 
     }
 
+    function transitionToBasicView(){
 
+        //break the anchors needed to move port stats
+        powerOutBox.anchors.top = undefined
+        powerOutBox.anchors.left = undefined
+        powerOutBox.anchors.right = undefined
+        temperatureBox.anchors.left = powerOutBox.left
+        temperatureBox.anchors.right = powerOutBox.right
+        efficencyBox.anchors.left = powerOutBox.left
+        efficencyBox.anchors.right = powerOutBox.right
+        portToBasic.start()
+        outputVoltageBox.transitionToBasicView()
+        maxPowerBox.transitionToBasicView()
+        powerInBox.transitionToBasicView()
+        powerOutBox.transitionToBasicView()
+        temperatureBox.transitionToBasicView()
+        efficencyBox.transitionToBasicView()
+
+    }
+
+    SequentialAnimation{
+        id: portToBasic
+
+        ParallelAnimation{
+            id: unRearrangeStatsBoxes
+            running: false
+
+            PropertyAnimation {
+                target: outputVoltageBox
+                property: "anchors.rightMargin"
+                to: 10
+                duration: tabTransitionTime
+            }
+
+            PropertyAnimation {
+                target: powerOutBox
+                property: "x"
+                to: (root.width)/2 + 40
+                duration: tabTransitionTime
+            }
+
+            PropertyAnimation {
+                target: powerOutBox
+                property: "width"
+                to: 110
+                duration: tabTransitionTime
+            }
+
+            PropertyAnimation {
+                target: powerOutBox
+                property: "y"
+                to: titleBackground.y + titleBackground.height + 8
+                duration: tabTransitionTime
+            }
+        }   //phase 1 transition
+
+        onStopped: {
+            advancedControls.transitionToBasicView();
+        }
+}
 
 
     signal showGraph()

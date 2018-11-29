@@ -73,6 +73,34 @@ Rectangle {
             to:1
             duration: tabTransitionTime
         }
+    }
+
+    function transitionToBasicView(){
+        portToBasic.start()
+    }
+
+    ParallelAnimation{
+        id: portToBasic
+        running: false
+
+        PropertyAnimation{
+            target:titleBackground
+            property: "height"
+            to:basicTitleBackgroundHeight
+            duration: tabTransitionTime
+        }
+        PropertyAnimation{
+            target:volumneText
+            property: "opacity"
+            to:0
+            duration: tabTransitionTime
+        }
+        PropertyAnimation{
+            target:volumeSlider
+            property: "opacity"
+            to:0
+            duration: tabTransitionTime
+        }
 
 
     }
