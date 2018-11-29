@@ -3,10 +3,13 @@ import QtQuick.Controls 2.2
 import "qrc:/views/usb-pd-multiport/sgwidgets"
 import "qrc:/views/usb-pd-multiport/views/advanced-partial-views"
 
+
 Rectangle {
     id: root
 
     property bool debugLayout: false
+
+
 
     anchors {
         fill: parent
@@ -23,6 +26,11 @@ Rectangle {
         anchors.centerIn: root
         font.pixelSize: 24
     }
+
+
+
+
+
 
 /*    Overview {
         id: overview

@@ -262,7 +262,7 @@ Item {
 
         Text {
             id: cableCompensation
-            text: "<b>Cable Compensation:</b>"
+            text: "<b>Cable Compensation</b>"
             font {
                 pixelSize: 16
             }

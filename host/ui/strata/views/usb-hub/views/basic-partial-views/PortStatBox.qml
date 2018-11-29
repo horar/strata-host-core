@@ -42,6 +42,29 @@ Rectangle {
          }
      }
 
+     function transitionToBasicView(){
+         enlargeIcon.start()
+     }
+
+     ParallelAnimation{
+         id: enlargeIcon
+         running: false
+
+         PropertyAnimation {
+             target: iconImage
+             property: "height"
+             to: root.height * 0.9
+             duration: tabTransitionTime
+         }
+
+         PropertyAnimation {
+             target: iconImage
+             property: "anchors.verticalCenterOffset"
+             to: 0
+             duration: tabTransitionTime
+         }
+     }
+
     Image {
         id: iconImage
         source: root.icon

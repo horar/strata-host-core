@@ -10,13 +10,23 @@ Item {
     property real ratioCalc: root.width / 1200
     property int tabTransitionTime: 1000
     property int tabTransitionTimePhase2: 1000
+
     property int basicPortWidth: 160
     property int advancedPortWidth: 240
+
+    property int basicDeviceWidth: 160
     property int advancedDeviceWidth: 240
+
+    property int basicThinPortWidth: 170
     property int advancedThinPortWidth: 170
+
+    property int basicPortHeight: 344
+
     property int advancedUSBAPortHeight: 240
     property int advancedAudioPortHeight: 150
     property int advancedDisplayPortPortHeight: 140
+
+    property int basicTopMargin: 95
     property int advancedTopMargin: 10
 
     width: parent.width / parent.height > initialAspectRatio ? parent.height * initialAspectRatio : parent.width
@@ -354,6 +364,284 @@ Item {
         }
 
     }
+
+    //----------------------------------------------------------------------------------------
+    //                      Animation to Basic View
+    //----------------------------------------------------------------------------------------
+
+    function transitionToBasicView(){
+        backgroundToBasic.start();
+        //unanchor parts of the ports that will be rearranged
+        port4.anchors.bottom = undefined;
+        port4.anchors.left = undefined;
+        audioPort.anchors.top = undefined;
+        audioPort.anchors.bottom = undefined;
+        audioPort.anchors.left = undefined;
+        displayPort.anchors.top = undefined;
+        displayPort.anchors.bottom = undefined;
+        displayPort.anchors.left = undefined;
+
+        portsToBasic.start();
+        devicesToBasic.start();
+        audioPort.transitionToBasicView();
+        displayPort.transitionToBasicView();
+        upstreamPort.transitionToBasicView();
+        port1.transitionToBasicView();
+        port2.transitionToBasicView();
+        port3.transitionToBasicView();
+        port4.transitionToBasicView();
+
+    }
+
+    ParallelAnimation{
+        id: backgroundToBasic
+        running: false
+
+        PropertyAnimation{
+            target:deviceBackground
+            property: "anchors.topMargin"
+            to:(3*root.height)/32
+            duration: tabTransitionTime
+        }
+
+        PropertyAnimation{
+            target:deviceBackground
+            property: "height"
+            to: (7*parent.height)/16
+            duration: tabTransitionTime
+        }
+    }
+
+    ParallelAnimation{
+        //changing the background will expand the ports as well, since they're anchored together
+        //we will have to alter size and position of the USB-A, Audio and DisplayPort ports here
+        id:portsToBasic
+        PropertyAnimation{
+            target:upstreamPort
+            property: "width"
+            to: basicPortWidth
+            duration: tabTransitionTime
+        }
+        PropertyAnimation{
+            target:port1
+            property: "width"
+            to: basicPortWidth
+            duration: tabTransitionTime
+        }
+        PropertyAnimation{
+            target:port2
+            property: "width"
+            to: basicPortWidth
+            duration: tabTransitionTime
+        }
+        PropertyAnimation{
+            target:port3
+            property: "width"
+            to: basicPortWidth
+            duration: tabTransitionTime
+        }
+        PropertyAnimation{
+            //usb-A port
+            target:port4
+            property: "width"
+            to: basicPortWidth
+            duration: tabTransitionTime
+        }
+
+        PropertyAnimation{
+            //usb-A port
+            target:port4
+            property: "height"
+            to: basicPortHeight
+            duration: tabTransitionTime
+        }
+        PropertyAnimation{
+            //usb-A port
+            target:port4
+            property: "x"
+            to: background.x  + (4* basicPortWidth) + (5*7)
+            duration: tabTransitionTime
+        }
+
+        PropertyAnimation{
+            target:audioPort
+            property: "width"
+            to: basicPortWidth
+            duration: tabTransitionTime
+        }
+        PropertyAnimation{
+            target:audioPort
+            property: "height"
+            to: basicPortHeight
+            duration: tabTransitionTime
+        }
+        PropertyAnimation{
+            target:audioPort
+            property: "x"
+            to: background.x  + (5* basicPortWidth) + (6*7)
+            duration: tabTransitionTime
+        }
+        PropertyAnimation{
+            target:audioPort
+            property: "y"
+            to: background.y+10
+            duration: tabTransitionTime
+        }
+        PropertyAnimation{
+            target:displayPort
+            property: "width"
+            to: basicPortWidth
+            duration: tabTransitionTime
+        }
+        PropertyAnimation{
+            target:displayPort
+            property: "x"
+            to: background.x  + (6* basicPortWidth) + (7*7)
+            duration: tabTransitionTime
+        }
+
+        PropertyAnimation{
+            target:displayPort
+            property: "y"
+            to: background.y+10
+            duration: tabTransitionTime
+        }
+
+        PropertyAnimation{
+            target:displayPort
+            property: "height"
+            to: basicPortHeight
+            duration: tabTransitionTime
+        }
+    }
+
+    //--------------------------------------------------------------------
+    //  Device Animations
+    //--------------------------------------------------------------------
+    ParallelAnimation{
+        id: devicesToBasic
+        PropertyAnimation{
+            target: upstreamDevice
+            property: "width"
+            to: basicDeviceWidth
+            duration: tabTransitionTime
+        }
+        PropertyAnimation{
+            target: port1Device
+            property: "width"
+            to: basicDeviceWidth
+            duration: tabTransitionTime
+        }
+        PropertyAnimation{
+            target: port2Device
+            property: "width"
+            to: basicDeviceWidth
+            duration: tabTransitionTime
+        }
+        PropertyAnimation{
+            target: port3Device
+            property: "width"
+            to: basicDeviceWidth
+            duration: tabTransitionTime
+        }
+        PropertyAnimation{
+            target: upstreamDevice
+            property: "anchors.topMargin"
+            to: basicTopMargin
+            duration: tabTransitionTime
+        }
+        PropertyAnimation{
+            target: port1Device
+            property: "anchors.topMargin"
+            to: basicTopMargin
+            duration: tabTransitionTime
+        }
+        PropertyAnimation{
+            target: port2Device
+            property: "anchors.topMargin"
+            to: basicTopMargin
+            duration: tabTransitionTime
+        }
+        PropertyAnimation{
+            target: port3Device
+            property: "anchors.topMargin"
+            to: basicTopMargin
+            duration: tabTransitionTime
+        }
+        PropertyAnimation{
+            target: port4Device
+            property: "anchors.topMargin"
+            to: basicTopMargin
+            duration: tabTransitionTime
+        }
+
+        PropertyAnimation{
+            target: port4Device
+            property: "opacity"
+            to: 1
+            duration: tabTransitionTime
+        }
+        PropertyAnimation{
+            target: videoIcon
+            property: "opacity"
+            to: 1
+            duration: tabTransitionTime
+        }
+        PropertyAnimation{
+            target: audioIcon
+            property: "opacity"
+            to: 1
+            duration: tabTransitionTime
+        }
+        PropertyAnimation{
+            target: upstreamAnimation
+            property: "opacity"
+            to: 1
+            duration: tabTransitionTime
+        }
+        PropertyAnimation{
+            target: port1Animation
+            property: "opacity"
+            to: 1
+            duration: tabTransitionTime
+        }
+        PropertyAnimation{
+            target: port2Animation
+            property: "opacity"
+            to: 1
+            duration: tabTransitionTime
+        }
+        PropertyAnimation{
+            target: port3Animation
+            property: "opacity"
+            to: 1
+            duration: tabTransitionTime
+        }
+        PropertyAnimation{
+            target: port4Animation
+            property: "opacity"
+            to: 1
+            duration: tabTransitionTime
+        }
+        PropertyAnimation{
+            target: displayPortAnimation
+            property: "opacity"
+            to: 1
+            duration: tabTransitionTime
+        }
+        PropertyAnimation{
+            target: audioAnimation
+            property: "opacity"
+            to: 1
+            duration: tabTransitionTime
+        }
+
+    }
+
+//----------------------------------------------------------------------------------------
+//                      Views
+//----------------------------------------------------------------------------------------
+
 
     Rectangle{
         id:deviceBackground

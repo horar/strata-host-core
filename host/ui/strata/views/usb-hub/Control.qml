@@ -13,8 +13,12 @@ Item {
         id: platformInterface
     }
 
+    property bool basicControlIsVisible: true
+    property bool advancedControlIsVisible: false
+
     TabBar {
         id: navTabs
+
         anchors {
             top: controlView.top
             left: controlView.left
@@ -25,9 +29,17 @@ Item {
             id: basicButton
             text: qsTr("Basic")
             onClicked: {
-                basicControl.visible = true
-                advancedControl.visible = false
-                systemControl.visible = false;
+                //from advanced
+                if (advancedControlIsVisible){
+                    console.log("going to basic from advanced")
+                    basicControl.transitionToBasicView();
+                    basicControlIsVisible = true;
+                    advancedControlIsVisible = false;
+                }
+                //from system control
+                else if (systemControl.visible){
+                    systemControl.visible = false;
+                }
             }
         }
 
@@ -35,10 +47,16 @@ Item {
             id: advancedButton
             text: qsTr("Advanced")
             onClicked: {
-                basicControl.transitionToAdvancedView()
-                //basicControl.visible = false
-                //advancedControl.visible = true
-                systemControl.visible = false;
+                if (basicControlIsVisible){
+                    console.log("going to advanced from basic")
+                    basicControl.transitionToAdvancedView();
+                    basicControlIsVisible = false;
+                    advancedControlIsVisible = true;
+                }
+                //from system control
+                else if (systemControl.visible){
+                    systemControl.visible = false;
+                }
             }
         }
 
@@ -48,6 +66,8 @@ Item {
             onClicked: {
                 basicControl.visible = false
                 advancedControl.visible = false
+                basicControlIsVisible = false;
+                advancedControlIsVisible = false;
                 systemControl.visible = true;
             }
         }

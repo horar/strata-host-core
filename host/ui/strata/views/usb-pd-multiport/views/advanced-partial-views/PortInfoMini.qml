@@ -139,13 +139,13 @@ Item {
 
             text: thisIsPort1 ?"Assured" :"Not assured"
             font {
-                pixelSize: 10
+                pixelSize: 9
             }
             color: "white"
             visible: (assuredPowerActive && deviceConnected) ? true : false
             anchors {
                 right: portNumberContainer.right
-                rightMargin: 5
+                rightMargin: 2
                 verticalCenter: portNumberContainer.verticalCenter
             }
         }

@@ -223,6 +223,7 @@ Item {
             right: root.right
         }
         height:250
+        //height:300
 
         SGGraph {
             id: graph1
@@ -231,12 +232,13 @@ Item {
             anchors {
                 top: portGraphs.top
                 bottom: portGraphs.bottom
+                bottomMargin:0
             }
             width: portGraphs.width /  Math.max(1, graphSelector.howManyChecked)
             yAxisTitle: "V"
-            xAxisTitle: "Seconds"
+            xAxisTitle: "1 sec/div"
             minYValue: 0                    // Default: 0
-            maxYValue: 22                   // Default: 10
+            maxYValue: 25                   // Default: 10
             minXValue: 0                    // Default: 0
             maxXValue: 5                    // Default: 10
 
@@ -264,14 +266,14 @@ Item {
             anchors {
                 top: portGraphs.top
                 bottom: portGraphs.bottom
-//                left: graph1.right
+                bottomMargin:0
             }
             width: portGraphs.width /  Math.max(1, graphSelector.howManyChecked)
             yAxisTitle: "A"
-            xAxisTitle: "Seconds"
+            xAxisTitle: "1 sec/div"
 
             minYValue: 0                    // Default: 0
-            maxYValue: 6                   // Default: 10
+            maxYValue: 5                   // Default: 10
             minXValue: 0                    // Default: 0
             maxXValue: 5                    // Default: 10
 
@@ -299,14 +301,14 @@ Item {
             anchors {
                 top: portGraphs.top
                 bottom: portGraphs.bottom
-//                left: graph2.right
+                bottomMargin:0
             }
             width: portGraphs.width /  Math.max(1, graphSelector.howManyChecked)
             yAxisTitle: "A"
-            xAxisTitle: "Seconds"
+            xAxisTitle: "1 sec/div"
 
             minYValue: 0                    // Default: 0
-            maxYValue: 6                   // Default: 10
+            maxYValue: 5                   // Default: 10
             minXValue: 0                    // Default: 0
             maxXValue: 5                    // Default: 10
 
@@ -334,13 +336,13 @@ Item {
             anchors {
                 top: portGraphs.top
                 bottom: portGraphs.bottom
-//                left: graph3.right
+                bottomMargin:0
             }
             width: portGraphs.width /  Math.max(1, graphSelector.howManyChecked)
             yAxisTitle: "W"
-            xAxisTitle: "Seconds"
+            xAxisTitle: "1 sec/div"
             minYValue: 0                    // Default: 0
-            maxYValue: 110                   // Default: 10
+            maxYValue: 125                   // Default: 10
             minXValue: 0                    // Default: 0
             maxXValue: 5                    // Default: 10
 
@@ -369,13 +371,13 @@ Item {
             anchors {
                 top: portGraphs.top
                 bottom: portGraphs.bottom
-//                left: graph4.right
+                bottomMargin:0
             }
             width: portGraphs.width /  Math.max(1, graphSelector.howManyChecked)
             yAxisTitle: "W"
-            xAxisTitle: "Seconds"
+            xAxisTitle: "1 sec/div"
             minYValue: 0                    // Default: 0
-            maxYValue: 110                   // Default: 10
+            maxYValue: 125                   // Default: 10
             minXValue: 0                    // Default: 0
             maxXValue: 5                    // Default: 10
 
@@ -404,11 +406,11 @@ Item {
             anchors {
                 top: portGraphs.top
                 bottom: portGraphs.bottom
-                //                left: graph4.right
+                bottomMargin:0
             }
             width: portGraphs.width /  Math.max(1, graphSelector.howManyChecked)
             yAxisTitle: "Percent"
-            xAxisTitle: "Seconds"
+            xAxisTitle: "1 sec/div"
 
             minYValue: 0                    // Default: 0
             maxYValue: 100                   // Default: 10
