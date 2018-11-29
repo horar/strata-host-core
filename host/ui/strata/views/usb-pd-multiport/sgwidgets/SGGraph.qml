@@ -80,7 +80,7 @@ ChartView {
         color: axesColor
         gridVisible: showYGrids
         gridLineColor: rootChart.gridLineColor
-//        tickCount: 6  //  applyNiceNumbers() takes care of this based on range
+        tickCount: 6  //  applyNiceNumbers() takes care of this based on range
         labelFormat: "%.0f"
         labelsFont.pixelSize: rootChart.textSize*.8
         labelsColor: textColor
@@ -167,7 +167,7 @@ ChartView {
     }
 
     Component.onCompleted: {
-        valueAxisY.applyNiceNumbers();  // Automatically determine axis ticks
+        //valueAxisY.applyNiceNumbers();  // Automatically determine axis ticks
         valueAxisX.applyNiceNumbers();
     }
 
