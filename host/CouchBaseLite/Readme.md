@@ -1,10 +1,10 @@
 #Couhbase-lite-cpp library
 This library depends on couchbase-lite-core. 
 Note: This is tested on Mac OS.
-Please run the following script to setup git submodules and apply patches to couchbase-lite-core. 
+Please run the following to build couchbase-lite-core. 
 ```
-cd submodule_patches/
-sudo ./configure_couchbase.sh
+cd couchbase-lite-core/build_cmake
+./build_macos.sh
 ```
 
 #Build
