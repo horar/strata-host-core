@@ -3,7 +3,6 @@
         <file>main.qml</file>
         <file>views/bubu/Control.qml</file>
         <file>SGLoginScreen.qml</file>
-        <file>SGComboBox.qml</file>
         <file>SGDetectingPlatform.qml</file>
         <file>views/motor-vortex/Control.qml</file>
         <file>SGControlContainer.qml</file>

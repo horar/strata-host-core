@@ -8,6 +8,7 @@ import "js/navigation_control.js" as NavigationControl
 import "js/login.js" as Authenticator
 import "js/restclient.js" as Rest
 import Fonts 1.0
+import "qrc:/statusbar-partial-views"
 
 Rectangle {
     id: container
@@ -175,13 +176,16 @@ Rectangle {
         SGComboBox {
             id: usernameField
 
-            height: 38
+            comboBoxHeight: 38
             focus: true
             property string text: currentText
             onEditTextChanged: text = editText
             onCurrentIndexChanged: text = currentText
 
             editable: true
+            borderColor: "#ddd"
+            model: ListModel {}
+            placeholderText: "Username"
 
             Component.onCompleted: {
                 var userNames = JSON.parse(userNameFieldSettings.userNameStore)
@@ -220,6 +224,11 @@ Rectangle {
                     model.append({text: text})
                     currentIndex = find(text)
                 }
+            }
+
+            font {
+                pixelSize: 15
+                family: Fonts.franklinGothicBook
             }
 
             Settings {

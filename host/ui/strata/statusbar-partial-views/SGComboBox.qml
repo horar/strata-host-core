@@ -7,6 +7,11 @@ Item {
 
     signal activated(int index)
     signal highlighted(int index)
+    signal editTextChanged(string editText)
+
+    function find(text) {
+        return comboBox.find(text)
+    }
 
     property alias currentIndex: comboBox.currentIndex
     property alias currentText: comboBox.currentText
@@ -18,6 +23,7 @@ Item {
     property alias pressed: comboBox.pressed
     property alias textRole: comboBox.textRole
     property alias overrideLabelWidth: labelText.width
+    property alias placeholderText: comboBox.placeholderText
 
     property string label: ""
     property bool labelLeft: true
@@ -29,6 +35,7 @@ Item {
     property real comboBoxHeight: 32
     property real comboBoxWidth: 120
     property real popupHeight: 300
+    property font font
 
     implicitHeight: labelLeft ? Math.max(labelText.height, comboBox.height) : labelText.height + comboBox.height + comboBox.anchors.topMargin
     implicitWidth: labelLeft ? labelText.width + comboBox.width + comboBox.anchors.leftMargin : Math.max(labelText.width, comboBox.width)
@@ -49,6 +56,8 @@ Item {
 
         onActivated: root.activated(index)
         onHighlighted: root.highlighted(index)
+        onEditTextChanged: root.editTextChanged(editText)
+        font: root.font
 
         model: ["First", "Second", "Third"]
         height: root.comboBoxHeight
@@ -59,6 +68,8 @@ Item {
             topMargin: root.label === "" ? 0 : root.labelLeft ? 0 : 5
         }
         width: root.comboBoxWidth
+
+        property string placeholderText
 
         indicator: Text {
             text: comboBox.popup.visible ? "\ue813" : "\ue810"
@@ -72,11 +83,12 @@ Item {
         }
 
         contentItem: TextField {
+            id: textField
             anchors {
                 fill: parent
                 rightMargin: comboBox.height
             }
-            leftPadding: 13
+            leftPadding: 10
             rightPadding: 0
 
             text: comboBox.editable ? comboBox.editText : comboBox.displayText
@@ -85,6 +97,7 @@ Item {
             readOnly: comboBox.down
 //            inputMethodHints: comboBox.inputMethodHints
 //            validator: comboBox.validator
+            placeholderText: comboBox.placeholderText
 
             font: comboBox.font
             color: root.textColor
@@ -94,8 +107,8 @@ Item {
 
             background: Rectangle {
                 visible: comboBox.enabled && comboBox.editable && !comboBox.flat
-                border.width: parent && parent.activeFocus && !parent.readOnly ? 2 : 1
-                border.color: parent && parent.activeFocus && !parent.readOnly ? "#0cf" : root.borderColor
+                border.width: 1
+                border.color: parent && parent.activeFocus && !parent.readOnly ? "#219647" : root.borderColor
                 color: root.boxColor
             }
             onAccepted: parent.focus = false
@@ -131,6 +144,8 @@ Item {
                 border.color: root.borderColor
                 radius: 2
             }
+
+            opacity: comboBox.delegateModel.count > 0 ? 1 : 0
         }
 
         delegate: ItemDelegate {
