@@ -11,7 +11,7 @@ Rectangle {
     property int portNumber: 1
     property alias portName: portTitle.text
 
-    property int basicTitleBackgroundHeight: (2*root.height)/16;
+    property int basicTitleBackgroundHeight: 50//(2*root.height)/16;
     property int advancedTitleBackgroundHeight: advancedAudioPortHeight/4
     signal showGraph()
 
@@ -145,7 +145,7 @@ Rectangle {
             anchors.horizontalCenter: titleBackground.horizontalCenter
             anchors.verticalCenter: titleBackground.verticalCenter
             font {
-                pixelSize: 20
+                pixelSize: 28
             }
             anchors {
                 verticalCenter: statsContainer.verticalCenter

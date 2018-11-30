@@ -19,7 +19,7 @@ Rectangle {
     property alias outputPower: powerOutBox.value
     property alias portTemperature: temperatureBox.value
 
-    property int basicTitleBackgroundHeight: (2*root.height)/16;
+    property int basicTitleBackgroundHeight: 50//(2*root.height)/16;
     property int advancedTitleBackgroundHeight: advancedDisplayPortPortHeight/4
 
     onPortConnectedChanged:{
@@ -147,7 +147,7 @@ Rectangle {
         anchors.leftMargin: 1
         anchors.right: root.right
         anchors.rightMargin: 1
-        height: (2*root.height)/16
+        height: 50//(2*root.height)/16
         radius:5
 
         Rectangle{
@@ -166,7 +166,7 @@ Rectangle {
             anchors.horizontalCenter: titleBackground.horizontalCenter
             anchors.verticalCenter: titleBackground.verticalCenter
             font {
-                pixelSize: 20
+                pixelSize: 28
             }
 
             color: root.portConnected ? "black" : "#bbb"

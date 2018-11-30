@@ -11,7 +11,7 @@ Rectangle {
     property color portColor: "#30a2db"
     property int portNumber: 1
     property alias portName: portTitle.text
-    property int basicTitleBackgroundHeight: (2*root.height)/16;
+    property int basicTitleBackgroundHeight: 50//(2*root.height)/16;
     property int advancedTitleBackgroundHeight: advancedDisplayPortPortHeight/4
 
     signal showGraph()
@@ -117,7 +117,7 @@ Rectangle {
         anchors.leftMargin: 1
         anchors.right: root.right
         anchors.rightMargin: 1
-        height: (2*root.height)/16
+        height: 50//(2*root.height)/16
         radius:5
 
         Rectangle{
@@ -136,7 +136,7 @@ Rectangle {
             anchors.horizontalCenter: titleBackground.horizontalCenter
             anchors.verticalCenter: titleBackground.verticalCenter
             font {
-                pixelSize: 20
+                pixelSize: 28
             }
             anchors {
                 verticalCenter: statsContainer.verticalCenter
