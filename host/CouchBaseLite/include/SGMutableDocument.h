@@ -21,6 +21,6 @@ public:
 
     fleece::impl::MutableArray* getMutableArray(fleece::slice key)      {return mutable_dict_->getMutableArray(key);}
     fleece::impl::MutableDict* getMutableDict(fleece::slice key)        {return mutable_dict_->getMutableDict(key);}
-
+    void setBody(const std::string &body);
 };
 #endif //SGMUTABLEDOCUMENT_H

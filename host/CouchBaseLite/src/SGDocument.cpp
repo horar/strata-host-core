@@ -4,7 +4,7 @@
 * @author Luay Alshawi
 * $Rev: 1 $
 * $Date:
-* @brief Document c++ object to map a raw docuemtn in DB to c++ object. Similar to ORM
+* @brief Document c++ object to map a raw document in DB to c++ object. Similar to ORM. Gives read only to the document body
 ******************************************************************************
 * @copyright Copyright 2018 On Semiconductor
 */
@@ -13,7 +13,7 @@
 
 #define DEBUG(...) printf("SGDocument: "); printf(__VA_ARGS__)
 using fleece::impl::Value;
-
+using namespace std;
 SGDocument::SGDocument() {
     c4db_       = NULL;
     c4document_ = NULL;
@@ -44,12 +44,13 @@ bool SGDocument::exist() {
     return true;
 }
 
+/** SGDocument getBody.
+* @brief Stringify fleece object (mutable_dict_) to string json format.
+*/
 const std::string &SGDocument::getBody() const {
-    return body_;
-}
-
-void SGDocument::setBody(const std::string &body) {
-    body_ = body;
+    fleece::alloc_slice json_slice =  mutable_dict_->toJSON();
+    string string_slice = string((const char*)json_slice.buf, json_slice.size);
+    return string_slice;
 }
 
 /** SGDocument setC4Document.
@@ -67,14 +68,6 @@ bool SGDocument::setC4Document(SGDatabase *database,const std::string &docId) {
         C4Error c4error;
         C4String rev_id = c4document_->revID;
         std::string rev_id_str = std::string((const char *)rev_id.buf, rev_id.size);
-
-        C4SliceResult fleece_body = c4doc_bodyAsJSON(c4document_,false,&c4error);
-
-        // Set the document body content to the internal body_
-        setBody(std::string((char*)fleece_body.buf, fleece_body.size));
-
-        // Clean up. Deallocate fleece body
-        c4slice_free(fleece_body);
 
         // TODO: Luay: Check for the body type. We are expecting the body to be in dictionary format (key,value) but this is not guaranteed!
         mutable_dict_ = fleece::impl::MutableDict::newDict(Value::fromData(c4document_->selectedRev.body)->asDict());
@@ -102,5 +95,3 @@ bool SGDocument::empty() {
 C4Document *SGDocument::getC4document() const {
     return c4document_;
 }
-
-

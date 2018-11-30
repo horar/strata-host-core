@@ -42,7 +42,15 @@ int main(){
         DEBUG("Document Key: %s\n", (*iter).c_str());
     }
 
-    SGMutableDocument usbPDDocument(&sgDatabase, "2018.TEST.2");
+    SGMutableDocument newdoc(&sgDatabase, "custom_doc");
+    // This is not valid json The exception should catch it
+    newdoc.setBody("fdfd");
+
+    // This is a valid json
+    std::string json_data = R"foo({"name":"luay","age":100,"myobj":{"mykey":"myvalue","myarray":[1,2,3,4]} })foo";
+    newdoc.setBody(json_data);
+
+    SGMutableDocument usbPDDocument(&sgDatabase, "usb-pd-document");
 
 
     DEBUG("document Id: %s, body: %s\n", usbPDDocument.getId().c_str(), usbPDDocument.getBody().c_str());
@@ -86,6 +94,11 @@ int main(){
     }
 
     sgDatabase.save(&usbPDDocument);
+
+    DEBUG("Document Body after save: %s", usbPDDocument.getBody().c_str());
+
+
+    // Bellow Replicator API
 
     string my_url = "ws://localhost:4984/staging";
     SGURLEndpoint url_endpoint(my_url);

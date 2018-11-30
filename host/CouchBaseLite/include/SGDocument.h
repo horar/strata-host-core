@@ -4,7 +4,7 @@
 * @author Luay Alshawi
 * $Rev: 1 $
 * $Date:
-* @brief Document c++ object to map a raw docuemtn in DB to c++ object. Similar to ORM
+* @brief Document c++ object to map a raw document in DB to c++ object. Similar to ORM. Gives read only to the document body
 ******************************************************************************
 * @copyright Copyright 2018 On Semiconductor
 */
@@ -29,8 +29,9 @@ public:
 
     const std::string &getId() const;
     void setId(const std::string &id);
+
+    //Return string json format
     const std::string &getBody() const;
-    void setBody(const std::string &body_);
 
     bool empty();
     const fleece::impl::Value* get(const std::string &keyToFind);
@@ -43,7 +44,6 @@ private:
     C4Document*     c4document_;
     // Document ID
     std::string     id_;
-    std::string     body_;
     friend class    SGDatabase;
 protected:
     bool setC4Document(SGDatabase *database, const std::string &docId);
