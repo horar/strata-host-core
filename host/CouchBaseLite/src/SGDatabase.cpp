@@ -174,10 +174,10 @@ C4Document *SGDatabase::getDocumentById(const std::string &doc_id) {
     return c4doc;
 }
 /** SGDatabase deleteDocument.
-* @brief delete existing docuemtn from the DB. True successful, otherwise false
+* @brief delete existing document from the DB. True successful, otherwise false
 * @param SGDocument The document object
 */
-bool SGDatabase::deleteDocument(class SGDocument *doc) {
+bool SGDatabase::deleteDocument(SGDocument *doc) {
     C4Error error;
     c4db_beginTransaction(c4db_, &error);
 

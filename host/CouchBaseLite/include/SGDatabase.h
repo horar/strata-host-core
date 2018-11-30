@@ -4,7 +4,7 @@
 * @author Luay Alshawi
 * $Rev: 1 $
 * $Date:
-* @brief Database c++ object for the local couchbase database
+* @brief c++ Database object for the local couchbase database
 ******************************************************************************
 * @copyright Copyright 2018 On Semiconductor
 */
@@ -29,8 +29,8 @@ public:
 
     C4Database *getC4db() const;
 
-    void save(class SGDocument *doc);
-    bool deleteDocument(class SGDocument *doc);
+    void save(SGDocument *doc);
+    bool deleteDocument(SGDocument *doc);
 
     C4Document* getDocumentById(const std::string &doc_id);
 
