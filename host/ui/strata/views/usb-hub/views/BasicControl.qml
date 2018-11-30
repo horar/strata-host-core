@@ -370,7 +370,7 @@ Item {
     //----------------------------------------------------------------------------------------
 
     function transitionToBasicView(){
-        backgroundToBasic.start();
+
         //unanchor parts of the ports that will be rearranged
         port4.anchors.bottom = undefined;
         port4.anchors.left = undefined;
@@ -381,16 +381,33 @@ Item {
         displayPort.anchors.bottom = undefined;
         displayPort.anchors.left = undefined;
 
-        portsToBasic.start();
-        devicesToBasic.start();
         audioPort.transitionToBasicView();
         displayPort.transitionToBasicView();
         upstreamPort.transitionToBasicView();
         port1.transitionToBasicView();
         port2.transitionToBasicView();
         port3.transitionToBasicView();
-        port4.transitionToBasicView();
+        //port4.transitionToBasicView();
 
+        //this timer will give the above animations time to run
+        portContentAnimationTimer.start()
+        //when finished the ports and devices will resize
+        //when that's finished the background will resize
+
+    }
+
+    Timer{
+        //give the content of the ports time to rearrange themselves
+        //with a timer
+        id:portContentAnimationTimer
+        running: false
+        interval: tabTransitionTime
+
+        onTriggered: {
+            //then rearrange the port and devices outline
+            portsToBasic.start();
+            devicesToBasic.start();
+        }
     }
 
     ParallelAnimation{
@@ -410,6 +427,7 @@ Item {
             to: (7*parent.height)/16
             duration: tabTransitionTime
         }
+
     }
 
     ParallelAnimation{
@@ -512,6 +530,13 @@ Item {
             property: "height"
             to: basicPortHeight
             duration: tabTransitionTime
+        }
+
+        onStopped: {
+            //port 4 (USB-A) was special, because it was shrunk.
+            //Thus we allow that port to resize to normal height before we rearrange its content
+            port4.transitionToBasicView();
+            backgroundToBasic.start()
         }
     }
 
