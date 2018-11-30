@@ -8,6 +8,7 @@ cd couchbase-lite-core/build_cmake/scripts
 ```
 
 #Build
+While you are in CouchBaseLite directory run the following:
 ```
 mkdir build && cd build
 cmake ..
