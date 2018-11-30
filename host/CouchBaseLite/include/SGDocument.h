@@ -41,8 +41,6 @@ public:
 private:
     C4Database*     c4db_;
     C4Document*     c4document_;
-private:
-
     // Document ID
     std::string     id_;
     std::string     body_;
