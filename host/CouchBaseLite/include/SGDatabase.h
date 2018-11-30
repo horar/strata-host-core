@@ -29,12 +29,14 @@ public:
 
     C4Database *getC4db() const;
 
-    void save(SGDocument *doc);
-    bool deleteDocument(SGDocument *doc);
+    void save(class SGDocument *doc);
+    bool deleteDocument(class SGDocument *doc);
 
     C4Document* getDocumentById(const std::string &doc_id);
 
     virtual ~SGDatabase();
+
+    std::vector<std::string> getAllDocumentsKey();
 
 private:
 

@@ -25,7 +25,7 @@ void onStatusChanged(SGReplicator::ActivityLevel level, SGReplicatorProgress pro
     if(progress.total > 0){
         progress_percentage = (progress.completed / progress.total) *100;
     }
-    DEBUG("Replicator Activity Level: %s %f %\n", activity_level_string[level], progress_percentage);
+    DEBUG("Replicator Activity Level: %s %f (%d/%d) \n", activity_level_string[level], progress_percentage, progress.completed, progress.total);
 }
 void onDocumentEnded(bool pushing, std::string doc_id, std::string error_message, bool is_error,bool transient){
     DEBUG("onDocumentError: pushing: %d, Doc Id: %s, is error: %d, error message: %s, transient:%d\n", pushing, doc_id.c_str(), is_error, error_message.c_str(), transient);
@@ -33,7 +33,16 @@ void onDocumentEnded(bool pushing, std::string doc_id, std::string error_message
 int main(){
 
     SGDatabase sgDatabase("db2");
-    SGMutableDocument usbPDDocument(&sgDatabase, "motor-vortex");
+
+    vector<string> document_keys = sgDatabase.getAllDocumentsKey();
+
+    // Printing the list of documents key from the local DB.
+    for(std::vector <string>::iterator iter = document_keys.begin(); iter != document_keys.end(); iter++)
+    {
+        DEBUG("Document Key: %s\n", (*iter).c_str());
+    }
+
+    SGMutableDocument usbPDDocument(&sgDatabase, "2018.TEST.2");
 
 
     DEBUG("document Id: %s, body: %s\n", usbPDDocument.getId().c_str(), usbPDDocument.getBody().c_str());
@@ -100,9 +109,12 @@ int main(){
     replicator.addDocumentEndedListener(onDocumentEnded);
 
     replicator.start();
+
     DEBUG("About to stop the replicator thread\n");
     this_thread::sleep_for(chrono::milliseconds(5000));
+
     replicator.stop();
+
     DEBUG("bye\n");
 
 

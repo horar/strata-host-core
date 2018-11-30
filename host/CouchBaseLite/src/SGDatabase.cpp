@@ -9,6 +9,8 @@
 * @copyright Copyright 2018 On Semiconductor
 */
 #include <iostream>
+#include <include/SGDatabase.h>
+
 #include "FleeceImpl.hh"
 #include "MutableArray.hh"
 #include "MutableDict.hh"
@@ -196,4 +198,31 @@ bool SGDatabase::deleteDocument(SGDocument *doc) {
     c4db_endTransaction(c4db_, true, &error);
 
     return result;
+}
+
+vector<std::string> SGDatabase::getAllDocumentsKey() {
+    vector<string> document_keys;
+    C4Error c4error;
+    string json;
+    json.append("[\"SELECT\", {\"WHAT\": [[\"._id\"]]}]");
+    C4Query *query = c4query_new(c4db_, c4str(json.c_str()),&c4error);
+    if(c4error.code == NO_CB_ERROR){
+
+        C4QueryOptions options = kC4DefaultQueryOptions;
+        C4QueryEnumerator *query_enumerator = c4query_run(query, &options, c4str(nullptr), &c4error);
+
+        if(c4error.code == NO_CB_ERROR){
+            while (c4queryenum_next(query_enumerator, &c4error)) {
+                FLSlice doc_name = FLValue_AsString(FLArrayIterator_GetValueAt(&query_enumerator->columns,0));
+                document_keys.push_back(string((char*)doc_name.buf, doc_name.size));
+            }
+        }else{
+            DEBUG("C4QueryEnumerator failed to run\n");
+        }
+
+    }else{
+        DEBUG("C4Query failed to execute a query\n");
+    }
+
+    return document_keys;
 }
