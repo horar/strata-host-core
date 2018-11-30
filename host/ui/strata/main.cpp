@@ -13,6 +13,7 @@
 #include <QtCore/QDir>
 #include "QtDebug"
 #include <QProcess>
+#include <QSettings>
 
 #include <PlatformInterface/core/CoreInterface.h>
 
@@ -29,6 +30,9 @@ int main(int argc, char *argv[])
     if (!chromiumFlags.contains("disable-web-security")) {
         qputenv("QTWEBENGINE_CHROMIUM_FLAGS", chromiumFlags + " --disable-web-security");
     }
+
+    QSettings::setDefaultFormat(QSettings::IniFormat);
+    QCoreApplication::setOrganizationName(QStringLiteral("On Semiconductor"));
 
     QApplication app(argc, argv);
     QQmlApplicationEngine engine;
@@ -70,7 +74,7 @@ int main(int argc, char *argv[])
         #ifdef Q_OS_MACOS
         // We are pretty deep in the directory. Ex. ui/build-xxx-Release/spyglass.app/Contents/MacOs
         #define HOST_ROOT_PATH      (app.applicationDirPath() + "/../../../../../")
-        #define HCS_PATH            HOST_ROOT_PATH + "apps/hcs2/build/hcs"
+        #define HCS_PATH            HOST_ROOT_PATH + "build/apps/hcs2/hcs2"
         #define HCS_CONFIG_PATH     HOST_ROOT_PATH + "apps/hcs2/files/conf/host_controller_service.config_template"
         #endif
 

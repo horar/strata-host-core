@@ -96,6 +96,48 @@ Rectangle {
         }
     }
 
+    function transitionToBasicView(){
+        outputVoltageBox.anchors.topMargin = 8;
+        maxPowerBox.anchors.topMargin = 8;
+        powerInBox.anchors.topMargin = 8;
+        powerOutBox.anchors.topMargin = 8;
+        temperatureBox.anchors.topMargin = 8;
+        portToBasic.start()
+    }
+
+    ParallelAnimation{
+        id: portToBasic
+        running: false
+
+        PropertyAnimation{
+            target:titleBackground
+            property: "height"
+            to:basicTitleBackgroundHeight
+            duration: tabTransitionTime
+        }
+
+        PropertyAnimation{
+            target:powerInBox
+            property: "height"
+            to:40
+            duration: tabTransitionTime
+        }
+
+        PropertyAnimation{
+            target:portSubtitle
+            property: "opacity"
+            to:1
+            duration: tabTransitionTime
+        }
+
+        PropertyAnimation{
+            target:chargingRectangle
+            property: "opacity"
+            to:0
+            duration: tabTransitionTime
+        }
+    }
+
     Rectangle{
         id:titleBackground
         color:"lightgrey"

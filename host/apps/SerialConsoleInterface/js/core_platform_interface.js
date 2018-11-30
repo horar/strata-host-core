@@ -11,6 +11,8 @@ function platformConnectionChanged (payload) {
         var platformID = notification.platformID
         var connected = notification.connected
         var verboseName = notification.verboseName
+        var platformCommands = notification.platformCommands
+
 
         var thisTab
 
@@ -29,6 +31,9 @@ function platformConnectionChanged (payload) {
                 platformInterface.tabList.tabs[connectingTab].content.boardId = platformID
                 platformInterface.tabList.tabs[connectingTab].tab.boardId = platformID
                 platformInterface.tabList.nextTabToConnect++
+                //available platform commands
+                CorePlatformInterface.insertPlatformCommands(platformCommands,platformInterface.tabList.tabs[connectingTab].content.historyList)
+
             } else {
 //                console.log("Core Plat Interface: Connecting to "+ verboseName)
                 platformInterface.platformList[platformID].connected = connected
@@ -131,7 +136,7 @@ function saveAndSendCommand(command) {
     var currentRowColor = "black"
     try {
         JSON.parse(command)
-        cmdHistoryList.insert(0, { "status" : command })
+        cmdHistoryList.insert(0, { "status" : command , type : "previous"})
         platformController.sendCommand(command, boardId)
     } catch(e) {
         currentRowColor = "red"
@@ -139,4 +144,15 @@ function saveAndSendCommand(command) {
     }
 
     CorePlatformInterface.addColorizedRow(logBoxList, command, currentRowColor)
+}
+
+function insertPlatformCommands(inputlist,outputlist) {
+    console.log("PLATFORM COMMANDS\n====================================\n\n"+inputlist.length)
+
+    for( var i=0; i < inputlist.length ; ++i )
+    {
+        console.log("test"+inputlist[i])
+        outputlist.insert(i,{ "status" : inputlist[i], type : "platform"})
+    }
+
 }

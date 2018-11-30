@@ -19,13 +19,15 @@
 #include <iostream>
 #include <unistd.h>
 #include <thread>// std::this_thread::sleep_for
-// #include "Connector.h"
-#include "Flasher.h"
+
+#include <Connector.h>
+#include <Flasher.h>
+
 using namespace std;
 
 #define MANUAL_OPEN_PORT 0
-int main(int argc, char *argv[]){
-
+int main(int argc, char *argv[])
+{
 	if(argc < 2){
 		cout << "Usage: ./flasher <path_to_firmware.bin>" << endl;
 		return 1;
@@ -33,11 +35,9 @@ int main(int argc, char *argv[]){
 
 	char *firmware_file_path = argv[1];
 
-
 #if MANUAL_OPEN_PORT
-	SerialConnector *serialConnector = new SerialConnector();
-	int res = serialConnector->open("/dev/cu.usbserial-DB00VFH8");
-	if(!res){
+	Connector* serialConnector = ConnectorFactory::getConnector("platform");
+	if(!serialConnector->open("/dev/cu.usbserial-DB00VFH8")) {
 		return 0;
 	}
 	Flasher flasher(serialConnector);
@@ -53,5 +53,6 @@ int main(int argc, char *argv[]){
 #if MANUAL_OPEN_PORT
 	delete serialConnector;
 #endif
+
 	return 0;
 }

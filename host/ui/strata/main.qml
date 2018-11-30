@@ -38,7 +38,7 @@ Window {
         }
     }
 
-    onClosing: {
+    onClosing: {    // @disable-check M16
         if(is_remote_connected) {
             // sending remote disconnect message to hcs
             var remote_disconnect_json = {
@@ -59,6 +59,11 @@ Window {
         coreInterface.sendCommand(JSON.stringify(remote_json))
         // End session with HCS
         coreInterface.unregisterClient();
+
+        // Destruct components dynamically created by NavigationControl
+        NavigationControl.removeView(statusBarContainer)
+        NavigationControl.removeView(controlContainer)
+        NavigationControl.removeView(contentContainer)
     }
 
     Column {

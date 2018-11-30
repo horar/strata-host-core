@@ -19,6 +19,9 @@ add_executable(${PROJECT_NAME} src/main.cpp)
 
 target_link_libraries(${PROJECT_NAME}
     flasher
-    ${IOKIT_LIB}
-    ${FOUNDATION_LIB}
+    connector
 )
+
+if (APPLE)
+    target_link_libraries(${PROJECT_NAME} ${IOKIT_LIB} ${FOUNDATION_LIB} )
+endif()

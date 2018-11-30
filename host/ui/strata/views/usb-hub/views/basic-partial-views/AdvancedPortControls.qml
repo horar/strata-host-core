@@ -72,6 +72,31 @@ Item {
 
     }
 
+    function transitionToBasicView(){
+        //set the opacity of the view to be seen, but set the opacity of the parts to 0
+        advanceControlsView.opacity = 0;
+        topDivider.opacity = 0;
+        maxOutputPower.opacity = 0;
+        currentLimitText.opacity = 0;
+        currentLimitSlider.opacity = 0
+        cableCompensationText.opacity = 0
+        outputBiasText.opacity = 0;
+        cableCompensationDivider.opacity = 0;
+        cableCompensationHeaderText.opacity = 0
+        cableCompensationIncrementSlider.opacity = 0
+        outputBiasSlider.opacity = 1;
+
+        graphDivider.opacity = 0
+        showGraphText.opacity = 0;
+        graphSelector.opacity = 0;
+        capabilitiesDivider.opacity = 0;
+        sourceCapabilitiesText.opacity = 0;
+        sourceCapabilitiesButtonStrip.opacity = 0;
+
+        //do we want a build-out here?
+        //advancedPortControlsBuildIn.start()
+    }
+
     Rectangle{
         id:topDivider
         anchors.left: advanceControlsView.left

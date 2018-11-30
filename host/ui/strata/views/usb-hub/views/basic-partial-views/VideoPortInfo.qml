@@ -75,6 +75,38 @@ Rectangle {
         }
     }
 
+    function transitionToBasicView(){
+
+        portToBasic.start()
+    }
+
+    ParallelAnimation{
+        id: portToBasic
+        running: false
+
+        PropertyAnimation{
+            target:titleBackground
+            property: "height"
+            to:basicTitleBackgroundHeight
+            duration: tabTransitionTime
+        }
+
+        PropertyAnimation {
+            target: backgroundRect
+            property: "opacity"
+            from: 0
+            to: 1
+            duration: tabTransitionTime
+        }
+
+        PropertyAnimation {
+            target: video
+            property: "anchors.verticalCenterOffset"
+            to: 0
+            duration: tabTransitionTime
+        }
+    }
+
 
     Rectangle{
         id:titleBackground

@@ -27,8 +27,8 @@ Item {
                 labelLeft: false
                 barWidth: margins.width
                 maximumValue: platformInterface.ac_power_supply_connection.power
-                showThreshold: true
-                thresholdValue: (.9 * platformInterface.ac_power_supply_connection.power)
+                //showThreshold: true
+                //thresholdValue: (.9 * platformInterface.ac_power_supply_connection.power)
 
                 gaugeElements: Row {
                     id: container
@@ -40,13 +40,26 @@ Item {
                         value: {
                             if (platformInterface.request_usb_power_notification.port === 1){
                                 if (platformInterface.request_usb_power_notification.device !== "none")
-                                    return platformInterface.request_usb_power_notification.maximum_power
+                                    return (platformInterface.request_usb_power_notification.negotiated_voltage * platformInterface.request_usb_power_notification.negotiated_current)
                                   else
                                     return 0
-                                //return platformInterface.request_usb_power_notification.output_voltage * platformInterface.request_usb_power_notification.output_current
                             }
                             else{
                                return port1BarElement.value;
+                            }
+                        }
+                        secondaryValue:{
+                            if (platformInterface.request_usb_power_notification.port === 1){
+                                if (platformInterface.request_usb_power_notification.device !== "none"){
+                                    return (platformInterface.request_usb_power_notification.output_voltage *
+                                            platformInterface.request_usb_power_notification.output_current)
+                                }
+                                else{
+                                    return 0
+                                }
+                            }
+                            else{
+                                return port1BarElement.secondaryValue;
                             }
                         }
                     }
@@ -58,13 +71,26 @@ Item {
                             if (platformInterface.request_usb_power_notification.port === 2){
                                 //console.log("port two max power =",platformInterface.request_usb_power_notification.maximum_power)
                                 if (platformInterface.request_usb_power_notification.device !== "none")
-                                    return platformInterface.request_usb_power_notification.maximum_power
+                                    return (platformInterface.request_usb_power_notification.negotiated_voltage * platformInterface.request_usb_power_notification.negotiated_current)
                                   else
                                     return 0
-                                //return platformInterface.request_usb_power_notification.output_voltage * platformInterface.request_usb_power_notification.output_current
                             }
                             else{
                                return port2BarElement.value;
+                            }
+                        }
+                        secondaryValue:{
+                            if (platformInterface.request_usb_power_notification.port === 2){
+                                if (platformInterface.request_usb_power_notification.device !== "none"){
+                                    return (platformInterface.request_usb_power_notification.output_voltage *
+                                            platformInterface.request_usb_power_notification.output_current)
+                                }
+                                else{
+                                    return 0
+                                }
+                            }
+                            else{
+                                return port2BarElement.secondaryValue;
                             }
                         }
                     }
@@ -75,13 +101,26 @@ Item {
                         value: {
                             if (platformInterface.request_usb_power_notification.port === 3){
                                 if (platformInterface.request_usb_power_notification.device !== "none")
-                                    return platformInterface.request_usb_power_notification.maximum_power
+                                    return (platformInterface.request_usb_power_notification.negotiated_voltage * platformInterface.request_usb_power_notification.negotiated_current)
                                   else
                                     return 0
-                                //return platformInterface.request_usb_power_notification.output_voltage * platformInterface.request_usb_power_notification.output_current
                             }
                             else{
                                return port3BarElement.value;
+                            }
+                        }
+                        secondaryValue:{
+                            if (platformInterface.request_usb_power_notification.port === 3){
+                                if (platformInterface.request_usb_power_notification.device !== "none"){
+                                    return (platformInterface.request_usb_power_notification.output_voltage *
+                                            platformInterface.request_usb_power_notification.output_current)
+                                }
+                                else{
+                                    return 0
+                                }
+                            }
+                            else{
+                                return port3BarElement.secondaryValue;
                             }
                         }
                     }
@@ -92,13 +131,26 @@ Item {
                         value: {
                             if (platformInterface.request_usb_power_notification.port === 4){
                                 if (platformInterface.request_usb_power_notification.device !== "none")
-                                    return platformInterface.request_usb_power_notification.maximum_power
+                                    return (platformInterface.request_usb_power_notification.negotiated_voltage * platformInterface.request_usb_power_notification.negotiated_current)
                                   else
                                     return 0
-                                //return platformInterface.request_usb_power_notification.output_voltage * platformInterface.request_usb_power_notification.output_current
                             }
                             else{
                                return port4BarElement.value;
+                            }
+                        }
+                        secondaryValue:{
+                            if (platformInterface.request_usb_power_notification.port === 4){
+                                if (platformInterface.request_usb_power_notification.device !== "none"){
+                                    return (platformInterface.request_usb_power_notification.output_voltage *
+                                            platformInterface.request_usb_power_notification.output_current)
+                                }
+                                else{
+                                    return 0
+                                }
+                            }
+                            else{
+                                return port4BarElement.secondaryValue;
                             }
                         }
                     }

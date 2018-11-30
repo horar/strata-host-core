@@ -24,14 +24,12 @@ AttachmentObserver::AttachmentObserver(void *client_socket,void *client_id_list)
 }
 
 void AttachmentObserver::DocumentChangeCallback(jsonString jsonBody) {
-    clientList::iterator client_list_iterator = client_list_->begin();
-    while(client_list_iterator != client_list_->end()) {
-        client_connector_->setDealerID(*client_list_iterator);
+    for(const auto& item : *client_list_) {
+        client_connector_->setDealerID(item);
         client_connector_->send(jsonBody);
         // [prasanth] : comment the following PDEBUG for faster performance.
         // use it for debugging
         // PDEBUG(PRINT_DEBUG,"[hcs to hcc]%s",jsonBody);
-        client_list_iterator++;
     }
 }
 /******************************************************************************/
@@ -74,11 +72,11 @@ HostControllerService::HostControllerService(string configuration_file)
     // creating the nimbus object
     database_ = new Nimbus();
     // initializing the connectors
-    client_connector_ = connector_factory_->getConnector("router");
-    serial_connector_ = connector_factory_->getConnector("platform");
-    remote_connector_ = connector_factory_->getConnector("dealer");
+    client_connector_ = ConnectorFactory::getConnector("router");
+    serial_connector_ = ConnectorFactory::getConnector("platform");
+    remote_connector_ = ConnectorFactory::getConnector("dealer");
     // this connecotr is used for activity monitor from discovery service
-    remote_activity_connector_ = connector_factory_->getConnector("subscriber");
+    remote_activity_connector_ = ConnectorFactory::getConnector("subscriber");
 }
 
 // @f init
@@ -115,8 +113,7 @@ HcsError HostControllerService::init()
     //addtion of event is not implemented successfully in hcs
     while((int)run());
 
-    HcsError error = HcsError::NO_ERROR;
-    return error;
+    return HcsError::NO_ERROR;
 }
 
 // @f run
@@ -143,8 +140,7 @@ HcsError HostControllerService::run()
     initializePlatform(); // init serial config
     port_disconnected_ = false;
 
-    HcsError error = HcsError::EVENT_BASE_FAILURE;
-    return error;
+    return HcsError::EVENT_BASE_FAILURE;
 }
 
 HcsError HostControllerService::setEventLoop()
@@ -169,22 +165,16 @@ HcsError HostControllerService::setEventLoop()
     platform_uuid_.push_back(simulated_usb_pd);  // for testing alone
     platform_uuid_.push_back(simulated_motor_vortex);
     platform_uuid_.push_back(sim_usb);
-    std::list<string>::iterator client_list_iterator = clientList.begin();
-    while(client_list_iterator != clientList.end()) {
-        client_connector_->setDealerID(*client_list_iterator);
-        client_connector_->send(platformList);
-        PDEBUG(PRINT_DEBUG,"[hcs to hcc]%s",platformList.c_str());
-        client_list_iterator++;
-    }
+
+    sendMessageToUI(platformList);
+
     PDEBUG(PRINT_DEBUG,"Starting the event");
     // creating a periodic event for test case
     event_loop_base_ = event_base_new();
     event_init();
     if (!event_loop_base_) {
         PDEBUG(PRINT_DEBUG,"Could not create event base");
-
-        HcsError error = HcsError::EVENT_BASE_FAILURE;
-        return error;
+        return HcsError::EVENT_BASE_FAILURE;
     }
     timeval seconds = {1, 0};
     event_set(&periodic_event_,-1,EV_TIMEOUT
@@ -196,6 +186,8 @@ HcsError HostControllerService::setEventLoop()
                         HostControllerService::serviceCallback,this);
     event_add(&service_handler_,NULL);
     event_dispatch();
+
+    return HcsError::NO_ERROR;
 }
 
 /******************************************************************************/
@@ -228,16 +220,12 @@ void HostControllerService::testCallback(evutil_socket_t fd, short what, void* a
                                                    HostControllerService::platformCallback,hcs);
 #endif
             event_add(&hcs->platform_handler_,NULL);
+
             // sending the platform list to ui
-            string platformList ;
+            string platformList;
             hcs->getPlatformListJson(platformList);
-            std::list<string>::iterator client_list_iterator = hcs->clientList.begin();
-            while(client_list_iterator != hcs->clientList.end()) {
-                hcs->client_connector_->setDealerID(*client_list_iterator);
-                hcs->client_connector_->send(platformList);
-                PDEBUG(PRINT_DEBUG,"[hcs to hcc]%s",platformList.c_str());
-                client_list_iterator++;
-            }   // end while
+            hcs->sendMessageToUI(platformList);
+
         }   // end if - availableplatform
     }   // end if - flag that says if port is connected or not
 }
@@ -368,7 +356,7 @@ void HostControllerService::platformCallback(evutil_socket_t fd, short what, voi
     // [TODO] [prasanth] This is just a test case. will clean this as we proceed
     HostControllerService *hcs = (HostControllerService*)args;
     string read_message = hcs->platformRead();
-    if(read_message != "") {
+    if(!read_message.empty()) {
         PDEBUG(PRINT_DEBUG,"message being read %s\n",read_message.c_str());
         // [TODO] [prasanth] change the map value for platform from string to structure
         hcs->checkPlatformExist(read_message);
@@ -500,6 +488,9 @@ std::vector<string> HostControllerService::initialCommandDispatch(const std::str
                                             selected_platform.insert(selected_platform.begin(),board_name);
                                             selected_platform.insert(selected_platform.begin()+1,remote_status);
                                             return selected_platform;
+        default:
+            assert(false);
+            break;
     }
     return selected_platform;
 }
@@ -515,11 +506,10 @@ std::vector<string> HostControllerService::initialCommandDispatch(const std::str
 //
 bool HostControllerService::disptachMessageToPlatforms(const std::string& dealer_id,std::string& read_message)
 {
-    for(multimap_iterator_= platform_client_mapping_.begin();multimap_iterator_!=
-                            platform_client_mapping_.end();multimap_iterator_++) {
-        if (multimap_iterator_->second == dealer_id) {
+    for(const auto& item : platform_client_mapping_) {
+        if (item.second == dealer_id) {
             // the following printing is strictly for testing only
-            PDEBUG(PRINT_DEBUG,"\033[1;4;31m[%s<-%s]\033[0m: %s\n",multimap_iterator_->first[0].c_str(),dealer_id.c_str(),read_message.c_str());
+            PDEBUG(PRINT_DEBUG,"\033[1;4;31m[%s<-%s]\033[0m: %s\n",item.first[0].c_str(), dealer_id.c_str(),read_message.c_str());
             Document service_command;
             if(!read_message.empty()) {
                 if (service_command.Parse(read_message.c_str()).HasParseError()) {
@@ -529,14 +519,16 @@ bool HostControllerService::disptachMessageToPlatforms(const std::string& dealer
             }
             if(service_command.HasMember("cmd")) {
                 string command = service_command["cmd"].GetString();
-                if(multimap_iterator_->first[1] == "connected") {
-                    PDEBUG(PRINT_DEBUG,"\033[1;4;31mlocal write %s\033[0m\n",multimap_iterator_->first[1].c_str());
+
+                //TODO: check if first has some items...
+                if(item.first[1] == "connected") {
+                    PDEBUG(PRINT_DEBUG,"\033[1;4;31mlocal write %s\033[0m\n",item.first[1].c_str());
                     if(serial_connector_->send(read_message)) {
                         PDEBUG(PRINT_DEBUG,"\033[1;4;33mWrite success %s\033[0m",read_message.c_str());
                     }
                 }
-                else if(multimap_iterator_->first[1] == "remote") {
-                    PDEBUG(PRINT_DEBUG,"\033[1;4;31mlocal write %s\033[0m\n",multimap_iterator_->first[1].c_str());
+                else if(item.first[1] == "remote") {
+                    PDEBUG(PRINT_DEBUG,"\033[1;4;31mlocal write %s\033[0m\n",item.first[1].c_str());
                     // parsing the message and add the user name field to the message
                     // This si required for only remote client[FAE] to notify the customer that the command is sent from
                     // FAE with FAE username
@@ -560,23 +552,20 @@ bool HostControllerService::disptachMessageToPlatforms(const std::string& dealer
 //
 CommandDispatcherMessages HostControllerService::stringHash(const std::string& command)
 {
-    CommandDispatcherMessages message;
     if(command == "request_hcs_status") {
-        message = CommandDispatcherMessages::REQUEST_HCS_STATUS;
-        return message;
-    } else if (command == "request_available_platforms") {
-        message = CommandDispatcherMessages::REQUEST_AVAILABLE_PLATFORMS;
-        return message;
-    } else if (command == "platform_select") {
-        message = CommandDispatcherMessages::PLATFORM_SELECT;
-        return message;
-    } else if (command == "register_client") {
-        message = CommandDispatcherMessages::REGISTER_CLIENT;
-        return message;
-    } else {
-        message = CommandDispatcherMessages::COMMAND_NOT_FOUND;
-        return message;
+        return CommandDispatcherMessages::REQUEST_HCS_STATUS;
     }
+    else if (command == "request_available_platforms") {
+        return CommandDispatcherMessages::REQUEST_AVAILABLE_PLATFORMS;
+    }
+    else if (command == "platform_select") {
+        return CommandDispatcherMessages::PLATFORM_SELECT;
+    }
+    else if (command == "register_client") {
+        return CommandDispatcherMessages::REGISTER_CLIENT;
+    }
+
+    return CommandDispatcherMessages::COMMAND_NOT_FOUND;
 }
 
 //[TODO] [prasanth] create some class for this function
@@ -601,6 +590,7 @@ bool HostControllerService::parseAndGetPlatformId()
     g_dealer_id_ = serial_connector_->getPlatformUUID();
     platform.connection_status = "connected";
     platform_uuid_.push_back(platform);
+    return true;
 }
 
 // @f parseHCSCommands
@@ -735,7 +725,7 @@ void HostControllerService::handleRemoteGetPlatforms()
 {
     bool get_platform_success = false;
     if(discovery_service_->getHCSToken().empty()) {
-        PDEBUG(PRINT_DEBUG," Invalid Token for remote connection\n",0);
+        PDEBUG(PRINT_DEBUG," Invalid Token for remote connection\n");
     }
     else {
         remote_platforms remote_platform;
@@ -898,7 +888,7 @@ void HostControllerService::platformDisconnectRoutine ()
     platform_uuid_.clear();
     platform_client_mapping_.clear();
 
-    string platformList ;
+
 
     platform_details simulated_usb_pd,simulated_motor_vortex,sim_usb;
     simulated_usb_pd.platform_uuid = "P2.2018.1.1.0.0.c9060ff8-5c5e-4295-b95a-d857ee9a3671";
@@ -916,15 +906,12 @@ void HostControllerService::platformDisconnectRoutine ()
     platform_uuid_.push_back(simulated_usb_pd);  // for testing alone
     platform_uuid_.push_back(simulated_motor_vortex);
     platform_uuid_.push_back(sim_usb);
+
+    string platformList;
     getPlatformListJson(platformList);
-    std::list<string>::iterator client_list_iterator = clientList.begin();
-    while(client_list_iterator != clientList.end()) {
-        client_connector_->setDealerID(*client_list_iterator);
-        client_connector_->send(platformList);
-        PDEBUG(PRINT_DEBUG,"[hcs to hcc]%s",platformList.c_str());
-        client_list_iterator++;
-    }
-    if (!port_disconnected_){
+    sendMessageToUI(platformList);
+
+    if (!port_disconnected_) {
         event_del(&platform_handler_);
         port_disconnected_ = true;
         // close the serial port
@@ -935,18 +922,22 @@ void HostControllerService::platformDisconnectRoutine ()
     }
 }
 
+void HostControllerService::sendMessageToUI(const std::string& message)
+{
+    for(const auto& item : clientList) {
+        client_connector_->setDealerID(item);
+        client_connector_->send(message);
+        PDEBUG(PRINT_DEBUG,"[hcs to hcc]%s", message.c_str());
+    }
+}
+
 // @f sendDisconnecttoUI
 // @b sends the platform disconnected(local/remote) message to UI
 //
 void HostControllerService::sendDisconnecttoUI()
 {
-    std::list<string>::iterator client_list_iterator = clientList.begin();
     string disconnect_message = "{\"notification\":{\"value\":\"platform_connection_change_notification\",\"payload\":{\"status\":\"disconnected\"}}}";
-    while(client_list_iterator != clientList.end()) {
-        client_connector_->setDealerID(*client_list_iterator);
-        client_connector_->send(disconnect_message);
-        client_list_iterator++;
-    }
+    sendMessageToUI(disconnect_message);
 }
 
 // @f getPlatformListJson
@@ -967,9 +958,8 @@ void HostControllerService::getPlatformListJson(string &list)
     Value array(kArrayType);
     Document::AllocatorType& allocator = document.GetAllocator();
     // traversing through the list
-    for(auto platform_list_iterator = platform_uuid_.begin(); platform_list_iterator
-                                != platform_uuid_.end();platform_list_iterator++) {
-        platform_details platform = *platform_list_iterator;
+    for(const platform_details& platform : platform_uuid_)
+    {
         Value json_verbose(platform.platform_verbose.c_str(),allocator);
         Value json_uuid(platform.platform_uuid.c_str(),allocator);
         Value json_connection_status(platform.connection_status.c_str(),allocator);
@@ -985,6 +975,7 @@ void HostControllerService::getPlatformListJson(string &list)
     nested_object.SetObject();
     nested_object.AddMember("list",array,allocator);
     document.AddMember("hcs::notification",nested_object,allocator);
+
     StringBuffer strbuf;
     Writer<StringBuffer> writer(strbuf);
     document.Accept(writer);
@@ -1005,16 +996,12 @@ void HostControllerService::getPlatformListJson(string &list)
 //
 bool HostControllerService::clientExists(const string& client_identifier)
 {
-    bool does_client_exist;
-    multimap_iterator_ = platform_client_mapping_.begin();
-    while(multimap_iterator_ != platform_client_mapping_.end()) {
-        does_client_exist = (multimap_iterator_->second == client_identifier);
-        if(does_client_exist) {
-            break;
+    for(const auto& item : platform_client_mapping_) {
+        if (item.second == client_identifier) {
+            return true;
         }
-        multimap_iterator_++;
     }
-    return does_client_exist;
+    return false;
 }
 
 // @f clientExistsinList
@@ -1028,16 +1015,12 @@ bool HostControllerService::clientExists(const string& client_identifier)
 //
 bool HostControllerService::clientExistInList(const string& client_identifier)
 {
-    bool does_client_exist;
-    std::list<string>::iterator client_list_iterator = clientList.begin();
-    while(client_list_iterator != clientList.end()) {
-        does_client_exist = (*client_list_iterator == client_identifier);
-        if(does_client_exist) {
-            break;
+    for(const auto& item : clientList) {
+        if (item == client_identifier) {
+            return true;
         }
-        client_list_iterator++;
     }
-    return does_client_exist;
+    return false;
 }
 
 // @f checkPlatformExist
@@ -1051,17 +1034,13 @@ bool HostControllerService::clientExistInList(const string& client_identifier)
 //
 bool HostControllerService::checkPlatformExist(const std::string& message)
 {
-    multimap_iterator_ = platform_client_mapping_.begin();
-    while(multimap_iterator_ != platform_client_mapping_.end()) {
-        bool does_platform_exist = false;
-        std::vector<string> map_uuid = multimap_iterator_->first;
-        string dealer_id;
-        dealer_id = multimap_iterator_->second;
+    for(const auto& item : platform_client_mapping_) {
+        // bool does_platform_exist = false;
+        string dealer_id = item.second;
         if(!message.empty()) {
           client_connector_->setDealerID(dealer_id);
           client_connector_->send(message);
         }
-        multimap_iterator_++;
     }
     return true;
 }
@@ -1074,8 +1053,6 @@ bool HostControllerService::checkPlatformExist(const std::string& message)
 //
 void HostControllerService::remoteRouting(const std::string& message)
 {
-    string dealer_id;
-    multimap_iterator_ = platform_client_mapping_.begin();
     if(message.empty()) {
         return;
     }
@@ -1102,22 +1079,22 @@ void HostControllerService::remoteRouting(const std::string& message)
             } // end if the json has the required key-value
         } // end if the json has the required key-value
     }
-    while(multimap_iterator_ != platform_client_mapping_.end()) {
-        bool does_platform_exist = false;
-        std::vector<string> map_uuid = multimap_iterator_->first;
-        string dealer_id = multimap_iterator_->second;
-        dealer_id = multimap_iterator_->second;
+
+    for(const auto& item : platform_client_mapping_) {
+        // bool does_platform_exist = false;
+        std::vector<string> map_uuid = item.first;
+        string dealer_id = item.second;
         if(map_uuid[1] == "remote") {
             client_connector_->setDealerID(dealer_id);
             client_connector_->send(message);
-        } else if ((map_uuid[1] == "connected")) {
+        }
+        else if ((map_uuid[1] == "connected")) {
             PDEBUG(PRINT_DEBUG,"Inside remote writing %s with dealer id %s",message.c_str(),dealer_id.c_str());
             serial_connector_->send(message);
             // [prasanth]: the customer HCS on receiving the commands from FAE should parse the message
             // and take the username and send it to UI client for activity monitor
             retrieveUsername(message);
         }
-        multimap_iterator_++;
     }
 }
 

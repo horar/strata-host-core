@@ -1,5 +1,6 @@
 import QtQuick 2.9
 import QtQuick.Layouts 1.3
+import QtQuick.Controls 2.3
 import "qrc:/views/usb-pd-multiport/sgwidgets"
 
 Item {
@@ -21,6 +22,38 @@ Item {
                 top:parent.top
                 left: parent.left
                 leftMargin: 45
+            }
+        }
+
+        Button{
+            //a rectangle to cover the max power popup when it's disabled, so we can still show a
+            //tooltip explaining *why* its disabled.
+            id:toolTipMask
+            hoverEnabled: true
+            z:1
+            visible:!assuredPortSwitch.enabled
+            background: Rectangle{
+                color:"transparent"
+            }
+
+            anchors {
+                left: maxPowerOutput.left
+                top: assuredPortSwitch.top
+                bottom:maxPowerOutput.bottom
+                right: maxPowerOutput.right
+            }
+
+            ToolTip{
+                id:maxPowerToolTip
+                visible:toolTipMask.hovered
+                text:"Port Power can not be changed when devices are connected"
+                delay:500
+                timeout:2000
+
+                background: Rectangle {
+                    color: "#eee"
+                    radius: 2
+                }
             }
         }
 
@@ -104,7 +137,7 @@ Item {
 
         SGComboBox {
 
-            property variant maxPowerOptions
+            property variant maxPowerOptions: ["15","27", "36", "45","60","100"]
             property int maxPower: platformInterface.usb_pd_maximum_power.commanded_max_power
 
             //limit the options for power usage to be less than the max power allocated for this port
@@ -132,7 +165,7 @@ Item {
                         maxPowerOptions = [];
                     }
 
-                    //console.log("got a new commanded max power for port",platformInterface.usb_pd_maximum_power.port)
+                    console.log("got a new commanded max power for port",platformInterface.usb_pd_maximum_power.port)
                     maxPowerOutput.currentIndex = maxPowerOutput.comboBox.find( parseInt (platformInterface.usb_pd_maximum_power.commanded_max_power))
                 }
             }
@@ -196,6 +229,8 @@ Item {
             id: currentLimitInput
             showButton: false
             infoBoxWidth: 30
+            minimumValue: 0
+            maximumValue: 100
             anchors {
                 verticalCenter: currentLimit.verticalCenter
                 verticalCenterOffset: -7
@@ -227,7 +262,7 @@ Item {
 
         Text {
             id: cableCompensation
-            text: "<b>Cable Compensation:</b>"
+            text: "<b>Cable Compensation</b>"
             font {
                 pixelSize: 16
             }
@@ -267,6 +302,8 @@ Item {
             id: incrementInput
             showButton: false
             infoBoxWidth: 30
+            minimumValue: 0
+            maximumValue: 3
             anchors {
                 verticalCenter: increment.verticalCenter
                 verticalCenterOffset: -7
@@ -274,11 +311,13 @@ Item {
                 rightMargin: 5
             }
 
-            value: platformInterface.set_cable_loss_compensation.output_current.toFixed(0)
-            onApplied: platformInterface.set_cable_loss_compensation.update(portNumber,
-                           intValue,
+            value: platformInterface.set_cable_loss_compensation.output_current.toFixed(1)
+            onApplied:{
+                //console.log("sending values from increment textbox:",portNumber, incrementInput.floatValue, platformInterface.set_cable_loss_compensation.bias_voltage);
+                platformInterface.set_cable_loss_compensation.update(portNumber,
+                           incrementInput.floatValue,
                            platformInterface.set_cable_loss_compensation.bias_voltage)
-
+                    }
         }
 
         Text{
@@ -319,6 +358,8 @@ Item {
             id: biasInput
             showButton: false
             infoBoxWidth: 30
+            minimumValue: 0
+            maximumValue: 2
             anchors {
                 verticalCenter: bias.verticalCenter
                 verticalCenterOffset: -7
@@ -326,10 +367,10 @@ Item {
                 rightMargin: 5
             }
 
-            value: platformInterface.set_cable_loss_compensation.bias_voltage.toFixed(0)
+            value: platformInterface.set_cable_loss_compensation.bias_voltage.toFixed(1)
             onApplied: platformInterface.set_cable_loss_compensation.update(portNumber,
                                                                             platformInterface.set_cable_loss_compensation.output_current,
-                                                                            intValue)
+                                                                            biasInput.floatValue)
         }
 
         Text{

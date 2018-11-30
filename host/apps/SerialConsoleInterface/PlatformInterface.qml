@@ -37,6 +37,10 @@ Item {
                             '{"cmd":"request_platform_id5"}' ]
     }
 
+    property var coreCommands : { "1":
+                           [ '{"cmd":"request_platform_id"}' ]
+    }
+
     // -------------------------------------------------------------------
     // Connect to platformController notification signals
 

@@ -1,7 +1,6 @@
 <RCC>
     <qresource prefix="/">
         <file>main.qml</file>
-        <file>main.cpp</file>
         <file>views/bubu/Control.qml</file>
         <file>SGLoginScreen.qml</file>
         <file>SGDetectingPlatform.qml</file>
@@ -11,13 +10,9 @@
         <file>views/bubu/Content.qml</file>
         <file>views/motor-vortex/Content.qml</file>
         <file>SGWelcome.qml</file>
-        <file>include/DocumentManager.h</file>
         <file>js/login.js</file>
         <file>js/navigation_control.js</file>
         <file>js/restclient.js</file>
-        <file>PlatformInterface/core/CoreInterface.cpp</file>
-        <file>PlatformInterface/core/CoreInterface.h</file>
-        <file>source/DocumentManager.cpp</file>
         <file>views/motor-vortex/PageComingSoon.qml</file>
         <file>views/motor-vortex/PageLayout.qml</file>
         <file>views/motor-vortex/PageSchematic.qml</file>
