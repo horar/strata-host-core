@@ -15,14 +15,12 @@ Item {
     width: parent.width
     height: graphSelector.nothingChecked ? portSettings.height : portSettings.height + portGraphs.height
 
-
-
     PortInfo {
         id: portInfo
         anchors {
             left: parent.left
             top: root.top
-            bottom: root.bottom
+            topMargin: 110
         }
         advertisedVoltage:{
             if (platformInterface.request_usb_power_notification.port === portNumber){
@@ -96,8 +94,8 @@ Item {
     Rectangle{
         id:graphAndCapibilitiesRect
         anchors.left: portInfo.right
-        anchors.top:portInfo.top
-        //anchors.right:portSettings.left
+        anchors.verticalCenter: portInfo.verticalCenter
+        anchors.verticalCenterOffset: 2
 
         height:225
         width:310
@@ -440,7 +438,7 @@ Item {
             minXValue: 0                    // Default: 0
             maxXValue: 5                    // Default: 10
 
-            property real stream
+            property real stream: 0
             property real count: 0
             property real interval: 10 // 10 Hz?
 
@@ -475,7 +473,7 @@ Item {
             minXValue: 0                    // Default: 0
             maxXValue: 5                    // Default: 10
 
-            property real stream
+            property real stream: 0
             property real count: 0
             property real interval: 10 // 10 Hz?
 
@@ -510,7 +508,7 @@ Item {
             minXValue: 0                    // Default: 0
             maxXValue: 5                    // Default: 10
 
-            property real stream
+            property real stream: 0
             property real count: 0
             property real interval: 10 // 10 Hz?
 
@@ -544,7 +542,7 @@ Item {
             minXValue: 0                    // Default: 0
             maxXValue: 5                    // Default: 10
 
-            property real stream
+            property real stream: 0
             property real count: 0
             property real interval: 10 // 10 Hz?
 
@@ -579,7 +577,7 @@ Item {
             minXValue: 0                    // Default: 0
             maxXValue: 5                    // Default: 10
 
-            property real stream
+            property real stream: 0
             property real count: 0
             property real interval: 10 // 10 Hz?
 
@@ -615,7 +613,7 @@ Item {
             minXValue: 0                    // Default: 0
             maxXValue: 5                    // Default: 10
 
-            property real stream
+            property real stream: 0
             property real count: 0
             property real interval: 10 // 10 Hz?
             property real inputPower: 0
