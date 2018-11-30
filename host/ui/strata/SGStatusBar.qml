@@ -1221,6 +1221,7 @@ Rectangle {
                     text: qsTr("Log Out")
                     onClicked: {
                         profileMenu.close()
+                        PlatformSelection.sendSelection(0)
                         NavigationControl.updateState(NavigationControl.events.LOGOUT_EVENT)
                         remoteConnectContainer.state = "default"
 
