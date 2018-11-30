@@ -35,6 +35,7 @@ function populatePlatforms(platform_list_json) {
         "P2.2018.0.0.0" : "usb-pd-multiport",       //uninitialized board
         "SEC.2017.038.0.0": "usb-pd-multiport",
         "SEC.2018.018.0.0" : "logic-gate",
+        "SEC.2018.018.1.0" : "logic-gate",
         "SEC.2018.001.0.0": "usb-hub"
     }
 
