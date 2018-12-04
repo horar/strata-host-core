@@ -115,6 +115,9 @@ int main(){
 
     replicator_configuration.setReplicatorType(SGReplicatorConfiguration::ReplicatorType::kPushAndPull);
 
+    vector<string> channels = {"channel1", "random_channel_name"};
+    replicator_configuration.setChannels(channels);
+
     SGReplicator replicator(&replicator_configuration);
 
 

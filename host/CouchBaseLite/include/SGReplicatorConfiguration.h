@@ -19,13 +19,13 @@ class SGReplicatorConfiguration {
 public:
     SGReplicatorConfiguration();
     SGReplicatorConfiguration(SGDatabase *db, SGURLEndpoint *url_endpoint);
+    virtual ~SGReplicatorConfiguration();
+    
     enum ReplicatorType{
         kPushAndPull = 0,
         kPush,
         kPull
     };
-
-    virtual ~SGReplicatorConfiguration();
 
     C4Database* getDatabase() const;
 
@@ -44,14 +44,23 @@ public:
 
     fleece::Retained<fleece::impl::MutableDict> effectiveOptions();
 
+    // Pass vector by copy, to avoid weather the reference exist or not
+    void setChannels(std::vector<std::string> channels);
+
 private:
     C4Database          *database_;
     class SGURLEndpoint *url_endpoint_;
     ReplicatorType      replicator_type_;
     SGAuthenticator     *authenticator_;
 
+    std::vector<std::string> channels_;
+
     //Holds all extra configuration for the replicator
     fleece::Retained<fleece::impl::MutableDict> options_;
+
+    // Options for the replicator progress level
+    const int kNotifyOnEveryDocumentChange = 1;
+    const int kNotifyOnEveryAttachmentChange = 2;
 };
 
 

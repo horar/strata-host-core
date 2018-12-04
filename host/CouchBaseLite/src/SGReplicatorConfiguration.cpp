@@ -9,9 +9,10 @@
 * @copyright Copyright 2018 On Semiconductor
 */
 
-#include <include/SGReplicatorConfiguration.h>
-
 #include "SGReplicatorConfiguration.h"
+
+
+using namespace std;
 using namespace fleece;
 using namespace fleece::impl;
 #define DEBUG(...) printf("SGReplicatorConfiguration: "); printf(__VA_ARGS__)
@@ -65,6 +66,14 @@ const SGAuthenticator *SGReplicatorConfiguration::getAuthenticator() const {
     return authenticator_;
 }
 
+void SGReplicatorConfiguration::setChannels(std::vector<std::string> channels){
+    // Pass vector channels by copy!
+    channels_ = channels;
+}
+
+/** SGReplicatorConfiguration effectiveOptions.
+* @brief Initialize and build the options for the replicator
+*/
 fleece::Retained<fleece::impl::MutableDict> SGReplicatorConfiguration::effectiveOptions() {
 
     if(authenticator_ != nullptr){
@@ -74,8 +83,20 @@ fleece::Retained<fleece::impl::MutableDict> SGReplicatorConfiguration::effective
     }
     // Here we can process more options and add it to options_
 
-    //If >=1, notify on every doc; if >=2, on every attachment (int)
-    options_->set( slice(kC4ReplicatorOptionProgressLevel), 1);
+    // If >=1, notify on every doc; if >=2, on every attachment (int)
+    options_->set( slice(kC4ReplicatorOptionProgressLevel), kNotifyOnEveryDocumentChange);
+
+    // Get all channels name to be filtered by the pull replicator
+    if(channels_.size() > 0){
+        // Set fleece arrays the values stored in the channels_ vector
+        Retained<MutableArray> channels_array = MutableArray::newArray(channels_.size());
+        for(int index = 0; index < channels_.size(); index++)
+        {
+            channels_array->set(index, channels_[index]);
+        }
+        options_->set( slice(kC4ReplicatorOptionChannels), channels_array);
+
+    }
 
     return options_;
 }
