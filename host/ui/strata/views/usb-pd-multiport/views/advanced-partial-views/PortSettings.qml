@@ -26,7 +26,7 @@ Item {
         }
 
         Button{
-            //a rectangle to cover the max power popup when it's disabled, so we can still show a
+            //a rectangle to cover the assured power switch when it's disabled, so we can still show a
             //tooltip explaining *why* its disabled.
             id:toolTipMask
             hoverEnabled: true
@@ -37,16 +37,24 @@ Item {
             }
 
             anchors {
-                left: maxPowerOutput.left
+                left: assuredPortSwitch.left
                 top: assuredPortSwitch.top
-                bottom:maxPowerOutput.bottom
-                right: maxPowerOutput.right
+                bottom:assuredPortSwitch.bottom
+                right: assuredPortSwitch.right
             }
 
             ToolTip{
                 id:maxPowerToolTip
                 visible:toolTipMask.hovered
-                text:"Port Power can not be changed when devices are connected"
+                //text:"Port Power can not be changed when devices are connected"
+                text:{
+                    if (portNumber === 1){
+                        return "Assured Port Power can not be changed when devices are connected"
+                    }
+                    else {
+                        return "Assured Port Power can not be changed for this port"
+                    }
+                }
                 delay:500
                 timeout:2000
 
