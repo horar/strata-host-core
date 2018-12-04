@@ -203,6 +203,17 @@ Item {
 //            }
         }
 
+        Text{
+            id: maxPowerUnits
+            text: "W"
+            color: !assuredPortSwitch.checked ? "black" : "grey"
+            anchors {
+                left: maxPowerOutput.right
+                leftMargin: 5
+                verticalCenter: maxPowerOutput.verticalCenter
+            }
+        }
+
 
 
         SGSlider {

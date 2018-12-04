@@ -370,6 +370,17 @@ Item {
 
             }
 
+            Text{
+                id: assuredMaxPowerUnits
+                text: "W"
+                color: !assuredPortSwitch.checked ? "black" : "grey"
+                anchors {
+                    left: assuredMaxPowerOutput.right
+                    leftMargin: 5
+                    verticalCenter: assuredMaxPowerOutput.verticalCenter
+                }
+            }
+
 
 
             SGSegmentedButtonStrip {
@@ -712,9 +723,20 @@ Item {
                     //console.log("got a new min power setting",platformInterface.foldback_input_voltage_limiting_event.foldback_minimum_voltage_power);
                     limitOutput.currentIndex = limitOutput.comboBox.find( parseInt (platformInterface.foldback_input_voltage_limiting_event.foldback_minimum_voltage_power))
                 }
-
-
             }
+
+            Text{
+                id: limitOutputPowerUnits
+                text: "W"
+                color: "black"
+                anchors {
+                    left: limitOutput.right
+                    leftMargin: 5
+                    verticalCenter: limitOutput.verticalCenter
+                }
+            }
+
+
 
 
 
@@ -841,7 +863,7 @@ Item {
 
             Text{
                 id:percentLabel
-                text:"percent"
+                text:"%"
                 anchors{
                     left:limitOutput2.right
                     leftMargin: 5
