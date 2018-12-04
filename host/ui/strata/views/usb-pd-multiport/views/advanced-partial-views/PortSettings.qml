@@ -143,6 +143,39 @@ Item {
             onToggled: platformInterface.set_assured_power_port.update(checked, portNumber)  //we're only allowing port 1 to be assured            
         }
 
+
+        Button{
+            //a rectangle to cover the assured power switch when it's disabled, so we can still show a
+            //tooltip explaining *why* its disabled.
+            id:powerPopupToolTipMask
+            hoverEnabled: true
+            z:1
+            visible:(assuredPortSwitch.checked && portNumber === 1)
+            background: Rectangle{
+                color:"transparent"
+            }
+
+            anchors {
+                left: maxPowerOutput.left
+                top: maxPowerOutput.top
+                bottom:maxPowerOutput.bottom
+                right: maxPowerOutput.right
+            }
+
+            ToolTip{
+                id:powerPopupToolTip
+                visible:powerPopupToolTipMask.hovered
+                text: "Maximum Port Power can not be changed while Assured Port Power is active"
+                delay:500
+                timeout:2000
+
+                background: Rectangle {
+                    color: "#eee"
+                    radius: 2
+                }
+            }
+        }
+
         SGComboBox {
 
             property variant maxPowerOptions: ["15","27", "36", "45","60","100"]
@@ -181,8 +214,13 @@ Item {
             id: maxPowerOutput
             label: "Max Power Output:"
             model: maxPowerOptions
-            enabled: !assuredPortSwitch.checked
-            textColor: !assuredPortSwitch.checked ? "black" : "grey"
+            enabled:{
+                if (portNumber === 1 && assuredPortSwitch.checked)
+                    return false;
+                else
+                    return true
+            }
+            textColor: enabled ? "black" : "grey"
             comboBoxHeight: 25
             comboBoxWidth: 60
             anchors {
@@ -214,7 +252,7 @@ Item {
         Text{
             id: maxPowerUnits
             text: "W"
-            color: !assuredPortSwitch.checked ? "black" : "grey"
+            color: maxPowerOutput.enabled ? "black" : "grey"
             anchors {
                 left: maxPowerOutput.right
                 leftMargin: 5
