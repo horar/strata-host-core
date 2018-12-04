@@ -107,9 +107,9 @@ int main(){
     DEBUG("schema %s, \n", url_endpoint.getSchema().c_str());
     DEBUG("getPath %s, \n", url_endpoint.getPath().c_str());
 
-    SGBasicAuthenticator basic_authenticator("username","password");
-
     SGReplicatorConfiguration replicator_configuration(&sgDatabase, &url_endpoint);
+
+    SGBasicAuthenticator basic_authenticator("username","password");
 
     replicator_configuration.setAuthenticator(&basic_authenticator);
 

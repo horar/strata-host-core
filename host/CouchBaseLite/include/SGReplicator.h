@@ -38,7 +38,6 @@ public:
         kIdle,
         kBusy
     };
-
     bool start();
     bool stop();
     void addChangeListener(const std::function<void(SGReplicator::ActivityLevel, SGReplicatorProgress)>& callback);
@@ -58,6 +57,10 @@ private:
 
     void setReplicatorType(SGReplicatorConfiguration::ReplicatorType replicator_type);
     bool _start(std::future<void> future_obj);
+
+    // Restart a replicator
+    bool restart();
+
 };
 
 

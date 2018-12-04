@@ -28,7 +28,7 @@ SGReplicator::SGReplicator() {}
 
 SGReplicator::~SGReplicator() {
     stop();
-    c4repl_free(c4replicator_);
+
 }
 
 /** SGReplicator.
@@ -49,6 +49,9 @@ bool SGReplicator::stop(){
         // Send a termination signal to the running thread.
         replicator_exit_signal.set_value();
         replicator_thread_.join();
+
+        // Free the replicator reference
+        c4repl_free(c4replicator_);
     }
 }
 
@@ -198,4 +201,13 @@ void SGReplicator::addDocumentEndedListener(const std::function<void(bool pushin
 
         ((SGReplicator*)context)->on_document_error_callback(pushing, doc_id, error_message, error.code > 0 ,errorIsTransient);
     };
+}
+
+/** SGReplicator restart.
+* @brief Restarts the replicator.
+*/
+bool SGReplicator::restart() {
+    stop();
+    start();
+    return true;
 }
