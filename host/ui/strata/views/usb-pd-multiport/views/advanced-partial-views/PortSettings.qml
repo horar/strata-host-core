@@ -372,7 +372,7 @@ Item {
                 rightMargin: 5
             }
 
-            value: platformInterface.get_cable_loss_compensation.bias_voltage.toFixed(1)
+            value: platformInterface.get_cable_loss_compensation.bias_voltage.toFixed(0)
             onApplied: platformInterface.set_cable_loss_compensation.update(portNumber,
                                                                             platformInterface.get_cable_loss_compensation.output_current,
                                                                             biasInput.floatValue)

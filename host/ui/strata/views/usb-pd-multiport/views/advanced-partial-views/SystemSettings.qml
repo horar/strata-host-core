@@ -553,7 +553,7 @@ Item {
             SGSubmitInfoBox {
                 id: tempFaultInput
                 showButton: false
-                infoBoxWidth: 30
+                infoBoxWidth: 35
                 minimumValue: -64
                 maximumValue: 191
                 anchors {
@@ -790,7 +790,7 @@ Item {
             SGSubmitInfoBox {
                 id: foldbackTempInput
                 showButton: false
-                infoBoxWidth: 30
+                infoBoxWidth: 35
                 anchors {
                     verticalCenter: foldbackTemp.verticalCenter
                     verticalCenterOffset: -7
