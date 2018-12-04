@@ -211,7 +211,9 @@ Item {
             value: platformInterface.request_over_current_protection_notification.current_limit
             labelTopAligned: true
             startLabel: "0A"
-            endLabel: "100A"
+            endLabel: "6A"
+            from: 0
+            to: 6
             anchors {
                 left: parent.left
                 leftMargin: 86
@@ -230,7 +232,7 @@ Item {
             showButton: false
             infoBoxWidth: 30
             minimumValue: 0
-            maximumValue: 100
+            maximumValue: 6
             anchors {
                 verticalCenter: currentLimit.verticalCenter
                 verticalCenterOffset: -7
@@ -275,12 +277,14 @@ Item {
         SGSlider {
             id: increment
             label: "For every increment of:"
-            value:platformInterface.set_cable_loss_compensation.output_current
-            from:0
-            to:3
+            value:platformInterface.get_cable_loss_compensation.output_current
+            from:.25
+            to:1
+            stepSize: .25
+            toolTipDecimalPlaces: 2
             labelTopAligned: true
-            startLabel: "0A"
-            endLabel: "3A"
+            startLabel: ".25A"
+            endLabel: "1A"
             anchors {
                 left: parent.left
                 leftMargin: 25
@@ -290,10 +294,10 @@ Item {
                 rightMargin: 10
             }
             onMoved:{
-                console.log("sending values from increment slider:",portNumber, increment.value, platformInterface.set_cable_loss_compensation.bias_voltage);
+                console.log("sending values from increment slider:",portNumber, increment.value, platformInterface.get_cable_loss_compensation.bias_voltage);
                 platformInterface.set_cable_compensation.update(portNumber,
                                                                      value,
-                                                                     platformInterface.set_cable_loss_compensation.bias_voltage)
+                                                                     platformInterface.get_cable_loss_compensation.bias_voltage)
             }
 
         }
@@ -311,12 +315,12 @@ Item {
                 rightMargin: 5
             }
 
-            value: platformInterface.set_cable_loss_compensation.output_current.toFixed(1)
+            value: platformInterface.get_cable_loss_compensation.output_current.toFixed(1)
             onApplied:{
                 //console.log("sending values from increment textbox:",portNumber, incrementInput.floatValue, platformInterface.set_cable_loss_compensation.bias_voltage);
                 platformInterface.set_cable_loss_compensation.update(portNumber,
                            incrementInput.floatValue,
-                           platformInterface.set_cable_loss_compensation.bias_voltage)
+                           platformInterface.get_cable_loss_compensation.bias_voltage)
                     }
         }
 
@@ -332,12 +336,13 @@ Item {
         SGSlider {
             id: bias
             label: "Bias output by:"
-            value:platformInterface.set_cable_loss_compensation.bias_voltage
+            value:platformInterface.get_cable_loss_compensation.bias_voltage
             from:0
-            to:2
+            to:200
+            stepSize: 10
             labelTopAligned: true
             startLabel: "0mV"
-            endLabel: "2mV"
+            endLabel: "200mV"
             anchors {
                 left: parent.left
                 leftMargin: 75
@@ -348,7 +353,7 @@ Item {
             }
             onMoved: {
                 platformInterface.set_cable_compensation.update(portNumber,
-                                                                     platformInterface.set_cable_loss_compensation.output_current,
+                                                                     platformInterface.get_cable_loss_compensation.output_current,
                                                                      value)
             }
 
@@ -357,7 +362,7 @@ Item {
         SGSubmitInfoBox {
             id: biasInput
             showButton: false
-            infoBoxWidth: 30
+            infoBoxWidth: 35
             minimumValue: 0
             maximumValue: 2
             anchors {
@@ -367,9 +372,9 @@ Item {
                 rightMargin: 5
             }
 
-            value: platformInterface.set_cable_loss_compensation.bias_voltage.toFixed(1)
+            value: platformInterface.get_cable_loss_compensation.bias_voltage.toFixed(1)
             onApplied: platformInterface.set_cable_loss_compensation.update(portNumber,
-                                                                            platformInterface.set_cable_loss_compensation.output_current,
+                                                                            platformInterface.get_cable_loss_compensation.output_current,
                                                                             biasInput.floatValue)
         }
 
