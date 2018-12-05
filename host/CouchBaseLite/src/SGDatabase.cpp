@@ -26,32 +26,42 @@ using namespace fleece::impl;
 #define DEBUG(...) printf("SGDatabase: "); printf(__VA_ARGS__)
 SGDatabase::SGDatabase() {}
 SGDatabase::SGDatabase(const std::string& db_name) {
-    open(db_name);
+    setDBName(db_name);
 }
 
 SGDatabase::~SGDatabase() {
     close();
 }
 
+void SGDatabase::setDBName(const std::string& name){
+    // copy content from name to db_name. We want to own the data for safety reasons.
+    db_name_ = name;
+}
+
+const std::string& SGDatabase::getDBName() const{
+    return db_name_;
+}
+
 /** SGDatabase Open.
 * @brief Open or create a local embedded database if name does not exist
 * @param db_name The couchebase lite embeeded database name.
 */
-void SGDatabase::open(const std::string db_name) {
+SGDatabaseReturnStatus SGDatabase::open() {
 
-    db_lock_.lock();
+    lock_guard<mutex> lock(db_lock_);
     DEBUG("Calling open\n");
 
     // Check for empty db name
-    if (db_name.length() == 0){
+    if (db_name_.length() == 0){
         DEBUG("DB name can't be empty! \n");
-        return;
+        return SGDatabaseReturnStatus::kDBNameError;
     }
     /*
         Make a db folder to store all future databases
         Use a system call as experimental::filesystem wouldn't compile with clang
         System call will work with Windows/Mac/Linux
     */
+    // System returns the processor exit status. In this case mkdir return 0 on success.
     system("mkdir db");
 
     // Configure database attributes
@@ -61,43 +71,107 @@ void SGDatabase::open(const std::string db_name) {
     c4db_config_.versioning     = kC4RevisionTrees;
     c4db_config_.encryptionKey.algorithm    = kC4EncryptionNone;
 
-    std::string db_path = "./db/" + db_name;
+    std::string db_path = "./db/" + db_name_;
     c4error_.code = 0;
     c4db_ = c4db_open(c4str(db_path.c_str()), &c4db_config_, &c4error_);
-    if (c4error_.code !=NO_CB_ERROR){
+    if (c4error_.code != kSGNoCouchBaseError_ && c4error_.code < kC4NumErrorCodesPlus1){
         DEBUG("Error opening the db: %s. Error Code:%d.\n", db_path.c_str(), c4error_.code);
+        return SGDatabaseReturnStatus::kOpenDBError;
     }
-    DEBUG("Leaving open\n");
 
-    db_lock_.unlock();
-
-
+    return SGDatabaseReturnStatus::kNoError;
 }
+
 /** SGDatabase Close.
 * @brief Close the local database if it's open
 */
-void SGDatabase::close() {
-    db_lock_.lock();
+SGDatabaseReturnStatus SGDatabase::close() {
+    lock_guard<mutex> lock(db_lock_);
     DEBUG("Calling close\n");
 
     c4db_close(c4db_, &c4error_);
+    if(c4error_.code != kSGNoCouchBaseError_ && c4error_.code < kC4NumErrorCodesPlus1){
+        return SGDatabaseReturnStatus::kCloseDBError;
+    }
     c4db_free(c4db_);
 
     DEBUG("Leaving close\n");
-    db_lock_.unlock();
+    return SGDatabaseReturnStatus::kNoError;
 }
 
 C4Database *SGDatabase::getC4db() const {
     return c4db_;
 }
 
+/** SGDatabase createNewDocument.
+* @brief Create new couchebase document.
+* @param doc The SGDocument reference.
+* @param body The fleece slice data which will be stored in the body of the document.
+*/
+SGDatabaseReturnStatus SGDatabase::createNewDocument(SGDocument *doc, alloc_slice body){
+    // Document does not exist. Creating a new one
+    DEBUG("Creating a new document\n");
+
+    C4RevisionFlags revisionFlags = kRevNew;
+    C4String docId = c4str(doc->getId().c_str());
+
+    C4Document *newdoc = c4doc_create(c4db_, docId, body, revisionFlags,&c4error_);
+    if (c4error_.code != kSGNoCouchBaseError_ && c4error_.code < kC4NumErrorCodesPlus1) {
+        DEBUG("Could not create new document. Error Code:%d.\n",  c4error_.code);
+        return SGDatabaseReturnStatus::kCreateDocumentError;
+    }else{
+        doc->c4document_ = newdoc;
+    }
+    return SGDatabaseReturnStatus::kNoError;
+}
+
+/** SGDatabase updateDocument.
+* @brief Update existing couchebase document.
+* @param doc The SGDocument reference.
+* @param body The fleece slice data which will update the body.
+*/
+SGDatabaseReturnStatus SGDatabase::updateDocument(SGDocument *doc, alloc_slice new_body){
+    // Docuement exist. Make modifications to the body
+    DEBUG("document Exist. Working on updating the document: %s\n", doc->getId().c_str());
+    C4String rev_id = doc->c4document_->revID;
+    std::string rev_id_string = std::string((const char *) rev_id.buf, rev_id.size);
+    DEBUG("REV id: %s\n", rev_id_string.c_str());
+
+    C4Document *newdoc = c4doc_update(doc->c4document_, new_body, doc->c4document_->selectedRev.flags, &c4error_);
+
+    if (c4error_.code != NO_CB_ERROR && (c4error_.code < kC4NumErrorCodesPlus1) ) {
+        C4SliceResult sliceResult = c4error_getDescription(c4error_);
+        string slice2string = string((char*)sliceResult.buf,sliceResult.size);
+
+        DEBUG("Could not update the body of an existing document.\n");
+        DEBUG("Error Msg:%s\n", slice2string.c_str());
+
+        // free sliceResult
+        c4slice_free(sliceResult);
+
+        return SGDatabaseReturnStatus::kUpdatDocumentError;
+
+    }else{
+        // All good
+        doc->c4document_ = newdoc;
+    }
+    return SGDatabaseReturnStatus::kNoError;
+}
+
 /** SGDatabase save.
 * @brief Create/Edit a document
 * @param SGDocument The reference to the document object
 */
-void SGDatabase::save(SGDocument *doc) {
-    db_lock_.lock();
+SGDatabaseReturnStatus SGDatabase::save(SGDocument *doc) {
+    lock_guard<mutex> lock(db_lock_);
+
+    SGDatabaseReturnStatus status = SGDatabaseReturnStatus::kNoError;
+
     c4db_beginTransaction(c4db_, &c4error_);
+    if(c4error_.code != kSGNoCouchBaseError_ && c4error_.code < kC4NumErrorCodesPlus1){
+        DEBUG("save kBeginTransactionError\n");
+        return SGDatabaseReturnStatus::kBeginTransactionError;
+    }
     DEBUG("Calling save\n");
 
     // Set error code 0.
@@ -111,49 +185,20 @@ void SGDatabase::save(SGDocument *doc) {
     alloc_slice fleece_data = encoder.finish();
 
     if( c4doc == NULL ){
-        // Document does not exist. Creating a new one
-        DEBUG("Creating a new document\n");
-
-        C4RevisionFlags revisionFlags = kRevNew;
-        C4String docId = c4str(doc->getId().c_str());
-
-        C4Document *newdoc = c4doc_create(c4db_, docId, fleece_data, revisionFlags,&c4error_);
-        if (c4error_.code != NO_CB_ERROR && (c4error_.code < kC4NumErrorCodesPlus1) ) {
-            DEBUG("Could not insert the body of new document. Error Code:%d.\n",  c4error_.code);
-        }else{
-            doc->c4document_ = newdoc;
-        }
+        status = createNewDocument(doc, fleece_data);
 
     }else{
-        // Docuement exist. Make modifications to the body
-        DEBUG("document Exist. Working on updating the document: %s\n", doc->getId().c_str());
-        C4String rev_id = c4doc->revID;
-        std::string rev_id_string = std::string((const char *) rev_id.buf, rev_id.size);
-        DEBUG("REV id: %s\n", rev_id_string.c_str());
-
-        C4Document *newdoc = c4doc_update(c4doc, fleece_data, c4doc->selectedRev.flags, &c4error_);
-
-        if (c4error_.code != NO_CB_ERROR && (c4error_.code < kC4NumErrorCodesPlus1) ) {
-            C4SliceResult sliceResult = c4error_getDescription(c4error_);
-            string slice2string = string((char*)sliceResult.buf,sliceResult.size);
-
-            DEBUG("Could not update the body of an existing document.\n");
-            DEBUG("Error Msg:%s\n", slice2string.c_str());
-
-            // free sliceResult
-            c4slice_free(sliceResult);
-
-        }else{
-            // All good
-            doc->c4document_ = newdoc;
-        }
+        status = updateDocument(doc, fleece_data);
     }
 
     DEBUG("Leaving save\n");
     c4db_endTransaction(c4db_, true, &c4error_);
+    if(c4error_.code != kSGNoCouchBaseError_ && c4error_.code < kC4NumErrorCodesPlus1){
+        DEBUG("save kEndTransactionError\n");
+        return SGDatabaseReturnStatus::kEndTransactionError;
+    }
 
-    db_lock_.unlock();
-
+    return status;
 }
 /** SGDatabase getDocumentById.
 * @brief return C4Document if there is such a document exist in the DB, otherwise return null
@@ -179,25 +224,34 @@ C4Document *SGDatabase::getDocumentById(const std::string &doc_id) {
 * @brief delete existing document from the DB. True successful, otherwise false
 * @param SGDocument The document object
 */
-bool SGDatabase::deleteDocument(SGDocument *doc) {
-    C4Error error;
-    c4db_beginTransaction(c4db_, &error);
-
+SGDatabaseReturnStatus SGDatabase::deleteDocument(SGDocument *doc) {
+    c4db_beginTransaction(c4db_, &c4error_);
+    if(c4error_.code != kSGNoCouchBaseError_ && c4error_.code < kC4NumErrorCodesPlus1){
+        DEBUG("deleteDocument kBeginTransactionError\n");
+        return SGDatabaseReturnStatus::kBeginTransactionError;
+    }
     const char *doc_id = doc->getId().c_str();
     DEBUG("START deleteDocument: %s\n", doc_id);
 
-    bool result = c4db_purgeDoc(c4db_, c4str(doc_id), &error);
+    // Try to delete the document
+    bool is_deleted = c4db_purgeDoc(c4db_, c4str(doc_id), &c4error_);
 
-    if (result) {
-        DEBUG("Document %s deleted\n", doc_id);
-        // TODO: Do we need to have a delete flag in the document?
-        doc->setId("");
+    c4db_endTransaction(c4db_, true, &c4error_);
+
+    if(c4error_.code != kSGNoCouchBaseError_ && c4error_.code < kC4NumErrorCodesPlus1){
+        DEBUG("deleteDocument kEndTransactionError\n");
+        return SGDatabaseReturnStatus::kEndTransactionError;
     }
 
-    DEBUG("END deleteDocument: %s\n", doc_id);
-    c4db_endTransaction(c4db_, true, &error);
+    if(!is_deleted){
+        return SGDatabaseReturnStatus::kDeleteDocumentError;
+    }
 
-    return result;
+    DEBUG("Document %s deleted\n", doc_id);
+    // TODO: Do we need to have a delete flag in the document?
+    doc->setId("");
+    DEBUG("END deleteDocument: %s\n", doc_id);
+    return SGDatabaseReturnStatus::kNoError;
 }
 
 vector<std::string> SGDatabase::getAllDocumentsKey() {

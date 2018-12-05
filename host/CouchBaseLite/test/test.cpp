@@ -34,6 +34,11 @@ int main(){
 
     SGDatabase sgDatabase("db2");
 
+    if(sgDatabase.open() != SGDatabaseReturnStatus::kNoError){
+        DEBUG("Can't open DB!\n");
+        return 1;
+    }
+
     vector<string> document_keys = sgDatabase.getAllDocumentsKey();
 
     // Printing the list of documents key from the local DB.
