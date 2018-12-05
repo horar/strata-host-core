@@ -87,7 +87,7 @@ fleece::Retained<fleece::impl::MutableDict> SGReplicatorConfiguration::effective
     options_->set( slice(kC4ReplicatorOptionProgressLevel), kNotifyOnEveryDocumentChange);
 
     // Get all channels name to be filtered by the pull replicator
-    if(channels_.size() > 0){
+    if( !channels_.empty() ){
         // Set fleece arrays the values stored in the channels_ vector
         Retained<MutableArray> channels_array = MutableArray::newArray(channels_.size());
         for(int index = 0; index < channels_.size(); index++)
