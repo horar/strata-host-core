@@ -103,9 +103,8 @@ Popup {
 
             ScrollView {
                 id: scrollView
-                anchors {
-                    fill: profileStack
-                }
+                Layout.fillWidth: true
+                Layout.fillHeight: true
 
                 contentHeight: contentContainer.height
                 contentWidth: contentContainer.width
@@ -445,15 +444,18 @@ Popup {
             }
 
             SGProfileUpdate {
-
+                Layout.fillWidth: true
+                Layout.fillHeight: true
             }
 
             SGAnalyticsPopup {
-
+                Layout.fillWidth: true
+                Layout.fillHeight: true
             }
 
             SGPrivacyPolicy {
-
+                Layout.fillWidth: true
+                Layout.fillHeight: true
             }
         }
     }

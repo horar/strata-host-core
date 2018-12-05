@@ -167,12 +167,16 @@ Item {
         Circuit {
             id: circuit1
             onUpdate: Calc.calculate(circuit1, efficiency.series1)
+            Layout.fillWidth: true
+            Layout.fillHeight: true
         }
 
         Circuit {
             id: circuit2
             onUpdate: Calc.calculate(circuit2, efficiency.series2)
             highMosfetIndex: 1
+            Layout.fillWidth: true
+            Layout.fillHeight: true
         }
 
        /* Item {
@@ -187,9 +191,15 @@ Item {
             }
         }  */
 
-        Mosfets { }
+        Mosfets {
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+        }
 
-        Drivers { }
+        Drivers {
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+        }
     }
 
     PropertyAnimation {

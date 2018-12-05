@@ -3,9 +3,6 @@ import "component_source.js" as ComponentSource
 
 Item {
     id: root
-    anchors {
-        fill: parent
-    }
 
     Row {
         id: header
