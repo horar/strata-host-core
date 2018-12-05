@@ -86,13 +86,13 @@ Item {
                         port2connected = true;
                     }
                 }
-                else if (platformInterface.usb_pd_port_connect.port_id === 3){
-                    if (platformInterface.usb_pd_port_connect.connection_state === "USB_C_port_3"){
+                else if (platformInterface.usb_pd_port_connect.port_id === "USB_C_port_3"){
+                    if (platformInterface.usb_pd_port_connect.connection_state === "connected"){
                         port3connected = true;
                     }
                 }
-                else if (platformInterface.usb_pd_port_connect.port_id === 4){
-                    if (platformInterface.usb_pd_port_connect.connection_state === "USB_C_port_4"){
+                else if (platformInterface.usb_pd_port_connect.port_id === "USB_C_port_4"){
+                    if (platformInterface.usb_pd_port_connect.connection_state === "connected"){
                         port4connected = true;
                     }
                 }
@@ -215,7 +215,7 @@ Item {
             label: "Max Power Output:"
             model: maxPowerOptions
             enabled:{
-                if (portNumber === 1 && assuredPortSwitch.checked)
+                if (portNumber === 1 && (assuredPortSwitch.checked || !assuredPortSwitch.enabled))
                     return false;
                 else
                     return true
