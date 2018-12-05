@@ -12,10 +12,21 @@ Item {
     width: parent.width / parent.height > initialAspectRatio ? parent.height * initialAspectRatio : parent.width
     height: parent.width / parent.height < initialAspectRatio ? parent.width / initialAspectRatio : parent.height
 
+    Rectangle{
+        color:"white"
+        anchors {
+            fill: root
+        }
+    }
+
     Image {
         id: name
         anchors {
-            fill: root
+            //fill: root
+            top:root.top
+            bottom:root.bottom
+            left:root.left
+            leftMargin: 150
         }
         source: "images/basic-background.png"
     }
@@ -27,25 +38,25 @@ Item {
 
     PlugAnimation {
         id: port1Animation
-        x: 748 * ratioCalc
+        x: 898 * ratioCalc
         y: 63 * ratioCalc
     }
 
     PlugAnimation {
         id: port2Animation
-        x: 748 * ratioCalc
+        x: 898 * ratioCalc
         y: 255 * ratioCalc
     }
 
     PlugAnimation {
         id: port3Animation
-        x: 748 * ratioCalc
+        x: 898 * ratioCalc
         y: 447 * ratioCalc
     }
 
     PlugAnimation {
         id: port4Animation
-        x: 748 * ratioCalc
+        x: 898 * ratioCalc
         y: 639 * ratioCalc
     }
 
@@ -55,7 +66,8 @@ Item {
         height: root.height
         anchors {
             left: root.left
-            leftMargin: 80 * ratioCalc
+            //leftMargin: 80 * ratioCalc
+            leftMargin: 230 * ratioCalc
         }
 
         Rectangle {
