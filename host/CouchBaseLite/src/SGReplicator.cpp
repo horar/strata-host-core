@@ -47,7 +47,7 @@ SGReplicator::SGReplicator(SGReplicatorConfiguration *replicator_configuration) 
 bool SGReplicator::stop(){
     if(replicator_thread_.joinable()){
         // Send a termination signal to the running thread.
-        replicator_exit_signal.set_value();
+        replicator_exit_signal_.set_value();
         replicator_thread_.join();
 
         // Free the replicator reference
@@ -60,7 +60,7 @@ bool SGReplicator::stop(){
 */
 bool SGReplicator::start(){
     // Start the replication thread and pass the promise object to it.
-    replicator_thread_ = thread(&SGReplicator::_start, this, std::move(replicator_exit_signal.get_future()));
+    replicator_thread_ = thread(&SGReplicator::_start, this, std::move(replicator_exit_signal_.get_future()));
 }
 
 /** SGReplicator _start.

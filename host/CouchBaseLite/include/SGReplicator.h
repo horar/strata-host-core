@@ -53,7 +53,7 @@ private:
     std::function<void(bool pushing, std::string doc_id, std::string error_message, bool is_error,bool error_is_transient)> on_document_error_callback_;
 
     std::thread replicator_thread_;
-    std::promise<void> replicator_exit_signal;
+    std::promise<void> replicator_exit_signal_;
 
     void setReplicatorType(SGReplicatorConfiguration::ReplicatorType replicator_type);
     bool _start(std::future<void> future_obj);
