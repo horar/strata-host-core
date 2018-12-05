@@ -66,7 +66,7 @@ const SGAuthenticator *SGReplicatorConfiguration::getAuthenticator() const {
     return authenticator_;
 }
 
-void SGReplicatorConfiguration::setChannels(std::vector<std::string> channels){
+void SGReplicatorConfiguration::setChannels(const std::vector<std::string>& channels){
     // Pass vector channels by copy!
     channels_ = channels;
 }

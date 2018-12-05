@@ -44,8 +44,7 @@ public:
 
     fleece::Retained<fleece::impl::MutableDict> effectiveOptions();
 
-    // Pass vector by copy, to avoid weather the reference exist or not
-    void setChannels(std::vector<std::string> channels);
+    void setChannels(const std::vector<std::string>& channels);
 
 private:
     C4Database          *database_;
