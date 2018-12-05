@@ -184,35 +184,13 @@ Item {
             //limit the options for power usage to be less than the max power allocated for this port
             onMaxPowerChanged:{
                 if (platformInterface.usb_pd_maximum_power.port === portNumber){
-//                    if (maxPower >= 100){
-//                        maxPowerOptions = ["15","27", "36", "45","60","100"];
-//                    }
-//                    else if (maxPower >=60){
-//                        maxPowerOptions = ["15","27", "36", "45","60"];
-//                    }
-//                    else if (maxPower >=45){
-//                        maxPowerOptions = ["15","27", "36", "45"];
-//                    }
-//                    else if (maxPower >=36){
-//                        maxPowerOptions = ["15","27", "36"];
-//                    }
-//                    else if (maxPower >=27){
-//                        maxPowerOptions = ["15","27"];
-//                    }
-//                    else if (maxPower >=15){
-//                        maxPowerOptions = ["15"];
-//                    }
-//                    else{
-//                        maxPowerOptions = [];
-//                    }
-
                     //console.log("got a new commanded max power for port",platformInterface.usb_pd_maximum_power.port)
                     maxPowerOutput.currentIndex = maxPowerOutput.comboBox.find( parseInt (platformInterface.usb_pd_maximum_power.commanded_max_power))
                 }
             }
 
             id: maxPowerOutput
-            label: "Max Power Output:"
+            label: "Maximum Power Output:"
             model: maxPowerOptions
             enabled:{
                 if (portNumber === 1 && (assuredPortSwitch.checked || !assuredPortSwitch.enabled))
@@ -225,7 +203,7 @@ Item {
             comboBoxWidth: 60
             anchors {
                 left: parent.left
-                leftMargin: 48
+                leftMargin: 10
                 top: assuredPortSwitch.bottom
                 topMargin: 10
             }
@@ -273,7 +251,7 @@ Item {
             to: 6
             anchors {
                 left: parent.left
-                leftMargin: 86
+                leftMargin: 80
                 top: maxPowerOutput.bottom
                 topMargin: 10
                 right: currentLimitInput.left
