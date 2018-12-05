@@ -20,8 +20,8 @@ public:
     SGReplicatorConfiguration();
     SGReplicatorConfiguration(SGDatabase *db, SGURLEndpoint *url_endpoint);
     virtual ~SGReplicatorConfiguration();
-    
-    enum ReplicatorType{
+
+    enum class ReplicatorType{
         kPushAndPull = 0,
         kPush,
         kPull
