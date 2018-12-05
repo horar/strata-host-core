@@ -184,7 +184,7 @@ void SGReplicator::addChangeListener(const std::function<void(SGReplicator::Acti
 * @param callback The callback function.
 */
 void SGReplicator::addDocumentEndedListener(const std::function<void(bool pushing, std::string doc_id, std::string error_message, bool is_error,bool error_is_transient)> &callback) {
-    on_document_error_callback = callback;
+    on_document_error_callback_ = callback;
     replicator_parameters_.onDocumentEnded = [](C4Replicator* C4NONNULL,
                                                 bool pushing,
                                                 C4HeapString docID,
@@ -199,7 +199,7 @@ void SGReplicator::addDocumentEndedListener(const std::function<void(bool pushin
         c4error_getDescriptionC(error, error_message, sizeof(error_message));
         DEBUG("Error code: %d\n", error.code);
 
-        ((SGReplicator*)context)->on_document_error_callback(pushing, doc_id, error_message, error.code > 0 ,errorIsTransient);
+        ((SGReplicator*)context)->on_document_error_callback_(pushing, doc_id, error_message, error.code > 0 ,errorIsTransient);
     };
 }
 
