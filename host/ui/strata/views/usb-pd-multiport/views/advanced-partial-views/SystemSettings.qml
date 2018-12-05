@@ -278,13 +278,13 @@ Item {
                             port2connected = true;
                         }
                     }
-                    else if (platformInterface.usb_pd_port_connect.port_id === 3){
-                        if (platformInterface.usb_pd_port_connect.connection_state === "USB_C_port_3"){
+                    else if (platformInterface.usb_pd_port_connect.port_id === "USB_C_port_3"){
+                        if (platformInterface.usb_pd_port_connect.connection_state === "connected"){
                             port3connected = true;
                         }
                     }
-                    else if (platformInterface.usb_pd_port_connect.port_id === 4){
-                        if (platformInterface.usb_pd_port_connect.connection_state === "USB_C_port_4"){
+                    else if (platformInterface.usb_pd_port_connect.port_id === "USB_C_port_4"){
+                        if (platformInterface.usb_pd_port_connect.connection_state === "connected"){
                             port4connected = true;
                         }
                     }
@@ -342,8 +342,8 @@ Item {
                 model: ["15","27", "36", "45","60","100"]
                 comboBoxHeight: 25
                 comboBoxWidth: 60
-                enabled: !assuredPortSwitch.checked
-                textColor: !assuredPortSwitch.checked ? "black" : "grey"
+                enabled: (!assuredPortSwitch.checked && assuredPortSwitch.enabled)
+                textColor: enabled ? "black" : "grey"
                 anchors {
 
                     top: assuredPortText.top
@@ -368,6 +368,17 @@ Item {
                 }
 
 
+            }
+
+            Text{
+                id: assuredMaxPowerUnits
+                text: "W"
+                color: assuredMaxPowerOutput.enabled ? "black" : "grey"
+                anchors {
+                    left: assuredMaxPowerOutput.right
+                    leftMargin: 5
+                    verticalCenter: assuredMaxPowerOutput.verticalCenter
+                }
             }
 
 
@@ -553,7 +564,7 @@ Item {
             SGSubmitInfoBox {
                 id: tempFaultInput
                 showButton: false
-                infoBoxWidth: 30
+                infoBoxWidth: 35
                 minimumValue: -64
                 maximumValue: 191
                 anchors {
@@ -595,128 +606,12 @@ Item {
         }
 
 
-        Item {
+       Item {
             id: margins2
             anchors {
                 fill: parent
                 margins: 15
             }
-
-            Text {
-                id: inputFoldback
-                text: "<b>Input Foldback</b>"
-                font {
-                    pixelSize: 16
-                }
-            }
-
-            Text{
-                id: inputFoldbackStatus
-                text: "Active:"
-                anchors {
-                    top: inputFoldback.bottom
-                    topMargin:15
-                    left: margins2.left
-                    leftMargin: 122
-                }
-            }
-
-            SGSwitch {
-                id: inputFoldbackSwitch
-                anchors {
-                    left: inputFoldbackStatus.right
-                    leftMargin: 10
-                    verticalCenter: inputFoldbackStatus.verticalCenter
-                }
-                checkedLabel: "On"
-                uncheckedLabel: "Off"
-                switchHeight: 20
-                switchWidth: 46
-                checked: platformInterface.foldback_input_voltage_limiting_event.input_voltage_foldback_enabled
-                onToggled: platformInterface.set_input_voltage_foldback.update(checked, platformInterface.foldback_input_voltage_limiting_event.foldback_minimum_voltage,
-                                platformInterface.foldback_input_voltage_limiting_event.foldback_minimum_voltage_power)
-            }
-
-            SGSlider {
-                id: foldbackLimit
-                label: "Limit below:"
-                value: platformInterface.foldback_input_voltage_limiting_event.foldback_minimum_voltage
-                anchors {
-                    left: parent.left
-                    leftMargin: 91
-                    top: inputFoldbackStatus.bottom
-                    topMargin: 15
-                    right: foldbackLimitInput.left
-                    rightMargin: 10
-                }
-                from: 0
-                to: 20
-                startLabel: "0V"
-                endLabel: "20V"
-                labelTopAligned: true
-                //copy the current values for other stuff, and add the new slider value for the limit.
-                onMoved: platformInterface.set_input_voltage_foldback.update(platformInterface.foldback_input_voltage_limiting_event.input_voltage_foldback_enabled,
-                                 value,
-                                platformInterface.foldback_input_voltage_limiting_event.foldback_minimum_voltage_power)
-            }
-
-            SGSubmitInfoBox {
-                id: foldbackLimitInput
-                showButton: false
-                infoBoxWidth: 30
-                minimumValue: 0
-                maximumValue: 20
-                anchors {
-                    verticalCenter: foldbackLimit.verticalCenter
-                    verticalCenterOffset: -7
-                    right: foldbackLimitUnits.left
-                    rightMargin: 5
-                }
-                value: Math.round(platformInterface.foldback_input_voltage_limiting_event.foldback_minimum_voltage)
-                onApplied: platformInterface.set_input_voltage_foldback.update(platformInterface.foldback_input_voltage_limiting_event.input_voltage_foldback_enabled,
-                                                                              parseInt(value),
-                                                                              platformInterface.foldback_input_voltage_limiting_event.foldback_minimum_voltage_power)
-            }
-
-            Text{
-                id: foldbackLimitUnits
-                text: "V"
-                anchors {
-                    right: parent.right
-                    verticalCenter: foldbackLimitInput.verticalCenter
-                }
-            }
-
-            SGComboBox {
-                id: limitOutput
-                label: "Limit output power to:"
-                model: ["15","27", "36", "45","60","100"]
-                comboBoxHeight: 25
-                comboBoxWidth: 70
-                anchors {
-                    left: parent.left
-                    leftMargin:30
-                    top: foldbackLimit.bottom
-                    topMargin: 10
-                }
-                //when changing the value
-                onActivated: {
-                    console.log("setting input power foldback to ",limitOutput.comboBox.currentText);
-                    platformInterface.set_input_voltage_foldback.update(platformInterface.foldback_input_voltage_limiting_event.input_voltage_foldback_enabled,
-                                                                        platformInterface.foldback_input_voltage_limiting_event.foldback_minimum_voltage,
-                                                                                 limitOutput.comboBox.currentText)
-                }
-
-                property var currentFoldbackOuput: platformInterface.foldback_input_voltage_limiting_event.foldback_minimum_voltage_power
-                onCurrentFoldbackOuputChanged: {
-                    //console.log("got a new min power setting",platformInterface.foldback_input_voltage_limiting_event.foldback_minimum_voltage_power);
-                    limitOutput.currentIndex = limitOutput.comboBox.find( parseInt (platformInterface.foldback_input_voltage_limiting_event.foldback_minimum_voltage_power))
-                }
-
-
-            }
-
-
 
             Text {
                 id: tempFoldback
@@ -725,7 +620,7 @@ Item {
                     pixelSize: 16
                 }
                 anchors {
-                    top: limitOutput.bottom
+                    top: margins2.top
                     topMargin: 15
                 }
             }
@@ -790,7 +685,7 @@ Item {
             SGSubmitInfoBox {
                 id: foldbackTempInput
                 showButton: false
-                infoBoxWidth: 30
+                infoBoxWidth: 35
                 anchors {
                     verticalCenter: foldbackTemp.verticalCenter
                     verticalCenterOffset: -7
@@ -841,7 +736,7 @@ Item {
 
             Text{
                 id:percentLabel
-                text:"percent"
+                text:"%"
                 anchors{
                     left:limitOutput2.right
                     leftMargin: 5
