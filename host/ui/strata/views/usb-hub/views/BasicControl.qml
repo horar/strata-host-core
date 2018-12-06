@@ -496,7 +496,7 @@ Item {
         PropertyAnimation{
             target:audioPort
             property: "x"
-            to: background.x  + (5* basicPortWidth) + (6*7)
+            to: background.x  + (6* basicPortWidth) + (7*7)
             duration: tabTransitionTime
         }
         PropertyAnimation{
@@ -514,7 +514,7 @@ Item {
         PropertyAnimation{
             target:displayPort
             property: "x"
-            to: background.x  + (6* basicPortWidth) + (7*7)
+            to: background.x  + (5* basicPortWidth) + (6*7)
             duration: tabTransitionTime
         }
 

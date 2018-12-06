@@ -30,6 +30,7 @@ Item {
             text: qsTr("Basic")
             onClicked: {
                 //from advanced
+                console.log("going to basic",basicControlIsVisible,advancedControlIsVisible,systemControl.visible)
                 if (advancedControlIsVisible){
                     console.log("going to basic from advanced")
                     basicControl.transitionToBasicView();
@@ -39,6 +40,11 @@ Item {
                 //from system control
                 else if (systemControl.visible){
                     systemControl.visible = false;
+                    basicControl.visible = true;
+                    if (!basicControlIsVisible){
+                        basicControl.transitionToBasicView();
+                    }
+                    basicControlIsVisible = true;
                 }
             }
         }
@@ -56,6 +62,11 @@ Item {
                 //from system control
                 else if (systemControl.visible){
                     systemControl.visible = false;
+                    basicControl.visible = true
+                    if (!advancedControlIsVisible){
+                        basicControl.transitionToAdvancedView();
+                    }
+                    advancedControlIsVisible = true
                 }
             }
         }

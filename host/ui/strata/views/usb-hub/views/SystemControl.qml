@@ -165,6 +165,7 @@ Item {
                 to: 200
                 startLabel: "38W"
                 endLabel: "100W"
+                labelTopAligned: true
                     //value: platformInterface.input_under_voltage_notification.minimum_voltage
                 onMoved: {
                     //platformInterface.set_minimum_input_voltage.update(value);
@@ -282,6 +283,7 @@ Item {
             SGSlider {
                 id: tempFault
                 label: "Fault when temperature is above:"
+                labelTopAligned: true
                 width:480
                 anchors {
                     left: faultGroup.left
@@ -367,6 +369,7 @@ Item {
             SGSlider {
                 id: foldbackTemp
                 label: "When any port temperature is above:"
+                labelTopAligned: true
                 width:510
                 anchors {
                     left: foldbackGroup.left
@@ -406,6 +409,7 @@ Item {
             SGSlider {
                 id: foldbackTempLimit
                 label: "Cut the port output power by:"
+                labelTopAligned: true
                 width:465
                 anchors {
                     left: foldbackGroup.left
@@ -454,6 +458,7 @@ Item {
             SGSlider {
                 id: tempFoldbackHysteresis
                 label: "End limiting on a decrease of:"
+                labelTopAligned: true
                 width:465
                 anchors {
                     left: foldbackGroup.left
