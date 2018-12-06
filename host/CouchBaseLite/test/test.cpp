@@ -30,6 +30,9 @@ void onStatusChanged(SGReplicator::ActivityLevel level, SGReplicatorProgress pro
 void onDocumentEnded(bool pushing, std::string doc_id, std::string error_message, bool is_error,bool transient){
     DEBUG("onDocumentError: pushing: %d, Doc Id: %s, is error: %d, error message: %s, transient:%d\n", pushing, doc_id.c_str(), is_error, error_message.c_str(), transient);
 }
+void onValidate(const std::string& doc_id, const std::string& json_body){
+    DEBUG("New incoming revision: Doc Id: %s, Doc body: %s\n", doc_id.c_str(), json_body.c_str() );
+}
 int main(){
 
     SGDatabase sgDatabase("db2");
@@ -128,6 +131,7 @@ int main(){
 
     replicator.addChangeListener(onStatusChanged);
     replicator.addDocumentEndedListener(onDocumentEnded);
+    replicator.addValidationListener(onValidate);
 
     replicator.start();
 

@@ -77,19 +77,7 @@ bool SGReplicator::_start(std::future<void> future_obj){
     alloc_slice fleece_data = encoder.finish();
     replicator_parameters_.optionsDictFleece = fleece_data;
 
-    // TODO: Luay, provide callback interface to these functions.
     // Callback functions
-    replicator_parameters_.validationFunc = [](C4String docID, C4RevisionFlags ref, FLDict body, void *context){
-        DEBUG("validationFunc\n");
-        FLStringResult f = FLValue_ToJSON((FLValue)body);
-        string doc_id = string((char *)docID.buf, docID.size);
-        string body_json = string((char *)f.buf, f.size);
-        DEBUG("Doc ID: %s, received body json:%s\n",doc_id.c_str(), body_json.c_str());
-
-        //dispatch_register listener
-
-        return true;
-    };
     replicator_parameters_.pushFilter = [](C4String docID, C4RevisionFlags ref, FLDict body, void *context){
         DEBUG("pushFilter\n");
         FLStringResult f = FLValue_ToJSON((FLValue)body);
@@ -154,6 +142,15 @@ void SGReplicator::setReplicatorType(SGReplicatorConfiguration::ReplicatorType r
 
 }
 
+/** SGReplicator restart.
+* @brief Restarts the replicator.
+*/
+bool SGReplicator::restart() {
+    stop();
+    start();
+    return true;
+}
+
 /** SGReplicator addChangeListener.
 * @brief Adds the callback function to the replicator's onStatusChanged event.
 * @param callback The callback function.
@@ -203,11 +200,25 @@ void SGReplicator::addDocumentEndedListener(const std::function<void(bool pushin
     };
 }
 
-/** SGReplicator restart.
-* @brief Restarts the replicator.
+/** SGReplicator addValidationListener.
+* @brief Adds the callback function to the replicator's validationFunc event. All incoming revisions from SyncGateway will be accepted!
+* @param callback The callback function.
 */
-bool SGReplicator::restart() {
-    stop();
-    start();
-    return true;
+void SGReplicator::addValidationListener(const std::function<void(const std::string& doc_id, const std::string& json_body )>& callback){
+    on_validation_callback_ = callback;
+    DEBUG("addValidationListener\n");
+    replicator_parameters_.validationFunc = [](C4String docID, C4RevisionFlags ref, FLDict body, void *context){
+        DEBUG("validationFunc\n");
+
+        FLStringResult fleece_json_string = FLValue_ToJSON((FLValue)body);
+        string doc_id = string((char *)docID.buf, docID.size);
+        string body_json = string((char *)fleece_json_string.buf, fleece_json_string.size);
+
+        ((SGReplicator*)context)->on_validation_callback_(doc_id, body_json);
+
+        // Accept All documents as of now
+        return true;
+    };
 }
+
+

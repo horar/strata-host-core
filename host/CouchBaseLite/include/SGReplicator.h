@@ -42,6 +42,7 @@ public:
     bool stop();
     void addChangeListener(const std::function<void(SGReplicator::ActivityLevel, SGReplicatorProgress)>& callback);
     void addDocumentEndedListener(const std::function<void(bool pushing, std::string doc_id, std::string error_message, bool is_error,bool error_is_transient)>& callback );
+    void addValidationListener(const std::function<void(const std::string& doc_id, const std::string& json_body )>& callback);
 
 
 private:
@@ -51,6 +52,7 @@ private:
 
     std::function<void(SGReplicator::ActivityLevel, SGReplicatorProgress progress)> on_status_changed_callback_;
     std::function<void(bool pushing, std::string doc_id, std::string error_message, bool is_error,bool error_is_transient)> on_document_error_callback_;
+    std::function<void(const std::string& doc_id, const std::string& json_body )> on_validation_callback_;
 
     std::thread replicator_thread_;
     std::promise<void> replicator_exit_signal_;
