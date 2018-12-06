@@ -315,7 +315,7 @@ Item {
             value:platformInterface.get_cable_loss_compensation.output_current
             from:.25
             to:1
-            stepSize: .25
+            stepSize: .005
             toolTipDecimalPlaces: 2
             labelTopAligned: true
             startLabel: ".25A"
@@ -369,9 +369,10 @@ Item {
         }
 
         SGSlider {
+            //N.B. values to and from the platform are in volts, but values displayed are in mV
             id: bias
             label: "Bias output by:"
-            value:platformInterface.get_cable_loss_compensation.bias_voltage
+            value:platformInterface.get_cable_loss_compensation.bias_voltage * 1000
             from:0
             to:200
             stepSize: 10
@@ -389,12 +390,13 @@ Item {
             onMoved: {
                 platformInterface.set_cable_compensation.update(portNumber,
                                                                      platformInterface.get_cable_loss_compensation.output_current,
-                                                                     value)
+                                                                     value/1000)
             }
 
         }
 
         SGSubmitInfoBox {
+            //N.B.  values to and from the platform are in volts, but values displayed are in mV
             id: biasInput
             showButton: false
             infoBoxWidth: 35
@@ -407,10 +409,10 @@ Item {
                 rightMargin: 5
             }
 
-            value: platformInterface.get_cable_loss_compensation.bias_voltage.toFixed(0)
+            value: platformInterface.get_cable_loss_compensation.bias_voltage * 1000
             onApplied: platformInterface.set_cable_loss_compensation.update(portNumber,
                                                                             platformInterface.get_cable_loss_compensation.output_current,
-                                                                            biasInput.floatValue)
+                                                                            biasInput.floatValue/1000)
         }
 
         Text{
