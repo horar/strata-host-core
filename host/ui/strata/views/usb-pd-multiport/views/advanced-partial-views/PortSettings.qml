@@ -461,9 +461,11 @@ Item {
 
             onSourceCapabilitiesChanged:{
 
+
                 //the strip's first child is the Grid layout. The children of that layout are the buttons in
                 //question. This makes accessing the buttons a little bit cumbersome since they're loaded dynamically.
                 if (platformInterface.usb_pd_advertised_voltages_notification.port === portNumber){
+
                     //console.log("updating advertised voltages for port ",portNumber)
                     //disable all the possibilities
                     faultProtectionButtonStrip.buttonList[0].children[6].enabled = false;
