@@ -12,11 +12,13 @@
 using namespace std;
 using namespace Spyglass;
 
+const char* HOST_CONTROLLER_SERVICE_IN_ADDRESS = "tcp://127.0.0.1:5563";
+
 CoreInterface::CoreInterface(QObject *parent) : QObject(parent)
 {
     //qDebug() << "CoreInterface::CoreInterfaceQObject *parent) : QObject(parent) CTOR\n";
 
-    hcc = new HostControllerClient;
+    hcc = new HostControllerClient(HOST_CONTROLLER_SERVICE_IN_ADDRESS);
 
     // [TODO] [prasanth] : need to be added in a better place
     // json command to ask the list of available platforms from hcs
@@ -65,9 +67,6 @@ CoreInterface::~CoreInterface()
 {
     //qDebug() << "CoreInterface::~CoreInterface() DTOR\n";
 
-    hcc->notificationSocket->close();
-    hcc->sendCmdSocket->close();
-    zmq_term(hcc->context);
     delete(hcc);
     notification_thread_.detach();
 }

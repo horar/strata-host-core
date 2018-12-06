@@ -46,6 +46,7 @@ HOST_ROOT = ../../../host
 unix : !macx : !win32 {
     message("Building on Linux")
     LIBS += -L$${HOST_ROOT}/ext_libs/libzmq/lib/linux/ -lzmq
+    LIBS += -L$${HOST_ROOT}/build/libs/HostControllerClient/ -lHostControllerClient
     DEPENDPATH += $${HOST_ROOT}/ext_libs/libzmq/include
     INCLUDEPATH += $${HOST_ROOT}/libs/HostControllerClient/include/
     INCLUDEPATH += $${HOST_ROOT}/ext_libs/zmq/include
@@ -57,6 +58,7 @@ unix : !macx : !win32 {
 else : macx : !win32 {
     message("Building on macOS")
     LIBS += -L$${HOST_ROOT}/ext_libs/libzmq/lib/mac/ -lzmq
+    LIBS += -L$${HOST_ROOT}/build/libs/HostControllerClient/ -lHostControllerClient
     DEPENDPATH += $${HOST_ROOT}/ext_libs/libzmq/include
     INCLUDEPATH += $${HOST_ROOT}/include/macos/libzmq
     INCLUDEPATH += $${HOST_ROOT}/libs/HostControllerClient/include/

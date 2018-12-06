@@ -128,7 +128,7 @@
 class Connector {
 public:
     Connector() = default;
-    Connector(const std::string&) {};
+    Connector(const std::string&) {};   //TODO: why is the argument not used ?
     virtual ~Connector() = default;
 
     virtual bool open(const std::string&) = 0;
@@ -147,20 +147,27 @@ public:
 
     virtual int getFileDescriptor() = 0;
 
-    void setDealerID(const std::string& id) { dealer_id_ = id; }
-    const std::string &getDealerID() const { return dealer_id_;}
-    const std::string &getPlatformUUID() const { return platform_uuid_;}
+    void setDealerID(const std::string& id);
+    std::string getDealerID() const { return dealer_id_;}
+    std::string getPlatformUUID() const { return platform_uuid_;}
     bool isSpyglassPlatform() const { return spyglass_platform_connected_; }
-		void setConnectionState(bool connection_state) { connection_state_ = connection_state; }
-		bool isConnected() const { return connection_state_; }
+    void setConnectionState(bool connection_state);
+    bool isConnected() const { return connection_state_; }
+    void setPlatformUUID(const std::string& id);
 
 protected:
-    std::string dealer_id_;
+    void setPlatformConnected(bool state);
+
+protected:
     std::mutex locker_;
+
+private:
+    std::string dealer_id_;
     std::string platform_uuid_;
     std::string server_;
-    bool spyglass_platform_connected_;	// flag used in hcs for checking if platform is available
-		bool connection_state_;
+
+	bool connection_state_ = false;
+    bool spyglass_platform_connected_ = false;	// flag used in hcs for checking if platform is available
 };
 
 namespace ConnectorFactory {
