@@ -91,12 +91,15 @@ Window {
     SGPeekThroughOverlay {
         id: poopup
         property alias target: myBox
+        property alias fill: root
         onClicked: visible = false
     }
 
     SGPeekThroughOverlay {
         id: poopup2
         property alias target: myBox2
+        property alias fill: root
+
         onClicked: visible = false
     }
 }

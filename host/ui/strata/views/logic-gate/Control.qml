@@ -18,6 +18,14 @@ Rectangle {
         id: platformInterface
     }
 
+    SGPeekThroughOverlay {
+        property alias target: partOne.logicSelection
+        property alias fill: controlNavigation
+        visible: true
+        onClicked: visible = false
+        z:50
+    }
+
     TabBar {
         id: navTabs
         anchors {

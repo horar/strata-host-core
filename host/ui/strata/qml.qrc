@@ -443,5 +443,9 @@
         <file>views/SGPdfViewer/SGPdfViewer.qml</file>
         <file>statusbar-partial-views/SGPrivacyPolicy.qml</file>
         <file>statusbar-partial-views/SGGreenButton.qml</file>
+        <file>views/logic-gate/sgwidgets/SGPeekThroughOverlay.qml</file>
+        <file>views/logic-gate/sgwidgets/images/corner-fade.png</file>
+        <file>views/logic-gate/sgwidgets/images/side-fade.png</file>
+        <file>views/logic-gate/sgwidgets/images/top-fade.png</file>
     </qresource>
 </RCC>
