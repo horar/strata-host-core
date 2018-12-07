@@ -14,7 +14,7 @@ Item {
          remappedTarget = target.mapToItem(fill, 0, 0)
      }
 
-     property int padding: 60
+     property int padding: 30
      property real globalOpacity: .5
 
      x: remappedFill.x
@@ -35,7 +35,7 @@ Item {
              left: root.left
              bottom: root.bottom
          }
-         width: Math.max(0, remappedTarget.x - padding/2)
+         width: Math.max(-padding/2, remappedTarget.x - padding/2)
          opacity: root.globalOpacity
      }
 
@@ -47,7 +47,7 @@ Item {
              right: root.right
              bottom: root.bottom
          }
-         width: Math.max(0, root.width - target.width - left.width - padding)
+         width: Math.max(-padding/2, root.width - target.width - left.width - padding)
          opacity: root.globalOpacity
      }
 
