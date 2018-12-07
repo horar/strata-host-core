@@ -22,11 +22,7 @@ Item {
     Image {
         id: name
         anchors {
-            //fill: root
-            top:root.top
-            bottom:root.bottom
-            left:root.left
-            leftMargin: 150
+            fill: root
         }
         source: "images/basic-background.png"
     }
