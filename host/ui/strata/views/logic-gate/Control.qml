@@ -19,11 +19,19 @@ Rectangle {
     }
 
     SGPeekThroughOverlay {
-        property alias target: partOne.logicSelection
+        property alias target: basicButton//partOne.logicSelection
         property alias fill: controlNavigation
         visible: true
         onClicked: visible = false
         z:50
+
+        height: controlNavigation.parent.mainWindow.height
+        width: controlNavigation.parent.mainWindow.width
+
+        remappedFill: controlNavigation.parent.mainWindow.mapToItem(target, 0, 0)
+        Component.onCompleted: {
+            remappedTarget = target.mapToItem(controlNavigation.parent.mainWindow, 0, 0)
+        }
     }
 
     TabBar {

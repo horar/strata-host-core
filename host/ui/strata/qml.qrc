@@ -447,5 +447,6 @@
         <file>views/logic-gate/sgwidgets/images/corner-fade.png</file>
         <file>views/logic-gate/sgwidgets/images/side-fade.png</file>
         <file>views/logic-gate/sgwidgets/images/top-fade.png</file>
+        <file>views/logic-gate/sgwidgets/SGToolTipPopup.qml</file>
     </qresource>
 </RCC>

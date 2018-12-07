@@ -4,14 +4,21 @@ Item {
      id: root
      width: fill.width
      height: fill.height
-     opacity: .5
      visible: false
 
      signal clicked()
 
      property var remappedTarget
+     property var remappedFill: fill.mapToItem(target, 0, 0)
+     Component.onCompleted: {
+         remappedTarget = target.mapToItem(fill, 0, 0)
+     }
 
-     Component.onCompleted: remappedTarget = target.mapToItem(fill, 0, 0)
+     property int padding: 60
+     property real globalOpacity: .5
+
+     x: remappedFill.x
+     y: remappedFill.y
 
      MouseArea {
          anchors {
@@ -28,7 +35,8 @@ Item {
              left: root.left
              bottom: root.bottom
          }
-         width: remappedTarget.x
+         width: Math.max(0, remappedTarget.x - padding/2)
+         opacity: root.globalOpacity
      }
 
      Rectangle {
@@ -39,7 +47,8 @@ Item {
              right: root.right
              bottom: root.bottom
          }
-         width: fill.width - target.width - left.width
+         width: Math.max(0, root.width - target.width - left.width - padding)
+         opacity: root.globalOpacity
      }
 
      Rectangle {
@@ -50,7 +59,8 @@ Item {
              right: right.left
              left: left.right
          }
-         height: remappedTarget.y
+         height: remappedTarget.y - padding/2
+         opacity: root.globalOpacity
      }
 
      Rectangle {
@@ -61,7 +71,8 @@ Item {
              right: right.left
              left: left.right
          }
-         height: fill.height - target.height - top.height
+         height: root.height - target.height - top.height - padding
+         opacity: root.globalOpacity
      }
 
      Image {
@@ -70,9 +81,10 @@ Item {
              left: left.right
              top: top.bottom
          }
-         height: Math.min(30, target.height/2)
-         width: Math.min(30, target.width/2)
+         height: Math.min(30, (target.height + padding)/2)
+         width: Math.min(30, (target.width + padding)/2)
          source: "images/corner-fade.png"
+         opacity: root.globalOpacity
      }
 
      Image {
@@ -85,6 +97,7 @@ Item {
          width: bottomRight.height
          source: "images/corner-fade.png"
          transform: Rotation { origin.x: topRight.width/2; origin.y: topRight.width/2; angle: 90}
+         opacity: root.globalOpacity
      }
 
      Image {
@@ -93,10 +106,11 @@ Item {
              right: right.left
              bottom: bottom.top
          }
-         height: Math.min(30, target.height/2)
-         width: Math.min(30, target.width/2)
+         height: Math.min(30, (target.height + padding)/2)
+         width: Math.min(30, (target.width+ padding)/2)
          source: "images/corner-fade.png"
          rotation: 180
+         opacity: root.globalOpacity
      }
 
      Image {
@@ -109,7 +123,7 @@ Item {
          width: topLeft.height
          source: "images/corner-fade.png"
          transform: Rotation { origin.x: bottomLeft.height/2; origin.y: bottomLeft.height/2; angle: -90}
-
+         opacity: root.globalOpacity
      }
 
      Image {
@@ -121,6 +135,7 @@ Item {
          }
          width: bottomRight.width
          source: "images/side-fade.png"
+         opacity: root.globalOpacity
      }
 
      Image {
@@ -132,6 +147,7 @@ Item {
          }
          height: topLeft.height
          source: "images/top-fade.png"
+         opacity: root.globalOpacity
      }
 
      Image {
@@ -144,6 +160,7 @@ Item {
          width: topLeft.width
          source: "images/side-fade.png"
          rotation: 180
+         opacity: root.globalOpacity
      }
 
      Image {
@@ -156,5 +173,25 @@ Item {
          height: bottomLeft.width
          source: "images/top-fade.png"
          rotation: 180
+         opacity: root.globalOpacity
+     }
+
+
+     SGToolTipPopup {
+         showOn: true
+         anchors {
+             top: bottomFade.bottom
+             horizontalCenter: bottomFade.horizontalCenter
+         }
+         reverseDirection: true
+
+         content: Text {
+             id: helpText
+             color:"white"
+             font {
+                 pixelSize: 20
+                 }
+             text: "<b>THIS IS A TEST</b>"
+         }
      }
  }
