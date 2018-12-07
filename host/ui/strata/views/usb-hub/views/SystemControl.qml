@@ -177,6 +177,7 @@ Item {
                 showButton: false
                 anchors {
                     verticalCenter: maximumBoardPower.verticalCenter
+                    verticalCenterOffset: -7
                     left: maximumBoardPower.right
                     leftMargin: 15
                 }
@@ -307,6 +308,7 @@ Item {
                 showButton: false
                 anchors {
                     verticalCenter: tempFault.verticalCenter
+                    verticalCenterOffset: -7
                     left:tempFault.right
                     leftMargin: 10
                 }
@@ -397,6 +399,7 @@ Item {
                 showButton: false
                 anchors {
                     verticalCenter: foldbackTemp.verticalCenter
+                    verticalCenterOffset: -7
                     left:foldbackTemp.right
                     leftMargin: 10
                 }
@@ -444,6 +447,7 @@ Item {
                 showButton: false
                 anchors {
                     verticalCenter: foldbackTempLimit.verticalCenter
+                    verticalCenterOffset: -7
                     left:foldbackTempLimit.right
                     leftMargin: 10
                 }
@@ -485,6 +489,7 @@ Item {
                 showButton: false
                 anchors {
                     verticalCenter: tempFoldbackHysteresis.verticalCenter
+                    verticalCenterOffset: -7
                     left:tempFoldbackHysteresis.right
                     leftMargin: 10
                 }
