@@ -30,9 +30,8 @@ Item {
             text: qsTr("Basic")
             onClicked: {
                 //from advanced
-                console.log("going to basic",basicControlIsVisible,advancedControlIsVisible,systemControl.visible)
                 if (advancedControlIsVisible){
-                    console.log("going to basic from advanced")
+                    //console.log("going to basic from advanced")
                     basicControl.transitionToBasicView();
                     basicControlIsVisible = true;
                     advancedControlIsVisible = false;
@@ -54,7 +53,7 @@ Item {
             text: qsTr("Advanced")
             onClicked: {
                 if (basicControlIsVisible){
-                    console.log("going to advanced from basic")
+                    //console.log("going to advanced from basic")
                     basicControl.transitionToAdvancedView();
                     basicControlIsVisible = false;
                     advancedControlIsVisible = true;
@@ -76,7 +75,7 @@ Item {
             text: qsTr("System")
             onClicked: {
                 basicControl.visible = false
-                advancedControl.visible = false
+                //advancedControl.visible = false
                 basicControlIsVisible = false;
                 advancedControlIsVisible = false;
                 systemControl.visible = true;
@@ -99,11 +98,11 @@ Item {
             property real initialAspectRatio
         }
 
-        AdvancedControl {
-            id: advancedControl
-            visible: false
-            property real initialAspectRatio
-        }
+//        AdvancedControl {
+//            id: advancedControl
+//            visible: false
+//            property real initialAspectRatio
+//        }
 
         SystemControl{
             id: systemControl
@@ -113,7 +112,8 @@ Item {
     }
 
     Component.onCompleted: {
-        advancedControl.initialAspectRatio = basicControl.initialAspectRatio = controlContainer.width / controlContainer.height
+        basicControl.initialAspectRatio = controlContainer.width / controlContainer.height
+        //advancedControl.initialAspectRatio = basicControl.initialAspectRatio = controlContainer.width / controlContainer.height
 
         console.log("Requesting platform Refresh")
         platformInterface.refresh.send() //ask the platform for all the current values

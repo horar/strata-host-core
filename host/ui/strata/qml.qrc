@@ -341,7 +341,6 @@
         <file>views/usb-hub/Content.qml</file>
         <file>views/usb-hub/Control.qml</file>
         <file>views/usb-hub/PlatformInterface.qml</file>
-        <file>views/usb-hub/views/AdvancedControl.qml</file>
         <file>views/usb-hub/views/BasicControl.qml</file>
         <file>views/usb-hub/views/SystemControl.qml</file>
         <file>views/usb-hub/views/images/FourPortWireframeAdvancedView.png</file>
