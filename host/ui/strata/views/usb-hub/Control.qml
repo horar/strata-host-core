@@ -98,12 +98,6 @@ Item {
             property real initialAspectRatio
         }
 
-//        AdvancedControl {
-//            id: advancedControl
-//            visible: false
-//            property real initialAspectRatio
-//        }
-
         SystemControl{
             id: systemControl
             visible: false
@@ -113,7 +107,6 @@ Item {
 
     Component.onCompleted: {
         basicControl.initialAspectRatio = controlContainer.width / controlContainer.height
-        //advancedControl.initialAspectRatio = basicControl.initialAspectRatio = controlContainer.width / controlContainer.height
 
         console.log("Requesting platform Refresh")
         platformInterface.refresh.send() //ask the platform for all the current values
