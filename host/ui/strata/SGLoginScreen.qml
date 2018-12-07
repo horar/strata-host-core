@@ -6,7 +6,6 @@ import QtQuick.Controls.Styles 1.4
 import Qt.labs.settings 1.0
 import "js/navigation_control.js" as NavigationControl
 import "js/login.js" as Authenticator
-import "js/restclient.js" as Rest
 import Fonts 1.0
 import "qrc:/statusbar-partial-views"
 
@@ -14,15 +13,10 @@ Rectangle {
     id: container
     anchors { fill: parent }
     visible: true
-    property bool showLoginOnCompletion: false
     clip: true
 
     Component.onCompleted: {
-        //spotlightAnimation.start();
-        if (showLoginOnCompletion){
-            showConnectionScreen.start();
-        }
-        usernameField.forceActiveFocus();   //allows the user to type their username without clicking
+        usernameField.forceActiveFocus();   // Allows the user to type their username without clicking
     }
 
     // Login Button Connection
@@ -31,33 +25,42 @@ Rectangle {
         onClicked: {
             // Report Error if we are missing text
             if (usernameField.text=="" || passwordField.text==""){
+                loginErrorText.text = "Username or password is blank"
                 failedLoginAnimation.start();
+            } else {
+                // Pass info to Authenticator
+                var login_info = { user: usernameField.text, password: passwordField.text }
+                Authenticator.login(login_info)
+                loginRectangle.enabled = false
             }
-            // Pass info to Authenticator
-            var login_info = { user: usernameField.text, password: passwordField.text }
-            Authenticator.login(login_info)
         }
     }
 
     Connections {
         target: Authenticator.signals
         onLoginResult: {
-            console.log("Login result received")
-            if(result){
+            //console.log("Login result received")
+            if (result === "Connected") {
+                connectionStatus.text = "Connected, Loading UI..."
                 var data = { user_id: usernameField.text }
                 NavigationControl.updateState(NavigationControl.events.LOGIN_SUCCESSFUL_EVENT,data)
-
                 usernameField.updateModel()
-            }
-            else{
-                //Show the failed animation
+            } else {
+                loginRectangle.enabled = true
+                connectionStatus.text = ""
+                if (result === "No Connection") {
+                    loginErrorText.text = "Connection to authentication server failed"
+                } else {
+                    loginErrorText.text = "Your username or password are incorrect"
+                }
                 failedLoginAnimation.start()
             }
         }
+
         // [TODO][prasanth]: jwt will be created/received in the hcs
         // for now, jwt will be received in the UI and then sent to HCS
         onLoginJWT: {
-            console.log("JWT received",jwt_string)
+            //console.log("JWT received",jwt_string)
             var jwt_json = {
                 "hcs::cmd":"jwt_token",
                 "payload": {
@@ -69,6 +72,21 @@ Rectangle {
             coreInterface.sendCommand(JSON.stringify(jwt_json))
         }
 
+        onConnectionStatus: {
+            switch(status) {
+                case 0:
+                    connectionStatus.text = "Building Request"
+                    break;
+                case 1:
+                    connectionStatus.text = "Waiting on Server Response"
+                    break;
+                case 2:
+                    connectionStatus.text = "Request Received From Server"
+                    break;
+                case 3:
+                    connectionStatus.text = "Processing Request"
+            }
+        }
     }
 
     //-----------------------------------------------------------
@@ -126,37 +144,6 @@ Rectangle {
                 verticalCenter: onSemiHeader.verticalCenter
             }
         }
-    }
-
-    //-----------------------------------------------------------
-    //connection screen elements
-    //-----------------------------------------------------------
-    Text {
-        id: searchingText
-        x: 217; y: 213
-        width: 147; height: 15
-        color: "#aeaeae"
-        text: qsTr("Searching for hardware")
-        anchors {
-            horizontalCenter: container.horizontalCenter
-            top: spyglassTextRect.bottom
-            topMargin: 25
-        }
-        horizontalAlignment: Text.AlignHCenter
-        fontSizeMode: Text.Fit
-        opacity: 0
-    }
-
-    BusyIndicator {
-        id: busyIndicator
-        x: 301; y: 264
-        anchors {
-            horizontalCenter: container.horizontalCenter
-            top: searchingText.bottom
-            topMargin: 25
-        }
-        font { pixelSize: 8 }
-        opacity:0
     }
 
     //-----------------------------------------------------------
@@ -305,7 +292,7 @@ Rectangle {
                     verticalCenter: loginErrorRect.verticalCenter
                 }
                 horizontalAlignment:Text.AlignHCenter
-                text: "Your username or password are incorrect"
+                text: ""
                 color: "white"
             }
         }
@@ -347,6 +334,80 @@ Rectangle {
         }
     }
 
+    //-----------------------------------------------------------
+    // connecting status elements
+    //-----------------------------------------------------------
+    Item {
+        id: connectingStatus
+        anchors {
+            fill: loginRectangle
+        }
+        visible: !loginRectangle.enabled
+
+        Rectangle {
+            id: coverup
+            color: "white"
+            opacity: 0.75
+            anchors {
+                fill: parent
+            }
+        }
+
+        Text {
+            id: searchingText
+            color: "#888"
+            text: "Connecting..."
+            anchors {
+                horizontalCenter: connectingStatus.horizontalCenter
+                top: connectingStatus.top
+                topMargin: 25
+            }
+            horizontalAlignment: Text.AlignHCenter
+            font {
+                family: Fonts.franklinGothicBold
+            }
+        }
+
+        Text {
+            id: connectionStatus
+            color: "#888"
+            text: ""
+            anchors {
+                horizontalCenter: searchingText.horizontalCenter
+                top: searchingText.bottom
+                topMargin: 3
+            }
+            horizontalAlignment: Text.AlignHCenter
+            font {
+                family: Fonts.franklinGothicBook
+            }
+
+//            onTextChanged: console.log("Connection Status:", text, Date.now())
+        }
+
+        Text {
+            id: indicator
+            font {
+                family: Fonts.sgicons
+                pixelSize: 40
+            }
+            text: "\ue834"
+            color: "#888"
+            anchors {
+                horizontalCenter: connectingStatus.horizontalCenter
+                top: searchingText.bottom
+                topMargin: 30
+            }
+
+            RotationAnimation on rotation {
+                loops: Animation.Infinite
+                from: 0
+                to: 360
+                duration: 750
+            }
+        }
+    }
+
     SequentialAnimation{
         //animator to show that the login failed
         id:failedLoginAnimation
@@ -358,7 +419,7 @@ Rectangle {
             duration: 200
         }
         NumberAnimation{
-            target:loginErrorRect
+            target: loginErrorRect
             property:"opacity"
             to: 1
             duration: 200
@@ -383,61 +444,8 @@ Rectangle {
             to: 125
             duration: 200
         }
-    }
 
-    SequentialAnimation{
-        //animator to fade out the login elements and show the connection screen
-        id:handleLoginClick
-        running: false
-
-        ParallelAnimation{
-            NumberAnimation{
-                target: loginRectangle;
-                property: "opacity";
-                to: 0;
-                duration: 1000
-            }
-        }
-
-        ParallelAnimation{
-            //reveal the connection screen elements
-            NumberAnimation{
-                target: searchingText;
-                property: "opacity";
-                to: 1;
-                duration: 1000
-            }
-            NumberAnimation{
-                target: busyIndicator;
-                property: "opacity";
-                to: 1;
-                duration: 1000
-            }
-        }
-    }
-
-    ParallelAnimation{
-        id:showConnectionScreen
-        running:false
-        NumberAnimation{
-            target: loginRectangle;
-            property: "opacity";
-            to: 0;
-            duration: 1
-        }
-        //reveal the connection screen elements
-        NumberAnimation{
-            target: searchingText;
-            property: "opacity";
-            to: 1;
-            duration: 1
-        }
-        NumberAnimation{
-            target: busyIndicator;
-            property: "opacity";
-            to: 1;
-            duration: 1
-        }
+        onStopped: loginErrorText.text = ""
     }
 
     // These text boxes are HACK solution to get around an issue on windows builds where the glyphs loaded in this file were the ONLY glyphs that appeared in subsequent views.

@@ -27,6 +27,8 @@ ChartView {
 
     property alias series: dataLine
     property alias repeatOldData: repeatTimer.running
+    property alias xAxisTickCount: valueAxisX.tickCount
+    property alias yAxisTickCount: valueAxisY.tickCount
 
     property int textSize: 14
     property color dataLineColor: Qt.rgba(0, 0, 0, 1)
@@ -167,8 +169,13 @@ ChartView {
     }
 
     Component.onCompleted: {
-        valueAxisY.applyNiceNumbers();  // Automatically determine axis ticks
-        valueAxisX.applyNiceNumbers();
+        // Automatically determine ticks if not specified by user
+        if (!valueAxisX.tickCount){
+            valueAxisX.applyNiceNumbers();
+        }
+        if (!valueAxisY.tickCount){
+            valueAxisY.applyNiceNumbers();
+        }
     }
 
     function appendData(timeDiffSeconds) {

@@ -5,9 +5,6 @@ import QtQuick.Dialogs 1.3
 
 ScrollView {
     id: scrollView
-    anchors {
-        fill: profileStack
-    }
 
     contentHeight: contentContainer.height
     contentWidth: contentContainer.width

@@ -4,7 +4,6 @@ import QtQuick.Controls 2.3
 import QtQuick.Layouts 1.3
 import "js/navigation_control.js" as NavigationControl
 import "qrc:/js/platform_selection.js" as PlatformSelection
-import "js/login.js" as Authenticator
 
 Window {
     id: mainWindow
