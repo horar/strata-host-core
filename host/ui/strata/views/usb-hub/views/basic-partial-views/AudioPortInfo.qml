@@ -6,7 +6,7 @@ import "qrc:/views/usb-pd-multiport/sgwidgets"
 Rectangle {
     id: root
 
-    property bool portConnected: true
+    property bool portConnected: false
     property color portColor: "#30a2db"
     property int portNumber: 1
     property alias portName: portTitle.text
@@ -101,8 +101,6 @@ Rectangle {
             to:0
             duration: tabTransitionTime
         }
-
-
     }
 
     Timer{
@@ -128,6 +126,7 @@ Rectangle {
         anchors.rightMargin: 1
         height:basicTitleBackgroundHeight
         radius:5
+        z:1
 
         Rectangle{
             id:squareBottomBackground
@@ -193,6 +192,7 @@ Rectangle {
     Rectangle {
         id: connectionContainer
         opacity: 1
+        z:1
 
         anchors {
             top:titleBackground.bottom
