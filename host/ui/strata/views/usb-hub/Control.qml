@@ -41,7 +41,7 @@ Item {
                     systemControl.visible = false;
                     basicControl.visible = true;
                     if (!basicControlIsVisible){
-                        basicControl.transitionToBasicView();
+                        basicControl.switchToBasicView();
                     }
                     basicControlIsVisible = true;
                 }
@@ -63,7 +63,7 @@ Item {
                     systemControl.visible = false;
                     basicControl.visible = true
                     if (!advancedControlIsVisible){
-                        basicControl.transitionToAdvancedView();
+                        basicControl.switchToAdvancedView()
                     }
                     advancedControlIsVisible = true
                 }
