@@ -13,6 +13,7 @@ Rectangle {
     property var value_BNoti
     property var value_CNoti
     property int currentIndex: 0
+    anchors.fill: parent
 
     //Reset view for the nl7sz97 tab
     function resetToIndex0(){
@@ -39,9 +40,7 @@ Rectangle {
         resetToIndex0();
     }
 
-    anchors {
-        fill: parent
-    }
+
 
     property var io_state: platformInterface.nl7sz97_io_state
 
@@ -334,10 +333,15 @@ Rectangle {
         width: parent.width/2
         height: parent.height/2
 
+
         anchors{
-            verticalCenter: parent.verticalCenter
-            horizontalCenter: parent.horizontalCenter
+            top: logicSelection.bottom
+            topMargin: 40
+            horizontalCenter: logicSelection.horizontalCenter
+
         }
+
+
 
         Rectangle { //Input 1 Container
             id: inputAToggleContainer
@@ -474,10 +478,12 @@ Rectangle {
             id: gatesImage
             source: gateImageSource
             anchors {
-
                 left: inputAToggleContainer.right
+                top: logicContainer.top
+                //centerIn: logicContainer.Center
             }
-            fillMode: Image.PreserveAspectFit
+            fillMode:Image.PreserveAspectFit;
+           // clip:true
         }
 
         Rectangle { //Output Container
@@ -486,6 +492,7 @@ Rectangle {
             height: 50
             anchors {
                 left: gatesImage.right
+                right: logicContainer.right
                 top: inputAToggleContainer.top
                 topMargin: 50
             }
@@ -496,6 +503,7 @@ Rectangle {
                 lightSize: 50
                 textColor: "black"
                 status : "off"
+                anchors.fill: thirdInput
             }
         }
 
@@ -569,7 +577,7 @@ Rectangle {
                 transform: Rotation { origin.x: 25; origin.y: 25; angle: 270 }
             }
         }
-    }
+    } // end of the logicContainer
 }
 
 
