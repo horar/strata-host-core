@@ -2,6 +2,7 @@ import QtQuick 2.9
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 1.4
 import "qrc:/views/logic-gate/sgwidgets"
+import "qrc:/js/help_layout_manager.js" as Help
 
 Rectangle {
     id: container
@@ -40,6 +41,10 @@ Rectangle {
 
     Component.onCompleted: {
         resetToIndex0();
+        Help.registerTarget(thirdInput, "The gate outputs will automatically match the inputs for a given logic function and are also represented on the board by the green LEDs.", 4)
+        Help.registerTarget(inputAToggleContainer, "The inputs can be toggled on or off and are also represented on the board by blue LEDs.", 3)
+        Help.registerTarget(logicSelection, "Use these buttons to select which logic function you want to run.", 1)
+        Help.registerTarget(gatesImage, "The image displayed represents the logic gate, its input controls and its outputs", 2)
     }
 
     anchors {

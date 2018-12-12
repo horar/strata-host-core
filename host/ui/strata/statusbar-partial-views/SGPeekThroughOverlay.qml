@@ -2,40 +2,51 @@ import QtQuick 2.9
 
 Item {
      id: root
-     width: fill.width
-     height: fill.height
+     width: left.width + top.width + right.width
+     height: left.height
      visible: false
+     z: 50
 
-     signal clicked()
-
-     property var remappedTarget
-     property var remappedFill: fill.mapToItem(target, 0, 0)
-     Component.onCompleted: {
-         remappedTarget = target.mapToItem(fill, 0, 0)
+     function setTarget(target, fill) {
+         var remappedTarget = target.mapToItem(fill, 0, 0)//target.width/2, target.height/2)
+         mockTarget.x = remappedTarget.x //- (mockTarget.width/2)
+         mockTarget.y = remappedTarget.y// - (mockTarget.height/2)
+//         mockTarget.x = target.x //- (mockTarget.width/2)
+//         mockTarget.y = target.y// - (mockTarget.height/2)
+         mockTarget.width = target.width
+         mockTarget.height = target.height
+         windowHeight = fill.height
+         windowWidth = fill.width
      }
 
-     property int padding: 30
-     property real globalOpacity: .5
+     property alias fill: root.parent
+     property alias index: toolTipPopup.index
+     property alias description: toolTipPopup.description
 
-     x: remappedFill.x
-     y: remappedFill.y
+     property real windowHeight
+     property real windowWidth
+     property real globalOpacity: .5
 
      MouseArea {
          anchors {
              fill: root
          }
-         onClicked: root.clicked()
+         onClicked: root.visible = false
+     }
+
+     Item {
+         id: mockTarget
      }
 
      Rectangle {
          id: left
          color: "black"
          anchors {
-             top: root.top
-             left: root.left
-             bottom: root.bottom
+             right: leftFade.left
+             verticalCenter: leftFade.verticalCenter
          }
-         width: Math.max(-padding/2, remappedTarget.x - padding/2)
+         width: windowWidth
+         height: windowHeight * 2
          opacity: root.globalOpacity
      }
 
@@ -43,11 +54,11 @@ Item {
          id: right
          color: "black"
          anchors {
-             top: root.top
-             right: root.right
-             bottom: root.bottom
+             left: rightFade.right
+             verticalCenter: rightFade.verticalCenter
          }
-         width: Math.max(-padding/2, root.width - target.width - left.width - padding)
+         width: windowWidth
+         height: windowHeight * 2
          opacity: root.globalOpacity
      }
 
@@ -55,11 +66,11 @@ Item {
          id: top
          color: "black"
          anchors {
-             top: root.top
+             bottom: topFade.top
              right: right.left
              left: left.right
          }
-         height: remappedTarget.y - padding/2
+         height: windowHeight
          opacity: root.globalOpacity
      }
 
@@ -67,11 +78,11 @@ Item {
          id: bottom
          color: "black"
          anchors {
-             bottom: root.bottom
+             top: bottomFade.bottom
              right: right.left
              left: left.right
          }
-         height: root.height - target.height - top.height - padding
+         height: windowHeight
          opacity: root.globalOpacity
      }
 
@@ -81,8 +92,8 @@ Item {
              left: left.right
              top: top.bottom
          }
-         height: Math.min(30, (target.height + padding)/2)
-         width: Math.min(30, (target.width + padding)/2)
+         height: 30
+         width: 30
          source: "images/corner-fade.png"
          opacity: root.globalOpacity
      }
@@ -93,8 +104,8 @@ Item {
              right: right.left
              top: top.bottom
          }
-         height: bottomRight.width
-         width: bottomRight.height
+         height: 30
+         width: 30
          source: "images/corner-fade.png"
          transform: Rotation { origin.x: topRight.width/2; origin.y: topRight.width/2; angle: 90}
          opacity: root.globalOpacity
@@ -106,8 +117,8 @@ Item {
              right: right.left
              bottom: bottom.top
          }
-         height: Math.min(30, (target.height + padding)/2)
-         width: Math.min(30, (target.width+ padding)/2)
+         height: 30
+         width: 30
          source: "images/corner-fade.png"
          rotation: 180
          opacity: root.globalOpacity
@@ -119,8 +130,8 @@ Item {
              left: left.right
              bottom: bottom.top
          }
-         height: topLeft.width
-         width: topLeft.height
+         height: 30
+         width: 30
          source: "images/corner-fade.png"
          transform: Rotation { origin.x: bottomLeft.height/2; origin.y: bottomLeft.height/2; angle: -90}
          opacity: root.globalOpacity
@@ -130,10 +141,10 @@ Item {
          id: leftFade
          anchors {
              top: topLeft.bottom
-             left: left.right
+             right: mockTarget.left
              bottom: bottomRight.top
          }
-         width: bottomRight.width
+         width: 30
          source: "images/side-fade.png"
          opacity: root.globalOpacity
      }
@@ -141,11 +152,11 @@ Item {
      Image {
          id: topFade
          anchors {
-             top: top.bottom
+             bottom: mockTarget.top
              left: topLeft.right
              right: bottomRight.left
          }
-         height: topLeft.height
+         height: 30
          source: "images/top-fade.png"
          opacity: root.globalOpacity
      }
@@ -154,10 +165,10 @@ Item {
          id: rightFade
          anchors {
              top: topLeft.bottom
-             right: right.left
+             left: mockTarget.right
              bottom: bottomRight.top
          }
-         width: topLeft.width
+         width: 30
          source: "images/side-fade.png"
          rotation: 180
          opacity: root.globalOpacity
@@ -166,32 +177,33 @@ Item {
      Image {
          id: bottomFade
          anchors {
-             bottom: bottom.top
+             top: mockTarget.bottom
              left: topLeft.right
              right: bottomRight.left
          }
-         height: bottomLeft.width
+         height: 30
          source: "images/top-fade.png"
          rotation: 180
          opacity: root.globalOpacity
      }
 
-
      SGToolTipPopup {
+         id: toolTipPopup
          showOn: true
          anchors {
              top: bottomFade.bottom
              horizontalCenter: bottomFade.horizontalCenter
          }
          reverseDirection: true
+         color: "white"
+         property int index
+         property string description
 
-         content: Text {
-             id: helpText
-             color:"white"
-             font {
-                 pixelSize: 20
-                 }
-             text: "<b>THIS IS A TEST</b>"
+         content: SGTourControl {
+             id: tourControl
+             onClose: root.visible = false
+             index: toolTipPopup.index
+             description: toolTipPopup.description
          }
      }
  }

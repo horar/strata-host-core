@@ -4,9 +4,10 @@ import QtQuick.Controls 2.3
 import QtGraphicalEffects 1.0
 import QtQuick.Controls.Styles 1.4
 import QtQuick.Extras 1.4
+import Fonts 1.0
 //import tech.spyglass. 1.0
 import "qrc:/js/navigation_control.js" as NavigationControl
-import "qrc:/views/logic-gate/sgwidgets"
+import "qrc:/js/help_layout_manager.js" as Help
 
 Rectangle {
     id: controlNavigation
@@ -18,20 +19,12 @@ Rectangle {
         id: platformInterface
     }
 
-    SGPeekThroughOverlay {
-        property alias target: basicButton//partOne.logicSelection
-        property alias fill: controlNavigation
-        visible: true
-        onClicked: visible = false
-        z:50
+    Component.onCompleted: {
+        Help.registerTarget(navTabs, "Using these two tabs, you may select between running the NL7SZ97 or the NL7SZ58 multifunction gates.", 0)
+    }
 
-        height: controlNavigation.parent.mainWindow.height
-        width: controlNavigation.parent.mainWindow.width
-
-        remappedFill: controlNavigation.parent.mainWindow.mapToItem(target, 0, 0)
-        Component.onCompleted: {
-            remappedTarget = target.mapToItem(controlNavigation.parent.mainWindow, 0, 0)
-        }
+    Component.onDestruction: {
+        Help.reset()
     }
 
     TabBar {
@@ -72,6 +65,7 @@ Rectangle {
     }
 
     ScrollView {
+        id: scrollView
         anchors {
             top: navTabs.bottom
             bottom: parent.bottom
@@ -117,6 +111,34 @@ Rectangle {
                 id: partTwo
                 visible: false
             }
+        }
+    }
+
+    Text {
+        id: helpIcon
+        anchors {
+            right: scrollView.right
+            top: scrollView.top
+            margins: 20
+        }
+        text: "\ue808"
+        color: helpMouse.containsMouse ? "lightgrey" : "grey"
+        font {
+            family: Fonts.sgicons
+            pixelSize: 40
+        }
+
+        MouseArea {
+            id: helpMouse
+            anchors {
+                fill: helpIcon
+            }
+            onClicked: {
+                navTabs.currentIndex = 0
+                basicButton.clicked()
+                Help.startHelpTour()
+            }
+            hoverEnabled: true
         }
     }
 }
