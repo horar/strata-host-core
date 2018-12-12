@@ -4,9 +4,10 @@ import QtQuick.Controls 2.3
 import QtGraphicalEffects 1.0
 import QtQuick.Controls.Styles 1.4
 import QtQuick.Extras 1.4
+import Fonts 1.0
 //import tech.spyglass. 1.0
 import "qrc:/js/navigation_control.js" as NavigationControl
-import "qrc:/views/logic-gate/sgwidgets"
+import "qrc:/js/help_layout_manager.js" as Help
 
 Item {
     id: controlNavigation
@@ -16,6 +17,14 @@ Item {
 
     PlatformInterface {
         id: platformInterface
+    }
+
+    Component.onCompleted: {
+        Help.registerTarget(navTabs, "Using these two tabs, you may select between running the NL7SZ97 or the NL7SZ58 multifunction gates.", 0)
+    }
+
+    Component.onDestruction: {
+        Help.reset()
     }
 
     TabBar {
@@ -53,6 +62,7 @@ Item {
             }
         }
     }
+
     Item {
         id: controlContainer
         property int currentIndex: 0
@@ -63,7 +73,7 @@ Item {
             left: controlNavigation.left
         }
 
-       PartOne  {
+        PartOne  {
             id: partOne
             visible: true
         }
@@ -74,51 +84,34 @@ Item {
         }
     }
 
-//    ScrollView {
-//        anchors {
-//            top: navTabs.bottom
-//            bottom: parent.bottom
-//            right: parent.right
-//            left: parent.left
-//            fill: parent
-//        }
 
-//        onWidthChanged: {
-//            if (width < 1200) {
-//                ScrollBar.horizontal.policy = ScrollBar.AlwaysOn
-//            } else {
-//                ScrollBar.horizontal.policy = ScrollBar.AlwaysOff
-//            }
-//        }
+    Text {
+        id: helpIcon
+        anchors {
+            right: controlContainer.right
+            top: controlContainer.top
+            margins: 20
+        }
+        text: "\ue808"
+        color: helpMouse.containsMouse ? "lightgrey" : "grey"
+        font {
+            family: Fonts.sgicons
+            pixelSize: 40
+        }
 
-//        onHeightChanged: {
-//            if (height < 725) {
-//                ScrollBar.vertical.policy = ScrollBar.AlwaysOn
-//            } else {
-//                ScrollBar.vertical.policy = ScrollBar.AlwaysOff
-//            }
-//        }
+        MouseArea {
+            id: helpMouse
+            anchors {
+                fill: helpIcon
+            }
+            onClicked: {
+                navTabs.currentIndex = 0
+                basicButton.clicked()
+                Help.startHelpTour()
+            }
+            hoverEnabled: true
+        }
+    }
 
-//        Flickable {
-//            id: controlContainer
-//            property int currentIndex: 0
-//            boundsBehavior: Flickable.StopAtBounds
-//            contentWidth: 1200
-//            contentHeight: 725
-
-//            clip: true
-
-//            PartOne {
-//                id: partOne
-//                visible: true
-
-//            }
-
-//            PartTwo {
-//                id: partTwo
-//                visible: false
-//            }
-//        }
-//    }
 }
 
