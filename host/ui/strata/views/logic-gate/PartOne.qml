@@ -159,7 +159,7 @@ Rectangle {
     SGSegmentedButtonStrip {
         id: logicSelection
         radius: 4
-        buttonHeight: 25
+        buttonHeight: 45
         visible: true
         index: tabIndex
 
@@ -335,10 +335,8 @@ Rectangle {
 
 
         anchors{
-            top: logicSelection.bottom
-            topMargin: 40
-            horizontalCenter: logicSelection.horizontalCenter
-
+            verticalCenter: parent.verticalCenter
+            horizontalCenter: parent.horizontalCenter
         }
 
 
