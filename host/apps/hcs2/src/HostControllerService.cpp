@@ -16,22 +16,13 @@
 using namespace rapidjson;
 using namespace std;
 
-AttachmentObserver::AttachmentObserver(void *client_socket,void *client_id_list)
-{
-    PDEBUG(PRINT_DEBUG,"Attaching the nimbus observer");
-    client_connector_ = (Connector *)client_socket;
-    client_list_ = (clientList *)client_id_list;
-}
+using namespace fleece;
+// using namespace fleece::impl;
+#define DEBUG(...) printf("TEST SGLiteCore: "); printf(__VA_ARGS__)
+// [prasanth] TODO :: need to take the db name and document name into config file
+const char* database = "strata_db";
+const char* document = "platform_document";
 
-void AttachmentObserver::DocumentChangeCallback(jsonString jsonBody) {
-    for(const auto& item : *client_list_) {
-        client_connector_->setDealerID(item);
-        client_connector_->send(jsonBody);
-        // [prasanth] : comment the following PDEBUG for faster performance.
-        // use it for debugging
-        // PDEBUG(PRINT_DEBUG,"[hcs to hcc]%s",jsonBody);
-    }
-}
 /******************************************************************************/
 /*                                core functions                              */
 /******************************************************************************/
@@ -69,14 +60,14 @@ HostControllerService::HostControllerService(string configuration_file)
     remote_discovery_monitor_ = configuration_->GetDiscoveryMonitorSubscriber();
     // creating discovery service object
     discovery_service_ = new DiscoveryService(configuration_->GetDiscoveryServerID());
-    // creating the nimbus object
-    database_ = new Nimbus();
     // initializing the connectors
     client_connector_ = ConnectorFactory::getConnector("router");
     serial_connector_ = ConnectorFactory::getConnector("platform");
     remote_connector_ = ConnectorFactory::getConnector("dealer");
     // this connecotr is used for activity monitor from discovery service
     remote_activity_connector_ = ConnectorFactory::getConnector("subscriber");
+    // SGCouchbase integration
+    sgcouchbase_ = new SGCouchbaseLiteWrapper(database);
 }
 
 // @f init
@@ -98,9 +89,6 @@ HcsError HostControllerService::init()
     // opening the client socket to connect with UI
     client_connector_->open(hcs_server_address_);
     // registering the observer to the database
-    // // TODO [prasanth] NIMBUS integration **Needs better organisation
-    AttachmentObserver blobObserver((void *)client_connector_, (void *)&clientList);
-    database_->Register(&blobObserver);
     // [TODO]: [prasanth] the following lines are used to handle the serial connect/disconnect
     // This method will be removed once we get the serial to socket stuff in
     port_disconnected_ = true;
@@ -145,27 +133,12 @@ HcsError HostControllerService::run()
 
 HcsError HostControllerService::setEventLoop()
 {
-    // get the platform list from the discovery service
-    // [TODO] [Prasanth] : Should be added dynamically
     string platformList ;
     getPlatformListJson(platformList);
-    platform_details simulated_usb_pd,simulated_motor_vortex,sim_usb;
-    simulated_usb_pd.platform_uuid = "P2.2018.1.1.0.0.c9060ff8-5c5e-4295-b95a-d857ee9a3671";
-    simulated_usb_pd.platform_verbose = "USB PD Load Board";
-    simulated_usb_pd.connection_status = "view";
 
-    simulated_motor_vortex.platform_uuid = "SEC.2017.004.2.0.0.1c9f3822-b865-11e8-b42a-47f5c5ed4fc3";
-    simulated_motor_vortex.platform_verbose = "Vortex Fountain Motor Platform Board";
-    simulated_motor_vortex.connection_status = "view";
-
-    sim_usb.platform_uuid = "P2.2017.1.1.0.0.cbde0519-0f42-4431-a379-caee4a1494af";
-    sim_usb.platform_verbose = "USB PD";
-    sim_usb.connection_status = "view";
-
-    platform_uuid_.push_back(simulated_usb_pd);  // for testing alone
-    platform_uuid_.push_back(simulated_motor_vortex);
-    platform_uuid_.push_back(sim_usb);
-
+    // [prasanth] TODO: open the db document in a proper location
+    sgcouchbase_->openDocument(document);
+    sgcouchbase_->getStoredPlatforms(platform_uuid_);
     sendMessageToUI(platformList);
 
     PDEBUG(PRINT_DEBUG,"Starting the event");
@@ -307,10 +280,6 @@ void HostControllerService::serviceCallback(evutil_socket_t fd, short what, void
                 Writer<StringBuffer> writer(strbuf);
                 document.Accept(writer);
                 PDEBUG(PRINT_DEBUG,"db::cmd %s\n",strbuf.GetString());
-                // sending the command to NIMBUS
-                if ( hcs->database_->Command( strbuf.GetString() ) != NO_ERRORS ){
-                    PDEBUG(PRINT_DEBUG,"ERROR: database failed failed!");
-                }
                 PDEBUG(PRINT_DEBUG,"adding the %s uuid to multimap\n",selected_platform_info[0].c_str());
             }
         }
@@ -425,22 +394,6 @@ void HostControllerService::initializePlatform()
 {
     // clearing the list
     platform_uuid_.clear();
-
-    platform_details simulated_usb_pd,simulated_motor_vortex,sim_usb;
-    simulated_usb_pd.platform_uuid = "P2.2018.1.1.0.0.c9060ff8-5c5e-4295-b95a-d857ee9a3671";
-    simulated_usb_pd.platform_verbose = "USB PD Load Board";
-    simulated_usb_pd.connection_status = "view";
-
-    simulated_motor_vortex.platform_uuid = "SEC.2017.004.2.0.0.1c9f3822-b865-11e8-b42a-47f5c5ed4fc3";
-    simulated_motor_vortex.platform_verbose = "Vortex Fountain Motor Platform Board";
-    simulated_motor_vortex.connection_status = "view";
-
-    sim_usb.platform_uuid = "P2.2017.1.1.0.0.cbde0519-0f42-4431-a379-caee4a1494af";
-    sim_usb.platform_verbose = "USB PD";
-    sim_usb.connection_status = "view";
-    platform_uuid_.push_back(simulated_usb_pd);  // for testing alone
-    platform_uuid_.push_back(simulated_motor_vortex);
-    platform_uuid_.push_back(sim_usb);
     parseAndGetPlatformId();
 }
 
@@ -589,6 +542,19 @@ bool HostControllerService::parseAndGetPlatformId()
     // [TODO] [prasanth] : change the dealer_id var name to platform id
     g_dealer_id_ = serial_connector_->getPlatformUUID();
     platform.connection_status = "connected";
+    sgcouchbase_->getStoredPlatforms(platform_uuid_);
+    if(platform_uuid_.empty()) {
+        sgcouchbase_->addPlatformtoDB(platform.platform_uuid,platform.platform_verbose);
+        platform_uuid_.push_back(platform);
+
+    }
+    for(auto &iter : platform_uuid_) {
+        if(iter.platform_uuid == platform.platform_uuid) {
+            iter.connection_status = "connected";
+            return true;
+        }  
+    }
+    sgcouchbase_->addPlatformtoDB(platform.platform_uuid,platform.platform_verbose);
     platform_uuid_.push_back(platform);
     return true;
 }
@@ -886,27 +852,8 @@ void HostControllerService::platformDisconnectRoutine ()
     }
 
     platform_uuid_.clear();
+    sgcouchbase_->getStoredPlatforms(platform_uuid_);
     platform_client_mapping_.clear();
-
-
-
-    platform_details simulated_usb_pd,simulated_motor_vortex,sim_usb;
-    simulated_usb_pd.platform_uuid = "P2.2018.1.1.0.0.c9060ff8-5c5e-4295-b95a-d857ee9a3671";
-    simulated_usb_pd.platform_verbose = "USB PD Load Board";
-    simulated_usb_pd.connection_status = "view";
-
-    simulated_motor_vortex.platform_uuid = "SEC.2017.004.2.0.0.1c9f3822-b865-11e8-b42a-47f5c5ed4fc3";
-    simulated_motor_vortex.platform_verbose = "Vortex Fountain Motor Platform Board";
-    simulated_motor_vortex.connection_status = "view";
-
-    sim_usb.platform_uuid = "P2.2017.1.1.0.0.cbde0519-0f42-4431-a379-caee4a1494af";
-    sim_usb.platform_verbose = "USB PD";
-    sim_usb.connection_status = "view";
-
-    platform_uuid_.push_back(simulated_usb_pd);  // for testing alone
-    platform_uuid_.push_back(simulated_motor_vortex);
-    platform_uuid_.push_back(sim_usb);
-
     string platformList;
     getPlatformListJson(platformList);
     sendMessageToUI(platformList);

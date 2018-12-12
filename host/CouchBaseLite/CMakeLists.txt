@@ -8,7 +8,7 @@ project (couchbase-lite-cpp)
 SET(CMAKE_CXX_FLAGS "-v -std=c++11")
 
 # Required headers
-set(CB_DIR "${CMAKE_CURRENT_SOURCE_DIR}/couchbase-lite-core")
+set(CB_DIR "${CMAKE_SOURCE_DIR}/CouchBaseLite/couchbase-lite-core")
 
 set(CMAKE_BUILD_TYPE DEBUG)
 
@@ -134,7 +134,12 @@ set(LIB_SOURCES
 # Make couchbase-lite-cpp a library;
 add_library(couchbase-lite-cpp STATIC ${LIB_SOURCES})
 # We only need litecore library linked
-target_link_libraries(couchbase-lite-cpp ${litecore} ${FleeceStatic} ${CivetWeb} ${BLIPStatic} ${Support})
+target_link_libraries(couchbase-lite-cpp
+		PUBLIC ${litecore}
+		PUBLIC ${FleeceStatic}
+		PUBLIC ${CivetWeb}
+		PUBLIC ${BLIPStatic}
+		PUBLIC ${Support})
 #${CivetWeb} ${LiteCoreStatic}  ${LiteCoreREST_Static} ${FleeceStatic} ${BLIPStatic} ${libdl}
 # Compile source/s
 set(SOURCES ${SHARED_DIR}/cpp-base64/base64.cpp test/test.cpp)
@@ -146,3 +151,29 @@ target_link_libraries(couchbase_lite_cpp_test couchbase-lite-cpp)
 #executable
 add_executable (couchbase_lite_cpp_fleece_test test/fleece_test.cpp)
 target_link_libraries(couchbase_lite_cpp_fleece_test ${FleeceStatic})
+
+target_include_directories(couchbase-lite-cpp
+		PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}"
+		PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/include"
+		PUBLIC "${SHARED_DIR}/cpp-base64"				#cpp-base64 submodule
+		PUBLIC "${SHARED_DIR}/rapidjson/include"		#rapidjson submodule
+		PUBLIC "${CB_DIR}/C"
+		PUBLIC "${CB_DIR}/C/include"
+		PUBLIC "${CB_DIR}/LiteCore/Support"
+		PUBLIC "${CB_DIR}/Replicator"
+		PUBLIC "${CB_DIR}/vendor/fleece/API"
+		PUBLIC "${CB_DIR}/vendor/fleece/Fleece/Core"
+		PUBLIC "${CB_DIR}/vendor/fleece/Fleece/Mutable"
+		PUBLIC "${CB_DIR}/vendor/fleece/Fleece/Support"
+
+		PUBLIC "${CB_DIR}/LiteCore/Database"
+
+		PUBLIC "${CB_DIR}/vendor/SQLiteCpp/include"
+		PUBLIC "${CB_DIR}/vendor/SQLiteCpp/sqlite3"
+		PUBLIC "${CB_DIR}/vendor/sqlite3-unicodesn"
+		PUBLIC "${CB_DIR}/vendor/BLIP-Cpp/include/blip_cpp"
+		PUBLIC "${CB_DIR}/vendor/BLIP-Cpp/src/util"
+		PUBLIC "${CB_DIR}/vendor/civetweb/include"
+		PUBLIC "${CB_DIR}/vendor/mbedtls/include"
+		PUBLIC "${CB_LIB_DIR}"
+		)
