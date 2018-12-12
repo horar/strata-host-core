@@ -360,8 +360,8 @@ Item {
                         return "—"
                     }
                     else{
-                        return "—"
-                        //return Math.round((theOutputPower/theInputPower) * 100)/100
+                        //return "—"
+                        return Math.round((theOutputPower/theInputPower) * 100)
                     }
                 }
                 else{
@@ -471,8 +471,8 @@ Item {
                         return "—"
                     }
                     else{
-                        return "—"
-                        //return Math.round((theOutputPower/theInputPower) *100)/100
+                        //return "—"
+                        return Math.round((theOutputPower/theInputPower) *100)
                     }
                 }
                 else{
@@ -582,8 +582,8 @@ Item {
                         return "—"
                     }
                     else{
-                        //return Math.round((theOutputPower/theInputPower) *100)/100
-                        return "—"
+                        return Math.round((theOutputPower/theInputPower) *100)
+                        //return "—"
                     }
                 }
                 else{
@@ -692,8 +692,8 @@ Item {
                         return "—"
                     }
                     else{
-                        //return Math.round((theOutputPower/theInputPower) *100)/100
-                        return "—"
+                        return Math.round((theOutputPower/theInputPower) *100)
+                        //return "—"
                     }
                 else{
                     return portInfo4.efficency;

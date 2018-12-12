@@ -251,8 +251,8 @@ Item {
                             return "—"
                         }
                         else{
-                            //return Math.round((theOutputPower/theInputPower) *100)/100
-                            return "—"
+                            return Math.round((theOutputPower/theInputPower) *100)
+                            //return "—"
                         }
                     }
                     else{
@@ -357,8 +357,8 @@ Item {
                             return "—"
                         }
                         else{
-                            //return Math.round((theOutputPower/theInputPower) *100)/100;
-                            return "—"
+                            return Math.round((theOutputPower/theInputPower) *100);
+                            //return "—"
                         }
                     }
                     else{
@@ -458,12 +458,13 @@ Item {
                     var theOutputPower = platformInterface.request_usb_power_notification.output_voltage * platformInterface.request_usb_power_notification.output_current;
 
                     if (platformInterface.request_usb_power_notification.port === 3){
+                        //console.log("port 3 outputVoltage=",platformInterface.request_usb_power_notification.output_voltage,"outputCurrent=",platformInterface.request_usb_power_notification.output_current);
                         if (theInputPower == 0){    //division by 0 would normally give "nan"
                             return "—"
                         }
                         else{
-                            //return math.round((theOutputPower/theInputPower) *100)/100
-                            return "—"
+                            return Math.round((theOutputPower/theInputPower)*100 )
+                            //return "—"
                         }
                     }
                     else{
@@ -567,8 +568,8 @@ Item {
                             return "—"
                         }
                         else{
-                            //return Math.round((theOutputPower/theInputPower)*100)/100
-                            return "—"
+                            return Math.round((theOutputPower/theInputPower)*100)
+                            //return "—"
                         }
                     }
                     else{
