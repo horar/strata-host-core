@@ -8,11 +8,9 @@ Item {
      z: 50
 
      function setTarget(target, fill) {
-         var remappedTarget = target.mapToItem(fill, 0, 0)//target.width/2, target.height/2)
-         mockTarget.x = remappedTarget.x //- (mockTarget.width/2)
-         mockTarget.y = remappedTarget.y// - (mockTarget.height/2)
-//         mockTarget.x = target.x //- (mockTarget.width/2)
-//         mockTarget.y = target.y// - (mockTarget.height/2)
+         var remappedTarget = target.mapToItem(fill, 0, 0)
+         mockTarget.x = remappedTarget.x
+         mockTarget.y = remappedTarget.y
          mockTarget.width = target.width
          mockTarget.height = target.height
          windowHeight = fill.height

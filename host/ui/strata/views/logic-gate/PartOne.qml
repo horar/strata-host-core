@@ -7,8 +7,6 @@ import "qrc:/js/help_layout_manager.js" as Help
 Rectangle {
     id: container
 
-    property alias logicSelection: logicSelection
-
     property string gateImageSource
     property string value_A: "A"
     property string value_B: "B"

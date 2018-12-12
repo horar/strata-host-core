@@ -18,14 +18,6 @@ function registerWindow(windowTarget) {
     window = windowTarget
 }
 
-function refreshHelp () {
-    for (var i = 0; i < helpObjects.length; i++){
-        if (helpObjects[i]["helpObject"].visible) {
-            helpObjects[i]["helpObject"].setTarget(helpObjects[i]["target"], window);
-        }
-    }
-}
-
 function refreshView (i) {
     helpObjects[i]["helpObject"].setTarget(helpObjects[i]["target"], window); // set/refresh the target sizing in case of window resize
 }
