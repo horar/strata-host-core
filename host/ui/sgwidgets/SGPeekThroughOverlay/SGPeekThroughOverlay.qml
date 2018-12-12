@@ -2,16 +2,12 @@ import QtQuick 2.9
 
 Item {
      id: root
-     width: fill.width
-     height: fill.height
+     width: parent.width
+     height: parent.height
      opacity: .5
      visible: false
 
      signal clicked()
-
-     property var remappedTarget
-
-     Component.onCompleted: remappedTarget = target.mapToItem(fill, 0, 0)
 
      MouseArea {
          anchors {
@@ -28,7 +24,7 @@ Item {
              left: root.left
              bottom: root.bottom
          }
-         width: remappedTarget.x
+         width: target.x
      }
 
      Rectangle {
@@ -39,7 +35,7 @@ Item {
              right: root.right
              bottom: root.bottom
          }
-         width: fill.width - target.width - left.width
+         width: root.parent.width - target.width - left.width
      }
 
      Rectangle {
@@ -50,7 +46,7 @@ Item {
              right: right.left
              left: left.right
          }
-         height: remappedTarget.y
+         height: target.y
      }
 
      Rectangle {
@@ -61,7 +57,7 @@ Item {
              right: right.left
              left: left.right
          }
-         height: fill.height - target.height - top.height
+         height: root.parent.height - target.height - top.height
      }
 
      Image {
@@ -70,9 +66,9 @@ Item {
              left: left.right
              top: top.bottom
          }
-         height: Math.min(30, target.height/2)
-         width: Math.min(30, target.width/2)
-         source: "images/corner-fade.png"
+         height: 30
+         width: height
+         source: "qrc:/images/corner-fade.png"
      }
 
      Image {
@@ -81,10 +77,10 @@ Item {
              right: right.left
              top: top.bottom
          }
-         height: bottomRight.width
-         width: bottomRight.height
-         source: "images/corner-fade.png"
-         transform: Rotation { origin.x: topRight.width/2; origin.y: topRight.width/2; angle: 90}
+         height: 30
+         width: height
+         source: "qrc:/images/corner-fade.png"
+         rotation: 90
      }
 
      Image {
@@ -93,9 +89,9 @@ Item {
              right: right.left
              bottom: bottom.top
          }
-         height: Math.min(30, target.height/2)
-         width: Math.min(30, target.width/2)
-         source: "images/corner-fade.png"
+         height: 30
+         width: height
+         source: "qrc:/images/corner-fade.png"
          rotation: 180
      }
 
@@ -105,22 +101,21 @@ Item {
              left: left.right
              bottom: bottom.top
          }
-         height: topLeft.width
-         width: topLeft.height
-         source: "images/corner-fade.png"
-         transform: Rotation { origin.x: bottomLeft.height/2; origin.y: bottomLeft.height/2; angle: -90}
-
+         height: 30
+         width: height
+         source: "qrc:/images/corner-fade.png"
+         rotation: 270
      }
 
      Image {
          id: leftFade
          anchors {
-             top: topLeft.bottom
+             top: topRight.bottom
              left: left.right
              bottom: bottomRight.top
          }
-         width: bottomRight.width
-         source: "images/side-fade.png"
+         width: 30
+         source: "qrc:/images/side-fade.png"
      }
 
      Image {
@@ -128,21 +123,21 @@ Item {
          anchors {
              top: top.bottom
              left: topLeft.right
-             right: bottomRight.left
+             right: topRight.left
          }
-         height: topLeft.height
-         source: "images/top-fade.png"
+         height: 30
+         source: "qrc:/images/top-fade.png"
      }
 
      Image {
          id: rightFade
          anchors {
-             top: topLeft.bottom
+             top: topRight.bottom
              right: right.left
              bottom: bottomRight.top
          }
-         width: topLeft.width
-         source: "images/side-fade.png"
+         width: 30
+         source: "qrc:/images/side-fade.png"
          rotation: 180
      }
 
@@ -151,10 +146,10 @@ Item {
          anchors {
              bottom: bottom.top
              left: topLeft.right
-             right: bottomRight.left
+             right: topRight.left
          }
-         height: bottomLeft.width
-         source: "images/top-fade.png"
+         height: 30
+         source: "qrc:/images/top-fade.png"
          rotation: 180
      }
  }
