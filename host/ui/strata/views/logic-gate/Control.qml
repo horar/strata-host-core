@@ -40,7 +40,6 @@ Item {
             text: qsTr("NL7SZ97")
             onClicked: {
                 controlContainer.currentIndex = 0
-                console.log("in view one")
                 partOne.visible = true
                 partTwo.visible = false
                 partOne.resetToIndex0();
@@ -53,7 +52,6 @@ Item {
             onClicked: {
                 platformInterface.off_97_led.update()
                 controlContainer.currentIndex = 1
-                console.log("in view two")
                 partOne.visible = false
                 partTwo.visible = true
                 partTwo.resetToIndex0()

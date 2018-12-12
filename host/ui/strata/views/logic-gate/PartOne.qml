@@ -339,13 +339,10 @@ Rectangle {
         width: parent.width/2
         height: parent.height/2
 
-
         anchors{
             verticalCenter: parent.verticalCenter
             horizontalCenter: parent.horizontalCenter
         }
-
-
 
         Rectangle { //Input 1 Container
             id: inputAToggleContainer
@@ -487,7 +484,7 @@ Rectangle {
                 //centerIn: logicContainer.Center
             }
             fillMode:Image.PreserveAspectFit;
-           // clip:true
+            // clip:true
         }
 
         Rectangle { //Output Container
