@@ -492,11 +492,10 @@ Rectangle {
 
         Rectangle { //Output Container
             id: thirdInput
-            width: 50
+            width: 80
             height: 50
             anchors {
                 left: gatesImage.right
-                right: logicContainer.right
                 top: inputAToggleContainer.top
                 topMargin: 50
             }

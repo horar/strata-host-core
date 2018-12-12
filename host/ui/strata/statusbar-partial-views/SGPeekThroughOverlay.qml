@@ -199,7 +199,6 @@ Item {
 
          content: SGTourControl {
              id: tourControl
-             onClose: root.visible = false
              index: toolTipPopup.index
              description: toolTipPopup.description
          }

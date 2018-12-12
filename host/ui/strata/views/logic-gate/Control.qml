@@ -33,7 +33,6 @@ Item {
             top: parent.top
             left: parent.left
             right: parent.right
-            horizontalCenter: parent.horizontalCenter
         }
 
         TabButton {
