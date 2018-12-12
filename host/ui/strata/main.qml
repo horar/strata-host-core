@@ -4,6 +4,7 @@ import QtQuick.Controls 2.3
 import QtQuick.Layouts 1.3
 import "js/navigation_control.js" as NavigationControl
 import "qrc:/js/platform_selection.js" as PlatformSelection
+import "qrc:/js/help_layout_manager.js" as Help
 
 Window {
     id: mainWindow
@@ -16,12 +17,11 @@ Window {
     property bool showDebugCommandBar: false
     property bool is_remote_connected: false
 
-
     Component.onCompleted: {
         console.log("Initializing")
         NavigationControl.init(flipable,controlContainer, contentContainer, statusBarContainer)
+        Help.registerWindow(mainWindow.contentItem)
     }
-
 
     Connections {
         target: coreInterface
