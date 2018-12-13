@@ -8,7 +8,7 @@ Item {
 
     property bool debugLayout: false
     property real ratioCalc: root.width / 1200
-    property int transitionStepTime: 1000
+    property int transitionStepTime: 5000
     property int tabTransitionTime: transitionStepTime
     property int tabTransitionTimePhase2: transitionStepTime
 
@@ -24,8 +24,8 @@ Item {
     property int basicPortHeight: 344
 
     property int advancedUSBAPortHeight: 240
-    property int advancedAudioPortHeight: 150
-    property int advancedDisplayPortPortHeight: 140
+    property int advancedAudioPortHeight: 157
+    property int advancedDisplayPortPortHeight: 157
 
     property int basicTopMargin: 95
     property int advancedTopMargin: 10
@@ -108,19 +108,12 @@ Item {
     }
 
     function transitionToAdvancedView(){
-        backgroundToAdvanced.start();
-        //unanchor parts of the ports that will be rearranged
-        port4.anchors.bottom = undefined;
-        port4.anchors.left = undefined;
-        audioPort.anchors.top = undefined;
-        audioPort.anchors.bottom = undefined;
-        audioPort.anchors.left = undefined;
-        displayPort.anchors.top = undefined;
-        displayPort.anchors.bottom = undefined;
-        displayPort.anchors.left = undefined;
 
-        portsToAdvanced.start();
-        devicesToAdvanced.start();
+
+        portsAndBackgroundToAdvanced.start()
+
+        //portsToAdvanced.start();
+        //devicesToAdvanced.start();
         audioPort.transitionToAdvancedView();
         displayPort.transitionToAdvancedView();
         upstreamPort.transitionToAdvancedView();
@@ -131,127 +124,207 @@ Item {
 
     }
 
-    ParallelAnimation{
-        id: backgroundToAdvanced
-        running: false
+    SequentialAnimation{
+        id:portsAndBackgroundToAdvanced
 
-        PropertyAnimation{
-            target:deviceBackground
-            property: "anchors.topMargin"
-            to:(root.height)/32
-            duration: tabTransitionTime
-        }
+        ParallelAnimation{
+            id: backgroundToAdvanced
+            running: false
 
-        PropertyAnimation{
-            target:deviceBackground
-            property: "height"
-            to: (23*parent.height)/32
-            duration: tabTransitionTime
-        }
-    }
+            PropertyAnimation{
+                target:deviceBackground
+                property: "anchors.topMargin"
+                to:(root.height)/32
+                duration: tabTransitionTime
+            }
 
-    ParallelAnimation{
-        //changing the background will expand the ports as well, since they're anchored together
-        //we will have to alter size and position of the USB-A, Audio and DisplayPort ports here
-        id:portsToAdvanced
-        PropertyAnimation{
-            target:upstreamPort
-            property: "width"
-            to: advancedPortWidth
-            duration: tabTransitionTime
-        }
-        PropertyAnimation{
-            target:port1
-            property: "width"
-            to: advancedPortWidth
-            duration: tabTransitionTime
-        }
-        PropertyAnimation{
-            target:port2
-            property: "width"
-            to: advancedPortWidth
-            duration: tabTransitionTime
-        }
-        PropertyAnimation{
-            target:port3
-            property: "width"
-            to: advancedPortWidth
-            duration: tabTransitionTime
-        }
-        PropertyAnimation{
-            //usb-A port
-            target:port4
-            property: "width"
-            to: advancedThinPortWidth
-            duration: tabTransitionTime
+            PropertyAnimation{
+                target:deviceBackground
+                property: "height"
+                to: (23*parent.height)/32
+                duration: tabTransitionTime
+            }
+
+            onStopped:{
+                //unanchor parts of the ports that will be rearranged in the next step
+//                port4.anchors.bottom = undefined;
+//                port4.anchors.bottomMargin = 0
+//                port4.anchors.left = undefined;
+//                port4.anchors.leftMargin = 0
+//                port4.anchors.top = undefined
+//                port4.anchors.topMargin = 0
+//                port4.anchors.right = undefined
+//                port4.anchors.rightMargin = 0
+
+//                displayPort.anchors.top = undefined;
+//                displayPort.anchors.bottom = undefined;
+                displayPort.anchors.left = undefined;
+                  displayPort.anchors.left = port3.right;
+                displayPort.anchors.leftMargin = port4.width + 7;
+
+//                audioPort.anchors.top = undefined;
+//                audioPort.anchors.bottom = undefined;
+                audioPort.anchors.left = undefined;
+                audioPort.anchors.left = port3.right;
+                audioPort.anchors.leftMargin = port4.width + displayPort.width + 7 + 7;
+
+            }
         }
 
-        PropertyAnimation{
-            //usb-A port
-            target:port4
-            property: "height"
-            to: advancedUSBAPortHeight
-            duration: tabTransitionTime
-        }
-        PropertyAnimation{
-            //usb-A port
-            target:port4
-            property: "x"
-            to: deviceBackground.width - advancedThinPortWidth - 10
-            duration: tabTransitionTime
+        ParallelAnimation{
+            //here the heights and positions of the USB-A, Audio and Video ports
+            id:adjustRightThreePortHeightsAndPositions
+
+            PropertyAnimation{
+                //usb-A port
+                target:port4
+                property: "width"
+                to: advancedThinPortWidth
+                duration: tabTransitionTime
+            }
+
+            PropertyAnimation{
+                //usb-A port
+                target:port4
+                property: "anchors.bottomMargin"
+                to: advancedDisplayPortPortHeight + advancedAudioPortHeight + 10
+                duration: tabTransitionTime
+            }
+
+
+            PropertyAnimation{
+                target:audioPort
+                property: "width"
+                to: advancedThinPortWidth
+                duration: tabTransitionTime
+            }
+            PropertyAnimation{
+                target:audioPort
+                property: "anchors.topMargin"
+                to: advancedUSBAPortHeight + 10
+                duration: tabTransitionTime
+            }
+            PropertyAnimation{
+                target:audioPort
+                property: "anchors.bottomMargin"
+                to: advancedDisplayPortPortHeight  + 10 + 10
+                duration: tabTransitionTime
+            }
+
+            PropertyAnimation{
+                target:displayPort
+                property: "width"
+                to: advancedThinPortWidth
+                duration: tabTransitionTime
+            }
+            PropertyAnimation{
+                target:displayPort
+                property: "anchors.topMargin"
+                to: advancedUSBAPortHeight + advancedAudioPortHeight + 10 + 10 + 10
+                duration: tabTransitionTime
+            }
+
+
         }
 
-        PropertyAnimation{
-            target:audioPort
-            property: "width"
-            to: advancedThinPortWidth
-            duration: tabTransitionTime
-        }
-        PropertyAnimation{
-            target:audioPort
-            property: "height"
-            to: advancedAudioPortHeight
-            duration: tabTransitionTime
-        }
-        PropertyAnimation{
-            target:audioPort
-            property: "x"
-            to: deviceBackground.width - advancedThinPortWidth -10
-            duration: tabTransitionTime
-        }
-        PropertyAnimation{
-            target:audioPort
-            property: "y"
-            to: advancedUSBAPortHeight  + 10 + 10
-            duration: tabTransitionTime
-        }
-        PropertyAnimation{
-            target:displayPort
-            property: "width"
-            to: advancedThinPortWidth
-            duration: tabTransitionTime
-        }
-        PropertyAnimation{
-            target:displayPort
-            property: "x"
-            to: deviceBackground.width - advancedThinPortWidth -10
-            duration: tabTransitionTime
+        ParallelAnimation{
+            id:upstreamPortToAdvanced
+
+            PropertyAnimation{
+                target:upstreamPort
+                property: "width"
+                to: advancedPortWidth
+                duration: tabTransitionTime
+            }
+
+            PropertyAnimation{
+                target:displayPort
+                property: "anchors.leftMargin"
+                to: -port4.width;
+                duration: tabTransitionTime
+            }
+
+            PropertyAnimation{
+                target:audioPort
+                property: "anchors.leftMargin"
+                to: -port4.width;
+                duration: tabTransitionTime
+            }
+
         }
 
-        PropertyAnimation{
-            target:displayPort
-            property: "y"
-            to: advancedUSBAPortHeight + advancedAudioPortHeight + 10 + 10 + 10
-            duration: tabTransitionTime
+        ParallelAnimation{
+            id:port1ToAdvanced
+
+            PropertyAnimation{
+                target:port1
+                property: "width"
+                to: advancedPortWidth
+                duration: tabTransitionTime
+            }
+
+            PropertyAnimation{
+                target:displayPort
+                property: "anchors.leftMargin"
+                to: -(advancedPortWidth - basicPortWidth) ;
+                duration: tabTransitionTime
+            }
+
+//            PropertyAnimation{
+//                target:audioPort
+//                property: "anchors.leftMargin"
+//                to: (advancedPortWidth - basicPortWidth);
+//                duration: tabTransitionTime
+//            }
+
         }
 
-        PropertyAnimation{
-            target:displayPort
-            property: "height"
-            to: advancedDisplayPortPortHeight
-            duration: tabTransitionTime
+//        ParallelAnimation{
+//            id:port2ToAdvanced
+
+//            PropertyAnimation{
+//                target:port2
+//                property: "width"
+//                to: advancedPortWidth
+//                duration: tabTransitionTime
+//            }
+
+//            PropertyAnimation{
+//                target:displayPort
+//                property: "anchors.leftMargin"
+//                to: -port4.width;
+//                duration: tabTransitionTime
+//            }
+
+//            PropertyAnimation{
+//                target:audioPort
+//                property: "anchors.leftMargin"
+//                to: -port4.width;
+//                duration: tabTransitionTime
+//            }
+
+//        }
+
+//        ParallelAnimation{
+
+//            id:port3ToAdvanced
+//            PropertyAnimation{
+//                target:port3
+//                property: "width"
+//                to: advancedPortWidth
+//                duration: tabTransitionTime
+//            }
+
+ //       }
+
+        onStopped:{
+            devicesToAdvanced.start()
         }
-    }
+    }  //end sequential animation
+
+
+
+
 
     //--------------------------------------------------------------------
     //  Device Animations
