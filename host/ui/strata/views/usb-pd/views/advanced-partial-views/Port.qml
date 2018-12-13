@@ -378,19 +378,19 @@ Item {
                     }
                 }
 
-                SGSegmentedButton{
-                    text: qsTr("η")
-                    enabled: root.portConnected
-                    onCheckedChanged: {
-                        if (checked) {
-                            graph6.visible = true
-                            graphSelector.howManyChecked++
-                        } else {
-                            graph6.visible = false
-                            graphSelector.howManyChecked--
-                        }
-                    }
-                }
+//                SGSegmentedButton{
+//                    text: qsTr("η")
+//                    enabled: root.portConnected
+//                    onCheckedChanged: {
+//                        if (checked) {
+//                            graph6.visible = true
+//                            graphSelector.howManyChecked++
+//                        } else {
+//                            graph6.visible = false
+//                            graphSelector.howManyChecked--
+//                        }
+//                    }
+//                }
             }
 
 
