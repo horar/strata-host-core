@@ -30,12 +30,12 @@ Item {
                 return portInfo.advertisedVoltage;
             }
         }
-        maxPower:{
+        pdContract:{
             if (platformInterface.request_usb_power_notification.port === portNumber){
-               return Math.round(platformInterface.request_usb_power_notification.maximum_power *100)/100
+               return Math.round(platformInterface.request_usb_power_notification.negotiated_current * platformInterface.request_usb_power_notification.negotiated_voltage*100)/100
             }
             else{
-                return portInfo.maxPower;
+                return portInfo.pdContract;
             }
         }
         inputPower:{

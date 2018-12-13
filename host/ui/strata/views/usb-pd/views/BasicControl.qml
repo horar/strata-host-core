@@ -263,12 +263,12 @@ Item {
                     return portInfo1.advertisedVoltage;
                 }
             }
-            maxPower:{
+            pdContract:{
                 if (platformInterface.request_usb_power_notification.port === 1){
-                   return Math.round(platformInterface.request_usb_power_notification.maximum_power *100)/100
+                   return Math.round(platformInterface.request_usb_power_notification.negotiated_current * platformInterface.request_usb_power_notification.negotiated_voltage*100)/100
                 }
                 else{
-                    return portInfo1.maxPower;
+                    return portInfo1.pdContract;
                 }
             }
             inputPower:{
@@ -369,12 +369,12 @@ Item {
                     return portInfo2.advertisedVoltage;
                 }
             }
-            maxPower:{
+            pdContract:{
                 if (platformInterface.request_usb_power_notification.port === 2){
-                    return Math.round(platformInterface.request_usb_power_notification.maximum_power *100)/100
+                   return Math.round(platformInterface.request_usb_power_notification.negotiated_current * platformInterface.request_usb_power_notification.negotiated_voltage*100)/100
                 }
                 else{
-                    return portInfo2.maxPower;
+                    return portInfo2.pdContract;
                 }
             }
             inputPower:{
