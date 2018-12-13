@@ -54,15 +54,8 @@ private:
     std::function<void(bool pushing, std::string doc_id, std::string error_message, bool is_error,bool error_is_transient)> on_document_error_callback_;
     std::function<void(const std::string& doc_id, const std::string& json_body )> on_validation_callback_;
 
-    std::thread replicator_thread_;
-    std::promise<void> replicator_exit_signal_;
-
     void setReplicatorType(SGReplicatorConfiguration::ReplicatorType replicator_type);
-    bool _start(std::future<void> future_obj);
-
-    // Restart a replicator
-    bool restart();
-
+    bool _start();
 };
 
 
