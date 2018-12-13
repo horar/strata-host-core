@@ -27,7 +27,6 @@ Rectangle {
 
     onVisibleChanged: {
         if(visible === true) {
-            console.log("is visible basic")
             Help.reset()
             Help.registerTarget(navTabs, "These tabs will select between Basic and advanced control view of the demo. (FAE control tab is restricted access only.)", 0)
             Help.registerTarget(motorSpeedControl, "The slider sets motor speed from 1500-4000 rpm" , 1)

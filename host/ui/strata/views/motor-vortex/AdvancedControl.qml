@@ -29,11 +29,8 @@ Rectangle {
 
     onVisibleChanged: {
         if(visible === true) {
-
-            console.log("is visible adv")
             Help.reset()
             Help.registerTarget(navTabs, "These tabs will select between Basic and advanced control view of the demo. (FAE control tab is restricted access only.)", 0)
-
             Help.registerTarget( targetSpeedSlider, "The slider sets the motor speed from 1500-4000 rpm", 1)
             Help.registerTarget( operationModeControl, "Two mode to control the motor", 2)
             Help.registerTarget( buttonContainer, "This button start, stops or reset the motor",3)
@@ -41,12 +38,10 @@ Rectangle {
             Help.registerTarget( driveModeContainer, "Two modes are available to drive the motor and you can set the phase angle from 0 - 28.125 ",5)
             Help.registerTarget( hueSlider, " This slider change the LED color on the motor vortex to combination of different colors ",6)
             Help.registerTarget( singleColorSlider, " This slider set LED light to single color Red, Green or Blue",7)
-            Help.registerTarget( ledPulseFrequency, " These slider sets the LED frequency",8)
+            Help.registerTarget( ledPulseFrequency, " This slider sets the LED frequency",8)
             Help.registerTarget(vInGraph , " This shows input voltage graph",9)
             Help.registerTarget(speedGraph , " This shows the live current speed over RPM graph",10)
             Help.registerTarget(faultBox , " Any system error that happens appears in this container",11)
-
-
 
         }
     }
