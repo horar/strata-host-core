@@ -10,7 +10,7 @@ Item {
     property color portColor: "#30a2db"
 
     property alias advertisedVoltage: advertisedVoltageBox.value
-    property alias maxPower: maxPowerBox.value
+    property alias pdContract: pdContractBox.value
     property alias inputPower: inputPowerBox.value
     property alias outputPower: outputPowerBox.value
     property alias outputVoltage: outputVoltageBox.value
@@ -156,6 +156,15 @@ Item {
                     }
 
                     PortStatBox {
+                        id: pdContractBox
+                        label: "PD CONTRACT"
+                        value: ""
+                        icon: "../images/icon-max.svg"
+                        portColor: root.portColor
+                        unit: "W"
+                    }
+
+                    PortStatBox {
                         id:inputPowerBox
                         label: "POWER IN"
                         value: ""
@@ -164,14 +173,7 @@ Item {
                         unit: "W"
                     }
 
-                    PortStatBox {
-                        id:outputVoltageBox
-                        label: "VOLTAGE OUT"
-                        value: ""
-                        icon: "../images/icon-voltage.svg"
-                        portColor: root.portColor
-                        unit: "V"
-                    }
+
 
                 }
 
@@ -187,21 +189,12 @@ Item {
                     width: stats.width/2 - 2
 
                     PortStatBox {
-                        id: maxPowerBox
-                        label: "MAX CAPACITY"
-                        value: ""
-                        icon: "../images/icon-max.svg"
-                        portColor: root.portColor
-                        unit: "W"
-                    }
-
-                    PortStatBox {
-                        id: outputPowerBox
-                        label: "POWER OUT"
+                        id:outputVoltageBox
+                        label: "VOLTAGE OUT"
                         value: ""
                         icon: "../images/icon-voltage.svg"
                         portColor: root.portColor
-                        unit: "W"
+                        unit: "V"
                     }
 
                     PortStatBox {
@@ -213,6 +206,14 @@ Item {
                         unit: "°C"
                     }
 
+                    PortStatBox {
+                        id: outputPowerBox
+                        label: "POWER OUT"
+                        value: ""
+                        icon: "../images/icon-voltage.svg"
+                        portColor: root.portColor
+                        unit: "W"
+                    }
 
                 }
             }

@@ -8,6 +8,7 @@ Item {
 
     property bool debugLayout: false
     property real ratioCalc: root.width / 1200
+    property real initialAspectRatio: 1200/820
 
     width: parent.width / parent.height > initialAspectRatio ? parent.height * initialAspectRatio : parent.width
     height: parent.width / parent.height < initialAspectRatio ? parent.width / initialAspectRatio : parent.height
@@ -360,8 +361,8 @@ Item {
                         return "—"
                     }
                     else{
-                        return "—"
-                        //return Math.round((theOutputPower/theInputPower) * 100)/100
+                        //return "—"
+                        return Math.round((theOutputPower/theInputPower) * 100)
                     }
                 }
                 else{
@@ -471,8 +472,8 @@ Item {
                         return "—"
                     }
                     else{
-                        return "—"
-                        //return Math.round((theOutputPower/theInputPower) *100)/100
+                        //return "—"
+                        return Math.round((theOutputPower/theInputPower) *100)
                     }
                 }
                 else{
@@ -582,8 +583,8 @@ Item {
                         return "—"
                     }
                     else{
-                        //return Math.round((theOutputPower/theInputPower) *100)/100
-                        return "—"
+                        return Math.round((theOutputPower/theInputPower) *100)
+                        //return "—"
                     }
                 }
                 else{
@@ -692,8 +693,8 @@ Item {
                         return "—"
                     }
                     else{
-                        //return Math.round((theOutputPower/theInputPower) *100)/100
-                        return "—"
+                        return Math.round((theOutputPower/theInputPower) *100)
+                        //return "—"
                     }
                 else{
                     return portInfo4.efficency;
