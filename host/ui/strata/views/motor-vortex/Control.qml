@@ -21,6 +21,7 @@ Rectangle {
     }
 
     Component.onCompleted: {
+        helpIcon.visible = true
         Help.registerTarget(navTabs, "These tabs will select between Basic and advanced control view of the demo. (FAE control tab is restricted access only.)", 0)
     }
 
@@ -42,7 +43,7 @@ Rectangle {
             text: qsTr("Basic")
             onClicked: {
 
-
+                helpIcon.visible = true
                 controlContainer.currentIndex = 0
             }
         }
@@ -51,7 +52,7 @@ Rectangle {
             id: advancedButton
             text: qsTr("Advanced")
             onClicked: {
-
+                helpIcon.visible = true
                 controlContainer.currentIndex = 1
             }
         }
@@ -60,6 +61,7 @@ Rectangle {
             id: faeButton
             text: qsTr("FAE Only")
             onClicked: {
+                helpIcon.visible = false
                 controlContainer.currentIndex = 2
             }
             background: Rectangle {
@@ -132,6 +134,8 @@ Rectangle {
             BasicControl {
                 id: basicView
                 visible: true
+                property alias tavView: navTabs
+
 
 
             }
@@ -140,12 +144,14 @@ Rectangle {
                 id: advanceView
                 visible: false
                 property alias basicView: basicView
+                 property alias tavView: navTabs
             }
 
             FAEControl {
                 id : faeView
                 visible: false
                 property alias basicView: basicView
+                property alias tavView: navTabs
             }
         }
     }
@@ -163,6 +169,7 @@ Rectangle {
             family: Fonts.sgicons
             pixelSize: 40
         }
+        visible: false
 
         MouseArea {
             id: helpMouse
@@ -170,7 +177,6 @@ Rectangle {
                 fill: helpIcon
             }
             onClicked: {
-
                 Help.startHelpTour()
             }
             hoverEnabled: true
