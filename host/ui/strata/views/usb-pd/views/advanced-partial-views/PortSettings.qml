@@ -44,6 +44,8 @@ Item {
         SGSlider {
             id: currentLimit
             label: "Current limit:"
+            from:0
+            to:6
             value: platformInterface.request_over_current_protection_notification.current_limit
             anchors {
                 left: parent.left
@@ -62,12 +64,14 @@ Item {
         SGSubmitInfoBox {
             id: currentLimitInput
             showButton: false
+            minimumValue: 0
+            maximumValue: 6
             anchors {
                 verticalCenter: currentLimit.verticalCenter
                 right: parent.right
             }
-            value: currentLimit.value.toFixed(0)
-            onApplied: currentLimit.value = value
+            value: platformInterface.request_over_current_protection_notification.current_limit.toFixed(0)
+            onApplied: platformInterface.set_over_current_protection.update(portNumber, value)
         }
 
         SGDivider {
