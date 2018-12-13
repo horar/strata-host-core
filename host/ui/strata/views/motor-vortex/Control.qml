@@ -5,8 +5,10 @@ import QtGraphicalEffects 1.0
 import QtQuick.Controls.Styles 1.4
 import QtQuick.Extras 1.4
 //import tech.spyglass. 1.0
+import Fonts 1.0
 import "qrc:/js/navigation_control.js" as NavigationControl
 import "qrc:/views/motor-vortex/sgwidgets"
+import "qrc:/js/help_layout_manager.js" as Help
 
 Rectangle {
     id: controlNavigation
@@ -16,6 +18,14 @@ Rectangle {
 
     PlatformInterface {
         id: platformInterface
+    }
+
+    Component.onCompleted: {
+        Help.registerTarget(navTabs, "These tabs will select between Basic and advanced control view of the demo. (FAE control tab is restricted access only.)", 0)
+    }
+
+    Component.onDestruction: {
+        Help.reset()
     }
 
 
@@ -31,6 +41,8 @@ Rectangle {
             id: basicButton
             text: qsTr("Basic")
             onClicked: {
+
+
                 controlContainer.currentIndex = 0
             }
         }
@@ -89,14 +101,17 @@ Rectangle {
             onCurrentIndexChanged: {
                 switch (currentIndex){
                 case 0:
+
                     basicView.visible = true
                     advanceView.visible = false
                     faeView.visible = false
                     break;
                 case 1:
+
                     basicView.visible = false
                     advanceView.visible = true
                     faeView.visible = false
+
                     break;
                 case 2:
                     basicView.visible = false
@@ -117,6 +132,8 @@ Rectangle {
             BasicControl {
                 id: basicView
                 visible: true
+
+
             }
 
             AdvancedControl {
@@ -130,6 +147,33 @@ Rectangle {
                 visible: false
                 property alias basicView: basicView
             }
+        }
+    }
+
+    Text {
+        id: helpIcon
+        anchors {
+            right: scrollView.right
+            top: scrollView.top
+            margins: 20
+        }
+        text: "\ue808"
+        color: helpMouse.containsMouse ? "lightgrey" : "grey"
+        font {
+            family: Fonts.sgicons
+            pixelSize: 40
+        }
+
+        MouseArea {
+            id: helpMouse
+            anchors {
+                fill: helpIcon
+            }
+            onClicked: {
+
+                Help.startHelpTour()
+            }
+            hoverEnabled: true
         }
     }
 }

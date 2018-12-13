@@ -7,6 +7,7 @@ import QtQuick.Extras 1.4
 //import tech.spyglass. 1.0
 import "qrc:/js/navigation_control.js" as NavigationControl
 import "qrc:/views/motor-vortex/sgwidgets"
+import "qrc:/js/help_layout_manager.js" as Help
 
 Rectangle {
     id: controlPage
@@ -16,6 +17,26 @@ Rectangle {
     color: "white"
 
     property alias warningVisible: warningBox.visible
+
+
+    Component.onCompleted: {
+        Help.registerTarget(motorSpeedControl, "The slider sets motor speed from 1500-4000 rpm" , 1)
+        Help.registerTarget(tachMeterGauge, "The gauage shows the speed of the motor", 2)
+        Help.registerTarget(operationModeControl, "These are two modes to control the system. In manual mode, speed of the motor will be set by the slider above. In Automatic Demo Pattern mode, the system will go through a particular speed profile.", 3)
+    }
+
+    onVisibleChanged: {
+        if(visible === true) {
+            console.log("is visible basic")
+            Help.reset()
+            Help.registerTarget(motorSpeedControl, "The slider sets motor speed from 1500-4000 rpm" , 0)
+            Help.registerTarget(tachMeterGauge, "The gauage shows the speed of the motor", 1)
+            Help.registerTarget(operationModeControl, "These are two modes to control the system. In manual mode, speed of the motor will be set by the slider above. In Automatic Demo Pattern mode, the system will go through a particular speed profile.", 2)
+        }
+    }
+
+
+
     // Control Section
     Rectangle {
         id: controlSection1

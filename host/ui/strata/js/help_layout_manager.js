@@ -3,15 +3,18 @@
 var window
 var helpObjects = []
 
-function registerTarget(helpTarget, targetDescription, index) {
+function registerTarget( helpTarget, targetDescription, index) {
     var component = Qt.createComponent("qrc:/statusbar-partial-views/SGPeekThroughOverlay.qml");
     var object = component.createObject(window);
 
     object.index = index
     object.description = targetDescription
 
-    var helpObject = { "index": index, "target": helpTarget, "description": targetDescription, "helpObject": object}
+
+
+    var helpObject = { "index": index, "target": helpTarget, "description": targetDescription, "helpObject": object }
     helpObjects.push(helpObject)
+
 }
 
 function registerWindow(windowTarget) {
@@ -48,7 +51,7 @@ function prev(currentIndex) {
 
 function startHelpTour() {
     for (var i = 0; i < helpObjects.length; i++){
-        if (helpObjects[i]["index"] === 0) {
+        if (helpObjects[i]["index"] === 0 )  {
             refreshView(i)
             helpObjects[i]["helpObject"].visible = true
         }
@@ -56,6 +59,7 @@ function startHelpTour() {
 }
 
 function reset() {
+    console.log("in reset")
     for (var i=0; i<helpObjects.length; i++) {
         helpObjects[i]["helpObject"].destroy()
     }
