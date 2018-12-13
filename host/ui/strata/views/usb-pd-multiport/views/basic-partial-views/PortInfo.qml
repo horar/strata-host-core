@@ -64,7 +64,7 @@ Rectangle {
                     horizontalCenter: portTitle.horizontalCenter
                 }
                 height: 20
-                width: 60
+                width: 65
                 onClicked: root.showGraph()
             }
 

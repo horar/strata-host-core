@@ -31,7 +31,7 @@ Item {
             onClicked: {
                 //from advanced
                 if (advancedControlIsVisible){
-                    console.log("going to basic from advanced")
+                    //console.log("going to basic from advanced")
                     basicControl.transitionToBasicView();
                     basicControlIsVisible = true;
                     advancedControlIsVisible = false;
@@ -39,6 +39,11 @@ Item {
                 //from system control
                 else if (systemControl.visible){
                     systemControl.visible = false;
+                    basicControl.visible = true;
+                    if (!basicControlIsVisible){
+                        basicControl.switchToBasicView();
+                    }
+                    basicControlIsVisible = true;
                 }
             }
         }
@@ -48,7 +53,7 @@ Item {
             text: qsTr("Advanced")
             onClicked: {
                 if (basicControlIsVisible){
-                    console.log("going to advanced from basic")
+                    //console.log("going to advanced from basic")
                     basicControl.transitionToAdvancedView();
                     basicControlIsVisible = false;
                     advancedControlIsVisible = true;
@@ -56,6 +61,11 @@ Item {
                 //from system control
                 else if (systemControl.visible){
                     systemControl.visible = false;
+                    basicControl.visible = true
+                    if (!advancedControlIsVisible){
+                        basicControl.switchToAdvancedView()
+                    }
+                    advancedControlIsVisible = true
                 }
             }
         }
@@ -65,7 +75,7 @@ Item {
             text: qsTr("System")
             onClicked: {
                 basicControl.visible = false
-                advancedControl.visible = false
+                //advancedControl.visible = false
                 basicControlIsVisible = false;
                 advancedControlIsVisible = false;
                 systemControl.visible = true;
@@ -88,12 +98,6 @@ Item {
             property real initialAspectRatio
         }
 
-        AdvancedControl {
-            id: advancedControl
-            visible: false
-            property real initialAspectRatio
-        }
-
         SystemControl{
             id: systemControl
             visible: false
@@ -102,7 +106,7 @@ Item {
     }
 
     Component.onCompleted: {
-        advancedControl.initialAspectRatio = basicControl.initialAspectRatio = controlContainer.width / controlContainer.height
+        basicControl.initialAspectRatio = controlContainer.width / controlContainer.height
 
         console.log("Requesting platform Refresh")
         platformInterface.refresh.send() //ask the platform for all the current values

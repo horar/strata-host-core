@@ -184,35 +184,13 @@ Item {
             //limit the options for power usage to be less than the max power allocated for this port
             onMaxPowerChanged:{
                 if (platformInterface.usb_pd_maximum_power.port === portNumber){
-//                    if (maxPower >= 100){
-//                        maxPowerOptions = ["15","27", "36", "45","60","100"];
-//                    }
-//                    else if (maxPower >=60){
-//                        maxPowerOptions = ["15","27", "36", "45","60"];
-//                    }
-//                    else if (maxPower >=45){
-//                        maxPowerOptions = ["15","27", "36", "45"];
-//                    }
-//                    else if (maxPower >=36){
-//                        maxPowerOptions = ["15","27", "36"];
-//                    }
-//                    else if (maxPower >=27){
-//                        maxPowerOptions = ["15","27"];
-//                    }
-//                    else if (maxPower >=15){
-//                        maxPowerOptions = ["15"];
-//                    }
-//                    else{
-//                        maxPowerOptions = [];
-//                    }
-
                     //console.log("got a new commanded max power for port",platformInterface.usb_pd_maximum_power.port)
                     maxPowerOutput.currentIndex = maxPowerOutput.comboBox.find( parseInt (platformInterface.usb_pd_maximum_power.commanded_max_power))
                 }
             }
 
             id: maxPowerOutput
-            label: "Max Power Output:"
+            label: "Maximum Power Output:"
             model: maxPowerOptions
             enabled:{
                 if (portNumber === 1 && (assuredPortSwitch.checked || !assuredPortSwitch.enabled))
@@ -225,7 +203,7 @@ Item {
             comboBoxWidth: 60
             anchors {
                 left: parent.left
-                leftMargin: 48
+                leftMargin: 10
                 top: assuredPortSwitch.bottom
                 topMargin: 10
             }
@@ -273,7 +251,7 @@ Item {
             to: 6
             anchors {
                 left: parent.left
-                leftMargin: 86
+                leftMargin: 80
                 top: maxPowerOutput.bottom
                 topMargin: 10
                 right: currentLimitInput.left
@@ -337,7 +315,7 @@ Item {
             value:platformInterface.get_cable_loss_compensation.output_current
             from:.25
             to:1
-            stepSize: .25
+            stepSize: .005
             toolTipDecimalPlaces: 2
             labelTopAligned: true
             startLabel: ".25A"
@@ -391,9 +369,10 @@ Item {
         }
 
         SGSlider {
+            //N.B. values to and from the platform are in volts, but values displayed are in mV
             id: bias
             label: "Bias output by:"
-            value:platformInterface.get_cable_loss_compensation.bias_voltage
+            value:platformInterface.get_cable_loss_compensation.bias_voltage * 1000
             from:0
             to:200
             stepSize: 10
@@ -411,12 +390,13 @@ Item {
             onMoved: {
                 platformInterface.set_cable_compensation.update(portNumber,
                                                                      platformInterface.get_cable_loss_compensation.output_current,
-                                                                     value)
+                                                                     value/1000)
             }
 
         }
 
         SGSubmitInfoBox {
+            //N.B.  values to and from the platform are in volts, but values displayed are in mV
             id: biasInput
             showButton: false
             infoBoxWidth: 35
@@ -429,10 +409,10 @@ Item {
                 rightMargin: 5
             }
 
-            value: platformInterface.get_cable_loss_compensation.bias_voltage.toFixed(0)
+            value: platformInterface.get_cable_loss_compensation.bias_voltage * 1000
             onApplied: platformInterface.set_cable_loss_compensation.update(portNumber,
                                                                             platformInterface.get_cable_loss_compensation.output_current,
-                                                                            biasInput.floatValue)
+                                                                            biasInput.floatValue/1000)
         }
 
         Text{
@@ -483,9 +463,11 @@ Item {
 
             onSourceCapabilitiesChanged:{
 
+
                 //the strip's first child is the Grid layout. The children of that layout are the buttons in
                 //question. This makes accessing the buttons a little bit cumbersome since they're loaded dynamically.
                 if (platformInterface.usb_pd_advertised_voltages_notification.port === portNumber){
+
                     //console.log("updating advertised voltages for port ",portNumber)
                     //disable all the possibilities
                     faultProtectionButtonStrip.buttonList[0].children[6].enabled = false;

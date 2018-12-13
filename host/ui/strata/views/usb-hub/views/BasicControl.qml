@@ -8,8 +8,9 @@ Item {
 
     property bool debugLayout: false
     property real ratioCalc: root.width / 1200
-    property int tabTransitionTime: 1000
-    property int tabTransitionTimePhase2: 1000
+    property int transitionStepTime: 1000
+    property int tabTransitionTime: transitionStepTime
+    property int tabTransitionTimePhase2: transitionStepTime
 
     property int basicPortWidth: 160
     property int advancedPortWidth: 240
@@ -94,6 +95,16 @@ Item {
         anchors.horizontalCenterOffset: 10
         anchors.bottom: audioIcon.verticalCenter
         anchors.bottomMargin: -20
+    }
+
+    function switchToAdvancedView(){
+        tabTransitionTime = 0
+        transitionToAdvancedView();
+    }
+
+    //called upon completion of the switch to advanced animation
+    function toAdvancedAnimationFinished(){
+        tabTransitionTime = transitionStepTime;  //reset tab transition time if needed
     }
 
     function transitionToAdvancedView(){
@@ -363,11 +374,25 @@ Item {
             duration: tabTransitionTime
         }
 
+        onStopped:{
+            toAdvancedAnimationFinished();
+        }
+
     }
 
     //----------------------------------------------------------------------------------------
     //                      Animation to Basic View
     //----------------------------------------------------------------------------------------
+
+    function switchToBasicView(){
+        tabTransitionTime = 0
+        transitionToBasicView();
+    }
+
+    //called upon completion of the switch to basic animation
+    function toBasicAnimationFinished(){
+        tabTransitionTime = transitionStepTime;  //reset tab transition time if needed
+    }
 
     function transitionToBasicView(){
 
@@ -496,7 +521,7 @@ Item {
         PropertyAnimation{
             target:audioPort
             property: "x"
-            to: background.x  + (5* basicPortWidth) + (6*7)
+            to: background.x  + (6* basicPortWidth) + (7*7)
             duration: tabTransitionTime
         }
         PropertyAnimation{
@@ -514,7 +539,7 @@ Item {
         PropertyAnimation{
             target:displayPort
             property: "x"
-            to: background.x  + (6* basicPortWidth) + (7*7)
+            to: background.x  + (5* basicPortWidth) + (6*7)
             duration: tabTransitionTime
         }
 
@@ -659,6 +684,10 @@ Item {
             property: "opacity"
             to: 1
             duration: tabTransitionTime
+        }
+
+        onStopped:{
+            toBasicAnimationFinished();
         }
 
     }

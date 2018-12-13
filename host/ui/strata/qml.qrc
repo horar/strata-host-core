@@ -341,7 +341,6 @@
         <file>views/usb-hub/Content.qml</file>
         <file>views/usb-hub/Control.qml</file>
         <file>views/usb-hub/PlatformInterface.qml</file>
-        <file>views/usb-hub/views/AdvancedControl.qml</file>
         <file>views/usb-hub/views/BasicControl.qml</file>
         <file>views/usb-hub/views/SystemControl.qml</file>
         <file>views/usb-hub/views/images/FourPortWireframeAdvancedView.png</file>
@@ -443,5 +442,12 @@
         <file>views/SGPdfViewer/SGPdfViewer.qml</file>
         <file>statusbar-partial-views/SGPrivacyPolicy.qml</file>
         <file>statusbar-partial-views/SGGreenButton.qml</file>
+        <file>js/help_layout_manager.js</file>
+        <file>statusbar-partial-views/SGPeekThroughOverlay.qml</file>
+        <file>statusbar-partial-views/SGTourControl.qml</file>
+        <file>statusbar-partial-views/SGToolTipPopup.qml</file>
+        <file>statusbar-partial-views/images/corner-fade.png</file>
+        <file>statusbar-partial-views/images/side-fade.png</file>
+        <file>statusbar-partial-views/images/top-fade.png</file>
     </qresource>
 </RCC>
