@@ -98,8 +98,9 @@ Item {
             id: increment
             label: "For every increment of:"
             value:platformInterface.get_cable_loss_compensation.output_current
-            from:0
+            from:1
             to:3
+            toolTipDecimalPlaces: 2
             anchors {
                 left: parent.left
                 top: cableCompensation.bottom
@@ -109,8 +110,6 @@ Item {
             }
             onSliderMoved:{
                 //console.log("sending values from increment slider:",portNumber, increment.value, platformInterface.get_cable_loss_compensation.bias_voltage);
-                //this code is generating "TypeError: Property 'update' of object [object Object] is not a function"
-                //errors for some reason. Same for other controls changing cable compensation values
                 platformInterface.set_cable_loss_compensation.update(portNumber,
                                                                      increment.value,
                                                                      platformInterface.set_cable_loss_compensation.bias_voltage)
@@ -125,7 +124,7 @@ Item {
                 verticalCenter: increment.verticalCenter
                 right: parent.right
             }
-            value: platformInterface.get_cable_loss_compensation.output_current.toFixed(0)
+            value: platformInterface.get_cable_loss_compensation.output_current.toFixed(2)
             onApplied: {
                 platformInterface.set_cable_loss_compensation.update(portNumber,
                                                                      incrementInput.value,
@@ -139,6 +138,7 @@ Item {
             value:platformInterface.get_cable_loss_compensation.bias_voltage
             from:0
             to:2
+            toolTipDecimalPlaces: 2
             anchors {
                 left: parent.left
                 leftMargin: 50
@@ -162,7 +162,7 @@ Item {
                 verticalCenter: bias.verticalCenter
                 right: parent.right
             }
-            value: platformInterface.get_cable_loss_compensation.bias_voltage.toFixed(0)
+            value: platformInterface.get_cable_loss_compensation.bias_voltage.toFixed(2)
             onApplied: {
                 platformInterface.set_cable_loss_compensation.update(portNumber,
                         platformInterface.set_cable_loss_compensation.output_current,
