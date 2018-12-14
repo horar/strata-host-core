@@ -11,6 +11,7 @@ Window {
     visible: true
     width: 1200
     height: 900
+    minimumHeight:800
     title: qsTr("ON Semiconductor: Strata Developer Studio")
 
     // Debug option(s)
