@@ -136,9 +136,17 @@ int main(){
     replicator.start();
 
     DEBUG("About to stop the replicator thread\n");
-    this_thread::sleep_for(chrono::milliseconds(5000));
+    this_thread::sleep_for(chrono::milliseconds(1000));
 
     replicator.stop();
+    channels = {"random_channel_name"};
+    replicator_configuration.setChannels(channels);
+    this_thread::sleep_for(chrono::milliseconds(5000));
+
+    replicator.start();
+
+    this_thread::sleep_for(chrono::milliseconds(5000));
+
 
     DEBUG("bye\n");
 
