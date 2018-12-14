@@ -27,8 +27,7 @@ using namespace fleece::impl;
 SGReplicator::SGReplicator() {}
 
 SGReplicator::~SGReplicator() {
-    stop();
-
+    c4repl_free(c4replicator_);
 }
 
 /** SGReplicator.
@@ -39,37 +38,29 @@ SGReplicator::SGReplicator(SGReplicatorConfiguration *replicator_configuration) 
     replicator_configuration_ = replicator_configuration;
     setReplicatorType(replicator_configuration_->getReplicatorType());
     replicator_parameters_.callbackContext = this;
+    c4socket_registerFactory(C4CivetWebSocketFactory);
 }
 
 /** SGReplicator stop.
 * @brief Stop a running replicator thread.
 */
 bool SGReplicator::stop(){
-    if(replicator_thread_.joinable()){
-        // Send a termination signal to the running thread.
-        replicator_exit_signal_.set_value();
-        replicator_thread_.join();
-
-        // Free the replicator reference
-        c4repl_free(c4replicator_);
-    }
+    c4repl_stop(c4replicator_);
 }
 
 /** SGReplicator start.
 * @brief Starts a replicator background thread by calling _start().
 */
 bool SGReplicator::start(){
-    // Start the replication thread and pass the promise object to it.
-    replicator_thread_ = thread(&SGReplicator::_start, this, std::move(replicator_exit_signal_.get_future()));
+    return _start();
 }
 
 /** SGReplicator _start.
 * @brief Starts the replicator.
 * @param future_obj The future object used to send a signal to its running thread.
 */
-bool SGReplicator::_start(std::future<void> future_obj){
+bool SGReplicator::_start(){
     C4Error c4error;
-    c4socket_registerFactory(C4CivetWebSocketFactory);
 
     Encoder encoder;
 
@@ -108,10 +99,7 @@ bool SGReplicator::_start(std::future<void> future_obj){
 
         return false;
     }
-    //TODO: Remove this. This is only used because we don't want to exit the program. Since replicator stuff are async and work on the background!
-    while ( (c4repl_getStatus(c4replicator_).level != kC4Stopped) && future_obj.wait_for(std::chrono::milliseconds(1)) == std::future_status::timeout){
-        this_thread::sleep_for(chrono::milliseconds(1000));
-    }
+
     return true;
 }
 
@@ -140,15 +128,6 @@ void SGReplicator::setReplicatorType(SGReplicatorConfiguration::ReplicatorType r
             break;
     }
 
-}
-
-/** SGReplicator restart.
-* @brief Restarts the replicator.
-*/
-bool SGReplicator::restart() {
-    stop();
-    start();
-    return true;
 }
 
 /** SGReplicator addChangeListener.
