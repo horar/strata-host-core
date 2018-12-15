@@ -52,7 +52,10 @@ Item {
             anchors {
                 horizontalCenter: column.horizontalCenter
             }
-            onVisibleChanged: text = root.index+1 + "/" + Help.helpObjects.length
+            onVisibleChanged: {
+                console.log("help tour")
+                text = root.index+1 + "/" +  Help.tourCount
+            }
         }
 
         Item {
@@ -113,7 +116,7 @@ Item {
                 onClicked: {
                     Help.next(root.index)
                 }
-                onVisibleChanged: text = (root.index + 1) === Help.helpObjects.length ? "End Tour" : "Next"
+                onVisibleChanged: text = (root.index + 1) === Help.tourCount ? "End Tour" : "Next"
             }
         }
     }

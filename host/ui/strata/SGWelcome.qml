@@ -5,6 +5,7 @@ import QtGraphicalEffects 1.0
 import "qrc:/statusbar-partial-views"
 import "js/navigation_control.js" as NavigationControl
 import Fonts 1.0
+import "qrc:/js/help_layout_manager.js" as Help
 
 Rectangle{
     id:container
@@ -91,6 +92,46 @@ Rectangle{
         x: (parent.width - width)/2
         y: (parent.height - height)/2
     }
+    Rectangle {
+        color: "red"
+        anchors {
+            right: container.right
+            top: container.top
+//            margins: 40
+
+        }
+        Text{
+            id: helpIcon
+
+//            anchors {
+//                right: background.right
+//                top: background.top
+//                margins: 20
+//            }
+            text: "\ue808"
+            color: helpMouse.containsMouse ? "lightgrey" : "grey"
+
+            font {
+                family: Fonts.sgicons
+                pixelSize: 40
+            }
+
+            MouseArea {
+                id: helpMouse
+                anchors {
+                    fill: helpIcon
+                }
+                onClicked: {
+
+                    Help.startHelpTour()
+                }
+                hoverEnabled: true
+            }
+        }
+    }
+
+
+
 
     Item {
         id: upperContainer
@@ -100,7 +141,7 @@ Rectangle{
             top: container.top
         }
         height: container.height * 0.5
-        z: 2
+        //   z: 2
 
         Item {
             id: userContainer
