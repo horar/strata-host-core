@@ -66,7 +66,7 @@ SGDatabaseReturnStatus SGDatabase::open() {
 
     // Configure database attributes
     // This is the default DB configuration taken from the Java bindings
-    c4db_config_.flags          = kC4DB_Create | kC4DB_AutoCompact | kC4DB_SharedKeys;
+    c4db_config_.flags          = kC4DB_Create | kC4DB_AutoCompact;
     c4db_config_.storageEngine  = kC4SQLiteStorageEngine;
     c4db_config_.versioning     = kC4RevisionTrees;
     c4db_config_.encryptionKey.algorithm    = kC4EncryptionNone;
