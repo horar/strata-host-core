@@ -95,7 +95,7 @@ Item {
                 label: "INPUT VOLTAGE"
                 value: {
                     if (portVoltage != 0)
-                        Math.round((portVoltage) *100)/100
+                        Math.round((inputVoltage) *100)/100
                       else
                         "0.00"
                 }
@@ -110,23 +110,43 @@ Item {
             }
 
             PortStatBox {
+                id:combinedInputPowerBox
 
-                property var inputVoltage: platformInterface.request_usb_power_notification.input_voltage;
-                property var inputCurrent: platformInterface.request_usb_power_notification.input_current;
-                property real inputPower: inputVoltage * inputCurrent;
-
+                property real inputVoltage: platformInterface.request_usb_power_notification.input_voltage;
+                property real inputCurrent: platformInterface.request_usb_power_notification.input_current;
                 property real port1Power:0;
+                property real port2Power:0;
 
-                onInputPowerChanged: {
-                    //only check one of the ports for power, since the input power should be the same on all
-                    //four ports.
-                    if (platformInterface.request_usb_power_notification.port ===1)
-                        port1Power = inputPower;
+                onInputCurrentChanged:{
+                    console.log("port",platformInterface.request_usb_power_notification.port,"input Current=",inputCurrent);
+                    if (platformInterface.request_usb_power_notification.port === 1){
+                        //console.log("input voltage=",inputVoltage,"input Current=",inputCurrent, "input Power=",inputPower);
+                        combinedInputPowerBox.port1Power = combinedInputPowerBox.inputVoltage * combinedInputPowerBox.inputCurrent;
+                    }
+                    else if (platformInterface.request_usb_power_notification.port === 2){
+                        combinedInputPowerBox.port2Power = combinedInputPowerBox.inputVoltage * combinedInputPowerBox.inputCurrent;
+                    }
+                    console.log("port1Power=",combinedInputPowerBox.port1Power,"port2Power=",combinedInputPowerBox.port2Power);
                 }
 
-                id:combinedInputPowerBox
+                property var deviceDisconnected: platformInterface.usb_pd_port_disconnect.connection_state
+
+                 onDeviceDisconnectedChanged:{
+
+                     if (platformInterface.usb_pd_port_disconnect.port_id === "USB_C_port_1"){
+                         if (platformInterface.usb_pd_port_disconnect.connection_state === "disconnected"){
+                             combinedInputPowerBox.port1Power = 0;
+                         }
+                     }
+                     else if (platformInterface.usb_pd_port_disconnect.port_id === "USB_C_port_2"){
+                         if (platformInterface.usb_pd_port_disconnect.connection_state === "disconnected"){
+                             combinedInputPowerBox.port2Power = 0;
+                         }
+                     }
+                }
+
                 label: "INPUT POWER"
-                value: Math.round((port1Power) *100)/100
+                value: Math.round((combinedInputPowerBox.port1Power + combinedInputPowerBox.port2Power) *100)/100
                 valueSize: 32
                 icon: "../images/icon-voltage.svg"
                 unit: "W"
