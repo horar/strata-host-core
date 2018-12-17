@@ -243,7 +243,7 @@ Item {
                     }
                 }
                 portEfficency: {
-                    var theInputPower = platformInterface.request_usb_power_notification.input_voltage * platformInterface.request_usb_power_notification.input_current;
+                    var theInputPower = platformInterface.request_usb_power_notification.input_voltage * platformInterface.request_usb_power_notification.input_current +2;//PTJ-1321 2 Watt compensation
                     var theOutputPower = platformInterface.request_usb_power_notification.output_voltage * platformInterface.request_usb_power_notification.output_current;
 
                     if (platformInterface.request_usb_power_notification.port === 1){
@@ -349,7 +349,7 @@ Item {
                     }
                 }
                 portEfficency: {
-                    var theInputPower = platformInterface.request_usb_power_notification.input_voltage * platformInterface.request_usb_power_notification.input_current;
+                    var theInputPower = platformInterface.request_usb_power_notification.input_voltage * platformInterface.request_usb_power_notification.input_current+2;//PTJ-1321 2 watt compensaton
                     var theOutputPower = platformInterface.request_usb_power_notification.output_voltage * platformInterface.request_usb_power_notification.output_current;
 
                     if (platformInterface.request_usb_power_notification.port === 2){
@@ -454,7 +454,7 @@ Item {
                     }
                 }
                 portEfficency: {
-                    var theInputPower = platformInterface.request_usb_power_notification.input_voltage * platformInterface.request_usb_power_notification.input_current;
+                    var theInputPower = platformInterface.request_usb_power_notification.input_voltage * platformInterface.request_usb_power_notification.input_current+2; //PTJ-1321 2 watt compensation
                     var theOutputPower = platformInterface.request_usb_power_notification.output_voltage * platformInterface.request_usb_power_notification.output_current;
 
                     if (platformInterface.request_usb_power_notification.port === 3){
@@ -560,7 +560,7 @@ Item {
                     }
                 }
                 portEfficency: {
-                    var theInputPower = platformInterface.request_usb_power_notification.input_voltage * platformInterface.request_usb_power_notification.input_current;
+                    var theInputPower = platformInterface.request_usb_power_notification.input_voltage * platformInterface.request_usb_power_notification.input_current + 2; //PTJ-1321 2 watt compensation
                     var theOutputPower = platformInterface.request_usb_power_notification.output_voltage * platformInterface.request_usb_power_notification.output_current;
 
                     if (platformInterface.request_usb_power_notification.port === 1){
