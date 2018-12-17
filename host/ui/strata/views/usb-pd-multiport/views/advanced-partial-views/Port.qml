@@ -414,7 +414,7 @@ Item {
             yAxisTitle: "Percent"
             xAxisTitle: "1 sec/div"
 
-            minYValue: 0                    // Default: 0
+            minYValue: 70                    // Default: 0
             maxYValue: 100                   // Default: 10
             minXValue: 0                    // Default: 0
             maxXValue: 5                    // Default: 10
