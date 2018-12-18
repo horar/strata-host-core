@@ -26,9 +26,9 @@ Rectangle {
     color: "black"
 
     Component.onCompleted: {
-        Help.registerTarget(platformControlsButton, "Displays the platform control view. Only disabled when the platform is connected", 0,"statusHelp")
-        Help.registerTarget(platformContentButton, "Displays the platform content view for selected plafform", 1,"statusHelp")
-        Help.registerTarget(cbSelectorContainer, "List of connected and previously conntected boards ", 2,"statusHelp")
+        Help.registerTarget(platformControlsButton, "Use this button to select the platform control view. This is disabled and platform content is the only available view when the selected platform is not connected", 0,"statusHelp")
+        Help.registerTarget(platformContentButton, "Use this button to select the content view for the selected platform.", 1,"statusHelp")
+        Help.registerTarget(cbSelectorContainer, "Use this drop down to select from connected and previously connected platforms. ", 2,"statusHelp")
     }
 
     Component.onDestruction: {

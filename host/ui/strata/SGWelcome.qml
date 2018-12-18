@@ -5,7 +5,6 @@ import QtGraphicalEffects 1.0
 import "qrc:/statusbar-partial-views"
 import "js/navigation_control.js" as NavigationControl
 import Fonts 1.0
-import "qrc:/js/help_layout_manager.js" as Help
 
 Rectangle{
     id:container
