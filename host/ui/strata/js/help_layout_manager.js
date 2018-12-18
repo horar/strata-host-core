@@ -5,13 +5,23 @@ var helpObjects = []
 var helpView
 var tourCount = 0
 
+/*******
+   Adding into the help tutorial API:
+   Help.registerTarget(Target, Description, Index Number, View Target)
+   Example: Help.registerTarget(startButton "this button starts the motor", 0, "motorVortexView")
+
+   Starting the tutorial when help icon is clicked API:
+   Help.startHelpTour(view Target)
+   Example:  Help.startHelpTour("motorVortexView")
+
+*******/
+
 function registerTarget(helpTarget, targetDescription, index, viewTab) {
     var component = Qt.createComponent("qrc:/statusbar-partial-views/SGPeekThroughOverlay.qml");
     var object = component.createObject(window);
 
     object.index = index
     object.description = targetDescription
-    // object.view = viewTab
 
     var helpObject = { "view": viewTab, "index": index, "target": helpTarget, "description": targetDescription, "helpObject": object }
     helpObjects.push(helpObject)
