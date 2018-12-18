@@ -22,7 +22,6 @@ Item {
            portSettings.height + portGraphs.height;
         }
 
-        //graphSelector.nothingChecked ? portSettings.height : portSettings.height + portGraphs.height
     }
 
     PortInfo {

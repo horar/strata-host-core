@@ -46,6 +46,8 @@ Item {
             label: "Current limit:"
             from:0
             to:6
+            startLabel:"0A"
+            endLabel:"6A"
             value: platformInterface.request_over_current_protection_notification.current_limit
             anchors {
                 left: parent.left
@@ -100,6 +102,8 @@ Item {
             value:platformInterface.get_cable_loss_compensation.output_current
             from:1
             to:3
+            startLabel:"1A"
+            endLabel:"3A"
             toolTipDecimalPlaces: 2
             anchors {
                 left: parent.left
@@ -138,6 +142,8 @@ Item {
             value:platformInterface.get_cable_loss_compensation.bias_voltage
             from:0
             to:2
+            startLabel:"0mV"
+            endLabel:"2mV"
             toolTipDecimalPlaces: 2
             anchors {
                 left: parent.left
