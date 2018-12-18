@@ -19,7 +19,7 @@
 enum class SERIAL_PORT_CONFIGURATION {
     STOP_BIT = 1,
     DATA_BIT = 8,
-    BAUD_RATE = 57600,
+    BAUD_RATE = 115200,
 };
 
 // Serial Port Flow Control
