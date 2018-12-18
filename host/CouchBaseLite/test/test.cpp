@@ -8,6 +8,7 @@
 #include "MutableArray.hh"
 #include "MutableDict.hh"
 #include "Doc.hh"
+#include "JSONDelta.hh"
 
 #include "SGReplicator.h"
 #include "SGDatabase.h"
@@ -17,6 +18,8 @@
 using namespace std;
 using namespace fleece;
 using namespace fleece::impl;
+using namespace std::placeholders;
+
 #define DEBUG(...) printf("TEST SGLiteCore: "); printf(__VA_ARGS__)
 
 const char* activity_level_string[] = {"Stopped","Offline","Connecting","Idle", "Busy" };
@@ -30,9 +33,24 @@ void onStatusChanged(SGReplicator::ActivityLevel level, SGReplicatorProgress pro
 void onDocumentEnded(bool pushing, std::string doc_id, std::string error_message, bool is_error,bool transient){
     DEBUG("onDocumentError: pushing: %d, Doc Id: %s, is error: %d, error message: %s, transient:%d\n", pushing, doc_id.c_str(), is_error, error_message.c_str(), transient);
 }
-void onValidate(const std::string& doc_id, const std::string& json_body){
-    DEBUG("New incoming revision: Doc Id: %s, Doc body: %s\n", doc_id.c_str(), json_body.c_str() );
-}
+
+// Mini object to show how to bind functions from another object
+class MiniHCS{
+public:
+    MiniHCS(SGDatabase *db){
+        db_ = db;
+    };
+    virtual~MiniHCS(){};
+    void onValidate(const std::string& doc_id, const std::string& json_body) {
+        printf("MiniHCS: New incoming revision: Doc Id: %s, Doc body: %s\n", doc_id.c_str(), json_body.c_str() );
+        SGDocument document(db_, doc_id);
+        printf("MiniHCS: existing revision: Doc Id: %s, Doc body: %s\n", doc_id.c_str(), document.getBody().c_str() );
+    }
+
+private:
+    SGDatabase *db_;
+};
+
 int main(){
 
     SGDatabase sgDatabase("db2");
@@ -131,7 +149,10 @@ int main(){
 
     replicator.addChangeListener(onStatusChanged);
     replicator.addDocumentEndedListener(onDocumentEnded);
-    replicator.addValidationListener(onValidate);
+
+    MiniHCS miniHCS(&sgDatabase);
+    replicator.addValidationListener( bind(&MiniHCS::onValidate, &miniHCS, _1, _2) );
+
 
     replicator.start();
 
