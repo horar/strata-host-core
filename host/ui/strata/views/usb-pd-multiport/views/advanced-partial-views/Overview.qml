@@ -228,7 +228,7 @@ Item {
                 }
                 portTemperature:{
                     if (platformInterface.request_usb_power_notification.port === 1){
-                        return Math.round(platformInterface.request_usb_power_notification.temperature * 10)/10;
+                        return (platformInterface.request_usb_power_notification.temperature).toFixed(1);
                     }
                     else{
                         return miniInfo1.portTemperature;

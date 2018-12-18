@@ -110,11 +110,11 @@ Item {
                 label: "INPUT VOLTAGE"
                 value: {
                     if (portVoltage != 0)
-                        Math.round((portVoltage) *100)/100
+                        (portVoltage).toFixed(2)
                       else
                         "0.00"
                 }
-                valueSize: 32
+                valueSize: 30
                 icon: "../images/icon-voltage.svg"
                 unit: "V"
                 anchors.top: combinedStatsBackgroundRect.bottom
@@ -170,7 +170,7 @@ Item {
                 id:combinedInputPowerBox
                 label: "INPUT POWER"
                 value: (combinedPortPower).toFixed(2);
-                valueSize: 32
+                valueSize: 30
                 icon: "../images/icon-voltage.svg"
                 unit: "W"
                 anchors.top: combinedInputVoltageBox.bottom
@@ -231,7 +231,7 @@ Item {
                 value: "200"
                 icon: "../images/icon-max.svg"
                 //portColor: root.portColor
-                valueSize: 32
+                valueSize: 30
                 unit: "W"
                 anchors.top: topBackgroundRect.bottom
                 anchors.topMargin: 20
@@ -247,7 +247,7 @@ Item {
                 value: "24"
                 icon: "../images/icon-voltage.svg"
                 //portColor: root.portColor
-                valueSize: 32
+                valueSize: 30
                 unit: "V"
                 anchors.top: maxPowerBox.bottom
                 anchors.topMargin: 20
@@ -347,7 +347,7 @@ Item {
             }
             portTemperature:{
                 if (platformInterface.request_usb_power_notification.port === 1){
-                    return Math.round(platformInterface.request_usb_power_notification.temperature*10)/10
+                    return (platformInterface.request_usb_power_notification.temperature).toFixed(1)
                 }
                 else{
                     return portInfo1.portTemperature;
