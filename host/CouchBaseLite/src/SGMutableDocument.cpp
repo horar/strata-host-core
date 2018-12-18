@@ -11,12 +11,10 @@
 #include "SGMutableDocument.h"
 #define DEBUG(...) printf("SGMutableDocument: "); printf(__VA_ARGS__)
 
-SGMutableDocument::SGMutableDocument(class SGDatabase *database, std::string docId):SGDocument(database, docId) {
-    DEBUG("Constructor\n");
-}
+SGMutableDocument::SGMutableDocument(class SGDatabase *database, std::string docId):SGDocument(database, docId) {}
 
 /** SGMutableDocument setBody.
-* @brief Given a string in json format this will convert it to fleece mutable dictionary
+* @brief Given a string in json format this will convert it to fleece mutable dictionary. true on success, false otherwise
 * @param body The reference to the string json format.
 */
 bool SGMutableDocument::setBody(const std::string &body) {
