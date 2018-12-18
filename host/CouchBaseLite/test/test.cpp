@@ -69,12 +69,17 @@ int main(){
     }
 
     SGMutableDocument newdoc(&sgDatabase, "custom_doc");
-    // This is not valid json The exception should catch it
-    newdoc.setBody("fdfd");
 
-    // This is a valid json
+    // This is not a valid json.
+    if( !newdoc.setBody("fdfd") ){
+        DEBUG("The body is not set! fdfd is not a valid json\n");
+    }
+
+    // This is a valid json.
     std::string json_data = R"foo({"name":"luay","age":100,"myobj":{"mykey":"myvalue","myarray":[1,2,3,4]} })foo";
-    newdoc.setBody(json_data);
+    if( newdoc.setBody(json_data) ){
+        DEBUG("json_data is a valid json\n");
+    }
 
     SGMutableDocument usbPDDocument(&sgDatabase, "usb-pd-document");
 
