@@ -26,7 +26,7 @@ Item {
                 width: margins.width
                 labelLeft: false
                 barWidth: margins.width
-                maximumValue: platformInterface.ac_power_supply_connection.power
+                maximumValue: 200//platformInterface.ac_power_supply_connection.power
                 //showThreshold: true
                 //thresholdValue: (.9 * platformInterface.ac_power_supply_connection.power)
 
@@ -236,7 +236,8 @@ Item {
                 }
                 outputPower: {
                     if (platformInterface.request_usb_power_notification.port === 1){
-                        return Math.round(platformInterface.request_usb_power_notification.output_voltage * platformInterface.request_usb_power_notification.output_current *100)/100
+                        var theOutputPower = Math.round(platformInterface.request_usb_power_notification.output_voltage * platformInterface.request_usb_power_notification.output_current *100)/100
+                        return theOutputPower.toFixed(2);
                     }
                     else{
                         return miniInfo1.outputPower;

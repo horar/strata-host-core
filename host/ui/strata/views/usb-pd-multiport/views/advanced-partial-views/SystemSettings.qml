@@ -149,9 +149,9 @@ Item {
                     rightMargin: 10
                 }
                 from: 30
-                to: platformInterface.ac_power_supply_connection.power
+                to: 200//platformInterface.ac_power_supply_connection.power
                 startLabel: "30W"
-                endLabel: platformInterface.ac_power_supply_connection.power+"W"
+                endLabel: "200W"//platformInterface.ac_power_supply_connection.power+"W"
                 labelTopAligned: true
                 value: currentMaxPower
 
@@ -167,7 +167,7 @@ Item {
                 infoBoxWidth: 30
                 enabled: maximumBoardPower.enabled
                 minimumValue: 30
-                maximumValue: platformInterface.ac_power_supply_connection.power
+                maximumValue: 200//platformInterface.ac_power_supply_connection.power
                 anchors {
                     verticalCenter: maximumBoardPower.verticalCenter
                     verticalCenterOffset: -7

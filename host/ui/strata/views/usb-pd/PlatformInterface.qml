@@ -31,6 +31,8 @@ Item {
     }
 
     onRequest_usb_power_notificationChanged: {
+//        console.log("port",request_usb_power_notification.port,"input current=",request_usb_power_notification.input_current);
+
 //        console.log("output voltage=",request_usb_power_notification.output_voltage,
 //                    "output current=",request_usb_power_notification.output_current,
 //                    "power=",request_usb_power_notification.output_voltage * request_usb_power_notification.output_current);

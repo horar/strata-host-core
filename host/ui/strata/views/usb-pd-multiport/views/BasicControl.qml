@@ -194,7 +194,7 @@ Item {
             height: 428 * ratioCalc
 
             property bool inputPowerConnected:  platformInterface.ac_power_supply_connection.state === "connected"
-            //property bool inputPowerConnected: true
+            visible: inputPowerConnected
 
             Rectangle{
                 id:topBackgroundRect
@@ -244,7 +244,7 @@ Item {
             PortStatBox {
                 id:voltageOutBox
                 label: "VOLTAGE OUTPUT"
-                value: "100"
+                value: "24"
                 icon: "../images/icon-voltage.svg"
                 //portColor: root.portColor
                 valueSize: 32

@@ -216,8 +216,10 @@ Item {
 
 
     property var ac_power_supply_connection:{
-        "state":"connected",  // or "disconnected"
-        "power":200          // maximum supply power in watts
+        "state":"disconnected",  // "disconnected" or "connected"
+                "verbose_name":"ON AC PS 1.0",
+                "platform_id":"SEC.2018.012.1.2.cbde0512-0e12-1111-abcd-abcd12345678",
+                "parameters":""  // valid JSON string contained within quotes. Empty string if no parametric data.
     }
 
     property var assured_power_port:{
