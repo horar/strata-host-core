@@ -401,7 +401,7 @@ Item {
                             faultListModel.remove(i);
                         }
                     }
-                    faultListModel.append({"type":"voltage", "port":0, "status":stateMessage});
+                    faultListModel.append({"type":"voltage", "portName":"0", "status":stateMessage});
 
                 }
                 else{                                       //remove input voltage message from list
@@ -420,12 +420,12 @@ Item {
                     stateMessage += " temperature is above ";
                     stateMessage += platformInterface.over_temperature_notification.maximum_temperature;
                     stateMessage += " °C";
-                    faultListModel.append({"type":"temperature", "port":platformInterface.over_temperature_notification.port, "status":stateMessage});
+                    faultListModel.append({"type":"temperature", "portName":platformInterface.over_temperature_notification.port, "status":stateMessage});
                 }
                 else{                                       //remove temp message for the correct port from list
                     for(var i = 0; i < faultListModel.count; ++i){
                         var theItem = faultListModel.get(i);
-                        if (theItem.type === "temperature" && theItem.port === platformInterface.over_temperature_notification.port){
+                        if (theItem.type === "temperature" && theItem.portName === platformInterface.over_temperature_notification.port){
                             faultListModel.remove(i);
                         }
                     }

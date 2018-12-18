@@ -611,7 +611,7 @@ Item {
                             faultListModel.remove(i);
                         }
                     }
-                    faultListModel.append({"type":"voltage", "port":0, "status":stateMessage});
+                    faultListModel.append({"type":"voltage", "port":"0", "status":stateMessage});
 
                 }
                 else{                                       //remove input voltage message from list
@@ -625,18 +625,22 @@ Item {
             }
 
             onOverTempEventChanged: {
-                if (underVoltageEvent.state === "above"){   //add temp  message to list
+                console.log("new over temp event with state",platformInterface.over_temperature_notification.state);
+                if (platformInterface.over_temperature_notification.state === "above"){   //add temp  message to list
                     stateMessage = platformInterface.over_temperature_notification.port
                     stateMessage += " temperature is above ";
                     stateMessage += platformInterface.over_temperature_notification.maximum_temperature;
                     stateMessage += " °C";
-                    faultListModel.append({"type":"temperature", "port":Number(platformInterface.over_temperature_notification.port), "status":stateMessage});
+                    faultListModel.append({"type":"temperature", "port":platformInterface.over_temperature_notification.port, "status":stateMessage});
+                    console.log("appended new temp fault on port",platformInterface.over_temperature_notification.port);
                 }
                 else{                                       //remove temp message for the correct port from list
                     for(var i = 0; i < faultListModel.count; ++i){
                         var theItem = faultListModel.get(i);
+                        console.log("checking for removal. type=",theItem.type,"port=",theItem.port);
                         if (theItem.type === "temperature" && theItem.port === platformInterface.over_temperature_notification.port){
                             faultListModel.remove(i);
+                            console.log("removed notification from list");
                         }
                     }
                 }
