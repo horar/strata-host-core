@@ -2,6 +2,7 @@ import QtQuick 2.10
 import QtQuick.Window 2.10
 import QtQuick.Controls 2.3
 import QtQuick.Layouts 1.3
+import Qt.labs.settings 1.0
 import "js/navigation_control.js" as NavigationControl
 import "qrc:/js/platform_selection.js" as PlatformSelection
 import "qrc:/js/help_layout_manager.js" as Help
@@ -63,6 +64,17 @@ Window {
         NavigationControl.removeView(statusBarContainer)
         NavigationControl.removeView(controlContainer)
         NavigationControl.removeView(contentContainer)
+    }
+
+    Settings {
+        id: mainWindowSettings
+
+        category: "MainWindow"
+
+        property alias x: mainWindow.x
+        property alias y: mainWindow.y
+        property alias width: mainWindow.width
+        property alias height: mainWindow.height
     }
 
     Column {
