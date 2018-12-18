@@ -53,8 +53,8 @@ Item {
                 horizontalCenter: column.horizontalCenter
             }
             onVisibleChanged: {
-                console.log("help tour")
-                text = root.index+1 + "/" +  Help.tourCount
+                    text = (root.index + 1) + "/" +  Help.tourCount
+
             }
         }
 

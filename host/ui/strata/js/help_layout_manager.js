@@ -72,9 +72,8 @@ function reset(viewTab) {
 
     for (var i=0; i<helpObjects.length; i++) {
         if(helpObjects[i]["view"] === viewTab) {
-            helpObjects[i]["helpObject"].destroy()
-            helpObjects[i].pop()
-
+           helpObjects[i]["helpObject"].destroy()
         }
     }
+
 }

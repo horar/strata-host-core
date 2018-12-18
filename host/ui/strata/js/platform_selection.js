@@ -37,6 +37,7 @@ function populatePlatforms(platform_list_json) {
         "SEC.2018.018.0.0" : "logic-gate", // Alpha Board
         "SEC.2018.018.1.0" : "logic-gate", // Beta Board
         "SEC.2018.001.0.0": "usb-hub"
+
     }
 
     platformListModel.clear()
