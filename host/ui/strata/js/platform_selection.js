@@ -77,7 +77,7 @@ function populatePlatforms(platform_list_json) {
             var platform_info = {
                 "text" : platform_list.list[i].verbose,
                 "verbose" : platform_list.list[i].verbose,
-                "name" : uuid_map[platformType],    //this will return the name used to bring up the UI
+                "name" : uuid_map.hasOwnProperty(platformType) ? uuid_map[platformType] : "unknown-platform",    //this will return the name used to bring up the UI
                 "connection" : platform_list.list[i].connection,
                 "uuid"  :   platform_list.list[i].uuid
             }
@@ -116,6 +116,7 @@ function populatePlatforms(platform_list_json) {
                     selectedPlatform.connection === platform_info.connection) {
                 platformListModel.currentIndex = (platformListModel.count - 1)
             }
+
         }
     }
     catch(err) {
