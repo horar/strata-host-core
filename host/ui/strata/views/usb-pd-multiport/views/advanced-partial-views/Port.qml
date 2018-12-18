@@ -14,7 +14,16 @@ Item {
     property alias enableAssuredPower: portSettings.assuredPortPowerEnabled
 
     width: parent.width
-    height: graphSelector.nothingChecked ? portSettings.height : portSettings.height + portGraphs.height
+    height: {
+        if (graphSelector.nothingChecked || !portConnected){
+            portSettings.height;
+        }
+        else if (!graphSelector.nothingChecked && portConnected){
+           portSettings.height + portGraphs.height;
+        }
+
+        //graphSelector.nothingChecked ? portSettings.height : portSettings.height + portGraphs.height
+    }
 
     PortInfo {
         id: portInfo
@@ -225,7 +234,6 @@ Item {
             right: root.right
         }
         height:250
-        //height:300
 
         SGGraph {
             id: graph1
