@@ -8,12 +8,11 @@ var tourCount = 0
 /*******
    Adding into the help tutorial API:
    Help.registerTarget(Target, Description, Index Number, View Target)
-   Example: Help.registerTarget(startButton "this button starts the motor", 0, "motorVortexView")
+   Example: Help.registerTarget(startButton "this button starts the motor", 0, "motorVortexHelp")
 
    Starting the tutorial when help icon is clicked API:
    Help.startHelpTour(view Target)
-   Example:  Help.startHelpTour("motorVortexView")
-
+   Example:  Help.startHelpTour("motorVortexHelp")
 *******/
 
 function registerTarget(helpTarget, targetDescription, index, viewTab) {
