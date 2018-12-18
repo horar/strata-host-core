@@ -11,7 +11,7 @@ Rectangle {
     property int portNumber: 1
 
     property alias advertisedVoltage: advertisedVoltageBox.value
-    property alias maxPower: maxPowerBox.value
+    property alias pdContract: pdContractBox.value
     property alias inputPower: inputPowerBox.value
     property alias outputPower: outputPowerBox.value
     property alias outputVoltage: outputVoltageBox.value
@@ -143,8 +143,8 @@ Rectangle {
                     }
 
                     PortStatBox {
-                        id:maxPowerBox
-                        label: "MAX CAPACITY"
+                        id:pdContractBox
+                        label: "PD CONTRACT"
                         //value: "100"
                         icon: "../images/icon-max.svg"
                         portColor: root.portColor
