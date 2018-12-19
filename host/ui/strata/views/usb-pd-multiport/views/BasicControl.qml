@@ -8,9 +8,17 @@ Item {
 
     property bool debugLayout: false
     property real ratioCalc: root.width / 1200
+    property real initialAspectRatio: 1200/820
 
     width: parent.width / parent.height > initialAspectRatio ? parent.height * initialAspectRatio : parent.width
     height: parent.width / parent.height < initialAspectRatio ? parent.width / initialAspectRatio : parent.height
+
+    Rectangle{
+        color:"white"
+        anchors {
+            fill: root
+        }
+    }
 
     Image {
         id: name
@@ -27,25 +35,25 @@ Item {
 
     PlugAnimation {
         id: port1Animation
-        x: 748 * ratioCalc
+        x: 898 * ratioCalc
         y: 63 * ratioCalc
     }
 
     PlugAnimation {
         id: port2Animation
-        x: 748 * ratioCalc
+        x: 898 * ratioCalc
         y: 255 * ratioCalc
     }
 
     PlugAnimation {
         id: port3Animation
-        x: 748 * ratioCalc
+        x: 898 * ratioCalc
         y: 447 * ratioCalc
     }
 
     PlugAnimation {
         id: port4Animation
-        x: 748 * ratioCalc
+        x: 898 * ratioCalc
         y: 639 * ratioCalc
     }
 
@@ -55,7 +63,8 @@ Item {
         height: root.height
         anchors {
             left: root.left
-            leftMargin: 80 * ratioCalc
+            //leftMargin: 80 * ratioCalc
+            leftMargin: 230 * ratioCalc
         }
 
         Rectangle {
@@ -352,8 +361,8 @@ Item {
                         return "—"
                     }
                     else{
-                        return "—"
-                        //return Math.round((theOutputPower/theInputPower) * 100)/100
+                        //return "—"
+                        return Math.round((theOutputPower/theInputPower) * 100)
                     }
                 }
                 else{
@@ -463,8 +472,8 @@ Item {
                         return "—"
                     }
                     else{
-                        return "—"
-                        //return Math.round((theOutputPower/theInputPower) *100)/100
+                        //return "—"
+                        return Math.round((theOutputPower/theInputPower) *100)
                     }
                 }
                 else{
@@ -574,8 +583,8 @@ Item {
                         return "—"
                     }
                     else{
-                        //return Math.round((theOutputPower/theInputPower) *100)/100
-                        return "—"
+                        return Math.round((theOutputPower/theInputPower) *100)
+                        //return "—"
                     }
                 }
                 else{
@@ -684,8 +693,8 @@ Item {
                         return "—"
                     }
                     else{
-                        //return Math.round((theOutputPower/theInputPower) *100)/100
-                        return "—"
+                        return Math.round((theOutputPower/theInputPower) *100)
+                        //return "—"
                     }
                 else{
                     return portInfo4.efficency;

@@ -167,7 +167,7 @@ Item {
         "enabled":false                     // or false
     }
 
-    property var set_cable_loss_compensation:{
+    property var get_cable_loss_compensation:{
         "port":0,                           // Same port as in the command above.
         "output_current":0,                 // Amps
         "bias_voltage":0,                   // Volts

@@ -31,10 +31,10 @@ A step by step series of examples that tell you have to get a development env ru
 
 Say what the step will be
 
-Inside spyglass,
+Inside spyglass folder,
 
 ```
-cd host/hcs2
+cd host
 mkdir build
 cd build
 ```
@@ -62,18 +62,18 @@ make
 
 ####Linux and MAC
 
-Before deploying, user needs to have a config file that sets the destination socket and cloud bucket that HCS needs to communicate with. The template for the config file is available in "host/hcs2/files/conf". Create a copy of this config file.
+Before deploying, user needs to have a config file that sets the destination socket and cloud bucket that HCS needs to communicate with. The template for the config file is available in "host/apps/hcs2/files/conf". Create a copy of this config file.
 
 ```
-cd host/hcs2/files/conf
+cd host/apps/hcs2/files/conf
 cp host_controller_service.config_template host_controller_service.config
 ```
 
 Now deploy in the terminal,
 
 ```
-cd host/hcs2/build/
-sudo ./hcs -f ../files/conf/host_controller_service.config
+cd host/build/
+sudo ./apps/hcs2/hcs2 -f ../apps/hcs2/files/conf/host_controller_service.config
 ```
 
 ## Built With

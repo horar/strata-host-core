@@ -1,7 +1,6 @@
 <RCC>
     <qresource prefix="/">
         <file>main.qml</file>
-        <file>main.cpp</file>
         <file>views/bubu/Control.qml</file>
         <file>SGLoginScreen.qml</file>
         <file>SGDetectingPlatform.qml</file>
@@ -11,13 +10,9 @@
         <file>views/bubu/Content.qml</file>
         <file>views/motor-vortex/Content.qml</file>
         <file>SGWelcome.qml</file>
-        <file>include/DocumentManager.h</file>
         <file>js/login.js</file>
         <file>js/navigation_control.js</file>
         <file>js/restclient.js</file>
-        <file>PlatformInterface/core/CoreInterface.cpp</file>
-        <file>PlatformInterface/core/CoreInterface.h</file>
-        <file>source/DocumentManager.cpp</file>
         <file>views/motor-vortex/PageComingSoon.qml</file>
         <file>views/motor-vortex/PageLayout.qml</file>
         <file>views/motor-vortex/PageSchematic.qml</file>
@@ -346,7 +341,6 @@
         <file>views/usb-hub/Content.qml</file>
         <file>views/usb-hub/Control.qml</file>
         <file>views/usb-hub/PlatformInterface.qml</file>
-        <file>views/usb-hub/views/AdvancedControl.qml</file>
         <file>views/usb-hub/views/BasicControl.qml</file>
         <file>views/usb-hub/views/SystemControl.qml</file>
         <file>views/usb-hub/views/images/FourPortWireframeAdvancedView.png</file>
@@ -448,5 +442,15 @@
         <file>views/SGPdfViewer/SGPdfViewer.qml</file>
         <file>statusbar-partial-views/SGPrivacyPolicy.qml</file>
         <file>statusbar-partial-views/SGGreenButton.qml</file>
+        <file>js/help_layout_manager.js</file>
+        <file>statusbar-partial-views/SGPeekThroughOverlay.qml</file>
+        <file>statusbar-partial-views/SGTourControl.qml</file>
+        <file>statusbar-partial-views/SGToolTipPopup.qml</file>
+        <file>statusbar-partial-views/images/corner-fade.png</file>
+        <file>statusbar-partial-views/images/side-fade.png</file>
+        <file>statusbar-partial-views/images/top-fade.png</file>
+        <file>views/unknown-platform/Content.qml</file>
+        <file>views/unknown-platform/Control.qml</file>
+        <file>views/unknown-platform/Warning.qml</file>
     </qresource>
 </RCC>

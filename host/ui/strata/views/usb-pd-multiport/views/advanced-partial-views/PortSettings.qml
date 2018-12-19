@@ -26,7 +26,7 @@ Item {
         }
 
         Button{
-            //a rectangle to cover the max power popup when it's disabled, so we can still show a
+            //a rectangle to cover the assured power switch when it's disabled, so we can still show a
             //tooltip explaining *why* its disabled.
             id:toolTipMask
             hoverEnabled: true
@@ -37,16 +37,24 @@ Item {
             }
 
             anchors {
-                left: maxPowerOutput.left
+                left: assuredPortSwitch.left
                 top: assuredPortSwitch.top
-                bottom:maxPowerOutput.bottom
-                right: maxPowerOutput.right
+                bottom:assuredPortSwitch.bottom
+                right: assuredPortSwitch.right
             }
 
             ToolTip{
                 id:maxPowerToolTip
                 visible:toolTipMask.hovered
-                text:"Port Power can not be changed when devices are connected"
+                //text:"Port Power can not be changed when devices are connected"
+                text:{
+                    if (portNumber === 1){
+                        return "Assured Port Power can not be changed when devices are connected"
+                    }
+                    else {
+                        return "Assured Port Power can not be changed for this port"
+                    }
+                }
                 delay:500
                 timeout:2000
 
@@ -78,13 +86,13 @@ Item {
                         port2connected = true;
                     }
                 }
-                else if (platformInterface.usb_pd_port_connect.port_id === 3){
-                    if (platformInterface.usb_pd_port_connect.connection_state === "USB_C_port_3"){
+                else if (platformInterface.usb_pd_port_connect.port_id === "USB_C_port_3"){
+                    if (platformInterface.usb_pd_port_connect.connection_state === "connected"){
                         port3connected = true;
                     }
                 }
-                else if (platformInterface.usb_pd_port_connect.port_id === 4){
-                    if (platformInterface.usb_pd_port_connect.connection_state === "USB_C_port_4"){
+                else if (platformInterface.usb_pd_port_connect.port_id === "USB_C_port_4"){
+                    if (platformInterface.usb_pd_port_connect.connection_state === "connected"){
                         port4connected = true;
                     }
                 }
@@ -135,6 +143,39 @@ Item {
             onToggled: platformInterface.set_assured_power_port.update(checked, portNumber)  //we're only allowing port 1 to be assured            
         }
 
+
+        Button{
+            //a rectangle to cover the assured power switch when it's disabled, so we can still show a
+            //tooltip explaining *why* its disabled.
+            id:powerPopupToolTipMask
+            hoverEnabled: true
+            z:1
+            visible:(assuredPortSwitch.checked && portNumber === 1)
+            background: Rectangle{
+                color:"transparent"
+            }
+
+            anchors {
+                left: maxPowerOutput.left
+                top: maxPowerOutput.top
+                bottom:maxPowerOutput.bottom
+                right: maxPowerOutput.right
+            }
+
+            ToolTip{
+                id:powerPopupToolTip
+                visible:powerPopupToolTipMask.hovered
+                text: "Maximum Port Power can not be changed while Assured Port Power is active"
+                delay:500
+                timeout:2000
+
+                background: Rectangle {
+                    color: "#eee"
+                    radius: 2
+                }
+            }
+        }
+
         SGComboBox {
 
             property variant maxPowerOptions: ["15","27", "36", "45","60","100"]
@@ -143,43 +184,26 @@ Item {
             //limit the options for power usage to be less than the max power allocated for this port
             onMaxPowerChanged:{
                 if (platformInterface.usb_pd_maximum_power.port === portNumber){
-                    if (maxPower >= 100){
-                        maxPowerOptions = ["15","27", "36", "45","60","100"];
-                    }
-                    else if (maxPower >=60){
-                        maxPowerOptions = ["15","27", "36", "45","60"];
-                    }
-                    else if (maxPower >=45){
-                        maxPowerOptions = ["15","27", "36", "45"];
-                    }
-                    else if (maxPower >=36){
-                        maxPowerOptions = ["15","27", "36"];
-                    }
-                    else if (maxPower >=27){
-                        maxPowerOptions = ["15","27"];
-                    }
-                    else if (maxPower >=15){
-                        maxPowerOptions = ["15"];
-                    }
-                    else{
-                        maxPowerOptions = [];
-                    }
-
-                    console.log("got a new commanded max power for port",platformInterface.usb_pd_maximum_power.port)
+                    //console.log("got a new commanded max power for port",platformInterface.usb_pd_maximum_power.port)
                     maxPowerOutput.currentIndex = maxPowerOutput.comboBox.find( parseInt (platformInterface.usb_pd_maximum_power.commanded_max_power))
                 }
             }
 
             id: maxPowerOutput
-            label: "Max Power Output:"
+            label: "Maximum Power Output:"
             model: maxPowerOptions
-            enabled: !assuredPortSwitch.checked
-            textColor: !assuredPortSwitch.checked ? "black" : "grey"
+            enabled:{
+                if (portNumber === 1 && (assuredPortSwitch.checked || !assuredPortSwitch.enabled))
+                    return false;
+                else
+                    return true
+            }
+            textColor: enabled ? "black" : "grey"
             comboBoxHeight: 25
             comboBoxWidth: 60
             anchors {
                 left: parent.left
-                leftMargin: 48
+                leftMargin: 10
                 top: assuredPortSwitch.bottom
                 topMargin: 10
             }
@@ -203,6 +227,17 @@ Item {
 //            }
         }
 
+        Text{
+            id: maxPowerUnits
+            text: "W"
+            color: maxPowerOutput.enabled ? "black" : "grey"
+            anchors {
+                left: maxPowerOutput.right
+                leftMargin: 5
+                verticalCenter: maxPowerOutput.verticalCenter
+            }
+        }
+
 
 
         SGSlider {
@@ -211,10 +246,12 @@ Item {
             value: platformInterface.request_over_current_protection_notification.current_limit
             labelTopAligned: true
             startLabel: "0A"
-            endLabel: "100A"
+            endLabel: "6A"
+            from: 0
+            to: 6
             anchors {
                 left: parent.left
-                leftMargin: 86
+                leftMargin: 80
                 top: maxPowerOutput.bottom
                 topMargin: 10
                 right: currentLimitInput.left
@@ -230,7 +267,7 @@ Item {
             showButton: false
             infoBoxWidth: 30
             minimumValue: 0
-            maximumValue: 100
+            maximumValue: 6
             anchors {
                 verticalCenter: currentLimit.verticalCenter
                 verticalCenterOffset: -7
@@ -262,7 +299,7 @@ Item {
 
         Text {
             id: cableCompensation
-            text: "<b>Cable Compensation:</b>"
+            text: "<b>Cable Compensation</b>"
             font {
                 pixelSize: 16
             }
@@ -275,12 +312,14 @@ Item {
         SGSlider {
             id: increment
             label: "For every increment of:"
-            value:platformInterface.set_cable_loss_compensation.output_current
-            from:0
-            to:3
+            value:platformInterface.get_cable_loss_compensation.output_current
+            from:.25
+            to:1
+            stepSize: .005
+            toolTipDecimalPlaces: 2
             labelTopAligned: true
-            startLabel: "0A"
-            endLabel: "3A"
+            startLabel: ".25A"
+            endLabel: "1A"
             anchors {
                 left: parent.left
                 leftMargin: 25
@@ -290,10 +329,10 @@ Item {
                 rightMargin: 10
             }
             onMoved:{
-                console.log("sending values from increment slider:",portNumber, increment.value, platformInterface.set_cable_loss_compensation.bias_voltage);
+                console.log("sending values from increment slider:",portNumber, increment.value, platformInterface.get_cable_loss_compensation.bias_voltage);
                 platformInterface.set_cable_compensation.update(portNumber,
                                                                      value,
-                                                                     platformInterface.set_cable_loss_compensation.bias_voltage)
+                                                                     platformInterface.get_cable_loss_compensation.bias_voltage)
             }
 
         }
@@ -311,12 +350,12 @@ Item {
                 rightMargin: 5
             }
 
-            value: platformInterface.set_cable_loss_compensation.output_current.toFixed(1)
+            value: platformInterface.get_cable_loss_compensation.output_current.toFixed(1)
             onApplied:{
                 //console.log("sending values from increment textbox:",portNumber, incrementInput.floatValue, platformInterface.set_cable_loss_compensation.bias_voltage);
                 platformInterface.set_cable_loss_compensation.update(portNumber,
                            incrementInput.floatValue,
-                           platformInterface.set_cable_loss_compensation.bias_voltage)
+                           platformInterface.get_cable_loss_compensation.bias_voltage)
                     }
         }
 
@@ -330,14 +369,16 @@ Item {
         }
 
         SGSlider {
+            //N.B. values to and from the platform are in volts, but values displayed are in mV
             id: bias
             label: "Bias output by:"
-            value:platformInterface.set_cable_loss_compensation.bias_voltage
+            value:platformInterface.get_cable_loss_compensation.bias_voltage * 1000
             from:0
-            to:2
+            to:200
+            stepSize: 10
             labelTopAligned: true
             startLabel: "0mV"
-            endLabel: "2mV"
+            endLabel: "200mV"
             anchors {
                 left: parent.left
                 leftMargin: 75
@@ -348,16 +389,17 @@ Item {
             }
             onMoved: {
                 platformInterface.set_cable_compensation.update(portNumber,
-                                                                     platformInterface.set_cable_loss_compensation.output_current,
-                                                                     value)
+                                                                     platformInterface.get_cable_loss_compensation.output_current,
+                                                                     value/1000)
             }
 
         }
 
         SGSubmitInfoBox {
+            //N.B.  values to and from the platform are in volts, but values displayed are in mV
             id: biasInput
             showButton: false
-            infoBoxWidth: 30
+            infoBoxWidth: 35
             minimumValue: 0
             maximumValue: 2
             anchors {
@@ -367,10 +409,10 @@ Item {
                 rightMargin: 5
             }
 
-            value: platformInterface.set_cable_loss_compensation.bias_voltage.toFixed(1)
+            value: platformInterface.get_cable_loss_compensation.bias_voltage * 1000
             onApplied: platformInterface.set_cable_loss_compensation.update(portNumber,
-                                                                            platformInterface.set_cable_loss_compensation.output_current,
-                                                                            biasInput.floatValue)
+                                                                            platformInterface.get_cable_loss_compensation.output_current,
+                                                                            biasInput.floatValue/1000)
         }
 
         Text{
@@ -421,9 +463,11 @@ Item {
 
             onSourceCapabilitiesChanged:{
 
+
                 //the strip's first child is the Grid layout. The children of that layout are the buttons in
                 //question. This makes accessing the buttons a little bit cumbersome since they're loaded dynamically.
                 if (platformInterface.usb_pd_advertised_voltages_notification.port === portNumber){
+
                     //console.log("updating advertised voltages for port ",portNumber)
                     //disable all the possibilities
                     faultProtectionButtonStrip.buttonList[0].children[6].enabled = false;

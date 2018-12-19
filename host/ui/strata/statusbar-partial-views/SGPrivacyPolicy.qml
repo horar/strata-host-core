@@ -6,9 +6,6 @@ import QtWebEngine 1.6
 
 Item {
     id: root
-    anchors {
-        fill: profileStack
-    }
     clip: true
 
     Item {

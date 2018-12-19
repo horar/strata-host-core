@@ -13,8 +13,12 @@ Item {
         id: platformInterface
     }
 
+    property bool basicControlIsVisible: true
+    property bool advancedControlIsVisible: false
+
     TabBar {
         id: navTabs
+
         anchors {
             top: controlView.top
             left: controlView.left
@@ -25,9 +29,22 @@ Item {
             id: basicButton
             text: qsTr("Basic")
             onClicked: {
-                basicControl.visible = true
-                advancedControl.visible = false
-                systemControl.visible = false;
+                //from advanced
+                if (advancedControlIsVisible){
+                    //console.log("going to basic from advanced")
+                    basicControl.transitionToBasicView();
+                    basicControlIsVisible = true;
+                    advancedControlIsVisible = false;
+                }
+                //from system control
+                else if (systemControl.visible){
+                    systemControl.visible = false;
+                    basicControl.visible = true;
+                    if (!basicControlIsVisible){
+                        basicControl.switchToBasicView();
+                    }
+                    basicControlIsVisible = true;
+                }
             }
         }
 
@@ -35,10 +52,21 @@ Item {
             id: advancedButton
             text: qsTr("Advanced")
             onClicked: {
-                basicControl.transitionToAdvancedView()
-                //basicControl.visible = false
-                //advancedControl.visible = true
-                systemControl.visible = false;
+                if (basicControlIsVisible){
+                    //console.log("going to advanced from basic")
+                    basicControl.transitionToAdvancedView();
+                    basicControlIsVisible = false;
+                    advancedControlIsVisible = true;
+                }
+                //from system control
+                else if (systemControl.visible){
+                    systemControl.visible = false;
+                    basicControl.visible = true
+                    if (!advancedControlIsVisible){
+                        basicControl.switchToAdvancedView()
+                    }
+                    advancedControlIsVisible = true
+                }
             }
         }
 
@@ -47,7 +75,9 @@ Item {
             text: qsTr("System")
             onClicked: {
                 basicControl.visible = false
-                advancedControl.visible = false
+                //advancedControl.visible = false
+                basicControlIsVisible = false;
+                advancedControlIsVisible = false;
                 systemControl.visible = true;
             }
         }
@@ -68,12 +98,6 @@ Item {
             property real initialAspectRatio
         }
 
-        AdvancedControl {
-            id: advancedControl
-            visible: false
-            property real initialAspectRatio
-        }
-
         SystemControl{
             id: systemControl
             visible: false
@@ -82,7 +106,7 @@ Item {
     }
 
     Component.onCompleted: {
-        advancedControl.initialAspectRatio = basicControl.initialAspectRatio = controlContainer.width / controlContainer.height
+        basicControl.initialAspectRatio = controlContainer.width / controlContainer.height
 
         console.log("Requesting platform Refresh")
         platformInterface.refresh.send() //ask the platform for all the current values

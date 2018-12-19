@@ -2,9 +2,11 @@ import QtQuick 2.9
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 1.4
 import "qrc:/views/logic-gate/sgwidgets"
+import "qrc:/js/help_layout_manager.js" as Help
 
 Rectangle {
     id: container
+
     property string gateImageSource
     property string value_A: "A"
     property string value_B: "B"
@@ -37,6 +39,10 @@ Rectangle {
 
     Component.onCompleted: {
         resetToIndex0();
+        Help.registerTarget(thirdInput, "The gate outputs will automatically match the inputs for a given logic function and are also represented on the board by the green LEDs.", 4)
+        Help.registerTarget(inputAToggleContainer, "The inputs can be toggled on or off and are also represented on the board by blue LEDs.", 3)
+        Help.registerTarget(logicSelection, "Use these buttons to select which logic function you want to run.", 1)
+        Help.registerTarget(gatesImage, "The image displayed represents the logic gate, its input controls and its outputs", 2)
     }
 
     anchors {
@@ -119,7 +125,6 @@ Rectangle {
             sgStatusLightInputB.status = "green"
         }
         else {
-//            console.log("switch 1 is off")
             inputTwoToggle.checked = false
             sgStatusLightInputB.status = "off"
         }
@@ -132,7 +137,6 @@ Rectangle {
             inputOneToggle.checked = true
         }
         else {
-//            console.log("switch 2 is off")
             inputOneToggle.checked = false
         }
     }
@@ -146,10 +150,9 @@ Rectangle {
         else sgStatusLight.status = "off"
     }
 
-     // For the Selector LED Input 3
+    // For the Selector LED Input 3
     property var valueC: value_CNoti
     onValueCChanged: {
-//        console.log("change in c")
         if(valueC === 1) {
             sgStatusLightTwo.status = "green"
             toggleSwitch1.checked = true
@@ -158,12 +161,6 @@ Rectangle {
             sgStatusLightTwo.status = "off"
             toggleSwitch1.checked = false
         }
-    }
-
-    function read_state() {
-//        console.log("inread")
-        platformInterface.read_io_97.update();
-        platformInterface.read_io_97.show();
     }
 
     SGSegmentedButtonStrip {
@@ -371,34 +368,28 @@ Rectangle {
                     if(inputOneText.text === "A") {
                         if(inputOneToggle.checked)  {
                             platformInterface.write_io_97.update(1, platformInterface.nl7sz97_io_state.b, platformInterface.nl7sz97_io_state.c)
-                            platformInterface.write_io_97.show()
                         }
                         else {
                             platformInterface.write_io_97.update(0,platformInterface.nl7sz97_io_state.b, platformInterface.nl7sz97_io_state.c)
-                            platformInterface.write_io_97.show()
                         }
                     }
 
                     else if(inputOneText.text === "B") {
                         if(inputOneToggle.checked)  {
                             platformInterface.write_io_97.update(platformInterface.nl7sz97_io_state.a, 1 , platformInterface.nl7sz97_io_state.c)
-                            platformInterface.write_io_97.show()
                         }
                         else {
                             platformInterface.write_io_97.update(platformInterface.nl7sz97_io_state.a, 0 , platformInterface.nl7sz97_io_state.c)
-                            platformInterface.write_io_97.show()
                         }
                     }
 
                     else if(inputOneText.text === "C") {
                         if(inputOneToggle.checked)  {
                             platformInterface.write_io_97.update( platformInterface.nl7sz97_io_state.a, platformInterface.nl7sz97_io_state.b, 1)
-                            platformInterface.write_io_97.show()
                         }
                         else {
                             platformInterface.write_io_97.update(platformInterface.nl7sz97_io_state.a, platformInterface.nl7sz97_io_state.b, 0)
-                            platformInterface.write_io_97.show()
-                       }
+                        }
                     }
                 }
             }
@@ -437,33 +428,27 @@ Rectangle {
                     if(inputTwoText.text === "A") {
                         if(inputTwoToggle.checked)  {
                             platformInterface.write_io_97.update(1, platformInterface.nl7sz97_io_state.b, platformInterface.nl7sz97_io_state.c)
-                            platformInterface.write_io_97.show()
                         }
                         else {
                             platformInterface.write_io_97.update(0,platformInterface.nl7sz97_io_state.b, platformInterface.nl7sz97_io_state.c)
-                            platformInterface.write_io_97.show()
                         }
                     }
 
                     else if(inputTwoText.text === "B") {
                         if(inputTwoToggle.checked)  {
                             platformInterface.write_io_97.update(platformInterface.nl7sz97_io_state.a, 1,platformInterface.nl7sz97_io_state.c)
-                            platformInterface.write_io_97.show()
                         }
                         else {
                             platformInterface.write_io_97.update(platformInterface.nl7sz97_io_state.a, 0,platformInterface.nl7sz97_io_state.c)
-                            platformInterface.write_io_97.show()
                         }
                     }
 
                     else if(inputTwoText.text === "C") {
                         if(inputTwoToggle.checked)  {
                             platformInterface.write_io_97.update(platformInterface.nl7sz97_io_state.a,platformInterface.nl7sz97_io_state.b,1)
-                            platformInterface.write_io_97.show()
                         }
                         else {
                             platformInterface.write_io_97.update(platformInterface.nl7sz97_io_state.a, platformInterface.nl7sz97_io_state.b,0)
-                            platformInterface.write_io_97.show()
                         }
                     }
                 }
@@ -562,34 +547,27 @@ Rectangle {
                     if(inputThirdText.text === "A") {
                         if(toggleSwitch1.checked)  {
                             platformInterface.write_io_97.update(1, platformInterface.nl7sz97_io_state.b, platformInterface.nl7sz97_io_state.c)
-                            platformInterface.write_io_97.show()
                         }
                         else {
                             platformInterface.write_io_97.update(0,platformInterface.nl7sz97_io_state.b, platformInterface.nl7sz97_io_state.c)
-                            platformInterface.write_io_97.show()
                         }
                     }
 
                     else if(inputThirdText.text === "B") {
                         if(toggleSwitch1.checked)  {
                             platformInterface.write_io_97.update( platformInterface.nl7sz97_io_state.a, 1, platformInterface.nl7sz97_io_state.c)
-                            platformInterface.write_io_97.show()
                         }
                         else {
                             platformInterface.write_io_97.update( platformInterface.nl7sz97_io_state.a, 0, platformInterface.nl7sz97_io_state.c)
-                            platformInterface.write_io_97.show()
                         }
                     }
 
                     else if(inputThirdText.text === "C") {
                         if(toggleSwitch1.checked)  {
-
                             platformInterface.write_io_97.update( platformInterface.nl7sz97_io_state.a, platformInterface.nl7sz97_io_state.b, 1)
-                            platformInterface.write_io_97.show()
                         }
                         else {
                             platformInterface.write_io_97.update(platformInterface.nl7sz97_io_state.a, platformInterface.nl7sz97_io_state.b,0)
-                            platformInterface.write_io_97.show()
                         }
                     }
                 }
@@ -599,11 +577,5 @@ Rectangle {
         }
     }
 }
-
-
-
-
-
-
 
 

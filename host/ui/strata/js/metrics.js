@@ -125,6 +125,6 @@ function sendMetricsToCloud(page_name){
         console.log("Post response: ",JSON.stringify(res))
     },function(err){
         console.log("Post error: ", JSON.stringify(err))
-    });
+    }, undefined);
     timeSinceLastViewChanged = new Date();
 }

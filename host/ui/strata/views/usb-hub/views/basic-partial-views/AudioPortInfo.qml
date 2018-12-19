@@ -6,12 +6,12 @@ import "qrc:/views/usb-pd-multiport/sgwidgets"
 Rectangle {
     id: root
 
-    property bool portConnected: true
+    property bool portConnected: false
     property color portColor: "#30a2db"
     property int portNumber: 1
     property alias portName: portTitle.text
 
-    property int basicTitleBackgroundHeight: (2*root.height)/16;
+    property int basicTitleBackgroundHeight: 50//(2*root.height)/16;
     property int advancedTitleBackgroundHeight: advancedAudioPortHeight/4
     signal showGraph()
 
@@ -73,8 +73,34 @@ Rectangle {
             to:1
             duration: tabTransitionTime
         }
+    }
 
+    function transitionToBasicView(){
+        portToBasic.start()
+    }
 
+    ParallelAnimation{
+        id: portToBasic
+        running: false
+
+        PropertyAnimation{
+            target:titleBackground
+            property: "height"
+            to:basicTitleBackgroundHeight
+            duration: tabTransitionTime
+        }
+        PropertyAnimation{
+            target:volumneText
+            property: "opacity"
+            to:0
+            duration: tabTransitionTime
+        }
+        PropertyAnimation{
+            target:volumeSlider
+            property: "opacity"
+            to:0
+            duration: tabTransitionTime
+        }
     }
 
     Timer{
@@ -100,6 +126,7 @@ Rectangle {
         anchors.rightMargin: 1
         height:basicTitleBackgroundHeight
         radius:5
+        z:1
 
         Rectangle{
             id:squareBottomBackground
@@ -117,7 +144,7 @@ Rectangle {
             anchors.horizontalCenter: titleBackground.horizontalCenter
             anchors.verticalCenter: titleBackground.verticalCenter
             font {
-                pixelSize: 20
+                pixelSize: 28
             }
             anchors {
                 verticalCenter: statsContainer.verticalCenter
@@ -165,6 +192,7 @@ Rectangle {
     Rectangle {
         id: connectionContainer
         opacity: 1
+        z:1
 
         anchors {
             top:titleBackground.bottom

@@ -5,9 +5,6 @@ import "component_source.js" as ComponentSource
 
 Item {
     id: root
-    anchors {
-        fill: parent
-    }
 
     signal update()  // Selected mosfets in comboboxes aren't set until very late in loading, so update is signaled when this happens, otherwise many of the properties below are undefined
 
