@@ -243,7 +243,15 @@ Item {
         SGSlider {
             id: currentLimit
             label: "Current limit:"
-            value: platformInterface.request_over_current_protection_notification.current_limit
+            value: {
+                if (platformInterface.request_over_current_protection_notification.port === portNumber){
+                    return platformInterface.request_over_current_protection_notification.current_limit;
+                }
+                else{
+                    return currentLimit.value;
+                }
+
+            }
             labelTopAligned: true
             startLabel: "0A"
             endLabel: "6A"
@@ -275,7 +283,14 @@ Item {
                 rightMargin: 5
             }
 
-            value: platformInterface.request_over_current_protection_notification.current_limit.toFixed(0)
+            value:{
+               if (platformInterface.request_over_current_protection_notification.port === portNumber){
+                   return platformInterface.request_over_current_protection_notification.current_limit.toFixed(0)
+                }
+                else{
+                   return currentLimit.value;
+                 }
+            }
             onApplied: platformInterface.set_over_current_protection.update(portNumber, intValue)
 
         }
@@ -312,7 +327,14 @@ Item {
         SGSlider {
             id: increment
             label: "For every increment of:"
-            value:platformInterface.get_cable_loss_compensation.output_current
+            value:{
+                if (platformInterface.get_cable_loss_compensation.port === portNumber){
+                    return platformInterface.get_cable_loss_compensation.output_current;
+                }
+                else{
+                    return increment.value
+                }
+            }
             from:.25
             to:1
             stepSize: .005
@@ -350,7 +372,14 @@ Item {
                 rightMargin: 5
             }
 
-            value: platformInterface.get_cable_loss_compensation.output_current.toFixed(1)
+            value:{
+                if (platformInterface.get_cable_loss_compensation.port === portNumber){
+                      return platformInterface.get_cable_loss_compensation.output_current.toFixed(1)
+                  }
+                  else{
+                      return increment.value
+                  }
+            }
             onApplied:{
                 //console.log("sending values from increment textbox:",portNumber, incrementInput.floatValue, platformInterface.set_cable_loss_compensation.bias_voltage);
                 platformInterface.set_cable_compensation.update(portNumber,
@@ -372,7 +401,14 @@ Item {
             //N.B. values to and from the platform are in volts, but values displayed are in mV
             id: bias
             label: "Bias output by:"
-            value:platformInterface.get_cable_loss_compensation.bias_voltage * 1000
+            value:{
+                if (platformInterface.get_cable_loss_compensation.port === portNumber){
+                    return platformInterface.get_cable_loss_compensation.bias_voltage * 1000
+                }
+                else{
+                    return bias.value
+                }
+            }
             from:0
             to:200
             stepSize: 10
@@ -409,7 +445,14 @@ Item {
                 rightMargin: 5
             }
 
-            value: platformInterface.get_cable_loss_compensation.bias_voltage * 1000
+            value:{
+                if (platformInterface.get_cable_loss_compensation.port === portNumber){
+                    return platformInterface.get_cable_loss_compensation.bias_voltage * 1000
+                }
+                else{
+                    return bias.value
+                }
+            }
             onApplied: platformInterface.set_cable_compensation.update(portNumber,
                                     platformInterface.get_cable_loss_compensation.output_current,
                                     biasInput.floatValue/1000)
