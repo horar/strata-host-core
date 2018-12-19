@@ -2,8 +2,22 @@
 
 var window
 var helpObjects = []
+var helpView
+var tourCount = 0
 
-function registerTarget( helpTarget, targetDescription, index) {
+
+/*******
+   Adding into the help tutorial API:
+   Help.registerTarget(Target, Description, Index Number, View Target)
+   Example: Help.registerTarget(startButton "this button starts the motor", 0, "motorVortexHelp")
+
+   Starting the tutorial when help icon is clicked API:
+   Help.startHelpTour(view Target)
+   Example:  Help.startHelpTour("motorVortexHelp")
+*******/
+
+function registerTarget(helpTarget, targetDescription, index, viewTab) {
+
     var component = Qt.createComponent("qrc:/statusbar-partial-views/SGPeekThroughOverlay.qml");
     var object = component.createObject(window);
 
@@ -11,8 +25,7 @@ function registerTarget( helpTarget, targetDescription, index) {
     object.description = targetDescription
 
 
-
-    var helpObject = { "index": index, "target": helpTarget, "description": targetDescription, "helpObject": object }
+    var helpObject = { "view": viewTab, "index": index, "target": helpTarget, "description": targetDescription, "helpObject": object }
     helpObjects.push(helpObject)
 
 }
@@ -27,9 +40,9 @@ function refreshView (i) {
 
 function next(currentIndex) {
     for (var i = 0; i < helpObjects.length; i++){
-        if (helpObjects[i]["index"] === currentIndex) {
+        if (helpObjects[i]["index"] === currentIndex && helpView === helpObjects[i]["view"]) {
             helpObjects[i]["helpObject"].visible = false
-        } else if (helpObjects[i]["index"] === currentIndex+1) {
+        } else if (helpObjects[i]["index"] === currentIndex+1 && helpView === helpObjects[i]["view"]) {
             refreshView(i)
             helpObjects[i]["helpObject"].visible = true
         }
@@ -39,9 +52,9 @@ function next(currentIndex) {
 function prev(currentIndex) {
     if (currentIndex > 0) {
         for (var i = 0; i < helpObjects.length; i++){
-            if (helpObjects[i]["index"] === currentIndex) {
+            if (helpObjects[i]["index"] === currentIndex && helpView === helpObjects[i]["view"]) {
                 helpObjects[i]["helpObject"].visible = false
-            } else if (helpObjects[i]["index"] === currentIndex-1) {
+            } else if (helpObjects[i]["index"] === currentIndex-1 && helpView === helpObjects[i]["view"]) {
                 refreshView(i)
                 helpObjects[i]["helpObject"].visible = true
             }
@@ -49,19 +62,32 @@ function prev(currentIndex) {
     }
 }
 
-function startHelpTour() {
+function startHelpTour(viewTab) {
+    helpView = viewTab
+    var max = 0
+    var startIndex
     for (var i = 0; i < helpObjects.length; i++){
-        if (helpObjects[i]["index"] === 0 )  {
-            refreshView(i)
-            helpObjects[i]["helpObject"].visible = true
+
+        if (helpObjects[i]["index"] === 0 && helpObjects[i]["view"] === viewTab ) {
+            startIndex = i
+        }
+        if(helpObjects[i]["view"] === viewTab) {
+            if(helpObjects[i]["index"] > max) {
+                max = helpObjects[i]["index"]
+            }
         }
     }
+    tourCount = max + 1
+    refreshView(startIndex)
+    helpObjects[startIndex]["helpObject"].visible = true
 }
 
-function reset() {
-    console.log("in reset")
+
+function reset(viewTab) {
     for (var i=0; i<helpObjects.length; i++) {
-        helpObjects[i]["helpObject"].destroy()
+        if(helpObjects[i]["view"] === viewTab) {
+           helpObjects[i]["helpObject"].destroy()
+        }
     }
-    helpObjects = []
+
 }

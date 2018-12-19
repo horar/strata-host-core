@@ -21,7 +21,7 @@ function populatePlatforms(platform_list_json) {
 
     // Map out UUID->platform name
     // Lookup table
-    //  platform_id -> local qml directory holding interface
+    // platform_id -> local qml directory holding interface
     //to enable a new model of board UI to be shown, this list has to be edited
     //the other half of the map will be the name of the directory that will be used to show the initial screen (e.g. usb-pd/Control.qml)
 
@@ -78,7 +78,7 @@ function populatePlatforms(platform_list_json) {
             var platform_info = {
                 "text" : platform_list.list[i].verbose,
                 "verbose" : platform_list.list[i].verbose,
-                "name" : uuid_map[platformType],    //this will return the name used to bring up the UI
+                "name" : uuid_map.hasOwnProperty(platformType) ? uuid_map[platformType] : "unknown-platform",    //this will return the name used to bring up the UI
                 "connection" : platform_list.list[i].connection,
                 "uuid"  :   platform_list.list[i].uuid
             }
@@ -117,6 +117,7 @@ function populatePlatforms(platform_list_json) {
                     selectedPlatform.connection === platform_info.connection) {
                 platformListModel.currentIndex = (platformListModel.count - 1)
             }
+
         }
     }
     catch(err) {

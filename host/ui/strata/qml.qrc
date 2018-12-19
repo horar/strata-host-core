@@ -449,5 +449,8 @@
         <file>statusbar-partial-views/images/corner-fade.png</file>
         <file>statusbar-partial-views/images/side-fade.png</file>
         <file>statusbar-partial-views/images/top-fade.png</file>
+        <file>views/unknown-platform/Content.qml</file>
+        <file>views/unknown-platform/Control.qml</file>
+        <file>views/unknown-platform/Warning.qml</file>
     </qresource>
 </RCC>
