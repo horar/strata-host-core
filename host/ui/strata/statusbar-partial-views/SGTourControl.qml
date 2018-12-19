@@ -6,7 +6,7 @@ import "qrc:/js/help_layout_manager.js" as Help
 Item {
     id: root
     height: root.childrenRect.height
-    width: 400
+    width: 360
 
     property int index: 0
     property alias description: description.text
@@ -52,7 +52,10 @@ Item {
             anchors {
                 horizontalCenter: column.horizontalCenter
             }
-            onVisibleChanged: text = root.index+1 + "/" + Help.helpObjects.length
+            onVisibleChanged: {
+                    text = (root.index + 1) + "/" +  Help.tourCount
+
+            }
         }
 
         Item {
@@ -113,7 +116,7 @@ Item {
                 onClicked: {
                     Help.next(root.index)
                 }
-                onVisibleChanged: text = (root.index + 1) === Help.helpObjects.length ? "End Tour" : "Next"
+                onVisibleChanged: text = (root.index + 1) === Help.tourCount ? "End Tour" : "Next"
             }
         }
     }

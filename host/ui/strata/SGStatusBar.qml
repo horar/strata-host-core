@@ -7,6 +7,7 @@ import "js/navigation_control.js" as NavigationControl
 import "qrc:/js/platform_selection.js" as PlatformSelection
 import "qrc:/statusbar-partial-views"
 import Fonts 1.0
+import "qrc:/js/help_layout_manager.js" as Help
 
 Rectangle {
     id: container
@@ -23,6 +24,17 @@ Rectangle {
     property color alternateColor1: "#575757"
 
     color: "black"
+
+    Component.onCompleted: {
+        Help.registerTarget(platformControlsButton, "Use this button to select the platform control view. Only available when platform is connected", 0,"statusHelp")
+        Help.registerTarget(platformContentButton, "Use this button to select the content view for the selected platform.", 1,"statusHelp")
+        Help.registerTarget(cbSelectorContainer, "Use this drop down to select from connected and previously connected platforms. ", 2,"statusHelp")
+
+    }
+
+    Component.onDestruction: {
+        Help.reset("statusHelp")
+    }
 
     function getWidth(string) {
         return (string.match(/width=\"([0-9]+)\"/))
@@ -1202,6 +1214,15 @@ Rectangle {
                     onClicked: {
                         profileMenu.close()
                         feedbackPopup.open();
+                    }
+                    width: profileMenu.width
+                }
+                SGMenuItem {
+                    text: qsTr("Help")
+                    onClicked: {
+                        profileMenu.close()
+                        Help.startHelpTour("statusHelp")
+
                     }
                     width: profileMenu.width
                 }

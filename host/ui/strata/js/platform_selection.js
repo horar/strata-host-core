@@ -21,7 +21,7 @@ function populatePlatforms(platform_list_json) {
 
     // Map out UUID->platform name
     // Lookup table
-    //  platform_id -> local qml directory holding interface
+    // platform_id -> local qml directory holding interface
     //to enable a new model of board UI to be shown, this list has to be edited
     //the other half of the map will be the name of the directory that will be used to show the initial screen (e.g. usb-pd/Control.qml)
 
