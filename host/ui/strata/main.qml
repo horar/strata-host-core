@@ -12,7 +12,7 @@ Window {
     width: 1200
     height: 900
     minimumHeight:600
-    minimumWidth:800
+    minimumWidth:1100
     title: qsTr("ON Semiconductor: Strata Developer Studio")
 
     // Debug option(s)
