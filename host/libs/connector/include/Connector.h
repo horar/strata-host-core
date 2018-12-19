@@ -125,6 +125,7 @@
 #include <iostream>
 #include <mutex>
 
+
 class Connector {
 public:
     Connector() = default;
@@ -135,25 +136,27 @@ public:
     virtual bool close() = 0;
 
     // non-blocking calls
+
     virtual bool send(const std::string& message) = 0;
-    virtual bool sendSmallChunks(const std::string& message, const unsigned int chunk_limit)=0;
+    virtual bool sendSmallChunks(const std::string& message, const unsigned int chunk_limit) = 0;
     virtual bool read(std::string& notification) = 0;
+
+
+    virtual int getFileDescriptor() = 0;
+
+    void setDealerID(const std::string& id);
+    std::string getDealerID() const { return dealer_id_; }
+    std::string getPlatformUUID() const { return platform_uuid_; }
+    bool isSpyglassPlatform() const { return spyglass_platform_connected_; }
+    void setConnectionState(bool connection_state);
+    bool isConnected() const { return connection_state_; }
+    void setPlatformUUID(const std::string& id);
 
     friend std::ostream& operator<< (std::ostream& stream, const Connector & c) {
         std::cout << "Connector: " << std::endl;
         std::cout << "  server: " << c.server_ << std::endl;
         return stream;
     }
-
-    virtual int getFileDescriptor() = 0;
-
-    void setDealerID(const std::string& id);
-    std::string getDealerID() const { return dealer_id_;}
-    std::string getPlatformUUID() const { return platform_uuid_;}
-    bool isSpyglassPlatform() const { return spyglass_platform_connected_; }
-    void setConnectionState(bool connection_state);
-    bool isConnected() const { return connection_state_; }
-    void setPlatformUUID(const std::string& id);
 
 protected:
     void setPlatformConnected(bool state);

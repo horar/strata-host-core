@@ -334,14 +334,7 @@ bool SerialConnector::sendSmallChunks(const std::string& message, const unsigned
     return false;
 }
 
-// @f getFileDescriptor
-// @b returns the file descriptor
-//
-// arguments:
-//  IN:
-//
-//  OUT: file descriptor
-//
+
 //
 int SerialConnector::getFileDescriptor()
 {

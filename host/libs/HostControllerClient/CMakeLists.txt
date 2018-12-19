@@ -6,11 +6,6 @@ find_package(ZeroMQ REQUIRED)
 
 set(EXT_LIBS_PATH ${CMAKE_SOURCE_DIR}/ext_libs)
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include
-        ${ZEROMQ_INCLUDE_DIR}
-        ${EXT_LIBS_PATH}/zmq/include
-        )
-
 add_library(${PROJECT_NAME}
     src/HostControllerClient.cpp
 )
@@ -21,5 +16,6 @@ target_link_libraries(${PROJECT_NAME}
 
 target_include_directories(${PROJECT_NAME}
         PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
+        PUBLIC ${ZEROMQ_INCLUDE_DIR}
         PUBLIC ${EXT_LIBS_PATH}/zmq/include
         )
