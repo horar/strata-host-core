@@ -58,6 +58,7 @@ Item {
         onHighlighted: root.highlighted(index)
         onEditTextChanged: root.editTextChanged(editText)
         font: root.font
+        enabled: root.enabled
 
         model: ["First", "Second", "Third"]
         height: root.comboBoxHeight
@@ -92,7 +93,7 @@ Item {
             rightPadding: 0
 
             text: comboBox.editable ? comboBox.editText : comboBox.displayText
-            enabled: comboBox.editable
+            enabled: comboBox.editable && comboBox.enabled
             autoScroll: comboBox.editable
             readOnly: comboBox.down
 //            inputMethodHints: comboBox.inputMethodHints
@@ -104,6 +105,7 @@ Item {
             selectionColor: comboBox.palette.highlight
             selectedTextColor: comboBox.palette.highlightedText
             verticalAlignment: Text.AlignVCenter
+            opacity: enabled ? 1 : 0.5
 
             background: Rectangle {
                 visible: comboBox.enabled && comboBox.editable && !comboBox.flat
@@ -112,6 +114,7 @@ Item {
                 color: root.boxColor
             }
             onAccepted: parent.focus = false
+            Keys.forwardTo: root
         }
 
         background: Rectangle {

@@ -11,8 +11,7 @@ var signals = createObject("qrc:/SGSignals.qml", null)
 */
 function login(login_info){
     var data = {"username":login_info.user,"password":login_info.password};
-    Rest.xhr("post","login",data,
-             login_result, login_error)
+    Rest.xhr("post", "login", data, login_result, login_error, signals)
 }
 
 /*
@@ -20,12 +19,12 @@ function login(login_info){
 */
 function login_result(response)
 {
-    console.log("Login success! ", response)
+    console.log("Login success! ", JSON.stringify(response))
 
     if(response.hasOwnProperty("token")){
         Rest.jwt = response.token;
     }
-    signals.loginResult(true)
+    signals.loginResult("Connected")
     // [TODO][prasanth]: jwt will be created/received in the hcs
     // for now, jwt will be received in the UI and then sent to HCS
     signals.loginJWT(response.token)
@@ -36,8 +35,12 @@ function login_result(response)
 */
 function login_error(error)
 {
-    console.log("Login Error : ", error)
-    signals.loginResult(false)
+    console.log("Login Error : ", JSON.stringify(error))
+    if (error.message === "No connection") {
+        signals.loginResult("No Connection")
+    } else {
+        signals.loginResult("Bad Login Info")
+    }
 }
 
 /*

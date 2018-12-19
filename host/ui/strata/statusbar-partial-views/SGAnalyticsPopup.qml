@@ -6,9 +6,6 @@ import QtGraphicalEffects 1.0
 
 Item {
     id: root
-    anchors {
-        fill: profileStack
-    }
     clip: true
 
     Item {

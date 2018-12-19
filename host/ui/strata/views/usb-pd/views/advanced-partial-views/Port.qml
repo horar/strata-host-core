@@ -15,14 +15,12 @@ Item {
     width: parent.width
     height: graphSelector.nothingChecked ? portSettings.height : portSettings.height + portGraphs.height
 
-
-
     PortInfo {
         id: portInfo
         anchors {
             left: parent.left
             top: root.top
-            bottom: root.bottom
+            topMargin: 110
         }
         advertisedVoltage:{
             if (platformInterface.request_usb_power_notification.port === portNumber){
@@ -32,12 +30,12 @@ Item {
                 return portInfo.advertisedVoltage;
             }
         }
-        maxPower:{
+        pdContract:{
             if (platformInterface.request_usb_power_notification.port === portNumber){
-               return Math.round(platformInterface.request_usb_power_notification.maximum_power *100)/100
+               return Math.round(platformInterface.request_usb_power_notification.negotiated_current * platformInterface.request_usb_power_notification.negotiated_voltage*100)/100
             }
             else{
-                return portInfo.maxPower;
+                return portInfo.pdContract;
             }
         }
         inputPower:{
@@ -96,8 +94,8 @@ Item {
     Rectangle{
         id:graphAndCapibilitiesRect
         anchors.left: portInfo.right
-        anchors.top:portInfo.top
-        //anchors.right:portSettings.left
+        anchors.verticalCenter: portInfo.verticalCenter
+        anchors.verticalCenterOffset: 2
 
         height:225
         width:310
@@ -380,19 +378,19 @@ Item {
                     }
                 }
 
-                SGSegmentedButton{
-                    text: qsTr("η")
-                    enabled: root.portConnected
-                    onCheckedChanged: {
-                        if (checked) {
-                            graph6.visible = true
-                            graphSelector.howManyChecked++
-                        } else {
-                            graph6.visible = false
-                            graphSelector.howManyChecked--
-                        }
-                    }
-                }
+//                SGSegmentedButton{
+//                    text: qsTr("η")
+//                    enabled: root.portConnected
+//                    onCheckedChanged: {
+//                        if (checked) {
+//                            graph6.visible = true
+//                            graphSelector.howManyChecked++
+//                        } else {
+//                            graph6.visible = false
+//                            graphSelector.howManyChecked--
+//                        }
+//                    }
+//                }
             }
 
 

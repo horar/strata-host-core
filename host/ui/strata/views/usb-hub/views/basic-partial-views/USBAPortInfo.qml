@@ -6,7 +6,7 @@ import "qrc:/views/usb-pd-multiport/sgwidgets"
 Rectangle {
     id: root
 
-    property bool portConnected: true
+    property bool portConnected: false
     property bool isUSBAPort: true     //used to hide information not available for USB-A ports
     property color portColor: "#30a2db"
     property int portNumber: 0
@@ -19,7 +19,7 @@ Rectangle {
     property alias outputPower: powerOutBox.value
     property alias portTemperature: temperatureBox.value
 
-    property int basicTitleBackgroundHeight: (2*root.height)/16;
+    property int basicTitleBackgroundHeight: 50//(2*root.height)/16;
     property int advancedTitleBackgroundHeight: advancedDisplayPortPortHeight/4
 
     onPortConnectedChanged:{
@@ -147,8 +147,9 @@ Rectangle {
         anchors.leftMargin: 1
         anchors.right: root.right
         anchors.rightMargin: 1
-        height: (2*root.height)/16
+        height: 50//(2*root.height)/16
         radius:5
+        z:1
 
         Rectangle{
             id:squareBottomBackground
@@ -166,7 +167,7 @@ Rectangle {
             anchors.horizontalCenter: titleBackground.horizontalCenter
             anchors.verticalCenter: titleBackground.verticalCenter
             font {
-                pixelSize: 20
+                pixelSize: 28
             }
 
             color: root.portConnected ? "black" : "#bbb"
@@ -299,7 +300,8 @@ Rectangle {
 
     Rectangle {
         id: connectionContainer
-        opacity: 0
+        opacity: 1
+        z:1
 
         anchors {
             top:titleBackground.bottom

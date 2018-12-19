@@ -6,7 +6,7 @@ import "qrc:/views/usb-pd-multiport/sgwidgets"
 Rectangle {
     id: root
 
-    property bool portConnected: true
+    property bool portConnected: false
     property bool isUSBAPort: false     //used to hide information not available for USB-A ports
     property color portColor: "#30a2db"
     property int portNumber: 0
@@ -103,21 +103,13 @@ Rectangle {
             advancedControls.transitionToAdvancedView();
         }
 
-        //after the stats boxes are rearranged, and the port resized, fade in the advanced controls
-//        PropertyAnimation {
-//            id: fadeInAdvancedControls
-//            target: advancedControls
-//            property: "opacity"
-//            to: 1
-//            duration: tabTransitionTimePhase2
-//        }
-
-
     }
 
     function transitionToBasicView(){
 
         //break the anchors needed to move port stats
+        //these should have been changed on the transition to advanced view,
+        //but we'll do it again just in case.
         powerOutBox.anchors.top = undefined
         powerOutBox.anchors.left = undefined
         powerOutBox.anchors.right = undefined
@@ -126,17 +118,20 @@ Rectangle {
         efficencyBox.anchors.left = powerOutBox.left
         efficencyBox.anchors.right = powerOutBox.right
         portToBasic.start()
-        outputVoltageBox.transitionToBasicView()
-        maxPowerBox.transitionToBasicView()
-        powerInBox.transitionToBasicView()
-        powerOutBox.transitionToBasicView()
-        temperatureBox.transitionToBasicView()
-        efficencyBox.transitionToBasicView()
+
 
     }
 
     SequentialAnimation{
         id: portToBasic
+
+        //fade out the advanced controls
+        PropertyAnimation {
+            target: advancedControls
+            property: "opacity"
+            to: 0
+            duration: tabTransitionTime
+        }
 
         ParallelAnimation{
             id: unRearrangeStatsBoxes
@@ -152,28 +147,38 @@ Rectangle {
             PropertyAnimation {
                 target: powerOutBox
                 property: "x"
-                to: (root.width)/2 + 40
+                to: root.x
                 duration: tabTransitionTime
             }
+
 
             PropertyAnimation {
                 target: powerOutBox
                 property: "width"
-                to: 110
+                to: 200
                 duration: tabTransitionTime
             }
 
             PropertyAnimation {
                 target: powerOutBox
                 property: "y"
-                to: titleBackground.y + titleBackground.height + 8
+                to: 200
                 duration: tabTransitionTime
             }
         }   //phase 1 transition
 
-        onStopped: {
-            advancedControls.transitionToBasicView();
+        onStopped:{
+            powerOutBox.anchors.left = outputVoltageBox.left
+            powerOutBox.anchors.right = outputVoltageBox.right
+            //enlarge the icons
+            outputVoltageBox.transitionToBasicView()
+            maxPowerBox.transitionToBasicView()
+            powerInBox.transitionToBasicView()
+            powerOutBox.transitionToBasicView()
+            temperatureBox.transitionToBasicView()
+            efficencyBox.transitionToBasicView()
         }
+
 }
 
 
@@ -269,6 +274,7 @@ Rectangle {
         color:"transparent"
         icon: "../images/icon-voltage.svg"
         visible: !isUSBAPort
+
     }
 
     PortStatBox{
@@ -324,7 +330,7 @@ Rectangle {
 
     Rectangle {
         id: connectionContainer
-        opacity: 0
+        opacity: 1
 
         anchors {
             top:titleBackground.bottom

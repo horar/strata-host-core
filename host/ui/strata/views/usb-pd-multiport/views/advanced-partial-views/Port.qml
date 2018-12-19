@@ -32,9 +32,11 @@ Item {
             }
         }
         maxPower:{
-            //labeled "max capacity" in the UI, this is the wattage agreed to by the platform and device
+            //labeled "PD Contract" in the UI, this is the wattage agreed to by the platform and device
             if (platformInterface.request_usb_power_notification.port === portNumber){
-               return Math.round(platformInterface.request_usb_power_notification.maximum_power *100)/100;
+                var voltage = platformInterface.request_usb_power_notification.negotiated_voltage;
+                var current = platformInterface.request_usb_power_notification.negotiated_current;
+                return Math.round(voltage*current *100)/100;
             }
             else{
                 return portInfo.maxPower;
@@ -81,8 +83,8 @@ Item {
                     return "—"
                 }
                 else{
-                    //return Math.round((theOutputPower/theInputPower)*100)/100
-                    return "—"
+                    return Math.round((theOutputPower/theInputPower)*100)
+                    //return "—"
                 }
             }
             else{

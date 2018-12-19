@@ -138,7 +138,7 @@ Item {
 
         PortStatBoxMini {
             id: theMaxWattage
-            label: "MAX CAPACITY"
+            label: "PD CONTRACT"
             value: ""
             icon: "../images/icon-max.svg"
             height: column1.sbHeight

@@ -157,7 +157,7 @@ Item {
 
                     PortStatBox {
                         id: maxPowerBox
-                        label: "MAX CAPACITY"
+                        label: "PD CONTRACT"
                         value: ""
                         icon: "../images/icon-max.svg"
                         portColor: root.portColor
