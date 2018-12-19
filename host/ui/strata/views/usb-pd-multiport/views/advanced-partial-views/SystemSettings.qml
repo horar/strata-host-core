@@ -492,52 +492,7 @@ Item {
                 }
             }
 
-            SGSlider {
-                id: inputFault
-                label: "Fault when input below:"
-                anchors {
-                    left: margins1.left
-                    leftMargin: 65
-                    top: faultProtection.bottom
-                    topMargin: 10
-                    right: inputFaultInput.left
-                    rightMargin: 10
-                }
-                from: 0
-                to: 20
-                startLabel: "0V"
-                endLabel: "20V"
-                labelTopAligned: true
-                value: platformInterface.input_under_voltage_notification.minimum_voltage
-                onMoved: {
-                    platformInterface.set_minimum_input_voltage.update(value);
-                }
-            }
 
-            SGSubmitInfoBox {
-                id: inputFaultInput
-                showButton: false
-                infoBoxWidth: 30
-                minimumValue: 0
-                maximumValue: 20
-                anchors {
-                    verticalCenter: inputFault.verticalCenter
-                    verticalCenterOffset: -7
-                    right: inputFaultUnits.left
-                    rightMargin: 5
-                }
-                value: Math.round(platformInterface.input_under_voltage_notification.minimum_voltage)
-                onApplied:platformInterface.set_minimum_input_voltage.update(value);   // slider will be updated via notification
-            }
-
-            Text{
-                id: inputFaultUnits
-                text: "V"
-                anchors {
-                    right: parent.right
-                    verticalCenter: inputFaultInput.verticalCenter
-                }
-            }
 
             SGSlider {
                 id: tempFault
@@ -545,7 +500,7 @@ Item {
                 anchors {
                     left: parent.left
                     leftMargin:20
-                    top: inputFault.bottom
+                    top: faultProtection.bottom
                     topMargin: 10
                     right: tempFaultInput.left
                     rightMargin: 10
