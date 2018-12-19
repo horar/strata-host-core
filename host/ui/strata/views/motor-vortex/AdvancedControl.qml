@@ -24,28 +24,17 @@ Rectangle {
         platformInterface.set_phase_angle.update(15);
         platformInterface.set_drive_mode.update(0);
         platformInterface.system_mode_selection.update("manual");
-
+        Help.registerTarget(navTabs, "These tabs will select between Basic and advanced control view of the demo. (FAE control tab is restricted access only.)", 0 , "advanceViewHelp")
+        Help.registerTarget( targetSpeedSlider, "The slider sets the motor speed from 1500-4000 rpm", 1, "advanceViewHelp")
+        Help.registerTarget( operationModeControl, "Two mode to control the motor", 2 , "advanceViewHelp")
+        Help.registerTarget( buttonContainer, "This button start, stops or reset the motor",3, "advanceViewHelp")
+        Help.registerTarget( rampRateSlider, "The slider sets the ramp rate. The deflaut ramp rate is 3",4, "advanceViewHelp")
+        Help.registerTarget( driveModeContainer, "Two modes are available to drive the motor and you can set the phase angle from 0 - 28.125 ",5, "advanceViewHelp")
+        Help.registerTarget( hueSlider, " This slider change the LED color on the motor vortex to combination of different colors ",6, "advanceViewHelp")
+        Help.registerTarget( singleColorSlider, " This slider set LED light to single color Red, Green or Blue",7, "advanceViewHelp")
+        Help.registerTarget( ledPulseFrequency, " This slider sets the LED frequency",8, "advanceViewHelp")
+        Help.registerTarget(leftSide , " This shows input voltage and current speed graph. FaultBox displays all the system error that appers ",9, "advanceViewHelp")
     }
-
-    onVisibleChanged: {
-        if(visible === true) {
-            Help.reset()
-            Help.registerTarget(navTabs, "These tabs will select between Basic and advanced control view of the demo. (FAE control tab is restricted access only.)", 0)
-            Help.registerTarget( targetSpeedSlider, "The slider sets the motor speed from 1500-4000 rpm", 1)
-            Help.registerTarget( operationModeControl, "Two mode to control the motor", 2)
-            Help.registerTarget( buttonContainer, "This button start, stops or reset the motor",3)
-            Help.registerTarget( rampRateSlider, "The slider sets the ramp rate. The deflaut ramp rate is 3",4)
-            Help.registerTarget( driveModeContainer, "Two modes are available to drive the motor and you can set the phase angle from 0 - 28.125 ",5)
-            Help.registerTarget( hueSlider, " This slider change the LED color on the motor vortex to combination of different colors ",6)
-            Help.registerTarget( singleColorSlider, " This slider set LED light to single color Red, Green or Blue",7)
-            Help.registerTarget( ledPulseFrequency, " This slider sets the LED frequency",8)
-            Help.registerTarget(vInGraph , " This shows input voltage graph",9)
-            Help.registerTarget(speedGraph , " This shows the live current speed over RPM graph",10)
-            Help.registerTarget(faultBox , " Any system error that happens appears in this container",11)
-
-        }
-    }
-
 
     Rectangle {
         id: leftSide

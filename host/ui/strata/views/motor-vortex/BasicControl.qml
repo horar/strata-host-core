@@ -20,22 +20,11 @@ Rectangle {
 
 
     Component.onCompleted: {
-        Help.registerTarget(motorSpeedControl, "The slider sets motor speed from 1500-4000 rpm" , 1)
-        Help.registerTarget(tachMeterGauge, "The gauage shows the speed of the motor", 2)
-        Help.registerTarget(operationModeControl, "These are two modes to control the system. In manual mode, speed of the motor will be set by the slider above. In Automatic Demo Pattern mode, the system will go through a particular speed profile.", 3)
+        Help.registerTarget(navTabs, "These tabs will select between Basic and advanced control view of the demo. (FAE control tab is restricted access only.)", 0, "basicViewHelp")
+        Help.registerTarget(motorSpeedControl, "The slider sets motor speed from 1500-4000 rpm" , 1 , "basicViewHelp")
+        Help.registerTarget(tachMeterGauge, "The gauage shows the speed of the motor", 2, "basicViewHelp")
+        Help.registerTarget(operationModeControl, "These are two modes to control the system. In manual mode, speed of the motor will be set by the slider above. In Automatic Demo Pattern mode, the system will go through a particular speed profile.", 3 , "basicViewHelp")
     }
-
-    onVisibleChanged: {
-        if(visible === true) {
-            Help.reset()
-            Help.registerTarget(navTabs, "These tabs will select between Basic and advanced control view of the demo. (FAE control tab is restricted access only.)", 0)
-            Help.registerTarget(motorSpeedControl, "The slider sets motor speed from 1500-4000 rpm" , 1)
-            Help.registerTarget(tachMeterGauge, "The gauage shows the speed of the motor", 2)
-            Help.registerTarget(operationModeControl, "These are two modes to control the system. In manual mode, speed of the motor will be set by the slider above. In Automatic Demo Pattern mode, the system will go through a particular speed profile.", 31)
-        }
-    }
-
-
 
     // Control Section
     Rectangle {
