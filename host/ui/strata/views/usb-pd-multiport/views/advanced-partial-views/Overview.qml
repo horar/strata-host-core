@@ -563,7 +563,7 @@ Item {
                     var theInputPower = platformInterface.request_usb_power_notification.input_voltage * platformInterface.request_usb_power_notification.input_current + 2; //PTJ-1321 2 watt compensation
                     var theOutputPower = platformInterface.request_usb_power_notification.output_voltage * platformInterface.request_usb_power_notification.output_current;
 
-                    if (platformInterface.request_usb_power_notification.port === 1){
+                    if (platformInterface.request_usb_power_notification.port === 4){
                         if (theInputPower == 0){    //division by 0 would normally give "nan"
                             return "—"
                         }
