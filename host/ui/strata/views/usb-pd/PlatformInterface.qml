@@ -77,8 +77,8 @@ Item {
 
    property var over_temperature_notification:{
            "port":"USB_C_port_1",                                // or any USB C port
-           "state":"above",                                      // if the temperature crossed from under temperature to over temperature, "below" otherwise.
-           "maximum_temperature":191                             // Temperature limit in degrees C
+           "state":"below",                                      // if the temperature crossed from under temperature to over temperature, "below" otherwise.
+           "maximum_temperature":200                             // Temperature limit in degrees C
     }
 
         //consider the values held by this property to be the master ones, which will be current when needed for calling

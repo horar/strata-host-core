@@ -415,7 +415,7 @@ Item {
             }
 
             onOverTempEventChanged: {
-                if (underVoltageEvent.state === "above"){   //add temp  message to list
+                if (overTempEvent.state === "above"){   //add temp  message to list
                     stateMessage = platformInterface.over_temperature_notification.port
                     stateMessage += " temperature is above ";
                     stateMessage += platformInterface.over_temperature_notification.maximum_temperature;
@@ -470,7 +470,7 @@ Item {
             }
 
             onOverTempEventChanged: {
-                if (underVoltageEvent.state === "above"){   //add temp  message to list
+                if (overTempEvent.state === "above"){   //add temp  message to list
                     stateMessage = platformInterface.over_temperature_notification.port
                     stateMessage += " temperature is above ";
                     stateMessage += platformInterface.over_temperature_notification.maximum_temperature;

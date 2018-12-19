@@ -626,22 +626,18 @@ Item {
             }
 
             onOverTempEventChanged: {
-                console.log("new over temp event with state",platformInterface.over_temperature_notification.state);
                 if (platformInterface.over_temperature_notification.state === "above"){   //add temp  message to list
                     stateMessage = platformInterface.over_temperature_notification.port
                     stateMessage += " temperature is above ";
                     stateMessage += platformInterface.over_temperature_notification.maximum_temperature;
                     stateMessage += " °C";
                     faultListModel.append({"type":"temperature", "port":platformInterface.over_temperature_notification.port, "status":stateMessage});
-                    console.log("appended new temp fault on port",platformInterface.over_temperature_notification.port);
                 }
                 else{                                       //remove temp message for the correct port from list
                     for(var i = 0; i < faultListModel.count; ++i){
                         var theItem = faultListModel.get(i);
-                        console.log("checking for removal. type=",theItem.type,"port=",theItem.port);
                         if (theItem.type === "temperature" && theItem.port === platformInterface.over_temperature_notification.port){
                             faultListModel.remove(i);
-                            console.log("removed notification from list");
                         }
                     }
                 }
@@ -672,7 +668,6 @@ Item {
                     stateMessage = "Input is below ";
                     stateMessage += platformInterface.input_under_voltage_notification.minimum_voltage;
                     stateMessage += " V";
-                    console.log("adding message to fault history",stateMessage);
                     faultHistory.input = stateMessage;
 
                 }
@@ -685,12 +680,14 @@ Item {
             }
 
             onOverTempEventChanged: {
-                if (underVoltageEvent.state === "above"){   //add temp  message to list
+                console.log("over temp event received. state=",overTempEvent.state);
+                if (overTempEvent.state === "above"){   //add temp  message to list
                     stateMessage = platformInterface.over_temperature_notification.port
                     stateMessage += " temperature is above ";
                     stateMessage += platformInterface.over_temperature_notification.maximum_temperature;
                     stateMessage += " °C";
                     faultHistory.input = stateMessage;
+                    console.log("added over temp event to history")
                 }
                 else{
 //                    stateMessage = platformInterface.over_temperature_notification.port
