@@ -65,7 +65,7 @@ bool ZMQConnector::open(const string& ip_address)
         try {
             LOG_DEBUG(DEBUG,"Connecting to the remote server socket %s\n",ip_address.c_str());
 
-            const std::string id = getDealerID();
+            const std::string& id = getDealerID();
             if (!id.empty()) {
                 socket_->setsockopt(ZMQ_IDENTITY, id.c_str(), id.length());
             }
@@ -139,16 +139,8 @@ bool ZMQConnector::read(string& message)
         // remote sockets read from router and they have only message and not dealer id
         locker_.lock();
         if(connection_interface_ == "router") {
-            unsigned char buffer[128]; size_t size = sizeof(buffer);
-            s_recv_raw(*socket_, buffer, &size);
-            if (size > 0 && buffer[0] == 0) {
-                std::string dealer_id = hex2Str(buffer, size);
-
-                if (getDealerID().empty())
-                    setDealerID(dealer_id);
-
-            }
-
+            std::string dealer_id = s_recv(*socket_);
+            setDealerID(dealer_id);
         }
         message = s_recv(*socket_);
         locker_.unlock();
