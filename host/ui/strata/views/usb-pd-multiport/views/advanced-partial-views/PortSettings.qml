@@ -353,7 +353,7 @@ Item {
             value: platformInterface.get_cable_loss_compensation.output_current.toFixed(1)
             onApplied:{
                 //console.log("sending values from increment textbox:",portNumber, incrementInput.floatValue, platformInterface.set_cable_loss_compensation.bias_voltage);
-                platformInterface.set_cable_loss_compensation.update(portNumber,
+                platformInterface.set_cable_compensation.update(portNumber,
                            incrementInput.floatValue,
                            platformInterface.get_cable_loss_compensation.bias_voltage)
                     }
@@ -401,7 +401,7 @@ Item {
             showButton: false
             infoBoxWidth: 35
             minimumValue: 0
-            maximumValue: 2
+            maximumValue: 200
             anchors {
                 verticalCenter: bias.verticalCenter
                 verticalCenterOffset: -7
@@ -410,9 +410,9 @@ Item {
             }
 
             value: platformInterface.get_cable_loss_compensation.bias_voltage * 1000
-            onApplied: platformInterface.set_cable_loss_compensation.update(portNumber,
-                                                                            platformInterface.get_cable_loss_compensation.output_current,
-                                                                            biasInput.floatValue/1000)
+            onApplied: platformInterface.set_cable_compensation.update(portNumber,
+                                    platformInterface.get_cable_loss_compensation.output_current,
+                                    biasInput.floatValue/1000)
         }
 
         Text{
