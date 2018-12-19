@@ -52,7 +52,7 @@ Item {
         }
         inputPower:{
             if (platformInterface.request_usb_power_notification.port === portNumber){
-                return (platformInterface.request_usb_power_notification.input_voltage * platformInterface.request_usb_power_notification.input_current).toFixed(2);
+                return ((platformInterface.request_usb_power_notification.input_voltage * platformInterface.request_usb_power_notification.input_current)+2).toFixed(2); //PTJ-1321 adding 2 watts compensation
             }
             else{
                 return portInfo.inputPower;
