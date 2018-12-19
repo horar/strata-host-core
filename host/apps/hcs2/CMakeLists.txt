@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.5.1)
+cmake_minimum_required(VERSION 3.1)
 project(hcs2)     #old: HostControllerService
 
 # The version number
@@ -6,6 +6,7 @@ set(HostControllerService_VERSION_MAJOR 1)
 set(HostControllerService_VERSION_MINOR 0)
 
 set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Add Red color for errors
 string(ASCII 27 Esc)
@@ -28,14 +29,19 @@ if (CROSSCOMPILE)
     SET(CMAKE_CXX_FLAGS "-v -std=gnu++11 -static-libstdc++ -static-libgcc -static")
 elseif(UNIX AND NOT APPLE AND NOT CROSSCOMPILE)
     message("TOOL CHAIN: linux")
-    SET(CMAKE_CXX_FLAGS "-v -std=c++11")
-    set(CMAKE_BUILD_TYPE Debug)
+    if (NOT CMAKE_BUILD_TYPE)
+        set(CMAKE_BUILD_TYPE RelWithDebInfo)
+        # set(CMAKE_BUILD_TYPE Debug) # To enable debugging
+    endif()
+
 elseif (APPLE)
     message("TOOL CHAIN: mac")
-    SET(CMAKE_CXX_FLAGS "-v -std=c++11")
-    set(CMAKE_BUILD_TYPE Debug)
-    # To enable debugging
-    set(CMAKE_BUILD_TYPE RelWithDebInfo)
+
+    if (NOT CMAKE_BUILD_TYPE)
+        set(CMAKE_BUILD_TYPE RelWithDebInfo)
+        # set(CMAKE_BUILD_TYPE Debug) # To enable debugging
+    endif()
+
     find_library(IOKIT_LIBRARY IOKit)
     find_library(FOUNDATION_LIBRARY Foundation)
 else()
@@ -174,17 +180,18 @@ target_include_directories(libBase64 PUBLIC ${SHARED_DIR}/cpp-base64)
 
 # HostControllerService ----------------------------------------------------------
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include
-    ${CMAKE_CURRENT_SOURCE_DIR}   # for logger
-    ${LIBEVENT2_INCLUDE_DIR}
-)
-
 add_executable(${PROJECT_NAME}
     src/HostControllerService.cpp
     src/DiscoveryService.cpp
     src/ParseConfig.cpp
     src/main.cpp
 )
+
+target_include_directories(${PROJECT_NAME}
+        PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include
+        PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}   # for logger
+        PRIVATE ${LIBEVENT2_INCLUDE_DIR}
+        )
 
 target_link_libraries(${PROJECT_NAME}
     PRIVATE connector nimbusLib libBase64
@@ -196,6 +203,5 @@ if (APPLE)
         PRIVATE ${FOUNDATION_LIBRARY} ${IOKIT_LIBRARY}
     )
 endif()
-
 
 endif()  #CROSSCOMPILE
