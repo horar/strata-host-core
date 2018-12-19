@@ -71,7 +71,7 @@ Rectangle {
         anchors {
             bottom: root.bottom
             bottomMargin: root.bottomMargin
-            left: root.left
+            right: unitText.left
             leftMargin: 5
         }
         font {
@@ -86,8 +86,8 @@ Rectangle {
         anchors {
             bottom: valueText.bottom
             bottomMargin: 2
-            left: valueText.right
-            leftMargin: 5
+            right: iconImage.horizontalCenter
+            rightMargin:-5
         }
         font {
             pixelSize: root.unitSize

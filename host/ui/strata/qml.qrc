@@ -450,5 +450,6 @@
         <file>statusbar-partial-views/images/side-fade.png</file>
         <file>statusbar-partial-views/images/top-fade.png</file>
         <file>views/usb-pd-multiport/views/images/graphIcon.svg</file>
+        <file>views/usb-pd/views/images/graphIcon.svg</file>
     </qresource>
 </RCC>
