@@ -33,6 +33,9 @@ public:
     //Return string json format
     const std::string &getBody() const;
 
+    // Return mutable_dict_ as fleece Dict object
+    const fleece::impl::Dict* asDict() const;
+
     bool empty();
     const fleece::impl::Value* get(const std::string &keyToFind);
 

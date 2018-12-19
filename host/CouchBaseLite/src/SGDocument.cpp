@@ -53,6 +53,13 @@ const std::string &SGDocument::getBody() const {
     return string_slice;
 }
 
+/** SGDocument asDict.
+* @brief Return the internal mutable_dict_ as fleece Dict object.
+*/
+const fleece::impl::Dict* SGDocument::asDict() const{
+    return mutable_dict_->asDict();
+}
+
 /** SGDocument setC4Document.
 * @brief Open a document and sets its body to to the existing mutable_dict, if the document exist. Otherwise init mutable_dict_
  * NOTE: This is not a public function, it's protected!
