@@ -164,7 +164,7 @@ Item {
             SGSubmitInfoBox {
                 id: maximumBoardPowerInput
                 showButton: false
-                infoBoxWidth: 30
+                infoBoxWidth: 35
                 enabled: maximumBoardPower.enabled
                 minimumValue: 30
                 maximumValue: 200//platformInterface.ac_power_supply_connection.power
