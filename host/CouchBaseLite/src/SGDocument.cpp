@@ -48,9 +48,7 @@ bool SGDocument::exist() {
 * @brief Stringify fleece object (mutable_dict_) to string json format.
 */
 const std::string &SGDocument::getBody() const {
-    fleece::alloc_slice json_slice =  mutable_dict_->toJSON();
-    string string_slice = string((const char*)json_slice.buf, json_slice.size);
-    return string_slice;
+    return mutable_dict_->asDict()->toJSONString();
 }
 
 /** SGDocument asDict.
