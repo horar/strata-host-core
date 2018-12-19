@@ -100,10 +100,11 @@ Item {
             id: increment
             label: "For every increment of:"
             value:platformInterface.get_cable_loss_compensation.output_current
-            from:1
-            to:3
-            startLabel:"1A"
-            endLabel:"3A"
+            from:.25
+            to:1
+            stepSize: .005
+            startLabel:".25A"
+            endLabel:"1A"
             toolTipDecimalPlaces: 2
             anchors {
                 left: parent.left
@@ -124,6 +125,8 @@ Item {
         SGSubmitInfoBox {
             id: incrementInput
             showButton: false
+            minimumValue: 0
+            maximumValue: 1
             anchors {
                 verticalCenter: increment.verticalCenter
                 right: parent.right
@@ -141,9 +144,10 @@ Item {
             label: "Bias output by:"
             value:platformInterface.get_cable_loss_compensation.bias_voltage
             from:0
-            to:2
+            to:200
+            stepSize: 10
             startLabel:"0mV"
-            endLabel:"2mV"
+            endLabel:"200mV"
             toolTipDecimalPlaces: 2
             anchors {
                 left: parent.left
@@ -164,6 +168,8 @@ Item {
         SGSubmitInfoBox {
             id: biasInput
             showButton: false
+            minimumValue: 0
+            maximumValue: 200
             anchors {
                 verticalCenter: bias.verticalCenter
                 right: parent.right
