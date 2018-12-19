@@ -22,7 +22,6 @@ Rectangle {
 
     Component.onCompleted: {
         helpIcon.visible = true
-
     }
 
     Component.onDestruction: {

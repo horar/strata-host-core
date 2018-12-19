@@ -24,7 +24,7 @@ Rectangle {
         platformInterface.set_phase_angle.update(15);
         platformInterface.set_drive_mode.update(0);
         platformInterface.system_mode_selection.update("manual");
-        Help.registerTarget(navTabs, "These tabs will select between Basic and advanced control view of the demo. (FAE control tab is restricted access only.)", 0 , "advanceViewHelp")
+        Help.registerTarget( navTabs, "These tabs will select between Basic and advanced control view of the demo. (FAE control tab is restricted access only.)", 0 , "advanceViewHelp")
         Help.registerTarget( targetSpeedSlider, "The slider sets the motor speed from 1500-4000 rpm", 1, "advanceViewHelp")
         Help.registerTarget( operationModeControl, "Two mode to control the motor", 2 , "advanceViewHelp")
         Help.registerTarget( buttonContainer, "This button start, stops or reset the motor",3, "advanceViewHelp")
@@ -33,7 +33,7 @@ Rectangle {
         Help.registerTarget( hueSlider, " This slider change the LED color on the motor vortex to combination of different colors ",6, "advanceViewHelp")
         Help.registerTarget( singleColorSlider, " This slider set LED light to single color Red, Green or Blue",7, "advanceViewHelp")
         Help.registerTarget( ledPulseFrequency, " This slider sets the LED frequency",8, "advanceViewHelp")
-        Help.registerTarget(leftSide , " This shows input voltage and current speed graph. FaultBox displays all the system error that appers ",9, "advanceViewHelp")
+        Help.registerTarget( leftSide , " This shows input voltage and current speed graph. FaultBox displays all the system error that appers ",9, "advanceViewHelp")
     }
 
     Rectangle {
