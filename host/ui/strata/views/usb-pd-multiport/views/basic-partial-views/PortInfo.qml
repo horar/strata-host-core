@@ -161,7 +161,7 @@ Rectangle {
 
                     PortStatBox {
                         id:maxPowerBox
-                        label: "MAX CAPACITY"
+                        label: "PD CONTRACT"
                         //value: "100"
                         icon: "../images/icon-max.svg"
                         portColor: root.portColor
