@@ -13,7 +13,15 @@ Item {
     property bool showGraphs: false
 
     width: parent.width
-    height: graphSelector.nothingChecked ? portSettings.height : portSettings.height + portGraphs.height
+    height: {
+        if (graphSelector.nothingChecked || !portConnected){
+            portSettings.height;
+        }
+        else if (!graphSelector.nothingChecked && portConnected){
+           portSettings.height + portGraphs.height;
+        }
+
+    }
 
     PortInfo {
         id: portInfo
