@@ -17,7 +17,7 @@ typedef struct node {
 typedef struct {
     node_t *head;
     node_t *tail;
-    node_t *temp; // used when add, remove, and print out the list
+    node_t *temp;
     size_t size;
 }queue_t;
 

@@ -40,16 +40,14 @@ void push(char *data)
      */
 
     if (g_queue->head == NULL) {
-        g_queue->size = 0;
         g_queue->head = g_queue->tail = new_node;
     }
 
-    if (g_queue->size == 1) {
-
+    else if (g_queue->size == 1) {
         g_queue->tail = new_node;
         g_queue->head->next = g_queue->tail;
     }
-    if (g_queue->size > 1) {
+    else {
         g_queue->temp = g_queue->tail;
         g_queue->tail = new_node;
         g_queue->temp->next = new_node;

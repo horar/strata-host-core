@@ -15,7 +15,7 @@ const char *response_string[] = {
 };
 /* *
  * Lists of the command_handler that will be used for dispatching
- * commands. Each sub array in function_map[] will have the
+ * commands. Each sub array in command_handlers[] will have the
  * command in a string format followed by the function that
  * will be declared and defined in dispatch.h and
  * dispatch.c respectively. Command argument will be the
