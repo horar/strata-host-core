@@ -134,9 +134,9 @@ Item {
                     rightMargin: 10
                 }
                 from: -64
-                to: 191
+                to: 135
                 startLabel: "-64°C"
-                endLabel: "191°C"
+                endLabel: "135°C"
                 value: platformInterface.set_maximum_temperature_notification.maximum_temperature
                 onSliderMoved: {
                     platformInterface.set_maximum_temperature.update(value);

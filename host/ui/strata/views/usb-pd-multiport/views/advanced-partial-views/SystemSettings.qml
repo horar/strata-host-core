@@ -506,9 +506,9 @@ Item {
                     rightMargin: 10
                 }
                 from: -64
-                to: 191
+                to: 135
                 startLabel: "-64°C"
-                endLabel: "191°C"
+                endLabel: "135°C"
                 labelTopAligned: true
                 value: platformInterface.set_maximum_temperature_notification.maximum_temperature
                 onMoved: {
@@ -521,7 +521,7 @@ Item {
                 showButton: false
                 infoBoxWidth: 35
                 minimumValue: -64
-                maximumValue: 191
+                maximumValue: 135
                 anchors {
                     verticalCenter: tempFault.verticalCenter
                     verticalCenterOffset: -7

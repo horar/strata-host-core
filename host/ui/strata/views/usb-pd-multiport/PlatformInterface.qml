@@ -76,7 +76,7 @@ Item {
    property var over_temperature_notification:{
            "port":"USB_C_port_1",                                // or any USB C port
            "state":"below",                                      // if the temperature crossed from under temperature to over temperature, "below" otherwise.
-           "maximum_temperature":191                             // Temperature limit in degrees C
+           "maximum_temperature":135                             // Temperature limit in degrees C
     }
 
         //consider the values held by this property to be the master ones, which will be current when needed for calling
@@ -302,7 +302,7 @@ Item {
     property var set_maximum_temperature :({
                 "cmd":"request_set_maximum_temperature",
                 "payload":{
-                       "value":200    // 0 - 127 degrees C
+                       "value":135    // 0 - 135 degrees C
                  },
                  update: function(maximumTemperature){
                       this.set(maximumTemperature)
