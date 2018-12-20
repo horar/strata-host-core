@@ -382,7 +382,7 @@ Item {
             id: currentFaults
             height: rightColumn.height/2
             width: rightColumn.width
-            title: "Current Faults:"
+            title: "Active Faults:"
             model: faultListModel
 
             property var underVoltageEvent: platformInterface.input_under_voltage_notification
