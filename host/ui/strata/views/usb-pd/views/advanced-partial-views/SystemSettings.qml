@@ -315,9 +315,9 @@ Item {
                     rightMargin: 10
                 }
                 from: 25
-                to: 200
+                to: 135
                 startLabel: "25°C"
-                endLabel: "200°C"
+                endLabel: "135°C"
                 value: platformInterface.foldback_temperature_limiting_event.foldback_maximum_temperature
                 onSliderMoved:{
                     console.log("sending temp foldback update command from foldbackTempSlider");
