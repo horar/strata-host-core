@@ -225,21 +225,7 @@ Item {
                 anchors.horizontalCenter: inputConversionStats.horizontalCenter
             }
 
-            PortStatBox {
-                id:maxPowerBox
-                label: "MAX CAPACITY"
-                value: "200"
-                icon: "../images/icon-max.svg"
-                //portColor: root.portColor
-                valueSize: 30
-                unit: "W"
-                anchors.top: topBackgroundRect.bottom
-                anchors.topMargin: 20
-                anchors.horizontalCenter: inputConversionStats.horizontalCenter
-                height: inputConversionStats.height/8
-                width: inputConversionStats.width/2
-                visible: inputConversionStats.inputPowerConnected
-            }
+
 
             PortStatBox {
                 id:voltageOutBox
@@ -249,7 +235,24 @@ Item {
                 //portColor: root.portColor
                 valueSize: 30
                 unit: "V"
-                anchors.top: maxPowerBox.bottom
+                anchors.top: topBackgroundRect.bottom
+                anchors.topMargin: 20
+                anchors.horizontalCenter: inputConversionStats.horizontalCenter
+
+                height: inputConversionStats.height/8
+                width: inputConversionStats.width/2
+                visible: inputConversionStats.inputPowerConnected
+            }
+
+            PortStatBox {
+                id:maxPowerBox
+                label: "MAX CAPACITY"
+                value: "200"
+                icon: "../images/icon-max.svg"
+                //portColor: root.portColor
+                valueSize: 30
+                unit: "W"
+                anchors.top: voltageOutBox.bottom
                 anchors.topMargin: 20
                 anchors.horizontalCenter: inputConversionStats.horizontalCenter
                 height: inputConversionStats.height/8
@@ -262,7 +265,7 @@ Item {
                 source:"./images/powerconverter.png"
                 opacity:.5
                 fillMode:Image.PreserveAspectFit
-                anchors.top:voltageOutBox.bottom
+                anchors.top:maxPowerBox.bottom
 
                 anchors.topMargin:40
                 anchors.bottom:inputConversionStats.bottom
