@@ -177,19 +177,21 @@ Item {
         }
 
         SGComboBox {
+            id: maxPowerOutput
 
             property variant maxPowerOptions: ["15","27", "36", "45","60","100"]
-            property int maxPower: platformInterface.usb_pd_maximum_power.commanded_max_power
+            property var maxPower: platformInterface.usb_pd_maximum_power
 
             //limit the options for power usage to be less than the max power allocated for this port
             onMaxPowerChanged:{
                 if (platformInterface.usb_pd_maximum_power.port === portNumber){
-                    //console.log("got a new commanded max power for port",platformInterface.usb_pd_maximum_power.port)
+                    console.log("got a new commanded max power for port",platformInterface.usb_pd_maximum_power.port)
                     maxPowerOutput.currentIndex = maxPowerOutput.comboBox.find( parseInt (platformInterface.usb_pd_maximum_power.commanded_max_power))
+                    console.log("commanded max power set to index",maxPowerOutput.currentIndex);
                 }
             }
 
-            id: maxPowerOutput
+
             label: "Maximum Power Output:"
             model: maxPowerOptions
             enabled:{
