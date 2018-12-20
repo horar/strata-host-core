@@ -275,7 +275,7 @@ Item {
         SGSubmitInfoBox {
             id: currentLimitInput
             showButton: false
-            infoBoxWidth: 30
+            infoBoxWidth: 35
             minimumValue: 0
             maximumValue: 6
             anchors {
@@ -364,7 +364,7 @@ Item {
         SGSubmitInfoBox {
             id: incrementInput
             showButton: false
-            infoBoxWidth: 30
+            infoBoxWidth: 35
             minimumValue: 0
             maximumValue: 3
             anchors {
