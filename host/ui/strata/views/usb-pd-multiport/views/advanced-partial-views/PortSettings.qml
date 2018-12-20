@@ -410,11 +410,11 @@ Item {
                 }
             }
             from:0
-            to:200
+            to:50
             stepSize: 10
             labelTopAligned: true
             startLabel: "0mV"
-            endLabel: "200mV"
+            endLabel: "50mV"
             anchors {
                 left: parent.left
                 leftMargin: 75
@@ -437,7 +437,7 @@ Item {
             showButton: false
             infoBoxWidth: 35
             minimumValue: 0
-            maximumValue: 200
+            maximumValue: 50
             anchors {
                 verticalCenter: bias.verticalCenter
                 verticalCenterOffset: -7

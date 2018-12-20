@@ -181,10 +181,10 @@ Item {
                 }
             }
             from:0
-            to:200
+            to:50
             stepSize: 10
             startLabel:"0mV"
-            endLabel:"200mV"
+            endLabel:"50mV"
             toolTipDecimalPlaces: 2
             anchors {
                 left: parent.left
@@ -206,7 +206,7 @@ Item {
             id: biasInput
             showButton: false
             minimumValue: 0
-            maximumValue: 200
+            maximumValue: 50
             anchors {
                 verticalCenter: bias.verticalCenter
                 right: parent.right
