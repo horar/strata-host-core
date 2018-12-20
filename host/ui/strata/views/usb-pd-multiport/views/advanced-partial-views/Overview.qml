@@ -484,7 +484,7 @@ Item {
                 }
                 width: margins.width / 4 - 15
                 portConnected: false
-                portColor: "blueviolet"
+                portColor: "#2348cd"
 
                 property var deviceConnected: platformInterface.usb_pd_port_connect.connection_state
                 property var deviceDisconnected: platformInterface.usb_pd_port_disconnect.connection_state
