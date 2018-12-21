@@ -556,7 +556,7 @@ Item {
             }
             outputPower:{
                 if (platformInterface.request_usb_power_notification.port === 3){
-                    return Math.round(platformInterface.request_usb_power_notification.output_voltage * platformInterface.request_usb_power_notification.output_current).toFixed(2);
+                    return (platformInterface.request_usb_power_notification.output_voltage * platformInterface.request_usb_power_notification.output_current).toFixed(2);
                 }
                 else{
                     return portInfo3.outputPower;
