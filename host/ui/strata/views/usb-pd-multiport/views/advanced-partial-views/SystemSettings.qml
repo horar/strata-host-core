@@ -505,9 +505,9 @@ Item {
                     right: tempFaultInput.left
                     rightMargin: 10
                 }
-                from: -64
+                from: 0
                 to: 135
-                startLabel: "-64°C"
+                startLabel: "0°C"
                 endLabel: "135°C"
                 labelTopAligned: true
                 value: platformInterface.set_maximum_temperature_notification.maximum_temperature
@@ -520,7 +520,7 @@ Item {
                 id: tempFaultInput
                 showButton: false
                 infoBoxWidth: 35
-                minimumValue: -64
+                minimumValue: 0
                 maximumValue: 135
                 anchors {
                     verticalCenter: tempFault.verticalCenter
@@ -624,7 +624,7 @@ Item {
                 }
                 from: 25
                 to: 135
-                startLabel: "25°C"
+                startLabel: "0°C"
                 endLabel: "135°C"
                 labelTopAligned: true
                 value: platformInterface.foldback_temperature_limiting_event.foldback_maximum_temperature

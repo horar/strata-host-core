@@ -133,9 +133,9 @@ Item {
                     right: tempFaultInput.left
                     rightMargin: 10
                 }
-                from: -64
+                from: -40
                 to: 135
-                startLabel: "-64°C"
+                startLabel: "-40°C"
                 endLabel: "135°C"
                 value: platformInterface.set_maximum_temperature_notification.maximum_temperature
                 onSliderMoved: {
@@ -314,9 +314,9 @@ Item {
                     right: foldbackTempInput.left
                     rightMargin: 10
                 }
-                from: 25
+                from: -40
                 to: 135
-                startLabel: "25°C"
+                startLabel: "-40°C"
                 endLabel: "135°C"
                 value: platformInterface.foldback_temperature_limiting_event.foldback_maximum_temperature
                 onSliderMoved:{
