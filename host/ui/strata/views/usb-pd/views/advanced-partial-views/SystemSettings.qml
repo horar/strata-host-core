@@ -260,8 +260,15 @@ Item {
                     console.log("got a new min power setting",platformInterface.foldback_input_voltage_limiting_event.foldback_minimum_voltage_power);
                     limitOutput.currentIndex = limitOutput.comboBox.find( parseInt (platformInterface.foldback_input_voltage_limiting_event.foldback_minimum_voltage_power))
                 }
-
-
+            }
+            Text{
+                id: foldbackTempUnits
+                text: "°C"
+                anchors {
+                    left: limitOutput.right
+                    leftMargin: 5
+                    verticalCenter: limitOutput.verticalCenter
+                }
             }
 
             SGDivider {
@@ -328,6 +335,7 @@ Item {
 
             }
 
+
             SGSubmitInfoBox {
                 id: foldbackTempInput
                 showButton: false
@@ -341,6 +349,7 @@ Item {
                                                                              intValue,
                                                                              platformInterface.foldback_temperature_limiting_event.foldback_maximum_temperature_power)
             }
+
 
             SGComboBox {
                 id: limitOutput2
@@ -364,6 +373,16 @@ Item {
 
                 onCurrentFoldbackOuputChanged: {
                     limitOutput2.currentIndex = limitOutput2.comboBox.find( parseInt (platformInterface.foldback_temperature_limiting_event.foldback_maximum_temperature_power))
+                }
+            }
+
+            Text{
+                id: foldbackTempUnits2
+                text: "W"
+                anchors {
+                    left: limitOutput2.right
+                    leftMargin: 5
+                    verticalCenter: limitOutput2.verticalCenter
                 }
             }
         }
