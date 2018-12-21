@@ -171,6 +171,34 @@ Item {
 
                 property var deviceConnected: platformInterface.usb_pd_port_connect.connection_state
                 property var deviceDisconnected: platformInterface.usb_pd_port_disconnect.connection_state
+                property int theRunningTotal: 0
+                property int theEfficiencyCount: 0
+                property int theEfficiencyAverage: 0
+
+                property var periodicValues: platformInterface.request_usb_power_notification
+
+                onPeriodicValuesChanged: {
+                    var theInputPower = platformInterface.request_usb_power_notification.input_voltage * platformInterface.request_usb_power_notification.input_current +2;//PTJ-1321 2 Watt compensation
+                    var theOutputPower = platformInterface.request_usb_power_notification.output_voltage * platformInterface.request_usb_power_notification.output_current;
+
+                    if (platformInterface.request_usb_power_notification.port === 1){
+                        //sum eight values of the efficency and average before displaying
+                        var theEfficiency = Math.round((theOutputPower/theInputPower) *100)
+                        miniInfo1.theRunningTotal += theEfficiency;
+                        //console.log("new efficiency value=",theEfficiency,"new total is",miniInfo1.theRunningTotal,miniInfo1.theEfficiencyCount);
+                        miniInfo1.theEfficiencyCount++;
+
+                        if (miniInfo1.theEfficiencyCount == 7){
+                            miniInfo1.theEfficiencyAverage = miniInfo1.theRunningTotal/8;
+                            miniInfo1.theEfficiencyCount = 0;
+                            miniInfo1.theRunningTotal = 0
+
+                            //console.log("publishing new efficency",miniInfo1.theEfficiencyAverage);
+                            //return miniInfo1.theEfficiencyAverage
+                        }
+                    }
+
+                }
 
                 onDeviceConnectedChanged: {
                     if (platformInterface.usb_pd_port_connect.port_id === "USB_C_port_1"){
@@ -243,21 +271,7 @@ Item {
                     }
                 }
                 portEfficency: {
-                    var theInputPower = platformInterface.request_usb_power_notification.input_voltage * platformInterface.request_usb_power_notification.input_current +2;//PTJ-1321 2 Watt compensation
-                    var theOutputPower = platformInterface.request_usb_power_notification.output_voltage * platformInterface.request_usb_power_notification.output_current;
-
-                    if (platformInterface.request_usb_power_notification.port === 1){
-                        if (theInputPower == 0){    //division by 0 would normally give "nan"
-                            return "—"
-                        }
-                        else{
-                            return Math.round((theOutputPower/theInputPower) *100)
-                            //return "—"
-                        }
-                    }
-                    else{
-                        return miniInfo1.portEfficency;
-                    }
+                    return theEfficiencyAverage;
                 }
 
             }
