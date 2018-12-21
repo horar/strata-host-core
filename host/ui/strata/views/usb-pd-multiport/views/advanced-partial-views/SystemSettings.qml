@@ -622,10 +622,10 @@ Item {
                     right: foldbackTempInput.left
                     rightMargin: 10
                 }
-                from: 25
-                to: 135
+                from: 0
+                to: 100
                 startLabel: "0°C"
-                endLabel: "135°C"
+                endLabel: "100°C"
                 labelTopAligned: true
                 value: platformInterface.foldback_temperature_limiting_event.foldback_maximum_temperature
                 onMoved:{

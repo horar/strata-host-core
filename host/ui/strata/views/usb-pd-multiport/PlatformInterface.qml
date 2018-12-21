@@ -134,7 +134,7 @@ Item {
     property var foldback_temperature_limiting_refresh:{
             "port":0,
             "current_temperature":0,
-            "foldback_maximum_temperature":200,
+            "foldback_maximum_temperature":135,
             "foldback_maximum_temperature_power":15,
             "temperature_foldback_enabled":true,
             "temperature_foldback_active":true,
