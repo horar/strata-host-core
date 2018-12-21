@@ -328,22 +328,22 @@ Item {
 
         SGSlider {
             id: increment
-            label: "For every increment of:"
+            label: "Rate of change:"
             value:{
                 if (platformInterface.get_cable_loss_compensation.port === portNumber){
-                    return platformInterface.get_cable_loss_compensation.output_current;
+                    return platformInterface.get_cable_loss_compensation.bias_voltage*1000;
                 }
                 else{
                     return increment.value
                 }
             }
-            from:.25
-            to:1
-            stepSize: .005
-            toolTipDecimalPlaces: 2
+            from:.0
+            to:200
+            stepSize: 10
+            toolTipDecimalPlaces: 0
             labelTopAligned: true
-            startLabel: ".25A"
-            endLabel: "1A"
+            startLabel: "0mV/A"
+            endLabel: "200mV/A"
             anchors {
                 left: parent.left
                 leftMargin: 25
@@ -353,10 +353,10 @@ Item {
                 rightMargin: 10
             }
             onMoved:{
-                console.log("sending values from increment slider:",portNumber, increment.value, platformInterface.get_cable_loss_compensation.bias_voltage);
+                //console.log("sending values from increment slider:",portNumber, increment.value, platformInterface.get_cable_loss_compensation.bias_voltage);
                 platformInterface.set_cable_compensation.update(portNumber,
-                                                                     value,
-                                                                     platformInterface.get_cable_loss_compensation.bias_voltage)
+                                       platformInterface.get_cable_loss_compensation.output_current,
+                                       value/1000)
             }
 
         }
@@ -366,7 +366,7 @@ Item {
             showButton: false
             infoBoxWidth: 35
             minimumValue: 0
-            maximumValue: 3
+            maximumValue: 200
             anchors {
                 verticalCenter: increment.verticalCenter
                 verticalCenterOffset: -7
@@ -376,23 +376,22 @@ Item {
 
             value:{
                 if (platformInterface.get_cable_loss_compensation.port === portNumber){
-                      return platformInterface.get_cable_loss_compensation.output_current.toFixed(1)
+                      return (platformInterface.get_cable_loss_compensation.bias_voltage*1000)
                   }
                   else{
                       return increment.value
                   }
             }
             onApplied:{
-                //console.log("sending values from increment textbox:",portNumber, incrementInput.floatValue, platformInterface.set_cable_loss_compensation.bias_voltage);
                 platformInterface.set_cable_compensation.update(portNumber,
-                           incrementInput.floatValue,
-                           platformInterface.get_cable_loss_compensation.bias_voltage)
+                           platformInterface.get_cable_loss_compensation.output_current,
+                           incrementInput.floatValue/1000)
                     }
         }
 
         Text{
             id: incrementInputUnits
-            text: "A"
+            text: "mV/A"
             anchors {
                 right: parent.right
                 verticalCenter: incrementInput.verticalCenter
@@ -400,26 +399,26 @@ Item {
         }
 
         SGSlider {
-            //N.B. values to and from the platform are in volts, but values displayed are in mV
             id: bias
-            label: "Bias output by:"
+            label: "Per:"
             value:{
                 if (platformInterface.get_cable_loss_compensation.port === portNumber){
-                    return platformInterface.get_cable_loss_compensation.bias_voltage * 1000
+                    return platformInterface.get_cable_loss_compensation.output_current
                 }
                 else{
                     return bias.value
                 }
             }
-            from:0
-            to:50
-            stepSize: 10
+            from:.25
+            to:1
+            stepSize: .25
             labelTopAligned: true
-            startLabel: "0mV"
-            endLabel: "50mV"
+            startLabel: "0.25A"
+            endLabel: "1A"
+            toolTipDecimalPlaces: 2
             anchors {
                 left: parent.left
-                leftMargin: 75
+                leftMargin: 97
                 top: increment.bottom
                 topMargin: 10
                 right: biasInput.left
@@ -427,19 +426,19 @@ Item {
             }
             onMoved: {
                 platformInterface.set_cable_compensation.update(portNumber,
-                                                                     platformInterface.get_cable_loss_compensation.output_current,
-                                                                     value/1000)
+                                                                value,
+                                                                platformInterface.get_cable_loss_compensation.bias_voltage
+                                                                )
             }
 
         }
 
         SGSubmitInfoBox {
-            //N.B.  values to and from the platform are in volts, but values displayed are in mV
             id: biasInput
             showButton: false
             infoBoxWidth: 35
             minimumValue: 0
-            maximumValue: 50
+            maximumValue: 1
             anchors {
                 verticalCenter: bias.verticalCenter
                 verticalCenterOffset: -7
@@ -449,20 +448,20 @@ Item {
 
             value:{
                 if (platformInterface.get_cable_loss_compensation.port === portNumber){
-                    return platformInterface.get_cable_loss_compensation.bias_voltage * 1000
+                    return platformInterface.get_cable_loss_compensation.output_current
                 }
                 else{
                     return bias.value
                 }
             }
             onApplied: platformInterface.set_cable_compensation.update(portNumber,
-                                    platformInterface.get_cable_loss_compensation.output_current,
-                                    biasInput.floatValue/1000)
+                                    biasInput.floatValue,
+                                    platformInterface.get_cable_loss_compensation.bias_voltage)
         }
 
         Text{
             id: biasInputUnits
-            text: "mV"
+            text: "A"
             anchors {
                 right: parent.right
                 verticalCenter: biasInput.verticalCenter
