@@ -246,7 +246,7 @@ Item {
                     top: foldbackLimit.bottom
                     topMargin: 10
                 }
-                comboBoxWidth: 60
+                comboBoxWidth: 75
                 //when changing the value
                 onActivated: {
                     console.log("setting input power foldback to ",limitOutput.comboBox.currentText);
@@ -351,7 +351,7 @@ Item {
                     top: foldbackTemp.bottom
                     topMargin: 10
                 }
-                comboBoxWidth: 60
+                comboBoxWidth: 75
                 //when the value is changed by the user
                 onActivated: {
                     console.log("sending temp foldback update command from limitOutputComboBox");
