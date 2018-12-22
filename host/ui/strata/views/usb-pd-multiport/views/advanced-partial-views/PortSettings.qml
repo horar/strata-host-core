@@ -331,7 +331,8 @@ Item {
             label: "Rate of change:"
             value:{
                 if (platformInterface.get_cable_loss_compensation.port === portNumber){
-                    return platformInterface.get_cable_loss_compensation.bias_voltage*1000;
+                    return (platformInterface.get_cable_loss_compensation.bias_voltage/
+                            platformInterface.get_cable_loss_compensation.output_current * 1000);
                 }
                 else{
                     return increment.value
@@ -356,7 +357,7 @@ Item {
                 //console.log("sending values from increment slider:",portNumber, increment.value, platformInterface.get_cable_loss_compensation.bias_voltage);
                 platformInterface.set_cable_compensation.update(portNumber,
                                        platformInterface.get_cable_loss_compensation.output_current,
-                                       value/1000)
+                                       value*platformInterface.get_cable_loss_compensation.output_current/1000)
             }
 
         }
@@ -376,7 +377,8 @@ Item {
 
             value:{
                 if (platformInterface.get_cable_loss_compensation.port === portNumber){
-                      return (platformInterface.get_cable_loss_compensation.bias_voltage*1000)
+                      return (platformInterface.get_cable_loss_compensation.bias_voltage/
+                              platformInterface.get_cable_loss_compensation.output_current * 1000)
                   }
                   else{
                       return increment.value
@@ -385,7 +387,7 @@ Item {
             onApplied:{
                 platformInterface.set_cable_compensation.update(portNumber,
                            platformInterface.get_cable_loss_compensation.output_current,
-                           incrementInput.floatValue/1000)
+                           incrementInput.floatValue * platformInterface.get_cable_loss_compensation.output_current/1000)
                     }
         }
 
@@ -426,9 +428,9 @@ Item {
             }
             onMoved: {
                 platformInterface.set_cable_compensation.update(portNumber,
-                                                                value,
-                                                                platformInterface.get_cable_loss_compensation.bias_voltage
-                                                                )
+                      value,
+                      platformInterface.get_cable_loss_compensation.bias_voltage * value
+                      )
             }
 
         }
@@ -456,7 +458,7 @@ Item {
             }
             onApplied: platformInterface.set_cable_compensation.update(portNumber,
                                     biasInput.floatValue,
-                                    platformInterface.get_cable_loss_compensation.bias_voltage)
+                                    platformInterface.get_cable_loss_compensation.bias_voltage*biasInput.floatValue)
         }
 
         Text{

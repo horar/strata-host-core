@@ -444,9 +444,9 @@ Item {
                       },
                       update: function (portNumber, outputCurrent, biasVoltage){
                           //adding back these console messages will cause an error when the update function is called.
-                          console.log("set_cable_loss_compensation.port=",portNumber);
-                          console.log("set_cable_loss_compensation.output_current=",outputCurrent);
-                          console.log("set_cable_loss_compensation.bias_voltage=",biasVoltage);
+                          //console.log("set_cable_loss_compensation.port=",portNumber);
+                          //console.log("set_cable_loss_compensation.output_current=",outputCurrent);
+                          //console.log("set_cable_loss_compensation.bias_voltage=",biasVoltage);
 
                           this.set(portNumber,outputCurrent,biasVoltage);
                           //console.log("sending set_cable_loss_compensation cmd ", JSON.stringify(this));
