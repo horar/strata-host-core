@@ -24,10 +24,8 @@ function registerTarget(helpTarget, targetDescription, index, viewTab) {
     object.index = index
     object.description = targetDescription
 
-
     var helpObject = { "view": viewTab, "index": index, "target": helpTarget, "description": targetDescription, "helpObject": object }
     helpObjects.push(helpObject)
-
 }
 
 function registerWindow(windowTarget) {
@@ -66,17 +64,20 @@ function startHelpTour(viewTab) {
     helpView = viewTab
     var max = 0
     var startIndex
+
     for (var i = 0; i < helpObjects.length; i++){
 
         if (helpObjects[i]["index"] === 0 && helpObjects[i]["view"] === viewTab ) {
             startIndex = i
         }
+
         if(helpObjects[i]["view"] === viewTab) {
             if(helpObjects[i]["index"] > max) {
-                max = helpObjects[i]["index"]
+                max = helpObjects[i]["index"]  // find the maximum index in this view, which is its tourCount-1
             }
         }
     }
+
     tourCount = max + 1
     refreshView(startIndex)
     helpObjects[startIndex]["helpObject"].visible = true
@@ -84,10 +85,18 @@ function startHelpTour(viewTab) {
 
 
 function reset(viewTab) {
+
+    var toDelete = [] // create array of indexes in helpObjects that need to be removed
+
     for (var i=0; i<helpObjects.length; i++) {
         if(helpObjects[i]["view"] === viewTab) {
-           helpObjects[i]["helpObject"].destroy()
+            helpObjects[i]["helpObject"].destroy()
+            toDelete.push(i) // add object index to be removed from helpObjects array
         }
     }
 
+    // remove these objects in reverse order so that the indexes aren't changed by the removal of others
+    for (var j=toDelete.length-1; j>-1; j--) {
+        helpObjects.splice(toDelete[j],1)
+    }
 }
