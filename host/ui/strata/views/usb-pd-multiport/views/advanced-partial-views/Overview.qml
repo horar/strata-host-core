@@ -188,7 +188,7 @@ Item {
                         //console.log("new efficiency value=",theEfficiency,"new total is",miniInfo1.theRunningTotal,miniInfo1.theEfficiencyCount);
                         miniInfo1.theEfficiencyCount++;
 
-                        if (miniInfo1.theEfficiencyCount == 7){
+                        if (miniInfo1.theEfficiencyCount == 8){
                             miniInfo1.theEfficiencyAverage = miniInfo1.theRunningTotal/8;
                             miniInfo1.theEfficiencyCount = 0;
                             miniInfo1.theRunningTotal = 0
