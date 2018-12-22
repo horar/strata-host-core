@@ -436,7 +436,7 @@ Item {
         SGSubmitInfoBox {
             id: biasInput
             showButton: false
-            infoBoxWidth: 35
+            infoBoxWidth: 40
             minimumValue: 0
             maximumValue: 1
             anchors {
