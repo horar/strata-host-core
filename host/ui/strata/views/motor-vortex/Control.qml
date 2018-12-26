@@ -5,8 +5,10 @@ import QtGraphicalEffects 1.0
 import QtQuick.Controls.Styles 1.4
 import QtQuick.Extras 1.4
 //import tech.spyglass. 1.0
+import Fonts 1.0
 import "qrc:/js/navigation_control.js" as NavigationControl
 import "qrc:/views/motor-vortex/sgwidgets"
+import "qrc:/js/help_layout_manager.js" as Help
 
 Rectangle {
     id: controlNavigation
@@ -18,6 +20,14 @@ Rectangle {
         id: platformInterface
     }
 
+    Component.onCompleted: {
+        helpIcon.visible = true
+    }
+
+    Component.onDestruction: {
+        Help.reset("basicViewHelp")
+        Help.reset("advanceViewHelp")
+    }
 
     TabBar {
         id: navTabs
@@ -31,6 +41,7 @@ Rectangle {
             id: basicButton
             text: qsTr("Basic")
             onClicked: {
+                helpIcon.visible = true
                 controlContainer.currentIndex = 0
             }
         }
@@ -39,7 +50,7 @@ Rectangle {
             id: advancedButton
             text: qsTr("Advanced")
             onClicked: {
-
+                helpIcon.visible = true
                 controlContainer.currentIndex = 1
             }
         }
@@ -48,6 +59,7 @@ Rectangle {
             id: faeButton
             text: qsTr("FAE Only")
             onClicked: {
+                helpIcon.visible = false
                 controlContainer.currentIndex = 2
             }
             background: Rectangle {
@@ -83,7 +95,6 @@ Rectangle {
 
         Flickable {
             id: controlContainer
-
             property int currentIndex: 0
 
             onCurrentIndexChanged: {
@@ -130,6 +141,39 @@ Rectangle {
                 visible: false
                 property alias basicView: basicView
             }
+        }
+    }
+
+    Text {
+        id: helpIcon
+        anchors {
+            right: scrollView.right
+            top: scrollView.top
+            margins: 20
+        }
+        text: "\ue808"
+        color: helpMouse.containsMouse ? "lightgrey" : "grey"
+        font {
+            family: Fonts.sgicons
+            pixelSize: 40
+        }
+        visible: true
+
+        MouseArea {
+            id: helpMouse
+            anchors {
+                fill: helpIcon
+            }
+            onClicked: {
+                if(basicView.visible === true) {
+                    Help.startHelpTour("basicViewHelp")
+                }
+                else if(advanceView.visible === true) {
+                    Help.startHelpTour("advanceViewHelp")
+                }
+                else console.log("help not available")
+            }
+            hoverEnabled: true
         }
     }
 }
