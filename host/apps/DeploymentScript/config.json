@@ -1,0 +1,5 @@
+{
+  "sync_gateway_url": "http://127.0.0.1:4984",
+  "sync_gateway_db": "staging",
+  "cloud_services_url": "http://localhost:8081"
+}
