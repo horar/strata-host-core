@@ -18,7 +18,6 @@ Rectangle {
 
     property alias warningVisible: warningBox.visible
 
-
     Component.onCompleted: {
         Help.registerTarget(navTabs, "These tabs switch between Basic and Advanced control views. The FAE Only tab is restricted for ON Semiconductor field engineers.", 0, "basicViewHelp")
         Help.registerTarget(motorSpeedControl, "The slider sets motor speed from 1500-4000 rpm" , 1 , "basicViewHelp")

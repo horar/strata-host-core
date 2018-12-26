@@ -5,7 +5,6 @@ var helpObjects = []
 var helpView
 var tourCount = 0
 
-
 /*******
    Adding into the help tutorial API:
    Help.registerTarget(Target, Description, Index Number, View Target)
@@ -17,7 +16,6 @@ var tourCount = 0
 *******/
 
 function registerTarget(helpTarget, targetDescription, index, viewTab) {
-
     var component = Qt.createComponent("qrc:/statusbar-partial-views/SGPeekThroughOverlay.qml");
     var object = component.createObject(window);
 
@@ -85,16 +83,13 @@ function startHelpTour(viewTab) {
 
 
 function reset(viewTab) {
-
     var toDelete = [] // create array of indexes in helpObjects that need to be removed
-
     for (var i=0; i<helpObjects.length; i++) {
         if(helpObjects[i]["view"] === viewTab) {
             helpObjects[i]["helpObject"].destroy()
             toDelete.push(i) // add object index to be removed from helpObjects array
         }
     }
-
     // remove these objects in reverse order so that the indexes aren't changed by the removal of others
     for (var j=toDelete.length-1; j>-1; j--) {
         helpObjects.splice(toDelete[j],1)

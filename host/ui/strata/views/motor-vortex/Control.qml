@@ -29,7 +29,6 @@ Rectangle {
         Help.reset("advanceViewHelp")
     }
 
-
     TabBar {
         id: navTabs
         anchors {
@@ -97,7 +96,6 @@ Rectangle {
 
         Flickable {
             id: controlContainer
-
             property int currentIndex: 0
 
             onCurrentIndexChanged: {
