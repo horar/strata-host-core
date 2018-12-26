@@ -20,11 +20,11 @@ Item {
     }
 
     Component.onCompleted: {
-        Help.registerTarget(navTabs, "Using these two tabs, you may select between running the NL7SZ97 or the NL7SZ58 multifunction gates.", 0)
+        Help.registerTarget(navTabs, "Using these two tabs, you may select between running the NL7SZ97 or the NL7SZ58 multifunction gates.", 0,"logicGateHelp")
     }
 
     Component.onDestruction: {
-        Help.reset()
+        Help.reset("logicGateHelp")
     }
 
     TabBar {
@@ -104,7 +104,7 @@ Item {
             onClicked: {
                 navTabs.currentIndex = 0
                 basicButton.clicked()
-                Help.startHelpTour()
+                Help.startHelpTour("logicGateHelp")
             }
             hoverEnabled: true
         }

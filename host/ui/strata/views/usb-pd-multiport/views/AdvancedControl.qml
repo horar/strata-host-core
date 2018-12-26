@@ -12,8 +12,6 @@ Rectangle {
         fill: parent
     }
 
-
-
     Overview {
         id: overview
         height: 310

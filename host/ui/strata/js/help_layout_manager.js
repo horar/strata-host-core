@@ -2,17 +2,27 @@
 
 var window
 var helpObjects = []
-var helpRunning = false
-var helpIndex
+var helpView
+var tourCount = 0
 
-function registerTarget(helpTarget, targetDescription, index) {
+/*******
+   Adding into the help tutorial API:
+   Help.registerTarget(Target, Description, Index Number, View Target)
+   Example: Help.registerTarget(startButton "this button starts the motor", 0, "motorVortexHelp")
+
+   Starting the tutorial when help icon is clicked API:
+   Help.startHelpTour(view Target)
+   Example:  Help.startHelpTour("motorVortexHelp")
+*******/
+
+function registerTarget(helpTarget, targetDescription, index, viewTab) {
     var component = Qt.createComponent("qrc:/statusbar-partial-views/SGPeekThroughOverlay.qml");
     var object = component.createObject(window);
 
     object.index = index
     object.description = targetDescription
 
-    var helpObject = { "index": index, "target": helpTarget, "description": targetDescription, "helpObject": object}
+    var helpObject = { "view": viewTab, "index": index, "target": helpTarget, "description": targetDescription, "helpObject": object }
     helpObjects.push(helpObject)
 }
 
@@ -34,16 +44,11 @@ function liveResize() {
 
 function next(currentIndex) {
     for (var i = 0; i < helpObjects.length; i++){
-        if (helpObjects[i]["index"] === currentIndex) {
+        if (helpObjects[i]["index"] === currentIndex && helpView === helpObjects[i]["view"]) {
             helpObjects[i]["helpObject"].visible = false
-            if (helpObjects[i]["index"] === helpObjects.length - 1) { //if last, end tour
-                helpRunning = false
-                break
-            }
-        } else if (helpObjects[i]["index"] === currentIndex+1) {
+        } else if (helpObjects[i]["index"] === currentIndex+1 && helpView === helpObjects[i]["view"]) {
             refreshView(i)
             helpObjects[i]["helpObject"].visible = true
-            helpIndex = i
         }
     }
 }
@@ -51,9 +56,9 @@ function next(currentIndex) {
 function prev(currentIndex) {
     if (currentIndex > 0) {
         for (var i = 0; i < helpObjects.length; i++){
-            if (helpObjects[i]["index"] === currentIndex) {
+            if (helpObjects[i]["index"] === currentIndex && helpView === helpObjects[i]["view"]) {
                 helpObjects[i]["helpObject"].visible = false
-            } else if (helpObjects[i]["index"] === currentIndex-1) {
+            } else if (helpObjects[i]["index"] === currentIndex-1 && helpView === helpObjects[i]["view"]) {
                 refreshView(i)
                 helpObjects[i]["helpObject"].visible = true
                 helpIndex = i
@@ -62,27 +67,35 @@ function prev(currentIndex) {
     }
 }
 
-function startHelpTour() {
+function startHelpTour(viewTab) {
+    helpView = viewTab
+    var max = 0
+    var startIndex
     for (var i = 0; i < helpObjects.length; i++){
-        if (helpObjects[i]["index"] === 0) {
-            refreshView(i)
-            helpObjects[i]["helpObject"].visible = true
-            helpRunning = true
-            helpIndex = i
+        if (helpObjects[i]["index"] === 0 && helpObjects[i]["view"] === viewTab ) {
+            startIndex = i
+        }
+        if(helpObjects[i]["view"] === viewTab) {
+            if(helpObjects[i]["index"] > max) {
+                max = helpObjects[i]["index"]
+            }
         }
     }
+    tourCount = max + 1
+    refreshView(startIndex)
+    helpObjects[startIndex]["helpObject"].visible = true
 }
 
-function closeTour() {
-    for (var i = 0; i < helpObjects.length; i++){
-        helpObjects[i]["helpObject"].visible = false
-        helpRunning = false
-    }
-}
-
-function reset() {
+function reset(viewTab) {
+    var toDelete = [] // create array of indexes in helpObjects that need to be removed
     for (var i=0; i<helpObjects.length; i++) {
-        helpObjects[i]["helpObject"].destroy()
+        if(helpObjects[i]["view"] === viewTab) {
+            helpObjects[i]["helpObject"].destroy()
+            toDelete.push(i) // add object index to be removed from helpObjects array
+        }
     }
-    helpObjects = []
+    // remove these objects in reverse order so that the indexes aren't changed by the removal of others
+    for (var j=toDelete.length-1; j>-1; j--) {
+        helpObjects.splice(toDelete[j],1)
+    }
 }

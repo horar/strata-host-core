@@ -40,10 +40,10 @@ Rectangle {
 
     Component.onCompleted: {
         resetToIndex0();
-        Help.registerTarget(thirdInput, "The gate outputs will automatically match the inputs for a given logic function and are also represented on the board by the green LEDs.", 4)
-        Help.registerTarget(inputAToggleContainer, "The inputs can be toggled on or off and are also represented on the board by blue LEDs.", 3)
-        Help.registerTarget(logicSelection, "Use these buttons to select which logic function you want to run.", 1)
-        Help.registerTarget(gatesImage, "The image displayed represents the logic gate, its input controls and its outputs", 2)
+        Help.registerTarget(thirdInput, "The gate outputs will automatically match the inputs for a given logic function and are also represented on the board by the green LEDs.", 2, "logicGateHelp")
+        Help.registerTarget(inputAToggleContainer, "The inputs can be toggled on or off and are also represented on the board by blue LEDs.", 3, "logicGateHelp" )
+        Help.registerTarget(logicSelection, "Use these buttons to select which logic function you want to run.", 4, "logicGateHelp")
+        Help.registerTarget(gatesImage, "The image displayed represents the logic gate, its input controls and its outputs", 1, "logicGateHelp")
     }
 
 
