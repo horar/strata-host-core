@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.2
 import "qrc:/js/navigation_control.js" as NavigationControl
 import "qrc:/views/motor-vortex/sgwidgets"
+import "qrc:/js/help_layout_manager.js" as Help
 
 Rectangle {
     id: faeControl
