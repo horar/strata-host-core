@@ -118,7 +118,7 @@ def getFilesMetadata(class_id, path, url, token):
         for fname in fileList:
             fileInfo = dict()
             fileInfo["name"] = currentDirName
-            fileInfo["file"] = fname
+            fileInfo["file"] = "{}/{}/{}".format(class_id, currentDirName, fname)
             filePath = dirName + "/" + fname
             fileInfo["md5"] = md5(filePath)
             fileInfo["timestamp"] = timeStamp()
