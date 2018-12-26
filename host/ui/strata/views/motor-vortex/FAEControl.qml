@@ -25,11 +25,6 @@ Rectangle {
         platformInterface.set_drive_mode.update(0);
     }
 
-
-    onVisibleChanged: {
-         Help.reset()
-    }
-
     Rectangle {
         id: leftSide
         width: 600

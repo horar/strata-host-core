@@ -105,11 +105,9 @@ Rectangle {
                     faeView.visible = false
                     break;
                 case 1:
-
                     basicView.visible = false
                     advanceView.visible = true
                     faeView.visible = false
-
                     break;
                 case 2:
                     basicView.visible = false
