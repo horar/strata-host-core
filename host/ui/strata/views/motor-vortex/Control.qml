@@ -41,7 +41,6 @@ Rectangle {
             id: basicButton
             text: qsTr("Basic")
             onClicked: {
-
                 helpIcon.visible = true
                 controlContainer.currentIndex = 0
             }
