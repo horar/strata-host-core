@@ -450,7 +450,7 @@ Rectangle {
 
     // These text boxes are HACK solution to get around an issue on windows builds where the glyphs loaded in this file were the ONLY glyphs that appeared in subsequent views.
     // the effects of this bug are documented here: https://bugreports.qt.io/browse/QTBUG-62578 - our instance of this issue was not random as described, however.  --Faller
-    // Update 10/23/2018: This may have been solved by moving to a singleton font loader.
+    // Update 10/23/2018: This may have been solved by moving to singleton font loader, [TODO] need to test.
     Text {
         text: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890:./\\{}()[]-=+_!@#$%^&*`~<>?\"\'"
         font {
@@ -463,6 +463,14 @@ Rectangle {
         text:  "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890:./\\{}()[]-=+_!@#$%^&*`~<>?\"\'"
         font {
             family: Fonts.franklinGothicBook
+        }
+        visible: false
+    }
+
+    Text {
+        text:  "\u0023 \u0027 \u0037 \u0038 \u003a \u0043 \u25b2 \ue800 \ue801 \ue805 \ue808 \ue80b \ue80e \ue810 \ue811 \ue813 \ue824 \ue834 \uf15b"
+        font {
+            family: Fonts.sgicons
         }
         visible: false
     }
