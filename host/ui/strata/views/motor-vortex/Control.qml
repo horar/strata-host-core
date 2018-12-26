@@ -128,14 +128,12 @@ Rectangle {
             BasicControl {
                 id: basicView
                 visible: true
-                property alias tavView: navTabs
             }
 
             AdvancedControl {
                 id: advanceView
                 visible: false
                 property alias basicView: basicView
-                property alias tavView: navTabs
             }
 
             FAEControl {
