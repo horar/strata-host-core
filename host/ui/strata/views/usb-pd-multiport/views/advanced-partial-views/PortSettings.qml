@@ -401,14 +401,14 @@ Item {
         }
 
         SGSlider {
-            id: bias
+            id: stepSize
             label: "Per:"
             value:{
                 if (platformInterface.get_cable_loss_compensation.port === portNumber){
                     return platformInterface.get_cable_loss_compensation.output_current
                 }
                 else{
-                    return bias.value
+                    return stepSize.value
                 }
             }
             from:.25
@@ -423,28 +423,30 @@ Item {
                 leftMargin: 97
                 top: increment.bottom
                 topMargin: 10
-                right: biasInput.left
+                right: stepSizeInput.left
                 rightMargin: 10
             }
             onMoved: {
+                //note that we have to convert the stored bias_voltage back into mV by using
+                //the stored step size, and then multiplying by the new value
                 platformInterface.set_cable_compensation.update(portNumber,
                       value,
-                      platformInterface.get_cable_loss_compensation.bias_voltage * value
+                      (platformInterface.get_cable_loss_compensation.bias_voltage / platformInterface.get_cable_loss_compensation.output_current) * value
                       )
             }
 
         }
 
         SGSubmitInfoBox {
-            id: biasInput
+            id: stepSizeInput
             showButton: false
             infoBoxWidth: 40
             minimumValue: 0
             maximumValue: 1
             anchors {
-                verticalCenter: bias.verticalCenter
+                verticalCenter: stepSize.verticalCenter
                 verticalCenterOffset: -7
-                right: biasInputUnits.left
+                right: stepSizeInputUnits.left
                 rightMargin: 5
             }
 
@@ -453,20 +455,20 @@ Item {
                     return platformInterface.get_cable_loss_compensation.output_current
                 }
                 else{
-                    return bias.value
+                    return stepSize.value
                 }
             }
             onApplied: platformInterface.set_cable_compensation.update(portNumber,
                                     biasInput.floatValue,
-                                    platformInterface.get_cable_loss_compensation.bias_voltage*biasInput.floatValue)
+                                    (platformInterface.get_cable_loss_compensation.bias_voltage / platformInterface.get_cable_loss_compensation.output_current) *biasInput.floatValue)
         }
 
         Text{
-            id: biasInputUnits
+            id: stepSizeInputUnits
             text: "A"
             anchors {
                 right: parent.right
-                verticalCenter: biasInput.verticalCenter
+                verticalCenter: stepSizeInput.verticalCenter
             }
         }
 
@@ -475,7 +477,7 @@ Item {
             id: div2
             height: 1
             anchors {
-                top: bias.bottom
+                top: stepSize.bottom
                 topMargin: 15
             }
         }
