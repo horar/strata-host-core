@@ -31,6 +31,35 @@ Item {
             top: root.top
             bottom: graphSelector.top
         }
+
+        property int theRunningTotal: 0
+        property int theEfficiencyCount: 0
+        property int theEfficiencyAverage: 0
+
+        property var periodicValues: platformInterface.request_usb_power_notification
+
+        onPeriodicValuesChanged: {
+            var theInputPower = platformInterface.request_usb_power_notification.input_voltage * platformInterface.request_usb_power_notification.input_current +2;//PTJ-1321 2 Watt compensation
+            var theOutputPower = platformInterface.request_usb_power_notification.output_voltage * platformInterface.request_usb_power_notification.output_current;
+
+            if (platformInterface.request_usb_power_notification.port === portNumber){
+                //sum eight values of the efficency and average before displaying
+                var theEfficiency = Math.round((theOutputPower/theInputPower) *100)
+                portInfo.theRunningTotal += theEfficiency;
+                //console.log("new efficiency value=",theEfficiency,"new total is",miniInfo1.theRunningTotal,miniInfo1.theEfficiencyCount);
+                portInfo.theEfficiencyCount++;
+
+                if (portInfo.theEfficiencyCount === 8){
+                    portInfo.theEfficiencyAverage = portInfo.theRunningTotal/8;
+                    portInfo.theEfficiencyCount = 0;
+                    portInfo.theRunningTotal = 0
+
+                    //console.log("publishing new efficency",miniInfo1.theEfficiencyAverage);
+                    //return miniInfo1.theEfficiencyAverage
+                }
+            }
+
+        }
         advertisedVoltage:{
             if (platformInterface.request_usb_power_notification.port === portNumber){
                 return platformInterface.request_usb_power_notification.negotiated_voltage
@@ -82,23 +111,7 @@ Item {
                 return portInfo.portTemperature;
             }
         }
-        efficency: {
-            var theInputPower = platformInterface.request_usb_power_notification.input_voltage * platformInterface.request_usb_power_notification.input_current + 2;//PTJ-1321 2 watt compensation
-            var theOutputPower = platformInterface.request_usb_power_notification.output_voltage * platformInterface.request_usb_power_notification.output_current;
-
-            if (platformInterface.request_usb_power_notification.port === portNumber){
-                if (theInputPower == 0){    //division by 0 would normally give "nan"
-                    return "—"
-                }
-                else{
-                    return Math.round((theOutputPower/theInputPower)*100)
-                    //return "—"
-                }
-            }
-            else{
-                return portInfo.efficency;
-            }
-        }
+        efficency: theEfficiencyAverage
     }
 
     SGSegmentedButtonStrip {
