@@ -29,7 +29,7 @@ Item {
          anchors {
              fill: root
          }
-         onClicked: root.visible = false
+         onClicked: toolTipPopup.contentItem.close()
      }
 
      Item {

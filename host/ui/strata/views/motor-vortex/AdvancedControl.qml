@@ -25,7 +25,7 @@ Rectangle {
         platformInterface.set_drive_mode.update(0);
         platformInterface.system_mode_selection.update("manual");
         Help.registerTarget( navTabs, "These tabs switch between Basic and Advanced control views. The FAE Only tab is restricted for ON Semiconductor field engineers.", 0 , "advanceViewHelp")
-        Help.registerTarget( buttonContainer, "This button start, stops or reset the motor",1, "advanceViewHelp")
+        Help.registerTarget( buttonContainer, "This button starts, stops or resets the motor",1, "advanceViewHelp")
         Help.registerTarget( targetSpeedSlider, "The slider sets motor speed from 1500-4000 rpm", 3, "advanceViewHelp")
         Help.registerTarget( operationModeControl, "These are two modes to control the system. In manual mode, speed of the motor will be set by the slider above. In Automatic Demo Pattern mode, the system will go through a particular speed profile.", 2, "advanceViewHelp")
         Help.registerTarget( rampRateSlider, "This slider sets the startup ramp speed of the motor. Lower numbers have slower startup speeds. The default ramp rate is 3",4, "advanceViewHelp")
