@@ -364,9 +364,38 @@ Item {
                     if (platformInterface.usb_pd_maximum_power.port === 1){
                         assuredMaxPowerOutput.currentIndex = assuredMaxPowerOutput.comboBox.find( parseInt (platformInterface.usb_pd_maximum_power.commanded_max_power))
                     }
-
                 }
 
+                property var maxPower: platformInterface.maximum_board_power.watts
+                onMaxPowerChanged: {
+                    //there are 24W held in reserve for other ports, so don't offer anything more than
+                    //maxPower-24 for the assured power options
+                    ["15","27", "36", "45","60","100"]
+                    if (maxPower < 27 + 24){
+                        model= ["15"];
+                        assuredMaxPowerOutput.currentIndex = 0;
+                    }
+                    else if (maxPower < 36 + 24){
+                        model=["15","27"];
+                        assuredMaxPowerOutput.currentIndex = 1;
+                    }
+                    else if (maxPower < 45 + 24){
+                        model=["15","27","36"];
+                        assuredMaxPowerOutput.currentIndex = 2;
+                    }
+                    else if (maxPower < 60 + 24){
+                        model= ["15","27","36","45"];
+                        assuredMaxPowerOutput.currentIndex = 3;
+                    }
+                    else if (maxPower < 100 + 24){
+                        model =["15","27","36","45","60"];
+                        assuredMaxPowerOutput.currentIndex = 4;
+                    }
+                    else{
+                        model = ["15","27", "36", "45","60","100"];
+                        assuredMaxPowerOutput.currentIndex = 5;
+                    }
+                }
 
             }
 
