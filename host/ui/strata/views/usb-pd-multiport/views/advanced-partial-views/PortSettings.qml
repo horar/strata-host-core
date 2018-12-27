@@ -196,7 +196,7 @@ Item {
             label: "Maximum Power Output:"
             model: maxPowerOptions
             enabled:{
-                if (portNumber === 1 && (assuredPortSwitch.checked || !assuredPortSwitch.enabled))
+                if (portNumber === 1 && assuredPortSwitch.checked)
                     return false;
                 else
                     return true
@@ -269,7 +269,7 @@ Item {
                 rightMargin: 10
             }
 
-            onMoved: platformInterface.set_over_current_protection.update(portNumber, value)
+            onMoved: platformInterface.request_over_current_protection.update(portNumber, value)
 
         }
 
@@ -294,7 +294,7 @@ Item {
                    return currentLimit.value;
                  }
             }
-            onApplied: platformInterface.set_over_current_protection.update(portNumber, intValue)
+            onApplied: platformInterface.request_over_current_protection.update(portNumber, intValue)
 
         }
 

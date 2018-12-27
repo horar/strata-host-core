@@ -237,7 +237,7 @@ Item {
 
     property var output_current_exceeds_maximum:{
         "port":1,              // 1, 2, ... maximum port number
-        "current_limit":15,    // amps - output current  exceeds this level
+        "current_limit":6,    // amps - output current  exceeds this level
         "exceeds_limit":true,  // or false
         "action":"retry",      // "retry" or "shutdown" or "nothing"
         "enabled":true         // or false
@@ -404,7 +404,7 @@ Item {
                     show: function () { CorePlatformInterface.show(this) }
     })
 
-    property var set_over_current_protection:({
+    property var request_over_current_protection:({
                     "cmd":"request_over_current_protection",
                     "payload":{
                         "port":0,                    // 1, 2, 3, ... up to maximum number of ports

@@ -94,13 +94,6 @@ Item {
             onApplied: platformInterface.set_over_current_protection.update(portNumber, intValue)
         }
 
-//        SGDivider {
-//            id: div1
-//            anchors {
-//                top: currentLimit.bottom
-//                topMargin: 15
-//            }
-//        }
 
         Text {
             id: cableCompensation
