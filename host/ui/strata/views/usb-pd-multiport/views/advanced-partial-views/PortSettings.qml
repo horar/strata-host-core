@@ -20,6 +20,7 @@ Item {
             text: "Assure Port power:"
             anchors {
                 top:parent.top
+                topMargin: 30
                 left: parent.left
                 leftMargin: 45
             }
@@ -207,7 +208,7 @@ Item {
                 left: parent.left
                 leftMargin: 10
                 top: assuredPortSwitch.bottom
-                topMargin: 10
+                topMargin: 15
             }
 
             //when changing the value
@@ -246,8 +247,8 @@ Item {
             id: currentLimit
             label: "Current limit:"
             value: {
-                if (platformInterface.request_over_current_protection_notification.port === portNumber){
-                    return platformInterface.request_over_current_protection_notification.current_limit;
+                if (platformInterface.output_current_exceeds_maximum.port === portNumber){
+                    return platformInterface.output_current_exceeds_maximum.current_limit;
                 }
                 else{
                     return currentLimit.value;
@@ -286,8 +287,8 @@ Item {
             }
 
             value:{
-               if (platformInterface.request_over_current_protection_notification.port === portNumber){
-                   return platformInterface.request_over_current_protection_notification.current_limit.toFixed(0)
+               if (platformInterface.output_current_exceeds_maximum.port === portNumber){
+                   return platformInterface.output_current_exceeds_maximum.current_limit.toFixed(0)
                 }
                 else{
                    return currentLimit.value;
@@ -306,191 +307,111 @@ Item {
             }
         }
 
-        SGDivider {
-            id: div1
-            anchors {
-                top: currentLimit.bottom
-                topMargin: 15
-            }
-        }
+
 
         Text {
             id: cableCompensation
-            text: "<b>Cable Compensation</b>"
+            text: "Cable Compensation:"
             font {
-                pixelSize: 16
+                pixelSize: 13
             }
             anchors {
-                top: div1.bottom
+                top: currentLimit.bottom
                 topMargin: 15
+                left:parent.left
+                leftMargin: 30
             }
         }
 
-        SGSlider {
-            id: increment
-            label: "Rate of change:"
-            value:{
-                if (platformInterface.get_cable_loss_compensation.port === portNumber){
-                    return (platformInterface.get_cable_loss_compensation.bias_voltage/
-                            platformInterface.get_cable_loss_compensation.output_current * 1000);
-                }
-                else{
-                    return increment.value
-                }
-            }
-            from:.0
-            to:200
-            stepSize: 10
-            toolTipDecimalPlaces: 0
-            labelTopAligned: true
-            startLabel: "0mV/A"
-            endLabel: "200mV/A"
+
+
+        SGSegmentedButtonStrip {
+            id: cableCompensationButtonStrip
             anchors {
-                left: parent.left
-                leftMargin: 25
-                top: cableCompensation.bottom
-                topMargin: 10
-                right: incrementInput.left
-                rightMargin: 10
+                left: cableCompensation.right
+                leftMargin: 10
+                verticalCenter: cableCompensation.verticalCenter
             }
-            onMoved:{
-                //console.log("sending values from increment slider:",portNumber, increment.value, platformInterface.get_cable_loss_compensation.bias_voltage);
-                platformInterface.set_cable_compensation.update(portNumber,
-                                       platformInterface.get_cable_loss_compensation.output_current,
-                                       value*platformInterface.get_cable_loss_compensation.output_current/1000)
-            }
+            textColor: "#666"
+            activeTextColor: "white"
+            radius: 4
+            buttonHeight: 25
+            hoverEnabled: false
 
-        }
+            property var cableLoss: platformInterface.get_cable_loss_compensation
 
-        SGSubmitInfoBox {
-            id: incrementInput
-            showButton: false
-            infoBoxWidth: 35
-            minimumValue: 0
-            maximumValue: 200
-            anchors {
-                verticalCenter: increment.verticalCenter
-                verticalCenterOffset: -7
-                right: incrementInputUnits.left
-                rightMargin: 5
-            }
-
-            value:{
+            onCableLossChanged: {
                 if (platformInterface.get_cable_loss_compensation.port === portNumber){
-                      return (platformInterface.get_cable_loss_compensation.bias_voltage/
-                              platformInterface.get_cable_loss_compensation.output_current * 1000)
-                  }
-                  else{
-                      return increment.value
-                  }
-            }
-            onApplied:{
-                platformInterface.set_cable_compensation.update(portNumber,
-                           platformInterface.get_cable_loss_compensation.output_current,
-                           incrementInput.floatValue * platformInterface.get_cable_loss_compensation.output_current/1000)
+                    //console.log("cable compensation for port ",portNumber,"set to",platformInterface.get_cable_loss_compensation.bias_voltage*1000)
+                    if (platformInterface.get_cable_loss_compensation.bias_voltage === 0){
+                        cableCompensationButtonStrip.buttonList[0].children[0].enabled = true;
                     }
-        }
-
-        Text{
-            id: incrementInputUnits
-            text: "mV/A"
-            anchors {
-                right: parent.right
-                verticalCenter: incrementInput.verticalCenter
-            }
-        }
-
-        SGSlider {
-            id: stepSize
-            label: "Per:"
-            value:{
-                if (platformInterface.get_cable_loss_compensation.port === portNumber){
-                    return platformInterface.get_cable_loss_compensation.output_current
-                }
-                else{
-                    return stepSize.value
+                    else if (platformInterface.get_cable_loss_compensation.bias_voltage * 1000 == 100){
+                        cableCompensationButtonStrip.buttonList[0].children[2].enabled = true;
+                    }
+                    else if (platformInterface.get_cable_loss_compensation.bias_voltage * 1000 == 200){
+                        cableCompensationButtonStrip.buttonList[0].children[2].enabled = true;
+                    }
                 }
             }
-            from:.25
-            to:1
-            stepSize: .25
-            labelTopAligned: true
-            startLabel: "0.25A"
-            endLabel: "1A"
-            toolTipDecimalPlaces: 2
-            anchors {
-                left: parent.left
-                leftMargin: 97
-                top: increment.bottom
-                topMargin: 10
-                right: stepSizeInput.left
-                rightMargin: 10
-            }
-            onMoved: {
-                //note that we have to convert the stored bias_voltage back into mV by using
-                //the stored step size, and then multiplying by the new value
-                platformInterface.set_cable_compensation.update(portNumber,
-                      value,
-                      (platformInterface.get_cable_loss_compensation.bias_voltage / platformInterface.get_cable_loss_compensation.output_current) * value
-                      )
-            }
 
-        }
+            segmentedButtons: GridLayout {
+                id:cableCompensationGridLayout
+                columnSpacing: 2
 
-        SGSubmitInfoBox {
-            id: stepSizeInput
-            showButton: false
-            infoBoxWidth: 40
-            minimumValue: 0
-            maximumValue: 1
-            anchors {
-                verticalCenter: stepSize.verticalCenter
-                verticalCenterOffset: -7
-                right: stepSizeInputUnits.left
-                rightMargin: 5
-            }
+                SGSegmentedButton{
+                    id: cableCompensationSetting1
+                    text: qsTr("Off")
+                    checkable: true
 
-            value:{
-                if (platformInterface.get_cable_loss_compensation.port === portNumber){
-                    return platformInterface.get_cable_loss_compensation.output_current
+                    onClicked:{
+                        platformInterface.set_cable_compensation.update(portNumber,
+                                               1,
+                                               0);
+                    }
                 }
-                else{
-                    return stepSize.value
+
+                SGSegmentedButton{
+                    id: cableCompensationSetting2
+                    text: qsTr("100 mv/A")
+                    checkable: true
+
+                    onClicked:{
+                        platformInterface.set_cable_compensation.update(portNumber,
+                                               1,
+                                               100/1000);
+                    }
+                }
+
+                SGSegmentedButton{
+                    id:cableCompensationSetting3
+                    text: qsTr("200 mv/A")
+                    checkable: true
+
+                    onClicked:{
+                        platformInterface.set_cable_compensation.update(portNumber,
+                                               1,
+                                               200/1000);
+                    }
                 }
             }
-            onApplied: platformInterface.set_cable_compensation.update(portNumber,
-                                    biasInput.floatValue,
-                                    (platformInterface.get_cable_loss_compensation.bias_voltage / platformInterface.get_cable_loss_compensation.output_current) *biasInput.floatValue)
-        }
-
-        Text{
-            id: stepSizeInputUnits
-            text: "A"
-            anchors {
-                right: parent.right
-                verticalCenter: stepSizeInput.verticalCenter
-            }
         }
 
 
-        SGDivider {
-            id: div2
-            height: 1
-            anchors {
-                top: stepSize.bottom
-                topMargin: 15
-            }
-        }
+
+
 
         Text {
             id: advertisedVoltages
-            text: "<b>Advertised Voltages:</b>"
+            text: "Advertised Voltages:"
             font {
-                pixelSize: 16
+                pixelSize: 13
             }
             anchors {
-                top: div2.bottom
-                topMargin: 15
+                top: cableCompensation.bottom
+                topMargin: 30
+                left:parent.left
+                leftMargin: 35
             }
         }
 

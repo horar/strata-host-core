@@ -49,8 +49,8 @@ Item {
             startLabel:"0A"
             endLabel:"6A"
             value: {
-                if (platformInterface.request_over_current_protection_notification.port === portNumber){
-                    return platformInterface.request_over_current_protection_notification.current_limit;
+                if (platformInterface.ouput_current_exceeds_maximum.port === portNumber){
+                    return platformInterface.ouput_current_exceeds_maximum.current_limit;
                 }
                 else{
                     return currentLimit.value;
@@ -81,8 +81,8 @@ Item {
                 right: parent.right
             }
             value:{
-               if (platformInterface.request_over_current_protection_notification.port === portNumber){
-                   return platformInterface.request_over_current_protection_notification.current_limit.toFixed(0)
+               if (platformInterface.ouput_current_exceeds_maximum.port === portNumber){
+                   return platformInterface.ouput_current_exceeds_maximum.current_limit.toFixed(0)
                 }
                 else{
                    return currentLimitInput.value;

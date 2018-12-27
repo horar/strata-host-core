@@ -235,6 +235,15 @@ Item {
 
     }
 
+    property var output_current_exceeds_maximum:{
+        "port":1,              // 1, 2, ... maximum port number
+        "current_limit":15,    // amps - output current  exceeds this level
+        "exceeds_limit":true,  // or false
+        "action":"retry",      // "retry" or "shutdown" or "nothing"
+        "enabled":true         // or false
+    }
+
+
     // --------------------------------------------------------------------------------------------
     //          Commands
     //--------------------------------------------------------------------------------------------

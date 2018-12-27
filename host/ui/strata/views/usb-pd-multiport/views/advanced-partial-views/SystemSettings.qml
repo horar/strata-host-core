@@ -5,7 +5,7 @@ import "qrc:/views/usb-pd-multiport/sgwidgets"
 
 Item {
     id: root
-    height: 375
+    height: 350
     width: parent.width
     anchors {
         left: parent.left
