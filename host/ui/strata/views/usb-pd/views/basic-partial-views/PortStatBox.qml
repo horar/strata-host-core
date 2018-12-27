@@ -87,7 +87,7 @@ Rectangle {
             bottom: valueText.bottom
             bottomMargin: 2
             right: iconImage.horizontalCenter
-            rightMargin:-5
+            rightMargin:-iconImage.width/8
         }
         font {
             pixelSize: root.unitSize

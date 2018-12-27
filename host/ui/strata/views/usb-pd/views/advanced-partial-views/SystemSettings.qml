@@ -46,7 +46,7 @@ Item {
                     top: faultText.bottom
                     topMargin: 10
                     left: margins1.left
-                    leftMargin: 90
+                    leftMargin: 95
                     right: margins1.right
                     rightMargin: 10
                 }
@@ -61,14 +61,6 @@ Item {
                 segmentedButtons: GridLayout {
                     columnSpacing: 2
 
-                    SGSegmentedButton{
-                        text: qsTr("Shutdown")
-                        checked: platformInterface.usb_pd_protection_action.action === "shutdown"
-
-                        onClicked: {
-                            platformInterface.set_protection_action.update("shutdown");
-                        }
-                    }
 
                     SGSegmentedButton{
                         text: qsTr("Retry")
@@ -97,12 +89,13 @@ Item {
                     left: margins1.left
                     leftMargin: 45
                     top: faultProtection.bottom
-                    topMargin: 10
+                    topMargin: 15
                     right: inputFaultInput.left
                     rightMargin: 10
                 }
                 from: 0
                 to: 20
+                labelTopAligned: true
                 startLabel: "0V"
                 endLabel: "20V"
                 value: platformInterface.input_under_voltage_notification.minimum_voltage
@@ -116,6 +109,7 @@ Item {
                 showButton: false
                 anchors {
                     verticalCenter: inputFault.verticalCenter
+                    verticalCenterOffset:-7
                     right: parent.right
                 }
                 infoBoxWidth: 40
@@ -131,10 +125,11 @@ Item {
                     top: inputFault.bottom
                     topMargin: 10
                     right: tempFaultInput.left
-                    rightMargin: 10
+                    rightMargin: 15
                 }
                 from: -40
                 to: 135
+                labelTopAligned: true
                 startLabel: "-40°C"
                 endLabel: "135°C"
                 value: platformInterface.set_maximum_temperature_notification.maximum_temperature
@@ -148,6 +143,7 @@ Item {
                 showButton: false
                 anchors {
                     verticalCenter: tempFault.verticalCenter
+                    verticalCenterOffset:-7
                     right: parent.right
                 }
                 infoBoxWidth: 40
@@ -215,6 +211,7 @@ Item {
                 }
                 from: 0
                 to: 20
+                labelTopAligned: true
                 startLabel: "0V"
                 endLabel: "20V"
                 //copy the current values for other stuff, and add the new slider value for the limit.
@@ -244,7 +241,7 @@ Item {
                 anchors {
                     left: parent.left
                     top: foldbackLimit.bottom
-                    topMargin: 10
+                    topMargin: 15
                 }
                 comboBoxWidth: 75
                 //when changing the value
@@ -268,6 +265,7 @@ Item {
                     left: limitOutput.right
                     leftMargin: 5
                     verticalCenter: limitOutput.verticalCenter
+                    verticalCenterOffset: -7
                 }
             }
 
@@ -317,12 +315,13 @@ Item {
                     left: parent.left
                     leftMargin: 60
                     top: tempFoldback.bottom
-                    topMargin: 10
+                    topMargin: 15
                     right: foldbackTempInput.left
                     rightMargin: 10
                 }
                 from: -40
                 to: 100
+                labelTopAligned: true
                 startLabel: "-40°C"
                 endLabel: "100°C"
                 value: platformInterface.foldback_temperature_limiting_event.foldback_maximum_temperature
@@ -341,6 +340,7 @@ Item {
                 showButton: false
                 anchors {
                     verticalCenter: foldbackTemp.verticalCenter
+                    verticalCenterOffset: -7
                     right: parent.right
                 }
                 infoBoxWidth: 40

@@ -66,6 +66,12 @@ Rectangle {
                 width: 55
                 onClicked: root.showGraph()
 
+                background: Rectangle{
+                    color: "lightGrey"
+                    radius: 5
+                    opacity: .5
+                }
+
                 Image{
                     id:graphIcon
                      source: "qrc:/views/usb-pd/views/images/graphIcon.svg"
