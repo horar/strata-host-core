@@ -464,15 +464,6 @@ Item {
                     columnSpacing: 2
 
                     SGSegmentedButton{
-                        text: qsTr("Shutdown")
-                        checked: platformInterface.usb_pd_protection_action.action === "shutdown"
-
-                        onClicked: {
-                            platformInterface.set_protection_action.update("shutdown");
-                        }
-                    }
-
-                    SGSegmentedButton{
                         text: qsTr("Retry")
                         checked: platformInterface.usb_pd_protection_action.action === "retry"
 
