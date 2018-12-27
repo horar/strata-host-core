@@ -16,7 +16,7 @@ Item {
     property alias minimumValue: gauge.minimumValue
     property alias maximumValue: gauge.maximumValue
     property alias barWidth: capacityBarContainer.implicitWidth
-
+    property alias overrideLabelWidth: labelText.width
     property alias gaugeElements : gaugeElements.sourceComponent
 
     property bool thresholdExceeded: false

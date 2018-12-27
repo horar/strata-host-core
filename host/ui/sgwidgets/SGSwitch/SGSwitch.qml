@@ -29,6 +29,7 @@ Item {
     property bool labelLeft: true
     property alias checkedLabel: checkedLabelText.text
     property alias uncheckedLabel: uncheckedLabelText.text
+    property alias overrideLabelWidth: labelText.width
     property bool labelsInside: true
 
     implicitHeight: root.labelLeft ? switchRoot.height : labelText.height + switchRoot.height + switchRoot.anchors.topMargin

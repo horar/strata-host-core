@@ -1,6 +1,11 @@
 import QtQuick 2.9
-import QtQuick.Window 2.2
+import QtQuick.Window 2.10
 import QtQuick.Controls 2.3
+import "qrc:/help_layout_manager.js" as Help
+
+/*
+See help_layout_manager for API that is used in this file.
+*/
 
 Window {
     id: root
@@ -10,6 +15,15 @@ Window {
     title: qsTr("")
     property variant clickPos: "1,1" // @disable-check M311 // Ignore 'use string' (M311) QtCreator warning
 
+    Component.onCompleted: {
+        Help.registerWindow(root)
+        Help.registerTarget(myBox, "this is the first box", 0, "basicViewHelp")
+        Help.registerTarget(myBox2, "this is the second box", 1, "basicViewHelp")
+    }
+
+    onClosing: { // @disable-check M16  // Ignore "invalid property name" warning
+        Help.reset("basicViewHelp")  // Necessary to remove dynamically created help views. If inside of a dynamically created object, use component.ondestruction instead
+    }
 
     Rectangle {
         color: "tomato"
@@ -17,9 +31,8 @@ Window {
             centerIn: parent
         }
         opacity: 0.75
-        width: 300
+        width: 210
         height: width
-
     }
 
     Rectangle {
@@ -54,10 +67,9 @@ Window {
 
         Button {
             id: showOverlay
-            text: "Show Overlay"
+            text: "Start Help Tour"
             onClicked: {
-                poopup.visible = !poopup.visible
-                poopup2.visible = false
+                Help.startHelpTour("basicViewHelp")
             }
             anchors {
                 top: text.bottom
@@ -69,34 +81,20 @@ Window {
     Rectangle {
         id: myBox2
         color: "cyan"
-        x: 50
-        y: 50
+        x: parent.width/6
+        y: x
         width: 100
         height: width
 
-        Button {
-            id: showOverlay1
-            text: "Overlay"
-            onClicked: {
-                poopup2.visible = !poopup2.visible
-                poopup.visible = false
-            }
+        Text {
+            id: box2text
+            text: "Secondary Target Box"
             anchors {
                 centerIn: parent
             }
+            width: parent.width
+            wrapMode: Text.Wrap
+            horizontalAlignment: Text.AlignHCenter
         }
-    }
-
-
-    SGPeekThroughOverlay {
-        id: poopup
-        property alias target: myBox
-        onClicked: visible = false
-    }
-
-    SGPeekThroughOverlay {
-        id: poopup2
-        property alias target: myBox2
-        onClicked: visible = false
     }
 }
