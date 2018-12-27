@@ -58,7 +58,6 @@ Rectangle {
 
             Button {
                 id: showGraphs
-                //text: "Graphs"
                 anchors {
                     bottom: statsContainer.bottom
                     horizontalCenter: portTitle.horizontalCenter
@@ -66,6 +65,12 @@ Rectangle {
                 height: 50
                 width: 50
                 onClicked: root.showGraph()
+
+                background: Rectangle{
+                    color: "lightGrey"
+                    radius: 5
+                    opacity: .5
+                }
 
                 Image{
                     id:graphIcon

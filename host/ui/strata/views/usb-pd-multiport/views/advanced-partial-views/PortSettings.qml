@@ -140,7 +140,7 @@ Item {
             switchHeight: 20
             switchWidth: 46
 
-            checked: platformInterface.assured_power_port.enabled
+            checked: platformInterface.assured_power_port.enabled && (portNumber === 1)
             onToggled: platformInterface.set_assured_power_port.update(checked, portNumber)  //we're only allowing port 1 to be assured            
         }
 
