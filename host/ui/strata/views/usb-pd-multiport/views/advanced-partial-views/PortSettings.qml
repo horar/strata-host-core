@@ -256,10 +256,11 @@ Item {
 
             }
             labelTopAligned: true
-            startLabel: "0A"
+            startLabel: "1A"
             endLabel: "6A"
-            from: 0
+            from: 1
             to: 6
+            stepSize: 1
             anchors {
                 left: parent.left
                 leftMargin: 80
@@ -277,7 +278,7 @@ Item {
             id: currentLimitInput
             showButton: false
             infoBoxWidth: 35
-            minimumValue: 0
+            minimumValue: 1
             maximumValue: 6
             anchors {
                 verticalCenter: currentLimit.verticalCenter

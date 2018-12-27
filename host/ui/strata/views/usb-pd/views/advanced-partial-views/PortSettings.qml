@@ -45,9 +45,10 @@ Item {
         SGSlider {
             id: currentLimit
             label: "Current limit:"
-            from:0
+            from:1
             to:6
-            startLabel:"0A"
+            stepSize: 1
+            startLabel:"1A"
             endLabel:"6A"
             labelTopAligned: true
             value: {
@@ -76,7 +77,7 @@ Item {
         SGSubmitInfoBox {
             id: currentLimitInput
             showButton: false
-            minimumValue: 0
+            minimumValue: 1
             maximumValue: 6
             anchors {
                 verticalCenter: currentLimit.verticalCenter
