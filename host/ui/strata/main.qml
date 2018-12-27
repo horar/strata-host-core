@@ -23,7 +23,7 @@ Window {
     Component.onCompleted: {
         console.log("Initializing")
         NavigationControl.init(flipable,controlContainer, contentContainer, statusBarContainer)
-        Help.registerWindow(mainWindow.contentItem)
+        Help.registerWindow(mainWindow)
     }
 
     Connections {

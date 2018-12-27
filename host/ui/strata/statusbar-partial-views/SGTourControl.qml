@@ -12,6 +12,7 @@ Item {
     property alias description: description.text
 
     signal close()
+    onClose: Help.closeTour()
 
     Text {
         id: closer

@@ -9,7 +9,7 @@ import Fonts 1.0
 import "qrc:/js/navigation_control.js" as NavigationControl
 import "qrc:/js/help_layout_manager.js" as Help
 
-Rectangle {
+Item {
     id: controlNavigation
     anchors {
         fill: parent
@@ -60,61 +60,33 @@ Rectangle {
         }
     }
 
-    ScrollView {
-        id: scrollView
+    Item {
+        id: controlContainer
+        property int currentIndex: 0
         anchors {
             top: navTabs.bottom
-            bottom: parent.bottom
-            right: parent.right
-            left: parent.left
+            bottom: controlNavigation.bottom
+            right: controlNavigation.right
+            left: controlNavigation.left
         }
 
-        onWidthChanged: {
-            if (width < 1200) {
-                ScrollBar.horizontal.policy = ScrollBar.AlwaysOn
-            } else {
-                ScrollBar.horizontal.policy = ScrollBar.AlwaysOff
-            }
+        PartOne  {
+            id: partOne
+            visible: true
         }
 
-        onHeightChanged: {
-            if (height < 725) {
-                ScrollBar.vertical.policy = ScrollBar.AlwaysOn
-            } else {
-                ScrollBar.vertical.policy = ScrollBar.AlwaysOff
-            }
-        }
-
-        Flickable {
-            id: controlContainer
-
-            property int currentIndex: 0
-
-            boundsBehavior: Flickable.StopAtBounds
-            contentWidth: 1200
-            contentHeight: 725
-            anchors {
-                fill: parent
-            }
-            clip: true
-
-            PartOne {
-                id: partOne
-                visible: true
-            }
-
-            PartTwo {
-                id: partTwo
-                visible: false
-            }
+        PartTwo {
+            id: partTwo
+            visible: false
         }
     }
+
 
     Text {
         id: helpIcon
         anchors {
-            right: scrollView.right
-            top: scrollView.top
+            right: controlContainer.right
+            top: controlContainer.top
             margins: 20
         }
         text: "\ue808"
@@ -137,5 +109,6 @@ Rectangle {
             hoverEnabled: true
         }
     }
+
 }
 

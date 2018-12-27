@@ -142,7 +142,7 @@ Rectangle {
     SGSegmentedButtonStrip {
         id: logicSelectionList
         radius: 4
-        buttonHeight: 25
+        buttonHeight: 45
         visible: true
         anchors {
             top: parent.top
