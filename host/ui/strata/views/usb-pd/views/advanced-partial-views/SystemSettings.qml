@@ -338,6 +338,8 @@ Item {
             SGSubmitInfoBox {
                 id: foldbackTempInput
                 showButton: false
+                minimumValue: -40
+                maximumValue: 100
                 anchors {
                     verticalCenter: foldbackTemp.verticalCenter
                     verticalCenterOffset: -7

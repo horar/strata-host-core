@@ -115,7 +115,7 @@ Item {
 
         Text {
             id: advertisedVoltagesText
-            text: "<b>Advertised Voltages</b>"
+            text: "<b>Advertised Profiles</b>"
             font {
                 pixelSize: 16
             }

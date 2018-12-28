@@ -404,7 +404,7 @@ Item {
 
         Text {
             id: advertisedVoltages
-            text: "Advertised Voltages:"
+            text: "Advertised Profiles:"
             font {
                 pixelSize: 13
             }
@@ -412,7 +412,7 @@ Item {
                 top: cableCompensation.bottom
                 topMargin: 30
                 left:parent.left
-                leftMargin: 35
+                leftMargin: 40
             }
         }
 
