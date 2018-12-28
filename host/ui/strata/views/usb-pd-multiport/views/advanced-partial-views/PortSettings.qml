@@ -186,9 +186,9 @@ Item {
             //limit the options for power usage to be less than the max power allocated for this port
             onMaxPowerChanged:{
                 if (platformInterface.usb_pd_maximum_power.port === portNumber){
-                    console.log("got a new commanded max power for port",platformInterface.usb_pd_maximum_power.port)
+                    //console.log("got a new commanded max power for port",platformInterface.usb_pd_maximum_power.port)
                     maxPowerOutput.currentIndex = maxPowerOutput.comboBox.find( parseInt (platformInterface.usb_pd_maximum_power.commanded_max_power))
-                    console.log("commanded max power set to index",maxPowerOutput.currentIndex);
+                    //console.log("commanded max power set to index",maxPowerOutput.currentIndex);
                 }
             }
 
