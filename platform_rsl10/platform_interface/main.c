@@ -7,19 +7,14 @@
 
 
 int main( ) {
+
+    size_t size_of_each_memory_block = size_of_node_struct();
+
     //initialize queue
     queue_t *queue1 = queue_init();
 
-    /* the size of the node struct is 8 bytes, so if you
-     * want a command size of 8 bytes, then it will be 16
-     * in total. The compiler will account for 8 each time.
-     * e.g. if you put a command length of 2 bytes the total
-     * will be 16 anyway. In that case you will need to specify
-     * 16 anyway
-     * I need to find a good automated solution for this */
-
     // initialize memory pool memory_pool_init(# of blocks, size of each block)
-    memory_pool_t *pool = memory_pool_init(5, 81);
+    memory_pool_t *pool = memory_pool_init(5, size_of_each_memory_block);
     // this should fail -- size limit exceeded
     push("{\"cmd\":\"request_platform_id\", \"{\\\"nak\\\":\\\"\\\",\\\"payload\\\":{\\\"return_value\\\":false,\\\"return_string\\\":\\\"json error: this now should be the maximum length\\\"}}\"}", queue1, pool);
    // memory_pool_dump(pool);

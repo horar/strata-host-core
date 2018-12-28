@@ -19,8 +19,9 @@ void dispatch(char *data);
 void pop(queue_t *, memory_pool_t *);
 void queue_and_memory_pool_destroy(queue_t *, memory_pool_t *);
 
-// accessor function
+// accessors functions
 bool commands_in_queue(queue_t *);
+size_t size_of_node_struct();
 
 // helper function
 void print_list(queue_t *);

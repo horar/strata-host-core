@@ -18,7 +18,7 @@ enum {BAD_JSON, COMMAND_NOT_FOUND, COMMAND_VALID};
 // forward declaration
 typedef struct command_handler command_handler_t;
 
-// List of core functions
+// list of core functions
 void call_command_handler(char *name, cJSON *payload_value);
 void request_platform_id(cJSON *payload_value);
 void request_echo(cJSON *payload_value);

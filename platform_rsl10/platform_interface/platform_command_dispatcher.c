@@ -7,8 +7,21 @@
 #include "platform_command_dispatcher.h"
 #include "platform_command_implementation.h"
 
+/**  An example of json format
+  * payload arguments could be anything you want
+  * this examples have a number and string arguments
+  *
+  *  "{\"cmd\" : \"whatever_command\", \"payload\" : {\"number_argument\" : 1, \"string_argument\" : \"whatever"}}"
+  *   OR
+  *   "{\"cmd\" : \"whatever_command\", \"payload\" : {\"whatever_payload\"}"
+  *   OR
+  *   "{\"cmd\" : \"whatever_command\"}"
+  **/
+
+#define COMMAND_LENGTH_IN_BYTES 256
+
 typedef struct node {
-    char data[72];
+    char data[COMMAND_LENGTH_IN_BYTES];
     struct node *next;
 } node_t;
 
@@ -40,7 +53,7 @@ void push(char *data, queue_t *queue, memory_pool_t *pool)
 {
     node_t *new_node = (node_t*)memory_pool_acquire(pool);
 
-    printf("The size of node_t is %d\n", sizeof(node_t));
+    printf("The size of node_t is %lu\n", sizeof(node_t));
 
     memcpy(new_node->data, data, strlen(data));
     new_node->next = NULL;
@@ -66,10 +79,6 @@ void push(char *data, queue_t *queue, memory_pool_t *pool)
     queue->size++;
 }
 
-/**
- * call dispatch function to dispatch commands on the queue & remove it after
- * it being executed by calling pop function
- **/
 void execute(queue_t *queue, memory_pool_t *pool)
 {
     dispatch(queue->head->data);
@@ -86,19 +95,12 @@ void pop(queue_t *queue, memory_pool_t *pool)
         //print_list();
     }
 }
-/* An example of json format
-   * payload arguments could be anything you want
-   * this examples have a number and string arguments
-
-     "{\"cmd\" : \"whatever\", \"payload\" : {\"number_argument\" : 1, \"string_argument\" : \"whatever"}}"
-     OR
-     "{\"cmd\" : \"whatever\"}"
-*/
 
 /**
  * check for proper json command and command validation, call the
  * right function for each command by calling call_command_handler function.
  **/
+
 void dispatch(char * data)
 {
     char *parse_string = data;
@@ -154,12 +156,13 @@ bool commands_in_queue(queue_t *queue)
     if (queue->head){
         return true;
     }
-    else{
-        return false;
-    }
-
+    return false;
 }
 
+size_t size_of_node_struct()
+{
+    return sizeof(node_t);
+}
 void print_list(queue_t * queue)
 {
     printf("PRINT: Current liked queue size %zu \n", queue->size);
