@@ -336,6 +336,38 @@ Item {
 
             }
 
+            Button{
+                //a rectangle to cover the assured power switch when it's disabled, so we can still show a
+                //tooltip explaining *why* its disabled.
+                id:maxAssuredPowerPopupToolTipMask
+                hoverEnabled: true
+                z:1
+                visible:(assuredPortSwitch.checked)
+                background: Rectangle{
+                    color:"transparent"
+                }
+
+                anchors {
+                    left: assuredMaxPowerOutput.left
+                    top: assuredMaxPowerOutput.top
+                    bottom:assuredMaxPowerOutput.bottom
+                    right: assuredMaxPowerOutput.right
+                }
+
+                ToolTip{
+                    id:maxAssuredPowerPopupToolTip
+                    visible:maxAssuredPowerPopupToolTipMask.hovered
+                    text: "Disabled while Assured Port 1 Power is on"
+                    delay:500
+                    timeout:2000
+
+                    background: Rectangle {
+                        color: "#eee"
+                        radius: 2
+                    }
+                }
+            }
+
             SGComboBox {
                 id: assuredMaxPowerOutput
                 label: "Maximum Assured Power:"
@@ -370,7 +402,6 @@ Item {
                 onMaxPowerChanged: {
                     //there are 24W held in reserve for other ports, so don't offer anything more than
                     //maxPower-24 for the assured power options
-                    ["15","27", "36", "45","60","100"]
                     if (maxPower < 27 + 24){
                         model= ["15"];
                         assuredMaxPowerOutput.currentIndex = 0;
@@ -390,6 +421,7 @@ Item {
                     else if (maxPower < 100 + 24){
                         model =["15","27","36","45","60"];
                         assuredMaxPowerOutput.currentIndex = 4;
+                        console.log("setting max assured power to 60. index is",assuredMaxPowerOutput.currentText);
                     }
                     else{
                         model = ["15","27", "36", "45","60","100"];
@@ -596,7 +628,7 @@ Item {
                 }
                 anchors {
                     top: margins2.top
-                    topMargin: 15
+                    topMargin: 0
                 }
             }
 
