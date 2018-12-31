@@ -522,7 +522,7 @@ Item {
                             faultListModel.remove(i);
                         }
                     }
-                    faultListModel.append({"type":"voltage", "port":0, "status":stateMessage});
+                    faultListModel.append({"type":"voltage", "port":"0", "status":stateMessage});
 
                 }
                 else{                                       //remove input voltage message from list
@@ -591,12 +591,14 @@ Item {
             }
 
             onOverTempEventChanged: {
-                if (underVoltageEvent.state === "above"){   //add temp  message to list
+                console.log("over temp state change. state=",overTempEvent.state)
+                if (overTempEvent.state === "above"){   //add temp  message to list
                     stateMessage = platformInterface.over_temperature_notification.port
-                    stateMessage += " temperature is above ";
+                    stateMessage += " temperature is abbove ";
                     stateMessage += platformInterface.over_temperature_notification.maximum_temperature;
                     stateMessage += " °C";
                     faultHistory.input = stateMessage;
+                    console.log("added over temp fault to fault history")
                 }
                 else{
 //                    stateMessage = platformInterface.over_temperature_notification.port

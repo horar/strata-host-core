@@ -58,14 +58,36 @@ Rectangle {
 
             Button {
                 id: showGraphs
-                text: "Graphs"
                 anchors {
                     bottom: statsContainer.bottom
                     horizontalCenter: portTitle.horizontalCenter
                 }
-                height: 20
-                width: 70
+                height: 55
+                width: 55
                 onClicked: root.showGraph()
+
+                background: Rectangle{
+                    color: "lightGrey"
+                    radius: 5
+                    opacity: .5
+                }
+
+                Image{
+                    id:graphIcon
+                     source: "qrc:/views/usb-pd/views/images/graphIcon.svg"
+                    anchors{
+                        top:parent.top
+                        topMargin:10
+                        bottom:parent.bottom
+                        bottomMargin:10
+                        left:parent.left
+                        leftMargin:10
+                        right:parent.right
+                        rightMargin:10
+                    }
+
+                    opacity:root.portConnected ? .5 :.15
+                }
             }
 
             Rectangle {

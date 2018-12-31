@@ -14,7 +14,15 @@ Item {
     property alias enableAssuredPower: portSettings.assuredPortPowerEnabled
 
     width: parent.width
-    height: graphSelector.nothingChecked ? portSettings.height : portSettings.height + portGraphs.height
+    height: {
+        if (graphSelector.nothingChecked || !portConnected){
+            portSettings.height;
+        }
+        else if (!graphSelector.nothingChecked && portConnected){
+           portSettings.height + portGraphs.height;
+        }
+
+    }
 
     PortInfo {
         id: portInfo
@@ -22,6 +30,35 @@ Item {
             left: parent.left
             top: root.top
             bottom: graphSelector.top
+        }
+
+        property int theRunningTotal: 0
+        property int theEfficiencyCount: 0
+        property int theEfficiencyAverage: 0
+
+        property var periodicValues: platformInterface.request_usb_power_notification
+
+        onPeriodicValuesChanged: {
+            var theInputPower = platformInterface.request_usb_power_notification.input_voltage * platformInterface.request_usb_power_notification.input_current +2;//PTJ-1321 2 Watt compensation
+            var theOutputPower = platformInterface.request_usb_power_notification.output_voltage * platformInterface.request_usb_power_notification.output_current;
+
+            if (platformInterface.request_usb_power_notification.port === portNumber){
+                //sum eight values of the efficency and average before displaying
+                var theEfficiency = Math.round((theOutputPower/theInputPower) *100)
+                portInfo.theRunningTotal += theEfficiency;
+                //console.log("new efficiency value=",theEfficiency,"new total is",miniInfo1.theRunningTotal,miniInfo1.theEfficiencyCount);
+                portInfo.theEfficiencyCount++;
+
+                if (portInfo.theEfficiencyCount === 8){
+                    portInfo.theEfficiencyAverage = portInfo.theRunningTotal/8;
+                    portInfo.theEfficiencyCount = 0;
+                    portInfo.theRunningTotal = 0
+
+                    //console.log("publishing new efficency",miniInfo1.theEfficiencyAverage);
+                    //return miniInfo1.theEfficiencyAverage
+                }
+            }
+
         }
         advertisedVoltage:{
             if (platformInterface.request_usb_power_notification.port === portNumber){
@@ -44,7 +81,7 @@ Item {
         }
         inputPower:{
             if (platformInterface.request_usb_power_notification.port === portNumber){
-                return Math.round(platformInterface.request_usb_power_notification.input_voltage * platformInterface.request_usb_power_notification.input_current *100)/100
+                return ((platformInterface.request_usb_power_notification.input_voltage * platformInterface.request_usb_power_notification.input_current)+2).toFixed(2); //PTJ-1321 adding 2 watts compensation
             }
             else{
                 return portInfo.inputPower;
@@ -52,7 +89,7 @@ Item {
         }
         outputPower:{
             if (platformInterface.request_usb_power_notification.port === portNumber){
-                return Math.round(platformInterface.request_usb_power_notification.output_voltage * platformInterface.request_usb_power_notification.output_current *100)/100
+                return (platformInterface.request_usb_power_notification.output_voltage * platformInterface.request_usb_power_notification.output_current).toFixed(2);
             }
             else{
                 return portInfo.outputPower;
@@ -60,7 +97,7 @@ Item {
         }
         outputVoltage:{
             if (platformInterface.request_usb_power_notification.port === portNumber){
-                return Math.round(platformInterface.request_usb_power_notification.output_voltage *100)/100
+                return (platformInterface.request_usb_power_notification.output_voltage).toFixed(2);
             }
             else{
                 return portInfo.outputVoltage;
@@ -68,29 +105,13 @@ Item {
         }
         portTemperature:{
             if (platformInterface.request_usb_power_notification.port === portNumber){
-                return Math.round(platformInterface.request_usb_power_notification.temperature *10)/10
+                return (platformInterface.request_usb_power_notification.temperature).toFixed(1)
             }
             else{
                 return portInfo.portTemperature;
             }
         }
-        efficency: {
-            var theInputPower = platformInterface.request_usb_power_notification.input_voltage * platformInterface.request_usb_power_notification.input_current;
-            var theOutputPower = platformInterface.request_usb_power_notification.output_voltage * platformInterface.request_usb_power_notification.output_current;
-
-            if (platformInterface.request_usb_power_notification.port === portNumber){
-                if (theInputPower == 0){    //division by 0 would normally give "nan"
-                    return "—"
-                }
-                else{
-                    return Math.round((theOutputPower/theInputPower)*100)
-                    //return "—"
-                }
-            }
-            else{
-                return portInfo.efficency;
-            }
-        }
+        efficency: theEfficiencyAverage
     }
 
     SGSegmentedButtonStrip {
@@ -225,7 +246,6 @@ Item {
             right: root.right
         }
         height:250
-        //height:300
 
         SGGraph {
             id: graph1
@@ -414,7 +434,7 @@ Item {
             yAxisTitle: "Percent"
             xAxisTitle: "1 sec/div"
 
-            minYValue: 0                    // Default: 0
+            minYValue: 70                    // Default: 0
             maxYValue: 100                   // Default: 10
             minXValue: 0                    // Default: 0
             maxXValue: 5                    // Default: 10
@@ -422,24 +442,37 @@ Item {
             property real stream: 0
             property real count: 0
             property real interval: 10 // 10 Hz?
-            property real inputPower: 0
-            property real outputPower: 0
 
-            property var powerInfo: platformInterface.request_usb_power_notification.output_voltage
-            onPowerInfoChanged:{
-                //console.log("new power notification for port ",portNumber);
+            property int theRunningTotal: 0
+            property int theEfficiencyCount: 0
+            property int theEfficiencyAverage: 0
+
+            property var periodicValues: platformInterface.request_usb_power_notification.output_voltage
+
+            onPeriodicValuesChanged: {
+                var theInputPower = platformInterface.request_usb_power_notification.input_voltage * platformInterface.request_usb_power_notification.input_current +2;//PTJ-1321 2 Watt compensation
+                var theOutputPower = platformInterface.request_usb_power_notification.output_voltage * platformInterface.request_usb_power_notification.output_current;
+
                 if (platformInterface.request_usb_power_notification.port === portNumber){
-                    //console.log("voltage=",platformInterface.request_usb_power_notification.output_voltage," count=",count);
-                    count += interval;
-                    inputPower = platformInterface.request_usb_power_notification.input_voltage *
-                            platformInterface.request_usb_power_notification.input_current;
-                    outputPower = platformInterface.request_usb_power_notification.output_voltage *
-                            platformInterface.request_usb_power_notification.output_current;
-                    //console.log("inputPower=",inputPower," outputPower=",outputPower,(outputPower/inputPower)*100);
-                    if (inputPower == 0)
+                    //sum eight values of the efficency and average before displaying
+                    var theEfficiency = Math.round((theOutputPower/theInputPower) *100)
+                    graph6.theRunningTotal += theEfficiency;
+                    //console.log("input=",theInputPower,"output=",theOutputPower,"efficiency=",theEfficiency);
+                    //console.log("new efficiency value=",theEfficiency,"new total is",graph6.theRunningTotal,graph6.theEfficiencyCount);
+                    graph6.theEfficiencyCount++;
+
+                    if (graph6.theEfficiencyCount === 8){
+                        graph6.theEfficiencyAverage = graph6.theRunningTotal/8;
+                        graph6.theEfficiencyCount = 0;
+                        graph6.theRunningTotal = 0
+
+                        //console.log("publishing new efficency",graph6.theEfficiencyAverage);
+                    }
+
+                    if (theInputPower == 0)
                         stream = 0;
                     else{
-                        stream = (outputPower/inputPower)*100;
+                        stream = theEfficiencyAverage;
                     }
                 }
             }

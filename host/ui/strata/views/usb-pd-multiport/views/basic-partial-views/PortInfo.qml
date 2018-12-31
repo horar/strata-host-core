@@ -58,14 +58,36 @@ Rectangle {
 
             Button {
                 id: showGraphs
-                text: "Graphs"
                 anchors {
                     bottom: statsContainer.bottom
                     horizontalCenter: portTitle.horizontalCenter
                 }
-                height: 20
-                width: 65
+                height: 50
+                width: 50
                 onClicked: root.showGraph()
+
+                background: Rectangle{
+                    color: "lightGrey"
+                    radius: 5
+                    opacity: .5
+                }
+
+                Image{
+                    id:graphIcon
+                     source: "qrc:/views/usb-pd-multiport/views/images/graphIcon.svg"
+                    anchors{
+                        top:parent.top
+                        topMargin:10
+                        bottom:parent.bottom
+                        bottomMargin:10
+                        left:parent.left
+                        leftMargin:10
+                        right:parent.right
+                        rightMargin:10
+                    }
+
+                    opacity:root.portConnected ? .5 :.15
+                }
             }
 
             Rectangle {
@@ -144,7 +166,7 @@ Rectangle {
 
                     PortStatBox {
                         id:maxPowerBox
-                        label: "MAX CAPACITY"
+                        label: "PD CONTRACT"
                         //value: "100"
                         icon: "../images/icon-max.svg"
                         portColor: root.portColor

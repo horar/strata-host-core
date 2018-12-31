@@ -5,7 +5,7 @@ import "qrc:/views/usb-pd-multiport/sgwidgets"
 
 Item {
     id: root
-    height: 375
+    height: 350
     width: parent.width
     anchors {
         left: parent.left
@@ -94,13 +94,13 @@ Item {
                             port2connected = true;
                         }
                     }
-                    else if (platformInterface.usb_pd_port_connect.port_id === 3){
-                        if (platformInterface.usb_pd_port_connect.connection_state === "USB_C_port_3"){
+                    else if (platformInterface.usb_pd_port_connect.port_id === "USB_C_port_3"){
+                        if (platformInterface.usb_pd_port_connect.connection_state === "connected"){
                             port3connected = true;
                         }
                     }
-                    else if (platformInterface.usb_pd_port_connect.port_id === 4){
-                        if (platformInterface.usb_pd_port_connect.connection_state === "USB_C_port_4"){
+                    else if (platformInterface.usb_pd_port_connect.port_id === "USB_C_port_4"){
+                        if (platformInterface.usb_pd_port_connect.connection_state === "connected"){
                             port4connected = true;
                         }
                     }
@@ -149,9 +149,9 @@ Item {
                     rightMargin: 10
                 }
                 from: 30
-                to: platformInterface.ac_power_supply_connection.power
+                to: 200//platformInterface.ac_power_supply_connection.power
                 startLabel: "30W"
-                endLabel: platformInterface.ac_power_supply_connection.power+"W"
+                endLabel: "200W"//platformInterface.ac_power_supply_connection.power+"W"
                 labelTopAligned: true
                 value: currentMaxPower
 
@@ -164,10 +164,10 @@ Item {
             SGSubmitInfoBox {
                 id: maximumBoardPowerInput
                 showButton: false
-                infoBoxWidth: 30
+                infoBoxWidth: 35
                 enabled: maximumBoardPower.enabled
                 minimumValue: 30
-                maximumValue: platformInterface.ac_power_supply_connection.power
+                maximumValue: 200//platformInterface.ac_power_supply_connection.power
                 anchors {
                     verticalCenter: maximumBoardPower.verticalCenter
                     verticalCenterOffset: -7
@@ -336,6 +336,38 @@ Item {
 
             }
 
+            Button{
+                //a rectangle to cover the assured power switch when it's disabled, so we can still show a
+                //tooltip explaining *why* its disabled.
+                id:maxAssuredPowerPopupToolTipMask
+                hoverEnabled: true
+                z:1
+                visible:(assuredPortSwitch.checked)
+                background: Rectangle{
+                    color:"transparent"
+                }
+
+                anchors {
+                    left: assuredMaxPowerOutput.left
+                    top: assuredMaxPowerOutput.top
+                    bottom:assuredMaxPowerOutput.bottom
+                    right: assuredMaxPowerOutput.right
+                }
+
+                ToolTip{
+                    id:maxAssuredPowerPopupToolTip
+                    visible:maxAssuredPowerPopupToolTipMask.hovered
+                    text: "Disabled while Assured Port 1 Power is on"
+                    delay:500
+                    timeout:2000
+
+                    background: Rectangle {
+                        color: "#eee"
+                        radius: 2
+                    }
+                }
+            }
+
             SGComboBox {
                 id: assuredMaxPowerOutput
                 label: "Maximum Assured Power:"
@@ -364,9 +396,38 @@ Item {
                     if (platformInterface.usb_pd_maximum_power.port === 1){
                         assuredMaxPowerOutput.currentIndex = assuredMaxPowerOutput.comboBox.find( parseInt (platformInterface.usb_pd_maximum_power.commanded_max_power))
                     }
-
                 }
 
+                property var maxPower: platformInterface.maximum_board_power.watts
+                onMaxPowerChanged: {
+                    //there are 24W held in reserve for other ports, so don't offer anything more than
+                    //maxPower-24 for the assured power options
+                    if (maxPower < 27 + 24){
+                        model= ["15"];
+                        assuredMaxPowerOutput.currentIndex = 0;
+                    }
+                    else if (maxPower < 36 + 24){
+                        model=["15","27"];
+                        assuredMaxPowerOutput.currentIndex = 1;
+                    }
+                    else if (maxPower < 45 + 24){
+                        model=["15","27","36"];
+                        assuredMaxPowerOutput.currentIndex = 2;
+                    }
+                    else if (maxPower < 60 + 24){
+                        model= ["15","27","36","45"];
+                        assuredMaxPowerOutput.currentIndex = 3;
+                    }
+                    else if (maxPower < 100 + 24){
+                        model =["15","27","36","45","60"];
+                        assuredMaxPowerOutput.currentIndex = 4;
+                        console.log("setting max assured power to 60. index is",assuredMaxPowerOutput.currentText);
+                    }
+                    else{
+                        model = ["15","27", "36", "45","60","100"];
+                        assuredMaxPowerOutput.currentIndex = 5;
+                    }
+                }
 
             }
 
@@ -464,15 +525,6 @@ Item {
                     columnSpacing: 2
 
                     SGSegmentedButton{
-                        text: qsTr("Shutdown")
-                        checked: platformInterface.usb_pd_protection_action.action === "shutdown"
-
-                        onClicked: {
-                            platformInterface.set_protection_action.update("shutdown");
-                        }
-                    }
-
-                    SGSegmentedButton{
                         text: qsTr("Retry")
                         checked: platformInterface.usb_pd_protection_action.action === "retry"
 
@@ -492,52 +544,7 @@ Item {
                 }
             }
 
-            SGSlider {
-                id: inputFault
-                label: "Fault when input below:"
-                anchors {
-                    left: margins1.left
-                    leftMargin: 65
-                    top: faultProtection.bottom
-                    topMargin: 10
-                    right: inputFaultInput.left
-                    rightMargin: 10
-                }
-                from: 0
-                to: 20
-                startLabel: "0V"
-                endLabel: "20V"
-                labelTopAligned: true
-                value: platformInterface.input_under_voltage_notification.minimum_voltage
-                onMoved: {
-                    platformInterface.set_minimum_input_voltage.update(value);
-                }
-            }
 
-            SGSubmitInfoBox {
-                id: inputFaultInput
-                showButton: false
-                infoBoxWidth: 30
-                minimumValue: 0
-                maximumValue: 20
-                anchors {
-                    verticalCenter: inputFault.verticalCenter
-                    verticalCenterOffset: -7
-                    right: inputFaultUnits.left
-                    rightMargin: 5
-                }
-                value: Math.round(platformInterface.input_under_voltage_notification.minimum_voltage)
-                onApplied:platformInterface.set_minimum_input_voltage.update(value);   // slider will be updated via notification
-            }
-
-            Text{
-                id: inputFaultUnits
-                text: "V"
-                anchors {
-                    right: parent.right
-                    verticalCenter: inputFaultInput.verticalCenter
-                }
-            }
 
             SGSlider {
                 id: tempFault
@@ -545,15 +552,15 @@ Item {
                 anchors {
                     left: parent.left
                     leftMargin:20
-                    top: inputFault.bottom
+                    top: faultProtection.bottom
                     topMargin: 10
                     right: tempFaultInput.left
                     rightMargin: 10
                 }
-                from: -64
-                to: 191
-                startLabel: "-64°C"
-                endLabel: "191°C"
+                from: 0
+                to: 135
+                startLabel: "0°C"
+                endLabel: "135°C"
                 labelTopAligned: true
                 value: platformInterface.set_maximum_temperature_notification.maximum_temperature
                 onMoved: {
@@ -565,8 +572,8 @@ Item {
                 id: tempFaultInput
                 showButton: false
                 infoBoxWidth: 35
-                minimumValue: -64
-                maximumValue: 191
+                minimumValue: 0
+                maximumValue: 135
                 anchors {
                     verticalCenter: tempFault.verticalCenter
                     verticalCenterOffset: -7
@@ -621,7 +628,7 @@ Item {
                 }
                 anchors {
                     top: margins2.top
-                    topMargin: 15
+                    topMargin: 0
                 }
             }
 
@@ -667,10 +674,10 @@ Item {
                     right: foldbackTempInput.left
                     rightMargin: 10
                 }
-                from: 25
-                to: 200
-                startLabel: "25°C"
-                endLabel: "200°C"
+                from: 0
+                to: 100
+                startLabel: "0°C"
+                endLabel: "100°C"
                 labelTopAligned: true
                 value: platformInterface.foldback_temperature_limiting_event.foldback_maximum_temperature
                 onMoved:{
