@@ -205,7 +205,7 @@ Item {
                     left: parent.left
                     leftMargin: 61
                     top: inputFoldback.bottom
-                    topMargin: 10
+                    topMargin: 13
                     right: foldbackLimitInput.left
                     rightMargin: 10
                 }
@@ -225,6 +225,7 @@ Item {
                 showButton: false
                 anchors {
                     verticalCenter: foldbackLimit.verticalCenter
+                    verticalCenterOffset: -7
                     right: parent.right
                 }
                 infoBoxWidth: 40
@@ -260,12 +261,12 @@ Item {
             }
             Text{
                 id: foldbackTempUnits
-                text: "°C"
+                text: "W"
                 anchors {
                     left: limitOutput.right
                     leftMargin: 5
                     verticalCenter: limitOutput.verticalCenter
-                    verticalCenterOffset: -7
+                    verticalCenterOffset: 0
                 }
             }
 
