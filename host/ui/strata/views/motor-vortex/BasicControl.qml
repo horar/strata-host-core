@@ -7,6 +7,7 @@ import QtQuick.Extras 1.4
 //import tech.spyglass. 1.0
 import "qrc:/js/navigation_control.js" as NavigationControl
 import "qrc:/views/motor-vortex/sgwidgets"
+import "qrc:/js/help_layout_manager.js" as Help
 
 Rectangle {
     id: controlPage
@@ -16,6 +17,14 @@ Rectangle {
     color: "white"
 
     property alias warningVisible: warningBox.visible
+
+    Component.onCompleted: {
+        Help.registerTarget(navTabs, "These tabs switch between Basic and Advanced control views. The FAE Only tab is restricted for ON Semiconductor field engineers.", 0, "basicViewHelp")
+        Help.registerTarget(motorSpeedControl, "The slider sets motor speed from 1500-4000 rpm" , 1 , "basicViewHelp")
+        Help.registerTarget(tachMeterGauge, "The gauge shows the speed of the motor", 3, "basicViewHelp")
+        Help.registerTarget(operationModeControl, "These are two modes to control the system. In manual mode, speed of the motor will be set by the slider above. In Automatic Demo Pattern mode, the system will go through a particular speed profile.", 2 , "basicViewHelp")
+    }
+
     // Control Section
     Rectangle {
         id: controlSection1

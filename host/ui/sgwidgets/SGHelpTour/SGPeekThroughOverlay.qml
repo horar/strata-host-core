@@ -1,4 +1,5 @@
 import QtQuick 2.9
+import "qrc:/../SGToolTipPopup/"
 
 Item {
      id: root
@@ -192,7 +193,7 @@ Item {
              top: bottomFade.bottom
              horizontalCenter: bottomFade.horizontalCenter
          }
-         reverseDirection: true
+         pointsUp: true
          color: "white"
          property int index
          property string description

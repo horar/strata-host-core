@@ -1,0 +1,18 @@
+<RCC>
+    <qresource prefix="/">
+        <file>main.qml</file>
+        <file>images/corner-fade.png</file>
+        <file>images/side-fade.png</file>
+        <file>images/top-fade.png</file>
+        <file>SGPeekThroughOverlay.qml</file>
+        <file>help_layout_manager.js</file>
+        <file>SGTourControl.qml</file>
+        <file>../SGToolTipPopup/SGToolTipPopup.qml</file>
+        <file>fonts/Fonts.qml</file>
+        <file>fonts/FranklinGothicBold.ttf</file>
+        <file>fonts/FranklinGothicBook.otf</file>
+        <file>fonts/FranklinGothicMedium.otf</file>
+        <file>fonts/Inconsolata.otf</file>
+        <file>fonts/sgicons.ttf</file>
+    </qresource>
+</RCC>

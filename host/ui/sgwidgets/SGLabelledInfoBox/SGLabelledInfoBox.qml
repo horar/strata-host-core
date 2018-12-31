@@ -12,6 +12,7 @@ Rectangle {
     property color infoBoxColor: "#eeeeee"
     property color infoBoxBorderColor: "#cccccc"
     property real infoBoxBorderWidth: 1
+    property alias overrideLabelWidth: labelText.width
 
     implicitHeight: labelLeft ? infoContainer.height : labelText.height + infoContainer.height + infoContainer.anchors.topMargin
     implicitWidth: labelLeft ? infoBoxWidth + labelText.width + infoContainer.anchors.leftMargin : Math.max(infoBoxWidth, labelText.width)

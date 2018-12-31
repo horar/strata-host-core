@@ -3,7 +3,9 @@ import QtGraphicalEffects 1.0
 
 Item {
     id: root
+
     property alias content: content.sourceComponent
+    property alias contentItem: content.item
 
     property bool showOn: false
     property bool reverseDirection: false

@@ -19,6 +19,7 @@ Item {
     property alias stepSize: sgSlider.stepSize
     property alias orientation: sgSlider.orientation
     property alias startLabel: startLabel.text
+    property alias overrideLabelWidth: labelText.width
     property alias endLabel: endLabel.text
 
     property bool inputBox: true

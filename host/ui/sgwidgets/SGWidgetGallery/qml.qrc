@@ -122,12 +122,6 @@
         <file>../SGGraphTimed/qml.qrc</file>
         <file>../SGGraphTimed/SGGraphTimed.pro</file>
         <file>../SGGraphTimed/SGGraphTimed.qml</file>
-        <file>../SGPeekThroughOverlay/images/corner-fade.png</file>
-        <file>../SGPeekThroughOverlay/images/side-fade.png</file>
-        <file>../SGPeekThroughOverlay/images/top-fade.png</file>
-        <file>../SGPeekThroughOverlay/main.qml</file>
-        <file>../SGPeekThroughOverlay/SGPeekThroughOverlay.qml</file>
-        <file>../SGStatusListBox/SGSubmitInfoBox.qml</file>
         <file>main.cpp</file>
         <file>../SGStatusListBox/fonts/Inconsolata.otf</file>
         <file>../SGSubmitInfoBox/fonts/Inconsolata.otf</file>

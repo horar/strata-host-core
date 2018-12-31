@@ -13,6 +13,7 @@ Item {
     property bool labelLeft: true
     property color textColor : "black"
     property real sliderHeight: 28
+    property alias overrideLabelWidth: labelText.width
 
     implicitHeight: labelLeft ? Math.max(labelText.height, sliderHeight) : labelText.height + sliderHeight + rgbSlider.anchors.topMargin
     implicitWidth: 450

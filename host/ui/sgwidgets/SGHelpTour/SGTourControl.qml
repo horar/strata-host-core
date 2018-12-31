@@ -1,7 +1,7 @@
 import QtQuick 2.3
 import QtQuick.Controls 2.3
 import Fonts 1.0
-import "qrc:/js/help_layout_manager.js" as Help
+import "qrc:/help_layout_manager.js" as Help
 
 Item {
     id: root
@@ -55,7 +55,6 @@ Item {
             }
             onVisibleChanged: {
                     text = (root.index + 1) + "/" +  Help.tourCount
-
             }
         }
 
@@ -122,3 +121,4 @@ Item {
         }
     }
 }
+

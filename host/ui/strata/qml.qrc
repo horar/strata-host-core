@@ -451,5 +451,8 @@
         <file>statusbar-partial-views/images/top-fade.png</file>
         <file>views/usb-pd-multiport/views/images/graphIcon.svg</file>
         <file>views/usb-pd/views/images/graphIcon.svg</file>
+        <file>views/unknown-platform/Content.qml</file>
+        <file>views/unknown-platform/Control.qml</file>
+        <file>views/unknown-platform/Warning.qml</file>
     </qresource>
 </RCC>

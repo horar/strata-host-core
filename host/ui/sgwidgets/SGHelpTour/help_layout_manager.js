@@ -8,20 +8,29 @@ var helpView
 var tourCount = 0
 
 /*******
-   Including help library:
+    Including help library:
         import "qrc:/js/help_layout_manager.js" as Help
 
-   Adding into the help tutorial API:
-        Help.registerTarget(Target, Description, Index Number, Help View Target)
-   Example: Help.registerTarget(startButton, "this button starts the motor", 0, "motorVortexHelp")
+    Adding into the help tutorial (usually in Component.onCompleted of Target's parent):
+        Help.registerTarget(Target, Description, Index Number (starts at 0), Help View Target)
+    Example: Help.registerTarget(startButton, "this button starts the motor", 0, "motorVortexHelp")
 
-   Starting the tutorial when help icon is clicked API:
+    Starting the help tour:
         Help.startHelpTour(Help View Target)
-   Example:  Help.startHelpTour("motorVortexHelp")
+    Example:  Help.startHelpTour("motorVortexHelp")
+
+    Since this dynamically creates objects, be sure to destroy them onClose or Component.onDestruction by calling:
+        Help.reset(Help View Target)
+    Example:  Help.reset("motorVortexHelp")
+
+    Help tour requires the following structural components:
+        SGTourControl.qml
+        SGPeekThroughOverlay.qml
+        SGToolTipPopup.qml
 *******/
 
 function registerTarget(helpTarget, targetDescription, index, view) {
-    var component = Qt.createComponent("qrc:/statusbar-partial-views/SGPeekThroughOverlay.qml");
+    var component = Qt.createComponent("qrc:/SGPeekThroughOverlay.qml");
     var object = component.createObject(window);
 
     object.index = index

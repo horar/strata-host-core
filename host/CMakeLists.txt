@@ -27,5 +27,11 @@ add_subdirectory(libs)
 # applications
 add_subdirectory(apps)
 
+#tests..
+#add_subdirectory(test)
+
+#utils
+add_subdirectory(utils)
+
 
 add_subdirectory(research_spikes)

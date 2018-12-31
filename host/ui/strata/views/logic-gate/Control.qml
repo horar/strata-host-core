@@ -9,7 +9,7 @@ import Fonts 1.0
 import "qrc:/js/navigation_control.js" as NavigationControl
 import "qrc:/js/help_layout_manager.js" as Help
 
-Rectangle {
+Item {
     id: controlNavigation
     anchors {
         fill: parent
@@ -20,11 +20,11 @@ Rectangle {
     }
 
     Component.onCompleted: {
-        Help.registerTarget(navTabs, "Using these two tabs, you may select between running the NL7SZ97 or the NL7SZ58 multifunction gates.", 0)
+        Help.registerTarget(navTabs, "Using these two tabs, you may select between running the NL7SZ97 or the NL7SZ58 multifunction gates.", 0,"logicGateHelp")
     }
 
     Component.onDestruction: {
-        Help.reset()
+        Help.reset("logicGateHelp")
     }
 
     TabBar {
@@ -39,13 +39,10 @@ Rectangle {
             id: basicButton
             text: qsTr("NL7SZ97")
             onClicked: {
-//                platformInterface.off_led.update()
                 controlContainer.currentIndex = 0
-                console.log("in view one")
                 partOne.visible = true
                 partTwo.visible = false
                 partOne.resetToIndex0();
-//                platformInterface.mux_97.update();
             }
         }
 
@@ -55,7 +52,6 @@ Rectangle {
             onClicked: {
                 platformInterface.off_97_led.update()
                 controlContainer.currentIndex = 1
-                console.log("in view two")
                 partOne.visible = false
                 partTwo.visible = true
                 partTwo.resetToIndex0()
@@ -64,61 +60,33 @@ Rectangle {
         }
     }
 
-    ScrollView {
-        id: scrollView
+    Item {
+        id: controlContainer
+        property int currentIndex: 0
         anchors {
             top: navTabs.bottom
-            bottom: parent.bottom
-            right: parent.right
-            left: parent.left
+            bottom: controlNavigation.bottom
+            right: controlNavigation.right
+            left: controlNavigation.left
         }
 
-        onWidthChanged: {
-            if (width < 1200) {
-                ScrollBar.horizontal.policy = ScrollBar.AlwaysOn
-            } else {
-                ScrollBar.horizontal.policy = ScrollBar.AlwaysOff
-            }
+        PartOne  {
+            id: partOne
+            visible: true
         }
 
-        onHeightChanged: {
-            if (height < 725) {
-                ScrollBar.vertical.policy = ScrollBar.AlwaysOn
-            } else {
-                ScrollBar.vertical.policy = ScrollBar.AlwaysOff
-            }
-        }
-
-        Flickable {
-            id: controlContainer
-
-            property int currentIndex: 0
-
-            boundsBehavior: Flickable.StopAtBounds
-            contentWidth: 1200
-            contentHeight: 725
-            anchors {
-                fill: parent
-            }
-            clip: true
-
-            PartOne {
-                id: partOne
-                visible: true
-            }
-
-            PartTwo {
-                id: partTwo
-                visible: false
-            }
+        PartTwo {
+            id: partTwo
+            visible: false
         }
     }
+
 
     Text {
         id: helpIcon
         anchors {
-            right: scrollView.right
-            top: scrollView.top
+            right: controlContainer.right
+            top: controlContainer.top
             margins: 20
         }
         text: "\ue808"
@@ -136,10 +104,11 @@ Rectangle {
             onClicked: {
                 navTabs.currentIndex = 0
                 basicButton.clicked()
-                Help.startHelpTour()
+                Help.startHelpTour("logicGateHelp")
             }
             hoverEnabled: true
         }
     }
+
 }
 
