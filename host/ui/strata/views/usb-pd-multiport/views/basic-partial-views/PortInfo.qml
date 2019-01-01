@@ -72,22 +72,27 @@ Rectangle {
                     opacity: .5
                 }
 
-                Image{
-                    id:graphIcon
-                     source: "qrc:/views/usb-pd-multiport/views/images/graphIcon.svg"
-                    anchors{
-                        top:parent.top
-                        topMargin:10
-                        bottom:parent.bottom
-                        bottomMargin:10
-                        left:parent.left
-                        leftMargin:10
-                        right:parent.right
-                        rightMargin:10
-                    }
+                icon.source:"qrc:/views/usb-pd-multiport/views/images/graphIcon.svg"
+                icon.width: parent.width -20
+                icon.height: parent.width - 20
+                icon.color: root.portConnected ? "darkgrey" : "lightgrey"
 
-                    opacity:root.portConnected ? .5 :.15
-                }
+//                Image{
+//                    id:graphIcon
+//                     source: "qrc:/views/usb-pd-multiport/views/images/graphIcon.svg"
+//                    anchors{
+//                        top:parent.top
+//                        topMargin:10
+//                        bottom:parent.bottom
+//                        bottomMargin:10
+//                        left:parent.left
+//                        leftMargin:10
+//                        right:parent.right
+//                        rightMargin:10
+//                    }
+
+//                    opacity:root.portConnected ? .5 :.15
+//                }
             }
 
             Rectangle {
