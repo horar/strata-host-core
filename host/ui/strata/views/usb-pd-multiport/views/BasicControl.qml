@@ -411,6 +411,7 @@ Item {
             onShowGraph: {
                 graphDrawer.portNumber = portNumber;
                 graphDrawer.open();
+                portInfo1.visible = false;
             }
         }
 
