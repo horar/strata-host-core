@@ -64,10 +64,14 @@ Rectangle {
                 }
                 height: 50
                 width: 50
-                onClicked: root.showGraph()
+                checkable:true
+                onClicked: {
+                    root.showGraph()
+                    background.color = "blue"
+                }
 
                 background: Rectangle{
-                    color: showGraphs.down ? "darkGrey" : "lightGrey"
+                    color: showGraphs.checked ? "darkGrey" : "lightGrey"
                     radius: 5
                     opacity: .5
                 }
