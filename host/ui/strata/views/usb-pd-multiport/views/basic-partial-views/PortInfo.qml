@@ -67,15 +67,15 @@ Rectangle {
                 onClicked: root.showGraph()
 
                 background: Rectangle{
-                    color: "lightGrey"
+                    color: showGraphs.down ? "darkGrey" : "lightGrey"
                     radius: 5
                     opacity: .5
                 }
 
-                icon.source:"qrc:/views/usb-pd-multiport/views/images/graphIcon.svg"
-                icon.width: parent.width -20
-                icon.height: parent.width - 20
-                icon.color: root.portConnected ? "darkgrey" : "lightgrey"
+//                icon.source:"qrc:/views/usb-pd-multiport/views/images/graphIcon.svg"
+//                icon.width: parent.width -20
+//                icon.height: parent.width - 20
+//                icon.color: root.portConnected ? "darkgrey" : "lightgrey"
 
 //                Image{
 //                    id:graphIcon
