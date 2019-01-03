@@ -20,6 +20,7 @@ Item {
             text: "Assure Port power:"
             anchors {
                 top:parent.top
+                topMargin: 30
                 left: parent.left
                 leftMargin: 45
             }
@@ -139,7 +140,7 @@ Item {
             switchHeight: 20
             switchWidth: 46
 
-            checked: platformInterface.assured_power_port.enabled
+            checked: platformInterface.assured_power_port.enabled && (portNumber === 1)
             onToggled: platformInterface.set_assured_power_port.update(checked, portNumber)  //we're only allowing port 1 to be assured            
         }
 
@@ -177,23 +178,25 @@ Item {
         }
 
         SGComboBox {
+            id: maxPowerOutput
 
             property variant maxPowerOptions: ["15","27", "36", "45","60","100"]
-            property int maxPower: platformInterface.usb_pd_maximum_power.commanded_max_power
+            property var maxPower: platformInterface.usb_pd_maximum_power
 
             //limit the options for power usage to be less than the max power allocated for this port
             onMaxPowerChanged:{
                 if (platformInterface.usb_pd_maximum_power.port === portNumber){
                     //console.log("got a new commanded max power for port",platformInterface.usb_pd_maximum_power.port)
                     maxPowerOutput.currentIndex = maxPowerOutput.comboBox.find( parseInt (platformInterface.usb_pd_maximum_power.commanded_max_power))
+                    //console.log("commanded max power set to index",maxPowerOutput.currentIndex);
                 }
             }
 
-            id: maxPowerOutput
+
             label: "Maximum Power Output:"
             model: maxPowerOptions
             enabled:{
-                if (portNumber === 1 && (assuredPortSwitch.checked || !assuredPortSwitch.enabled))
+                if (portNumber === 1 && assuredPortSwitch.checked)
                     return false;
                 else
                     return true
@@ -205,7 +208,7 @@ Item {
                 left: parent.left
                 leftMargin: 10
                 top: assuredPortSwitch.bottom
-                topMargin: 10
+                topMargin: 15
             }
 
             //when changing the value
@@ -243,12 +246,21 @@ Item {
         SGSlider {
             id: currentLimit
             label: "Current limit:"
-            value: platformInterface.request_over_current_protection_notification.current_limit
+            value: {
+                if (platformInterface.output_current_exceeds_maximum.port === portNumber){
+                    return platformInterface.output_current_exceeds_maximum.current_limit;
+                }
+                else{
+                    return currentLimit.value;
+                }
+
+            }
             labelTopAligned: true
-            startLabel: "0A"
+            startLabel: "1A"
             endLabel: "6A"
-            from: 0
+            from: 1
             to: 6
+            stepSize: 1
             anchors {
                 left: parent.left
                 leftMargin: 80
@@ -258,15 +270,15 @@ Item {
                 rightMargin: 10
             }
 
-            onMoved: platformInterface.set_over_current_protection.update(portNumber, value)
+            onMoved: platformInterface.request_over_current_protection.update(portNumber, value)
 
         }
 
         SGSubmitInfoBox {
             id: currentLimitInput
             showButton: false
-            infoBoxWidth: 30
-            minimumValue: 0
+            infoBoxWidth: 35
+            minimumValue: 1
             maximumValue: 6
             anchors {
                 verticalCenter: currentLimit.verticalCenter
@@ -275,8 +287,15 @@ Item {
                 rightMargin: 5
             }
 
-            value: platformInterface.request_over_current_protection_notification.current_limit.toFixed(0)
-            onApplied: platformInterface.set_over_current_protection.update(portNumber, intValue)
+            value:{
+               if (platformInterface.output_current_exceeds_maximum.port === portNumber){
+                   return platformInterface.output_current_exceeds_maximum.current_limit.toFixed(0)
+                }
+                else{
+                   return currentLimit.value;
+                 }
+            }
+            onApplied: platformInterface.request_over_current_protection.update(portNumber, intValue)
 
         }
 
@@ -289,160 +308,111 @@ Item {
             }
         }
 
-        SGDivider {
-            id: div1
-            anchors {
-                top: currentLimit.bottom
-                topMargin: 15
-            }
-        }
+
 
         Text {
             id: cableCompensation
-            text: "<b>Cable Compensation</b>"
+            text: "Cable Compensation:"
             font {
-                pixelSize: 16
+                pixelSize: 13
             }
             anchors {
-                top: div1.bottom
+                top: currentLimit.bottom
                 topMargin: 15
+                left:parent.left
+                leftMargin: 30
             }
         }
 
-        SGSlider {
-            id: increment
-            label: "For every increment of:"
-            value:platformInterface.get_cable_loss_compensation.output_current
-            from:.25
-            to:1
-            stepSize: .005
-            toolTipDecimalPlaces: 2
-            labelTopAligned: true
-            startLabel: ".25A"
-            endLabel: "1A"
+
+
+        SGSegmentedButtonStrip {
+            id: cableCompensationButtonStrip
             anchors {
-                left: parent.left
-                leftMargin: 25
-                top: cableCompensation.bottom
-                topMargin: 10
-                right: incrementInput.left
-                rightMargin: 10
+                left: cableCompensation.right
+                leftMargin: 10
+                verticalCenter: cableCompensation.verticalCenter
             }
-            onMoved:{
-                console.log("sending values from increment slider:",portNumber, increment.value, platformInterface.get_cable_loss_compensation.bias_voltage);
-                platformInterface.set_cable_compensation.update(portNumber,
-                                                                     value,
-                                                                     platformInterface.get_cable_loss_compensation.bias_voltage)
-            }
+            textColor: "#666"
+            activeTextColor: "white"
+            radius: 4
+            buttonHeight: 25
+            hoverEnabled: false
 
-        }
+            property var cableLoss: platformInterface.get_cable_loss_compensation
 
-        SGSubmitInfoBox {
-            id: incrementInput
-            showButton: false
-            infoBoxWidth: 30
-            minimumValue: 0
-            maximumValue: 3
-            anchors {
-                verticalCenter: increment.verticalCenter
-                verticalCenterOffset: -7
-                right: incrementInputUnits.left
-                rightMargin: 5
-            }
-
-            value: platformInterface.get_cable_loss_compensation.output_current.toFixed(1)
-            onApplied:{
-                //console.log("sending values from increment textbox:",portNumber, incrementInput.floatValue, platformInterface.set_cable_loss_compensation.bias_voltage);
-                platformInterface.set_cable_loss_compensation.update(portNumber,
-                           incrementInput.floatValue,
-                           platformInterface.get_cable_loss_compensation.bias_voltage)
+            onCableLossChanged: {
+                if (platformInterface.get_cable_loss_compensation.port === portNumber){
+                    //console.log("cable compensation for port ",portNumber,"set to",platformInterface.get_cable_loss_compensation.bias_voltage*1000)
+                    if (platformInterface.get_cable_loss_compensation.bias_voltage === 0){
+                        cableCompensationButtonStrip.buttonList[0].children[0].enabled = true;
                     }
-        }
-
-        Text{
-            id: incrementInputUnits
-            text: "A"
-            anchors {
-                right: parent.right
-                verticalCenter: incrementInput.verticalCenter
-            }
-        }
-
-        SGSlider {
-            //N.B. values to and from the platform are in volts, but values displayed are in mV
-            id: bias
-            label: "Bias output by:"
-            value:platformInterface.get_cable_loss_compensation.bias_voltage * 1000
-            from:0
-            to:200
-            stepSize: 10
-            labelTopAligned: true
-            startLabel: "0mV"
-            endLabel: "200mV"
-            anchors {
-                left: parent.left
-                leftMargin: 75
-                top: increment.bottom
-                topMargin: 10
-                right: biasInput.left
-                rightMargin: 10
-            }
-            onMoved: {
-                platformInterface.set_cable_compensation.update(portNumber,
-                                                                     platformInterface.get_cable_loss_compensation.output_current,
-                                                                     value/1000)
+                    else if (platformInterface.get_cable_loss_compensation.bias_voltage * 1000 == 100){
+                        cableCompensationButtonStrip.buttonList[0].children[2].enabled = true;
+                    }
+                    else if (platformInterface.get_cable_loss_compensation.bias_voltage * 1000 == 200){
+                        cableCompensationButtonStrip.buttonList[0].children[2].enabled = true;
+                    }
+                }
             }
 
-        }
+            segmentedButtons: GridLayout {
+                id:cableCompensationGridLayout
+                columnSpacing: 2
 
-        SGSubmitInfoBox {
-            //N.B.  values to and from the platform are in volts, but values displayed are in mV
-            id: biasInput
-            showButton: false
-            infoBoxWidth: 35
-            minimumValue: 0
-            maximumValue: 2
-            anchors {
-                verticalCenter: bias.verticalCenter
-                verticalCenterOffset: -7
-                right: biasInputUnits.left
-                rightMargin: 5
-            }
+                SGSegmentedButton{
+                    id: cableCompensationSetting1
+                    text: qsTr("Off")
+                    checkable: true
 
-            value: platformInterface.get_cable_loss_compensation.bias_voltage * 1000
-            onApplied: platformInterface.set_cable_loss_compensation.update(portNumber,
-                                                                            platformInterface.get_cable_loss_compensation.output_current,
-                                                                            biasInput.floatValue/1000)
-        }
+                    onClicked:{
+                        platformInterface.set_cable_compensation.update(portNumber,
+                                               1,
+                                               0);
+                    }
+                }
 
-        Text{
-            id: biasInputUnits
-            text: "mV"
-            anchors {
-                right: parent.right
-                verticalCenter: biasInput.verticalCenter
+                SGSegmentedButton{
+                    id: cableCompensationSetting2
+                    text: qsTr("100 mv/A")
+                    checkable: true
+
+                    onClicked:{
+                        platformInterface.set_cable_compensation.update(portNumber,
+                                               1,
+                                               100/1000);
+                    }
+                }
+
+                SGSegmentedButton{
+                    id:cableCompensationSetting3
+                    text: qsTr("200 mv/A")
+                    checkable: true
+
+                    onClicked:{
+                        platformInterface.set_cable_compensation.update(portNumber,
+                                               1,
+                                               200/1000);
+                    }
+                }
             }
         }
 
 
-        SGDivider {
-            id: div2
-            height: 1
-            anchors {
-                top: bias.bottom
-                topMargin: 15
-            }
-        }
+
+
 
         Text {
             id: advertisedVoltages
-            text: "<b>Advertised Voltages:</b>"
+            text: "Advertised Profiles:"
             font {
-                pixelSize: 16
+                pixelSize: 13
             }
             anchors {
-                top: div2.bottom
-                topMargin: 15
+                top: cableCompensation.bottom
+                topMargin: 30
+                left:parent.left
+                leftMargin: 40
             }
         }
 

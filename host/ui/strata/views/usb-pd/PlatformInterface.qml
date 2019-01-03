@@ -31,6 +31,8 @@ Item {
     }
 
     onRequest_usb_power_notificationChanged: {
+//        console.log("port",request_usb_power_notification.port,"input current=",request_usb_power_notification.input_current);
+
 //        console.log("output voltage=",request_usb_power_notification.output_voltage,
 //                    "output current=",request_usb_power_notification.output_current,
 //                    "power=",request_usb_power_notification.output_voltage * request_usb_power_notification.output_current);
@@ -75,8 +77,8 @@ Item {
 
    property var over_temperature_notification:{
            "port":"USB_C_port_1",                                // or any USB C port
-           "state":"above",                                      // if the temperature crossed from under temperature to over temperature, "below" otherwise.
-           "maximum_temperature":191                             // Temperature limit in degrees C
+           "state":"below",                                      // if the temperature crossed from under temperature to over temperature, "below" otherwise.
+           "maximum_temperature":200                             // Temperature limit in degrees C
     }
 
         //consider the values held by this property to be the master ones, which will be current when needed for calling
@@ -124,7 +126,7 @@ Item {
     property var foldback_temperature_limiting_event:{
             "port":0,
             "current_temperature":0,
-            "foldback_maximum_temperature":200,
+            "foldback_maximum_temperature":135,
             "foldback_maximum_temperature_power":15,
             "temperature_foldback_enabled":true,
             "temperature_foldback_active":true,
@@ -134,7 +136,7 @@ Item {
     property var foldback_temperature_limiting_refresh:{
             "port":0,
             "current_temperature":0,
-            "foldback_maximum_temperature":200,
+            "foldback_maximum_temperature":135,
             "foldback_maximum_temperature_power":15,
             "temperature_foldback_enabled":true,
             "temperature_foldback_active":true,
@@ -221,6 +223,14 @@ Item {
         "port":1,              // or any USB C port id
         "voltage":12,          // One of the available voltages
         "maximum_current":100  // in milliamps
+    }
+
+    property var output_current_exceeds_maximum:{
+        "port":1,              // 1, 2, ... maximum port number
+        "current_limit":15,    // amps - output current  exceeds this level
+        "exceeds_limit":true,  // or false
+        "action":"retry",      // "retry" or "shutdown" or "nothing"
+        "enabled":true         // or false
     }
 
     // --------------------------------------------------------------------------------------------

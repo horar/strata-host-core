@@ -547,9 +547,6 @@ Window {
                         maxXValue: 5                    // Default: 10
                         showXGrids: false               // Default: false
                         showYGrids: true                // Default: false
-                        showOptions: false               // Default: false
-                        running: graphSwitch.checked
-                        repeatOldData: false
                     }
 
                     SGSwitch {

@@ -198,7 +198,7 @@ Item {
         }
 
         property real sbHeight: 50
-        property real sbValueSize: 24
+        property real sbValueSize: 20
         property real sbLabelSize: 9
         property real bottomMargin: 4
 

@@ -29,7 +29,7 @@ Item {
          anchors {
              fill: root
          }
-         onClicked: root.visible = false
+         onClicked: toolTipPopup.contentItem.close()
      }
 
      Item {
@@ -199,7 +199,6 @@ Item {
 
          content: SGTourControl {
              id: tourControl
-             onClose: root.visible = false
              index: toolTipPopup.index
              description: toolTipPopup.description
          }

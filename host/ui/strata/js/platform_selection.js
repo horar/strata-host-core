@@ -6,6 +6,7 @@ var platformListModel
 var coreInterface
 var documentManager
 var selectedPlatform = { "uuid":"", "verbose":"", "connection":"" }
+var platformType
 
 function initialize (newModel, newCoreInterface, newDocumentManager) {
     isInitialized = true
@@ -21,7 +22,7 @@ function populatePlatforms(platform_list_json) {
 
     // Map out UUID->platform name
     // Lookup table
-    //  platform_id -> local qml directory holding interface
+    // platform_id -> local qml directory holding interface
     //to enable a new model of board UI to be shown, this list has to be edited
     //the other half of the map will be the name of the directory that will be used to show the initial screen (e.g. usb-pd/Control.qml)
 
@@ -37,7 +38,11 @@ function populatePlatforms(platform_list_json) {
         "SEC.2017.038.0.1": "usb-pd-multiport",
         "SEC.2018.018.0.0" : "logic-gate", // Alpha Board
         "SEC.2018.018.1.0" : "logic-gate", // Beta Board
-        "SEC.2018.001.0.0": "usb-hub"
+        "SEC.2018.001.0.0": "usb-hub",
+
+        "102" : "usb-pd",
+        "103" : "usb-pd-multiport"
+
     }
 
     platformListModel.clear()
@@ -57,8 +62,11 @@ function populatePlatforms(platform_list_json) {
             //console.log("the UUID String=",theString)
             if(theString !== null){
                 if(pattern.test(theString)) {
-                    var platformType = String(theString).match(pattern)[0]
+                    platformType = String(theString).match(pattern)[0]
                 }
+                else if (theString.length === 3) {
+                  platformType = String(theString)
+                  }
                 else{   //If there is invalid uuid just pass the iteration.
                     console.log("platform uuid does not match the pattern");
                     continue
