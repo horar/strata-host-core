@@ -28,9 +28,24 @@ Item {
         source: "images/basic-background.png"
     }
 
+    //for testing
+    Text{
+        id:testText
+        font.pixelSize: 172
+        anchors.centerIn: parent
+        text:"graph"
+        visible:false
+        opacity:.2
+        z:100
+    }
+
     GraphDrawer {
         id: graphDrawer
         z: 10
+
+        onAboutToHide:{
+            testText.visible = false
+        }
     }
 
     PlugAnimation {
@@ -411,12 +426,7 @@ Item {
             onShowGraph: {
                 graphDrawer.portNumber = portNumber;
                 graphDrawer.open();
-                if (portInfo1.visible){
-                    portInfo1.opacity = .5;
-                }
-                else{
-                    portInfo1.opacity = 1;
-                }
+                testText.visible = true;
             }
         }
 

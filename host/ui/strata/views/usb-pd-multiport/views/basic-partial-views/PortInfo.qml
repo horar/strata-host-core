@@ -64,22 +64,22 @@ Rectangle {
                 }
                 height: 50
                 width: 50
-                checkable:true
                 onClicked: {
                     root.showGraph()
-                    background.color = "blue"
+                    if (root.opacity < 1)
+                        root.opacity = 1;
                 }
 
                 background: Rectangle{
-                    color: showGraphs.checked ? "darkGrey" : "lightGrey"
+                    color: showGraphs.down ? "darkGrey" : "lightGrey"
                     radius: 5
                     opacity: .5
                 }
 
-//                icon.source:"qrc:/views/usb-pd-multiport/views/images/graphIcon.svg"
-//                icon.width: parent.width -20
-//                icon.height: parent.width - 20
-//                icon.color: root.portConnected ? "darkgrey" : "lightgrey"
+                icon.source:"qrc:/views/usb-pd-multiport/views/images/graphIcon.svg"
+                icon.width: parent.width -20
+                icon.height: parent.width - 20
+                icon.color: root.portConnected ? "darkgrey" : "lightgrey"
 
 //                Image{
 //                    id:graphIcon
