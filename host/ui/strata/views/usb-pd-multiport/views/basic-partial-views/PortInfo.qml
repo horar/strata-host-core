@@ -85,22 +85,9 @@ Rectangle {
                 icon.height: parent.width - 20
                 icon.color: root.portConnected ? "darkgrey" : "lightgrey"
 
-//                Image{
-//                    id:graphIcon
-//                     source: "qrc:/views/usb-pd-multiport/views/images/graphIcon.svg"
-//                    anchors{
-//                        top:parent.top
-//                        topMargin:10
-//                        bottom:parent.bottom
-//                        bottomMargin:10
-//                        left:parent.left
-//                        leftMargin:10
-//                        right:parent.right
-//                        rightMargin:10
-//                    }
-
-//                    opacity:root.portConnected ? .5 :.15
-//                }
+                Component.onCompleted: {
+                    showGraphs.clicked.connect(showGraph)
+                }
             }
 
             Rectangle {
