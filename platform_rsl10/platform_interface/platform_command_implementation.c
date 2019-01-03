@@ -35,13 +35,13 @@ void call_command_handler(char *name, cJSON *payload_value) {
 
     for (int i = 0; i < g_command_handlers_size; i++) {
         if (!strcmp(command_handlers[i].name, name)) {
-            response_string[COMMAND_VALID]; //emit ack
+            emit(response_string[COMMAND_VALID]); //emit ack
             command_handlers[i].fp(payload_value);
             return;
         }
     }
     printf("%s %s \n", name, "command doesn't exist");
-    response_string[COMMAND_NOT_FOUND]; //emit command not found
+    emit(response_string[COMMAND_NOT_FOUND]);
 }
 
 
@@ -83,5 +83,19 @@ void general_purpose (cJSON *payload_value) {
 /* do whatever you want below this line
  * by using number_value and string_value variables
  */
+}
+
+void emit(const char *response_string)
+{
+    // the following code assumes you are using
+    // cmsis uart driver for RSL10
+    // send function in cmsis uart driver works by telling
+    // it the size of how many bytes your sending or
+    // whenever it sees the new line will stop sending
+    // if that new line was found within the size of
+    // bytes that has been specified in the second argument
+    // https://bitbucket.org/onsemi-spyglass/spyglass/src/RSL10-development/RSL10/uart_cmsis_driver/
+
+    // uart->Send(response_string, strlen(response_string));
 }
 

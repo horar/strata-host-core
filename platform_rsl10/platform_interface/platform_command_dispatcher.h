@@ -13,6 +13,7 @@ typedef struct queue queue_t;
 
 // list of core functions
 queue_t *queue_init(void);
+bool is_command_within_length(char *);
 void push(char *data, queue_t *, memory_pool_t *);
 void execute(queue_t *, memory_pool_t *);
 void dispatch(char *data);

@@ -12,7 +12,6 @@ int main( ) {
 
     //initialize queue
     queue_t *queue1 = queue_init();
-
     // initialize memory pool memory_pool_init(# of blocks, size of each block)
     memory_pool_t *pool = memory_pool_init(5, size_of_each_memory_block);
     // this should fail -- size limit exceeded

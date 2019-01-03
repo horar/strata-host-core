@@ -13,12 +13,15 @@
   *
   *  "{\"cmd\" : \"whatever_command\", \"payload\" : {\"number_argument\" : 1, \"string_argument\" : \"whatever"}}"
   *   OR
-  *   "{\"cmd\" : \"whatever_command\", \"payload\" : {\"whatever_payload\"}"
+  *  "{\"cmd\" : \"whatever_command\", \"payload\" : {\"whatever_payload\"}"
   *   OR
-  *   "{\"cmd\" : \"whatever_command\"}"
+  *  "{\"cmd\" : \"whatever_command\"}"
   **/
 
-#define COMMAND_LENGTH_IN_BYTES 256
+#define COMMAND_LENGTH_IN_BYTES 150
+// This could be change to full stack size or whatever appropriate
+// which can be used in uart->Receive (uart cmsis driver)
+#define COMMAND_MAX_LENGTH 2000
 
 typedef struct node {
     char data[COMMAND_LENGTH_IN_BYTES];
@@ -42,6 +45,19 @@ queue_t *queue_init(void)
 
     return queue;
 }
+
+bool is_command_within_length(char *data)
+{
+    size_t i = 0;
+    for(; (*(data+i) && *(data+i) != '\n' && i < COMMAND_MAX_LENGTH ) ; i++);
+
+    if (i <= COMMAND_LENGTH_IN_BYTES) {
+        return true;
+    }
+    else {
+        return false;
+    }
+}
 /**
 * Add a new element at the end of the list if a list already exist.
 * otherwise, it will add the first element. It takes two arguments,
@@ -51,32 +67,33 @@ queue_t *queue_init(void)
 **/
 void push(char *data, queue_t *queue, memory_pool_t *pool)
 {
-    node_t *new_node = (node_t*)memory_pool_acquire(pool);
+    bool length = is_command_within_length(data);
+    if (length == true) {
 
-    printf("The size of node_t is %lu\n", sizeof(node_t));
+        node_t *new_node = (node_t *) memory_pool_acquire(pool);
 
-    memcpy(new_node->data, data, strlen(data));
-    new_node->next = NULL;
-    /*
-     * we could you use strncpy if we want to specify the size of
-     * the array of data inside node struct
-    ** strncpy(new_node->data, data, strlen(data));
-     */
+        memcpy(new_node->data, data, strlen(data));
+        new_node->next = NULL;
 
-    if (queue->head == NULL) {
-        queue->head = queue->tail = new_node;
-    }
-
-    else if (queue->size == 1) {
-        queue->tail = new_node;
-        queue->head->next = queue->tail;
+        if (queue->head == NULL) {
+            queue->head = queue->tail = new_node;
+        }
+        else if (queue->size == 1) {
+            queue->tail = new_node;
+            queue->head->next = queue->tail;
+        }
+        else {
+            queue->temp = queue->tail;
+            queue->tail = new_node;
+            queue->temp->next = new_node;
+        }
+        queue->size++;
     }
     else {
-        queue->temp = queue->tail;
-        queue->tail = new_node;
-        queue->temp->next = new_node;
+        printf("command size exceeded the specified limit\n");
+        emit(response_string[LONG_COMMAND]);
+        return;
     }
-    queue->size++;
 }
 
 void execute(queue_t *queue, memory_pool_t *pool)
@@ -117,7 +134,7 @@ void dispatch(char * data)
         if (error_ptr != NULL)
         {
             printf("%s %s", error_ptr, "is invalid json\n");
-            response_string[BAD_JSON]; //emit json not valid
+            emit(response_string[BAD_JSON]);
         }
         /* warning: memory is allocated to store the parsed JSON and
          * must be freed by cJSON_Delete(json); to prevent memory lea */
