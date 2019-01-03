@@ -92,7 +92,6 @@ void push(char *data, queue_t *queue, memory_pool_t *pool)
     else {
         printf("command size exceeded the specified limit\n");
         emit(response_string[LONG_COMMAND]);
-        return;
     }
 }
 
