@@ -68,7 +68,12 @@ Rectangle {
                 height: 50
                 width: 50
                 font.pixelSize: 24
-                onClicked: {
+//                onClicked: {
+//                    root.showGraph()
+//                    tapCount++;
+//                    showGraphs.text = tapCount;
+//                }
+                onReleased: {
                     root.showGraph()
                     tapCount++;
                     showGraphs.text = tapCount;
