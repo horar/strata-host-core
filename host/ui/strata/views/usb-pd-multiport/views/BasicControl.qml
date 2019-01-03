@@ -423,12 +423,13 @@ Item {
                  }
             }
 
-//            onShowGraph: {
-//                testText.visible = true;
-//                graphDrawer.portNumber = portNumber;
-//                graphDrawer.open();
+            onShowGraph: {
+                opacity = .5;
+                testText.visible = true;
+                graphDrawer.portNumber = portNumber;
+                graphDrawer.open();
 
-//            }
+            }
         }
 
         PortInfo {

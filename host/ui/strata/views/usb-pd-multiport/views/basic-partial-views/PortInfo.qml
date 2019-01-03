@@ -21,14 +21,6 @@ Rectangle {
 
     signal showGraph()
 
-    onShowGraph: {
-        //testText.visible = true;
-        graphDrawer.portNumber = portNumber;
-        graphDrawer.open();
-        opacity = .5;
-
-    }
-
     color: "white"
 
     width: 400
