@@ -424,9 +424,10 @@ Item {
             }
 
             onShowGraph: {
+                testText.visible = true;
                 graphDrawer.portNumber = portNumber;
                 graphDrawer.open();
-                testText.visible = true;
+
             }
         }
 

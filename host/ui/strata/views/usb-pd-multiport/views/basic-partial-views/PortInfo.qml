@@ -75,7 +75,7 @@ Rectangle {
                 }
 
                 background: Rectangle{
-                    color: showGraphs.down ? "darkGrey" : "lightGrey"
+                    color: root.portConnected ? "darkGrey" : "lightGrey"
                     radius: 5
                     opacity: .5
                 }
