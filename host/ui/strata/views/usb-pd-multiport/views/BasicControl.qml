@@ -298,6 +298,10 @@ Item {
         }
     }
 
+    function openGraphDrawer(){
+        graphDrawer.open();
+    }
+
     Item {
         id: portColumn
         width: 330 * ratioCalc
@@ -431,9 +435,7 @@ Item {
 
             }
 
-            function openGraphDrawer(){
-                graphDrawer.open();
-            }
+
         }
 
         PortInfo {
