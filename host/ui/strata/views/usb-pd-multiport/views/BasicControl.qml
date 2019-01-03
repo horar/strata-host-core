@@ -424,11 +424,15 @@ Item {
             }
 
             onShowGraph: {
-                opacity = .5;
                 testText.visible = true;
                 graphDrawer.portNumber = portNumber;
-                graphDrawer.open();
+                //graphDrawer.open();
+                openGraphDrawer();
 
+            }
+
+            function openGraphDrawer(){
+                graphDrawer.open();
             }
         }
 
