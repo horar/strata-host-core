@@ -58,16 +58,20 @@ Rectangle {
 
             Button {
                 id: showGraphs
+
+                property int tapCount: 0;
+
                 anchors {
                     bottom: statsContainer.bottom
                     horizontalCenter: portTitle.horizontalCenter
                 }
                 height: 50
                 width: 50
+                font.pixelSize: 24
                 onClicked: {
                     root.showGraph()
-                    if (root.opacity < 1)
-                        root.opacity = 1;
+                    tapCount++;
+                    showGraphs.text = tapCount;
                 }
 
                 background: Rectangle{
