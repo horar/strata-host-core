@@ -21,6 +21,14 @@ Rectangle {
 
     signal showGraph()
 
+    onShowGraph: {
+        //testText.visible = true;
+        graphDrawer.portNumber = portNumber;
+        graphDrawer.open();
+        opacity = .5;
+
+    }
+
     color: "white"
 
     width: 400
@@ -68,16 +76,12 @@ Rectangle {
                 height: 50
                 width: 50
                 font.pixelSize: 24
-//                onClicked: {
-//                    root.showGraph()
-//                    tapCount++;
-//                    showGraphs.text = tapCount;
-//                }
-                onReleased: {
+                onClicked: {
                     root.showGraph()
                     tapCount++;
                     showGraphs.text = tapCount;
                 }
+
 
                 background: Rectangle{
                     color: root.portConnected ? "darkGrey" : "lightGrey"
