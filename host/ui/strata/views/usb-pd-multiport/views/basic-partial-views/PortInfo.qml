@@ -72,7 +72,7 @@ Rectangle {
 
 
                 background: Rectangle{
-                    color: root.portConnected ? "darkGrey" : "lightGrey"
+                    color: pressed ? "darkGrey" : "lightGrey"
                     radius: 5
                     opacity: .5
                 }
