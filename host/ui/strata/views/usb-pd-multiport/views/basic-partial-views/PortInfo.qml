@@ -59,8 +59,6 @@ Rectangle {
             Button {
                 id: showGraphs
 
-                property int tapCount: 0;
-
                 anchors {
                     bottom: statsContainer.bottom
                     horizontalCenter: portTitle.horizontalCenter
@@ -70,8 +68,6 @@ Rectangle {
                 font.pixelSize: 24
                 onClicked: {
                     root.showGraph()
-                    tapCount++;
-                    showGraphs.text = tapCount;
                 }
 
 

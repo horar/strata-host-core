@@ -43,6 +43,14 @@ Item {
         id: graphDrawer
         z: 10
 
+        onOpened: {
+            testText.visible = true;
+        }
+
+        onAboutToShow: {
+            testText.visible = true;
+        }
+
         onAboutToHide:{
             testText.visible = false
         }
@@ -298,9 +306,6 @@ Item {
         }
     }
 
-    function openGraphDrawer(){
-        graphDrawer.open();
-    }
 
     Item {
         id: portColumn
@@ -428,11 +433,8 @@ Item {
             }
 
             onShowGraph: {
-                testText.visible = true;
                 graphDrawer.portNumber = portNumber;
-                //graphDrawer.open();
-                openGraphDrawer();
-
+                graphDrawer.open();
             }
 
 
