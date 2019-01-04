@@ -28,32 +28,9 @@ Item {
         source: "images/basic-background.png"
     }
 
-    //for testing
-    Text{
-        id:testText
-        font.pixelSize: 172
-        anchors.centerIn: parent
-        text:"graph"
-        visible:false
-        opacity:.2
-        z:100
-    }
-
     GraphDrawer {
         id: graphDrawer
         z: 10
-
-        onOpened: {
-            testText.visible = true;
-        }
-
-        onAboutToShow: {
-            testText.visible = true;
-        }
-
-        onAboutToHide:{
-            testText.visible = false
-        }
     }
 
     PlugAnimation {
