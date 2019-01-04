@@ -1,12 +1,11 @@
 import QtQuick 2.9
-import "qrc:/views/usb-pd-multiport/views/basic-partial-views"
 
 AnimatedImage {
     id: root
     property bool pluggedIn: false
-    source: "../images/cord.gif"
+    source: "../images/USBCAnim.gif"
     height: 81 * ratioCalc
-    width: 350 * ratioCalc
+    width: 319 * ratioCalc
     playing: false
     onCurrentFrameChanged: {
         if (currentFrame === frameCount-1) {
@@ -14,39 +13,14 @@ AnimatedImage {
         }
     }
 
-    Rectangle {
-        id: coverup1
-        width: 8 * ratioCalc
-        height: 50 * ratioCalc
-        color: "#bab9bc"
+    Image {
+        source: "../images/cordTermination.png"
+        height: 19 * ratioCalc
+        width: height
         anchors {
-            left: root.left
-            leftMargin: 10 * ratioCalc
-            bottom: root.bottom
-            bottomMargin: 0
-        }
-
-        Rectangle {
-            color: "black"
-            opacity: .3
-            width: 2 * ratioCalc
-            height: 23 * ratioCalc
-            anchors {
-                left: coverup1.right
-                verticalCenter: coverup1.verticalCenter
-                verticalCenterOffset: 2
-            }
-        }
-
-        Rectangle {
-            id: coverup2
-            width: 9 * ratioCalc
-            height: 50 * ratioCalc
-            color: "#d1d1d4"
-            anchors {
-                right: coverup1.left
-                verticalCenter: coverup1.verticalCenter
-            }
+            right: root.right
+            verticalCenter: root.verticalCenter
+            verticalCenterOffset: 17 * ratioCalc
         }
     }
 }

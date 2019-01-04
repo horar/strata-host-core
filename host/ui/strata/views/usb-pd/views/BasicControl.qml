@@ -32,15 +32,15 @@ Item {
 
     PlugAnimation {
         id: port1Animation
-        x: 748 * ratioCalc
-        y: 170 * ratioCalc
+        x: 918 * ratioCalc
+        y: 161 * ratioCalc
     }
 
 
     PlugAnimation {
         id: port2Animation
-        x: 748 * ratioCalc
-        y: 535 * ratioCalc
+        x: 918 * ratioCalc
+        y: 543 * ratioCalc
     }
 
 
@@ -50,7 +50,7 @@ Item {
         height: root.height
         anchors {
             left: root.left
-            leftMargin: 80 * ratioCalc
+            leftMargin: 230 * ratioCalc
         }
 
         Rectangle {
@@ -58,11 +58,11 @@ Item {
             color: "#eee"
             anchors {
                 top: inputColumn.top
-                topMargin: 55 * ratioCalc
+                topMargin: 37 * ratioCalc
                 left: inputColumn.left
                 right: inputColumn.right
             }
-            height: 285 * ratioCalc
+            height: 299 * ratioCalc
 
             Rectangle{
                 id:combinedStatsBackgroundRect
@@ -169,7 +169,7 @@ Item {
                 left: inputColumn.left
                 right: inputColumn.right
             }
-            height: 405 * ratioCalc
+            height: 428 * ratioCalc
 
             property bool inputPowerConnected: true
 
@@ -267,10 +267,10 @@ Item {
 
         PortInfo {
             id: portInfo1
-            height: 344 * ratioCalc
+            height: 364 * ratioCalc
             anchors {
                 top: portColumn.top
-                topMargin: 54 * ratioCalc
+                topMargin: 37 * ratioCalc
                 left: portColumn.left
                 right: portColumn.right
             }
@@ -376,7 +376,7 @@ Item {
             height: portInfo1.height
             anchors {
                 top: portInfo1.bottom
-                topMargin: 23 * ratioCalc
+                topMargin: 19 * ratioCalc
                 left: portColumn.left
                 right: portColumn.right
             }

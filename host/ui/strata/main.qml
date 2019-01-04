@@ -204,14 +204,21 @@ Window {
                 }
             }
             Button {
-                text: "Disconnect"
+                text: "Reset Window"
                 onClicked: {
-                    NavigationControl.updateState(NavigationControl.events.PLATFORM_DISCONNECTED_EVENT, null)
-                    var disconnect_json = {"hcs::cmd":"disconnect_platform"}
-                    console.log("disconnecting the platform")
-                    coreInterface.sendCommand(JSON.stringify(disconnect_json))
+                    mainWindow.height = 900
+                    mainWindow.width = 1200
                 }
             }
+//            Button {
+//                text: "Disconnect"
+//                onClicked: {
+//                    NavigationControl.updateState(NavigationControl.events.PLATFORM_DISCONNECTED_EVENT, null)
+//                    var disconnect_json = {"hcs::cmd":"disconnect_platform"}
+//                    console.log("disconnecting the platform")
+//                    coreInterface.sendCommand(JSON.stringify(disconnect_json))
+//                }
+//            }
 //            Button {
 //                text: "Logout"
 //                onClicked: {

@@ -35,25 +35,25 @@ Item {
 
     PlugAnimation {
         id: port1Animation
-        x: 898 * ratioCalc
+        x: 917 * ratioCalc
         y: 63 * ratioCalc
     }
 
     PlugAnimation {
         id: port2Animation
-        x: 898 * ratioCalc
+        x: 917 * ratioCalc
         y: 255 * ratioCalc
     }
 
     PlugAnimation {
         id: port3Animation
-        x: 898 * ratioCalc
+        x: 917 * ratioCalc
         y: 447 * ratioCalc
     }
 
     PlugAnimation {
         id: port4Animation
-        x: 898 * ratioCalc
+        x: 917 * ratioCalc
         y: 639 * ratioCalc
     }
 
@@ -823,7 +823,7 @@ Item {
 
                          if (platformInterface.usb_pd_port_connect.port_id === "USB_C_port_1"){
                              if (platformInterface.usb_pd_port_connect.connection_state === "connected"){
-                                 port1Animation.source = "images/cord.gif"
+                                 port1Animation.source = "images/USBCAnim.gif"
                                  port1Animation.currentFrame = 0
                                  port1Animation.playing = true
                                  port1Animation.pluggedIn = !port1Animation.pluggedIn
@@ -835,27 +835,13 @@ Item {
 
                          if (platformInterface.usb_pd_port_disconnect.port_id === "USB_C_port_1"){
                              if (platformInterface.usb_pd_port_disconnect.connection_state === "disconnected"){
-                                 port1Animation.source = "images/cordReverse.gif"
+                                 port1Animation.source = "images/USBCAnimReverse.gif"
                                  port1Animation.currentFrame = 0
                                  port1Animation.playing = true
                                  port1Animation.pluggedIn = !port1Animation.pluggedIn
                              }
                          }
                     }
-
-//                    onClicked: {
-//                        if (!port1Animation.pluggedIn) {
-//                            port1Animation.source = "images/cord.gif"
-//                            port1Animation.currentFrame = 0
-//                            port1Animation.playing = true
-//                            port1Animation.pluggedIn = !port1Animation.pluggedIn
-//                        } else {
-//                            port1Animation.source = "images/cordReverse.gif"
-//                            port1Animation.currentFrame = 0
-//                            port1Animation.playing = true
-//                            port1Animation.pluggedIn = !port1Animation.pluggedIn
-//                        }
-//                    }
                 }
             }
 
@@ -877,7 +863,7 @@ Item {
 
                          if (platformInterface.usb_pd_port_connect.port_id === "USB_C_port_2"){
                              if (platformInterface.usb_pd_port_connect.connection_state === "connected"){
-                                 port2Animation.source = "images/cord.gif"
+                                 port2Animation.source = "images/USBCAnim.gif"
                                  port2Animation.currentFrame = 0
                                  port2Animation.playing = true
                                  port2Animation.pluggedIn = !port2Animation.pluggedIn
@@ -891,26 +877,13 @@ Item {
 
                          if (platformInterface.usb_pd_port_disconnect.port_id === "USB_C_port_2"){
                              if (platformInterface.usb_pd_port_disconnect.connection_state === "disconnected"){
-                                 port2Animation.source = "images/cordReverse.gif"
+                                 port2Animation.source = "images/USBCAnimReverse.gif"
                                  port2Animation.currentFrame = 0
                                  port2Animation.playing = true
                                  port2Animation.pluggedIn = !port2Animation.pluggedIn
                              }
                          }
                     }
-//                    onClicked: {
-//                        if (!port2Animation.pluggedIn) {
-//                            port2Animation.source = "images/cord.gif"
-//                            port2Animation.currentFrame = 0
-//                            port2Animation.playing = true
-//                            port2Animation.pluggedIn = !port2Animation.pluggedIn
-//                        } else {
-//                            port2Animation.source = "images/cordReverse.gif"
-//                            port2Animation.currentFrame = 0
-//                            port2Animation.playing = true
-//                            port2Animation.pluggedIn = !port2Animation.pluggedIn
-//                        }
-//                    }
                 }
             }
 
@@ -932,7 +905,7 @@ Item {
 
                          if (platformInterface.usb_pd_port_connect.port_id === "USB_C_port_3"){
                              if (platformInterface.usb_pd_port_connect.connection_state === "connected"){
-                                 port3Animation.source = "images/cord.gif"
+                                 port3Animation.source = "images/USBCAnim.gif"
                                  port3Animation.currentFrame = 0
                                  port3Animation.playing = true
                                  port3Animation.pluggedIn = !port3Animation.pluggedIn
@@ -946,26 +919,13 @@ Item {
 
                          if (platformInterface.usb_pd_port_disconnect.port_id === "USB_C_port_3"){
                              if (platformInterface.usb_pd_port_disconnect.connection_state === "disconnected"){
-                                 port3Animation.source = "images/cordReverse.gif"
+                                 port3Animation.source = "images/USBCAnimReverse.gif"
                                  port3Animation.currentFrame = 0
                                  port3Animation.playing = true
                                  port3Animation.pluggedIn = !port3Animation.pluggedIn
                              }
                          }
                     }
-//                    onClicked: {
-//                        if (!port3Animation.pluggedIn) {
-//                            port3Animation.source = "images/cord.gif"
-//                            port3Animation.currentFrame = 0
-//                            port3Animation.playing = true
-//                            port3Animation.pluggedIn = !port3Animation.pluggedIn
-//                        } else {
-//                            port3Animation.source = "images/cordReverse.gif"
-//                            port3Animation.currentFrame = 0
-//                            port3Animation.playing = true
-//                            port3Animation.pluggedIn = !port3Animation.pluggedIn
-//                        }
-//                    }
                 }
             }
 
@@ -987,7 +947,7 @@ Item {
 
                          if (platformInterface.usb_pd_port_connect.port_id === "USB_C_port_4"){
                              if (platformInterface.usb_pd_port_connect.connection_state === "connected"){
-                                 port4Animation.source = "images/cord.gif"
+                                 port4Animation.source = "images/USBCAnim.gif"
                                  port4Animation.currentFrame = 0
                                  port4Animation.playing = true
                                  port4Animation.pluggedIn = !port4Animation.pluggedIn
@@ -1001,26 +961,13 @@ Item {
 
                          if (platformInterface.usb_pd_port_disconnect.port_id === "USB_C_port_4"){
                              if (platformInterface.usb_pd_port_disconnect.connection_state === "disconnected"){
-                                 port4Animation.source = "images/cordReverse.gif"
+                                 port4Animation.source = "images/USBCAnimReverse.gif"
                                  port4Animation.currentFrame = 0
                                  port4Animation.playing = true
                                  port4Animation.pluggedIn = !port4Animation.pluggedIn
                              }
                          }
                     }
-//                    onClicked: {
-//                        if (!port4Animation.pluggedIn) {
-//                            port4Animation.source = "images/cord.gif"
-//                            port4Animation.currentFrame = 0
-//                            port4Animation.playing = true
-//                            port4Animation.pluggedIn = !port4Animation.pluggedIn
-//                        } else {
-//                            port4Animation.source = "images/cordReverse.gif"
-//                            port4Animation.currentFrame = 0
-//                            port4Animation.playing = true
-//                            port4Animation.pluggedIn = !port4Animation.pluggedIn
-//                        }
-//                    }
                 }
             }
         }

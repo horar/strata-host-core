@@ -216,8 +216,6 @@
         <file>views/usb-pd-multiport/views/basic-partial-views/PortInfo.qml</file>
         <file>views/usb-pd-multiport/views/basic-partial-views/PortStatBox.qml</file>
         <file>views/usb-pd-multiport/views/images/basic-background.png</file>
-        <file>views/usb-pd-multiport/views/images/cord.gif</file>
-        <file>views/usb-pd-multiport/views/images/cordReverse.gif</file>
         <file>views/usb-pd-multiport/views/images/icon-efficiency.svg</file>
         <file>views/usb-pd-multiport/views/images/icon-max.svg</file>
         <file>views/usb-pd-multiport/views/images/icon-temp.svg</file>
@@ -375,8 +373,6 @@
         <file>views/usb-hub/views/images/AudioAnimReverse.gif</file>
         <file>views/usb-hub/views/images/DisplayPortAnim.gif</file>
         <file>views/usb-hub/views/images/DisplayPortAnimReverse.gif</file>
-        <file>views/usb-pd/views/images/cord.gif</file>
-        <file>views/usb-pd/views/images/cordReverse.gif</file>
         <file>views/usb-pd/views/images/icon-efficiency.svg</file>
         <file>views/usb-pd/views/images/icon-max.svg</file>
         <file>views/usb-pd/views/images/icon-temp.svg</file>
@@ -454,5 +450,11 @@
         <file>views/unknown-platform/Content.qml</file>
         <file>views/unknown-platform/Control.qml</file>
         <file>views/unknown-platform/Warning.qml</file>
+        <file>views/usb-pd-multiport/views/images/cordTermination.png</file>
+        <file>views/usb-pd-multiport/views/images/USBCAnim.gif</file>
+        <file>views/usb-pd-multiport/views/images/USBCAnimReverse.gif</file>
+        <file>views/usb-pd/views/images/USBCAnim.gif</file>
+        <file>views/usb-pd/views/images/USBCAnimReverse.gif</file>
+        <file>views/usb-pd/views/images/cordTermination.png</file>
     </qresource>
 </RCC>
