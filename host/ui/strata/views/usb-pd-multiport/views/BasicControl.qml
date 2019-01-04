@@ -114,7 +114,7 @@ Item {
                       else
                         "0.00"
                 }
-                valueSize: 30
+                valueSize: 24
                 icon: "../images/icon-voltage.svg"
                 unit: "V"
                 anchors.top: combinedStatsBackgroundRect.bottom
@@ -170,7 +170,7 @@ Item {
                 id:combinedInputPowerBox
                 label: "INPUT POWER"
                 value: (combinedPortPower).toFixed(2);
-                valueSize: 30
+                valueSize: 24
                 icon: "../images/icon-voltage.svg"
                 unit: "W"
                 anchors.top: combinedInputVoltageBox.bottom
@@ -233,7 +233,7 @@ Item {
                 value: "24"
                 icon: "../images/icon-voltage.svg"
                 //portColor: root.portColor
-                valueSize: 30
+                valueSize: 24
                 unit: "V"
                 anchors.top: topBackgroundRect.bottom
                 anchors.topMargin: 20
