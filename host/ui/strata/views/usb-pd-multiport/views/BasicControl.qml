@@ -250,7 +250,7 @@ Item {
                 value: "200"
                 icon: "../images/icon-max.svg"
                 //portColor: root.portColor
-                valueSize: 30
+                valueSize: 24
                 unit: "W"
                 anchors.top: voltageOutBox.bottom
                 anchors.topMargin: 20
