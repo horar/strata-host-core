@@ -82,9 +82,6 @@ Rectangle {
                 icon.height: parent.width - 20
                 icon.color: root.portConnected ? "darkgrey" : "lightgrey"
 
-                Component.onCompleted: {
-                    showGraphs.clicked.connect(showGraph)
-                }
             }
 
             Rectangle {
