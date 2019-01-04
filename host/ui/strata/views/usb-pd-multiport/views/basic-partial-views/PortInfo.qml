@@ -66,13 +66,12 @@ Rectangle {
                 height: 50
                 width: 50
                 onClicked: {
-                    //root.showGraph();
-                    testButton.clicked();
+                   root.showGraph();
                 }
 
 
                 background: Rectangle{
-                    color: pressed ? "darkGrey" : "lightGrey"
+                    color: showGraphs.pressed ? "darkGrey" : "lightGrey"
                     radius: 5
                     opacity: .5
                 }
@@ -84,16 +83,6 @@ Rectangle {
 
             }
 
-            Button{
-                id:testButton
-                anchors.top: showGraphs.bottom
-                anchors.left: showGraphs.left
-                height:1
-                width:1
-                onClicked:{
-                    root.showGraph()
-                }
-            }
 
             Rectangle {
                 id: divider
