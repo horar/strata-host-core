@@ -424,7 +424,7 @@ Item {
         id: portGraphs
         anchors {
             top: portSettings.bottom
-            topMargin: 15
+            topMargin: 5
             left: root.left
             right: root.right
         }

@@ -283,6 +283,7 @@ Item {
         }
     }
 
+
     Item {
         id: portColumn
         width: 330 * ratioCalc
@@ -412,6 +413,8 @@ Item {
                 graphDrawer.portNumber = portNumber;
                 graphDrawer.open();
             }
+
+
         }
 
         PortInfo {
