@@ -65,9 +65,9 @@ Rectangle {
                 }
                 height: 50
                 width: 50
-                font.pixelSize: 24
                 onClicked: {
-                    root.showGraph()
+                    //root.showGraph();
+                    testButton.clicked();
                 }
 
 
@@ -82,6 +82,17 @@ Rectangle {
                 icon.height: parent.width - 20
                 icon.color: root.portConnected ? "darkgrey" : "lightgrey"
 
+            }
+
+            Button{
+                id:testButton
+                anchors.top: showGraphs.bottom
+                anchors.left: showGraphs.left
+                height:1
+                width:1
+                onClicked:{
+                    root.showGraph()
+                }
             }
 
             Rectangle {
