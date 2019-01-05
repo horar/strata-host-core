@@ -529,7 +529,7 @@ Item {
 
                          if (platformInterface.usb_pd_port_disconnect.port_id === "USB_C_port_1"){
                              if (platformInterface.usb_pd_port_disconnect.connection_state === "disconnected"){
-                                 port1Animation.source = "images/cordReverse.gif"
+                                 port1Animation.source = "images/USBCAnimReverse.gif"
                                  port1Animation.currentFrame = 0
                                  port1Animation.playing = true
                                  port1Animation.pluggedIn = !port1Animation.pluggedIn
@@ -585,7 +585,7 @@ Item {
 
                          if (platformInterface.usb_pd_port_disconnect.port_id === "USB_C_port_2"){
                              if (platformInterface.usb_pd_port_disconnect.connection_state === "disconnected"){
-                                 port2Animation.source = "images/cordReverse.gif"
+                                 port2Animation.source = "images/USBCAnimReverse.gif"
                                  port2Animation.currentFrame = 0
                                  port2Animation.playing = true
                                  port2Animation.pluggedIn = !port2Animation.pluggedIn
