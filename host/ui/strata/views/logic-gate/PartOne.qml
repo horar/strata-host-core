@@ -2,9 +2,11 @@ import QtQuick 2.9
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 1.4
 import "qrc:/views/logic-gate/sgwidgets"
+import "qrc:/js/help_layout_manager.js" as Help
 
 Rectangle {
     id: container
+
     property string gateImageSource
     property string value_A: "A"
     property string value_B: "B"
@@ -13,6 +15,7 @@ Rectangle {
     property var value_BNoti
     property var value_CNoti
     property int currentIndex: 0
+    anchors.fill: parent
 
     //Reset view for the nl7sz97 tab
     function resetToIndex0(){
@@ -37,11 +40,13 @@ Rectangle {
 
     Component.onCompleted: {
         resetToIndex0();
+        Help.registerTarget(thirdInput, "The gate outputs will automatically match the inputs for a given logic function and are also represented on the board by the green LEDs.", 2, "logicGateHelp")
+        Help.registerTarget(inputAToggleContainer, "The inputs can be toggled on or off and are also represented on the board by blue LEDs.", 3, "logicGateHelp" )
+        Help.registerTarget(logicSelection, "Use these buttons to select which logic function you want to run.", 4, "logicGateHelp")
+        Help.registerTarget(gatesImage, "The image displayed represents the logic gate, its input controls and its outputs", 1, "logicGateHelp")
     }
 
-    anchors {
-        fill: parent
-    }
+
 
     property var io_state: platformInterface.nl7sz97_io_state
 
@@ -160,7 +165,7 @@ Rectangle {
     SGSegmentedButtonStrip {
         id: logicSelection
         radius: 4
-        buttonHeight: 25
+        buttonHeight: 45
         visible: true
         index: tabIndex
 
@@ -474,15 +479,17 @@ Rectangle {
             id: gatesImage
             source: gateImageSource
             anchors {
-
                 left: inputAToggleContainer.right
+                top: logicContainer.top
+                //centerIn: logicContainer.Center
             }
-            fillMode: Image.PreserveAspectFit
+            fillMode:Image.PreserveAspectFit;
+            // clip:true
         }
 
         Rectangle { //Output Container
             id: thirdInput
-            width: 50
+            width: 80
             height: 50
             anchors {
                 left: gatesImage.right
@@ -496,6 +503,7 @@ Rectangle {
                 lightSize: 50
                 textColor: "black"
                 status : "off"
+                anchors.fill: thirdInput
             }
         }
 
@@ -569,7 +577,7 @@ Rectangle {
                 transform: Rotation { origin.x: 25; origin.y: 25; angle: 270 }
             }
         }
-    }
+    } // end of the logicContainer
 }
 
 

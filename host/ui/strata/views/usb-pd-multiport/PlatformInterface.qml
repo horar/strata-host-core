@@ -75,8 +75,8 @@ Item {
 
    property var over_temperature_notification:{
            "port":"USB_C_port_1",                                // or any USB C port
-           "state":"above",                                      // if the temperature crossed from under temperature to over temperature, "below" otherwise.
-           "maximum_temperature":191                             // Temperature limit in degrees C
+           "state":"below",                                      // if the temperature crossed from under temperature to over temperature, "below" otherwise.
+           "maximum_temperature":135                             // Temperature limit in degrees C
     }
 
         //consider the values held by this property to be the master ones, which will be current when needed for calling
@@ -124,7 +124,7 @@ Item {
     property var foldback_temperature_limiting_event:{
             "port":0,
             "current_temperature":0,
-            "foldback_maximum_temperature":200,
+            "foldback_maximum_temperature":135,
             "foldback_maximum_temperature_power":15,
             "temperature_foldback_enabled":true,
             "temperature_foldback_active":true,
@@ -134,7 +134,7 @@ Item {
     property var foldback_temperature_limiting_refresh:{
             "port":0,
             "current_temperature":0,
-            "foldback_maximum_temperature":200,
+            "foldback_maximum_temperature":135,
             "foldback_maximum_temperature_power":15,
             "temperature_foldback_enabled":true,
             "temperature_foldback_active":true,
@@ -216,8 +216,10 @@ Item {
 
 
     property var ac_power_supply_connection:{
-        "state":"connected",  // or "disconnected"
-        "power":200          // maximum supply power in watts
+        "state":"disconnected",  // "disconnected" or "connected"
+                "verbose_name":"ON AC PS 1.0",
+                "platform_id":"SEC.2018.012.1.2.cbde0512-0e12-1111-abcd-abcd12345678",
+                "parameters":""  // valid JSON string contained within quotes. Empty string if no parametric data.
     }
 
     property var assured_power_port:{
@@ -232,6 +234,15 @@ Item {
         "maximum_current":100  // in milliamps
 
     }
+
+    property var output_current_exceeds_maximum:{
+        "port":1,              // 1, 2, ... maximum port number
+        "current_limit":6,    // amps - output current  exceeds this level
+        "exceeds_limit":true,  // or false
+        "action":"retry",      // "retry" or "shutdown" or "nothing"
+        "enabled":true         // or false
+    }
+
 
     // --------------------------------------------------------------------------------------------
     //          Commands
@@ -300,7 +311,7 @@ Item {
     property var set_maximum_temperature :({
                 "cmd":"request_set_maximum_temperature",
                 "payload":{
-                       "value":200    // 0 - 127 degrees C
+                       "value":135    // 0 - 135 degrees C
                  },
                  update: function(maximumTemperature){
                       this.set(maximumTemperature)
@@ -393,7 +404,7 @@ Item {
                     show: function () { CorePlatformInterface.show(this) }
     })
 
-    property var set_over_current_protection:({
+    property var request_over_current_protection:({
                     "cmd":"request_over_current_protection",
                     "payload":{
                         "port":0,                    // 1, 2, 3, ... up to maximum number of ports
@@ -442,9 +453,9 @@ Item {
                       },
                       update: function (portNumber, outputCurrent, biasVoltage){
                           //adding back these console messages will cause an error when the update function is called.
-                          console.log("set_cable_loss_compensation.port=",portNumber);
-                          console.log("set_cable_loss_compensation.output_current=",outputCurrent);
-                          console.log("set_cable_loss_compensation.bias_voltage=",biasVoltage);
+                          //console.log("set_cable_loss_compensation.port=",portNumber);
+                          //console.log("set_cable_loss_compensation.output_current=",outputCurrent);
+                          //console.log("set_cable_loss_compensation.bias_voltage=",biasVoltage);
 
                           this.set(portNumber,outputCurrent,biasVoltage);
                           //console.log("sending set_cable_loss_compensation cmd ", JSON.stringify(this));

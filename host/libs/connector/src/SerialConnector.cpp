@@ -137,6 +137,7 @@ bool SerialConnector::open(const std::string& serial_port_name)
         sp_set_stopbits(platform_socket_,(int)SERIAL_PORT_CONFIGURATION::STOP_BIT);
         sp_set_bits(platform_socket_,(int)SERIAL_PORT_CONFIGURATION::DATA_BIT);
         sp_set_baudrate(platform_socket_,(int)SERIAL_PORT_CONFIGURATION::BAUD_RATE);
+        LOG_DEBUG(DEBUG,"SERIAL PORT BAUD RATE: %d\n",(int)SERIAL_PORT_CONFIGURATION::BAUD_RATE);
         sp_set_rts(platform_socket_,serialport.rts_);
         sp_set_dtr(platform_socket_,serialport.dtr_);
         sp_set_parity(platform_socket_,serialport.parity_);

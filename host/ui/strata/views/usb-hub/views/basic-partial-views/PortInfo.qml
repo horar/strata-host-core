@@ -6,7 +6,7 @@ import "qrc:/views/usb-pd-multiport/sgwidgets"
 Rectangle {
     id: root
 
-    property bool portConnected: true
+    property bool portConnected: false
     property bool isUSBAPort: false     //used to hide information not available for USB-A ports
     property color portColor: "#30a2db"
     property int portNumber: 0
@@ -330,7 +330,7 @@ Rectangle {
 
     Rectangle {
         id: connectionContainer
-        opacity: 0
+        opacity: 1
 
         anchors {
             top:titleBackground.bottom

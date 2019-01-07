@@ -46,7 +46,7 @@ Item {
                     top: faultText.bottom
                     topMargin: 10
                     left: margins1.left
-                    leftMargin: 90
+                    leftMargin: 95
                     right: margins1.right
                     rightMargin: 10
                 }
@@ -61,14 +61,6 @@ Item {
                 segmentedButtons: GridLayout {
                     columnSpacing: 2
 
-                    SGSegmentedButton{
-                        text: qsTr("Shutdown")
-                        checked: platformInterface.usb_pd_protection_action.action === "shutdown"
-
-                        onClicked: {
-                            platformInterface.set_protection_action.update("shutdown");
-                        }
-                    }
 
                     SGSegmentedButton{
                         text: qsTr("Retry")
@@ -97,12 +89,13 @@ Item {
                     left: margins1.left
                     leftMargin: 45
                     top: faultProtection.bottom
-                    topMargin: 10
+                    topMargin: 15
                     right: inputFaultInput.left
                     rightMargin: 10
                 }
                 from: 0
                 to: 20
+                labelTopAligned: true
                 startLabel: "0V"
                 endLabel: "20V"
                 value: platformInterface.input_under_voltage_notification.minimum_voltage
@@ -116,6 +109,7 @@ Item {
                 showButton: false
                 anchors {
                     verticalCenter: inputFault.verticalCenter
+                    verticalCenterOffset:-7
                     right: parent.right
                 }
                 infoBoxWidth: 40
@@ -131,12 +125,13 @@ Item {
                     top: inputFault.bottom
                     topMargin: 10
                     right: tempFaultInput.left
-                    rightMargin: 10
+                    rightMargin: 15
                 }
-                from: -64
-                to: 191
-                startLabel: "-64°C"
-                endLabel: "191°C"
+                from: -40
+                to: 135
+                labelTopAligned: true
+                startLabel: "-40°C"
+                endLabel: "135°C"
                 value: platformInterface.set_maximum_temperature_notification.maximum_temperature
                 onSliderMoved: {
                     platformInterface.set_maximum_temperature.update(value);
@@ -148,6 +143,7 @@ Item {
                 showButton: false
                 anchors {
                     verticalCenter: tempFault.verticalCenter
+                    verticalCenterOffset:-7
                     right: parent.right
                 }
                 infoBoxWidth: 40
@@ -209,12 +205,13 @@ Item {
                     left: parent.left
                     leftMargin: 61
                     top: inputFoldback.bottom
-                    topMargin: 10
+                    topMargin: 13
                     right: foldbackLimitInput.left
                     rightMargin: 10
                 }
                 from: 0
                 to: 20
+                labelTopAligned: true
                 startLabel: "0V"
                 endLabel: "20V"
                 //copy the current values for other stuff, and add the new slider value for the limit.
@@ -228,6 +225,7 @@ Item {
                 showButton: false
                 anchors {
                     verticalCenter: foldbackLimit.verticalCenter
+                    verticalCenterOffset: -7
                     right: parent.right
                 }
                 infoBoxWidth: 40
@@ -244,9 +242,9 @@ Item {
                 anchors {
                     left: parent.left
                     top: foldbackLimit.bottom
-                    topMargin: 10
+                    topMargin: 15
                 }
-                comboBoxWidth: 60
+                comboBoxWidth: 75
                 //when changing the value
                 onActivated: {
                     console.log("setting input power foldback to ",limitOutput.comboBox.currentText);
@@ -260,8 +258,16 @@ Item {
                     console.log("got a new min power setting",platformInterface.foldback_input_voltage_limiting_event.foldback_minimum_voltage_power);
                     limitOutput.currentIndex = limitOutput.comboBox.find( parseInt (platformInterface.foldback_input_voltage_limiting_event.foldback_minimum_voltage_power))
                 }
-
-
+            }
+            Text{
+                id: foldbackTempUnits
+                text: "W"
+                anchors {
+                    left: limitOutput.right
+                    leftMargin: 5
+                    verticalCenter: limitOutput.verticalCenter
+                    verticalCenterOffset: 0
+                }
             }
 
             SGDivider {
@@ -310,14 +316,15 @@ Item {
                     left: parent.left
                     leftMargin: 60
                     top: tempFoldback.bottom
-                    topMargin: 10
+                    topMargin: 15
                     right: foldbackTempInput.left
                     rightMargin: 10
                 }
-                from: 25
-                to: 200
-                startLabel: "25°C"
-                endLabel: "200°C"
+                from: -40
+                to: 100
+                labelTopAligned: true
+                startLabel: "-40°C"
+                endLabel: "100°C"
                 value: platformInterface.foldback_temperature_limiting_event.foldback_maximum_temperature
                 onSliderMoved:{
                     console.log("sending temp foldback update command from foldbackTempSlider");
@@ -328,11 +335,15 @@ Item {
 
             }
 
+
             SGSubmitInfoBox {
                 id: foldbackTempInput
                 showButton: false
+                minimumValue: -40
+                maximumValue: 100
                 anchors {
                     verticalCenter: foldbackTemp.verticalCenter
+                    verticalCenterOffset: -7
                     right: parent.right
                 }
                 infoBoxWidth: 40
@@ -341,6 +352,7 @@ Item {
                                                                              intValue,
                                                                              platformInterface.foldback_temperature_limiting_event.foldback_maximum_temperature_power)
             }
+
 
             SGComboBox {
                 id: limitOutput2
@@ -351,7 +363,7 @@ Item {
                     top: foldbackTemp.bottom
                     topMargin: 10
                 }
-                comboBoxWidth: 60
+                comboBoxWidth: 75
                 //when the value is changed by the user
                 onActivated: {
                     console.log("sending temp foldback update command from limitOutputComboBox");
@@ -364,6 +376,16 @@ Item {
 
                 onCurrentFoldbackOuputChanged: {
                     limitOutput2.currentIndex = limitOutput2.comboBox.find( parseInt (platformInterface.foldback_temperature_limiting_event.foldback_maximum_temperature_power))
+                }
+            }
+
+            Text{
+                id: foldbackTempUnits2
+                text: "W"
+                anchors {
+                    left: limitOutput2.right
+                    leftMargin: 5
+                    verticalCenter: limitOutput2.verticalCenter
                 }
             }
         }
@@ -382,7 +404,7 @@ Item {
             id: currentFaults
             height: rightColumn.height/2
             width: rightColumn.width
-            title: "Current Faults:"
+            title: "Active Faults:"
             model: faultListModel
 
             property var underVoltageEvent: platformInterface.input_under_voltage_notification
@@ -401,7 +423,7 @@ Item {
                             faultListModel.remove(i);
                         }
                     }
-                    faultListModel.append({"type":"voltage", "port":0, "status":stateMessage});
+                    faultListModel.append({"type":"voltage", "portName":"0", "status":stateMessage});
 
                 }
                 else{                                       //remove input voltage message from list
@@ -415,17 +437,17 @@ Item {
             }
 
             onOverTempEventChanged: {
-                if (underVoltageEvent.state === "above"){   //add temp  message to list
+                if (overTempEvent.state === "above"){   //add temp  message to list
                     stateMessage = platformInterface.over_temperature_notification.port
                     stateMessage += " temperature is above ";
                     stateMessage += platformInterface.over_temperature_notification.maximum_temperature;
                     stateMessage += " °C";
-                    faultListModel.append({"type":"temperature", "port":platformInterface.over_temperature_notification.port, "status":stateMessage});
+                    faultListModel.append({"type":"temperature", "portName":platformInterface.over_temperature_notification.port, "status":stateMessage});
                 }
                 else{                                       //remove temp message for the correct port from list
                     for(var i = 0; i < faultListModel.count; ++i){
                         var theItem = faultListModel.get(i);
-                        if (theItem.type === "temperature" && theItem.port === platformInterface.over_temperature_notification.port){
+                        if (theItem.type === "temperature" && theItem.portName === platformInterface.over_temperature_notification.port){
                             faultListModel.remove(i);
                         }
                     }
@@ -470,7 +492,7 @@ Item {
             }
 
             onOverTempEventChanged: {
-                if (underVoltageEvent.state === "above"){   //add temp  message to list
+                if (overTempEvent.state === "above"){   //add temp  message to list
                     stateMessage = platformInterface.over_temperature_notification.port
                     stateMessage += " temperature is above ";
                     stateMessage += platformInterface.over_temperature_notification.maximum_temperature;

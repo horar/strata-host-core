@@ -11,12 +11,12 @@ Rectangle {
     property int portNumber: 1
 
     property alias advertisedVoltage: advertisedVoltageBox.value
-    property alias maxPower: maxPowerBox.value
+    property alias pdContract: pdContractBox.value
     property alias inputPower: inputPowerBox.value
     property alias outputPower: outputPowerBox.value
     property alias outputVoltage: outputVoltageBox.value
     property alias portTemperature: portTemperatureBox.value
-    property alias efficency: efficencyBox.value
+    //property alias efficency: efficencyBox.value
 
 
     signal showGraph()
@@ -58,14 +58,41 @@ Rectangle {
 
             Button {
                 id: showGraphs
-                text: "Graphs"
                 anchors {
                     bottom: statsContainer.bottom
                     horizontalCenter: portTitle.horizontalCenter
                 }
-                height: 20
-                width: 60
+                height: 55
+                width: 55
                 onClicked: root.showGraph()
+
+                background: Rectangle{
+                    color: "lightGrey"
+                    radius: 5
+                    opacity: .5
+                }
+
+                //testing replacing the image with an icon to improve touch response
+                icon.source:"qrc:/views/usb-pd/views/images/graphIcon.svg"
+                icon.width: parent.width -20
+                icon.height: parent.width - 20
+                icon.color: root.portConnected ? "darkgrey" : "lightgrey"
+//                Image{
+//                    id:graphIcon
+//                     source: "qrc:/views/usb-pd/views/images/graphIcon.svg"
+//                    anchors{
+//                        top:parent.top
+//                        topMargin:10
+//                        bottom:parent.bottom
+//                        bottomMargin:10
+//                        left:parent.left
+//                        leftMargin:10
+//                        right:parent.right
+//                        rightMargin:10
+//                    }
+
+//                    opacity:root.portConnected ? .5 :.15
+//                }
             }
 
             Rectangle {
@@ -143,8 +170,8 @@ Rectangle {
                     }
 
                     PortStatBox {
-                        id:maxPowerBox
-                        label: "MAX CAPACITY"
+                        id:pdContractBox
+                        label: "PD CONTRACT"
                         //value: "100"
                         icon: "../images/icon-max.svg"
                         portColor: root.portColor
@@ -162,15 +189,7 @@ Rectangle {
                         height: (root.height - 10)/4
                     }
 
-                    PortStatBox {
-                        id:outputPowerBox
-                        label: "POWER OUT"
-                        //value: "7.8"
-                        icon: "../images/icon-voltage.svg"
-                        portColor: root.portColor
-                        unit: "W"
-                        height: (root.height - 10)/4
-                    }
+
 
                 }
 
@@ -206,14 +225,24 @@ Rectangle {
                     }
 
                     PortStatBox {
-                        id:efficencyBox
-                        label: "EFFICIENCY"
-                        //value: "92"
-                        icon: "../images/icon-efficiency.svg"
+                        id:outputPowerBox
+                        label: "POWER OUT"
+                        //value: "7.8"
+                        icon: "../images/icon-voltage.svg"
                         portColor: root.portColor
-                        unit: "%"
+                        unit: "W"
                         height: (root.height - 10)/4
                     }
+
+//                    PortStatBox {
+//                        id:efficencyBox
+//                        label: "EFFICIENCY"
+//                        //value: "92"
+//                        icon: "../images/icon-efficiency.svg"
+//                        portColor: root.portColor
+//                        unit: "%"
+//                        height: (root.height - 10)/4
+//                    }
                 }
             }
         }

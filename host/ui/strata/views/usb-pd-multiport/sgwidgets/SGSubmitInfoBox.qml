@@ -107,7 +107,7 @@ Rectangle {
 
                 DoubleValidator{
                     id:numberValidator
-                    decimals:1
+                    decimals:2
                     bottom:minimumValue
                     top:maximumValue
                 }

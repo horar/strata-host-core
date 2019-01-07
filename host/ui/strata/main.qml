@@ -2,26 +2,29 @@ import QtQuick 2.10
 import QtQuick.Window 2.10
 import QtQuick.Controls 2.3
 import QtQuick.Layouts 1.3
+import Qt.labs.settings 1.0
 import "js/navigation_control.js" as NavigationControl
 import "qrc:/js/platform_selection.js" as PlatformSelection
+import "qrc:/js/help_layout_manager.js" as Help
 
 Window {
     id: mainWindow
     visible: true
     width: 1200
     height: 900
+    minimumHeight:600
+    minimumWidth:1100
     title: qsTr("ON Semiconductor: Strata Developer Studio")
 
     // Debug option(s)
     property bool showDebugCommandBar: false
     property bool is_remote_connected: false
 
-
     Component.onCompleted: {
         console.log("Initializing")
         NavigationControl.init(flipable,controlContainer, contentContainer, statusBarContainer)
+        Help.registerWindow(mainWindow)
     }
-
 
     Connections {
         target: coreInterface
@@ -63,6 +66,17 @@ Window {
         NavigationControl.removeView(statusBarContainer)
         NavigationControl.removeView(controlContainer)
         NavigationControl.removeView(contentContainer)
+    }
+
+    Settings {
+        id: mainWindowSettings
+
+        category: "MainWindow"
+
+        property alias x: mainWindow.x
+        property alias y: mainWindow.y
+        property alias width: mainWindow.width
+        property alias height: mainWindow.height
     }
 
     Column {
@@ -190,14 +204,21 @@ Window {
                 }
             }
             Button {
-                text: "Disconnect"
+                text: "Reset Window"
                 onClicked: {
-                    NavigationControl.updateState(NavigationControl.events.PLATFORM_DISCONNECTED_EVENT, null)
-                    var disconnect_json = {"hcs::cmd":"disconnect_platform"}
-                    console.log("disconnecting the platform")
-                    coreInterface.sendCommand(JSON.stringify(disconnect_json))
+                    mainWindow.height = 900
+                    mainWindow.width = 1200
                 }
             }
+//            Button {
+//                text: "Disconnect"
+//                onClicked: {
+//                    NavigationControl.updateState(NavigationControl.events.PLATFORM_DISCONNECTED_EVENT, null)
+//                    var disconnect_json = {"hcs::cmd":"disconnect_platform"}
+//                    console.log("disconnecting the platform")
+//                    coreInterface.sendCommand(JSON.stringify(disconnect_json))
+//                }
+//            }
 //            Button {
 //                text: "Logout"
 //                onClicked: {

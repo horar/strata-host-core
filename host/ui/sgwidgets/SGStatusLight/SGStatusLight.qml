@@ -9,6 +9,7 @@ Item {
     property string label: ""
     property bool labelLeft: true
     property real lightSize : 50
+    property alias overrideLabelWidth: labelText.width
     property color textColor : "black"
 
     implicitHeight: labelLeft ? Math.max(labelText.height, lightSize) : labelText.height + lightSize + statusLight.anchors.topMargin

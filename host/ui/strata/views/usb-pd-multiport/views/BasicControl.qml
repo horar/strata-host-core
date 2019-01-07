@@ -8,9 +8,17 @@ Item {
 
     property bool debugLayout: false
     property real ratioCalc: root.width / 1200
+    property real initialAspectRatio: 1200/820
 
     width: parent.width / parent.height > initialAspectRatio ? parent.height * initialAspectRatio : parent.width
     height: parent.width / parent.height < initialAspectRatio ? parent.width / initialAspectRatio : parent.height
+
+    Rectangle{
+        color:"white"
+        anchors {
+            fill: root
+        }
+    }
 
     Image {
         id: name
@@ -27,25 +35,25 @@ Item {
 
     PlugAnimation {
         id: port1Animation
-        x: 748 * ratioCalc
+        x: 917 * ratioCalc
         y: 63 * ratioCalc
     }
 
     PlugAnimation {
         id: port2Animation
-        x: 748 * ratioCalc
+        x: 917 * ratioCalc
         y: 255 * ratioCalc
     }
 
     PlugAnimation {
         id: port3Animation
-        x: 748 * ratioCalc
+        x: 917 * ratioCalc
         y: 447 * ratioCalc
     }
 
     PlugAnimation {
         id: port4Animation
-        x: 748 * ratioCalc
+        x: 917 * ratioCalc
         y: 639 * ratioCalc
     }
 
@@ -55,7 +63,8 @@ Item {
         height: root.height
         anchors {
             left: root.left
-            leftMargin: 80 * ratioCalc
+            //leftMargin: 80 * ratioCalc
+            leftMargin: 230 * ratioCalc
         }
 
         Rectangle {
@@ -101,11 +110,11 @@ Item {
                 label: "INPUT VOLTAGE"
                 value: {
                     if (portVoltage != 0)
-                        Math.round((portVoltage) *100)/100
+                        (portVoltage).toFixed(2)
                       else
                         "0.00"
                 }
-                valueSize: 32
+                valueSize: 24
                 icon: "../images/icon-voltage.svg"
                 unit: "V"
                 anchors.top: combinedStatsBackgroundRect.bottom
@@ -119,7 +128,7 @@ Item {
 
                 property var inputVoltage: platformInterface.request_usb_power_notification.input_voltage;
                 property var inputCurrent: platformInterface.request_usb_power_notification.input_current;
-                property real inputPower: inputVoltage * inputCurrent;
+                property real inputPower: (inputVoltage * inputCurrent)+2;  //PTJ-1321 adding 2 watts compensation
 
                 property real port1Power:0;
                 property real port2Power:0;
@@ -160,8 +169,8 @@ Item {
 
                 id:combinedInputPowerBox
                 label: "INPUT POWER"
-                value: Math.round((combinedPortPower) *100)/100
-                valueSize: 32
+                value: (combinedPortPower).toFixed(2);
+                valueSize: 24
                 icon: "../images/icon-voltage.svg"
                 unit: "W"
                 anchors.top: combinedInputVoltageBox.bottom
@@ -185,7 +194,7 @@ Item {
             height: 428 * ratioCalc
 
             property bool inputPowerConnected:  platformInterface.ac_power_supply_connection.state === "connected"
-            //property bool inputPowerConnected: true
+            visible: inputPowerConnected
 
             Rectangle{
                 id:topBackgroundRect
@@ -216,31 +225,34 @@ Item {
                 anchors.horizontalCenter: inputConversionStats.horizontalCenter
             }
 
+
+
             PortStatBox {
-                id:maxPowerBox
-                label: "MAX CAPACITY"
-                value: "200"
-                icon: "../images/icon-max.svg"
+                id:voltageOutBox
+                label: "VOLTAGE OUTPUT"
+                value: "24"
+                icon: "../images/icon-voltage.svg"
                 //portColor: root.portColor
-                valueSize: 32
-                unit: "W"
+                valueSize: 24
+                unit: "V"
                 anchors.top: topBackgroundRect.bottom
                 anchors.topMargin: 20
                 anchors.horizontalCenter: inputConversionStats.horizontalCenter
+
                 height: inputConversionStats.height/8
                 width: inputConversionStats.width/2
                 visible: inputConversionStats.inputPowerConnected
             }
 
             PortStatBox {
-                id:voltageOutBox
-                label: "VOLTAGE OUTPUT"
-                value: "100"
-                icon: "../images/icon-voltage.svg"
+                id:maxPowerBox
+                label: "MAX CAPACITY"
+                value: "200"
+                icon: "../images/icon-max.svg"
                 //portColor: root.portColor
-                valueSize: 32
-                unit: "V"
-                anchors.top: maxPowerBox.bottom
+                valueSize: 24
+                unit: "W"
+                anchors.top: voltageOutBox.bottom
                 anchors.topMargin: 20
                 anchors.horizontalCenter: inputConversionStats.horizontalCenter
                 height: inputConversionStats.height/8
@@ -253,7 +265,8 @@ Item {
                 source:"./images/powerconverter.png"
                 opacity:.5
                 fillMode:Image.PreserveAspectFit
-                anchors.top:voltageOutBox.bottom
+                anchors.top:maxPowerBox.bottom
+
                 anchors.topMargin:40
                 anchors.bottom:inputConversionStats.bottom
                 anchors.bottomMargin:40
@@ -269,6 +282,7 @@ Item {
             visible: debugLayout
         }
     }
+
 
     Item {
         id: portColumn
@@ -290,6 +304,33 @@ Item {
             }
             portConnected: false
             portNumber: 1
+
+            property int theRunningTotal: 0
+            property int theEfficiencyCount: 0
+            property int theEfficiencyAverage: 0
+
+            property var periodicValues: platformInterface.request_usb_power_notification
+
+            onPeriodicValuesChanged: {
+                var theInputPower = platformInterface.request_usb_power_notification.input_voltage * platformInterface.request_usb_power_notification.input_current +2;//PTJ-1321 2 Watt compensation
+                var theOutputPower = platformInterface.request_usb_power_notification.output_voltage * platformInterface.request_usb_power_notification.output_current;
+
+                if (platformInterface.request_usb_power_notification.port === 1){
+                    //sum eight values of the efficency and average before displaying
+                    var theEfficiency = Math.round((theOutputPower/theInputPower) *100)
+                    portInfo1.theRunningTotal += theEfficiency;
+                    //console.log("new efficiency value=",theEfficiency,"new total is",miniInfo1.theRunningTotal,miniInfo1.theEfficiencyCount);
+                    portInfo1.theEfficiencyCount++;
+
+                    if (portInfo1.theEfficiencyCount == 8){
+                        portInfo1.theEfficiencyAverage = portInfo1.theRunningTotal/8;
+                        portInfo1.theEfficiencyCount = 0;
+                        portInfo1.theRunningTotal = 0
+                    }
+                }
+
+            }
+
             advertisedVoltage:{
                 if (platformInterface.request_usb_power_notification.port === 1){
                     return platformInterface.request_usb_power_notification.negotiated_voltage
@@ -313,7 +354,7 @@ Item {
             }
             inputPower:{
                 if (platformInterface.request_usb_power_notification.port === 1){
-                    return Math.round(platformInterface.request_usb_power_notification.input_voltage * platformInterface.request_usb_power_notification.input_current * 100)/100
+                    return ((platformInterface.request_usb_power_notification.input_voltage * platformInterface.request_usb_power_notification.input_current)+2).toFixed(2); //PTJ-1321 adding 2 watts compensation
                 }
                 else{
                     return portInfo1.inputPower;
@@ -321,7 +362,7 @@ Item {
             }
             outputPower:{
                 if (platformInterface.request_usb_power_notification.port === 1){
-                    return Math.round(platformInterface.request_usb_power_notification.output_voltage * platformInterface.request_usb_power_notification.output_current * 100)/100
+                    return (platformInterface.request_usb_power_notification.output_voltage * platformInterface.request_usb_power_notification.output_current).toFixed(2);
                 }
                 else{
                     return portInfo1.outputPower;
@@ -329,7 +370,7 @@ Item {
             }
             outputVoltage:{
                 if (platformInterface.request_usb_power_notification.port === 1){
-                    return Math.round(platformInterface.request_usb_power_notification.output_voltage *100)/100
+                    return (platformInterface.request_usb_power_notification.output_voltage).toFixed(2)
                 }
                 else{
                     return portInfo1.outputVoltage;
@@ -337,29 +378,13 @@ Item {
             }
             portTemperature:{
                 if (platformInterface.request_usb_power_notification.port === 1){
-                    return Math.round(platformInterface.request_usb_power_notification.temperature*10)/10
+                    return (platformInterface.request_usb_power_notification.temperature).toFixed(1)
                 }
                 else{
                     return portInfo1.portTemperature;
                 }
             }
-            efficency: {
-                var theInputPower = platformInterface.request_usb_power_notification.input_voltage * platformInterface.request_usb_power_notification.input_current;
-                var theOutputPower = platformInterface.request_usb_power_notification.output_voltage * platformInterface.request_usb_power_notification.output_current;
-
-                if (platformInterface.request_usb_power_notification.port === 1){
-                    if (theInputPower == 0){    //division by 0 would normally give "nan"
-                        return "—"
-                    }
-                    else{
-                        return "—"
-                        //return Math.round((theOutputPower/theInputPower) * 100)/100
-                    }
-                }
-                else{
-                    return portInfo1.efficency;
-                }
-            }
+            efficency: theEfficiencyAverage
 
             property var deviceConnected: platformInterface.usb_pd_port_connect.connection_state
             property var deviceDisconnected: platformInterface.usb_pd_port_disconnect.connection_state
@@ -388,6 +413,8 @@ Item {
                 graphDrawer.portNumber = portNumber;
                 graphDrawer.open();
             }
+
+
         }
 
         PortInfo {
@@ -401,6 +428,33 @@ Item {
             }
             portNumber: 2
             portConnected: false
+
+            property int theRunningTotal: 0
+            property int theEfficiencyCount: 0
+            property int theEfficiencyAverage: 0
+
+            property var periodicValues: platformInterface.request_usb_power_notification
+
+            onPeriodicValuesChanged: {
+                var theInputPower = platformInterface.request_usb_power_notification.input_voltage * platformInterface.request_usb_power_notification.input_current +2;//PTJ-1321 2 Watt compensation
+                var theOutputPower = platformInterface.request_usb_power_notification.output_voltage * platformInterface.request_usb_power_notification.output_current;
+
+                if (platformInterface.request_usb_power_notification.port === 2){
+                    //sum eight values of the efficency and average before displaying
+                    var theEfficiency = Math.round((theOutputPower/theInputPower) *100)
+                    portInfo2.theRunningTotal += theEfficiency;
+                    //console.log("new efficiency value=",theEfficiency,"new total is",miniInfo1.theRunningTotal,miniInfo1.theEfficiencyCount);
+                    portInfo2.theEfficiencyCount++;
+
+                    if (portInfo2.theEfficiencyCount == 8){
+                        portInfo2.theEfficiencyAverage = portInfo2.theRunningTotal/8;
+                        portInfo2.theEfficiencyCount = 0;
+                        portInfo2.theRunningTotal = 0
+                    }
+                }
+
+            }
+
             advertisedVoltage:{
                 if (platformInterface.request_usb_power_notification.port === 2){
                     return platformInterface.request_usb_power_notification.negotiated_voltage
@@ -424,7 +478,7 @@ Item {
             }
             inputPower:{
                 if (platformInterface.request_usb_power_notification.port === 2){
-                    return Math.round(platformInterface.request_usb_power_notification.input_voltage * platformInterface.request_usb_power_notification.input_current *100)/100
+                    return ((platformInterface.request_usb_power_notification.input_voltage * platformInterface.request_usb_power_notification.input_current)+2).toFixed(2);//PTJ-1321 adding 2 watts compensation
                 }
                 else{
                     return portInfo2.inputPower;
@@ -432,7 +486,7 @@ Item {
             }
             outputPower:{
                 if (platformInterface.request_usb_power_notification.port === 2){
-                    return Math.round(platformInterface.request_usb_power_notification.output_voltage * platformInterface.request_usb_power_notification.output_current *100)/100
+                    return (platformInterface.request_usb_power_notification.output_voltage * platformInterface.request_usb_power_notification.output_current).toFixed(2);
                 }
                 else{
                     return portInfo2.outputPower;
@@ -440,7 +494,7 @@ Item {
             }
             outputVoltage:{
                 if (platformInterface.request_usb_power_notification.port === 2){
-                    return Math.round(platformInterface.request_usb_power_notification.output_voltage *100)/100
+                    return (platformInterface.request_usb_power_notification.output_voltage).toFixed(2);
                 }
                 else{
                     return portInfo2.outputVoltage;
@@ -454,23 +508,7 @@ Item {
                     return portInfo2.portTemperature;
                 }
             }
-            efficency: {
-                var theInputPower = platformInterface.request_usb_power_notification.input_voltage * platformInterface.request_usb_power_notification.input_current;
-                var theOutputPower = platformInterface.request_usb_power_notification.output_voltage * platformInterface.request_usb_power_notification.output_current
-
-                if (platformInterface.request_usb_power_notification.port === 2){
-                    if (theInputPower == 0){    //division by 0 would normally give "nan"
-                        return "—"
-                    }
-                    else{
-                        return "—"
-                        //return Math.round((theOutputPower/theInputPower) *100)/100
-                    }
-                }
-                else{
-                    return portInfo2.efficency
-                }
-            }
+            efficency: theEfficiencyAverage
 
             property var deviceConnected: platformInterface.usb_pd_port_connect.connection_state
             property var deviceDisconnected: platformInterface.usb_pd_port_disconnect.connection_state
@@ -512,6 +550,32 @@ Item {
             }
             portNumber: 3
             portConnected: false
+
+            property int theRunningTotal: 0
+            property int theEfficiencyCount: 0
+            property int theEfficiencyAverage: 0
+
+            property var periodicValues: platformInterface.request_usb_power_notification
+
+            onPeriodicValuesChanged: {
+                var theInputPower = platformInterface.request_usb_power_notification.input_voltage * platformInterface.request_usb_power_notification.input_current +2;//PTJ-1321 2 Watt compensation
+                var theOutputPower = platformInterface.request_usb_power_notification.output_voltage * platformInterface.request_usb_power_notification.output_current;
+
+                if (platformInterface.request_usb_power_notification.port === 3){
+                    //sum eight values of the efficency and average before displaying
+                    var theEfficiency = Math.round((theOutputPower/theInputPower) *100)
+                    portInfo3.theRunningTotal += theEfficiency;
+                    //console.log("new efficiency value=",theEfficiency,"new total is",miniInfo1.theRunningTotal,miniInfo1.theEfficiencyCount);
+                    portInfo3.theEfficiencyCount++;
+
+                    if (portInfo3.theEfficiencyCount == 8){
+                        portInfo3.theEfficiencyAverage = portInfo3.theRunningTotal/8;
+                        portInfo3.theEfficiencyCount = 0;
+                        portInfo3.theRunningTotal = 0
+                    }
+                }
+
+            }
             advertisedVoltage:{
                 if (platformInterface.request_usb_power_notification.port === 3){
                     return platformInterface.request_usb_power_notification.negotiated_voltage
@@ -535,7 +599,7 @@ Item {
             }
             inputPower:{
                 if (platformInterface.request_usb_power_notification.port === 3){
-                    return Math.round(platformInterface.request_usb_power_notification.input_voltage * platformInterface.request_usb_power_notification.input_current *100)/100
+                    return ((platformInterface.request_usb_power_notification.input_voltage * platformInterface.request_usb_power_notification.input_current)+2).toFixed(2);//PTJ-1321 adding 2 watts compensation
                 }
                 else{
                     return portInfo3.inputPower;
@@ -543,7 +607,7 @@ Item {
             }
             outputPower:{
                 if (platformInterface.request_usb_power_notification.port === 3){
-                    return Math.round(platformInterface.request_usb_power_notification.output_voltage * platformInterface.request_usb_power_notification.output_current *100)/100
+                    return (platformInterface.request_usb_power_notification.output_voltage * platformInterface.request_usb_power_notification.output_current).toFixed(2);
                 }
                 else{
                     return portInfo3.outputPower;
@@ -551,7 +615,7 @@ Item {
             }
             outputVoltage:{
                 if (platformInterface.request_usb_power_notification.port === 3){
-                    return Math.round(platformInterface.request_usb_power_notification.output_voltage *100)/100
+                    return (platformInterface.request_usb_power_notification.output_voltage).toFixed(2);
                 }
                 else{
                     return portInfo3.outputVoltage;
@@ -565,23 +629,7 @@ Item {
                     return portInfo3.portTemperature;
                 }
             }
-            efficency: {
-                var theInputPower = platformInterface.request_usb_power_notification.input_voltage * platformInterface.request_usb_power_notification.input_current;
-                var theOutputPower = platformInterface.request_usb_power_notification.output_voltage * platformInterface.request_usb_power_notification.output_current
-
-                if (platformInterface.request_usb_power_notification.port === 3){
-                    if (theInputPower == 0){    //division by 0 would normally give "nan"
-                        return "—"
-                    }
-                    else{
-                        //return Math.round((theOutputPower/theInputPower) *100)/100
-                        return "—"
-                    }
-                }
-                else{
-                  return portInfo3.efficency;
-                    }
-            }
+            efficency: theEfficiencyAverage
 
             property var deviceConnected: platformInterface.usb_pd_port_connect.connection_state
             property var deviceDisconnected: platformInterface.usb_pd_port_disconnect.connection_state
@@ -622,6 +670,33 @@ Item {
             }
             portNumber: 4
             portConnected: false
+
+            property int theRunningTotal: 0
+            property int theEfficiencyCount: 0
+            property int theEfficiencyAverage: 0
+
+            property var periodicValues: platformInterface.request_usb_power_notification
+
+            onPeriodicValuesChanged: {
+                var theInputPower = platformInterface.request_usb_power_notification.input_voltage * platformInterface.request_usb_power_notification.input_current +2;//PTJ-1321 2 Watt compensation
+                var theOutputPower = platformInterface.request_usb_power_notification.output_voltage * platformInterface.request_usb_power_notification.output_current;
+
+                if (platformInterface.request_usb_power_notification.port === 4){
+                    //sum eight values of the efficency and average before displaying
+                    var theEfficiency = Math.round((theOutputPower/theInputPower) *100)
+                    portInfo4.theRunningTotal += theEfficiency;
+                    //console.log("new efficiency value=",theEfficiency,"new total is",miniInfo1.theRunningTotal,miniInfo1.theEfficiencyCount);
+                    portInfo4.theEfficiencyCount++;
+
+                    if (portInfo4.theEfficiencyCount == 8){
+                        portInfo4.theEfficiencyAverage = portInfo4.theRunningTotal/8;
+                        portInfo4.theEfficiencyCount = 0;
+                        portInfo4.theRunningTotal = 0
+                    }
+                }
+
+            }
+
             advertisedVoltage:{
                 if (platformInterface.request_usb_power_notification.port === 4){
                     return platformInterface.request_usb_power_notification.negotiated_voltage;
@@ -645,7 +720,7 @@ Item {
             }
             inputPower:{
                 if (platformInterface.request_usb_power_notification.port === 4){
-                    return Math.round(platformInterface.request_usb_power_notification.input_voltage * platformInterface.request_usb_power_notification.input_current *100)/100
+                    return ((platformInterface.request_usb_power_notification.input_voltage * platformInterface.request_usb_power_notification.input_current)+2).toFixed(2); //PTJ-1321 adding 2 watts compensation
                 }
                 else{
                    return portInfo4.inputPower;
@@ -653,7 +728,7 @@ Item {
             }
             outputPower:{
                 if (platformInterface.request_usb_power_notification.port === 4){
-                    return Math.round(platformInterface.request_usb_power_notification.output_voltage * platformInterface.request_usb_power_notification.output_current *100)/100
+                    return (platformInterface.request_usb_power_notification.output_voltage * platformInterface.request_usb_power_notification.output_current).toFixed(2);
                 }
                 else{
                    return portInfo4.outputPower;
@@ -661,7 +736,7 @@ Item {
             }
             outputVoltage:{
                 if (platformInterface.request_usb_power_notification.port === 4){
-                    return Math.round(platformInterface.request_usb_power_notification.output_voltage *100)/100
+                    return (platformInterface.request_usb_power_notification.output_voltage).toFixed(2);
                 }
                 else{
                    return portInfo4.outputVoltage;
@@ -675,22 +750,7 @@ Item {
                    return portInfo4.portTemperature;
                 }
             }
-            efficency: {
-                var theInputPower = platformInterface.request_usb_power_notification.input_voltage * platformInterface.request_usb_power_notification.input_current;
-                var theOutputPower = platformInterface.request_usb_power_notification.output_voltage * platformInterface.request_usb_power_notification.output_current
-
-                if (platformInterface.request_usb_power_notification.port === 4)
-                    if (theInputPower == 0){    //division by 0 would normally give "nan"
-                        return "—"
-                    }
-                    else{
-                        //return Math.round((theOutputPower/theInputPower) *100)/100
-                        return "—"
-                    }
-                else{
-                    return portInfo4.efficency;
-                }
-            }
+            efficency: theEfficiencyAverage
 
             property var deviceConnected: platformInterface.usb_pd_port_connect.connection_state
             property var deviceDisconnected: platformInterface.usb_pd_port_disconnect.connection_state
@@ -763,7 +823,7 @@ Item {
 
                          if (platformInterface.usb_pd_port_connect.port_id === "USB_C_port_1"){
                              if (platformInterface.usb_pd_port_connect.connection_state === "connected"){
-                                 port1Animation.source = "images/cord.gif"
+                                 port1Animation.source = "images/USBCAnim.gif"
                                  port1Animation.currentFrame = 0
                                  port1Animation.playing = true
                                  port1Animation.pluggedIn = !port1Animation.pluggedIn
@@ -775,26 +835,12 @@ Item {
 
                          if (platformInterface.usb_pd_port_disconnect.port_id === "USB_C_port_1"){
                              if (platformInterface.usb_pd_port_disconnect.connection_state === "disconnected"){
-                                 port1Animation.source = "images/cordReverse.gif"
+                                 port1Animation.source = "images/USBCAnimReverse.gif"
                                  port1Animation.currentFrame = 0
                                  port1Animation.playing = true
                                  port1Animation.pluggedIn = !port1Animation.pluggedIn
                              }
                          }
-                    }
-
-                    onClicked: {
-                        if (!port1Animation.pluggedIn) {
-                            port1Animation.source = "images/cord.gif"
-                            port1Animation.currentFrame = 0
-                            port1Animation.playing = true
-                            port1Animation.pluggedIn = !port1Animation.pluggedIn
-                        } else {
-                            port1Animation.source = "images/cordReverse.gif"
-                            port1Animation.currentFrame = 0
-                            port1Animation.playing = true
-                            port1Animation.pluggedIn = !port1Animation.pluggedIn
-                        }
                     }
                 }
             }
@@ -817,7 +863,7 @@ Item {
 
                          if (platformInterface.usb_pd_port_connect.port_id === "USB_C_port_2"){
                              if (platformInterface.usb_pd_port_connect.connection_state === "connected"){
-                                 port2Animation.source = "images/cord.gif"
+                                 port2Animation.source = "images/USBCAnim.gif"
                                  port2Animation.currentFrame = 0
                                  port2Animation.playing = true
                                  port2Animation.pluggedIn = !port2Animation.pluggedIn
@@ -831,25 +877,12 @@ Item {
 
                          if (platformInterface.usb_pd_port_disconnect.port_id === "USB_C_port_2"){
                              if (platformInterface.usb_pd_port_disconnect.connection_state === "disconnected"){
-                                 port2Animation.source = "images/cordReverse.gif"
+                                 port2Animation.source = "images/USBCAnimReverse.gif"
                                  port2Animation.currentFrame = 0
                                  port2Animation.playing = true
                                  port2Animation.pluggedIn = !port2Animation.pluggedIn
                              }
                          }
-                    }
-                    onClicked: {
-                        if (!port2Animation.pluggedIn) {
-                            port2Animation.source = "images/cord.gif"
-                            port2Animation.currentFrame = 0
-                            port2Animation.playing = true
-                            port2Animation.pluggedIn = !port2Animation.pluggedIn
-                        } else {
-                            port2Animation.source = "images/cordReverse.gif"
-                            port2Animation.currentFrame = 0
-                            port2Animation.playing = true
-                            port2Animation.pluggedIn = !port2Animation.pluggedIn
-                        }
                     }
                 }
             }
@@ -872,7 +905,7 @@ Item {
 
                          if (platformInterface.usb_pd_port_connect.port_id === "USB_C_port_3"){
                              if (platformInterface.usb_pd_port_connect.connection_state === "connected"){
-                                 port3Animation.source = "images/cord.gif"
+                                 port3Animation.source = "images/USBCAnim.gif"
                                  port3Animation.currentFrame = 0
                                  port3Animation.playing = true
                                  port3Animation.pluggedIn = !port3Animation.pluggedIn
@@ -886,25 +919,12 @@ Item {
 
                          if (platformInterface.usb_pd_port_disconnect.port_id === "USB_C_port_3"){
                              if (platformInterface.usb_pd_port_disconnect.connection_state === "disconnected"){
-                                 port3Animation.source = "images/cordReverse.gif"
+                                 port3Animation.source = "images/USBCAnimReverse.gif"
                                  port3Animation.currentFrame = 0
                                  port3Animation.playing = true
                                  port3Animation.pluggedIn = !port3Animation.pluggedIn
                              }
                          }
-                    }
-                    onClicked: {
-                        if (!port3Animation.pluggedIn) {
-                            port3Animation.source = "images/cord.gif"
-                            port3Animation.currentFrame = 0
-                            port3Animation.playing = true
-                            port3Animation.pluggedIn = !port3Animation.pluggedIn
-                        } else {
-                            port3Animation.source = "images/cordReverse.gif"
-                            port3Animation.currentFrame = 0
-                            port3Animation.playing = true
-                            port3Animation.pluggedIn = !port3Animation.pluggedIn
-                        }
                     }
                 }
             }
@@ -927,7 +947,7 @@ Item {
 
                          if (platformInterface.usb_pd_port_connect.port_id === "USB_C_port_4"){
                              if (platformInterface.usb_pd_port_connect.connection_state === "connected"){
-                                 port4Animation.source = "images/cord.gif"
+                                 port4Animation.source = "images/USBCAnim.gif"
                                  port4Animation.currentFrame = 0
                                  port4Animation.playing = true
                                  port4Animation.pluggedIn = !port4Animation.pluggedIn
@@ -941,25 +961,12 @@ Item {
 
                          if (platformInterface.usb_pd_port_disconnect.port_id === "USB_C_port_4"){
                              if (platformInterface.usb_pd_port_disconnect.connection_state === "disconnected"){
-                                 port4Animation.source = "images/cordReverse.gif"
+                                 port4Animation.source = "images/USBCAnimReverse.gif"
                                  port4Animation.currentFrame = 0
                                  port4Animation.playing = true
                                  port4Animation.pluggedIn = !port4Animation.pluggedIn
                              }
                          }
-                    }
-                    onClicked: {
-                        if (!port4Animation.pluggedIn) {
-                            port4Animation.source = "images/cord.gif"
-                            port4Animation.currentFrame = 0
-                            port4Animation.playing = true
-                            port4Animation.pluggedIn = !port4Animation.pluggedIn
-                        } else {
-                            port4Animation.source = "images/cordReverse.gif"
-                            port4Animation.currentFrame = 0
-                            port4Animation.playing = true
-                            port4Animation.pluggedIn = !port4Animation.pluggedIn
-                        }
                     }
                 }
             }

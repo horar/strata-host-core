@@ -37,9 +37,9 @@ int main(int argc, char *argv[])
     QApplication app(argc, argv);
     QQmlApplicationEngine engine;
 
-    qmlRegisterType<CoreInterface>("tech.spyglass.CoreInterface",1,0,"CoreInterface");
-    qmlRegisterType<DocumentManager>("tech.spyglass.DocumentManager", 1, 0, "DocumentManager");
-    qmlRegisterType<Document>("tech.spyglass.Document", 1, 0, "Document");
+    qmlRegisterUncreatableType<CoreInterface>("tech.spyglass.CoreInterface",1,0,"CoreInterface", QStringLiteral("You can't instantiate CoreInterface in QML"));
+    qmlRegisterUncreatableType<DocumentManager>("tech.spyglass.DocumentManager", 1, 0, "DocumentManager", QStringLiteral("You can't instantiate DocumentManager in QML"));
+    qmlRegisterUncreatableType<Document>("tech.spyglass.Document", 1, 0, "Document", "You can't instantiate Document in QML");
     qmlRegisterSingletonType(QUrl("qrc:/fonts/Fonts.qml"), "Fonts", 1, 0, "Fonts");
 
     CoreInterface *coreInterface = new CoreInterface();
@@ -68,6 +68,7 @@ int main(int argc, char *argv[])
         // We are at the build folder as root
         #define HOST_ROOT_PATH      (app.applicationDirPath())
         #define HCS_PATH            HOST_ROOT_PATH + "/HCS/HCS.exe"
+        //#define HCS_PATH            HOST_ROOT_PATH + "/HCS/HCS_4port.exe"
         #define HCS_CONFIG_PATH     HOST_ROOT_PATH + "/HCS/host_controller_service.config"
         #endif
 
@@ -75,6 +76,7 @@ int main(int argc, char *argv[])
         // We are pretty deep in the directory. Ex. ui/build-xxx-Release/spyglass.app/Contents/MacOs
         #define HOST_ROOT_PATH      (app.applicationDirPath() + "/../../../../../")
         #define HCS_PATH            HOST_ROOT_PATH + "build/apps/hcs2/hcs2"
+        //#define HCS_PATH            HOST_ROOT_PATH + "build/apps/hcs2/hcs_4port"
         #define HCS_CONFIG_PATH     HOST_ROOT_PATH + "apps/hcs2/files/conf/host_controller_service.config_template"
         #endif
 

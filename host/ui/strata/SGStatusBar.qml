@@ -7,6 +7,7 @@ import "js/navigation_control.js" as NavigationControl
 import "qrc:/js/platform_selection.js" as PlatformSelection
 import "qrc:/statusbar-partial-views"
 import Fonts 1.0
+import "qrc:/js/help_layout_manager.js" as Help
 
 Rectangle {
     id: container
@@ -23,6 +24,17 @@ Rectangle {
     property color alternateColor1: "#575757"
 
     color: "black"
+
+    Component.onCompleted: {
+        Help.registerTarget(platformControlsButton, "Use this button to select the platform control view. Only available when platform is connected", 0,"statusHelp")
+        Help.registerTarget(platformContentButton, "Use this button to select the content view for the selected platform.", 1,"statusHelp")
+        Help.registerTarget(cbSelectorContainer, "Use this drop down to select from connected and previously connected platforms. ", 2,"statusHelp")
+
+    }
+
+    Component.onDestruction: {
+        Help.reset("statusHelp")
+    }
 
     function getWidth(string) {
         return (string.match(/width=\"([0-9]+)\"/))
@@ -1205,6 +1217,15 @@ Rectangle {
                     }
                     width: profileMenu.width
                 }
+                SGMenuItem {
+                    text: qsTr("Help")
+                    onClicked: {
+                        profileMenu.close()
+                        Help.startHelpTour("statusHelp")
+
+                    }
+                    width: profileMenu.width
+                }
 
                 Rectangle {
                     id: menuDivider
@@ -1330,16 +1351,18 @@ Rectangle {
                             [ { "connection":"view",
                                 "uuid":"P2.2018.1.1.0.0.c9060ff8-5c5e-4295-b95a-d857ee9a3671",
                                 "verbose":"USB PD Load Board"},
-
                               { "connection":"view",
                                 "uuid":"P2.2017.1.1.0.0.cbde0519-0f42-4431-a379-caee4a1494af",
                                 "verbose":"USB PD"},
                               { "connection":"view",
                                 "uuid":"SEC.2017.004.2.0.0.1c9f3822-b865-11e8-b42a-47f5c5ed4fc3",
                                 "verbose":"Vortex Fountain Motor Platform Board"},
-                              { "connection":"connected",
+                              '+/*{ "connection":"connected",
                                 "uuid":"SEC.2017.004.2.0.0.1c9f3822-b865-11e8-b42a-47f5c5ed4fc3",
-                                "verbose":"Fake Motor Vortex AutoConnect"}
+                                "verbose":"Fake Motor Vortex AutoConnect"}*/'
+                              { "connection":"connected",
+                                "uuid":"SEC.2016.004.2.0.0.1c9f3822-b865-11e8-b42a-47f5c5ed4fc3",
+                                "verbose":"Unknown Board"}
                                ]
                         }'
 

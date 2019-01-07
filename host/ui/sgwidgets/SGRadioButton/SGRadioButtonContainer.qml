@@ -10,6 +10,7 @@ Item {
     property alias radioGroup : radioButtons.sourceComponent
     property alias radioButtons: radioButtons.item
     property alias radioButtonSize: radioButtons.radioButtonSize
+    property alias overrideLabelWidth: labelText.width
 
     property color textColor: "#000000"
     property color radioColor: "#000000"

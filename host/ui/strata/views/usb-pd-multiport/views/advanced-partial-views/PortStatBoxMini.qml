@@ -13,7 +13,7 @@ Rectangle {
     property string unit: "V"
     property string icon: "../images/icon-voltage.svg"
     property real labelSize: 9
-    property real valueSize: 30
+    property real valueSize: 27
     property real unitSize: 12
     property real bottomMargin: 0
     property color textColor: "#555"
@@ -57,8 +57,8 @@ Rectangle {
         anchors {
             bottom: root.bottom
             bottomMargin: root.bottomMargin
-            left: root.left
-            leftMargin: 5
+            right:unitText.left
+            rightMargin:0
         }
         font {
             pixelSize: root.valueSize
@@ -72,24 +72,12 @@ Rectangle {
         anchors {
             bottom: valueText.bottom
             bottomMargin: 3
-            left: valueText.right
-            leftMargin: 5
+            right:root.right
+            rightMargin:5
         }
         font {
             pixelSize: root.unitSize
         }
     }
 
-//    Image {
-//        id: iconImage
-//        source: root.icon
-//        opacity: 0.2
-//        height: root.height * 1.5
-//        width: height
-//        anchors {
-//            verticalCenter: parent.verticalCenter
-//            right: parent.right
-//            rightMargin: 5
-//        }
-//    }
 }

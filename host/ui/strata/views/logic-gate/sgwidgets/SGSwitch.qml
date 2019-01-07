@@ -15,11 +15,11 @@ Item {
     property alias down: switchRoot.down
     property alias checked: switchRoot.checked
 
-    property real switchHeight: 26
+    property real switchHeight: 30
     property real fontSize: 10
 
     // Optional Configurations:
-    property real switchWidth: 52
+    property real switchWidth: 65
     property color handleColor: "white"
     property color grooveFillColor: "#0cf"
     property color grooveColor: "#ccc"

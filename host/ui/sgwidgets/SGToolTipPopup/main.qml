@@ -30,15 +30,17 @@ Window {
         SGToolTipPopup {
             id: sgToolTipPopup
 
-            showOn: hoverArea.containsMouse
+            showOn: hoverArea.containsMouse // Connect this to whatever boolean you want the tooltip to be shown when true
             anchors {
                 bottom: hoverText.top
                 horizontalCenter: hoverText.horizontalCenter
             }
 
             // Optional Configuration:
-            radius: 8       // Default: 5 (0 for square)
-            color: "#0ce"   // Default: "#00ccee"
+            radius: 5               // Default: 5 (0 for square)
+            color: "#0ce"           // Default: "#00ccee"
+            pointsUp: false         // Default: false (determines if arrow points up or down
+            alignment: "center"     // Default: "center" (determines horizontal offset of arrow, other options are "left" and "right")
 
             // Content can contain any single object (which can have nested objects within it)
             content: Text {
