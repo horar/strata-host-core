@@ -10,9 +10,6 @@
 [submodule "platform/mbed-os/sources/mbed-os"]
 	path = platform/mbed-os/sources/mbed-os
 	url = https://github.com/ARMmbed/mbed-os
-[submodule "host/CouchBaseLite/couchbase-lite-core"]
-	path = host/CouchBaseLite/couchbase-lite-core
-	url = https://github.com/couchbase/couchbase-lite-core.git
 [submodule "host/libs/couchbaselite/couchbase-lite-core"]
 	path = host/libs/couchbaselite/couchbase-lite-core
 	url = https://github.com/couchbase/couchbase-lite-core.git
