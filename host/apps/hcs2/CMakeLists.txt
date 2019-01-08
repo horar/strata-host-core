@@ -25,7 +25,6 @@ endif ()
 
 if (CROSSCOMPILE)
     message("TOOL CHAIN: windows")
-    SET(CMAKE_TOOLCHAIN_FILE ./cmake/x86_64.cmake)
     SET(CMAKE_CXX_FLAGS "-v -std=gnu++11 -static-libstdc++ -static-libgcc -static")
 elseif(UNIX AND NOT APPLE AND NOT CROSSCOMPILE)
     message("TOOL CHAIN: linux")
@@ -168,7 +167,7 @@ if (CROSSCOMPILE)
     remove_definitions(-DNIMBUS_SCHEMA_PATH)
     add_definitions(-DNIMBUS_SCHEMA_PATH="nimbus_command_schema.json")
 
-else() #CROSSCOMPILE
+endif() #CROSSCOMPILE
 
 find_package(Libevent2 REQUIRED)
 
@@ -198,10 +197,15 @@ target_link_libraries(${PROJECT_NAME}
     PRIVATE ${LIBEVENT2_LIBRARIES}
 )
 
+if (CROSSCOMPILE)
+    # Litecore; Only link LiteCore to HCS. The others will cause problems on crosscompile.
+    target_link_libraries(${PROJECT_NAME}
+        PRIVATE ${litecore}
+    )
+endif()
+
 if (APPLE)
     target_link_libraries(${PROJECT_NAME}
         PRIVATE ${FOUNDATION_LIBRARY} ${IOKIT_LIBRARY}
     )
 endif()
-
-endif()  #CROSSCOMPILE

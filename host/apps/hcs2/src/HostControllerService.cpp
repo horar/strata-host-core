@@ -13,6 +13,10 @@
 
 #include "HostControllerService.h"
 
+#include <chrono>
+#include <thread>
+
+
 using namespace rapidjson;
 using namespace std;
 
@@ -137,7 +141,7 @@ HcsError HostControllerService::init()
 HcsError HostControllerService::run()
 {
     while(!openPlatform()) {
-        sleep(0.2);
+        std::this_thread::sleep_for(std::chrono::milliseconds(200));
     }
     PDEBUG(PRINT_DEBUG,"\033[1;32mPlatform detected\033[0m\n");
     initializePlatform(); // init serial config
