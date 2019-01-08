@@ -26,6 +26,7 @@ using namespace fleece::impl;
 #define DEBUG(...) printf("SGDatabase: "); printf(__VA_ARGS__)
 SGDatabase::SGDatabase() {}
 SGDatabase::SGDatabase(const std::string& db_name) {
+    c4db_ = nullptr;
     setDBName(db_name);
 }
 
@@ -80,6 +81,13 @@ SGDatabaseReturnStatus SGDatabase::open() {
     }
 
     return SGDatabaseReturnStatus::kNoError;
+}
+
+/** SGDatabase isOpen.
+* @brief Check if database is open
+*/
+bool SGDatabase::isOpen(){
+    return c4db_ != nullptr;
 }
 
 /** SGDatabase Close.

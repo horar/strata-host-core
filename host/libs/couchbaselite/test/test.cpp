@@ -55,8 +55,19 @@ int main(){
 
     SGDatabase sgDatabase("db2");
 
-    if(sgDatabase.open() != SGDatabaseReturnStatus::kNoError){
+    if (!sgDatabase.isOpen()) {
+        DEBUG("Db is not open yet\n");
+    }
+
+    if (sgDatabase.open() != SGDatabaseReturnStatus::kNoError) {
         DEBUG("Can't open DB!\n");
+        return 1;
+    }
+
+    if (sgDatabase.isOpen()) {
+        DEBUG("DB is open using isOpen API\n");
+    } else {
+        DEBUG("DB is not open, exiting!\n");
         return 1;
     }
 

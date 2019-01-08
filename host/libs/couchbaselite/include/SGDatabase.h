@@ -60,7 +60,7 @@ public:
 
     SGDatabaseReturnStatus open();
     SGDatabaseReturnStatus close();
-
+    bool isOpen();
 private:
 
     C4Database          *c4db_;
