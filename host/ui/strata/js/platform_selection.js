@@ -27,21 +27,23 @@ function populatePlatforms(platform_list_json) {
     //the other half of the map will be the name of the directory that will be used to show the initial screen (e.g. usb-pd/Control.qml)
 
     var uuid_map = {
-        "P2.2017.1.1.0" : "usb-pd",             //original version
-        "P2.2018.1.1.0" : "bubu",
+        "P2.2017.1.1.0"    : "usb-pd",             //original version
+        "P2.2018.1.1.0"    : "bubu",
         "SEC.2017.004.2.0" : "motor-vortex",
         "SEC.2018.004.0.1" : "usb-pd",
         "SEC.2018.004.1.1" : "usb-pd",
         "SEC.2018.004.1.2" : "usb-pd",
-        "P2.2018.0.0.0" : "usb-pd-multiport",       //uninitialized board
-        "SEC.2017.038.0.0": "usb-pd-multiport",
-        "SEC.2017.038.0.1": "usb-pd-multiport",
+        "P2.2018.0.0.0"    : "usb-pd-multiport",       //uninitialized board
+        "SEC.2017.038.0.0" : "usb-pd-multiport",
+        "SEC.2017.038.0.1" : "usb-pd-multiport",
         "SEC.2018.018.0.0" : "logic-gate", // Alpha Board
         "SEC.2018.018.1.0" : "logic-gate", // Beta Board
-        "SEC.2018.001.0.0": "usb-hub",
+        "SEC.2018.001.0.0" : "usb-hub",
+        "SEC.2018.030.0.0" : "led",
 
-        "102" : "usb-pd",
-        "103" : "usb-pd-multiport"
+        "102"              : "usb-pd",
+        "103"              : "usb-pd-multiport",
+        "104"              : "led"
 
     }
 
