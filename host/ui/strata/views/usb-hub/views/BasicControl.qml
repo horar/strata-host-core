@@ -158,21 +158,22 @@ Item {
 
 //                displayPort.anchors.top = undefined;
 //                displayPort.anchors.bottom = undefined;
-                displayPort.anchors.left = undefined;
-                  displayPort.anchors.left = port3.right;
-                displayPort.anchors.leftMargin = port4.width + 7;
+//                displayPort.anchors.left = undefined;
+//                  displayPort.anchors.left = port3.right;
+//                displayPort.anchors.leftMargin = port4.width + 7;
 
 //                audioPort.anchors.top = undefined;
 //                audioPort.anchors.bottom = undefined;
-                audioPort.anchors.left = undefined;
-                audioPort.anchors.left = port3.right;
-                audioPort.anchors.leftMargin = port4.width + displayPort.width + 7 + 7;
+//                audioPort.anchors.left = undefined;
+//                audioPort.anchors.left = port3.right;
+//                audioPort.anchors.leftMargin = port4.width + displayPort.width + 7 + 7;
 
             }
         }
 
         ParallelAnimation{
             //here the heights and positions of the USB-A, Audio and Video ports
+            //as we transition to the advanced view
             id:adjustRightThreePortHeightsAndPositions
 
             PropertyAnimation{
@@ -187,7 +188,7 @@ Item {
                 //usb-A port
                 target:port4
                 property: "anchors.bottomMargin"
-                to: advancedDisplayPortPortHeight + advancedAudioPortHeight + 10
+                to: advancedDisplayPortPortHeight + advancedAudioPortHeight + 5+10+10
                 duration: tabTransitionTime
             }
 
@@ -201,13 +202,13 @@ Item {
             PropertyAnimation{
                 target:audioPort
                 property: "anchors.topMargin"
-                to: advancedUSBAPortHeight + 10
+                to: advancedUSBAPortHeight + 10+10
                 duration: tabTransitionTime
             }
             PropertyAnimation{
                 target:audioPort
                 property: "anchors.bottomMargin"
-                to: advancedDisplayPortPortHeight  + 10 + 10
+                to: advancedDisplayPortPortHeight  + 5+10
                 duration: tabTransitionTime
             }
 
@@ -220,7 +221,7 @@ Item {
             PropertyAnimation{
                 target:displayPort
                 property: "anchors.topMargin"
-                to: advancedUSBAPortHeight + advancedAudioPortHeight + 10 + 10 + 10
+                to: advancedUSBAPortHeight + advancedAudioPortHeight + 10+10+7
                 duration: tabTransitionTime
             }
 
@@ -238,18 +239,20 @@ Item {
             }
 
             PropertyAnimation{
-                target:displayPort
+                target:audioPort
                 property: "anchors.leftMargin"
-                to: -port4.width;
+                to:   7;
                 duration: tabTransitionTime
             }
 
             PropertyAnimation{
-                target:audioPort
+                target:displayPort
                 property: "anchors.leftMargin"
-                to: -port4.width;
+                to: advancedPortWidth.width + 7 + 7;
                 duration: tabTransitionTime
             }
+
+
 
         }
 
@@ -263,38 +266,33 @@ Item {
                 duration: tabTransitionTime
             }
 
-            PropertyAnimation{
-                target:displayPort
-                property: "anchors.leftMargin"
-                to: -(advancedPortWidth - basicPortWidth) ;
-                duration: tabTransitionTime
-            }
+
 
 //            PropertyAnimation{
 //                target:audioPort
 //                property: "anchors.leftMargin"
-//                to: (advancedPortWidth - basicPortWidth);
-//                duration: tabTransitionTime
-//            }
-
-        }
-
-//        ParallelAnimation{
-//            id:port2ToAdvanced
-
-//            PropertyAnimation{
-//                target:port2
-//                property: "width"
-//                to: advancedPortWidth
+//                to: 7;
 //                duration: tabTransitionTime
 //            }
 
 //            PropertyAnimation{
 //                target:displayPort
 //                property: "anchors.leftMargin"
-//                to: -port4.width;
+//                to: advancedPortWidth  ;
 //                duration: tabTransitionTime
 //            }
+
+        }
+
+        ParallelAnimation{
+            id:port2ToAdvanced
+
+            PropertyAnimation{
+                target:port2
+                property: "width"
+                to: advancedPortWidth
+                duration: tabTransitionTime
+            }
 
 //            PropertyAnimation{
 //                target:audioPort
@@ -303,19 +301,26 @@ Item {
 //                duration: tabTransitionTime
 //            }
 
-//        }
+            PropertyAnimation{
+                target:displayPort
+                property: "anchors.leftMargin"
+                to: 7;
+                duration: tabTransitionTime
+            }
 
-//        ParallelAnimation{
+        }
 
-//            id:port3ToAdvanced
-//            PropertyAnimation{
-//                target:port3
-//                property: "width"
-//                to: advancedPortWidth
-//                duration: tabTransitionTime
-//            }
+        ParallelAnimation{
 
- //       }
+            id:port3ToAdvanced
+            PropertyAnimation{
+                target:port3
+                property: "width"
+                to: advancedPortWidth
+                duration: tabTransitionTime
+            }
+
+        }
 
         onStopped:{
             devicesToAdvanced.start()
@@ -594,7 +599,7 @@ Item {
         PropertyAnimation{
             target:audioPort
             property: "x"
-            to: background.x  + (6* basicPortWidth) + (7*7)
+            to: background.x  + (5* basicPortWidth) + (6*7)
             duration: tabTransitionTime
         }
         PropertyAnimation{
@@ -612,7 +617,7 @@ Item {
         PropertyAnimation{
             target:displayPort
             property: "x"
-            to: background.x  + (5* basicPortWidth) + (6*7)
+            to: background.x  + (6* basicPortWidth) + (7*7)
             duration: tabTransitionTime
         }
 
@@ -854,12 +859,26 @@ Item {
             width:basicPortWidth
         }
 
+        AudioPortInfo{
+            id:audioPort
+            portName:"Audio"
+            portConnected: false
+            anchors.left: port3.right
+            anchors.leftMargin: basicPortWidth + 7 + 7
+            anchors.top:deviceBackground.top
+            anchors.topMargin: 10
+            anchors.bottom: deviceBackground.bottom
+            anchors.bottomMargin: 5
+
+            width:basicPortWidth
+        }
+
         VideoPortInfo{
             id:displayPort
             portName:"DisplayPort"
             portConnected: false
-            anchors.left: port4.right
-            anchors.leftMargin: 7
+            anchors.left: port3.right
+            anchors.leftMargin: basicPortWidth + basicPortWidth +7 + 7 + 7
             anchors.top:deviceBackground.top
             anchors.topMargin: 10
             anchors.bottom: deviceBackground.bottom
@@ -867,18 +886,7 @@ Item {
             width:basicPortWidth
         }
 
-        AudioPortInfo{
-            id:audioPort
-            portName:"Audio"
-            portConnected: false
-            anchors.left: displayPort.right
-            anchors.leftMargin: 7
-            anchors.top:deviceBackground.top
-            anchors.topMargin: 10
-            anchors.bottom: deviceBackground.bottom
-            anchors.bottomMargin: 5
-            width:basicPortWidth
-        }
+
     }
 
     DeviceInfo{
@@ -1044,42 +1052,15 @@ Item {
         }
     }
 
-    Image{
-        id:videoIcon
-        source:"./images/videoIcon.png"
-        anchors.verticalCenter: port4Device.verticalCenter
-        anchors.left:port4Device.right
-        anchors.leftMargin: 40
-        fillMode:Image.PreserveAspectFit
-        opacity: displayPort.portConnected ? 1 : .5
 
-        MouseArea{
-            anchors.fill: parent
-
-            onClicked: {
-                if (!displayPortAnimation.pluggedIn) {
-                    displayPortAnimation.source = "images/DisplayPortAnim.gif"
-                    displayPortAnimation.currentFrame = 0
-                    displayPortAnimation.playing = true
-                    displayPortAnimation.pluggedIn = !displayPortAnimation.pluggedIn
-                    displayPort.portConnected = true
-                } else {
-                    displayPortAnimation.source = "images/DisplayPortAnimReverse.gif"
-                    displayPortAnimation.currentFrame = 0
-                    displayPortAnimation.playing = true
-                    displayPortAnimation.pluggedIn = !displayPortAnimation.pluggedIn
-                    displayPort.portConnected = false
-                }
-            }
-        }
-    }
 
     Image{
         id:audioIcon
         source:"./images/headphonesIcon.png"
         anchors.verticalCenter: port4Device.verticalCenter
-        anchors.left:videoIcon.right
-        anchors.leftMargin: 80
+        anchors.left:port4Device.right
+        anchors.leftMargin: 40
+
         fillMode:Image.PreserveAspectFit
         opacity: audioPort.portConnected ? 1 : .5
 
@@ -1104,7 +1085,35 @@ Item {
         }
     }
 
+    Image{
+        id:videoIcon
+        source:"./images/videoIcon.png"
+        anchors.verticalCenter: port4Device.verticalCenter
+        anchors.left:audioIcon.right
+        anchors.leftMargin: 80
+        fillMode:Image.PreserveAspectFit
+        opacity: displayPort.portConnected ? 1 : .5
 
+        MouseArea{
+            anchors.fill: parent
+
+            onClicked: {
+                if (!displayPortAnimation.pluggedIn) {
+                    displayPortAnimation.source = "images/DisplayPortAnim.gif"
+                    displayPortAnimation.currentFrame = 0
+                    displayPortAnimation.playing = true
+                    displayPortAnimation.pluggedIn = !displayPortAnimation.pluggedIn
+                    displayPort.portConnected = true
+                } else {
+                    displayPortAnimation.source = "images/DisplayPortAnimReverse.gif"
+                    displayPortAnimation.currentFrame = 0
+                    displayPortAnimation.playing = true
+                    displayPortAnimation.pluggedIn = !displayPortAnimation.pluggedIn
+                    displayPort.portConnected = false
+                }
+            }
+        }
+    }
 
     Image{
         source:"./images/FourPortWireframeBasicView.png"
