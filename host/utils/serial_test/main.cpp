@@ -4,6 +4,7 @@
 #include <thread>
 #include <chrono>
 #include <iostream>
+#include <cstring>
 
 #ifdef __APPLE__
         static const char* usb_keyword = "usb";
