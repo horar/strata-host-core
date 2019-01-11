@@ -23,15 +23,8 @@ if (APPLE)
 endif()
 
 add_subdirectory(libs)
-
-# applications
 add_subdirectory(apps)
-
-#tests..
+add_subdirectory(ui) # LC: temporary enable; later will be re-located in project tree
 #add_subdirectory(test)
-
-#utils
 add_subdirectory(utils)
-
-
 add_subdirectory(research_spikes)
