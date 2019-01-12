@@ -1,5 +1,5 @@
 import QtQuick 2.9
-//import "qrc:/views/usb-pd-multiport/sgwidgets"
+//import "qrc:/views/led/sgwidgets"
 
 Rectangle {
     id: root
@@ -19,56 +19,12 @@ Rectangle {
     property color textColor: "#555"
     property color portColor: "#2eb457"
 
-     function transitionToAdvancedView(){
-         shrinkIcon.start()
-     }
 
-     ParallelAnimation{
-         id: shrinkIcon
-         running: false
-
-         PropertyAnimation {
-             target: iconImage
-             property: "height"
-             to: root.height * 0.65
-             duration: tabTransitionTime
-         }
-
-         PropertyAnimation {
-             target: iconImage
-             property: "anchors.verticalCenterOffset"
-             to: 5
-             duration: tabTransitionTime
-         }
-     }
-
-     function transitionToBasicView(){
-         enlargeIcon.start()
-     }
-
-     ParallelAnimation{
-         id: enlargeIcon
-         running: false
-
-         PropertyAnimation {
-             target: iconImage
-             property: "height"
-             to: root.height * 0.9
-             duration: tabTransitionTime
-         }
-
-         PropertyAnimation {
-             target: iconImage
-             property: "anchors.verticalCenterOffset"
-             to: 0
-             duration: tabTransitionTime
-         }
-     }
 
     Image {
         id: iconImage
         source: root.icon
-        opacity: 0.1
+        opacity: .5
         height: root.height * 0.9
         width: height
         anchors {

@@ -3,15 +3,15 @@ import QtQuick.Controls 2.3
 
 Item {
     id: root
-
     implicitWidth: 200
-    implicitHeight: root.labelLeft ? sgSlider.height : sgSlider.height + labelText.height + sgSlider.anchors.topMargin
+    implicitHeight: root.labelLeft ? controlContainer.height : controlContainer.height + labelText.height + controlContainer.anchors.topMargin
 
     signal moved()
+    signal userSet()
+    signal programmaticallySet()
 
     property alias from: sgSlider.from
     property alias to: sgSlider.to
-    property alias value: sgSlider.value
     property alias position: sgSlider.position
     property alias live: sgSlider.live
     property alias pressed: sgSlider.pressed
@@ -19,8 +19,10 @@ Item {
     property alias stepSize: sgSlider.stepSize
     property alias orientation: sgSlider.orientation
     property alias startLabel: startLabel.text
+    property alias overrideLabelWidth: labelText.width
     property alias endLabel: endLabel.text
 
+    property bool inputBox: true
     property bool labelTopAligned: false
     property bool showToolTip: true
     property color grooveColor: "#dddddd"
@@ -30,114 +32,219 @@ Item {
     property bool labelLeft: true
     property int toolTipDecimalPlaces: 0
 
+    property real value: (to - from) / 2
+    onValueChanged: {
+        sgSlider.value = value
+        if (inputBox) {
+            infoText.text = value
+        }
+    }
+    function setValue(value) {
+        if (root.value !== value) {
+            root.value = value
+            programmaticallySet()
+        }
+    }
+    function userInput(value) {
+        if (root.value !== value) {
+            root.value = value
+            userSet()
+        }
+    }
+
     Text {
         id: labelText
         text: root.label
         width: contentWidth
-        height: root.label === "" ? 0 : root.labelLeft ? sgSlider.height : contentHeight
-        topPadding: root.label === "" ? 0 : root.labelLeft ? labelTopAligned ? 0 : (sgSlider.height-contentHeight)/2 : 0
+        height: root.label === "" ? 0 : root.labelLeft ? controlContainer.height : contentHeight
+        topPadding: root.label === "" ? 0 : root.labelLeft ? labelTopAligned ? 0 : (controlContainer.height-contentHeight)/2 : 0
         bottomPadding: topPadding
         color: root.textColor
     }
 
-    Slider {
-        id: sgSlider
-        value: 50
-        from: 0
-        to: 100
-        live: false
-        implicitWidth: root.labelLeft ? root.width - labelText.width - sgSlider.anchors.leftMargin : root.width
-        implicitHeight: startLabel.text === "" && endLabel.text === "" ? handleImg.height : handleImg.height + Math.max(startLabel.height, endLabel.height)
-        padding: 0
+    Item {
+        id: controlContainer
+        implicitHeight: Math.max(sgSlider.height, inputContainer.height)
+        implicitWidth: root.labelLeft ? root.width - labelText.width - this.anchors.leftMargin : root.width
         anchors {
             left: root.labelLeft ? labelText.right : labelText.left
             top: root.labelLeft ? labelText.top : labelText.bottom
             leftMargin: root.label === "" ? 0 : root.labelLeft ? 10 : 0
             topMargin: root.label === "" ? 0 : root.labelLeft ? 0 : 5
         }
-        enabled: root.enabled
-        opacity: root.enabled ? 1 : .5
-        layer.enabled: root.enabled ? false : true
 
-        background: Rectangle {
-            id: groove
-            y: handleImg.height / 2 - height / 2
-            width: sgSlider.width
-            implicitHeight: 4
-            height: implicitHeight
-            radius: 2
-            color: root.grooveColor
-
-            Rectangle {
-                id: grooveFill
-                width: sgSlider.visualPosition * groove.width
-                height: groove.height
-                color: root.grooveFillColor
-                radius: 2
+        Slider {
+            id: sgSlider
+            value: root.value
+            from: 0
+            to: 100
+            live: false
+            implicitWidth: controlContainer.width - inputContainer.width
+            implicitHeight: startLabel.text === "" && endLabel.text === "" ? handleImg.height : handleImg.height + Math.max(startLabel.height, endLabel.height)
+            padding: 0
+            anchors {
+                verticalCenter: controlContainer.verticalCenter
             }
-
-            // TODO: Faller - fix up the following repeater to make tickmarks at user specified intervals
-//            Repeater {
-//                id: tickRepeater
-//                model: 9
-
-//                Rectangle {
-//                    id: tickMarks
-//                    color: "#ddd"
-//                    height: 6
-//                    width: 1
-//                    anchors {
-//                        top: groove.bottom
-//                        topMargin: 2
-//                    }
-//                    z: -1
-//                    x: (index + 1) * (sgSlider.width - sgSlider.handle.width) / 10 + sgSlider.handle.width/2
-//                }
-//            }
-        }
-
-        handle: Image {
-            id: handleImg
-            x: sgSlider.visualPosition * (sgSlider.width - width + 4) - 2
-            width: 32
-            height: 16
-            source: sgSlider.pressed ? "./images/sliderHandleActive.svg" : "./images/sliderHandle.svg"
-            mipmap: true
-        }
-
-        ToolTip {
-            id: toolTip
-            parent: sgSlider.handle
-            visible: root.showToolTip ? sgSlider.pressed : false
-            text: (sgSlider.valueAt(sgSlider.position)).toFixed(root.toolTipDecimalPlaces)
-
-            contentItem: Text {
-                color: root.textColor
-                text: toolTip.text
+            enabled: root.enabled
+            opacity: root.enabled ? 1 : .5
+            layer.enabled: root.enabled ? false : true
+            onMoved: root.moved()
+            onPressedChanged: {
+                if (!pressed) {
+                    root.userInput(value)
+                }
+            }
+            onValueChanged: {
+                root.userInput(value)
             }
 
             background: Rectangle {
-                id: toolTipBackground
-                color: "#eee"
+                id: groove
+                y: handleImg.height / 2 - height / 2
+                width: sgSlider.width
+                implicitHeight: 4
+                height: implicitHeight
                 radius: 2
+                color: root.grooveColor
+
+                Rectangle {
+                    id: grooveFill
+                    width: sgSlider.visualPosition * groove.width
+                    height: groove.height
+                    color: root.grooveFillColor
+                    radius: 2
+                }
+
+                // TODO: Faller - fix up the following repeater to make tickmarks at user specified intervals
+                //            Repeater {
+                //                id: tickRepeater
+                //                model: 9
+
+                //                Rectangle {
+                //                    id: tickMarks
+                //                    color: "#ddd"
+                //                    height: 6
+                //                    width: 1
+                //                    anchors {
+                //                        top: groove.bottom
+                //                        topMargin: 2
+                //                    }
+                //                    z: -1
+                //                    x: (index + 1) * (sgSlider.width - sgSlider.handle.width) / 10 + sgSlider.handle.width/2
+                //                }
+                //            }
+            }
+
+            handle: Image {
+                id: handleImg
+                x: sgSlider.visualPosition * (sgSlider.width - width + 4) - 2
+                width: 32
+                height: 16
+                source: sgSlider.pressed ? "./images/sliderHandleActive.svg" : "./images/sliderHandle.svg"
+                mipmap: true
+            }
+
+            ToolTip {
+                id: toolTip
+                parent: sgSlider.handle
+                visible: root.showToolTip ? sgSlider.pressed : false
+                text: (sgSlider.valueAt(sgSlider.position)).toFixed(root.toolTipDecimalPlaces)
+
+                contentItem: Text {
+                    color: root.textColor
+                    text: toolTip.text
+                }
+
+                background: Rectangle {
+                    id: toolTipBackground
+                    color: "dimgrey"
+                    radius: 2
+                }
+            }
+
+            Label {
+                id: startLabel
+                anchors.bottom : sgSlider.bottom
+                font.pixelSize : 12
+                text: sgSlider.from
+                color: root.textColor
+            }
+
+            Label {
+                id: endLabel
+                anchors.right : sgSlider.right
+                anchors.bottom : sgSlider.bottom
+                font.pixelSize: 12
+                text: sgSlider.to
+                color: root.textColor
             }
         }
 
-        Label {
-            id: startLabel
-            anchors.bottom : sgSlider.bottom
-            font.pixelSize : 12
-            text: sgSlider.from
-            color: root.textColor
-        }
+        Item {
+            id: inputContainer
+            anchors {
+                left: sgSlider.right
+                //verticalCenter: controlContainer.verticalCenter
+                verticalCenter: controlContainer.top
+                verticalCenterOffset: 10
+            }
+            height: root.inputBox ? infoText.height : 0
+            width: root.inputBox ? 50 : 0
+            visible: root.inputBox
 
-        Label {
-            id: endLabel
-            anchors.right : sgSlider.right
-            anchors.bottom : sgSlider.bottom
-            font.pixelSize: 12
-            text: sgSlider.to
-            color: root.textColor
+            TextInput {
+                id: infoText
+                padding: 5
+                anchors {
+                    left: inputContainer.left
+                    right: inputContainer.right
+                    leftMargin: 5
+                }
+                text: root.value
+                selectByMouse: true
+                readOnly: false
+                font {
+//                    family: inconsolata.name // inconsolata is monospaced and has clear chars for O/0 etc
+                    pixelSize: (Qt.platform.os === "osx") ? 12 : 10;
+                }
+                horizontalAlignment: TextInput.AlignRight
+                validator: realNumberValidator
+                enabled: root.enabled
+                color: root.textColor
+                opacity: root.enabled ? 1 : 0.5
+                onEditingFinished: {
+                    root.userInput(parseFloat(this.text))
+                }
+                onAccepted: {
+                    root.userInput(parseFloat(this.text))
+                }
+                clip: true
+
+                RegExpValidator {
+                    id: realNumberValidator
+                    regExp: /[-+]?([0-9]*\.[0-9]+|[0-9]+)/
+                }
+
+                MouseArea {
+                    visible: !infoText.readOnly
+                    anchors {
+                        fill: infoText
+                    }
+                    cursorShape: Qt.IBeamCursor
+                    acceptedButtons: Qt.NoButton
+                }
+
+                Rectangle {
+                    color: "transparent"
+                    border {
+                        width: 1
+                        color: "lightgrey"
+                    }
+                    anchors {
+                        fill: infoText
+                    }
+                }
+            }
         }
     }
 }

@@ -107,7 +107,7 @@ Item {
             height: 26
             y: parent.height / 2 - height / 2
             radius: 13
-            color: "#ccc"
+            color: "dimgrey"
 
             Text {
                 id: uncheckedText

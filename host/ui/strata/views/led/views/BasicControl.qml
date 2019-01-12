@@ -1,2056 +1,901 @@
 import QtQuick 2.9
 import QtGraphicalEffects 1.0
-import "qrc:/views/usb-hub/sgwidgets"
-import "qrc:/views/usb-hub/views/basic-partial-views"
+import QtQuick.Dialogs 1.3
+import QtQuick.Controls 2.4
+import "qrc:/views/led/sgwidgets"
+import "qrc:/views/led/views/basic-partial-views"
 
-Item {
+Rectangle {
     id: root
+    anchors.fill:parent
+    color:"dimgrey"
+
+    property string textColor: "white"
+    property string secondaryTextColor: "grey"
+    property string windowsDarkBlue: "#2d89ef"
+    property string backgroundColor: "#2A2E31"
+    property string dividerColor: "#3E4042"
+    property string switchGrooveColor:"dimgrey"
+    property int leftSwitchMargin: 40
+    property int rightInset: 50
 
-    property bool debugLayout: false
-    property real ratioCalc: root.width / 1200
-    property int transitionStepTime: 5000
-    property int tabTransitionTime: transitionStepTime
-    property int tabTransitionTimePhase2: transitionStepTime
-
-    property int basicPortWidth: 160
-    property int advancedPortWidth: 240
-
-    property int basicDeviceWidth: 160
-    property int advancedDeviceWidth: 240
-
-    property int basicThinPortWidth: 170
-    property int advancedThinPortWidth: 170
-
-    property int basicPortHeight: 344
-
-    property int advancedUSBAPortHeight: 240
-    property int advancedAudioPortHeight: 157
-    property int advancedDisplayPortPortHeight: 157
-
-    property int basicTopMargin: 95
-    property int advancedTopMargin: 10
-
-    width: parent.width / parent.height > initialAspectRatio ? parent.height * initialAspectRatio : parent.width
-    height: parent.width / parent.height < initialAspectRatio ? parent.width / initialAspectRatio : parent.height
-
-
-
-    Rectangle{
-        id:background
-        anchors.fill:parent
-        color:"#145A74"
-    }
-
-    PlugAnimation {
-        id: upstreamAnimation
-        anchors.horizontalCenter: upstreamDevice.horizontalCenter
-        anchors.horizontalCenterOffset: 10
-        anchors.bottom: upstreamDevice.verticalCenter
-        anchors.bottomMargin: -20
-    }
-
-    PlugAnimation {
-        id: port1Animation
-        anchors.horizontalCenter: port1Device.horizontalCenter
-        anchors.horizontalCenterOffset: 10
-        anchors.bottom: port1Device.verticalCenter
-        anchors.bottomMargin: -20
-    }
-
-    PlugAnimation {
-        id: port2Animation
-        anchors.horizontalCenter: port2Device.horizontalCenter
-        anchors.horizontalCenterOffset: 10
-        anchors.bottom: port2Device.verticalCenter
-        anchors.bottomMargin: -20
-    }
-
-    PlugAnimation {
-        id: port3Animation
-        anchors.horizontalCenter: port3Device.horizontalCenter
-        anchors.horizontalCenterOffset: 10
-        anchors.bottom: port3Device.verticalCenter
-        anchors.bottomMargin: -20
-    }
-
-    PlugAnimation {
-        id: port4Animation
-        anchors.horizontalCenter: port4Device.horizontalCenter
-        anchors.horizontalCenterOffset: 10
-        anchors.bottom: port4Device.verticalCenter
-        anchors.bottomMargin: -10
-    }
-
-    PlugAnimation {
-        id: displayPortAnimation
-        anchors.horizontalCenter: videoIcon.horizontalCenter
-        anchors.horizontalCenterOffset: 10
-        anchors.bottom: videoIcon.verticalCenter
-        anchors.bottomMargin: -20
-    }
-
-    PlugAnimation {
-        id: audioAnimation
-        anchors.horizontalCenter: audioIcon.horizontalCenter
-        anchors.horizontalCenterOffset: 10
-        anchors.bottom: audioIcon.verticalCenter
-        anchors.bottomMargin: -20
-    }
-
-    function switchToAdvancedView(){
-        tabTransitionTime = 0
-        transitionToAdvancedView();
-    }
-
-    //called upon completion of the switch to advanced animation
-    function toAdvancedAnimationFinished(){
-        tabTransitionTime = transitionStepTime;  //reset tab transition time if needed
-    }
-
-    function transitionToAdvancedView(){
-
-
-        portsAndBackgroundToAdvanced.start()
-
-        //portsToAdvanced.start();
-        //devicesToAdvanced.start();
-        audioPort.transitionToAdvancedView();
-        displayPort.transitionToAdvancedView();
-        upstreamPort.transitionToAdvancedView();
-        port1.transitionToAdvancedView();
-        port2.transitionToAdvancedView();
-        port3.transitionToAdvancedView();
-        port4.transitionToAdvancedView();
-
-    }
-
-    SequentialAnimation{
-        id:portsAndBackgroundToAdvanced
-
-        ParallelAnimation{
-            id: backgroundToAdvanced
-            running: false
-
-            PropertyAnimation{
-                target:deviceBackground
-                property: "anchors.topMargin"
-                to:(root.height)/32
-                duration: tabTransitionTime
-            }
-
-            PropertyAnimation{
-                target:deviceBackground
-                property: "height"
-                to: (23*parent.height)/32
-                duration: tabTransitionTime
-            }
-
-            onStopped:{
-                //unanchor parts of the ports that will be rearranged in the next step
-//                port4.anchors.bottom = undefined;
-//                port4.anchors.bottomMargin = 0
-//                port4.anchors.left = undefined;
-//                port4.anchors.leftMargin = 0
-//                port4.anchors.top = undefined
-//                port4.anchors.topMargin = 0
-//                port4.anchors.right = undefined
-//                port4.anchors.rightMargin = 0
-
-//                displayPort.anchors.top = undefined;
-//                displayPort.anchors.bottom = undefined;
-//                displayPort.anchors.left = undefined;
-//                  displayPort.anchors.left = port3.right;
-//                displayPort.anchors.leftMargin = port4.width + 7;
-
-//                audioPort.anchors.top = undefined;
-//                audioPort.anchors.bottom = undefined;
-//                audioPort.anchors.left = undefined;
-//                audioPort.anchors.left = port3.right;
-//                audioPort.anchors.leftMargin = port4.width + displayPort.width + 7 + 7;
-
-            }
-        }
-
-        ParallelAnimation{
-            //here the heights and positions of the USB-A, Audio and Video ports
-            //as we transition to the advanced view
-            id:adjustRightThreePortHeightsAndPositions
-
-            PropertyAnimation{
-                //usb-A port
-                target:port4
-                property: "width"
-                to: advancedThinPortWidth
-                duration: tabTransitionTime
-            }
-
-            PropertyAnimation{
-                //usb-A port
-                target:port4
-                property: "anchors.bottomMargin"
-                to: advancedDisplayPortPortHeight + advancedAudioPortHeight + 5+10+10
-                duration: tabTransitionTime
-            }
-
-
-            PropertyAnimation{
-                target:audioPort
-                property: "width"
-                to: advancedThinPortWidth
-                duration: tabTransitionTime
-            }
-            PropertyAnimation{
-                target:audioPort
-                property: "anchors.topMargin"
-                to: advancedUSBAPortHeight + 10+10
-                duration: tabTransitionTime
-            }
-            PropertyAnimation{
-                target:audioPort
-                property: "anchors.bottomMargin"
-                to: advancedDisplayPortPortHeight  + 5+10
-                duration: tabTransitionTime
-            }
-
-            PropertyAnimation{
-                target:displayPort
-                property: "width"
-                to: advancedThinPortWidth
-                duration: tabTransitionTime
-            }
-            PropertyAnimation{
-                target:displayPort
-                property: "anchors.topMargin"
-                to: advancedUSBAPortHeight + advancedAudioPortHeight + 10+10+7
-                duration: tabTransitionTime
-            }
-
-
-        }
-
-        ParallelAnimation{
-            id:upstreamPortToAdvanced
-
-            PropertyAnimation{
-                target:upstreamPort
-                property: "width"
-                to: advancedPortWidth
-                duration: tabTransitionTime
-            }
-
-            PropertyAnimation{
-                target:audioPort
-                property: "anchors.leftMargin"
-                to:   7;
-                duration: tabTransitionTime
-            }
-
-            PropertyAnimation{
-                target:displayPort
-                property: "anchors.leftMargin"
-                to: advancedPortWidth.width + 7 + 7;
-                duration: tabTransitionTime
-            }
-
-
-
-        }
-
-        ParallelAnimation{
-            id:port1ToAdvanced
-
-            PropertyAnimation{
-                target:port1
-                property: "width"
-                to: advancedPortWidth
-                duration: tabTransitionTime
-            }
-
-
-
-//            PropertyAnimation{
-//                target:audioPort
-//                property: "anchors.leftMargin"
-//                to: 7;
-//                duration: tabTransitionTime
-//            }
-
-//            PropertyAnimation{
-//                target:displayPort
-//                property: "anchors.leftMargin"
-//                to: advancedPortWidth  ;
-//                duration: tabTransitionTime
-//            }
-
-        }
-
-        ParallelAnimation{
-            id:port2ToAdvanced
-
-            PropertyAnimation{
-                target:port2
-                property: "width"
-                to: advancedPortWidth
-                duration: tabTransitionTime
-            }
-
-//            PropertyAnimation{
-//                target:audioPort
-//                property: "anchors.leftMargin"
-//                to: -port4.width;
-//                duration: tabTransitionTime
-//            }
-
-            PropertyAnimation{
-                target:displayPort
-                property: "anchors.leftMargin"
-                to: 7;
-                duration: tabTransitionTime
-            }
-
-        }
-
-        ParallelAnimation{
-
-            id:port3ToAdvanced
-            PropertyAnimation{
-                target:port3
-                property: "width"
-                to: advancedPortWidth
-                duration: tabTransitionTime
-            }
-
-        }
-
-        onStopped:{
-            devicesToAdvanced.start()
-        }
-    }  //end sequential animation
-
-
-
-
-
-    //--------------------------------------------------------------------
-    //  Device Animations
-    //--------------------------------------------------------------------
-    ParallelAnimation{
-        id: devicesToAdvanced
-        PropertyAnimation{
-            target: upstreamDevice
-            property: "width"
-            to: advancedDeviceWidth
-            duration: tabTransitionTime
-        }
-        PropertyAnimation{
-            target: port1Device
-            property: "width"
-            to: advancedDeviceWidth
-            duration: tabTransitionTime
-        }
-        PropertyAnimation{
-            target: port2Device
-            property: "width"
-            to: advancedDeviceWidth
-            duration: tabTransitionTime
-        }
-        PropertyAnimation{
-            target: port3Device
-            property: "width"
-            to: advancedDeviceWidth
-            duration: tabTransitionTime
-        }
-        PropertyAnimation{
-            target: upstreamDevice
-            property: "anchors.topMargin"
-            to: advancedTopMargin
-            duration: tabTransitionTime
-        }
-        PropertyAnimation{
-            target: port1Device
-            property: "anchors.topMargin"
-            to: advancedTopMargin
-            duration: tabTransitionTime
-        }
-        PropertyAnimation{
-            target: port2Device
-            property: "anchors.topMargin"
-            to: advancedTopMargin
-            duration: tabTransitionTime
-        }
-        PropertyAnimation{
-            target: port3Device
-            property: "anchors.topMargin"
-            to: advancedTopMargin
-            duration: tabTransitionTime
-        }
-        PropertyAnimation{
-            target: port4Device
-            property: "anchors.topMargin"
-            to: advancedTopMargin
-            duration: tabTransitionTime
-        }
-
-        PropertyAnimation{
-            target: port4Device
-            property: "opacity"
-            to: 0
-            duration: tabTransitionTime
-        }
-        PropertyAnimation{
-            target: videoIcon
-            property: "opacity"
-            to: 0
-            duration: tabTransitionTime
-        }
-        PropertyAnimation{
-            target: audioIcon
-            property: "opacity"
-            to: 0
-            duration: tabTransitionTime
-        }
-        PropertyAnimation{
-            target: upstreamAnimation
-            property: "opacity"
-            to: 0
-            duration: tabTransitionTime
-        }
-        PropertyAnimation{
-            target: port1Animation
-            property: "opacity"
-            to: 0
-            duration: tabTransitionTime
-        }
-        PropertyAnimation{
-            target: port2Animation
-            property: "opacity"
-            to: 0
-            duration: tabTransitionTime
-        }
-        PropertyAnimation{
-            target: port3Animation
-            property: "opacity"
-            to: 0
-            duration: tabTransitionTime
-        }
-        PropertyAnimation{
-            target: port4Animation
-            property: "opacity"
-            to: 0
-            duration: tabTransitionTime
-        }
-        PropertyAnimation{
-            target: displayPortAnimation
-            property: "opacity"
-            to: 0
-            duration: tabTransitionTime
-        }
-        PropertyAnimation{
-            target: audioAnimation
-            property: "opacity"
-            to: 0
-            duration: tabTransitionTime
-        }
-
-        onStopped:{
-            toAdvancedAnimationFinished();
-        }
-
-    }
 
     //----------------------------------------------------------------------------------------
-    //                      Animation to Basic View
+    //                      Views
     //----------------------------------------------------------------------------------------
-
-    function switchToBasicView(){
-        tabTransitionTime = 0
-        transitionToBasicView();
-    }
-
-    //called upon completion of the switch to basic animation
-    function toBasicAnimationFinished(){
-        tabTransitionTime = transitionStepTime;  //reset tab transition time if needed
-    }
-
-    function transitionToBasicView(){
-
-        //unanchor parts of the ports that will be rearranged
-        port4.anchors.bottom = undefined;
-        port4.anchors.left = undefined;
-        audioPort.anchors.top = undefined;
-        audioPort.anchors.bottom = undefined;
-        audioPort.anchors.left = undefined;
-        displayPort.anchors.top = undefined;
-        displayPort.anchors.bottom = undefined;
-        displayPort.anchors.left = undefined;
-
-        audioPort.transitionToBasicView();
-        displayPort.transitionToBasicView();
-        upstreamPort.transitionToBasicView();
-        port1.transitionToBasicView();
-        port2.transitionToBasicView();
-        port3.transitionToBasicView();
-        //port4.transitionToBasicView();
-
-        //this timer will give the above animations time to run
-        portContentAnimationTimer.start()
-        //when finished the ports and devices will resize
-        //when that's finished the background will resize
-
-    }
-
-    Timer{
-        //give the content of the ports time to rearrange themselves
-        //with a timer
-        id:portContentAnimationTimer
-        running: false
-        interval: tabTransitionTime
-
-        onTriggered: {
-            //then rearrange the port and devices outline
-            portsToBasic.start();
-            devicesToBasic.start();
-        }
-    }
-
-    ParallelAnimation{
-        id: backgroundToBasic
-        running: false
-
-        PropertyAnimation{
-            target:deviceBackground
-            property: "anchors.topMargin"
-            to:(3*root.height)/32
-            duration: tabTransitionTime
-        }
-
-        PropertyAnimation{
-            target:deviceBackground
-            property: "height"
-            to: (7*parent.height)/16
-            duration: tabTransitionTime
-        }
-
-    }
-
-    ParallelAnimation{
-        //changing the background will expand the ports as well, since they're anchored together
-        //we will have to alter size and position of the USB-A, Audio and DisplayPort ports here
-        id:portsToBasic
-        PropertyAnimation{
-            target:upstreamPort
-            property: "width"
-            to: basicPortWidth
-            duration: tabTransitionTime
-        }
-        PropertyAnimation{
-            target:port1
-            property: "width"
-            to: basicPortWidth
-            duration: tabTransitionTime
-        }
-        PropertyAnimation{
-            target:port2
-            property: "width"
-            to: basicPortWidth
-            duration: tabTransitionTime
-        }
-        PropertyAnimation{
-            target:port3
-            property: "width"
-            to: basicPortWidth
-            duration: tabTransitionTime
-        }
-        PropertyAnimation{
-            //usb-A port
-            target:port4
-            property: "width"
-            to: basicPortWidth
-            duration: tabTransitionTime
-        }
-
-        PropertyAnimation{
-            //usb-A port
-            target:port4
-            property: "height"
-            to: basicPortHeight
-            duration: tabTransitionTime
-        }
-        PropertyAnimation{
-            //usb-A port
-            target:port4
-            property: "x"
-            to: background.x  + (4* basicPortWidth) + (5*7)
-            duration: tabTransitionTime
-        }
-
-        PropertyAnimation{
-            target:audioPort
-            property: "width"
-            to: basicPortWidth
-            duration: tabTransitionTime
-        }
-        PropertyAnimation{
-            target:audioPort
-            property: "height"
-            to: basicPortHeight
-            duration: tabTransitionTime
-        }
-        PropertyAnimation{
-            target:audioPort
-            property: "x"
-            to: background.x  + (5* basicPortWidth) + (6*7)
-            duration: tabTransitionTime
-        }
-        PropertyAnimation{
-            target:audioPort
-            property: "y"
-            to: background.y+10
-            duration: tabTransitionTime
-        }
-        PropertyAnimation{
-            target:displayPort
-            property: "width"
-            to: basicPortWidth
-            duration: tabTransitionTime
-        }
-        PropertyAnimation{
-            target:displayPort
-            property: "x"
-            to: background.x  + (6* basicPortWidth) + (7*7)
-            duration: tabTransitionTime
-        }
-
-        PropertyAnimation{
-            target:displayPort
-            property: "y"
-            to: background.y+10
-            duration: tabTransitionTime
-        }
-
-        PropertyAnimation{
-            target:displayPort
-            property: "height"
-            to: basicPortHeight
-            duration: tabTransitionTime
-        }
-
-        onStopped: {
-            //port 4 (USB-A) was special, because it was shrunk.
-            //Thus we allow that port to resize to normal height before we rearrange its content
-            port4.transitionToBasicView();
-            backgroundToBasic.start()
-        }
-    }
-
-    //--------------------------------------------------------------------
-    //  Device Animations
-    //--------------------------------------------------------------------
-    ParallelAnimation{
-        id: devicesToBasic
-        PropertyAnimation{
-            target: upstreamDevice
-            property: "width"
-            to: basicDeviceWidth
-            duration: tabTransitionTime
-        }
-        PropertyAnimation{
-            target: port1Device
-            property: "width"
-            to: basicDeviceWidth
-            duration: tabTransitionTime
-        }
-        PropertyAnimation{
-            target: port2Device
-            property: "width"
-            to: basicDeviceWidth
-            duration: tabTransitionTime
-        }
-        PropertyAnimation{
-            target: port3Device
-            property: "width"
-            to: basicDeviceWidth
-            duration: tabTransitionTime
-        }
-        PropertyAnimation{
-            target: upstreamDevice
-            property: "anchors.topMargin"
-            to: basicTopMargin
-            duration: tabTransitionTime
-        }
-        PropertyAnimation{
-            target: port1Device
-            property: "anchors.topMargin"
-            to: basicTopMargin
-            duration: tabTransitionTime
-        }
-        PropertyAnimation{
-            target: port2Device
-            property: "anchors.topMargin"
-            to: basicTopMargin
-            duration: tabTransitionTime
-        }
-        PropertyAnimation{
-            target: port3Device
-            property: "anchors.topMargin"
-            to: basicTopMargin
-            duration: tabTransitionTime
-        }
-        PropertyAnimation{
-            target: port4Device
-            property: "anchors.topMargin"
-            to: basicTopMargin
-            duration: tabTransitionTime
-        }
-
-        PropertyAnimation{
-            target: port4Device
-            property: "opacity"
-            to: 1
-            duration: tabTransitionTime
-        }
-        PropertyAnimation{
-            target: videoIcon
-            property: "opacity"
-            to: 1
-            duration: tabTransitionTime
-        }
-        PropertyAnimation{
-            target: audioIcon
-            property: "opacity"
-            to: 1
-            duration: tabTransitionTime
-        }
-        PropertyAnimation{
-            target: upstreamAnimation
-            property: "opacity"
-            to: 1
-            duration: tabTransitionTime
-        }
-        PropertyAnimation{
-            target: port1Animation
-            property: "opacity"
-            to: 1
-            duration: tabTransitionTime
-        }
-        PropertyAnimation{
-            target: port2Animation
-            property: "opacity"
-            to: 1
-            duration: tabTransitionTime
-        }
-        PropertyAnimation{
-            target: port3Animation
-            property: "opacity"
-            to: 1
-            duration: tabTransitionTime
-        }
-        PropertyAnimation{
-            target: port4Animation
-            property: "opacity"
-            to: 1
-            duration: tabTransitionTime
-        }
-        PropertyAnimation{
-            target: displayPortAnimation
-            property: "opacity"
-            to: 1
-            duration: tabTransitionTime
-        }
-        PropertyAnimation{
-            target: audioAnimation
-            property: "opacity"
-            to: 1
-            duration: tabTransitionTime
-        }
-
-        onStopped:{
-            toBasicAnimationFinished();
-        }
-
-    }
-
-//----------------------------------------------------------------------------------------
-//                      Views
-//----------------------------------------------------------------------------------------
 
 
     Rectangle{
         id:deviceBackground
-        color:"darkgrey"
-        radius:5
+        color:backgroundColor
+        radius:10
         height:(7*parent.height)/16
         anchors.left:root.left
         anchors.leftMargin: 12
         anchors.right: root.right
         anchors.rightMargin: 12
         anchors.top:root.top
-        anchors.topMargin: (3*root.height)/32
-
-        PortInfo{
-            id:upstreamPort
-            portName:"Upstream"
-            portNumber:1
-            portConnected: false
-            anchors.left: deviceBackground.left
-            anchors.leftMargin: 7
-            anchors.top:deviceBackground.top
-            anchors.topMargin: 10
-            anchors.bottom: deviceBackground.bottom
-            anchors.bottomMargin: 5
-            width:basicPortWidth
-        }
-
-        PortInfo{
-            id:port1
-            portName:"Port 1"
-            portNumber:2
-            portConnected: false
-            anchors.left: upstreamPort.right
-            anchors.leftMargin: 7
-            anchors.top:deviceBackground.top
-            anchors.topMargin: 10
-            anchors.bottom: deviceBackground.bottom
-            anchors.bottomMargin: 5
-            width:basicPortWidth
-        }
-
-        PortInfo{
-            id:port2
-            portName:"Port 2"
-            portNumber:3
-            portConnected: false
-            anchors.left: port1.right
-            anchors.leftMargin: 7
-            anchors.top:deviceBackground.top
-            anchors.topMargin: 10
-            anchors.bottom: deviceBackground.bottom
-            anchors.bottomMargin: 5
-            width:basicPortWidth
-        }
-
-        PortInfo{
-            id:port3
-            portName:"Port 3"
-            portNumber:4
-            portConnected: false
-            anchors.left: port2.right
-            anchors.leftMargin: 7
-            anchors.top:deviceBackground.top
-            anchors.topMargin: 10
-            anchors.bottom: deviceBackground.bottom
-            anchors.bottomMargin: 5
-            width:basicPortWidth
-        }
-
-        USBAPortInfo{
-            id:port4
-            portName:"Port 4"
-            portSubtitle: "USB-A"
-            portNumber:5
-            portConnected: false
-            isUSBAPort: true
-            anchors.left: port3.right
-            anchors.leftMargin: 7
-            anchors.top:deviceBackground.top
-            anchors.topMargin: 10
-            anchors.bottom: deviceBackground.bottom
-            anchors.bottomMargin: 5
-            width:basicPortWidth
-        }
-
-        AudioPortInfo{
-            id:audioPort
-            portName:"Audio"
-            portConnected: false
-            anchors.left: port3.right
-            anchors.leftMargin: basicPortWidth + 7 + 7
-            anchors.top:deviceBackground.top
-            anchors.topMargin: 10
-            anchors.bottom: deviceBackground.bottom
-            anchors.bottomMargin: 5
-
-            width:basicPortWidth
-        }
-
-        VideoPortInfo{
-            id:displayPort
-            portName:"DisplayPort"
-            portConnected: false
-            anchors.left: port3.right
-            anchors.leftMargin: basicPortWidth + basicPortWidth +7 + 7 + 7
-            anchors.top:deviceBackground.top
-            anchors.topMargin: 10
-            anchors.bottom: deviceBackground.bottom
-            anchors.bottomMargin: 5
-            width:basicPortWidth
-        }
-
-
-    }
-
-    DeviceInfo{
-        id:upstreamDevice
-        anchors.top:deviceBackground.bottom
-        anchors.topMargin: 95
-        anchors.left:root.left
-        anchors.leftMargin: 20
-        height:145
-        width:160
-
-        MouseArea{
-            anchors.fill: parent
-
-            onClicked: {
-                if (!upstreamAnimation.pluggedIn) {
-                    upstreamAnimation.source = "images/cord.gif"
-                    upstreamAnimation.currentFrame = 0
-                    upstreamAnimation.playing = true
-                    upstreamAnimation.pluggedIn = !upstreamAnimation.pluggedIn
-                    upstreamPort.portConnected = true
-                    upstreamDevice.connected = true
-                } else {
-                    upstreamAnimation.source = "images/cordReverse.gif"
-                    upstreamAnimation.currentFrame = 0
-                    upstreamAnimation.playing = true
-                    upstreamAnimation.pluggedIn = !upstreamAnimation.pluggedIn
-                    upstreamPort.portConnected = false
-                    upstreamDevice.connected = false
-                }
-            }
-        }
-
-    }
-
-    DeviceInfo{
-        id:port1Device
-        anchors.top:deviceBackground.bottom
-        anchors.topMargin: 95
-        anchors.left:upstreamDevice.right
-        anchors.leftMargin: 7
-        height:145
-        width:160
-
-        MouseArea{
-            anchors.fill: parent
-
-            onClicked: {
-                if (!port1Animation.pluggedIn) {
-                    port1Animation.source = "images/cord.gif"
-                    port1Animation.currentFrame = 0
-                    port1Animation.playing = true
-                    port1Animation.pluggedIn = !port1Animation.pluggedIn
-                    port1.portConnected = true
-                    port1Device.connected = true
-                } else {
-                    port1Animation.source = "images/cordReverse.gif"
-                    port1Animation.currentFrame = 0
-                    port1Animation.playing = true
-                    port1Animation.pluggedIn = !port1Animation.pluggedIn
-                    port1.portConnected = false
-                    port1Device.connected = false
-                }
-            }
-        }
-
-
-    }
-
-    DeviceInfo{
-        id:port2Device
-        anchors.top:deviceBackground.bottom
-        anchors.topMargin: 95
-        anchors.left:port1Device.right
-        anchors.leftMargin: 7
-        height:145
-        width:160
-
-        MouseArea{
-            anchors.fill: parent
-
-            onClicked: {
-                if (!port2Animation.pluggedIn) {
-                    port2Animation.source = "images/cord.gif"
-                    port2Animation.currentFrame = 0
-                    port2Animation.playing = true
-                    port2Animation.pluggedIn = !port2Animation.pluggedIn
-                    port2.portConnected = true
-                    port2Device.connected = true
-                } else {
-                    port2Animation.source = "images/cordReverse.gif"
-                    port2Animation.currentFrame = 0
-                    port2Animation.playing = true
-                    port2Animation.pluggedIn = !port2Animation.pluggedIn
-                    port2.portConnected = false
-                    port2Device.connected = false
-                }
-            }
-        }
-    }
-
-    DeviceInfo{
-        id:port3Device
-        anchors.top:deviceBackground.bottom
-        anchors.topMargin: 95
-        anchors.left:port2Device.right
-        anchors.leftMargin: 7
-        height:145
-        width:160
-
-        MouseArea{
-            anchors.fill: parent
-
-            onClicked: {
-                if (!port3Animation.pluggedIn) {
-                    port3Animation.source = "images/cord.gif"
-                    port3Animation.currentFrame = 0
-                    port3Animation.playing = true
-                    port3Animation.pluggedIn = !port3Animation.pluggedIn
-                    port3.portConnected = true
-                    port3Device.connected = true
-                } else {
-                    port3Animation.source = "images/cordReverse.gif"
-                    port3Animation.currentFrame = 0
-                    port3Animation.playing = true
-                    port3Animation.pluggedIn = !port3Animation.pluggedIn
-                    port3.portConnected = false
-                    port3Device.connected = false
-                }
-            }
-        }
-    }
-
-    DeviceInfo{
-        id:port4Device
-        anchors.top:deviceBackground.bottom
-        anchors.topMargin: 95
-        anchors.left:port3Device.right
-        anchors.leftMargin: 7
-        height:145
-        width:160
-
-        MouseArea{
-            anchors.fill: parent
-
-            onClicked: {
-                if (!port4Animation.pluggedIn) {
-                    port4Animation.source = "images/usbACord.gif"
-                    port4Animation.currentFrame = 0
-                    port4Animation.playing = true
-                    port4Animation.pluggedIn = !port4Animation.pluggedIn
-                    port4.portConnected = true
-                    port4Device.connected = true
-                } else {
-                    port4Animation.source = "images/usbACordReverse.gif"
-                    port4Animation.currentFrame = 0
-                    port4Animation.playing = true
-                    port4Animation.pluggedIn = !port4Animation.pluggedIn
-                    port4.portConnected = false
-                    port4Device.connected = false
-                }
-            }
-        }
-    }
-
-
-
-    Image{
-        id:audioIcon
-        source:"./images/headphonesIcon.png"
-        anchors.verticalCenter: port4Device.verticalCenter
-        anchors.left:port4Device.right
-        anchors.leftMargin: 40
-
-        fillMode:Image.PreserveAspectFit
-        opacity: audioPort.portConnected ? 1 : .5
-
-        MouseArea{
-            anchors.fill: parent
-
-            onClicked: {
-                if (!audioAnimation.pluggedIn) {
-                    audioAnimation.source = "images/AudioAnim.gif"
-                    audioAnimation.currentFrame = 0
-                    audioAnimation.playing = true
-                    audioAnimation.pluggedIn = !audioAnimation.pluggedIn
-                    audioPort.portConnected = true
-                } else {
-                    audioAnimation.source = "images/AudioAnimReverse.gif"
-                    audioAnimation.currentFrame = 0
-                    audioAnimation.playing = true
-                    audioAnimation.pluggedIn = !audioAnimation.pluggedIn
-                    audioPort.portConnected = false
-                }
-            }
-        }
-    }
-
-    Image{
-        id:videoIcon
-        source:"./images/videoIcon.png"
-        anchors.verticalCenter: port4Device.verticalCenter
-        anchors.left:audioIcon.right
-        anchors.leftMargin: 80
-        fillMode:Image.PreserveAspectFit
-        opacity: displayPort.portConnected ? 1 : .5
-
-        MouseArea{
-            anchors.fill: parent
-
-            onClicked: {
-                if (!displayPortAnimation.pluggedIn) {
-                    displayPortAnimation.source = "images/DisplayPortAnim.gif"
-                    displayPortAnimation.currentFrame = 0
-                    displayPortAnimation.playing = true
-                    displayPortAnimation.pluggedIn = !displayPortAnimation.pluggedIn
-                    displayPort.portConnected = true
-                } else {
-                    displayPortAnimation.source = "images/DisplayPortAnimReverse.gif"
-                    displayPortAnimation.currentFrame = 0
-                    displayPortAnimation.playing = true
-                    displayPortAnimation.pluggedIn = !displayPortAnimation.pluggedIn
-                    displayPort.portConnected = false
-                }
-            }
-        }
-    }
-
-    Image{
-        source:"./images/FourPortWireframeBasicView.png"
-        anchors.fill:root
-        opacity: .2
-        visible: false
-    }
-
-//    Text{
-//        id:placeholderText
-//        text: "hub basic view"
-//        anchors.centerIn: root
-//        font.pixelSize: 24
-//    }
-
-
-
-//    Image {
-//        id: name
-//        anchors {
-//            fill: root
-//        }
-//        source: "images/basic-background.png"
-//    }
-
- /*   GraphDrawer {
-        id: graphDrawer
-        z: 10
-    }
-
-    PlugAnimation {
-        id: port1Animation
-        x: 748 * ratioCalc
-        y: 63 * ratioCalc
-    }
-
-    PlugAnimation {
-        id: port2Animation
-        x: 748 * ratioCalc
-        y: 255 * ratioCalc
-    }
-
-    PlugAnimation {
-        id: port3Animation
-        x: 748 * ratioCalc
-        y: 447 * ratioCalc
-    }
-
-    PlugAnimation {
-        id: port4Animation
-        x: 748 * ratioCalc
-        y: 639 * ratioCalc
-    }
-
-    Item {
-        id: inputColumn
-        width: 310 * ratioCalc
-        height: root.height
-        anchors {
-            left: root.left
-            leftMargin: 80 * ratioCalc
-        }
-
-        Rectangle {
-            id: combinedPortStats
-            color: "#eee"
-            anchors {
-                top: inputColumn.top
-                topMargin: 35 * ratioCalc
-                left: inputColumn.left
-                right: inputColumn.right
-            }
-            height: 300 * ratioCalc
-
-            Rectangle{
-                id:combinedStatsBackgroundRect
-                color:"#ddd"
-                anchors.top:combinedPortStats.top
-                anchors.left:combinedPortStats.left
-                anchors.right:combinedPortStats.right
-                height:combinedPortStats.height/6
-
-                Text{
-                    id:combinedStatsText
-                    text:"COMBINED PORT STATISTICS"
-                    font.pixelSize: 17
-                    color: "#bbb"
-                    anchors.centerIn: combinedStatsBackgroundRect
-                }
-            }
-
-
-
-
-            PortStatBox {
-
-                property var inputVoltage:platformInterface.request_usb_power_notification.input_voltage;
-                property real port1Voltage:0;
-                property real port2Voltage:0;
-                property real port3Voltage:0;
-                property real port4Voltage:0;
-
-                onInputVoltageChanged: {
-                     if (platformInterface.request_usb_power_notification.port ===1)
-                         port1Voltage = platformInterface.request_usb_power_notification.input_voltage;
-                     else if (platformInterface.request_usb_power_notification.port ===2)
-                         port2Voltage = platformInterface.request_usb_power_notification.input_voltage;
-                     else if (platformInterface.request_usb_power_notification.port ===3)
-                         port3Voltage = platformInterface.request_usb_power_notification.input_voltage;
-                     else if (platformInterface.request_usb_power_notification.port ===4)
-                         port4Voltage = platformInterface.request_usb_power_notification.input_voltage;
-                }
-
-                id:combinedInputVoltageBox
-                label: "INPUT VOLTAGE"
-                value: Math.round((port1Voltage + port2Voltage + port3Voltage + port4Voltage) *100)/100
-                valueSize: 32
-                icon: "../images/icon-voltage.svg"
-                unit: "V"
-                anchors.top: combinedStatsBackgroundRect.bottom
-                anchors.topMargin: 20
-                anchors.horizontalCenter: combinedPortStats.horizontalCenter
-                height: combinedPortStats.height/5
-                width: combinedPortStats.width/2
-            }
-
-            PortStatBox {
-
-                property var inputVoltage: platformInterface.request_usb_power_notification.input_voltage;
-                property var inputCurrent: platformInterface.request_usb_power_notification.input_current;
-                property real inputPower: inputVoltage * inputCurrent;
-
-                property real port1Power:0;
-                property real port2Power:0;
-                property real port3Power:0;
-                property real port4Power:0;
-
-                onInputPowerChanged: {
-                    if (platformInterface.request_usb_power_notification.port ===1)
-                        port1Power = inputPower;
-                    else if (platformInterface.request_usb_power_notification.port ===2)
-                        port2Power = inputPower;
-                    else if (platformInterface.request_usb_power_notification.port ===3)
-                        port3Power = inputPower;
-                    else if (platformInterface.request_usb_power_notification.port ===4)
-                        port4Power = inputPower;
-                }
-
-                id:combinedInputPowerBox
-                label: "INPUT POWER"
-                value: Math.round((port1Power + port2Power + port3Power + port4Power) *100)/100
-                valueSize: 32
-                icon: "../images/icon-voltage.svg"
-                unit: "W"
-                anchors.top: combinedInputVoltageBox.bottom
-                anchors.topMargin: 20
-                anchors.horizontalCenter: combinedPortStats.horizontalCenter
-                height: combinedPortStats.height/5
-                width: combinedPortStats.width/2
-                //visible: combinedPortStats.inputPowerConnected
-            }
-        }
-
-        Rectangle {
-            id: inputConversionStats
-            color: combinedPortStats.color
-            anchors {
-                top: combinedPortStats.bottom
-                topMargin: 20 * ratioCalc
-                left: inputColumn.left
-                right: inputColumn.right
-            }
-            height: 428 * ratioCalc
-
-            property bool inputPowerConnected: true
-
-            Rectangle{
-                id:topBackgroundRect
-                color:"#ddd"
-                anchors.top:inputConversionStats.top
-                anchors.left:inputConversionStats.left
-                anchors.right:inputConversionStats.right
-                height:inputConversionStats.height/6
-            }
-
-            Text{
-                id:powerConverterText
-                text:"POWER CONVERTER"
-                font.pixelSize: 17
-                color: "#bbb"
-                anchors.top: inputConversionStats.top
-                anchors.topMargin:10
-                anchors.horizontalCenter: inputConversionStats.horizontalCenter
-            }
-
-            Text{
-                id:converterNameText
-                text:"ON Semiconductor NCP4060A"
-                visible: inputConversionStats.inputPowerConnected
-                font.pixelSize: 20
-                //color: "#bbb"
-                anchors.top: powerConverterText.bottom
-                anchors.horizontalCenter: inputConversionStats.horizontalCenter
-            }
-
-            PortStatBox {
-                id:maxPowerBox
-                label: "MAX CAPACITY"
-                value: "200"
-                icon: "../images/icon-max.svg"
-                //portColor: root.portColor
-                valueSize: 32
-                unit: "W"
-                anchors.top: topBackgroundRect.bottom
-                anchors.topMargin: 20
-                anchors.horizontalCenter: inputConversionStats.horizontalCenter
-                height: inputConversionStats.height/8
-                width: inputConversionStats.width/2
-                visible: inputConversionStats.inputPowerConnected
-            }
-
-            PortStatBox {
-                id:voltageOutBox
-                label: "VOLTAGE OUTPUT"
-                value: "100"
-                icon: "../images/icon-voltage.svg"
-                //portColor: root.portColor
-                valueSize: 32
-                unit: "V"
-                anchors.top: maxPowerBox.bottom
-                anchors.topMargin: 20
-                anchors.horizontalCenter: inputConversionStats.horizontalCenter
-                height: inputConversionStats.height/8
-                width: inputConversionStats.width/2
-                visible: inputConversionStats.inputPowerConnected
-            }
+        anchors.topMargin: 12
+        anchors.bottom:root.bottom
+        anchors.bottomMargin: 12
+
+        Rectangle{
+            id:pwmContainer
+            anchors.left:parent.left
+            anchors.right:parent.right
+            anchors.top:parent.top
+            height: parent.height/4
+            color:"transparent"
 
             Image{
-                id:powerConverterIcon
-                source:"./images/powerconverter.png"
-                opacity:.5
-                fillMode:Image.PreserveAspectFit
-                anchors.top:voltageOutBox.bottom
-                anchors.topMargin:40
-                anchors.bottom:inputConversionStats.bottom
-                anchors.bottomMargin:40
-                anchors.left:inputConversionStats.left
-                anchors.right: inputConversionStats.right
+                id:pwmIcon
+                height:50
+                width:50
+                anchors.top:parent.top
+                anchors.topMargin: 15
+                anchors.left:parent.left
+                anchors.leftMargin: 10
+                source:"./images/icon-pulse.svg"
+            }
+
+            Text{
+                id:pwmTitle
+                text: "Pulse"
+                font.pointSize: 48
+                color: textColor
+                anchors.top:parent.top
+                anchors.topMargin:10
+                anchors.left:pwmIcon.right
+                anchors.leftMargin: 20
+            }
+
+            Text{
+                id:pwmSubtitle
+                text: "2-Channel PWM RGB Control"
+                font.pointSize: 15
+                color: secondaryTextColor
+                anchors.top:pwmTitle.bottom
+                anchors.topMargin:0
+                anchors.left:pwmTitle.left
+            }
+
+            SGSwitch{
+                id:pwmSwitch
+                anchors.left:parent.left
+                anchors.leftMargin: leftSwitchMargin
+                anchors.verticalCenter: parent.verticalCenter
+                grooveFillColor:windowsDarkBlue
+                grooveColor:"black"
+                //uncheckedLabel:"off"
+            }
+
+            Text{
+                id:channel1Title
+                text: "1"
+                font.pointSize: 265
+                color: secondaryTextColor
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.left:pwmSwitch.right
+                anchors.leftMargin: 200
+                opacity:.2
+            }
+
+            Rectangle {
+                id: ledControlContainer
+                width: 200
+                height: childrenRect.height + 10
+                color: "transparent"
+                anchors {
+                    verticalCenter: parent.verticalCenter
+                    verticalCenterOffset: 0
+                    left:channel1Title.right
+                    leftMargin: 0
+                }
+
+                SGHueSlider {
+                    id: hueSlider
+                    label: ""
+                    labelLeft: true
+                    //value: platformInterface.ledSlider
+                    sliderHeight:50
+                    //transform: Rotation { axis { x: 1; y: 0; z: 0 } angle: 70}
+                    anchors {
+                        //verticalCenter: whiteButton.verticalCenter
+                        left: ledControlContainer.left
+                        leftMargin: 10
+                        right: ledControlContainer.right
+                        rightMargin: 10
+                        top: ledControlContainer.top
+                        topMargin: 10
+                    }
+
+                    onValueChanged: {
+                        pwmColorBox1.value = hueSlider.hexvalue;
+                        pwmLED1.ledColor = hueSlider.hexvalue;
+                        pwmLED2.ledColor = hueSlider.hexvalue;
+                        pwmLED3.ledColor = hueSlider.hexvalue;
+                        //platformInterface.set_color_mixing.update(hueSlider.color1, hueSlider.color_value1, hueSlider.color2, hueSlider.color_value2)
+                        //platformInterface.ledSlider = value
+                        //platformInterface.turnOffChecked = false
+                    }
+
+                    Component.onCompleted: {
+                        pwmColorBox1.value = "#008080";
+                        pwmLED1.ledColor = "#008080";
+                        pwmLED2.ledColor = "#008080";
+                        pwmLED3.ledColor = "#008080";
+                    }
+                }
+
+                Text{
+                    id:whiteButtonLabel
+                    text:"white:"
+                    color:"white"
+
+                    anchors.left: hueSlider.left
+                    anchors.top: hueSlider.bottom
+                    anchors.topMargin: 10
+
+                }
+
+                RoundButton {
+                    id: whiteButton
+                    checkable: false
+                    //text: "White"
+                    height:30
+                    width:30
+                    anchors.verticalCenter: whiteButtonLabel.verticalCenter
+                    anchors.left:whiteButtonLabel.right
+                    anchors.leftMargin: 5
+                    onClicked: {
+                        pwmColorBox1.value = "#FFFFFF";
+                        pwmLED1.ledColor = "#FFFFFF";
+                        pwmLED2.ledColor = "#FFFFFF";
+                        pwmLED3.ledColor = "#FFFFFF";
+                        //platformInterface.set_led_outputs_on_off.update("white")
+                        //platformInterface.turnOffChecked = false
+                    }
+                }
+
+                SGSubmitInfoBox{
+                    id:pwmColorBox1
+                    anchors.left:whiteButton.right
+                    anchors.leftMargin: 20
+                    anchors.verticalCenter: whiteButton.verticalCenter
+                    //anchors.right:hueSlider.right
+                    infoBoxWidth:80
+                    height:20
+                    textColor:"white"
+                    value:"#008080"
+
+                    onApplied:{
+                        pwmLED1.ledColor = pwmColorBox1.value;
+                        pwmLED2.ledColor = pwmColorBox1.value;
+                        pwmLED3.ledColor = pwmColorBox1.value;
+                    }
+                }
+
+
             }
 
 
 
+            Column{
+                id:leftPWMlights
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.left: ledControlContainer.right
+                anchors.leftMargin: 25
+                width:50
+                spacing:10
+
+                LEDIndicator{
+                    id: pwmLED1
+                    ledColor: "white"
+                    height: 40
+                }
+                LEDIndicator{
+                    id: pwmLED2
+                    ledColor: "white"
+                    height: 40
+                }
+                LEDIndicator{
+                    id: pwmLED3
+                    ledColor: "white"
+                    height: 40
+                }
+            }
+
+            Column{
+                id:rightPWMlights
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.left: leftPWMlights.right
+                anchors.leftMargin: 10
+                width:50
+                spacing:10
+
+                LEDIndicator{
+                    id: pwmLED4
+                    ledColor: "white"
+                    height: 40
+                }
+                LEDIndicator{
+                    id: pwmLED5
+                    ledColor: "white"
+                    height: 40
+                }
+                LEDIndicator{
+                    id: pwmLED6
+                    ledColor: "white"
+                    height: 40
+                }
+            }
+
+
+
+            Rectangle {
+                id: ledControlContainer2
+                width: 200
+                height: childrenRect.height + 10
+                color: "transparent"
+                anchors {
+                    verticalCenter: parent.verticalCenter
+                    right:channel2Title.left
+                    rightMargin: 0
+                }
+
+                SGHueSlider {
+                    id: hueSlider2
+                    label: ""
+                    labelLeft: true
+                    //value: platformInterface.ledSlider
+                    sliderHeight:50
+                    //transform: Rotation { axis { x: 1; y: 0; z: 0 } angle: 70}
+                    anchors {
+                        //verticalCenter: whiteButton.verticalCenter
+                        left: ledControlContainer2.left
+                        leftMargin: 10
+                        right: ledControlContainer2.right
+                        rightMargin: 10
+                        top: ledControlContainer2.top
+                        topMargin: 10
+                    }
+
+                    onValueChanged: {
+                        //console.log("slider changed:",hueSlider2.rgbArray[0], hueSlider2.rgbArray[1], hueSlider2.rgbArray[2])
+                        //console.log("hex value is:",hueSlider2.hexvalue)
+                        pwmColorBox2.value = hueSlider2.hexvalue;
+                        pwmLED4.ledColor = hueSlider2.hexvalue;
+                        pwmLED5.ledColor = hueSlider2.hexvalue;
+                        pwmLED6.ledColor = hueSlider2.hexvalue;
+                        //platformInterface.set_color_mixing.update(hueSlider.color1, hueSlider.color_value1, hueSlider.color2, hueSlider.color_value2)
+                        //platformInterface.ledSlider = value
+                        //platformInterface.turnOffChecked = false
+                    }
+
+                    Component.onCompleted: {
+                        pwmColorBox2.value = "#008080";
+                        pwmLED4.ledColor = "#008080";
+                        pwmLED5.ledColor = "#008080";
+                        pwmLED6.ledColor = "#008080";
+                    }
+                }
+
+                Text{
+                    id:whiteButtonLabel2
+                    text:"white:"
+                    color:"white"
+
+                    anchors.left: hueSlider2.left
+                    anchors.top: hueSlider2.bottom
+                    anchors.topMargin: 10
+
+                }
+
+                RoundButton {
+                    id: whiteButton2
+                    checkable: false
+                    height:30
+                    width:30
+                    anchors.verticalCenter: whiteButtonLabel2.verticalCenter
+                    anchors.left:whiteButtonLabel2.right
+                    anchors.leftMargin: 5
+                    onClicked: {
+                        pwmColorBox2.value = "#FFFFFF";
+                        pwmLED4.ledColor = "#FFFFFF";
+                        pwmLED5.ledColor = "#FFFFFF";
+                        pwmLED6.ledColor = "#FFFFFF";
+
+                        //platformInterface.set_led_outputs_on_off.update("white")
+                        //platformInterface.turnOffChecked = false
+                    }
+
+
+                }
+
+                SGSubmitInfoBox{
+                    id:pwmColorBox2
+                    anchors.left:whiteButton2.right
+                    anchors.leftMargin: 20
+                    anchors.verticalCenter: whiteButton2.verticalCenter
+                    //anchors.right:hueSlider.right
+                    infoBoxWidth:80
+                    height:20
+                    textColor:"white"
+                    value:"#008080"
+
+                    onApplied:{
+                        pwmLED4.ledColor = pwmColorBox2.value;
+                        pwmLED5.ledColor = pwmColorBox2.value;
+                        pwmLED6.ledColor = pwmColorBox2.value;
+                    }
+                }
+
+
+            }
+
+            Text{
+                id:channel2Title
+                text: "2"
+                font.pointSize: 265
+                color: secondaryTextColor
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.right:parent.right
+                anchors.rightMargin: rightInset
+                opacity:.2
+            }
+
+            Rectangle {
+                id:divider1
+                color: dividerColor
+                anchors.left:parent.left
+                anchors.right:parent.right
+                anchors.bottom:parent.bottom
+                height:1
+            }
+
         }
 
-        SGLayoutDebug {
-            visible: debugLayout
+//----------------------------------------------------------------------------------------
+//                      Linear
+//----------------------------------------------------------------------------------------
+        Rectangle{
+            id:linearContainer
+            anchors.left:parent.left
+            anchors.right:parent.right
+            anchors.top:pwmContainer.bottom
+            height: parent.height/4
+            color:"transparent"
+
+            Image{
+                id:linearIcon
+                height:50
+                width:50
+                anchors.top:parent.top
+                anchors.topMargin: 15
+                anchors.left:parent.left
+                anchors.leftMargin: 10
+                source:"./images/icon-linear.svg"
+            }
+
+            Text{
+                id:linearTitle
+                text: "Linear"
+                font.pointSize: 48
+                color: textColor
+                anchors.top:parent.top
+                anchors.topMargin:10
+                anchors.left:linearIcon.right
+                anchors.leftMargin: 20
+            }
+
+            Text{
+                id:linearSubtitle
+                text: "1 Channel Linear RGB Control"
+                font.pointSize: 15
+                color: secondaryTextColor
+                anchors.top:linearTitle.bottom
+                anchors.topMargin:0
+                anchors.left:linearTitle.left
+            }
+
+
+            SGSwitch{
+                id:linearSwitch
+                anchors.left:parent.left
+                anchors.leftMargin: leftSwitchMargin
+                anchors.verticalCenter: parent.verticalCenter
+                grooveFillColor:windowsDarkBlue
+                grooveColor:switchGrooveColor
+            }
+
+
+            Rectangle {
+                id: linearControlContainer
+                width: 200
+                height: childrenRect.height + 10
+                color: "transparent"
+                anchors {
+                    verticalCenter: parent.verticalCenter
+                    verticalCenterOffset: 0
+                    left:linearSwitch.right
+                    leftMargin: 320
+                }
+
+                SGHueSlider {
+                    id: linearHueSlider
+                    label: ""
+                    labelLeft: true
+                    //value: platformInterface.ledSlider
+                    sliderHeight:50
+                    //transform: Rotation { axis { x: 1; y: 0; z: 0 } angle: 70}
+                    anchors {
+                        //verticalCenter: whiteButton.verticalCenter
+                        left: linearControlContainer.left
+                        leftMargin: 10
+                        right: linearControlContainer.right
+                        rightMargin: 10
+                        top: linearControlContainer.top
+                        topMargin: 10
+                    }
+
+                    onValueChanged: {
+                        linearColorBox.value = linearHueSlider.hexvalue;
+                        linearLED1.ledColor = linearHueSlider.hexvalue;
+                        linearLED2.ledColor = linearHueSlider.hexvalue;
+                        linearLED3.ledColor = linearHueSlider.hexvalue;
+                        //platformInterface.set_color_mixing.update(hueSlider.color1, hueSlider.color_value1, hueSlider.color2, hueSlider.color_value2)
+                        //platformInterface.ledSlider = value
+                        //platformInterface.turnOffChecked = false
+                    }
+
+                    Component.onCompleted: {
+                        linearColorBox.value = "#008080";
+                        linearLED1.ledColor = "#008080";
+                        linearLED2.ledColor = "#008080";
+                        linearLED3.ledColor = "#008080";
+                    }
+                }
+
+                Text{
+                    id:linearWhiteButtonLabel
+                    text:"white:"
+                    color:"white"
+
+                    anchors.left: linearHueSlider.left
+                    anchors.top: linearHueSlider.bottom
+                    anchors.topMargin: 10
+
+                }
+
+                RoundButton {
+                    id: linearWhiteButton
+                    checkable: false
+                    //text: "White"
+                    height:30
+                    width:30
+                    anchors.verticalCenter: linearWhiteButtonLabel.verticalCenter
+                    anchors.left:linearWhiteButtonLabel.right
+                    anchors.leftMargin: 5
+                    onClicked: {
+                        linearColorBox.value = "#FFFFFF";
+                        linearLED1.ledColor = "#FFFFFF";
+                        linearLED2.ledColor = "#FFFFFF";
+                        linearLED3.ledColor = "#FFFFFF";
+                        //platformInterface.set_led_outputs_on_off.update("white")
+                        //platformInterface.turnOffChecked = false
+                    }
+                }
+
+                SGSubmitInfoBox{
+                    id:linearColorBox
+                    anchors.left:linearWhiteButton.right
+                    anchors.leftMargin: 20
+                    anchors.verticalCenter: linearWhiteButton.verticalCenter
+                    //anchors.right:hueSlider.right
+                    infoBoxWidth:80
+                    height:20
+                    textColor:"white"
+                    value:"#008080"
+
+                    onApplied:{
+                        linearLED1.ledColor = linearColorBox.value;
+                        linearLED2.ledColor = linearColorBox.value;
+                        linearLED3.ledColor = linearColorBox.value;
+                    }
+                }
+
+
+            }
+
+
+
+            Column{
+                id:linearPWMlights
+                anchors.top:parent.top
+                anchors.topMargin: parent.height/8
+                anchors.right: parent.right
+                anchors.rightMargin: rightInset
+                width:50
+                spacing:10
+
+                LEDIndicator{
+                    id: linearLED1
+                    ledColor: "white"
+                    height: 40
+                }
+                LEDIndicator{
+                    id: linearLED2
+                    ledColor: "white"
+                    height: 40
+                }
+                LEDIndicator{
+                    id: linearLED3
+                    ledColor: "white"
+                    height: 40
+                }
+            }
+
+            Rectangle {
+                id:divider2
+                color: dividerColor
+                anchors.left:parent.left
+                anchors.right:parent.right
+                anchors.bottom:parent.bottom
+                height:1
+            }
         }
+
+//----------------------------------------------------------------------------------------
+//                      Buck
+//----------------------------------------------------------------------------------------
+        Rectangle{
+            id:buckContainer
+            anchors.left:parent.left
+            anchors.right:parent.right
+            anchors.top:linearContainer.bottom
+            height: parent.height/4
+            color:"transparent"
+            //border.color:"tran"
+            //border.width:1
+
+            Image{
+                id:buckIcon
+                height:50
+                width:50
+                anchors.top:parent.top
+                anchors.topMargin: 15
+                anchors.left:parent.left
+                anchors.leftMargin: 10
+                source:"./images/icon-voltage.svg"
+            }
+
+            Text{
+                id:buckTitle
+                text: "Buck"
+                font.pointSize: 48
+                color: textColor
+                anchors.top:parent.top
+                anchors.topMargin:10
+                anchors.left:buckIcon.right
+                anchors.leftMargin: 20
+            }
+
+            Text{
+                id:buckSubtitle
+                text: "High Current AECQ Buck"
+                font.pointSize: 15
+                color: secondaryTextColor
+                anchors.top:buckTitle.bottom
+                anchors.left:buckTitle.left
+            }
+
+            SGSwitch{
+                id:buckSwitch
+                anchors.left:parent.left
+                anchors.leftMargin: leftSwitchMargin
+                anchors.verticalCenter: parent.verticalCenter
+                grooveFillColor:windowsDarkBlue
+                grooveColor:switchGrooveColor
+            }
+
+            PortInfo{
+                id:highCurrentInfo
+                anchors.top: parent.top
+                anchors.topMargin: 10
+                anchors.left: buckSwitch.right
+                anchors.leftMargin: 200
+                width:250
+                boxHeight:60
+            }
+
+            SGSlider {
+                id: ledIntensity
+                width:350
+                label: "Intensity:"
+                //                value: {
+                //                    if (platformInterface.output_current_exceeds_maximum.port === portNumber){
+                //                        return platformInterface.output_current_exceeds_maximum.current_limit;
+                //                    }
+                //                    else{
+                //                        return currentLimit.value;
+                //                    }
+
+                //                }
+                labelTopAligned: true
+                startLabel: "0%"
+                endLabel: "100%"
+                grooveColor: "dimgrey"
+                grooveFillColor: windowsDarkBlue
+                textColor: "white"
+                from: 0
+                to: 100
+                stepSize: 1
+                anchors {
+                    left: highCurrentInfo.right
+                    leftMargin: 50
+                    verticalCenter: parent.verticalCenter
+                }
+
+                onUserSet:{
+                    setBuckLEDs();
+                    console.log("new value:",ledIntensity.value);
+                    //platformInterface.request_over_current_protection.update(portNumber, value)
+                }
+
+                Component.onCompleted:{
+                    setBuckLEDs();
+                }
+
+                function setBuckLEDs(){
+                    var theColor = parseInt((255 * (ledIntensity.value/100)).toFixed(0))
+
+                    var theHexValue = theColor.toString(16).toUpperCase();
+                    if (theHexValue.length % 2) {
+                      theHexValue = '0' + theHexValue;
+                    }
+
+                    var hexvalue ="#" + theHexValue + theHexValue + theHexValue
+                    console.log("new value:",hexvalue);
+                    buckLED1.ledColor = hexvalue;
+                }
+
+            }
+
+            LEDIndicator{
+                id: buckLED1
+                ledColor: "white"
+                height: 40
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.right:parent.right
+                anchors.rightMargin: rightInset
+            }
+
+            Rectangle {
+                id:divider3
+                color: dividerColor
+                anchors.left:parent.left
+                anchors.right:parent.right
+                anchors.bottom:parent.bottom
+                height:1
+            }
+        }
+
+//----------------------------------------------------------------------------------------
+//                      Boost
+//----------------------------------------------------------------------------------------
+        Rectangle{
+            id:boostContainer
+            height: parent.height/4
+            anchors.left:parent.left
+            anchors.right:parent.right
+            anchors.top:buckContainer.bottom
+            anchors.bottom:parent.bottom
+            color:"transparent"
+
+            Image{
+                id:boostIcon
+                height:50
+                width:50
+                anchors.top:parent.top
+                anchors.topMargin: 15
+                anchors.left:parent.left
+                anchors.leftMargin: 10
+                source:"./images/icon-voltage.svg"
+            }
+
+            Text{
+                id:boostTitle
+                text: "Boost"
+                font.pointSize: 48
+                color: textColor
+                anchors.top:parent.top
+                anchors.topMargin:10
+                anchors.left:boostIcon.right
+                anchors.leftMargin: 20
+            }
+
+            Text{
+                id:boostSubtitle
+                text: "Boost Controller for LED Backlighting"
+                font.pointSize: 15
+                color: secondaryTextColor
+                anchors.top:boostTitle.bottom
+                anchors.left:boostTitle.left
+            }
+
+
+            SGSwitch{
+                id:boostSwitch
+                anchors.left:parent.left
+                anchors.leftMargin: leftSwitchMargin
+                anchors.verticalCenter: parent.verticalCenter
+                grooveFillColor:windowsDarkBlue
+                grooveColor:switchGrooveColor
+            }
+
+            SGSlider {
+                id: boostIntensity
+                label: "Intensity:"
+                width: 350
+                //                value: {
+                //                    if (platformInterface.output_current_exceeds_maximum.port === portNumber){
+                //                        return platformInterface.output_current_exceeds_maximum.current_limit;
+                //                    }
+                //                    else{
+                //                        return currentLimit.value;
+                //                    }
+
+                //                }
+                labelTopAligned: true
+                startLabel: "0%"
+                endLabel: "100%"
+                grooveColor:"dimgrey"
+                grooveFillColor: windowsDarkBlue
+                textColor: "white"
+                from: 0
+                to: 100
+                stepSize: 1
+                anchors {
+                    left: boostSwitch.right
+                    leftMargin: 500
+                    verticalCenter: parent.verticalCenter
+                }
+
+                onUserSet:{
+                    setBoostLEDs();
+                    //platformInterface.request_over_current_protection.update(portNumber, value)
+                }
+
+                Component.onCompleted:{
+                    setBoostLEDs();
+                }
+
+                function setBoostLEDs(){
+                    var theColor = parseInt((255 * (boostIntensity.value/100)).toFixed(0))
+                    var theHexValue = theColor.toString(16).toUpperCase();
+                    if (theHexValue.length % 2) {
+                      theHexValue = '0' + theHexValue;
+                    }
+
+                    var hexvalue ="#" + theHexValue + theHexValue + theHexValue
+
+                    console.log("new value:",hexvalue);
+                    boostLED1.ledColor = hexvalue;
+                    boostLED2.ledColor = hexvalue;
+                    boostLED3.ledColor = hexvalue;
+                    boostLED4.ledColor = hexvalue;
+                    boostLED5.ledColor = hexvalue;
+                    boostLED6.ledColor = hexvalue;
+                    boostLED7.ledColor = hexvalue;
+                    boostLED8.ledColor = hexvalue;
+                    boostLED9.ledColor = hexvalue;
+                }
+
+            }
+
+
+            Column{
+                id:boostPWMlights
+                anchors.top:parent.top
+                anchors.topMargin: parent.height/8
+                anchors.right: boostPWMlights2.left
+                anchors.rightMargin: 10
+                width:50
+                spacing:10
+
+                LEDIndicator{
+                    id: boostLED1
+                    ledColor: "white"
+                    height: 40
+                }
+                LEDIndicator{
+                    id: boostLED2
+                    ledColor: "white"
+                    height: 40
+                }
+                LEDIndicator{
+                    id: boostLED3
+                    ledColor: "white"
+                    height: 40
+                }
+            }
+
+            Column{
+                id:boostPWMlights2
+                anchors.top:parent.top
+                anchors.topMargin: parent.height/8
+                anchors.right: boostPWMlights3.left
+                anchors.rightMargin: 10
+                width:50
+                spacing:10
+
+                LEDIndicator{
+                    id: boostLED4
+                    ledColor: "white"
+                    height: 40
+                }
+                LEDIndicator{
+                    id: boostLED5
+                    ledColor: "white"
+                    height: 40
+                }
+                LEDIndicator{
+                    id: boostLED6
+                    ledColor: "white"
+                    height: 40
+                }
+            }
+
+            Column{
+                id:boostPWMlights3
+                anchors.top:parent.top
+                anchors.topMargin: parent.height/8
+                anchors.right: parent.right
+                anchors.rightMargin: rightInset
+                width:50
+                spacing:10
+
+                LEDIndicator{
+                    id: boostLED7
+                    ledColor: "white"
+                    height: 40
+                }
+                LEDIndicator{
+                    id: boostLED8
+                    ledColor: "white"
+                    height: 40
+                }
+                LEDIndicator{
+                    id: boostLED9
+                    ledColor: "white"
+                    height: 40
+                }
+            }
+        }
+
+
     }
 
-    Item {
-        id: portColumn
-        width: 330 * ratioCalc
-        height: root.height
-        anchors {
-            left: inputColumn.right
-            leftMargin: 20 * ratioCalc
-        }
 
-        PortInfo {
-            id: portInfo1
-            height: 172 * ratioCalc
-            anchors {
-                top: portColumn.top
-                topMargin: 35 * ratioCalc
-                left: portColumn.left
-                right: portColumn.right
-            }
-            portConnected: false
-            portNumber: 1
-            advertisedVoltage:{
-                if (platformInterface.request_usb_power_notification.port === 1){
-                    return platformInterface.request_usb_power_notification.negotiated_voltage
-                }
-                else{
-                    return portInfo1.advertisedVoltage;
-                }
-            }
-            maxPower:{
-                if (platformInterface.request_usb_power_notification.port === 1){
-                   return Math.round(platformInterface.request_usb_power_notification.maximum_power *100)/100
-                }
-                else{
-                    return portInfo1.maxPower;
-                }
-            }
-            inputPower:{
-                if (platformInterface.request_usb_power_notification.port === 1){
-                    return Math.round(platformInterface.request_usb_power_notification.input_voltage * platformInterface.request_usb_power_notification.input_current * 100)/100
-                }
-                else{
-                    return portInfo1.inputPower;
-                }
-            }
-            outputPower:{
-                if (platformInterface.request_usb_power_notification.port === 1){
-                    return Math.round(platformInterface.request_usb_power_notification.output_voltage * platformInterface.request_usb_power_notification.output_current * 100)/100
-                }
-                else{
-                    return portInfo1.outputPower;
-                }
-            }
-            outputVoltage:{
-                if (platformInterface.request_usb_power_notification.port === 1){
-                    return Math.round(platformInterface.request_usb_power_notification.output_voltage *100)/100
-                }
-                else{
-                    return portInfo1.outputVoltage;
-                }
-            }
-            portTemperature:{
-                if (platformInterface.request_usb_power_notification.port === 1){
-                    return Math.round(platformInterface.request_usb_power_notification.temperature*10)/10
-                }
-                else{
-                    return portInfo1.portTemperature;
-                }
-            }
-            efficency: {
-                var theInputPower = platformInterface.request_usb_power_notification.input_voltage * platformInterface.request_usb_power_notification.input_current;
-                var theOutputPower = platformInterface.request_usb_power_notification.output_voltage * platformInterface.request_usb_power_notification.output_current;
 
-                if (platformInterface.request_usb_power_notification.port === 1){
-                    if (theInputPower == 0){    //division by 0 would normally give "nan"
-                        return "—"
-                    }
-                    else{
-                        return "—"
-                        //return Math.round((theOutputPower/theInputPower) * 100)/100
-                    }
-                }
-                else{
-                    return portInfo1.efficency;
-                }
-            }
-
-            property var deviceConnected: platformInterface.usb_pd_port_connect.connection_state
-            property var deviceDisconnected: platformInterface.usb_pd_port_disconnect.connection_state
-
-             onDeviceConnectedChanged: {
-//                 console.log("device connected message received in basicControl. Port=",platformInterface.usb_pd_port_connect.port_id,
-//                             "state=",platformInterface.usb_pd_port_connect.connection_state);
-
-                 if (platformInterface.usb_pd_port_connect.port_id === "USB_C_port_1"){
-                     if (platformInterface.usb_pd_port_connect.connection_state === "connected"){
-                         portInfo1.portConnected = true;
-                     }
-                 }
-             }
-
-             onDeviceDisconnectedChanged:{
-
-                 if (platformInterface.usb_pd_port_disconnect.port_id === "USB_C_port_1"){
-                     if (platformInterface.usb_pd_port_disconnect.connection_state === "disconnected"){
-                         portInfo1.portConnected = false;
-                     }
-                 }
-            }
-
-            onShowGraph: {
-                graphDrawer.portNumber = portNumber;
-                graphDrawer.open();
-            }
-        }
-
-        PortInfo {
-            id: portInfo2
-            height: portInfo1.height
-            anchors {
-                top: portInfo1.bottom
-                topMargin: 20 * ratioCalc
-                left: portColumn.left
-                right: portColumn.right
-            }
-            portNumber: 2
-            portConnected: false
-            advertisedVoltage:{
-                if (platformInterface.request_usb_power_notification.port === 2){
-                    return platformInterface.request_usb_power_notification.negotiated_voltage
-                }
-                else{
-                    return portInfo2.advertisedVoltage;
-                }
-            }
-            maxPower:{
-                if (platformInterface.request_usb_power_notification.port === 2){
-                    return Math.round(platformInterface.request_usb_power_notification.maximum_power *100)/100
-                }
-                else{
-                    return portInfo2.maxPower;
-                }
-            }
-            inputPower:{
-                if (platformInterface.request_usb_power_notification.port === 2){
-                    return Math.round(platformInterface.request_usb_power_notification.input_voltage * platformInterface.request_usb_power_notification.input_current *100)/100
-                }
-                else{
-                    return portInfo2.inputPower;
-                }
-            }
-            outputPower:{
-                if (platformInterface.request_usb_power_notification.port === 2){
-                    return Math.round(platformInterface.request_usb_power_notification.output_voltage * platformInterface.request_usb_power_notification.output_current *100)/100
-                }
-                else{
-                    return portInfo2.outputPower;
-                }
-            }
-            outputVoltage:{
-                if (platformInterface.request_usb_power_notification.port === 2){
-                    return Math.round(platformInterface.request_usb_power_notification.output_voltage *100)/100
-                }
-                else{
-                    return portInfo2.outputVoltage;
-                }
-            }
-            portTemperature:{
-                if (platformInterface.request_usb_power_notification.port === 2){
-                    return Math.round(platformInterface.request_usb_power_notification.temperature*10)/10;
-                }
-                else{
-                    return portInfo2.portTemperature;
-                }
-            }
-            efficency: {
-                var theInputPower = platformInterface.request_usb_power_notification.input_voltage * platformInterface.request_usb_power_notification.input_current;
-                var theOutputPower = platformInterface.request_usb_power_notification.output_voltage * platformInterface.request_usb_power_notification.output_current
-
-                if (platformInterface.request_usb_power_notification.port === 2){
-                    if (theInputPower == 0){    //division by 0 would normally give "nan"
-                        return "—"
-                    }
-                    else{
-                        return "—"
-                        //return Math.round((theOutputPower/theInputPower) *100)/100
-                    }
-                }
-                else{
-                    return portInfo2.efficency
-                }
-            }
-
-            property var deviceConnected: platformInterface.usb_pd_port_connect.connection_state
-            property var deviceDisconnected: platformInterface.usb_pd_port_disconnect.connection_state
-
-             onDeviceConnectedChanged: {
-//                 console.log("device connected message received in basicControl. Port=",platformInterface.usb_pd_port_connect.port_id,
-//                             "state=",platformInterface.usb_pd_port_connect.connection_state);
-
-                 if (platformInterface.usb_pd_port_connect.port_id === "USB_C_port_2"){
-                     if (platformInterface.usb_pd_port_connect.connection_state === "connected"){
-                         portInfo2.portConnected = true;
-                     }
-                 }
-             }
-
-             onDeviceDisconnectedChanged:{
-
-                 if (platformInterface.usb_pd_port_disconnect.port_id === "USB_C_port_2"){
-                     if (platformInterface.usb_pd_port_disconnect.connection_state === "disconnected"){
-                         portInfo2.portConnected = false;
-                     }
-                 }
-            }
-
-            onShowGraph: {
-                graphDrawer.portNumber = portNumber;
-                graphDrawer.open();
-            }
-        }
-
-        PortInfo {
-            id: portInfo3
-            height: portInfo1.height
-            anchors {
-                top: portInfo2.bottom
-                topMargin: 20 * ratioCalc
-                left: portColumn.left
-                right: portColumn.right
-            }
-            portNumber: 3
-            portConnected: false
-            advertisedVoltage:{
-                if (platformInterface.request_usb_power_notification.port === 3){
-                    return platformInterface.request_usb_power_notification.negotiated_voltage
-                }
-                else{
-                    return portInfo3.advertisedVoltage;
-                }
-                }
-            maxPower:{
-                if (platformInterface.request_usb_power_notification.port === 3){
-                    return Math.round(platformInterface.request_usb_power_notification.maximum_power *100)/100
-                }
-                else{
-                    return portInfo3.maxPower;
-                }
-            }
-            inputPower:{
-                if (platformInterface.request_usb_power_notification.port === 3){
-                    return Math.round(platformInterface.request_usb_power_notification.input_voltage * platformInterface.request_usb_power_notification.input_current *100)/100
-                }
-                else{
-                    return portInfo3.inputPower;
-                }
-            }
-            outputPower:{
-                if (platformInterface.request_usb_power_notification.port === 3){
-                    return Math.round(platformInterface.request_usb_power_notification.output_voltage * platformInterface.request_usb_power_notification.output_current *100)/100
-                }
-                else{
-                    return portInfo3.outputPower;
-                }
-            }
-            outputVoltage:{
-                if (platformInterface.request_usb_power_notification.port === 3){
-                    return Math.round(platformInterface.request_usb_power_notification.output_voltage *100)/100
-                }
-                else{
-                    return portInfo3.outputVoltage;
-                }
-            }
-            portTemperature:{
-                if (platformInterface.request_usb_power_notification.port === 3){
-                    return Math.round(platformInterface.request_usb_power_notification.temperature*10)/10;
-                }
-                else{
-                    return portInfo3.portTemperature;
-                }
-            }
-            efficency: {
-                var theInputPower = platformInterface.request_usb_power_notification.input_voltage * platformInterface.request_usb_power_notification.input_current;
-                var theOutputPower = platformInterface.request_usb_power_notification.output_voltage * platformInterface.request_usb_power_notification.output_current
-
-                if (platformInterface.request_usb_power_notification.port === 3){
-                    if (theInputPower == 0){    //division by 0 would normally give "nan"
-                        return "—"
-                    }
-                    else{
-                        //return Math.round((theOutputPower/theInputPower) *100)/100
-                        return "—"
-                    }
-                }
-                else{
-                  return portInfo3.efficency;
-                    }
-            }
-
-            property var deviceConnected: platformInterface.usb_pd_port_connect.connection_state
-            property var deviceDisconnected: platformInterface.usb_pd_port_disconnect.connection_state
-
-             onDeviceConnectedChanged: {
-//                 console.log("device connected message received in basicControl. Port=",platformInterface.usb_pd_port_connect.port_id,
-//                             "state=",platformInterface.usb_pd_port_connect.connection_state);
-
-                 if (platformInterface.usb_pd_port_connect.port_id === "USB_C_port_3"){
-                     if (platformInterface.usb_pd_port_connect.connection_state === "connected"){
-                         portInfo3.portConnected = true;
-                     }
-                 }
-             }
-
-             onDeviceDisconnectedChanged:{
-
-                 if (platformInterface.usb_pd_port_disconnect.port_id === "USB_C_port_3"){
-                     if (platformInterface.usb_pd_port_disconnect.connection_state === "disconnected"){
-                         portInfo3.portConnected = false;
-                     }
-                 }
-            }
-            onShowGraph: {
-                graphDrawer.portNumber = portNumber;
-                graphDrawer.open();
-            }
-        }
-
-        PortInfo {
-            id: portInfo4
-            height: portInfo1.height
-            anchors {
-                top: portInfo3.bottom
-                topMargin: 20 * ratioCalc
-                left: portColumn.left
-                right: portColumn.right
-            }
-            portNumber: 4
-            portConnected: false
-            advertisedVoltage:{
-                if (platformInterface.request_usb_power_notification.port === 4){
-                    return platformInterface.request_usb_power_notification.negotiated_voltage;
-                }
-                else{
-                   return portInfo4.advertisedVoltage;
-                }
-            }
-            maxPower:{
-                if (platformInterface.request_usb_power_notification.port === 4){
-                    return Math.round(platformInterface.request_usb_power_notification.maximum_power *100)/100
-                }
-                else{
-                    return portInfo4.maxPower;
-                }
-            }
-            inputPower:{
-                if (platformInterface.request_usb_power_notification.port === 4){
-                    return Math.round(platformInterface.request_usb_power_notification.input_voltage * platformInterface.request_usb_power_notification.input_current *100)/100
-                }
-                else{
-                   return portInfo4.inputPower;
-                }
-            }
-            outputPower:{
-                if (platformInterface.request_usb_power_notification.port === 4){
-                    return Math.round(platformInterface.request_usb_power_notification.output_voltage * platformInterface.request_usb_power_notification.output_current *100)/100
-                }
-                else{
-                   return portInfo4.outputPower;
-                }
-            }
-            outputVoltage:{
-                if (platformInterface.request_usb_power_notification.port === 4){
-                    return Math.round(platformInterface.request_usb_power_notification.output_voltage *100)/100
-                }
-                else{
-                   return portInfo4.outputVoltage;
-                }
-            }
-            portTemperature:{
-                if (platformInterface.request_usb_power_notification.port === 4){
-                    return Math.round(platformInterface.request_usb_power_notification.temperature*10)/10;
-                }
-                else{
-                   return portInfo4.portTemperature;
-                }
-            }
-            efficency: {
-                var theInputPower = platformInterface.request_usb_power_notification.input_voltage * platformInterface.request_usb_power_notification.input_current;
-                var theOutputPower = platformInterface.request_usb_power_notification.output_voltage * platformInterface.request_usb_power_notification.output_current
-
-                if (platformInterface.request_usb_power_notification.port === 4)
-                    if (theInputPower == 0){    //division by 0 would normally give "nan"
-                        return "—"
-                    }
-                    else{
-                        //return Math.round((theOutputPower/theInputPower) *100)/100
-                        return "—"
-                    }
-                else{
-                    return portInfo4.efficency;
-                }
-            }
-
-            property var deviceConnected: platformInterface.usb_pd_port_connect.connection_state
-            property var deviceDisconnected: platformInterface.usb_pd_port_disconnect.connection_state
-
-             onDeviceConnectedChanged: {
-//                 console.log("device connected message received in basicControl. Port=",platformInterface.usb_pd_port_connect.port_id,
-//                             "state=",platformInterface.usb_pd_port_connect.connection_state);
-
-                 if (platformInterface.usb_pd_port_connect.port_id === "USB_C_port_4"){
-                     if (platformInterface.usb_pd_port_connect.connection_state === "connected"){
-                         portInfo4.portConnected = true;
-                     }
-                 }
-             }
-
-             onDeviceDisconnectedChanged:{
-
-                 if (platformInterface.usb_pd_port_disconnect.port_id === "USB_C_port_4"){
-                     if (platformInterface.usb_pd_port_disconnect.connection_state === "disconnected"){
-                         portInfo4.portConnected = false;
-                     }
-                 }
-            }
-
-            onShowGraph: {
-                graphDrawer.portNumber = portNumber;
-                graphDrawer.open();
-            }
-        }
-
-        SGLayoutDebug {
-            visible: debugLayout
-        }
-    }
-
-    Item {
-        id: deviceColumn
-        width: 280 * ratioCalc
-        height: root.height
-        anchors {
-            left: portColumn.right
-            leftMargin: 160 * ratioCalc
-        }
-
-        Column {
-            anchors {
-                top: deviceColumn.top
-                topMargin: 35 * ratioCalc
-                right: deviceColumn.right
-            }
-
-            width: parent.width - (100 * ratioCalc)
-            spacing: 20 * ratioCalc
-
-            DeviceInfo {
-                height: portInfo1.height
-                width: parent.width
-
-                MouseArea {
-                    anchors {
-                        fill: parent
-                    }
-
-                    property var deviceConnected: platformInterface.usb_pd_port_connect.connection_state
-                    property var deviceDisconnected: platformInterface.usb_pd_port_disconnect.connection_state
-
-                     onDeviceConnectedChanged: {
-                         //console.log("device connected message received in basicControl. Port=",platformInterface.usb_pd_port_connect.port_id,
-                         //            "state=",platformInterface.usb_pd_port_connect.connection_state);
-
-                         if (platformInterface.usb_pd_port_connect.port_id === "USB_C_port_1"){
-                             if (platformInterface.usb_pd_port_connect.connection_state === "connected"){
-                                 port1Animation.source = "images/cord.gif"
-                                 port1Animation.currentFrame = 0
-                                 port1Animation.playing = true
-                                 port1Animation.pluggedIn = !port1Animation.pluggedIn
-                             }
-                         }
-                     }
-
-                     onDeviceDisconnectedChanged:{
-
-                         if (platformInterface.usb_pd_port_disconnect.port_id === "USB_C_port_1"){
-                             if (platformInterface.usb_pd_port_disconnect.connection_state === "disconnected"){
-                                 port1Animation.source = "images/cordReverse.gif"
-                                 port1Animation.currentFrame = 0
-                                 port1Animation.playing = true
-                                 port1Animation.pluggedIn = !port1Animation.pluggedIn
-                             }
-                         }
-                    }
-
-                    onClicked: {
-                        if (!port1Animation.pluggedIn) {
-                            port1Animation.source = "images/cord.gif"
-                            port1Animation.currentFrame = 0
-                            port1Animation.playing = true
-                            port1Animation.pluggedIn = !port1Animation.pluggedIn
-                        } else {
-                            port1Animation.source = "images/cordReverse.gif"
-                            port1Animation.currentFrame = 0
-                            port1Animation.playing = true
-                            port1Animation.pluggedIn = !port1Animation.pluggedIn
-                        }
-                    }
-                }
-            }
-
-            DeviceInfo {
-                height: portInfo1.height
-                width: parent.width
-
-                MouseArea {
-                    anchors {
-                        fill: parent
-                    }
-
-                    property var deviceConnected: platformInterface.usb_pd_port_connect.connection_state
-                    property var deviceDisconnected: platformInterface.usb_pd_port_disconnect.connection_state
-
-                     onDeviceConnectedChanged: {
-                         //console.log("device connected message received in basicControl. Port=",platformInterface.usb_pd_port_connect.port_id,
-                         //            "state=",platformInterface.usb_pd_port_connect.connection_state);
-
-                         if (platformInterface.usb_pd_port_connect.port_id === "USB_C_port_2"){
-                             if (platformInterface.usb_pd_port_connect.connection_state === "connected"){
-                                 port2Animation.source = "images/cord.gif"
-                                 port2Animation.currentFrame = 0
-                                 port2Animation.playing = true
-                                 port2Animation.pluggedIn = !port2Animation.pluggedIn
-                             }
-                         }
-                     }
-
-                     onDeviceDisconnectedChanged:{
-                         //console.log("device disconnected message received in basicControl. Port=",platformInterface.usb_pd_port_disconnect.port_id,
-                          //           "state=",platformInterface.usb_pd_port_disconnect.connection_state);
-
-                         if (platformInterface.usb_pd_port_disconnect.port_id === "USB_C_port_2"){
-                             if (platformInterface.usb_pd_port_disconnect.connection_state === "disconnected"){
-                                 port2Animation.source = "images/cordReverse.gif"
-                                 port2Animation.currentFrame = 0
-                                 port2Animation.playing = true
-                                 port2Animation.pluggedIn = !port2Animation.pluggedIn
-                             }
-                         }
-                    }
-                    onClicked: {
-                        if (!port2Animation.pluggedIn) {
-                            port2Animation.source = "images/cord.gif"
-                            port2Animation.currentFrame = 0
-                            port2Animation.playing = true
-                            port2Animation.pluggedIn = !port2Animation.pluggedIn
-                        } else {
-                            port2Animation.source = "images/cordReverse.gif"
-                            port2Animation.currentFrame = 0
-                            port2Animation.playing = true
-                            port2Animation.pluggedIn = !port2Animation.pluggedIn
-                        }
-                    }
-                }
-            }
-
-            DeviceInfo {
-                height: portInfo1.height
-                width: parent.width
-
-                MouseArea {
-                    anchors {
-                        fill: parent
-                    }
-
-                    property var deviceConnected: platformInterface.usb_pd_port_connect.connection_state
-                    property var deviceDisconnected: platformInterface.usb_pd_port_disconnect.connection_state
-
-                     onDeviceConnectedChanged: {
-                         //console.log("device connected message received in basicControl. Port=",platformInterface.usb_pd_port_connect.port_id,
-                         //            "state=",platformInterface.usb_pd_port_connect.connection_state);
-
-                         if (platformInterface.usb_pd_port_connect.port_id === "USB_C_port_3"){
-                             if (platformInterface.usb_pd_port_connect.connection_state === "connected"){
-                                 port3Animation.source = "images/cord.gif"
-                                 port3Animation.currentFrame = 0
-                                 port3Animation.playing = true
-                                 port3Animation.pluggedIn = !port3Animation.pluggedIn
-                             }
-                         }
-                     }
-
-                     onDeviceDisconnectedChanged:{
-                         //console.log("device disconnected message received in basicControl. Port=",platformInterface.usb_pd_port_disconnect.port_id,
-                          //           "state=",platformInterface.usb_pd_port_disconnect.connection_state);
-
-                         if (platformInterface.usb_pd_port_disconnect.port_id === "USB_C_port_3"){
-                             if (platformInterface.usb_pd_port_disconnect.connection_state === "disconnected"){
-                                 port3Animation.source = "images/cordReverse.gif"
-                                 port3Animation.currentFrame = 0
-                                 port3Animation.playing = true
-                                 port3Animation.pluggedIn = !port3Animation.pluggedIn
-                             }
-                         }
-                    }
-                    onClicked: {
-                        if (!port3Animation.pluggedIn) {
-                            port3Animation.source = "images/cord.gif"
-                            port3Animation.currentFrame = 0
-                            port3Animation.playing = true
-                            port3Animation.pluggedIn = !port3Animation.pluggedIn
-                        } else {
-                            port3Animation.source = "images/cordReverse.gif"
-                            port3Animation.currentFrame = 0
-                            port3Animation.playing = true
-                            port3Animation.pluggedIn = !port3Animation.pluggedIn
-                        }
-                    }
-                }
-            }
-
-            DeviceInfo {
-                height: portInfo1.height
-                width: parent.width
-
-                MouseArea {
-                    anchors {
-                        fill: parent
-                    }
-
-                    property var deviceConnected: platformInterface.usb_pd_port_connect.connection_state
-                    property var deviceDisconnected: platformInterface.usb_pd_port_disconnect.connection_state
-
-                     onDeviceConnectedChanged: {
-                         //console.log("device connected message received in basicControl. Port=",platformInterface.usb_pd_port_connect.port_id,
-                         //            "state=",platformInterface.usb_pd_port_connect.connection_state);
-
-                         if (platformInterface.usb_pd_port_connect.port_id === "USB_C_port_4"){
-                             if (platformInterface.usb_pd_port_connect.connection_state === "connected"){
-                                 port4Animation.source = "images/cord.gif"
-                                 port4Animation.currentFrame = 0
-                                 port4Animation.playing = true
-                                 port4Animation.pluggedIn = !port4Animation.pluggedIn
-                             }
-                         }
-                     }
-
-                     onDeviceDisconnectedChanged:{
-                         //console.log("device disconnected message received in basicControl. Port=",platformInterface.usb_pd_port_disconnect.port_id,
-                         //            "state=",platformInterface.usb_pd_port_disconnect.connection_state);
-
-                         if (platformInterface.usb_pd_port_disconnect.port_id === "USB_C_port_4"){
-                             if (platformInterface.usb_pd_port_disconnect.connection_state === "disconnected"){
-                                 port4Animation.source = "images/cordReverse.gif"
-                                 port4Animation.currentFrame = 0
-                                 port4Animation.playing = true
-                                 port4Animation.pluggedIn = !port4Animation.pluggedIn
-                             }
-                         }
-                    }
-                    onClicked: {
-                        if (!port4Animation.pluggedIn) {
-                            port4Animation.source = "images/cord.gif"
-                            port4Animation.currentFrame = 0
-                            port4Animation.playing = true
-                            port4Animation.pluggedIn = !port4Animation.pluggedIn
-                        } else {
-                            port4Animation.source = "images/cordReverse.gif"
-                            port4Animation.currentFrame = 0
-                            port4Animation.playing = true
-                            port4Animation.pluggedIn = !port4Animation.pluggedIn
-                        }
-                    }
-                }
-            }
-        }
-
-        SGLayoutDebug {
-            visible: debugLayout
-        }
-    }
-    */
 }

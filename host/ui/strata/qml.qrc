@@ -483,40 +483,21 @@
         <file>views/led/sgwidgets/SGSubmitInfoBox.qml</file>
         <file>views/led/sgwidgets/SGSwitch.qml</file>
         <file>views/led/sgwidgets/SGToolTipPopup.qml</file>
-        <file>views/led/views/basic-partial-views/AdvancedPortControls.qml</file>
-        <file>views/led/views/basic-partial-views/AudioGraph.qml</file>
-        <file>views/led/views/basic-partial-views/AudioPortInfo.qml</file>
-        <file>views/led/views/basic-partial-views/DeviceInfo.qml</file>
-        <file>views/led/views/basic-partial-views/PlugAnimation.qml</file>
         <file>views/led/views/basic-partial-views/PortInfo.qml</file>
         <file>views/led/views/basic-partial-views/PortStatBox.qml</file>
-        <file>views/led/views/basic-partial-views/USBAPortInfo.qml</file>
-        <file>views/led/views/basic-partial-views/VideoPortInfo.qml</file>
-        <file>views/led/views/images/AudioAnim.gif</file>
-        <file>views/led/views/images/AudioAnimReverse.gif</file>
-        <file>views/led/views/images/basic-background.png</file>
-        <file>views/led/views/images/cord.gif</file>
-        <file>views/led/views/images/cordReverse.gif</file>
-        <file>views/led/views/images/DisplayPortAnim.gif</file>
-        <file>views/led/views/images/DisplayPortAnimReverse.gif</file>
-        <file>views/led/views/images/FourPortWireframeAdvancedView.png</file>
-        <file>views/led/views/images/FourPortWireframeBasicView.png</file>
-        <file>views/led/views/images/headphonesIcon.png</file>
         <file>views/led/views/images/icon-efficiency.svg</file>
         <file>views/led/views/images/icon-max.svg</file>
         <file>views/led/views/images/icon-temp.svg</file>
         <file>views/led/views/images/icon-usb-disconnected.svg</file>
         <file>views/led/views/images/icon-voltage.svg</file>
-        <file>views/led/views/images/penguin.mp4</file>
-        <file>views/led/views/images/screen.png</file>
-        <file>views/led/views/images/soundwave.png</file>
-        <file>views/led/views/images/usbACord.gif</file>
-        <file>views/led/views/images/usbACordReverse.gif</file>
-        <file>views/led/views/images/videoIcon.png</file>
         <file>views/led/views/BasicControl.qml</file>
         <file>views/led/views/SystemControl.qml</file>
         <file>views/led/Content.qml</file>
         <file>views/led/Control.qml</file>
         <file>views/led/PlatformInterface.qml</file>
+        <file>views/led/views/basic-partial-views/LEDIndicator.qml</file>
+        <file>views/led/views/images/icon-pulse.svg</file>
+        <file>views/led/views/images/icon-linear.svg</file>
+        <file>views/led/sgwidgets/SGHueSlider.qml</file>
     </qresource>
 </RCC>
