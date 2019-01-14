@@ -95,10 +95,12 @@ int main(int argc, char *argv[])
     int appResult = app.exec();
 
 #ifdef START_SERVICES
-    if (hcs_started) {
-        // Do some last minute clean-up; Terminate HCS
+    if (hcsProcess->state() == QProcess::Running) {
         qDebug() << "Killing HCS";
         hcsProcess->kill();
+        if (!hcsProcess->waitForFinished()) {
+            qWarning() << "Failed to kill HCS server";
+        }
     }
 #endif
 
