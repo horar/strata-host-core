@@ -53,7 +53,7 @@ SGDatabaseReturnStatus SGDatabase::open() {
     DEBUG("Calling open\n");
 
     // Check for empty db name
-    if (db_name_.length() == 0){
+    if ( db_name_.empty() ){
         DEBUG("DB name can't be empty! \n");
         return SGDatabaseReturnStatus::kDBNameError;
     }
