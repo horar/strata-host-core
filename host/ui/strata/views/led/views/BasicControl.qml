@@ -13,11 +13,13 @@ Rectangle {
     property string textColor: "white"
     property string secondaryTextColor: "grey"
     property string windowsDarkBlue: "#2d89ef"
-    property string backgroundColor: "#2A2E31"
+    property string backgroundColor: "#FF2A2E31"
+    property string transparentBackgroundColor: "#002A2E31"
     property string dividerColor: "#3E4042"
     property string switchGrooveColor:"dimgrey"
     property int leftSwitchMargin: 40
     property int rightInset: 50
+    property int leftScrimOffset: 310
 
 
     //----------------------------------------------------------------------------------------
@@ -71,7 +73,7 @@ Rectangle {
 
             Text{
                 id:pwmSubtitle
-                text: "2-Channel PWM RGB Control"
+                text: "2 Channel PWM RGB Control"
                 font.pointSize: 15
                 color: secondaryTextColor
                 anchors.top:pwmTitle.bottom
@@ -86,7 +88,62 @@ Rectangle {
                 anchors.verticalCenter: parent.verticalCenter
                 grooveFillColor:windowsDarkBlue
                 grooveColor:"black"
-                //uncheckedLabel:"off"
+                checked:true
+            }
+
+            RoundButton{
+                id:pulseScrim
+                anchors.left: parent.left
+                anchors.leftMargin:leftScrimOffset
+                anchors.top:parent.top
+                anchors.bottom:parent.bottom
+                anchors.right:parent.right
+                visible:!pwmSwitch.checked
+                opacity:1
+                z:5
+
+                onVisibleChanged:{
+                    if (visible){
+                        pulseScrimToOpaque.start()
+                    }
+                    else{
+                        pulseScrimToTransparent.start()
+                    }
+                }
+
+                OpacityAnimator{
+                    id:pulseScrimToOpaque
+                    target:pulseScrim
+                    from: 0
+                    to: 1
+                    duration:1000
+                    running:false
+                }
+
+                OpacityAnimator{
+                    id:pulseScrimToTransparent
+                    target:pulseScrim
+                    from: 1
+                    to: 0
+                    duration:1000
+                    running:false
+                }
+
+                background:Rectangle{
+                    color:"transparent"
+                    radius:5
+                }
+
+                LinearGradient {
+                       anchors.fill: parent
+                       start: Qt.point(0, 0)
+                       end: Qt.point(parent.width, 0)
+                       gradient: Gradient {
+                           GradientStop { position: 0.0; color: "#00000000"}
+                           GradientStop { position: .15; color: "#BB000000" }
+                           GradientStop { position: .5; color: "#FF000000" }
+                       }
+                   }
             }
 
             Text{
@@ -96,7 +153,7 @@ Rectangle {
                 color: secondaryTextColor
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.left:pwmSwitch.right
-                anchors.leftMargin: 200
+                anchors.leftMargin: 220
                 opacity:.2
             }
 
@@ -426,8 +483,64 @@ Rectangle {
                 anchors.verticalCenter: parent.verticalCenter
                 grooveFillColor:windowsDarkBlue
                 grooveColor:switchGrooveColor
+                checked:true
             }
 
+
+            RoundButton{
+                id:linearScrim
+                anchors.left: parent.left
+                anchors.leftMargin:leftScrimOffset
+                anchors.top:parent.top
+                anchors.bottom:parent.bottom
+                anchors.right:parent.right
+                visible:!linearSwitch.checked
+                z:5
+                opacity:1
+
+                onVisibleChanged:{
+                    if (visible){
+                        linearScrimToOpaque.start()
+                    }
+                    else{
+                        linearScrimToTransparent.start()
+                    }
+                }
+
+                OpacityAnimator{
+                    id:linearScrimToOpaque
+                    target:linearScrim
+                    from: 0
+                    to: 1
+                    duration:1000
+                    running:false
+                }
+
+                OpacityAnimator{
+                    id:linearScrimToTransparent
+                    target:linearScrim
+                    from: 1
+                    to: 0
+                    duration:1000
+                    running:false
+                }
+
+                background:Rectangle{
+                    color:"transparent"
+                    radius:5
+                }
+
+                LinearGradient {
+                       anchors.fill: parent
+                       start: Qt.point(0, 0)
+                       end: Qt.point(parent.width, 0)
+                       gradient: Gradient {
+                           GradientStop { position: 0.0; color: "#00000000"}
+                           GradientStop { position: .15; color: "#BB000000" }
+                           GradientStop { position: .5; color: "#FF000000" }
+                       }
+                   }
+            }
 
             Rectangle {
                 id: linearControlContainer
@@ -616,6 +729,62 @@ Rectangle {
                 anchors.verticalCenter: parent.verticalCenter
                 grooveFillColor:windowsDarkBlue
                 grooveColor:switchGrooveColor
+                checked:true
+            }
+
+            RoundButton{
+                id:buckScrim
+                anchors.left: parent.left
+                anchors.leftMargin:leftScrimOffset
+                anchors.top:parent.top
+                anchors.bottom:parent.bottom
+                anchors.right:parent.right
+                visible:!buckSwitch.checked
+                opacity:1
+                z:5
+
+                onVisibleChanged:{
+                    if (visible){
+                        buckScrimToOpaque.start()
+                    }
+                    else{
+                        buckScrimToTransparent.start()
+                    }
+                }
+
+                OpacityAnimator{
+                    id:buckScrimToOpaque
+                    target:buckScrim
+                    from: 0
+                    to: 1
+                    duration:1000
+                    running:false
+                }
+
+                OpacityAnimator{
+                    id:buckScrimToTransparent
+                    target:buckScrim
+                    from: 1
+                    to: 0
+                    duration:1000
+                    running:false
+                }
+
+                background:Rectangle{
+                    color:"transparent"
+                    radius:5
+                }
+
+                LinearGradient {
+                       anchors.fill: parent
+                       start: Qt.point(0, 0)
+                       end: Qt.point(parent.width, 0)
+                       gradient: Gradient {
+                           GradientStop { position: 0.0; color: "#00000000"}
+                           GradientStop { position: .15; color: "#BB000000" }
+                           GradientStop { position: .5; color: "#FF000000" }
+                       }
+                   }
             }
 
             PortInfo{
@@ -623,14 +792,14 @@ Rectangle {
                 anchors.top: parent.top
                 anchors.topMargin: 10
                 anchors.left: buckSwitch.right
-                anchors.leftMargin: 200
+                anchors.leftMargin: 240
                 width:250
                 boxHeight:60
             }
 
             SGSlider {
                 id: ledIntensity
-                width:350
+                width:330
                 label: "Intensity:"
                 //                value: {
                 //                    if (platformInterface.output_current_exceeds_maximum.port === portNumber){
@@ -649,10 +818,11 @@ Rectangle {
                 textColor: "white"
                 from: 0
                 to: 100
+                value: 1
                 stepSize: 1
                 anchors {
                     left: highCurrentInfo.right
-                    leftMargin: 50
+                    leftMargin: 30
                     verticalCenter: parent.verticalCenter
                 }
 
@@ -687,7 +857,7 @@ Rectangle {
                 height: 40
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.right:parent.right
-                anchors.rightMargin: rightInset
+                anchors.rightMargin: rightInset + 10
             }
 
             Rectangle {
@@ -736,7 +906,7 @@ Rectangle {
 
             Text{
                 id:boostSubtitle
-                text: "Boost Controller for LED Backlighting"
+                text: "Controller for LED Backlighting"
                 font.pointSize: 15
                 color: secondaryTextColor
                 anchors.top:boostTitle.bottom
@@ -751,6 +921,61 @@ Rectangle {
                 anchors.verticalCenter: parent.verticalCenter
                 grooveFillColor:windowsDarkBlue
                 grooveColor:switchGrooveColor
+                checked:true
+            }
+
+            RoundButton{
+                id:boostScrim
+                anchors.left: parent.left
+                anchors.leftMargin:leftScrimOffset
+                anchors.top:parent.top
+                anchors.bottom:parent.bottom
+                anchors.right:parent.right
+                visible:!boostSwitch.checked
+                z:5
+
+                onVisibleChanged:{
+                    if (visible){
+                        boostScrimToOpaque.start()
+                    }
+                    else{
+                        boostScrimToTransparent.start()
+                    }
+                }
+
+                OpacityAnimator{
+                    id:boostScrimToOpaque
+                    target:boostScrim
+                    from: 0
+                    to: 1
+                    duration:1000
+                    running:false
+                }
+
+                OpacityAnimator{
+                    id:boostScrimToTransparent
+                    target:boostScrim
+                    from: 1
+                    to: 0
+                    duration:1000
+                    running:false
+                }
+
+                LinearGradient {
+                       anchors.fill: parent
+                       start: Qt.point(0, 0)
+                       end: Qt.point(parent.width, 0)
+                       gradient: Gradient {
+                           GradientStop { position: 0.0; color: "#00000000"}
+                           GradientStop { position: .15; color: "#BB000000" }
+                           GradientStop { position: .5; color: "#FF000000" }
+                       }
+                   }
+
+                background:Rectangle{
+                    color:"transparent"
+                    radius:5
+                }
             }
 
             SGSlider {
@@ -797,7 +1022,7 @@ Rectangle {
                       theHexValue = '0' + theHexValue;
                     }
 
-                    var hexvalue ="#" + theHexValue + theHexValue + theHexValue
+                    var hexvalue ="#" + "00" + theHexValue + "00"
 
                     console.log("new value:",hexvalue);
                     boostLED1.ledColor = hexvalue;
@@ -825,17 +1050,17 @@ Rectangle {
 
                 LEDIndicator{
                     id: boostLED1
-                    ledColor: "white"
+                    ledColor: "green"
                     height: 40
                 }
                 LEDIndicator{
                     id: boostLED2
-                    ledColor: "white"
+                    ledColor: "green"
                     height: 40
                 }
                 LEDIndicator{
                     id: boostLED3
-                    ledColor: "white"
+                    ledColor: "green"
                     height: 40
                 }
             }
