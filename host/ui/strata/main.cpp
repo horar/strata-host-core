@@ -84,9 +84,12 @@ int main(int argc, char *argv[])
         QStringList arguments;
         arguments << "-f" << hcsConfigPath;
         hcsProcess->start(hcsPath, arguments, QIODevice::ReadWrite);
+        if (!hcsProcess->waitForStarted()) {
+            qWarning() << "Process does not started yet (" << hcsProcess->state() << ")";
         }
     } else {
         qWarning() << "Failed to start HCS: Does not exist";
+    }
 #endif
 
     int appResult = app.exec();
