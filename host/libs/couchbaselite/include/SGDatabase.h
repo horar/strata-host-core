@@ -68,7 +68,9 @@ private:
     C4Error             c4error_;
     std::string         db_name_;
     std::mutex          db_lock_;
-    uint32_t            kSGNoCouchBaseError_ = 0;
+
+    static const uint32_t kSGNoCouchBaseError_ = 0;
+    static const std::string kSGDatabasesDirectory_;
 
     SGDatabaseReturnStatus createNewDocument(SGDocument *doc, fleece::alloc_slice body);
     SGDatabaseReturnStatus updateDocument(SGDocument *doc, fleece::alloc_slice new_body);

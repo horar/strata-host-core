@@ -9,19 +9,22 @@
 * @copyright Copyright 2018 On Semiconductor
 */
 #include <iostream>
-#include <include/SGDatabase.h>
+
+#include "SGDatabase.h"
 
 #include "FleeceImpl.hh"
 #include "MutableArray.hh"
 #include "MutableDict.hh"
 #include "Doc.hh"
 #include "c4Document+Fleece.h"
-#include "SGDatabase.h"
+
 #include "SGDocument.h"
 
 using namespace std;
 using namespace fleece;
 using namespace fleece::impl;
+
+const string SGDatabase::kSGDatabasesDirectory_ = "db";
 
 #define DEBUG(...) printf("SGDatabase: "); printf(__VA_ARGS__)
 SGDatabase::SGDatabase() {}
@@ -35,7 +38,6 @@ SGDatabase::~SGDatabase() {
 }
 
 void SGDatabase::setDBName(const std::string& name){
-    // copy content from name to db_name. We want to own the data for safety reasons.
     db_name_ = name;
 }
 
@@ -63,7 +65,8 @@ SGDatabaseReturnStatus SGDatabase::open() {
         System call will work with Windows/Mac/Linux
     */
     // System returns the processor exit status. In this case mkdir return 0 on success.
-    system("mkdir db");
+    string command = "mkdir " + kSGDatabasesDirectory_;
+    system(command.c_str());
 
     // Configure database attributes
     // This is the default DB configuration taken from the Java bindings
@@ -72,9 +75,12 @@ SGDatabaseReturnStatus SGDatabase::open() {
     c4db_config_.versioning     = kC4RevisionTrees;
     c4db_config_.encryptionKey.algorithm    = kC4EncryptionNone;
 
-    std::string db_path = "./db/" + db_name_;
+    string db_path = kSGDatabasesDirectory_ + "/" + db_name_;
+
     c4error_.code = 0;
+
     c4db_ = c4db_open(c4str(db_path.c_str()), &c4db_config_, &c4error_);
+
     if (c4error_.code != kSGNoCouchBaseError_ && c4error_.code < kC4NumErrorCodesPlus1){
         DEBUG("Error opening the db: %s. Error Code:%d.\n", db_path.c_str(), c4error_.code);
         return SGDatabaseReturnStatus::kOpenDBError;
