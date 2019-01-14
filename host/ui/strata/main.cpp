@@ -96,10 +96,14 @@ int main(int argc, char *argv[])
 
 #ifdef START_SERVICES
     if (hcsProcess->state() == QProcess::Running) {
-        qDebug() << "Killing HCS";
-        hcsProcess->kill();
+        qDebug() << "Terminating HCS";
+        hcsProcess->terminate();
         if (!hcsProcess->waitForFinished()) {
-            qWarning() << "Failed to kill HCS server";
+            qDebug() << "Killing HCS";
+            hcsProcess->kill();
+            if (!hcsProcess->waitForFinished()) {
+                qWarning() << "Failed to kill HCS server";
+            }
         }
     }
 #endif
