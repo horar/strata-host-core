@@ -1,6 +1,8 @@
 platform/cli/USB-PD/BUILD/*
 *build*/
 *BUILD*/
+#simlink to build directory
+host/build
 *.pro.user*
 *.pro.user
 *.exe
@@ -13,6 +15,7 @@ platform/cli/USB-PD/BUILD/*
 CMakeFiles
 CMakeCache.txt
 CMakeScripts
+CMakeLists.txt.user
 Testing
 Makefile
 cmake_install.cmake

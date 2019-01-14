@@ -90,8 +90,11 @@ int main(int argc, char *argv[])
         /* This is the same across all platforms
         */
 
+        QString hcsPath = QDir::cleanPath(HCS_PATH);
+        QString hcsConfigPath = QDir::cleanPath(HCS_CONFIG_PATH);
+
         // Ensure HCS exists
-        QFileInfo hcs_file(HCS_PATH);
+        QFileInfo hcs_file(hcsPath);
         bool hcs_started = false;
 
         // Create a QProcess
@@ -101,12 +104,11 @@ int main(int argc, char *argv[])
             hcs_started = true;
 
             // Start HCS before handling events for QT
-            qDebug() << "Starting HCS: " << HCS_PATH;
-            QString hcsPath = HCS_PATH;
+            qDebug() << "Starting HCS: " << hcsPath;
 
             // Argument list for HCS
             QStringList arguments;
-            arguments << "-f" << HCS_CONFIG_PATH;
+            arguments << "-f" << hcsConfigPath;
 
             // Start HCS
         //    hcsProcess->setProcessChannelMode(QProcess::ForwardedChannels);
