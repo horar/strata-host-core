@@ -26,7 +26,6 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
 
 add_subdirectory(libs)
 add_subdirectory(apps)
-add_subdirectory(ui) # LC: temporary enable; later will be re-located in project tree
 #add_subdirectory(test)
 add_subdirectory(utils)
 add_subdirectory(research_spikes)
