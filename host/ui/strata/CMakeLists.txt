@@ -104,4 +104,9 @@ target_compile_definitions(${PROJECT_NAME}
     PRIVATE QT_DISABLE_DEPRECATED_BEFORE=0x060000
 )
 
+# LC: start 'hcs' process from strata (will be handled by strata monitor in near future)
+set_source_files_properties(main.cpp PROPERTIES
+    COMPILE_DEFINITIONS START_SERVICES
+)
+
 feature_summary(WHAT ALL)
