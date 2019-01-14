@@ -71,7 +71,10 @@
 #include "Logger.h"
 #include "DiscoveryService.h"
 #include "Connector.h"
-#include "SGCouchbaseLiteWrapper.h"
+
+// nimbus integration
+#include "nimbus.h"
+#include "observer.h"
 
 // Console print function
 // used in main.cc and host-controller-service.cc
@@ -107,6 +110,13 @@ enum class CommandDispatcherMessages{
     REGISTER_CLIENT     = 3,
     COMMAND_NOT_FOUND	= 10,
 };
+
+// struct that will be added to the list
+typedef struct{
+    std::string platform_uuid;
+    std::string platform_verbose;
+    std::string connection_status;
+}platform_details;
 
 class HostControllerService {
 public:
@@ -216,8 +226,9 @@ private:
     Connector *remote_connector_ ;
     Connector *remote_activity_connector_;
 
-    // SGCouchbase wrapper object
-    SGCouchbaseLiteWrapper * sgcouchbase_;
+    // Nimbus/database object
+    Nimbus * database_;
+
     // JWT for the client session
     std::string JWT;
     // bool remote_advertise;
