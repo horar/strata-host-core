@@ -73,11 +73,11 @@ bool SGReplicator::_start(){
     replicator_parameters_.optionsDictFleece = fleece_data;
 
     // Callback function for outgoing revision event
-    // As of now this is used for log purposes!
+    // This is used for log purposes!
     replicator_parameters_.pushFilter = [](C4String docID, C4RevisionFlags ref, FLDict body, void *context){
         DEBUG("pushFilter\n");
         alloc_slice fleece_body = FLValue_ToJSON((FLValue)body);
-        DEBUG("Doc ID: %s, received body json:%s\n", slice(docID).asString().c_str(), fleece_body.asString().c_str());
+        DEBUG("Doc ID: %s, pushing body json:%s\n", slice(docID).asString().c_str(), fleece_body.asString().c_str());
         return true;
     };
 
@@ -171,12 +171,8 @@ void SGReplicator::addDocumentEndedListener(const std::function<void(bool pushin
                                                 bool errorIsTransient,
                                                 void *context){
 
-        string doc_id = string((char *)docID.buf, docID.size);
-        char error_message[200];
-        c4error_getDescriptionC(error, error_message, sizeof(error_message));
-        DEBUG("Error code: %d\n", error.code);
-
-        ((SGReplicator*)context)->on_document_error_callback_(pushing, doc_id, error_message, error.code > 0 ,errorIsTransient);
+        alloc_slice error_message =c4error_getDescription(error);
+        ((SGReplicator*)context)->on_document_error_callback_(pushing, slice(docID).asString(), error_message.asString(), error.code > 0 ,errorIsTransient);
     };
 }
 
@@ -191,12 +187,9 @@ void SGReplicator::addValidationListener(const std::function<void(const std::str
         DEBUG("validationFunc\n");
 
         alloc_slice fleece_json_string = FLValue_ToJSON((FLValue)body);
-        string doc_id = slice(doc_id).asString();
-        string body_json = fleece_json_string.asString();
+        ((SGReplicator*)context)->on_validation_callback_(slice(docID).asString(), fleece_json_string.asString());
 
-        ((SGReplicator*)context)->on_validation_callback_(doc_id, body_json);
-
-        // Accept All documents as of now
+        // Accept All documents
         return true;
     };
 }
