@@ -18,8 +18,10 @@ using namespace fleece::impl;
 #define DEBUG(...) printf("SGReplicatorConfiguration: "); printf(__VA_ARGS__)
 
 SGReplicatorConfiguration::SGReplicatorConfiguration() {
+    database_      = nullptr;
+    url_endpoint_  = nullptr;
     authenticator_ = nullptr;
-    options_ = fleece::impl::MutableDict::newDict();
+    options_       = fleece::impl::MutableDict::newDict();
 }
 
 SGReplicatorConfiguration::~SGReplicatorConfiguration() {}
@@ -77,7 +79,6 @@ void SGReplicatorConfiguration::setChannels(const std::vector<std::string>& chan
 fleece::Retained<fleece::impl::MutableDict> SGReplicatorConfiguration::effectiveOptions() {
 
     if(authenticator_ != nullptr){
-        // Pass by reference.
         // This will add authentication options to the fleece dictionary.
         authenticator_->authenticate(options_);
     }
