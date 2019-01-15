@@ -61,73 +61,50 @@ int main(int argc, char *argv[])
     // Starting services this build?
     // [prasanth] : Important note: Start HCS before launching the UI
     // So the service callback works properly
-    #define START_SERVICES
-    #ifdef START_SERVICES
+#ifdef START_SERVICES
 
-        #ifdef Q_OS_WIN
-        // We are at the build folder as root
-        #define HOST_ROOT_PATH      (app.applicationDirPath())
-        #define HCS_PATH            HOST_ROOT_PATH + "/HCS/HCS.exe"
-        //#define HCS_PATH            HOST_ROOT_PATH + "/HCS/HCS_4port.exe"
-        #define HCS_CONFIG_PATH     HOST_ROOT_PATH + "/HCS/host_controller_service.config"
-        #endif
+#ifdef Q_OS_WIN
+    const QString hcsPath{ QDir::cleanPath(QString("%1/hcs2.exe").arg(app.applicationDirPath())) };
+    const QString hcsConfigPath{ QDir::cleanPath(QString("%1/../../apps/hcs2/files/conf/host_controller_service.config").arg(app.applicationDirPath()))};
+#endif
+#ifdef Q_OS_MACOS
+    const QString hcsPath{ QDir::cleanPath(QString("%1/../../../hcs2").arg(app.applicationDirPath())) };
+    const QString hcsConfigPath{ QDir::cleanPath(QString("%1/../../../../../apps/hcs2/files/conf/host_controller_service.config_template").arg(app.applicationDirPath()))};
+#endif
+#ifdef Q_OS_LINUX
+    const QString hcsPath{ QDir::cleanPath(QString("%1/hcs2").arg(app.applicationDirPath())) };
+    const QString hcsConfigPath{ QDir::cleanPath(QString("%1/../../apps/hcs2/files/conf/host_controller_service.config").arg(app.applicationDirPath()))};
+#endif
 
-        #ifdef Q_OS_MACOS
-        // We are pretty deep in the directory. Ex. ui/build-xxx-Release/spyglass.app/Contents/MacOs
-        #define HOST_ROOT_PATH      (app.applicationDirPath() + "/../../../../../")
-        #define HCS_PATH            HOST_ROOT_PATH + "build/apps/hcs2/hcs2"
-        //#define HCS_PATH            HOST_ROOT_PATH + "build/apps/hcs2/hcs_4port"
-        #define HCS_CONFIG_PATH     HOST_ROOT_PATH + "apps/hcs2/files/conf/host_controller_service.config_template"
-        #endif
+    // Start HCS before handling events for Qt
+    auto hcsProcess{std::make_unique<QProcess>(nullptr)};
+    if (QFile::exists(hcsPath)) {
+        qDebug() << "Starting HCS: " << hcsPath << "(" << hcsConfigPath << ")";
 
-        #ifdef Q_OS_LINUX
-        // We are at the build folder
-        #define HOST_ROOT_PATH      (app.applicationDirPath() + "/../../")
-        #define HCS_PATH            HOST_ROOT_PATH + "HostControllerService/build/hcs"
-        #define HCS_CONFIG_PATH     HOST_ROOT_PATH + "HostControllerService/files/conf/host_controller_service.config"
-        #endif
-
-        /* This is the same across all platforms
-        */
-
-        QString hcsPath = QDir::cleanPath(HCS_PATH);
-        QString hcsConfigPath = QDir::cleanPath(HCS_CONFIG_PATH);
-
-        // Ensure HCS exists
-        QFileInfo hcs_file(hcsPath);
-        bool hcs_started = false;
-
-        // Create a QProcess
-        QProcess *hcsProcess = new QProcess(nullptr);
-
-        if(hcs_file.exists()) {
-            hcs_started = true;
-
-            // Start HCS before handling events for QT
-            qDebug() << "Starting HCS: " << hcsPath;
-
-            // Argument list for HCS
-            QStringList arguments;
-            arguments << "-f" << hcsConfigPath;
-
-            // Start HCS
-        //    hcsProcess->setProcessChannelMode(QProcess::ForwardedChannels);
-            hcsProcess->start(hcsPath,arguments, QIODevice::ReadWrite);
+        QStringList arguments;
+        arguments << "-f" << hcsConfigPath;
+        hcsProcess->start(hcsPath, arguments, QIODevice::ReadWrite);
+        if (!hcsProcess->waitForStarted()) {
+            qWarning() << "Process does not started yet (" << hcsProcess->state() << ")";
         }
-        else {
-            hcs_started = false;
-            qDebug() << "Failed to start HCS: Does not exist";
-        }
+    } else {
+        qWarning() << "Failed to start HCS: Does not exist";
+    }
+#endif
 
-    #endif
-    // Call QT and stay here until the application quits.
     int appResult = app.exec();
 
 #ifdef START_SERVICES
-    if (hcs_started) {
-        // Do some last minute clean-up; Terminate HCS
-        qDebug() << "Killing HCS";
-        hcsProcess->kill();
+    if (hcsProcess->state() == QProcess::Running) {
+        qDebug() << "Terminating HCS";
+        hcsProcess->terminate();
+        if (!hcsProcess->waitForFinished()) {
+            qDebug() << "Killing HCS";
+            hcsProcess->kill();
+            if (!hcsProcess->waitForFinished()) {
+                qWarning() << "Failed to kill HCS server";
+            }
+        }
     }
 #endif
 
