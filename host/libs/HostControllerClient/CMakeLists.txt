@@ -9,10 +9,10 @@ add_library(${PROJECT_NAME}
 
 target_link_libraries(${PROJECT_NAME}
         PUBLIC ${ZEROMQ_LIBRARIES}
+        PUBLIC ZMQHelper
+        PUBLIC ZeroMQ
 )
 
 target_include_directories(${PROJECT_NAME}
-        PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
-        PUBLIC ${ZEROMQ_INCLUDE_DIR}
-        PUBLIC ${ZMQHELP_INCLUDE_DIR}
-        )
+    PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
+)
