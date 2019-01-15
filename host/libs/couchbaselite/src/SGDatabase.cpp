@@ -261,6 +261,9 @@ SGDatabaseReturnStatus SGDatabase::deleteDocument(SGDocument *doc) {
     return SGDatabaseReturnStatus::kNoError;
 }
 
+/** SGDatabase getAllDocumentsKey.
+* @brief Runs local database query to get list of document keys.
+*/
 vector<std::string> SGDatabase::getAllDocumentsKey() {
     vector<string> document_keys;
     C4Error c4error = {};
