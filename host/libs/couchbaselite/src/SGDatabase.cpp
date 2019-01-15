@@ -79,7 +79,7 @@ SGDatabaseReturnStatus SGDatabase::open() {
 
     c4error_.code = 0;
 
-    c4db_ = c4db_open(c4str(db_path.c_str()), &c4db_config_, &c4error_);
+    c4db_ = c4db_open(slice(db_path), &c4db_config_, &c4error_);
 
     if (c4error_.code != kSGNoCouchBaseError_ && c4error_.code < kC4NumErrorCodesPlus1){
         DEBUG("Error opening the db: %s. Error Code:%d.\n", db_path.c_str(), c4error_.code);
@@ -127,9 +127,8 @@ SGDatabaseReturnStatus SGDatabase::createNewDocument(SGDocument *doc, alloc_slic
     DEBUG("Creating a new document\n");
 
     C4RevisionFlags revisionFlags = kRevNew;
-    C4String docId = c4str(doc->getId().c_str());
 
-    C4Document *newdoc = c4doc_create(c4db_, docId, body, revisionFlags,&c4error_);
+    C4Document *newdoc = c4doc_create(c4db_, slice(doc->getId()), body, revisionFlags,&c4error_);
     if (c4error_.code != kSGNoCouchBaseError_ && c4error_.code < kC4NumErrorCodesPlus1) {
         DEBUG("Could not create new document. Error Code:%d.\n",  c4error_.code);
         return SGDatabaseReturnStatus::kCreateDocumentError;
@@ -145,26 +144,20 @@ SGDatabaseReturnStatus SGDatabase::createNewDocument(SGDocument *doc, alloc_slic
 * @param body The fleece slice data which will update the body.
 */
 SGDatabaseReturnStatus SGDatabase::updateDocument(SGDocument *doc, alloc_slice new_body){
-    // Docuement exist. Make modifications to the body
+    // Document exist. Make modifications to the body
     DEBUG("document Exist. Working on updating the document: %s\n", doc->getId().c_str());
-    C4String rev_id = doc->c4document_->revID;
-    std::string rev_id_string = std::string((const char *) rev_id.buf, rev_id.size);
-    DEBUG("REV id: %s\n", rev_id_string.c_str());
+    string rev_id = slice(doc->c4document_->revID).asString();
+    DEBUG("REV id: %s\n", rev_id.c_str());
 
     C4Document *newdoc = c4doc_update(doc->c4document_, new_body, doc->c4document_->selectedRev.flags, &c4error_);
 
-    if (c4error_.code != NO_CB_ERROR && (c4error_.code < kC4NumErrorCodesPlus1) ) {
-        C4SliceResult sliceResult = c4error_getDescription(c4error_);
-        string slice2string = string((char*)sliceResult.buf,sliceResult.size);
+    if (c4error_.code != kSGNoCouchBaseError_ && (c4error_.code < kC4NumErrorCodesPlus1) ) {
+        alloc_slice sliceResult = c4error_getDescription(c4error_);
 
         DEBUG("Could not update the body of an existing document.\n");
-        DEBUG("Error Msg:%s\n", slice2string.c_str());
-
-        // free sliceResult
-        c4slice_free(sliceResult);
+        DEBUG("Error Msg:%s\n", sliceResult.asString().c_str());
 
         return SGDatabaseReturnStatus::kUpdatDocumentError;
-
     }else{
         // All good
         doc->c4document_ = newdoc;
@@ -198,7 +191,7 @@ SGDatabaseReturnStatus SGDatabase::save(SGDocument *doc) {
     encoder.writeValue(doc->mutable_dict_);
     alloc_slice fleece_data = encoder.finish();
 
-    if( c4doc == NULL ){
+    if( c4doc == nullptr ){
         status = createNewDocument(doc, fleece_data);
 
     }else{
@@ -227,7 +220,7 @@ C4Document *SGDatabase::getDocumentById(const std::string &doc_id) {
     c4db_beginTransaction(c4db_, &error);
     c4doc = c4doc_get(c4db_, c4str(doc_id.c_str()), true, &error);
     c4db_endTransaction(c4db_, true, &error);
-    if (error.code !=NO_CB_ERROR && (error.code < kC4NumErrorCodesPlus1)){
+    if (error.code !=kSGNoCouchBaseError_ && (error.code < kC4NumErrorCodesPlus1)){
         DEBUG("Error Code:%d.\n",  error.code);
     }
     DEBUG("END getDocumentById: %s\n", doc_id.c_str());
@@ -244,11 +237,10 @@ SGDatabaseReturnStatus SGDatabase::deleteDocument(SGDocument *doc) {
         DEBUG("deleteDocument kBeginTransactionError\n");
         return SGDatabaseReturnStatus::kBeginTransactionError;
     }
-    const char *doc_id = doc->getId().c_str();
-    DEBUG("START deleteDocument: %s\n", doc_id);
+    DEBUG("START deleteDocument: %s\n", doc->getId().c_str());
 
     // Try to delete the document
-    bool is_deleted = c4db_purgeDoc(c4db_, c4str(doc_id), &c4error_);
+    bool is_deleted = c4db_purgeDoc(c4db_, slice(doc->getId()), &c4error_);
 
     c4db_endTransaction(c4db_, true, &c4error_);
 
@@ -261,35 +253,35 @@ SGDatabaseReturnStatus SGDatabase::deleteDocument(SGDocument *doc) {
         return SGDatabaseReturnStatus::kDeleteDocumentError;
     }
 
-    DEBUG("Document %s deleted\n", doc_id);
-    // TODO: Do we need to have a delete flag in the document?
-    doc->setId("");
-    DEBUG("END deleteDocument: %s\n", doc_id);
+    DEBUG("Document %s deleted\n", doc->getId().c_str());
+
+    doc->setId( string() );
+
+    DEBUG("END deleteDocument: %s\n", doc->getId().c_str());
     return SGDatabaseReturnStatus::kNoError;
 }
 
 vector<std::string> SGDatabase::getAllDocumentsKey() {
     vector<string> document_keys;
-    C4Error c4error;
-    string json;
-    json.append("[\"SELECT\", {\"WHAT\": [[\"._id\"]]}]");
-    C4Query *query = c4query_new(c4db_, c4str(json.c_str()),&c4error);
-    if(c4error.code == NO_CB_ERROR){
+    C4Error c4error = {};
+    string json = "[\"SELECT\", {\"WHAT\": [[\"._id\"]]}]";
+    C4Query *query = c4query_new(c4db_, slice(json),&c4error);
+    if(c4error.code == kSGNoCouchBaseError_ ){
 
         C4QueryOptions options = kC4DefaultQueryOptions;
         C4QueryEnumerator *query_enumerator = c4query_run(query, &options, c4str(nullptr), &c4error);
 
-        if(c4error.code == NO_CB_ERROR){
+        if(c4error.code == kSGNoCouchBaseError_){
             while (c4queryenum_next(query_enumerator, &c4error)) {
-                FLSlice doc_name = FLValue_AsString(FLArrayIterator_GetValueAt(&query_enumerator->columns,0));
-                document_keys.push_back(string((char*)doc_name.buf, doc_name.size));
+                slice doc_name = FLValue_AsString(FLArrayIterator_GetValueAt(&query_enumerator->columns,0));
+                document_keys.push_back( doc_name.asString() );
             }
         }else{
-            DEBUG("C4QueryEnumerator failed to run\n");
+            DEBUG("C4QueryEnumerator failed to run. Error code:%d\n", c4error.code);
         }
 
     }else{
-        DEBUG("C4Query failed to execute a query\n");
+        DEBUG("C4Query failed to execute a query. Error code:%d\n", c4error.code);
     }
 
     return document_keys;
