@@ -53,6 +53,7 @@ Rectangle {
                 id:pwmIcon
                 height:50
                 width:50
+                mipmap:true
                 anchors.top:parent.top
                 anchors.topMargin: 15
                 anchors.left:parent.left
@@ -447,6 +448,7 @@ Rectangle {
                 id:linearIcon
                 height:50
                 width:50
+                mipmap:true
                 anchors.top:parent.top
                 anchors.topMargin: 15
                 anchors.left:parent.left
@@ -695,11 +697,12 @@ Rectangle {
                 id:buckIcon
                 height:50
                 width:50
+                mipmap:true
                 anchors.top:parent.top
                 anchors.topMargin: 15
                 anchors.left:parent.left
                 anchors.leftMargin: 10
-                source:"./images/icon-voltage.svg"
+                source:"./images/icon-buck.svg"
             }
 
             Text{
@@ -886,11 +889,12 @@ Rectangle {
                 id:boostIcon
                 height:50
                 width:50
+                mipmap:true
                 anchors.top:parent.top
                 anchors.topMargin: 15
                 anchors.left:parent.left
                 anchors.leftMargin: 10
-                source:"./images/icon-voltage.svg"
+                source:"./images/icon-boost.svg"
             }
 
             Text{

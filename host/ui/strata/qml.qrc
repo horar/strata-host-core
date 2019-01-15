@@ -499,5 +499,7 @@
         <file>views/led/views/images/icon-pulse.svg</file>
         <file>views/led/views/images/icon-linear.svg</file>
         <file>views/led/sgwidgets/SGHueSlider.qml</file>
+        <file>views/led/views/images/icon-buck.svg</file>
+        <file>views/led/views/images/icon-boost.svg</file>
     </qresource>
 </RCC>

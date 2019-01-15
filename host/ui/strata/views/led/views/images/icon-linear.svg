@@ -4,7 +4,7 @@
     <title>Artboard</title>
     <desc>Created with Sketch.</desc>
     <g id="Artboard" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-        <g id="pulse" transform="translate(1.000000, 1.000000)" fill="#FFFFFF" fill-rule="nonzero" stroke="#FFFFFF">
+        <g id="pulse" transform="translate(1.000000, 1.000000)" fill-rule="nonzero" stroke="#FFFFFF" stroke-width="3">
             <path d="M51.167,0.334 L1.833,0.334 C1.004,0.334 0.333,1.005 0.333,1.834 L0.333,51.166 C0.333,51.995 1.004,52.666 1.833,52.666 L51.166,52.666 C51.995,52.666 52.666,51.995 52.666,51.166 L52.666,1.834 C52.667,1.005 51.995,0.334 51.167,0.334 Z" id="Shape"></path>
         </g>
         <path d="M8.47188351,38.7 L46.4509916,38.7 C47.0986256,38.7 47.7,38.1518009 47.7,37.4665519 L47.7,15.5385862 C47.7,14.6249209 46.6360299,14.0310385 45.8033576,14.4421879 L7.87050908,36.4158369 C6.76027937,37.1010858 7.22287508,38.7 8.47188351,38.7 Z" id="ramp" stroke="#FFFFFF" fill="#FFFFFF" fill-rule="nonzero"></path>
