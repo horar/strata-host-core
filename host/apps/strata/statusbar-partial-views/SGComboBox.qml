@@ -7,7 +7,6 @@ Item {
 
     signal activated(int index)
     signal highlighted(int index)
-    signal editTextChanged(string editText)
 
     function find(text) {
         return comboBox.find(text)
@@ -24,6 +23,7 @@ Item {
     property alias textRole: comboBox.textRole
     property alias overrideLabelWidth: labelText.width
     property alias placeholderText: comboBox.placeholderText
+    property alias editText: comboBox.editText
 
     property string label: ""
     property bool labelLeft: true
@@ -56,7 +56,6 @@ Item {
 
         onActivated: root.activated(index)
         onHighlighted: root.highlighted(index)
-        onEditTextChanged: root.editTextChanged(editText)
         font: root.font
         enabled: root.enabled
 

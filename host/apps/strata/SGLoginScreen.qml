@@ -169,6 +169,12 @@ Rectangle {
             onEditTextChanged: text = editText
             onCurrentTextChanged: text = currentText
 
+            onActivated: {
+                if(index >= 0) {
+                    usernameField.editText = model.get(index).text
+                }
+            }
+
             editable: true
             borderColor: "#ddd"
             model: ListModel {}
