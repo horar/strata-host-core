@@ -43,7 +43,7 @@ bool SGDocument::exist() {
 /** SGDocument getBody.
 * @brief Stringify fleece object (mutable_dict_) to string json format.
 */
-const std::string &SGDocument::getBody() const {
+const std::string SGDocument::getBody() const {
     return mutable_dict_->asDict()->toJSONString();
 }
 
@@ -65,15 +65,8 @@ bool SGDocument::setC4Document(SGDatabase *database,const std::string &docId) {
     c4document_ = database->getDocumentById(docId);
     id_         = docId;
     if(c4document_ != nullptr){
-        DEBUG("SGDocument\n");
-        C4Error c4error;
-        C4String rev_id = c4document_->revID;
-        std::string rev_id_str = std::string((const char *)rev_id.buf, rev_id.size);
-
-        // TODO: Luay: Check for the body type. We are expecting the body to be in dictionary format (key,value) but this is not guaranteed!
         mutable_dict_ = fleece::impl::MutableDict::newDict(Value::fromData(c4document_->selectedRev.body)->asDict());
-
-        DEBUG("body: %s,object member counts:%d, revision:%s\n",getBody().c_str(),mutable_dict_->count(), rev_id_str.c_str());
+        DEBUG("Doc Id: %s, body: %s, revision:%s\n", docId.c_str(), getBody().c_str(), fleece::slice(c4document_->selectedRev.revID).asString().c_str());
         return true;
     }
     // Init a new mutable dict

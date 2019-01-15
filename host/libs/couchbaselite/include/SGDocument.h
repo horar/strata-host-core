@@ -31,7 +31,7 @@ public:
     void setId(const std::string &id);
 
     //Return string json format
-    const std::string &getBody() const;
+    const std::string getBody() const;
 
     // Return mutable_dict_ as fleece Dict object
     const fleece::impl::Dict* asDict() const;
