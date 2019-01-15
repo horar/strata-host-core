@@ -56,6 +56,7 @@ private:
 
     void setReplicatorType(SGReplicatorConfiguration::ReplicatorType replicator_type);
     bool _start();
+    bool isValidSGReplicatorConfiguration();
 };
 
 

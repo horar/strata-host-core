@@ -64,6 +64,10 @@ bool SGReplicator::_start(){
 
     Encoder encoder;
 
+    if(!isValidSGReplicatorConfiguration()){
+        return false;
+    }
+
     encoder.writeValue(replicator_configuration_->effectiveOptions());
     alloc_slice fleece_data = encoder.finish();
     replicator_parameters_.optionsDictFleece = fleece_data;
@@ -122,6 +126,11 @@ void SGReplicator::setReplicatorType(SGReplicatorConfiguration::ReplicatorType r
 
 }
 
+bool SGReplicator::isValidSGReplicatorConfiguration(){
+    return  replicator_configuration_ != nullptr &&
+            replicator_configuration_->getDatabase() != nullptr &&
+            !replicator_configuration_->getUrlEndpoint()->getPath().empty();
+}
 /** SGReplicator addChangeListener.
 * @brief Adds the callback function to the replicator's onStatusChanged event.
 * @param callback The callback function.
