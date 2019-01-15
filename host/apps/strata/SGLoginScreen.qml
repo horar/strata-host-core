@@ -167,7 +167,7 @@ Rectangle {
             focus: true
             property string text: currentText
             onEditTextChanged: text = editText
-            onCurrentIndexChanged: text = currentText
+            onCurrentTextChanged: text = currentText
 
             editable: true
             borderColor: "#ddd"
