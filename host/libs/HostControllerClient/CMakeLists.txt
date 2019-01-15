@@ -1,6 +1,7 @@
 project(HostControllerClient VERSION 1.0)
 
 find_package(ZeroMQ REQUIRED)
+find_package(ZMQHelper REQUIRED)
 
 set(EXT_LIBS_PATH ${CMAKE_SOURCE_DIR}/ext_libs)
 
@@ -15,5 +16,5 @@ target_link_libraries(${PROJECT_NAME}
 target_include_directories(${PROJECT_NAME}
         PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
         PUBLIC ${ZEROMQ_INCLUDE_DIR}
-        PUBLIC ${EXT_LIBS_PATH}/zmq/include
+        PUBLIC ${ZMQHELP_INCLUDE_DIR}
         )
