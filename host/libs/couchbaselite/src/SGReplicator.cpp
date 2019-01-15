@@ -60,7 +60,7 @@ bool SGReplicator::start(){
 * @param future_obj The future object used to send a signal to its running thread.
 */
 bool SGReplicator::_start(){
-    C4Error c4error;
+    C4Error c4error = {};
 
     Encoder encoder;
 
@@ -68,35 +68,27 @@ bool SGReplicator::_start(){
     alloc_slice fleece_data = encoder.finish();
     replicator_parameters_.optionsDictFleece = fleece_data;
 
-    // Callback functions
+    // Callback function for outgoing revision event
+    // As of now this is used for log purposes!
     replicator_parameters_.pushFilter = [](C4String docID, C4RevisionFlags ref, FLDict body, void *context){
         DEBUG("pushFilter\n");
-        FLStringResult f = FLValue_ToJSON((FLValue)body);
-        string doc_id = string((char *)docID.buf, docID.size);
-        string body_json = string((char *)f.buf, f.size);
-        DEBUG("Doc ID: %s, received body json:%s\n",doc_id.c_str(), body_json.c_str());
+        alloc_slice fleece_body = FLValue_ToJSON((FLValue)body);
+        DEBUG("Doc ID: %s, received body json:%s\n", slice(docID).asString().c_str(), fleece_body.asString().c_str());
         return true;
     };
 
     c4replicator_ = c4repl_new(replicator_configuration_->getDatabase(),
                                replicator_configuration_->getUrlEndpoint()->getC4Address(),
-                               c4str(replicator_configuration_->getUrlEndpoint()->getPath().c_str()),
-                               NULL,
+                               slice(replicator_configuration_->getUrlEndpoint()->getPath()),
+                               nullptr,
                                replicator_parameters_,
                                &c4error
     );
 
     if (c4error.code != NO_CB_ERROR && (c4error.code < kC4NumErrorCodesPlus1) ) {
         DEBUG("Replication failed.\n");
-
-        C4SliceResult sliceResult = c4error_getDescription(c4error);
-        string slice2string = string((char*)sliceResult.buf,sliceResult.size);
-
-        DEBUG("Error Msg:%s\n", slice2string.c_str());
-
-        // free sliceResult
-        c4slice_free(sliceResult);
-
+        alloc_slice slice_result = c4error_getDescription(c4error);
+        DEBUG("Error Msg:%s\n", slice_result.asString().c_str());
         return false;
     }
 
@@ -189,9 +181,9 @@ void SGReplicator::addValidationListener(const std::function<void(const std::str
     replicator_parameters_.validationFunc = [](C4String docID, C4RevisionFlags ref, FLDict body, void *context){
         DEBUG("validationFunc\n");
 
-        FLStringResult fleece_json_string = FLValue_ToJSON((FLValue)body);
-        string doc_id = string((char *)docID.buf, docID.size);
-        string body_json = string((char *)fleece_json_string.buf, fleece_json_string.size);
+        alloc_slice fleece_json_string = FLValue_ToJSON((FLValue)body);
+        string doc_id = slice(doc_id).asString();
+        string body_json = fleece_json_string.asString();
 
         ((SGReplicator*)context)->on_validation_callback_(doc_id, body_json);
 
