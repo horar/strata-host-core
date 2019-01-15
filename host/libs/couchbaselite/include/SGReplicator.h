@@ -46,9 +46,9 @@ public:
 
 
 private:
-    C4Replicator *c4replicator_;
-    SGReplicatorConfiguration *replicator_configuration_;
-    C4ReplicatorParameters replicator_parameters_;
+    C4Replicator                *c4replicator_ {nullptr};
+    SGReplicatorConfiguration   *replicator_configuration_ {nullptr};
+    C4ReplicatorParameters      replicator_parameters_;
 
     std::function<void(SGReplicator::ActivityLevel, SGReplicatorProgress progress)> on_status_changed_callback_;
     std::function<void(bool pushing, std::string doc_id, std::string error_message, bool is_error,bool error_is_transient)> on_document_error_callback_;

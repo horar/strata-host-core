@@ -18,9 +18,6 @@ using namespace fleece::impl;
 #define DEBUG(...) printf("SGReplicatorConfiguration: "); printf(__VA_ARGS__)
 
 SGReplicatorConfiguration::SGReplicatorConfiguration() {
-    database_      = nullptr;
-    url_endpoint_  = nullptr;
-    authenticator_ = nullptr;
     options_       = fleece::impl::MutableDict::newDict();
 }
 

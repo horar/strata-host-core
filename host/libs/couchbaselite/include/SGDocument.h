@@ -43,8 +43,8 @@ public:
     bool exist();
 
 private:
-    C4Database*     c4db_;
-    C4Document*     c4document_;
+    C4Database*     c4db_ {nullptr};
+    C4Document*     c4document_ {nullptr};
     // Document ID
     std::string     id_;
     friend class    SGDatabase;

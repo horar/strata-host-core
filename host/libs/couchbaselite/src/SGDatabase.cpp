@@ -24,12 +24,9 @@ using namespace std;
 using namespace fleece;
 using namespace fleece::impl;
 
-const string SGDatabase::kSGDatabasesDirectory_ = "db";
-
 #define DEBUG(...) printf("SGDatabase: "); printf(__VA_ARGS__)
 SGDatabase::SGDatabase() {}
 SGDatabase::SGDatabase(const std::string& db_name) {
-    c4db_ = nullptr;
     setDBName(db_name);
 }
 
@@ -75,7 +72,7 @@ SGDatabaseReturnStatus SGDatabase::open() {
     c4db_config_.versioning     = kC4RevisionTrees;
     c4db_config_.encryptionKey.algorithm    = kC4EncryptionNone;
 
-    string db_path = kSGDatabasesDirectory_ + string("/") + db_name_;
+    string db_path = string(kSGDatabasesDirectory_) + string("/") + db_name_;
 
     c4error_.code = 0;
 

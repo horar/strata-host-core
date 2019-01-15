@@ -47,10 +47,10 @@ public:
     void setChannels(const std::vector<std::string>& channels);
 
 private:
-    C4Database          *database_;
-    class SGURLEndpoint *url_endpoint_;
+    C4Database          *database_ {nullptr};
+    SGAuthenticator     *authenticator_ {nullptr};
+    class SGURLEndpoint *url_endpoint_ {nullptr};
     ReplicatorType      replicator_type_;
-    SGAuthenticator     *authenticator_;
 
     std::vector<std::string> channels_;
 

@@ -14,15 +14,12 @@
 #define DEBUG(...) printf("SGDocument: "); printf(__VA_ARGS__)
 using fleece::impl::Value;
 using namespace std;
-SGDocument::SGDocument() {
-    c4db_       = nullptr;
-    c4document_ = nullptr;
-}
+SGDocument::SGDocument() {}
 SGDocument::~SGDocument() {
     c4doc_free(c4document_);
 }
 
-SGDocument::SGDocument(SGDatabase *database, const std::string &docId): SGDocument() {
+SGDocument::SGDocument(SGDatabase *database, const std::string &docId){
     setC4Document(database, docId);
 }
 const std::string &SGDocument::getId() const {

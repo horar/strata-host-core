@@ -16,9 +16,7 @@
 #include <thread>         // std::thread
 #include <mutex>          // std::mutex
 #include "c4.h"
-
 #include "FleeceImpl.hh"
-
 #include "SGDocument.h"
 #ifndef NO_CB_ERROR
 #define NO_CB_ERROR     0      // Declare value rather than use a magic number
@@ -63,14 +61,14 @@ public:
     bool isOpen();
 private:
 
-    C4Database          *c4db_;
+    C4Database          *c4db_ {nullptr};
     C4DatabaseConfig    c4db_config_;
     C4Error             c4error_;
     std::string         db_name_;
     std::mutex          db_lock_;
 
     static const uint32_t kSGNoCouchBaseError_ = 0;
-    static const std::string kSGDatabasesDirectory_;
+    static constexpr const char* kSGDatabasesDirectory_ = "db";
 
     SGDatabaseReturnStatus createNewDocument(SGDocument *doc, fleece::alloc_slice body);
     SGDatabaseReturnStatus updateDocument(SGDocument *doc, fleece::alloc_slice new_body);
