@@ -399,11 +399,21 @@ Rectangle {
                 topMargin: 30
             }
 
+            onVisibleChanged: {
+                if(visible) {
+                    indicatorAnimation.start()
+                } else {
+                    indicatorAnimation.stop();
+                }
+            }
+
             RotationAnimation on rotation {
+                id: indicatorAnimation
                 loops: Animation.Infinite
                 from: 0
                 to: 360
                 duration: 750
+                running: false
             }
         }
     }

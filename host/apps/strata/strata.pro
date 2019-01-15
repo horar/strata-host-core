@@ -65,7 +65,7 @@ else : macx : !win32 {
     INCLUDEPATH += $${HOST_ROOT}/ext_libs/zmq/include
     INCLUDEPATH += $${HOST_ROOT}/ext_libs/libzmq/include
     INCLUDEPATH += $$PWD/PlatformInterface
-    INCLUDEPATH += $$PWD/include
+    INCLUDEPATH += $$PWD/source
 
 }
 
@@ -80,7 +80,7 @@ else : win32 {
     INCLUDEPATH += $${HOST_ROOT}/ext_libs/zmq/include
     INCLUDEPATH += $${HOST_ROOT}/ext_libs/libzmq/include
     INCLUDEPATH += $$PWD/PlatformInterface/
-    INCLUDEPATH += $$PWD/include
+    INCLUDEPATH += $$PWD/source
     DEPENDPATH += $${HOST_ROOT}/lib/linux/include
 }
 else: message("UNKNOWN machine type. Build configuration failed !!!!")
@@ -93,7 +93,7 @@ message(Depend Path: $$DEPENDPATH);
 message("DONE");
 
 HEADERS += PlatformInterface/core/CoreInterface.h \
-    include/DocumentManager.h \
+    source/DocumentManager.h \
     $${HOST_ROOT}/libs/HostControllerClient/include/HostControllerClient.hpp \
     $${HOST_ROOT}/ext_libs/zmq/include/zhelpers.hpp \
     $${HOST_ROOT}/ext_libs/zmq/include/zmq.hpp \
