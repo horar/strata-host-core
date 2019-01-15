@@ -65,7 +65,7 @@ SGDatabaseReturnStatus SGDatabase::open() {
         System call will work with Windows/Mac/Linux
     */
     // System returns the processor exit status. In this case mkdir return 0 on success.
-    string command = "mkdir " + kSGDatabasesDirectory_;
+    string command = string("mkdir ") + kSGDatabasesDirectory_;
     system(command.c_str());
 
     // Configure database attributes
@@ -75,7 +75,7 @@ SGDatabaseReturnStatus SGDatabase::open() {
     c4db_config_.versioning     = kC4RevisionTrees;
     c4db_config_.encryptionKey.algorithm    = kC4EncryptionNone;
 
-    string db_path = kSGDatabasesDirectory_ + "/" + db_name_;
+    string db_path = kSGDatabasesDirectory_ + string("/") + db_name_;
 
     c4error_.code = 0;
 
