@@ -160,7 +160,7 @@ SGDatabaseReturnStatus SGDatabase::updateDocument(SGDocument *doc, alloc_slice n
         return SGDatabaseReturnStatus::kUpdatDocumentError;
     }else{
         // All good
-        doc->c4document_ = newdoc;
+        doc->setC4document(newdoc);
     }
     return SGDatabaseReturnStatus::kNoError;
 }
@@ -218,7 +218,7 @@ C4Document *SGDatabase::getDocumentById(const std::string &doc_id) {
     DEBUG("START getDocumentById: %s\n", doc_id.c_str());
 
     c4db_beginTransaction(c4db_, &error);
-    c4doc = c4doc_get(c4db_, c4str(doc_id.c_str()), true, &error);
+    c4doc = c4doc_get(c4db_, slice(doc_id), true, &error);
     c4db_endTransaction(c4db_, true, &error);
     if (error.code !=kSGNoCouchBaseError_ && (error.code < kC4NumErrorCodesPlus1)){
         DEBUG("Error Code:%d.\n",  error.code);
@@ -256,6 +256,7 @@ SGDatabaseReturnStatus SGDatabase::deleteDocument(SGDocument *doc) {
     DEBUG("Document %s deleted\n", doc->getId().c_str());
 
     doc->setId( string() );
+    doc->setC4document(nullptr);
 
     DEBUG("END deleteDocument: %s\n", doc->getId().c_str());
     return SGDatabaseReturnStatus::kNoError;

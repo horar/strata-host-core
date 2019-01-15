@@ -48,6 +48,9 @@ private:
     // Document ID
     std::string     id_;
     friend class    SGDatabase;
+
+    void setC4document(C4Document *);
+
 protected:
     bool setC4Document(SGDatabase *database, const std::string &docId);
     fleece::Retained<fleece::impl::MutableDict> mutable_dict_;

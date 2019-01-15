@@ -22,7 +22,7 @@ SGDocument::~SGDocument() {
     c4doc_free(c4document_);
 }
 
-SGDocument::SGDocument(SGDatabase *database, const std::string &docId) {
+SGDocument::SGDocument(SGDatabase *database, const std::string &docId): SGDocument() {
     setC4Document(database, docId);
 }
 const std::string &SGDocument::getId() const {
@@ -88,4 +88,8 @@ bool SGDocument::empty() {
 }
 C4Document *SGDocument::getC4document() const {
     return c4document_;
+}
+
+void SGDocument::setC4document(C4Document *doc){
+    c4document_ = doc;
 }
