@@ -21,7 +21,7 @@ if (ZMQHelper_FOUND)
 
     message( STATUS "ZMQHelper headers found at ${ZMQHELP_INCLUDE_DIR}" )
 
-    add_library( ZMQHelper UNKNOWN IMPORTED )
+    add_library( ZMQHelper INTERFACE IMPORTED )
     set_property( TARGET ZMQHelper PROPERTY INTERFACE_INCLUDE_DIRECTORIES "${ZMQHELP_INCLUDE_DIR}" )
 
     mark_as_advanced(
