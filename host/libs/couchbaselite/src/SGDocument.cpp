@@ -15,9 +15,8 @@
 using fleece::impl::Value;
 using namespace std;
 SGDocument::SGDocument() {
-    c4db_       = NULL;
-    c4document_ = NULL;
-    id_         = "";
+    c4db_       = nullptr;
+    c4document_ = nullptr;
 }
 SGDocument::~SGDocument() {
     c4doc_free(c4document_);
@@ -38,10 +37,7 @@ void SGDocument::setId(const std::string &id) {
 * @brief Check if the document exist in the DB.
 */
 bool SGDocument::exist() {
-    if (c4document_ == NULL){
-        return false;
-    }
-    return true;
+    return c4document_ != nullptr;
 }
 
 /** SGDocument getBody.
@@ -68,7 +64,7 @@ bool SGDocument::setC4Document(SGDatabase *database,const std::string &docId) {
     c4db_       = database->getC4db();
     c4document_ = database->getDocumentById(docId);
     id_         = docId;
-    if(c4document_ !=NULL){
+    if(c4document_ != nullptr){
         DEBUG("SGDocument\n");
         C4Error c4error;
         C4String rev_id = c4document_->revID;
