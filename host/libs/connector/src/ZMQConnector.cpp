@@ -15,15 +15,37 @@
 
 using namespace std;
 
+
+static std::string hex2Str(unsigned char* data, size_t len)
+{
+    std::stringstream ss;
+    ss << std::hex;
+    for(size_t i=0;i < len; i++)
+        ss << std::setw(2) << std::setfill('0') << (int)data[i];
+    return ss.str();
+}
+
+
+
 // @f constructor
 // @b creates the context for the socket
 //
-ZMQConnector::ZMQConnector(const string& type)
+ZMQConnector::ZMQConnector(const string& type) : Connector(),
+    context_(new zmq::context_t ),
+    socket_(nullptr),
+    connection_interface_(type)
 {
-    LOG_DEBUG(DEBUG,"Creating ZMQ connector object for %s\n",type.c_str());
-    // zmq context creation
-    context_ = new(zmq::context_t);
-    connection_interface_ = type;
+    LOG_DEBUG(DEBUG,"Creating ZMQ connector object for %s\n", type.c_str());
+}
+
+ZMQConnector::~ZMQConnector()
+{
+    if (socket_) {
+        close();
+        delete socket_;
+    }
+
+    delete context_;
 }
 
 // @f open
@@ -42,8 +64,13 @@ bool ZMQConnector::open(const string& ip_address)
         socket_ = new zmq::socket_t(*context_,ZMQ_DEALER);
         try {
             LOG_DEBUG(DEBUG,"Connecting to the remote server socket %s\n",ip_address.c_str());
-            socket_->setsockopt(ZMQ_IDENTITY,dealer_id_.c_str(),dealer_id_.length());
+
+            const std::string& id = getDealerID();
+            if (!id.empty()) {
+                socket_->setsockopt(ZMQ_IDENTITY, id.c_str(), id.length());
+            }
             socket_->connect(ip_address.c_str());
+
         }
         catch (zmq::error_t& e) {
             LOG_DEBUG(DEBUG,"Error in opening remote\n",0);
@@ -67,7 +94,7 @@ bool ZMQConnector::open(const string& ip_address)
 bool ZMQConnector::close()
 {
     socket_->close();
-    connection_state_ = false;
+    setConnectionState(false);
     return true;
 }
 
@@ -112,7 +139,8 @@ bool ZMQConnector::read(string& message)
         // remote sockets read from router and they have only message and not dealer id
         locker_.lock();
         if(connection_interface_ == "router") {
-            dealer_id_ = s_recv(*socket_);
+            std::string dealer_id = s_recv(*socket_);
+            setDealerID(dealer_id);
         }
         message = s_recv(*socket_);
         locker_.unlock();
@@ -144,7 +172,7 @@ bool ZMQConnector::send(const string& message)
     // remote sockets write to router and they have only message and not dealer id
     locker_.lock();
     if(connection_interface_ == "router") {
-        s_sendmore(*socket_,dealer_id_);
+        s_sendmore(*socket_, getDealerID() );
     }
     s_send(*socket_,message);
     locker_.unlock();

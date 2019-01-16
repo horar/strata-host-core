@@ -42,7 +42,7 @@ class SerialConnector : public Connector {
 public:
     SerialConnector();
     SerialConnector(const std::string&) {}
-    virtual ~SerialConnector() {}
+    virtual ~SerialConnector();
 
     bool open(const std::string&);
 
@@ -77,18 +77,17 @@ private:
     // integer variable used for wait timeout // required only for serial to socket
     int serial_wait_timeout_;
 
-// #ifdef _WIN32
+#ifdef _WIN32
     zmq::context_t* context_;
     zmq::socket_t* write_socket_;   // After serial port read, writes to this socket
     zmq::socket_t* read_socket_;
-// #endif
+#endif
 };
 
 class ZMQConnector : public Connector {
 public:
-    ZMQConnector() {}
     ZMQConnector(const std::string&);
-    virtual ~ZMQConnector() {}
+    virtual ~ZMQConnector();
 
     bool open(const std::string&);
     bool close();
@@ -101,6 +100,9 @@ public:
     int getFileDescriptor();
 
 private:
+    ZMQConnector() = delete;
+
+private:
     zmq::context_t* context_;
     zmq::socket_t* socket_;
     std::string connection_interface_;
@@ -109,8 +111,8 @@ private:
 class RequestReplyConnector : public Connector {
 public:
     RequestReplyConnector();
-    RequestReplyConnector(const std::string&) {}
-    virtual ~RequestReplyConnector() = default;
+    RequestReplyConnector(const std::string&);
+    virtual ~RequestReplyConnector();
 
     bool open(const std::string&);
     bool close();
@@ -130,9 +132,8 @@ private:
 
 class PublisherSubscriberConnector : public Connector {
 public:
-  	PublisherSubscriberConnector() {}
     PublisherSubscriberConnector(const std::string&);
-    virtual ~PublisherSubscriberConnector() {}
+    virtual ~PublisherSubscriberConnector();
 
     bool open(const std::string&);
     bool close();
@@ -143,6 +144,9 @@ public:
     bool read(std::string& notification);
 
     int getFileDescriptor();
+
+private:
+    PublisherSubscriberConnector() = delete;
 
 private:
     zmq::context_t* context_;

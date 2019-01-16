@@ -44,7 +44,7 @@ using namespace rapidjson;
 // @f constructor
 // @b
 //
-SerialConnector::SerialConnector()
+SerialConnector::SerialConnector() : Connector()
 {
     LOG_DEBUG(DEBUG,"Creating a Serial Connector Object\n",0);
 #ifdef _WIN32
@@ -58,8 +58,14 @@ SerialConnector::SerialConnector()
 #endif
     LOG_DEBUG(DEBUG,"Creating thread for serial port scan\n",0);
     open_platform_thread_ = new thread(&SerialConnector::openPlatform,this);
-    spyglass_platform_connected_ = false;
 }
+
+SerialConnector::~SerialConnector()
+{
+    //TODO: cleanup...
+}
+
+
 
 // @f isPlatformAvailable
 // @b
@@ -97,7 +103,7 @@ void SerialConnector::openPlatform()
                     if (open(platform_port_name)) {
                         sp_free_port_list(ports);
                         // the flag that is being used by hcs to detect if spyglass platform is connected
-                        spyglass_platform_connected_ = true;
+                        setPlatformConnected(true);
                         return ;
                     }   // end if - open platform
                 }   // end if - string pattern match
@@ -189,7 +195,7 @@ bool SerialConnector::open(const std::string& serial_port_name)
 bool SerialConnector::close()
 {
     sp_close(platform_socket_);
-    spyglass_platform_connected_ = false;
+    setPlatformConnected(false);
     open_platform_thread_->join();
     delete open_platform_thread_;
     open_platform_thread_ = new thread(&SerialConnector::openPlatform,this);
@@ -230,10 +236,10 @@ bool SerialConnector::read(string &notification)
         if(error < 0) {
             cout << "error number "<<error<<endl;
             LOG_DEBUG(DEBUG,"Platform Disconnected:%c\n",temp);
-            dealer_id_.clear();
+            setDealerID(std::string());
             return false;
         }
-        if(temp !='\n' && temp!= NULL) {
+        if(temp != '\n' && temp != '\0') {
             response.push_back(temp);
         }
     }
@@ -329,14 +335,7 @@ bool SerialConnector::sendSmallChunks(const std::string& message, const unsigned
     return false;
 }
 
-// @f getFileDescriptor
-// @b returns the file descriptor
-//
-// arguments:
-//  IN:
-//
-//  OUT: file descriptor
-//
+
 //
 int SerialConnector::getFileDescriptor()
 {
@@ -364,6 +363,7 @@ int SerialConnector::getFileDescriptor()
 // @ref 1) under "KNOWN BUGS/HACKS" section in Connector.h for more details
 void SerialConnector::windowsPlatformReadHandler()
 {
+#ifdef _WIN32
     // Producer Consumer model is used here.
     // This is to ensure the synchoronous activity between push and pull sockets
     unique_lock<mutex> lock_condition_variable(locker_);
@@ -425,6 +425,7 @@ void SerialConnector::windowsPlatformReadHandler()
             s_send(*write_socket_,read_message);
         }
     }
+#endif //WIN32
 }
 
 // @f getPlatformID
@@ -452,8 +453,8 @@ bool SerialConnector::getPlatformID(std::string message)
         return false;
     }
     if (platform_command["notification"]["payload"].HasMember("verbose_name")) {
-        dealer_id_ = platform_command["notification"]["payload"]["verbose_name"].GetString();
-        platform_uuid_ = platform_command["notification"]["payload"]["platform_id"].GetString();
+        setDealerID(platform_command["notification"]["payload"]["verbose_name"].GetString());
+        setPlatformUUID(platform_command["notification"]["payload"]["platform_id"].GetString());
         return true;
     }
     return false;

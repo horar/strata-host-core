@@ -18,12 +18,22 @@ using namespace std;
 // @f constructor
 // @b creates the context for the socket
 //
-PublisherSubscriberConnector::PublisherSubscriberConnector(const string& type)
+PublisherSubscriberConnector::PublisherSubscriberConnector(const string& type) : Connector(),
+    context_(new zmq::context_t),
+    socket_(nullptr),
+    connection_interface_(type)
 {
     LOG_DEBUG(DEBUG,"Creating PublisherSubscriberConnector connector object for %s\n",type.c_str());
-    // zmq context creation
-    context_ = new(zmq::context_t);
-    connection_interface_ = type;
+}
+
+PublisherSubscriberConnector::~PublisherSubscriberConnector()
+{
+    if (socket_) {
+        close();
+        delete socket_;
+    }
+
+    delete context_;
 }
 
 // @f open
@@ -39,10 +49,10 @@ PublisherSubscriberConnector::PublisherSubscriberConnector(const string& type)
 bool PublisherSubscriberConnector::open(const string& ip_address)
 {
     if(connection_interface_ == "subscribe") {
-        socket_ = new zmq::socket_t(*context_,ZMQ_SUB);
+        socket_ = new zmq::socket_t(*context_, ZMQ_SUB);
         try {
-            LOG_DEBUG(DEBUG,"Connecting to the remote server socket %s with filter %s\n",ip_address.c_str(),dealer_id_.c_str());
-            socket_->setsockopt(ZMQ_SUBSCRIBE,dealer_id_.c_str(),1);
+            LOG_DEBUG(DEBUG,"Connecting to the remote server socket %s with filter %s\n",ip_address.c_str(), getDealerID().c_str());
+            socket_->setsockopt(ZMQ_SUBSCRIBE, getDealerID().c_str(),1);
             socket_->connect(ip_address.c_str());
         }
         catch (zmq::error_t& e) {
@@ -58,7 +68,7 @@ bool PublisherSubscriberConnector::open(const string& ip_address)
             return false;
         }
     }
-    connection_state_ = true;
+    setConnectionState(true);
     return true;
 }
 
@@ -68,7 +78,7 @@ bool PublisherSubscriberConnector::open(const string& ip_address)
 bool PublisherSubscriberConnector::close()
 {
     socket_->close();
-    connection_state_ = false;
+    setConnectionState(false);
     return true;
 }
 
@@ -112,7 +122,7 @@ bool PublisherSubscriberConnector::read(string& message)
         // 1) dealer_id and 2) message
         // remote sockets read from router and they have only message and not dealer id
         if(connection_interface_ == "publish") {
-            dealer_id_ = s_recv(*socket_);
+            setDealerID(s_recv(*socket_));
         }
         message = s_recv(*socket_);
     }
@@ -139,7 +149,7 @@ bool PublisherSubscriberConnector::send(const string& message)
 {
     // 1) dealer_id and 2) message
     if(connection_interface_ == "publish") {
-        s_sendmore(*socket_,dealer_id_);
+        s_sendmore(*socket_, getDealerID() );
     }
     s_send(*socket_,message);
     unsigned int     zmq_events;
