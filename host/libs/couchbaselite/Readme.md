@@ -1,6 +1,6 @@
 #Couhbase-lite-cpp library
 This library depends on couchbase-lite-core. 
-Note: This is tested on Mac OS.
+Note: This is tested on Mac OS and (Windows built using Visual Studio).
 
 Since couchbase-lite-core is submodule of this library please run:
 `git submodule update --init --recursive`
@@ -35,7 +35,7 @@ This library was tested with Couchbase version `5.5.1`
 - Install Sync Gateway 2.1.1 from above link
 - Follow sync gateway instructions setup from `https://docs.couchbase.com/sync-gateway/2.1/getting-started.html`
 - NOTE: Use the following configuration file and change information as needed.
-`
+```JSON
 {
     "log": ["*"],
     "databases": {
@@ -58,4 +58,4 @@ This library was tested with Couchbase version `5.5.1`
         }
     }
 }
-`
+```
