@@ -167,7 +167,13 @@ Rectangle {
             focus: true
             property string text: currentText
             onEditTextChanged: text = editText
-            onCurrentIndexChanged: text = currentText
+            onCurrentTextChanged: text = currentText
+
+            onActivated: {
+                if(index >= 0) {
+                    usernameField.editText = model.get(index).text
+                }
+            }
 
             editable: true
             borderColor: "#ddd"
