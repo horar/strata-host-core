@@ -19,7 +19,7 @@ using namespace std;
 using namespace fleece;
 using namespace fleece::impl;
 using namespace std::placeholders;
-
+using namespace Spyglass;
 #define DEBUG(...) printf("TEST SGLiteCore: "); printf(__VA_ARGS__)
 
 const char* activity_level_string[] = {"Stopped","Offline","Connecting","Idle", "Busy" };

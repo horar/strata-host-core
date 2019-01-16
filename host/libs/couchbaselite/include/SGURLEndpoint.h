@@ -15,40 +15,43 @@
 
 #include "c4.h"
 
-class SGURLEndpoint {
+namespace Spyglass {
+    class SGURLEndpoint {
 
-public:
-    SGURLEndpoint();
-    SGURLEndpoint(const std::string &full_url);
-    virtual ~SGURLEndpoint();
+    public:
+        SGURLEndpoint();
 
-    const std::string &getHost() const;
+        SGURLEndpoint(const std::string &full_url);
 
-    void setHost(const std::string &host);
+        virtual ~SGURLEndpoint();
 
-    const std::string &getSchema() const;
+        const std::string &getHost() const;
 
-    void setSchema(const std::string &schema);
+        void setHost(const std::string &host);
 
-    const std::string &getPath() const;
+        const std::string &getSchema() const;
 
-    void setPath(const std::string &path);
+        void setSchema(const std::string &schema);
 
-    const uint16_t &getPort() const;
+        const std::string &getPath() const;
 
-    void setPort(const uint16_t &port);
+        void setPath(const std::string &path);
 
-    const C4Address &getC4Address() const;
+        const uint16_t &getPort() const;
 
-private:
-    std::string uri;
-    std::string host_;
-    std::string schema_;
-    std::string path_;
-    uint16_t    port_;
+        void setPort(const uint16_t &port);
 
-    C4Address   c4address_;
-};
+        const C4Address &getC4Address() const;
 
+    private:
+        std::string uri;
+        std::string host_;
+        std::string schema_;
+        std::string path_;
+        uint16_t port_;
+
+        C4Address c4address_;
+    };
+}
 
 #endif //SGURLENDPOINT_H

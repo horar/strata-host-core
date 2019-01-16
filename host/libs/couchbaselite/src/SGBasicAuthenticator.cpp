@@ -14,34 +14,41 @@ using namespace fleece;
 using namespace fleece::impl;
 #define DEBUG(...) printf("SGBasicAuthenticator: "); printf(__VA_ARGS__)
 
-SGBasicAuthenticator::SGBasicAuthenticator(){}
-SGBasicAuthenticator::SGBasicAuthenticator(const std::string &username, const std::string &password){
-    username_ = username;
-    password_ = password;
-}
-SGBasicAuthenticator::~SGBasicAuthenticator(){}
+namespace Spyglass {
+    SGBasicAuthenticator::SGBasicAuthenticator() {}
 
-void SGBasicAuthenticator::setUserName(const std::string &username){
-    username_ = username;
-}
-const std::string SGBasicAuthenticator::getUserName() const{
-    return username_;
-}
-void SGBasicAuthenticator::setPassword(const std::string &password){
-    password_ = password;
-}
-const std::string SGBasicAuthenticator::getPassword() const{
-    return password_;
-}
+    SGBasicAuthenticator::SGBasicAuthenticator(const std::string &username, const std::string &password) {
+        username_ = username;
+        password_ = password;
+    }
 
-/** SGBasicAuthenticator authenticate.
-* @brief Creates a fleece dictionary to set auth type, set username and password.
-* @param options The reference to the mutable fleece dicationary.
-*/
-void SGBasicAuthenticator::authenticate(fleece::Retained<fleece::impl::MutableDict> options){
-    fleece::Retained<fleece::impl::MutableDict> auth = fleece::impl::MutableDict::newDict();
-    auth->set( slice(kC4ReplicatorAuthType), slice(kC4AuthTypeBasic) );
-    auth->set( slice(kC4ReplicatorAuthUserName), slice(username_) );
-    auth->set( slice(kC4ReplicatorAuthPassword), slice(password_) );
-    options->set( slice(kC4ReplicatorOptionAuthentication), auth);
+    SGBasicAuthenticator::~SGBasicAuthenticator() {}
+
+    void SGBasicAuthenticator::setUserName(const std::string &username) {
+        username_ = username;
+    }
+
+    const std::string SGBasicAuthenticator::getUserName() const {
+        return username_;
+    }
+
+    void SGBasicAuthenticator::setPassword(const std::string &password) {
+        password_ = password;
+    }
+
+    const std::string SGBasicAuthenticator::getPassword() const {
+        return password_;
+    }
+
+    /** SGBasicAuthenticator authenticate.
+    * @brief Creates a fleece dictionary to set auth type, set username and password.
+    * @param options The reference to the mutable fleece dicationary.
+    */
+    void SGBasicAuthenticator::authenticate(fleece::Retained<fleece::impl::MutableDict> options) {
+        fleece::Retained<fleece::impl::MutableDict> auth = fleece::impl::MutableDict::newDict();
+        auth->set(slice(kC4ReplicatorAuthType), slice(kC4AuthTypeBasic));
+        auth->set(slice(kC4ReplicatorAuthUserName), slice(username_));
+        auth->set(slice(kC4ReplicatorAuthPassword), slice(password_));
+        options->set(slice(kC4ReplicatorOptionAuthentication), auth);
+    }
 }

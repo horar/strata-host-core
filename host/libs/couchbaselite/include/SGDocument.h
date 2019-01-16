@@ -17,44 +17,50 @@
 #include "FleeceImpl.hh"
 #include "MutableArray.hh"
 #include "MutableDict.hh"
-class SGDocument{
-public:
-    SGDocument();
 
-    virtual ~SGDocument();
+namespace Spyglass {
+    class SGDocument {
+    public:
+        SGDocument();
 
-    SGDocument(class SGDatabase *database, const std::string &docId);
+        virtual ~SGDocument();
 
-    C4Document *getC4document() const;
+        SGDocument(class SGDatabase *database, const std::string &docId);
 
-    const std::string &getId() const;
-    void setId(const std::string &id);
+        C4Document *getC4document() const;
 
-    //Return string json format
-    const std::string getBody() const;
+        const std::string &getId() const;
 
-    // Return mutable_dict_ as fleece Dict object
-    const fleece::impl::Dict* asDict() const;
+        void setId(const std::string &id);
 
-    bool empty();
-    const fleece::impl::Value* get(const std::string &keyToFind);
+        //Return string json format
+        const std::string getBody() const;
 
-    // Check if document exist in DB
-    bool exist();
+        // Return mutable_dict_ as fleece Dict object
+        const fleece::impl::Dict *asDict() const;
 
-private:
-    C4Database*     c4db_ {nullptr};
-    C4Document*     c4document_ {nullptr};
-    // Document ID
-    std::string     id_;
-    friend class    SGDatabase;
+        bool empty();
 
-    void setC4document(C4Document *);
+        const fleece::impl::Value *get(const std::string &keyToFind);
 
-protected:
-    bool setC4Document(SGDatabase *database, const std::string &docId);
-    fleece::Retained<fleece::impl::MutableDict> mutable_dict_;
-};
+        // Check if document exist in DB
+        bool exist();
 
+    private:
+        C4Database *c4db_{nullptr};
+        C4Document *c4document_{nullptr};
+        // Document ID
+        std::string id_;
+
+        friend class SGDatabase;
+
+        void setC4document(C4Document *);
+
+    protected:
+        bool setC4Document(SGDatabase *database, const std::string &docId);
+
+        fleece::Retained<fleece::impl::MutableDict> mutable_dict_;
+    };
+}
 
 #endif //SGDOCUMENT_H

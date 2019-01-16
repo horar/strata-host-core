@@ -19,45 +19,59 @@
 
 #include "SGDatabase.h"
 #include "SGReplicatorConfiguration.h"
+namespace Spyglass {
+    typedef struct {
+        uint64_t completed;// The number of completed changes processed.
+        uint64_t total;// The total number of changes to be processed.
+        uint64_t document_count;// Number of documents transferred so far.
+    } SGReplicatorProgress;
 
-typedef struct{
-    uint64_t completed;// The number of completed changes processed.
-    uint64_t total;// The total number of changes to be processed.
-    uint64_t document_count;// Number of documents transferred so far.
-}SGReplicatorProgress;
-class SGReplicator {
-public:
-    SGReplicator();
-    SGReplicator(SGReplicatorConfiguration *replicator_configuration);
-    virtual ~SGReplicator();
+    class SGReplicator {
+    public:
+        SGReplicator();
 
-    enum ActivityLevel{
-        kStopped=0,
-        kOffline,
-        kConnecting,
-        kIdle,
-        kBusy
+        SGReplicator(SGReplicatorConfiguration *replicator_configuration);
+
+        virtual ~SGReplicator();
+
+        enum ActivityLevel {
+            kStopped = 0,
+            kOffline,
+            kConnecting,
+            kIdle,
+            kBusy
+        };
+
+        bool start();
+
+        void stop();
+
+        void addChangeListener(const std::function<void(SGReplicator::ActivityLevel, SGReplicatorProgress)> &callback);
+
+        void addDocumentEndedListener(
+                const std::function<void(bool pushing, std::string doc_id, std::string error_message, bool is_error,
+                                         bool error_is_transient)> &callback);
+
+        void addValidationListener(
+                const std::function<void(const std::string &doc_id, const std::string &json_body)> &callback);
+
+
+    private:
+        C4Replicator *c4replicator_{nullptr};
+        SGReplicatorConfiguration *replicator_configuration_{nullptr};
+        C4ReplicatorParameters replicator_parameters_;
+
+        std::function<void(SGReplicator::ActivityLevel, SGReplicatorProgress progress)> on_status_changed_callback_;
+        std::function<void(bool pushing, std::string doc_id, std::string error_message, bool is_error,
+                           bool error_is_transient)> on_document_error_callback_;
+        std::function<void(const std::string &doc_id, const std::string &json_body)> on_validation_callback_;
+
+        void setReplicatorType(SGReplicatorConfiguration::ReplicatorType replicator_type);
+
+        bool _start();
+
+        bool isValidSGReplicatorConfiguration();
     };
-    bool start();
-    void stop();
-    void addChangeListener(const std::function<void(SGReplicator::ActivityLevel, SGReplicatorProgress)>& callback);
-    void addDocumentEndedListener(const std::function<void(bool pushing, std::string doc_id, std::string error_message, bool is_error,bool error_is_transient)>& callback );
-    void addValidationListener(const std::function<void(const std::string& doc_id, const std::string& json_body )>& callback);
-
-
-private:
-    C4Replicator                *c4replicator_ {nullptr};
-    SGReplicatorConfiguration   *replicator_configuration_ {nullptr};
-    C4ReplicatorParameters      replicator_parameters_;
-
-    std::function<void(SGReplicator::ActivityLevel, SGReplicatorProgress progress)> on_status_changed_callback_;
-    std::function<void(bool pushing, std::string doc_id, std::string error_message, bool is_error,bool error_is_transient)> on_document_error_callback_;
-    std::function<void(const std::string& doc_id, const std::string& json_body )> on_validation_callback_;
-
-    void setReplicatorType(SGReplicatorConfiguration::ReplicatorType replicator_type);
-    bool _start();
-    bool isValidSGReplicatorConfiguration();
-};
-
+}
 
 #endif //SGREPLICATOR_H

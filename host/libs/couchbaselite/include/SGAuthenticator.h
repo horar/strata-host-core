@@ -16,31 +16,41 @@
 #include "FleeceImpl.hh"
 #include "MutableArray.hh"
 #include "MutableDict.hh"
-class SGAuthenticator {
-public:
-    SGAuthenticator(){}
-    virtual ~SGAuthenticator(){}
-    virtual void authenticate(fleece::Retained<fleece::impl::MutableDict> options) = 0;
-};
 
-class SGBasicAuthenticator: public SGAuthenticator{
-public:
-    SGBasicAuthenticator();
-    SGBasicAuthenticator(const std::string &username, const std::string &password);
-    virtual ~SGBasicAuthenticator();
+namespace Spyglass {
+    class SGAuthenticator {
+    public:
+        SGAuthenticator() {}
 
-    void setUserName(const std::string &username);
-    const std::string getUserName() const;
-    void setPassword(const std::string &password);
-    const std::string getPassword() const;
+        virtual ~SGAuthenticator() {}
 
-    void authenticate(fleece::Retained<fleece::impl::MutableDict> options);
+        virtual void authenticate(fleece::Retained<fleece::impl::MutableDict> options) = 0;
+    };
 
-private:
-    std::string username_;
-    std::string password_;
+    class SGBasicAuthenticator : public SGAuthenticator {
+    public:
+        SGBasicAuthenticator();
 
-};
+        SGBasicAuthenticator(const std::string &username, const std::string &password);
+
+        virtual ~SGBasicAuthenticator();
+
+        void setUserName(const std::string &username);
+
+        const std::string getUserName() const;
+
+        void setPassword(const std::string &password);
+
+        const std::string getPassword() const;
+
+        void authenticate(fleece::Retained<fleece::impl::MutableDict> options);
+
+    private:
+        std::string username_;
+        std::string password_;
+
+    };
+}
 
 
 #endif //SGAUTHENTICATOR_H
