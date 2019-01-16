@@ -206,29 +206,29 @@ namespace Spyglass {
     * @param docId The document id
     */
     C4Document *SGDatabase::getDocumentById(const std::string &doc_id) {
+        lock_guard<mutex> lock(db_lock_);
         C4Document *c4doc;
-        C4Error error;
 
         DEBUG("START getDocumentById: %s\n", doc_id.c_str());
 
-        c4db_beginTransaction(c4db_, &error);
-        if (isC4Error(error)) {
+        c4db_beginTransaction(c4db_, &c4error_);
+        if (isC4Error(c4error_)) {
             DEBUG("getDocumentById starting transaction failed\n");
             return nullptr;
         }
 
-        c4doc = c4doc_get(c4db_, slice(doc_id), true, &error);
+        c4doc = c4doc_get(c4db_, slice(doc_id), true, &c4error_);
 
         // HACK. There is no straightforward API to check if document exist in local DB.
         // Since c4doc_get has must_exist parameter sets to true.
         // It will output an error saying document not found and sets code to kC4ErrorNotFound.
         // In this case C4Error needs to be cleared. Otherwise, it will flag c4db_endTransaction as failure.
-        if(error.code == kC4ErrorNotFound){
-            error = {};
+        if(c4error_.code == kC4ErrorNotFound){
+            c4error_ = {};
         }
 
-        c4db_endTransaction(c4db_, true, &error);
-        if (isC4Error(error)) {
+        c4db_endTransaction(c4db_, true, &c4error_);
+        if (isC4Error(c4error_)) {
             DEBUG("getDocumentById ending transaction failed\n");
             return nullptr;
         }
@@ -241,6 +241,7 @@ namespace Spyglass {
     * @param SGDocument The document object
     */
     SGDatabaseReturnStatus SGDatabase::deleteDocument(SGDocument *doc) {
+        lock_guard<mutex> lock(db_lock_);
         c4db_beginTransaction(c4db_, &c4error_);
         if (isC4Error(c4error_)) {
             DEBUG("deleteDocument kBeginTransactionError\n");
@@ -274,6 +275,7 @@ namespace Spyglass {
     * @brief Runs local database query to get list of document keys.
     */
     vector<std::string> SGDatabase::getAllDocumentsKey() {
+        lock_guard<mutex> lock(db_lock_);
         vector<string> document_keys;
         C4Error c4error = {};
         string json = "[\"SELECT\", {\"WHAT\": [[\"._id\"]]}]";
