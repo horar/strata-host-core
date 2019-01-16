@@ -141,8 +141,9 @@ Rectangle {
                        end: Qt.point(parent.width, 0)
                        gradient: Gradient {
                            GradientStop { position: 0.0; color: "#00000000"}
-                           GradientStop { position: .15; color: "#BB000000" }
-                           GradientStop { position: .5; color: "#FF000000" }
+                           GradientStop { position: .15; color: "#66000000" }
+                           GradientStop { position: .5; color: "#BB000000" }
+
                        }
                    }
             }
@@ -174,11 +175,9 @@ Rectangle {
                     id: hueSlider
                     label: ""
                     labelLeft: true
-                    //value: platformInterface.ledSlider
+                    value: 255*.25
                     sliderHeight:50
-                    //transform: Rotation { axis { x: 1; y: 0; z: 0 } angle: 70}
                     anchors {
-                        //verticalCenter: whiteButton.verticalCenter
                         left: ledControlContainer.left
                         leftMargin: 10
                         right: ledControlContainer.right
@@ -192,16 +191,13 @@ Rectangle {
                         pwmLED1.ledColor = hueSlider.hexvalue;
                         pwmLED2.ledColor = hueSlider.hexvalue;
                         pwmLED3.ledColor = hueSlider.hexvalue;
-                        //platformInterface.set_color_mixing.update(hueSlider.color1, hueSlider.color_value1, hueSlider.color2, hueSlider.color_value2)
-                        //platformInterface.ledSlider = value
-                        //platformInterface.turnOffChecked = false
                     }
 
                     Component.onCompleted: {
-                        pwmColorBox1.value = "#008080";
-                        pwmLED1.ledColor = "#008080";
-                        pwmLED2.ledColor = "#008080";
-                        pwmLED3.ledColor = "#008080";
+                        pwmColorBox1.value = "#46B900";
+                        pwmLED1.ledColor = "#46B900";
+                        pwmLED2.ledColor = "#46B900";
+                        pwmLED3.ledColor = "#46B900";
                     }
                 }
 
@@ -244,7 +240,7 @@ Rectangle {
                     infoBoxWidth:80
                     height:20
                     textColor:"white"
-                    value:"#008080"
+                    value:"#46B900"
 
                     onApplied:{
                         pwmLED1.ledColor = pwmColorBox1.value;
@@ -325,11 +321,9 @@ Rectangle {
                     id: hueSlider2
                     label: ""
                     labelLeft: true
-                    //value: platformInterface.ledSlider
+                    value: 255*.75
                     sliderHeight:50
-                    //transform: Rotation { axis { x: 1; y: 0; z: 0 } angle: 70}
                     anchors {
-                        //verticalCenter: whiteButton.verticalCenter
                         left: ledControlContainer2.left
                         leftMargin: 10
                         right: ledControlContainer2.right
@@ -351,10 +345,10 @@ Rectangle {
                     }
 
                     Component.onCompleted: {
-                        pwmColorBox2.value = "#008080";
-                        pwmLED4.ledColor = "#008080";
-                        pwmLED5.ledColor = "#008080";
-                        pwmLED6.ledColor = "#008080";
+                        pwmColorBox2.value = "#3A00C5";
+                        pwmLED4.ledColor = "#3A00C5";
+                        pwmLED5.ledColor = "#3A00C5";
+                        pwmLED6.ledColor = "#3A00C5";
                     }
                 }
 
@@ -538,8 +532,8 @@ Rectangle {
                        end: Qt.point(parent.width, 0)
                        gradient: Gradient {
                            GradientStop { position: 0.0; color: "#00000000"}
-                           GradientStop { position: .15; color: "#BB000000" }
-                           GradientStop { position: .5; color: "#FF000000" }
+                           GradientStop { position: .15; color: "#66000000" }
+                           GradientStop { position: .5; color: "#BB000000" }
                        }
                    }
             }
@@ -552,8 +546,8 @@ Rectangle {
                 anchors {
                     verticalCenter: parent.verticalCenter
                     verticalCenterOffset: 0
-                    left:linearSwitch.right
-                    leftMargin: 320
+                    right:linearPWMlights.left
+                    rightMargin: 100
                 }
 
                 SGHueSlider {
@@ -784,8 +778,8 @@ Rectangle {
                        end: Qt.point(parent.width, 0)
                        gradient: Gradient {
                            GradientStop { position: 0.0; color: "#00000000"}
-                           GradientStop { position: .15; color: "#BB000000" }
-                           GradientStop { position: .5; color: "#FF000000" }
+                           GradientStop { position: .15; color: "#66000000" }
+                           GradientStop { position: .5; color: "#BB000000" }
                        }
                    }
             }
@@ -971,8 +965,8 @@ Rectangle {
                        end: Qt.point(parent.width, 0)
                        gradient: Gradient {
                            GradientStop { position: 0.0; color: "#00000000"}
-                           GradientStop { position: .15; color: "#BB000000" }
-                           GradientStop { position: .5; color: "#FF000000" }
+                           GradientStop { position: .15; color: "#66000000" }
+                           GradientStop { position: .5; color: "#BB000000" }
                        }
                    }
 

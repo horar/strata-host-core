@@ -21,6 +21,19 @@ Rectangle {
 
 
 
+    Rectangle{
+        color:"#555"
+        anchors.left:iconImage.left
+        anchors.leftMargin: 1
+        anchors.top:iconImage.top
+        anchors.topMargin: 1
+        anchors.right:iconImage.right
+        anchors.rightMargin:1
+        anchors.bottom:iconImage.bottom
+        anchors.bottomMargin: 1
+        radius:height/2
+    }
+
     Image {
         id: iconImage
         source: root.icon
