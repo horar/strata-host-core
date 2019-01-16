@@ -1,14 +1,11 @@
 cmake_minimum_required(VERSION 3.5)
 project (couchbase-lite-cpp)
 
-# Compiler details
-#SET(GCC_COMPILE_FLAGS "-std=c++11")
-
-# Compiler details from Couchbase
-SET(CMAKE_CXX_FLAGS "-v -std=c++11")
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Required headers
-set(CB_DIR "${CMAKE_SOURCE_DIR}/libs/couchbaselite/couchbase-lite-core")
+set(CB_DIR "${CMAKE_SOURCE_DIR}/couchbase-lite-core")
 
 set(CMAKE_BUILD_TYPE DEBUG)
 
@@ -121,14 +118,15 @@ if (CivetWeb)
     message("Found CivetWeb library(s) ${CivetWeb}")
 endif()
 set(LIB_SOURCES
-		${CMAKE_CURRENT_SOURCE_DIR}/src/SGDatabase.cpp
-		${CMAKE_CURRENT_SOURCE_DIR}/src/SGDocument.cpp
-		${CMAKE_CURRENT_SOURCE_DIR}/src/SGMutableDocument.cpp
-		${CMAKE_CURRENT_SOURCE_DIR}/src/SGReplicator.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/SGURLEndpoint.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/SGReplicatorConfiguration.cpp
-		${CMAKE_CURRENT_SOURCE_DIR}/src/SGBasicAuthenticator.cpp
-    ${CB_DIR}/Replicator/CivetWebSocket.cc
+	${CMAKE_CURRENT_SOURCE_DIR}/src/SGDatabase.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/SGDocument.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/SGMutableDocument.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/SGReplicator.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/SGURLEndpoint.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/SGReplicatorConfiguration.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/SGBasicAuthenticator.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/SGUtility.cpp
+	${CB_DIR}/Replicator/CivetWebSocket.cc
 )
 
 # Make couchbase-lite-cpp a library;
