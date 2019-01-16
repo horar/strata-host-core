@@ -4,22 +4,15 @@
 #include <iostream>
 #include <thread>
 
-#include "FleeceImpl.hh"
-#include "MutableArray.hh"
-#include "MutableDict.hh"
-#include "Doc.hh"
-#include "JSONDelta.hh"
+#include "SGFleece.h"
+#include "SGCouchBaseLite.h"
 
-#include "SGReplicator.h"
-#include "SGDatabase.h"
-#include "SGDocument.h"
-#include "SGMutableDocument.h"
-#include "SGAuthenticator.h"
 using namespace std;
 using namespace fleece;
 using namespace fleece::impl;
 using namespace std::placeholders;
 using namespace Spyglass;
+
 #define DEBUG(...) printf("TEST SGLiteCore: "); printf(__VA_ARGS__)
 
 const char* activity_level_string[] = {"Stopped","Offline","Connecting","Idle", "Busy" };
@@ -137,7 +130,7 @@ int main(){
 
     sgDatabase.save(&usbPDDocument);
 
-    DEBUG("Document Body after save: %s", usbPDDocument.getBody().c_str());
+    DEBUG("Document Body after save: %s\n", usbPDDocument.getBody().c_str());
 
 
     // Bellow Replicator API
