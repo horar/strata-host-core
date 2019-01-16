@@ -18,6 +18,7 @@
 #include "CivetWebSocket.hh"
 
 #include "SGReplicator.h"
+#include "SGUtility.h"
 
 using namespace std;
 using namespace fleece;
@@ -91,10 +92,8 @@ namespace Spyglass {
                                    &c4error
         );
 
-        if (c4error.code != NO_CB_ERROR && (c4error.code < kC4NumErrorCodesPlus1)) {
+        if (isC4Error(c4error)) {
             DEBUG("Replication failed.\n");
-            alloc_slice slice_result = c4error_getDescription(c4error);
-            DEBUG("Error Msg:%s\n", slice_result.asString().c_str());
             return false;
         }
 

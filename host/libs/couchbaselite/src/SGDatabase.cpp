@@ -19,6 +19,7 @@
 #include "c4Document+Fleece.h"
 
 #include "SGDocument.h"
+#include "SGUtility.h"
 
 using namespace std;
 using namespace fleece;
@@ -80,8 +81,8 @@ namespace Spyglass {
 
         c4db_ = c4db_open(slice(db_path), &c4db_config_, &c4error_);
 
-        if (c4error_.code != kSGNoCouchBaseError_ && c4error_.code < kC4NumErrorCodesPlus1) {
-            DEBUG("Error opening the db: %s. Error Code:%d.\n", db_path.c_str(), c4error_.code);
+        if (isC4Error(c4error_)) {
+            DEBUG("Error opening the db: %s.\n", db_path.c_str());
             return SGDatabaseReturnStatus::kOpenDBError;
         }
 
@@ -103,7 +104,7 @@ namespace Spyglass {
         DEBUG("Calling close\n");
 
         c4db_close(c4db_, &c4error_);
-        if (c4error_.code != kSGNoCouchBaseError_ && c4error_.code < kC4NumErrorCodesPlus1) {
+        if (isC4Error(c4error_)) {
             return SGDatabaseReturnStatus::kCloseDBError;
         }
         c4db_free(c4db_);
@@ -128,8 +129,8 @@ namespace Spyglass {
         C4RevisionFlags revisionFlags = kRevNew;
 
         C4Document *newdoc = c4doc_create(c4db_, slice(doc->getId()), body, revisionFlags, &c4error_);
-        if (c4error_.code != kSGNoCouchBaseError_ && c4error_.code < kC4NumErrorCodesPlus1) {
-            DEBUG("Could not create new document. Error Code:%d.\n", c4error_.code);
+        if (isC4Error(c4error_)) {
+            DEBUG("Could not create new document.");
             return SGDatabaseReturnStatus::kCreateDocumentError;
         } else {
             doc->c4document_ = newdoc;
@@ -150,12 +151,8 @@ namespace Spyglass {
 
         C4Document *newdoc = c4doc_update(doc->c4document_, new_body, doc->c4document_->selectedRev.flags, &c4error_);
 
-        if (c4error_.code != kSGNoCouchBaseError_ && (c4error_.code < kC4NumErrorCodesPlus1)) {
-            alloc_slice sliceResult = c4error_getDescription(c4error_);
-
+        if (isC4Error(c4error_)) {
             DEBUG("Could not update the body of an existing document.\n");
-            DEBUG("Error Msg:%s\n", sliceResult.asString().c_str());
-
             return SGDatabaseReturnStatus::kUpdatDocumentError;
         } else {
             // All good
@@ -174,7 +171,7 @@ namespace Spyglass {
         SGDatabaseReturnStatus status = SGDatabaseReturnStatus::kNoError;
 
         c4db_beginTransaction(c4db_, &c4error_);
-        if (c4error_.code != kSGNoCouchBaseError_ && c4error_.code < kC4NumErrorCodesPlus1) {
+        if (isC4Error(c4error_)) {
             DEBUG("save kBeginTransactionError\n");
             return SGDatabaseReturnStatus::kBeginTransactionError;
         }
@@ -199,7 +196,7 @@ namespace Spyglass {
 
         DEBUG("Leaving save\n");
         c4db_endTransaction(c4db_, true, &c4error_);
-        if (c4error_.code != kSGNoCouchBaseError_ && c4error_.code < kC4NumErrorCodesPlus1) {
+        if (isC4Error(c4error_)) {
             DEBUG("save kEndTransactionError\n");
             return SGDatabaseReturnStatus::kEndTransactionError;
         }
@@ -208,7 +205,7 @@ namespace Spyglass {
     }
 
     /** SGDatabase getDocumentById.
-    * @brief return C4Document if there is such a document exist in the DB, otherwise return null
+    * @brief return C4Document if there is such a document exist in the DB, otherwise return nullptr
     * @param docId The document id
     */
     C4Document *SGDatabase::getDocumentById(const std::string &doc_id) {
@@ -218,13 +215,27 @@ namespace Spyglass {
         DEBUG("START getDocumentById: %s\n", doc_id.c_str());
 
         c4db_beginTransaction(c4db_, &error);
+        if (isC4Error(error)) {
+            DEBUG("getDocumentById starting transaction failed\n");
+            return nullptr;
+        }
+
         c4doc = c4doc_get(c4db_, slice(doc_id), true, &error);
+
+        // HACK. There is no straightforward API to check if document exist in local DB.
+        // Since c4doc_get has must_exist parameter sets to true.
+        // It will output an error saying document not found and sets code to kC4ErrorNotFound.
+        // In this case C4Error needs to be cleared. Otherwise, it will flag c4db_endTransaction as failure.
+        if(error.code == kC4ErrorNotFound){
+            error = {};
+        }
+
         c4db_endTransaction(c4db_, true, &error);
-        if (error.code != kSGNoCouchBaseError_ && (error.code < kC4NumErrorCodesPlus1)) {
-            DEBUG("Error Code:%d.\n", error.code);
+        if (isC4Error(error)) {
+            DEBUG("getDocumentById ending transaction failed\n");
+            return nullptr;
         }
         DEBUG("END getDocumentById: %s\n", doc_id.c_str());
-
         return c4doc;
     }
 
@@ -234,7 +245,7 @@ namespace Spyglass {
     */
     SGDatabaseReturnStatus SGDatabase::deleteDocument(SGDocument *doc) {
         c4db_beginTransaction(c4db_, &c4error_);
-        if (c4error_.code != kSGNoCouchBaseError_ && c4error_.code < kC4NumErrorCodesPlus1) {
+        if (isC4Error(c4error_)) {
             DEBUG("deleteDocument kBeginTransactionError\n");
             return SGDatabaseReturnStatus::kBeginTransactionError;
         }
@@ -244,8 +255,7 @@ namespace Spyglass {
         bool is_deleted = c4db_purgeDoc(c4db_, slice(doc->getId()), &c4error_);
 
         c4db_endTransaction(c4db_, true, &c4error_);
-
-        if (c4error_.code != kSGNoCouchBaseError_ && c4error_.code < kC4NumErrorCodesPlus1) {
+        if (isC4Error(c4error_)) {
             DEBUG("deleteDocument kEndTransactionError\n");
             return SGDatabaseReturnStatus::kEndTransactionError;
         }
