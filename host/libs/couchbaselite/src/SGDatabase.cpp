@@ -154,10 +154,10 @@ namespace Spyglass {
         if (isC4Error(c4error_)) {
             DEBUG("Could not update the body of an existing document.\n");
             return SGDatabaseReturnStatus::kUpdatDocumentError;
-        } else {
-            // All good
-            doc->setC4document(newdoc);
         }
+
+        doc->setC4document(newdoc);
+
         return SGDatabaseReturnStatus::kNoError;
     }
 
@@ -176,9 +176,6 @@ namespace Spyglass {
             return SGDatabaseReturnStatus::kBeginTransactionError;
         }
         DEBUG("Calling save\n");
-
-        // Set error code 0.
-        c4error_.code = 0;
 
         C4Document *c4doc = doc->getC4document();
 
