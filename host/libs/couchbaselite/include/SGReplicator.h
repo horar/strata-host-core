@@ -39,7 +39,7 @@ public:
         kBusy
     };
     bool start();
-    bool stop();
+    void stop();
     void addChangeListener(const std::function<void(SGReplicator::ActivityLevel, SGReplicatorProgress)>& callback);
     void addDocumentEndedListener(const std::function<void(bool pushing, std::string doc_id, std::string error_message, bool is_error,bool error_is_transient)>& callback );
     void addValidationListener(const std::function<void(const std::string& doc_id, const std::string& json_body )>& callback);

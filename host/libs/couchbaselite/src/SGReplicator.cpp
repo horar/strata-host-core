@@ -44,7 +44,7 @@ SGReplicator::SGReplicator(SGReplicatorConfiguration *replicator_configuration) 
 /** SGReplicator stop.
 * @brief Stop a running replicator thread.
 */
-bool SGReplicator::stop(){
+void SGReplicator::stop(){
     c4repl_stop(c4replicator_);
 }
 
