@@ -19,11 +19,25 @@ using namespace std;
 // @f constructor
 // @b creates the context for the socket
 //
-RequestReplyConnector::RequestReplyConnector() : Connector()
+RequestReplyConnector::RequestReplyConnector() : Connector(),
+    context_( new zmq::context_t),
+    socket_(nullptr)
 {
     LOG_DEBUG(DEBUG,"Creating Discovery Service connector object\n",0);
-    // zmq context creation
-    context_ = new(zmq::context_t);
+}
+
+RequestReplyConnector::RequestReplyConnector(const std::string&) : RequestReplyConnector()
+{
+}
+
+RequestReplyConnector::~RequestReplyConnector()
+{
+    if (socket_) {
+        close();
+        delete socket_;
+    }
+
+    delete context_;
 }
 
 // @f open

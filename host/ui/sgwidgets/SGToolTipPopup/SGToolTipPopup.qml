@@ -3,75 +3,98 @@ import QtGraphicalEffects 1.0
 
 Item {
     id: root
+
     property alias content: content.sourceComponent
+    property alias contentItem: content.item
 
     property bool showOn: false
-    property bool reverseDirection: false
+    property bool pointsUp: false
+    property string alignment: "center"
     property real radius: 5
     property color color: "#00ccee"
 
     onShowOnChanged: {
         showOn ? showAnimation.start() : hideAnimation.start()
     }
+
     opacity: 0
     visible: false
+    implicitHeight: container.implicitHeight
+    implicitWidth: container.implicitWidth
+    z: 50
 
-    implicitHeight: canvas.implicitHeight
-    implicitWidth: canvas.implicitWidth
-
-    z:50
-
-    Canvas {
-        id: canvas
-
-        implicitWidth: content.childrenRect.width + 20
-        implicitHeight: content.childrenRect.height + 30  // 30 because 10 padding*2 and 10 for pointer
-        contextType: "2d"
-
-        onPaint: {
-            var context = getContext("2d")
-            context.reset();
-            context.beginPath();
-            //        context.shadowColor = "#000"  // Broken in qml 5.x according to https://qmlbook.github.io/ch07/index.html
-            //        context.shadowBlur = 3
-
-            if (reverseDirection) {
-                context.moveTo(radius, 10);
-                context.lineTo(width / 2 + 5, 10);
-                context.lineTo(width / 2 - 5, 0);
-                context.lineTo(width / 2 - 5, 10);
-                context.lineTo(width - radius, 10);
-                context.arcTo(width, 10, width, height - radius, radius);
-                context.lineTo(width, height - radius);
-                context.arcTo(width, height, width - radius, height, radius);
-                context.lineTo(radius, height);
-                context.arcTo(0, height, 0, height - radius, radius);
-                context.lineTo(0, radius + 10);
-                context.arcTo(0, 10, radius, 10, radius);
-            } else {
-                context.moveTo(radius, 0);
-                context.lineTo(width - radius, 0);
-                context.arcTo(width, 0, width, height - radius, radius);
-                context.lineTo(width, height - 10 - radius);
-                context.arcTo(width, height - 10, width - radius, height - 10, radius);
-                context.lineTo(width / 2 + 5, height - 10);
-                context.lineTo(width / 2 - 5, height);
-                context.lineTo(width / 2 - 5, height - 10);
-                context.lineTo(radius, height - 10);
-                context.arcTo(0, height - 10, 0, height - 10 -radius, radius);
-                context.lineTo(0, radius);
-                context.arcTo(0, 0, radius, 0, radius);
-            }
-            context.closePath();
-            context.fillStyle = root.color;
-            context.fill();
+    Component.onCompleted: {
+        if (pointsUp) {
+            colorRect.anchors.bottom = container.bottom
+            triangleArrow.anchors.bottom = colorRect.top
+        } else {
+            colorRect.anchors.top = container.top
+            triangleArrow.anchors.top = colorRect.bottom
+            triangleArrow.rotation = 180
         }
 
-        Loader {
-            id: content
-            anchors {
-                centerIn: canvas
-                verticalCenterOffset: reverseDirection ? 5 : -5  // To compensate for pointer
+        switch (alignment) {
+            case "left":
+                triangleArrow.anchors.left = container.left
+                triangleArrow.anchors.leftMargin = 15
+                pointsUp ? false : triangleArrow.rotation -= 90
+                break;
+            case "right":
+                triangleArrow.anchors.right = container.right
+                triangleArrow.anchors.rightMargin = 15
+                pointsUp ? triangleArrow.rotation -= 90 : false
+                break;
+            default:
+                triangleArrow.anchors.horizontalCenter = container.horizontalCenter
+        }
+    }
+
+    Item {
+        id: container
+        implicitWidth: content.childrenRect.width + 20
+        implicitHeight: content.childrenRect.height + 30  // 30 because 10 padding*2 and 10 for pointer
+
+        Rectangle {
+            id: colorRect
+            color: root.color
+            radius: root.radius
+            height: container.height - 10
+            width: container.width
+
+            MouseArea {
+                // Blocks clickthroughs
+                anchors { fill: colorRect }
+                hoverEnabled: true
+                preventStealing: true
+                propagateComposedEvents: false
+            }
+
+            Loader {
+                id: content
+                anchors {
+                    centerIn: colorRect
+                }
+            }
+        }
+
+        Canvas {
+            id: triangleArrow
+
+            implicitWidth: 10
+            implicitHeight: 10
+            contextType: "2d"
+
+            onPaint: {
+                var context = getContext("2d")
+                context.reset();
+                context.beginPath();
+                context.moveTo(0, 10);
+                context.lineTo(0, 0);
+                context.lineTo(10, 10);
+                context.lineTo(0, 10);
+                context.closePath();
+                context.fillStyle = root.color;
+                context.fill();
             }
         }
     }
@@ -89,15 +112,14 @@ Item {
     }
 
     DropShadow {
-        anchors.fill: canvas
+        anchors.fill: container
         horizontalOffset: 1.5
         verticalOffset: 1.5
         radius: 6.0
         samples: 13
         color: "#88000000"
-        source: canvas
+        source: container
         visible: root.visible
         opacity: root.opacity
     }
 }
-

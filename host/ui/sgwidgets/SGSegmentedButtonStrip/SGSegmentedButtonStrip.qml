@@ -23,6 +23,7 @@ Item {
     property real buttonImplicitWidth: 70
     property bool nothingChecked: true
     property bool hoverEnabled: true
+    property alias overrideLabelWidth: labelText.width
 
     property int index: 0
     onIndexChanged: {

@@ -3,7 +3,8 @@
         <file>main.qml</file>
         <file>SGStatusListBox.qml</file>
         <file>fonts/sgicons.ttf</file>
-        <file>SGSubmitInfoBox.qml</file>
         <file>fonts/Inconsolata.otf</file>
+        <file>../SGSubmitInfoBox/SGSubmitInfoBox.qml</file>
+        <file>../SGSubmitInfoBox/fonts/Inconsolata.otf</file>
     </qresource>
 </RCC>
