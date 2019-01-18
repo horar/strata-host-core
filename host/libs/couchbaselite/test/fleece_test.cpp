@@ -1,11 +1,7 @@
 //
 // Created by Luay Alshawi on 10/25/18.
 // Fleece Playground. Not an actual test
-#include "FleeceImpl.hh"
-#include "MutableArray.hh"
-#include "MutableDict.hh"
-#include "Doc.hh"
-#include "JSONDelta.hh"
+#include "SGFleece.h"
 #include <iostream>
 
 using namespace std;
@@ -19,28 +15,25 @@ using namespace fleece::impl;
 * @param delta The value given which contains the delta. (Delta JSON).
 * @param newdict The Object to be written to.
 */
-// Note: This function is not designed to be generic. It assumes it has the same json structure in main
-// If something fails newdict might be null
-// newdict will contains only the keys that are modified
-void getDiff(const Dict* original_dict, const Value *delta, Retained<MutableDict> newdict){
+bool getDiff(const Dict* original_dict, const Value *delta, Retained<MutableDict> newdict){
     if(!delta){
         cout << "delta is null" << endl;
-        return;
+        return false;
     }
     const Dict* dict = delta->asDict();
     if(!dict) {
         cout << "dict is null" << endl;
-        return;
+        return false;
     }
 
     if(!dict->get("documents"_sl)){
         cout << "documents is not a key" << endl;
-        return;
+        return false;
     }
     const Dict* document = dict->get("documents"_sl)->asDict();
     if(!document){
         cout << "documents is not Dictionary" << endl;
-        return;
+        return false;
     }
     Retained<MutableDict> download = MutableDict::newDict();
     for (Dict::iterator document_iterator(document); document_iterator; ++document_iterator){
@@ -48,7 +41,7 @@ void getDiff(const Dict* original_dict, const Value *delta, Retained<MutableDict
         const Dict* internal_dict = document_iterator.value()->asDict();
         if(!internal_dict){
             cout << "something went wrong!" << endl;
-            return;
+            return false;
         }
 
         // for dicationary
@@ -72,7 +65,7 @@ void getDiff(const Dict* original_dict, const Value *delta, Retained<MutableDict
                     const Dict* current_document = original_dict->get("documents"_sl)->asDict();
                     if(!current_document){
                         cout << "current _document is not valid dict or does not have documents key" << endl;
-                        return;
+                        return false;
                     }
 
                     const Array* arr = current_document->get( document_iterator.keyString().asString())->asArray();
@@ -92,6 +85,7 @@ void getDiff(const Dict* original_dict, const Value *delta, Retained<MutableDict
         }
     }
     newdict->set("documents"_sl, download);
+    return true;
 
 }
 

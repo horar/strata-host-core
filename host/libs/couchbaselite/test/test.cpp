@@ -6,7 +6,6 @@
 
 #include "SGFleece.h"
 #include "SGCouchBaseLite.h"
-
 using namespace std;
 using namespace fleece;
 using namespace fleece::impl;
