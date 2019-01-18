@@ -12,7 +12,6 @@
 #define SGAUTHENTICATOR_H
 
 #include <string>
-#include "fleece/FLSlice.h"
 #include "FleeceImpl.hh"
 #include "MutableArray.hh"
 #include "MutableDict.hh"
