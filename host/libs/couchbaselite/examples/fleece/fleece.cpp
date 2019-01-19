@@ -44,7 +44,7 @@ bool getDiff(const Dict* original_dict, const Value *delta, Retained<MutableDict
             return false;
         }
 
-        // for dicationary
+
         if(document_iterator.value()->type() == kDict){
             Retained<MutableArray> mutable_array = MutableArray::newArray();
 
@@ -80,7 +80,7 @@ bool getDiff(const Dict* original_dict, const Value *delta, Retained<MutableDict
             // Set the new dictionary with updated copy
             download->set(document_iterator.keyString(), mutable_array);
         }else{
-            // Add the new key, value stuff as it is
+            // Add the new key and value as it is
             download->set(document_iterator.keyString(), document_iterator.value());
         }
     }
@@ -96,13 +96,12 @@ int main(){
     // Load string json to fleece Doc
     Retained<Doc> doc = Doc::fromJSON(json_data);
 
-    // Pass existing  doc to mutable dictionary since we have json
+    // Pass existing  doc to mutable dictionary
     Retained<MutableDict> update = MutableDict::newDict(doc->asDict());
     cout << "Reading key name: " << update->get(slice("name"))->asString().asString() <<endl;
     update->set("name"_sl, slice("Alshawi"));
     cout << "Updating key name: " << update->get(slice("name"))->asString().asString() <<endl;
 
-    // Done
     const Dict *dict = update->asDict();
 
     const Dict *myobj = dict->get(slice("myobj"))->asDict();
@@ -119,7 +118,7 @@ int main(){
 
     cout << "update myarray index0= " << myarray->get(0)->asInt() << " index2= " << myarray->get(1)->asInt() << endl;
 
-    cout << "new json in string:" << dict->toJSON().asString();
+    cout << "new json in string format:" << dict->toJSON().asString();
 
     string original_json = R"foo(
     {
@@ -237,15 +236,15 @@ int main(){
     alloc_slice fleeceDelta = JSONConverter::convertJSON(jsonDelta);
     const Value *delta = Value::fromData(fleeceDelta);
 
-
     Retained<MutableDict> newdict = MutableDict::newDict();
 
     getDiff(original_dict, delta, newdict);
 
-    cout << "json:" <<endl;
+    cout << "Delta Json:" <<endl;
     cout << delta->toJSONString() << endl<<endl;
-    cout << newdict->toJSONString() << endl<<endl;
 
+    cout << "Merged final Json:" <<endl;
+    cout << newdict->toJSONString() << endl<<endl;
 
     return 0;
 }
