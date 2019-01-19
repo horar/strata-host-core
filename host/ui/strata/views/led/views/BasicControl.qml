@@ -21,6 +21,32 @@ Rectangle {
     property int rightInset: 50
     property int leftScrimOffset: 310
 
+    function rgbToHsl(r, g, b) {
+      r /= 255
+      g /= 255
+      b /= 255
+      var max = Math.max(r, g, b), min = Math.min(r, g, b)
+      var h, s, l = (max + min) / 2
+      if (max == min) {
+        h = s = 0
+      } else {
+        var d = max - min
+        s = l > 0.5 ? d / (2 - max - min) : d / (max + min)
+        switch (max) {
+        case r:
+          h = (g - b) / d + (g < b ? 6 : 0)
+          break
+        case g:
+          h = (b - r) / d + 2
+          break
+        case b:
+          h = (r - g) / d + 4
+          break
+        }
+        h /= 6;
+      }
+      return {"h":h, "s":s, "l":l};
+    }
 
     //----------------------------------------------------------------------------------------
     //                      Views
@@ -89,7 +115,13 @@ Rectangle {
                 anchors.verticalCenter: parent.verticalCenter
                 grooveFillColor:windowsDarkBlue
                 grooveColor:"black"
-                checked:true
+                checked:platformInterface.set_pulse_colors_notification.enabled
+
+                onCheckedChanged:{
+                    platformInterface.set_pulse_colors.update(checked,
+                                                              platformInterface.set_pulse_colors_notification.channel1_color,
+                                                              platformInterface.set_pulse_colors_notification.channel2_color);
+                }
             }
 
             RoundButton{
@@ -172,10 +204,24 @@ Rectangle {
                 }
 
                 SGHueSlider {
+
                     id: hueSlider
                     label: ""
                     labelLeft: true
-                    value: 255*.25
+                    value: {
+                        var theColorString = platformInterface.set_pulse_colors_notification.channel1_color;
+
+                        //convert the rgb color to a hsv color
+                        var r = parseInt(theColorString.substr(0, 2), 16)
+                        var g = parseInt(theColorString.substr(2, 2), 16)
+                        var b = parseInt(theColorString.substr(4, 2), 16)
+                        //console.log("r,g,b=",r,g,b);
+                        var hsl = rgbToHsl(r, g, b)
+                        //console.log("h,s,v=",hsl.h,hsl.s,hsl.l)
+
+                        //The returned value is between 0 and 1, so scale to match the slider's range
+                        return hsl.h * 255;
+                    }
                     sliderHeight:50
                     anchors {
                         left: ledControlContainer.left
@@ -187,47 +233,70 @@ Rectangle {
                     }
 
                     onValueChanged: {
-                        pwmColorBox1.value = hueSlider.hexvalue;
-                        pwmLED1.ledColor = hueSlider.hexvalue;
-                        pwmLED2.ledColor = hueSlider.hexvalue;
-                        pwmLED3.ledColor = hueSlider.hexvalue;
+                        //remove these once notifications are working
+//                        pwmColorBox1.value = hueSlider.hexvalue;
+//                        pwmLED1.ledColor = hueSlider.hexvalue;
+//                        pwmLED2.ledColor = hueSlider.hexvalue;
+//                        pwmLED3.ledColor = hueSlider.hexvalue;
+
+                        var colorString = hueSlider.hexvalue.substring(1,7); //remove the # from the start of the string
+
+                        platformInterface.set_pulse_colors.update(platformInterface.set_pulse_colors_notification.enabled,
+                                                                  colorString,
+                                                                  platformInterface.set_pulse_colors_notification.channel2_color);
                     }
 
                     Component.onCompleted: {
-                        pwmColorBox1.value = "#46B900";
-                        pwmLED1.ledColor = "#46B900";
-                        pwmLED2.ledColor = "#46B900";
-                        pwmLED3.ledColor = "#46B900";
+//                        pwmColorBox1.value = "#46B900";
+//                        pwmLED1.ledColor = "#46B900";
+//                        pwmLED2.ledColor = "#46B900";
+//                        pwmLED3.ledColor = "#46B900";
                     }
                 }
 
-                Text{
-                    id:whiteButtonLabel
-                    text:"white:"
-                    color:"white"
 
-                    anchors.left: hueSlider.left
-                    anchors.top: hueSlider.bottom
-                    anchors.topMargin: 10
-
-                }
 
                 RoundButton {
                     id: whiteButton
                     checkable: false
-                    //text: "White"
-                    height:30
-                    width:30
-                    anchors.verticalCenter: whiteButtonLabel.verticalCenter
-                    anchors.left:whiteButtonLabel.right
-                    anchors.leftMargin: 5
+                    text: "Set to white"
+
+                    height:25
+                    width:80
+                    radius:5
+                    anchors.left:hueSlider.left
+                    anchors.top: hueSlider.bottom
+                    anchors.topMargin: 10
+
+                    contentItem: Text {
+                            text: whiteButton.text
+                            font.pixelSize: 12
+                            font.underline: true
+                            //opacity: enabled ? 1.0 : 0.3
+                            color: whiteButton.pressed ? "grey" : "white"
+                            horizontalAlignment: Text.AlignHCenter
+                            verticalAlignment: Text.AlignVCenter
+                            elide: Text.ElideRight
+                        }
+
+                    background: Rectangle {
+                            id: backgroundRect
+                            implicitWidth: 80
+                            implicitHeight: 25
+                            radius: whiteButton.radius
+                            anchors.fill: parent
+                            color: "transparent"
+                    }
+
                     onClicked: {
-                        pwmColorBox1.value = "#FFFFFF";
-                        pwmLED1.ledColor = "#FFFFFF";
-                        pwmLED2.ledColor = "#FFFFFF";
-                        pwmLED3.ledColor = "#FFFFFF";
-                        //platformInterface.set_led_outputs_on_off.update("white")
-                        //platformInterface.turnOffChecked = false
+//                        pwmColorBox1.value = "#FFFFFF";
+//                        pwmLED1.ledColor = "#FFFFFF";
+//                        pwmLED2.ledColor = "#FFFFFF";
+//                        pwmLED3.ledColor = "#FFFFFF";
+
+                        platformInterface.set_pulse_colors.update(platformInterface.set_pulse_colors_notification.enabled,
+                                                                  "FFFFFF",
+                                                                  platformInterface.set_pulse_colors_notification.channel2_color);
                     }
                 }
 
@@ -240,12 +309,18 @@ Rectangle {
                     infoBoxWidth:80
                     height:20
                     textColor:"white"
-                    value:"#46B900"
+                    value: "#" + platformInterface.set_pulse_colors_notification.color1
 
                     onApplied:{
-                        pwmLED1.ledColor = pwmColorBox1.value;
-                        pwmLED2.ledColor = pwmColorBox1.value;
-                        pwmLED3.ledColor = pwmColorBox1.value;
+//                        pwmLED1.ledColor = pwmColorBox1.value;
+//                        pwmLED2.ledColor = pwmColorBox1.value;
+//                        pwmLED3.ledColor = pwmColorBox1.value;
+
+                        var colorString = pwmColorBox1.value.substring(1,7); //remove the # from the start of the string
+
+                        platformInterface.set_pulse_colors.update(platformInterface.set_pulse_colors_notification.enabled,
+                                                                  colorString,
+                                                                  platformInterface.set_pulse_colors_notification.channel2_color);
                     }
                 }
 
@@ -264,17 +339,30 @@ Rectangle {
 
                 LEDIndicator{
                     id: pwmLED1
-                    ledColor: "white"
+                    ledColor: {
+                        var theColor = platformInterface.set_pulse_colors_notification.channel1_color
+                        theColor = "#"+theColor
+                        return theColor
+                    }
+
                     height: 40
                 }
                 LEDIndicator{
                     id: pwmLED2
-                    ledColor: "white"
+                    ledColor: {
+                        var theColor = platformInterface.set_pulse_colors_notification.channel1_color
+                        theColor = "#"+theColor
+                        return theColor
+                    }
                     height: 40
                 }
                 LEDIndicator{
                     id: pwmLED3
-                    ledColor: "white"
+                    ledColor: {
+                        var theColor = platformInterface.set_pulse_colors_notification.channel1_color
+                        theColor = "#"+theColor
+                        return theColor
+                    }
                     height: 40
                 }
             }
@@ -289,17 +377,29 @@ Rectangle {
 
                 LEDIndicator{
                     id: pwmLED4
-                    ledColor: "white"
+                    ledColor: {
+                        var theColor = platformInterface.set_pulse_colors_notification.channel2_color
+                        theColor = "#"+theColor
+                        return theColor
+                    }
                     height: 40
                 }
                 LEDIndicator{
                     id: pwmLED5
-                    ledColor: "white"
+                    ledColor: {
+                        var theColor = platformInterface.set_pulse_colors_notification.channel2_color
+                        theColor = "#"+theColor
+                        return theColor
+                    }
                     height: 40
                 }
                 LEDIndicator{
                     id: pwmLED6
-                    ledColor: "white"
+                    ledColor: {
+                        var theColor = platformInterface.set_pulse_colors_notification.channel2_color
+                        theColor = "#"+theColor
+                        return theColor
+                    }
                     height: 40
                 }
             }
@@ -318,10 +418,23 @@ Rectangle {
                 }
 
                 SGHueSlider {
+                    property color theColor: "white"
+
                     id: hueSlider2
                     label: ""
                     labelLeft: true
-                    value: 255*.75
+                    value: {
+                        var theColorString = platformInterface.set_pulse_colors_notification.channel2_color;
+
+                        //convert the rgb color to a hsv color
+                        var r = parseInt(theColorString.substr(0, 2), 16)
+                        var g = parseInt(theColorString.substr(2, 2), 16)
+                        var b = parseInt(theColorString.substr(4, 2), 16)
+                        var hsl = rgbToHsl(r, g, b)
+
+                        //The returned value is between 0 and 1, so scale to match the slider's range
+                        return hsl.h * 255;
+                    }
                     sliderHeight:50
                     anchors {
                         left: ledControlContainer2.left
@@ -335,50 +448,68 @@ Rectangle {
                     onValueChanged: {
                         //console.log("slider changed:",hueSlider2.rgbArray[0], hueSlider2.rgbArray[1], hueSlider2.rgbArray[2])
                         //console.log("hex value is:",hueSlider2.hexvalue)
-                        pwmColorBox2.value = hueSlider2.hexvalue;
-                        pwmLED4.ledColor = hueSlider2.hexvalue;
-                        pwmLED5.ledColor = hueSlider2.hexvalue;
-                        pwmLED6.ledColor = hueSlider2.hexvalue;
-                        //platformInterface.set_color_mixing.update(hueSlider.color1, hueSlider.color_value1, hueSlider.color2, hueSlider.color_value2)
-                        //platformInterface.ledSlider = value
-                        //platformInterface.turnOffChecked = false
+//                        pwmColorBox2.value = hueSlider2.hexvalue;
+//                        pwmLED4.ledColor = hueSlider2.hexvalue;
+//                        pwmLED5.ledColor = hueSlider2.hexvalue;
+//                        pwmLED6.ledColor = hueSlider2.hexvalue;
+
+                        var colorString = hueSlider2.hexvalue.substring(1,7); //remove the # from the start of the string
+
+                        platformInterface.set_pulse_colors.update(platformInterface.set_pulse_colors_notification.enabled,
+                                                                  platformInterface.set_pulse_colors_notification.channel1_color,
+                                                                  colorString);
+
                     }
 
                     Component.onCompleted: {
-                        pwmColorBox2.value = "#3A00C5";
-                        pwmLED4.ledColor = "#3A00C5";
-                        pwmLED5.ledColor = "#3A00C5";
-                        pwmLED6.ledColor = "#3A00C5";
+//                        pwmColorBox2.value = "#3A00C5";
+//                        pwmLED4.ledColor = "#3A00C5";
+//                        pwmLED5.ledColor = "#3A00C5";
+//                        pwmLED6.ledColor = "#3A00C5";
                     }
-                }
-
-                Text{
-                    id:whiteButtonLabel2
-                    text:"white:"
-                    color:"white"
-
-                    anchors.left: hueSlider2.left
-                    anchors.top: hueSlider2.bottom
-                    anchors.topMargin: 10
-
                 }
 
                 RoundButton {
                     id: whiteButton2
                     checkable: false
-                    height:30
-                    width:30
-                    anchors.verticalCenter: whiteButtonLabel2.verticalCenter
-                    anchors.left:whiteButtonLabel2.right
-                    anchors.leftMargin: 5
-                    onClicked: {
-                        pwmColorBox2.value = "#FFFFFF";
-                        pwmLED4.ledColor = "#FFFFFF";
-                        pwmLED5.ledColor = "#FFFFFF";
-                        pwmLED6.ledColor = "#FFFFFF";
+                    text: "Set to white"
 
-                        //platformInterface.set_led_outputs_on_off.update("white")
-                        //platformInterface.turnOffChecked = false
+                    height:25
+                    width:80
+                    radius:5
+                    anchors.left:hueSlider2.left
+                    anchors.top: hueSlider2.bottom
+                    anchors.topMargin: 10
+
+                    contentItem: Text {
+                            text: whiteButton2.text
+                            font.pixelSize: 12
+                            font.underline: true
+                            //opacity: enabled ? 1.0 : 0.3
+                            color: whiteButton.pressed ? "grey" : "white"
+                            horizontalAlignment: Text.AlignHCenter
+                            verticalAlignment: Text.AlignVCenter
+                            elide: Text.ElideRight
+                        }
+
+                    background: Rectangle {
+                            id: backgroundRect2
+                            implicitWidth: 80
+                            implicitHeight: 25
+                            radius: whiteButton2.radius
+                            anchors.fill: parent
+                            color: "transparent"
+                    }
+
+                    onClicked: {
+//                        pwmColorBox2.value = "#FFFFFF";
+//                        pwmLED4.ledColor = "#FFFFFF";
+//                        pwmLED5.ledColor = "#FFFFFF";
+//                        pwmLED6.ledColor = "#FFFFFF";
+
+                        platformInterface.set_pulse_colors.update(platformInterface.set_pulse_colors_notification.enabled,
+                                                                  platformInterface.set_pulse_colors_notification.channel1_color,
+                                                                  "FFFFFF");
                     }
 
 
@@ -393,12 +524,18 @@ Rectangle {
                     infoBoxWidth:80
                     height:20
                     textColor:"white"
-                    value:"#008080"
+                    value:platformInterface.set_pulse_colors_notification.channel2_color
 
                     onApplied:{
-                        pwmLED4.ledColor = pwmColorBox2.value;
-                        pwmLED5.ledColor = pwmColorBox2.value;
-                        pwmLED6.ledColor = pwmColorBox2.value;
+//                        pwmLED4.ledColor = pwmColorBox2.value;
+//                        pwmLED5.ledColor = pwmColorBox2.value;
+//                        pwmLED6.ledColor = pwmColorBox2.value;
+
+                        var colorString = pwmColorBox2.value.substring(1,7); //remove the # from the start of the string
+
+                        platformInterface.set_pulse_colors.update(platformInterface.set_pulse_colors_notification.enabled,
+                                                                  platformInterface.set_pulse_colors_notification.channel1_color,
+                                                                  colorString);
                     }
                 }
 
@@ -479,7 +616,12 @@ Rectangle {
                 anchors.verticalCenter: parent.verticalCenter
                 grooveFillColor:windowsDarkBlue
                 grooveColor:switchGrooveColor
-                checked:true
+                checked:platformInterface.set_linear_color_notification.enabled
+
+                onCheckedChanged:{
+                    platformInterface.set_linear_color.update(linearSwitch.checked,
+                                                              platformInterface.set_linear_color_notification.color);
+                }
             }
 
 
@@ -551,12 +693,25 @@ Rectangle {
                 }
 
                 SGHueSlider {
+                    property color theColor:"white"
+
                     id: linearHueSlider
                     label: ""
                     labelLeft: true
-                    //value: platformInterface.ledSlider
+                    value: {
+                        var theColorString = platformInterface.set_linear_color_notification.color;
+
+                        //convert the rgb color to a hsv color
+                        var r = parseInt(theColorString.substr(0, 2), 16)
+                        var g = parseInt(theColorString.substr(2, 2), 16)
+                        var b = parseInt(theColorString.substr(4, 2), 16)
+                        console.log("linear color=",theColorString,"rgb=",r,g,b)
+                        var hsl = rgbToHsl(r, g, b)
+
+                        //The returned value is between 0 and 1, so scale to match the slider's range
+                        return hsl.h * 255;
+                    }
                     sliderHeight:50
-                    //transform: Rotation { axis { x: 1; y: 0; z: 0 } angle: 70}
                     anchors {
                         //verticalCenter: whiteButton.verticalCenter
                         left: linearControlContainer.left
@@ -568,50 +723,62 @@ Rectangle {
                     }
 
                     onValueChanged: {
-                        linearColorBox.value = linearHueSlider.hexvalue;
-                        linearLED1.ledColor = linearHueSlider.hexvalue;
-                        linearLED2.ledColor = linearHueSlider.hexvalue;
-                        linearLED3.ledColor = linearHueSlider.hexvalue;
-                        //platformInterface.set_color_mixing.update(hueSlider.color1, hueSlider.color_value1, hueSlider.color2, hueSlider.color_value2)
-                        //platformInterface.ledSlider = value
-                        //platformInterface.turnOffChecked = false
+                        //linearColorBox.value = linearHueSlider.hexvalue;
+//                        linearLED1.ledColor = linearHueSlider.hexvalue;
+//                        linearLED2.ledColor = linearHueSlider.hexvalue;
+//                        linearLED3.ledColor = linearHueSlider.hexvalue;
+
+                        var colorString = linearHueSlider.hexvalue.substring(1,7); //remove the # from the start of the string
+
+                        platformInterface.set_linear_color.update(platformInterface.set_linear_color_notification.enabled,
+                                                                  colorString);
                     }
 
                     Component.onCompleted: {
-                        linearColorBox.value = "#008080";
-                        linearLED1.ledColor = "#008080";
-                        linearLED2.ledColor = "#008080";
-                        linearLED3.ledColor = "#008080";
+
                     }
-                }
-
-                Text{
-                    id:linearWhiteButtonLabel
-                    text:"white:"
-                    color:"white"
-
-                    anchors.left: linearHueSlider.left
-                    anchors.top: linearHueSlider.bottom
-                    anchors.topMargin: 10
-
                 }
 
                 RoundButton {
                     id: linearWhiteButton
                     checkable: false
-                    //text: "White"
-                    height:30
-                    width:30
-                    anchors.verticalCenter: linearWhiteButtonLabel.verticalCenter
-                    anchors.left:linearWhiteButtonLabel.right
-                    anchors.leftMargin: 5
+                    text: "Set to white"
+
+                    height:25
+                    width:80
+                    radius:5
+                    anchors.left: linearHueSlider.left
+                    anchors.top: linearHueSlider.bottom
+                    anchors.topMargin: 10
+
+                    contentItem: Text {
+                            text: linearWhiteButton.text
+                            font.pixelSize: 12
+                            font.underline: true
+                            color: linearWhiteButton.pressed ? "grey" : "white"
+                            horizontalAlignment: Text.AlignHCenter
+                            verticalAlignment: Text.AlignVCenter
+                            elide: Text.ElideRight
+                        }
+
+                    background: Rectangle {
+                            id: linearWhiteButtonBackground
+                            implicitWidth: 80
+                            implicitHeight: 25
+                            radius: linearWhiteButton.radius
+                            anchors.fill: parent
+                            color: "transparent"
+                    }
+
                     onClicked: {
-                        linearColorBox.value = "#FFFFFF";
-                        linearLED1.ledColor = "#FFFFFF";
-                        linearLED2.ledColor = "#FFFFFF";
-                        linearLED3.ledColor = "#FFFFFF";
-                        //platformInterface.set_led_outputs_on_off.update("white")
-                        //platformInterface.turnOffChecked = false
+                        //remove these when notifications are active
+//                        linearColorBox.value = "#FFFFFF";
+//                        linearLED1.ledColor = "#FFFFFF";
+//                        linearLED2.ledColor = "#FFFFFF";
+//                        linearLED3.ledColor = "#FFFFFF";
+
+                        platformInterface.set_linear_color.update(platformInterface.set_linear_color_notification.enabled,
+                                                                  "FFFFFF");
                     }
                 }
 
@@ -624,12 +791,22 @@ Rectangle {
                     infoBoxWidth:80
                     height:20
                     textColor:"white"
-                    value:"#008080"
+                    value:{
+                        var theColor = "#" + platformInterface.set_linear_color_notification.color
+                        console.log("linear color for box is",theColor)
+                        return theColor
+                    }
 
                     onApplied:{
-                        linearLED1.ledColor = linearColorBox.value;
-                        linearLED2.ledColor = linearColorBox.value;
-                        linearLED3.ledColor = linearColorBox.value;
+                        //remove these when notifications are active
+//                        linearLED1.ledColor = linearColorBox.value;
+//                        linearLED2.ledColor = linearColorBox.value;
+//                        linearLED3.ledColor = linearColorBox.value;
+
+                        var colorString = linearColorBox.value.substring(1,7); //remove the # from the start of the string
+
+                        platformInterface.set_linear_color.update(platformInterface.set_linear_color_notification.enabled,
+                                                                  colorString);
                     }
                 }
 
@@ -649,17 +826,29 @@ Rectangle {
 
                 LEDIndicator{
                     id: linearLED1
-                    ledColor: "white"
+                    ledColor: {
+                        var theColor = platformInterface.set_linear_color_notification.color
+                        theColor = "#"+theColor
+                        return theColor
+                    }
                     height: 40
                 }
                 LEDIndicator{
                     id: linearLED2
-                    ledColor: "white"
+                    ledColor: {
+                        var theColor = platformInterface.set_linear_color_notification.color
+                        theColor = "#"+theColor
+                        return theColor
+                    }
                     height: 40
                 }
                 LEDIndicator{
                     id: linearLED3
-                    ledColor: "white"
+                    ledColor: {
+                        var theColor = platformInterface.set_linear_color_notification.color
+                        theColor = "#"+theColor
+                        return theColor
+                    }
                     height: 40
                 }
             }
@@ -684,8 +873,6 @@ Rectangle {
             anchors.top:linearContainer.bottom
             height: parent.height/4
             color:"transparent"
-            //border.color:"tran"
-            //border.width:1
 
             Image{
                 id:buckIcon
@@ -726,7 +913,12 @@ Rectangle {
                 anchors.verticalCenter: parent.verticalCenter
                 grooveFillColor:windowsDarkBlue
                 grooveColor:switchGrooveColor
-                checked:true
+                checked:platformInterface.set_buck_intensity_notification.enabled
+
+                onCheckedChanged:{
+                    platformInterface.set_buck_intensity.update(buckSwitch.checked,
+                                                              platformInterface.set_buck_intensity_notification.intensity);
+                }
             }
 
             RoundButton{
@@ -785,28 +977,59 @@ Rectangle {
             }
 
             PortInfo{
-                id:highCurrentInfo
+                id:buckTelemetry
                 anchors.top: parent.top
                 anchors.topMargin: 10
                 anchors.left: buckSwitch.right
                 anchors.leftMargin: 240
                 width:250
                 boxHeight:60
+
+                property int theRunningTotal: 0
+                property int theEfficiencyCount: 0
+                property int theEfficiencyAverage: 0
+                property var periodicValues: platformInterface.led_buck_power_notification
+
+                onPeriodicValuesChanged: {
+                    var theInputPower = platformInterface.led_buck_power_notification.input_voltage * platformInterface.led_buck_power_notification.input_current +2;//PTJ-1321 2 Watt compensation
+                    var theOutputPower = platformInterface.led_buck_power_notification.output_voltage * platformInterface.led_buck_power_notification.output_current;
+
+                    //sum eight values of the efficency and average before displaying
+                    var theEfficiency = Math.round((theOutputPower/theInputPower) *100)
+                    buckTelemetry.theRunningTotal += theEfficiency;
+                    //console.log("new efficiency value=",theEfficiency,"new total is",miniInfo1.theRunningTotal,miniInfo1.theEfficiencyCount);
+                    buckTelemetry.theEfficiencyCount++;
+
+                    if (buckTelemetry.theEfficiencyCount === 8){
+                        buckTelemetry.theEfficiencyAverage = buckTelemetry.theRunningTotal/8;
+                        buckTelemetry.theEfficiencyCount = 0;
+                        buckTelemetry.theRunningTotal = 0
+                    }
+                }
+
+                inputVoltage:{
+                    return (platformInterface.led_buck_power_notification.input_voltage).toFixed(1);
+                }
+                outputVoltage:{
+                    return (platformInterface.led_buck_power_notification.output_voltage).toFixed(2);
+                }
+                inputCurrent:{
+                    return (platformInterface.led_buck_power_notification.input_current).toFixed(0)
+                }
+                outputCurrent:{
+                    return (platformInterface.led_buck_power_notification.output_current).toFixed(0)
+                }
+                temperature:{
+                    return (platformInterface.led_buck_power_notification.temperature).toFixed(0)
+                }
+                efficiency: theEfficiencyAverage
             }
 
             SGSlider {
                 id: ledIntensity
                 width:330
                 label: "Intensity:"
-                //                value: {
-                //                    if (platformInterface.output_current_exceeds_maximum.port === portNumber){
-                //                        return platformInterface.output_current_exceeds_maximum.current_limit;
-                //                    }
-                //                    else{
-                //                        return currentLimit.value;
-                //                    }
-
-                //                }
+                value: platformInterface.set_buck_intensity_notification.intensity
                 labelTopAligned: true
                 startLabel: "0%"
                 endLabel: "100%"
@@ -815,22 +1038,22 @@ Rectangle {
                 textColor: "white"
                 from: 0
                 to: 100
-                value: 1
                 stepSize: 1
                 anchors {
-                    left: highCurrentInfo.right
+                    left: buckTelemetry.right
                     leftMargin: 30
                     verticalCenter: parent.verticalCenter
                 }
 
                 onUserSet:{
-                    setBuckLEDs();
-                    console.log("new value:",ledIntensity.value);
-                    //platformInterface.request_over_current_protection.update(portNumber, value)
+                    //setBuckLEDs();
+                    //console.log("new value:",ledIntensity.value);
+                    platformInterface.set_buck_intensity.update(platformInterface.set_buck_intensity_notification.enabled,
+                                                              ledIntensity.value);
                 }
 
                 Component.onCompleted:{
-                    setBuckLEDs();
+                    //setBuckLEDs();
                 }
 
                 function setBuckLEDs(){
@@ -842,7 +1065,7 @@ Rectangle {
                     }
 
                     var hexvalue ="#" + theHexValue + theHexValue + theHexValue
-                    console.log("new value:",hexvalue);
+                    //console.log("new value:",hexvalue);
                     buckLED1.ledColor = hexvalue;
                 }
 
@@ -850,7 +1073,17 @@ Rectangle {
 
             LEDIndicator{
                 id: buckLED1
-                ledColor: "white"
+                ledColor: {
+                    var theColor = parseInt((255 * (platformInterface.set_buck_intensity_notification.intensity)).toFixed(0))
+
+                    var theHexValue = theColor.toString(16).toUpperCase();
+                    if (theHexValue.length % 2) {
+                      theHexValue = '0' + theHexValue;
+                    }
+
+                    var theHexColor ="#" + theHexValue + theHexValue + theHexValue
+                    return theHexColor
+                }
                 height: 40
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.right:parent.right
@@ -919,7 +1152,12 @@ Rectangle {
                 anchors.verticalCenter: parent.verticalCenter
                 grooveFillColor:windowsDarkBlue
                 grooveColor:switchGrooveColor
-                checked:true
+                checked:platformInterface.set_boost_intensity_notification.enabled
+
+                onCheckedChanged:{
+                    platformInterface.set_boost_intensity.update(checked,
+                                                              platformInterface.set_boost_intensity_notification.intensity);
+                }
             }
 
             RoundButton{
@@ -980,15 +1218,7 @@ Rectangle {
                 id: boostIntensity
                 label: "Intensity:"
                 width: 350
-                //                value: {
-                //                    if (platformInterface.output_current_exceeds_maximum.port === portNumber){
-                //                        return platformInterface.output_current_exceeds_maximum.current_limit;
-                //                    }
-                //                    else{
-                //                        return currentLimit.value;
-                //                    }
-
-                //                }
+                value: platformInterface.set_boost_intensity_notification.intensity
                 labelTopAligned: true
                 startLabel: "0%"
                 endLabel: "100%"
@@ -1005,34 +1235,16 @@ Rectangle {
                 }
 
                 onUserSet:{
-                    setBoostLEDs();
-                    //platformInterface.request_over_current_protection.update(portNumber, value)
+                    //setBoostLEDs();
+                    platformInterface.set_boost_intensity.update(platformInterface.set_boost_intensity_notification.enabled,
+                                                              boostIntensity.value);
                 }
 
                 Component.onCompleted:{
-                    setBoostLEDs();
+                    //setBoostLEDs();
                 }
 
-                function setBoostLEDs(){
-                    var theColor = parseInt((255 * (boostIntensity.value/100)).toFixed(0))
-                    var theHexValue = theColor.toString(16).toUpperCase();
-                    if (theHexValue.length % 2) {
-                      theHexValue = '0' + theHexValue;
-                    }
 
-                    var hexvalue ="#" + "00" + theHexValue + "00"
-
-                    console.log("new value:",hexvalue);
-                    boostLED1.ledColor = hexvalue;
-                    boostLED2.ledColor = hexvalue;
-                    boostLED3.ledColor = hexvalue;
-                    boostLED4.ledColor = hexvalue;
-                    boostLED5.ledColor = hexvalue;
-                    boostLED6.ledColor = hexvalue;
-                    boostLED7.ledColor = hexvalue;
-                    boostLED8.ledColor = hexvalue;
-                    boostLED9.ledColor = hexvalue;
-                }
 
             }
 
@@ -1045,6 +1257,33 @@ Rectangle {
                 anchors.rightMargin: 10
                 width:50
                 spacing:10
+
+                function setBoostLEDs(){
+                    var theColor = parseInt((255 * (boostIntensity.value/100)).toFixed(0))
+                    var theHexValue = theColor.toString(16).toUpperCase();
+                    if (theHexValue.length % 2) {
+                      theHexValue = '0' + theHexValue;
+                    }
+
+                    var hexvalue ="#" + "00" + theHexValue + "00"
+
+                    //console.log("new value:",hexvalue);
+                    boostLED1.ledColor = hexvalue;
+                    boostLED2.ledColor = hexvalue;
+                    boostLED3.ledColor = hexvalue;
+                    boostLED4.ledColor = hexvalue;
+                    boostLED5.ledColor = hexvalue;
+                    boostLED6.ledColor = hexvalue;
+                    boostLED7.ledColor = hexvalue;
+                    boostLED8.ledColor = hexvalue;
+                    boostLED9.ledColor = hexvalue;
+                }
+
+                property var boostIntensity: platformInterface.set_boost_intensity_notification.intensity
+
+                onBoostIntensityChanged:{
+                    setBoostLEDs();
+                }
 
                 LEDIndicator{
                     id: boostLED1

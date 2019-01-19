@@ -47,7 +47,7 @@ Rectangle {
             anchors.right: column1.right
             height:boxHeight
             label: "CURRENT IN"
-            unit: "A"
+            unit: "mA"
             color:"transparent"
             icon: "../images/icon-voltage.svg"
             valueSize:36
@@ -104,7 +104,7 @@ Rectangle {
             anchors.right: column2.right
             height:boxHeight
             label: "CURRENT OUT"
-            unit:"A"
+            unit:"mA"
             color:"transparent"
             icon: "../images/icon-voltage.svg"
             valueSize:36

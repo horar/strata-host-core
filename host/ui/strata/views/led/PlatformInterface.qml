@@ -27,18 +27,18 @@ Item {
 
    property var set_pulse_colors_notification:{
         "enabled":true,                              // or 'false' if disabling the pulse LED
-        "channel1_color":"FFFFFF",                   //a six digit hex value (R,G,B)
-        "channel2_color":"FFFFFF"
+        "channel1_color":"46B900",                   //a six digit hex value (R,G,B)
+        "channel2_color":"3A00C5"
     }
 
    property var set_linear_color_notification:{
         "enabled":true,                                // or 'false' if disabling the linear LED
-        "color":"FFFFFF"                              //a six digit hex value (R,G,B)
+        "color":"008888"                              //a six digit hex value (R,G,B)
     }
 
    property var set_buck_intensity_notification:{
          "enabled":true,                             // or 'false' if disabling the buck LED
-         "intensity":50                               //0-100%
+         "intensity":1                               //0-100%
     }
 
 
