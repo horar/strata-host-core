@@ -5,11 +5,7 @@ Note: This is tested on Mac OS and (Windows built using Visual Studio).
 Since couchbase-lite-core is submodule of this library please run:
 `git submodule update --init --recursive`
 
-Please run the following to build couchbase-lite-core. 
-```
-cd couchbase-lite-core/build_cmake/scripts
-./build_macos.sh
-```
+Due to large library sizes for couchbase-lite-core. The library is added as subdirectory and it will be built on the fly when building this library! 
 
 #Build
 Go to spyglass/host:
@@ -18,9 +14,10 @@ mkdir build && cd build
 cmake ..
 ```
 
-#Run the test/demo
+#Run the example demos from spyglass/host/build/app
 ```
-./build/libs/couchbaselite/couchbase_lite_cpp_test
+./fleece-playground
+./sgcouchbaselite-playground
 ```
 
 DB location will be inside build/db/${dbname}/db.sqlite3.
@@ -59,3 +56,7 @@ This library was tested with Couchbase version `5.5.1`
     }
 }
 ```
+
+#TODO:
+1. Unit Tests.
+2. Improve/reuse Log. This can be done by doing some refactoring/file restructures on other projects which has better log.
