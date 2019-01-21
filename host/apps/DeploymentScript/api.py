@@ -5,6 +5,9 @@ import hashlib
 import time
 import datetime
 
+IGNORED_FILE_EXTENSONS = ['.db']
+IGNORED_FILE_NAMES = ['.DS_Store']
+
 def singup(url, username, password):
     """signup function: Register new user to the cloud services
 
@@ -22,7 +25,7 @@ def singup(url, username, password):
         'password': password,
         'title': 'title',
         'company': 'company',
-        'code': 'fGEU'
+        'code': 'fGEU.'
     }
     response = requests.post(url+'/signup', json_body)
     return response.status_code, response.json()
@@ -116,10 +119,14 @@ def getFilesMetadata(class_id, path, url, token):
     for dirName, subdirList, fileList in os.walk(path):
         currentDirName = dirName.split(os.path.sep)[-1]
         for fname in fileList:
+            filePath = dirName + "/" + fname
+            filename, extension = os.path.splitext(fname)
+            if filename in IGNORED_FILE_NAMES or extension in IGNORED_FILE_EXTENSONS:
+                print "Ignoring:", filePath
+                continue
             fileInfo = dict()
             fileInfo["name"] = currentDirName
             fileInfo["file"] = "{}/{}/{}".format(class_id, currentDirName, fname)
-            filePath = dirName + "/" + fname
             fileInfo["md5"] = md5(filePath)
             fileInfo["timestamp"] = timeStamp()
             filesMetaData.append(fileInfo)
