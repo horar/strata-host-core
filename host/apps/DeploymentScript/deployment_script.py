@@ -26,6 +26,12 @@ CLOUD_SERVICE_PASSWORD = 'password!@#'
 CLOUD_SERVICE_URL = ''
 CLOUD_SERVICE_ACCESS_TOKEN = ''
 
+
+# Index of the directory to upload its contents.
+# ['dirA', 'dirB', 'dirC'] where the path looks like this. /dirA/dirB/dirC
+# This will be dirC
+UPLOAD_DIRECTORY_INDEX = 2
+
 # Used for program exist status
 Successful = 0
 Error = 1
@@ -35,6 +41,7 @@ def main():
     CLOUD_SERVICE_URL = configuration_data["cloud_services_url"]
 
     signup_result = singup(CLOUD_SERVICE_URL, CLOUD_SERVICE_USERNAME, CLOUD_SERVICE_PASSWORD)
+    print  signup_result[1]
     if signup_result[0] == 200:
         CLOUD_SERVICE_ACCESS_TOKEN = signup_result[1]["token"]
     else:
@@ -57,7 +64,7 @@ def main():
     for dirName, subdirList, fileList in os.walk(rootDir):
         currentDirName = dirName.split(os.path.sep)[-1]
         currentDepth = len(dirName.split(os.path.sep)) - depth
-        if (currentDepth == 1):
+        if (currentDepth == UPLOAD_DIRECTORY_INDEX):
             try:
                 json_document["documents"][currentDirName] = getFilesMetadata(classId, dirName, CLOUD_SERVICE_URL,
                                                                       CLOUD_SERVICE_ACCESS_TOKEN)
