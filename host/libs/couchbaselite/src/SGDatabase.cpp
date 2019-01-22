@@ -119,6 +119,9 @@ namespace Spyglass {
         }
         c4db_free(c4db_);
 
+        // c4db_free Deallocate but won't set c4db_ to nullptr
+        c4db_ = nullptr;
+
         DEBUG("Leaving close\n");
         return SGDatabaseReturnStatus::kNoError;
     }
@@ -178,6 +181,16 @@ namespace Spyglass {
     SGDatabaseReturnStatus SGDatabase::save(SGDocument *doc) {
         lock_guard<mutex> lock(db_lock_);
 
+        if(!isOpen()){
+            DEBUG("Calling save() while DB is not open\n");
+            return SGDatabaseReturnStatus::kOpenDBError;
+        }
+
+        if(doc == nullptr){
+            DEBUG("Passing uninitialized/invalid SGDocument to save()\n");
+            return SGDatabaseReturnStatus::kInvalidArgumentError;
+        }
+
         SGDatabaseReturnStatus status = SGDatabaseReturnStatus::kNoError;
 
         c4db_beginTransaction(c4db_, &c4error_);
@@ -217,6 +230,11 @@ namespace Spyglass {
     */
     C4Document *SGDatabase::getDocumentById(const std::string &doc_id) {
         lock_guard<mutex> lock(db_lock_);
+
+        if(!isOpen() || doc_id.empty()){
+            return nullptr;
+        }
+
         C4Document *c4doc;
 
         DEBUG("START getDocumentById: %s\n", doc_id.c_str());
@@ -252,6 +270,17 @@ namespace Spyglass {
     */
     SGDatabaseReturnStatus SGDatabase::deleteDocument(SGDocument *doc) {
         lock_guard<mutex> lock(db_lock_);
+
+        if(!isOpen()){
+            DEBUG("Calling deleteDocument() while DB is not open\n");
+            return SGDatabaseReturnStatus::kOpenDBError;
+        }
+
+        if(doc == nullptr){
+            DEBUG("Passing uninitialized/invalid SGDocument to deleteDocument()\n");
+            return SGDatabaseReturnStatus::kInvalidArgumentError;
+        }
+
         c4db_beginTransaction(c4db_, &c4error_);
         if (isC4Error(c4error_)) {
             DEBUG("deleteDocument kBeginTransactionError\n");
@@ -286,6 +315,11 @@ namespace Spyglass {
     */
     vector<std::string> SGDatabase::getAllDocumentsKey() {
         lock_guard<mutex> lock(db_lock_);
+
+        if(!isOpen()){
+            throw runtime_error("Trying to run database query while DB is not open!");
+        }
+
         vector<string> document_keys;
         const static string json = "[\"SELECT\", {\"WHAT\": [[\"._id\"]]}]";
         C4Query *query = c4query_new(c4db_, slice(json), &c4error_);

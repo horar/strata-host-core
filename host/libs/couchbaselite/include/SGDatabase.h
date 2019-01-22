@@ -33,7 +33,8 @@ namespace Spyglass {
         kEndTransactionError,
         kDBNameError,
         kCreateDBDirectoryError,
-        kDeleteDocumentError
+        kDeleteDocumentError,
+        kInvalidArgumentError
     };
 
     class SGDatabase {
