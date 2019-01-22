@@ -15,6 +15,8 @@ using namespace fleece::impl;
 * @param delta The value given which contains the delta. (Delta JSON).
 * @param newdict The Object to be written to.
 */
+// WARNING: This is not a generic diff implementation. This depends on custom structure JSON.
+// It's implemented to show off diff capabilities using fleece API.
 bool getDiff(const Dict* original_dict, const Value *delta, Retained<MutableDict> newdict){
     if(!delta){
         cout << "delta is null" << endl;
