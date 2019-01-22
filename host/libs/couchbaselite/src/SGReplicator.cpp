@@ -84,7 +84,7 @@ namespace Spyglass {
             return true;
         };
 
-        c4replicator_ = c4repl_new(replicator_configuration_->getDatabase(),
+        c4replicator_ = c4repl_new(replicator_configuration_->getDatabase()->getC4db(),
                                    replicator_configuration_->getUrlEndpoint()->getC4Address(),
                                    slice(replicator_configuration_->getUrlEndpoint()->getPath()),
                                    nullptr,
