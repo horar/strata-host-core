@@ -62,7 +62,7 @@ namespace Spyglass {
 
         C4Document *getDocumentById(const std::string &doc_id);
 
-
+        // Throws std::runtime_error exception on error
         std::vector<std::string> getAllDocumentsKey();
 
         SGDatabaseReturnStatus open();

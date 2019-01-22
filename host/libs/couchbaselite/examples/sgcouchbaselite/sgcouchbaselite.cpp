@@ -71,7 +71,12 @@ int main(){
         return 1;
     }
 
-    vector<string> document_keys = sgDatabase.getAllDocumentsKey();
+    vector<string> document_keys;
+    try{
+        document_keys = sgDatabase.getAllDocumentsKey();
+    }catch(const std::exception& e) {
+        DEBUG("Exceptions thrown: %s\n", e.what());
+    }
 
     // Printing the list of documents key from the local DB.
     for(std::vector <string>::iterator iter = document_keys.begin(); iter != document_keys.end(); iter++)

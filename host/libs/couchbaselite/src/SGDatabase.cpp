@@ -286,25 +286,34 @@ namespace Spyglass {
     vector<std::string> SGDatabase::getAllDocumentsKey() {
         lock_guard<mutex> lock(db_lock_);
         vector<string> document_keys;
-        C4Error c4error = {};
-        string json = "[\"SELECT\", {\"WHAT\": [[\"._id\"]]}]";
-        C4Query *query = c4query_new(c4db_, slice(json), &c4error);
-        if (c4error.code == kSGNoCouchBaseError_) {
+        const static string json = "[\"SELECT\", {\"WHAT\": [[\"._id\"]]}]";
+        C4Query *query = c4query_new(c4db_, slice(json), &c4error_);
 
+        if(!isC4Error(c4error_)){
             C4QueryOptions options = kC4DefaultQueryOptions;
-            C4QueryEnumerator *query_enumerator = c4query_run(query, &options, c4str(nullptr), &c4error);
+            C4QueryEnumerator *query_enumerator = c4query_run(query, &options, c4str(nullptr), &c4error_);
 
-            if (c4error.code == kSGNoCouchBaseError_) {
-                while (c4queryenum_next(query_enumerator, &c4error)) {
-                    slice doc_name = FLValue_AsString(FLArrayIterator_GetValueAt(&query_enumerator->columns, 0));
-                    document_keys.push_back(doc_name.asString());
+            if(!isC4Error(c4error_)){
+
+                while (c4queryenum_next(query_enumerator, &c4error_)) {
+
+                    if(!isC4Error(c4error_)){
+                        slice doc_name = FLValue_AsString(FLArrayIterator_GetValueAt(&query_enumerator->columns, 0));
+                        document_keys.push_back(doc_name.asString());
+                    }else{
+                        DEBUG("c4queryenum_next failed to run.\n");
+                        throw runtime_error("c4queryenum_next failed to run.");
+                    }
                 }
-            } else {
-                DEBUG("C4QueryEnumerator failed to run. Error code:%d\n", c4error.code);
+
+            }else{
+                DEBUG("C4QueryEnumerator failed to run.\n");
+                throw runtime_error("C4QueryEnumerator failed to run.");
             }
 
-        } else {
-            DEBUG("C4Query failed to execute a query. Error code:%d\n", c4error.code);
+        }else{
+            DEBUG("C4Query failed to execute a query.\n");
+            throw runtime_error("C4Query failed to execute a query.");
         }
 
         return document_keys;
