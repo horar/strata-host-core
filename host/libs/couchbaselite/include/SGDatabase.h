@@ -42,7 +42,10 @@ namespace Spyglass {
     public:
         SGDatabase();
 
+		// Using this constructor will create db directory based where the process is running from
         SGDatabase(const std::string &db_name);
+
+		// Using this constructor will create db directory based on the given path
         SGDatabase(const std::string &db_name, const std::string &path);
 
         virtual ~SGDatabase();
