@@ -18,6 +18,11 @@ namespace Spyglass{
         if(err.code != kSGNoCouchBaseError_ && err.code < kC4NumErrorCodesPlus1){
             fleece::alloc_slice error_message = c4error_getDescription(err);
             printf("%s -- ", error_message.asString().c_str());
+
+            // C4Error is usually private member and reusable.
+            // The C API for couchbase-lite-core requires multiple function call to do one operation.
+            // Because of this, a successful call does not change the property of C4Error, hence it’s only for reporting errors.
+            // So, reset needs to be done either in this function or after each call to isC4Error().
             err = {};
             return true;
         }
