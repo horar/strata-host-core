@@ -29,7 +29,6 @@ using namespace fleece::impl;
 namespace Spyglass {
     SGDatabase::SGDatabase() {}
 
-    SGDatabase::SGDatabase(const std::string &db_name): SGDatabase(db_name, string("./"))  {}
 
     SGDatabase::SGDatabase(const std::string &db_name, const std::string &path) {
         setDBName(db_name);
