@@ -7,7 +7,7 @@
 //
 //
 
-#include <PlatformInterface/core/CoreInterface.h>
+#include "PlatformInterface/core/CoreInterface.h"
 
 using namespace std;
 using namespace Spyglass;
