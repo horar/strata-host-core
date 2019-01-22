@@ -70,7 +70,6 @@ namespace Spyglass {
 
         C4Database *c4db_{nullptr};
         C4DatabaseConfig c4db_config_;
-        C4Error c4error_;
         C4Error c4error_ {};
         std::string db_name_;
         std::mutex db_lock_;
