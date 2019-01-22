@@ -84,7 +84,6 @@ namespace Spyglass {
         std::string db_path_;
         std::mutex db_lock_;
 
-        static const uint32_t kSGNoCouchBaseError_ = 0;
         static constexpr const char *kSGDatabasesDirectory_ = "db";
 
         SGDatabaseReturnStatus createNewDocument(SGDocument *doc, fleece::alloc_slice body);
