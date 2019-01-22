@@ -29,8 +29,11 @@ using namespace fleece::impl;
 namespace Spyglass {
     SGDatabase::SGDatabase() {}
 
-    SGDatabase::SGDatabase(const std::string &db_name) {
+    SGDatabase::SGDatabase(const std::string &db_name): SGDatabase(db_name, string("./"))  {}
+
+    SGDatabase::SGDatabase(const std::string &db_name, const std::string &path) {
         setDBName(db_name);
+        setDBPath(path);
     }
 
     SGDatabase::~SGDatabase() {
@@ -45,6 +48,14 @@ namespace Spyglass {
         return db_name_;
     }
 
+    void SGDatabase::setDBPath(const std::string &path) {
+        db_path_ = path;
+    }
+
+    const std::string &SGDatabase::getDBPath() const {
+        return db_path_;
+    }
+
     /** SGDatabase Open.
     * @brief Open or create a local embedded database if name does not exist
     * @param db_name The couchebase lite embeeded database name.
@@ -55,7 +66,7 @@ namespace Spyglass {
         DEBUG("Calling open\n");
 
         // Check for empty db name
-        if (db_name_.empty()) {
+        if (db_name_.empty() || db_path_.empty()) {
             DEBUG("DB name can't be empty! \n");
             return SGDatabaseReturnStatus::kDBNameError;
         }
@@ -65,7 +76,7 @@ namespace Spyglass {
             System call will work with Windows/Mac/Linux
         */
         // System returns the processor exit status. In this case mkdir return 0 on success.
-        string command = string("mkdir ") + kSGDatabasesDirectory_;
+        string command = string("mkdir ") + getDBPath() + kSGDatabasesDirectory_;
         system(command.c_str());
 
         // Configure database attributes
@@ -75,10 +86,8 @@ namespace Spyglass {
         c4db_config_.versioning = kC4RevisionTrees;
         c4db_config_.encryptionKey.algorithm = kC4EncryptionNone;
 
-        string db_path = string(kSGDatabasesDirectory_) + string("/") + db_name_;
-
-        c4error_.code = 0;
-
+        string db_path = getDBPath() + string(kSGDatabasesDirectory_) + string("/") + db_name_;
+        
         c4db_ = c4db_open(slice(db_path), &c4db_config_, &c4error_);
 
         if (isC4Error(c4error_)) {

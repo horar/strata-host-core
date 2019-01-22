@@ -45,7 +45,15 @@ private:
 
 int main(){
 
-    SGDatabase sgDatabase("db2");
+
+    // Set location for db to be stored in  /Users/zbgd3f/
+    // This path sensative. / needs to be at the end
+    SGDatabase sgDatabase("db2", "/Users/zbgd3f/");
+
+    // Default db location will be exectuable location
+//    SGDatabase sgDatabase("db2");
+
+    DEBUG("Database will be stored in: %s\n", sgDatabase.getDBPath().c_str());
 
     if (!sgDatabase.isOpen()) {
         DEBUG("Db is not open yet\n");

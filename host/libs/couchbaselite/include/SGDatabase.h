@@ -42,12 +42,17 @@ namespace Spyglass {
         SGDatabase();
 
         SGDatabase(const std::string &db_name);
+        SGDatabase(const std::string &db_name, const std::string &path);
 
         virtual ~SGDatabase();
 
         void setDBName(const std::string &name);
 
         const std::string &getDBName() const;
+
+        void setDBPath(const std::string &name);
+
+        const std::string &getDBPath() const;
 
         C4Database *getC4db() const;
 
@@ -72,6 +77,7 @@ namespace Spyglass {
         C4DatabaseConfig c4db_config_;
         C4Error c4error_ {};
         std::string db_name_;
+        std::string db_path_;
         std::mutex db_lock_;
 
         static const uint32_t kSGNoCouchBaseError_ = 0;
