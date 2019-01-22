@@ -31,16 +31,16 @@ namespace Spyglass {
     */
     SGReplicatorConfiguration::SGReplicatorConfiguration(SGDatabase *db, SGURLEndpoint *url_endpoint)
             : SGReplicatorConfiguration() {
-        database_ = db->getC4db();
-        url_endpoint_ = url_endpoint;
+        setDatabase(db);
+        setUrlEndpoint_(url_endpoint);
     }
 
-    C4Database *SGReplicatorConfiguration::getDatabase() const {
+    SGDatabase *SGReplicatorConfiguration::getDatabase() const {
         return database_;
     }
 
-    void SGReplicatorConfiguration::setDatabase(const SGDatabase &database) {
-        database_ = database.getC4db();
+    void SGReplicatorConfiguration::setDatabase(SGDatabase *database) {
+        database_ = database;
     }
 
     const SGURLEndpoint *SGReplicatorConfiguration::getUrlEndpoint() const {
@@ -59,8 +59,8 @@ namespace Spyglass {
         replicator_type_ = replicator_type;
     }
 
-    void SGReplicatorConfiguration::setAuthenticator(const SGAuthenticator *authenticator) {
-        authenticator_ = (SGAuthenticator *) authenticator;
+    void SGReplicatorConfiguration::setAuthenticator(SGAuthenticator *authenticator) {
+        authenticator_ = authenticator;
     }
 
     const SGAuthenticator *SGReplicatorConfiguration::getAuthenticator() const {

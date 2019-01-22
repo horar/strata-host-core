@@ -30,19 +30,19 @@ namespace Spyglass {
             kPull
         };
 
-        C4Database *getDatabase() const;
+        SGDatabase *getDatabase() const;
 
-        void setDatabase(const SGDatabase &database_);
+        void setDatabase(SGDatabase *database);
 
         const SGURLEndpoint *getUrlEndpoint() const;
 
-        void setUrlEndpoint_(SGURLEndpoint *url_endpoint_);
+        void setUrlEndpoint_(SGURLEndpoint *url_endpoint);
 
         ReplicatorType getReplicatorType() const;
 
         void setReplicatorType(ReplicatorType replicator_type);
 
-        void setAuthenticator(const SGAuthenticator *authenticator);
+        void setAuthenticator(SGAuthenticator *authenticator);
 
         const SGAuthenticator *getAuthenticator() const;
 
@@ -51,7 +51,7 @@ namespace Spyglass {
         void setChannels(const std::vector<std::string> &channels);
 
     private:
-        C4Database *database_{nullptr};
+        SGDatabase *database_{nullptr};
         SGAuthenticator *authenticator_{nullptr};
 
         class SGURLEndpoint *url_endpoint_{nullptr};
