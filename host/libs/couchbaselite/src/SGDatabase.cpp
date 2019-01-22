@@ -29,6 +29,7 @@ using namespace fleece::impl;
 namespace Spyglass {
     SGDatabase::SGDatabase() {}
 
+    SGDatabase::SGDatabase(const std::string &db_name): SGDatabase(db_name, string())  {}
 
     SGDatabase::SGDatabase(const std::string &db_name, const std::string &path) {
         setDBName(db_name);
@@ -65,7 +66,7 @@ namespace Spyglass {
         DEBUG("Calling open\n");
 
         // Check for empty db name
-        if (db_name_.empty() || db_path_.empty()) {
+        if (db_name_.empty()) {
             DEBUG("DB name can't be empty! \n");
             return SGDatabaseReturnStatus::kDBNameError;
         }
