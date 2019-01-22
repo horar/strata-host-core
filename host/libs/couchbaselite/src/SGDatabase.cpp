@@ -76,6 +76,7 @@ namespace Spyglass {
             System call will work with Windows/Mac/Linux
         */
         // System returns the processor exit status. In this case mkdir return 0 on success.
+        //TODO: Replace system call to make a directory using standard C/C++ API
         string command = string("mkdir ") + getDBPath() + kSGDatabasesDirectory_;
         system(command.c_str());
 
