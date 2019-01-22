@@ -62,8 +62,6 @@ namespace Spyglass {
     * @param future_obj The future object used to send a signal to its running thread.
     */
     bool SGReplicator::_start() {
-        C4Error c4error = {};
-
         Encoder encoder;
 
         if (!isValidSGReplicatorConfiguration()) {
