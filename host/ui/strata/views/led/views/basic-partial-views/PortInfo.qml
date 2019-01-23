@@ -18,7 +18,7 @@ Rectangle {
     color: "lightgoldenrodyellow"
     radius: 5
     border.color: "white"
-    width: 200
+    width: 400
 
     Column {
         id: column1
