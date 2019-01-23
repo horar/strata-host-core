@@ -43,7 +43,7 @@ function populatePlatforms(platform_list_json) {
 
         "102"              : "usb-pd",
         "103"              : "usb-pd-multiport",
-        "104"              : "led"
+        "109"              : "led"
 
     }
 
