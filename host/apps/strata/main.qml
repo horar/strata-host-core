@@ -188,6 +188,13 @@ Window {
                     NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT, data)
                 }
             }
+            Button {
+                text: "LED"
+                onClicked: {
+                    var data = { platform_name: "led"}
+                    NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT, data)
+                }
+            }
 
 
             // UI events
