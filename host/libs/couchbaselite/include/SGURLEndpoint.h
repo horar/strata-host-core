@@ -48,7 +48,7 @@ namespace Spyglass {
         std::string host_;
         std::string schema_;
         std::string path_;
-        uint16_t port_;
+        uint16_t port_ {0};
 
         C4Address c4address_;
     };
