@@ -90,7 +90,7 @@ namespace Spyglass {
         if (!channels_.empty()) {
             // Set fleece arrays the values stored in the channels_ vector
             Retained<MutableArray> channels_array = MutableArray::newArray(channels_.size());
-            for (int index = 0; index < channels_.size(); index++) {
+            for (unsigned int index = 0; index < channels_.size(); index++) {
                 channels_array->set(index, channels_[index]);
             }
             options_->set(slice(kC4ReplicatorOptionChannels), channels_array);
