@@ -51,12 +51,17 @@ namespace Spyglass {
 
         const SGAuthenticator *getAuthenticator() const;
 
+        void setChannels(const std::vector<std::string> &channels);
+
         /** SGReplicatorConfiguration effectiveOptions.
         * @brief Initialize and build the options for the replicator
         */
         fleece::Retained<fleece::impl::MutableDict> effectiveOptions();
 
-        void setChannels(const std::vector<std::string> &channels);
+        /** SGReplicatorConfiguration isValid.
+        * @brief Validate database_ and url_endpoint_ references.
+        */
+        bool isValid() const;
 
     private:
         SGDatabase *database_{nullptr};

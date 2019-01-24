@@ -91,4 +91,18 @@ namespace Spyglass {
 
         return options_;
     }
+
+    bool SGReplicatorConfiguration::isValid() const{
+        if(database_ == nullptr && database_->getC4db() == nullptr){
+            return false;
+        }
+        if(url_endpoint_ == nullptr){
+            return false;
+        }
+        if( url_endpoint_->getHost().empty() || url_endpoint_->getSchema().empty() || url_endpoint_->getPath().empty() ){
+            return false;
+        }
+
+        return true;
+    }
 }

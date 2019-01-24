@@ -108,10 +108,7 @@ namespace Spyglass {
     }
 
     bool SGReplicator::isValidSGReplicatorConfiguration() {
-        return  replicator_configuration_ != nullptr &&
-                replicator_configuration_->getDatabase() != nullptr &&
-                replicator_configuration_->getDatabase()->getC4db() != nullptr &&
-                !replicator_configuration_->getUrlEndpoint()->getPath().empty();
+        return  replicator_configuration_ != nullptr && replicator_configuration_->isValid();
     }
 
     void SGReplicator::addChangeListener(
