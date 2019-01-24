@@ -24,11 +24,6 @@ namespace Spyglass {
 
     SGReplicatorConfiguration::~SGReplicatorConfiguration() {}
 
-    /** SGReplicatorConfiguration.
-    * @brief Sets private members.
-    * @param db The reference to the SGDatabase
-    * @param url_endpoint The reference to the SGURLEndpoint object.
-    */
     SGReplicatorConfiguration::SGReplicatorConfiguration(SGDatabase *db, SGURLEndpoint *url_endpoint)
             : SGReplicatorConfiguration() {
         setDatabase(db);
@@ -72,9 +67,6 @@ namespace Spyglass {
         channels_ = channels;
     }
 
-    /** SGReplicatorConfiguration effectiveOptions.
-    * @brief Initialize and build the options for the replicator
-    */
     fleece::Retained<fleece::impl::MutableDict> SGReplicatorConfiguration::effectiveOptions() {
 
         if (authenticator_ != nullptr) {

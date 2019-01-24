@@ -30,6 +30,10 @@ namespace Spyglass {
     public:
         SGReplicator();
 
+        /** SGReplicator.
+        * @brief Initial setup the replicator.
+        * @param replicator_configuration The SGReplicator configuration object.
+        */
         SGReplicator(SGReplicatorConfiguration *replicator_configuration);
 
         virtual ~SGReplicator();
@@ -42,16 +46,34 @@ namespace Spyglass {
             kBusy
         };
 
+        /** SGReplicator start.
+        * @brief Starts a replicator background thread by calling _start().
+        */
         bool start();
 
+        /** SGReplicator stop.
+        * @brief Stop a running replicator thread.
+        */
         void stop();
 
+        /** SGReplicator addChangeListener.
+        * @brief Adds the callback function to the replicator's onStatusChanged event.
+        * @param callback The callback function.
+        */
         void addChangeListener(const std::function<void(SGReplicator::ActivityLevel, SGReplicatorProgress)> &callback);
 
+        /** SGReplicator addDocumentErrorListener.
+        * @brief Adds the callback function to the replicator's onDocumentEnded event. (This can notifiy for error and also for added Doc to local DB)
+        * @param callback The callback function.
+        */
         void addDocumentEndedListener(
                 const std::function<void(bool pushing, std::string doc_id, std::string error_message, bool is_error,
                                          bool error_is_transient)> &callback);
 
+        /** SGReplicator addValidationListener.
+        * @brief Adds the callback function to the replicator's validationFunc event. All incoming revisions from SyncGateway will be accepted!
+        * @param callback The callback function.
+        */
         void addValidationListener(
                 const std::function<void(const std::string &doc_id, const std::string &json_body)> &callback);
 
@@ -67,8 +89,16 @@ namespace Spyglass {
                            bool error_is_transient)> on_document_error_callback_;
         std::function<void(const std::string &doc_id, const std::string &json_body)> on_validation_callback_;
 
+        /** SGReplicator setReplicatorType.
+        * @brief Set the replicator type to the C4ReplicatorParameters.
+        * @param replicator_type The enum replicator type to be used for the replicator.
+        */
         void setReplicatorType(SGReplicatorConfiguration::ReplicatorType replicator_type);
 
+        /** SGReplicator _start.
+        * @brief Starts the replicator.
+        * @param future_obj The future object used to send a signal to its running thread.
+        */
         bool _start();
 
         bool isValidSGReplicatorConfiguration();

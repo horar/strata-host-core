@@ -42,6 +42,10 @@ namespace Spyglass {
 
         const std::string getPassword() const;
 
+        /** SGBasicAuthenticator authenticate.
+        * @brief Creates a fleece dictionary to set auth type, set username and password.
+        * @param options The reference to the mutable fleece dicationary.
+        */
         void authenticate(fleece::Retained<fleece::impl::MutableDict> options);
 
     private:

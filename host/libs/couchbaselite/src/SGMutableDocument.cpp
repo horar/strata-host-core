@@ -13,10 +13,6 @@
 namespace Spyglass {
     SGMutableDocument::SGMutableDocument(class SGDatabase *database, std::string docId) : SGDocument(database, docId) {}
 
-    /** SGMutableDocument setBody.
-    * @brief Given a string in json format this will convert it to fleece mutable dictionary. true on success, false otherwise
-    * @param body The reference to the string json format.
-    */
     bool SGMutableDocument::setBody(const std::string &body) {
         try {
             fleece::Retained<fleece::impl::Doc> doc = fleece::impl::Doc::fromJSON(body);

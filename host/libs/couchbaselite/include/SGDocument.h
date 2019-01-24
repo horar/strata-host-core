@@ -33,17 +33,30 @@ namespace Spyglass {
 
         void setId(const std::string &id);
 
-        //Return string json format
+        /** SGDocument getBody.
+        * @brief Stringify fleece object (mutable_dict_) to string json format.
+        */
         const std::string getBody() const;
 
-        // Return mutable_dict_ as fleece Dict object
+        /** SGDocument asDict.
+        * @brief Return the internal mutable_dict_ as fleece Dict object.
+        */
         const fleece::impl::Dict *asDict() const;
 
+        /** SGDocument empty.
+        * @brief check if MutableDict is empty.
+        */
         bool empty() const;
 
+        /** SGDocument get.
+        * @brief MutableDict wrapper to access document data.
+        * @param keyToFind The reference to the key.
+        */
         const fleece::impl::Value *get(const std::string &keyToFind);
 
-        // Check if document exist in DB
+        /** SGDocument exist.
+        * @brief Check if the document exist in the DB.
+        */
         bool exist() const;
 
     private:
@@ -52,10 +65,15 @@ namespace Spyglass {
         // Document ID
         std::string id_;
 
-        friend class SGDatabase;
-
+        /** SGDocument setC4Document.
+        * @brief Open a document and sets its body to to the existing mutable_dict, if the document exist. Otherwise init mutable_dict_
+         * NOTE: This is not a public function, it's protected!
+        * @param database The reference to the opened SGDatabase.
+        * @param docId The reference to the docId to be opened.
+        */
         void setC4document(C4Document *);
 
+        friend class SGDatabase;
     protected:
         bool setC4Document(SGDatabase *database, const std::string &docId);
 

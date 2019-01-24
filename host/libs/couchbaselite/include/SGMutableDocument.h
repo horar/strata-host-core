@@ -24,6 +24,10 @@ namespace Spyglass {
 
         fleece::impl::MutableDict *getMutableDict(fleece::slice key) { return mutable_dict_->getMutableDict(key); }
 
+        /** SGMutableDocument setBody.
+        * @brief Given a string in json format this will convert it to fleece mutable dictionary. true on success, false otherwise
+        * @param body The reference to the string json format.
+        */
         bool setBody(const std::string &body);
     };
 }

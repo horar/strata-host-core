@@ -60,21 +60,45 @@ namespace Spyglass {
 
         C4Database *getC4db() const;
 
-        SGDatabaseReturnStatus save(class SGDocument *doc);
-
-        SGDatabaseReturnStatus deleteDocument(class SGDocument *doc);
-
-        C4Document *getDocumentById(const std::string &doc_id);
-
-        // Throws std::runtime_error exception on error
-        std::vector<std::string> getAllDocumentsKey();
-
+        /** SGDatabase Open.
+        * @brief Open or create a local embedded database if name does not exist
+        * @param db_name The couchebase lite embeeded database name.
+        */
         SGDatabaseReturnStatus open();
 
-        SGDatabaseReturnStatus close();
-
+        /** SGDatabase isOpen.
+        * @brief Check if database is open
+        */
         bool isOpen();
 
+        /** SGDatabase Close.
+        * @brief Close the local database if it's open
+        */
+        SGDatabaseReturnStatus close();
+
+
+        /** SGDatabase save.
+        * @brief Create/Edit a document
+        * @param SGDocument The reference to the document object
+        */
+        SGDatabaseReturnStatus save(class SGDocument *doc);
+
+        /** SGDatabase getDocumentById.
+        * @brief return C4Document if there is such a document exist in the DB, otherwise return nullptr
+        * @param docId The document id
+        */
+        C4Document *getDocumentById(const std::string &doc_id);
+
+        /** SGDatabase deleteDocument.
+        * @brief delete existing document from the DB. True successful, otherwise false
+        * @param SGDocument The document object
+        */
+        SGDatabaseReturnStatus deleteDocument(class SGDocument *doc);
+
+        /** SGDatabase getAllDocumentsKey.
+        * @brief Runs local database query to get list of document keys. Throws std::runtime_error exception on error
+        */
+        std::vector<std::string> getAllDocumentsKey();
     private:
 
         C4Database *c4db_{nullptr};
@@ -86,8 +110,18 @@ namespace Spyglass {
 
         static constexpr const char *kSGDatabasesDirectory_ = "db";
 
+        /** SGDatabase createNewDocument.
+        * @brief Create new couchebase document.
+        * @param doc The SGDocument reference.
+        * @param body The fleece slice data which will be stored in the body of the document.
+        */
         SGDatabaseReturnStatus createNewDocument(SGDocument *doc, fleece::alloc_slice body);
 
+        /** SGDatabase updateDocument.
+        * @brief Update existing couchebase document.
+        * @param doc The SGDocument reference.
+        * @param body The fleece slice data which will update the body.
+        */
         SGDatabaseReturnStatus updateDocument(SGDocument *doc, fleece::alloc_slice new_body);
 
     };

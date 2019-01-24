@@ -18,8 +18,8 @@ namespace Spyglass {
     SGBasicAuthenticator::SGBasicAuthenticator() {}
 
     SGBasicAuthenticator::SGBasicAuthenticator(const std::string &username, const std::string &password) {
-        username_ = username;
-        password_ = password;
+        setUserName(username);
+        setPassword(password);
     }
 
     SGBasicAuthenticator::~SGBasicAuthenticator() {}
@@ -40,10 +40,6 @@ namespace Spyglass {
         return password_;
     }
 
-    /** SGBasicAuthenticator authenticate.
-    * @brief Creates a fleece dictionary to set auth type, set username and password.
-    * @param options The reference to the mutable fleece dicationary.
-    */
     void SGBasicAuthenticator::authenticate(fleece::Retained<fleece::impl::MutableDict> options) {
         fleece::Retained<fleece::impl::MutableDict> auth = fleece::impl::MutableDict::newDict();
         auth->set(slice(kC4ReplicatorAuthType), slice(kC4AuthTypeBasic));

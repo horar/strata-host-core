@@ -56,10 +56,6 @@ namespace Spyglass {
         return db_path_;
     }
 
-    /** SGDatabase Open.
-    * @brief Open or create a local embedded database if name does not exist
-    * @param db_name The couchebase lite embeeded database name.
-    */
     SGDatabaseReturnStatus SGDatabase::open() {
 
         lock_guard<mutex> lock(db_lock_);
@@ -100,16 +96,10 @@ namespace Spyglass {
         return SGDatabaseReturnStatus::kNoError;
     }
 
-    /** SGDatabase isOpen.
-    * @brief Check if database is open
-    */
     bool SGDatabase::isOpen() {
         return c4db_ != nullptr;
     }
 
-    /** SGDatabase Close.
-    * @brief Close the local database if it's open
-    */
     SGDatabaseReturnStatus SGDatabase::close() {
         lock_guard<mutex> lock(db_lock_);
         DEBUG("Calling close\n");
@@ -137,11 +127,6 @@ namespace Spyglass {
         return c4db_;
     }
 
-    /** SGDatabase createNewDocument.
-    * @brief Create new couchebase document.
-    * @param doc The SGDocument reference.
-    * @param body The fleece slice data which will be stored in the body of the document.
-    */
     SGDatabaseReturnStatus SGDatabase::createNewDocument(SGDocument *doc, alloc_slice body) {
         // Document does not exist. Creating a new one
         DEBUG("Creating a new document\n");
@@ -159,11 +144,6 @@ namespace Spyglass {
         return SGDatabaseReturnStatus::kNoError;
     }
 
-    /** SGDatabase updateDocument.
-    * @brief Update existing couchebase document.
-    * @param doc The SGDocument reference.
-    * @param body The fleece slice data which will update the body.
-    */
     SGDatabaseReturnStatus SGDatabase::updateDocument(SGDocument *doc, alloc_slice new_body) {
         // Document exist. Make modifications to the body
         DEBUG("document Exist. Working on updating the document: %s\n", doc->getId().c_str());
@@ -183,10 +163,6 @@ namespace Spyglass {
         return SGDatabaseReturnStatus::kNoError;
     }
 
-    /** SGDatabase save.
-    * @brief Create/Edit a document
-    * @param SGDocument The reference to the document object
-    */
     SGDatabaseReturnStatus SGDatabase::save(SGDocument *doc) {
         lock_guard<mutex> lock(db_lock_);
         DEBUG("Calling save\n");
@@ -233,10 +209,6 @@ namespace Spyglass {
         return status;
     }
 
-    /** SGDatabase getDocumentById.
-    * @brief return C4Document if there is such a document exist in the DB, otherwise return nullptr
-    * @param docId The document id
-    */
     C4Document *SGDatabase::getDocumentById(const std::string &doc_id) {
         lock_guard<mutex> lock(db_lock_);
 
@@ -266,10 +238,6 @@ namespace Spyglass {
         return c4doc;
     }
 
-    /** SGDatabase deleteDocument.
-    * @brief delete existing document from the DB. True successful, otherwise false
-    * @param SGDocument The document object
-    */
     SGDatabaseReturnStatus SGDatabase::deleteDocument(SGDocument *doc) {
         lock_guard<mutex> lock(db_lock_);
 
@@ -313,9 +281,6 @@ namespace Spyglass {
         return SGDatabaseReturnStatus::kNoError;
     }
 
-    /** SGDatabase getAllDocumentsKey.
-    * @brief Runs local database query to get list of document keys.
-    */
     vector<std::string> SGDatabase::getAllDocumentsKey() {
         lock_guard<mutex> lock(db_lock_);
 

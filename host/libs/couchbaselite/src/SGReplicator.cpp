@@ -32,10 +32,6 @@ namespace Spyglass {
         c4repl_free(c4replicator_);
     }
 
-    /** SGReplicator.
-    * @brief Initial setup the replicator.
-    * @param replicator_configuration The SGReplicator configuration object.
-    */
     SGReplicator::SGReplicator(SGReplicatorConfiguration *replicator_configuration) {
         replicator_configuration_ = replicator_configuration;
         setReplicatorType(replicator_configuration_->getReplicatorType());
@@ -43,24 +39,14 @@ namespace Spyglass {
         c4socket_registerFactory(C4CivetWebSocketFactory);
     }
 
-    /** SGReplicator stop.
-    * @brief Stop a running replicator thread.
-    */
     void SGReplicator::stop() {
         c4repl_stop(c4replicator_);
     }
 
-    /** SGReplicator start.
-    * @brief Starts a replicator background thread by calling _start().
-    */
     bool SGReplicator::start() {
         return _start();
     }
 
-    /** SGReplicator _start.
-    * @brief Starts the replicator.
-    * @param future_obj The future object used to send a signal to its running thread.
-    */
     bool SGReplicator::_start() {
         Encoder encoder;
 
@@ -98,10 +84,6 @@ namespace Spyglass {
         return true;
     }
 
-    /** SGReplicator setReplicatorType.
-    * @brief Set the replicator type to the C4ReplicatorParameters.
-    * @param replicator_type The enum replicator type to be used for the replicator.
-    */
     void SGReplicator::setReplicatorType(SGReplicatorConfiguration::ReplicatorType replicator_type) {
 
         switch (replicator_type) {
@@ -132,10 +114,6 @@ namespace Spyglass {
                 !replicator_configuration_->getUrlEndpoint()->getPath().empty();
     }
 
-    /** SGReplicator addChangeListener.
-    * @brief Adds the callback function to the replicator's onStatusChanged event.
-    * @param callback The callback function.
-    */
     void SGReplicator::addChangeListener(
             const std::function<void(SGReplicator::ActivityLevel, SGReplicatorProgress progress)> &callback) {
         //TODO: push to List of callbacks listening
@@ -160,10 +138,6 @@ namespace Spyglass {
         };
     }
 
-    /** SGReplicator addDocumentErrorListener.
-    * @brief Adds the callback function to the replicator's onDocumentEnded event. (This can notifiy for error and also for added Doc to local DB)
-    * @param callback The callback function.
-    */
     void SGReplicator::addDocumentEndedListener(
             const std::function<void(bool pushing, std::string doc_id, std::string error_message, bool is_error,
                                      bool error_is_transient)> &callback) {
@@ -184,10 +158,6 @@ namespace Spyglass {
         };
     }
 
-    /** SGReplicator addValidationListener.
-    * @brief Adds the callback function to the replicator's validationFunc event. All incoming revisions from SyncGateway will be accepted!
-    * @param callback The callback function.
-    */
     void SGReplicator::addValidationListener(
             const std::function<void(const std::string &doc_id, const std::string &json_body)> &callback) {
         on_validation_callback_ = callback;

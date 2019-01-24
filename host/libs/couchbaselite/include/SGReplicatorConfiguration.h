@@ -20,6 +20,11 @@ namespace Spyglass {
     public:
         SGReplicatorConfiguration();
 
+        /** SGReplicatorConfiguration.
+        * @brief Sets private members.
+        * @param db The reference to the SGDatabase
+        * @param url_endpoint The reference to the SGURLEndpoint object.
+        */
         SGReplicatorConfiguration(SGDatabase *db, SGURLEndpoint *url_endpoint);
 
         virtual ~SGReplicatorConfiguration();
@@ -46,6 +51,9 @@ namespace Spyglass {
 
         const SGAuthenticator *getAuthenticator() const;
 
+        /** SGReplicatorConfiguration effectiveOptions.
+        * @brief Initialize and build the options for the replicator
+        */
         fleece::Retained<fleece::impl::MutableDict> effectiveOptions();
 
         void setChannels(const std::vector<std::string> &channels);
