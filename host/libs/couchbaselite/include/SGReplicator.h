@@ -60,7 +60,7 @@ namespace Spyglass {
         C4Replicator *c4replicator_{nullptr};
         SGReplicatorConfiguration *replicator_configuration_{nullptr};
         C4ReplicatorParameters replicator_parameters_;
-        C4Error c4error {};
+        C4Error c4error_ {};
 
         std::function<void(SGReplicator::ActivityLevel, SGReplicatorProgress progress)> on_status_changed_callback_;
         std::function<void(bool pushing, std::string doc_id, std::string error_message, bool is_error,

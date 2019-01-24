@@ -87,7 +87,7 @@ namespace Spyglass {
                                    slice(replicator_configuration_->getUrlEndpoint()->getPath()),
                                    nullptr,
                                    replicator_parameters_,
-                                   &c4error
+                                   &c4error_
         );
 
         if (isC4Error(c4error)) {
