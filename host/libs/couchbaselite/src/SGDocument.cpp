@@ -36,7 +36,7 @@ namespace Spyglass {
     /** SGDocument exist.
     * @brief Check if the document exist in the DB.
     */
-    bool SGDocument::exist() {
+    bool SGDocument::exist() const {
         return c4document_ != nullptr;
     }
 
@@ -85,7 +85,7 @@ namespace Spyglass {
         return mutable_dict_->get(keyToFind);
     }
 
-    bool SGDocument::empty() {
+    bool SGDocument::empty() const {
         return mutable_dict_->empty();
     }
 

@@ -39,12 +39,12 @@ namespace Spyglass {
         // Return mutable_dict_ as fleece Dict object
         const fleece::impl::Dict *asDict() const;
 
-        bool empty();
+        bool empty() const;
 
         const fleece::impl::Value *get(const std::string &keyToFind);
 
         // Check if document exist in DB
-        bool exist();
+        bool exist() const;
 
     private:
         C4Database *c4db_{nullptr};
