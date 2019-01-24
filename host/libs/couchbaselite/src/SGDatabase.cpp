@@ -91,7 +91,8 @@ namespace Spyglass {
         
         c4db_ = c4db_open(slice(db_path), &c4db_config_, &c4error_);
 
-        if (isC4Error(c4error_)) {
+        if(c4db_ == nullptr){
+            logC4Error(c4error_);
             DEBUG("Error opening the db: %s.\n", db_path.c_str());
             return SGDatabaseReturnStatus::kOpenDBError;
         }
@@ -113,10 +114,16 @@ namespace Spyglass {
         lock_guard<mutex> lock(db_lock_);
         DEBUG("Calling close\n");
 
-        c4db_close(c4db_, &c4error_);
-        if (isC4Error(c4error_)) {
+        if(c4db_ == nullptr){
+            DEBUG("Calling close on non opened DB\n");
             return SGDatabaseReturnStatus::kCloseDBError;
         }
+
+        if(!c4db_close(c4db_, &c4error_)){
+            logC4Error(c4error_);
+            return SGDatabaseReturnStatus::kCloseDBError;
+        }
+
         c4db_free(c4db_);
 
         // c4db_free Deallocate but won't set c4db_ to nullptr
@@ -142,12 +149,13 @@ namespace Spyglass {
         C4RevisionFlags revisionFlags = kRevNew;
 
         C4Document *newdoc = c4doc_create(c4db_, slice(doc->getId()), body, revisionFlags, &c4error_);
-        if (isC4Error(c4error_)) {
+
+        if(newdoc == nullptr){
+            logC4Error(c4error_);
             DEBUG("Could not create new document.");
             return SGDatabaseReturnStatus::kCreateDocumentError;
-        } else {
-            doc->c4document_ = newdoc;
         }
+        doc->setC4document(newdoc);
         return SGDatabaseReturnStatus::kNoError;
     }
 
@@ -164,7 +172,8 @@ namespace Spyglass {
 
         C4Document *newdoc = c4doc_update(doc->c4document_, new_body, doc->c4document_->selectedRev.flags, &c4error_);
 
-        if (isC4Error(c4error_)) {
+        if(newdoc == nullptr){
+            logC4Error(c4error_);
             DEBUG("Could not update the body of an existing document.\n");
             return SGDatabaseReturnStatus::kUpdatDocumentError;
         }
@@ -180,6 +189,7 @@ namespace Spyglass {
     */
     SGDatabaseReturnStatus SGDatabase::save(SGDocument *doc) {
         lock_guard<mutex> lock(db_lock_);
+        DEBUG("Calling save\n");
 
         if(!isOpen()){
             DEBUG("Calling save() while DB is not open\n");
@@ -193,12 +203,11 @@ namespace Spyglass {
 
         SGDatabaseReturnStatus status = SGDatabaseReturnStatus::kNoError;
 
-        c4db_beginTransaction(c4db_, &c4error_);
-        if (isC4Error(c4error_)) {
+        if(!c4db_beginTransaction(c4db_, &c4error_)){
+            logC4Error(c4error_);
             DEBUG("save kBeginTransactionError\n");
             return SGDatabaseReturnStatus::kBeginTransactionError;
         }
-        DEBUG("Calling save\n");
 
         C4Document *c4doc = doc->getC4document();
 
@@ -214,13 +223,13 @@ namespace Spyglass {
             status = updateDocument(doc, fleece_data);
         }
 
-        DEBUG("Leaving save\n");
-        c4db_endTransaction(c4db_, true, &c4error_);
-        if (isC4Error(c4error_)) {
+        if(!c4db_endTransaction(c4db_, true, &c4error_)){
+            logC4Error(c4error_);
             DEBUG("save kEndTransactionError\n");
             return SGDatabaseReturnStatus::kEndTransactionError;
         }
 
+        DEBUG("Leaving save\n");
         return status;
     }
 
@@ -239,27 +248,20 @@ namespace Spyglass {
 
         DEBUG("START getDocumentById: %s\n", doc_id.c_str());
 
-        c4db_beginTransaction(c4db_, &c4error_);
-        if (isC4Error(c4error_)) {
+        if(!c4db_beginTransaction(c4db_, &c4error_)){
+            logC4Error(c4error_);
             DEBUG("getDocumentById starting transaction failed\n");
             return nullptr;
         }
 
         c4doc = c4doc_get(c4db_, slice(doc_id), true, &c4error_);
 
-        // HACK. There is no straightforward API to check if document exist in local DB.
-        // Since c4doc_get has must_exist parameter sets to true.
-        // It will output an error saying document not found and sets code to kC4ErrorNotFound.
-        // In this case C4Error needs to be cleared. Otherwise, it will flag c4db_endTransaction as failure.
-        if(c4error_.code == kC4ErrorNotFound){
-            c4error_ = {};
-        }
-
-        c4db_endTransaction(c4db_, true, &c4error_);
-        if (isC4Error(c4error_)) {
+        if(!c4db_endTransaction(c4db_, true, &c4error_)){
+            logC4Error(c4error_);
             DEBUG("getDocumentById ending transaction failed\n");
             return nullptr;
         }
+
         DEBUG("END getDocumentById: %s\n", doc_id.c_str());
         return c4doc;
     }
@@ -281,18 +283,19 @@ namespace Spyglass {
             return SGDatabaseReturnStatus::kInvalidArgumentError;
         }
 
-        c4db_beginTransaction(c4db_, &c4error_);
-        if (isC4Error(c4error_)) {
+        if(!c4db_beginTransaction(c4db_, &c4error_)){
+            logC4Error(c4error_);
             DEBUG("deleteDocument kBeginTransactionError\n");
             return SGDatabaseReturnStatus::kBeginTransactionError;
         }
+
         DEBUG("START deleteDocument: %s\n", doc->getId().c_str());
 
         // Try to delete the document
         bool is_deleted = c4db_purgeDoc(c4db_, slice(doc->getId()), &c4error_);
 
-        c4db_endTransaction(c4db_, true, &c4error_);
-        if (isC4Error(c4error_)) {
+        if(!c4db_endTransaction(c4db_, true, &c4error_)){
+            logC4Error(c4error_);
             DEBUG("deleteDocument kEndTransactionError\n");
             return SGDatabaseReturnStatus::kEndTransactionError;
         }
@@ -324,29 +327,29 @@ namespace Spyglass {
         const static string json = "[\"SELECT\", {\"WHAT\": [[\"._id\"]]}]";
         C4Query *query = c4query_new(c4db_, slice(json), &c4error_);
 
-        if(!isC4Error(c4error_)){
+        if(query != nullptr){
             C4QueryOptions options = kC4DefaultQueryOptions;
             C4QueryEnumerator *query_enumerator = c4query_run(query, &options, c4str(nullptr), &c4error_);
 
-            if(!isC4Error(c4error_)){
+            if(query_enumerator != nullptr){
+                while (bool is_next_result_availanle = c4queryenum_next(query_enumerator, &c4error_)) {
 
-                while (c4queryenum_next(query_enumerator, &c4error_)) {
-
-                    if(!isC4Error(c4error_)){
+                    if(is_next_result_availanle){
                         slice doc_name = FLValue_AsString(FLArrayIterator_GetValueAt(&query_enumerator->columns, 0));
                         document_keys.push_back(doc_name.asString());
                     }else{
+                        logC4Error(c4error_);
                         DEBUG("c4queryenum_next failed to run.\n");
                         throw runtime_error("c4queryenum_next failed to run.");
                     }
                 }
-
             }else{
+                logC4Error(c4error_);
                 DEBUG("C4QueryEnumerator failed to run.\n");
                 throw runtime_error("C4QueryEnumerator failed to run.");
             }
-
         }else{
+            logC4Error(c4error_);
             DEBUG("C4Query failed to execute a query.\n");
             throw runtime_error("C4Query failed to execute a query.");
         }

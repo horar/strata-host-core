@@ -90,11 +90,11 @@ namespace Spyglass {
                                    &c4error_
         );
 
-        if (isC4Error(c4error)) {
+        if(c4replicator_ == nullptr){
+            logC4Error(c4error_);
             DEBUG("Replication failed.\n");
             return false;
         }
-
         return true;
     }
 
