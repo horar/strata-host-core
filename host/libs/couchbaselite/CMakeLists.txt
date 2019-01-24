@@ -24,7 +24,7 @@ add_library(${PROJECT_NAME}
 
 target_include_directories(${PROJECT_NAME}
 	PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/include"
-	PUBLIC "${CB_DIR}/C/Include"
+	PUBLIC "${CB_DIR}/C/include"
 	PUBLIC "${CB_DIR}/vendor/fleece/API"
 	PUBLIC "${CB_DIR}/vendor/fleece/Fleece/Core"
 	PUBLIC "${CB_DIR}/vendor/fleece/Fleece/Mutable"
