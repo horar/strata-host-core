@@ -492,9 +492,16 @@ std::vector<string> HostControllerService::initialCommandDispatch(const std::str
         PDEBUG(PRINT_DEBUG,"ERROR: json parse error!\n");
         return selected_platform;
     }
+
+    if (!service_command.HasMember("cmd") || !service_command.HasMember("payload") ) {
+        PDEBUG(PRINT_DEBUG,"ERROR: invalid json - missing 'cmd' or 'payload' !\n");
+        return selected_platform;
+    }
+
     // state machine using switch statements
     string platformList;
     CommandDispatcherMessages message = stringHash(service_command["cmd"].GetString());
+    Value& payload_item = service_command["payload"];
     switch(message) {
         case CommandDispatcherMessages::REQUEST_HCS_STATUS:
                                             client_connector_->send(JSON_SINGLE_OBJECT
@@ -510,8 +517,8 @@ std::vector<string> HostControllerService::initialCommandDispatch(const std::str
 
         case CommandDispatcherMessages::PLATFORM_SELECT:
                                             PDEBUG(PRINT_DEBUG,"The client has selected a platform");
-                                            board_name = service_command["platform_uuid"].GetString();
-                                            remote_status = service_command["remote"].GetString();
+                                            board_name = payload_item["platform_uuid"].GetString();
+                                            remote_status = payload_item["remote"].GetString();
                                             selected_platform.insert(selected_platform.begin(),board_name);
                                             selected_platform.insert(selected_platform.begin()+1,remote_status);
                                             return selected_platform;

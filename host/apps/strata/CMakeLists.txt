@@ -22,7 +22,6 @@ find_package(Qt5 5.10
 add_executable(${PROJECT_NAME})
 target_sources(${PROJECT_NAME} PRIVATE
     main.cpp
-    PlatformInterface/core/CoreInterface.cpp
     source/DocumentManager.cpp
 
     qml.qrc
@@ -62,6 +61,7 @@ target_link_libraries(${PROJECT_NAME}
     connector
     flasher
     HostControllerClient
+    PlatformInterface
 )
 
 target_include_directories(${PROJECT_NAME}

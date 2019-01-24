@@ -14,7 +14,6 @@
 #include <QObject>
 #include <iterator>
 #include <QString>
-#include <QKeyEvent>
 #include <QDebug>
 #include <QJsonObject>
 #include <QJsonDocument>
