@@ -1,6 +1,26 @@
 
 #include "Connector_impl.h"
 
+void Connector::setDealerID(const std::string& id)
+{
+    dealer_id_ = id;
+}
+
+void Connector::setPlatformUUID(const std::string& id)
+{
+    platform_uuid_ = id;
+}
+
+void Connector::setConnectionState(bool connection_state)
+{
+    connection_state_ = connection_state;
+}
+
+void Connector::setPlatformConnected(bool state)
+{
+    spyglass_platform_connected_ = state;
+}
+
 namespace ConnectorFactory {
 
 Connector* getConnector(const std::string& type)

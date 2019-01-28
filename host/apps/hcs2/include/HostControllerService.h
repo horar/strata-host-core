@@ -108,6 +108,7 @@ enum class CommandDispatcherMessages{
     REQUEST_AVAILABLE_PLATFORMS = 1,
     PLATFORM_SELECT		= 2,
     REGISTER_CLIENT     = 3,
+    UNREGISTER_CLIENT   = 4,
     COMMAND_NOT_FOUND	= 10,
 };
 
@@ -121,23 +122,18 @@ typedef struct{
 class HostControllerService {
 public:
     // constructor
-    HostControllerService(std::string configuration_file);
+    HostControllerService(const std::string& configuration_file);
 
     // public member functions
     HcsError init();
     HcsError run();
     HcsError exit();
 
-    // libevent callbacks
-    static void testCallback(evutil_socket_t fd, short what, void* args);
-    static void serviceCallback(evutil_socket_t fd, short what, void* args);
-    static void platformCallback(evutil_socket_t fd, short what, void* args);
-    static void remoteCallback(evutil_socket_t fd, short what, void* args);
-    static void remoteActivityCallback(evutil_socket_t fd, short what, void* args);
+
 
     // utility functions
     std::vector<std::string> initialCommandDispatch(const std::string& dealer_id,const std::string& command);
-    bool disptachMessageToPlatforms(const std::string& dealer_id,std::string& command);
+    bool disptachMessageToPlatforms(const std::string& dealer_id, const std::string& command);
     CommandDispatcherMessages stringHash(const std::string& command);
     bool openPlatform(); // platform functions
     void initializePlatform(); //platform functions
@@ -176,6 +172,17 @@ public:
     HcsError setEventLoop();
     void appendUsername(std::string&); // appends the username to the input json message
     void retrieveUsername(const std::string&);  // retrieves user name from the input json string
+
+    // libevent callbacks
+    static void testCallback(evutil_socket_t fd, short what, void* args);
+    static void serviceCallback(evutil_socket_t fd, short what, void* args);
+    static void platformCallback(evutil_socket_t fd, short what, void* args);
+    static void remoteCallback(evutil_socket_t fd, short what, void* args);
+    static void remoteActivityCallback(evutil_socket_t fd, short what, void* args);
+
+    void onServiceCallback(const std::string& dealer_id, const std::string& message);
+    void onPlatformCallback(const std::string& message); //maybe platform ID?
+
 private:
     // config file data members
     ParseConfig *configuration_;
