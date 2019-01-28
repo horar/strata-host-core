@@ -11,7 +11,7 @@
 #include "SGMutableDocument.h"
 #define DEBUG(...) printf("SGMutableDocument: "); printf(__VA_ARGS__)
 namespace Spyglass {
-    SGMutableDocument::SGMutableDocument(class SGDatabase *database, std::string docId) : SGDocument(database, docId) {}
+    SGMutableDocument::SGMutableDocument(class SGDatabase *database, const std::string &docId) : SGDocument(database, docId) {}
 
     bool SGMutableDocument::setBody(const std::string &body) {
         try {
