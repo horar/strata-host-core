@@ -96,7 +96,7 @@ namespace Spyglass {
         return SGDatabaseReturnStatus::kNoError;
     }
 
-    bool SGDatabase::isOpen() {
+    bool SGDatabase::isOpen() const {
         return c4db_ != nullptr;
     }
 

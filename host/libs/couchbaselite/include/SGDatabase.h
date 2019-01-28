@@ -69,7 +69,7 @@ namespace Spyglass {
         /** SGDatabase isOpen.
         * @brief Check if database is open
         */
-        bool isOpen();
+        bool isOpen() const;
 
         /** SGDatabase Close.
         * @brief Close the local database if it's open
