@@ -17,8 +17,6 @@
 
 #include <string>
 #include <iostream>
-#include <unistd.h>
-#include <thread>// std::this_thread::sleep_for
 
 #include <Connector.h>
 #include <Flasher.h>
@@ -36,23 +34,20 @@ int main(int argc, char *argv[])
 	char *firmware_file_path = argv[1];
 
 #if MANUAL_OPEN_PORT
-	Connector* serialConnector = ConnectorFactory::getConnector("platform");
-	if(!serialConnector->open("/dev/cu.usbserial-DB00VFH8")) {
-		return 0;
+    Connector* connector = ConnectorFactory::getConnector("platform");
+    if(!connector->open("/dev/cu.usbserial-DB00VFH8")) {
+        return 1;
 	}
-	Flasher flasher(serialConnector);
+    Flasher flasher(connector);
 #else
-	Flasher flasher;
+    Connector* connector(ConnectorFactory::getConnector("platform"));
+    Flasher flasher(connector, firmware_file_path);
 #endif
 
-	cout << "START: flash" <<endl;
-	int res = flasher.flash(firmware_file_path);
-	cout << "Flasher Return Status:" << ( res ? "true": "false" ) << endl;
- 	cout << "END: flash" <<endl;
+    cout << "START: flash" <<endl;
+    cout << "Flash: Return Status:   " << ( flasher.flash() ? "true": "false" ) << endl;
+    cout << "END: flash" <<endl;
 
-#if MANUAL_OPEN_PORT
-	delete serialConnector;
-#endif
-
-	return 0;
+    delete connector;
+    return 0;
 }

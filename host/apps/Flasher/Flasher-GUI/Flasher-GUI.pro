@@ -29,8 +29,7 @@ INCLUDEPATH +=  $$PWD/../include \
                 $$PWD/../../hcs2/include \
                 $$PWD/../../include/macos/libserial \
                 $$PWD/../../include/macos/libzmq \
-                $$PWD/../../../shared/rapidjson/include \
-                $$PWD/../../../shared/bootloader/include
+                $$PWD/../../../shared/rapidjson/include
 SOURCES += \
         main.cpp \
         mainwindow.cpp \

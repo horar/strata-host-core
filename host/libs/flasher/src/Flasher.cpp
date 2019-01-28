@@ -1,46 +1,22 @@
-/**
- ******************************************************************************
- * @file Flasher.cpp
- * @author Luay Alshawi
- * $Rev: 1 $
- * $Date: 2018-06-13 17:46:28 +0100 (Wed, 23 June 2018) $
- * @brief Flasher API.
- ******************************************************************************
- * @copyright Copyright 2018 On Semiconductor
- *
- * @internal
- *
- * @endinternal
- *
- * @ingroup driver
- */
+
 #include "Flasher.h"
-#include <sstream>
-#include <iostream>
-#include <fstream>
-#include <string.h>
-#include <thread>// std::this_thread::sleep_for
-#include <chrono>// std::chrono::seconds
-#include <iomanip>// std::setfill, std::setw
-#include "util.h"
-#include <vector>
+
+#include <thread>
 #include <numeric>
 
-// rapidjson libraries
-#include <rapidjson/schema.h>
-#include <rapidjson/document.h>
 #include <rapidjson/writer.h>
 #include <rapidjson/stringbuffer.h>
 
-#include "Base64.h"
-using namespace std;
+#include "Connector.h"
+#include "CodecBase64.h"
+
+
 using namespace rapidjson;
 
 
 // Schemas are gerenerated by https://www.liquid-technologies.com/online-json-to-schema-converter
 
 // { "ack" : "<command_name>", "payload" : { "return_value" : <boolean>, "return_string" : "<string>" } }
-
 rapidjson::SchemaDocument Flasher::ackJsonSchema( createJsonSchema(R"({
       "$schema": "http://json-schema.org/draft-04/schema#",
       "type": "object",
@@ -71,7 +47,6 @@ rapidjson::SchemaDocument Flasher::ackJsonSchema( createJsonSchema(R"({
     })") );
 
 // {"notification":{"value":"write_fib","payload":{"status":"OK"}}}
-
 rapidjson::SchemaDocument Flasher::notifyJsonSchema( createJsonSchema(R"({
   "$schema": "http://json-schema.org/draft-04/schema#",
   "type": "object",
@@ -160,59 +135,17 @@ rapidjson::SchemaDocument Flasher::notifyRollbackJsonSchema( createJsonSchema(R"
 ]
 })") );
 
-
-/** Flasher default Constructor.
- * @brief init SerialConnector and set can_delete_serial to true since serial initialized in the Flasher.
- */
-Flasher::Flasher()
-{
-    serial_ = ConnectorFactory::getConnector("platform");
-    can_deallocate_serial_ = true;
-    cout << "Flasher: ctor" << endl;
-}
-
 Flasher::~Flasher()
 {
-    if(can_deallocate_serial_) {
-        delete serial_;
-    }
-    cout << "Flasher: dtor" << endl;
 }
 
-/** Flasher setSerialConnector.
- * @brief Set SerialConnector
- * @param source The string to be converted to hex.
- */
-Flasher::Flasher(Connector* s)
+
+Flasher::Flasher(Connector* s, const std::string &firmwareFilename)
+: serial_(s)
+, firmwareFilename_(firmwareFilename)
 {
-    serial_ = s;
-    can_deallocate_serial_ = false;
 }
 
-/** Flasher write.
- * @brief Send data through SerialConnector.
- * @param data The data to be sent through serial.
- * @return true on success, false otherwise.
- */
-bool Flasher::write(const string& data)
-{
-    return serial_->send(data);
-}
-
-/** Flasher read.
- * @brief Read data from serial using SerialConnector API.
- */
-int Flasher::read()
-{
-    string read;
-    serial_->read(read);
-
-    // Clear recieved_buffer_ before writing
-    memset(recieved_buffer_, 0, sizeof(recieved_buffer_));
-    strcpy(recieved_buffer_, read.c_str());
-
-    return static_cast<int>(read.size());
-}
 
 SchemaDocument Flasher::createJsonSchema(const std::string& schemaJson)
 {
@@ -223,6 +156,7 @@ SchemaDocument Flasher::createJsonSchema(const std::string& schemaJson)
     }
     return SchemaDocument(sd); // Compile a Document to SchemaDocument
 }
+
 
 bool Flasher::validateJsonMessage(const std::string& message, const rapidjson::SchemaDocument& schemaDocument, rapidjson::Document& document)
 {
@@ -250,13 +184,12 @@ bool Flasher::validateJsonMessage(const std::string& message, const rapidjson::S
     return true;
 }
 
+
 bool Flasher::readAck(const std::string& ackName)
 {
     std::string message;
 
     serial_->read(message);
-
-    printf("%s(%d) message: %s\n", __FILE__, __LINE__, message.c_str());
 
     Document document;
 
@@ -279,13 +212,13 @@ bool Flasher::readAck(const std::string& ackName)
     return payload["return_value"].GetBool();
 }
 
+
 bool Flasher::readNotify(const std::string& notificationName, std::string& status)
 {
     std::string message;
 
     serial_->read(message);
 
-    printf("%s(%d) message: %s\n", __FILE__, __LINE__, message.c_str());
     Document document;
 
     if (false == validateJsonMessage(message, notifyJsonSchema, document))
@@ -312,62 +245,7 @@ bool Flasher::readNotify(const std::string& notificationName, std::string& statu
 }
 
 
-/** Flasher writeFirmwareInfoBlock.
- * @brief Sends firmware info blcok to bootloader.
- * @param firmware_size The firmware size to be stored in the fib.
- * @param checksum The firmware checksum.
- * @param status The bootloader status.
- * @return true on success, false otherwise.
- */
-bool Flasher::processFirmwareInfoBlockCommand(int firmware_size, int checksum, int status)
-{
-    std::string notificationStatus;
-
-    return (writeFirmwareInfoBlockCommand(firmware_size, checksum, status) &&
-            readAck("write_fib") &&
-            readNotify("write_fib", notificationStatus));
-}
-
-/** Flasher writeFirmwareInfoBlock.
- * @brief Sends firmware info blcok to bootloader.
- * @param firmware_size The firmware size to be stored in the fib.
- * @param checksum The firmware checksum.
- * @param status The bootloader status.
- * @return true on success, false otherwise.
- */
-bool Flasher::writeFirmwareInfoBlockCommand(int firmware_size, int checksum, int status)
-{
-    cout << "Sending checksum" << endl;
-
-    StringBuffer s;
-    Writer<StringBuffer> writer(s);
-
-    writer.StartObject();
-
-    writer.Key("cmd");                // output a key,
-    writer.String("write_fib");             // follow by a value.
-
-    writer.Key("payload");
-    writer.StartObject();
-
-    writer.Key("size");
-    writer.Int(firmware_size);
-
-    writer.Key("checksum");
-    writer.Int(checksum);
-
-    writer.Key("status");
-    writer.Int(status);
-
-    writer.EndObject();
-
-    writer.EndObject();
-
-    return write(s.GetString());
-}
-
-
-bool Flasher::processFlashFirmwareCommand(int32_t chunkNumber, const std::vector<uint8_t>& chunkBuffer)
+bool Flasher::processCommandFlashFirmware()
 {
     Flasher::RESPONSE_STATUS status(RESPONSE_STATUS::NEXT_CHUNK);
     std::string notificationStatus;
@@ -375,7 +253,7 @@ bool Flasher::processFlashFirmwareCommand(int32_t chunkNumber, const std::vector
     int32_t errorCounter = 10;
     do
     {
-        if (writeFlashCommand(chunkNumber, chunkBuffer) &&
+        if (writeCommandFlash() &&
             readAck("flash_firmware") &&
             readNotify("flash_firmware", notificationStatus))
         {
@@ -396,19 +274,16 @@ bool Flasher::processFlashFirmwareCommand(int32_t chunkNumber, const std::vector
     return true;
 }
 
-bool Flasher::writeFlashCommand(int32_t chunkNumber, const std::vector<uint8_t>& chunkBuffer)
-{
-    std::string chunkBase64;
-    chunkBase64.resize(base64::encoded_size(chunkBuffer.size()));
-    base64::encode((void*)chunkBase64.data(), chunkBuffer.data(), chunkBuffer.size());
 
+bool Flasher::writeCommandFlash()
+{
     StringBuffer s;
     Writer<StringBuffer> writer(s);
 
     writer.StartObject();
 
     writer.Key("cmd");                // output a key,
-    writer.String("flash_firmware");             // follow by a value.
+    writer.String("flash_firmware");  // follow by a value.
 
     writer.Key("payload");
     writer.StartObject();
@@ -417,13 +292,17 @@ bool Flasher::writeFlashCommand(int32_t chunkNumber, const std::vector<uint8_t>&
     writer.StartObject();
 
     writer.Key("number");
-    writer.Int(chunkNumber);
+    writer.Int(chunk_.number);
 
     writer.Key("size");
-    writer.Int(static_cast<int>(chunkBuffer.size()));
+    writer.Int(static_cast<int>(chunk_.data.size()));
 
     writer.Key("crc");
-    writer.Int(std::accumulate(chunkBuffer.begin(), chunkBuffer.end(), 0));
+    writer.Int(std::accumulate(chunk_.data.begin(), chunk_.data.end(), 0));
+
+    std::string chunkBase64;
+    chunkBase64.resize(flash::base64::encoded_size(chunk_.data.size()));
+    flash::base64::encode((void*)chunkBase64.data(), chunk_.data.data(), chunk_.data.size());
 
     writer.Key("data");
     writer.String(chunkBase64.c_str(), static_cast<SizeType>(chunkBase64.length()));
@@ -434,26 +313,24 @@ bool Flasher::writeFlashCommand(int32_t chunkNumber, const std::vector<uint8_t>&
 
     writer.EndObject();
 
-    return write(s.GetString());
+    return serial_->send(s.GetString());
 }
 
-/** Flasher isPlatfromConnected.
- * @brief Wait for a platfrom to be connected and send firmware_update command to the platfrom's firmware.
- * @return true on success, false otherwise.
- */
+
 bool Flasher::isPlatfromConnected()
 {
     // Wait for a platfrom to be connected. Pooling!!!
+    const int POOLING_COUNTER_LIMIT = 100;
     int pooling_counter = 0;
     while(!serial_->isSpyglassPlatform()){
 
         // Sleep for 100ms.
         std::this_thread::sleep_for (std::chrono::milliseconds(100));
-        cout << "Waiting for a platfrom to be connected."<< endl;
+        std::cout << "Waiting for a platfrom to be connected."<< std::endl;
         pooling_counter++;
 
         if(pooling_counter > POOLING_COUNTER_LIMIT){
-            cout << "Could not connect to a platfrom. Exiting Flash function!"<< endl;
+            std::cout << "Could not connect to a platfrom. Exiting Flash function!"<< std::endl;
             return false;
         }
     }
@@ -461,14 +338,13 @@ bool Flasher::isPlatfromConnected()
     // Read dealer id after spyglass enabled platform was found
     if(serial_->getDealerID() == "Bootloader"){
         // Already in bootloader mode. Do nothing
-        cout << "Platform in bootloader mode. Flashing Process is about to start." << endl;
+        std::cout << "Platform in bootloader mode. Flashing Process is about to start." << std::endl;
 
     }
     else{
         // Fimrware update command to be sent to the platfrom core.
-        string firmware_update_json = R"({'cmd':'firmware_update'})";
         // Enter bootloader mode.
-        if(!write(firmware_update_json)){
+        if(!serial_->send(R"({'cmd':'firmware_update'})")){
             return false;
         }
         // Bootloader takes 5 seconds to start (known issue related to clock source). Platform and bootloader uses the same setting for clock source.
@@ -476,19 +352,11 @@ bool Flasher::isPlatfromConnected()
         std::this_thread::sleep_for (std::chrono::milliseconds(5500));
     }
 
-    // Read response
-    //KUC read();
-
     return true;
 }
 
 
-/** Flasher flash.
- * @brief Flash firmware to bootloader.
- * @param input_firmware The firmware path to be flashed to the bootloader.
- * @return true on success, false otherwise.
- */
-bool Flasher::flash(const std::string &filename)
+bool Flasher::flash()
 {
     // This is a blocking function and has a timeout.
     if (false == isPlatfromConnected())
@@ -496,117 +364,144 @@ bool Flasher::flash(const std::string &filename)
         return false;
     }
 
-    // Open firmware file as read, binary only
-    // On Windows binary must be stated explicitly
-    FILE *file = fopen(filename.c_str(), "rb");
-    if (file == nullptr)
-    {
-        cout << "Could not open firmware file " << filename << endl;
-        return false;
-    }
-
     //Calculate file size
-    fseek(file, 0, SEEK_END);
-    int32_t fsize = static_cast<int32_t>(ftell(file));
-    fseek(file, 0, SEEK_SET);
+    int32_t firmwareSize = getFileSize(firmwareFilename_);
 
-    if (fsize <= 0)
+    if (firmwareSize == 0)
     {
-        // Return when the file is empty.
         return false;
     }
 
-    // Write file size to the bootloader. Also, needed for the rollback since this is how much we are going to read.
-    // In case the flashing process failed. The bootloader should stay in the bootloader mode. Since the flasher about to overwrite the firmware section.
-    if (false == processFirmwareInfoBlockCommand(fsize, 0, FirmwareStatus::kNoFirmware))
+    // Open firmware file as read, binary only
+    FILE *firmwareFile = fopen(firmwareFilename_.c_str(), "rb");
+    if (firmwareFile == nullptr)
     {
+        std::cout << "Could not open firmware file " << firmwareFilename_ << std::endl;
         return false;
     }
 
     // Send firmware data
-    const size_t FLASH_CHUNK_SIZE = 256;
-    std::vector<uint8_t> chunkBuffer(FLASH_CHUNK_SIZE);
+    chunk_.number = 0;
+    chunk_.data.resize(static_cast<int32_t>(Chunk::SIZE::DEFAULT));
 
-    size_t totalSize = fsize;
-    size_t chunkSize = 0;
-    int32_t chunkNumber = 0;
-
-    RESPONSE_STATUS status(RESPONSE_STATUS::NEXT_CHUNK);
-
-    while (totalSize > 0)
+    while (firmwareSize > 0)
     {
-        chunkNumber++;
-        if (totalSize < FLASH_CHUNK_SIZE)
+        chunk_.number++;
+        if (firmwareSize < static_cast<int32_t>(Chunk::SIZE::DEFAULT))
         {
-            chunkNumber = 0;    // the last chunk
+            chunk_.number = 0;    // the last chunk
         }
 
-        chunkSize = fread(chunkBuffer.data(), 1, FLASH_CHUNK_SIZE, file);
-        chunkBuffer.resize(chunkSize);
+        chunk_.data.resize(fread(chunk_.data.data(), 1, static_cast<int32_t>(Chunk::SIZE::DEFAULT), firmwareFile));
 
-        totalSize -= chunkSize;
+        firmwareSize -= chunk_.data.size();
 
-        if (false == processFlashFirmwareCommand(chunkNumber, chunkBuffer))
+        if (false == processCommandFlashFirmware())
         {
+            fclose(firmwareFile);
             return false;
         }
     }
 
-    // Close the firmware file.
-    fclose(file);
+    fclose(firmwareFile);
 
-    // Rollback and writes the read firmware to temp file "output.bin"
-    rollback(filename + ".rb");
-
-    // Compare flashed firmware and the read firmware checksum. Return 0 if both don't match.
-    int checksum = isChecksumMatch(filename.c_str(), filename + ".rb");
-
-    // Write the fib on positive chekcsum
-    if(checksum > 0){
-        // Write the final fib to the bootloader
-        return writeFirmwareInfoBlockCommand(fsize,checksum,FirmwareStatus::kValidFirmware);
-    }
-
-    // Flashing the firmware failed
-    return false;
+    return rollback() && verify() && startApplication();
 }
 
-/** Flasher rollback.
- * @brief Read existing firmware from bootloader and save it to a temporary file.
- * @param fsize The expected firmware size to be read from the bootloader.
- * @return total read bytes from the bootloader.
- */
-bool Flasher::rollback(const std::string& filename)
+
+bool Flasher::rollback()
 {
-    // saves data read from flash (platfrom) to this file
-    FILE *rollbackFile = fopen(filename.c_str(), "wb");
+    const std::string& rollbackFilename(firmwareFilename_ + ".rb");
+
+    FILE *rollbackFile = fopen(rollbackFilename.c_str(), "wb");
     if (rollbackFile == nullptr)
     {
-        cout << "Could not open debug_file file : " << filename << endl;
+        std::cout << "Could not open rollback file : " << rollbackFilename << std::endl;
         return false;
     }
 
-    do     // the last chunk
+    chunk_.number = 0;
+    chunk_.data.clear();
+
+    do
     {
-        if (false == processRollbackFirmwareCommand())
+        if (false == processCommandRollbackFirmware())
         {
+            fclose(rollbackFile);
             return false;
         }
 
         fwrite(chunk_.data.data(), 1, chunk_.data.size(), rollbackFile);
     }
-    while (0 != chunk_.number);
+    while (0 != chunk_.number);     // the last chunk
 
     fclose(rollbackFile);
-
     return true;
 
 }
 
-bool Flasher::writeRollbackCommand(Flasher::RESPONSE_STATUS status)
-{
-    cout << "writeRollbackCommand" << endl;
 
+bool Flasher::writeCommandStartApplication()
+{
+    StringBuffer s;
+    Writer<StringBuffer> writer(s);
+
+    writer.StartObject();
+
+    writer.Key("cmd");
+    writer.String("start_application");
+
+    writer.EndObject();
+
+    return serial_->send(s.GetString());
+}
+
+bool Flasher::processCommandStartApplication()
+{
+    std::string notificationStatus;
+
+    for (int32_t errorCounter = 10; 0 != errorCounter; --errorCounter)
+    {
+        if (writeCommandStartApplication() &&
+            readAck("start_application") &&
+            readNotify("start_application", notificationStatus))
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+bool Flasher::startApplication()
+{
+    return processCommandStartApplication();
+}
+
+bool Flasher::verify() const
+{
+    const std::string& rollbackFilename(firmwareFilename_ + ".rb");
+
+    const int32_t firmwareSize = getFileSize(firmwareFilename_);
+    const int32_t rollbackSize = getFileSize(rollbackFilename);
+
+    if (firmwareSize != rollbackSize)
+    {
+        return false;
+    }
+
+    const int32_t firmwareChecksum = getFileChecksum(firmwareFilename_);
+    const int32_t rollbackChecksum = getFileChecksum(rollbackFilename);
+
+    std::cout << "Firmware Checksum:" << firmwareChecksum << std::endl;
+    std::cout << "Read Back Firmware Checksum:" << rollbackChecksum << std::endl;
+
+    return (firmwareChecksum == rollbackChecksum && -1 != firmwareChecksum);
+}
+
+
+bool Flasher::writeCommandRollback(Flasher::RESPONSE_STATUS status)
+{
     StringBuffer s;
     Writer<StringBuffer> writer(s);
 
@@ -636,8 +531,25 @@ bool Flasher::writeRollbackCommand(Flasher::RESPONSE_STATUS status)
 
     writer.EndObject();
 
-    return write(s.GetString());
+    return serial_->send(s.GetString());
 }
+
+
+bool Flasher::writeCommandReadFib()
+{
+    StringBuffer s;
+    Writer<StringBuffer> writer(s);
+
+    writer.StartObject();
+
+    writer.Key("cmd");
+    writer.String("read_fib");
+
+    writer.EndObject();
+
+    return serial_->send(s.GetString());
+}
+
 
 bool Flasher::readNotifyRollback(const std::string& notificationName, std::string& status)
 {
@@ -645,9 +557,8 @@ bool Flasher::readNotifyRollback(const std::string& notificationName, std::strin
     status.clear();
 
     std::string message;
-
     serial_->read(message);
-printf("%s(%d) message: %s\n", __FILE__, __LINE__, message.c_str());
+
     Document document;
 
     if (false == validateJsonMessage(message, notifyRollbackJsonSchema, document))
@@ -685,8 +596,8 @@ printf("%s(%d) message: %s\n", __FILE__, __LINE__, message.c_str());
         uint32_t crc = chunk["crc"].GetUint();
         std::string chunkBase64 = chunk["data"].GetString();
 
-        chunk_.data.resize(base64::decoded_size(chunkBase64.size()));
-        chunk_.data.resize(base64::decode(chunk_.data.data(), chunkBase64.data(), chunkBase64.size()).first);
+        chunk_.data.resize(flash::base64::decoded_size(chunkBase64.size()));
+        chunk_.data.resize(flash::base64::decode(chunk_.data.data(), chunkBase64.data(), chunkBase64.size()).first);
 
         if (size != chunk_.data.size() ||
             crc != std::accumulate(chunk_.data.begin(), chunk_.data.end(), 0U))
@@ -699,7 +610,7 @@ printf("%s(%d) message: %s\n", __FILE__, __LINE__, message.c_str());
 }
 
 
-bool Flasher::processRollbackFirmwareCommand()
+bool Flasher::processCommandRollbackFirmware()
 {
     Flasher::RESPONSE_STATUS status(0 == chunk_.number ? RESPONSE_STATUS::NONE : RESPONSE_STATUS::NEXT_CHUNK);
     std::string notificationStatus;
@@ -707,7 +618,7 @@ bool Flasher::processRollbackFirmwareCommand()
     int32_t errorCounter = 10;
     do
     {
-        if (writeRollbackCommand(status) &&
+        if (writeCommandRollback(status) &&
             readAck("rollback_firmware") &&
             readNotifyRollback("rollback_firmware", notificationStatus))
         {
@@ -729,81 +640,44 @@ bool Flasher::processRollbackFirmwareCommand()
 }
 
 
-/** Flasher isChecksumMatch.
- * @brief Return the checksum if two files match the checksum, 0 otherwise
- * @param filname_one The firmware path.
- * @param filname_two The read firmware path.
- */
-int32_t Flasher::isChecksumMatch(const std::string &filname_one, const std::string &filname_two)
+int32_t Flasher::getFileChecksum(const std::string &filname) const
 {
-    int32_t checksum_file_one = getFileChecksum(filname_one);
-    int32_t checksum_file_two = getFileChecksum(filname_two);
+    FILE * file = fopen ( filname.c_str() , "rb" );
 
-    cout << "Firmware Checksum:" << checksum_file_one << endl;
-    cout << "Read Back Firmware Checksum:" << checksum_file_two << endl;
-
-    if(checksum_file_one > 0 && checksum_file_two > 0){
-        if(checksum_file_one == checksum_file_two){
-            return checksum_file_one;
-        }
-    }
-    return 0;
-}
-/** Flasher rawBytesChecksum.
- * @brief Return the sum of given bytes.
- * @param buff The
- * @param length The lenght of the buff.
- */
-int32_t Flasher::rawBytesChecksum(unsigned char *buffer, size_t length)
-{
-    int32_t sum;       // nothing gained in using smaller types!
-    for ( sum = 0 ; length != 0 ; length-- ){
-        sum += *(buffer++);   // parenthesis not required!
-    }
-    return sum;
-}
-/** Flasher getFileChecksum.
- * @brief Return the sum from the given binary file. Positive number for checksum, -1 for error.
- * @param filname The firmware path.
- */
-int32_t Flasher::getFileChecksum(const std::string &filname)
-{
-    FILE * file;
-    size_t file_size;
-    uint8_t * buffer;
-    size_t result;
-
-    file = fopen ( filname.c_str() , "rb" );
     if (file == nullptr) {
-        cout << "Could not open file " << filname << " to calculate the checksum."<< endl;
+        std::cout << "Could not open file " << filname << " to calculate the checksum."<< std::endl;
         return -1;
     }
 
-    // Get file size:
-    fseek (file , 0 , SEEK_END);
-    file_size = static_cast<size_t>(ftell(file));
-    rewind (file);
-
-    // allocate memory to contain the whole file:
-    buffer = new uint8_t[file_size];
-    // Handel allocating error
-    if (buffer == nullptr){
-        return -1;
+    int32_t sum = 0;
+    for (int32_t c = 0; c != EOF; c = getc (file))
+    {
+        sum += c;
     }
 
-    // Copy the file into the buffer:
-    result = fread (buffer,1,file_size,file);
-    if (result != file_size){
-        return -1;
-    }
-
-    // Get file checksum
-    int32_t sum = rawBytesChecksum(buffer,file_size);
-
-    // Close the opened file
     fclose (file);
-    // Free the buffer
-    delete[] buffer;
 
     return sum;
+}
+
+int32_t Flasher::getFileSize(const std::string &fileName) const
+{
+    FILE *file = fopen(fileName.c_str(), "rb");
+    if (file == nullptr)
+    {
+        std::cout << "Could not open firmware file " << fileName << std::endl;
+        return 0;
+    }
+
+    //Calculate file size
+    fseek(file, 0, SEEK_END);
+    int32_t firmwareSize = static_cast<int32_t>(ftell(file));
+    fseek(file, 0, SEEK_SET);
+
+    if (firmwareSize <= 0)
+    {
+        fclose(file);
+        return 0;
+    }
+    return firmwareSize;
 }

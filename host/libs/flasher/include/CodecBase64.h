@@ -37,15 +37,21 @@
 
 */
 
-#ifndef BOOST_BEAST_DETAIL_BASE64_HPP
-#define BOOST_BEAST_DETAIL_BASE64_HPP
+// modified by Ondrej Kucharik
+
+#ifndef _CORE_COMMAND_DISPATCHER_FLASHER_CODECBASE64_H_
+#define _CORE_COMMAND_DISPATCHER_FLASHER_CODECBASE64_H_
 
 #include <cctype>
 #include <string>
 #include <utility>
 
 
-namespace base64 {
+namespace flash
+{
+
+namespace base64
+{
 
 inline
 char const*
@@ -210,4 +216,7 @@ decode(void* dest, char const* src, std::size_t len)
 
 } // base64
 
-#endif
+} // flash
+
+
+#endif // _CORE_COMMAND_DISPATCHER_FLASHER_CODECBASE64_H_
