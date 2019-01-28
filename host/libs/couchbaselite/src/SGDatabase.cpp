@@ -104,7 +104,7 @@ namespace Spyglass {
         lock_guard<mutex> lock(db_lock_);
         DEBUG("Calling close\n");
 
-        if(c4db_ == nullptr){
+        if( !isOpen() ){
             DEBUG("Calling close on non opened DB\n");
             return SGDatabaseReturnStatus::kCloseDBError;
         }
