@@ -13,10 +13,10 @@
 
 #include <string>
 #include "SGDatabase.h"
-#include "c4Document+Fleece.h"
-#include "FleeceImpl.hh"
-#include "MutableArray.hh"
-#include "MutableDict.hh"
+#include <c4Document+Fleece.h>
+#include <FleeceImpl.hh>
+#include <MutableArray.hh>
+#include <MutableDict.hh>
 
 namespace Spyglass {
     class SGDocument {

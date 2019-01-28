@@ -12,9 +12,9 @@
 #define SGAUTHENTICATOR_H
 
 #include <string>
-#include "FleeceImpl.hh"
-#include "MutableArray.hh"
-#include "MutableDict.hh"
+#include <FleeceImpl.hh>
+#include <MutableArray.hh>
+#include <MutableDict.hh>
 
 namespace Spyglass {
     class SGAuthenticator {

@@ -12,11 +12,11 @@
 
 #include "SGDatabase.h"
 
-#include "FleeceImpl.hh"
-#include "MutableArray.hh"
-#include "MutableDict.hh"
-#include "Doc.hh"
-#include "c4Document+Fleece.h"
+#include <FleeceImpl.hh>
+#include <MutableArray.hh>
+#include <MutableDict.hh>
+#include <Doc.hh>
+#include <c4Document+Fleece.h>
 
 #include "SGDocument.h"
 #include "SGUtility.h"

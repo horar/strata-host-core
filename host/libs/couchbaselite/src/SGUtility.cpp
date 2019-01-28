@@ -10,7 +10,7 @@
 */
 
 #include "SGUtility.h"
-#include "FleeceImpl.hh"
+#include <FleeceImpl.hh>
 namespace Spyglass{
 
     void logC4Error(const C4Error &err){

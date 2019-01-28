@@ -11,10 +11,10 @@
 #ifndef SGFLEECE_H
 #define SGFLEECE_H
 
-#include "FleeceImpl.hh"
-#include "MutableArray.hh"
-#include "MutableDict.hh"
-#include "Doc.hh"
-#include "JSONDelta.hh"
+#include <FleeceImpl.hh>
+#include <MutableArray.hh>
+#include <MutableDict.hh>
+#include <Doc.hh>
+#include <JSONDelta.hh>
 
 #endif //SGFLEECE_H

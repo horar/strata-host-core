@@ -13,14 +13,11 @@
 #define SGDATABASE_H
 
 #include <string>
-#include <thread>         // std::thread
-#include <mutex>          // std::mutex
-#include "c4.h"
-#include "FleeceImpl.hh"
+#include <thread>
+#include <mutex>
+#include <c4.h>
+#include <FleeceImpl.hh>
 #include "SGDocument.h"
-#ifndef NO_CB_ERROR
-#define NO_CB_ERROR     0      // Declare value rather than use a magic number
-#endif
 
 namespace Spyglass {
     enum class SGDatabaseReturnStatus {

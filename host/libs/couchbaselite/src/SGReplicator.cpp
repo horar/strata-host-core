@@ -15,7 +15,7 @@
 #include <thread>
 #include <set>
 
-#include "CivetWebSocket.hh"
+#include <CivetWebSocket.hh>
 
 #include "SGReplicator.h"
 #include "SGUtility.h"

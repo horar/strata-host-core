@@ -9,7 +9,7 @@
 * @copyright Copyright 2018 On Semiconductor
 */
 #include "SGAuthenticator.h"
-#include "c4Replicator.h"
+#include <c4Replicator.h>
 using namespace fleece;
 using namespace fleece::impl;
 #define DEBUG(...) printf("SGBasicAuthenticator: "); printf(__VA_ARGS__)

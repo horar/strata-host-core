@@ -9,7 +9,7 @@
 * @copyright Copyright 2018 On Semiconductor
 */
 #include "SGURLEndpoint.h"
-#include "FleeceImpl.hh"
+#include <FleeceImpl.hh>
 using namespace std;
 using namespace fleece;
 #define DEBUG(...) printf("SGURLEndpoint: "); printf(__VA_ARGS__)

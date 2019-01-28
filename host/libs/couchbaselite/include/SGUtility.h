@@ -11,7 +11,7 @@
 
 #ifndef SGUTILITY_H
 #define SGUTILITY_H
-#include "c4.h"
+#include <c4.h>
 namespace Spyglass{
     void logC4Error(const C4Error &err);
 }

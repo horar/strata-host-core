@@ -15,7 +15,7 @@
 #include <future>
 #include <thread>
 
-#include "c4.h"
+#include <c4.h>
 
 #include "SGDatabase.h"
 #include "SGReplicatorConfiguration.h"

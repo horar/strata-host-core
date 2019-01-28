@@ -13,7 +13,7 @@
 
 #include <string>
 
-#include "c4.h"
+#include <c4.h>
 
 namespace Spyglass {
     class SGURLEndpoint {
