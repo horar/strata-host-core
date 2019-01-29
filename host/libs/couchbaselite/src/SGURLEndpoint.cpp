@@ -43,6 +43,7 @@ namespace Spyglass {
             setPort(c4address_.port);
         } else {
             DEBUG("Failed c4address_fromURL is not valid\n");
+            throw logic_error("Failed to parse uri");
         }
     }
 
