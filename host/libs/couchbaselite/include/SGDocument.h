@@ -65,17 +65,15 @@ namespace Spyglass {
         // Document ID
         std::string id_;
 
-        /** SGDocument setC4Document.
-        * @brief Open a document and sets its body to to the existing mutable_dict, if the document exist. Otherwise init mutable_dict_
-         * NOTE: This is not a public function, it's protected!
-        * @param database The reference to the opened SGDatabase.
-        * @param docId The reference to the docId to be opened.
-        */
         void setC4document(C4Document *);
 
         friend class SGDatabase;
     protected:
-        bool setC4Document(SGDatabase *database, const std::string &docId);
+
+        /** SGDocument initMutableDict.
+        * @brief Loads the document's body and set it to mutable_dict_, if the document exist. Otherwise init mutable_dict_
+        */
+        void initMutableDict();
 
         fleece::Retained<fleece::impl::MutableDict> mutable_dict_;
     };

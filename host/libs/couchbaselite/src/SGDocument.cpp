@@ -22,7 +22,9 @@ namespace Spyglass {
     }
 
     SGDocument::SGDocument(SGDatabase *database, const std::string &docId) {
-        setC4Document(database, docId);
+        setC4document(database->getDocumentById(docId));
+        setId(docId);
+        initMutableDict();
     }
 
     const std::string &SGDocument::getId() const {
@@ -45,21 +47,15 @@ namespace Spyglass {
         return mutable_dict_->asDict();
     }
 
-    bool SGDocument::setC4Document(SGDatabase *database, const std::string &docId) {
-        c4db_ = database->getC4db();
-        c4document_ = database->getDocumentById(docId);
-        id_ = docId;
-        if (c4document_ != nullptr) {
-            mutable_dict_ = fleece::impl::MutableDict::newDict(
-                    Value::fromData(c4document_->selectedRev.body)->asDict());
-            DEBUG("Doc Id: %s, body: %s, revision:%s\n", docId.c_str(), getBody().c_str(),
-                  fleece::slice(c4document_->selectedRev.revID).asString().c_str());
-            return true;
+    void SGDocument::initMutableDict() {
+        if ( exist() ) {
+            mutable_dict_ = fleece::impl::MutableDict::newDict(Value::fromData(c4document_->selectedRev.body)->asDict());
+            DEBUG("Doc Id: %s, body: %s, revision:%s\n", id_.c_str(), getBody().c_str(), fleece::slice(c4document_->selectedRev.revID).asString().c_str());
+            return;
         }
         // Init a new mutable dict
         mutable_dict_ = fleece::impl::MutableDict::newDict();
         DEBUG("c4document_ is null\n");
-        return false;
     }
 
     const fleece::impl::Value *SGDocument::get(const std::string &keyToFind) {
