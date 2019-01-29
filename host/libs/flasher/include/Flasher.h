@@ -32,27 +32,56 @@ class Flasher
 {
 public:
 
-    Flasher() = delete;
-    explicit Flasher(Connector* s, const std::string &firmwareFilename);
-    ~Flasher();
+    Flasher();
+
+    /*!
+     * Ctor
+     * \param connector - serial connector
+     * \param firmwareFilename - filename of new image to flash
+     */
+    Flasher(Connector* connector, const std::string firmwareFilename);
+    virtual ~Flasher();
+
 
     Flasher(const Flasher&) = delete;
     Flasher& operator=(const Flasher&) = delete;
 
-    bool flash();
-    bool rollback();
+    /*!
+     * The method sets serial connector.
+     */
+    void setConnector(Connector* connector);
+
+    /*!
+     * The method sets filename of new image to flash.
+     */
+    void setFirmwareFilename(const std::string firmwareFilename);
+
+    /*!
+     * The method flashes an image from the file firmwareFilename over connector, downloads the currently flashed image,
+     * compare orig. image with downloaded image and start the image/application if it is requested.
+     */
+    bool flash(bool forceStartApplication);
+
+    /*!
+     * The method downloads an current image from a device fo file firmwareFilename.rb
+     */
+    bool backup();
+
+    /*!
+     * The method start an image/application if it is valid.
+     */
     bool startApplication();
 
 private:
 
     /*! Flasher isPlatfromConnected.
-   * \brief Wait for a platfrom to be connected and send firmware_update command to the platfrom's firmware.
-   * \return true on success, false otherwise.
-   */
+    * \brief Wait for a platfrom to be connected and send firmware_update command to the platfrom's firmware.
+    * \return true on success, false otherwise.
+    */
     bool isPlatfromConnected();
 
     bool processCommandFlashFirmware();
-    bool processCommandRollbackFirmware();
+    bool processCommandBackupFirmware();
     bool processCommandStartApplication();
 
     enum class RESPONSE_STATUS
@@ -63,13 +92,13 @@ private:
     };
 
     bool writeCommandFlash();
-    bool writeCommandRollback(Flasher::RESPONSE_STATUS status);
+    bool writeCommandBackup(Flasher::RESPONSE_STATUS status);
     bool writeCommandStartApplication();
     bool writeCommandReadFib();
 
     bool readAck(const std::string& ackName);
-    bool readNotify(const std::string& notificationName, std::string& status);
-    bool readNotifyRollback(const std::string& notificationName, std::string& status);
+    bool readNotify(const std::string& notificationName);
+    bool readNotifyBackup(const std::string& notificationName);
 
     bool verify() const;
 
@@ -81,7 +110,7 @@ private:
 
     static rapidjson::SchemaDocument ackJsonSchema;
     static rapidjson::SchemaDocument notifyJsonSchema;
-    static rapidjson::SchemaDocument notifyRollbackJsonSchema;
+    static rapidjson::SchemaDocument notifyBackupJsonSchema;
 
     struct Chunk
     {
@@ -95,7 +124,7 @@ private:
     } chunk_;
 
     Connector* serial_;
-    const std::string firmwareFilename_;
+    std::string firmwareFilename_;
 };
 
 #endif

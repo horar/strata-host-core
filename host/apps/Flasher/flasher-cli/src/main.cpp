@@ -45,7 +45,7 @@ int main(int argc, char *argv[])
 #endif
 
     cout << "START: flash" <<endl;
-    cout << "Flash: Return Status:   " << ( flasher.flash() ? "true": "false" ) << endl;
+    cout << "Flash: Return Status:   " << ( flasher.flash(true) ? "true": "false" ) << endl;
     cout << "END: flash" <<endl;
 
     delete connector;

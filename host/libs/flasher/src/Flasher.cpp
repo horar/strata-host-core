@@ -46,7 +46,7 @@ rapidjson::SchemaDocument Flasher::ackJsonSchema( createJsonSchema(R"({
       ]
     })") );
 
-// {"notification":{"value":"write_fib","payload":{"status":"OK"}}}
+// {"notification":{"value":"write_fib","payload":{"status":"ok"}}}
 rapidjson::SchemaDocument Flasher::notifyJsonSchema( createJsonSchema(R"({
   "$schema": "http://json-schema.org/draft-04/schema#",
   "type": "object",
@@ -81,8 +81,8 @@ rapidjson::SchemaDocument Flasher::notifyJsonSchema( createJsonSchema(R"({
     })") );
 
 
-// {"notification":{"value":"rollback","payload":{"chunk" : { "number":1 , "size" : 10, "crc" : 120, "data" : "abcdef" }, "status": "error" }}}
-rapidjson::SchemaDocument Flasher::notifyRollbackJsonSchema( createJsonSchema(R"({
+// {"notification":{"value":"backup","payload":{"chunk" : { "number":1 , "size" : 10, "crc" : 120, "data" : "abcdef" }, "status": "error" }}}
+rapidjson::SchemaDocument Flasher::notifyBackupJsonSchema( createJsonSchema(R"({
 "$schema": "http://json-schema.org/draft-04/schema#",
 "type": "object",
 "properties": {
@@ -135,17 +135,33 @@ rapidjson::SchemaDocument Flasher::notifyRollbackJsonSchema( createJsonSchema(R"
 ]
 })") );
 
-Flasher::~Flasher()
+
+Flasher::Flasher()
+: serial_(nullptr)
+, firmwareFilename_()
 {
 }
 
 
-Flasher::Flasher(Connector* s, const std::string &firmwareFilename)
-: serial_(s)
+Flasher::Flasher(Connector* connector, const std::string firmwareFilename)
+: serial_(connector)
 , firmwareFilename_(firmwareFilename)
 {
 }
 
+Flasher::~Flasher()
+{
+}
+
+void Flasher::setConnector(Connector* connector)
+{
+    serial_ = connector;
+}
+
+void Flasher::setFirmwareFilename(const std::string firmwareFilename)
+{
+    firmwareFilename_ = firmwareFilename;
+}
 
 SchemaDocument Flasher::createJsonSchema(const std::string& schemaJson)
 {
@@ -207,13 +223,11 @@ bool Flasher::readAck(const std::string& ackName)
 
     Value& payload(document["payload"]);
 
-    std::cout << "readAck : " << payload["return_string"].GetString() << std::endl;
-
     return payload["return_value"].GetBool();
 }
 
 
-bool Flasher::readNotify(const std::string& notificationName, std::string& status)
+bool Flasher::readNotify(const std::string& notificationName)
 {
     std::string message;
 
@@ -233,8 +247,8 @@ bool Flasher::readNotify(const std::string& notificationName, std::string& statu
         return false;
     }
 
-    status = notification["payload"]["status"].GetString();
-    if (std::string("OK") != status)
+    std::string status = notification["payload"]["status"].GetString();
+    if (std::string("ok") != status)
     {
         std::cout << status << std::endl;
 
@@ -248,14 +262,13 @@ bool Flasher::readNotify(const std::string& notificationName, std::string& statu
 bool Flasher::processCommandFlashFirmware()
 {
     Flasher::RESPONSE_STATUS status(RESPONSE_STATUS::NEXT_CHUNK);
-    std::string notificationStatus;
 
     int32_t errorCounter = 10;
     do
     {
         if (writeCommandFlash() &&
             readAck("flash_firmware") &&
-            readNotify("flash_firmware", notificationStatus))
+            readNotify("flash_firmware"))
         {
             status = RESPONSE_STATUS::NEXT_CHUNK;
         }
@@ -301,8 +314,8 @@ bool Flasher::writeCommandFlash()
     writer.Int(std::accumulate(chunk_.data.begin(), chunk_.data.end(), 0));
 
     std::string chunkBase64;
-    chunkBase64.resize(flash::base64::encoded_size(chunk_.data.size()));
-    flash::base64::encode((void*)chunkBase64.data(), chunk_.data.data(), chunk_.data.size());
+    chunkBase64.resize(base64::encoded_size(chunk_.data.size()));
+    base64::encode((void*)chunkBase64.data(), chunk_.data.data(), chunk_.data.size());
 
     writer.Key("data");
     writer.String(chunkBase64.c_str(), static_cast<SizeType>(chunkBase64.length()));
@@ -356,7 +369,7 @@ bool Flasher::isPlatfromConnected()
 }
 
 
-bool Flasher::flash()
+bool Flasher::flash(bool forceStartApplication)
 {
     // This is a blocking function and has a timeout.
     if (false == isPlatfromConnected())
@@ -405,18 +418,18 @@ bool Flasher::flash()
 
     fclose(firmwareFile);
 
-    return rollback() && verify() && startApplication();
+    return backup() && verify() && (forceStartApplication ? startApplication() : true);
 }
 
 
-bool Flasher::rollback()
+bool Flasher::backup()
 {
-    const std::string& rollbackFilename(firmwareFilename_ + ".rb");
+    const std::string& backupFilename(firmwareFilename_ + ".bak");
 
-    FILE *rollbackFile = fopen(rollbackFilename.c_str(), "wb");
-    if (rollbackFile == nullptr)
+    FILE *backupFile = fopen(backupFilename.c_str(), "wb");
+    if (backupFile == nullptr)
     {
-        std::cout << "Could not open rollback file : " << rollbackFilename << std::endl;
+        std::cout << "Could not open backup file : " << backupFilename << std::endl;
         return false;
     }
 
@@ -425,17 +438,17 @@ bool Flasher::rollback()
 
     do
     {
-        if (false == processCommandRollbackFirmware())
+        if (false == processCommandBackupFirmware())
         {
-            fclose(rollbackFile);
+            fclose(backupFile);
             return false;
         }
 
-        fwrite(chunk_.data.data(), 1, chunk_.data.size(), rollbackFile);
+        fwrite(chunk_.data.data(), 1, chunk_.data.size(), backupFile);
     }
     while (0 != chunk_.number);     // the last chunk
 
-    fclose(rollbackFile);
+    fclose(backupFile);
     return true;
 
 }
@@ -464,7 +477,7 @@ bool Flasher::processCommandStartApplication()
     {
         if (writeCommandStartApplication() &&
             readAck("start_application") &&
-            readNotify("start_application", notificationStatus))
+            readNotify("start_application"))
         {
             return true;
         }
@@ -480,27 +493,27 @@ bool Flasher::startApplication()
 
 bool Flasher::verify() const
 {
-    const std::string& rollbackFilename(firmwareFilename_ + ".rb");
+    const std::string& backupFilename(firmwareFilename_ + ".bak");
 
     const int32_t firmwareSize = getFileSize(firmwareFilename_);
-    const int32_t rollbackSize = getFileSize(rollbackFilename);
+    const int32_t backupSize = getFileSize(backupFilename);
 
-    if (firmwareSize != rollbackSize)
+    if (firmwareSize != backupSize)
     {
         return false;
     }
 
     const int32_t firmwareChecksum = getFileChecksum(firmwareFilename_);
-    const int32_t rollbackChecksum = getFileChecksum(rollbackFilename);
+    const int32_t backupChecksum = getFileChecksum(backupFilename);
 
     std::cout << "Firmware Checksum:" << firmwareChecksum << std::endl;
-    std::cout << "Read Back Firmware Checksum:" << rollbackChecksum << std::endl;
+    std::cout << "Read Back Firmware Checksum:" << backupChecksum << std::endl;
 
-    return (firmwareChecksum == rollbackChecksum && -1 != firmwareChecksum);
+    return (firmwareChecksum == backupChecksum && -1 != firmwareChecksum);
 }
 
 
-bool Flasher::writeCommandRollback(Flasher::RESPONSE_STATUS status)
+bool Flasher::writeCommandBackup(Flasher::RESPONSE_STATUS status)
 {
     StringBuffer s;
     Writer<StringBuffer> writer(s);
@@ -508,7 +521,7 @@ bool Flasher::writeCommandRollback(Flasher::RESPONSE_STATUS status)
     writer.StartObject();
 
     writer.Key("cmd");
-    writer.String("rollback_firmware");
+    writer.String("backup_firmware");
 
     if (RESPONSE_STATUS::NONE != status)
     {
@@ -519,7 +532,7 @@ bool Flasher::writeCommandRollback(Flasher::RESPONSE_STATUS status)
 
         if (RESPONSE_STATUS::NEXT_CHUNK == status)
         {
-            writer.String("OK");
+            writer.String("ok");
         }
         else if (RESPONSE_STATUS::RESEND_CHUNK == status)
         {
@@ -551,17 +564,16 @@ bool Flasher::writeCommandReadFib()
 }
 
 
-bool Flasher::readNotifyRollback(const std::string& notificationName, std::string& status)
+bool Flasher::readNotifyBackup(const std::string& notificationName)
 {
     chunk_.data.clear();
-    status.clear();
 
     std::string message;
     serial_->read(message);
 
     Document document;
 
-    if (false == validateJsonMessage(message, notifyRollbackJsonSchema, document))
+    if (false == validateJsonMessage(message, notifyBackupJsonSchema, document))
     {
         return false;
     }
@@ -578,8 +590,8 @@ bool Flasher::readNotifyRollback(const std::string& notificationName, std::strin
 
     if (payload.HasMember("status"))
     {
-        status = payload["status"].GetString();
-        if (std::string("OK") != status)
+        std::string status(payload["status"].GetString());
+        if (std::string("ok") != status)
         {
             std::cout << status << std::endl;
 
@@ -596,8 +608,8 @@ bool Flasher::readNotifyRollback(const std::string& notificationName, std::strin
         uint32_t crc = chunk["crc"].GetUint();
         std::string chunkBase64 = chunk["data"].GetString();
 
-        chunk_.data.resize(flash::base64::decoded_size(chunkBase64.size()));
-        chunk_.data.resize(flash::base64::decode(chunk_.data.data(), chunkBase64.data(), chunkBase64.size()).first);
+        chunk_.data.resize(base64::decoded_size(chunkBase64.size()));
+        chunk_.data.resize(base64::decode(chunk_.data.data(), chunkBase64.data(), chunkBase64.size()).first);
 
         if (size != chunk_.data.size() ||
             crc != std::accumulate(chunk_.data.begin(), chunk_.data.end(), 0U))
@@ -610,17 +622,16 @@ bool Flasher::readNotifyRollback(const std::string& notificationName, std::strin
 }
 
 
-bool Flasher::processCommandRollbackFirmware()
+bool Flasher::processCommandBackupFirmware()
 {
     Flasher::RESPONSE_STATUS status(0 == chunk_.number ? RESPONSE_STATUS::NONE : RESPONSE_STATUS::NEXT_CHUNK);
-    std::string notificationStatus;
 
     int32_t errorCounter = 10;
     do
     {
-        if (writeCommandRollback(status) &&
-            readAck("rollback_firmware") &&
-            readNotifyRollback("rollback_firmware", notificationStatus))
+        if (writeCommandBackup(status) &&
+            readAck("backup_firmware") &&
+            readNotifyBackup("backup_firmware"))
         {
             status = RESPONSE_STATUS::NEXT_CHUNK;
         }

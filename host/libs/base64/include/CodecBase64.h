@@ -47,9 +47,6 @@
 #include <utility>
 
 
-namespace flash
-{
-
 namespace base64
 {
 
@@ -215,8 +212,6 @@ decode(void* dest, char const* src, std::size_t len)
 }
 
 } // base64
-
-} // flash
 
 
 #endif // _CORE_COMMAND_DISPATCHER_FLASHER_CODECBASE64_H_
