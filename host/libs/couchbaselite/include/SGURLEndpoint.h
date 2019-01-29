@@ -21,6 +21,10 @@ namespace Spyglass {
     public:
         SGURLEndpoint();
 
+        /** SGURLEndpoint.
+        * @brief Sets uri and parses url. WARNING: Throws std::logic_error exception if parsing failed.
+        * @param full_url sync-gateway url. i.e "ws://localhost:4984/staging"
+        */
         SGURLEndpoint(const std::string &full_url);
 
         virtual ~SGURLEndpoint();
