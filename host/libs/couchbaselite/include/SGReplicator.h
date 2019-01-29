@@ -47,7 +47,7 @@ namespace Spyglass {
         };
 
         /** SGReplicator start.
-        * @brief Starts a replicator background thread by calling _start().
+        * @brief Starts a replicator calling _start().
         */
         bool start();
 
@@ -96,8 +96,7 @@ namespace Spyglass {
         void setReplicatorType(SGReplicatorConfiguration::ReplicatorType replicator_type);
 
         /** SGReplicator _start.
-        * @brief Starts the replicator.
-        * @param future_obj The future object used to send a signal to its running thread.
+        * @brief Starts the C4replicator.
         */
         bool _start();
 
