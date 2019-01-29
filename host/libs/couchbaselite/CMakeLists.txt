@@ -7,23 +7,23 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 add_subdirectory(couchbase-lite-core)
 
-set(CB_DIR "${CMAKE_CURRENT_SOURCE_DIR}/couchbase-lite-core")
+set(CB_DIR "couchbase-lite-core")
 
 add_library(${PROJECT_NAME}
-	${CMAKE_CURRENT_SOURCE_DIR}/src/SGDatabase.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/src/SGDocument.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/src/SGMutableDocument.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/src/SGReplicator.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/src/SGReplicatorConfiguration.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/src/SGURLEndpoint.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/src/SGBasicAuthenticator.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/src/SGUtility.cpp
+	src/SGDatabase.cpp
+	src/SGDocument.cpp
+	src/SGMutableDocument.cpp
+	src/SGReplicator.cpp
+	src/SGReplicatorConfiguration.cpp
+	src/SGURLEndpoint.cpp
+	src/SGBasicAuthenticator.cpp
+	src/SGUtility.cpp
 	#HACK: This is not included in couchbase-lite-core. But, we need it for the replicator
 	${CB_DIR}/Replicator/CivetWebSocket.cc
 )
 
 target_include_directories(${PROJECT_NAME}
-	PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/include"
+	PUBLIC "include"
 	PUBLIC "${CB_DIR}/C/include"
 	PUBLIC "${CB_DIR}/vendor/fleece/API"
 	PUBLIC "${CB_DIR}/vendor/fleece/Fleece/Core"
