@@ -96,15 +96,20 @@ namespace Spyglass {
         return SGDatabaseReturnStatus::kNoError;
     }
 
-    bool SGDatabase::isOpen() const {
+    bool SGDatabase::_isOpen() const {
         return c4db_ != nullptr;
+    }
+
+    bool SGDatabase::isOpen() {
+        lock_guard<mutex> lock(db_lock_);
+        return _isOpen();
     }
 
     SGDatabaseReturnStatus SGDatabase::close() {
         lock_guard<mutex> lock(db_lock_);
         DEBUG("Calling close\n");
 
-        if( !isOpen() ){
+        if( !_isOpen() ){
             DEBUG("Calling close on non opened DB\n");
             return SGDatabaseReturnStatus::kCloseDBError;
         }
@@ -123,11 +128,12 @@ namespace Spyglass {
         return SGDatabaseReturnStatus::kNoError;
     }
 
-    C4Database *SGDatabase::getC4db() const {
+    C4Database *SGDatabase::getC4db() {
+        lock_guard<mutex> lock(db_lock_);
         return c4db_;
     }
 
-    SGDatabaseReturnStatus SGDatabase::createNewDocument(SGDocument *doc, alloc_slice body) {
+    SGDatabaseReturnStatus SGDatabase::_createNewDocument(SGDocument *doc, alloc_slice body) {
         // Document does not exist. Creating a new one
         DEBUG("Creating a new document\n");
 
@@ -144,7 +150,7 @@ namespace Spyglass {
         return SGDatabaseReturnStatus::kNoError;
     }
 
-    SGDatabaseReturnStatus SGDatabase::updateDocument(SGDocument *doc, alloc_slice new_body) {
+    SGDatabaseReturnStatus SGDatabase::_updateDocument(SGDocument *doc, alloc_slice new_body) {
         // Document exist. Make modifications to the body
         DEBUG("document Exist. Working on updating the document: %s\n", doc->getId().c_str());
         string rev_id = slice(doc->c4document_->revID).asString();
@@ -167,7 +173,7 @@ namespace Spyglass {
         lock_guard<mutex> lock(db_lock_);
         DEBUG("Calling save\n");
 
-        if(!isOpen()){
+        if(!_isOpen()){
             DEBUG("Calling save() while DB is not open\n");
             return SGDatabaseReturnStatus::kOpenDBError;
         }
@@ -193,10 +199,10 @@ namespace Spyglass {
         alloc_slice fleece_data = encoder.finish();
 
         if (c4doc == nullptr) {
-            status = createNewDocument(doc, fleece_data);
+            status = _createNewDocument(doc, fleece_data);
 
         } else {
-            status = updateDocument(doc, fleece_data);
+            status = _updateDocument(doc, fleece_data);
         }
 
         if(!c4db_endTransaction(c4db_, true, &c4error_)){
@@ -212,7 +218,7 @@ namespace Spyglass {
     C4Document *SGDatabase::getDocumentById(const std::string &doc_id) {
         lock_guard<mutex> lock(db_lock_);
 
-        if(!isOpen() || doc_id.empty()){
+        if(!_isOpen() || doc_id.empty()){
             return nullptr;
         }
 
@@ -241,7 +247,7 @@ namespace Spyglass {
     SGDatabaseReturnStatus SGDatabase::deleteDocument(SGDocument *doc) {
         lock_guard<mutex> lock(db_lock_);
 
-        if(!isOpen()){
+        if(!_isOpen()){
             DEBUG("Calling deleteDocument() while DB is not open\n");
             return SGDatabaseReturnStatus::kOpenDBError;
         }
@@ -284,7 +290,7 @@ namespace Spyglass {
     vector<std::string> SGDatabase::getAllDocumentsKey() {
         lock_guard<mutex> lock(db_lock_);
 
-        if(!isOpen()){
+        if(!_isOpen()){
             throw runtime_error("Trying to run database query while DB is not open!");
         }
 

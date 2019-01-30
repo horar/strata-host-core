@@ -55,7 +55,7 @@ namespace Spyglass {
 
         const std::string &getDBPath() const;
 
-        C4Database *getC4db() const;
+        C4Database *getC4db();
 
         /** SGDatabase Open.
         * @brief Open or create a local embedded database if name does not exist
@@ -64,15 +64,14 @@ namespace Spyglass {
         SGDatabaseReturnStatus open();
 
         /** SGDatabase isOpen.
-        * @brief Check if database is open
+        * @brief Check if database is open. Safe to be called on multi threaded programs.
         */
-        bool isOpen() const;
+        bool isOpen();
 
         /** SGDatabase Close.
         * @brief Close the local database if it's open
         */
         SGDatabaseReturnStatus close();
-
 
         /** SGDatabase save.
         * @brief Create/Edit a document
@@ -112,14 +111,19 @@ namespace Spyglass {
         * @param doc The SGDocument reference.
         * @param body The fleece slice data which will be stored in the body of the document.
         */
-        SGDatabaseReturnStatus createNewDocument(SGDocument *doc, fleece::alloc_slice body);
+        SGDatabaseReturnStatus _createNewDocument(SGDocument *doc, fleece::alloc_slice body);
 
         /** SGDatabase updateDocument.
         * @brief Update existing couchebase document.
         * @param doc The SGDocument reference.
         * @param body The fleece slice data which will update the body.
         */
-        SGDatabaseReturnStatus updateDocument(SGDocument *doc, fleece::alloc_slice new_body);
+        SGDatabaseReturnStatus _updateDocument(SGDocument *doc, fleece::alloc_slice new_body);
+
+        /** SGDatabase isOpen.
+        * @brief Check if database is open. Called internally inside locked functions.
+        */
+        bool _isOpen() const;
 
     };
 }
