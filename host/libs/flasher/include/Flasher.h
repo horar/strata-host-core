@@ -21,8 +21,8 @@
 #include <string>
 #include <vector>
 
-#include "rapidjson/schema.h"
-#include "rapidjson/document.h"
+#include <rapidjson/schema.h>
+#include <rapidjson/document.h>
 
 
 class Connector;
@@ -39,7 +39,7 @@ public:
      * \param connector - serial connector
      * \param firmwareFilename - filename of new image to flash
      */
-    Flasher(Connector* connector, const std::string firmwareFilename);
+    Flasher(Connector* connector, const std::string& firmwareFilename);
     virtual ~Flasher();
 
 
@@ -54,13 +54,18 @@ public:
     /*!
      * The method sets filename of new image to flash.
      */
-    void setFirmwareFilename(const std::string firmwareFilename);
+    void setFirmwareFilename(const std::string& firmwareFilename);
+
+    /*!
+     * The method checks whether bootloader is ready or tries to initialize it.
+     */
+    bool initializeBootloader() const;
 
     /*!
      * The method flashes an image from the file firmwareFilename over connector, downloads the currently flashed image,
      * compare orig. image with downloaded image and start the image/application if it is requested.
      */
-    bool flash(bool forceStartApplication);
+    bool flash(const bool forceStartApplication);
 
     /*!
      * The method downloads an current image from a device fo file firmwareFilename.rb
@@ -78,11 +83,13 @@ private:
     * \brief Wait for a platfrom to be connected and send firmware_update command to the platfrom's firmware.
     * \return true on success, false otherwise.
     */
-    bool isPlatfromConnected();
+    bool isPlatfromConnected() const;
 
     bool processCommandFlashFirmware();
     bool processCommandBackupFirmware();
     bool processCommandStartApplication();
+
+    const static int32_t RESPONSE_STATUS_MAX_ERRORS = 10;
 
     enum class RESPONSE_STATUS
     {
@@ -102,8 +109,8 @@ private:
 
     bool verify() const;
 
-    int32_t getFileChecksum(const std::string &filname) const;
-    int32_t getFileSize(const std::string &fileName) const;
+    static int32_t getFileChecksum(const std::string &filname);
+    static int32_t getFileSize(const std::string &fileName);
 
     static rapidjson::SchemaDocument createJsonSchema(const std::string& schema);
     static bool validateJsonMessage(const std::string& message, const rapidjson::SchemaDocument& schemaDocument, rapidjson::Document& document);
@@ -121,7 +128,10 @@ private:
             DEFAULT = 256
         };
         std::vector<uint8_t> data;
-    } chunk_;
+    };
+
+    Chunk flashChunk_;
+    Chunk backupChunk_;
 
     Connector* serial_;
     std::string firmwareFilename_;

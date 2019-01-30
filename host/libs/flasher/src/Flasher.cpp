@@ -7,8 +7,8 @@
 #include <rapidjson/writer.h>
 #include <rapidjson/stringbuffer.h>
 
-#include "Connector.h"
-#include "CodecBase64.h"
+#include <Connector.h>
+#include <CodecBase64.h>
 
 
 using namespace rapidjson;
@@ -137,13 +137,12 @@ rapidjson::SchemaDocument Flasher::notifyBackupJsonSchema( createJsonSchema(R"({
 
 
 Flasher::Flasher()
-: serial_(nullptr)
-, firmwareFilename_()
+: Flasher(nullptr, "")
 {
 }
 
 
-Flasher::Flasher(Connector* connector, const std::string firmwareFilename)
+Flasher::Flasher(Connector* connector, const std::string& firmwareFilename)
 : serial_(connector)
 , firmwareFilename_(firmwareFilename)
 {
@@ -158,7 +157,7 @@ void Flasher::setConnector(Connector* connector)
     serial_ = connector;
 }
 
-void Flasher::setFirmwareFilename(const std::string firmwareFilename)
+void Flasher::setFirmwareFilename(const std::string& firmwareFilename)
 {
     firmwareFilename_ = firmwareFilename;
 }
@@ -205,7 +204,10 @@ bool Flasher::readAck(const std::string& ackName)
 {
     std::string message;
 
-    serial_->read(message);
+    if (false == serial_->read(message))
+    {
+        return false;
+    }
 
     Document document;
 
@@ -231,7 +233,10 @@ bool Flasher::readNotify(const std::string& notificationName)
 {
     std::string message;
 
-    serial_->read(message);
+    if (false == serial_->read(message))
+    {
+        return false;
+    }
 
     Document document;
 
@@ -261,30 +266,17 @@ bool Flasher::readNotify(const std::string& notificationName)
 
 bool Flasher::processCommandFlashFirmware()
 {
-    Flasher::RESPONSE_STATUS status(RESPONSE_STATUS::NEXT_CHUNK);
-
-    int32_t errorCounter = 10;
-    do
+    for (int32_t errorCounter = 0; RESPONSE_STATUS_MAX_ERRORS != errorCounter; ++errorCounter)
     {
         if (writeCommandFlash() &&
             readAck("flash_firmware") &&
             readNotify("flash_firmware"))
         {
-            status = RESPONSE_STATUS::NEXT_CHUNK;
-        }
-        else
-        {
-            status = RESPONSE_STATUS::RESEND_CHUNK;
-        }
-
-        if (0 == --errorCounter)
-        {
-            return false;
+            return true;
         }
     }
-    while (RESPONSE_STATUS::RESEND_CHUNK == status);
 
-    return true;
+    return false;
 }
 
 
@@ -305,17 +297,17 @@ bool Flasher::writeCommandFlash()
     writer.StartObject();
 
     writer.Key("number");
-    writer.Int(chunk_.number);
+    writer.Int(flashChunk_.number);
 
     writer.Key("size");
-    writer.Int(static_cast<int>(chunk_.data.size()));
+    writer.Int(static_cast<int>(flashChunk_.data.size()));
 
     writer.Key("crc");
-    writer.Int(std::accumulate(chunk_.data.begin(), chunk_.data.end(), 0));
+    writer.Int(std::accumulate(flashChunk_.data.begin(), flashChunk_.data.end(), 0));
 
     std::string chunkBase64;
-    chunkBase64.resize(base64::encoded_size(chunk_.data.size()));
-    base64::encode((void*)chunkBase64.data(), chunk_.data.data(), chunk_.data.size());
+    chunkBase64.resize(base64::encoded_size(flashChunk_.data.size()));
+    base64::encode((void*)chunkBase64.data(), flashChunk_.data.data(), flashChunk_.data.size());
 
     writer.Key("data");
     writer.String(chunkBase64.c_str(), static_cast<SizeType>(chunkBase64.length()));
@@ -330,7 +322,7 @@ bool Flasher::writeCommandFlash()
 }
 
 
-bool Flasher::isPlatfromConnected()
+bool Flasher::isPlatfromConnected() const
 {
     // Wait for a platfrom to be connected. Pooling!!!
     const int POOLING_COUNTER_LIMIT = 100;
@@ -348,28 +340,42 @@ bool Flasher::isPlatfromConnected()
         }
     }
 
+    return true;
+}
+
+bool Flasher::initializeBootloader() const
+{
+    if (false == isPlatfromConnected())
+    {
+        return false;
+    }
+
     // Read dealer id after spyglass enabled platform was found
-    if(serial_->getDealerID() == "Bootloader"){
+    if(serial_->getDealerID() == "Bootloader")
+    {
         // Already in bootloader mode. Do nothing
         std::cout << "Platform in bootloader mode. Flashing Process is about to start." << std::endl;
-
     }
-    else{
+    else
+    {
         // Fimrware update command to be sent to the platfrom core.
         // Enter bootloader mode.
-        if(!serial_->send(R"({'cmd':'firmware_update'})")){
+        if(!serial_->send(R"({'cmd':'firmware_update'})"))
+        {
             return false;
         }
         // Bootloader takes 5 seconds to start (known issue related to clock source). Platform and bootloader uses the same setting for clock source.
         // clock source for bootloader and application must match. Otherwise when application jumps to bootloader, it will have a hardware fault which requires board to be reset.
         std::this_thread::sleep_for (std::chrono::milliseconds(5500));
+
+        return false;   // TODO : firmware_update is not implemented!!!
     }
 
     return true;
 }
 
 
-bool Flasher::flash(bool forceStartApplication)
+bool Flasher::flash(const bool forceStartApplication)
 {
     // This is a blocking function and has a timeout.
     if (false == isPlatfromConnected())
@@ -380,7 +386,7 @@ bool Flasher::flash(bool forceStartApplication)
     //Calculate file size
     int32_t firmwareSize = getFileSize(firmwareFilename_);
 
-    if (firmwareSize == 0)
+    if (0 >= firmwareSize)
     {
         return false;
     }
@@ -394,20 +400,20 @@ bool Flasher::flash(bool forceStartApplication)
     }
 
     // Send firmware data
-    chunk_.number = 0;
-    chunk_.data.resize(static_cast<int32_t>(Chunk::SIZE::DEFAULT));
+    flashChunk_.number = 0;
+    flashChunk_.data.resize(static_cast<int32_t>(Chunk::SIZE::DEFAULT));
 
     while (firmwareSize > 0)
     {
-        chunk_.number++;
+        flashChunk_.number++;
         if (firmwareSize < static_cast<int32_t>(Chunk::SIZE::DEFAULT))
         {
-            chunk_.number = 0;    // the last chunk
+            flashChunk_.number = 0;    // the last chunk
         }
 
-        chunk_.data.resize(fread(chunk_.data.data(), 1, static_cast<int32_t>(Chunk::SIZE::DEFAULT), firmwareFile));
+        flashChunk_.data.resize(fread(flashChunk_.data.data(), 1, static_cast<int32_t>(Chunk::SIZE::DEFAULT), firmwareFile));
 
-        firmwareSize -= chunk_.data.size();
+        firmwareSize -= flashChunk_.data.size();
 
         if (false == processCommandFlashFirmware())
         {
@@ -433,8 +439,8 @@ bool Flasher::backup()
         return false;
     }
 
-    chunk_.number = 0;
-    chunk_.data.clear();
+    backupChunk_.number = 0;
+    backupChunk_.data.clear();
 
     do
     {
@@ -444,9 +450,9 @@ bool Flasher::backup()
             return false;
         }
 
-        fwrite(chunk_.data.data(), 1, chunk_.data.size(), backupFile);
+        fwrite(backupChunk_.data.data(), 1, backupChunk_.data.size(), backupFile);
     }
-    while (0 != chunk_.number);     // the last chunk
+    while (0 != backupChunk_.number);     // the last chunk
 
     fclose(backupFile);
     return true;
@@ -471,9 +477,7 @@ bool Flasher::writeCommandStartApplication()
 
 bool Flasher::processCommandStartApplication()
 {
-    std::string notificationStatus;
-
-    for (int32_t errorCounter = 10; 0 != errorCounter; --errorCounter)
+    for (int32_t errorCounter = 0; RESPONSE_STATUS_MAX_ERRORS != errorCounter; ++errorCounter)
     {
         if (writeCommandStartApplication() &&
             readAck("start_application") &&
@@ -498,7 +502,7 @@ bool Flasher::verify() const
     const int32_t firmwareSize = getFileSize(firmwareFilename_);
     const int32_t backupSize = getFileSize(backupFilename);
 
-    if (firmwareSize != backupSize)
+    if (firmwareSize != backupSize || 0 >= firmwareSize)
     {
         return false;
     }
@@ -566,10 +570,12 @@ bool Flasher::writeCommandReadFib()
 
 bool Flasher::readNotifyBackup(const std::string& notificationName)
 {
-    chunk_.data.clear();
-
     std::string message;
-    serial_->read(message);
+
+    if (false == serial_->read(message))
+    {
+        return false;
+    }
 
     Document document;
 
@@ -584,7 +590,6 @@ bool Flasher::readNotifyBackup(const std::string& notificationName)
     {
         return false;
     }
-
 
     Value& payload(notification["payload"]);
 
@@ -603,16 +608,16 @@ bool Flasher::readNotifyBackup(const std::string& notificationName)
     {
         Value& chunk(payload["chunk"]);
 
-        chunk_.number = chunk["number"].GetInt();
+        backupChunk_.number = chunk["number"].GetInt();
         uint32_t size = chunk["size"].GetUint();
         uint32_t crc = chunk["crc"].GetUint();
         std::string chunkBase64 = chunk["data"].GetString();
 
-        chunk_.data.resize(base64::decoded_size(chunkBase64.size()));
-        chunk_.data.resize(base64::decode(chunk_.data.data(), chunkBase64.data(), chunkBase64.size()).first);
+        backupChunk_.data.resize(base64::decoded_size(chunkBase64.size()));
+        backupChunk_.data.resize(base64::decode(backupChunk_.data.data(), chunkBase64.data(), chunkBase64.size()).first);
 
-        if (size != chunk_.data.size() ||
-            crc != std::accumulate(chunk_.data.begin(), chunk_.data.end(), 0U))
+        if (size != backupChunk_.data.size() ||
+            crc != std::accumulate(backupChunk_.data.begin(), backupChunk_.data.end(), 0U))
         {
             return false;
         }
@@ -624,34 +629,24 @@ bool Flasher::readNotifyBackup(const std::string& notificationName)
 
 bool Flasher::processCommandBackupFirmware()
 {
-    Flasher::RESPONSE_STATUS status(0 == chunk_.number ? RESPONSE_STATUS::NONE : RESPONSE_STATUS::NEXT_CHUNK);
+    Flasher::RESPONSE_STATUS status(0 == backupChunk_.number ? RESPONSE_STATUS::NONE : RESPONSE_STATUS::NEXT_CHUNK);
 
-    int32_t errorCounter = 10;
-    do
+    for (int32_t errorCounter = 0; RESPONSE_STATUS_MAX_ERRORS != errorCounter; ++errorCounter)
     {
         if (writeCommandBackup(status) &&
             readAck("backup_firmware") &&
             readNotifyBackup("backup_firmware"))
         {
-            status = RESPONSE_STATUS::NEXT_CHUNK;
-        }
-        else
-        {
-            status =  RESPONSE_STATUS::RESEND_CHUNK;
-        }
-
-        if (0 == --errorCounter)
-        {
-            return false;
-        }
+            return true;
+        }        
+        status = RESPONSE_STATUS::RESEND_CHUNK;
     }
-    while (RESPONSE_STATUS::RESEND_CHUNK == status);
 
-    return true;
+    return false;
 }
 
 
-int32_t Flasher::getFileChecksum(const std::string &filname) const
+int32_t Flasher::getFileChecksum(const std::string &filname)
 {
     FILE * file = fopen ( filname.c_str() , "rb" );
 
@@ -671,13 +666,13 @@ int32_t Flasher::getFileChecksum(const std::string &filname) const
     return sum;
 }
 
-int32_t Flasher::getFileSize(const std::string &fileName) const
+int32_t Flasher::getFileSize(const std::string &fileName)
 {
     FILE *file = fopen(fileName.c_str(), "rb");
     if (file == nullptr)
     {
         std::cout << "Could not open firmware file " << fileName << std::endl;
-        return 0;
+        return -1;
     }
 
     //Calculate file size
@@ -685,10 +680,6 @@ int32_t Flasher::getFileSize(const std::string &fileName) const
     int32_t firmwareSize = static_cast<int32_t>(ftell(file));
     fseek(file, 0, SEEK_SET);
 
-    if (firmwareSize <= 0)
-    {
-        fclose(file);
-        return 0;
-    }
+    fclose(file);
     return firmwareSize;
 }

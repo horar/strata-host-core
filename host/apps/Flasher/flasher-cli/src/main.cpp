@@ -26,28 +26,34 @@ using namespace std;
 #define MANUAL_OPEN_PORT 0
 int main(int argc, char *argv[])
 {
-	if(argc < 2){
+    if (argc < 2)
+    {
 		cout << "Usage: ./flasher <path_to_firmware.bin>" << endl;
 		return 1;
 	}
 
 	char *firmware_file_path = argv[1];
 
+    std::unique_ptr<Connector> connector(ConnectorFactory::getConnector("platform"));
 #if MANUAL_OPEN_PORT
-    Connector* connector = ConnectorFactory::getConnector("platform");
-    if(!connector->open("/dev/cu.usbserial-DB00VFH8")) {
+    if(!connector->open("/dev/cu.usbserial-DB00VFH8"))
+    {
         return 1;
-	}
-    Flasher flasher(connector);
-#else
-    Connector* connector(ConnectorFactory::getConnector("platform"));
-    Flasher flasher(connector, firmware_file_path);
+    }
 #endif
+    Flasher flasher(connector.get(), firmware_file_path);
 
-    cout << "START: flash" <<endl;
-    cout << "Flash: Return Status:   " << ( flasher.flash(true) ? "true": "false" ) << endl;
-    cout << "END: flash" <<endl;
+    cout << "START: flash" << endl;
 
-    delete connector;
+    if (false == flasher.initializeBootloader())
+    {
+        return 1;
+    }
+
+    bool result = flasher.flash(true);
+
+    cout << "Flash: Return Status:   " << ( result ? "OK": "Failed" ) << endl;
+    cout << "END: flash" << endl;
+
     return 0;
 }
