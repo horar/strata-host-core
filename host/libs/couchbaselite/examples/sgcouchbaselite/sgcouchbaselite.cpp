@@ -72,10 +72,9 @@ int main(){
     }
 
     vector<string> document_keys;
-    try{
-        document_keys = sgDatabase.getAllDocumentsKey();
-    }catch(const std::exception& e) {
-        DEBUG("Exceptions thrown: %s\n", e.what());
+    if(!sgDatabase.getAllDocumentsKey(document_keys)){
+        DEBUG("Failed to run getAllDocumentsKey()\n");
+        return 1;
     }
 
     // Printing the list of documents key from the local DB.

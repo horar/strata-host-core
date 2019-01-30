@@ -92,9 +92,9 @@ namespace Spyglass {
         SGDatabaseReturnStatus deleteDocument(class SGDocument *doc);
 
         /** SGDatabase getAllDocumentsKey.
-        * @brief Runs local database query to get list of document keys. Throws std::runtime_error exception on error
+        * @brief Runs local database query to get list of document keys. True on success, False otherwise.
         */
-        std::vector<std::string> getAllDocumentsKey();
+        bool getAllDocumentsKey(std::vector<std::string>& document_keys);
     private:
 
         C4Database *c4db_{nullptr};

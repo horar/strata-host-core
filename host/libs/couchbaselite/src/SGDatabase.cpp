@@ -287,14 +287,14 @@ namespace Spyglass {
         return SGDatabaseReturnStatus::kNoError;
     }
 
-    vector<std::string> SGDatabase::getAllDocumentsKey() {
+    bool SGDatabase::getAllDocumentsKey(std::vector<std::string>& document_keys) {
         lock_guard<mutex> lock(db_lock_);
 
         if(!_isOpen()){
-            throw runtime_error("Trying to run database query while DB is not open!");
+            DEBUG("Trying to run database query while DB is not open!\n");
+            return false;
         }
 
-        vector<string> document_keys;
         const static string json = "[\"SELECT\", {\"WHAT\": [[\"._id\"]]}]";
         C4Query *query = c4query_new(c4db_, slice(json), &c4error_);
 
@@ -311,20 +311,20 @@ namespace Spyglass {
                     }else{
                         logC4Error(c4error_);
                         DEBUG("c4queryenum_next failed to run.\n");
-                        throw runtime_error("c4queryenum_next failed to run.");
+                        return false;
                     }
                 }
             }else{
                 logC4Error(c4error_);
                 DEBUG("C4QueryEnumerator failed to run.\n");
-                throw runtime_error("C4QueryEnumerator failed to run.");
+                return false;
             }
         }else{
             logC4Error(c4error_);
             DEBUG("C4Query failed to execute a query.\n");
-            throw runtime_error("C4Query failed to execute a query.");
+            return false;
         }
 
-        return document_keys;
+        return true;
     }
 }
