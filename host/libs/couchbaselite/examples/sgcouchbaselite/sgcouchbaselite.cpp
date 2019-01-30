@@ -146,15 +146,15 @@ int main(){
 
 
     // Bellow Replicator API
-
-    try{
-        SGURLEndpoint failed_url_endpoint("bla+bla");
-    }catch(const std::exception& e){
-        DEBUG("Caught exceptions for failed_url_endpoint: Message:%s\n", e.what());
-    }
-
     string my_url = "ws://localhost:4984/staging";
     SGURLEndpoint url_endpoint(my_url);
+
+    if(url_endpoint.init()){
+        DEBUG("url_endpoint is valid \n");
+    }else{
+        DEBUG("Invalid url_endpoint\n");
+        return 1;
+    }
 
     DEBUG("host %s, \n", url_endpoint.getHost().c_str());
     DEBUG("schema %s, \n", url_endpoint.getSchema().c_str());

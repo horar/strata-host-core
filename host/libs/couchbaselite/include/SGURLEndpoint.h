@@ -29,6 +29,11 @@ namespace Spyglass {
 
         virtual ~SGURLEndpoint();
 
+        /** SGURLEndpoint init.
+        * @brief Parse uri to small parts and set member variables. True on success, otherwise false.
+        */
+        bool init();
+
         const std::string &getHost() const;
 
         void setHost(const std::string &host);

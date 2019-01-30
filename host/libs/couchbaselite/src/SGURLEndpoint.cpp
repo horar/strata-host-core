@@ -19,14 +19,10 @@ namespace Spyglass {
 
     SGURLEndpoint::~SGURLEndpoint() {}
 
-    /** SGReplicatorConfiguration.
-    * @brief Initial setup the replicator.
-    * @param db The reference to the SGDatabase
-    * @param url_endpoint The reference to the SGURLEndpoint object.
-    */
-    SGURLEndpoint::SGURLEndpoint(const std::string &full_url) : uri(full_url) {
-        C4String dbname;
+    SGURLEndpoint::SGURLEndpoint(const std::string &full_url) : uri(full_url) {}
 
+    bool SGURLEndpoint::init() {
+        C4String dbname;
         // c4address_fromURL won't set proper or complete path
         // ws://localhost:4984/staging
         // schema: ws
@@ -34,17 +30,21 @@ namespace Spyglass {
         // port: 4984
         // path: /
         // Note: staging will be set in dbname. which is the remote DB to replicate from
-        if (c4address_fromURL(c4str(uri.c_str()), &c4address_, &dbname)) {
-            DEBUG("c4address_fromURL is valid\n");
-            setHost( slice(c4address_.hostname).asString() );
-            // HACK
-            setPath( slice(dbname).asString() );
-            setSchema( slice(c4address_.scheme).asString() );
-            setPort(c4address_.port);
-        } else {
-            DEBUG("Failed c4address_fromURL is not valid\n");
-            throw logic_error("Failed to parse uri");
+
+        if(uri.empty()){
+            return false;
         }
+        if (!c4address_fromURL(slice(uri), &c4address_, &dbname)) {
+            return false;
+        }
+
+        DEBUG("c4address_fromURL is valid\n");
+        setHost( slice(c4address_.hostname).asString() );
+        // HACK
+        setPath( slice(dbname).asString() );
+        setSchema( slice(c4address_.scheme).asString() );
+        setPort(c4address_.port);
+        return true;
     }
 
     const C4Address &SGURLEndpoint::getC4Address() const {
