@@ -450,7 +450,11 @@ bool Flasher::backup()
             return false;
         }
 
-        fwrite(backupChunk_.data.data(), 1, backupChunk_.data.size(), backupFile);
+        if (backupChunk_.data.size() != fwrite(backupChunk_.data.data(), 1, backupChunk_.data.size(), backupFile))
+        {
+            std::cout << "Could not write to backup file : " << backupFilename << std::endl;
+            return false;
+        }
     }
     while (0 != backupChunk_.number);     // the last chunk
 
