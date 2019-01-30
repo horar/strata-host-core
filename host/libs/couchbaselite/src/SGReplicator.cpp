@@ -40,7 +40,9 @@ namespace Spyglass {
     }
 
     void SGReplicator::stop() {
-        c4repl_stop(c4replicator_);
+        if(c4replicator_ != nullptr){
+            c4repl_stop(c4replicator_);
+        }
     }
 
     bool SGReplicator::start() {
