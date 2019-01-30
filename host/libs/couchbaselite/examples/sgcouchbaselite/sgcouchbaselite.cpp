@@ -180,7 +180,10 @@ int main(){
     replicator.addValidationListener( bind(&MiniHCS::onValidate, &miniHCS, _1, _2) );
 
 
-    replicator.start();
+    if(!replicator.start()){
+        DEBUG("Could not start the replicator!\n");
+        return 1;
+    }
 
     DEBUG("About to stop the replicator thread\n");
     this_thread::sleep_for(chrono::milliseconds(1000));
