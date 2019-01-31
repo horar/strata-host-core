@@ -1,5 +1,8 @@
 #Couhbase-lite-cpp library
 This library depends on couchbase-lite-core. 
+SGDatabase and SGReplicator have thread safe functions. Please see the .h files for more details.
+
+
 Note: This is tested on Mac OS and (Windows built using Visual Studio).
 
 Since couchbase-lite-core is submodule of this library please run:
