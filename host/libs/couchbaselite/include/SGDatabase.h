@@ -34,6 +34,10 @@ namespace Spyglass {
         kInvalidArgumentError
     };
 
+    /*
+     * Thread safe is guaranteed on these functions:
+     * getC4db(), open(), isOpen(), close(), save(), getDocumentById(), deleteDocument(), getAllDocumentsKey()
+     */
     class SGDatabase {
 
     public:
@@ -55,44 +59,45 @@ namespace Spyglass {
 
         const std::string &getDBPath() const;
 
+        //  Thread Safe.
         C4Database *getC4db();
 
         /** SGDatabase Open.
-        * @brief Open or create a local embedded database if name does not exist
+        * @brief Open or create a local embedded database if name does not exist. Thread Safe.
         * @param db_name The couchebase lite embeeded database name.
         */
         SGDatabaseReturnStatus open();
 
         /** SGDatabase isOpen.
-        * @brief Check if database is open. Safe to be called on multi threaded programs.
+        * @brief Check if database is open. Safe to be called on multi threaded programs. Thread Safe.
         */
         bool isOpen();
 
         /** SGDatabase Close.
-        * @brief Close the local database if it's open
+        * @brief Close the local database if it's open. Thread Safe.
         */
         SGDatabaseReturnStatus close();
 
         /** SGDatabase save.
-        * @brief Create/Edit a document
+        * @brief Create/Edit a document. Thread Safe.
         * @param SGDocument The reference to the document object
         */
         SGDatabaseReturnStatus save(class SGDocument *doc);
 
         /** SGDatabase getDocumentById.
-        * @brief return C4Document if there is such a document exist in the DB, otherwise return nullptr
+        * @brief return C4Document if there is such a document exist in the DB, otherwise return nullptr. Thread Safe.
         * @param docId The document id
         */
         C4Document *getDocumentById(const std::string &doc_id);
 
         /** SGDatabase deleteDocument.
-        * @brief delete existing document from the DB. True successful, otherwise false
+        * @brief delete existing document from the DB. True successful, otherwise false. Thread Safe.
         * @param SGDocument The document object
         */
         SGDatabaseReturnStatus deleteDocument(class SGDocument *doc);
 
         /** SGDatabase getAllDocumentsKey.
-        * @brief Runs local database query to get list of document keys. True on success, False otherwise.
+        * @brief Runs local database query to get list of document keys. True on success, False otherwise. Thread Safe.
         */
         bool getAllDocumentsKey(std::vector<std::string>& document_keys);
     private:
