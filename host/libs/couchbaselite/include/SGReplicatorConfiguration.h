@@ -67,7 +67,7 @@ namespace Spyglass {
         SGDatabase *database_{nullptr};
         SGAuthenticator *authenticator_{nullptr};
 
-        class SGURLEndpoint *url_endpoint_{nullptr};
+        SGURLEndpoint *url_endpoint_{nullptr};
 
         ReplicatorType replicator_type_;
 
