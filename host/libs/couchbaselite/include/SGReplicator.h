@@ -26,6 +26,10 @@ namespace Spyglass {
         uint64_t document_count;// Number of documents transferred so far.
     } SGReplicatorProgress;
 
+    /*
+     * Thread safe is guaranteed on these functions:
+     * start(), stop(),
+     */
     class SGReplicator {
     public:
         SGReplicator();
@@ -47,12 +51,12 @@ namespace Spyglass {
         };
 
         /** SGReplicator start.
-        * @brief Starts a replicator calling _start().
+        * @brief Starts a C4replicator. Thread Safe.
         */
         bool start();
 
         /** SGReplicator stop.
-        * @brief Stop a running replicator thread.
+        * @brief Stop a running replicator thread. Thread Safe.
         */
         void stop();
 
@@ -83,7 +87,7 @@ namespace Spyglass {
         SGReplicatorConfiguration *replicator_configuration_{nullptr};
         C4ReplicatorParameters replicator_parameters_;
         C4Error c4error_ {};
-
+        std::mutex replicator_lock_;
         std::function<void(SGReplicator::ActivityLevel, SGReplicatorProgress progress)> on_status_changed_callback_;
         std::function<void(bool pushing, std::string doc_id, std::string error_message, bool is_error,
                            bool error_is_transient)> on_document_error_callback_;
@@ -94,11 +98,6 @@ namespace Spyglass {
         * @param replicator_type The enum replicator type to be used for the replicator.
         */
         void setReplicatorType(SGReplicatorConfiguration::ReplicatorType replicator_type);
-
-        /** SGReplicator _start.
-        * @brief Starts the C4replicator.
-        */
-        bool _start();
 
         bool isValidSGReplicatorConfiguration();
     };

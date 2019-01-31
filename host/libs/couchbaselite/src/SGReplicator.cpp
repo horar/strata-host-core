@@ -40,16 +40,15 @@ namespace Spyglass {
     }
 
     void SGReplicator::stop() {
+        lock_guard<mutex> lock(replicator_lock_);
         if(c4replicator_ != nullptr){
             c4repl_stop(c4replicator_);
         }
     }
 
     bool SGReplicator::start() {
-        return _start();
-    }
+        lock_guard<mutex> lock(replicator_lock_);
 
-    bool SGReplicator::_start() {
         Encoder encoder;
 
         if (!isValidSGReplicatorConfiguration()) {
