@@ -1,0 +1,190 @@
+
+#include "PlatformConnection.h"
+#include "SerialPort.h"
+#include "EventsMgr.h"
+#include "PlatformManager.h"
+
+static const size_t g_readBufferSize = 1024;
+static const size_t g_writeBufferSize = 1024;
+
+static const int g_readTimeout = 200;
+static const int g_writeTimeout = 200;
+
+//////////////////////////////////////////////////////////////////////////////////////
+
+PlatformConnection::PlatformConnection(PlatformManager* parent) : parent_(parent)
+{
+    readBuffer_.reserve(g_readBufferSize);
+    writeBuffer_.reserve(g_writeBufferSize);
+}
+
+PlatformConnection::~PlatformConnection()
+{
+    close();
+}
+
+bool PlatformConnection::open(const std::string& portName)
+{
+    std::unique_ptr<SerialPort> port(new SerialPort);
+    bool ret = port->open(portName);
+    if (ret) {
+        port_ = std::move(port);
+    }
+    return ret;
+}
+
+void PlatformConnection::close()
+{
+    if (event_) {
+        event_->deactivate();
+
+        event_.release();
+    }
+
+    if (port_) {
+        port_->close();
+
+        port_.release();
+    }
+}
+
+bool PlatformConnection::getMessage(std::string& result)
+{
+    assert(readBuffer_.size() >= readOffset_);
+    if (readBuffer_.size() == readOffset_) {
+        readBuffer_.clear();
+        readOffset_ = 0;
+        return false;
+    }
+
+    std::string::size_type off = readBuffer_.find('\n', readOffset_);
+    if (off == std::string::npos)
+        return false;
+
+    while(off == readOffset_) {
+        readOffset_++;
+        off = readBuffer_.find('\n', readOffset_);
+        if (off == std::string::npos)
+            return false;
+    }
+
+
+    result = readBuffer_.substr(readOffset_, (off - readOffset_));
+    readOffset_ = (off + 1);
+    return true;
+}
+
+void PlatformConnection::onDescriptorEvent(EvEvent*, int flags)
+{
+    if (flags & EvEvent::eEvStateRead) {
+
+        int ret = handleRead();
+        if (ret < 0) {
+
+            event_->deactivate();
+
+            //TODO: remove connection from Platform manager
+            parent_->removeConnection(this);
+            return;
+        }
+
+        if (isReadable()) {
+            if(parent_) {
+                parent_->notiftyConnectionReadable(this);
+            }
+        }
+    }
+    if (flags & EvEvent::eEvStateWrite) {
+        //TODO:...
+
+    }
+}
+
+int PlatformConnection::handleRead()
+{
+    unsigned char read_data[512];
+    int ret = port_->read(read_data, sizeof(read_data), g_readTimeout);
+    if (ret <= 0) {
+        return ret;
+    }
+
+    readBuffer_.append(reinterpret_cast<char*>(read_data), static_cast<size_t>(ret));
+    return ret;
+}
+
+void PlatformConnection::addMessage(const std::string& message)
+{
+    writeBuffer_.append(message);
+    writeBuffer_.append("\n");
+
+    //TODO: set write to be called from dispatcher...
+    handleWrite();
+}
+
+int PlatformConnection::handleWrite()
+{
+    const unsigned char* data = reinterpret_cast<const unsigned char*>(writeBuffer_.data()) + writeOffset_;
+    size_t length = writeBuffer_.size() - writeOffset_;
+
+    int ret = port_->write(const_cast<unsigned char*>(data), length, g_writeTimeout);
+    if (ret < 0) {
+        return ret;
+    }
+
+    writeOffset_ += ret;
+    return ret;
+}
+
+bool PlatformConnection::isReadable()
+{
+    if (readBuffer_.size() <= readOffset_)
+        return false;
+
+    std::string::size_type off = readBuffer_.find('\n', static_cast<size_t>(readOffset_));
+    if (off == std::string::npos)
+        return false;
+
+    return true;
+}
+
+std::string PlatformConnection::getName() const
+{
+    assert(port_);
+    return std::string(port_->getName());
+}
+
+void PlatformConnection::attachEventMgr(EvEventsMgr* ev_manager)
+{
+    if (!port_)
+        return;
+
+    event_mgr_ = ev_manager;
+
+    int fd = port_->getFileDescriptor();
+    event_.reset(new EvEvent(EvEvent::eEvTypeHandle, fd, 0));
+    event_->setCallback(std::bind(&PlatformConnection::onDescriptorEvent, this, std::placeholders::_1, std::placeholders::_2 ) );
+
+    updateEvent(true, false);
+}
+
+void PlatformConnection::detachEventMgr()
+{
+    if (event_) {
+        event_->deactivate();
+    }
+}
+
+void PlatformConnection::updateEvent(bool read, bool write)
+{
+    if (!event_) {
+        return;
+
+    }
+
+    int evFlags = (read ? EvEvent::eEvStateRead : 0) | (write ? EvEvent::eEvStateWrite : 0);
+
+    event_->deactivate();
+    event_->activate(event_mgr_, evFlags);
+}
+
+

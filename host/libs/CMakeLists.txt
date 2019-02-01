@@ -1,4 +1,7 @@
+add_subdirectory(serial_port)
 add_subdirectory(connector)
 add_subdirectory(flasher)
 add_subdirectory(HostControllerClient)
 add_subdirectory(PlatformInterface)
+add_subdirectory(EventsMgr)
+add_subdirectory(PlatformManager)

@@ -1,0 +1,178 @@
+
+#include "PlatformManager.h"
+#include "SerialPort.h"
+#include "PlatformConnection.h"
+
+#include <string>
+#include <algorithm>
+#include <functional>
+#include <iostream>
+
+static const int g_portsRefreshTime = 500;  //in ms
+
+////////////////////////////////////////////////////////////////////////////////////////////
+
+PlatformManager::PlatformManager()
+{
+}
+
+PlatformManager::~PlatformManager()
+{
+}
+
+void PlatformManager::Init()
+{
+    ports_update_.reset( eventsMgr_.CreateEventTimer(g_portsRefreshTime) );
+    ports_update_->setCallback(std::bind(&PlatformManager::onUpdatePortList, this, std::placeholders::_1, std::placeholders::_2) );
+    ports_update_->activate(&eventsMgr_);
+
+}
+
+void PlatformManager::StartLoop()
+{
+    eventsMgr_.startInThread();
+}
+
+void PlatformManager::Stop()
+{
+    eventsMgr_.stop();
+}
+
+void PlatformManager::setPlatformHandler(PlatformConnHandler* handler)
+{
+    plat_handler_ = handler;
+}
+
+void PlatformManager::onUpdatePortList(EvEvent*, int)
+{
+    std::vector<std::string> listOfSerialPorts;
+    if (getListOfSerialPorts(listOfSerialPorts)) {
+
+        std::vector<serialPortHash> myList;
+        myList.reserve( listOfSerialPorts.size() );
+        serialPortHash hash;
+        for(const std::string& portName : listOfSerialPorts) {
+            hash = std::hash<std::string>{}(portName);
+
+            hashToName_.insert( { hash, portName } );
+            myList.push_back(hash);
+        }
+
+        std::vector<serialPortHash> added, removed;
+        added.reserve( listOfSerialPorts.size() );
+        removed.reserve( listOfSerialPorts.size() );
+        computeListDiff(myList, added, removed);
+
+        //removed ports
+        for(auto hash : removed) {
+            onRemovedPort(hash);
+        }
+
+        //new ports added...
+        for(auto hash : added) {
+            onAddedPort(hash);
+        }
+
+        portsList_ = myList;
+    }
+}
+
+void PlatformManager::computeListDiff(const std::vector<serialPortHash>& list,
+                                      std::vector<serialPortHash>& added_ports,
+                                      std::vector<serialPortHash>& removed_ports)
+{
+    std::vector<serialPortHash> curr(list);
+    std::vector<serialPortHash> last(portsList_);
+
+    std::sort(curr.begin(), curr.end());
+    std::sort(last.begin(), last.end());
+
+    std::set_difference(curr.begin(), curr.end(),
+                        last.begin(), last.end(),
+                        std::inserter(added_ports, added_ports.begin()));
+
+    std::set_difference(last.begin(), last.end(),
+                        curr.begin(), curr.end(),
+                        std::inserter(removed_ports, removed_ports.begin()));
+}
+
+std::string PlatformManager::hashToPortName(serialPortHash hash)
+{
+    auto it = hashToName_.find(hash);
+    if (it != hashToName_.end()) {
+        return it->second;
+    }
+
+    return std::string();
+}
+
+void PlatformManager::onRemovedPort(serialPortHash hash)
+{
+    std::string portName  = hashToPortName(hash);
+    std::cout << "Removed ser.port:" << portName << std::endl;
+
+    auto find = openedPorts_.find(hash);
+    if (find != openedPorts_.end()) {
+        PlatformConnection* conn = find->second;
+        conn->close();
+
+        if (plat_handler_) {
+            plat_handler_->onCloseConnection(conn);
+        }
+
+        delete conn;
+        openedPorts_.erase(find);
+    }
+}
+
+void PlatformManager::removeConnection(PlatformConnection* conn)
+{
+    //TODO: remove connection
+
+
+}
+
+void PlatformManager::onAddedPort(serialPortHash hash)
+{
+    std::string portName  = hashToPortName(hash);
+    std::cout << "New ser.port:" << portName << std::endl;
+
+    PlatformConnection* conn = new PlatformConnection(this);
+    bool ret = conn->open(portName);
+    if (ret) {
+
+        {
+            std::lock_guard<std::mutex> lock(connectionMap_mutex_);
+            openedPorts_.insert({hash, conn});
+        }
+
+        conn->attachEventMgr(&eventsMgr_);
+
+        if (plat_handler_) {
+            plat_handler_->onNewConnection(conn);
+        }
+    }
+    else {
+        delete conn;
+    }
+}
+
+void PlatformManager::notiftyConnectionReadable(PlatformConnection* conn)
+{
+    //Debug stuff
+#if 0
+    bool found = false;
+    for(auto it = openedPorts_.begin(); it != openedPorts_.end(); ++it) {
+        if (it->second == conn)
+            found = true;
+    }
+
+    if (!found) //Temporary...
+        return;
+#endif
+
+    if (plat_handler_) {
+        plat_handler_->onNotifyReadConnection(conn);
+    }
+}
+
