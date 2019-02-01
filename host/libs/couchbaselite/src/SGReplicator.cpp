@@ -36,6 +36,8 @@ namespace Spyglass {
         replicator_configuration_ = replicator_configuration;
         setReplicatorType(replicator_configuration_->getReplicatorType());
         replicator_parameters_.callbackContext = this;
+        // Warning c4socket_registerFactory set to throw noexcept. But, it calls C4SocketImpl::registerFactory function which throws exception!
+        // Therefore, this exception can't be caught!
         c4socket_registerFactory(C4CivetWebSocketFactory);
     }
 

@@ -27,6 +27,8 @@ namespace Spyglass {
     } SGReplicatorProgress;
 
     /*
+     * Warning: This object can be initialized only once in the program life cycle. See constructor for more information.
+     *
      * Thread safe is guaranteed on these functions:
      * start(), stop(),
      */
@@ -35,7 +37,7 @@ namespace Spyglass {
         SGReplicator();
 
         /** SGReplicator.
-        * @brief Initial setup the replicator.
+        * @brief Initial setup the replicator. Warning: This object can be initialized only once in the program life cycle. See constructor for more information.
         * @param replicator_configuration The SGReplicator configuration object.
         */
         SGReplicator(SGReplicatorConfiguration *replicator_configuration);
