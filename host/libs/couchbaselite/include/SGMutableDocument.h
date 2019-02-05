@@ -15,7 +15,7 @@
 namespace Spyglass {
     class SGMutableDocument : public SGDocument {
     public:
-        SGMutableDocument(class SGDatabase *database, const std::string &docId);
+        SGMutableDocument(SGDatabase *database, const std::string &docId);
 
         template<typename T>
         void set(const std::string &key, T value) { mutable_dict_->set(key, value); }
