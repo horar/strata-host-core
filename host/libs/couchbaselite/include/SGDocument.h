@@ -19,13 +19,16 @@
 #include <MutableDict.hh>
 
 namespace Spyglass {
+    // Forward declaration is required due to the circular include for SGDatabase<->SGDocument.
+    class SGDatabase;
+
     class SGDocument {
     public:
         SGDocument();
 
         virtual ~SGDocument();
 
-        SGDocument(class SGDatabase *database, const std::string &docId);
+        SGDocument(SGDatabase *database, const std::string &docId);
 
         C4Document *getC4document() const;
 
@@ -67,7 +70,7 @@ namespace Spyglass {
 
         void setC4document(C4Document *);
 
-        friend class SGDatabase;
+        friend SGDatabase;
     protected:
 
         /** SGDocument initMutableDict.

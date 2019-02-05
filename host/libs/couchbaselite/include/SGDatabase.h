@@ -20,6 +20,9 @@
 #include "SGDocument.h"
 
 namespace Spyglass {
+    // Forward declaration is required due to the circular include for SGDatabase<->SGDocument.
+    class SGDocument;
+
     enum class SGDatabaseReturnStatus {
         kNoError,
         kOpenDBError,
@@ -82,7 +85,7 @@ namespace Spyglass {
         * @brief Create/Edit a document. Thread Safe.
         * @param SGDocument The reference to the document object
         */
-        SGDatabaseReturnStatus save(class SGDocument *doc);
+        SGDatabaseReturnStatus save(SGDocument *doc);
 
         /** SGDatabase getDocumentById.
         * @brief return C4Document if there is such a document exist in the DB, otherwise return nullptr. Thread Safe.
@@ -94,7 +97,7 @@ namespace Spyglass {
         * @brief delete existing document from the DB. True successful, otherwise false. Thread Safe.
         * @param SGDocument The document object
         */
-        SGDatabaseReturnStatus deleteDocument(class SGDocument *doc);
+        SGDatabaseReturnStatus deleteDocument(SGDocument *doc);
 
         /** SGDatabase getAllDocumentsKey.
         * @brief Runs local database query to get list of document keys. True on success, False otherwise. Thread Safe.
