@@ -3,6 +3,7 @@
 
 #include <thread>
 #include <numeric>
+#include <fstream>
 
 #include <rapidjson/writer.h>
 #include <rapidjson/stringbuffer.h>
@@ -392,37 +393,42 @@ bool Flasher::flash(const bool forceStartApplication)
     }
 
     // Open firmware file as read, binary only
-    FILE *firmwareFile = fopen(firmwareFilename_.c_str(), "rb");
-    if (firmwareFile == nullptr)
+    std::ifstream firmwareFile(firmwareFilename_, std::ifstream::binary);
+    if (!firmwareFile)
     {
         std::cout << "Could not open firmware file " << firmwareFilename_ << std::endl;
         return false;
     }
 
     // Send firmware data
+    int32_t flashChunkDataSize = static_cast<int32_t>(Chunk::SIZE::DEFAULT);
     flashChunk_.number = 0;
-    flashChunk_.data.resize(static_cast<int32_t>(Chunk::SIZE::DEFAULT));
+    flashChunk_.data.resize(static_cast<uint32_t>(flashChunkDataSize));
 
-    while (firmwareSize > 0)
+    do
     {
         flashChunk_.number++;
-        if (firmwareSize < static_cast<int32_t>(Chunk::SIZE::DEFAULT))
+        if (firmwareSize < flashChunkDataSize)
         {
+            flashChunkDataSize = firmwareSize;
             flashChunk_.number = 0;    // the last chunk
         }
 
-        flashChunk_.data.resize(fread(flashChunk_.data.data(), 1, static_cast<int32_t>(Chunk::SIZE::DEFAULT), firmwareFile));
+        if (!firmwareFile.read((char*)flashChunk_.data.data(), flashChunkDataSize))
+        {
+            std::cout << "Could not read from firmware file : " << firmwareFilename_ << std::endl;
+            return false;
+        }
 
+        flashChunk_.data.resize(static_cast<unsigned long>(firmwareFile.gcount()));
         firmwareSize -= flashChunk_.data.size();
 
         if (false == processCommandFlashFirmware())
         {
-            fclose(firmwareFile);
             return false;
         }
     }
-
-    fclose(firmwareFile);
+    while (firmwareSize > 0);
 
     return backup() && verify() && (forceStartApplication ? startApplication() : true);
 }
@@ -430,10 +436,10 @@ bool Flasher::flash(const bool forceStartApplication)
 
 bool Flasher::backup()
 {
-    const std::string& backupFilename(firmwareFilename_ + ".bak");
+    const std::string backupFilename(firmwareFilename_ + ".bak");
+    std::ofstream backupFile(backupFilename, std::ifstream::binary);
 
-    FILE *backupFile = fopen(backupFilename.c_str(), "wb");
-    if (backupFile == nullptr)
+    if (!backupFile)
     {
         std::cout << "Could not open backup file : " << backupFilename << std::endl;
         return false;
@@ -446,11 +452,10 @@ bool Flasher::backup()
     {
         if (false == processCommandBackupFirmware())
         {
-            fclose(backupFile);
             return false;
         }
 
-        if (backupChunk_.data.size() != fwrite(backupChunk_.data.data(), 1, backupChunk_.data.size(), backupFile))
+        if (!backupFile.write((const char*)backupChunk_.data.data(), static_cast<long>(backupChunk_.data.size())))
         {
             std::cout << "Could not write to backup file : " << backupFilename << std::endl;
             return false;
@@ -458,7 +463,6 @@ bool Flasher::backup()
     }
     while (0 != backupChunk_.number);     // the last chunk
 
-    fclose(backupFile);
     return true;
 
 }
@@ -650,40 +654,40 @@ bool Flasher::processCommandBackupFirmware()
 }
 
 
-int32_t Flasher::getFileChecksum(const std::string &filname)
+int32_t Flasher::getFileChecksum(const std::string &fileName)
 {
-    FILE * file = fopen ( filname.c_str() , "rb" );
+    std::ifstream file(fileName, std::ifstream::binary);
 
-    if (file == nullptr) {
-        std::cout << "Could not open file " << filname << " to calculate the checksum."<< std::endl;
+    if (!file) {
+        std::cout << "Could not open file " << fileName << " to calculate the checksum."<< std::endl;
         return -1;
     }
 
     int32_t sum = 0;
-    for (int32_t c = 0; c != EOF; c = getc (file))
+    int8_t c = 0;
+
+    while (file >> c)
     {
         sum += c;
     }
-
-    fclose (file);
 
     return sum;
 }
 
 int32_t Flasher::getFileSize(const std::string &fileName)
 {
-    FILE *file = fopen(fileName.c_str(), "rb");
-    if (file == nullptr)
+    std::ifstream file(fileName, std::ifstream::binary);
+
+    if (!file)
     {
         std::cout << "Could not open firmware file " << fileName << std::endl;
         return -1;
     }
 
     //Calculate file size
-    fseek(file, 0, SEEK_END);
-    int32_t firmwareSize = static_cast<int32_t>(ftell(file));
-    fseek(file, 0, SEEK_SET);
+    file.seekg(0, file.end);
+    int32_t firmwareSize = static_cast<int32_t>(file.tellg());
+    file.seekg(0, file.beg);
 
-    fclose(file);
     return firmwareSize;
 }

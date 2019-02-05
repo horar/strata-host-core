@@ -109,7 +109,7 @@ private:
 
     bool verify() const;
 
-    static int32_t getFileChecksum(const std::string &filname);
+    static int32_t getFileChecksum(const std::string &fileName);
     static int32_t getFileSize(const std::string &fileName);
 
     static rapidjson::SchemaDocument createJsonSchema(const std::string& schema);
