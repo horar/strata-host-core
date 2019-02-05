@@ -17,42 +17,31 @@
 
 #include <string>
 #include <iostream>
-#include <unistd.h>
-#include <thread>// std::this_thread::sleep_for
 
 #include <Connector.h>
 #include <Flasher.h>
 
-using namespace std;
 
-#define MANUAL_OPEN_PORT 0
 int main(int argc, char *argv[])
 {
-	if(argc < 2){
-		cout << "Usage: ./flasher <path_to_firmware.bin>" << endl;
+    if (argc < 2)
+    {
+        std::cout << "Usage: ./flasher <path_to_firmware.bin>" << std::endl;
 		return 1;
 	}
 
-	char *firmware_file_path = argv[1];
+    const char* firmware_file_path = argv[1];
 
-#if MANUAL_OPEN_PORT
-	Connector* serialConnector = ConnectorFactory::getConnector("platform");
-	if(!serialConnector->open("/dev/cu.usbserial-DB00VFH8")) {
-		return 0;
-	}
-	Flasher flasher(serialConnector);
-#else
-	Flasher flasher;
-#endif
+    std::unique_ptr<Connector> connector(ConnectorFactory::getConnector("platform"));
 
-	cout << "START: flash" <<endl;
-	int res = flasher.flash(firmware_file_path);
-	cout << "Flasher Return Status:" << ( res ? "true": "false" ) << endl;
- 	cout << "END: flash" <<endl;
+    Flasher flasher(connector.get(), firmware_file_path);
 
-#if MANUAL_OPEN_PORT
-	delete serialConnector;
-#endif
+    std::cout << "START: flash" << std::endl;
 
-	return 0;
+    bool result = flasher.initializeBootloader() && flasher.flash(true);
+
+    std::cout << "Flash: Return Status:   " << ( result ? "OK": "Failed" ) << std::endl;
+    std::cout << "END: flash" << std::endl;
+
+    return ( result ? 0 : 1 );
 }

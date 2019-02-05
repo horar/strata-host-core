@@ -1,15 +1,15 @@
 [submodule "cloud/couchbase-lite-core"]
 	path = cloud/couchbase-lite-core
 	url = https://github.com/couchbase/couchbase-lite-core.git
+[submodule "platform/mbed-os/sources/mbed-os"]
+	path = platform/mbed-os/sources/mbed-os
+	url = https://github.com/ARMmbed/mbed-os
 [submodule "shared/rapidjson"]
 	path = shared/rapidjson
 	url = https://github.com/Tencent/rapidjson.git
 [submodule "shared/cpp-base64"]
 	path = shared/cpp-base64
 	url = https://github.com/ReneNyffenegger/cpp-base64.git
-[submodule "platform/mbed-os/sources/mbed-os"]
-	path = platform/mbed-os/sources/mbed-os
-	url = https://github.com/ARMmbed/mbed-os
 [submodule "host/libs/couchbaselite/couchbase-lite-core"]
 	path = host/libs/couchbaselite/couchbase-lite-core
 	url = https://github.com/couchbase/couchbase-lite-core.git
