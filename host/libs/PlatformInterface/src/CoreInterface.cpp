@@ -7,7 +7,7 @@
 //
 //
 
-#include <PlatformInterface/core/CoreInterface.h>
+#include "core/CoreInterface.h"
 
 using namespace std;
 using namespace Spyglass;
@@ -331,10 +331,13 @@ void CoreInterface::remoteSetupHandler(QJsonObject payload)
 // TOOD connect is a better name
 void CoreInterface::sendSelectedPlatform(QString verbose, QString connection_status)
 {
+    QJsonObject cmdPayloadObject;
+    cmdPayloadObject.insert("platform_uuid",verbose);
+    cmdPayloadObject.insert("remote",connection_status);
+
     QJsonObject cmdMessageObject;
     cmdMessageObject.insert("cmd", "platform_select");
-    cmdMessageObject.insert("platform_uuid",verbose);
-    cmdMessageObject.insert("remote",connection_status);
+    cmdMessageObject.insert("payload", cmdPayloadObject);
 
     QJsonDocument doc(cmdMessageObject);
     QString strJson(doc.toJson(QJsonDocument::Compact));
@@ -355,8 +358,14 @@ void CoreInterface::sendCommand(QString cmd)
 //
 void CoreInterface::registerClient()
 {
-    std::string cmd= "{\"cmd\":\"register_client\"}";
-    hcc->sendCmd(cmd);
+    QJsonObject cmdMessageObject;
+    cmdMessageObject.insert("cmd", "register_client");
+    cmdMessageObject.insert("payload", QJsonObject());
+
+    QJsonDocument doc(cmdMessageObject);
+    QString strJson(doc.toJson(QJsonDocument::Compact));
+    //qDebug()<<"parse to send"<<strJson;
+    hcc->sendCmd(strJson.toStdString());
 }
 
 // @f unregisterClient
@@ -364,8 +373,14 @@ void CoreInterface::registerClient()
 //
 void CoreInterface::unregisterClient()
 {
-    std::string cmd= "{\"cmd\":\"unregister\"}";
-    hcc->sendCmd(cmd);
+    QJsonObject cmdMessageObject;
+    cmdMessageObject.insert("cmd", "unregister");
+    cmdMessageObject.insert("payload", QJsonObject());
+
+    QJsonDocument doc(cmdMessageObject);
+    QString strJson(doc.toJson(QJsonDocument::Compact));
+    //qDebug()<<"parse to send"<<strJson;
+    hcc->sendCmd(strJson.toStdString());
 }
 
 // @f cloudNotificationHandler

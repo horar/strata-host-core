@@ -374,7 +374,7 @@ Item {
 
                 SGSegmentedButton{
                     id: cableCompensationSetting2
-                    text: qsTr("100 mv/A")
+                    text: qsTr("100 mV/A")
                     checkable: true
 
                     onClicked:{
@@ -386,7 +386,7 @@ Item {
 
                 SGSegmentedButton{
                     id:cableCompensationSetting3
-                    text: qsTr("200 mv/A")
+                    text: qsTr("200 mV/A")
                     checkable: true
 
                     onClicked:{

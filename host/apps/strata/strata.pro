@@ -47,11 +47,12 @@ unix : !macx : !win32 {
     message("Building on Linux")
     LIBS += -L$${HOST_ROOT}/ext_libs/libzmq/lib/linux/ -lzmq
     LIBS += -L$${HOST_ROOT}/build/libs/HostControllerClient/ -lHostControllerClient
+    LIBS += -L$${HOST_ROOT}/build/libs/PlatformInterface/ -lPlatformInterface
     DEPENDPATH += $${HOST_ROOT}/ext_libs/libzmq/include
     INCLUDEPATH += $${HOST_ROOT}/libs/HostControllerClient/include/
     INCLUDEPATH += $${HOST_ROOT}/ext_libs/zmq/include
     INCLUDEPATH += $${HOST_ROOT}/ext_libs/libzmq/include
-    INCLUDEPATH += $$PWD/PlatformInterface
+    INCLUDEPATH += $${HOST_ROOT}/libs/PlatformInterface/include/
 }
 
 # macOS (not iOS)
@@ -59,12 +60,13 @@ else : macx : !win32 {
     message("Building on macOS")
     LIBS += -L$${HOST_ROOT}/ext_libs/libzmq/lib/mac/ -lzmq
     LIBS += -L$${HOST_ROOT}/build/libs/HostControllerClient/ -lHostControllerClient
+    LIBS += -L$${HOST_ROOT}/build/libs/PlatformInterface/ -lPlatformInterface
     DEPENDPATH += $${HOST_ROOT}/ext_libs/libzmq/include
     INCLUDEPATH += $${HOST_ROOT}/include/macos/libzmq
     INCLUDEPATH += $${HOST_ROOT}/libs/HostControllerClient/include/
     INCLUDEPATH += $${HOST_ROOT}/ext_libs/zmq/include
     INCLUDEPATH += $${HOST_ROOT}/ext_libs/libzmq/include
-    INCLUDEPATH += $$PWD/PlatformInterface
+    INCLUDEPATH += $${HOST_ROOT}/libs/PlatformInterface/include/
     INCLUDEPATH += $$PWD/source
 
 }
@@ -79,7 +81,7 @@ else : win32 {
     INCLUDEPATH += $${HOST_ROOT}/libs/HostControllerClient/include/
     INCLUDEPATH += $${HOST_ROOT}/ext_libs/zmq/include
     INCLUDEPATH += $${HOST_ROOT}/ext_libs/libzmq/include
-    INCLUDEPATH += $$PWD/PlatformInterface/
+    INCLUDEPATH += $${HOST_ROOT}/libs/PlatformInterface/include/
     INCLUDEPATH += $$PWD/source
     DEPENDPATH += $${HOST_ROOT}/lib/linux/include
 }
@@ -92,15 +94,15 @@ message(Include Path: $$INCLUDEPATH);
 message(Depend Path: $$DEPENDPATH);
 message("DONE");
 
-HEADERS += PlatformInterface/core/CoreInterface.h \
+HEADERS += \
     source/DocumentManager.h \
     $${HOST_ROOT}/libs/HostControllerClient/include/HostControllerClient.hpp \
+    $${HOST_ROOT}/libs/PlatformInterface/include/PlatformInterface/core/PlatformInterface.h \
     $${HOST_ROOT}/ext_libs/zmq/include/zhelpers.hpp \
     $${HOST_ROOT}/ext_libs/zmq/include/zmq.hpp \
     $${HOST_ROOT}/ext_libs/zmq/include/zmq_addon.hpp
 
 SOURCES += main.cpp \
-    PlatformInterface/core/CoreInterface.cpp \
     source/DocumentManager.cpp
 
 RESOURCES += qml.qrc \
