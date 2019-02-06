@@ -19,47 +19,122 @@
 #define Flasher_H_
 
 #include <string>
-#include "Connector.h"
-#include "bootloader_protocol.h"
+#include <vector>
+
+#include <rapidjson/schema.h>
+#include <rapidjson/document.h>
 
 
+class Connector;
 
-// #define FLASH_DEBUG
-#define POOLING_COUNTER_LIMIT                   100
-#define SERIAL_CHUNK_LIMIT_SIZE                 64
-#define BINARY_TEMP_OUTPUT_FILENAME             "output.bin"
-class Flasher{
 
+class Flasher
+{
 public:
-  Flasher();
-  Flasher(Connector* s);
-  ~Flasher();
 
-  int flash(const std::string &input_firmware);
-  unsigned int rollback(unsigned int);
-  int writeFirmwareInfoBlock(unsigned int firmware_size, unsigned int checksum, unsigned int status);
+    Flasher();
+
+    /*!
+     * Ctor
+     * \param connector - serial connector
+     * \param firmwareFilename - filename of new image to flash
+     */
+    Flasher(Connector* connector, const std::string& firmwareFilename);
+    virtual ~Flasher();
+
+
+    Flasher(const Flasher&) = delete;
+    Flasher& operator=(const Flasher&) = delete;
+
+    /*!
+     * The method sets serial connector.
+     */
+    void setConnector(Connector* connector);
+
+    /*!
+     * The method sets filename of new image to flash.
+     */
+    void setFirmwareFilename(const std::string& firmwareFilename);
+
+    /*!
+     * The method checks whether bootloader is ready or tries to initialize it.
+     */
+    bool initializeBootloader() const;
+
+    /*!
+     * The method flashes an image from the file firmwareFilename over connector, downloads the currently flashed image,
+     * compare orig. image with downloaded image and start the image/application if it is requested.
+     */
+    bool flash(const bool forceStartApplication);
+
+    /*!
+     * The method downloads an current image from a device fo file firmwareFilename.rb
+     */
+    bool backup();
+
+    /*!
+     * The method start an image/application if it is valid.
+     */
+    bool startApplication();
 
 private:
-  char recieved_buffer_[ BUFFER_SIZE ];
 
-  uint32_t rawBytesChecksum(unsigned char *buffer, size_t length);
-  uint32_t getFileChecksum(const std::string &filname);
-  uint32_t isChecksumMatch(const std::string &filname_one, const std::string &filname_two);
+    /*! Flasher isPlatfromConnected.
+    * \brief Wait for a platfrom to be connected and send firmware_update command to the platfrom's firmware.
+    * \return true on success, false otherwise.
+    */
+    bool isPlatfromConnected() const;
 
-  bool isPlatfromConnected();
+    bool processCommandFlashFirmware();
+    bool processCommandBackupFirmware();
+    bool processCommandStartApplication();
 
-  // Serial API
-  bool write(const std::string& );
-  int read();
+    const static int32_t RESPONSE_STATUS_MAX_ERRORS = 10;
 
-  Connector *serial_;
+    enum class RESPONSE_STATUS
+    {
+        NONE,
+        NEXT_CHUNK,
+        RESEND_CHUNK
+    };
 
-  // Hold status if serial was initialized in the flasher
-  bool can_deallocate_serial_;
+    bool writeCommandFlash();
+    bool writeCommandBackup(Flasher::RESPONSE_STATUS status);
+    bool writeCommandStartApplication();
+    bool writeCommandReadFib();
 
-  Flasher(const Flasher&)=delete;
-  Flasher& operator=(const Flasher&)=delete;
+    bool readAck(const std::string& ackName);
+    bool readNotify(const std::string& notificationName);
+    bool readNotifyBackup(const std::string& notificationName);
 
+    bool verify() const;
+
+    static int32_t getFileChecksum(const std::string &fileName);
+    static int32_t getFileSize(const std::string &fileName);
+
+    static rapidjson::SchemaDocument createJsonSchema(const std::string& schema);
+    static bool validateJsonMessage(const std::string& message, const rapidjson::SchemaDocument& schemaDocument, rapidjson::Document& document);
+
+    static rapidjson::SchemaDocument ackJsonSchema;
+    static rapidjson::SchemaDocument notifyJsonSchema;
+    static rapidjson::SchemaDocument notifyBackupJsonSchema;
+
+    struct Chunk
+    {
+        int32_t number;
+
+        enum class SIZE : uint32_t
+        {
+            DEFAULT = 256
+        };
+        std::vector<uint8_t> data;
+    };
+
+    Chunk flashChunk_;
+    Chunk backupChunk_;
+
+    Connector* serial_;
+    std::string firmwareFilename_;
 };
 
 #endif

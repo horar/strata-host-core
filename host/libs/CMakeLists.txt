@@ -1,4 +1,6 @@
+add_subdirectory(base64)
 add_subdirectory(connector)
 add_subdirectory(flasher)
 add_subdirectory(HostControllerClient)
 add_subdirectory(PlatformInterface)
+add_subdirectory(couchbaselite)
