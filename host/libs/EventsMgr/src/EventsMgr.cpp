@@ -103,15 +103,22 @@ void EvEvent::deactivate()
     active_ = false;
 }
 
-void EvEvent::fire()
+void EvEvent::fire(int ev_flags)
 {
     if (!event_ || !active_)
         return;
 
-    event_active(event_, EV_TIMEOUT, 0);
+    if (type_ == eEvTypeTimer) {
+        event_active(event_, EV_TIMEOUT, 0);
+    }
+    else if (type_ == eEvTypeHandle) {
+
+        short flags = ((ev_flags & eEvStateRead) ? EV_READ : 0) | ((ev_flags & eEvStateWrite) ? EV_WRITE : 0);
+        event_active(event_, flags, 0);
+    }
 }
 
-struct timeval EvEvent::tvMsecs(int msecs)
+struct timeval EvEvent::tvMsecs(unsigned int msecs)
 {
     timeval t;
     t.tv_sec = msecs / 1000;

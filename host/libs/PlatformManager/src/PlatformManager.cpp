@@ -87,6 +87,7 @@ void PlatformManager::computeListDiff(const std::vector<serialPortHash>& list,
     std::sort(curr.begin(), curr.end());
     std::sort(last.begin(), last.end());
 
+    //create differences of the lists.. what is added / removed
     std::set_difference(curr.begin(), curr.end(),
                         last.begin(), last.end(),
                         std::inserter(added_ports, added_ports.begin()));
@@ -159,16 +160,13 @@ void PlatformManager::onAddedPort(serialPortHash hash)
 
 void PlatformManager::notiftyConnectionReadable(PlatformConnection* conn)
 {
-    //Debug stuff
-#if 0
+#if !defined(NDEBUG)      //Debug stuff
     bool found = false;
     for(auto it = openedPorts_.begin(); it != openedPorts_.end(); ++it) {
         if (it->second == conn)
             found = true;
     }
-
-    if (!found) //Temporary...
-        return;
+    assert(found);
 #endif
 
     if (plat_handler_) {

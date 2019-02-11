@@ -38,16 +38,45 @@ public:
     EvEvent(EventType type, int fileHandle, int timeInMs);
     ~EvEvent();
 
+    /**
+     * Sets the event type
+     * @param type type of the event (Timer and Handle is now supported)
+     * @param fileHandle filehandle or -1 for undefined
+     * @param timeInMs timeout for event or 0 for undefined
+     */
     void set(EventType type, int fileHandle, int timeInMs);
 
+    /**
+     * Sets callback function for this event
+     * @param callback function to call
+     */
     void setCallback(std::function<void(EvEvent*, int)> callback);
 
+    /**
+     * Activates the event in EvEventMgr
+     * @param mgr event manager to attach
+     * @param ev_flags flags see enum EventState
+     * @return
+     */
     bool activate(EvEventsMgr* mgr, int ev_flags = 0);
+
+    /**
+     * Deactivates event
+     */
     void deactivate();
 
-    void fire();
+    /**
+     * Fires the event
+     * @param ev_flags flags see enum EventState
+     */
+    void fire(int ev_flags = 0);
 
-    static struct timeval tvMsecs(int msecs);
+    /**
+     * Static method to convert time in miliseconds into 'struct timeval'
+     * @param msecs time in miliseconds
+     * @return converted time
+     */
+    static struct timeval tvMsecs(unsigned int msecs);
 
 protected:
 
@@ -77,6 +106,10 @@ public:
     EvEvent* CreateEventHandle(int fd);
     EvEvent* CreateEventTimer(int timeInMs);
 
+    /**
+     * starts dispatch loop with given flags
+     * @param flags
+     */
     void dispatch(int flags = 0);
 
     void startInThread();
