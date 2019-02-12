@@ -3,6 +3,7 @@
 #define PLATFORM_SERIALPORT_H
 
 #include <string>
+#include <vector>
 
 struct sp_port;
 struct sp_event_set;
