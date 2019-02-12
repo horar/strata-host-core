@@ -2,6 +2,7 @@
 #define PROJECT_CONNECTION_H
 
 #include <string>
+#include <mutex>
 
 class EvEvent;
 class EvEventsMgr;
@@ -67,7 +68,10 @@ private:
 
     void onDescriptorEvent(EvEvent*, int flags);
 
-    void updateEvent(bool read, bool write);
+    bool updateEvent(bool read, bool write);
+
+    bool isWriteBufferEmpty() const;
+
 
 private:
     PlatformManager* parent_;
@@ -81,6 +85,9 @@ private:
 
     int readOffset_ = 0;
     int writeOffset_ = 0;
+
+    std::mutex readLock_;
+    std::mutex writeLock_;
 
 };
 

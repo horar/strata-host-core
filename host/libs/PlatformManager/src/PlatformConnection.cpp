@@ -4,8 +4,8 @@
 #include "EventsMgr.h"
 #include "PlatformManager.h"
 
-static const size_t g_readBufferSize = 1024;
-static const size_t g_writeBufferSize = 1024;
+static const size_t g_readBufferSize = 4096;
+static const size_t g_writeBufferSize = 4096;
 
 static const int g_readTimeout = 200;
 static const int g_writeTimeout = 200;
@@ -51,6 +51,8 @@ void PlatformConnection::close()
 bool PlatformConnection::getMessage(std::string& result)
 {
     assert(readBuffer_.size() >= readOffset_);
+
+    std::lock_guard<std::mutex> lock(readLock_);
     if (readBuffer_.size() == readOffset_) {
         readBuffer_.clear();
         readOffset_ = 0;
@@ -95,8 +97,22 @@ void PlatformConnection::onDescriptorEvent(EvEvent*, int flags)
         }
     }
     if (flags & EvEvent::eEvStateWrite) {
-        //TODO:...
 
+        int ret = handleWrite();
+        if (ret < 0) {
+            //TODO: handle error...
+
+        }
+
+        bool isEmpty;
+        {
+            std::lock_guard<std::mutex> lock(writeLock_);
+            isEmpty = isWriteBufferEmpty();
+        }
+
+        if (isEmpty) {
+            updateEvent(true, false);
+        }
     }
 }
 
@@ -108,23 +124,22 @@ int PlatformConnection::handleRead()
         return ret;
     }
 
+    //TODO: checking if we need allocate more space..
+
+    std::lock_guard<std::mutex> lock(readLock_);
     readBuffer_.append(reinterpret_cast<char*>(read_data), static_cast<size_t>(ret));
     return ret;
 }
 
-void PlatformConnection::addMessage(const std::string& message)
-{
-    writeBuffer_.append(message);
-    writeBuffer_.append("\n");
-
-    //TODO: set write to be called from dispatcher...
-    handleWrite();
-}
-
 int PlatformConnection::handleWrite()
 {
-    const unsigned char* data = reinterpret_cast<const unsigned char*>(writeBuffer_.data()) + writeOffset_;
+    std::lock_guard<std::mutex> lock(writeLock_);
+    if (isWriteBufferEmpty()) {
+        return 0;
+    }
+
     size_t length = writeBuffer_.size() - writeOffset_;
+    const unsigned char* data = reinterpret_cast<const unsigned char*>(writeBuffer_.data()) + writeOffset_;
 
     int ret = port_->write(const_cast<unsigned char*>(data), length, g_writeTimeout);
     if (ret < 0) {
@@ -135,8 +150,26 @@ int PlatformConnection::handleWrite()
     return ret;
 }
 
+void PlatformConnection::addMessage(const std::string& message)
+{
+    bool isWrite = event_->isActive(EvEvent::eEvStateWrite);
+
+    //TODO: checking for too big messages...
+
+    {
+        std::lock_guard<std::mutex> lock(writeLock_);
+        writeBuffer_.append(message);
+        writeBuffer_.append("\n");
+    }
+
+    if (!isWrite) {
+        updateEvent(true, true);
+    }
+}
+
 bool PlatformConnection::isReadable()
 {
+    std::lock_guard<std::mutex> lock(readLock_);
     if (readBuffer_.size() <= readOffset_)
         return false;
 
@@ -174,17 +207,19 @@ void PlatformConnection::detachEventMgr()
     }
 }
 
-void PlatformConnection::updateEvent(bool read, bool write)
+bool PlatformConnection::isWriteBufferEmpty() const
+{
+    return (writeBuffer_.size() - writeOffset_) == 0;
+}
+
+bool PlatformConnection::updateEvent(bool read, bool write)
 {
     if (!event_) {
-        return;
-
+        return false;
     }
 
     int evFlags = (read ? EvEvent::eEvStateRead : 0) | (write ? EvEvent::eEvStateWrite : 0);
-
-    event_->deactivate();
-    event_->activate(event_mgr_, evFlags);
+    return event_->activate(event_mgr_, evFlags);
 }
 
 
