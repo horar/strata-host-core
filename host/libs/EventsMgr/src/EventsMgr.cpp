@@ -9,7 +9,7 @@
 #include <assert.h>
 #include <iostream>
 
-void evEventsCallback(evutil_socket_t fd, short what, void* arg)
+void evEventsCallback(evutil_socket_t /*fd*/, short what, void* arg)
 {
     assert(arg);
     EvEvent* ev = static_cast<EvEvent*>(arg);
@@ -28,30 +28,24 @@ void evEventsCallback(evutil_socket_t fd, short what, void* arg)
 /////////////////////////////////////////////////////////////////////////////////
 
 EvEvent::EvEvent()
-    : type_(eEvTypeUnknown)
-    , fileHandle_(-1)
-    , timeInMs_(0)
-    , event_(nullptr)
 {
 }
 
-EvEvent::EvEvent(EventType type, int fileHandle, int timeInMs)
-    : type_(type)
-    , fileHandle_(fileHandle)
-    , timeInMs_(timeInMs)
-    , event_(nullptr)
+EvEvent::EvEvent(EvType type, ev_handle_t fileHandle, int timeInMs) : EvEvent()
 {
+    set(type, fileHandle, timeInMs);
 }
 
 EvEvent::~EvEvent()
 {
     if (event_) {
+        deactivate();
 
         event_free(event_);
     }
 }
 
-void EvEvent::set(EventType type, int fileHandle, int timeInMs)
+void EvEvent::set(EvType type, ev_handle_t fileHandle, int timeInMs)
 {
     type_ = type;
     fileHandle_ = fileHandle;
@@ -65,13 +59,13 @@ void EvEvent::setCallback(std::function<void(EvEvent*, int)> callback)
 
 bool EvEvent::activate(EvEventsMgr* mgr, int ev_flags)
 {
+    std::lock_guard<std::mutex> lock(lock_);
     if (event_ != nullptr) {
         deactivate();
 
         event_free(event_);
     }
 
-    int ret;
     if (type_ == eEvTypeTimer) {
         event_ = event_new(mgr->base(), -1, EV_TIMEOUT | EV_PERSIST, evEventsCallback, static_cast<void*>(this) );
 
@@ -101,6 +95,12 @@ void EvEvent::deactivate()
 
     event_del(event_);
     active_ = false;
+}
+
+bool EvEvent::isActive(int ev_flags)
+{
+    short flags = ((ev_flags & eEvStateRead) ? EV_READ : 0) | ((ev_flags & eEvStateWrite) ? EV_WRITE : 0);
+    return event_pending(event_, flags, nullptr) != 0;
 }
 
 void EvEvent::fire(int ev_flags)
@@ -166,7 +166,7 @@ EvEventsMgr::~EvEventsMgr()
     }
 }
 
-EvEvent* EvEventsMgr::CreateEventHandle(int fd)
+EvEvent* EvEventsMgr::CreateEventHandle(ev_handle_t fd)
 {
     return new EvEvent(EvEvent::eEvTypeHandle, fd, 0);
 }

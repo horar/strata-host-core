@@ -10,10 +10,16 @@ struct event;
 class EvEventsMgr;
 
 //a copy from libevent2
-#ifdef _WIN32
+#if defined(_WIN32)
 #define evutil_socket_t intptr_t
 #else
 #define evutil_socket_t int
+#endif
+
+#ifdef _WIN32
+typedef intptr_t ev_handle_t;
+#else
+typedef int      ev_handle_t;
 #endif
 
 //////////////////////////////////////////////////////////////////
@@ -21,21 +27,28 @@ class EvEventsMgr;
 class EvEvent
 {
 public:
-    enum EventType {
+    enum EvType {
         eEvTypeUnknown = 0,
         eEvTypeTimer,
         eEvTypeHandle,
         eEvTypeSignal       //Linux or Mac only
     };
 
-    enum EventState {
+    enum EvTypeFlags {   //flags for event type occured
         eEvStateRead  = 1,
         eEvStateWrite = 2,
         eEvStateTimeout = 4,
     };
 
     EvEvent();
-    EvEvent(EventType type, int fileHandle, int timeInMs);
+
+    /**
+     * Constructor
+     * @param type type of event
+     * @param fileHandle file handle or -1 for undefined
+     * @param timeInMs timeout or 0 for undefined
+     */
+    EvEvent(EvType type, ev_handle_t fileHandle, int timeInMs);
     ~EvEvent();
 
     /**
@@ -44,7 +57,7 @@ public:
      * @param fileHandle filehandle or -1 for undefined
      * @param timeInMs timeout for event or 0 for undefined
      */
-    void set(EventType type, int fileHandle, int timeInMs);
+    void set(EvType type, ev_handle_t fileHandle, int timeInMs);
 
     /**
      * Sets callback function for this event
@@ -55,19 +68,22 @@ public:
     /**
      * Activates the event in EvEventMgr
      * @param mgr event manager to attach
-     * @param ev_flags flags see enum EventState
+     * @param ev_flags flags see enum EvTypeFlags
      * @return
      */
     bool activate(EvEventsMgr* mgr, int ev_flags = 0);
 
     /**
-     * Deactivates event
+     * Deactivates event, removes from event_loop
      */
     void deactivate();
 
+
+    bool isActive(int ev_flags);
+
     /**
      * Fires the event
-     * @param ev_flags flags see enum EventState
+     * @param ev_flags flags see enum EvTypeFlags
      */
     void fire(int ev_flags = 0);
 
@@ -83,14 +99,15 @@ protected:
     void event_notification(int flags);
 
 private:
-    EventType type_;
-    int timeInMs_;
-    int fileHandle_;
-    bool active_ = false;
+    EvType type_ = eEvTypeUnknown;
+    int timeInMs_ = 0;
+    ev_handle_t fileHandle_ = (ev_handle_t)-1;
+
+    struct event* event_ = nullptr;
 
     std::function<void(EvEvent*, int)> callback_;
-
-    struct event* event_;
+    bool active_ = false;       //status if event is in some event_base queue
+    std::mutex lock_;
 
     friend void evEventsCallback(evutil_socket_t fd, short what, void* arg);
 };
@@ -103,11 +120,22 @@ public:
     EvEventsMgr();
     ~EvEventsMgr();
 
-    EvEvent* CreateEventHandle(int fd);
+    /**
+     * Creates event for a filehandle
+     * @param fd file handle
+     * @return returns new event
+     */
+    EvEvent* CreateEventHandle(ev_handle_t fd);
+
+    /**
+     * Creates event for a timeout
+     * @param timeInMs timeour in miliseconds
+     * @return returns new event
+     */
     EvEvent* CreateEventTimer(int timeInMs);
 
     /**
-     * starts dispatch loop with given flags
+     * Starts dispatch loop with given flags
      * @param flags
      */
     void dispatch(int flags = 0);
