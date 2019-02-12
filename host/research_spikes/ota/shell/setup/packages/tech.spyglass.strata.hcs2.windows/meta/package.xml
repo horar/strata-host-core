@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package>
+    <DisplayName>Host Controller Service (win)</DisplayName>
+    <Description>Install this example.</Description>
+    <Version>0.0.0-8</Version>
+    <ReleaseDate>2019-01-21</ReleaseDate>
+    <Licenses>
+        <License name="Beer Public License Agreement" file="license.txt" />
+    </Licenses>
+    <!--<Default>script</Default>-->
+    <!--<Script>installscript.qs</Script>-->
+    <UserInterfaces>
+        <UserInterface>page.ui</UserInterface>
+    </UserInterfaces>
+    <SortingPriority>100</SortingPriority>
+</Package>
