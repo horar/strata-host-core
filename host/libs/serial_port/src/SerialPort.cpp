@@ -102,16 +102,22 @@ bool SerialPort::flush()
     return (sp_flush(portHandle_, SP_BUF_BOTH) == SP_OK) ? true : false;
 }
 
-int SerialPort::getFileDescriptor()
+sp_handle_t SerialPort::getFileDescriptor()
 {
     if (!portHandle_) {
         return -1;
     }
 
+#if defined(_WIN32)
+    HANDLE fd;
+#else
     int fd;
-    sp_get_port_handle(portHandle_,&fd);
+#endif
 
-    return fd;
+    if (sp_get_port_handle(portHandle_, &fd) != SP_OK) {
+        return static_cast<sp_handle_t>(-1);
+    }
+    return static_cast<sp_handle_t>(fd);
 }
 
 const char* SerialPort::getName() const

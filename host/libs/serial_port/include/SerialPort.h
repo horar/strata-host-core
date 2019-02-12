@@ -7,6 +7,12 @@
 struct sp_port;
 struct sp_event_set;
 
+#ifdef _WIN32
+typedef intptr_t sp_handle_t;
+#else
+typedef int      sp_handle_t;
+#endif
+
 class SerialPort
 {
 public:
@@ -54,7 +60,7 @@ public:
      * Returns file descriptor
      * @return returns file descriptor or -1 if the port is not open
      */
-    int getFileDescriptor();
+    sp_handle_t getFileDescriptor();
 
     /**
      * returns name of the serial port (device)
