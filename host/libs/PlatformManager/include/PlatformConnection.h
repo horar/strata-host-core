@@ -5,92 +5,97 @@
 #include <mutex>
 #include <memory>
 
-class EvEvent;
-class EvEventsMgr;
-class PlatformManager;
 class serial_port;
 
-class PlatformConnection
-{
-public:
-    PlatformConnection(PlatformManager* parent);
-    ~PlatformConnection();
+namespace spyglass {
 
-    /**
-     * Opens connection on serial port specified by name
-     * @param port_name - name of the serial port (device)
-     * @return returns true when success otherwise false
-     */
-    bool open(const std::string& portName);
+    class EvEvent;
+    class EvEventsMgr;
+    class PlatformManager;
 
-    /**
-     * Closes opened connection
-     */
-    void close();
+    class PlatformConnection {
+    public:
+        PlatformConnection(PlatformManager *parent);
 
-    /**
-     * Returns single platform message when available
-     * @param result platform message
-     * @return returns true when message present, otherwise false
-     */
-    bool getMessage(std::string& result);
+        ~PlatformConnection();
 
-    /**
-     * Sends message over connection
-     * @param message message to send
-     */
-    void addMessage(const std::string& message);
+        /**
+         * Opens connection on serial port specified by name
+         * @param port_name - name of the serial port (device)
+         * @return returns true when success otherwise false
+         */
+        bool open(const std::string &portName);
 
-    /**
-     * @return returns name of the connection
-     */
-    std::string getName() const;
+        /**
+         * Closes opened connection
+         */
+        void close();
 
-    /**
-     * @return Checks if there is a message available
-     */
-    bool isReadable();
+        /**
+         * Returns single platform message when available
+         * @param result platform message
+         * @return returns true when message present, otherwise false
+         */
+        bool getMessage(std::string &result);
 
-    /**
-     * Attaches EvEventsMgr to the connection to handle read/write notifications
-     *  it is method for PlatformManager
-     * @param ev_manager manager to attach
-     */
-    void attachEventMgr(EvEventsMgr* ev_manager);
+        /**
+         * Sends message over connection
+         * @param message message to send
+         */
+        void addMessage(const std::string &message);
 
-    /**
-     * Detaches EvEventsMgr from connection
-     */
-    void detachEventMgr();
+        /**
+         * @return returns name of the connection
+         */
+        std::string getName() const;
 
-private:
-    int handleRead();
-    int handleWrite();
+        /**
+         * @return Checks if there is a message available
+         */
+        bool isReadable();
 
-    void onDescriptorEvent(EvEvent*, int flags);
+        /**
+         * Attaches EvEventsMgr to the connection to handle read/write notifications
+         *  it is method for PlatformManager
+         * @param ev_manager manager to attach
+         */
+        void attachEventMgr(EvEventsMgr *ev_manager);
 
-    bool updateEvent(bool read, bool write);
+        /**
+         * Detaches EvEventsMgr from connection
+         */
+        void detachEventMgr();
 
-    bool isWriteBufferEmpty() const;
+    private:
+        int handleRead();
+
+        int handleWrite();
+
+        void onDescriptorEvent(EvEvent *, int flags);
+
+        bool updateEvent(bool read, bool write);
+
+        bool isWriteBufferEmpty() const;
 
 
-private:
-    PlatformManager* parent_;
-    std::unique_ptr<serial_port> port_;
+    private:
+        PlatformManager *parent_;
+        std::unique_ptr<serial_port> port_;
 
-    EvEventsMgr* event_mgr_ = nullptr;
-    std::unique_ptr<EvEvent> event_;
+        EvEventsMgr *event_mgr_ = nullptr;
+        std::unique_ptr<EvEvent> event_;
 
-    std::string readBuffer_;
-    std::string writeBuffer_;
+        std::string readBuffer_;
+        std::string writeBuffer_;
 
-    int readOffset_ = 0;
-    int writeOffset_ = 0;
+        int readOffset_ = 0;
+        int writeOffset_ = 0;
 
-    std::mutex readLock_;
-    std::mutex writeLock_;
+        std::mutex readLock_;
+        std::mutex writeLock_;
 
-};
+    };
 
+} //end of namespace
 
 #endif //PROJECT_CONNECTION_H

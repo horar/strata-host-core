@@ -8,78 +8,83 @@
 
 #include <EventsMgr.h>
 
-typedef size_t serialPortHash;
+namespace spyglass {
 
-class PlatformConnection;
+    typedef size_t serialPortHash;
 
-class PlatformConnHandler
-{
-public:
-    virtual void onNewConnection(PlatformConnection* connection) = 0;
-    virtual void onCloseConnection(PlatformConnection* connection) = 0;
+    class PlatformConnection;
 
-    virtual void onNotifyReadConnection(PlatformConnection* connection) = 0;
-};
+    class PlatformConnHandler {
+    public:
+        virtual void onNewConnection(PlatformConnection *connection) = 0;
 
-class PlatformManager
-{
-public:
-    PlatformManager();
-    ~PlatformManager();
+        virtual void onCloseConnection(PlatformConnection *connection) = 0;
 
-    /**
-     * Initializes the platform manager
-     * @return returns true when successful otherwise false
-     */
-    bool Init();
+        virtual void onNotifyReadConnection(PlatformConnection *connection) = 0;
+    };
 
-    /**
-     * Starts event loop in different thread that handles connections
-     */
-    void StartLoop();
+    class PlatformManager {
+    public:
+        PlatformManager();
 
-    /**
-     * Stops event loop and destroys thread
-     */
-    void Stop();
+        ~PlatformManager();
 
-    /**
-     * Attaches handler for new/removed/read ready connections
-     * @param handler handler to attach
-     */
-    void setPlatformHandler(PlatformConnHandler* handler);
+        /**
+         * Initializes the platform manager
+         * @return returns true when successful otherwise false
+         */
+        bool Init();
 
-protected:
-    void onAddedPort(serialPortHash hash);
-    void onRemovedPort(serialPortHash hash);
+        /**
+         * Starts event loop in different thread that handles connections
+         */
+        void StartLoop();
 
-    void notifyConnectionReadable(PlatformConnection* conn);
+        /**
+         * Stops event loop and destroys thread
+         */
+        void Stop();
 
-    void removeConnection(PlatformConnection* conn);
+        /**
+         * Attaches handler for new/removed/read ready connections
+         * @param handler handler to attach
+         */
+        void setPlatformHandler(PlatformConnHandler *handler);
 
-private:
-    void onUpdatePortList(EvEvent*, int);
+    protected:
+        void onAddedPort(serialPortHash hash);
 
-private:
-    void computeListDiff(const std::vector<serialPortHash>& list,
-                         std::vector<serialPortHash>& added_ports,
-                         std::vector<serialPortHash>& removed_ports);
+        void onRemovedPort(serialPortHash hash);
 
-    std::string hashToPortName(serialPortHash hash);
+        void notifyConnectionReadable(PlatformConnection *conn);
 
-private:
-    std::vector<serialPortHash> portsList_;
-    std::map<serialPortHash, std::string> hashToName_;
+        void removeConnection(PlatformConnection *conn);
 
-    std::mutex connectionMap_mutex_;
-    std::map<serialPortHash, PlatformConnection*> openedPorts_;
+    private:
+        void onUpdatePortList(EvEvent *, int);
 
-    PlatformConnHandler* plat_handler_ = nullptr;
+    private:
+        void computeListDiff(const std::vector<serialPortHash> &list,
+                             std::vector<serialPortHash> &added_ports,
+                             std::vector<serialPortHash> &removed_ports);
 
-    EvEventsMgr eventsMgr_;
-    std::unique_ptr<EvEvent> ports_update_;
+        std::string hashToPortName(serialPortHash hash);
 
-    friend class PlatformConnection;
-};
+    private:
+        std::vector<serialPortHash> portsList_;
+        std::map<serialPortHash, std::string> hashToName_;
+
+        std::mutex connectionMap_mutex_;
+        std::map<serialPortHash, PlatformConnection *> openedPorts_;
+
+        PlatformConnHandler *plat_handler_ = nullptr;
+
+        EvEventsMgr eventsMgr_;
+        std::unique_ptr<EvEvent> ports_update_;
+
+        friend class PlatformConnection;
+    };
+
+} //end of namespace
 
 #endif //PROJECT_PLATFORMMANAGER_H

@@ -10,20 +10,20 @@
 #include <vector>
 #include <iostream>
 
-class MyHandler : public PlatformConnHandler
+class MyHandler : public spyglass::PlatformConnHandler
 {
 public:
-    virtual void onNewConnection(PlatformConnection* connection)
+    virtual void onNewConnection(spyglass::PlatformConnection* connection)
     {
         connection->addMessage("{\"cmd\":\"request_platform_id\",\"payload\":{} }");
 
     }
-    virtual void onCloseConnection(PlatformConnection* connection)
+    virtual void onCloseConnection(spyglass::PlatformConnection* connection)
     {
 
     }
 
-    virtual void onNotifyReadConnection(PlatformConnection* connection)
+    virtual void onNotifyReadConnection(spyglass::PlatformConnection* connection)
     {
         static int iCount = 0;
         std::string msg;
@@ -41,7 +41,7 @@ public:
 
 int main(int argc, char* argv[])
 {
-    PlatformManager* mgr = new PlatformManager;
+    spyglass::PlatformManager* mgr = new spyglass::PlatformManager;
     MyHandler handler;
 
     mgr->Init();
@@ -76,7 +76,6 @@ int main(int argc, char* argv[])
 
 
     conn->addMessage("{\"cmd\":\"request_platform_id\",\"payload\":{} }");
-
 
 #endif
 

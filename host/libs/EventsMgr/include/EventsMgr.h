@@ -9,7 +9,6 @@
 
 struct event_base;
 struct event;
-class EvEventsMgr;
 
 //a copy from libevent2
 #if defined(_WIN32)
@@ -18,11 +17,16 @@ class EvEventsMgr;
 #define evutil_socket_t int
 #endif
 
+namespace spyglass
+{
+
 #ifdef _WIN32
 typedef intptr_t ev_handle_t;
 #else
 typedef int      ev_handle_t;
 #endif
+
+class EvEventsMgr;
 
 //////////////////////////////////////////////////////////////////
 
@@ -162,6 +166,8 @@ private:
     struct event_base* event_base_;
 
 };
+
+} //end of namespace
 
 
 #endif //PROJECT_EVENTSMGR_H

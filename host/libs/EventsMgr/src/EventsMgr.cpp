@@ -9,18 +9,21 @@
 #include <assert.h>
 #include <iostream>
 
+namespace spyglass
+{
+
 void evEventsCallback(evutil_socket_t /*fd*/, short what, void* arg)
 {
     assert(arg);
-    EvEvent* ev = static_cast<EvEvent*>(arg);
+    spyglass::EvEvent* ev = static_cast<spyglass::EvEvent*>(arg);
 
     int flags = 0;
     if (what & EV_READ)
-        flags |= EvEvent::eEvStateRead;
+        flags |= spyglass::EvEvent::eEvStateRead;
     if (what & EV_WRITE)
-        flags |= EvEvent::eEvStateWrite;
+        flags |= spyglass::EvEvent::eEvStateWrite;
     if (what & EV_TIMEOUT)
-        flags |= EvEvent::eEvStateTimeout;
+        flags |= spyglass::EvEvent::eEvStateTimeout;
 
     ev->event_notification(flags);
 }
@@ -214,4 +217,4 @@ void EvEventsMgr::threadMain()
     std::cout << "Stop thread." << std::endl;
 }
 
-
+} //end of namespace

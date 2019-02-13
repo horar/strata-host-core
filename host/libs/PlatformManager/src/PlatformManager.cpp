@@ -9,6 +9,8 @@
 #include <iostream>
 #include <assert.h>
 
+namespace spyglass {
+
 static const int g_portsRefreshTime = 500;  //in ms
 
 ////////////////////////////////////////////////////////////////////////////////////////////
@@ -193,3 +195,5 @@ void PlatformManager::notifyConnectionReadable(PlatformConnection* conn)
         plat_handler_->onNotifyReadConnection(conn);
     }
 }
+
+} //end of namespace
