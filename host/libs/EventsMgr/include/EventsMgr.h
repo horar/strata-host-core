@@ -4,6 +4,7 @@
 
 #include <functional>
 #include <thread>
+#include <mutex>
 
 struct event_base;
 struct event;
