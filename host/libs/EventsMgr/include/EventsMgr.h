@@ -80,8 +80,12 @@ public:
      */
     void deactivate();
 
-
-    bool isActive(int ev_flags);
+    /**
+     * Checks event activation flags
+     * @param ev_flags flags to check
+     * @return returns true when flags are set otherwise false
+     */
+    bool isActive(int ev_flags);    //TODO: probably better name...
 
     /**
      * Fires the event

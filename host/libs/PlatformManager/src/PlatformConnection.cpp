@@ -94,7 +94,7 @@ void PlatformConnection::onDescriptorEvent(EvEvent*, int flags)
 
         if (isReadable()) {
             if(parent_) {
-                parent_->notiftyConnectionReadable(this);
+                parent_->notifyConnectionReadable(this);
             }
         }
     }

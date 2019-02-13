@@ -29,8 +29,9 @@ public:
 
     /**
      * Initializes the platform manager
+     * @return returns true when successful otherwise false
      */
-    void Init();
+    bool Init();
 
     /**
      * Starts event loop in different thread that handles connections
@@ -52,7 +53,7 @@ protected:
     void onAddedPort(serialPortHash hash);
     void onRemovedPort(serialPortHash hash);
 
-    void notiftyConnectionReadable(PlatformConnection* conn);
+    void notifyConnectionReadable(PlatformConnection* conn);
 
     void removeConnection(PlatformConnection* conn);
 
