@@ -1,6 +1,6 @@
 
 #include "serial_port.h"
-#include "SerialPortConfiguration.h"
+#include "serial_port_config.h"
 
 #include <libserialport.h>
 #include <vector>

@@ -39,7 +39,7 @@ public:
      * @param timeout timeout for read
      * @return returns number of bytes read or negative number means error.
      */
-    int read(unsigned char* data_buffer, size_t buffer_size, unsigned int timeout = 250);
+    int read(unsigned char* data_buffer, size_t buffer_size, unsigned int timeout);
 
     /**
      * Writes to serial port
