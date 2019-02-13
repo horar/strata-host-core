@@ -140,6 +140,7 @@ int PlatformConnection::handleWrite()
         return 0;
     }
 
+    assert(writeBuffer_.size() >= writeOffset_);
     size_t length = writeBuffer_.size() - writeOffset_;
     const unsigned char* data = reinterpret_cast<const unsigned char*>(writeBuffer_.data()) + writeOffset_;
 
