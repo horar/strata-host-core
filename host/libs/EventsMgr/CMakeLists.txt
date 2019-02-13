@@ -11,8 +11,6 @@ if (APPLE)
     find_library(FOUNDATION_LIBRARY Foundation)
 endif()
 
-include_directories(${SERIALPORT_INCLUDE_DIR} )
-
 add_library(${PROJECT_NAME}
         src/EventsMgr.cpp
         )
@@ -28,10 +26,6 @@ if (APPLE)
 endif()
 
 target_include_directories(${PROJECT_NAME}
-        PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
-        )
-
-
-
-
-
+    PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
+    PUBLIC ${LIBEVENT2_INCLUDE_DIR}
+)

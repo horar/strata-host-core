@@ -12,8 +12,6 @@ if (APPLE)
     find_library(FOUNDATION_LIBRARY Foundation)
 endif()
 
-include_directories(${SERIALPORT_INCLUDE_DIR} )
-
 add_library(${PROJECT_NAME}
         src/PlatformManager.cpp
         src/PlatformConnection.cpp
@@ -33,8 +31,3 @@ target_include_directories(${PROJECT_NAME}
         PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
         PUBLIC ${SHARED_DIR}/rapidjson/include
 )
-
-
-
-
-
