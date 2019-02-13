@@ -1,4 +1,4 @@
-project(StrataSerial VERSION 1.0)
+project(StrataSerialPort VERSION 1.0)
 
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)

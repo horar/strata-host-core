@@ -19,7 +19,7 @@ add_library(${PROJECT_NAME}
 
 target_link_libraries(${PROJECT_NAME}
         PUBLIC EventsMgr
-        PUBLIC StrataSerial
+        PUBLIC StrataSerialPort
         ${CMAKE_THREAD_LIBS_INIT}
 )
 
@@ -30,5 +30,4 @@ endif()
 target_include_directories(${PROJECT_NAME}
         PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
         PUBLIC ${SHARED_DIR}/rapidjson/include
-        PUBLIC StrataSerial
 )
