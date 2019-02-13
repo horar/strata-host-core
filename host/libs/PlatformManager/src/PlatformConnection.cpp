@@ -4,6 +4,8 @@
 #include "EventsMgr.h"
 #include "PlatformManager.h"
 
+#include <assert.h>
+
 static const size_t g_readBufferSize = 4096;
 static const size_t g_writeBufferSize = 4096;
 
@@ -221,5 +223,3 @@ bool PlatformConnection::updateEvent(bool read, bool write)
     int evFlags = (read ? EvEvent::eEvStateRead : 0) | (write ? EvEvent::eEvStateWrite : 0);
     return event_->activate(event_mgr_, evFlags);
 }
-
-

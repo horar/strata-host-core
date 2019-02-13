@@ -1,4 +1,4 @@
-project(SerialPort VERSION 1.0)
+project(StrataSerial VERSION 1.0)
 
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -27,4 +27,3 @@ endif()
 target_include_directories(${PROJECT_NAME}
         PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
         )
-

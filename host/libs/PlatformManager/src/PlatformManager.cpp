@@ -1,12 +1,13 @@
 
 #include "PlatformManager.h"
-#include "SerialPort.h"
 #include "PlatformConnection.h"
+#include <SerialPort.h>
 
 #include <string>
 #include <algorithm>
 #include <functional>
 #include <iostream>
+#include <assert.h>
 
 static const int g_portsRefreshTime = 500;  //in ms
 
@@ -173,4 +174,3 @@ void PlatformManager::notiftyConnectionReadable(PlatformConnection* conn)
         plat_handler_->onNotifyReadConnection(conn);
     }
 }
-

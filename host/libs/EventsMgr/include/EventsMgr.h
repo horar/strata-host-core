@@ -5,6 +5,7 @@
 #include <functional>
 #include <thread>
 #include <mutex>
+#include <signal.h>
 
 struct event_base;
 struct event;
