@@ -1,6 +1,6 @@
 
 #include "PlatformConnection.h"
-#include "SerialPort.h"
+#include "serial_port.h"
 #include "EventsMgr.h"
 #include "PlatformManager.h"
 
@@ -27,7 +27,7 @@ PlatformConnection::~PlatformConnection()
 
 bool PlatformConnection::open(const std::string& portName)
 {
-    std::unique_ptr<SerialPort> port(new SerialPort);
+    std::unique_ptr<serial_port> port(new serial_port);
     bool ret = port->open(portName);
     if (ret) {
         port_ = std::move(port);

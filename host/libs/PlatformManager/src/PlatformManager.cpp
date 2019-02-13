@@ -1,7 +1,7 @@
 
 #include "PlatformManager.h"
 #include "PlatformConnection.h"
-#include <SerialPort.h>
+#include <serial_port.h>
 
 #include <string>
 #include <algorithm>

@@ -13,7 +13,7 @@ endif()
 include_directories(${SERIALPORT_INCLUDE_DIR} )
 
 add_library(${PROJECT_NAME}
-        src/SerialPort.cpp
+        src/serial_port.cpp
         )
 
 target_link_libraries(${PROJECT_NAME}

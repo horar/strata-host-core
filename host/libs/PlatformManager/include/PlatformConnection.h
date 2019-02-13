@@ -8,7 +8,7 @@
 class EvEvent;
 class EvEventsMgr;
 class PlatformManager;
-class SerialPort;
+class serial_port;
 
 class PlatformConnection
 {
@@ -76,7 +76,7 @@ private:
 
 private:
     PlatformManager* parent_;
-    std::unique_ptr<SerialPort> port_;
+    std::unique_ptr<serial_port> port_;
 
     EvEventsMgr* event_mgr_ = nullptr;
     std::unique_ptr<EvEvent> event_;
