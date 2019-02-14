@@ -1,5 +1,6 @@
 
-#include "EventsMgr.h"
+#include "EvEvent.h"
+#include "EvEventsMgr.h"
 
 // libevent library
 #include <event.h>
@@ -7,15 +8,15 @@
 #include <event2/thread.h>
 
 #include <assert.h>
-#include <iostream>
 
-namespace spyglass
-{
 
-void evEventsCallback(evutil_socket_t /*fd*/, short what, void* arg)
+namespace spyglass {
+
+
+void evEventsCallback(evutil_socket_t /*fd*/, short what, void *arg)
 {
     assert(arg);
-    spyglass::EvEvent* ev = static_cast<spyglass::EvEvent*>(arg);
+    spyglass::EvEvent *ev = static_cast<spyglass::EvEvent *>(arg);
 
     int flags = 0;
     if (what & EV_READ)
@@ -30,7 +31,7 @@ void evEventsCallback(evutil_socket_t /*fd*/, short what, void* arg)
 
 /////////////////////////////////////////////////////////////////////////////////
 
-EvEvent::EvEvent() : EvEvent(EvType::eEvTypeUnknown, (ev_handle_t)-1, 0)
+EvEvent::EvEvent() : EvEvent(EvType::eEvTypeUnknown, (ev_handle_t) - 1, 0)
 {
 }
 
@@ -61,24 +62,24 @@ void EvEvent::set(EvType type, ev_handle_t fileHandle, unsigned int timeInMs)
     timeInMs_ = timeInMs;
 }
 
-void EvEvent::setCallback(std::function<void(EvEvent*, int)> callback)
+void EvEvent::setCallback(std::function<void(EvEvent * , int)> callback)
 {
     callback_ = callback;
 }
 
-bool EvEvent::activate(EvEventsMgr* mgr, int ev_flags)
+bool EvEvent::activate(EvEventsMgr *mgr, int ev_flags)
 {
-    std::lock_guard<std::mutex> lock(lock_);
+    std::lock_guard <std::mutex> lock(lock_);
     if (event_ != nullptr) {
         deactivate();
 
         event_free(event_);
     }
 
-    switch(type_)
-    {
+    switch (type_) {
         case eEvTypeTimer: {
-            event_ = event_new(mgr->base(), -1, EV_TIMEOUT | EV_PERSIST, evEventsCallback, static_cast<void *>(this));
+            event_ = event_new(mgr->base(), -1, EV_TIMEOUT | EV_PERSIST, evEventsCallback,
+                               static_cast<void *>(this));
 
             timeval seconds = EvEvent::tvMsecs(timeInMs_);
             if (event_add(event_, &seconds) < 0) {
@@ -130,8 +131,7 @@ void EvEvent::fire(int ev_flags)
         return;
     }
 
-    switch(type_)
-    {
+    switch (type_) {
         case eEvTypeTimer:
             event_active(event_, EV_TIMEOUT, 0);
             break;
@@ -146,7 +146,7 @@ void EvEvent::fire(int ev_flags)
 }
 
 struct timeval EvEvent::tvMsecs(unsigned int msecs)
-{
+        {
     timeval t;
     t.tv_sec = msecs / 1000;
     t.tv_usec = (msecs % 1000) * 1000;
@@ -160,91 +160,5 @@ void EvEvent::event_notification(int flags)
     }
 }
 
-/////////////////////////////////////////////////////////////////////////////////
-
-EvEventsMgr::EvEventsMgr() : event_base_(nullptr)
-{
-    static bool isInitialized = false;
-
-    if (isInitialized == false) {
-
-#if defined(_WIN32)
-        int ret = evthread_use_windows_threads();
-#else
-        int ret = evthread_use_pthreads();
-#endif
-        if (ret < 0) {
-            throw std::runtime_error("Initialization of libevent2 failed!");
-        }
-
-        isInitialized = true;
-    }
-
-    event_base_ = event_base_new();
-    if (event_base_ == nullptr) {
-        throw std::runtime_error("Initialization of libevent2 failed!");
-    }
-}
-
-EvEventsMgr::~EvEventsMgr()
-{
-    if (event_base_ != nullptr) {
-        event_base_free(event_base_);
-    }
-}
-
-EvEvent* EvEventsMgr::CreateEventHandle(ev_handle_t fd)
-{
-    return new EvEvent(EvEvent::eEvTypeHandle, fd, 0);
-}
-
-EvEvent* EvEventsMgr::CreateEventTimer(unsigned int timeInMs)
-{
-    return new EvEvent(EvEvent::eEvTypeTimer, -1, timeInMs);
-}
-
-void EvEventsMgr::dispatch(int flags)
-{
-    //Note: this are possible flags, not supported yet
-    // EVLOOP_ONCE
-    // EVLOOP_NONBLOCK
-    // EVLOOP_NO_EXIT_ON_EMPTY
-
-    assert(event_base_);
-    event_base_loop(event_base_, flags);
-}
-
-void EvEventsMgr::startInThread()
-{
-    eventsThread_ = std::thread(&EvEventsMgr::threadMain, this);
-}
-
-void EvEventsMgr::stop()
-{
-    if (eventsThread_.get_id() == std::thread::id()) {
-        return;
-    }
-
-    stopThread_ = true;
-
-    event_base_loopexit(event_base_, nullptr);
-
-    eventsThread_.join();
-}
-
-void EvEventsMgr::threadMain()
-{
-    //TODO: put this in log:  std::cout << "Start thread.." << std::endl;
-
-    while(!stopThread_) {
-
-        if (event_base_loop(event_base_, 0) < 0) {
-            //TODO: show some error...
-            break;
-        }
-    }
-
-    //TODO: put this in log:  std::cout << "Stop thread." << std::endl;
-}
 
 } //end of namespace

@@ -12,7 +12,8 @@ if (APPLE)
 endif()
 
 add_library(${PROJECT_NAME}
-        src/EventsMgr.cpp
+        src/EvEvent.cpp
+        src/EvEventsMgr.cpp
         )
 
 target_link_libraries(${PROJECT_NAME}

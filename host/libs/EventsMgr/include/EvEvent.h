@@ -1,14 +1,8 @@
+#ifndef STRATA_EVENTS_MGR_EVENT_H
+#define STRATA_EVENTS_MGR_EVENT_H
 
-#ifndef PROJECT_EVENTSMGR_H
-#define PROJECT_EVENTSMGR_H
-
-#include <functional>
-#include <thread>
 #include <mutex>
-#include <atomic>
-
-struct event_base;
-struct event;
+#include <functional>
 
 //a copy from libevent2
 #if defined(_WIN32)
@@ -16,6 +10,8 @@ struct event;
 #else
 #define evutil_socket_t int
 #endif
+
+struct event;
 
 namespace spyglass
 {
@@ -122,59 +118,7 @@ private:
     friend void evEventsCallback(evutil_socket_t fd, short what, void* arg);
 };
 
-//////////////////////////////////////////////////////////////////
-
-class EvEventsMgr
-{
-public:
-    EvEventsMgr();
-    ~EvEventsMgr();
-
-    /**
-     * Creates event for a filehandle
-     * @param fd file handle
-     * @return returns new event
-     */
-    EvEvent* CreateEventHandle(ev_handle_t fd);
-
-    /**
-     * Creates event for a timeout
-     * @param timeInMs timeour in miliseconds
-     * @return returns new event
-     */
-    EvEvent* CreateEventTimer(unsigned int timeInMs);
-
-    /**
-     * Starts dispatch loop with given flags
-     * @param flags - not used at the moment
-     */
-    void dispatch(int flags = 0);
-
-    /**
-     * Starts dispatch loop in second thread and returns
-     */
-    void startInThread();
-
-    /**
-     * Stops thread with dispatch loop
-     */
-    void stop();
-
-    struct event_base* base() const { return event_base_; }
-
-private:
-    void threadMain();
-
-private:
-    std::thread eventsThread_;
-    std::atomic_bool stopThread_{false};
-
-private:
-    struct event_base* event_base_;
-
-};
 
 } //end of namespace
 
-
-#endif //PROJECT_EVENTSMGR_H
+#endif //STRATA_EVENTS_MGR_EVENT_H

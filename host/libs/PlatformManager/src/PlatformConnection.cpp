@@ -1,8 +1,9 @@
 
 #include "PlatformConnection.h"
-#include "serial_port.h"
-#include "EventsMgr.h"
 #include "PlatformManager.h"
+
+#include <serial_port.h>
+#include <EvEventsMgr.h>
 
 #include <assert.h>
 
