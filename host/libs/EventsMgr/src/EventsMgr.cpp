@@ -197,24 +197,26 @@ void EvEventsMgr::startInThread()
 void EvEventsMgr::stop()
 {
     stopThread_ = true;
+
+    event_base_loopexit(event_base_, NULL);
+
     eventsThread_.join();
 }
 
 void EvEventsMgr::threadMain()
 {
-    int ret;
-
-    std::cout << "Start thread.." << std::endl;
+    //TODO: put this in log:  std::cout << "Start thread.." << std::endl;
 
     while(!stopThread_) {
 
-        ret = event_base_loop(event_base_, 0);  //flags
-        if (ret < 0)
+        int ret = event_base_loop(event_base_, 0);  //flags
+        if (ret < 0) {
+            //TODO: show some error...
             break;
-
+        }
     }
 
-    std::cout << "Stop thread." << std::endl;
+    //TODO: put this in log:  std::cout << "Stop thread." << std::endl;
 }
 
 } //end of namespace

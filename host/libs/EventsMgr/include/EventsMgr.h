@@ -5,7 +5,7 @@
 #include <functional>
 #include <thread>
 #include <mutex>
-#include <signal.h>
+#include <atomic>
 
 struct event_base;
 struct event;
@@ -160,7 +160,7 @@ private:
 
 private:
     std::thread eventsThread_;
-    volatile sig_atomic_t stopThread_ = false;
+    std::atomic_bool stopThread_{false};
 
 private:
     struct event_base* event_base_;
