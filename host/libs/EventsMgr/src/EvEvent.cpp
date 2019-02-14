@@ -77,7 +77,7 @@ bool EvEvent::activate(EvEventsMgr *mgr, int ev_flags)
     }
 
     switch (type_) {
-        case eEvTypeTimer: {
+        case EvType::eEvTypeTimer: {
             event_ = event_new(mgr->base(), -1, EV_TIMEOUT | EV_PERSIST, evEventsCallback,
                                static_cast<void *>(this));
 
@@ -89,7 +89,7 @@ bool EvEvent::activate(EvEventsMgr *mgr, int ev_flags)
             break;
         }
 
-        case eEvTypeHandle: {
+        case EvType::eEvTypeHandle: {
             short flags = ((ev_flags & eEvStateRead) ? EV_READ : 0) | ((ev_flags & eEvStateWrite) ? EV_WRITE : 0);
             event_ = event_new(mgr->base(), fileHandle_, flags | EV_PERSIST, evEventsCallback,
                                static_cast<void *>(this));
@@ -132,10 +132,10 @@ void EvEvent::fire(int ev_flags)
     }
 
     switch (type_) {
-        case eEvTypeTimer:
+        case EvType::eEvTypeTimer:
             event_active(event_, EV_TIMEOUT, 0);
             break;
-        case eEvTypeHandle: {
+        case EvType::eEvTypeHandle: {
             short flags = ((ev_flags & eEvStateRead) ? EV_READ : 0) | ((ev_flags & eEvStateWrite) ? EV_WRITE : 0);
             event_active(event_, flags, 0);
         }

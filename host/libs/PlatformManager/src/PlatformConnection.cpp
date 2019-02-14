@@ -200,7 +200,7 @@ void PlatformConnection::attachEventMgr(EvEventsMgr* ev_manager)
     event_mgr_ = ev_manager;
 
     int fd = port_->getFileDescriptor();
-    event_.reset(new EvEvent(EvEvent::eEvTypeHandle, fd, 0));
+    event_.reset(ev_manager->CreateEventHandle(fd));
     event_->setCallback(std::bind(&PlatformConnection::onDescriptorEvent, this, std::placeholders::_1, std::placeholders::_2 ) );
 
     updateEvent(true, false);

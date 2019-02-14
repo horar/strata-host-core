@@ -29,7 +29,7 @@ class EvEventsMgr;
 class EvEvent
 {
 public:
-    enum EvType {
+    enum class EvType {
         eEvTypeUnknown = 0,
         eEvTypeTimer,
         eEvTypeHandle,
