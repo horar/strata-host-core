@@ -146,11 +146,18 @@ public:
 
     /**
      * Starts dispatch loop with given flags
-     * @param flags
+     * @param flags - not used at the moment
      */
     void dispatch(int flags = 0);
 
+    /**
+     * Starts dispatch loop in second thread and returns
+     */
     void startInThread();
+
+    /**
+     * Stops thread with dispatch loop
+     */
     void stop();
 
     struct event_base* base() const { return event_base_; }

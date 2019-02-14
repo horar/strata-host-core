@@ -196,6 +196,10 @@ void EvEventsMgr::startInThread()
 
 void EvEventsMgr::stop()
 {
+    if (eventsThread_.get_id() == std::thread::id()) {
+        return;
+    }
+
     stopThread_ = true;
 
     event_base_loopexit(event_base_, NULL);
