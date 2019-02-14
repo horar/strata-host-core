@@ -54,7 +54,7 @@ public:
      * @param fileHandle file handle or -1 for undefined
      * @param timeInMs timeout or 0 for undefined
      */
-    EvEvent(EvType type, ev_handle_t fileHandle, int timeInMs);
+    EvEvent(EvType type, ev_handle_t fileHandle, unsigned int timeInMs);
     ~EvEvent();
 
     /**
@@ -63,7 +63,7 @@ public:
      * @param fileHandle filehandle or -1 for undefined
      * @param timeInMs timeout for event or 0 for undefined
      */
-    void set(EvType type, ev_handle_t fileHandle, int timeInMs);
+    void set(EvType type, ev_handle_t fileHandle, unsigned int timeInMs);
 
     /**
      * Sets callback function for this event
@@ -109,9 +109,9 @@ protected:
     void event_notification(int flags);
 
 private:
-    EvType type_ = eEvTypeUnknown;
-    int timeInMs_ = 0;
-    ev_handle_t fileHandle_ = (ev_handle_t)-1;
+    EvType type_;
+    unsigned int timeInMs_;
+    ev_handle_t fileHandle_;
 
     struct event* event_ = nullptr;
 
@@ -142,7 +142,7 @@ public:
      * @param timeInMs timeour in miliseconds
      * @return returns new event
      */
-    EvEvent* CreateEventTimer(int timeInMs);
+    EvEvent* CreateEventTimer(unsigned int timeInMs);
 
     /**
      * Starts dispatch loop with given flags

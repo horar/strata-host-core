@@ -30,26 +30,32 @@ void evEventsCallback(evutil_socket_t /*fd*/, short what, void* arg)
 
 /////////////////////////////////////////////////////////////////////////////////
 
-EvEvent::EvEvent()
+EvEvent::EvEvent() : EvEvent(EvType::eEvTypeUnknown, (ev_handle_t)-1, 0)
 {
 }
 
-EvEvent::EvEvent(EvType type, ev_handle_t fileHandle, int timeInMs) : EvEvent()
+EvEvent::EvEvent(EvType type, ev_handle_t fileHandle, unsigned int timeInMs) :
+        type_{type},
+        fileHandle_{fileHandle},
+        timeInMs_{timeInMs}
 {
-    set(type, fileHandle, timeInMs);
 }
 
 EvEvent::~EvEvent()
 {
-    if (event_) {
+    if (event_ != nullptr) {
         deactivate();
 
         event_free(event_);
     }
 }
 
-void EvEvent::set(EvType type, ev_handle_t fileHandle, int timeInMs)
+void EvEvent::set(EvType type, ev_handle_t fileHandle, unsigned int timeInMs)
 {
+    if (event_ != nullptr) {
+        return;
+    }
+
     type_ = type;
     fileHandle_ = fileHandle;
     timeInMs_ = timeInMs;
@@ -93,8 +99,9 @@ bool EvEvent::activate(EvEventsMgr* mgr, int ev_flags)
 
 void EvEvent::deactivate()
 {
-    if (!event_ || !active_)
+    if (event_ == nullptr || false == active_) {
         return;
+    }
 
     event_del(event_);
     active_ = false;
@@ -108,8 +115,9 @@ bool EvEvent::isActive(int ev_flags)
 
 void EvEvent::fire(int ev_flags)
 {
-    if (!event_ || !active_)
+    if (event_ == nullptr || false == active_) {
         return;
+    }
 
     if (type_ == eEvTypeTimer) {
         event_active(event_, EV_TIMEOUT, 0);
@@ -142,7 +150,7 @@ EvEventsMgr::EvEventsMgr() : event_base_(nullptr)
 {
     static bool isInitialized = false;
 
-    if (!isInitialized) {
+    if (isInitialized == false) {
 
 #if defined(_WIN32)
         int ret = evthread_use_windows_threads();
@@ -157,14 +165,14 @@ EvEventsMgr::EvEventsMgr() : event_base_(nullptr)
     }
 
     event_base_ = event_base_new();
-    if (!event_base_) {
+    if (event_base_ == nullptr) {
         throw std::runtime_error("Initialization of libevent2 failed!");
     }
 }
 
 EvEventsMgr::~EvEventsMgr()
 {
-    if (event_base_) {
+    if (event_base_ != nullptr) {
         event_base_free(event_base_);
     }
 }
@@ -174,13 +182,14 @@ EvEvent* EvEventsMgr::CreateEventHandle(ev_handle_t fd)
     return new EvEvent(EvEvent::eEvTypeHandle, fd, 0);
 }
 
-EvEvent* EvEventsMgr::CreateEventTimer(int timeInMs)
+EvEvent* EvEventsMgr::CreateEventTimer(unsigned int timeInMs)
 {
     return new EvEvent(EvEvent::eEvTypeTimer, -1, timeInMs);
 }
 
 void EvEventsMgr::dispatch(int flags)
 {
+    //Note: this are possible flags, not supported yet
     // EVLOOP_ONCE
     // EVLOOP_NONBLOCK
     // EVLOOP_NO_EXIT_ON_EMPTY
@@ -202,7 +211,7 @@ void EvEventsMgr::stop()
 
     stopThread_ = true;
 
-    event_base_loopexit(event_base_, NULL);
+    event_base_loopexit(event_base_, nullptr);
 
     eventsThread_.join();
 }
@@ -213,8 +222,7 @@ void EvEventsMgr::threadMain()
 
     while(!stopThread_) {
 
-        int ret = event_base_loop(event_base_, 0);  //flags
-        if (ret < 0) {
+        if (event_base_loop(event_base_, 0) < 0) {
             //TODO: show some error...
             break;
         }
