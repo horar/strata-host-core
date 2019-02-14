@@ -89,7 +89,7 @@ public:
      * @param ev_flags flags to check
      * @return returns true when flags are set otherwise false
      */
-    bool isActive(int ev_flags);    //TODO: probably better name...
+    bool isActive(int ev_flags) const;    //TODO: probably better name...
 
     /**
      * Fires the event

@@ -75,23 +75,34 @@ bool EvEvent::activate(EvEventsMgr* mgr, int ev_flags)
         event_free(event_);
     }
 
-    if (type_ == eEvTypeTimer) {
-        event_ = event_new(mgr->base(), -1, EV_TIMEOUT | EV_PERSIST, evEventsCallback, static_cast<void*>(this) );
+    switch(type_)
+    {
+        case eEvTypeTimer: {
+            event_ = event_new(mgr->base(), -1, EV_TIMEOUT | EV_PERSIST, evEventsCallback, static_cast<void *>(this));
 
-        timeval seconds = EvEvent::tvMsecs(timeInMs_);
-        if (event_add(event_, &seconds) < 0) {
-            return false;
+            timeval seconds = EvEvent::tvMsecs(timeInMs_);
+            if (event_add(event_, &seconds) < 0) {
+                return false;
+            }
+            active_ = true;
+            break;
         }
-        active_ = true;
-    }
-    else if (type_ == eEvTypeHandle) {
 
-        short flags = ((ev_flags & eEvStateRead) ? EV_READ : 0) | ((ev_flags & eEvStateWrite) ? EV_WRITE : 0);
-        event_ = event_new(mgr->base(), fileHandle_, flags | EV_PERSIST, evEventsCallback, static_cast<void*>(this) );
-        if (event_add(event_, nullptr) < 0) {
-            return false;
+        case eEvTypeHandle: {
+            short flags = ((ev_flags & eEvStateRead) ? EV_READ : 0) | ((ev_flags & eEvStateWrite) ? EV_WRITE : 0);
+            event_ = event_new(mgr->base(), fileHandle_, flags | EV_PERSIST, evEventsCallback,
+                               static_cast<void *>(this));
+            if (event_add(event_, nullptr) < 0) {
+                return false;
+            }
+            active_ = true;
+            break;
         }
-        active_ = true;
+
+        default:
+            assert(false);
+            return false;
+
     }
 
     return true;
@@ -107,7 +118,7 @@ void EvEvent::deactivate()
     active_ = false;
 }
 
-bool EvEvent::isActive(int ev_flags)
+bool EvEvent::isActive(int ev_flags) const
 {
     short flags = ((ev_flags & eEvStateRead) ? EV_READ : 0) | ((ev_flags & eEvStateWrite) ? EV_WRITE : 0);
     return event_pending(event_, flags, nullptr) != 0;
@@ -119,13 +130,18 @@ void EvEvent::fire(int ev_flags)
         return;
     }
 
-    if (type_ == eEvTypeTimer) {
-        event_active(event_, EV_TIMEOUT, 0);
-    }
-    else if (type_ == eEvTypeHandle) {
-
-        short flags = ((ev_flags & eEvStateRead) ? EV_READ : 0) | ((ev_flags & eEvStateWrite) ? EV_WRITE : 0);
-        event_active(event_, flags, 0);
+    switch(type_)
+    {
+        case eEvTypeTimer:
+            event_active(event_, EV_TIMEOUT, 0);
+            break;
+        case eEvTypeHandle: {
+            short flags = ((ev_flags & eEvStateRead) ? EV_READ : 0) | ((ev_flags & eEvStateWrite) ? EV_WRITE : 0);
+            event_active(event_, flags, 0);
+        }
+        default:
+            assert(false);
+            break;
     }
 }
 
