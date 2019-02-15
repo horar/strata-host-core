@@ -85,26 +85,22 @@ void PlatformConnection::onDescriptorEvent(EvEvent*, int flags)
 {
     if (flags & EvEvent::eEvStateRead) {
 
-        int ret = handleRead();
-        if (ret < 0) {
+        if (handleRead() < 0) {
+            //TODO: [MF] add to log...
 
             event_->deactivate();
 
-            //TODO: remove connection from Platform manager
-            parent_->removeConnection(this);
-            return;
-        }
-
-        if (isReadable()) {
-            if(parent_) {
-                parent_->notifyConnectionReadable(this);
+            if (parent_) {
+                parent_->removeConnection(this);
             }
+        }
+        else if (isReadable() && parent_ != nullptr) {
+            parent_->notifyConnectionReadable(this);
         }
     }
     if (flags & EvEvent::eEvStateWrite) {
 
-        int ret = handleWrite();
-        if (ret < 0) {
+        if (handleWrite() < 0) {
             //TODO: handle error...
 
         }

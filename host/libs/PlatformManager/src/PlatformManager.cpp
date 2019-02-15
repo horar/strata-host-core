@@ -158,22 +158,20 @@ void PlatformManager::onAddedPort(serialPortHash hash)
 //TODO: add this to logging     std::cout << "New ser.port:" << portName << std::endl;
 
     PlatformConnection* conn = new PlatformConnection(this);
-    bool ret = conn->open(portName);
-    if (ret) {
-
-        {
-            std::lock_guard<std::mutex> lock(connectionMap_mutex_);
-            openedPorts_.insert({hash, conn});
-        }
-
-        conn->attachEventMgr(&eventsMgr_);
-
-        if (plat_handler_) {
-            plat_handler_->onNewConnection(conn);
-        }
-    }
-    else {
+    if (conn->open(portName) == false) {
         delete conn;
+        return;
+    }
+
+    {
+        std::lock_guard<std::mutex> lock(connectionMap_mutex_);
+        openedPorts_.insert({hash, conn});
+    }
+
+    conn->attachEventMgr(&eventsMgr_);
+
+    if (plat_handler_) {
+        plat_handler_->onNewConnection(conn);
     }
 }
 
@@ -184,8 +182,10 @@ void PlatformManager::notifyConnectionReadable(PlatformConnection* conn)
     {
         std::lock_guard<std::mutex> lock(connectionMap_mutex_);
         for(auto it = openedPorts_.begin(); it != openedPorts_.end(); ++it) {
-            if (it->second == conn)
+            if (it->second == conn) {
                 found = true;
+                break;
+            }
         }
     }
     assert(found);
