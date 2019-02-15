@@ -135,10 +135,13 @@ void EvEvent::fire(int ev_flags)
         case EvType::eEvTypeTimer:
             event_active(event_, EV_TIMEOUT, 0);
             break;
+
         case EvType::eEvTypeHandle: {
             short flags = ((ev_flags & eEvStateRead) ? EV_READ : 0) | ((ev_flags & eEvStateWrite) ? EV_WRITE : 0);
             event_active(event_, flags, 0);
+            break;
         }
+
         default:
             assert(false);
             break;
