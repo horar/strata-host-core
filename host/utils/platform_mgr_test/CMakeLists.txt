@@ -1,11 +1,9 @@
 cmake_minimum_required(VERSION 3.1)
 
-project(serial_test)
+project(platform_mgr_test)
 
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
-find_package(SerialPort REQUIRED)
 
 if(APPLE)
     find_library(IOKIT_LIB IOKit REQUIRED)
@@ -22,13 +20,7 @@ add_executable(${PROJECT_NAME}
         main.cpp
         )
 
-target_include_directories(${PROJECT_NAME}
-        PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include
-        PRIVATE ${SERIALPORT_INCLUDE_DIR}
-        )
-
-target_link_libraries(${PROJECT_NAME}
-        PUBLIC ${SERIALPORT_LIBRARIES}
+target_link_libraries(${PROJECT_NAME} PUBLIC PlatformManager
         )
 
 if (APPLE)
