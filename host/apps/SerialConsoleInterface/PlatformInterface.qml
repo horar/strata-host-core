@@ -42,18 +42,21 @@ Item {
     }
 
     // -------------------------------------------------------------------
-    // Connect to platformController notification signals
+    // Connect to BoardsController notification signals
 
     Connections {
-        target: platformController
+        target: boardsMgr
 
-        onNotificationChanged: {
-            CorePlatformInterface.notificationHandler(notification, platformID)
-//            platformController.notification = ""
+        onConnectedBoard: {
+            CorePlatformInterface.newBoardConnected(connection_id, verbose_name)
         }
 
-        onPlatformConnectedChanged: {
-            CorePlatformInterface.platformConnectionChanged(payload)
+        onDisconnectedBoard: {
+            CorePlatformInterface.boardDisconnected(connection_id)
+        }
+
+        onNotifyBoardMessage: {
+            CorePlatformInterface.boardMessage(connection_id, message)
         }
     }
 
