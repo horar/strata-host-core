@@ -10,11 +10,10 @@ Item {
     // List of Connected Platforms
 
     property var platformList : {
-            { "default": {
+            "default": {
                 "name": "No Board Connected",
                 "connected": false
             }
-        }
     }
 
     // -------------------
@@ -45,15 +44,18 @@ Item {
     // Connect to platformController notification signals
 
     Connections {
-        target: platformController
+        target: boardsMgr
 
-        onNotificationChanged: {
-            CorePlatformInterface.notificationHandler(notification, platformID)
-//            platformController.notification = ""
+        onConnectedBoard: {
+            CorePlatformInterface.newBoardConnected(connection_id, verbose_name)
         }
 
-        onPlatformConnectedChanged: {
-            CorePlatformInterface.platformConnectionChanged(payload)
+        onDisconnectedBoard: {
+            CorePlatformInterface.boardDisconnected(connection_id)
+        }
+
+        onNotifyBoardMessage: {
+            CorePlatformInterface.boardMessage(connection_id, message)
         }
     }
 

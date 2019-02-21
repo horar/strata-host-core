@@ -1,61 +1,66 @@
+
+function newBoardConnected(connection_id, verboseName) {
+
+    // If there is no entry for this platform, it is connecting for the first time and needs init
+    if(!platformInterface.platformList[connection_id]) {
+
+        var tabNum = platformInterface.tabList.nextTabToConnect
+
+        // If new platform, and new tab not yet existing, create tab
+        if (platformInterface.tabList.tabCount === platformInterface.tabList.nextTabToConnect) {
+            tabNum = addTabView()
+        }
+
+        platformInterface.platformList[connection_id] = { "connected": "true", "name": verboseName, "tabNumber": tabNum }
+        platformInterface.tabList.tabs[tabNum].content.boardId = connection_id
+        platformInterface.tabList.tabs[tabNum].tab.boardId = connection_id
+        platformInterface.tabList.nextTabToConnect++
+
+        //available platform commands
+//TODO:        CorePlatformInterface.insertPlatformCommands(platformCommands,platformInterface.tabList.tabs[connectingTab].content.historyList)
+
+    } else {
+
+        platformInterface.platformList[connection_id].connected = true
+    }
+
+    var tabNumber = platformInterface.platformList[connection_id].tabNumber
+    CorePlatformInterface.addColorizedRow(platformInterface.tabList.tabs[tabNumber].content.logBoxList,"Platform "+ verboseName +" connected","black")
+
+    platformInterface.statusImageUpdate()  // Hack solution to update the tab status light
+}
+
+function boardDisconnected(connection_id) {
+
+    var tabNumber = platformInterface.platformList[connection_id].tabNumber
+    platformInterface.platformList[connection_id].connected = false
+
+    //TODO add if statement when the tab was closed.
+    CorePlatformInterface.addColorizedRow(platformInterface.tabList.tabs[tabNumber].content.logBoxList, "Platform " + platformInterface.platformList[connection_id].name + " disconnected","black")
+
+    platformInterface.statusImageUpdate()  // Hack solution to update the tab status light
+}
+
+function boardMessage(connection_id, message) {
+    if(!platformInterface.platformList[connection_id]) {
+        return
+    }
+
+    var tabNumber = platformInterface.platformList[connection_id].tabNumber
+    platformInterface.tabList.tabs[tabNumber].content.logBoxList.append({ "status" : message})
+}
+
+function sendCommand(connection_id, command) {
+
+    boardsMgr.sendCommand(connection_id, command)
+
+    CorePlatformInterface.addColorizedRow(logBoxList, command, "black")
+    cmdHistoryList.insert(0, { "status" : command , type : "previous"})
+}
+
 function notificationHandler (notification, platformID) {
     var tabNumber = platformInterface.platformList[platformID].tabNumber
     platformInterface.tabList.tabs[tabNumber].content.logBoxList.append({ "status" : notification})
-}
-
-function platformConnectionChanged (payload) {
-    try {
-        var notification = JSON.parse(payload)
-//        console.log("payload: ", payload)
-
-        var platformID = notification.platformID
-        var connected = notification.connected
-        var verboseName = notification.verboseName
-        var platformCommands = notification.platformCommands
-
-
-        var thisTab
-
-        if (connected) {
-            // If there is no entry for this platform, it is connecting for the first time and needs init
-            if(!platformInterface.platformList[platformID]) {
-
-                // If new platform, and new tab not yet existing, create tab
-                if (platformInterface.tabList.tabCount === platformInterface.tabList.nextTabToConnect){
-                    addTabView()
-                }
-
-//                console.log("Core Plat Interface: Initializing "+ verboseName)
-                var connectingTab = platformInterface.tabList.nextTabToConnect
-                platformInterface.platformList[platformID] = { "connected": connected, "name": verboseName, "tabNumber": connectingTab }
-                platformInterface.tabList.tabs[connectingTab].content.boardId = platformID
-                platformInterface.tabList.tabs[connectingTab].tab.boardId = platformID
-                platformInterface.tabList.nextTabToConnect++
-                //available platform commands
-                CorePlatformInterface.insertPlatformCommands(platformCommands,platformInterface.tabList.tabs[connectingTab].content.historyList)
-
-            } else {
-//                console.log("Core Plat Interface: Connecting to "+ verboseName)
-                platformInterface.platformList[platformID].connected = connected
-            }
-
-            thisTab = platformInterface.platformList[platformID].tabNumber
-            CorePlatformInterface.addColorizedRow(platformInterface.tabList.tabs[thisTab].content.logBoxList,"Platform "+ verboseName +" connected","black")
-
-        } else {
-            thisTab = platformInterface.platformList[platformID].tabNumber
-            platformInterface.platformList[platformID].connected = connected
-            CorePlatformInterface.addColorizedRow(platformInterface.tabList.tabs[thisTab].content.logBoxList, "Platform " + platformInterface.platformList[platformID].name + " disconnected","black")
-        }
-
-        platformInterface.statusImageUpdate()  // Hack solution to update the tab status light
-    }
-    catch (e) {
-        if (e instanceof SyntaxError){
-            console.log("PlatformConnectionChanged JSON is invalid, ignoring")
-            console.log(payload)
-        }
-    }
 }
 
 // -------------------------
@@ -130,20 +135,21 @@ function addTabView() {
     platformInterface.tabList.tabs.push( { "content": content, "tab": tab, "tabNumber": number } )
 
     platformInterface.tabList.tabCount++
+
+    return number
 }
 
-function saveAndSendCommand(command) {
-    var currentRowColor = "black"
+function checkCommand(command) {
     try {
         JSON.parse(command)
-        cmdHistoryList.insert(0, { "status" : command , type : "previous"})
-        platformController.sendCommand(command, boardId)
     } catch(e) {
-        currentRowColor = "red"
+        var currentRowColor = "red"
         CorePlatformInterface.addColorizedRow(logBoxList, "Invalid JSON Format:", currentRowColor)
-    }
+        CorePlatformInterface.addColorizedRow(logBoxList, command, currentRowColor)
 
-    CorePlatformInterface.addColorizedRow(logBoxList, command, currentRowColor)
+        return false
+    }
+    return true
 }
 
 function insertPlatformCommands(inputlist,outputlist) {
