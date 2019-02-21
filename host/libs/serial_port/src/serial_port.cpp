@@ -5,7 +5,10 @@
 #include <libserialport.h>
 #include <vector>
 #include <string>
-#include <sys/file.h>
+
+#if defined(__unix__) || defined(__APPLE__)
+  #include <sys/file.h>
+#endif
 
 
 serial_port::serial_port() : portHandle_(nullptr), event_(nullptr)
@@ -31,9 +34,8 @@ void serial_port::setupSGFormat()
 
 bool serial_port::open(const std::string& port_name)
 {
-    sp_return error;
-    error = sp_get_port_by_name(port_name.c_str(), &portHandle_);
-    if(error != SP_OK) {
+    sp_return error = sp_get_port_by_name(port_name.c_str(), &portHandle_);
+    if (error != SP_OK) {
         return false;
     }
 
@@ -41,21 +43,20 @@ bool serial_port::open(const std::string& port_name)
 
 #if defined(__unix__) || defined(__APPLE__)
     if (error == SP_OK) {
-        int ret = flock(getFileDescriptor(), LOCK_EX);
-        if (ret < 0) {
+        if (flock(getFileDescriptor(), LOCK_EX) < 0) {
             error = SP_ERR_FAIL;
         }
     }
 #endif
 
-    if (error == SP_OK) {
-
-        setupSGFormat();
-
-        flush();
-        return true;
+    if (error != SP_OK) {
+        return false;
     }
-    return false;
+
+    setupSGFormat();
+
+    flush();
+    return true;
 }
 
 void serial_port::close()
@@ -67,10 +68,10 @@ void serial_port::close()
     flock(getFileDescriptor(), LOCK_UN);
 #endif
 
-    sp_return err = sp_close(portHandle_);
-    if (err == SP_OK) {
-        portHandle_ = nullptr;
+    if (sp_close(portHandle_) != SP_OK) {
+        return;
     }
+    portHandle_ = nullptr;
 }
 
 int serial_port::read(unsigned char* data_buffer, size_t buffer_size, unsigned int timeout)
@@ -83,6 +84,7 @@ int serial_port::read(unsigned char* data_buffer, size_t buffer_size, unsigned i
     if (timeout > 0) {
         sp_wait(event_, timeout);
     }
+    assert(portHandle_);
     int ret = sp_nonblocking_read(portHandle_, data_buffer, buffer_size);
     if (ret < 0) {
         //TODO: log error...
@@ -93,12 +95,14 @@ int serial_port::read(unsigned char* data_buffer, size_t buffer_size, unsigned i
 
 int serial_port::write(unsigned char* data_buffer, size_t buffer_size, unsigned int timeout)
 {
+    assert(portHandle_);
     sp_return error = sp_blocking_write(portHandle_, data_buffer, buffer_size, timeout);
     return static_cast<int>(error);
 }
 
 bool serial_port::flush()
 {
+    assert(portHandle_);
     return (sp_flush(portHandle_, SP_BUF_BOTH) == SP_OK) ? true : false;
 }
 
@@ -132,19 +136,20 @@ const char* serial_port::getName() const
 ///////////////////////////////////////////////////////////////////////////////////
 
 #ifdef __APPLE__
-const char* g_usb_keyword = "usb";
+static const char* g_usb_keyword = "usb";
 #elif __linux__
-const char* g_usb_keyword = "USB";
+static const char* g_usb_keyword = "USB";
 #elif _WIN32
-const char* g_usb_keyword = "COM";
+static const char* g_usb_keyword = "COM";
 #endif
 
 bool getListOfSerialPorts(std::vector<std::string>& result_list)
 {
     struct sp_port **ports;
     sp_return ret = sp_list_ports(&ports);
-    if (ret != SP_OK)
+    if (ret != SP_OK) {
         return false;
+    }
 
     std::string port_name;
     result_list.clear();
