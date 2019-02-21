@@ -131,11 +131,11 @@ void PlatformManager::onRemovedPort(serialPortHash hash)
         conn = find->second;
     }
 
-    conn->close();
-
     if (plat_handler_) {
         plat_handler_->onCloseConnection(conn);
     }
+
+    conn->close();
 
     {
         std::lock_guard<std::mutex> lock(connectionMap_mutex_);
