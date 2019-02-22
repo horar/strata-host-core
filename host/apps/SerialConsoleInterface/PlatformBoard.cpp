@@ -61,11 +61,23 @@ int PlatformBoard::parseInitialMsg(const std::string& msg, bool& wasNotification
     {
         wasNotification = false;
         std::string command_id = firstIt->value.GetString();
+        if (command_id != "request_platform_id") {
+            return 0;
+        }
+
+        if (!doc.HasMember("payload")) {
+            return -2;
+        }
 
         rapidjson::Value& doc_payload = doc["payload"];
+        if (!doc_payload.HasMember("return_value")) {
+            return -2;
+        }
 
-        bool ret = doc_payload.HasMember("return_value");
-        assert(ret);
+        if (doc_payload["return_value"].GetBool() != true) {
+            //TODO: this is the question...
+            return 0;
+        }
 
         return 1;
     }
@@ -73,14 +85,22 @@ int PlatformBoard::parseInitialMsg(const std::string& msg, bool& wasNotification
     {
         wasNotification = true;
         rapidjson::Value& doc_notify = firstIt->value;
-        std::string notify_value = doc_notify["value"].GetString();
-        rapidjson::Value& notify_payload = doc_notify["payload"];
-
-        if (notify_value == "platform_id") {
-            platformId_   = notify_payload["platform_id"].GetString();
-            verboseName_  = notify_payload["verbose_name"].GetString();
+        if (!doc_notify.HasMember("value") || !doc_notify.HasMember("payload") ) {
+            return -2;  //Malformed notification
         }
 
+        std::string notify_value = doc_notify["value"].GetString();
+        if (notify_value != "platform_id") {
+            return 0;
+        }
+
+        rapidjson::Value& notify_payload = doc_notify["payload"];
+        if (!notify_payload.HasMember("platform_id") || !notify_payload.HasMember("verbose_name")) {
+            return -2;
+        }
+
+        platformId_   = notify_payload["platform_id"].GetString();
+        verboseName_  = notify_payload["verbose_name"].GetString();
         return 1;
     }
 
