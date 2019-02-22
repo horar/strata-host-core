@@ -10,12 +10,12 @@ Item {
     // List of Connected Platforms
 
     property var platformList : {
-            { "default": {
+          "default": {
                 "name": "No Board Connected",
                 "connected": false
             }
         }
-    }
+
 
     // -------------------
     // List of Tabs/Content

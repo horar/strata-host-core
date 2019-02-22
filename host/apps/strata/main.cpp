@@ -36,6 +36,11 @@ int main(int argc, char *argv[])
 
     QApplication app(argc, argv);
     QQmlApplicationEngine engine;
+    QObject::connect(&engine, &QQmlApplicationEngine::warnings, [=] (const QList<QQmlError> &warnings) {
+        for (const auto& error : warnings) {
+            qWarning() << "qml-error: " << error.toString(); // TODO: [LC], when logging into file, check/forward messageType into logger
+        }
+    });
 
     qmlRegisterUncreatableType<CoreInterface>("tech.spyglass.CoreInterface",1,0,"CoreInterface", QStringLiteral("You can't instantiate CoreInterface in QML"));
     qmlRegisterUncreatableType<DocumentManager>("tech.spyglass.DocumentManager", 1, 0, "DocumentManager", QStringLiteral("You can't instantiate DocumentManager in QML"));
