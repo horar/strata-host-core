@@ -4,7 +4,7 @@
 
 #include <PlatformConnection.h>
 
-BoardsController::BoardsController(QObject *parent) : QObject(parent), conn_handler_(this)
+BoardsController::BoardsController(QObject *parent) : QObject(parent), conn_handler_()
 {
 }
 
@@ -15,6 +15,8 @@ BoardsController::~BoardsController()
 
 void BoardsController::initialize()
 {
+    conn_handler_.setParent(this);
+
     platform_mgr_.Init();
     platform_mgr_.setPlatformHandler(&conn_handler_);
 
@@ -24,9 +26,11 @@ void BoardsController::initialize()
 void BoardsController::sendCommand(QString connection_id, QString message)
 {
     spyglass::PlatformConnection* conn = conn_handler_.getConnection(connection_id.toStdString() );
-    if (conn != nullptr) {
-        conn->addMessage(message.toStdString() );
+    if (conn == nullptr) {
+        return;
     }
+
+    conn->addMessage(message.toStdString() );
 }
 
 void BoardsController::newConnection(const std::string& connection_id, const std::string& verbose_name)
@@ -47,7 +51,7 @@ void BoardsController::notifyMessageFromConnection(const std::string& connection
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-BoardsController::ConnectionHandler::ConnectionHandler(BoardsController* parent) : parent_(parent)
+BoardsController::ConnectionHandler::ConnectionHandler() : parent_(nullptr)
 {
 }
 
@@ -57,6 +61,11 @@ BoardsController::ConnectionHandler::~ConnectionHandler()
     for(auto item : connections_) {
         delete item.second;
     }
+}
+
+void BoardsController::ConnectionHandler::setParent(BoardsController *parent)
+{
+    parent_ = parent;
 }
 
 void BoardsController::ConnectionHandler::onNewConnection(spyglass::PlatformConnection *connection)
@@ -122,11 +131,11 @@ PlatformBoard* BoardsController::ConnectionHandler::getBoard(spyglass::PlatformC
 {
     std::lock_guard<std::mutex> lock(connectionsLock_);
     auto findIt = connections_.find(connection);
-    if (findIt != connections_.end()) {
-        return findIt->second;
+    if (findIt == connections_.end()) {
+        return nullptr;
     }
 
-    return nullptr;
+    return findIt->second;
 }
 
 spyglass::PlatformConnection* BoardsController::ConnectionHandler::getConnection(const std::string& conn_id)

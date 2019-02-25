@@ -32,8 +32,10 @@ private:
     class ConnectionHandler : public spyglass::PlatformConnHandler
     {
     public:
-        ConnectionHandler(BoardsController* parent);
+        ConnectionHandler();
         virtual ~ConnectionHandler();
+
+        void setParent(BoardsController* parent);
 
         virtual void onNewConnection(spyglass::PlatformConnection *connection);
         virtual void onCloseConnection(spyglass::PlatformConnection *connection);
