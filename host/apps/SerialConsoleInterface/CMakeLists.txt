@@ -46,15 +46,15 @@ set(QML_IMPORT_PATH "${QML_DIRS}"
 
 add_executable(${PROJECT_NAME}
     main.cpp
-    PlatformController.cpp
+    BoardsController.cpp
+    PlatformBoard.cpp
     qml.qrc
 )
 
 target_link_libraries(${PROJECT_NAME}
     Qt5::Core
     Qt5::Quick
-    connector
-    flasher
+    PlatformManager
 )
 
 if (APPLE)
