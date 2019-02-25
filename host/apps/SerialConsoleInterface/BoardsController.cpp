@@ -109,18 +109,19 @@ void BoardsController::ConnectionHandler::onNotifyReadConnection(spyglass::Platf
     std::string message;
     while( connection->getMessage(message)) {
 
-        ProcessResult status = board->handleMessage(message);
+        PlatformBoard::ProcessResult status = board->handleMessage(message);
         switch(status)
         {
-            case ProcessResult::eIgnored:
+            case PlatformBoard::ProcessResult::eIgnored:
                 parent_->notifyMessageFromConnection( conn_id, message );
                 break;
-            case ProcessResult::eProcessed:
+            case PlatformBoard::ProcessResult::eProcessed:
                 if (board->isPlatformConnected() && false == board->getPlatformId().empty()) {
                     parent_->newConnection(conn_id, board->getVerboseName() );
                 }
                 break;
-            case ProcessResult::eParseError:
+            case PlatformBoard::ProcessResult::eParseError:
+            case PlatformBoard::ProcessResult::eValidationError:
                 //TODO: add some error to log file...
                 break;
         }

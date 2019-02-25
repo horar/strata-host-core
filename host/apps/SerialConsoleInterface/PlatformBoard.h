@@ -7,14 +7,16 @@ namespace spyglass {
     class PlatformConnection;
 }
 
-enum class ProcessResult {
-    eParseError = -1,
-    eIgnored = 0,      //forward message to further processing
-    eProcessed,        //processed
-};
-
 class PlatformBoard
 {
+public:
+    enum class ProcessResult {
+        eValidationError = -2,
+        eParseError = -1,
+        eIgnored = 0,      //forward message to further processing
+        eProcessed,        //processed
+    };
+
 public:
     explicit PlatformBoard(spyglass::PlatformConnection* connection);
     virtual ~PlatformBoard();
@@ -29,7 +31,7 @@ public:
     bool isPlatformConnected() const { return (state_ == State::eConnected); }
 
 private:
-    int parseInitialMsg(const std::string& msg, bool& wasNotification);
+    ProcessResult parseInitialMsg(const std::string& msg, bool& wasNotification);
 
 private:
     enum class State {
@@ -38,13 +40,12 @@ private:
         eConnected,
     };
 
-    std::string conn_id_;
     std::string platformId_;
     std::string verboseName_;
 
-    spyglass::PlatformConnection* connection_ = nullptr;
+    spyglass::PlatformConnection* connection_;
 
-    enum State state_ = State::eInit;
+    enum State state_;
 };
 
 

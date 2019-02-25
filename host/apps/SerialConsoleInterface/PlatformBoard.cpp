@@ -8,7 +8,7 @@
 #include <rapidjson/stringbuffer.h>
 
 
-PlatformBoard::PlatformBoard(spyglass::PlatformConnection* connection) : connection_(connection)
+PlatformBoard::PlatformBoard(spyglass::PlatformConnection* connection) : connection_(connection), state_(State::eInit)
 {
 }
 
@@ -23,33 +23,26 @@ void PlatformBoard::sendInitialMsg()
     state_ = State::eSendInitialMsg;
 }
 
-ProcessResult PlatformBoard::handleMessage(const std::string& msg)
+PlatformBoard::ProcessResult PlatformBoard::handleMessage(const std::string& msg)
 {
     if (state_ == State::eSendInitialMsg) {
         bool wasNotification;
-        int ret = parseInitialMsg(msg, wasNotification);
-        if (ret < 0) {
-            return ProcessResult::eParseError;
+        ProcessResult ret = parseInitialMsg(msg, wasNotification);
+        if (ProcessResult::eProcessed == ret && wasNotification && false == platformId_.empty()) {
+            state_ = State::eConnected;
         }
-        else if (ret == 0) {
-            return ProcessResult::eIgnored;
-        }
-        else if (ret == 1) {
-            if (wasNotification && false == platformId_.empty()) {
-                state_ = State::eConnected;
-            }
-            return ProcessResult::eProcessed;
-        }
+
+        return ret;
     }
 
     return ProcessResult::eIgnored;
 }
 
-int PlatformBoard::parseInitialMsg(const std::string& msg, bool& wasNotification)
+PlatformBoard::ProcessResult PlatformBoard::parseInitialMsg(const std::string& msg, bool& wasNotification)
 {
     rapidjson::Document doc;
     if (doc.Parse(msg.c_str()).HasParseError()) {
-        return -1;
+        return ProcessResult::eParseError;
     }
 
     assert(doc.IsObject());
@@ -61,49 +54,49 @@ int PlatformBoard::parseInitialMsg(const std::string& msg, bool& wasNotification
         wasNotification = false;
         std::string command_id = firstIt->value.GetString();
         if (command_id != "request_platform_id") {
-            return 0;
+            return ProcessResult::eIgnored;
         }
 
         if (!doc.HasMember("payload")) {
-            return -2;
+            return ProcessResult::eValidationError;
         }
 
         rapidjson::Value& doc_payload = doc["payload"];
         if (!doc_payload.HasMember("return_value")) {
-            return -2;
+            return ProcessResult::eValidationError;
         }
 
         if (doc_payload["return_value"].GetBool() != true) {
             //TODO: this is the question...
-            return 0;
+            return ProcessResult::eIgnored;
         }
 
-        return 1;
+        return ProcessResult::eProcessed;
     }
     else if (msg_type == "notification")
     {
         wasNotification = true;
         rapidjson::Value& doc_notify = firstIt->value;
         if (!doc_notify.HasMember("value") || !doc_notify.HasMember("payload") ) {
-            return -2;  //Malformed notification
+            return ProcessResult::eValidationError;  //Malformed notification
         }
 
         std::string notify_value = doc_notify["value"].GetString();
         if (notify_value != "platform_id") {
-            return 0;
+            return ProcessResult::eIgnored;
         }
 
         rapidjson::Value& notify_payload = doc_notify["payload"];
         if (!notify_payload.HasMember("platform_id") || !notify_payload.HasMember("verbose_name")) {
-            return -2;
+            return ProcessResult::eValidationError;
         }
 
         platformId_   = notify_payload["platform_id"].GetString();
         verboseName_  = notify_payload["verbose_name"].GetString();
-        return 1;
+        return ProcessResult::eProcessed;
     }
 
-    return 0;
+    return ProcessResult::eIgnored;
 }
 
 
