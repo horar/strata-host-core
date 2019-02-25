@@ -13,10 +13,10 @@ int main(int argc, char *argv[])
     QQmlApplicationEngine engine;
     engine.addImportPath("qrc:///");
 
-    qmlRegisterType<BoardsController>("tech.spyglass.sci", 1, 0, "BoardsController");
+    qmlRegisterUncreatableType<BoardsController>("tech.spyglass.sci", 1, 0, "BoardsController", "can not instantiate BoardsController in qml");
     qmlRegisterSingletonType(QUrl("qrc:/fonts/Fonts.qml"), "fonts", 1, 0, "Fonts");
 
-    std::unique_ptr<BoardsController> boardsMgr(new BoardsController());
+    std::unique_ptr<BoardsController> boardsMgr = std::make_unique<BoardsController>();
     boardsMgr->initialize();
     engine.rootContext()->setContextProperty("boardsMgr", boardsMgr.get());
 
