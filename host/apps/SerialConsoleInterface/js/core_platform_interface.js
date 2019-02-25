@@ -1,5 +1,5 @@
 
-function newBoardConnected(connection_id, verboseName) {
+function boardConnected(connection_id, verboseName) {
 
     // If there is no entry for this platform, it is connecting for the first time and needs init
     if(!platformInterface.platformList[connection_id]) {
