@@ -7,9 +7,6 @@
         <file>PlatformInterface.qml</file>
         <file>fonts/Inconsolata.otf</file>
         <file>fonts/sgicons.ttf</file>
-        <file>main.cpp</file>
-        <file>PlatformController.cpp</file>
-        <file>PlatformController.h</file>
         <file>fonts/Fonts.qml</file>
         <file>partial-views/SGSideDrawer.qml</file>
         <file>partial-views/SGStatusListBox.qml</file>
