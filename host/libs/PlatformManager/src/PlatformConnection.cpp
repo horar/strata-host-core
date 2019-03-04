@@ -78,6 +78,10 @@ bool PlatformConnection::getMessage(std::string& result)
 
     result = readBuffer_.substr(readOffset_, (off - readOffset_));
     readOffset_ = (off + 1);
+    if (readBuffer_.size() == readOffset_) {
+        readBuffer_.clear();
+        readOffset_ = 0;
+    }
     return true;
 }
 
@@ -85,7 +89,7 @@ void PlatformConnection::onDescriptorEvent(EvEvent*, int flags)
 {
     if (flags & EvEvent::eEvStateRead) {
 
-        if (handleRead() < 0) {
+        if (handleRead(g_readTimeout) < 0) {
             //TODO: [MF] add to log...
 
             event_->deactivate();
@@ -100,7 +104,7 @@ void PlatformConnection::onDescriptorEvent(EvEvent*, int flags)
     }
     if (flags & EvEvent::eEvStateWrite) {
 
-        if (handleWrite() < 0) {
+        if (handleWrite(g_writeTimeout) < 0) {
             //TODO: handle error...
 
         }
@@ -117,10 +121,10 @@ void PlatformConnection::onDescriptorEvent(EvEvent*, int flags)
     }
 }
 
-int PlatformConnection::handleRead()
+int PlatformConnection::handleRead(int timeout)
 {
     unsigned char read_data[512];
-    int ret = port_->read(read_data, sizeof(read_data), g_readTimeout);
+    int ret = port_->read(read_data, sizeof(read_data), timeout);
     if (ret <= 0) {
         return ret;
     }
@@ -132,7 +136,7 @@ int PlatformConnection::handleRead()
     return ret;
 }
 
-int PlatformConnection::handleWrite()
+int PlatformConnection::handleWrite(int timeout)
 {
     std::lock_guard<std::mutex> lock(writeLock_);
     if (isWriteBufferEmpty()) {
@@ -143,7 +147,7 @@ int PlatformConnection::handleWrite()
     size_t length = writeBuffer_.size() - writeOffset_;
     const unsigned char* data = reinterpret_cast<const unsigned char*>(writeBuffer_.data()) + writeOffset_;
 
-    int ret = port_->write(const_cast<unsigned char*>(data), length, g_writeTimeout);
+    int ret = port_->write(const_cast<unsigned char*>(data), length, timeout);
     if (ret < 0) {
         return ret;
     }
@@ -167,6 +171,22 @@ void PlatformConnection::addMessage(const std::string& message)
     if (!isWrite) {
         updateEvent(true, true);
     }
+}
+
+void PlatformConnection::sendMessage(const std::string &message)
+{
+    {
+        std::lock_guard<std::mutex> lock(writeLock_);
+        writeBuffer_.append(message);
+        writeBuffer_.append("\n");
+    }
+
+    handleWrite(g_writeTimeout);
+}
+
+int PlatformConnection::waitForMessages(int timeout)
+{
+    return handleRead(timeout);
 }
 
 bool PlatformConnection::isReadable()

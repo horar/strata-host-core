@@ -39,10 +39,22 @@ namespace spyglass {
         bool getMessage(std::string &result);
 
         /**
-         * Sends message over connection
+         * Adds message to queue for sending
          * @param message message to send
          */
         void addMessage(const std::string &message);
+
+        /**
+         * Sends message over connection
+         * @param message message to send
+         */
+        void sendMessage(const std::string &message);
+
+        /**
+         * Waits for messages for specified amount of time
+         * @param timeout amount of time to wait
+         */
+        int waitForMessages(int timeout);
 
         /**
          * @return returns name of the connection
@@ -67,9 +79,9 @@ namespace spyglass {
         void detachEventMgr();
 
     private:
-        int handleRead();
+        int handleRead(int timeout);
 
-        int handleWrite();
+        int handleWrite(int timeout);
 
         void onDescriptorEvent(EvEvent *, int flags);
 
