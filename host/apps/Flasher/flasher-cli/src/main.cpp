@@ -18,8 +18,9 @@
 #include <string>
 #include <iostream>
 
-#include <Connector.h>
 #include <Flasher.h>
+#include <serial_port.h>
+#include <PlatformConnection.h>
 
 
 int main(int argc, char *argv[])
@@ -32,9 +33,56 @@ int main(int argc, char *argv[])
 
     const char* firmware_file_path = argv[1];
 
-    std::unique_ptr<Connector> connector(ConnectorFactory::getConnector("platform"));
+    std::vector<std::string> portsList;
+    if (!getListOfSerialPorts(portsList)) {
+        std::cerr << "Unable to populate list of serial ports" << std::endl;
+        return 1;
+    }
 
-    Flasher flasher(connector.get(), firmware_file_path);
+    if (portsList.empty()) {
+        std::cerr << "No device connected on serial port." << std::endl;
+        return 1;
+    }
+
+    std::string choosen_port;
+    if (portsList.size() > 1) {
+        std::cout << "Choose one port:" << std::endl;
+
+        int idx = 1;
+        for(const auto& item : portsList) {
+            std::cout << idx << ") " << item << std::endl;
+            idx++;
+        }
+
+        try {
+
+            std::string input;
+            std::cin >> input;
+
+            int choosen_idx = std::stoi(input);
+            choosen_port = portsList[choosen_idx];
+        }
+        catch(const std::exception& ex) {
+            std::cout << "Error:" << ex.what() << std::endl;
+            return 1;
+        }
+
+    }
+    else {
+        choosen_port = portsList.front();
+    }
+
+    std::unique_ptr<spyglass::PlatformConnection> connection(new spyglass::PlatformConnection(nullptr));
+
+    if (!connection->open(choosen_port)) {
+        std::cerr << "Cudn't open the serial port!" << std::endl;
+        return 1;
+    }
+
+    connection->waitForMessages(100);
+
+
+    Flasher flasher(connection.get(), firmware_file_path);
 
     std::cout << "START: flash" << std::endl;
 

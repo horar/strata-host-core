@@ -25,8 +25,9 @@
 #include <rapidjson/document.h>
 
 
-class Connector;
-
+namespace spyglass {
+    class PlatformConnection;
+}
 
 class Flasher
 {
@@ -39,7 +40,7 @@ public:
      * \param connector - serial connector
      * \param firmwareFilename - filename of new image to flash
      */
-    Flasher(Connector* connector, const std::string& firmwareFilename);
+    Flasher(spyglass::PlatformConnection* connector, const std::string& firmwareFilename);
     virtual ~Flasher();
 
 
@@ -49,7 +50,7 @@ public:
     /*!
      * The method sets serial connector.
      */
-    void setConnector(Connector* connector);
+    void setConnector(spyglass::PlatformConnection* connector);
 
     /*!
      * The method sets filename of new image to flash.
@@ -59,7 +60,7 @@ public:
     /*!
      * The method checks whether bootloader is ready or tries to initialize it.
      */
-    bool initializeBootloader() const;
+    bool initializeBootloader();
 
     /*!
      * The method flashes an image from the file firmwareFilename over connector, downloads the currently flashed image,
@@ -78,12 +79,16 @@ public:
     bool startApplication();
 
 private:
+    enum ResponseState {
+        eWaitForAck = 0,
+        eWaitForNotify,
+    };
 
     /*! Flasher isPlatfromConnected.
     * \brief Wait for a platfrom to be connected and send firmware_update command to the platfrom's firmware.
     * \return true on success, false otherwise.
     */
-    bool isPlatfromConnected() const;
+    bool isPlatfromConnected(std::string* verbose_name);
 
     bool processCommandFlashFirmware();
     bool processCommandBackupFirmware();
@@ -105,6 +110,7 @@ private:
 
     bool readAck(const std::string& ackName);
     bool readNotify(const std::string& notificationName);
+    bool readNotifySimple(const std::string& notificationName, rapidjson::Value& payload);
     bool readNotifyBackup(const std::string& notificationName);
 
     bool verify() const;
@@ -116,6 +122,7 @@ private:
     static bool validateJsonMessage(const std::string& message, const rapidjson::SchemaDocument& schemaDocument, rapidjson::Document& document);
 
     static rapidjson::SchemaDocument ackJsonSchema;
+    static rapidjson::SchemaDocument notifySimpleJsonSchema;
     static rapidjson::SchemaDocument notifyJsonSchema;
     static rapidjson::SchemaDocument notifyBackupJsonSchema;
 
@@ -133,7 +140,7 @@ private:
     Chunk flashChunk_;
     Chunk backupChunk_;
 
-    Connector* serial_;
+    spyglass::PlatformConnection* serial_;
     std::string firmwareFilename_;
 };
 
