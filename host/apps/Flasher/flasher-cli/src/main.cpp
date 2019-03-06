@@ -84,10 +84,20 @@ int main(int argc, char *argv[])
 
     Flasher flasher(connection.get(), firmware_file_path);
 
+    //Note: if you need output commands send/recv to std::cout or some other ostream
+    //flasher.setCommunicationMsgStream(&std::cout);
+
+    std::cout << "Check bootloader.. " << std::endl;
+
+    bool result = flasher.initializeBootloader();
+    std::cout << "Status: " << ( result ? "OK": "Failed" ) << std::endl;
+    if (!result) {
+        std::cout << "END: flash" << std::endl;
+        return 1;
+    }
+
     std::cout << "START: flash" << std::endl;
-
-    bool result = flasher.initializeBootloader() && flasher.flash(true);
-
+    result = flasher.flash(true);
     std::cout << "Flash: Return Status:   " << ( result ? "OK": "Failed" ) << std::endl;
     std::cout << "END: flash" << std::endl;
 

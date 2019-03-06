@@ -59,8 +59,15 @@ public:
 
     /*!
      * The method checks whether bootloader is ready or tries to initialize it.
+     * @return returns true when device is in bootloader mode otherwise false
      */
     bool initializeBootloader();
+
+    /*!
+     * Sets output stream for commands send/recv. For debugging purposes
+     * @param output output stream
+     */
+    void setCommunicationMsgStream(std::ostream* output);
 
     /*!
      * The method flashes an image from the file firmwareFilename over connector, downloads the currently flashed image,
@@ -103,6 +110,7 @@ private:
         RESEND_CHUNK
     };
 
+    void sendCommand(const std::string& cmd);
     bool writeCommandFlash();
     bool writeCommandBackup(Flasher::RESPONSE_STATUS status);
     bool writeCommandStartApplication();
@@ -142,6 +150,7 @@ private:
 
     spyglass::PlatformConnection* serial_;
     std::string firmwareFilename_;
+    std::ostream* dbg_out_stream_;
 };
 
 #endif

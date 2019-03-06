@@ -176,6 +176,7 @@ Flasher::Flasher()
 Flasher::Flasher(spyglass::PlatformConnection* connector, const std::string& firmwareFilename)
 : serial_(connector)
 , firmwareFilename_(firmwareFilename)
+, dbg_out_stream_(nullptr)
 {
 }
 
@@ -191,6 +192,11 @@ void Flasher::setConnector(spyglass::PlatformConnection* connector)
 void Flasher::setFirmwareFilename(const std::string& firmwareFilename)
 {
     firmwareFilename_ = firmwareFilename;
+}
+
+void Flasher::setCommunicationMsgStream(std::ostream* output)
+{
+    dbg_out_stream_ = output;
 }
 
 SchemaDocument Flasher::createJsonSchema(const std::string& schemaJson)
@@ -239,7 +245,10 @@ bool Flasher::readAck(const std::string& ackName)
     {
         return false;
     }
-    std::cout << message << std::endl;
+
+    if (dbg_out_stream_) {
+        *dbg_out_stream_ << message << std::endl;
+    }
 
     Document document;
 
@@ -268,7 +277,10 @@ bool Flasher::readNotifySimple(const std::string& notificationName, rapidjson::V
     {
         return false;
     }
-    std::cout << message << std::endl;
+
+    if (dbg_out_stream_) {
+        *dbg_out_stream_ << message << std::endl;
+    }
 
     Document document;
 
@@ -297,7 +309,10 @@ bool Flasher::readNotify(const std::string& notificationName)
     {
         return false;
     }
-    std::cout << message << std::endl;
+
+    if (dbg_out_stream_) {
+        *dbg_out_stream_ << message << std::endl;
+    }
 
     Document document;
 
@@ -355,6 +370,13 @@ bool Flasher::processCommandFlashFirmware()
     return false;
 }
 
+void Flasher::sendCommand(const std::string& cmd)
+{
+    serial_->sendMessage(cmd);
+    if (dbg_out_stream_) {
+        *dbg_out_stream_ << cmd << std::endl;
+    }
+}
 
 bool Flasher::writeCommandFlash()
 {
@@ -394,9 +416,7 @@ bool Flasher::writeCommandFlash()
 
     writer.EndObject();
 
-    serial_->sendMessage(s.GetString());
-    std::cout << s.GetString() << std::endl;
-
+    sendCommand(s.GetString());
     return true;
 }
 
@@ -412,7 +432,7 @@ bool Flasher::isPlatfromConnected(std::string* verbose_name)
     std::string message;
     for(int counter = 0; counter < POOLING_COUNTER_LIMIT; counter++) {
 
-        serial_->sendMessage(init_msg);
+        sendCommand(init_msg);
 
         ResponseState waitState = eWaitForAck;
         for (int retry = 0; retry < max_retry_wait_for_message; retry++) {
@@ -578,8 +598,7 @@ bool Flasher::writeCommandStartApplication()
 
     writer.EndObject();
 
-    serial_->sendMessage(s.GetString());
-    std::cout << s.GetString() << std::endl;
+    sendCommand(s.GetString());
     return true;
 }
 
@@ -671,9 +690,7 @@ bool Flasher::writeCommandBackup(Flasher::RESPONSE_STATUS status)
 
     writer.EndObject();
 
-    serial_->sendMessage(s.GetString());
-    std::cout << s.GetString() << std::endl;
-
+    sendCommand(s.GetString());
     return true;
 }
 
@@ -690,7 +707,7 @@ bool Flasher::writeCommandReadFib()
 
     writer.EndObject();
 
-    serial_->sendMessage(s.GetString());
+    sendCommand(s.GetString());
     return true;
 }
 
@@ -703,7 +720,10 @@ bool Flasher::readNotifyBackup(const std::string& notificationName)
     {
         return false;
     }
-    std::cout << message << std::endl;
+
+    if (dbg_out_stream_) {
+        *dbg_out_stream_ << message << std::endl;
+    }
 
     Document document;
 
