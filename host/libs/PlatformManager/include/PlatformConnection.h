@@ -79,16 +79,27 @@ namespace spyglass {
         void detachEventMgr();
 
     private:
+
+        /**
+         * Handles read from device
+         * @param timeout to wait for read
+         * @return number of bytes readed or negative when error
+         */
         int handleRead(int timeout);
 
+        /**
+         * Handles write to device
+         * @param timeout
+         * @return number of bytes written or negative when error
+         */
         int handleWrite(int timeout);
+
 
         void onDescriptorEvent(EvEvent *, int flags);
 
         bool updateEvent(bool read, bool write);
 
         bool isWriteBufferEmpty() const;
-
 
     private:
         PlatformManager *parent_;

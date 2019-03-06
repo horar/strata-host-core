@@ -30,6 +30,8 @@ PlatformConnection::~PlatformConnection()
 
 bool PlatformConnection::open(const std::string& portName)
 {
+    std::lock_guard<std::mutex> lock(readLock_);
+
     std::unique_ptr<serial_port> port(new serial_port);
     bool ret = port->open(portName);
     if (ret) {
@@ -46,11 +48,17 @@ void PlatformConnection::close()
         event_.release();
     }
 
+    readLock_.lock();
+    writeLock_.lock();
+
     if (port_) {
         port_->close();
 
         port_.release();
     }
+
+    writeLock_.unlock();
+    readLock_.unlock();
 }
 
 bool PlatformConnection::getMessage(std::string& result)
@@ -158,6 +166,7 @@ int PlatformConnection::handleWrite(int timeout)
 
 void PlatformConnection::addMessage(const std::string& message)
 {
+    assert(event_);
     bool isWrite = event_->isActive(EvEvent::eEvStateWrite);
 
     //TODO: checking for too big messages...
@@ -175,6 +184,11 @@ void PlatformConnection::addMessage(const std::string& message)
 
 void PlatformConnection::sendMessage(const std::string &message)
 {
+    assert(port_ != nullptr);
+    if (port_ == nullptr) {
+        return;
+    }
+
     {
         std::lock_guard<std::mutex> lock(writeLock_);
         writeBuffer_.append(message);
@@ -186,11 +200,13 @@ void PlatformConnection::sendMessage(const std::string &message)
 
 int PlatformConnection::waitForMessages(int timeout)
 {
+    assert(port_ != nullptr);
     return handleRead(timeout);
 }
 
 bool PlatformConnection::isReadable()
 {
+    assert(port_ != nullptr);
     std::lock_guard<std::mutex> lock(readLock_);
     if (readBuffer_.size() <= readOffset_)
         return false;
@@ -204,14 +220,15 @@ bool PlatformConnection::isReadable()
 
 std::string PlatformConnection::getName() const
 {
-    assert(port_);
+    assert(port_ != nullptr);
     return std::string(port_->getName());
 }
 
 void PlatformConnection::attachEventMgr(EvEventsMgr* ev_manager)
 {
-    if (!port_)
+    if (port_ == nullptr) {
         return;
+    }
 
     event_mgr_ = ev_manager;
 
@@ -224,6 +241,10 @@ void PlatformConnection::attachEventMgr(EvEventsMgr* ev_manager)
 
 void PlatformConnection::detachEventMgr()
 {
+    if (port_ == nullptr) {
+        return;
+    }
+
     if (event_) {
         event_->deactivate();
     }
