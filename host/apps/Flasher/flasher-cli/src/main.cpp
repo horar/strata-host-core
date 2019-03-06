@@ -54,18 +54,14 @@ int main(int argc, char *argv[])
             idx++;
         }
 
-        try {
-
-            std::string input;
-            std::cin >> input;
-
-            int choosen_idx = std::stoi(input);
-            choosen_port = portsList[choosen_idx];
-        }
-        catch(const std::exception& ex) {
-            std::cout << "Error:" << ex.what() << std::endl;
+        unsigned int inputValue = 0;
+        std::cin >> inputValue;
+        if (std::cin.fail() || (inputValue > 0 && inputValue >= portsList.size())) {
+            std::cerr << "Enter/select valid port index...";
             return 1;
         }
+
+        choosen_port = portsList.at(inputValue - 1);
 
     }
     else {
@@ -75,12 +71,9 @@ int main(int argc, char *argv[])
     std::unique_ptr<spyglass::PlatformConnection> connection(new spyglass::PlatformConnection(nullptr));
 
     if (!connection->open(choosen_port)) {
-        std::cerr << "Cudn't open the serial port!" << std::endl;
+        std::cerr << "Couldn't open the serial port!" << std::endl;
         return 1;
     }
-
-    connection->waitForMessages(100);
-
 
     Flasher flasher(connection.get(), firmware_file_path);
 
@@ -92,7 +85,6 @@ int main(int argc, char *argv[])
     bool result = flasher.initializeBootloader();
     std::cout << "Status: " << ( result ? "OK": "Failed" ) << std::endl;
     if (!result) {
-        std::cout << "END: flash" << std::endl;
         return 1;
     }
 
