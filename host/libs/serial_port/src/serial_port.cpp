@@ -43,7 +43,7 @@ bool serial_port::open(const std::string& port_name)
 
 #if defined(__unix__) || defined(__APPLE__)
     if (error == SP_OK) {
-        if (flock(getFileDescriptor(), LOCK_EX) < 0) {
+        if (flock(getFileDescriptor(), LOCK_EX | LOCK_NB) < 0) {
             error = SP_ERR_FAIL;
         }
     }
