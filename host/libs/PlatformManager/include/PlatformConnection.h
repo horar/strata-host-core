@@ -55,7 +55,7 @@ namespace spyglass {
          * Waits for messages for specified amount of time
          * @param timeout amount of time to wait
          */
-        int waitForMessages(int timeout);
+        int waitForMessages(unsigned int timeout);
 
         /**
          * @return returns name of the connection

@@ -195,7 +195,7 @@ bool PlatformConnection::sendMessage(const std::string &message)
     return (handleWrite(g_writeTimeout) > 0);
 }
 
-int PlatformConnection::waitForMessages(int timeout)
+int PlatformConnection::waitForMessages(unsigned int timeout)
 {
     assert(port_ != nullptr);
     return handleRead(timeout);
