@@ -56,7 +56,7 @@ int main(int argc, char *argv[])
 
         unsigned int inputValue = 0;
         std::cin >> inputValue;
-        if (std::cin.fail() || (inputValue > 0 && inputValue >= portsList.size())) {
+        if (std::cin.fail() || (inputValue < 1 || inputValue >= portsList.size())) {
             std::cerr << "Enter/select valid port index...";
             return 1;
         }
