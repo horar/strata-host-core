@@ -48,17 +48,14 @@ void PlatformConnection::close()
         event_.release();
     }
 
-    readLock_.lock();
-    writeLock_.lock();
+    std::lock_guard<std::mutex> rlock(readLock_);
+    std::lock_guard<std::mutex> wlock(writeLock_);
 
     if (port_) {
         port_->close();
 
         port_.release();
     }
-
-    writeLock_.unlock();
-    readLock_.unlock();
 }
 
 bool PlatformConnection::getMessage(std::string& result)
@@ -129,7 +126,7 @@ void PlatformConnection::onDescriptorEvent(EvEvent*, int flags)
     }
 }
 
-int PlatformConnection::handleRead(int timeout)
+int PlatformConnection::handleRead(unsigned int timeout)
 {
     unsigned char read_data[512];
     int ret = port_->read(read_data, sizeof(read_data), timeout);
@@ -144,7 +141,7 @@ int PlatformConnection::handleRead(int timeout)
     return ret;
 }
 
-int PlatformConnection::handleWrite(int timeout)
+int PlatformConnection::handleWrite(unsigned int timeout)
 {
     std::lock_guard<std::mutex> lock(writeLock_);
     if (isWriteBufferEmpty()) {
@@ -182,11 +179,11 @@ void PlatformConnection::addMessage(const std::string& message)
     }
 }
 
-void PlatformConnection::sendMessage(const std::string &message)
+bool PlatformConnection::sendMessage(const std::string &message)
 {
     assert(port_ != nullptr);
     if (port_ == nullptr) {
-        return;
+        return false;
     }
 
     {
@@ -195,7 +192,7 @@ void PlatformConnection::sendMessage(const std::string &message)
         writeBuffer_.append("\n");
     }
 
-    handleWrite(g_writeTimeout);
+    return (handleWrite(g_writeTimeout) > 0);
 }
 
 int PlatformConnection::waitForMessages(int timeout)

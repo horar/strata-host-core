@@ -91,11 +91,11 @@ private:
         eWaitForNotify,
     };
 
-    /*! Flasher isPlatfromConnected.
-    * \brief Wait for a platfrom to be connected and send firmware_update command to the platfrom's firmware.
-    * \return true on success, false otherwise.
-    */
-    bool isPlatfromConnected(std::string* verbose_name);
+    /*!
+     * \brief Wait for a platform to be connected and send firmware_update command to the platform's firmware.
+     * \return true on success, false otherwise.
+     */
+    bool isPlatformConnected(std::string& verbose_name);
 
     bool processCommandFlashFirmware();
     bool processCommandBackupFirmware();

@@ -47,8 +47,9 @@ namespace spyglass {
         /**
          * Sends message over connection
          * @param message message to send
+         * @return returns true when message was send, otherwise false
          */
-        void sendMessage(const std::string &message);
+        bool sendMessage(const std::string &message);
 
         /**
          * Waits for messages for specified amount of time
@@ -85,14 +86,14 @@ namespace spyglass {
          * @param timeout to wait for read
          * @return number of bytes readed or negative when error
          */
-        int handleRead(int timeout);
+        int handleRead(unsigned int timeout);
 
         /**
          * Handles write to device
          * @param timeout
          * @return number of bytes written or negative when error
          */
-        int handleWrite(int timeout);
+        int handleWrite(unsigned int timeout);
 
 
         void onDescriptorEvent(EvEvent *, int flags);
@@ -111,8 +112,8 @@ namespace spyglass {
         std::string readBuffer_;
         std::string writeBuffer_;
 
-        int readOffset_ = 0;
-        int writeOffset_ = 0;
+        unsigned int readOffset_ = 0;
+        unsigned int writeOffset_ = 0;
 
         std::mutex readLock_;
         std::mutex writeLock_;

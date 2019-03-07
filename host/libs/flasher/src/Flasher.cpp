@@ -421,7 +421,7 @@ bool Flasher::writeCommandFlash()
 }
 
 
-bool Flasher::isPlatfromConnected(std::string* verbose_name)
+bool Flasher::isPlatformConnected(std::string& verbose_name)
 {
     // Wait for a platfrom to be connected. Pooling!!!
     const int POOLING_COUNTER_LIMIT = 100;
@@ -448,8 +448,8 @@ bool Flasher::isPlatfromConnected(std::string* verbose_name)
                     rapidjson::Value payload;
                     if (readNotifySimple("platform_id", payload)) {
 
-                        if (verbose_name && payload.HasMember("verbose_name")) {
-                            *verbose_name = payload["verbose_name"].GetString();
+                        if (payload.HasMember("verbose_name")) {
+                            verbose_name = payload["verbose_name"].GetString();
                         }
                         return true;
                     }
@@ -465,7 +465,7 @@ bool Flasher::isPlatfromConnected(std::string* verbose_name)
 bool Flasher::initializeBootloader()
 {
     std::string verbose_name;
-    if (false == isPlatfromConnected(&verbose_name))
+    if (false == isPlatformConnected(verbose_name))
     {
         return false;
     }
@@ -497,7 +497,7 @@ bool Flasher::flash(const bool forceStartApplication)
 {
     std::string verbose_name;
     // This is a blocking function and has a timeout.
-    if (false == isPlatfromConnected(&verbose_name))
+    if (false == isPlatformConnected(verbose_name))
     {
         return false;
     }
@@ -639,7 +639,7 @@ bool Flasher::startApplication()
 
 bool Flasher::verify() const
 {
-    const std::string& backupFilename(firmwareFilename_ + ".bak");
+    std::string backupFilename(firmwareFilename_ + ".bak");
 
     const int32_t firmwareSize = getFileSize(firmwareFilename_);
     const int32_t backupSize = getFileSize(backupFilename);
