@@ -342,11 +342,13 @@ bool Flasher::readNotify(const std::string& notificationName)
 
 bool Flasher::processCommandFlashFirmware()
 {
+    const int max_retry_wait_for_message = 10;
+
     for (int errorCounter = 0; RESPONSE_STATUS_MAX_ERRORS != errorCounter; errorCounter++)
     {
-        writeCommandFlash();
-
-        const int max_retry_wait_for_message = 10;
+        if (false == writeCommandFlash()) {
+            continue;
+        }
 
         ResponseState waitState = eWaitForAck;
         for (int retry = 0; retry < max_retry_wait_for_message; retry++) {
@@ -421,7 +423,7 @@ bool Flasher::writeCommandFlash()
 }
 
 
-bool Flasher::isPlatformConnected(std::string& verbose_name)
+bool Flasher::waitForPlatformConnected(std::string &verbose_name)
 {
     // Wait for a platfrom to be connected. Pooling!!!
     const int POOLING_COUNTER_LIMIT = 100;
@@ -467,7 +469,7 @@ bool Flasher::isPlatformConnected(std::string& verbose_name)
 bool Flasher::initializeBootloader()
 {
     std::string verbose_name;
-    if (false == isPlatformConnected(verbose_name))
+    if (false == waitForPlatformConnected(verbose_name))
     {
         return false;
     }
@@ -499,7 +501,7 @@ bool Flasher::flash(const bool forceStartApplication)
 {
     std::string verbose_name;
     // This is a blocking function and has a timeout.
-    if (false == isPlatformConnected(verbose_name))
+    if (false == waitForPlatformConnected(verbose_name))
     {
         return false;
     }

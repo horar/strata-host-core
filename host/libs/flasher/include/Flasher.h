@@ -95,7 +95,7 @@ private:
      * \brief Wait for a platform to be connected and send firmware_update command to the platform's firmware.
      * \return true on success, false otherwise.
      */
-    bool isPlatformConnected(std::string& verbose_name);
+    bool waitForPlatformConnected(std::string &verbose_name);
 
     bool processCommandFlashFirmware();
     bool processCommandBackupFirmware();
