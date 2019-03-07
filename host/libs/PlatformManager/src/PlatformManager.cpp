@@ -145,7 +145,7 @@ void PlatformManager::onRemovedPort(serialPortHash hash)
     delete conn;
 }
 
-void PlatformManager::removeConnection(PlatformConnection* conn)
+void PlatformManager::removeConnection(PlatformConnection* /*conn*/)
 {
     //TODO: remove connection
 

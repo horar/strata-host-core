@@ -30,6 +30,8 @@ PlatformConnection::~PlatformConnection()
 
 bool PlatformConnection::open(const std::string& portName)
 {
+    std::lock_guard<std::mutex> lock(readLock_);
+
     std::unique_ptr<serial_port> port(new serial_port);
     bool ret = port->open(portName);
     if (ret) {
@@ -45,6 +47,9 @@ void PlatformConnection::close()
 
         event_.release();
     }
+
+    std::lock_guard<std::mutex> rlock(readLock_);
+    std::lock_guard<std::mutex> wlock(writeLock_);
 
     if (port_) {
         port_->close();
@@ -78,6 +83,10 @@ bool PlatformConnection::getMessage(std::string& result)
 
     result = readBuffer_.substr(readOffset_, (off - readOffset_));
     readOffset_ = (off + 1);
+    if (readBuffer_.size() == readOffset_) {
+        readBuffer_.clear();
+        readOffset_ = 0;
+    }
     return true;
 }
 
@@ -85,7 +94,7 @@ void PlatformConnection::onDescriptorEvent(EvEvent*, int flags)
 {
     if (flags & EvEvent::eEvStateRead) {
 
-        if (handleRead() < 0) {
+        if (handleRead(g_readTimeout) < 0) {
             //TODO: [MF] add to log...
 
             event_->deactivate();
@@ -100,7 +109,7 @@ void PlatformConnection::onDescriptorEvent(EvEvent*, int flags)
     }
     if (flags & EvEvent::eEvStateWrite) {
 
-        if (handleWrite() < 0) {
+        if (handleWrite(g_writeTimeout) < 0) {
             //TODO: handle error...
 
         }
@@ -117,10 +126,10 @@ void PlatformConnection::onDescriptorEvent(EvEvent*, int flags)
     }
 }
 
-int PlatformConnection::handleRead()
+int PlatformConnection::handleRead(unsigned int timeout)
 {
     unsigned char read_data[512];
-    int ret = port_->read(read_data, sizeof(read_data), g_readTimeout);
+    int ret = port_->read(read_data, sizeof(read_data), timeout);
     if (ret <= 0) {
         return ret;
     }
@@ -132,7 +141,7 @@ int PlatformConnection::handleRead()
     return ret;
 }
 
-int PlatformConnection::handleWrite()
+int PlatformConnection::handleWrite(unsigned int timeout)
 {
     std::lock_guard<std::mutex> lock(writeLock_);
     if (isWriteBufferEmpty()) {
@@ -143,7 +152,7 @@ int PlatformConnection::handleWrite()
     size_t length = writeBuffer_.size() - writeOffset_;
     const unsigned char* data = reinterpret_cast<const unsigned char*>(writeBuffer_.data()) + writeOffset_;
 
-    int ret = port_->write(const_cast<unsigned char*>(data), length, g_writeTimeout);
+    int ret = port_->write(const_cast<unsigned char*>(data), length, timeout);
     if (ret < 0) {
         return ret;
     }
@@ -154,6 +163,7 @@ int PlatformConnection::handleWrite()
 
 void PlatformConnection::addMessage(const std::string& message)
 {
+    assert(event_);
     bool isWrite = event_->isActive(EvEvent::eEvStateWrite);
 
     //TODO: checking for too big messages...
@@ -169,8 +179,31 @@ void PlatformConnection::addMessage(const std::string& message)
     }
 }
 
+bool PlatformConnection::sendMessage(const std::string &message)
+{
+    assert(port_ != nullptr);
+    if (port_ == nullptr) {
+        return false;
+    }
+
+    {
+        std::lock_guard<std::mutex> lock(writeLock_);
+        writeBuffer_.append(message);
+        writeBuffer_.append("\n");
+    }
+
+    return (handleWrite(g_writeTimeout) > 0);
+}
+
+int PlatformConnection::waitForMessages(unsigned int timeout)
+{
+    assert(port_ != nullptr);
+    return handleRead(timeout);
+}
+
 bool PlatformConnection::isReadable()
 {
+    assert(port_ != nullptr);
     std::lock_guard<std::mutex> lock(readLock_);
     if (readBuffer_.size() <= readOffset_)
         return false;
@@ -184,14 +217,15 @@ bool PlatformConnection::isReadable()
 
 std::string PlatformConnection::getName() const
 {
-    assert(port_);
+    assert(port_ != nullptr);
     return std::string(port_->getName());
 }
 
 void PlatformConnection::attachEventMgr(EvEventsMgr* ev_manager)
 {
-    if (!port_)
+    if (port_ == nullptr) {
         return;
+    }
 
     event_mgr_ = ev_manager;
 
@@ -204,6 +238,10 @@ void PlatformConnection::attachEventMgr(EvEventsMgr* ev_manager)
 
 void PlatformConnection::detachEventMgr()
 {
+    if (port_ == nullptr) {
+        return;
+    }
+
     if (event_) {
         event_->deactivate();
     }
