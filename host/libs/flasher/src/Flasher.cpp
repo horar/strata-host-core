@@ -788,7 +788,7 @@ bool Flasher::processCommandBackupFirmware()
         ResponseState waitState = eWaitForAck;
         for (int retry = 0; retry < max_retry_wait_for_message; retry++) {
 
-            if (serial_->waitForMessages(200) > 0) {
+            if (serial_->waitForMessages(g_waitForMesageTime) > 0) {
 
                 if (waitState == eWaitForAck) {
                     if (readAck("backup_firmware")) {
