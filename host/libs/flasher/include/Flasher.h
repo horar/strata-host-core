@@ -101,7 +101,7 @@ private:
     bool processCommandBackupFirmware();
     bool processCommandStartApplication();
 
-    const static int32_t RESPONSE_STATUS_MAX_ERRORS = 10;
+    const static int RESPONSE_STATUS_MAX_ERRORS = 10;
 
     enum class RESPONSE_STATUS
     {
@@ -110,7 +110,7 @@ private:
         RESEND_CHUNK
     };
 
-    void sendCommand(const std::string& cmd);
+    bool sendCommand(const std::string& cmd);
     bool writeCommandFlash();
     bool writeCommandBackup(Flasher::RESPONSE_STATUS status);
     bool writeCommandStartApplication();

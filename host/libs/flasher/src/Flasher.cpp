@@ -342,7 +342,7 @@ bool Flasher::readNotify(const std::string& notificationName)
 
 bool Flasher::processCommandFlashFirmware()
 {
-    for (int32_t errorCounter = 0; RESPONSE_STATUS_MAX_ERRORS != errorCounter; ++errorCounter)
+    for (int errorCounter = 0; RESPONSE_STATUS_MAX_ERRORS != errorCounter; errorCounter++)
     {
         writeCommandFlash();
 
@@ -370,12 +370,13 @@ bool Flasher::processCommandFlashFirmware()
     return false;
 }
 
-void Flasher::sendCommand(const std::string& cmd)
+bool Flasher::sendCommand(const std::string& cmd)
 {
-    serial_->sendMessage(cmd);
-    if (dbg_out_stream_) {
+    bool ret = serial_->sendMessage(cmd);
+    if (ret && dbg_out_stream_) {
         *dbg_out_stream_ << cmd << std::endl;
     }
+    return ret;
 }
 
 bool Flasher::writeCommandFlash()
@@ -416,8 +417,7 @@ bool Flasher::writeCommandFlash()
 
     writer.EndObject();
 
-    sendCommand(s.GetString());
-    return true;
+    return sendCommand(s.GetString());
 }
 
 
@@ -432,7 +432,9 @@ bool Flasher::isPlatformConnected(std::string& verbose_name)
     std::string message;
     for(int counter = 0; counter < POOLING_COUNTER_LIMIT; counter++) {
 
-        sendCommand(init_msg);
+        if (false == sendCommand(init_msg)) {
+            continue;
+        }
 
         ResponseState waitState = eWaitForAck;
         for (int retry = 0; retry < max_retry_wait_for_message; retry++) {
@@ -598,17 +600,18 @@ bool Flasher::writeCommandStartApplication()
 
     writer.EndObject();
 
-    sendCommand(s.GetString());
-    return true;
+    return sendCommand(s.GetString());
 }
 
 bool Flasher::processCommandStartApplication()
 {
     const int max_retry_wait_for_message = 10;
 
-    for (int32_t errorCounter = 0; RESPONSE_STATUS_MAX_ERRORS != errorCounter; ++errorCounter)
+    for (int errorCounter = 0; RESPONSE_STATUS_MAX_ERRORS != errorCounter; errorCounter++)
     {
-        writeCommandStartApplication();
+        if (false == writeCommandStartApplication()) {
+            continue;
+        }
 
         ResponseState waitState = eWaitForAck;
         for (int retry = 0; retry < max_retry_wait_for_message; retry++) {
@@ -690,8 +693,7 @@ bool Flasher::writeCommandBackup(Flasher::RESPONSE_STATUS status)
 
     writer.EndObject();
 
-    sendCommand(s.GetString());
-    return true;
+    return sendCommand(s.GetString());
 }
 
 
@@ -707,8 +709,7 @@ bool Flasher::writeCommandReadFib()
 
     writer.EndObject();
 
-    sendCommand(s.GetString());
-    return true;
+    return sendCommand(s.GetString());
 }
 
 
@@ -781,9 +782,11 @@ bool Flasher::processCommandBackupFirmware()
 
     Flasher::RESPONSE_STATUS status(0 == backupChunk_.number ? RESPONSE_STATUS::NONE : RESPONSE_STATUS::NEXT_CHUNK);
 
-    for (int32_t errorCounter = 0; RESPONSE_STATUS_MAX_ERRORS != errorCounter; ++errorCounter)
+    for (int errorCounter = 0; RESPONSE_STATUS_MAX_ERRORS != errorCounter; errorCounter++)
     {
-        writeCommandBackup(status);
+        if (false == writeCommandBackup(status)) {
+            continue;
+        }
 
         ResponseState waitState = eWaitForAck;
         for (int retry = 0; retry < max_retry_wait_for_message; retry++) {
