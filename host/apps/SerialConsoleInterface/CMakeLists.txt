@@ -10,7 +10,7 @@ set(CMAKE_AUTORCC ON)
 
 include(FeatureSummary)
 
-find_package(Qt5 5.11 COMPONENTS Core Gui Network Quick REQUIRED)
+find_package(Qt5 5.10 COMPONENTS Core Gui Network Quick REQUIRED)
 if (NOT Qt5_FOUND)
     message(FATAL_ERROR "Qt5 not found!")
 endif()
