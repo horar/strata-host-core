@@ -1,8 +1,5 @@
 project(platform_mgr_test)
 
-set(CMAKE_CXX_STANDARD 11)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
 if(APPLE)
     find_library(IOKIT_LIB IOKit REQUIRED)
     if (NOT IOKIT_LIB)

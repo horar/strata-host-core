@@ -5,10 +5,6 @@ project(SerialConsoleInterface
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS OFF)
-
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
@@ -55,6 +51,14 @@ if (APPLE)
         ${FOUNDATION_LIB}
     )
 endif()
+
+set_target_properties(${PROJECT_NAME} PROPERTIES
+    CXX_STANDARD 17
+    CXX_STANDARD_REQUIRED ON
+    CXX_EXTENSIONS OFF
+    AUTOMOC ON
+    AUTORCC ON
+)
 
 target_compile_options(${PROJECT_NAME}
     PRIVATE $<$<CXX_COMPILER_ID:AppleClang>:-Wall -Wextra>

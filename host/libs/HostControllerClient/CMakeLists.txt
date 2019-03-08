@@ -3,9 +3,6 @@ project(HostControllerClient VERSION 1.0)
 find_package(ZeroMQ REQUIRED)
 find_package(ZMQHelper REQUIRED)
 
-set(CMAKE_CXX_STANDARD 11)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
 add_library(${PROJECT_NAME}
     src/HostControllerClient.cpp
 )

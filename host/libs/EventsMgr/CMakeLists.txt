@@ -1,8 +1,5 @@
 project(EventsMgr VERSION 1.0)
 
-set(CMAKE_CXX_STANDARD 11)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
 find_package(Libevent2 REQUIRED)
 find_package(Threads REQUIRED)
 

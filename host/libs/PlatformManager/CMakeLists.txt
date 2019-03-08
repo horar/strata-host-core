@@ -1,8 +1,5 @@
 project(PlatformManager VERSION 1.0)
 
-set(CMAKE_CXX_STANDARD 11)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
 find_package(Threads REQUIRED)
 
 set(SHARED_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../../shared")

@@ -4,9 +4,6 @@ project(hcs2)     #old: HostControllerService
 set(HostControllerService_VERSION_MAJOR 1)
 set(HostControllerService_VERSION_MINOR 0)
 
-set(CMAKE_CXX_STANDARD 11)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
 # Add Red color for errors
 string(ASCII 27 Esc)
 set(red "${Esc}[31m")
