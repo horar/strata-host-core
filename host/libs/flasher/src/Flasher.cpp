@@ -499,7 +499,9 @@ bool Flasher::processCommandUpdateFirmware()
 
 bool Flasher::initializeBootloader()
 {
-    for(int restart_retry = 0; restart_retry < 3; restart_retry++)
+    const int max_retry_of_enter_bootloader = 3;
+
+    for(int restart_retry = 0; restart_retry < max_retry_of_enter_bootloader; restart_retry++)
     {
         std::string verbose_name;
         if (false == waitForPlatformConnected(verbose_name))
