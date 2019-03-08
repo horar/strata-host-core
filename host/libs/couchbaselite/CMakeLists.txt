@@ -1,4 +1,6 @@
-project (couchbase-lite-cpp)
+project (couchbase-lite-cpp
+    LANGUAGES CXX
+)
 
 add_subdirectory(couchbase-lite-core)
 

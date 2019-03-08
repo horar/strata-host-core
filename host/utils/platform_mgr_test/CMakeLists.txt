@@ -1,4 +1,6 @@
-project(platform_mgr_test)
+project(platform_mgr_test
+    LANGUAGES CXX
+)
 
 if(APPLE)
     find_library(IOKIT_LIB IOKit REQUIRED)

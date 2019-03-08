@@ -1,8 +1,7 @@
-project(connector)
-
-# The version number
-set(HostControllerService_VERSION_MAJOR 1)
-set(HostControllerService_VERSION_MINOR 0)
+project(connector
+    VERSION 1.0
+    LANGUAGES CXX
+)
 
 find_package(SerialPort REQUIRED)
 find_package(ZeroMQ REQUIRED)

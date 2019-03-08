@@ -1,6 +1,6 @@
 project(SerialConsoleInterface
-    LANGUAGES CXX
     VERSION 0.0.0
+    LANGUAGES CXX
 )
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)

@@ -1,8 +1,8 @@
-project(HostControllerService)
+project(HostControllerService
+    VERSION 1.0
+    LANGUAGES CXX
+)
 
-# The version number
-set(HostControllerService_VERSION_MAJOR 1)
-set(HostControllerService_VERSION_MINOR 0)
 
 # Add Red color for errors
 string(ASCII 27 Esc)

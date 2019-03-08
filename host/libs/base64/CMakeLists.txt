@@ -1,4 +1,7 @@
-project(base64 VERSION 1.0)
+project(base64
+    VERSION 1.0
+    LANGUAGES CXX
+)
 
 add_library(${PROJECT_NAME} INTERFACE)
 

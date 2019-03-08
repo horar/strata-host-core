@@ -1,4 +1,7 @@
-project(flasher-app)
+project(flasher-app
+    VERSION 1.0.0
+    LANGUAGES CXX
+)
 
 if(APPLE)
     find_library(IOKIT_LIB IOKit REQUIRED)

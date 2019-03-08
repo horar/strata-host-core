@@ -1,4 +1,7 @@
-project(PlatformManager VERSION 1.0)
+project(PlatformManager
+    VERSION 1.0
+    LANGUAGES CXX
+)
 
 find_package(Threads REQUIRED)
 

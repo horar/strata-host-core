@@ -1,4 +1,7 @@
-project(StrataSerialPort VERSION 1.0)
+project(StrataSerialPort
+    VERSION 1.0
+    LANGUAGES CXX
+)
 
 find_package(SerialPort REQUIRED)
 

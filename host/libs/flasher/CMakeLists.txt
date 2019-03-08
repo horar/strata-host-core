@@ -1,4 +1,7 @@
-project(flasher VERSION 1.0)
+project(flasher
+    VERSION 1.0
+    LANGUAGES CXX
+)
 
 add_library(${PROJECT_NAME}
     src/Flasher.cpp

@@ -1,4 +1,6 @@
-project(serial_test)
+project(serial_test
+    LANGUAGES CXX
+)
 
 find_package(SerialPort REQUIRED)
 

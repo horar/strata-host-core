@@ -1,8 +1,7 @@
-project (serialtest)
-
-# The version number
-set (serialtest_VERSION_MAJOR 1)
-set (serialtest_VERSION_MINOR 0)
+project (serialtest
+    VERSION 1.0
+    LANGUAGES CXX
+)
 
 if(WINDOWS)
 SET(CMAKE_TOOLCHAIN_FILE x86_64.cmake)
