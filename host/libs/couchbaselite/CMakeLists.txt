@@ -1,5 +1,3 @@
-cmake_minimum_required(VERSION 3.5)
-
 project (couchbase-lite-cpp)
 
 set(CMAKE_CXX_STANDARD 11)

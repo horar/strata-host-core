@@ -1,4 +1,3 @@
-cmake_minimum_required(VERSION 3.1 FATAL_ERROR)
 project(SerialConsoleInterface
     LANGUAGES CXX
     VERSION 0.0.0

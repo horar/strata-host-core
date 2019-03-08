@@ -1,5 +1,3 @@
-cmake_minimum_required(VERSION 2.8)
-
 project(ConnectorTest)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
