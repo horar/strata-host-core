@@ -19,6 +19,7 @@ add_executable(${PROJECT_NAME}
     logging/LoggingQtCategories.qrc
 
     qml-dev-studio.qrc
+    qml-dev-studio-minimal.qrc
     qml-dev-studio-resources.qrc
 
     qml-views-15A-switcher.qrc
