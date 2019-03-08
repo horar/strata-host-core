@@ -1,11 +1,4 @@
 cmake_minimum_required(VERSION 3.1 FATAL_ERROR)
-
-if(APPLE)
-     if(NOT CMAKE_OSX_DEPLOYMENT_TARGET)
-        set(CMAKE_OSX_DEPLOYMENT_TARGET "10.13" CACHE STRING "" FORCE)
-    endif()
-endif()
-
 project(SerialConsoleInterface
     LANGUAGES CXX
     VERSION 0.0.0
