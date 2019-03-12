@@ -466,34 +466,68 @@ bool Flasher::waitForPlatformConnected(std::string &verbose_name)
     return false;
 }
 
+bool Flasher::processCommandUpdateFirmware()
+{
+    const int max_retry_wait_for_message = 10;
+
+    const std::string update_fw_msg(R"({'cmd':'update_firmware'})");
+
+    // Fimrware update command to be sent to the platfrom core.
+    // Enter bootloader mode.
+    serial_->sendMessage(update_fw_msg);
+
+    ResponseState waitState = eWaitForAck;
+    for(int retry = 0; retry < max_retry_wait_for_message; retry++) {
+
+        if (serial_->waitForMessages(g_waitForMesageTime) > 0) {
+
+            if (waitState == eWaitForAck) {
+                if (readAck("update_firmware")) {
+                    waitState = eWaitForNotify;
+                }
+            }
+            if (waitState == eWaitForNotify) {
+                if (readNotify("update_firmware")) {
+                    return true;
+                }
+            }
+        }
+    }
+
+    return false;
+}
+
 bool Flasher::initializeBootloader()
 {
-    std::string verbose_name;
-    if (false == waitForPlatformConnected(verbose_name))
+    const int max_retry_of_enter_bootloader = 3;
+
+    for(int restart_retry = 0; restart_retry < max_retry_of_enter_bootloader; restart_retry++)
     {
-        return false;
+        std::string verbose_name;
+        if (false == waitForPlatformConnected(verbose_name))
+        {
+            return false;
+        }
+
+        // Read dealer id after spyglass enabled platform was found
+        if (verbose_name == "Bootloader")
+        {
+            // Already in bootloader mode. Do nothing
+            std::cout << "Platform in bootloader mode. Flashing Process is about to start." << std::endl;
+            return true;
+        }
+        else
+        {
+            if (processCommandUpdateFirmware()) {
+
+                // Bootloader takes 5 seconds to start (known issue related to clock source). Platform and bootloader uses the same setting for clock source.
+                // clock source for bootloader and application must match. Otherwise when application jumps to bootloader, it will have a hardware fault which requires board to be reset.
+                std::this_thread::sleep_for (std::chrono::milliseconds(5500));
+            }
+        }
     }
 
-    // Read dealer id after spyglass enabled platform was found
-    if(verbose_name == "Bootloader")
-    {
-        // Already in bootloader mode. Do nothing
-        std::cout << "Platform in bootloader mode. Flashing Process is about to start." << std::endl;
-    }
-    else
-    {
-        // Fimrware update command to be sent to the platfrom core.
-        // Enter bootloader mode.
-        serial_->sendMessage(R"({'cmd':'firmware_update'})");
-
-        // Bootloader takes 5 seconds to start (known issue related to clock source). Platform and bootloader uses the same setting for clock source.
-        // clock source for bootloader and application must match. Otherwise when application jumps to bootloader, it will have a hardware fault which requires board to be reset.
-        std::this_thread::sleep_for (std::chrono::milliseconds(5500));
-
-        return false;   // TODO : firmware_update is not implemented!!!
-    }
-
-    return true;
+    return false;
 }
 
 
