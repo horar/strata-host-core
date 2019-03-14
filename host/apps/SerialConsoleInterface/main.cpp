@@ -13,6 +13,8 @@ int main(int argc, char *argv[])
     QQmlApplicationEngine engine;
     engine.addImportPath("qrc:///");
 
+    QCoreApplication::setOrganizationName(QStringLiteral("On Semiconductor"));
+
     qmlRegisterUncreatableType<BoardsController>("tech.spyglass.sci", 1, 0, "BoardsController", "can not instantiate BoardsController in qml");
     qmlRegisterSingletonType(QUrl("qrc:/fonts/Fonts.qml"), "fonts", 1, 0, "Fonts");
 
