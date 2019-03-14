@@ -18,13 +18,10 @@
         <file>partial-views/images/redStatusLight.svg</file>
         <file>partial-views/images/yellowStatusLight.svg</file>
         <file>partial-views/SGStatusLight.qml</file>
-    </qresource>
-    <qresource prefix="/" lang="qml">
-        <file>resources/Info.plist.in</file>
         <file>resources/serialconsoleinterface.rc</file>
+        <file>resources/Info.plist.in</file>
         <file>resources/icons/on.ico</file>
         <file>resources/icons/onLogoGreen.icns</file>
     </qresource>
     <qresource prefix="/js"/>
-    <qresource prefix="/js" lang="javascript"/>
 </RCC>
