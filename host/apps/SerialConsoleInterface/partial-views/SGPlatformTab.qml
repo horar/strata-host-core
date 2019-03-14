@@ -83,6 +83,7 @@ TabButton {
                 onClicked: {
                     content.destroy()
                     tabBar.removeItem(control)
+                    delete platformInterface.platformList[boardId]
                 }
 
                 onEntered: closerIcon.color = "grey"
