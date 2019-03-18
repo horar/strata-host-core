@@ -62,8 +62,8 @@ bool is_command_within_length(char *data)
 * Add a new element at the end of the list if a list already exist.
 * otherwise, it will add the first element. It takes two arguments,
 * first, will be a pointer to data, which will be the json command
-* and second is a pointer to the list itself to store the data in
-* each node.
+* and the second argument is a pointer to the list itself to store
+* the data in each node.
 **/
 void push(char *data, queue_t *queue, memory_pool_t *pool)
 {
