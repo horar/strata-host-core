@@ -6,6 +6,7 @@
 #define PLATFORM_INTERFACE_DEBUG_MACROS_H
 
 #include <printf.h>
+#include <string.h>
 
 /* MACROS FOR DEBUG PURPOSES */
 #if 1

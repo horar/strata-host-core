@@ -1,8 +1,6 @@
 //
 // Created by Mustafa Alshehab on 8/17/18.
 //
-
-#include <string.h>
 #include "../include/platform_command_dispatcher.h"
 #include "../include/platform_command_implementation.h"
 #include "../include/debug_macros.h"

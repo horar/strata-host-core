@@ -1,5 +1,3 @@
-#include <stdlib.h>
-#include "cJSON.h"
 #include "../include/platform_command_dispatcher.h"
 #include "../include/debug_macros.h"
 
@@ -33,5 +31,6 @@ int main( ) {
     //free queue and memory pool memory
     queue_and_memory_pool_destroy(queue1,pool);
     LOG_DEBUG("END\n");
+
     return 0;
 }
