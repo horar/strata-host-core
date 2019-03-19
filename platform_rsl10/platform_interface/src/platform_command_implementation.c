@@ -1,8 +1,8 @@
 //
 // Created by Mustafa Alshehab on 12/26/18.
 //
-#include "platform_command_implementation.h"
-#include <printf.h>
+#include "../include/platform_command_implementation.h"
+#include "../include/debug_macros.h"
 #include <memory.h>
 
 #define ARRAY_SIZE(array)  sizeof(array) / sizeof(array[0]);
@@ -31,7 +31,7 @@ static int g_command_handlers_size = ARRAY_SIZE(command_handlers);
 
 // Below are the lists of functions used for each command
 void call_command_handler(char *name, cJSON *payload_value) {
-    printf("Size of the command_handlers  %u\n", g_command_handlers_size);
+    LOG_DEBUG("Size of the command_handlers list is %u", g_command_handlers_size);
 
     for (int i = 0; i < g_command_handlers_size; i++) {
         if (!strcmp(command_handlers[i].name, name)) {
@@ -40,13 +40,13 @@ void call_command_handler(char *name, cJSON *payload_value) {
             return;
         }
     }
-    printf("%s %s \n", name, "command doesn't exist");
+    LOG_ERROR("%s %s \n", name, "command doesn't exist");
     emit(response_string[COMMAND_NOT_FOUND]);
 }
 
 
 void request_platform_id (cJSON *payload_value) {
-    printf("confirm execution of platform_id_command or echo command \n");
+    LOG_DEBUG("confirm execution of platform_id_command or echo command \n");
     /* call a send response function
      * In case of RSL-10 will be something
      * like below to sent platform id through UART
@@ -58,7 +58,7 @@ void request_platform_id (cJSON *payload_value) {
 }
 
 void request_echo (cJSON *payload_value) {
-    printf("confirm execution of echo command \n");
+    LOG_DEBUG("confirm execution of echo command\n");
     /* In case of RSL-10 will be something
      * you could echo whatever you received from rx uart
      * UART->TX_DATA = uart_rx_buffer;
@@ -66,17 +66,24 @@ void request_echo (cJSON *payload_value) {
 }
 
 void general_purpose (cJSON *payload_value) {
+    /* in case of payload consists of two arguments
+     the first is a number and the second is a string
+     "{\"cmd\" : \"command_A\", \"payload\" : {\"number_argument\" : 1, \"string_argument\" : \"whatever"}}"
+     */
+
     cJSON *number_argument = NULL;
     cJSON *string_argument = NULL;
 
-    printf("confirm execution of general_command\n");
+    LOG_DEBUG("confirm execution of general_command\n");
 
     if (payload_value == NULL) {
+        LOG_ERROR("No payload value");
         return;
     }
+    // this how to fetch a number using cJSON library
     number_argument = cJSON_GetObjectItem(payload_value, "number_argument");
     size_t number_value = number_argument->valueint;
-
+    // this how to fetch a string using cJSON library
     string_argument = cJSON_GetObjectItem(payload_value, "string_argument");
     char *string_value = string_argument->valuestring;
 
@@ -87,6 +94,7 @@ void general_purpose (cJSON *payload_value) {
 
 void emit(const char *response_string)
 {
+    LOG_DEBUG("confirm execution of emit %s\n", response_string);
     // the following code assumes you are using
     // cmsis uart driver for RSL10
     // send function in cmsis uart driver works by telling

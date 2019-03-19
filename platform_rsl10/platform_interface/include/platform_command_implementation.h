@@ -14,7 +14,7 @@ static const char *response_string[] = {
         "{\"notification\":\"payload\":{\"return_string\":\"error: command size exceeded the specified limit\"}}"
 };
 
-enum {BAD_JSON, COMMAND_NOT_FOUND, COMMAND_VALID, LONG_COMMAND};
+enum emit_messages {BAD_JSON, COMMAND_NOT_FOUND, COMMAND_VALID, LONG_COMMAND};
 
 // forward declaration
 typedef struct command_handler command_handler_t;

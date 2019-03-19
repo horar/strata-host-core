@@ -3,24 +3,24 @@
 //
 
 #include <string.h>
-#include <printf.h>
-#include "platform_command_dispatcher.h"
-#include "platform_command_implementation.h"
+#include "../include/platform_command_dispatcher.h"
+#include "../include/platform_command_implementation.h"
+#include "../include/debug_macros.h"
 
 /**  An example of json format
   * payload arguments could be anything you want
   * this examples have a number and string arguments
   *
-  *  "{\"cmd\" : \"whatever_command\", \"payload\" : {\"number_argument\" : 1, \"string_argument\" : \"whatever"}}"
+  *  "{\"cmd\" : \"command_A\", \"payload\" : {\"number_argument\" : 1, \"string_argument\" : \"whatever"}}"
   *   OR
-  *  "{\"cmd\" : \"whatever_command\", \"payload\" : {\"whatever_payload\"}"
+  *  "{\"cmd\" : \"command_B\", \"payload\" : {\"whatever_payload\"}"
   *   OR
-  *  "{\"cmd\" : \"whatever_command\"}"
+  *  "{\"cmd\" : \"command_C\"}"
   **/
 
 #define COMMAND_LENGTH_IN_BYTES 150
+
 // This could be change to full stack size or whatever appropriate
-// which can be used in uart->Receive (uart cmsis driver)
 #define COMMAND_MAX_LENGTH 2000
 
 typedef struct node {
@@ -41,6 +41,7 @@ queue_t *queue_init(void)
 
     queue->head = NULL;
     queue->tail = NULL;
+    queue->temp = NULL;
     queue->size = 0;
 
     return queue;
@@ -49,7 +50,7 @@ queue_t *queue_init(void)
 bool is_command_within_length(char *data)
 {
     size_t i = 0;
-    for(; (*(data+i) && *(data+i) != '\n' && i < COMMAND_MAX_LENGTH ) ; i++);
+    for(; (*(data+i) != '\n' && i < COMMAND_MAX_LENGTH ) ; i++);
 
     if (i <= COMMAND_LENGTH_IN_BYTES) {
         return true;
@@ -68,10 +69,9 @@ bool is_command_within_length(char *data)
 void push(char *data, queue_t *queue, memory_pool_t *pool)
 {
     bool length = is_command_within_length(data);
+
     if (length == true) {
-
         node_t *new_node = (node_t *) memory_pool_acquire(pool);
-
         memcpy(new_node->data, data, strlen(data));
         new_node->next = NULL;
 
@@ -90,7 +90,7 @@ void push(char *data, queue_t *queue, memory_pool_t *pool)
         queue->size++;
     }
     else {
-        printf("command size exceeded the specified limit\n");
+        LOG_ERROR("command size exceeded the specified limit\n");
         emit(response_string[LONG_COMMAND]);
     }
 }
@@ -108,7 +108,6 @@ void pop(queue_t *queue, memory_pool_t *pool)
         memory_pool_release(pool,queue->head);
         queue->head = queue->temp;
         queue->size--;
-        //print_list();
     }
 }
 
@@ -117,10 +116,10 @@ void pop(queue_t *queue, memory_pool_t *pool)
  * right function for each command by calling call_command_handler function.
  **/
 
-void dispatch(char * data)
+void dispatch(char *data)
 {
     char *parse_string = data;
-    printf("parsing string is %s \n", parse_string);
+    LOG_DEBUG("Command being parsed is: %s \n", parse_string);
 
     cJSON *json = NULL;
     cJSON *cmd = NULL;
@@ -132,7 +131,7 @@ void dispatch(char * data)
         const char *error_ptr = cJSON_GetErrorPtr();
         if (error_ptr != NULL)
         {
-            printf("%s %s", error_ptr, "is invalid json\n");
+            LOG_ERROR("%s %s", error_ptr, "is invalid json\n");
             emit(response_string[BAD_JSON]);
         }
         /* warning: memory is allocated to store the parsed JSON and
@@ -147,6 +146,7 @@ void dispatch(char * data)
     if (cmd == NULL) {
         /* warning: memory is allocated to store the parsed JSON and
          * must be freed by cJSON_Delete(json); to prevent memory lea */
+        LOG_ERROR("cmd argument is NULL\n");
         cJSON_Delete(json);
         return;
     }
@@ -181,12 +181,12 @@ size_t size_of_node_struct()
 }
 void print_list(queue_t * queue)
 {
-    printf("PRINT: Current liked queue size %zu \n", queue->size);
-    printf("The queue consists of ");
+    LOG_DEBUG("Current liked_list size is: %zu \n", queue->size);
+    LOG_DEBUG("Commands queue consists of: ");
     queue->temp = queue->head;
     while (queue->temp != NULL) {
-        printf("%s %s ", queue->temp->data, "-->");
+        LOG_DEBUG("%s %s ", queue->temp->data, "-->");
         queue->temp = queue->temp->next;
     }
-    printf("NULL\n");
+    LOG_DEBUG("NULL\n");
 }
