@@ -147,7 +147,10 @@ Item {
 
                 onAccepted: {
                     if (text.length !== 0) {
-                        CorePlatformInterface.saveAndSendCommand(text)
+                        if (CorePlatformInterface.checkCommand(text)) {
+                            CorePlatformInterface.sendCommand(boardId, text)
+                        }
+
                         cmdInput.text = ""
                         historyBox.filterBoxValue = ""
                         historyBox.currentIndex = -1

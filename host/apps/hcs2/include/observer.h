@@ -21,15 +21,15 @@ class AttachmentObserver : public Observer {
 public:
     AttachmentObserver() {};
     AttachmentObserver(void *client_socket,void *client_id_list);
-    ~AttachmentObserver(){};
-
-    void SyncStatusCallback(NimbusSyncInfo info) {
-    }
-
-    void ReplicationComplete() {
+    virtual ~AttachmentObserver()
+    {
+        //TODO: release of client list ?  relase of connector ?
     };
 
-    void DocumentChangeCallback(jsonString jsonBody);
+    virtual void SyncStatusCallback(NimbusSyncInfo info) { }
+    virtual void DocumentChangeCallback(jsonString jsonBody);
+
+    void ReplicationComplete() { };
 
 private:
     typedef std::list<std::string> clientList;

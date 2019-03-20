@@ -10,12 +10,12 @@ Item {
     // List of Connected Platforms
 
     property var platformList : {
-            { "default": {
+          "default": {
                 "name": "No Board Connected",
                 "connected": false
             }
         }
-    }
+
 
     // -------------------
     // List of Tabs/Content
@@ -42,18 +42,21 @@ Item {
     }
 
     // -------------------------------------------------------------------
-    // Connect to platformController notification signals
+    // Connect to BoardsController notification signals
 
     Connections {
-        target: platformController
+        target: boardsMgr
 
-        onNotificationChanged: {
-            CorePlatformInterface.notificationHandler(notification, platformID)
-//            platformController.notification = ""
+        onConnectedBoard: {
+            CorePlatformInterface.boardConnected(connection_id, verbose_name)
         }
 
-        onPlatformConnectedChanged: {
-            CorePlatformInterface.platformConnectionChanged(payload)
+        onDisconnectedBoard: {
+            CorePlatformInterface.boardDisconnected(connection_id)
+        }
+
+        onNotifyBoardMessage: {
+            CorePlatformInterface.boardMessage(connection_id, message)
         }
     }
 
@@ -73,7 +76,7 @@ Item {
             id: button1
             text: "connect platform"
             onClicked: {
-                CorePlatformInterface.platformConnectionChanged ('{"verboseName":"Fake Platform ID", "connected":true, "platformID": "fakeID"}')
+                CorePlatformInterface.boardConnected("fake_connection_ID", "Fake Platform ID")
             }
         }
 
@@ -82,7 +85,7 @@ Item {
             anchors { top: button1.bottom }
             text: "disconnect platform"
             onClicked: {
-                CorePlatformInterface.platformConnectionChanged ('{"verboseName":"Fake Platform ID", "connected":false, "platformID": "fakeID"}')
+                CorePlatformInterface.boardDisconnected("fake_connection_ID")
             }
         }
     }

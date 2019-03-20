@@ -1,4 +1,4 @@
-if( TARGET SerialPort )
+if( TARGET libSerialPort )
     return()
 endif()
 
@@ -30,9 +30,9 @@ endif()
 if (SERIALPORT_FOUND)
   message( STATUS "Serial port found at ${SERIALPORT_LIBRARY}" )
 
-  add_library( SerialPort UNKNOWN IMPORTED )
-  set_property( TARGET SerialPort PROPERTY IMPORTED_LOCATION "${SERIALPORT_LIBRARY}" )
-  set_property( TARGET SerialPort PROPERTY INTERFACE_INCLUDE_DIRECTORIES "${SERIALPORT_INCLUDE_DIR}" )
+  add_library( libSerialPort UNKNOWN IMPORTED )
+  set_property( TARGET libSerialPort PROPERTY IMPORTED_LOCATION "${SERIALPORT_LIBRARY}" )
+  set_property( TARGET libSerialPort PROPERTY INTERFACE_INCLUDE_DIRECTORIES "${SERIALPORT_INCLUDE_DIR}" )
 
   set(SERIALPORT_LIBRARIES ${SERIALPORT_LIBRARY} )
   set(SERIALPORT_INCLUDE_DIRS ${SERIALPORT_INCLUDE_DIR} )
@@ -44,7 +44,7 @@ if (SERIALPORT_FOUND)
       SERIALPORT_INCLUDE_DIRS )
 
 else (SERIALPORT_FOUND)
-    if (SerialPort_FIND_REQUIRED)
+    if (libSerialPort_FIND_REQUIRED)
       message(FATAL_ERROR "Could NOT find libSerialPort development files: ${SERIALPORT_INCLUDE_DIR} :: ${SERIALPORT_LIBRARY}")
     endif()
 endif()
