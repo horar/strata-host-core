@@ -1,9 +1,11 @@
 project(ConnectorTest LANGUAGES CXX)
+
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
+
 set(SCI_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../../apps/SerialConsoleInterface )
-enable_testing(true)
+
 find_package(Qt5 5.10 COMPONENTS Core Test REQUIRED)
 if(APPLE)
     find_library(IOKIT_LIB IOKit REQUIRED)
@@ -15,8 +17,10 @@ if(APPLE)
         message(FATAL_ERROR "Foundation framework not found")
     endif()
 endif()
+
 #temporary RS hack solution for testing
 include_directories(${SCI_DIR})
+
 add_executable(${PROJECT_NAME}
     "main.cpp"
     "${SCI_DIR}/PlatformController.cpp"
