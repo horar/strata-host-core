@@ -3,6 +3,8 @@ cmake_minimum_required (VERSION 2.8)
 project(flasher-app)
 
 set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
 
 if(APPLE)
     find_library(IOKIT_LIB IOKit REQUIRED)
@@ -19,7 +21,8 @@ add_executable(${PROJECT_NAME} src/main.cpp)
 
 target_link_libraries(${PROJECT_NAME}
     flasher
-    connector
+    PlatformManager
+    StrataSerialPort
 )
 
 if (APPLE)

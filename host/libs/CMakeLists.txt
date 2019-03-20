@@ -1,5 +1,9 @@
-cmake_minimum_required(VERSION 2.8)
-
+add_subdirectory(base64)
+add_subdirectory(serial_port)
 add_subdirectory(connector)
 add_subdirectory(flasher)
-# TODO:  add_subdirectory(HostControlerClient)
+add_subdirectory(HostControllerClient)
+add_subdirectory(PlatformInterface)
+add_subdirectory(couchbaselite)
+add_subdirectory(EventsMgr)
+add_subdirectory(PlatformManager)

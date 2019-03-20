@@ -13,6 +13,10 @@
 
 #include "HostControllerService.h"
 
+#include <chrono>
+#include <thread>
+
+
 using namespace rapidjson;
 using namespace std;
 
@@ -48,7 +52,7 @@ void AttachmentObserver::DocumentChangeCallback(jsonString jsonBody) {
 //  ERROR:
 //    exits if socket cannot be opened or incorrect socket address
 //
-HostControllerService::HostControllerService(string configuration_file)
+HostControllerService::HostControllerService(const string& configuration_file)
 {
     // config file parsing
     configuration_ = new ParseConfig(configuration_file);
@@ -94,13 +98,15 @@ HostControllerService::HostControllerService(string configuration_file)
 HcsError HostControllerService::init()
 {
     // zmq context creation
-    socket_context_ = new(zmq::context_t);
+    socket_context_ = new zmq::context_t;
     // opening the client socket to connect with UI
     client_connector_->open(hcs_server_address_);
+
     // registering the observer to the database
     // // TODO [prasanth] NIMBUS integration **Needs better organisation
     AttachmentObserver blobObserver((void *)client_connector_, (void *)&clientList);
     database_->Register(&blobObserver);
+
     // [TODO]: [prasanth] the following lines are used to handle the serial connect/disconnect
     // This method will be removed once we get the serial to socket stuff in
     port_disconnected_ = true;
@@ -108,6 +114,7 @@ HcsError HostControllerService::init()
     remote_connector_->setConnectionState(false);
     client_connector_->setConnectionState(false);
     remote_activity_connector_->setConnectionState(false);
+
     setEventLoop();
     // [TODO] [prasanth] : This function run is coded in this, since the libevent dynamic
     //addtion of event is not implemented successfully in hcs
@@ -134,7 +141,7 @@ HcsError HostControllerService::init()
 HcsError HostControllerService::run()
 {
     while(!openPlatform()) {
-        sleep(0.2);
+        std::this_thread::sleep_for(std::chrono::milliseconds(200));
     }
     PDEBUG(PRINT_DEBUG,"\033[1;32mPlatform detected\033[0m\n");
     initializePlatform(); // init serial config
@@ -216,7 +223,7 @@ void HostControllerService::testCallback(evutil_socket_t fd, short what, void* a
             event_set(&hcs->platform_handler_,hcs->serial_connector_->getFileDescriptor(), EV_READ | EV_WRITE | EV_PERSIST,
                                            HostControllerService::platformCallback,hcs);
 #else
-            event_set(&hcs->platform_handler_,hcs->serial_connector_->getFileDescriptor(), EV_READ  | EV_PERSIST,
+            event_set(&hcs->platform_handler_, hcs->serial_connector_->getFileDescriptor(), EV_READ  | EV_PERSIST,
                                                    HostControllerService::platformCallback,hcs);
 #endif
             event_add(&hcs->platform_handler_,NULL);
@@ -246,80 +253,12 @@ void HostControllerService::serviceCallback(evutil_socket_t fd, short what, void
 {
     // [TODO] [prasanth] This is just a test case. will clean this as we proceed
     HostControllerService *hcs = (HostControllerService*)args;
-    string dealer_id;
-    string read_message;
-    if(hcs->client_connector_->read(read_message)) {
-        dealer_id = hcs->client_connector_->getDealerID();
-        if(!hcs->clientExistInList(dealer_id)) {
-            PDEBUG(PRINT_DEBUG,"Adding new client to list");
-            hcs->clientList.push_back(dealer_id);
-        }
-        Document service_command;
-        if (service_command.Parse(read_message.c_str()).HasParseError()) {
-            PDEBUG(PRINT_DEBUG,"ERROR: json parse error!");
-        }
 
-        // TODO [ian] add this to a "command_filter" map to add more then just "db::cmd"
-        if( service_command.HasMember("db::cmd") ) {
-            // [TODO] [prasanth] : verify with Abe. Removing Open after nimbus initialization causes seg fault on this command
-            // Hence commeneted out
-            // if ( hcs->database_->Command( read_message.c_str() ) != NO_ERRORS ){
-            //     PDEBUG(PRINT_DEBUG,"ERROR: database failed failed!");
-            // }
-        }
-        // parsing all the hcs related messages
-        // for instance, remote control message,chat
-        else if( service_command.HasMember("hcs::cmd") ) {
-            hcs->parseHCSCommands(read_message);
-        }
-        // the following routine is to add the client[ui] into the routing table
-        else if(hcs->platform_client_mapping_.empty() || !hcs->clientExists(dealer_id)) {
-            std::vector<string> selected_platform_info = hcs->initialCommandDispatch(dealer_id,read_message);
-            // strictly for testing alone
-            if(!(selected_platform_info[0] == "NONE")) {
-                // need to change the following lines to support struct
-                std::vector<string> map_element;
-                map_element.insert(map_element.begin(),selected_platform_info[0]);
-                map_element.insert(map_element.begin()+1,selected_platform_info[1]);
-                hcs->platform_client_mapping_.emplace(map_element,dealer_id);
-                //  storing the connected platform uuid to a global variable
-                // [TODO] [prasanth] This is required later for remote activity subscriber
-                // since it is created with platform uuid as filter
-                hcs->g_platform_uuid_ = selected_platform_info[0];
-                PDEBUG(PRINT_DEBUG,"adding the %s uuid to multimap\n",hcs->g_platform_uuid_.c_str());
-                if(selected_platform_info[1] == "remote") {
-                    // sending connect message to disc service
-                    hcs->handleRemoteConnection(selected_platform_info[0]);
-                    // openeing the subscriber socket for remote user connect and disconnect
-                    hcs->startActivityMonitorService();
-                }
-                // constructing JSON for the database to open the channel based on selected platform
-                Document document;
-                document.SetObject();
-                Document::AllocatorType& allocator = document.GetAllocator();
-                Value platform_id(selected_platform_info[0].c_str(),allocator);
-                Value payload_object;
-                payload_object.SetObject();
-                payload_object.AddMember("db_name",platform_id,allocator);
-                document.AddMember("db::payload",payload_object,allocator);
-                document.AddMember("db::cmd","open",allocator);
-                StringBuffer strbuf;
-                Writer<StringBuffer> writer(strbuf);
-                document.Accept(writer);
-                PDEBUG(PRINT_DEBUG,"db::cmd %s\n",strbuf.GetString());
-                // sending the command to NIMBUS
-                if ( hcs->database_->Command( strbuf.GetString() ) != NO_ERRORS ){
-                    PDEBUG(PRINT_DEBUG,"ERROR: database failed failed!");
-                }
-                PDEBUG(PRINT_DEBUG,"adding the %s uuid to multimap\n",selected_platform_info[0].c_str());
-            }
-        }
-        // this section will be invoked, if the client[ui] is already mapped to a platform and
-        else {
-            PDEBUG(PRINT_DEBUG,"Dispatching message to platform/s\n");
-            hcs->disptachMessageToPlatforms(dealer_id,read_message);
-        }
-    }   // end if - read platform messages
+    std::string message, dealer_id;
+    if (hcs->client_connector_->read(message)) {
+        dealer_id = hcs->client_connector_->getDealerID();
+        hcs->onServiceCallback(dealer_id, message);
+    }
 }
 
 // @f remote socket callback
@@ -357,14 +296,7 @@ void HostControllerService::platformCallback(evutil_socket_t fd, short what, voi
     HostControllerService *hcs = (HostControllerService*)args;
     string read_message = hcs->platformRead();
     if(!read_message.empty()) {
-        PDEBUG(PRINT_DEBUG,"message being read %s\n",read_message.c_str());
-        // [TODO] [prasanth] change the map value for platform from string to structure
-        hcs->checkPlatformExist(read_message);
-        //[TODO] [prasanth]: send data to the data bridge through multimap handle
-        // for now we are restricting the send to platform only when customer selects to advertise his/her platform
-        if(hcs->remote_connector_->isConnected()) {
-            hcs->remote_connector_->send(read_message);
-        }
+        hcs->onPlatformCallback(read_message);
     }
 }
 
@@ -385,6 +317,97 @@ void HostControllerService::remoteActivityCallback(evutil_socket_t fd, short wha
     if (hcs->remote_activity_connector_->read(read_message)) {
         PDEBUG(PRINT_DEBUG,"data activity message read %s",read_message.c_str());
         hcs->handleRemoteActivity(read_message);
+    }
+}
+
+void HostControllerService::onServiceCallback(const std::string& dealer_id, const std::string& message)
+{
+    if(!clientExistInList(dealer_id)) {
+        PDEBUG(PRINT_DEBUG,"Adding new client<%s> to list", dealer_id.c_str());
+        clientList.push_back(dealer_id);
+    }
+    Document service_command;
+    if (service_command.Parse(message.c_str()).HasParseError()) {
+        PDEBUG(PRINT_DEBUG,"ERROR: json parse error!");
+    }
+
+    // TODO [ian] add this to a "command_filter" map to add more then just "db::cmd"
+    if( service_command.HasMember("db::cmd") ) {
+        // [TODO] [prasanth] : verify with Abe. Removing Open after nimbus initialization causes seg fault on this command
+        // Hence commeneted out
+        // if ( hcs->database_->Command( read_message.c_str() ) != NO_ERRORS ){
+        //     PDEBUG(PRINT_DEBUG,"ERROR: database failed failed!");
+        // }
+    }
+        // parsing all the hcs related messages
+        // for instance, remote control message,chat
+    else if( service_command.HasMember("hcs::cmd") ) {
+        parseHCSCommands(message);
+    }
+        // the following routine is to add the client[ui] into the routing table
+    else if(platform_client_mapping_.empty() || !clientExists(dealer_id)) {
+
+        std::vector<string> selected_platform_info = initialCommandDispatch(dealer_id, message);
+        // strictly for testing alone
+        if(!(selected_platform_info[0] == "NONE")) {
+            // need to change the following lines to support struct
+            std::vector<string> map_element;
+            map_element.insert(map_element.begin(),selected_platform_info[0]);
+            map_element.insert(map_element.begin()+1,selected_platform_info[1]);
+            platform_client_mapping_.emplace(map_element,dealer_id);
+
+            //  storing the connected platform uuid to a global variable
+            // [TODO] [prasanth] This is required later for remote activity subscriber
+            // since it is created with platform uuid as filter
+            g_platform_uuid_ = selected_platform_info[0];
+
+            PDEBUG(PRINT_DEBUG,"adding the %s uuid to multimap\n", g_platform_uuid_.c_str());
+            if(selected_platform_info[1] == "remote") {
+                // sending connect message to disc service
+                handleRemoteConnection(selected_platform_info[0]);
+                // openeing the subscriber socket for remote user connect and disconnect
+                startActivityMonitorService();
+            }
+
+            // constructing JSON for the database to open the channel based on selected platform
+            Document document;
+            document.SetObject();
+            Document::AllocatorType& allocator = document.GetAllocator();
+            Value platform_id(selected_platform_info[0].c_str(),allocator);
+            Value payload_object;
+            payload_object.SetObject();
+            payload_object.AddMember("db_name",platform_id,allocator);
+            document.AddMember("db::payload",payload_object,allocator);
+            document.AddMember("db::cmd","open",allocator);
+            StringBuffer strbuf;
+            Writer<StringBuffer> writer(strbuf);
+            document.Accept(writer);
+            PDEBUG(PRINT_DEBUG,"db::cmd %s\n",strbuf.GetString());
+
+            // sending the command to NIMBUS
+            if ( database_->Command( strbuf.GetString() ) != NO_ERRORS ){
+                PDEBUG(PRINT_DEBUG,"ERROR: database failed failed!");
+            }
+            PDEBUG(PRINT_DEBUG,"adding the %s uuid to multimap\n",selected_platform_info[0].c_str());
+        }
+    }
+        // this section will be invoked, if the client[ui] is already mapped to a platform and
+    else {
+        PDEBUG(PRINT_DEBUG,"Dispatching message to platform/s\n");
+        disptachMessageToPlatforms(dealer_id, message);
+    }
+}
+
+void HostControllerService::onPlatformCallback(const std::string& message)
+{
+    PDEBUG(PRINT_DEBUG,"message being read %s\n",message.c_str());
+    // [TODO] [prasanth] change the map value for platform from string to structure
+    checkPlatformExist(message);
+
+    //[TODO] [prasanth]: send data to the data bridge through multimap handle
+    // for now we are restricting the send to platform only when customer selects to advertise his/her platform
+    if (remote_connector_->isConnected()) {
+        remote_connector_->send(message);
     }
 }
 
@@ -457,37 +480,51 @@ std::vector<string> HostControllerService::initialCommandDispatch(const std::str
 {
     // [TODO]: [prasanth] should be removed after bod demo
     std::vector<string> selected_platform;
-    selected_platform.insert(selected_platform.begin(),"NONE");
-    selected_platform.insert(selected_platform.begin()+1,"NONE");
-    string board_name,remote_status ;
+    selected_platform.insert(selected_platform.begin(), std::string("NONE"));
+    selected_platform.insert(selected_platform.begin()+1,std::string("NONE"));
+
+    string board_name,remote_status;
     client_connector_->setDealerID(dealer_id);
+
     Document service_command;
     // [TODO] [prasanth] : needs better organization
     if (service_command.Parse(command.c_str()).HasParseError()) {
         PDEBUG(PRINT_DEBUG,"ERROR: json parse error!\n");
         return selected_platform;
     }
+
+    if (!service_command.HasMember("cmd") || !service_command.HasMember("payload") ) {
+        PDEBUG(PRINT_DEBUG,"ERROR: invalid json - missing 'cmd' or 'payload' !\n");
+        return selected_platform;
+    }
+
     // state machine using switch statements
     string platformList;
     CommandDispatcherMessages message = stringHash(service_command["cmd"].GetString());
+    Value& payload_item = service_command["payload"];
     switch(message) {
         case CommandDispatcherMessages::REQUEST_HCS_STATUS:
                                             client_connector_->send(JSON_SINGLE_OBJECT
                                                 ("hcs::notification","hcs_active"));
                                             break;
+
         case CommandDispatcherMessages::REGISTER_CLIENT:
         case CommandDispatcherMessages::REQUEST_AVAILABLE_PLATFORMS:
                                             PDEBUG(PRINT_DEBUG,"Sending the list of available platform");
                                             getPlatformListJson(platformList);
                                             client_connector_->send(platformList);
                                             break;
+
         case CommandDispatcherMessages::PLATFORM_SELECT:
                                             PDEBUG(PRINT_DEBUG,"The client has selected a platform");
-                                            board_name = service_command["platform_uuid"].GetString();
-                                            remote_status = service_command["remote"].GetString();
+                                            board_name = payload_item["platform_uuid"].GetString();
+                                            remote_status = payload_item["remote"].GetString();
                                             selected_platform.insert(selected_platform.begin(),board_name);
                                             selected_platform.insert(selected_platform.begin()+1,remote_status);
                                             return selected_platform;
+        case CommandDispatcherMessages::UNREGISTER_CLIENT:
+                                            break;
+
         default:
             assert(false);
             break;
@@ -504,12 +541,13 @@ std::vector<string> HostControllerService::initialCommandDispatch(const std::str
 //  OUT: true if success,
 //       false if failure
 //
-bool HostControllerService::disptachMessageToPlatforms(const std::string& dealer_id,std::string& read_message)
+bool HostControllerService::disptachMessageToPlatforms(const std::string& dealer_id, const std::string& read_message)
 {
     for(const auto& item : platform_client_mapping_) {
         if (item.second == dealer_id) {
             // the following printing is strictly for testing only
             PDEBUG(PRINT_DEBUG,"\033[1;4;31m[%s<-%s]\033[0m: %s\n",item.first[0].c_str(), dealer_id.c_str(),read_message.c_str());
+
             Document service_command;
             if(!read_message.empty()) {
                 if (service_command.Parse(read_message.c_str()).HasParseError()) {
@@ -528,12 +566,15 @@ bool HostControllerService::disptachMessageToPlatforms(const std::string& dealer
                     }
                 }
                 else if(item.first[1] == "remote") {
+
                     PDEBUG(PRINT_DEBUG,"\033[1;4;31mlocal write %s\033[0m\n",item.first[1].c_str());
                     // parsing the message and add the user name field to the message
                     // This si required for only remote client[FAE] to notify the customer that the command is sent from
                     // FAE with FAE username
-                    appendUsername(read_message);
-                    remote_connector_->send(read_message);
+
+                    std::string msg_with_username(read_message);
+                    appendUsername(msg_with_username);
+                    remote_connector_->send(msg_with_username);
                 }
             }   // end if - json check for member "cmd"
         }   // end if - check if user is connected to a platform or remote
@@ -563,6 +604,9 @@ CommandDispatcherMessages HostControllerService::stringHash(const std::string& c
     }
     else if (command == "register_client") {
         return CommandDispatcherMessages::REGISTER_CLIENT;
+    }
+    else if (command == "unregister") {
+        return CommandDispatcherMessages::UNREGISTER_CLIENT;
     }
 
     return CommandDispatcherMessages::COMMAND_NOT_FOUND;

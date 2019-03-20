@@ -125,19 +125,32 @@
 #include <iostream>
 #include <mutex>
 
+
 class Connector {
 public:
     Connector() = default;
-    Connector(const std::string&) {};
+    Connector(const std::string&) {};   //TODO: why is the argument not used ?
     virtual ~Connector() = default;
 
     virtual bool open(const std::string&) = 0;
     virtual bool close() = 0;
 
     // non-blocking calls
+
     virtual bool send(const std::string& message) = 0;
-    virtual bool sendSmallChunks(const std::string& message, const unsigned int chunk_limit)=0;
+    virtual bool sendSmallChunks(const std::string& message, const unsigned int chunk_limit) = 0;
     virtual bool read(std::string& notification) = 0;
+
+
+    virtual int getFileDescriptor() = 0;
+
+    void setDealerID(const std::string& id);
+    std::string getDealerID() const { return dealer_id_; }
+    std::string getPlatformUUID() const { return platform_uuid_; }
+    bool isSpyglassPlatform() const { return spyglass_platform_connected_; }
+    void setConnectionState(bool connection_state);
+    bool isConnected() const { return connection_state_; }
+    void setPlatformUUID(const std::string& id);
 
     friend std::ostream& operator<< (std::ostream& stream, const Connector & c) {
         std::cout << "Connector: " << std::endl;
@@ -145,22 +158,19 @@ public:
         return stream;
     }
 
-    virtual int getFileDescriptor() = 0;
-
-    void setDealerID(const std::string& id) { dealer_id_ = id; }
-    const std::string &getDealerID() const { return dealer_id_;}
-    const std::string &getPlatformUUID() const { return platform_uuid_;}
-    bool isSpyglassPlatform() const { return spyglass_platform_connected_; }
-		void setConnectionState(bool connection_state) { connection_state_ = connection_state; }
-		bool isConnected() const { return connection_state_; }
+protected:
+    void setPlatformConnected(bool state);
 
 protected:
-    std::string dealer_id_;
     std::mutex locker_;
+
+private:
+    std::string dealer_id_;
     std::string platform_uuid_;
     std::string server_;
-    bool spyglass_platform_connected_;	// flag used in hcs for checking if platform is available
-		bool connection_state_;
+
+	bool connection_state_ = false;
+    bool spyglass_platform_connected_ = false;	// flag used in hcs for checking if platform is available
 };
 
 namespace ConnectorFactory {

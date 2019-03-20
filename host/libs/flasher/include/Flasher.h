@@ -19,47 +19,139 @@
 #define Flasher_H_
 
 #include <string>
-#include "Connector.h"
-#include "bootloader_protocol.h"
+#include <vector>
+
+#include <rapidjson/schema.h>
+#include <rapidjson/document.h>
 
 
+namespace spyglass {
+    class PlatformConnection;
+}
 
-// #define FLASH_DEBUG
-#define POOLING_COUNTER_LIMIT                   100
-#define SERIAL_CHUNK_LIMIT_SIZE                 64
-#define BINARY_TEMP_OUTPUT_FILENAME             "output.bin"
-class Flasher{
-
+class Flasher
+{
 public:
-  Flasher();
-  Flasher(Connector* s);
-  ~Flasher();
 
-  int flash(const std::string &input_firmware);
-  unsigned int rollback(unsigned int);
-  int writeFirmwareInfoBlock(unsigned int firmware_size, unsigned int checksum, unsigned int status);
+    Flasher();
+
+    /*!
+     * Ctor
+     * \param connector - serial connector
+     * \param firmwareFilename - filename of new image to flash
+     */
+    Flasher(spyglass::PlatformConnection* connector, const std::string& firmwareFilename);
+    virtual ~Flasher();
+
+
+    Flasher(const Flasher&) = delete;
+    Flasher& operator=(const Flasher&) = delete;
+
+    /*!
+     * The method sets serial connector.
+     */
+    void setConnector(spyglass::PlatformConnection* connector);
+
+    /*!
+     * The method sets filename of new image to flash.
+     */
+    void setFirmwareFilename(const std::string& firmwareFilename);
+
+    /*!
+     * The method checks whether bootloader is ready or tries to initialize it.
+     * @return returns true when device is in bootloader mode otherwise false
+     */
+    bool initializeBootloader();
+
+    /*!
+     * Sets output stream for commands send/recv. For debugging purposes
+     * @param output output stream
+     */
+    void setCommunicationMsgStream(std::ostream* output);
+
+    /*!
+     * The method flashes an image from the file firmwareFilename over connector, downloads the currently flashed image,
+     * compare orig. image with downloaded image and start the image/application if it is requested.
+     */
+    bool flash(const bool forceStartApplication);
+
+    /*!
+     * The method downloads an current image from a device fo file firmwareFilename.rb
+     */
+    bool backup();
+
+    /*!
+     * The method start an image/application if it is valid.
+     */
+    bool startApplication();
 
 private:
-  char recieved_buffer_[ BUFFER_SIZE ];
+    enum ResponseState {
+        eWaitForAck = 0,
+        eWaitForNotify,
+    };
 
-  uint32_t rawBytesChecksum(unsigned char *buffer, size_t length);
-  uint32_t getFileChecksum(const std::string &filname);
-  uint32_t isChecksumMatch(const std::string &filname_one, const std::string &filname_two);
+    /*!
+     * \brief Wait for a platform to be connected and send firmware_update command to the platform's firmware.
+     * \return true on success, false otherwise.
+     */
+    bool waitForPlatformConnected(std::string &verbose_name);
 
-  bool isPlatfromConnected();
+    bool processCommandFlashFirmware();
+    bool processCommandBackupFirmware();
+    bool processCommandStartApplication();
+    bool processCommandUpdateFirmware();
 
-  // Serial API
-  bool write(const std::string& );
-  int read();
+    const static int RESPONSE_STATUS_MAX_ERRORS = 10;
 
-  Connector *serial_;
+    enum class RESPONSE_STATUS
+    {
+        NONE,
+        NEXT_CHUNK,
+        RESEND_CHUNK
+    };
 
-  // Hold status if serial was initialized in the flasher
-  bool can_deallocate_serial_;
+    bool sendCommand(const std::string& cmd);
+    bool writeCommandFlash();
+    bool writeCommandBackup(Flasher::RESPONSE_STATUS status);
+    bool writeCommandStartApplication();
+    bool writeCommandReadFib();
 
-  Flasher(const Flasher&)=delete;
-  Flasher& operator=(const Flasher&)=delete;
+    bool readAck(const std::string& ackName);
+    bool readNotify(const std::string& notificationName);
+    bool readNotifySimple(const std::string& notificationName, rapidjson::Value& payload);
+    bool readNotifyBackup(const std::string& notificationName);
 
+    bool verify() const;
+
+    static int32_t getFileChecksum(const std::string &fileName);
+    static int32_t getFileSize(const std::string &fileName);
+
+    static rapidjson::SchemaDocument createJsonSchema(const std::string& schema);
+    static bool validateJsonMessage(const std::string& message, const rapidjson::SchemaDocument& schemaDocument, rapidjson::Document& document);
+
+    static rapidjson::SchemaDocument ackJsonSchema;
+    static rapidjson::SchemaDocument notifySimpleJsonSchema;
+    static rapidjson::SchemaDocument notifyJsonSchema;
+    static rapidjson::SchemaDocument notifyBackupJsonSchema;
+
+    struct Chunk
+    {
+        int32_t number;
+
+        enum class SIZE : uint32_t
+        {
+            DEFAULT = 256
+        };
+        std::vector<uint8_t> data;
+    };
+
+    Chunk flashChunk_;
+    Chunk backupChunk_;
+
+    spyglass::PlatformConnection* serial_;
+    std::string firmwareFilename_;
+    std::ostream* dbg_out_stream_;
 };
 
 #endif
