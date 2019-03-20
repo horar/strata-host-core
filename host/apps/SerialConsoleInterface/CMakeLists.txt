@@ -60,7 +60,7 @@ if (APPLE)
 endif()
 
 set(PRODUCT_NAME_LONG "Serial Console Interface")
-set(PRODUCT_NAME_COPYRIGHT "Copyright (C) 2018 On Semiconductor")
+set(PRODUCT_NAME_COPYRIGHT "Copyright (C) 2019 On Semiconductor")
 
 set_target_properties(${PROJECT_NAME} PROPERTIES
     CXX_STANDARD 17
