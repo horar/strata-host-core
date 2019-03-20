@@ -10,25 +10,25 @@ set(red "${Esc}[31m")
 set(reset_color "${Esc}[m")
 
 if (CROSSCOMPILE)
-    message("Building WINDOWS booo...")
+    message(STATUS "Building WINDOWS booo...")
 elseif (UNIX AND NOT APPLE AND NOT CROSSCOMPILE)
-    message("Building LINUX yea...")
+    message(STATUS "Building LINUX yea...")
 elseif (APPLE)
-    message("Building MAC yea...")
+    message(STATUS "Building MAC yea...")
 else()
-    message("ERROR: unsupported operating system !")
+    message(FATAL_ERROR "unsupported operating system !")
 endif ()
 
 if (CROSSCOMPILE)
-    message("TOOL CHAIN: windows")
+    message(STATUS "TOOL CHAIN: windows")
     SET(CMAKE_TOOLCHAIN_FILE ./cmake/x86_64.cmake)
     SET(CMAKE_CXX_FLAGS "-v -std=gnu++11 -static-libstdc++ -static-libgcc -static")
 elseif(UNIX AND NOT APPLE AND NOT CROSSCOMPILE)
-    message("TOOL CHAIN: linux")
+    message(STATUS "TOOL CHAIN: linux")
     SET(CMAKE_CXX_FLAGS "-v -std=c++11")
     set(CMAKE_BUILD_TYPE Debug)
 elseif (APPLE)
-    message("TOOL CHAIN: mac")
+    message(STATUS "TOOL CHAIN: mac")
     SET(CMAKE_CXX_FLAGS "-v -std=c++11")
     set(CMAKE_BUILD_TYPE Debug)
     # To enable debugging
@@ -36,7 +36,7 @@ elseif (APPLE)
     find_library(IOKIT_LIBRARY IOKit)
     find_library(FOUNDATION_LIBRARY Foundation)
 else()
-    message("ERROR: unsupported operating system !")
+    message(FATAL_ERROR "unsupported operating system !")
 endif ()
 
 set(HOST_CONTROLLER_SERVICE_BINARY_NAME "hcs")
@@ -70,7 +70,7 @@ add_library(nimbusLib STATIC 	${NIMBUS_DIR}/nimbus_internal.cc
 
 if (CROSSCOMPILE)
     # --- WINDOWS
-    message("INCLUDE/LITECORE: windows")
+    message(STATUS "INCLUDE/LITECORE: windows")
 
     # ZMQ
     link_directories(${CMAKE_CURRENT_SOURCE_DIR}/../lib/windows/zeromq)
@@ -85,9 +85,9 @@ if (CROSSCOMPILE)
     find_library(litecore NAMES LiteCore HINTS "${NIMBUS_DIR}/bin/x64")
     find_library(litecoreREST NAMES LiteCoreREST HINTS "${NIMBUS_DIR}/bin/x64")
     find_library(fleece NAMES FleeceStatic HINTS "${NIMBUS_DIR}/bin/x64")
-    message("Using litecore at: ${litecore}")
-    message("Using litecoreREST at: ${litecoreREST}")
-    message("Using fleece at: ${fleece}")
+    message(STATUS "Using litecore at: ${litecore}")
+    message(STATUS "Using litecoreREST at: ${litecoreREST}")
+    message(STATUS "Using fleece at: ${fleece}")
 
     # Overwrite definition for schema; Release backports look in the same folder
     remove_definitions(-DNIMBUS_SCHEMA_PATH)
@@ -96,7 +96,7 @@ if (CROSSCOMPILE)
 
 elseif (UNIX AND NOT APPLE AND NOT CROSSCOMPILE)
     #--- LINUX
-    message("INCLUDE/LITECORE: linux")
+    message(STATUS "INCLUDE/LITECORE: linux")
 
     include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../lib/linux/include)
     include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../lib/linux/include/event2)
@@ -108,15 +108,15 @@ elseif (UNIX AND NOT APPLE AND NOT CROSSCOMPILE)
             HINTS "${CMAKE_CURRENT_SOURCE_DIR}/../../cloud/couchbase-lite-core/build_cmake/unix")
 
     if (litecore)
-        message("Found litecore library")
+        message(STATUS "Found litecore library")
     else ()
         # Make this Red so its hard to miss
-        message("${red} !! Litecore library is missing. Run configure script in cloud/submodule_patches/ !! ${reset_color}")
+        message(FATAL_ERROR "${red} !! Litecore library is missing. Run configure script in cloud/submodule_patches/ !! ${reset_color}")
     endif ()
 
 elseif (APPLE)
     #--- Mac OSX
-    message("INCLUDE/LITECORE: mac")
+    message(STATUS "INCLUDE/LITECORE: mac")
 
     # Include Files
     include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../include/macos/libserial)
@@ -132,14 +132,14 @@ elseif (APPLE)
     find_library(litecore STATIC NAMES LiteCore
             HINTS "${CMAKE_CURRENT_SOURCE_DIR}/../lib/macos/litecore")
     if (litecore)
-        message("Found litecore library")
+        message(STATUS "Found litecore library")
     else ()
         # Make this Red so its hard to miss
-        message("${red} !! Litecore library is missing. Run configure script in cloud/submodule_patches/ !! ${reset_color}")
+        message(FATAL_ERROR "${red} !! Litecore library is missing. Run configure script in cloud/submodule_patches/ !! ${reset_color}")
     endif ()
 
 else()
-    message("ERROR: unsupported operating system !")
+    message(FATAL_ERROR "unsupported operating system !")
 endif ()
 
 set(SOURCE
@@ -157,7 +157,7 @@ add_library(usbconnector STATIC ${CMAKE_CURRENT_SOURCE_DIR}/src/USBConnector.cpp
 add_executable(${HOST_CONTROLLER_SERVICE_BINARY_NAME} ${SOURCE})
 
 if (CROSSCOMPILE)
-    message("LINKING: windows")
+    message(STATUS "LINKING: windows")
     target_link_libraries(${HOST_CONTROLLER_SERVICE_BINARY_NAME}
             -lzmq.dll
             -lstdc++
@@ -169,7 +169,7 @@ if (CROSSCOMPILE)
             ${litecore}
             )
 elseif( UNIX AND NOT APPLE AND NOT CROSSCOMPILE)
-    message("LINKING: linux")
+    message(STATUS "LINKING: linux")
     target_link_libraries(${HOST_CONTROLLER_SERVICE_BINARY_NAME}
             -lzmq
             -lstdc++
@@ -180,7 +180,7 @@ elseif( UNIX AND NOT APPLE AND NOT CROSSCOMPILE)
             ${litecore}
             )
 elseif (APPLE)
-    message("LINKING: mac")
+    message(STATUS "LINKING: mac")
     target_link_libraries(${HOST_CONTROLLER_SERVICE_BINARY_NAME}
             -lzmq
             -lstdc++
@@ -194,5 +194,5 @@ elseif (APPLE)
             )
 
 else()
-    message("ERROR: unsupported operating system !")
+    message(FATAL_ERROR "unsupported operating system !")
 endif ()
