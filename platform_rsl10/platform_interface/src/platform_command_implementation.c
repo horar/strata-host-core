@@ -16,8 +16,8 @@ struct command_handler{
  * Lists of the command_handler that will be used for dispatching
  * commands. Each sub array in command_handlers[] will have the
  * command in a string format followed by the function that
- * will be declared and defined in dispatch.h and
- * dispatch.c respectively. Command argument will be the
+ * will be declared and defined in platform_command_implementation.h and
+ * platform_command_implementation.c respectively. Command argument will be the
  * name of the function.
  * */
 
