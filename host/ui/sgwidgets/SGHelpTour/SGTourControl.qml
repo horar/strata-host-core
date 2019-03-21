@@ -54,7 +54,9 @@ Item {
                 horizontalCenter: column.horizontalCenter
             }
             onVisibleChanged: {
-                    text = (root.index + 1) + "/" +  Help.tourCount
+                if (visible) {
+                    text = (root.index + 1) + "/" +  Help.tour_count
+                }
             }
         }
 
@@ -116,9 +118,12 @@ Item {
                 onClicked: {
                     Help.next(root.index)
                 }
-                onVisibleChanged: text = (root.index + 1) === Help.tourCount ? "End Tour" : "Next"
+                onVisibleChanged: {
+                    if (visible) {
+                        text = (root.index + 1) === Help.tour_count ? "End Tour" : "Next"
+                    }
+                }
             }
         }
     }
 }
-

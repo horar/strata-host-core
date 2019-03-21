@@ -8,8 +8,8 @@ Item {
     property alias contentItem: content.item
 
     property bool showOn: false
-    property bool pointsUp: false
-    property string alignment: "center"
+    property bool arrowOnTop: false
+    property string horizontalAlignment: "center"
     property real radius: 5
     property color color: "#00ccee"
 
@@ -24,25 +24,43 @@ Item {
     z: 50
 
     Component.onCompleted: {
-        if (pointsUp) {
+        updateAlignment()
+    }
+
+    onHorizontalAlignmentChanged: updateAlignment()
+    onArrowOnTopChanged: updateAlignment()
+
+    function updateAlignment (){
+        triangleArrow.anchors.left = undefined
+        triangleArrow.anchors.right = undefined
+        triangleArrow.anchors.bottom = undefined
+        triangleArrow.anchors.top = undefined
+        triangleArrow.anchors.horizontalCenter = undefined
+
+        colorRect.anchors.bottom = undefined
+        colorRect.anchors.top = undefined
+
+
+        if (arrowOnTop) {
             colorRect.anchors.bottom = container.bottom
             triangleArrow.anchors.bottom = colorRect.top
+            triangleArrow.rotation = 0
         } else {
             colorRect.anchors.top = container.top
             triangleArrow.anchors.top = colorRect.bottom
             triangleArrow.rotation = 180
         }
 
-        switch (alignment) {
+        switch (horizontalAlignment) {
             case "left":
                 triangleArrow.anchors.left = container.left
                 triangleArrow.anchors.leftMargin = 15
-                pointsUp ? false : triangleArrow.rotation -= 90
+                triangleArrow.rotation -= arrowOnTop ? 0 : 90
                 break;
             case "right":
                 triangleArrow.anchors.right = container.right
                 triangleArrow.anchors.rightMargin = 15
-                pointsUp ? triangleArrow.rotation -= 90 : false
+                triangleArrow.rotation -= arrowOnTop ? 90 : 0
                 break;
             default:
                 triangleArrow.anchors.horizontalCenter = container.horizontalCenter
@@ -57,7 +75,7 @@ Item {
         Rectangle {
             id: colorRect
             color: root.color
-            radius: root.radius
+            radius: 15
             height: container.height - 10
             width: container.width
 

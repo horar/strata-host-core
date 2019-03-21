@@ -9,6 +9,7 @@ Window {
     title: qsTr("SGAccordion 2")
 
     SGAccordion {
+        id: accordion
         anchors {
             fill: parent
         }
@@ -22,16 +23,20 @@ Window {
         headerOpenColor: "#666"     // Default: "#666" (dark gray)
         headerClosedColor: "#eee"   // Default: "#eee" (light gray)
         dividerColor: "#fff"        // Default: "#fff" (white)
+        exclusive: false            // Default: false (indicates whether only 1 or many accordionItems can be open)
 
         accordionItems: Column {
-            SGAccordionItem {
+            property alias accordionItemAlias: accordionItem
 
+            SGAccordionItem {
+                id: accordionItem
                 // Optional Configuration for individual accordionItems:
                 title: "This is a Title"
 
                 contents: Item {
                     height: text.contentHeight + 20
                     width: parent.width
+                    property alias accordionItemText: text
 
                     Text {
                         id: text
@@ -53,5 +58,15 @@ Window {
                 contents: Switch{ } // This switch is an example of containing a widget
             }
         }
+    }
+
+    // Example of how to traverse the accordion and its accordionItems from the outside
+    Button {
+        onClicked: console.log(accordion.contentItem.accordionItemAlias.contentItem.accordionItemText.text)
+        anchors {
+            right: parent.right
+            bottom: parent.bottom
+        }
+        text: "Accordion Traversal Demo"
     }
 }
