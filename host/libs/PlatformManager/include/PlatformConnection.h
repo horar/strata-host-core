@@ -71,8 +71,9 @@ namespace spyglass {
          * Attaches EvEventsMgr to the connection to handle read/write notifications
          *  it is method for PlatformManager
          * @param ev_manager manager to attach
+         * @return returns true when succeeded otherwise false
          */
-        void attachEventMgr(EvEventsMgr *ev_manager);
+        bool attachEventMgr(EvEventsMgr *ev_manager);
 
         /**
          * Detaches EvEventsMgr from connection
@@ -108,6 +109,7 @@ namespace spyglass {
 
         EvEventsMgr *event_mgr_ = nullptr;
         std::unique_ptr<EvEvent> event_;
+        std::mutex event_lock_;  //this lock is used when read/write event is notified or when event is attached/detached
 
         std::string readBuffer_;
         std::string writeBuffer_;
