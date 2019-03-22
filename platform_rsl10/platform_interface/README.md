@@ -2,7 +2,7 @@
 - Platform interface written in C for RSL10 or any other board that
 does not support mbed and has limited flash storage (program memory)
 
-- Dependencies: Memory Pool
+- Dependencies: Memory Pool, cJSON
 - It assumes that UART end character is '\n' (the new line feed)
 
 ## Development info

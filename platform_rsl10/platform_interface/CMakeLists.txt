@@ -13,6 +13,6 @@ include_directories(external_libraries)
 
 link_directories(${COMPONENTS_DIR}/memory_pool/build/memory_pool-1.0.0-Darwin/lib)
 
-add_executable(platform_interface test_example/example.c external_libraries/cJSON.c src/platform_command_dispatcher.c include/platform_command_dispatcher.h src/platform_command_implementation.c include/platform_command_implementation.h include/debug_macros.h)
+add_executable(platform_interface test_example/example.c external_libraries/cJSON.c src/platform_interface_implementation.c include/platfrom_interface/platform_interface_implementation.h test_example/platform_command_implementation.c include/platform_command_implementation.h include/debug_macros.h)
 
 target_link_libraries(platform_interface ${LIBRARIES})

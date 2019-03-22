@@ -2,8 +2,8 @@
 // Created by Mustafa Alshehab on 3/19/19.
 //
 
-#ifndef PLATFORM_INTERFACE_DEBUG_MACROS_H
-#define PLATFORM_INTERFACE_DEBUG_MACROS_H
+#ifndef PLATFORM_INTERFACE_INCLUDE_DEBUG_MACROS_H
+#define PLATFORM_INTERFACE_INCLUDE_DEBUG_MACROS_H
 
 #include <printf.h>
 #include <string.h>
@@ -24,7 +24,7 @@
     } while(0)
 #else
 #define LOG_DEBUG(format, args...)
-  #define LOG_ERROR(format, args...)
+#define LOG_ERROR(format, args...)
 #endif
 
-#endif //PLATFORM_INTERFACE_DEBUG_MACROS_H
+#endif //PLATFORM_INTERFACE_INCLUDE_DEBUG_MACROS_H

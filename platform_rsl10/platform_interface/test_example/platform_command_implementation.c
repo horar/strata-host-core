@@ -3,12 +3,12 @@
 //
 #include "../include/platform_command_implementation.h"
 #include "../include/debug_macros.h"
-#include <memory.h>
 
 #define ARRAY_SIZE(array)  sizeof(array) / sizeof(array[0]);
 
-struct command_handler{
-    char  *name;
+struct command_handler {
+    char *name;
+
     void (*fp)(cJSON *payload_value);
 };
 
@@ -23,8 +23,8 @@ struct command_handler{
 
 command_handler_t command_handlers[] = {
         {"request_platform_id", request_platform_id},
-        {"request_echo", request_echo},
-        {"general_purpose", general_purpose},
+        {"request_echo",        request_echo},
+        {"general_purpose",     general_purpose},
 };
 
 static int g_command_handlers_size = ARRAY_SIZE(command_handlers);
@@ -33,8 +33,8 @@ static int g_command_handlers_size = ARRAY_SIZE(command_handlers);
 void call_command_handler(char *name, cJSON *payload_value) {
     LOG_DEBUG("Size of the command_handlers list is %u", g_command_handlers_size);
 
-    for (int i = 0; i < g_command_handlers_size; i++) {
-        if (!strcmp(command_handlers[i].name, name)) {
+    for ( int i = 0; i < g_command_handlers_size; i++ ) {
+        if ( !strcmp(command_handlers[i].name, name)) {
             emit(response_string[COMMAND_VALID]); //emit ack
             command_handlers[i].fp(payload_value);
             return;
@@ -45,7 +45,7 @@ void call_command_handler(char *name, cJSON *payload_value) {
 }
 
 
-void request_platform_id (cJSON *payload_value) {
+void request_platform_id(cJSON *payload_value) {
     LOG_DEBUG("confirm execution of platform_id_command or echo command \n");
     /* call a send response function
      * In case of RSL-10 will be something
@@ -57,7 +57,7 @@ void request_platform_id (cJSON *payload_value) {
 
 }
 
-void request_echo (cJSON *payload_value) {
+void request_echo(cJSON *payload_value) {
     LOG_DEBUG("confirm execution of echo command\n");
     /* In case of RSL-10 will be something
      * you could echo whatever you received from rx uart
@@ -65,7 +65,7 @@ void request_echo (cJSON *payload_value) {
      */
 }
 
-void general_purpose (cJSON *payload_value) {
+void general_purpose(cJSON *payload_value) {
     /* in case of payload consists of two arguments
      the first is a number and the second is a string
      "{\"cmd\" : \"command_A\", \"payload\" : {\"number_argument\" : 1, \"string_argument\" : \"whatever"}}"
@@ -76,7 +76,7 @@ void general_purpose (cJSON *payload_value) {
 
     LOG_DEBUG("confirm execution of general_command\n");
 
-    if (payload_value == NULL) {
+    if ( payload_value == NULL) {
         LOG_ERROR("No payload value");
         return;
     }
@@ -92,8 +92,7 @@ void general_purpose (cJSON *payload_value) {
  */
 }
 
-void emit(const char *response_string)
-{
+void emit(const char *response_string) {
     LOG_DEBUG("confirm execution of emit %s\n", response_string);
     // the following code assumes you are using
     // cmsis uart driver for RSL10
