@@ -100,6 +100,7 @@ private:
     bool processCommandFlashFirmware();
     bool processCommandBackupFirmware();
     bool processCommandStartApplication();
+    bool processCommandUpdateFirmware();
 
     const static int RESPONSE_STATUS_MAX_ERRORS = 10;
 

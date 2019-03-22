@@ -10,9 +10,11 @@ Item {
     implicitWidth: 300
 
     property alias accordionItems : accordionItems.sourceComponent
+    property alias contentItem: accordionItems.item
 
     property int openCloseTime: 80
     property string statusIcon: "\u25B2"
+    property bool exclusive: false
     property color contentsColor: "#fff"
     property color textOpenColor: "#fff"
     property color textClosedColor: "#000"
@@ -34,15 +36,16 @@ Item {
             width: scrollContainer.width
 
             // Passthrough properties so AccordionItems can get these
-            property real scrollContainerWidth: scrollContainer.width
-            property int accordionOpenCloseTime: openCloseTime
-            property string accordionStatusIcon: statusIcon
-            property color accordionTextOpenColor: textOpenColor
-            property color accordionTextClosedColor: textClosedColor
-            property color accordionContentsColor: contentsColor
-            property color accordionHeaderOpenColor: headerOpenColor
-            property color accordionHeaderClosedColor: headerClosedColor
-            property color accordionDividerColor: dividerColor
+            property alias scrollContainerWidth: scrollContainer.width
+            property alias accordionOpenCloseTime: root.openCloseTime
+            property alias accordionStatusIcon: root.statusIcon
+            property alias accordionExclusive: root.exclusive
+            property alias accordionTextOpenColor: root.textOpenColor
+            property alias accordionTextClosedColor: root.textClosedColor
+            property alias accordionContentsColor: root.contentsColor
+            property alias accordionHeaderOpenColor: root.headerOpenColor
+            property alias accordionHeaderClosedColor: root.headerClosedColor
+            property alias accordionDividerColor: root.dividerColor
         }
     }
 }

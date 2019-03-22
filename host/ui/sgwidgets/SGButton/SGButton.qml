@@ -4,6 +4,8 @@ import QtQuick.Controls 2.3
 Button {
     id: root
     text: qsTr("Button")
+    property alias textColor: buttonContent.color
+    property alias color: buttonBackground.color
 
     contentItem: Text {
         id: buttonContent
