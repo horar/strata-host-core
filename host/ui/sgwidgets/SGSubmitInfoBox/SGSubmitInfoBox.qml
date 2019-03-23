@@ -15,13 +15,13 @@ Rectangle {
     property color infoBoxColor: infoText.readOnly ? "#eee" : "transparent"
     property color infoBoxBorderColor: "#cccccc"
     property real infoBoxBorderWidth: 1
-    property bool realNumberValidation: false
     property alias showButton: applyButton.visible
     property alias buttonText: applyButton.text
     property alias overrideLabelWidth: labelText.width
     property alias readOnly: infoText.readOnly
     property alias unit: unit.text
     property alias textInput: infoText
+    property alias validator: infoText.validator
     property real floatValue: { return parseFloat(infoText.text) }
     property int intValue: { return parseInt(infoText.text) }
     property alias placeholderText: placeholder.text
@@ -89,17 +89,11 @@ Rectangle {
                     pixelSize: (Qt.platform.os === "osx") ? 12 : 10;
                 }
                 horizontalAlignment: leftJustify ? TextInput.AlignLeft : TextInput.AlignRight
-                validator: realNumberValidation ? realNumberValidator : null
                 onAccepted: root.applied(infoText.text)
                 enabled: root.enabled
                 color: root.textColor
                 opacity: root.enabled ? 1 : 0.5
                 onEditingFinished: { if (!root.showButton) { root.applied(infoText.text) } }
-
-                RegExpValidator {
-                    id: realNumberValidator
-                    regExp: /[-+]?([0-9]*\.[0-9]+|[0-9]+)/
-                }
 
                 MouseArea {
                     visible: !infoText.readOnly

@@ -404,7 +404,6 @@ Window {
 
                         label: "Voltage:"       // Default: "" (if not entered, label will not appear)
                         labelLeft: false                 // Default: true (if false, label will be on top)
-                        realNumberValidation: true      // Default: false (set true to restrict enterable values to real numbers)
                         buttonText: "Apply"
                         showButton: true
                         unit: "V"

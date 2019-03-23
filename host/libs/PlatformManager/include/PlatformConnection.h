@@ -39,10 +39,23 @@ namespace spyglass {
         bool getMessage(std::string &result);
 
         /**
-         * Sends message over connection
+         * Adds message to queue for sending
          * @param message message to send
          */
         void addMessage(const std::string &message);
+
+        /**
+         * Sends message over connection
+         * @param message message to send
+         * @return returns true when message was send, otherwise false
+         */
+        bool sendMessage(const std::string &message);
+
+        /**
+         * Waits for messages for specified amount of time
+         * @param timeout amount of time to wait
+         */
+        int waitForMessages(unsigned int timeout);
 
         /**
          * @return returns name of the connection
@@ -67,16 +80,27 @@ namespace spyglass {
         void detachEventMgr();
 
     private:
-        int handleRead();
 
-        int handleWrite();
+        /**
+         * Handles read from device
+         * @param timeout to wait for read
+         * @return number of bytes readed or negative when error
+         */
+        int handleRead(unsigned int timeout);
+
+        /**
+         * Handles write to device
+         * @param timeout
+         * @return number of bytes written or negative when error
+         */
+        int handleWrite(unsigned int timeout);
+
 
         void onDescriptorEvent(EvEvent *, int flags);
 
         bool updateEvent(bool read, bool write);
 
         bool isWriteBufferEmpty() const;
-
 
     private:
         PlatformManager *parent_;
@@ -88,8 +112,8 @@ namespace spyglass {
         std::string readBuffer_;
         std::string writeBuffer_;
 
-        int readOffset_ = 0;
-        int writeOffset_ = 0;
+        unsigned int readOffset_ = 0;
+        unsigned int writeOffset_ = 0;
 
         std::mutex readLock_;
         std::mutex writeLock_;

@@ -22,7 +22,7 @@ Window {
     }
 
     onClosing: { // @disable-check M16  // Ignore "invalid property name" warning
-        Help.reset("basicViewHelp")  // Necessary to remove dynamically created help views. If inside of a dynamically created object, use component.ondestruction instead
+        Help.destroyHelp()  // Necessary to remove dynamically created help views. If inside of a dynamically created object, use component.ondestruction instead
     }
 
     Rectangle {
