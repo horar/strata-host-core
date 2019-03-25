@@ -17,6 +17,8 @@
 
 #include <PlatformInterface/core/CoreInterface.h>
 
+#include <QtLoggerSetup.h>
+
 #include "DocumentManager.h"
 
 int main(int argc, char *argv[])
@@ -35,6 +37,7 @@ int main(int argc, char *argv[])
     QCoreApplication::setOrganizationName(QStringLiteral("On Semiconductor"));
 
     QApplication app(argc, argv);
+    const QtLoggerSetup loggerInitialization(app);
 
     qmlRegisterUncreatableType<CoreInterface>("tech.spyglass.CoreInterface",1,0,"CoreInterface", QStringLiteral("You can't instantiate CoreInterface in QML"));
     qmlRegisterUncreatableType<DocumentManager>("tech.spyglass.DocumentManager", 1, 0, "DocumentManager", QStringLiteral("You can't instantiate DocumentManager in QML"));

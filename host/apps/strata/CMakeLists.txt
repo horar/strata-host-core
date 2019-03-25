@@ -19,10 +19,11 @@ find_package(Qt5 5.10
     REQUIRED
 )
 
-add_executable(${PROJECT_NAME})
-target_sources(${PROJECT_NAME} PRIVATE
+add_executable(${PROJECT_NAME}
     main.cpp
     source/DocumentManager.cpp
+    logging/LoggingQtCategories.cpp
+    logging/LoggingQtCategories.qrc
 
     qml.qrc
     views/SGPdfViewer/pdfjs.qrc
@@ -62,6 +63,8 @@ target_link_libraries(${PROJECT_NAME}
     flasher
     HostControllerClient
     PlatformInterface
+
+    QtLogger
 )
 
 target_include_directories(${PROJECT_NAME}
