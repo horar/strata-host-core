@@ -16,7 +16,7 @@ Rectangle {
 
     property string title: "Default Title Text"
     property bool open: false
-    property bool exclusive: accordionExclusive
+    property bool exclusive: true
     property int openCloseTime: accordionOpenCloseTime
     property string statusIcon: accordionStatusIcon
     property color textOpenColor: accordionTextOpenColor

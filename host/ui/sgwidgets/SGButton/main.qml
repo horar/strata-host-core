@@ -8,6 +8,8 @@ Window {
     title: qsTr("SGButton")
 
     SGButton {
-
+        textColor: checked ? "#ffffff" : "#26282a"
+        text: "Button Text"
+        color: checked ? "#353637" : pressed ? "#cfcfcf": hovered ? "#eee" : "#e0e0e0"
     }
 }
