@@ -257,19 +257,23 @@ void PlatformConnection::detachEventMgr()
 
 bool PlatformConnection::stopListeningOnEvents(bool stop)
 {
-    if (!event_) {
+    if (!event_ || !event_mgr_) {
         return false;
     }
 
     std::lock_guard<std::mutex> lock(event_lock_);
     if (stop) {
         event_->deactivate();
+        return true;
     }
-    else {
-        bool write = !isWriteBufferEmpty();
-        updateEvent(true, write);
+
+    //resume
+    bool write;
+    {
+        std::lock_guard<std::mutex> lock(writeLock_);
+        write = !isWriteBufferEmpty();
     }
-    return true;
+    return updateEvent(true, write);
 }
 
 bool PlatformConnection::isWriteBufferEmpty() const

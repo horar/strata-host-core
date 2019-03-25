@@ -89,7 +89,7 @@ namespace spyglass {
         /**
          * Stops / Resumes listening on events from PlatformManager(EvEventMgr)
          * @param stop true stops listening, false resume
-         * @return
+         * @return returns true when succeeded otherwise false
          */
         bool stopListeningOnEvents(bool stop);
 
