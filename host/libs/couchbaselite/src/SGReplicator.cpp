@@ -30,7 +30,7 @@ namespace Spyglass {
         replicator_parameters_.callbackContext = this;
         replicator_parameters_.push = kC4Disabled;
         replicator_parameters_.pull = kC4Disabled;
-        replicator_parameters_.optionsDictFleece = alloc_slice();
+        replicator_parameters_.optionsDictFleece = slice();
         replicator_parameters_.pushFilter = nullptr;
         replicator_parameters_.validationFunc = nullptr;
         replicator_parameters_.onStatusChanged = nullptr;
