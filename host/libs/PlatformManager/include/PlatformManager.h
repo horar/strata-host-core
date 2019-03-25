@@ -61,16 +61,6 @@ namespace spyglass {
          */
         PlatformConnection* getConnection(const std::string& connection_id);
 
-        /**
-         * stops listens on requested connection
-         */
-        void stopListenOnConnection(PlatformConnection* connection);
-
-        /**
-         * resume listens on requested connection
-         */
-        void resumeListenOnConnection(PlatformConnection* connection);
-
     protected:
         void onAddedPort(serialPortHash hash);
 

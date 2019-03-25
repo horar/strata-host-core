@@ -67,18 +67,6 @@ PlatformConnection* PlatformManager::getConnection(const std::string& connection
     return conn;
 }
 
-void PlatformManager::stopListenOnConnection(PlatformConnection* connection)
-{
-    assert(connection);
-    connection->detachEventMgr();
-}
-
-void PlatformManager::resumeListenOnConnection(PlatformConnection* connection)
-{
-    assert(connection);
-    connection->attachEventMgr(&eventsMgr_);
-}
-
 void PlatformManager::onUpdatePortList(EvEvent*, int)
 {
     std::vector<std::string> listOfSerialPorts;

@@ -227,7 +227,7 @@ std::string PlatformConnection::getName() const
 
 bool PlatformConnection::attachEventMgr(EvEventsMgr* ev_manager)
 {
-    if (port_ == nullptr) {
+    if (port_ == nullptr || ev_manager == nullptr) {
         return false;
     }
 
@@ -253,6 +253,23 @@ void PlatformConnection::detachEventMgr()
         std::lock_guard<std::mutex> lock(event_lock_);
         event_->deactivate();
     }
+}
+
+bool PlatformConnection::stopListeningOnEvents(bool stop)
+{
+    if (!event_) {
+        return false;
+    }
+
+    std::lock_guard<std::mutex> lock(event_lock_);
+    if (stop) {
+        event_->deactivate();
+    }
+    else {
+        bool write = !isWriteBufferEmpty();
+        updateEvent(true, write);
+    }
+    return true;
 }
 
 bool PlatformConnection::isWriteBufferEmpty() const

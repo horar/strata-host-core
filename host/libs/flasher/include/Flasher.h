@@ -23,6 +23,7 @@
 
 #include <rapidjson/schema.h>
 #include <rapidjson/document.h>
+#include <PlatformConnection.h>
 
 
 namespace spyglass {
@@ -150,6 +151,8 @@ private:
     Chunk backupChunk_;
 
     spyglass::PlatformConnection* serial_;
+    spyglass::PauseConnectionListenerGuard serial_listener_guard_;
+
     std::string firmwareFilename_;
     std::ostream* dbg_out_stream_;
 };
