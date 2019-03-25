@@ -589,7 +589,7 @@ bool Flasher::flash(const bool forceStartApplication)
     }
     while (firmwareSize > 0);
 
-    return backup() && verify() && (forceStartApplication ? startApplication() : true);
+    return (forceStartApplication ? startApplication() : true);
 }
 
 
