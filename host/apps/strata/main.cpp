@@ -35,12 +35,6 @@ int main(int argc, char *argv[])
     QCoreApplication::setOrganizationName(QStringLiteral("On Semiconductor"));
 
     QApplication app(argc, argv);
-    QQmlApplicationEngine engine;
-    QObject::connect(&engine, &QQmlApplicationEngine::warnings, [=] (const QList<QQmlError> &warnings) {
-        for (const auto& error : warnings) {
-            qWarning() << "qml-error: " << error.toString(); // TODO: [LC], when logging into file, check/forward messageType into logger
-        }
-    });
 
     qmlRegisterUncreatableType<CoreInterface>("tech.spyglass.CoreInterface",1,0,"CoreInterface", QStringLiteral("You can't instantiate CoreInterface in QML"));
     qmlRegisterUncreatableType<DocumentManager>("tech.spyglass.DocumentManager", 1, 0, "DocumentManager", QStringLiteral("You can't instantiate DocumentManager in QML"));
@@ -54,8 +48,11 @@ int main(int argc, char *argv[])
     QtWebEngine::initialize();
     QtWebView::initialize();
 
-    engine.rootContext ()->setContextProperty ("coreInterface", coreInterface);
-    engine.rootContext ()->setContextProperty ("documentManager", documentManager);
+    QQmlApplicationEngine engine;
+    engine.addImportPath(QStringLiteral("qrc:/"));
+
+    engine.rootContext()->setContextProperty ("coreInterface", coreInterface);
+    engine.rootContext()->setContextProperty ("documentManager", documentManager);
 
     //engine.rootContext ()->setContextProperty ("dataCollector", dataCollector);
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
