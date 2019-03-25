@@ -28,9 +28,6 @@ using namespace fleece::impl;
 namespace Spyglass {
     SGReplicator::SGReplicator() {
         replicator_parameters_.callbackContext = this;
-        // Initialize replicator_parameters_ values to NULL.
-        // On windows they get assigned to garbage and depends on how lucky we are they may not be NULL and therefore will be called internally by lite-core.
-        // Thus, read memory violation occurs and big problem happen!
         replicator_parameters_.push = kC4Disabled;
         replicator_parameters_.pull = kC4Disabled;
         replicator_parameters_.optionsDictFleece = alloc_slice();
