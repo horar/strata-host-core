@@ -31,12 +31,12 @@ namespace Spyglass {
         replicator_parameters_.push = kC4Disabled;
         replicator_parameters_.pull = kC4Disabled;
         replicator_parameters_.optionsDictFleece = alloc_slice();
-        replicator_parameters_.pushFilter = NULL;
-        replicator_parameters_.validationFunc = NULL;
-        replicator_parameters_.onStatusChanged = NULL;
-        replicator_parameters_.onDocumentEnded = NULL;
-        replicator_parameters_.onBlobProgress = NULL;
-        replicator_parameters_.socketFactory = NULL;
+        replicator_parameters_.pushFilter = nullptr;
+        replicator_parameters_.validationFunc = nullptr;
+        replicator_parameters_.onStatusChanged = nullptr;
+        replicator_parameters_.onDocumentEnded = nullptr;
+        replicator_parameters_.onBlobProgress = nullptr;
+        replicator_parameters_.socketFactory = nullptr;
         // To support multiple/separate replications to multiple sync-gateway/databases at the same time we need to provide our websocket implementation.
         RegisterC4CivetWebSocketFactory();
     }
