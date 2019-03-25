@@ -2,6 +2,7 @@
 
 ## Description
 Basic expectations from logging setup in Strata:
+
 - allow define what kind of data are saved in addition to message (i.e. timestamp, PID, TID, component etc.)
 - introduce log files rotation, based on file size and number of files
 - allow change the scope of logging based on so named 'categories'
@@ -14,30 +15,34 @@ then default value is stored into this file.
 At this time the user may change them and have to re/start application to use them.
 
 ## Libraries
+
 1. SpdLogger
 This setup library is based on 'spdlog' i.e. very fast small header-only library. Present approach utilize
 one common logger with 2 sinks. One sing for developer's terminal and one sink for rotated log file.
-
 2. QtLogger
 Qt framework already contains logging framework.
 QtLogger is a small helper library aimed to load and setup Qt logging framework and SpdLogger library
 int our way.
 Developer only add following line after app instiation:
-```
+```cpp
+
     QApplication app(argc, argv);
     const QtLoggerSetup loggerInitialization(app);
+
 ```
 link the QtLogger library and standard Qt logging functions can be used.
 Logging categories in Qt and QML are defined as described in Qt documentation.
 
 ## Configuration
 Configuration file is stored:
+
 - macOS: /Users/<USER>/.config/On Semiconductor/Strata Development Studio.ini
 - Windows: TBD
 
 ### Log message formatting
 #### spdlog
 This library add prepend to message text following information:
+
 - timestamp
 - process id
 - thread id
@@ -48,6 +53,7 @@ More details about customization and other available place holders:
 
 #### Qt
 This library create a message with following content:
+
 - logging category (i.e. component/subcomponent name)
 - class/function name
 - message
@@ -66,6 +72,7 @@ Ref:
 
 ### Configuration
 The configuration file is stored in application data:
+
 - macOS:
 - Windows: TBD
 
@@ -84,6 +91,7 @@ spdlogMessagePattern=%Y-%m-%d %T.%e PID:%P TID:%t [%L] %v
 
 The Qt filter rule sub-strings are always separated by 2 characters '\n'.
 Other sample sub-strings that may be used:
+
 - disable all QML uncategorized messages: "qml=false"
 - disable debug strata developer studio messages: "strata.devstudio.debug=false"
 - enable all messages (incl. Qt internals): "*=true"
@@ -91,6 +99,7 @@ Other sample sub-strings that may be used:
 
 ## Log file
 Logging files incl. rotated files will be stored:
+
 - macOS: /Users/<USER>/Library/Application Support/On Semiconductor/Strata Development Studio/Strata\ Development\ Studio.log
 - Windows: TBD
   
