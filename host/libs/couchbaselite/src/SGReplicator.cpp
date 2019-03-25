@@ -37,7 +37,6 @@ namespace Spyglass {
         replicator_parameters_.onDocumentEnded = NULL;
         replicator_parameters_.onBlobProgress = NULL;
         replicator_parameters_.socketFactory = NULL;
-        // This should be called once during the program lifecycle!
         // To support multiple/separate replications to multiple sync-gateway/databases at the same time we need to provide our websocket implementation.
         RegisterC4CivetWebSocketFactory();
     }
