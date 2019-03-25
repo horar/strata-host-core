@@ -1,6 +1,8 @@
 
 #include "Flasher.h"
 
+#include <Buypass.h>
+
 #include <thread>
 #include <numeric>
 #include <fstream>
@@ -404,7 +406,8 @@ bool Flasher::writeCommandFlash()
     writer.Int(static_cast<int>(flashChunk_.data.size()));
 
     writer.Key("crc");
-    writer.Int(std::accumulate(flashChunk_.data.begin(), flashChunk_.data.end(), 0));
+    writer.Int(crc16::buypass(static_cast<const uint8_t *>(flashChunk_.data.data()),
+                              static_cast<uint32_t>(flashChunk_.data.size())));
 
     std::string chunkBase64;
     chunkBase64.resize(base64::encoded_size(flashChunk_.data.size()));
@@ -802,7 +805,7 @@ bool Flasher::readNotifyBackup(const std::string& notificationName)
         backupChunk_.data.resize(base64::decode(backupChunk_.data.data(), chunkBase64.data(), chunkBase64.size()).first);
 
         if (size != backupChunk_.data.size() ||
-            crc != std::accumulate(backupChunk_.data.begin(), backupChunk_.data.end(), 0U))
+            crc != crc16::buypass(static_cast<const uint8_t *>(backupChunk_.data.data()), static_cast<uint32_t>(backupChunk_.data.size())))
         {
             return false;
         }
