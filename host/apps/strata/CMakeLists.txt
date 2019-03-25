@@ -111,4 +111,11 @@ set_source_files_properties(main.cpp PROPERTIES
     COMPILE_DEFINITIONS START_SERVICES
 )
 
+# TODO: [LC] fix this, because it need to be set in multiple Qt UI projects
+list(APPEND QML_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/logging/qml")
+list(APPEND QML_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/")
+set(QML_IMPORT_PATH "${QML_DIRS};${QML_IMPORT_PATH}"
+    CACHE STRING "Qt Creator extra qml import paths" FORCE
+)
+
 feature_summary(WHAT ALL)
