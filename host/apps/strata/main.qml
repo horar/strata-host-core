@@ -7,6 +7,8 @@ import "js/navigation_control.js" as NavigationControl
 import "qrc:/js/platform_selection.js" as PlatformSelection
 import "qrc:/js/help_layout_manager.js" as Help
 
+import Strata.Logger 1.0
+
 Window {
     id: mainWindow
     visible: true
@@ -21,7 +23,7 @@ Window {
     property bool is_remote_connected: false
 
     Component.onCompleted: {
-        console.log("Initializing")
+        console.log(Logger.devStudioCategory, "Initializing")
         NavigationControl.init(flipable,controlContainer, contentContainer, statusBarContainer)
         Help.registerWindow(mainWindow)
     }
@@ -48,7 +50,7 @@ Window {
             }
             coreInterface.sendCommand(JSON.stringify(remote_disconnect_json))
 
-            console.log("UI -> HCS ", JSON.stringify(remote_disconnect_json))
+            console.log(Logger.devStudioCategory, "UI -> HCS ", JSON.stringify(remote_disconnect_json))
         }
 
         var remote_json = {
@@ -57,7 +59,7 @@ Window {
                 "advertise_platforms":false
             }
         }
-        console.log("asking hcs to advertise the platforms",JSON.stringify(remote_json))
+        console.log(Logger.devStudioCategory, "asking hcs to advertise the platforms",JSON.stringify(remote_json))
         coreInterface.sendCommand(JSON.stringify(remote_json))
         // End session with HCS
         coreInterface.unregisterClient();
@@ -222,7 +224,7 @@ Window {
 //                onClicked: {
 //                    NavigationControl.updateState(NavigationControl.events.PLATFORM_DISCONNECTED_EVENT, null)
 //                    var disconnect_json = {"hcs::cmd":"disconnect_platform"}
-//                    console.log("disconnecting the platform")
+//                    console.log(Logger.devStudioCategory, "disconnecting the platform")
 //                    coreInterface.sendCommand(JSON.stringify(disconnect_json))
 //                }
 //            }
@@ -275,7 +277,7 @@ Window {
         property string selectedConnection: "" // Signal that determines UI behaviors
 
         Component.onCompleted: {
-//            console.log("platformListModel component completed");
+//            console.log(Logger.devStudioCategory, "platformListModel component completed");
             if (!PlatformSelection.isInitialized) { PlatformSelection.initialize(this, coreInterface, documentManager) }
             PlatformSelection.populatePlatforms(coreInterface.platform_list_)
         }
@@ -284,7 +286,7 @@ Window {
     Connections {
         target: coreInterface
         onPlatformListChanged: {
-            //console.log("platform list updated: ", list)
+            //console.log(Logger.devStudioCategory, "platform list updated: ", list)
             PlatformSelection.populatePlatforms(list)
         }
     }
@@ -294,7 +296,7 @@ Window {
     Connections {
         target: coreInterface
         onPlatformIDChanged: {
-            console.log("Main: PlatformIDChanged to ", id)
+            console.log(Logger.devStudioCategory, "Main: PlatformIDChanged to ", id)
             // Map out UUID->platform name
             var uuid_map = {
                 "SEC.2018.004.1.1.0.2.20180710161919.1bfacee3-fb60-471d-98f8-fe597bb222cd" : "usb-pd-multiport", //using USB-PD card to masquarade as multiport until hardware is available
@@ -305,13 +307,13 @@ Window {
 
             // Send update to NavigationControl
             if (uuid_map.hasOwnProperty(id)){
-                console.log("identified new platform as ", uuid_map[id])
+                console.log(Logger.devStudioCategory, "identified new platform as ", uuid_map[id])
                 var data = { platform_name : uuid_map[id] }
                 NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT, data)
             }
         }
         onPlatformStateChanged: {
-            console.log("Main: PlatformStateChanged: ", platform_connected_state)
+            console.log(Logger.devStudioCategory, "Main: PlatformStateChanged: ", platform_connected_state)
         }
     }
 }

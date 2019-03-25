@@ -9,6 +9,8 @@ import "qrc:/statusbar-partial-views"
 import Fonts 1.0
 import "qrc:/js/help_layout_manager.js" as Help
 
+import Strata.Logger 1.0
+
 Rectangle {
     id: container
     anchors { fill: parent }
@@ -147,7 +149,7 @@ Rectangle {
                         "advertise_platforms":false
                     }
                 }
-                console.log("asking hcs to advertise the platforms",JSON.stringify(remote_json))
+                console.log(Logger.devStudioCategory, "asking hcs to advertise the platforms",JSON.stringify(remote_json))
                 coreInterface.sendCommand(JSON.stringify(remote_json))
             }
         }
@@ -492,7 +494,7 @@ Rectangle {
                                                 "advertise_platforms":advertise
                                             }
                                         }
-                                        console.log("asking hcs to advertise the platforms",JSON.stringify(remote_json))
+                                        console.log(Logger.devStudioCategory, "asking hcs to advertise the platforms",JSON.stringify(remote_json))
                                         coreInterface.sendCommand(JSON.stringify(remote_json))
                                     }
                                 }
@@ -727,7 +729,7 @@ Rectangle {
                                                             "user_name":name
                                                         }
                                                     }
-                                                    console.log("disconnecting user",JSON.stringify(remote_json))
+                                                    console.log(Logger.devStudioCategory, "disconnecting user",JSON.stringify(remote_json))
                                                     coreInterface.sendCommand(JSON.stringify(remote_json))
 
                                                 }
@@ -851,7 +853,7 @@ Rectangle {
                             Connections {
                                 target: tryAgainButton
                                 onClicked: {
-                                    console.log("try again")
+                                    console.log(Logger.devStudioCategory, "try again")
                                     remoteConnectContainer.state = "default"
                                 }
                             }
@@ -865,7 +867,7 @@ Rectangle {
                                         "hcs::cmd":"remote_disconnect",
                                     }
                                     coreInterface.sendCommand(JSON.stringify(remote_disconnect_json))
-                                    console.log("UI -> HCS ", JSON.stringify(remote_disconnect_json));
+                                    console.log(Logger.devStudioCategory, "UI -> HCS ", JSON.stringify(remote_disconnect_json));
                                 }
                             }
 
@@ -978,7 +980,7 @@ Rectangle {
                                 width: tokenField.width + submitTokenButton.width + submitTokenButton.anchors.leftMargin
                                 height: tokenField.height
                                 // Default visibility is false; state changes will make it visible
-                                visible: { console.log("created"); return false}
+                                visible: { console.log(Logger.devStudioCategory, "created"); return false}
                                 anchors {
                                     top: tokenLabel.bottom
                                     horizontalCenter: remoteConnectContainer.horizontalCenter
@@ -995,8 +997,8 @@ Rectangle {
 
                                     onAccepted: {
                                         focus = false
-                                        console.log("TOKEN: ", text);
-                                        console.log("sending token:", tokenField.text);
+                                        console.log(Logger.devStudioCategory, "TOKEN: ", text);
+                                        console.log(Logger.devStudioCategory, "sending token:", tokenField.text);
                                         var remote_json = {
                                             "hcs::cmd":"get_platforms",
                                             "payload": {
@@ -1004,7 +1006,7 @@ Rectangle {
                                             }
                                         }
                                         coreInterface.sendCommand(JSON.stringify(remote_json))
-                                        console.log("UI -> HCS ", JSON.stringify(remote_json));
+                                        console.log(Logger.devStudioCategory, "UI -> HCS ", JSON.stringify(remote_json));
                                     }
 
                                 }
@@ -1021,7 +1023,7 @@ Rectangle {
                                     font.capitalization: Font.AllUppercase
 
                                     onClicked: {
-                                        console.log("sending token:", tokenField.text);
+                                        console.log(Logger.devStudioCategory, "sending token:", tokenField.text);
                                         var remote_json = {
                                             "hcs::cmd":"get_platforms",
                                             "payload": {
@@ -1029,7 +1031,7 @@ Rectangle {
                                             }
                                         }
                                         coreInterface.sendCommand(JSON.stringify(remote_json))
-                                        console.log("UI -> HCS ", JSON.stringify(remote_json));
+                                        console.log(Logger.devStudioCategory, "UI -> HCS ", JSON.stringify(remote_json));
                                     }
                                 }
                             }
@@ -1254,7 +1256,7 @@ Rectangle {
                             }
                             coreInterface.sendCommand(JSON.stringify(remote_disconnect_json))
 
-                            console.log("UI -> HCS ", JSON.stringify(remote_disconnect_json))
+                            console.log(Logger.devStudioCategory, "UI -> HCS ", JSON.stringify(remote_disconnect_json))
                         }
 
                         if(is_remote_advertised){
@@ -1265,7 +1267,7 @@ Rectangle {
                                     "advertise_platforms":is_remote_advertised
                                 }
                             }
-                            console.log("asking hcs to advertise the platforms",JSON.stringify(remote_json))
+                            console.log(Logger.devStudioCategory, "asking hcs to advertise the platforms",JSON.stringify(remote_json))
                             coreInterface.sendCommand(JSON.stringify(remote_json))
                         }
 

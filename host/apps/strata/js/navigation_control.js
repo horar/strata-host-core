@@ -2,6 +2,7 @@
 .import QtQuick 2.0 as QtQuickModule
 .import "metrics.js" as Metrics
 
+.import Strata.Logger 1.0 as LoggerModule
 
 /*
     Data that will likely be needed for platform views
@@ -73,7 +74,7 @@ function getQMLFile(platform_name, filename) {
     }
 
     var qml_file_name = PREFIX + platform_name + "/" + filename
-    console.log("Locating at ", qml_file_name)
+    console.log(LoggerModule.Logger.devStudioNavigationControlCategory, "Locating at ", qml_file_name)
 
     return qml_file_name
 }
@@ -104,8 +105,8 @@ function createView(name, parent)
     var component = Qt.createComponent(name, QtQuickModule.Component.PreferSynchronous, parent);
 
     if (component.status === QtQuickModule.Component.Error) {
-        console.log("ERROR: Cannot createComponent(", name, "), parameters=", JSON.stringify(context));
-        console.log("errString: ", component.errorString())
+        console.log(LoggerModule.Logger.devStudioNavigationControlCategory, "ERROR: Cannot createComponent(", name, "), parameters=", JSON.stringify(context));
+        console.log(LoggerModule.Logger.devStudioNavigationControlCategory, "errString: ", component.errorString())
     }
 
     /*
@@ -120,12 +121,12 @@ function createView(name, parent)
         removeView(parent)
     }
     catch(err){
-        console.log("ERROR: Could not destroy child")
+        console.log(LoggerModule.Logger.devStudioNavigationControlCategory, "ERROR: Could not destroy child")
     }
 
     var object = component.createObject(parent,context)
     if (object === null) {
-        console.log("Error creating object: name=", name, ", parameters=", JSON.stringify(context));
+        console.log(LoggerModule.Logger.devStudioNavigationControlCategory, "Error creating object: name=", name, ", parameters=", JSON.stringify(context));
     }
 
     return object;
@@ -188,7 +189,7 @@ function globalEventHandler(event,data)
         break;
 
     default:
-        console.log("Unhandled signal, ", event, " in state ", navigation_state_)
+        console.log(LoggerModule.Logger.devStudioNavigationControlCategory, "Unhandled signal, ", event, " in state ", navigation_state_)
         break;
     }
 }
@@ -282,7 +283,7 @@ function updateState(event, data)
 
             case events.NEW_PLATFORM_CONNECTED_EVENT:
                 // Cache platform name until we are ready to view
-                console.log("new platform connected data:", data.platform_name)
+                console.log(LoggerModule.Logger.devStudioNavigationControlCategory, "new platform connected data:", data.platform_name)
                 context.platform_name = data.platform_name
                 context.platform_state = true;
                 // Refresh
@@ -303,7 +304,7 @@ function updateState(event, data)
 
             case events.OFFLINE_MODE_EVENT:
                 // Offline mode just keeps platform_state as false
-                console.log("Entering offline mode for ", data.platform_name)
+                console.log(LoggerModule.Logger.devStudioNavigationControlCategory, "Entering offline mode for ", data.platform_name)
                 context.platform_name = data.platform_name
                 context.platform_state = false;
                 updateState(events.SHOW_CONTROL_EVENT)
@@ -313,7 +314,7 @@ function updateState(event, data)
                 // Send request to metrics service when entering and leaving platform control view
                 var pageName = '';
                 if(flipable_parent_.flipped===false){
-                    console.log("In flipable ",context.platform_name)
+                    console.log(LoggerModule.Logger.devStudioNavigationControlCategory, "In flipable ",context.platform_name)
                     pageName = context.platform_name +' Control'
                 }else {
                     var currentTabName = Metrics.getCurrentTab()

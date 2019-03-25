@@ -1,6 +1,8 @@
 .pragma library
 .import "qrc:/js/navigation_control.js" as NavigationControl
 
+.import Strata.Logger 1.0 as LoggerModule
+
 var isInitialized = false
 var platformListModel
 var coreInterface
@@ -52,16 +54,16 @@ function populatePlatforms(platform_list_json) {
     platformListModel.append({ "text" : "Select a Platform..." })
     // Parse JSON
     try {
-        console.log("populatePlaforms: ", platform_list_json)
+        console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "populatePlaforms: ", platform_list_json)
         var platform_list = JSON.parse(platform_list_json)
-        console.log("number of platforms in list:",platform_list.list.length);
+        console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "number of platforms in list:",platform_list.list.length);
 
         for (var i = 0; i < platform_list.list.length; i ++){
 
             //extract the platform identifier (without firmware or uuid) for matching
             var pattern = new RegExp('^[A-Z0-9]+\.[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+');
             var theString = platform_list.list[i].uuid;
-            //console.log("the UUID String=",theString)
+            //console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "the UUID String=",theString)
             if(theString !== null){
                 if(pattern.test(theString)) {
                     platformType = String(theString).match(pattern)[0]
@@ -70,18 +72,18 @@ function populatePlatforms(platform_list_json) {
                   platformType = String(theString)
                   }
                 else{   //If there is invalid uuid just pass the iteration.
-                    console.log("platform uuid does not match the pattern");
+                    console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "platform uuid does not match the pattern");
                     continue
                 }
             }
             else{   //If the uuid is null just pass the iteration.
-                console.log("platform uuid string is null");
+                console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "platform uuid string is null");
                 continue
             }
-            console.log("looking at platform ",platform_list.list[i].uuid);
+            console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "looking at platform ",platform_list.list[i].uuid);
 
 //            if (platformType){
-//                console.log("platform name matched pattern:",platformType);
+//                console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "platform name matched pattern:",platformType);
 //            }
 
             // Extract platform verbose name and UUID
@@ -93,13 +95,13 @@ function populatePlatforms(platform_list_json) {
                 "uuid"  :   platform_list.list[i].uuid
             }
 
-//            console.log("platform list item:",i);
-//            console.log("text:",platform_info.text);
-//            console.log("verbose:",platform_info.verbose);
-//            console.log("platform type:",platformType);
-//            console.log("name:",platform_info.name);
-//            console.log("connection:",platform_info.connection);
-//            console.log("uuid:",platform_info.uuid);
+//            console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "platform list item:",i);
+//            console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "text:",platform_info.text);
+//            console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "verbose:",platform_info.verbose);
+//            console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "platform type:",platformType);
+//            console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "name:",platform_info.name);
+//            console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "connection:",platform_info.connection);
+//            console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "uuid:",platform_info.uuid);
 
             // Append text to state the type of Connection
             if(platform_info.connection === "remote"){
@@ -111,11 +113,11 @@ function populatePlatforms(platform_list_json) {
             else if (platform_info.connection === "connected"){
                 platform_info.text += " (Connected)"
                 // copy "connected" platform; Note: this will auto select the last listed "connected" platform
-                console.log("autoconnect =",platform_info.name);
+                console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "autoconnect =",platform_info.name);
                 autoSelectedPlatform = platform_info
                 autoSelectedIndex = i+1 //+1 due to default "select a platform entry"
             } else {
-                console.log("unknown connection type for ",platform_info.text," ",platform_info.connection);
+                console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "unknown connection type for ",platform_info.text," ",platform_info.connection);
             }
 
             // Add to the model
@@ -131,7 +133,7 @@ function populatePlatforms(platform_list_json) {
         }
     }
     catch(err) {
-        console.log("CoreInterface error:", err.toString())
+        console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "CoreInterface error:", err.toString())
         platformListModel.clear()
         platformListModel.append({ "text" : "Select a Platform..." })
         platformListModel.append({ "text" : "No Platforms Available" } )
@@ -144,7 +146,7 @@ function populatePlatforms(platform_list_json) {
 
     // Auto Select newly connected platform
     if ( autoSelectEnabled && autoSelectedPlatform) {
-        console.log("Auto selecting connected platform: ", autoSelectedPlatform.name)
+        console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Auto selecting connected platform: ", autoSelectedPlatform.name)
         sendSelection( autoSelectedIndex )
     }
 }
@@ -161,19 +163,19 @@ function sendSelection (currentIndex) {
     */
     NavigationControl.updateState(NavigationControl.events.PLATFORM_DISCONNECTED_EVENT, null)
     var disconnect_json = {"hcs::cmd":"disconnect_platform"}
-    console.log("disonnecting the platform")
+    console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "disonnecting the platform")
     coreInterface.sendCommand(JSON.stringify(disconnect_json))
 
     var connection = platformListModel.get(currentIndex).connection
     var data = { platform_name: platformListModel.get(currentIndex).name}
-    console.log("setting data platform_name to",data.platform_name);
+    console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "setting data platform_name to",data.platform_name);
 
     // Clear all documents for contents
     documentManager.clearDocumentSets();
 
     if (connection === "view") {
         platformListModel.selectedConnection = "view"
-        console.log("menu item selected for platform:",platformListModel.get(currentIndex).uuid, platformListModel.get(currentIndex).connection);
+        console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "menu item selected for platform:",platformListModel.get(currentIndex).uuid, platformListModel.get(currentIndex).connection);
         // Go offline-mode
         NavigationControl.updateState(NavigationControl.events.OFFLINE_MODE_EVENT, data)
         coreInterface.sendSelectedPlatform(platformListModel.get(currentIndex).uuid, platformListModel.get(currentIndex).connection)
