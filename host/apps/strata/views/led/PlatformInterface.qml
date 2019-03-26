@@ -15,23 +15,25 @@ Item {
 
     // @notification request_usb_power_notification
     //
-    property var led_buck_power_notification : {
-        "input_voltage": 0.0,
-        "output_voltage":0.0,
-        "input_current": 0.0,
-        "output_current":0.0,
-        "temperature": 0.0
+    property var power_notification : {
+        "buck_input_voltage": 0.0,
+        "buck_output_voltage":0.0,
+        "buck_input_current": 0.0,
+        "buck_output_current":0.0,
+        "buck_temperature": 0.0,
+        "boost_input_voltage": 0.0,
+        "boost_output_voltage":0.0
     }
+
+    property var enable_power_telemetry_notification:{
+          "enabled":true                             // or 'false' if disabling periodic notifications
+           }
 
 
    property var set_pulse_colors_notification:{
         "enabled":true,                              // or 'false' if disabling the pulse LED
         "channel1_color":"46B900",                   //a six digit hex value (R,G,B)
         "channel2_color":"3A00C5"
-    }
-
-    onSet_pulse_colors_notificationChanged: {
-        console.log("Pulse notification sent! pulse is set to",set_pulse_colors_notification.enabled)
     }
 
    property var set_linear_color_notification:{
@@ -75,6 +77,23 @@ Item {
                      CorePlatformInterface.send(this)
                 }
     })
+
+    property var enable_power_telemetry:({
+                 "cmd":"enable_power_telemetry",
+                 "payload":{
+                    "enabled":true                        // or 'false' if disabling periodic notifications
+                    },
+                 update: function(enabled){
+                   this.set(enabled)
+                   CorePlatformInterface.send(this)
+                 },
+                 set: function(inEnabled){
+                   this.payload.enabled = inEnabled;
+                  },
+                 send: function(){
+                   CorePlatformInterface.send(this)
+                  }
+     })
 
     property var set_pulse_colors:({
                 "cmd":"set_pulse_colors",
@@ -182,7 +201,7 @@ Item {
     Connections {
         target: coreInterface
         onNotification: {
-            if (!payload.includes("request_usb_power_notification")){
+            if (!payload.includes("power_notification")){
                 console.log("**** Notification",payload);
             }
             CorePlatformInterface.data_source_handler(payload)
@@ -192,7 +211,7 @@ Item {
 
 
 
-        // DEBUG - TODO: Faller - Remove before merging back to Dev
+   /*     // DEBUG - TODO: Faller - Remove before merging back to Dev
     Window {
         id: debug
         visible: true
@@ -375,4 +394,5 @@ Item {
             }
         }
     }
+    */
 }

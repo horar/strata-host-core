@@ -5,6 +5,9 @@ import QtGraphicalEffects 1.0
 Item {
     id: root
 
+    signal moved()
+    signal userSet()
+
     property alias value: hueSlider.value
     property string color1: "green"
     property string color2: "blue"
@@ -17,6 +20,10 @@ Item {
     property var rgbArray: [0,0,0]
     property bool powerSave: true
     property string hexvalue: "#ffffff"
+
+    property alias pressed: hueSlider.pressed
+
+
 
     implicitHeight: labelLeft ? Math.max(labelText.height, sliderHeight) : labelText.height + sliderHeight + hueSlider.anchors.topMargin
     implicitWidth: 450
@@ -46,16 +53,79 @@ Item {
         live: false
         from: 0
         to: 255
+        onMoved: root.moved()
+        onPressedChanged: {
+            if (!pressed) {
+                root.userSet()
+            }
+        }
+
+        Rectangle{
+            id:focusRing
+            anchors.left:parent.left
+            anchors.top:parent.top
+            anchors.topMargin:4
+            anchors.right:parent.right
+            anchors.bottom:parent.bottom
+            anchors.bottomMargin:4
+            border.width: hueSlider.activeFocus ? 2 : 0
+            border.color:"green"
+            radius:5
+            color:"transparent"
+        }
+
+        Keys.onRightPressed:{
+            //we've seen a bug caused by holding down the arrow key, so for the time being we're
+            //throttling the rate this feature can send commands by turning off autorepeat.
+            if (event.isAutoRepeat)
+                return
+            if (value < 255){
+                value = value+1;
+                updateColorValues();
+                root.userSet()
+            }
+        }
+
+        Keys.onLeftPressed:{
+            //we've seen a bug caused by holding down the arrow key, so for the time being we're
+            //throttling the rate this feature can send commands by turning off autorepeat.
+            if (event.isAutoRepeat)
+                return
+            if (value > 0){
+                value = value-1;
+                updateColorValues();
+                root.userSet()
+            }
+        }
+
+        onActiveFocusChanged:{
+            if (activeFocus)
+                console.log("slider is now in focus");
+            else
+                console.log("slider is out of focus");
+        }
 
         background: Rectangle {
+            id:backgroundRectangle
             y: 4
             width: hueSlider.width
             height: hueSlider.height-8
+
+            border.color: "white"
+            border.width: hueSlider.activeFocus ? 5 : 0
+
             radius: 5
             layer.enabled: true
             layer.effect: LinearGradient {
                 start: Qt.point(0, 0)
                 end: Qt.point(width, 0)
+                source:Rectangle{
+                    x:20//border.width
+                    y:20//border.width
+                    height:backgroundRectangle.height - 40//2*border.width
+                    width: backgroundRectangle.width - 40//2*border.width
+                }
+
                 gradient: Gradient {
                     GradientStop { position: 0.0; color: Qt.hsva(0.0,1,1,1) }
                     GradientStop { position: 0.1667; color: Qt.hsva(0.1667,1,1,1) }
@@ -109,6 +179,12 @@ Item {
     }
 
     onValueChanged: {
+
+        updateColorValues();
+    }
+
+    function updateColorValues(){
+
         if (powerSave) {
             rgbArray = hueToRgbPowerSave(value/255)
         } else {

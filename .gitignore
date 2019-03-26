@@ -41,4 +41,4 @@ platform/applications/*/debug/*
 !platform/applications/*/debug/CMakeLists.txt
 *.jlink
 *.DS_Store
-
+*.autosave

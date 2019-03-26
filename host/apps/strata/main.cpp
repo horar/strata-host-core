@@ -88,6 +88,7 @@ int main(int argc, char *argv[])
 
         QStringList arguments;
         arguments << "-f" << hcsConfigPath;
+        hcsProcess->setProcessChannelMode(QProcess::ForwardedChannels);
         hcsProcess->start(hcsPath, arguments, QIODevice::ReadWrite);
         if (!hcsProcess->waitForStarted()) {
             qWarning() << "Process does not started yet (" << hcsProcess->state() << ")";

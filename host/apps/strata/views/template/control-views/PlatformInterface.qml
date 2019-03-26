@@ -89,7 +89,7 @@ Item {
     // @command: motor_running_command
     // @description: sends motor running command to platform
     //
-    property var motor_running_command : {
+    property var motor_running_command : ({
             "cmd" : "motor_running",
             "payload": {
                 "running": false // default value
@@ -104,7 +104,7 @@ Item {
             },
             send: function () { platformInterface.send(this) },
             show: function () { platformInterface.show(this) }
-        }
+        })
 
 
 

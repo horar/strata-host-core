@@ -3,7 +3,6 @@
         <file>main.qml</file>
         <file>views/bubu/Control.qml</file>
         <file>SGLoginScreen.qml</file>
-        <file>SGDetectingPlatform.qml</file>
         <file>views/motor-vortex/Control.qml</file>
         <file>SGControlContainer.qml</file>
         <file>SGContentContainer.qml</file>
@@ -13,11 +12,6 @@
         <file>js/login.js</file>
         <file>js/navigation_control.js</file>
         <file>js/restclient.js</file>
-        <file>views/motor-vortex/PageComingSoon.qml</file>
-        <file>views/motor-vortex/PageLayout.qml</file>
-        <file>views/motor-vortex/PageSchematic.qml</file>
-        <file>views/motor-vortex/PageSystemContent.qml</file>
-        <file>views/motor-vortex/PageTestReport.qml</file>
         <file>views/motor-vortex/images/icons/backIcon.svg</file>
         <file>views/motor-vortex/images/icons/infoIcon.svg</file>
         <file>views/motor-vortex/images/icons/leftArrow.svg</file>
@@ -118,11 +112,6 @@
         <file>views/bubu/images/system_content/USBCInterfaceSchematic1.png</file>
         <file>views/bubu/images/system_content/USBCInterfaceSchematic2.png</file>
         <file>views/bubu/images/system_content/USBInterfaceIcon.png</file>
-        <file>views/bubu/PageComingSoon.qml</file>
-        <file>views/bubu/PageLayout.qml</file>
-        <file>views/bubu/PageSchematic.qml</file>
-        <file>views/bubu/PageSystemContent.qml</file>
-        <file>views/bubu/PageTestReport.qml</file>
         <file>views/motor-vortex/sgwidgets/fonts/sgicons.ttf</file>
         <file>views/motor-vortex/sgwidgets/images/sliderHandle.svg</file>
         <file>views/motor-vortex/sgwidgets/images/sliderHandleActive.svg</file>
@@ -151,11 +140,6 @@
         <file>views/motor-vortex/sgwidgets/SGComboBox.qml</file>
         <file>views/entice_rgb/Content.qml</file>
         <file>views/entice_rgb/Control.qml</file>
-        <file>views/entice_rgb/PageComingSoon.qml</file>
-        <file>views/entice_rgb/PageLayout.qml</file>
-        <file>views/entice_rgb/PageSchematic.qml</file>
-        <file>views/entice_rgb/PageSystemContent.qml</file>
-        <file>views/entice_rgb/PageTestReport.qml</file>
         <file>views/entice_rgb/PlatformInterface.qml</file>
         <file>views/entice_rgb/sgwidgets/SGCircularGauge.qml</file>
         <file>views/entice_rgb/sgwidgets/SGComboBox.qml</file>
@@ -265,11 +249,6 @@
         <file>views/efficiency-simulator/GraphAndCircuit.qml</file>
         <file>views/logic-gate/Content.qml</file>
         <file>views/logic-gate/Control.qml</file>
-        <file>views/logic-gate/PageComingSoon.qml</file>
-        <file>views/logic-gate/PageLayout.qml</file>
-        <file>views/logic-gate/PageSchematic.qml</file>
-        <file>views/logic-gate/PageSystemContent.qml</file>
-        <file>views/logic-gate/PageTestReport.qml</file>
         <file>views/logic-gate/PlatformInterface.qml</file>
         <file>views/logic-gate/PartOne.qml</file>
         <file>views/logic-gate/PartTwo.qml</file>
@@ -304,11 +283,9 @@
         <file>views/logic-gate/images/nl7sz58/nand_nb.png</file>
         <file>views/logic-gate/images/nl7sz58/or.png</file>
         <file>views/logic-gate/images/nl7sz58/xor.png</file>
-        <file>statusbar-partial-views/SGPlatformSelector.qml</file>
         <file>js/platform_selection.js</file>
         <file>images/strata-logo-reverse.svg</file>
         <file>views/motor-vortex/sgwidgets/SGToolButton.qml</file>
-        <file>views/motor-vortex/DownloadsDrawer.qml</file>
         <file>views/usb-pd-multiport/views/images/powerconverter.png</file>
         <file>views/usb-hub/sgwidgets/fonts/sgicons.ttf</file>
         <file>views/usb-hub/sgwidgets/images/sliderHandle.svg</file>
@@ -426,36 +403,36 @@
         <file>views/usb-pd/Control.qml</file>
         <file>views/usb-pd/views/images/basic-twoPortBackground.png</file>
         <file>fonts/Fonts.qml</file>
-        <file>statusbar-partial-views/SGProfilePopup.qml</file>
         <file>statusbar-partial-views/SGSubmitInfoBox.qml</file>
-        <file>statusbar-partial-views/SGProfileUpdate.qml</file>
-        <file>statusbar-partial-views/SGAnalyticsPopup.qml</file>
         <file>statusbar-partial-views/SGStatusListBox.qml</file>
         <file>statusbar-partial-views/SGFeedbackPopup.qml</file>
         <file>statusbar-partial-views/SGConfirmationPopup.qml</file>
-        <file>views/motor-vortex/PageInteractiveBlockDiagrams.qml</file>
-        <file>views/motor-vortex/InteractiveBlockDiagramDemo.html</file>
         <file>views/SGPdfViewer/SGPdfViewer.qml</file>
         <file>statusbar-partial-views/SGPrivacyPolicy.qml</file>
         <file>statusbar-partial-views/SGGreenButton.qml</file>
         <file>js/help_layout_manager.js</file>
-        <file>statusbar-partial-views/SGPeekThroughOverlay.qml</file>
-        <file>statusbar-partial-views/SGTourControl.qml</file>
-        <file>statusbar-partial-views/SGToolTipPopup.qml</file>
-        <file>statusbar-partial-views/images/corner-fade.png</file>
-        <file>statusbar-partial-views/images/side-fade.png</file>
-        <file>statusbar-partial-views/images/top-fade.png</file>
+        <file>statusbar-partial-views/SGAboutPopup.qml</file>
+        <file>statusbar-partial-views/SGPrivacyPopup.qml</file>
+        <file>images/on-semi-logo-horiz.svg</file>
+        <file>views/logic-gate/sgwidgets/SGToolButton.qml</file>
         <file>views/usb-pd-multiport/views/images/graphIcon.svg</file>
         <file>views/usb-pd/views/images/graphIcon.svg</file>
-        <file>views/unknown-platform/Content.qml</file>
-        <file>views/unknown-platform/Control.qml</file>
-        <file>views/unknown-platform/Warning.qml</file>
+        <file>views/usb-pd/sgwidgets/SGToolButton.qml</file>
+        <file>views/usb-pd-multiport/sgwidgets/SGToolButton.qml</file>
+        <file>js/feedback.js</file>
         <file>views/usb-pd-multiport/views/images/cordTermination.png</file>
         <file>views/usb-pd-multiport/views/images/USBCAnim.gif</file>
         <file>views/usb-pd-multiport/views/images/USBCAnimReverse.gif</file>
         <file>views/usb-pd/views/images/USBCAnim.gif</file>
         <file>views/usb-pd/views/images/USBCAnimReverse.gif</file>
         <file>views/usb-pd/views/images/cordTermination.png</file>
+        <file>js/platform_model.js</file>
+        <file>views/logic-gate/content-views/Datasheets.qml</file>
+        <file>views/logic-gate/content-views/Documents.qml</file>
+        <file>views/logic-gate/content-views/Downloads.qml</file>
+        <file>statusbar-partial-views/SGAnalyticsPopup.qml</file>
+        <file>statusbar-partial-views/SGProfilePopup.qml</file>
+        <file>statusbar-partial-views/SGProfileUpdate.qml</file>
         <file>views/led/sgwidgets/fonts/Inconsolata.otf</file>
         <file>views/led/sgwidgets/fonts/sgicons.ttf</file>
         <file>views/led/sgwidgets/images/sliderHandle.svg</file>
@@ -469,6 +446,7 @@
         <file>views/led/sgwidgets/SGComboBox.qml</file>
         <file>views/led/sgwidgets/SGDivider.qml</file>
         <file>views/led/sgwidgets/SGGraph.qml</file>
+        <file>views/led/sgwidgets/SGHueSlider.qml</file>
         <file>views/led/sgwidgets/SGLabelledInfoBox.qml</file>
         <file>views/led/sgwidgets/SGLayoutDebug.qml</file>
         <file>views/led/sgwidgets/SGLayoutDivider.qml</file>
@@ -483,10 +461,15 @@
         <file>views/led/sgwidgets/SGSubmitInfoBox.qml</file>
         <file>views/led/sgwidgets/SGSwitch.qml</file>
         <file>views/led/sgwidgets/SGToolTipPopup.qml</file>
+        <file>views/led/views/basic-partial-views/LEDIndicator.qml</file>
         <file>views/led/views/basic-partial-views/PortInfo.qml</file>
         <file>views/led/views/basic-partial-views/PortStatBox.qml</file>
+        <file>views/led/views/images/icon-boost.svg</file>
+        <file>views/led/views/images/icon-buck.svg</file>
         <file>views/led/views/images/icon-efficiency.svg</file>
+        <file>views/led/views/images/icon-linear.svg</file>
         <file>views/led/views/images/icon-max.svg</file>
+        <file>views/led/views/images/icon-pulse.svg</file>
         <file>views/led/views/images/icon-temp.svg</file>
         <file>views/led/views/images/icon-usb-disconnected.svg</file>
         <file>views/led/views/images/icon-voltage.svg</file>
@@ -495,11 +478,273 @@
         <file>views/led/Content.qml</file>
         <file>views/led/Control.qml</file>
         <file>views/led/PlatformInterface.qml</file>
-        <file>views/led/views/basic-partial-views/LEDIndicator.qml</file>
-        <file>views/led/views/images/icon-pulse.svg</file>
-        <file>views/led/views/images/icon-linear.svg</file>
-        <file>views/led/sgwidgets/SGHueSlider.qml</file>
-        <file>views/led/views/images/icon-buck.svg</file>
-        <file>views/led/views/images/icon-boost.svg</file>
+        <file>views/logic-gate/content-views/content-widgets/SGAccordion.qml</file>
+        <file>views/logic-gate/content-views/content-widgets/SGAccordionItem.qml</file>
+        <file>views/logic-gate/content-views/content-widgets/SGRadioButton.qml</file>
+        <file>views/logic-gate/content-views/content-widgets/SGRadioButtonContainer.qml</file>
+        <file>views/logic-gate/content-views/content-widgets/SGSelectorButton.qml</file>
+        <file>views/logic-gate/content-views/content-widgets/docLoading.gif</file>
+        <file>views/XDFN-LDO/sgwidgets/fonts/digitalseven.ttf</file>
+        <file>views/XDFN-LDO/sgwidgets/fonts/sgicons.ttf</file>
+        <file>views/XDFN-LDO/sgwidgets/images/And B.png</file>
+        <file>views/XDFN-LDO/sgwidgets/images/And C.png</file>
+        <file>views/XDFN-LDO/sgwidgets/images/Buffer.png</file>
+        <file>views/XDFN-LDO/sgwidgets/images/greenStatusLight.svg</file>
+        <file>views/XDFN-LDO/sgwidgets/images/offStatusLight.svg</file>
+        <file>views/XDFN-LDO/sgwidgets/images/OR.png</file>
+        <file>views/XDFN-LDO/sgwidgets/images/redStatusLight.svg</file>
+        <file>views/XDFN-LDO/sgwidgets/images/sliderHandle.svg</file>
+        <file>views/XDFN-LDO/sgwidgets/images/sliderHandleActive.svg</file>
+        <file>views/XDFN-LDO/sgwidgets/images/sliderValue.svg</file>
+        <file>views/XDFN-LDO/sgwidgets/SGCircularGauge.qml</file>
+        <file>views/XDFN-LDO/sgwidgets/SGComboBox.qml</file>
+        <file>views/XDFN-LDO/sgwidgets/SGGraph.qml</file>
+        <file>views/XDFN-LDO/sgwidgets/SGHueSlider.qml</file>
+        <file>views/XDFN-LDO/sgwidgets/SGLabelledInfoBox.qml</file>
+        <file>views/XDFN-LDO/sgwidgets/SGRadioButton.qml</file>
+        <file>views/XDFN-LDO/sgwidgets/SGRadioButtonContainer.qml</file>
+        <file>views/XDFN-LDO/sgwidgets/SGRGBSlider.qml</file>
+        <file>views/XDFN-LDO/sgwidgets/SGSegmentedButton.qml</file>
+        <file>views/XDFN-LDO/sgwidgets/SGSegmentedButtonStrip.qml</file>
+        <file>views/XDFN-LDO/sgwidgets/SGSlider.qml</file>
+        <file>views/XDFN-LDO/sgwidgets/SGStatusLight.qml</file>
+        <file>views/XDFN-LDO/sgwidgets/SGStatusListBox.qml</file>
+        <file>views/XDFN-LDO/sgwidgets/SGSubmitInfoBox.qml</file>
+        <file>views/XDFN-LDO/sgwidgets/SGSwitch.qml</file>
+        <file>views/XDFN-LDO/sgwidgets/SGToolButton.qml</file>
+        <file>views/XDFN-LDO/sgwidgets/SGToolTipPopup.qml</file>
+        <file>views/XDFN-LDO/AdvancedControl.qml</file>
+        <file>views/XDFN-LDO/BasicControl.qml</file>
+        <file>views/XDFN-LDO/Content.qml</file>
+        <file>views/XDFN-LDO/Control.qml</file>
+        <file>views/XDFN-LDO/PlatformInterface.qml</file>
+        <file>views/15A-switcher/sgwidgets/fonts/digitalseven.ttf</file>
+        <file>views/15A-switcher/sgwidgets/fonts/sgicons.ttf</file>
+        <file>views/15A-switcher/sgwidgets/images/And B.png</file>
+        <file>views/15A-switcher/sgwidgets/images/And C.png</file>
+        <file>views/15A-switcher/sgwidgets/images/Buffer.png</file>
+        <file>views/15A-switcher/sgwidgets/images/greenStatusLight.svg</file>
+        <file>views/15A-switcher/sgwidgets/images/offStatusLight.svg</file>
+        <file>views/15A-switcher/sgwidgets/images/OR.png</file>
+        <file>views/15A-switcher/sgwidgets/images/redStatusLight.svg</file>
+        <file>views/15A-switcher/sgwidgets/images/sliderHandle.svg</file>
+        <file>views/15A-switcher/sgwidgets/images/sliderHandleActive.svg</file>
+        <file>views/15A-switcher/sgwidgets/images/sliderValue.svg</file>
+        <file>views/15A-switcher/sgwidgets/SGCircularGauge.qml</file>
+        <file>views/15A-switcher/sgwidgets/SGComboBox.qml</file>
+        <file>views/15A-switcher/sgwidgets/SGGraph.qml</file>
+        <file>views/15A-switcher/sgwidgets/SGHueSlider.qml</file>
+        <file>views/15A-switcher/sgwidgets/SGLabelledInfoBox.qml</file>
+        <file>views/15A-switcher/sgwidgets/SGRadioButton.qml</file>
+        <file>views/15A-switcher/sgwidgets/SGRadioButtonContainer.qml</file>
+        <file>views/15A-switcher/sgwidgets/SGRGBSlider.qml</file>
+        <file>views/15A-switcher/sgwidgets/SGSegmentedButton.qml</file>
+        <file>views/15A-switcher/sgwidgets/SGSegmentedButtonStrip.qml</file>
+        <file>views/15A-switcher/sgwidgets/SGSlider.qml</file>
+        <file>views/15A-switcher/sgwidgets/SGStatusLight.qml</file>
+        <file>views/15A-switcher/sgwidgets/SGStatusListBox.qml</file>
+        <file>views/15A-switcher/sgwidgets/SGSubmitInfoBox.qml</file>
+        <file>views/15A-switcher/sgwidgets/SGSwitch.qml</file>
+        <file>views/15A-switcher/sgwidgets/SGToolButton.qml</file>
+        <file>views/15A-switcher/sgwidgets/SGToolTipPopup.qml</file>
+        <file>views/15A-switcher/AdvancedControl.qml</file>
+        <file>views/15A-switcher/BasicControl.qml</file>
+        <file>views/15A-switcher/Content.qml</file>
+        <file>views/15A-switcher/Control.qml</file>
+        <file>views/15A-switcher/PlatformInterface.qml</file>
+        <file>views/5A-switcher/sgwidgets/fonts/digitalseven.ttf</file>
+        <file>views/5A-switcher/sgwidgets/fonts/sgicons.ttf</file>
+        <file>views/5A-switcher/sgwidgets/images/greenStatusLight.svg</file>
+        <file>views/5A-switcher/sgwidgets/images/offStatusLight.svg</file>
+        <file>views/5A-switcher/sgwidgets/images/redStatusLight.svg</file>
+        <file>views/5A-switcher/sgwidgets/images/sliderHandle.svg</file>
+        <file>views/5A-switcher/sgwidgets/images/sliderHandleActive.svg</file>
+        <file>views/5A-switcher/sgwidgets/images/sliderValue.svg</file>
+        <file>views/5A-switcher/sgwidgets/SGCircularGauge.qml</file>
+        <file>views/5A-switcher/sgwidgets/SGComboBox.qml</file>
+        <file>views/5A-switcher/sgwidgets/SGGraph.qml</file>
+        <file>views/5A-switcher/sgwidgets/SGHueSlider.qml</file>
+        <file>views/5A-switcher/sgwidgets/SGLabelledInfoBox.qml</file>
+        <file>views/5A-switcher/sgwidgets/SGRadioButton.qml</file>
+        <file>views/5A-switcher/sgwidgets/SGRadioButtonContainer.qml</file>
+        <file>views/5A-switcher/sgwidgets/SGRGBSlider.qml</file>
+        <file>views/5A-switcher/sgwidgets/SGSegmentedButton.qml</file>
+        <file>views/5A-switcher/sgwidgets/SGSegmentedButtonStrip.qml</file>
+        <file>views/5A-switcher/sgwidgets/SGSlider.qml</file>
+        <file>views/5A-switcher/sgwidgets/SGStatusLight.qml</file>
+        <file>views/5A-switcher/sgwidgets/SGStatusListBox.qml</file>
+        <file>views/5A-switcher/sgwidgets/SGSubmitInfoBox.qml</file>
+        <file>views/5A-switcher/sgwidgets/SGSwitch.qml</file>
+        <file>views/5A-switcher/sgwidgets/SGToolButton.qml</file>
+        <file>views/5A-switcher/sgwidgets/SGToolTipPopup.qml</file>
+        <file>views/5A-switcher/AdvancedControl.qml</file>
+        <file>views/5A-switcher/BasicControl.qml</file>
+        <file>views/5A-switcher/Content.qml</file>
+        <file>views/5A-switcher/Control.qml</file>
+        <file>views/5A-switcher/PlatformInterface.qml</file>
+        <file>views/5A-switcher/sgwidgets/SGLayoutDivider.qml</file>
+        <file>views/5A-switcher/sgwidgets/SGAccordionItem.qml</file>
+        <file>views/5A-switcher/sgwidgets/SGAccordion.qml</file>
+        <file>views/5A-switcher/Telemetry.qml</file>
+        <file>views/5A-switcher/SystemSettings.qml</file>
+        <file>views/15A-switcher/content-views/content-widgets/docLoading.gif</file>
+        <file>views/15A-switcher/content-views/content-widgets/SGAccordion.qml</file>
+        <file>views/15A-switcher/content-views/content-widgets/SGAccordionItem.qml</file>
+        <file>views/15A-switcher/content-views/content-widgets/SGRadioButton.qml</file>
+        <file>views/15A-switcher/content-views/content-widgets/SGRadioButtonContainer.qml</file>
+        <file>views/15A-switcher/content-views/content-widgets/SGSelectorButton.qml</file>
+        <file>views/15A-switcher/content-views/Datasheets.qml</file>
+        <file>views/15A-switcher/content-views/Documents.qml</file>
+        <file>views/15A-switcher/content-views/Downloads.qml</file>
+        <file>views/bubu/content-views/content-widgets/docLoading.gif</file>
+        <file>views/bubu/content-views/content-widgets/SGAccordion.qml</file>
+        <file>views/bubu/content-views/content-widgets/SGAccordionItem.qml</file>
+        <file>views/bubu/content-views/content-widgets/SGRadioButton.qml</file>
+        <file>views/bubu/content-views/content-widgets/SGRadioButtonContainer.qml</file>
+        <file>views/bubu/content-views/content-widgets/SGSelectorButton.qml</file>
+        <file>views/bubu/content-views/Datasheets.qml</file>
+        <file>views/bubu/content-views/Documents.qml</file>
+        <file>views/bubu/content-views/Downloads.qml</file>
+        <file>views/entice_rgb/content-views/content-widgets/docLoading.gif</file>
+        <file>views/entice_rgb/content-views/content-widgets/SGAccordion.qml</file>
+        <file>views/entice_rgb/content-views/content-widgets/SGAccordionItem.qml</file>
+        <file>views/entice_rgb/content-views/content-widgets/SGRadioButton.qml</file>
+        <file>views/entice_rgb/content-views/content-widgets/SGRadioButtonContainer.qml</file>
+        <file>views/entice_rgb/content-views/content-widgets/SGSelectorButton.qml</file>
+        <file>views/entice_rgb/content-views/Datasheets.qml</file>
+        <file>views/entice_rgb/content-views/Documents.qml</file>
+        <file>views/entice_rgb/content-views/Downloads.qml</file>
+        <file>views/led/content-views/content-widgets/docLoading.gif</file>
+        <file>views/led/content-views/content-widgets/SGAccordion.qml</file>
+        <file>views/led/content-views/content-widgets/SGAccordionItem.qml</file>
+        <file>views/led/content-views/content-widgets/SGRadioButton.qml</file>
+        <file>views/led/content-views/content-widgets/SGRadioButtonContainer.qml</file>
+        <file>views/led/content-views/content-widgets/SGSelectorButton.qml</file>
+        <file>views/led/content-views/Datasheets.qml</file>
+        <file>views/led/content-views/Documents.qml</file>
+        <file>views/led/content-views/Downloads.qml</file>
+        <file>views/motor-vortex/content-views/content-widgets/docLoading.gif</file>
+        <file>views/motor-vortex/content-views/content-widgets/SGAccordion.qml</file>
+        <file>views/motor-vortex/content-views/content-widgets/SGAccordionItem.qml</file>
+        <file>views/motor-vortex/content-views/content-widgets/SGRadioButton.qml</file>
+        <file>views/motor-vortex/content-views/content-widgets/SGRadioButtonContainer.qml</file>
+        <file>views/motor-vortex/content-views/content-widgets/SGSelectorButton.qml</file>
+        <file>views/motor-vortex/content-views/Datasheets.qml</file>
+        <file>views/motor-vortex/content-views/Documents.qml</file>
+        <file>views/motor-vortex/content-views/Downloads.qml</file>
+        <file>views/usb-pd/content-views/content-widgets/docLoading.gif</file>
+        <file>views/usb-pd/content-views/content-widgets/SGAccordion.qml</file>
+        <file>views/usb-pd/content-views/content-widgets/SGAccordionItem.qml</file>
+        <file>views/usb-pd/content-views/content-widgets/SGRadioButton.qml</file>
+        <file>views/usb-pd/content-views/content-widgets/SGRadioButtonContainer.qml</file>
+        <file>views/usb-pd/content-views/content-widgets/SGSelectorButton.qml</file>
+        <file>views/usb-pd/content-views/Datasheets.qml</file>
+        <file>views/usb-pd/content-views/Documents.qml</file>
+        <file>views/usb-pd/content-views/Downloads.qml</file>
+        <file>views/usb-pd-multiport/content-views/content-widgets/docLoading.gif</file>
+        <file>views/usb-pd-multiport/content-views/content-widgets/SGAccordion.qml</file>
+        <file>views/usb-pd-multiport/content-views/content-widgets/SGAccordionItem.qml</file>
+        <file>views/usb-pd-multiport/content-views/content-widgets/SGRadioButton.qml</file>
+        <file>views/usb-pd-multiport/content-views/content-widgets/SGRadioButtonContainer.qml</file>
+        <file>views/usb-pd-multiport/content-views/content-widgets/SGSelectorButton.qml</file>
+        <file>views/usb-pd-multiport/content-views/Datasheets.qml</file>
+        <file>views/usb-pd-multiport/content-views/Documents.qml</file>
+        <file>views/usb-pd-multiport/content-views/Downloads.qml</file>
+        <file>views/XDFN-LDO/content-views/content-widgets/docLoading.gif</file>
+        <file>views/XDFN-LDO/content-views/content-widgets/SGAccordion.qml</file>
+        <file>views/XDFN-LDO/content-views/content-widgets/SGAccordionItem.qml</file>
+        <file>views/XDFN-LDO/content-views/content-widgets/SGRadioButton.qml</file>
+        <file>views/XDFN-LDO/content-views/content-widgets/SGRadioButtonContainer.qml</file>
+        <file>views/XDFN-LDO/content-views/content-widgets/SGSelectorButton.qml</file>
+        <file>views/XDFN-LDO/content-views/Datasheets.qml</file>
+        <file>views/XDFN-LDO/content-views/Documents.qml</file>
+        <file>views/XDFN-LDO/content-views/Downloads.qml</file>
+        <file>js/uuid_map.js</file>
+        <file>views/5A-switcher/content-views/content-widgets/docLoading.gif</file>
+        <file>views/5A-switcher/content-views/content-widgets/SGAccordion.qml</file>
+        <file>views/5A-switcher/content-views/content-widgets/SGAccordionItem.qml</file>
+        <file>views/5A-switcher/content-views/content-widgets/SGRadioButton.qml</file>
+        <file>views/5A-switcher/content-views/content-widgets/SGRadioButtonContainer.qml</file>
+        <file>views/5A-switcher/content-views/content-widgets/SGSelectorButton.qml</file>
+        <file>views/5A-switcher/content-views/Datasheets.qml</file>
+        <file>views/5A-switcher/content-views/Documents.qml</file>
+        <file>views/5A-switcher/content-views/Downloads.qml</file>
+        <file>views/XDFN-LDO/MultiplePlatform.qml</file>
+        <file>statusbar-partial-views/platform-selector/SGPlatformSelectorDelegate.qml</file>
+        <file>statusbar-partial-views/help-tour/SGPeekThroughOverlay.qml</file>
+        <file>statusbar-partial-views/help-tour/SGToolTipPopup.qml</file>
+        <file>statusbar-partial-views/help-tour/SGTourControl.qml</file>
+        <file>statusbar-partial-views/help-tour/images/corner-fade.png</file>
+        <file>statusbar-partial-views/help-tour/images/side-fade.png</file>
+        <file>statusbar-partial-views/help-tour/images/top-fade.png</file>
+        <file>statusbar-partial-views/platform-selector/images/icons/ac.png</file>
+        <file>statusbar-partial-views/platform-selector/images/icons/analog.png</file>
+        <file>statusbar-partial-views/platform-selector/images/icons/audio.png</file>
+        <file>statusbar-partial-views/platform-selector/images/icons/automotive.png</file>
+        <file>statusbar-partial-views/platform-selector/images/icons/computing.png</file>
+        <file>statusbar-partial-views/platform-selector/images/icons/connectivity.png</file>
+        <file>statusbar-partial-views/platform-selector/images/icons/consumer.png</file>
+        <file>statusbar-partial-views/platform-selector/images/icons/dc.png</file>
+        <file>statusbar-partial-views/platform-selector/images/icons/digital.png</file>
+        <file>statusbar-partial-views/platform-selector/images/icons/discrete.png</file>
+        <file>statusbar-partial-views/platform-selector/images/icons/esd.png</file>
+        <file>statusbar-partial-views/platform-selector/images/icons/imagesensors.png</file>
+        <file>statusbar-partial-views/platform-selector/images/icons/industrial.png</file>
+        <file>statusbar-partial-views/platform-selector/images/icons/infrared.png</file>
+        <file>statusbar-partial-views/platform-selector/images/icons/led.png</file>
+        <file>statusbar-partial-views/platform-selector/images/icons/ledlighting.png</file>
+        <file>statusbar-partial-views/platform-selector/images/icons/mcu.png</file>
+        <file>statusbar-partial-views/platform-selector/images/icons/medical.png</file>
+        <file>statusbar-partial-views/platform-selector/images/icons/memory.png</file>
+        <file>statusbar-partial-views/platform-selector/images/icons/militaryaerospace.png</file>
+        <file>statusbar-partial-views/platform-selector/images/icons/motorcontrol.png</file>
+        <file>statusbar-partial-views/platform-selector/images/icons/networkingtelecom.png</file>
+        <file>statusbar-partial-views/platform-selector/images/icons/optoisolator.png</file>
+        <file>statusbar-partial-views/platform-selector/images/icons/pm.png</file>
+        <file>statusbar-partial-views/platform-selector/images/icons/powersupply.png</file>
+        <file>statusbar-partial-views/platform-selector/images/icons/sensor.png</file>
+        <file>statusbar-partial-views/platform-selector/images/icons/video.png</file>
+        <file>statusbar-partial-views/platform-selector/images/icons/whitegoods.png</file>
+        <file>statusbar-partial-views/platform-selector/images/icons/wirelessiot.png</file>
+        <file>statusbar-partial-views/platform-selector/images/whiteFadeMask.svg</file>
+        <file>views/led/views/basic-partial-views/BoostPortInfo.qml</file>
+        <file>views/led/views/images/connectionBracket.svg</file>
+        <file>views/led/views/images/connectionBracketFlipped.svg</file>
+        <file>statusbar-partial-views/platform-selector/images/platform-images/notFound.png</file>
+        <file>statusbar-partial-views/platform-selector/images/platform-images/comingSoon.png</file>
+        <file>statusbar-partial-views/platform-selector/images/platform-images/201.png</file>
+        <file>statusbar-partial-views/platform-selector/images/platform-images/202.png</file>
+        <file>statusbar-partial-views/platform-selector/images/platform-images/203.png</file>
+        <file>statusbar-partial-views/platform-selector/images/platform-images/204.png</file>
+        <file>statusbar-partial-views/platform-selector/images/platform-images/207.png</file>
+        <file>statusbar-partial-views/platform-selector/images/platform-images/209.png</file>
+        <file>statusbar-partial-views/platform-selector/images/platform-images/210.png</file>
+        <file>statusbar-partial-views/platform-selector/images/platform-images/comingsoon.png</file>
+        <file>views/5A-switcher/TimeAndWarningSettings.qml</file>
+        <file>views/5A-switcher/Diagnotics.qml</file>
+        <file>views/5A-switcher/sgwidgets/DiagnoticRadioButton.qml</file>
+        <file>statusbar-partial-views/platform-selector/SGPlatformSelectorListView.qml</file>
+        <file>views/15A-switcher/MultiplePlatform.qml</file>
+        <file>views/template/content-views/content-widgets/docLoading.gif</file>
+        <file>views/template/content-views/content-widgets/SGAccordion.qml</file>
+        <file>views/template/content-views/content-widgets/SGAccordionItem.qml</file>
+        <file>views/template/content-views/content-widgets/SGRadioButton.qml</file>
+        <file>views/template/content-views/content-widgets/SGRadioButtonContainer.qml</file>
+        <file>views/template/content-views/content-widgets/SGSelectorButton.qml</file>
+        <file>views/template/content-views/Datasheets.qml</file>
+        <file>views/template/content-views/Documents.qml</file>
+        <file>views/template/content-views/Downloads.qml</file>
+        <file>views/template/sgwidgets/SGSwitch.qml</file>
+        <file>views/template/Content.qml</file>
+        <file>views/template/Control.qml</file>
+        <file>views/template/control-views/AdvancedControl.qml</file>
+        <file>views/template/control-views/BasicControl.qml</file>
+        <file>views/template/sgwidgets/SGResponsiveScrollView.qml</file>
+        <file>views/template/sgwidgets/fonts/digitalseven.ttf</file>
+        <file>views/template/sgwidgets/SGCircularGauge.qml</file>
+        <file>views/template/control-views/DebugExample.qml</file>
+        <file>views/template/control-views/PlatformInterface.qml</file>
+        <file>statusbar-partial-views/SGDebugBar.qml</file>
+        <file>statusbar-partial-views/platform-selector/images/platform-images/208.png</file>
     </qresource>
 </RCC>

@@ -20,7 +20,13 @@ var xhr = function(method, endpoint, data, callback, errorCallback, signals) {
             }
             else if (xhr.readyState === 4 && xhr.status >= 300) {
                 if (errorCallback) {
-                    errorCallback(JSON.parse(xhr.responseText));
+                    var resopnse = xhr.responseText;
+                    try{
+                      resopnse =   JSON.parse(xhr.responseText);
+                    }catch(error){
+                        console.log("error response not json", error)
+                    }
+                    errorCallback(resopnse);
                 }
             }
             // No connection to db - readyState is 4 (request complete)

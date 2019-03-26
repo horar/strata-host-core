@@ -1,23 +1,21 @@
 .pragma library
 .import QtQuick 2.0 as QtQuickModule
 .import "metrics.js" as Metrics
-
+.import "uuid_map.js" as UuidMap
 
 /*
     Data that will likely be needed for platform views
 */
 var context = {
-    "control_qml" : "",
     "user_id" : "",
-    "platform_name" : "",
-    "is_logged_in" : "false",
+    "class_id" : "",
+    "is_logged_in" : false,
     "platform_state" : ""
 }
 
 /*
   Mapping of verbose_name to file directory structure.
 */
-
 var screens = {
     LOGIN_SCREEN: "qrc:/SGLoginScreen.qml",
     WELCOME_SCREEN : "qrc:/SGWelcome.qml",
@@ -29,7 +27,6 @@ var screens = {
   All states handled by navigation_state_
 */
 var states = {
-
     UNINITIALIZED: 1,       // Init() has not been called
     LOGIN_STATE: 2,         // User needs to login
     CONTROL_STATE: 3,       // Platform is connected and we are ready for control
@@ -42,12 +39,13 @@ var events = {
     PROMPT_LOGIN_EVENT:             1,
     LOGIN_SUCCESSFUL_EVENT:         2,
     LOGOUT_EVENT:                   3,
-    PLATFORM_CONNECTED_EVENT:       4,
-    PLATFORM_DISCONNECTED_EVENT:    5,
-    SHOW_CONTROL_EVENT:             6,
-    OFFLINE_MODE_EVENT:             7,
-    NEW_PLATFORM_CONNECTED_EVENT:   8,
-    TOGGLE_CONTROL_CONTENT:         9,
+    PLATFORM_DISCONNECTED_EVENT:    4,
+    SHOW_CONTROL_EVENT:             5,
+    OFFLINE_MODE_EVENT:             6,
+    NEW_PLATFORM_CONNECTED_EVENT:   7,
+    TOGGLE_CONTROL_CONTENT:         8,
+    SHOW_CONTROL:                   9,
+    SHOW_CONTENT:                   10,
 }
 
 /*
@@ -63,16 +61,19 @@ var flipable_parent_= null
     Retrieve the qml file in the templated file structure
 */
 var PREFIX = "qrc:/views/"
-function getQMLFile(platform_name, filename) {
-    //console.log(platform_name, "-", filename, "qml file requested.")
+function getQMLFile(class_id, filename) {
 
-    // Build the file name - ./view/<platform_name>/filename.qml
+    // eventually dirname should === class_id and this UUIDmap will be unnecessary
+    var dir_name = UuidMap.uuid_map[class_id]
+    //console.log(class_id, "-", filename, "qml file requested.")
+
+    // Build the file name - ./view/<class_id>/filename.qml
     if (filename.search(".qml") < 0){
         //console.log("adding extension to filename: ", filename)
         filename = filename + ".qml"
     }
 
-    var qml_file_name = PREFIX + platform_name + "/" + filename
+    var qml_file_name = PREFIX + dir_name + "/" + filename
     console.log("Locating at ", qml_file_name)
 
     return qml_file_name
@@ -123,12 +124,12 @@ function createView(name, parent)
         console.log("ERROR: Could not destroy child")
     }
 
-    var object = component.createObject(parent,context)
+    var object = component.createObject(parent,context)
     if (object === null) {
         console.log("Error creating object: name=", name, ", parameters=", JSON.stringify(context));
     }
 
-    return object;
+    return object;
 }
 
 /*
@@ -157,8 +158,8 @@ function globalEventHandler(event,data)
         //console.log("Updated state to Login:", states.LOGIN_STATE)
         navigation_state_ = states.LOGIN_STATE
 
-        // Update both containers; Login blocks both
-        createView(screens.LOGIN_SCREEN, content_container_)
+        // Update both containers
+        removeView(content_container_)
         createView(screens.LOGIN_SCREEN, control_container_)
 
         // Remove StatusBar at Login
@@ -167,23 +168,34 @@ function globalEventHandler(event,data)
         break;
 
     case events.LOGOUT_EVENT:
+        updateState(events.SHOW_CONTROL)
+
         context.is_logged_in = false;
+        context.user_id = ""
+
+        removeView(content_container_)
+        removeView(control_container_)
+
+        // Set login state before disconnect event, so global event happens, not control_state version
+        navigation_state_ = states.LOGIN_STATE
+        updateState(events.PLATFORM_DISCONNECTED_EVENT)
 
         // Show Login Screen
-        //console.log("Logging user out. Displaying Login screen")
+//        console.log("Logging user out. Displaying Login screen")
         updateState(events.PROMPT_LOGIN_EVENT)
         break;
 
     case events.NEW_PLATFORM_CONNECTED_EVENT:
         // Cache platform name until we are ready to view
-        //console.log("Platform connected. Caching platform: ", data.platform_name)
-        context.platform_name = data.platform_name
+        //console.log("Platform connected. Caching platform: ", data.class_id)
+        context.class_id = data.class_id
         context.platform_state = true;
         break;
 
     case events.PLATFORM_DISCONNECTED_EVENT:
         // Disconnected
-        //console.log("Platform disconnected")
+//        console.log("Platform disconnected in global event handler")
+        context.class_id = "";
         context.platform_state = false;
         break;
 
@@ -232,13 +244,17 @@ function updateState(event, data)
             case events.LOGIN_SUCCESSFUL_EVENT:
                 context.user_id = data.user_id
                 context.is_logged_in = true;
-                navigation_state_ = states.CONTROL_STATE
 
                 // Update StatusBar
                 status_bar_container_.visible = true
-                createView(screens.STATUS_BAR, status_bar_container_)
+                var statusBar = createView(screens.STATUS_BAR, status_bar_container_)
+
                 // Update Control by next state
+                navigation_state_ = states.CONTROL_STATE
                 updateState(events.SHOW_CONTROL_EVENT,null)
+
+                 // Populate platforms only after all UI components are complete
+                statusBar.loginSuccessful()
             break;
 
             default:
@@ -254,7 +270,7 @@ function updateState(event, data)
                 // Refresh Control View based on conditions
                 if (context.platform_state){
                     // Show control when connected
-                    var qml_control = getQMLFile(context.platform_name, "Control")
+                    var qml_control = getQMLFile(context.class_id, "Control")
                     createView(qml_control, control_container_)
 
                     // Restart timer of control
@@ -265,9 +281,9 @@ function updateState(event, data)
                     createView(screens.WELCOME_SCREEN, control_container_)
                 }
 
-                // Show content when we have a platform name; doesn't have to be actively connected
-                if(context.platform_name !== ""){
-                    var qml_content = getQMLFile(context.platform_name, "Content")
+                // Show content when we have a platform clasS_id; doesn't have to be actively connected
+                if(context.class_id !== ""){
+                    var qml_content = getQMLFile(context.class_id, "Content")
                     var contentObject = createView(qml_content, content_container_)
 
                     // Insert Listener
@@ -276,35 +292,30 @@ function updateState(event, data)
                 }
                 else {
                     // Otherwise; no platform has been connected or chosen
-                    createView(screens.WELCOME_SCREEN, content_container_)
+                    removeView(content_container_)
                 }
                 break;
 
             case events.NEW_PLATFORM_CONNECTED_EVENT:
                 // Cache platform name until we are ready to view
-                console.log("new platform connected data:", data.platform_name)
-                context.platform_name = data.platform_name
+                console.log("new platform connected data:", data.class_id)
+                context.class_id = data.class_id
                 context.platform_state = true;
                 // Refresh
                 updateState(events.SHOW_CONTROL_EVENT)
                 break;
 
-            case events.PLATFORM_CONNECTED_EVENT:
-                context.platform_state = true;
-                updateState(events.SHOW_CONTROL_EVENT)
-                break;
-
             case events.PLATFORM_DISCONNECTED_EVENT:
                 context.platform_state = false;
-                context.platform_name = "";
+                context.class_id = "";
                 // Refresh
                 updateState(events.SHOW_CONTROL_EVENT)
                 break;
 
             case events.OFFLINE_MODE_EVENT:
                 // Offline mode just keeps platform_state as false
-                console.log("Entering offline mode for ", data.platform_name)
-                context.platform_name = data.platform_name
+                console.log("Entering offline mode for ", data.class_id)
+                context.class_id = data.class_id
                 context.platform_state = false;
                 updateState(events.SHOW_CONTROL_EVENT)
                 break;
@@ -313,11 +324,11 @@ function updateState(event, data)
                 // Send request to metrics service when entering and leaving platform control view
                 var pageName = '';
                 if(flipable_parent_.flipped===false){
-                    console.log("In flipable ",context.platform_name)
-                    pageName = context.platform_name +' Control'
+                    console.log("In flipable ",context.class_id)
+                    pageName = context.class_id +' Control'
                 }else {
                     var currentTabName = Metrics.getCurrentTab()
-                    pageName = context.platform_name +' '+ currentTabName
+                    pageName = context.class_id +' '+ currentTabName
                 }
 
                 Metrics.sendMetricsToCloud(pageName)
@@ -326,6 +337,19 @@ function updateState(event, data)
                 flipable_parent_.flipped = !flipable_parent_.flipped
 
                 break;
+
+            case events.SHOW_CONTROL:
+                if (flipable_parent_.flipped) {
+                    updateState(events.TOGGLE_CONTROL_CONTENT)
+                }
+                break;
+
+            case events.SHOW_CONTENT:
+                if (!flipable_parent_.flipped) {
+                    updateState(events.TOGGLE_CONTROL_CONTENT)
+                }
+                break;
+
             default:
                 globalEventHandler(event,data)
             break;
@@ -337,4 +361,3 @@ function updateState(event, data)
             break;
     }
 }
-

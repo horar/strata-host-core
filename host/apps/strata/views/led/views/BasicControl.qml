@@ -1,7 +1,8 @@
-import QtQuick 2.9
+import QtQuick 2.10
 import QtGraphicalEffects 1.0
 import QtQuick.Dialogs 1.3
-import QtQuick.Controls 2.4
+import QtQuick.Controls 2.3
+import QtQuick.Layouts 1.3
 import "qrc:/views/led/sgwidgets"
 import "qrc:/views/led/views/basic-partial-views"
 
@@ -20,6 +21,9 @@ Rectangle {
     property int leftSwitchMargin: 40
     property int rightInset: 50
     property int leftScrimOffset: 310
+    property bool pulseColorsLinked: false
+
+    property real widthRatio: root.width / 1200
 
     function rgbToHsl(r, g, b) {
       r /= 255
@@ -77,8 +81,8 @@ Rectangle {
 
             Image{
                 id:pwmIcon
-                height:50
-                width:50
+                height:parent.height/4
+                width:parent.height/4
                 mipmap:true
                 anchors.top:parent.top
                 anchors.topMargin: 15
@@ -90,10 +94,10 @@ Rectangle {
             Text{
                 id:pwmTitle
                 text: "Pulse"
-                font.pointSize: 48
+                font.pixelSize: parent.height/4
                 color: textColor
                 anchors.top:parent.top
-                anchors.topMargin:10
+                anchors.topMargin:5
                 anchors.left:pwmIcon.right
                 anchors.leftMargin: 20
             }
@@ -101,10 +105,10 @@ Rectangle {
             Text{
                 id:pwmSubtitle
                 text: "2 Channel PWM RGB Control"
-                font.pointSize: 15
+                font.pixelSize: parent.height/14
                 color: secondaryTextColor
                 anchors.top:pwmTitle.bottom
-                anchors.topMargin:0
+                anchors.topMargin:-5
                 anchors.left:pwmTitle.left
             }
 
@@ -115,10 +119,7 @@ Rectangle {
                 anchors.verticalCenter: parent.verticalCenter
                 grooveFillColor:windowsDarkBlue
                 grooveColor:"black"
-                checked:{
-                    console.log("pulse switch enabled changed to",platformInterface.set_pulse_colors_notification.enabled)
-                    platformInterface.set_pulse_colors_notification.enabled
-                }
+                checked:platformInterface.set_pulse_colors_notification.enabled
 
                 onToggled:{
                     console.log("pulse switch value changed")
@@ -187,7 +188,7 @@ Rectangle {
             Text{
                 id:channel1Title
                 text: "1"
-                font.pointSize: 265
+                font.pixelSize: parent.height *1.2
                 color: secondaryTextColor
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.left:pwmSwitch.right
@@ -197,14 +198,20 @@ Rectangle {
 
             Rectangle {
                 id: ledControlContainer
-                width: 200
                 height: childrenRect.height + 10
+                width: 200
                 color: "transparent"
+
+                Layout.fillWidth: true
+                Layout.minimumWidth: 50
+
                 anchors {
                     verticalCenter: parent.verticalCenter
                     verticalCenterOffset: 0
                     left:channel1Title.right
                     leftMargin: 0
+                    right: leftPWMlights.left
+                    rightMargin: 25
                 }
 
                 SGHueSlider {
@@ -236,71 +243,125 @@ Rectangle {
                         topMargin: 10
                     }
 
-                    onValueChanged: {
+                    onUserSet: {
                         var colorString = hueSlider.hexvalue.substring(1,7); //remove the # from the start of the string
 
-                        platformInterface.set_pulse_colors.update(platformInterface.set_pulse_colors_notification.enabled,
-                                                                  colorString,
-                                                                  platformInterface.set_pulse_colors_notification.channel2_color);
+                        if (root.pulseColorsLinked){
+                            platformInterface.set_pulse_colors.update(platformInterface.set_pulse_colors_notification.enabled,
+                                                                      colorString,
+                                                                      colorString);
+                        }
+                        else{
+                            platformInterface.set_pulse_colors.update(platformInterface.set_pulse_colors_notification.enabled,
+                                                                      colorString,
+                                                                      platformInterface.set_pulse_colors_notification.channel2_color);
+                        }
                     }
 
                 }
 
+                Text {
+                    id:colorButtonsText
+                    text:"Set to:"
+                    color:secondaryTextColor
+                    font.pixelSize: 12
 
-
-                RoundButton {
-                    id: whiteButton
-                    checkable: false
-                    text: "Set to white"
-
-                    height:25
-                    width:80
-                    radius:5
                     anchors.left:hueSlider.left
                     anchors.top: hueSlider.bottom
                     anchors.topMargin: 10
+                }
 
-                    contentItem: Text {
-                            text: whiteButton.text
-                            font.pixelSize: 12
-                            font.underline: true
-                            color: whiteButton.pressed ? "grey" : "white"
-                            horizontalAlignment: Text.AlignHCenter
-                            verticalAlignment: Text.AlignVCenter
-                            elide: Text.ElideRight
-                        }
+                Button {
+                    id:whiteButton
+                    height:24
+                    width:24
+                    anchors.left:colorButtonsText.right
+                    anchors.leftMargin: 5
+                    anchors.verticalCenter: colorButtonsText.verticalCenter
 
                     background: Rectangle {
-                            id: backgroundRect
-                            implicitWidth: 80
-                            implicitHeight: 25
-                            radius: whiteButton.radius
+                            id: whiteButtonBackgroundRect
+                            implicitWidth: 24
+                            implicitHeight: 24
+                            radius: 12
                             anchors.fill: parent
-                            color: "transparent"
+                            color: "white"
                     }
 
                     onClicked: {
-
-                        platformInterface.set_pulse_colors.update(platformInterface.set_pulse_colors_notification.enabled,
+                        if (root.pulseColorsLinked){
+                            platformInterface.set_pulse_colors.update(platformInterface.set_pulse_colors_notification.enabled,
+                                                                  "FFFFFF",
+                                                                  "FFFFFF");
+                        }
+                        else{
+                            platformInterface.set_pulse_colors.update(platformInterface.set_pulse_colors_notification.enabled,
                                                                   "FFFFFF",
                                                                   platformInterface.set_pulse_colors_notification.channel2_color);
+                        }
                     }
                 }
 
+                Button {
+                    id:blackButton
+                    height:26
+                    width:26
+                    anchors.left:whiteButton.right
+                    anchors.leftMargin: 5
+                    anchors.verticalCenter: colorButtonsText.verticalCenter
+
+                    background: Rectangle {
+                            id: blackButtonBackgroundRect
+                            implicitWidth: 26
+                            implicitHeight: 26
+                            radius: 13
+                            anchors.fill: parent
+                            color: "black"
+                    }
+
+                    onClicked: {
+                        if (root.pulseColorsLinked){
+                            platformInterface.set_pulse_colors.update(platformInterface.set_pulse_colors_notification.enabled,
+                                                                  "000000",
+                                                                  "000000");
+                        }
+                        else{
+                            platformInterface.set_pulse_colors.update(platformInterface.set_pulse_colors_notification.enabled,
+                                                                  "000000",
+                                                                  platformInterface.set_pulse_colors_notification.channel2_color);
+                        }
+                    }
+                }
+
+
+
                 SGSubmitInfoBox{
                     id:pwmColorBox1
-                    anchors.left:whiteButton.right
-                    anchors.leftMargin: 20
-                    anchors.verticalCenter: whiteButton.verticalCenter
-                    infoBoxWidth:80
+                    anchors.right:hueSlider.right
+                    anchors.rightMargin: 10
+                    anchors.top: hueSlider.bottom
+                    anchors.topMargin: 10
+                    infoBoxWidth:65
                     height:20
                     textColor:"white"
+                    realNumberValidation: true
                     value: platformInterface.set_pulse_colors_notification.channel1_color
 
                     onApplied:{
+                        sendValue();
+                    }
+
+                    function sendValue(){
+                        if (root.pulseColorsLinked){
+                            platformInterface.set_pulse_colors.update(platformInterface.set_pulse_colors_notification.enabled,
+                                                                      pwmColorBox1.value,
+                                                                      pwmColorBox1.value);
+                        }
+                        else{
                         platformInterface.set_pulse_colors.update(platformInterface.set_pulse_colors_notification.enabled,
                                                                   pwmColorBox1.value,
                                                                   platformInterface.set_pulse_colors_notification.channel2_color);
+                        }
                     }
                 }
 
@@ -309,11 +370,54 @@ Rectangle {
 
 
 
+            Button{
+                id:topGroupButton
+                anchors.left:leftPWMlights.left
+                anchors.leftMargin: 10
+//                anchors.top:parent.top
+//                anchors.topMargin: 15
+                anchors.right:rightPWMlights.right
+                anchors.rightMargin: 15
+                anchors.bottom:leftPWMlights.top
+                height:25
+                checkable:true
+                opacity: checked ? 1 : .2
+                checked: root.pulseColorsLinked
+
+                contentItem: Image {
+                        source:"./images/connectionBracket.svg"
+                    }
+
+                background: Rectangle {
+                        id: topGroupButtonBackgroundRect
+                        radius: 2
+                        anchors.fill: parent
+                        color: "transparent"
+                }
+
+                onClicked:{
+                    //when this button is turned on:
+                    //• send a command to the platform that the color for both sides should be the left color
+                    if (root.pulseColorsLinked){
+                        root.pulseColorsLinked = false;
+                    }
+                    else{
+                        root.pulseColorsLinked = true;
+                        platformInterface.set_pulse_colors.update(platformInterface.set_pulse_colors_notification.enabled,
+                                                                  pwmColorBox1.value,
+                                                                  pwmColorBox1.value);
+                    }
+
+                }
+            }
+
             Column{
                 id:leftPWMlights
                 anchors.verticalCenter: parent.verticalCenter
-                anchors.left: ledControlContainer.right
-                anchors.leftMargin: 25
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.horizontalCenterOffset: 75*widthRatio
+                //anchors.left: ledControlContainer.right
+                //anchors.leftMargin: 25
                 width:50
                 spacing:10
 
@@ -325,7 +429,7 @@ Rectangle {
                         return theColor
                     }
 
-                    height: 40
+                    height: root.height * .05
                 }
                 LEDIndicator{
                     id: pwmLED2
@@ -334,7 +438,8 @@ Rectangle {
                         theColor = "#"+theColor
                         return theColor
                     }
-                    height: 40
+                    //height: 40
+                    height: root.height * .05
                 }
                 LEDIndicator{
                     id: pwmLED3
@@ -343,7 +448,8 @@ Rectangle {
                         theColor = "#"+theColor
                         return theColor
                     }
-                    height: 40
+                    //height: 40
+                    height: root.height * .05
                 }
             }
 
@@ -362,7 +468,8 @@ Rectangle {
                         theColor = "#"+theColor
                         return theColor
                     }
-                    height: 40
+                    //height: 40
+                    height: root.height * .05
                 }
                 LEDIndicator{
                     id: pwmLED5
@@ -371,7 +478,8 @@ Rectangle {
                         theColor = "#"+theColor
                         return theColor
                     }
-                    height: 40
+                    //height: 40
+                    height: root.height * .05
                 }
                 LEDIndicator{
                     id: pwmLED6
@@ -380,7 +488,50 @@ Rectangle {
                         theColor = "#"+theColor
                         return theColor
                     }
-                    height: 40
+                    //height: 40
+                    height: root.height * .05
+                }
+            }
+
+            Button{
+                id:bottomGroupButton
+                anchors.left:leftPWMlights.left
+                anchors.leftMargin: 10
+                anchors.top:leftPWMlights.bottom
+                anchors.right:rightPWMlights.right
+                anchors.rightMargin: 15
+//                anchors.bottom:parent.bottom
+//                anchors.bottomMargin: 15
+                height:25
+                checkable:true
+                opacity: checked ? 1 : .2
+                checked: root.pulseColorsLinked
+
+                contentItem: Image {
+                        source:"./images/connectionBracketFlipped.svg"
+                    }
+
+                background: Rectangle {
+                        id: bottomGroupButtonBackgroundRect
+                        radius: 2
+                        anchors.fill: parent
+                        color: "transparent"
+                }
+
+
+                onClicked:{
+                    //when this button is turned on:
+                    //• send a command to the platform that the color for both sides should be the left color
+                    if (root.pulseColorsLinked){
+                        root.pulseColorsLinked = false;
+                    }
+                    else{
+                        root.pulseColorsLinked = true;
+                        platformInterface.set_pulse_colors.update(platformInterface.set_pulse_colors_notification.enabled,
+                                                                  pwmColorBox1.value,
+                                                                  pwmColorBox1.value);
+                    }
+
                 }
             }
 
@@ -388,13 +539,14 @@ Rectangle {
 
             Rectangle {
                 id: ledControlContainer2
-                width: 200
                 height: childrenRect.height + 10
                 color: "transparent"
                 anchors {
                     verticalCenter: parent.verticalCenter
                     right:channel2Title.left
                     rightMargin: 0
+                    left: rightPWMlights.right
+                    leftMargin: 25
                 }
 
                 SGHueSlider {
@@ -425,84 +577,138 @@ Rectangle {
                         topMargin: 10
                     }
 
-                    onValueChanged: {
+                    onUserSet: {
                          var colorString = hueSlider2.hexvalue.substring(1,7); //remove the # from the start of the string
 
+                        if (root.pulseColorsLinked){
+                            platformInterface.set_pulse_colors.update(platformInterface.set_pulse_colors_notification.enabled,
+                                                                      colorString,
+                                                                      colorString);
+                        }
+                        else{
                         platformInterface.set_pulse_colors.update(platformInterface.set_pulse_colors_notification.enabled,
                                                                   platformInterface.set_pulse_colors_notification.channel1_color,
                                                                   colorString);
+                        }
                     }
                 }
 
-                RoundButton {
-                    id: whiteButton2
-                    checkable: false
-                    text: "Set to white"
+                Text {
+                    id:colorButtonsText2
+                    text:"Set to:"
+                    color:secondaryTextColor
+                    font.pixelSize: 12
 
-                    height:25
-                    width:80
-                    radius:5
                     anchors.left:hueSlider2.left
                     anchors.top: hueSlider2.bottom
                     anchors.topMargin: 10
+                }
 
-                    contentItem: Text {
-                            text: whiteButton2.text
-                            font.pixelSize: 12
-                            font.underline: true
-                            color: whiteButton2.pressed ? "grey" : "white"
-                            horizontalAlignment: Text.AlignHCenter
-                            verticalAlignment: Text.AlignVCenter
-                            elide: Text.ElideRight
-                        }
+                Button {
+                    id:whiteButton2
+                    height:24
+                    width:24
+                    anchors.left:colorButtonsText2.right
+                    anchors.leftMargin: 5
+                    anchors.verticalCenter: colorButtonsText2.verticalCenter
 
                     background: Rectangle {
-                            id: backgroundRect2
-                            implicitWidth: 80
-                            implicitHeight: 25
-                            radius: whiteButton2.radius
+                            id: whiteButtonBackgroundRect2
+                            implicitWidth: 24
+                            implicitHeight: 24
+                            radius: 12
                             anchors.fill: parent
-                            color: "transparent"
+                            color: "white"
                     }
 
                     onClicked: {
-
+                        if (root.pulseColorsLinked){
+                            platformInterface.set_pulse_colors.update(platformInterface.set_pulse_colors_notification.enabled,
+                                                                      "FFFFFF",
+                                                                      "FFFFFF");
+                        }
+                        else{
                         platformInterface.set_pulse_colors.update(platformInterface.set_pulse_colors_notification.enabled,
                                                                   platformInterface.set_pulse_colors_notification.channel1_color,
                                                                   "FFFFFF");
+                        }
+                    }
+                }
+
+                Button {
+                    id:blackButton2
+                    height:26
+                    width:26
+                    anchors.left:whiteButton2.right
+                    anchors.leftMargin: 5
+                    anchors.verticalCenter: colorButtonsText2.verticalCenter
+
+                    background: Rectangle {
+                            id: blackButtonBackgroundRect2
+                            implicitWidth: 26
+                            implicitHeight: 26
+                            radius: 13
+                            anchors.fill: parent
+                            color: "black"
                     }
 
-
+                    onClicked: {
+                        if (root.pulseColorsLinked){
+                            platformInterface.set_pulse_colors.update(platformInterface.set_pulse_colors_notification.enabled,
+                                                                      "000000",
+                                                                      "000000");
+                        }
+                        else{
+                        platformInterface.set_pulse_colors.update(platformInterface.set_pulse_colors_notification.enabled,
+                                                                  platformInterface.set_pulse_colors_notification.channel1_color,
+                                                                  "000000");
+                        }
+                    }
                 }
+
+
 
                 SGSubmitInfoBox{
                     id:pwmColorBox2
-                    anchors.left:whiteButton2.right
-                    anchors.leftMargin: 20
-                    anchors.verticalCenter: whiteButton2.verticalCenter
-                    infoBoxWidth:80
+                    anchors.right:ledControlContainer2.right
+                    anchors.rightMargin: 10
+                    anchors.top: hueSlider2.bottom
+                    anchors.topMargin: 10
+
+                    infoBoxWidth:65
                     height:20
                     textColor:"white"
+                    realNumberValidation: true
                     value:platformInterface.set_pulse_colors_notification.channel2_color
 
                     onApplied:{
+                        if (root.pulseColorsLinked){
+                            platformInterface.set_pulse_colors.update(platformInterface.set_pulse_colors_notification.enabled,
+                                                                      pwmColorBox2.value,
+                                                                      pwmColorBox2.value);
+                        }
+                        else{
                         platformInterface.set_pulse_colors.update(platformInterface.set_pulse_colors_notification.enabled,
                                                                   platformInterface.set_pulse_colors_notification.channel1_color,
                                                                   pwmColorBox2.value);
+                        }
                     }
                 }
 
 
             }
 
+
+
             Text{
                 id:channel2Title
                 text: "2"
-                font.pointSize: 265
+                font.pixelSize: parent.height *1.2
                 color: secondaryTextColor
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.right:parent.right
                 anchors.rightMargin: rightInset
+
                 opacity:.2
             }
 
@@ -530,8 +736,8 @@ Rectangle {
 
             Image{
                 id:linearIcon
-                height:50
-                width:50
+                height:parent.height/4
+                width:parent.height/4
                 mipmap:true
                 anchors.top:parent.top
                 anchors.topMargin: 15
@@ -543,10 +749,10 @@ Rectangle {
             Text{
                 id:linearTitle
                 text: "Linear"
-                font.pointSize: 48
+                font.pixelSize: parent.height/4
                 color: textColor
                 anchors.top:parent.top
-                anchors.topMargin:10
+                anchors.topMargin:5
                 anchors.left:linearIcon.right
                 anchors.leftMargin: 20
             }
@@ -554,10 +760,10 @@ Rectangle {
             Text{
                 id:linearSubtitle
                 text: "1 Channel Linear RGB Control"
-                font.pointSize: 15
+                font.pixelSize: parent.height/14
                 color: secondaryTextColor
                 anchors.top:linearTitle.bottom
-                anchors.topMargin:0
+                anchors.topMargin:-5
                 anchors.left:linearTitle.left
             }
 
@@ -635,10 +841,10 @@ Rectangle {
 
             Rectangle {
                 id: linearControlContainer
-                width: 200
                 height: childrenRect.height + 10
                 color: "transparent"
                 anchors {
+                    left:parent.horizontalCenter
                     verticalCenter: parent.verticalCenter
                     verticalCenterOffset: 0
                     right:linearPWMlights.left
@@ -675,48 +881,44 @@ Rectangle {
                         topMargin: 10
                     }
 
-                    onValueChanged: {
+                    onUserSet: {
                         var colorString = linearHueSlider.hexvalue.substring(1,7); //remove the # from the start of the string
 
                         platformInterface.set_linear_color.update(platformInterface.set_linear_color_notification.enabled,
                                                                   colorString);
                     }
 
-                    Component.onCompleted: {
 
-                    }
                 }
 
-                RoundButton {
-                    id: linearWhiteButton
-                    checkable: false
-                    text: "Set to white"
+                Text {
+                    id:linearColorButtonsText
+                    text:"Set to:"
+                    color:secondaryTextColor
+                    font.pixelSize: 12
 
-                    height:25
-                    width:80
-                    radius:5
                     anchors.left: linearHueSlider.left
                     anchors.top: linearHueSlider.bottom
                     anchors.topMargin: 10
+                }
 
-                    contentItem: Text {
-                            text: linearWhiteButton.text
-                            font.pixelSize: 12
-                            font.underline: true
-                            color: linearWhiteButton.pressed ? "grey" : "white"
-                            horizontalAlignment: Text.AlignHCenter
-                            verticalAlignment: Text.AlignVCenter
-                            elide: Text.ElideRight
-                        }
+                Button {
+                    id:linearWhiteButton
+                    height:24
+                    width:24
+                    anchors.left:linearColorButtonsText.right
+                    anchors.leftMargin: 5
+                    anchors.verticalCenter: linearColorButtonsText.verticalCenter
 
                     background: Rectangle {
-                            id: linearWhiteButtonBackground
-                            implicitWidth: 80
-                            implicitHeight: 25
-                            radius: linearWhiteButton.radius
+                            id: linearWhiteButtonBackgroundRect
+                            implicitWidth: 24
+                            implicitHeight: 24
+                            radius: 12
                             anchors.fill: parent
-                            color: "transparent"
+                            color: "white"
                     }
+
 
                     onClicked: {
                         platformInterface.set_linear_color.update(platformInterface.set_linear_color_notification.enabled,
@@ -724,19 +926,44 @@ Rectangle {
                     }
                 }
 
+                Button {
+                    id:linearBlackButton
+                    height:26
+                    width:26
+                    anchors.left:linearWhiteButton.right
+                    anchors.leftMargin: 5
+                    anchors.verticalCenter: linearColorButtonsText.verticalCenter
+
+                    background: Rectangle {
+                            id: linearBlackButtonBackgroundRect
+                            implicitWidth: 26
+                            implicitHeight: 26
+                            radius: 13
+                            anchors.fill: parent
+                            color: "black"
+                    }
+
+                    onClicked: {
+                        platformInterface.set_linear_color.update(platformInterface.set_linear_color_notification.enabled,
+                                                                  "000000");
+                    }
+                }
+
+
                 SGSubmitInfoBox{
                     id:linearColorBox
-                    anchors.left:linearWhiteButton.right
-                    anchors.leftMargin: 20
+                    anchors.right:linearControlContainer.right
+                    anchors.rightMargin: 10
                     anchors.verticalCenter: linearWhiteButton.verticalCenter
-                    infoBoxWidth:80
+                    infoBoxWidth:65
                     height:20
                     textColor:"white"
+                    realNumberValidation: true
                     value:platformInterface.set_linear_color_notification.color
 
                     onApplied:{
                         platformInterface.set_linear_color.update(platformInterface.set_linear_color_notification.enabled,
-                                                                  inearColorBox.value);
+                                                                  linearColorBox.value);
                     }
                 }
 
@@ -761,7 +988,7 @@ Rectangle {
                         theColor = "#"+theColor
                         return theColor
                     }
-                    height: 40
+                    height: root.height * .05
                 }
                 LEDIndicator{
                     id: linearLED2
@@ -770,7 +997,7 @@ Rectangle {
                         theColor = "#"+theColor
                         return theColor
                     }
-                    height: 40
+                    height: root.height * .05
                 }
                 LEDIndicator{
                     id: linearLED3
@@ -779,7 +1006,7 @@ Rectangle {
                         theColor = "#"+theColor
                         return theColor
                     }
-                    height: 40
+                    height: root.height * .05
                 }
             }
 
@@ -806,8 +1033,8 @@ Rectangle {
 
             Image{
                 id:buckIcon
-                height:50
-                width:50
+                height:parent.height/4
+                width:parent.height/4
                 mipmap:true
                 anchors.top:parent.top
                 anchors.topMargin: 15
@@ -819,10 +1046,10 @@ Rectangle {
             Text{
                 id:buckTitle
                 text: "Buck"
-                font.pointSize: 48
+                font.pixelSize: parent.height/4
                 color: textColor
                 anchors.top:parent.top
-                anchors.topMargin:10
+                anchors.topMargin:5
                 anchors.left:buckIcon.right
                 anchors.leftMargin: 20
             }
@@ -830,9 +1057,10 @@ Rectangle {
             Text{
                 id:buckSubtitle
                 text: "High Current AECQ Buck"
-                font.pointSize: 15
+                font.pixelSize: parent.height/14
                 color: secondaryTextColor
                 anchors.top:buckTitle.bottom
+                anchors.topMargin: -5
                 anchors.left:buckTitle.left
             }
 
@@ -918,41 +1146,58 @@ Rectangle {
                 property int theRunningTotal: 0
                 property int theEfficiencyCount: 0
                 property int theEfficiencyAverage: 0
-                property var periodicValues: platformInterface.led_buck_power_notification
+
+                property var periodicValues: platformInterface.power_notification
+
+                Component.onCompleted: {
+                        theRunningTotal = 0;
+                    }
 
                 onPeriodicValuesChanged: {
-                    var theInputPower = platformInterface.led_buck_power_notification.input_voltage * platformInterface.led_buck_power_notification.input_current +2;//PTJ-1321 2 Watt compensation
-                    var theOutputPower = platformInterface.led_buck_power_notification.output_voltage * platformInterface.led_buck_power_notification.output_current;
+                    var theInputPower = platformInterface.power_notification.buck_input_voltage * platformInterface.power_notification.buck_input_current;
+                    var theOutputPower = (platformInterface.power_notification.buck_input_voltage - platformInterface.power_notification.buck_output_voltage) * platformInterface.power_notification.buck_output_current;
 
-                    //sum eight values of the efficiency and average before displaying
-                    var theEfficiency = Math.round((theOutputPower/theInputPower) *100)
-                    buckTelemetry.theRunningTotal += theEfficiency;
-                    //console.log("new efficiency value=",theEfficiency,"new total is",miniInfo1.theRunningTotal,miniInfo1.theEfficiencyCount);
-                    buckTelemetry.theEfficiencyCount++;
-
-                    if (buckTelemetry.theEfficiencyCount === 8){
-                        buckTelemetry.theEfficiencyAverage = buckTelemetry.theRunningTotal/8;
-                        buckTelemetry.theEfficiencyCount = 0;
-                        buckTelemetry.theRunningTotal = 0
+                    var theEfficiency
+                    //sum eight values of the efficency and average before displaying
+                    //if the input power is 0 (probably because input_current is 0) then assume efficiency of 0
+                    if (theInputPower === 0)
+                        theEfficiency = 0
+                      else{
+                        theEfficiency = Math.round((theOutputPower/theInputPower) *100)
                     }
+
+                    theRunningTotal += theEfficiency;
+                    //console.log("new efficiency value=",theEfficiency,"new total is",theRunningTotal,theEfficiencyCount);
+                    theEfficiencyCount++;
+
+                    if (theEfficiencyCount === 8){
+                        theEfficiencyAverage = theRunningTotal/8;
+                        theEfficiencyCount = 0;
+                        theRunningTotal = 0
+
+                        //console.log("publishing new efficency",theEfficiencyAverage);
+                    }
+
                 }
 
                 inputVoltage:{
-                    return (platformInterface.led_buck_power_notification.input_voltage).toFixed(1);
+                    return (platformInterface.power_notification.buck_input_voltage).toFixed(1);
                 }
                 outputVoltage:{
-                    return (platformInterface.led_buck_power_notification.output_voltage).toFixed(1);
+                    return (platformInterface.power_notification.buck_input_voltage - platformInterface.power_notification.buck_output_voltage).toFixed(1);
                 }
                 inputCurrent:{
-                    return (platformInterface.led_buck_power_notification.input_current).toFixed(0)
+                    return (platformInterface.power_notification.buck_input_current).toFixed(0)
                 }
                 outputCurrent:{
-                    return (platformInterface.led_buck_power_notification.output_current).toFixed(0)
+                    return (platformInterface.power_notification.buck_output_current).toFixed(0)
                 }
                 temperature:{
-                    return (platformInterface.led_buck_power_notification.temperature).toFixed(0)
+                    return (platformInterface.power_notification.buck_temperature).toFixed(0)
                 }
-                efficiency: theEfficiencyAverage
+                efficiency: {
+                    return theEfficiencyAverage;
+                }
             }
 
             SGSlider {
@@ -973,6 +1218,8 @@ Rectangle {
                     left: buckTelemetry.right
                     leftMargin: 30
                     verticalCenter: parent.verticalCenter
+                    right:buckLED1.left
+                    rightMargin: 140
                 }
 
                 onUserSet:{
@@ -997,7 +1244,7 @@ Rectangle {
                     var theHexColor ="#" + theHexValue + theHexValue + theHexValue
                     return theHexColor
                 }
-                height: 40
+                height: root.height * .05
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.right:parent.right
                 anchors.rightMargin: rightInset + 10
@@ -1027,8 +1274,8 @@ Rectangle {
 
             Image{
                 id:boostIcon
-                height:50
-                width:50
+                height:parent.height/4
+                width:parent.height/4
                 mipmap:true
                 anchors.top:parent.top
                 anchors.topMargin: 15
@@ -1040,10 +1287,10 @@ Rectangle {
             Text{
                 id:boostTitle
                 text: "Boost"
-                font.pointSize: 48
+                font.pixelSize: parent.height/4
                 color: textColor
                 anchors.top:parent.top
-                anchors.topMargin:10
+                anchors.topMargin:5
                 anchors.left:boostIcon.right
                 anchors.leftMargin: 20
             }
@@ -1051,9 +1298,10 @@ Rectangle {
             Text{
                 id:boostSubtitle
                 text: "Controller for LED Backlighting"
-                font.pointSize: 15
+                font.pixelSize: parent.height/14
                 color: secondaryTextColor
                 anchors.top:boostTitle.bottom
+                anchors.topMargin: -5
                 anchors.left:boostTitle.left
             }
 
@@ -1127,6 +1375,26 @@ Rectangle {
                 }
             }
 
+            BoostPortInfo{
+                id:boostTelemetry
+                //anchors.top: parent.top
+                //anchors.topMargin: 10
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.verticalCenterOffset: -40
+                anchors.left: boostSwitch.right
+                anchors.leftMargin: 240
+                width:275
+                boxHeight:60
+
+                inputVoltage:{
+                    return (platformInterface.power_notification.boost_input_voltage).toFixed(1);
+                }
+                outputVoltage:{
+                    return (platformInterface.power_notification.boost_output_voltage).toFixed(1);
+                }
+
+            }
+
             SGSlider {
                 id: boostIntensity
                 label: "Intensity:"
@@ -1145,9 +1413,11 @@ Rectangle {
                 to: 100
                 stepSize: 1
                 anchors {
-                    left: boostSwitch.right
-                    leftMargin: 500
+                    left: boostTelemetry.right
+                    leftMargin: 30
                     verticalCenter: parent.verticalCenter
+                    right: boostPWMlights.left
+                    rightMargin: 25
                 }
 
                 onUserSet:{
@@ -1206,17 +1476,17 @@ Rectangle {
                 LEDIndicator{
                     id: boostLED1
                     ledColor: "green"
-                    height: 40
+                    height: root.height * .05
                 }
                 LEDIndicator{
                     id: boostLED2
                     ledColor: "green"
-                    height: 40
+                    height: root.height * .05
                 }
                 LEDIndicator{
                     id: boostLED3
                     ledColor: "green"
-                    height: 40
+                    height: root.height * .05
                 }
             }
 
@@ -1232,17 +1502,17 @@ Rectangle {
                 LEDIndicator{
                     id: boostLED4
                     ledColor: "white"
-                    height: 40
+                    height: root.height * .05
                 }
                 LEDIndicator{
                     id: boostLED5
                     ledColor: "white"
-                    height: 40
+                    height: root.height * .05
                 }
                 LEDIndicator{
                     id: boostLED6
                     ledColor: "white"
-                    height: 40
+                    height: root.height * .05
                 }
             }
 
@@ -1258,17 +1528,17 @@ Rectangle {
                 LEDIndicator{
                     id: boostLED7
                     ledColor: "white"
-                    height: 40
+                    height: root.height * .05
                 }
                 LEDIndicator{
                     id: boostLED8
                     ledColor: "white"
-                    height: 40
+                    height: root.height * .05
                 }
                 LEDIndicator{
                     id: boostLED9
                     ledColor: "white"
-                    height: 40
+                    height: root.height * .05
                 }
             }
         }

@@ -6,8 +6,6 @@ import "qrc:/views/usb-pd-multiport/sgwidgets"
 Item {
     id:advanceControlsView
 
-    property int buildInTime: 500
-
     function transitionToAdvancedView(){
         //set the opacity of the view to be seen, but set the opacity of the parts to 0
         advanceControlsView.opacity = 1;
@@ -15,17 +13,10 @@ Item {
         maxOutputPower.opacity = 0;
         currentLimitText.opacity = 0;
         currentLimitSlider.opacity = 0
-        cableCompensationText.opacity = 0
-        outputBiasText.opacity = 0;
-        cableCompensationDivider.opacity = 0;
         cableCompensationHeaderText.opacity = 0
-        cableCompensationIncrementSlider.opacity = 0
-        outputBiasSlider.opacity = 0;
 
-        graphDivider.opacity = 0
         showGraphText.opacity = 0;
         graphSelector.opacity = 0;
-        capabilitiesDivider.opacity = 0;
         sourceCapabilitiesText.opacity = 0;
         sourceCapabilitiesButtonStrip.opacity = 0;
 
@@ -41,29 +32,29 @@ Item {
             property: "opacity"
             from: 0
             to: 1
-            duration: buildInTime
+            duration: advancedControlBuildInTime
         }
 
         PropertyAnimation {
-            targets: [cableCompensationDivider,cableCompensationHeaderText,cableCompensationText, outputBiasText, cableCompensationIncrementSlider,outputBiasSlider]
+            targets: [cableCompensationHeaderText]
             property: "opacity"
             to: 1
-            duration: buildInTime
+            duration: advancedControlBuildInTime
         }
 
         PropertyAnimation {
             id: fadeInGraphsSection
-            targets: [graphDivider,showGraphText,graphSelector]
+            targets: [showGraphText,graphSelector]
             property: "opacity"
             to: 1
-            duration: buildInTime
+            duration: advancedControlBuildInTime
         }
         PropertyAnimation {
             id: fadeInSourceCapibilitiesSection
-            targets: [capabilitiesDivider,sourceCapabilitiesText,sourceCapabilitiesButtonStrip]
+            targets: [sourceCapabilitiesText,sourceCapabilitiesButtonStrip]
             property: "opacity"
             to: 1
-            duration: buildInTime
+            duration: advancedControlBuildInTime
         }
 
         onStopped: {
@@ -86,7 +77,6 @@ Item {
         cableCompensationIncrementSlider.opacity = 0
         outputBiasSlider.opacity = 1;
 
-        graphDivider.opacity = 0
         showGraphText.opacity = 0;
         graphSelector.opacity = 0;
         capabilitiesDivider.opacity = 0;
@@ -165,22 +155,13 @@ Item {
         from: 0
         to: 100
         startLabel: "0A"
-        endLabel: "100V"
+        endLabel: "100A"
         //copy the current values for other stuff, and add the new slider value for the limit.
         onMoved: platformInterface.set_input_voltage_foldback.update(platformInterface.foldback_input_voltage_limiting_event.input_voltage_foldback_enabled,
                          value,
                         platformInterface.foldback_input_voltage_limiting_event.foldback_minimum_voltage_power)
     }
 
-    Rectangle{
-        id:cableCompensationDivider
-        anchors.left: advanceControlsView.left
-        anchors.right:advanceControlsView.right
-        anchors.top: currentLimitSlider.bottom
-        anchors.topMargin: 3
-        height: 1
-        color:"grey"
-    }
 
     Text{
         id:cableCompensationHeaderText
@@ -189,100 +170,108 @@ Item {
         anchors {
             left: advanceControlsView.left
             leftMargin: 10
-            top: cableCompensationDivider.bottom
-            topMargin: 10
+            top: currentLimitSlider.bottom
+            topMargin: 15
             right: advanceControlsView.right
             rightMargin: 10
         }
     }
 
-    Text{
-        id:cableCompensationText
-        text:"For every increment of:"
+    SGSegmentedButtonStrip {
+        id: cableCompensationButtonStrip
         anchors {
             left: advanceControlsView.left
-            leftMargin: 20
+            leftMargin: 10
+            right: advanceControlsView.right
+            rightMargin: 10
             top: cableCompensationHeaderText.bottom
-            topMargin: 10
-            right: advanceControlsView.right
-            rightMargin: 10
-        }
-    }
-
-    SGSlider {
-        id: cableCompensationIncrementSlider
-        //value: platformInterface.foldback_input_voltage_limiting_event.foldback_minimum_voltage
-        anchors {
-            left: advanceControlsView.left
-            leftMargin: 20
-            top: cableCompensationText.bottom
             topMargin: 5
-            right: advanceControlsView.right
-            rightMargin: 10
         }
-        from: 0
-        to: 100
-        startLabel: "0A"
-        endLabel: "100V"
-        //copy the current values for other stuff, and add the new slider value for the limit.
-        onMoved: platformInterface.set_input_voltage_foldback.update(platformInterface.foldback_input_voltage_limiting_event.input_voltage_foldback_enabled,
-                         value,
-                        platformInterface.foldback_input_voltage_limiting_event.foldback_minimum_voltage_power)
+        textColor: "#666"
+        activeTextColor: "white"
+        radius: 4
+        buttonHeight: 25
+        hoverEnabled: false
+
+        property var cableLoss: platformInterface.get_cable_loss_compensation
+
+        onCableLossChanged: {
+            if (platformInterface.get_cable_loss_compensation.port === portNumber){
+                console.log("cable compensation for port ",portNumber,"set to",platformInterface.get_cable_loss_compensation.bias_voltage*1000)
+                if (platformInterface.get_cable_loss_compensation.bias_voltage === 0){
+                    cableCompensationButtonStrip.buttonList[0].children[0].checked = true;
+                }
+                else if (platformInterface.get_cable_loss_compensation.bias_voltage * 1000 == 100){
+                    console.log("setting cable compensation for port",portNumber,"to 100");
+                    cableCompensationButtonStrip.buttonList[0].children[1].checked = true;
+                }
+                else if (platformInterface.get_cable_loss_compensation.bias_voltage * 1000 == 200){
+                    cableCompensationButtonStrip.buttonList[0].children[2].checked = true;
+                }
+            }
+        }
+
+        segmentedButtons: GridLayout {
+            id:cableCompensationGridLayout
+            columnSpacing: 2
+
+            SGSegmentedButton{
+                id: cableCompensationSetting1
+                text: qsTr("Off")
+                checkable: true
+
+                onClicked:{
+                    platformInterface.set_cable_compensation.update(portNumber,
+                                           1,
+                                           0);
+                }
+            }
+
+            SGSegmentedButton{
+                id: cableCompensationSetting2
+                text: qsTr("100 mv/A")
+                checkable: true
+
+                onClicked:{
+                    platformInterface.set_cable_compensation.update(portNumber,
+                                           1,
+                                           100/1000);
+                }
+            }
+
+            SGSegmentedButton{
+                id:cableCompensationSetting3
+                text: qsTr("200 mv/A")
+                checkable: true
+
+                onClicked:{
+                    platformInterface.set_cable_compensation.update(portNumber,
+                                           1,
+                                           200/1000);
+                }
+            }
+        }
     }
 
-    Text{
-        id:outputBiasText
-        text:"Bias output by:"
-        anchors {
-            left: advanceControlsView.left
-            leftMargin: 20
-            top: cableCompensationIncrementSlider.bottom
-            topMargin: 10
-            right: advanceControlsView.right
-            rightMargin: 10
-        }
-    }
-
-    SGSlider {
-        id: outputBiasSlider
-        //value: platformInterface.foldback_input_voltage_limiting_event.foldback_minimum_voltage
-        anchors {
-            left: advanceControlsView.left
-            leftMargin: 20
-            top: outputBiasText.bottom
-            topMargin: 5
-            right: advanceControlsView.right
-            rightMargin: 10
-        }
-        from: 0
-        to: 100
-        startLabel: "0A"
-        endLabel: "100V"
-        //copy the current values for other stuff, and add the new slider value for the limit.
-        onMoved: platformInterface.set_input_voltage_foldback.update(platformInterface.foldback_input_voltage_limiting_event.input_voltage_foldback_enabled,
-                         value,
-                        platformInterface.foldback_input_voltage_limiting_event.foldback_minimum_voltage_power)
-    }
-
-    Rectangle{
-        id:graphDivider
-        anchors.left: advanceControlsView.left
-        anchors.right:advanceControlsView.right
-        anchors.top: outputBiasSlider.bottom
-        anchors.topMargin: 3
-        height: 1
-        color:"grey"
-    }
+//    Rectangle{
+//        id:graphDivider
+//        anchors.left: advanceControlsView.left
+//        anchors.right:advanceControlsView.right
+//        anchors.top: cableCompensationButtonStrip.bottom
+//        anchors.topMargin: 3
+//        height: 1
+//        color:"grey"
+//    }
 
     Text{
         id:showGraphText
-        text:"GRAPHS:"
+        text:"GRAPHS"
         font.bold:true
         anchors {
             left: advanceControlsView.left
             leftMargin: 10
-            top: graphDivider.bottom
-            topMargin: 3
+            top: cableCompensationButtonStrip.bottom
+            topMargin: 10
             right: advanceControlsView.right
             rightMargin: 10
         }
@@ -396,25 +385,17 @@ Item {
         }
     }
 
-    Rectangle{
-        id:capabilitiesDivider
-        anchors.left: advanceControlsView.left
-        anchors.right:advanceControlsView.right
-        anchors.top: graphSelector.bottom
-        anchors.topMargin: 3
-        height: 1
-        color:"grey"
-    }
+
 
     Text{
         id:sourceCapabilitiesText
-        text:"SOURCE CAPABILITIES:"
+        text:"SOURCE CAPABILITIES"
         font.bold:true
         anchors {
             left: advanceControlsView.left
             leftMargin: 10
-            top: capabilitiesDivider.bottom
-            topMargin: 3
+            top: graphSelector.bottom
+            topMargin: 15
             right: advanceControlsView.right
             rightMargin: 10
         }
