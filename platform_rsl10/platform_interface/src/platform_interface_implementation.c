@@ -1,9 +1,9 @@
 //
 // Created by Mustafa Alshehab on 8/17/18.
 //
-#include "../include/platfrom_interface/platform_interface_implementation.h"
-#include "../include/platform_command_implementation.h"
-#include "../include/debug_macros.h"
+#include "platform_interface_implementation.h"
+#include "platform_command_implementation.h"
+#include "debug_macros.h"
 
 /**  An example of json format
   * payload arguments could be anything you want

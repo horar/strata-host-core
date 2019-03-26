@@ -4,15 +4,26 @@ project(platform_interface C)
 set(CMAKE_C_STANDARD 99)
 set(CMAKE_BUILD_TYPE Debug)
 set(COMPONENTS_DIR ../../platform/components)
-set(LIBRARIES memory_pool)
+set(EXTLIB_DIR ../../platform/ext_libs)
 
-# include memory_pool.h file
-include_directories(${COMPONENTS_DIR}/memory_pool/include/memory_pool)
-# include cJson.h file
-include_directories(external_libraries)
+add_subdirectory(${COMPONENTS_DIR}/memory_pool memory_pool)
 
-link_directories(${COMPONENTS_DIR}/memory_pool/build/memory_pool-1.0.0-Darwin/lib)
+add_subdirectory(${EXTLIB_DIR}/cJSON cJSON)
 
-add_executable(platform_interface test_example/example.c external_libraries/cJSON.c src/platform_interface_implementation.c include/platfrom_interface/platform_interface_implementation.h test_example/platform_command_implementation.c include/platform_command_implementation.h include/debug_macros.h)
+add_library(platform_interface
+        STATIC src/platform_interface_implementation.c
+)
+target_include_directories(
+        platform_interface
+        PUBLIC include
+        PUBLIC include/platfrom_interface
+)
 
-target_link_libraries(platform_interface ${LIBRARIES})
+target_link_libraries(platform_interface memory_pool cJSON)
+
+add_executable(platform_interface_example
+        test_example/example.c
+        test_example/platform_command_implementation.c
+        )
+
+target_link_libraries(platform_interface_example platform_interface)
