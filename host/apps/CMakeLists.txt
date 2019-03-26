@@ -22,5 +22,4 @@ if (APPS_SCI AND NOT CROSSCOMPILE)
 endif()
 
 # old stuff..
-# add_subdirectory(HostControllerService)
 # add_subdirectory(HostNotification)
