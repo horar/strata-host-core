@@ -1,4 +1,5 @@
 add_subdirectory(base64)
+add_subdirectory(crc16)
 add_subdirectory(serial_port)
 add_subdirectory(connector)
 add_subdirectory(flasher)
