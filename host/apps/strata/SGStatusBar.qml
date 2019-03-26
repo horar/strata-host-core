@@ -885,6 +885,7 @@ Rectangle {
                                     // sending remote disconnect message to hcs
                                     var remote_disconnect_json = {
                                         "hcs::cmd":"remote_disconnect",
+                                        "payload":{}
                                     }
                                     coreInterface.sendCommand(JSON.stringify(remote_disconnect_json))
                                     console.log("UI -> HCS ", JSON.stringify(remote_disconnect_json));

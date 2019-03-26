@@ -358,7 +358,7 @@ void CoreInterface::sendCommand(QString cmd)
 //
 void CoreInterface::disconnectPlatform()
 {
-    std::string cmd= "{\"hcs::cmd\":\"disconnect_platform\"}";
+    std::string cmd= "{\"hcs::cmd\":\"disconnect_platform\",\"payload\":{}}";
     hcc->sendCmd(cmd);
 }
 
