@@ -185,8 +185,8 @@ void PlatformConnection::addMessage(const std::string& message)
 
 bool PlatformConnection::sendMessage(const std::string &message)
 {
-    assert(port_ != nullptr);
-    if (port_ == nullptr) {
+    assert(port_);
+    if (!port_) {
         return false;
     }
 
@@ -201,13 +201,13 @@ bool PlatformConnection::sendMessage(const std::string &message)
 
 int PlatformConnection::waitForMessages(unsigned int timeout)
 {
-    assert(port_ != nullptr);
+    assert(port_);
     return handleRead(timeout);
 }
 
 bool PlatformConnection::isReadable()
 {
-    assert(port_ != nullptr);
+    assert(port_);
     std::lock_guard<std::mutex> lock(readLock_);
     if (readBuffer_.size() <= readOffset_)
         return false;
@@ -221,13 +221,13 @@ bool PlatformConnection::isReadable()
 
 std::string PlatformConnection::getName() const
 {
-    assert(port_ != nullptr);
+    assert(port_);
     return std::string(port_->getName());
 }
 
 bool PlatformConnection::attachEventMgr(EvEventsMgr* ev_manager)
 {
-    if (port_ == nullptr || ev_manager == nullptr) {
+    if (!port_ || ev_manager == nullptr) {
         return false;
     }
 
@@ -244,7 +244,7 @@ bool PlatformConnection::attachEventMgr(EvEventsMgr* ev_manager)
 
 void PlatformConnection::detachEventMgr()
 {
-    if (port_ == nullptr) {
+    if (!port_) {
         return;
     }
 
@@ -257,7 +257,7 @@ void PlatformConnection::detachEventMgr()
 
 bool PlatformConnection::stopListeningOnEvents(bool stop)
 {
-    if (!event_ || !event_mgr_) {
+    if (!event_ || event_mgr_ == nullptr) {
         return false;
     }
 
@@ -271,7 +271,7 @@ bool PlatformConnection::stopListeningOnEvents(bool stop)
     bool write;
     {
         std::lock_guard<std::mutex> lock(writeLock_);
-        write = !isWriteBufferEmpty();
+        write = (isWriteBufferEmpty() == false);  //set write when write buffer isn't empty
     }
     return updateEvent(true, write);
 }
@@ -283,7 +283,7 @@ bool PlatformConnection::isWriteBufferEmpty() const
 
 bool PlatformConnection::updateEvent(bool read, bool write)
 {
-    if (!event_ || !event_mgr_) {
+    if (!event_ || event_mgr_ == nullptr) {
         return false;
     }
 
