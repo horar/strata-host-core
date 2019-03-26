@@ -168,6 +168,11 @@ void PlatformManager::removeConnection(PlatformConnection* /*conn*/)
 
 }
 
+EvEventsMgr* PlatformManager::getEvEventsMgr()
+{
+    return &eventsMgr_;
+}
+
 void PlatformManager::onAddedPort(serialPortHash hash)
 {
     std::string portName  = hashToPortName(hash);

@@ -70,7 +70,7 @@ namespace spyglass {
 
         void removeConnection(PlatformConnection *conn);
 
-        EvEventsMgr* getEvEventsMgr() { return &eventsMgr_; }
+        EvEventsMgr* getEvEventsMgr();
 
     private:
         void onUpdatePortList(EvEvent *, int);
