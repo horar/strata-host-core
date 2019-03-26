@@ -92,6 +92,8 @@ bool PlatformConnection::getMessage(std::string& result)
 
 void PlatformConnection::onDescriptorEvent(EvEvent*, int flags)
 {
+    std::lock_guard<std::mutex> lock(event_lock_);
+
     if (flags & EvEvent::eEvStateRead) {
 
         if (handleRead(g_readTimeout) < 0) {
@@ -175,14 +177,16 @@ void PlatformConnection::addMessage(const std::string& message)
     }
 
     if (!isWrite) {
+
+        std::lock_guard<std::mutex> lock(event_lock_);
         updateEvent(true, true);
     }
 }
 
 bool PlatformConnection::sendMessage(const std::string &message)
 {
-    assert(port_ != nullptr);
-    if (port_ == nullptr) {
+    assert(port_);
+    if (!port_) {
         return false;
     }
 
@@ -197,13 +201,13 @@ bool PlatformConnection::sendMessage(const std::string &message)
 
 int PlatformConnection::waitForMessages(unsigned int timeout)
 {
-    assert(port_ != nullptr);
+    assert(port_);
     return handleRead(timeout);
 }
 
 bool PlatformConnection::isReadable()
 {
-    assert(port_ != nullptr);
+    assert(port_);
     std::lock_guard<std::mutex> lock(readLock_);
     if (readBuffer_.size() <= readOffset_)
         return false;
@@ -217,15 +221,17 @@ bool PlatformConnection::isReadable()
 
 std::string PlatformConnection::getName() const
 {
-    assert(port_ != nullptr);
+    assert(port_);
     return std::string(port_->getName());
 }
 
-void PlatformConnection::attachEventMgr(EvEventsMgr* ev_manager)
+bool PlatformConnection::attachEventMgr(EvEventsMgr* ev_manager)
 {
-    if (port_ == nullptr) {
-        return;
+    if (!port_ || ev_manager == nullptr) {
+        return false;
     }
+
+    std::lock_guard<std::mutex> lock(event_lock_);
 
     event_mgr_ = ev_manager;
 
@@ -233,18 +239,41 @@ void PlatformConnection::attachEventMgr(EvEventsMgr* ev_manager)
     event_.reset(ev_manager->CreateEventHandle(fd));
     event_->setCallback(std::bind(&PlatformConnection::onDescriptorEvent, this, std::placeholders::_1, std::placeholders::_2 ) );
 
-    updateEvent(true, false);
+    return updateEvent(true, false);
 }
 
 void PlatformConnection::detachEventMgr()
 {
-    if (port_ == nullptr) {
+    if (!port_) {
         return;
     }
 
     if (event_) {
+
+        std::lock_guard<std::mutex> lock(event_lock_);
         event_->deactivate();
     }
+}
+
+bool PlatformConnection::stopListeningOnEvents(bool stop)
+{
+    if (!event_ || event_mgr_ == nullptr) {
+        return false;
+    }
+
+    std::lock_guard<std::mutex> lock(event_lock_);
+    if (stop) {
+        event_->deactivate();
+        return true;
+    }
+
+    //resume
+    bool write;
+    {
+        std::lock_guard<std::mutex> lock(writeLock_);
+        write = (isWriteBufferEmpty() == false);  //set write when write buffer isn't empty
+    }
+    return updateEvent(true, write);
 }
 
 bool PlatformConnection::isWriteBufferEmpty() const
@@ -254,7 +283,7 @@ bool PlatformConnection::isWriteBufferEmpty() const
 
 bool PlatformConnection::updateEvent(bool read, bool write)
 {
-    if (!event_) {
+    if (!event_ || event_mgr_ == nullptr) {
         return false;
     }
 

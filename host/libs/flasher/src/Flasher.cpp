@@ -169,6 +169,8 @@ rapidjson::SchemaDocument Flasher::notifyBackupJsonSchema( createJsonSchema(R"({
 })") );
 
 
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
 Flasher::Flasher()
 : Flasher(nullptr, std::string())
 {
@@ -177,9 +179,11 @@ Flasher::Flasher()
 
 Flasher::Flasher(spyglass::PlatformConnection* connector, const std::string& firmwareFilename)
 : serial_(connector)
+, serial_listener_guard_(connector)
 , firmwareFilename_(firmwareFilename)
 , dbg_out_stream_(nullptr)
 {
+
 }
 
 Flasher::~Flasher()
@@ -189,6 +193,7 @@ Flasher::~Flasher()
 void Flasher::setConnector(spyglass::PlatformConnection* connector)
 {
     serial_ = connector;
+    serial_listener_guard_.attach(serial_);
 }
 
 void Flasher::setFirmwareFilename(const std::string& firmwareFilename)
