@@ -1,9 +1,6 @@
-cmake_minimum_required(VERSION 3.1)
-
-project(platform_mgr_test)
-
-set(CMAKE_CXX_STANDARD 11)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
+project(platform_mgr_test
+    LANGUAGES CXX
+)
 
 if(APPLE)
     find_library(IOKIT_LIB IOKit REQUIRED)

@@ -24,11 +24,6 @@ Rectangle {
         helpIcon.visible = true
     }
 
-    Component.onDestruction: {
-        Help.reset("basicViewHelp")
-        Help.reset("advanceViewHelp")
-    }
-
     TabBar {
         id: navTabs
         anchors {
@@ -51,6 +46,7 @@ Rectangle {
             text: qsTr("Advanced")
             onClicked: {
                 helpIcon.visible = true
+
                 controlContainer.currentIndex = 1
             }
         }

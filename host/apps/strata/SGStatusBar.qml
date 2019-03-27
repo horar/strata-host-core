@@ -5,9 +5,12 @@ import QtQuick.Window 2.3 // for debug window, can be cut out for release
 import QtGraphicalEffects 1.0
 import "js/navigation_control.js" as NavigationControl
 import "qrc:/js/platform_selection.js" as PlatformSelection
+import "js/login.js" as Authenticator
 import "qrc:/statusbar-partial-views"
+import "qrc:/statusbar-partial-views/help-tour"
 import Fonts 1.0
 import "qrc:/js/help_layout_manager.js" as Help
+import "qrc:/js/platform_model.js" as Model
 
 import Strata.Logger 1.0
 
@@ -28,14 +31,25 @@ Rectangle {
     color: "black"
 
     Component.onCompleted: {
-        Help.registerTarget(platformControlsButton, "Use this button to select the platform control view. Only available when platform is connected", 0,"statusHelp")
-        Help.registerTarget(platformContentButton, "Use this button to select the content view for the selected platform.", 1,"statusHelp")
-        Help.registerTarget(cbSelectorContainer, "Use this drop down to select from connected and previously connected platforms. ", 2,"statusHelp")
+        Help.registerTarget(platformSelectionButton, "Use button to open the platform selector view.", 0, "statusHelp")
+        Help.registerTarget(platformControlsButton, "Use this button to select the platform control view. Only available when platform is connected", 1, "statusHelp")
+        Help.registerTarget(platformContentButton, "Use this button to select the content view for the selected platform.", 2, "statusHelp")
+    }
 
+    // Navigation_control calls this after login when statusbar AND control/content components are all complete
+    function loginSuccessful() {
+//        PlatformSelection.populatePlatforms(coreInterface.platform_list_)
+        //TODO: uncomment the above when coreInterface sends updated format
+        PlatformSelection.populatePlatforms(JSON.stringify(Model.platforms))
+
+        // only run shortCircuit if HCS is working and a platformlist is available
+        if (JSON.parse(coreInterface.platform_list_).hasOwnProperty("list")) {
+            Model.shortCircuit(coreInterface.platform_list_)
+        }
     }
 
     Component.onDestruction: {
-        Help.reset("statusHelp")
+        Help.destroyHelp()
     }
 
     function getWidth(string) {
@@ -119,6 +133,7 @@ Rectangle {
         }
         return null
     }
+
 
     Connections {
         target: coreInterface
@@ -232,31 +247,35 @@ Rectangle {
                 }
             }
 
-            Item {
-                id: cbSelectorContainer
-                width: 270
-                height: toolBar.height
 
-                SGPlatformSelector {
-                    id: cbSelector
-                    comboBoxWidth: 250
-                    anchors {
-                        verticalCenter: cbSelectorContainer.verticalCenter
-                        horizontalCenter: cbSelectorContainer.horizontalCenter
+            SGToolButton {
+                id: platformSelectionButton
+                text: qsTr("Platform Selection")
+                width: 150
+                buttonColor: hovered || PlatformSelection.platformListModel.selectedConnection === "" ? menuColor : container.color
+                onClicked: {
+                    if (NavigationControl.context["platform_state"] || NavigationControl.context["class_id"] !== "") {
+                        PlatformSelection.deselectPlatform()
                     }
                 }
+                iconCharacter: "\ue804"
+            }
+
+            Rectangle {
+                id: buttonDivider1
+                width: 1
+                height: toolBar.height
+                color: container.color
             }
 
             SGToolButton {
                 id: platformControlsButton
                 text: qsTr("Platform Controls")
                 width: 150
-                buttonColor: hovered || !NavigationControl.flipable_parent_.flipped ? menuColor : container.color
+                buttonColor: hovered || (PlatformSelection.platformListModel.selectedConnection !== "" && !NavigationControl.flipable_parent_.flipped) ? menuColor : container.color
                 enabled: PlatformSelection.platformListModel.selectedConnection !== "view" && PlatformSelection.platformListModel.selectedConnection !== ""
                 onClicked: {
-                    if (NavigationControl.flipable_parent_.flipped) {
-                        NavigationControl.updateState(NavigationControl.events.TOGGLE_CONTROL_CONTENT)
-                    }
+                    NavigationControl.updateState(NavigationControl.events.SHOW_CONTROL)
                 }
                 iconCharacter: "\u003a"
             }
@@ -272,18 +291,16 @@ Rectangle {
                 id: platformContentButton
                 text: qsTr("Platform Content")
                 width: 150
-                buttonColor: hovered || NavigationControl.flipable_parent_.flipped ? menuColor : container.color
+                buttonColor: hovered || (PlatformSelection.platformListModel.selectedConnection !== "" && NavigationControl.flipable_parent_.flipped) ? menuColor : container.color
                 enabled: PlatformSelection.platformListModel.selectedConnection !== ""
                 onClicked: {
-                    if (!NavigationControl.flipable_parent_.flipped) {
-                        NavigationControl.updateState(NavigationControl.events.TOGGLE_CONTROL_CONTENT)
-                    }
+                    NavigationControl.updateState(NavigationControl.events.SHOW_CONTENT)
                 }
                 iconCharacter: "\uf15b"
             }
 
             Rectangle {
-                id: buttonDivider1
+                id: buttonDivider3
                 width: 1
                 height: toolBar.height
                 color: container.color
@@ -291,6 +308,10 @@ Rectangle {
 
             SGToolButton {
                 id: remoteSupportButton
+
+                visible: false
+                enabled: false
+
                 text: qsTr("Remote Support")
                 width: 150
                 onPressed: {
@@ -865,6 +886,7 @@ Rectangle {
                                     // sending remote disconnect message to hcs
                                     var remote_disconnect_json = {
                                         "hcs::cmd":"remote_disconnect",
+                                        "payload":{}
                                     }
                                     coreInterface.sendCommand(JSON.stringify(remote_disconnect_json))
                                     console.log(Logger.devStudioCategory, "UI -> HCS ", JSON.stringify(remote_disconnect_json));
@@ -1203,10 +1225,23 @@ Rectangle {
                 width: profileMenu.width
 
                 SGMenuItem {
+
+                    visible: false
+                    enabled: false
+
                     text: qsTr("My Profile")
                     onClicked: {
                         profileMenu.close()
                         profilePopup.open();
+                    }
+                    width: profileMenu.width
+                }
+
+                SGMenuItem {
+                    text: qsTr("About")
+                    onClicked: {
+                        profileMenu.close()
+                        aboutPopup.open();
                     }
                     width: profileMenu.width
                 }
@@ -1219,12 +1254,12 @@ Rectangle {
                     }
                     width: profileMenu.width
                 }
+
                 SGMenuItem {
                     text: qsTr("Help")
                     onClicked: {
                         profileMenu.close()
-                        Help.startHelpTour("statusHelp")
-
+                        Help.startHelpTour("statusHelp", "strataMain")
                     }
                     width: profileMenu.width
                 }
@@ -1244,33 +1279,10 @@ Rectangle {
                     text: qsTr("Log Out")
                     onClicked: {
                         profileMenu.close()
-                        PlatformSelection.sendSelection(0)
+
                         NavigationControl.updateState(NavigationControl.events.LOGOUT_EVENT)
-                        remoteConnectContainer.state = "default"
-
-                        if(is_remote_connected) {
-                            is_remote_connected = false //resetting the remote connection state
-                            // sending remote disconnect message to hcs
-                            var remote_disconnect_json = {
-                                "hcs::cmd":"remote_disconnect",
-                            }
-                            coreInterface.sendCommand(JSON.stringify(remote_disconnect_json))
-
-                            console.log(Logger.devStudioCategory, "UI -> HCS ", JSON.stringify(remote_disconnect_json))
-                        }
-
-                        if(is_remote_advertised){
-                            is_remote_advertised = false
-                            var remote_json = {
-                                "hcs::cmd":"advertise",
-                                "payload": {
-                                    "advertise_platforms":is_remote_advertised
-                                }
-                            }
-                            console.log(Logger.devStudioCategory, "asking hcs to advertise the platforms",JSON.stringify(remote_json))
-                            coreInterface.sendCommand(JSON.stringify(remote_json))
-                        }
-
+                        Authenticator.logout()
+                        coreInterface.disconnectPlatform()
                     }
                     width: profileMenu.width
                 }
@@ -1283,13 +1295,31 @@ Rectangle {
 
         x: container.width/2 - profilePopup.width/2
         y: container.parent.windowHeight/2 - profilePopup.height/2
+
+        property string versionNumber: container.parent.versionNumber
+    }
+
+    SGAboutPopup {
+        id: aboutPopup
+
+        x: container.width/2 - aboutPopup.width/2
+        y: container.parent.windowHeight/2 - aboutPopup.height/2
+
+        property string versionNumber: container.parent.versionNumber
+    }
+
+    SGPrivacyPopup {
+        id: privacyPopup
+
+        x: container.width/2 - privacyPopup.width/2
+        y: container.parent.windowHeight/2 - privacyPopup.height/2
     }
 
     SGFeedbackPopup {
         id: feedbackPopup
 
-        x: container.width/2 - profilePopup.width/2
-        y: container.parent.windowHeight/2 - profilePopup.height/2
+        x: container.width/2 - feedbackPopup.width/2
+        y: container.parent.windowHeight/2 - feedbackPopup.height/2
     }
 
     Window {

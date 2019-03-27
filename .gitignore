@@ -42,3 +42,4 @@ platform/applications/*/debug/*
 *.jlink
 *.DS_Store
 *.qmlc
+*.autosave

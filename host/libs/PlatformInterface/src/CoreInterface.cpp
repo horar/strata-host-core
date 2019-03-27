@@ -355,6 +355,15 @@ void CoreInterface::sendCommand(QString cmd)
     hcc->sendCmd(cmd.toStdString());
 }
 
+// @f disconnectPlatform
+// @b send disconnect command to HCS
+//
+void CoreInterface::disconnectPlatform()
+{
+    std::string cmd= "{\"hcs::cmd\":\"disconnect_platform\",\"payload\":{}}";
+    hcc->sendCmd(cmd);
+}
+
 // @f registerClient
 // @b send initial handshake to receive platform list
 //

@@ -129,15 +129,15 @@ Item {
 
             onCableLossChanged: {
                 if (platformInterface.get_cable_loss_compensation.port === portNumber){
-                    //console.log("cable compensation for port ",portNumber,"set to",platformInterface.get_cable_loss_compensation.bias_voltage*1000)
+                    console.log("cable compensation for port ",portNumber,"set to",platformInterface.get_cable_loss_compensation.bias_voltage*1000)
                     if (platformInterface.get_cable_loss_compensation.bias_voltage === 0){
-                        cableCompensationButtonStrip.buttonList[0].children[0].enabled = true;
+                        cableCompensationButtonStrip.buttonList[0].children[0].checked = true;
                     }
                     else if (platformInterface.get_cable_loss_compensation.bias_voltage * 1000 == 100){
-                        cableCompensationButtonStrip.buttonList[0].children[2].enabled = true;
+                        cableCompensationButtonStrip.buttonList[0].children[2].checked = true;
                     }
                     else if (platformInterface.get_cable_loss_compensation.bias_voltage * 1000 == 200){
-                        cableCompensationButtonStrip.buttonList[0].children[2].enabled = true;
+                        cableCompensationButtonStrip.buttonList[0].children[2].checked = true;
                     }
                 }
             }
@@ -160,7 +160,7 @@ Item {
 
                 SGSegmentedButton{
                     id: cableCompensationSetting2
-                    text: qsTr("100 mV/A")
+                    text: qsTr("100 mv/A")
                     checkable: true
 
                     onClicked:{
@@ -172,7 +172,7 @@ Item {
 
                 SGSegmentedButton{
                     id:cableCompensationSetting3
-                    text: qsTr("200 mV/A")
+                    text: qsTr("200 mv/A")
                     checkable: true
 
                     onClicked:{

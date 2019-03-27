@@ -92,6 +92,7 @@ int main(int argc, char *argv[])
 
         QStringList arguments;
         arguments << "-f" << hcsConfigPath;
+        hcsProcess->setProcessChannelMode(QProcess::ForwardedChannels);
         hcsProcess->start(hcsPath, arguments, QIODevice::ReadWrite);
         if (!hcsProcess->waitForStarted()) {
             qCWarning(logCategoryStrataDevStudio) << "Process does not started yet (state:" << hcsProcess->state() << ")";

@@ -71,13 +71,27 @@ namespace spyglass {
          * Attaches EvEventsMgr to the connection to handle read/write notifications
          *  it is method for PlatformManager
          * @param ev_manager manager to attach
+         * @return returns true when succeeded otherwise false
          */
-        void attachEventMgr(EvEventsMgr *ev_manager);
+        bool attachEventMgr(EvEventsMgr* ev_manager);
 
         /**
          * Detaches EvEventsMgr from connection
          */
         void detachEventMgr();
+
+        /**
+         * Returns events manager that is PlatformConnection attached too
+         *  or nullptr when isn't attached.
+         */
+        EvEventsMgr* getEventMgr() const { return event_mgr_; }
+
+        /**
+         * Stops / Resumes listening on events from PlatformManager(EvEventMgr)
+         * @param stop true stops listening, false resume
+         * @return returns true when succeeded otherwise false
+         */
+        bool stopListeningOnEvents(bool stop);
 
     private:
 
@@ -108,6 +122,7 @@ namespace spyglass {
 
         EvEventsMgr *event_mgr_ = nullptr;
         std::unique_ptr<EvEvent> event_;
+        std::mutex event_lock_;  //this lock is used when read/write event is notified or when event is attached/detached
 
         std::string readBuffer_;
         std::string writeBuffer_;
@@ -119,6 +134,41 @@ namespace spyglass {
         std::mutex writeLock_;
 
     };
+
+
+    /**
+     * Helper class for pause/resume connection listening
+     */
+    class PauseConnectionListenerGuard
+    {
+    public:
+        PauseConnectionListenerGuard(PlatformConnection* connection = nullptr) : connection_(connection) {
+            if (connection_) {
+                connection->stopListeningOnEvents(true);
+            }
+        }
+
+        ~PauseConnectionListenerGuard() {
+            if (connection_) {
+                connection_->stopListeningOnEvents(false);
+            }
+        }
+
+        void attach(PlatformConnection* connection) {
+            if (connection_ != nullptr) {
+                connection_->stopListeningOnEvents(false);
+            }
+
+            connection_ = connection;
+            if (connection_) {
+                connection->stopListeningOnEvents(true);
+            }
+        }
+
+    private:
+        spyglass::PlatformConnection* connection_;
+    };
+
 
 } //end of namespace
 

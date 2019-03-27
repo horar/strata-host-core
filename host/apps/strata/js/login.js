@@ -16,6 +16,7 @@ function login(login_info){
     Rest.xhr("post", "login", data, login_result, login_error, signals)
 }
 
+
 /*
   Callback function when we get a success result from the REST object
 */
@@ -43,6 +44,13 @@ function login_error(error)
     } else {
         signals.loginResult("Bad Login Info")
     }
+}
+
+/*
+  Clear token on logout
+*/
+function logout() {
+    Rest.jwt = ""
 }
 
 /*

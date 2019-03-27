@@ -26,19 +26,28 @@ using namespace fleece::impl;
 #define DEBUG(...) printf("SGReplicator: "); printf(__VA_ARGS__)
 
 namespace Spyglass {
-    SGReplicator::SGReplicator() {}
+    SGReplicator::SGReplicator() {
+        replicator_parameters_.callbackContext = this;
+        replicator_parameters_.push = kC4Disabled;
+        replicator_parameters_.pull = kC4Disabled;
+        replicator_parameters_.optionsDictFleece = slice();
+        replicator_parameters_.pushFilter = nullptr;
+        replicator_parameters_.validationFunc = nullptr;
+        replicator_parameters_.onStatusChanged = nullptr;
+        replicator_parameters_.onDocumentEnded = nullptr;
+        replicator_parameters_.onBlobProgress = nullptr;
+        replicator_parameters_.socketFactory = nullptr;
+        // To support multiple/separate replications to multiple sync-gateway/databases at the same time we need to provide our websocket implementation.
+        RegisterC4CivetWebSocketFactory();
+    }
 
     SGReplicator::~SGReplicator() {
         c4repl_free(c4replicator_);
     }
 
-    SGReplicator::SGReplicator(SGReplicatorConfiguration *replicator_configuration) {
+    SGReplicator::SGReplicator(SGReplicatorConfiguration *replicator_configuration): SGReplicator() {
         replicator_configuration_ = replicator_configuration;
         setReplicatorType(replicator_configuration_->getReplicatorType());
-        replicator_parameters_.callbackContext = this;
-        // Warning c4socket_registerFactory set to throw noexcept. But, it calls C4SocketImpl::registerFactory function which throws exception!
-        // Therefore, this exception can't be caught!
-        c4socket_registerFactory(C4CivetWebSocketFactory);
     }
 
     void SGReplicator::stop() {
