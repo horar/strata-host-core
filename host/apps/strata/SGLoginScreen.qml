@@ -9,6 +9,8 @@ import "js/login.js" as Authenticator
 import Fonts 1.0
 import "qrc:/statusbar-partial-views"
 
+import Strata.Logger 1.0
+
 Rectangle {
     id: container
     anchors { fill: parent }
@@ -41,7 +43,7 @@ Rectangle {
     Connections {
         target: Authenticator.signals
         onLoginResult: {
-            //console.log("Login result received")
+            //console.log(Logger.devStudioCategory, "Login result received")
             if (result === "Connected") {
                 connectionStatus.text = "Connected, Loading UI..."
                 var data = { user_id: usernameField.text }
@@ -62,7 +64,7 @@ Rectangle {
         // [TODO][prasanth]: jwt will be created/received in the hcs
         // for now, jwt will be received in the UI and then sent to HCS
         onLoginJWT: {
-            //console.log("JWT received",jwt_string)
+            //console.log(Logger.devStudioCategory, "JWT received",jwt_string)
             var jwt_json = {
                 "hcs::cmd":"jwt_token",
                 "payload": {
@@ -70,7 +72,7 @@ Rectangle {
                     "user_name":usernameField.text
                 }
             }
-            console.log("sending the jwt json to hcs",JSON.stringify(jwt_json))
+            console.log(Logger.devStudioCategory, "sending the jwt json to hcs",JSON.stringify(jwt_json))
             coreInterface.sendCommand(JSON.stringify(jwt_json))
         }
 
@@ -432,7 +434,7 @@ Rectangle {
                 family: Fonts.franklinGothicBook
             }
 
-//            onTextChanged: console.log("Connection Status:", text, Date.now())
+//            onTextChanged: console.log(Logger.devStudioCategory, "Connection Status:", text, Date.now())
         }
 
         Text {

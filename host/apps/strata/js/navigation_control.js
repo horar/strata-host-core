@@ -3,6 +3,8 @@
 .import "metrics.js" as Metrics
 .import "uuid_map.js" as UuidMap
 
+.import Strata.Logger 1.0 as LoggerModule
+
 /*
     Data that will likely be needed for platform views
 */
@@ -65,16 +67,16 @@ function getQMLFile(class_id, filename) {
 
     // eventually dirname should === class_id and this UUIDmap will be unnecessary
     var dir_name = UuidMap.uuid_map[class_id]
-    //console.log(class_id, "-", filename, "qml file requested.")
+    //console.log(LoggerModule.Logger.devStudioNavigationControlCategory, class_id + "-" + filename + "qml file requested.")
 
     // Build the file name - ./view/<class_id>/filename.qml
     if (filename.search(".qml") < 0){
-        //console.log("adding extension to filename: ", filename)
+        //console.log(LoggerModule.Logger.devStudioNavigationControlCategory, "adding extension to filename: ", filename)
         filename = filename + ".qml"
     }
 
     var qml_file_name = PREFIX + dir_name + "/" + filename
-    console.log("Locating at ", qml_file_name)
+    console.log(LoggerModule.Logger.devStudioNavigationControlCategory, "Locating at ", qml_file_name)
 
     return qml_file_name
 }
@@ -100,13 +102,13 @@ function init(flipable_parent, control_parent, content_parent, bar_parent)
 */
 function createView(name, parent)
 {
-    //console.log("createView: name =", name, ", parameters =", JSON.stringify(context))
+    //console.log(LoggerModule.Logger.devStudioNavigationControlCategory, "createView: name =", name, ", parameters =", JSON.stringify(context))
 
     var component = Qt.createComponent(name, QtQuickModule.Component.PreferSynchronous, parent);
 
     if (component.status === QtQuickModule.Component.Error) {
-        console.log("ERROR: Cannot createComponent(", name, "), parameters=", JSON.stringify(context));
-        console.log("errString: ", component.errorString())
+        console.log(LoggerModule.Logger.devStudioNavigationControlCategory, "ERROR: Cannot createComponent(", name, "), parameters=", JSON.stringify(context));
+        console.log(LoggerModule.Logger.devStudioNavigationControlCategory, "errString: ", component.errorString())
     }
 
     /*
@@ -121,12 +123,12 @@ function createView(name, parent)
         removeView(parent)
     }
     catch(err){
-        console.log("ERROR: Could not destroy child")
+        console.log(LoggerModule.Logger.devStudioNavigationControlCategory, "ERROR: Could not destroy child")
     }
 
     var object = component.createObject(parent,context)
     if (object === null) {
-        console.log("Error creating object: name=", name, ", parameters=", JSON.stringify(context));
+        console.log(LoggerModule.Logger.devStudioNavigationControlCategory, "Error creating object: name=", name, ", parameters=", JSON.stringify(context));
     }
 
     return object;
@@ -138,7 +140,7 @@ function createView(name, parent)
 function removeView(parent)
 {
     if (parent.children.length > 0){
-        //console.log("Destroying view")
+        //console.log(LoggerModule.Logger.devStudioNavigationControlCategory, "Destroying view")
         for (var x in parent.children){
             parent.children[x].destroy()
         }
@@ -155,7 +157,7 @@ function globalEventHandler(event,data)
     switch(event)
     {
     case events.PROMPT_LOGIN_EVENT:
-        //console.log("Updated state to Login:", states.LOGIN_STATE)
+        //console.log(LoggerModule.Logger.devStudioNavigationControlCategory, "Updated state to Login:", states.LOGIN_STATE)
         navigation_state_ = states.LOGIN_STATE
 
         // Update both containers
@@ -181,26 +183,26 @@ function globalEventHandler(event,data)
         updateState(events.PLATFORM_DISCONNECTED_EVENT)
 
         // Show Login Screen
-//        console.log("Logging user out. Displaying Login screen")
+//        console.log(LoggerModule.Logger.devStudioNavigationControlCategory, "Logging user out. Displaying Login screen")
         updateState(events.PROMPT_LOGIN_EVENT)
         break;
 
     case events.NEW_PLATFORM_CONNECTED_EVENT:
         // Cache platform name until we are ready to view
-        //console.log("Platform connected. Caching platform: ", data.class_id)
+        //console.log(LoggerModule.Logger.devStudioNavigationControlCategory, "Platform connected. Caching platform: ", data.class_id)
         context.class_id = data.class_id
         context.platform_state = true;
         break;
 
     case events.PLATFORM_DISCONNECTED_EVENT:
         // Disconnected
-//        console.log("Platform disconnected in global event handler")
+//        console.log(LoggerModule.Logger.devStudioNavigationControlCategory, "Platform disconnected in global event handler")
         context.class_id = "";
         context.platform_state = false;
         break;
 
     default:
-        console.log("Unhandled signal, ", event, " in state ", navigation_state_)
+        console.log(LoggerModule.Logger.devStudioNavigationControlCategory, "Unhandled signal, ", event, " in state ", navigation_state_)
         break;
     }
 }
@@ -224,7 +226,7 @@ function updateState(event)
 */
 function updateState(event, data)
 {
-    //console.log("Received event: ", event)
+    //console.log(LoggerModule.Logger.devStudioNavigationControlCategory, "Received event: ", event)
 
     switch(navigation_state_){
         case states.UNINITIALIZED:
@@ -298,7 +300,7 @@ function updateState(event, data)
 
             case events.NEW_PLATFORM_CONNECTED_EVENT:
                 // Cache platform name until we are ready to view
-                console.log("new platform connected data:", data.class_id)
+                console.log(LoggerModule.Logger.devStudioNavigationControlCategory, "new platform connected data:", data.class_id)
                 context.class_id = data.class_id
                 context.platform_state = true;
                 // Refresh
@@ -314,7 +316,7 @@ function updateState(event, data)
 
             case events.OFFLINE_MODE_EVENT:
                 // Offline mode just keeps platform_state as false
-                console.log("Entering offline mode for ", data.class_id)
+                console.log(LoggerModule.Logger.devStudioNavigationControlCategory, "Entering offline mode for ", data.class_id)
                 context.class_id = data.class_id
                 context.platform_state = false;
                 updateState(events.SHOW_CONTROL_EVENT)
@@ -324,7 +326,7 @@ function updateState(event, data)
                 // Send request to metrics service when entering and leaving platform control view
                 var pageName = '';
                 if(flipable_parent_.flipped===false){
-                    console.log("In flipable ",context.class_id)
+                    console.log(LoggerModule.Logger.devStudioNavigationControlCategory, "In flipable ",context.class_id)
                     pageName = context.class_id +' Control'
                 }else {
                     var currentTabName = Metrics.getCurrentTab()

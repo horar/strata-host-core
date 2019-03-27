@@ -9,6 +9,8 @@
 
 #include "core/CoreInterface.h"
 
+#include "LoggingQtCategories.h"
+
 using namespace std;
 using namespace Spyglass;
 
@@ -16,7 +18,7 @@ const char* HOST_CONTROLLER_SERVICE_IN_ADDRESS = "tcp://127.0.0.1:5563";
 
 CoreInterface::CoreInterface(QObject *parent) : QObject(parent)
 {
-    //qDebug() << "CoreInterface::CoreInterfaceQObject *parent) : QObject(parent) CTOR\n";
+    //qCDebug(logCategoryCoreInterface) << "CoreInterface::CoreInterfaceQObject *parent) : QObject(parent) CTOR\n";
 
     hcc = new HostControllerClient(HOST_CONTROLLER_SERVICE_IN_ADDRESS);
 
@@ -65,7 +67,7 @@ CoreInterface::CoreInterface(QObject *parent) : QObject(parent)
 
 CoreInterface::~CoreInterface()
 {
-    //qDebug() << "CoreInterface::~CoreInterface() DTOR\n";
+    //qCDebug(logCategoryCoreInterface) << "CoreInterface::~CoreInterface() DTOR\n";
 
     delete(hcc);
     notification_thread_.detach();
@@ -114,10 +116,10 @@ void CoreInterface::notificationsThread()
 
         // Debug; Some messages are too long to print (ex: cloud images)
         if (n.length() < 500) {
-          qDebug() <<"[recv]" << n;
+          qCDebug(logCategoryCoreInterface) <<"[recv]" << n;
           emit pretendMetrics(n); // TODO: remove this (see pretendMetrics in CoreInterface.H)
         } else {
-          qDebug() <<"[recv] Unprinted: Long Data Message Over 500 Chars";
+          qCDebug(logCategoryCoreInterface) <<"[recv] Unprinted: Long Data Message Over 500 Chars";
           emit pretendMetrics("Cloud file download, over 500 chars"); // TODO: remove this (see pretendMetrics in CoreInterface.H)
         }
 
@@ -165,7 +167,7 @@ void CoreInterface::platformIDNotificationHandler(QJsonObject payload)
 {
     if (payload.contains("platform_id")) {
         QString platform_id = payload["platform_id"].toString();
-        //qDebug() << "Received platform_id = " << platform_id;
+        //qCDebug(logCategoryCoreInterface) << "Received platform_id = " << platform_id;
 
         if(platform_id_ != platform_id ) {
             platform_id_ = platform_id;
@@ -181,7 +183,7 @@ void CoreInterface::platformIDNotificationHandler(QJsonObject payload)
 void CoreInterface::connectionChangeNotificationHandler(QJsonObject payload)
 {
     QString state = payload["status"].toString();
-    //qDebug() << "platform_state = " << state;
+    //qCDebug(logCategoryCoreInterface) << "platform_state = " << state;
 
     if( state == "connected" ) {
         platform_state_ = true;
@@ -258,7 +260,7 @@ void CoreInterface::platformListHandler(QJsonObject payload)
 
     if( platform_list_ != strJson_list ) {
         platform_list_ = strJson_list;
-        //qDebug() << "initialHandshakeHandler: platform_list:" << platform_list_;
+        //qCDebug(logCategoryCoreInterface) << "initialHandshakeHandler: platform_list:" << platform_list_;
         emit platformListChanged(platform_list_);
     }
 }
@@ -451,13 +453,13 @@ bool CoreInterface::registerNotificationHandler(std::string notification, Notifi
 
 bool CoreInterface::registerDataSourceHandler(std::string source, DataSourceHandler handler)
 {
-    qDebug("CoreInterface::registerDataSourceHanlder:"
-              "source=%s", source.c_str());
+    qCDebug(logCategoryCoreInterface) << "CoreInterface::registerDataSourceHanlder:"
+                                      << QString("source=%1").arg(source.c_str());
 
     auto search = data_source_handlers_.find(source);
     if( search != data_source_handlers_.end()) {
-        qCritical("CoreInterface::registerDataSourceHanlder:"
-                  " ERROR: handler already exits for %s !!", source.c_str ());
+        qCCritical(logCategoryCoreInterface) << "CoreInterface::registerDataSourceHanlder:"
+                                             << QString(" ERROR: handler already exits for %1 !!").arg(source.c_str ());
         return false;
     }
 

@@ -11,6 +11,8 @@ import "qrc:/statusbar-partial-views"
 
 import "qrc:/js/platform_model.js" as Model
 
+import Strata.Logger 1.0
+
 Window {
     id: mainWindow
     visible: true
@@ -30,7 +32,7 @@ Window {
     property bool debug_menu_enabled: true
 
     Component.onCompleted: {
-        console.log("Initializing")
+        console.log(Logger.devStudioCategory, "Initializing")
         NavigationControl.init(flipable,controlContainer, contentContainer, statusBarContainer)
         Help.registerWindow(mainWindow)
     }
@@ -44,7 +46,7 @@ Window {
             }
             coreInterface.sendCommand(JSON.stringify(remote_disconnect_json))
 
-            console.log("UI -> HCS ", JSON.stringify(remote_disconnect_json))
+            console.log(Logger.devStudioCategory, "UI -> HCS ", JSON.stringify(remote_disconnect_json))
         }
 
         var remote_json = {
@@ -53,7 +55,7 @@ Window {
                 "advertise_platforms":false
             }
         }
-        console.log("asking hcs to advertise the platforms",JSON.stringify(remote_json))
+        console.log(Logger.devStudioCategory, "asking hcs to advertise the platforms",JSON.stringify(remote_json))
         coreInterface.sendCommand(JSON.stringify(remote_json))
         // End session with HCS
         coreInterface.unregisterClient();
@@ -138,7 +140,7 @@ Window {
         property string selectedConnection: ""
 
         Component.onCompleted: {
-            //            console.log("platformListModel component completed");
+            //            console.log(Logger.devStudioCategory, "platformListModel component completed");
             if (!PlatformSelection.isInitialized) { PlatformSelection.initialize(this, coreInterface, documentManager) }
         }
     }
@@ -148,18 +150,18 @@ Window {
         target: coreInterface
 
         onPlatformIDChanged: {
-            console.log("Main: PlatformIDChanged to ", id)
+            console.log(Logger.devStudioCategory, "Main: PlatformIDChanged to ", id)
 
             // Send update to NavigationControl
 //            if (UuidMap.uuid_map.hasOwnProperty(id)){
-//                console.log("identified new platform as ", UuidMap.uuid_map[id])
+//                console.log(Logger.devStudioCategory, "identified new platform as ", UuidMap.uuid_map[id])
 //                var data = { class_id : id }
 //                NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT, data)
 //            }
         }
 
         onPlatformStateChanged: {
-            console.log("Main: PlatformStateChanged: ", platform_connected_state)
+            console.log(Logger.devStudioCategory, "Main: PlatformStateChanged: ", platform_connected_state)
         }
 
         onRemoteConnectionChanged:{

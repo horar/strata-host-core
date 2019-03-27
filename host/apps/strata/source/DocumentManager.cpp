@@ -5,24 +5,27 @@
 // Document Manager class to interact with corresponding QML SGDocumentViewer Widget
 //
 
+#include "DocumentManager.h"
+
+#include "logging/LoggingQtCategories.h"
+
 #include <QObject>
 #include <QJsonObject>
 #include <QJsonArray>
 #include <QFileInfo>
 #include <QDir>
 
-#include "DocumentManager.h"
 using namespace std;
 
 DocumentManager::DocumentManager()
 {
-    qDebug("DocumentManager::DocumentManager() ctor: default");
+    qCDebug(logCategoryDocumentManager) << " ctor: default";
     init();
 }
 
 DocumentManager::DocumentManager(CoreInterface *coreInterface) : coreInterface_(coreInterface)
 {
-    qDebug("DocumentManager::DocumentManager() ctor: core interface");
+    qCDebug(logCategoryDocumentManager) << "core interface";
     /*
         Register document handler with CoreInterface
         This will also send a command to Nimbus
@@ -35,7 +38,7 @@ DocumentManager::DocumentManager(CoreInterface *coreInterface) : coreInterface_(
 
 DocumentManager::DocumentManager(QObject *parent) : QObject(parent)
 {
-    qDebug("DocumentManager::DocumentManager(parent=%p)", parent);
+    qCDebug(logCategoryDocumentManager) << "(parent=" << parent << ")";
     init();
 }
 
@@ -46,7 +49,7 @@ DocumentManager::~DocumentManager ()
 
 void DocumentManager::init()
 {
-    //qDebug("DocumentManager::init");
+    //qCDebug(logCategoryDocumentManager);
 
     // create document sets: "<name>",  & <name>_documnts_
 
@@ -110,7 +113,7 @@ void DocumentManager::init()
 //
 void DocumentManager::viewDocumentHandler(QJsonObject data)
 {
-    qDebug("DocumentManager::viewDocumentHandler called");
+    qCDebug(logCategoryDocumentManager) << " called";
 
     if (data.contains("documents") ) {
         QJsonArray document_array = data["documents"].toArray();
@@ -129,7 +132,7 @@ void DocumentManager::viewDocumentHandler(QJsonObject data)
                 DocumentSetPtr document_set = getDocumentSet (name);
 
                 if( document_set == nullptr ) {
-                    qCritical("DocumentManager::updateDocuments: invalid document name = '%s'", name.toStdString ().c_str ());
+                    qCritical(logCategoryDocumentManager) << "invalid document name = '" << name.toStdString().c_str () << "'";
                     return;
                 }
                 //                    document_set->clear ();
@@ -138,7 +141,7 @@ void DocumentManager::viewDocumentHandler(QJsonObject data)
                     // For datasheet, parse local csv into document list for UI to pick up parts, categories and PDF urls
                     QFile file(uri);
                     if (!file.open(QIODevice::ReadOnly)) {
-                        qDebug() << file.errorString();
+                        qCDebug(logCategoryDocumentManager) << file.errorString();
                     }
 
                     // Create a document and add to datasheet_documents_ for each lines of CSV
@@ -186,7 +189,7 @@ void DocumentManager::viewDocumentHandler(QJsonObject data)
         //            emit datasheetRevisionCountChanged(++datasheet_rev_count_);
         //        }
         //        else {
-        //            qCritical("DocumentManager::updateDocuments: invalid document name = '%s'", name.toStdString ().c_str ());
+        //            qCritical(logCategoryDocumentManager) << "invalid document name = " << '" << name.toStdString ().c_str () << "'";
         //        }
             }
         }
@@ -213,7 +216,7 @@ DocumentSetPtr DocumentManager::getDocumentSet(const QString &set)
 {
     auto document_set = document_sets_.find(set.toStdString ().c_str ());
     if (document_set == document_sets_.end()) {
-        qDebug("DocumentManager::getDocumentSet: %s NOT FOUND", set.toStdString ().c_str ());
+        qCDebug(logCategoryDocumentManager) << set.toStdString ().c_str () << " NOT FOUND";
         return nullptr;
     }
 

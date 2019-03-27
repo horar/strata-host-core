@@ -2,6 +2,8 @@
 .import "platform_selection.js" as PlatformSelection
 .import "uuid_map.js" as UuidMap
 
+.import Strata.Logger 1.0 as LoggerModule
+
 ///////////
 //
 //  This is a hardcoded list of platforms that will function until HCS can serve this information to UI from PRT and Deployment Portal
@@ -523,7 +525,7 @@ function shortCircuit (platform_list_json) {
             PlatformSelection.sendSelection()
         }
     } catch(err) {
-        console.log("SHORTCIRCUIT error:", err.toString())
+        console.log(LoggerModule.Logger.devStudioPlatformModelCategory, "SHORTCIRCUIT error:", err.toString())
         PlatformSelection.platformListModel.clear()
         PlatformSelection.platformListModel.append({ "verbose_name" : "Error! No platforms available" })
     }

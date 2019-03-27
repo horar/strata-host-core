@@ -1,6 +1,8 @@
 .import "restclient.js" as Rest
 .import QtQuick 2.0 as QtQuickModule
 
+.import Strata.Logger 1.0 as LoggerModule
+
 /*
   Signal component to notify Login status
 */
@@ -20,7 +22,7 @@ function login(login_info){
 */
 function login_result(response)
 {
-    console.log("Login success! ", JSON.stringify(response))
+    console.log(LoggerModule.Logger.devStudioLoginCategory, "Login success! ", JSON.stringify(response))
 
     if(response.hasOwnProperty("token")){
         Rest.jwt = response.token;
@@ -36,7 +38,7 @@ function login_result(response)
 */
 function login_error(error)
 {
-    console.log("Login Error : ", JSON.stringify(error))
+    console.log(LoggerModule.Logger.devStudioLoginCategory, "Login Error : ", JSON.stringify(error))
     if (error.message === "No connection") {
         signals.loginResult("No Connection")
     } else {
@@ -55,18 +57,18 @@ function logout() {
   Dynamically load qml controls by qml filename
 */
 function createObject(name, parent) {
-    console.log("createObject: name =", name)
+    console.log(LoggerModule.Logger.devStudioLoginCategory, "createObject: name =", name)
 
     var component = Qt.createComponent(name, QtQuickModule.Component.PreferSynchronous, parent);
 
     if (component.status === QtQuickModule.Component.Error) {
-        console.log("ERROR: Cannot createComponent ", name);
+        console.log(LoggerModule.Logger.devStudioLoginCategory, "ERROR: Cannot createComponent ", name);
     }
 
     // TODO[Abe]: store this globally for later destroying
     var object = component.createObject(parent)
     if (object === null) {
-        console.log("Error creating object: name=", name);
+        console.log(LoggerModule.Logger.devStudioLoginCategory, "Error creating object: name=", name);
     }
 
     return object;

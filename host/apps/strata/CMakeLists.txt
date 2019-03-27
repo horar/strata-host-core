@@ -13,10 +13,11 @@ find_package(Qt5 5.10
     REQUIRED
 )
 
-add_executable(${PROJECT_NAME})
-target_sources(${PROJECT_NAME} PRIVATE
+add_executable(${PROJECT_NAME}
     main.cpp
     source/DocumentManager.cpp
+    logging/LoggingQtCategories.cpp
+    logging/LoggingQtCategories.qrc
 
     qml.qrc
     views/SGPdfViewer/pdfjs.qrc
@@ -56,6 +57,8 @@ target_link_libraries(${PROJECT_NAME}
     flasher
     HostControllerClient
     PlatformInterface
+
+    QtLogger
 )
 
 target_include_directories(${PROJECT_NAME}
@@ -100,6 +103,13 @@ target_compile_definitions(${PROJECT_NAME}
 # LC: start 'hcs' process from strata (will be handled by strata monitor in near future)
 set_source_files_properties(main.cpp PROPERTIES
     COMPILE_DEFINITIONS START_SERVICES
+)
+
+# TODO: [LC] fix this, because it need to be set in multiple Qt UI projects
+list(APPEND QML_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/logging/qml")
+list(APPEND QML_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/")
+set(QML_IMPORT_PATH "${QML_DIRS};${QML_IMPORT_PATH}"
+    CACHE STRING "Qt Creator extra qml import paths" FORCE
 )
 
 feature_summary(WHAT ALL)

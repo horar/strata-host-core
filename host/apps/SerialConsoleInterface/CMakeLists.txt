@@ -26,9 +26,10 @@ if(APPLE)
     endif()
 endif()
 
+# FIXME: [LC] look@strata note
 list(APPEND QML_DIRS "${CMAKE_CURRENT_SOURCE_DIR}")
 list(APPEND QML_DIRS ":/")
-set(QML_IMPORT_PATH "${QML_DIRS}"
+set(QML_IMPORT_PATH "${QML_DIRS};${QML_IMPORT_PATH}"
     CACHE STRING "Qt Creator extra qml import paths" FORCE
 )
 
