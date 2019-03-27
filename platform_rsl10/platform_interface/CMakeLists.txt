@@ -12,7 +12,8 @@ add_subdirectory(${EXTLIB_DIR}/cJSON cJSON)
 
 add_library(platform_interface
         STATIC src/platform_interface_implementation.c
-)
+        )
+
 target_include_directories(
         platform_interface
         PUBLIC include

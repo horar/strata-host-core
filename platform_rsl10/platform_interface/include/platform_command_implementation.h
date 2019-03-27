@@ -5,7 +5,7 @@
 #ifndef PLATFORM_INTERFACE_INCLUDE_PLATFORM_COMMAND_IMPLEMENTATION_H
 #define PLATFORM_INTERFACE_INCLUDE_PLATFORM_COMMAND_IMPLEMENTATION_H
 
-#include "cJSON.h"
+#include <cJSON.h>
 
 static const char *response_string[] = {
         "{\"nak\":\"\",\"payload\":{\"return_value\":false,\"return_string\":\"json error: badly formatted json\"}}",

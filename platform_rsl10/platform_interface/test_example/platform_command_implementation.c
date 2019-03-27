@@ -8,7 +8,6 @@
 
 struct command_handler {
     char *name;
-
     void (*fp)(cJSON *payload_value);
 };
 
@@ -27,11 +26,11 @@ command_handler_t command_handlers[] = {
         {"general_purpose",     general_purpose},
 };
 
-static int g_command_handlers_size = ARRAY_SIZE(command_handlers);
+size_t g_command_handlers_size = ARRAY_SIZE(command_handlers);
 
 // Below are the lists of functions used for each command
 void call_command_handler(char *name, cJSON *payload_value) {
-    LOG_DEBUG("Size of the command_handlers list is %u", g_command_handlers_size);
+    LOG_DEBUG("Size of the command_handlers list is %zu", g_command_handlers_size);
 
     for ( int i = 0; i < g_command_handlers_size; i++ ) {
         if ( !strcmp(command_handlers[i].name, name)) {

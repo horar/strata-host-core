@@ -6,7 +6,7 @@
 #define PLATFORM_INTERFACE_INCLUDE_PLATFORM_COMMAND_DISPATCHER_H
 
 #include <stdlib.h>
-#include "memory_pool/memory_pool.h"
+#include <memory_pool/memory_pool.h>
 
 // forward declaration
 typedef struct queue queue_t;
