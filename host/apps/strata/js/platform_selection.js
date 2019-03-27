@@ -34,10 +34,10 @@ function populatePlatforms(platform_list_json) {
 
             var class_idPattern = new RegExp('^[0-9]{3,10}$');  // [TODO]: recreate regexp when class_id structure is finalized, currently checks for 3-10 digit int
             var class_id = String(platform_list.list[i].class_id);
-            // console.log("class_id =",class_id)
+            // console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "class_id =",class_id)
 
             if (class_idPattern.test(class_id) && class_id !== "undefined" && UuidMap.uuid_map.hasOwnProperty(class_id)) {  // Checks against the string "undefined" since it is cast to String() above
-                console.log("looking at platform", platform_list.list[i].class_id);
+                console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "looking at platform", platform_list.list[i].class_id);
 
                 // Extract platform information
                  platform_info = {
@@ -85,7 +85,7 @@ function populatePlatforms(platform_list_json) {
 
             if (platform_info.connection === "connected" && autoConnectEnabled){
                 // copy "connected" platform; Note: this will auto select the last listed "connected" platform
-                console.log("Selecting", platform_info.name, "for autoconnection");
+                console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Selecting", platform_info.name, "for autoconnection");
                 autoConnecting = true
                 platformListModel.selectedClass_id = platform_info.class_id
                 platformListModel.selectedName = platform_info.name
@@ -102,7 +102,7 @@ function populatePlatforms(platform_list_json) {
 
     // Auto select newly connected platform
     if (autoConnecting) {
-        console.log("Auto connecting platform ", platformListModel.selectedClassId)
+        console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Auto connecting platform ", platformListModel.selectedClassId)
         sendSelection()
     } else {
         // Reset to default state
@@ -113,7 +113,7 @@ function populatePlatforms(platform_list_json) {
 function sendSelection () {
     // Run this disconnection code only if nav_control believes something is connected, otherwise createView() needlessly gets called
     if (NavigationControl.context["platform_connected"] || NavigationControl.context["offline_mode"] || NavigationControl.context["class_id"] !== "") {
-        console.log("Disconnecting platform from navigation control")
+        console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Disconnecting platform from navigation control")
         NavigationControl.updateState(NavigationControl.events.PLATFORM_DISCONNECTED_EVENT, null)
     }
 

@@ -67,11 +67,11 @@ function getQMLFile(class_id, filename) {
 
     // eventually dirname should === class_id and this UUIDmap will be unnecessary
     var dir_name = UuidMap.uuid_map[class_id]
-    //console.log(class_id, "-", filename, "qml file requested.")
+    //console.log(LoggerModule.Logger.devStudioNavigationControlCategory, class_id + "-" + filename + "qml file requested.")
 
     // Build the file name - ./view/<class_id>/filename.qml
     if (filename.search(".qml") < 0){
-        //console.log("adding extension to filename: ", filename)
+        //console.log(LoggerModule.Logger.devStudioNavigationControlCategory, "adding extension to filename: ", filename)
         filename = filename + ".qml"
     }
 
@@ -102,7 +102,7 @@ function init(flipable_parent, control_parent, content_parent, bar_parent)
 */
 function createView(name, parent)
 {
-    //console.log("createView: name =", name, ", parameters =", JSON.stringify(context))
+    //console.log(LoggerModule.Logger.devStudioNavigationControlCategory, "createView: name =", name, ", parameters =", JSON.stringify(context))
 
     var component = Qt.createComponent(name, QtQuickModule.Component.PreferSynchronous, parent);
 
@@ -140,7 +140,7 @@ function createView(name, parent)
 function removeView(parent)
 {
     if (parent.children.length > 0){
-        //console.log("Destroying view")
+        //console.log(LoggerModule.Logger.devStudioNavigationControlCategory, "Destroying view")
         for (var x in parent.children){
             parent.children[x].destroy()
         }
@@ -157,7 +157,7 @@ function globalEventHandler(event,data)
     switch(event)
     {
     case events.PROMPT_LOGIN_EVENT:
-        //console.log("Updated state to Login:", states.LOGIN_STATE)
+        //console.log(LoggerModule.Logger.devStudioNavigationControlCategory, "Updated state to Login:", states.LOGIN_STATE)
         navigation_state_ = states.LOGIN_STATE
 
         // Update both containers
@@ -183,20 +183,20 @@ function globalEventHandler(event,data)
         updateState(events.PLATFORM_DISCONNECTED_EVENT)
 
         // Show Login Screen
-//        console.log("Logging user out. Displaying Login screen")
+//        console.log(LoggerModule.Logger.devStudioNavigationControlCategory, "Logging user out. Displaying Login screen")
         updateState(events.PROMPT_LOGIN_EVENT)
         break;
 
     case events.NEW_PLATFORM_CONNECTED_EVENT:
         // Cache platform name until we are ready to view
-        //console.log("Platform connected. Caching platform: ", data.class_id)
+        //console.log(LoggerModule.Logger.devStudioNavigationControlCategory, "Platform connected. Caching platform: ", data.class_id)
         context.class_id = data.class_id
         context.platform_state = true;
         break;
 
     case events.PLATFORM_DISCONNECTED_EVENT:
         // Disconnected
-//        console.log("Platform disconnected in global event handler")
+//        console.log(LoggerModule.Logger.devStudioNavigationControlCategory, "Platform disconnected in global event handler")
         context.class_id = "";
         context.platform_state = false;
         break;
@@ -226,7 +226,7 @@ function updateState(event)
 */
 function updateState(event, data)
 {
-    //console.log("Received event: ", event)
+    //console.log(LoggerModule.Logger.devStudioNavigationControlCategory, "Received event: ", event)
 
     switch(navigation_state_){
         case states.UNINITIALIZED:

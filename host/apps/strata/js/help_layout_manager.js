@@ -1,6 +1,8 @@
 .pragma library
 .import "navigation_control.js" as NavigationControl
 
+.import Strata.Logger 1.0 as LoggerModule
+
 var window
 var current_class_id
 var current_tour_targets
@@ -42,11 +44,11 @@ function registerTarget(helpTarget, targetDescription, index, tourName) {
 
         if (views.length >1) {
             // new class_id is replacing a disconnected platform (strataMain is views[0]); older help needs to be removed
-            // console.log("Deleting previous help", current_class_id, class_id, views.length)
+            // console.log(LoggerModule.Logger.devStudioHelpCategory, "Deleting previous help", current_class_id, class_id, views.length)
             killView(1)
         }
 
-        // console.log("CREATING HELP VIEW and TOUR", class_id, tourName)
+        // console.log(LoggerModule.Logger.devStudioHelpCategory, "CREATING HELP VIEW and TOUR", class_id, tourName)
         current_class_id = class_id
         tourIndices = createView(class_id, tourName)
     } else {
@@ -106,7 +108,7 @@ function locateTour(class_id, tourName) {
                 }
             }
             // create tour in view if view found, but no tour found
-            // console.log("CREATING TOUR", tourName, "for VIEW", current_class_id)
+            // console.log(LoggerModule.Logger.devStudioHelpCategory, "CREATING TOUR", tourName, "for VIEW", current_class_id)
             var newTourIndex = createTour(i, tourName)
             return [i, newTourIndex]
         }
@@ -199,7 +201,7 @@ function destroyHelp() {
 
 function killView(index) {
     for (var i=0; i<views[index].view_tours.length; i++) {
-//        console.log("Destroying", views[index].view_tours[i].tour_name)
+//        console.log(LoggerModule.Logger.devStudioHelpCategory, "Destroying", views[index].view_tours[i].tour_name)
         for (var j=0; j<views[index].view_tours[i].tour_targets.length; j++) {
             views[index].view_tours[i].tour_targets[j].helpObject.destroy()
         }

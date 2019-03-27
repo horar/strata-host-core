@@ -1,8 +1,9 @@
 .import "restclient.js" as Rest
 
-
+.import Strata.Logger 1.0 as LoggerModule
 
 var confirmPopup = null
+
 /*
   Send Feedback information to server
 */
@@ -14,12 +15,11 @@ function feedbackInfo(feedback_info, success, error){
 
 function onSuccess(response)
 {
-    console.log("response: ", JSON.stringify(response));
+    console.log(LoggerModule.Logger.devStudioFeedbackCategory, "response: ", JSON.stringify(response));
 
 }
 function onError(response)
 {
-    console.log("error response: ", JSON.stringify(response));
-
+    console.log(LoggerModule.Logger.devStudioFeedbackCategory, "error response: ", JSON.stringify(response));
 }
 

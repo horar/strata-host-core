@@ -13,11 +13,20 @@ QtObject {
     property LoggingCategory devStudioPlatformSelectionCategory: LoggingCategory {
         name: "strata.devstudio.platformSelection"
     }
+    property LoggingCategory devStudioPlatformModelCategory: LoggingCategory {
+        name: "strata.devstudio.platformModel"
+    }
     property LoggingCategory devStudioLoginCategory: LoggingCategory {
         name: "strata.devstudio.login"
     }
     property LoggingCategory devStudioMetricsCategory: LoggingCategory {
         name: "strata.devstudio.metrics"
+    }
+    property LoggingCategory devStudioHelpCategory: LoggingCategory {
+        name: "strata.devstudio.help"
+    }
+    property LoggingCategory devStudioFeedbackCategory: LoggingCategory {
+        name: "strata.devstudio.feedback"
     }
     property LoggingCategory devStudioCorePlatformInterfaceCategory: LoggingCategory {
         name: "strata.devstudio.platIf.core"
