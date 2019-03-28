@@ -88,7 +88,7 @@ Rectangle {
             anchors.topMargin: 8
             anchors.right: column2.right
             height:boxHeight
-            label: "VOLTAGE OUT"
+            label: "LED VOLTAGE"
             unit: "V"
             color:"transparent"
             icon: "../images/icon-voltage.svg"

@@ -10,9 +10,13 @@ Rectangle {
     clip: true
 
     property alias contents: contents.sourceComponent
+    property alias contentItem: contents.item
+
+    objectName: "accordionItem"
 
     property string title: "Default Title Text"
     property bool open: false
+    property bool exclusive: accordionExclusive
     property int openCloseTime: accordionOpenCloseTime
     property string statusIcon: accordionStatusIcon
     property color textOpenColor: accordionTextOpenColor
@@ -21,6 +25,18 @@ Rectangle {
     property color headerOpenColor: accordionHeaderOpenColor
     property color headerClosedColor: accordionHeaderClosedColor
     property alias dividerColor: divider.color
+    property alias closeContent: closeContent
+
+    onOpenChanged: {
+        if (open && exclusive && root.parent) {
+            for (var i = 0; i< root.parent.children.length; i++){
+                if (root.parent.children[i] !== root && root.parent.children[i].open && root.parent.children[i].objectName === "accordionItem"){
+                    root.parent.children[i].closeContent.start()
+                    root.parent.children[i].open = false
+                }
+            }
+        }
+    }
 
     Rectangle {
         id: titleBar

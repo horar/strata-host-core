@@ -1,5 +1,7 @@
 .pragma library
 
+.import Strata.Logger 1.0 as LoggerModule
+
 var url = "http://18.222.75.160/";
 
 // jwt will be set after successful login
@@ -15,12 +17,18 @@ var xhr = function(method, endpoint, data, callback, errorCallback, signals) {
 
     xhr.onreadystatechange = function() {
             if ( xhr.readyState === 4 && xhr.status >= 200 && xhr.status < 300) {
-                //console.log(xhr.responseText)
+                //console.log(LoggerModule.Logger.devStudioRestClientCategory, xhr.responseText)
                 callback( JSON.parse(xhr.responseText) );
             }
             else if (xhr.readyState === 4 && xhr.status >= 300) {
                 if (errorCallback) {
-                    errorCallback(JSON.parse(xhr.responseText));
+                    var resopnse = xhr.responseText;
+                    try{
+                      resopnse =   JSON.parse(xhr.responseText);
+                    }catch(error){
+                        console.error(LoggerModule.Logger.devStudioRestClientCategory, "error response not json: " + error)
+                    }
+                    errorCallback(resopnse);
                 }
             }
             // No connection to db - readyState is 4 (request complete)
@@ -41,7 +49,7 @@ var xhr = function(method, endpoint, data, callback, errorCallback, signals) {
 
     // Set JWT in the requst header
     if (jwt !== '') {
-        console.log("JWT", jwt)
+        console.log(LoggerModule.Logger.devStudioRestClientCategory, "JWT", jwt)
         xhr.setRequestHeader("x-access-token",jwt);
     }
 

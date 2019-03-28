@@ -1,6 +1,8 @@
 
 #include "Flasher.h"
 
+#include <Buypass.h>
+
 #include <thread>
 #include <numeric>
 #include <fstream>
@@ -167,6 +169,8 @@ rapidjson::SchemaDocument Flasher::notifyBackupJsonSchema( createJsonSchema(R"({
 })") );
 
 
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
 Flasher::Flasher()
 : Flasher(nullptr, std::string())
 {
@@ -175,9 +179,11 @@ Flasher::Flasher()
 
 Flasher::Flasher(spyglass::PlatformConnection* connector, const std::string& firmwareFilename)
 : serial_(connector)
+, serial_listener_guard_(connector)
 , firmwareFilename_(firmwareFilename)
 , dbg_out_stream_(nullptr)
 {
+
 }
 
 Flasher::~Flasher()
@@ -187,6 +193,7 @@ Flasher::~Flasher()
 void Flasher::setConnector(spyglass::PlatformConnection* connector)
 {
     serial_ = connector;
+    serial_listener_guard_.attach(serial_);
 }
 
 void Flasher::setFirmwareFilename(const std::string& firmwareFilename)
@@ -404,7 +411,8 @@ bool Flasher::writeCommandFlash()
     writer.Int(static_cast<int>(flashChunk_.data.size()));
 
     writer.Key("crc");
-    writer.Int(std::accumulate(flashChunk_.data.begin(), flashChunk_.data.end(), 0));
+    writer.Int(crc16::buypass(static_cast<const uint8_t *>(flashChunk_.data.data()),
+                              static_cast<uint32_t>(flashChunk_.data.size())));
 
     std::string chunkBase64;
     chunkBase64.resize(base64::encoded_size(flashChunk_.data.size()));
@@ -586,7 +594,7 @@ bool Flasher::flash(const bool forceStartApplication)
     }
     while (firmwareSize > 0);
 
-    return backup() && verify() && (forceStartApplication ? startApplication() : true);
+    return (forceStartApplication ? startApplication() : true);
 }
 
 
@@ -802,7 +810,7 @@ bool Flasher::readNotifyBackup(const std::string& notificationName)
         backupChunk_.data.resize(base64::decode(backupChunk_.data.data(), chunkBase64.data(), chunkBase64.size()).first);
 
         if (size != backupChunk_.data.size() ||
-            crc != std::accumulate(backupChunk_.data.begin(), backupChunk_.data.end(), 0U))
+            crc != crc16::buypass(static_cast<const uint8_t *>(backupChunk_.data.data()), static_cast<uint32_t>(backupChunk_.data.size())))
         {
             return false;
         }

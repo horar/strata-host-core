@@ -1,10 +1,7 @@
-cmake_minimum_required (VERSION 2.8)
-
-project(flasher-app)
-
-set(CMAKE_CXX_STANDARD 11)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS OFF)
+project(flasher-app
+    VERSION 1.0.0
+    LANGUAGES CXX
+)
 
 if(APPLE)
     find_library(IOKIT_LIB IOKit REQUIRED)

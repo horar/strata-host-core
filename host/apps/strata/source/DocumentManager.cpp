@@ -5,36 +5,40 @@
 // Document Manager class to interact with corresponding QML SGDocumentViewer Widget
 //
 
+#include "DocumentManager.h"
+
+#include "logging/LoggingQtCategories.h"
+
 #include <QObject>
 #include <QJsonObject>
 #include <QJsonArray>
-
-#include "DocumentManager.h"
+#include <QFileInfo>
+#include <QDir>
 
 using namespace std;
 
 DocumentManager::DocumentManager()
 {
-    qDebug("DocumentManager::DocumentManager() ctor: default");
+    qCDebug(logCategoryDocumentManager) << " ctor: default";
     init();
 }
 
 DocumentManager::DocumentManager(CoreInterface *coreInterface) : coreInterface_(coreInterface)
 {
-    qDebug("DocumentManager::DocumentManager() ctor: core interface");
+    qCDebug(logCategoryDocumentManager) << "core interface";
     /*
         Register document handler with CoreInterface
         This will also send a command to Nimbus
     */
     coreInterface->registerDataSourceHandler("document",
-                                            bind(&DocumentManager::dataSourceHandler,
+                                            bind(&DocumentManager::viewDocumentHandler,
                                             this, placeholders::_1));
     init();
 }
 
 DocumentManager::DocumentManager(QObject *parent) : QObject(parent)
 {
-    qDebug("DocumentManager::DocumentManager(parent=%p)", parent);
+    qCDebug(logCategoryDocumentManager) << "(parent=" << parent << ")";
     init();
 }
 
@@ -45,21 +49,17 @@ DocumentManager::~DocumentManager ()
 
 void DocumentManager::init()
 {
-    //qDebug("DocumentManager::init");
+    //qCDebug(logCategoryDocumentManager);
 
     // create document sets: "<name>",  & <name>_documnts_
-    document_sets_.emplace(make_pair(QString("schematic"), &schematic_documents_));
-    document_sets_.emplace(make_pair(QString("assembly"), &assembly_documents_));
-    document_sets_.emplace(make_pair(QString("layout"), &layout_documents_));
-    document_sets_.emplace(make_pair(QString("test_report"), &test_report_documents_));
-    document_sets_.emplace(make_pair(QString("targeted_content"), &targeted_documents_));
 
-    schematic_rev_count_ =  0;
-    assembly_rev_count_ =   0;
-    layout_rev_count_ =     0;
-    testreport_rev_count_ = 0;
-    targeted_rev_count_ =   0;
+    document_sets_.emplace(make_pair(QString("pdf"), &pdf_documents_));
+    document_sets_.emplace(make_pair(QString("download"), &download_documents_));
+    document_sets_.emplace(make_pair(QString("datasheet"), &datasheet_documents_));
 
+    pdf_rev_count_ =  0;
+    download_rev_count_ =   0;
+    datasheet_rev_count_ =   0;
     // register w/ Implementation Interface for Docoument Data Source Updates
     // TODO [ian] change to "document" on cloud update
 
@@ -68,13 +68,13 @@ void DocumentManager::init()
     //
     //sleep(2);
     //platformInterface_->registerDataSourceHandler("document",
-    //                                                 bind(&DocumentManager::dataSourceHandler,
+    //                                                 bind(&DocumentManager::viewDocumentHandler,
     //                                                      this, placeholders::_1));
 
 }
 
-// @f documentDataSourceHandler
-// @b handle document data source updates from Implementation Interface
+// @f viewDocumentHandler
+// @b handle view document source updates from Implementation Interface
 //
 // arguments:
 //  IN:
@@ -88,8 +88,7 @@ void DocumentManager::init()
 //  "type": "schematic",
 //  "documents": [
 //    {
-//      "data": "*******",
-//      "filename": "schematic15.png"
+//      "uri": "x/x/x/xxxx.pdf"
 //    }
 //  ]
 //}
@@ -98,8 +97,8 @@ void DocumentManager::init()
 //    "type": "document",
 //    "name": "schematic",
 //    "documents": [
-//      {"data": "*******","filename": "schematic1.png"},
-//      {"data": "*******","filename": "schematic1.png"}
+//      {"uri": "x/x/x/yyyy.pdf"},
+//      {"uri": "x/x/x/xxxx.pdf"}
 //    ]
 //  }
 //}
@@ -112,64 +111,91 @@ void DocumentManager::init()
 //}
 
 //
-void DocumentManager::dataSourceHandler(QJsonObject data)
+void DocumentManager::viewDocumentHandler(QJsonObject data)
 {
-    qDebug("DocumentManager::documentDataSourceHandler called");
+    qCDebug(logCategoryDocumentManager) << " called";
 
-    if (data.contains("name") && data.contains("documents") ) {
-
-        QString name = data.value("name").toString();  // Can be schematic, layout or assembly and so on
-
-        qDebug("DocumentManager::documentDataSourceHandler called : name=%s", name.toStdString().c_str());
-
-        DocumentSetPtr document_set = getDocumentSet (name);
-        if( document_set == nullptr ) {
-            qCritical("DocumentManager::updateDocuments: invalid document name = '%s'", name.toStdString ().c_str ());
-            return;
-        }
-        document_set->clear ();
-
-        // walk through documents and add to Document Viewer
+    if (data.contains("documents") ) {
         QJsonArray document_array = data["documents"].toArray();
-        foreach (const QJsonValue &r, document_array) {
-            QString fname = r["filename"].toString();
-            QString data = r["data"].toString();
-            Document *d = new Document (data);
-            document_set->append (d);
 
-            //qDebug("fname=%s, data=%.200s", fname.toStdString().c_str(), data.toStdString().c_str());
-        }
+        foreach (const QJsonValue &documentValue, document_array) {
+            QJsonObject documentObject = documentValue.toObject();
+
+            if (documentObject.contains("name") && documentObject.contains("uri")){
+                QString name = documentObject["name"].toString();
+                QString uri = documentObject["uri"].toString();
+
+                if (name != "download" && name != "datasheet") {
+                    name = QString("pdf");
+                }
+
+                DocumentSetPtr document_set = getDocumentSet (name);
+
+                if( document_set == nullptr ) {
+                    qCritical(logCategoryDocumentManager) << "invalid document name = '" << name.toStdString().c_str () << "'";
+                    return;
+                }
+                //                    document_set->clear ();
+
+                if (name == "datasheet") {
+                    // For datasheet, parse local csv into document list for UI to pick up parts, categories and PDF urls
+                    QFile file(uri);
+                    if (!file.open(QIODevice::ReadOnly)) {
+                        qCDebug(logCategoryDocumentManager) << file.errorString();
+                    }
+
+                    // Create a document and add to datasheet_documents_ for each lines of CSV
+                    while (!file.atEnd()) {
+                        QString line = file.readLine();
+                        line.remove(QRegExp("\n|\r\n|\r"));
+                        QStringList datasheetLine = line.split(QRegExp("(,)(?=(?:[^\"]|\"[^\"]*\")*$)"));  // Split on commas that are not inside quotes
+                        datasheetLine.replaceInStrings("\"", "");  // Remove quotes that stem from commas in CSV titles
+                        Document *d = new Document (datasheetLine.at(2), datasheetLine.at(0), datasheetLine.at(1));
+                        document_set->append (d);
+                    }
+                    file.close();
+
+                } else {
+                    QFileInfo fi(uri);
+                    QString filename = fi.fileName();
+                    QDir dir(fi.dir());
+                    QString dirname = dir.dirName();
+                    if (dirname == "faq") {
+                        dirname = "FAQ";
+                    }
+                    Document *d = new Document (uri, filename, dirname);
+                    if (dirname == "layout") {  // Sort layout to front
+                        document_set->insert (0, d);
+                    } else {
+                        document_set->append (d);
+                    }
+                }
 
 
+                // TODO: [ian] SUPER hack. Unable to call "emit" on dynamic document set.
+                //   it may be possible to use QObject::connect to create a "dispatcher" type object
+                //   to emit based on string set name
+                //
+        //        if( name == "pdf" ) {
+        //            emit pdfDocumentsChanged();
+        //            emit pdfRevisionCountChanged(++pdfrev_count_);
+        //        }
+        //        else if( name == "download" ) {
+        //            emit downloadDocumentsChanged();
+        //            emit downloadRevisionCountChanged(++download_rev_count_);
+        //        }
+        //        else if( name == "datasheet" ) {
+        //            emit datasheetDocumentsChanged();
+        //            emit datasheetRevisionCountChanged(++datasheet_rev_count_);
+        //        }
+        //        else {
+        //            qCritical(logCategoryDocumentManager) << "invalid document name = " << '" << name.toStdString ().c_str () << "'";
+        //        }
+            }
+        }
 
-        // TODO: [ian] SUPER hack. Unable to call "emit" on dynamic document set.
-        //   it may be possible to use QObject::connect to create a "dispatcher" type object
-        //   to emit based on string set name
-        //
-        if( name == "schematic" ) {
-            emit schematicDocumentsChanged();
-            emit schematicRevisionCountChanged(++schematic_rev_count_);
-        }
-        else if( name == "assembly" ) {
-
-            emit assemblyDocumentsChanged();
-            emit assemblyRevisionCountChanged(++assembly_rev_count_);
-        }
-        else if( name == "layout" ) {
-            emit layoutDocumentsChanged();
-            emit layoutRevisionCountChanged(++layout_rev_count_);
-        }
-        else if( name == "test_report" ) {
-            emit testReportDocumentsChanged();
-            emit testReportRevisionCountChanged(++testreport_rev_count_);
-        }
-        else if( name == "targeted_content" ) {
-            emit targetedDocumentsChanged();
-            emit targetedRevisionCountChanged(++targeted_rev_count_);
-        }
-        else {
-            qCritical("DocumentManager::updateDocuments: invalid document name = '%s'", name.toStdString ().c_str ());
-        }
+        // Signal that stops doc loading spinner
+        emit documentsUpdated();
     }
 }
 
@@ -190,7 +216,7 @@ DocumentSetPtr DocumentManager::getDocumentSet(const QString &set)
 {
     auto document_set = document_sets_.find(set.toStdString ().c_str ());
     if (document_set == document_sets_.end()) {
-        qDebug("DocumentManager::getDocumentSet: %s NOT FOUND)", set.toStdString ().c_str ());
+        qCDebug(logCategoryDocumentManager) << set.toStdString ().c_str () << " NOT FOUND";
         return nullptr;
     }
 
@@ -206,27 +232,17 @@ void DocumentManager::clearDocumentSets()
 
 }
 
-void DocumentManager::clearSchematicRevisionCount() {
-    schematic_rev_count_ = 0;
-    emit schematicRevisionCountChanged(schematic_rev_count_);
+void DocumentManager::clearPdfRevisionCount() {
+    pdf_rev_count_ = 0;
+    emit pdfRevisionCountChanged(pdf_rev_count_);
 }
 
-void DocumentManager::clearAssemblyRevisionCount() {
-    assembly_rev_count_ = 0;
-    emit assemblyRevisionCountChanged(assembly_rev_count_);
+void DocumentManager::clearDownloadRevisionCount() {
+    download_rev_count_ = 0;
+    emit downloadRevisionCountChanged(download_rev_count_);
 }
 
-void DocumentManager::clearLayoutRevisionCount() {
-    layout_rev_count_ = 0;
-    emit layoutRevisionCountChanged(layout_rev_count_);
-}
-
-void DocumentManager::clearTestReportRevisionCount() {
-    testreport_rev_count_ = 0;
-    emit testReportRevisionCountChanged(testreport_rev_count_);
-}
-
-void DocumentManager::clearTargetedRevisionCount() {
-    targeted_rev_count_ = 0;
-    emit targetedRevisionCountChanged(targeted_rev_count_);
+void DocumentManager::clearDatasheetRevisionCount() {
+    datasheet_rev_count_ = 0;
+    emit datasheetRevisionCountChanged(datasheet_rev_count_);
 }

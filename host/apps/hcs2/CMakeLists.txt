@@ -1,12 +1,7 @@
-cmake_minimum_required(VERSION 3.1)
-project(hcs2)     #old: HostControllerService
-
-# The version number
-set(HostControllerService_VERSION_MAJOR 1)
-set(HostControllerService_VERSION_MINOR 0)
-
-set(CMAKE_CXX_STANDARD 11)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
+project(hcs2      #old: HostControllerService
+    VERSION 1.0
+    LANGUAGES CXX
+)
 
 # Add Red color for errors
 string(ASCII 27 Esc)
@@ -14,27 +9,27 @@ set(red "${Esc}[31m")
 set(reset_color "${Esc}[m")
 
 if (CROSSCOMPILE)
-    message("Building WINDOWS")
+    message(STATUS "Building WINDOWS")
 elseif (UNIX AND NOT APPLE AND NOT CROSSCOMPILE)
-    message("Building LINUX")
+    message(STATUS "Building LINUX")
 elseif (APPLE)
-    message("Building MAC")
+    message(STATUS "Building MAC")
 else()
-    message("ERROR: unsupported operating system !")
+    message(FATAL_ERROR "unsupported operating system !")
 endif ()
 
 if (CROSSCOMPILE)
-    message("TOOL CHAIN: windows")
+    message(STATUS "TOOL CHAIN: windows")
     SET(CMAKE_CXX_FLAGS "-v -std=gnu++11 -static-libstdc++ -static-libgcc -static")
 elseif(UNIX AND NOT APPLE AND NOT CROSSCOMPILE)
-    message("TOOL CHAIN: linux")
+    message(STATUS "TOOL CHAIN: linux")
     if (NOT CMAKE_BUILD_TYPE)
         set(CMAKE_BUILD_TYPE RelWithDebInfo)
         # set(CMAKE_BUILD_TYPE Debug) # To enable debugging
     endif()
 
 elseif (APPLE)
-    message("TOOL CHAIN: mac")
+    message(STATUS "TOOL CHAIN: mac")
 
     if (NOT CMAKE_BUILD_TYPE)
         set(CMAKE_BUILD_TYPE RelWithDebInfo)
@@ -44,7 +39,7 @@ elseif (APPLE)
     find_library(IOKIT_LIBRARY IOKit)
     find_library(FOUNDATION_LIBRARY Foundation)
 else()
-    message("ERROR: unsupported operating system !")
+    message(FATAL_ERROR "unsupported operating system !")
 endif ()
 
 # set(HOST_CONTROLLER_SERVICE_BINARY_NAME "hcs")
@@ -80,7 +75,7 @@ include_directories(
 
 if (APPLE)
     #--- Mac OSX
-    message("INCLUDE/LITECORE: mac")
+    message(STATUS "INCLUDE/LITECORE: mac")
 
     # Target Files
     link_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../lib/macos/litecore)
@@ -89,15 +84,15 @@ if (APPLE)
     find_library(litecore STATIC NAMES LiteCore
             HINTS "${CMAKE_CURRENT_SOURCE_DIR}/../../lib/macos/litecore")
     if (litecore)
-        message("Found litecore library")
+        message(STATUS "Found litecore library")
     else ()
         # Make this Red so its hard to miss
-        message("${red} !! Litecore library is missing. Run configure script in cloud/submodule_patches/ !! ${reset_color}")
+        message(FATAL_ERROR "${red} !! Litecore library is missing. Run configure script in cloud/submodule_patches/ !! ${reset_color}")
     endif ()
 
 elseif (UNIX AND NOT APPLE AND NOT CROSSCOMPILE)
     #--- Linux
-    message("INCLUDE/LITECORE: linux")
+    message(STATUS "INCLUDE/LITECORE: linux")
 
     # Target Files
     link_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../lib/linux/litecore)
@@ -106,24 +101,24 @@ elseif (UNIX AND NOT APPLE AND NOT CROSSCOMPILE)
     find_library(litecore STATIC NAMES LiteCore
             HINTS "${CMAKE_CURRENT_SOURCE_DIR}/../../../cloud/couchbase-lite-core/build_cmake/unix")
     if (litecore)
-        message("Found litecore library")
+        message(STATUS "Found litecore library")
     else ()
         # Make this Red so its hard to miss
-        message("${red} !! Litecore library is missing. Run configure script in cloud/submodule_patches/ !! ${reset_color}")
+        message(FATAL_ERROR "${red} !! Litecore library is missing. Run configure script in cloud/submodule_patches/ !! ${reset_color}")
     endif ()
 elseif (CROSSCOMPILE)
 
     # --- WINDOWS
-    message("INCLUDE/LITECORE: windows")
+    message(STATUS "INCLUDE/LITECORE: windows")
 
     # Litecore; Only link LiteCore to HCS. The others will cause problems on crosscompile.
     # Currently they are not needed.
     find_library(litecore NAMES LiteCore HINTS "${NIMBUS_DIR}/bin/x64")
     find_library(litecoreREST NAMES LiteCoreREST HINTS "${NIMBUS_DIR}/bin/x64")
     find_library(fleece NAMES FleeceStatic HINTS "${NIMBUS_DIR}/bin/x64")
-    message("Using litecore at: ${litecore}")
-    message("Using litecoreREST at: ${litecoreREST}")
-    message("Using fleece at: ${fleece}")
+    message(STATUS "Using litecore at: ${litecore}")
+    message(STATUS "Using litecoreREST at: ${litecoreREST}")
+    message(STATUS "Using fleece at: ${fleece}")
 
     # Overwrite definition for schema; Release backports look in the same folder
     remove_definitions(-DNIMBUS_SCHEMA_PATH)
@@ -144,7 +139,7 @@ endif()
 
 if (CROSSCOMPILE)
     # --- WINDOWS
-    message("INCLUDE/LITECORE: windows")
+    message(STATUS "INCLUDE/LITECORE: windows")
 
     # ZMQ
     link_directories(${CMAKE_CURRENT_SOURCE_DIR}/../lib/windows/zeromq)
@@ -159,9 +154,9 @@ if (CROSSCOMPILE)
     find_library(litecore NAMES LiteCore HINTS "${NIMBUS_DIR}/bin/x64")
     find_library(litecoreREST NAMES LiteCoreREST HINTS "${NIMBUS_DIR}/bin/x64")
     find_library(fleece NAMES FleeceStatic HINTS "${NIMBUS_DIR}/bin/x64")
-    message("Using litecore at: ${litecore}")
-    message("Using litecoreREST at: ${litecoreREST}")
-    message("Using fleece at: ${fleece}")
+    message(STATUS "Using litecore at: ${litecore}")
+    message(STATUS "Using litecoreREST at: ${litecoreREST}")
+    message(STATUS "Using fleece at: ${fleece}")
 
     # Overwrite definition for schema; Release backports look in the same folder
     remove_definitions(-DNIMBUS_SCHEMA_PATH)

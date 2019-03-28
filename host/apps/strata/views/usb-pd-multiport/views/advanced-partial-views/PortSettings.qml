@@ -213,21 +213,10 @@ Item {
 
             //when changing the value
             onActivated: {
-                console.log("setting max power to ",parseInt(maxPowerOutput.comboBox.currentText));
+                console.log("Max Power Output: setting max power to ",parseInt(maxPowerOutput.comboBox.currentText));
                 platformInterface.set_usb_pd_maximum_power.update(portNumber,parseInt(maxPowerOutput.comboBox.currentText))
             }
 
-            //notification of a change from elsewhere
-            //NB this info comes from the periodic power notification, not from the usb_pd_maximum_power notificaiton
-//            property var currentMaximumPower: platformInterface.usb_pd_maximum_power.commanded_max_power
-//            onCurrentMaximumPowerChanged: {
-//                if (platformInterface.usb_pd_maximum_power.port === portNumber){
-//                    console.log("got a new commanded max power for port",platformInterface.usb_pd_maximum_power.port)
-//                    maxPowerOutput.currentIndex = maxPowerOutput.comboBox.find( parseInt (platformInterface.usb_pd_maximum_power.commanded_max_power))
-//                    console.log("set port power to index",maxPowerOutput.currentIndex)
-//                }
-
-//            }
         }
 
         Text{
@@ -345,13 +334,14 @@ Item {
                 if (platformInterface.get_cable_loss_compensation.port === portNumber){
                     //console.log("cable compensation for port ",portNumber,"set to",platformInterface.get_cable_loss_compensation.bias_voltage*1000)
                     if (platformInterface.get_cable_loss_compensation.bias_voltage === 0){
-                        cableCompensationButtonStrip.buttonList[0].children[0].enabled = true;
+                        cableCompensationButtonStrip.buttonList[0].children[0].checked = true;
                     }
                     else if (platformInterface.get_cable_loss_compensation.bias_voltage * 1000 == 100){
-                        cableCompensationButtonStrip.buttonList[0].children[2].enabled = true;
+                        //console.log("setting cable compensation for port",portNumber,"to 100");
+                        cableCompensationButtonStrip.buttonList[0].children[1].checked = true;
                     }
                     else if (platformInterface.get_cable_loss_compensation.bias_voltage * 1000 == 200){
-                        cableCompensationButtonStrip.buttonList[0].children[2].enabled = true;
+                        cableCompensationButtonStrip.buttonList[0].children[2].checked = true;
                     }
                 }
             }
@@ -374,7 +364,7 @@ Item {
 
                 SGSegmentedButton{
                     id: cableCompensationSetting2
-                    text: qsTr("100 mV/A")
+                    text: qsTr("100 mv/A")
                     checkable: true
 
                     onClicked:{
@@ -386,7 +376,7 @@ Item {
 
                 SGSegmentedButton{
                     id:cableCompensationSetting3
-                    text: qsTr("200 mV/A")
+                    text: qsTr("200 mv/A")
                     checkable: true
 
                     onClicked:{

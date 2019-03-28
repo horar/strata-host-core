@@ -71,38 +71,27 @@ Rectangle {
             target:titleBackground
             property: "height"
             to:advancedTitleBackgroundHeight
-            duration: tabTransitionTime
-        }
-
-        PropertyAnimation{
-            target:powerInBox
-            property: "height"
-            to:-5
-            duration: tabTransitionTime
+            duration: basicToAdvancedTransitionTime
         }
 
         PropertyAnimation{
             target:portSubtitle
             property: "opacity"
             to:0
-            duration: tabTransitionTime
+            duration: basicToAdvancedTransitionTime
         }
 
         PropertyAnimation{
             target:chargingRectangle
             property: "opacity"
             to:1
-            duration: tabTransitionTime
+            duration: basicToAdvancedTransitionTime
         }
     }
 
     function transitionToBasicView(){
-        outputVoltageBox.anchors.topMargin = 8;
-        maxPowerBox.anchors.topMargin = 8;
-        powerInBox.anchors.topMargin = 8;
-        powerOutBox.anchors.topMargin = 8;
-        temperatureBox.anchors.topMargin = 8;
         portToBasic.start()
+        //console.log("usb a port transitioning to basic")
     }
 
     ParallelAnimation{
@@ -113,28 +102,21 @@ Rectangle {
             target:titleBackground
             property: "height"
             to:basicTitleBackgroundHeight
-            duration: tabTransitionTime
-        }
-
-        PropertyAnimation{
-            target:powerInBox
-            property: "height"
-            to:40
-            duration: tabTransitionTime
+            duration: advancedToBasicTransitionTime
         }
 
         PropertyAnimation{
             target:portSubtitle
             property: "opacity"
             to:1
-            duration: tabTransitionTime
+            duration: advancedToBasicTransitionTime
         }
 
         PropertyAnimation{
             target:chargingRectangle
             property: "opacity"
             to:0
-            duration: tabTransitionTime
+            duration: advancedToBasicTransitionTime
         }
     }
 
@@ -204,10 +186,10 @@ Rectangle {
         anchors.left:root.left
         anchors.leftMargin: 10
         anchors.top: outputVoltageBox.bottom
-        anchors.topMargin: 8
+        anchors.topMargin: isUSBAPort ? 0:8
         anchors.right: root.right
         anchors.rightMargin: 10
-        height:40
+        height: isUSBAPort ? 0:40
         label: "MAXIMUM POWER"
         unit: "W"
         color:"transparent"
@@ -219,15 +201,14 @@ Rectangle {
         anchors.left:root.left
         anchors.leftMargin: 10
         anchors.top: maxPowerBox.bottom
-        anchors.topMargin: 8
+        anchors.topMargin: isUSBAPort ? 0:8
         anchors.right: root.right
         anchors.rightMargin: 10
-        height:40
+        height: isUSBAPort ? 0:40
         label: "POWER IN"
         unit:"W"
         color:"transparent"
         icon: "../images/icon-voltage.svg"
-        visible: !isUSBAPort
     }
 
     PortStatBox{
@@ -253,7 +234,7 @@ Rectangle {
         anchors.topMargin: 8
         anchors.right: root.right
         anchors.rightMargin: 10
-        height:40
+        height: isUSBAPort ? 0:40
         label: "TEMPERATURE"
         unit:"°C"
         color:"transparent"

@@ -13,3 +13,6 @@
 [submodule "host/libs/couchbaselite/couchbase-lite-core"]
 	path = host/libs/couchbaselite/couchbase-lite-core
 	url = https://github.com/couchbase/couchbase-lite-core.git
+[submodule "host/extern/spdlog"]
+	path = host/extern/spdlog
+	url = https://github.com/gabime/spdlog.git/
