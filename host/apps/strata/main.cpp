@@ -92,7 +92,22 @@ int main(int argc, char *argv[])
 
         QStringList arguments;
         arguments << "-f" << hcsConfigPath;
-        hcsProcess->setProcessChannelMode(QProcess::ForwardedChannels);
+
+        // XXX: [LC] temporary solutions until Strata Monitor takeover 'hcs' service management
+        QObject::connect(hcsProcess.get(), &QProcess::readyReadStandardOutput, [&]() {
+            const QString hscMsg{QString::fromLatin1(hcsProcess->readAllStandardOutput())};
+            for (const auto& line : hscMsg.split(QRegExp("\n|\r\n|\r"))) {
+                qCDebug(logCategoryHcs) << line;
+            }
+        } );
+        QObject::connect(hcsProcess.get(), &QProcess::readyReadStandardError, [&]() {
+            const QString hscMsg{QString::fromLatin1(hcsProcess->readAllStandardError())};
+            for (const auto& line : hscMsg.split(QRegExp("\n|\r\n|\r"))) {
+                qCCritical(logCategoryHcs) << line;
+            }
+        });
+        // XXX: [LC] end
+
         hcsProcess->start(hcsPath, arguments, QIODevice::ReadWrite);
         if (!hcsProcess->waitForStarted()) {
             qCWarning(logCategoryStrataDevStudio) << "Process does not started yet (state:" << hcsProcess->state() << ")";
