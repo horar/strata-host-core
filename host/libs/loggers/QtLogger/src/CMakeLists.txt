@@ -5,6 +5,7 @@ find_package(Qt5 5.10
 
 add_library(${PROJECT_NAME} STATIC
     QtLoggerSetup.cpp
+    LoggingQtCategories.cpp
 )
 
 set_target_properties(${PROJECT_NAME} PROPERTIES
