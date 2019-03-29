@@ -6,8 +6,6 @@ message(STATUS "${PROJECT_NAME} v${PROJECT_VERSION}")
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-include(FeatureSummary)
-
 find_package(Qt5 5.10
     COMPONENTS Core Gui Widgets Quick Qml WebView WebEngine Charts
     REQUIRED
@@ -111,5 +109,3 @@ list(APPEND QML_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/")
 set(QML_IMPORT_PATH "${QML_DIRS};${QML_IMPORT_PATH}"
     CACHE STRING "Qt Creator extra qml import paths" FORCE
 )
-
-feature_summary(WHAT ALL)

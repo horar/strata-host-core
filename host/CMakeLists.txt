@@ -6,6 +6,7 @@ endif()
 
 project(host LANGUAGES NONE)
 
+include(FeatureSummary)
 include(CTest)
 
 set(CMAKE_CXX_STANDARD 11)
@@ -43,3 +44,5 @@ add_subdirectory(apps)
 #add_subdirectory(test)
 add_subdirectory(utils)
 add_subdirectory(research_spikes)
+
+feature_summary(WHAT ALL)
