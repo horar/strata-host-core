@@ -1,8 +1,8 @@
 diff --git a/web/viewer.css b/web/viewer.css
-index 72230783..ad616f89 100644
+index 45385ec8..8fd097c1 100644
 --- a/web/viewer.css
 +++ b/web/viewer.css
-@@ -843,16 +843,31 @@ html[dir='rtl'] .toolbarButton.pageDown::before {
+@@ -843,27 +843,48 @@ html[dir='rtl'] .toolbarButton.pageDown::before {
    content: url(images/toolbarButton-presentationMode.png);
  }
  
@@ -34,7 +34,16 @@ index 72230783..ad616f89 100644
  .toolbarButton.download::before,
  .secondaryToolbarButton.download::before {
    content: url(images/toolbarButton-download.png);
-@@ -864,6 +879,7 @@ html[dir='rtl'] .toolbarButton.pageDown::before {
+ }
+ 
++.toolbarButton.download,
++.secondaryToolbarButton.download {
++  display: none !important;
++}
++
+ .toolbarButton.bookmark,
+ .secondaryToolbarButton.bookmark {
+   box-sizing: border-box;
    outline: none;
    padding-top: 4px;
    text-decoration: none;
@@ -42,7 +51,7 @@ index 72230783..ad616f89 100644
  }
  .secondaryToolbarButton.bookmark {
    padding-top: 5px;
-@@ -1656,16 +1672,31 @@ html[dir='rtl'] #documentPropertiesOverlay .row > * {
+@@ -1656,21 +1677,41 @@ html[dir='rtl'] #documentPropertiesOverlay .row > * {
      content: url(images/toolbarButton-presentationMode@2x.png);
    }
  
@@ -74,3 +83,16 @@ index 72230783..ad616f89 100644
    .toolbarButton.download::before,
    .secondaryToolbarButton.download::before {
      content: url(images/toolbarButton-download@2x.png);
+   }
+ 
++  .toolbarButton.download,
++  .secondaryToolbarButton.download {
++    display: none !important;
++  }
++
+   .toolbarButton.bookmark::before,
+   .secondaryToolbarButton.bookmark::before {
+     content: url(images/toolbarButton-bookmark@2x.png);
+-- 
+2.20.1
+
