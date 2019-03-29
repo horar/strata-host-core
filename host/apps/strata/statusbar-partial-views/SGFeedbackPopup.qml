@@ -6,6 +6,7 @@ import QtGraphicalEffects 1.0
 import "../js/feedback.js" as Feedback
 import "../js/navigation_control.js" as NavigationControl
 
+import Strata.Logger 1.0
 
 Popup {
     id: root
@@ -330,14 +331,14 @@ Popup {
                                 text: "Submit"
                                 onClicked: {
 
-                                    console.log ("in connection",textEdit.text)
+                                    console.log(Logger.devStudioFeedbackCategory, "in connection",textEdit.text)
                                     if(nameBox.textInput.text === "" || emailBox.textInput.text === "" || companyBox.textInput.text === ""  || textEdit.text === ""  ) {
                                         errorPopup.popupText = "All the required fields need to be completed to submit"
                                         errorPopup.open()
-                                        console.log ("error!! empty")
+                                        console.log(Logger.devStudioFeedbackCategory, "error!! empty")
                                     }
                                     else if (isEmailAddress(emailBox.textInput.text) === false){
-                                        console.log("invalid email address")
+                                        console.log(Logger.devStudioFeedbackCategory, "invalid email address")
                                         invalidEmailPopup.open()
                                     }
 

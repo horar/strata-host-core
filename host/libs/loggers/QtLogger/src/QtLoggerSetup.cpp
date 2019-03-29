@@ -1,5 +1,7 @@
 #include "QtLoggerSetup.h"
 
+#include "LoggingQtCategories.h"
+
 #include <SpdLogger.h>
 
 #include <QDebug>
@@ -42,7 +44,7 @@ QtLoggerSetup::QtLoggerSetup(const QCoreApplication& app) {
 }
 
 QtLoggerSetup::~QtLoggerSetup() {
-    qInfo() << "...Qt logging finished";
+    qCInfo(logCategoryQtLogger) << "...Qt logging finished";
 }
 
 void QtLoggerSetup::generateDefaultSettings() const {
@@ -121,12 +123,12 @@ void QtLoggerSetup::setupQtLog() {
 
     qInstallMessageHandler(qtLogCallback);
 
-    qInfo() << "Qt logging started...";
+    qCInfo(logCategoryQtLogger) << "Qt logging started...";
 
-    qDebug() << "Application setup:";
-    qDebug() << "\tfile:" << settings.fileName();
-    qDebug() << "\tformat:" << settings.format();
-    qDebug() << "\taccess" << settings.status();
-    qDebug() << "\tlogging category filte rules:" << filterRules;
-    qDebug() << "\tlogger message pattern:" << messagePattern;
+    qCDebug(logCategoryQtLogger) << "Application setup:";
+    qCDebug(logCategoryQtLogger) << "\tfile:" << settings.fileName();
+    qCDebug(logCategoryQtLogger) << "\tformat:" << settings.format();
+    qCDebug(logCategoryQtLogger) << "\taccess" << settings.status();
+    qCDebug(logCategoryQtLogger) << "\tlogging category filte rules:" << filterRules;
+    qCDebug(logCategoryQtLogger) << "\tlogger message pattern:" << messagePattern;
 }

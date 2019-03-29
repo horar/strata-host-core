@@ -132,7 +132,7 @@ void DocumentManager::viewDocumentHandler(QJsonObject data)
                 DocumentSetPtr document_set = getDocumentSet (name);
 
                 if( document_set == nullptr ) {
-                    qCritical(logCategoryDocumentManager) << "invalid document name = '" << name.toStdString().c_str () << "'";
+                    qCCritical(logCategoryDocumentManager) << "invalid document name = '" << name.toStdString().c_str () << "'";
                     return;
                 }
                 //                    document_set->clear ();
@@ -189,7 +189,7 @@ void DocumentManager::viewDocumentHandler(QJsonObject data)
         //            emit datasheetRevisionCountChanged(++datasheet_rev_count_);
         //        }
         //        else {
-        //            qCritical(logCategoryDocumentManager) << "invalid document name = " << '" << name.toStdString ().c_str () << "'";
+        //            qCCritical(logCategoryDocumentManager) << "invalid document name = " << '" << name.toStdString ().c_str () << "'";
         //        }
             }
         }
