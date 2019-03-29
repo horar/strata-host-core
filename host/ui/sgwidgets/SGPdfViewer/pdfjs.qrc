@@ -397,7 +397,6 @@
         <file>minified/web/locale/zh-TW/viewer.properties</file>
         <file>minified/web/locale/zu/viewer.properties</file>
         <file>minified/web/locale/locale.properties</file>
-        <file>minified/web/compressed.tracemonkey-pldi-09.pdf</file>
         <file>minified/web/pdf.viewer.js</file>
         <file>minified/web/viewer.css</file>
         <file>minified/web/viewer.html</file>
