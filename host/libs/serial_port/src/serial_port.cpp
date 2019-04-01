@@ -17,7 +17,7 @@ serial_port::serial_port() : portHandle_(nullptr), event_(nullptr)
 
 serial_port::~serial_port()
 {
-
+    close();
 }
 
 void serial_port::setupSGFormat()
@@ -61,14 +61,17 @@ bool serial_port::open(const std::string& port_name)
 
 void serial_port::close()
 {
-    if (!portHandle_)
+    if (portHandle_ == nullptr) {
         return;
+    }
+
 
 #if defined(__unix__) || defined(__APPLE__)
     flock(getFileDescriptor(), LOCK_UN);
 #endif
 
     if (sp_close(portHandle_) != SP_OK) {
+        assert(false);
         return;
     }
     portHandle_ = nullptr;

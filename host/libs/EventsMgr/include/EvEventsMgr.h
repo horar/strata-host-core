@@ -13,6 +13,9 @@ struct event_base;
 namespace spyglass
 {
 
+/**
+ * NOTE: This class is working on Mac,Linux with file descriptors (handles). But on Windows it works only with WinSock handles.
+ */
 class EvEventsMgr
 {
 public:
