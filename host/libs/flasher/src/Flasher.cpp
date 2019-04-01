@@ -1,18 +1,23 @@
 
 #include "Flasher.h"
 
+#include <Buypass.h>
+
 #include <thread>
 #include <numeric>
 #include <fstream>
+#include <iostream>
 
 #include <rapidjson/writer.h>
 #include <rapidjson/stringbuffer.h>
 
-#include <Connector.h>
 #include <CodecBase64.h>
+#include <PlatformConnection.h>
 
 
 using namespace rapidjson;
+
+static const unsigned int g_waitForMesageTime = 200;
 
 
 // Schemas are gerenerated by https://www.liquid-technologies.com/online-json-to-schema-converter
@@ -46,6 +51,33 @@ rapidjson::SchemaDocument Flasher::ackJsonSchema( createJsonSchema(R"({
         "payload"
       ]
     })") );
+
+// {"notification":{"value":"platform_id","payload":{ }}}
+rapidjson::SchemaDocument Flasher::notifySimpleJsonSchema( createJsonSchema(R"({
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "notification": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "type": "string"
+        },
+        "payload": {
+          "type": "object"
+        }
+      },
+      "required": [
+        "value",
+        "payload"
+      ]
+    }
+  },
+  "required": [
+    "notification"
+  ]
+    })") );
+
 
 // {"notification":{"value":"write_fib","payload":{"status":"ok"}}}
 rapidjson::SchemaDocument Flasher::notifyJsonSchema( createJsonSchema(R"({
@@ -137,30 +169,41 @@ rapidjson::SchemaDocument Flasher::notifyBackupJsonSchema( createJsonSchema(R"({
 })") );
 
 
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
 Flasher::Flasher()
-: Flasher(nullptr, "")
+: Flasher(nullptr, std::string())
 {
 }
 
 
-Flasher::Flasher(Connector* connector, const std::string& firmwareFilename)
+Flasher::Flasher(spyglass::PlatformConnection* connector, const std::string& firmwareFilename)
 : serial_(connector)
+, serial_listener_guard_(connector)
 , firmwareFilename_(firmwareFilename)
+, dbg_out_stream_(nullptr)
 {
+
 }
 
 Flasher::~Flasher()
 {
 }
 
-void Flasher::setConnector(Connector* connector)
+void Flasher::setConnector(spyglass::PlatformConnection* connector)
 {
     serial_ = connector;
+    serial_listener_guard_.attach(serial_);
 }
 
 void Flasher::setFirmwareFilename(const std::string& firmwareFilename)
 {
     firmwareFilename_ = firmwareFilename;
+}
+
+void Flasher::setCommunicationMsgStream(std::ostream* output)
+{
+    dbg_out_stream_ = output;
 }
 
 SchemaDocument Flasher::createJsonSchema(const std::string& schemaJson)
@@ -205,9 +248,13 @@ bool Flasher::readAck(const std::string& ackName)
 {
     std::string message;
 
-    if (false == serial_->read(message))
+    if (false == serial_->getMessage(message))
     {
         return false;
+    }
+
+    if (dbg_out_stream_) {
+        *dbg_out_stream_ << message << std::endl;
     }
 
     Document document;
@@ -229,14 +276,49 @@ bool Flasher::readAck(const std::string& ackName)
     return payload["return_value"].GetBool();
 }
 
+bool Flasher::readNotifySimple(const std::string& notificationName, rapidjson::Value& payload)
+{
+    std::string message;
+
+    if (false == serial_->getMessage(message))
+    {
+        return false;
+    }
+
+    if (dbg_out_stream_) {
+        *dbg_out_stream_ << message << std::endl;
+    }
+
+    Document document;
+
+    if (false == validateJsonMessage(message, notifySimpleJsonSchema, document))
+    {
+        return false;
+    }
+
+    Value& notification(document["notification"]);
+
+    if (notificationName != notification["value"].GetString())
+    {
+        return false;
+    }
+
+    payload = notification["payload"];
+    return true;
+}
+
 
 bool Flasher::readNotify(const std::string& notificationName)
 {
     std::string message;
 
-    if (false == serial_->read(message))
+    if (false == serial_->getMessage(message))
     {
         return false;
+    }
+
+    if (dbg_out_stream_) {
+        *dbg_out_stream_ << message << std::endl;
     }
 
     Document document;
@@ -267,19 +349,44 @@ bool Flasher::readNotify(const std::string& notificationName)
 
 bool Flasher::processCommandFlashFirmware()
 {
-    for (int32_t errorCounter = 0; RESPONSE_STATUS_MAX_ERRORS != errorCounter; ++errorCounter)
+    const int max_retry_wait_for_message = 10;
+
+    for (int errorCounter = 0; RESPONSE_STATUS_MAX_ERRORS != errorCounter; errorCounter++)
     {
-        if (writeCommandFlash() &&
-            readAck("flash_firmware") &&
-            readNotify("flash_firmware"))
-        {
-            return true;
+        if (false == writeCommandFlash()) {
+            continue;
+        }
+
+        ResponseState waitState = eWaitForAck;
+        for (int retry = 0; retry < max_retry_wait_for_message; retry++) {
+
+            if (serial_->waitForMessages(g_waitForMesageTime) > 0) {
+
+                if (waitState == eWaitForAck) {
+                    if (readAck("flash_firmware")) {
+                        waitState = eWaitForNotify;
+                    }
+                }
+                if (waitState == eWaitForNotify) {
+                    if (readNotify("flash_firmware")) {
+                        return true;
+                    }
+                }
+            }
         }
     }
 
     return false;
 }
 
+bool Flasher::sendCommand(const std::string& cmd)
+{
+    bool ret = serial_->sendMessage(cmd);
+    if (ret && dbg_out_stream_) {
+        *dbg_out_stream_ << cmd << std::endl;
+    }
+    return ret;
+}
 
 bool Flasher::writeCommandFlash()
 {
@@ -304,7 +411,8 @@ bool Flasher::writeCommandFlash()
     writer.Int(static_cast<int>(flashChunk_.data.size()));
 
     writer.Key("crc");
-    writer.Int(std::accumulate(flashChunk_.data.begin(), flashChunk_.data.end(), 0));
+    writer.Int(crc16::buypass(static_cast<const uint8_t *>(flashChunk_.data.data()),
+                              static_cast<uint32_t>(flashChunk_.data.size())));
 
     std::string chunkBase64;
     chunkBase64.resize(base64::encoded_size(flashChunk_.data.size()));
@@ -319,67 +427,123 @@ bool Flasher::writeCommandFlash()
 
     writer.EndObject();
 
-    return serial_->send(s.GetString());
+    return sendCommand(s.GetString());
 }
 
 
-bool Flasher::isPlatfromConnected() const
+bool Flasher::waitForPlatformConnected(std::string &verbose_name)
 {
     // Wait for a platfrom to be connected. Pooling!!!
     const int POOLING_COUNTER_LIMIT = 100;
-    int pooling_counter = 0;
-    while(!serial_->isSpyglassPlatform()){
+    const int max_retry_wait_for_message = 10;
 
-        // Sleep for 100ms.
-        std::this_thread::sleep_for (std::chrono::milliseconds(100));
-        std::cout << "Waiting for a platfrom to be connected."<< std::endl;
-        pooling_counter++;
+    const std::string init_msg("{\"cmd\":\"request_platform_id\"}");
 
-        if(pooling_counter > POOLING_COUNTER_LIMIT){
-            std::cout << "Could not connect to a platfrom. Exiting Flash function!"<< std::endl;
-            return false;
+    std::string message;
+    for(int counter = 0; counter < POOLING_COUNTER_LIMIT; counter++) {
+
+        if (false == sendCommand(init_msg)) {
+            continue;
+        }
+
+        ResponseState waitState = eWaitForAck;
+        for (int retry = 0; retry < max_retry_wait_for_message; retry++) {
+
+            if (serial_->waitForMessages(g_waitForMesageTime) > 0) {
+                if (waitState == eWaitForAck) {
+                    if (readAck("request_platform_id")) {
+                        waitState = eWaitForNotify;
+                    }
+                }
+                if (waitState == eWaitForNotify) {
+
+                    rapidjson::Value payload;
+                    if (readNotifySimple("platform_id", payload)) {
+
+                        if (payload.HasMember("verbose_name")) {
+                            verbose_name = payload["verbose_name"].GetString();
+                        }
+                        return true;
+                    }
+                }
+            }
         }
     }
 
-    return true;
+    std::cout << "Could not connect to a platfrom. Exiting Flash function!"<< std::endl;
+    return false;
 }
 
-bool Flasher::initializeBootloader() const
+bool Flasher::processCommandUpdateFirmware()
 {
-    if (false == isPlatfromConnected())
-    {
-        return false;
+    const int max_retry_wait_for_message = 10;
+
+    const std::string update_fw_msg(R"({'cmd':'update_firmware'})");
+
+    // Fimrware update command to be sent to the platfrom core.
+    // Enter bootloader mode.
+    serial_->sendMessage(update_fw_msg);
+
+    ResponseState waitState = eWaitForAck;
+    for(int retry = 0; retry < max_retry_wait_for_message; retry++) {
+
+        if (serial_->waitForMessages(g_waitForMesageTime) > 0) {
+
+            if (waitState == eWaitForAck) {
+                if (readAck("update_firmware")) {
+                    waitState = eWaitForNotify;
+                }
+            }
+            if (waitState == eWaitForNotify) {
+                if (readNotify("update_firmware")) {
+                    return true;
+                }
+            }
+        }
     }
 
-    // Read dealer id after spyglass enabled platform was found
-    if(serial_->getDealerID() == "Bootloader")
+    return false;
+}
+
+bool Flasher::initializeBootloader()
+{
+    const int max_retry_of_enter_bootloader = 3;
+
+    for(int restart_retry = 0; restart_retry < max_retry_of_enter_bootloader; restart_retry++)
     {
-        // Already in bootloader mode. Do nothing
-        std::cout << "Platform in bootloader mode. Flashing Process is about to start." << std::endl;
-    }
-    else
-    {
-        // Fimrware update command to be sent to the platfrom core.
-        // Enter bootloader mode.
-        if(!serial_->send(R"({'cmd':'firmware_update'})"))
+        std::string verbose_name;
+        if (false == waitForPlatformConnected(verbose_name))
         {
             return false;
         }
-        // Bootloader takes 5 seconds to start (known issue related to clock source). Platform and bootloader uses the same setting for clock source.
-        // clock source for bootloader and application must match. Otherwise when application jumps to bootloader, it will have a hardware fault which requires board to be reset.
-        std::this_thread::sleep_for (std::chrono::milliseconds(5500));
 
-        return false;   // TODO : firmware_update is not implemented!!!
+        // Read dealer id after spyglass enabled platform was found
+        if (verbose_name == "Bootloader")
+        {
+            // Already in bootloader mode. Do nothing
+            std::cout << "Platform in bootloader mode. Flashing Process is about to start." << std::endl;
+            return true;
+        }
+        else
+        {
+            if (processCommandUpdateFirmware()) {
+
+                // Bootloader takes 5 seconds to start (known issue related to clock source). Platform and bootloader uses the same setting for clock source.
+                // clock source for bootloader and application must match. Otherwise when application jumps to bootloader, it will have a hardware fault which requires board to be reset.
+                std::this_thread::sleep_for (std::chrono::milliseconds(5500));
+            }
+        }
     }
 
-    return true;
+    return false;
 }
 
 
 bool Flasher::flash(const bool forceStartApplication)
 {
+    std::string verbose_name;
     // This is a blocking function and has a timeout.
-    if (false == isPlatfromConnected())
+    if (false == waitForPlatformConnected(verbose_name))
     {
         return false;
     }
@@ -430,7 +594,7 @@ bool Flasher::flash(const bool forceStartApplication)
     }
     while (firmwareSize > 0);
 
-    return backup() && verify() && (forceStartApplication ? startApplication() : true);
+    return (forceStartApplication ? startApplication() : true);
 }
 
 
@@ -480,18 +644,35 @@ bool Flasher::writeCommandStartApplication()
 
     writer.EndObject();
 
-    return serial_->send(s.GetString());
+    return sendCommand(s.GetString());
 }
 
 bool Flasher::processCommandStartApplication()
 {
-    for (int32_t errorCounter = 0; RESPONSE_STATUS_MAX_ERRORS != errorCounter; ++errorCounter)
+    const int max_retry_wait_for_message = 10;
+
+    for (int errorCounter = 0; RESPONSE_STATUS_MAX_ERRORS != errorCounter; errorCounter++)
     {
-        if (writeCommandStartApplication() &&
-            readAck("start_application") &&
-            readNotify("start_application"))
-        {
-            return true;
+        if (false == writeCommandStartApplication()) {
+            continue;
+        }
+
+        ResponseState waitState = eWaitForAck;
+        for (int retry = 0; retry < max_retry_wait_for_message; retry++) {
+
+            if (serial_->waitForMessages(g_waitForMesageTime) > 0) {
+
+                if (waitState == eWaitForAck) {
+                    if (readAck("start_application")) {
+                        waitState = eWaitForNotify;
+                    }
+                }
+                if (waitState == eWaitForNotify) {
+                    if (readNotify("start_application")) {
+                        return true;
+                    }
+                }
+            }
         }
     }
 
@@ -505,7 +686,7 @@ bool Flasher::startApplication()
 
 bool Flasher::verify() const
 {
-    const std::string& backupFilename(firmwareFilename_ + ".bak");
+    std::string backupFilename(firmwareFilename_ + ".bak");
 
     const int32_t firmwareSize = getFileSize(firmwareFilename_);
     const int32_t backupSize = getFileSize(backupFilename);
@@ -556,7 +737,7 @@ bool Flasher::writeCommandBackup(Flasher::RESPONSE_STATUS status)
 
     writer.EndObject();
 
-    return serial_->send(s.GetString());
+    return sendCommand(s.GetString());
 }
 
 
@@ -572,7 +753,7 @@ bool Flasher::writeCommandReadFib()
 
     writer.EndObject();
 
-    return serial_->send(s.GetString());
+    return sendCommand(s.GetString());
 }
 
 
@@ -580,9 +761,13 @@ bool Flasher::readNotifyBackup(const std::string& notificationName)
 {
     std::string message;
 
-    if (false == serial_->read(message))
+    if (false == serial_->getMessage(message))
     {
         return false;
+    }
+
+    if (dbg_out_stream_) {
+        *dbg_out_stream_ << message << std::endl;
     }
 
     Document document;
@@ -625,7 +810,7 @@ bool Flasher::readNotifyBackup(const std::string& notificationName)
         backupChunk_.data.resize(base64::decode(backupChunk_.data.data(), chunkBase64.data(), chunkBase64.size()).first);
 
         if (size != backupChunk_.data.size() ||
-            crc != std::accumulate(backupChunk_.data.begin(), backupChunk_.data.end(), 0U))
+            crc != crc16::buypass(static_cast<const uint8_t *>(backupChunk_.data.data()), static_cast<uint32_t>(backupChunk_.data.size())))
         {
             return false;
         }
@@ -637,16 +822,34 @@ bool Flasher::readNotifyBackup(const std::string& notificationName)
 
 bool Flasher::processCommandBackupFirmware()
 {
+    const int max_retry_wait_for_message = 10;
+
     Flasher::RESPONSE_STATUS status(0 == backupChunk_.number ? RESPONSE_STATUS::NONE : RESPONSE_STATUS::NEXT_CHUNK);
 
-    for (int32_t errorCounter = 0; RESPONSE_STATUS_MAX_ERRORS != errorCounter; ++errorCounter)
+    for (int errorCounter = 0; RESPONSE_STATUS_MAX_ERRORS != errorCounter; errorCounter++)
     {
-        if (writeCommandBackup(status) &&
-            readAck("backup_firmware") &&
-            readNotifyBackup("backup_firmware"))
-        {
-            return true;
-        }        
+        if (false == writeCommandBackup(status)) {
+            continue;
+        }
+
+        ResponseState waitState = eWaitForAck;
+        for (int retry = 0; retry < max_retry_wait_for_message; retry++) {
+
+            if (serial_->waitForMessages(g_waitForMesageTime) > 0) {
+
+                if (waitState == eWaitForAck) {
+                    if (readAck("backup_firmware")) {
+                        waitState = eWaitForNotify;
+                    }
+                }
+                if (waitState == eWaitForNotify) {
+                    if (readNotifyBackup("backup_firmware")) {
+                        return true;
+                    }
+                }
+            }
+        }
+
         status = RESPONSE_STATUS::RESEND_CHUNK;
     }
 

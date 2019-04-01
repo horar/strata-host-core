@@ -14,17 +14,17 @@ Item {
     //  document all messages to clearly indicate to the UI layer proper names
 
     property var nl7sz58_io_state: {
-                                        "a":0,
-                                        "b":1,
-                                        "c":0,
-                                        "y":1
+                "a":0,
+                "b":1,
+                "c":0,
+                "y":1
     }
 
     property var nl7sz97_io_state: {
-                                        "a":1,
-                                        "b":0,
-                                        "c":1,
-                                        "y":1
+                "a":1,
+                "b":0,
+                "c":1,
+                "y":1
     }
 
     // @notification input_voltage_notification
@@ -50,9 +50,9 @@ Item {
     property var write_io: ({
                                 "cmd":"nl7sz58_write_io",
                                 "payload":{
-                                            "a":1,
-                                            "b":0,
-                                            "c":1
+                                    "a":1,
+                                    "b":0,
+                                    "c":1
                                 },
                                 update: function (a,b,c) {
                                     this.set(a,b,c)
@@ -143,9 +143,9 @@ Item {
     property var write_io_97: ({
                                    "cmd":"nl7sz97_write_io",
                                    "payload":{
-                                               "a":1,
-                                               "b":0,
-                                               "c":1
+                                       "a":1,
+                                       "b":0,
+                                       "c":1
                                    },
                                    update: function (a,b,c) {
                                        this.set(a,b,c)
@@ -238,7 +238,7 @@ Item {
     Connections {
         target: coreInterface
         onNotification: {
-//            console.log("when in connection")
+            //            console.log("when in connection")
             CorePlatformInterface.data_source_handler(payload)
         }
     }

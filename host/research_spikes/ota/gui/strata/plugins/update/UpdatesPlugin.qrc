@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/">
+        <file alias="qml/updates/updates.qml">qml/updates.qml</file>
+    </qresource>
+</RCC>

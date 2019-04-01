@@ -3,11 +3,15 @@ import QtQuick.Controls 2.3
 import QtQuick.Controls.Styles 1.4
 import QtGraphicalEffects 1.0
 import "qrc:/statusbar-partial-views"
+import "qrc:/statusbar-partial-views/platform-selector"
 import "js/navigation_control.js" as NavigationControl
 import Fonts 1.0
+import QtWebEngine 1.6
 
 Rectangle{
     id:container
+    anchors.fill: parent
+    clip: true
 
     // Context properties that get passed when created dynamically
     property string user_id: ""
@@ -48,41 +52,6 @@ Rectangle{
         }
     }
 
-    // DEBUG test butt-un to simulate signal data
-    //        Button {
-    //            text: "TEST"
-
-    //            onClicked: {
-
-    ////                // DEBUG inject test data for testing offline
-    ////                var list = [
-    ////                            {
-    ////                                "verbose":"usb-pd",
-    ////                                "uuid":"P2.2017.1.1.0.0.cbde0519-0f42-4431-a379-caee4a1494af",
-    ////                                "connection":"view"
-    ////                            },
-    ////                            {
-    ////                                "verbose":"bubu",
-    ////                                "uuid":"P2.2018.1.1.0.0.c9060ff8-5c5e-4295-b95a-d857ee9a3671",
-    ////                                "connection":"connected"
-    ////                            },
-    ////                            {
-    ////                                "verbose":"motor-vortex",
-    ////                                "uuid":"SEC.2017.004.2.0.0.1c9f3822-b865-11e8-b42a-47f5c5ed4fc3",
-    ////                                "connection":"connected"
-    ////                            }];
-
-    ////                var handshake = {"list":list};
-    ////                console.log("TEST platformList: ", JSON.stringify(handshake));
-    ////                platformContainer.populatePlatforms(JSON.stringify(handshake));
-
-    //                coreInterface.sendHandshake();
-    //            }
-    //        }
-
-    anchors.fill: parent
-    clip: true
-
     Image {
         id: background
         source: "qrc:/images/login-background.svg"
@@ -92,33 +61,33 @@ Rectangle{
         y: (parent.height - height)/2
     }
 
-    Item {
+    Row {
         id: upperContainer
         anchors {
-            left: container.left
-            right: container.right
+            horizontalCenter: container.horizontalCenter
             top: container.top
+            topMargin: Math.max((container.height - upperContainer.height - platformSelector.height)/3, 0)
         }
-        height: container.height * 0.5
+        height: Math.max(userContainer.height, strataLogo.height)
         z: 2
+        spacing: 20
+
 
         Item {
             id: userContainer
             anchors {
                 verticalCenter: upperContainer.verticalCenter
-                horizontalCenter: upperContainer.horizontalCenter
-                horizontalCenterOffset: -200
             }
-            height: welcomeMessage.height + user_img.height
+            height: childrenRect.height
             width: Math.max (welcomeMessage.width, user_img.width)
 
             Image {
                 id: user_img
-                sourceSize.width: 135
-                height: 1.1333 * width
+                sourceSize.height: 160
+                fillMode: Image.PreserveAspectFit
                 anchors {
                     top : userContainer.top
-                    horizontalCenter: welcomeMessage.horizontalCenter
+                    horizontalCenter: userContainer.horizontalCenter
                 }
                 source: "qrc:/images/" + getUserImage(user_id)
                 visible: false
@@ -126,7 +95,7 @@ Rectangle{
 
             Rectangle {
                 id: mask
-                width: 135
+                width: 120
                 height: width
                 radius: width/2
                 visible: false
@@ -147,11 +116,12 @@ Rectangle{
                 id: welcomeMessage
                 anchors {
                     top: user_img.bottom
-                    topMargin: 0
+                    topMargin: -20
+                    horizontalCenter: userContainer.horizontalCenter
                 }
                 font {
                     family: Fonts.franklinGothicBold
-                    pixelSize: 32
+                    pixelSize: 20
                 }
                 text: getUserName(user_id)
             }
@@ -160,172 +130,115 @@ Rectangle{
         Rectangle {
             id: divider
             color: "#999"
+            height: userContainer.height
             anchors {
-                left: userContainer.right
-                leftMargin: 30
-                top: userContainer.top
-                bottom: userContainer.bottom
+                verticalCenter: userContainer.verticalCenter
             }
             width: 2
         }
 
-        Item {
-            id: platformContainer
+        Image {
+            id: strataLogo
             anchors {
                 verticalCenter: userContainer.verticalCenter
-                left: divider.right
-                leftMargin: 30
             }
-            height: strataLogo.height + platformSelector.height + platformSelector.anchors.topMargin + cbSelector.height + cbSelector.anchors.topMargin
-            width: cbSelector.width
-
-            Image {
-                id: strataLogo
-                width: 2 * height
-                height: upperContainer.height > 264 ? 175 : 100
-                anchors {
-                    horizontalCenter: cbSelector.horizontalCenter
-                }
-                source: "qrc:/images/strata-logo.svg"
-                mipmap: true;
-            }
-
-            Label {
-                id: platformSelector
-                text: "SELECT PLATFORM:"
-                font {
-                    pixelSize: 20
-                    family: Fonts.franklinGothicBold
-                }
-                anchors {
-                    top: strataLogo.bottom
-                    topMargin: 20
-                    horizontalCenter: cbSelector.horizontalCenter
-                }
-            }
-
-
-            SGPlatformSelector {
-                id: cbSelector
-                anchors {
-                    top: platformSelector.bottom
-                    topMargin: 10
-                    left: platformContainer.left
-                }
-                comboBoxWidth: 350
-            }
+            sourceSize.height: 175
+            fillMode: Image.PreserveAspectFit
+            source: "qrc:/images/strata-logo.svg"
+            mipmap: true;
         }
     }
 
-    Item {
-        id: lowerContainer
+    SGPlatformSelectorListView {
+        id: platformSelector
         anchors {
-            left: container.left
-            right: container.right
-            bottom: container.bottom
+            top: upperContainer.bottom
+            horizontalCenter: container.horizontalCenter
+            topMargin: upperContainer.anchors.topMargin
         }
-        height: container.height * 0.5
-        z: 1
+        height: container.height * .625
+    }
 
-        Item {
-            id: adContainer
-            anchors {
-                verticalCenter: lowerContainer.verticalCenter
-                horizontalCenter: lowerContainer.horizontalCenter
-            }
-            height: lowerContainer.height * 0.86
-            width: height / 0.53
+    Popup {
+        id: orderPopup
+        x: container.width/2 - orderPopup.width/2
+        y: container.height/2 - orderPopup.height/2
+        width: container.width-100
+        height: container.height - 100
+        modal: true
+        focus: true
+        padding: 0
+        closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
+
+        onOpened: webview.url = "https://www.onsemi.com/PowerSolutions/locateSalesSupport.do"
+
+
+        DropShadow {
+            width: orderPopup.width
+            height: orderPopup.height
+            horizontalOffset: 1
+            verticalOffset: 3
+            radius: 15.0
+            samples: 30
+            color: "#cc000000"
+            source: orderPopup.background
+            z: -1
+            cached: true
+        }
+
+        Rectangle {
+            id: popupContainer
+            width: orderPopup.width
+            height: orderPopup.height
             clip: true
+            color: "white"
 
-            SwipeView {
-                id: adSwipe
+            Rectangle {
+                id: title
+                height: 30
+                width: popupContainer.width
                 anchors {
-                    fill: parent
+                    top: popupContainer.top
                 }
+                color: "lightgrey"
 
-                Image {
-                    source: "qrc:/images/demo-ads/1.png"
-
-                    MouseArea {
-                        anchors {
-                            fill: parent
-                        }
-                        hoverEnabled: true
-                        cursorShape: Qt.PointingHandCursor
-                        onClicked: {
-                            Qt.openUrlExternally("http://www.onsemi.com");
-                        }
+                Text {
+                    id: close
+                    text: "\ue805"
+                    color: close_hover.containsMouse ? "#eee" : "white"
+                    font {
+                        family: Fonts.sgicons
+                        pixelSize: 20
                     }
-                }
-
-                Image {
-                    source: "qrc:/images/demo-ads/2.png"
-
-                    MouseArea {
-                        anchors {
-                            fill: parent
-                        }
-                        hoverEnabled: true
-                        cursorShape: Qt.PointingHandCursor
-                        onClicked: {
-                            Qt.openUrlExternally("http://www.onsemi.com");
-                        }
+                    anchors {
+                        right: title.right
+                        verticalCenter: title.verticalCenter
+                        rightMargin: 10
                     }
-                }
-
-                Image {
-                    source: "qrc:/images/demo-ads/3.png"
 
                     MouseArea {
+                        id: close_hover
                         anchors {
-                            fill: parent
+                            fill: close
                         }
+                        onClicked: orderPopup.close()
                         hoverEnabled: true
                         cursorShape: Qt.PointingHandCursor
-                        onClicked: {
-                            Qt.openUrlExternally("http://www.onsemi.com");
-                        }
-                    }
-                }
-
-                Image {
-                    source: "qrc:/images/demo-ads/4.png"
-
-                    MouseArea {
-                        anchors {
-                            fill: parent
-                        }
-                        hoverEnabled: true
-                        cursorShape: Qt.PointingHandCursor
-                        onClicked: {
-                            Qt.openUrlExternally("http://www.onsemi.com");
-                        }
                     }
                 }
             }
 
-            Timer {
-                interval: 3000
-                running: true
-                repeat: true
-                onTriggered: {
-                    if (adSwipe.currentIndex < 3) {
-                        adSwipe.currentIndex++
-                    } else {
-                        adSwipe.currentIndex = 0
-                    }
+            WebEngineView {
+                id: webview
+                anchors {
+                    top: title.bottom
+                    left: popupContainer.left
+                    right: popupContainer.right
+                    bottom: popupContainer.bottom
                 }
-            }
-
-            PageIndicator {
-                id: indicator
-
-                count: adSwipe.count
-                currentIndex: adSwipe.currentIndex
-
-                anchors.bottom: adSwipe.bottom
-                anchors.horizontalCenter: adSwipe.horizontalCenter
+                url: ""
             }
         }
     }
+
 }

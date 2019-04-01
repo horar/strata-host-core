@@ -211,7 +211,7 @@ Item {
     }
 
     property var maximum_board_power :{
-         "watts":30          // 30-300
+         "watts":200          // 30-300
     }
 
 

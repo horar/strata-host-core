@@ -1,7 +1,7 @@
-project(PlatformManager VERSION 1.0)
-
-set(CMAKE_CXX_STANDARD 11)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
+project(PlatformManager
+    VERSION 1.0
+    LANGUAGES CXX
+)
 
 find_package(Threads REQUIRED)
 

@@ -14,6 +14,9 @@ namespace spyglass {
 
     class PlatformConnection;
 
+    /**
+     * Pure virtual interface for connection handling
+     */
     class PlatformConnHandler {
     public:
         virtual void onNewConnection(PlatformConnection *connection) = 0;
@@ -51,6 +54,13 @@ namespace spyglass {
          */
         void setPlatformHandler(PlatformConnHandler *handler);
 
+        /**
+         * Returns connection object according 'connection_id'
+         * @param connection_id search for
+         * @return returns connection object or null when not found
+         */
+        PlatformConnection* getConnection(const std::string& connection_id);
+
     protected:
         void onAddedPort(serialPortHash hash);
 
@@ -59,6 +69,8 @@ namespace spyglass {
         void notifyConnectionReadable(PlatformConnection *conn);
 
         void removeConnection(PlatformConnection *conn);
+
+        EvEventsMgr* getEvEventsMgr();
 
     private:
         void onUpdatePortList(EvEvent *, int);

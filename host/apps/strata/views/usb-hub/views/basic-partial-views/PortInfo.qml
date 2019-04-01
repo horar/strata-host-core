@@ -6,6 +6,7 @@ import "qrc:/views/usb-pd-multiport/sgwidgets"
 Rectangle {
     id: root
 
+    property int portWidth: 150
     property bool portConnected: false
     property bool isUSBAPort: false     //used to hide information not available for USB-A ports
     property color portColor: "#30a2db"
@@ -43,9 +44,19 @@ Rectangle {
         duration: 1000
     }
 
+    function prepareToTransitionToAdvancedView(){
+        //keep the telemetry boxes from expanding as the port view is expanding
+        //console.log("port preparing to transition to advanced")
+        powerOutBox.anchors.right = undefined
+        temperatureBox.anchors.right = powerOutBox.right
+        efficencyBox.anchors.right = powerOutBox.right
+    }
+
     function transitionToAdvancedView(){
 
         //break the anchors needed to move port stats
+        //unhook the box around the power telemetry. Attach the
+        //temperature and efficiency boxes to the power box so they can move together
         powerOutBox.anchors.top = undefined
         powerOutBox.anchors.left = undefined
         powerOutBox.anchors.right = undefined
@@ -67,35 +78,53 @@ Rectangle {
         id: portToAdvanced
 
         ParallelAnimation{
-            id: rearrangeStatsBoxes
+            id: adjustStatsBoxSizes //and move bottom stats boxes right
             running: false
 
             PropertyAnimation {
                 target: outputVoltageBox
-                property: "anchors.rightMargin"
-                to: 120
-                duration: tabTransitionTime
+                property: "width"
+                to: (root.width)/2 -10
+                duration: basicToAdvancedTelemetryAnimationTime
             }
 
             PropertyAnimation {
-                target: powerOutBox
-                property: "x"
-                to: (root.width)/2 + 40
-                duration: tabTransitionTime
+                target: maxPowerBox
+                property: "width"
+                to: (root.width)/2-10
+                duration: basicToAdvancedTelemetryAnimationTime
+            }
+
+            PropertyAnimation {
+                target: powerInBox
+                property: "width"
+                to: (root.width)/2-10
+                duration: basicToAdvancedTelemetryAnimationTime
             }
 
             PropertyAnimation {
                 target: powerOutBox
                 property: "width"
-                to: 110
-                duration: tabTransitionTime
+                to: (root.width)/2-10
+                duration: basicToAdvancedTelemetryAnimationTime
             }
+
+            PropertyAnimation {
+                target: powerOutBox
+                property: "x"
+                to: (root.width)/2
+                duration: basicToAdvancedTelemetryAnimationTime
+            }
+        }
+        ParallelAnimation{
+            id:moveBottomStatsBoxesUp
+            running:false
 
             PropertyAnimation {
                 target: powerOutBox
                 property: "y"
                 to: titleBackground.y + titleBackground.height + 8
-                duration: tabTransitionTime
+                duration: basicToAdvancedTelemetryAnimationTime
             }
         }   //phase 1 transition
 
@@ -103,6 +132,15 @@ Rectangle {
             advancedControls.transitionToAdvancedView();
         }
 
+    }
+
+
+ //-----------------------------------------------------------------------------------------------------------
+ //         Transition to Basic
+ //-----------------------------------------------------------------------------------------------------------
+    function prepareToTransitionToBasicView(){
+        //console.log("port preparing to transition to basic")
+        portToBasic.start()
     }
 
     function transitionToBasicView(){
@@ -117,55 +155,72 @@ Rectangle {
         temperatureBox.anchors.right = powerOutBox.right
         efficencyBox.anchors.left = powerOutBox.left
         efficencyBox.anchors.right = powerOutBox.right
-        portToBasic.start()
-
-
     }
+
 
     SequentialAnimation{
         id: portToBasic
 
-        //fade out the advanced controls
         PropertyAnimation {
+            id:fadeOutAdvancedControls
+            running:false
             target: advancedControls
             property: "opacity"
             to: 0
-            duration: tabTransitionTime
+            duration: advancedToBasicAdvancedControlsAnimationTime
         }
 
         ParallelAnimation{
-            id: unRearrangeStatsBoxes
-            running: false
-
             PropertyAnimation {
-                target: outputVoltageBox
-                property: "anchors.rightMargin"
-                to: 10
-                duration: tabTransitionTime
+                id:moveRightTelemetryBoxesDown
+                target: powerOutBox
+                property: "y"
+                to: 200
+                duration: advancedToBasicTelemetryAnimationTime
             }
+        }
+
+        ParallelAnimation{
 
             PropertyAnimation {
                 target: powerOutBox
                 property: "x"
-                to: root.x
-                duration: tabTransitionTime
+                to: 10
+                duration: advancedToBasicTelemetryAnimationTime
+            }
+        }
+
+        ParallelAnimation{
+
+
+            PropertyAnimation {
+                target: outputVoltageBox
+                property: "width"
+                to: portWidth -10
+                duration: basicToAdvancedTelemetryAnimationTime
             }
 
+            PropertyAnimation {
+                target: maxPowerBox
+                property: "width"
+                to: portWidth -10
+                duration: basicToAdvancedTelemetryAnimationTime
+            }
+
+            PropertyAnimation {
+                target: powerInBox
+                property: "width"
+                to: portWidth -10
+                duration: basicToAdvancedTelemetryAnimationTime
+            }
 
             PropertyAnimation {
                 target: powerOutBox
                 property: "width"
-                to: 200
-                duration: tabTransitionTime
+                to: portWidth -10
+                duration: basicToAdvancedTelemetryAnimationTime
             }
-
-            PropertyAnimation {
-                target: powerOutBox
-                property: "y"
-                to: 200
-                duration: tabTransitionTime
-            }
-        }   //phase 1 transition
+        }
 
         onStopped:{
             powerOutBox.anchors.left = outputVoltageBox.left
@@ -187,7 +242,7 @@ Rectangle {
     color: "lightgoldenrodyellow"
     radius: 5
     border.color: "black"
-    width: 150
+    width: portWidth
 
     Rectangle{
         id:titleBackground
@@ -242,8 +297,7 @@ Rectangle {
         anchors.leftMargin: 10
         anchors.top: titleBackground.bottom
         anchors.topMargin: 8
-        anchors.right: root.right
-        anchors.rightMargin: 10
+        width:portWidth-10
         height:40
         label: "VOLTAGE OUT"
         color:"transparent"
@@ -254,7 +308,8 @@ Rectangle {
         anchors.left:outputVoltageBox.left
         anchors.top: outputVoltageBox.bottom
         anchors.topMargin: 8
-        anchors.right: outputVoltageBox.right
+        //anchors.right: outputVoltageBox.right
+        width:portWidth-10
         height:40
         label: "MAXIMUM POWER"
         unit: "W"
@@ -267,7 +322,8 @@ Rectangle {
         anchors.left:outputVoltageBox.left
         anchors.top: maxPowerBox.bottom
         anchors.topMargin: 8
-        anchors.right: outputVoltageBox.right
+        //anchors.right: outputVoltageBox.right
+        width:portWidth-10
         height:40
         label: "POWER IN"
         unit:"W"
@@ -282,7 +338,8 @@ Rectangle {
         anchors.left:outputVoltageBox.left
         anchors.top: powerInBox.bottom
         anchors.topMargin: 8
-        anchors.right: outputVoltageBox.right
+        //anchors.right: outputVoltageBox.right
+        width:portWidth-10
         height:40
         label: "POWER OUT"
         unit:"W"
@@ -295,7 +352,8 @@ Rectangle {
         anchors.left:outputVoltageBox.left
         anchors.top: powerOutBox.bottom
         anchors.topMargin: 8
-        anchors.right: outputVoltageBox.right
+        //anchors.right: outputVoltageBox.right
+        width:portWidth-10
         height:40
         label: "TEMPERATURE"
         unit:"°C"
@@ -308,7 +366,8 @@ Rectangle {
         anchors.left:outputVoltageBox.left
         anchors.top: temperatureBox.bottom
         anchors.topMargin: 8
-        anchors.right: outputVoltageBox.right
+        //anchors.right: outputVoltageBox.right
+        width:portWidth-10
         height:40
         label: "EFFICENCY"
         unit:"%"

@@ -30,6 +30,8 @@ PlatformConnection::~PlatformConnection()
 
 bool PlatformConnection::open(const std::string& portName)
 {
+    std::lock_guard<std::mutex> lock(readLock_);
+
     std::unique_ptr<serial_port> port(new serial_port);
     bool ret = port->open(portName);
     if (ret) {
@@ -45,6 +47,9 @@ void PlatformConnection::close()
 
         event_.release();
     }
+
+    std::lock_guard<std::mutex> rlock(readLock_);
+    std::lock_guard<std::mutex> wlock(writeLock_);
 
     if (port_) {
         port_->close();
@@ -78,14 +83,20 @@ bool PlatformConnection::getMessage(std::string& result)
 
     result = readBuffer_.substr(readOffset_, (off - readOffset_));
     readOffset_ = (off + 1);
+    if (readBuffer_.size() == readOffset_) {
+        readBuffer_.clear();
+        readOffset_ = 0;
+    }
     return true;
 }
 
 void PlatformConnection::onDescriptorEvent(EvEvent*, int flags)
 {
+    std::lock_guard<std::mutex> lock(event_lock_);
+
     if (flags & EvEvent::eEvStateRead) {
 
-        if (handleRead() < 0) {
+        if (handleRead(g_readTimeout) < 0) {
             //TODO: [MF] add to log...
 
             event_->deactivate();
@@ -100,7 +111,7 @@ void PlatformConnection::onDescriptorEvent(EvEvent*, int flags)
     }
     if (flags & EvEvent::eEvStateWrite) {
 
-        if (handleWrite() < 0) {
+        if (handleWrite(g_writeTimeout) < 0) {
             //TODO: handle error...
 
         }
@@ -117,10 +128,10 @@ void PlatformConnection::onDescriptorEvent(EvEvent*, int flags)
     }
 }
 
-int PlatformConnection::handleRead()
+int PlatformConnection::handleRead(unsigned int timeout)
 {
     unsigned char read_data[512];
-    int ret = port_->read(read_data, sizeof(read_data), g_readTimeout);
+    int ret = port_->read(read_data, sizeof(read_data), timeout);
     if (ret <= 0) {
         return ret;
     }
@@ -132,7 +143,7 @@ int PlatformConnection::handleRead()
     return ret;
 }
 
-int PlatformConnection::handleWrite()
+int PlatformConnection::handleWrite(unsigned int timeout)
 {
     std::lock_guard<std::mutex> lock(writeLock_);
     if (isWriteBufferEmpty()) {
@@ -143,7 +154,7 @@ int PlatformConnection::handleWrite()
     size_t length = writeBuffer_.size() - writeOffset_;
     const unsigned char* data = reinterpret_cast<const unsigned char*>(writeBuffer_.data()) + writeOffset_;
 
-    int ret = port_->write(const_cast<unsigned char*>(data), length, g_writeTimeout);
+    int ret = port_->write(const_cast<unsigned char*>(data), length, timeout);
     if (ret < 0) {
         return ret;
     }
@@ -154,6 +165,7 @@ int PlatformConnection::handleWrite()
 
 void PlatformConnection::addMessage(const std::string& message)
 {
+    assert(event_);
     bool isWrite = event_->isActive(EvEvent::eEvStateWrite);
 
     //TODO: checking for too big messages...
@@ -165,12 +177,37 @@ void PlatformConnection::addMessage(const std::string& message)
     }
 
     if (!isWrite) {
+
+        std::lock_guard<std::mutex> lock(event_lock_);
         updateEvent(true, true);
     }
 }
 
+bool PlatformConnection::sendMessage(const std::string &message)
+{
+    assert(port_);
+    if (!port_) {
+        return false;
+    }
+
+    {
+        std::lock_guard<std::mutex> lock(writeLock_);
+        writeBuffer_.append(message);
+        writeBuffer_.append("\n");
+    }
+
+    return (handleWrite(g_writeTimeout) > 0);
+}
+
+int PlatformConnection::waitForMessages(unsigned int timeout)
+{
+    assert(port_);
+    return handleRead(timeout);
+}
+
 bool PlatformConnection::isReadable()
 {
+    assert(port_);
     std::lock_guard<std::mutex> lock(readLock_);
     if (readBuffer_.size() <= readOffset_)
         return false;
@@ -188,10 +225,13 @@ std::string PlatformConnection::getName() const
     return std::string(port_->getName());
 }
 
-void PlatformConnection::attachEventMgr(EvEventsMgr* ev_manager)
+bool PlatformConnection::attachEventMgr(EvEventsMgr* ev_manager)
 {
-    if (!port_)
-        return;
+    if (!port_ || ev_manager == nullptr) {
+        return false;
+    }
+
+    std::lock_guard<std::mutex> lock(event_lock_);
 
     event_mgr_ = ev_manager;
 
@@ -199,14 +239,41 @@ void PlatformConnection::attachEventMgr(EvEventsMgr* ev_manager)
     event_.reset(ev_manager->CreateEventHandle(fd));
     event_->setCallback(std::bind(&PlatformConnection::onDescriptorEvent, this, std::placeholders::_1, std::placeholders::_2 ) );
 
-    updateEvent(true, false);
+    return updateEvent(true, false);
 }
 
 void PlatformConnection::detachEventMgr()
 {
+    if (!port_) {
+        return;
+    }
+
     if (event_) {
+
+        std::lock_guard<std::mutex> lock(event_lock_);
         event_->deactivate();
     }
+}
+
+bool PlatformConnection::stopListeningOnEvents(bool stop)
+{
+    if (!event_ || event_mgr_ == nullptr) {
+        return false;
+    }
+
+    std::lock_guard<std::mutex> lock(event_lock_);
+    if (stop) {
+        event_->deactivate();
+        return true;
+    }
+
+    //resume
+    bool write;
+    {
+        std::lock_guard<std::mutex> lock(writeLock_);
+        write = (isWriteBufferEmpty() == false);  //set write when write buffer isn't empty
+    }
+    return updateEvent(true, write);
 }
 
 bool PlatformConnection::isWriteBufferEmpty() const
@@ -216,7 +283,7 @@ bool PlatformConnection::isWriteBufferEmpty() const
 
 bool PlatformConnection::updateEvent(bool read, bool write)
 {
-    if (!event_) {
+    if (!event_ || event_mgr_ == nullptr) {
         return false;
     }
 

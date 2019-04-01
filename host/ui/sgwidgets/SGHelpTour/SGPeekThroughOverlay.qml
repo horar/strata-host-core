@@ -16,6 +16,31 @@ Item {
          mockTarget.height = target.height
          windowHeight = fill.height
          windowWidth = fill.width
+
+         // apply default alignment settings:
+         toolTipPopup.anchors.bottom = undefined
+         toolTipPopup.anchors.right = undefined
+         toolTipPopup.anchors.left = undefined
+         toolTipPopup.anchors.horizontalCenter = bottomFade.horizontalCenter
+         toolTipPopup.anchors.top = bottomFade.bottom
+         toolTipPopup.horizontalAlignment = "center"
+         toolTipPopup.arrowOnTop = true
+
+         // change alignment if default alignment extends beyond window edges
+         if ( toolTipPopup.x < 0 ) {
+             toolTipPopup.anchors.horizontalCenter = undefined
+             toolTipPopup.anchors.left = bottomFade.horizontalCenter
+             toolTipPopup.horizontalAlignment = "left"
+         } else if ( toolTipPopup.x + toolTipPopup.width > fill.width ) {
+             toolTipPopup.anchors.horizontalCenter = undefined
+             toolTipPopup.anchors.right = bottomFade.horizontalCenter
+             toolTipPopup.horizontalAlignment = "right"
+         }
+         if ( toolTipPopup.y + toolTipPopup.height > fill.height ) {
+             toolTipPopup.anchors.top = undefined
+             toolTipPopup.anchors.bottom = topFade.top
+             toolTipPopup.arrowOnTop = false
+         }
      }
 
      property alias fill: root.parent
@@ -31,6 +56,7 @@ Item {
              fill: root
          }
          onClicked: toolTipPopup.contentItem.close()
+         onWheel: {} // Prevent views behind from scrolling, which will misalign the peekthrough
      }
 
      Item {
@@ -189,11 +215,7 @@ Item {
      SGToolTipPopup {
          id: toolTipPopup
          showOn: true
-         anchors {
-             top: bottomFade.bottom
-             horizontalCenter: bottomFade.horizontalCenter
-         }
-         pointsUp: true
+         // anchors and arrow alignment dynamically in setTarget
          color: "white"
          property int index
          property string description

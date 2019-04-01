@@ -34,20 +34,28 @@ class Document : public QObject
 {
     Q_OBJECT
 
-    Q_PROPERTY(QString data READ data NOTIFY dataChanged)
+    Q_PROPERTY(QString uri READ uri NOTIFY uriChanged)
+    Q_PROPERTY(QString filename READ filename NOTIFY filenameChanged)
+    Q_PROPERTY(QString dirname READ dirname NOTIFY dirnameChanged)
 
 public:
     Document() {}
-    Document(const QString &data) : data_(data) {}
+    Document(const QString &uri, const QString &filename, const QString &dirname) : uri_(uri), filename_(filename), dirname_(dirname) {}
     virtual ~Document() {}
 
-    QString data() const { return data_; }
+    QString uri() const { return uri_; }
+    QString filename() const { return filename_; }
+    QString dirname() const { return dirname_; }
 
 signals:
-    void dataChanged(const QString &name);
+    void uriChanged(const QString &name);
+    void filenameChanged(const QString &filename);
+    void dirnameChanged(const QString &dirname);
 
 private:
-    QString data_;
+    QString uri_;
+    QString filename_;
+    QString dirname_;
 };
 
 using DocumentSet = QList<Document *>;            // typedefs
@@ -57,16 +65,13 @@ class DocumentManager : public QObject
 {
     Q_OBJECT
 
-    Q_PROPERTY(QQmlListProperty<Document> schematicDocuments READ schematicDocuments NOTIFY schematicDocumentsChanged)
-    Q_PROPERTY(QQmlListProperty<Document> assemblyDocuments READ assemblyDocuments NOTIFY assemblyDocumentsChanged)
-    Q_PROPERTY(QQmlListProperty<Document> layoutDocuments READ layoutDocuments NOTIFY layoutDocumentsChanged)
-    Q_PROPERTY(QQmlListProperty<Document> testReportDocuments READ testReportDocuments NOTIFY testReportDocumentsChanged)
-    Q_PROPERTY(QQmlListProperty<Document> targetedDocuments READ targetedDocuments NOTIFY targetedDocumentsChanged)
-    Q_PROPERTY(uint schematicRevisionCount MEMBER schematic_rev_count_ NOTIFY schematicRevisionCountChanged)
-    Q_PROPERTY(uint assemblyRevisionCount MEMBER assembly_rev_count_ NOTIFY assemblyRevisionCountChanged)
-    Q_PROPERTY(uint layoutRevisionCount MEMBER layout_rev_count_ NOTIFY layoutRevisionCountChanged)
-    Q_PROPERTY(uint testReportRevisionCount MEMBER testreport_rev_count_ NOTIFY testReportRevisionCountChanged)
-    Q_PROPERTY(uint targetedRevisionCount MEMBER targeted_rev_count_ NOTIFY targetedRevisionCountChanged)
+    Q_PROPERTY(QQmlListProperty<Document> pdfDocuments READ pdfDocuments NOTIFY pdfDocumentsChanged)
+    Q_PROPERTY(QQmlListProperty<Document> downloadDocuments READ downloadDocuments NOTIFY downloadDocumentsChanged)
+    Q_PROPERTY(QQmlListProperty<Document> datasheetDocuments READ datasheetDocuments NOTIFY datasheetDocumentsChanged)
+
+    Q_PROPERTY(uint pdfRevisionCount MEMBER pdf_rev_count_ NOTIFY pdfRevisionCountChanged)
+    Q_PROPERTY(uint downloadRevisionCount MEMBER download_rev_count_ NOTIFY downloadRevisionCountChanged)
+    Q_PROPERTY(uint datasheetRevisionCount MEMBER datasheet_rev_count_ NOTIFY datasheetRevisionCountChanged)
 
 public:
     DocumentManager();
@@ -75,61 +80,51 @@ public:
     virtual ~DocumentManager();
 
     // read methods
-    QQmlListProperty<Document> schematicDocuments() { return QQmlListProperty<Document>(this, schematic_documents_); }
-    QQmlListProperty<Document> assemblyDocuments() { return QQmlListProperty<Document>(this, assembly_documents_); }
-    QQmlListProperty<Document> layoutDocuments() { return QQmlListProperty<Document>(this, layout_documents_); }
-    QQmlListProperty<Document> testReportDocuments() { return QQmlListProperty<Document>(this, test_report_documents_); }
-    QQmlListProperty<Document> targetedDocuments() { return QQmlListProperty<Document>(this, targeted_documents_); }
+    QQmlListProperty<Document> pdfDocuments() { return QQmlListProperty<Document>(this, pdf_documents_); }
+    QQmlListProperty<Document> downloadDocuments() { return QQmlListProperty<Document>(this, download_documents_); }
+    QQmlListProperty<Document> datasheetDocuments() { return QQmlListProperty<Document>(this, datasheet_documents_); }
 
     bool updateDocuments(const QString set, const QList<QString> &documents);
 
-    Q_INVOKABLE void clearSchematicRevisionCount();
-    Q_INVOKABLE void clearAssemblyRevisionCount();
-    Q_INVOKABLE void clearLayoutRevisionCount();
-    Q_INVOKABLE void clearTestReportRevisionCount();
-    Q_INVOKABLE void clearTargetedRevisionCount();
+    Q_INVOKABLE void clearPdfRevisionCount();
+    Q_INVOKABLE void clearDownloadRevisionCount();
+    Q_INVOKABLE void clearDatasheetRevisionCount();
+
     Q_INVOKABLE void clearDocumentSets();
 
 signals:
     // Document Changes
-    void schematicDocumentsChanged();
-    void assemblyDocumentsChanged();
-    void layoutDocumentsChanged();
-    void testReportDocumentsChanged();
-    void targetedDocumentsChanged();
+    void pdfDocumentsChanged();
+    void downloadDocumentsChanged();
+    void datasheetDocumentsChanged();
+    // Any Changed
+    void documentsUpdated();
 
     // Revision Count Changes
-    void schematicRevisionCountChanged(uint revisionCount);
-    void assemblyRevisionCountChanged(uint revisionCount);
-    void layoutRevisionCountChanged(uint revisionCount);
-    void testReportRevisionCountChanged(uint revisionCount);
-    void targetedRevisionCountChanged(uint revisionCount);
+    void pdfRevisionCountChanged(uint revisionCount);
+    void downloadRevisionCountChanged(uint revisionCount);
+    void datasheetRevisionCountChanged(uint revisionCount);
 
 private:
     CoreInterface *coreInterface_;
 
-    void dataSourceHandler(QJsonObject);
+    void viewDocumentHandler(QJsonObject);
 
     // Document Sets
-    DocumentSet schematic_documents_;
-    DocumentSet assembly_documents_;
-    DocumentSet layout_documents_;
-    DocumentSet test_report_documents_;
-    DocumentSet targeted_documents_;
+    DocumentSet pdf_documents_;
+    DocumentSet download_documents_;
+    DocumentSet datasheet_documents_;
 
     std::map<QString, DocumentSetPtr> document_sets_;
 
     DocumentSetPtr getDocumentSet(const QString &set);
 
     // Count the amount of deployments that have been received
-    uint schematic_rev_count_;
-    uint assembly_rev_count_;
-    uint layout_rev_count_;
-    uint testreport_rev_count_;
-    uint targeted_rev_count_;
+    uint pdf_rev_count_;
+    uint download_rev_count_;
+    uint datasheet_rev_count_;
 
     void init();
-
 };
 
 #endif // DOCUMENT_MANAGER_H
