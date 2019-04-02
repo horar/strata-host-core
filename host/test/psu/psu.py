@@ -2,8 +2,16 @@
 
 import json
 import sys, os, getopt
+from Carbon.Aliases import false
 
-from serial import Serial
+
+try:
+    from serial import Serial
+    from serial.tools import list_ports, miniterm
+except:
+    print "pyserial library not found. Please, install it : LINUX/MAC pip install pyserial , WIN python -m pip install pyserial"
+
+    
 from timeit import default_timer as timer
 from time import sleep
 
@@ -48,23 +56,11 @@ class MeasurementScenarion:
         self.__scenario = None
         self.__result = {}
     
-    def parse(self, measurementFile = ""):
-        if "" == measurementFile:
-            measurementFile = self.__filename
-            
-        try:    
-            fd = open(measurementFile)
-            if False == fd.closed:
-                self.__scenario = json.load(fd)
-        except:
-            self.__verbose.error("Parsing : " , measurementFile)
-            return False
-        finally:
-            fd.close()
-        
-        return True
     
     def process(self):
+        
+        if False == self.__parse():
+            return False
         
         if None == self.__platformSerial:
             return False
@@ -99,7 +95,7 @@ class MeasurementScenarion:
                     iterationResult["ack"] = [ True, timer() - startTime]
                     
                     if ackRef != ackOut:
-                        self.__verbose.warning("Transaction " + transaction["name"] + " : message = " + json.dumps(ackOut))
+                        self.__verbose.warning("Transaction " + transaction["name"] + "[" + str(iteration) + "] : message = " + json.dumps(ackOut))
                         iterationResult["ack"][0] = False
                 
                     elif ackOut["payload"]["return_value"]:
@@ -110,10 +106,10 @@ class MeasurementScenarion:
                             iterationResult["notification"] = [ True, timer() - startTime ]
                             
                             if notificationRef != notificationOut:
-                                self.__verbose.warning("Transaction " + transaction["name"] + " : message = " + json.dumps(notificationOut))
+                                self.__verbose.warning("Transaction " + transaction["name"] + "[" + str(iteration) + "] : message = " + json.dumps(notificationOut))
                                 iterationResult["notification"][0] = False
                         
-                self.__verbose.info("Transaction " + transaction["name"] + " OK")
+                self.__verbose.info("Transaction " + transaction["name"] + "[" + str(iteration) + "] OK")
                     
         return True
         
@@ -159,6 +155,28 @@ class MeasurementScenarion:
             print "Avg. NOTIFY time : %6f sec, count(iterations/received/correct) : ( %d[100%%]/%d[%4.2f%%]/%d[%4.2f%%])" \
                 % (notificationAvgTime, len(transaction), notificationCount, 100.0 * notificationCount / len(transaction), notificationOK,  100.0 * notificationOK / len(transaction))
 
+    def __parse(self, measurementFile = ""):
+        if "" == measurementFile:
+            measurementFile = self.__filename
+            
+        try:    
+            fd = open(measurementFile)
+        except:
+            self.__verbose.error("Parsing a file : <" + measurementFile + ">")
+            return False
+        
+        if fd.closed:
+            return False
+        
+        try:
+            self.__scenario = json.load(fd)
+        except:
+            self.__verbose.error("Parsing a file : <" + measurementFile + ">")
+            return False
+        
+        fd.close()
+        
+        return True
 
 
 class PlatformSerial:
@@ -242,11 +260,6 @@ def help():
     return True
 
 def ports():
-    try:
-        from serial.tools import list_ports
-    except:
-        print("pyserial library not found. Please, install it : pip install pyserial")
-        return False
     
     ports = list_ports.comports()
     print "Ports:"
@@ -257,12 +270,7 @@ def ports():
 
 
 def terminal(portDevice, baudRate):
-    try:
-        from serial.tools import miniterm
-    except:
-        print("pyserial library not found. Please, install it : pip install pyserial")
-        return False
-    
+
     # hack due to miniterm initialization issue : it always reads command line parameters.
     sysArgv = sys.argv
     sys.argv = ['dummy.py']
@@ -282,7 +290,7 @@ def measurement(scenarioFile, portDevice, baudRate, timeoutSec, rawMeasurement, 
         return False
     
     measurement = MeasurementScenarion(scenarioFile, platformSerial, verbose)
-    if measurement.parse() and measurement.process():
+    if measurement.process():
         measurement.report(rawMeasurement)
         return True
     
@@ -298,7 +306,7 @@ if __name__ == "__main__":
         help();
         sys.exit(1)
     
-    scenarioFile = ""
+    scenarioFile = "measurement.json"
     portDevice = 0
     rawMeasurement = False
     verboseLevel = Verbose.NONE
