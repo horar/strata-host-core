@@ -386,7 +386,7 @@ Item {
 
                 //when changing the value
                 onActivated: {
-                    console.log("setting max power to ",parseInt(assuredMaxPowerOutput.comboBox.currentText));
+                    console.log("AssuredMaxPowerOutput: setting max power to ",parseInt(assuredMaxPowerOutput.comboBox.currentText));
                     platformInterface.set_usb_pd_maximum_power.update(1,parseInt(assuredMaxPowerOutput.comboBox.currentText))
                 }
 
@@ -400,35 +400,56 @@ Item {
 
                 property var maxPower: platformInterface.maximum_board_power.watts
                 onMaxPowerChanged: {
+                    var previousIndex = assuredMaxPowerOutput.currentIndex;
+                    console.log("AssuredMaxPower:current index is",previousIndex);
+                    console.log("AssuredMaxPower:max power is",maxPower);
                     //there are 24W held in reserve for other ports, so don't offer anything more than
                     //maxPower-24 for the assured power options
-                    if (maxPower < 27 + 24){
-                        model= ["15"];
-                        assuredMaxPowerOutput.currentIndex = 0;
+                    if (maxPower >= 100 + 24){
+                        model = ["15","27", "36", "45","60","100"];
+                        if (previousIndex >=0)
+                            assuredMaxPowerOutput.currentIndex = previousIndex;
+                        else
+                            assuredMaxPowerOutput.currentIndex = 5;
                     }
-                    else if (maxPower < 36 + 24){
-                        model=["15","27"];
-                        assuredMaxPowerOutput.currentIndex = 1;
-                    }
-                    else if (maxPower < 45 + 24){
-                        model=["15","27","36"];
-                        assuredMaxPowerOutput.currentIndex = 2;
-                    }
-                    else if (maxPower < 60 + 24){
-                        model= ["15","27","36","45"];
-                        assuredMaxPowerOutput.currentIndex = 3;
-                    }
-                    else if (maxPower < 100 + 24){
+                    else if (maxPower >= 60 + 24){
                         model =["15","27","36","45","60"];
-                        assuredMaxPowerOutput.currentIndex = 4;
-                        console.log("setting max assured power to 60. index is",assuredMaxPowerOutput.currentText);
+                        if (previousIndex >4)
+                            assuredMaxPowerOutput.currentIndex = 4;
+                        else
+                            assuredMaxPowerOutput.currentIndex = previousIndex;
+                        platformInterface.set_usb_pd_maximum_power.update(1,parseInt(assuredMaxPowerOutput.comboBox.currentText))
+                    }
+                    else if (maxPower >= 45 + 24){
+                        model= ["15","27","36","45"];
+                        if (previousIndex >3)
+                            assuredMaxPowerOutput.currentIndex = 3;
+                        else
+                            assuredMaxPowerOutput.currentIndex = previousIndex;
+                        platformInterface.set_usb_pd_maximum_power.update(1,parseInt(assuredMaxPowerOutput.comboBox.currentText))
+                    }
+                    else if (maxPower >= 36 + 24){
+                        model=["15","27","36"];
+                        if (previousIndex >2)
+                            assuredMaxPowerOutput.currentIndex = 2;
+                          else
+                            assuredMaxPowerOutput.currentIndex = previousIndex;
+                        platformInterface.set_usb_pd_maximum_power.update(1,parseInt(assuredMaxPowerOutput.comboBox.currentText))
+                    }
+                    else if (maxPower > 27 + 24){
+                        model=["15","27"];
+                        if (previousIndex >1)
+                            assuredMaxPowerOutput.currentIndex = 1;
+                          else
+                            assuredMaxPowerOutput.currentIndex = previousIndex;
+                        platformInterface.set_usb_pd_maximum_power.update(1,parseInt(assuredMaxPowerOutput.comboBox.currentText))
                     }
                     else{
-                        model = ["15","27", "36", "45","60","100"];
-                        assuredMaxPowerOutput.currentIndex = 5;
+                        model= ["15"];
+                        assuredMaxPowerOutput.currentIndex = 0;
+                        platformInterface.set_usb_pd_maximum_power.update(1,15)
                     }
                 }
-
             }
 
             Text{
@@ -451,6 +472,7 @@ Item {
                 textColor: "#666"
                 radius: 4
                 buttonHeight: 25
+                visible:false
                 anchors {
                     top: assuredMaxPowerOutput.bottom
                     topMargin: 10
@@ -693,6 +715,8 @@ Item {
                 id: foldbackTempInput
                 showButton: false
                 infoBoxWidth: 35
+                minimumValue:0
+                maximumValue:100
                 anchors {
                     verticalCenter: foldbackTemp.verticalCenter
                     verticalCenterOffset: -7
@@ -717,7 +741,7 @@ Item {
             SGComboBox {
                 id: limitOutput2
                 label: "Reduce output power to:"
-                model: ["10","15", "25", "45","75","90"]
+                model: ["25", "45","75","90"]
                 comboBoxHeight: 25
                 comboBoxWidth: 60
                 anchors {

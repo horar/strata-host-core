@@ -31,14 +31,14 @@ Rectangle {
              target: iconImage
              property: "height"
              to: root.height * 0.65
-             duration: tabTransitionTime
+             duration: basicToAdvancedTransitionTime
          }
 
          PropertyAnimation {
              target: iconImage
              property: "anchors.verticalCenterOffset"
              to: 5
-             duration: tabTransitionTime
+             duration: basicToAdvancedTransitionTime
          }
      }
 
@@ -54,14 +54,14 @@ Rectangle {
              target: iconImage
              property: "height"
              to: root.height * 0.9
-             duration: tabTransitionTime
+             duration: advancedToBasicTransitionTime
          }
 
          PropertyAnimation {
              target: iconImage
              property: "anchors.verticalCenterOffset"
              to: 0
-             duration: tabTransitionTime
+             duration: advancedToBasicTransitionTime
          }
      }
 

@@ -1,11 +1,6 @@
-cmake_minimum_required(VERSION 3.5)
-
-project (couchbase-lite-cpp)
-
-set(CMAKE_CXX_STANDARD 11)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS OFF)
-
+project (couchbase-lite-cpp
+    LANGUAGES CXX
+)
 
 add_subdirectory(couchbase-lite-core)
 
@@ -40,7 +35,7 @@ target_include_directories(${PROJECT_NAME}
 
 target_link_libraries(${PROJECT_NAME}
 	PRIVATE LiteCore
-	PRIVATE FleeceStatic
+	PUBLIC FleeceStatic
 	PRIVATE CivetWeb
 	PRIVATE BLIPStatic
 	PRIVATE Support

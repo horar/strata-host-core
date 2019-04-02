@@ -175,6 +175,7 @@ bool ZMQConnector::send(const string& message)
         s_sendmore(*socket_, getDealerID() );
     }
     s_send(*socket_,message);
+    LOG_DEBUG(DEBUG,"[Socket] Tx'ed message : %s\n",message.c_str());
     locker_.unlock();
     unsigned int     zmq_events;
     size_t           zmq_events_size  = sizeof(zmq_events);

@@ -3,6 +3,10 @@ import QtQuick.Controls 2.3
 import QtQuick.Layouts 1.3
 import Fonts 1.0
 import QtGraphicalEffects 1.0
+import "../js/feedback.js" as Feedback
+import "../js/navigation_control.js" as NavigationControl
+
+import Strata.Logger 1.0
 
 Popup {
     id: root
@@ -12,6 +16,11 @@ Popup {
     focus: true
     padding: 0
     closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
+
+    function isEmailAddress(str) {
+       var pattern = /\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*/;
+       return pattern.test(str);  // returns a boolean
+    }
 
     DropShadow {
         width: root.width
@@ -236,27 +245,46 @@ Popup {
                                 id: subcolumn2
                                 spacing: 10
 
-                                SGComboBox {
-                                    label: "Product:"
-                                    overrideLabelWidth: 60
-                                    comboBoxWidth: 220
-                                    model: ["Strata Software", "Platform"]
+                                SGSubmitInfoBox {
+                                    id: nameBox
+                                    label: "Name:"
+                                    showButton: false
+                                    overrideLabelWidth: 100
+                                    infoBoxWidth: 200
+                                    KeyNavigation.tab: emailBox.textInput
+                                    KeyNavigation.priority: KeyNavigation.BeforeItem
                                 }
 
-                                SGComboBox {
-                                    label: "Category:"
-                                    overrideLabelWidth: 60
-                                    comboBoxWidth: 220
-                                    model: ["Usability", "Features", "Collateral", "Quality of Service"]
+                                SGSubmitInfoBox {
+                                    id: emailBox
+                                    label: "Email Address:"
+                                    showButton: false
+                                    overrideLabelWidth: 100
+                                    infoBoxWidth: 200
+                                    KeyNavigation.tab: companyBox.textInput
+                                    KeyNavigation.priority: KeyNavigation.BeforeItem
                                 }
 
-                                SGSwitch {
-                                    label: "Can the Strata Development Team contact you about your feedback?"
-                                    checkedLabel: "Yes"
-                                    uncheckedLabel: "No"
-                                    checked: true
-                                    labelsInside: false
+                                SGSubmitInfoBox {
+                                    id: companyBox
+                                    label: "Company:"
+                                    showButton: false
+                                    overrideLabelWidth: 100
+                                    infoBoxWidth: 200
+                                    KeyNavigation.tab: textEdit
+                                    KeyNavigation.priority: KeyNavigation.BeforeItem
                                 }
+                            }
+
+                            Item {
+                                id: spacer
+                                width: 10
+                                height: 10
+                            }
+
+                            Text {
+                                id: commentLabel
+                                text: "Any comments or questions:"
                             }
 
                             Rectangle {
@@ -267,7 +295,7 @@ Popup {
                                     color: "lightgrey"
                                 }
                                 width: feedbackColumn.width
-                                height: Math.max(scrollView.height - feedbackTextContainer.height - feedbackFormTitle.height - subcolumn2.height - 110 - submitButton.height, 200)
+                                height: Math.max(scrollView.height - feedbackTextContainer.height - feedbackFormTitle.height - subcolumn2.height - 130 - submitButton.height - spacer.height - commentLabel.height, 200)
 
                                 TextEdit {
                                     id: textEdit
@@ -293,6 +321,8 @@ Popup {
                                         }
                                         previousText = text
                                     }
+                                    KeyNavigation.tab: submitButton
+                                    KeyNavigation.priority: KeyNavigation.BeforeItem
                                 }
                             }
 
@@ -300,8 +330,31 @@ Popup {
                                 id: submitButton
                                 text: "Submit"
                                 onClicked: {
-                                    confirmPopup.open()
-                                    textEdit.text = ""
+
+                                    console.log(Logger.devStudioFeedbackCategory, "in connection",textEdit.text)
+                                    if(nameBox.textInput.text === "" || emailBox.textInput.text === "" || companyBox.textInput.text === ""  || textEdit.text === ""  ) {
+                                        errorPopup.popupText = "All the required fields need to be completed to submit"
+                                        errorPopup.open()
+                                        console.log(Logger.devStudioFeedbackCategory, "error!! empty")
+                                    }
+                                    else if (isEmailAddress(emailBox.textInput.text) === false){
+                                        console.log(Logger.devStudioFeedbackCategory, "invalid email address")
+                                        invalidEmailPopup.open()
+                                    }
+
+                                    else  {
+                                        var feedbackInfo = { name: nameBox.textInput.text , email : emailBox.textInput.text , company : companyBox.textInput.text, comment : textEdit.text }
+                                        function success() {
+                                            confirmPopup.open()
+                                        }
+                                        function error() {
+                                             errorPopup.popupText = "Something went wrong please try again"
+                                             errorPopup.open()
+                                        }
+
+                                        Feedback.feedbackInfo(feedbackInfo,success, error)
+
+                                    }
                                 }
                             }
                         }
@@ -322,6 +375,36 @@ Popup {
             onClicked: {
                 root.close()
                 confirmPopup.close()
+                textEdit.text = ""
+                nameBox.textInput.text = ""
+                emailBox.textInput.text = ""
+                companyBox.textInput.text = ""
+            }
+        }
+    }
+    SGConfirmationPopup {
+        id: errorPopup
+        cancelButtonText: ""
+        titleText: "Error"
+        popupText: "All the required fields need to be completed to submit"
+        Connections {
+            target: errorPopup.acceptButton
+            onClicked: {
+                //root.close()
+                errorPopup.close()
+            }
+        }
+    }
+    SGConfirmationPopup {
+        id: invalidEmailPopup
+        cancelButtonText: ""
+        titleText: "Error"
+        popupText: "Invalid Email Id. Please try again"
+        Connections {
+            target: invalidEmailPopup.acceptButton
+            onClicked: {
+                //root.close()
+                invalidEmailPopup.close()
             }
         }
     }

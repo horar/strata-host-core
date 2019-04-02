@@ -98,7 +98,7 @@ Rectangle {
 
                 RegExpValidator {
                     id: realNumberValidator
-                    regExp: /[-+]?([0-9]*\.[0-9]+|[0-9]+)/
+                    regExp: /^[0-9a-fA-F]{6}$/
                 }
 
                 MouseArea {

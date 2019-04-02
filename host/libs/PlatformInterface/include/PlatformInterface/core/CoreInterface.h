@@ -75,7 +75,8 @@ public:
     Q_INVOKABLE void registerClient();
     Q_INVOKABLE void unregisterClient();
     Q_INVOKABLE void sendCommand(QString cmd);
-
+    Q_INVOKABLE void disconnectPlatform();
+    
 signals:
 
     // ---
