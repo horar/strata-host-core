@@ -24,8 +24,8 @@ public:
     const std::vector<std::string> &GetSerialPorts() const { return serial_ports_; }
     bool IsSimulatedPlatform() const { return simulated_platform_; }
 
-    const std::string &GetDatabaseServer() const { return database_server_; }
-    const std::string &GetGatewaySync() const { return gateway_sync_; }
+    const std::string &GetDatabaseServer() const { return documents_download_link_; }
+    const std::string &GetGatewaySync() const { return sync_gateway_url_; }
     const std::string &GetDiscoveryServerID() const { return discovery_server_address_;}
     const std::string &GetDiscoveryMonitorSubscriber() const { return discovery_server_notification_subscriber_address_; }
 
@@ -38,6 +38,8 @@ public:
         std::cout << "gateway_sync: " << config.gateway_sync_<< std::endl;
         std::cout << "discovery_server_address: "<< config.discovery_server_address_ << std::endl;
         std::cout << "discovery_server_subscriber_address: "<< config.discovery_server_notification_subscriber_address_ << std::endl;
+        std::cout << "documents download link: "<< config.documents_download_link_ << std::endl;
+        std::cout << "sync gate way url "<< config.sync_gateway_url_ << std::endl;
         for (auto &serial_port : config.serial_ports_) {
             std::cout << " + serial port: " << serial_port << std::endl;
         }
@@ -61,7 +63,9 @@ private:
     std::string discovery_server_notification_subscriber_address_;
     // serial port number
     std::vector<std::string> serial_ports_;
-
+    // To store the download link
+    std::string documents_download_link_;
+    std::string sync_gateway_url_;
     std::vector<std::string> channels_;
     bool simulated_platform_;
 };

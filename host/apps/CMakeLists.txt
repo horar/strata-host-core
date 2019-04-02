@@ -16,7 +16,7 @@ if(APPS_STRATA AND NOT MINGW)
     add_subdirectory(strata)
 endif()
 
-if (APPS_SCI AND NOT CROSSCOMPILE)
+if (APPS_SCI AND NOT WIN32)
   # this is not supported on windows yet
   add_subdirectory(SerialConsoleInterface)
 endif()
