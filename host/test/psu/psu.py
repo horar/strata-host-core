@@ -255,7 +255,7 @@ def help():
     print "        { ... }, ..."
     print "        ]"
     print "     }"
-    print " More info : https://ons-sec.atlassian.net/wiki/spaces/SPYG/pages/623968370/Platfrom+Serial+Utilities+PSU"
+    print " More info : https://ons-sec.atlassian.net/wiki/spaces/SPYG/pages/623968370/Platform+Serial+Utilities+PSU"
     return True
 
 def ports():
