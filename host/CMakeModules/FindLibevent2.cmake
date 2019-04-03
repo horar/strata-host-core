@@ -10,7 +10,7 @@ if (APPLE)
 elseif (UNIX AND NOT APPLE AND NOT CROSSCOMPILE)
   set(PLATFORM_TYPE "linux")
 elseif (WIN32)
-  set(PLATFORM_TYPE "windows")
+  set(PLATFORM_TYPE "windows/x64")
 endif()
 
 FIND_PATH(LIBEVENT2_INCLUDE_DIR event2/event.h HINTS ${EXT_LIBS_PATH}/libevent/include/ /usr/include/event2 )
