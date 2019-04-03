@@ -17,7 +17,7 @@ PrtBasePage {
         Common.SgButton {
             minimumContentWidth: buttonWidth
             minimumContentHeight: buttonHeight
-            text: "Platform\nRegistration"
+            text: qsTr("Platform\nRegistration")
             onClicked: jumpToPage("register")
             icon.source: "qrc:/images/chip-flash.svg"
             icon.height: 60
@@ -28,7 +28,7 @@ PrtBasePage {
         Common.SgButton {
             minimumContentWidth: buttonWidth
             minimumContentHeight: buttonHeight
-            text: "New\nPlatform"
+            text: qsTr("New\nPlatform")
             onClicked: jumpToPage("create")
             icon.source: "qrc:/images/plus.svg"
             icon.height: 60
@@ -39,7 +39,7 @@ PrtBasePage {
         Common.SgButton {
             minimumContentWidth: buttonWidth
             minimumContentHeight: buttonHeight
-            text: "Board\nStatus"
+            text: qsTr("Board\nStatus")
             onClicked: jumpToPage("status")
             icon.source: "qrc:/images/search-analyze.svg"
             icon.height: 60

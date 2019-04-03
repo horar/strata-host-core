@@ -5,7 +5,7 @@ import "./common" as Common
 import "./common/Colors.js" as Colors
 
 PrtBasePage {
-    title: "New Platform"
+    title: qsTr("New Platform")
 
     Item {
         anchors {
@@ -50,15 +50,15 @@ PrtBasePage {
                         id: opnEditor
                         itemWidth: 400
 
-                        label: "Ordering Part Number"
-                        helperText: "Preferred format: XXX-XXXX-XXX"
+                        label: qsTr("Ordering Part Number")
+                        helperText: qsTr("Preferred format: XXX-XXXX-XXX")
                         inputValidation: true
 
                         function inputValidationErrorMsg() {
                             if (text.length === 0) {
-                                return "OPN is required"
+                                return qsTr("OPN is required")
                             } else if (text.length < 10) {
-                                return "OPN (minimum 10 chars) is required"
+                                return qsTr("OPN (minimum 10 chars) is required")
                             }
 
                             return ""
@@ -69,12 +69,12 @@ PrtBasePage {
                         id: nameEditor
                         itemWidth: 400
 
-                        label: "Verbose Name"
+                        label: qsTr("Verbose Name")
                         inputValidation: true
 
                         function inputValidationErrorMsg() {
                             if (text.length === 0) {
-                                return "Verbose Name is required"
+                                return qsTr("Verbose Name is required")
                             }
 
                             return ""
@@ -85,7 +85,7 @@ PrtBasePage {
                         id: yearEditor
                         itemWidth: 60
 
-                        label: "Year"
+                        label: qsTr("Year")
                         inputValidation: true
                         validator: IntValidator {}
 
@@ -94,12 +94,13 @@ PrtBasePage {
 
                         function inputValidationErrorMsg() {
                             if (text.length === 0) {
-                                return "Year is required"
+                                return qsTr("Year is required")
                             }
 
                             var year = parseInt(text)
                             if (year < minYear || year > maxYear) {
-                                return "Year (between " + minYear + " and " + maxYear + ") is required"
+                                return qsTr("Year (between %1 and %2) is required").arg(minYear).arg(maxYear)
+
                             }
 
                             return ""
@@ -110,12 +111,12 @@ PrtBasePage {
                         id: originEditor
                         itemWidth: 400
 
-                        label: "Origin"
+                        label: qsTr("Origin")
                         inputValidation: true
 
                         function inputValidationErrorMsg() {
                             if (text.length === 0) {
-                                return "Origin is required"
+                                return qsTr("Origin is required")
                             }
 
                             return ""
@@ -129,12 +130,12 @@ PrtBasePage {
                             id: boardMajorEditor
                             anchors.bottom: parent.bottom
 
-                            label: "Board major ver."
+                            label: qsTr("Board major ver.")
                             inputValidation: true
 
                             function inputValidationErrorMsg() {
                                 if (value < 1) {
-                                    return "Value should be above 0"
+                                    return qsTr("Value should be above 0")
                                 }
 
                                 return ""
@@ -145,7 +146,7 @@ PrtBasePage {
                             id: boardMinorEditor
                             anchors.bottom: parent.bottom
 
-                            label: "Board minor ver."
+                            label: qsTr("Board minor ver.")
                             inputValidation: true
                         }
                     }
@@ -154,7 +155,7 @@ PrtBasePage {
                         id: appTagEditor
                         itemWidth: 600
 
-                        label: "Application Tags"
+                        label: qsTr("Application Tags")
                         tagModel: appTagModel
                         tagColor: Colors.APPLICATION_TAG
                         inputValidation: true
@@ -162,7 +163,7 @@ PrtBasePage {
                         function inputValidationErrorMsg() {
                             var tags = appTagEditor.item.getSelectedTags()
                             if (tags.length < 1) {
-                                return "At least 1 application tag is required"
+                                return qsTr("At least 1 application tag is required")
                             }
 
                             return ""
@@ -173,7 +174,7 @@ PrtBasePage {
                         id: productTagEditor
                         itemWidth: 600
 
-                        label: "Product Tags"
+                        label: qsTr("Product Tags")
                         tagModel: producsTagModel
                         tagColor: Colors.PRODUCT_TAG
                         inputValidation: true
@@ -181,7 +182,7 @@ PrtBasePage {
                         function inputValidationErrorMsg() {
                             var tags = productTagEditor.item.getSelectedTags()
                             if (tags.length < 1) {
-                                return "At least 1 product tag is required"
+                                return qsTr("At least 1 product tag is required")
                             }
 
                             return ""
@@ -192,16 +193,16 @@ PrtBasePage {
                         id: descriptionEditor
                         itemWidth: 600
 
-                        label: "Description"
+                        label: qsTr("Description")
                         minimumLineCount: 3
                         maximumLineCount: 10
                         inputValidation: true
 
                         function inputValidationErrorMsg() {
                             if (text.length === 0) {
-                                return "Description is required"
+                                return qsTr("Description is required")
                             } else if (text.length < 30 ) {
-                               return "Description (minimum 30 chars) is required"
+                               return qsTr("Description (minimum 30 chars) is required")
                             }
 
                             return ""
@@ -224,7 +225,7 @@ PrtBasePage {
                         anchors.centerIn: parent
 
                         Common.SgButton {
-                            text: "Submit\nNew Platform"
+                            text: qsTr("Submit\nNew Platform")
                             onClicked: {
                                 if (opnEditor.inputValidationErrorMsg().length === 0
                                         && nameEditor.inputValidationErrorMsg().length === 0

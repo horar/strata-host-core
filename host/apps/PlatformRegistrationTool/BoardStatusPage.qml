@@ -12,7 +12,7 @@ PrtBasePage {
     property int rowHeight: 80
     property bool forceConnect: false
 
-    title: "Board Status"
+    title: qsTr("Board Status")
 
     footerButtonModel: {
         var list = []

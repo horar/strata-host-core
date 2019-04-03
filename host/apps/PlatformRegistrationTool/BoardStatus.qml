@@ -62,13 +62,13 @@ Item {
 
         Common.SgText {
             anchors.horizontalCenter: parent.horizontalCenter
-            text: "No Board Detected"
+            text: qsTr("No Board Detected")
             fontSizeMultiplier: 2.0
         }
 
         Common.SgText {
             anchors.horizontalCenter: parent.horizontalCenter
-            text: "Connect board to see detailed information"
+            text: qsTr("Connect board to see detailed information")
             font.italic: true
         }
     }
@@ -111,7 +111,7 @@ Item {
                 anchors.verticalCenter: parent.verticalCenter
                 width: dummyText.paintedWidth
 
-                text: "Connected:"
+                text: qsTr("Connected:")
                 font.bold: dummyText.font.bold
                 horizontalAlignment: dummyText.horizontalAlignment
                 elide: dummyText.elide
@@ -131,7 +131,7 @@ Item {
                 anchors.verticalCenter: parent.verticalCenter
                 width: dummyText.paintedWidth
 
-                text: "Registered:"
+                text: qsTr("Registered:")
                 font.bold: dummyText.font.bold
                 horizontalAlignment: dummyText.horizontalAlignment
                 elide: dummyText.elide
@@ -151,7 +151,7 @@ Item {
                 anchors.verticalCenter: parent.verticalCenter
                 width: dummyText.paintedWidth
 
-                text: "Bootloader:"
+                text: qsTr("Bootloader:")
                 font.bold: dummyText.font.bold
                 horizontalAlignment: dummyText.horizontalAlignment
                 elide: dummyText.elide
@@ -169,7 +169,7 @@ Item {
                 anchors.verticalCenter: parent.verticalCenter
                 width: dummyText.paintedWidth
 
-                text: "Ordering Part Number:"
+                text: qsTr("Ordering Part Number:")
                 font.bold: dummyText.font.bold
                 horizontalAlignment: dummyText.horizontalAlignment
                 elide: dummyText.elide
@@ -187,7 +187,7 @@ Item {
                 anchors.verticalCenter: parent.verticalCenter
                 width: dummyText.paintedWidth
 
-                text: "Verbose Name:"
+                text: qsTr("Verbose Name:")
                 font.bold: dummyText.font.bold
                 horizontalAlignment: dummyText.horizontalAlignment
                 elide: dummyText.elide
@@ -205,7 +205,7 @@ Item {
                 anchors.verticalCenter: parent.verticalCenter
                 width: dummyText.paintedWidth
 
-                text: "Firmware:"
+                text: qsTr("Firmware:")
                 font.bold: dummyText.font.bold
                 horizontalAlignment: dummyText.horizontalAlignment
                 elide: dummyText.elide
@@ -223,7 +223,7 @@ Item {
                 anchors.verticalCenter: parent.verticalCenter
                 width: dummyText.paintedWidth
 
-                text: "Board Revision:"
+                text: qsTr("Board Revision:")
                 font.bold: dummyText.font.bold
                 horizontalAlignment: dummyText.horizontalAlignment
                 elide: dummyText.elide
@@ -241,7 +241,7 @@ Item {
                 anchors.verticalCenter: parent.verticalCenter
                 width: dummyText.paintedWidth
 
-                text: "Year:"
+                text: qsTr("Year:")
                 font.bold: dummyText.font.bold
                 horizontalAlignment: dummyText.horizontalAlignment
                 elide: dummyText.elide
@@ -274,7 +274,7 @@ Item {
                 anchors.verticalCenter: parent.verticalCenter
                 width: dummyText.paintedWidth
 
-                text: "Application Tags:"
+                text: qsTr("Application Tags:")
                 font.bold: dummyText.font.bold
                 horizontalAlignment: dummyText.horizontalAlignment
                 elide: dummyText.elide
@@ -295,7 +295,7 @@ Item {
                 anchors.verticalCenter: parent.verticalCenter
                 width: dummyText.paintedWidth
 
-                text: "Product Tags:"
+                text: qsTr("Product Tags:")
                 font.bold: dummyText.font.bold
                 horizontalAlignment: dummyText.horizontalAlignment
                 elide: dummyText.elide
@@ -316,7 +316,7 @@ Item {
                 anchors.verticalCenter: parent.verticalCenter
                 width: dummyText.paintedWidth
 
-                text: "Description:"
+                text: qsTr("Description:")
                 font.bold: dummyText.font.bold
                 horizontalAlignment: dummyText.horizontalAlignment
                 elide: dummyText.elide

@@ -8,7 +8,7 @@ import "./common/SgUtils.js" as SgUtils
 PrtBasePage {
     id: page
 
-    title: "Register Platfrom"
+    title: qsTr("Register Platfrom")
 
     property string outputStr
     property string bootloadeId
@@ -143,8 +143,8 @@ PrtBasePage {
             id: opnFilterEditor
             anchors.horizontalCenter: parent.horizontalCenter
 
-            label: "Ordering Part Number"
-            helperText: "? - any single char\n* - zero or more of any chars"
+            label: qsTr("Ordering Part Number")
+            helperText: qsTr("? - any single char\n* - zero or more of any chars")
 
             property string text
 
@@ -226,7 +226,7 @@ PrtBasePage {
             Common.SgButton {
                 id: registerBtn
                 visible: false
-                text: "Register\nPlatform"
+                text: qsTr("Register\nPlatform")
                 onClicked: {
                     registrationInit()
                 }
