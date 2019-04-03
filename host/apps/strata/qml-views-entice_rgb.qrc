@@ -1,0 +1,35 @@
+<RCC>
+    <qresource prefix="/">
+        <file>views/entice_rgb/Content.qml</file>
+        <file>views/entice_rgb/Control.qml</file>
+        <file>views/entice_rgb/PlatformInterface.qml</file>
+        <file>views/entice_rgb/content-views/Datasheets.qml</file>
+        <file>views/entice_rgb/content-views/Documents.qml</file>
+        <file>views/entice_rgb/content-views/Downloads.qml</file>
+        <file>views/entice_rgb/content-views/content-widgets/SGAccordion.qml</file>
+        <file>views/entice_rgb/content-views/content-widgets/SGAccordionItem.qml</file>
+        <file>views/entice_rgb/content-views/content-widgets/SGRadioButton.qml</file>
+        <file>views/entice_rgb/content-views/content-widgets/SGRadioButtonContainer.qml</file>
+        <file>views/entice_rgb/content-views/content-widgets/SGSelectorButton.qml</file>
+        <file>views/entice_rgb/content-views/content-widgets/docLoading.gif</file>
+        <file>views/entice_rgb/sgwidgets/SGCircularGauge.qml</file>
+        <file>views/entice_rgb/sgwidgets/SGComboBox.qml</file>
+        <file>views/entice_rgb/sgwidgets/SGGraph.qml</file>
+        <file>views/entice_rgb/sgwidgets/SGHueSlider.qml</file>
+        <file>views/entice_rgb/sgwidgets/SGLabelledInfoBox.qml</file>
+        <file>views/entice_rgb/sgwidgets/SGRGBSlider.qml</file>
+        <file>views/entice_rgb/sgwidgets/SGRadioButton.qml</file>
+        <file>views/entice_rgb/sgwidgets/SGRadioButtonContainer.qml</file>
+        <file>views/entice_rgb/sgwidgets/SGSegmentedButton.qml</file>
+        <file>views/entice_rgb/sgwidgets/SGSegmentedButtonStrip.qml</file>
+        <file>views/entice_rgb/sgwidgets/SGSlider.qml</file>
+        <file>views/entice_rgb/sgwidgets/SGStatusListBox.qml</file>
+        <file>views/entice_rgb/sgwidgets/SGSubmitInfoBox.qml</file>
+        <file>views/entice_rgb/sgwidgets/SGToolTipPopup.qml</file>
+        <file>views/entice_rgb/sgwidgets/fonts/digitalseven.ttf</file>
+        <file>views/entice_rgb/sgwidgets/fonts/sgicons.ttf</file>
+        <file>views/entice_rgb/sgwidgets/images/sliderHandle.svg</file>
+        <file>views/entice_rgb/sgwidgets/images/sliderHandleActive.svg</file>
+        <file>views/entice_rgb/sgwidgets/images/sliderValue.svg</file>
+    </qresource>
+</RCC>
