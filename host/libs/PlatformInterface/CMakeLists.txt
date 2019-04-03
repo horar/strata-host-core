@@ -7,7 +7,7 @@ message(STATUS "${PROJECT_NAME} v${PROJECT_VERSION}")
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-find_package(Qt5 5.10
+find_package(Qt5 5.12
     COMPONENTS Core
     REQUIRED
 )
