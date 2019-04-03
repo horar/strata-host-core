@@ -1,8 +1,7 @@
-#!/usr/bin/python
+#!/usr/bin/env python2
 
 import json
 import sys, os, getopt
-from Carbon.Aliases import false
 
 
 try:
@@ -234,7 +233,7 @@ def help():
     print "     -s or --scenario :  path + filename of measurement scenario(JSON), default : 'measurement.json'"
     print "     -p or --port     :  serial port that a platform device is connected to"
     print "     -r or --raw      :  report measurement statistic + raw measurement data"
-    print "     -v or --verbose  :  verbose level : 0 = NONE, 1 = ERROR, 2 = WARNING, 3= INFO, 4 = DEBUG, default : 0"
+    print "     -v or --verbose  :  verbose level : 0 = NONE, 1 = ERROR, 2 = WARNING, 3 = INFO, 4 = DEBUG, default : 0"
     print "     -t or --timeout  :  timeout for reading form serial port, default : 3 sec"
     print "  Measurement scenario file(JSON):"
     print "     The scenario consists of a few transactions."
@@ -256,7 +255,7 @@ def help():
     print "        { ... }, ..."
     print "        ]"
     print "     }"
-
+    print " More info : https://ons-sec.atlassian.net/wiki/spaces/SPYG/pages/623968370/Platfrom+Serial+Utilities+PSU"
     return True
 
 def ports():
@@ -307,7 +306,7 @@ if __name__ == "__main__":
         sys.exit(1)
     
     scenarioFile = "measurement.json"
-    portDevice = 0
+    portDevice = ""
     rawMeasurement = False
     verboseLevel = Verbose.NONE
     timeoutSec = 3      # default value 3 sec
