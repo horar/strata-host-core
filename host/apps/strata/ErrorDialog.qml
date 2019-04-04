@@ -21,7 +21,7 @@ ApplicationWindow {
 
         text: qsTr("<strong><h2>An unexpected application error has occurred.</h2></strong>" +
                    "<br><br>" +
-                   "Please contact us.")
+                   "Please contact your local sales representative.")
     }
 
     footer: DialogButtonBox {
