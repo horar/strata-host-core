@@ -26,6 +26,10 @@ if (APPLE)
     target_link_libraries(${PROJECT_NAME} PUBLIC ${IOKIT_LIBRARY} ${FOUNDATION_LIBRARY} )
 endif()
 
+if (WIN32)
+    target_link_libraries(${PROJECT_NAME} PUBLIC Ws2_32.lib)
+endif()
+
 target_include_directories(${PROJECT_NAME}
     PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
     PUBLIC ${LIBEVENT2_INCLUDE_DIR}

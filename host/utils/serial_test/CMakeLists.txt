@@ -31,3 +31,7 @@ target_link_libraries(${PROJECT_NAME}
 if (APPLE)
     target_link_libraries(${PROJECT_NAME} PUBLIC ${IOKIT_LIB} ${FOUNDATION_LIB} )
 endif()
+
+if (WIN32)
+    target_link_libraries(${PROJECT_NAME} LINK_PUBLIC SetupAPI.lib  )
+endif()

@@ -3,8 +3,6 @@ project(PlatformInterface
     LANGUAGES CXX
 )
 
-message(STATUS "${PROJECT_NAME} v${PROJECT_VERSION}")
-
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 find_package(Qt5 5.10
@@ -22,9 +20,7 @@ add_library(${PROJECT_NAME}
 
 target_link_libraries(${PROJECT_NAME}
     PUBLIC Qt5::Core
-
     PUBLIC HostControllerClient
-
     PRIVATE QtLogger
 )
 

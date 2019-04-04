@@ -24,6 +24,11 @@ if (APPLE)
     target_link_libraries(${PROJECT_NAME} PUBLIC ${IOKIT_LIBRARY} ${FOUNDATION_LIBRARY} )
 endif()
 
+if (WIN32)
+    target_link_libraries(${PROJECT_NAME} LINK_PUBLIC SetupAPI.lib  )
+endif()
+
 target_include_directories(${PROJECT_NAME}
         PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
         )
+

@@ -76,17 +76,14 @@ add_executable(${PROJECT_NAME}
     src/SGCouchbaseLiteWrapper.cpp
     src/main.cpp
 )
-if(WIN32)
-    target_link_libraries(${PROJECT_NAME}
-    PRIVATE connector libBase64 couchbase-lite-cpp sgwget
-    PRIVATE ${LIBEVENT2_LIBRARIES}
-	PRIVATE Setupapi.lib
-	)
-else()
-    target_link_libraries(${PROJECT_NAME}
+
+target_link_libraries(${PROJECT_NAME}
     PRIVATE connector libBase64 couchbase-lite-cpp sgwget
     PRIVATE ${LIBEVENT2_LIBRARIES}
 )
+
+if (WIN32)
+    target_link_libraries(${PROJECT_NAME} PRIVATE Setupapi.lib Ws2_32.lib )
 endif()
 
 if (APPLE)

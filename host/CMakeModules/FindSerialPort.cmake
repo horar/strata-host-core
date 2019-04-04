@@ -17,7 +17,7 @@ if (APPLE)
 elseif(UNIX AND NOT APPLE AND NOT CROSSCOMPILE)
   set(PLATFORM_TYPE "linux")
 elseif (WIN32)
-  set(PLATFORM_TYPE "windows")
+  set(PLATFORM_TYPE "windows/x64")
 endif()
 
 find_library( SERIALPORT_LIBRARY NAMES "serialport" PATHS ${EXT_LIBS_PATH}/libserial/lib/${PLATFORM_TYPE} )

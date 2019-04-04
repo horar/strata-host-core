@@ -72,6 +72,6 @@ target_compile_definitions(${PROJECT_NAME}
 if(APPLE)
     set_target_properties(${PROJECT_NAME} PROPERTIES
         MACOSX_BUNDLE ON
-    MACOSX_BUNDLE_BUNDLE_NAME "Serial Console Interface"
+        MACOSX_BUNDLE_BUNDLE_NAME "Serial Console Interface"
     )
 endif()
