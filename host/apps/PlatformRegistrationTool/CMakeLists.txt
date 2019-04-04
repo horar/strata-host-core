@@ -6,8 +6,6 @@ message(STATUS "${PROJECT_NAME} v${PROJECT_VERSION}")
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-include(FeatureSummary)
-
 find_package(Qt5 5.12
     COMPONENTS Core Gui Quick Qml Network
     REQUIRED
@@ -115,5 +113,3 @@ target_compile_definitions(${PROJECT_NAME}
     PRIVATE QT_DEPRECATED_WARNINGS
     PRIVATE QT_DISABLE_DEPRECATED_BEFORE=0x060000
 )
-
-feature_summary(WHAT ALL)
