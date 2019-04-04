@@ -62,7 +62,7 @@
 #include <libserialport.h>
 
 // rapid json library
-#include "rapidjson/document.h"
+#include <rapidjson/document.h>
 #include <rapidjson/writer.h>
 #include <rapidjson/stringbuffer.h>
 
@@ -70,11 +70,9 @@
 #include "ParseConfig.h"
 #include "Logger.h"
 #include "DiscoveryService.h"
-#include "Connector.h"
-
-// nimbus integration
-#include "nimbus.h"
-#include "observer.h"
+#include <Connector.h>
+#include <SGwget.h>
+#include "SGCouchbaseLiteWrapper.h"
 
 // Console print function
 // used in main.cc and host-controller-service.cc
@@ -112,13 +110,6 @@ enum class CommandDispatcherMessages{
     COMMAND_NOT_FOUND	= 10,
 };
 
-// struct that will be added to the list
-typedef struct{
-    std::string platform_uuid;
-    std::string platform_verbose;
-    std::string connection_status;
-}platform_details;
-
 class HostControllerService {
 public:
     // constructor
@@ -128,8 +119,6 @@ public:
     HcsError init();
     HcsError run();
     HcsError exit();
-
-
 
     // utility functions
     std::vector<std::string> initialCommandDispatch(const std::string& dealer_id,const std::string& command);
@@ -143,6 +132,11 @@ public:
     std::string platformRead(); // this fucntion will be moved to usb connector
     bool parseAndGetPlatformId(); // potential new class to parse and handle json messages
     void parseHCSCommands(const std::string&); // function that parses the messages for hcs
+    bool createFolder(std::string& url, std::string& file_path);
+    void getFolderName(std::string& url, std::string& file_path);
+    void handleViewDocuments(rapidjson::Value& view_documents, const std::string& flag);
+    void handleDownloadDocuments(rapidjson::Value& download_documents);
+
 
     // getter fucntions
     void getPlatformListJson(std::string &);
@@ -173,6 +167,9 @@ public:
     void appendUsername(std::string&); // appends the username to the input json message
     void retrieveUsername(const std::string&);  // retrieves user name from the input json string
 
+    void onValidate(const std::string& doc_id, const std::string& json_body) ;
+
+    void sendDocumentstoUI(const std::string& json_body);
     // libevent callbacks
     static void testCallback(evutil_socket_t fd, short what, void* args);
     static void serviceCallback(evutil_socket_t fd, short what, void* args);
@@ -213,7 +210,6 @@ private:
 
     // list to hold all the platform UUID
     // [testing alone] hold int
-    typedef std::list<platform_details> platformList;
     platformList platform_uuid_;    // [TODO] : change the naming style
     std::string g_platform_uuid_;	// global variable to stor connected uuid
 
@@ -233,12 +229,11 @@ private:
     Connector *remote_connector_ ;
     Connector *remote_activity_connector_;
 
-    // Nimbus/database object
-    Nimbus * database_;
+    // SGCouchbase Lite wrapper
+    SGCouchbaseLiteWrapper *sgcouchbase_;
 
     // JWT for the client session
     std::string JWT;
-    // bool remote_advertise;
 
     struct event remote_handler_;
     struct event periodic_event_;
@@ -246,7 +241,7 @@ private:
     struct event service_handler_;
     struct event activity_handler_;
 
+    // To store the username for the strata login
     std::string user_name_;
-
 };
 #endif

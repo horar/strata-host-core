@@ -6,9 +6,7 @@ message(STATUS "${PROJECT_NAME} v${PROJECT_VERSION}")
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-include(FeatureSummary)
-
-find_package(Qt5 5.10
+find_package(Qt5 5.12
     COMPONENTS Core Gui Widgets Quick Qml WebView WebEngine Charts
     REQUIRED
 )
@@ -16,10 +14,27 @@ find_package(Qt5 5.10
 add_executable(${PROJECT_NAME}
     main.cpp
     source/DocumentManager.cpp
+
     logging/LoggingQtCategories.cpp
     logging/LoggingQtCategories.qrc
 
-    qml.qrc
+    qml-dev-studio.qrc
+    qml-dev-studio-resources.qrc
+
+    qml-views-15A-switcher.qrc
+    qml-views-5A-switcher.qrc
+    qml-views-XDFN-LDO.qrc
+    qml-views-bubu.qrc
+    qml-views-efficiency-simulator.qrc
+    qml-views-entice_rgb.qrc
+    qml-views-led.qrc
+    qml-views-logic-gate.qrc
+    qml-views-motor-vortex.qrc
+    qml-views-template.qrc
+    qml-views-usb-hub.qrc
+    qml-views-usb-pd-multiport.qrc
+    qml-views-usb-pd.qrc
+
     views/SGPdfViewer/pdfjs.qrc
 )
 if(APPLE)
@@ -111,5 +126,3 @@ list(APPEND QML_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/")
 set(QML_IMPORT_PATH "${QML_DIRS};${QML_IMPORT_PATH}"
     CACHE STRING "Qt Creator extra qml import paths" FORCE
 )
-
-feature_summary(WHAT ALL)

@@ -1,0 +1,19 @@
+<RCC>
+    <qresource prefix="/">
+        <file>views/efficiency-simulator/Circuit.qml</file>
+        <file>views/efficiency-simulator/Drivers.qml</file>
+        <file>views/efficiency-simulator/EfficiencySimulator.qml</file>
+        <file>views/efficiency-simulator/GraphAndCircuit.qml</file>
+        <file>views/efficiency-simulator/Mosfets.qml</file>
+        <file>views/efficiency-simulator/calculation.js</file>
+        <file>views/efficiency-simulator/component_source.js</file>
+        <file>views/efficiency-simulator/images/circuit.png</file>
+        <file>views/efficiency-simulator/sgwidgets/SGColumnDivider.qml</file>
+        <file>views/efficiency-simulator/sgwidgets/SGComboBox.qml</file>
+        <file>views/efficiency-simulator/sgwidgets/SGMinimizeContainer.qml</file>
+        <file>views/efficiency-simulator/sgwidgets/SGStaticGraph.qml</file>
+        <file>views/efficiency-simulator/sgwidgets/SGSubmitInfoBox.qml</file>
+        <file>views/efficiency-simulator/sgwidgets/SGTitleBar.qml</file>
+        <file>views/efficiency-simulator/sgwidgets/fonts/sgicons.ttf</file>
+    </qresource>
+</RCC>

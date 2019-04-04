@@ -69,8 +69,8 @@ ParseConfig::ParseConfig(std::string file) :
     }
 
     Value& database_config = configuration["database"];
-    database_server_ = database_config["server"].GetString();
-    gateway_sync_ = database_config["gateway_sync"].GetString();
+    documents_download_link_  = database_config["file_server"].GetString();
+    sync_gateway_url_ = database_config["gateway_sync"].GetString();
 
     Value& channels = database_config["channels"];
     if( channels.IsArray ()) {

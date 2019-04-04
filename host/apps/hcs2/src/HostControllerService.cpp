@@ -12,30 +12,290 @@
 */
 
 #include "HostControllerService.h"
-
 #include <chrono>
 #include <thread>
 
-
 using namespace rapidjson;
 using namespace std;
+using namespace Spyglass;
 
-AttachmentObserver::AttachmentObserver(void *client_socket,void *client_id_list)
+#ifdef _WIN32
+#include <direct.h>
+#else
+#include <sys/stat.h>
+#endif
+
+// [prasanth] TODO :: need to take the db name and document name into config file
+const char* g_database = "strata_db";
+const char* g_document = "platform_document";
+const char* g_user_name = "username";
+const char* g_password = "password";
+const string g_delimiter = "/";
+const string g_download_folder = "/PDF";
+
+// util functions that are required
+// @f GetCurrentWorkingDir
+// @b gets the current executable path
+//
+// arguments:
+//  OUT:
+//   string that contains the system path
+//
+void GetCurrentWorkingDir( string &file_path )
 {
-    PDEBUG(PRINT_DEBUG,"Attaching the nimbus observer");
-    client_connector_ = (Connector *)client_socket;
-    client_list_ = (clientList *)client_id_list;
+    char buff[FILENAME_MAX];
+#ifdef _WIN32
+    _getcwd(buff,FILENAME_MAX);
+#else
+    getcwd(buff,FILENAME_MAX);
+#endif
+    file_path = string(buff);
 }
 
-void AttachmentObserver::DocumentChangeCallback(jsonString jsonBody) {
-    for(const auto& item : *client_list_) {
-        client_connector_->setDealerID(item);
-        client_connector_->send(jsonBody);
-        // [prasanth] : comment the following PDEBUG for faster performance.
-        // use it for debugging
-        // PDEBUG(PRINT_DEBUG,"[hcs to hcc]%s",jsonBody);
+// @f CreateFolder
+// @b creates the folder
+//
+// arguments:
+//  IN:
+//   dir
+//  OUT:
+//   TRUE on success else FALSE
+//
+bool CreateFolder(const string& folder_name)
+{
+    if(folder_name.empty()) {
+        PDEBUG(PRINT_DEBUG,"Empty Directory name\n");
+        return false;
+    }
+ #ifdef _WIN32
+    if(_mkdir(folder_name.c_str()) < 0) {
+#else
+    if(mkdir(folder_name.c_str(),0777) < 0) {
+#endif
+        // 17 is for if file already exists
+        // we are returning if file already exists
+        if(errno != 17) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool HostControllerService::createFolder(string& url, string& file_path)
+{
+    size_t pos = 0;
+    string token;
+    int counter = 0;
+    cout << "file path is "<< file_path <<endl;
+    GetCurrentWorkingDir(file_path);
+    file_path.append(g_download_folder);
+    while ((pos = url.find(g_delimiter)) != std::string::npos) {
+        counter++;
+        token = url.substr(0, pos);
+        url.erase(0, pos + g_delimiter.length());
+        file_path.append(g_delimiter);
+        file_path.append(token);
+        if(!CreateFolder(file_path)) {
+            cout << "create folder failed here \n";
+            return false;
+        }
+    }
+    return (pos > 0);
+}
+
+void HostControllerService::getFolderName(string& url, string& file_path)
+{
+    size_t pos = 0;
+    string token;
+    int counter = 0;
+
+    GetCurrentWorkingDir(file_path);
+    file_path.append(g_download_folder);
+    while ((pos = url.find(g_delimiter)) != std::string::npos) {
+        counter++;
+        token = url.substr(0, pos);
+        cout << token << endl;
+        url.erase(0, pos + g_delimiter.length());
+        file_path.append(g_delimiter);
+        file_path.append(token);
     }
 }
+
+void HostControllerService::handleViewDocuments(Value& view_documents,const string& flag)
+{
+    string file_path;
+    Document json_document;
+    json_document.SetObject();
+    Value document_object;
+    document_object.SetObject();
+    Document::AllocatorType& allocator = json_document.GetAllocator();
+    Value array(kArrayType);
+    document_object.AddMember("type","document",allocator);
+    for(int i=0; i<view_documents.Size(); i++) {
+        string url  =  view_documents[i]["file"].GetString();
+        // adding the prefix to the link (adding the file service endpoint)
+        PDEBUG(PRINT_DEBUG,"the url to download is %s\n",url.c_str());
+        string file_url;
+        if(flag == "replication") {
+            file_url = configuration_->GetDatabaseServer() + url;
+            if(!createFolder(url,file_path)) {
+                PDEBUG(PRINT_DEBUG,"Create Folder failed\n");
+                return;
+                // Need an UI method to tell the folder creation fails
+            }
+        }
+        else if(flag == "local") {
+            getFolderName(url, file_path);
+        }
+        file_path.append(g_delimiter);
+        file_path.append(url);
+        string file_path_to_download = file_path;
+        if(flag == "replication") {
+            SGwget downloader;
+            if(!downloader.download(file_url,file_path_to_download,"overwrite")) {
+                return;
+            }
+        }
+
+        Value jwt_file_path_to_download(file_path_to_download.c_str(),allocator);
+        string name_file = view_documents[i]["name"].GetString();
+        Value jwt_type(name_file.c_str(),allocator);
+        Value array_object; // create array object
+        array_object.SetObject();
+        array_object.AddMember("uri",jwt_file_path_to_download,allocator);
+        array_object.AddMember("name",jwt_type,allocator);
+        array.PushBack(array_object,allocator);
+    }
+    document_object.AddMember("documents",array,allocator);
+    json_document.AddMember("cloud::notification",document_object,allocator);
+    StringBuffer strbuf;
+    Writer<StringBuffer> writer(strbuf);
+    json_document.Accept(writer);
+    sendMessageToUI(strbuf.GetString());
+}
+
+void HostControllerService::handleDownloadDocuments(Value& download_documents)
+{
+    Document json_document;
+    json_document.SetObject();
+    Value document_object;
+    document_object.SetObject();
+    Document::AllocatorType& allocator = json_document.GetAllocator();
+    Value array(kArrayType);
+    document_object.AddMember("type","document",allocator);
+
+    for(int i=0;i<download_documents.Size();i++) {
+        string url  =  download_documents[i]["file"].GetString();
+        Value jwt_file_path_to_download(url.c_str(),allocator);
+        Value array_object; // create array object
+        array_object.SetObject();
+        array_object.AddMember("uri",jwt_file_path_to_download,allocator);
+        array_object.AddMember("name","download",allocator);
+        array.PushBack(array_object,allocator);
+    }
+    document_object.AddMember("documents",array,allocator);
+    json_document.AddMember("cloud::notification",document_object,allocator);
+    StringBuffer strbuf;
+    Writer<StringBuffer> writer(strbuf);
+    json_document.Accept(writer);
+    sendMessageToUI(strbuf.GetString());
+}
+// Formatted JSON Data
+// {
+//    "channels":"SEC.2018.018.1.0",
+//    "documents":{
+//       "configuration":[
+//          {
+//             "file":"/<class>/views/schematic/schematic.pdf",
+//             "md5":"9e107d9d372bb6826bd81d3542a419d6",
+//             "name":"schematic",
+//             "timestamp":"2005-10-30 T 10:45.76"
+//          }
+//       ],
+//       "downloads":[
+//          {
+//             "file":"/<class>/views/schematic/schematic.pdf",
+//             "md5":"9e107d9d372bb6826bd81d3542a419d6",
+//             "name":"downloads1",
+//             "timestamp":"2005-10-30 T 10:45.76"
+//          },
+//          {
+//             "file":"/<class>/views/schematic/schematic.pdf",
+//             "md5":"9e107d9d372bb6826bd81d3542a419d7",
+//             "name":"downloads2",
+//             "timestamp":"2005-10-30 T 10:45.76"
+//          },
+//          {
+//             "file":"/<class>/views/schematic/schematic.pdf",
+//             "md5":"9e107d9d372bb6826bd81d3542a419d7",
+//             "name":"downloads3",
+//             "timestamp":"2005-10-30 T 10:45.76"
+//          }
+//       ],
+//       "views":[
+//          {
+//             "file":"SEC.2018.018.1.0/schematic/schematic.pdf",
+//             "md5":"9e107d9d372bb6826bd81d3542a419d6",
+//             "name":"schematic",
+//             "timestamp":"2005-10-30 T 10:45.876"
+//          }
+//       ]
+//    },
+//    "name":"<Platform Class Verbose name. Example: USB 4-Port Power Deliery"
+// }
+void HostControllerService::onValidate(const std::string& doc_id, const std::string& json_body)
+{
+    string diff_json_body;
+    // get diff is used to find the difference between saved and proposed documents
+    sgcouchbase_->getDiff(doc_id,json_body,diff_json_body);
+    // TODO check if string from getdiff is valid
+    Document db_notification;
+    if (db_notification.Parse(diff_json_body.c_str()).HasParseError()) {
+        PDEBUG(PRINT_DEBUG,"json failed\n");
+        return;
+    }
+    string file_path;
+    GetCurrentWorkingDir(file_path);
+    file_path.append(g_download_folder);
+    if(!CreateFolder(file_path)) {
+        PDEBUG(PRINT_DEBUG,"cannot create folders for pdfs to download");
+        return;
+    }
+    // handle - check if views object exist inside the documents
+    if(!db_notification.HasMember("documents")) {
+        PDEBUG(PRINT_DEBUG,"no documents in the db");
+        return;
+    }
+    if(db_notification["documents"].HasMember("views")) {
+        Value& view_documents = db_notification["documents"]["views"];
+        // put the funciton here
+        handleViewDocuments(view_documents,"replication");
+    }
+    if(!db_notification["documents"].HasMember("downloads")) {
+        return;
+    }
+    Value& download_documents = db_notification["documents"]["downloads"];
+    handleDownloadDocuments(download_documents);
+}
+
+void HostControllerService::sendDocumentstoUI(const std::string& json_body)
+{
+    Document db_notification;
+    if (db_notification.Parse(json_body.c_str()).HasParseError()) {
+        PDEBUG(PRINT_DEBUG,"json failed\n");
+        return;
+    }
+    if (db_notification.HasMember("views")) {
+        Value& view_documents = db_notification["views"];
+        handleViewDocuments(view_documents,"local");
+    }
+    if (!db_notification.HasMember("downloads")) {
+        return;
+    }
+    Value& download_documents = db_notification["downloads"];
+    handleDownloadDocuments(download_documents);
+}
+
 /******************************************************************************/
 /*                                core functions                              */
 /******************************************************************************/
@@ -73,14 +333,16 @@ HostControllerService::HostControllerService(const string& configuration_file)
     remote_discovery_monitor_ = configuration_->GetDiscoveryMonitorSubscriber();
     // creating discovery service object
     discovery_service_ = new DiscoveryService(configuration_->GetDiscoveryServerID());
-    // creating the nimbus object
-    database_ = new Nimbus();
     // initializing the connectors
     client_connector_ = ConnectorFactory::getConnector("router");
     serial_connector_ = ConnectorFactory::getConnector("platform");
     remote_connector_ = ConnectorFactory::getConnector("dealer");
     // this connecotr is used for activity monitor from discovery service
     remote_activity_connector_ = ConnectorFactory::getConnector("subscriber");
+    // SGCouchbase integration
+    sgcouchbase_ = new SGCouchbaseLiteWrapper(g_database,configuration_->GetGatewaySync());
+    sgcouchbase_->setAuthentication(g_user_name,g_password);
+    sgcouchbase_->setValidationListener(bind(&HostControllerService::onValidate,this,placeholders::_1,placeholders::_2));
 }
 
 // @f init
@@ -103,10 +365,6 @@ HcsError HostControllerService::init()
     client_connector_->open(hcs_server_address_);
 
     // registering the observer to the database
-    // // TODO [prasanth] NIMBUS integration **Needs better organisation
-    AttachmentObserver blobObserver((void *)client_connector_, (void *)&clientList);
-    database_->Register(&blobObserver);
-
     // [TODO]: [prasanth] the following lines are used to handle the serial connect/disconnect
     // This method will be removed once we get the serial to socket stuff in
     port_disconnected_ = true;
@@ -114,7 +372,10 @@ HcsError HostControllerService::init()
     remote_connector_->setConnectionState(false);
     client_connector_->setConnectionState(false);
     remote_activity_connector_->setConnectionState(false);
-
+    if(!sgcouchbase_->openDatabase()) {
+        // [prasanth]: need an UI way to tell the user that database creation failed
+        PDEBUG(PRINT_DEBUG,"Databse open failed\n");
+    }
     setEventLoop();
     // [TODO] [prasanth] : This function run is coded in this, since the libevent dynamic
     //addtion of event is not implemented successfully in hcs
@@ -152,27 +413,12 @@ HcsError HostControllerService::run()
 
 HcsError HostControllerService::setEventLoop()
 {
-    // get the platform list from the discovery service
-    // [TODO] [Prasanth] : Should be added dynamically
     string platformList ;
     getPlatformListJson(platformList);
-    platform_details simulated_usb_pd,simulated_motor_vortex,sim_usb;
-    simulated_usb_pd.platform_uuid = "P2.2018.1.1.0.0.c9060ff8-5c5e-4295-b95a-d857ee9a3671";
-    simulated_usb_pd.platform_verbose = "USB PD Load Board";
-    simulated_usb_pd.connection_status = "view";
 
-    simulated_motor_vortex.platform_uuid = "SEC.2017.004.2.0.0.1c9f3822-b865-11e8-b42a-47f5c5ed4fc3";
-    simulated_motor_vortex.platform_verbose = "Vortex Fountain Motor Platform Board";
-    simulated_motor_vortex.connection_status = "view";
-
-    sim_usb.platform_uuid = "P2.2017.1.1.0.0.cbde0519-0f42-4431-a379-caee4a1494af";
-    sim_usb.platform_verbose = "USB PD";
-    sim_usb.connection_status = "view";
-
-    platform_uuid_.push_back(simulated_usb_pd);  // for testing alone
-    platform_uuid_.push_back(simulated_motor_vortex);
-    platform_uuid_.push_back(sim_usb);
-
+    // [prasanth] TODO: open the db document in a proper location
+    sgcouchbase_->openDocument(g_document);
+    sgcouchbase_->getStoredPlatforms(platform_uuid_);
     sendMessageToUI(platformList);
 
     PDEBUG(PRINT_DEBUG,"Starting the event");
@@ -349,7 +595,7 @@ void HostControllerService::onServiceCallback(const std::string& dealer_id, cons
 
         std::vector<string> selected_platform_info = initialCommandDispatch(dealer_id, message);
         // strictly for testing alone
-        if(!(selected_platform_info[0] == "NONE")) {
+        if(selected_platform_info[0] != "NONE") {
             // need to change the following lines to support struct
             std::vector<string> map_element;
             map_element.insert(map_element.begin(),selected_platform_info[0]);
@@ -368,27 +614,14 @@ void HostControllerService::onServiceCallback(const std::string& dealer_id, cons
                 // openeing the subscriber socket for remote user connect and disconnect
                 startActivityMonitorService();
             }
-
-            // constructing JSON for the database to open the channel based on selected platform
-            Document document;
-            document.SetObject();
-            Document::AllocatorType& allocator = document.GetAllocator();
-            Value platform_id(selected_platform_info[0].c_str(),allocator);
-            Value payload_object;
-            payload_object.SetObject();
-            payload_object.AddMember("db_name",platform_id,allocator);
-            document.AddMember("db::payload",payload_object,allocator);
-            document.AddMember("db::cmd","open",allocator);
-            StringBuffer strbuf;
-            Writer<StringBuffer> writer(strbuf);
-            document.Accept(writer);
-            PDEBUG(PRINT_DEBUG,"db::cmd %s\n",strbuf.GetString());
-
-            // sending the command to NIMBUS
-            if ( database_->Command( strbuf.GetString() ) != NO_ERRORS ){
-                PDEBUG(PRINT_DEBUG,"ERROR: database failed failed!");
+            sgcouchbase_->addChannels(selected_platform_info[0]);
+            // Read if document exists
+            string json_body;
+            sgcouchbase_->readExistingDocument(selected_platform_info[0],json_body);
+            sendDocumentstoUI(json_body);
+            if(!sgcouchbase_->startReplicator()) {
+                PDEBUG(PRINT_DEBUG,"Replication failed.\n");
             }
-            PDEBUG(PRINT_DEBUG,"adding the %s uuid to multimap\n",selected_platform_info[0].c_str());
         }
     }
         // this section will be invoked, if the client[ui] is already mapped to a platform and
@@ -448,22 +681,6 @@ void HostControllerService::initializePlatform()
 {
     // clearing the list
     platform_uuid_.clear();
-
-    platform_details simulated_usb_pd,simulated_motor_vortex,sim_usb;
-    simulated_usb_pd.platform_uuid = "P2.2018.1.1.0.0.c9060ff8-5c5e-4295-b95a-d857ee9a3671";
-    simulated_usb_pd.platform_verbose = "USB PD Load Board";
-    simulated_usb_pd.connection_status = "view";
-
-    simulated_motor_vortex.platform_uuid = "SEC.2017.004.2.0.0.1c9f3822-b865-11e8-b42a-47f5c5ed4fc3";
-    simulated_motor_vortex.platform_verbose = "Vortex Fountain Motor Platform Board";
-    simulated_motor_vortex.connection_status = "view";
-
-    sim_usb.platform_uuid = "P2.2017.1.1.0.0.cbde0519-0f42-4431-a379-caee4a1494af";
-    sim_usb.platform_verbose = "USB PD";
-    sim_usb.connection_status = "view";
-    platform_uuid_.push_back(simulated_usb_pd);  // for testing alone
-    platform_uuid_.push_back(simulated_motor_vortex);
-    platform_uuid_.push_back(sim_usb);
     parseAndGetPlatformId();
 }
 
@@ -593,7 +810,7 @@ bool HostControllerService::disptachMessageToPlatforms(const std::string& dealer
 //
 CommandDispatcherMessages HostControllerService::stringHash(const std::string& command)
 {
-    if(command == "request_hcs_status") {
+    if (command == "request_hcs_status") {
         return CommandDispatcherMessages::REQUEST_HCS_STATUS;
     }
     else if (command == "request_available_platforms") {
@@ -633,6 +850,18 @@ bool HostControllerService::parseAndGetPlatformId()
     // [TODO] [prasanth] : change the dealer_id var name to platform id
     g_dealer_id_ = serial_connector_->getPlatformUUID();
     platform.connection_status = "connected";
+    sgcouchbase_->getStoredPlatforms(platform_uuid_);
+    if(platform_uuid_.empty()) {
+        sgcouchbase_->addPlatformtoDB(platform.platform_uuid,platform.platform_verbose);
+        platform_uuid_.push_back(platform);
+    }
+    for(auto &iter : platform_uuid_) {
+        if(iter.platform_uuid == platform.platform_uuid) {
+            iter.connection_status = "connected";
+            return true;
+        }
+    }
+    sgcouchbase_->addPlatformtoDB(platform.platform_uuid,platform.platform_verbose);
     platform_uuid_.push_back(platform);
     return true;
 }
@@ -706,10 +935,43 @@ void HostControllerService::parseHCSCommands(const string &hcs_message)
     else if(!(strcmp(hcs_command["hcs::cmd"].GetString(),"disconnect_platform"))) {
         PDEBUG(PRINT_DEBUG,"User has requested to disconnect from platform\n");
         platform_client_mapping_.clear();
+        sgcouchbase_->stopReplicator();
     }
     else if(!(strcmp(hcs_command["hcs::cmd"].GetString(),"unregister"))) {
         PDEBUG(PRINT_DEBUG,"User has disconnected\n");
         platform_client_mapping_.clear();
+    }
+    else if(!(strcmp(hcs_command["hcs::cmd"].GetString(),"download_files"))) {
+        PDEBUG(PRINT_DEBUG,"download files request\n");
+        Value& array = hcs_command["payload"];
+        for(int i=0;i<array.Size();i++) {
+            string file_path = array[i]["path"].GetString();
+#if _WIN32
+            const string substring_toremove = "file:///";
+#else
+            const string substring_toremove = "file://";
+#endif
+            std::string::size_type position_remove = file_path.find(substring_toremove);
+            if (position_remove != std::string::npos) {
+                file_path.erase(position_remove, substring_toremove.length());
+            }
+            file_path.append(g_delimiter);
+            file_path.append(array[i]["name"].GetString());
+            cout << "file path from ui is "<<file_path<<endl;
+            SGwget downloader;
+            string file_url = array[i]["file"].GetString();
+            file_url = configuration_->GetDatabaseServer() + file_url;
+            cout << "download file url is "<<file_url<<endl;
+            // [TODO] The following download is a blocking function. The main thread will
+            // be waiting for this function to return and this function may take more time (slow internet, large file,..)
+            // JIRA SCT-289 has been created to take care of this issue
+            if(downloader.download(file_url,file_path,"non-overwrite")) {
+                cout<< "Download success\n";
+            }
+            else {
+                cout << "Download failed\n";
+            }
+        }
     }
 }
 
@@ -809,8 +1071,8 @@ void HostControllerService::handleRemoteGetPlatforms()
 //
 void HostControllerService::handleRemoteConnection(const std::string& platform_id)
 {
-    bool status = discovery_service_->sendConnect(platform_id,dealer_remote_socket_id_);
     cout<<"connection zmq "<<dealer_remote_socket_id_<<endl;
+    bool status = discovery_service_->sendConnect(platform_id,dealer_remote_socket_id_);
 }
 
 // @f handleRemoteActivity
@@ -930,27 +1192,9 @@ void HostControllerService::platformDisconnectRoutine ()
     }
 
     platform_uuid_.clear();
+    sgcouchbase_->getStoredPlatforms(platform_uuid_);
+    sgcouchbase_->stopReplicator();
     platform_client_mapping_.clear();
-
-
-
-    platform_details simulated_usb_pd,simulated_motor_vortex,sim_usb;
-    simulated_usb_pd.platform_uuid = "P2.2018.1.1.0.0.c9060ff8-5c5e-4295-b95a-d857ee9a3671";
-    simulated_usb_pd.platform_verbose = "USB PD Load Board";
-    simulated_usb_pd.connection_status = "view";
-
-    simulated_motor_vortex.platform_uuid = "SEC.2017.004.2.0.0.1c9f3822-b865-11e8-b42a-47f5c5ed4fc3";
-    simulated_motor_vortex.platform_verbose = "Vortex Fountain Motor Platform Board";
-    simulated_motor_vortex.connection_status = "view";
-
-    sim_usb.platform_uuid = "P2.2017.1.1.0.0.cbde0519-0f42-4431-a379-caee4a1494af";
-    sim_usb.platform_verbose = "USB PD";
-    sim_usb.connection_status = "view";
-
-    platform_uuid_.push_back(simulated_usb_pd);  // for testing alone
-    platform_uuid_.push_back(simulated_motor_vortex);
-    platform_uuid_.push_back(sim_usb);
-
     string platformList;
     getPlatformListJson(platformList);
     sendMessageToUI(platformList);
@@ -1010,8 +1254,8 @@ void HostControllerService::getPlatformListJson(string &list)
         Value array_object;
         array_object.SetObject();
 
-        array_object.AddMember("verbose",json_verbose,allocator);
-        array_object.AddMember("uuid",json_uuid,allocator);
+        array_object.AddMember("name",json_verbose,allocator);
+        array_object.AddMember("class_id",json_uuid,allocator);
         array_object.AddMember("connection",json_connection_status,allocator);
         array.PushBack(array_object,allocator);
     }

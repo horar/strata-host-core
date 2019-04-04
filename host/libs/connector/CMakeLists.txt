@@ -10,7 +10,6 @@ find_package(Threads REQUIRED)
 
 set(EXT_LIBS_PATH ${CMAKE_SOURCE_DIR}/ext_libs)
 
-
 add_library(connector
     src/Connector_impl.cpp
     src/SerialConnector.cpp

@@ -5,11 +5,14 @@
 #include <libserialport.h>
 #include <vector>
 #include <string>
+#include <assert.h>
 
 #if defined(__unix__) || defined(__APPLE__)
   #include <sys/file.h>
 #endif
-
+#if defined(_WIN32)
+  #include <windows.h>
+#endif
 
 serial_port::serial_port() : portHandle_(nullptr), event_(nullptr)
 {
@@ -115,16 +118,11 @@ sp_handle_t serial_port::getFileDescriptor()
         return -1;
     }
 
-#if defined(_WIN32)
-    HANDLE fd;
-#else
-    int fd;
-#endif
-
+    sp_handle_t fd;
     if (sp_get_port_handle(portHandle_, &fd) != SP_OK) {
         return static_cast<sp_handle_t>(-1);
     }
-    return static_cast<sp_handle_t>(fd);
+    return fd;
 }
 
 const char* serial_port::getName() const
