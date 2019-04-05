@@ -16,6 +16,7 @@
         <file>common/SgButtonImage.qml</file>
         <file>common/SgDialog.qml</file>
         <file>common/SgIcon.qml</file>
+        <file>common/SgMessageDialog.qml</file>
         <file>common/SgPressable.qml</file>
         <file>common/SgSpinBox.qml</file>
         <file>common/SgSpinBoxEditor.qml</file>
