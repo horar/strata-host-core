@@ -6,6 +6,7 @@ import "./Colors.js" as Colors
 Dialog {
     id: dialog
 
+    property bool destroyOnClose: false
     header: Item {
         implicitHeight: label.paintedHeight + 16
 
@@ -30,5 +31,11 @@ Dialog {
 
     background: Rectangle {
         color: "#eeeeee"
+    }
+
+    onClosed: {
+        if (destroyOnClose) {
+            dialog.destroy()
+        }
     }
 }
