@@ -52,70 +52,6 @@ Rectangle {
         Help.destroyHelp()
     }
 
-    function getWidth(string) {
-        return (string.match(/width=\"([0-9]+)\"/))
-    }
-
-    function getHeight(string) {
-        return (string.match(/height=\"([0-9]+)\"/))
-    }
-
-    property var userImages: {
-        "dave.priscak@onsemi.com" : "dave_priscak.png",
-                "david.somo@onsemi.com" : "david_somo.png",
-                "daryl.ostrander@onsemi.com" : "daryl_ostrander.png",
-                "paul.mascarenas@onsemi.com" : "paul_mascarenas.png",
-                "ian.cain@onsemi.com" : "ian.cain.jpg",
-                "blankavatar" : "blank_avatar.png"
-    }
-
-    property var userNames: {
-        "dave.priscak@onsemi.com" : "Dave Priscak",
-                "david.somo@onsemi.com"   : "David Somo",
-                "daryl.ostrander@onsemi.com" : "Daryl Ostrander",
-                "paul.mascarenas@onsemi.com" : "Paul Mascarenas",
-                "ian.cain@onsemi.com" : "Ian Cain"
-    }
-
-    property var userJobtitle: {
-        "dave.priscak@onsemi.com" : "VP Solutions Engineering",
-                "david.somo@onsemi.com"   : "Vice President, Corporate Strategy and Marketing",
-                "daryl.ostrander@onsemi.com" : "Director ON Semiconductor",
-                "paul.mascarenas@onsemi.com" : "Director ON Semiconductor",
-                "ian.cain@onsemi.com" : "Corporate Tech Ladder-Apps Mgmt (TL)"
-    }
-
-    function getUserImage(user_name){
-        user_name = user_name.toLowerCase()
-        if(userImages.hasOwnProperty(user_name)){
-            return userImages[user_name]
-        }
-        else{
-            return userImages["blankavatar"]
-        }
-    }
-
-    function getUserName(user_name){
-        var user_lower = user_name.toLowerCase()
-        if(userNames.hasOwnProperty(user_lower)){
-            return userNames[user_lower]
-        }
-        else{
-            return user_name
-        }
-    }
-
-    function getJobTitle(user_name){
-        var user_lower = user_name.toLowerCase()
-        if(userJobtitle.hasOwnProperty(user_lower)){
-            return userJobtitle[user_lower]
-        }
-        else{
-            return generalTitle;
-        }
-
-    }
-
     function generateToken(n) {
         var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
         var token = '';
@@ -197,7 +133,6 @@ Rectangle {
         visible: false
         color: "white"
     }
-
 
     Connections {
         target: coreInterface
@@ -735,7 +670,7 @@ Rectangle {
                                                 height: remoteUserDelegateContainer.height - 30
                                                 width: height
                                                 fillMode: Image.PreserveAspectFit
-                                                source: "qrc:/images/closeIcon.svg"
+                                                source: "qrc:/images/icons/fail_x.svg"
                                             }
 
                                             MouseArea {
@@ -1168,7 +1103,7 @@ Rectangle {
 
             Text {
                 id: profileInitial
-                text: getUserName(user_id).charAt(0)
+                text: user_id.charAt(0)
                 color: "white"
                 anchors {
                     centerIn: profileIcon

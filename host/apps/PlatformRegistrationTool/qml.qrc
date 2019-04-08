@@ -1,0 +1,33 @@
+<!DOCTYPE RCC>
+<RCC version="1.0">
+    <qresource prefix="/">
+        <file>main.qml</file>
+        <file>BoardStatus.qml</file>
+        <file>BoardStatusPage.qml</file>
+        <file>CreatePlatformPage.qml</file>
+        <file>MainPage.qml</file>
+        <file>PrtBasePage.qml</file>
+        <file>RegisterPlatformPage.qml</file>
+        <file>TextProgressDialog.qml</file>
+        <file>common/Colors.js</file>
+        <file>common/SgUtils.js</file>
+        <file>common/SgBaseEditor.qml</file>
+        <file>common/SgButton.qml</file>
+        <file>common/SgButtonImage.qml</file>
+        <file>common/SgDialog.qml</file>
+        <file>common/SgIcon.qml</file>
+        <file>common/SgPressable.qml</file>
+        <file>common/SgSpinBox.qml</file>
+        <file>common/SgSpinBoxEditor.qml</file>
+        <file>common/SgSuggestionPopup.qml</file>
+        <file>common/SgTag.qml</file>
+        <file>common/SgTagFlow.qml</file>
+        <file>common/SgTagSelector.qml</file>
+        <file>common/SgTagSelectorEditor.qml</file>
+        <file>common/SgText.qml</file>
+        <file>common/SgTextEdit.qml</file>
+        <file>common/SgTextEditEditor.qml</file>
+        <file>common/SgTextField.qml</file>
+        <file>common/SgTextFieldEditor.qml</file>
+    </qresource>
+</RCC>

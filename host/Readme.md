@@ -20,16 +20,16 @@ brew install cmake
 
 ### Qt5 installation (for Linux and MacOS)
 
-Download and install Qt5. Minimum required version is 5.11 and QtChart component installed as well
+Download and install Qt5. Minimum required version is 5.12 and QtChart component installed as well
 
 To set paths for build run command in console (for MacOS)
 ```
-export Qt5_DIR=<QT installed directory>/5.11.2/clang_64/lib/cmake/Qt5
+export Qt5_DIR=<QT installed directory>/5.12.2/clang_64/lib/cmake/Qt5
 ```
 
 or for Linux:
 ```
-export Qt5_DIR=<QT installed directory>/5.11.2/gcc_64/lib/cmake/Qt5
+export Qt5_DIR=<QT installed directory>/5.12.2/gcc_64/lib/cmake/Qt5
 ```
 
 
