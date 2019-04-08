@@ -7,33 +7,16 @@
         <file>fonts/Inconsolata.otf</file>
         <file>fonts/sgicons.ttf</file>
         <file>images/blank_avatar.png</file>
-        <file>images/blank_avatar_old.png</file>
-        <file>images/closeIcon.svg</file>
-        <file>images/daryl_ostrander.png</file>
-        <file>images/dave_priscak.png</file>
-        <file>images/david_somo.png</file>
-        <file>images/demo-ads/1.png</file>
-        <file>images/demo-ads/2.png</file>
-        <file>images/demo-ads/3.png</file>
-        <file>images/demo-ads/4.png</file>
-        <file>images/ian.cain.jpg</file>
-        <file>images/icons/SettingIcon.svg</file>
         <file>images/icons/fail_x.svg</file>
-        <file>images/icons/onLogoGreen.svg</file>
-        <file>images/icons/onLogoGrey.svg</file>
         <file>images/icons/remote-locked.png</file>
         <file>images/icons/remote-unlocked.png</file>
-        <file>images/icons/remotecommunication.svg</file>
         <file>images/icons/success_check.svg</file>
         <file>images/icons/whiteAlertIcon.svg</file>
         <file>images/login-background.svg</file>
         <file>images/on-semi-logo-horiz.svg</file>
         <file>images/on-semi-logo.png</file>
-        <file>images/paul_mascarenas.png</file>
-        <file>images/phone-icon.png</file>
         <file>images/strata-logo-reverse.svg</file>
         <file>images/strata-logo.svg</file>
         <file>resources/icons/app/on.ico</file>
     </qresource>
 </RCC>
-
