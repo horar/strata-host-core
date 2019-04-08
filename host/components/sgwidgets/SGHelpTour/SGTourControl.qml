@@ -1,5 +1,5 @@
-import QtQuick 2.3
-import QtQuick.Controls 2.3
+import QtQuick 2.12
+import QtQuick.Controls 2.12
 import Fonts 1.0
 import QtGraphicalEffects 1.0
 import "qrc:/help_layout_manager.js" as Help

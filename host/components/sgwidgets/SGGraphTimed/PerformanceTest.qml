@@ -1,6 +1,6 @@
-import QtQuick 2.9
-import QtQuick.Window 2.2
-import QtQuick.Controls 2.2
+import QtQuick 2.12
+import QtQuick.Window 2.12
+import QtQuick.Controls 2.12
 
 //////// This is just for performance testing this SGGraphTimed, this file is not needed for any other projects
 
