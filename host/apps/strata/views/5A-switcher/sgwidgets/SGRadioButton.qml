@@ -3,14 +3,11 @@ import QtQuick.Controls 2.2
 
 RadioButton {
     id: root
-
     property color textColor: masterTextColor
     property color radioColor: masterRadioColor
-
     text: "Radio Button"
     implicitWidth: buttonText.implicitWidth + buttonText.anchors.leftMargin + indicator.width
     implicitHeight: 26
-
     contentItem: buttonText
 
     Text {
@@ -20,8 +17,7 @@ RadioButton {
             leftMargin: 10
         }
         text: root.text
-        opacity: enabled ? 1.0 : 0.3
-        color: root.textColor
+        font.bold: true
         elide: Text.ElideRight
         verticalAlignment: Text.AlignVCenter
     }

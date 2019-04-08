@@ -3,7 +3,7 @@ import QtQuick.Layouts 1.3
 import QtGraphicalEffects 1.0
 import QtQuick.Controls.Styles 1.4
 import QtQuick.Extras 1.4
-import QtQuick.Controls 1.4
+import QtQuick.Controls 2.3
 import "qrc:/js/navigation_control.js" as NavigationControl
 import "qrc:/views/5A-switcher/sgwidgets"
 import "qrc:/js/help_layout_manager.js" as Help
@@ -28,7 +28,7 @@ Item {
 
 
     property var read_mask_register_status: platformInterface.initial_status_1.read_int_msk
-    property string register_mask_binary
+    property var register_mask_binary: "00000000"
     onRead_mask_register_statusChanged: {
         register_mask_binary = ("00000000"+read_mask_register_status.toString(2)).substr(-8)
     }
@@ -69,70 +69,68 @@ Item {
 
     Rectangle {
         id: diagnoticsContainer
-        width : parent.width/1.5
+        width : parent.width/1.1
         height: parent.height/2
         color: "transparent"
         border.color: "black"
         border.width: 3
         radius: 10
-
         anchors {
             verticalCenter: parent.verticalCenter
             horizontalCenter: parent.horizontalCenter
         }
 
         RowLayout {
-            width: parent.width
-            height: parent.height
+            anchors.fill:parent
             spacing: 20
 
-            Rectangle {
-
+            ColumnLayout {
                 id: container
-                width: parent.width/14
-                height: parent.height
-                color: "red"
+                Layout.minimumWidth: 50
+                Layout.preferredWidth: 100
+                Layout.maximumWidth: 150
+                Layout.minimumHeight: 150
+                Layout.leftMargin: 20
+                spacing: 20
 
                 Text {
                     id: titleColumn
                     width: parent.width
                     height: parent.height/4
-                    anchors{
-                        top:parent.top
-
-                    }
                     text: " "
+                    Layout.alignment: Qt.AlignCenter
                 }
 
                 Text {
                     id: maskTitle
                     text: "Write Mask\nregister"
                     horizontalAlignment: Text.AlignHCenter
-
-
+                    Layout.alignment: Qt.AlignCenter
                     font.bold: true
                     width: parent.width
-                    height: parent.height/6
-                    anchors {
-                        top:titleColumn.bottom
-                        topMargin: 13
-                        left: parent.left
-                        leftMargin: 50
-                    }
+
                 }
 
                 Button {
                     id: readTitle
-                    text: "Read Sense\nRegister"
-
-                    width: 100
-                    height: 50
-                    anchors {
-                        top:maskTitle.bottom
-                        topMargin: 20
-                        left: parent.left
-                        leftMargin: 10
+                    Text {
+                        text: "Read Sense\n Register"
+                        font.bold: true
+                        anchors.centerIn: parent
+                        horizontalAlignment: Text.AlignHCenter
                     }
+                    background: Rectangle {
+                        color: "light gray"
+                        border.width: 1
+                        border.color: "gray"
+                        radius: 10
+                    }
+
+                    Layout.minimumWidth: 40
+                    Layout.preferredWidth: 110
+                    Layout.maximumWidth: 90
+                    Layout.minimumHeight:60
+                    Layout.alignment: Qt.AlignCenter
 
                     onClicked: {
                         platformInterface.read_sense_register.update()
@@ -140,466 +138,365 @@ Item {
                 }
             }
 
-            Rectangle {
-                width: parent.width/15
-                height: parent.height
 
+            ColumnLayout {
+                spacing: 20
+                Layout.minimumWidth: 50
+                Layout.preferredWidth: 100
+                Layout.maximumWidth: 150
+                Layout.minimumHeight: 150
 
-                ColumnLayout {
-                    spacing: 20
-                    anchors{
-                        left: parent.left
-                        leftMargin: 20
+                Text {
+                    id: tsd
+                    width: parent.width
+                    height: parent.height/4
+                    text: "TSD"
+                    font.bold: true
+                    Layout.alignment: Qt.AlignCenter
+                }
+
+                DiagnoticRadioButton {
+                    id: tsd1
+                    Layout.alignment: Qt.AlignCenter
+                    property var register_value: register_mask_binary
+                    onRegister_valueChanged: {
+                        checked = parseInt(register_value[0])
                     }
-
-                    Text {
-                        id: tsd
-                        width: parent.width
-                        height: parent.height/4
-                        anchors{
-                            top:parent.top
-                            topMargin: 15
-                            horizontalCenter: parent.horizontalCenter
+                    onClicked:{
+                        if (checked) {
+                            platformInterface.mask_thermal_shutdown_interrupt.update("masked")
                         }
-                        text: "TSD"
-                        font.bold: true
-                    }
-
-                    DiagnoticRadioButton {
-                        id: tsd1
-
-                        anchors {
-                            top: tsd.bottom
-                            topMargin: 39
-                            horizontalCenter: tsd.horizontalCenter
-                        }
-
-                        property string register_value: register_mask_binary
-                        onRegister_valueChanged: {
-                            checked = parseInt(register_value[0])
-                        }
-
-                        onClicked:{
-                            if (checked) {
-                                platformInterface.mask_thermal_shutdown_interrupt.update("masked")
-                            }
-                            else {
-                                platformInterface.mask_thermal_shutdown_interrupt.update("unmasked")
-                            }
+                        else {
+                            platformInterface.mask_thermal_shutdown_interrupt.update("unmasked")
                         }
                     }
+                }
 
-                    SGStatusLight {
-                        id: tsd2
-                        anchors {
-                            top: tsd1.bottom
-                            topMargin: 20
-                            horizontalCenter: tsd.horizontalCenter
+                SGStatusLight {
+                    id: tsd2
+                    lightSize: 25
+                    Layout.alignment: Qt.AlignCenter
+                    property string register_value: register_Binary
+
+                    onRegister_valueChanged: {
+                        if(register_value[6] === "1"){
+                            status = "green"
                         }
-                        lightSize: 25
-
-                        property string register_value: register_Binary
-
-                        onRegister_valueChanged: {
-                            if(register_value[6] === "1"){
-                                status = "green"
-                            }
-                            else status = "red"
-                        }
+                        else status = "red"
                     }
                 }
             }
 
-            Rectangle {
-                width: parent.width/15
-                height: parent.height
+            ColumnLayout {
+                spacing: 20
+                Layout.minimumWidth: 50
+                Layout.preferredWidth: 100
+                Layout.maximumWidth: 150
+                Layout.minimumHeight: 150
+                Text {
+                    id: twarn
+                    width: parent.width
+                    height: parent.height/4
+                    text: "TWARN"
+                    font.bold: true
+                    Layout.alignment: Qt.AlignCenter
+                }
 
-                ColumnLayout {
-                    spacing: 20
-                    Text {
-                        id: twarn
-                        width: parent.width
-                        height: parent.height/4
-                        anchors{
-                            top:parent.top
-                            topMargin: 15
-                            horizontalCenter: parent.horizontalCenter
-                        }
-                        text: "TWARN"
-                        font.bold: true
+                DiagnoticRadioButton{
+                    id: twarn1
+                    Layout.alignment: Qt.AlignCenter
+
+                    property var register_value: register_mask_binary
+                    onRegister_valueChanged: {
+                        checked = parseInt(register_value[1])
                     }
 
-
-                    DiagnoticRadioButton{
-                        id: twarn1
-                        anchors {
-                            top: twarn.bottom
-                            horizontalCenter: twarn.horizontalCenter
-                            topMargin: 39
+                    onClicked: {
+                        if (checked) {
+                            platformInterface.mask_thermal_warn_interrupt.update("masked")
+                            platformInterface.mask_thermal_warn_interrupt.show()
                         }
-
-                        property string register_value: register_mask_binary
-                        onRegister_valueChanged: {
-                            checked = parseInt(register_value[1])
-                        }
-
-                        onClicked: {
-                            if (checked) {
-                                platformInterface.mask_thermal_warn_interrupt.update("masked")
-                                platformInterface.mask_thermal_warn_interrupt.show()
-                            }
-                            else {
-                                platformInterface.mask_thermal_warn_interrupt.update("unmasked")
-                                platformInterface.mask_thermal_warn_interrupt.show()
-                            }
-
-                        }
-
-                    }
-
-                    SGStatusLight {
-                        id: twarn2
-                        anchors {
-                            top: twarn1.bottom
-                            topMargin: 20
-                            horizontalCenter: twarn.horizontalCenter
-                        }
-                        lightSize: 25
-
-                        property string register_value: register_Binary
-
-                        onRegister_valueChanged: {
-                            if(register_value[5] === "1"){
-                                status = "green"
-                            }
-                            else status = "red"
+                        else {
+                            platformInterface.mask_thermal_warn_interrupt.update("unmasked")
+                            platformInterface.mask_thermal_warn_interrupt.show()
                         }
 
                     }
 
                 }
 
-            }
+                SGStatusLight {
+                    id: twarn2
+                    lightSize: 25
+                    Layout.alignment: Qt.AlignCenter
 
-            Rectangle {
-                width: parent.width/15
-                height: parent.height
-                ColumnLayout {
-                    spacing: 20
-                    Text {
-                        id: tprew
-                        width: parent.width
-                        height: parent.height/4
-                        anchors{
-                            top:parent.top
-                            topMargin: 15
+
+                    property string register_value: register_Binary
+
+
+                    onRegister_valueChanged: {
+                        if(register_value[5] === "1"){
+                            status = "green"
                         }
-                        text: "TPREW"
-                        font.bold: true
-                    }
-                    DiagnoticRadioButton{
-                        id: tprew1
-                        anchors {
-                            top: tprew.bottom
-                            topMargin: 39
-                            horizontalCenter: tprew.horizontalCenter
-                        }
-
-                        property string register_value: register_mask_binary
-                        onRegister_valueChanged: {
-                            checked = parseInt(register_value[2])
-                        }
-
-                        onClicked: {
-                            if (checked) {
-                                platformInterface.mask_thermal_prewarn_interrupt.update("masked")
-                                platformInterface.mask_thermal_prewarn_interrupt.show()
-                            }
-                            else {
-                                platformInterface.mask_thermal_prewarn_interrupt.update("unmasked")
-                                platformInterface.mask_thermal_prewarn_interrupt.show()
-                            }
-                        }
-
-                    }
-                    SGStatusLight {
-                        id: tprew2
-                        anchors {
-                            top: tprew1.bottom
-                            topMargin: 20
-                            horizontalCenter: tprew.horizontalCenter
-
-                        }
-                        lightSize: 25
-
-                        property string register_value: register_Binary
-
-                        onRegister_valueChanged: {
-                            if(register_value[4] === "1"){
-                                status = "green"
-                            }
-                            else status = "red"
-                        }
+                        else status = "red"
                     }
                 }
             }
 
-            Rectangle {
-                width: parent.width/15
-                height: parent.height
-                ColumnLayout {
-                    spacing: 20
+            ColumnLayout {
+                spacing: 20
+                Layout.minimumWidth: 50
+                Layout.preferredWidth: 100
+                Layout.maximumWidth: 150
+                Layout.minimumHeight: 150
+                Text {
+                    id: tprew
+                    width: parent.width
+                    height: parent.height/4
+                    text: "TPREW"
+                    font.bold: true
+                    Layout.alignment: Qt.AlignCenter
+                }
+                DiagnoticRadioButton{
+                    id: tprew1
+                    Layout.alignment: Qt.AlignCenter
 
-                    Text {
-                        id: ishort
-                        width: parent.width
-                        height: parent.height/4
-                        anchors{
-                            top:parent.top
-                            topMargin: 15
-
-                        }
-                        text: "ISHORT"
-                        font.bold: true
+                    property var register_value: register_mask_binary
+                    onRegister_valueChanged: {
+                        checked = parseInt(register_value[2])
                     }
-                    DiagnoticRadioButton{
-                        id: ishort1
-                        anchors {
-                            top: ishort.bottom
-                            topMargin: 39
-                            horizontalCenter: ishort.horizontalCenter
-                        }
 
-                        property string register_value: register_mask_binary
-                        onRegister_valueChanged: {
-                            checked = parseInt(register_value[4])
+                    onClicked: {
+                        if (checked) {
+                            platformInterface.mask_thermal_prewarn_interrupt.update("masked")
+                            platformInterface.mask_thermal_prewarn_interrupt.show()
                         }
-
-                        onClicked: {
-                            if (checked) {
-                                platformInterface.mask_short_circuit_interrupt.update("masked")
-                                platformInterface.mask_short_circuit_interrupt.show()
-                            }
-                            else {
-                                platformInterface.mask_short_circuit_interrupt.update("unmasked")
-                                platformInterface.mask_short_circuit_interrupt.show()
-                            }
+                        else {
+                            platformInterface.mask_thermal_prewarn_interrupt.update("unmasked")
+                            platformInterface.mask_thermal_prewarn_interrupt.show()
                         }
                     }
 
-                    SGStatusLight {
-                        id: ishort2
-                        anchors {
-                            top: ishort1.bottom
-                            topMargin: 20
-                            horizontalCenter: ishort.horizontalCenter
+                }
+                SGStatusLight {
+                    id: tprew2
+                    lightSize: 25
+                    Layout.alignment: Qt.AlignCenter
+                    property string register_value: register_Binary
+                    onRegister_valueChanged: {
+                        if(register_value[4] === "1"){
+                            status = "green"
                         }
-                        lightSize: 25
-                        property string register_value: register_Binary
+                        else status = "red"
+                    }
+                }
+            }
 
-                        onRegister_valueChanged: {
-                            if(register_value[4] === "1"){
-                                status = "green"
-                            }
-                            else status = "red"
+            ColumnLayout {
+                spacing: 20
+                Layout.minimumWidth: 50
+                Layout.preferredWidth: 100
+                Layout.maximumWidth: 150
+                Layout.minimumHeight: 150
+
+                Text {
+                    id: ishort
+                    width: parent.width
+                    height: parent.height/4
+                    text: "ISHORT"
+                    font.bold: true
+                    Layout.alignment: Qt.AlignCenter
+
+                }
+                DiagnoticRadioButton{
+                    id: ishort1
+                    property var register_value: register_mask_binary
+                    onRegister_valueChanged: {
+                        checked = parseInt(register_value[4])
+                    }
+                    Layout.alignment: Qt.AlignCenter
+
+                    onClicked: {
+                        if (checked) {
+                            platformInterface.mask_short_circuit_interrupt.update("masked")
+                            platformInterface.mask_short_circuit_interrupt.show()
                         }
+                        else {
+                            platformInterface.mask_short_circuit_interrupt.update("unmasked")
+                            platformInterface.mask_short_circuit_interrupt.show()
+                        }
+                    }
+                }
 
+                SGStatusLight {
+                    id: ishort2
+                    lightSize: 25
+                    Layout.alignment: Qt.AlignCenter
+                    property string register_value: register_Binary
+
+                    onRegister_valueChanged: {
+                        if(register_value[4] === "1"){
+                            status = "green"
+                        }
+                        else status = "red"
                     }
 
                 }
 
             }
 
-            Rectangle {
-                width: parent.width/15
-                height: parent.height
+            ColumnLayout {
+                spacing: 20
+                Layout.minimumWidth: 50
+                Layout.preferredWidth: 100
+                Layout.maximumWidth: 150
+                Layout.minimumHeight: 150
 
-                ColumnLayout {
-                    spacing: 20
+                Text {
+                    id: uvlo
+                    width: parent.width
+                    height: parent.height/4
+                    Layout.alignment: Qt.AlignCenter
 
-                    Text {
-                        id: uvlo
-                        width: parent.width
-                        height: parent.height/4
-                        anchors{
-                            top:parent.top
-                            topMargin: 15
-                            horizontalCenter: parent.horizontalCenter
+                    text: "UVLO"
+                    font.bold: true
+                }
+                DiagnoticRadioButton{
+                    id: uvlo1
+                    Layout.alignment: Qt.AlignCenter
 
-                        }
-                        text: "UVLO"
-                        font.bold: true
+                    property var register_value: register_mask_binary
+                    onRegister_valueChanged: {
+                        checked = parseInt(register_value[5])
                     }
-                    DiagnoticRadioButton{
-                        id: uvlo1
-                        anchors {
-                            top: uvlo.bottom
-                            topMargin: 39
-                            horizontalCenter: uvlo.horizontalCenter
-                        }
 
-                        property string register_value: register_mask_binary
-                        onRegister_valueChanged: {
-                            checked = parseInt(register_value[5])
+                    onClicked: {
+                        if (checked) {
+                            platformInterface.mask_uvlo_interrupt.update("masked")
+                            platformInterface.mask_uvlo_interrupt.show()
                         }
-
-                        onClicked: {
-                            if (checked) {
-                                platformInterface.mask_uvlo_interrupt.update("masked")
-                                platformInterface.mask_uvlo_interrupt.show()
-                            }
-                            else {
-                                platformInterface.mask_uvlo_interrupt.update("unmasked")
-                                platformInterface.mask_uvlo_interrupt.show()
-                            }
-                        }
-                    }
-                    SGStatusLight {
-                        id: uvlo2
-                        anchors {
-                            top: uvlo1.bottom
-                            topMargin: 20
-                            horizontalCenter: uvlo.horizontalCenter
-                        }
-                        lightSize: 25
-
-                        property string register_value: register_Binary
-
-                        onRegister_valueChanged: {
-                            if(register_value[5] === "1"){
-                                status = "green"
-                            }
-                            else status = "red"
+                        else {
+                            platformInterface.mask_uvlo_interrupt.update("unmasked")
+                            platformInterface.mask_uvlo_interrupt.show()
                         }
                     }
                 }
-            }
-            Rectangle {
-                width: parent.width/15
-                height: parent.height
-                color: "yellow"
+                SGStatusLight {
+                    id: uvlo2
+                    lightSize: 25
+                    Layout.alignment: Qt.AlignCenter
+                    property string register_value: register_Binary
 
-                ColumnLayout {
-                    spacing: 20
-
-                    Text {
-                        id: idcdc
-                        width: parent.width
-                        height: parent.height/4
-                        anchors{
-                            top:parent.top
-                            topMargin: 15
-
+                    onRegister_valueChanged: {
+                        if(register_value[5] === "1"){
+                            status = "green"
                         }
-                        text: "IDCDC"
-                        font.bold: true
-                    }
-                    DiagnoticRadioButton{
-                        id: idcdc1
-                        anchors {
-                            top: idcdc.bottom
-                            topMargin: 39
-                            horizontalCenter:idcdc.horizontalCenter
-                        }
-                        property string register_value: register_mask_binary
-                        onRegister_valueChanged: {
-                            checked = parseInt(register_value[6])
-                        }
-                        onClicked: {
-                            if (checked) {
-                                platformInterface.mask_ocp_interrupt.update("masked")
-                                platformInterface.mask_ocp_interrupt.show()
-                            }
-                            else {
-                                platformInterface.mask_ocp_interrupt.update("unmasked")
-                                platformInterface.mask_ocp_interrupt.show()
-                            }
-                        }
-                    }
-
-                    SGStatusLight {
-                        id: idcdc2
-
-                        anchors {
-                            top: idcdc1.bottom
-                            topMargin: 20
-                            horizontalCenter: idcdc.horizontalCenter
-                        }
-                        lightSize: 25
-
-                        property string register_value: register_Binary
-
-                        onRegister_valueChanged: {
-                            if(register_value[6] === "1"){
-                                status = "green"
-                            }
-                            else status = "red"
-                        }
+                        else status = "red"
                     }
                 }
             }
 
-            Rectangle {
-                width: parent.width/2
-                height: parent.height
 
-                ColumnLayout {
-                    spacing: 20
-                    ExclusiveGroup { id: tabPositionGroup6 }
-                    Text {
-                        id: pg
-                        width: parent.width
-                        height: parent.height/4
-                        anchors{
-                            top:parent.top
-                            topMargin: 15
-                        }
-                        text: "PG"
-                        font.bold: true
+            ColumnLayout {
+                spacing: 20
+                Layout.minimumWidth: 50
+                Layout.preferredWidth: 100
+                Layout.maximumWidth: 150
+                Layout.minimumHeight: 150
+
+                Text {
+                    id: idcdc
+                    width: parent.width
+                    height: parent.height/4
+                    Layout.alignment: Qt.AlignCenter
+                    text: "IDCDC"
+                    font.bold: true
+                }
+                DiagnoticRadioButton{
+                    id: idcdc1
+                    Layout.alignment: Qt.AlignCenter
+                    property var register_value: register_mask_binary
+                    onRegister_valueChanged: {
+                        checked = parseInt(register_value[6])
                     }
-                    DiagnoticRadioButton{
-                        id: pg1
-                        anchors {
-                            top: pg.bottom
-                            topMargin: 39
+                    onClicked: {
+                        if (checked) {
+                            platformInterface.mask_ocp_interrupt.update("masked")
+                            platformInterface.mask_ocp_interrupt.show()
                         }
-                        property string register_value: register_mask_binary
-                        onRegister_valueChanged: {
-                            checked = parseInt(register_value[7])
-                        }
-
-                        onClicked: {
-                            if (checked) {
-                                platformInterface.mask_pgood_interrupt.update("masked")
-                                platformInterface.mask_pgood_interrupt.show()
-                            }
-                            else {
-                                platformInterface.mask_pgood_interrupt.update("unmasked")
-                                platformInterface.mask_pgood_interrupt.show()
-                            }
+                        else {
+                            platformInterface.mask_ocp_interrupt.update("unmasked")
+                            platformInterface.mask_ocp_interrupt.show()
                         }
                     }
-                    SGStatusLight {
-                        id: pg2
-                        anchors {
-                            top: pg1.bottom
-                            topMargin: 20
-                        }
-                        lightSize: 25
-                        property string register_value: register_Binary
+                }
 
-                        onRegister_valueChanged: {
-                            if(register_value[7] === "1"){
-                                status = "green"
-                            }
-                            else status = "red"
-                        }
+                SGStatusLight {
+                    id: idcdc2
+                    Layout.alignment: Qt.AlignCenter
+                    lightSize: 25
 
+                    property string register_value: register_Binary
+
+                    onRegister_valueChanged: {
+                        if(register_value[6] === "1"){
+                            status = "green"
+                        }
+                        else status = "red"
+                    }
+                }
+            }
+
+            ColumnLayout {
+                spacing: 20
+                Layout.minimumWidth: 50
+                Layout.preferredWidth: 100
+                Layout.maximumWidth: 150
+                Layout.minimumHeight: 150
+                Layout.rightMargin: 10
+                Text {
+                    id: pg
+                    width: parent.width
+                    text: "PG"
+                    font.bold: true
+                    Layout.alignment: Qt.AlignCenter
+                }
+                DiagnoticRadioButton{
+                    id: pg1
+                    Layout.alignment: Qt.AlignCenter
+                    property var register_value: register_mask_binary
+                    onRegister_valueChanged: {
+                        checked = parseInt(register_value[7])
                     }
 
+                    onClicked: {
+                        if (checked) {
+                            platformInterface.mask_pgood_interrupt.update("masked")
+                            platformInterface.mask_pgood_interrupt.show()
+                        }
+                        else {
+                            platformInterface.mask_pgood_interrupt.update("unmasked")
+                            platformInterface.mask_pgood_interrupt.show()
+                        }
+                    }
+                }
+                SGStatusLight {
+                    id: pg2
+                    Layout.alignment: Qt.AlignCenter
+                    lightSize: 25
+                    property string register_value: register_Binary
+
+                    onRegister_valueChanged: {
+                        if(register_value[7] === "1"){
+                            status = "green"
+                        }
+                        else status = "red"
+                    }
                 }
             }
         }
     }
 }
+
+
 

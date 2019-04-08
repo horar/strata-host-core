@@ -46,11 +46,6 @@ Rectangle {
             padding: 10
         }
 
-//        Component.onCompleted: {
-//            if (title.text === ""){
-//                titleArea.visible = false }
-//        }
-
     }
 
 
@@ -60,6 +55,7 @@ Rectangle {
         implicitHeight: contentItem.childrenRect.height
         //interactive: false
         clip: true
+        flickableDirection: Flickable.VerticalFlick
 
         anchors {
             left: root.left
@@ -73,11 +69,13 @@ Rectangle {
             text: model.status // modelData
             color: root.statusTextColor
             font.family: "Courier"
+
         }
 
         highlightFollowsCurrentItem: true
-        onContentHeightChanged: {
-            if (running) { scroll() }
+        ScrollBar.vertical: ScrollBar {
+            clip: true
+
         }
 
     }

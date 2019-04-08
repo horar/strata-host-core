@@ -87,6 +87,7 @@ Item {
                 text: "5A-switcher"
                 onClicked: {
                     var data = { class_id: "208"}
+                    NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT, data)
                 }
             }
 
