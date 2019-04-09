@@ -1,4 +1,7 @@
-project(HostControllerClient VERSION 1.0)
+project(HostControllerClient
+    VERSION 1.0
+    LANGUAGES CXX
+)
 
 find_package(ZeroMQ REQUIRED)
 find_package(ZMQHelper REQUIRED)

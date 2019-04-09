@@ -5,9 +5,14 @@ import QtQuick.Window 2.3 // for debug window, can be cut out for release
 import QtGraphicalEffects 1.0
 import "js/navigation_control.js" as NavigationControl
 import "qrc:/js/platform_selection.js" as PlatformSelection
+import "js/login.js" as Authenticator
 import "qrc:/statusbar-partial-views"
+import "qrc:/statusbar-partial-views/help-tour"
 import Fonts 1.0
 import "qrc:/js/help_layout_manager.js" as Help
+import "qrc:/js/platform_model.js" as Model
+
+import Strata.Logger 1.0
 
 Rectangle {
     id: container
@@ -26,78 +31,25 @@ Rectangle {
     color: "black"
 
     Component.onCompleted: {
-        Help.registerTarget(platformControlsButton, "Use this button to select the platform control view. Only available when platform is connected", 0,"statusHelp")
-        Help.registerTarget(platformContentButton, "Use this button to select the content view for the selected platform.", 1,"statusHelp")
-        Help.registerTarget(cbSelectorContainer, "Use this drop down to select from connected and previously connected platforms. ", 2,"statusHelp")
+        Help.registerTarget(platformSelectionButton, "Use button to open the platform selector view.", 0, "statusHelp")
+        Help.registerTarget(platformControlsButton, "Use this button to select the platform control view. Only available when platform is connected", 1, "statusHelp")
+        Help.registerTarget(platformContentButton, "Use this button to select the content view for the selected platform.", 2, "statusHelp")
+    }
 
+    // Navigation_control calls this after login when statusbar AND control/content components are all complete
+    function loginSuccessful() {
+//        PlatformSelection.populatePlatforms(coreInterface.platform_list_)
+        //TODO: uncomment the above when coreInterface sends updated format
+        PlatformSelection.populatePlatforms(JSON.stringify(Model.platforms))
+
+        // only run shortCircuit if HCS is working and a platformlist is available
+        if (JSON.parse(coreInterface.platform_list_).hasOwnProperty("list")) {
+            Model.shortCircuit(coreInterface.platform_list_)
+        }
     }
 
     Component.onDestruction: {
-        Help.reset("statusHelp")
-    }
-
-    function getWidth(string) {
-        return (string.match(/width=\"([0-9]+)\"/))
-    }
-
-    function getHeight(string) {
-        return (string.match(/height=\"([0-9]+)\"/))
-    }
-
-    property var userImages: {
-        "dave.priscak@onsemi.com" : "dave_priscak.png",
-                "david.somo@onsemi.com" : "david_somo.png",
-                "daryl.ostrander@onsemi.com" : "daryl_ostrander.png",
-                "paul.mascarenas@onsemi.com" : "paul_mascarenas.png",
-                "ian.cain@onsemi.com" : "ian.cain.jpg",
-                "blankavatar" : "blank_avatar.png"
-    }
-
-    property var userNames: {
-        "dave.priscak@onsemi.com" : "Dave Priscak",
-                "david.somo@onsemi.com"   : "David Somo",
-                "daryl.ostrander@onsemi.com" : "Daryl Ostrander",
-                "paul.mascarenas@onsemi.com" : "Paul Mascarenas",
-                "ian.cain@onsemi.com" : "Ian Cain"
-    }
-
-    property var userJobtitle: {
-        "dave.priscak@onsemi.com" : "VP Solutions Engineering",
-                "david.somo@onsemi.com"   : "Vice President, Corporate Strategy and Marketing",
-                "daryl.ostrander@onsemi.com" : "Director ON Semiconductor",
-                "paul.mascarenas@onsemi.com" : "Director ON Semiconductor",
-                "ian.cain@onsemi.com" : "Corporate Tech Ladder-Apps Mgmt (TL)"
-    }
-
-    function getUserImage(user_name){
-        user_name = user_name.toLowerCase()
-        if(userImages.hasOwnProperty(user_name)){
-            return userImages[user_name]
-        }
-        else{
-            return userImages["blankavatar"]
-        }
-    }
-
-    function getUserName(user_name){
-        var user_lower = user_name.toLowerCase()
-        if(userNames.hasOwnProperty(user_lower)){
-            return userNames[user_lower]
-        }
-        else{
-            return user_name
-        }
-    }
-
-    function getJobTitle(user_name){
-        var user_lower = user_name.toLowerCase()
-        if(userJobtitle.hasOwnProperty(user_lower)){
-            return userJobtitle[user_lower]
-        }
-        else{
-            return generalTitle;
-        }
-
+        Help.destroyHelp()
     }
 
     function generateToken(n) {
@@ -117,6 +69,7 @@ Rectangle {
         }
         return null
     }
+
 
     Connections {
         target: coreInterface
@@ -147,7 +100,7 @@ Rectangle {
                         "advertise_platforms":false
                     }
                 }
-                console.log("asking hcs to advertise the platforms",JSON.stringify(remote_json))
+                console.log(Logger.devStudioCategory, "asking hcs to advertise the platforms",JSON.stringify(remote_json))
                 coreInterface.sendCommand(JSON.stringify(remote_json))
             }
         }
@@ -180,7 +133,6 @@ Rectangle {
         visible: false
         color: "white"
     }
-
 
     Connections {
         target: coreInterface
@@ -230,31 +182,35 @@ Rectangle {
                 }
             }
 
-            Item {
-                id: cbSelectorContainer
-                width: 270
-                height: toolBar.height
 
-                SGPlatformSelector {
-                    id: cbSelector
-                    comboBoxWidth: 250
-                    anchors {
-                        verticalCenter: cbSelectorContainer.verticalCenter
-                        horizontalCenter: cbSelectorContainer.horizontalCenter
+            SGToolButton {
+                id: platformSelectionButton
+                text: qsTr("Platform Selection")
+                width: 150
+                buttonColor: hovered || PlatformSelection.platformListModel.selectedConnection === "" ? menuColor : container.color
+                onClicked: {
+                    if (NavigationControl.context["platform_state"] || NavigationControl.context["class_id"] !== "") {
+                        PlatformSelection.deselectPlatform()
                     }
                 }
+                iconCharacter: "\ue804"
+            }
+
+            Rectangle {
+                id: buttonDivider1
+                width: 1
+                height: toolBar.height
+                color: container.color
             }
 
             SGToolButton {
                 id: platformControlsButton
                 text: qsTr("Platform Controls")
                 width: 150
-                buttonColor: hovered || !NavigationControl.flipable_parent_.flipped ? menuColor : container.color
+                buttonColor: hovered || (PlatformSelection.platformListModel.selectedConnection !== "" && !NavigationControl.flipable_parent_.flipped) ? menuColor : container.color
                 enabled: PlatformSelection.platformListModel.selectedConnection !== "view" && PlatformSelection.platformListModel.selectedConnection !== ""
                 onClicked: {
-                    if (NavigationControl.flipable_parent_.flipped) {
-                        NavigationControl.updateState(NavigationControl.events.TOGGLE_CONTROL_CONTENT)
-                    }
+                    NavigationControl.updateState(NavigationControl.events.SHOW_CONTROL)
                 }
                 iconCharacter: "\u003a"
             }
@@ -270,18 +226,16 @@ Rectangle {
                 id: platformContentButton
                 text: qsTr("Platform Content")
                 width: 150
-                buttonColor: hovered || NavigationControl.flipable_parent_.flipped ? menuColor : container.color
+                buttonColor: hovered || (PlatformSelection.platformListModel.selectedConnection !== "" && NavigationControl.flipable_parent_.flipped) ? menuColor : container.color
                 enabled: PlatformSelection.platformListModel.selectedConnection !== ""
                 onClicked: {
-                    if (!NavigationControl.flipable_parent_.flipped) {
-                        NavigationControl.updateState(NavigationControl.events.TOGGLE_CONTROL_CONTENT)
-                    }
+                    NavigationControl.updateState(NavigationControl.events.SHOW_CONTENT)
                 }
                 iconCharacter: "\uf15b"
             }
 
             Rectangle {
-                id: buttonDivider1
+                id: buttonDivider3
                 width: 1
                 height: toolBar.height
                 color: container.color
@@ -289,6 +243,10 @@ Rectangle {
 
             SGToolButton {
                 id: remoteSupportButton
+
+                visible: false
+                enabled: false
+
                 text: qsTr("Remote Support")
                 width: 150
                 onPressed: {
@@ -492,7 +450,7 @@ Rectangle {
                                                 "advertise_platforms":advertise
                                             }
                                         }
-                                        console.log("asking hcs to advertise the platforms",JSON.stringify(remote_json))
+                                        console.log(Logger.devStudioCategory, "asking hcs to advertise the platforms",JSON.stringify(remote_json))
                                         coreInterface.sendCommand(JSON.stringify(remote_json))
                                     }
                                 }
@@ -712,7 +670,7 @@ Rectangle {
                                                 height: remoteUserDelegateContainer.height - 30
                                                 width: height
                                                 fillMode: Image.PreserveAspectFit
-                                                source: "qrc:/images/closeIcon.svg"
+                                                source: "qrc:/images/icons/fail_x.svg"
                                             }
 
                                             MouseArea {
@@ -727,7 +685,7 @@ Rectangle {
                                                             "user_name":name
                                                         }
                                                     }
-                                                    console.log("disconnecting user",JSON.stringify(remote_json))
+                                                    console.log(Logger.devStudioCategory, "disconnecting user",JSON.stringify(remote_json))
                                                     coreInterface.sendCommand(JSON.stringify(remote_json))
 
                                                 }
@@ -851,7 +809,7 @@ Rectangle {
                             Connections {
                                 target: tryAgainButton
                                 onClicked: {
-                                    console.log("try again")
+                                    console.log(Logger.devStudioCategory, "try again")
                                     remoteConnectContainer.state = "default"
                                 }
                             }
@@ -863,9 +821,10 @@ Rectangle {
                                     // sending remote disconnect message to hcs
                                     var remote_disconnect_json = {
                                         "hcs::cmd":"remote_disconnect",
+                                        "payload":{}
                                     }
                                     coreInterface.sendCommand(JSON.stringify(remote_disconnect_json))
-                                    console.log("UI -> HCS ", JSON.stringify(remote_disconnect_json));
+                                    console.log(Logger.devStudioCategory, "UI -> HCS ", JSON.stringify(remote_disconnect_json));
                                 }
                             }
 
@@ -978,7 +937,7 @@ Rectangle {
                                 width: tokenField.width + submitTokenButton.width + submitTokenButton.anchors.leftMargin
                                 height: tokenField.height
                                 // Default visibility is false; state changes will make it visible
-                                visible: { console.log("created"); return false}
+                                visible: { console.log(Logger.devStudioCategory, "created"); return false}
                                 anchors {
                                     top: tokenLabel.bottom
                                     horizontalCenter: remoteConnectContainer.horizontalCenter
@@ -995,8 +954,8 @@ Rectangle {
 
                                     onAccepted: {
                                         focus = false
-                                        console.log("TOKEN: ", text);
-                                        console.log("sending token:", tokenField.text);
+                                        console.log(Logger.devStudioCategory, "TOKEN: ", text);
+                                        console.log(Logger.devStudioCategory, "sending token:", tokenField.text);
                                         var remote_json = {
                                             "hcs::cmd":"get_platforms",
                                             "payload": {
@@ -1004,7 +963,7 @@ Rectangle {
                                             }
                                         }
                                         coreInterface.sendCommand(JSON.stringify(remote_json))
-                                        console.log("UI -> HCS ", JSON.stringify(remote_json));
+                                        console.log(Logger.devStudioCategory, "UI -> HCS ", JSON.stringify(remote_json));
                                     }
 
                                 }
@@ -1021,7 +980,7 @@ Rectangle {
                                     font.capitalization: Font.AllUppercase
 
                                     onClicked: {
-                                        console.log("sending token:", tokenField.text);
+                                        console.log(Logger.devStudioCategory, "sending token:", tokenField.text);
                                         var remote_json = {
                                             "hcs::cmd":"get_platforms",
                                             "payload": {
@@ -1029,7 +988,7 @@ Rectangle {
                                             }
                                         }
                                         coreInterface.sendCommand(JSON.stringify(remote_json))
-                                        console.log("UI -> HCS ", JSON.stringify(remote_json));
+                                        console.log(Logger.devStudioCategory, "UI -> HCS ", JSON.stringify(remote_json));
                                     }
                                 }
                             }
@@ -1144,7 +1103,7 @@ Rectangle {
 
             Text {
                 id: profileInitial
-                text: getUserName(user_id).charAt(0)
+                text: user_id.charAt(0)
                 color: "white"
                 anchors {
                     centerIn: profileIcon
@@ -1201,10 +1160,23 @@ Rectangle {
                 width: profileMenu.width
 
                 SGMenuItem {
+
+                    visible: false
+                    enabled: false
+
                     text: qsTr("My Profile")
                     onClicked: {
                         profileMenu.close()
                         profilePopup.open();
+                    }
+                    width: profileMenu.width
+                }
+
+                SGMenuItem {
+                    text: qsTr("About")
+                    onClicked: {
+                        profileMenu.close()
+                        aboutPopup.open();
                     }
                     width: profileMenu.width
                 }
@@ -1217,12 +1189,12 @@ Rectangle {
                     }
                     width: profileMenu.width
                 }
+
                 SGMenuItem {
                     text: qsTr("Help")
                     onClicked: {
                         profileMenu.close()
-                        Help.startHelpTour("statusHelp")
-
+                        Help.startHelpTour("statusHelp", "strataMain")
                     }
                     width: profileMenu.width
                 }
@@ -1242,33 +1214,10 @@ Rectangle {
                     text: qsTr("Log Out")
                     onClicked: {
                         profileMenu.close()
-                        PlatformSelection.sendSelection(0)
+
                         NavigationControl.updateState(NavigationControl.events.LOGOUT_EVENT)
-                        remoteConnectContainer.state = "default"
-
-                        if(is_remote_connected) {
-                            is_remote_connected = false //resetting the remote connection state
-                            // sending remote disconnect message to hcs
-                            var remote_disconnect_json = {
-                                "hcs::cmd":"remote_disconnect",
-                            }
-                            coreInterface.sendCommand(JSON.stringify(remote_disconnect_json))
-
-                            console.log("UI -> HCS ", JSON.stringify(remote_disconnect_json))
-                        }
-
-                        if(is_remote_advertised){
-                            is_remote_advertised = false
-                            var remote_json = {
-                                "hcs::cmd":"advertise",
-                                "payload": {
-                                    "advertise_platforms":is_remote_advertised
-                                }
-                            }
-                            console.log("asking hcs to advertise the platforms",JSON.stringify(remote_json))
-                            coreInterface.sendCommand(JSON.stringify(remote_json))
-                        }
-
+                        Authenticator.logout()
+                        coreInterface.disconnectPlatform()
                     }
                     width: profileMenu.width
                 }
@@ -1281,13 +1230,31 @@ Rectangle {
 
         x: container.width/2 - profilePopup.width/2
         y: container.parent.windowHeight/2 - profilePopup.height/2
+
+        property string versionNumber: container.parent.versionNumber
+    }
+
+    SGAboutPopup {
+        id: aboutPopup
+
+        x: container.width/2 - aboutPopup.width/2
+        y: container.parent.windowHeight/2 - aboutPopup.height/2
+
+        property string versionNumber: container.parent.versionNumber
+    }
+
+    SGPrivacyPopup {
+        id: privacyPopup
+
+        x: container.width/2 - privacyPopup.width/2
+        y: container.parent.windowHeight/2 - privacyPopup.height/2
     }
 
     SGFeedbackPopup {
         id: feedbackPopup
 
-        x: container.width/2 - profilePopup.width/2
-        y: container.parent.windowHeight/2 - profilePopup.height/2
+        x: container.width/2 - feedbackPopup.width/2
+        y: container.parent.windowHeight/2 - feedbackPopup.height/2
     }
 
     Window {

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package>
+    <DisplayName>SG widgets</DisplayName>
+    <Description>Install this example.</Description>
+    <Version>0.1.0-2</Version>
+    <ReleaseDate>2019-01-21</ReleaseDate>
+    <Dependencies>tech.spyglass.strata.ui.qt</Dependencies>
+    <Licenses>
+        <License name="Beer Public License Agreement" file="license.txt" />
+    </Licenses>
+    <!--<Default>script</Default>-->
+    <!--<Script>installscript.qs</Script>-->
+    <UserInterfaces>
+        <UserInterface>page.ui</UserInterface>
+    </UserInterfaces>
+    <!--<AutoDependOn>tech.spyglass.strata.ui,tech.spyglass.strata.views</AutoDependOn>-->
+    <SortingPriority>80</SortingPriority>
+</Package>

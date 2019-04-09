@@ -30,20 +30,23 @@ Item {
             text: qsTr("Basic")
             onClicked: {
                 //from advanced
-                if (advancedControlIsVisible){
-                    //console.log("going to basic from advanced")
+                console.log("basic visible=",basicControl.visible,"advanced visible=",advancedControlIsVisible)
+                if (basicControl.visible && advancedControlIsVisible){
+                    console.log("going to basic from advanced")
                     basicControl.transitionToBasicView();
                     basicControlIsVisible = true;
                     advancedControlIsVisible = false;
                 }
                 //from system control
                 else if (systemControl.visible){
-                    systemControl.visible = false;
-                    basicControl.visible = true;
+                    console.log("going from system to basic")
+                    crossfadeToBasicControl.start();    //crossfade to basic
+
                     if (!basicControlIsVisible){
-                        basicControl.switchToBasicView();
+                        basicControl.transitionImmediatelyToBasicView();
                     }
                     basicControlIsVisible = true;
+                    advancedControlIsVisible = false;
                 }
             }
         }
@@ -52,20 +55,26 @@ Item {
             id: advancedButton
             text: qsTr("Advanced")
             onClicked: {
-                if (basicControlIsVisible){
-                    //console.log("going to advanced from basic")
+                if (basicControl.visible && basicControlIsVisible){
+                    console.log("going from basic to advanced")
                     basicControl.transitionToAdvancedView();
                     basicControlIsVisible = false;
                     advancedControlIsVisible = true;
+                    console.log("basic visible=",basicControlIsVisible,"advancedVisible=",advancedControlIsVisible)
                 }
                 //from system control
                 else if (systemControl.visible){
-                    systemControl.visible = false;
-                    basicControl.visible = true
+                    console.log("going to advanced from system")
+                    crossfadeToBasicControl.start();    //crossfade to basic
+
                     if (!advancedControlIsVisible){
-                        basicControl.switchToAdvancedView()
+                        console.log("switching from basic to advanced view")
+                        console.log("basic visible=",basicControlIsVisible,"advancedVisible=",advancedControlIsVisible)
+                        basicControl.transitionImmediatelyToAdvancedView()
                     }
-                    advancedControlIsVisible = true
+                    advancedControlIsVisible = true;
+                    basicControlIsVisible = false;
+                    console.log("basic visible=",basicControlIsVisible,"advancedVisible=",advancedControlIsVisible)
                 }
             }
         }
@@ -74,12 +83,66 @@ Item {
             id: systemButton
             text: qsTr("System")
             onClicked: {
-                basicControl.visible = false
-                //advancedControl.visible = false
-                basicControlIsVisible = false;
-                advancedControlIsVisible = false;
-                systemControl.visible = true;
+                crossfadeToSystemControl.start()
             }
+        }
+    }
+
+    ParallelAnimation{
+        id:crossfadeToSystemControl
+        running: false
+
+        onStarted:{
+            systemControl.visible = true
+            systemControl.opacity = 0
+        }
+
+        PropertyAnimation{
+            target: basicControl
+            property: "opacity"
+            to: 0
+            duration:1000
+        }
+
+        PropertyAnimation{
+            target: systemControl
+            property: "opacity"
+            to: 1
+            duration:1000
+        }
+
+        onStopped:{
+            basicControl.visible = false
+            systemControl.visible = true
+        }
+    }
+
+    ParallelAnimation{
+        id:crossfadeToBasicControl
+        running: false
+
+        onStarted:{
+            basicControl.visible = true
+            basicControl.opacity = 0
+        }
+
+        PropertyAnimation{
+            target: basicControl
+            property: "opacity"
+            to: 1
+            duration:1000
+        }
+
+        PropertyAnimation{
+            target: systemControl
+            property: "opacity"
+            to: 0
+            duration:1000
+        }
+
+        onStopped:{
+            basicControl.visible = true
+            systemControl.visible = false
         }
     }
 

@@ -39,8 +39,8 @@
 
 // modified by Ondrej Kucharik
 
-#ifndef _CORE_COMMAND_DISPATCHER_FLASHER_CODECBASE64_H_
-#define _CORE_COMMAND_DISPATCHER_FLASHER_CODECBASE64_H_
+#ifndef _BASE64_CODECBASE64_H_
+#define _BASE64_CODECBASE64_H_
 
 #include <cctype>
 #include <string>
@@ -214,4 +214,4 @@ decode(void* dest, char const* src, std::size_t len)
 } // base64
 
 
-#endif // _CORE_COMMAND_DISPATCHER_FLASHER_CODECBASE64_H_
+#endif // _BASE64_CODECBASE64_H_

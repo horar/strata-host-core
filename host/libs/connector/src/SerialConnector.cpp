@@ -34,12 +34,12 @@ using namespace rapidjson;
 // windows enablement requires sleep to avoid high CPU usgae, since sp_wait that waits
 // for read event always returns successfully even if there is no data to read.
 // @ref 5) under "KNOWN BUGS/HACKS" section in Connector.h for more details
-#define SERIAL_READ_SLEEP_IN_SECONDS 0.05
+const int SERIAL_READ_SLEEP_MS = 50;
 
 // Currently the Strata platforms are identified automatically using Platform_ID notification
 // and this is done synchoronously. Increasing the number of retries to 15 is usefull for
 // 4port since it has lot of periodic notifications and it affects the discovery procedure
-#define PLATFORM_ID_RETRY 15
+const int PLATFORM_ID_RETRY = 15;
 
 // @f constructor
 // @b
@@ -78,7 +78,7 @@ void SerialConnector::openPlatform()
     LOG_DEBUG(DEBUG,"In openPlatform thread\n",0);
 
     while(true) {
-        sleep(2);
+        std::this_thread::sleep_for(std::chrono::milliseconds(2000));
         sp_return port_list_error = sp_list_ports(&ports);
         std::string usb_keyword;
         std::string platform_port_name;
@@ -163,7 +163,7 @@ bool SerialConnector::open(const std::string& serial_port_name)
         for (int i =0 ; i <=PLATFORM_ID_RETRY; i++) {
             // sleep for 50 milliseconds before reading from the platform
             // This sleep time is proportional to the time taken for detecting the platforms
-            sleep(SERIAL_READ_SLEEP_IN_SECONDS);
+            std::this_thread::sleep_for(std::chrono::milliseconds(SERIAL_READ_SLEEP_MS));
             // making the serial thread processing to start reading from the port
             producer_consumer_.notify_one();
             string read_message;
@@ -174,7 +174,9 @@ bool SerialConnector::open(const std::string& serial_port_name)
             // wiki link:
             // https://ons-sec.atlassian.net/wiki/spaces/SPYG/pages/6815754/Platform+Command+Dispatcher
             // // @ref 2) in KNOWN BUGS/HACKS in Connector.h
-            read(read_message);
+            if(!read(read_message)) {
+                break;
+            }
             if(getPlatformID(read_message)) {
                 serial_wait_timeout_ = 0;
                 return true;
@@ -233,7 +235,7 @@ bool SerialConnector::read(string &notification)
 
         // [prasanth]: if the return value from read is less than 0, then the resource is unavailable
         // but we are checking if it is equal to 0 for loadboard since it takes 5sec to load
-        if(error < 0) {
+        if(error <= 0) {
             cout << "error number "<<error<<endl;
             LOG_DEBUG(DEBUG,"Platform Disconnected:%c\n",temp);
             setDealerID(std::string());
@@ -398,7 +400,7 @@ void SerialConnector::windowsPlatformReadHandler()
                 return;
             }
             if(error == 0) {
-                sleep(SERIAL_READ_SLEEP_IN_SECONDS);
+                std::this_thread::sleep_for(std::chrono::milliseconds(SERIAL_READ_SLEEP_MS));
 // [HACK] [todo] [prasanth] : the following if stetment is required only for ST eval boards in windows
 // On disconnecting the ST board from windows, the read() does not return negative value, instead returns zero.
 // We are counting the number of zeros and if it has 10 (2Sseconds), we are checking if it is motor board
@@ -452,9 +454,9 @@ bool SerialConnector::getPlatformID(std::string message)
     if (!(platform_command["notification"].IsObject())) {
         return false;
     }
-    if (platform_command["notification"]["payload"].HasMember("verbose_name")) {
-        setDealerID(platform_command["notification"]["payload"]["verbose_name"].GetString());
-        setPlatformUUID(platform_command["notification"]["payload"]["platform_id"].GetString());
+    if (platform_command["notification"]["payload"].HasMember("class_id")) {
+        setDealerID(platform_command["notification"]["payload"]["name"].GetString());
+        setPlatformUUID(platform_command["notification"]["payload"]["class_id"].GetString());
         return true;
     }
     return false;

@@ -1,5 +1,6 @@
-cmake_minimum_required(VERSION 2.8)
-project(0_mq_training)
+project(0_mq_training
+    LANGUAGES CXX
+)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "../bin/")
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "../lib/")

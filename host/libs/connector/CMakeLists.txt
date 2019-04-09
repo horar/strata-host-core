@@ -1,12 +1,7 @@
-cmake_minimum_required(VERSION 3.5.1)
-project(connector)
-
-# The version number
-set(HostControllerService_VERSION_MAJOR 1)
-set(HostControllerService_VERSION_MINOR 0)
-
-set(CMAKE_CXX_STANDARD 11)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
+project(connector
+    VERSION 1.0
+    LANGUAGES CXX
+)
 
 find_package(SerialPort REQUIRED)
 find_package(ZeroMQ REQUIRED)
@@ -14,7 +9,6 @@ find_package(RapidJSON REQUIRED)
 find_package(Threads REQUIRED)
 
 set(EXT_LIBS_PATH ${CMAKE_SOURCE_DIR}/ext_libs)
-
 
 add_library(connector
     src/Connector_impl.cpp

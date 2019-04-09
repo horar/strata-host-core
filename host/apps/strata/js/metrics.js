@@ -1,6 +1,8 @@
 .pragma library
 .import "restclient.js" as Rest
 
+.import Strata.Logger 1.0 as LoggerModule
+
 /*
     Metrics
     Object will be a time keeper for user dwell time and hits.
@@ -27,14 +29,13 @@ function init(context){
     of the child TabBar control
 */
 function injectEventToTree(obj) {
-
+/* commented out because this currently does nothing other than recurse a bunch since there is no longer a tabbar in content view
     // inject custom function to all children that has onCurrentIndexChanged event
     if(qmltypeof(obj,"QQuickTabBar")){
         Object.defineProperty(obj, 'onCurrentIndexChangedlListenerFunction', { value: createListenerFunction(obj) })
         obj.onCurrentIndexChanged.connect(obj.onCurrentIndexChangedlListenerFunction);
 
         //TODO: Add a listener to get tababr button's name at index 0
-
     }
 
     if (obj && obj.children) {
@@ -43,9 +44,9 @@ function injectEventToTree(obj) {
             injectEventToTree(obj.children[i])
         }
         if(obj.children.length > 100){
-            console.log("WARNING: QML object children exceeds 100.")
+            console.log(LoggerModule.Logger.devStudioMetricsCategory, "WARNING: QML object children exceeds 100.")
         }
-    }
+    }*/
 }
 
 // Return a listener function that will be invoked on the tabbar change event
@@ -70,10 +71,10 @@ function qmltypeof(obj, className) {
   dwell time and hit count at the TabBar view level.
 */
 function onCurrentIndexChange(object,args){
-    console.log("onCurrentIndexChanged:", object,"index:",object.currentIndex,"tab name:",object.currentItem.text,JSON.stringify(this.context))
+    console.log(LoggerModule.Logger.devStudioMetricsCategory, "onCurrentIndexChanged:", object,"index:",object.currentIndex,"tab name:",object.currentItem.text,JSON.stringify(this.context))
     var tabName = object.contentChildren[currentTabIndex].text
-    var platfromName = context.platform_name
-    sendMetricsToCloud(platfromName +' '+tabName)
+    var platformName = context.class_id
+    sendMetricsToCloud(platformName +' '+tabName)
 
     currentTabIndex = object.currentIndex;
     currentTabName = object.currentItem.text
@@ -119,12 +120,12 @@ function sendMetricsToCloud(page_name){
         howLong:String(getTimeElapsed()),
         page: page_name
     };
-    console.log(JSON.stringify(data))
+    console.log(LoggerModule.Logger.devStudioMetricsCategory, JSON.stringify(data))
 
     Rest.xhr("post","metrics",data,function(res){
-        console.log("Post response: ",JSON.stringify(res))
+        console.log(LoggerModule.Logger.devStudioMetricsCategory, "Post response: ",JSON.stringify(res))
     },function(err){
-        console.log("Post error: ", JSON.stringify(err))
+        console.log(LoggerModule.Logger.devStudioMetricsCategory, "Post error: ", JSON.stringify(err))
     }, undefined);
     timeSinceLastViewChanged = new Date();
 }

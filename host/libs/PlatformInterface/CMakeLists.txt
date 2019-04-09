@@ -1,21 +1,18 @@
-cmake_minimum_required(VERSION 3.8 FATAL_ERROR)
-
 project(PlatformInterface
     VERSION 1.0.0
     LANGUAGES CXX
 )
 
-message(STATUS "${PROJECT_NAME} v${PROJECT_VERSION}")
-
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-find_package(Qt5 5.10
+find_package(Qt5 5.12
     COMPONENTS Core
     REQUIRED
 )
 
 add_library(${PROJECT_NAME}
     src/CoreInterface.cpp
+    src/LoggingQtCategories.cpp
     # This is to let CMake know to run moc preprocessor on header files
     # with Q_OBJECT macro.
     include/PlatformInterface/core/CoreInterface.h
@@ -23,8 +20,8 @@ add_library(${PROJECT_NAME}
 
 target_link_libraries(${PROJECT_NAME}
     PUBLIC Qt5::Core
-
     PUBLIC HostControllerClient
+    PRIVATE QtLogger
 )
 
 target_include_directories(${PROJECT_NAME}

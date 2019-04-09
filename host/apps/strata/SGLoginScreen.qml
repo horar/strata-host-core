@@ -9,6 +9,8 @@ import "js/login.js" as Authenticator
 import Fonts 1.0
 import "qrc:/statusbar-partial-views"
 
+import Strata.Logger 1.0
+
 Rectangle {
     id: container
     anchors { fill: parent }
@@ -23,23 +25,25 @@ Rectangle {
     Connections {
         target: loginButton
         onClicked: {
-            // Report Error if we are missing text
-            if (usernameField.text=="" || passwordField.text==""){
-                loginErrorText.text = "Username or password is blank"
-                failedLoginAnimation.start();
-            } else {
-                // Pass info to Authenticator
-                var login_info = { user: usernameField.text, password: passwordField.text }
-                Authenticator.login(login_info)
-                loginRectangle.enabled = false
-            }
+//            // Report Error if we are missing text
+//            if (usernameField.text=="" || passwordField.text==""){
+//                loginErrorText.text = "Username or password is blank"
+//                failedLoginAnimation.start();
+//            } else {
+//                // Pass info to Authenticator
+//                var login_info = { user: usernameField.text, password: passwordField.text }
+//                Authenticator.login(login_info)
+//                loginRectangle.enabled = false
+//            }
+            var data = { user_id: "Guest" }
+            NavigationControl.updateState(NavigationControl.events.LOGIN_SUCCESSFUL_EVENT,data)
         }
     }
 
     Connections {
         target: Authenticator.signals
         onLoginResult: {
-            //console.log("Login result received")
+            //console.log(Logger.devStudioCategory, "Login result received")
             if (result === "Connected") {
                 connectionStatus.text = "Connected, Loading UI..."
                 var data = { user_id: usernameField.text }
@@ -60,7 +64,7 @@ Rectangle {
         // [TODO][prasanth]: jwt will be created/received in the hcs
         // for now, jwt will be received in the UI and then sent to HCS
         onLoginJWT: {
-            //console.log("JWT received",jwt_string)
+            //console.log(Logger.devStudioCategory, "JWT received",jwt_string)
             var jwt_json = {
                 "hcs::cmd":"jwt_token",
                 "payload": {
@@ -68,7 +72,7 @@ Rectangle {
                     "user_name":usernameField.text
                 }
             }
-            console.log("sending the jwt json to hcs",JSON.stringify(jwt_json))
+            console.log(Logger.devStudioCategory, "sending the jwt json to hcs",JSON.stringify(jwt_json))
             coreInterface.sendCommand(JSON.stringify(jwt_json))
         }
 
@@ -103,8 +107,8 @@ Rectangle {
 
     Image {
         id: strataLogo
-        width: 2 * height
-        height: container.height < 560 ? 125 : 200
+        fillMode: Image.PreserveAspectFit
+        sourceSize.height: container.height < 560 ? 125 : 200
         anchors {
             horizontalCenter: container.horizontalCenter
             bottom: spyglassTextRect.top
@@ -165,7 +169,7 @@ Rectangle {
 
             comboBoxHeight: 38
             focus: true
-            property string text: currentText
+            property string text: "Guest"
             onEditTextChanged: text = editText
             onCurrentTextChanged: text = currentText
 
@@ -177,24 +181,27 @@ Rectangle {
 
             editable: true
             borderColor: "#ddd"
-            model: ListModel {}
+            model: ListModel {    ListElement {
+                    name: "Guest"
+                }}
             placeholderText: "Username"
+            enabled: false
 
-            Component.onCompleted: {
-                var userNames = JSON.parse(userNameFieldSettings.userNameStore)
-                for (var i = 0; i < userNames.length; ++i) {
-                    model.append(userNames[i])
-                }
-                currentIndex = userNameFieldSettings.userNameIndex
-            }
-            Component.onDestruction: {
-                var userNames = []
-                for (var i = 0; i < model.count; ++i) {
-                    userNames.push(model.get(i))
-                }
-                userNameFieldSettings.userNameStore = JSON.stringify(userNames)
-                userNameFieldSettings.userNameIndex = currentIndex
-            }
+//            Component.onCompleted: {
+//                var userNames = JSON.parse(userNameFieldSettings.userNameStore)
+//                for (var i = 0; i < userNames.length; ++i) {
+//                    model.append(userNames[i])
+//                }
+//                currentIndex = userNameFieldSettings.userNameIndex
+//            }
+//            Component.onDestruction: {
+//                var userNames = []
+//                for (var i = 0; i < model.count; ++i) {
+//                    userNames.push(model.get(i))
+//                }
+//                userNameFieldSettings.userNameStore = JSON.stringify(userNames)
+//                userNameFieldSettings.userNameIndex = currentIndex
+//            }
 
             anchors {
                 top: loginRectangle.top
@@ -240,6 +247,7 @@ Rectangle {
                 left: loginRectangle.left
                 right: loginRectangle.right
             }
+            enabled: false
             height: 38
             activeFocusOnTab: true
             placeholderText: qsTr("Password")
@@ -261,6 +269,44 @@ Rectangle {
             Keys.onReturnPressed:{
                 loginButton.clicked()
             }
+
+            text: "Guest"
+        }
+
+        Rectangle {
+            id: hoverWarning
+            anchors {
+                top: usernameField.top
+                bottom: passwordField.bottom
+                left: usernameField.left
+                right: usernameField.right
+            }
+            visible: mouseWarning.containsMouse
+            opacity: .75
+            color: "#666"
+        }
+
+        MouseArea {
+            id: mouseWarning
+            hoverEnabled: true
+            anchors {
+                fill: hoverWarning
+            }
+        }
+
+        Text {
+            id: guestText
+            text: "This initial release of Strata does not require an account, click 'Login' below."
+            wrapMode: Text.Wrap
+            anchors {
+                left: hoverWarning.left
+                right: hoverWarning.right
+                margins: 10
+                verticalCenter: hoverWarning.verticalCenter
+            }
+            color: "white"
+            visible: mouseWarning.containsMouse
+            horizontalAlignment: Text.AlignHCenter
         }
 
         Rectangle{
@@ -388,7 +434,7 @@ Rectangle {
                 family: Fonts.franklinGothicBook
             }
 
-//            onTextChanged: console.log("Connection Status:", text, Date.now())
+//            onTextChanged: console.log(Logger.devStudioCategory, "Connection Status:", text, Date.now())
         }
 
         Text {

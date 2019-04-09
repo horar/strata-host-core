@@ -44,7 +44,6 @@ Rectangle {
     }
 
     function transitionToAdvancedView(){
-
         portToAdvanced.start()
     }
 
@@ -56,7 +55,7 @@ Rectangle {
             target:titleBackground
             property: "height"
             to:advancedTitleBackgroundHeight
-            duration: tabTransitionTime
+            duration: basicToAdvancedTransitionTime
         }
 
         PropertyAnimation {
@@ -64,14 +63,14 @@ Rectangle {
             property: "opacity"
             from: 1
             to: 0
-            duration: tabTransitionTime
+            duration: basicToAdvancedTransitionTime
         }
 
         PropertyAnimation {
             target: video
             property: "anchors.verticalCenterOffset"
             to: 20
-            duration: tabTransitionTime
+            duration: basicToAdvancedTransitionTime
         }
     }
 
@@ -88,21 +87,21 @@ Rectangle {
             target:titleBackground
             property: "height"
             to:basicTitleBackgroundHeight
-            duration: tabTransitionTime
+            duration: advancedToBasicTransitionTime
         }
         PropertyAnimation {
             target: backgroundRect
             property: "opacity"
             from: 0
             to: 1
-            duration: tabTransitionTime
+            duration: advancedToBasicTransitionTime
         }
 
         PropertyAnimation {
             target: video
             property: "anchors.verticalCenterOffset"
             to: 0
-            duration: tabTransitionTime
+            duration: advancedToBasicTransitionTime
         }
     }
 

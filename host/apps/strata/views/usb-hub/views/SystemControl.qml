@@ -38,7 +38,7 @@ Item {
         Rectangle{
             id:powerGroup
             color:"lightYellow"
-            height:200
+            height:130
             width: controlColumn.width
             radius:5
 
@@ -130,61 +130,14 @@ Item {
                         platformInterface.set_power_negotiation.update("first_come_first_served");
                     }
                 }
-                RadioButton {
-                    id: priorityNegotiationButton
-                    text: "Priority"
-                    indicator: Rectangle{
-                        width: 14
-                        height: 14
-                        x: 6
-                        y: 6
-                        radius: 7
-                        border.color: priorityNegotiationButton.down ? "#17a81a" : "black"
-                        color: priorityNegotiationButton.checked ? "#145A74": "ivory"
-                    }
-                    onClicked: {
-                        platformInterface.set_power_negotiation.update("priority");
-                    }
-                }
-            }
 
-
-
-
-            SGSlider {
-                id: maximumBoardPower
-                label: "Maximum Power:"
-                width: 375
-                anchors {
-                    left: powerGroup.left
-                    leftMargin: 135
-                    top:powerNegotiationColumn.bottom
-                    topMargin: 10
-                }
-                from: 30
-                to: 200
-                startLabel: "38W"
-                endLabel: "100W"
-                labelTopAligned: true
-                    //value: platformInterface.input_under_voltage_notification.minimum_voltage
-                onMoved: {
-                    //platformInterface.set_minimum_input_voltage.update(value);
-                }
-            }
-
-            SGSubmitInfoBox {
-                id: maximumBoardPowerInput
-                showButton: false
-                anchors {
-                    verticalCenter: maximumBoardPower.verticalCenter
-                    verticalCenterOffset: -7
-                    left: maximumBoardPower.right
-                    leftMargin: 15
-                }
-                //input: inputFault.value.toFixed(0)
-                //onApplied: platformInterface.set_minimum_input_voltage.update(input);   // slider will be updated via notification
             }
         }
+
+
+
+
+
 
         Rectangle{
             id:faultGroup
