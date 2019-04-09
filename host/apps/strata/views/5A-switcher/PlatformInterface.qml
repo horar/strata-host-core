@@ -82,10 +82,12 @@ Item {
 
     property var  status_ack_register: {
         "events_detected":[ ]
+
     }
 
-
-
+    property var  status_mcu_reset: {
+        "mcu_reset": ""
+    }
 
     // -------------------  end notification messages
 
@@ -124,6 +126,10 @@ Item {
                                   set: function (enabled) {
                                       this.payload.enable = enabled;
                                   },
+                                  get: function() {
+                                      return this.payload.enable
+                                  },
+
                                   send: function () { CorePlatformInterface.send(this) },
                                   show: function () { CorePlatformInterface.show(this) }
 
@@ -734,7 +740,6 @@ Item {
     property string reset_indicator
     property var mask_register_state
     property bool reset_flag: false
-    property bool interrupt_flag: false
 
     // DEBUG Window for testing motor vortex UI without a platform
     //    Window {

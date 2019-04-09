@@ -6,10 +6,8 @@ Item {
 
     implicitWidth: childrenRect.width
     implicitHeight: childrenRect.height
-
     property alias radioGroup : radioButtons.sourceComponent
     property alias radioButtons: radioButtons.item
-
     property color textColor: "#000000"
     property color radioColor: "#000000"
     property bool exclusive: true

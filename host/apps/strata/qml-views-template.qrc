@@ -1,0 +1,23 @@
+<RCC>
+    <qresource prefix="/">
+        <file>views/template/Content.qml</file>
+        <file>views/template/Control.qml</file>
+        <file>views/template/content-views/Datasheets.qml</file>
+        <file>views/template/content-views/Documents.qml</file>
+        <file>views/template/content-views/Downloads.qml</file>
+        <file>views/template/content-views/content-widgets/SGAccordion.qml</file>
+        <file>views/template/content-views/content-widgets/SGAccordionItem.qml</file>
+        <file>views/template/content-views/content-widgets/SGRadioButton.qml</file>
+        <file>views/template/content-views/content-widgets/SGRadioButtonContainer.qml</file>
+        <file>views/template/content-views/content-widgets/SGSelectorButton.qml</file>
+        <file>views/template/content-views/content-widgets/docLoading.gif</file>
+        <file>views/template/control-views/AdvancedControl.qml</file>
+        <file>views/template/control-views/BasicControl.qml</file>
+        <file>views/template/control-views/DebugExample.qml</file>
+        <file>views/template/control-views/PlatformInterface.qml</file>
+        <file>views/template/sgwidgets/SGCircularGauge.qml</file>
+        <file>views/template/sgwidgets/SGResponsiveScrollView.qml</file>
+        <file>views/template/sgwidgets/SGSwitch.qml</file>
+        <file>views/template/sgwidgets/fonts/digitalseven.ttf</file>
+    </qresource>
+</RCC>

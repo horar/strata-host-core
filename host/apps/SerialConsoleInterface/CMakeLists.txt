@@ -15,12 +15,7 @@ message(STATUS "${PROJECT_NAME} v${PROJECT_VERSION}")
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-include(FeatureSummary)
-
-find_package(Qt5 5.11 COMPONENTS Core Gui Network Quick REQUIRED)
-if (NOT Qt5_FOUND)
-    message(FATAL_ERROR "Qt5 not found!")
-endif()
+find_package(Qt5 5.12 COMPONENTS Core Gui Network Quick REQUIRED)
 
 if(APPLE)
     find_library(IOKIT_LIB IOKit REQUIRED)
@@ -122,8 +117,6 @@ target_compile_definitions(${PROJECT_NAME}
 if(APPLE)
     set_target_properties(${PROJECT_NAME} PROPERTIES
         MACOSX_BUNDLE ON
-    MACOSX_BUNDLE_BUNDLE_NAME "Serial Console Interface"
+        MACOSX_BUNDLE_BUNDLE_NAME "Serial Console Interface"
     )
 endif()
-
-feature_summary(WHAT ALL)

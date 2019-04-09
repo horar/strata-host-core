@@ -1,0 +1,22 @@
+<RCC>
+    <qresource prefix="/">
+        <file>fonts/Fonts.qml</file>
+        <file>fonts/FranklinGothicBold.ttf</file>
+        <file>fonts/FranklinGothicBook.otf</file>
+        <file>fonts/FranklinGothicMedium.otf</file>
+        <file>fonts/Inconsolata.otf</file>
+        <file>fonts/sgicons.ttf</file>
+        <file>images/blank_avatar.png</file>
+        <file>images/icons/fail_x.svg</file>
+        <file>images/icons/remote-locked.png</file>
+        <file>images/icons/remote-unlocked.png</file>
+        <file>images/icons/success_check.svg</file>
+        <file>images/icons/whiteAlertIcon.svg</file>
+        <file>images/login-background.svg</file>
+        <file>images/on-semi-logo-horiz.svg</file>
+        <file>images/on-semi-logo.png</file>
+        <file>images/strata-logo-reverse.svg</file>
+        <file>images/strata-logo.svg</file>
+        <file>resources/icons/app/on.ico</file>
+    </qresource>
+</RCC>

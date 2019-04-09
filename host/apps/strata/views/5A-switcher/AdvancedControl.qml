@@ -22,7 +22,7 @@ Rectangle {
 
     Telemetry {
         id: overview
-        height: 310
+        height: 450
 
         SGLayoutDivider {
             position: "bottom"
@@ -37,14 +37,12 @@ Rectangle {
         }
         width: root.width
         scrollBarPolicy: ScrollBar.AlwaysOn
-
         accordionItems: Column {
             SGAccordionItem {
                 id: systemSettings
                 title: "<b>System Settings</b>"
                 open: true
                 contents: SystemSettings { }
-
             }
 
             SGAccordionItem {
@@ -52,7 +50,6 @@ Rectangle {
                 title: "<b>Miscellaneous</b>"
                 open: false
                 contents: TimeAndWarningSettings { }
-
             }
 
             SGAccordionItem {

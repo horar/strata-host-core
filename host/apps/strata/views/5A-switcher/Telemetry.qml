@@ -10,7 +10,7 @@ import "qrc:/js/help_layout_manager.js" as Help
 
 Item {
     id: root
-    height: 350
+    height: 450
     width: parent.width
     anchors.left: parent.left
     property string vinlable: ""
@@ -32,10 +32,7 @@ Item {
     onStatus_interruptChanged:  {
         if(status_interrupt === "bad") {
             errorLed.status = "red"
-            platformInterface.enabled = false
-            platformInterface.set_enable.update("off")
             basicControl.warningVisible = true
-            platformInterface.interrupt_flag = true
         }
     }
 
@@ -56,17 +53,24 @@ Item {
             ledLight.status = "green"
             platformInterface.hide_enable = true
             vinlable = "over"
-            ledLight.label = "VIN Ready ("+ vinlable + " 2.5V)"
-
-
+            ledLight.label = "VIN Ready \n ("+ vinlable + " 2.5V)"
         }
         else {
             ledLight.status = "red"
             platformInterface.hide_enable = false
             vinlable = "under"
-            ledLight.label = "VIN Ready ("+ vinlable + " 2.25V)"
+            ledLight.label = "VIN Ready \n ("+ vinlable + " 2.25V)"
 
         }
+    }
+
+    function addToHistoryLog()
+    {
+        var errorArray = platformInterface.status_ack_register.events_detected
+        for (var i in errorArray){
+            faultHistoryModel.insert(0,{ status : errorArray[i] })
+        }
+
     }
 
     property bool check_intd_state: platformInterface.intd_state
@@ -75,6 +79,7 @@ Item {
             errorLed.status = "green"
             basicControl.warningVisible = false
             faultModel.clear()
+            addToHistoryLog()
         }
         else if(check_intd_state == false)   {
             if( errorLed.status === "green") {
@@ -109,10 +114,11 @@ Item {
         Help.registerTarget(ledLight,"VIN Ready LED will turn green when input voltage is high enough to regulate (above 4.5V). Part cannot be enabled until input voltage is high enough. ", 6, "advance5AHelp")
         Help.registerTarget(errorLed, "Interrupt Error LED will be turned on when an interrupt has been triggered.", 7, "advance5AHelp")
         Help.registerTarget(interruptError, "When an interrupt is triggered, the message log will display the interrupts that occurred.", 8, "advance5AHelp")
-        Help.registerTarget(inputVoltage, "Input voltage is shown here in Volts.", 9, "advance5AHelp")
-        Help.registerTarget(inputCurrent, "Input current is shown here in A", 10, "advance5AHelp")
+        Help.registerTarget(faultHistory, "The fault History box will show all the previous faults generated. Every time a new fault occurs it will be displayed on the top of the list.", 9, "advance5AHelp")
+        Help.registerTarget(inputVoltage, "Input voltage is shown here in Volts.", 10, "advance5AHelp")
+        Help.registerTarget(inputCurrent, "Input current is shown here in A", 11, "advance5AHelp")
         Help.registerTarget(ouputCurrent, " Output current is shown here in A.", 12, "advance5AHelp")
-        Help.registerTarget(outputVoltage, "Output voltage is shown here in Volts.", 11, "advance5AHelp")
+        Help.registerTarget(outputVoltage, "Output voltage is shown here in Volts.", 13, "advance5AHelp")
     }
 
     Item {
@@ -136,15 +142,14 @@ Item {
                     fill: parent
                 }
                 Rectangle {
+                    id:gauges
                     width : parent.width
                     height: parent.height/1.5
-                    color: "red"
+
+
                     SGCircularGauge {
                         id: tempGauge
-                        anchors {
-                            top: parent.top
-
-                        }
+                        anchors.top: parent.top
                         width: parent.width/4
                         height: parent.height
                         gaugeFrontColor1: Qt.rgba(0,0.5,1,1)
@@ -206,7 +211,6 @@ Item {
                             top: parent.top
                             left: powerDissipatedGauge.right
                         }
-
                         width: parent.width/4
                         height: parent.height
                         gaugeFrontColor1: Qt.rgba(0,0.5,1,1)
@@ -232,8 +236,8 @@ Item {
                         id: inputVoltage
                         label: "Input Voltage"
                         unit: "V"
-                        infoBoxWidth: parent.width/5
-                        infoBoxHeight : parent.height/3.5
+                        infoBoxWidth: parent.width/5.5
+                        infoBoxHeight : parent.height/5
                         fontSize :  (parent.width + parent.height)/50
                         unitSize: (parent.width + parent.height)/40
                         info: platformInterface.status_voltage_current.vin.toFixed(2)
@@ -248,8 +252,8 @@ Item {
                         id: inputCurrent
                         label: "Input Current"
                         unit: "A"
-                        infoBoxWidth: parent.width/5
-                        infoBoxHeight : parent.height/3.5
+                        infoBoxWidth: parent.width/5.5
+                        infoBoxHeight : parent.height/5
                         fontSize :  (parent.width + parent.height)/50
                         unitSize: (parent.width + parent.height)/40
                         info:  platformInterface.status_voltage_current.iin.toFixed(2)
@@ -265,8 +269,8 @@ Item {
                         label: "Output Voltage"
                         info: platformInterface.status_voltage_current.vout
                         unit: "V"
-                        infoBoxWidth: parent.width/5
-                        infoBoxHeight: parent.height/3.5
+                        infoBoxWidth: parent.width/5.5
+                        infoBoxHeight : parent.height/5
                         fontSize: (parent.width + parent.height)/50
                         unitSize: (parent.width + parent.height)/40
                         anchors {
@@ -281,8 +285,8 @@ Item {
                         label: "Output Current"
                         info: platformInterface.status_voltage_current.iout.toFixed(2)
                         unit: "A"
-                        infoBoxWidth: parent.width/5
-                        infoBoxHeight: parent.height/3.5
+                        infoBoxWidth: parent.width/5.5
+                        infoBoxHeight : parent.height/5
                         fontSize : (parent.width + parent.height)/50
                         unitSize: (parent.width + parent.height)/40
                         anchors {
@@ -299,7 +303,6 @@ Item {
             id: divider
             position: "right"
         }
-
     }
 
     Item {
@@ -319,7 +322,7 @@ Item {
 
             Rectangle {
                 id: faultContainer
-                height: parent.height/1.5
+                height: parent.height/1.4
                 width: parent.width
                 border.color: "black"
                 border.width: 3
@@ -329,78 +332,13 @@ Item {
                     topMargin: 10
                 }
 
-                Row {
-                    id: errorContainer
-                    width: parent.width
-                    height: parent.height/4
-
-                    anchors {
-                        top:parent.top
-                        topMargin: 5
-                        left: parent.left
-                        leftMargin: 10
-                    }
-                    Rectangle
-                    {
-                        width:parent.width/2
-                        height: parent.height
-                        color: "transparent"
-
-                        SGStatusLight {
-                            id: ledLight
-                            // Optional Configuration:
-                            label: "VIN Ready (under 2.25V)" // Default: "" (if not entered, label will not appear)
-                            anchors{
-                                horizontalCenter: parent.horizontalCenter
-                                verticalCenter: parent.verticalCenter
-                            }
-                            lightSize: (parent.width + parent.height)/15
-                            fontSize:  (parent.width + parent.height)/30
-
-                            property string vinMonitor: platformInterface.status_vin_good.vingood
-                            onVinMonitorChanged:  {
-                                if(vinMonitor === "good") {
-                                    status = "green"
-                                    vinlable = "over"
-                                    platformInterface.hide_enable = true
-                                    label = "VIN Ready ("+ vinlable + " 2.25V)"
-                                }
-                                else if(vinMonitor === "bad") {
-                                    status = "red"
-                                    platformInterface.hide_enable = false
-                                    vinlable = "under"
-                                    label = "VIN Ready ("+ vinlable + " 2.25V)"
-                                }
-                            }
-                        }
-                    }
-                    Rectangle
-                    {
-                        width:parent.width/2
-                        height: parent.height
-                        color: "transparent"
-                        SGStatusLight {
-                            id: errorLed
-                            // Optional Configuration:
-                            label: "Interrupt Error" // Default: "" (if not entered, label will not appear)
-
-                            anchors{
-                                horizontalCenter: parent.horizontalCenter
-                                verticalCenter: parent.verticalCenter
-                            }
-                            lightSize: (parent.width + parent.height)/15
-                            fontSize:  (parent.width + parent.height)/30
-                            status: platformInterface.inbt_state
-                        }
-                    }
-                }
                 SGStatusListBox {
                     id: interruptError
-                    height: parent.height/1.8
+                    height: parent.height/2.2
                     width: parent.width/1.1
                     anchors {
-                        top: errorContainer.bottom
-                        topMargin: 5
+                        top: parent.top
+                        topMargin: 10
                         horizontalCenter: parent.horizontalCenter
                     }
                     title: "Faults Log:"
@@ -410,61 +348,137 @@ Item {
                 property var errorArray: platformInterface.status_ack_register.events_detected
                 onErrorArrayChanged: {
                     for (var i in errorArray){
-                        faultModel.append({ status : errorArray[i] })
+                        faultModel.insert(0,{ status : errorArray[i] })
                     }
                 }
                 ListModel {
                     id: faultModel
 
                 }
+                SGStatusListBox {
+                    id: faultHistory
+                    height: parent.height/2.2
+                    width: parent.width/1.1
+                    anchors {
+                        top: interruptError.bottom
+                        topMargin: 5
+                        horizontalCenter: parent.horizontalCenter
+                    }
+                    title: "Faults History:"
+                    model: faultHistoryModel
+                    ListModel {
+                        id: faultHistoryModel
+
+                    }
+                }
             }
 
             Rectangle {
                 id:resetContainer
                 height: rightColumn.height/4
-                width: rightColumn.width/1.8
+                width: rightColumn.width/1.4
                 color: "transparent"
                 border.color: "black"
                 border.width: 3
                 radius: 10
                 anchors{
                     top: parent.top
-                    topMargin: 15
+                    topMargin: 5
                 }
-                SGStatusLight {
-                    id: resetLed
-                    // Optional Configuration:
-                    label: "Reset"+ "\n"+ "Indicator" // Default: "" (if not entered, label will not appear)
-                    anchors  {
-                        verticalCenter: parent.verticalCenter
-                        left: parent.left
-                        leftMargin: 20
+                RowLayout {
+                    anchors.fill: parent
 
+                    ColumnLayout{
+                        spacing: 10
+                        Layout.minimumWidth: 50
+                        Layout.preferredWidth: 100
+                        Layout.maximumWidth: 150
+                        Layout.minimumHeight: 100
+
+                        SGStatusLight {
+                            id: resetLed
+                            // Optional Configuration:
+                            label: "Reset"+ "\n"+ "Indicator" // Default: "" (if not entered, label will not appear)
+                            Layout.alignment: Qt.AlignCenter
+                            Layout.topMargin: 10
+                            status: platformInterface.reset_indicator
+                        }
+
+                        Button {
+                            id: resetButton
+                            Layout.minimumWidth: 40
+                            Layout.preferredWidth: 110
+                            Layout.maximumWidth: 70
+                            Layout.minimumHeight:40
+                            Layout.alignment: Qt.AlignCenter
+                            background: Rectangle {
+                                color: "light gray"
+                                border.width: 1
+                                border.color: "gray"
+                                radius: 10
+                            }
+                            Text {
+                                text: "Force \n Reset"
+                                font.bold: true
+                                anchors.centerIn: parent
+                                horizontalAlignment: Text.AlignHCenter
+                            }
+                            onClicked: {
+                                platformInterface.force_reset_registers.update("reset")
+                                platformInterface.rearm_device.update("off")
+                                platformInterface.read_initial_status.update()
+
+                            }
+                        }
                     }
-                    lightSize: (parent.width + parent.height)/15
-                    status: platformInterface.reset_indicator
 
-                }
+                    ColumnLayout{
+                        spacing: 10
+                        Layout.minimumWidth: 50
+                        Layout.preferredWidth: 100
+                        Layout.maximumWidth: 150
+                        Layout.minimumHeight: 100
 
-                Button {
-                    id: resetButton
-                    width: parent.width/3
-                    height: parent.height - 40
-                    anchors {
-                        left: resetLed.right
-                        leftMargin: 20
-                        top: parent.top
-                        topMargin: 20
+                        SGStatusLight {
+                            id: ledLight
+                            // Optional Configuration:
+                            label: "VIN Ready" +"\n" + "(under 2.25V)" // Default: "" (if not entered, label will not appear)
+                            Layout.alignment: Qt.AlignCenter
 
-                    }
-                    text: qsTr("Force Reset")
-                    onClicked: {
-                        platformInterface.force_reset_registers.update("reset")
-                        platformInterface.force_reset_registers.show()
-                        platformInterface.read_initial_status.update()
+                            property string vinMonitor: platformInterface.status_vin_good.vingood
+                            onVinMonitorChanged:  {
+                                if(vinMonitor === "good") {
+                                    status = "green"
+                                    vinlable = "over"
+                                    platformInterface.hide_enable = true
+                                    label = "VIN Ready \n ("+ vinlable + " 2.25V)"
+                                    platformInterface.read_initial_status.update()
+
+                                }
+                                else if(vinMonitor === "bad") {
+                                    status = "red"
+                                    platformInterface.hide_enable = false
+                                    vinlable = "under"
+                                    label = "VIN Ready \n ("+ vinlable + " 2.25V)"
+                                    platformInterface.enabled = false
+                                    platformInterface.set_enable.update("off")
+                                }
+                            }
+                        }
+
+                        SGStatusLight {
+                            id: errorLed
+                            Layout.alignment: Qt.AlignCenter
+                            Layout.leftMargin: 10
+                            // Optional Configuration:
+                            label: "Interrupt \n Error" // Default: "" (if not entered, label will not appear)
+                            status: platformInterface.inbt_state
+                        }
+
                     }
                 }
             }
         }
     }
 }
+

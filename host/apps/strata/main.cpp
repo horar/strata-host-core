@@ -64,7 +64,14 @@ int main(int argc, char *argv[])
     //engine.rootContext ()->setContextProperty ("dataCollector", dataCollector);
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
     if (engine.rootObjects().isEmpty()) {
-        return -1;
+        qCCritical(logCategoryStrataDevStudio) << "engine failed to load 'main' qml file; quitting...";
+        engine.load(QUrl(QStringLiteral("qrc:/ErrorDialog.qml")));
+        if (engine.rootObjects().isEmpty()) {
+            qCCritical(logCategoryStrataDevStudio) << "hell froze - engine fails to load error dialog; aborting...";
+            return -1;
+        }
+
+        return app.exec();
     }
 
     // Starting services this build?

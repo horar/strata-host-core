@@ -16,42 +16,6 @@ Rectangle{
     // Context properties that get passed when created dynamically
     property string user_id: ""
 
-    // Hardcoded mapping
-    property var userImages: {
-        "dave.priscak@onsemi.com" : "dave_priscak.png",
-                "david.somo@onsemi.com" : "david_somo.png",
-                "daryl.ostrander@onsemi.com" : "daryl_ostrander.png",
-                "paul.mascarenas@onsemi.com" : "paul_mascarenas.png",
-                "blankavatar" : "blank_avatar.png"
-    }
-
-    property var userNames: {
-        "dave.priscak@onsemi.com" : "Dave Priscak",
-                "david.somo@onsemi.com"   : "David Somo",
-                "daryl.ostrander@onsemi.com" : "Daryl Ostrander",
-                "paul.mascarenas@onsemi.com" : "Paul Mascarenas",
-    }
-
-    function getUserImage(user_name){
-        user_name = user_name.toLowerCase()
-        if(userImages.hasOwnProperty(user_name)){
-            return userImages[user_name]
-        }
-        else{
-            return userImages["blankavatar"]
-        }
-    }
-
-    function getUserName(user_name){
-        var user_lower = user_name.toLowerCase()
-        if(userNames.hasOwnProperty(user_lower)){
-            return userNames[user_lower]
-        }
-        else{
-            return user_name
-        }
-    }
-
     Image {
         id: background
         source: "qrc:/images/login-background.svg"
@@ -72,7 +36,6 @@ Rectangle{
         z: 2
         spacing: 20
 
-
         Item {
             id: userContainer
             anchors {
@@ -89,7 +52,7 @@ Rectangle{
                     top : userContainer.top
                     horizontalCenter: userContainer.horizontalCenter
                 }
-                source: "qrc:/images/" + getUserImage(user_id)
+                source: "qrc:/images/" + "blank_avatar.png"
                 visible: false
             }
 
@@ -123,7 +86,7 @@ Rectangle{
                     family: Fonts.franklinGothicBold
                     pixelSize: 20
                 }
-                text: getUserName(user_id)
+                text: user_id
             }
         }
 

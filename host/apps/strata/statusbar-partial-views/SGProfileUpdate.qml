@@ -56,14 +56,14 @@ ScrollView {
                         label: "Name:"
                         overrideLabelWidth: 150
                         infoBoxWidth: 300
-                        value: getUserName(user_id)
+                        value: user_id
                     }
 
                     SGSubmitInfoBox {
                         label: "Email:"
                         overrideLabelWidth: 150
                         infoBoxWidth: 300
-                        value: getUserName(user_id) + "@onsemi.com"
+                        value: user_id + "@onsemi.com"
                     }
 
                     SGSubmitInfoBox {
@@ -144,7 +144,7 @@ ScrollView {
                             id: profile_image
                             sourceSize.height: 150
                             fillMode: Image.PreserveAspectFit
-                            source: "qrc:/images/" + getUserImage(user_id)
+                            source: "qrc:/images/" + "blank_avatar.png"
                         }
                     }
 
