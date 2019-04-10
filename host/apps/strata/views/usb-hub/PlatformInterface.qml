@@ -522,30 +522,16 @@ Item {
                         "advertised_maximum_current": '+ (Math.random()*20).toFixed(0) +',
                         "negotiated_current": '+ (Math.random()*20).toFixed(0) +',
                         "negotiated_voltage": '+ (Math.random()*20).toFixed(0) +',
-                        "input_voltage": '+ (Math.random()*20).toFixed(0) +',
-                        "output_voltage":'+ (Math.random()*20).toFixed(0) +',
-                        "input_current": '+ (Math.random()*20).toFixed(0) +',
-                        "output_current":'+ (Math.random()*20).toFixed(0) +',
-                        "temperature": '+ (Math.random()*20).toFixed(0) +',
+                        "input_voltage": '+ (Math.random()*20).toFixed(2) +',
+                        "output_voltage":'+ (Math.random()*20).toFixed(2) +',
+                        "input_current": '+ (Math.random()*20).toFixed(2) +',
+                        "output_current":'+ (Math.random()*20).toFixed(2) +',
+                        "temperature": '+ (Math.random()*212).toFixed(1) +',
                         "maximum_power":'+ (Math.random()*20).toFixed(0) +'
                         }
                     }')
             }
         }
-
-
-
-//        "port": '+ (Math.random()*3 + 1).toFixed(0) +',
-//        "device": "PD",
-//        "advertised_maximum_current": '+ (Math.random()*20).toFixed(0) +',
-//        "negotiated_current": '+ (Math.random()*20).toFixed(0) +',
-//        "negotiated_voltage": '+ (Math.random()*20).toFixed(0) +',
-//        "input_voltage": '+ (Math.random()*20).toFixed(0) +',
-//        "output_voltage":'+ (Math.random()*20).toFixed(0) +',
-//        "input_current": '+ (Math.random()*20).toFixed(0) +',
-//        "output_current":'+ (Math.random()*20).toFixed(0) +',
-//        "temperature": '+ (Math.random()*20).toFixed(0) +',
-//        "maximum_power":'+ (Math.random()*20).toFixed(0) +'
 
 //        Button {
 //            id: button2
