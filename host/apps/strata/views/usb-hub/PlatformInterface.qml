@@ -31,9 +31,9 @@ Item {
     }
 
     onRequest_usb_power_notificationChanged: {
-//        console.log("output voltage=",request_usb_power_notification.output_voltage,
-//                    "output current=",request_usb_power_notification.output_current,
-//                    "power=",request_usb_power_notification.output_voltage * request_usb_power_notification.output_current);
+        console.log("output voltage=",request_usb_power_notification.output_voltage,
+                    "output current=",request_usb_power_notification.output_current,
+                    "power=",request_usb_power_notification.output_voltage * request_usb_power_notification.output_current);
     }
 
 
@@ -502,7 +502,7 @@ Item {
 
 
 
-    /*    // DEBUG - TODO: Faller - Remove before merging back to Dev
+        // DEBUG - TODO: Faller - Remove before merging back to Dev
     Window {
         id: debug
         visible: true
@@ -512,54 +512,71 @@ Item {
         // This button sends 2 notifications in 1 JSON, future possible implementation
         Button {
             id: button1
-            text: "send pi_stats and voltage"
+            text: "basic port stats"
             onClicked: {
                 CorePlatformInterface.data_source_handler('{
-                                        "input_voltage_notification": {
-                                            "vin": '+ (Math.random()*5+10).toFixed(2) +'
-                                        },
-                                        "pi_stats": {
-                                            "speed_target": 3216,
-                                            "current_speed": '+ (Math.random()*2000+3000).toFixed(0) +',
-                                            "error": -1104,
-                                            "sum": -0.01,
-                                            "duty_now": 0.67,
-                                            "mode": "manual"
-                                        }
-                                    }')
+                    "value":"request_usb_power_notification",
+                    "payload": {
+                        "port": '+ (Math.random()*3 + 1).toFixed(0) +',
+                        "device": "PD",
+                        "advertised_maximum_current": '+ (Math.random()*20).toFixed(0) +',
+                        "negotiated_current": '+ (Math.random()*20).toFixed(0) +',
+                        "negotiated_voltage": '+ (Math.random()*20).toFixed(0) +',
+                        "input_voltage": '+ (Math.random()*20).toFixed(0) +',
+                        "output_voltage":'+ (Math.random()*20).toFixed(0) +',
+                        "input_current": '+ (Math.random()*20).toFixed(0) +',
+                        "output_current":'+ (Math.random()*20).toFixed(0) +',
+                        "temperature": '+ (Math.random()*20).toFixed(0) +',
+                        "maximum_power":'+ (Math.random()*20).toFixed(0) +'
+                        }
+                    }')
             }
         }
 
-        Button {
-            id: button2
-            anchors { top: button1.bottom }
-            text: "send vin"
-            onClicked: {
-                CorePlatformInterface.data_source_handler('{
-                    "value":"pi_stats",
-                    "payload":{
-                                "speed_target":3216,
-                                "current_speed": '+ (Math.random()*2000+3000).toFixed(0) +',
-                                "error":-1104,
-                                "sum":-0.01,
-                                "duty_now":0.67,
-                                "mode":"manual"
-                               }
-                             }')
-            }
-        }
-        Button {
-            anchors { top: button2.bottom }
-            text: "send"
-            onClicked: {
-                CorePlatformInterface.data_source_handler('{
-                            "value":"input_voltage_notification",
-                            "payload":{
-                                     "vin":'+ (Math.random()*5+10).toFixed(2) +'
-                            }
-                    }
-            ')
-            }
-        }
-    }*/
+
+
+//        "port": '+ (Math.random()*3 + 1).toFixed(0) +',
+//        "device": "PD",
+//        "advertised_maximum_current": '+ (Math.random()*20).toFixed(0) +',
+//        "negotiated_current": '+ (Math.random()*20).toFixed(0) +',
+//        "negotiated_voltage": '+ (Math.random()*20).toFixed(0) +',
+//        "input_voltage": '+ (Math.random()*20).toFixed(0) +',
+//        "output_voltage":'+ (Math.random()*20).toFixed(0) +',
+//        "input_current": '+ (Math.random()*20).toFixed(0) +',
+//        "output_current":'+ (Math.random()*20).toFixed(0) +',
+//        "temperature": '+ (Math.random()*20).toFixed(0) +',
+//        "maximum_power":'+ (Math.random()*20).toFixed(0) +'
+
+//        Button {
+//            id: button2
+//            anchors { top: button1.bottom }
+//            text: "send vin"
+//            onClicked: {
+//                CorePlatformInterface.data_source_handler('{
+//                    "value":"pi_stats",
+//                    "payload":{
+//                                "speed_target":3216,
+//                                "current_speed": '+ (Math.random()*2000+3000).toFixed(0) +',
+//                                "error":-1104,
+//                                "sum":-0.01,
+//                                "duty_now":0.67,
+//                                "mode":"manual"
+//                               }
+//                             }')
+//            }
+//        }
+//        Button {
+//            anchors { top: button2.bottom }
+//            text: "send"
+//            onClicked: {
+//                CorePlatformInterface.data_source_handler('{
+//                            "value":"input_voltage_notification",
+//                            "payload":{
+//                                     "vin":'+ (Math.random()*5+10).toFixed(2) +'
+//                            }
+//                    }
+//            ')
+//            }
+//        }
+    }
 }
