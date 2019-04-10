@@ -7,16 +7,15 @@
 int main(int argc, char *argv[])
 {
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+    QCoreApplication::setOrganizationName(QStringLiteral("On Semiconductor"));
 
     QGuiApplication app(argc, argv);
 
-    QQmlApplicationEngine engine;
-    engine.addImportPath("qrc:///");
-
-    QCoreApplication::setOrganizationName(QStringLiteral("On Semiconductor"));
-
     qmlRegisterUncreatableType<BoardsController>("tech.spyglass.sci", 1, 0, "BoardsController", "can not instantiate BoardsController in qml");
     qmlRegisterSingletonType(QUrl("qrc:/fonts/Fonts.qml"), "fonts", 1, 0, "Fonts");
+
+    QQmlApplicationEngine engine;
+    engine.addImportPath("qrc:///");
 
     std::unique_ptr<BoardsController> boardsMgr = std::make_unique<BoardsController>();
     boardsMgr->initialize();
