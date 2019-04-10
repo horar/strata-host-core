@@ -18,7 +18,7 @@
         <file>partial-views/images/redStatusLight.svg</file>
         <file>partial-views/images/yellowStatusLight.svg</file>
         <file>partial-views/SGStatusLight.qml</file>
-        <file>resources/icons/on.ico</file>
+        <file>resources/icons/app/sci.ico</file>
     </qresource>
     <qresource prefix="/js"/>
 </RCC>
