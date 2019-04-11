@@ -1,4 +1,5 @@
 import QtQuick 2.12
+import QtQuick.Controls 2.12
 
 import "./common/" as Common
 
@@ -10,6 +11,7 @@ Common.SgDialog {
     title: "Registering Platform"
     modal: true
     focus: true
+    closePolicy: Popup.NoAutoClose
 
     Column {
         spacing: 10

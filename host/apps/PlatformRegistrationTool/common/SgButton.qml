@@ -13,6 +13,7 @@ Button {
     property bool hasDelimeter: false
     property int iconPosition: Item.Left
     property alias iconColor: iconItem.iconColor
+    property alias color: bg.color
     property int iconPadding: 4
 
     padding: 4
