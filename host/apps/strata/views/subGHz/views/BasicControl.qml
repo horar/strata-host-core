@@ -299,6 +299,54 @@ Rectangle {
             }
         }
 
+        Button{
+            id:resetButton
+            anchors.right: parent.right
+            anchors.rightMargin:10
+            anchors.bottom:startStopReceiveButton.bottom
+            height:20
+            text:"reset"
+
+            contentItem: Text {
+                text: resetButton.text
+                anchors.verticalCenter: parent.verticalCenter
+                font.pixelSize: 12
+                color:{
+                    if (resetButton.down)
+                        color = "black" ;
+                    else if (resetButton.hovered)
+                        color = "white";
+                    else
+                        color = "dimgrey";
+                }
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignVCenter
+                elide: Text.ElideRight
+            }
+
+            background: Rectangle {
+                implicitWidth: 60
+                color: "transparent"
+                border.width: 0
+                radius: resetButton.height/2
+            }
+
+            onHoveredChanged:{
+                if (hovered){
+                    resetButton.background.border.width = 1;
+                    resetButton.contentItem.color = "white";
+                }
+                else{
+                    resetButton.background.border.width = 0;
+                    resetButton.contentItem.color = "dimgrey";
+                }
+            }
+
+            onClicked:{
+                errorGraph.series.clear()
+            }
+        }
+
     }
 
     Popover{
