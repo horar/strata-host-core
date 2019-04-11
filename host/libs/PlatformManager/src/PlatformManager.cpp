@@ -1,6 +1,8 @@
 
 #include "PlatformManager.h"
 #include "PlatformConnection.h"
+#include "WinCommEvent.h"
+
 #include <serial_port.h>
 
 #include <string>
@@ -26,6 +28,7 @@ PlatformManager::~PlatformManager()
 
 bool PlatformManager::Init()
 {
+#if defined(__linux__) || defined(__APPLE__)
     ports_update_.reset( eventsMgr_.CreateEventTimer(g_portsRefreshTime) );
     ports_update_->setCallback(std::bind(&PlatformManager::onUpdatePortList, this, std::placeholders::_1, std::placeholders::_2) );
 
@@ -33,18 +36,36 @@ bool PlatformManager::Init()
         ports_update_.release();
         return false;
     }
+#elif defined(_WIN32)
+
+	ports_update_.reset(new WinTimerEvent());
+	ports_update_->create();
+	ports_update_->setCallback(std::bind(&PlatformManager::onUpdatePortList, this, std::placeholders::_1, std::placeholders::_2));
+
+	winEventsMgr_.addEvent(ports_update_.get());
+
+	ports_update_->activate(0);
+#endif
 
     return true;
 }
 
 void PlatformManager::StartLoop()
 {
+#if defined(__linux__) || defined(__APPLE__)
     eventsMgr_.startInThread();
+#elif defined(_WIN32)
+	winEventsMgr_.startInThread();
+#endif
 }
 
 void PlatformManager::Stop()
 {
+#if defined(__linux__) || defined(__APPLE__)
     eventsMgr_.stop();
+#elif defined(_WIN32)
+	winEventsMgr_.stop();
+#endif
 }
 
 void PlatformManager::setPlatformHandler(PlatformConnHandler* handler)
@@ -169,10 +190,12 @@ void PlatformManager::removeConnection(PlatformConnection* /*conn*/)
 
 }
 
+#if defined(__linux__) || defined(__APPLE__)
 EvEventsMgr* PlatformManager::getEvEventsMgr()
 {
     return &eventsMgr_;
 }
+#endif
 
 void PlatformManager::onAddedPort(serialPortHash hash)
 {
@@ -190,7 +213,15 @@ void PlatformManager::onAddedPort(serialPortHash hash)
         openedPorts_.insert({hash, conn});
     }
 
+#if defined(__linux__) || defined(__APPLE__)
     conn->attachEventMgr(&eventsMgr_);
+#elif defined(_WIN32)
+
+	spyglass::WinCommEvent* ev = conn->getEvent();
+	winEventsMgr_.addEvent(static_cast<spyglass::WinEventBase*>(ev));
+
+
+#endif
 
     if (plat_handler_) {
         plat_handler_->onNewConnection(conn);

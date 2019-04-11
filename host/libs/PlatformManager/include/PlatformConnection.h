@@ -9,9 +9,14 @@ class serial_port;
 
 namespace spyglass {
 
-    class EvEvent;
-    class EvEventsMgr;
     class PlatformManager;
+
+#if defined(__linux__) || defined(__APPLE__)
+	class EvEvent;
+	class EvEventsMgr;
+#elif defined(_WIN32)
+	class WinCommEvent;
+#endif
 
     class PlatformConnection {
     public:
@@ -67,6 +72,7 @@ namespace spyglass {
          */
         bool isReadable();
 
+#if defined(__linux__) || defined(__APPLE__)
         /**
          * Attaches EvEventsMgr to the connection to handle read/write notifications
          *  it is method for PlatformManager
@@ -76,15 +82,20 @@ namespace spyglass {
         bool attachEventMgr(EvEventsMgr* ev_manager);
 
         /**
-         * Detaches EvEventsMgr from connection
-         */
-        void detachEventMgr();
-
-        /**
          * Returns events manager that is PlatformConnection attached too
          *  or nullptr when isn't attached.
          */
         EvEventsMgr* getEventMgr() const { return event_mgr_; }
+#elif defined(_WIN32)
+
+		WinCommEvent* getEvent();
+
+#endif
+
+		/**
+		 * Detaches EvEventsMgr from connection
+		 */
+		void detachEventMgr();
 
         /**
          * Stops / Resumes listening on events from PlatformManager(EvEventMgr)
@@ -109,19 +120,28 @@ namespace spyglass {
          */
         int handleWrite(unsigned int timeout);
 
-
-        void onDescriptorEvent(EvEvent *, int flags);
-
         bool updateEvent(bool read, bool write);
 
         bool isWriteBufferEmpty() const;
+
+#if defined(__linux__) || defined(__APPLE__)
+		void onDescriptorEvent(EvEvent *, int flags);
+#elif defined(_WIN32)
+		void onDescriptorEvent(WinCommEvent *, int flags);
+#endif
 
     private:
         PlatformManager *parent_;
         std::unique_ptr<serial_port> port_;
 
+#if defined(__linux__) || defined(__APPLE__)
         EvEventsMgr *event_mgr_ = nullptr;
         std::unique_ptr<EvEvent> event_;
+#elif defined(_WIN32)
+
+		std::unique_ptr<WinCommEvent> event_;
+
+#endif
         std::mutex event_lock_;  //this lock is used when read/write event is notified or when event is attached/detached
 
         std::string readBuffer_;
