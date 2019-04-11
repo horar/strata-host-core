@@ -1,10 +1,4 @@
 
-if(APPLE)
-     if(NOT CMAKE_OSX_DEPLOYMENT_TARGET)
-        set(CMAKE_OSX_DEPLOYMENT_TARGET "10.13" CACHE STRING "" FORCE)
-    endif()
-endif()
-
 project(SerialConsoleInterface
     LANGUAGES CXX
     VERSION 0.0.0
@@ -14,7 +8,7 @@ message(STATUS "${PROJECT_NAME} v${PROJECT_VERSION}")
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 find_package(Qt5 5.12
-    COMPONENTS Core Gui Network Quick
+    COMPONENTS Core Quick
     REQUIRED
 )
 
