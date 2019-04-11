@@ -3,7 +3,12 @@
 #include "PlatformManager.h"
 
 #include <serial_port.h>
+#if defined(__linux__) || defined(__APPLE__)
 #include <EvEventsMgr.h>
+#elif defined(_WIN32)
+#include "WinCommEvent.h"
+#include <EvEvent.h>  //for r/w state flags
+#endif
 
 #include <assert.h>
 
@@ -82,7 +87,7 @@ bool PlatformConnection::getMessage(std::string& result)
 
 
     result = readBuffer_.substr(readOffset_, (off - readOffset_));
-    readOffset_ = (off + 1);
+    readOffset_ = static_cast<unsigned int>(off + 1);
     if (readBuffer_.size() == readOffset_) {
         readBuffer_.clear();
         readOffset_ = 0;
@@ -90,6 +95,7 @@ bool PlatformConnection::getMessage(std::string& result)
     return true;
 }
 
+#if defined(__linux__) || defined(__APPLE__)
 void PlatformConnection::onDescriptorEvent(EvEvent*, int flags)
 {
     std::lock_guard<std::mutex> lock(event_lock_);
@@ -127,6 +133,16 @@ void PlatformConnection::onDescriptorEvent(EvEvent*, int flags)
         }
     }
 }
+#elif defined(_WIN32)
+void PlatformConnection::onDescriptorEvent(WinCommEvent *, int flags)
+{
+	//TODO:...
+
+
+}
+
+#endif
+
 
 int PlatformConnection::handleRead(unsigned int timeout)
 {
@@ -166,7 +182,7 @@ int PlatformConnection::handleWrite(unsigned int timeout)
 void PlatformConnection::addMessage(const std::string& message)
 {
     assert(event_);
-    bool isWrite = event_->isActive(EvEvent::eEvStateWrite);
+	bool isWrite = false; //TODO:   event_->isActive(EvEvent::eEvStateWrite);
 
     //TODO: checking for too big messages...
 
@@ -225,6 +241,7 @@ std::string PlatformConnection::getName() const
     return std::string(port_->getName());
 }
 
+#if defined(__linux__) || defined(__APPLE__)
 bool PlatformConnection::attachEventMgr(EvEventsMgr* ev_manager)
 {
     if (!port_ || ev_manager == nullptr) {
@@ -242,22 +259,55 @@ bool PlatformConnection::attachEventMgr(EvEventsMgr* ev_manager)
     return updateEvent(true, false);
 }
 
+bool PlatformConnection::updateEvent(bool read, bool write)
+{
+	if (!event_ || event_mgr_ == nullptr) {
+		return false;
+	}
+
+	int evFlags = (read ? EvEvent::eEvStateRead : 0) | (write ? EvEvent::eEvStateWrite : 0);
+	return event_->activate(event_mgr_, evFlags);
+}
+#elif defined(_WIN32)
+
+WinCommEvent* PlatformConnection::getEvent()
+{
+	if (!event_) {
+		event_.reset(new WinCommEvent());
+
+		HANDLE hCom = reinterpret_cast<HANDLE>(port_->getFileDescriptor());
+		event_->create(hCom);
+	}
+
+	return event_.get();
+}
+
 void PlatformConnection::detachEventMgr()
 {
-    if (!port_) {
-        return;
-    }
+	if (!port_) {
+		return;
+	}
 
-    if (event_) {
-
-        std::lock_guard<std::mutex> lock(event_lock_);
-        event_->deactivate();
-    }
+	if (event_) {
+		std::lock_guard<std::mutex> lock(event_lock_);
+		event_->deactivate();
+	}
 }
+
+bool PlatformConnection::updateEvent(bool read, bool write)
+{
+	if (!event_) {
+		return false;
+	}
+
+	int evFlags = (read ? EvEvent::eEvStateRead : 0) | (write ? EvEvent::eEvStateWrite : 0);
+	return event_->activate(evFlags);
+}
+#endif
 
 bool PlatformConnection::stopListeningOnEvents(bool stop)
 {
-    if (!event_ || event_mgr_ == nullptr) {
+    if (!event_ /* TODO:  || event_mgr_ == nullptr*/ ) {
         return false;
     }
 
@@ -281,15 +331,6 @@ bool PlatformConnection::isWriteBufferEmpty() const
     return (writeBuffer_.size() - writeOffset_) == 0;
 }
 
-bool PlatformConnection::updateEvent(bool read, bool write)
-{
-    if (!event_ || event_mgr_ == nullptr) {
-        return false;
-    }
-
-    int evFlags = (read ? EvEvent::eEvStateRead : 0) | (write ? EvEvent::eEvStateWrite : 0);
-    return event_->activate(event_mgr_, evFlags);
-}
 
 } //end of namespace
 

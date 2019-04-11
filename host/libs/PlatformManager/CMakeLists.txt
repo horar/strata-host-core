@@ -17,6 +17,14 @@ add_library(${PROJECT_NAME}
         src/PlatformConnection.cpp
 )
 
+if(WIN32)
+    target_sources(${PROJECT_NAME}
+        PRIVATE src/WinCommEvent.cpp
+		PRIVATE src/WinCommWaitManager.cpp
+		PRIVATE src/WinTimerEvent.cpp
+    )
+endif()
+
 target_link_libraries(${PROJECT_NAME}
         PUBLIC EventsMgr
         PUBLIC StrataSerialPort
