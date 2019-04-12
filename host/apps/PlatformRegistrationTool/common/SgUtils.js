@@ -1,9 +1,16 @@
 .pragma library
 
-function createDialog(url, parent) {
+/* Dynamically creates dialog and sets destroyOnClose. */
+function createDialog(parent, url, properties) {
+    if (properties === undefined) {
+        properties = {}
+    }
+
     var component = Qt.createComponent(url, parent)
     if (component) {
-        var obj = component.createObject(parent)
+        properties["destroyOnClose"] = true
+
+        var obj = component.createObject(parent, properties)
         var pos = centreObject(obj, parent)
 
         obj.x = pos.x
@@ -11,6 +18,27 @@ function createDialog(url, parent) {
 
         return obj
     }
+}
+
+function showMessageDialog(parent, type, title, text, standardButtons, callbackAccepted, callbackRejected) {
+    var properties = {
+        "type": type,
+        "title": title,
+        "text": text,
+        "standardButtons": standardButtons,
+    }
+
+    var dialog = createDialog(parent, "SgMessageDialog.qml", properties)
+
+    if (callbackAccepted) {
+        dialog.accepted.connect(callbackAccepted)
+    }
+
+    if (callbackRejected) {
+        dialog.rejected.connect(callbackRejected)
+    }
+
+    dialog.open()
 }
 
 function centreObject(object, parent) {
