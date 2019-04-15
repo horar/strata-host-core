@@ -7,8 +7,6 @@
 
 namespace spyglass {
 
-class EvEvent;
-
 class WinCommEvent : public WinEventBase
 {
 public:
@@ -17,15 +15,17 @@ public:
 
     bool create(HANDLE hComm);
 
-    void setCallback(std::function<void(EvEvent*, int)> callback);
+    void setCallback(std::function<void(WinEventBase*, int)> callback);
 
     virtual int getType() { return 1; }
 
-    virtual HANDLE getWaitHandle();
+    virtual ev2_handle_t getWaitHandle();
 	virtual void handle_event(int flags);
 
 	virtual bool activate(int evFlags);
 	virtual void deactivate();
+
+	bool isActive(int ev_flags) const;
 
 protected:
 	int preDispatch();
@@ -34,6 +34,9 @@ protected:
 	bool isPending() const;
 
 	void cancelWait();
+
+private:
+	int updateFlags();
 
 private:
 	HANDLE hComm_;
@@ -53,7 +56,7 @@ private:
 	DWORD dwEventMask_;
 	OVERLAPPED wait_;
 
-    std::function<void(EvEvent*, int)> callback_;
+    std::function<void(WinEventBase*, int)> callback_;
 
 	friend class WinCommWaitManager;
 };

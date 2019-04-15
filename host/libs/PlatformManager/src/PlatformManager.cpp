@@ -3,6 +3,8 @@
 #include "PlatformConnection.h"
 #include "WinCommEvent.h"
 
+#include <EvEvent.h>
+
 #include <serial_port.h>
 
 #include <string>
@@ -38,13 +40,13 @@ bool PlatformManager::Init()
     }
 #elif defined(_WIN32)
 
-	ports_update_.reset(new WinTimerEvent());
-	ports_update_->create();
-	ports_update_->setCallback(std::bind(&PlatformManager::onUpdatePortList, this, std::placeholders::_1, std::placeholders::_2));
+//	ports_update_.reset(new WinTimerEvent());
+//	ports_update_->create();
+//	ports_update_->setCallback(std::bind(&PlatformManager::onUpdatePortList, this, std::placeholders::_1, std::placeholders::_2));
 
-	winEventsMgr_.addEvent(ports_update_.get());
+//	winEventsMgr_.addEvent(ports_update_.get());
 
-	ports_update_->activate(0);
+//	ports_update_->activate(0);
 #endif
 
     return true;
@@ -218,7 +220,11 @@ void PlatformManager::onAddedPort(serialPortHash hash)
 #elif defined(_WIN32)
 
 	spyglass::WinCommEvent* ev = conn->getEvent();
-	winEventsMgr_.addEvent(static_cast<spyglass::WinEventBase*>(ev));
+
+	int flags = (int) spyglass::EvEvent::eEvStateRead;
+	ev->activate(flags);
+
+	winEventsMgr_.registerEvent(ev);
 
 
 #endif

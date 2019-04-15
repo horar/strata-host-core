@@ -15,6 +15,7 @@ namespace spyglass {
 	class EvEvent;
 	class EvEventsMgr;
 #elif defined(_WIN32)
+	class WinEventBase;
 	class WinCommEvent;
 #endif
 
@@ -127,7 +128,7 @@ namespace spyglass {
 #if defined(__linux__) || defined(__APPLE__)
 		void onDescriptorEvent(EvEvent *, int flags);
 #elif defined(_WIN32)
-		void onDescriptorEvent(WinCommEvent *, int flags);
+		void onDescriptorEvent(WinEventBase*, int flags);
 #endif
 
     private:

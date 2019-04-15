@@ -3,16 +3,17 @@
 
 #if defined(_WIN32)
 
+#include "WinEventBase.h"
+
 #include <thread>
 #include <atomic>
 #include <map>
 
-typedef void* HANDLE;
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
 
 namespace spyglass
 {
-
-class WinEventBase;
 
 class WinCommWaitManager
 {
@@ -20,7 +21,8 @@ public:
 	WinCommWaitManager();
 	~WinCommWaitManager();
 
-	void addEvent(WinEventBase* event);
+	bool registerEvent(WinEventBase* event);
+	void unregisterEvent(WinEventBase* event);
 
 	int dispatch();
 
@@ -34,7 +36,7 @@ private:
 	std::thread eventsThread_;
 	std::atomic_bool stopThread_{ false };
 
-	std::map<HANDLE, WinEventBase*> eventMap_;
+	std::map<ev2_handle_t, WinEventBase*> eventMap_;
 	HANDLE hStopEvent_;
 };
 
