@@ -17,18 +17,15 @@ public:
 	WinEventBase(int type);
     virtual ~WinEventBase();
 
-    void setCallback(std::function<void(WinEventBase*, int)> callback);
+    int getType() const { return type_; }
 
-	int getType() const { return type_; }
+    void setCallback(std::function<void(WinEventBase*, int)> callback);
 
     virtual ev2_handle_t getWaitHandle() = 0;
     virtual void handle_event(int flags);
 
     virtual bool activate(int evFlags) = 0;
     virtual void deactivate() = 0;
-
-protected:
-
 
 private:
 	int type_;

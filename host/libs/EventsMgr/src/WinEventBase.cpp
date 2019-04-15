@@ -1,6 +1,8 @@
 
 #include "WinEventBase.h"
 
+#if defined(_WIN32)
+
 namespace spyglass {
 
 WinEventBase::WinEventBase(int type) : type_(type)
@@ -25,4 +27,4 @@ void WinEventBase::handle_event(int flags)
 
 } //namespace
 
-
+#endif //defined(_WIN32)

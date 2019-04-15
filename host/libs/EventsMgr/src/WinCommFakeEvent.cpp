@@ -1,6 +1,8 @@
 
 #include "WinCommFakeEvent.h"
 
+#if defined(_WIN32)
+
 namespace spyglass {
 
 WinCommFakeEvent::WinCommFakeEvent() : WinEventBase(3), hEvent_(NULL), act_flags_(0)
@@ -51,10 +53,12 @@ void WinCommFakeEvent::deactivate()
     ::ResetEvent(hEvent_);
 }
 
-int WinCommFakeEvent::getEventStateFlags() const
+int WinCommFakeEvent::getEvFlagsState() const
 {
     return act_flags_;
 }
 
 
 } //namespace spyglass
+
+#endif //defined(_WIN32)
