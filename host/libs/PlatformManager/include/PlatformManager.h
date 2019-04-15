@@ -69,7 +69,7 @@ namespace spyglass {
         PlatformConnection* getConnection(const std::string& connection_id);
 
 
-		void onUpdatePortList(EvEvent *, int);  //Temporary
+		void onUpdatePortList(WinEventBase*, int);  //Temporary
 
     protected:
         void onAddedPort(serialPortHash hash);

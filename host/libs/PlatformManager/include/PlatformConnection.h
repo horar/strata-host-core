@@ -17,6 +17,7 @@ namespace spyglass {
 #elif defined(_WIN32)
 	class WinEventBase;
 	class WinCommEvent;
+    class WinCommFakeEvent;
 #endif
 
     class PlatformConnection {
@@ -89,7 +90,8 @@ namespace spyglass {
         EvEventsMgr* getEventMgr() const { return event_mgr_; }
 #elif defined(_WIN32)
 
-		WinCommEvent* getEvent();
+        WinEventBase* getEvent();
+        WinEventBase* getWriteEvent();
 
 #endif
 
@@ -141,9 +143,10 @@ namespace spyglass {
 #elif defined(_WIN32)
 
 		std::unique_ptr<WinCommEvent> event_;
+        std::unique_ptr<WinCommFakeEvent> write_event_;
 
 #endif
-        std::mutex event_lock_;  //this lock is used when read/write event is notified or when event is attached/detached
+        std::recursive_mutex event_lock_;  //this lock is used when read/write event is notified or when event is attached/detached
 
         std::string readBuffer_;
         std::string writeBuffer_;

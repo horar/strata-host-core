@@ -40,13 +40,12 @@ bool PlatformManager::Init()
     }
 #elif defined(_WIN32)
 
-//	ports_update_.reset(new WinTimerEvent());
-//	ports_update_->create();
-//	ports_update_->setCallback(std::bind(&PlatformManager::onUpdatePortList, this, std::placeholders::_1, std::placeholders::_2));
+	ports_update_.reset(new WinTimerEvent());
+	ports_update_->create(g_portsRefreshTime);
+	ports_update_->setCallback(std::bind(&PlatformManager::onUpdatePortList, this, std::placeholders::_1, std::placeholders::_2));
 
-//	winEventsMgr_.addEvent(ports_update_.get());
-
-//	ports_update_->activate(0);
+    winEventsMgr_.registerEvent(ports_update_.get());
+	ports_update_->activate(0);
 #endif
 
     return true;
@@ -91,8 +90,12 @@ PlatformConnection* PlatformManager::getConnection(const std::string& connection
     return conn;
 }
 
-void PlatformManager::onUpdatePortList(EvEvent*, int)
+void PlatformManager::onUpdatePortList(WinEventBase*, int)
 {
+    static int idx = 0;
+
+    std::cout << "onUpdatePortList:" << idx << std::endl;  idx++;
+
     std::vector<std::string> listOfSerialPorts;
     if (getListOfSerialPorts(listOfSerialPorts)) {
 
@@ -171,6 +174,17 @@ void PlatformManager::onRemovedPort(serialPortHash hash)
         conn = find->second;
     }
 
+    std::cout << "Disconnect" << std::endl;
+
+    //TODO: linux and Mac
+#if defined(_WIN32)
+    WinEventBase* ev = conn->getEvent();
+    winEventsMgr_.unregisterEvent(ev);
+
+    ev = conn->getWriteEvent();
+    winEventsMgr_.unregisterEvent(ev);
+#endif
+
     if (plat_handler_) {
         plat_handler_->onCloseConnection(conn);
     }
@@ -189,6 +203,8 @@ void PlatformManager::removeConnection(PlatformConnection* /*conn*/)
 {
     //TODO: remove connection
 
+    std::cout << "Disconnect" << std::endl;
+
 
 }
 
@@ -201,6 +217,8 @@ EvEventsMgr* PlatformManager::getEvEventsMgr()
 
 void PlatformManager::onAddedPort(serialPortHash hash)
 {
+    std::cout << "onAddedPort()" << std::endl;
+
     std::string portName  = hashToPortName(hash);
 //TODO: add this to logging     std::cout << "New ser.port:" << portName << std::endl;
 
@@ -219,15 +237,18 @@ void PlatformManager::onAddedPort(serialPortHash hash)
     conn->attachEventMgr(&eventsMgr_);
 #elif defined(_WIN32)
 
-	spyglass::WinCommEvent* ev = conn->getEvent();
+	spyglass::WinEventBase* ev = conn->getEvent();
 
 	int flags = (int) spyglass::EvEvent::eEvStateRead;
 	ev->activate(flags);
 
 	winEventsMgr_.registerEvent(ev);
 
-
+    spyglass::WinEventBase* ev2 = conn->getWriteEvent();
+    winEventsMgr_.registerEvent(ev2);
 #endif
+
+    std::cout << "New connection" << std::endl;
 
     if (plat_handler_) {
         plat_handler_->onNewConnection(conn);

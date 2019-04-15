@@ -5,7 +5,7 @@
 
 namespace spyglass {
 
-WinTimerEvent::WinTimerEvent() : WinEventBase(), hTimer_(NULL)
+WinTimerEvent::WinTimerEvent() : WinEventBase(2), hTimer_(NULL), timeInMs_(0), active_(false)
 {
 }
 
@@ -16,33 +16,52 @@ WinTimerEvent::~WinTimerEvent()
 	}
 }
 
-bool WinTimerEvent::create()
+bool WinTimerEvent::create(unsigned int timeInMs)
 {
-	hTimer_ = ::CreateWaitableTimer(NULL, TRUE, NULL);
-	return hTimer_ != NULL;
-}
+    if (hTimer_ != NULL) {
+        return false;
+    }
 
-void WinTimerEvent::setCallback(std::function<void(WinEventBase*, int)> callback)
-{
-	callback_ = callback;
+	hTimer_ = ::CreateWaitableTimer(NULL, TRUE, NULL);
+    if (hTimer_ != NULL) {
+        timeInMs_ = timeInMs;
+    }
+
+	return hTimer_ != NULL;
 }
 
 bool WinTimerEvent::activate(int flags)
 {
-	LARGE_INTEGER time;
-	time.QuadPart = -150000000LL;		//500ms
+    if (hTimer_ == NULL)
+        return false;
 
-	BOOL ret = ::SetWaitableTimer(hTimer_, &time, 0, NULL, NULL, FALSE);
-	if (!ret) {
-		return false;
-	}
+    if (active_) {
+        return true;
+    }
 
-	return true;
+    bool ret;
+    if ((ret = setTimer()) == true) {
+        active_ = true;
+    }
+    return ret;
 }
 
 void WinTimerEvent::deactivate()
 {
+    if (active_ == false) {
+        return;
+    }
+
 	::CancelWaitableTimer(hTimer_);
+    active_ = false;
+}
+
+bool WinTimerEvent::setTimer()
+{
+    LARGE_INTEGER time;
+    time.QuadPart = (static_cast<int64_t>(timeInMs_ * 10000)) * -1;  // -150000000LL;		//500ms
+
+    return ::SetWaitableTimer(hTimer_, &time, 0, NULL, NULL, FALSE) == TRUE;
 }
 
 ev2_handle_t WinTimerEvent::getWaitHandle()
@@ -50,17 +69,9 @@ ev2_handle_t WinTimerEvent::getWaitHandle()
 	return reinterpret_cast<ev2_handle_t>(hTimer_);
 }
 
-void WinTimerEvent::handle_event(int flags)
+void WinTimerEvent::restartTimer()
 {
-	if (callback_) {
-		callback_(nullptr, flags);
-	}
-}
-
-void WinTimerEvent::resetTimer()
-{
-	activate(0);
-
+    setTimer();
 }
 
 

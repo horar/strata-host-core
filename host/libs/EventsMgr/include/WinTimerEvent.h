@@ -17,24 +17,22 @@ public:
     WinTimerEvent();
     virtual ~WinTimerEvent();
 
-    bool create();
-	void setCallback(std::function<void(WinEventBase*, int)> callback);
-
-	void resetTimer();
-
-    virtual int getType() { return 0; }
+    bool create(unsigned int timeInMs);
+    void restartTimer();
 
 	virtual ev2_handle_t getWaitHandle();
-    virtual void handle_event(int flags);
 
     virtual bool activate(int evFlags);
     virtual void deactivate();
 
 private:
-	HANDLE hTimer_;
-	std::function<void(WinEventBase*, int)> callback_;
+    bool setTimer();
 
-    friend class WinCommWaitManager;
+private:
+	HANDLE hTimer_;
+    unsigned int timeInMs_;
+    bool active_;
+
 };
 
 }; //namespace

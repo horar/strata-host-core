@@ -7,6 +7,7 @@
 
 #include <thread>
 #include <atomic>
+#include <mutex>
 #include <map>
 
 #define WIN32_LEAN_AND_MEAN
@@ -37,6 +38,8 @@ private:
 	std::atomic_bool stopThread_{ false };
 
 	std::map<ev2_handle_t, WinEventBase*> eventMap_;
+    std::mutex dispatchLock_;
+
 	HANDLE hStopEvent_;
 };
 
