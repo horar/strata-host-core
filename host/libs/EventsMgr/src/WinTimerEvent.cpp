@@ -3,6 +3,8 @@
 
 #include "WinTimerEvent.h"
 
+#if defined(_WIN32)
+
 namespace spyglass {
 
 WinTimerEvent::WinTimerEvent() : WinEventBase(2), hTimer_(NULL), timeInMs_(0), active_(false)
@@ -59,7 +61,7 @@ void WinTimerEvent::deactivate()
 bool WinTimerEvent::setTimer()
 {
     LARGE_INTEGER time;
-    time.QuadPart = (static_cast<int64_t>(timeInMs_ * 10000)) * -1;  // -150000000LL;		//500ms
+    time.QuadPart = (static_cast<int64_t>(timeInMs_ * 10000)) * -1;
 
     return ::SetWaitableTimer(hTimer_, &time, 0, NULL, NULL, FALSE) == TRUE;
 }
@@ -74,5 +76,6 @@ void WinTimerEvent::restartTimer()
     setTimer();
 }
 
-
 } //namespace
+
+#endif //defined(_WIN32)

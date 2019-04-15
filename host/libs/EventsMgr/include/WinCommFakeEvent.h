@@ -24,7 +24,7 @@ public:
     virtual bool activate(int evFlags);
     virtual void deactivate();
 
-    int getEventStateFlags() const;
+    int getEvFlagsState() const;
 
 private:
 	HANDLE hEvent_;

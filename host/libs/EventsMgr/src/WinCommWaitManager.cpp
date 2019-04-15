@@ -12,7 +12,7 @@
 namespace spyglass
 {
 
-unsigned int g_waitTimeout = 500000;  //in ms
+unsigned int g_waitTimeout = 5000;  //in ms
 
 WinCommWaitManager::WinCommWaitManager() : hStopEvent_(NULL)
 {
@@ -126,19 +126,24 @@ int WinCommWaitManager::dispatch()
 		if (hSignaled == hStopEvent_)
 			return 0;
 
-		auto findIt = eventMap_.find(hSignaled);
-		if (findIt == eventMap_.end())
-			return -1;
+        WinEventBase* ev;
+        {
+            std::lock_guard<std::mutex> lock(dispatchLock_);
+            auto findIt = eventMap_.find(hSignaled);
+            if (findIt == eventMap_.end())
+                return -1;
+
+            ev = findIt->second;
+        }
 
 		int flags = 0;
-		WinEventBase* ev = findIt->second;
 		if (ev->getType() == 1) {
 			WinCommEvent* com = static_cast<WinCommEvent*>(ev);
-			flags = com->getEventStateFlags();
+			flags = com->getEvFlagsState();
 		}
         else if (ev->getType() == 3) {
             WinCommFakeEvent* com = static_cast<WinCommFakeEvent*>(ev);
-            flags = com->getEventStateFlags();
+            flags = com->getEvFlagsState();
         }
 
 		ev->handle_event(flags);

@@ -24,11 +24,11 @@ public:
 
     ev2_handle_t getWriteHandle();
 
+    int getEvFlagsState() const;
 
 protected:
 	int preDispatch();
 
-	int getEventStateFlags() const;
 	bool isPending() const;
 
 	void cancelWait();
@@ -38,9 +38,7 @@ private:
 
 private:
 	HANDLE hComm_;
-    HANDLE hWriteEvent_;
-
-	int flags_;  //read / write
+	int flags_;  //read 
 
     enum state {
         eNotInitialized = 0,

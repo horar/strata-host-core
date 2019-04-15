@@ -3,9 +3,11 @@
 
 #include "WinCommEvent.h"
 
+#if defined(_WIN32)
+
 namespace spyglass {
 
-	WinCommEvent::WinCommEvent() : WinEventBase(1), hComm_(NULL), hWriteEvent_(NULL), flags_(0), state_(eNotInitialized), hWaitEvent_(NULL), dwEventMask_(0)
+	WinCommEvent::WinCommEvent() : WinEventBase(1), hComm_(NULL), flags_(0), state_(eNotInitialized), hWaitEvent_(NULL), dwEventMask_(0)
 	{
 		wait_ = { 0 };
 	}
@@ -50,7 +52,7 @@ namespace spyglass {
 			return 1;	//IO_PENDING
 		}
 
-		int flags = getEventStateFlags();
+		int flags = getEvFlagsState();
 
 		handle_event(flags);
 		return 0;
@@ -61,7 +63,7 @@ namespace spyglass {
 		return reinterpret_cast<ev2_handle_t>(hWaitEvent_);
 	}
 
-	int WinCommEvent::getEventStateFlags() const
+	int WinCommEvent::getEvFlagsState() const
 	{
 		int flags = 0;
 		flags |= (dwEventMask_ & EV_RXCHAR) ? EvEvent::eEvStateRead : 0;
@@ -113,3 +115,6 @@ namespace spyglass {
 
 
 } //namespace spyglass
+
+#endif //defined(_WIN32)
+
