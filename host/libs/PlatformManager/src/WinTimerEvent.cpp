@@ -22,7 +22,7 @@ bool WinTimerEvent::create()
 	return hTimer_ != NULL;
 }
 
-void WinTimerEvent::setCallback(std::function<void(EvEvent*, int)> callback)
+void WinTimerEvent::setCallback(std::function<void(WinEventBase*, int)> callback)
 {
 	callback_ = callback;
 }
@@ -30,7 +30,7 @@ void WinTimerEvent::setCallback(std::function<void(EvEvent*, int)> callback)
 bool WinTimerEvent::activate(int flags)
 {
 	LARGE_INTEGER time;
-	time.QuadPart = -5000000LL;		//500ms
+	time.QuadPart = -150000000LL;		//500ms
 
 	BOOL ret = ::SetWaitableTimer(hTimer_, &time, 0, NULL, NULL, FALSE);
 	if (!ret) {
@@ -42,11 +42,12 @@ bool WinTimerEvent::activate(int flags)
 
 void WinTimerEvent::deactivate()
 {
+	::CancelWaitableTimer(hTimer_);
 }
 
-HANDLE WinTimerEvent::getWaitHandle()
+ev2_handle_t WinTimerEvent::getWaitHandle()
 {
-	return hTimer_;
+	return reinterpret_cast<ev2_handle_t>(hTimer_);
 }
 
 void WinTimerEvent::handle_event(int flags)
@@ -54,6 +55,12 @@ void WinTimerEvent::handle_event(int flags)
 	if (callback_) {
 		callback_(nullptr, flags);
 	}
+}
+
+void WinTimerEvent::resetTimer()
+{
+	activate(0);
+
 }
 
 

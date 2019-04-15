@@ -134,9 +134,43 @@ void PlatformConnection::onDescriptorEvent(EvEvent*, int flags)
     }
 }
 #elif defined(_WIN32)
-void PlatformConnection::onDescriptorEvent(WinCommEvent *, int flags)
+void PlatformConnection::onDescriptorEvent(WinEventBase* , int flags)
 {
-	//TODO:...
+	std::lock_guard<std::mutex> lock(event_lock_);
+
+	if (flags & EvEvent::eEvStateRead) {
+
+		if (handleRead(g_readTimeout) < 0) {
+			//TODO: [MF] add to log...
+
+			event_->deactivate();
+
+			if (parent_) {
+				parent_->removeConnection(this);
+			}
+		}
+		else if (isReadable() && parent_ != nullptr) {
+			parent_->notifyConnectionReadable(this);
+		}
+	}
+	if (flags & EvEvent::eEvStateWrite) {
+
+		if (handleWrite(g_writeTimeout) < 0) {
+			//TODO: handle error...
+
+		}
+
+		bool isEmpty;
+		{
+			std::lock_guard<std::mutex> lock(writeLock_);
+			isEmpty = isWriteBufferEmpty();
+		}
+
+		if (isEmpty) {
+			updateEvent(true, false);
+		}
+	}
+
 
 
 }
@@ -182,7 +216,7 @@ int PlatformConnection::handleWrite(unsigned int timeout)
 void PlatformConnection::addMessage(const std::string& message)
 {
     assert(event_);
-	bool isWrite = false; //TODO:   event_->isActive(EvEvent::eEvStateWrite);
+	bool isWrite = event_->isActive(EvEvent::eEvStateWrite);
 
     //TODO: checking for too big messages...
 
@@ -277,6 +311,7 @@ WinCommEvent* PlatformConnection::getEvent()
 
 		HANDLE hCom = reinterpret_cast<HANDLE>(port_->getFileDescriptor());
 		event_->create(hCom);
+		event_->setCallback(std::bind(&PlatformConnection::onDescriptorEvent, this, std::placeholders::_1, std::placeholders::_2));
 	}
 
 	return event_.get();

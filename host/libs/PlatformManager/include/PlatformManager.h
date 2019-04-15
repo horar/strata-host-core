@@ -68,6 +68,9 @@ namespace spyglass {
          */
         PlatformConnection* getConnection(const std::string& connection_id);
 
+
+		void onUpdatePortList(EvEvent *, int);  //Temporary
+
     protected:
         void onAddedPort(serialPortHash hash);
 
@@ -82,7 +85,7 @@ namespace spyglass {
 #endif
 
     private:
-        void onUpdatePortList(EvEvent *, int);
+
 
     private:
         void computeListDiff(const std::vector<serialPortHash> &list,

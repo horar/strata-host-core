@@ -24,14 +24,22 @@ WinCommWaitManager::~WinCommWaitManager()
 	}
 }
 
-void WinCommWaitManager::addEvent(WinEventBase* ev)
+bool WinCommWaitManager::registerEvent(WinEventBase* ev)
 {
-	HANDLE handle = ev->getWaitHandle();
+	ev2_handle_t handle = ev->getWaitHandle();
 	if (handle == NULL) {
-		return;
+		return false;
 	}
 
 	eventMap_.insert({ handle, ev } );
+	return true;
+}
+
+void WinCommWaitManager::unregisterEvent(WinEventBase* ev)
+{
+	//TODO: search in map, and remove event..
+
+
 }
 
 void WinCommWaitManager::startInThread()
@@ -91,16 +99,18 @@ int WinCommWaitManager::dispatch()
 	else if (dwRet == WAIT_TIMEOUT) {
 
 		//Loop over all ev and cancel the Wait...
-//TODO:
-//		for (const auto& item : eventMap_) {
-//			if (item.second->isPending()) {
-//				item.second->cancelWait();
-//			}
-//		}
+
+		for (const auto& item : eventMap_) {
+
+			if (item.second->getType() == 1) {
+				WinCommEvent* com = static_cast<WinCommEvent*>(item.second);
+				com->cancelWait();
+			}
+		}
 
 		return 0;
 	}
-	else if (dwRet >= WAIT_OBJECT_0 && dwRet < (WAIT_OBJECT_0+dwCount)) {
+	else if (dwRet >= WAIT_OBJECT_0 && dwRet < (WAIT_OBJECT_0 + dwCount)) {
 
 		// check witch one is signaled..
 		HANDLE hSignaled = waitList[(dwRet - WAIT_OBJECT_0)];
@@ -118,14 +128,18 @@ int WinCommWaitManager::dispatch()
 			flags = com->getEventStateFlags();
 		}
 
-    	ev->handle_event(flags);
+		ev->handle_event(flags);
+
+		//reset wait event, and loop WaitFor... ??
 
 		if (ev->getType() == 1) {
 			WinCommEvent* com = static_cast<WinCommEvent*>(ev);
-    		com->cancelWait();
-        }
-
-		//reset wait event, and loop WaitFor... ??
+			com->cancelWait();
+		}
+		else {
+			WinTimerEvent* timer = static_cast<WinTimerEvent*>(ev);
+			timer->resetTimer();
+		}
 
 		return 1;
 	}

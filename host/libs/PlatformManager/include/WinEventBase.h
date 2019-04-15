@@ -1,31 +1,38 @@
 #ifndef PLATFORM_MANAGER_WIN_EVENT_BASE_H__
 #define PLATFORM_MANAGER_WIN_EVENT_BASE_H__
 
-#if defined(_WIN32)
-
-#include <functional>
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
-
 namespace spyglass {
+
+#ifdef _WIN32
+	typedef void*  ev2_handle_t;
+#else
+	typedef int    ev2_handle_t;
+#endif
 
 class WinEventBase
 {
 public:
-	WinEventBase() = default;
-    virtual ~WinEventBase() = default;
+	WinEventBase();
+    virtual ~WinEventBase();
+
+    void setCallback(std::function<void(WinEventBase*, int)> callback);
+
 
     virtual int getType() = 0;
 
-    virtual HANDLE getWaitHandle() = 0;
-    virtual void handle_event(int flags) = 0;
+    virtual ev2_handle_t getWaitHandle() = 0;
+    virtual void handle_event(int flags);
 
     virtual bool activate(int evFlags) = 0;
     virtual void deactivate() = 0;
+
+protected:
+
+
+private:
+    std::function<void(WinEventBase*, int)> callback_;
 };
 
 }; //namespace
-
-#endif //_WIN32
 
 #endif //PLATFORM_MANAGER_WIN_EVENT_BASE_H__

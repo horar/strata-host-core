@@ -11,8 +11,6 @@
 
 namespace spyglass {
 
-class EvEvent;
-
 class WinTimerEvent : public WinEventBase
 {
 public:
@@ -20,11 +18,13 @@ public:
     virtual ~WinTimerEvent();
 
     bool create();
-	void setCallback(std::function<void(EvEvent*, int)> callback);
+	void setCallback(std::function<void(WinEventBase*, int)> callback);
+
+	void resetTimer();
 
     virtual int getType() { return 0; }
 
-	virtual HANDLE getWaitHandle();
+	virtual ev2_handle_t getWaitHandle();
     virtual void handle_event(int flags);
 
     virtual bool activate(int evFlags);
@@ -32,7 +32,7 @@ public:
 
 private:
 	HANDLE hTimer_;
-	std::function<void(EvEvent*, int)> callback_;
+	std::function<void(WinEventBase*, int)> callback_;
 
     friend class WinCommWaitManager;
 };
