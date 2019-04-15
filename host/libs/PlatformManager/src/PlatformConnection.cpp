@@ -7,6 +7,7 @@
 #include <EvEventsMgr.h>
 #elif defined(_WIN32)
 #include "WinCommEvent.h"
+#include "WinCommFakeEvent.h"
 #include <EvEvent.h>  //for r/w state flags
 #endif
 
@@ -49,9 +50,15 @@ void PlatformConnection::close()
 {
     if (event_) {
         event_->deactivate();
-
         event_.release();
     }
+
+#if defined(_WIN32)
+    if (write_event_) {
+        write_event_->deactivate();
+        write_event_.release();
+    }
+#endif
 
     std::lock_guard<std::mutex> rlock(readLock_);
     std::lock_guard<std::mutex> wlock(writeLock_);
@@ -136,7 +143,7 @@ void PlatformConnection::onDescriptorEvent(EvEvent*, int flags)
 #elif defined(_WIN32)
 void PlatformConnection::onDescriptorEvent(WinEventBase* , int flags)
 {
-	std::lock_guard<std::mutex> lock(event_lock_);
+	std::lock_guard<std::recursive_mutex> lock(event_lock_);
 
 	if (flags & EvEvent::eEvStateRead) {
 
@@ -210,6 +217,10 @@ int PlatformConnection::handleWrite(unsigned int timeout)
     }
 
     writeOffset_ += ret;
+    if (writeBuffer_.size() == writeOffset_) {
+        writeBuffer_.clear();
+        writeOffset_ = 0;
+    }
     return ret;
 }
 
@@ -228,8 +239,18 @@ void PlatformConnection::addMessage(const std::string& message)
 
     if (!isWrite) {
 
-        std::lock_guard<std::mutex> lock(event_lock_);
+        try {
+
+
+        std::lock_guard<std::recursive_mutex> lock(event_lock_);
         updateEvent(true, true);
+
+
+        }
+        catch (std::exception& ex) {
+            printf("");
+        }
+
     }
 }
 
@@ -304,7 +325,7 @@ bool PlatformConnection::updateEvent(bool read, bool write)
 }
 #elif defined(_WIN32)
 
-WinCommEvent* PlatformConnection::getEvent()
+WinEventBase* PlatformConnection::getEvent()
 {
 	if (!event_) {
 		event_.reset(new WinCommEvent());
@@ -314,7 +335,19 @@ WinCommEvent* PlatformConnection::getEvent()
 		event_->setCallback(std::bind(&PlatformConnection::onDescriptorEvent, this, std::placeholders::_1, std::placeholders::_2));
 	}
 
-	return event_.get();
+    return event_.get();
+}
+
+WinEventBase* PlatformConnection::getWriteEvent()
+{
+    if (!write_event_) {
+
+        write_event_.reset(new WinCommFakeEvent());
+        write_event_->create();
+        write_event_->setCallback(std::bind(&PlatformConnection::onDescriptorEvent, this, std::placeholders::_1, std::placeholders::_2));
+    }
+
+    return write_event_.get();
 }
 
 void PlatformConnection::detachEventMgr()
@@ -324,9 +357,14 @@ void PlatformConnection::detachEventMgr()
 	}
 
 	if (event_) {
-		std::lock_guard<std::mutex> lock(event_lock_);
+		std::lock_guard<std::recursive_mutex> lock(event_lock_);
 		event_->deactivate();
 	}
+
+    if (write_event_) {
+        std::lock_guard<std::recursive_mutex> lock(event_lock_);
+        write_event_->deactivate();
+    }
 }
 
 bool PlatformConnection::updateEvent(bool read, bool write)
@@ -335,8 +373,13 @@ bool PlatformConnection::updateEvent(bool read, bool write)
 		return false;
 	}
 
-	int evFlags = (read ? EvEvent::eEvStateRead : 0) | (write ? EvEvent::eEvStateWrite : 0);
-	return event_->activate(evFlags);
+    int evFlags = (read ? EvEvent::eEvStateRead : 0);
+	event_->activate(evFlags);
+
+    evFlags = (write ? EvEvent::eEvStateWrite : 0);
+    write_event_->activate(evFlags);
+
+    return true;
 }
 #endif
 
@@ -346,7 +389,7 @@ bool PlatformConnection::stopListeningOnEvents(bool stop)
         return false;
     }
 
-    std::lock_guard<std::mutex> lock(event_lock_);
+    std::lock_guard<std::recursive_mutex> lock(event_lock_);
     if (stop) {
         event_->deactivate();
         return true;

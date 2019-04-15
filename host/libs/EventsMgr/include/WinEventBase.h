@@ -1,6 +1,8 @@
 #ifndef PLATFORM_MANAGER_WIN_EVENT_BASE_H__
 #define PLATFORM_MANAGER_WIN_EVENT_BASE_H__
 
+#include <functional>
+
 namespace spyglass {
 
 #ifdef _WIN32
@@ -12,13 +14,12 @@ namespace spyglass {
 class WinEventBase
 {
 public:
-	WinEventBase();
+	WinEventBase(int type);
     virtual ~WinEventBase();
 
     void setCallback(std::function<void(WinEventBase*, int)> callback);
 
-
-    virtual int getType() = 0;
+	int getType() const { return type_; }
 
     virtual ev2_handle_t getWaitHandle() = 0;
     virtual void handle_event(int flags);
@@ -30,6 +31,7 @@ protected:
 
 
 private:
+	int type_;
     std::function<void(WinEventBase*, int)> callback_;
 };
 

@@ -18,19 +18,18 @@ public:
     virtual ~WinCommFakeEvent();
 
     bool create();
-	void setCallback(std::function<void(WinEventBase*, int)> callback);
-
-    virtual int getType() { return 0; }
 
 	virtual ev2_handle_t getWaitHandle();
-    virtual void handle_event(int flags);
 
     virtual bool activate(int evFlags);
     virtual void deactivate();
 
+    int getEventStateFlags() const;
+
 private:
 	HANDLE hEvent_;
-	std::function<void(WinEventBase*, int)> callback_;
+    int act_flags_;
+
 
     friend class WinCommWaitManager;
 };

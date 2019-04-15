@@ -16,6 +16,16 @@ add_library(${PROJECT_NAME}
         src/EvEventsMgr.cpp
         )
 
+if(WIN32)
+    target_sources(${PROJECT_NAME}
+        PRIVATE src/WinEventBase.cpp
+        PRIVATE src/WinCommEvent.cpp
+        PRIVATE src/WinCommWaitManager.cpp
+        PRIVATE src/WinTimerEvent.cpp
+		PRIVATE src/WinCommFakeEvent.cpp
+    )
+endif()
+
 target_link_libraries(${PROJECT_NAME}
         PUBLIC ${LIBEVENT2_LIBRARIES}
         PUBLIC ${LIBEVENT2_PTHREAD_LIBRARIES}

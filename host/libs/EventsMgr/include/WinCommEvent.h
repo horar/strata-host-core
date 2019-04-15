@@ -15,17 +15,15 @@ public:
 
     bool create(HANDLE hComm);
 
-    void setCallback(std::function<void(WinEventBase*, int)> callback);
-
-    virtual int getType() { return 1; }
-
     virtual ev2_handle_t getWaitHandle();
-	virtual void handle_event(int flags);
 
 	virtual bool activate(int evFlags);
 	virtual void deactivate();
 
 	bool isActive(int ev_flags) const;
+
+    ev2_handle_t getWriteHandle();
+
 
 protected:
 	int preDispatch();
@@ -40,6 +38,7 @@ private:
 
 private:
 	HANDLE hComm_;
+    HANDLE hWriteEvent_;
 
 	int flags_;  //read / write
 
@@ -55,8 +54,6 @@ private:
 
 	DWORD dwEventMask_;
 	OVERLAPPED wait_;
-
-    std::function<void(WinEventBase*, int)> callback_;
 
 	friend class WinCommWaitManager;
 };

@@ -2,6 +2,7 @@
 #include "WinCommWaitManager.h"
 #include "WinEventBase.h"
 #include "WinCommEvent.h"
+#include "WinCommFakeEvent.h"
 #include "WinTimerEvent.h"
 
 #include <Windows.h>
@@ -11,7 +12,7 @@
 namespace spyglass
 {
 
-unsigned int g_waitTimeout = 5000;  //in ms
+unsigned int g_waitTimeout = 500000;  //in ms
 
 WinCommWaitManager::WinCommWaitManager() : hStopEvent_(NULL)
 {
@@ -37,9 +38,12 @@ bool WinCommWaitManager::registerEvent(WinEventBase* ev)
 
 void WinCommWaitManager::unregisterEvent(WinEventBase* ev)
 {
-	//TODO: search in map, and remove event..
-
-
+    for (auto item : eventMap_) {
+        if (item.second == ev) {
+            eventMap_.erase(item.first);
+            return;
+        }
+    }
 }
 
 void WinCommWaitManager::startInThread()
@@ -72,19 +76,24 @@ int WinCommWaitManager::dispatch()
 	DWORD dwCount = 0;
 	HANDLE waitList[MAXIMUM_WAIT_OBJECTS];
 
-	for (auto item : eventMap_) {
+    {
+        std::lock_guard<std::mutex> lock(dispatchLock_);
 
-        if (item.second->getType() == 1) {
-            WinCommEvent* ev = static_cast<WinCommEvent*>(item.second);
-            ret = ev->preDispatch();
-    		if (ret != 1)	//TODO: handle imedially dispatch..
-    			continue;
-        }
+	    for (auto item : eventMap_) {
 
-		waitList[dwCount] = item.first; dwCount++;
-		if (dwCount >= (MAXIMUM_WAIT_OBJECTS-1))
-			break;
-	}
+            if (item.second->getType() == 1) {
+                WinCommEvent* ev = static_cast<WinCommEvent*>(item.second);
+                ret = ev->preDispatch();
+    		    if (ret != 1)	//TODO: handle imedially dispatch..
+    			    continue;
+            }
+
+		    waitList[dwCount] = item.first; dwCount++;
+		    if (dwCount >= (MAXIMUM_WAIT_OBJECTS-1))
+			    break;
+	    }
+
+    }
 
 	if (dwCount == 0) {
 		return 0;
@@ -127,6 +136,10 @@ int WinCommWaitManager::dispatch()
 			WinCommEvent* com = static_cast<WinCommEvent*>(ev);
 			flags = com->getEventStateFlags();
 		}
+        else if (ev->getType() == 3) {
+            WinCommFakeEvent* com = static_cast<WinCommFakeEvent*>(ev);
+            flags = com->getEventStateFlags();
+        }
 
 		ev->handle_event(flags);
 
@@ -136,9 +149,9 @@ int WinCommWaitManager::dispatch()
 			WinCommEvent* com = static_cast<WinCommEvent*>(ev);
 			com->cancelWait();
 		}
-		else {
+		else if (ev->getType() == 2) {
 			WinTimerEvent* timer = static_cast<WinTimerEvent*>(ev);
-			timer->resetTimer();
+			timer->restartTimer();
 		}
 
 		return 1;
