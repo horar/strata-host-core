@@ -13,9 +13,9 @@ WinTimerEvent::WinTimerEvent() : WinEventBase(2), hTimer_(NULL), timeInMs_(0), a
 
 WinTimerEvent::~WinTimerEvent()
 {
-	if (hTimer_ != NULL) {
-		::CloseHandle(hTimer_);
-	}
+    if (hTimer_ != NULL) {
+        ::CloseHandle(hTimer_);
+    }
 }
 
 bool WinTimerEvent::create(unsigned int timeInMs)
@@ -24,12 +24,12 @@ bool WinTimerEvent::create(unsigned int timeInMs)
         return false;
     }
 
-	hTimer_ = ::CreateWaitableTimer(NULL, TRUE, NULL);
+    hTimer_ = ::CreateWaitableTimer(NULL, TRUE, NULL);
     if (hTimer_ != NULL) {
         timeInMs_ = timeInMs;
     }
 
-	return hTimer_ != NULL;
+    return hTimer_ != NULL;
 }
 
 bool WinTimerEvent::activate(int flags)
@@ -54,7 +54,7 @@ void WinTimerEvent::deactivate()
         return;
     }
 
-	::CancelWaitableTimer(hTimer_);
+    ::CancelWaitableTimer(hTimer_);
     active_ = false;
 }
 
@@ -68,7 +68,7 @@ bool WinTimerEvent::setTimer()
 
 ev2_handle_t WinTimerEvent::getWaitHandle()
 {
-	return reinterpret_cast<ev2_handle_t>(hTimer_);
+    return reinterpret_cast<ev2_handle_t>(hTimer_);
 }
 
 void WinTimerEvent::restartTimer()

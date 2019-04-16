@@ -20,20 +20,20 @@ WinCommWaitManager::WinCommWaitManager() : hStopEvent_(NULL)
 
 WinCommWaitManager::~WinCommWaitManager()
 {
-	if (hStopEvent_ != NULL) {
-		::CloseHandle(hStopEvent_);
-	}
+    if (hStopEvent_ != NULL) {
+        ::CloseHandle(hStopEvent_);
+    }
 }
 
 bool WinCommWaitManager::registerEvent(WinEventBase* ev)
 {
-	ev2_handle_t handle = ev->getWaitHandle();
-	if (handle == NULL) {
-		return false;
-	}
+    ev2_handle_t handle = ev->getWaitHandle();
+    if (handle == NULL) {
+        return false;
+    }
 
-	eventMap_.insert({ handle, ev } );
-	return true;
+    eventMap_.insert({ handle, ev } );
+    return true;
 }
 
 void WinCommWaitManager::unregisterEvent(WinEventBase* ev)
@@ -48,83 +48,83 @@ void WinCommWaitManager::unregisterEvent(WinEventBase* ev)
 
 void WinCommWaitManager::startInThread()
 {
-	if (hStopEvent_ == NULL) {
-		hStopEvent_ = ::CreateEvent(NULL, TRUE, FALSE, NULL);
-		if (hStopEvent_ == 0) {
-			return;
-		}
-	}
+    if (hStopEvent_ == NULL) {
+        hStopEvent_ = ::CreateEvent(NULL, TRUE, FALSE, NULL);
+        if (hStopEvent_ == 0) {
+            return;
+        }
+    }
 
-	eventsThread_ = std::thread(&WinCommWaitManager::threadMain, this);
+    eventsThread_ = std::thread(&WinCommWaitManager::threadMain, this);
 }
 
 void WinCommWaitManager::stop()
 {
-	if (eventsThread_.get_id() == std::thread::id()) {
-		return;
-	}
+    if (eventsThread_.get_id() == std::thread::id()) {
+        return;
+    }
 
-	stopThread_ = true;
-	::SetEvent(hStopEvent_);
+    stopThread_ = true;
+    ::SetEvent(hStopEvent_);
 
-	eventsThread_.join();
+    eventsThread_.join();
 }
 
 int WinCommWaitManager::dispatch()
 {
-	int ret;
-	DWORD dwCount = 0;
-	HANDLE waitList[MAXIMUM_WAIT_OBJECTS];
+    int ret;
+    DWORD dwCount = 0;
+    HANDLE waitList[MAXIMUM_WAIT_OBJECTS];
 
     {
         std::lock_guard<std::mutex> lock(dispatchLock_);
 
-	    for (auto item : eventMap_) {
+        for (auto item : eventMap_) {
 
             if (item.second->getType() == 1) {
                 WinCommEvent* ev = static_cast<WinCommEvent*>(item.second);
                 ret = ev->preDispatch();
-    		    if (ret != 1)	//TODO: handle imedially dispatch..
-    			    continue;
+                if (ret != 1)	//TODO: handle imedially dispatch..
+                    // continue;
             }
 
-		    waitList[dwCount] = item.first; dwCount++;
-		    if (dwCount >= (MAXIMUM_WAIT_OBJECTS-1))
-			    break;
-	    }
+            waitList[dwCount] = item.first; dwCount++;
+            if (dwCount >= (MAXIMUM_WAIT_OBJECTS-1))
+                break;
+        }
 
     }
 
-	if (dwCount == 0) {
-		return 0;
-	}
+    if (dwCount == 0) {
+        return 0;
+    }
 
-	waitList[dwCount] = hStopEvent_; dwCount++;
+    waitList[dwCount] = hStopEvent_; dwCount++;
 
-	DWORD dwRet = ::WaitForMultipleObjects(dwCount, waitList, FALSE, g_waitTimeout);
-	if (dwRet == WAIT_FAILED) {
-		return -1;
-	}
-	else if (dwRet == WAIT_TIMEOUT) {
+    DWORD dwRet = ::WaitForMultipleObjects(dwCount, waitList, FALSE, g_waitTimeout);
+    if (dwRet == WAIT_FAILED) {
+        return -1;
+    }
+    else if (dwRet == WAIT_TIMEOUT) {
 
-		//Loop over all ev and cancel the Wait...
+        //Loop over all ev and cancel the Wait...
 
-		for (const auto& item : eventMap_) {
+        for (const auto& item : eventMap_) {
 
-			if (item.second->getType() == 1) {
-				WinCommEvent* com = static_cast<WinCommEvent*>(item.second);
-				com->cancelWait();
-			}
-		}
+            if (item.second->getType() == 1) {
+                WinCommEvent* com = static_cast<WinCommEvent*>(item.second);
+                com->cancelWait();
+            }
+        }
 
-		return 0;
-	}
-	else if (dwRet >= WAIT_OBJECT_0 && dwRet < (WAIT_OBJECT_0 + dwCount)) {
+        return 0;
+    }
+    else if (dwRet >= WAIT_OBJECT_0 && dwRet < (WAIT_OBJECT_0 + dwCount)) {
 
-		// check witch one is signaled..
-		HANDLE hSignaled = waitList[(dwRet - WAIT_OBJECT_0)];
-		if (hSignaled == hStopEvent_)
-			return 0;
+        // check witch one is signaled..
+        HANDLE hSignaled = waitList[(dwRet - WAIT_OBJECT_0)];
+        if (hSignaled == hStopEvent_)
+            return 0;
 
         WinEventBase* ev;
         {
@@ -136,48 +136,46 @@ int WinCommWaitManager::dispatch()
             ev = findIt->second;
         }
 
-		int flags = 0;
-		if (ev->getType() == 1) {
-			WinCommEvent* com = static_cast<WinCommEvent*>(ev);
-			flags = com->getEvFlagsState();
-		}
+        int flags = 0;
+        if (ev->getType() == 1) {
+            WinCommEvent* com = static_cast<WinCommEvent*>(ev);
+            flags = com->getEvFlagsState();
+        }
         else if (ev->getType() == 3) {
             WinCommFakeEvent* com = static_cast<WinCommFakeEvent*>(ev);
             flags = com->getEvFlagsState();
         }
 
-		ev->handle_event(flags);
+        ev->handle_event(flags);
 
-		//reset wait event, and loop WaitFor... ??
+        //reset wait event, and loop WaitFor... ??
 
-		if (ev->getType() == 1) {
-			WinCommEvent* com = static_cast<WinCommEvent*>(ev);
-			com->cancelWait();
-		}
-		else if (ev->getType() == 2) {
-			WinTimerEvent* timer = static_cast<WinTimerEvent*>(ev);
-			timer->restartTimer();
-		}
+        if (ev->getType() == 1) {
+            WinCommEvent* com = static_cast<WinCommEvent*>(ev);
+            com->cancelWait();
+        }
+        else if (ev->getType() == 2) {
+            WinTimerEvent* timer = static_cast<WinTimerEvent*>(ev);
+            timer->restartTimer();
+        }
 
-		return 1;
-	}
+        return 1;
+    }
 
-	return -555;
+    return -555;
 }
 
 void WinCommWaitManager::threadMain()
 {
-	//TODO: put this in log:  std::cout << "Start thread.." << std::endl;
+    //TODO: put this in log:  std::cout << "Start thread.." << std::endl;
 
-	int ret;
-	while (!stopThread_) {
-		ret = dispatch();
-	}
+    int ret;
+    while (!stopThread_) {
+        ret = dispatch();
+    }
 
-	//TODO: put this in log:  std::cout << "Stop thread." << std::endl;
+    //TODO: put this in log:  std::cout << "Stop thread." << std::endl;
 }
-
-
 
 
 } //namespace spyglass

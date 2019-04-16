@@ -6,15 +6,15 @@
 namespace spyglass {
 
 #ifdef _WIN32
-	typedef void*  ev2_handle_t;
+    typedef void*  ev2_handle_t;
 #else
-	typedef int    ev2_handle_t;
+    typedef int    ev2_handle_t;
 #endif
 
 class WinEventBase
 {
 public:
-	WinEventBase(int type);
+    WinEventBase(int type);
     virtual ~WinEventBase();
 
     int getType() const { return type_; }
@@ -28,7 +28,7 @@ public:
     virtual void deactivate() = 0;
 
 private:
-	int type_;
+    int type_;
     std::function<void(WinEventBase*, int)> callback_;
 };
 
