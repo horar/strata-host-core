@@ -34,18 +34,18 @@ bool PlatformManager::Init()
     ports_update_.reset( eventsMgr_.CreateEventTimer(g_portsRefreshTime) );
     ports_update_->setCallback(std::bind(&PlatformManager::onUpdatePortList, this, std::placeholders::_1, std::placeholders::_2) );
 
-    if (!ports_update_->activate(&eventsMgr_)) {
+    if (!ports_update_->activate()) {   //TODO: &eventsMgr_
         ports_update_.release();
         return false;
     }
 #elif defined(_WIN32)
 
-	ports_update_.reset(new WinTimerEvent());
-	ports_update_->create(g_portsRefreshTime);
-	ports_update_->setCallback(std::bind(&PlatformManager::onUpdatePortList, this, std::placeholders::_1, std::placeholders::_2));
+    ports_update_.reset(new WinTimerEvent());
+    ports_update_->create(g_portsRefreshTime);
+    ports_update_->setCallback(std::bind(&PlatformManager::onUpdatePortList, this, std::placeholders::_1, std::placeholders::_2));
 
     winEventsMgr_.registerEvent(ports_update_.get());
-	ports_update_->activate(0);
+    ports_update_->activate(0);
 #endif
 
     return true;
@@ -53,20 +53,12 @@ bool PlatformManager::Init()
 
 void PlatformManager::StartLoop()
 {
-#if defined(__linux__) || defined(__APPLE__)
     eventsMgr_.startInThread();
-#elif defined(_WIN32)
-	winEventsMgr_.startInThread();
-#endif
 }
 
 void PlatformManager::Stop()
 {
-#if defined(__linux__) || defined(__APPLE__)
     eventsMgr_.stop();
-#elif defined(_WIN32)
-	winEventsMgr_.stop();
-#endif
 }
 
 void PlatformManager::setPlatformHandler(PlatformConnHandler* handler)
@@ -90,7 +82,7 @@ PlatformConnection* PlatformManager::getConnection(const std::string& connection
     return conn;
 }
 
-void PlatformManager::onUpdatePortList(WinEventBase*, int)
+void PlatformManager::onUpdatePortList(EvEventBase*, int)
 {
     static int idx = 0;
 
@@ -237,12 +229,12 @@ void PlatformManager::onAddedPort(serialPortHash hash)
     conn->attachEventMgr(&eventsMgr_);
 #elif defined(_WIN32)
 
-	spyglass::WinEventBase* ev = conn->getEvent();
+    spyglass::EvEventBase* ev = conn->getEvent();
 
-	int flags = (int) spyglass::EvEvent::eEvStateRead;
-	ev->activate(flags);
+    int flags = (int) spyglass::EvEvent::eEvStateRead;
+    ev->activate(flags);
 
-	winEventsMgr_.registerEvent(ev);
+    winEventsMgr_.registerEvent(ev);
 
     spyglass::WinEventBase* ev2 = conn->getWriteEvent();
     winEventsMgr_.registerEvent(ev2);

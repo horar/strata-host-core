@@ -19,7 +19,7 @@ namespace spyglass {
     typedef size_t serialPortHash;
 
     class PlatformConnection;
-	class EvEvent;
+    class EvEventBase;
 
     /**
      * Pure virtual interface for connection handling
@@ -68,9 +68,6 @@ namespace spyglass {
          */
         PlatformConnection* getConnection(const std::string& connection_id);
 
-
-		void onUpdatePortList(WinEventBase*, int);  //Temporary
-
     protected:
         void onAddedPort(serialPortHash hash);
 
@@ -83,6 +80,8 @@ namespace spyglass {
 #if defined(__linux__) || defined(__APPLE__)
         EvEventsMgr* getEvEventsMgr();
 #endif
+
+        void onUpdatePortList(EvEventBase*, int);  //Temporary
 
     private:
 
@@ -106,13 +105,13 @@ namespace spyglass {
 #if defined(__linux__) || defined(__APPLE__)
         EvEventsMgr eventsMgr_;
         std::unique_ptr<EvEvent> ports_update_;
-#elif defined(_WIN32)
-		WinCommWaitManager winEventsMgr_;
 
-		std::unique_ptr<WinTimerEvent> ports_update_;
+#elif defined(_WIN32)
+        WinCommWaitManager eventsMgr_;
+        std::unique_ptr<WinTimerEvent> ports_update_;
 #endif
 
-		friend class PlatformConnection;
+        friend class PlatformConnection;
     };
 
 } //end of namespace

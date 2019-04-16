@@ -48,12 +48,16 @@ EvEventsMgr::~EvEventsMgr()
 
 EvEvent* EvEventsMgr::CreateEventHandle(ev_handle_t fd)
 {
-    return new EvEvent(EvEvent::EvType::eEvTypeHandle, fd, 0);
+    EvEvent* result = new EvEvent(EvEvent::EvType::eEvTypeHandle, fd, 0);
+    result->setDispatcher(this);
+    return result;
 }
 
 EvEvent* EvEventsMgr::CreateEventTimer(unsigned int timeInMs)
 {
-    return new EvEvent(EvEvent::EvType::eEvTypeTimer, -1, timeInMs);
+    EvEvent* result = new EvEvent(EvEvent::EvType::eEvTypeTimer, -1, timeInMs);
+    result->setDispatcher(this);
+    return result;
 }
 
 void EvEventsMgr::dispatch(int flags)

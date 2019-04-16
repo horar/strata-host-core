@@ -1,13 +1,11 @@
 
-#include <EvEvent.h>	//for r/w flags
-
 #include "WinCommEvent.h"
 
 #if defined(_WIN32)
 
 namespace spyglass {
 
-    WinCommEvent::WinCommEvent() : WinEventBase(1), hComm_(NULL), flags_(0), state_(eNotInitialized), hWaitEvent_(NULL), dwEventMask_(0)
+    WinCommEvent::WinCommEvent() : EvEventBase(1), hComm_(NULL), flags_(0), state_(eNotInitialized), hWaitEvent_(NULL), dwEventMask_(0)
     {
         wait_ = { 0 };
     }
@@ -42,15 +40,15 @@ namespace spyglass {
         memset(&wait_, 0, sizeof(wait_));
         wait_.hEvent = hWaitEvent_;
 
-		if (!::WaitCommEvent(hComm_, &dwEventMask_, &wait_)) {
-			if (GetLastError() != ERROR_IO_PENDING) {
-				//hard error..
-				return -1;
-			}
+        if (!::WaitCommEvent(hComm_, &dwEventMask_, &wait_)) {
+            if (GetLastError() != ERROR_IO_PENDING) {
+                //hard error..
+                return -1;
+            }
 
-			state_ = ePending;
-			return 1;	//IO_PENDING
-		}
+            state_ = ePending;
+            return 1;	//IO_PENDING
+        }
 
         int flags = getEvFlagsState();
 
@@ -66,8 +64,8 @@ namespace spyglass {
     int WinCommEvent::getEvFlagsState() const
     {
         int flags = 0;
-        flags |= (dwEventMask_ & EV_RXCHAR) ? EvEvent::eEvStateRead : 0;
-        flags |= (dwEventMask_ & EV_TXEMPTY) ? EvEvent::eEvStateWrite : 0;
+        flags |= (dwEventMask_ & EV_RXCHAR) ? EvEventBase::eEvStateRead : 0;
+        flags |= (dwEventMask_ & EV_TXEMPTY) ? EvEventBase::eEvStateWrite : 0;
         return flags;
     }
 
@@ -102,8 +100,8 @@ namespace spyglass {
     int WinCommEvent::updateFlags()
     {
         DWORD dwComMask = 0;
-        dwComMask |= (flags_ & EvEvent::eEvStateRead) ? EV_RXCHAR : 0;
-        //TODO: dwComMask |= (flags_ & EvEvent::eEvStateWrite) ? EV_TXEMPTY : 0;
+        dwComMask |= (flags_ & EvEventBase::eEvStateRead) ? EV_RXCHAR : 0;
+        //TODO: dwComMask |= (flags_ & EvEventBase::eEvStateWrite) ? EV_TXEMPTY : 0;
 
         if (!::SetCommMask(hComm_, dwComMask)) {
             //TODO: error handling

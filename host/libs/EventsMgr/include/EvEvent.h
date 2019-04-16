@@ -5,6 +5,8 @@
 #include <functional>
 #include <cstdio>
 
+#include "EvEventBase.h"
+
 #if defined(_WIN32)
 #include <WinSock2.h>
 #endif
@@ -31,22 +33,9 @@ class EvEventsMgr;
 
 //////////////////////////////////////////////////////////////////
 
-class EvEvent
+class EvEvent : public EvEventBase
 {
 public:
-    enum class EvType {
-        eEvTypeUnknown = 0,
-        eEvTypeTimer,
-        eEvTypeHandle,
-        eEvTypeSignal       //Linux or Mac only
-    };
-
-    enum EvTypeFlags {   //flags for event type occured
-        eEvStateRead  = 1,
-        eEvStateWrite = 2,
-        eEvStateTimeout = 4,
-    };
-
     EvEvent();
 
     /**
@@ -67,23 +56,25 @@ public:
     void set(EvType type, ev_handle_t fileHandle, unsigned int timeInMs);
 
     /**
-     * Sets callback function for this event
-     * @param callback function to call
+     * Sets the dispatcher for event
+     * @param mgr
      */
-    void setCallback(std::function<void(EvEvent*, int)> callback);
+    void setDispatcher(EvEventsMgr* mgr);
 
     /**
      * Activates the event in EvEventMgr
-     * @param mgr event manager to attach
      * @param ev_flags flags see enum EvTypeFlags
      * @return
      */
-    bool activate(EvEventsMgr* mgr, int ev_flags = 0);
+    virtual bool activate(int ev_flags = 0);
 
     /**
      * Deactivates event, removes from event_loop
      */
-    void deactivate();
+    virtual void deactivate();
+
+
+    virtual ev2_handle_t getWaitHandle() { return 0; }
 
     /**
      * Checks event activation flags
@@ -107,16 +98,14 @@ public:
 
 protected:
 
-    void event_notification(int flags);
 
 private:
-    EvType type_;
     unsigned int timeInMs_;
     ev_handle_t fileHandle_;
 
     struct event* event_ = nullptr;
+    EvEventsMgr* mgr_ = nullptr;
 
-    std::function<void(EvEvent*, int)> callback_;
     bool active_ = false;       //status if event is in some event_base queue
     std::mutex lock_;
 

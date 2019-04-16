@@ -3,11 +3,11 @@
 
 #if defined(_WIN32)
 
-#include "WinEventBase.h"
+#include "EvEventBase.h"
 
 namespace spyglass {
 
-class WinCommEvent : public WinEventBase
+class WinCommEvent : public EvEventBase
 {
 public:
     WinCommEvent();
@@ -17,28 +17,28 @@ public:
 
     virtual ev2_handle_t getWaitHandle();
 
-	virtual bool activate(int evFlags);
-	virtual void deactivate();
+    virtual bool activate(int evFlags);
+    virtual void deactivate();
 
-	bool isActive(int ev_flags) const;
+    bool isActive(int ev_flags) const;
 
     ev2_handle_t getWriteHandle();
 
     int getEvFlagsState() const;
 
 protected:
-	int preDispatch();
+    int preDispatch();
 
-	bool isPending() const;
+    bool isPending() const;
 
-	void cancelWait();
-
-private:
-	int updateFlags();
+    void cancelWait();
 
 private:
-	HANDLE hComm_;
-	int flags_;  //read 
+    int updateFlags();
+
+private:
+    HANDLE hComm_;
+    int flags_;  //read
 
     enum state {
         eNotInitialized = 0,
@@ -50,10 +50,10 @@ private:
 
     HANDLE hWaitEvent_;
 
-	DWORD dwEventMask_;
-	OVERLAPPED wait_;
+    DWORD dwEventMask_;
+    OVERLAPPED wait_;
 
-	friend class WinCommWaitManager;
+    friend class WinCommWaitManager;
 };
 
 }; //namespace

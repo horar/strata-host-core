@@ -3,7 +3,7 @@
 
 #if defined(_WIN32)
 
-#include "WinEventBase.h"
+#include "EvEventBase.h"
 
 #include <thread>
 #include <atomic>
@@ -22,8 +22,8 @@ public:
     WinCommWaitManager();
     ~WinCommWaitManager();
 
-    bool registerEvent(WinEventBase* event);
-    void unregisterEvent(WinEventBase* event);
+    bool registerEvent(EvEventBase* event);
+    void unregisterEvent(EvEventBase* event);
 
     int dispatch();
 
@@ -37,7 +37,7 @@ private:
     std::thread eventsThread_;
     std::atomic_bool stopThread_{ false };
 
-    std::map<ev2_handle_t, WinEventBase*> eventMap_;
+    std::map<ev2_handle_t, EvEventBase* > eventMap_;
     std::mutex dispatchLock_;
 
     HANDLE hStopEvent_;

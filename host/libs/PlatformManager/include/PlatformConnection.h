@@ -10,13 +10,14 @@ class serial_port;
 namespace spyglass {
 
     class PlatformManager;
+    class EvEventBase;
 
 #if defined(__linux__) || defined(__APPLE__)
-	class EvEvent;
-	class EvEventsMgr;
+    class EvEvent;
+    class EvEventsMgr;
 #elif defined(_WIN32)
-	class WinEventBase;
-	class WinCommEvent;
+    class WinEventBase;
+    class WinCommEvent;
     class WinCommFakeEvent;
 #endif
 
@@ -95,10 +96,10 @@ namespace spyglass {
 
 #endif
 
-		/**
-		 * Detaches EvEventsMgr from connection
-		 */
-		void detachEventMgr();
+        /**
+         * Detaches EvEventsMgr from connection
+         */
+        void detachEventMgr();
 
         /**
          * Stops / Resumes listening on events from PlatformManager(EvEventMgr)
@@ -127,11 +128,8 @@ namespace spyglass {
 
         bool isWriteBufferEmpty() const;
 
-#if defined(__linux__) || defined(__APPLE__)
-		void onDescriptorEvent(EvEvent *, int flags);
-#elif defined(_WIN32)
-		void onDescriptorEvent(WinEventBase*, int flags);
-#endif
+        void onDescriptorEvent(EvEventBase*, int flags);
+
 
     private:
         PlatformManager *parent_;
@@ -142,7 +140,7 @@ namespace spyglass {
         std::unique_ptr<EvEvent> event_;
 #elif defined(_WIN32)
 
-		std::unique_ptr<WinCommEvent> event_;
+        std::unique_ptr<WinCommEvent> event_;
         std::unique_ptr<WinCommFakeEvent> write_event_;
 
 #endif
