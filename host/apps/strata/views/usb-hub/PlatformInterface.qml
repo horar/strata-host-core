@@ -210,6 +210,20 @@ Item {
          "watts":30          // 30-300
     }
 
+    property var usb_a_port_is_charging_notification:{
+        "port":0,
+        "charging": false       //or true
+    }
+
+    property var device_characteristics_notification:{
+        "port":0,
+        "source":false,
+        "sink":false,
+        "fast_role_swap":false,
+        "superspeed":false,
+        "extended_sink":false
+    }
+
     // --------------------------------------------------------------------------------------------
     //          Commands
     //--------------------------------------------------------------------------------------------
