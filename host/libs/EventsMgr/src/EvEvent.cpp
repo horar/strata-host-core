@@ -37,8 +37,8 @@ EvEvent::EvEvent() : EvEvent(EvType::eEvTypeUnknown, (ev_handle_t) - 1, 0)
 }
 
 EvEvent::EvEvent(EvType type, ev_handle_t fileHandle, unsigned int timeInMs) : EvEventBase(type),
-        fileHandle_{fileHandle},
-        timeInMs_{timeInMs}
+       timeInMs_{timeInMs},
+       fileHandle_{fileHandle}
 {
 }
 
