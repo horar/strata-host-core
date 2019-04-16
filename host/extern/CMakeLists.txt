@@ -119,3 +119,104 @@ set_target_properties(gtest::gmock PROPERTIES
 )
 
 add_dependencies(gtest::gmock DEPENDS libgtest)
+
+
+#
+# couchbase-lite-core
+#
+ExternalProject_Add(libcblitecore
+    INSTALL_DIR ${CMAKE_BINARY_DIR}/3rd_party
+    SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/couchbase-lite-core
+    #GIT_REPOSITORY https://github.com/couchbase/couchbase-lite-core.git
+    #GIT_TAG 513281b8
+    #GIT_PROGRESS ${CMAKE_VERBOSE_MAKEFILE}
+
+    CMAKE_ARGS ${CMAKE_ARGS}
+        -DBUILD_SHARED_LIBS=${BUILD_SHARED_LIBS}
+        -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
+        -DCMAKE_VERBOSE_MAKEFILE=${CMAKE_VERBOSE_MAKEFILE}
+        -DCMAKE_OSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET}
+        -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
+        -DENABLE_TESTING=off
+        -DENABLE_PROGRAMS=off
+
+    INSTALL_COMMAND ${CMAKE_COMMAND} --build . --target install
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different libLiteCoreStatic.a <INSTALL_DIR>/lib
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different libSupport.a <INSTALL_DIR>/lib
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different vendor/fleece/libFleeceStatic.a <INSTALL_DIR>/lib
+    #COMMAND ${CMAKE_COMMAND} -E copy_if_different vendor/fleece/libFleeceBase.a <INSTALL_DIR>/lib
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different vendor/BLIP-Cpp/libBLIPStatic.a <INSTALL_DIR>/lib
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different vendor/sqlite3-unicodesn/libSQLite3_UnicodeSN.a <INSTALL_DIR>/lib
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different REST/libCivetWeb.a <INSTALL_DIR>/lib
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different REST/libLiteCoreREST_Static.a <INSTALL_DIR>/lib
+
+    ## TODO: update couchbase-lite-cpp include paths!!
+    #COMMAND ${CMAKE_COMMAND} -E copy_directory <SOURCE_DIR>/C/include <INSTALL_DIR>/include
+    #COMMAND ${CMAKE_COMMAND} -E copy_directory <SOURCE_DIR>/vendor/fleece/API <INSTALL_DIR>/include/fleece/API
+    #COMMAND ${CMAKE_COMMAND} -E copy_directory <SOURCE_DIR>/vendor/fleece/Fleece/Core <INSTALL_DIR>/include/vendor/Fleece/Core
+    #COMMAND ${CMAKE_COMMAND} -E copy_directory <SOURCE_DIR>/vendor/fleece/Fleece/Mutable <INSTALL_DIR>/include/vendor/Fleece/Mutable
+    #COMMAND ${CMAKE_COMMAND} -E copy_directory <SOURCE_DIR>/vendor/fleece/Fleece/Support <INSTALL_DIR>/include/vendor/Fleece/Support
+
+    #COMMAND ${CMAKE_COMMAND} -E copy_directory <SOURCE_DIR>/Replicator <INSTALL_DIR>/include/Replicator
+    #COMMAND ${CMAKE_COMMAND} -E copy_directory <SOURCE_DIR>/LiteCore/Support <INSTALL_DIR>/include/LiteCore/Support
+
+    #COMMAND ${CMAKE_COMMAND} -E copy_directory <SOURCE_DIR>/vendor/BLIP-Cpp/include/blip_cpp <INSTALL_DIR>/include/BLIP/include/blip_cpp
+    #COMMAND ${CMAKE_COMMAND} -E copy_directory <SOURCE_DIR>/vendor/BLIP-Cpp/src/util <INSTALL_DIR>/include/BLIP/src/util
+
+    #COMMAND ${CMAKE_COMMAND} -E copy_directory <SOURCE_DIR>/vendor/civetweb/include <INSTALL_DIR>/include/civetweb/include
+)
+add_library(cblitecore::LiteCore STATIC IMPORTED GLOBAL)
+set_target_properties(cblitecore::LiteCore PROPERTIES
+    INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_BINARY_DIR}/3rd_party/include"
+    IMPORTED_LOCATION  "${CMAKE_BINARY_DIR}/3rd_party/lib/libLiteCoreStatic.a"
+)
+add_dependencies(cblitecore::LiteCore DEPENDS libcblitecore)
+
+add_library(cblitecore::Fleece STATIC IMPORTED GLOBAL)
+set_target_properties(cblitecore::Fleece PROPERTIES
+    INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_BINARY_DIR}/3rd_party/include"
+    IMPORTED_LOCATION  "${CMAKE_BINARY_DIR}/3rd_party/lib/libFleeceStatic.a"
+)
+add_dependencies(cblitecore::Fleece DEPENDS libcblitecore)
+
+#add_library(cblitecore::FleeceBase STATIC IMPORTED GLOBAL)
+#set_target_properties(cblitecore::FleeceBase PROPERTIES
+#    INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_BINARY_DIR}/3rd_party/include"
+#    IMPORTED_LOCATION  "${CMAKE_BINARY_DIR}/3rd_party/lib/libFleeceBase.a"
+#)
+#add_dependencies(cblitecore::FleeceBase DEPENDS libcblitecore)
+
+add_library(cblitecore::CivetWeb STATIC IMPORTED GLOBAL)
+set_target_properties(cblitecore::CivetWeb PROPERTIES
+    INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_BINARY_DIR}/3rd_party/include"
+    IMPORTED_LOCATION  "${CMAKE_BINARY_DIR}/3rd_party/lib/libCivetWeb.a"
+)
+add_dependencies(cblitecore::CivetWeb DEPENDS libcblitecore)
+
+add_library(cblitecore::LiteCoreRest STATIC IMPORTED GLOBAL)
+set_target_properties(cblitecore::LiteCoreRest PROPERTIES
+    INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_BINARY_DIR}/3rd_party/include"
+    IMPORTED_LOCATION  "${CMAKE_BINARY_DIR}/3rd_party/lib/libLiteCoreREST_Static.a"
+)
+add_dependencies(cblitecore::LiteCoreRest DEPENDS libcblitecore)
+
+add_library(cblitecore::BLIP STATIC IMPORTED GLOBAL)
+set_target_properties(cblitecore::BLIP PROPERTIES
+    INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_BINARY_DIR}/3rd_party/include"
+    IMPORTED_LOCATION  "${CMAKE_BINARY_DIR}/3rd_party/lib/libBLIPStatic.a"
+)
+add_dependencies(cblitecore::BLIP DEPENDS libcblitecore)
+
+add_library(cblitecore::support STATIC IMPORTED GLOBAL)
+set_target_properties(cblitecore::support PROPERTIES
+    INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_BINARY_DIR}/3rd_party/include"
+    IMPORTED_LOCATION  "${CMAKE_BINARY_DIR}/3rd_party/lib/libSupport.a"
+)
+add_dependencies(cblitecore::support DEPENDS libcblitecore)
+
+add_library(cblitecore::SQLite3_unicode STATIC IMPORTED GLOBAL)
+set_target_properties(cblitecore::SQLite3_unicode PROPERTIES
+    INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_BINARY_DIR}/3rd_party/include"
+    IMPORTED_LOCATION  "${CMAKE_BINARY_DIR}/3rd_party/lib/libSQLite3_UnicodeSN.a"
+)
+add_dependencies(cblitecore::SQLite3_unicode DEPENDS libcblitecore)
