@@ -20,7 +20,7 @@ public:
     bool create(unsigned int timeInMs);
     void restartTimer();
 
-	virtual ev2_handle_t getWaitHandle();
+    virtual ev2_handle_t getWaitHandle();
 
     virtual bool activate(int evFlags);
     virtual void deactivate();
@@ -29,7 +29,7 @@ private:
     bool setTimer();
 
 private:
-	HANDLE hTimer_;
+    HANDLE hTimer_;
     unsigned int timeInMs_;
     bool active_;
 

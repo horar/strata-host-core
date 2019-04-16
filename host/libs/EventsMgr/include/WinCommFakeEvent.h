@@ -27,7 +27,7 @@ public:
     int getEvFlagsState() const;
 
 private:
-	HANDLE hEvent_;
+    HANDLE hEvent_;
     int act_flags_;
 
 

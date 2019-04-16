@@ -19,28 +19,28 @@ namespace spyglass
 class WinCommWaitManager
 {
 public:
-	WinCommWaitManager();
-	~WinCommWaitManager();
+    WinCommWaitManager();
+    ~WinCommWaitManager();
 
-	bool registerEvent(WinEventBase* event);
-	void unregisterEvent(WinEventBase* event);
+    bool registerEvent(WinEventBase* event);
+    void unregisterEvent(WinEventBase* event);
 
-	int dispatch();
+    int dispatch();
 
-	void startInThread();
-	void stop();
-
-private:
-	void threadMain();
+    void startInThread();
+    void stop();
 
 private:
-	std::thread eventsThread_;
-	std::atomic_bool stopThread_{ false };
+    void threadMain();
 
-	std::map<ev2_handle_t, WinEventBase*> eventMap_;
+private:
+    std::thread eventsThread_;
+    std::atomic_bool stopThread_{ false };
+
+    std::map<ev2_handle_t, WinEventBase*> eventMap_;
     std::mutex dispatchLock_;
 
-	HANDLE hStopEvent_;
+    HANDLE hStopEvent_;
 };
 
 } //namespace
