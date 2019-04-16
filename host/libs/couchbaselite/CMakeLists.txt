@@ -34,11 +34,11 @@ target_include_directories(${PROJECT_NAME}
 )
 
 target_link_libraries(${PROJECT_NAME}
-	PRIVATE LiteCore
-	PUBLIC FleeceStatic
-	PRIVATE CivetWeb
-	PRIVATE BLIPStatic
-	PRIVATE Support
+    PRIVATE LiteCore
+    PUBLIC FleeceStatic
+    PRIVATE CivetWeb
+    PRIVATE BLIPStatic
+    PRIVATE Support
 )
 
 add_subdirectory(examples)

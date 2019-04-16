@@ -13,14 +13,14 @@ if (APPLE)
 endif()
 
 add_library(${PROJECT_NAME}
-        src/PlatformManager.cpp
-        src/PlatformConnection.cpp
+    src/PlatformManager.cpp
+    src/PlatformConnection.cpp
 )
 
 target_link_libraries(${PROJECT_NAME}
-        PUBLIC EventsMgr
-        PUBLIC StrataSerialPort
-        ${CMAKE_THREAD_LIBS_INIT}
+    PUBLIC EventsMgr
+    PUBLIC StrataSerialPort
+    PUBLIC Threads::Threads
 )
 
 if (APPLE)
@@ -28,6 +28,6 @@ if (APPLE)
 endif()
 
 target_include_directories(${PROJECT_NAME}
-        PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
-        PUBLIC ${SHARED_DIR}/rapidjson/include
+    PUBLIC ${SHARED_DIR}/rapidjson/include
+    PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
