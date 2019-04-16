@@ -149,7 +149,7 @@ void EvEvent::fire(int ev_flags)
 }
 
 struct timeval EvEvent::tvMsecs(unsigned int msecs)
-        {
+{
     timeval t;
     t.tv_sec = msecs / 1000;
     t.tv_usec = (msecs % 1000) * 1000;

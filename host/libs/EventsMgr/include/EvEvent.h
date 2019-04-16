@@ -3,6 +3,11 @@
 
 #include <mutex>
 #include <functional>
+#include <cstdio>
+
+#if defined(_WIN32)
+#include <WinSock2.h>
+#endif
 
 //a copy from libevent2
 #if defined(_WIN32)

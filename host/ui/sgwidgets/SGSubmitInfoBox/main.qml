@@ -19,15 +19,15 @@ Window {
         infoBoxColor: "#eee"            // Default: "#eeeeee" (light gray)
         infoBoxBorderColor: "#999"      // Default: "#999999" (dark gray)
         infoBoxBorderWidth: 1           // Default: 1 (assign 0 for no border)
-        realNumberValidation: true      // Default: false (set true to restrict enterable values to real numbers)
         textColor: "black"              // Default: "black" (colors label as well as text in box
         enabled: true                   // Default: true
         buttonText: "Apply"             // Default: "submit"
         showButton: true                // Default: false
         unit: "V"                       // Default: ""
-        placeholderText: "Type..." // Default: ""
+        placeholderText: "Type..."      // Default: ""
         leftJustify: false              // Default: false (justifies text in the input to the left)
 //        overrideLabelWidth: 100       // Default: label contents width - this is useful for lining up lots of these vertically, set them all to the same value
+        validator: DoubleValidator { }  // Default: no input validator - you may assign your own configured DoubleValidator, IntValidator or RegExpValidator
 
         // Useful Signals:
         onApplied: console.log("Applied string value is " + value)

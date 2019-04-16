@@ -152,7 +152,7 @@ Popup {
                                 }
                                 sourceSize.height: 220
                                 fillMode: Image.PreserveAspectFit
-                                source: "qrc:/images/" + getUserImage(user_id)
+                                source: "qrc:/images/" + "blank_avatar.png"
                             }
 
                             Item {
@@ -171,7 +171,7 @@ Popup {
 
                                     Text {
                                         id: profile_username
-                                        text: getUserName(user_id)
+                                        text: user_id
                                         font {
                                             pixelSize: 25
                                             family: Fonts.franklinGothicBold
@@ -181,7 +181,7 @@ Popup {
 
                                     Text {
                                         id: profile_email
-                                        text: "Email: " + getUserName(user_id) + "@onsemi.com"
+                                        text: "Email: " + user_id + "@onsemi.com"
                                         font {
                                             pixelSize: 15
                                             family: Fonts.franklinGothicBook
@@ -191,7 +191,7 @@ Popup {
 
                                     Text {
                                         id: profile_userId
-                                        text: "User ID: " + getUserName(user_id)
+                                        text: "User ID: " + user_id
                                         font {
                                             pixelSize: 15
                                             family: Fonts.franklinGothicBook
@@ -211,7 +211,7 @@ Popup {
 
                                     Text {
                                         id: jobTitle
-                                        text : "Job Title: " + getJobTitle(user_id)
+                                        text : "Job Title: " //+ getJobTitle(user_id)
                                         color: "black"
                                         font {
                                             pixelSize: 15

@@ -111,5 +111,8 @@ Item {
         console.log("Requesting platform Refresh")
         platformInterface.refresh.send() //ask the platform for all the current values
 
+        console.log("Enabling periodic notifications")
+        platformInterface.enable_power_telemetry.update(true);
+
     }
 }

@@ -1,9 +1,3 @@
-cmake_minimum_required(VERSION 3.8 FATAL_ERROR)
-
-if(APPLE AND NOT CMAKE_OSX_DEPLOYMENT_TARGET)
-    set(CMAKE_OSX_DEPLOYMENT_TARGET "10.13" CACHE STRING "" FORCE)
-endif()
-
 project(strata
     VERSION 0.0.0
     LANGUAGES CXX
@@ -12,19 +6,36 @@ message(STATUS "${PROJECT_NAME} v${PROJECT_VERSION}")
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-include(FeatureSummary)
-
-find_package(Qt5 5.10
+find_package(Qt5 5.12
     COMPONENTS Core Gui Widgets Quick Qml WebView WebEngine Charts
     REQUIRED
 )
 
-add_executable(${PROJECT_NAME})
-target_sources(${PROJECT_NAME} PRIVATE
+add_executable(${PROJECT_NAME}
     main.cpp
     source/DocumentManager.cpp
 
-    qml.qrc
+    logging/LoggingQtCategories.cpp
+    logging/LoggingQtCategories.qrc
+
+    qml-dev-studio.qrc
+    qml-dev-studio-minimal.qrc
+    qml-dev-studio-resources.qrc
+
+    qml-views-15A-switcher.qrc
+    qml-views-5A-switcher.qrc
+    qml-views-XDFN-LDO.qrc
+    qml-views-bubu.qrc
+    qml-views-efficiency-simulator.qrc
+    qml-views-entice_rgb.qrc
+    qml-views-led.qrc
+    qml-views-logic-gate.qrc
+    qml-views-motor-vortex.qrc
+    qml-views-template.qrc
+    qml-views-usb-hub.qrc
+    qml-views-usb-pd-multiport.qrc
+    qml-views-usb-pd.qrc
+
     views/SGPdfViewer/pdfjs.qrc
 )
 if(APPLE)
@@ -62,6 +73,8 @@ target_link_libraries(${PROJECT_NAME}
     flasher
     HostControllerClient
     PlatformInterface
+
+    QtLogger
 )
 
 target_include_directories(${PROJECT_NAME}
@@ -108,4 +121,9 @@ set_source_files_properties(main.cpp PROPERTIES
     COMPILE_DEFINITIONS START_SERVICES
 )
 
-feature_summary(WHAT ALL)
+# TODO: [LC] fix this, because it need to be set in multiple Qt UI projects
+list(APPEND QML_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/logging/qml")
+list(APPEND QML_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/")
+set(QML_IMPORT_PATH "${QML_DIRS};${QML_IMPORT_PATH}"
+    CACHE STRING "Qt Creator extra qml import paths" FORCE
+)

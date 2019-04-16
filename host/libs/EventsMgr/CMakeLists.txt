@@ -1,7 +1,7 @@
-project(EventsMgr VERSION 1.0)
-
-set(CMAKE_CXX_STANDARD 11)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
+project(EventsMgr
+    VERSION 1.0
+    LANGUAGES CXX
+)
 
 find_package(Libevent2 REQUIRED)
 find_package(Threads REQUIRED)
@@ -24,6 +24,10 @@ target_link_libraries(${PROJECT_NAME}
 
 if (APPLE)
     target_link_libraries(${PROJECT_NAME} PUBLIC ${IOKIT_LIBRARY} ${FOUNDATION_LIBRARY} )
+endif()
+
+if (WIN32)
+    target_link_libraries(${PROJECT_NAME} PUBLIC Ws2_32.lib)
 endif()
 
 target_include_directories(${PROJECT_NAME}

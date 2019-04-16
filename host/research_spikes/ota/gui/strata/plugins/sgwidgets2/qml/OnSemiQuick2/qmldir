@@ -1,0 +1,11 @@
+module OnSemiQuick2
+
+Bob 1.0 Bob.qml
+Alice 1.0 Alice.qml
+Carol 1.0 Carol.qml
+
+#ChatWindow 1.0 ChatWindow.qml
+#ChatArea 1.0 ChatArea.qml
+#internal ChatWindowForm ChatWindowForm.ui.qml
+#internal ChatAreaForm ChatAreaForm.ui.qml
+#internal ChatMessageDelegateForm ChatMessageDelegateForm.ui.qml

@@ -59,19 +59,19 @@ Rectangle {
             target:titleBackground
             property: "height"
             to:advancedTitleBackgroundHeight
-            duration: tabTransitionTime
+            duration: basicToAdvancedTransitionTime
         }
         PropertyAnimation{
-            target:volumneText
+            target:volumeText
             property: "opacity"
             to:1
-            duration: tabTransitionTime
+            duration: basicToAdvancedTransitionTime
         }
         PropertyAnimation{
             target:volumeSlider
             property: "opacity"
             to:1
-            duration: tabTransitionTime
+            duration: basicToAdvancedTransitionTime
         }
     }
 
@@ -87,19 +87,19 @@ Rectangle {
             target:titleBackground
             property: "height"
             to:basicTitleBackgroundHeight
-            duration: tabTransitionTime
+            duration: advancedToBasicTransitionTime
         }
         PropertyAnimation{
-            target:volumneText
+            target:volumeText
             property: "opacity"
             to:0
-            duration: tabTransitionTime
+            duration: advancedToBasicTransitionTime
         }
         PropertyAnimation{
             target:volumeSlider
             property: "opacity"
             to:0
-            duration: tabTransitionTime
+            duration: advancedToBasicTransitionTime
         }
     }
 
@@ -168,7 +168,7 @@ Rectangle {
     }
 
     Text{
-        id:volumneText
+        id:volumeText
         text:"VOLUME:"
         anchors.top: placeholderImage.bottom
         anchors.left: root.left
@@ -181,7 +181,7 @@ Rectangle {
         id:volumeSlider
         startLabel: ""
         endLabel: ""
-        anchors.top: volumneText.bottom
+        anchors.top: volumeText.bottom
         anchors.left: root.left
         anchors.leftMargin: 10
         anchors.right:root.right

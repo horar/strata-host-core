@@ -13,6 +13,7 @@ Rectangle {
 
     function resetData(){
         startStopButton.checked = false
+        targetSpeedSlider.value = 1500
         rampRateSlider.value = 3
         driveModeCombo.currentIndex = 15
         faultModel.clear()

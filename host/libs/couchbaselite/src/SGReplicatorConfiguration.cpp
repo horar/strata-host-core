@@ -19,6 +19,7 @@ using namespace fleece::impl;
 
 namespace Spyglass {
     SGReplicatorConfiguration::SGReplicatorConfiguration() {
+        replicator_type_ = ReplicatorType::kPull;
         options_ = fleece::impl::MutableDict::newDict();
     }
 

@@ -1,7 +1,7 @@
-project(StrataSerialPort VERSION 1.0)
-
-set(CMAKE_CXX_STANDARD 11)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
+project(StrataSerialPort
+    VERSION 1.0
+    LANGUAGES CXX
+)
 
 find_package(SerialPort REQUIRED)
 
@@ -24,6 +24,11 @@ if (APPLE)
     target_link_libraries(${PROJECT_NAME} PUBLIC ${IOKIT_LIBRARY} ${FOUNDATION_LIBRARY} )
 endif()
 
+if (WIN32)
+    target_link_libraries(${PROJECT_NAME} LINK_PUBLIC SetupAPI.lib  )
+endif()
+
 target_include_directories(${PROJECT_NAME}
         PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
         )
+

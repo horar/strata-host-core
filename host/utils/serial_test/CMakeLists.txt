@@ -1,9 +1,6 @@
-cmake_minimum_required(VERSION 3.1)
-
-project(serial_test)
-
-set(CMAKE_CXX_STANDARD 11)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
+project(serial_test
+    LANGUAGES CXX
+)
 
 find_package(SerialPort REQUIRED)
 
@@ -33,4 +30,8 @@ target_link_libraries(${PROJECT_NAME}
 
 if (APPLE)
     target_link_libraries(${PROJECT_NAME} PUBLIC ${IOKIT_LIB} ${FOUNDATION_LIB} )
+endif()
+
+if (WIN32)
+    target_link_libraries(${PROJECT_NAME} LINK_PUBLIC SetupAPI.lib  )
 endif()

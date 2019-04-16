@@ -15,11 +15,18 @@ using namespace fleece;
 #define DEBUG(...) printf("SGURLEndpoint: "); printf(__VA_ARGS__)
 
 namespace Spyglass {
-    SGURLEndpoint::SGURLEndpoint() {}
+    SGURLEndpoint::SGURLEndpoint() {
+        c4address_.hostname = slice();
+        c4address_.path = slice();
+        c4address_.scheme = slice();
+        c4address_.port = 0;
+    }
 
     SGURLEndpoint::~SGURLEndpoint() {}
 
-    SGURLEndpoint::SGURLEndpoint(const std::string &full_url) : uri(full_url) {}
+    SGURLEndpoint::SGURLEndpoint(const std::string &full_url) : SGURLEndpoint() {
+        uri = full_url;
+    }
 
     bool SGURLEndpoint::init() {
         C4String dbname;

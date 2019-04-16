@@ -7,6 +7,7 @@
 #include <algorithm>
 #include <functional>
 #include <iostream>
+#include <iterator>
 #include <assert.h>
 
 namespace spyglass {
@@ -49,6 +50,22 @@ void PlatformManager::Stop()
 void PlatformManager::setPlatformHandler(PlatformConnHandler* handler)
 {
     plat_handler_ = handler;
+}
+
+PlatformConnection* PlatformManager::getConnection(const std::string& connection_id)
+{
+    serialPortHash hash = std::hash<std::string>{}(connection_id);
+    PlatformConnection* conn;
+    {
+        std::lock_guard<std::mutex> lock(connectionMap_mutex_);
+        auto find = openedPorts_.find(hash);
+        if (find == openedPorts_.end()) {
+            return nullptr;
+        }
+        conn = find->second;
+    }
+
+    return conn;
 }
 
 void PlatformManager::onUpdatePortList(EvEvent*, int)
@@ -145,11 +162,16 @@ void PlatformManager::onRemovedPort(serialPortHash hash)
     delete conn;
 }
 
-void PlatformManager::removeConnection(PlatformConnection* conn)
+void PlatformManager::removeConnection(PlatformConnection* /*conn*/)
 {
     //TODO: remove connection
 
 
+}
+
+EvEventsMgr* PlatformManager::getEvEventsMgr()
+{
+    return &eventsMgr_;
 }
 
 void PlatformManager::onAddedPort(serialPortHash hash)

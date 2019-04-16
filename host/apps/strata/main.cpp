@@ -17,6 +17,9 @@
 
 #include <PlatformInterface/core/CoreInterface.h>
 
+#include <QtLoggerSetup.h>
+#include "logging/LoggingQtCategories.h"
+
 #include "DocumentManager.h"
 
 int main(int argc, char *argv[])
@@ -35,12 +38,10 @@ int main(int argc, char *argv[])
     QCoreApplication::setOrganizationName(QStringLiteral("On Semiconductor"));
 
     QApplication app(argc, argv);
-    QQmlApplicationEngine engine;
-    QObject::connect(&engine, &QQmlApplicationEngine::warnings, [=] (const QList<QQmlError> &warnings) {
-        for (const auto& error : warnings) {
-            qWarning() << "qml-error: " << error.toString(); // TODO: [LC], when logging into file, check/forward messageType into logger
-        }
-    });
+    const QtLoggerSetup loggerInitialization(app);
+    qCInfo(logCategoryStrataDevStudio) << QStringLiteral("================================================================================") ;
+    qCInfo(logCategoryStrataDevStudio) << QStringLiteral("%1 v%2").arg(QCoreApplication::applicationName()).arg(QCoreApplication::applicationVersion());
+    qCInfo(logCategoryStrataDevStudio) << QStringLiteral("================================================================================") ;
 
     qmlRegisterUncreatableType<CoreInterface>("tech.spyglass.CoreInterface",1,0,"CoreInterface", QStringLiteral("You can't instantiate CoreInterface in QML"));
     qmlRegisterUncreatableType<DocumentManager>("tech.spyglass.DocumentManager", 1, 0, "DocumentManager", QStringLiteral("You can't instantiate DocumentManager in QML"));
@@ -54,13 +55,23 @@ int main(int argc, char *argv[])
     QtWebEngine::initialize();
     QtWebView::initialize();
 
-    engine.rootContext ()->setContextProperty ("coreInterface", coreInterface);
-    engine.rootContext ()->setContextProperty ("documentManager", documentManager);
+    QQmlApplicationEngine engine;
+    engine.addImportPath(QStringLiteral("qrc:/"));
+
+    engine.rootContext()->setContextProperty ("coreInterface", coreInterface);
+    engine.rootContext()->setContextProperty ("documentManager", documentManager);
 
     //engine.rootContext ()->setContextProperty ("dataCollector", dataCollector);
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
     if (engine.rootObjects().isEmpty()) {
-        return -1;
+        qCCritical(logCategoryStrataDevStudio) << "engine failed to load 'main' qml file; quitting...";
+        engine.load(QUrl(QStringLiteral("qrc:/ErrorDialog.qml")));
+        if (engine.rootObjects().isEmpty()) {
+            qCCritical(logCategoryStrataDevStudio) << "hell froze - engine fails to load error dialog; aborting...";
+            return -1;
+        }
+
+        return app.exec();
     }
 
     // Starting services this build?
@@ -84,16 +95,33 @@ int main(int argc, char *argv[])
     // Start HCS before handling events for Qt
     auto hcsProcess{std::make_unique<QProcess>(nullptr)};
     if (QFile::exists(hcsPath)) {
-        qDebug() << "Starting HCS: " << hcsPath << "(" << hcsConfigPath << ")";
+        qCDebug(logCategoryStrataDevStudio) << "Starting HCS: " << hcsPath << "(" << hcsConfigPath << ")";
 
         QStringList arguments;
         arguments << "-f" << hcsConfigPath;
+
+        // XXX: [LC] temporary solutions until Strata Monitor takeover 'hcs' service management
+        QObject::connect(hcsProcess.get(), &QProcess::readyReadStandardOutput, [&]() {
+            const QString hscMsg{QString::fromLatin1(hcsProcess->readAllStandardOutput())};
+            for (const auto& line : hscMsg.split(QRegExp("\n|\r\n|\r"))) {
+                qCDebug(logCategoryHcs) << line;
+            }
+        } );
+        QObject::connect(hcsProcess.get(), &QProcess::readyReadStandardError, [&]() {
+            const QString hscMsg{QString::fromLatin1(hcsProcess->readAllStandardError())};
+            for (const auto& line : hscMsg.split(QRegExp("\n|\r\n|\r"))) {
+                qCCritical(logCategoryHcs) << line;
+            }
+        });
+        // XXX: [LC] end
+
         hcsProcess->start(hcsPath, arguments, QIODevice::ReadWrite);
         if (!hcsProcess->waitForStarted()) {
-            qWarning() << "Process does not started yet (" << hcsProcess->state() << ")";
+            qCWarning(logCategoryStrataDevStudio) << "Process does not started yet (state:" << hcsProcess->state() << ")";
         }
+        qCInfo(logCategoryStrataDevStudio) << "HCS started";
     } else {
-        qWarning() << "Failed to start HCS: Does not exist";
+        qCCritical(logCategoryStrataDevStudio) << "Failed to start HCS: does not exist";
     }
 #endif
 
@@ -101,13 +129,13 @@ int main(int argc, char *argv[])
 
 #ifdef START_SERVICES
     if (hcsProcess->state() == QProcess::Running) {
-        qDebug() << "Terminating HCS";
+        qCDebug(logCategoryStrataDevStudio) << "terminating HCS";
         hcsProcess->terminate();
         if (!hcsProcess->waitForFinished()) {
-            qDebug() << "Killing HCS";
+            qCDebug(logCategoryStrataDevStudio) << "termination failed, killing HCS";
             hcsProcess->kill();
             if (!hcsProcess->waitForFinished()) {
-                qWarning() << "Failed to kill HCS server";
+                qCWarning(logCategoryStrataDevStudio) << "Failed to kill HCS server";
             }
         }
     }
