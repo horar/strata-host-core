@@ -3,6 +3,8 @@
 #include "PlatformManager.h"
 
 #include <serial_port.h>
+#include <EvEventBase.h>
+
 #if defined(__linux__) || defined(__APPLE__)
 #include <EvEventsMgr.h>
 #elif defined(_WIN32)
@@ -103,11 +105,11 @@ bool PlatformConnection::getMessage(std::string& result)
 }
 
 #if defined(__linux__) || defined(__APPLE__)
-void PlatformConnection::onDescriptorEvent(EvEvent*, int flags)
+void PlatformConnection::onDescriptorEvent(EvEventBase*, int flags)
 {
-    std::lock_guard<std::mutex> lock(event_lock_);
+    std::lock_guard<std::recursive_mutex> lock(event_lock_);
 
-    if (flags & EvEvent::eEvStateRead) {
+    if (flags & EvEventBase::eEvStateRead) {
 
         if (handleRead(g_readTimeout) < 0) {
             //TODO: [MF] add to log...
@@ -122,7 +124,7 @@ void PlatformConnection::onDescriptorEvent(EvEvent*, int flags)
             parent_->notifyConnectionReadable(this);
         }
     }
-    if (flags & EvEvent::eEvStateWrite) {
+    if (flags & EvEventBase::eEvStateWrite) {
 
         if (handleWrite(g_writeTimeout) < 0) {
             //TODO: handle error...
@@ -141,11 +143,11 @@ void PlatformConnection::onDescriptorEvent(EvEvent*, int flags)
     }
 }
 #elif defined(_WIN32)
-void PlatformConnection::onDescriptorEvent(WinEventBase* , int flags)
+void PlatformConnection::onDescriptorEvent(EvEventBase* , int flags)
 {
-	std::lock_guard<std::recursive_mutex> lock(event_lock_);
+    std::lock_guard<std::recursive_mutex> lock(event_lock_);
 
-	if (flags & EvEvent::eEvStateRead) {
+    if (flags & EvEvent::eEvStateRead) {
 
 		if (handleRead(g_readTimeout) < 0) {
 			//TODO: [MF] add to log...
@@ -227,7 +229,7 @@ int PlatformConnection::handleWrite(unsigned int timeout)
 void PlatformConnection::addMessage(const std::string& message)
 {
     assert(event_);
-	bool isWrite = event_->isActive(EvEvent::eEvStateWrite);
+    bool isWrite = event_->isActive(EvEventBase::eEvStateWrite);
 
     //TODO: checking for too big messages...
 
@@ -303,7 +305,7 @@ bool PlatformConnection::attachEventMgr(EvEventsMgr* ev_manager)
         return false;
     }
 
-    std::lock_guard<std::mutex> lock(event_lock_);
+    std::lock_guard<std::recursive_mutex> lock(event_lock_);
 
     event_mgr_ = ev_manager;
 
@@ -316,24 +318,24 @@ bool PlatformConnection::attachEventMgr(EvEventsMgr* ev_manager)
 
 bool PlatformConnection::updateEvent(bool read, bool write)
 {
-	if (!event_ || event_mgr_ == nullptr) {
-		return false;
-	}
+    if (!event_ || event_mgr_ == nullptr) {
+        return false;
+    }
 
-	int evFlags = (read ? EvEvent::eEvStateRead : 0) | (write ? EvEvent::eEvStateWrite : 0);
-	return event_->activate(event_mgr_, evFlags);
+    int evFlags = (read ? EvEventBase::eEvStateRead : 0) | (write ? EvEventBase::eEvStateWrite : 0);
+    return event_->activate(evFlags);  //event_mgr_
 }
 #elif defined(_WIN32)
 
 WinEventBase* PlatformConnection::getEvent()
 {
-	if (!event_) {
-		event_.reset(new WinCommEvent());
+    if (!event_) {
+        event_.reset(new WinCommEvent());
 
-		HANDLE hCom = reinterpret_cast<HANDLE>(port_->getFileDescriptor());
-		event_->create(hCom);
-		event_->setCallback(std::bind(&PlatformConnection::onDescriptorEvent, this, std::placeholders::_1, std::placeholders::_2));
-	}
+        HANDLE hCom = reinterpret_cast<HANDLE>(port_->getFileDescriptor());
+        event_->create(hCom);
+        event_->setCallback(std::bind(&PlatformConnection::onDescriptorEvent, this, std::placeholders::_1, std::placeholders::_2));
+    }
 
     return event_.get();
 }
@@ -352,14 +354,14 @@ WinEventBase* PlatformConnection::getWriteEvent()
 
 void PlatformConnection::detachEventMgr()
 {
-	if (!port_) {
-		return;
-	}
+    if (!port_) {
+        return;
+    }
 
-	if (event_) {
-		std::lock_guard<std::recursive_mutex> lock(event_lock_);
-		event_->deactivate();
-	}
+    if (event_) {
+        std::lock_guard<std::recursive_mutex> lock(event_lock_);
+        event_->deactivate();
+    }
 
     if (write_event_) {
         std::lock_guard<std::recursive_mutex> lock(event_lock_);
@@ -369,12 +371,12 @@ void PlatformConnection::detachEventMgr()
 
 bool PlatformConnection::updateEvent(bool read, bool write)
 {
-	if (!event_) {
-		return false;
-	}
+    if (!event_) {
+        return false;
+    }
 
     int evFlags = (read ? EvEvent::eEvStateRead : 0);
-	event_->activate(evFlags);
+    event_->activate(evFlags);
 
     evFlags = (write ? EvEvent::eEvStateWrite : 0);
     write_event_->activate(evFlags);

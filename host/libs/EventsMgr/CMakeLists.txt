@@ -12,17 +12,17 @@ if (APPLE)
 endif()
 
 add_library(${PROJECT_NAME}
+        src/EvEventBase.cpp
         src/EvEvent.cpp
         src/EvEventsMgr.cpp
         )
 
 if(WIN32)
     target_sources(${PROJECT_NAME}
-        PRIVATE src/WinEventBase.cpp
         PRIVATE src/WinCommEvent.cpp
         PRIVATE src/WinCommWaitManager.cpp
         PRIVATE src/WinTimerEvent.cpp
-		PRIVATE src/WinCommFakeEvent.cpp
+        PRIVATE src/WinCommFakeEvent.cpp
     )
 endif()
 

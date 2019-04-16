@@ -1,4 +1,5 @@
 
+#include "EvEventBase.h"
 #include "EvEvent.h"
 #include "EvEventsMgr.h"
 
@@ -16,17 +17,17 @@ namespace spyglass {
 void evEventsCallback(evutil_socket_t /*fd*/, short what, void *arg)
 {
     assert(arg);
-    spyglass::EvEvent *ev = static_cast<spyglass::EvEvent *>(arg);
+    spyglass::EvEventBase *ev = static_cast<spyglass::EvEventBase *>(arg);
 
     int flags = 0;
     if (what & EV_READ)
-        flags |= spyglass::EvEvent::eEvStateRead;
+        flags |= spyglass::EvEventBase::eEvStateRead;
     if (what & EV_WRITE)
-        flags |= spyglass::EvEvent::eEvStateWrite;
+        flags |= spyglass::EvEventBase::eEvStateWrite;
     if (what & EV_TIMEOUT)
-        flags |= spyglass::EvEvent::eEvStateTimeout;
+        flags |= spyglass::EvEventBase::eEvStateTimeout;
 
-    ev->event_notification(flags);
+    ev->handle_event(flags);
 }
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -35,8 +36,7 @@ EvEvent::EvEvent() : EvEvent(EvType::eEvTypeUnknown, (ev_handle_t) - 1, 0)
 {
 }
 
-EvEvent::EvEvent(EvType type, ev_handle_t fileHandle, unsigned int timeInMs) :
-        type_{type},
+EvEvent::EvEvent(EvType type, ev_handle_t fileHandle, unsigned int timeInMs) : EvEventBase(type),
         fileHandle_{fileHandle},
         timeInMs_{timeInMs}
 {
@@ -57,18 +57,22 @@ void EvEvent::set(EvType type, ev_handle_t fileHandle, unsigned int timeInMs)
         return;
     }
 
-    type_ = type;
+    EvEventBase::setType(type);
     fileHandle_ = fileHandle;
     timeInMs_ = timeInMs;
 }
 
-void EvEvent::setCallback(std::function<void(EvEvent * , int)> callback)
+void EvEvent::setDispatcher(EvEventsMgr* mgr)
 {
-    callback_ = callback;
+    mgr_ = mgr;
 }
 
-bool EvEvent::activate(EvEventsMgr *mgr, int ev_flags)
+bool EvEvent::activate(int ev_flags)  //EvEventsMgr *mgr,
 {
+    if (mgr_ == nullptr) {
+        return false;
+    }
+
     std::lock_guard <std::mutex> lock(lock_);
     if (event_ != nullptr) {
         deactivate();
@@ -76,9 +80,9 @@ bool EvEvent::activate(EvEventsMgr *mgr, int ev_flags)
         event_free(event_);
     }
 
-    switch (type_) {
+    switch (EvEventBase::getType()) {
         case EvType::eEvTypeTimer: {
-            event_ = event_new(mgr->base(), -1, EV_TIMEOUT | EV_PERSIST, evEventsCallback,
+            event_ = event_new(mgr_->base(), -1, EV_TIMEOUT | EV_PERSIST, evEventsCallback,
                                static_cast<void *>(this));
 
             timeval seconds = EvEvent::tvMsecs(timeInMs_);
@@ -90,8 +94,8 @@ bool EvEvent::activate(EvEventsMgr *mgr, int ev_flags)
         }
 
         case EvType::eEvTypeHandle: {
-            short flags = ((ev_flags & eEvStateRead) ? EV_READ : 0) | ((ev_flags & eEvStateWrite) ? EV_WRITE : 0);
-            event_ = event_new(mgr->base(), fileHandle_, flags | EV_PERSIST, evEventsCallback,
+            short flags = ((ev_flags & EvEventBase::eEvStateRead) ? EV_READ : 0) | ((ev_flags & EvEventBase::eEvStateWrite) ? EV_WRITE : 0);
+            event_ = event_new(mgr_->base(), fileHandle_, flags | EV_PERSIST, evEventsCallback,
                                static_cast<void *>(this));
             if (event_add(event_, nullptr) < 0) {
                 return false;
@@ -121,7 +125,7 @@ void EvEvent::deactivate()
 
 bool EvEvent::isActive(int ev_flags) const
 {
-    short flags = ((ev_flags & eEvStateRead) ? EV_READ : 0) | ((ev_flags & eEvStateWrite) ? EV_WRITE : 0);
+    short flags = ((ev_flags & EvEventBase::eEvStateRead) ? EV_READ : 0) | ((ev_flags & EvEventBase::eEvStateWrite) ? EV_WRITE : 0);
     return event_pending(event_, flags, nullptr) != 0;
 }
 
@@ -131,13 +135,13 @@ void EvEvent::fire(int ev_flags)
         return;
     }
 
-    switch (type_) {
+    switch (EvEventBase::getType()) {
         case EvType::eEvTypeTimer:
             event_active(event_, EV_TIMEOUT, 0);
             break;
 
         case EvType::eEvTypeHandle: {
-            short flags = ((ev_flags & eEvStateRead) ? EV_READ : 0) | ((ev_flags & eEvStateWrite) ? EV_WRITE : 0);
+            short flags = ((ev_flags & EvEventBase::eEvStateRead) ? EV_READ : 0) | ((ev_flags & EvEventBase::eEvStateWrite) ? EV_WRITE : 0);
             event_active(event_, flags, 0);
             break;
         }
@@ -154,13 +158,6 @@ struct timeval EvEvent::tvMsecs(unsigned int msecs)
     t.tv_sec = msecs / 1000;
     t.tv_usec = (msecs % 1000) * 1000;
     return t;
-}
-
-void EvEvent::event_notification(int flags)
-{
-    if (callback_) {
-        callback_(this, flags);
-    }
 }
 
 
