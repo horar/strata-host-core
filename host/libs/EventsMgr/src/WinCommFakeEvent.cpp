@@ -5,7 +5,7 @@
 
 namespace spyglass {
 
-WinCommFakeEvent::WinCommFakeEvent() : WinEventBase(3), hEvent_(NULL), act_flags_(0)
+WinCommFakeEvent::WinCommFakeEvent() : WinEventBase(eEvTypeWinFakeHandle), hEvent_(NULL), act_flags_(0)
 {
 
 }

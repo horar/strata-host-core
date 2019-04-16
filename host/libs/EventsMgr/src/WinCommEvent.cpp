@@ -5,7 +5,7 @@
 
 namespace spyglass {
 
-    WinCommEvent::WinCommEvent() : EvEventBase(1), hComm_(NULL), flags_(0), state_(eNotInitialized), hWaitEvent_(NULL), dwEventMask_(0)
+    WinCommEvent::WinCommEvent() : EvEventBase(eEvTypeWinHandle), hComm_(NULL), flags_(0), state_(eNotInitialized), hWaitEvent_(NULL), dwEventMask_(0)
     {
         wait_ = { 0 };
     }
@@ -47,7 +47,7 @@ namespace spyglass {
             }
 
             state_ = ePending;
-            return 1;	//IO_PENDING
+            return 1;       //IO_PENDING
         }
 
         int flags = getEvFlagsState();

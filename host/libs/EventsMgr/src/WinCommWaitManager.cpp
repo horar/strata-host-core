@@ -81,10 +81,10 @@ int WinCommWaitManager::dispatch()
 
         for (auto item : eventMap_) {
 
-            if (item.second->getType() == 1) {
+            if (item.second->getType() == eEvTypeWinHandle) {
                 WinCommEvent* ev = static_cast<WinCommEvent*>(item.second);
                 ret = ev->preDispatch();
-                if (ret != 1)	//TODO: handle imedially dispatch..
+                if (ret != 1)       //TODO: handle imedially dispatch..
                     // continue;
             }
 
@@ -111,7 +111,7 @@ int WinCommWaitManager::dispatch()
 
         for (const auto& item : eventMap_) {
 
-            if (item.second->getType() == 1) {
+            if (item.second->getType() == eEvTypeWinHandle) {
                 WinCommEvent* com = static_cast<WinCommEvent*>(item.second);
                 com->cancelWait();
             }
@@ -137,11 +137,11 @@ int WinCommWaitManager::dispatch()
         }
 
         int flags = 0;
-        if (ev->getType() == 1) {
+        if (ev->getType() == eEvTypeWinHandle) {
             WinCommEvent* com = static_cast<WinCommEvent*>(ev);
             flags = com->getEvFlagsState();
         }
-        else if (ev->getType() == 3) {
+        else if (ev->getType() == eEvTypeWinFakeHandle) {
             WinCommFakeEvent* com = static_cast<WinCommFakeEvent*>(ev);
             flags = com->getEvFlagsState();
         }
@@ -150,11 +150,11 @@ int WinCommWaitManager::dispatch()
 
         //reset wait event, and loop WaitFor... ??
 
-        if (ev->getType() == 1) {
+        if (ev->getType() == eEvTypeWinHandle) {
             WinCommEvent* com = static_cast<WinCommEvent*>(ev);
             com->cancelWait();
         }
-        else if (ev->getType() == 2) {
+        else if (ev->getType() == eEvTypeWinTimer) {
             WinTimerEvent* timer = static_cast<WinTimerEvent*>(ev);
             timer->restartTimer();
         }
