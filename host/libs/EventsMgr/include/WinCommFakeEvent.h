@@ -7,11 +7,11 @@
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 
-#include "WinEventBase.h"
+#include "EvEventBase.h"
 
 namespace spyglass {
 
-class WinCommFakeEvent : public WinEventBase
+class WinCommFakeEvent : public EvEventBase
 {
 public:
     WinCommFakeEvent();

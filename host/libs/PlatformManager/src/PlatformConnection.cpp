@@ -327,7 +327,7 @@ bool PlatformConnection::updateEvent(bool read, bool write)
 }
 #elif defined(_WIN32)
 
-WinEventBase* PlatformConnection::getEvent()
+EvEventBase* PlatformConnection::getEvent()
 {
     if (!event_) {
         event_.reset(new WinCommEvent());
@@ -340,7 +340,7 @@ WinEventBase* PlatformConnection::getEvent()
     return event_.get();
 }
 
-WinEventBase* PlatformConnection::getWriteEvent()
+EvEventBase* PlatformConnection::getWriteEvent()
 {
     if (!write_event_) {
 

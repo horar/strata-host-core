@@ -16,7 +16,6 @@ namespace spyglass {
     class EvEvent;
     class EvEventsMgr;
 #elif defined(_WIN32)
-    class WinEventBase;
     class WinCommEvent;
     class WinCommFakeEvent;
 #endif
@@ -91,8 +90,8 @@ namespace spyglass {
         EvEventsMgr* getEventMgr() const { return event_mgr_; }
 #elif defined(_WIN32)
 
-        WinEventBase* getEvent();
-        WinEventBase* getWriteEvent();
+        EvEventBase* getEvent();
+        EvEventBase* getWriteEvent();
 
 #endif
 

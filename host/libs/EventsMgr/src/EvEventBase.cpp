@@ -1,6 +1,8 @@
 
 #include "EvEventBase.h"
 
+#include <assert.h>
+
 namespace spyglass {
 
 EvEventBase::EvEventBase(EvType type) : type_(type)

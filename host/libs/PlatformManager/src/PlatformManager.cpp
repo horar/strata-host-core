@@ -44,7 +44,7 @@ bool PlatformManager::Init()
     ports_update_->create(g_portsRefreshTime);
     ports_update_->setCallback(std::bind(&PlatformManager::onUpdatePortList, this, std::placeholders::_1, std::placeholders::_2));
 
-    winEventsMgr_.registerEvent(ports_update_.get());
+    eventsMgr_.registerEvent(ports_update_.get());
     ports_update_->activate(0);
 #endif
 
@@ -170,11 +170,11 @@ void PlatformManager::onRemovedPort(serialPortHash hash)
 
     //TODO: linux and Mac
 #if defined(_WIN32)
-    WinEventBase* ev = conn->getEvent();
-    winEventsMgr_.unregisterEvent(ev);
+    EvEventBase* ev = conn->getEvent();
+    eventsMgr_.unregisterEvent(ev);
 
     ev = conn->getWriteEvent();
-    winEventsMgr_.unregisterEvent(ev);
+    eventsMgr_.unregisterEvent(ev);
 #endif
 
     if (plat_handler_) {
@@ -234,10 +234,10 @@ void PlatformManager::onAddedPort(serialPortHash hash)
     int flags = (int) spyglass::EvEvent::eEvStateRead;
     ev->activate(flags);
 
-    winEventsMgr_.registerEvent(ev);
+    eventsMgr_.registerEvent(ev);
 
-    spyglass::WinEventBase* ev2 = conn->getWriteEvent();
-    winEventsMgr_.registerEvent(ev2);
+    spyglass::EvEventBase* ev2 = conn->getWriteEvent();
+    eventsMgr_.registerEvent(ev2);
 #endif
 
     std::cout << "New connection" << std::endl;

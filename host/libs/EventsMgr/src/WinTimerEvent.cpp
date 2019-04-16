@@ -7,7 +7,7 @@
 
 namespace spyglass {
 
-WinTimerEvent::WinTimerEvent() : WinEventBase(eEvTypeWinTimer), hTimer_(NULL), timeInMs_(0), active_(false)
+WinTimerEvent::WinTimerEvent() : EvEventBase(EvType::eEvTypeWinTimer), hTimer_(NULL), timeInMs_(0), active_(false)
 {
 }
 

@@ -5,7 +5,7 @@
 
 namespace spyglass {
 
-    WinCommEvent::WinCommEvent() : EvEventBase(eEvTypeWinHandle), hComm_(NULL), flags_(0), state_(eNotInitialized), hWaitEvent_(NULL), dwEventMask_(0)
+    WinCommEvent::WinCommEvent() : EvEventBase(EvType::eEvTypeWinHandle), hComm_(NULL), flags_(0), state_(eNotInitialized), hWaitEvent_(NULL), dwEventMask_(0)
     {
         wait_ = { 0 };
     }
