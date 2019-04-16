@@ -19,7 +19,7 @@ public:
 
     bool create();
 
-	virtual ev2_handle_t getWaitHandle();
+    virtual ev2_handle_t getWaitHandle();
 
     virtual bool activate(int evFlags);
     virtual void deactivate();

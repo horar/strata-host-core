@@ -21,6 +21,7 @@ public:
         eEvTypeSignal,      //Linux or Mac only
         eEvTypeWinHandle,   //Windows only
         eEvTypeWinTimer,    //Windows only
+        eEvTypeWinFakeHandle,
     };
 
     enum EvTypeFlags {   //flags for event type occured
