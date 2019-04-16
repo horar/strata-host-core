@@ -1,8 +1,6 @@
-cmake_minimum_required (VERSION 3.5)
-
-project(fleece-playground)
-
-set(CMAKE_CXX_STANDARD 11)
+project(fleece-playground
+    LANGUAGES CXX
+)
 
 add_executable(${PROJECT_NAME} fleece.cpp)
 
