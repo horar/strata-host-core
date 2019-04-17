@@ -28,24 +28,26 @@ WinCommWaitManager::~WinCommWaitManager()
 
 bool WinCommWaitManager::registerEvent(EvEventBase* ev)
 {
-    if (eventMap_.size() >= g_maxEventMapSize) {
+    if (eventList_.size() >= g_maxEventMapSize) {
         return false;
     }
 
+    //TODO: check for duplicates
     ev2_handle_t handle = ev->getWaitHandle();
     if (handle == NULL) {
         return false;
     }
 
-    eventMap_.insert({ handle, ev } );
+    eventList_.push_back(std::make_pair(handle, ev));
     return true;
 }
 
 void WinCommWaitManager::unregisterEvent(EvEventBase* ev)
 {
-    for (auto item : eventMap_) {
-        if (item.second == ev) {
-            eventMap_.erase(item.first);
+    std::list<event_pair>::itertator it;
+    for (it = eventList_.begin(); it != eventList_.end(); ++it) {
+        if (it->second == ev) {
+            eventList_.erase(it);
             return;
         }
     }
@@ -84,7 +86,7 @@ int WinCommWaitManager::dispatch()
     {
         std::lock_guard<std::mutex> lock(dispatchLock_);
 
-        for (auto item : eventMap_) {
+        for (auto item : eventList_) {
 
             if (item.second->getType() == EvEventBase::EvType::eEvTypeWinHandle) {
                 WinCommEvent* ev = static_cast<WinCommEvent*>(item.second);
@@ -128,15 +130,24 @@ int WinCommWaitManager::dispatch()
 
         // check witch one is signaled..
         HANDLE hSignaled = waitList[(dwRet - WAIT_OBJECT_0)];
-        if (hSignaled == hStopEvent_)
+        if (hSignaled == hStopEvent_) {
             return 0;
+        }
 
         EvEventBase* ev;
+        std::list<event_pair>::iterator findIt;
         {
             std::lock_guard<std::mutex> lock(dispatchLock_);
-            auto findIt = eventMap_.find(hSignaled);
-            if (findIt == eventMap_.end())
+            for(findIt = eventList_.begin(); findIt != eventList_.end(); ++findIt) {
+                if (findIt->first == hSignaled) {
+                    break;
+                }
+            }
+
+            if (findIt == eventList_.end()) {
+                assert(false);     //Something really wrong!
                 return -1;
+            }
 
             ev = findIt->second;
         }
@@ -164,6 +175,16 @@ int WinCommWaitManager::dispatch()
             timer->restartTimer();
         }
 
+        {
+            //NOTE: move signalled event to back of the event list
+            //      to avoid signalling one and the same event
+            std::lock_guard<std::mutex> lock(dispatchLock_);
+            event_pair temp = *findIt;
+
+            eventList_.erase(findIt);
+            eventList.push_back(temp);
+        }
+
         return 1;
     }
 
@@ -177,6 +198,9 @@ void WinCommWaitManager::threadMain()
     int ret;
     while (!stopThread_) {
         ret = dispatch();
+        if (ret < 0)
+            break;
+
     }
 
     //TODO: put this in log:  std::cout << "Stop thread." << std::endl;
