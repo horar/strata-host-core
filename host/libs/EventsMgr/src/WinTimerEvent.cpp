@@ -1,9 +1,11 @@
 
+#if !defined(_WIN32)
+#error "This file is only for Widnows"
+#endif
+
 #include <EvEvent.h>	//for r/w flags
 
 #include "WinTimerEvent.h"
-
-#if defined(_WIN32)
 
 namespace spyglass {
 
@@ -78,4 +80,3 @@ void WinTimerEvent::restartTimer()
 
 } //namespace
 
-#endif //defined(_WIN32)

@@ -1,6 +1,6 @@
 
 #if !defined(_WIN32)
-#ersror "This file is only for Widnows"
+#error "This file is only for Widnows"
 #endif
 
 #include "WinCommWaitManager.h"

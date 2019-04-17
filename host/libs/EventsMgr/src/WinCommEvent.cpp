@@ -1,7 +1,9 @@
 
-#include "WinCommEvent.h"
+#if !defined(_WIN32)
+#error "This file is only for Widnows"
+#endif
 
-#if defined(_WIN32)
+#include "WinCommEvent.h"
 
 namespace spyglass {
 
@@ -121,5 +123,4 @@ namespace spyglass {
 
 } //namespace spyglass
 
-#endif //defined(_WIN32)
 

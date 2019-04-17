@@ -240,19 +240,8 @@ void PlatformConnection::addMessage(const std::string& message)
     }
 
     if (!isWrite) {
-
-        try {
-
-
         std::lock_guard<std::recursive_mutex> lock(event_lock_);
         updateEvent(true, true);
-
-
-        }
-        catch (std::exception& ex) {
-            printf("");
-        }
-
     }
 }
 

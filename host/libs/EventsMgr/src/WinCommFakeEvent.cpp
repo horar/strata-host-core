@@ -1,7 +1,9 @@
 
-#include "WinCommFakeEvent.h"
+#if !defined(_WIN32)
+#error "This file is only for Widnows"
+#endif
 
-#if defined(_WIN32)
+#include "WinCommFakeEvent.h"
 
 namespace spyglass {
 
@@ -60,5 +62,3 @@ int WinCommFakeEvent::getEvFlagsState() const
 
 
 } //namespace spyglass
-
-#endif //defined(_WIN32)
