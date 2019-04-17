@@ -118,7 +118,7 @@ target_compile_definitions(${PROJECT_NAME}
 
 # LC: start 'hcs' process from strata (will be handled by strata monitor in near future)
 set_source_files_properties(main.cpp PROPERTIES
-    COMPILE_DEFINITIONS START_SERVICES
+    COMPILE_DEFINITIONS "START_SERVICES;WINDOWS_INSTALLER_BUILD=$<BOOL:${WINDOWS_INSTALLER_BUILD}>"
 )
 
 # TODO: [LC] fix this, because it need to be set in multiple Qt UI projects

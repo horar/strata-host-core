@@ -80,8 +80,13 @@ int main(int argc, char *argv[])
 #ifdef START_SERVICES
 
 #ifdef Q_OS_WIN
-    const QString hcsPath{ QDir::cleanPath(QString("%1/hcs2.exe").arg(app.applicationDirPath())) };
-    const QString hcsConfigPath{ QDir::cleanPath(QString("%1/../../apps/hcs2/files/conf/host_controller_service.config").arg(app.applicationDirPath()))};
+#if WINDOWS_INSTALLER_BUILD
+    const QString hcsPath{ QDir::cleanPath(QString("%1/HCS/hcs2.exe").arg(app.applicationDirPath())) };
+    const QString hcsConfigPath{ QDir::cleanPath(QString("%1/HCS/hcs.config").arg(app.applicationDirPath()))};
+#else
+     const QString hcsPath{ QDir::cleanPath(QString("%1/hcs2.exe").arg(app.applicationDirPath())) };
+     const QString hcsConfigPath{ QDir::cleanPath(QString("%1/../../apps/hcs2/files/conf/host_controller_service.config").arg(app.applicationDirPath()))};
+#endif
 #endif
 #ifdef Q_OS_MACOS
     const QString hcsPath{ QDir::cleanPath(QString("%1/../../../hcs2").arg(app.applicationDirPath())) };
