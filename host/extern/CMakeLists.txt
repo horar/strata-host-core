@@ -2,12 +2,15 @@ include(ExternalProject)
 
 file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/3rd_party/include)
 
+# root of all 3rd party project (git submodules)
+set(SOURCE_DIR_EXTERN ${CMAKE_SOURCE_DIR}/../extern)
+
 #
 # spdlog
 #
 ExternalProject_Add(libspdlog
     INSTALL_DIR ${CMAKE_BINARY_DIR}/3rd_party
-    SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/spdlog
+    SOURCE_DIR ${SOURCE_DIR_EXTERN}/spdlog
 
     CMAKE_ARGS ${CMAKE_ARGS}
         -DBUILD_SHARED_LIBS=${BUILD_SHARED_LIBS}
@@ -120,13 +123,12 @@ set_target_properties(gtest::gmock PROPERTIES
 
 add_dependencies(gtest::gmock DEPENDS libgtest)
 
-
 #
 # couchbase-lite-core
 #
 ExternalProject_Add(libcblitecore
     INSTALL_DIR ${CMAKE_BINARY_DIR}/3rd_party
-    SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/couchbase-lite-core
+    SOURCE_DIR ${SOURCE_DIR_EXTERN}/couchbase-lite-core
     #GIT_REPOSITORY https://github.com/couchbase/couchbase-lite-core.git
     #GIT_TAG 513281b8
     #GIT_PROGRESS ${CMAKE_VERBOSE_MAKEFILE}

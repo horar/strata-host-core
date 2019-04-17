@@ -2,7 +2,7 @@ project (couchbase-lite-cpp
     LANGUAGES CXX
 )
 
-set(CB_DIR "${CMAKE_SOURCE_DIR}/extern/couchbase-lite-core")
+set(CB_DIR "${CMAKE_SOURCE_DIR}/../extern/couchbase-lite-core")
 
 add_library(${PROJECT_NAME}
 	src/SGDatabase.cpp
