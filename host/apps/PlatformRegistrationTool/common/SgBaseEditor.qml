@@ -16,9 +16,6 @@ FocusScope {
     property int spacing: 2
     property string helperText: ""
     property string errorText
-    property bool inErrorState: false
-    property bool inOkayState: false
-
 
     /* Set this to True if you want input validation to be handled by editor. */
     property bool inputValidation: false
@@ -149,7 +146,6 @@ FocusScope {
             SgIcon {
                 anchors.centerIn: parent
                 sourceSize.height: Math.floor(parent.height - 4)
-                fillMode: Image.PreserveAspectFit
                 source: "qrc:/images/exclamation.svg"
                 iconColor: "white"
             }
@@ -169,7 +165,6 @@ FocusScope {
             SgIcon {
                 anchors.centerIn: parent
                 sourceSize.height: Math.floor(parent.height - 4)
-                fillMode: Image.PreserveAspectFit
                 source: "qrc:/images/check.svg"
                 iconColor: "white"
             }
