@@ -1,4 +1,4 @@
-project(strata
+project(StrataDeveloperStudio
     VERSION 0.0.0
     LANGUAGES CXX
 )
