@@ -3,8 +3,11 @@ import QtQuick.Controls 2.12
 
 import "./common" as Common
 import "./common/Colors.js" as Colors
+import "./common/SgUtils.js" as SgUtils
 
 PrtBasePage {
+    id: page
+
     title: qsTr("New Platform")
 
     Item {
@@ -135,7 +138,7 @@ PrtBasePage {
 
                             function inputValidationErrorMsg() {
                                 if (value < 1) {
-                                    return qsTr("Value should be above 0")
+                                    return qsTr("Board major version is required")
                                 }
 
                                 return ""
@@ -163,7 +166,7 @@ PrtBasePage {
                         function inputValidationErrorMsg() {
                             var tags = appTagEditor.item.getSelectedTags()
                             if (tags.length < 1) {
-                                return qsTr("At least 1 application tag is required")
+                                return qsTr("Application tag is required")
                             }
 
                             return ""
@@ -182,7 +185,7 @@ PrtBasePage {
                         function inputValidationErrorMsg() {
                             var tags = productTagEditor.item.getSelectedTags()
                             if (tags.length < 1) {
-                                return qsTr("At least 1 product tag is required")
+                                return qsTr("Product tag is required")
                             }
 
                             return ""
@@ -227,21 +230,63 @@ PrtBasePage {
                         Common.SgButton {
                             text: qsTr("Submit\nNew Platform")
                             onClicked: {
-                                if (opnEditor.inputValidationErrorMsg().length === 0
-                                        && nameEditor.inputValidationErrorMsg().length === 0
-                                        && yearEditor.inputValidationErrorMsg().length === 0
-                                        && originEditor.inputValidationErrorMsg().length === 0
-                                        && boardMajorEditor.inputValidationErrorMsg().length === 0
-                                        && boardMinorEditor.inputValidationErrorMsg().length === 0
-                                        && appTagEditor.inputValidationErrorMsg().length === 0
-                                        && productTagEditor.inputValidationErrorMsg().length === 0
-                                        && descriptionEditor.inputValidationErrorMsg().length === 0)
-                                {
+                                var errorList = []
+
+                                var error = opnEditor.inputValidationErrorMsg()
+                                if (error.length) {
+                                    errorList.push(error)
+                                }
+
+                                error = nameEditor.inputValidationErrorMsg()
+                                if (error.length) {
+                                    errorList.push(error)
+                                }
+
+                                error = yearEditor.inputValidationErrorMsg()
+                                if (error.length) {
+                                    errorList.push(error)
+                                }
+
+                                error = originEditor.inputValidationErrorMsg()
+                                if (error.length) {
+                                    errorList.push(error)
+                                }
+
+                                error = boardMajorEditor.inputValidationErrorMsg()
+                                if (error.length) {
+                                    errorList.push(error)
+                                }
+
+                                error = boardMinorEditor.inputValidationErrorMsg()
+                                if (error.length) {
+                                    errorList.push(error)
+                                }
+
+                                error = appTagEditor.inputValidationErrorMsg()
+                                if (error.length) {
+                                    errorList.push(error)
+                                }
+
+                                error = productTagEditor.inputValidationErrorMsg()
+                                if (error.length) {
+                                    errorList.push(error)
+                                }
+
+                                error = descriptionEditor.inputValidationErrorMsg()
+                                if (error.length) {
+                                    errorList.push(error)
+                                }
+
+                                if (errorList.length) {
+                                    SgUtils.showMessageDialog(
+                                                page,
+                                                Common.SgMessageDialog.Error,
+                                                "Validation Failed",
+                                                errorList.join("\n"))
+
+                                } else {
                                     //TODO start registration process
                                     console.log("input is VALID")
-                                } else {
-                                    //TODO show warning dialog
-                                    console.log("input is NOT VALID, plese check your data.")
                                 }
                             }
                         }

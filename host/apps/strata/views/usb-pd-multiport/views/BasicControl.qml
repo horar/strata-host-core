@@ -135,8 +135,10 @@ Item {
                 property real port3Power:0;
                 property real port4Power:0;
                 property real combinedPortPower: 0
+                property int portNumber: platformInterface.request_usb_power_notification.port;
 
-                onInputPowerChanged: {
+                //onInputPowerChanged: {
+                onPortNumberChanged:{
                     if (platformInterface.request_usb_power_notification.port ===1 &&
                         platformInterface.request_usb_power_notification.device !== "none")
                         port1Power = inputPower;
@@ -149,6 +151,11 @@ Item {
                     else if (platformInterface.request_usb_power_notification.port ===4 &&
                              platformInterface.request_usb_power_notification.device !== "none")
                         port4Power = inputPower;
+
+//                    if (platformInterface.request_usb_power_notification.device === "none"){
+//                        console.log("zeroing out input power for port", platformInterface.request_usb_power_notification.port,
+//                                    inputPower);
+//                    }
 
                     //clear the last power value for the port if the port has just been disconnected
                     if (platformInterface.request_usb_power_notification.port ===1 &&

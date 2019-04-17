@@ -276,12 +276,16 @@ PrtBasePage {
         registrationInProgress = true
         jLinkDone = false
 
-        var dialog = SgUtils.createDialog("qrc:/TextProgressDialog.qml", page)
+        var dialog = SgUtils.createDialog(
+                    page,
+                    "qrc:/TextProgressDialog.qml",
+                    {
+                        "title": "Registering Platform",
+                        "text": Qt.binding(function() { return outputStr})
+                    })
+
         if (dialog) {
             outputStr = ""
-            dialog.closePolicy = Popup.NoAutoClose
-            dialog.text = Qt.binding(function() { return outputStr})
-
             dialog.open()
         }
 
@@ -380,40 +384,48 @@ PrtBasePage {
 
 
     function jLinkLoadBoard() {
-        var dialog = SgUtils.createDialog("qrc:/TextProgressDialog.qml", page)
+        var dialog = SgUtils.createDialog(
+                    page,
+                    "qrc:/TextProgressDialog.qml",
+                    {
+                        "title": "JLink load",
+                        "text": Qt.binding(function() { return outputStr})
+                    })
+
         if (dialog) {
             outputStr = ""
-            dialog.closePolicy = Popup.NoAutoClose
-            dialog.title = "JLink load"
-            dialog.text = Qt.binding(function() { return outputStr})
-
             dialog.open()
             jlinkConnector.flashBoardRequested("/Users/zbh6nr/proj/images/bootloader-release.bin")
         }
     }
 
     function jLinkLoadForceBoard() {
-        var dialog = SgUtils.createDialog("qrc:/TextProgressDialog.qml", page)
+        var dialog = SgUtils.createDialog(
+                    page,
+                    "qrc:/TextProgressDialog.qml",
+                    {
+                        "title": "JLink load force",
+                        "text": Qt.binding(function() { return outputStr})
+                    })
+
         if (dialog) {
             outputStr = ""
-            dialog.closePolicy = Popup.NoAutoClose
-            dialog.title = "JLink load force"
-            dialog.text = Qt.binding(function() { return outputStr})
-
             dialog.open()
             jlinkConnector.flashBoardRequested("/Users/zbh6nr/proj/images/bootloader-release.bin", true)
         }
     }
 
     function jLinkEraseBoard() {
-        var dialog = SgUtils.createDialog("qrc:/TextProgressDialog.qml", page)
+        var dialog = SgUtils.createDialog(
+                    page,
+                    "qrc:/TextProgressDialog.qml",
+                    {
+                        "title": "JLink erase",
+                        "text": Qt.binding(function() { return outputStr})
+                    })
 
         if (dialog) {
             outputStr = ""
-            dialog.closePolicy = Popup.NoAutoClose
-            dialog.title = "JLink erase"
-            dialog.text = Qt.binding(function() { return outputStr})
-
             dialog.open()
             jlinkConnector.flashBoardRequested("", true)
         }

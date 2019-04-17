@@ -19,7 +19,5 @@
         <file>partial-views/images/yellowStatusLight.svg</file>
         <file>partial-views/SGStatusLight.qml</file>
     </qresource>
-    <qresource prefix="/" lang="qml"/>
     <qresource prefix="/js"/>
-    <qresource prefix="/js" lang="javascript"/>
 </RCC>

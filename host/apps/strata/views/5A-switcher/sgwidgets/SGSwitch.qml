@@ -9,15 +9,11 @@ Rectangle {
     signal toggled()
     signal press()
     signal pressAndHold()
-
     property alias pressed: switchRoot.pressed
     property alias down: switchRoot.down
     property alias checked: switchRoot.checked
-
     property real switchHeight: 30
     property real fontSize: 15
-
-
     // Optional Configurations:
     property real switchWidth: 65
     property color handleColor: "white"
