@@ -45,7 +45,7 @@ public:
      * @param timeInMs timeout or 0 for undefined
      */
     EvEvent(EvType type, ev_handle_t fileHandle, unsigned int timeInMs);
-    ~EvEvent();
+    virtual ~EvEvent();
 
     /**
      * Sets the event type

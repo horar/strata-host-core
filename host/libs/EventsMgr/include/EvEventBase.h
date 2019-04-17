@@ -1,5 +1,5 @@
-#ifndef PLATFORM_MANAGER_WIN_EVENT_BASE_H__
-#define PLATFORM_MANAGER_WIN_EVENT_BASE_H__
+#ifndef STRATA_EV_EVENT_BASE_H__
+#define STRATA_EV_EVENT_BASE_H__
 
 #include <functional>
 
@@ -34,6 +34,9 @@ public:
     EvEventBase(EvType type);
     virtual ~EvEventBase();
 
+    /**
+     * returns type of the object
+     */
     EvType getType() const { return type_; }
 
     /**
@@ -42,10 +45,27 @@ public:
      */
     void setCallback(std::function<void(EvEventBase*, int)> callback);
 
+    /**
+     * returns handle for wait dispatcher
+     */
     virtual ev2_handle_t getWaitHandle() = 0;
+
+    /**
+     * Method that calls the callback.
+     * @param flags
+     */
     virtual void handle_event(int flags);
 
+    /**
+     * Activates event in EventMgr (or WinCommWaitManager)
+     * @param evFlags
+     * @return
+     */
     virtual bool activate(int evFlags) = 0;
+
+    /**
+     * decativates event in EventMgr
+     */
     virtual void deactivate() = 0;
 
 protected:
@@ -58,4 +78,4 @@ private:
 
 }; //namespace
 
-#endif //PLATFORM_MANAGER_WIN_EVENT_BASE_H__
+#endif //STRATA_EV_EVENT_BASE_H__

@@ -1,6 +1,6 @@
 
-#ifndef STRATA_EVENTS_MGR_H
-#define STRATA_EVENTS_MGR_H
+#ifndef STRATA_EVENTS_MGR_H__
+#define STRATA_EVENTS_MGR_H__
 
 #include <thread>
 #include <mutex>
@@ -68,4 +68,4 @@ private:
 
 } //end of namespace
 
-#endif //STRATA_EVENTS_MGR_H
+#endif //STRATA_EVENTS_MGR_H__
