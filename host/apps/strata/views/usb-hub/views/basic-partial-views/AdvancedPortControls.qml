@@ -156,7 +156,7 @@ Item {
         from: 0
         to: 100
         startLabel: "0A"
-        endLabel: "100A"
+        endLabel: "5A"
 
         property  var overCurrentProtection: platformInterface.request_over_current_protection_notification
 
