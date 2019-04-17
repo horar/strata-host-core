@@ -1,4 +1,8 @@
 
+#if !defined(_WIN32)
+#ersror "This file is only for Widnows"
+#endif
+
 #include "WinCommWaitManager.h"
 #include "EvEventBase.h"
 #include "WinCommEvent.h"
@@ -8,6 +12,7 @@
 #include <Windows.h>
 
 #include <thread>
+#include <assert.h>
 
 namespace spyglass
 {
@@ -44,7 +49,7 @@ bool WinCommWaitManager::registerEvent(EvEventBase* ev)
 
 void WinCommWaitManager::unregisterEvent(EvEventBase* ev)
 {
-    std::list<event_pair>::itertator it;
+    std::list<event_pair>::iterator it;
     for (it = eventList_.begin(); it != eventList_.end(); ++it) {
         if (it->second == ev) {
             eventList_.erase(it);
@@ -93,6 +98,7 @@ int WinCommWaitManager::dispatch()
                 ret = ev->preDispatch();
                 if (ret != 1)       //TODO: handle imedially dispatch..
                     continue;
+
             }
 
             waitList[dwCount] = item.first; dwCount++;
@@ -116,7 +122,7 @@ int WinCommWaitManager::dispatch()
 
         //Loop over all ev and cancel the Wait...
 
-        for (const auto& item : eventMap_) {
+        for (const auto& item : eventList_) {
 
             if (item.second->getType() == EvEventBase::EvType::eEvTypeWinHandle) {
                 WinCommEvent* com = static_cast<WinCommEvent*>(item.second);
@@ -175,14 +181,15 @@ int WinCommWaitManager::dispatch()
             timer->restartTimer();
         }
 
-        {
+        if (eventList_.size() > 1) {
+
             //NOTE: move signalled event to back of the event list
             //      to avoid signalling one and the same event
             std::lock_guard<std::mutex> lock(dispatchLock_);
             event_pair temp = *findIt;
 
             eventList_.erase(findIt);
-            eventList.push_back(temp);
+            eventList_.push_back(temp);
         }
 
         return 1;

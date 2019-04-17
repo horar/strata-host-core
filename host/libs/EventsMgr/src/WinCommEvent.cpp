@@ -36,6 +36,10 @@ namespace spyglass {
             return -1;
         }
 
+        if (state_ == ePending) {
+            return 1;
+        }
+
         dwEventMask_ = 0;
         memset(&wait_, 0, sizeof(wait_));
         wait_.hEvent = hWaitEvent_;
@@ -76,6 +80,9 @@ namespace spyglass {
 
     void WinCommEvent::cancelWait()
     {
+        if (state_ != ePending)
+            return;
+
         ::CancelIoEx(hComm_, &wait_);
         ::ResetEvent(wait_.hEvent);
         state_ = eReady;
