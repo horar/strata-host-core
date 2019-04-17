@@ -4,9 +4,6 @@
 [submodule "platform/mbed-os/sources/mbed-os"]
 	path = platform/mbed-os/sources/mbed-os
 	url = https://github.com/ARMmbed/mbed-os
-[submodule "shared/rapidjson"]
-	path = shared/rapidjson
-	url = https://github.com/Tencent/rapidjson.git
 [submodule "shared/cpp-base64"]
 	path = shared/cpp-base64
 	url = https://github.com/ReneNyffenegger/cpp-base64.git
@@ -22,3 +19,6 @@
 [submodule "extern/spdlog"]
 	path = extern/spdlog
 	url = https://github.com/gabime/spdlog.git
+[submodule "extern/rapidjson"]
+	path = extern/rapidjson
+	url = https://github.com/Tencent/rapidjson.git

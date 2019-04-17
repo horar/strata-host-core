@@ -123,6 +123,7 @@ set_target_properties(gtest::gmock PROPERTIES
 
 add_dependencies(gtest::gmock DEPENDS libgtest)
 
+
 #
 # couchbase-lite-core
 #

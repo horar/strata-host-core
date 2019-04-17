@@ -5,7 +5,7 @@ project(PlatformManager
 
 find_package(Threads REQUIRED)
 
-set(SHARED_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../../shared")
+set(SHARED_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../../extern")
 
 if (APPLE)
     find_library(IOKIT_LIBRARY IOKit)
