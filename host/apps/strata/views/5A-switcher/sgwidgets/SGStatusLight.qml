@@ -8,7 +8,7 @@ Item {
     property string status: "off"
     property string label: ""
     property bool labelLeft: true
-    property real lightSize : 50
+    property real lightSize : 30
     property color textColor : "black"
     property real fontSize: 10
 
@@ -25,6 +25,8 @@ Item {
         color: root.textColor
         font.pointSize: fontSize
         font.bold: true
+        horizontalAlignment: Text.AlignHCenter
+
     }
 
     Image {
@@ -41,23 +43,23 @@ Item {
         height: root.lightSize
         source: {
             switch(root.status) {
-                case "green":
-                    "./images/greenStatusLight.svg"
-                    break;
-                case "red":
-                    "./images/redStatusLight.svg"
-                    break;
-                case "yellow":
-                    "./images/yellowStatusLight.svg"
-                    break;
-                case "orange":
-                    "./images/orangeStatusLight.svg"
-                    break;
-                case "off":
-                    "./images/offStatusLight.svg"
-                    break;
-                default:
-                    "./images/offStatusLight.svg"
+            case "green":
+                "./images/greenStatusLight.svg"
+                break;
+            case "red":
+                "./images/redStatusLight.svg"
+                break;
+            case "yellow":
+                "./images/yellowStatusLight.svg"
+                break;
+            case "orange":
+                "./images/orangeStatusLight.svg"
+                break;
+            case "off":
+                "./images/offStatusLight.svg"
+                break;
+            default:
+                "./images/offStatusLight.svg"
             }
         }
         mipmap: true

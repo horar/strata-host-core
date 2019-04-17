@@ -92,10 +92,7 @@ Rectangle {
 
     // Make sure focus follows current transcript messages when window is full
     function scroll() {
-        if (statusList.contentHeight > statusList.height && statusList.contentY > (statusList.contentHeight - statusList.height - 50))
-        {
-            statusList.contentY = statusList.contentHeight - statusList.height;
-        }
+        statusList.positionViewAtEnd()
     }
 
     Rectangle {

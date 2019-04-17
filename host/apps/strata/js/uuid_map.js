@@ -45,7 +45,8 @@ var uuid_map = {
     "215": "5A-switcher",
     "216": "5A-switcher",
     "217": "XDFN-LDO",
+    "218": "usb-hub",
     "219": "15A-switcher",
     "220": "15A-switcher",
-    "218": "usb-hub"
+    "222": "subGHz"
 }

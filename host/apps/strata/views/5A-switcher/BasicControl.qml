@@ -17,10 +17,21 @@ Item {
         source: "sgwidgets/fonts/sgicons.ttf"
     }
 
-
     property alias warningVisible: warningBox.visible
     property string vinlable: ""
 
+    // When the load is turned on before enable is on, the part sends out the surge and resets the mcu.
+    // Detect the mcu reset and turn of the pause periodic.
+    // Part of Windows Serial USB mouse hack
+    property var read_mcu_reset_state: platformInterface.status_mcu_reset.mcu_reset
+    onRead_mcu_reset_stateChanged: {
+        if(read_mcu_reset_state === "occurred") {
+            platformInterface.pause_periodic.update(false)
+        }
+        else  {
+            platformInterface.status_mcu_reset.mcu_reset = ""
+        }
+    }
     property var read_enable_state: platformInterface.initial_status_0.enable_status
     onRead_enable_stateChanged: {
         if(read_enable_state === "on") {
@@ -73,13 +84,9 @@ Item {
     }
 
     Rectangle{
-        anchors{
-            centerIn: parent
-        }
-
+        anchors.centerIn: parent
         width : parent.width
         height: parent.height - 150
-
 
         Rectangle {
             id: pageLable
@@ -110,7 +117,6 @@ Item {
                 text: "<b>Programmable Synchronous Adaption On-time Buck Converter</b>"
                 font.pixelSize:(parent.width + parent.height)/ 30
                 color: "black"
-
             }
         }
         Rectangle {
@@ -453,10 +459,6 @@ Item {
                                 platformInterface.reset_status_indicator.update("reset")
                                 platformInterface.reset_indicator = "off"
                                 platformInterface.reset_flag = false
-                            }
-                            if(platformInterface.interrupt_flag === true){
-                                platformInterface.read_initial_status.update()
-                                platformInterface.interrupt_flag = false
                             }
                         }
                         else{

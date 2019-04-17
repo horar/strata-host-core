@@ -17,11 +17,9 @@ Item {
     width: parent.width
 
     property var outputvoltage0: []
-
     property bool check_enable_state: platformInterface.hide_enable
     onCheck_enable_stateChanged: {
         if(check_enable_state === true) {
-
             enableSwitch.enabled  = true
             enableSwitch.opacity = 1.0
         }
@@ -31,14 +29,11 @@ Item {
         }
     }
 
-
-
     property var read_enable_state: platformInterface.initial_status_0.enable_status
     onRead_enable_stateChanged: {
         if(read_enable_state === "on") {
             platformInterface.enabled = true
             platformInterface.intd_state = true
-
         }
         else  {
             platformInterface.enabled = false
@@ -105,10 +100,7 @@ Item {
         platformInterface.ipeak_state = read_ipeak_state
     }
 
-
-
     Component.onCompleted: {
-
         var value;
         for(var i = 0 ; i <= 127 ; ++i ) {
             value = (i * 6.25) + 600
@@ -116,7 +108,6 @@ Item {
         }
         outputVolCombo.model = outputvoltage0
         outputVolCombo2.model = outputvoltage0
-
         helpIcon.visible = true
         Help.registerTarget(enableSwitch, "Enable switch enables and disables the part.", 0, "advance5Asetting1Help")
         Help.registerTarget(peakCurrentCombo, "Set Inductor Peak Current dropdown menu will set the OCP level for the part.", 1 , "advance5Asetting1Help")
@@ -133,8 +124,6 @@ Item {
             bottom: parent.bottom
         }
         width: parent.width/3
-
-
 
         Item {
             id: margins1
@@ -161,7 +150,7 @@ Item {
                 height: parent.height
                 anchors {
                     top: parent.top
-                    topMargin: 60
+                    topMargin: 45
                 }
 
                 Column {
@@ -171,6 +160,7 @@ Item {
                     Rectangle {
                         width: parent.width
                         height: parent.height/5
+
                         SGSwitch {
                             id: enableSwitch
                             anchors.horizontalCenter: parent.horizontalCenter
@@ -184,7 +174,7 @@ Item {
                             grooveColor: "#ccc"             // Default: "#ccc"
                             grooveFillColor: "#0cf"         // Default: "#0cf"
                             checked: platformInterface.enabled
-                            fontSizeLabel: (parent.width + parent.height)/25
+                            fontSizeLabel: (parent.width + parent.height)/22
                             onCheckedChanged: {
                                 if(checked) {
                                     platformInterface.intd_state = true
@@ -203,11 +193,6 @@ Item {
                                         platformInterface.reset_indicator = "off"
                                         platformInterface.reset_flag = false
                                     }
-                                    if(platformInterface.interrupt_flag === true){
-                                        platformInterface.read_initial_status.update()
-                                        platformInterface.interrupt_flag = false
-                                    }
-
                                 }
                                 else{
                                     platformInterface.set_enable.update("off")
@@ -221,10 +206,11 @@ Item {
                     Rectangle {
                         width: parent.width
                         height: parent.height/5
+
                         SGComboBox {
                             id: peakCurrentCombo
                             currentIndex: platformInterface.ipeak_state
-                            fontSize: (parent.width + parent.height)/25
+                            fontSize: (parent.width + parent.height)/22
                             label :"Set Inductor\nPeak Current"
                             model: [ "7.0A (Iout = 5.3A)", "7.7A (Iout = 5.8A)","8.2A (Iout = 6.3A)", "8.8A (Iout = 6.8A)" ]
                             anchors {
@@ -244,11 +230,8 @@ Item {
                         width: parent.width
                         height: parent.height/5
                     }
-
                 }
-
             }
-
         }
         SGLayoutDivider {
             id: divider1
@@ -333,7 +316,7 @@ Item {
                 spacing: 5
                 anchors {
                     top : vselContainer.bottom
-                    topMargin: 10
+                    topMargin: 15
                 }
                 width: parent.width
                 height: parent.height - vselContainer.height
@@ -344,7 +327,7 @@ Item {
                     Column {
                         id: outputvolcontainer
                         anchors.fill: parent
-                        spacing:  10
+                        spacing:  20
                         Rectangle {
                             width: parent.width
                             height: parent.height/5
@@ -384,8 +367,6 @@ Item {
                         }
 
                     } // end of column
-
-
                 } // first rec of the row
                 Rectangle {
                     width: parent.width/2
@@ -417,11 +398,8 @@ Item {
                                 }
                                 comboBoxWidth: parent.width/3
                                 comboBoxHeight: parent.height/2
-
                             }
-
                         }
-
                         Rectangle {
                             width : parent.width
                             height: parent.height/5
@@ -445,16 +423,11 @@ Item {
                                     }
                                     platformInterface.dcdc_mode1 = currentIndex
                                 }
-
                             }
                         }
                     }
                 }
-
             } // end of row
-
-
-
             Text {
                 id: helpIcon
                 anchors {

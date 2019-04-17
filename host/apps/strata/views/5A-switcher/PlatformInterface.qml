@@ -82,10 +82,12 @@ Item {
 
     property var  status_ack_register: {
         "events_detected":[ ]
+
     }
 
-
-
+    property var  status_mcu_reset: {
+        "mcu_reset": ""
+    }
 
     // -------------------  end notification messages
 
@@ -124,6 +126,10 @@ Item {
                                   set: function (enabled) {
                                       this.payload.enable = enabled;
                                   },
+                                  get: function() {
+                                      return this.payload.enable
+                                  },
+
                                   send: function () { CorePlatformInterface.send(this) },
                                   show: function () { CorePlatformInterface.show(this) }
 
@@ -590,19 +596,20 @@ Item {
     property var mask_ocp_interrupt: ({
                                           "cmd" : "mask_ocp_interrupt",
                                           "payload": {
-                                              "mask_ocp_interrupt": "" ,
+                                              "ocp_interrupt": "" ,
                                           },
 
-                                          update: function (mask_ocp_interrupt) {
-                                              this.set(mask_ocp_interrupt)
+                                          update: function (ocp_interrupt) {
+                                              this.set(ocp_interrupt)
                                               CorePlatformInterface.send(this)
                                           },
-                                          set: function (mask_ocp_interrupt) {
-                                              this.payload.mask_ocp_interrupt = mask_ocp_interrupt;
+                                          set: function (ocp_interrupt) {
+                                              this.payload.ocp_interrupt = ocp_interrupt;
                                           },
                                           send: function () { CorePlatformInterface.send(this) },
                                           show: function () { CorePlatformInterface.show(this) }
                                       })
+
 
 
     property var mask_uvlo_interrupt: ({
@@ -734,7 +741,6 @@ Item {
     property string reset_indicator
     property var mask_register_state
     property bool reset_flag: false
-    property bool interrupt_flag: false
 
     // DEBUG Window for testing motor vortex UI without a platform
     //    Window {

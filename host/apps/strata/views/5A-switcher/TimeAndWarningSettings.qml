@@ -66,7 +66,6 @@ Item {
             auto_button_state = true
             ppwm_button_state = false
         }
-
     }
 
     Component.onCompleted: {
@@ -96,7 +95,6 @@ Item {
                 fill: parent
                 margins: 15
             }
-
             Rectangle {
                 id: timeAndwarning
                 width : parent.width/1.1
@@ -122,7 +120,7 @@ Item {
                     SGComboBox {
                         id: dvsSpeedCombo
                         currentIndex: platformInterface.dvs_speed_state
-                        fontSize: (parent.width + parent.height)/26
+                        fontSize: (parent.width + parent.height)/32
                         label : "DVS Speed"
                         model: [
                             "6.25mV step / 0.333uS", "6.25mV step / 0.666uS", "6.25mV step / 1.333uS",
@@ -155,7 +153,7 @@ Item {
                     SGComboBox {
                         id:  delayEnableCombo
                         currentIndex: platformInterface.delay_enable_state
-                        fontSize: (parent.width + parent.height)/26
+                        fontSize: (parent.width + parent.height)/32
                         label : "Delay upon Enabled"
                         model: [ "0mS", "2mS", "4mS", "6mS", "8mS", "10mS", "12mS", "14mS"]
                         anchors {
@@ -168,9 +166,7 @@ Item {
                             platformInterface.set_delay_on_enable.update(currentIndex)
                             platformInterface.delay_enable_state = currentIndex
                         }
-
                     }
-
                 }
 
                 Rectangle {
@@ -187,7 +183,7 @@ Item {
                     SGComboBox {
                         id: thresholdCombo
                         currentIndex: platformInterface.thermal_prewarn_state
-                        fontSize: (parent.width + parent.height)/26
+                        fontSize: (parent.width + parent.height)/32
                         label : "Thermal pre-warning"+"\n"+ "Threshold"
                         model: [ "83˚c","94˚c", "105˚c", "116˚c" ]
                         anchors.horizontalCenter: parent.horizontalCenter
@@ -226,7 +222,6 @@ Item {
             }
 
             Rectangle {
-
                 width : parent.width/1.1
                 height: parent.height/1.3
                 color: "transparent"
@@ -237,120 +232,136 @@ Item {
                     centerIn: parent
                 }
 
-                SGRadioButtonContainer {
-                    id: dvsButtonContainer
-                    // Optional configuration:
-                    fontSize: (parent.width+parent.height)/35
-                    label: "DVS Mode:" // Default: "" (will not appear if not entered)
-                    labelLeft: true         // Default: true
-                    textColor: "black"      // Default: "#000000"  (black)
-                    radioColor: "black"     // Default: "#000000"  (black)
-                    exclusive: true         // Default: true
-
+                Rectangle {
+                    id: buttonContainer
+                    width : parent.width - 30
+                    height: parent.height/4
                     anchors {
                         top: parent.top
-                        topMargin:  40
+                        topMargin: 40
                         horizontalCenter: parent.horizontalCenter
-                        horizontalCenterOffset: -(activeDischargeSwitch.width - width)/2
                     }
 
-                    radioGroup: GridLayout {
-                        columnSpacing: 10
-                        rowSpacing: 10
-
-                        property int fontSize: (parent.width+parent.height)/8
-                        SGRadioButton {
-                            id: auto
-                            text: "Auto"
-                            checked: auto_button_state
-
-                            onClicked: {
-                                platformInterface.dvs_mode.update("auto")
-                                platformInterface.dvs_mode.show()
-                            }
+                    SGRadioButtonContainer {
+                        id: dvsButtonContainer
+                        // Optional configuration:
+                        fontSize: (parent.width+parent.height)/32
+                        label: "DVS Mode:" // Default: "" (will not appear if not entered)
+                        labelLeft: true         // Default: true
+                        textColor: "black"      // Default: "#000000"  (black)
+                        radioColor: "black"     // Default: "#000000"  (black)
+                        exclusive: true         // Default: true
+                        anchors {
+                            horizontalCenter: parent.horizontalCenter
+                            horizontalCenterOffset: -(activeDischargeSwitch.width - width)/2
                         }
 
-                        SGRadioButton {
-                            id: ppwm
-                            text: "PPWM"
-                            checked: ppwm_button_state
+                        radioGroup: GridLayout {
+                            columnSpacing: 10
+                            rowSpacing: 10
 
-                            onClicked: {
-                                platformInterface.dvs_mode.update("forced_ppwm")
-                                platformInterface.dvs_mode.show()
+                            property int fontSize: (parent.width+parent.height)/8
+                            SGRadioButton {
+                                id: auto
+                                text: "Auto"
+                                checked: auto_button_state
+
+                                onClicked: {
+                                    platformInterface.dvs_mode.update("auto")
+                                    platformInterface.dvs_mode.show()
+                                }
                             }
 
+                            SGRadioButton {
+                                id: ppwm
+                                text: "PPWM"
+                                checked: ppwm_button_state
+
+                                onClicked: {
+                                    platformInterface.dvs_mode.update("forced_ppwm")
+                                    platformInterface.dvs_mode.show()
+                                }
+                            }
                         }
                     }
                 }
 
-
-                SGSwitch {
-                    id: sleepModeSwitch
-                    label : "Sleep Mode"
-                    checkedLabel: "On"
-                    uncheckedLabel: "Off"
-                    switchWidth: 85       // Default: 52 (change for long custom checkedLabels when labelsInside)
-                    switchHeight: 26               // Default: 26
-                    textColor: "black"              // Default: "black"
-                    handleColor: "white"            // Default: "white"
-                    grooveColor: "#ccc"             // Default: "#ccc"
-                    grooveFillColor: "#0cf"         // Default: "#0cf"
-
-                    fontSizeLabel: (parent.width + parent.height)/35
+                Rectangle{
+                    id: sleepMode
+                    width : parent.width - 30
+                    height: parent.height/4
                     anchors {
-                        top: dvsButtonContainer.bottom
-                        topMargin : 30
+                        top: buttonContainer.bottom
+                        topMargin : 5
                         horizontalCenter: parent.horizontalCenter
-                        horizontalCenterOffset: -(activeDischargeSwitch.width - width)/2
                     }
 
-                    checked: platformInterface.sleep_mode_state
-                    onToggled : {
-                        platformInterface.sleep_mode_state = checked
-                        if(checked){
-                            platformInterface.sleep_mode.update("on")
-                            platformInterface.sleep_mode.show()
+                    SGSwitch {
+                        id: sleepModeSwitch
+                        label : "Sleep Mode"
+                        checkedLabel: "On"
+                        uncheckedLabel: "Off"
+                        switchWidth: 85       // Default: 52 (change for long custom checkedLabels when labelsInside)
+                        switchHeight: 26               // Default: 26
+                        textColor: "black"              // Default: "black"
+                        handleColor: "white"            // Default: "white"
+                        grooveColor: "#ccc"             // Default: "#ccc"
+                        grooveFillColor: "#0cf"         // Default: "#0cf"
+                        fontSizeLabel: (parent.width + parent.height)/32
+                        anchors {
+                            horizontalCenter: parent.horizontalCenter
+                            horizontalCenterOffset: -(activeDischargeSwitch.width - width)/2
                         }
-                        else{
-                            platformInterface.sleep_mode.update("off")
-                            platformInterface.sleep_mode.show()
+
+                        checked: platformInterface.sleep_mode_state
+                        onToggled : {
+                            platformInterface.sleep_mode_state = checked
+                            if(checked){
+                                platformInterface.sleep_mode.update("on")
+                                platformInterface.sleep_mode.show()
+                            }
+                            else{
+                                platformInterface.sleep_mode.update("off")
+                                platformInterface.sleep_mode.show()
+                            }
                         }
                     }
                 }
-
-
-                SGSwitch {
-                    id: activeDischargeSwitch
-                    label : "Active Discharge Path"
-                    checkedLabel: "Enable"
-                    uncheckedLabel: "Disable"
-                    switchWidth: 85     // Default: 52 (change for long custom checkedLabels when labelsInside)
-                    switchHeight: 26               // Default: 26
-                    textColor: "black"              // Default: "black"
-                    handleColor: "white"            // Default: "white"
-                    grooveColor: "#ccc"             // Default: "#ccc"
-                    grooveFillColor: "#0cf"         // Default: "#0cf"
-
+                Rectangle{
+                    id: activeDischarge
+                    width : parent.width - 30
+                    height: parent.height/4
                     anchors {
-                        top: sleepModeSwitch.bottom
-                        topMargin : 30
+                        top: sleepMode.bottom
+                        topMargin : 10
                         horizontalCenter: parent.horizontalCenter
-
                     }
-                    fontSizeLabel: (parent.width + parent.height)/35
 
-                    checked: platformInterface.active_discharge_state
-                    onToggled : {
-                        if(checked){
-                            platformInterface.active_discharge.update("on")
-                            platformInterface.active_discharge.show()
+                    SGSwitch {
+                        id: activeDischargeSwitch
+                        label : "Active Discharge Path"
+                        checkedLabel: "Enable"
+                        uncheckedLabel: "Disable"
+                        switchWidth: 85     // Default: 52 (change for long custom checkedLabels when labelsInside)
+                        switchHeight: 26               // Default: 26
+                        textColor: "black"              // Default: "black"
+                        handleColor: "white"            // Default: "white"
+                        grooveColor: "#ccc"             // Default: "#ccc"
+                        grooveFillColor: "#0cf"         // Default: "#0cf"
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        fontSizeLabel: (parent.width + parent.height)/32
+                        checked: platformInterface.active_discharge_state
+                        onToggled : {
+                            if(checked){
+                                platformInterface.active_discharge.update("on")
+                                platformInterface.active_discharge.show()
+                            }
+                            else{
+                                platformInterface.active_discharge.update("off")
+                                platformInterface.active_discharge.show()
+                            }
+                            platformInterface.active_discharge_state = checked
                         }
-                        else{
-                            platformInterface.active_discharge.update("off")
-                            platformInterface.active_discharge.show()
-                        }
-                        platformInterface.active_discharge_state = checked
                     }
                 }
             }
@@ -361,7 +372,6 @@ Item {
                     right: parent.right
                     rightMargin: 7
                     top: parent.top
-
                 }
                 text: "\ue808"
                 color: helpMouse.containsMouse ? "lightgrey" : "grey"
@@ -383,7 +393,6 @@ Item {
                 }
             }
         }
-
     }
-
 }
+

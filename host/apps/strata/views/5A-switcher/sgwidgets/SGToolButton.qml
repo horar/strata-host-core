@@ -14,7 +14,6 @@ ToolButton {
         implicitHeight: 40
         color: root.hovered ? "#666" : Qt.darker("#666")
         opacity: enabled ? 1 : 0.3
-        //        visible: control.down || (control.enabled && (control.checked || control.highlighted))
     }
 
     contentItem: Item {
@@ -48,9 +47,7 @@ ToolButton {
             Text {
                 id: buttonText
                 text: root.text
-                font {
-                    family: franklinGothicBook.name
-                }
+                font.family: franklinGothicBook.name
                 opacity: enabled ? 1.0 : 0.3
                 color: "white"
                 anchors {
