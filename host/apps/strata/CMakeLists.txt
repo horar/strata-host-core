@@ -143,9 +143,10 @@ set_source_files_properties(main.cpp PROPERTIES
     COMPILE_DEFINITIONS "START_SERVICES;WINDOWS_INSTALLER_BUILD=$<BOOL:${WINDOWS_INSTALLER_BUILD}>"
 )
 
-# TODO: [LC] fix this, because it need to be set in multiple Qt UI projects
+# [LC] update QML mobule import paths for this project here
+list(APPEND QML_DIRS "${CMAKE_CURRENT_SOURCE_DIR}")
 list(APPEND QML_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/logging/qml")
-list(APPEND QML_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/")
+list(APPEND QML_DIRS ":/")
 set(QML_IMPORT_PATH "${QML_DIRS};${QML_IMPORT_PATH}"
     CACHE STRING "Qt Creator extra qml import paths" FORCE
 )
