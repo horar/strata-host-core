@@ -13,6 +13,7 @@ namespace spyglass
 {
 
 unsigned int g_waitTimeout = 5000;  //in ms
+unsigned int g_maxEventMapSize = MAXIMUM_WAIT_OBJECTS-1;
 
 WinCommWaitManager::WinCommWaitManager() : hStopEvent_(NULL)
 {
@@ -27,6 +28,10 @@ WinCommWaitManager::~WinCommWaitManager()
 
 bool WinCommWaitManager::registerEvent(EvEventBase* ev)
 {
+    if (eventMap_.size() >= g_maxEventMapSize) {
+        return false;
+    }
+
     ev2_handle_t handle = ev->getWaitHandle();
     if (handle == NULL) {
         return false;
@@ -162,7 +167,7 @@ int WinCommWaitManager::dispatch()
         return 1;
     }
 
-    return -555;
+    return -2;
 }
 
 void WinCommWaitManager::threadMain()
