@@ -37,25 +37,28 @@ void serial_port::setupSGFormat()
 
 bool serial_port::open(const std::string& port_name)
 {
-    sp_return error = sp_get_port_by_name(port_name.c_str(), &portHandle_);
+    struct sp_port* com_handle = nullptr;
+    sp_return error = sp_get_port_by_name(port_name.c_str(), &com_handle);
     if (error != SP_OK) {
         return false;
     }
 
-    error = sp_open(portHandle_, SP_MODE_READ_WRITE);
+    error = sp_open(com_handle, SP_MODE_READ_WRITE);
+    if (error != SP_OK) {
+        sp_free_port(com_handle);
+        return false;
+    }
 
+    portHandle_ = com_handle;
 #if defined(__unix__) || defined(__APPLE__)
-    if (error == SP_OK) {
-        if (flock(getFileDescriptor(), LOCK_EX | LOCK_NB) < 0) {
-            error = SP_ERR_FAIL;
-        }
+    if (flock(getFileDescriptor(), LOCK_EX | LOCK_NB) < 0) {
+
+        sp_close(portHandle_);
+        sp_free_port(portHandle_);
+        portHandle_ = nullptr;
+        return false;
     }
 #endif
-
-    if (error != SP_OK) {
-        return false;
-    }
-
     setupSGFormat();
 
     flush();
@@ -77,6 +80,7 @@ void serial_port::close()
         assert(false);
         return;
     }
+    sp_free_port(portHandle_);
     portHandle_ = nullptr;
 }
 
@@ -146,7 +150,7 @@ static const char* g_usb_keyword = "COM";
 
 bool getListOfSerialPorts(std::vector<std::string>& result_list)
 {
-    struct sp_port **ports;
+    struct sp_port **ports = NULL;
     sp_return ret = sp_list_ports(&ports);
     if (ret != SP_OK) {
         return false;
