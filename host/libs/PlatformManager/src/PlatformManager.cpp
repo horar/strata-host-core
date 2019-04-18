@@ -44,7 +44,7 @@ bool PlatformManager::Init()
     ports_update_->create(g_portsRefreshTime);
     ports_update_->setCallback(std::bind(&PlatformManager::onUpdatePortList, this, std::placeholders::_1, std::placeholders::_2));
 
-    eventsMgr_.registerEvent(ports_update_.get());
+    portsUpdateThread_.registerEvent(ports_update_.get());
     ports_update_->activate(0);
 #endif
 
@@ -54,10 +54,18 @@ bool PlatformManager::Init()
 void PlatformManager::StartLoop()
 {
     eventsMgr_.startInThread();
+#if defined(_WIN32)
+    portsUpdateThread_.startInThread();
+#endif
+
 }
 
 void PlatformManager::Stop()
 {
+#if defined(_WIN32)
+    portsUpdateThread_.stop();
+#endif
+
     eventsMgr_.stop();
 }
 

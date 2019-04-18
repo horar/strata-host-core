@@ -108,6 +108,8 @@ namespace spyglass {
 
 #elif defined(_WIN32)
         WinCommWaitManager eventsMgr_;
+
+        WinCommWaitManager portsUpdateThread_;
         std::unique_ptr<WinTimerEvent> ports_update_;
 #endif
 
