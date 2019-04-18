@@ -127,8 +127,11 @@ namespace spyglass {
 
         bool isWriteBufferEmpty() const;
 
+        /**
+         * handles callbacks from events
+         * @param flags - flags for indicating read/write event
+         */
         void onDescriptorEvent(EvEventBase*, int flags);
-
 
     private:
         PlatformManager *parent_;

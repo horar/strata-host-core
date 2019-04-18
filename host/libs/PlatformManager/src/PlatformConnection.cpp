@@ -301,10 +301,10 @@ bool PlatformConnection::updateEvent(bool read, bool write)
         return false;
     }
 
-    int evFlags = (read ? EvEvent::eEvStateRead : 0);
+    int evFlags = (read ? EvEventBase::eEvStateRead : 0);
     event_->activate(evFlags);
 
-    evFlags = (write ? EvEvent::eEvStateWrite : 0);
+    evFlags = (write ? EvEventBase::eEvStateWrite : 0);
     write_event_->activate(evFlags);
 
     return true;
