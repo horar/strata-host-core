@@ -108,10 +108,6 @@ int WinCommWaitManager::dispatch()
 
     }
 
-    if (dwCount == 0) {
-        return 0;
-    }
-
     waitList[dwCount] = hStopEvent_; dwCount++;
 
     DWORD dwRet = ::WaitForMultipleObjects(dwCount, waitList, FALSE, g_waitTimeout);
