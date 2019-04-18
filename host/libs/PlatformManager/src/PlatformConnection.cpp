@@ -10,7 +10,6 @@
 #elif defined(_WIN32)
 #include "WinCommEvent.h"
 #include "WinCommFakeEvent.h"
-#include <EvEvent.h>  //for r/w state flags
 #endif
 
 #include <assert.h>
@@ -104,7 +103,6 @@ bool PlatformConnection::getMessage(std::string& result)
     return true;
 }
 
-#if defined(__linux__) || defined(__APPLE__)
 void PlatformConnection::onDescriptorEvent(EvEventBase*, int flags)
 {
     std::lock_guard<std::recursive_mutex> lock(event_lock_);
@@ -142,50 +140,6 @@ void PlatformConnection::onDescriptorEvent(EvEventBase*, int flags)
         }
     }
 }
-#elif defined(_WIN32)
-void PlatformConnection::onDescriptorEvent(EvEventBase* , int flags)
-{
-    std::lock_guard<std::recursive_mutex> lock(event_lock_);
-
-    if (flags & EvEvent::eEvStateRead) {
-
-		if (handleRead(g_readTimeout) < 0) {
-			//TODO: [MF] add to log...
-
-			event_->deactivate();
-
-			if (parent_) {
-				parent_->removeConnection(this);
-			}
-		}
-		else if (isReadable() && parent_ != nullptr) {
-			parent_->notifyConnectionReadable(this);
-		}
-	}
-	if (flags & EvEvent::eEvStateWrite) {
-
-		if (handleWrite(g_writeTimeout) < 0) {
-			//TODO: handle error...
-
-		}
-
-		bool isEmpty;
-		{
-			std::lock_guard<std::mutex> lock(writeLock_);
-			isEmpty = isWriteBufferEmpty();
-		}
-
-		if (isEmpty) {
-			updateEvent(true, false);
-		}
-	}
-
-
-
-}
-
-#endif
-
 
 int PlatformConnection::handleRead(unsigned int timeout)
 {
@@ -341,23 +295,6 @@ EvEventBase* PlatformConnection::getWriteEvent()
     return write_event_.get();
 }
 
-void PlatformConnection::detachEventMgr()
-{
-    if (!port_) {
-        return;
-    }
-
-    if (event_) {
-        std::lock_guard<std::recursive_mutex> lock(event_lock_);
-        event_->deactivate();
-    }
-
-    if (write_event_) {
-        std::lock_guard<std::recursive_mutex> lock(event_lock_);
-        write_event_->deactivate();
-    }
-}
-
 bool PlatformConnection::updateEvent(bool read, bool write)
 {
     if (!event_) {
@@ -373,6 +310,25 @@ bool PlatformConnection::updateEvent(bool read, bool write)
     return true;
 }
 #endif
+
+void PlatformConnection::detachEventMgr()
+{
+    if (!port_) {
+        return;
+    }
+
+    if (event_) {
+        std::lock_guard<std::recursive_mutex> lock(event_lock_);
+        event_->deactivate();
+    }
+
+#if defined(_WIN32)
+    if (write_event_) {
+        std::lock_guard<std::recursive_mutex> lock(event_lock_);
+        write_event_->deactivate();
+    }
+#endif
+}
 
 bool PlatformConnection::stopListeningOnEvents(bool stop)
 {

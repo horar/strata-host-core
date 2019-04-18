@@ -34,7 +34,7 @@ bool PlatformManager::Init()
     ports_update_.reset( eventsMgr_.CreateEventTimer(g_portsRefreshTime) );
     ports_update_->setCallback(std::bind(&PlatformManager::onUpdatePortList, this, std::placeholders::_1, std::placeholders::_2) );
 
-    if (!ports_update_->activate()) {   //TODO: &eventsMgr_
+    if (!ports_update_->activate()) {
         ports_update_.release();
         return false;
     }
@@ -168,8 +168,10 @@ void PlatformManager::onRemovedPort(serialPortHash hash)
 
     std::cout << "Disconnect" << std::endl;
 
-    //TODO: linux and Mac
-#if defined(_WIN32)
+#if defined(__linux__) || defined(__APPLE__)
+    conn->detachEventMgr();
+
+#elif defined(_WIN32)
     EvEventBase* ev = conn->getEvent();
     eventsMgr_.unregisterEvent(ev);
 
