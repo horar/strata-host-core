@@ -153,6 +153,9 @@ Rectangle {
         }
     }
 
+    //this image should animate in response to
+    //platformInterface.audio_active_notification.active === true
+    //it should also scale vertically in response to changes in the volume slider
     Image{
         id:placeholderImage
         source: "../images/soundwave.png"
@@ -160,6 +163,11 @@ Rectangle {
         anchors.left:root.left
         anchors.right:root.right
         fillMode:Image.PreserveAspectFit
+
+        property var audioPlaying : platformInterface.audio_active_notification.audio_active
+        onAudioPlayingChanged: {
+            console.log ("audio playing changed to",audioPlaying)
+        }
     }
 
     AudioGraph{
@@ -187,6 +195,15 @@ Rectangle {
         anchors.right:root.right
         anchors.rightMargin: 10
         opacity:0
+
+        value:{
+            return valueAt(platformInterface.audio_volume_notification.volume)
+        }
+
+        onMoved:{
+            platformInterface.set_audio_volume.update(volumeSlider.position)
+        }
+
     }
 
     Rectangle {

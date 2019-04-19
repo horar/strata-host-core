@@ -128,7 +128,9 @@ Rectangle {
 
         property var deviceCharacteristics: platformInterface.device_characteristics_notification
         onDeviceCharacteristicsChanged:{
-            if (platformInterface.device_characteristics_notification === portNumber){
+            console.log("In port",portNumber,"new charcteristics for port",deviceCharacteristics.port)
+            if (platformInterface.device_characteristics_notification.port === portNumber){
+                console.log("updating indicators for port",portNumber)
                 sourceIndicator.checked = platformInterface.device_characteristics_notification.source;
                 sinkIndicator.checked = platformInterface.device_characteristics_notification.sink
                 fastRoleSwapIndicator.checked = platformInterface.device_characteristics_notification.fast_role_swap

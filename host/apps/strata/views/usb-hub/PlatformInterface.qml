@@ -224,6 +224,26 @@ Item {
         "extended_sink":false
     }
 
+    onDevice_characteristics_notificationChanged: {
+        console.log("device characteristics changed ",device_characteristics_notification.port,
+                                                       device_characteristics_notification.source,
+                                                    device_characteristics_notification.fast_role_swap,
+                                                    device_characteristics_notification.superspeed,
+                                                    device_characteristics_notification.extended_sink);
+    }
+
+    property var displayport_video_active_notification:{
+        "video_active": false       //or true
+    }
+
+    property var audio_active_notification:{
+        "audio_active": false       //or true
+    }
+
+    property var audio_volume_notification:{
+        "volume":.5       //value between 0 and 1
+    }
+
     // --------------------------------------------------------------------------------------------
     //          Commands
     //--------------------------------------------------------------------------------------------
@@ -492,6 +512,22 @@ Item {
                       show: function () { CorePlatformInterface.show(this) }
     })
 
+    property var set_audio_volume:({
+                    "cmd":"set_audio_volume",
+                    "payload":{
+                        "volume":0      // value between 0 and 1
+                      },
+                      update: function (inVolume){
+                          this.set(inVolume);
+                          CorePlatformInterface.send(this);
+                          },
+                      set: function(volume){
+                           this.payload.volume = volume;
+                           },
+                      send: function () { CorePlatformInterface.send(this) },
+                      show: function () { CorePlatformInterface.show(this) }
+    })
+
     // -------------------  end commands
 
     // NOTE:
@@ -547,36 +583,71 @@ Item {
             }
         }
 
-//        Button {
-//            id: button2
-//            anchors { top: button1.bottom }
-//            text: "send vin"
-//            onClicked: {
-//                CorePlatformInterface.data_source_handler('{
-//                    "value":"pi_stats",
-//                    "payload":{
-//                                "speed_target":3216,
-//                                "current_speed": '+ (Math.random()*2000+3000).toFixed(0) +',
-//                                "error":-1104,
-//                                "sum":-0.01,
-//                                "duty_now":0.67,
-//                                "mode":"manual"
-//                               }
-//                             }')
-//            }
-//        }
-//        Button {
-//            anchors { top: button2.bottom }
-//            text: "send"
-//            onClicked: {
-//                CorePlatformInterface.data_source_handler('{
-//                            "value":"input_voltage_notification",
-//                            "payload":{
-//                                     "vin":'+ (Math.random()*5+10).toFixed(2) +'
-//                            }
-//                    }
-//            ')
-//            }
-//        }
+
+//        "port":1,//c,
+//        "source":true,//'+ (Math.random() >= .5) ? true :false +',
+//        "sink":true,//'+ (Math.random() >= .5) ? true :false +',
+//        "fast_role_swap":true,//'+ (Math.random() >= .5) ? true :false +',
+//        "superspeed":true,//'+ (Math.random() >= .5) ? true :false +',
+//        "extended_sink":true,//'+ (Math.random() >= .5) ? true :false +'
+
+
+
+        Button {
+            id: button2
+            anchors { top: button1.bottom }
+            text: "device characteristics"
+
+            function randomBool(){
+                if (Math.random() >= .5)
+                    return true;
+                  else
+                    return false;
+            }
+
+            onClicked: {
+                CorePlatformInterface.data_source_handler('{
+                    "value":"device_characteristics_notification",
+                    "payload":{
+                        "port":'+ (Math.random()*4 + 1).toFixed(0) +',
+                        "source":'+ randomBool() +',
+                        "sink":'+ randomBool() +',
+                        "fast_role_swap":'+ randomBool() +',
+                        "superspeed":'+ randomBool() +',
+                        "extended_sink":'+ randomBool() +'
+                        }
+                     }')
+            }
+        }
+
+        Button {
+            id:button3
+            anchors { top: button2.bottom }
+            text: "start audio"
+            onClicked: {
+                CorePlatformInterface.data_source_handler('{
+                            "value":"audio_active_notification",
+                            "payload":{
+                                     "audio_active":true
+                            }
+                    }
+            ')
+            }
+        }
+
+        Button {
+            id:button4
+            anchors { top: button3.bottom }
+            text: "end audio"
+            onClicked: {
+                CorePlatformInterface.data_source_handler('{
+                            "value":"audio_active_notification",
+                            "payload":{
+                                     "audio_active":false
+                            }
+                    }
+            ')
+            }
+        }
     }
 }

@@ -183,6 +183,16 @@ Rectangle {
         Keys.onSpacePressed: video.playbackState == MediaPlayer.PlayingState ? video.pause() : video.play()
         Keys.onLeftPressed: video.seek(video.position - 5000)
         Keys.onRightPressed: video.seek(video.position + 5000)
+
+        property var videoIsPlaying: platformInterface.displayport_video_active_notification.video_active
+        onVideoIsPlayingChanged: {
+            if (videoIsPlaying){
+                video.play()
+            }
+            else{
+                video.pause()
+            }
+        }
     }
 
 
