@@ -7,6 +7,7 @@ ToolButton {
     text: qsTr("ToolButton Text")
     property alias buttonColor: backRect.color
     property string iconCharacter: ""
+    property alias iconSource: buttonIcon.source
     hoverEnabled: true
 
     background: Rectangle {
@@ -29,21 +30,17 @@ ToolButton {
             height: buttonText.height
             width: buttonIcon.text === "" ? buttonText.width : buttonText.width + buttonIcon.width + buttonIcon.anchors.rightMargin
 
-            Text {
+            SGIcon {
                 id: buttonIcon
-                text: root.iconCharacter
-                font {
-                    family: Fonts.sgicons
-                    pixelSize: 20
-                }
-                color: "white"
-                opacity: enabled ? 1.0 : 0.3
                 anchors {
                     right: buttonText.left
                     verticalCenter: buttonText.verticalCenter
                     verticalCenterOffset: -2
                     rightMargin: 10
                 }
+                sourceSize.height: 20
+                iconColor: "white"
+                opacity: enabled ? 1.0 : 0.3
             }
 
             Text {

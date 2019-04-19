@@ -5,10 +5,6 @@ import QtQuick 2.0
 Item {
     id: fonts
 
-    readonly property FontLoader sgiconsFont: FontLoader {
-        source: "./sgicons.ttf"
-    }
-
     readonly property FontLoader inconsolataFont: FontLoader {
         source: "./Inconsolata.otf"
     }
@@ -25,7 +21,6 @@ Item {
         source: "./FranklinGothicMedium.otf"
     }
 
-    readonly property string sgicons: fonts.sgiconsFont.name
     readonly property string franklinGothicBold: fonts.franklinGothicBoldFont.name
     readonly property string franklinGothicBook: fonts.franklinGothicBookFont.name
     readonly property string franklinGothicMedium: fonts.franklinGothicMediumFont.name

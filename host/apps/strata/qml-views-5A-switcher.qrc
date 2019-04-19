@@ -37,7 +37,6 @@
         <file>views/5A-switcher/sgwidgets/SGStatusListBox.qml</file>
         <file>views/5A-switcher/sgwidgets/SGSubmitInfoBox.qml</file>
         <file>views/5A-switcher/sgwidgets/SGSwitch.qml</file>
-        <file>views/5A-switcher/sgwidgets/SGToolButton.qml</file>
         <file>views/5A-switcher/sgwidgets/SGToolTipPopup.qml</file>
         <file>views/5A-switcher/sgwidgets/fonts/digitalseven.ttf</file>
         <file>views/5A-switcher/sgwidgets/fonts/sgicons.ttf</file>
@@ -47,5 +46,9 @@
         <file>views/5A-switcher/sgwidgets/images/sliderHandle.svg</file>
         <file>views/5A-switcher/sgwidgets/images/sliderHandleActive.svg</file>
         <file>views/5A-switcher/sgwidgets/images/sliderValue.svg</file>
+        <file>views/5A-switcher/content-views/content-widgets/angle-right-solid.svg</file>
+        <file>views/5A-switcher/content-views/content-widgets/SGIcon.qml</file>
+        <file>views/5A-switcher/question-circle-solid.svg</file>
+        <file>views/5A-switcher/sgwidgets/SGIcon.qml</file>
     </qresource>
 </RCC>

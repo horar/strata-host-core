@@ -16,7 +16,7 @@ Window {
 
             SGDrawerMenuItem {
                 label: "Users"
-                icon:"\u0045"
+                icon:"icons/users-solid.svg"
                 contentDrawerWidth: 250
                 drawerContent: Text {
                     text: "<b>Users</b>"
@@ -31,7 +31,7 @@ Window {
 
             SGDrawerMenuItem {
                 label: "Chat"
-                icon:"\u003B"
+                icon:"icons/comments-solid.svg"
                 drawerColor: "lightsalmon"
                 drawerContent: Text {
                     text: "<b>Chat</b>"
@@ -46,26 +46,11 @@ Window {
 
             SGDrawerMenuItem {
                 label: "Help"
-                icon:"\ue808"
+                icon:"icons/question-circle-solid.svg"
                 drawerColor: "burlywood"
                 contentDrawerWidth: 400
                 drawerContent: Text {
                     text: "<b>Help</b>"
-                    font {
-                        pixelSize: 50
-                    }
-                    color: "#fff"
-                    horizontalAlignment: Text.AlignHCenter
-                    verticalAlignment: Text.AlignVCenter
-                }
-            }
-
-            SGDrawerMenuItem {
-                drawerColor: "lightgreen"
-                divider: false
-                contentDrawerWidth: 350
-                drawerContent: Text {
-                    text: "<b>Settings</b>"
                     font {
                         pixelSize: 50
                     }

@@ -32,7 +32,6 @@
         <file>views/logic-gate/sgwidgets/SGSegmentedButtonStrip.qml</file>
         <file>views/logic-gate/sgwidgets/SGStatusLight.qml</file>
         <file>views/logic-gate/sgwidgets/SGSwitch.qml</file>
-        <file>views/logic-gate/sgwidgets/SGToolButton.qml</file>
         <file>views/logic-gate/sgwidgets/fonts/digitalseven.ttf</file>
         <file>views/logic-gate/sgwidgets/fonts/sgicons.ttf</file>
         <file>views/logic-gate/sgwidgets/images/And B.png</file>
@@ -46,5 +45,8 @@
         <file>views/logic-gate/sgwidgets/images/sliderHandle.svg</file>
         <file>views/logic-gate/sgwidgets/images/sliderHandleActive.svg</file>
         <file>views/logic-gate/sgwidgets/images/sliderValue.svg</file>
+        <file>views/logic-gate/content-views/content-widgets/angle-right-solid.svg</file>
+        <file>views/logic-gate/content-views/content-widgets/SGIcon.qml</file>
+        <file>views/logic-gate/images/question-circle-solid.svg</file>
     </qresource>
 </RCC>

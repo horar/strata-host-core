@@ -2,7 +2,10 @@
     <qresource prefix="/">
         <file>main.qml</file>
         <file>SGDrawerMenu.qml</file>
-        <file>fonts/sgicons.ttf</file>
         <file>SGDrawerMenuItem.qml</file>
+        <file>icons/comments-solid.svg</file>
+        <file>icons/question-circle-solid.svg</file>
+        <file>icons/users-solid.svg</file>
+        <file>icons/angle-left-solid.svg</file>
     </qresource>
 </RCC>

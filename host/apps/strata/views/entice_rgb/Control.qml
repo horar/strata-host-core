@@ -6,7 +6,7 @@ import QtQuick.Controls.Styles 1.4
 import QtQuick.Extras 1.4
 //import tech.spyglass. 1.0
 import "qrc:/js/navigation_control.js" as NavigationControl
-import "qrc:/views/motor-vortex/sgwidgets"
+import "qrc:/views/entice_rgb/sgwidgets"
 
 Rectangle {
     id: controlNavigation

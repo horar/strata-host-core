@@ -57,5 +57,7 @@
         <file>views/led/views/images/icon-temp.svg</file>
         <file>views/led/views/images/icon-usb-disconnected.svg</file>
         <file>views/led/views/images/icon-voltage.svg</file>
+        <file>views/led/content-views/content-widgets/angle-right-solid.svg</file>
+        <file>views/led/content-views/content-widgets/SGIcon.qml</file>
     </qresource>
 </RCC>
