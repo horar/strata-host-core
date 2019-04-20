@@ -76,6 +76,9 @@ target_link_libraries(${PROJECT_NAME}
 
     QtLogger
 )
+if(WIN32)
+    target_link_libraries(${PROJECT_NAME} Shlwapi)
+endif()
 
 target_include_directories(${PROJECT_NAME}
     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/source
