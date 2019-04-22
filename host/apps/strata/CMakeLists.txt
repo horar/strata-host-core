@@ -110,9 +110,9 @@ if(APPLE)
 endif()
 
 if(WIN32)
-	set_target_properties(${PROJECT_NAME} PROPERTIES
-		WIN32_EXECUTABLE ON
-	)
+    set_target_properties(${PROJECT_NAME} PROPERTIES
+        WIN32_EXECUTABLE ON
+    )
 endif()
 
 target_compile_options(${PROJECT_NAME}
