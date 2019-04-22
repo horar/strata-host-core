@@ -1,5 +1,6 @@
 import QtQuick 2.9
 import QtQuick.Controls 2.3
+import QtGraphicalEffects 1.0
 
 Item {
     id: root
@@ -71,16 +72,32 @@ Item {
 
         property string placeholderText
 
-        indicator: Text {
-            text: comboBox.popup.visible ? "\ue813" : "\ue810"
-            font.family: sgicons.name
-            color: comboBox.pressed ? colorMod(root.indicatorColor, .25) : root.indicatorColor
-            anchors {
-                verticalCenter: comboBox.verticalCenter
-                right: comboBox.right
-                rightMargin: comboBox.height/2 - width/2
+        indicator: Item {
+                width: iconImage.width
+                height: iconImage.height
+                rotation: comboBox.popup.visible ? 180 : 0
+                anchors {
+                    verticalCenter: comboBox.verticalCenter
+                    right: comboBox.right
+                    rightMargin: comboBox.height/2 - width/2
+                }
+
+                Image {
+                    id: iconImage
+                    visible: false
+                    fillMode: Image.PreserveAspectFit
+                    source: "icons/angle-down-solid.svg"
+                    sourceSize.height: 25
+                }
+
+                ColorOverlay {
+                    id: overlay
+                    anchors.fill: iconImage
+                    source: iconImage
+                    visible: true
+                    color: comboBox.pressed ? colorMod(root.indicatorColor, .25) : root.indicatorColor
+                }
             }
-        }
 
         contentItem: TextField {
             id: textField
@@ -184,11 +201,6 @@ Item {
                 }
             }
         }
-    }
-
-    FontLoader {
-        id: sgicons
-        source: "fonts/sgicons.ttf"
     }
 
     // Add increment to color (within range of 0-1) add to lighten, subtract to darken

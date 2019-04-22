@@ -71,15 +71,15 @@ Item {
 
         property string placeholderText
 
-        indicator: Text {
-            text: comboBox.popup.visible ? "\ue813" : "\ue810"
-            font.family: Fonts.sgicons
-            color: comboBox.pressed ? colorMod(root.indicatorColor, .25) : root.indicatorColor
+        indicator: SGIcon {
+            source: comboBox.popup.visible ? "qrc:/images/icons/angle-up.svg" : "qrc:/images/icons/angle-down.svg"
+            iconColor: comboBox.pressed ? colorMod(root.indicatorColor, .25) : root.indicatorColor
             anchors {
                 verticalCenter: comboBox.verticalCenter
                 right: comboBox.right
                 rightMargin: comboBox.height/2 - width/2
             }
+            sourceSize.height: 20
         }
 
         contentItem: TextField {

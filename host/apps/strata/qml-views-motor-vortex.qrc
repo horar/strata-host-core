@@ -61,12 +61,14 @@
         <file>views/motor-vortex/sgwidgets/SGSlider.qml</file>
         <file>views/motor-vortex/sgwidgets/SGStatusListBox.qml</file>
         <file>views/motor-vortex/sgwidgets/SGSubmitInfoBox.qml</file>
-        <file>views/motor-vortex/sgwidgets/SGToolButton.qml</file>
         <file>views/motor-vortex/sgwidgets/SGToolTipPopup.qml</file>
         <file>views/motor-vortex/sgwidgets/fonts/digitalseven.ttf</file>
         <file>views/motor-vortex/sgwidgets/fonts/sgicons.ttf</file>
         <file>views/motor-vortex/sgwidgets/images/sliderHandle.svg</file>
         <file>views/motor-vortex/sgwidgets/images/sliderHandleActive.svg</file>
         <file>views/motor-vortex/sgwidgets/images/sliderValue.svg</file>
+        <file>views/motor-vortex/content-views/content-widgets/angle-right-solid.svg</file>
+        <file>views/motor-vortex/content-views/content-widgets/SGIcon.qml</file>
+        <file>views/motor-vortex/images/icons/question-circle-solid.svg</file>
     </qresource>
 </RCC>

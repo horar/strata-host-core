@@ -30,7 +30,6 @@
         <file>views/XDFN-LDO/sgwidgets/SGStatusListBox.qml</file>
         <file>views/XDFN-LDO/sgwidgets/SGSubmitInfoBox.qml</file>
         <file>views/XDFN-LDO/sgwidgets/SGSwitch.qml</file>
-        <file>views/XDFN-LDO/sgwidgets/SGToolButton.qml</file>
         <file>views/XDFN-LDO/sgwidgets/SGToolTipPopup.qml</file>
         <file>views/XDFN-LDO/sgwidgets/fonts/digitalseven.ttf</file>
         <file>views/XDFN-LDO/sgwidgets/fonts/sgicons.ttf</file>
@@ -44,5 +43,8 @@
         <file>views/XDFN-LDO/sgwidgets/images/sliderHandle.svg</file>
         <file>views/XDFN-LDO/sgwidgets/images/sliderHandleActive.svg</file>
         <file>views/XDFN-LDO/sgwidgets/images/sliderValue.svg</file>
+        <file>views/XDFN-LDO/content-views/content-widgets/angle-right-solid.svg</file>
+        <file>views/XDFN-LDO/content-views/content-widgets/SGIcon.qml</file>
+        <file>views/XDFN-LDO/question-circle-solid.svg</file>
     </qresource>
 </RCC>

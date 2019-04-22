@@ -399,7 +399,7 @@ Rectangle {
         Rectangle {
             id: coverup
             color: "white"
-            opacity: 0.75
+            opacity: 0.8
             anchors {
                 fill: parent
             }
@@ -437,36 +437,24 @@ Rectangle {
 //            onTextChanged: console.log(Logger.devStudioCategory, "Connection Status:", text, Date.now())
         }
 
-        Text {
+        AnimatedImage {
             id: indicator
-            font {
-                family: Fonts.sgicons
-                pixelSize: 40
-            }
-            text: "\ue834"
-            color: "#888"
             anchors {
                 horizontalCenter: connectingStatus.horizontalCenter
                 top: searchingText.bottom
-                topMargin: 30
+                topMargin: 20
             }
+            source: "images/loading.gif"
 
             onVisibleChanged: {
                 if(visible) {
-                    indicatorAnimation.start()
+                    indicator.playing = true
                 } else {
-                    indicatorAnimation.stop();
+                    indicator.playing = false
                 }
             }
 
-            RotationAnimation on rotation {
-                id: indicatorAnimation
-                loops: Animation.Infinite
-                from: 0
-                to: 360
-                duration: 750
-                running: false
-            }
+
         }
     }
 
@@ -525,14 +513,6 @@ Rectangle {
         text:  "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890:./\\{}()[]-=+_!@#$%^&*`~<>?\"\'"
         font {
             family: Fonts.franklinGothicBook
-        }
-        visible: false
-    }
-
-    Text {
-        text:  "\u0023 \u0027 \u0037 \u0038 \u003a \u0043 \u25b2 \ue800 \ue801 \ue805 \ue808 \ue80b \ue80e \ue810 \ue811 \ue813 \ue824 \ue834 \uf15b"
-        font {
-            family: Fonts.sgicons
         }
         visible: false
     }

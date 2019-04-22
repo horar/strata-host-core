@@ -64,14 +64,12 @@ Popup {
                     color: "black"
                 }
 
-                Text {
+                SGIcon {
                     id: confirmTitleText
-                    text: "\ue805"
-                    color: closeconfirmMouse.containsMouse ? "#eee" : "white"
-                    font {
-                        family: Fonts.sgicons
-                        pixelSize: 20
-                    }
+                    source: "qrc:/images/icons/times.svg"
+                    iconColor: closeconfirmMouse.containsMouse ? "#eee" : "white"
+                    sourceSize.height: 20
+
                     anchors {
                         right: confirmTitleBox.right
                         verticalCenter: confirmTitleBox.verticalCenter

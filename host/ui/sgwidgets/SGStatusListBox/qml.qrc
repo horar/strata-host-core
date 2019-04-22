@@ -2,9 +2,10 @@
     <qresource prefix="/">
         <file>main.qml</file>
         <file>SGStatusListBox.qml</file>
-        <file>fonts/sgicons.ttf</file>
         <file>fonts/Inconsolata.otf</file>
         <file>../SGSubmitInfoBox/SGSubmitInfoBox.qml</file>
         <file>../SGSubmitInfoBox/fonts/Inconsolata.otf</file>
+        <file>icons/ban.svg</file>
+        <file>icons/search.svg</file>
     </qresource>
 </RCC>

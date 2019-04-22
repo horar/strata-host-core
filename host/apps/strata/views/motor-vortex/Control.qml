@@ -9,6 +9,7 @@ import Fonts 1.0
 import "qrc:/js/navigation_control.js" as NavigationControl
 import "qrc:/views/motor-vortex/sgwidgets"
 import "qrc:/js/help_layout_manager.js" as Help
+import "content-views/content-widgets"
 
 Rectangle {
     id: controlNavigation
@@ -140,19 +141,16 @@ Rectangle {
         }
     }
 
-    Text {
+    SGIcon {
         id: helpIcon
         anchors {
             right: scrollView.right
             top: scrollView.top
             margins: 20
         }
-        text: "\ue808"
-        color: helpMouse.containsMouse ? "lightgrey" : "grey"
-        font {
-            family: Fonts.sgicons
-            pixelSize: 40
-        }
+        source: "images/icons/question-circle-solid.svg"
+        iconColor: helpMouse.containsMouse ? "lightgrey" : "grey"
+        sourceSize.height: 40
         visible: true
 
         MouseArea {

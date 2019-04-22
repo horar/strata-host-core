@@ -8,8 +8,7 @@ import QtQuick.Controls 1.4
 import "qrc:/js/navigation_control.js" as NavigationControl
 import "qrc:/views/5A-switcher/sgwidgets"
 import "qrc:/js/help_layout_manager.js" as Help
-import Fonts 1.0
-
+import "content-views/content-widgets"
 
 Item {
     id: root
@@ -428,20 +427,17 @@ Item {
                     }
                 }
             } // end of row
-            Text {
+
+            SGIcon {
                 id: helpIcon
                 anchors {
                     right: parent.right
                     rightMargin: 10
                     top: parent.top
-
                 }
-                text: "\ue808"
-                color: helpMouse.containsMouse ? "lightgrey" : "grey"
-                font {
-                    family: Fonts.sgicons
-                    pixelSize: 40
-                }
+                source: "question-circle-solid.svg"
+                iconColor: helpMouse.containsMouse ? "lightgrey" : "grey"
+                sourceSize.height: 40
                 visible: true
 
                 MouseArea {
@@ -458,4 +454,3 @@ Item {
         }
     }
 }
-
