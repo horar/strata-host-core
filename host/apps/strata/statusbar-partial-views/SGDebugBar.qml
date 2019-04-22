@@ -91,6 +91,14 @@ Item {
                 }
             }
 
+            Button {
+                text: "LED"
+                onClicked: {
+                    var data = { class_id: "209"}
+                    NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT, data)
+                }
+            }
+
             // UI events
             Button {
                 text: "Toggle Content/Control"

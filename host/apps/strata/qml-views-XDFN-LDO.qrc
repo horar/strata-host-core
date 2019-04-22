@@ -18,7 +18,6 @@
         <file>views/XDFN-LDO/sgwidgets/SGCircularGauge.qml</file>
         <file>views/XDFN-LDO/sgwidgets/SGComboBox.qml</file>
         <file>views/XDFN-LDO/sgwidgets/SGGraph.qml</file>
-        <file>views/XDFN-LDO/sgwidgets/SGHueSlider.qml</file>
         <file>views/XDFN-LDO/sgwidgets/SGLabelledInfoBox.qml</file>
         <file>views/XDFN-LDO/sgwidgets/SGRGBSlider.qml</file>
         <file>views/XDFN-LDO/sgwidgets/SGRadioButton.qml</file>
