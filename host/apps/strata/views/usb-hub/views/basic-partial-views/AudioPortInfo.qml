@@ -23,11 +23,11 @@ Rectangle {
     onPortConnectedChanged:{
         if (portConnected){
             hideStats.start()
-            audioDataTimer.start()
+            //audioDataTimer.start()
         }
          else{
             showStats.start()
-            audioDataTimer.stop()
+            //audioDataTimer.stop()
         }
     }
 
@@ -103,17 +103,17 @@ Rectangle {
         }
     }
 
-    Timer{
-        //generate sample data to drive the audio graph when a
-        //device is connected. This is for testing, and will be removed when real audio data is available
-        id:audioDataTimer
-        interval: 500
-        repeat: true
-        onTriggered: {
-            var sampleValue = Math.random();
-        }
+//    Timer{
+//        //generate sample data to drive the audio graph when a
+//        //device is connected. This is for testing, and will be removed when real audio data is available
+//        id:audioDataTimer
+//        interval: 500
+//        repeat: true
+//        onTriggered: {
+//            var sampleValue = Math.random();
+//        }
 
-    }
+//    }
 
     Rectangle{
         id:titleBackground
@@ -163,6 +163,7 @@ Rectangle {
         anchors.left:root.left
         anchors.right:root.right
         fillMode:Image.PreserveAspectFit
+        opacity:0
 
         property var audioPlaying : platformInterface.audio_active_notification.audio_active
         onAudioPlayingChanged: {
@@ -170,19 +171,36 @@ Rectangle {
         }
     }
 
-    AudioGraph{
+    AudioWaveform{
         id:audioWaveform
+        anchors.verticalCenter: root.verticalCenter
+        anchors.left:root.left
+        anchors.right:root.right
+        height:100
+
+//        property var audioPlaying : platformInterface.audio_active_notification.audio_active
+//        onAudioPlayingChanged: {
+//            if(audioPlaying)
+//                audioWaveform.start();
+//            else
+//                audioWaveform.stop();
+//            console.log ("audio playing changed to",audioPlaying)
+//        }
+    }
+
+    AudioGraph{
+        id:waveformGraph
         visible: false
     }
 
     Text{
         id:volumeText
         text:"VOLUME:"
-        anchors.top: placeholderImage.bottom
+        anchors.top: audioWaveform.bottom
         anchors.left: root.left
         anchors.right:root.right
         anchors.leftMargin: 10
-        opacity:0
+        opacity:1
     }
 
     SGSlider{
@@ -194,10 +212,11 @@ Rectangle {
         anchors.leftMargin: 10
         anchors.right:root.right
         anchors.rightMargin: 10
-        opacity:0
+        opacity:1
 
         value:{
-            return valueAt(platformInterface.audio_volume_notification.volume)
+            //the volume will be between 0 and 1
+            return from + ((to-from) * (platformInterface.audio_volume_notification.volume))
         }
 
         onMoved:{

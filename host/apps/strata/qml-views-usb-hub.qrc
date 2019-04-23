@@ -62,5 +62,7 @@
         <file>views/usb-hub/views/images/usbACord.gif</file>
         <file>views/usb-hub/views/images/usbACordReverse.gif</file>
         <file>views/usb-hub/views/images/videoIcon.png</file>
+        <file>views/usb-hub/views/basic-partial-views/AudioWaveform.qml</file>
+        <file>views/usb-hub/views/basic-partial-views/AudioSample.qml</file>
     </qresource>
 </RCC>
