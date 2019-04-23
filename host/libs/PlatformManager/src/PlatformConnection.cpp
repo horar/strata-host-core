@@ -335,9 +335,15 @@ void PlatformConnection::detachEventMgr()
 
 bool PlatformConnection::stopListeningOnEvents(bool stop)
 {
-    if (!event_ /* TODO:  || event_mgr_ == nullptr*/ ) {
+    if (!event_) {
         return false;
     }
+
+#if defined(__linux__) || defined(__APPLE__)
+    if (event_mgr_ == nullptr) {
+        return false;
+    }
+#endif
 
     std::lock_guard<std::recursive_mutex> lock(event_lock_);
     if (stop) {
