@@ -6,9 +6,9 @@
 namespace spyglass {
 
 #ifdef _WIN32
-    typedef void*  ev2_handle_t;
+    typedef void*  ev_handle_t;
 #else
-    typedef int    ev2_handle_t;
+    typedef int    ev_handle_t;
 #endif
 
 class EvEventBase
@@ -48,7 +48,7 @@ public:
     /**
      * returns handle for wait dispatcher
      */
-    virtual ev2_handle_t getWaitHandle() = 0;
+    virtual ev_handle_t getWaitHandle() = 0;
 
     /**
      * Method that calls the callback.

@@ -62,9 +62,9 @@ namespace spyglass {
         return 0;
     }
 
-    ev2_handle_t WinCommEvent::getWaitHandle()
+    ev_handle_t WinCommEvent::getWaitHandle()
     {
-        return reinterpret_cast<ev2_handle_t>(hWaitEvent_);
+        return reinterpret_cast<ev_handle_t>(hWaitEvent_);
     }
 
     int WinCommEvent::getEvFlagsState() const

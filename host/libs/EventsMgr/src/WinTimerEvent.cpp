@@ -68,7 +68,7 @@ bool WinTimerEvent::setTimer()
     return ::SetWaitableTimer(hTimer_, &time, 0, NULL, NULL, FALSE) == TRUE;
 }
 
-ev2_handle_t WinTimerEvent::getWaitHandle()
+ev_handle_t WinTimerEvent::getWaitHandle()
 {
     return reinterpret_cast<ev2_handle_t>(hTimer_);
 }

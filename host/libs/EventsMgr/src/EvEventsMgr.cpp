@@ -1,5 +1,6 @@
 
 #include "EvEventsMgr.h"
+#include "EvEvent.h"
 
 // libevent library
 #include <event.h>
@@ -39,25 +40,36 @@ EvEventsMgr::EvEventsMgr() : event_base_(nullptr)
     }
 }
 
+bool EvEventsMgr::registerEvent(EvEventBase* event)
+{
+    if (event->getType() != EvEventBase::EvType::eEvTypeHandle &&
+        event->getType() != EvEventBase::EvType::eEvTypeTimer) {
+
+        return false;
+    }
+
+    EvEvent* ev = static_cast<EvEvent*>(event);
+    ev->setDispatcher(this);
+    return true;
+}
+
+void EvEventsMgr::unregisterEvent(spyglass::EvEventBase *event)
+{
+    if (event->getType() != EvEventBase::EvType::eEvTypeHandle &&
+        event->getType() != EvEventBase::EvType::eEvTypeTimer) {
+
+        return;
+    }
+
+    EvEvent* ev = static_cast<EvEvent*>(event);
+    ev->setDispatcher(nullptr);
+}
+
 EvEventsMgr::~EvEventsMgr()
 {
     if (event_base_ != nullptr) {
         event_base_free(event_base_);
     }
-}
-
-EvEvent* EvEventsMgr::CreateEventHandle(ev_handle_t fd)
-{
-    EvEvent* result = new EvEvent(EvEvent::EvType::eEvTypeHandle, fd, 0);
-    result->setDispatcher(this);
-    return result;
-}
-
-EvEvent* EvEventsMgr::CreateEventTimer(unsigned int timeInMs)
-{
-    EvEvent* result = new EvEvent(EvEvent::EvType::eEvTypeTimer, -1, timeInMs);
-    result->setDispatcher(this);
-    return result;
 }
 
 void EvEventsMgr::dispatch(int flags)

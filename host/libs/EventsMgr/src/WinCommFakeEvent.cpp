@@ -28,7 +28,7 @@ bool WinCommFakeEvent::create()
     return true;
 }
 
-ev2_handle_t WinCommFakeEvent::getWaitHandle()
+ev_handle_t WinCommFakeEvent::getWaitHandle()
 {
     return hEvent_;
 }

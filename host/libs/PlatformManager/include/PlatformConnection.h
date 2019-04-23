@@ -123,8 +123,18 @@ namespace spyglass {
          */
         int handleWrite(unsigned int timeout);
 
+        /**
+         * Updates activation/deactivation of the event, especially read/write state
+         * @param read
+         * @param write
+         * @return returns true when successful otherwise false
+         */
         bool updateEvent(bool read, bool write);
 
+        /**
+         * return if write buffer is empty.
+         * NOTE: this method is not thread safe
+         */
         bool isWriteBufferEmpty() const;
 
         /**

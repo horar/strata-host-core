@@ -31,8 +31,10 @@ PlatformManager::~PlatformManager()
 bool PlatformManager::Init()
 {
 #if defined(__linux__) || defined(__APPLE__)
-    ports_update_.reset( eventsMgr_.CreateEventTimer(g_portsRefreshTime) );
+
+    ports_update_.reset( new EvEvent(EvEvent::EvType::eEvTypeTimer, -1, g_portsRefreshTime));
     ports_update_->setCallback(std::bind(&PlatformManager::onUpdatePortList, this, std::placeholders::_1, std::placeholders::_2) );
+    eventsMgr_.registerEvent(ports_update_.get());
 
     if (!ports_update_->activate()) {
         ports_update_.release();

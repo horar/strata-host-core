@@ -23,12 +23,6 @@ struct event;
 namespace spyglass
 {
 
-#ifdef _WIN32
-typedef intptr_t ev_handle_t;
-#else
-typedef int      ev_handle_t;
-#endif
-
 class EvEventsMgr;
 
 //////////////////////////////////////////////////////////////////
@@ -74,7 +68,7 @@ public:
     virtual void deactivate();
 
 
-    virtual ev2_handle_t getWaitHandle() { return 0; }
+    virtual ev_handle_t getWaitHandle() { return 0; }
 
     /**
      * Checks event activation flags

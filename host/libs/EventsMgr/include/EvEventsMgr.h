@@ -23,18 +23,17 @@ public:
     ~EvEventsMgr();
 
     /**
-     * Creates event for a filehandle
-     * @param fd file handle
-     * @return returns new event
+     * Register event to event dispatcher
+     * @param event event to register
+     * @return returns
      */
-    EvEvent* CreateEventHandle(ev_handle_t fd);
+    bool registerEvent(EvEventBase* event);
 
     /**
-     * Creates event for a timeout
-     * @param timeInMs timeour in miliseconds
-     * @return returns new event
+     * Unregisters event from event dispatcher
+     * @param event
      */
-    EvEvent* CreateEventTimer(unsigned int timeInMs);
+    void unregisterEvent(EvEventBase* event);
 
     /**
      * Starts dispatch loop with given flags

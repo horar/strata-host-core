@@ -20,7 +20,7 @@ public:
     bool create(unsigned int timeInMs);
     void restartTimer();
 
-    virtual ev2_handle_t getWaitHandle();
+    virtual ev_handle_t getWaitHandle();
 
     virtual bool activate(int evFlags);
     virtual void deactivate();
