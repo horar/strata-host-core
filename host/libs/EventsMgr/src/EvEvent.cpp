@@ -95,7 +95,7 @@ bool EvEvent::activate(int ev_flags)  //EvEventsMgr *mgr,
 
         case EvType::eEvTypeHandle: {
             short flags = ((ev_flags & EvEventBase::eEvStateRead) ? EV_READ : 0) | ((ev_flags & EvEventBase::eEvStateWrite) ? EV_WRITE : 0);
-            event_ = event_new(mgr_->base(), fileHandle_, flags | EV_PERSIST, evEventsCallback,
+            event_ = event_new(mgr_->base(), reinterpret_cast<evutil_socket_t>(fileHandle_), flags | EV_PERSIST, evEventsCallback,
                                static_cast<void *>(this));
             if (event_add(event_, nullptr) < 0) {
                 return false;
@@ -121,6 +121,15 @@ void EvEvent::deactivate()
 
     event_del(event_);
     active_ = false;
+}
+
+ev_handle_t EvEvent::getWaitHandle()
+{
+#if defined(_WIN32)
+    return (ev_handle_t)nullptr;
+#elif defined(__linux__) || defined(__APPLE__)
+    return (ev_handle_t)-1;
+#endif
 }
 
 bool EvEvent::isActive(int ev_flags) const

@@ -70,7 +70,7 @@ bool WinTimerEvent::setTimer()
 
 ev_handle_t WinTimerEvent::getWaitHandle()
 {
-    return reinterpret_cast<ev2_handle_t>(hTimer_);
+    return reinterpret_cast<ev_handle_t>(hTimer_);
 }
 
 void WinTimerEvent::restartTimer()

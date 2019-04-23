@@ -11,13 +11,6 @@
 #include <WinSock2.h>
 #endif
 
-//a copy from libevent2
-#if defined(_WIN32)
-#define evutil_socket_t intptr_t
-#else
-#define evutil_socket_t int
-#endif
-
 struct event;
 
 namespace spyglass
@@ -67,8 +60,10 @@ public:
      */
     virtual void deactivate();
 
-
-    virtual ev_handle_t getWaitHandle() { return 0; }
+    /** 
+     * returns wait handle, in this case invalid
+     */
+    virtual ev_handle_t getWaitHandle();
 
     /**
      * Checks event activation flags
@@ -90,9 +85,6 @@ public:
      */
     static struct timeval tvMsecs(unsigned int msecs);
 
-protected:
-
-
 private:
     unsigned int timeInMs_;
     ev_handle_t fileHandle_;
@@ -102,8 +94,6 @@ private:
 
     bool active_ = false;       //status if event is in some event_base queue
     std::mutex lock_;
-
-    friend void evEventsCallback(evutil_socket_t fd, short what, void* arg);
 };
 
 

@@ -25,7 +25,7 @@ public:
 
     bool isActive(int ev_flags) const;
 
-    ev2_handle_t getWriteHandle();
+    ev_handle_t getWriteHandle();
 
     int getEvFlagsState() const;
 

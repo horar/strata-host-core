@@ -37,11 +37,12 @@ bool WinCommWaitManager::registerEvent(EvEventBase* ev)
         return false;
     }
 
-    //TODO: check for duplicates
-    ev2_handle_t handle = ev->getWaitHandle();
+    ev_handle_t handle = ev->getWaitHandle();
     if (handle == NULL) {
         return false;
     }
+
+    //TODO: check for duplicates
 
     eventList_.push_back(std::make_pair(handle, ev));
     return true;

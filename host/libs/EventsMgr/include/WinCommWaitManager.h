@@ -38,7 +38,7 @@ private:
     std::thread eventsThread_;
     std::atomic_bool stopThread_{ false };
 
-    typedef std::pair<ev2_handle_t, EvEventBase*> event_pair;
+    typedef std::pair<ev_handle_t, EvEventBase*> event_pair;
 
     std::list<event_pair> eventList_;
     std::mutex dispatchLock_;
