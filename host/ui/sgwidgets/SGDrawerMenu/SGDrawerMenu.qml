@@ -1,5 +1,6 @@
 import QtQuick 2.9
 import QtQuick.Controls 2.2
+import QtGraphicalEffects 1.0
 
 Item {
     id:root
@@ -37,19 +38,32 @@ Item {
             visible: false
         }
 
-        Text {
+        Item {
             id: hintIcon
-            text: "\ue811"
-            color: "#ddd"
-            font {
-                pixelSize: 25
-                family: sgicons.name
-            }
+            width: iconImage.width
+            height: iconImage.height
             anchors {
                 verticalCenter: menuContainer.verticalCenter
                 left: menuContainer.left
+                leftMargin: 2
             }
             Behavior on opacity { NumberAnimation { duration: root.slideDuration } }
+
+            Image {
+                id: iconImage
+                visible: false
+                fillMode: Image.PreserveAspectFit
+                source: "icons/angle-left-solid.svg"
+                sourceSize.height: 30
+            }
+
+            ColorOverlay {
+                id: overlay
+                anchors.fill: iconImage
+                source: iconImage
+                visible: true
+                color: "#ddd"
+            }
         }
 
         MouseArea{
@@ -255,10 +269,5 @@ Item {
         anchors {
             fill: remainderHover
         }
-    }
-
-    FontLoader {
-        id: sgicons
-        source: "fonts/sgicons.ttf"
     }
 }

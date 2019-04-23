@@ -135,7 +135,6 @@ Rectangle{
 
         onOpened: webview.url = "https://www.onsemi.com/PowerSolutions/locateSalesSupport.do"
 
-
         DropShadow {
             width: orderPopup.width
             height: orderPopup.height
@@ -165,14 +164,11 @@ Rectangle{
                 }
                 color: "lightgrey"
 
-                Text {
+                SGIcon {
                     id: close
-                    text: "\ue805"
-                    color: close_hover.containsMouse ? "#eee" : "white"
-                    font {
-                        family: Fonts.sgicons
-                        pixelSize: 20
-                    }
+                    source: "images/icons/times.svg"
+                    iconColor: close_hover.containsMouse ? "#eee" : "white"
+                    sourceSize.height: 20
                     anchors {
                         right: title.right
                         verticalCenter: title.verticalCenter

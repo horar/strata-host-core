@@ -73,7 +73,7 @@ Item {
             id: name
             text: model.verbose_name
             font {
-                pixelSize: 18
+                pixelSize: 16
                 family: Fonts.franklinGothicBold
             }
             width: infoColumn.width
@@ -86,30 +86,31 @@ Item {
         }
 
         Text {
-            id: info
-            text: model.description
-            anchors {
-                horizontalCenter: infoColumn.horizontalCenter
-                top: name.bottom
-                topMargin: 10
-                bottom: productId.top
-                bottomMargin: 10
-            }
-            width: infoColumn.width
-            font {
-                pixelSize: 12
-                family: Fonts.franklinGothicBook
-            }
-            wrapMode: Text.Wrap
-            elide: Text.ElideRight
-            horizontalAlignment: Text.AlignHCenter
-        }
-
-        Text {
             id: productId
             text: model.on_part_number
             anchors {
                 horizontalCenter: infoColumn.horizontalCenter
+                top: name.bottom
+                topMargin: 12
+            }
+            width: infoColumn.width
+            font {
+                pixelSize: 13
+                family: Fonts.franklinGothicBold
+            }
+            color: "#333"
+            font.italic: true
+            wrapMode: Text.Wrap
+            horizontalAlignment: Text.AlignHCenter
+        }
+
+        Text {
+            id: info
+            text: model.description
+            anchors {
+                horizontalCenter: infoColumn.horizontalCenter
+                top: productId.bottom
+                topMargin: 12
                 bottom: infoColumn.bottom
             }
             width: infoColumn.width
@@ -117,8 +118,9 @@ Item {
                 pixelSize: 12
                 family: Fonts.franklinGothicBook
             }
-            color: "#AAA"
+            color: "#666"
             wrapMode: Text.Wrap
+            elide: Text.ElideRight
             horizontalAlignment: Text.AlignHCenter
         }
     }

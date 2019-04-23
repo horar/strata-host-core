@@ -1,5 +1,6 @@
 import QtQuick 2.9
 import QtQuick.Controls 2.2
+import QtGraphicalEffects 1.0
 
 Item {
     id: root
@@ -55,20 +56,31 @@ Item {
             }
         }
 
-        Text {
+        Item {
             id: menuItemIcon
-            font {
-                pixelSize: 40
-                family: sgicons.name
-            }
-            text: root.icon
-            color: "#bbb"
+            width: iconImage.width
+            height: iconImage.height
             anchors {
                 top: menuItem.top
                 topMargin: 10
+                horizontalCenter: menuItem.horizontalCenter
             }
-            width: menuItem.width
-            horizontalAlignment: Text.AlignHCenter
+
+            Image {
+                id: iconImage
+                visible: false
+                fillMode: Image.PreserveAspectFit
+                source: root.icon
+                sourceSize.height: 40
+            }
+
+            ColorOverlay {
+                id: overlay
+                anchors.fill: iconImage
+                source: iconImage
+                visible: true
+                color: "#bbb"
+            }
         }
 
         Text {
@@ -168,11 +180,6 @@ Item {
         duration: slideDuration
         to: 0
         from: triangle.opacity
-    }
-
-    FontLoader {
-        id: sgicons
-        source: "fonts/sgicons.ttf"
     }
 
     // Add increment to color (within range of 0-1) add to lighten, subtract to darken
