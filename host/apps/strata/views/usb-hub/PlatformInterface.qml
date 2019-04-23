@@ -557,7 +557,7 @@ Item {
         id: debug
         visible: true
         width: 200
-        height: 200
+        height: 240
 
         // This button sends 2 notifications in 1 JSON, future possible implementation
         Button {
@@ -644,6 +644,36 @@ Item {
                             "value":"audio_active_notification",
                             "payload":{
                                      "audio_active":false
+                            }
+                    }
+            ')
+            }
+        }
+
+        Button {
+            id:button5
+            anchors { top: button4.bottom }
+            text: "start video"
+            onClicked: {
+                CorePlatformInterface.data_source_handler('{
+                            "value":"displayport_video_active_notification",
+                            "payload":{
+                                     "video_active":true
+                            }
+                    }
+            ')
+            }
+        }
+
+        Button {
+            id:button6
+            anchors { top: button5.bottom }
+            text: "end video"
+            onClicked: {
+                CorePlatformInterface.data_source_handler('{
+                            "value":"displayport_video_active_notification",
+                            "payload":{
+                                     "video_active":false
                             }
                     }
             ')

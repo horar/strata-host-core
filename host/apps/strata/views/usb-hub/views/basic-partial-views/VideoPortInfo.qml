@@ -165,6 +165,8 @@ Rectangle {
         fillMode: VideoOutput.PreserveAspectFit
         source: "../images/penguin.mp4"
         autoPlay: true
+        loops: MediaPlayer.Infinite //loop until stopped
+        volume: 0      //the video sample has audio, but we don't want to hear it
 
         Component.onCompleted: {
             //move into the video so there' a screen to see
