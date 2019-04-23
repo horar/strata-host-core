@@ -62,6 +62,8 @@
         <file>views/usb-hub/views/images/usbACord.gif</file>
         <file>views/usb-hub/views/images/usbACordReverse.gif</file>
         <file>views/usb-hub/views/images/videoIcon.png</file>
+        <file>views/usb-hub/views/basic-partial-views/AudioWaveform.qml</file>
+        <file>views/usb-hub/views/basic-partial-views/AudioSample.qml</file>
         <file>views/usb-hub/content-views/content-widgets/angle-right-solid.svg</file>
         <file>views/usb-hub/content-views/content-widgets/docLoading.gif</file>
         <file>views/usb-hub/content-views/content-widgets/SGAccordion.qml</file>

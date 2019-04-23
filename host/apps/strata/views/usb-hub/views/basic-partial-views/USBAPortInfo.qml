@@ -6,6 +6,7 @@ import "qrc:/views/usb-pd-multiport/sgwidgets"
 Rectangle {
     id: root
 
+
     property bool portConnected: false
     property bool isUSBAPort: true     //used to hide information not available for USB-A ports
     property color portColor: "#30a2db"
@@ -267,6 +268,7 @@ Rectangle {
             anchors.verticalCenter: chargingRectangle.verticalCenter
             height:15
             autoExclusive : false
+            checked: platformInterface.usb_a_port_is_charging_notification.charging
             indicator: Rectangle{
                 implicitWidth: 15
                 implicitHeight: 15
