@@ -91,6 +91,15 @@ Item {
                 }
             }
 
+            Button{
+                text: "SAR ADC"
+                onClicked: {
+                    var data = { class_id: "sar-adc"}
+                    NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT, data)
+
+                }
+            }
+
             // UI events
             Button {
                 text: "Toggle Content/Control"

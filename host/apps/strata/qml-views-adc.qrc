@@ -1,0 +1,36 @@
+<RCC>
+    <qresource prefix="/">
+        <file>views/sar-adc/content-views/content-widgets/docLoading.gif</file>
+        <file>views/sar-adc/content-views/content-widgets/SGAccordion.qml</file>
+        <file>views/sar-adc/content-views/content-widgets/SGAccordionItem.qml</file>
+        <file>views/sar-adc/content-views/content-widgets/SGRadioButton.qml</file>
+        <file>views/sar-adc/content-views/content-widgets/SGRadioButtonContainer.qml</file>
+        <file>views/sar-adc/content-views/content-widgets/SGSelectorButton.qml</file>
+        <file>views/sar-adc/content-views/Datasheets.qml</file>
+        <file>views/sar-adc/content-views/Documents.qml</file>
+        <file>views/sar-adc/content-views/Downloads.qml</file>
+        <file>views/sar-adc/control-views/AdvancedControl.qml</file>
+        <file>views/sar-adc/control-views/BasicControl.qml</file>
+        <file>views/sar-adc/control-views/DebugExample.qml</file>
+        <file>views/sar-adc/control-views/PlatformInterface.qml</file>
+        <file>views/sar-adc/sgwidgets/fonts/digitalseven.ttf</file>
+        <file>views/sar-adc/sgwidgets/SGCircularGauge.qml</file>
+        <file>views/sar-adc/sgwidgets/SGResponsiveScrollView.qml</file>
+        <file>views/sar-adc/sgwidgets/SGSwitch.qml</file>
+        <file>views/sar-adc/Content.qml</file>
+        <file>views/sar-adc/Control.qml</file>
+        <file>views/sar-adc/content-views/content-widgets/SGIcon.qml</file>
+        <file>views/sar-adc/content-views/content-widgets/angle-right-solid.svg</file>
+        <file>views/sar-adc/content-views/content-widgets/question-circle-solid.svg</file>
+        <file>views/sar-adc/control-views/question-circle-solid.svg</file>
+        <file>views/sar-adc/sgwidgets/SGGraphStatic.qml</file>
+        <file>views/sar-adc/sgwidgets/SGSlider.qml</file>
+        <file>views/sar-adc/sgwidgets/images/sliderValue.svg</file>
+        <file>views/sar-adc/sgwidgets/images/sliderHandleActive.svg</file>
+        <file>views/sar-adc/sgwidgets/images/sliderHandle.svg</file>
+        <file>views/sar-adc/sgwidgets/SGLabelledInfoBox.qml</file>
+        <file>views/sar-adc/sgwidgets/SGStatusListBox.qml</file>
+        <file>views/sar-adc/sgwidgets/SGRadioButtonContainer.qml</file>
+        <file>views/sar-adc/sgwidgets/SGRadioButton.qml</file>
+    </qresource>
+</RCC>
