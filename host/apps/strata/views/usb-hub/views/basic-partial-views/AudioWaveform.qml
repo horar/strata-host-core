@@ -53,7 +53,7 @@ Item {
                 sample1Value = Math.random() * platformInterface.audio_volume_notification.volume;  //scale by the volume (0-1)
               else
                 sample1Value = 0;
-            console.log("timer. Value =",sample1Value)
+            //console.log("timer. Value =",sample1Value)
          }
 
     }

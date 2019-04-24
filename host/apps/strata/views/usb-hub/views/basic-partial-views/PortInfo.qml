@@ -298,7 +298,7 @@ Rectangle {
         anchors.top: titleBackground.bottom
         anchors.topMargin: 8
         width:portWidth-10
-        height:40
+        height:root.height/9
         label: "VOLTAGE OUT"
         color:"transparent"
     }
@@ -310,7 +310,7 @@ Rectangle {
         anchors.topMargin: 8
         //anchors.right: outputVoltageBox.right
         width:portWidth-10
-        height:40
+        height:root.height/9
         label: "MAXIMUM POWER"
         unit: "W"
         color:"transparent"
@@ -324,7 +324,7 @@ Rectangle {
         anchors.topMargin: 8
         //anchors.right: outputVoltageBox.right
         width:portWidth-10
-        height:40
+        height:root.height/9
         label: "POWER IN"
         unit:"W"
         color:"transparent"
@@ -340,7 +340,7 @@ Rectangle {
         anchors.topMargin: 8
         //anchors.right: outputVoltageBox.right
         width:portWidth-10
-        height:40
+        height:root.height/9
         label: "POWER OUT"
         unit:"W"
         color:"transparent"
@@ -354,7 +354,7 @@ Rectangle {
         anchors.topMargin: 8
         //anchors.right: outputVoltageBox.right
         width:portWidth-10
-        height:40
+        height:root.height/9
         label: "TEMPERATURE"
         unit:"°C"
         color:"transparent"
@@ -368,7 +368,7 @@ Rectangle {
         anchors.topMargin: 8
         //anchors.right: outputVoltageBox.right
         width:portWidth-10
-        height:40
+        height:root.height/9
         label: "EFFICENCY"
         unit:"%"
         color:"transparent"

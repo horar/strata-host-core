@@ -13,7 +13,8 @@ Rectangle {
     property string unit: "V"
     property string icon: "../images/icon-voltage.svg"
     property real labelSize: 9
-    property real valueSize: 22
+    //property real valueSize: 22
+    property real valueSize: root.height/2
     property real unitSize: 12
     property real bottomMargin: 0
     property color textColor: "#555"
