@@ -84,7 +84,7 @@ target_include_directories(${PROJECT_NAME}
     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/source
 )
 
-set(PRODUCT_NAME_LONG "Strata Development Studio")
+set(PRODUCT_NAME_LONG "Strata Developer Studio")
 set(PRODUCT_NAME_COPYRIGHT "Copyright (C) 2018 On Semiconductor")
 set_target_properties(${PROJECT_NAME} PROPERTIES
     CXX_STANDARD 17

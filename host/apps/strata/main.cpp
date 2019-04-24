@@ -89,7 +89,7 @@ int main(int argc, char *argv[])
     QString hcsConfigPath;
     TCHAR programDataPath[MAX_PATH];
     if (SUCCEEDED(SHGetFolderPath(NULL, CSIDL_COMMON_APPDATA, NULL, 0, programDataPath))) {
-        hcsConfigPath = QDir::cleanPath(QString("%1/ON Semiconductor/Strata/HCS/hcs.config").arg(programDataPath));
+        hcsConfigPath = QDir::cleanPath(QString("%1/ON Semiconductor/Strata Developer Studio/HCS/hcs.config").arg(programDataPath));
         qCInfo(logCategoryStrataDevStudio) << QStringLiteral("hcsConfigPath:") << hcsConfigPath ;
     }else{
         qCCritical(logCategoryStrataDevStudio) << "Failed to get ProgramData path using windows API call...";
