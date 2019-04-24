@@ -122,7 +122,7 @@ namespace spyglass {
 
         EvEventsMgr *event_mgr_ = nullptr;
         std::unique_ptr<EvEvent> event_;
-        std::mutex event_lock_;  //this lock is used when read/write event is notified or when event is attached/detached
+        std::recursive_mutex event_lock_;  //this lock is used when read/write event is notified or when event is attached/detached
 
         std::string readBuffer_;
         std::string writeBuffer_;

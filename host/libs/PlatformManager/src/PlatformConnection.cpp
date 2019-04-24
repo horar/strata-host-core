@@ -43,6 +43,8 @@ bool PlatformConnection::open(const std::string& portName)
 void PlatformConnection::close()
 {
     if (event_) {
+
+        std::lock_guard<std::recursive_mutex> lock(event_lock_);
         event_->deactivate();
 
         event_.release();
@@ -92,13 +94,12 @@ bool PlatformConnection::getMessage(std::string& result)
 
 void PlatformConnection::onDescriptorEvent(EvEvent*, int flags)
 {
-    std::lock_guard<std::mutex> lock(event_lock_);
-
     if (flags & EvEvent::eEvStateRead) {
 
         if (handleRead(g_readTimeout) < 0) {
             //TODO: [MF] add to log...
 
+            std::lock_guard<std::recursive_mutex> lock(event_lock_);
             event_->deactivate();
 
             if (parent_) {
@@ -106,6 +107,8 @@ void PlatformConnection::onDescriptorEvent(EvEvent*, int flags)
             }
         }
         else if (isReadable() && parent_ != nullptr) {
+
+            std::lock_guard<std::recursive_mutex> lock(event_lock_);
             parent_->notifyConnectionReadable(this);
         }
     }
@@ -123,6 +126,8 @@ void PlatformConnection::onDescriptorEvent(EvEvent*, int flags)
         }
 
         if (isEmpty) {
+
+            std::lock_guard<std::recursive_mutex> lock(event_lock_);
             updateEvent(true, false);
         }
     }
@@ -178,7 +183,7 @@ void PlatformConnection::addMessage(const std::string& message)
 
     if (!isWrite) {
 
-        std::lock_guard<std::mutex> lock(event_lock_);
+        std::lock_guard<std::recursive_mutex> lock(event_lock_);
         updateEvent(true, true);
     }
 }
@@ -231,7 +236,7 @@ bool PlatformConnection::attachEventMgr(EvEventsMgr* ev_manager)
         return false;
     }
 
-    std::lock_guard<std::mutex> lock(event_lock_);
+    std::lock_guard<std::recursive_mutex> lock(event_lock_);
 
     event_mgr_ = ev_manager;
 
@@ -250,7 +255,7 @@ void PlatformConnection::detachEventMgr()
 
     if (event_) {
 
-        std::lock_guard<std::mutex> lock(event_lock_);
+        std::lock_guard<std::recursive_mutex> lock(event_lock_);
         event_->deactivate();
     }
 }
@@ -261,7 +266,7 @@ bool PlatformConnection::stopListeningOnEvents(bool stop)
         return false;
     }
 
-    std::lock_guard<std::mutex> lock(event_lock_);
+    std::lock_guard<std::recursive_mutex> lock(event_lock_);
     if (stop) {
         event_->deactivate();
         return true;
