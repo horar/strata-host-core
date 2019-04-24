@@ -35,6 +35,7 @@ add_executable(${PROJECT_NAME}
     qml-views-usb-hub.qrc
     qml-views-usb-pd-multiport.qrc
     qml-views-usb-pd.qrc
+    qml-views-subghz.qrc
 
     views/SGPdfViewer/pdfjs.qrc
 )

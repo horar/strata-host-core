@@ -61,5 +61,7 @@
         <file>views/bubu/images/system_content/USBCInterfaceSchematic2.png</file>
         <file>views/bubu/images/system_content/USBInterfaceIcon.png</file>
         <file>views/bubu/images/system_content/dialogBorder.svg</file>
+        <file>views/bubu/content-views/content-widgets/angle-right-solid.svg</file>
+        <file>views/bubu/content-views/content-widgets/SGIcon.qml</file>
     </qresource>
 </RCC>

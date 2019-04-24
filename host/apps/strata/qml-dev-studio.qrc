@@ -86,5 +86,6 @@
         <file>statusbar-partial-views/platform-selector/images/platform-images/notFound.png</file>
         <file>statusbar-partial-views/platform-selector/images/whiteFadeMask.svg</file>
         <file>views/SGPdfViewer/SGPdfViewer.qml</file>
+        <file>statusbar-partial-views/SGIcon.qml</file>
     </qresource>
 </RCC>

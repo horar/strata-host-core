@@ -1,5 +1,6 @@
 import QtQuick 2.9
 import QtQuick.Controls 2.2
+import QtGraphicalEffects 1.0
 import "qrc:/../SGSubmitInfoBox/"
 
 Rectangle {
@@ -152,13 +153,10 @@ Rectangle {
                 }
             }
 
-            Text {
+            Item {
                 id: textClear
-                font {
-                    family: sgicons.name
-                }
-                color: "grey"
-                text: "\ue824"
+                width: iconImage.width
+                height: iconImage.height
                 anchors {
                     right: filterBox.right
                     verticalCenter: filterBox.verticalCenter
@@ -166,6 +164,22 @@ Rectangle {
                     rightMargin: 3
                 }
                 visible: filterBox.value !== ""
+
+                Image {
+                    id: iconImage
+                    visible: false
+                    fillMode: Image.PreserveAspectFit
+                    source: "icons/ban.svg"
+                    sourceSize.height: 13
+                }
+
+                ColorOverlay {
+                    id: overlay
+                    anchors.fill: iconImage
+                    source: iconImage
+                    visible: true
+                    color: "grey"
+                }
 
                 MouseArea {
                     id: textClearButton
@@ -180,18 +194,31 @@ Rectangle {
             }
         }
 
-        Text {
+        Item {
             id: filterSearch
-            font {
-                family: sgicons.name
-            }
-            color: "grey"
-            text: "\ue801"
+            width: iconImage1.width
+            height: iconImage1.height
             anchors {
                 left: filterBox.right
                 verticalCenter: filterBox.verticalCenter
                 verticalCenterOffset: 1
                 leftMargin: 5
+            }
+
+            Image {
+                id: iconImage1
+                visible: false
+                fillMode: Image.PreserveAspectFit
+                source: "icons/search.svg"
+                sourceSize.height: 13
+            }
+
+            ColorOverlay {
+                id: overlay1
+                anchors.fill: iconImage1
+                source: iconImage1
+                visible: true
+                color: "grey"
             }
 
             MouseArea {
@@ -225,11 +252,6 @@ Rectangle {
             filterBox.value = ""
             filterBox.applied ("")
         }
-    }
-
-    FontLoader {
-        id: sgicons
-        source: "fonts/sgicons.ttf"
     }
 
     FontLoader {

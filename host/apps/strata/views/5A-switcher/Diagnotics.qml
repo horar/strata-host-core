@@ -7,7 +7,6 @@ import QtQuick.Controls 2.3
 import "qrc:/js/navigation_control.js" as NavigationControl
 import "qrc:/views/5A-switcher/sgwidgets"
 import "qrc:/js/help_layout_manager.js" as Help
-import Fonts 1.0
 
 Item {
     id: root
@@ -38,21 +37,17 @@ Item {
         Help.registerTarget(diagnoticsContainer, "Clicking the blank circles under each interrupt will fill the circle in signaling that the interrupt has been masked. By clicking read, the LEDs will light up to give the user the current status of the interrupt sense register (INTSEN).", 0, "advance5Asetting3Help")
     }
 
-    Text {
+    SGIcon {
         id: helpIcon
         anchors {
             right: parent.right
             rightMargin: 15
             top: parent.top
             topMargin: 10
-
         }
-        text: "\ue808"
-        color: helpMouse.containsMouse ? "lightgrey" : "grey"
-        font {
-            family: Fonts.sgicons
-            pixelSize: 40
-        }
+        source: "question-circle-solid.svg"
+        iconColor: helpMouse.containsMouse ? "lightgrey" : "grey"
+        sourceSize.height: 40
         visible: true
 
         MouseArea {
@@ -497,6 +492,3 @@ Item {
         }
     }
 }
-
-
-

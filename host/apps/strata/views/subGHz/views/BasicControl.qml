@@ -60,6 +60,17 @@ Rectangle {
         clip:true
 
 
+        Text{
+            id:platformName
+            anchors.top: parent.top
+            anchors.topMargin: 15
+            anchors.left:parent.left
+            anchors.leftMargin: 15
+            width:100
+            text:"Point-to-point Wireless\nCommunication Link"
+            font.pixelSize:24
+            color:"dimgrey"
+        }
 
         Rectangle{
             id:transmitter
@@ -71,7 +82,7 @@ Rectangle {
             radius:30
             color:"slateGrey"
             //border.color:"dimgrey"
-            border.color:"lawngreen"
+            border.color:"gold"
             border.width:3
 
             Text{
@@ -112,12 +123,12 @@ Rectangle {
         id:receiver
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
-        anchors.verticalCenterOffset: -100
+        anchors.verticalCenterOffset: 25
         height:300
         width:300
         radius:30
         color:"slateGrey"
-        border.color:"lawngreen"
+        border.color:"gold"
         border.width:3
 
         Text{
@@ -228,7 +239,7 @@ Rectangle {
                 anchors.top:parent.top
                 anchors.bottom:parent.bottom
                 width:parent.width/2
-                label: "Error Rate"
+                label: "Packet Error Rate"
                 value: {
                     var errorRate = platformInterface.receive_notification.packet_error_rate.toFixed(2) //returns 0.xx
                     return errorRate.substring(1);
@@ -285,6 +296,54 @@ Rectangle {
 
                 platformInterface.toggle_receive.update(!root.receiving)
                 root.receiving = !root.receiving
+            }
+        }
+
+        Button{
+            id:resetButton
+            anchors.right: parent.right
+            anchors.rightMargin:10
+            anchors.bottom:startStopReceiveButton.bottom
+            height:20
+            text:"reset"
+
+            contentItem: Text {
+                text: resetButton.text
+                anchors.verticalCenter: parent.verticalCenter
+                font.pixelSize: 12
+                color:{
+                    if (resetButton.down)
+                        color = "black" ;
+                    else if (resetButton.hovered)
+                        color = "white";
+                    else
+                        color = "dimgrey";
+                }
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignVCenter
+                elide: Text.ElideRight
+            }
+
+            background: Rectangle {
+                implicitWidth: 60
+                color: "transparent"
+                border.width: 0
+                radius: resetButton.height/2
+            }
+
+            onHoveredChanged:{
+                if (hovered){
+                    resetButton.background.border.width = 1;
+                    resetButton.contentItem.color = "white";
+                }
+                else{
+                    resetButton.background.border.width = 0;
+                    resetButton.contentItem.color = "dimgrey";
+                }
+            }
+
+            onClicked:{
+                errorGraph.series.clear()
             }
         }
 
@@ -395,7 +454,7 @@ Rectangle {
         color:"transparent"
         titleBoxColor:root.backgroundColor
         titleTextColor:"lightgrey"
-        titleTextSize:24
+        titleTextSize:15
         titleBoxBorderColor:"black"
         statusTextColor: "white"
         statusBoxColor: "red"
@@ -405,7 +464,7 @@ Rectangle {
         anchors.bottom:deviceBackground.bottom
         anchors.bottomMargin: 40
         anchors.horizontalCenter: receiver.horizontalCenter
-        title: "data console"
+        title: "DATA CONSOLE"
         model: dataPacketModel
 
         property var dataPacket: platformInterface.receive_notification.data_packet

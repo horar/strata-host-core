@@ -5,9 +5,8 @@ import QtGraphicalEffects 1.0
 import QtQuick.Controls.Styles 1.4
 import QtQuick.Extras 1.4
 //import tech.spyglass. 1.0
-import Fonts 1.0
 import "qrc:/js/navigation_control.js" as NavigationControl
-import "qrc:/views/XDFN-LDO/sgwidgets"
+import "qrc:/views/5A-switcher/sgwidgets"
 import "qrc:/js/help_layout_manager.js" as Help
 
 Rectangle {
@@ -103,7 +102,7 @@ Rectangle {
         }
     }
 
-    Text {
+    SGIcon {
         id: helpIcon
         anchors {
             right: parent.right
@@ -111,12 +110,9 @@ Rectangle {
             top: parent.top
             topMargin: 50
         }
-        text: "\ue808"
-        color: helpMouse.containsMouse ? "lightgrey" : "grey"
-        font {
-            family: Fonts.sgicons
-            pixelSize: 40
-        }
+        source: "question-circle-solid.svg"
+        iconColor: helpMouse.containsMouse ? "lightgrey" : "grey"
+        sourceSize.height: 40
         visible: true
 
         MouseArea {

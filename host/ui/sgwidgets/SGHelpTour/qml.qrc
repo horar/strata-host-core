@@ -13,7 +13,7 @@
         <file>fonts/FranklinGothicBook.otf</file>
         <file>fonts/FranklinGothicMedium.otf</file>
         <file>fonts/Inconsolata.otf</file>
-        <file>fonts/sgicons.ttf</file>
         <file>navigation_control.js</file>
+        <file>icons/times.svg</file>
     </qresource>
 </RCC>

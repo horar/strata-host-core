@@ -19,7 +19,6 @@
         <file>../SGCircularGauge/qml.qrc</file>
         <file>../SGCircularGauge/SGCircularGauge.pro</file>
         <file>../SGCircularGauge/SGCircularGauge.qml</file>
-        <file>../SGComboBox/fonts/sgicons.ttf</file>
         <file>../SGComboBox/main.cpp</file>
         <file>../SGComboBox/main.qml</file>
         <file>../SGComboBox/qml.qrc</file>
@@ -30,13 +29,11 @@
         <file>../SGLabelledInfoBox/qml.qrc</file>
         <file>../SGLabelledInfoBox/SGLabelledInfoBox.pro</file>
         <file>../SGLabelledInfoBox/SGLabelledInfoBox.qml</file>
-        <file>../SGOutputLogBox/fonts/sgicons.ttf</file>
         <file>../SGOutputLogBox/main.cpp</file>
         <file>../SGOutputLogBox/main.qml</file>
         <file>../SGOutputLogBox/qml.qrc</file>
         <file>../SGOutputLogBox/SGOutputLogBox.pro</file>
         <file>../SGOutputLogBox/SGOutputLogBox.qml</file>
-        <file>../SGPopout/fonts/sgicons.ttf</file>
         <file>../SGPopout/main.cpp</file>
         <file>../SGPopout/main.qml</file>
         <file>../SGPopout/qml.qrc</file>
@@ -74,7 +71,6 @@
         <file>../SGStatusLight/qml.qrc</file>
         <file>../SGStatusLight/SGStatusLight.pro</file>
         <file>../SGStatusLight/SGStatusLight.qml</file>
-        <file>../SGStatusListBox/fonts/sgicons.ttf</file>
         <file>../SGStatusListBox/main.cpp</file>
         <file>../SGStatusListBox/main.qml</file>
         <file>../SGStatusListBox/qml.qrc</file>
@@ -95,7 +91,6 @@
         <file>../SGToolTipPopup/qml.qrc</file>
         <file>../SGToolTipPopup/SGToolTipPopup.pro</file>
         <file>../SGToolTipPopup/SGToolTipPopup.qml</file>
-        <file>../SGDrawerMenu/fonts/sgicons.ttf</file>
         <file>../SGDrawerMenu/main.cpp</file>
         <file>../SGDrawerMenu/main.qml</file>
         <file>../SGDrawerMenu/qml.qrc</file>
@@ -125,5 +120,16 @@
         <file>main.cpp</file>
         <file>../SGStatusListBox/fonts/Inconsolata.otf</file>
         <file>../SGSubmitInfoBox/fonts/Inconsolata.otf</file>
+        <file>../SGComboBox/icons/angle-down-solid.svg</file>
+        <file>../SGDrawerMenu/icons/angle-left-solid.svg</file>
+        <file>../SGDrawerMenu/icons/comments-solid.svg</file>
+        <file>../SGDrawerMenu/icons/question-circle-solid.svg</file>
+        <file>../SGDrawerMenu/icons/users-solid.svg</file>
+        <file>../SGHelpTour/icons/times.svg</file>
+        <file>../SGPopout/icons/double-caret.svg</file>
+        <file>../SGPopout/icons/sign-in-alt-solid.svg</file>
+        <file>../SGPopout/icons/sign-out-alt-solid.svg</file>
+        <file>../SGStatusListBox/icons/ban.svg</file>
+        <file>../SGStatusListBox/icons/search.svg</file>
     </qresource>
 </RCC>
