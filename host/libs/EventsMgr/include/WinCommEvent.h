@@ -16,8 +16,15 @@ public:
     WinCommEvent();
     virtual ~WinCommEvent();
 
+    /**
+     * creates an event for asynchronous notifications
+     * @param hComm communication device handle to create wait event
+     */
     bool create(HANDLE hComm);
 
+    /**
+     * returns handle to the wait event
+     */
     virtual ev_handle_t getWaitHandle();
 
     virtual bool activate(int evFlags);
@@ -25,6 +32,9 @@ public:
 
     bool isActive(int ev_flags) const;
 
+    /**
+     * returns handle to the fake write event
+     */
     ev_handle_t getWriteHandle();
 
     int getEvFlagsState() const;

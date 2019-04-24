@@ -17,6 +17,10 @@ public:
     WinCommFakeEvent();
     virtual ~WinCommFakeEvent();
 
+    /**
+     * Creates fake event
+     * @returns returns true when succeeded otherwise false
+     */
     bool create();
 
     virtual ev_handle_t getWaitHandle();

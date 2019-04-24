@@ -17,9 +17,21 @@ public:
     WinTimerEvent();
     virtual ~WinTimerEvent();
 
+    /**
+     * Creates timer event with specified time
+     * @param timeInMs specified time to signal
+     * @return returns true when succeeded, otherwise false
+     */
     bool create(unsigned int timeInMs);
+
+    /**
+     * Restarts the timer
+     */
     void restartTimer();
 
+    /**
+     * returns handle to the wait event
+     */
     virtual ev_handle_t getWaitHandle();
 
     virtual bool activate(int evFlags);
@@ -32,7 +44,6 @@ private:
     HANDLE hTimer_;
     unsigned int timeInMs_;
     bool active_;
-
 };
 
 }; //namespace

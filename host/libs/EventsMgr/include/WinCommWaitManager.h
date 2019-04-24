@@ -23,16 +23,36 @@ public:
     WinCommWaitManager();
     ~WinCommWaitManager();
 
+    /**
+     * Registers an event in this class
+     * @param event event to register
+     * @return returns true when succeeded, otherwise false
+     */
     bool registerEvent(EvEventBase* event);
+
+    /**
+     * Unregister event from dispatcher
+     * @param event event to unregister
+     */
     void unregisterEvent(EvEventBase* event);
 
-    int dispatch();
-
+    /**
+     * Starts dispatcher in second thread
+     */
     void startInThread();
+
+    /**
+     * Stops dispatcher thread
+     */
     void stop();
 
 private:
     void threadMain();
+
+    /**
+     * Dispatch function
+     */
+    int dispatch();
 
 private:
     std::thread eventsThread_;
