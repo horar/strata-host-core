@@ -14,9 +14,11 @@ find_package(Qt5 5.12
 
 add_executable(${PROJECT_NAME}
     main.cpp
+    SciModel.cpp
     BoardsController.cpp
     PlatformBoard.cpp
     qml.qrc
+    images/images.qrc
 )
 
 if(APPLE)
