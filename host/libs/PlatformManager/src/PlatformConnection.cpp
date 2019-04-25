@@ -8,8 +8,7 @@
 #if defined(__linux__) || defined(__APPLE__)
 #include <EvEventsMgr.h>
 #elif defined(_WIN32)
-#include "WinCommEvent.h"
-#include "WinCommFakeEvent.h"
+#include <WinCommEvent.h>
 #endif
 
 #include <assert.h>

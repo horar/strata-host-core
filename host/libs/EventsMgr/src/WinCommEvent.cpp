@@ -64,9 +64,11 @@ namespace spyglass {
             return 1;       //IO_PENDING
         }
 
-        int flags = getActivationFlags();
+        if (dwEventMask_ != 0) {
 
-        handle_event(flags);
+            int flags = getActivationFlags();
+            handle_event(flags);
+        }
         return 0;
     }
 

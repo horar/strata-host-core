@@ -6,7 +6,6 @@
 #include "WinCommWaitManager.h"
 #include "EvEventBase.h"
 #include "WinCommEvent.h"
-#include "WinCommFakeEvent.h"
 #include "WinTimerEvent.h"
 
 #include <Windows.h>
@@ -57,9 +56,12 @@ bool WinCommWaitManager::registerEvent(EvEventBase* ev)
 
 void WinCommWaitManager::unregisterEvent(EvEventBase* ev)
 {
-    for (auto it = eventList_.begin(); it != eventList_.end(); ++it) {
+    for (auto it = eventList_.begin(); it != eventList_.end(); ) {
         if (it->second == ev) {
-            eventList_.erase(it);
+            it = eventList_.erase(it);
+        }
+        else {
+            ++it;
         }
     }
 }
