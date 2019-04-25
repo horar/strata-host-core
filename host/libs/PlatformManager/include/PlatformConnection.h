@@ -88,15 +88,12 @@ namespace spyglass {
          *  or nullptr when isn't attached.
          */
         EvEventsMgr* getEventMgr() const { return event_mgr_; }
-#elif defined(_WIN32)
-        EvEventBase* getEvent();
-
 #endif
 
         /**
-         * Detaches EvEventsMgr from connection
+         * Returns event
          */
-        void detachEventMgr();
+        EvEventBase* getEvent();
 
         /**
          * Stops / Resumes listening on events from PlatformManager(EvEventMgr)

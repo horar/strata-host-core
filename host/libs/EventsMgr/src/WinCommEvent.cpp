@@ -94,6 +94,8 @@ namespace spyglass {
 
     bool WinCommEvent::activate(int evFlags)
     {
+        std::lock_guard <std::mutex> lock(eventLock_);
+
         DWORD dwComMask = (evFlags & EvEventBase::eEvStateRead) ? EV_RXCHAR : 0;
         if (!::SetCommMask(hComm_, dwComMask)) {
             //TODO: error handling
@@ -112,6 +114,8 @@ namespace spyglass {
 
     void WinCommEvent::deactivate()
     {
+        std::lock_guard <std::mutex> lock(eventLock_);
+
         ::SetCommMask(hComm_, 0);
         ::ResetEvent(hWriteEvent_);
         flags_ = 0;
@@ -119,6 +123,8 @@ namespace spyglass {
 
     int WinCommEvent::getActivationFlags()
     {
+        std::lock_guard <std::mutex> lock(eventLock_);
+
         int flags = 0;
         flags |= (dwEventMask_ & EV_RXCHAR) ? EvEventBase::eEvStateRead : 0;
         flags |= (flags_ & EvEventBase::eEvStateWrite);

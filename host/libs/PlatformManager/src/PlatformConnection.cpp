@@ -12,6 +12,7 @@
 #endif
 
 #include <assert.h>
+#include <iostream>
 
 namespace spyglass {
 
@@ -150,6 +151,8 @@ int PlatformConnection::handleRead(unsigned int timeout)
 
 int PlatformConnection::handleWrite(unsigned int timeout)
 {
+    std::cout << "handleWrite()" << std::endl;
+
     std::lock_guard<std::mutex> lock(writeLock_);
     if (isWriteBufferEmpty()) {
         return 0;
@@ -176,6 +179,8 @@ void PlatformConnection::addMessage(const std::string& message)
 {
     assert(event_);
     bool isWrite = event_->isActive(EvEventBase::eEvStateWrite);
+
+    std::cout << "addMessage()" << std::endl;
 
     //TODO: checking for too big messages...
 
@@ -261,7 +266,7 @@ bool PlatformConnection::updateEvent(bool read, bool write)
     }
 
     int evFlags = (read ? EvEventBase::eEvStateRead : 0) | (write ? EvEventBase::eEvStateWrite : 0);
-    return event_->activate(evFlags);  //event_mgr_
+    return event_->activate(evFlags);
 }
 #elif defined(_WIN32)
 
@@ -289,6 +294,7 @@ bool PlatformConnection::updateEvent(bool read, bool write)
 }
 #endif
 
+/*
 void PlatformConnection::detachEventMgr()
 {
     if (!port_) {
@@ -299,7 +305,7 @@ void PlatformConnection::detachEventMgr()
         std::lock_guard<std::recursive_mutex> lock(event_lock_);
         event_->deactivate();
     }
-}
+}*/
 
 bool PlatformConnection::stopListeningOnEvents(bool stop)
 {

@@ -185,13 +185,9 @@ void PlatformManager::onRemovedPort(serialPortHash hash)
 
     std::cout << "Disconnect" << std::endl;
 
-#if defined(__linux__) || defined(__APPLE__)
-    conn->detachEventMgr();
-
-#elif defined(_WIN32)
     EvEventBase* ev = conn->getEvent();
+    ev->deactivate();
     eventsMgr_.unregisterEvent(ev);
-#endif
 
     if (plat_handler_) {
         plat_handler_->onCloseConnection(conn);
@@ -241,23 +237,19 @@ void PlatformManager::onAddedPort(serialPortHash hash)
         openedPorts_.insert({hash, conn});
     }
 
-#if defined(__linux__) || defined(__APPLE__)
-    conn->attachEventMgr(&eventsMgr_);
-#elif defined(_WIN32)
-
     spyglass::EvEventBase* ev = conn->getEvent();
-
-    int flags = (int) spyglass::EvEvent::eEvStateRead;
-    ev->activate(flags);
-
     eventsMgr_.registerEvent(ev);
-#endif
 
     std::cout << "New connection" << std::endl;
 
     if (plat_handler_) {
         plat_handler_->onNewConnection(conn);
     }
+
+    //activate event in dispatcher (for read)
+    int flags = ev->getActivationFlags();
+    flags |= spyglass::EvEvent::eEvStateRead;
+    ev->activate(flags);    //TODO: error logging...
 }
 
 void PlatformManager::notifyConnectionReadable(PlatformConnection* conn)

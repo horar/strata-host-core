@@ -39,6 +39,7 @@ bool WinTimerEvent::activate(int flags)
     if (hTimer_ == NULL)
         return false;
 
+    std::lock_guard <std::mutex> lock(lock_);
     if (active_) {
         return true;
     }
@@ -52,6 +53,7 @@ bool WinTimerEvent::activate(int flags)
 
 void WinTimerEvent::deactivate()
 {
+    std::lock_guard <std::mutex> lock(lock_);
     if (active_ == false) {
         return;
     }

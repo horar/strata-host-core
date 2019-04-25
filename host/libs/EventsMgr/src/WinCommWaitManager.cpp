@@ -20,14 +20,14 @@ namespace spyglass
 unsigned int g_waitTimeout = 5000;  //in ms
 unsigned int g_maxEventMapSize = MAXIMUM_WAIT_OBJECTS-1;
 
-WinCommWaitManager::WinCommWaitManager() : hStopEvent_(NULL)
+WinCommWaitManager::WinCommWaitManager() : hWakeupEvent_(NULL)
 {
 }
 
 WinCommWaitManager::~WinCommWaitManager()
 {
-    if (hStopEvent_ != NULL) {
-        ::CloseHandle(hStopEvent_);
+    if (hWakeupEvent_ != NULL) {
+        ::CloseHandle(hWakeupEvent_);
     }
 }
 
@@ -41,7 +41,11 @@ bool WinCommWaitManager::registerEvent(EvEventBase* ev)
     if (handle == NULL) {
         return false;
     }
-    eventList_.push_back(std::make_pair(handle, ev));
+
+    {
+        std::lock_guard<std::mutex> lock(dispatchLock_);
+        eventList_.push_back(std::make_pair(handle, ev));
+    }
 
     if (ev->getType() == EvEventBase::EvType::eEvTypeWinHandle) {
         WinCommEvent* com = static_cast<WinCommEvent*>(ev);
@@ -49,28 +53,39 @@ bool WinCommWaitManager::registerEvent(EvEventBase* ev)
         if (handle_write == NULL) {
             return false;
         }
-        eventList_.push_back(std::make_pair(handle_write, ev));
+
+        {
+            std::lock_guard<std::mutex> lock(dispatchLock_);
+            eventList_.push_back(std::make_pair(handle_write, ev));
+        }
     }
+
+    ::SetEvent(hWakeupEvent_);
     return true;
 }
 
 void WinCommWaitManager::unregisterEvent(EvEventBase* ev)
 {
-    for (auto it = eventList_.begin(); it != eventList_.end(); ) {
-        if (it->second == ev) {
-            it = eventList_.erase(it);
-        }
-        else {
-            ++it;
+    {
+        std::lock_guard<std::mutex> lock(dispatchLock_);
+        for (auto it = eventList_.begin(); it != eventList_.end(); ) {
+            if (it->second == ev) {
+                it = eventList_.erase(it);
+            }
+            else {
+                ++it;
+            }
         }
     }
+
+    ::SetEvent(hWakeupEvent_);
 }
 
 bool WinCommWaitManager::startInThread()
 {
-    if (hStopEvent_ == NULL) {
-        hStopEvent_ = ::CreateEvent(NULL, TRUE, FALSE, NULL);
-        if (hStopEvent_ == NULL) {
+    if (hWakeupEvent_ == NULL) {
+        hWakeupEvent_ = ::CreateEvent(NULL, TRUE, FALSE, NULL);
+        if (hWakeupEvent_ == NULL) {
             return false;
         }
     }
@@ -86,7 +101,7 @@ void WinCommWaitManager::stop()
     }
 
     stopThread_ = true;
-    ::SetEvent(hStopEvent_);
+    ::SetEvent(hWakeupEvent_);
 
     eventsThread_.join();
 }
@@ -118,7 +133,7 @@ int WinCommWaitManager::dispatch()
 
     }
 
-    waitList[dwCount] = hStopEvent_;
+    waitList[dwCount] = hWakeupEvent_;
     dwCount++;
 
     DWORD dwRet = ::WaitForMultipleObjects(dwCount, waitList, FALSE, g_waitTimeout);
@@ -143,7 +158,9 @@ int WinCommWaitManager::dispatch()
 
         // check witch one is signaled..
         HANDLE hSignaled = waitList[(dwRet - WAIT_OBJECT_0)];
-        if (hSignaled == hStopEvent_) {
+        if (hSignaled == hWakeupEvent_) {
+
+            ::ResetEvent(hWakeupEvent_);
             return 0;
         }
         

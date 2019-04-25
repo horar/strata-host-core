@@ -7,6 +7,7 @@
 
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
+#include <mutex>
 
 namespace spyglass {
 
@@ -59,6 +60,8 @@ private:
     };
 
     enum state state_;
+
+    std::mutex eventLock_;
 
     HANDLE hReadWaitEvent_;
 

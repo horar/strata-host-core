@@ -6,6 +6,7 @@
 #include <functional>
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
+#include <mutex>
 
 #include "EvEventBase.h"
 
@@ -48,6 +49,8 @@ private:
     HANDLE hTimer_;
     unsigned int timeInMs_;
     bool active_;
+
+    std::mutex lock_;
 };
 
 }; //namespace

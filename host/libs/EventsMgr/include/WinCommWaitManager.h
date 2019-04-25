@@ -66,7 +66,7 @@ private:
     std::list<event_pair> eventList_;
     std::mutex dispatchLock_;
 
-    HANDLE hStopEvent_;
+    HANDLE hWakeupEvent_;
 };
 
 } //namespace
