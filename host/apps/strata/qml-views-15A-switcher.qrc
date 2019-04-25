@@ -18,7 +18,6 @@
         <file>views/15A-switcher/sgwidgets/SGCircularGauge.qml</file>
         <file>views/15A-switcher/sgwidgets/SGComboBox.qml</file>
         <file>views/15A-switcher/sgwidgets/SGGraph.qml</file>
-        <file>views/15A-switcher/sgwidgets/SGHueSlider.qml</file>
         <file>views/15A-switcher/sgwidgets/SGLabelledInfoBox.qml</file>
         <file>views/15A-switcher/sgwidgets/SGRGBSlider.qml</file>
         <file>views/15A-switcher/sgwidgets/SGRadioButton.qml</file>

@@ -31,9 +31,9 @@ Item {
     }
 
     onRequest_usb_power_notificationChanged: {
-//        console.log("output voltage=",request_usb_power_notification.output_voltage,
-//                    "output current=",request_usb_power_notification.output_current,
-//                    "power=",request_usb_power_notification.output_voltage * request_usb_power_notification.output_current);
+        console.log("output voltage=",request_usb_power_notification.output_voltage,
+                    "output current=",request_usb_power_notification.output_current,
+                    "power=",request_usb_power_notification.output_voltage * request_usb_power_notification.output_current);
     }
 
 
@@ -208,6 +208,40 @@ Item {
 
     property var maximum_board_power :{
          "watts":30          // 30-300
+    }
+
+    property var usb_a_port_is_charging_notification:{
+        "port":0,
+        "charging": false       //or true
+    }
+
+    property var device_characteristics_notification:{
+        "port":0,
+        "source":false,
+        "sink":false,
+        "fast_role_swap":false,
+        "superspeed":false,
+        "extended_sink":false
+    }
+
+    onDevice_characteristics_notificationChanged: {
+        console.log("device characteristics changed ",device_characteristics_notification.port,
+                                                       device_characteristics_notification.source,
+                                                    device_characteristics_notification.fast_role_swap,
+                                                    device_characteristics_notification.superspeed,
+                                                    device_characteristics_notification.extended_sink);
+    }
+
+    property var displayport_video_active_notification:{
+        "video_active": false       //or true
+    }
+
+    property var audio_active_notification:{
+        "audio_active": false       //or true
+    }
+
+    property var audio_volume_notification:{
+        "volume":.5       //value between 0 and 1
     }
 
     // --------------------------------------------------------------------------------------------
@@ -478,6 +512,22 @@ Item {
                       show: function () { CorePlatformInterface.show(this) }
     })
 
+    property var set_audio_volume:({
+                    "cmd":"set_audio_volume",
+                    "payload":{
+                        "volume":0      // value between 0 and 1
+                      },
+                      update: function (inVolume){
+                          this.set(inVolume);
+                          CorePlatformInterface.send(this);
+                          },
+                      set: function(volume){
+                           this.payload.volume = volume;
+                           },
+                      send: function () { CorePlatformInterface.send(this) },
+                      show: function () { CorePlatformInterface.show(this) }
+    })
+
     // -------------------  end commands
 
     // NOTE:
@@ -502,64 +552,132 @@ Item {
 
 
 
-    /*    // DEBUG - TODO: Faller - Remove before merging back to Dev
+        // DEBUG - TODO: Faller - Remove before merging back to Dev
     Window {
         id: debug
         visible: true
         width: 200
-        height: 200
+        height: 240
 
         // This button sends 2 notifications in 1 JSON, future possible implementation
         Button {
             id: button1
-            text: "send pi_stats and voltage"
+            text: "basic port stats"
             onClicked: {
                 CorePlatformInterface.data_source_handler('{
-                                        "input_voltage_notification": {
-                                            "vin": '+ (Math.random()*5+10).toFixed(2) +'
-                                        },
-                                        "pi_stats": {
-                                            "speed_target": 3216,
-                                            "current_speed": '+ (Math.random()*2000+3000).toFixed(0) +',
-                                            "error": -1104,
-                                            "sum": -0.01,
-                                            "duty_now": 0.67,
-                                            "mode": "manual"
-                                        }
-                                    }')
+                    "value":"request_usb_power_notification",
+                    "payload": {
+                        "port": '+ (Math.random()*3 + 1).toFixed(0) +',
+                        "device": "PD",
+                        "advertised_maximum_current": '+ (Math.random()*20).toFixed(0) +',
+                        "negotiated_current": '+ (Math.random()*20).toFixed(0) +',
+                        "negotiated_voltage": '+ (Math.random()*20).toFixed(0) +',
+                        "input_voltage": '+ (Math.random()*20).toFixed(2) +',
+                        "output_voltage":'+ (Math.random()*20).toFixed(2) +',
+                        "input_current": '+ (Math.random()*20).toFixed(2) +',
+                        "output_current":'+ (Math.random()*20).toFixed(2) +',
+                        "temperature": '+ (Math.random()*212).toFixed(1) +',
+                        "maximum_power":'+ (Math.random()*20).toFixed(0) +'
+                        }
+                    }')
             }
         }
+
+
+//        "port":1,//c,
+//        "source":true,//'+ (Math.random() >= .5) ? true :false +',
+//        "sink":true,//'+ (Math.random() >= .5) ? true :false +',
+//        "fast_role_swap":true,//'+ (Math.random() >= .5) ? true :false +',
+//        "superspeed":true,//'+ (Math.random() >= .5) ? true :false +',
+//        "extended_sink":true,//'+ (Math.random() >= .5) ? true :false +'
+
+
 
         Button {
             id: button2
             anchors { top: button1.bottom }
-            text: "send vin"
+            text: "device characteristics"
+
+            function randomBool(){
+                if (Math.random() >= .5)
+                    return true;
+                  else
+                    return false;
+            }
+
             onClicked: {
                 CorePlatformInterface.data_source_handler('{
-                    "value":"pi_stats",
+                    "value":"device_characteristics_notification",
                     "payload":{
-                                "speed_target":3216,
-                                "current_speed": '+ (Math.random()*2000+3000).toFixed(0) +',
-                                "error":-1104,
-                                "sum":-0.01,
-                                "duty_now":0.67,
-                                "mode":"manual"
-                               }
-                             }')
+                        "port":'+ (Math.random()*4 + 1).toFixed(0) +',
+                        "source":'+ randomBool() +',
+                        "sink":'+ randomBool() +',
+                        "fast_role_swap":'+ randomBool() +',
+                        "superspeed":'+ randomBool() +',
+                        "extended_sink":'+ randomBool() +'
+                        }
+                     }')
             }
         }
+
         Button {
+            id:button3
             anchors { top: button2.bottom }
-            text: "send"
+            text: "start audio"
             onClicked: {
                 CorePlatformInterface.data_source_handler('{
-                            "value":"input_voltage_notification",
+                            "value":"audio_active_notification",
                             "payload":{
-                                     "vin":'+ (Math.random()*5+10).toFixed(2) +'
+                                     "audio_active":true
                             }
                     }
             ')
             }
         }
-    }*/
+
+        Button {
+            id:button4
+            anchors { top: button3.bottom }
+            text: "end audio"
+            onClicked: {
+                CorePlatformInterface.data_source_handler('{
+                            "value":"audio_active_notification",
+                            "payload":{
+                                     "audio_active":false
+                            }
+                    }
+            ')
+            }
+        }
+
+        Button {
+            id:button5
+            anchors { top: button4.bottom }
+            text: "start video"
+            onClicked: {
+                CorePlatformInterface.data_source_handler('{
+                            "value":"displayport_video_active_notification",
+                            "payload":{
+                                     "video_active":true
+                            }
+                    }
+            ')
+            }
+        }
+
+        Button {
+            id:button6
+            anchors { top: button5.bottom }
+            text: "end video"
+            onClicked: {
+                CorePlatformInterface.data_source_handler('{
+                            "value":"displayport_video_active_notification",
+                            "payload":{
+                                     "video_active":false
+                            }
+                    }
+            ')
+            }
+        }
+    }
 }

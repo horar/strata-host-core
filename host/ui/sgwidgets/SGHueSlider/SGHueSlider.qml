@@ -1,6 +1,5 @@
-import QtQuick 2.9
+import QtQuick 2.12
 import QtQuick.Controls 2.3
-import QtGraphicalEffects 1.0
 
 Item {
     id: root
@@ -54,11 +53,8 @@ Item {
             width: hueSlider.width
             height: hueSlider.height-8
             radius: 5
-            layer.enabled: true
-            layer.effect: LinearGradient {
-                start: Qt.point(0, 0)
-                end: Qt.point(width, 0)
-                gradient: Gradient {
+            gradient: Gradient {
+                    orientation: Gradient.Horizontal
                     GradientStop { position: 0.0; color: Qt.hsva(0.0,1,1,1) }
                     GradientStop { position: 0.1667; color: Qt.hsva(0.1667,1,1,1) }
                     GradientStop { position: 0.3333; color: Qt.hsva(0.3333,1,1,1) }
@@ -68,7 +64,6 @@ Item {
                     GradientStop { position: 1.0; color: Qt.hsva(1.0,1,1,1) }
                 }
             }
-        }
 
         handle: Item {
             id: handle
