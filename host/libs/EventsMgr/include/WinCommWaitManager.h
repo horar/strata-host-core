@@ -55,6 +55,8 @@ private:
      */
     int dispatch();
 
+    int handleEvent(HANDLE hEvent);
+
 private:
     std::thread eventsThread_;
     std::atomic_bool stopThread_{ false };

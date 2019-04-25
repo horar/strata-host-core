@@ -13,6 +13,7 @@
 
 #include <thread>
 #include <assert.h>
+#include <algorithm>
 
 namespace spyglass
 {
@@ -41,10 +42,16 @@ bool WinCommWaitManager::registerEvent(EvEventBase* ev)
     if (handle == NULL) {
         return false;
     }
-
-    //TODO: check for duplicates
-
     eventList_.push_back(std::make_pair(handle, ev));
+
+    if (ev->getType() == EvEventBase::EvType::eEvTypeWinHandle) {
+        WinCommEvent* com = static_cast<WinCommEvent*>(ev);
+        ev_handle_t handle_write = com->getWriteWaitHandle();
+        if (handle_write == NULL) {
+            return false;
+        }
+        eventList_.push_back(std::make_pair(handle_write, ev));
+    }
     return true;
 }
 
@@ -53,7 +60,6 @@ void WinCommWaitManager::unregisterEvent(EvEventBase* ev)
     for (auto it = eventList_.begin(); it != eventList_.end(); ++it) {
         if (it->second == ev) {
             eventList_.erase(it);
-            return;
         }
     }
 }
@@ -96,10 +102,11 @@ int WinCommWaitManager::dispatch()
 
             if (item.second->getType() == EvEventBase::EvType::eEvTypeWinHandle) {
                 WinCommEvent* ev = static_cast<WinCommEvent*>(item.second);
-                ret = ev->preDispatch();
-                if (ret != 1)       //TODO: handle imedially dispatch..
-                    continue;
-
+                if (ev->getWaitHandle() == item.first) {
+                    ret = ev->preDispatch();
+                    if (ret != 1)       //TODO: handle imedially dispatch..
+                        continue;
+                }
             }
 
             waitList[dwCount] = item.first; dwCount++;
@@ -137,63 +144,61 @@ int WinCommWaitManager::dispatch()
         if (hSignaled == hStopEvent_) {
             return 0;
         }
-
-        EvEventBase* ev;
-        std::list<event_pair>::iterator findIt;
-        {
-            std::lock_guard<std::mutex> lock(dispatchLock_);
-            for(findIt = eventList_.begin(); findIt != eventList_.end(); ++findIt) {
-                if (findIt->first == hSignaled) {
-                    break;
-                }
-            }
-
-            if (findIt == eventList_.end()) {
-                assert(false);     //Something really wrong!
-                return -1;
-            }
-
-            ev = findIt->second;
-        }
-
-        int flags = 0;
-        if (ev->getType() == EvEventBase::EvType::eEvTypeWinHandle) {
-            WinCommEvent* com = static_cast<WinCommEvent*>(ev);
-            flags = com->getActivationFlags();
-        }
-        else if (ev->getType() == EvEventBase::EvType::eEvTypeWinFakeHandle) {
-            WinCommFakeEvent* com = static_cast<WinCommFakeEvent*>(ev);
-            flags = com->getActivationFlags();
-        }
-
-        ev->handle_event(flags);
-
-        //reset wait event, and loop WaitFor... ??
-
-        if (ev->getType() == EvEventBase::EvType::eEvTypeWinHandle) {
-            WinCommEvent* com = static_cast<WinCommEvent*>(ev);
-            com->cancelWait();
-        }
-        else if (ev->getType() == EvEventBase::EvType::eEvTypeWinTimer) {
-            WinTimerEvent* timer = static_cast<WinTimerEvent*>(ev);
-            timer->restartTimer();
-        }
-
-        if (eventList_.size() > 1) {
-
-            //NOTE: move signalled event to back of the event list
-            //      to avoid signalling one and the same event
-            std::lock_guard<std::mutex> lock(dispatchLock_);
-            event_pair temp = *findIt;
-
-            eventList_.erase(findIt);
-            eventList_.push_back(temp);
-        }
-
-        return 1;
+        
+        return handleEvent(hSignaled);
     }
 
     return -2;
+}
+
+int WinCommWaitManager::handleEvent(HANDLE hSignaled)
+{
+    EvEventBase* ev;
+    std::list<event_pair>::iterator findIt;
+    {
+        std::lock_guard<std::mutex> lock(dispatchLock_);
+        findIt = std::find_if(eventList_.begin(), eventList_.end(), [=](event_pair const& item) {
+            return item.first == hSignaled;
+        });
+        if (findIt == eventList_.end()) {
+            assert(false);     //Something really wrong!
+            return -1;
+        }
+
+        ev = findIt->second;
+    }
+
+    int flags = 0;
+    if (ev->getType() == EvEventBase::EvType::eEvTypeWinHandle) {
+        WinCommEvent* com = static_cast<WinCommEvent*>(ev);
+        flags = com->getActivationFlags();
+    }
+
+    ev->handle_event(flags);
+
+    //reset wait event, and loop WaitFor... ??
+
+    if (ev->getType() == EvEventBase::EvType::eEvTypeWinHandle) {
+        WinCommEvent* com = static_cast<WinCommEvent*>(ev);
+        com->cancelWait();
+    }
+    else if (ev->getType() == EvEventBase::EvType::eEvTypeWinTimer) {
+        WinTimerEvent* timer = static_cast<WinTimerEvent*>(ev);
+        timer->restartTimer();
+    }
+
+    if (eventList_.size() > 1) {
+
+        //NOTE: move signalled event to back of the event list
+        //      to avoid signalling one and the same event
+        std::lock_guard<std::mutex> lock(dispatchLock_);
+        event_pair temp = *findIt;
+
+        eventList_.erase(findIt);
+        eventList_.push_back(temp);
+    }
+
+    return 1;
 }
 
 void WinCommWaitManager::threadMain()

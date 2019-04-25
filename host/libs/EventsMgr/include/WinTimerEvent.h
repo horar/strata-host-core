@@ -37,6 +37,8 @@ public:
     bool activate(int evFlags) override;
     void deactivate() override;
 
+    int getActivationFlags() override;
+
     bool isActive(int ev_flags) const override;
 
 private:

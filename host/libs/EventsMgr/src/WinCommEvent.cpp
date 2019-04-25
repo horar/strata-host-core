@@ -7,23 +7,33 @@
 
 namespace spyglass {
 
-    WinCommEvent::WinCommEvent() : EvEventBase(EvType::eEvTypeWinHandle), hComm_(NULL), flags_(0), state_(eNotInitialized), hWaitEvent_(NULL), dwEventMask_(0)
+    WinCommEvent::WinCommEvent() : EvEventBase(EvType::eEvTypeWinHandle),
+        hComm_(NULL), flags_(0), state_(eNotInitialized),
+        hReadWaitEvent_(NULL), dwEventMask_(0), hWriteEvent_(NULL)
     {
         wait_ = { 0 };
     }
 
     WinCommEvent::~WinCommEvent()
     {
-        if (hWaitEvent_ != NULL) {
-            ::CloseHandle(hWaitEvent_);
+        if (hWriteEvent_ != NULL) {
+            ::CloseHandle(hWriteEvent_);
+        }
+
+        if (hReadWaitEvent_ != NULL) {
+            ::CloseHandle(hReadWaitEvent_);
         }
     }
 
     bool WinCommEvent::create(HANDLE hComm)
     {
-        hWaitEvent_ = ::CreateEvent(NULL, TRUE, FALSE, NULL);
-        if (hWaitEvent_ == NULL) {
-            //TODO: error handling
+        hReadWaitEvent_ = ::CreateEvent(NULL, TRUE, FALSE, NULL);
+        if (hReadWaitEvent_ == NULL) {
+            return false;
+        }
+
+        hWriteEvent_ = ::CreateEvent(NULL, TRUE, FALSE, NULL);
+        if (hWriteEvent_ == NULL) {
             return false;
         }
 
@@ -34,9 +44,7 @@ namespace spyglass {
 
     int WinCommEvent::preDispatch()
     {
-        if (updateFlags() != 0) {
-            return -1;
-        }
+        resetCommMask();
 
         if (state_ == ePending) {
             return 1;
@@ -44,7 +52,7 @@ namespace spyglass {
 
         dwEventMask_ = 0;
         memset(&wait_, 0, sizeof(wait_));
-        wait_.hEvent = hWaitEvent_;
+        wait_.hEvent = hReadWaitEvent_;
 
         if (!::WaitCommEvent(hComm_, &dwEventMask_, &wait_)) {
             if (GetLastError() != ERROR_IO_PENDING) {
@@ -56,7 +64,7 @@ namespace spyglass {
             return 1;       //IO_PENDING
         }
 
-        int flags = getEvFlagsState();
+        int flags = getActivationFlags();
 
         handle_event(flags);
         return 0;
@@ -64,7 +72,7 @@ namespace spyglass {
 
     ev_handle_t WinCommEvent::getWaitHandle()
     {
-        return reinterpret_cast<ev_handle_t>(hWaitEvent_);
+        return reinterpret_cast<ev_handle_t>(hReadWaitEvent_);
     }
 
     bool WinCommEvent::isPending() const
@@ -84,12 +92,26 @@ namespace spyglass {
 
     bool WinCommEvent::activate(int evFlags)
     {
+        DWORD dwComMask = (evFlags & EvEventBase::eEvStateRead) ? EV_RXCHAR : 0;
+        if (!::SetCommMask(hComm_, dwComMask)) {
+            //TODO: error handling
+            return false;
+        }
+        if ((evFlags & EvEventBase::eEvStateWrite) != 0) {
+            ::SetEvent(hWriteEvent_);
+        }
+        else {
+            ::ResetEvent(hWriteEvent_);
+        }
+
         flags_ = evFlags;
         return true;
     }
 
     void WinCommEvent::deactivate()
     {
+        ::SetCommMask(hComm_, 0);
+        ::ResetEvent(hWriteEvent_);
         flags_ = 0;
     }
 
@@ -97,7 +119,7 @@ namespace spyglass {
     {
         int flags = 0;
         flags |= (dwEventMask_ & EV_RXCHAR) ? EvEventBase::eEvStateRead : 0;
-        flags |= (dwEventMask_ & EV_TXEMPTY) ? EvEventBase::eEvStateWrite : 0;
+        flags |= (flags_ & EvEventBase::eEvStateWrite);
         return flags;
     }
 
@@ -106,20 +128,16 @@ namespace spyglass {
         return (flags_ & ev_flags) != 0;
     }
 
-    int WinCommEvent::updateFlags()
+    ev_handle_t WinCommEvent::getWriteWaitHandle() const
     {
-        DWORD dwComMask = 0;
-        dwComMask |= (flags_ & EvEventBase::eEvStateRead) ? EV_RXCHAR : 0;
-        //TODO: dwComMask |= (flags_ & EvEventBase::eEvStateWrite) ? EV_TXEMPTY : 0;
-
-        if (!::SetCommMask(hComm_, dwComMask)) {
-            //TODO: error handling
-            return -1;
-        }
-
-        return 0;
+        return hWriteEvent_;
     }
 
+    int WinCommEvent::resetCommMask()
+    {
+        DWORD dwComMask = (flags_ & EvEventBase::eEvStateRead) ? EV_RXCHAR : 0;
+        return ::SetCommMask(hComm_, dwComMask);
+    }
 
 } //namespace spyglass
 

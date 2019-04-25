@@ -34,7 +34,11 @@ public:
 
     bool isActive(int ev_flags) const override;
 
+    ev_handle_t getWriteWaitHandle() const;
+
 protected:
+
+    int resetCommMask();
     int preDispatch();
 
     bool isPending() const;
@@ -56,10 +60,12 @@ private:
 
     enum state state_;
 
-    HANDLE hWaitEvent_;
+    HANDLE hReadWaitEvent_;
 
     DWORD dwEventMask_;
     OVERLAPPED wait_;
+
+    HANDLE hWriteEvent_;
 
     friend class WinCommWaitManager;
 };

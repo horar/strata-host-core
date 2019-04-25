@@ -21,7 +21,6 @@ public:
         eEvTypeSignal,      //Linux or Mac only
         eEvTypeWinHandle,   //Windows only
         eEvTypeWinTimer,    //Windows only
-        eEvTypeWinFakeHandle,
     };
 
     enum EvTypeFlags {   //flags for event type occured
@@ -70,7 +69,7 @@ public:
 
     /**
      * returns activation flags
-     * @return returns true when flags are set otherwise false
+     * @return returns activation flags given on activate()
      */
     virtual int getActivationFlags() = 0;
 
