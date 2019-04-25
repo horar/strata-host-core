@@ -61,7 +61,7 @@ bool PlatformManager::StartLoop()
 
 #if defined(_WIN32)
     if (portsUpdateThread_.startInThread() == false) {
-        eventsMgr.stop();
+        eventsMgr_.stop();
         return false;
     }
 #endif
