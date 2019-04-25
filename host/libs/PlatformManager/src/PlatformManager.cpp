@@ -191,9 +191,6 @@ void PlatformManager::onRemovedPort(serialPortHash hash)
 #elif defined(_WIN32)
     EvEventBase* ev = conn->getEvent();
     eventsMgr_.unregisterEvent(ev);
-
-    ev = conn->getWriteEvent();
-    eventsMgr_.unregisterEvent(ev);
 #endif
 
     if (plat_handler_) {
@@ -254,9 +251,6 @@ void PlatformManager::onAddedPort(serialPortHash hash)
     ev->activate(flags);
 
     eventsMgr_.registerEvent(ev);
-
-    spyglass::EvEventBase* ev2 = conn->getWriteEvent();
-    eventsMgr_.registerEvent(ev2);
 #endif
 
     std::cout << "New connection" << std::endl;
