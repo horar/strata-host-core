@@ -159,11 +159,11 @@ int WinCommWaitManager::dispatch()
         int flags = 0;
         if (ev->getType() == EvEventBase::EvType::eEvTypeWinHandle) {
             WinCommEvent* com = static_cast<WinCommEvent*>(ev);
-            flags = com->getEvFlagsState();
+            flags = com->getActivationFlags();
         }
         else if (ev->getType() == EvEventBase::EvType::eEvTypeWinFakeHandle) {
             WinCommFakeEvent* com = static_cast<WinCommFakeEvent*>(ev);
-            flags = com->getEvFlagsState();
+            flags = com->getActivationFlags();
         }
 
         ev->handle_event(flags);
