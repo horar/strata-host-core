@@ -25,10 +25,10 @@ public:
     /**
      * returns handle to the wait event
      */
-    virtual ev_handle_t getWaitHandle();
+    ev_handle_t getWaitHandle() override;
 
-    virtual bool activate(int evFlags);
-    virtual void deactivate();
+    bool activate(int evFlags) override;
+    void deactivate() override;
 
     bool isActive(int ev_flags) const;
 

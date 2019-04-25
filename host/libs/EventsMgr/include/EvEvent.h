@@ -32,7 +32,7 @@ public:
      * @param timeInMs timeout or 0 for undefined
      */
     EvEvent(EvType type, ev_handle_t fileHandle, unsigned int timeInMs);
-    virtual ~EvEvent();
+    ~EvEvent();
 
     /**
      * Sets the event type
@@ -53,17 +53,17 @@ public:
      * @param ev_flags flags see enum EvTypeFlags
      * @return
      */
-    virtual bool activate(int ev_flags = 0);
+    bool activate(int ev_flags = 0) override;
 
     /**
      * Deactivates event, removes from event_loop
      */
-    virtual void deactivate();
+    void deactivate() override;
 
     /** 
      * returns wait handle, in this case invalid
      */
-    virtual ev_handle_t getWaitHandle();
+    ev_handle_t getWaitHandle() override;
 
     /**
      * Checks event activation flags

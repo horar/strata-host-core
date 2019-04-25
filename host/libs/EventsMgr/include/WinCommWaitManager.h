@@ -38,8 +38,9 @@ public:
 
     /**
      * Starts dispatcher in second thread
+     * @return returns true when succeded
      */
-    void startInThread();
+    bool startInThread();
 
     /**
      * Stops dispatcher thread

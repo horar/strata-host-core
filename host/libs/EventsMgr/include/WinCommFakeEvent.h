@@ -23,17 +23,16 @@ public:
      */
     bool create();
 
-    virtual ev_handle_t getWaitHandle();
+    ev_handle_t getWaitHandle() override;
 
-    virtual bool activate(int evFlags);
-    virtual void deactivate();
+    bool activate(int evFlags) override;
+    void deactivate() override;
 
     int getEvFlagsState() const;
 
 private:
     HANDLE hEvent_;
     int act_flags_;
-
 
     friend class WinCommWaitManager;
 };

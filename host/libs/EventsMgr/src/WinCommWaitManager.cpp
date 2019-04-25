@@ -50,8 +50,7 @@ bool WinCommWaitManager::registerEvent(EvEventBase* ev)
 
 void WinCommWaitManager::unregisterEvent(EvEventBase* ev)
 {
-    std::list<event_pair>::iterator it;
-    for (it = eventList_.begin(); it != eventList_.end(); ++it) {
+    for (auto it = eventList_.begin(); it != eventList_.end(); ++it) {
         if (it->second == ev) {
             eventList_.erase(it);
             return;
@@ -59,16 +58,17 @@ void WinCommWaitManager::unregisterEvent(EvEventBase* ev)
     }
 }
 
-void WinCommWaitManager::startInThread()
+bool WinCommWaitManager::startInThread()
 {
     if (hStopEvent_ == NULL) {
         hStopEvent_ = ::CreateEvent(NULL, TRUE, FALSE, NULL);
-        if (hStopEvent_ == 0) {
-            return;
+        if (hStopEvent_ == NULL) {
+            return false;
         }
     }
 
     eventsThread_ = std::thread(&WinCommWaitManager::threadMain, this);
+    return true;
 }
 
 void WinCommWaitManager::stop()
@@ -109,7 +109,8 @@ int WinCommWaitManager::dispatch()
 
     }
 
-    waitList[dwCount] = hStopEvent_; dwCount++;
+    waitList[dwCount] = hStopEvent_;
+    dwCount++;
 
     DWORD dwRet = ::WaitForMultipleObjects(dwCount, waitList, FALSE, g_waitTimeout);
     if (dwRet == WAIT_FAILED) {

@@ -53,13 +53,20 @@ bool PlatformManager::Init()
     return true;
 }
 
-void PlatformManager::StartLoop()
+bool PlatformManager::StartLoop()
 {
-    eventsMgr_.startInThread();
+    if (eventsMgr_.startInThread() == false) {
+        return false;
+    }
+
 #if defined(_WIN32)
-    portsUpdateThread_.startInThread();
+    if (portsUpdateThread_.startInThread() == false) {
+        eventsMgr.stop();
+        return false;
+    }
 #endif
 
+    return true;
 }
 
 void PlatformManager::Stop()

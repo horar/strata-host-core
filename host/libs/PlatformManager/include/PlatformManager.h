@@ -48,7 +48,7 @@ namespace spyglass {
         /**
          * Starts event loop in different thread that handles connections
          */
-        void StartLoop();
+        bool StartLoop();
 
         /**
          * Stops event loop and destroys thread

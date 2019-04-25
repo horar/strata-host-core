@@ -52,14 +52,14 @@ public:
 
     /**
      * Method that calls the callback.
-     * @param flags
+     * @param flags bit flags of enum EvTypeFlags
      */
     virtual void handle_event(int flags);
 
     /**
      * Activates event in EventMgr (or WinCommWaitManager)
-     * @param evFlags
-     * @return
+     * @param evFlags bit flags of enum EvTypeFlags
+     * @return returns true when succeeded, otherwise false
      */
     virtual bool activate(int evFlags) = 0;
 

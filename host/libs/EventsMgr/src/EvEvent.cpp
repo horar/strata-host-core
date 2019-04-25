@@ -67,7 +67,7 @@ void EvEvent::setDispatcher(EvEventsMgr* mgr)
     mgr_ = mgr;
 }
 
-bool EvEvent::activate(int ev_flags)  //EvEventsMgr *mgr,
+bool EvEvent::activate(int ev_flags)
 {
     if (mgr_ == nullptr) {
         return false;

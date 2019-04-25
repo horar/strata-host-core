@@ -83,9 +83,10 @@ void EvEventsMgr::dispatch(int flags)
     event_base_loop(event_base_, flags);
 }
 
-void EvEventsMgr::startInThread()
+bool EvEventsMgr::startInThread()
 {
     eventsThread_ = std::thread(&EvEventsMgr::threadMain, this);
+    return true;
 }
 
 void EvEventsMgr::stop()

@@ -150,7 +150,7 @@ static const char* g_usb_keyword = "COM";
 
 bool getListOfSerialPorts(std::vector<std::string>& result_list)
 {
-    struct sp_port **ports = NULL;
+    struct sp_port **ports = nullptr;
     sp_return ret = sp_list_ports(&ports);
     if (ret != SP_OK) {
         return false;

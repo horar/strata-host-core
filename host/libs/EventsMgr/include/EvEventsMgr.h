@@ -44,7 +44,7 @@ public:
     /**
      * Starts dispatch loop in second thread and returns
      */
-    void startInThread();
+    bool startInThread();
 
     /**
      * Stops thread with dispatch loop
