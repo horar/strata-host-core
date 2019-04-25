@@ -49,6 +49,11 @@ public:
     void setDispatcher(EvEventsMgr* mgr);
 
     /**
+     * returns wait handle, in this case invalid
+     */
+    ev_handle_t getWaitHandle() override;
+
+    /**
      * Activates the event in EvEventMgr
      * @param ev_flags flags see enum EvTypeFlags
      * @return
@@ -60,17 +65,18 @@ public:
      */
     void deactivate() override;
 
-    /** 
-     * returns wait handle, in this case invalid
+    /**
+     * returns activation flags
+     * @return returns true when flags are set otherwise false
      */
-    ev_handle_t getWaitHandle() override;
+    int getActivationFlags() override;
 
     /**
      * Checks event activation flags
      * @param ev_flags flags to check
      * @return returns true when flags are set otherwise false
      */
-    bool isActive(int ev_flags) const;    //TODO: probably better name...
+    bool isActive(int ev_flags) const override;    //TODO: probably better name...
 
     /**
      * Fires the event

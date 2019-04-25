@@ -60,6 +60,16 @@ void WinTimerEvent::deactivate()
     active_ = false;
 }
 
+int WinTimerEvent::getActivationFlags()
+{
+    return (active_) ? EvEventBase::eEvStateTimeout : 0;
+}
+
+bool WinTimerEvent::isActive(int ev_flags) const
+{
+    return (ev_flags & EvEventBase::eEvStateTimeout) ? active_ : false;
+}
+
 bool WinTimerEvent::setTimer()
 {
     LARGE_INTEGER time;

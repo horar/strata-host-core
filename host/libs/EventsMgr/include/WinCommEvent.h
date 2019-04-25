@@ -14,7 +14,7 @@ class WinCommEvent : public EvEventBase
 {
 public:
     WinCommEvent();
-    virtual ~WinCommEvent();
+    ~WinCommEvent();
 
     /**
      * creates an event for asynchronous notifications
@@ -30,14 +30,9 @@ public:
     bool activate(int evFlags) override;
     void deactivate() override;
 
-    bool isActive(int ev_flags) const;
+    int getActivationFlags() override;
 
-    /**
-     * returns handle to the fake write event
-     */
-    ev_handle_t getWriteHandle();
-
-    int getEvFlagsState() const;
+    bool isActive(int ev_flags) const override;
 
 protected:
     int preDispatch();

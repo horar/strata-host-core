@@ -68,6 +68,19 @@ public:
      */
     virtual void deactivate() = 0;
 
+    /**
+     * returns activation flags
+     * @return returns true when flags are set otherwise false
+     */
+    virtual int getActivationFlags() = 0;
+
+    /**
+     * Checks event activation flags
+     * @param ev_flags flags to check
+     * @return returns true when flags are set otherwise false
+     */
+    virtual bool isActive(int ev_flags) const = 0;    //TODO: probably better name...
+
 protected:
     void setType(EvType type);
 

@@ -15,7 +15,7 @@ class WinCommFakeEvent : public EvEventBase
 {
 public:
     WinCommFakeEvent();
-    virtual ~WinCommFakeEvent();
+    ~WinCommFakeEvent();
 
     /**
      * Creates fake event
@@ -28,7 +28,9 @@ public:
     bool activate(int evFlags) override;
     void deactivate() override;
 
-    int getEvFlagsState() const;
+    int getActivationFlags() override;
+
+    bool isActive(int ev_flags) const override;
 
 private:
     HANDLE hEvent_;

@@ -132,6 +132,21 @@ ev_handle_t EvEvent::getWaitHandle()
 #endif
 }
 
+int EvEvent::getActivationFlags()
+{
+    int result = 0;
+    if (event_pending(event_, EV_READ, nullptr) != 0) {
+        result |= EvEventBase::eEvStateRead;
+    }
+    if (event_pending(event_, EV_WRITE, nullptr) != 0) {
+        result |= EvEventBase::eEvStateWrite;
+    }
+    if (event_pending(event_, EV_TIMEOUT, nullptr) != 0) {
+        result |= EvEventBase::eEvStateTimeout;
+    }
+    return result;
+}
+
 bool EvEvent::isActive(int ev_flags) const
 {
     short flags = ((ev_flags & EvEventBase::eEvStateRead) ? EV_READ : 0) | ((ev_flags & EvEventBase::eEvStateWrite) ? EV_WRITE : 0);

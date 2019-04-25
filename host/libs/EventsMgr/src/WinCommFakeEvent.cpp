@@ -22,8 +22,9 @@ WinCommFakeEvent::~WinCommFakeEvent()
 bool WinCommFakeEvent::create()
 {
     hEvent_ = ::CreateEvent(NULL, TRUE, FALSE, NULL);
-    if(hEvent_ == NULL)
+    if(hEvent_ == NULL) {
         return false;
+    }
 
     return true;
 }

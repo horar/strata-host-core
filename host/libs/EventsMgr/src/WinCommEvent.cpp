@@ -67,14 +67,6 @@ namespace spyglass {
         return reinterpret_cast<ev_handle_t>(hWaitEvent_);
     }
 
-    int WinCommEvent::getEvFlagsState() const
-    {
-        int flags = 0;
-        flags |= (dwEventMask_ & EV_RXCHAR) ? EvEventBase::eEvStateRead : 0;
-        flags |= (dwEventMask_ & EV_TXEMPTY) ? EvEventBase::eEvStateWrite : 0;
-        return flags;
-    }
-
     bool WinCommEvent::isPending() const
     {
         return state_ == ePending;
@@ -99,6 +91,14 @@ namespace spyglass {
     void WinCommEvent::deactivate()
     {
         flags_ = 0;
+    }
+
+    int WinCommEvent::getActivationFlags()
+    {
+        int flags = 0;
+        flags |= (dwEventMask_ & EV_RXCHAR) ? EvEventBase::eEvStateRead : 0;
+        flags |= (dwEventMask_ & EV_TXEMPTY) ? EvEventBase::eEvStateWrite : 0;
+        return flags;
     }
 
     bool WinCommEvent::isActive(int ev_flags) const

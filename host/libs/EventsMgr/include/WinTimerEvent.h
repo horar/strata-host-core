@@ -15,7 +15,7 @@ class WinTimerEvent : public EvEventBase
 {
 public:
     WinTimerEvent();
-    virtual ~WinTimerEvent();
+    ~WinTimerEvent();
 
     /**
      * Creates timer event with specified time
@@ -36,6 +36,8 @@ public:
 
     bool activate(int evFlags) override;
     void deactivate() override;
+
+    bool isActive(int ev_flags) const override;
 
 private:
     bool setTimer();
