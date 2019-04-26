@@ -46,14 +46,13 @@ RUN wget https://download.qt.io/archive/qt/5.12/5.12.2/qt-opensource-linux-x64-5
 # COPY qt-opensource-linux-x64-5.12.2.run ./qt-opensource-linux-x64-5.12.2.run # Used for local development to reduce build time
 RUN chmod +x ./qt-opensource-linux-x64-5.12.2.run
 COPY qt-noninteractive.qs /qt-noninteractive.qs
-RUN ./qt-opensource-linux-x64-5.12.2.run --script qt-noninteractive.qs --platform minimal --verbose
+RUN ./qt-opensource-linux-x64-5.12.2.run --script qt-noninteractive.qs --platform minimal
 RUN rm -rf ./qt-opensource-linux-x64-5.12.2.run qt-noninteractive.qs 
 
-# Add qt to the path
-RUN export PATH=/opt/Qt5.12.2/5.12.2/gcc_64/bin:$PATH
-RUN export PATH=/opt/Qt5.12.2/Tools/QtCreator/bin:$PATH
+# Add Qt and Qtcreator to the path
+ENV PATH="/opt/Qt5.12.2/5.12.2/gcc_64/bin:/opt/Qt5.12.2/Tools/QtCreator/bin:${PATH}"
 
 # Clean up
 RUN apt-get clean
 RUN apt-get -y autoremove
-RUN rm -rf /var/lib/apt/lists/* /requirements.txt
+RUN rm -rf /var/lib/apt/lists/*
