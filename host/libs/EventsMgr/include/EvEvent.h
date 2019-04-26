@@ -53,7 +53,7 @@ public:
      * @param ev_flags flags see enum EvTypeFlags
      * @return
      */
-    bool activate(int ev_flags = 0) override;
+    bool activate(int ev_flags) override;
 
     /**
      * Deactivates event, removes from event_loop
@@ -61,8 +61,7 @@ public:
     void deactivate() override;
 
     /**
-     * returns activation flags
-     * @return returns true when flags are set otherwise false
+     * @return returns activation flags
      */
     int getActivationFlags() override;
 

@@ -22,7 +22,6 @@ if(WIN32)
         PRIVATE src/WinCommEvent.cpp
         PRIVATE src/WinCommWaitManager.cpp
         PRIVATE src/WinTimerEvent.cpp
-#        PRIVATE src/WinCommFakeEvent.cpp
     )
 endif()
 

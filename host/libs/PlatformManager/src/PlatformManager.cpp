@@ -37,7 +37,7 @@ bool PlatformManager::Init()
     ports_update_->setCallback(std::bind(&PlatformManager::onUpdatePortList, this, std::placeholders::_1, std::placeholders::_2) );
     eventsMgr_.registerEvent(ports_update_.get());
 
-    if (!ports_update_->activate()) {
+    if (!ports_update_->activate(0)) {
         ports_update_.release();
         return false;
     }
