@@ -3,10 +3,10 @@
 #error "This file is only for Widnows"
 #endif
 
-#include "WinCommWaitManager.h"
+#include "win32/EvCommWaitManager.h"
 #include "EvEventBase.h"
-#include "WinCommEvent.h"
-#include "WinTimerEvent.h"
+#include "win32/EvCommEvent.h"
+#include "win32/EvTimerEvent.h"
 
 #include <Windows.h>
 

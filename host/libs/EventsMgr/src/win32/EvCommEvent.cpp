@@ -3,7 +3,7 @@
 #error "This file is only for Widnows"
 #endif
 
-#include "WinCommEvent.h"
+#include "win32/EvCommEvent.h"
 
 namespace spyglass {
 

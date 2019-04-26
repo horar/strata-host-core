@@ -3,9 +3,7 @@
 #error "This file is only for Widnows"
 #endif
 
-#include <EvEvent.h>	//for r/w flags
-
-#include "WinTimerEvent.h"
+#include "win32/EvTimerEvent.h"
 
 namespace spyglass {
 

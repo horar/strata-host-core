@@ -1,7 +1,10 @@
 
 #include "PlatformManager.h"
 #include "PlatformConnection.h"
-#include "WinCommEvent.h"
+
+#if defined(_WIN32)
+#include <win32/EvCommEvent.h>
+#endif
 
 #include <EvEvent.h>
 

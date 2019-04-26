@@ -10,8 +10,8 @@
 #if defined(__linux__) || defined(__APPLE__)
 #include <EvEventsMgr.h>
 #elif defined(_WIN32)
-#include "WinCommWaitManager.h"
-#include "WinTimerEvent.h"
+#include <win32/EvCommWaitManager.h>
+#include <win32/EvTimerEvent.h>
 #endif
 
 namespace spyglass {

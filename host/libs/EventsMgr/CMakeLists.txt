@@ -19,9 +19,9 @@ add_library(${PROJECT_NAME}
 
 if(WIN32)
     target_sources(${PROJECT_NAME}
-        PRIVATE src/WinCommEvent.cpp
-        PRIVATE src/WinCommWaitManager.cpp
-        PRIVATE src/WinTimerEvent.cpp
+        PRIVATE src/win32/EvCommEvent.cpp
+        PRIVATE src/win32/EvCommWaitManager.cpp
+        PRIVATE src/win32/EvTimerEvent.cpp
     )
 endif()
 
