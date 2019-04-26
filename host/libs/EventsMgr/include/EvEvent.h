@@ -23,24 +23,19 @@ class EvEventsMgr;
 class EvEvent : public EvEventBase
 {
 public:
-    EvEvent();
-
     /**
      * Constructor
-     * @param type type of event
-     * @param fileHandle file handle or -1 for undefined
-     * @param timeInMs timeout or 0 for undefined
      */
-    EvEvent(EvType type, ev_handle_t fileHandle, unsigned int timeInMs);
+    EvEvent();
     ~EvEvent();
 
     /**
-     * Sets the event type
+     * Sets the event variables according type
      * @param type type of the event (Timer and Handle is now supported)
      * @param fileHandle filehandle or -1 for undefined
      * @param timeInMs timeout for event or 0 for undefined
      */
-    void set(EvType type, ev_handle_t fileHandle, unsigned int timeInMs);
+    bool create(EvType type, ev_handle_t fileHandle, unsigned int timeInMs);
 
     /**
      * Sets the dispatcher for event

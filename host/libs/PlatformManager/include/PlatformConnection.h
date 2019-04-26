@@ -74,24 +74,8 @@ namespace spyglass {
          */
         bool isReadable();
 
-#if defined(__linux__) || defined(__APPLE__)
         /**
-         * Attaches EvEventsMgr to the connection to handle read/write notifications
-         *  it is method for PlatformManager
-         * @param ev_manager manager to attach
-         * @return returns true when succeeded otherwise false
-         */
-        bool attachEventMgr(EvEventsMgr* ev_manager);
-
-        /**
-         * Returns events manager that is PlatformConnection attached too
-         *  or nullptr when isn't attached.
-         */
-        EvEventsMgr* getEventMgr() const { return event_mgr_; }
-#endif
-
-        /**
-         * Returns event
+         * Returns event for registration in Event dispatcher
          */
         EvEventBase* getEvent();
 
@@ -143,11 +127,9 @@ namespace spyglass {
         std::unique_ptr<serial_port> port_;
 
 #if defined(__linux__) || defined(__APPLE__)
-        EvEventsMgr *event_mgr_ = nullptr;
         std::unique_ptr<EvEvent> event_;
 #elif defined(_WIN32)
         std::unique_ptr<WinCommEvent> event_;
-
 #endif
         std::recursive_mutex event_lock_;  //this lock is used when read/write event is notified or when event is attached/detached
 

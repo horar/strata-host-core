@@ -32,7 +32,8 @@ bool PlatformManager::Init()
 {
 #if defined(__linux__) || defined(__APPLE__)
 
-    ports_update_.reset( new EvEvent(EvEvent::EvType::eEvTypeTimer, -1, g_portsRefreshTime));
+    ports_update_.reset( new EvEvent());
+    ports_update_->create(EvEvent::EvType::eEvTypeTimer, -1, g_portsRefreshTime);
     ports_update_->setCallback(std::bind(&PlatformManager::onUpdatePortList, this, std::placeholders::_1, std::placeholders::_2) );
     eventsMgr_.registerEvent(ports_update_.get());
 
@@ -212,13 +213,6 @@ void PlatformManager::removeConnection(PlatformConnection* /*conn*/)
 
 }
 
-#if defined(__linux__) || defined(__APPLE__)
-EvEventsMgr* PlatformManager::getEvEventsMgr()
-{
-    return &eventsMgr_;
-}
-#endif
-
 void PlatformManager::onAddedPort(serialPortHash hash)
 {
     std::cout << "onAddedPort()" << std::endl;
@@ -232,24 +226,28 @@ void PlatformManager::onAddedPort(serialPortHash hash)
         return;
     }
 
+    spyglass::EvEventBase* ev = conn->getEvent();
+    eventsMgr_.registerEvent(ev);
+
+    //activate event in dispatcher (for read)
+    if (ev->activate(spyglass::EvEvent::eEvStateRead) == false) {
+        //TODO: error logging...
+        eventsMgr_.unregisterEvent(ev);
+
+        delete conn;
+        return;
+    }
+
+    std::cout << "New connection" << std::endl;
+
     {
         std::lock_guard<std::mutex> lock(connectionMap_mutex_);
         openedPorts_.insert({hash, conn});
     }
 
-    spyglass::EvEventBase* ev = conn->getEvent();
-    eventsMgr_.registerEvent(ev);
-
-    std::cout << "New connection" << std::endl;
-
     if (plat_handler_) {
         plat_handler_->onNewConnection(conn);
     }
-
-    //activate event in dispatcher (for read)
-    int flags = ev->getActivationFlags();
-    flags |= spyglass::EvEvent::eEvStateRead;
-    ev->activate(flags);    //TODO: error logging...
 }
 
 void PlatformManager::notifyConnectionReadable(PlatformConnection* conn)

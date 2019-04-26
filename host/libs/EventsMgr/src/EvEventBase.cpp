@@ -15,7 +15,7 @@ EvEventBase::~EvEventBase()
 
 void EvEventBase::setType(EvType type)
 {
-    assert(false);
+    type_ = type;
 }
 
 void EvEventBase::setCallback(std::function<void(EvEventBase*, int)> callback)

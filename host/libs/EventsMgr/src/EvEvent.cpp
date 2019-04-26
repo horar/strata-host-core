@@ -32,14 +32,11 @@ void evEventsCallback(evutil_socket_t /*fd*/, short what, void *arg)
 
 /////////////////////////////////////////////////////////////////////////////////
 
-EvEvent::EvEvent() : EvEvent(EvType::eEvTypeUnknown, (ev_handle_t) - 1, 0)
+EvEvent::EvEvent() : EvEventBase(EvType::eEvTypeUnknown)
+    , timeInMs_(0)
+    , fileHandle_(-1)
 {
-}
 
-EvEvent::EvEvent(EvType type, ev_handle_t fileHandle, unsigned int timeInMs) : EvEventBase(type),
-       timeInMs_{timeInMs},
-       fileHandle_{fileHandle}
-{
 }
 
 EvEvent::~EvEvent()
@@ -51,15 +48,27 @@ EvEvent::~EvEvent()
     }
 }
 
-void EvEvent::set(EvType type, ev_handle_t fileHandle, unsigned int timeInMs)
+bool EvEvent::create(EvType type, ev_handle_t fileHandle, unsigned int timeInMs)
 {
     if (event_ != nullptr) {
-        return;
+        return false;
     }
 
     EvEventBase::setType(type);
-    fileHandle_ = fileHandle;
-    timeInMs_ = timeInMs;
+    switch (type) {
+
+    case EvType::eEvTypeTimer:
+        timeInMs_ = timeInMs;
+        break;
+    case EvType::eEvTypeHandle:
+        fileHandle_ = fileHandle;
+        break;
+    default:
+        assert(false);
+        return false;
+    }
+
+    return true;
 }
 
 void EvEvent::setDispatcher(EvEventsMgr* mgr)
@@ -134,6 +143,8 @@ ev_handle_t EvEvent::getWaitHandle()
 
 int EvEvent::getActivationFlags()
 {
+    assert(event_);
+
     int result = 0;
     if (event_pending(event_, EV_READ, nullptr) != 0) {
         result |= EvEventBase::eEvStateRead;
@@ -149,6 +160,10 @@ int EvEvent::getActivationFlags()
 
 bool EvEvent::isActive(int ev_flags) const
 {
+    if (event_ == nullptr) {
+        return false;
+    }
+
     short flags = ((ev_flags & EvEventBase::eEvStateRead) ? EV_READ : 0) | ((ev_flags & EvEventBase::eEvStateWrite) ? EV_WRITE : 0);
     return event_pending(event_, flags, nullptr) != 0;
 }

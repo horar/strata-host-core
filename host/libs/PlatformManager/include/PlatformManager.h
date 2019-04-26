@@ -77,10 +77,6 @@ namespace spyglass {
 
         void removeConnection(PlatformConnection *conn);
 
-#if defined(__linux__) || defined(__APPLE__)
-        EvEventsMgr* getEvEventsMgr();
-#endif
-
         void onUpdatePortList(EvEventBase*, int);  //Temporary
 
     private:
