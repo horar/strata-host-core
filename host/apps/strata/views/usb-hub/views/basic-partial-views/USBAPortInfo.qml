@@ -53,10 +53,7 @@ Rectangle {
 
     function transitionToAdvancedView(){
         outputVoltageBox.anchors.topMargin = 3;
-        maxPowerBox.anchors.topMargin = 3;
-        powerInBox.anchors.topMargin = 3;
         powerOutBox.anchors.topMargin = 3;
-        temperatureBox.anchors.topMargin = 3;
         portToAdvanced.start()
     }
 
@@ -199,12 +196,12 @@ Rectangle {
     Rectangle{
         id:chargingRectangle
         anchors.left:root.left
-        anchors.top: outputVoltageBox.bottom
+        anchors.top: powerOutBox.bottom
         anchors.topMargin: 3
         anchors.right: root.right
         anchors.rightMargin: 10
         height:20
-        opacity: 1
+        opacity: 0
         color:"transparent"
 
         Text {
