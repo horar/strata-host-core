@@ -34,7 +34,7 @@ void evEventsCallback(evutil_socket_t /*fd*/, short what, void *arg)
 
 EvEvent::EvEvent() : EvEventBase(EvType::eEvTypeUnknown)
     , timeInMs_(0)
-    , fileHandle_(-1)
+    , fileHandle_((ev_handle_t)-1)
 {
 
 }

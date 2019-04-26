@@ -243,7 +243,7 @@ EvEventBase* PlatformConnection::getEvent()
 #if defined(__linux__) || defined(__APPLE__)
         event_.reset(new EvEvent());
         event_->create(EvEvent::EvType::eEvTypeHandle, fd, 0);
-#elif
+#elif defined(_WIN32)
         event_.reset(new WinCommEvent());
         event_->create(reinterpret_cast<HANDLE>(fd));
 #endif
@@ -292,4 +292,3 @@ bool PlatformConnection::isWriteBufferEmpty() const
 
 
 } //end of namespace
-
