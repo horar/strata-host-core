@@ -5,6 +5,8 @@
 
 #include "win32/EvCommEvent.h"
 
+#include <assert.h>
+
 namespace spyglass {
 
     EvCommEvent::EvCommEvent() : EvEventBase(EvType::eEvTypeWinHandle),
@@ -44,6 +46,10 @@ namespace spyglass {
 
     EvCommEvent::preDispatchResult EvCommEvent::preDispatch()
     {
+        if (hComm_ == NULL) {
+            return eError;
+        }
+
         resetCommMask();
 
         if (state_ == ePending) {
@@ -54,6 +60,7 @@ namespace spyglass {
         memset(&wait_, 0, sizeof(wait_));
         wait_.hEvent = hReadWaitEvent_;
 
+        assert(hComm_);
         if (!::WaitCommEvent(hComm_, &dwEventMask_, &wait_)) {
             if (GetLastError() != ERROR_IO_PENDING) {
                 //hard error..
@@ -89,6 +96,10 @@ namespace spyglass {
     bool EvCommEvent::activate(int evFlags)
     {
         std::lock_guard <std::mutex> lock(eventLock_);
+
+        if (hComm_ == NULL) {
+            return false;
+        }
 
         DWORD dwComMask = (evFlags & EvEventBase::eEvStateRead) ? EV_RXCHAR : 0;
         if (!::SetCommMask(hComm_, dwComMask)) {
@@ -132,6 +143,7 @@ namespace spyglass {
 
     ev_handle_t EvCommEvent::getWriteWaitHandle() const
     {
+        assert(hWriteEvent_);
         return hWriteEvent_;
     }
 
