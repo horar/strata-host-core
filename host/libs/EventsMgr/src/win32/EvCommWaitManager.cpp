@@ -126,23 +126,24 @@ int WinCommWaitManager::dispatch()
             if (item.second->getType() == EvEventBase::EvType::eEvTypeWinHandle) {
                 WinCommEvent* ev = static_cast<WinCommEvent*>(item.second);
                 if (ev->getWaitHandle() == item.first) {
-                    preDispatchResult res = ev->preDispatch();
-                    if (res == eOK) {
+                    WinCommEvent::preDispatchResult res = ev->preDispatch();
+                    if (res == WinCommEvent::eOK) {
                         //handle imedially dispatch..
-                        if (dwEventMask_ != 0) {
-                            int flags = getActivationFlags();
-                            handle_event(flags);
+                        int flags = ev->getActivationFlags();
+                        if (flags != 0) {
+                            ev->handle_event(flags);
                             processed_events++;
                         }
                     }
-                    else if (res != eIOPending) {
+                    else if (res != WinCommEvent::eIOPending) {
                         //TODO: log errors..
                         continue;
                     }
                 }
             }
 
-            waitList[dwCount] = item.first; dwCount++;
+            waitList[dwCount] = item.first;
+            dwCount++;
             if (dwCount >= (MAXIMUM_WAIT_OBJECTS-1))
                 break;
         }

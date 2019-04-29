@@ -42,7 +42,7 @@ namespace spyglass {
         return true;
     }
 
-    preDispatchResult WinCommEvent::preDispatch()
+    WinCommEvent::preDispatchResult WinCommEvent::preDispatch()
     {
         resetCommMask();
 
@@ -142,5 +142,3 @@ namespace spyglass {
     }
 
 } //namespace spyglass
-
-

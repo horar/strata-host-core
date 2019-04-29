@@ -42,7 +42,7 @@ protected:
     enum preDispatchResult {
         eError = -1,
         eOK = 0,
-        eIOPending = 1,
+        eIOPending,
     };
 
     preDispatchResult preDispatch();
