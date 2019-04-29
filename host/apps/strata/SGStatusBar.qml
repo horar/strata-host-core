@@ -106,19 +106,16 @@ Rectangle {
         }
     }
 
-    Text {
+    SGIcon {
         id: remote_activity_icon
-        text: qsTr("\u0027")
+        source: "images/icons/wifi.svg"
         anchors {
             left: remote_user_icons.right
             leftMargin: 15
             verticalCenter: container.verticalCenter
         }
-        color: "#00b842"
-        font {
-            family: Fonts.sgicons
-            pixelSize: 20
-        }
+        iconColor: "#00b842"
+        sourceSize.height: 20
         visible: remote_activity_label.visible
     }
 
@@ -182,7 +179,6 @@ Rectangle {
                 }
             }
 
-
             SGToolButton {
                 id: platformSelectionButton
                 text: qsTr("Platform Selection")
@@ -193,7 +189,7 @@ Rectangle {
                         PlatformSelection.deselectPlatform()
                     }
                 }
-                iconCharacter: "\ue804"
+                iconSource: "images/icons/th-list.svg"
             }
 
             Rectangle {
@@ -212,7 +208,7 @@ Rectangle {
                 onClicked: {
                     NavigationControl.updateState(NavigationControl.events.SHOW_CONTROL)
                 }
-                iconCharacter: "\u003a"
+                iconSource: "images/icons/sliders-h.svg"
             }
 
             Rectangle {
@@ -231,7 +227,7 @@ Rectangle {
                 onClicked: {
                     NavigationControl.updateState(NavigationControl.events.SHOW_CONTENT)
                 }
-                iconCharacter: "\uf15b"
+                iconSource: "images/icons/file.svg"
             }
 
             Rectangle {
@@ -253,20 +249,19 @@ Rectangle {
                     remoteSupportMenu.open()
                 }
                 buttonColor: remoteSupportButton.hovered || remoteSupportMenu.visible ? menuColor : container.color
-                iconCharacter: "\u0043"
+                iconSource: "images/icons/user-plus.svg"
 
-                Text {
+                SGIcon {
                     id: remoteSupportPopupIndicator
-                    text: "\ue810"
-                    font {
-                        family: Fonts.sgicons
-                    }
+                    source: "images/icons/angle-down.svg"
                     visible: remoteSupportMenu.visible
                     anchors {
                         bottom: remoteSupportButton.bottom
+                        bottomMargin: -5
                         horizontalCenter: remoteSupportButton.horizontalCenter
                     }
-                    color: container.color
+                    iconColor: "white"
+                    sourceSize.height: 20
                 }
 
                 Popup {

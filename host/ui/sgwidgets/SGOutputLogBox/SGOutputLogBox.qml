@@ -103,11 +103,6 @@ Rectangle {
     }
 
     FontLoader {
-        id: sgicons
-        source: "fonts/sgicons.ttf"
-    }
-
-    FontLoader {
         id: inconsolata
         source: "fonts/Inconsolata.otf"
     }

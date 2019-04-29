@@ -122,18 +122,15 @@ Rectangle {
                 }
             }
 
-            Text {
+            SGIcon {
                 id: textClear
-                font {
-                    family: Fonts.sgicons
-                }
-                color: "grey"
-                text: "\ue824"
+                sourceSize.height: 12
+                iconColor: "grey"
+                source: "qrc:/images/icons/ban.svg"
                 anchors {
                     right: filterBox.right
                     verticalCenter: filterBox.verticalCenter
-                    verticalCenterOffset: 1
-                    rightMargin: 3
+                    rightMargin: 4
                 }
                 visible: filterBox.value !== ""
 
@@ -150,17 +147,14 @@ Rectangle {
             }
         }
 
-        Text {
+        SGIcon {
             id: filterSearch
-            font {
-                family: Fonts.sgicons
-            }
-            color: "grey"
-            text: "\ue801"
+            sourceSize.height: 12
+            iconColor: "grey"
+            source: "qrc:/images/icons/search.svg"
             anchors {
                 left: filterBox.right
                 verticalCenter: filterBox.verticalCenter
-                verticalCenterOffset: 1
                 leftMargin: 5
             }
 

@@ -113,16 +113,17 @@ Item {
         comboBoxHeight: 25
         //when changing the value
         onActivated: {
-            console.log("setting input power foldback to ",limitOutput.comboBox.currentText);
-            //platformInterface.set_input_voltage_foldback.update(platformInterface.foldback_input_voltage_limiting_event.input_voltage_foldback_enabled,
-           //                                                     platformInterface.foldback_input_voltage_limiting_event.foldback_minimum_voltage,
-            //                                                             limitOutput.comboBox.currentText)
+            //console.log("setting input power foldback to ",limitOutput.comboBox.currentText);
+            platformInterface.set_usb_pd_maximum_power.update(portNumber,
+                                                              maxOutputPower.comboBox.currentText)
         }
 
-        property var currentFoldbackOuput: platformInterface.foldback_input_voltage_limiting_event.foldback_minimum_voltage_power
+        property var currentFoldbackOuput: platformInterface.usb_pd_maximum_power.commanded_max_power
         onCurrentFoldbackOuputChanged: {
             //console.log("got a new min power setting",platformInterface.foldback_input_voltage_limiting_event.foldback_minimum_voltage_power);
-            //limitOutput.currentIndex = limitOutput.comboBox.find( parseInt (platformInterface.foldback_input_voltage_limiting_event.foldback_minimum_voltage_power))
+            if (platformInterface.usb_pd_maximum_power.port === portNumber){
+                maxOutputPower.currentIndex = maxOutputPower.comboBox.find( parseInt (platformInterface.usb_pd_maximum_power.commanded_max_power))
+            }
         }
 
 
@@ -143,7 +144,7 @@ Item {
 
     SGSlider {
         id: currentLimitSlider
-        //value: platformInterface.foldback_input_voltage_limiting_event.foldback_minimum_voltage
+        //value: platformInterface.request_over_current_protection_notification.current_limit
         anchors {
             left: advanceControlsView.left
             leftMargin: 10
@@ -155,11 +156,19 @@ Item {
         from: 0
         to: 100
         startLabel: "0A"
-        endLabel: "100A"
+        endLabel: "5A"
+
+        property  var overCurrentProtection: platformInterface.request_over_current_protection_notification
+
+        onOverCurrentProtectionChanged: {
+            if (platformInterface.request_over_current_protection_notification.port === portNumber){
+                value = platformInterface.request_over_current_protection_notification.current_limit
+            }
+        }
+
         //copy the current values for other stuff, and add the new slider value for the limit.
-        onMoved: platformInterface.set_input_voltage_foldback.update(platformInterface.foldback_input_voltage_limiting_event.input_voltage_foldback_enabled,
-                         value,
-                        platformInterface.foldback_input_voltage_limiting_event.foldback_minimum_voltage_power)
+        onMoved: platformInterface.set_over_current_protection.update(portNumber, true,
+                         value)
     }
 
 

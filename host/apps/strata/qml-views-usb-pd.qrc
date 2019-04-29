@@ -32,7 +32,6 @@
         <file>views/usb-pd/sgwidgets/SGStatusListBox.qml</file>
         <file>views/usb-pd/sgwidgets/SGSubmitInfoBox.qml</file>
         <file>views/usb-pd/sgwidgets/SGSwitch.qml</file>
-        <file>views/usb-pd/sgwidgets/SGToolButton.qml</file>
         <file>views/usb-pd/sgwidgets/SGToolTipPopup.qml</file>
         <file>views/usb-pd/sgwidgets/fonts/Inconsolata.otf</file>
         <file>views/usb-pd/sgwidgets/fonts/sgicons.ttf</file>
@@ -66,5 +65,7 @@
         <file>views/usb-pd/views/images/icon-usb-disconnected.svg</file>
         <file>views/usb-pd/views/images/icon-voltage.svg</file>
         <file>views/usb-pd/views/images/powerconverter.png</file>
+        <file>views/usb-pd/content-views/content-widgets/angle-right-solid.svg</file>
+        <file>views/usb-pd/content-views/content-widgets/SGIcon.qml</file>
     </qresource>
 </RCC>

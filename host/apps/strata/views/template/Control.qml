@@ -3,6 +3,7 @@ import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.3
 import Fonts 1.0
 import "control-views"
+import "content-views/content-widgets"
 import "qrc:/js/help_layout_manager.js" as Help
 
 Item {
@@ -62,19 +63,16 @@ Item {
         }
     }
 
-    Text {
+    SGIcon {
         id: helpIcon
         anchors {
             right: controlContainer.right
             top: controlContainer.top
             margins: 20
         }
-        text: "\ue808"
-        color: helpMouse.containsMouse ? "lightgrey" : "grey"
-        font {
-            family: Fonts.sgicons
-            pixelSize: 40
-        }
+        source: "control-views/question-circle-solid.svg"
+        iconColor: helpMouse.containsMouse ? "lightgrey" : "grey"
+        sourceSize.height: 40
 
         MouseArea {
             id: helpMouse

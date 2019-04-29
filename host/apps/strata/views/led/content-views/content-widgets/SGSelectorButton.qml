@@ -1,6 +1,6 @@
 import QtQuick 2.9
 import QtQuick.Controls 2.3
-import Fonts 1.0
+import QtGraphicalEffects 1.12
 
 Item {
     id: delegateContainer
@@ -71,19 +71,31 @@ Item {
             visible: delegateContainer.current && delegateContainer.underline
         }
 
-        Text {
+        Item {
             id: selected
-            text: "\ue812"
-            color: "#333"
+            width: image.width
+            height: image.height
+            visible: delegateContainer.current
             anchors {
                 verticalCenter: delegateButton.verticalCenter
                 right: delegateButton.right
                 rightMargin: (delegateContainer.height - height) / 3
             }
-            visible: delegateContainer.current
-            font {
-                family: Fonts.sgicons
-                pixelSize: delegateContainer.height/2
+
+            Image {
+                id: image
+                visible: false
+                fillMode: Image.PreserveAspectFit
+                source: "angle-right-solid.svg"
+                sourceSize.height: delegateContainer.height * .75
+            }
+
+            ColorOverlay {
+                id: overlay
+                anchors.fill: image
+                source: image
+                visible: true
+                color: "#333"
             }
         }
     }

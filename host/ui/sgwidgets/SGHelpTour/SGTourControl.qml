@@ -1,6 +1,7 @@
 import QtQuick 2.3
 import QtQuick.Controls 2.3
 import Fonts 1.0
+import QtGraphicalEffects 1.0
 import "qrc:/help_layout_manager.js" as Help
 
 Item {
@@ -14,19 +15,30 @@ Item {
     signal close()
     onClose: Help.closeTour()
 
-    Text {
+    Item {
         id: closer
-        text: "\ue805"
+        width: iconImage.width
+        height: iconImage.height
         anchors {
             top: root.top
             right: root.right
+            rightMargin: 2
         }
 
-        color: closerMouse.containsMouse ? "lightgrey" : "grey"
+        Image {
+            id: iconImage
+            visible: false
+            fillMode: Image.PreserveAspectFit
+            source: "icons/times.svg"
+            sourceSize.height: 18
+        }
 
-        font {
-            family: Fonts.sgicons
-            pixelSize: 18
+        ColorOverlay {
+            id: overlay
+            anchors.fill: iconImage
+            source: iconImage
+            visible: true
+            color: closerMouse.containsMouse ? "lightgrey" : "grey"
         }
 
         MouseArea {

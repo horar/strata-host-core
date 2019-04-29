@@ -596,19 +596,20 @@ Item {
     property var mask_ocp_interrupt: ({
                                           "cmd" : "mask_ocp_interrupt",
                                           "payload": {
-                                              "mask_ocp_interrupt": "" ,
+                                              "ocp_interrupt": "" ,
                                           },
 
-                                          update: function (mask_ocp_interrupt) {
-                                              this.set(mask_ocp_interrupt)
+                                          update: function (ocp_interrupt) {
+                                              this.set(ocp_interrupt)
                                               CorePlatformInterface.send(this)
                                           },
-                                          set: function (mask_ocp_interrupt) {
-                                              this.payload.mask_ocp_interrupt = mask_ocp_interrupt;
+                                          set: function (ocp_interrupt) {
+                                              this.payload.ocp_interrupt = ocp_interrupt;
                                           },
                                           send: function () { CorePlatformInterface.send(this) },
                                           show: function () { CorePlatformInterface.show(this) }
                                       })
+
 
 
     property var mask_uvlo_interrupt: ({

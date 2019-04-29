@@ -2,6 +2,7 @@ import QtQuick 2.3
 import QtQuick.Controls 2.3
 import Fonts 1.0
 import "qrc:/js/help_layout_manager.js" as Help
+import "qrc:/statusbar-partial-views"
 
 Item {
     id: root
@@ -14,20 +15,16 @@ Item {
     signal close()
     onClose: Help.closeTour()
 
-    Text {
+    SGIcon {
         id: closer
-        text: "\ue805"
+        source: "qrc:/images/icons/times.svg"
         anchors {
             top: root.top
             right: root.right
+            rightMargin: 2
         }
-
-        color: closerMouse.containsMouse ? "lightgrey" : "grey"
-
-        font {
-            family: Fonts.sgicons
-            pixelSize: 18
-        }
+        iconColor: closerMouse.containsMouse ? "lightgrey" : "grey"
+        sourceSize.height: 18
 
         MouseArea {
             id: closerMouse

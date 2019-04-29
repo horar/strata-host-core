@@ -91,6 +91,14 @@ Item {
                 }
             }
 
+            Button {
+                text: "USB Hub"
+                onClicked: {
+                    var data = { class_id: "218"}
+                    NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT, data)
+                }
+            }
+
             // UI events
             Button {
                 text: "Toggle Content/Control"
