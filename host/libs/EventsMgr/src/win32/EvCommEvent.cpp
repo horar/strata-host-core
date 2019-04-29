@@ -42,12 +42,12 @@ namespace spyglass {
         return true;
     }
 
-    int WinCommEvent::preDispatch()
+    preDispatchResult WinCommEvent::preDispatch()
     {
         resetCommMask();
 
         if (state_ == ePending) {
-            return 1;
+            return eIOPending;
         }
 
         dwEventMask_ = 0;
@@ -57,19 +57,13 @@ namespace spyglass {
         if (!::WaitCommEvent(hComm_, &dwEventMask_, &wait_)) {
             if (GetLastError() != ERROR_IO_PENDING) {
                 //hard error..
-                return -1;
+                return eError;
             }
 
             state_ = ePending;
-            return 1;       //IO_PENDING
+            return eIOPending;
         }
-
-        if (dwEventMask_ != 0) {
-
-            int flags = getActivationFlags();
-            handle_event(flags);
-        }
-        return 0;
+        return eOK;
     }
 
     ev_handle_t WinCommEvent::getWaitHandle()

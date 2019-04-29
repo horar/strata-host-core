@@ -45,6 +45,7 @@ public:
 
     /**
      * returns wait handle, in this case invalid
+     * NOTE: this is just a dummy function, always returns invalid handle
      */
     ev_handle_t getWaitHandle() override;
 

@@ -52,6 +52,7 @@ private:
 
     /**
      * Dispatch function
+     * @return negativ number is error, zero or one is
      */
     int dispatch();
 

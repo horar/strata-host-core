@@ -39,8 +39,15 @@ public:
 
 protected:
 
+    enum preDispatchResult {
+        eError = -1,
+        eOK = 0,
+        eIOPending = 1,
+    };
+
+    preDispatchResult preDispatch();
+
     int resetCommMask();
-    int preDispatch();
 
     bool isPending() const;
 

@@ -51,6 +51,9 @@ public:
      */
     void stop();
 
+    /**
+     * returns event base for EvEventsMgr
+     */
     struct event_base* base() const { return event_base_; }
 
 private:

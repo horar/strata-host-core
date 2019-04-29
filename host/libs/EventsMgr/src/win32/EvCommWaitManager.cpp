@@ -60,7 +60,10 @@ bool WinCommWaitManager::registerEvent(EvEventBase* ev)
         }
     }
 
-    ::SetEvent(hWakeupEvent_);
+    if (hWakeupEvent_ != NULL) {
+        ::SetEvent(hWakeupEvent_);
+    }
+
     return true;
 }
 
@@ -78,7 +81,9 @@ void WinCommWaitManager::unregisterEvent(EvEventBase* ev)
         }
     }
 
-    ::SetEvent(hWakeupEvent_);
+    if (hWakeupEvent_ != NULL) {
+        ::SetEvent(hWakeupEvent_);
+    }
 }
 
 bool WinCommWaitManager::startInThread()
@@ -96,7 +101,7 @@ bool WinCommWaitManager::startInThread()
 
 void WinCommWaitManager::stop()
 {
-    if (eventsThread_.get_id() == std::thread::id()) {
+    if (eventsThread_.get_id() == std::thread::id() || hWakeupEvent_ == NULL) {
         return;
     }
 
@@ -111,6 +116,7 @@ int WinCommWaitManager::dispatch()
     int ret;
     DWORD dwCount = 0;
     HANDLE waitList[MAXIMUM_WAIT_OBJECTS];
+    int processed_events = 0;
 
     {
         std::lock_guard<std::mutex> lock(dispatchLock_);
@@ -120,9 +126,19 @@ int WinCommWaitManager::dispatch()
             if (item.second->getType() == EvEventBase::EvType::eEvTypeWinHandle) {
                 WinCommEvent* ev = static_cast<WinCommEvent*>(item.second);
                 if (ev->getWaitHandle() == item.first) {
-                    ret = ev->preDispatch();
-                    if (ret != 1)       //TODO: handle imedially dispatch..
+                    preDispatchResult res = ev->preDispatch();
+                    if (res == eOK) {
+                        //handle imedially dispatch..
+                        if (dwEventMask_ != 0) {
+                            int flags = getActivationFlags();
+                            handle_event(flags);
+                            processed_events++;
+                        }
+                    }
+                    else if (res != eIOPending) {
+                        //TODO: log errors..
                         continue;
+                    }
                 }
             }
 
@@ -133,6 +149,7 @@ int WinCommWaitManager::dispatch()
 
     }
 
+    assert(hWakeupEvent_);
     waitList[dwCount] = hWakeupEvent_;
     dwCount++;
 
@@ -152,7 +169,7 @@ int WinCommWaitManager::dispatch()
             }
         }
 
-        return 0;
+        return processed_events;
     }
     else if (dwRet >= WAIT_OBJECT_0 && dwRet < (WAIT_OBJECT_0 + dwCount)) {
 
@@ -163,8 +180,13 @@ int WinCommWaitManager::dispatch()
             ::ResetEvent(hWakeupEvent_);
             return 0;
         }
-        
-        return handleEvent(hSignaled);
+
+        if ((ret = handleEvent(hSignaled)) < 0) {
+            return ret;
+        }
+
+        processed_events++;
+        return processed_events;
     }
 
     return -2;
@@ -217,7 +239,7 @@ int WinCommWaitManager::handleEvent(HANDLE hSignaled)
         eventList_.push_back(temp);
     }
 
-    return 1;
+    return 0;
 }
 
 void WinCommWaitManager::threadMain()
