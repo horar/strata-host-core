@@ -91,10 +91,20 @@ Item {
                 }
             }
 
+
             Button{
                 text: "SAR ADC"
                 onClicked: {
                     var data = { class_id: "sar-adc"}
+                    NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT, data)
+
+                }
+            }
+
+            Button {
+                text: "USB Hub"
+                onClicked: {
+                    var data = { class_id: "218"}
                     NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT, data)
 
                 }

@@ -28,9 +28,9 @@ Item {
     }
 
     property var receive_notification : {
-        "rssi":-85,                   		// -dBm
-        "packet_error_rate":1.2,            // PER %
-        "data_packet":"DEADBEEFFACEFEED"	// string representing received data
+        "rssi":-00,                   		// -dBm
+        "packet_error_rate":0,            // PER %
+        "data_packet":""	// string representing received data
     }
 
     // --------------------------------------------------------------------------------------------
