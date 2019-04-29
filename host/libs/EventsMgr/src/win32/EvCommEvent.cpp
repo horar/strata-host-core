@@ -7,14 +7,14 @@
 
 namespace spyglass {
 
-    WinCommEvent::WinCommEvent() : EvEventBase(EvType::eEvTypeWinHandle),
+    EvCommEvent::EvCommEvent() : EvEventBase(EvType::eEvTypeWinHandle),
         hComm_(NULL), flags_(0), state_(eNotInitialized),
         hReadWaitEvent_(NULL), dwEventMask_(0), hWriteEvent_(NULL)
     {
         wait_ = { 0 };
     }
 
-    WinCommEvent::~WinCommEvent()
+    EvCommEvent::~EvCommEvent()
     {
         if (hWriteEvent_ != NULL) {
             ::CloseHandle(hWriteEvent_);
@@ -25,7 +25,7 @@ namespace spyglass {
         }
     }
 
-    bool WinCommEvent::create(HANDLE hComm)
+    bool EvCommEvent::create(HANDLE hComm)
     {
         hReadWaitEvent_ = ::CreateEvent(NULL, TRUE, FALSE, NULL);
         if (hReadWaitEvent_ == NULL) {
@@ -42,7 +42,7 @@ namespace spyglass {
         return true;
     }
 
-    WinCommEvent::preDispatchResult WinCommEvent::preDispatch()
+    EvCommEvent::preDispatchResult EvCommEvent::preDispatch()
     {
         resetCommMask();
 
@@ -66,17 +66,17 @@ namespace spyglass {
         return eOK;
     }
 
-    ev_handle_t WinCommEvent::getWaitHandle()
+    ev_handle_t EvCommEvent::getWaitHandle()
     {
         return reinterpret_cast<ev_handle_t>(hReadWaitEvent_);
     }
 
-    bool WinCommEvent::isPending() const
+    bool EvCommEvent::isPending() const
     {
         return state_ == ePending;
     }
 
-    void WinCommEvent::cancelWait()
+    void EvCommEvent::cancelWait()
     {
         if (state_ != ePending)
             return;
@@ -86,7 +86,7 @@ namespace spyglass {
         state_ = eReady;
     }
 
-    bool WinCommEvent::activate(int evFlags)
+    bool EvCommEvent::activate(int evFlags)
     {
         std::lock_guard <std::mutex> lock(eventLock_);
 
@@ -106,7 +106,7 @@ namespace spyglass {
         return true;
     }
 
-    void WinCommEvent::deactivate()
+    void EvCommEvent::deactivate()
     {
         std::lock_guard <std::mutex> lock(eventLock_);
 
@@ -115,7 +115,7 @@ namespace spyglass {
         flags_ = 0;
     }
 
-    int WinCommEvent::getActivationFlags()
+    int EvCommEvent::getActivationFlags()
     {
         std::lock_guard <std::mutex> lock(eventLock_);
 
@@ -125,17 +125,17 @@ namespace spyglass {
         return flags;
     }
 
-    bool WinCommEvent::isActive(int ev_flags) const
+    bool EvCommEvent::isActive(int ev_flags) const
     {
         return (flags_ & ev_flags) != 0;
     }
 
-    ev_handle_t WinCommEvent::getWriteWaitHandle() const
+    ev_handle_t EvCommEvent::getWriteWaitHandle() const
     {
         return hWriteEvent_;
     }
 
-    int WinCommEvent::resetCommMask()
+    int EvCommEvent::resetCommMask()
     {
         DWORD dwComMask = (flags_ & EvEventBase::eEvStateRead) ? EV_RXCHAR : 0;
         return ::SetCommMask(hComm_, dwComMask);

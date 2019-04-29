@@ -46,7 +46,7 @@ bool PlatformManager::Init()
     }
 #elif defined(_WIN32)
 
-    ports_update_.reset(new WinTimerEvent());
+    ports_update_.reset(new EvTimerEvent());
     ports_update_->create(g_portsRefreshTime);
     ports_update_->setCallback(std::bind(&PlatformManager::onUpdatePortList, this, std::placeholders::_1, std::placeholders::_2));
 

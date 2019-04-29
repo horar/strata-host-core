@@ -12,11 +12,11 @@
 
 namespace spyglass {
 
-class WinTimerEvent : public EvEventBase
+class EvTimerEvent : public EvEventBase
 {
 public:
-    WinTimerEvent();
-    ~WinTimerEvent();
+    EvTimerEvent();
+    ~EvTimerEvent();
 
     /**
      * Creates timer event with specified time

@@ -17,11 +17,11 @@
 namespace spyglass
 {
 
-class WinCommWaitManager
+class EvCommWaitManager
 {
 public:
-    WinCommWaitManager();
-    ~WinCommWaitManager();
+    EvCommWaitManager();
+    ~EvCommWaitManager();
 
     /**
      * Registers an event in this class

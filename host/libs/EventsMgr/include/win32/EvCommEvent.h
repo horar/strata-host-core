@@ -11,11 +11,11 @@
 
 namespace spyglass {
 
-class WinCommEvent : public EvEventBase
+class EvCommEvent : public EvEventBase
 {
 public:
-    WinCommEvent();
-    ~WinCommEvent();
+    EvCommEvent();
+    ~EvCommEvent();
 
     /**
      * creates an event for asynchronous notifications
@@ -77,7 +77,7 @@ private:
 
     HANDLE hWriteEvent_;
 
-    friend class WinCommWaitManager;
+    friend class EvCommWaitManager;
 };
 
 }; //namespace

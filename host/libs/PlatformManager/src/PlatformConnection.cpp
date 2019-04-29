@@ -244,7 +244,7 @@ EvEventBase* PlatformConnection::getEvent()
         event_.reset(new EvEvent());
         event_->create(EvEvent::EvType::eEvTypeHandle, fd, 0);
 #elif defined(_WIN32)
-        event_.reset(new WinCommEvent());
+        event_.reset(new EvCommEvent());
         event_->create(reinterpret_cast<HANDLE>(fd));
 #endif
 

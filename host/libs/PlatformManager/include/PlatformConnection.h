@@ -16,8 +16,7 @@ namespace spyglass {
     class EvEvent;
     class EvEventsMgr;
 #elif defined(_WIN32)
-    class WinCommEvent;
-    class WinCommFakeEvent;
+    class EvCommEvent;
 #endif
 
     class PlatformConnection {
@@ -129,7 +128,7 @@ namespace spyglass {
 #if defined(__linux__) || defined(__APPLE__)
         std::unique_ptr<EvEvent> event_;
 #elif defined(_WIN32)
-        std::unique_ptr<WinCommEvent> event_;
+        std::unique_ptr<EvCommEvent> event_;
 #endif
         std::recursive_mutex event_lock_;  //this lock is used when read/write event is notified or when event is attached/detached
 

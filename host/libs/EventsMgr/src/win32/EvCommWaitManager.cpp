@@ -20,18 +20,18 @@ namespace spyglass
 unsigned int g_waitTimeout = 5000;  //in ms
 unsigned int g_maxEventMapSize = MAXIMUM_WAIT_OBJECTS-1;
 
-WinCommWaitManager::WinCommWaitManager() : hWakeupEvent_(NULL)
+EvCommWaitManager::EvCommWaitManager() : hWakeupEvent_(NULL)
 {
 }
 
-WinCommWaitManager::~WinCommWaitManager()
+EvCommWaitManager::~EvCommWaitManager()
 {
     if (hWakeupEvent_ != NULL) {
         ::CloseHandle(hWakeupEvent_);
     }
 }
 
-bool WinCommWaitManager::registerEvent(EvEventBase* ev)
+bool EvCommWaitManager::registerEvent(EvEventBase* ev)
 {
     if (eventList_.size() >= g_maxEventMapSize) {
         return false;
@@ -48,7 +48,7 @@ bool WinCommWaitManager::registerEvent(EvEventBase* ev)
     }
 
     if (ev->getType() == EvEventBase::EvType::eEvTypeWinHandle) {
-        WinCommEvent* com = static_cast<WinCommEvent*>(ev);
+        EvCommEvent* com = static_cast<EvCommEvent*>(ev);
         ev_handle_t handle_write = com->getWriteWaitHandle();
         if (handle_write == NULL) {
             return false;
@@ -67,7 +67,7 @@ bool WinCommWaitManager::registerEvent(EvEventBase* ev)
     return true;
 }
 
-void WinCommWaitManager::unregisterEvent(EvEventBase* ev)
+void EvCommWaitManager::unregisterEvent(EvEventBase* ev)
 {
     {
         std::lock_guard<std::mutex> lock(dispatchLock_);
@@ -86,7 +86,7 @@ void WinCommWaitManager::unregisterEvent(EvEventBase* ev)
     }
 }
 
-bool WinCommWaitManager::startInThread()
+bool EvCommWaitManager::startInThread()
 {
     if (hWakeupEvent_ == NULL) {
         hWakeupEvent_ = ::CreateEvent(NULL, TRUE, FALSE, NULL);
@@ -95,11 +95,11 @@ bool WinCommWaitManager::startInThread()
         }
     }
 
-    eventsThread_ = std::thread(&WinCommWaitManager::threadMain, this);
+    eventsThread_ = std::thread(&EvCommWaitManager::threadMain, this);
     return true;
 }
 
-void WinCommWaitManager::stop()
+void EvCommWaitManager::stop()
 {
     if (eventsThread_.get_id() == std::thread::id() || hWakeupEvent_ == NULL) {
         return;
@@ -111,7 +111,7 @@ void WinCommWaitManager::stop()
     eventsThread_.join();
 }
 
-int WinCommWaitManager::dispatch()
+int EvCommWaitManager::dispatch()
 {
     int ret;
     DWORD dwCount = 0;
@@ -124,10 +124,10 @@ int WinCommWaitManager::dispatch()
         for (auto item : eventList_) {
 
             if (item.second->getType() == EvEventBase::EvType::eEvTypeWinHandle) {
-                WinCommEvent* ev = static_cast<WinCommEvent*>(item.second);
+                EvCommEvent* ev = static_cast<EvCommEvent*>(item.second);
                 if (ev->getWaitHandle() == item.first) {
-                    WinCommEvent::preDispatchResult res = ev->preDispatch();
-                    if (res == WinCommEvent::eOK) {
+                    EvCommEvent::preDispatchResult res = ev->preDispatch();
+                    if (res == EvCommEvent::eOK) {
                         //handle imedially dispatch..
                         int flags = ev->getActivationFlags();
                         if (flags != 0) {
@@ -135,7 +135,7 @@ int WinCommWaitManager::dispatch()
                             processed_events++;
                         }
                     }
-                    else if (res != WinCommEvent::eIOPending) {
+                    else if (res != EvCommEvent::eIOPending) {
                         //TODO: log errors..
                         continue;
                     }
@@ -165,7 +165,7 @@ int WinCommWaitManager::dispatch()
         for (const auto& item : eventList_) {
 
             if (item.second->getType() == EvEventBase::EvType::eEvTypeWinHandle) {
-                WinCommEvent* com = static_cast<WinCommEvent*>(item.second);
+                EvCommEvent* com = static_cast<EvCommEvent*>(item.second);
                 com->cancelWait();
             }
         }
@@ -193,7 +193,7 @@ int WinCommWaitManager::dispatch()
     return -2;
 }
 
-int WinCommWaitManager::handleEvent(HANDLE hSignaled)
+int EvCommWaitManager::handleEvent(HANDLE hSignaled)
 {
     EvEventBase* ev;
     std::list<event_pair>::iterator findIt;
@@ -212,7 +212,7 @@ int WinCommWaitManager::handleEvent(HANDLE hSignaled)
 
     int flags = 0;
     if (ev->getType() == EvEventBase::EvType::eEvTypeWinHandle) {
-        WinCommEvent* com = static_cast<WinCommEvent*>(ev);
+        EvCommEvent* com = static_cast<EvCommEvent*>(ev);
         flags = com->getActivationFlags();
     }
 
@@ -221,11 +221,11 @@ int WinCommWaitManager::handleEvent(HANDLE hSignaled)
     //reset wait event, and loop WaitFor... ??
 
     if (ev->getType() == EvEventBase::EvType::eEvTypeWinHandle) {
-        WinCommEvent* com = static_cast<WinCommEvent*>(ev);
+        EvCommEvent* com = static_cast<EvCommEvent*>(ev);
         com->cancelWait();
     }
     else if (ev->getType() == EvEventBase::EvType::eEvTypeWinTimer) {
-        WinTimerEvent* timer = static_cast<WinTimerEvent*>(ev);
+        EvTimerEvent* timer = static_cast<EvTimerEvent*>(ev);
         timer->restartTimer();
     }
 
@@ -243,7 +243,7 @@ int WinCommWaitManager::handleEvent(HANDLE hSignaled)
     return 0;
 }
 
-void WinCommWaitManager::threadMain()
+void EvCommWaitManager::threadMain()
 {
     //TODO: put this in log:  std::cout << "Start thread.." << std::endl;
 

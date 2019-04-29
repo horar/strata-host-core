@@ -103,10 +103,10 @@ namespace spyglass {
         std::unique_ptr<EvEvent> ports_update_;
 
 #elif defined(_WIN32)
-        WinCommWaitManager eventsMgr_;
+        EvCommWaitManager eventsMgr_;
 
-        WinCommWaitManager portsUpdateThread_;
-        std::unique_ptr<WinTimerEvent> ports_update_;
+        EvCommWaitManager portsUpdateThread_;
+        std::unique_ptr<EvTimerEvent> ports_update_;
 #endif
 
         friend class PlatformConnection;
