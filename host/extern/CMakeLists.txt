@@ -85,3 +85,34 @@ if (APPLE)
         )
     endif()
 endif()
+
+#
+# googletest
+#
+ExternalProject_Add(libgtest
+    INSTALL_DIR ${CMAKE_BINARY_DIR}/3rd_party
+    SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/googletest
+
+    CMAKE_ARGS ${CMAKE_ARGS}
+        -DCMAKE_BUILD_TYPE=Release
+        -DCMAKE_VERBOSE_MAKEFILE=${CMAKE_VERBOSE_MAKEFILE}
+        -DCMAKE_OSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET}
+        -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
+)
+
+add_library(gtest STATIC IMPORTED GLOBAL)
+set_target_properties(gtest PROPERTIES
+    INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_BINARY_DIR}/3rd_party/include"
+    IMPORTED_LOCATION  "${CMAKE_BINARY_DIR}/3rd_party/lib/libgtest${CMAKE_STATIC_LIBRARY_SUFFIX}"
+)
+
+add_dependencies(gtest DEPENDS libgtest)
+
+
+add_library(gmock STATIC IMPORTED GLOBAL)
+set_target_properties(gmock PROPERTIES
+    INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_BINARY_DIR}/3rd_party/include"
+    IMPORTED_LOCATION  "${CMAKE_BINARY_DIR}/3rd_party/lib/libgmock${CMAKE_STATIC_LIBRARY_SUFFIX}"
+)
+
+add_dependencies(gmock DEPENDS libgtest)
