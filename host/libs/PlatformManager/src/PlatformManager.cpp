@@ -107,7 +107,7 @@ void PlatformManager::onUpdatePortList(EvEventBase*, int)
 {
     static int idx = 0;
 
-    std::cout << "onUpdatePortList:" << idx << std::endl;  idx++;
+    //TODO: add to log.. std::cout << "onUpdatePortList:" << idx << std::endl;  idx++;
 
     std::vector<std::string> listOfSerialPorts;
     if (getListOfSerialPorts(listOfSerialPorts)) {

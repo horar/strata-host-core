@@ -151,7 +151,7 @@ int PlatformConnection::handleRead(unsigned int timeout)
 
 int PlatformConnection::handleWrite(unsigned int timeout)
 {
-    std::cout << "handleWrite()" << std::endl;
+    //TODO: add to log..  std::cout << "handleWrite()" << std::endl;
 
     std::lock_guard<std::mutex> lock(writeLock_);
     if (isWriteBufferEmpty()) {
@@ -180,7 +180,7 @@ void PlatformConnection::addMessage(const std::string& message)
     assert(event_);
     bool isWrite = event_->isActive(EvEventBase::eEvStateWrite);
 
-    std::cout << "addMessage()" << std::endl;
+    //TODO: add to log.. std::cout << "addMessage()" << std::endl;
 
     //TODO: checking for too big messages...
 
