@@ -19,9 +19,9 @@ public:
     Q_INVOKABLE void sendCommand(QString connection_id, QString cmd);
 
     //callbacks from ConnectionHandler
-    void newConnection(const std::string& connection_id, const std::string& verbose_name);
-    void removeConnection(const std::string& connection_id);
-    void notifyMessageFromConnection(const std::string& connection_id, const std::string& message);
+    void newConnection(const QString& connectionId, const QString& verboseName);
+    void removeConnection(const QString &connectionId);
+    void notifyMessageFromConnection(const QString &connectionId, const QString &message);
 
 signals:
     void connectedBoard(QString connectionId, QString verboseName);
