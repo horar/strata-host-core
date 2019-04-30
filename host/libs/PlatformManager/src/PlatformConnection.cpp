@@ -3,9 +3,16 @@
 #include "PlatformManager.h"
 
 #include <serial_port.h>
+#include <EvEventBase.h>
+
+#if defined(__linux__) || defined(__APPLE__)
 #include <EvEventsMgr.h>
+#elif defined(_WIN32)
+#include <win32/EvCommEvent.h>
+#endif
 
 #include <assert.h>
+#include <iostream>
 
 namespace spyglass {
 
@@ -44,7 +51,6 @@ void PlatformConnection::close()
 {
     if (event_) {
         event_->deactivate();
-
         event_.release();
     }
 
@@ -82,7 +88,7 @@ bool PlatformConnection::getMessage(std::string& result)
 
 
     result = readBuffer_.substr(readOffset_, (off - readOffset_));
-    readOffset_ = (off + 1);
+    readOffset_ = static_cast<unsigned int>(off + 1);
     if (readBuffer_.size() == readOffset_) {
         readBuffer_.clear();
         readOffset_ = 0;
@@ -90,11 +96,11 @@ bool PlatformConnection::getMessage(std::string& result)
     return true;
 }
 
-void PlatformConnection::onDescriptorEvent(EvEvent*, int flags)
+void PlatformConnection::onDescriptorEvent(EvEventBase*, int flags)
 {
-    std::lock_guard<std::mutex> lock(event_lock_);
+    std::lock_guard<std::recursive_mutex> lock(event_lock_);
 
-    if (flags & EvEvent::eEvStateRead) {
+    if (flags & EvEventBase::eEvStateRead) {
 
         if (handleRead(g_readTimeout) < 0) {
             //TODO: [MF] add to log...
@@ -109,7 +115,7 @@ void PlatformConnection::onDescriptorEvent(EvEvent*, int flags)
             parent_->notifyConnectionReadable(this);
         }
     }
-    if (flags & EvEvent::eEvStateWrite) {
+    if (flags & EvEventBase::eEvStateWrite) {
 
         if (handleWrite(g_writeTimeout) < 0) {
             //TODO: handle error...
@@ -145,6 +151,8 @@ int PlatformConnection::handleRead(unsigned int timeout)
 
 int PlatformConnection::handleWrite(unsigned int timeout)
 {
+    //TODO: add to log..  std::cout << "handleWrite()" << std::endl;
+
     std::lock_guard<std::mutex> lock(writeLock_);
     if (isWriteBufferEmpty()) {
         return 0;
@@ -160,13 +168,19 @@ int PlatformConnection::handleWrite(unsigned int timeout)
     }
 
     writeOffset_ += ret;
+    if (writeBuffer_.size() == writeOffset_) {
+        writeBuffer_.clear();
+        writeOffset_ = 0;
+    }
     return ret;
 }
 
 void PlatformConnection::addMessage(const std::string& message)
 {
     assert(event_);
-    bool isWrite = event_->isActive(EvEvent::eEvStateWrite);
+    bool isWrite = event_->isActive(EvEventBase::eEvStateWrite);
+
+    //TODO: add to log.. std::cout << "addMessage()" << std::endl;
 
     //TODO: checking for too big messages...
 
@@ -177,8 +191,7 @@ void PlatformConnection::addMessage(const std::string& message)
     }
 
     if (!isWrite) {
-
-        std::lock_guard<std::mutex> lock(event_lock_);
+        std::lock_guard<std::recursive_mutex> lock(event_lock_);
         updateEvent(true, true);
     }
 }
@@ -213,10 +226,7 @@ bool PlatformConnection::isReadable()
         return false;
 
     std::string::size_type off = readBuffer_.find('\n', static_cast<size_t>(readOffset_));
-    if (off == std::string::npos)
-        return false;
-
-    return true;
+    return (off != std::string::npos);
 }
 
 std::string PlatformConnection::getName() const
@@ -225,43 +235,42 @@ std::string PlatformConnection::getName() const
     return std::string(port_->getName());
 }
 
-bool PlatformConnection::attachEventMgr(EvEventsMgr* ev_manager)
+EvEventBase* PlatformConnection::getEvent()
 {
-    if (!port_ || ev_manager == nullptr) {
+    if (!event_) {
+        sp_handle_t fd = port_->getFileDescriptor();
+
+#if defined(__linux__) || defined(__APPLE__)
+        event_.reset(new EvEvent());
+        event_->create(EvEvent::EvType::eEvTypeHandle, fd, 0);
+#elif defined(_WIN32)
+        event_.reset(new EvCommEvent());
+        event_->create(reinterpret_cast<HANDLE>(fd));
+#endif
+
+        event_->setCallback(std::bind(&PlatformConnection::onDescriptorEvent, this, std::placeholders::_1, std::placeholders::_2));
+    }
+
+    return event_.get();
+}
+
+bool PlatformConnection::updateEvent(bool read, bool write)
+{
+    if (!event_) {
         return false;
     }
 
-    std::lock_guard<std::mutex> lock(event_lock_);
-
-    event_mgr_ = ev_manager;
-
-    int fd = port_->getFileDescriptor();
-    event_.reset(ev_manager->CreateEventHandle(fd));
-    event_->setCallback(std::bind(&PlatformConnection::onDescriptorEvent, this, std::placeholders::_1, std::placeholders::_2 ) );
-
-    return updateEvent(true, false);
-}
-
-void PlatformConnection::detachEventMgr()
-{
-    if (!port_) {
-        return;
-    }
-
-    if (event_) {
-
-        std::lock_guard<std::mutex> lock(event_lock_);
-        event_->deactivate();
-    }
+    int evFlags = (read ? EvEventBase::eEvStateRead : 0) | (write ? EvEventBase::eEvStateWrite : 0);
+    return event_->activate(evFlags);
 }
 
 bool PlatformConnection::stopListeningOnEvents(bool stop)
 {
-    if (!event_ || event_mgr_ == nullptr) {
+    if (!event_) {
         return false;
     }
 
-    std::lock_guard<std::mutex> lock(event_lock_);
+    std::lock_guard<std::recursive_mutex> lock(event_lock_);
     if (stop) {
         event_->deactivate();
         return true;
@@ -281,15 +290,5 @@ bool PlatformConnection::isWriteBufferEmpty() const
     return (writeBuffer_.size() - writeOffset_) == 0;
 }
 
-bool PlatformConnection::updateEvent(bool read, bool write)
-{
-    if (!event_ || event_mgr_ == nullptr) {
-        return false;
-    }
-
-    int evFlags = (read ? EvEvent::eEvStateRead : 0) | (write ? EvEvent::eEvStateWrite : 0);
-    return event_->activate(event_mgr_, evFlags);
-}
 
 } //end of namespace
-

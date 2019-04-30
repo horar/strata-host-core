@@ -5,14 +5,21 @@
 #include <map>
 #include <string>
 #include <functional>
+#include <mutex>
 
+#if defined(__linux__) || defined(__APPLE__)
 #include <EvEventsMgr.h>
+#elif defined(_WIN32)
+#include <win32/EvCommWaitManager.h>
+#include <win32/EvTimerEvent.h>
+#endif
 
 namespace spyglass {
 
     typedef size_t serialPortHash;
 
     class PlatformConnection;
+    class EvEventBase;
 
     /**
      * Pure virtual interface for connection handling
@@ -41,7 +48,7 @@ namespace spyglass {
         /**
          * Starts event loop in different thread that handles connections
          */
-        void StartLoop();
+        bool StartLoop();
 
         /**
          * Stops event loop and destroys thread
@@ -70,10 +77,10 @@ namespace spyglass {
 
         void removeConnection(PlatformConnection *conn);
 
-        EvEventsMgr* getEvEventsMgr();
+        void onUpdatePortList(EvEventBase*, int);  //Temporary
 
     private:
-        void onUpdatePortList(EvEvent *, int);
+
 
     private:
         void computeListDiff(const std::vector<serialPortHash> &list,
@@ -91,8 +98,16 @@ namespace spyglass {
 
         PlatformConnHandler *plat_handler_ = nullptr;
 
+#if defined(__linux__) || defined(__APPLE__)
         EvEventsMgr eventsMgr_;
         std::unique_ptr<EvEvent> ports_update_;
+
+#elif defined(_WIN32)
+        EvCommWaitManager eventsMgr_;
+
+        EvCommWaitManager portsUpdateThread_;
+        std::unique_ptr<EvTimerEvent> ports_update_;
+#endif
 
         friend class PlatformConnection;
     };
