@@ -105,9 +105,7 @@ PlatformConnection* PlatformManager::getConnection(const std::string& connection
 
 void PlatformManager::onUpdatePortList(EvEventBase*, int)
 {
-    static int idx = 0;
-
-    //TODO: add to log.. std::cout << "onUpdatePortList:" << idx << std::endl;  idx++;
+    //TODO: add to log.. std::cout << "onUpdatePortList:" << std::endl;
 
     std::vector<std::string> listOfSerialPorts;
     if (getListOfSerialPorts(listOfSerialPorts)) {
@@ -187,7 +185,7 @@ void PlatformManager::onRemovedPort(serialPortHash hash)
         conn = find->second;
     }
 
-    std::cout << "Disconnect" << std::endl;
+//TODO: add to log.. std::cout << "Disconnect" << std::endl;
 
     EvEventBase* ev = conn->getEvent();
     ev->deactivate();
@@ -211,14 +209,14 @@ void PlatformManager::removeConnection(PlatformConnection* /*conn*/)
 {
     //TODO: remove connection
 
-    std::cout << "Disconnect" << std::endl;
+//TODO: add to log..  std::cout << "Disconnect" << std::endl;
 
 
 }
 
 void PlatformManager::onAddedPort(serialPortHash hash)
 {
-    std::cout << "onAddedPort()" << std::endl;
+//TODO: add to log.. std::cout << "onAddedPort()" << std::endl;
 
     std::string portName  = hashToPortName(hash);
 //TODO: add this to logging     std::cout << "New ser.port:" << portName << std::endl;
@@ -241,7 +239,7 @@ void PlatformManager::onAddedPort(serialPortHash hash)
         return;
     }
 
-    std::cout << "New connection" << std::endl;
+//TODO: add to log.. std::cout << "New connection" << std::endl;
 
     {
         std::lock_guard<std::mutex> lock(connectionMap_mutex_);
