@@ -1,23 +1,20 @@
 <RCC>
     <qresource prefix="/">
         <file>main.qml</file>
-        <file>js/core_platform_interface.js</file>
-        <file>partial-views/SGPlatformTab.qml</file>
-        <file>partial-views/SGPlatformContent.qml</file>
-        <file>PlatformInterface.qml</file>
+        <file>SciMain.qml</file>
+        <file>PlatformDelegate.qml</file>
         <file>fonts/Inconsolata.otf</file>
-        <file>fonts/sgicons.ttf</file>
+        <file>fonts/FranklinGothicBold.ttf</file>
+        <file>fonts/FranklinGothicBook.otf</file>
+        <file>fonts/FranklinGothicMedium.otf</file>
         <file>fonts/Fonts.qml</file>
-        <file>partial-views/SGSideDrawer.qml</file>
-        <file>partial-views/SGStatusListBox.qml</file>
-        <file>partial-views/SGSubmitInfoBox.qml</file>
-        <file>partial-views/SGCommandHistory.qml</file>
-        <file>partial-views/images/greenStatusLight.svg</file>
-        <file>partial-views/images/offStatusLight.svg</file>
-        <file>partial-views/images/orangeStatusLight.svg</file>
-        <file>partial-views/images/redStatusLight.svg</file>
-        <file>partial-views/images/yellowStatusLight.svg</file>
-        <file>partial-views/SGStatusLight.qml</file>
+        <file>common/Colors.js</file>
+        <file>common/SgIcon.qml</file>
+        <file>common/SgPressable.qml</file>
+        <file>common/SgText.qml</file>
+        <file>common/SgIconButton.qml</file>
+        <file>common/SgTextField.qml</file>
+        <file>common/SgSuggestionPopup.qml</file>
+        <file>common/SGStatusLight.qml</file>
     </qresource>
-    <qresource prefix="/js"/>
 </RCC>

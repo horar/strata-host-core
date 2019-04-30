@@ -77,12 +77,15 @@ target_link_libraries(${PROJECT_NAME}
 
     QtLogger
 )
+if(WIN32)
+    target_link_libraries(${PROJECT_NAME} Shlwapi)
+endif()
 
 target_include_directories(${PROJECT_NAME}
     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/source
 )
 
-set(PRODUCT_NAME_LONG "Strata Development Studio")
+set(PRODUCT_NAME_LONG "Strata Developer Studio")
 set(PRODUCT_NAME_COPYRIGHT "Copyright (C) 2018 On Semiconductor")
 set_target_properties(${PROJECT_NAME} PROPERTIES
     CXX_STANDARD 17
@@ -107,6 +110,12 @@ if(APPLE)
     )
 endif()
 
+if(WIN32)
+    set_target_properties(${PROJECT_NAME} PROPERTIES
+        WIN32_EXECUTABLE ON
+    )
+endif()
+
 target_compile_options(${PROJECT_NAME}
     PRIVATE $<$<CXX_COMPILER_ID:AppleClang>:-Wall -Wextra>
 )
@@ -119,7 +128,7 @@ target_compile_definitions(${PROJECT_NAME}
 
 # LC: start 'hcs' process from strata (will be handled by strata monitor in near future)
 set_source_files_properties(main.cpp PROPERTIES
-    COMPILE_DEFINITIONS START_SERVICES
+    COMPILE_DEFINITIONS "START_SERVICES;WINDOWS_INSTALLER_BUILD=$<BOOL:${WINDOWS_INSTALLER_BUILD}>"
 )
 
 # TODO: [LC] fix this, because it need to be set in multiple Qt UI projects
