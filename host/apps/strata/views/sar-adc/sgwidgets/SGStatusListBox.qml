@@ -58,18 +58,19 @@ Rectangle {
         flickableDirection: Flickable.VerticalFlick
 
         anchors {
-            left: root.left
-            right: root.right
+           // left: root.left
+            //right: root.right
+            horizontalCenter: parent.horizontalCenter
             top: titleArea.visible ? titleArea.bottom : root.top
             bottom: root.bottom
-            margins: 10
+            margins: 20
         }
 
         delegate: Text {
             text: model.status // modelData
             color: root.statusTextColor
             font.family: "Courier"
-
+            font.pixelSize: 15
         }
 
         highlightFollowsCurrentItem: true

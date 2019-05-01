@@ -16,51 +16,23 @@ Item {
         id: platformInterface
     }
 
-    Component.onCompleted: {
-        Help.registerTarget(navTabs, "Using these two tabs, you may select between basic and advanced controls.", 0, "controlHelp")
-    }
+//    Component.onCompleted: {
+//        Help.registerTarget(navTabs, "Using these two tabs, you may select between basic and advanced controls.", 0, "controlHelp")
+//    }
 
-    TabBar {
-        id: navTabs
-        anchors {
-            top: parent.top
-            left: parent.left
-            right: parent.right
-        }
 
-        TabButton {
-            id: basicButton
-            text: qsTr("Basic")
-            onClicked: {
-                controlContainer.currentIndex = 0
-            }
-        }
-
-        TabButton {
-            id: advancedButton
-            text: qsTr("Advanced")
-            onClicked: {
-                controlContainer.currentIndex = 1
-            }
-        }
-    }
 
     StackLayout {
         id: controlContainer
         anchors {
-            top: navTabs.bottom
-            bottom: controlNavigation.bottom
-            right: controlNavigation.right
-            left: controlNavigation.left
+           fill: parent
         }
 
         BasicControl {
             id: basic
         }
 
-        AdvancedControl {
-            id: advanced
-        }
+
     }
 
 //    SGIcon {

@@ -12,6 +12,7 @@ Item{
     property color infoBoxColor: "#eeeeee"
     property color labelColor: "#eeeeee"
     property color infoBoxBorderColor: "#cccccc"
+    property color infoTextColor: "#cccccc"
     property real infoBoxBorderWidth: 1
     property string unit: "RPM"
     property int fontSize: 10
@@ -23,7 +24,7 @@ Item{
         text: label
         width: contentWidth
         height: root.labelLeft ? infoContainer.height : contentHeight
-        font.pixelSize: fontSize
+        font.pixelSize: 15
         topPadding: root.label === "" ? 0 : root.labelLeft ? (infoContainer.height-contentHeight)/2 : 0
         bottomPadding: topPadding
         font.bold: true
@@ -59,8 +60,7 @@ Item{
                 right: infoContainer.right
                 verticalCenter: infoContainer.verticalCenter
             }
-
-            color: "green"
+            color: infoTextColor
             selectByMouse: true
             readOnly: true
             font.pixelSize:infoContainer.height// Scale the gauge font based on what the largest or smallest number that might be displayed

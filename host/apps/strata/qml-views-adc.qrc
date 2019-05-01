@@ -32,5 +32,6 @@
         <file>views/sar-adc/sgwidgets/SGStatusListBox.qml</file>
         <file>views/sar-adc/sgwidgets/SGRadioButtonContainer.qml</file>
         <file>views/sar-adc/sgwidgets/SGRadioButton.qml</file>
+        <file>views/sar-adc/sgwidgets/SGSubmitInfoBox.qml</file>
     </qresource>
 </RCC>
