@@ -174,147 +174,178 @@ Item {
         height: parent.height/2
         color: "#696969"
         anchors.top: graphContainer.bottom
-        RowLayout{
+
+        Row{
             anchors.fill: parent
+            Rectangle {
+                width:parent.width/2.7
+                height : parent.height
+                anchors{
+                    top: parent.top
+                    topMargin: 10
 
-            ColumnLayout{
-                Layout.preferredWidth: 400 * ratioCalc
-                Layout.preferredHeight: 440 * ratioCalc
-                Layout.alignment: Qt.AlignTop
-                spacing: 15
+                }
+                color: "transparent"
 
-                ColumnLayout {
-                    Layout.preferredWidth: ratioCalc * 400
-                    Layout.preferredHeight: ratioCalc * 100
-                    Text {
-                        Layout.preferredWidth: ratioCalc * 50
-                        Layout.preferredHeight: ratioCalc * 50
-                        id: containerTitle
-                        text: "ADC Stimuli"
-                        font.bold: true
-                        font.pixelSize: 20
-                        color: "white"
-                        Layout.alignment: Qt.AlignHCenter
-                        horizontalAlignment: Text.AlignHCenter
-                        verticalAlignment: Text.AlignVCenter
-                    }
 
-                    SGRadioButtonContainer {
-                        id: dvsButtonContainer
-                        // Optional configuration:
-                        //fontSize: (parent.width+parent.height)/32
-                        label: "DVDD:" // Default: "" (will not appear if not entered)
-                        labelLeft: true         // Default: true
-                        textColor: "white"      // Default: "#000000"  (black)
-                        radioColor: "black"     // Default: "#000000"  (black)
-                        exclusive: true         // Default: true
-                        Layout.alignment: Qt.AlignCenter
+                Rectangle{
+                    id: adcSetting
+                    width: parent.width
+                    height: parent.height/4
+                    color: "transparent"
+                    ColumnLayout {
+                        anchors.fill: parent
 
-                        radioGroup: GridLayout {
-                            columnSpacing: 10
-                            rowSpacing: 10
+                        Text {
+                            width: ratioCalc * 50
+                            height : ratioCalc * 50
+                            id: containerTitle
+                            text: "ADC Stimuli"
+                            font.bold: true
+                            font.pixelSize: 20
+                            color: "white"
+                            Layout.alignment: Qt.AlignHCenter
+                            horizontalAlignment: Text.AlignHCenter
+                            verticalAlignment: Text.AlignVCenter
+                        }
 
-                            property int fontSize: (parent.width+parent.height)/8
-                            SGRadioButton {
-                                id: dvdd1
-                                text: "3.3V"
-                            }
+                        SGRadioButtonContainer {
+                            id: dvsButtonContainer
+                            // Optional configuration:
+                            //fontSize: (parent.width+parent.height)/32
+                            label: "DVDD:" // Default: "" (will not appear if not entered)
+                            labelLeft: true         // Default: true
+                            textColor: "white"      // Default: "#000000"  (black)
+                            radioColor: "black"     // Default: "#000000"  (black)
+                            exclusive: true         // Default: true
+                            Layout.alignment: Qt.AlignCenter
 
-                            SGRadioButton {
-                                id: dvdd2
-                                text: "1.8V"
+                            radioGroup: GridLayout {
+                                columnSpacing: 10
+                                rowSpacing: 10
+
+                                property int fontSize: (parent.width+parent.height)/8
+                                SGRadioButton {
+                                    id: dvdd1
+                                    text: "3.3V"
+                                    checked: true
+                                }
+
+                                SGRadioButton {
+                                    id: dvdd2
+                                    text: "1.8V"
+                                }
                             }
                         }
-                    }
-                    SGRadioButtonContainer {
-                        id: avddButtonContainer
-                        // Optional configuration:
-                        //fontSize: (parent.width+parent.height)/32
-                        label: "AVDD:" // Default: "" (will not appear if not entered)
-                        labelLeft: true         // Default: true
-                        textColor: "white"      // Default: "#000000"  (black)
-                        radioColor: "black"     // Default: "#000000"  (black)
-                        exclusive: true         // Default: true
-                        Layout.alignment: Qt.AlignCenter
+                        SGRadioButtonContainer {
+                            id: avddButtonContainer
+                            // Optional configuration:
+                            //fontSize: (parent.width+parent.height)/32
+                            label: "AVDD:" // Default: "" (will not appear if not entered)
+                            labelLeft: true         // Default: true
+                            textColor: "white"      // Default: "#000000"  (black)
+                            radioColor: "black"     // Default: "#000000"  (black)
+                            exclusive: true         // Default: true
+                            Layout.alignment: Qt.AlignCenter
 
-                        radioGroup: GridLayout {
-                            columnSpacing: 10
-                            rowSpacing: 10
+                            radioGroup: GridLayout {
+                                columnSpacing: 10
+                                rowSpacing: 10
 
-                            property int fontSize: (parent.width+parent.height)/8
-                            SGRadioButton {
-                                id: avdd1
-                                text: "3.3V"
-                            }
-                            SGRadioButton {
-                                id: avdd2
-                                text: "1.8V"
+                                property int fontSize: (parent.width+parent.height)/8
+                                SGRadioButton {
+                                    id: avdd1
+                                    text: "3.3V"
+                                    checked: true
+                                }
+                                SGRadioButton {
+                                    id: avdd2
+                                    text: "1.8V"
+                                }
                             }
                         }
                     }
                 }
                 Rectangle{
-                    Layout.preferredWidth: ratioCalc * 400
-                    Layout.preferredHeight: ratioCalc * 50
+                    id: frequencySetting
+                    width:  parent.width
+                    height : parent.height/6
                     color: "transparent"
-                    Layout.alignment: Qt.AlignCenter
+                    anchors{
+                        top: adcSetting.bottom
+                    }
 
                     SGSubmitInfoBox{
                         label: "Input Frequency"
                         input: "1000.5"
-                        infoBoxWidth: ratioCalc * 150
-                        infoBoxHeight: ratioCalc * 60
+                        infoBoxWidth: parent.width/3
+                        infoBoxHeight: parent.height/2
                         infoBoxColor: "black"
                         textColor: "White"
                         fontSize: 20 * ratioCalc
                         buttonVisible: false
-                        Layout.alignment: Qt.AlignCenter
+                        anchors.centerIn: parent
+                        unit: "kHz"
+                    }
+                }
+                Rectangle{
+                    id: dataModel
+                    width:  parent.width/0.9
+                    height : parent.height/3
+                    color: "transparent"
+
+                    anchors{
+                        top:frequencySetting.bottom
+                    }
+
+                    SGStatusListBox {
+                        id: interruptError
+                        implicitWidth: parent.width/1.5
+                        implicitHeight : parent.height
+                        title: "Status:"
+                        titleBoxColor: "black"
+                        titleTextColor: "white"
+                        statusBoxColor: " black"
+                        statusTextColor: "green"
+                        model: faultModel
                         anchors.centerIn: parent
                     }
-                }
-                SGStatusListBox {
-                    id: interruptError
-                    Layout.preferredWidth: ratioCalc * 350
-                    Layout.preferredHeight: ratioCalc * 200
-                    title: "Status:"
-                    titleBoxColor: "black"
-                    titleTextColor: "white"
-                    statusBoxColor: " black"
-                    statusTextColor: "green"
-                    model: faultModel
-                    Layout.alignment: Qt.AlignCenter
+
+                    ListModel {
+                        id: faultModel
+
+                        ListElement {
+                            status: "Message 1"
+                        }
+                        ListElement {
+                            status: "Message 2"
+                        }
+                        ListElement {
+                            status: "Message 3"
+                        }
+                    }
                 }
 
-                ListModel {
-                    id: faultModel
-
-                    ListElement {
-                        status: "Message 1"
-                    }
-                    ListElement {
-                        status: "Message 2"
-                    }
-                    ListElement {
-                        status: "Message 3"
-                    }
-                }
             }
 
-            ColumnLayout{
-                Layout.preferredWidth: 400 * ratioCalc
-                Layout.preferredHeight: 440 * ratioCalc
-                Layout.alignment: Qt.AlignTop
+
+            Rectangle {
+                width:parent.width/4
+                height : parent.height
+                color: "transparent"
+
                 Rectangle{
-                    Layout.preferredWidth: ratioCalc * 200
-                    Layout.preferredHeight: ratioCalc * 80
-                    Layout.alignment: Qt.AlignHCenter
+                    id: acquireButtonContainer
                     color: "transparent"
+                    width: parent.width
+                    height: parent.height/5
                     Button {
                         id: acquireDataButton
-                        width: ratioCalc * 130
-                        height: ratioCalc * 50
+                        width: parent.width/3
+                        height: parent.height/1.7
+
+                        text: qsTr("Acquire \n Data")
                         anchors.centerIn: parent
-                        text: qsTr("Acquire Data")
                         background: Rectangle {
                             implicitWidth: 100
                             implicitHeight: 40
@@ -333,15 +364,18 @@ Item {
                             horizontalAlignment: Text.AlignHCenter
                             verticalAlignment: Text.AlignVCenter
                             elide: Text.ElideRight
+
                         }
                     }
                 }
-
                 Rectangle {
                     id: gaugeContainer
-                    Layout.preferredWidth: 400 * ratioCalc
-                    Layout.preferredHeight: 200 * ratioCalc
-                    Layout.alignment: Qt.AlignCenter
+                    anchors{
+                        top: acquireButtonContainer.bottom
+                    }
+
+                    width: parent.width
+                    height: parent.height/2.4
                     color: "transparent"
                     SGCircularGauge{
                         id:lightGauge
@@ -361,153 +395,160 @@ Item {
                     }
                 }
                 Rectangle {
-                    Layout.preferredWidth:  ratioCalc * 290
-                    Layout.preferredHeight:  ratioCalc * 100
+                    width:  parent.width
+                    height : parent.height/6
                     color: "transparent"
-                    Layout.alignment: Qt.AlignCenter
-
+                    anchors.top: gaugeContainer.bottom
                     SGLabelledInfoBox {
                         id: powerConsumption
                         label: "Power Consumption"
                         info: "92"
-                        unit: "uW"
-                        infoBoxWidth: ratioCalc * 100
-                        infoBoxHeight : ratioCalc * 50
+                        unit: "µW"
+                        infoBoxWidth: parent.width/3
+                        infoBoxHeight: parent.height/2
                         fontSize: 15
                         unitSize: 10
-                        anchors.fill: parent
                         infoBoxColor: "black"
                         labelColor: "white"
                         infoTextColor: "#48d1cc"
+                        anchors.centerIn: parent
                     }
                 }
             }
 
-            ColumnLayout{
-                Layout.preferredWidth: 400 * ratioCalc
-                Layout.preferredHeight: 440 * ratioCalc
-                Layout.alignment: Qt.AlignTop
 
-                Text {
-                    id: title
-                    Layout.preferredWidth: ratioCalc * 50
-                    Layout.preferredHeight: ratioCalc * 70
-                    text: " ADC Performance \n Metrics"
-                    color: "white"
-                    Layout.alignment: Qt.AlignHCenter
-                    horizontalAlignment: Text.AlignHCenter
-                    verticalAlignment: Text.AlignVCenter
-                    font.pixelSize: 20
-                    font.bold: true
+            Rectangle {
+                width:parent.width/3
+                height : parent.height
+                color: "transparent"
+                Rectangle {
+                    id: titleContainer
+                    width: parent.width
+                    height: parent.height/6
+                    color: "transparent"
+                    Text {
+                        id: title
+                        text: " ADC Performance \n Metrics"
+                        color: "white"
+                        anchors.centerIn: parent
+                        horizontalAlignment: Text.AlignHCenter
+                        verticalAlignment: Text.AlignVCenter
+                        font.pixelSize: 20
+                        font.bold: true
+                    }
                 }
+                Column{
+                    width: parent.width
+                    height: parent.height - titleContainer.height
+                    anchors{
+                        top: titleContainer.bottom
+                    }
 
-                Rectangle{
-                    Layout.preferredWidth: ratioCalc * 300
-                    Layout.preferredHeight: ratioCalc * 50
-                    color: "transparent"
-                    Layout.alignment: Qt.AlignCenter
-                    SGLabelledInfoBox {
-                        label: "SNR"
-                        info: "68.9"
-                        unit: "dB"
-                        infoBoxWidth: ratioCalc * 100
-                        infoBoxHeight : ratioCalc * 40
-                        fontSize: 15
-                        unitSize: 10
-                        anchors{
-                            centerIn: parent
+                    Rectangle{
+                        width: parent.width
+                        height: parent.height/7
+                        color: "transparent"
+
+                        SGLabelledInfoBox {
+                            label: "SNR"
+                            info: "68.9"
+                            unit: "dB"
+                            infoBoxWidth: parent.width/3
+                            infoBoxHeight : parent.height/1.6
+                            fontSize: 15
+                            unitSize: 10
+                            anchors{
+                                centerIn: parent
+                            }
+                            infoBoxColor: "black"
+                            labelColor: "white"
+                            infoTextColor: "#ffa500"
                         }
-                        infoBoxColor: "black"
-                        labelColor: "white"
-                        infoTextColor: "#ffa500"
+                    }
+                    Rectangle{
+                        width: parent.width
+                        height: parent.height/7
+                        color: "transparent"
+
+                        SGLabelledInfoBox {
+                            label: "SNDR"
+                            info: "67.8"
+                            unit: "dB"
+                            infoBoxWidth: parent.width/3
+                            infoBoxHeight : parent.height/1.6
+                            fontSize: 15
+                            unitSize: 10
+                            anchors{
+                                centerIn: parent
+                            }
+                            infoBoxColor: "black"
+                            labelColor: "white"
+                            infoTextColor: "#f0e68c"
+                        }
+                    }
+                    Rectangle{
+
+                        color: "transparent"
+                        width: parent.width
+                        height: parent.height/7
+                        SGLabelledInfoBox {
+                            label: "THD"
+                            info: "70"
+                            unit: "dB"
+                            infoBoxWidth: parent.width/3
+                            infoBoxHeight : parent.height/1.6
+                            fontSize: 15
+                            unitSize: 10
+                            anchors{
+                                centerIn: parent
+                            }
+                            infoBoxColor: "black"
+                            labelColor: "white"
+                            infoTextColor: "#ffff00"
+                        }
+                    }
+                    Rectangle{
+                        width: parent.width
+                        height: parent.height/7
+                        color: "transparent"
+                        SGLabelledInfoBox {
+                            label: "ENOB"
+                            info: "11.5"
+                            unit: "bits"
+                            infoBoxWidth: parent.width/3
+                            infoBoxHeight : parent.height/1.6
+                            fontSize: 15
+                            unitSize: 10
+                            anchors{
+                                centerIn: parent
+                            }
+                            infoBoxColor: "black"
+                            labelColor: "white"
+                            infoTextColor: "#cd5c5c"
+                        }
+                    }
+                    Rectangle{
+                        width: parent.width
+                        height: parent.height/7
+                        color: "transparent"
+
+                        SGLabelledInfoBox {
+                            label: "Offset"
+                            info: "2.5"
+                            unit: "bits"
+                            infoBoxWidth: parent.width/3
+                            infoBoxHeight : parent.height/1.6
+                            fontSize: 15
+                            unitSize: 10
+                            anchors{
+                                centerIn: parent
+                            }
+                            infoBoxColor: "black"
+                            labelColor: "white"
+                        }
                     }
                 }
-                Rectangle{
-                    Layout.preferredWidth: ratioCalc * 300
-                    Layout.preferredHeight: ratioCalc * 50
-                    color: "transparent"
-                    Layout.alignment: Qt.AlignCenter
-                    SGLabelledInfoBox {
-                        label: "SNDR"
-                        info: "67.8"
-                        unit: "dB"
-                        infoBoxWidth: ratioCalc * 100
-                        infoBoxHeight : ratioCalc * 40
-                        fontSize: 15
-                        unitSize: 10
-                        anchors{
-                            centerIn: parent
-                        }
-                        infoBoxColor: "black"
-                        labelColor: "white"
-                        infoTextColor: "#f0e68c"
-                    }
-                }
-                Rectangle{
-                    Layout.preferredWidth: ratioCalc * 300
-                    Layout.preferredHeight: ratioCalc * 50
-                    color: "transparent"
-                    Layout.alignment: Qt.AlignCenter
-                    SGLabelledInfoBox {
-                        label: "THD"
-                        info: "70"
-                        unit: "dB"
-                        infoBoxWidth: ratioCalc * 100
-                        infoBoxHeight : ratioCalc * 40
-                        fontSize: 15
-                        unitSize: 10
-                        anchors{
-                            centerIn: parent
-                        }
-                        infoBoxColor: "black"
-                        labelColor: "white"
-                        infoTextColor: "#ffff00"
-                    }
-                }
-                Rectangle{
-                    Layout.preferredWidth: ratioCalc * 300
-                    Layout.preferredHeight: ratioCalc * 50
-                    color: "transparent"
-                    Layout.alignment: Qt.AlignCenter
-                    SGLabelledInfoBox {
-                        label: "ENOB"
-                        info: "11.5"
-                        unit: "bits"
-                        infoBoxWidth: ratioCalc * 100
-                        infoBoxHeight : ratioCalc * 40
-                        fontSize: 15
-                        unitSize: 10
-                        anchors{
-                            centerIn: parent
-                        }
-                        infoBoxColor: "black"
-                        labelColor: "white"
-                        infoTextColor: "#cd5c5c"
-                    }
-                }
-                Rectangle{
-                    Layout.preferredWidth: ratioCalc * 300
-                    Layout.preferredHeight: ratioCalc * 50
-                    color: "transparent"
-                    Layout.alignment: Qt.AlignCenter
-                    SGLabelledInfoBox {
-                        label: "Offset"
-                        info: "2.5"
-                        unit: "bits"
-                        infoBoxWidth: ratioCalc * 100
-                        infoBoxHeight : ratioCalc * 40
-                        fontSize: 15
-                        unitSize: 10
-                        anchors{
-                            centerIn: parent
-                        }
-                        infoBoxColor: "black"
-                        labelColor: "white"
-                    }
-                }
-                //   }
             }
         }
     }
 }
-

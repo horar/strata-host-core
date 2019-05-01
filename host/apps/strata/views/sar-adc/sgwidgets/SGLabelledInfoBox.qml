@@ -18,7 +18,7 @@ Item{
     property int fontSize: 10
     property int unitSize: 100
     implicitHeight: labelLeft ? infoContainer.height : labelText.height + infoContainer.height+ infoContainer.anchors.topMargin + 40
-    implicitWidth: labelLeft ? infoBoxWidth + labelText.width + unitText.width : Math.max(infoBoxWidth, labelText.width )
+    implicitWidth: labelLeft ? infoBoxWidth + labelText.width + unitText.width : Math.max(infoBoxWidth, labelText.width)
     Text {
         id: labelText
         text: label
@@ -81,6 +81,7 @@ Item{
         anchors {
             left : infoContainer.right
             leftMargin: 6  
+            verticalCenter: infoContainer.verticalCenter
         }
         font.bold: true
     }

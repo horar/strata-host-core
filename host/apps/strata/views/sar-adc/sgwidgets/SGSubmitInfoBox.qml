@@ -21,9 +21,10 @@ Rectangle {
     property bool buttonVisible: true
     property string buttonText: "Submit"
     property int fontSize: 10
+    property string unit: "RPM"
 
     implicitHeight: labelLeft ? inputButtonContainer.height : labelText.height + inputButtonContainer.height + inputButtonContainer.anchors.topMargin
-    implicitWidth: labelLeft ? labelText.width + inputButtonContainer.width + inputButtonContainer.anchors.leftMargin :
+    implicitWidth: labelLeft ? labelText.width + inputButtonContainer.width + inputButtonContainer.anchors.leftMargin + unitText.width :
                                Math.max(inputButtonContainer.width, labelText.width)
     color: "transparent"
 
@@ -103,6 +104,21 @@ Rectangle {
                     regExp: /[-+]?([0-9]*\.[0-9]+|[0-9]+)/
                 }
             }
+        }
+        Text {
+            id: unitText
+            text: "" + unit
+            width: contentWidth + 20
+            height: contentHeight
+            font.pixelSize: 15
+            color: "white"
+
+            anchors {
+                left : infoContainer.right
+                leftMargin: 6
+                verticalCenter: infoContainer.verticalCenter
+            }
+            font.bold: true
         }
 
         Button {
