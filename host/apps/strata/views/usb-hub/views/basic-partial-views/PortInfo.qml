@@ -57,7 +57,7 @@ Rectangle {
         //break the anchors needed to move port stats
         //unhook the box around the power telemetry. Attach the
         //temperature and efficiency boxes to the power box so they can move together
-        powerOutBox.anchors.top = undefined
+        //powerOutBox.anchors.top = undefined
         powerOutBox.anchors.left = undefined
         powerOutBox.anchors.right = undefined
         temperatureBox.anchors.left = powerOutBox.left
@@ -126,7 +126,12 @@ Rectangle {
                 to: titleBackground.y + titleBackground.height + 8
                 duration: basicToAdvancedTelemetryAnimationTime
             }
-        }   //phase 1 transition
+        }
+
+        onStarted: {
+            //break the top anchor for the top box of the bottom three so we can move it up
+            powerOutBox.anchors.top = undefined
+        }
 
         onStopped: {
             advancedControls.transitionToAdvancedView();
@@ -170,24 +175,24 @@ Rectangle {
             duration: advancedToBasicAdvancedControlsAnimationTime
         }
 
-        ParallelAnimation{
-            PropertyAnimation {
-                id:moveRightTelemetryBoxesDown
-                target: powerOutBox
-                property: "y"
-                to: 200
-                duration: advancedToBasicTelemetryAnimationTime
-            }
+        PropertyAnimation {
+            id:moveRightTelemetryBoxesDown
+            target: powerOutBox
+            property: "y"
+            to: powerInBox.y + powerInBox.height
+            duration: advancedToBasicTelemetryAnimationTime
+
+
+
+
         }
 
-        ParallelAnimation{
+        PropertyAnimation {
 
-            PropertyAnimation {
-                target: powerOutBox
-                property: "x"
-                to: 10
-                duration: advancedToBasicTelemetryAnimationTime
-            }
+            target: powerOutBox
+            property: "x"
+            to: 10
+            duration: advancedToBasicTelemetryAnimationTime
         }
 
         ParallelAnimation{
@@ -223,6 +228,7 @@ Rectangle {
         }
 
         onStopped:{
+            powerOutBox.anchors.top = powerInBox.bottom
             powerOutBox.anchors.left = outputVoltageBox.left
             powerOutBox.anchors.right = outputVoltageBox.right
             //enlarge the icons

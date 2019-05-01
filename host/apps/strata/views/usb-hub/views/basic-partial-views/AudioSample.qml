@@ -14,7 +14,7 @@ Item {
         anchors.verticalCenter: parent.verticalCenter
         anchors.right:parent.right
         anchors.rightMargin: 2
-        height: 0
+        height: root.height - (root.height * root.value)/2
         radius:width/2
         color:"black"
 
@@ -37,6 +37,11 @@ Item {
     }
 
     onValueChanged: {
+        updateValueRectSize.start()
+    }
+
+    onHeightChanged: {
+        //so static value will resize when transitioning basic->advanced screen
         updateValueRectSize.start()
     }
 }

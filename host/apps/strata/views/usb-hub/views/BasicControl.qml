@@ -1050,7 +1050,7 @@ Item {
 
                     outputVoltage:{
                         if (platformInterface.request_usb_power_notification.port === 1){
-                            return (platformInterface.request_usb_power_notification.output_voltage).toFixed(2)
+                            return (platformInterface.request_usb_power_notification.output_voltage).toFixed(1)
                         }
                         else{
                             return upstreamPort.outputVoltage;
@@ -1072,7 +1072,7 @@ Item {
                     }
                     inputPower:{
                         if (platformInterface.request_usb_power_notification.port === 1){
-                            return ((platformInterface.request_usb_power_notification.input_voltage * platformInterface.request_usb_power_notification.input_current)+2).toFixed(2); //PTJ-1321 adding 2 watts compensation
+                            return ((platformInterface.request_usb_power_notification.input_voltage * platformInterface.request_usb_power_notification.input_current)+2).toFixed(1); //PTJ-1321 adding 2 watts compensation
                         }
                         else{
                             return upstreamPort.inputPower;
@@ -1080,7 +1080,7 @@ Item {
                     }
                     outputPower:{
                         if (platformInterface.request_usb_power_notification.port === 1){
-                            return (platformInterface.request_usb_power_notification.output_voltage * platformInterface.request_usb_power_notification.output_current).toFixed(2);
+                            return (platformInterface.request_usb_power_notification.output_voltage * platformInterface.request_usb_power_notification.output_current).toFixed(1);
                         }
                         else{
                             return upstreamPort.outputPower;

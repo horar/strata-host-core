@@ -24,6 +24,11 @@ Item {
     property alias graph6: popoutWindow.graph6
 
     property int howManyChecked: 0
+    onHowManyCheckedChanged: {
+        if (howManyChecked == 0){
+            popoutWindow.close();
+        }
+    }
 
     signal windowClosed
 
@@ -47,15 +52,6 @@ Item {
             }
             color: "white"
         }
-
-
-//        Text{
-//            id:debugText
-//            anchors.centerIn: parent
-//            text:"some text"
-//            font.pixelSize: 72
-
-//        }
 
         Row {
             id: portGraphs

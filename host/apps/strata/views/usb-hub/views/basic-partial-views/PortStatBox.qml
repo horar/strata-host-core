@@ -31,7 +31,7 @@ Rectangle {
          PropertyAnimation {
              target: iconImage
              property: "height"
-             to: root.height * 0.65
+             to: root.height * 0.60
              duration: basicToAdvancedTransitionTime
          }
 
@@ -54,7 +54,7 @@ Rectangle {
          PropertyAnimation {
              target: iconImage
              property: "height"
-             to: root.height * 0.9
+             to: root.height * 0.75
              duration: advancedToBasicTransitionTime
          }
 
@@ -70,7 +70,7 @@ Rectangle {
         id: iconImage
         source: root.icon
         opacity: 0.1
-        height: root.height * 0.9
+        height: root.height * 0.75
         width: height
         anchors {
             verticalCenter: root.verticalCenter

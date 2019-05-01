@@ -61,6 +61,8 @@ Rectangle {
             to:advancedTitleBackgroundHeight
             duration: basicToAdvancedTransitionTime
         }
+
+
         PropertyAnimation{
             target:volumeText
             property: "opacity"
@@ -89,6 +91,7 @@ Rectangle {
             to:basicTitleBackgroundHeight
             duration: advancedToBasicTransitionTime
         }
+
         PropertyAnimation{
             target:volumeText
             property: "opacity"
@@ -153,44 +156,15 @@ Rectangle {
         }
     }
 
-    //this image should animate in response to
-    //platformInterface.audio_active_notification.active === true
-    //it should also scale vertically in response to changes in the volume slider
-    Image{
-        id:placeholderImage
-        source: "../images/soundwave.png"
-        anchors.verticalCenter: root.verticalCenter
-        anchors.left:root.left
-        anchors.right:root.right
-        fillMode:Image.PreserveAspectFit
-        opacity:0
-
-        property var audioPlaying : platformInterface.audio_active_notification.audio_active
-        onAudioPlayingChanged: {
-            console.log ("audio playing changed to",audioPlaying)
-        }
-    }
-
     AudioWaveform{
+        //the waveform is visible all the time, but if audio_active is false, then new random data
+        //won't change the heights of the bars, so it will appear invisible.
         id:audioWaveform
         anchors.verticalCenter: root.verticalCenter
         anchors.left:root.left
         anchors.right:root.right
-        height:100
+        height:90
 
-//        property var audioPlaying : platformInterface.audio_active_notification.audio_active
-//        onAudioPlayingChanged: {
-//            if(audioPlaying)
-//                audioWaveform.start();
-//            else
-//                audioWaveform.stop();
-//            console.log ("audio playing changed to",audioPlaying)
-//        }
-    }
-
-    AudioGraph{
-        id:waveformGraph
-        visible: false
     }
 
     Text{
@@ -200,7 +174,7 @@ Rectangle {
         anchors.left: root.left
         anchors.right:root.right
         anchors.leftMargin: 10
-        opacity:1
+        opacity:0
     }
 
     SGSlider{
@@ -212,7 +186,7 @@ Rectangle {
         anchors.leftMargin: 10
         anchors.right:root.right
         anchors.rightMargin: 10
-        opacity:1
+        opacity:0
 
         value:{
             //the volume will be between 0 and 1
