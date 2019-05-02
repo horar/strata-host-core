@@ -46,4 +46,4 @@ target_link_libraries(${PROJECT_NAME}
 
 
 # FIXME: [LC] broken with 'cblitecore' submodule build
-#add_subdirectory(examples)
+add_subdirectory(examples)
