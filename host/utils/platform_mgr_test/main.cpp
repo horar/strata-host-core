@@ -10,6 +10,9 @@
 #include <vector>
 #include <iostream>
 
+std::map<spyglass::PlatformConnection*, int> g_connectionMap;
+
+
 class MyHandler : public spyglass::PlatformConnHandler
 {
 public:
@@ -25,7 +28,7 @@ public:
 
     virtual void onNotifyReadConnection(spyglass::PlatformConnection* connection)
     {
-        static int iCount = 0;
+        int iCount = g_connectionMap[connection];
         std::string msg;
         while(connection->getMessage(msg)) {
             std::cout << "Msg:" << msg << std::endl;
@@ -36,6 +39,8 @@ public:
             connection->addMessage("{\"cmd\":\"request_platform_id\",\"payload\":{} }");
             iCount = 0;
         }
+
+        g_connectionMap[connection] = iCount;
     }
 };
 

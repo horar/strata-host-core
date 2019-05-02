@@ -9,9 +9,15 @@ class serial_port;
 
 namespace spyglass {
 
+    class PlatformManager;
+    class EvEventBase;
+
+#if defined(__linux__) || defined(__APPLE__)
     class EvEvent;
     class EvEventsMgr;
-    class PlatformManager;
+#elif defined(_WIN32)
+    class EvCommEvent;
+#endif
 
     class PlatformConnection {
     public:
@@ -68,23 +74,9 @@ namespace spyglass {
         bool isReadable();
 
         /**
-         * Attaches EvEventsMgr to the connection to handle read/write notifications
-         *  it is method for PlatformManager
-         * @param ev_manager manager to attach
-         * @return returns true when succeeded otherwise false
+         * Returns event for registration in Event dispatcher
          */
-        bool attachEventMgr(EvEventsMgr* ev_manager);
-
-        /**
-         * Detaches EvEventsMgr from connection
-         */
-        void detachEventMgr();
-
-        /**
-         * Returns events manager that is PlatformConnection attached too
-         *  or nullptr when isn't attached.
-         */
-        EvEventsMgr* getEventMgr() const { return event_mgr_; }
+        EvEventBase* getEvent();
 
         /**
          * Stops / Resumes listening on events from PlatformManager(EvEventMgr)
@@ -109,19 +101,35 @@ namespace spyglass {
          */
         int handleWrite(unsigned int timeout);
 
-
-        void onDescriptorEvent(EvEvent *, int flags);
-
+        /**
+         * Updates activation/deactivation of the event, especially read/write state
+         * @param read
+         * @param write
+         * @return returns true when successful otherwise false
+         */
         bool updateEvent(bool read, bool write);
 
+        /**
+         * return if write buffer is empty.
+         * NOTE: this method is not thread safe
+         */
         bool isWriteBufferEmpty() const;
+
+        /**
+         * handles callbacks from events
+         * @param flags - flags for indicating read/write event
+         */
+        void onDescriptorEvent(EvEventBase*, int flags);
 
     private:
         PlatformManager *parent_;
         std::unique_ptr<serial_port> port_;
 
-        EvEventsMgr *event_mgr_ = nullptr;
+#if defined(__linux__) || defined(__APPLE__)
         std::unique_ptr<EvEvent> event_;
+#elif defined(_WIN32)
+        std::unique_ptr<EvCommEvent> event_;
+#endif
         std::recursive_mutex event_lock_;  //this lock is used when read/write event is notified or when event is attached/detached
 
         std::string readBuffer_;
