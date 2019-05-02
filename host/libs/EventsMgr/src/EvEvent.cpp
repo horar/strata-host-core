@@ -41,9 +41,9 @@ EvEvent::EvEvent() : EvEventBase(EvType::eEvTypeUnknown)
 EvEvent::~EvEvent()
 {
     if (event_ != nullptr) {
-        deactivate();
 
-        event_free(event_);
+        std::lock_guard <std::mutex> lock(lock_);
+        deact_and_release();
     }
 }
 
@@ -83,9 +83,7 @@ bool EvEvent::activate(int ev_flags)
 
     std::lock_guard <std::mutex> lock(lock_);
     if (event_ != nullptr) {
-        deactivate();
-
-        event_free(event_);
+        deact_and_release();
     }
 
     switch (EvEventBase::getType()) {
@@ -127,6 +125,7 @@ void EvEvent::deactivate()
         return;
     }
 
+    std::lock_guard <std::mutex> lock(lock_);
     event_del(event_);
     active_ = false;
 }
@@ -173,6 +172,7 @@ void EvEvent::fire(int ev_flags)
         return;
     }
 
+    std::lock_guard <std::mutex> lock(lock_);
     switch (EvEventBase::getType()) {
         case EvType::eEvTypeTimer:
             event_active(event_, EV_TIMEOUT, 0);
@@ -188,6 +188,14 @@ void EvEvent::fire(int ev_flags)
             assert(false);
             break;
     }
+}
+
+void EvEvent::deact_and_release()
+{
+    event_del(event_);
+    active_ = false;
+
+    event_free(event_);
 }
 
 struct timeval EvEvent::tvMsecs(unsigned int msecs)

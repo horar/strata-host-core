@@ -87,6 +87,9 @@ public:
     static struct timeval tvMsecs(unsigned int msecs);
 
 private:
+    void deact_and_release();
+
+private:
     unsigned int timeInMs_;
     ev_handle_t fileHandle_;
 
