@@ -94,7 +94,9 @@ ExternalProject_Add(libgtest
     SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/googletest
 
     CMAKE_ARGS ${CMAKE_ARGS}
-        -DCMAKE_BUILD_TYPE=Release
+        -Dgtest_force_shared_crt=NO
+        -DDEBUG_POSTFIX=""
+        -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
         -DCMAKE_VERBOSE_MAKEFILE=${CMAKE_VERBOSE_MAKEFILE}
         -DCMAKE_OSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET}
         -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
@@ -103,7 +105,7 @@ ExternalProject_Add(libgtest
 add_library(gtest STATIC IMPORTED GLOBAL)
 set_target_properties(gtest PROPERTIES
     INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_BINARY_DIR}/3rd_party/include"
-    IMPORTED_LOCATION  "${CMAKE_BINARY_DIR}/3rd_party/lib/libgtest${CMAKE_STATIC_LIBRARY_SUFFIX}"
+    IMPORTED_LOCATION  "${CMAKE_BINARY_DIR}/3rd_party/lib/${CMAKE_STATIC_LIBRARY_PREFIX}gtest${CMAKE_STATIC_LIBRARY_SUFFIX}"
 )
 
 add_dependencies(gtest DEPENDS libgtest)
@@ -112,7 +114,7 @@ add_dependencies(gtest DEPENDS libgtest)
 add_library(gmock STATIC IMPORTED GLOBAL)
 set_target_properties(gmock PROPERTIES
     INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_BINARY_DIR}/3rd_party/include"
-    IMPORTED_LOCATION  "${CMAKE_BINARY_DIR}/3rd_party/lib/libgmock${CMAKE_STATIC_LIBRARY_SUFFIX}"
+    IMPORTED_LOCATION  "${CMAKE_BINARY_DIR}/3rd_party/lib/${CMAKE_STATIC_LIBRARY_PREFIX}gmock${CMAKE_STATIC_LIBRARY_SUFFIX}"
 )
 
 add_dependencies(gmock DEPENDS libgtest)
