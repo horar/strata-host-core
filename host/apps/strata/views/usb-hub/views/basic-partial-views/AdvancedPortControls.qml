@@ -281,7 +281,7 @@ Item {
     PortGraphWindow{
         id:portGraphWindow
         title: "<b>Port " + portNumber + "</b>"
-        windowWidth:800
+        windowWidth:300
         windowHeight:300
 
         onWindowClosed: {

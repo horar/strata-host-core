@@ -28,6 +28,9 @@ Item {
         if (howManyChecked == 0){
             popoutWindow.close();
         }
+        else{
+            popoutWindow.width = 300 * howManyChecked;
+        }
     }
 
     signal windowClosed
