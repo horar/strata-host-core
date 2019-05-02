@@ -186,9 +186,9 @@ protected:
     const uint32_t MAX_IDS{10};
     const uint32_t LOOP_COUNTER{20};
 
-    const std::vector<const std::string> REQUEST_MESSAGE_REFS{"req1", "req2", "req3"};
-    const std::vector<const std::string> RESPONSE_MESSAGE_REFS{"resp1", "resp2", "resp3"};
-    const std::vector<const std::string> PUBLISHER_MESSAGE_REFS{"pub-sub1", "pub-sub2", "pub-sub3"};
+    const std::vector<std::string> REQUEST_MESSAGE_REFS{"req1", "req2", "req3"};
+    const std::vector<std::string> RESPONSE_MESSAGE_REFS{"resp1", "resp2", "resp3"};
+    const std::vector<std::string> PUBLISHER_MESSAGE_REFS{"pub-sub1", "pub-sub2", "pub-sub3"};
 
     std::atomic_int mStop_{false};
 };

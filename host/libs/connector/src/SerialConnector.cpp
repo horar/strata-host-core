@@ -13,6 +13,7 @@
 
 #include "SerialConnector.h"
 #include "SerialPortConfiguration.h"
+#include "zhelpers.hpp"
 
 using namespace std;
 using namespace rapidjson;
@@ -262,9 +263,9 @@ bool SerialConnector::read(string &notification)
     zmq::pollitem_t items = {*read_socket_, 0, ZMQ_POLLIN, 0};
     zmq::poll(&items, 1, 10);
     if (items.revents & ZMQ_POLLIN) {
-        notification = s_recv(*read_socket_);
         // LOG_DEBUG(DEBUG,"Rx'ed message : %s\n",notification.c_str());
-        if (notification == "Platform_Disconnected") {
+        if (false == s_recv(*read_socket_, notification) ||
+            notification == "Platform_Disconnected") {
             return false;
         } else {
             producer_consumer_.notify_one();
@@ -312,7 +313,7 @@ int SerialConnector::getFileDescriptor()
     size_t file_descriptor_size = sizeof(file_descriptor);
     read_socket_->getsockopt(ZMQ_FD, &file_descriptor, &file_descriptor_size);
 #endif
-    return file_descriptor;
+    return static_cast<bool>(file_descriptor);
 }
 
 // @f windowsPlatformReadHandler

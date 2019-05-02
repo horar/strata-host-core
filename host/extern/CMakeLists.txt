@@ -92,7 +92,8 @@ endif()
 ExternalProject_Add(libgtest
     INSTALL_DIR ${CMAKE_BINARY_DIR}/3rd_party
     SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/googletest
-
+    PATCH_COMMAND ${GIT_EXECUTABLE} apply ${CMAKE_CURRENT_SOURCE_DIR}/patches/googletest/0001-no-debug-suffix.patch
+            
     CMAKE_ARGS ${CMAKE_ARGS}
         -Dgtest_force_shared_crt=NO
         -DDEBUG_POSTFIX=""

@@ -24,7 +24,7 @@ public:
     void addSubscriber(const std::string& dealerID) override;
 
 private:
-    std::set<const std::string> mSubscribers_;
+    std::set<std::string> mSubscribers_;
 };
 
 #endif  // ZmqPublisherConnector_H
