@@ -1,11 +1,13 @@
 
 FROM ubuntu:18.04
 
-# Install the dependencies 
-RUN apt-get update && apt-get install -y cmake build-essential wget unzip
-
-# Install the rquired libraries to run qtcreator and Strata
-RUN apt-get install -y \
+# Install the dependencies and rquired libraries to run qtcreator and Strata
+RUN apt-get update \
+        && apt-get install -y \
+                    cmake \
+                    build-essential \
+                    wget \
+                    unzip \
                     libxcb-keysyms1-dev \
                     libxcb-image0-dev \
                     libxcb-shm0-dev \
@@ -39,7 +41,9 @@ RUN apt-get install -y \
                     libasound2 \
                     libxcomposite1 \
                     libnss3 \
-                    libxtst6
+                    libxtst6 \
+        && apt-get clean \
+        && rm -rf /var/lib/apt/lists/*
 
 # Install Qt 5.12.2
 RUN wget https://download.qt.io/archive/qt/5.12/5.12.2/qt-opensource-linux-x64-5.12.2.run
@@ -51,8 +55,3 @@ RUN rm -rf ./qt-opensource-linux-x64-5.12.2.run qt-noninteractive.qs
 
 # Add Qt and Qtcreator to the path
 ENV PATH="/opt/Qt5.12.2/5.12.2/gcc_64/bin:/opt/Qt5.12.2/Tools/QtCreator/bin:${PATH}"
-
-# Clean up
-RUN apt-get clean
-RUN apt-get -y autoremove
-RUN rm -rf /var/lib/apt/lists/*
