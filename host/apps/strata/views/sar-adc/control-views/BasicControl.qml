@@ -277,15 +277,17 @@ Item {
 
                     SGSubmitInfoBox{
                         label: "Input Frequency"
-                        input: "1000.5"
+                       // placeholderText: "1000.5"
+                        value: "1000.5"
                         infoBoxWidth: parent.width/3
                         infoBoxHeight: parent.height/2
                         infoBoxColor: "black"
-                        textColor: "White"
-                        fontSize: 20 * ratioCalc
-                        buttonVisible: false
+                        textColor: "white"
+                        fontSize: 29
+                        showButton: false
                         anchors.centerIn: parent
                         unit: "kHz"
+                        validator: DoubleValidator { }
                     }
                 }
                 Rectangle{
