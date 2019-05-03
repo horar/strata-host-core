@@ -93,9 +93,6 @@ ExternalProject_Add(libgtest
     INSTALL_DIR ${CMAKE_BINARY_DIR}/3rd_party
     SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/googletest
 
-    PATCH_COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/patches/googletest/googletest/cmake/internal_utils.cmake ${CMAKE_CURRENT_SOURCE_DIR}/googletest/googletest/cmake/
-
-#test_cmd git reset --hard
     CMAKE_ARGS ${CMAKE_ARGS}
         -Dgtest_force_shared_crt=YES
         -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
