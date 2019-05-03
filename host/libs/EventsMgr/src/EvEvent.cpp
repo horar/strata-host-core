@@ -43,7 +43,7 @@ EvEvent::~EvEvent()
     if (event_ != nullptr) {
 
         std::lock_guard <std::mutex> lock(lock_);
-        deact_and_release();
+        deactAndRelease();
     }
 }
 
@@ -83,7 +83,7 @@ bool EvEvent::activate(int ev_flags)
 
     std::lock_guard <std::mutex> lock(lock_);
     if (event_ != nullptr) {
-        deact_and_release();
+        deactAndRelease();
     }
 
     switch (EvEventBase::getType()) {
@@ -190,7 +190,7 @@ void EvEvent::fire(int ev_flags)
     }
 }
 
-void EvEvent::deact_and_release()
+void EvEvent::deactAndRelease()
 {
     event_del(event_);
     active_ = false;

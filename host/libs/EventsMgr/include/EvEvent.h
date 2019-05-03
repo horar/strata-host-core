@@ -87,7 +87,11 @@ public:
     static struct timeval tvMsecs(unsigned int msecs);
 
 private:
-    void deact_and_release();
+    /**
+     * deactivates an Event and release it.
+     * NOTE: no locks, no checks
+     */
+    void deactAndRelease();
 
 private:
     unsigned int timeInMs_;
