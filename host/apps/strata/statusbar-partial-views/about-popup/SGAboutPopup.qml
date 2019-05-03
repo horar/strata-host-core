@@ -3,11 +3,12 @@ import QtQuick.Controls 2.3
 import QtQuick.Layouts 1.3
 import Fonts 1.0
 import QtGraphicalEffects 1.0
+import "qrc:/statusbar-partial-views"
 
 Popup {
     id: profilePopup
     width: Math.max(container.width * 0.8, 600)
-    height: Math.max(container.parent.windowHeight * 0.5, 350)
+    height: Math.max(container.parent.windowHeight * 0.75, 350)
     modal: true
     focus: true
     padding: 0
@@ -110,7 +111,7 @@ Popup {
 
                 Column {
                     id: mainColumn
-                    spacing: 30
+                    spacing: 20
                     width: contentContainer.width - 30
                     anchors {
                         horizontalCenter: contentContainer.horizontalCenter
@@ -167,38 +168,52 @@ Popup {
                         }
                     }
 
-//                    Rectangle {
-//                        id: nameContainer
-//                        width: mainColumn.width
-//                        height: Math.max(hardwareText.contentHeight + 40, softwareText.contentHeight + 40)
-//                        color: "#eee"
+                    Rectangle {
+                        id: nameContainer
+                        width: aboutTextContainer.width
+                        height: 100
+                        color: "white"
+                        border {
+                            width: 1
+                            color: "#ddd"
+                        }
+                        anchors {
+                            horizontalCenter: mainColumn.horizontalCenter
+                        }
 
-//                        Row {
-//                            id:namesRow
-//                            anchors {
-//                                top: nameContainer.top
-//                                topMargin: 20
-//                                horizontalCenter: nameContainer.horizontalCenter
-//                            }
+                        Item {
+                            id: scrollviewClipper
+                            anchors {
+                                fill: nameContainer
+                            }
+                            clip: true
 
-//                        TextEdit {
-//                            id: hardwareText
-//                            width: (nameContainer.width/2)-20
-//                            text: "<b>Hardware Team:</b><br><br>Ed Osburn<br>Lorem ipsum<br>dolor sit amet<br>consectetur adipiscing<br>elit. Aenean id<br>dapibus purus.<br>Aliquam nibh velit,<br>volutpat et consequat<br>id, feugiat nec diam.<br>Mauris arcu nibh,<br>vulputate eu iaculis<br>ac, convallis vitae<br>nunc. Morbi ac<br>sodales ante,<br>sed accumsan<br>orci. Fusce vitae<br>neque quis nibh<br>vestibulum suscipit<br>in nec mauris."
-//                            wrapMode: TextEdit.Wrap
-//                            textFormat: TextEdit.RichText
-//                        }
+                            ScrollView {
+                                anchors {
+                                    fill: parent
+                                    margins: 10
+                                }
+                                clip: false
 
-//                        TextEdit {
-//                            id: softwareText
-//                            width: (nameContainer.width/2)-20
-//                            text: "<b>Software Team:</b><br><br>Ian Cain<br>Lorem ipsum<br>dolor sit amet<br>consectetur adipiscing<br>elit. Aenean id<br>dapibus purus.<br>Aliquam nibh velit,<br>volutpat et consequat<br>id, feugiat nec diam.<br>Mauris arcu nibh,<br>vulputate eu iaculis<br>ac, convallis vitae<br>nunc. Morbi ac<br>sodales ante,<br>sed accumsan<br>orci. Fusce vitae<br>neque quis nibh<br>vestibulum suscipit<br>in nec mauris."
-//                            wrapMode: TextEdit.Wrap
-//                            textFormat: TextEdit.RichText
-//                        }
-//                        }
-
-//                    }
+                                Text {
+                                    id: attributionText
+                                    text: "Attribution List: (not found)"
+                                    color: "#aaa"
+                                    Component.onCompleted: {
+                                        var xhr = new XMLHttpRequest;
+                                        xhr.open("GET", "qrc:/statusbar-partial-views/about-popup/attributionInfo.txt");
+                                        xhr.onreadystatechange = function() {
+                                            if (xhr.readyState == XMLHttpRequest.DONE) {
+                                                var response = xhr.responseText;
+                                                attributionText.text = response
+                                            }
+                                        };
+                                        xhr.send();
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
