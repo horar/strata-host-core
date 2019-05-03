@@ -1,4 +1,4 @@
-find_package(Qt5 5.12
+find_package(Qt5 ${VERSION_QT5}
     COMPONENTS Core
     REQUIRED
 )

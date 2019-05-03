@@ -6,7 +6,10 @@ set(CMAKE_AUTOMOC ON)
 
 set(SCI_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../../apps/SerialConsoleInterface )
 
-find_package(Qt5 5.10 COMPONENTS Core Test REQUIRED)
+find_package(Qt5 ${VERSION_QT5}
+    COMPONENTS Core Test
+    REQUIRED
+)
 if(APPLE)
     find_library(IOKIT_LIB IOKit REQUIRED)
     if (NOT IOKIT_LIB)
