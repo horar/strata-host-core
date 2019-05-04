@@ -47,11 +47,11 @@ RUN apt-get update \
 
 # Install Qt 5.12.2
 RUN wget https://download.qt.io/archive/qt/5.12/5.12.2/qt-opensource-linux-x64-5.12.2.run
-# COPY qt-opensource-linux-x64-5.12.2.run ./qt-opensource-linux-x64-5.12.2.run # Used for local development to reduce build time
-RUN chmod +x ./qt-opensource-linux-x64-5.12.2.run
+# COPY qt-opensource-linux-x64-5.12.2.run ./qt-opensource-linux-x64-5.12.2.run 
 COPY qt-noninteractive.qs /qt-noninteractive.qs
-RUN ./qt-opensource-linux-x64-5.12.2.run --script qt-noninteractive.qs --platform minimal
-RUN rm -rf ./qt-opensource-linux-x64-5.12.2.run qt-noninteractive.qs 
+RUN chmod +x ./qt-opensource-linux-x64-5.12.2.run \
+        && ./qt-opensource-linux-x64-5.12.2.run --script qt-noninteractive.qs --platform minimal \
+        && rm -rf ./qt-opensource-linux-x64-5.12.2.run qt-noninteractive.qs 
 
 # Add Qt and Qtcreator to the path
 ENV PATH="/opt/Qt5.12.2/5.12.2/gcc_64/bin:/opt/Qt5.12.2/Tools/QtCreator/bin:${PATH}"

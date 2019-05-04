@@ -27,17 +27,8 @@ Controller.prototype.ComponentSelectionPageCallback = function() {
     var widget = gui.currentPageWidget();
 
     widget.selectComponent("qt.qt5.5122.gcc_64")
-    widget.selectComponent("qt.qt5.5122.doc")
     widget.selectComponent("qt.qt5.5122.qtcharts")
     widget.selectComponent("qt.qt5.5122.qtcharts.gcc_64")
-    widget.selectComponent("qt.qt5.5122.qtdatavis3d")
-    widget.selectComponent("qt.qt5.5122.qtdatavis3d.gcc_64")
-    widget.selectComponent("qt.qt5.5122.qtnetworkauth")
-    widget.selectComponent("qt.qt5.5122.qtnetworkauth.gcc_64")
-    widget.selectComponent("qt.qt5.5122.qtremoteobjects")
-    widget.selectComponent("qt.qt5.5122.qtremoteobjects.gcc_64")
-    widget.selectComponent("qt.qt5.5122.qtwebglplugin")
-    widget.selectComponent("qt.qt5.5122.qtwebglplugin.gcc_64")
     widget.selectComponent("qt.qt5.5122.qtwebengine")
     widget.selectComponent("qt.qt5.5122.qtwebengine.gcc_64")
     widget.selectComponent("qt.qt5.tools.qtcreator")
