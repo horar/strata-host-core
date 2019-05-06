@@ -166,7 +166,7 @@ void PlatformController::connectWorker()
                 std::shared_lock lock(quitMutex_);
                 if (aboutToQuit_) return;
             }
-            //            sleep(1);
+            
             chrono::milliseconds timespan(250);
             this_thread::sleep_for(timespan);
             continue;
