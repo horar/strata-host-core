@@ -6,6 +6,7 @@
 #include <string>
 #include <functional>
 #include <mutex>
+#include <memory>
 
 #if defined(__linux__) || defined(__APPLE__)
 #include <EvEventsMgr.h>
@@ -21,16 +22,19 @@ namespace spyglass {
     class PlatformConnection;
     class EvEventBase;
 
+    typedef std::shared_ptr<PlatformConnection> PlatformConnectionShPtr;
+
+
     /**
      * Pure virtual interface for connection handling
      */
     class PlatformConnHandler {
     public:
-        virtual void onNewConnection(PlatformConnection *connection) = 0;
+        virtual void onNewConnection(PlatformConnectionShPtr connection) = 0;
 
-        virtual void onCloseConnection(PlatformConnection *connection) = 0;
+        virtual void onCloseConnection(PlatformConnectionShPtr connection) = 0;
 
-        virtual void onNotifyReadConnection(PlatformConnection *connection) = 0;
+        virtual void onNotifyReadConnection(PlatformConnectionShPtr connection) = 0;
     };
 
     class PlatformManager {
@@ -73,7 +77,7 @@ namespace spyglass {
 
         void onRemovedPort(serialPortHash hash);
 
-        void notifyConnectionReadable(PlatformConnection *conn);
+        void notifyConnectionReadable(PlatformConnection* conn);
 
         void removeConnection(PlatformConnection *conn);
 
@@ -94,7 +98,7 @@ namespace spyglass {
         std::map<serialPortHash, std::string> hashToName_;
 
         std::mutex connectionMap_mutex_;
-        std::map<serialPortHash, PlatformConnection *> openedPorts_;
+        std::map<serialPortHash, PlatformConnectionShPtr> openedPorts_;
 
         PlatformConnHandler *plat_handler_ = nullptr;
 
