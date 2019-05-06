@@ -43,6 +43,7 @@ bool PlatformConnection::open(const std::string& portName)
     bool ret = port->open(portName);
     if (ret) {
         port_ = std::move(port);
+        portName_ = portName;
     }
     return ret;
 }
@@ -55,7 +56,7 @@ void PlatformConnection::close()
     }
 
     if (parent_) {
-        parent_->removeConnection(this);
+        parent_->unregisterConnection(this);
     }
 
     std::lock_guard<std::mutex> rlock(readLock_);
@@ -112,7 +113,7 @@ void PlatformConnection::onDescriptorEvent(EvEventBase*, int flags)
             event_->deactivate();
 
             if (parent_) {
-                parent_->removeConnection(this);
+                parent_->unregisterConnection(this);
             }
         }
         else if (isReadable() && parent_ != nullptr) {
@@ -218,7 +219,9 @@ bool PlatformConnection::sendMessage(const std::string &message)
 
 int PlatformConnection::waitForMessages(unsigned int timeout)
 {
-    assert(port_);
+    if (!port_) {
+        return -10;
+    }
     return handleRead(timeout);
 }
 
@@ -235,8 +238,7 @@ bool PlatformConnection::isReadable()
 
 std::string PlatformConnection::getName() const
 {
-    assert(port_);
-    return std::string(port_->getName());
+    return portName_;
 }
 
 EvEventBase* PlatformConnection::createEvent()

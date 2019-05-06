@@ -60,11 +60,13 @@ namespace spyglass {
         /**
          * Waits for messages for specified amount of time
          * @param timeout amount of time to wait
+         * @return negative number means error, positive numbers means number of bytes read
+         *         -10 means port is not open
          */
         int waitForMessages(unsigned int timeout);
 
         /**
-         * @return returns name of the connection
+         * @return returns name of the connection (after successful open)
          */
         std::string getName() const;
 
@@ -135,6 +137,7 @@ namespace spyglass {
     private:
         PlatformManager *parent_;
         std::unique_ptr<serial_port> port_;
+        std::string portName_;
 
 #if defined(__linux__) || defined(__APPLE__)
         std::unique_ptr<EvEvent> event_;
