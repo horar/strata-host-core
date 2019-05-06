@@ -172,7 +172,7 @@ std::string PlatformManager::hashToPortName(serialPortHash hash)
 
 void PlatformManager::onRemovedPort(serialPortHash hash)
 {
-    std::string portName  = hashToPortName(hash);
+//TODO: add this to logging    std::string portName  = hashToPortName(hash);
 //TODO: add this to logging    std::cout << "Removed ser.port:" << portName << std::endl;
 
     PlatformConnection* conn;
@@ -188,8 +188,10 @@ void PlatformManager::onRemovedPort(serialPortHash hash)
 //TODO: add to log.. std::cout << "Disconnect" << std::endl;
 
     EvEventBase* ev = conn->getEvent();
-    ev->deactivate();
-    eventsMgr_.unregisterEvent(ev);
+    if (ev) {
+        eventsMgr_.unregisterEvent(ev);
+        conn->releaseEvent();
+    }
 
     if (plat_handler_) {
         plat_handler_->onCloseConnection(conn);
@@ -205,12 +207,21 @@ void PlatformManager::onRemovedPort(serialPortHash hash)
     delete conn;
 }
 
-void PlatformManager::removeConnection(PlatformConnection* /*conn*/)
+void PlatformManager::removeConnection(PlatformConnection* conn)
 {
-    //TODO: remove connection
+    EvEventBase* ev = conn->getEvent();
+    if (ev != nullptr) {
+        eventsMgr_.unregisterEvent(ev);
+        conn->releaseEvent();
+    }
+
+    serialPortHash hash = std::hash<std::string>{}(conn->getName());
+    {
+        std::lock_guard<std::mutex> lock(connectionMap_mutex_);
+        openedPorts_.erase(hash);
+    }
 
 //TODO: add to log..  std::cout << "Disconnect" << std::endl;
-
 
 }
 
@@ -227,7 +238,7 @@ void PlatformManager::onAddedPort(serialPortHash hash)
         return;
     }
 
-    spyglass::EvEventBase* ev = conn->getEvent();
+    spyglass::EvEventBase* ev = conn->createEvent();
     eventsMgr_.registerEvent(ev);
 
     //activate event in dispatcher (for read)

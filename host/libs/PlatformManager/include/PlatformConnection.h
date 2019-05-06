@@ -74,9 +74,20 @@ namespace spyglass {
         bool isReadable();
 
         /**
-         * Returns event for registration in Event dispatcher
+         * Creates and returns event for registration in Event dispatcher
+         */
+        EvEventBase* createEvent();
+
+        /**
+         * @return returns event.
          */
         EvEventBase* getEvent();
+
+        /**
+         * Deactivates and releases the event
+         * @return returns true when successeded otherwise false
+         */
+        bool releaseEvent();
 
         /**
          * Stops / Resumes listening on events from PlatformManager(EvEventMgr)

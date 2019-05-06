@@ -54,6 +54,10 @@ void PlatformConnection::close()
         event_.release();
     }
 
+    if (parent_) {
+        parent_->removeConnection(this);
+    }
+
     std::lock_guard<std::mutex> rlock(readLock_);
     std::lock_guard<std::mutex> wlock(writeLock_);
 
@@ -235,7 +239,7 @@ std::string PlatformConnection::getName() const
     return std::string(port_->getName());
 }
 
-EvEventBase* PlatformConnection::getEvent()
+EvEventBase* PlatformConnection::createEvent()
 {
     if (!event_) {
         sp_handle_t fd = port_->getFileDescriptor();
@@ -252,6 +256,22 @@ EvEventBase* PlatformConnection::getEvent()
     }
 
     return event_.get();
+}
+
+EvEventBase* PlatformConnection::getEvent()
+{
+    return event_.get();
+}
+
+bool PlatformConnection::releaseEvent()
+{
+    if (!event_) {
+        return false;
+    }
+
+    event_->deactivate();
+    event_.release();
+    return true;
 }
 
 bool PlatformConnection::updateEvent(bool read, bool write)
