@@ -106,6 +106,7 @@ void PlatformConnection::onDescriptorEvent(EvEventBase*, int flags)
         if (handleRead(g_readTimeout) < 0) {
             //TODO: [MF] add to log...
 
+            std::lock_guard<std::recursive_mutex> lock(event_lock_);
             event_->deactivate();
 
             if (parent_) {
@@ -113,6 +114,7 @@ void PlatformConnection::onDescriptorEvent(EvEventBase*, int flags)
             }
         }
         else if (isReadable() && parent_ != nullptr) {
+            std::lock_guard<std::recursive_mutex> lock(event_lock_);
             parent_->notifyConnectionReadable(getName());
         }
     }
@@ -130,6 +132,8 @@ void PlatformConnection::onDescriptorEvent(EvEventBase*, int flags)
         }
 
         if (isEmpty) {
+
+            std::lock_guard<std::recursive_mutex> lock(event_lock_);
             updateEvent(true, false);
         }
     }

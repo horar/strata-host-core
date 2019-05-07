@@ -29,6 +29,12 @@ PlatformManager::PlatformManager()
 
 PlatformManager::~PlatformManager()
 {
+    Stop();
+
+    std::lock_guard<std::mutex> lock(connectionMap_mutex_);
+    for(auto item : openedPorts_) {
+        item.second->close();
+    }
 }
 
 bool PlatformManager::Init()
