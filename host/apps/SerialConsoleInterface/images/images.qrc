@@ -1,0 +1,17 @@
+<!DOCTYPE RCC>
+<RCC version="1.0">
+    <qresource prefix="/images/">
+        <file>times.svg</file>
+        <file>chevron-left.svg</file>
+        <file>chevron-right.svg</file>
+        <file>chevron-down.svg</file>
+        <file>redo.svg</file>
+        <file>arrow-bottom.svg</file>
+        <file>broom.svg</file>
+        <file>greenStatusLight.svg</file>
+        <file>offStatusLight.svg</file>
+        <file>orangeStatusLight.svg</file>
+        <file>redStatusLight.svg</file>
+        <file>yellowStatusLight.svg</file>
+    </qresource>
+</RCC>

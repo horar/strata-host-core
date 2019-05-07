@@ -24,9 +24,9 @@ public:
     void notifyMessageFromConnection(const std::string& connection_id, const std::string& message);
 
 signals:
-    void connectedBoard(QString connection_id, QString verbose_name);
-    void disconnectedBoard(QString connection_id);
-    void notifyBoardMessage(QString connection_id, QString message);
+    void connectedBoard(QString connectionId, QString verboseName);
+    void disconnectedBoard(QString connectionId);
+    void notifyBoardMessage(QString connectionId, QString message);
 
 private:
     class ConnectionHandler : public spyglass::PlatformConnHandler

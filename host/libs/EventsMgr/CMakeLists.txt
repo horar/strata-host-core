@@ -12,9 +12,18 @@ if (APPLE)
 endif()
 
 add_library(${PROJECT_NAME}
+        src/EvEventBase.cpp
         src/EvEvent.cpp
         src/EvEventsMgr.cpp
         )
+
+if(WIN32)
+    target_sources(${PROJECT_NAME}
+        PRIVATE src/win32/EvCommEvent.cpp
+        PRIVATE src/win32/EvCommWaitManager.cpp
+        PRIVATE src/win32/EvTimerEvent.cpp
+    )
+endif()
 
 target_link_libraries(${PROJECT_NAME}
         PUBLIC ${LIBEVENT2_LIBRARIES}
