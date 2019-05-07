@@ -271,7 +271,7 @@ void PlatformManager::onAddedPort(serialPortHash hash)
     }
 
     if (plat_handler_) {
-        plat_handler_->onNewConnection(conn);  //TODO:
+        plat_handler_->onNewConnection(conn);
     }
 }
 
