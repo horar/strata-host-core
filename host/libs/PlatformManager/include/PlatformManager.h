@@ -24,7 +24,6 @@ namespace spyglass {
 
     typedef std::shared_ptr<PlatformConnection> PlatformConnectionShPtr;
 
-
     /**
      * Pure virtual interface for connection handling
      */
@@ -70,18 +69,26 @@ namespace spyglass {
          * @param connection_id search for
          * @return returns connection object or null when not found
          */
-        PlatformConnection* getConnection(const std::string& connection_id);
+        PlatformConnectionShPtr getConnection(const std::string& connection_id);
+
+        /**
+         * Closes and removes connection from PlatformManager
+         * @param connection_id to remove
+         */
+        bool removeConnection(const std::string& connection_id);
 
     protected:
         void onAddedPort(serialPortHash hash);
 
         void onRemovedPort(serialPortHash hash);
 
-        void notifyConnectionReadable(PlatformConnection* conn);
+        void onRemoveClosedPort(serialPortHash hash);
 
-        void removeConnection(PlatformConnection *conn);
+        void notifyConnectionReadable(const std::string& connection_id);
 
-        void onUpdatePortList(EvEventBase*, int);  //Temporary
+        void onUpdatePortList(EvEventBase*, int);
+
+        void unregisterConnection(const std::string& connection_id);
 
     private:
 
@@ -99,6 +106,9 @@ namespace spyglass {
 
         std::mutex connectionMap_mutex_;
         std::map<serialPortHash, PlatformConnectionShPtr> openedPorts_;
+
+        std::mutex closedPorts_mutex_;
+        std::map<serialPortHash, PlatformConnectionShPtr> closedPorts_;
 
         PlatformConnHandler *plat_handler_ = nullptr;
 

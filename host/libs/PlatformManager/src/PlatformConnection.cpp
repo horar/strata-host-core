@@ -50,23 +50,19 @@ bool PlatformConnection::open(const std::string& portName)
 
 void PlatformConnection::close()
 {
-    if (event_) {
-        event_->deactivate();
-        event_.release();
+    if (!port_) {
+        return;
     }
 
     if (parent_) {
-        parent_->unregisterConnection(this);
+        parent_->unregisterConnection(getName());
     }
 
     std::lock_guard<std::mutex> rlock(readLock_);
     std::lock_guard<std::mutex> wlock(writeLock_);
 
-    if (port_) {
-        port_->close();
-
-        port_.release();
-    }
+    port_->close();
+    port_.release();
 }
 
 bool PlatformConnection::getMessage(std::string& result)
@@ -113,11 +109,11 @@ void PlatformConnection::onDescriptorEvent(EvEventBase*, int flags)
             event_->deactivate();
 
             if (parent_) {
-                parent_->unregisterConnection(this);
+                parent_->unregisterConnection(getName());
             }
         }
         else if (isReadable() && parent_ != nullptr) {
-            parent_->notifyConnectionReadable(this);
+            parent_->notifyConnectionReadable(getName());
         }
     }
     if (flags & EvEventBase::eEvStateWrite) {
