@@ -37,12 +37,11 @@ private:
 
         void setParent(BoardsController* parent);
 
-        virtual void onNewConnection(spyglass::PlatformConnection *connection);
-        virtual void onCloseConnection(spyglass::PlatformConnection *connection);
-        virtual void onNotifyReadConnection(spyglass::PlatformConnection *connection);
+        void onNewConnection(spyglass::PlatformConnectionShPtr connection) override;
+        void onCloseConnection(spyglass::PlatformConnectionShPtr connection) override;
+        void onNotifyReadConnection(spyglass::PlatformConnectionShPtr connection) override;
 
         PlatformBoard* getBoard(spyglass::PlatformConnection* connection);
-        spyglass::PlatformConnection* getConnection(const std::string& conn_id);
 
     private:
         BoardsController* parent_;

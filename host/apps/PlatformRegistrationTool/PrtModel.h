@@ -15,7 +15,7 @@ class FlashTask : public QObject, public QRunnable
 {
     Q_OBJECT
 public:
-    FlashTask(spyglass::PlatformConnection *connection, const QString &firmwarePath);
+    FlashTask(spyglass::PlatformConnectionShPtr connection, const QString &firmwarePath);
     void run() override;
 
 signals:
@@ -23,7 +23,7 @@ signals:
     void notify(QString connectionId, QString message);
 
 private:
-    spyglass::PlatformConnection *connection_;
+    spyglass::PlatformConnectionShPtr connection_;
     QString firmwarePath_;
 };
 
@@ -35,9 +35,9 @@ public:
 
     void setReceiver(PrtModel *receiver);
 
-    virtual void onNewConnection(spyglass::PlatformConnection *connection);
-    virtual void onCloseConnection(spyglass::PlatformConnection *connection);
-    virtual void onNotifyReadConnection(spyglass::PlatformConnection *connection);
+    void onNewConnection(spyglass::PlatformConnectionShPtr connection) override;
+    void onCloseConnection(spyglass::PlatformConnectionShPtr connection) override;
+    void onNotifyReadConnection(spyglass::PlatformConnectionShPtr connection) override;
 
 private:
     PrtModel *receiver_;
@@ -59,9 +59,9 @@ public:
     QStringList connectionIds() const;
 
     // callbacks from ConnectionHandler
-    void newConnection(spyglass::PlatformConnection *connection);
-    void closeConnection(spyglass::PlatformConnection *connection);
-    void notifyReadConnection(spyglass::PlatformConnection *connection);
+    void newConnection(spyglass::PlatformConnectionShPtr connection);
+    void closeConnection(spyglass::PlatformConnectionShPtr connection);
+    void notifyReadConnection(spyglass::PlatformConnectionShPtr connection);
 
 signals:
     void connectionIdsChanged();

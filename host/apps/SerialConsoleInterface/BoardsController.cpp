@@ -25,8 +25,8 @@ void BoardsController::initialize()
 
 void BoardsController::sendCommand(QString connection_id, QString message)
 {
-    spyglass::PlatformConnection* conn = conn_handler_.getConnection(connection_id.toStdString() );
-    if (conn == nullptr) {
+    spyglass::PlatformConnectionShPtr conn = platform_mgr_.getConnection(connection_id.toStdString() );
+    if (!conn) {
         return;
     }
 
@@ -68,21 +68,21 @@ void BoardsController::ConnectionHandler::setParent(BoardsController *parent)
     parent_ = parent;
 }
 
-void BoardsController::ConnectionHandler::onNewConnection(spyglass::PlatformConnection *connection)
+void BoardsController::ConnectionHandler::onNewConnection(spyglass::PlatformConnectionShPtr connection)
 {
     PlatformBoard* board = new PlatformBoard(connection);
 
     {
         std::lock_guard<std::mutex> lock(connectionsLock_);
-        connections_.insert({connection, board});
+        connections_.insert({connection.get(), board});
     }
 
     board->sendInitialMsg();
 }
 
-void BoardsController::ConnectionHandler::onCloseConnection(spyglass::PlatformConnection *connection)
+void BoardsController::ConnectionHandler::onCloseConnection(spyglass::PlatformConnectionShPtr connection)
 {
-    PlatformBoard* board = getBoard(connection);
+    PlatformBoard* board = getBoard(connection.get());
     if (board == nullptr) {
         return;
     }
@@ -93,13 +93,13 @@ void BoardsController::ConnectionHandler::onCloseConnection(spyglass::PlatformCo
 
     {
         std::lock_guard<std::mutex> lock(connectionsLock_);
-        connections_.erase(connection);
+        connections_.erase(connection.get());
     }
 }
 
-void BoardsController::ConnectionHandler::onNotifyReadConnection(spyglass::PlatformConnection* connection)
+void BoardsController::ConnectionHandler::onNotifyReadConnection(spyglass::PlatformConnectionShPtr connection)
 {
-    PlatformBoard* board = getBoard(connection);
+    PlatformBoard* board = getBoard(connection.get());
     if (board == nullptr) {
         return;
     }
@@ -137,17 +137,5 @@ PlatformBoard* BoardsController::ConnectionHandler::getBoard(spyglass::PlatformC
     }
 
     return findIt->second;
-}
-
-spyglass::PlatformConnection* BoardsController::ConnectionHandler::getConnection(const std::string& conn_id)
-{
-    std::lock_guard<std::mutex> lock(connectionsLock_);
-    for(auto item : connections_ ) {
-        if (item.first->getName() == conn_id) {
-            return item.first;
-        }
-    }
-
-    return nullptr;
 }
 

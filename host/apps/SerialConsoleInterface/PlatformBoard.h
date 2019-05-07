@@ -2,10 +2,7 @@
 #define SCI_PLATFORMBOARD_H
 
 #include <string>
-
-namespace spyglass {
-    class PlatformConnection;
-}
+#include <PlatformManager.h>
 
 class PlatformBoard
 {
@@ -18,8 +15,8 @@ public:
     };
 
 public:
-    explicit PlatformBoard(spyglass::PlatformConnection* connection);
-    virtual ~PlatformBoard();
+    explicit PlatformBoard(spyglass::PlatformConnectionShPtr connection);
+    ~PlatformBoard() = default;
 
     void sendInitialMsg();
 
@@ -43,7 +40,7 @@ private:
     std::string platformId_;
     std::string verboseName_;
 
-    spyglass::PlatformConnection* connection_;
+    spyglass::PlatformConnectionShPtr connection_;
 
     enum State state_;
 };
