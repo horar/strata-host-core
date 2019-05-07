@@ -78,20 +78,27 @@ namespace spyglass {
         bool removeConnection(const std::string& connection_id);
 
     protected:
+        /**
+         * callback from PlatformConnection
+         */
+        void notifyConnectionReadable(const std::string& connection_id);
+
+        /**
+         * callback from PlatformConnection
+         */
+        void unregisterConnection(const std::string& connection_id);
+
+        /**
+         * Updates the port list, calculates the differences
+         */
+        void onUpdatePortList(EvEventBase*, int);
+
+
         void onAddedPort(serialPortHash hash);
 
         void onRemovedPort(serialPortHash hash);
 
         void onRemoveClosedPort(serialPortHash hash);
-
-        void notifyConnectionReadable(const std::string& connection_id);
-
-        void onUpdatePortList(EvEventBase*, int);
-
-        void unregisterConnection(const std::string& connection_id);
-
-    private:
-
 
     private:
         void computeListDiff(const std::vector<serialPortHash> &list,
