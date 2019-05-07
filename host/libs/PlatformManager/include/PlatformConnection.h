@@ -19,7 +19,7 @@ namespace spyglass {
     class EvCommEvent;
 #endif
 
-    class PlatformConnection {
+    class PlatformConnection final {
     public:
         PlatformConnection(PlatformManager *parent);
 
@@ -157,16 +157,18 @@ namespace spyglass {
 
     };
 
+    typedef std::shared_ptr<PlatformConnection> PlatformConnectionShPtr;
 
     /**
      * Helper class for pause/resume connection listening
      */
-    class PauseConnectionListenerGuard
+    class PauseConnectionListenerGuard final
     {
     public:
-        PauseConnectionListenerGuard(PlatformConnection* connection = nullptr) : connection_(connection) {
-            if (connection_) {
-                connection->stopListeningOnEvents(true);
+        PauseConnectionListenerGuard(PlatformConnectionShPtr connection) {
+            if (connection) {
+                connection_ = connection;
+                connection_->stopListeningOnEvents(true);
             }
         }
 
@@ -176,19 +178,19 @@ namespace spyglass {
             }
         }
 
-        void attach(PlatformConnection* connection) {
-            if (connection_ != nullptr) {
+        void attach(PlatformConnectionShPtr connection) {
+            if (connection_) {
                 connection_->stopListeningOnEvents(false);
             }
 
             connection_ = connection;
             if (connection_) {
-                connection->stopListeningOnEvents(true);
+                connection_->stopListeningOnEvents(true);
             }
         }
 
     private:
-        spyglass::PlatformConnection* connection_;
+        spyglass::PlatformConnectionShPtr connection_;
     };
 
 

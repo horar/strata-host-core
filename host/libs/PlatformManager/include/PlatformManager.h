@@ -36,7 +36,7 @@ namespace spyglass {
         virtual void onNotifyReadConnection(PlatformConnectionShPtr connection) = 0;
     };
 
-    class PlatformManager {
+    class PlatformManager final {
     public:
         PlatformManager();
 
