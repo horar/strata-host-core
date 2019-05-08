@@ -1099,8 +1099,9 @@ Item {
                     property var deviceDisconnected: platformInterface.usb_pd_port_disconnect.connection_state
 
                     onDeviceConnectedChanged: {
-                        //                 console.log("device connected message received in basicControl. Port=",platformInterface.usb_pd_port_connect.port_id,
-                        //                             "state=",platformInterface.usb_pd_port_connect.connection_state);
+                        //debug code
+                        // console.log("device connected message received in basicControl. Port=",platformInterface.usb_pd_port_connect.port_id,
+                        //             "state=",platformInterface.usb_pd_port_connect.connection_state);
 
                         if (platformInterface.usb_pd_port_connect.port_id === "upstream"){
                             if (platformInterface.usb_pd_port_connect.connection_state === "connected"){
@@ -1146,6 +1147,7 @@ Item {
                             //sum eight values of the efficency and average before displaying
                             var theEfficiency = Math.round((theOutputPower/theInputPower) *100)
                             port1.theRunningTotal += theEfficiency;
+                            //debug code
                             //console.log("new efficiency value=",theEfficiency,"new total is",miniInfo1.theRunningTotal,miniInfo1.theEfficiencyCount);
                             port1.theEfficiencyCount++;
 
@@ -1211,8 +1213,9 @@ Item {
                     property var deviceDisconnected: platformInterface.usb_pd_port_disconnect.connection_state
 
                     onDeviceConnectedChanged: {
-                        //                 console.log("device connected message received in basicControl. Port=",platformInterface.usb_pd_port_connect.port_id,
-                        //                             "state=",platformInterface.usb_pd_port_connect.connection_state);
+                        //debug code
+                        //console.log("device connected message received in basicControl. Port=",platformInterface.usb_pd_port_connect.port_id,
+                        //              "state=",platformInterface.usb_pd_port_connect.connection_state);
 
                         if (platformInterface.usb_pd_port_connect.port_id === portName){
                             if (platformInterface.usb_pd_port_connect.connection_state === "connected"){
@@ -1259,6 +1262,7 @@ Item {
                             //sum eight values of the efficency and average before displaying
                             var theEfficiency = Math.round((theOutputPower/theInputPower) *100)
                             port2.theRunningTotal += theEfficiency;
+                            //debug code
                             //console.log("new efficiency value=",theEfficiency,"new total is",miniInfo1.theRunningTotal,miniInfo1.theEfficiencyCount);
                             port2.theEfficiencyCount++;
 
@@ -1324,8 +1328,9 @@ Item {
                     property var deviceDisconnected: platformInterface.usb_pd_port_disconnect.connection_state
 
                     onDeviceConnectedChanged: {
-                        //                 console.log("device connected message received in basicControl. Port=",platformInterface.usb_pd_port_connect.port_id,
-                        //                             "state=",platformInterface.usb_pd_port_connect.connection_state);
+                        //debug code
+                        //console.log("device connected message received in basicControl. Port=",platformInterface.usb_pd_port_connect.port_id,
+                        //            "state=",platformInterface.usb_pd_port_connect.connection_state);
 
                         if (platformInterface.usb_pd_port_connect.port_id === portName){
                             if (platformInterface.usb_pd_port_connect.connection_state === "connected"){
@@ -1372,6 +1377,7 @@ Item {
                             //sum eight values of the efficency and average before displaying
                             var theEfficiency = Math.round((theOutputPower/theInputPower) *100)
                             port3.theRunningTotal += theEfficiency;
+                            //debug code
                             //console.log("new efficiency value=",theEfficiency,"new total is",miniInfo1.theRunningTotal,miniInfo1.theEfficiencyCount);
                             port3.theEfficiencyCount++;
 
@@ -1437,8 +1443,9 @@ Item {
                     property var deviceDisconnected: platformInterface.usb_pd_port_disconnect.connection_state
 
                     onDeviceConnectedChanged: {
-                        //                 console.log("device connected message received in basicControl. Port=",platformInterface.usb_pd_port_connect.port_id,
-                        //                             "state=",platformInterface.usb_pd_port_connect.connection_state);
+                        //debug code
+                        // console.log("device connected message received in basicControl. Port=",platformInterface.usb_pd_port_connect.port_id,
+                        //              "state=",platformInterface.usb_pd_port_connect.connection_state);
 
                         if (platformInterface.usb_pd_port_connect.port_id === portName){
                             if (platformInterface.usb_pd_port_connect.connection_state === "connected"){
