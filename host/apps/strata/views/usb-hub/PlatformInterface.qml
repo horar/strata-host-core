@@ -241,7 +241,7 @@ Item {
     }
 
     property var audio_volume_notification:{
-        "volume":.5       //value between 0 and 1
+        "volume":1       //value between 0 and 1
     }
 
     // --------------------------------------------------------------------------------------------
@@ -551,7 +551,7 @@ Item {
 
 
 
-/*
+
         // DEBUG - TODO: Faller - Remove before merging back to Dev
     Window {
         id: debug
@@ -559,9 +559,14 @@ Item {
         width: 200
         height: 240
 
-        // This button sends 2 notifications in 1 JSON, future possible implementation
+        Button{
+            id: button0
+            text:"blank button"
+        }
+
         Button {
             id: button1
+            anchors { top: button0.bottom }
             text: "basic port stats"
             onClicked: {
                 CorePlatformInterface.data_source_handler('{
@@ -582,15 +587,6 @@ Item {
                     }')
             }
         }
-
-
-//        "port":1,//c,
-//        "source":true,//'+ (Math.random() >= .5) ? true :false +',
-//        "sink":true,//'+ (Math.random() >= .5) ? true :false +',
-//        "fast_role_swap":true,//'+ (Math.random() >= .5) ? true :false +',
-//        "superspeed":true,//'+ (Math.random() >= .5) ? true :false +',
-//        "extended_sink":true,//'+ (Math.random() >= .5) ? true :false +'
-
 
 
         Button {
@@ -680,6 +676,6 @@ Item {
             }
         }
     }
-    */
+
 
 }
