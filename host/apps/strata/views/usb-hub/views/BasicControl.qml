@@ -223,10 +223,8 @@ Item {
                 duration: basicToAdvancedTransitionTime
             }
 
-
             //I thought the audio port would have to be animated as well, but it turns out it doesn't
             //as it's left side is tied to the displayport, so it moves left with that.
-
 
         }
 
@@ -1682,6 +1680,11 @@ Item {
                 height:145
                 width:160
                 portNumber:5
+
+                sinkVisible:false
+                fastRoleSwapVisible:false
+                superspeedVisible:true
+                extendedSinkVisible:false
 
                 MouseArea{
                     anchors.fill: parent
