@@ -8,10 +8,6 @@ Item {
     id: root
 
     property string title: "<b>Port " + portNumber + "</b>"
-    //property color overlaycolor: "tomato"
-
-    //property alias portNumber: port.portNumber
-    //property alias portConnected: port.portConnected
 
     property alias open: popoutWindow.visible
     property alias windowWidth: popoutWindow.width
