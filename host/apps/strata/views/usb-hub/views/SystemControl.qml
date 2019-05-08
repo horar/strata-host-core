@@ -238,12 +238,13 @@ Item {
                 id: tempFault
                 label: "Fault when temperature is above:"
                 labelTopAligned: true
-                width:480
                 anchors {
                     left: faultGroup.left
                     leftMargin: 35
                     top: faultProtectionColumn.bottom
                     topMargin: 10
+                    right:tempFaultInput.left
+                    rightMargin: 10
 
                 }
                 from: -20
@@ -262,8 +263,8 @@ Item {
                 anchors {
                     verticalCenter: tempFault.verticalCenter
                     verticalCenterOffset: -7
-                    left:tempFault.right
-                    leftMargin: 10
+                    right:faultGroup.right
+                    rightMargin: 35
                 }
                 value: tempFault.value.toFixed(0)
                 onApplied: platformInterface.set_maximum_temperature.update(input); // slider will be updated via notification
@@ -325,12 +326,13 @@ Item {
                 id: foldbackTemp
                 label: "When any port temperature is above:"
                 labelTopAligned: true
-                width:510
                 anchors {
                     left: foldbackGroup.left
                     leftMargin: 10
                     top: temperatureFoldbackActiveLabel.bottom
                     topMargin: 10
+                    right: foldbackTempInput.left
+                    rightMargin: 10
                 }
                 from: 0
                 to: 125
@@ -353,8 +355,8 @@ Item {
                 anchors {
                     verticalCenter: foldbackTemp.verticalCenter
                     verticalCenterOffset: -7
-                    left:foldbackTemp.right
-                    leftMargin: 10
+                    right:foldbackGroup.right
+                    rightMargin: 35
                 }
 //                input: foldbackTemp.value.toFixed(0)
 //                platformInterface.set_temperature_foldback.update(platformInterface.foldback_temperature_limiting_event.temperature_foldback_enabled,
@@ -366,12 +368,13 @@ Item {
                 id: foldbackTempLimit
                 label: "Cut the port output power by:"
                 labelTopAligned: true
-                width:465
                 anchors {
                     left: foldbackGroup.left
                     leftMargin: 55
                     top: foldbackTemp.bottom
                     topMargin: 10
+                    right:foldbackTempLimitInput.left
+                    rightMargin:10
                 }
                 from: 1
                 to: 100
@@ -401,8 +404,8 @@ Item {
                 anchors {
                     verticalCenter: foldbackTempLimit.verticalCenter
                     verticalCenterOffset: -7
-                    left:foldbackTempLimit.right
-                    leftMargin: 10
+                    right: foldbackGroup.right
+                    rightMargin:35
                 }
 //                input: foldbackTemp.value.toFixed(0)
 //                platformInterface.set_temperature_foldback.update(platformInterface.foldback_temperature_limiting_event.temperature_foldback_enabled,
@@ -416,12 +419,13 @@ Item {
                 id: tempFoldbackHysteresis
                 label: "End limiting on a decrease of:"
                 labelTopAligned: true
-                width:465
                 anchors {
                     left: foldbackGroup.left
                     leftMargin: 55
                     top: foldbackTempLimit.bottom
                     topMargin: 10
+                    right:tempFoldbackHysteresisInput.left
+                    rightMargin:10
                 }
                 from: 25
                 to: 200
@@ -443,8 +447,8 @@ Item {
                 anchors {
                     verticalCenter: tempFoldbackHysteresis.verticalCenter
                     verticalCenterOffset: -7
-                    left:tempFoldbackHysteresis.right
-                    leftMargin: 10
+                    right:foldbackGroup.right
+                    rightMargin:35
                 }
                 //input: foldbackTemp.value.toFixed(0)
                 //onApplied: platformInterface.set_temperature_foldback.update(platformInterface.foldback_temperature_limiting_event.temperature_foldback_enabled,
