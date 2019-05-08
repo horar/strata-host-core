@@ -1117,11 +1117,6 @@ Item {
                             }
                         }
                     }
-
-                    //            onShowGraph: {
-                    //                graphDrawer.portNumber = portNumber;
-                    //                graphDrawer.open();
-                    //            }
                 }
 
                 PortInfo{
@@ -1235,10 +1230,6 @@ Item {
                         }
                     }
 
-                    //            onShowGraph: {
-                    //                graphDrawer.portNumber = portNumber;
-                    //                graphDrawer.open();
-                    //            }
                 }
 
                 PortInfo{
@@ -1352,10 +1343,6 @@ Item {
                         }
                     }
 
-                    //            onShowGraph: {
-                    //                graphDrawer.portNumber = portNumber;
-                    //                graphDrawer.open();
-                    //            }
                 }
 
                 PortInfo{
@@ -1469,10 +1456,6 @@ Item {
                         }
                     }
 
-                    //            onShowGraph: {
-                    //                graphDrawer.portNumber = portNumber;
-                    //                graphDrawer.open();
-                    //            }
                 }
 
                 USBAPortInfo{
