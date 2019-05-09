@@ -57,6 +57,11 @@ QVariantMap BoardsController::getConnectionInfo(const QString &connectionId)
     return result;
 }
 
+QStringList BoardsController::connectionIds() const
+{
+    return connectionIds_;
+}
+
 spyglass::PlatformConnection *BoardsController::getConnection(const QString &connectionId)
 {
     return conn_handler_.getConnection(connectionId.toStdString());
@@ -64,11 +69,31 @@ spyglass::PlatformConnection *BoardsController::getConnection(const QString &con
 
 void BoardsController::newConnection(spyglass::PlatformConnection* connection)
 {
+    if (connection == nullptr) {
+        return;
+    }
+
+    QString connectionId = QString::fromStdString(connection->getName());
+
+    if (connectionIds_.indexOf(connectionId) < 0) {
+        connectionIds_.append(connectionId);
+        emit connectionIdsChanged();
+    } else {
+        qDebug() << "ERROR: this board is already connected" << connectionId;
+    }
+
     emit connectedBoard(connectionId);
 }
 
 void BoardsController::removeConnection(const QString &connectionId)
 {
+    int ret = connectionIds_.removeAll(connectionId);
+    emit connectionIdsChanged();
+
+    if (ret != 1) {
+        qDebug() << "ERROR: suspicious number of boards removed" << connectionId << ret;
+    }
+
     emit disconnectedBoard(connectionId);
 }
 

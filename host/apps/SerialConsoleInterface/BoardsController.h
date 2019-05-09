@@ -12,6 +12,8 @@ class BoardsController : public QObject
 {
     Q_OBJECT
 
+    Q_PROPERTY(QStringList connectionIds READ connectionIds NOTIFY connectionIdsChanged)
+
 public:
     BoardsController(QObject *parent = nullptr);
     virtual ~BoardsController();
@@ -20,6 +22,7 @@ public:
     Q_INVOKABLE void sendCommand(QString connection_id, QString cmd);
     Q_INVOKABLE QVariantMap getConnectionInfo(const QString &connectionId);
 
+    QStringList connectionIds() const;
     spyglass::PlatformConnection* getConnection(const QString &connectionId);
 
     //callbacks from ConnectionHandler
@@ -31,6 +34,7 @@ signals:
     void connectedBoard(QString connectionId);
     void disconnectedBoard(QString connectionId);
     void notifyBoardMessage(QString connectionId, QString message);
+    void connectionIdsChanged();
 
 private:
     class ConnectionHandler : public spyglass::PlatformConnHandler
@@ -60,7 +64,7 @@ private:
 
     spyglass::PlatformManager platform_mgr_;
     ConnectionHandler conn_handler_;
-
+    QStringList connectionIds_;
 };
 
 
