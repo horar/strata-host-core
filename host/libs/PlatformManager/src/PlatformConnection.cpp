@@ -220,7 +220,7 @@ bool PlatformConnection::sendMessage(const std::string &message)
 int PlatformConnection::waitForMessages(unsigned int timeout)
 {
     if (!port_) {
-        return -10;
+        return iPortNotOpenErr;
     }
     return handleRead(timeout);
 }

@@ -19,6 +19,8 @@ namespace spyglass {
     class EvCommEvent;
 #endif
 
+    const int iPortNotOpenErr = -10;    //special return value for waitForMessages()
+
     class PlatformConnection final {
     public:
         PlatformConnection(PlatformManager *parent);
@@ -61,7 +63,7 @@ namespace spyglass {
          * Waits for messages for specified amount of time
          * @param timeout amount of time to wait
          * @return negative number means error, positive numbers means number of bytes read
-         *         -10 means port is not open
+         *         iPortNotOpenErr  means port is not open
          */
         int waitForMessages(unsigned int timeout);
 
