@@ -167,27 +167,6 @@ Item {
                                     show: function () { CorePlatformInterface.show(this) }
                                 })
 
-    //Tejashree: This is a HACK implementation//////////////////////////////
-    property var pause_periodic: ({
-                                      "cmd" : "pause_periodic",
-                                      "payload": {
-                                          "pause_flag": "",
-                                      },
-
-                                      // Set can set single or multiple properties before sending to platform
-                                      set: function (pause_flag) {
-                                          this.payload.pause_flag = pause_flag;
-                                      },
-
-                                      // Update will set and send in one shot
-                                      update: function (pause_flag) {
-                                          this.set(pause_flag)
-                                          CorePlatformInterface.send(this)
-                                      },
-                                      send: function () { CorePlatformInterface.send(this) },
-                                      show: function () { CorePlatformInterface.show(this) }
-                                  })
-
 
     property var  read_initial_status: ({
 
