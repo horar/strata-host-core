@@ -18,24 +18,61 @@ PlatformBoard::~PlatformBoard()
 
 void PlatformBoard::sendInitialMsg()
 {
+    const std::string init_msg("{\"cmd\":\"get_firmware_info\"}");
+    connection_->addMessage(init_msg);
+    state_ = State::eWaitingForFirmwareInfo;
+}
+
+void PlatformBoard::sendPlatformInfoMsg()
+{
     const std::string init_msg("{\"cmd\":\"request_platform_id\"}");
     connection_->addMessage(init_msg);
-    state_ = State::eSendInitialMsg;
+    state_ = State::eWaitingForPlatformInfo;
 }
 
 PlatformBoard::ProcessResult PlatformBoard::handleMessage(const std::string& msg)
 {
-    if (state_ == State::eSendInitialMsg) {
+    if (state_ == State::eWaitingForFirmwareInfo || state_ == State::eWaitingForPlatformInfo) {
         bool wasNotification;
         ProcessResult ret = parseInitialMsg(msg, wasNotification);
-        if (ProcessResult::eProcessed == ret && wasNotification && false == platformId_.empty()) {
-            state_ = State::eConnected;
+
+        if (ProcessResult::eProcessed == ret && wasNotification) {
+            if (state_ == State::eWaitingForFirmwareInfo) {
+                if (applicationVersion_.empty()) {
+                    state_ = State::eConnected;
+                } else {
+                    sendPlatformInfoMsg();
+                }
+
+            } else if (state_ == State::eWaitingForPlatformInfo) {
+                state_ = State::eConnected;
+            }
         }
 
         return ret;
     }
 
     return ProcessResult::eIgnored;
+}
+
+std::string PlatformBoard::getPlatformId() const
+{
+    return platformId_;
+}
+
+std::string PlatformBoard::getVerboseName() const
+{
+    return verboseName_;
+}
+
+std::string PlatformBoard::getBootloaderVersion() const
+{
+    return bootloaderVersion_;
+}
+
+std::string PlatformBoard::getApplicationVersion() const
+{
+    return applicationVersion_;
 }
 
 PlatformBoard::ProcessResult PlatformBoard::parseInitialMsg(const std::string& msg, bool& wasNotification)
@@ -53,7 +90,7 @@ PlatformBoard::ProcessResult PlatformBoard::parseInitialMsg(const std::string& m
     {
         wasNotification = false;
         std::string command_id = firstIt->value.GetString();
-        if (command_id != "request_platform_id") {
+        if (command_id != "get_firmware_info" || command_id != "request_platform_id") {
             return ProcessResult::eIgnored;
         }
 
@@ -82,23 +119,49 @@ PlatformBoard::ProcessResult PlatformBoard::parseInitialMsg(const std::string& m
         }
 
         std::string notify_value = doc_notify["value"].GetString();
-        if (notify_value != "platform_id") {
+        rapidjson::Value& notify_payload = doc_notify["payload"];
+
+        if (notify_value == "get_firmware_info") {
+            if (!notify_payload.HasMember("bootloader") || !notify_payload.HasMember("application")) {
+                return ProcessResult::eValidationError;
+            }
+
+            rapidjson::Value& bootloader_value = notify_payload["bootloader"];
+            rapidjson::Value& application_value = notify_payload["application"];
+
+            if (bootloader_value.HasMember("version") && bootloader_value.HasMember("date")) {
+                bootloaderVersion_ = bootloader_value["version"].GetString();
+            } else {
+                bootloaderVersion_ = "";
+            }
+
+            if (application_value.HasMember("version") && application_value.HasMember("date")) {
+                applicationVersion_ = application_value["version"].GetString();
+            } else {
+                applicationVersion_ = "";
+            }
+
+            return ProcessResult::eProcessed;
+
+        } else if (notify_value == "platform_id") {
+            const char* nameIdentifier = "verbose_name";
+            if (notify_payload.HasMember("platform_id_version")) {
+                nameIdentifier = "name";
+            }
+
+            if (!notify_payload.HasMember("platform_id") || !notify_payload.HasMember(nameIdentifier)) {
+                return ProcessResult::eValidationError;
+            }
+
+            platformId_ = notify_payload["platform_id"].GetString();
+            verboseName_ = notify_payload[nameIdentifier].GetString();
+
+            return ProcessResult::eProcessed;
+
+        } else {
             return ProcessResult::eIgnored;
         }
-
-        rapidjson::Value& notify_payload = doc_notify["payload"];
-        if (!notify_payload.HasMember("platform_id") || !notify_payload.HasMember("verbose_name")) {
-            return ProcessResult::eValidationError;
-        }
-
-        platformId_   = notify_payload["platform_id"].GetString();
-        verboseName_  = notify_payload["verbose_name"].GetString();
-        return ProcessResult::eProcessed;
     }
 
     return ProcessResult::eIgnored;
 }
-
-
-
-

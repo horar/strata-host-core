@@ -3,6 +3,7 @@
 #include "PlatformBoard.h"
 
 #include <PlatformConnection.h>
+#include <QDebug>
 
 BoardsController::BoardsController(QObject *parent) : QObject(parent), conn_handler_()
 {
@@ -33,9 +34,32 @@ void BoardsController::sendCommand(QString connection_id, QString message)
     conn->addMessage(message.toStdString() );
 }
 
-void BoardsController::newConnection(const QString& connectionId, const QString& verboseName)
+QVariantMap BoardsController::getConnectionInfo(const QString &connectionId)
 {
-    emit connectedBoard(connectionId, verboseName);
+    QVariantMap result;
+
+    spyglass::PlatformConnection* connection = conn_handler_.getConnection(connectionId.toStdString());
+    if (connection == nullptr) {
+        return result;
+    }
+
+    PlatformBoard* board = conn_handler_.getBoard(connection);
+    if (board == nullptr) {
+        return result;
+    }
+
+    result.insert("connectionId", connectionId);
+    result.insert("platformId", QString::fromStdString(board->getPlatformId()));
+    result.insert("verboseName", QString::fromStdString(board->getVerboseName()));
+    result.insert("bootloaderVersion", QString::fromStdString(board->getBootloaderVersion()));
+    result.insert("applicationVersion", QString::fromStdString(board->getApplicationVersion()));
+
+    return result;
+}
+
+void BoardsController::newConnection(spyglass::PlatformConnection* connection)
+{
+    emit connectedBoard(connectionId);
 }
 
 void BoardsController::removeConnection(const QString &connectionId)
@@ -107,17 +131,19 @@ void BoardsController::ConnectionHandler::onNotifyReadConnection(spyglass::Platf
     QString connId = QString::fromStdString(connection->getName());
 
     std::string message;
-    while( connection->getMessage(message)) {
+    while (connection->getMessage(message)) {
 
         PlatformBoard::ProcessResult status = board->handleMessage(message);
         switch(status)
         {
             case PlatformBoard::ProcessResult::eIgnored:
-                parent_->notifyMessageFromConnection(connId, QString::fromStdString(message));
+                if (board->isPlatformConnected()) {
+                    parent_->notifyMessageFromConnection(connId, QString::fromStdString(message));
+                }
                 break;
             case PlatformBoard::ProcessResult::eProcessed:
-                if (board->isPlatformConnected() && false == board->getPlatformId().empty()) {
-                    parent_->newConnection(connId, QString::fromStdString(board->getVerboseName()));
+                if (board->isPlatformConnected()) {
+                    parent_->newConnection(connection);
                 }
                 break;
             case PlatformBoard::ProcessResult::eParseError:

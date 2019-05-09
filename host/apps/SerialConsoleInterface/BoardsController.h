@@ -2,6 +2,7 @@
 #define SCI_BOARDCONTROLER_H
 
 #include <QObject>
+#include <QVariantMap>
 
 #include <PlatformManager.h>
 
@@ -17,14 +18,15 @@ public:
 
     Q_INVOKABLE void initialize();
     Q_INVOKABLE void sendCommand(QString connection_id, QString cmd);
+    Q_INVOKABLE QVariantMap getConnectionInfo(const QString &connectionId);
 
     //callbacks from ConnectionHandler
-    void newConnection(const QString& connectionId, const QString& verboseName);
+    void newConnection(spyglass::PlatformConnection *connection);
     void removeConnection(const QString &connectionId);
     void notifyMessageFromConnection(const QString &connectionId, const QString &message);
 
 signals:
-    void connectedBoard(QString connectionId, QString verboseName);
+    void connectedBoard(QString connectionId);
     void disconnectedBoard(QString connectionId);
     void notifyBoardMessage(QString connectionId, QString message);
 
@@ -52,6 +54,8 @@ private:
     };
 
 private:
+    Q_DISABLE_COPY(BoardsController)
+
     spyglass::PlatformManager platform_mgr_;
     ConnectionHandler conn_handler_;
 
