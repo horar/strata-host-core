@@ -341,6 +341,14 @@ Item {
 
         onStopped:{
             devicesToAdvanced.start()
+            //reset the variables controlling the port animations here.
+            upstreamPortReadyToTransitionToAdvanced = false;
+            port1ReadyToTransitionToAdvanced = false;
+            port2ReadyToTransitionToAdvanced = false;
+            port3ReadyToTransitionToAdvanced = false;
+            port4ReadyToTransitionToAdvanced = false;
+            audioPortReadyToTransitionToAdvanced = false;
+            displayPortReadyToTransitionToAdvanced = false;
         }
     }  //end sequential animation
 
@@ -349,31 +357,38 @@ Item {
     //these are handled outside the sequential animation, as there's no way to trigger
     //a function from within a larger animation, as onStopped isn't called for child animations
     function upstreamPortTransitionToAdvancedProc(){
-        upstreamPort.transitionToAdvancedView()
+        if (upstreamPortReadyToTransitionToAdvanced == true)
+            upstreamPort.transitionToAdvancedView()
     }
 
     function port1TransitionToAdvancedProc(){
-        port1.transitionToAdvancedView()
+        if (port1ReadyToTransitionToAdvanced == true)
+            port1.transitionToAdvancedView()
     }
 
     function port2TransitionToAdvancedProc(){
-        port2.transitionToAdvancedView()
+        if (port2ReadyToTransitionToAdvanced == true)
+            port2.transitionToAdvancedView()
     }
 
     function port3TransitionToAdvancedProc(){
-        port3.transitionToAdvancedView()
+        if (port3ReadyToTransitionToAdvanced == true)
+            port3.transitionToAdvancedView()
     }
 
     function port4TransitionToAdvancedProc(){
-        port4.transitionToAdvancedView()
+        if (port4ReadyToTransitionToAdvanced == true)
+            port4.transitionToAdvancedView()
     }
 
     function audioPortTransitionToAdvancedProc(){
-        audioPort.transitionToAdvancedView()
+        if (audioPortReadyToTransitionToAdvanced == true)
+            audioPort.transitionToAdvancedView()
     }
 
     function displayPortTransitionToAdvancedProc(){
-        displayPort.transitionToAdvancedView()
+        if (displayPortReadyToTransitionToAdvanced == true)
+            displayPort.transitionToAdvancedView()
     }
 
 

@@ -358,10 +358,10 @@ Item {
                     right:foldbackGroup.right
                     rightMargin: 35
                 }
-//                input: foldbackTemp.value.toFixed(0)
-//                platformInterface.set_temperature_foldback.update(platformInterface.foldback_temperature_limiting_event.temperature_foldback_enabled,
-//                                                                  platformInterface.foldback_temperature_limiting_event.foldback_maximum_temperature,
-//                                                                  limitOutput2.currentText)
+                value: platformInterface.foldback_temperature_limiting_event.foldback_maximum_temperature.toFixed(0)
+                onApplied:  platformInterface.set_temperature_foldback.update(platformInterface.foldback_temperature_limiting_event.temperature_foldback_enabled,
+                                                                  platformInterface.foldback_temperature_limiting_event.foldback_maximum_temperature,
+                                                                  foldbackTempInput.currentText)
             }
 
             SGSlider {
@@ -381,19 +381,13 @@ Item {
                 startLabel: "0%"
                 endLabel: "99%"
 
-                property var currentFoldbackOuput: platformInterface.foldback_temperature_limiting_event.foldback_maximum_temperature_power
-
-                onCurrentFoldbackOuputChanged: {
-                    //limitOutput2.currentIndex = limitOutput2.comboBox.find( parseInt (platformInterface.foldback_temperature_limiting_event.foldback_maximum_temperature_power))
-                }
-
-
+                //N.B. Not the correct API call
                 value: platformInterface.foldback_temperature_limiting_event.foldback_maximum_temperature
                 onMoved:{
-//                    console.log("sending temp foldback update command from foldbackTempSlider");
-//                    platformInterface.set_temperature_foldback.update(platformInterface.foldback_temperature_limiting_event.temperature_foldback_enabled,
-//                                                                      platformInterface.foldback_temperature_limiting_event.foldback_maximum_temperature,
-//                                                                      limitOutput2.currentText);
+                    //console.log("sending temp foldback update command from foldbackTempSlider");
+                    platformInterface.set_temperature_foldback.update(platformInterface.foldback_temperature_limiting_event.temperature_foldback_enabled,
+                                                                      platformInterface.foldback_temperature_limiting_event.foldback_maximum_temperature,
+                                                                      limitOutput2.currentText);
                 }
 
             }
@@ -407,10 +401,11 @@ Item {
                     right: foldbackGroup.right
                     rightMargin:35
                 }
-//                input: foldbackTemp.value.toFixed(0)
-//                platformInterface.set_temperature_foldback.update(platformInterface.foldback_temperature_limiting_event.temperature_foldback_enabled,
-//                                                                  platformInterface.foldback_temperature_limiting_event.foldback_maximum_temperature,
-//                                                                  limitOutput2.currentText)
+                //N.B. Not the correct API call
+                value: platformInterface.foldback_temperature_limiting_event.foldback_maximum_temperature_power.toFixed(0)
+                onApplied: platformInterface.set_temperature_foldback.update(platformInterface.foldback_temperature_limiting_event.temperature_foldback_enabled,
+                                                                  platformInterface.foldback_temperature_limiting_event.foldback_maximum_temperature,
+                                                                  limitOutput2.currentText)
             }
 
 
@@ -431,6 +426,7 @@ Item {
                 to: 200
                 startLabel: "1°C"
                 endLabel: "10°C"
+                //N.B. Not the correct API call
                 value: platformInterface.foldback_temperature_limiting_event.foldback_maximum_temperature
                 onMoved:{
                     //console.log("sending temp foldback update command from foldbackTempSlider");
@@ -450,7 +446,8 @@ Item {
                     right:foldbackGroup.right
                     rightMargin:35
                 }
-                //input: foldbackTemp.value.toFixed(0)
+                //N.B. Not the correct API call
+                value: platformInterface.foldback_temperature_limiting_event.foldback_maximum_temperature_power.toFixed(0)
                 //onApplied: platformInterface.set_temperature_foldback.update(platformInterface.foldback_temperature_limiting_event.temperature_foldback_enabled,
                 //                                                             input,
                 //                                                             platformInterface.foldback_temperature_limiting_event.foldback_maximum_temperature_power)

@@ -120,6 +120,7 @@ Rectangle {
             id:moveBottomStatsBoxesUp
             running:false
 
+
             PropertyAnimation {
                 target: powerOutBox
                 property: "y"
