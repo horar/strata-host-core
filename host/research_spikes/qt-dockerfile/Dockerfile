@@ -46,10 +46,9 @@ RUN apt-get update \
         && rm -rf /var/lib/apt/lists/*
 
 # Install Qt 5.12.2
-RUN wget https://download.qt.io/archive/qt/5.12/5.12.2/qt-opensource-linux-x64-5.12.2.run
-# COPY qt-opensource-linux-x64-5.12.2.run ./qt-opensource-linux-x64-5.12.2.run 
 COPY qt-noninteractive.qs /qt-noninteractive.qs
-RUN chmod +x ./qt-opensource-linux-x64-5.12.2.run \
+RUN wget --no-check-certificate https://download.qt.io/archive/qt/5.12/5.12.2/qt-opensource-linux-x64-5.12.2.run \
+        && chmod +x ./qt-opensource-linux-x64-5.12.2.run \
         && ./qt-opensource-linux-x64-5.12.2.run --script qt-noninteractive.qs --platform minimal \
         && rm -rf ./qt-opensource-linux-x64-5.12.2.run qt-noninteractive.qs 
 
