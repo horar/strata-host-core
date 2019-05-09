@@ -57,6 +57,11 @@ QVariantMap BoardsController::getConnectionInfo(const QString &connectionId)
     return result;
 }
 
+spyglass::PlatformConnection *BoardsController::getConnection(const QString &connectionId)
+{
+    return conn_handler_.getConnection(connectionId.toStdString());
+}
+
 void BoardsController::newConnection(spyglass::PlatformConnection* connection)
 {
     emit connectedBoard(connectionId);
