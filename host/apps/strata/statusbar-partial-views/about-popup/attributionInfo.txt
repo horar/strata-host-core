@@ -1,0 +1,5 @@
+Attribution List:
+
+Some icons used in Strata belong to Font Awesome toolkit, licensed CC BY 4.0:
+    https://github.com/FortAwesome/Font-Awesome
+    https://creativecommons.org/licenses/by/4.0/

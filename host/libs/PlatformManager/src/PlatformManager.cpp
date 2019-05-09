@@ -1,6 +1,13 @@
 
 #include "PlatformManager.h"
 #include "PlatformConnection.h"
+
+#if defined(_WIN32)
+#include <win32/EvCommEvent.h>
+#endif
+
+#include <EvEvent.h>
+
 #include <serial_port.h>
 
 #include <string>
@@ -22,28 +29,64 @@ PlatformManager::PlatformManager()
 
 PlatformManager::~PlatformManager()
 {
+    Stop();
+
+    std::lock_guard<std::mutex> lock(connectionMap_mutex_);
+    for(auto item : openedPorts_) {
+        item.second->close();
+
+        delete item.second;
+    }
 }
 
 bool PlatformManager::Init()
 {
-    ports_update_.reset( eventsMgr_.CreateEventTimer(g_portsRefreshTime) );
-    ports_update_->setCallback(std::bind(&PlatformManager::onUpdatePortList, this, std::placeholders::_1, std::placeholders::_2) );
+#if defined(__linux__) || defined(__APPLE__)
 
-    if (!ports_update_->activate(&eventsMgr_)) {
+    ports_update_.reset( new EvEvent());
+    ports_update_->create(EvEvent::EvType::eEvTypeTimer, -1, g_portsRefreshTime);
+    ports_update_->setCallback(std::bind(&PlatformManager::onUpdatePortList, this, std::placeholders::_1, std::placeholders::_2) );
+    eventsMgr_.registerEvent(ports_update_.get());
+
+    if (!ports_update_->activate(0)) {
         ports_update_.release();
         return false;
     }
+#elif defined(_WIN32)
+
+    ports_update_.reset(new EvTimerEvent());
+    ports_update_->create(g_portsRefreshTime);
+    ports_update_->setCallback(std::bind(&PlatformManager::onUpdatePortList, this, std::placeholders::_1, std::placeholders::_2));
+
+    portsUpdateThread_.registerEvent(ports_update_.get());
+    ports_update_->activate(0);
+#endif
 
     return true;
 }
 
-void PlatformManager::StartLoop()
+bool PlatformManager::StartLoop()
 {
-    eventsMgr_.startInThread();
+    if (eventsMgr_.startInThread() == false) {
+        return false;
+    }
+
+#if defined(_WIN32)
+    if (portsUpdateThread_.startInThread() == false) {
+        eventsMgr_.stop();
+        return false;
+    }
+#endif
+
+    return true;
 }
 
 void PlatformManager::Stop()
 {
+#if defined(_WIN32)
+    portsUpdateThread_.stop();
+#endif
+
     eventsMgr_.stop();
 }
 
@@ -68,8 +111,10 @@ PlatformConnection* PlatformManager::getConnection(const std::string& connection
     return conn;
 }
 
-void PlatformManager::onUpdatePortList(EvEvent*, int)
+void PlatformManager::onUpdatePortList(EvEventBase*, int)
 {
+    //TODO: add to log.. std::cout << "onUpdatePortList:" << std::endl;
+
     std::vector<std::string> listOfSerialPorts;
     if (getListOfSerialPorts(listOfSerialPorts)) {
 
@@ -148,6 +193,12 @@ void PlatformManager::onRemovedPort(serialPortHash hash)
         conn = find->second;
     }
 
+//TODO: add to log.. std::cout << "Disconnect" << std::endl;
+
+    EvEventBase* ev = conn->getEvent();
+    ev->deactivate();
+    eventsMgr_.unregisterEvent(ev);
+
     if (plat_handler_) {
         plat_handler_->onCloseConnection(conn);
     }
@@ -166,16 +217,15 @@ void PlatformManager::removeConnection(PlatformConnection* /*conn*/)
 {
     //TODO: remove connection
 
+//TODO: add to log..  std::cout << "Disconnect" << std::endl;
 
-}
 
-EvEventsMgr* PlatformManager::getEvEventsMgr()
-{
-    return &eventsMgr_;
 }
 
 void PlatformManager::onAddedPort(serialPortHash hash)
 {
+//TODO: add to log.. std::cout << "onAddedPort()" << std::endl;
+
     std::string portName  = hashToPortName(hash);
 //TODO: add this to logging     std::cout << "New ser.port:" << portName << std::endl;
 
@@ -185,12 +235,24 @@ void PlatformManager::onAddedPort(serialPortHash hash)
         return;
     }
 
+    spyglass::EvEventBase* ev = conn->getEvent();
+    eventsMgr_.registerEvent(ev);
+
+    //activate event in dispatcher (for read)
+    if (ev->activate(spyglass::EvEvent::eEvStateRead) == false) {
+        //TODO: error logging...
+        eventsMgr_.unregisterEvent(ev);
+
+        delete conn;
+        return;
+    }
+
+//TODO: add to log.. std::cout << "New connection" << std::endl;
+
     {
         std::lock_guard<std::mutex> lock(connectionMap_mutex_);
         openedPorts_.insert({hash, conn});
     }
-
-    conn->attachEventMgr(&eventsMgr_);
 
     if (plat_handler_) {
         plat_handler_->onNewConnection(conn);

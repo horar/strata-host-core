@@ -7,16 +7,18 @@ message(STATUS "${PROJECT_NAME} v${PROJECT_VERSION}")
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-find_package(Qt5 5.12
+find_package(Qt5 ${VERSION_QT5}
     COMPONENTS Core Quick
     REQUIRED
 )
 
 add_executable(${PROJECT_NAME}
     main.cpp
+    SciModel.cpp
     BoardsController.cpp
     PlatformBoard.cpp
     qml.qrc
+    images/images.qrc
 )
 
 if(APPLE)
