@@ -71,6 +71,12 @@ QString SciModel::urlToPath(const QUrl &url)
     return QUrl(url).path();
 }
 
+bool SciModel::isFile(const QString &file)
+{
+    QFileInfo info(file);
+    return info.isFile();
+}
+
 BoardsController *SciModel::boardController()
 {
     return &boardController_;
