@@ -34,6 +34,7 @@ public:
     virtual ~SciModel();
 
     Q_INVOKABLE void programDevice(const QString &connectionId, const QString &firmwarePath);
+    Q_INVOKABLE QString urlToPath(const QUrl &url);
 
     BoardsController* boardController();
 

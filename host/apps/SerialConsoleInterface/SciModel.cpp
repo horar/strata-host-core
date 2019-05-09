@@ -66,6 +66,11 @@ void SciModel::programDevice(const QString &connectionId, const QString &firmwar
     QThreadPool::globalInstance()->start(task);
 }
 
+QString SciModel::urlToPath(const QUrl &url)
+{
+    return QUrl(url).path();
+}
+
 BoardsController *SciModel::boardController()
 {
     return &boardController_;
