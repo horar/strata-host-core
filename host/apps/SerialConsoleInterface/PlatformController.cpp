@@ -1,7 +1,8 @@
 #include "PlatformController.h"
+#include "Connector.h"
+
 #include <QDebug>
 #include <iostream>
-#include "Connector.h"
 
 using namespace std;
 
@@ -85,15 +86,18 @@ bool PlatformController::platformConnected() const
 
 void PlatformController::setVerboseName(QString verboseName)
 {
-    if (verboseName_ == verboseName) return;
-
+    if (verboseName_ == verboseName) {
+        return;
+    }
     verboseName_ = verboseName;
     emit verboseNameChanged(verboseName_);
 }
 
 void PlatformController::setPlatformID(QString platformID)
 {
-    if (platformID_ == platformID) return;
+    if (platformID_ == platformID) {
+        return;
+    }
 
     platformID_ = platformID;
     emit platformIDChanged(platformID_);
@@ -101,7 +105,9 @@ void PlatformController::setPlatformID(QString platformID)
 
 void PlatformController::setNotification(QString notification)
 {
-    if (notification_ == notification) return;
+    if (notification_ == notification) {
+        return;
+    }
 
     notification_ = notification;
     emit notificationChanged(notification_, platformID_);
@@ -166,7 +172,7 @@ void PlatformController::connectWorker()
                 std::shared_lock lock(quitMutex_);
                 if (aboutToQuit_) return;
             }
-            
+
             chrono::milliseconds timespan(250);
             this_thread::sleep_for(timespan);
             continue;
