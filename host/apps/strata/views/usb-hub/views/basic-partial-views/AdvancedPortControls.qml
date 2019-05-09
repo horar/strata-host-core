@@ -113,16 +113,17 @@ Item {
         comboBoxHeight: 25
         //when changing the value
         onActivated: {
-            console.log("setting input power foldback to ",limitOutput.comboBox.currentText);
-            //platformInterface.set_input_voltage_foldback.update(platformInterface.foldback_input_voltage_limiting_event.input_voltage_foldback_enabled,
-           //                                                     platformInterface.foldback_input_voltage_limiting_event.foldback_minimum_voltage,
-            //                                                             limitOutput.comboBox.currentText)
+            //console.log("setting input power foldback to ",limitOutput.comboBox.currentText);
+            platformInterface.set_usb_pd_maximum_power.update(portNumber,
+                                                              maxOutputPower.comboBox.currentText)
         }
 
-        property var currentFoldbackOuput: platformInterface.foldback_input_voltage_limiting_event.foldback_minimum_voltage_power
+        property var currentFoldbackOuput: platformInterface.usb_pd_maximum_power.commanded_max_power
         onCurrentFoldbackOuputChanged: {
             //console.log("got a new min power setting",platformInterface.foldback_input_voltage_limiting_event.foldback_minimum_voltage_power);
-            //limitOutput.currentIndex = limitOutput.comboBox.find( parseInt (platformInterface.foldback_input_voltage_limiting_event.foldback_minimum_voltage_power))
+            if (platformInterface.usb_pd_maximum_power.port === portNumber){
+                maxOutputPower.currentIndex = maxOutputPower.comboBox.find( parseInt (platformInterface.usb_pd_maximum_power.commanded_max_power))
+            }
         }
 
 
@@ -143,7 +144,7 @@ Item {
 
     SGSlider {
         id: currentLimitSlider
-        //value: platformInterface.foldback_input_voltage_limiting_event.foldback_minimum_voltage
+        //value: platformInterface.request_over_current_protection_notification.current_limit
         anchors {
             left: advanceControlsView.left
             leftMargin: 10
@@ -155,11 +156,19 @@ Item {
         from: 0
         to: 100
         startLabel: "0A"
-        endLabel: "100A"
+        endLabel: "5A"
+
+        property  var overCurrentProtection: platformInterface.request_over_current_protection_notification
+
+        onOverCurrentProtectionChanged: {
+            if (platformInterface.request_over_current_protection_notification.port === portNumber){
+                value = platformInterface.request_over_current_protection_notification.current_limit
+            }
+        }
+
         //copy the current values for other stuff, and add the new slider value for the limit.
-        onMoved: platformInterface.set_input_voltage_foldback.update(platformInterface.foldback_input_voltage_limiting_event.input_voltage_foldback_enabled,
-                         value,
-                        platformInterface.foldback_input_voltage_limiting_event.foldback_minimum_voltage_power)
+        onMoved: platformInterface.set_over_current_protection.update(portNumber, true,
+                         value)
     }
 
 
@@ -253,15 +262,7 @@ Item {
         }
     }
 
-//    Rectangle{
-//        id:graphDivider
-//        anchors.left: advanceControlsView.left
-//        anchors.right:advanceControlsView.right
-//        anchors.top: cableCompensationButtonStrip.bottom
-//        anchors.topMargin: 3
-//        height: 1
-//        color:"grey"
-//    }
+
 
     Text{
         id:showGraphText
@@ -277,9 +278,21 @@ Item {
         }
     }
 
+    PortGraphWindow{
+        id:portGraphWindow
+        title: "<b>Port " + portNumber + "</b>"
+        windowWidth:300
+        windowHeight:300
+
+        onWindowClosed: {
+            //when the window closes, the buttons corresonding to the graphs in that window
+            //should turn off
+            graphSelector.deselectAllButtons();
+        }
+    }
+
     SGSegmentedButtonStrip {
         id: graphSelector
-        //label: "<b>Show Graphs:</b>"
         labelLeft: false
         anchors {
             top: showGraphText.bottom
@@ -295,90 +308,117 @@ Item {
         enabled: root.portConnected
         property int howManyChecked: 0
 
+        function deselectAllButtons() {
+           console.log("deselect buttons called")
+
+            for (var child_id in graphSelector.buttonList[0].children) {
+                graphSelector.buttonList[0].children[child_id].checked = false;
+            }
+        }
+
         segmentedButtons: GridLayout {
             columnSpacing: 2
             rowSpacing: 2
 
+            property alias vOut: voutButton
+            property alias iOutButton: iOutButton
+            property alias iInButton: iInButton
+            property alias pOutButton: pOutButton
+            property alias pInButton: pInButton
+            property alias efficiencyButton: efficiencyButton
+
             SGSegmentedButton{
+                id:voutButton
                 text: qsTr("Vout")
                 enabled: root.portConnected
                 onCheckedChanged: {
                     if (checked) {
-                        graph1.visible = true
-                        graphSelector.howManyChecked++
+                        portGraphWindow.open = true;
+                        portGraphWindow.graph1.visible = true;
+                        portGraphWindow.howManyChecked++;
                     } else {
-                        graph1.visible = false
-                        graphSelector.howManyChecked--
+                        portGraphWindow.graph1.visible = false;
+                        portGraphWindow.howManyChecked--;
                     }
                 }
             }
 
             SGSegmentedButton{
+                id:iOutButton
                 text: qsTr("Iout")
                 enabled: root.portConnected
                 onCheckedChanged: {
                     if (checked) {
-                        graph2.visible = true
-                        graphSelector.howManyChecked++
+                        portGraphWindow.open = true;
+                        portGraphWindow.graph2.visible = true
+                        portGraphWindow.howManyChecked++
                     } else {
-                        graph2.visible = false
-                        graphSelector.howManyChecked--
+                        portGraphWindow.graph2.visible = false
+                        portGraphWindow.howManyChecked--
                     }
                 }
             }
 
             SGSegmentedButton{
+                id:iInButton
                 text: qsTr("Iin")
                 enabled: root.portConnected
                 onCheckedChanged: {
                     if (checked) {
-                        graph3.visible = true
-                        graphSelector.howManyChecked++
+                        portGraphWindow.open = true;
+                        portGraphWindow.graph3.visible = true
+                        portGraphWindow.howManyChecked++
                     } else {
-                        graph3.visible = false
-                        graphSelector.howManyChecked--
+                        portGraphWindow.graph3.visible = false
+                        portGraphWindow.howManyChecked--
                     }
                 }
             }
 
             SGSegmentedButton{
+                id:pOutButton
                 text: qsTr("Pout")
                 enabled: root.portConnected
                 onCheckedChanged: {
                     if (checked) {
-                        graph4.visible = true
-                        graphSelector.howManyChecked++
+                        portGraphWindow.open = true;
+                        portGraphWindow.graph4.visible = true
+                        portGraphWindow.howManyChecked++
                     } else {
-                        graph4.visible = false
-                        graphSelector.howManyChecked--
+                        portGraphWindow.graph4.visible = false
+                        portGraphWindow.howManyChecked--
                     }
                 }
             }
 
             SGSegmentedButton{
+                id:pInButton
                 text: qsTr("Pin")
                 enabled: root.portConnected
                 onCheckedChanged: {
                     if (checked) {
-                        graph5.visible = true
-                        graphSelector.howManyChecked++
+                        portGraphWindow.open = true;
+                        portGraphWindow.graph5.visible = true
+                        portGraphWindow.howManyChecked++
                     } else {
-                        graph5.visible = false
-                        graphSelector.howManyChecked--
+                        portGraphWindow.graph5.visible = false
+                        portGraphWindow.howManyChecked--
                     }
                 }
             }
 
             SGSegmentedButton{
+                id:efficiencyButton
                 text: qsTr("η")
                 enabled: root.portConnected
                 onCheckedChanged: {
                     if (checked) {
-                        graph6.visible = true
-                        graphSelector.howManyChecked++
+                        portGraphWindow.open = true;
+                        portGraphWindow.graph6.visible = true
+                        portGraphWindow.howManyChecked++
                     } else {
-                        graph6.visible = false
-                        graphSelector.howManyChecked--
+                        portGraphWindow.graph6.visible = false
+                        portGraphWindow.howManyChecked--
                     }
                 }
             }

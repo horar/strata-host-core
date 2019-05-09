@@ -1,4 +1,5 @@
 #include "BoardsController.h"
+#include "SciModel.h"
 
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
@@ -11,15 +12,13 @@ int main(int argc, char *argv[])
 
     QGuiApplication app(argc, argv);
 
-    qmlRegisterUncreatableType<BoardsController>("tech.spyglass.sci", 1, 0, "BoardsController", "can not instantiate BoardsController in qml");
-    qmlRegisterSingletonType(QUrl("qrc:/fonts/Fonts.qml"), "fonts", 1, 0, "Fonts");
+    qmlRegisterSingletonType(QUrl("qrc:/fonts/Fonts.qml"), "tech.strata.fonts", 1, 0, "Fonts");
 
     QQmlApplicationEngine engine;
     engine.addImportPath("qrc:///");
 
-    std::unique_ptr<BoardsController> boardsMgr = std::make_unique<BoardsController>();
-    boardsMgr->initialize();
-    engine.rootContext()->setContextProperty("boardsMgr", boardsMgr.get());
+    qmlRegisterType<SciModel>("tech.strata.sci", 1, 0, "SciModel");
+    qmlRegisterUncreatableType<BoardsController>("tech.strata.sci", 1, 0, "BoardsController", "can not instantiate BoardsController in qml");
 
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
     if (engine.rootObjects().isEmpty()) {

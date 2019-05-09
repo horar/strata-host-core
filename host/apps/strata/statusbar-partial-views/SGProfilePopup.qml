@@ -65,14 +65,12 @@ Popup {
                 color: "black"
             }
 
-            Text {
+            SGIcon {
                 id: close_profile
-                text: "\ue805"
-                color: close_profile_hover.containsMouse ? "#eee" : "white"
-                font {
-                    family: Fonts.sgicons
-                    pixelSize: 20
-                }
+                iconColor: close_profile_hover.containsMouse ? "#eee" : "white"
+                source: "qrc:/images/icons/times.svg"
+                sourceSize.height: 20
+
                 anchors {
                     right: title.right
                     verticalCenter: title.verticalCenter
@@ -517,14 +515,12 @@ Popup {
                         color: "black"
                     }
 
-                    Text {
+                    SGIcon {
                         id: privacyConfirmTitleText
-                        text: "\ue805"
-                        color: closePrivacyConfirmMouse.containsMouse ? "#eee" : "white"
-                        font {
-                            family: Fonts.sgicons
-                            pixelSize: 20
-                        }
+                        source: "qrc:/images/icons/times.svg"
+                        iconColor: close_profile_hover.containsMouse ? "#eee" : "white"
+                        sourceSize.height: 20
+
                         anchors {
                             right: privacyConfirmTitleBox.right
                             verticalCenter: privacyConfirmTitleBox.verticalCenter

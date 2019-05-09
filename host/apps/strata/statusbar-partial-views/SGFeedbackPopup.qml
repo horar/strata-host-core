@@ -73,14 +73,12 @@ Popup {
                 color: "black"
             }
 
-            Text {
+            SGIcon {
                 id: closer
-                text: "\ue805"
-                color: closeHover.containsMouse ? "#eee" : "white"
-                font {
-                    family: Fonts.sgicons
-                    pixelSize: 20
-                }
+                source: "qrc:/images/icons/times.svg"
+                iconColor: closeHover.containsMouse ? "#eee" : "white"
+                sourceSize.height: 20
+
                 anchors {
                     right: title.right
                     verticalCenter: title.verticalCenter

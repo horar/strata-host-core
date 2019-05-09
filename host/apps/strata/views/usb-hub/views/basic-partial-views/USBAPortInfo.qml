@@ -6,18 +6,15 @@ import "qrc:/views/usb-pd-multiport/sgwidgets"
 Rectangle {
     id: root
 
+
     property bool portConnected: false
-    property bool isUSBAPort: true     //used to hide information not available for USB-A ports
     property color portColor: "#30a2db"
     property int portNumber: 0
     property alias portName: portTitle.text
     property alias portSubtitle: portSubtitle.text
 
     property alias outputVoltage: outputVoltageBox.value
-    property alias maxPower: maxPowerBox.value
-    property alias inputPower: powerInBox.value
     property alias outputPower: powerOutBox.value
-    property alias portTemperature: temperatureBox.value
 
     property int basicTitleBackgroundHeight: 50//(2*root.height)/16;
     property int advancedTitleBackgroundHeight: advancedDisplayPortPortHeight/4
@@ -56,10 +53,7 @@ Rectangle {
 
     function transitionToAdvancedView(){
         outputVoltageBox.anchors.topMargin = 3;
-        maxPowerBox.anchors.topMargin = 3;
-        powerInBox.anchors.topMargin = 3;
         powerOutBox.anchors.topMargin = 3;
-        temperatureBox.anchors.topMargin = 3;
         portToAdvanced.start()
     }
 
@@ -181,41 +175,12 @@ Rectangle {
         color:"transparent"
     }
 
-    PortStatBox{
-        id:maxPowerBox
-        anchors.left:root.left
-        anchors.leftMargin: 10
-        anchors.top: outputVoltageBox.bottom
-        anchors.topMargin: isUSBAPort ? 0:8
-        anchors.right: root.right
-        anchors.rightMargin: 10
-        height: isUSBAPort ? 0:40
-        label: "MAXIMUM POWER"
-        unit: "W"
-        color:"transparent"
-        icon: "../images/icon-max.svg"
-    }
-
-    PortStatBox{
-        id:powerInBox
-        anchors.left:root.left
-        anchors.leftMargin: 10
-        anchors.top: maxPowerBox.bottom
-        anchors.topMargin: isUSBAPort ? 0:8
-        anchors.right: root.right
-        anchors.rightMargin: 10
-        height: isUSBAPort ? 0:40
-        label: "POWER IN"
-        unit:"W"
-        color:"transparent"
-        icon: "../images/icon-voltage.svg"
-    }
 
     PortStatBox{
         id:powerOutBox
         anchors.left:root.left
         anchors.leftMargin: 10
-        anchors.top: powerInBox.bottom
+        anchors.top: outputVoltageBox.bottom
         anchors.topMargin: 8
         anchors.right: root.right
         anchors.rightMargin: 10
@@ -226,25 +191,12 @@ Rectangle {
         icon: "../images/icon-voltage.svg"
     }
 
-    PortStatBox{
-        id:temperatureBox
-        anchors.left:root.left
-        anchors.leftMargin: 10
-        anchors.top: powerOutBox.bottom
-        anchors.topMargin: 8
-        anchors.right: root.right
-        anchors.rightMargin: 10
-        height: isUSBAPort ? 0:40
-        label: "TEMPERATURE"
-        unit:"°C"
-        color:"transparent"
-        icon: "../images/icon-temp.svg"
-    }
+
 
     Rectangle{
         id:chargingRectangle
         anchors.left:root.left
-        anchors.top: temperatureBox.bottom
+        anchors.top: powerOutBox.bottom
         anchors.topMargin: 3
         anchors.right: root.right
         anchors.rightMargin: 10
@@ -267,6 +219,7 @@ Rectangle {
             anchors.verticalCenter: chargingRectangle.verticalCenter
             height:15
             autoExclusive : false
+            checked: platformInterface.usb_a_port_is_charging_notification.charging
             indicator: Rectangle{
                 implicitWidth: 15
                 implicitHeight: 15

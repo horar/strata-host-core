@@ -23,11 +23,11 @@ Rectangle {
     onPortConnectedChanged:{
         if (portConnected){
             hideStats.start()
-            audioDataTimer.start()
+            //audioDataTimer.start()
         }
          else{
             showStats.start()
-            audioDataTimer.stop()
+            //audioDataTimer.stop()
         }
     }
 
@@ -61,6 +61,8 @@ Rectangle {
             to:advancedTitleBackgroundHeight
             duration: basicToAdvancedTransitionTime
         }
+
+
         PropertyAnimation{
             target:volumeText
             property: "opacity"
@@ -89,6 +91,7 @@ Rectangle {
             to:basicTitleBackgroundHeight
             duration: advancedToBasicTransitionTime
         }
+
         PropertyAnimation{
             target:volumeText
             property: "opacity"
@@ -103,17 +106,17 @@ Rectangle {
         }
     }
 
-    Timer{
-        //generate sample data to drive the audio graph when a
-        //device is connected. This is for testing, and will be removed when real audio data is available
-        id:audioDataTimer
-        interval: 500
-        repeat: true
-        onTriggered: {
-            var sampleValue = Math.random();
-        }
+//    Timer{
+//        //generate sample data to drive the audio graph when a
+//        //device is connected. This is for testing, and will be removed when real audio data is available
+//        id:audioDataTimer
+//        interval: 500
+//        repeat: true
+//        onTriggered: {
+//            var sampleValue = Math.random();
+//        }
 
-    }
+//    }
 
     Rectangle{
         id:titleBackground
@@ -153,24 +156,21 @@ Rectangle {
         }
     }
 
-    Image{
-        id:placeholderImage
-        source: "../images/soundwave.png"
+    AudioWaveform{
+        //the waveform is visible all the time, but if audio_active is false, then new random data
+        //won't change the heights of the bars, so it will appear invisible.
+        id:audioWaveform
         anchors.verticalCenter: root.verticalCenter
         anchors.left:root.left
         anchors.right:root.right
-        fillMode:Image.PreserveAspectFit
-    }
+        height:90
 
-    AudioGraph{
-        id:audioWaveform
-        visible: false
     }
 
     Text{
         id:volumeText
         text:"VOLUME:"
-        anchors.top: placeholderImage.bottom
+        anchors.top: audioWaveform.bottom
         anchors.left: root.left
         anchors.right:root.right
         anchors.leftMargin: 10
@@ -187,6 +187,16 @@ Rectangle {
         anchors.right:root.right
         anchors.rightMargin: 10
         opacity:0
+
+        value:{
+            //the volume will be between 0 and 1
+            return from + ((to-from) * (platformInterface.audio_volume_notification.volume))
+        }
+
+        onMoved:{
+            platformInterface.set_audio_volume.update(volumeSlider.position)
+        }
+
     }
 
     Rectangle {

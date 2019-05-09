@@ -8,12 +8,19 @@ Rectangle {
     border.color: connected ? "transparent" : "black"
     radius:5
 
+    property int portNumber:0
     property bool connected: false
     property alias source: sourceIndicator.checked
     property alias sink: sinkIndicator.checked
     property alias fastRoleSwap: fastRoleSwapIndicator.checked
     property alias superspeed: superspeedIndicator.checked
     property alias extendedSink: extendedSinkIndicator.checked
+
+    property bool sourceVisible:true
+    property bool sinkVisible:true
+    property bool fastRoleSwapVisible:true
+    property bool superspeedVisible:true
+    property bool extendedSinkVisible:true
 
     onConnectedChanged:{
         if (connected){
@@ -99,18 +106,23 @@ Rectangle {
 
         Text {
             text: "SOURCE"
+            visible: sourceVisible ? true : false
         }
         Text {
             text: "SINK"
+            visible: sinkVisible ? true : false
         }
         Text {
             text: "FAST ROLE SWAP"
+            visible: fastRoleSwapVisible ? true : false
         }
         Text {
             text: "SUPERSPEED"
+            visible: superspeedVisible ? true : false
         }
         Text {
             text: "EXTENDED SINK"
+            visible: extendedSinkVisible ? true : false
         }
     }
 
@@ -125,10 +137,24 @@ Rectangle {
 
         spacing: -4
 
+        property var deviceCharacteristics: platformInterface.device_characteristics_notification
+        onDeviceCharacteristicsChanged:{
+            console.log("In port",portNumber,"new charcteristics for port",deviceCharacteristics.port)
+            if (platformInterface.device_characteristics_notification.port === portNumber){
+                console.log("updating indicators for port",portNumber)
+                sourceIndicator.checked = platformInterface.device_characteristics_notification.source;
+                sinkIndicator.checked = platformInterface.device_characteristics_notification.sink
+                fastRoleSwapIndicator.checked = platformInterface.device_characteristics_notification.fast_role_swap
+                superspeedIndicator.checked = platformInterface.device_characteristics_notification.superspeed
+                extendedSinkIndicator.checked = platformInterface.device_characteristics_notification.extended_sink
+            }
+        }
+
         RadioButton {
             id: sourceIndicator
             height:15
             autoExclusive : false
+            visible: sourceVisible ? true : false
             indicator: Rectangle{
                 implicitWidth: 15
                 implicitHeight: 15
@@ -138,12 +164,15 @@ Rectangle {
                 color: sourceIndicator.checked ? "green": "white"
                 border.color: sourceIndicator.checked ? "black": "grey"
             }
+
+
         }
 
         RadioButton {
             id: sinkIndicator
             height:15
             autoExclusive : false
+            visible: sinkVisible ? true : false
             indicator: Rectangle{
                 implicitWidth: 15
                 implicitHeight: 15
@@ -159,6 +188,7 @@ Rectangle {
             id: fastRoleSwapIndicator
             height:15
             autoExclusive : false
+            visible: fastRoleSwapVisible ? true : false
             indicator: Rectangle{
                 implicitWidth: 15
                 implicitHeight: 15
@@ -174,6 +204,7 @@ Rectangle {
             id: superspeedIndicator
             height:15
             autoExclusive : false
+            visible: superspeedVisible ? true : false
             indicator: Rectangle{
                 implicitWidth: 15
                 implicitHeight: 15
@@ -189,6 +220,7 @@ Rectangle {
             id: extendedSinkIndicator
             height:15
             autoExclusive : false
+            visible: extendedSinkVisible ? true : false
             indicator: Rectangle{
                 implicitWidth: 15
                 implicitHeight: 15

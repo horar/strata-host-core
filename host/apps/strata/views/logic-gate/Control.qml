@@ -6,6 +6,7 @@ import QtQuick.Controls.Styles 1.4
 import QtQuick.Extras 1.4
 import Fonts 1.0
 //import tech.spyglass. 1.0
+import "content-views/content-widgets"
 import "qrc:/js/navigation_control.js" as NavigationControl
 import "qrc:/js/help_layout_manager.js" as Help
 
@@ -77,20 +78,17 @@ Item {
         }
     }
 
-
-    Text {
+    SGIcon {
         id: helpIcon
         anchors {
             right: controlContainer.right
             top: controlContainer.top
             margins: 20
         }
-        text: "\ue808"
-        color: helpMouse.containsMouse ? "lightgrey" : "grey"
-        font {
-            family: Fonts.sgicons
-            pixelSize: 40
-        }
+        source: "images/question-circle-solid.svg"
+        iconColor: helpMouse.containsMouse ? "lightgrey" : "grey"
+        sourceSize.height: 40
+        visible: true
 
         MouseArea {
             id: helpMouse
@@ -107,4 +105,3 @@ Item {
     }
 
 }
-

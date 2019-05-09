@@ -1,6 +1,6 @@
 
-#ifndef STRATA_EVENTS_MGR_H
-#define STRATA_EVENTS_MGR_H
+#ifndef STRATA_EVENTS_MGR_H__
+#define STRATA_EVENTS_MGR_H__
 
 #include <thread>
 #include <mutex>
@@ -13,6 +13,9 @@ struct event_base;
 namespace spyglass
 {
 
+/**
+ * NOTE: This class is working on Mac,Linux with file descriptors (handles). But on Windows it works only with WinSock handles.
+ */
 class EvEventsMgr
 {
 public:
@@ -20,18 +23,17 @@ public:
     ~EvEventsMgr();
 
     /**
-     * Creates event for a filehandle
-     * @param fd file handle
-     * @return returns new event
+     * Register event to event dispatcher
+     * @param event event to register
+     * @return returns
      */
-    EvEvent* CreateEventHandle(ev_handle_t fd);
+    bool registerEvent(EvEventBase* event);
 
     /**
-     * Creates event for a timeout
-     * @param timeInMs timeour in miliseconds
-     * @return returns new event
+     * Unregisters event from event dispatcher
+     * @param event
      */
-    EvEvent* CreateEventTimer(unsigned int timeInMs);
+    void unregisterEvent(EvEventBase* event);
 
     /**
      * Starts dispatch loop with given flags
@@ -42,13 +44,16 @@ public:
     /**
      * Starts dispatch loop in second thread and returns
      */
-    void startInThread();
+    bool startInThread();
 
     /**
      * Stops thread with dispatch loop
      */
     void stop();
 
+    /**
+     * returns event base for EvEventsMgr
+     */
     struct event_base* base() const { return event_base_; }
 
 private:
@@ -65,4 +70,4 @@ private:
 
 } //end of namespace
 
-#endif //STRATA_EVENTS_MGR_H
+#endif //STRATA_EVENTS_MGR_H__

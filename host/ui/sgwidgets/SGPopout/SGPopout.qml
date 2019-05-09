@@ -2,6 +2,7 @@ import QtQuick 2.9
 import QtQuick.Window 2.10
 import QtQuick.Controls 2.3
 import QtQuick.Layouts 1.0
+import QtGraphicalEffects 1.0
 
 Rectangle {
     id: root
@@ -168,18 +169,30 @@ Rectangle {
                     color: "#ccc"
                 }
 
-                Text {
+                Item {
                     id: popperIcon
+                    width: iconImage.width
+                    height: iconImage.height
                     rotation: popout.state === "unpopped" | popout.state === ""  ? 0 : 180
-                    text: popout.state === "unpopped" | popout.state === ""  ? "\u0038" : "\u0037"
-                    font {
-                        pixelSize: 18
-                        family: sgicons.name
-                    }
                     anchors {
                         centerIn: popper
                     }
-                    color: "#888"
+
+                    Image {
+                        id: iconImage
+                        visible: false
+                        fillMode: Image.PreserveAspectFit
+                        source: popout.state === "unpopped" | popout.state === ""  ? "icons/sign-in-alt-solid.svg" : "icons/sign-out-alt-solid.svg"
+                        sourceSize.height: 18
+                    }
+
+                    ColorOverlay {
+                        id: overlay
+                        anchors.fill: iconImage
+                        source: iconImage
+                        visible: true
+                        color: "#888"
+                    }
                 }
 
                 MouseArea {
@@ -259,26 +272,34 @@ Rectangle {
                 popoutWindow.height += delta.y;
             }
 
-            Text {
+            Item {
                 id: resizeHint
-                text: "\u0023"
                 rotation: -45
-                opacity: 0.15
+                width: iconImage1.width
+                height: iconImage1.height
                 anchors {
                     right: resize.right
                     rightMargin: 4
                     bottom: resize.bottom
                 }
-                font {
-                    pixelSize: 18
-                    family: sgicons.name
+                opacity: 0.15
+
+                Image {
+                    id: iconImage1
+                    visible: false
+                    fillMode: Image.PreserveAspectFit
+                    source: "icons/double-caret.svg"
+                    sourceSize.height: 18
+                }
+
+                ColorOverlay {
+                    id: overlay1
+                    anchors.fill: iconImage1
+                    source: iconImage1
+                    visible: true
+                    color: "black"
                 }
             }
         }
-    }
-
-    FontLoader {
-        id: sgicons
-        source: "fonts/sgicons.ttf"
     }
 }

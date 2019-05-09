@@ -19,5 +19,8 @@
         <file>views/template/sgwidgets/SGResponsiveScrollView.qml</file>
         <file>views/template/sgwidgets/SGSwitch.qml</file>
         <file>views/template/sgwidgets/fonts/digitalseven.ttf</file>
+        <file>views/template/content-views/content-widgets/angle-right-solid.svg</file>
+        <file>views/template/content-views/content-widgets/SGIcon.qml</file>
+        <file>views/template/control-views/question-circle-solid.svg</file>
     </qresource>
 </RCC>

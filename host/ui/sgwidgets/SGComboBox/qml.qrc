@@ -2,6 +2,6 @@
     <qresource prefix="/">
         <file>main.qml</file>
         <file>SGComboBox.qml</file>
-        <file>fonts/sgicons.ttf</file>
+        <file>icons/angle-down-solid.svg</file>
     </qresource>
 </RCC>

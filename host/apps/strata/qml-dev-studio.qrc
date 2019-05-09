@@ -19,7 +19,6 @@
         <file>js/restclient.js</file>
         <file>js/uuid_map.js</file>
         <file>main.qml</file>
-        <file>statusbar-partial-views/SGAboutPopup.qml</file>
         <file>statusbar-partial-views/SGAnalyticsPopup.qml</file>
         <file>statusbar-partial-views/SGComboBox.qml</file>
         <file>statusbar-partial-views/SGConfirmationPopup.qml</file>
@@ -86,5 +85,8 @@
         <file>statusbar-partial-views/platform-selector/images/platform-images/notFound.png</file>
         <file>statusbar-partial-views/platform-selector/images/whiteFadeMask.svg</file>
         <file>views/SGPdfViewer/SGPdfViewer.qml</file>
+        <file>statusbar-partial-views/SGIcon.qml</file>
+        <file>statusbar-partial-views/about-popup/attributionInfo.txt</file>
+        <file>statusbar-partial-views/about-popup/SGAboutPopup.qml</file>
     </qresource>
 </RCC>
