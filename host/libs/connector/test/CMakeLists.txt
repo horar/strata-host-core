@@ -10,7 +10,7 @@ add_executable(connector-test
 
 target_link_libraries(${PROJECT_NAME}
     PRIVATE connector
-    PRIVATE gtest
+    PRIVATE gtest::gtest
 )
 
 if (WIN32)

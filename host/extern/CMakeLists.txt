@@ -101,19 +101,21 @@ ExternalProject_Add(libgtest
         -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
 )
 
-add_library(gtest STATIC IMPORTED GLOBAL)
-set_target_properties(gtest PROPERTIES
+add_library(gtest::gtest STATIC IMPORTED GLOBAL)
+set_target_properties(gtest::gtest PROPERTIES
     INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_BINARY_DIR}/3rd_party/include"
     IMPORTED_LOCATION  "${CMAKE_BINARY_DIR}/3rd_party/lib/${CMAKE_STATIC_LIBRARY_PREFIX}gtest${CMAKE_STATIC_LIBRARY_SUFFIX}"
+    IMPORTED_LOCATION_DEBUG  "${CMAKE_BINARY_DIR}/3rd_party/lib/${CMAKE_STATIC_LIBRARY_PREFIX}gtestd${CMAKE_STATIC_LIBRARY_SUFFIX}"
 )
 
-add_dependencies(gtest DEPENDS libgtest)
+add_dependencies(gtest::gtest DEPENDS libgtest)
 
 
-add_library(gmock STATIC IMPORTED GLOBAL)
-set_target_properties(gmock PROPERTIES
+add_library(gtest::gmock STATIC IMPORTED GLOBAL)
+set_target_properties(gtest::gmock PROPERTIES
     INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_BINARY_DIR}/3rd_party/include"
     IMPORTED_LOCATION  "${CMAKE_BINARY_DIR}/3rd_party/lib/${CMAKE_STATIC_LIBRARY_PREFIX}gmock${CMAKE_STATIC_LIBRARY_SUFFIX}"
+    IMPORTED_LOCATION_DEBUG  "${CMAKE_BINARY_DIR}/3rd_party/lib/${CMAKE_STATIC_LIBRARY_PREFIX}gmockd${CMAKE_STATIC_LIBRARY_SUFFIX}"
 )
 
-add_dependencies(gmock DEPENDS libgtest)
+add_dependencies(gtest::gmock DEPENDS libgtest)
