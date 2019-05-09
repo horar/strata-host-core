@@ -31,9 +31,20 @@ PlatformManager::~PlatformManager()
 {
     Stop();
 
-    std::lock_guard<std::mutex> lock(connectionMap_mutex_);
-    for(auto item : openedPorts_) {
-        item.second->close();
+    // closing all opened ports
+    // we need to close ports without locking because that would cause deadlock
+    for(;;) {
+        PlatformConnectionShPtr conn;
+        {
+            std::lock_guard<std::mutex> lock(connectionMap_mutex_);
+            if (openedPorts_.empty()) {
+                break;
+            }
+
+            conn = openedPorts_.begin()->second;
+        }
+
+        conn->close();
     }
 }
 
