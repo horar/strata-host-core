@@ -1,6 +1,9 @@
 
 FROM ubuntu:18.04
 
+ARG QT_VERSION_MINOR=5.12.3
+ARG QT_VERSION=5.12
+
 # Install the dependencies and rquired libraries to run qtcreator and Strata
 RUN apt-get update \
         && apt-get install -y \
@@ -45,12 +48,12 @@ RUN apt-get update \
         && apt-get clean \
         && rm -rf /var/lib/apt/lists/*
 
-# Install Qt 5.12.2
+# Install Qt QT_VERSION_MINOR
 COPY qt-noninteractive.qs /qt-noninteractive.qs
-RUN wget --no-check-certificate https://download.qt.io/archive/qt/5.12/5.12.2/qt-opensource-linux-x64-5.12.2.run \
-        && chmod +x ./qt-opensource-linux-x64-5.12.2.run \
-        && ./qt-opensource-linux-x64-5.12.2.run --script qt-noninteractive.qs --platform minimal \
-        && rm -rf ./qt-opensource-linux-x64-5.12.2.run qt-noninteractive.qs 
+RUN wget --no-check-certificate https://download.qt.io/archive/qt/$QT_VERSION/$QT_VERSION_MINOR/qt-opensource-linux-x64-$QT_VERSION_MINOR.run \
+        && chmod +x ./qt-opensource-linux-x64-$QT_VERSION_MINOR.run \
+        && ./qt-opensource-linux-x64-$QT_VERSION_MINOR.run --script qt-noninteractive.qs --platform minimal \
+        && rm -rf ./qt-opensource-linux-x64-$QT_VERSION_MINOR.run qt-noninteractive.qs 
 
 # Add Qt and Qtcreator to the path
-ENV PATH="/opt/Qt5.12.2/5.12.2/gcc_64/bin:/opt/Qt5.12.2/Tools/QtCreator/bin:${PATH}"
+ENV PATH="/opt/Qt$QT_VERSION_MINOR/$QT_VERSION_MINOR/gcc_64/bin:/opt/Qt$QT_VERSION_MINOR/Tools/QtCreator/bin:${PATH}"
