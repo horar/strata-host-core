@@ -19,7 +19,6 @@ Controller.prototype.IntroductionPageCallback = function() {
 
 Controller.prototype.TargetDirectoryPageCallback = function()
 {
-    // gui.currentPageWidget().TargetDirectoryLineEdit.setText("/qt.qt5.);
     gui.clickButton(buttons.NextButton);
 }
 

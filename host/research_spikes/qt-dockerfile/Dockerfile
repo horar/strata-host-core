@@ -53,7 +53,7 @@ COPY qt-noninteractive.qs /qt-noninteractive.qs
 RUN wget --no-check-certificate https://download.qt.io/archive/qt/$QT_VERSION/$QT_VERSION_MINOR/qt-opensource-linux-x64-$QT_VERSION_MINOR.run \
         && chmod +x ./qt-opensource-linux-x64-$QT_VERSION_MINOR.run \
         && ./qt-opensource-linux-x64-$QT_VERSION_MINOR.run --script qt-noninteractive.qs --platform minimal \
-        && rm -rf ./qt-opensource-linux-x64-$QT_VERSION_MINOR.run qt-noninteractive.qs 
+        && rm -rf ./qt-opensource-linux-x64-$QT_VERSION_MINOR.run qt-noninteractive.qs opt/Qt$QT_VERSION_MINOR/Docs/ opt/Qt$QT_VERSION_MINOR/Examples/
 
 # Add Qt and Qtcreator to the path
 ENV PATH="/opt/Qt$QT_VERSION_MINOR/$QT_VERSION_MINOR/gcc_64/bin:/opt/Qt$QT_VERSION_MINOR/Tools/QtCreator/bin:${PATH}"
