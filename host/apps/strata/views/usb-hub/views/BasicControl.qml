@@ -12,12 +12,12 @@ Item {
 
     //default values
     //these are used to restore animation times after an immediate change, which happens without the animation
-    property int defaultBasicToAdvancedTransitionTime: 1000
-    property int defaultBasicToAdvancedTelemetryAnimationTime: 1000
-    property int defaultAdvancedToBasicTransitionTime: 1000
-    property int defaultAdvancedToBasicTelemetryAnimationTime: 1000
-    property int defaultAdvancedToBasicAdvancedControlsAnimationTime: 1000
-    property int defaultAdvancedToBasicAnimationPauseTime: 2000
+    property int defaultBasicToAdvancedTransitionTime: 700
+    property int defaultBasicToAdvancedTelemetryAnimationTime: 700
+    property int defaultAdvancedToBasicTransitionTime: 700
+    property int defaultAdvancedToBasicTelemetryAnimationTime: 700
+    property int defaultAdvancedToBasicAdvancedControlsAnimationTime: 700
+    property int defaultAdvancedToBasicAnimationPauseTime: 1400
     property int defaultAdvancedControlBuildInTime: 500
 
     //basic to advanced animation times
@@ -68,6 +68,8 @@ Item {
     onAudioPortReadyToTransitionToAdvancedChanged: audioPortTransitionToAdvancedProc()
     property bool displayPortReadyToTransitionToAdvanced:false
     onDisplayPortReadyToTransitionToAdvancedChanged: displayPortTransitionToAdvancedProc()
+    property bool devicesReadyToTransitionToAdvanced:false
+    onDevicesReadyToTransitionToAdvancedChanged: devicesTransitionToAdvancedProc()
 
     property bool port2ReadyToTransitionToBasic:false
     onPort2ReadyToTransitionToBasicChanged: port2TransitionToBasicProc()
@@ -336,11 +338,15 @@ Item {
                 property:"displayPortReadyToTransitionToAdvanced";
                 value: "true"
             }
+            PropertyAction{
+                target:root;
+                property:"devicesReadyToTransitionToAdvanced";
+                value: "true"
+            }
 
         }
 
         onStopped:{
-            devicesToAdvanced.start()
             //reset the variables controlling the port animations here.
             upstreamPortReadyToTransitionToAdvanced = false;
             port1ReadyToTransitionToAdvanced = false;
@@ -349,6 +355,7 @@ Item {
             port4ReadyToTransitionToAdvanced = false;
             audioPortReadyToTransitionToAdvanced = false;
             displayPortReadyToTransitionToAdvanced = false;
+            devicesReadyToTransitionToAdvanced = false;
         }
     }  //end sequential animation
 
@@ -389,6 +396,11 @@ Item {
     function displayPortTransitionToAdvancedProc(){
         if (displayPortReadyToTransitionToAdvanced == true)
             displayPort.transitionToAdvancedView()
+    }
+
+    function devicesTransitionToAdvancedProc(){
+        if (devicesReadyToTransitionToAdvanced == true)
+            devicesToAdvanced.start()
     }
 
 
@@ -563,7 +575,7 @@ Item {
     SequentialAnimation{
         id:transitionViewsToBasic
 
-        //give the ports time to transition their subviews
+        //give the port 3 time to transition its subviews
         PauseAnimation{
             duration:port3.portConnected ? advancedToBasicAnimationPauseTime : 1
         }
@@ -912,17 +924,25 @@ Item {
         }
         onStopped:{
             toBasicAnimationFinished();
+
+            //reset the variables used to trigger animations
+            port2ReadyToTransitionToBasic = false;
+            port1ReadyToTransitionToBasic = false
+            upstreamPortReadyToTransitionToBasic = false
         }
     }
 
     function port2TransitionToBasicProc(){
-        port2.prepareToTransitionToBasicView();
+        if (port2ReadyToTransitionToBasic == true)
+            port2.prepareToTransitionToBasicView();
     }
     function port1TransitionToBasicProc(){
-        port1.prepareToTransitionToBasicView();
+        if (port1ReadyToTransitionToBasic == true)
+            port1.prepareToTransitionToBasicView();
     }
     function upstreamPortTransitionToBasicProc(){
-        upstreamPort.prepareToTransitionToBasicView();
+        if (upstreamPortReadyToTransitionToBasic == true)
+            upstreamPort.prepareToTransitionToBasicView();
     }
 
     Rectangle{
