@@ -132,13 +132,13 @@ PlatformBoard::ProcessResult PlatformBoard::parseInitialMsg(const std::string& m
             if (bootloader_value.HasMember("version") && bootloader_value.HasMember("date")) {
                 bootloaderVersion_ = bootloader_value["version"].GetString();
             } else {
-                bootloaderVersion_ = "";
+                bootloaderVersion_.clear();
             }
 
             if (application_value.HasMember("version") && application_value.HasMember("date")) {
                 applicationVersion_ = application_value["version"].GetString();
             } else {
-                applicationVersion_ = "";
+                applicationVersion_.clear();
             }
 
             return ProcessResult::eProcessed;
