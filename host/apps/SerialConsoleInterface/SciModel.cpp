@@ -6,8 +6,6 @@
 
 #include <QDebug>
 #include <QThreadPool>
-#include <QFileInfo>
-#include <QUrl>
 
 
 
@@ -39,17 +37,6 @@ void SciModel::programDevice(const QString &connectionId, const QString &firmwar
             this, &SciModel::notify);
 
     QThreadPool::globalInstance()->start(task);
-}
-
-QString SciModel::urlToPath(const QUrl &url)
-{
-    return QUrl(url).path();
-}
-
-bool SciModel::isFile(const QString &file)
-{
-    QFileInfo info(file);
-    return info.isFile();
 }
 
 BoardsController *SciModel::boardController()

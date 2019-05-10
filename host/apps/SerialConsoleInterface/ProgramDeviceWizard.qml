@@ -3,6 +3,7 @@ import QtQuick.Controls 2.12
 import tech.strata.fonts 1.0 as StrataFonts
 import "./common" as Common
 import "./common/SgUtils.js" as SgUtils
+import tech.strata.utils 1.0
 import "./common/Colors.js" as Colors
 import QtQuick.Dialogs 1.3
 
@@ -112,7 +113,7 @@ Item {
                             function inputValidationErrorMsg() {
                                 if (text.length === 0) {
                                     return qsTr("Firmware path is required")
-                                } else if (!sciModel.isFile(text)) {
+                                } else if (!SgUtilsCpp.isFile(text)) {
                                     return qsTr("Firmware path does not refer to a file")
                                 }
 
@@ -455,7 +456,7 @@ Item {
         var dialog = SgUtils.createDialogFromComponent(wizard, fileDialogComponent)
 
         dialog.accepted.connect(function() {
-            wizard.firmwarePath = sciModel.urlToPath(dialog.fileUrl)
+            wizard.firmwarePath = SgUtilsCpp.urlToPath(dialog.fileUrl)
             dialog.destroy()})
 
 
