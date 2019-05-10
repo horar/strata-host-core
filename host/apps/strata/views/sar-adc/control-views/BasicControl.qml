@@ -12,6 +12,12 @@ Item {
     property real initialAspectRatio: 1200/820
     width: parent.width / parent.height > initialAspectRatio ? parent.height * initialAspectRatio : parent.width
     height: parent.width / parent.height < initialAspectRatio ? parent.width / initialAspectRatio : parent.height
+
+    function setAvgPowerMeter(a,b) {
+        var holder = a+b
+        return holder
+    }
+
     Rectangle{
         width: parent.width
         height: parent.height/1.7
@@ -113,14 +119,24 @@ Item {
                     width: ratioCalc * 130
                     height : ratioCalc * 50
                     text: qsTr(" Histogram")
+                    checkable: true
                     background: Rectangle {
+                        id: backgroundContainer1
                         implicitWidth: 100
                         implicitHeight: 40
                         opacity: enabled ? 1 : 0.3
-                        border.color: plotSetting1.down ? "#17a81a" : "black"//"#21be2b"
+                        color: {
+                            if(plotSetting2.checked) {
+                                color = "lightgrey"
+                            }
+                            else {
+                                color =  "#33b13b"
+                            }
+
+                        }
                         border.width: 1
-                        color: "#33b13b"
                         radius: 10
+
                     }
                     Layout.alignment: Qt.AlignHCenter
                     contentItem: Text {
@@ -132,9 +148,23 @@ Item {
                         verticalAlignment: Text.AlignVCenter
                         elide: Text.ElideRight
                     }
-                    onClicked: {
-                        graph2.yAxisTitle = "Hit Count"
-                        graph2.xAxisTitle = "Codes"
+
+
+
+                    onCheckedChanged: {
+                        console.log("check2", checked)
+                        if(backgroundContainer1.color == "#d3d3d3") {
+                            backgroundContainer1.color = "#33b13b"
+                            graph2.yAxisTitle = "Power (dB)"
+                            graph2.xAxisTitle = "Frequency (KHz)"
+                            backgroundContainer2.color = "#d3d3d3"
+                        }
+                        else {
+                            backgroundContainer2.color = "#33b13b"
+                            graph2.yAxisTitle = "Hit Count"
+                            graph2.xAxisTitle = "Codes"
+                            backgroundContainer1.color  = "#d3d3d3"
+                        }
                     }
                 }
                 Button {
@@ -142,13 +172,15 @@ Item {
                     width: ratioCalc * 130
                     height : ratioCalc * 50
                     text: qsTr("FFT")
+                    checkable: true
                     background: Rectangle {
+                        id: backgroundContainer2
                         implicitWidth: 100
                         implicitHeight: 40
                         opacity: enabled ? 1 : 0.3
                         border.color: plotSetting2.down ? "#17a81a" : "black"//"#21be2b"
                         border.width: 1
-                        color: "#33b13b"
+                        color: "lightgrey"
                         radius: 10
                     }
                     Layout.alignment: Qt.AlignHCenter
@@ -161,9 +193,21 @@ Item {
                         verticalAlignment: Text.AlignVCenter
                         elide: Text.ElideRight
                     }
-                    onClicked: {
-                        graph2.yAxisTitle = "Power (dB)"
-                        graph2.xAxisTitle = "Frequency (KHz)"
+
+                    onCheckedChanged: {
+                        console.log("check2", checked)
+                        if(backgroundContainer2.color == "#d3d3d3") {
+                            backgroundContainer2.color = "#33b13b"
+                            graph2.yAxisTitle = "Hit Count"
+                            graph2.xAxisTitle = "Codes"
+                            backgroundContainer1.color = "#d3d3d3"
+                        }
+                        else {
+                            graph2.yAxisTitle = "Power (dB)"
+                            graph2.xAxisTitle = "Frequency (KHz)"
+                            backgroundContainer1.color = "#33b13b"
+                            backgroundContainer2.color  = "#d3d3d3"
+                        }
                     }
                 }
             }
@@ -213,7 +257,7 @@ Item {
                             id: dvsButtonContainer
                             // Optional configuration:
                             //fontSize: (parent.width+parent.height)/32
-                            label: "DVDD:" // Default: "" (will not appear if not entered)
+                            label: "<b> ADC Digital Supply DVDD:<\b>" // Default: "" (will not appear if not entered)
                             labelLeft: true         // Default: true
                             textColor: "white"      // Default: "#000000"  (black)
                             radioColor: "black"     // Default: "#000000"  (black)
@@ -241,7 +285,7 @@ Item {
                             id: avddButtonContainer
                             // Optional configuration:
                             //fontSize: (parent.width+parent.height)/32
-                            label: "AVDD:" // Default: "" (will not appear if not entered)
+                            label: "<b> ADC Analog Supply AVDD :<\b>" // Default: "" (will not appear if not entered)
                             labelLeft: true         // Default: true
                             textColor: "white"      // Default: "#000000"  (black)
                             radioColor: "black"     // Default: "#000000"  (black)
@@ -277,7 +321,7 @@ Item {
 
                     SGSubmitInfoBox{
                         label: "Input Frequency"
-                       // placeholderText: "1000.5"
+                        // placeholderText: "1000.5"
                         value: "1000.5"
                         infoBoxWidth: parent.width/3
                         infoBoxHeight: parent.height/2
@@ -308,7 +352,7 @@ Item {
                         titleBoxColor: "black"
                         titleTextColor: "white"
                         statusBoxColor: " black"
-                        statusTextColor: "green"
+                        statusTextColor: "#eeeeee"
                         model: faultModel
                         anchors.centerIn: parent
                     }
@@ -332,7 +376,7 @@ Item {
 
 
             Rectangle {
-                width:parent.width/4
+                width:parent.width/3
                 height : parent.height
                 color: "transparent"
 
@@ -340,11 +384,11 @@ Item {
                     id: acquireButtonContainer
                     color: "transparent"
                     width: parent.width
-                    height: parent.height/5
+                    height: parent.height/5.5
                     Button {
                         id: acquireDataButton
                         width: parent.width/3
-                        height: parent.height/1.7
+                        height: parent.height/2
 
                         text: qsTr("Acquire \n Data")
                         anchors.centerIn: parent
@@ -377,7 +421,7 @@ Item {
                     }
 
                     width: parent.width
-                    height: parent.height/2.4
+                    height: parent.height/3
                     color: "transparent"
                     SGCircularGauge{
                         id:lightGauge
@@ -385,42 +429,75 @@ Item {
                             fill: parent
                             horizontalCenter: parent.horizontalCenter
                         }
-                        gaugeFrontColor1: Qt.rgba(0,0.5,1,1)
-                        gaugeFrontColor2: Qt.rgba(1,0,0,1)
+                        gaugeFrontColor1: Qt.rgba(0,1,0,1)
+                        gaugeFrontColor2: Qt.rgba(1,1,1,1)
                         minimumValue: 0
-                        maximumValue: 100
-                        tickmarkStepSize: 10
+                        maximumValue: 400
+                        tickmarkStepSize: 40
                         outerColor: "white"
                         unitLabel: "µW"
                         gaugeTitle : "Average" + "\n"+ "Power"
-                        value: 50
+
+                        value: setAvgPowerMeter(parseInt(digitalPowerConsumption.info) ,parseInt(analogPowerConsumption.info))
+                        function lerpColor (color1, color2, x){
+                            if (Qt.colorEqual(color1, color2)){
+                                return color1;
+                            } else {
+                                return Qt.rgba(
+                                            color1.r * (1 - x) + color2.r * x,
+                                            color1.g * (1 - x) + color2.g * x,
+                                            color1.b * (1 - x) + color2.b * x, 1
+                                            );
+                            }
+                        }
                     }
                 }
                 Rectangle {
+                    id: digitalPowerContainer
                     width:  parent.width
-                    height : parent.height/6
+                    height : parent.height/7
                     color: "transparent"
                     anchors.top: gaugeContainer.bottom
                     SGLabelledInfoBox {
-                        id: powerConsumption
-                        label: "Power Consumption"
+                        id: digitalPowerConsumption
+                        label: "Digital Power \n Consumption"
                         info: "92"
                         unit: "µW"
+                        anchors.centerIn: parent
                         infoBoxWidth: parent.width/3
-                        infoBoxHeight: parent.height/2
+                        infoBoxHeight: parent.height/1.9
                         fontSize: 15
                         unitSize: 10
                         infoBoxColor: "black"
                         labelColor: "white"
-                        infoTextColor: "#48d1cc"
+
+                    }
+                }
+                Rectangle {
+                    width:  parent.width
+                    height : parent.height/7
+                    color: "transparent"
+                    anchors.top: digitalPowerContainer.bottom
+                    SGLabelledInfoBox {
+                        id: analogPowerConsumption
+                        label: "Analog Power \n Consumption"
+                        info: "50"
+                        unit: "µW"
                         anchors.centerIn: parent
+                        infoBoxWidth: parent.width/3
+                        infoBoxHeight: parent.height/1.9
+                        fontSize: 15
+                        unitSize: 10
+                        infoBoxColor: "black"
+                        labelColor: "white"
+
                     }
                 }
             }
 
 
             Rectangle {
-                width:parent.width/3
+                width: parent.width/3.5
                 height : parent.height
                 color: "transparent"
                 Rectangle {
@@ -445,6 +522,7 @@ Item {
                     anchors{
                         top: titleContainer.bottom
                     }
+                  spacing: 5
 
                     Rectangle{
                         width: parent.width
@@ -464,7 +542,6 @@ Item {
                             }
                             infoBoxColor: "black"
                             labelColor: "white"
-                            infoTextColor: "#ffa500"
                         }
                     }
                     Rectangle{
@@ -482,10 +559,10 @@ Item {
                             unitSize: 10
                             anchors{
                                 centerIn: parent
+                                horizontalCenterOffset: -5
                             }
                             infoBoxColor: "black"
                             labelColor: "white"
-                            infoTextColor: "#f0e68c"
                         }
                     }
                     Rectangle{
@@ -506,7 +583,7 @@ Item {
                             }
                             infoBoxColor: "black"
                             labelColor: "white"
-                            infoTextColor: "#ffff00"
+
                         }
                     }
                     Rectangle{
@@ -526,7 +603,7 @@ Item {
                             }
                             infoBoxColor: "black"
                             labelColor: "white"
-                            infoTextColor: "#cd5c5c"
+
                         }
                     }
                     Rectangle{
@@ -544,6 +621,7 @@ Item {
                             unitSize: 10
                             anchors{
                                 centerIn: parent
+                                horizontalCenterOffset: -2
                             }
                             infoBoxColor: "black"
                             labelColor: "white"

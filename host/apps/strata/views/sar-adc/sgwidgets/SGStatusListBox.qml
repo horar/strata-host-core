@@ -40,9 +40,9 @@ Rectangle {
             id: title
             text: root.title
             color: root.titleTextColor
-            anchors {
-                fill: titleArea
-            }
+            anchors.fill: titleArea
+            horizontalAlignment: Text.AlignHCenter
+            verticalAlignment: Text.AlignVCenter
             padding: 10
         }
 
@@ -58,9 +58,8 @@ Rectangle {
         flickableDirection: Flickable.VerticalFlick
 
         anchors {
-           // left: root.left
-            //right: root.right
-            horizontalCenter: parent.horizontalCenter
+            left: root.left
+            right: root.right
             top: titleArea.visible ? titleArea.bottom : root.top
             bottom: root.bottom
             margins: 20
