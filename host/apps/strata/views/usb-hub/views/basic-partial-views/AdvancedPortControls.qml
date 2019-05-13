@@ -1,7 +1,7 @@
 import QtQuick 2.9
 import QtQuick.Controls 2.2
 import QtQuick.Layouts 1.3  //for gridLayout
-import "qrc:/views/usb-pd-multiport/sgwidgets"
+import "../../sgwidgets"
 
 Item {
     id:advanceControlsView
@@ -450,16 +450,16 @@ Item {
     SGSegmentedButtonStrip {
         id: sourceCapabilitiesButtonStrip
         anchors {
-            left: advanceControlsView.left
             top: sourceCapabilitiesText.bottom
             topMargin: 3
             verticalCenter: advanceControlsView.verticalCenter
+            horizontalCenter: advanceControlsView.horizontalCenter
         }
         textColor: "#666"
         activeTextColor: "white"
         radius: 4
         buttonHeight: 30
-        buttonImplicitWidth: 15
+        buttonImplicitWidth: 10
         hoverEnabled: false
 
         property var sourceCapabilities: platformInterface.usb_pd_advertised_voltages_notification.settings
@@ -560,26 +560,36 @@ Item {
             }
         }
 
+
+
         segmentedButtons: GridLayout {
             id:advertisedVoltageGridLayout
             columnSpacing: 2
+
+            property int sidePadding: 5
 
             SGSegmentedButton{
                 id: setting1
                 text: qsTr("5V\n3A")
                 checkable: false
+                leftPadding:sidePadding
+                rightPadding:sidePadding
             }
 
             SGSegmentedButton{
                 id: setting2
                 text: qsTr("7V\n3A")
                 checkable: false
+                leftPadding:sidePadding
+                rightPadding:sidePadding
             }
 
             SGSegmentedButton{
                 id:setting3
                 text: qsTr("8V\n3A")
                 checkable: false
+                leftPadding:sidePadding
+                rightPadding:sidePadding
             }
 
             SGSegmentedButton{
@@ -587,6 +597,8 @@ Item {
                 text: qsTr("9V\n3A")
                 //enabled: false
                 checkable: false
+                leftPadding:sidePadding
+                rightPadding:sidePadding
             }
 
             SGSegmentedButton{
@@ -594,6 +606,8 @@ Item {
                 text: qsTr("12V\n3A")
                 enabled: false
                 checkable: false
+                leftPadding:sidePadding
+                rightPadding:sidePadding
             }
 
             SGSegmentedButton{
@@ -601,6 +615,8 @@ Item {
                 text: qsTr("15V\n3A")
                 enabled: false
                 checkable: false
+                leftPadding:sidePadding
+                rightPadding:sidePadding
             }
 
             SGSegmentedButton{
@@ -608,6 +624,8 @@ Item {
                 text: qsTr("20V\n3A")
                 enabled: false
                 checkable: false
+                leftPadding:sidePadding
+                rightPadding:sidePadding
             }
         }
     } //source capabilities segmented button strip
