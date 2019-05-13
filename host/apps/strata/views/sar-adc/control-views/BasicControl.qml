@@ -20,7 +20,7 @@ Item {
 
     Rectangle{
         width: parent.width
-        height: parent.height/1.7
+        height: parent.height/1.8
         color: "#a9a9a9"
         // color: "transparent"
         id: graphContainer
@@ -327,17 +327,17 @@ Item {
                         infoBoxHeight: parent.height/2
                         infoBoxColor: "black"
                         textColor: "white"
-                        fontSize: 29
                         showButton: false
                         anchors.centerIn: parent
                         unit: "kHz"
+                        fontSize: 15
                         validator: DoubleValidator { }
                     }
                 }
                 Rectangle{
                     id: dataModel
                     width:  parent.width/0.9
-                    height : parent.height/3
+                    height : parent.height/2.5
                     color: "transparent"
 
                     anchors{
@@ -384,17 +384,17 @@ Item {
                     id: acquireButtonContainer
                     color: "transparent"
                     width: parent.width
-                    height: parent.height/5.5
+                    height: parent.height/5
                     Button {
                         id: acquireDataButton
                         width: parent.width/3
-                        height: parent.height/2
+                        height: parent.height/1.5
 
                         text: qsTr("Acquire \n Data")
                         anchors.centerIn: parent
                         background: Rectangle {
                             implicitWidth: 100
-                            implicitHeight: 40
+                            implicitHeight: 60
                             opacity: enabled ? 1 : 0.3
                             border.color: acquireDataButton.down ? "#17a81a" : "black"//"#21be2b"
                             border.width: 1
@@ -421,7 +421,7 @@ Item {
                     }
 
                     width: parent.width
-                    height: parent.height/3
+                    height: parent.height/2.7
                     color: "transparent"
                     SGCircularGauge{
                         id:lightGauge
@@ -465,7 +465,7 @@ Item {
                         unit: "µW"
                         anchors.centerIn: parent
                         infoBoxWidth: parent.width/3
-                        infoBoxHeight: parent.height/1.9
+                        infoBoxHeight: parent.height/1.6
                         fontSize: 15
                         unitSize: 10
                         infoBoxColor: "black"
@@ -485,7 +485,7 @@ Item {
                         unit: "µW"
                         anchors.centerIn: parent
                         infoBoxWidth: parent.width/3
-                        infoBoxHeight: parent.height/1.9
+                        infoBoxHeight: parent.height/1.6
                         fontSize: 15
                         unitSize: 10
                         infoBoxColor: "black"
@@ -521,8 +521,9 @@ Item {
                     height: parent.height - titleContainer.height
                     anchors{
                         top: titleContainer.bottom
+                        topMargin: 5
                     }
-                  spacing: 5
+                  spacing: 10
 
                     Rectangle{
                         width: parent.width

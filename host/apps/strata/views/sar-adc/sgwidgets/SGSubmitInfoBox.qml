@@ -26,7 +26,7 @@ Rectangle {
     property int intValue: { return parseInt(infoText.text) }
     property alias placeholderText: placeholder.text
     property bool leftJustify: false
-     property int fontSize: 10
+    property int fontSize: 10
 
     implicitHeight: labelLeft ? inputButtonContainer.height : labelText.height + inputButtonContainer.height + inputButtonContainer.anchors.topMargin
     implicitWidth: labelLeft ? labelText.width + inputButtonContainer.width + inputButtonContainer.anchors.leftMargin :
@@ -45,6 +45,7 @@ Rectangle {
         horizontalAlignment: Text.AlignRight
         visible: text !== ""
         font.bold: true
+        font.pixelSize: fontSize
     }
 
     Rectangle {

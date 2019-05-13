@@ -24,11 +24,12 @@ Item{
         text: label
         width: contentWidth
         height: root.labelLeft ? infoContainer.height : contentHeight
-        font.pixelSize: 15
+        font.pixelSize: fontSize
         topPadding: root.label === "" ? 0 : root.labelLeft ? (infoContainer.height-contentHeight)/2 : 0
         bottomPadding: topPadding
         font.bold: true
         color: labelColor
+        horizontalAlignment: Text.AlignRight
     }
     FontLoader {
         id: digital
@@ -80,7 +81,7 @@ Item{
 
         anchors {
             left : infoContainer.right
-            leftMargin: 6  
+            leftMargin: 6
             verticalCenter: infoContainer.verticalCenter
         }
         font.bold: true

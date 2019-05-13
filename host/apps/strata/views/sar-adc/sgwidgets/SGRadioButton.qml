@@ -24,6 +24,7 @@ RadioButton {
         color: root.textColor
         elide: Text.ElideRight
         verticalAlignment: Text.AlignVCenter
+
     }
 
     indicator: Rectangle {

@@ -24,6 +24,7 @@ Item {
         topPadding: root.label === "" ? 0 : root.labelLeft ? 5 : 0
         bottomPadding: topPadding
         color: textColor
+        font.pixelSize: 15
     }
 
     ButtonGroup{
