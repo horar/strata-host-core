@@ -46,6 +46,7 @@ SgDialog {
 
     modal: true
     focus: true
+    closePolicy: Popup.CloseOnEscape
 
     headerBgColor: {
         if (dialog.type === SgMessageDialog.Warning) {
