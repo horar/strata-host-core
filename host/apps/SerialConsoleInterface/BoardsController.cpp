@@ -51,11 +51,11 @@ QVariantMap BoardsController::getConnectionInfo(const QString &connectionId)
         return result;
     }
 
-    result.insert("connectionId", connectionId);
-    result.insert("platformId", QString::fromStdString(board->getPlatformId()));
-    result.insert("verboseName", QString::fromStdString(board->getVerboseName()));
-    result.insert("bootloaderVersion", QString::fromStdString(board->getBootloaderVersion()));
-    result.insert("applicationVersion", QString::fromStdString(board->getApplicationVersion()));
+    result.insert(QStringLiteral("connectionId"), connectionId);
+    result.insert(QStringLiteral("platformId"), QString::fromStdString(board->getPlatformId()));
+    result.insert(QStringLiteral("verboseName"), QString::fromStdString(board->getVerboseName()));
+    result.insert(QStringLiteral("bootloaderVersion"), QString::fromStdString(board->getBootloaderVersion()));
+    result.insert(QStringLiteral("applicationVersion"), QString::fromStdString(board->getApplicationVersion()));
 
     return result;
 }
