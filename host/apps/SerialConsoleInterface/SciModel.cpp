@@ -57,11 +57,11 @@ void SciModel::programDevice(const QString &connectionId, const QString &firmwar
     }
 
     ProgramDeviceTask *task = new ProgramDeviceTask(connection, firmwarePath);
-    connect(task, SIGNAL(taskDone(spyglass::PlatformConnection *, bool)),
-            this, SLOT(programDeviceDoneHandler(spyglass::PlatformConnection *, bool)));
+    connect(task, &ProgramDeviceTask::taskDone,
+            this, &SciModel::programDeviceDoneHandler);
 
-    connect(task, SIGNAL(notify(QString, QString)),
-            this, SIGNAL(notify(QString, QString)));
+    connect(task, &ProgramDeviceTask::notify,
+            this, &SciModel::notify);
 
     QThreadPool::globalInstance()->start(task);
 }
