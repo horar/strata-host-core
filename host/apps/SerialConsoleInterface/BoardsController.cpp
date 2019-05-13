@@ -16,7 +16,7 @@ BoardsController::~BoardsController()
 
 void BoardsController::initialize()
 {
-    conn_handler_.setParent(this);
+    conn_handler_.setReceiver(this);
 
     if (platform_mgr_.Init()) {
         platform_mgr_.setPlatformHandler(&conn_handler_);
@@ -125,7 +125,7 @@ void BoardsController::notifyMessageFromConnection(const QString &connectionId, 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-BoardsController::ConnectionHandler::ConnectionHandler() : parent_(nullptr)
+BoardsController::ConnectionHandler::ConnectionHandler() : receiver_(nullptr)
 {
 }
 
@@ -137,9 +137,9 @@ BoardsController::ConnectionHandler::~ConnectionHandler()
     }
 }
 
-void BoardsController::ConnectionHandler::setParent(BoardsController *parent)
+void BoardsController::ConnectionHandler::setReceiver(BoardsController *receiver)
 {
-    parent_ = parent;
+    receiver_ = receiver;
 }
 
 void BoardsController::ConnectionHandler::onNewConnection(spyglass::PlatformConnection *connection)
@@ -161,7 +161,7 @@ void BoardsController::ConnectionHandler::onCloseConnection(spyglass::PlatformCo
         return;
     }
 
-    parent_->closeConnection(QString::fromStdString(connection->getName()));
+    receiver_->closeConnection(QString::fromStdString(connection->getName()));
 
     delete board;
 
@@ -188,12 +188,12 @@ void BoardsController::ConnectionHandler::onNotifyReadConnection(spyglass::Platf
         {
             case PlatformBoard::ProcessResult::eIgnored:
                 if (board->isPlatformConnected()) {
-                    parent_->notifyMessageFromConnection(connId, QString::fromStdString(message));
+                    receiver_->notifyMessageFromConnection(connId, QString::fromStdString(message));
                 }
                 break;
             case PlatformBoard::ProcessResult::eProcessed:
                 if (board->isPlatformConnected()) {
-                    parent_->newConnection(connection);
+                    receiver_->newConnection(connection);
                 }
                 break;
             case PlatformBoard::ProcessResult::eParseError:

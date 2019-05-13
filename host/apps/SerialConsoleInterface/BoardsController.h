@@ -44,7 +44,7 @@ private:
         ConnectionHandler();
         virtual ~ConnectionHandler();
 
-        void setParent(BoardsController* parent);
+        void setReceiver(BoardsController* receiver);
 
         virtual void onNewConnection(spyglass::PlatformConnection *connection);
         virtual void onCloseConnection(spyglass::PlatformConnection *connection);
@@ -54,7 +54,7 @@ private:
         spyglass::PlatformConnection* getConnection(const std::string& conn_id);
 
     private:
-        BoardsController* parent_;
+        BoardsController *receiver_;
 
         std::mutex connectionsLock_;
         std::map<spyglass::PlatformConnection*, PlatformBoard*> connections_;
