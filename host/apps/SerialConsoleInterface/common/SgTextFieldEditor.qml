@@ -8,6 +8,7 @@ SgBaseEditor {
     property string suggestionModelTextRole
     property string text
     property QtObject validator: null
+    property string placeholderText
 
     signal suggestionDelegateSelected(int index)
 
@@ -20,6 +21,7 @@ SgBaseEditor {
         suggestionListModel: root.suggestionListModel
         suggestionModelTextRole: root.suggestionModelTextRole
         validator: root.validator
+        placeholderText: root.placeholderText
 
         onSuggestionDelegateSelected: {
              root.suggestionDelegateSelected(index)

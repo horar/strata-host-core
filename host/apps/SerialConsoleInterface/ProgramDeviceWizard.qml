@@ -97,6 +97,7 @@ Item {
                             itemWidth: Math.floor(optionWrapper.width * 0.7)
                             enabled: manualButton.checked
                             inputValidation: true
+                            placeholderText: "Enter path..."
                             text: wizard.firmwarePath
                             onTextChanged: {
                                 wizard.firmwarePath = text
