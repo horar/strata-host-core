@@ -1,11 +1,13 @@
 #ifndef SCIMODEL_H
 #define SCIMODEL_H
 
+#include "BoardsController.h"
+
+#include <Flasher.h>
+#include <PlatformManager.h>
+
 #include <QObject>
 #include <QRunnable>
-#include <PlatformManager.h>
-#include "BoardsController.h"
-#include "Flasher.h"
 
 class ProgramDeviceTask : public QObject, public QRunnable
 {
