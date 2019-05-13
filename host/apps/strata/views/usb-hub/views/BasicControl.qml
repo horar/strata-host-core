@@ -1160,6 +1160,7 @@ Item {
                     portName:"Port 1"
                     portNumber:2
                     portConnected: false
+                    isDisplayportCapable: true
                     anchors.left: upstreamPort.right
                     anchors.leftMargin: 7
                     anchors.top:deviceBackground.top

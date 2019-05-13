@@ -244,6 +244,11 @@ Item {
         "volume":1       //value between 0 and 1
     }
 
+    property var port_is_displayport_sink_notificaton:{
+        "port":0,
+        "is_displayport_sink":false
+    }
+
     // --------------------------------------------------------------------------------------------
     //          Commands
     //--------------------------------------------------------------------------------------------
@@ -551,7 +556,7 @@ Item {
 
 
 
-
+/*
         // DEBUG - TODO: Faller - Remove before merging back to Dev
     Window {
         id: debug
@@ -675,7 +680,6 @@ Item {
             ')
             }
         }
-    }
-
+    */
 
 }

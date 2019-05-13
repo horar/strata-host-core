@@ -13,6 +13,7 @@ Rectangle {
     property int portNumber: 0
     property alias portName: portTitle.text
     property alias portSubtitle: portSubtitle.text
+    property alias isDisplayportCapable: advancedControls.isDisplayportCapable
 
     property alias outputVoltage: outputVoltageBox.value
     property alias maxPower: maxPowerBox.value

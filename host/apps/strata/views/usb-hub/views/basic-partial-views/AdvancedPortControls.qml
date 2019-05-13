@@ -6,6 +6,8 @@ import "qrc:/views/usb-pd-multiport/sgwidgets"
 Item {
     id:advanceControlsView
 
+    property bool isDisplayportCapable: false
+
     function transitionToAdvancedView(){
         //set the opacity of the view to be seen, but set the opacity of the parts to 0
         advanceControlsView.opacity = 1;
@@ -19,6 +21,8 @@ Item {
         graphSelector.opacity = 0;
         sourceCapabilitiesText.opacity = 0;
         sourceCapabilitiesButtonStrip.opacity = 0;
+        displayportText.opacity = 0;
+        displayportIndicator.opacity = 0;
 
         advancedPortControlsBuildIn.start()
     }
@@ -51,7 +55,7 @@ Item {
         }
         PropertyAnimation {
             id: fadeInSourceCapibilitiesSection
-            targets: [sourceCapabilitiesText,sourceCapabilitiesButtonStrip]
+            targets: [sourceCapabilitiesText,sourceCapabilitiesButtonStrip,displayportText, displayportIndicator]
             property: "opacity"
             to: 1
             duration: advancedControlBuildInTime
@@ -64,7 +68,7 @@ Item {
     }
 
     function transitionToBasicView(){
-        //set the opacity of the view to be seen, but set the opacity of the parts to 0
+        //set the opacity of the view to be transparent, and set the opacity of the parts to 0
         advanceControlsView.opacity = 0;
         topDivider.opacity = 0;
         maxOutputPower.opacity = 0;
@@ -82,6 +86,8 @@ Item {
         capabilitiesDivider.opacity = 0;
         sourceCapabilitiesText.opacity = 0;
         sourceCapabilitiesButtonStrip.opacity = 0;
+        displayportText.opacity = 0;
+        displayportIndicator.opacity = 0;
 
         //do we want a build-out here?
         //advancedPortControlsBuildIn.start()
@@ -604,6 +610,53 @@ Item {
                 checkable: false
             }
         }
+    } //source capabilities segmented button strip
+
+
+    //some platformInterface property will govern if displayport is shown
+    property var isDisplayPortSink: platformInterface.port_is_displayport_sink_notificaton
+    onIsDisplayPortSinkChanged:{
+        if (platformInterface.port_is_displayport_sink_notificaton.port === portNumber){
+            displayportIndicator.checked = platformInterface.port_is_displayport_sink_notificaton.is_displayport_sink;
+        }
     }
+
+    Text{
+        id:displayportText
+        text:"DISPLAY PORT"
+        font.bold:true
+        visible: root.isDisplayportCapable
+        anchors {
+            left: advanceControlsView.left
+            leftMargin: 10
+            //top: sourceCapabilitiesButtonStrip.bottom
+            top: sourceCapabilitiesText.bottom
+            topMargin: 55
+        }
+    }
+
+    RadioButton {
+        id: displayportIndicator
+        height:15
+        width:15
+        visible:root.isDisplayportCapable
+        autoExclusive : false
+        checked:false
+        anchors{
+            right: advanceControlsView.right
+            rightMargin: 5
+            verticalCenter: displayportText.verticalCenter
+        }
+
+        indicator: Rectangle{
+            height:15
+            width:15
+            radius: 7
+            color: displayportIndicator.checked ? "green": "white"
+            border.color: displayportIndicator.checked ? "black": "grey"
+        }
+
+    }
+
 
 }
