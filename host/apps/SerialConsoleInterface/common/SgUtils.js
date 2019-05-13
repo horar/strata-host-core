@@ -47,6 +47,8 @@ function showMessageDialog(parent, type, title, text, standardButtons, callbackA
     }
 
     dialog.open()
+
+    return dialog
 }
 
 function centreObject(object, parent) {

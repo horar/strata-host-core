@@ -237,6 +237,7 @@ Item {
             property int verticalSpacing: 8
             property int processingStatus: ProgramDeviceWizard.NoDevice
             property string flashProgressNotification
+            property variant warningDialog: null
 
             hasBack: processingStatus !== ProgramDeviceWizard.ProgrammigDevice
 
@@ -281,6 +282,10 @@ Item {
             }
 
             function tryProgramDevice() {
+                if (warningDialog !== null) {
+                    warningDialog.reject()
+                }
+
                 if (processingStatus === ProgramDeviceWizard.NoDevice) {
                     if (sciModel.boardController.connectionIds.length === 1) {
                         var connectionInfo = sciModel.boardController.getConnectionInfo(sciModel.boardController.connectionIds[0])
@@ -291,7 +296,7 @@ Item {
                             msg += "\n"
                             msg += "Do you want to program it anyway ?"
 
-                            SgUtils.showMessageDialog(
+                            warningDialog =SgUtils.showMessageDialog(
                                         processPage,
                                         Common.SgMessageDialog.Warning,
                                         "Device already with firmware",
