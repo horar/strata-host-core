@@ -69,7 +69,7 @@ void BoardsController::reconnect(const QString &connectionId)
         return;
     }
 
-    removeConnection(connectionId);
+    closeConnection(connectionId);
 
     board->sendInitialMsg();
 }
@@ -102,7 +102,7 @@ void BoardsController::newConnection(spyglass::PlatformConnection* connection)
     emit connectedBoard(connectionId);
 }
 
-void BoardsController::removeConnection(const QString &connectionId)
+void BoardsController::closeConnection(const QString &connectionId)
 {
     int ret = connectionIds_.removeAll(connectionId);
     emit connectionIdsChanged();
@@ -158,7 +158,7 @@ void BoardsController::ConnectionHandler::onCloseConnection(spyglass::PlatformCo
         return;
     }
 
-    parent_->removeConnection(QString::fromStdString(connection->getName()));
+    parent_->closeConnection(QString::fromStdString(connection->getName()));
 
     delete board;
 

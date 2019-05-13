@@ -28,7 +28,7 @@ public:
 
     //callbacks from ConnectionHandler
     void newConnection(spyglass::PlatformConnection *connection);
-    void removeConnection(const QString &connectionId);
+    void closeConnection(const QString &connectionId);
     void notifyMessageFromConnection(const QString &connectionId, const QString &message);
 
 signals:
