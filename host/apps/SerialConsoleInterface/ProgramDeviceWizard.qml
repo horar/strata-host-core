@@ -291,7 +291,8 @@ Item {
                         var connectionInfo = sciModel.boardController.getConnectionInfo(sciModel.boardController.connectionIds[0])
 
                         if (connectionInfo.applicationVersion.length > 0) {
-                            var msg = "Connected device already has a firmware " + connectionInfo.verboseName + " of version " + connectionInfo.applicationVersion
+                            var msg = "Connected device already has a firmware " + connectionInfo.verboseName
+                            msg += " of version " + connectionInfo.applicationVersion
                             msg += "\n"
                             msg += "\n"
                             msg += "Do you want to program it anyway ?"
