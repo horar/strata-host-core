@@ -94,12 +94,12 @@ PlatformBoard::ProcessResult PlatformBoard::parseInitialMsg(const std::string& m
             return ProcessResult::eIgnored;
         }
 
-        if (!doc.HasMember("payload")) {
+        if (doc.HasMember("payload") == false) {
             return ProcessResult::eValidationError;
         }
 
         rapidjson::Value& doc_payload = doc["payload"];
-        if (!doc_payload.HasMember("return_value")) {
+        if (doc_payload.HasMember("return_value") == false) {
             return ProcessResult::eValidationError;
         }
 
@@ -114,7 +114,8 @@ PlatformBoard::ProcessResult PlatformBoard::parseInitialMsg(const std::string& m
     {
         wasNotification = true;
         rapidjson::Value& doc_notify = firstIt->value;
-        if (!doc_notify.HasMember("value") || !doc_notify.HasMember("payload") ) {
+        if (doc_notify.HasMember("value") == false
+                || doc_notify.HasMember("payload") == false) {
             return ProcessResult::eValidationError;  //Malformed notification
         }
 
@@ -122,7 +123,8 @@ PlatformBoard::ProcessResult PlatformBoard::parseInitialMsg(const std::string& m
         rapidjson::Value& notify_payload = doc_notify["payload"];
 
         if (notify_value == "get_firmware_info") {
-            if (!notify_payload.HasMember("bootloader") || !notify_payload.HasMember("application")) {
+            if (notify_payload.HasMember("bootloader") == false
+                    || notify_payload.HasMember("application") == false) {
                 return ProcessResult::eValidationError;
             }
 
@@ -149,7 +151,8 @@ PlatformBoard::ProcessResult PlatformBoard::parseInitialMsg(const std::string& m
                 nameIdentifier = "name";
             }
 
-            if (!notify_payload.HasMember("platform_id") || !notify_payload.HasMember(nameIdentifier)) {
+            if (notify_payload.HasMember("platform_id") == false
+                    || notify_payload.HasMember(nameIdentifier) == false) {
                 return ProcessResult::eValidationError;
             }
 
