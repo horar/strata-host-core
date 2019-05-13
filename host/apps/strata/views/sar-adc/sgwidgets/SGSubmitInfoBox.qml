@@ -134,6 +134,7 @@ Rectangle {
                 leftMargin: text === "" ? 0 : 5
                 verticalCenter: infoContainer.verticalCenter
             }
+            font.bold: true
             visible: text !== ""
             color: root.textColor
         }

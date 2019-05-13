@@ -458,6 +458,7 @@ Item {
                     height : parent.height/7
                     color: "transparent"
                     anchors.top: gaugeContainer.bottom
+                    anchors.topMargin: 5
                     SGLabelledInfoBox {
                         id: digitalPowerConsumption
                         label: "Digital Power \n Consumption"
