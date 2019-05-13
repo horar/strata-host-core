@@ -17,6 +17,7 @@ add_executable(${PROJECT_NAME}
     SciModel.cpp
     BoardsController.cpp
     PlatformBoard.cpp
+    ProgramDeviceTask.cpp
     qml.qrc
     images/images.qrc
 )

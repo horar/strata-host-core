@@ -1,40 +1,15 @@
 #include "SciModel.h"
-#include <PlatformConnection.h>
 #include "PlatformBoard.h"
+#include "ProgramDeviceTask.h"
+
+#include <PlatformConnection.h>
 
 #include <QDebug>
 #include <QThreadPool>
 #include <QFileInfo>
 #include <QUrl>
 
-ProgramDeviceTask::ProgramDeviceTask(spyglass::PlatformConnection *connection, const QString &firmwarePath)
-    : connection_(connection), firmwarePath_(firmwarePath)
-{
-}
 
-void ProgramDeviceTask::run()
-{
-    if (connection_ == nullptr) {
-        emit taskDone(connection_, false);
-        return;
-    }
-
-    Flasher flasher(connection_, firmwarePath_.toStdString());
-
-    emit notify(QString::fromStdString(connection_->getName()), "Initializing bootloader");
-
-    if (flasher.initializeBootloader()) {
-        emit notify(QString::fromStdString(connection_->getName()), "Programming");
-        if (flasher.flash(true)) {
-            emit taskDone(connection_, true);
-            return;
-        }
-    } else {
-        emit notify(QString::fromStdString(connection_->getName()), "Initializing of bootloader failed");
-    }
-
-    emit taskDone(connection_, false);
-}
 
 SciModel::SciModel(QObject *parent)
     : QObject(parent)
