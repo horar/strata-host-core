@@ -11,6 +11,7 @@ class PlatformBoard;
 class BoardsController : public QObject
 {
     Q_OBJECT
+    Q_DISABLE_COPY(BoardsController)
 
     Q_PROPERTY(QStringList connectionIds READ connectionIds NOTIFY connectionIdsChanged)
 
@@ -61,8 +62,6 @@ private:
     };
 
 private:
-    Q_DISABLE_COPY(BoardsController)
-
     spyglass::PlatformManager platform_mgr_;
     ConnectionHandler conn_handler_;
     QStringList connectionIds_;

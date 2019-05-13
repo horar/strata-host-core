@@ -10,6 +10,7 @@
 class SciModel : public QObject
 {
     Q_OBJECT
+    Q_DISABLE_COPY(SciModel)
 
     Q_PROPERTY(BoardsController* boardController READ boardController CONSTANT)
 
@@ -31,8 +32,6 @@ private slots:
     void programDeviceDoneHandler(spyglass::PlatformConnection *connection, bool status);
 
 private:
-    Q_DISABLE_COPY(SciModel)
-
     BoardsController boardController_;
 };
 
