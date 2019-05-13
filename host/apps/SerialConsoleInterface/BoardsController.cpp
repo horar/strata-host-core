@@ -18,10 +18,13 @@ void BoardsController::initialize()
 {
     conn_handler_.setParent(this);
 
-    platform_mgr_.Init();
-    platform_mgr_.setPlatformHandler(&conn_handler_);
-
-    platform_mgr_.StartLoop();
+    if (platform_mgr_.Init()) {
+        platform_mgr_.setPlatformHandler(&conn_handler_);
+        platform_mgr_.StartLoop();
+    } else {
+        //TODO: notify user
+        qDebug() << "BoardsController::BoardsController() Initialization of platform manager failed.";
+    }
 }
 
 void BoardsController::sendCommand(QString connection_id, QString message)
