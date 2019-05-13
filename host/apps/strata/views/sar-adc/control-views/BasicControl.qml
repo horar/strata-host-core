@@ -257,7 +257,7 @@ Item {
                             id: dvsButtonContainer
                             // Optional configuration:
                             //fontSize: (parent.width+parent.height)/32
-                            label: "<b> ADC Digital Supply DVDD:<\b>" // Default: "" (will not appear if not entered)
+                            label: "<b> ADC Digital Supply DVDD: <\b>" // Default: "" (will not appear if not entered)
                             labelLeft: true         // Default: true
                             textColor: "white"      // Default: "#000000"  (black)
                             radioColor: "black"     // Default: "#000000"  (black)
@@ -285,7 +285,7 @@ Item {
                             id: avddButtonContainer
                             // Optional configuration:
                             //fontSize: (parent.width+parent.height)/32
-                            label: "<b> ADC Analog Supply AVDD :<\b>" // Default: "" (will not appear if not entered)
+                            label: "<b> ADC Analog Supply AVDD: <\b>" // Default: "" (will not appear if not entered)
                             labelLeft: true         // Default: true
                             textColor: "white"      // Default: "#000000"  (black)
                             radioColor: "black"     // Default: "#000000"  (black)
@@ -482,7 +482,7 @@ Item {
                     SGLabelledInfoBox {
                         id: analogPowerConsumption
                         label: "Analog Power \n Consumption"
-                        info: "50"
+                        info: "100"
                         unit: "µW"
                         anchors.centerIn: parent
                         infoBoxWidth: parent.width/3

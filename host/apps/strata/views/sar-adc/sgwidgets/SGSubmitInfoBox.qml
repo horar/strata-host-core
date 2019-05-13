@@ -82,16 +82,19 @@ Rectangle {
                 anchors {
                     right: infoContainer.right
                     verticalCenter: infoContainer.verticalCenter
+                    horizontalCenter: infoContainer.horizontalCenter
                     left: infoContainer.left
                 }
                 text: ""
+
                 selectByMouse: true
                 readOnly: false
                 font {
                     family: digital.name
-                    pixelSize: infoContainer.height
+                    pixelSize: infoContainer.height - 7
                     bold: true
                 }
+
                 renderType: Text.NativeRendering
                 horizontalAlignment: leftJustify ? TextInput.AlignLeft : TextInput.AlignRight
                 onAccepted: root.applied(infoText.text)

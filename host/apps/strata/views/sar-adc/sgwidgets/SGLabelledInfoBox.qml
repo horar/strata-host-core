@@ -64,7 +64,7 @@ Item{
             color: infoTextColor
             selectByMouse: true
             readOnly: true
-            font.pixelSize:infoContainer.height// Scale the gauge font based on what the largest or smallest number that might be displayed
+            font.pixelSize:infoContainer.height - 7
             renderType: Text.NativeRendering
             font.family: digital.name
 
