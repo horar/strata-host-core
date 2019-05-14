@@ -634,8 +634,8 @@ Item {
     //some platformInterface property will govern if displayport is shown
     property var isDisplayPortSink: platformInterface.port_is_displayport_sink_notificaton
     onIsDisplayPortSinkChanged:{
-        if (platformInterface.port_is_displayport_sink_notificaton.port === portNumber){
-            displayportIndicator.checked = platformInterface.port_is_displayport_sink_notificaton.is_displayport_sink;
+        if (platformInterface.port_is_displayport_sink_notification.port === portNumber){
+            displayportIndicator.checked = platformInterface.port_is_displayport_sink_notification.is_displayport_sink;
         }
     }
 

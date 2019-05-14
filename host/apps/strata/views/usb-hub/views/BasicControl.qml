@@ -1,8 +1,8 @@
 import QtQuick 2.9
 import QtGraphicalEffects 1.0
 import QtQuick.Controls 2.3
-import "qrc:/views/usb-hub/sgwidgets"
-import "qrc:/views/usb-hub/views/basic-partial-views"
+import "../sgwidgets"
+import "../views/basic-partial-views"
 
 Item {
     id: root

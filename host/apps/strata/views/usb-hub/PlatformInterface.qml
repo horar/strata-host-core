@@ -121,36 +121,14 @@ Item {
 
     //consider the values held by this property to be the master ones, which will be current when needed for calling
     //the API to set the input temperature foldback
-    property var foldback_temperature_limiting_event:{
-            "port":0,
+    property var temperature_foldback_notification:{
             "current_temperature":0,
             "foldback_maximum_temperature":200,
-            "foldback_maximum_temperature_power":15,
+            "foldback_power_reduction_percentage":15,
             "temperature_foldback_enabled":true,
             "temperature_foldback_active":true,
-            "maximum_power":0
+            "temperature_hysteresis":0              //in °C
     }
-
-    property var foldback_temperature_limiting_refresh:{
-            "port":0,
-            "current_temperature":0,
-            "foldback_maximum_temperature":200,
-            "foldback_maximum_temperature_power":15,
-            "temperature_foldback_enabled":true,
-            "temperature_foldback_active":true,
-            "maximum_power":0
-    }
-    //keep the refresh and event notification properties in synch
-//    onFoldback_temperature_limiting_refreshChanged: {
-//        //update the corresponding variables
-//        foldback_temperature_limiting_event.port = foldback_input_voltage_limiting_refresh.port;
-//        foldback_temperature_limiting_event.current_temperature = foldback_temperature_limiting_refresh.current_temperature;
-//        foldback_temperature_limiting_event.foldback_maximum_temperature = foldback_temperature_limiting_refresh.foldback_maximum_temperature;
-//        foldback_temperature_limiting_event.foldback_maximum_temperature_power = foldback_temperature_limiting_refresh.foldback_maximum_temperature_power;
-//        foldback_temperature_limiting_event.temperature_foldback_enabled = foldback_temperature_limiting_refresh.temperature_foldback_enabled;
-//        foldback_temperature_limiting_event.temperature_foldback_active = foldback_temperature_limiting_refresh.temperature_foldback_active;
-//        foldback_temperature_limiting_event.maximum_power = foldback_temperature_limiting_refresh.maximum_power;
-//    }
 
     property var usb_pd_maximum_power:{
         "port":0,                            // up to maximum number of ports
@@ -244,7 +222,7 @@ Item {
         "volume":1       //value between 0 and 1
     }
 
-    property var port_is_displayport_sink_notificaton:{
+    property var port_is_displayport_sink_notification:{
         "port":0,
         "is_displayport_sink":false
     }
@@ -362,17 +340,19 @@ Item {
     })
 
     property var  set_temperature_foldback:({
-                  "cmd":"request_temperature_foldback",
+                  "cmd":"set_temperature_foldback",
                   "payload":{
                         "enabled":false,  // or true
                         "temperature":0,    // in °C
-                        "power":45      // in Watts
+                        "power_reduction":45,      // in percent
+                        "temperature_hysteresis":0              //in °C
                        },
-                   update: function(enabled,temperature,watts){
+                   update: function(enabled,temperature,percentage,hysterisis){
                        //update the variables for this action
-//                       foldback_temperature_limiting_event.foldback_maximum_temperature = temperature;
-//                       foldback_temperature_limiting_event.foldback_maximum_temperature_power = watts;
-//                       foldback_temperature_limiting_event.temperature_foldback_enabled = enabled;
+                       request_temperature_foldback.foldback_maximum_temperature = temperature;
+                       request_temperature_foldback.foldback_maximum_temperature_power = watts;
+                       request_temperature_foldback.temperature_foldback_enabled = enabled;
+                       request_temperature_foldback.temperature_hysteresis = hysterisis;
                         this.set(enabled,temperature,watts)
                         CorePlatformInterface.send(this)
                         },
