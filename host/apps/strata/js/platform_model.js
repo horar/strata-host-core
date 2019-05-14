@@ -176,7 +176,7 @@ var platforms = { "list":
                 "documents": true,
                 "control": true
             },
-            "class_id": "214",
+            "class_id": "206",
             "connection": "view"
         },
 
