@@ -32,6 +32,9 @@ const char* g_user_name = "username";
 const char* g_password = "password";
 const string g_delimiter = "/";
 const string g_download_folder = "/PDF";
+// [prasanth] This thread count has been set to 3 since most of
+// the released platforms have a maximum of three files that are available to download
+const unsigned int g_download_thread_count = 3;
 
 // util functions that are required
 // @f GetCurrentWorkingDir
@@ -151,8 +154,7 @@ void HostControllerService::handleViewDocuments(Value& view_documents,const stri
         file_path.append(url);
         string file_path_to_download = file_path;
         if(flag == "replication") {
-            SGwget downloader;
-            if(!downloader.download(file_url,file_path_to_download,"overwrite")) {
+            if(!downloader_->download(file_url,file_path_to_download,"overwrite",DownloadMode::SYNC)) {
                 return;
             }
         }
@@ -296,6 +298,11 @@ void HostControllerService::sendDocumentstoUI(const std::string& json_body)
     handleDownloadDocuments(download_documents);
 }
 
+void HostControllerService::onDownloadCallback(bool download_status,const std::string& file_name) {
+    cout <<"download was "<<download_status<<" for file "<< file_name <<endl;
+    // [prasanth] needs an UI way to tell the user regarding the download process
+}
+
 /******************************************************************************/
 /*                                core functions                              */
 /******************************************************************************/
@@ -315,7 +322,7 @@ void HostControllerService::sendDocumentstoUI(const std::string& json_body)
 HostControllerService::HostControllerService(const string& configuration_file)
 {
     // config file parsing
-    configuration_ = new ParseConfig(configuration_file);
+    configuration_ = unique_ptr<ParseConfig>(new ParseConfig(configuration_file));
     cout<<"************************************************************\n";
     cout<<"CONFIG: \n"<< *configuration_ <<std::endl;
     if(PRINT_DEBUG > 0) {
@@ -327,12 +334,13 @@ HostControllerService::HostControllerService(const string& configuration_file)
     cout<<"************************************************************\n";
     //[TODO] [prasanth] : rename the terms and variables in config file and
     // parseconfig.cpp for easy understanding
+    socket_context_ = nullptr;
     hcs_server_address_ = configuration_->GetSubscriberAddress();
     hcs_remote_address_ = configuration_->GetRemoteAddress();
     // remote monitor socket address retrieval
     remote_discovery_monitor_ = configuration_->GetDiscoveryMonitorSubscriber();
     // creating discovery service object
-    discovery_service_ = new DiscoveryService(configuration_->GetDiscoveryServerID());
+    discovery_service_ = unique_ptr<DiscoveryService>(new DiscoveryService(configuration_->GetDiscoveryServerID()));
     // initializing the connectors
     client_connector_ = ConnectorFactory::getConnector("router");
     serial_connector_ = ConnectorFactory::getConnector("platform");
@@ -340,9 +348,18 @@ HostControllerService::HostControllerService(const string& configuration_file)
     // this connecotr is used for activity monitor from discovery service
     remote_activity_connector_ = ConnectorFactory::getConnector("subscriber");
     // SGCouchbase integration
-    sgcouchbase_ = new SGCouchbaseLiteWrapper(g_database,configuration_->GetGatewaySync());
+    sgcouchbase_ = std::unique_ptr<SGCouchbaseLiteWrapper>(new SGCouchbaseLiteWrapper(g_database,configuration_->GetGatewaySync()));
     sgcouchbase_->setAuthentication(g_user_name,g_password);
     sgcouchbase_->setValidationListener(bind(&HostControllerService::onValidate,this,placeholders::_1,placeholders::_2));
+    downloader_ = unique_ptr<SGwget>(new SGwget());
+}
+
+HostControllerService::~HostControllerService()
+{
+    delete remote_activity_connector_;
+    delete remote_connector_;
+    delete serial_connector_;
+    delete client_connector_;
 }
 
 // @f init
@@ -359,8 +376,6 @@ HostControllerService::HostControllerService(const string& configuration_file)
 //
 HcsError HostControllerService::init()
 {
-    // zmq context creation
-    socket_context_ = new zmq::context_t;
     // opening the client socket to connect with UI
     client_connector_->open(hcs_server_address_);
 
@@ -376,6 +391,10 @@ HcsError HostControllerService::init()
         // [prasanth]: need an UI way to tell the user that database creation failed
         PDEBUG(PRINT_DEBUG,"Databse open failed\n");
     }
+    if(!downloader_->setThreadCount(g_download_thread_count)) {
+        PDEBUG(PRINT_DEBUG,"Download thread count was not set\n");
+    }
+    downloader_->setAsyncDownloadListner(bind(&HostControllerService::onDownloadCallback,this,placeholders::_1,placeholders::_2));
     setEventLoop();
     // [TODO] [prasanth] : This function run is coded in this, since the libevent dynamic
     //addtion of event is not implemented successfully in hcs
@@ -422,13 +441,7 @@ HcsError HostControllerService::setEventLoop()
     sendMessageToUI(platformList);
 
     PDEBUG(PRINT_DEBUG,"Starting the event");
-    // creating a periodic event for test case
-    event_loop_base_ = event_base_new();
     event_init();
-    if (!event_loop_base_) {
-        PDEBUG(PRINT_DEBUG,"Could not create event base");
-        return HcsError::EVENT_BASE_FAILURE;
-    }
     timeval seconds = {1, 0};
     event_set(&periodic_event_,-1,EV_TIMEOUT
                         | EV_PERSIST, HostControllerService::testCallback,this);
@@ -958,18 +971,11 @@ void HostControllerService::parseHCSCommands(const string &hcs_message)
             file_path.append(g_delimiter);
             file_path.append(array[i]["name"].GetString());
             cout << "file path from ui is "<<file_path<<endl;
-            SGwget downloader;
             string file_url = array[i]["file"].GetString();
             file_url = configuration_->GetDatabaseServer() + file_url;
             cout << "download file url is "<<file_url<<endl;
-            // [TODO] The following download is a blocking function. The main thread will
-            // be waiting for this function to return and this function may take more time (slow internet, large file,..)
-            // JIRA SCT-289 has been created to take care of this issue
-            if(downloader.download(file_url,file_path,"non-overwrite")) {
-                cout<< "Download success\n";
-            }
-            else {
-                cout << "Download failed\n";
+            if(!downloader_->download(file_url,file_path,"non-overwrite",DownloadMode::ASYNC)) {
+                cout << "Failed to add the task to download queue. Check the SGwget object state "<<endl;
             }
         }
     }
