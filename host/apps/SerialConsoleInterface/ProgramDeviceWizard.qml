@@ -459,7 +459,6 @@ Item {
             wizard.firmwarePath = SgUtilsCpp.urlToPath(dialog.fileUrl)
             dialog.destroy()})
 
-
         dialog.rejected.connect(function() {
             dialog.destroy()
         })
