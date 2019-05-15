@@ -349,10 +349,10 @@ Item {
                        },
                    update: function(enabled,temperature,percentage,hysterisis){
                        //update the variables for this action
-                       request_temperature_foldback.foldback_maximum_temperature = temperature;
-                       request_temperature_foldback.foldback_maximum_temperature_power = watts;
-                       request_temperature_foldback.temperature_foldback_enabled = enabled;
-                       request_temperature_foldback.temperature_hysteresis = hysterisis;
+                       set_temperature_foldback.foldback_maximum_temperature = temperature;
+                       set_temperature_foldback.foldback_maximum_temperature_power = watts;
+                       set_temperature_foldback.temperature_foldback_enabled = enabled;
+                       set_temperature_foldback.temperature_hysteresis = hysterisis;
                         this.set(enabled,temperature,watts)
                         CorePlatformInterface.send(this)
                         },
