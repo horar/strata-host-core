@@ -3,6 +3,7 @@
 #include "PlatformBoard.h"
 
 #include <PlatformConnection.h>
+#include <QDebug>
 
 BoardsController::BoardsController(QObject *parent) : QObject(parent), conn_handler_()
 {
@@ -15,12 +16,15 @@ BoardsController::~BoardsController()
 
 void BoardsController::initialize()
 {
-    conn_handler_.setParent(this);
+    conn_handler_.setReceiver(this);
 
-    platform_mgr_.Init();
-    platform_mgr_.setPlatformHandler(&conn_handler_);
-
-    platform_mgr_.StartLoop();
+    if (platform_mgr_.Init()) {
+        platform_mgr_.setPlatformHandler(&conn_handler_);
+        platform_mgr_.StartLoop();
+    } else {
+        //TODO: notify user
+        qDebug() << "BoardsController::BoardsController() Initialization of platform manager failed.";
+    }
 }
 
 void BoardsController::sendCommand(QString connection_id, QString message)
@@ -33,25 +37,95 @@ void BoardsController::sendCommand(QString connection_id, QString message)
     conn->addMessage(message.toStdString() );
 }
 
-void BoardsController::newConnection(const std::string& connection_id, const std::string& verbose_name)
+QVariantMap BoardsController::getConnectionInfo(const QString &connectionId)
 {
-    emit connectedBoard(QString::fromStdString(connection_id), QString::fromStdString(verbose_name));
+    QVariantMap result;
+
+    spyglass::PlatformConnection* connection = conn_handler_.getConnection(connectionId.toStdString());
+    if (connection == nullptr) {
+        return result;
+    }
+
+    PlatformBoard* board = conn_handler_.getBoard(connection);
+    if (board == nullptr) {
+        return result;
+    }
+
+    result.insert(QStringLiteral("connectionId"), connectionId);
+    result.insert(QStringLiteral("platformId"), QString::fromStdString(board->getPlatformId()));
+    result.insert(QStringLiteral("verboseName"), QString::fromStdString(board->getVerboseName()));
+    result.insert(QStringLiteral("bootloaderVersion"), QString::fromStdString(board->getBootloaderVersion()));
+    result.insert(QStringLiteral("applicationVersion"), QString::fromStdString(board->getApplicationVersion()));
+
+    return result;
 }
 
-void BoardsController::removeConnection(const std::string& connection_id)
+void BoardsController::reconnect(const QString &connectionId)
 {
-    emit disconnectedBoard(QString::fromStdString(connection_id));
+    spyglass::PlatformConnection* connection = conn_handler_.getConnection(connectionId.toStdString());
+    if (connection == nullptr) {
+        return;
+    }
+
+    PlatformBoard* board = conn_handler_.getBoard(connection);
+    if (board == nullptr) {
+        return;
+    }
+
+    closeConnection(connectionId);
+
+    board->sendInitialMsg();
 }
 
-void BoardsController::notifyMessageFromConnection(const std::string& connection_id, const std::string& message)
+QStringList BoardsController::connectionIds() const
 {
-    emit notifyBoardMessage(QString::fromStdString(connection_id), QString::fromStdString(message) );
+    return connectionIds_;
+}
+
+spyglass::PlatformConnection *BoardsController::getConnection(const QString &connectionId)
+{
+    return conn_handler_.getConnection(connectionId.toStdString());
+}
+
+void BoardsController::newConnection(spyglass::PlatformConnection* connection)
+{
+    if (connection == nullptr) {
+        return;
+    }
+
+    QString connectionId = QString::fromStdString(connection->getName());
+
+    if (connectionIds_.indexOf(connectionId) < 0) {
+        connectionIds_.append(connectionId);
+        emit connectionIdsChanged();
+    } else {
+        qDebug() << "ERROR: this board is already connected" << connectionId;
+    }
+
+    emit connectedBoard(connectionId);
+}
+
+void BoardsController::closeConnection(const QString &connectionId)
+{
+    int ret = connectionIds_.removeAll(connectionId);
+    emit connectionIdsChanged();
+
+    if (ret != 1) {
+        qDebug() << "ERROR: suspicious number of boards removed" << connectionId << ret;
+    }
+
+    emit disconnectedBoard(connectionId);
+}
+
+void BoardsController::notifyMessageFromConnection(const QString &connectionId, const QString &message)
+{
+    emit notifyBoardMessage(connectionId, message);
 }
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-BoardsController::ConnectionHandler::ConnectionHandler() : parent_(nullptr)
+BoardsController::ConnectionHandler::ConnectionHandler() : receiver_(nullptr)
 {
 }
 
@@ -63,9 +137,9 @@ BoardsController::ConnectionHandler::~ConnectionHandler()
     }
 }
 
-void BoardsController::ConnectionHandler::setParent(BoardsController *parent)
+void BoardsController::ConnectionHandler::setReceiver(BoardsController *receiver)
 {
-    parent_ = parent;
+    receiver_ = receiver;
 }
 
 void BoardsController::ConnectionHandler::onNewConnection(spyglass::PlatformConnectionShPtr connection)
@@ -87,7 +161,7 @@ void BoardsController::ConnectionHandler::onCloseConnection(spyglass::PlatformCo
         return;
     }
 
-    parent_->removeConnection( connection->getName() );
+    receiver_->closeConnection(QString::fromStdString(connection->getName()));
 
     delete board;
 
@@ -104,20 +178,22 @@ void BoardsController::ConnectionHandler::onNotifyReadConnection(spyglass::Platf
         return;
     }
 
-    std::string conn_id = connection->getName();
+    QString connId = QString::fromStdString(connection->getName());
 
     std::string message;
-    while( connection->getMessage(message)) {
+    while (connection->getMessage(message)) {
 
         PlatformBoard::ProcessResult status = board->handleMessage(message);
         switch(status)
         {
             case PlatformBoard::ProcessResult::eIgnored:
-                parent_->notifyMessageFromConnection( conn_id, message );
+                if (board->isPlatformConnected()) {
+                    receiver_->notifyMessageFromConnection(connId, QString::fromStdString(message));
+                }
                 break;
             case PlatformBoard::ProcessResult::eProcessed:
-                if (board->isPlatformConnected() && false == board->getPlatformId().empty()) {
-                    parent_->newConnection(conn_id, board->getVerboseName() );
+                if (board->isPlatformConnected()) {
+                    receiver_->newConnection(connection);
                 }
                 break;
             case PlatformBoard::ProcessResult::eParseError:

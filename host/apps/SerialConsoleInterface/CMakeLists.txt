@@ -17,6 +17,7 @@ add_executable(${PROJECT_NAME}
     SciModel.cpp
     BoardsController.cpp
     PlatformBoard.cpp
+    ProgramDeviceTask.cpp
     qml.qrc
     images/images.qrc
 )
@@ -47,6 +48,7 @@ target_link_libraries(${PROJECT_NAME}
     Qt5::Core
     Qt5::Quick
     PlatformManager
+    flasher
 )
 
 set(PRODUCT_NAME_LONG "Serial Console Interface")

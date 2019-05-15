@@ -16,3 +16,6 @@
 [submodule "host/extern/spdlog"]
 	path = host/extern/spdlog
 	url = https://github.com/gabime/spdlog.git/
+[submodule "host/ext_libs/threadpool"]
+	path = host/ext_libs/threadpool
+	url = https://github.com/progschj/ThreadPool

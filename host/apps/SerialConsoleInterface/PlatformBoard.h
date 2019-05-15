@@ -19,11 +19,14 @@ public:
     ~PlatformBoard() = default;
 
     void sendInitialMsg();
+    void sendPlatformInfoMsg();
 
     ProcessResult handleMessage(const std::string& msg);
 
-    std::string getPlatformId() const { return platformId_; }
-    std::string getVerboseName() const { return verboseName_; }
+    std::string getPlatformId() const;
+    std::string getVerboseName() const;
+    std::string getBootloaderVersion() const;
+    std::string getApplicationVersion() const;
 
     bool isPlatformConnected() const { return (state_ == State::eConnected); }
 
@@ -33,12 +36,15 @@ private:
 private:
     enum class State {
         eInit = 0,
-        eSendInitialMsg,
+        eWaitingForFirmwareInfo,
+        eWaitingForPlatformInfo,
         eConnected,
     };
 
     std::string platformId_;
     std::string verboseName_;
+    std::string bootloaderVersion_;
+    std::string applicationVersion_;
 
     spyglass::PlatformConnectionShPtr connection_;
 
