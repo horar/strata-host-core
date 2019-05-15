@@ -245,7 +245,7 @@ Item {
             Connections {
                 target: sciModel.boardController
 
-                onConnectedBoard: {
+                onActiveBoard: {
                     if (processingStatus === ProgramDeviceWizard.ProgrammigSucceed
                             || processingStatus === ProgramDeviceWizard.ProgrammigFailed)
                     {
