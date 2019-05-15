@@ -111,10 +111,9 @@ PlatformConnectionShPtr PlatformManager::getConnection(const std::string& connec
     {
         std::lock_guard<std::mutex> lock(connectionMap_mutex_);
         auto find = openedPorts_.find(hash);
-        if (find == openedPorts_.end()) {
-            return nullptr;
+        if (find != openedPorts_.end()) {
+            conn = find->second;
         }
-        conn = find->second;
     }
 
     return conn;
