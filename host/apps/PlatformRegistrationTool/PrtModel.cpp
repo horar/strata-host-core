@@ -13,26 +13,28 @@ FlashTask::FlashTask(spyglass::PlatformConnectionShPtr connection, const QString
 
 void FlashTask::run()
 {
-    if(connection_ == nullptr) {
-        emit taskDone(connection_.get(), false);
+    Q_ASSERT(connection_ != nullptr);
+    if (connection_ == nullptr) {
         return;
     }
 
     Flasher flasher(connection_, firmwarePath_.toStdString());
 
-    emit notify(QString::fromStdString(connection_->getName()), "Initializing bootloader.\n");
+    QString connectionId = QString::fromStdString(connection_->getName());
+
+    emit notify(connectionId, "Initializing bootloader.\n");
 
     if (flasher.initializeBootloader()) {
-        emit notify(QString::fromStdString(connection_->getName()), "Flashing.\n");
+        emit notify(connectionId, "Flashing.\n");
         if (flasher.flash(true)) {
-            emit taskDone(connection_.get(), true);
+            emit taskDone(connectionId, true);
             return;
         }
     } else {
-        emit notify(QString::fromStdString(connection_->getName()), "Initializing of bootloader failed.\n");
+        emit notify(connectionId, "Initializing of bootloader failed.\n");
     }
 
-    emit taskDone(connection_.get(), false);
+    emit taskDone(connectionId, false);
 }
 
 PrtModel::PrtModel(QObject *parent)
@@ -64,9 +66,8 @@ void PrtModel::sendCommand(const QString &connectionId, const QString &cmd)
     connection->sendMessage(cmd.toStdString());
 }
 
-void PrtModel::flasherDoneHandler(spyglass::PlatformConnection *connection, bool status)
+void PrtModel::flasherDoneHandler(const QString& connectionId, bool status)
 {
-    QString connectionId = QString::fromStdString(connection->getName());
     emit flashTaskDone(connectionId, status);
 }
 
@@ -81,8 +82,8 @@ void PrtModel::flash(const QString &connectionId, const QString &firmwarePath)
     }
 
     FlashTask *task = new FlashTask(connection, firmwarePath);
-    connect(task, SIGNAL(taskDone(spyglass::PlatformConnection *, bool)),
-            this, SLOT(flasherDoneHandler(spyglass::PlatformConnection *, bool)));
+    connect(task, SIGNAL(taskDone(QString, bool)),
+            this, SLOT(flasherDoneHandler(QString, bool)));
 
     connect(task, SIGNAL(notify(QString, QString)),
             this, SIGNAL(notify(QString, QString)));

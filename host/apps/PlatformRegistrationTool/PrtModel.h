@@ -19,7 +19,7 @@ public:
     void run() override;
 
 signals:
-    void taskDone(spyglass::PlatformConnection *connector, bool status);
+    void taskDone(QString connectionId, bool status);
     void notify(QString connectionId, QString message);
 
 private:
@@ -70,7 +70,7 @@ signals:
     void flashTaskDone(QString connectionId, bool status);
 
 private slots:
-    void flasherDoneHandler(spyglass::PlatformConnection *connection, bool status);
+    void flasherDoneHandler(const QString& connectionId, bool status);
 
 private:
     Q_DISABLE_COPY(PrtModel)
