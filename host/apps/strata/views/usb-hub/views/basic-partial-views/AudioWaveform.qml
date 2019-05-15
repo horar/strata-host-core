@@ -44,7 +44,7 @@ Item {
         sample14Value = Math.random();
         sample15Value = Math.random();
         sample16Value = Math.random();
-        console.log("initial audio values are:",sample1Value,sample2Value,sample3Value,sample4Value,sample5Value,sample6Value,sample7Value,sample8Value,sample9Value,sample10Value,sample11Value,sample12Value,sample13Value,sample14Value,sample15Value,sample16Value)
+        //console.log("initial audio values are:",sample1Value,sample2Value,sample3Value,sample4Value,sample5Value,sample6Value,sample7Value,sample8Value,sample9Value,sample10Value,sample11Value,sample12Value,sample13Value,sample14Value,sample15Value,sample16Value)
     }
 
     Timer{

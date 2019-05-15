@@ -1,10 +1,12 @@
 import QtQuick 2.9
 import QtQuick.Controls 2.2
 import QtQuick.Layouts 1.3  //for gridLayout
-import "qrc:/views/usb-pd-multiport/sgwidgets"
+import "../../sgwidgets"
 
 Item {
     id:advanceControlsView
+
+    property bool isDisplayportCapable: false
 
     function transitionToAdvancedView(){
         //set the opacity of the view to be seen, but set the opacity of the parts to 0
@@ -19,6 +21,8 @@ Item {
         graphSelector.opacity = 0;
         sourceCapabilitiesText.opacity = 0;
         sourceCapabilitiesButtonStrip.opacity = 0;
+        displayportText.opacity = 0;
+        displayportIndicator.opacity = 0;
 
         advancedPortControlsBuildIn.start()
     }
@@ -51,7 +55,7 @@ Item {
         }
         PropertyAnimation {
             id: fadeInSourceCapibilitiesSection
-            targets: [sourceCapabilitiesText,sourceCapabilitiesButtonStrip]
+            targets: [sourceCapabilitiesText,sourceCapabilitiesButtonStrip,displayportText, displayportIndicator]
             property: "opacity"
             to: 1
             duration: advancedControlBuildInTime
@@ -64,7 +68,7 @@ Item {
     }
 
     function transitionToBasicView(){
-        //set the opacity of the view to be seen, but set the opacity of the parts to 0
+        //set the opacity of the view to be transparent, and set the opacity of the parts to 0
         advanceControlsView.opacity = 0;
         topDivider.opacity = 0;
         maxOutputPower.opacity = 0;
@@ -82,6 +86,8 @@ Item {
         capabilitiesDivider.opacity = 0;
         sourceCapabilitiesText.opacity = 0;
         sourceCapabilitiesButtonStrip.opacity = 0;
+        displayportText.opacity = 0;
+        displayportIndicator.opacity = 0;
 
         //do we want a build-out here?
         //advancedPortControlsBuildIn.start()
@@ -444,16 +450,16 @@ Item {
     SGSegmentedButtonStrip {
         id: sourceCapabilitiesButtonStrip
         anchors {
-            left: advanceControlsView.left
             top: sourceCapabilitiesText.bottom
             topMargin: 3
             verticalCenter: advanceControlsView.verticalCenter
+            horizontalCenter: advanceControlsView.horizontalCenter
         }
         textColor: "#666"
         activeTextColor: "white"
         radius: 4
         buttonHeight: 30
-        buttonImplicitWidth: 15
+        buttonImplicitWidth: 10
         hoverEnabled: false
 
         property var sourceCapabilities: platformInterface.usb_pd_advertised_voltages_notification.settings
@@ -554,26 +560,36 @@ Item {
             }
         }
 
+
+
         segmentedButtons: GridLayout {
             id:advertisedVoltageGridLayout
             columnSpacing: 2
+
+            property int sidePadding: 5
 
             SGSegmentedButton{
                 id: setting1
                 text: qsTr("5V\n3A")
                 checkable: false
+                leftPadding:sidePadding
+                rightPadding:sidePadding
             }
 
             SGSegmentedButton{
                 id: setting2
                 text: qsTr("7V\n3A")
                 checkable: false
+                leftPadding:sidePadding
+                rightPadding:sidePadding
             }
 
             SGSegmentedButton{
                 id:setting3
                 text: qsTr("8V\n3A")
                 checkable: false
+                leftPadding:sidePadding
+                rightPadding:sidePadding
             }
 
             SGSegmentedButton{
@@ -581,6 +597,8 @@ Item {
                 text: qsTr("9V\n3A")
                 //enabled: false
                 checkable: false
+                leftPadding:sidePadding
+                rightPadding:sidePadding
             }
 
             SGSegmentedButton{
@@ -588,6 +606,8 @@ Item {
                 text: qsTr("12V\n3A")
                 enabled: false
                 checkable: false
+                leftPadding:sidePadding
+                rightPadding:sidePadding
             }
 
             SGSegmentedButton{
@@ -595,6 +615,8 @@ Item {
                 text: qsTr("15V\n3A")
                 enabled: false
                 checkable: false
+                leftPadding:sidePadding
+                rightPadding:sidePadding
             }
 
             SGSegmentedButton{
@@ -602,8 +624,57 @@ Item {
                 text: qsTr("20V\n3A")
                 enabled: false
                 checkable: false
+                leftPadding:sidePadding
+                rightPadding:sidePadding
             }
         }
+    } //source capabilities segmented button strip
+
+
+    //some platformInterface property will govern if displayport is shown
+    property var isDisplayPortSink: platformInterface.port_is_displayport_sink_notificaton
+    onIsDisplayPortSinkChanged:{
+        if (platformInterface.port_is_displayport_sink_notification.port === portNumber){
+            displayportIndicator.checked = platformInterface.port_is_displayport_sink_notification.is_displayport_sink;
+        }
     }
+
+    Text{
+        id:displayportText
+        text:"DISPLAY PORT"
+        font.bold:true
+        visible: root.isDisplayportCapable
+        anchors {
+            left: advanceControlsView.left
+            leftMargin: 10
+            //top: sourceCapabilitiesButtonStrip.bottom
+            top: sourceCapabilitiesText.bottom
+            topMargin: 55
+        }
+    }
+
+    RadioButton {
+        id: displayportIndicator
+        height:15
+        width:15
+        visible:root.isDisplayportCapable
+        autoExclusive : false
+        checked:false
+        anchors{
+            right: advanceControlsView.right
+            rightMargin: 5
+            verticalCenter: displayportText.verticalCenter
+        }
+
+        indicator: Rectangle{
+            height:15
+            width:15
+            radius: 7
+            color: displayportIndicator.checked ? "green": "white"
+            border.color: displayportIndicator.checked ? "black": "grey"
+        }
+
+    }
+
 
 }
