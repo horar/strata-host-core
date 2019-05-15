@@ -347,16 +347,16 @@ Item {
                         "power_reduction":45,      // in percent
                         "temperature_hysteresis":0              //in °C
                        },
-                   update: function(enabled,temperature,percentage,hysterisis){
+                   update: function(enabled,temperature,percentage,hysteresis){
                        //update the variables for this action
-                        this.set(enabled,temperature,percentage,hysterisis)
+                        this.set(enabled,temperature,percentage,hysteresis)
                         CorePlatformInterface.send(this)
                         },
                    set: function(enabled,temperature,percentage,hysteresis){
                         this.payload.enabled = enabled;
                         this.payload.temperature = temperature;
                         this.payload.power_reduction = percentage;
-                        this.payload.temperature_hysterisis = hysterisis
+                        this.payload.temperature_hysteresis = hysteresis
                         },
                    send: function(){
                         CorePlatformInterface.send(this)
