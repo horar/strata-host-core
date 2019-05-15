@@ -8,11 +8,7 @@
 #include <rapidjson/stringbuffer.h>
 
 
-PlatformBoard::PlatformBoard(spyglass::PlatformConnection* connection) : connection_(connection), state_(State::eInit)
-{
-}
-
-PlatformBoard::~PlatformBoard()
+PlatformBoard::PlatformBoard(spyglass::PlatformConnectionShPtr connection) : connection_(connection), state_(State::eInit)
 {
 }
 

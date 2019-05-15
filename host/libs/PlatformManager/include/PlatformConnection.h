@@ -19,7 +19,9 @@ namespace spyglass {
     class EvCommEvent;
 #endif
 
-    class PlatformConnection {
+    const int iPortNotOpenErr = -10;    //special return value for waitForMessages()
+
+    class PlatformConnection final {
     public:
         PlatformConnection(PlatformManager *parent);
 
@@ -60,11 +62,13 @@ namespace spyglass {
         /**
          * Waits for messages for specified amount of time
          * @param timeout amount of time to wait
+         * @return negative number means error, positive numbers means number of bytes read
+         *         iPortNotOpenErr  means port is not open
          */
         int waitForMessages(unsigned int timeout);
 
         /**
-         * @return returns name of the connection
+         * @return returns name of the connection (after successful open)
          */
         std::string getName() const;
 
@@ -74,9 +78,20 @@ namespace spyglass {
         bool isReadable();
 
         /**
-         * Returns event for registration in Event dispatcher
+         * Creates and returns event for registration in Event dispatcher
+         */
+        EvEventBase* createEvent();
+
+        /**
+         * @return returns event.
          */
         EvEventBase* getEvent();
+
+        /**
+         * Deactivates and releases the event
+         * @return returns true when successeded otherwise false
+         */
+        bool releaseEvent();
 
         /**
          * Stops / Resumes listening on events from PlatformManager(EvEventMgr)
@@ -124,6 +139,7 @@ namespace spyglass {
     private:
         PlatformManager *parent_;
         std::unique_ptr<serial_port> port_;
+        std::string portName_;
 
 #if defined(__linux__) || defined(__APPLE__)
         std::unique_ptr<EvEvent> event_;
@@ -143,16 +159,18 @@ namespace spyglass {
 
     };
 
+    typedef std::shared_ptr<PlatformConnection> PlatformConnectionShPtr;
 
     /**
      * Helper class for pause/resume connection listening
      */
-    class PauseConnectionListenerGuard
+    class PauseConnectionListenerGuard final
     {
     public:
-        PauseConnectionListenerGuard(PlatformConnection* connection = nullptr) : connection_(connection) {
-            if (connection_) {
-                connection->stopListeningOnEvents(true);
+        PauseConnectionListenerGuard(PlatformConnectionShPtr connection) {
+            if (connection) {
+                connection_ = connection;
+                connection_->stopListeningOnEvents(true);
             }
         }
 
@@ -162,19 +180,19 @@ namespace spyglass {
             }
         }
 
-        void attach(PlatformConnection* connection) {
-            if (connection_ != nullptr) {
+        void attach(PlatformConnectionShPtr connection) {
+            if (connection_) {
                 connection_->stopListeningOnEvents(false);
             }
 
             connection_ = connection;
             if (connection_) {
-                connection->stopListeningOnEvents(true);
+                connection_->stopListeningOnEvents(true);
             }
         }
 
     private:
-        spyglass::PlatformConnection* connection_;
+        spyglass::PlatformConnectionShPtr connection_;
     };
 
 

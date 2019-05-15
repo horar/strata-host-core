@@ -7,14 +7,14 @@ class ProgramDeviceTask : public QObject, public QRunnable
 {
     Q_OBJECT
 public:
-    ProgramDeviceTask(spyglass::PlatformConnection *connection, const QString &firmwarePath);
+    ProgramDeviceTask(spyglass::PlatformConnectionShPtr connection, const QString &firmwarePath);
     void run() override;
 
 signals:
-    void taskDone(spyglass::PlatformConnection *connector, bool status);
+    void taskDone(QString connectionId, bool status);
     void notify(QString connectionId, QString message);
 
 private:
-    spyglass::PlatformConnection *connection_;
+    spyglass::PlatformConnectionShPtr connection_;
     QString firmwarePath_;
 };

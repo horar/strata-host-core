@@ -24,7 +24,7 @@ SciModel::~SciModel()
 void SciModel::programDevice(const QString &connectionId, const QString &firmwarePath)
 {
     qDebug() << "SciModel::programDevice()" << connectionId << firmwarePath;
-    spyglass::PlatformConnection *connection = boardController_.getConnection(connectionId);
+    spyglass::PlatformConnectionShPtr connection = boardController_.getConnection(connectionId);
     if (connection == nullptr) {
         notify(connectionId, "Connection Id not valid.");
         programDeviceDone(connectionId, false);
@@ -57,8 +57,7 @@ BoardsController *SciModel::boardController()
     return &boardController_;
 }
 
-void SciModel::programDeviceDoneHandler(spyglass::PlatformConnection *connection, bool status)
+void SciModel::programDeviceDoneHandler(const QString& connectionId, bool status)
 {
-    QString connectionId = QString::fromStdString(connection->getName());
     emit programDeviceDone(connectionId, status);
 }

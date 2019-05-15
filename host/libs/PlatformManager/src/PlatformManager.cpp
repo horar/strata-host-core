@@ -31,11 +31,20 @@ PlatformManager::~PlatformManager()
 {
     Stop();
 
-    std::lock_guard<std::mutex> lock(connectionMap_mutex_);
-    for(auto item : openedPorts_) {
-        item.second->close();
+    // closing all opened ports
+    // we need to close ports without locking because that would cause deadlock
+    for(;;) {
+        PlatformConnectionShPtr conn;
+        {
+            std::lock_guard<std::mutex> lock(connectionMap_mutex_);
+            if (openedPorts_.empty()) {
+                break;
+            }
 
-        delete item.second;
+            conn = openedPorts_.begin()->second;
+        }
+
+        conn->close();
     }
 }
 
@@ -95,17 +104,16 @@ void PlatformManager::setPlatformHandler(PlatformConnHandler* handler)
     plat_handler_ = handler;
 }
 
-PlatformConnection* PlatformManager::getConnection(const std::string& connection_id)
+PlatformConnectionShPtr PlatformManager::getConnection(const std::string& connection_id)
 {
     serialPortHash hash = std::hash<std::string>{}(connection_id);
-    PlatformConnection* conn;
+    PlatformConnectionShPtr conn;
     {
         std::lock_guard<std::mutex> lock(connectionMap_mutex_);
         auto find = openedPorts_.find(hash);
-        if (find == openedPorts_.end()) {
-            return nullptr;
+        if (find != openedPorts_.end()) {
+            conn = find->second;
         }
-        conn = find->second;
     }
 
     return conn;
@@ -135,6 +143,8 @@ void PlatformManager::onUpdatePortList(EvEventBase*, int)
 
         //removed ports
         for(auto hash : removed) {
+            onRemoveClosedPort(hash);
+
             onRemovedPort(hash);
         }
 
@@ -180,46 +190,64 @@ std::string PlatformManager::hashToPortName(serialPortHash hash)
 
 void PlatformManager::onRemovedPort(serialPortHash hash)
 {
-    std::string portName  = hashToPortName(hash);
+//TODO: add this to logging    std::string portName  = hashToPortName(hash);
 //TODO: add this to logging    std::cout << "Removed ser.port:" << portName << std::endl;
 
-    PlatformConnection* conn;
+    PlatformConnectionShPtr conn;
     {
         std::lock_guard<std::mutex> lock(connectionMap_mutex_);
         auto find = openedPorts_.find(hash);
         if (find == openedPorts_.end()) {
             return;
         }
+
         conn = find->second;
     }
 
 //TODO: add to log.. std::cout << "Disconnect" << std::endl;
 
     EvEventBase* ev = conn->getEvent();
-    ev->deactivate();
-    eventsMgr_.unregisterEvent(ev);
+    if (ev) {
+        eventsMgr_.unregisterEvent(ev);
+        conn->releaseEvent();
+    }
 
     if (plat_handler_) {
         plat_handler_->onCloseConnection(conn);
     }
 
     conn->close();
+    conn.reset();
 
     {
         std::lock_guard<std::mutex> lock(connectionMap_mutex_);
         openedPorts_.erase(hash);
     }
-
-    delete conn;
 }
 
-void PlatformManager::removeConnection(PlatformConnection* /*conn*/)
+void PlatformManager::onRemoveClosedPort(serialPortHash hash)
 {
-    //TODO: remove connection
+    std::lock_guard<std::mutex> lock(closedPorts_mutex_);
+
+    auto findIt = closedPorts_.find(hash);
+    if (findIt != closedPorts_.end()) {
+        closedPorts_.erase(findIt);
+    }
+}
+
+bool PlatformManager::removeConnection(const std::string& connection_id)
+{
+    PlatformConnectionShPtr conn = getConnection(connection_id);
+    if (!conn) {
+        return false;
+    }
+
+    conn->close();
+
+    unregisterConnection(conn->getName());
 
 //TODO: add to log..  std::cout << "Disconnect" << std::endl;
-
-
+    return true;
 }
 
 void PlatformManager::onAddedPort(serialPortHash hash)
@@ -229,13 +257,12 @@ void PlatformManager::onAddedPort(serialPortHash hash)
     std::string portName  = hashToPortName(hash);
 //TODO: add this to logging     std::cout << "New ser.port:" << portName << std::endl;
 
-    PlatformConnection* conn = new PlatformConnection(this);
+    PlatformConnectionShPtr conn = std::make_shared<PlatformConnection>(this);
     if (conn->open(portName) == false) {
-        delete conn;
         return;
     }
 
-    spyglass::EvEventBase* ev = conn->getEvent();
+    spyglass::EvEventBase* ev = conn->createEvent();
     eventsMgr_.registerEvent(ev);
 
     //activate event in dispatcher (for read)
@@ -243,7 +270,6 @@ void PlatformManager::onAddedPort(serialPortHash hash)
         //TODO: error logging...
         eventsMgr_.unregisterEvent(ev);
 
-        delete conn;
         return;
     }
 
@@ -259,25 +285,42 @@ void PlatformManager::onAddedPort(serialPortHash hash)
     }
 }
 
-void PlatformManager::notifyConnectionReadable(PlatformConnection* conn)
+void PlatformManager::notifyConnectionReadable(const std::string& connection_id)
 {
-#if !defined(NDEBUG)      //Debuging stuff
-    bool found = false;
-    {
-        std::lock_guard<std::mutex> lock(connectionMap_mutex_);
-        for(auto it = openedPorts_.begin(); it != openedPorts_.end(); ++it) {
-            if (it->second == conn) {
-                found = true;
-                break;
-            }
-        }
+    if (plat_handler_ == nullptr) {
+        //TODO: add some logging...
+        return;
     }
-    assert(found);
-#endif
 
-    if (plat_handler_) {
+    PlatformConnectionShPtr conn = getConnection(connection_id);
+    if (conn) {
         plat_handler_->onNotifyReadConnection(conn);
     }
 }
+
+void PlatformManager::unregisterConnection(const std::string& connection_id)
+{
+    PlatformConnectionShPtr conn = getConnection(connection_id);
+    if (!conn) {
+        return;
+    }
+
+    serialPortHash hash = std::hash<std::string>{}(connection_id);
+
+    EvEventBase* ev = conn->getEvent();
+    if (ev != nullptr) {
+        eventsMgr_.unregisterEvent(ev);
+        conn->releaseEvent();
+    }
+
+    {
+        std::lock_guard<std::mutex> lock1(closedPorts_mutex_);
+        std::lock_guard<std::mutex> lock2(connectionMap_mutex_);
+
+        closedPorts_.insert( { hash, conn } );
+        openedPorts_.erase(hash);
+    }
+}
+
 
 } //end of namespace

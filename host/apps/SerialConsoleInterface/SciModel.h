@@ -29,7 +29,7 @@ signals:
     void programDeviceDone(QString connectionId, bool status);
 
 private slots:
-    void programDeviceDoneHandler(spyglass::PlatformConnection *connection, bool status);
+    void programDeviceDoneHandler(const QString& connectionId, bool status);
 
 private:
     BoardsController boardController_;

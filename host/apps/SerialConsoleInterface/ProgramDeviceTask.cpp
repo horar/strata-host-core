@@ -2,31 +2,34 @@
 
 #include <QDebug>
 
-ProgramDeviceTask::ProgramDeviceTask(spyglass::PlatformConnection *connection, const QString &firmwarePath)
+ProgramDeviceTask::ProgramDeviceTask(spyglass::PlatformConnectionShPtr connection, const QString &firmwarePath)
     : connection_(connection), firmwarePath_(firmwarePath)
 {
 }
 
 void ProgramDeviceTask::run()
 {
+    Q_ASSERT(connection_ != nullptr);
     if (connection_ == nullptr) {
-        emit taskDone(connection_, false);
         return;
     }
 
     Flasher flasher(connection_, firmwarePath_.toStdString());
 
-    emit notify(QString::fromStdString(connection_->getName()), "Initializing bootloader");
+    QString connectionId = QString::fromStdString(connection_->getName());
+
+    emit notify(connectionId, "Initializing bootloader");
 
     if (flasher.initializeBootloader()) {
-        emit notify(QString::fromStdString(connection_->getName()), "Programming");
+        emit notify(connectionId, "Programming");
         if (flasher.flash(true)) {
-            emit taskDone(connection_, true);
+
+            emit taskDone(connectionId, true);
             return;
         }
     } else {
-        emit notify(QString::fromStdString(connection_->getName()), "Initializing of bootloader failed");
+        emit notify(connectionId, "Initializing of bootloader failed");
     }
 
-    emit taskDone(connection_, false);
+    emit taskDone(connectionId, false);
 }
