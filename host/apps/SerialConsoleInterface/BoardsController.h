@@ -25,10 +25,10 @@ public:
     Q_INVOKABLE void reconnect(const QString &connectionId);
 
     QStringList connectionIds() const;
-    spyglass::PlatformConnection* getConnection(const QString &connectionId);
+    spyglass::PlatformConnectionShPtr getConnection(const QString &connectionId);
 
     //callbacks from ConnectionHandler
-    void newConnection(spyglass::PlatformConnection *connection);
+    void newConnection(spyglass::PlatformConnectionShPtr connection);
     void closeConnection(const QString &connectionId);
     void notifyMessageFromConnection(const QString &connectionId, const QString &message);
 
@@ -51,7 +51,7 @@ private:
         void onCloseConnection(spyglass::PlatformConnectionShPtr connection) override;
         void onNotifyReadConnection(spyglass::PlatformConnectionShPtr connection) override;
 
-        PlatformBoard* getBoard(spyglass::PlatformConnection* connection);
+        PlatformBoard* getBoard(spyglass::PlatformConnectionShPtr connection);
 
     private:
         BoardsController *receiver_;
