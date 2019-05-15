@@ -320,9 +320,9 @@ Item {
                        console.log("input voltage foldback update: enabled=",enabled,"voltage=",voltage,"watts=",watts);
                        //set the notification property values, as the platform won't send a notification in response to this
                        //command, and those properties are used by controls to see what the value of other controls should be.
-                       foldback_input_voltage_limiting_event.input_voltage_foldback_enabled = enabled;
-                       foldback_input_voltage_limiting_event.foldback_minimum_voltage = voltage;
-                       foldback_input_voltage_limiting_event.foldback_minimum_voltage_power = watts;
+                       //foldback_input_voltage_limiting_event.input_voltage_foldback_enabled = enabled;
+                       //foldback_input_voltage_limiting_event.foldback_minimum_voltage = voltage;
+                       //foldback_input_voltage_limiting_event.foldback_minimum_voltage_power = watts;
                         this.set(enabled,voltage,watts)
                         CorePlatformInterface.send(this)
                         },
@@ -349,10 +349,6 @@ Item {
                        },
                    update: function(enabled,temperature,percentage,hysterisis){
                        //update the variables for this action
-                       set_temperature_foldback.temperature = temperature;
-                       set_temperature_foldback.power_reduction = percentage;
-                       set_temperature_foldback.enabled = enabled;
-                       set_temperature_foldback.temperature_hysteresis = hysterisis;
                         this.set(enabled,temperature,percentage,hysterisis)
                         CorePlatformInterface.send(this)
                         },
