@@ -1,0 +1,10 @@
+<!DOCTYPE RCC><RCC version="1.0">
+    <qresource prefix="/tech/strata/fonts">
+        <file>Fonts.qml</file>
+        <file>qmldir</file>
+        <file>FranklinGothicBold.ttf</file>
+        <file>FranklinGothicBook.otf</file>
+        <file>FranklinGothicMedium.otf</file>
+        <file>Inconsolata.otf</file>
+    </qresource>
+</RCC>

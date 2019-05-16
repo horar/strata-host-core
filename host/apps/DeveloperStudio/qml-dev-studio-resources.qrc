@@ -1,10 +1,5 @@
 <RCC>
     <qresource prefix="/">
-        <file>fonts/Fonts.qml</file>
-        <file>fonts/FranklinGothicBold.ttf</file>
-        <file>fonts/FranklinGothicBook.otf</file>
-        <file>fonts/FranklinGothicMedium.otf</file>
-        <file>fonts/Inconsolata.otf</file>
         <file>images/blank_avatar.png</file>
         <file>images/icons/fail_x.svg</file>
         <file>images/icons/remote-locked.png</file>
