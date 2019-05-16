@@ -1,7 +1,8 @@
 import QtQuick 2.9
 import QtQuick.Controls 2.3
 import "qrc:/js/platform_selection.js" as PlatformSelection
-import Fonts 1.0
+
+import tech.strata.fonts 1.0
 
 Item {
     id: root

@@ -9,10 +9,10 @@ import "js/login.js" as Authenticator
 import "qrc:/statusbar-partial-views"
 import "qrc:/statusbar-partial-views/help-tour"
 import "qrc:/statusbar-partial-views/about-popup"
-import Fonts 1.0
 import "qrc:/js/help_layout_manager.js" as Help
 import "qrc:/js/platform_model.js" as Model
 
+import tech.strata.fonts 1.0
 import Strata.Logger 1.0
 
 Rectangle {

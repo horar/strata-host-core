@@ -1,11 +1,11 @@
 import QtQuick 2.9
 import QtQuick.Controls 2.3
 import QtQuick.Layouts 1.3
-import Fonts 1.0
 import QtGraphicalEffects 1.0
 import "../js/feedback.js" as Feedback
 import "../js/navigation_control.js" as NavigationControl
 
+import tech.strata.fonts 1.0
 import Strata.Logger 1.0
 
 Popup {

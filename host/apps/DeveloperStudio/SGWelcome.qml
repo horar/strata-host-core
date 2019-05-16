@@ -5,8 +5,9 @@ import QtGraphicalEffects 1.0
 import "qrc:/statusbar-partial-views"
 import "qrc:/statusbar-partial-views/platform-selector"
 import "js/navigation_control.js" as NavigationControl
-import Fonts 1.0
 import QtWebEngine 1.6
+
+import tech.strata.fonts 1.0
 
 Rectangle{
     id:container

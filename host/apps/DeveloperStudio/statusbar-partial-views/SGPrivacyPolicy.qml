@@ -1,8 +1,9 @@
 import QtQuick 2.9
 import QtQuick.Controls 2.3
 import QtQuick.Layouts 1.3
-import Fonts 1.0
 import QtWebEngine 1.6
+
+import tech.strata.fonts 1.0
 
 Item {
     id: root

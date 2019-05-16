@@ -6,9 +6,9 @@ import QtQuick.Controls.Styles 1.4
 import Qt.labs.settings 1.0
 import "js/navigation_control.js" as NavigationControl
 import "js/login.js" as Authenticator
-import Fonts 1.0
 import "qrc:/statusbar-partial-views"
 
+import tech.strata.fonts 1.0
 import Strata.Logger 1.0
 
 Rectangle {

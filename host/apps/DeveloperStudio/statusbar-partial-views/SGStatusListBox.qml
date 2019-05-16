@@ -1,6 +1,7 @@
 import QtQuick 2.9
 import QtQuick.Controls 2.2
-import Fonts 1.0
+
+import tech.strata.fonts 1.0
 
 Rectangle {
     id: root

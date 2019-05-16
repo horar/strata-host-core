@@ -28,6 +28,9 @@
 
 int main(int argc, char *argv[])
 {
+    // TODO: [LC] use more clever resource loading incl. issue logging etc. (+support for Windows)
+    qCInfo(logCategoryStrataDevStudio)
+        << "LOAD: fonts.rcc = " << QResource::registerResource(QStringLiteral("../../../fonts.rcc"));
 #if defined(Q_OS_WIN)
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 #endif
@@ -50,7 +53,6 @@ int main(int argc, char *argv[])
     qmlRegisterUncreatableType<CoreInterface>("tech.spyglass.CoreInterface",1,0,"CoreInterface", QStringLiteral("You can't instantiate CoreInterface in QML"));
     qmlRegisterUncreatableType<DocumentManager>("tech.spyglass.DocumentManager", 1, 0, "DocumentManager", QStringLiteral("You can't instantiate DocumentManager in QML"));
     qmlRegisterUncreatableType<Document>("tech.spyglass.Document", 1, 0, "Document", "You can't instantiate Document in QML");
-    qmlRegisterSingletonType(QUrl("qrc:/fonts/Fonts.qml"), "Fonts", 1, 0, "Fonts");
 
     CoreInterface *coreInterface = new CoreInterface();
     DocumentManager* documentManager = new DocumentManager(coreInterface);
