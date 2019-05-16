@@ -2,7 +2,6 @@ import QtQuick 2.9
 import QtQuick.Controls 2.3
 import "qrc:/include/Modules/"      // On Semi QML Modules
 import "content-widgets"
-import Fonts 1.0
 
 Item {
     id: root
