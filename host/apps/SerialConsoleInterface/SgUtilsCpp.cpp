@@ -1,4 +1,4 @@
-#include "SgUtils.h"
+#include "SgUtilsCpp.h"
 
 #include <QFileInfo>
 #include <QUrl>
@@ -6,29 +6,29 @@
 #include <QTextStream>
 #include <QDebug>
 
-SgUtils::SgUtils(QObject *parent)
+SgUtilsCpp::SgUtilsCpp(QObject *parent)
     : QObject(parent)
 {
 
 }
 
-SgUtils::~SgUtils()
+SgUtilsCpp::~SgUtilsCpp()
 {
 
 }
 
-QString SgUtils::urlToPath(const QUrl &url)
+QString SgUtilsCpp::urlToPath(const QUrl &url)
 {
     return QUrl(url).path();
 }
 
-bool SgUtils::isFile(const QString &file)
+bool SgUtilsCpp::isFile(const QString &file)
 {
     QFileInfo info(file);
     return info.isFile();
 }
 
-bool SgUtils::atomicWrite(const QString &path, const QString &content)
+bool SgUtilsCpp::atomicWrite(const QString &path, const QString &content)
 {
     QSaveFile file(path);
 

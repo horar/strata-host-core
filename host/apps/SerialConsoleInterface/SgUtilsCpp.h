@@ -1,32 +1,32 @@
-#ifndef SGUTILS_H
-#define SGUTILS_H
+#ifndef SGUTILSCPP_H
+#define SGUTILSCPP_H
 
 #include <QObject>
 #include <QQmlEngine>
 #include <QJSEngine>
 
-class SgUtils : public QObject
+class SgUtilsCpp : public QObject
 {
     Q_OBJECT
-    Q_DISABLE_COPY(SgUtils)
+    Q_DISABLE_COPY(SgUtilsCpp)
 
 public:
-    explicit SgUtils(QObject *parent = nullptr);
-    virtual ~SgUtils();
+    explicit SgUtilsCpp(QObject *parent = nullptr);
+    virtual ~SgUtilsCpp();
 
     Q_INVOKABLE QString urlToPath(const QUrl &url);
     Q_INVOKABLE bool isFile(const QString &file);
     Q_INVOKABLE bool atomicWrite(const QString &path, const QString &content);
 };
 
-static QObject *sgUtilsSingletonProvider(QQmlEngine *engine, QJSEngine *scriptEngine)
+static QObject *sgUtilsCppSingletonProvider(QQmlEngine *engine, QJSEngine *scriptEngine)
 {
     Q_UNUSED(engine)
     Q_UNUSED(scriptEngine)
 
-    SgUtils *utils = new SgUtils();
+    SgUtilsCpp *utils = new SgUtilsCpp();
     return utils;
 }
 
 
-#endif  // SGUTILS_H
+#endif  // SGUTILSCPP_H

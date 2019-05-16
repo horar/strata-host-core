@@ -18,7 +18,7 @@ add_executable(${PROJECT_NAME}
     BoardsController.cpp
     PlatformBoard.cpp
     ProgramDeviceTask.cpp
-    SgUtils.cpp
+    SgUtilsCpp.cpp
     qml.qrc
     images/images.qrc
 )

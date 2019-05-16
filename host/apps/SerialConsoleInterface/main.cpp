@@ -1,6 +1,6 @@
 #include "BoardsController.h"
 #include "SciModel.h"
-#include "SgUtils.h"
+#include "SgUtilsCpp.h"
 
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
@@ -14,7 +14,7 @@ int main(int argc, char *argv[])
     QGuiApplication app(argc, argv);
 
     qmlRegisterSingletonType(QUrl("qrc:/fonts/Fonts.qml"), "tech.strata.fonts", 1, 0, "Fonts");
-    qmlRegisterSingletonType<SgUtils>("tech.strata.utils", 1, 0,"SgUtilsCpp", sgUtilsSingletonProvider);
+    qmlRegisterSingletonType<SgUtilsCpp>("tech.strata.utils", 1, 0,"SgUtilsCpp", sgUtilsCppSingletonProvider);
     qmlRegisterType<SciModel>("tech.strata.sci", 1, 0, "SciModel");
     qmlRegisterUncreatableType<BoardsController>("tech.strata.sci", 1, 0, "BoardsController", "can not instantiate BoardsController in qml");
 
