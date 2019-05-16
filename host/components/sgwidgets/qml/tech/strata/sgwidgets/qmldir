@@ -1,7 +1,9 @@
 module tech.strata.sgwidgets
 
 SGAccordion 1.0 SGAccordion/SGAccordion.qml
+SGAccordion 1.1 SGAccordion/SGAccordion11.qml
 SGAccordionItem 1.0 SGAccordion/SGAccordionItem.qml
+SGAccordionItem 1.1 SGAccordion/SGAccordionItem11.qml
 SGButton 1.0 SGButton/SGButton.qml
 SGCapacityBar 1.0 SGCapacityBar/SGCapacityBar.qml
 SGCapacityBarElement 1.0 SGCapacityBar/SGCapacityBarElement.qml
@@ -17,6 +19,7 @@ SGLabelledInfoBox 1.0 SGLabelledInfoBox/SGLabelledInfoBox.qml
 SGOutputLogBox 1.0 SGOutputLogBox/SGOutputLogBox.qml
 SGPdfViewer 1.0 SGPdfViewer/SGPdfViewer.qml
 SGPopout 1.0 SGPopout/SGPopout.qml
+SGPopout 1.1 SGPopout/SGPopout11.qml
 SGRGBSlider 1.0 SGRGBSlider/SGRGBSlider.qml
 SGRadioButton 1.0 SGRadioButton/SGRadioButton.qml
 SGRadioButtonContainer 1.0 SGRadioButton/SGRadioButtonContainer.qml
@@ -26,6 +29,7 @@ SGSlider 1.0 SGSlider/SGSlider.qml
 SGStatusLight 1.0 SGStatusLight/SGStatusLight.qml
 SGStatusListBox 1.0 SGStatusListBox/SGStatusListBox.qml
 SGSubmitInfoBox 1.0 SGSubmitInfoBox/SGSubmitInfoBox.qml
+SGSubmitInfoBox 1.1 SGSubmitInfoBox/SGSubmitInfoBox11.qml
 SGSwitch 1.0 SGSwitch/SGSwitch.qml
 SGTelestrator 1.0 SGTelestrator/SGTelestrator.qml
 SGToolTipPopup 1.0 SGToolTipPopup/SGToolTipPopup.qml
