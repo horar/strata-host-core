@@ -1,7 +1,8 @@
 import QtQuick 2.9
 import QtQuick.Controls 2.2
-import "qrc:/views/usb-pd-multiport/sgwidgets"
 import "qrc:/views/usb-pd-multiport/views/advanced-partial-views"
+
+import tech.strata.sgwidgets 1.0
 
 Rectangle {
     id: root

@@ -1,7 +1,8 @@
 import QtQuick 2.9
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.3
-import "qrc:/views/usb-pd-multiport/sgwidgets"
+
+import tech.strata.sgwidgets 1.0
 
 Item {
     id: root
@@ -141,7 +142,7 @@ Item {
             switchWidth: 46
 
             checked: platformInterface.assured_power_port.enabled && (portNumber === 1)
-            onToggled: platformInterface.set_assured_power_port.update(checked, portNumber)  //we're only allowing port 1 to be assured            
+            onToggled: platformInterface.set_assured_power_port.update(checked, portNumber)  //we're only allowing port 1 to be assured
         }
 
 

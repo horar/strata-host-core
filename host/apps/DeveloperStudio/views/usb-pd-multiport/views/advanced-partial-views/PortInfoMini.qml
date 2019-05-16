@@ -1,5 +1,6 @@
 import QtQuick 2.9
-import "qrc:/views/usb-pd-multiport/sgwidgets"
+
+import tech.strata.sgwidgets 1.0
 
 Item {
     id: root
