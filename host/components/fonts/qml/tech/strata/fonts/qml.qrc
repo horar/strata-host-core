@@ -6,5 +6,7 @@
         <file>FranklinGothicBook.otf</file>
         <file>FranklinGothicMedium.otf</file>
         <file>Inconsolata.otf</file>
+        <file>digitalseven.ttf</file>
+        <file>sgicons.ttf</file>
     </qresource>
 </RCC>
