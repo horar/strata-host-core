@@ -37,8 +37,6 @@ add_executable(${PROJECT_NAME}
     qml-views-usb-pd.qrc
     qml-views-subghz.qrc
     qml-views-smart-speaker.qrc
-
-    views/SGPdfViewer/pdfjs.qrc
 )
 if(APPLE)
     target_sources(${PROJECT_NAME} PRIVATE
