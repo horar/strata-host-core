@@ -30,14 +30,19 @@ string GetCurrentWorkingDir( void ) {
   return current_working_dir;
 }
 
+void onDownloadCallback(bool result,const string& file) {
+    cout << "\n file name is "<<file<<endl;
+}
+
 int main(int argc, char** argv) {
-    if(argc <2) {
-        cout << " missing the link \nCorrect Usage:./main <pdf link>\n";
+    if(argc <3) {
+        cout << " missing the link \nCorrect Usage:./main <pdf web link> <local path to download\n";
         exit(0);
     }
     SGwget downloader;
-    string path = GetCurrentWorkingDir() ;//+ "/pdf/".c_str();
-    path.append("/");
-    string content = downloader.download(argv[1],path);
-    cout << content << endl;
+    downloader.addAsyncDownloadListner(bind(&onDownloadCallback,placeholders::_1,placeholders::_2));
+    
+    for (int i=0;i<100;i++) {
+      bool content = downloader.download(argv[1],argv[2],"non-overwrite",DownloadMode::ASYNC);
+    }
 }

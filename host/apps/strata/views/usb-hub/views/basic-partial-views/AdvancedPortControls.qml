@@ -1,10 +1,12 @@
 import QtQuick 2.9
 import QtQuick.Controls 2.2
 import QtQuick.Layouts 1.3  //for gridLayout
-import "qrc:/views/usb-pd-multiport/sgwidgets"
+import "../../sgwidgets"
 
 Item {
     id:advanceControlsView
+
+    property bool isDisplayportCapable: false
 
     function transitionToAdvancedView(){
         //set the opacity of the view to be seen, but set the opacity of the parts to 0
@@ -19,6 +21,8 @@ Item {
         graphSelector.opacity = 0;
         sourceCapabilitiesText.opacity = 0;
         sourceCapabilitiesButtonStrip.opacity = 0;
+        displayportText.opacity = 0;
+        displayportIndicator.opacity = 0;
 
         advancedPortControlsBuildIn.start()
     }
@@ -51,7 +55,7 @@ Item {
         }
         PropertyAnimation {
             id: fadeInSourceCapibilitiesSection
-            targets: [sourceCapabilitiesText,sourceCapabilitiesButtonStrip]
+            targets: [sourceCapabilitiesText,sourceCapabilitiesButtonStrip,displayportText, displayportIndicator]
             property: "opacity"
             to: 1
             duration: advancedControlBuildInTime
@@ -64,7 +68,7 @@ Item {
     }
 
     function transitionToBasicView(){
-        //set the opacity of the view to be seen, but set the opacity of the parts to 0
+        //set the opacity of the view to be transparent, and set the opacity of the parts to 0
         advanceControlsView.opacity = 0;
         topDivider.opacity = 0;
         maxOutputPower.opacity = 0;
@@ -82,6 +86,8 @@ Item {
         capabilitiesDivider.opacity = 0;
         sourceCapabilitiesText.opacity = 0;
         sourceCapabilitiesButtonStrip.opacity = 0;
+        displayportText.opacity = 0;
+        displayportIndicator.opacity = 0;
 
         //do we want a build-out here?
         //advancedPortControlsBuildIn.start()
@@ -262,15 +268,7 @@ Item {
         }
     }
 
-//    Rectangle{
-//        id:graphDivider
-//        anchors.left: advanceControlsView.left
-//        anchors.right:advanceControlsView.right
-//        anchors.top: cableCompensationButtonStrip.bottom
-//        anchors.topMargin: 3
-//        height: 1
-//        color:"grey"
-//    }
+
 
     Text{
         id:showGraphText
@@ -286,9 +284,21 @@ Item {
         }
     }
 
+    PortGraphWindow{
+        id:portGraphWindow
+        title: "<b>Port " + portNumber + "</b>"
+        windowWidth:300
+        windowHeight:300
+
+        onWindowClosed: {
+            //when the window closes, the buttons corresonding to the graphs in that window
+            //should turn off
+            graphSelector.deselectAllButtons();
+        }
+    }
+
     SGSegmentedButtonStrip {
         id: graphSelector
-        //label: "<b>Show Graphs:</b>"
         labelLeft: false
         anchors {
             top: showGraphText.bottom
@@ -304,90 +314,117 @@ Item {
         enabled: root.portConnected
         property int howManyChecked: 0
 
+        function deselectAllButtons() {
+           console.log("deselect buttons called")
+
+            for (var child_id in graphSelector.buttonList[0].children) {
+                graphSelector.buttonList[0].children[child_id].checked = false;
+            }
+        }
+
         segmentedButtons: GridLayout {
             columnSpacing: 2
             rowSpacing: 2
 
+            property alias vOut: voutButton
+            property alias iOutButton: iOutButton
+            property alias iInButton: iInButton
+            property alias pOutButton: pOutButton
+            property alias pInButton: pInButton
+            property alias efficiencyButton: efficiencyButton
+
             SGSegmentedButton{
+                id:voutButton
                 text: qsTr("Vout")
                 enabled: root.portConnected
                 onCheckedChanged: {
                     if (checked) {
-                        graph1.visible = true
-                        graphSelector.howManyChecked++
+                        portGraphWindow.open = true;
+                        portGraphWindow.graph1.visible = true;
+                        portGraphWindow.howManyChecked++;
                     } else {
-                        graph1.visible = false
-                        graphSelector.howManyChecked--
+                        portGraphWindow.graph1.visible = false;
+                        portGraphWindow.howManyChecked--;
                     }
                 }
             }
 
             SGSegmentedButton{
+                id:iOutButton
                 text: qsTr("Iout")
                 enabled: root.portConnected
                 onCheckedChanged: {
                     if (checked) {
-                        graph2.visible = true
-                        graphSelector.howManyChecked++
+                        portGraphWindow.open = true;
+                        portGraphWindow.graph2.visible = true
+                        portGraphWindow.howManyChecked++
                     } else {
-                        graph2.visible = false
-                        graphSelector.howManyChecked--
+                        portGraphWindow.graph2.visible = false
+                        portGraphWindow.howManyChecked--
                     }
                 }
             }
 
             SGSegmentedButton{
+                id:iInButton
                 text: qsTr("Iin")
                 enabled: root.portConnected
                 onCheckedChanged: {
                     if (checked) {
-                        graph3.visible = true
-                        graphSelector.howManyChecked++
+                        portGraphWindow.open = true;
+                        portGraphWindow.graph3.visible = true
+                        portGraphWindow.howManyChecked++
                     } else {
-                        graph3.visible = false
-                        graphSelector.howManyChecked--
+                        portGraphWindow.graph3.visible = false
+                        portGraphWindow.howManyChecked--
                     }
                 }
             }
 
             SGSegmentedButton{
+                id:pOutButton
                 text: qsTr("Pout")
                 enabled: root.portConnected
                 onCheckedChanged: {
                     if (checked) {
-                        graph4.visible = true
-                        graphSelector.howManyChecked++
+                        portGraphWindow.open = true;
+                        portGraphWindow.graph4.visible = true
+                        portGraphWindow.howManyChecked++
                     } else {
-                        graph4.visible = false
-                        graphSelector.howManyChecked--
+                        portGraphWindow.graph4.visible = false
+                        portGraphWindow.howManyChecked--
                     }
                 }
             }
 
             SGSegmentedButton{
+                id:pInButton
                 text: qsTr("Pin")
                 enabled: root.portConnected
                 onCheckedChanged: {
                     if (checked) {
-                        graph5.visible = true
-                        graphSelector.howManyChecked++
+                        portGraphWindow.open = true;
+                        portGraphWindow.graph5.visible = true
+                        portGraphWindow.howManyChecked++
                     } else {
-                        graph5.visible = false
-                        graphSelector.howManyChecked--
+                        portGraphWindow.graph5.visible = false
+                        portGraphWindow.howManyChecked--
                     }
                 }
             }
 
             SGSegmentedButton{
+                id:efficiencyButton
                 text: qsTr("η")
                 enabled: root.portConnected
                 onCheckedChanged: {
                     if (checked) {
-                        graph6.visible = true
-                        graphSelector.howManyChecked++
+                        portGraphWindow.open = true;
+                        portGraphWindow.graph6.visible = true
+                        portGraphWindow.howManyChecked++
                     } else {
-                        graph6.visible = false
-                        graphSelector.howManyChecked--
+                        portGraphWindow.graph6.visible = false
+                        portGraphWindow.howManyChecked--
                     }
                 }
             }
@@ -413,16 +450,16 @@ Item {
     SGSegmentedButtonStrip {
         id: sourceCapabilitiesButtonStrip
         anchors {
-            left: advanceControlsView.left
             top: sourceCapabilitiesText.bottom
             topMargin: 3
             verticalCenter: advanceControlsView.verticalCenter
+            horizontalCenter: advanceControlsView.horizontalCenter
         }
         textColor: "#666"
         activeTextColor: "white"
         radius: 4
         buttonHeight: 30
-        buttonImplicitWidth: 15
+        buttonImplicitWidth: 10
         hoverEnabled: false
 
         property var sourceCapabilities: platformInterface.usb_pd_advertised_voltages_notification.settings
@@ -523,26 +560,36 @@ Item {
             }
         }
 
+
+
         segmentedButtons: GridLayout {
             id:advertisedVoltageGridLayout
             columnSpacing: 2
+
+            property int sidePadding: 5
 
             SGSegmentedButton{
                 id: setting1
                 text: qsTr("5V\n3A")
                 checkable: false
+                leftPadding:sidePadding
+                rightPadding:sidePadding
             }
 
             SGSegmentedButton{
                 id: setting2
                 text: qsTr("7V\n3A")
                 checkable: false
+                leftPadding:sidePadding
+                rightPadding:sidePadding
             }
 
             SGSegmentedButton{
                 id:setting3
                 text: qsTr("8V\n3A")
                 checkable: false
+                leftPadding:sidePadding
+                rightPadding:sidePadding
             }
 
             SGSegmentedButton{
@@ -550,6 +597,8 @@ Item {
                 text: qsTr("9V\n3A")
                 //enabled: false
                 checkable: false
+                leftPadding:sidePadding
+                rightPadding:sidePadding
             }
 
             SGSegmentedButton{
@@ -557,6 +606,8 @@ Item {
                 text: qsTr("12V\n3A")
                 enabled: false
                 checkable: false
+                leftPadding:sidePadding
+                rightPadding:sidePadding
             }
 
             SGSegmentedButton{
@@ -564,6 +615,8 @@ Item {
                 text: qsTr("15V\n3A")
                 enabled: false
                 checkable: false
+                leftPadding:sidePadding
+                rightPadding:sidePadding
             }
 
             SGSegmentedButton{
@@ -571,8 +624,57 @@ Item {
                 text: qsTr("20V\n3A")
                 enabled: false
                 checkable: false
+                leftPadding:sidePadding
+                rightPadding:sidePadding
             }
         }
+    } //source capabilities segmented button strip
+
+
+    //some platformInterface property will govern if displayport is shown
+    property var isDisplayPortSink: platformInterface.port_is_displayport_sink_notificaton
+    onIsDisplayPortSinkChanged:{
+        if (platformInterface.port_is_displayport_sink_notification.port === portNumber){
+            displayportIndicator.checked = platformInterface.port_is_displayport_sink_notification.is_displayport_sink;
+        }
     }
+
+    Text{
+        id:displayportText
+        text:"DISPLAY PORT"
+        font.bold:true
+        visible: root.isDisplayportCapable
+        anchors {
+            left: advanceControlsView.left
+            leftMargin: 10
+            //top: sourceCapabilitiesButtonStrip.bottom
+            top: sourceCapabilitiesText.bottom
+            topMargin: 55
+        }
+    }
+
+    RadioButton {
+        id: displayportIndicator
+        height:15
+        width:15
+        visible:root.isDisplayportCapable
+        autoExclusive : false
+        checked:false
+        anchors{
+            right: advanceControlsView.right
+            rightMargin: 5
+            verticalCenter: displayportText.verticalCenter
+        }
+
+        indicator: Rectangle{
+            height:15
+            width:15
+            radius: 7
+            color: displayportIndicator.checked ? "green": "white"
+            border.color: displayportIndicator.checked ? "black": "grey"
+        }
+
+    }
+
 
 }

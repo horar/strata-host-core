@@ -14,29 +14,34 @@ Item {
         anchors.verticalCenter: parent.verticalCenter
         anchors.right:parent.right
         anchors.rightMargin: 2
-        height: 0
+        height: root.height * root.value
         radius:width/2
         color:"black"
 
     }
 
-    ParallelAnimation{
-        id:updateValueRectSize
-        PropertyAnimation{
-            target:valueRectangle
-            property:"height"
-            to:root.height * root.value
-            duration: audioSampleTransitionSpeed
-        }
-        PropertyAnimation{
-            target:valueRectangle
-            property:"x"
-            to:root.height - (root.height * root.value)/2
-            duration: audioSampleTransitionSpeed
-        }
-    }
+//    ParallelAnimation{
+//        id:updateValueRectSize
+//        PropertyAnimation{
+//            target:valueRectangle
+//            property:"height"
+//            to:root.height * root.value
+//            duration: audioSampleTransitionSpeed
+//        }
+//        PropertyAnimation{
+//            target:valueRectangle
+//            property:"x"
+//            to:root.height - (root.height * root.value)/2
+//            duration: audioSampleTransitionSpeed
+//        }
+//    }
 
-    onValueChanged: {
-        updateValueRectSize.start()
-    }
+//    onValueChanged: {
+//        updateValueRectSize.start()
+//    }
+
+//    onHeightChanged: {
+//        //so static value will resize when transitioning basic->advanced screen
+//        updateValueRectSize.start()
+//    }
 }

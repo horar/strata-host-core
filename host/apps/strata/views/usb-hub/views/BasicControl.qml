@@ -1,7 +1,8 @@
 import QtQuick 2.9
 import QtGraphicalEffects 1.0
-import "qrc:/views/usb-hub/sgwidgets"
-import "qrc:/views/usb-hub/views/basic-partial-views"
+import QtQuick.Controls 2.3
+import "../sgwidgets"
+import "../views/basic-partial-views"
 
 Item {
     id: root
@@ -11,12 +12,12 @@ Item {
 
     //default values
     //these are used to restore animation times after an immediate change, which happens without the animation
-    property int defaultBasicToAdvancedTransitionTime: 1000
-    property int defaultBasicToAdvancedTelemetryAnimationTime: 1000
-    property int defaultAdvancedToBasicTransitionTime: 1000
-    property int defaultAdvancedToBasicTelemetryAnimationTime: 1000
-    property int defaultAdvancedToBasicAdvancedControlsAnimationTime: 1000
-    property int defaultAdvancedToBasicAnimationPauseTime: 2000
+    property int defaultBasicToAdvancedTransitionTime: 700
+    property int defaultBasicToAdvancedTelemetryAnimationTime: 700
+    property int defaultAdvancedToBasicTransitionTime: 700
+    property int defaultAdvancedToBasicTelemetryAnimationTime: 700
+    property int defaultAdvancedToBasicAdvancedControlsAnimationTime: 700
+    property int defaultAdvancedToBasicAnimationPauseTime: 1400
     property int defaultAdvancedControlBuildInTime: 500
 
     //basic to advanced animation times
@@ -67,6 +68,8 @@ Item {
     onAudioPortReadyToTransitionToAdvancedChanged: audioPortTransitionToAdvancedProc()
     property bool displayPortReadyToTransitionToAdvanced:false
     onDisplayPortReadyToTransitionToAdvancedChanged: displayPortTransitionToAdvancedProc()
+    property bool devicesReadyToTransitionToAdvanced:false
+    onDevicesReadyToTransitionToAdvancedChanged: devicesTransitionToAdvancedProc()
 
     property bool port2ReadyToTransitionToBasic:false
     onPort2ReadyToTransitionToBasicChanged: port2TransitionToBasicProc()
@@ -75,72 +78,9 @@ Item {
     property bool upstreamPortReadyToTransitionToBasic:false
     onUpstreamPortReadyToTransitionToBasicChanged: upstreamPortTransitionToBasicProc()
 
-    width: parent.width / parent.height > initialAspectRatio ? parent.height * initialAspectRatio : parent.width
-    height: parent.width / parent.height < initialAspectRatio ? parent.width / initialAspectRatio : parent.height
+    anchors.fill:parent
 
 
-
-    Rectangle{
-        id:background
-        anchors.fill:parent
-        color:"#145A74"
-    }
-
-    PlugAnimation {
-        id: upstreamAnimation
-        anchors.horizontalCenter: upstreamDevice.horizontalCenter
-        anchors.horizontalCenterOffset: 10
-        anchors.bottom: upstreamDevice.verticalCenter
-        anchors.bottomMargin: -20
-    }
-
-    PlugAnimation {
-        id: port1Animation
-        anchors.horizontalCenter: port1Device.horizontalCenter
-        anchors.horizontalCenterOffset: 10
-        anchors.bottom: port1Device.verticalCenter
-        anchors.bottomMargin: -20
-    }
-
-    PlugAnimation {
-        id: port2Animation
-        anchors.horizontalCenter: port2Device.horizontalCenter
-        anchors.horizontalCenterOffset: 10
-        anchors.bottom: port2Device.verticalCenter
-        anchors.bottomMargin: -20
-    }
-
-    PlugAnimation {
-        id: port3Animation
-        anchors.horizontalCenter: port3Device.horizontalCenter
-        anchors.horizontalCenterOffset: 10
-        anchors.bottom: port3Device.verticalCenter
-        anchors.bottomMargin: -20
-    }
-
-    PlugAnimation {
-        id: port4Animation
-        anchors.horizontalCenter: port4Device.horizontalCenter
-        anchors.horizontalCenterOffset: 10
-        anchors.bottom: port4Device.verticalCenter
-        anchors.bottomMargin: -10
-    }
-
-    PlugAnimation {
-        id: displayPortAnimation
-        anchors.horizontalCenter: videoIcon.horizontalCenter
-        anchors.horizontalCenterOffset: 10
-        anchors.bottom: videoIcon.verticalCenter
-        anchors.bottomMargin: -20
-    }
-
-    PlugAnimation {
-        id: audioAnimation
-        anchors.horizontalCenter: audioIcon.horizontalCenter
-        anchors.horizontalCenterOffset: 10
-        anchors.bottom: audioIcon.verticalCenter
-        anchors.bottomMargin: -20
-    }
 
     //called when switching to advanced view from the system tab
     //it should execute an immediate switch to the advanced view, not an animated transition
@@ -285,12 +225,10 @@ Item {
                 duration: basicToAdvancedTransitionTime
             }
 
+            //I thought the audio port would have to be animated as well, but it turns out it doesn't
+            //as it's left side is tied to the displayport, so it moves left with that.
 
-                //I thought the audio port would have to be animated as well, but it turns out it doesn't
-                //as it's left side is tied to the displayport, so it moves left with that.
-
-
-            }
+        }
 
         ParallelAnimation{
             id:port1ToAdvanced
@@ -400,11 +338,24 @@ Item {
                 property:"displayPortReadyToTransitionToAdvanced";
                 value: "true"
             }
+            PropertyAction{
+                target:root;
+                property:"devicesReadyToTransitionToAdvanced";
+                value: "true"
+            }
 
         }
 
         onStopped:{
-            devicesToAdvanced.start()
+            //reset the variables controlling the port animations here.
+            upstreamPortReadyToTransitionToAdvanced = false;
+            port1ReadyToTransitionToAdvanced = false;
+            port2ReadyToTransitionToAdvanced = false;
+            port3ReadyToTransitionToAdvanced = false;
+            port4ReadyToTransitionToAdvanced = false;
+            audioPortReadyToTransitionToAdvanced = false;
+            displayPortReadyToTransitionToAdvanced = false;
+            devicesReadyToTransitionToAdvanced = false;
         }
     }  //end sequential animation
 
@@ -412,33 +363,45 @@ Item {
     //functions to trigger the transition of controls within a PortInfo
     //these are handled outside the sequential animation, as there's no way to trigger
     //a function from within a larger animation, as onStopped isn't called for child animations
-     function upstreamPortTransitionToAdvancedProc(){
-         upstreamPort.transitionToAdvancedView()
-     }
+    function upstreamPortTransitionToAdvancedProc(){
+        if (upstreamPortReadyToTransitionToAdvanced == true)
+            upstreamPort.transitionToAdvancedView()
+    }
 
-     function port1TransitionToAdvancedProc(){
-         port1.transitionToAdvancedView()
-     }
+    function port1TransitionToAdvancedProc(){
+        if (port1ReadyToTransitionToAdvanced == true)
+            port1.transitionToAdvancedView()
+    }
 
-     function port2TransitionToAdvancedProc(){
-         port2.transitionToAdvancedView()
-     }
+    function port2TransitionToAdvancedProc(){
+        if (port2ReadyToTransitionToAdvanced == true)
+            port2.transitionToAdvancedView()
+    }
 
-     function port3TransitionToAdvancedProc(){
-         port3.transitionToAdvancedView()
-     }
+    function port3TransitionToAdvancedProc(){
+        if (port3ReadyToTransitionToAdvanced == true)
+            port3.transitionToAdvancedView()
+    }
 
-     function port4TransitionToAdvancedProc(){
-         port4.transitionToAdvancedView()
-     }
+    function port4TransitionToAdvancedProc(){
+        if (port4ReadyToTransitionToAdvanced == true)
+            port4.transitionToAdvancedView()
+    }
 
-     function audioPortTransitionToAdvancedProc(){
-         audioPort.transitionToAdvancedView()
-     }
+    function audioPortTransitionToAdvancedProc(){
+        if (audioPortReadyToTransitionToAdvanced == true)
+            audioPort.transitionToAdvancedView()
+    }
 
-     function displayPortTransitionToAdvancedProc(){
-         displayPort.transitionToAdvancedView()
-     }
+    function displayPortTransitionToAdvancedProc(){
+        if (displayPortReadyToTransitionToAdvanced == true)
+            displayPort.transitionToAdvancedView()
+    }
+
+    function devicesTransitionToAdvancedProc(){
+        if (devicesReadyToTransitionToAdvanced == true)
+            devicesToAdvanced.start()
+    }
 
 
     //--------------------------------------------------------------------
@@ -612,7 +575,7 @@ Item {
     SequentialAnimation{
         id:transitionViewsToBasic
 
-        //give the ports time to transition their subviews
+        //give the port 3 time to transition its subviews
         PauseAnimation{
             duration:port3.portConnected ? advancedToBasicAnimationPauseTime : 1
         }
@@ -961,803 +924,877 @@ Item {
         }
         onStopped:{
             toBasicAnimationFinished();
+
+            //reset the variables used to trigger animations
+            port2ReadyToTransitionToBasic = false;
+            port1ReadyToTransitionToBasic = false
+            upstreamPortReadyToTransitionToBasic = false
         }
     }
 
     function port2TransitionToBasicProc(){
-         port2.prepareToTransitionToBasicView();
+        if (port2ReadyToTransitionToBasic == true)
+            port2.prepareToTransitionToBasicView();
     }
     function port1TransitionToBasicProc(){
-         port1.prepareToTransitionToBasicView();
+        if (port1ReadyToTransitionToBasic == true)
+            port1.prepareToTransitionToBasicView();
     }
     function upstreamPortTransitionToBasicProc(){
-         upstreamPort.prepareToTransitionToBasicView();
+        if (upstreamPortReadyToTransitionToBasic == true)
+            upstreamPort.prepareToTransitionToBasicView();
     }
-
-
-//----------------------------------------------------------------------------------------
-//                      Views
-//----------------------------------------------------------------------------------------
-
 
     Rectangle{
-        id:deviceBackground
-        color:"darkgrey"
-        radius:5
-        height:(7*parent.height)/16
-        anchors.left:root.left
-        anchors.leftMargin: 12
-        anchors.right: root.right
-        anchors.rightMargin: 12
-        anchors.top:root.top
-        anchors.topMargin: (3*root.height)/32
+        id:background
+        anchors.fill:parent
+        color:"#145A74"
+    }
 
-        PortInfo{
-            id:upstreamPort
-            portName:"Upstream"
-            portNumber:1
-            portConnected: false
-            anchors.left: deviceBackground.left
-            anchors.leftMargin: 7
-            anchors.top:deviceBackground.top
-            anchors.topMargin: 10
-            anchors.bottom: deviceBackground.bottom
-            anchors.bottomMargin: 5
-            width:basicPortWidth
+    ScrollView {
+        //this allows the view to scroll if the window gets smaller than the basicView's minimum size
+        id: scrollView
+        anchors {
+            fill: root
+        }
 
-            property int theRunningTotal: 0
-            property int theEfficiencyCount: 0
-            property int theEfficiencyAverage: 0
+        Rectangle{
+            //put the contents of the basicControl view inside a rectangle of fixed size so that
+            //the contents can be scrolled when the window gets smaller
+            id:scrollViewContentRect
+            anchors.fill:parent
+            implicitHeight: 800
+            implicitWidth: 1200
+            color:"transparent"
 
-            property var periodicValues: platformInterface.request_usb_power_notification
 
-            onPeriodicValuesChanged: {
-                var theInputPower = platformInterface.request_usb_power_notification.input_voltage * platformInterface.request_usb_power_notification.input_current +2;//PTJ-1321 2 Watt compensation
-                var theOutputPower = platformInterface.request_usb_power_notification.output_voltage * platformInterface.request_usb_power_notification.output_current;
+            PlugAnimation {
+                id: upstreamAnimation
+                anchors.horizontalCenter: upstreamDevice.horizontalCenter
+                anchors.horizontalCenterOffset: 10
+                anchors.bottom: upstreamDevice.verticalCenter
+                anchors.bottomMargin: -20
+            }
 
-                if (platformInterface.request_usb_power_notification.port === 1){
-                    //sum eight values of the efficency and average before displaying
-                    var theEfficiency = Math.round((theOutputPower/theInputPower) *100)
-                    upstreamPort.theRunningTotal += theEfficiency;
-                    //console.log("new efficiency value=",theEfficiency,"new total is",miniInfo1.theRunningTotal,miniInfo1.theEfficiencyCount);
-                    upstreamPort.theEfficiencyCount++;
+            PlugAnimation {
+                id: port1Animation
+                anchors.horizontalCenter: port1Device.horizontalCenter
+                anchors.horizontalCenterOffset: 10
+                anchors.bottom: port1Device.verticalCenter
+                anchors.bottomMargin: -20
+            }
 
-                    if (upstreamPort.theEfficiencyCount == 8){
-                        upstreamPort.theEfficiencyAverage = portInfo1.theRunningTotal/8;
-                        upstreamPort.theEfficiencyCount = 0;
-                        upstreamPort.theRunningTotal = 0
+            PlugAnimation {
+                id: port2Animation
+                anchors.horizontalCenter: port2Device.horizontalCenter
+                anchors.horizontalCenterOffset: 10
+                anchors.bottom: port2Device.verticalCenter
+                anchors.bottomMargin: -20
+            }
+
+            PlugAnimation {
+                id: port3Animation
+                anchors.horizontalCenter: port3Device.horizontalCenter
+                anchors.horizontalCenterOffset: 10
+                anchors.bottom: port3Device.verticalCenter
+                anchors.bottomMargin: -20
+            }
+
+            PlugAnimation {
+                id: port4Animation
+                anchors.horizontalCenter: port4Device.horizontalCenter
+                anchors.horizontalCenterOffset: 10
+                anchors.bottom: port4Device.verticalCenter
+                anchors.bottomMargin: -10
+            }
+
+            PlugAnimation {
+                id: displayPortAnimation
+                anchors.horizontalCenter: videoIcon.horizontalCenter
+                anchors.horizontalCenterOffset: 10
+                anchors.bottom: videoIcon.verticalCenter
+                anchors.bottomMargin: -20
+            }
+
+            PlugAnimation {
+                id: audioAnimation
+                anchors.horizontalCenter: audioIcon.horizontalCenter
+                anchors.horizontalCenterOffset: 10
+                anchors.bottom: audioIcon.verticalCenter
+                anchors.bottomMargin: -20
+            }
+
+
+            //----------------------------------------------------------------------------------------
+            //                      Views
+            //----------------------------------------------------------------------------------------
+
+
+            Rectangle{
+                id:deviceBackground
+                color:"darkgrey"
+                radius:5
+                height:(7*scrollViewContentRect.height)/16
+                anchors.left:scrollViewContentRect.left
+                anchors.leftMargin: 12
+                anchors.right: scrollViewContentRect.right
+                anchors.rightMargin: 12
+                anchors.top:scrollViewContentRect.top
+                anchors.topMargin: (3*scrollViewContentRect.height)/32
+
+                PortInfo{
+                    id:upstreamPort
+                    portName:"Upstream"
+                    portNumber:1
+                    portConnected: false
+                    anchors.left: deviceBackground.left
+                    anchors.leftMargin: 7
+                    anchors.top:deviceBackground.top
+                    anchors.topMargin: 10
+                    anchors.bottom: deviceBackground.bottom
+                    anchors.bottomMargin: 5
+                    width:basicPortWidth
+
+                    property int theRunningTotal: 0
+                    property int theEfficiencyCount: 0
+                    property int theEfficiencyAverage: 0
+
+                    property var periodicValues: platformInterface.request_usb_power_notification
+
+                    onPeriodicValuesChanged: {
+                        var theInputPower = platformInterface.request_usb_power_notification.input_voltage * platformInterface.request_usb_power_notification.input_current +2;//PTJ-1321 2 Watt compensation
+                        var theOutputPower = platformInterface.request_usb_power_notification.output_voltage * platformInterface.request_usb_power_notification.output_current;
+
+                        if (platformInterface.request_usb_power_notification.port === 1){
+                            //sum eight values of the efficency and average before displaying
+                            var theEfficiency = Math.round((theOutputPower/theInputPower) *100)
+                            upstreamPort.theRunningTotal += theEfficiency;
+                            //console.log("new efficiency value=",theEfficiency,"new total is",miniInfo1.theRunningTotal,miniInfo1.theEfficiencyCount);
+                            upstreamPort.theEfficiencyCount++;
+
+                            if (upstreamPort.theEfficiencyCount == 8){
+                                upstreamPort.theEfficiencyAverage = portInfo1.theRunningTotal/8;
+                                upstreamPort.theEfficiencyCount = 0;
+                                upstreamPort.theRunningTotal = 0
+                            }
+                        }
+
+                    }
+
+                    outputVoltage:{
+                        if (platformInterface.request_usb_power_notification.port === 1){
+                            return (platformInterface.request_usb_power_notification.output_voltage).toFixed(1)
+                        }
+                        else{
+                            return upstreamPort.outputVoltage;
+                        }
+                    }
+
+                    maxPower:{
+                        if (platformInterface.request_usb_power_notification.port === 1){
+                            var voltage = platformInterface.request_usb_power_notification.negotiated_voltage;
+                            var current = platformInterface.request_usb_power_notification.negotiated_current;
+                            return Math.round(voltage*current *100)/100;
+                        }
+                        else if (!upstreamPort.portConnected){
+                            return "—"  //show a dash on disconnect, so cached value won't show on connect
+                        }
+                        else{
+                            return upstreamPort.maxPower;
+                        }
+                    }
+                    inputPower:{
+                        if (platformInterface.request_usb_power_notification.port === 1){
+                            return ((platformInterface.request_usb_power_notification.input_voltage * platformInterface.request_usb_power_notification.input_current)+2).toFixed(1); //PTJ-1321 adding 2 watts compensation
+                        }
+                        else{
+                            return upstreamPort.inputPower;
+                        }
+                    }
+                    outputPower:{
+                        if (platformInterface.request_usb_power_notification.port === 1){
+                            return (platformInterface.request_usb_power_notification.output_voltage * platformInterface.request_usb_power_notification.output_current).toFixed(1);
+                        }
+                        else{
+                            return upstreamPort.outputPower;
+                        }
+                    }
+
+                    portTemperature:{
+                        if (platformInterface.request_usb_power_notification.port === 1){
+                            return (platformInterface.request_usb_power_notification.temperature).toFixed(1)
+                        }
+                        else{
+                            return upstreamPort.portTemperature;
+                        }
+                    }
+                    efficency: theEfficiencyAverage
+
+                    property var deviceConnected: platformInterface.usb_pd_port_connect.connection_state
+                    property var deviceDisconnected: platformInterface.usb_pd_port_disconnect.connection_state
+
+                    onDeviceConnectedChanged: {
+                        //debug code
+                        // console.log("device connected message received in basicControl. Port=",platformInterface.usb_pd_port_connect.port_id,
+                        //             "state=",platformInterface.usb_pd_port_connect.connection_state);
+
+                        if (platformInterface.usb_pd_port_connect.port_id === "upstream"){
+                            if (platformInterface.usb_pd_port_connect.connection_state === "connected"){
+                                upstreamPort.portConnected = true;
+                            }
+                        }
+                    }
+
+                    onDeviceDisconnectedChanged:{
+
+                        if (platformInterface.usb_pd_port_disconnect.port_id === "upstream"){
+                            if (platformInterface.usb_pd_port_disconnect.connection_state === "disconnected"){
+                                upstreamPort.portConnected = false;
+                            }
+                        }
+                    }
+                }
+
+                PortInfo{
+                    id:port1
+                    portName:"Port 1"
+                    portNumber:2
+                    portConnected: false
+                    isDisplayportCapable: true
+                    anchors.left: upstreamPort.right
+                    anchors.leftMargin: 7
+                    anchors.top:deviceBackground.top
+                    anchors.topMargin: 10
+                    anchors.bottom: deviceBackground.bottom
+                    anchors.bottomMargin: 5
+                    width:basicPortWidth
+
+                    property int theRunningTotal: 0
+                    property int theEfficiencyCount: 0
+                    property int theEfficiencyAverage: 0
+
+                    property var periodicValues: platformInterface.request_usb_power_notification
+
+                    onPeriodicValuesChanged: {
+                        var theInputPower = platformInterface.request_usb_power_notification.input_voltage * platformInterface.request_usb_power_notification.input_current +2;//PTJ-1321 2 Watt compensation
+                        var theOutputPower = platformInterface.request_usb_power_notification.output_voltage * platformInterface.request_usb_power_notification.output_current;
+
+                        if (platformInterface.request_usb_power_notification.port === portNumber){
+                            //sum eight values of the efficency and average before displaying
+                            var theEfficiency = Math.round((theOutputPower/theInputPower) *100)
+                            port1.theRunningTotal += theEfficiency;
+                            //debug code
+                            //console.log("new efficiency value=",theEfficiency,"new total is",miniInfo1.theRunningTotal,miniInfo1.theEfficiencyCount);
+                            port1.theEfficiencyCount++;
+
+                            if (port1.theEfficiencyCount == 8){
+                                port1.theEfficiencyAverage = portInfo1.theRunningTotal/8;
+                                port1.theEfficiencyCount = 0;
+                                port1.theRunningTotal = 0
+                            }
+                        }
+
+                    }
+
+                    outputVoltage:{
+                        if (platformInterface.request_usb_power_notification.port === portNumber){
+                            return (platformInterface.request_usb_power_notification.output_voltage).toFixed(2)
+                        }
+                        else{
+                            return port1.outputVoltage;
+                        }
+                    }
+
+                    maxPower:{
+                        if (platformInterface.request_usb_power_notification.port === portNumber){
+                            var voltage = platformInterface.request_usb_power_notification.negotiated_voltage;
+                            var current = platformInterface.request_usb_power_notification.negotiated_current;
+                            return Math.round(voltage*current *100)/100;
+                        }
+                        else if (!port1.portConnected){
+                            return "—"  //show a dash on disconnect, so cached value won't show on connect
+                        }
+                        else{
+                            return port1.maxPower;
+                        }
+                    }
+                    inputPower:{
+                        if (platformInterface.request_usb_power_notification.port === portNumber){
+                            return ((platformInterface.request_usb_power_notification.input_voltage * platformInterface.request_usb_power_notification.input_current)+2).toFixed(2); //PTJ-1321 adding 2 watts compensation
+                        }
+                        else{
+                            return port1.inputPower;
+                        }
+                    }
+                    outputPower:{
+                        if (platformInterface.request_usb_power_notification.port === portNumber){
+                            return (platformInterface.request_usb_power_notification.output_voltage * platformInterface.request_usb_power_notification.output_current).toFixed(2);
+                        }
+                        else{
+                            return port1.outputPower;
+                        }
+                    }
+
+                    portTemperature:{
+                        if (platformInterface.request_usb_power_notification.port === portNumber){
+                            return (platformInterface.request_usb_power_notification.temperature).toFixed(1)
+                        }
+                        else{
+                            return port1.portTemperature;
+                        }
+                    }
+                    efficency: theEfficiencyAverage
+
+                    property var deviceConnected: platformInterface.usb_pd_port_connect.connection_state
+                    property var deviceDisconnected: platformInterface.usb_pd_port_disconnect.connection_state
+
+                    onDeviceConnectedChanged: {
+                        //debug code
+                        //console.log("device connected message received in basicControl. Port=",platformInterface.usb_pd_port_connect.port_id,
+                        //              "state=",platformInterface.usb_pd_port_connect.connection_state);
+
+                        if (platformInterface.usb_pd_port_connect.port_id === portName){
+                            if (platformInterface.usb_pd_port_connect.connection_state === "connected"){
+                                port1.portConnected = true;
+                            }
+                        }
+                    }
+
+                    onDeviceDisconnectedChanged:{
+
+                        if (platformInterface.usb_pd_port_disconnect.port_id === portName){
+                            if (platformInterface.usb_pd_port_disconnect.connection_state === "disconnected"){
+                                port1.portConnected = false;
+                            }
+                        }
+                    }
+
+                }
+
+                PortInfo{
+                    id:port2
+                    portName:"Port 2"
+                    portNumber:3
+                    portConnected: false
+                    anchors.left: port1.right
+                    anchors.leftMargin: 7
+                    anchors.top:deviceBackground.top
+                    anchors.topMargin: 10
+                    anchors.bottom: deviceBackground.bottom
+                    anchors.bottomMargin: 5
+                    width:basicPortWidth
+
+                    property int theRunningTotal: 0
+                    property int theEfficiencyCount: 0
+                    property int theEfficiencyAverage: 0
+
+                    property var periodicValues: platformInterface.request_usb_power_notification
+
+                    onPeriodicValuesChanged: {
+                        var theInputPower = platformInterface.request_usb_power_notification.input_voltage * platformInterface.request_usb_power_notification.input_current +2;//PTJ-1321 2 Watt compensation
+                        var theOutputPower = platformInterface.request_usb_power_notification.output_voltage * platformInterface.request_usb_power_notification.output_current;
+
+                        if (platformInterface.request_usb_power_notification.port === portNumber){
+                            //sum eight values of the efficency and average before displaying
+                            var theEfficiency = Math.round((theOutputPower/theInputPower) *100)
+                            port2.theRunningTotal += theEfficiency;
+                            //debug code
+                            //console.log("new efficiency value=",theEfficiency,"new total is",miniInfo1.theRunningTotal,miniInfo1.theEfficiencyCount);
+                            port2.theEfficiencyCount++;
+
+                            if (port2.theEfficiencyCount == 8){
+                                port2.theEfficiencyAverage = portInfo1.theRunningTotal/8;
+                                port2.theEfficiencyCount = 0;
+                                port2.theRunningTotal = 0
+                            }
+                        }
+
+                    }
+
+                    outputVoltage:{
+                        if (platformInterface.request_usb_power_notification.port === portNumber){
+                            return (platformInterface.request_usb_power_notification.output_voltage).toFixed(2)
+                        }
+                        else{
+                            return port2.outputVoltage;
+                        }
+                    }
+
+                    maxPower:{
+                        if (platformInterface.request_usb_power_notification.port === portNumber){
+                            var voltage = platformInterface.request_usb_power_notification.negotiated_voltage;
+                            var current = platformInterface.request_usb_power_notification.negotiated_current;
+                            return Math.round(voltage*current *100)/100;
+                        }
+                        else if (!port2.portConnected){
+                            return "—"  //show a dash on disconnect, so cached value won't show on connect
+                        }
+                        else{
+                            return port2.maxPower;
+                        }
+                    }
+                    inputPower:{
+                        if (platformInterface.request_usb_power_notification.port === portNumber){
+                            return ((platformInterface.request_usb_power_notification.input_voltage * platformInterface.request_usb_power_notification.input_current)+2).toFixed(2); //PTJ-1321 adding 2 watts compensation
+                        }
+                        else{
+                            return port2.inputPower;
+                        }
+                    }
+                    outputPower:{
+                        if (platformInterface.request_usb_power_notification.port === portNumber){
+                            return (platformInterface.request_usb_power_notification.output_voltage * platformInterface.request_usb_power_notification.output_current).toFixed(2);
+                        }
+                        else{
+                            return port2.outputPower;
+                        }
+                    }
+
+                    portTemperature:{
+                        if (platformInterface.request_usb_power_notification.port === portNumber){
+                            return (platformInterface.request_usb_power_notification.temperature).toFixed(1)
+                        }
+                        else{
+                            return port2.portTemperature;
+                        }
+                    }
+                    efficency: theEfficiencyAverage
+
+                    property var deviceConnected: platformInterface.usb_pd_port_connect.connection_state
+                    property var deviceDisconnected: platformInterface.usb_pd_port_disconnect.connection_state
+
+                    onDeviceConnectedChanged: {
+                        //debug code
+                        //console.log("device connected message received in basicControl. Port=",platformInterface.usb_pd_port_connect.port_id,
+                        //            "state=",platformInterface.usb_pd_port_connect.connection_state);
+
+                        if (platformInterface.usb_pd_port_connect.port_id === portName){
+                            if (platformInterface.usb_pd_port_connect.connection_state === "connected"){
+                                port2.portConnected = true;
+                            }
+                        }
+                    }
+
+                    onDeviceDisconnectedChanged:{
+
+                        if (platformInterface.usb_pd_port_disconnect.port_id === portName){
+                            if (platformInterface.usb_pd_port_disconnect.connection_state === "disconnected"){
+                                port2.portConnected = false;
+                            }
+                        }
+                    }
+
+                }
+
+                PortInfo{
+                    id:port3
+                    portName:"Port 3"
+                    portNumber:4
+                    portConnected: false
+                    anchors.left: port2.right
+                    anchors.leftMargin: 7
+                    anchors.top:deviceBackground.top
+                    anchors.topMargin: 10
+                    anchors.bottom: deviceBackground.bottom
+                    anchors.bottomMargin: 5
+                    width:basicPortWidth
+
+                    property int theRunningTotal: 0
+                    property int theEfficiencyCount: 0
+                    property int theEfficiencyAverage: 0
+
+                    property var periodicValues: platformInterface.request_usb_power_notification
+
+                    onPeriodicValuesChanged: {
+                        var theInputPower = platformInterface.request_usb_power_notification.input_voltage * platformInterface.request_usb_power_notification.input_current +2;//PTJ-1321 2 Watt compensation
+                        var theOutputPower = platformInterface.request_usb_power_notification.output_voltage * platformInterface.request_usb_power_notification.output_current;
+
+                        if (platformInterface.request_usb_power_notification.port === portNumber){
+                            //sum eight values of the efficency and average before displaying
+                            var theEfficiency = Math.round((theOutputPower/theInputPower) *100)
+                            port3.theRunningTotal += theEfficiency;
+                            //debug code
+                            //console.log("new efficiency value=",theEfficiency,"new total is",miniInfo1.theRunningTotal,miniInfo1.theEfficiencyCount);
+                            port3.theEfficiencyCount++;
+
+                            if (port3.theEfficiencyCount == 8){
+                                port3.theEfficiencyAverage = portInfo1.theRunningTotal/8;
+                                port3.theEfficiencyCount = 0;
+                                port3.theRunningTotal = 0
+                            }
+                        }
+
+                    }
+
+                    outputVoltage:{
+                        if (platformInterface.request_usb_power_notification.port === portNumber){
+                            return (platformInterface.request_usb_power_notification.output_voltage).toFixed(2)
+                        }
+                        else{
+                            return port3.outputVoltage;
+                        }
+                    }
+
+                    maxPower:{
+                        if (platformInterface.request_usb_power_notification.port === portNumber){
+                            var voltage = platformInterface.request_usb_power_notification.negotiated_voltage;
+                            var current = platformInterface.request_usb_power_notification.negotiated_current;
+                            return Math.round(voltage*current *100)/100;
+                        }
+                        else if (!port3.portConnected){
+                            return "—"  //show a dash on disconnect, so cached value won't show on connect
+                        }
+                        else{
+                            return port3.maxPower;
+                        }
+                    }
+                    inputPower:{
+                        if (platformInterface.request_usb_power_notification.port === portNumber){
+                            return ((platformInterface.request_usb_power_notification.input_voltage * platformInterface.request_usb_power_notification.input_current)+2).toFixed(2); //PTJ-1321 adding 2 watts compensation
+                        }
+                        else{
+                            return port3.inputPower;
+                        }
+                    }
+                    outputPower:{
+                        if (platformInterface.request_usb_power_notification.port === portNumber){
+                            return (platformInterface.request_usb_power_notification.output_voltage * platformInterface.request_usb_power_notification.output_current).toFixed(2);
+                        }
+                        else{
+                            return port3.outputPower;
+                        }
+                    }
+
+                    portTemperature:{
+                        if (platformInterface.request_usb_power_notification.port === portNumber){
+                            return (platformInterface.request_usb_power_notification.temperature).toFixed(1)
+                        }
+                        else{
+                            return port3.portTemperature;
+                        }
+                    }
+                    efficency: theEfficiencyAverage
+
+                    property var deviceConnected: platformInterface.usb_pd_port_connect.connection_state
+                    property var deviceDisconnected: platformInterface.usb_pd_port_disconnect.connection_state
+
+                    onDeviceConnectedChanged: {
+                        //debug code
+                        // console.log("device connected message received in basicControl. Port=",platformInterface.usb_pd_port_connect.port_id,
+                        //              "state=",platformInterface.usb_pd_port_connect.connection_state);
+
+                        if (platformInterface.usb_pd_port_connect.port_id === portName){
+                            if (platformInterface.usb_pd_port_connect.connection_state === "connected"){
+                                port3.portConnected = true;
+                            }
+                        }
+                    }
+
+                    onDeviceDisconnectedChanged:{
+
+                        if (platformInterface.usb_pd_port_disconnect.port_id === portName){
+                            if (platformInterface.usb_pd_port_disconnect.connection_state === "disconnected"){
+                                port3.portConnected = false;
+                            }
+                        }
+                    }
+
+                }
+
+                USBAPortInfo{
+                    id:port4
+                    portName:"Port 4"
+                    portSubtitle: "USB-A"
+                    portNumber:5
+                    portConnected: false
+                    anchors.left: port3.right
+                    anchors.leftMargin: 7
+                    anchors.top:deviceBackground.top
+                    anchors.topMargin: 10
+                    anchors.bottom: deviceBackground.bottom
+                    anchors.bottomMargin: 5
+                    width:basicPortWidth
+
+                    outputVoltage:{
+                        if (platformInterface.request_usb_power_notification.port === portNumber){
+                            return (platformInterface.request_usb_power_notification.output_voltage).toFixed(2)
+                        }
+                        else{
+                            return port4.outputVoltage;
+                        }
+                    }
+
+
+                    outputPower:{
+                        if (platformInterface.request_usb_power_notification.port === portNumber){
+                            return (platformInterface.request_usb_power_notification.output_voltage * platformInterface.request_usb_power_notification.output_current).toFixed(2);
+                        }
+                        else{
+                            return port4.outputPower;
+                        }
+                    }
+                }
+
+                VideoPortInfo{
+                    id:displayPort
+                    portName:"DisplayPort"
+                    portConnected: false
+                    anchors.left: port4.right
+                    anchors.leftMargin: 7
+                    anchors.top:deviceBackground.top
+                    anchors.topMargin: 10
+                    anchors.bottom: deviceBackground.bottom
+                    anchors.bottomMargin: 5
+                    width:basicPortWidth
+                }
+
+                AudioPortInfo{
+                    id:audioPort
+                    portName:"Audio"
+                    portConnected: false
+                    anchors.left: displayPort.right
+                    anchors.leftMargin: 7
+                    anchors.top:deviceBackground.top
+                    anchors.topMargin: 10
+                    anchors.bottom: deviceBackground.bottom
+                    anchors.bottomMargin: 5
+                    width:basicPortWidth
+                }
+            }
+
+            DeviceInfo{
+                id:upstreamDevice
+                anchors.top:deviceBackground.bottom
+                anchors.topMargin: 95
+                anchors.left:deviceBackground.left
+                anchors.leftMargin: 7
+                height:145
+                width:160
+                portNumber:1
+
+                MouseArea{
+                    anchors.fill: parent
+
+                    onClicked: {
+                        if (!upstreamAnimation.pluggedIn) {
+                            upstreamAnimation.source = "images/cord.gif"
+                            upstreamAnimation.currentFrame = 0
+                            upstreamAnimation.playing = true
+                            upstreamAnimation.pluggedIn = !upstreamAnimation.pluggedIn
+                            upstreamPort.portConnected = true
+                            upstreamDevice.connected = true
+                        } else {
+                            upstreamAnimation.source = "images/cordReverse.gif"
+                            upstreamAnimation.currentFrame = 0
+                            upstreamAnimation.playing = true
+                            upstreamAnimation.pluggedIn = !upstreamAnimation.pluggedIn
+                            upstreamPort.portConnected = false
+                            upstreamDevice.connected = false
+                        }
                     }
                 }
 
             }
 
-            outputVoltage:{
-                if (platformInterface.request_usb_power_notification.port === 1){
-                    return (platformInterface.request_usb_power_notification.output_voltage).toFixed(2)
-                }
-                else{
-                    return upstreamPort.outputVoltage;
-                }
-            }
+            DeviceInfo{
+                id:port1Device
+                anchors.top:deviceBackground.bottom
+                anchors.topMargin: 95
+                anchors.left:upstreamDevice.right
+                anchors.leftMargin: 7
+                height:145
+                width:160
+                portNumber:2
 
-            maxPower:{
-                if (platformInterface.request_usb_power_notification.port === 1){
-                    var voltage = platformInterface.request_usb_power_notification.negotiated_voltage;
-                    var current = platformInterface.request_usb_power_notification.negotiated_current;
-                    return Math.round(voltage*current *100)/100;
-                }
-                else if (!upstreamPort.portConnected){
-                    return "—"  //show a dash on disconnect, so cached value won't show on connect
-                }
-                else{
-                    return upstreamPort.maxPower;
-                }
-            }
-            inputPower:{
-                if (platformInterface.request_usb_power_notification.port === 1){
-                    return ((platformInterface.request_usb_power_notification.input_voltage * platformInterface.request_usb_power_notification.input_current)+2).toFixed(2); //PTJ-1321 adding 2 watts compensation
-                }
-                else{
-                    return upstreamPort.inputPower;
-                }
-            }
-            outputPower:{
-                if (platformInterface.request_usb_power_notification.port === 1){
-                    return (platformInterface.request_usb_power_notification.output_voltage * platformInterface.request_usb_power_notification.output_current).toFixed(2);
-                }
-                else{
-                    return upstreamPort.outputPower;
-                }
-            }
+                MouseArea{
+                    anchors.fill: parent
 
-            portTemperature:{
-                if (platformInterface.request_usb_power_notification.port === 1){
-                    return (platformInterface.request_usb_power_notification.temperature).toFixed(1)
-                }
-                else{
-                    return upstreamPort.portTemperature;
-                }
-            }
-            efficency: theEfficiencyAverage
-
-            property var deviceConnected: platformInterface.usb_pd_port_connect.connection_state
-            property var deviceDisconnected: platformInterface.usb_pd_port_disconnect.connection_state
-
-             onDeviceConnectedChanged: {
-//                 console.log("device connected message received in basicControl. Port=",platformInterface.usb_pd_port_connect.port_id,
-//                             "state=",platformInterface.usb_pd_port_connect.connection_state);
-
-                 if (platformInterface.usb_pd_port_connect.port_id === "upstream"){
-                     if (platformInterface.usb_pd_port_connect.connection_state === "connected"){
-                         upstreamPort.portConnected = true;
-                     }
-                 }
-             }
-
-             onDeviceDisconnectedChanged:{
-
-                 if (platformInterface.usb_pd_port_disconnect.port_id === "upstream"){
-                     if (platformInterface.usb_pd_port_disconnect.connection_state === "disconnected"){
-                         upstreamPort.portConnected = false;
-                     }
-                 }
-            }
-
-//            onShowGraph: {
-//                graphDrawer.portNumber = portNumber;
-//                graphDrawer.open();
-//            }
-        }
-
-        PortInfo{
-            id:port1
-            portName:"Port 1"
-            portNumber:2
-            portConnected: false
-            anchors.left: upstreamPort.right
-            anchors.leftMargin: 7
-            anchors.top:deviceBackground.top
-            anchors.topMargin: 10
-            anchors.bottom: deviceBackground.bottom
-            anchors.bottomMargin: 5
-            width:basicPortWidth
-
-            property int theRunningTotal: 0
-            property int theEfficiencyCount: 0
-            property int theEfficiencyAverage: 0
-
-            property var periodicValues: platformInterface.request_usb_power_notification
-
-            onPeriodicValuesChanged: {
-                var theInputPower = platformInterface.request_usb_power_notification.input_voltage * platformInterface.request_usb_power_notification.input_current +2;//PTJ-1321 2 Watt compensation
-                var theOutputPower = platformInterface.request_usb_power_notification.output_voltage * platformInterface.request_usb_power_notification.output_current;
-
-                if (platformInterface.request_usb_power_notification.port === portNumber){
-                    //sum eight values of the efficency and average before displaying
-                    var theEfficiency = Math.round((theOutputPower/theInputPower) *100)
-                    port1.theRunningTotal += theEfficiency;
-                    //console.log("new efficiency value=",theEfficiency,"new total is",miniInfo1.theRunningTotal,miniInfo1.theEfficiencyCount);
-                    port1.theEfficiencyCount++;
-
-                    if (port1.theEfficiencyCount == 8){
-                        port1.theEfficiencyAverage = portInfo1.theRunningTotal/8;
-                        port1.theEfficiencyCount = 0;
-                        port1.theRunningTotal = 0
+                    onClicked: {
+                        if (!port1Animation.pluggedIn) {
+                            port1Animation.source = "images/cord.gif"
+                            port1Animation.currentFrame = 0
+                            port1Animation.playing = true
+                            port1Animation.pluggedIn = !port1Animation.pluggedIn
+                            port1.portConnected = true
+                            port1Device.connected = true
+                        } else {
+                            port1Animation.source = "images/cordReverse.gif"
+                            port1Animation.currentFrame = 0
+                            port1Animation.playing = true
+                            port1Animation.pluggedIn = !port1Animation.pluggedIn
+                            port1.portConnected = false
+                            port1Device.connected = false
+                        }
                     }
                 }
 
+
             }
 
-            outputVoltage:{
-                if (platformInterface.request_usb_power_notification.port === portNumber){
-                    return (platformInterface.request_usb_power_notification.output_voltage).toFixed(2)
-                }
-                else{
-                    return port1.outputVoltage;
-                }
-            }
+            DeviceInfo{
+                id:port2Device
+                anchors.top:deviceBackground.bottom
+                anchors.topMargin: 95
+                anchors.left:port1Device.right
+                anchors.leftMargin: 7
+                height:145
+                width:160
+                portNumber:3
 
-            maxPower:{
-                if (platformInterface.request_usb_power_notification.port === portNumber){
-                    var voltage = platformInterface.request_usb_power_notification.negotiated_voltage;
-                    var current = platformInterface.request_usb_power_notification.negotiated_current;
-                    return Math.round(voltage*current *100)/100;
-                }
-                else if (!port1.portConnected){
-                    return "—"  //show a dash on disconnect, so cached value won't show on connect
-                }
-                else{
-                    return port1.maxPower;
-                }
-            }
-            inputPower:{
-                if (platformInterface.request_usb_power_notification.port === portNumber){
-                    return ((platformInterface.request_usb_power_notification.input_voltage * platformInterface.request_usb_power_notification.input_current)+2).toFixed(2); //PTJ-1321 adding 2 watts compensation
-                }
-                else{
-                    return port1.inputPower;
-                }
-            }
-            outputPower:{
-                if (platformInterface.request_usb_power_notification.port === portNumber){
-                    return (platformInterface.request_usb_power_notification.output_voltage * platformInterface.request_usb_power_notification.output_current).toFixed(2);
-                }
-                else{
-                    return port1.outputPower;
-                }
-            }
+                MouseArea{
+                    anchors.fill: parent
 
-            portTemperature:{
-                if (platformInterface.request_usb_power_notification.port === portNumber){
-                    return (platformInterface.request_usb_power_notification.temperature).toFixed(1)
-                }
-                else{
-                    return port1.portTemperature;
-                }
-            }
-            efficency: theEfficiencyAverage
-
-            property var deviceConnected: platformInterface.usb_pd_port_connect.connection_state
-            property var deviceDisconnected: platformInterface.usb_pd_port_disconnect.connection_state
-
-             onDeviceConnectedChanged: {
-//                 console.log("device connected message received in basicControl. Port=",platformInterface.usb_pd_port_connect.port_id,
-//                             "state=",platformInterface.usb_pd_port_connect.connection_state);
-
-                 if (platformInterface.usb_pd_port_connect.port_id === portName){
-                     if (platformInterface.usb_pd_port_connect.connection_state === "connected"){
-                         port1.portConnected = true;
-                     }
-                 }
-             }
-
-             onDeviceDisconnectedChanged:{
-
-                 if (platformInterface.usb_pd_port_disconnect.port_id === portName){
-                     if (platformInterface.usb_pd_port_disconnect.connection_state === "disconnected"){
-                         port1.portConnected = false;
-                     }
-                 }
-            }
-
-//            onShowGraph: {
-//                graphDrawer.portNumber = portNumber;
-//                graphDrawer.open();
-//            }
-        }
-
-        PortInfo{
-            id:port2
-            portName:"Port 2"
-            portNumber:3
-            portConnected: false
-            anchors.left: port1.right
-            anchors.leftMargin: 7
-            anchors.top:deviceBackground.top
-            anchors.topMargin: 10
-            anchors.bottom: deviceBackground.bottom
-            anchors.bottomMargin: 5
-            width:basicPortWidth
-
-            property int theRunningTotal: 0
-            property int theEfficiencyCount: 0
-            property int theEfficiencyAverage: 0
-
-            property var periodicValues: platformInterface.request_usb_power_notification
-
-            onPeriodicValuesChanged: {
-                var theInputPower = platformInterface.request_usb_power_notification.input_voltage * platformInterface.request_usb_power_notification.input_current +2;//PTJ-1321 2 Watt compensation
-                var theOutputPower = platformInterface.request_usb_power_notification.output_voltage * platformInterface.request_usb_power_notification.output_current;
-
-                if (platformInterface.request_usb_power_notification.port === portNumber){
-                    //sum eight values of the efficency and average before displaying
-                    var theEfficiency = Math.round((theOutputPower/theInputPower) *100)
-                    port2.theRunningTotal += theEfficiency;
-                    //console.log("new efficiency value=",theEfficiency,"new total is",miniInfo1.theRunningTotal,miniInfo1.theEfficiencyCount);
-                    port2.theEfficiencyCount++;
-
-                    if (port2.theEfficiencyCount == 8){
-                        port2.theEfficiencyAverage = portInfo1.theRunningTotal/8;
-                        port2.theEfficiencyCount = 0;
-                        port2.theRunningTotal = 0
+                    onClicked: {
+                        if (!port2Animation.pluggedIn) {
+                            port2Animation.source = "images/cord.gif"
+                            port2Animation.currentFrame = 0
+                            port2Animation.playing = true
+                            port2Animation.pluggedIn = !port2Animation.pluggedIn
+                            port2.portConnected = true
+                            port2Device.connected = true
+                        } else {
+                            port2Animation.source = "images/cordReverse.gif"
+                            port2Animation.currentFrame = 0
+                            port2Animation.playing = true
+                            port2Animation.pluggedIn = !port2Animation.pluggedIn
+                            port2.portConnected = false
+                            port2Device.connected = false
+                        }
                     }
                 }
-
             }
 
-            outputVoltage:{
-                if (platformInterface.request_usb_power_notification.port === portNumber){
-                    return (platformInterface.request_usb_power_notification.output_voltage).toFixed(2)
-                }
-                else{
-                    return port2.outputVoltage;
-                }
-            }
+            DeviceInfo{
+                id:port3Device
+                anchors.top:deviceBackground.bottom
+                anchors.topMargin: 95
+                anchors.left:port2Device.right
+                anchors.leftMargin: 7
+                height:145
+                width:160
+                portNumber:4
 
-            maxPower:{
-                if (platformInterface.request_usb_power_notification.port === portNumber){
-                    var voltage = platformInterface.request_usb_power_notification.negotiated_voltage;
-                    var current = platformInterface.request_usb_power_notification.negotiated_current;
-                    return Math.round(voltage*current *100)/100;
-                }
-                else if (!port2.portConnected){
-                    return "—"  //show a dash on disconnect, so cached value won't show on connect
-                }
-                else{
-                    return port2.maxPower;
-                }
-            }
-            inputPower:{
-                if (platformInterface.request_usb_power_notification.port === portNumber){
-                    return ((platformInterface.request_usb_power_notification.input_voltage * platformInterface.request_usb_power_notification.input_current)+2).toFixed(2); //PTJ-1321 adding 2 watts compensation
-                }
-                else{
-                    return port2.inputPower;
-                }
-            }
-            outputPower:{
-                if (platformInterface.request_usb_power_notification.port === portNumber){
-                    return (platformInterface.request_usb_power_notification.output_voltage * platformInterface.request_usb_power_notification.output_current).toFixed(2);
-                }
-                else{
-                    return port2.outputPower;
-                }
-            }
+                MouseArea{
+                    anchors.fill: parent
 
-            portTemperature:{
-                if (platformInterface.request_usb_power_notification.port === portNumber){
-                    return (platformInterface.request_usb_power_notification.temperature).toFixed(1)
-                }
-                else{
-                    return port2.portTemperature;
-                }
-            }
-            efficency: theEfficiencyAverage
-
-            property var deviceConnected: platformInterface.usb_pd_port_connect.connection_state
-            property var deviceDisconnected: platformInterface.usb_pd_port_disconnect.connection_state
-
-             onDeviceConnectedChanged: {
-//                 console.log("device connected message received in basicControl. Port=",platformInterface.usb_pd_port_connect.port_id,
-//                             "state=",platformInterface.usb_pd_port_connect.connection_state);
-
-                 if (platformInterface.usb_pd_port_connect.port_id === portName){
-                     if (platformInterface.usb_pd_port_connect.connection_state === "connected"){
-                         port2.portConnected = true;
-                     }
-                 }
-             }
-
-             onDeviceDisconnectedChanged:{
-
-                 if (platformInterface.usb_pd_port_disconnect.port_id === portName){
-                     if (platformInterface.usb_pd_port_disconnect.connection_state === "disconnected"){
-                         port2.portConnected = false;
-                     }
-                 }
-            }
-
-//            onShowGraph: {
-//                graphDrawer.portNumber = portNumber;
-//                graphDrawer.open();
-//            }
-        }
-
-        PortInfo{
-            id:port3
-            portName:"Port 3"
-            portNumber:4
-            portConnected: false
-            anchors.left: port2.right
-            anchors.leftMargin: 7
-            anchors.top:deviceBackground.top
-            anchors.topMargin: 10
-            anchors.bottom: deviceBackground.bottom
-            anchors.bottomMargin: 5
-            width:basicPortWidth
-
-            property int theRunningTotal: 0
-            property int theEfficiencyCount: 0
-            property int theEfficiencyAverage: 0
-
-            property var periodicValues: platformInterface.request_usb_power_notification
-
-            onPeriodicValuesChanged: {
-                var theInputPower = platformInterface.request_usb_power_notification.input_voltage * platformInterface.request_usb_power_notification.input_current +2;//PTJ-1321 2 Watt compensation
-                var theOutputPower = platformInterface.request_usb_power_notification.output_voltage * platformInterface.request_usb_power_notification.output_current;
-
-                if (platformInterface.request_usb_power_notification.port === portNumber){
-                    //sum eight values of the efficency and average before displaying
-                    var theEfficiency = Math.round((theOutputPower/theInputPower) *100)
-                    port3.theRunningTotal += theEfficiency;
-                    //console.log("new efficiency value=",theEfficiency,"new total is",miniInfo1.theRunningTotal,miniInfo1.theEfficiencyCount);
-                    port3.theEfficiencyCount++;
-
-                    if (port3.theEfficiencyCount == 8){
-                        port3.theEfficiencyAverage = portInfo1.theRunningTotal/8;
-                        port3.theEfficiencyCount = 0;
-                        port3.theRunningTotal = 0
+                    onClicked: {
+                        if (!port3Animation.pluggedIn) {
+                            port3Animation.source = "images/cord.gif"
+                            port3Animation.currentFrame = 0
+                            port3Animation.playing = true
+                            port3Animation.pluggedIn = !port3Animation.pluggedIn
+                            port3.portConnected = true
+                            port3Device.connected = true
+                        } else {
+                            port3Animation.source = "images/cordReverse.gif"
+                            port3Animation.currentFrame = 0
+                            port3Animation.playing = true
+                            port3Animation.pluggedIn = !port3Animation.pluggedIn
+                            port3.portConnected = false
+                            port3Device.connected = false
+                        }
                     }
                 }
-
             }
 
-            outputVoltage:{
-                if (platformInterface.request_usb_power_notification.port === portNumber){
-                    return (platformInterface.request_usb_power_notification.output_voltage).toFixed(2)
-                }
-                else{
-                    return port3.outputVoltage;
-                }
-            }
+            DeviceInfo{
+                id:port4Device
+                anchors.top:deviceBackground.bottom
+                anchors.topMargin: 95
+                anchors.left:port3Device.right
+                anchors.leftMargin: 7
+                height:145
+                width:160
+                portNumber:5
 
-            maxPower:{
-                if (platformInterface.request_usb_power_notification.port === portNumber){
-                    var voltage = platformInterface.request_usb_power_notification.negotiated_voltage;
-                    var current = platformInterface.request_usb_power_notification.negotiated_current;
-                    return Math.round(voltage*current *100)/100;
-                }
-                else if (!port3.portConnected){
-                    return "—"  //show a dash on disconnect, so cached value won't show on connect
-                }
-                else{
-                    return port3.maxPower;
-                }
-            }
-            inputPower:{
-                if (platformInterface.request_usb_power_notification.port === portNumber){
-                    return ((platformInterface.request_usb_power_notification.input_voltage * platformInterface.request_usb_power_notification.input_current)+2).toFixed(2); //PTJ-1321 adding 2 watts compensation
-                }
-                else{
-                    return port3.inputPower;
-                }
-            }
-            outputPower:{
-                if (platformInterface.request_usb_power_notification.port === portNumber){
-                    return (platformInterface.request_usb_power_notification.output_voltage * platformInterface.request_usb_power_notification.output_current).toFixed(2);
-                }
-                else{
-                    return port3.outputPower;
-                }
-            }
+                sinkVisible:false
+                fastRoleSwapVisible:false
+                superspeedVisible:true
+                extendedSinkVisible:false
 
-            portTemperature:{
-                if (platformInterface.request_usb_power_notification.port === portNumber){
-                    return (platformInterface.request_usb_power_notification.temperature).toFixed(1)
-                }
-                else{
-                    return port3.portTemperature;
-                }
-            }
-            efficency: theEfficiencyAverage
+                MouseArea{
+                    anchors.fill: parent
 
-            property var deviceConnected: platformInterface.usb_pd_port_connect.connection_state
-            property var deviceDisconnected: platformInterface.usb_pd_port_disconnect.connection_state
-
-             onDeviceConnectedChanged: {
-//                 console.log("device connected message received in basicControl. Port=",platformInterface.usb_pd_port_connect.port_id,
-//                             "state=",platformInterface.usb_pd_port_connect.connection_state);
-
-                 if (platformInterface.usb_pd_port_connect.port_id === portName){
-                     if (platformInterface.usb_pd_port_connect.connection_state === "connected"){
-                         port3.portConnected = true;
-                     }
-                 }
-             }
-
-             onDeviceDisconnectedChanged:{
-
-                 if (platformInterface.usb_pd_port_disconnect.port_id === portName){
-                     if (platformInterface.usb_pd_port_disconnect.connection_state === "disconnected"){
-                         port3.portConnected = false;
-                     }
-                 }
-            }
-
-//            onShowGraph: {
-//                graphDrawer.portNumber = portNumber;
-//                graphDrawer.open();
-//            }
-        }
-
-        USBAPortInfo{
-            id:port4
-            portName:"Port 4"
-            portSubtitle: "USB-A"
-            portNumber:5
-            portConnected: false
-            isUSBAPort: true
-            anchors.left: port3.right
-            anchors.leftMargin: 7
-            anchors.top:deviceBackground.top
-            anchors.topMargin: 10
-            anchors.bottom: deviceBackground.bottom
-            anchors.bottomMargin: 5
-            width:basicPortWidth
-
-            outputVoltage:{
-                if (platformInterface.request_usb_power_notification.port === portNumber){
-                    return (platformInterface.request_usb_power_notification.output_voltage).toFixed(2)
-                }
-                else{
-                    return port4.outputVoltage;
+                    onClicked: {
+                        if (!port4Animation.pluggedIn) {
+                            port4Animation.source = "images/usbACord.gif"
+                            port4Animation.currentFrame = 0
+                            port4Animation.playing = true
+                            port4Animation.pluggedIn = !port4Animation.pluggedIn
+                            port4.portConnected = true
+                            port4Device.connected = true
+                        } else {
+                            port4Animation.source = "images/usbACordReverse.gif"
+                            port4Animation.currentFrame = 0
+                            port4Animation.playing = true
+                            port4Animation.pluggedIn = !port4Animation.pluggedIn
+                            port4.portConnected = false
+                            port4Device.connected = false
+                        }
+                    }
                 }
             }
 
+            Image{
+                id:videoIcon
+                source:"./images/videoIcon.png"
+                anchors.verticalCenter: port4Device.verticalCenter
+                anchors.left:port4Device.right
+                anchors.leftMargin: 40
+                fillMode:Image.PreserveAspectFit
+                opacity: displayPort.portConnected ? 1 : .5
 
-            outputPower:{
-                if (platformInterface.request_usb_power_notification.port === portNumber){
-                    return (platformInterface.request_usb_power_notification.output_voltage * platformInterface.request_usb_power_notification.output_current).toFixed(2);
-                }
-                else{
-                    return port4.outputPower;
+                MouseArea{
+                    anchors.fill: parent
+
+                    onClicked: {
+                        if (!displayPortAnimation.pluggedIn) {
+                            displayPortAnimation.source = "images/DisplayPortAnim.gif"
+                            displayPortAnimation.currentFrame = 0
+                            displayPortAnimation.playing = true
+                            displayPortAnimation.pluggedIn = !displayPortAnimation.pluggedIn
+                            displayPort.portConnected = true
+                        } else {
+                            displayPortAnimation.source = "images/DisplayPortAnimReverse.gif"
+                            displayPortAnimation.currentFrame = 0
+                            displayPortAnimation.playing = true
+                            displayPortAnimation.pluggedIn = !displayPortAnimation.pluggedIn
+                            displayPort.portConnected = false
+                        }
+                    }
                 }
             }
-        }
 
-        VideoPortInfo{
-            id:displayPort
-            portName:"DisplayPort"
-            portConnected: false
-            anchors.left: port4.right
-            anchors.leftMargin: 7
-            anchors.top:deviceBackground.top
-            anchors.topMargin: 10
-            anchors.bottom: deviceBackground.bottom
-            anchors.bottomMargin: 5
-            width:basicPortWidth
-        }
+            Image{
+                id:audioIcon
+                source:"./images/headphonesIcon.png"
+                anchors.verticalCenter: port4Device.verticalCenter
+                anchors.left:videoIcon.right
+                anchors.leftMargin: 80
+                fillMode:Image.PreserveAspectFit
+                opacity: audioPort.portConnected ? 1 : .5
 
-        AudioPortInfo{
-            id:audioPort
-            portName:"Audio"
-            portConnected: false
-            anchors.left: displayPort.right
-            anchors.leftMargin: 7
-            anchors.top:deviceBackground.top
-            anchors.topMargin: 10
-            anchors.bottom: deviceBackground.bottom
-            anchors.bottomMargin: 5
-            width:basicPortWidth
+                MouseArea{
+                    anchors.fill: parent
+
+                    onClicked: {
+                        if (!audioAnimation.pluggedIn) {
+                            audioAnimation.source = "images/AudioAnim.gif"
+                            audioAnimation.currentFrame = 0
+                            audioAnimation.playing = true
+                            audioAnimation.pluggedIn = !audioAnimation.pluggedIn
+                            audioPort.portConnected = true
+                        } else {
+                            audioAnimation.source = "images/AudioAnimReverse.gif"
+                            audioAnimation.currentFrame = 0
+                            audioAnimation.playing = true
+                            audioAnimation.pluggedIn = !audioAnimation.pluggedIn
+                            audioPort.portConnected = false
+                        }
+                    }
+                }
+            }
+
         }
     }
-
-    DeviceInfo{
-        id:upstreamDevice
-        anchors.top:deviceBackground.bottom
-        anchors.topMargin: 95
-        anchors.left:root.left
-        anchors.leftMargin: 20
-        height:145
-        width:160
-        portNumber:1
-
-        MouseArea{
-            anchors.fill: parent
-
-            onClicked: {
-                if (!upstreamAnimation.pluggedIn) {
-                    upstreamAnimation.source = "images/cord.gif"
-                    upstreamAnimation.currentFrame = 0
-                    upstreamAnimation.playing = true
-                    upstreamAnimation.pluggedIn = !upstreamAnimation.pluggedIn
-                    upstreamPort.portConnected = true
-                    upstreamDevice.connected = true
-                } else {
-                    upstreamAnimation.source = "images/cordReverse.gif"
-                    upstreamAnimation.currentFrame = 0
-                    upstreamAnimation.playing = true
-                    upstreamAnimation.pluggedIn = !upstreamAnimation.pluggedIn
-                    upstreamPort.portConnected = false
-                    upstreamDevice.connected = false
-                }
-            }
-        }
-
-    }
-
-    DeviceInfo{
-        id:port1Device
-        anchors.top:deviceBackground.bottom
-        anchors.topMargin: 95
-        anchors.left:upstreamDevice.right
-        anchors.leftMargin: 7
-        height:145
-        width:160
-        portNumber:2
-
-        MouseArea{
-            anchors.fill: parent
-
-            onClicked: {
-                if (!port1Animation.pluggedIn) {
-                    port1Animation.source = "images/cord.gif"
-                    port1Animation.currentFrame = 0
-                    port1Animation.playing = true
-                    port1Animation.pluggedIn = !port1Animation.pluggedIn
-                    port1.portConnected = true
-                    port1Device.connected = true
-                } else {
-                    port1Animation.source = "images/cordReverse.gif"
-                    port1Animation.currentFrame = 0
-                    port1Animation.playing = true
-                    port1Animation.pluggedIn = !port1Animation.pluggedIn
-                    port1.portConnected = false
-                    port1Device.connected = false
-                }
-            }
-        }
-
-
-    }
-
-    DeviceInfo{
-        id:port2Device
-        anchors.top:deviceBackground.bottom
-        anchors.topMargin: 95
-        anchors.left:port1Device.right
-        anchors.leftMargin: 7
-        height:145
-        width:160
-        portNumber:3
-
-        MouseArea{
-            anchors.fill: parent
-
-            onClicked: {
-                if (!port2Animation.pluggedIn) {
-                    port2Animation.source = "images/cord.gif"
-                    port2Animation.currentFrame = 0
-                    port2Animation.playing = true
-                    port2Animation.pluggedIn = !port2Animation.pluggedIn
-                    port2.portConnected = true
-                    port2Device.connected = true
-                } else {
-                    port2Animation.source = "images/cordReverse.gif"
-                    port2Animation.currentFrame = 0
-                    port2Animation.playing = true
-                    port2Animation.pluggedIn = !port2Animation.pluggedIn
-                    port2.portConnected = false
-                    port2Device.connected = false
-                }
-            }
-        }
-    }
-
-    DeviceInfo{
-        id:port3Device
-        anchors.top:deviceBackground.bottom
-        anchors.topMargin: 95
-        anchors.left:port2Device.right
-        anchors.leftMargin: 7
-        height:145
-        width:160
-        portNumber:4
-
-        MouseArea{
-            anchors.fill: parent
-
-            onClicked: {
-                if (!port3Animation.pluggedIn) {
-                    port3Animation.source = "images/cord.gif"
-                    port3Animation.currentFrame = 0
-                    port3Animation.playing = true
-                    port3Animation.pluggedIn = !port3Animation.pluggedIn
-                    port3.portConnected = true
-                    port3Device.connected = true
-                } else {
-                    port3Animation.source = "images/cordReverse.gif"
-                    port3Animation.currentFrame = 0
-                    port3Animation.playing = true
-                    port3Animation.pluggedIn = !port3Animation.pluggedIn
-                    port3.portConnected = false
-                    port3Device.connected = false
-                }
-            }
-        }
-    }
-
-    DeviceInfo{
-        id:port4Device
-        anchors.top:deviceBackground.bottom
-        anchors.topMargin: 95
-        anchors.left:port3Device.right
-        anchors.leftMargin: 7
-        height:145
-        width:160
-        portNumber:5
-
-        MouseArea{
-            anchors.fill: parent
-
-            onClicked: {
-                if (!port4Animation.pluggedIn) {
-                    port4Animation.source = "images/usbACord.gif"
-                    port4Animation.currentFrame = 0
-                    port4Animation.playing = true
-                    port4Animation.pluggedIn = !port4Animation.pluggedIn
-                    port4.portConnected = true
-                    port4Device.connected = true
-                } else {
-                    port4Animation.source = "images/usbACordReverse.gif"
-                    port4Animation.currentFrame = 0
-                    port4Animation.playing = true
-                    port4Animation.pluggedIn = !port4Animation.pluggedIn
-                    port4.portConnected = false
-                    port4Device.connected = false
-                }
-            }
-        }
-    }
-
-    Image{
-        id:videoIcon
-        source:"./images/videoIcon.png"
-        anchors.verticalCenter: port4Device.verticalCenter
-        anchors.left:port4Device.right
-        anchors.leftMargin: 40
-        fillMode:Image.PreserveAspectFit
-        opacity: displayPort.portConnected ? 1 : .5
-
-        MouseArea{
-            anchors.fill: parent
-
-            onClicked: {
-                if (!displayPortAnimation.pluggedIn) {
-                    displayPortAnimation.source = "images/DisplayPortAnim.gif"
-                    displayPortAnimation.currentFrame = 0
-                    displayPortAnimation.playing = true
-                    displayPortAnimation.pluggedIn = !displayPortAnimation.pluggedIn
-                    displayPort.portConnected = true
-                } else {
-                    displayPortAnimation.source = "images/DisplayPortAnimReverse.gif"
-                    displayPortAnimation.currentFrame = 0
-                    displayPortAnimation.playing = true
-                    displayPortAnimation.pluggedIn = !displayPortAnimation.pluggedIn
-                    displayPort.portConnected = false
-                }
-            }
-        }
-    }
-
-    Image{
-        id:audioIcon
-        source:"./images/headphonesIcon.png"
-        anchors.verticalCenter: port4Device.verticalCenter
-        anchors.left:videoIcon.right
-        anchors.leftMargin: 80
-        fillMode:Image.PreserveAspectFit
-        opacity: audioPort.portConnected ? 1 : .5
-
-        MouseArea{
-            anchors.fill: parent
-
-            onClicked: {
-                if (!audioAnimation.pluggedIn) {
-                    audioAnimation.source = "images/AudioAnim.gif"
-                    audioAnimation.currentFrame = 0
-                    audioAnimation.playing = true
-                    audioAnimation.pluggedIn = !audioAnimation.pluggedIn
-                    audioPort.portConnected = true
-                } else {
-                    audioAnimation.source = "images/AudioAnimReverse.gif"
-                    audioAnimation.currentFrame = 0
-                    audioAnimation.playing = true
-                    audioAnimation.pluggedIn = !audioAnimation.pluggedIn
-                    audioPort.portConnected = false
-                }
-            }
-        }
-    }
-
-
-
-    Image{
-        source:"./images/FourPortWireframeBasicView.png"
-        anchors.fill:root
-        opacity: .2
-        visible: false
-    }
-
-
 }

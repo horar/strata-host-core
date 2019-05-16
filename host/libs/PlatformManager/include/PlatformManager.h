@@ -6,6 +6,7 @@
 #include <string>
 #include <functional>
 #include <mutex>
+#include <memory>
 
 #if defined(__linux__) || defined(__APPLE__)
 #include <EvEventsMgr.h>
@@ -21,19 +22,21 @@ namespace spyglass {
     class PlatformConnection;
     class EvEventBase;
 
+    typedef std::shared_ptr<PlatformConnection> PlatformConnectionShPtr;
+
     /**
      * Pure virtual interface for connection handling
      */
     class PlatformConnHandler {
     public:
-        virtual void onNewConnection(PlatformConnection *connection) = 0;
+        virtual void onNewConnection(PlatformConnectionShPtr connection) = 0;
 
-        virtual void onCloseConnection(PlatformConnection *connection) = 0;
+        virtual void onCloseConnection(PlatformConnectionShPtr connection) = 0;
 
-        virtual void onNotifyReadConnection(PlatformConnection *connection) = 0;
+        virtual void onNotifyReadConnection(PlatformConnectionShPtr connection) = 0;
     };
 
-    class PlatformManager {
+    class PlatformManager final {
     public:
         PlatformManager();
 
@@ -66,21 +69,36 @@ namespace spyglass {
          * @param connection_id search for
          * @return returns connection object or null when not found
          */
-        PlatformConnection* getConnection(const std::string& connection_id);
+        PlatformConnectionShPtr getConnection(const std::string& connection_id);
+
+        /**
+         * Closes and removes connection from PlatformManager
+         * @param connection_id to remove
+         */
+        bool removeConnection(const std::string& connection_id);
 
     protected:
+        /**
+         * callback from PlatformConnection
+         */
+        void notifyConnectionReadable(const std::string& connection_id);
+
+        /**
+         * callback from PlatformConnection
+         */
+        void unregisterConnection(const std::string& connection_id);
+
+        /**
+         * Updates the port list, calculates the differences
+         */
+        void onUpdatePortList(EvEventBase*, int);
+
+
         void onAddedPort(serialPortHash hash);
 
         void onRemovedPort(serialPortHash hash);
 
-        void notifyConnectionReadable(PlatformConnection *conn);
-
-        void removeConnection(PlatformConnection *conn);
-
-        void onUpdatePortList(EvEventBase*, int);  //Temporary
-
-    private:
-
+        void onRemoveClosedPort(serialPortHash hash);
 
     private:
         void computeListDiff(const std::vector<serialPortHash> &list,
@@ -94,7 +112,10 @@ namespace spyglass {
         std::map<serialPortHash, std::string> hashToName_;
 
         std::mutex connectionMap_mutex_;
-        std::map<serialPortHash, PlatformConnection *> openedPorts_;
+        std::map<serialPortHash, PlatformConnectionShPtr> openedPorts_;
+
+        std::mutex closedPorts_mutex_;
+        std::map<serialPortHash, PlatformConnectionShPtr> closedPorts_;
 
         PlatformConnHandler *plat_handler_ = nullptr;
 
