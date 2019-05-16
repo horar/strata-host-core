@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/tech/strata/sgwidgets/SGGraphStatic">
+        <file>qmldir</file>
+        <file>SGGraphStatic.qml</file>
+    </qresource>
+</RCC>

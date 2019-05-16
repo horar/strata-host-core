@@ -1,0 +1,4 @@
+module tech.strata.sgwidgets.SGPopout
+
+SGGraph 1.0 SGGraph.qml
+SGPopout 1.0 SGPopout.qml

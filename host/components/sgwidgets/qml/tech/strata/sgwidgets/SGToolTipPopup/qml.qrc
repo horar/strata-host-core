@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/tech/strata/sgwidgets/SGToolTipPopup">
+        <file>qmldir</file>
+        <file>SGToolTipPopup.qml</file>
+    </qresource>
+</RCC>
