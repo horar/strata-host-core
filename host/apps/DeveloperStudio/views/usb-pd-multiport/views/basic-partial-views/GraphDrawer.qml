@@ -1,6 +1,7 @@
 import QtQuick 2.9
 import QtQuick.Controls 2.2
 
+import tech.strata.fonts 1.0
 import tech.strata.sgwidgets 1.0
 
 Drawer {
@@ -114,7 +115,7 @@ Drawer {
             color: "#ddd"
             font {
                 pixelSize: 25
-                family: sgicons.name
+                family: Fonts.sgicons
             }
             anchors {
                 verticalCenter: menuContainer.verticalCenter
@@ -283,10 +284,5 @@ Drawer {
         anchors {
             fill: remainderHover
         }
-    }
-
-    FontLoader {
-        id: sgicons
-        source: "../../sgwidgets/fonts/sgicons.ttf"
     }
 }
