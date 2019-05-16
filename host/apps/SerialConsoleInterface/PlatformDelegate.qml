@@ -338,7 +338,7 @@ FocusScope {
         id: fileDialogComponent
         FileDialog {
             title: qsTr("Select File to Export")
-            folder: shortcuts.home
+            folder: shortcuts.documents
             selectExisting: false
         }
     }
