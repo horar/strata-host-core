@@ -23,12 +23,9 @@
 
 #include <rapidjson/schema.h>
 #include <rapidjson/document.h>
+#include <PlatformManager.h>
 #include <PlatformConnection.h>
 
-
-namespace spyglass {
-    class PlatformConnection;
-}
 
 class Flasher
 {
@@ -41,7 +38,7 @@ public:
      * \param connector - serial connector
      * \param firmwareFilename - filename of new image to flash
      */
-    Flasher(spyglass::PlatformConnection* connector, const std::string& firmwareFilename);
+    Flasher(spyglass::PlatformConnectionShPtr connector, const std::string& firmwareFilename);
     virtual ~Flasher();
 
 
@@ -51,7 +48,7 @@ public:
     /*!
      * The method sets serial connector.
      */
-    void setConnector(spyglass::PlatformConnection* connector);
+    void setConnector(spyglass::PlatformConnectionShPtr connector);
 
     /*!
      * The method sets filename of new image to flash.
@@ -150,7 +147,7 @@ private:
     Chunk flashChunk_;
     Chunk backupChunk_;
 
-    spyglass::PlatformConnection* serial_;
+    spyglass::PlatformConnectionShPtr serial_;
     spyglass::PauseConnectionListenerGuard serial_listener_guard_;
 
     std::string firmwareFilename_;

@@ -30,7 +30,7 @@ Item {
             text: qsTr("Basic")
             onClicked: {
                 //from advanced
-                console.log("basic visible=",basicControl.visible,"advanced visible=",advancedControlIsVisible)
+                //console.log("basic visible=",basicControl.visible,"advanced visible=",advancedControlIsVisible)
                 if (basicControl.visible && advancedControlIsVisible){
                     console.log("going to basic from advanced")
                     basicControl.transitionToBasicView();
@@ -60,7 +60,7 @@ Item {
                     basicControl.transitionToAdvancedView();
                     basicControlIsVisible = false;
                     advancedControlIsVisible = true;
-                    console.log("basic visible=",basicControlIsVisible,"advancedVisible=",advancedControlIsVisible)
+                    //console.log("basic visible=",basicControlIsVisible,"advancedVisible=",advancedControlIsVisible)
                 }
                 //from system control
                 else if (systemControl.visible){
@@ -69,12 +69,12 @@ Item {
 
                     if (!advancedControlIsVisible){
                         console.log("switching from basic to advanced view")
-                        console.log("basic visible=",basicControlIsVisible,"advancedVisible=",advancedControlIsVisible)
+                        //console.log("basic visible=",basicControlIsVisible,"advancedVisible=",advancedControlIsVisible)
                         basicControl.transitionImmediatelyToAdvancedView()
                     }
                     advancedControlIsVisible = true;
                     basicControlIsVisible = false;
-                    console.log("basic visible=",basicControlIsVisible,"advancedVisible=",advancedControlIsVisible)
+                    //console.log("basic visible=",basicControlIsVisible,"advancedVisible=",advancedControlIsVisible)
                 }
             }
         }

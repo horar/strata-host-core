@@ -13,5 +13,9 @@
         <file>orangeStatusLight.svg</file>
         <file>redStatusLight.svg</file>
         <file>yellowStatusLight.svg</file>
+        <file>check.svg</file>
+        <file>exclamation.svg</file>
+        <file>exclamation-triangle.svg</file>
+        <file>times-circle.svg</file>
     </qresource>
 </RCC>

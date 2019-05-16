@@ -2,7 +2,7 @@ import QtQuick 2.9
 import QtGraphicalEffects 1.0
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.1
-import "qrc:/views/usb-hub/sgwidgets"
+import "../sgwidgets"
 
 Item {
     id: systemControls
@@ -238,12 +238,13 @@ Item {
                 id: tempFault
                 label: "Fault when temperature is above:"
                 labelTopAligned: true
-                width:480
                 anchors {
                     left: faultGroup.left
                     leftMargin: 35
                     top: faultProtectionColumn.bottom
                     topMargin: 10
+                    right:tempFaultInput.left
+                    rightMargin: 10
 
                 }
                 from: -20
@@ -262,8 +263,8 @@ Item {
                 anchors {
                     verticalCenter: tempFault.verticalCenter
                     verticalCenterOffset: -7
-                    left:tempFault.right
-                    leftMargin: 10
+                    right:faultGroup.right
+                    rightMargin: 35
                 }
                 value: tempFault.value.toFixed(0)
                 onApplied: platformInterface.set_maximum_temperature.update(input); // slider will be updated via notification
@@ -312,12 +313,13 @@ Item {
                 grooveFillColor: "#145A74"
                 switchHeight: 20
                 switchWidth: 46
-                checked: platformInterface.foldback_temperature_limiting_event.temperature_foldback_enabled
+                checked: platformInterface.temperature_foldback_notification.temperature_foldback_enabled
                 onToggled:{
                     console.log("sending temp foldback update command from tempFoldbackSwitch");
                     platformInterface.set_temperature_foldback.update(tempFoldbackSwitch.checked,
-                                                                      platformInterface.foldback_temperature_limiting_event.foldback_maximum_temperature,
-                                                                      platformInterface.foldback_temperature_limiting_event.foldback_maximum_temperature_power);
+                                                                      platformInterface.temperature_foldback_notification.foldback_maximum_temperature,
+                                                                      platformInterface.temperature_foldback_notification.foldback_power_reduction_percentage,
+                                                                      platformInterface.temperature_foldback_notification.hysteresis);
                 }
             }
 
@@ -325,23 +327,25 @@ Item {
                 id: foldbackTemp
                 label: "When any port temperature is above:"
                 labelTopAligned: true
-                width:510
                 anchors {
                     left: foldbackGroup.left
                     leftMargin: 10
                     top: temperatureFoldbackActiveLabel.bottom
                     topMargin: 10
+                    right: foldbackTempInput.left
+                    rightMargin: 10
                 }
                 from: 0
                 to: 125
                 startLabel: "0°C"
                 endLabel: "125°C"
-                value: platformInterface.foldback_temperature_limiting_event.foldback_maximum_temperature
+                value: platformInterface.temperature_foldback_notification.foldback_maximum_temperature
                 onMoved:{
                     console.log("sending temp foldback update command from foldbackTempSlider");
-                    platformInterface.set_temperature_foldback.update(platformInterface.foldback_temperature_limiting_event.temperature_foldback_enabled,
+                    platformInterface.set_temperature_foldback.update(platformInterface.temperature_foldback_notification.temperature_foldback_enabled,
                                                                       foldbackTemp.value,
-                                                                      platformInterface.foldback_temperature_limiting_event.foldback_maximum_temperature_power)
+                                                                      platformInterface.temperature_foldback_notification.foldback_power_reduction_percentage,
+                                                                      platformInterface.temperature_foldback_notification.hysteresis);
                 }
 
             }
@@ -353,44 +357,41 @@ Item {
                 anchors {
                     verticalCenter: foldbackTemp.verticalCenter
                     verticalCenterOffset: -7
-                    left:foldbackTemp.right
-                    leftMargin: 10
+                    right:foldbackGroup.right
+                    rightMargin: 35
                 }
-//                input: foldbackTemp.value.toFixed(0)
-//                platformInterface.set_temperature_foldback.update(platformInterface.foldback_temperature_limiting_event.temperature_foldback_enabled,
-//                                                                  platformInterface.foldback_temperature_limiting_event.foldback_maximum_temperature,
-//                                                                  limitOutput2.currentText)
+                value: platformInterface.temperature_foldback_notification.foldback_maximum_temperature.toFixed(0)
+                onApplied:  platformInterface.set_temperature_foldback.update(platformInterface.temperature_foldback_notification.temperature_foldback_enabled,
+                                                                  foldbackTempInput.currentText,
+                                                                  platformInterface.temperature_foldback_notification.foldback_power_reduction_percentage,
+                                                                  platformInterface.temperature_foldback_notification.hysteresis)
             }
 
             SGSlider {
                 id: foldbackTempLimit
                 label: "Cut the port output power by:"
                 labelTopAligned: true
-                width:465
                 anchors {
                     left: foldbackGroup.left
                     leftMargin: 55
                     top: foldbackTemp.bottom
                     topMargin: 10
+                    right:foldbackTempLimitInput.left
+                    rightMargin:10
                 }
                 from: 1
                 to: 100
                 startLabel: "0%"
                 endLabel: "99%"
 
-                property var currentFoldbackOuput: platformInterface.foldback_temperature_limiting_event.foldback_maximum_temperature_power
-
-                onCurrentFoldbackOuputChanged: {
-                    //limitOutput2.currentIndex = limitOutput2.comboBox.find( parseInt (platformInterface.foldback_temperature_limiting_event.foldback_maximum_temperature_power))
-                }
-
-
-                value: platformInterface.foldback_temperature_limiting_event.foldback_maximum_temperature
+                //N.B. Not the correct API call
+                value: platformInterface.temperature_foldback_notification.foldback_power_reduction_percentage
                 onMoved:{
-//                    console.log("sending temp foldback update command from foldbackTempSlider");
-//                    platformInterface.set_temperature_foldback.update(platformInterface.foldback_temperature_limiting_event.temperature_foldback_enabled,
-//                                                                      platformInterface.foldback_temperature_limiting_event.foldback_maximum_temperature,
-//                                                                      limitOutput2.currentText);
+                    //console.log("sending temp foldback update command from foldbackTempSlider");
+                    platformInterface.set_temperature_foldback.update(platformInterface.temperature_foldback_notification.temperature_foldback_enabled,
+                                                                      platformInterface.temperature_foldback_notification.foldback_maximum_temperature,
+                                                                      limitOutput2.currentText,
+                                                                      platformInterface.temperature_foldback_notification.hysteresis);
                 }
 
             }
@@ -401,13 +402,15 @@ Item {
                 anchors {
                     verticalCenter: foldbackTempLimit.verticalCenter
                     verticalCenterOffset: -7
-                    left:foldbackTempLimit.right
-                    leftMargin: 10
+                    right: foldbackGroup.right
+                    rightMargin:35
                 }
-//                input: foldbackTemp.value.toFixed(0)
-//                platformInterface.set_temperature_foldback.update(platformInterface.foldback_temperature_limiting_event.temperature_foldback_enabled,
-//                                                                  platformInterface.foldback_temperature_limiting_event.foldback_maximum_temperature,
-//                                                                  limitOutput2.currentText)
+                //N.B. Not the correct API call
+                value: platformInterface.temperature_foldback_notification.foldback_power_reduction_percentage.toFixed(0)
+                onApplied: platformInterface.set_temperature_foldback.update(platformInterface.temperature_foldback_notification.temperature_foldback_enabled,
+                                                                  platformInterface.temperature_foldback_notification.foldback_maximum_temperature,
+                                                                  limitOutput2.currentText,
+                                                                  platformInterface.temperature_foldback_notification.hysteresis);
             }
 
 
@@ -416,23 +419,25 @@ Item {
                 id: tempFoldbackHysteresis
                 label: "End limiting on a decrease of:"
                 labelTopAligned: true
-                width:465
                 anchors {
                     left: foldbackGroup.left
                     leftMargin: 55
                     top: foldbackTempLimit.bottom
                     topMargin: 10
+                    right:tempFoldbackHysteresisInput.left
+                    rightMargin:10
                 }
                 from: 25
                 to: 200
                 startLabel: "1°C"
                 endLabel: "10°C"
-                value: platformInterface.foldback_temperature_limiting_event.foldback_maximum_temperature
+                value: platformInterface.temperature_foldback_notification.temperature_hysteresis
                 onMoved:{
                     //console.log("sending temp foldback update command from foldbackTempSlider");
-                    //platformInterface.set_temperature_foldback.update(platformInterface.foldback_temperature_limiting_event.temperature_foldback_enabled,
-                    //                                                  foldbackTemp.value,
-                    //                                                  platformInterface.foldback_temperature_limiting_event.foldback_maximum_temperature_power)
+                    platformInterface.set_temperature_foldback.update(platformInterface.temperature_foldback_notification.temperature_foldback_enabled,
+                                                                      platformInterface.temperature_foldback_notification.foldback_maximum_temperature,
+                                                                      platformInterface.temperature_foldback_notification.foldback_power_reduction_percentage,
+                                                                     tempFoldbackHysteresis.value)
                 }
 
             }
@@ -443,13 +448,14 @@ Item {
                 anchors {
                     verticalCenter: tempFoldbackHysteresis.verticalCenter
                     verticalCenterOffset: -7
-                    left:tempFoldbackHysteresis.right
-                    leftMargin: 10
+                    right:foldbackGroup.right
+                    rightMargin:35
                 }
-                //input: foldbackTemp.value.toFixed(0)
-                //onApplied: platformInterface.set_temperature_foldback.update(platformInterface.foldback_temperature_limiting_event.temperature_foldback_enabled,
-                //                                                             input,
-                //                                                             platformInterface.foldback_temperature_limiting_event.foldback_maximum_temperature_power)
+                value: platformInterface.temperature_foldback_notification.temperature_hysteresis.toFixed(0)
+                onApplied: platformInterface.set_temperature_foldback.update(platformInterface.temperature_foldback_notification.temperature_foldback_enabled,
+                                                                             platformInterface.temperature_foldback_notification.foldback_maximum_temperature,
+                                                                             platformInterface.temperature_foldback_notification.foldback_power_reduction_percentage,
+                                                                             tempFoldbackHysteresisInput.currentText)
             }
     }
 
