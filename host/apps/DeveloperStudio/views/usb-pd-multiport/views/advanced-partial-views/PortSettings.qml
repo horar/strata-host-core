@@ -2,7 +2,7 @@ import QtQuick 2.9
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.3
 
-import tech.strata.sgwidgets 1.0
+import tech.strata.sgwidgets 1.1
 
 Item {
     id: root
@@ -188,7 +188,7 @@ Item {
             onMaxPowerChanged:{
                 if (platformInterface.usb_pd_maximum_power.port === portNumber){
                     //console.log("got a new commanded max power for port",platformInterface.usb_pd_maximum_power.port)
-                    maxPowerOutput.currentIndex = maxPowerOutput.comboBox.find( parseInt (platformInterface.usb_pd_maximum_power.commanded_max_power))
+                    maxPowerOutput.currentIndex = maxPowerOutput.find( parseInt (platformInterface.usb_pd_maximum_power.commanded_max_power))
                     //console.log("commanded max power set to index",maxPowerOutput.currentIndex);
                 }
             }
@@ -214,8 +214,8 @@ Item {
 
             //when changing the value
             onActivated: {
-                console.log("Max Power Output: setting max power to ",parseInt(maxPowerOutput.comboBox.currentText));
-                platformInterface.set_usb_pd_maximum_power.update(portNumber,parseInt(maxPowerOutput.comboBox.currentText))
+                console.log("Max Power Output: setting max power to ",parseInt(maxPowerOutput.currentText));
+                platformInterface.set_usb_pd_maximum_power.update(portNumber,parseInt(maxPowerOutput.currentText))
             }
 
         }

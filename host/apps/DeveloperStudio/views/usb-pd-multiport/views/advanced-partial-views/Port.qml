@@ -248,7 +248,7 @@ Item {
         }
         height:250
 
-        SGGraph {
+        SGGraphTimed {
             id: graph1
             title: "Voltage Out"
             visible: false
@@ -282,7 +282,7 @@ Item {
             inputData: stream          // Set the graph's data source here
         }
 
-        SGGraph {
+        SGGraphTimed {
             id: graph2
             title: "Current Out"
             visible: false
@@ -317,7 +317,7 @@ Item {
             inputData: stream          // Set the graph's data source here
         }
 
-        SGGraph {
+        SGGraphTimed {
             id: graph3
             title: "Current In"
             visible: false
@@ -352,7 +352,7 @@ Item {
             inputData: stream          // Set the graph's data source here
         }
 
-        SGGraph {
+        SGGraphTimed {
             id: graph4
             title: "Power Out"
             visible: false
@@ -387,7 +387,7 @@ Item {
             inputData: stream          // Set the graph's data source here
         }
 
-        SGGraph {
+        SGGraphTimed {
             id: graph5
             title: "Power In"
             visible: false
@@ -422,7 +422,7 @@ Item {
             inputData: stream          // Set the graph's data source here
         }
 
-        SGGraph {
+        SGGraphTimed {
             id: graph6
             title: "Efficiency"
             visible: false

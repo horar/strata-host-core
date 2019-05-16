@@ -2,7 +2,8 @@ import QtQuick 2.9
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.2
 import QtQuick.Window 2.12
-import "qrc:/views/usb-pd-multiport/sgwidgets"
+
+import tech.strata.sgwidgets 1.1
 
 Item {
     id: root
@@ -69,7 +70,7 @@ Item {
             property alias portGraphsGraph5: graph5
             property alias portGraphsGraph6: graph6
 
-            SGGraph {
+            SGGraphTimed {
                 id: graph1
                 title: "Voltage Out"
                 visible: false
@@ -103,7 +104,7 @@ Item {
                 inputData: stream          // Set the graph's data source here
             }
 
-            SGGraph {
+            SGGraphTimed {
                 id: graph2
                 title: "Current Out"
                 visible: false
@@ -138,7 +139,7 @@ Item {
                 inputData: stream          // Set the graph's data source here
             }
 
-            SGGraph {
+            SGGraphTimed {
                 id: graph3
                 title: "Current In"
                 visible: false
@@ -173,7 +174,7 @@ Item {
                 inputData: stream          // Set the graph's data source here
             }
 
-            SGGraph {
+            SGGraphTimed {
                 id: graph4
                 title: "Power Out"
                 visible: false
@@ -208,7 +209,7 @@ Item {
                 inputData: stream          // Set the graph's data source here
             }
 
-            SGGraph {
+            SGGraphTimed {
                 id: graph5
                 title: "Power In"
                 visible: false
@@ -243,7 +244,7 @@ Item {
                 inputData: stream          // Set the graph's data source here
             }
 
-            SGGraph {
+            SGGraphTimed {
                 id: graph6
                 title: "Efficiency"
                 visible: false
