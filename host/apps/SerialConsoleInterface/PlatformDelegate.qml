@@ -340,6 +340,7 @@ FocusScope {
             title: qsTr("Select File to Export")
             folder: shortcuts.documents
             selectExisting: false
+            defaultSuffix: "log"
         }
     }
 
