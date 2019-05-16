@@ -31,6 +31,10 @@ int main(int argc, char *argv[])
     // TODO: [LC] use more clever resource loading incl. issue logging etc. (+support for Windows)
     qCInfo(logCategoryStrataDevStudio)
         << "LOAD: fonts.rcc = " << QResource::registerResource(QStringLiteral("../../../fonts.rcc"));
+    qCInfo(logCategoryStrataDevStudio)
+        << "LOAD: pdfjs.rcc = "
+        << QResource::registerResource(QStringLiteral("../../../pdfjs.rcc"));
+
 #if defined(Q_OS_WIN)
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 #endif
