@@ -135,7 +135,7 @@ Drawer {
             }
         }
 
-        SGGraph{
+        SGGraphTimed {
             id:voltageGraph
             anchors.left: menuContainer.left
             anchors.right:menuContainer.right
@@ -176,7 +176,7 @@ Drawer {
             showYGrids: true                // Default: false
         }
 
-        SGGraph{
+        SGGraphTimed {
             id:powerGraph
             anchors.left: menuContainer.left
             anchors.right:menuContainer.right
@@ -218,7 +218,7 @@ Drawer {
             showYGrids: true                // Default: false
         }
 
-        SGGraph{
+        SGGraphTimed {
             id:temperatureGraph
             anchors.left: menuContainer.left
             anchors.right:menuContainer.right
