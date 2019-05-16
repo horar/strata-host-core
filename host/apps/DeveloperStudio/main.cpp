@@ -34,6 +34,9 @@ int main(int argc, char *argv[])
     qCInfo(logCategoryStrataDevStudio)
         << "LOAD: pdfjs.rcc = "
         << QResource::registerResource(QStringLiteral("../../../pdfjs.rcc"));
+    qCInfo(logCategoryStrataDevStudio)
+        << "LOAD: sgwidgets.rcc = "
+        << QResource::registerResource(QStringLiteral("../../../sgwidgets.rcc"));
 
 #if defined(Q_OS_WIN)
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);

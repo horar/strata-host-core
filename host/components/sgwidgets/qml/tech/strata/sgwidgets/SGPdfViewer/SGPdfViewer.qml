@@ -1,7 +1,7 @@
-import QtQuick 2.9
-import QtQuick.Controls 2.3
+import QtQuick 2.12
+import QtQuick.Controls 2.12
 import QtWebEngine 1.6
-import QtGraphicalEffects 1.0
+import QtGraphicalEffects 1.12
 
 Item {
     id: root
@@ -19,8 +19,8 @@ Item {
         }
 
         // Example url: "qrc:/minified/web/viewer.html?file=file://localhost/Users/zbgzzh/Desktop/layout.pdf"
-        url: root.url === "datasheet-unavailable" ? "qrc:/minified/web/viewer.html?file=" :"qrc:/minified/web/viewer.html?file=" + root.url
-        enabled: url != "qrc:/minified/web/viewer.html?file="
+        url: root.url === "datasheet-unavailable" ? "qrc:/tech/pdfjs/minified/web/viewer.html?file=" :"qrc:/tech/pdfjs/minified/web/viewer.html?file=" + root.url
+        enabled: url != "qrc:/tech/pdfjs/minified/web/viewer.html?file="
 
         profile: WebEngineProfile {
             onDownloadRequested: {
