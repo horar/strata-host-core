@@ -21,7 +21,6 @@ Rectangle {
         id: platformInterface
     }
 
-
     Component.onCompleted: {
         helpIcon.visible = true
         Help.registerTarget(navTabs, "Using these two tabs you can switch between basic or advance control.", 0,"basic5AHelp")
