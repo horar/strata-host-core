@@ -20,8 +20,9 @@
  *
  * Valuable Information
  * ================
- * 1) Libevent dynamic addition/removal of events is implemented using event_init,event_add and event_dispatch.
- *    Dynamic addition and removal of events does not work using event_base_init, event_base_dispatch
+ * 1) Libevent dynamic addition/removal of events is implemented using event_init,event_add and
+ * event_dispatch. Dynamic addition and removal of events does not work using event_base_init,
+ * event_base_dispatch
  *
  * KNOWN BUGS/HACKS
  * ================
@@ -39,39 +40,34 @@
 #define HOST_CONTROLLER_SERVICE_H
 
 // standard library
-#include <iostream>
-#include <string>
-#include <sstream>
+#include <SimpleOpt.h>
 #include <stdio.h>
 #include <fstream>
-#include <SimpleOpt.h>
-#include <map>
+#include <iostream>
 #include <list>
+#include <map>
+#include <sstream>
+#include <string>
 #include <thread>
 
-// zero mq library
-#include "zmq.hpp"
-#include "zmq_addon.hpp"
-#include "zhelpers.hpp"
-
 // libevent library
-#include <event2/event.h>
 #include <event.h>
+#include <event2/event.h>
 
 // libserial port library
 #include <libserialport.h>
 
 // rapid json library
 #include <rapidjson/document.h>
-#include <rapidjson/writer.h>
 #include <rapidjson/stringbuffer.h>
+#include <rapidjson/writer.h>
 
 // project libraries
-#include "ParseConfig.h"
-#include "Logger.h"
-#include "DiscoveryService.h"
 #include <Connector.h>
 #include <SGwget.h>
+#include "DiscoveryService.h"
+#include "Logger.h"
+#include "ParseConfig.h"
 #include "SGCouchbaseLiteWrapper.h"
 
 // Console print function
@@ -110,18 +106,20 @@ enum class CommandDispatcherMessages{
     COMMAND_NOT_FOUND	= 10,
 };
 
-class HostControllerService {
+class HostControllerService
+{
 public:
     // constructor
     HostControllerService(const std::string& configuration_file);
-
+    ~HostControllerService();
     // public member functions
     HcsError init();
     HcsError run();
     HcsError exit();
 
     // utility functions
-    std::vector<std::string> initialCommandDispatch(const std::string& dealer_id,const std::string& command);
+    std::vector<std::string> initialCommandDispatch(const std::string& dealer_id,
+                                                    const std::string& command);
     bool disptachMessageToPlatforms(const std::string& dealer_id, const std::string& command);
     CommandDispatcherMessages stringHash(const std::string& command);
     bool openPlatform(); // platform functions
@@ -168,6 +166,7 @@ public:
     void retrieveUsername(const std::string&);  // retrieves user name from the input json string
 
     void onValidate(const std::string& doc_id, const std::string& json_body) ;
+    void onDownloadCallback(bool download_result,const std::string& download_file_name);
 
     void sendDocumentstoUI(const std::string& json_body);
     // libevent callbacks
@@ -182,24 +181,17 @@ public:
 
 private:
     // config file data members
-    ParseConfig *configuration_;
-    // zeromq data members
-    zmq::context_t* socket_context_;    // context
+    std::unique_ptr<ParseConfig> configuration_;
     std::string hcs_server_address_;    // server address
     std::string hcs_remote_address_;    // remote address
-    zmq::socket_t* server_socket_;      // server socket
-    zmq::socket_t* remote_socket_;      // remote socket
 
     // The following socket is for monitoring the activity from discovery service
     std::string remote_discovery_monitor_; // monitor sokcet address
-    zmq::socket_t* remote_discovery_monitor_socket_;    // monitor socket
 
     // getting serial port number from config file
     std::vector<std::string> serial_port_list_;
     // getting the dealer id for remote connection
     std::string dealer_remote_socket_id_;
-    // libevent data members
-    event_base *event_loop_base_;
     // multimap usage to store & find the link between client and platform
     // multimap is selected since in future we may work on many to many possibilities
     // for eg: client connected to two plat or plat connected to 2 clients
@@ -216,7 +208,7 @@ private:
     std::list<std::string> clientList;
 
     // Object for Discovery Service
-    DiscoveryService *discovery_service_;
+    std::unique_ptr<DiscoveryService> discovery_service_;
 
     // zmq::message_t g_reply_;
     std::string g_reply_,g_selected_platform_verbose_,g_dealer_id_;
@@ -229,8 +221,11 @@ private:
     Connector *remote_connector_ ;
     Connector *remote_activity_connector_;
 
+    // SGwget object
+    std::unique_ptr<SGwget> downloader_;
+
     // SGCouchbase Lite wrapper
-    SGCouchbaseLiteWrapper *sgcouchbase_;
+    std::unique_ptr<SGCouchbaseLiteWrapper> sgcouchbase_;
 
     // JWT for the client session
     std::string JWT;

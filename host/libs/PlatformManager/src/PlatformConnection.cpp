@@ -43,27 +43,26 @@ bool PlatformConnection::open(const std::string& portName)
     bool ret = port->open(portName);
     if (ret) {
         port_ = std::move(port);
+        portName_ = portName;
     }
     return ret;
 }
 
 void PlatformConnection::close()
 {
-    if (event_) {
+    if (!port_) {
+        return;
+    }
 
-        std::lock_guard<std::recursive_mutex> lock(event_lock_);
-        event_->deactivate();
-        event_.release();
+    if (parent_) {
+        parent_->unregisterConnection(getName());
     }
 
     std::lock_guard<std::mutex> rlock(readLock_);
     std::lock_guard<std::mutex> wlock(writeLock_);
 
-    if (port_) {
-        port_->close();
-
-        port_.release();
-    }
+    port_->close();
+    port_.release();
 }
 
 bool PlatformConnection::getMessage(std::string& result)
@@ -111,13 +110,12 @@ void PlatformConnection::onDescriptorEvent(EvEventBase*, int flags)
             event_->deactivate();
 
             if (parent_) {
-                parent_->removeConnection(this);
+                parent_->unregisterConnection(getName());
             }
         }
         else if (isReadable() && parent_ != nullptr) {
-
             std::lock_guard<std::recursive_mutex> lock(event_lock_);
-            parent_->notifyConnectionReadable(this);
+            parent_->notifyConnectionReadable(getName());
         }
     }
     if (flags & EvEventBase::eEvStateWrite) {
@@ -221,7 +219,9 @@ bool PlatformConnection::sendMessage(const std::string &message)
 
 int PlatformConnection::waitForMessages(unsigned int timeout)
 {
-    assert(port_);
+    if (!port_) {
+        return iPortNotOpenErr;
+    }
     return handleRead(timeout);
 }
 
@@ -238,11 +238,10 @@ bool PlatformConnection::isReadable()
 
 std::string PlatformConnection::getName() const
 {
-    assert(port_);
-    return std::string(port_->getName());
+    return portName_;
 }
 
-EvEventBase* PlatformConnection::getEvent()
+EvEventBase* PlatformConnection::createEvent()
 {
     if (!event_) {
         sp_handle_t fd = port_->getFileDescriptor();
@@ -259,6 +258,22 @@ EvEventBase* PlatformConnection::getEvent()
     }
 
     return event_.get();
+}
+
+EvEventBase* PlatformConnection::getEvent()
+{
+    return event_.get();
+}
+
+bool PlatformConnection::releaseEvent()
+{
+    if (!event_) {
+        return false;
+    }
+
+    event_->deactivate();
+    event_.release();
+    return true;
 }
 
 bool PlatformConnection::updateEvent(bool read, bool write)

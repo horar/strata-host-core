@@ -313,7 +313,7 @@ FocusScope {
             }
         }
 
-        Button {
+        Common.SgButton {
             id: btnSend
             anchors {
                 verticalCenter: cmdInput.verticalCenter
@@ -323,25 +323,11 @@ FocusScope {
 
             focusPolicy: Qt.NoFocus
             text: qsTr("SEND")
-            font.family: StrataFonts.Fonts.franklinGothicBold
             onClicked: {
                 sendTextInputTextAsComand()
             }
 
             enabled: model.status === "connected"
-
-            background: Rectangle {
-                implicitHeight: 40
-                implicitWidth: 100
-                opacity: enabled ? 1 : 0.5
-                color: {
-                    if (btnSend.pressed) {
-                        return "orange"
-                    }
-
-                    return "#aaaaaa"
-                }
-            }
         }
     }
 
@@ -377,7 +363,7 @@ FocusScope {
     }
 
     function sendTextInputTextAsComand() {
-        if(model.status !== "connected") {
+        if (model.status !== "connected") {
             return
         }
 

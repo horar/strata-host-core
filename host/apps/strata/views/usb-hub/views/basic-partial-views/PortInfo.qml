@@ -13,6 +13,7 @@ Rectangle {
     property int portNumber: 0
     property alias portName: portTitle.text
     property alias portSubtitle: portSubtitle.text
+    property alias isDisplayportCapable: advancedControls.isDisplayportCapable
 
     property alias outputVoltage: outputVoltageBox.value
     property alias maxPower: maxPowerBox.value
@@ -120,6 +121,7 @@ Rectangle {
             id:moveBottomStatsBoxesUp
             running:false
 
+
             PropertyAnimation {
                 target: powerOutBox
                 property: "y"
@@ -172,7 +174,7 @@ Rectangle {
             target: advancedControls
             property: "opacity"
             to: 0
-            duration: advancedToBasicAdvancedControlsAnimationTime
+            duration: root.portConnected ? advancedToBasicAdvancedControlsAnimationTime: 1
         }
 
         PropertyAnimation {
@@ -180,7 +182,7 @@ Rectangle {
             target: powerOutBox
             property: "y"
             to: powerInBox.y + powerInBox.height
-            duration: advancedToBasicTelemetryAnimationTime
+            duration: root.portConnected ? advancedToBasicTelemetryAnimationTime: 1
 
 
 
@@ -192,7 +194,7 @@ Rectangle {
             target: powerOutBox
             property: "x"
             to: 10
-            duration: advancedToBasicTelemetryAnimationTime
+            duration: root.portConnected ? advancedToBasicTelemetryAnimationTime : 1
         }
 
         ParallelAnimation{
@@ -202,28 +204,28 @@ Rectangle {
                 target: outputVoltageBox
                 property: "width"
                 to: portWidth -10
-                duration: basicToAdvancedTelemetryAnimationTime
+                duration: root.portConnected ? basicToAdvancedTelemetryAnimationTime: 1
             }
 
             PropertyAnimation {
                 target: maxPowerBox
                 property: "width"
                 to: portWidth -10
-                duration: basicToAdvancedTelemetryAnimationTime
+                duration: root.portConnected ? basicToAdvancedTelemetryAnimationTime: 1
             }
 
             PropertyAnimation {
                 target: powerInBox
                 property: "width"
                 to: portWidth -10
-                duration: basicToAdvancedTelemetryAnimationTime
+                duration: root.portConnected ? basicToAdvancedTelemetryAnimationTime: 1
             }
 
             PropertyAnimation {
                 target: powerOutBox
                 property: "width"
                 to: portWidth -10
-                duration: basicToAdvancedTelemetryAnimationTime
+                duration: root.portConnected ? basicToAdvancedTelemetryAnimationTime: 1
             }
         }
 
