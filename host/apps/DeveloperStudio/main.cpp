@@ -38,6 +38,10 @@ int main(int argc, char *argv[])
         << "LOAD: sgwidgets.rcc = "
         << QResource::registerResource(QStringLiteral("../../../sgwidgets.rcc"));
 
+    // TODO: [LC] load view modules as above...
+    qCInfo(logCategoryStrataDevStudio)
+        << "LOAD: views-usb-pd-multiport.rcc = "
+        << QResource::registerResource(QStringLiteral("../../../views-usb-pd-multiport.rcc"));
 #if defined(Q_OS_WIN)
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 #endif

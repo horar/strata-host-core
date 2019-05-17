@@ -1,0 +1,44 @@
+<RCC>
+    <qresource prefix="/views/usb-pd-multiport">
+        <file>Content.qml</file>
+        <file>Control.qml</file>
+        <file>PlatformInterface.qml</file>
+        <file>content-views/Datasheets.qml</file>
+        <file>content-views/Documents.qml</file>
+        <file>content-views/Downloads.qml</file>
+        <file>content-views/content-widgets/SGAccordion.qml</file>
+        <file>content-views/content-widgets/SGAccordionItem.qml</file>
+        <file>content-views/content-widgets/SGRadioButton.qml</file>
+        <file>content-views/content-widgets/SGRadioButtonContainer.qml</file>
+        <file>content-views/content-widgets/SGSelectorButton.qml</file>
+        <file>content-views/content-widgets/docLoading.gif</file>
+        <file>views/AdvancedControl.qml</file>
+        <file>views/BasicControl.qml</file>
+        <file>views/advanced-partial-views/Overview.qml</file>
+        <file>views/advanced-partial-views/Port.qml</file>
+        <file>views/advanced-partial-views/PortInfo.qml</file>
+        <file>views/advanced-partial-views/PortInfoMini.qml</file>
+        <file>views/advanced-partial-views/PortSettings.qml</file>
+        <file>views/advanced-partial-views/PortStatBox.qml</file>
+        <file>views/advanced-partial-views/PortStatBoxMini.qml</file>
+        <file>views/advanced-partial-views/SystemSettings.qml</file>
+        <file>views/basic-partial-views/DeviceInfo.qml</file>
+        <file>views/basic-partial-views/GraphDrawer.qml</file>
+        <file>views/basic-partial-views/PlugAnimation.qml</file>
+        <file>views/basic-partial-views/PortInfo.qml</file>
+        <file>views/basic-partial-views/PortStatBox.qml</file>
+        <file>views/images/USBCAnim.gif</file>
+        <file>views/images/USBCAnimReverse.gif</file>
+        <file>views/images/basic-background.png</file>
+        <file>views/images/cordTermination.png</file>
+        <file>views/images/graphIcon.svg</file>
+        <file>views/images/icon-efficiency.svg</file>
+        <file>views/images/icon-max.svg</file>
+        <file>views/images/icon-temp.svg</file>
+        <file>views/images/icon-usb-disconnected.svg</file>
+        <file>views/images/icon-voltage.svg</file>
+        <file>views/images/powerconverter.png</file>
+        <file>content-views/content-widgets/angle-right-solid.svg</file>
+        <file>content-views/content-widgets/SGIcon.qml</file>
+    </qresource>
+</RCC>
