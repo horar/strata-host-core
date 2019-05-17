@@ -1,26 +1,32 @@
 #include "HostControllerClient.hpp"
 
-namespace Spyglass {
-
-HostControllerClient::HostControllerClient(const char* net_in_address) : sendCmdSocket_(nullptr), notificationSocket_(nullptr)
+namespace Spyglass
 {
-    context_ = new zmq::context_t;
-
-    notificationSocket_ = new zmq::socket_t(*context_, ZMQ_DEALER);
-
-    notificationSocket_->connect(net_in_address);
-
+HostControllerClient::HostControllerClient(const char* net_in_address)
+    : connector_(ConnectorFactory::getConnector(ConnectorFactory::CONNECTOR_TYPE::ROUTER))
+{
+    connector_->open(net_in_address);
 }
 
 HostControllerClient::~HostControllerClient()
 {
-    if (notificationSocket_) {
-        notificationSocket_->close();
-        delete notificationSocket_;
-    }
-
-    zmq_term(context_);
-    delete context_;
 }
 
-} //namespace Spyglass
+bool HostControllerClient::sendCmd(const std::string& cmd)
+{
+    return connector_->send(cmd);
+}
+
+std::string HostControllerClient::receiveCommandAck()
+{
+    std::string message;
+    return (connector_->read(message) ? message : std::string());
+}
+
+std::string HostControllerClient::receiveNotification()
+{
+    std::string message;
+    return (connector_->read(message) ? message : std::string());
+}
+
+}  // namespace Spyglass
