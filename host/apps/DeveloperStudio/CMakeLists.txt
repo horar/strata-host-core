@@ -21,21 +21,6 @@ add_executable(${PROJECT_NAME}
     qml-dev-studio.qrc
     qml-dev-studio-minimal.qrc
     qml-dev-studio-resources.qrc
-
-    qml-views-15A-switcher.qrc
-    qml-views-5A-switcher.qrc
-    qml-views-XDFN-LDO.qrc
-    qml-views-bubu.qrc
-    qml-views-efficiency-simulator.qrc
-    qml-views-entice_rgb.qrc
-    qml-views-led.qrc
-    qml-views-logic-gate.qrc
-    qml-views-motor-vortex.qrc
-    qml-views-template.qrc
-    qml-views-usb-hub.qrc
-    qml-views-usb-pd.qrc
-    qml-views-subghz.qrc
-    qml-views-smart-speaker.qrc
 )
 if(APPLE)
     target_sources(${PROJECT_NAME} PRIVATE

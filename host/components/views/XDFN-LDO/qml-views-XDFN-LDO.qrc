@@ -1,0 +1,49 @@
+<RCC>
+    <qresource prefix="/views/XDFN-LDO">
+        <file>AdvancedControl.qml</file>
+        <file>BasicControl.qml</file>
+        <file>Content.qml</file>
+        <file>Control.qml</file>
+        <file>MultiplePlatform.qml</file>
+        <file>PlatformInterface.qml</file>
+        <file>content-views/Datasheets.qml</file>
+        <file>content-views/Documents.qml</file>
+        <file>content-views/Downloads.qml</file>
+        <file>content-views/content-widgets/SGAccordion.qml</file>
+        <file>content-views/content-widgets/SGAccordionItem.qml</file>
+        <file>content-views/content-widgets/SGRadioButton.qml</file>
+        <file>content-views/content-widgets/SGRadioButtonContainer.qml</file>
+        <file>content-views/content-widgets/SGSelectorButton.qml</file>
+        <file>content-views/content-widgets/docLoading.gif</file>
+        <file>sgwidgets/SGCircularGauge.qml</file>
+        <file>sgwidgets/SGComboBox.qml</file>
+        <file>sgwidgets/SGGraph.qml</file>
+        <file>sgwidgets/SGLabelledInfoBox.qml</file>
+        <file>sgwidgets/SGRGBSlider.qml</file>
+        <file>sgwidgets/SGRadioButton.qml</file>
+        <file>sgwidgets/SGRadioButtonContainer.qml</file>
+        <file>sgwidgets/SGSegmentedButton.qml</file>
+        <file>sgwidgets/SGSegmentedButtonStrip.qml</file>
+        <file>sgwidgets/SGSlider.qml</file>
+        <file>sgwidgets/SGStatusLight.qml</file>
+        <file>sgwidgets/SGStatusListBox.qml</file>
+        <file>sgwidgets/SGSubmitInfoBox.qml</file>
+        <file>sgwidgets/SGSwitch.qml</file>
+        <file>sgwidgets/SGToolTipPopup.qml</file>
+        <file>sgwidgets/fonts/digitalseven.ttf</file>
+        <file>sgwidgets/fonts/sgicons.ttf</file>
+        <file>sgwidgets/images/And B.png</file>
+        <file>sgwidgets/images/And C.png</file>
+        <file>sgwidgets/images/Buffer.png</file>
+        <file>sgwidgets/images/OR.png</file>
+        <file>sgwidgets/images/greenStatusLight.svg</file>
+        <file>sgwidgets/images/offStatusLight.svg</file>
+        <file>sgwidgets/images/redStatusLight.svg</file>
+        <file>sgwidgets/images/sliderHandle.svg</file>
+        <file>sgwidgets/images/sliderHandleActive.svg</file>
+        <file>sgwidgets/images/sliderValue.svg</file>
+        <file>content-views/content-widgets/angle-right-solid.svg</file>
+        <file>content-views/content-widgets/SGIcon.qml</file>
+        <file>question-circle-solid.svg</file>
+    </qresource>
+</RCC>

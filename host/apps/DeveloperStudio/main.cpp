@@ -42,6 +42,13 @@ int main(int argc, char *argv[])
     qCInfo(logCategoryStrataDevStudio)
         << "LOAD: views-usb-pd-multiport.rcc = "
         << QResource::registerResource(QStringLiteral("../../../views-usb-pd-multiport.rcc"));
+    qCInfo(logCategoryStrataDevStudio)
+        << "LOAD: views-templace.rcc = "
+        << QResource::registerResource(QStringLiteral("../../../views-template.rcc"));
+    qCInfo(logCategoryStrataDevStudio)
+        << "LOAD: views-bubu.rcc = "
+        << QResource::registerResource(QStringLiteral("../../../views-bubu.rcc"));
+
 #if defined(Q_OS_WIN)
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 #endif
