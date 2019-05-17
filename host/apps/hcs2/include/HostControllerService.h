@@ -20,8 +20,9 @@
  *
  * Valuable Information
  * ================
- * 1) Libevent dynamic addition/removal of events is implemented using event_init,event_add and event_dispatch.
- *    Dynamic addition and removal of events does not work using event_base_init, event_base_dispatch
+ * 1) Libevent dynamic addition/removal of events is implemented using event_init,event_add and
+ * event_dispatch. Dynamic addition and removal of events does not work using event_base_init,
+ * event_base_dispatch
  *
  * KNOWN BUGS/HACKS
  * ================
@@ -39,39 +40,34 @@
 #define HOST_CONTROLLER_SERVICE_H
 
 // standard library
-#include <iostream>
-#include <string>
-#include <sstream>
+#include <SimpleOpt.h>
 #include <stdio.h>
 #include <fstream>
-#include <SimpleOpt.h>
-#include <map>
+#include <iostream>
 #include <list>
+#include <map>
+#include <sstream>
+#include <string>
 #include <thread>
 
-// zero mq library
-#include "zmq.hpp"
-#include "zmq_addon.hpp"
-#include "zhelpers.hpp"
-
 // libevent library
-#include <event2/event.h>
 #include <event.h>
+#include <event2/event.h>
 
 // libserial port library
 #include <libserialport.h>
 
 // rapid json library
 #include <rapidjson/document.h>
-#include <rapidjson/writer.h>
 #include <rapidjson/stringbuffer.h>
+#include <rapidjson/writer.h>
 
 // project libraries
-#include "ParseConfig.h"
-#include "Logger.h"
-#include "DiscoveryService.h"
 #include <Connector.h>
 #include <SGwget.h>
+#include "DiscoveryService.h"
+#include "Logger.h"
+#include "ParseConfig.h"
 #include "SGCouchbaseLiteWrapper.h"
 
 // Console print function
@@ -110,7 +106,8 @@ enum class CommandDispatcherMessages{
     COMMAND_NOT_FOUND	= 10,
 };
 
-class HostControllerService {
+class HostControllerService
+{
 public:
     // constructor
     HostControllerService(const std::string& configuration_file);
@@ -121,7 +118,8 @@ public:
     HcsError exit();
 
     // utility functions
-    std::vector<std::string> initialCommandDispatch(const std::string& dealer_id,const std::string& command);
+    std::vector<std::string> initialCommandDispatch(const std::string& dealer_id,
+                                                    const std::string& command);
     bool disptachMessageToPlatforms(const std::string& dealer_id, const std::string& command);
     CommandDispatcherMessages stringHash(const std::string& command);
     bool openPlatform(); // platform functions
@@ -184,8 +182,6 @@ public:
 private:
     // config file data members
     std::unique_ptr<ParseConfig> configuration_;
-    // zeromq data members
-    std::unique_ptr<zmq::context_t> socket_context_;    // context
     std::string hcs_server_address_;    // server address
     std::string hcs_remote_address_;    // remote address
 
