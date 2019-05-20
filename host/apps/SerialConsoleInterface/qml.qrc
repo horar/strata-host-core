@@ -3,6 +3,8 @@
         <file>main.qml</file>
         <file>SciMain.qml</file>
         <file>PlatformDelegate.qml</file>
+        <file>ProgramDeviceWizard.qml</file>
+        <file>SciBasePage.qml</file>
         <file>fonts/Inconsolata.otf</file>
         <file>fonts/FranklinGothicBold.ttf</file>
         <file>fonts/FranklinGothicBook.otf</file>
@@ -14,7 +16,13 @@
         <file>common/SgText.qml</file>
         <file>common/SgIconButton.qml</file>
         <file>common/SgTextField.qml</file>
+        <file>common/SgBaseEditor.qml</file>
+        <file>common/SgTextFieldEditor.qml</file>
         <file>common/SgSuggestionPopup.qml</file>
         <file>common/SGStatusLight.qml</file>
+        <file>common/SgDialog.qml</file>
+        <file>common/SgUtils.js</file>
+        <file>common/SgButton.qml</file>
+        <file>common/SgMessageDialog.qml</file>
     </qresource>
 </RCC>

@@ -27,15 +27,6 @@ Rectangle {
     Component.onCompleted: {
         helpIcon.visible = true
         Help.registerTarget(navTabs, "Using these two tabs, you can switch between basic or advanced control.", 0,"basic15AHelp")
-        //Tejashree: This is a HACK implementation
-        // Windows Serial Mouse Issue fix
-        console.log("constructor")
-        platformInterface.pause_periodic.update(false)
-    }
-    //Tejashree: This is a HACK implementation
-    // Windows Serial Mouse Issue fix
-    Component.onDestruction:  {
-        platformInterface.pause_periodic.update(true)
     }
 
     TabBar {
