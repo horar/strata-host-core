@@ -15,21 +15,19 @@
 * @ingroup driver
 */
 
-#include <string>
 #include <iostream>
+#include <string>
 
 #include <Flasher.h>
-#include <serial_port.h>
 #include <PlatformConnection.h>
+#include <serial_port.h>
 
-
-int main(int argc, char *argv[])
+int main(int argc, char* argv[])
 {
-    if (argc < 2)
-    {
+    if (argc < 2) {
         std::cout << "Usage: ./flasher <path_to_firmware.bin>" << std::endl;
-		return 1;
-	}
+        return 1;
+    }
 
     const char* firmware_file_path = argv[1];
 
@@ -49,7 +47,7 @@ int main(int argc, char *argv[])
         std::cout << "Choose one port:" << std::endl;
 
         int idx = 1;
-        for(const auto& item : portsList) {
+        for (const auto& item : portsList) {
             std::cout << idx << ") " << item << std::endl;
             idx++;
         }
@@ -63,12 +61,12 @@ int main(int argc, char *argv[])
 
         choosen_port = portsList.at(inputValue - 1);
 
-    }
-    else {
+    } else {
         choosen_port = portsList.front();
     }
 
-    spyglass::PlatformConnectionShPtr connection = std::make_shared<spyglass::PlatformConnection>(nullptr);
+    spyglass::PlatformConnectionShPtr connection =
+        std::make_shared<spyglass::PlatformConnection>(nullptr);
 
     if (!connection->open(choosen_port)) {
         std::cerr << "Couldn't open the serial port!" << std::endl;
@@ -77,21 +75,21 @@ int main(int argc, char *argv[])
 
     Flasher flasher(connection, firmware_file_path);
 
-    //Note: if you need output commands send/recv to std::cout or some other ostream
-    //flasher.setCommunicationMsgStream(&std::cout);
+    // Note: if you need output commands send/recv to std::cout or some other ostream
+    // flasher.setCommunicationMsgStream(&std::cout);
 
     std::cout << "Check bootloader.. " << std::endl;
 
     bool result = flasher.initializeBootloader();
-    std::cout << "Status: " << ( result ? "OK": "Failed" ) << std::endl;
+    std::cout << "Status: " << (result ? "OK" : "Failed") << std::endl;
     if (!result) {
         return 1;
     }
 
     std::cout << "START: flash" << std::endl;
     result = flasher.flash(true);
-    std::cout << "Flash: Return Status:   " << ( result ? "OK": "Failed" ) << std::endl;
+    std::cout << "Flash: Return Status:   " << (result ? "OK" : "Failed") << std::endl;
     std::cout << "END: flash" << std::endl;
 
-    return ( result ? 0 : 1 );
+    return (result ? 0 : 1);
 }
