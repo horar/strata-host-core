@@ -45,9 +45,9 @@ int main(int argc, char *argv[])
 
     ResourceLoader resourceLoader;
 
-    qmlRegisterUncreatableType<CoreInterface>("tech.spyglass.CoreInterface",1,0,"CoreInterface", QStringLiteral("You can't instantiate CoreInterface in QML"));
-    qmlRegisterUncreatableType<DocumentManager>("tech.spyglass.DocumentManager", 1, 0, "DocumentManager", QStringLiteral("You can't instantiate DocumentManager in QML"));
-    qmlRegisterUncreatableType<Document>("tech.spyglass.Document", 1, 0, "Document", "You can't instantiate Document in QML");
+    qmlRegisterUncreatableType<CoreInterface>("tech.strata.CoreInterface",1,0,"CoreInterface", QStringLiteral("You can't instantiate CoreInterface in QML"));
+    qmlRegisterUncreatableType<DocumentManager>("tech.strata.DocumentManager", 1, 0, "DocumentManager", QStringLiteral("You can't instantiate DocumentManager in QML"));
+    qmlRegisterUncreatableType<Document>("tech.strata.Document", 1, 0, "Document", "You can't instantiate Document in QML");
 
     CoreInterface *coreInterface = new CoreInterface();
     DocumentManager* documentManager = new DocumentManager(coreInterface);

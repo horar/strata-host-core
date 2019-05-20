@@ -4,7 +4,6 @@ import QtQuick.Controls 2.3
 import QtGraphicalEffects 1.0
 import QtQuick.Controls.Styles 1.4
 import QtQuick.Extras 1.4
-//import tech.spyglass. 1.0
 import "content-views/content-widgets"
 import "qrc:/js/navigation_control.js" as NavigationControl
 import "qrc:/js/help_layout_manager.js" as Help
