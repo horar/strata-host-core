@@ -57,6 +57,8 @@ int main(int argc, char *argv[])
     QtWebView::initialize();
 
     QQmlApplicationEngine engine;
+    QQmlFileSelector selector(&engine);
+
     engine.addImportPath(QStringLiteral("qrc:/"));
 
     engine.rootContext()->setContextProperty ("coreInterface", coreInterface);

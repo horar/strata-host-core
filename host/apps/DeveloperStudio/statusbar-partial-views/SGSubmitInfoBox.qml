@@ -2,6 +2,7 @@ import QtQuick 2.9
 import QtQuick.Controls 2.2
 
 import tech.strata.fonts 1.0
+import tech.strata.theme 1.0
 
 Rectangle {
     id: root
@@ -89,7 +90,7 @@ Rectangle {
                 readOnly: false
                 font {
                     family: Fonts.inconsolata // inconsolata is monospaced and has clear chars for O/0 etc
-                    pixelSize: (Qt.platform.os === "osx") ? 12 : 10;
+                    pixelSize: Theme.basePixelSize
                 }
                 horizontalAlignment: leftJustify ? TextInput.AlignLeft : TextInput.AlignRight
                 validator: realNumberValidation ? realNumberValidator : null

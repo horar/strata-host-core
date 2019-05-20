@@ -4,8 +4,8 @@ import QtGraphicalEffects 1.0
 
 import tech.strata.sgwidgets.SGSubmitInfoBox 1.0
 
-
 import tech.strata.fonts 1.0
+import tech.strata.theme 1.0
 
 Rectangle {
     id: root
@@ -77,7 +77,7 @@ Rectangle {
             color: root.statusTextColor
             font {
                 family: Fonts.inconsolata // inconsolata is monospaced and has clear chars for O/0 etc
-                pixelSize: (Qt.platform.os === "osx") ? 12 : 10;
+                pixelSize: Theme.basePixelSize
             }
             selectByMouse: true
             readOnly: true

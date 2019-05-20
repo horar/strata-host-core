@@ -1,6 +1,8 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.12
 
+import tech.strata.theme 1.0
+
 Item {
     id: root
     implicitWidth: 200
@@ -203,7 +205,7 @@ Item {
                 readOnly: false
                 font {
 //                    family: inconsolata.name // inconsolata is monospaced and has clear chars for O/0 etc
-                    pixelSize: (Qt.platform.os === "osx") ? 12 : 10;
+                    pixelSize: Theme.basePixelSize
                 }
                 horizontalAlignment: TextInput.AlignRight
                 validator: realNumberValidator

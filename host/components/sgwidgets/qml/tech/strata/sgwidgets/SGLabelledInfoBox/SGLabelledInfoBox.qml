@@ -1,6 +1,8 @@
 import QtQuick 2.12
 import QtQuick.Layouts 1.12
 
+import tech.strata.theme 1.0
+
 Rectangle {
     id: root
 
@@ -63,6 +65,7 @@ Rectangle {
             readOnly: true
             font {
               family: "Courier" // Monospaced font for better text width uniformity
+              pixelSize: Theme.basePixelSize
             }
             color: "black"
         }
