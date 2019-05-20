@@ -4,3 +4,4 @@ project(component-sgwidgets
 )
 
 add_subdirectory(qml)
+add_subdirectory(src)
