@@ -18,7 +18,7 @@ add_executable(${PROJECT_NAME}
     $<IF:$<CONFIG:Debug>, source/debug/ResourcePath.cpp, source/release/ResourcePath.cpp>
 
     logging/LoggingQtCategories.cpp
-    logging/LoggingQtCategories.qrc
+    logging/qml/tech/strata/logger/qml.qrc
 
     qml-dev-studio.qrc
     qml-dev-studio-minimal.qrc

@@ -1,6 +1,6 @@
 .pragma library
 
-.import Strata.Logger 1.0 as LoggerModule
+.import tech.strata.logger 1.0 as LoggerModule
 
 var url = "http://18.222.75.160/";
 

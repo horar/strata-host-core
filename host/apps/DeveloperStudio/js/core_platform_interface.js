@@ -1,4 +1,4 @@
-.import Strata.Logger 1.0 as LoggerModule
+.import tech.strata.logger 1.0 as LoggerModule
 
 
 // -------------------------

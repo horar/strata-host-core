@@ -1,6 +1,6 @@
 .import "restclient.js" as Rest
 
-.import Strata.Logger 1.0 as LoggerModule
+.import tech.strata.logger 1.0 as LoggerModule
 
 var confirmPopup = null
 

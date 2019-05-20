@@ -1,7 +1,7 @@
 .pragma library
 .import "navigation_control.js" as NavigationControl
 
-.import Strata.Logger 1.0 as LoggerModule
+.import tech.strata.logger 1.0 as LoggerModule
 
 var window
 var current_class_id

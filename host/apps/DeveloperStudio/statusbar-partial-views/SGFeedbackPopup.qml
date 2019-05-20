@@ -6,7 +6,7 @@ import "../js/feedback.js" as Feedback
 import "../js/navigation_control.js" as NavigationControl
 
 import tech.strata.fonts 1.0
-import Strata.Logger 1.0
+import tech.strata.logger 1.0
 
 Popup {
     id: root

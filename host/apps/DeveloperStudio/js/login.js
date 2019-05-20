@@ -1,7 +1,7 @@
 .import "restclient.js" as Rest
 .import QtQuick 2.0 as QtQuickModule
 
-.import Strata.Logger 1.0 as LoggerModule
+.import tech.strata.logger 1.0 as LoggerModule
 
 /*
   Signal component to notify Login status

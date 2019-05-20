@@ -11,7 +11,7 @@ import "qrc:/statusbar-partial-views"
 
 import "qrc:/js/platform_model.js" as Model
 
-import Strata.Logger 1.0
+import tech.strata.logger 1.0
 
 Window {
     id: mainWindow

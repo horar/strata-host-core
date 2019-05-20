@@ -9,7 +9,7 @@ import "js/login.js" as Authenticator
 import "qrc:/statusbar-partial-views"
 
 import tech.strata.fonts 1.0
-import Strata.Logger 1.0
+import tech.strata.logger 1.0
 
 Rectangle {
     id: container
