@@ -25,30 +25,10 @@
 #include "logging/LoggingQtCategories.h"
 
 #include "DocumentManager.h"
+#include "ResourceLoader.h"
 
 int main(int argc, char *argv[])
 {
-    // TODO: [LC] use more clever resource loading incl. issue logging etc. (+support for Windows)
-    qCInfo(logCategoryStrataDevStudio)
-        << "LOAD: fonts.rcc = " << QResource::registerResource(QStringLiteral("../../../fonts.rcc"));
-    qCInfo(logCategoryStrataDevStudio)
-        << "LOAD: pdfjs.rcc = "
-        << QResource::registerResource(QStringLiteral("../../../pdfjs.rcc"));
-    qCInfo(logCategoryStrataDevStudio)
-        << "LOAD: sgwidgets.rcc = "
-        << QResource::registerResource(QStringLiteral("../../../sgwidgets.rcc"));
-
-    // TODO: [LC] load view modules as above...
-    qCInfo(logCategoryStrataDevStudio)
-        << "LOAD: views-usb-pd-multiport.rcc = "
-        << QResource::registerResource(QStringLiteral("../../../views-usb-pd-multiport.rcc"));
-    qCInfo(logCategoryStrataDevStudio)
-        << "LOAD: views-templace.rcc = "
-        << QResource::registerResource(QStringLiteral("../../../views-template.rcc"));
-    qCInfo(logCategoryStrataDevStudio)
-        << "LOAD: views-bubu.rcc = "
-        << QResource::registerResource(QStringLiteral("../../../views-bubu.rcc"));
-
 #if defined(Q_OS_WIN)
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 #endif
@@ -58,9 +38,12 @@ int main(int argc, char *argv[])
 
     QApplication app(argc, argv);
     const QtLoggerSetup loggerInitialization(app);
+
     qCInfo(logCategoryStrataDevStudio) << QStringLiteral("================================================================================") ;
     qCInfo(logCategoryStrataDevStudio) << QStringLiteral("%1 v%2").arg(QCoreApplication::applicationName()).arg(QCoreApplication::applicationVersion());
     qCInfo(logCategoryStrataDevStudio) << QStringLiteral("================================================================================") ;
+
+    ResourceLoader resourceLoader;
 
     qmlRegisterUncreatableType<CoreInterface>("tech.spyglass.CoreInterface",1,0,"CoreInterface", QStringLiteral("You can't instantiate CoreInterface in QML"));
     qmlRegisterUncreatableType<DocumentManager>("tech.spyglass.DocumentManager", 1, 0, "DocumentManager", QStringLiteral("You can't instantiate DocumentManager in QML"));

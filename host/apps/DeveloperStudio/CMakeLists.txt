@@ -14,6 +14,8 @@ find_package(Qt5 ${VERSION_QT5}
 add_executable(${PROJECT_NAME}
     main.cpp
     source/DocumentManager.cpp
+    source/ResourceLoader.cpp
+    $<IF:$<CONFIG:Debug>, source/debug/ResourcePath.cpp, source/release/ResourcePath.cpp>
 
     logging/LoggingQtCategories.cpp
     logging/LoggingQtCategories.qrc
