@@ -3,6 +3,9 @@ import QtQuick.Controls 2.12
 import "./common" as Common
 import "./common/Colors.js" as Colors
 import tech.strata.fonts 1.0 as StrataFonts
+import QtQuick.Dialogs 1.3
+import "./common/SgUtils.js" as SgUtils
+import tech.strata.utils 1.0
 
 FocusScope {
     id: platformDelegate
@@ -10,6 +13,7 @@ FocusScope {
     property string connectionId: model.connectionId
     property int maxCommandsInHistory: 20
     property int maxCommandsInScrollback: 200
+    property variant rootItem
 
     signal sendCommandRequested(string message)
 
@@ -186,19 +190,7 @@ FocusScope {
                     selectByKeyboard: true
                     selectByMouse: true
                     readOnly: true
-                    text: {
-                        try {
-                            var messageObj =  JSON.parse(model.message)
-                        } catch(error) {
-                            return model.message
-                        }
-
-                        if (model.condensed) {
-                            return JSON.stringify(messageObj)
-                        }
-
-                        return JSON.stringify(messageObj, undefined, 4)
-                    }
+                    text: prettifyJson(model.message, model.condensed)
 
                     MouseArea {
                         anchors.fill: parent
@@ -266,6 +258,17 @@ FocusScope {
                     scrollbackViewAtEndTimer.start()
                 }
             }
+
+            Common.SgIconButton {
+                height: buttonRow.iconHeight
+                width: height
+
+                hintText: qsTr("Export to file")
+                source: "qrc:/images/file-export.svg"
+                onClicked: {
+                    showFileExportDialog()
+                }
+            }
         }
 
         Common.SgTextField {
@@ -331,6 +334,16 @@ FocusScope {
         }
     }
 
+    Component {
+        id: fileDialogComponent
+        FileDialog {
+            title: qsTr("Select File to Export")
+            folder: shortcuts.documents
+            selectExisting: false
+            defaultSuffix: "log"
+        }
+    }
+
     function appendCommand(command) {
         //add it to scrollback
         scrollbackModel.append(command)
@@ -376,5 +389,68 @@ FocusScope {
 
         sendCommandRequested(JSON.stringify(obj))
         cmdInput.clear()
+    }
+
+    function showFileExportDialog() {
+        var dialog = SgUtils.createDialogFromComponent(platformDelegate, fileDialogComponent)
+
+        dialog.accepted.connect(function() {
+            var result = SgUtilsCpp.atomicWrite(
+                        SgUtilsCpp.urlToPath(dialog.fileUrl),
+                        getTextForExport())
+
+            if (result === false) {
+                SgUtils.showMessageDialog(
+                            rootItem,
+                            Common.SgMessageDialog.Error,
+                            "Export Failed",
+                            "Writting into selected file failed.")
+            }
+
+            console.log("showFileExportDialog() atomicWrite()", dialog.fileUrl, result)
+
+            dialog.destroy()})
+
+        dialog.rejected.connect(function() {
+            dialog.destroy()
+        })
+
+        dialog.open();
+    }
+
+    function prettifyJson(message, condensed) {
+        if (condensed === undefined) {
+            condensed = true
+        }
+
+        try {
+            var messageObj =  JSON.parse(message)
+        } catch(error) {
+            return message
+        }
+
+        if (model.condensed) {
+            JSON.stringify(messageObj)
+        }
+
+        return JSON.stringify(messageObj, undefined, 4)
+    }
+
+    function getTextForExport() {
+        var text = ""
+
+        for (var i = 0; i < scrollbackModel.count; ++i) {
+            var item = scrollbackModel.get(i)
+
+            var date = new Date(item.timestamp)
+            var timeStr = date.toLocaleDateString(Qt.locale(), "yyyy.MM.dd") + " " + date.toLocaleTimeString(Qt.locale(), "hh:mm:ss.zzz")
+            var typeStr = item.type === "query" ? "request" : "response"
+
+            text += timeStr + " " + typeStr + "\n"
+            text += prettifyJson(item.message, false)
+            text += "\n\n"
+        }
+
+        return text
     }
 }
