@@ -109,9 +109,6 @@ void PlatformConnection::onDescriptorEvent(EvEventBase*, int flags)
             std::lock_guard<std::recursive_mutex> lock(event_lock_);
             event_->deactivate();
 
-            if (parent_) {
-                parent_->unregisterConnection(getName());
-            }
         }
         else if (isReadable() && parent_ != nullptr) {
             std::lock_guard<std::recursive_mutex> lock(event_lock_);
