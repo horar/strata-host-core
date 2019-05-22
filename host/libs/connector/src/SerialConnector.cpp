@@ -8,7 +8,7 @@
     opening, closing, reading and writing to/from a serial port
 ******************************************************************************
 
-* @copyright Copyright 2018 On Semiconductor
+* @copyright Copyright 2018 ON Semiconductor
 */
 
 #include "SerialConnector.h"
