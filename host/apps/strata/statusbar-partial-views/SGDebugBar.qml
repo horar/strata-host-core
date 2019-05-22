@@ -98,6 +98,14 @@ Item {
                     NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT, data)
                 }
             }
+            Button {
+                text: "eFuse"
+                onClicked: {
+                    var data = { class_id: "eFuse"}
+                    NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT, data)
+                }
+            }
+
 
             // UI events
             Button {

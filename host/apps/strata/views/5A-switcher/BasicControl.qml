@@ -501,6 +501,7 @@ Item {
                     label: "Output Voltage"
                     info: platformInterface.status_voltage_current.vout
                     unit: "V"
+
                     infoBoxWidth: parent.width/3
                     infoBoxHeight : parent.height/12
                     fontSize :  (parent.width + parent.height)/37
@@ -511,6 +512,7 @@ Item {
                         horizontalCenter: parent.horizontalCenter
                         horizontalCenterOffset:  (width - ouputCurrent.width)/2
                     }
+
                 }
 
                 SGLabelledInfoBox {

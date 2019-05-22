@@ -1,0 +1,37 @@
+<RCC>
+    <qresource prefix="/">
+        <file>views/eFuse/content-views/content-widgets/angle-right-solid.svg</file>
+        <file>views/eFuse/content-views/content-widgets/docLoading.gif</file>
+        <file>views/eFuse/content-views/content-widgets/SGAccordion.qml</file>
+        <file>views/eFuse/content-views/content-widgets/SGAccordionItem.qml</file>
+        <file>views/eFuse/content-views/content-widgets/SGIcon.qml</file>
+        <file>views/eFuse/content-views/content-widgets/SGRadioButton.qml</file>
+        <file>views/eFuse/content-views/content-widgets/SGRadioButtonContainer.qml</file>
+        <file>views/eFuse/content-views/content-widgets/SGSelectorButton.qml</file>
+        <file>views/eFuse/content-views/Datasheets.qml</file>
+        <file>views/eFuse/content-views/Documents.qml</file>
+        <file>views/eFuse/content-views/Downloads.qml</file>
+        <file>views/eFuse/control-views/AdvancedControl.qml</file>
+        <file>views/eFuse/control-views/BasicControl.qml</file>
+        <file>views/eFuse/control-views/DebugExample.qml</file>
+        <file>views/eFuse/control-views/PlatformInterface.qml</file>
+        <file>views/eFuse/control-views/question-circle-solid.svg</file>
+        <file>views/eFuse/sgwidgets/fonts/digitalseven.ttf</file>
+        <file>views/eFuse/sgwidgets/SGCircularGauge.qml</file>
+        <file>views/eFuse/sgwidgets/SGIcon.qml</file>
+        <file>views/eFuse/sgwidgets/SGResponsiveScrollView.qml</file>
+        <file>views/eFuse/sgwidgets/SGSwitch.qml</file>
+        <file>views/eFuse/Content.qml</file>
+        <file>views/eFuse/Control.qml</file>
+        <file>views/eFuse/sgwidgets/SGLabelledInfoBox.qml</file>
+        <file>views/eFuse/sgwidgets/SGStatusLight.qml</file>
+        <file>views/eFuse/sgwidgets/images/greenStatusLight.svg</file>
+        <file>views/eFuse/sgwidgets/images/offStatusLight.svg</file>
+        <file>views/eFuse/sgwidgets/images/redStatusLight.svg</file>
+        <file>views/eFuse/sgwidgets/images/sliderHandle.svg</file>
+        <file>views/eFuse/sgwidgets/images/sliderHandleActive.svg</file>
+        <file>views/eFuse/sgwidgets/images/sliderValue.svg</file>
+        <file>views/eFuse/sgwidgets/SGComboBox.qml</file>
+        <file>views/eFuse/sgwidgets/fonts/sgicons.ttf</file>
+    </qresource>
+</RCC>
