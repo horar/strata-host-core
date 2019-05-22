@@ -32,7 +32,7 @@ HOST_ROOT = ../../../host
 
 HEADERS +=ImplementationInterfaceBinding/ImplementationInterfaceBinding.h \
         $${HOST_ROOT}/libs/HostControllerClient/include/HostControllerClient.hpp \
-        $${HOST_ROOT}/ext_libs/zmq/include/zhelpers.hpp \
+        $${HOST_ROOT}/ext_libs/zmq/include/ \
         $${HOST_ROOT}/ext_libs/zmq/include/zmq.hpp \
         $${HOST_ROOT}/ext_libs/zmq/include/zmq_addon.hpp
 
