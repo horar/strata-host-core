@@ -19,6 +19,7 @@ add_executable(${PROJECT_NAME}
     PlatformBoard.cpp
     ProgramDeviceTask.cpp
     SgUtilsCpp.cpp
+    SgJLinkConnector.cpp
     qml.qrc
     images/images.qrc
 )
