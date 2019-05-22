@@ -98,7 +98,7 @@ HEADERS += \
     source/DocumentManager.h \
     $${HOST_ROOT}/libs/HostControllerClient/include/HostControllerClient.hpp \
     $${HOST_ROOT}/libs/PlatformInterface/include/PlatformInterface/core/PlatformInterface.h \
-    $${HOST_ROOT}/ext_libs/zmq/include/zhelpers.hpp \
+    $${HOST_ROOT}/ext_libs/zmq/include/ \
     $${HOST_ROOT}/ext_libs/zmq/include/zmq.hpp \
     $${HOST_ROOT}/ext_libs/zmq/include/zmq_addon.hpp
 
