@@ -23,8 +23,8 @@ Item {
         WaitingForJLink,
         ProgrammingBootloader,
         ProgrammingApplication,
-        ProgrammigSucceed,
-        ProgrammigFailed
+        ProgrammingSucceed,
+        ProgrammingFailed
     }
 
     clip: true
@@ -452,9 +452,9 @@ Item {
                 onProgramDeviceDone: {
                     console.log("onProgramDeviceDone", status)
                     if (status) {
-                        processingStatus = ProgramDeviceWizard.ProgrammigSucceed
+                        processingStatus = ProgramDeviceWizard.ProgrammingSucceed
                     } else {
-                        processingStatus = ProgramDeviceWizard.ProgrammigFailed
+                        processingStatus = ProgramDeviceWizard.ProgrammingFailed
                         subtextNote = "Firmware programming error"
                     }
                 }
@@ -468,7 +468,7 @@ Item {
                     if (status) {
                         doProgramDeviceApplication()
                     } else {
-                        processingStatus = ProgramDeviceWizard.ProgrammigFailed
+                        processingStatus = ProgramDeviceWizard.ProgrammingFailed
                         subtextNote = "Bootloader programming error"
                     }
                 }
@@ -479,8 +479,8 @@ Item {
             }
 
             function callTryProgramDevice() {
-                if (processingStatus === ProgramDeviceWizard.ProgrammigSucceed
-                        || processingStatus === ProgramDeviceWizard.ProgrammigFailed)
+                if (processingStatus === ProgramDeviceWizard.ProgrammingSucceed
+                        || processingStatus === ProgramDeviceWizard.ProgrammingFailed)
                 {
                     processingStatus = ProgramDeviceWizard.WaitingForDevice
                 }
@@ -602,9 +602,9 @@ Item {
                         return "Programming bootloader..."
                     } else if (processingStatus === ProgramDeviceWizard.ProgrammingApplication) {
                         return "Programming firmware..."
-                    } else if (processingStatus === ProgramDeviceWizard.ProgrammigSucceed) {
+                    } else if (processingStatus === ProgramDeviceWizard.ProgrammingSucceed) {
                         return "Programming successful"
-                    } else if (processingStatus === ProgramDeviceWizard.ProgrammigFailed) {
+                    } else if (processingStatus === ProgramDeviceWizard.ProgrammingFailed) {
                         return "Programming failed"
                     }
                 }
@@ -639,9 +639,9 @@ Item {
                     height: width
 
                     source: {
-                        if (processingStatus === ProgramDeviceWizard.ProgrammigSucceed) {
+                        if (processingStatus === ProgramDeviceWizard.ProgrammingSucceed) {
                             return "qrc:/images/check.svg"
-                        } else if (processingStatus === ProgramDeviceWizard.ProgrammigFailed) {
+                        } else if (processingStatus === ProgramDeviceWizard.ProgrammingFailed) {
                             return "qrc:/images/times-circle.svg"
                         }
 
@@ -649,9 +649,9 @@ Item {
                     }
 
                     iconColor: {
-                        if (processingStatus === ProgramDeviceWizard.ProgrammigSucceed) {
+                        if (processingStatus === ProgramDeviceWizard.ProgrammingSucceed) {
                             return Colors.STRATA_GREEN
-                        } else if (processingStatus === ProgramDeviceWizard.ProgrammigFailed) {
+                        } else if (processingStatus === ProgramDeviceWizard.ProgrammingFailed) {
                             return Colors.TANGO_SCARLETRED2
                         }
 
@@ -683,11 +683,11 @@ Item {
                         msg += "\n\n"
                         msg += "Do not unplug the device until process is complete"
                         return msg
-                    } else if (processingStatus === ProgramDeviceWizard.ProgrammigSucceed) {
+                    } else if (processingStatus === ProgramDeviceWizard.ProgrammingSucceed) {
                         msg = "You can unplug the device now\n\n"
                         msg += "To program another device, simply plug it in and\n new process will start automatically"
                         return msg
-                    } else if(processingStatus === ProgramDeviceWizard.ProgrammigFailed) {
+                    } else if(processingStatus === ProgramDeviceWizard.ProgrammingFailed) {
                         msg = processPage.subtextNote
                         msg += "\n\n"
                         msg += "To program another device, simply plug it in and\n new process will start automatically"
@@ -709,8 +709,8 @@ Item {
                 text: qsTr("Done")
                 visible: processingStatus === ProgramDeviceWizard.WaitingForDevice
                          || processingStatus === ProgramDeviceWizard.WaitingForJLink
-                         || processingStatus === ProgramDeviceWizard.ProgrammigSucceed
-                         || processingStatus === ProgramDeviceWizard.ProgrammigFailed
+                         || processingStatus === ProgramDeviceWizard.ProgrammingSucceed
+                         || processingStatus === ProgramDeviceWizard.ProgrammingFailed
 
                 onClicked: cancelRequested()
             }
