@@ -26,12 +26,6 @@ CLOUD_SERVICE_PASSWORD = 'password!@#'
 CLOUD_SERVICE_URL = ''
 CLOUD_SERVICE_ACCESS_TOKEN = ''
 
-
-# Index of the directory to upload its contents.
-# ['dirA', 'dirB', 'dirC'] where the path looks like this. /dirA/dirB/dirC
-# This will be dirC
-UPLOAD_DIRECTORY_INDEX = 2
-
 # Used for program exist status
 Successful = 0
 Error = 1
@@ -50,8 +44,6 @@ def main():
     # Set the directory you want to start from
     rootDir = args.directory
 
-    depth = len(rootDir.split(os.path.sep))
-
     classId = args.classId
     verboseName = args.verboseName
 
@@ -61,17 +53,15 @@ def main():
     json_document["name"] = verboseName
     json_document["documents"] = dict()
 
-    for dirName, subdirList, fileList in os.walk(rootDir):
-        currentDirName = dirName.split(os.path.sep)[-1]
-        currentDepth = len(dirName.split(os.path.sep)) - depth
-        if (currentDepth == UPLOAD_DIRECTORY_INDEX):
-            try:
-                json_document["documents"][currentDirName] = getFilesMetadata(classId, dirName, CLOUD_SERVICE_URL,
-                                                                      CLOUD_SERVICE_ACCESS_TOKEN)
-            except ValueError as err:
-                print err.message
-                exit(Error)
-
+    for dir in next(os.walk(rootDir))[1]:
+        try:
+            full_path = rootDir + "/" + dir
+            json_document["documents"][dir] = getFilesMetadata(classId, full_path, CLOUD_SERVICE_URL,
+                                                                          CLOUD_SERVICE_ACCESS_TOKEN)
+        except ValueError as err:
+            print err.message
+            exit(Error)
+    print json_document
     if pushGateway(SYNC_GATEWAY_URL, classId, json_document):
         print "Document has been pushed successfully to the sync-gateway!"
         exit(Successful)
