@@ -150,13 +150,11 @@ bool SgJLinkConnector::processRequest(const QString &cmd)
     }
 
     QTextStream out(configFile_);
-    QString program;
     QStringList arguments;
 
     out << cmd;
     out.flush();
 
-    program = "/usr/local/bin/JLinkExe";
     arguments << "-CommanderScript" << configFile_->fileName() << "-ExitOnError" << "1";
 
     process_ = new QProcess(this);
@@ -170,10 +168,10 @@ bool SgJLinkConnector::processRequest(const QString &cmd)
     connect(process_, SIGNAL(readyReadStandardOutput()),
             this, SLOT(readStandardOutputHandler()));
 
-    qDebug() << "SgJLinkConnector::flashBoardRequested() let's run" << program << arguments;
-    emit notify(QString("Starting JLink process: %1\n").arg(program));
+    qDebug() << "SgJLinkConnector::flashBoardRequested() let's run" << exePath_ << arguments;
+    emit notify(QString("Starting JLink process: %1\n").arg(exePath_));
 
-    process_->start(program, arguments);
+    process_->start(exePath_, arguments);
 
     return true;
 }
