@@ -53,7 +53,7 @@ if(APPLE)
 endif()
 if(WIN32)
     target_sources(${PROJECT_NAME} PRIVATE
-        resources/platformRegisrationTool.rc
+        resources/platformRegistrationTool.rc
     )
 endif()
 
