@@ -20,7 +20,7 @@ void ResourceLoader::loadCoreResources()
 {
     for (const auto& resourceName : coreResources_) {
         const QString resourceFile(
-            QString("%1/%2").arg(ResourcePath::viewsResourcePath()).arg(resourceName));
+            QString("%1/%2").arg(ResourcePath::coreResourcePath()).arg(resourceName));
 
         if (QFile::exists(resourceFile) == false) {
             qCCritical(logCategoryStrataDevStudio(), "Missing '%s' resource file!!",
