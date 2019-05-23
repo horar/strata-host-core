@@ -49,6 +49,7 @@ bool SgJLinkConnector::isBoardConnected()
     QTemporaryFile configFile;
 
     if (!configFile.open()) {
+        qDebug() << "SgJLinkConnector::isBoardConnected() cannot open config file.";
         return false;
     }
 
@@ -151,6 +152,7 @@ bool SgJLinkConnector::processRequest(const QString &cmd)
     configFile_ = new QTemporaryFile(this);
 
     if (!configFile_->open()) {
+        qDebug() << "SgJLinkConnector::processRequest() cannot open config file.";
         delete configFile_;
         return false;
     }
