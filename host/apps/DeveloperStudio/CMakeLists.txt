@@ -15,7 +15,7 @@ add_executable(${PROJECT_NAME}
     main.cpp
     source/DocumentManager.cpp
     source/ResourceLoader.cpp
-    $<IF:$<CONFIG:Debug>, source/debug/ResourcePath.cpp, source/release/ResourcePath.cpp>
+    $<IF:$<CONFIG:Release>, source/release/ResourcePath.cpp, source/debug/ResourcePath.cpp>
 
     logging/LoggingQtCategories.cpp
     logging/qml/tech/strata/logger/qml.qrc
