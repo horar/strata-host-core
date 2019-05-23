@@ -145,6 +145,7 @@ bool SgJLinkConnector::processRequest(const QString &cmd)
     configFile_ = new QTemporaryFile(this);
 
     if (!configFile_->open()) {
+        delete configFile_;
         return false;
     }
 
