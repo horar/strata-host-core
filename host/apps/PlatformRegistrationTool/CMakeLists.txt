@@ -53,7 +53,7 @@ if(APPLE)
 endif()
 if(WIN32)
     target_sources(${PROJECT_NAME} PRIVATE
-        resources/platformRegisrationTool.rc
+        resources/platformRegistrationTool.rc
     )
 endif()
 
@@ -100,6 +100,11 @@ if(APPLE)
         MACOSX_BUNDLE_GUI_IDENTIFIER com.onsemi.strata.prt
         MACOSX_BUNDLE_ICON_FILE app.icns
         MACOSX_BUNDLE_INFO_STRING ${PRODUCT_NAME_LONG}
+    )
+endif()
+if(WIN32)
+    set_target_properties(${PROJECT_NAME} PROPERTIES
+        WIN32_EXECUTABLE ON
     )
 endif()
 

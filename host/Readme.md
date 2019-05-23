@@ -58,26 +58,26 @@ make
 
 
 
-###Serial Console Interface macOS deployment
+### Serial Console Interface deployment
 Optionally create simple app DMG with all dependant libraries
 
 ```
-    cd spyglass/host/build/apps/SerialConsoleInterface
-    macdeployqt SerialConsoleInterface.app/ -dmg -qmldir=../../../apps/SerialConsoleInterface/
+    cd spyglass/host/build
+    macdeployqt bin/Serial\ Console\ Interface.app -dmg -qmldir=../apps/SerialConsoleInterface/
 
 ```
 
-or on Xcode build
-
-```
-    cd spyglass/host/build/apps/SerialConsoleInterface
-    macdeployqt Release\SerialConsoleInterface.app/ -dmg -qmldir=../../../apps/SerialConsoleInterface/
-
-```
 DMG file with application will be created inside the directory:
-spyglass/host/build/apps/SerialConsoleInterface
+spyglass/host/build/bin
 
-####Windows
+Or on Windows:
+```
+    cd spyglass\host\build
+    windeployqt --force --no-translations --qmldir ..\apps\SerialConsoleInterface "bin\Serial Console Interface.exe"
+
+```
+
+#### Windows
 
 ### Compilation for Windows
 To start a build run cmd in a console: windows_build.sh in host folder

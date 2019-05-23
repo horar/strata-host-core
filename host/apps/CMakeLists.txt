@@ -11,29 +11,27 @@ if(NOT MINGW)
 else()
     message(WARNING "Strata Developer Studio is not supported in MinGW development environment!")
 endif()
-if(NOT WIN32)
-    option(APPS_SCI "Build 'Serial Console Interface'" ON)
-    add_feature_info(APPS_SCI APPS_SCI "Serial Console Interface")
-    option(APPS_PRT "Build 'Platform Registration Tool'" ON)
-    add_feature_info(APPS_PRT APPS_PRT "Platform Registration Tool")
-endif()
+option(APPS_SCI "Build 'Serial Console Interface'" ON)
+add_feature_info(APPS_SCI APPS_SCI "Serial Console Interface")
+option(APPS_PRT "Build 'Platform Registration Tool'" ON)
+add_feature_info(APPS_PRT APPS_PRT "Platform Registration Tool")
 
 if(APPS_HCS2)
     add_subdirectory(hcs2)
 endif()
+
 if(APPS_FLASHER)
     add_subdirectory(Flasher)
 endif()
+
 if(APPS_STRATA AND NOT MINGW)
     add_subdirectory(strata)
 endif()
 
-if (APPS_SCI AND NOT WIN32)
-  # this is not supported on windows yet
+if (APPS_SCI)
   add_subdirectory(SerialConsoleInterface)
 endif()
 
-if (APPS_PRT AND NOT WIN32)
-  # this is not supported on windows yet
+if (APPS_PRT)
   add_subdirectory(PlatformRegistrationTool)
 endif()
