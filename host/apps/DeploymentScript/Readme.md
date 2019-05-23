@@ -8,14 +8,13 @@
 - Authenticate and upload files to the cloud services
 - Build JSON structure based on the following directory structure
 ```html
-- SEC.2018.004
-    - 1.0
-        - downloads
-            - bom
-                - ONSEC-18-004_REV1_bom.xlsx
-        - views
-            - Schematic
-                - ONSEC-18-004_REV1_schematic.pdf
+- STR-NCP110-EVK
+    - downloads
+        - bom
+            - ONSEC-18-004_REV1_bom.xlsx
+    - views
+        - Schematic
+            - ONSEC-18-004_REV1_schematic.pdf
 ```
 ```json
 {
@@ -25,7 +24,7 @@
        "views":[
            {
                "name":"Schematic",
-               "file":"SEC.2018.004/Schematic/ONSEC-18-004_REV1_schematic.pdf",
+               "file":"STR-NCP110-EVK/Schematic/ONSEC-18-004_REV1_schematic.pdf",
                "md5":"9e107d9d372bb6826bd81d3542a419d6",
                "timestamp":"2018-10-30 T 10:45.76"
            }
@@ -33,7 +32,7 @@
        "downloads":[
            {
                "name":"bom",
-               "file":"SEC.2018.004/bom/ONSEC-18-004_REV1_bom.xlsx",
+               "file":"STR-NCP110-EVK/bom/ONSEC-18-004_REV1_bom.xlsx",
                "md5":"5gr07d9d372bb6826bd81d3542a419d6",
                "timestamp":"2018-10-30 T 10:45.76"
            }
