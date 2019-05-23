@@ -105,17 +105,23 @@ void SgJLinkConnector::errorOccurredHandler(QProcess::ProcessError error)
 
     QString errorStr;
 
-    if (error == QProcess::FailedToStart) {
+    switch (error) {
+    case QProcess::FailedToStart:
         errorStr = "JLink process failed to start.\n";
-    } else if (error == QProcess::Crashed) {
+        break;
+    case QProcess::Crashed:
         errorStr = "JLink process crashed.\n";
-    } else if (error == QProcess::Timedout) {
+        break;
+    case QProcess::Timedout:
         errorStr = "JLink process time out error.\n";
-    } else if (error == QProcess::WriteError) {
+        break;
+    case QProcess::WriteError:
         errorStr = "JLink process write error.\n";
-    } else if (error == QProcess::ReadError) {
+        break;
+    case QProcess::ReadError:
         errorStr = "JLink process read error.\n";
-    } else if (error == QProcess::UnknownError) {
+        break;
+    default:
         errorStr = "JLink process unknown error.\n";
     }
 
