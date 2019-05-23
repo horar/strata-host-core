@@ -676,7 +676,7 @@ Item {
                 text: {
                     if (processingStatus === ProgramDeviceWizard.WaitingForDevice
                             || processingStatus === ProgramDeviceWizard.WaitingForJLink) {
-                        return "Only single device can be connected while programming"
+                        return "Only single device with MCU EFM32GG380F1024 can be connected while programming"
                     } else if (processingStatus === ProgramDeviceWizard.ProgrammingBootloader
                                || processingStatus === ProgramDeviceWizard.ProgrammingApplication) {
                         var msg = processPage.subtextNote
