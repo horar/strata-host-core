@@ -167,14 +167,14 @@ bool SgJLinkConnector::processRequest(const QString &cmd)
 
     process_ = new QProcess(this);
 
-    connect(process_, SIGNAL(finished(int, QProcess::ExitStatus)),
-            this, SLOT(finishedHandler(int, QProcess::ExitStatus)));
+    connect(process_, qOverload<int, QProcess::ExitStatus>(&QProcess::finished),
+            this, &SgJLinkConnector::finishedHandler);
 
-    connect(process_, SIGNAL(errorOccurred(QProcess::ProcessError)),
-            this, SLOT(errorOccurredHandler(QProcess::ProcessError)));
+    connect(process_, &QProcess::errorOccurred,
+            this, &SgJLinkConnector::errorOccurredHandler);
 
-    connect(process_, SIGNAL(readyReadStandardOutput()),
-            this, SLOT(readStandardOutputHandler()));
+    connect(process_, &QProcess::readyReadStandardOutput,
+            this, &SgJLinkConnector::readStandardOutputHandler);
 
     qDebug() << "SgJLinkConnector::flashBoardRequested() let's run" << exePath_ << arguments;
     emit notify(QString("Starting JLink process: %1\n").arg(exePath_));
