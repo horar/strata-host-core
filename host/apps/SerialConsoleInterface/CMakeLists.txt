@@ -53,7 +53,7 @@ target_link_libraries(${PROJECT_NAME}
 )
 
 set(PRODUCT_NAME_LONG "Serial Console Interface")
-set(PRODUCT_NAME_COPYRIGHT "Copyright (C) 2019 On Semiconductor")
+set(PRODUCT_NAME_COPYRIGHT "Copyright (C) 2019 ON Semiconductor")
 
 set_target_properties(${PROJECT_NAME} PROPERTIES
     CXX_STANDARD 17

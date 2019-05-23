@@ -7,7 +7,7 @@
 * @brief Client[comamnd line] interaction with the platform through HCS
 ******************************************************************************
 
-* @copyright Copyright 2018 On Semiconductor
+* @copyright Copyright 2018 ON Semiconductor
 */
 // Standard libraries
 #include <stdlib.h>
