@@ -130,7 +130,7 @@ void SgJLinkConnector::readStandardOutputHandler()
     emit notify(output);
 }
 
-bool SgJLinkConnector::processRequest(const QString cmd)
+bool SgJLinkConnector::processRequest(const QString &cmd)
 {
     if (exePath_.isEmpty()) {
         qDebug() << "SgJLinkConnector::processRequest() exePath is empty";

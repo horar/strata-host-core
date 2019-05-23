@@ -37,7 +37,7 @@ private:
     QPointer<QTemporaryFile> configFile_;
     QString exePath_;
 
-    bool processRequest(const QString cmd);
+    bool processRequest(const QString &cmd);
     void finishFlashProcess(bool exitedNormally);
 };
 
