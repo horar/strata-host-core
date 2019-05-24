@@ -6,7 +6,7 @@
 * $Date: 11/27/18
 * @brief Authenticate Interface for the replicator.
 ******************************************************************************
-* @copyright Copyright 2018 On Semiconductor
+* @copyright Copyright 2018 ON Semiconductor
 */
 #ifndef SGAUTHENTICATOR_H
 #define SGAUTHENTICATOR_H

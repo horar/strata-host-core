@@ -7,7 +7,7 @@
 * @brief Implements the public Class for downloading pdfs and downloads
 ******************************************************************************
 
-* @copyright Copyright 2018 On Semiconductor
+* @copyright Copyright 2018 ON Semiconductor
 */
 #ifndef SGWGET_HPP
 #define SGWGET_HPP

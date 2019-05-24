@@ -27,14 +27,14 @@ Item {
     Connections {
         target:  sciModel.boardController
 
-        onConnectedBoard: {
+        onActiveBoard: {
             if (programDeviceDialogOpened) {
                 return
             }
 
             var connectionInfo = sciModel.boardController.getConnectionInfo(connectionId)
 
-            console.log("onConnectedBoard()",JSON.stringify(connectionInfo))
+            console.log("onActiveBoard()",JSON.stringify(connectionInfo))
 
             var effectiveVerboseName = connectionInfo.verboseName
 

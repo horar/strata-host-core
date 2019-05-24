@@ -19,6 +19,7 @@ add_executable(${PROJECT_NAME}
     PlatformBoard.cpp
     ProgramDeviceTask.cpp
     SgUtilsCpp.cpp
+    SgJLinkConnector.cpp
     qml.qrc
     images/images.qrc
 )
@@ -53,7 +54,7 @@ target_link_libraries(${PROJECT_NAME}
 )
 
 set(PRODUCT_NAME_LONG "Serial Console Interface")
-set(PRODUCT_NAME_COPYRIGHT "Copyright (C) 2019 On Semiconductor")
+set(PRODUCT_NAME_COPYRIGHT "Copyright (C) 2019 ON Semiconductor")
 
 set_target_properties(${PROJECT_NAME} PROPERTIES
     CXX_STANDARD 17
@@ -76,6 +77,11 @@ if(APPLE)
         MACOSX_BUNDLE_GUI_IDENTIFIER com.onsemi.spyglass
         MACOSX_BUNDLE_ICON_FILE sciLogoGreen.icns
         MACOSX_BUNDLE_INFO_STRING ${PRODUCT_NAME_LONG}
+    )
+endif()
+if(WIN32)
+    set_target_properties(${PROJECT_NAME} PROPERTIES
+        WIN32_EXECUTABLE ON
     )
 endif()
 

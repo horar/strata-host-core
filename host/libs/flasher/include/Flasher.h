@@ -6,7 +6,7 @@
 * $Date: 2018-06-13 17:46:28 +0100 (Wed, 23 June 2018) $
 * @brief Flasher header file.
 ******************************************************************************
-* @copyright Copyright 2018 On Semiconductor
+* @copyright Copyright 2018 ON Semiconductor
 *
 * @internal
 *

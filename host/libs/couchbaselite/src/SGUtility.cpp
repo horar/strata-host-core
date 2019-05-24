@@ -6,7 +6,7 @@
 * $Date: 1/15/19
 * @brief Utility
 ******************************************************************************
-* @copyright Copyright 2018 On Semiconductor
+* @copyright Copyright 2018 ON Semiconductor
 */
 
 #include "SGUtility.h"

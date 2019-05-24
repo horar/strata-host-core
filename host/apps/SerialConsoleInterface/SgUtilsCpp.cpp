@@ -28,6 +28,12 @@ bool SgUtilsCpp::isFile(const QString &file)
     return info.isFile();
 }
 
+bool SgUtilsCpp::isExecutable(const QString &file)
+{
+    QFileInfo info(file);
+    return info.isExecutable();
+}
+
 bool SgUtilsCpp::atomicWrite(const QString &path, const QString &content)
 {
     QSaveFile file(path);

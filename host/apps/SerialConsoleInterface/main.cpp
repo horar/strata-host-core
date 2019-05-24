@@ -1,6 +1,7 @@
 #include "BoardsController.h"
 #include "SciModel.h"
 #include "SgUtilsCpp.h"
+#include "SgJLinkConnector.h"
 
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
@@ -9,7 +10,7 @@
 int main(int argc, char *argv[])
 {
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
-    QCoreApplication::setOrganizationName(QStringLiteral("On Semiconductor"));
+    QCoreApplication::setOrganizationName(QStringLiteral("ON Semiconductor"));
 
     QGuiApplication app(argc, argv);
 
@@ -17,6 +18,7 @@ int main(int argc, char *argv[])
     qmlRegisterSingletonType<SgUtilsCpp>("tech.strata.utils", 1, 0,"SgUtilsCpp", sgUtilsCppSingletonProvider);
     qmlRegisterType<SciModel>("tech.strata.sci", 1, 0, "SciModel");
     qmlRegisterUncreatableType<BoardsController>("tech.strata.sci", 1, 0, "BoardsController", "can not instantiate BoardsController in qml");
+    qmlRegisterUncreatableType<SgJLinkConnector>("tech.strata.sci", 1, 0, "SgJLinkConnector", "can not instantiate SgJLinkConnector in qml");
 
     QQmlApplicationEngine engine;
     engine.addImportPath("qrc:///");
