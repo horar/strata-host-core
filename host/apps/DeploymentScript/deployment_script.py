@@ -34,12 +34,20 @@ def main():
     SYNC_GATEWAY_URL = "{}/{}".format(configuration_data["sync_gateway_url"], configuration_data["sync_gateway_db"])
     CLOUD_SERVICE_URL = configuration_data["cloud_services_url"]
 
-    signup_result = singup(CLOUD_SERVICE_URL, CLOUD_SERVICE_USERNAME, CLOUD_SERVICE_PASSWORD)
-    print  signup_result[1]
-    if signup_result[0] == 200:
-        CLOUD_SERVICE_ACCESS_TOKEN = signup_result[1]["token"]
+    (login_response_code, login_response_body) = login(CLOUD_SERVICE_URL, CLOUD_SERVICE_USERNAME, CLOUD_SERVICE_PASSWORD)
+    if login_response_code == 200:
+        CLOUD_SERVICE_ACCESS_TOKEN = login_response_body["token"]
+    elif login_response_code == 401:
+        # User does not exist. Creating a new user
+        (signup_response_code, signup_response_body) = singup(CLOUD_SERVICE_URL, CLOUD_SERVICE_USERNAME, CLOUD_SERVICE_PASSWORD)
+        if signup_response_code == 200:
+            CLOUD_SERVICE_ACCESS_TOKEN = signup_response_body["token"]
+        else:
+            print "Failed to signup to cloud services. Exiting!", signup_response_body
+            exit(Error)
     else:
-        CLOUD_SERVICE_ACCESS_TOKEN = login(CLOUD_SERVICE_URL, CLOUD_SERVICE_USERNAME, CLOUD_SERVICE_PASSWORD)[1]["token"]
+        print "Failed to login to cloud services. Exiting!", login_response_body
+        exit(Error)
 
     # Set the directory you want to start from
     rootDir = args.directory
