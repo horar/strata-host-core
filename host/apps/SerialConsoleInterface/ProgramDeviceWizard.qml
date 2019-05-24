@@ -479,8 +479,7 @@ Item {
             }
 
             function callTryProgramDevice() {
-                if (processingStatus === ProgramDeviceWizard.ProgrammingSucceed
-                        || processingStatus === ProgramDeviceWizard.ProgrammingFailed)
+                if (processingStatus === ProgramDeviceWizard.ProgrammingSucceed)
                 {
                     processingStatus = ProgramDeviceWizard.WaitingForDevice
                 }
@@ -688,31 +687,43 @@ Item {
                         msg += "To program another device, simply plug it in and\n new process will start automatically"
                         return msg
                     } else if(processingStatus === ProgramDeviceWizard.ProgrammingFailed) {
-                        msg = processPage.subtextNote
-                        msg += "\n\n"
-                        msg += "To program another device, simply plug it in and\n new process will start automatically"
-                        return msg
+                        return processPage.subtextNote
                     }
 
                     return ""
                 }
             }
 
-            Common.SgButton {
-                id: cancelBtn
+            Row {
                 anchors {
                     top: statusSubtext.bottom
                     topMargin: 4 * processPage.verticalSpacing
                     horizontalCenter: parent.horizontalCenter
                 }
 
-                text: qsTr("Done")
-                visible: processingStatus === ProgramDeviceWizard.WaitingForDevice
-                         || processingStatus === ProgramDeviceWizard.WaitingForJLink
-                         || processingStatus === ProgramDeviceWizard.ProgrammingSucceed
-                         || processingStatus === ProgramDeviceWizard.ProgrammingFailed
+                spacing: wizard.spacing
 
-                onClicked: cancelRequested()
+                Common.SgButton {
+                    id: cancelBtn
+
+                    text: qsTr("Done")
+                    visible: processingStatus === ProgramDeviceWizard.WaitingForDevice
+                             || processingStatus === ProgramDeviceWizard.WaitingForJLink
+                             || processingStatus === ProgramDeviceWizard.ProgrammingSucceed
+
+                    onClicked: cancelRequested()
+                }
+
+                Common.SgButton {
+                    id: confirmErrorBtn
+
+                    text: qsTr("Continue")
+                    visible: processingStatus === ProgramDeviceWizard.ProgrammingFailed
+
+                    onClicked: {
+                        processingStatus = ProgramDeviceWizard.WaitingForDevice
+                    }
+                }
             }
         }
     }
