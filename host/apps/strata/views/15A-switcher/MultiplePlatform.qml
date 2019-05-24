@@ -13,6 +13,9 @@ Item {
     property string warningVinLable: "2.5V"
     property string partNumber:  "NCP3235"
     property string title: "<b>High Current Sync Buck Converter</b>"
+    property real maxValue: 5
+    property real stepValue: 0.5
+
 
     function check_class_id ()
     {
@@ -22,6 +25,8 @@ Item {
             partNumber = " <b> NCP3235 </b>"
             listOfOutputValue = [">20A", "17.5A", "10A"]
             title = "<b>High Current Sync Buck Converter</b>"
+            maxValue = 60
+            stepValue = 6
         }
         if(class_id == 219) {
             modeVisible = false
@@ -29,6 +34,8 @@ Item {
             partNumber = " <b> NCP3232 </b>"
             listOfOutputValue = [">20A", "17.5A", "10A"]
             title = "<b>High Current Sync Buck Converter</b>"
+            maxValue = 60
+            stepValue = 6
         }
 
         if(class_id == 220) {
@@ -37,6 +44,9 @@ Item {
             partNumber = " <b> NCP3231 </b>"
             listOfOutputValue = [">30A", "27A", "10A"]
             title = "<b>High Current Sync Buck Converter</b>"
+            maxValue = 100
+            stepValue = 10
+
         }
     }
 

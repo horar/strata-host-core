@@ -13,6 +13,8 @@ Item{
     property string partNumber:  " "
     property string title: "<b>Low Noise and High PSRR Linear Regulator</b>"
     property bool showDecimal;
+    property real maxValue: 3000
+    property real stepValue: 300
 
     function check_class_id ()
     {
@@ -22,6 +24,8 @@ Item{
             partNumber = " <b> NCV8163/NCP163 </b>"
             warningVinLable = "2.25V"
             showDecimal = false
+            maxValue = 1500
+            stepValue = 150
         }
         else if(class_id === 206) {
             ecoVisible = false
@@ -29,6 +33,8 @@ Item{
             title =  "<b>Low Noise and High PSRR Linear Regulator</b> "
             warningVinLable = "2.25V"
             showDecimal = false
+            maxValue = 1500
+            stepValue = 150
         }
         else if(class_id === 210) {
             partNumber = "<b> NCP110 </b>"
@@ -43,6 +49,8 @@ Item{
             title = "<b> High PSRR Linear Regulator </b>"
             warningVinLable = "1.7V"
             showDecimal = false
+            maxValue = 1500
+            stepValue = 150
         }
         else if(class_id === 212) {
             ecoVisible = false
@@ -50,6 +58,8 @@ Item{
             title = "<b> Low Iq CMOS Linear Regulator </b>"
             warningVinLable = "2.25V"
             showDecimal = false
+            maxValue = 1000
+            stepValue = 100
 
         }
         else if(class_id === 217) {
@@ -58,6 +68,8 @@ Item{
             title = "<b> Low Iq Dual Power Mode Linear Regulator </b>"
             warningVinLable = "2.25V"
             showDecimal = true
+            maxValue = 300
+            stepValue = 30
         }
         else  {
             console.log("unknown")
