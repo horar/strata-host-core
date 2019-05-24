@@ -687,7 +687,10 @@ Item {
                         msg += "To program another device, simply plug it in and\n new process will start automatically"
                         return msg
                     } else if(processingStatus === ProgramDeviceWizard.ProgrammingFailed) {
-                        return processPage.subtextNote
+                        msg = processPage.subtextNote
+                        msg += "\n\n"
+                        msg += "Unplug the device and press Continue"
+                        return msg
                     }
 
                     return ""
