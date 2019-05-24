@@ -499,7 +499,7 @@ Item {
                     if (sciModel.boardController.connectionIds.length === 1) {
                         if (wizard.useJLink) {
                             processingStatus = ProgramDeviceWizard.WaitingForJLink
-                            var jLinkConnected = sciModel.jLinkConnector.isBoardConnected("/usr/local/bin/JLinkExe")
+                            var jLinkConnected = sciModel.jLinkConnector.isBoardConnected()
                             if (jLinkConnected === false) {
                                 jLinkCheckTimer.restart()
                                 return
