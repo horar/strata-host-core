@@ -683,8 +683,8 @@ Item {
                         msg += "Do not unplug the device until process is complete"
                         return msg
                     } else if (processingStatus === ProgramDeviceWizard.ProgrammingSucceed) {
-                        msg = "You can unplug the device now\n\n"
-                        msg += "To program another device, simply plug it in and\n new process will start automatically"
+                        msg = "To program another device, simply plug it in and\n new process will start automatically\n\n"
+                        msg += "Press Done if you don't want to program another device"
                         return msg
                     } else if(processingStatus === ProgramDeviceWizard.ProgrammingFailed) {
                         msg = processPage.subtextNote
