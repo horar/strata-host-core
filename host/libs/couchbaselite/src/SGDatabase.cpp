@@ -6,7 +6,7 @@
 * $Date:
 * @brief Database c++ object for the local couchbase database
 ******************************************************************************
-* @copyright Copyright 2018 On Semiconductor
+* @copyright Copyright 2018 ON Semiconductor
 */
 #include <iostream>
 
@@ -84,7 +84,7 @@ namespace Spyglass {
         c4db_config_.encryptionKey.algorithm = kC4EncryptionNone;
 
         string db_path = getDBPath() + string(kSGDatabasesDirectory_) + string("/") + db_name_;
-        
+
         c4db_ = c4db_open(slice(db_path), &c4db_config_, &c4error_);
 
         if(c4db_ == nullptr){

@@ -39,7 +39,7 @@ int main(int argc, char *argv[])
     }
 
     QSettings::setDefaultFormat(QSettings::IniFormat);
-    QCoreApplication::setOrganizationName(QStringLiteral("On Semiconductor"));
+    QCoreApplication::setOrganizationName(QStringLiteral("ON Semiconductor"));
 
     QApplication app(argc, argv);
     const QtLoggerSetup loggerInitialization(app);

@@ -11,7 +11,7 @@
 
 int main(int argc, char *argv[])
 {
-    QCoreApplication::setOrganizationName(QStringLiteral("On Semiconductor"));
+    QCoreApplication::setOrganizationName(QStringLiteral("ON Semiconductor"));
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 
     QGuiApplication app(argc, argv);

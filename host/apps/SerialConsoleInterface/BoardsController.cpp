@@ -74,6 +74,8 @@ void BoardsController::reconnect(const QString &connectionId)
 
     closeConnection(connectionId);
 
+    newConnection(QString::fromStdString(connection->getName()));
+
     board->sendInitialMsg();
 }
 
@@ -87,13 +89,8 @@ spyglass::PlatformConnectionShPtr BoardsController::getConnection(const QString 
     return platform_mgr_.getConnection(connectionId.toStdString());
 }
 
-void BoardsController::newConnection(spyglass::PlatformConnectionShPtr connection)
+void BoardsController::newConnection(const QString &connectionId)
 {
-    if (!connection) {
-        return;
-    }
-
-    QString connectionId = QString::fromStdString(connection->getName());
 
     if (connectionIds_.indexOf(connectionId) < 0) {
         connectionIds_.append(connectionId);
@@ -104,6 +101,11 @@ void BoardsController::newConnection(spyglass::PlatformConnectionShPtr connectio
     }
 
     emit connectedBoard(connectionId);
+}
+
+void BoardsController::activeConnection(const QString &connectionId)
+{
+    emit activeBoard(connectionId);
 }
 
 void BoardsController::closeConnection(const QString &connectionId)
@@ -152,6 +154,8 @@ void BoardsController::ConnectionHandler::onNewConnection(spyglass::PlatformConn
         connections_.insert({connection.get(), board});
     }
 
+    receiver_->newConnection(QString::fromStdString(connection->getName()));
+
     board->sendInitialMsg();
 }
 
@@ -188,13 +192,13 @@ void BoardsController::ConnectionHandler::onNotifyReadConnection(spyglass::Platf
         switch(status)
         {
             case PlatformBoard::ProcessResult::eIgnored:
-                if (board->isPlatformConnected()) {
+                if (board->isPlatformActive()) {
                     receiver_->notifyMessageFromConnection(connId, QString::fromStdString(message));
                 }
                 break;
             case PlatformBoard::ProcessResult::eProcessed:
-                if (board->isPlatformConnected()) {
-                    receiver_->newConnection(connection);
+                if (board->isPlatformActive()) {
+                    receiver_->activeConnection(QString::fromStdString(connection->getName()));
                 }
                 break;
             case PlatformBoard::ProcessResult::eParseError:

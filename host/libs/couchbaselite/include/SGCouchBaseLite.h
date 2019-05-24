@@ -6,7 +6,7 @@
 * $Date: 1/16/19
 * @brief Spyglasss CouchbaseLite header files
 ******************************************************************************
-* @copyright Copyright 2018 On Semiconductor
+* @copyright Copyright 2018 ON Semiconductor
 */
 #ifndef SGCOUCHBASELITE_H
 #define SGCOUCHBASELITE_H

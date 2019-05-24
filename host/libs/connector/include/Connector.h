@@ -7,7 +7,7 @@
 * @brief Abstract class for connector objects
 ******************************************************************************
 
-* @copyright Copyright 2018 On Semiconductor
+* @copyright Copyright 2018 ON Semiconductor
 */
 
 /**

@@ -86,7 +86,7 @@ target_include_directories(${PROJECT_NAME}
 )
 
 set(PRODUCT_NAME_LONG "Strata Developer Studio")
-set(PRODUCT_NAME_COPYRIGHT "Copyright (C) 2018 On Semiconductor")
+set(PRODUCT_NAME_COPYRIGHT "Copyright (C) 2018-2019 ON Semiconductor")
 set_target_properties(${PROJECT_NAME} PROPERTIES
     CXX_STANDARD 17
     CXX_STANDARD_REQUIRED ON
@@ -113,6 +113,17 @@ endif()
 if(WIN32)
     set_target_properties(${PROJECT_NAME} PROPERTIES
         WIN32_EXECUTABLE ON
+    )
+
+    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            ${CMAKE_SOURCE_DIR}/ext_libs/libzmq/bin/windows/x64/libzmq.dll
+            $<TARGET_FILE_DIR:${PROJECT_NAME}>
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            ${CMAKE_SOURCE_DIR}/ext_libs/libcurl/bin/windows/x64/libcurl.dll
+            $<TARGET_FILE_DIR:${PROJECT_NAME}>
+        COMMENT "Deploying dependant 3rd party libraries..."
+        VERBATIM
     )
 endif()
 

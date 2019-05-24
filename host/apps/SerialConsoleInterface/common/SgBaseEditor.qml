@@ -49,20 +49,25 @@ FocusScope {
         onValidationReadyChanged: {
             delegate.validate()
         }
+
+        onEnabledChanged: {
+            delegate.validate()
+        }
     }
 
-
     function validate(focusChanged) {
-        if (focusChanged) {
-            if (!loader.item.activeFocus) {
-                //editor lost focus
-                callInputValidationErrorMsg()
-            }
+        if (loader.item.enabled) {
+            if (focusChanged) {
+                if (!loader.item.activeFocus) {
+                    //editor lost focus
+                    callInputValidationErrorMsg()
+                }
 
-            return
-        } else if (loader.item.validationReady && !loader.item.activeEditing) {
-            callInputValidationErrorMsg()
-            return
+                return
+            } else if (loader.item.validationReady && !loader.item.activeEditing) {
+                callInputValidationErrorMsg()
+                return
+            }
         }
 
         validStatus = SgBaseEditor.Unknown

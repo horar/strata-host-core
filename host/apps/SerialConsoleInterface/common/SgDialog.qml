@@ -52,7 +52,6 @@ Dialog {
         }
     }
 
-
     background: Item {
         RectangularGlow {
             id: effect

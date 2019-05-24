@@ -53,7 +53,7 @@ if(APPLE)
 endif()
 if(WIN32)
     target_sources(${PROJECT_NAME} PRIVATE
-        resources/platformRegisrationTool.rc
+        resources/platformRegistrationTool.rc
     )
 endif()
 
@@ -78,7 +78,7 @@ target_include_directories(${PROJECT_NAME}
 
 
 set(PRODUCT_NAME_LONG "Platform Registration Tool")
-set(PRODUCT_NAME_COPYRIGHT "Copyright (C) 2019 On Semiconductor")
+set(PRODUCT_NAME_COPYRIGHT "Copyright (C) 2019 ON Semiconductor")
 set_target_properties(${PROJECT_NAME} PROPERTIES
     CXX_STANDARD 17
     CXX_STANDARD_REQUIRED ON
@@ -100,6 +100,11 @@ if(APPLE)
         MACOSX_BUNDLE_GUI_IDENTIFIER com.onsemi.strata.prt
         MACOSX_BUNDLE_ICON_FILE app.icns
         MACOSX_BUNDLE_INFO_STRING ${PRODUCT_NAME_LONG}
+    )
+endif()
+if(WIN32)
+    set_target_properties(${PROJECT_NAME} PROPERTIES
+        WIN32_EXECUTABLE ON
     )
 endif()
 

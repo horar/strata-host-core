@@ -73,6 +73,9 @@ Item {
         Help.registerTarget(enableSwitch, "This switch enables or disables the LDO output.", 7, "advanceHelp")
         Help.registerTarget(ouputCurrent, "Output current is shown here in milliamps.", 9, "advanceHelp")
         Help.registerTarget(outputVoltage, "Output voltage is shown here in Volts.", 8, "advanceHelp")
+        if(multiplePlatform.ecoVisible === true) {
+             Help.registerTarget(ecoSwitch, "The switch puts NCP171 into Low Power Mode.", 10, "advanceHelp")
+        }
     }
 
     Rectangle{
@@ -476,7 +479,7 @@ Item {
                             horizontalCenter: parent.horizontalCenter
                         }
 
-                        visible: multiplePlatform.ecoVisiable
+                        visible: multiplePlatform.ecoVisible
                         label : "Low Power Mode"
                         switchWidth: parent.width/9          // Default: 52 (change for long custom checkedLabels when labelsInside)
                         switchHeight: parent.height/15             // Default: 26

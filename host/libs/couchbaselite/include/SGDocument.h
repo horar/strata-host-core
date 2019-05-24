@@ -6,7 +6,7 @@
 * $Date:
 * @brief Document c++ object to map a raw document in DB to c++ object. Similar to ORM. Gives read only to the document body
 ******************************************************************************
-* @copyright Copyright 2018 On Semiconductor
+* @copyright Copyright 2018 ON Semiconductor
 */
 #ifndef SGDOCUMENT_H
 #define SGDOCUMENT_H

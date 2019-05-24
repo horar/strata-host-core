@@ -6,7 +6,7 @@
 * $Date: 11/27/18
 * @brief Basic Authenticator Interface for the replicator.
 ******************************************************************************
-* @copyright Copyright 2018 On Semiconductor
+* @copyright Copyright 2018 ON Semiconductor
 */
 #include "SGAuthenticator.h"
 #include <c4Replicator.h>

@@ -51,4 +51,5 @@ add_subdirectory(apps)
 add_subdirectory(utils)
 add_subdirectory(research_spikes)
 
+message(STATUS "=============================================================================")
 feature_summary(WHAT ALL)
