@@ -2,6 +2,7 @@
 #define SCI_BOARDCONTROLER_H
 
 #include <QObject>
+#include <QVariantMap>
 
 #include <PlatformManager.h>
 
@@ -10,6 +11,9 @@ class PlatformBoard;
 class BoardsController : public QObject
 {
     Q_OBJECT
+    Q_DISABLE_COPY(BoardsController)
+
+    Q_PROPERTY(QStringList connectionIds READ connectionIds NOTIFY connectionIdsChanged)
 
 public:
     BoardsController(QObject *parent = nullptr);
@@ -17,16 +21,24 @@ public:
 
     Q_INVOKABLE void initialize();
     Q_INVOKABLE void sendCommand(QString connection_id, QString cmd);
+    Q_INVOKABLE QVariantMap getConnectionInfo(const QString &connectionId);
+    Q_INVOKABLE void reconnect(const QString &connectionId);
+
+    QStringList connectionIds() const;
+    spyglass::PlatformConnectionShPtr getConnection(const QString &connectionId);
 
     //callbacks from ConnectionHandler
-    void newConnection(const std::string& connection_id, const std::string& verbose_name);
-    void removeConnection(const std::string& connection_id);
-    void notifyMessageFromConnection(const std::string& connection_id, const std::string& message);
+    void newConnection(const QString &connectionId);
+    void activeConnection(const QString &connectionId);
+    void closeConnection(const QString &connectionId);
+    void notifyMessageFromConnection(const QString &connectionId, const QString &message);
 
 signals:
-    void connectedBoard(QString connectionId, QString verboseName);
+    void connectedBoard(QString connectionId);
     void disconnectedBoard(QString connectionId);
     void notifyBoardMessage(QString connectionId, QString message);
+    void activeBoard(QString connectionId);
+    void connectionIdsChanged();
 
 private:
     class ConnectionHandler : public spyglass::PlatformConnHandler
@@ -35,17 +47,16 @@ private:
         ConnectionHandler();
         virtual ~ConnectionHandler();
 
-        void setParent(BoardsController* parent);
+        void setReceiver(BoardsController* receiver);
 
-        virtual void onNewConnection(spyglass::PlatformConnection *connection);
-        virtual void onCloseConnection(spyglass::PlatformConnection *connection);
-        virtual void onNotifyReadConnection(spyglass::PlatformConnection *connection);
+        void onNewConnection(spyglass::PlatformConnectionShPtr connection) override;
+        void onCloseConnection(spyglass::PlatformConnectionShPtr connection) override;
+        void onNotifyReadConnection(spyglass::PlatformConnectionShPtr connection) override;
 
-        PlatformBoard* getBoard(spyglass::PlatformConnection* connection);
-        spyglass::PlatformConnection* getConnection(const std::string& conn_id);
+        PlatformBoard* getBoard(spyglass::PlatformConnectionShPtr connection);
 
     private:
-        BoardsController* parent_;
+        BoardsController *receiver_;
 
         std::mutex connectionsLock_;
         std::map<spyglass::PlatformConnection*, PlatformBoard*> connections_;
@@ -54,7 +65,7 @@ private:
 private:
     spyglass::PlatformManager platform_mgr_;
     ConnectionHandler conn_handler_;
-
+    QStringList connectionIds_;
 };
 
 

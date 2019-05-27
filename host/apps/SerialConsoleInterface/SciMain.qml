@@ -6,12 +6,15 @@ import "./common/Colors.js" as Colors
 import tech.strata.sci 1.0 as SciCommon
 import "./common" as Common
 import tech.strata.fonts 1.0 as StrataFonts
+import "./common/SgUtils.js" as SgUtils
 
 Item {
     id: root
     anchors {
         fill: parent
     }
+
+    property bool programDeviceDialogOpened: false
 
     SciCommon.SciModel {
         id: sciModel
@@ -24,25 +27,51 @@ Item {
     Connections {
         target:  sciModel.boardController
 
-        onConnectedBoard: {
+        onActiveBoard: {
+            if (programDeviceDialogOpened) {
+                return
+            }
+
+            var connectionInfo = sciModel.boardController.getConnectionInfo(connectionId)
+
+            console.log("onActiveBoard()",JSON.stringify(connectionInfo))
+
+            var effectiveVerboseName = connectionInfo.verboseName
+
+            if (connectionInfo.verboseName.length === 0) {
+                if (connectionInfo.applicationVersion.lenght > 0) {
+                    effectiveVerboseName = "Application v"+connectionInfo.applicationVersion
+                } else if (connectionInfo.bootloaderVersion.length > 0) {
+                    effectiveVerboseName = "Bootloader v"+connectionInfo.bootloaderVersion
+                } else {
+                    effectiveVerboseName = "Unknown"
+                }
+            }
+
+            var platformItem = {
+                "connectionId": connectionInfo.connectionId,
+                "platformId": connectionInfo.platformId,
+                "verboseName": effectiveVerboseName,
+                "bootloaderVersion": connectionInfo.bootloaderVersion,
+                "applicationVersion": connectionInfo.applicationVersion,
+                "status": "connected"
+            }
+
             for (var i = 0; i < tabModel.count; ++i) {
                 var item = tabModel.get(i)
                 if (item.connectionId === connectionId) {
-                    tabModel.setProperty(i, "status","connected")
+                    tabModel.set(i, platformItem)
                     return
                 }
             }
 
-            tabModel.append({
-                                "text": verboseName,
-                                "connectionId": connectionId,
-                                "status": "connected"
-                            })
+            tabModel.append(platformItem)
 
             tabBar.currentIndex = tabModel.count - 1
         }
 
         onDisconnectedBoard: {
+            console.log("onDisconnectedBoard()", connectionId)
             for (var i = 0; i < tabModel.count; ++i) {
                 var item = tabModel.get(i)
                 if (item.connectionId === connectionId) {
@@ -90,7 +119,6 @@ Item {
                 delegate: TabButton {
                     id: delegate
 
-                    text: model.text
                     hoverEnabled: true
 
                     property int currentIndex: TabBar.tabBar.currentIndex
@@ -132,7 +160,7 @@ Item {
                             }
 
                             fontSizeMultiplier: 1.1
-                            text: delegate.text
+                            text: model.verboseName
                             font.family: StrataFonts.Fonts.franklinGothicBold
                             color: model.index === delegate.currentIndex ? "black" : "white"
                             elide: Text.ElideRight
@@ -214,6 +242,7 @@ Item {
                 id: platformDelegate
                 width: platformContentContainer.width
                 height: platformContentContainer.height
+                rootItem: root
 
                 onSendCommandRequested: {
                     sendCommand(connectionId, message)
@@ -222,6 +251,10 @@ Item {
                 Connections {
                     target:  sciModel.boardController
                     onNotifyBoardMessage: {
+                        if (programDeviceDialogOpened) {
+                            return
+                        }
+
                         if (platformDelegate.connectionId === connectionId) {
                             var timestamp = Date.now()
                             appendCommand(createCommand(timestamp, message, "response"))
@@ -237,7 +270,7 @@ Item {
         visible: tabModel.count === 0
         Text {
             anchors.centerIn: parent
-            text: "No Board Connected"
+            text: "No Device Connected"
             font.pointSize: 50
         }
     }
@@ -270,17 +303,35 @@ Item {
 
             spacing: 10
 
-            Button {
-                //only for developers
-                visible: false
+            Common.SgButton {
+                text: "Program\nDevice"
+                onClicked: showProgramDeviceDialogDialog()
+            }
+        }
+    }
 
-                text: "add fake board"
-                onClicked: {
-                    tabModel.append({
-                                        "text": "Platform Board "+tabModel.count,
-                                        "connectionId": "id-"+tabModel.count,
-                                        "status": "disconnected"
-                                    })
+    Component {
+        id: programDeviceDialogComponent
+
+        Common.SgDialog {
+            id: dialog
+
+            modal: true
+            closePolicy: Popup.NoAutoClose
+            focus: true
+            padding: 0
+            hasTitle: false
+
+            Column {
+                ProgramDeviceWizard {
+                    width: root.width - 20
+                    height: root.height - 20
+
+                    onCancelRequested: {
+                        dialog.close()
+                        programDeviceDialogOpened = false
+                        refrestDeviceInfo()
+                    }
                 }
             }
         }
@@ -314,6 +365,19 @@ Item {
             "message": message,
             "type": type,
             "condensed": false,
+        }
+    }
+
+    function showProgramDeviceDialogDialog() {
+        var dialog = SgUtils.createDialogFromComponent(root, programDeviceDialogComponent)
+
+        programDeviceDialogOpened = true
+        dialog.open()
+    }
+
+    function refrestDeviceInfo() {
+        for (var i = 0; i < sciModel.boardController.connectionIds.length; ++i) {
+            sciModel.boardController.reconnect(sciModel.boardController.connectionIds[i])
         }
     }
 }

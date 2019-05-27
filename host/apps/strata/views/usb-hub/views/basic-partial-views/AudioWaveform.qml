@@ -26,13 +26,34 @@ Item {
 
     property bool audioPlaying: platformInterface.audio_active_notification.audio_active
 
+    Component.onCompleted:{
+        //set some initial values so the waveform is seen (but not animated) when opened
+        sample1Value = Math.random();
+        sample2Value = Math.random();
+        sample3Value = Math.random();
+        sample4Value = Math.random();
+        sample5Value = Math.random();
+        sample6Value = Math.random();
+        sample7Value = Math.random();
+        sample8Value = Math.random();
+        sample9Value = Math.random();
+        sample10Value = Math.random();
+        sample11Value = Math.random();
+        sample12Value = Math.random();
+        sample13Value = Math.random();
+        sample14Value = Math.random();
+        sample15Value = Math.random();
+        sample16Value = Math.random();
+        //console.log("initial audio values are:",sample1Value,sample2Value,sample3Value,sample4Value,sample5Value,sample6Value,sample7Value,sample8Value,sample9Value,sample10Value,sample11Value,sample12Value,sample13Value,sample14Value,sample15Value,sample16Value)
+    }
+
     Timer{
         //generate sample data to drive the audio graph when a
         //device is connected. This is for testing, and will be removed when real audio data is available
         id:audioDataTimer
         interval: audioSampleInterval
         repeat: true
-        running:true
+        running:audioPlaying
         onTriggered: {
             sample16Value = sample15Value;
             sample15Value = sample14Value;
@@ -53,7 +74,7 @@ Item {
                 sample1Value = Math.random() * platformInterface.audio_volume_notification.volume;  //scale by the volume (0-1)
               else
                 sample1Value = 0;
-            console.log("timer. Value =",sample1Value)
+            //console.log("timer. Value =",sample1Value)
          }
 
     }

@@ -3,6 +3,7 @@
 #include "PlatformBoard.h"
 
 #include <PlatformConnection.h>
+#include <QDebug>
 
 BoardsController::BoardsController(QObject *parent) : QObject(parent), conn_handler_()
 {
@@ -15,109 +16,189 @@ BoardsController::~BoardsController()
 
 void BoardsController::initialize()
 {
-    conn_handler_.setParent(this);
+    conn_handler_.setReceiver(this);
 
-    platform_mgr_.Init();
-    platform_mgr_.setPlatformHandler(&conn_handler_);
-
-    platform_mgr_.StartLoop();
+    if (platform_mgr_.Init()) {
+        platform_mgr_.setPlatformHandler(&conn_handler_);
+        platform_mgr_.StartLoop();
+    } else {
+        //TODO: notify user
+        qDebug() << "BoardsController::BoardsController() Initialization of platform manager failed.";
+    }
 }
 
 void BoardsController::sendCommand(QString connection_id, QString message)
 {
-    spyglass::PlatformConnection* conn = conn_handler_.getConnection(connection_id.toStdString() );
-    if (conn == nullptr) {
+    spyglass::PlatformConnectionShPtr conn = platform_mgr_.getConnection(connection_id.toStdString() );
+    if (!conn) {
         return;
     }
 
     conn->addMessage(message.toStdString() );
 }
 
-void BoardsController::newConnection(const std::string& connection_id, const std::string& verbose_name)
+QVariantMap BoardsController::getConnectionInfo(const QString &connectionId)
 {
-    emit connectedBoard(QString::fromStdString(connection_id), QString::fromStdString(verbose_name));
+    QVariantMap result;
+
+    spyglass::PlatformConnectionShPtr connection = platform_mgr_.getConnection(connectionId.toStdString());
+    if (connection == nullptr) {
+        return result;
+    }
+
+    PlatformBoard* board = conn_handler_.getBoard(connection);
+    if (board == nullptr) {
+        return result;
+    }
+
+    result.insert(QStringLiteral("connectionId"), connectionId);
+    result.insert(QStringLiteral("platformId"), QString::fromStdString(board->getPlatformId()));
+    result.insert(QStringLiteral("verboseName"), QString::fromStdString(board->getVerboseName()));
+    result.insert(QStringLiteral("bootloaderVersion"), QString::fromStdString(board->getBootloaderVersion()));
+    result.insert(QStringLiteral("applicationVersion"), QString::fromStdString(board->getApplicationVersion()));
+
+    return result;
 }
 
-void BoardsController::removeConnection(const std::string& connection_id)
+void BoardsController::reconnect(const QString &connectionId)
 {
-    emit disconnectedBoard(QString::fromStdString(connection_id));
+    spyglass::PlatformConnectionShPtr connection = platform_mgr_.getConnection(connectionId.toStdString());
+    if (!connection) {
+        return;
+    }
+
+    PlatformBoard* board = conn_handler_.getBoard(connection);
+    if (board == nullptr) {
+        return;
+    }
+
+    closeConnection(connectionId);
+
+    newConnection(QString::fromStdString(connection->getName()));
+
+    board->sendInitialMsg();
 }
 
-void BoardsController::notifyMessageFromConnection(const std::string& connection_id, const std::string& message)
+QStringList BoardsController::connectionIds() const
 {
-    emit notifyBoardMessage(QString::fromStdString(connection_id), QString::fromStdString(message) );
+    return connectionIds_;
+}
+
+spyglass::PlatformConnectionShPtr BoardsController::getConnection(const QString &connectionId)
+{
+    return platform_mgr_.getConnection(connectionId.toStdString());
+}
+
+void BoardsController::newConnection(const QString &connectionId)
+{
+
+    if (connectionIds_.indexOf(connectionId) < 0) {
+        connectionIds_.append(connectionId);
+        emit connectionIdsChanged();
+    }
+    else {
+        qDebug() << "ERROR: this board is already connected" << connectionId;
+    }
+
+    emit connectedBoard(connectionId);
+}
+
+void BoardsController::activeConnection(const QString &connectionId)
+{
+    emit activeBoard(connectionId);
+}
+
+void BoardsController::closeConnection(const QString &connectionId)
+{
+    int ret = connectionIds_.removeAll(connectionId);
+    emit connectionIdsChanged();
+
+    if (ret != 1) {
+        qDebug() << "ERROR: suspicious number of boards removed" << connectionId << ret;
+    }
+
+    emit disconnectedBoard(connectionId);
+}
+
+void BoardsController::notifyMessageFromConnection(const QString &connectionId, const QString &message)
+{
+    emit notifyBoardMessage(connectionId, message);
 }
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-BoardsController::ConnectionHandler::ConnectionHandler() : parent_(nullptr)
+BoardsController::ConnectionHandler::ConnectionHandler() : receiver_(nullptr)
 {
 }
 
 BoardsController::ConnectionHandler::~ConnectionHandler()
 {
     std::lock_guard<std::mutex> lock(connectionsLock_);
-    for(auto item : connections_) {
+    for (auto item : connections_) {
         delete item.second;
     }
 }
 
-void BoardsController::ConnectionHandler::setParent(BoardsController *parent)
+void BoardsController::ConnectionHandler::setReceiver(BoardsController *receiver)
 {
-    parent_ = parent;
+    receiver_ = receiver;
 }
 
-void BoardsController::ConnectionHandler::onNewConnection(spyglass::PlatformConnection *connection)
+void BoardsController::ConnectionHandler::onNewConnection(spyglass::PlatformConnectionShPtr connection)
 {
     PlatformBoard* board = new PlatformBoard(connection);
 
     {
         std::lock_guard<std::mutex> lock(connectionsLock_);
-        connections_.insert({connection, board});
+        connections_.insert({connection.get(), board});
     }
+
+    receiver_->newConnection(QString::fromStdString(connection->getName()));
 
     board->sendInitialMsg();
 }
 
-void BoardsController::ConnectionHandler::onCloseConnection(spyglass::PlatformConnection *connection)
+void BoardsController::ConnectionHandler::onCloseConnection(spyglass::PlatformConnectionShPtr connection)
 {
     PlatformBoard* board = getBoard(connection);
     if (board == nullptr) {
         return;
     }
 
-    parent_->removeConnection( connection->getName() );
+    receiver_->closeConnection(QString::fromStdString(connection->getName()));
 
     delete board;
 
     {
         std::lock_guard<std::mutex> lock(connectionsLock_);
-        connections_.erase(connection);
+        connections_.erase(connection.get());
     }
 }
 
-void BoardsController::ConnectionHandler::onNotifyReadConnection(spyglass::PlatformConnection* connection)
+void BoardsController::ConnectionHandler::onNotifyReadConnection(spyglass::PlatformConnectionShPtr connection)
 {
     PlatformBoard* board = getBoard(connection);
     if (board == nullptr) {
         return;
     }
 
-    std::string conn_id = connection->getName();
+    QString connId = QString::fromStdString(connection->getName());
 
     std::string message;
-    while( connection->getMessage(message)) {
+    while (connection->getMessage(message)) {
 
         PlatformBoard::ProcessResult status = board->handleMessage(message);
         switch(status)
         {
             case PlatformBoard::ProcessResult::eIgnored:
-                parent_->notifyMessageFromConnection( conn_id, message );
+                if (board->isPlatformActive()) {
+                    receiver_->notifyMessageFromConnection(connId, QString::fromStdString(message));
+                }
                 break;
             case PlatformBoard::ProcessResult::eProcessed:
-                if (board->isPlatformConnected() && false == board->getPlatformId().empty()) {
-                    parent_->newConnection(conn_id, board->getVerboseName() );
+                if (board->isPlatformActive()) {
+                    receiver_->activeConnection(QString::fromStdString(connection->getName()));
                 }
                 break;
             case PlatformBoard::ProcessResult::eParseError:
@@ -128,26 +209,14 @@ void BoardsController::ConnectionHandler::onNotifyReadConnection(spyglass::Platf
     }
 }
 
-PlatformBoard* BoardsController::ConnectionHandler::getBoard(spyglass::PlatformConnection* connection)
+PlatformBoard* BoardsController::ConnectionHandler::getBoard(spyglass::PlatformConnectionShPtr connection)
 {
     std::lock_guard<std::mutex> lock(connectionsLock_);
-    auto findIt = connections_.find(connection);
+    auto findIt = connections_.find(connection.get());
     if (findIt == connections_.end()) {
         return nullptr;
     }
 
     return findIt->second;
-}
-
-spyglass::PlatformConnection* BoardsController::ConnectionHandler::getConnection(const std::string& conn_id)
-{
-    std::lock_guard<std::mutex> lock(connectionsLock_);
-    for(auto item : connections_ ) {
-        if (item.first->getName() == conn_id) {
-            return item.first;
-        }
-    }
-
-    return nullptr;
 }
 

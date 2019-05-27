@@ -7,7 +7,7 @@
 * @brief Implements the public Class for SGCouchbaseLiteCPP wrapper
 ******************************************************************************
 
-* @copyright Copyright 2018 On Semiconductor
+* @copyright Copyright 2018 ON Semiconductor
 */
 
 #ifndef SGCOUCHBASELITE_WRAPPER_H

@@ -16,19 +16,19 @@ std::map<spyglass::PlatformConnection*, int> g_connectionMap;
 class MyHandler : public spyglass::PlatformConnHandler
 {
 public:
-    virtual void onNewConnection(spyglass::PlatformConnection* connection)
+    void onNewConnection(spyglass::PlatformConnectionShPtr connection) override
     {
         connection->addMessage("{\"cmd\":\"request_platform_id\",\"payload\":{} }");
 
     }
-    virtual void onCloseConnection(spyglass::PlatformConnection* connection)
+    void onCloseConnection(spyglass::PlatformConnectionShPtr /*connection*/) override
     {
 
     }
 
-    virtual void onNotifyReadConnection(spyglass::PlatformConnection* connection)
+    void onNotifyReadConnection(spyglass::PlatformConnectionShPtr connection) override
     {
-        int iCount = g_connectionMap[connection];
+        int iCount = g_connectionMap[connection.get()];
         std::string msg;
         while(connection->getMessage(msg)) {
             std::cout << "Msg:" << msg << std::endl;
@@ -40,7 +40,7 @@ public:
             iCount = 0;
         }
 
-        g_connectionMap[connection] = iCount;
+        g_connectionMap[connection.get()] = iCount;
     }
 };
 
@@ -55,11 +55,13 @@ int main(int argc, char* argv[])
     mgr->StartLoop();
 
     //make some loops and then exit..
-    for(int i=0; i<5; i++) {
+    for(int i=0; i<20; i++) {
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
 
     mgr->Stop();
+
+    delete mgr;
 
     return 0;
 }

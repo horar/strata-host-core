@@ -2,10 +2,7 @@
 #define SCI_PLATFORMBOARD_H
 
 #include <string>
-
-namespace spyglass {
-    class PlatformConnection;
-}
+#include <PlatformManager.h>
 
 class PlatformBoard
 {
@@ -18,17 +15,21 @@ public:
     };
 
 public:
-    explicit PlatformBoard(spyglass::PlatformConnection* connection);
-    virtual ~PlatformBoard();
+    explicit PlatformBoard(spyglass::PlatformConnectionShPtr connection);
+    ~PlatformBoard() = default;
 
     void sendInitialMsg();
+    void sendPlatformInfoMsg();
 
     ProcessResult handleMessage(const std::string& msg);
 
-    std::string getPlatformId() const { return platformId_; }
-    std::string getVerboseName() const { return verboseName_; }
+    std::string getPlatformId() const;
+    std::string getVerboseName() const;
+    std::string getBootloaderVersion() const;
+    std::string getApplicationVersion() const;
 
-    bool isPlatformConnected() const { return (state_ == State::eConnected); }
+    bool isPlatformConnected() const;
+    bool isPlatformActive() const;
 
 private:
     ProcessResult parseInitialMsg(const std::string& msg, bool& wasNotification);
@@ -36,14 +37,17 @@ private:
 private:
     enum class State {
         eInit = 0,
-        eSendInitialMsg,
-        eConnected,
+        eWaitingForFirmwareInfo,
+        eWaitingForPlatformInfo,
+        eActive,
     };
 
     std::string platformId_;
     std::string verboseName_;
+    std::string bootloaderVersion_;
+    std::string applicationVersion_;
 
-    spyglass::PlatformConnection* connection_;
+    spyglass::PlatformConnectionShPtr connection_;
 
     enum State state_;
 };

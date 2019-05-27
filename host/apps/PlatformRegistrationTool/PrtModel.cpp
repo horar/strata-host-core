@@ -6,33 +6,35 @@
 
 #include <PlatformConnection.h>
 
-FlashTask::FlashTask(spyglass::PlatformConnection *connection, const QString &firmwarePath)
+FlashTask::FlashTask(spyglass::PlatformConnectionShPtr connection, const QString &firmwarePath)
     : connection_(connection), firmwarePath_(firmwarePath)
 {
 }
 
 void FlashTask::run()
 {
-    if(connection_ == nullptr) {
-        emit taskDone(connection_, false);
+    Q_ASSERT(connection_ != nullptr);
+    if (connection_ == nullptr) {
         return;
     }
 
     Flasher flasher(connection_, firmwarePath_.toStdString());
 
-    emit notify(QString::fromStdString(connection_->getName()), "Initializing bootloader.\n");
+    QString connectionId = QString::fromStdString(connection_->getName());
+
+    emit notify(connectionId, "Initializing bootloader.\n");
 
     if (flasher.initializeBootloader()) {
-        emit notify(QString::fromStdString(connection_->getName()), "Flashing.\n");
+        emit notify(connectionId, "Flashing.\n");
         if (flasher.flash(true)) {
-            emit taskDone(connection_, true);
+            emit taskDone(connectionId, true);
             return;
         }
     } else {
-        emit notify(QString::fromStdString(connection_->getName()), "Initializing of bootloader failed.\n");
+        emit notify(connectionId, "Initializing of bootloader failed.\n");
     }
 
-    emit taskDone(connection_, false);
+    emit taskDone(connectionId, false);
 }
 
 PrtModel::PrtModel(QObject *parent)
@@ -56,24 +58,22 @@ PrtModel::~PrtModel()
 
 void PrtModel::sendCommand(const QString &connectionId, const QString &cmd)
 {
-    spyglass::PlatformConnection *connection = platformManager_.getConnection(connectionId.toStdString());
-
-    if (connection == nullptr) {
+    spyglass::PlatformConnectionShPtr connection = platformManager_.getConnection(connectionId.toStdString());
+    if (!connection) {
         return;
     }
 
     connection->sendMessage(cmd.toStdString());
 }
 
-void PrtModel::flasherDoneHandler(spyglass::PlatformConnection *connection, bool status)
+void PrtModel::flasherDoneHandler(const QString& connectionId, bool status)
 {
-    QString connectionId = QString::fromStdString(connection->getName());
     emit flashTaskDone(connectionId, status);
 }
 
 void PrtModel::flash(const QString &connectionId, const QString &firmwarePath)
 {
-    spyglass::PlatformConnection *connection = platformManager_.getConnection(connectionId.toStdString());
+    spyglass::PlatformConnectionShPtr connection = platformManager_.getConnection(connectionId.toStdString());
 
     if (connection == nullptr) {
         notify(connectionId, "Connection Id not valid.");
@@ -82,8 +82,8 @@ void PrtModel::flash(const QString &connectionId, const QString &firmwarePath)
     }
 
     FlashTask *task = new FlashTask(connection, firmwarePath);
-    connect(task, SIGNAL(taskDone(spyglass::PlatformConnection *, bool)),
-            this, SLOT(flasherDoneHandler(spyglass::PlatformConnection *, bool)));
+    connect(task, SIGNAL(taskDone(QString, bool)),
+            this, SLOT(flasherDoneHandler(QString, bool)));
 
     connect(task, SIGNAL(notify(QString, QString)),
             this, SIGNAL(notify(QString, QString)));
@@ -96,7 +96,7 @@ QStringList PrtModel::connectionIds() const
     return connectionIds_;
 }
 
-void PrtModel::newConnection(spyglass::PlatformConnection *connection)
+void PrtModel::newConnection(spyglass::PlatformConnectionShPtr connection)
 {
     QString connectionId = QString::fromStdString(connection->getName());
 
@@ -108,7 +108,7 @@ void PrtModel::newConnection(spyglass::PlatformConnection *connection)
     }
 }
 
-void PrtModel::closeConnection(spyglass::PlatformConnection *connection)
+void PrtModel::closeConnection(spyglass::PlatformConnectionShPtr connection)
 {
     QString connectionId = QString::fromStdString(connection->getName());
 
@@ -120,7 +120,7 @@ void PrtModel::closeConnection(spyglass::PlatformConnection *connection)
     }
 }
 
-void PrtModel::notifyReadConnection(spyglass::PlatformConnection *connection)
+void PrtModel::notifyReadConnection(spyglass::PlatformConnectionShPtr connection)
 {
     std::string message;
     connection->getMessage(message);
@@ -142,21 +142,21 @@ void ConnectionHandler::setReceiver(PrtModel *receiver)
     receiver_ = receiver;
 }
 
-void ConnectionHandler::onNewConnection(spyglass::PlatformConnection *connection)
+void ConnectionHandler::onNewConnection(spyglass::PlatformConnectionShPtr connection)
 {
     if (receiver_ != nullptr) {
         receiver_->newConnection(connection);
     }
 }
 
-void ConnectionHandler::onCloseConnection(spyglass::PlatformConnection *connection)
+void ConnectionHandler::onCloseConnection(spyglass::PlatformConnectionShPtr connection)
 {
     if (receiver_ != nullptr) {
         receiver_->closeConnection(connection);
     }
 }
 
-void ConnectionHandler::onNotifyReadConnection(spyglass::PlatformConnection *connection)
+void ConnectionHandler::onNotifyReadConnection(spyglass::PlatformConnectionShPtr connection)
 {
     if (receiver_ != nullptr) {
         receiver_->notifyReadConnection(connection);

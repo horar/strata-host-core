@@ -8,7 +8,7 @@
         and cloud
 ******************************************************************************
 
-* @copyright Copyright 2018 On Semiconductor
+* @copyright Copyright 2018 ON Semiconductor
 */
 
 #include "HostControllerService.h"
@@ -23,6 +23,7 @@ using namespace Spyglass;
 #include <direct.h>
 #else
 #include <sys/stat.h>
+#include <unistd.h>
 #endif
 
 // [prasanth] TODO :: need to take the db name and document name into config file
@@ -32,6 +33,9 @@ const char* g_user_name = "username";
 const char* g_password = "password";
 const string g_delimiter = "/";
 const string g_download_folder = "/PDF";
+// [prasanth] This thread count has been set to 3 since most of
+// the released platforms have a maximum of three files that are available to download
+const unsigned int g_download_thread_count = 3;
 
 // util functions that are required
 // @f GetCurrentWorkingDir
@@ -131,7 +135,7 @@ void HostControllerService::handleViewDocuments(Value& view_documents,const stri
     Document::AllocatorType& allocator = json_document.GetAllocator();
     Value array(kArrayType);
     document_object.AddMember("type","document",allocator);
-    for(int i=0; i<view_documents.Size(); i++) {
+    for (uint32_t i = 0; i < view_documents.Size(); i++) {
         string url  =  view_documents[i]["file"].GetString();
         // adding the prefix to the link (adding the file service endpoint)
         PDEBUG(PRINT_DEBUG,"the url to download is %s\n",url.c_str());
@@ -143,16 +147,14 @@ void HostControllerService::handleViewDocuments(Value& view_documents,const stri
                 return;
                 // Need an UI method to tell the folder creation fails
             }
-        }
-        else if(flag == "local") {
+        } else if (flag == "local") {
             getFolderName(url, file_path);
         }
         file_path.append(g_delimiter);
         file_path.append(url);
         string file_path_to_download = file_path;
         if(flag == "replication") {
-            SGwget downloader;
-            if(!downloader.download(file_url,file_path_to_download,"overwrite")) {
+            if(!downloader_->download(file_url,file_path_to_download,"overwrite",DownloadMode::SYNC)) {
                 return;
             }
         }
@@ -184,7 +186,7 @@ void HostControllerService::handleDownloadDocuments(Value& download_documents)
     Value array(kArrayType);
     document_object.AddMember("type","document",allocator);
 
-    for(int i=0;i<download_documents.Size();i++) {
+    for (uint32_t i = 0; i < download_documents.Size(); i++) {
         string url  =  download_documents[i]["file"].GetString();
         Value jwt_file_path_to_download(url.c_str(),allocator);
         Value array_object; // create array object
@@ -296,6 +298,11 @@ void HostControllerService::sendDocumentstoUI(const std::string& json_body)
     handleDownloadDocuments(download_documents);
 }
 
+void HostControllerService::onDownloadCallback(bool download_status,const std::string& file_name) {
+    cout <<"download was "<<download_status<<" for file "<< file_name <<endl;
+    // [prasanth] needs an UI way to tell the user regarding the download process
+}
+
 /******************************************************************************/
 /*                                core functions                              */
 /******************************************************************************/
@@ -315,13 +322,12 @@ void HostControllerService::sendDocumentstoUI(const std::string& json_body)
 HostControllerService::HostControllerService(const string& configuration_file)
 {
     // config file parsing
-    configuration_ = new ParseConfig(configuration_file);
+    configuration_ = unique_ptr<ParseConfig>(new ParseConfig(configuration_file));
     cout<<"************************************************************\n";
     cout<<"CONFIG: \n"<< *configuration_ <<std::endl;
     if(PRINT_DEBUG > 0) {
         cout<< "Console print is enabled\n";
-    }
-    else {
+    } else {
         cout<< "Console print is disabled\n";
     }
     cout<<"************************************************************\n";
@@ -332,17 +338,28 @@ HostControllerService::HostControllerService(const string& configuration_file)
     // remote monitor socket address retrieval
     remote_discovery_monitor_ = configuration_->GetDiscoveryMonitorSubscriber();
     // creating discovery service object
-    discovery_service_ = new DiscoveryService(configuration_->GetDiscoveryServerID());
+    discovery_service_ = unique_ptr<DiscoveryService>(new DiscoveryService(configuration_->GetDiscoveryServerID()));
     // initializing the connectors
-    client_connector_ = ConnectorFactory::getConnector("router");
-    serial_connector_ = ConnectorFactory::getConnector("platform");
-    remote_connector_ = ConnectorFactory::getConnector("dealer");
+    client_connector_ = ConnectorFactory::getConnector(ConnectorFactory::CONNECTOR_TYPE::ROUTER);
+    serial_connector_ = ConnectorFactory::getConnector(ConnectorFactory::CONNECTOR_TYPE::SERIAL);
+    remote_connector_ = ConnectorFactory::getConnector(ConnectorFactory::CONNECTOR_TYPE::DEALER);
     // this connecotr is used for activity monitor from discovery service
-    remote_activity_connector_ = ConnectorFactory::getConnector("subscriber");
+    remote_activity_connector_ =
+        ConnectorFactory::getConnector(ConnectorFactory::CONNECTOR_TYPE::SUBSCRIBER);
     // SGCouchbase integration
-    sgcouchbase_ = new SGCouchbaseLiteWrapper(g_database,configuration_->GetGatewaySync());
+    sgcouchbase_ = std::unique_ptr<SGCouchbaseLiteWrapper>(new SGCouchbaseLiteWrapper(g_database,configuration_->GetGatewaySync()));
     sgcouchbase_->setAuthentication(g_user_name,g_password);
-    sgcouchbase_->setValidationListener(bind(&HostControllerService::onValidate,this,placeholders::_1,placeholders::_2));
+    sgcouchbase_->setValidationListener(
+        bind(&HostControllerService::onValidate, this, placeholders::_1, placeholders::_2));
+    downloader_ = unique_ptr<SGwget>(new SGwget());
+}
+
+HostControllerService::~HostControllerService()
+{
+    delete remote_activity_connector_;
+    delete remote_connector_;
+    delete serial_connector_;
+    delete client_connector_;
 }
 
 // @f init
@@ -359,8 +376,6 @@ HostControllerService::HostControllerService(const string& configuration_file)
 //
 HcsError HostControllerService::init()
 {
-    // zmq context creation
-    socket_context_ = new zmq::context_t;
     // opening the client socket to connect with UI
     client_connector_->open(hcs_server_address_);
 
@@ -376,10 +391,15 @@ HcsError HostControllerService::init()
         // [prasanth]: need an UI way to tell the user that database creation failed
         PDEBUG(PRINT_DEBUG,"Databse open failed\n");
     }
+    if(!downloader_->setThreadCount(g_download_thread_count)) {
+        PDEBUG(PRINT_DEBUG,"Download thread count was not set\n");
+    }
+    downloader_->setAsyncDownloadListner(bind(&HostControllerService::onDownloadCallback,this,placeholders::_1,placeholders::_2));
     setEventLoop();
     // [TODO] [prasanth] : This function run is coded in this, since the libevent dynamic
     //addtion of event is not implemented successfully in hcs
-    while((int)run());
+    while ((int)run())
+        ;
 
     return HcsError::NO_ERROR;
 }
@@ -422,21 +442,14 @@ HcsError HostControllerService::setEventLoop()
     sendMessageToUI(platformList);
 
     PDEBUG(PRINT_DEBUG,"Starting the event");
-    // creating a periodic event for test case
-    event_loop_base_ = event_base_new();
     event_init();
-    if (!event_loop_base_) {
-        PDEBUG(PRINT_DEBUG,"Could not create event base");
-        return HcsError::EVENT_BASE_FAILURE;
-    }
     timeval seconds = {1, 0};
-    event_set(&periodic_event_,-1,EV_TIMEOUT
-                        | EV_PERSIST, HostControllerService::testCallback,this);
+    event_set(&periodic_event_, -1, EV_TIMEOUT | EV_PERSIST, HostControllerService::testCallback,
+              this);
     event_add(&periodic_event_, &seconds);
 
     event_set(&service_handler_,client_connector_->getFileDescriptor(),
-                        EV_READ | EV_WRITE | EV_PERSIST ,
-                        HostControllerService::serviceCallback,this);
+              EV_READ | EV_WRITE | EV_PERSIST, HostControllerService::serviceCallback, this);
     event_add(&service_handler_,NULL);
     event_dispatch();
 
@@ -455,7 +468,7 @@ HcsError HostControllerService::setEventLoop()
 //  OUT:
 //   void
 //
-void HostControllerService::testCallback(evutil_socket_t fd, short what, void* args)
+void HostControllerService::testCallback(evutil_socket_t, short, void* args)
 {
 // creating a periodic event for test case
     HostControllerService *hcs = (HostControllerService*)args;
@@ -466,11 +479,12 @@ void HostControllerService::testCallback(evutil_socket_t fd, short what, void* a
             hcs->initializePlatform(); // init serial config
             hcs->port_disconnected_ = false;
 #ifdef _WIN32
-            event_set(&hcs->platform_handler_,hcs->serial_connector_->getFileDescriptor(), EV_READ | EV_WRITE | EV_PERSIST,
-                                           HostControllerService::platformCallback,hcs);
+            event_set(&hcs->platform_handler_, hcs->serial_connector_->getFileDescriptor(),
+                      EV_READ | EV_WRITE | EV_PERSIST, HostControllerService::platformCallback,
+                      hcs);
 #else
-            event_set(&hcs->platform_handler_, hcs->serial_connector_->getFileDescriptor(), EV_READ  | EV_PERSIST,
-                                                   HostControllerService::platformCallback,hcs);
+            event_set(&hcs->platform_handler_, hcs->serial_connector_->getFileDescriptor(),
+                      EV_READ | EV_PERSIST, HostControllerService::platformCallback, hcs);
 #endif
             event_add(&hcs->platform_handler_,NULL);
 
@@ -495,7 +509,7 @@ void HostControllerService::testCallback(evutil_socket_t fd, short what, void* a
 //  OUT:
 //   void
 //
-void HostControllerService::serviceCallback(evutil_socket_t fd, short what, void* args)
+void HostControllerService::serviceCallback(evutil_socket_t, short, void* args)
 {
     // [TODO] [prasanth] This is just a test case. will clean this as we proceed
     HostControllerService *hcs = (HostControllerService*)args;
@@ -516,7 +530,7 @@ void HostControllerService::serviceCallback(evutil_socket_t fd, short what, void
 //  OUT:
 //   void
 //
-void HostControllerService::remoteCallback(evutil_socket_t fd, short what, void* args)
+void HostControllerService::remoteCallback(evutil_socket_t, short, void* args)
 {
     // [TODO] [prasanth] This is just a test case. will clean this as we proceed
     HostControllerService *hcs = (HostControllerService*)args;
@@ -536,7 +550,7 @@ void HostControllerService::remoteCallback(evutil_socket_t fd, short what, void*
 //  OUT:
 //   void
 //
-void HostControllerService::platformCallback(evutil_socket_t fd, short what, void* args)
+void HostControllerService::platformCallback(evutil_socket_t, short, void* args)
 {
     // [TODO] [prasanth] This is just a test case. will clean this as we proceed
     HostControllerService *hcs = (HostControllerService*)args;
@@ -555,7 +569,7 @@ void HostControllerService::platformCallback(evutil_socket_t fd, short what, voi
 //  OUT:
 //   void
 //
-void HostControllerService::remoteActivityCallback(evutil_socket_t fd, short what, void* args)
+void HostControllerService::remoteActivityCallback(evutil_socket_t, short, void* args)
 {
     // [TODO] [prasanth] This is just a test case. will clean this as we proceed
     HostControllerService *hcs = (HostControllerService*)args;
@@ -566,7 +580,8 @@ void HostControllerService::remoteActivityCallback(evutil_socket_t fd, short wha
     }
 }
 
-void HostControllerService::onServiceCallback(const std::string& dealer_id, const std::string& message)
+void HostControllerService::onServiceCallback(const std::string& dealer_id,
+                                              const std::string& message)
 {
     if(!clientExistInList(dealer_id)) {
         PDEBUG(PRINT_DEBUG,"Adding new client<%s> to list", dealer_id.c_str());
@@ -579,9 +594,9 @@ void HostControllerService::onServiceCallback(const std::string& dealer_id, cons
 
     // TODO [ian] add this to a "command_filter" map to add more then just "db::cmd"
     if( service_command.HasMember("db::cmd") ) {
-        // [TODO] [prasanth] : verify with Abe. Removing Open after nimbus initialization causes seg fault on this command
-        // Hence commeneted out
-        // if ( hcs->database_->Command( read_message.c_str() ) != NO_ERRORS ){
+        // [TODO] [prasanth] : verify with Abe. Removing Open after nimbus initialization causes seg
+        // fault on this command Hence commeneted out if ( hcs->database_->Command(
+        // read_message.c_str() ) != NO_ERRORS ){
         //     PDEBUG(PRINT_DEBUG,"ERROR: database failed failed!");
         // }
     }
@@ -592,7 +607,6 @@ void HostControllerService::onServiceCallback(const std::string& dealer_id, cons
     }
         // the following routine is to add the client[ui] into the routing table
     else if(platform_client_mapping_.empty() || !clientExists(dealer_id)) {
-
         std::vector<string> selected_platform_info = initialCommandDispatch(dealer_id, message);
         // strictly for testing alone
         if(selected_platform_info[0] != "NONE") {
@@ -638,7 +652,8 @@ void HostControllerService::onPlatformCallback(const std::string& message)
     checkPlatformExist(message);
 
     //[TODO] [prasanth]: send data to the data bridge through multimap handle
-    // for now we are restricting the send to platform only when customer selects to advertise his/her platform
+    // for now we are restricting the send to platform only when customer selects to advertise
+    // his/her platform
     if (remote_connector_->isConnected()) {
         remote_connector_->send(message);
     }
@@ -693,7 +708,8 @@ void HostControllerService::initializePlatform()
 //  OUT:
 //
 //
-std::vector<string> HostControllerService::initialCommandDispatch(const std::string& dealer_id,const std::string& command)
+std::vector<string> HostControllerService::initialCommandDispatch(const std::string& dealer_id,
+                                                                  const std::string& command)
 {
     // [TODO]: [prasanth] should be removed after bod demo
     std::vector<string> selected_platform;
@@ -721,8 +737,7 @@ std::vector<string> HostControllerService::initialCommandDispatch(const std::str
     Value& payload_item = service_command["payload"];
     switch(message) {
         case CommandDispatcherMessages::REQUEST_HCS_STATUS:
-                                            client_connector_->send(JSON_SINGLE_OBJECT
-                                                ("hcs::notification","hcs_active"));
+            client_connector_->send(JSON_SINGLE_OBJECT("hcs::notification", "hcs_active"));
                                             break;
 
         case CommandDispatcherMessages::REGISTER_CLIENT:
@@ -750,7 +765,8 @@ std::vector<string> HostControllerService::initialCommandDispatch(const std::str
 }
 
 // @f disptachMessageToPlatforms
-// @b gets the json encoded string from client and then dispatches it to the corresponding platform/s
+// @b gets the json encoded string from client and then dispatches it to the corresponding
+// platform/s
 //
 // arguments:
 //  IN: client_id and the message from client
@@ -758,12 +774,14 @@ std::vector<string> HostControllerService::initialCommandDispatch(const std::str
 //  OUT: true if success,
 //       false if failure
 //
-bool HostControllerService::disptachMessageToPlatforms(const std::string& dealer_id, const std::string& read_message)
+bool HostControllerService::disptachMessageToPlatforms(const std::string& dealer_id,
+                                                       const std::string& read_message)
 {
     for(const auto& item : platform_client_mapping_) {
         if (item.second == dealer_id) {
             // the following printing is strictly for testing only
-            PDEBUG(PRINT_DEBUG,"\033[1;4;31m[%s<-%s]\033[0m: %s\n",item.first[0].c_str(), dealer_id.c_str(),read_message.c_str());
+            PDEBUG(PRINT_DEBUG, "\033[1;4;31m[%s<-%s]\033[0m: %s\n", item.first[0].c_str(),
+                   dealer_id.c_str(), read_message.c_str());
 
             Document service_command;
             if(!read_message.empty()) {
@@ -777,17 +795,18 @@ bool HostControllerService::disptachMessageToPlatforms(const std::string& dealer
 
                 //TODO: check if first has some items...
                 if(item.first[1] == "connected") {
-                    PDEBUG(PRINT_DEBUG,"\033[1;4;31mlocal write %s\033[0m\n",item.first[1].c_str());
+                    PDEBUG(PRINT_DEBUG, "\033[1;4;31mlocal write %s\033[0m\n",
+                           item.first[1].c_str());
                     if(serial_connector_->send(read_message)) {
-                        PDEBUG(PRINT_DEBUG,"\033[1;4;33mWrite success %s\033[0m",read_message.c_str());
+                        PDEBUG(PRINT_DEBUG, "\033[1;4;33mWrite success %s\033[0m",
+                               read_message.c_str());
                     }
-                }
-                else if(item.first[1] == "remote") {
-
-                    PDEBUG(PRINT_DEBUG,"\033[1;4;31mlocal write %s\033[0m\n",item.first[1].c_str());
+                } else if (item.first[1] == "remote") {
+                    PDEBUG(PRINT_DEBUG, "\033[1;4;31mlocal write %s\033[0m\n",
+                           item.first[1].c_str());
                     // parsing the message and add the user name field to the message
-                    // This si required for only remote client[FAE] to notify the customer that the command is sent from
-                    // FAE with FAE username
+                    // This si required for only remote client[FAE] to notify the customer that the
+                    // command is sent from FAE with FAE username
 
                     std::string msg_with_username(read_message);
                     appendUsername(msg_with_username);
@@ -812,17 +831,13 @@ CommandDispatcherMessages HostControllerService::stringHash(const std::string& c
 {
     if (command == "request_hcs_status") {
         return CommandDispatcherMessages::REQUEST_HCS_STATUS;
-    }
-    else if (command == "request_available_platforms") {
+    } else if (command == "request_available_platforms") {
         return CommandDispatcherMessages::REQUEST_AVAILABLE_PLATFORMS;
-    }
-    else if (command == "platform_select") {
+    } else if (command == "platform_select") {
         return CommandDispatcherMessages::PLATFORM_SELECT;
-    }
-    else if (command == "register_client") {
+    } else if (command == "register_client") {
         return CommandDispatcherMessages::REGISTER_CLIENT;
-    }
-    else if (command == "unregister") {
+    } else if (command == "unregister") {
         return CommandDispatcherMessages::UNREGISTER_CLIENT;
     }
 
@@ -879,8 +894,7 @@ void HostControllerService::parseHCSCommands(const string &hcs_message)
     if (hcs_command.Parse(hcs_message.c_str()).HasParseError()) {
         PDEBUG(PRINT_DEBUG,"json failed\n");
         return;
-    }
-    else if(!(strcmp(hcs_command["hcs::cmd"].GetString(),"jwt_token"))) {
+    } else if (!(strcmp(hcs_command["hcs::cmd"].GetString(), "jwt_token"))) {
         if(hcs_command["payload"].HasMember("jwt")) {
             PDEBUG(PRINT_DEBUG,"adding the JWT\n");
             string jwt = hcs_command["payload"]["jwt"].GetString();
@@ -891,8 +905,7 @@ void HostControllerService::parseHCSCommands(const string &hcs_message)
             // lower case
             transform(user_name_.begin(),user_name_.end(),user_name_.begin(), ::tolower);
         }
-    }
-    else if(!(strcmp(hcs_command["hcs::cmd"].GetString(),"advertise"))) {
+    } else if (!(strcmp(hcs_command["hcs::cmd"].GetString(), "advertise"))) {
         if(hcs_command["payload"].HasMember("advertise_platforms")) {
           bool remote_advertise = hcs_command["payload"]["advertise_platforms"].GetBool();
           PDEBUG(PRINT_DEBUG,"is remote session ON? %d",remote_advertise);
@@ -903,7 +916,8 @@ void HostControllerService::parseHCSCommands(const string &hcs_message)
     else if(!(strcmp(hcs_command["hcs::cmd"].GetString(),"get_platforms"))) {
         if(hcs_command["payload"].HasMember("hcs_token")) {
           discovery_service_->setHCSToken(hcs_command["payload"]["hcs_token"].GetString());
-          PDEBUG(PRINT_DEBUG,"the token required to connect is %s",discovery_service_->getHCSToken().c_str());
+            PDEBUG(PRINT_DEBUG, "the token required to connect is %s",
+                   discovery_service_->getHCSToken().c_str());
           handleRemoteGetPlatforms();
         }
     }
@@ -915,7 +929,8 @@ void HostControllerService::parseHCSCommands(const string &hcs_message)
             discovery_service_->disconnect(g_platform_uuid_);
             sendDisconnecttoUI();
             // platformDisconnectRoutine();
-            platform_uuid_.remove_if([](platform_details remote){ return remote.connection_status == "remote"; });
+            platform_uuid_.remove_if(
+                [](platform_details remote) { return remote.connection_status == "remote"; });
             platform_client_mapping_.clear();
             event_del(&remote_handler_);
             if(remote_activity_connector_->isConnected()) {
@@ -931,20 +946,17 @@ void HostControllerService::parseHCSCommands(const string &hcs_message)
           PDEBUG(PRINT_DEBUG,"disconnecting remote user %s",remote_user.c_str());
           discovery_service_->disconnectUser(remote_user,g_dealer_id_);
         }
-    }
-    else if(!(strcmp(hcs_command["hcs::cmd"].GetString(),"disconnect_platform"))) {
+    } else if (!(strcmp(hcs_command["hcs::cmd"].GetString(), "disconnect_platform"))) {
         PDEBUG(PRINT_DEBUG,"User has requested to disconnect from platform\n");
         platform_client_mapping_.clear();
         sgcouchbase_->stopReplicator();
-    }
-    else if(!(strcmp(hcs_command["hcs::cmd"].GetString(),"unregister"))) {
+    } else if (!(strcmp(hcs_command["hcs::cmd"].GetString(), "unregister"))) {
         PDEBUG(PRINT_DEBUG,"User has disconnected\n");
         platform_client_mapping_.clear();
-    }
-    else if(!(strcmp(hcs_command["hcs::cmd"].GetString(),"download_files"))) {
+    } else if (!(strcmp(hcs_command["hcs::cmd"].GetString(), "download_files"))) {
         PDEBUG(PRINT_DEBUG,"download files request\n");
         Value& array = hcs_command["payload"];
-        for(int i=0;i<array.Size();i++) {
+        for (uint32_t i = 0; i < array.Size(); i++) {
             string file_path = array[i]["path"].GetString();
 #if _WIN32
             const string substring_toremove = "file:///";
@@ -958,18 +970,11 @@ void HostControllerService::parseHCSCommands(const string &hcs_message)
             file_path.append(g_delimiter);
             file_path.append(array[i]["name"].GetString());
             cout << "file path from ui is "<<file_path<<endl;
-            SGwget downloader;
             string file_url = array[i]["file"].GetString();
             file_url = configuration_->GetDatabaseServer() + file_url;
             cout << "download file url is "<<file_url<<endl;
-            // [TODO] The following download is a blocking function. The main thread will
-            // be waiting for this function to return and this function may take more time (slow internet, large file,..)
-            // JIRA SCT-289 has been created to take care of this issue
-            if(downloader.download(file_url,file_path,"non-overwrite")) {
-                cout<< "Download success\n";
-            }
-            else {
-                cout << "Download failed\n";
+            if(!downloader_->download(file_url,file_path,"non-overwrite",DownloadMode::ASYNC)) {
+                cout << "Failed to add the task to download queue. Check the SGwget object state "<<endl;
             }
         }
     }
@@ -984,7 +989,8 @@ void HostControllerService::handleRemotePlatformRegistration(bool remote_adverti
         remote_connector_->setConnectionState(remote_advertise);
         startRemoteService();
         startActivityMonitorService();
-        bool status = discovery_service_->registerPlatform(g_dealer_id_,g_selected_platform_verbose_,dealer_remote_socket_id_);
+        bool status = discovery_service_->registerPlatform(
+            g_dealer_id_, g_selected_platform_verbose_, dealer_remote_socket_id_);
         Document document;
         document.SetObject();
         Document::AllocatorType& allocator = document.GetAllocator();
@@ -995,8 +1001,7 @@ void HostControllerService::handleRemotePlatformRegistration(bool remote_adverti
         if(status) {
             Value hcs_id_rpj(dealer_remote_socket_id_.c_str(),allocator);
             payload_object.AddMember("hcs_id",hcs_id_rpj,allocator);
-        }
-        else {
+        } else {
             Value hcs_id_rpj("Request Failed",allocator);
             payload_object.AddMember("hcs_id",hcs_id_rpj,allocator);
         }
@@ -1010,13 +1015,14 @@ void HostControllerService::handleRemotePlatformRegistration(bool remote_adverti
         Writer<StringBuffer> writer(strbuf);
         document.Accept(writer);
         client_connector_->send(strbuf.GetString());
-    }
-    else {
+    } else {
         if(remote_connector_->isConnected()) {
-            bool status = discovery_service_->deregisterPlatform(g_dealer_id_);
+            discovery_service_->deregisterPlatform(g_dealer_id_);
             event_del(&remote_handler_);
             event_del(&activity_handler_);
-            string disconnect_message = "{\"notification\":{\"value\":\"platform_connection_change_notification\",\"payload\":{\"status\":\"disconnected\"}}}";
+            string disconnect_message =
+                "{\"notification\":{\"value\":\"platform_connection_change_notification\","
+                "\"payload\":{\"status\":\"disconnected\"}}}";
             remote_connector_->send(disconnect_message);
             remote_connector_->close();
         }
@@ -1032,8 +1038,7 @@ void HostControllerService::handleRemoteGetPlatforms()
     bool get_platform_success = false;
     if(discovery_service_->getHCSToken().empty()) {
         PDEBUG(PRINT_DEBUG," Invalid Token for remote connection\n");
-    }
-    else {
+    } else {
         remote_platforms remote_platform;
         get_platform_success = discovery_service_->getRemotePlatforms(remote_platform);
         if(get_platform_success) {
@@ -1072,7 +1077,7 @@ void HostControllerService::handleRemoteGetPlatforms()
 void HostControllerService::handleRemoteConnection(const std::string& platform_id)
 {
     cout<<"connection zmq "<<dealer_remote_socket_id_<<endl;
-    bool status = discovery_service_->sendConnect(platform_id,dealer_remote_socket_id_);
+    discovery_service_->sendConnect(platform_id, dealer_remote_socket_id_);
 }
 
 // @f handleRemoteActivity
@@ -1093,32 +1098,30 @@ void HostControllerService::handleRemoteActivity(const std::string& platform_act
     if (command.Parse(platform_activity.c_str()).HasParseError()) {
         PDEBUG(PRINT_DEBUG,"json failed\n");
         return;
-    }
-    else if(!(strcmp(command["msg"].GetString(),"remote_user_connected"))) {
+    } else if (!(strcmp(command["msg"].GetString(), "remote_user_connected"))) {
         if(command.HasMember("user_name") && remote_connector_->isConnected()) {
             remote_user_name = command["user_name"].GetString();
             nested_object.AddMember("value","remote_user_added",allocator);
-        }
-        else {
+        } else {
             return;
         }
-    }
-    else if(!(strcmp(command["msg"].GetString(),"remote_user_disconnected"))) {
+    } else if (!(strcmp(command["msg"].GetString(), "remote_user_disconnected"))) {
         remote_user_name = command["user_name"].GetString();
-        //  [prasanth] Adding the remote_advertise to check if the hcs is the publisher or only remote
+        //  [prasanth] Adding the remote_advertise to check if the hcs is the publisher or only
+        //  remote
         // If it is a publisher then no need to disconnect
         if(!remote_connector_->isConnected() && (remote_user_name == user_name_)) {
             event_del(&remote_handler_);
             event_del(&activity_handler_);
-            platform_uuid_.remove_if([](platform_details remote){ return remote.connection_status == "remote"; });
+            platform_uuid_.remove_if(
+                [](platform_details remote) { return remote.connection_status == "remote"; });
             platform_client_mapping_.clear();
             sendDisconnecttoUI();
             remote_connector_->close();
             return;
         }
         nested_object.AddMember("value","remote_user_removed",allocator);
-    }
-    else {
+    } else {
         return;
     }
     Value username_rpj(remote_user_name.c_str(),allocator);
@@ -1135,7 +1138,8 @@ void HostControllerService::handleRemoteActivity(const std::string& platform_act
 }
 
 // @f addToLocalPlatformList
-// @b checks the list of available platforms and adds the new platforms to the list from Discovery Service
+// @b checks the list of available platforms and adds the new platforms to the list from Discovery
+// Service
 //
 // arguments:
 //  IN: disc service list of platforms
@@ -1144,7 +1148,7 @@ void HostControllerService::handleRemoteActivity(const std::string& platform_act
 //
 void HostControllerService::addToLocalPlatformList(remote_platforms remote_platform)
 {
-    for(int i=0;i<remote_platform.size();i++) {
+    for (uint32_t i = 0; i < remote_platform.size(); i++) {
         platform_details platform;
         platform.platform_uuid = remote_platform[i].platform_uuid;
         platform.platform_verbose = remote_platform[i].platform_verbose;
@@ -1170,8 +1174,7 @@ string HostControllerService::platformRead()
     string notification;
     if (serial_connector_->read(notification)) {
         return notification;
-    }
-    else {
+    } else {
         platformDisconnectRoutine();
         return "NULL";
     }
@@ -1183,10 +1186,12 @@ void HostControllerService::platformDisconnectRoutine ()
     sendDisconnecttoUI();
 
     if(remote_connector_->isConnected()) {
-        bool status = discovery_service_->deregisterPlatform(g_dealer_id_);
+        discovery_service_->deregisterPlatform(g_dealer_id_);
         event_del(&remote_handler_);
         event_del(&activity_handler_);
-        string disconnect_message = "{\"notification\":{\"value\":\"platform_connection_change_notification\",\"payload\":{\"status\":\"disconnected\"}}}";
+        string disconnect_message =
+            "{\"notification\":{\"value\":\"platform_connection_change_notification\",\"payload\":{"
+            "\"status\":\"disconnected\"}}}";
         remote_connector_->send(disconnect_message);
         remote_connector_->close();
     }
@@ -1224,7 +1229,9 @@ void HostControllerService::sendMessageToUI(const std::string& message)
 //
 void HostControllerService::sendDisconnecttoUI()
 {
-    string disconnect_message = "{\"notification\":{\"value\":\"platform_connection_change_notification\",\"payload\":{\"status\":\"disconnected\"}}}";
+    string disconnect_message =
+        "{\"notification\":{\"value\":\"platform_connection_change_notification\",\"payload\":{"
+        "\"status\":\"disconnected\"}}}";
     sendMessageToUI(disconnect_message);
 }
 
@@ -1246,8 +1253,7 @@ void HostControllerService::getPlatformListJson(string &list)
     Value array(kArrayType);
     Document::AllocatorType& allocator = document.GetAllocator();
     // traversing through the list
-    for(const platform_details& platform : platform_uuid_)
-    {
+    for (const platform_details& platform : platform_uuid_) {
         Value json_verbose(platform.platform_verbose.c_str(),allocator);
         Value json_uuid(platform.platform_uuid.c_str(),allocator);
         Value json_connection_status(platform.connection_status.c_str(),allocator);
@@ -1348,17 +1354,19 @@ void HostControllerService::remoteRouting(const std::string& message)
     if (document.Parse(message.c_str()).HasParseError()) {
         cout<< "json failed\n";
         return ;
-    }
-    else {
+    } else {
         // [prasanth]: [remote]: when the customer decides to stop advertising the platform,
         // the customer's HCS should send this "platform_change_notification" to all the remote
         // connected users [FAEs] through bridge service
         if(document.HasMember("notification")) {
             if(document["notification"].HasMember("value")) {
-                if(document["notification"]["value"] == "platform_connection_change_notification") {
+                if (document["notification"]["value"] ==
+                    "platform_connection_change_notification") {
                     event_del(&remote_handler_);
                     event_del(&activity_handler_);
-                    platform_uuid_.remove_if([](platform_details remote){ return remote.connection_status == "remote"; });
+                    platform_uuid_.remove_if([](platform_details remote) {
+                        return remote.connection_status == "remote";
+                    });
                     platform_client_mapping_.clear();
                     sendDisconnecttoUI();
                     remote_connector_->close();
@@ -1375,12 +1383,12 @@ void HostControllerService::remoteRouting(const std::string& message)
         if(map_uuid[1] == "remote") {
             client_connector_->setDealerID(dealer_id);
             client_connector_->send(message);
-        }
-        else if ((map_uuid[1] == "connected")) {
-            PDEBUG(PRINT_DEBUG,"Inside remote writing %s with dealer id %s",message.c_str(),dealer_id.c_str());
+        } else if ((map_uuid[1] == "connected")) {
+            PDEBUG(PRINT_DEBUG, "Inside remote writing %s with dealer id %s", message.c_str(),
+                   dealer_id.c_str());
             serial_connector_->send(message);
-            // [prasanth]: the customer HCS on receiving the commands from FAE should parse the message
-            // and take the username and send it to UI client for activity monitor
+            // [prasanth]: the customer HCS on receiving the commands from FAE should parse the
+            // message and take the username and send it to UI client for activity monitor
             retrieveUsername(message);
         }
     }
@@ -1403,8 +1411,7 @@ void HostControllerService::startRemoteService()
     remote_connector_->open(hcs_remote_address_);
 
     event_set(&remote_handler_,remote_connector_->getFileDescriptor(),
-                        EV_READ | EV_WRITE | EV_PERSIST ,
-                        HostControllerService::remoteCallback,this);
+              EV_READ | EV_WRITE | EV_PERSIST, HostControllerService::remoteCallback, this);
 
     event_add(&remote_handler_, NULL);
 }
@@ -1424,8 +1431,7 @@ void HostControllerService::startActivityMonitorService()
     remote_activity_connector_->open(remote_discovery_monitor_);
 
     event_set(&activity_handler_,remote_activity_connector_->getFileDescriptor(),
-                        EV_READ | EV_WRITE | EV_PERSIST ,
-                        HostControllerService::remoteActivityCallback,this);
+              EV_READ | EV_WRITE | EV_PERSIST, HostControllerService::remoteActivityCallback, this);
 
     event_add(&activity_handler_, NULL);
 }
@@ -1438,8 +1444,7 @@ void HostControllerService::startActivityMonitorService()
 //
 void HostControllerService::generateHCSToken(string& token_string, const int token_length)
 {
-    auto randchar = []() -> char
-    {
+    auto randchar = []() -> char {
         const char charset[] =
         "0123456789"
         "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -1465,8 +1470,7 @@ void HostControllerService::appendUsername(string& json_message)
     if (document.Parse(json_message.c_str()).HasParseError()) {
         cout<< "json failed\n";
         return ;
-    }
-    else {
+    } else {
         Value username_rpj(user_name_.c_str(),allocator);
         document.AddMember("user_name",username_rpj,allocator);
 
@@ -1495,8 +1499,7 @@ void HostControllerService::retrieveUsername(const string& json_message)
     }
     if(command.HasMember("user_name")) {
         remote_user_name = command["user_name"].GetString();
-    }
-    else {
+    } else {
         return;
     }
     // sending the user name to client

@@ -75,5 +75,7 @@
         <file>views/usb-hub/content-views/Documents.qml</file>
         <file>views/usb-hub/content-views/Downloads.qml</file>
         <file>views/usb-hub/content-views/content-widgets/SGIcon.qml</file>
+        <file>views/usb-hub/sgwidgets/SGResponsiveScrollView.qml</file>
+        <file>views/usb-hub/views/basic-partial-views/PortGraphWindow.qml</file>
     </qresource>
 </RCC>
