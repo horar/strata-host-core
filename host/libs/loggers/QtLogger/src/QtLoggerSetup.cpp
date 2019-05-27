@@ -61,7 +61,7 @@ void QtLoggerSetup::generateDefaultSettings() const {
     if (settings.contains(QStringLiteral("level-comment")) == false) {
         settings.setValue(
             QStringLiteral("level-comment"),
-            QStringLiteral("log level is one of: debug, info, warn, err, critical, off"));
+            QStringLiteral("log level is one of: debug, info, warning, error, critical, off"));
     }
     if (settings.contains(QStringLiteral("level")) == false) {
         settings.setValue(QStringLiteral("level"), QStringLiteral("info"));
