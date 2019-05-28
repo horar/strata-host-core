@@ -43,7 +43,7 @@ Dialog {
         SgText {
             id: label
             anchors {
-                left: headerIcon ? icon.right : parent.left
+                left: headerIcon && headerIcon.toString() ? icon.right : parent.left
                 leftMargin: headerIcon ? 5 : 12
                 verticalCenter: parent.verticalCenter
             }
