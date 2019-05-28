@@ -24,3 +24,4 @@ list(APPEND QML_DIRS ":/")
 set(QML_IMPORT_PATH "${QML_DIRS};${QML_IMPORT_PATH}"
     CACHE STRING "Qt Creator extra qml import paths" FORCE
 )
+
