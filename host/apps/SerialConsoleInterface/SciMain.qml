@@ -180,7 +180,23 @@ Item {
                             hasAlternativeColor: model.index !== delegate.currentIndex
                             source: "qrc:/images/times.svg"
                             onClicked: {
-                                removeBoard(model.connectionId)
+                                if (model.status === "connected") {
+                                    SgUtils.showConfirmationDialog(
+                                                root,
+                                                "Device is active",
+                                                "Do you really want to disconnect " + model.verboseName + " ?",
+                                                "Disconnect",
+                                                function () {
+                                                    var ret = sciModel.boardController.disconnect(connectionId)
+                                                    if (ret) {
+                                                        removeBoard(model.connectionId)
+                                                    }
+                                                },
+                                                "Keep Connected"
+                                                )
+                                } else {
+                                    removeBoard(model.connectionId)
+                                }
                             }
                         }
                     }
