@@ -12,7 +12,8 @@
 
 #include <spdlog/spdlog.h>
 
-void qtLogCallback(const QtMsgType type, const QMessageLogContext& context, const QString& msg) {
+void qtLogCallback(const QtMsgType type, const QMessageLogContext& context, const QString& msg)
+{
     const QString formattedMsg{qFormatLogMessage(type, context, msg)};
 
     switch (type) {
@@ -36,18 +37,21 @@ void qtLogCallback(const QtMsgType type, const QMessageLogContext& context, cons
     // spdlog::trace(formattedMsg.toStdString());
 }
 
-QtLoggerSetup::QtLoggerSetup(const QCoreApplication& app) {
+QtLoggerSetup::QtLoggerSetup(const QCoreApplication& app)
+{
     generateDefaultSettings();
 
     setupSpdLog(app);
     setupQtLog();
 }
 
-QtLoggerSetup::~QtLoggerSetup() {
+QtLoggerSetup::~QtLoggerSetup()
+{
     qCInfo(logCategoryQtLogger) << "...Qt logging finished";
 }
 
-void QtLoggerSetup::generateDefaultSettings() const {
+void QtLoggerSetup::generateDefaultSettings() const
+{
     QSettings settings;
     settings.beginGroup(QStringLiteral("log"));
 
@@ -90,7 +94,8 @@ void QtLoggerSetup::generateDefaultSettings() const {
     settings.endGroup();
 }
 
-void QtLoggerSetup::setupSpdLog(const QCoreApplication& app) {
+void QtLoggerSetup::setupSpdLog(const QCoreApplication& app)
+{
     QSettings settings;
     settings.beginGroup(QStringLiteral("log"));
     const auto maxFileSize{settings.value(QStringLiteral("maxFileSize")).toUInt()};
@@ -102,7 +107,7 @@ void QtLoggerSetup::setupSpdLog(const QCoreApplication& app) {
     const QString logPath{QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)};
     if (const QDir logDir{logPath}; logDir.exists() == false) {
         if (logDir.mkpath(logPath) == false) {
-            spdlog::critical("Failed to create log file!!");
+            spdlog::critical("Failed to create log file folder!!");
         }
     }
 
@@ -111,7 +116,8 @@ void QtLoggerSetup::setupSpdLog(const QCoreApplication& app) {
         messagePattern.toStdString(), level.toStdString(), maxFileSize, maxNoFiles);
 }
 
-void QtLoggerSetup::setupQtLog() {
+void QtLoggerSetup::setupQtLog()
+{
     QSettings settings;
     settings.beginGroup(QStringLiteral("log"));
     const auto filterRules{settings.value(QStringLiteral("qtFilterRules")).toString()};
@@ -123,7 +129,7 @@ void QtLoggerSetup::setupQtLog() {
 
     qInstallMessageHandler(qtLogCallback);
 
-    qCInfo(logCategoryQtLogger) << "Qt logging started...";
+    qCInfo(logCategoryQtLogger) << "Qt logging initiated...";
 
     qCDebug(logCategoryQtLogger) << "Application setup:";
     qCDebug(logCategoryQtLogger) << "\tfile:" << settings.fileName();

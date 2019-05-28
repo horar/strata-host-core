@@ -10,7 +10,8 @@
 /**
  * @brief The spdlog logging setup
  */
-class SpdLogger final {
+class SpdLogger final
+{
 public:
     /**
      * @brief SpdLogger
