@@ -15,6 +15,7 @@ Item {
     property string title: "<b>High Current Sync Buck Converter</b>"
     property real maxValue: 5
     property real stepValue: 0.5
+    property bool classid3235: false
 
 
     function check_class_id ()
@@ -27,6 +28,7 @@ Item {
             title = "<b>High Current Sync Buck Converter</b>"
             maxValue = 60
             stepValue = 6
+            classid3235 = true
         }
         if(class_id == 219) {
             modeVisible = false
@@ -36,6 +38,7 @@ Item {
             title = "<b>High Current Sync Buck Converter</b>"
             maxValue = 60
             stepValue = 6
+            classid3235 = false
         }
 
         if(class_id == 220) {
@@ -46,6 +49,7 @@ Item {
             title = "<b>High Current Sync Buck Converter</b>"
             maxValue = 100
             stepValue = 10
+            classid3235 = false
 
         }
     }

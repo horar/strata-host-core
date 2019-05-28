@@ -51,6 +51,21 @@ Item {
         platformInterface.mode = mode_state
     }
 
+    property bool hide_ouput_vol: platformInterface.hideOutputVol
+    onHide_ouput_volChanged: {
+        if(hide_ouput_vol == true){
+            outputVoltageList.opacity = 1.0
+            outputVoltageList.enabled = true
+
+
+        }
+        else {
+            outputVoltageList.enabled = false
+            outputVoltageList.opacity = 0.5
+        }
+
+    }
+
 
     FontLoader {
         id: icons
