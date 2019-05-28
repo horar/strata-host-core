@@ -45,6 +45,37 @@ function showMessageDialog(parent, type, title, text, standardButtons, callbackA
     return dialog
 }
 
+function showConfirmationDialog(
+    parent,
+    title,
+    text,
+    acceptButtonText,
+    callbackAccepted,
+    rejectButtonText,
+    callbackRejected) {
+
+    var properties = {
+        "title": title,
+        "text": text,
+        "acceptButtonText": acceptButtonText,
+        "rejectButtonText": rejectButtonText,
+    }
+
+    var dialog = createDialog(parent, "SgConfirmationDialog.qml", properties)
+
+    if (callbackAccepted) {
+        dialog.accepted.connect(callbackAccepted)
+    }
+
+    if (callbackRejected) {
+        dialog.rejected.connect(callbackRejected)
+    }
+
+    dialog.open()
+
+    return dialog
+}
+
 function generateHtmlUnorderedList(list) {
     var text = "<ul>"
     for (var i = 0; i < list.length; ++i) {
