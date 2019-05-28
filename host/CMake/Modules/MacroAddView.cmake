@@ -13,12 +13,7 @@ macro(add_view)
         return()
     endif()
 
-    find_package(Qt5 ${VERSION_QT5}
-        COMPONENTS Core
-        REQUIRED
-    )
-
-    file(GLOB_RECURSE QRC_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/*.qrc)
+    file(GLOB_RECURSE QRC_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/qml-*.qrc)
     add_custom_target(${local_NAME}-qrc-srcs SOURCES ${QRC_SRCS})
     qt5_add_binary_resources(views-${local_NAME}
         ${QRC_SRCS}
