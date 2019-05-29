@@ -1,8 +1,8 @@
+#include <QDebug>
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
-
-#include <QDebug>
 #include <QResource>
+#include <QtWebEngine>
 
 int main(int argc, char *argv[])
 {
@@ -18,6 +18,8 @@ int main(int argc, char *argv[])
                  << QResource::registerResource(
                         QString("%1/%2").arg(resourcePath).arg(resourceName));
     }
+
+    QtWebEngine::initialize();
 
     QQmlApplicationEngine engine;
     engine.addImportPath(QStringLiteral("qrc:/"));
