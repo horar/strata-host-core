@@ -429,8 +429,8 @@ FocusScope {
             return message
         }
 
-        if (model.condensed) {
-            JSON.stringify(messageObj)
+        if (condensed) {
+            return JSON.stringify(messageObj)
         }
 
         return JSON.stringify(messageObj, undefined, 4)
