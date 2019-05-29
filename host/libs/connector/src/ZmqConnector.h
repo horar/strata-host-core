@@ -35,6 +35,7 @@ private:
 protected:
     // timeout for request socket in milli seconds
     const int32_t REQUEST_SOCKET_TIMEOUT{5000};
+    const int32_t SOCKET_POLLING_TIMEOUT{10};
 
     std::unique_ptr<zmq::socket_t> socket_;
 };
