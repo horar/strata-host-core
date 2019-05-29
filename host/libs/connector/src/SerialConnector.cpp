@@ -175,9 +175,7 @@ bool SerialConnector::open(const std::string &serial_port_name)
             // wiki link:
             // https://ons-sec.atlassian.net/wiki/spaces/SPYG/pages/6815754/Platform+Command+Dispatcher
             // // @ref 2) in KNOWN BUGS/HACKS in Connector.h
-            if (!read(read_message)) {
-                break;
-            }
+            read(read_message);
             if (getPlatformID(read_message)) {
                 serial_wait_timeout_ = 0;
                 return true;
@@ -232,12 +230,7 @@ bool SerialConnector::read(string &notification)
         sp_wait(event_, 250);
         error = sp_nonblocking_read(platform_socket_, &temp, 1);
 
-        // LOG_DEBUG(DEBUG,"Temp:%c\n",temp);
-
-        // [prasanth]: if the return value from read is less than 0, then the resource is
-        // unavailable but we are checking if it is equal to 0 for loadboard since it takes 5sec to
-        // load
-        if (error <= 0) {
+        if (error < 0) {
             cout << "error number " << error << endl;
             CONNECTOR_DEBUG_LOG("Platform Disconnected:%c\n", temp);
             setDealerID(std::string());
