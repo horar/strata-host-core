@@ -306,7 +306,7 @@ int SerialConnector::getFileDescriptor()
     size_t file_descriptor_size = sizeof(file_descriptor);
     read_socket_->getsockopt(ZMQ_FD, &file_descriptor, &file_descriptor_size);
 #endif
-    return static_cast<bool>(file_descriptor);
+    return static_cast<int>(file_descriptor);
 }
 
 // @f windowsPlatformReadHandler
