@@ -9,6 +9,11 @@
 
 int main(int argc, char* argv[])
 {
+    QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+
+    // https://stackoverflow.com/questions/34099236/qtquick-chartview-qml-object-seg-faults-causes-qml-engine-segfault-during-load
+    QApplication app(argc, argv);
+
     QString resourcePath;
 #ifdef Q_OS_MACOS
     QDir applicationDir(QCoreApplication::applicationDirPath());
@@ -34,11 +39,6 @@ int main(int argc, char* argv[])
     while (it.hasNext()) {
         qDebug() << it.next();
     }
-
-    QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
-
-    // https://stackoverflow.com/questions/34099236/qtquick-chartview-qml-object-seg-faults-causes-qml-engine-segfault-during-load
-    QApplication app(argc, argv);
 
     QQmlApplicationEngine engine;
     engine.addImportPath(QStringLiteral("qrc:/"));
