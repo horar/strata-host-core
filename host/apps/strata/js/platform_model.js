@@ -507,6 +507,7 @@ function shortCircuit (platform_list_json) {
 
                     connected = true
                 }
+
                 break;
             }
         }
@@ -525,6 +526,10 @@ function shortCircuit (platform_list_json) {
             }
             PlatformSelection.deselectPlatform()
         } else {
+            // Move connected plat listing to top of list
+            PlatformSelection.platformListModel.move(PlatformSelection.platformListModel.currentIndex, 0, 1)
+            PlatformSelection.platformListModel.currentIndex = 0
+
             PlatformSelection.sendSelection()
         }
     } catch(err) {
