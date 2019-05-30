@@ -22,6 +22,9 @@ add_executable(${PROJECT_NAME}
     SgJLinkConnector.cpp
     qml.qrc
     images/images.qrc
+
+    logging/LoggingQtCategories.cpp
+    logging/qml/tech/strata/logger/qml.qrc
 )
 
 if(APPLE)
@@ -51,6 +54,8 @@ target_link_libraries(${PROJECT_NAME}
     Qt5::Quick
     PlatformManager
     flasher
+
+    QtLogger
 )
 
 set(PRODUCT_NAME_LONG "Serial Console Interface")
@@ -96,7 +101,8 @@ target_compile_definitions(${PROJECT_NAME}
 )
 
 list(APPEND QML_DIRS "${CMAKE_CURRENT_SOURCE_DIR}")
+list(APPEND QML_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/logging/qml")
 list(APPEND QML_DIRS ":/")
-set(QML_IMPORT_PATH "${QML_DIRS}"
+set(QML_IMPORT_PATH "${QML_DIRS};${QML_IMPORT_PATH}"
     CACHE STRING "Qt Creator extra qml import paths" FORCE
 )

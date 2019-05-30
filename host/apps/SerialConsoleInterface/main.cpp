@@ -6,13 +6,21 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
+#include <QSettings>
+
+#include <QtLoggerSetup.h>
+#include "logging/LoggingQtCategories.h"
 
 int main(int argc, char *argv[])
 {
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+    QSettings::setDefaultFormat(QSettings::IniFormat);
     QCoreApplication::setOrganizationName(QStringLiteral("ON Semiconductor"));
 
     QGuiApplication app(argc, argv);
+
+    const QtLoggerSetup loggerInitialization(app);
+    qCInfo(logCategorySci) << QStringLiteral("%1 v%2").arg(QCoreApplication::applicationName()).arg(QCoreApplication::applicationVersion());
 
     qmlRegisterSingletonType(QUrl("qrc:/fonts/Fonts.qml"), "tech.strata.fonts", 1, 0, "Fonts");
     qmlRegisterSingletonType<SgUtilsCpp>("tech.strata.utils", 1, 0,"SgUtilsCpp", sgUtilsCppSingletonProvider);
