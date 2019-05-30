@@ -54,7 +54,7 @@ bool ZmqConnector::read(std::string& message)
     }
 
     zmq::pollitem_t items = {*socket_, 0, ZMQ_POLLIN, 0};
-    if (-1 == zmq::poll(&items, 1, REQUEST_SOCKET_TIMEOUT)) {
+    if (-1 == zmq::poll(&items, 1, SOCKET_POLLING_TIMEOUT)) {
         return false;
     }
     if (items.revents & ZMQ_POLLIN) {
