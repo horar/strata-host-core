@@ -103,6 +103,11 @@ function populatePlatforms(platform_list_json) {
     // Auto select newly connected platform
     if (autoConnecting) {
         console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Auto connecting platform ", platformListModel.selectedClassId)
+
+        // Move connected plat listing to top of list
+        platformListModel.move(platformListModel.currentIndex, 0, 1)
+        platformListModel.currentIndex = 0
+
         sendSelection()
     } else {
         // Reset to default state

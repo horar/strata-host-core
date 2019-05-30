@@ -157,7 +157,17 @@ Item {
 
             highlight: highlightBar
             highlightFollowsCurrentItem: false
-            ScrollBar.vertical: ScrollBar {}
+            ScrollBar.vertical: ScrollBar {
+                width: 12
+                anchors {
+                    top: listview.top
+                    bottom: listview.bottom
+                    right: listview.right
+                }
+                policy: ScrollBar.AlwaysOn
+                minimumSize: 0.1
+                visible: listview.height < listview.contentHeight
+            }
 
             Component {
                 id: highlightBar
