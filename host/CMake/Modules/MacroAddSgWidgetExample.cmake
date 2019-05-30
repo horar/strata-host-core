@@ -2,6 +2,10 @@ macro(add_sgwidget_example)
     set(projectName NAME)
     cmake_parse_arguments(local "" "${projectName}" "" ${ARGN})
 
+    if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/main.cpp")
+        message(STATUS "${local_NAME}... skipping")
+        return()
+    endif()
     message(STATUS "${local_NAME}... ")
 
     add_executable(${local_NAME}
