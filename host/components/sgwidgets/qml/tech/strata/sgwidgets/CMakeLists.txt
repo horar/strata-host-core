@@ -7,7 +7,7 @@ find_package(Qt5 ${VERSION_QT5}
 
 file(GLOB SGWIDGETS_FOLDERS SG*)
 foreach(SGWIDGET_DIR ${SGWIDGETS_FOLDERS})
-    if(IS_DIRECTORY ${SGWIDGET_DIR})
+    if(IS_DIRECTORY ${SGWIDGET_DIR} AND EXISTS "${SGWIDGET_DIR}/CMakeLists.txt")
         get_filename_component(SGWIDGETS_NAME ${SGWIDGET_DIR} NAME_WE)
         add_subdirectory(${SGWIDGETS_NAME})
     endif()
