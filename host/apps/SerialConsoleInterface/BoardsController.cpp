@@ -79,6 +79,18 @@ void BoardsController::reconnect(const QString &connectionId)
     board->sendInitialMsg();
 }
 
+bool BoardsController::disconnect(const QString &connectionId)
+{
+    bool isRemoved = platform_mgr_.removeConnection(connectionId.toStdString());
+    if (isRemoved == false) {
+        qDebug() << "BoardsController::disconnect() board could not be disconnected" << connectionId;
+        return false;
+    }
+
+    closeConnection(connectionId);
+    return true;
+}
+
 QStringList BoardsController::connectionIds() const
 {
     return connectionIds_;

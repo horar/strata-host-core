@@ -26,7 +26,7 @@ SgDialog {
     id: dialog
 
     /* Dialog type */
-    property int type: SgDialog.Info
+    property int type: SgMessageDialog.Info
 
     /* Title of a dialog */
     title: ""
