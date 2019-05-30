@@ -2,8 +2,6 @@
     <qresource prefix="/tech/strata/sgwidgets/SGAccordion">
         <file>qmldir</file>
         <file>SGAccordionItem.qml</file>
-        <file>SGAccordionItem11.qml</file>
         <file>SGAccordion.qml</file>
-        <file>SGAccordion11.qml</file>
     </qresource>
 </RCC>

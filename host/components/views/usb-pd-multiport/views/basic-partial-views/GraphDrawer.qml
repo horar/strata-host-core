@@ -1,8 +1,6 @@
 import QtQuick 2.9
 import QtQuick.Controls 2.2
-
-import tech.strata.fonts 1.0
-import tech.strata.sgwidgets 1.0
+import "qrc:/views/usb-pd-multiport/sgwidgets"
 
 Drawer {
     id:root
@@ -37,13 +35,6 @@ Drawer {
                 to: root.width - root.menuWidth
             }
             NumberAnimation {
-                target: hintIcon
-                property: "opacity"
-                duration: root.slideDuration
-                from: 1
-                to: 0
-            }
-            NumberAnimation {
                 target: modalArea
                 property: "opacity"
                 duration: root.slideDuration
@@ -64,13 +55,6 @@ Drawer {
         ParallelAnimation{
             id:closeAnimation
             running:false
-            NumberAnimation {
-                target: hintIcon
-                property: "opacity"
-                duration: root.slideDuration
-                from: 0
-                to: 1
-            }
             NumberAnimation {
                 target: modalArea
                 property: "opacity"
@@ -109,21 +93,6 @@ Drawer {
             visible: false
         }
 
-        Text {
-            id: hintIcon
-            text: "\ue811"
-            color: "#ddd"
-            font {
-                pixelSize: 25
-                family: Fonts.sgicons
-            }
-            anchors {
-                verticalCenter: menuContainer.verticalCenter
-                left: menuContainer.left
-            }
-            Behavior on opacity { NumberAnimation { duration: root.slideDuration } }
-        }
-
         MouseArea{
             id: menuHover
             anchors {
@@ -135,7 +104,7 @@ Drawer {
             }
         }
 
-        SGGraphTimed {
+        SGGraph{
             id:voltageGraph
             anchors.left: menuContainer.left
             anchors.right:menuContainer.right
@@ -176,7 +145,7 @@ Drawer {
             showYGrids: true                // Default: false
         }
 
-        SGGraphTimed {
+        SGGraph{
             id:powerGraph
             anchors.left: menuContainer.left
             anchors.right:menuContainer.right
@@ -218,7 +187,7 @@ Drawer {
             showYGrids: true                // Default: false
         }
 
-        SGGraphTimed {
+        SGGraph{
             id:temperatureGraph
             anchors.left: menuContainer.left
             anchors.right:menuContainer.right

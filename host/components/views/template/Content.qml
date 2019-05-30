@@ -1,7 +1,6 @@
 import QtQuick 2.9
 import QtQuick.Controls 2.3
 import "content-views"
-import "content-views/content-widgets"
 
 import tech.strata.fonts 1.0
 import tech.strata.sgwidgets 1.0
@@ -69,6 +68,7 @@ Rectangle {
                 headerOpenColor: "#666"
                 headerClosedColor: "#484848"
                 dividerColor: "grey"
+                exclusive: false
 
                 accordionItems: Column {
 
@@ -78,7 +78,6 @@ Rectangle {
                         contents: Documents { }
                         open: true
                         visible: false
-                        exclusive: false
                     }
 
                     SGAccordionItem {
@@ -86,7 +85,6 @@ Rectangle {
                         title: "Part Datasheets"
                         contents: Datasheets { }
                         visible: false
-                        exclusive: false
                     }
 
                     SGAccordionItem {
@@ -94,7 +92,6 @@ Rectangle {
                         title: "Downloads"
                         contents: Downloads { }
                         visible: false
-                        exclusive: false
                     }
 
                     Connections {

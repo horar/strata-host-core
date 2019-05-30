@@ -1,8 +1,7 @@
 import QtQuick 2.9
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.3
-
-import tech.strata.sgwidgets 1.1
+import "qrc:/views/usb-pd-multiport/sgwidgets"
 
 Item {
     id: root
@@ -142,7 +141,7 @@ Item {
             switchWidth: 46
 
             checked: platformInterface.assured_power_port.enabled && (portNumber === 1)
-            onToggled: platformInterface.set_assured_power_port.update(checked, portNumber)  //we're only allowing port 1 to be assured
+            onToggled: platformInterface.set_assured_power_port.update(checked, portNumber)  //we're only allowing port 1 to be assured            
         }
 
 
@@ -188,7 +187,7 @@ Item {
             onMaxPowerChanged:{
                 if (platformInterface.usb_pd_maximum_power.port === portNumber){
                     //console.log("got a new commanded max power for port",platformInterface.usb_pd_maximum_power.port)
-                    maxPowerOutput.currentIndex = maxPowerOutput.find( parseInt (platformInterface.usb_pd_maximum_power.commanded_max_power))
+                    maxPowerOutput.currentIndex = maxPowerOutput.comboBox.find( parseInt (platformInterface.usb_pd_maximum_power.commanded_max_power))
                     //console.log("commanded max power set to index",maxPowerOutput.currentIndex);
                 }
             }
@@ -214,8 +213,8 @@ Item {
 
             //when changing the value
             onActivated: {
-                console.log("Max Power Output: setting max power to ",parseInt(maxPowerOutput.currentText));
-                platformInterface.set_usb_pd_maximum_power.update(portNumber,parseInt(maxPowerOutput.currentText))
+                console.log("Max Power Output: setting max power to ",parseInt(maxPowerOutput.comboBox.currentText));
+                platformInterface.set_usb_pd_maximum_power.update(portNumber,parseInt(maxPowerOutput.comboBox.currentText))
             }
 
         }

@@ -5,22 +5,13 @@
         <file>content-views/Datasheets.qml</file>
         <file>content-views/Documents.qml</file>
         <file>content-views/Downloads.qml</file>
-        <file>content-views/content-widgets/SGAccordion.qml</file>
-        <file>content-views/content-widgets/SGAccordionItem.qml</file>
-        <file>content-views/content-widgets/SGRadioButton.qml</file>
-        <file>content-views/content-widgets/SGRadioButtonContainer.qml</file>
         <file>content-views/content-widgets/SGSelectorButton.qml</file>
         <file>content-views/content-widgets/docLoading.gif</file>
         <file>control-views/AdvancedControl.qml</file>
         <file>control-views/BasicControl.qml</file>
-        <file>control-views/DebugExample.qml</file>
+        <file>control-views/DebugMenu.qml</file>
         <file>control-views/PlatformInterface.qml</file>
-        <file>sgwidgets/SGCircularGauge.qml</file>
-        <file>sgwidgets/SGResponsiveScrollView.qml</file>
-        <file>sgwidgets/SGSwitch.qml</file>
-        <file>sgwidgets/fonts/digitalseven.ttf</file>
         <file>content-views/content-widgets/angle-right-solid.svg</file>
-        <file>content-views/content-widgets/SGIcon.qml</file>
         <file>control-views/question-circle-solid.svg</file>
     </qresource>
 </RCC>

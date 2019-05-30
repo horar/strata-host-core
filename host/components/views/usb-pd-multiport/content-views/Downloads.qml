@@ -3,8 +3,6 @@ import QtQuick.Controls 2.3
 import QtQuick.Dialogs 1.3
 import "content-widgets"
 
-import tech.strata.fonts 1.0
-
 Rectangle {
     id: root
     implicitHeight: downloadControlsContainer.height + downloadControlsContainer.anchors.topMargin

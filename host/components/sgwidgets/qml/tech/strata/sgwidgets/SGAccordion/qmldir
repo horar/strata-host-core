@@ -1,6 +1,4 @@
 module tech.strata.sgwidgets.SGAccordion
 
 SGAccordion 1.0 SGAccordion.qml
-SGAccordion 1.1 SGAccordion11.qml
 SGAccordionItem 1.0 SGAccordionItem.qml
-SGAccordionItem 1.1 SGAccordionItem11.qml

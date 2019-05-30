@@ -102,23 +102,9 @@ Item {
             set: function (running) {
                 this.payload.running = running
             },
-            send: function () { platformInterface.send(this) },
-            show: function () { platformInterface.show(this) }
+            send: function () { CorePlatformInterface.send(this) },
+            show: function () { CorePlatformInterface.show(this) }
         })
-
-
-
-    // -------------------------------------------------------------------
-    // Helper functions
-
-    function send (command) {
-        console.log("send:", JSON.stringify(command));
-        coreInterface.sendCommand(JSON.stringify(command))
-    }
-
-    function show (command) {
-        console.log("show:", JSON.stringify(command));
-    }
 
 
 

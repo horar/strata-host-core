@@ -4,7 +4,7 @@ import QtQuick.Controls.Styles 1.4
 
 import tech.strata.fonts 1.0
 
-Rectangle {
+Item {
     id: root
 
     property real value: 0

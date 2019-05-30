@@ -2,9 +2,9 @@ import QtQuick 2.7
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.3
 import "control-views"
-import "content-views/content-widgets"
 import "qrc:/js/help_layout_manager.js" as Help
 
+import tech.strata.sgwidgets 1.0
 import tech.strata.fonts 1.0
 
 Item {
@@ -90,7 +90,8 @@ Item {
         }
     }
 
-    DebugExample {
+    DebugMenu {
+        // See description in control-views/DebugMenu.qml
         anchors {
             right: controlContainer.right
             bottom: controlContainer.bottom

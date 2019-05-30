@@ -3,8 +3,6 @@ import QtQuick.Window 2.2
 import QtQuick.Controls 2.3
 import "qrc:/views/usb-pd-multiport/views"
 
-import tech.strata.sgwidgets 1.0
-
 Item {
     id: controlView
     objectName: "control"
@@ -58,7 +56,7 @@ Item {
         AdvancedControl {
             id: advancedControl
             visible: false
-        }
+        }        
     }
 
     Rectangle{

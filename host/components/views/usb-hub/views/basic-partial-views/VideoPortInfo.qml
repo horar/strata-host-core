@@ -2,8 +2,7 @@ import QtQuick 2.9
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.2
 import QtMultimedia 5.8
-
-import tech.strata.sgwidgets 1.1
+import "qrc:/views/usb-hub/sgwidgets"
 
 Rectangle {
     id: root
@@ -240,4 +239,3 @@ Rectangle {
         }
     }
 }
-

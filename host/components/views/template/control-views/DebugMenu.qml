@@ -3,6 +3,11 @@ import QtQuick.Controls 2.3
 import QtGraphicalEffects 1.0
 import "qrc:/js/core_platform_interface.js" as CorePlatformInterface
 
+// This is an example debug menu that shows how you can test your UI by injecting
+// spoofed notifications to simulate a connected platform board.
+//
+// It is for development and should be removed from finalized UI's.
+
 Rectangle {
     id: root
     height: 200
@@ -29,7 +34,7 @@ Rectangle {
                 height: 40
 
                 Text {
-                    text: "Debug Buttons (spoof platform notifications):"
+                    text: "Debug (inject fake platform notifications):"
                     anchors {
                         verticalCenter: header.verticalCenter
                         left: header.left

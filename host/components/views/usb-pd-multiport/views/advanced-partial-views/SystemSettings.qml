@@ -1,8 +1,7 @@
 import QtQuick 2.9
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.3
-
-import tech.strata.sgwidgets 1.1
+import "qrc:/views/usb-pd-multiport/sgwidgets"
 
 Item {
     id: root
@@ -387,8 +386,8 @@ Item {
 
                 //when changing the value
                 onActivated: {
-                    console.log("AssuredMaxPowerOutput: setting max power to ",parseInt(assuredMaxPowerOutput.currentText));
-                    platformInterface.set_usb_pd_maximum_power.update(1,parseInt(assuredMaxPowerOutput.currentText))
+                    console.log("AssuredMaxPowerOutput: setting max power to ",parseInt(assuredMaxPowerOutput.comboBox.currentText));
+                    platformInterface.set_usb_pd_maximum_power.update(1,parseInt(assuredMaxPowerOutput.comboBox.currentText))
                 }
 
                 //notification of a change from elsewhere
@@ -762,7 +761,7 @@ Item {
                 property var currentFoldbackOuput: platformInterface.foldback_temperature_limiting_event.foldback_maximum_temperature_power
 
                 onCurrentFoldbackOuputChanged: {
-                    limitOutput2.currentIndex = limitOutput2.find( parseInt (platformInterface.foldback_temperature_limiting_event.foldback_maximum_temperature_power))
+                    limitOutput2.currentIndex = limitOutput2.comboBox.find( parseInt (platformInterface.foldback_temperature_limiting_event.foldback_maximum_temperature_power))
                 }
             }
 

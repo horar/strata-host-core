@@ -3,8 +3,6 @@ import QtQuick.Controls 2.3
 import "qrc:/include/Modules/"      // On Semi QML Modules
 import "content-widgets"
 
-import tech.strata.fonts 1.0
-
 Item {
     height: listViewContainer.height + 20
     width: parent.width

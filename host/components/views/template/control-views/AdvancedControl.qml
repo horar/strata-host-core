@@ -1,7 +1,8 @@
 import QtQuick 2.9
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 1.4
-import "../sgwidgets"
+import tech.strata.sgwidgets 1.0
+
 import "qrc:/js/help_layout_manager.js" as Help
 
 SGResponsiveScrollView {
@@ -10,8 +11,9 @@ SGResponsiveScrollView {
     minimumHeight: 800
     minimumWidth: 1000
 
-    contentItem: Rectangle {
+    Rectangle {
         id: container
+        parent: root.contentItem
         anchors {
             fill: parent
         }

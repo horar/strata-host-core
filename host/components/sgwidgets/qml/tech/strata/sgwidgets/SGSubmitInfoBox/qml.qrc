@@ -2,6 +2,5 @@
     <qresource prefix="/tech/strata/sgwidgets/SGSubmitInfoBox">
         <file>qmldir</file>
         <file>SGSubmitInfoBox.qml</file>
-        <file>SGSubmitInfoBox11.qml</file>
     </qresource>
 </RCC>

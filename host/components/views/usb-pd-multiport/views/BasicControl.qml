@@ -1,8 +1,7 @@
 import QtQuick 2.9
 import QtGraphicalEffects 1.0
+import "qrc:/views/usb-pd-multiport/sgwidgets"
 import "qrc:/views/usb-pd-multiport/views/basic-partial-views"
-
-import tech.strata.sgwidgets 1.0
 
 Item {
     id: root

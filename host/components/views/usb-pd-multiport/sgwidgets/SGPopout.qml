@@ -4,8 +4,6 @@ import QtQuick.Controls 2.3
 import QtQuick.Layouts 1.0
 import "qrc:/views/usb-pd-multiport/views/advanced-partial-views"
 
-import tech.strata.fonts 1.0
-
 Rectangle {
     id: root
 
@@ -173,7 +171,7 @@ Rectangle {
                     text: popout.state === "unpopped" | popout.state === ""  ? "\u0038" : "\u0037"
                     font {
                         pixelSize: 18
-                        family: Fonts.sgicons
+                        family: sgicons.name
                     }
                     anchors {
                         centerIn: parent
@@ -269,7 +267,7 @@ Rectangle {
                 }
                 font {
                     pixelSize: 18
-                    family: Fonts.sgicons
+                    family: sgicons.name
                 }
             }
         }
@@ -311,7 +309,7 @@ Rectangle {
             text: popout.state === "unpopped" | popout.state === ""  ? "\u0038" : "\u0037"
             font {
                 pixelSize: 18
-                family: Fonts.sgicons
+                family: sgicons.name
             }
             anchors {
                 right: parent.right
@@ -342,5 +340,10 @@ Rectangle {
             }
             cursorShape: Qt.PointingHandCursor
         }
+    }
+
+    FontLoader {
+        id: sgicons
+        source: "fonts/sgicons.ttf"
     }
 }

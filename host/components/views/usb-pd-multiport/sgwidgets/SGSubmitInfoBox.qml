@@ -1,9 +1,6 @@
 import QtQuick 2.9
 import QtQuick.Controls 2.2
 
-import tech.strata.theme 1.0
-import tech.strata.theme 1.0
-
 Rectangle {
     id: root
 
@@ -91,7 +88,7 @@ Rectangle {
                 readOnly: false
                 font {
                   family: "Courier" // Monospaced font for better text width uniformity
-                  pixelSize: Theme.basePixelSize
+                  pixelSize: (Qt.platform.os === "osx") ? 12 : 10;
                 }
                 horizontalAlignment: leftJustify ? TextInput.AlignLeft : TextInput.AlignRight
                 validator: numberValidator

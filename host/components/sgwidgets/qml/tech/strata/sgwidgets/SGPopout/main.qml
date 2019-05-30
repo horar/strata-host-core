@@ -54,7 +54,7 @@ ApplicationWindow {
             overlaycolor: "lightgreen"
             unpoppedWidth: parent.width / 2
             unpoppedHeight: parent.height
-            content: SGGraph {
+            content: SGGraphtimed {
                 id: graph
                 inputData: graphData.stream
             }
@@ -77,4 +77,3 @@ ApplicationWindow {
         }
     }
 }
-

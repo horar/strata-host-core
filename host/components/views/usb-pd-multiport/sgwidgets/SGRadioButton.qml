@@ -8,7 +8,7 @@ RadioButton {
     property color radioColor: masterRadioColor
 
     text: "Radio Button"
-    implicitWidth: buttonText.implicitWidth === 0 ? indicator.width : buttonText.implicitWidth + buttonText.anchors.leftMargin + indicator.width
+    implicitWidth: buttonText.implicitWidth + buttonText.anchors.leftMargin + indicator.width
     implicitHeight: Math.max(root.indicator.height, buttonText.height)
 
     contentItem: buttonText
@@ -52,3 +52,4 @@ RadioButton {
         }
     }
 }
+
