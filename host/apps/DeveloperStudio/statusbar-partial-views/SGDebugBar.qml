@@ -1,11 +1,10 @@
-import QtQuick 2.9
-import QtQuick.Controls 2.3
+import QtQuick 2.12
+import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.3
 import "qrc:/js/navigation_control.js" as NavigationControl
 
 Item {
     id: root
-    property bool debug_enabled
 
     Rectangle {
         id: commandBar
@@ -182,7 +181,7 @@ Item {
 
     MouseArea {
         id: debugMouse
-        visible: root.debug_enabled && !commandBar.visible
+        visible: !commandBar.visible
         anchors {
             fill: debugButton
         }

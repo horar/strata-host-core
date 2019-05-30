@@ -23,6 +23,8 @@ add_executable(${PROJECT_NAME}
     qml-dev-studio.qrc
     qml-dev-studio-minimal.qrc
     qml-dev-studio-resources.qrc
+
+    $<IF:$<CONFIG:Release>, qml-dev-studio-release.qrc, qml-dev-studio-debug.qrc>
 )
 if(APPLE)
     target_sources(${PROJECT_NAME} PRIVATE

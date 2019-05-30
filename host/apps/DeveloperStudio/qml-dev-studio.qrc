@@ -22,7 +22,6 @@
         <file>statusbar-partial-views/SGAnalyticsPopup.qml</file>
         <file>statusbar-partial-views/SGComboBox.qml</file>
         <file>statusbar-partial-views/SGConfirmationPopup.qml</file>
-        <file>statusbar-partial-views/SGDebugBar.qml</file>
         <file>statusbar-partial-views/SGFeedbackPopup.qml</file>
         <file>statusbar-partial-views/SGGreenButton.qml</file>
         <file>statusbar-partial-views/SGMenuItem.qml</file>

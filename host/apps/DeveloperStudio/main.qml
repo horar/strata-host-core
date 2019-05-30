@@ -26,11 +26,6 @@ Window {
     // Debug option(s)
     property bool is_remote_connected: false
 
-    /****
-      TO HIDE THE DEBUG SET THE BELOW PROPERTY TO FALSE
-    ***/
-    property bool debug_menu_enabled: false
-
     Component.onCompleted: {
         console.log(Logger.devStudioCategory, "Initializing")
         NavigationControl.init(flipable,controlContainer, contentContainer, statusBarContainer)
@@ -188,6 +183,5 @@ Window {
         anchors {
             fill: parent
         }
-        debug_enabled: mainWindow.debug_menu_enabled
     }
 }
