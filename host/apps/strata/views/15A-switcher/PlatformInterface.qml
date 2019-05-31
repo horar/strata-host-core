@@ -207,7 +207,7 @@ Item {
     property int ocp_threshold: 0
     property int mode: 0
     property bool advertise
-    property bool hideOutputVol: false
+    property bool hideOutputVol
 
   // DEBUG Window for testing motor vortex UI without a platform
     //    Window {

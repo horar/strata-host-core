@@ -30,11 +30,11 @@ Item {
         }
         else  {
             if(read_enable_state === "on") {
-                platformInterface.hideOutputVol = false
+               platformInterface.enabled = true
 
             }
             else  {
-                platformInterface.hideOutputVol = true
+               platformInterface.enabled = false
             }
         }
     }
@@ -68,7 +68,6 @@ Item {
 
         }
     }
-
 
 
     Component.onCompleted:  {
@@ -413,6 +412,7 @@ Item {
                     checked: platformInterface.enabled
                     fontSizeLabel: (parent.width + parent.height)/40
                     onToggled: {
+
                         if(checked){
                             platformInterface.set_enable.update("on")
                             if(multiplePlatform.classid3235 === true) {

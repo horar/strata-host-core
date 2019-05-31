@@ -53,11 +53,10 @@ Item {
 
     property bool hide_ouput_vol: platformInterface.hideOutputVol
     onHide_ouput_volChanged: {
+        console.log("in hide output")
         if(hide_ouput_vol == true){
             outputVoltageList.opacity = 1.0
             outputVoltageList.enabled = true
-
-
         }
         else {
             outputVoltageList.enabled = false
@@ -661,7 +660,6 @@ Item {
                         handleColor: "white"            // Default: "white"
                         grooveColor: "#ccc"             // Default: "#ccc"
                         grooveFillColor: "#0cf"         // Default: "#0cf"
-
                         checked: platformInterface.enabled
                         fontSizeLabel: (parent.width + parent.height)/40
 
@@ -682,7 +680,23 @@ Item {
                                 }
 
                             }
+                            if(multiplePlatform.classid3235 === true){
+                                if(checked){
+                                    ocplist.enabled = false
+                                    ocplist.opacity = 0.5
+                                    outputVoltageList.enabled = false
+                                    outputVoltageList.opacity = 0.5
+                                }
+                                else{
+                                    ocplist.enabled = true
+                                    ocplist.opacity = 1.0
+                                    outputVoltageList.enabled = true
+                                    outputVoltageList.opacity = 1.0
+                                }
+                            }
+
                             else {
+                                console.log("in the checked")
                                 if(checked){
                                     ocplist.enabled = false
                                     ocplist.opacity = 0.5
@@ -710,6 +724,26 @@ Item {
 
                                 platformInterface.enabled = checked
                             }
+                            else if (multiplePlatform.classid3235 === true) {
+                                if(checked){
+                                    platformInterface.set_enable.update("on")
+                                    outputVoltageList.enabled = false
+                                    outputVoltageList.opacity = 0.5
+                                    ocplist.enabled = false
+                                    ocplist.opacity = 0.5
+                                }
+                                else {
+
+                                    platformInterface.set_enable.update("off")
+                                    outputVoltageList.enabled = true
+                                    outputVoltageList.opacity = 1.0
+                                    ocplist.enabled = true
+                                    ocplist.opacity = 1.0
+                                }
+
+                                platformInterface.enabled = checked
+                            }
+
                             else {
                                 if(checked){
                                     platformInterface.set_enable.update("on")
@@ -749,6 +783,7 @@ Item {
                                 platformInterface.select_output_voltage.update(currentIndex)
                                 platformInterface.vout = currentIndex
                             }
+
 
 
                         }
