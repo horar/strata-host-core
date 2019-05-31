@@ -59,8 +59,8 @@ SerialConnector::SerialConnector() : Connector()
         return;
     }
     if (!read_socket_->init()) {
-	    CONNECTOR_DEBUG_LOG("%s Serial Connector failed in read socket init\n", "SerialConnector");
-	    return;
+        CONNECTOR_DEBUG_LOG("%s Serial Connector failed in read socket init\n", "SerialConnector");
+        return;
     }
     if (write_socket_->bind(SERIAL_SOCKET_ADDRESS) != 0) {
         CONNECTOR_DEBUG_LOG("%s Serial Connector failed in write socket bind\n", "SerialConnector");
