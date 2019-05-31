@@ -86,6 +86,7 @@
         <file>statusbar-partial-views/platform-selector/images/whiteFadeMask.svg</file>
         <file>views/SGPdfViewer/SGPdfViewer.qml</file>
         <file>statusbar-partial-views/SGIcon.qml</file>
+        <file>statusbar-partial-views/SGLogLevelSelector.qml</file>
         <file>statusbar-partial-views/about-popup/attributionInfo.txt</file>
         <file>statusbar-partial-views/about-popup/SGAboutPopup.qml</file>
     </qresource>

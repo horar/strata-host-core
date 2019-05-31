@@ -136,6 +136,9 @@ Item {
                     NavigationControl.updateState(NavigationControl.events.LOGIN_SUCCESSFUL_EVENT,data)
                 }
             }
+
+            SGLogLevelSelector {
+            }
         }
     }
 
