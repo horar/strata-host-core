@@ -1,5 +1,7 @@
 #include "QtLoggerSetup.h"
 
+#include "moc_QtLoggerSetup.cpp"
+
 #include "LoggingQtCategories.h"
 
 #include <SpdLogger.h>
@@ -37,12 +39,34 @@ void qtLogCallback(const QtMsgType type, const QMessageLogContext& context, cons
     // spdlog::trace(formattedMsg.toStdString());
 }
 
+void QtLoggerSetup::reload()
+{
+    QSettings settings;
+    const auto logLevel{settings.value(QStringLiteral("log/level")).toString()};
+    if (logLevel_ != logLevel) {
+        qCDebug(logCategoryQtLogger, "...reconfiguring loggers...");
+
+        setupSpdLog(*QCoreApplication::instance());
+        setupQtLog();
+    }
+}
+
 QtLoggerSetup::QtLoggerSetup(const QCoreApplication& app)
 {
     generateDefaultSettings();
 
     setupSpdLog(app);
     setupQtLog();
+
+    QSettings settings;
+    if (watchdog_.addPath(settings.fileName()) == false) {
+        qCCritical(logCategoryQtLogger, "Failed to register '%s' to system watcher",
+                   qUtf8Printable(settings.fileName()));
+        return;
+    }
+
+    QObject::connect(&watchdog_, &QFileSystemWatcher::fileChanged,
+                     [this](const QString&) { this->reload(); });
 }
 
 QtLoggerSetup::~QtLoggerSetup()
@@ -100,7 +124,7 @@ void QtLoggerSetup::setupSpdLog(const QCoreApplication& app)
     settings.beginGroup(QStringLiteral("log"));
     const auto maxFileSize{settings.value(QStringLiteral("maxFileSize")).toUInt()};
     const auto maxNoFiles{settings.value(QStringLiteral("maxNoFiles")).toUInt()};
-    const auto level{settings.value(QStringLiteral("level")).toString()};
+    logLevel_ = {settings.value(QStringLiteral("level")).toString()};
     const auto messagePattern{settings.value(QStringLiteral("spdlogMessagePattern")).toString()};
     settings.endGroup();
 
@@ -111,9 +135,8 @@ void QtLoggerSetup::setupSpdLog(const QCoreApplication& app)
         }
     }
 
-    static const SpdLogger logger(
-        QStringLiteral("%1/%2.log").arg(logPath).arg(app.applicationName()).toStdString(),
-        messagePattern.toStdString(), level.toStdString(), maxFileSize, maxNoFiles);
+    logger_.setup(QStringLiteral("%1/%2.log").arg(logPath).arg(app.applicationName()).toStdString(),
+                  messagePattern.toStdString(), logLevel_.toStdString(), maxFileSize, maxNoFiles);
 }
 
 void QtLoggerSetup::setupQtLog()

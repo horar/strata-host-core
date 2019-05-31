@@ -13,8 +13,11 @@
 class SpdLogger final
 {
 public:
+    SpdLogger();
+    ~SpdLogger();
+
     /**
-     * @brief SpdLogger
+     * @brief setup
      *
      * @param[in] fileName log file name with valid full path
      * @param[in] logPattern spdlog pattern
@@ -22,10 +25,9 @@ public:
      * @param[in] maxFileSize maximum size of log file before log rotation
      * @param[in] maxNoFiles maximum number of files for rotation
      */
-    SpdLogger(const std::string& fileName, const std::string& logPattern,
-              const std::string& logLevel = std::string("debug"),
-              const size_t maxFileSize = 1024 * 1024 * 5, const size_t maxNoFiles = 5);
-    ~SpdLogger();
+    void setup(const std::string& fileName, const std::string& logPattern,
+               const std::string& logLevel = std::string("debug"),
+               const size_t maxFileSize = 1024 * 1024 * 5, const size_t maxNoFiles = 5);
 
 private:
 #if defined(_WIN32)
