@@ -52,10 +52,20 @@ SerialConnector::SerialConnector() : Connector()
     context_ = new (zmq::context_t);
     // creating the push socket and binding to a address
     write_socket_ = new zmq::socket_t(*context_, ZMQ_PUSH);
-    write_socket_->bind(SERIAL_SOCKET_ADDRESS);
-    // creating the pull socket and connecting it to the PUSH socket
+     // creating the pull socket and connecting it to the PUSH socket
     read_socket_ = new zmq::socket_t(*context_, ZMQ_PULL);
-    read_socket_->connect(SERIAL_SOCKET_ADDRESS);
+    if (!write_socket_->init() && !read_socket_->init()) {
+        CONNECTOR_DEBUG_LOG("%s Serial Connector failed in socket init\n", "SerialConnector");
+        return;
+    }
+    if (write_socket_->bind(SERIAL_SOCKET_ADDRESS) != 0) {
+        CONNECTOR_DEBUG_LOG("%s Serial Connector failed in write socket bind\n", "SerialConnector");
+        return;
+    } 
+    if (read_socket_->connect(SERIAL_SOCKET_ADDRESS) != 0) {
+        CONNECTOR_DEBUG_LOG("%s Serial Connector failed in read socket connect\n", "SerialConnector");
+        return;
+    }
 #endif
     CONNECTOR_DEBUG_LOG("%s Creating thread for serial port scan\n", "SerialConnector");
     open_platform_thread_ = new thread(&SerialConnector::openPlatform, this);
