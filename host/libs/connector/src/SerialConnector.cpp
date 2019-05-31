@@ -54,9 +54,13 @@ SerialConnector::SerialConnector() : Connector()
     write_socket_ = new zmq::socket_t(*context_, ZMQ_PUSH);
      // creating the pull socket and connecting it to the PUSH socket
     read_socket_ = new zmq::socket_t(*context_, ZMQ_PULL);
-    if (!write_socket_->init() && !read_socket_->init()) {
-        CONNECTOR_DEBUG_LOG("%s Serial Connector failed in socket init\n", "SerialConnector");
+    if (!write_socket_->init() ) {
+        CONNECTOR_DEBUG_LOG("%s Serial Connector failed in write socket init\n", "SerialConnector");
         return;
+    }
+    if (!read_socket_->init()) {
+	    CONNECTOR_DEBUG_LOG("%s Serial Connector failed in read socket init\n", "SerialConnector");
+	    return;
     }
     if (write_socket_->bind(SERIAL_SOCKET_ADDRESS) != 0) {
         CONNECTOR_DEBUG_LOG("%s Serial Connector failed in write socket bind\n", "SerialConnector");
