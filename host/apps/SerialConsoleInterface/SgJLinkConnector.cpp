@@ -1,6 +1,6 @@
 #include "SgJLinkConnector.h"
+#include "logging/LoggingQtCategories.h"
 
-#include <QDebug>
 #include <QRegularExpression>
 
 SgJLinkConnector::SgJLinkConnector(QObject *parent)
@@ -14,7 +14,9 @@ SgJLinkConnector::~SgJLinkConnector()
 
 bool SgJLinkConnector::flashBoardRequested(const QString &binaryPath, bool eraseFirst)
 {
-    qDebug() << "SgJLinkConnector::flashBoardRequested() binary " << binaryPath;
+    qCInfo(logCategorySci)
+            << "binaryPath=" <<binaryPath
+            << "eraseFirst=" << eraseFirst;
 
     QString cmd;
     cmd += QString("device %1\n").arg("EFM32GG380F1024");
@@ -38,7 +40,7 @@ bool SgJLinkConnector::flashBoardRequested(const QString &binaryPath, bool erase
 bool SgJLinkConnector::isBoardConnected()
 {
     if (exePath_.isEmpty()) {
-        qDebug() << "SgJLinkConnector::isBoardConnected() exePath is empty";
+        qCWarning(logCategorySci) << "exePath is empty";
         return false;
     }
 
@@ -49,7 +51,7 @@ bool SgJLinkConnector::isBoardConnected()
     QTemporaryFile configFile;
 
     if (!configFile.open()) {
-        qDebug() << "SgJLinkConnector::isBoardConnected() cannot open config file.";
+        qCWarning(logCategorySci) << "cannot open config file";
         return false;
     }
 
@@ -73,7 +75,7 @@ bool SgJLinkConnector::isBoardConnected()
             }
         }
     } else {
-        qDebug() << "SgJLinkConnector::isBoardConnected() process did not finish";
+        qCWarning(logCategorySci) << "process did not finish";
         process.close();
     }
 
@@ -95,14 +97,16 @@ void SgJLinkConnector::setExePath(const QString &exePath)
 
 void SgJLinkConnector::finishedHandler(int exitCode, QProcess::ExitStatus exitStatus)
 {
-    qDebug() << "SgJLinkConnector::finishedHandler()" << exitCode << exitStatus;
+    qCInfo(logCategorySci)
+            << "exitCode=" << exitCode
+            << "exitStatus=" << exitStatus;
 
     finishFlashProcess(exitCode == 0 && exitStatus == QProcess::NormalExit);
 }
 
 void SgJLinkConnector::errorOccurredHandler(QProcess::ProcessError error)
 {
-    qDebug() << "SgJLinkConnector::errorOccuredHandler()" << error;
+    qCInfo(logCategorySci) << error;
 
     QString errorStr;
 
@@ -140,19 +144,19 @@ void SgJLinkConnector::readStandardOutputHandler()
 bool SgJLinkConnector::processRequest(const QString &cmd)
 {
     if (exePath_.isEmpty()) {
-        qDebug() << "SgJLinkConnector::processRequest() exePath is empty";
+        qCWarning(logCategorySci) << "exePath is empty";
         return false;
     }
 
     if (!process_.isNull()) {
-        qDebug() << "SgJLinkConnector::processRequest() process already in progress";
+        qCWarning(logCategorySci) << "process already in progress";
         return false;
     }
 
     configFile_ = new QTemporaryFile(this);
 
     if (!configFile_->open()) {
-        qDebug() << "SgJLinkConnector::processRequest() cannot open config file.";
+        qCWarning(logCategorySci) << "cannot open config file";
         delete configFile_;
         return false;
     }
@@ -176,7 +180,7 @@ bool SgJLinkConnector::processRequest(const QString &cmd)
     connect(process_, &QProcess::readyReadStandardOutput,
             this, &SgJLinkConnector::readStandardOutputHandler);
 
-    qDebug() << "SgJLinkConnector::flashBoardRequested() let's run" << exePath_ << arguments;
+    qCInfo(logCategorySci) << "let's run" << exePath_ << arguments;
     emit notify(QString("Starting JLink process: %1\n").arg(exePath_));
 
     process_->start(exePath_, arguments);
@@ -186,7 +190,7 @@ bool SgJLinkConnector::processRequest(const QString &cmd)
 
 void SgJLinkConnector::finishFlashProcess(bool exitedNormally)
 {
-    qDebug() << "SgJLinkConnector::finishFlashProcess()" << exitedNormally;
+    qCInfo(logCategorySci) << "exitedNormally=" << exitedNormally;
 
     process_->deleteLater();
     configFile_->deleteLater();

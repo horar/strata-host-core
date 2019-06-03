@@ -33,6 +33,7 @@ int main(int argc, char *argv[])
 
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
     if (engine.rootObjects().isEmpty()) {
+        qCCritical(logCategorySci) << "engine failed to load 'main' qml file; quitting...";
         return -1;
     }
 
