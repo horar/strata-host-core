@@ -101,10 +101,8 @@ FocusScope {
                     visible: model.type === "query"
                 }
 
-                Item {
-                    id: header
-                    width: headerRow.width
-                    height: headerRow.height
+                Common.SgText {
+                    id: timeText
                     anchors {
                         top: parent.top
                         topMargin: 1
@@ -112,34 +110,33 @@ FocusScope {
                         leftMargin: 1
                     }
 
-                    Row {
-                        id: headerRow
-                        spacing: 8
+                    text: {
+                        var date = new Date(model.timestamp)
+                        return date.toLocaleTimeString(Qt.locale(), "hh:mm:ss.zzz")
+                    }
 
-                        property int iconSize: 16
+                    fontSizeMultiplier: 1.1
+                    font.family: StrataFonts.Fonts.inconsolata
+                    color: cmdDelegate.helperTextColor
+                }
 
-                        Common.SgText {
-                            id: timeText
-                            anchors {
-                                verticalCenter: parent.verticalCenter
-                            }
+                Row {
+                    id: buttonRow
+                    anchors {
+                        left: timeText.right
+                        leftMargin: 2
+                        verticalCenter: timeText.verticalCenter
+                    }
 
-                            text: {
-                                var date = new Date(model.timestamp)
-                                return date.toLocaleTimeString(Qt.locale(), "hh:mm:ss.zzz")
-                            }
+                    spacing: 2
+                    property int iconSize: timeText.font.pixelSize
 
-                            fontSizeMultiplier: 1.1
-                            font.family: StrataFonts.Fonts.inconsolata
-                            color: cmdDelegate.helperTextColor
-                        }
+                    Item {
+                        height: buttonRow.iconSize
+                        width: buttonRow.iconSize
 
                         Common.SgIconButton {
-                            anchors {
-                                verticalCenter: parent.verticalCenter
-                            }
-                            height: timeText.font.pointSize
-                            width: height
+                            anchors.fill: parent
 
                             color: cmdDelegate.helperTextColor
                             visible: model.type === "query"
@@ -150,28 +147,22 @@ FocusScope {
                             }
                         }
                     }
-                }
 
-                Item {
-                    id: leftColumn
-                    width: condenseButton.width
-                    height: condenseButton.height
-                    anchors {
-                        left: header.left
-                        top: cmdText.top
-                    }
+                    Item {
+                        height: buttonRow.iconSize
+                        width: buttonRow.iconSize
 
-                    Common.SgIconButton {
-                        id: condenseButton
-                        height: cmdText.font.pointSize
-                        width: height
+                        Common.SgIconButton {
+                            id: condenseButton
+                            anchors.fill: parent
 
-                        color: cmdDelegate.helperTextColor
-                        hintText: qsTr("Condensed mode")
-                        source: model.condensed ? "qrc:/images/chevron-right.svg" : "qrc:/images/chevron-down.svg"
-                        onClicked: {
-                            var item = scrollbackModel.get(index)
-                            scrollbackModel.setProperty(index, "condensed", !item.condensed)
+                            color: cmdDelegate.helperTextColor
+                            hintText: qsTr("Condensed mode")
+                            source: model.condensed ? "qrc:/images/chevron-right.svg" : "qrc:/images/chevron-down.svg"
+                            onClicked: {
+                                var item = scrollbackModel.get(index)
+                                scrollbackModel.setProperty(index, "condensed", !item.condensed)
+                            }
                         }
                     }
                 }
@@ -179,9 +170,9 @@ FocusScope {
                 TextEdit {
                     id: cmdText
                     anchors {
-                        top: header.bottom
-                        left: leftColumn.right
-                        leftMargin: 2
+                        top: timeText.top
+                        left: buttonRow.right
+                        leftMargin: 1
                         right: parent.right
                         rightMargin: 2
                     }
