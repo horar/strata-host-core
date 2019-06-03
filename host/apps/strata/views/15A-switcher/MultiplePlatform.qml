@@ -22,7 +22,7 @@ Item {
     {
         if(class_id == 207) {
             modeVisible = true
-            holder3231 = true
+            holder3231 = false
             partNumber = " <b> NCP3235 </b>"
             listOfOutputValue = [">20A", "17.5A", "10A"]
             title = "<b>High Current Sync Buck Converter</b>"

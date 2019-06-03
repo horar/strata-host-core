@@ -51,19 +51,19 @@ Item {
         platformInterface.mode = mode_state
     }
 
-    property bool hide_ouput_vol: platformInterface.hideOutputVol
-    onHide_ouput_volChanged: {
-        console.log("in hide output")
-        if(hide_ouput_vol == true){
-            outputVoltageList.opacity = 1.0
-            outputVoltageList.enabled = true
-        }
-        else {
-            outputVoltageList.enabled = false
-            outputVoltageList.opacity = 0.5
-        }
+//    property bool hide_ouput_vol: platformInterface.hideOutputVol
+//    onHide_ouput_volChanged: {
+//        console.log("in hide output")
+//        if(hide_ouput_vol == true){
+//            outputVoltageList.opacity = 1.0
+//            outputVoltageList.enabled = true
+//        }
+//        else {
+//            outputVoltageList.enabled = false
+//            outputVoltageList.opacity = 0.5
+//        }
 
-    }
+//    }
 
 
     FontLoader {
@@ -680,7 +680,7 @@ Item {
                                 }
 
                             }
-                            if(multiplePlatform.classid3235 === true){
+                            else if(multiplePlatform.classid3235 == true){
                                 if(checked){
                                     ocplist.enabled = false
                                     ocplist.opacity = 0.5
@@ -724,7 +724,7 @@ Item {
 
                                 platformInterface.enabled = checked
                             }
-                            else if (multiplePlatform.classid3235 === true) {
+                            else if (multiplePlatform.classid3235 == true) {
                                 if(checked){
                                     platformInterface.set_enable.update("on")
                                     outputVoltageList.enabled = false

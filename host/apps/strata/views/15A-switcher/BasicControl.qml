@@ -17,26 +17,26 @@ Item {
     property var read_enable_state: platformInterface.initial_status.enable_status
 
     onRead_enable_stateChanged: {
-        if(multiplePlatform.classid3235 === true) {
+//        if(multiplePlatform.classid3235 === true) {
+//            if(read_enable_state === "on") {
+//                platformInterface.enabled = true
+//                platformInterface.hideOutputVol = false
+
+//            }
+//            else  {
+//                platformInterface.enabled = false
+//                platformInterface.hideOutputVol = true
+//            }
+//        }
+//        else  {
             if(read_enable_state === "on") {
                 platformInterface.enabled = true
-                platformInterface.hideOutputVol = false
 
             }
             else  {
                 platformInterface.enabled = false
-                platformInterface.hideOutputVol = true
             }
-        }
-        else  {
-            if(read_enable_state === "on") {
-               platformInterface.enabled = true
-
-            }
-            else  {
-               platformInterface.enabled = false
-            }
-        }
+       // }
     }
 
 
@@ -49,9 +49,9 @@ Item {
             ledLight.label = "VIN Ready ("+ vinlable + " 4.5V)"
             enableSwitch.enabled  = true
             enableSwitch.opacity = 1.0
-            if(multiplePlatform.classid3235 === true) {
-                platformInterface.hideOutputVol = false
-            }
+            //            if(multiplePlatform.classid3235 === true) {
+            //                platformInterface.hideOutputVol = false
+            //            }
 
 
         }
@@ -59,12 +59,12 @@ Item {
             ledLight.status = "red"
             vinlable = "under"
             ledLight.label = "VIN Ready ("+ vinlable + " 4.5V)"
-            enableSwitch.enabled  = false
-            enableSwitch.opacity = 0.5
+            //            enableSwitch.enabled  = false
+            //            enableSwitch.opacity = 0.5
             platformInterface.enabled = false
-            if(multiplePlatform.classid3235 === true) {
-                platformInterface.hideOutputVol = true
-            }
+            //            if(multiplePlatform.classid3235 === true) {
+            //                platformInterface.hideOutputVol = false
+            //            }
 
         }
     }
@@ -209,9 +209,9 @@ Item {
                             label = "VIN Ready ("+ vinlable + " 4.5V)"
                             enableSwitch.enabled  = true
                             enableSwitch.opacity = 1.0
-                            if(multiplePlatform.classid3235 === true) {
-                                platformInterface.hideOutputVol = false
-                            }
+                            //                            if(multiplePlatform.classid3235 === true) {
+                            //                                platformInterface.hideOutputVol = false
+                            //                            }
 
                         }
                         else if(vinMonitor === "bad") {
@@ -221,9 +221,9 @@ Item {
                             enableSwitch.enabled  = false
                             enableSwitch.opacity = 0.5
                             platformInterface.enabled = false
-                            if(multiplePlatform.classid3235 === true) {
-                                platformInterface.hideOutputVol = true
-                            }
+                            //                            if(multiplePlatform.classid3235 === true) {
+                            //                                platformInterface.hideOutputVol = true
+                            //                            }
                         }
                     }
                 }
@@ -415,16 +415,16 @@ Item {
 
                         if(checked){
                             platformInterface.set_enable.update("on")
-                            if(multiplePlatform.classid3235 === true) {
-                                platformInterface.hideOutputVol = false
-                            }
+                            //                            if(multiplePlatform.classid3235 === true) {
+                            //                                platformInterface.hideOutputVol = false
+                            //                            }
                         }
                         else {
 
                             platformInterface.set_enable.update("off")
-                            if(multiplePlatform.classid3235 === true) {
-                                platformInterface.hideOutputVol = true
-                            }
+                            //                            if(multiplePlatform.classid3235 === true) {
+                            //                                platformInterface.hideOutputVol = true
+                            //                            }
                         }
 
                         platformInterface.enabled = checked
@@ -433,15 +433,11 @@ Item {
                     onCheckedChanged:  {
                         if(checked) {
                             platformInterface.enabled = true
-                            if(multiplePlatform.classid3235 === true) {
-                                platformInterface.hideOutputVol = false
-                            }
+
                         }
                         else {
                             platformInterface.enabled = false
-                            if(multiplePlatform.classid3235 === true) {
-                                platformInterface.hideOutputVol = true
-                            }
+
                         }
                     }
                 }
