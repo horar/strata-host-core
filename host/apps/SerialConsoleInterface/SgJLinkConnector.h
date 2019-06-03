@@ -30,7 +30,6 @@ signals:
 private slots:
     void finishedHandler(int exitCode, QProcess::ExitStatus exitStatus);
     void errorOccurredHandler(QProcess::ProcessError error);
-    void readStandardOutputHandler();
 
 private:
     QPointer<QProcess> process_;

@@ -135,12 +135,6 @@ void SgJLinkConnector::errorOccurredHandler(QProcess::ProcessError error)
     finishFlashProcess(false);
 }
 
-void SgJLinkConnector::readStandardOutputHandler()
-{
-    QByteArray output = process_->readAllStandardOutput();
-    emit notify(output);
-}
-
 bool SgJLinkConnector::processRequest(const QString &cmd)
 {
     if (exePath_.isEmpty()) {
@@ -177,9 +171,6 @@ bool SgJLinkConnector::processRequest(const QString &cmd)
     connect(process_, &QProcess::errorOccurred,
             this, &SgJLinkConnector::errorOccurredHandler);
 
-    connect(process_, &QProcess::readyReadStandardOutput,
-            this, &SgJLinkConnector::readStandardOutputHandler);
-
     qCInfo(logCategorySci) << "let's run" << exePath_ << arguments;
     emit notify(QString("Starting JLink process: %1\n").arg(exePath_));
 
@@ -191,6 +182,9 @@ bool SgJLinkConnector::processRequest(const QString &cmd)
 void SgJLinkConnector::finishFlashProcess(bool exitedNormally)
 {
     qCInfo(logCategorySci) << "exitedNormally=" << exitedNormally;
+
+    QByteArray output = process_->readAllStandardOutput();
+    qCInfo(logCategorySci).noquote() << "output:"<< endl << output;
 
     process_->deleteLater();
     configFile_->deleteLater();
