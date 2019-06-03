@@ -24,7 +24,7 @@ public:
 
 signals:
     void notify(QString message);
-    void boardFlashFinished(bool status);
+    void processFinished(bool status);
     void exePathChanged();
 
 private slots:

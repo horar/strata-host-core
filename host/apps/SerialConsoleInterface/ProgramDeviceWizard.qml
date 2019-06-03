@@ -461,8 +461,8 @@ Item {
             Connections {
                 target: sciModel.jLinkConnector
 
-                onBoardFlashFinished: {
-                    console.log(Logger.sciCategory, "board flash finished", status)
+                onProcessFinished: {
+                    console.log(Logger.sciCategory, "JLink process finished with status=", status)
                     if (status) {
                         doProgramDeviceApplication()
                     } else {

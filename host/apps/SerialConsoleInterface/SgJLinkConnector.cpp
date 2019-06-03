@@ -189,5 +189,5 @@ void SgJLinkConnector::finishFlashProcess(bool exitedNormally)
     process_->deleteLater();
     configFile_->deleteLater();
 
-    emit boardFlashFinished(exitedNormally);
+    emit processFinished(exitedNormally);
 }
