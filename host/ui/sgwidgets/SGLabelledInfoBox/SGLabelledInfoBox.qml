@@ -4,15 +4,21 @@ import QtQuick.Layouts 1.3
 Rectangle {
     id: root
 
-    property string label: ""
+    property alias overrideLabelWidth: labelText.width
+    property alias label: labelText.text
+    property alias labelPixelSize: labelText.font.pixelSize
     property bool labelLeft: true
-    property string info: ""
-    property real infoBoxWidth: 50
-    property color textColor: "#000"
-    property color infoBoxColor: "#eeeeee"
+
+    property alias info: infoText.text
+    property alias textPixelSize: infoText.font.pixelSize
+    property alias textColor: infoText.color
+    property alias textPadding: infoText.padding
+
+    property alias infoBoxWidth: infoContainer.width
+    property alias infoBoxHeight: infoContainer.height
+    property alias infoBoxColor: infoContainer.color
     property color infoBoxBorderColor: "#cccccc"
     property real infoBoxBorderWidth: 1
-    property alias overrideLabelWidth: labelText.width
 
     implicitHeight: labelLeft ? infoContainer.height : labelText.height + infoContainer.height + infoContainer.anchors.topMargin
     implicitWidth: labelLeft ? infoBoxWidth + labelText.width + infoContainer.anchors.leftMargin : Math.max(infoBoxWidth, labelText.width)
@@ -29,9 +35,9 @@ Rectangle {
 
     Rectangle {
         id: infoContainer
-        height: 30
-        width: root.infoBoxWidth
-        color: root.infoBoxColor
+        height: textPixelSize * 2.5
+        width: 2 * height
+        color: "#eeeeee"
         radius: 2
         border {
             color: root.infoBoxBorderColor
@@ -47,19 +53,18 @@ Rectangle {
 
         TextInput {
             id: infoText
-            padding: 10
+            padding: font.pixelSize * 0.5
             anchors {
                 right: infoContainer.right
                 verticalCenter: infoContainer.verticalCenter
             }
-            text: info
+            text: ""
             selectByMouse: true
             readOnly: true
             font {
               family: "Courier" // Monospaced font for better text width uniformity
-              pixelSize: (Qt.platform.os === "osx") ? 12 : 10;
             }
-            color: root.textColor
+            color: "black"
         }
     }
 }
