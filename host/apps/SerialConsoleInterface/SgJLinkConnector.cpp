@@ -106,8 +106,6 @@ void SgJLinkConnector::finishedHandler(int exitCode, QProcess::ExitStatus exitSt
 
 void SgJLinkConnector::errorOccurredHandler(QProcess::ProcessError error)
 {
-    qCInfo(logCategorySci) << error;
-
     QString errorStr;
 
     switch (error) {
@@ -129,6 +127,8 @@ void SgJLinkConnector::errorOccurredHandler(QProcess::ProcessError error)
     default:
         errorStr = "JLink process unknown error.\n";
     }
+
+    qCWarning(logCategorySci) << error << errorStr;
 
     emit notify(errorStr);
 
