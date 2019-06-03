@@ -34,8 +34,6 @@ Item {
 
             var connectionInfo = sciModel.boardController.getConnectionInfo(connectionId)
 
-            console.log("onActiveBoard()",JSON.stringify(connectionInfo))
-
             var effectiveVerboseName = connectionInfo.verboseName
 
             if (connectionInfo.verboseName.length === 0) {
@@ -71,7 +69,6 @@ Item {
         }
 
         onDisconnectedBoard: {
-            console.log("onDisconnectedBoard()", connectionId)
             for (var i = 0; i < tabModel.count; ++i) {
                 var item = tabModel.get(i)
                 if (item.connectionId === connectionId) {

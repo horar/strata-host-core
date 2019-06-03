@@ -6,6 +6,7 @@ import "./common/SgUtils.js" as SgUtils
 import tech.strata.utils 1.0
 import "./common/Colors.js" as Colors
 import QtQuick.Dialogs 1.3
+import tech.strata.logger 1.0
 
 Item {
     id: wizard
@@ -403,20 +404,17 @@ Item {
                 target: sciModel.boardController
 
                 onConnectedBoard: {
-                    console.log("processPageComponent onConnectedBoard()", connectionId)
                     waitForActiveBoardTimer.connectionId = connectionId
                     waitForActiveBoardTimer.restart()
                 }
 
                 onActiveBoard: {
-                    console.log("processPageComponent onActiveBoard()", connectionId)
                     waitForActiveBoardTimer.stop()
 
                     callTryProgramDevice()
                 }
 
                 onDisconnectedBoard: {
-                    console.log("processPageComponent onDisconnectedBoard", connectionId)
                     waitForActiveBoardTimer.stop()
                     callTryProgramDevice()
                 }
@@ -450,7 +448,7 @@ Item {
                 }
 
                 onProgramDeviceDone: {
-                    console.log("onProgramDeviceDone", status)
+                    console.log(Logger.sciCategory, "program device done", status)
                     if (status) {
                         processingStatus = ProgramDeviceWizard.ProgrammingSucceed
                     } else {
@@ -463,8 +461,8 @@ Item {
             Connections {
                 target: sciModel.jLinkConnector
 
-                onBoardFlashFinished: {
-                    console.log("onBoardFlashFinished", status)
+                onProcessFinished: {
+                    console.log(Logger.sciCategory, "JLink process finished with status=", status)
                     if (status) {
                         doProgramDeviceApplication()
                     } else {
@@ -474,7 +472,7 @@ Item {
                 }
 
                 onNotify: {
-                    console.log("onNotify", message)
+                    console.log(Logger.sciCategory, "flash notification", message)
                 }
             }
 
@@ -568,14 +566,12 @@ Item {
             }
 
             function doProgramDeviceBootloader() {
-                console.log("doProgramDeviceBootloader()");
                 processingStatus = ProgramDeviceWizard.ProgrammingBootloader
                 processPage.subtextNote = "Programming"
                 sciModel.jLinkConnector.flashBoardRequested(wizard.bootloaderPath, true)
             }
 
             function doProgramDeviceApplication() {
-                console.log("doProgramDeviceApplication()");
                 processingStatus = ProgramDeviceWizard.ProgrammingApplication
                 sciModel.programDevice(sciModel.boardController.connectionIds[0], firmwarePath)
             }

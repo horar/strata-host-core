@@ -24,13 +24,12 @@ public:
 
 signals:
     void notify(QString message);
-    void boardFlashFinished(bool status);
+    void processFinished(bool status);
     void exePathChanged();
 
 private slots:
     void finishedHandler(int exitCode, QProcess::ExitStatus exitStatus);
     void errorOccurredHandler(QProcess::ProcessError error);
-    void readStandardOutputHandler();
 
 private:
     QPointer<QProcess> process_;

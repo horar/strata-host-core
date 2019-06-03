@@ -49,18 +49,18 @@ SerialConnector::SerialConnector() : Connector()
 {
     CONNECTOR_DEBUG_LOG("%s Creating a Serial Connector Object\n", "SerialConnector");
 #ifdef _WIN32
-    context_ = new (zmq::context_t);
+    context_ = unique_ptr<zmq::context_t>(new (zmq::context_t));
     // creating the push socket and binding to a address
-    write_socket_ = new zmq::socket_t(*context_, ZMQ_PUSH);
+    write_socket_ = unique_ptr<zmq::socket_t>(new zmq::socket_t(*context_, ZMQ_PUSH));
      // creating the pull socket and connecting it to the PUSH socket
-    read_socket_ = new zmq::socket_t(*context_, ZMQ_PULL);
+    read_socket_ = unique_ptr<zmq::socket_t>( new zmq::socket_t(*context_, ZMQ_PULL));
     if (!write_socket_->init() ) {
         CONNECTOR_DEBUG_LOG("%s Serial Connector failed in write socket init\n", "SerialConnector");
         return;
     }
     if (!read_socket_->init()) {
-	    CONNECTOR_DEBUG_LOG("%s Serial Connector failed in read socket init\n", "SerialConnector");
-	    return;
+        CONNECTOR_DEBUG_LOG("%s Serial Connector failed in read socket init\n", "SerialConnector");
+        return;
     }
     if (write_socket_->bind(SERIAL_SOCKET_ADDRESS) != 0) {
         CONNECTOR_DEBUG_LOG("%s Serial Connector failed in write socket bind\n", "SerialConnector");

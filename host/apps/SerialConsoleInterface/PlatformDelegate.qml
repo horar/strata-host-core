@@ -6,6 +6,7 @@ import tech.strata.fonts 1.0 as StrataFonts
 import QtQuick.Dialogs 1.3
 import "./common/SgUtils.js" as SgUtils
 import tech.strata.utils 1.0
+import tech.strata.logger 1.0
 
 FocusScope {
     id: platformDelegate
@@ -393,21 +394,22 @@ FocusScope {
 
     function showFileExportDialog() {
         var dialog = SgUtils.createDialogFromComponent(platformDelegate, fileDialogComponent)
-
         dialog.accepted.connect(function() {
             var result = SgUtilsCpp.atomicWrite(
                         SgUtilsCpp.urlToPath(dialog.fileUrl),
                         getTextForExport())
 
             if (result === false) {
+                console.error(LoggerModule.Logger.sciCategory, "failed to export content into", dialog.fileUrl)
+
                 SgUtils.showMessageDialog(
                             rootItem,
                             Common.SgMessageDialog.Error,
                             "Export Failed",
                             "Writting into selected file failed.")
+            } else {
+                console.log(Logger.sciCategory, "content exported into", dialog.fileUrl)
             }
-
-            console.log("showFileExportDialog() atomicWrite()", dialog.fileUrl, result)
 
             dialog.destroy()})
 
