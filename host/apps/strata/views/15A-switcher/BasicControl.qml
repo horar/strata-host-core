@@ -17,29 +17,14 @@ Item {
     property var read_enable_state: platformInterface.initial_status.enable_status
 
     onRead_enable_stateChanged: {
-//        if(multiplePlatform.classid3235 === true) {
-//            if(read_enable_state === "on") {
-//                platformInterface.enabled = true
-//                platformInterface.hideOutputVol = false
+        if(read_enable_state === "on") {
+            platformInterface.enabled = true
 
-//            }
-//            else  {
-//                platformInterface.enabled = false
-//                platformInterface.hideOutputVol = true
-//            }
-//        }
-//        else  {
-            if(read_enable_state === "on") {
-                platformInterface.enabled = true
-
-            }
-            else  {
-                platformInterface.enabled = false
-            }
-       // }
+        }
+        else  {
+            platformInterface.enabled = false
+        }
     }
-
-
 
     property var read_vin: platformInterface.status_voltage_current.vingood
     onRead_vinChanged: {
@@ -49,23 +34,13 @@ Item {
             ledLight.label = "VIN Ready ("+ vinlable + " 4.5V)"
             enableSwitch.enabled  = true
             enableSwitch.opacity = 1.0
-            //            if(multiplePlatform.classid3235 === true) {
-            //                platformInterface.hideOutputVol = false
-            //            }
-
-
         }
         else {
             ledLight.status = "red"
             vinlable = "under"
             ledLight.label = "VIN Ready ("+ vinlable + " 4.5V)"
-            //            enableSwitch.enabled  = false
-            //            enableSwitch.opacity = 0.5
             platformInterface.enabled = false
-            //            if(multiplePlatform.classid3235 === true) {
-            //                platformInterface.hideOutputVol = false
-            //            }
-
+            enableSwitch.opacity = 0.5
         }
     }
 
@@ -119,7 +94,6 @@ Item {
                 text: multiplePlatform.title
                 font.pixelSize: (parent.width + parent.height)/ 30
                 color: "black"
-
             }
         }
         Rectangle{
@@ -132,19 +106,15 @@ Item {
             }
 
             Rectangle {
-
                 id:left
                 width: parent.width/3
                 height: (parent.height/2) + 100
-
                 anchors {
                     top:parent.top
                     topMargin: 40
                     left: parent.left
                     leftMargin: 20
-
                 }
-
                 color: "transparent"
                 border.color: "black"
                 border.width: 5
@@ -155,7 +125,6 @@ Item {
                     id: textContainer2
                     width: parent.width/5
                     height: parent.height/10
-
                     anchors {
                         top: parent.top
                         topMargin: 20
@@ -178,7 +147,6 @@ Item {
                     id: line
                     height: 2
                     width: parent.width - 9
-
                     anchors {
                         top: textContainer2.bottom
                         topMargin: 2
@@ -209,10 +177,6 @@ Item {
                             label = "VIN Ready ("+ vinlable + " 4.5V)"
                             enableSwitch.enabled  = true
                             enableSwitch.opacity = 1.0
-                            //                            if(multiplePlatform.classid3235 === true) {
-                            //                                platformInterface.hideOutputVol = false
-                            //                            }
-
                         }
                         else if(vinMonitor === "bad") {
                             status = "red"
@@ -221,9 +185,6 @@ Item {
                             enableSwitch.enabled  = false
                             enableSwitch.opacity = 0.5
                             platformInterface.enabled = false
-                            //                            if(multiplePlatform.classid3235 === true) {
-                            //                                platformInterface.hideOutputVol = true
-                            //                            }
                         }
                     }
                 }
@@ -415,16 +376,9 @@ Item {
 
                         if(checked){
                             platformInterface.set_enable.update("on")
-                            //                            if(multiplePlatform.classid3235 === true) {
-                            //                                platformInterface.hideOutputVol = false
-                            //                            }
                         }
                         else {
-
                             platformInterface.set_enable.update("off")
-                            //                            if(multiplePlatform.classid3235 === true) {
-                            //                                platformInterface.hideOutputVol = true
-                            //                            }
                         }
 
                         platformInterface.enabled = checked
@@ -433,11 +387,9 @@ Item {
                     onCheckedChanged:  {
                         if(checked) {
                             platformInterface.enabled = true
-
                         }
                         else {
                             platformInterface.enabled = false
-
                         }
                     }
                 }
@@ -451,7 +403,6 @@ Item {
                     infoBoxHeight : parent.height/12
                     fontSize :  (parent.width + parent.height)/37
                     unitSize: (parent.width + parent.height)/35
-
                     anchors {
                         top : enableSwitch.bottom
                         topMargin : 20

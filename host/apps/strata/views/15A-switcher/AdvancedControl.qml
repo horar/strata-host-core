@@ -13,7 +13,6 @@ Item {
     property string vinlable: ""
     property var read_enable_state: platformInterface.initial_status.enable_status
 
-
     onRead_enable_stateChanged: {
         if(read_enable_state === "on") {
             platformInterface.enabled = true
@@ -51,21 +50,6 @@ Item {
         platformInterface.mode = mode_state
     }
 
-//    property bool hide_ouput_vol: platformInterface.hideOutputVol
-//    onHide_ouput_volChanged: {
-//        console.log("in hide output")
-//        if(hide_ouput_vol == true){
-//            outputVoltageList.opacity = 1.0
-//            outputVoltageList.enabled = true
-//        }
-//        else {
-//            outputVoltageList.enabled = false
-//            outputVoltageList.opacity = 0.5
-//        }
-
-//    }
-
-
     FontLoader {
         id: icons
         source: "sgwidgets/fonts/sgicons.ttf"
@@ -101,7 +85,6 @@ Item {
         Help.registerTarget(inputCurrent, "Input current is shown here in A.", 6, "advance15AHelp")
         Help.registerTarget(inputVoltage, "Input voltage is shown here in Volts.", 5, "advance15AHelp")
         Help.registerTarget(softStartList, "Select either a 5ms or 10ms softstart. Converter reset required to see changes", 7,"advance15AHelp")
-
         Help.registerTarget(vbVoltage, "This is internal LDO output voltage", 8, "advance15AHelp")
         Help.registerTarget(vccVoltage, "Biasing voltage used by converter- tied to input voltage by default.", 9, "advance15AHelp")
         Help.registerTarget(vboostVoltage, "This is boot-strap (pin BST) voltage. ", 10, "advance15AHelp")
@@ -281,7 +264,6 @@ Item {
 
                     anchors {
                         top: parent.top
-                        //  topMargin : 20
                         left: parent.left
                         leftMargin : 50
                     }
@@ -305,7 +287,6 @@ Item {
                         id: line
                         height: 2
                         width: parent.width - 9
-
                         anchors {
                             top: containerLabel.bottom
                             topMargin: 2
@@ -467,9 +448,7 @@ Item {
                             SGComboBox {
                                 id: softStartCombo
                                 currentIndex: platformInterface.soft_start
-                                model: [
-                                    "5ms", "10ms"
-                                ]
+                                model: ["5ms", "10ms"]
                                 label: "Soft Start:"
 
                                 anchors {
@@ -862,7 +841,6 @@ Item {
                             top : outputVoltage.bottom
                             topMargin : 14
                             horizontalCenter: parent.horizontalCenter
-
                         }
                     }
                 }

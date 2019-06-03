@@ -414,10 +414,7 @@ Item {
                         if(multiplePlatform.showDecimal === true) {
                         platformInterface.status_voltage_current.iout.toFixed(2)
                         }
-                        else {
-                            platformInterface.status_voltage_current.iout
-                        }
-
+                        else platformInterface.status_voltage_current.iout
                     }
                     unit: "mA"
                     infoBoxWidth: parent.width/3
