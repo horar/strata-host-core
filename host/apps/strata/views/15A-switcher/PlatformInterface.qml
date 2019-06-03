@@ -17,18 +17,18 @@ Item {
     // @description: read values
     //
     property var status_voltage_current : {
-                "vin":	0,		//in Volts
-                "vout": 0,   		//in Volts
-                "vcc": 0,   		//in Volts
-                "vb": 0,   		//in Volts
-                "vout": 0,   		//in Volts
-                "vboost": 0,   	//in Volts
-                "iin":	0,    		//in A
-                "iout": 0,     		//in A
-                "efficiency": 0,	// in percentage
-                "power_dissipated": 0, // in mW
-                "output_power": 0, // in mW
-                "vingood":	""
+        "vin":	0,		//in Volts
+        "vout": 0,   		//in Volts
+        "vcc": 0,   		//in Volts
+        "vb": 0,   		//in Volts
+        "vout": 0,   		//in Volts
+        "vboost": 0,   	//in Volts
+        "iin":	0,    		//in A
+        "iout": 0,     		//in A
+        "efficiency": 0,	// in percentage
+        "power_dissipated": 0, // in mW
+        "output_power": 0, // in mW
+        "vingood":	""
     }
 
     // @notification read_temperature_sensor
@@ -43,7 +43,7 @@ Item {
     }
 
     property var initial_status: {
-       "enable_status":"",
+        "enable_status":"",
         "soft_start_status":"",
         "vout_selector_status":0,
         "ocp_threshold_status":0,
@@ -63,13 +63,13 @@ Item {
 
     property var read_initial_status: ({ "cmd" : "read_initial_status",
 
-                                         update: function () {
-                                             CorePlatformInterface.send(this)
-                                         },
-                                         send: function () { CorePlatformInterface.send(this) },
-                                         show: function () { CorePlatformInterface.show(this) }
+                                           update: function () {
+                                               CorePlatformInterface.send(this)
+                                           },
+                                           send: function () { CorePlatformInterface.send(this) },
+                                           show: function () { CorePlatformInterface.show(this) }
 
-                                     })
+                                       })
 
     property var read_enable_state: ({ "cmd" : "read_enable",
 
@@ -102,84 +102,105 @@ Item {
                               })
 
     property var set_mode: ({
-                                  "cmd" : "set_mode",
-                                  "payload": {
-                                      "mode_index": 0,
-                                  },
+                                "cmd" : "set_mode",
+                                "payload": {
+                                    "mode_index": 0,
+                                },
 
-                                  // Update will set and send in one shot
-                                  update: function (mode_index) {
-                                      this.set(mode_index)
-                                      CorePlatformInterface.send(this)
-                                  },
-                                  // Set can set single or multiple properties before sending to platform
-                                  set: function (mode_index) {
-                                      this.payload.mode_index = mode_index;
-                                  },
-                                  send: function () { CorePlatformInterface.send(this) },
-                                  show: function () { CorePlatformInterface.show(this) }
+                                // Update will set and send in one shot
+                                update: function (mode_index) {
+                                    this.set(mode_index)
+                                    CorePlatformInterface.send(this)
+                                },
+                                // Set can set single or multiple properties before sending to platform
+                                set: function (mode_index) {
+                                    this.payload.mode_index = mode_index;
+                                },
+                                send: function () { CorePlatformInterface.send(this) },
+                                show: function () { CorePlatformInterface.show(this) }
 
-                              })
+                            })
 
     property var set_soft_start: ({
-                                  "cmd" : "set_soft_start",
-                                  "payload": {
-                                      "soft_start":"",
-                                  },
+                                      "cmd" : "set_soft_start",
+                                      "payload": {
+                                          "soft_start":"",
+                                      },
 
-                                  // Update will set and send in one shot
-                                  update: function (soft_start) {
-                                      this.set(soft_start)
-                                      CorePlatformInterface.send(this)
-                                  },
-                                  // Set can set single or multiple properties before sending to platform
-                                  set: function (soft_start) {
-                                      this.payload.soft_start = soft_start;
-                                  },
-                                  send: function () { CorePlatformInterface.send(this) },
-                                  show: function () { CorePlatformInterface.show(this) }
+                                      // Update will set and send in one shot
+                                      update: function (soft_start) {
+                                          this.set(soft_start)
+                                          CorePlatformInterface.send(this)
+                                      },
+                                      // Set can set single or multiple properties before sending to platform
+                                      set: function (soft_start) {
+                                          this.payload.soft_start = soft_start;
+                                      },
+                                      send: function () { CorePlatformInterface.send(this) },
+                                      show: function () { CorePlatformInterface.show(this) }
 
-                              })
+                                  })
 
     property var select_output_voltage: ({
-                                  "cmd" : "select_output_voltage",
-                                  "payload": {
-                                      "output_voltage": 0,
-                                  },
+                                             "cmd" : "select_output_voltage",
+                                             "payload": {
+                                                 "output_voltage": 0,
+                                             },
 
-                                  // Update will set and send in one shot
-                                  update: function (output_voltage) {
-                                      this.set(output_voltage)
-                                      CorePlatformInterface.send(this)
-                                  },
-                                  // Set can set single or multiple properties before sending to platform
-                                  set: function (output_voltage) {
-                                      this.payload.output_voltage = output_voltage;
-                                  },
-                                  send: function () { CorePlatformInterface.send(this) },
-                                  show: function () { CorePlatformInterface.show(this) }
+                                             // Update will set and send in one shot
+                                             update: function (output_voltage) {
+                                                 this.set(output_voltage)
+                                                 CorePlatformInterface.send(this)
+                                             },
+                                             // Set can set single or multiple properties before sending to platform
+                                             set: function (output_voltage) {
+                                                 this.payload.output_voltage = output_voltage;
+                                             },
+                                             send: function () { CorePlatformInterface.send(this) },
+                                             show: function () { CorePlatformInterface.show(this) }
 
-                              })
+                                         })
 
     property var select_ocp_threshold: ({
-                                  "cmd" : "select_ocp_threshold",
-                                  "payload": {
-                                      "ocp_threshold": 0,
-                                  },
+                                            "cmd" : "select_ocp_threshold",
+                                            "payload": {
+                                                "ocp_threshold": 0,
+                                            },
 
-                                  // Update will set and send in one shot
-                                  update: function (ocp_threshold) {
-                                      this.set(ocp_threshold)
-                                      CorePlatformInterface.send(this)
-                                  },
-                                  // Set can set single or multiple properties before sending to platform
-                                  set: function (ocp_threshold) {
-                                      this.payload.ocp_threshold = ocp_threshold;
-                                  },
-                                  send: function () { CorePlatformInterface.send(this) },
-                                  show: function () { CorePlatformInterface.show(this) }
+                                            // Update will set and send in one shot
+                                            update: function (ocp_threshold) {
+                                                this.set(ocp_threshold)
+                                                CorePlatformInterface.send(this)
+                                            },
+                                            // Set can set single or multiple properties before sending to platform
+                                            set: function (ocp_threshold) {
+                                                this.payload.ocp_threshold = ocp_threshold;
+                                            },
+                                            send: function () { CorePlatformInterface.send(this) },
+                                            show: function () { CorePlatformInterface.show(this) }
 
-                              })
+                                        })
+
+    //Tejashree: This is a HACK implementation
+    property var pause_periodic: ({
+                                      "cmd" : "pause_periodic",
+                                      "payload": {
+                                          "pause_flag": "",
+                                      },
+
+                                      // Set can set single or multiple properties before sending to platform
+                                      set: function (pause_flag) {
+                                          this.payload.pause_flag = pause_flag;
+                                      },
+
+                                      // Update will set and send in one shot
+                                      update: function (pause_flag) {
+                                          this.set(pause_flag)
+                                          CorePlatformInterface.send(this)
+                                      },
+                                      send: function () { CorePlatformInterface.send(this) },
+                                      show: function () { CorePlatformInterface.show(this) }
+                                  })
 
     // -------------------  end commands
     // NOTE:
@@ -209,7 +230,7 @@ Item {
     property bool advertise
     property bool hideOutputVol
 
-  // DEBUG Window for testing motor vortex UI without a platform
+    // DEBUG Window for testing motor vortex UI without a platform
     //    Window {
     //        id: debug
     //        visible: true
