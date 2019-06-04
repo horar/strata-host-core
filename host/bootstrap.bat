@@ -23,7 +23,7 @@ echo Setting up environment for CMake usage..
 set PATH="C:\Program Files\CMake\bin";%PATH%
 
 echo Setting up 'x64 Native Tools Command Prompt for VS 2017'
-call "C:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\VC\Auxiliary\Build\vcvarsall.bat" x64
+call "C:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\VC\Auxiliary\Build\vcvarsall.bat" x64 -vcvars_ver=14.1
 
 echo "======================================================================="
 echo " Preparing sandbox.."
@@ -41,13 +41,17 @@ echo " Generating project.."
 echo "======================================================================="
 cd build
 cmake -G "NMake Makefiles JOM" ^
-    -DCMAKE_BUILD_TYPE=Debug ^
+	-DCMAKE_BUILD_TYPE=Release ^
     ..\
+REM cmake -G "Visual Studio 14 2015 Win64" ^
+REM 	-T v141 ^
+REM     ..\
 
 echo "======================================================================="
 echo " Compiling.."
 echo "======================================================================="
 cmake --build .
+REM cmake --build . --config Release
 
 
 endlocal

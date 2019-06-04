@@ -34,16 +34,23 @@ target_include_directories(${PROJECT_NAME}
 )
 
 target_link_libraries(${PROJECT_NAME}
-    PRIVATE cblitecore::LiteCore
-    PRIVATE cblitecore::Fleece
-    PRIVATE cblitecore::CivetWeb
-    PRIVATE cblitecore::BLIP
-    PRIVATE cblitecore::support
-    PRIVATE cblitecore::SQLite3_unicode
-
-    PRIVATE z
+    PUBLIC cblitecore::LiteCore
+    PUBLIC cblitecore::Fleece
+    PUBLIC cblitecore::CivetWeb
+    PUBLIC cblitecore::BLIP
+    PUBLIC cblitecore::support
+    PUBLIC cblitecore::SQLite3_unicode
 )
-
+if(WIN32)
+	target_link_libraries(${PROJECT_NAME}
+		PUBLIC cblitecore::zlib
+		PUBLIC cblitecore::mbedtls
+	)
+else()
+	target_link_libraries(${PROJECT_NAME}
+		PRIVATE z
+	)
+endif()
 
 # FIXME: [LC] broken with 'cblitecore' submodule build
 add_subdirectory(examples)
