@@ -214,8 +214,8 @@ Item {
                     gaugeFrontColor1: Qt.rgba(0,0.5,1,1)
                     gaugeFrontColor2: Qt.rgba(1,0,0,1)
                     minimumValue: 0
-                    maximumValue: 3000
-                    tickmarkStepSize: 300
+                    maximumValue: multiplePlatform.maxValue
+                    tickmarkStepSize: multiplePlatform.stepValue
                     outerColor: "#999"
                     unitLabel: "mW"
                     gaugeTitle: "Output Power"
@@ -525,10 +525,7 @@ Item {
                             if(multiplePlatform.showDecimal === true) {
                                 platformInterface.status_voltage_current.iout.toFixed(2)
                             }
-                            else {
-                                platformInterface.status_voltage_current.iout
-                            }
-
+                            else platformInterface.status_voltage_current.iout
                         }
                         unit: "mA"
                         infoBoxWidth: parent.width/3

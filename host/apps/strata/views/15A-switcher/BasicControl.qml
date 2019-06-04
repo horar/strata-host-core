@@ -19,13 +19,12 @@ Item {
     onRead_enable_stateChanged: {
         if(read_enable_state === "on") {
             platformInterface.enabled = true
+
         }
         else  {
             platformInterface.enabled = false
         }
     }
-
-
 
     property var read_vin: platformInterface.status_voltage_current.vingood
     onRead_vinChanged: {
@@ -40,13 +39,10 @@ Item {
             ledLight.status = "red"
             vinlable = "under"
             ledLight.label = "VIN Ready ("+ vinlable + " 4.5V)"
-            enableSwitch.enabled  = false
-            enableSwitch.opacity = 0.5
             platformInterface.enabled = false
-
+            enableSwitch.opacity = 0.5
         }
     }
-
 
 
     Component.onCompleted:  {
@@ -98,7 +94,6 @@ Item {
                 text: multiplePlatform.title
                 font.pixelSize: (parent.width + parent.height)/ 30
                 color: "black"
-
             }
         }
         Rectangle{
@@ -111,19 +106,15 @@ Item {
             }
 
             Rectangle {
-
                 id:left
                 width: parent.width/3
                 height: (parent.height/2) + 100
-
                 anchors {
                     top:parent.top
                     topMargin: 40
                     left: parent.left
                     leftMargin: 20
-
                 }
-
                 color: "transparent"
                 border.color: "black"
                 border.width: 5
@@ -134,7 +125,6 @@ Item {
                     id: textContainer2
                     width: parent.width/5
                     height: parent.height/10
-
                     anchors {
                         top: parent.top
                         topMargin: 20
@@ -157,7 +147,6 @@ Item {
                     id: line
                     height: 2
                     width: parent.width - 9
-
                     anchors {
                         top: textContainer2.bottom
                         topMargin: 2
@@ -188,7 +177,6 @@ Item {
                             label = "VIN Ready ("+ vinlable + " 4.5V)"
                             enableSwitch.enabled  = true
                             enableSwitch.opacity = 1.0
-
                         }
                         else if(vinMonitor === "bad") {
                             status = "red"
@@ -385,10 +373,13 @@ Item {
                     checked: platformInterface.enabled
                     fontSizeLabel: (parent.width + parent.height)/40
                     onToggled: {
+
                         if(checked){
                             platformInterface.set_enable.update("on")
                         }
-                        else platformInterface.set_enable.update("off")
+                        else {
+                            platformInterface.set_enable.update("off")
+                        }
 
                         platformInterface.enabled = checked
                     }
@@ -412,7 +403,6 @@ Item {
                     infoBoxHeight : parent.height/12
                     fontSize :  (parent.width + parent.height)/37
                     unitSize: (parent.width + parent.height)/35
-
                     anchors {
                         top : enableSwitch.bottom
                         topMargin : 20

@@ -12,6 +12,7 @@ Rectangle {
     property alias infoBoxWidth: infoContainer.width
     property alias infoBoxHeight: infoContainer.height
     property color textColor: "#000"
+    property color invalidTextColor: "red"
     property color infoBoxColor: infoText.readOnly ? "#eee" : "transparent"
     property color infoBoxBorderColor: "#cccccc"
     property real infoBoxBorderWidth: 1
@@ -91,7 +92,7 @@ Rectangle {
                 horizontalAlignment: leftJustify ? TextInput.AlignLeft : TextInput.AlignRight
                 onAccepted: root.applied(infoText.text)
                 enabled: root.enabled
-                color: root.textColor
+                color: text == "" || acceptableInput ? root.textColor : root.invalidTextColor
                 opacity: root.enabled ? 1 : 0.5
                 onEditingFinished: { if (!root.showButton) { root.applied(infoText.text) } }
 
@@ -141,7 +142,10 @@ Rectangle {
                 leftMargin: unit.text === "" ? 10 : 20
                 verticalCenter: infoContainer.verticalCenter
             }
-            onClicked: root.applied(infoText.text)
+            onClicked: {
+                textInput.acceptableInput? root.applied(infoText.text) : console.log("invalid input")
+            }
+
             enabled: root.enabled
             height: visible ? 40 : 0
         }

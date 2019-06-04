@@ -21,7 +21,7 @@ Window {
     minimumHeight: 768-40 // -40 for Win10 taskbar height
     minimumWidth: 1024
     title: qsTr("ON Semiconductor: Strata Developer Studio")
-    property string versionNumber: "Strata 1.2.0 Build 1"  // For About Strata Popup
+    property string versionNumber: "Strata 1.3.0 Build 1"  // For About Strata Popup
 
     // Debug option(s)
     property bool is_remote_connected: false
@@ -29,7 +29,7 @@ Window {
     /****
       TO HIDE THE DEBUG SET THE BELOW PROPERTY TO FALSE
     ***/
-    property bool debug_menu_enabled: true
+    property bool debug_menu_enabled: false
 
     Component.onCompleted: {
         console.log(Logger.devStudioCategory, "Initializing")

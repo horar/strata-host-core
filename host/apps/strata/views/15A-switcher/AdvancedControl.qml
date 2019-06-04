@@ -13,7 +13,6 @@ Item {
     property string vinlable: ""
     property var read_enable_state: platformInterface.initial_status.enable_status
 
-
     onRead_enable_stateChanged: {
         if(read_enable_state === "on") {
             platformInterface.enabled = true
@@ -51,7 +50,6 @@ Item {
         platformInterface.mode = mode_state
     }
 
-
     FontLoader {
         id: icons
         source: "sgwidgets/fonts/sgicons.ttf"
@@ -87,7 +85,6 @@ Item {
         Help.registerTarget(inputCurrent, "Input current is shown here in A.", 6, "advance15AHelp")
         Help.registerTarget(inputVoltage, "Input voltage is shown here in Volts.", 5, "advance15AHelp")
         Help.registerTarget(softStartList, "Select either a 5ms or 10ms softstart. Converter reset required to see changes", 7,"advance15AHelp")
-
         Help.registerTarget(vbVoltage, "This is internal LDO output voltage", 8, "advance15AHelp")
         Help.registerTarget(vccVoltage, "Biasing voltage used by converter- tied to input voltage by default.", 9, "advance15AHelp")
         Help.registerTarget(vboostVoltage, "This is boot-strap (pin BST) voltage. ", 10, "advance15AHelp")
@@ -235,12 +232,12 @@ Item {
                     gaugeFrontColor1: Qt.rgba(0,0.5,1,1)
                     gaugeFrontColor2: Qt.rgba(1,0,0,1)
                     minimumValue: 0
-                    maximumValue: 30
-                    tickmarkStepSize: 2
+                    maximumValue: multiplePlatform.maxValue
+                    tickmarkStepSize: multiplePlatform.stepValue
                     outerColor: "#999"
                     unitLabel: "W"
                     gaugeTitle: "Output Power"
-                    decimal: 2
+                    decimal: 1
                     value: platformInterface.status_voltage_current.output_power
                     Behavior on value { NumberAnimation { duration: 300 } }
                 }
@@ -267,7 +264,6 @@ Item {
 
                     anchors {
                         top: parent.top
-                        //  topMargin : 20
                         left: parent.left
                         leftMargin : 50
                     }
@@ -291,7 +287,6 @@ Item {
                         id: line
                         height: 2
                         width: parent.width - 9
-
                         anchors {
                             top: containerLabel.bottom
                             topMargin: 2
@@ -453,9 +448,7 @@ Item {
                             SGComboBox {
                                 id: softStartCombo
                                 currentIndex: platformInterface.soft_start
-                                model: [
-                                    "5ms", "10ms"
-                                ]
+                                model: ["5ms", "10ms"]
                                 label: "Soft Start:"
 
                                 anchors {
@@ -646,7 +639,6 @@ Item {
                         handleColor: "white"            // Default: "white"
                         grooveColor: "#ccc"             // Default: "#ccc"
                         grooveFillColor: "#0cf"         // Default: "#0cf"
-
                         checked: platformInterface.enabled
                         fontSizeLabel: (parent.width + parent.height)/40
 
@@ -667,7 +659,23 @@ Item {
                                 }
 
                             }
+                            else if(multiplePlatform.classid3235 == true){
+                                if(checked){
+                                    ocplist.enabled = false
+                                    ocplist.opacity = 0.5
+                                    outputVoltageList.enabled = false
+                                    outputVoltageList.opacity = 0.5
+                                }
+                                else{
+                                    ocplist.enabled = true
+                                    ocplist.opacity = 1.0
+                                    outputVoltageList.enabled = true
+                                    outputVoltageList.opacity = 1.0
+                                }
+                            }
+
                             else {
+                                console.log("in the checked")
                                 if(checked){
                                     ocplist.enabled = false
                                     ocplist.opacity = 0.5
@@ -695,6 +703,26 @@ Item {
 
                                 platformInterface.enabled = checked
                             }
+                            else if (multiplePlatform.classid3235 == true) {
+                                if(checked){
+                                    platformInterface.set_enable.update("on")
+                                    outputVoltageList.enabled = false
+                                    outputVoltageList.opacity = 0.5
+                                    ocplist.enabled = false
+                                    ocplist.opacity = 0.5
+                                }
+                                else {
+
+                                    platformInterface.set_enable.update("off")
+                                    outputVoltageList.enabled = true
+                                    outputVoltageList.opacity = 1.0
+                                    ocplist.enabled = true
+                                    ocplist.opacity = 1.0
+                                }
+
+                                platformInterface.enabled = checked
+                            }
+
                             else {
                                 if(checked){
                                     platformInterface.set_enable.update("on")
@@ -734,6 +762,7 @@ Item {
                                 platformInterface.select_output_voltage.update(currentIndex)
                                 platformInterface.vout = currentIndex
                             }
+
 
 
                         }
@@ -812,7 +841,6 @@ Item {
                             top : outputVoltage.bottom
                             topMargin : 14
                             horizontalCenter: parent.horizontalCenter
-
                         }
                     }
                 }
