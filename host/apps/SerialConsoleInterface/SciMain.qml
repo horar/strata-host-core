@@ -223,7 +223,7 @@ Item {
                     width: height
 
                     hasAlternativeColor: true
-                    source: sidePane.shown ? "qrc:/images/chevron-right.svg" : "qrc:/images/chevron-left.svg"
+                    source: sidePane.shown ? "qrc:/images/side-pane-right-close.svg" : "qrc:/images/side-pane-right-open.svg"
                     onClicked: {
                         sidePane.shown = !sidePane.shown
                     }
