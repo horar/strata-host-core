@@ -95,7 +95,10 @@ void QtLoggerSetup::generateDefaultSettings() const
         settings.setValue(QStringLiteral("level"), QStringLiteral("info"));
     }
     if (settings.contains(QStringLiteral("spdlogMessagePattern")) == false) {
-        settings.setValue(QStringLiteral("spdlogMessagePattern"),
+        settings.setValue(QStringLiteral("spdlogMessagePattern"), QStringLiteral("%T.%e [%L] %v"));
+    }
+    if (settings.contains(QStringLiteral("spdlogMessagePattern4logFile")) == false) {
+        settings.setValue(QStringLiteral("spdlogMessagePattern4logFile"),
                           QStringLiteral("%Y-%m-%d %T.%e PID:%P TID:%t [%L] %v"));
     }
 
@@ -126,6 +129,8 @@ void QtLoggerSetup::setupSpdLog(const QCoreApplication& app)
     const auto maxNoFiles{settings.value(QStringLiteral("maxNoFiles")).toUInt()};
     logLevel_ = {settings.value(QStringLiteral("level")).toString()};
     const auto messagePattern{settings.value(QStringLiteral("spdlogMessagePattern")).toString()};
+    const auto messagePattern4logFile{
+        settings.value(QStringLiteral("spdlogMessagePattern4logFile")).toString()};
     settings.endGroup();
 
     const QString logPath{QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)};
@@ -136,7 +141,8 @@ void QtLoggerSetup::setupSpdLog(const QCoreApplication& app)
     }
 
     logger_.setup(QStringLiteral("%1/%2.log").arg(logPath).arg(app.applicationName()).toStdString(),
-                  messagePattern.toStdString(), logLevel_.toStdString(), maxFileSize, maxNoFiles);
+                  messagePattern.toStdString(), messagePattern4logFile.toStdString(),
+                  logLevel_.toStdString(), maxFileSize, maxNoFiles);
 }
 
 void QtLoggerSetup::setupQtLog()
