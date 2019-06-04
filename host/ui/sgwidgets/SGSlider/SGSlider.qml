@@ -30,23 +30,27 @@ Item {
     property color textColor: "#000000"
     property string label: ""
     property bool labelLeft: true
-    property int toolTipDecimalPlaces: 0
+    property int toolTipDecimalPlaces: decimalPlacesFromStepSize
+
+    property int decimalPlacesFromStepSize: {
+        return (Math.floor(root.stepSize) === root.stepSize) ?  0 :
+               root.stepSize.toString().split(".")[1].length || 0
+    }
 
     property real value: (to - from) / 2
     onValueChanged: {
         sgSlider.value = value
-        if (inputBox) {
-            infoText.text = value
-        }
     }
     function setValue(value) {
-        if (root.value !== value) {
+        value = parseFloat(value).toFixed(root.decimalPlacesFromStepSize)
+        if (root.value != value) { //@disable-check M126
             root.value = value
             programmaticallySet()
         }
     }
     function userInput(value) {
-        if (root.value !== value) {
+        value = parseFloat(value).toFixed(root.decimalPlacesFromStepSize)
+        if (root.value != value) { //@disable-check M126
             root.value = value
             userSet()
         }
@@ -91,12 +95,15 @@ Item {
             onMoved: root.moved()
             onPressedChanged: {
                 if (!pressed) {
-                    root.userInput(value)
+                    if (value.toFixed(decimalPlacesFromStepSize) != root.value) {
+                        root.userInput(value.toFixed(decimalPlacesFromStepSize))
+                    }
                 }
             }
             onValueChanged: {
-                root.userInput(value)
+                root.userInput(value.toFixed(decimalPlacesFromStepSize))
             }
+            snapMode: Slider.SnapOnRelease
 
             background: Rectangle {
                 id: groove

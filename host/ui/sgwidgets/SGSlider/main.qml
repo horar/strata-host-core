@@ -19,16 +19,16 @@ Window {
         // Optional configuration:
         label: "<b>RPM:</b>"        // Default: "" (if not entered, label will not appear)
         textColor: "black"          // Default: "black"
-        labelLeft: false             // Default: true
+        labelLeft: false            // Default: true
         width: 500                  // Default: 200
-        stepSize: 1.0                 // Default: 1.0
+        stepSize: 1.0               // Default: 1.0
         value: 5000                 // Default: average of from and to
         from: 0                     // Default: 0.0
         to: 10000                   // Default: 100.0
         startLabel: "0"             // Default: from
         endLabel: "10000"           // Default: to
         showToolTip: true           // Default: true
-        toolTipDecimalPlaces: 0     // Default: 0
+        toolTipDecimalPlaces: 0     // Default: number of decimal places in stepSize
         grooveColor: "#ddd"         // Default: "#dddddd"
         grooveFillColor: "lightgreen"// Default: "#888888"
         live: false                 // Default: false (will only send valueChanged signal when slider is released)
