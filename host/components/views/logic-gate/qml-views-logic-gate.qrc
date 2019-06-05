@@ -1,0 +1,52 @@
+<RCC>
+    <qresource prefix="/views/logic-gate">
+        <file>Content.qml</file>
+        <file>Control.qml</file>
+        <file>PartOne.qml</file>
+        <file>PartTwo.qml</file>
+        <file>PlatformInterface.qml</file>
+        <file>content-views/Datasheets.qml</file>
+        <file>content-views/Documents.qml</file>
+        <file>content-views/Downloads.qml</file>
+        <file>content-views/content-widgets/SGAccordion.qml</file>
+        <file>content-views/content-widgets/SGAccordionItem.qml</file>
+        <file>content-views/content-widgets/SGRadioButton.qml</file>
+        <file>content-views/content-widgets/SGRadioButtonContainer.qml</file>
+        <file>content-views/content-widgets/SGSelectorButton.qml</file>
+        <file>content-views/content-widgets/docLoading.gif</file>
+        <file>images/nl7sz58/and_nc.png</file>
+        <file>images/nl7sz58/buffer.png</file>
+        <file>images/nl7sz58/inverter.png</file>
+        <file>images/nl7sz58/nand.png</file>
+        <file>images/nl7sz58/nand_nb.png</file>
+        <file>images/nl7sz58/or.png</file>
+        <file>images/nl7sz58/xor.png</file>
+        <file>images/nl7sz97/and.png</file>
+        <file>images/nl7sz97/and_nc.png</file>
+        <file>images/nl7sz97/buffer.png</file>
+        <file>images/nl7sz97/inverter.png</file>
+        <file>images/nl7sz97/mux.png</file>
+        <file>images/nl7sz97/or.png</file>
+        <file>images/nl7sz97/or_nc.png</file>
+        <file>sgwidgets/SGSegmentedButton.qml</file>
+        <file>sgwidgets/SGSegmentedButtonStrip.qml</file>
+        <file>sgwidgets/SGStatusLight.qml</file>
+        <file>sgwidgets/SGSwitch.qml</file>
+        <file>sgwidgets/fonts/digitalseven.ttf</file>
+        <file>sgwidgets/fonts/sgicons.ttf</file>
+        <file>sgwidgets/images/And B.png</file>
+        <file>sgwidgets/images/And C.png</file>
+        <file>sgwidgets/images/Buffer.png</file>
+        <file>sgwidgets/images/OR.png</file>
+        <file>sgwidgets/images/greenStatusLight.svg</file>
+        <file>sgwidgets/images/inverter.png</file>
+        <file>sgwidgets/images/nand-icon.png</file>
+        <file>sgwidgets/images/offStatusLight.svg</file>
+        <file>sgwidgets/images/sliderHandle.svg</file>
+        <file>sgwidgets/images/sliderHandleActive.svg</file>
+        <file>sgwidgets/images/sliderValue.svg</file>
+        <file>content-views/content-widgets/angle-right-solid.svg</file>
+        <file>content-views/content-widgets/SGIcon.qml</file>
+        <file>images/question-circle-solid.svg</file>
+    </qresource>
+</RCC>

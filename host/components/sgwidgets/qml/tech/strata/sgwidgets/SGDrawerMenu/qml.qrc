@@ -1,0 +1,11 @@
+<RCC>
+    <qresource prefix="/tech/strata/sgwidgets/SGDrawerMenu">
+        <file>qmldir</file>
+        <file>SGDrawerMenu.qml</file>
+        <file>SGDrawerMenuItem.qml</file>
+        <file>icons/comments-solid.svg</file>
+        <file>icons/question-circle-solid.svg</file>
+        <file>icons/users-solid.svg</file>
+        <file>icons/angle-left-solid.svg</file>
+    </qresource>
+</RCC>

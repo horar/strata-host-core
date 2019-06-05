@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/tech/strata/sgwidgets/SGStatusListBox">
+        <file>qmldir</file>
+        <file>SGStatusListBox.qml</file>
+        <file>icons/ban.svg</file>
+        <file>icons/search.svg</file>
+    </qresource>
+</RCC>

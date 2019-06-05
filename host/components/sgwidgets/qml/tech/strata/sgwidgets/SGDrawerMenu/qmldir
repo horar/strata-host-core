@@ -1,0 +1,4 @@
+module tech.strata.sgwidgets
+
+SGDrawerMenu 1.0 SGDrawerMenu.qml
+SGDrawerMenuItem 1.0 SGDrawerMenuItem.qml
