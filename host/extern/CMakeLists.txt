@@ -94,7 +94,7 @@ endif()
 #
 ExternalProject_Add(libgtest
     INSTALL_DIR ${CMAKE_BINARY_DIR}/3rd_party
-    SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/googletest
+    SOURCE_DIR ${SOURCE_DIR_EXTERN}/googletest
 
     CMAKE_ARGS ${CMAKE_ARGS}
         -Dgtest_force_shared_crt=YES
