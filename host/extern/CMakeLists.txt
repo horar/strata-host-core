@@ -135,6 +135,8 @@ if(NOT WIN32)
         #GIT_TAG 513281b8
         #GIT_PROGRESS ${CMAKE_VERBOSE_MAKEFILE}
 
+        PATCH_COMMAND git diff --quiet HEAD && git apply -v ${CMAKE_SOURCE_DIR}/extern/patches/couchbase-lite-core_vendor_mbedtls_fix.patch
+
         CMAKE_ARGS ${CMAKE_ARGS}
             -DBUILD_SHARED_LIBS=${BUILD_SHARED_LIBS}
             -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
