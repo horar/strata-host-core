@@ -15,6 +15,7 @@ FocusScope {
     property int maxCommandsInHistory: 20
     property int maxCommandsInScrollback: 200
     property variant rootItem
+    property bool condensedMode: false
 
     signal sendCommandRequested(string message)
 
@@ -24,6 +25,12 @@ FocusScope {
         onRowsInserted: {
             if (scrollbackView.atYEnd) {
                 scrollbackViewAtEndTimer.restart()
+            }
+        }
+
+        function setCondensedToAll(condensed) {
+            for(var i = 0; i < count; ++i) {
+                setProperty(i, "condensed", condensed)
             }
         }
     }
@@ -218,18 +225,18 @@ FocusScope {
         }
 
         Row {
-            id: buttonRow
+            id: toolButtonRow
             anchors {
                 top: parent.top
                 topMargin: 6
                 left: cmdInput.left
             }
 
-            property int iconHeight: 20
+            property int iconHeight: 24
             spacing: 6
 
             Common.SgIconButton {
-                height: buttonRow.iconHeight
+                height: toolButtonRow.iconHeight
                 width: height
 
                 hintText: qsTr("Clear scrollback")
@@ -240,7 +247,7 @@ FocusScope {
             }
 
             Common.SgIconButton {
-                height: buttonRow.iconHeight
+                height: toolButtonRow.iconHeight
                 width: height
 
                 hintText: qsTr("Scroll to the bottom")
@@ -252,7 +259,19 @@ FocusScope {
             }
 
             Common.SgIconButton {
-                height: buttonRow.iconHeight
+                height: toolButtonRow.iconHeight
+                width: height
+
+                hintText: condensedMode ? qsTr("Expand all commands") : qsTr("Collapse all commands")
+                source: condensedMode ? "qrc:/images/list-expand.svg" : "qrc:/images/list-collapse.svg"
+                onClicked: {
+                    condensedMode = ! condensedMode
+                    scrollbackModel.setCondensedToAll(condensedMode)
+                }
+            }
+
+            Common.SgIconButton {
+                height: toolButtonRow.iconHeight
                 width: height
 
                 hintText: qsTr("Export to file")
@@ -266,7 +285,7 @@ FocusScope {
         Common.SgTextField {
             id: cmdInput
             anchors {
-                top: buttonRow.bottom
+                top: toolButtonRow.bottom
                 left: parent.left
                 right: btnSend.left
                 margins: 6
@@ -338,6 +357,7 @@ FocusScope {
 
     function appendCommand(command) {
         //add it to scrollback
+        command["condensed"] = condensedMode
         scrollbackModel.append(command)
         if (scrollbackModel.count > maxCommandsInScrollback) {
             scrollbackModel.remove(0)
