@@ -14,6 +14,9 @@ Dialog {
     property url headerIcon: ""
     property bool hasTitle: true
 
+    x: parent ? Math.round((parent.width - width) / 2) : 0
+    y: parent ? Math.round((parent.height - height) / 2) : 0
+
     header: Item {
         implicitHeight: hasTitle > 0 ? label.paintedHeight + 16 : 0
 
@@ -40,7 +43,7 @@ Dialog {
         SgText {
             id: label
             anchors {
-                left: headerIcon ? icon.right : parent.left
+                left: headerIcon && headerIcon.toString() ? icon.right : parent.left
                 leftMargin: headerIcon ? 5 : 12
                 verticalCenter: parent.verticalCenter
             }
@@ -51,7 +54,6 @@ Dialog {
             hasAlternativeColor: true
         }
     }
-
 
     background: Item {
         RectangularGlow {

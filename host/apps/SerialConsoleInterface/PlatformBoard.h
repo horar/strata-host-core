@@ -28,7 +28,8 @@ public:
     std::string getBootloaderVersion() const;
     std::string getApplicationVersion() const;
 
-    bool isPlatformConnected() const { return (state_ == State::eConnected); }
+    bool isPlatformConnected() const;
+    bool isPlatformActive() const;
 
 private:
     ProcessResult parseInitialMsg(const std::string& msg, bool& wasNotification);
@@ -38,7 +39,7 @@ private:
         eInit = 0,
         eWaitingForFirmwareInfo,
         eWaitingForPlatformInfo,
-        eConnected,
+        eActive,
     };
 
     std::string platformId_;

@@ -5,8 +5,9 @@ Window {
     visible: true
     height: 600
     width: 800
-    minimumWidth: 640
-    minimumHeight: 480
+    minimumHeight: 600
+    minimumWidth: 800
+
     title: qsTr("Serial Console Interface")
 
     Rectangle {

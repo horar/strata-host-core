@@ -1,0 +1,13 @@
+<RCC>
+    <qresource prefix="/tech/strata/sgwidgets/SGHelpTour">
+        <file>qmldir</file>
+        <file>images/corner-fade.png</file>
+        <file>images/side-fade.png</file>
+        <file>images/top-fade.png</file>
+        <file>SGPeekThroughOverlay.qml</file>
+        <file>help_layout_manager.js</file>
+        <file>SGTourControl.qml</file>
+        <file>navigation_control.js</file>
+        <file>icons/times.svg</file>
+    </qresource>
+</RCC>

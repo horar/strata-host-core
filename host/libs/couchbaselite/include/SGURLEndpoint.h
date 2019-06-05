@@ -6,7 +6,7 @@
 * $Date: 11/9/18
 * @brief Simple URI interface
 ******************************************************************************
-* @copyright Copyright 2018 On Semiconductor
+* @copyright Copyright 2018 ON Semiconductor
 */
 #ifndef SGURLENDPOINT_H
 #define SGURLENDPOINT_H

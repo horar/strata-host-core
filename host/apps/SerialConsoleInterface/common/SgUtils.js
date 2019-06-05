@@ -19,13 +19,7 @@ function createDialogFromComponent(parent, component, properties) {
 
     properties["destroyOnClose"] = true
 
-    var obj = component.createObject(parent, properties)
-    var pos = centreObject(obj, parent)
-
-    obj.x = pos.x
-    obj.y = pos.y
-
-    return obj
+    return component.createObject(parent, properties)
 }
 
 function showMessageDialog(parent, type, title, text, standardButtons, callbackAccepted, callbackRejected) {
@@ -51,13 +45,35 @@ function showMessageDialog(parent, type, title, text, standardButtons, callbackA
     return dialog
 }
 
-function centreObject(object, parent) {
-    var pos = {}
+function showConfirmationDialog(
+    parent,
+    title,
+    text,
+    acceptButtonText,
+    callbackAccepted,
+    rejectButtonText,
+    callbackRejected) {
 
-    pos["x"] = Math.round((parent.width - object.width) / 2)
-    pos["y"] = Math.round((parent.height - object.height) / 2)
+    var properties = {
+        "title": title,
+        "text": text,
+        "acceptButtonText": acceptButtonText,
+        "rejectButtonText": rejectButtonText,
+    }
 
-    return pos
+    var dialog = createDialog(parent, "SgConfirmationDialog.qml", properties)
+
+    if (callbackAccepted) {
+        dialog.accepted.connect(callbackAccepted)
+    }
+
+    if (callbackRejected) {
+        dialog.rejected.connect(callbackRejected)
+    }
+
+    dialog.open()
+
+    return dialog
 }
 
 function generateHtmlUnorderedList(list) {

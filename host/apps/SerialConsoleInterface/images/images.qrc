@@ -17,5 +17,10 @@
         <file>exclamation.svg</file>
         <file>exclamation-triangle.svg</file>
         <file>times-circle.svg</file>
+        <file>file-export.svg</file>
+        <file>side-pane-right-close.svg</file>
+        <file>side-pane-right-open.svg</file>
+        <file>list-expand.svg</file>
+        <file>list-collapse.svg</file>
     </qresource>
 </RCC>

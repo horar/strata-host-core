@@ -1,0 +1,4 @@
+module tech.strata.sgwidgets.SGCapacityBar
+
+SGCapacityBar 1.0 SGCapacityBar.qml
+SGCapacityBarElement 1.0 SGCapacityBarElement.qml

@@ -6,7 +6,7 @@
 * $Date: 11/6/18
 * @brief Replicator API
 ******************************************************************************
-* @copyright Copyright 2018 On Semiconductor
+* @copyright Copyright 2018 ON Semiconductor
 */
 #ifndef SGREPLICATOR_H
 #define SGREPLICATOR_H

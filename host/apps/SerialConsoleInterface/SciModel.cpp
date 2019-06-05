@@ -1,15 +1,10 @@
 #include "SciModel.h"
 #include "PlatformBoard.h"
 #include "ProgramDeviceTask.h"
-
+#include "logging/LoggingQtCategories.h"
 #include <PlatformConnection.h>
 
-#include <QDebug>
 #include <QThreadPool>
-#include <QFileInfo>
-#include <QUrl>
-
-
 
 SciModel::SciModel(QObject *parent)
     : QObject(parent)
@@ -23,9 +18,11 @@ SciModel::~SciModel()
 
 void SciModel::programDevice(const QString &connectionId, const QString &firmwarePath)
 {
-    qDebug() << "SciModel::programDevice()" << connectionId << firmwarePath;
+    qCInfo(logCategorySci) << connectionId << firmwarePath;
+
     spyglass::PlatformConnectionShPtr connection = boardController_.getConnection(connectionId);
     if (connection == nullptr) {
+        qCWarning(logCategorySci) << "unknown connection id" << connectionId;
         notify(connectionId, "Connection Id not valid.");
         programDeviceDone(connectionId, false);
         return;
@@ -41,20 +38,14 @@ void SciModel::programDevice(const QString &connectionId, const QString &firmwar
     QThreadPool::globalInstance()->start(task);
 }
 
-QString SciModel::urlToPath(const QUrl &url)
-{
-    return QUrl(url).path();
-}
-
-bool SciModel::isFile(const QString &file)
-{
-    QFileInfo info(file);
-    return info.isFile();
-}
-
 BoardsController *SciModel::boardController()
 {
     return &boardController_;
+}
+
+SgJLinkConnector *SciModel::jLinkConnector()
+{
+    return &jLinkConnector_;
 }
 
 void SciModel::programDeviceDoneHandler(const QString& connectionId, bool status)

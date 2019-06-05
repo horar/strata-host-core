@@ -85,3 +85,37 @@ if (APPLE)
         )
     endif()
 endif()
+
+#
+# googletest
+#
+ExternalProject_Add(libgtest
+    INSTALL_DIR ${CMAKE_BINARY_DIR}/3rd_party
+    SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/googletest
+
+    CMAKE_ARGS ${CMAKE_ARGS}
+        -Dgtest_force_shared_crt=YES
+        -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
+        -DCMAKE_VERBOSE_MAKEFILE=${CMAKE_VERBOSE_MAKEFILE}
+        -DCMAKE_OSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET}
+        -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
+)
+
+add_library(gtest::gtest STATIC IMPORTED GLOBAL)
+set_target_properties(gtest::gtest PROPERTIES
+    INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_BINARY_DIR}/3rd_party/include"
+    IMPORTED_LOCATION  "${CMAKE_BINARY_DIR}/3rd_party/lib/${CMAKE_STATIC_LIBRARY_PREFIX}gtest${CMAKE_STATIC_LIBRARY_SUFFIX}"
+    IMPORTED_LOCATION_DEBUG  "${CMAKE_BINARY_DIR}/3rd_party/lib/${CMAKE_STATIC_LIBRARY_PREFIX}gtestd${CMAKE_STATIC_LIBRARY_SUFFIX}"
+)
+
+add_dependencies(gtest::gtest DEPENDS libgtest)
+
+
+add_library(gtest::gmock STATIC IMPORTED GLOBAL)
+set_target_properties(gtest::gmock PROPERTIES
+    INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_BINARY_DIR}/3rd_party/include"
+    IMPORTED_LOCATION  "${CMAKE_BINARY_DIR}/3rd_party/lib/${CMAKE_STATIC_LIBRARY_PREFIX}gmock${CMAKE_STATIC_LIBRARY_SUFFIX}"
+    IMPORTED_LOCATION_DEBUG  "${CMAKE_BINARY_DIR}/3rd_party/lib/${CMAKE_STATIC_LIBRARY_PREFIX}gmockd${CMAKE_STATIC_LIBRARY_SUFFIX}"
+)
+
+add_dependencies(gtest::gmock DEPENDS libgtest)

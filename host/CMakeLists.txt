@@ -45,10 +45,13 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
 
 add_subdirectory(extern)
 
+add_subdirectory(components)
+
 add_subdirectory(libs)
 add_subdirectory(apps)
 #add_subdirectory(test)
 add_subdirectory(utils)
 add_subdirectory(research_spikes)
 
+message(STATUS "=============================================================================")
 feature_summary(WHAT ALL)

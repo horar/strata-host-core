@@ -1,0 +1,9 @@
+<RCC>
+    <qresource prefix="/tech/strata/sgwidgets/SGTelestrator">
+        <file>qmldir</file>
+        <file>SGColorChip.qml</file>
+        <file>SGLineThickness.qml</file>
+        <file>SGTelestrator.qml</file>
+        <file>Server.qml</file>
+    </qresource>
+</RCC>

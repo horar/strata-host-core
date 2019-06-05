@@ -7,7 +7,7 @@
 * @brief Abstract class for connector objects
 ******************************************************************************
 
-* @copyright Copyright 2018 On Semiconductor
+* @copyright Copyright 2018 ON Semiconductor
 */
 
 /**
@@ -83,53 +83,67 @@
  * This method is used to support the eventing systems like libevent.
  *
  * 2) Serial open() returns true only on reading the platform uuid from platform (HACK)
- *		In order to automatically detect the serial platform board, libconnectors uses libserialport to
- * enumerate the ports. Then it asks for platform UUID from the list. i.e) after opening a port from
- * the list, libconnectors send the "platform id request message" to the platform. Then it reads twice
- * from the platform with 50m sec delay in a loop with 5 iterations(This iteration is used because some
- * platform may take some time to load the software stack after power (for example: USB-PD-Load board)).
+ *		In order to automatically detect the serial platform board, libconnectors uses libserialport
+ *to enumerate the ports. Then it asks for platform UUID from the list. i.e) after opening a port
+ *from the list, libconnectors send the "platform id request message" to the platform. Then it reads
+ *twice from the platform with 50m sec delay in a loop with 5 iterations(This iteration is used
+ *because some platform may take some time to load the software stack after power (for example:
+ *USB-PD-Load board)).
  *
  * 3) libserialport sp_wait not working in windows (Techinal Hardship/HACK)
  *		sp_wait() waits for completion of event (receive) and returns '0' or SP_OK on success.
  * It uses WaitForMultipleObjects() in windows. But in windows, sp_wait always returns '0' or
- * SP_OK instead of waiting for the read event. This increases the CPU usage in windows since we use a thread
- * to read from platform. Currently libserialport has a workaround by sleeping for 100ms before trying to read
- * from the serial port.
+ * SP_OK instead of waiting for the read event. This increases the CPU usage in windows since we use
+ *a thread to read from platform. Currently libserialport has a workaround by sleeping for 100ms
+ *before trying to read from the serial port.
  *
- * 4) ST-Eval board disconnect not detected by libserialport read in windows (Techinal Hardship/HACK)
- *		Currently the platform disconnect is detected by the return value of read(). If read returns a negative
- * number, then the serial device is no more connected. But ST-EVAL boards (ST32L476VG in particular) on disconnecting
- * returns '0'. This behaviour hinders our platform disconnect detection. Currently the work around for this
- * specific issue is writing to the platform after 10 consecutive '0' return from read(). This helps
- * in detecting the ST-board disconnect. This issue is not noticed in other boards (Orion USB-PD, STM-USB-PD,
- * STM-USB_LOAD_BOARD) and only specific to VORTEX_FOUNTAIN project that uses ST Eval board. This logic is
- * enabled/disabled by setting ST_EVAL_BOARD_SUPPORT_ENABLED to 1/0 respectively in SerialConnector.cc
+ * 4) ST-Eval board disconnect not detected by libserialport read in windows (Techinal
+ *Hardship/HACK) Currently the platform disconnect is detected by the return value of read(). If
+ *read returns a negative number, then the serial device is no more connected. But ST-EVAL boards
+ *(ST32L476VG in particular) on disconnecting returns '0'. This behaviour hinders our platform
+ *disconnect detection. Currently the work around for this specific issue is writing to the platform
+ *after 10 consecutive '0' return from read(). This helps in detecting the ST-board disconnect. This
+ *issue is not noticed in other boards (Orion USB-PD, STM-USB-PD, STM-USB_LOAD_BOARD) and only
+ *specific to VORTEX_FOUNTAIN project that uses ST Eval board. This logic is enabled/disabled by
+ *setting ST_EVAL_BOARD_SUPPORT_ENABLED to 1/0 respectively in SerialConnector.cc
  *
  * 5) Serial messaged overlap in windows (Known Bug/HACK)
- *		In windows serial read some times produces overlapping of two messages when platform writes data at
- * high rate (10HZ). One example of the overlapped message read in windows is,
+ *		In windows serial read some times produces overlapping of two messages when platform writes
+ *data at high rate (10HZ). One example of the overlapped message read in windows is,
  *
  * {"notification":{"value":"pi_stats","payload":{"speed_target":1500,"current_speed":1500{"notification":{"value":
  * "pi_stats","payload":{"speed_target":1500,"current_speed":1520,"error":-20,"sum":-4.00e-4,"duty_now":0.19,"mode":"manual"}}}
  *
  * The above example contains two messages overlapped over each other. This overlapping happens
- * at a sleep of 200ms. After reducing the sleep time to 50ms, there is no overlapping. The average CPU usage in windows 7
- * four core operating at 2.3GHz is 3.
+ * at a sleep of 200ms. After reducing the sleep time to 50ms, there is no overlapping. The average
+ *CPU usage in windows 7 four core operating at 2.3GHz is 3.
  *
  */
 
 #ifndef CONNECTOR_H__
 #define CONNECTOR_H__
 
-#include <string>
 #include <iostream>
 #include <mutex>
+#include <string>
 
+// console prints
+// DEBUG is used for showing the debug print messages on console.
+// 0 - turn off debug and 1 - turn on debug
+#define CONNECTOR_DEBUG 0
+#if (CONNECTOR_DEBUG == 1)
+#define CONNECTOR_DEBUG_LOG(fmt, ...)      \
+    do {                                   \
+        fprintf(stderr, fmt, __VA_ARGS__); \
+    } while (0)
+#else
+#define CONNECTOR_DEBUG_LOG(lvl, fmt, ...)
+#endif
 
-class Connector {
+class Connector
+{
 public:
     Connector() = default;
-    Connector(const std::string&) {};   //TODO: why is the argument not used ?
     virtual ~Connector() = default;
 
     virtual bool open(const std::string&) = 0;
@@ -138,25 +152,25 @@ public:
     // non-blocking calls
 
     virtual bool send(const std::string& message) = 0;
-    virtual bool sendSmallChunks(const std::string& message, const unsigned int chunk_limit) = 0;
     virtual bool read(std::string& notification) = 0;
-
 
     virtual int getFileDescriptor() = 0;
 
+    /**
+     * @brief addSubscriber - a hack due to ZmqPublisherConnector class
+     * @param dealerID
+     */
+    virtual void addSubscriber(const std::string& dealerID);
+
     void setDealerID(const std::string& id);
-    std::string getDealerID() const { return dealer_id_; }
-    std::string getPlatformUUID() const { return platform_uuid_; }
-    bool isSpyglassPlatform() const { return spyglass_platform_connected_; }
+    std::string getDealerID() const;
+    std::string getPlatformUUID() const;
+    bool isSpyglassPlatform() const;
     void setConnectionState(bool connection_state);
-    bool isConnected() const { return connection_state_; }
+    bool isConnected() const;
     void setPlatformUUID(const std::string& id);
 
-    friend std::ostream& operator<< (std::ostream& stream, const Connector & c) {
-        std::cout << "Connector: " << std::endl;
-        std::cout << "  server: " << c.server_ << std::endl;
-        return stream;
-    }
+    friend std::ostream& operator<<(std::ostream& stream, const Connector& c);
 
 protected:
     void setPlatformConnected(bool state);
@@ -169,12 +183,16 @@ private:
     std::string platform_uuid_;
     std::string server_;
 
-	bool connection_state_ = false;
-    bool spyglass_platform_connected_ = false;	// flag used in hcs for checking if platform is available
+    bool connection_state_ = false;
+    bool spyglass_platform_connected_ =
+        false;  // flag used in hcs for checking if platform is available
 };
 
-namespace ConnectorFactory {
-		Connector* getConnector(const std::string& type);
-};
+namespace ConnectorFactory
+{
+enum class CONNECTOR_TYPE { SERIAL, ROUTER, DEALER, PUBLISHER, SUBSCRIBER, REQUEST, RESPONSE };
+
+Connector* getConnector(const CONNECTOR_TYPE type);
+};  // namespace ConnectorFactory
 
 #endif
