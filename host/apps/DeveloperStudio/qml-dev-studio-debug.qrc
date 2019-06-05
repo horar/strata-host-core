@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/statusbar-partial-views/">
+        <file alias="SGDebugBar.qml">statusbar-partial-views/SGDebugBar.qml</file>
+    </qresource>
+</RCC>
