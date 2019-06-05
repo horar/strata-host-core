@@ -9,10 +9,10 @@ Button {
     property string pinFunction: ""
     property int tabIndex: 0
     property string portName: "a" //default port is set to "a"
-    property int smallFontSize: (Qt.platform.os === "osx") ? 12  : 10;
-    property int mediumFontSize: (Qt.platform.os === "osx") ? 15  : 12;
-    property int largeFontSize: (Qt.platform.os === "osx") ? 24  : 20;
-    property int extraLargeFontSize: (Qt.platform.os === "osx") ? 36  : 24;
+    property int smallFontSize: (Qt.platform.os === "osx") ? 12  : 10
+    property int mediumFontSize: (Qt.platform.os === "osx") ? 15  : 12
+    property int largeFontSize: (Qt.platform.os === "osx") ? 24  : 20
+    property int extraLargeFontSize: (Qt.platform.os === "osx") ? 36  : 24
     checkable: true
     checked:true
 

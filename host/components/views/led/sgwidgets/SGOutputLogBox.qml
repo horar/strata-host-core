@@ -74,7 +74,7 @@ Rectangle {
                 selectByKeyboard: true
                 font {
                     family: inconsolata.name // inconsolata is monospaced and has clear chars for O/0 etc
-                    pixelSize: (Qt.platform.os === "osx") ? 12 : 10;
+                    pixelSize: (Qt.platform.os === "osx") ? 12 : 10
                 }
                 wrapMode: TextEdit.Wrap
                 textFormat: Text.RichText
