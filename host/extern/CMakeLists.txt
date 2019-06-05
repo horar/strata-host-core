@@ -128,7 +128,7 @@ add_dependencies(gtest::gmock DEPENDS libgtest)
 # couchbase-lite-core
 #
 if(NOT WIN32)
-	ExternalProject_Add(libcblitecore
+	ExternalProject_Add(${CMAKE_STATIC_LIBRARY_PREFIX}cblitecore
 		INSTALL_DIR ${CMAKE_BINARY_DIR}/3rd_party
 		SOURCE_DIR ${SOURCE_DIR_EXTERN}/couchbase-lite-core
 		#GIT_REPOSITORY https://github.com/couchbase/couchbase-lite-core.git
@@ -154,7 +154,7 @@ if(NOT WIN32)
 		COMMAND ${CMAKE_COMMAND} -E copy_if_different REST/${CMAKE_STATIC_LIBRARY_PREFIX}LiteCoreREST_Static${CMAKE_STATIC_LIBRARY_SUFFIX} <INSTALL_DIR>/lib
 	)
 else()
-	ExternalProject_Add(libcblitecore
+	ExternalProject_Add(${CMAKE_STATIC_LIBRARY_PREFIX}cblitecore
 		INSTALL_DIR ${CMAKE_BINARY_DIR}/3rd_party
 		SOURCE_DIR ${SOURCE_DIR_EXTERN}/couchbase-lite-core
 		#GIT_REPOSITORY https://github.com/couchbase/couchbase-lite-core.git
