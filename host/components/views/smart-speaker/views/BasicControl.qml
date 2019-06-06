@@ -3,8 +3,8 @@ import QtGraphicalEffects 1.0
 import QtQuick.Dialogs 1.3
 import QtQuick.Controls 2.3
 import QtQuick.Layouts 1.3
-import "qrc:/views/smart-speaker/sgwidgets"
-import "qrc:/views/smart-speaker/views/basic-partial-views"
+//import "qrc:/views/smart-speaker/sgwidgets"
+import "../views/basic-partial-views"
 
 Rectangle {
     id: root
@@ -47,13 +47,85 @@ Rectangle {
 
 
         Text{
-            anchors.centerIn: parent
+            id:boardName
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.top:parent.top
             text:"smart speaker"
             color:"white"
-            font.pixelSize: 150
+            font.pixelSize: 75
         }
 
+        ParametricEQView{
+            id:eqView
+            height:500
+            width:400
+            anchors.left:parent.left
+            anchors.leftMargin:50
+            anchors.top:boardName.bottom
+            anchors.topMargin:50
 
+        }
+        CrossoverFrequencyView{
+            id:crossoverView
+            height:500
+            width:100
+            anchors.left: eqView.right
+            anchors.leftMargin: 20
+            anchors.verticalCenter: eqView.verticalCenter
+
+            crossoverFrequency:200
+        }
+
+        MixerView{
+            id:mixerView
+            height:500
+            width:600
+            anchors.left:crossoverView.right
+            anchors.leftMargin:20
+            anchors.verticalCenter: eqView.verticalCenter
+        }
+
+        //bottom row
+
+        BluetoothView{
+            id:bluetoothView
+            height:200
+            width:200
+            anchors.left: parent.left
+            anchors.leftMargin: 50
+            anchors.top: eqView.bottom
+            anchors.topMargin:50
+        }
+
+        WirelessView{
+            id:wirelessView
+            height:200
+            width:200
+            anchors.left: bluetoothView.right
+            anchors.leftMargin: 50
+            anchors.verticalCenter: bluetoothView.verticalCenter
+
+            networkName:"network"
+        }
+
+        PortInfo{
+            id:portInfoView
+            height:200
+            anchors.left: wirelessView.right
+            anchors.leftMargin: 50
+            anchors.verticalCenter: bluetoothView.verticalCenter
+        }
+
+        InputVoltageView{
+            id:inputVoltageView
+            height:200
+            width:200
+            anchors.left: portInfoView.right
+            anchors.leftMargin: 50
+            anchors.verticalCenter: bluetoothView.verticalCenter
+
+            inputVoltage:"20"
+        }
     }
 
 }
