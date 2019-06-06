@@ -1,7 +1,5 @@
 #include "ProgramDeviceTask.h"
 
-#include <QDebug>
-
 ProgramDeviceTask::ProgramDeviceTask(spyglass::PlatformConnectionShPtr connection, const QString &firmwarePath)
     : connection_(connection), firmwarePath_(firmwarePath)
 {

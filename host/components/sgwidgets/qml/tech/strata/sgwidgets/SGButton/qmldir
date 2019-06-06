@@ -1,0 +1,4 @@
+module tech.strata.sgwidgets.SGButton
+typeinfo plugins.qmltypes
+
+SGButton 1.0 SGButton.qml

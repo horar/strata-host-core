@@ -23,6 +23,7 @@ public:
     Q_INVOKABLE void sendCommand(QString connection_id, QString cmd);
     Q_INVOKABLE QVariantMap getConnectionInfo(const QString &connectionId);
     Q_INVOKABLE void reconnect(const QString &connectionId);
+    Q_INVOKABLE bool disconnect(const QString &connectionId);
 
     QStringList connectionIds() const;
     spyglass::PlatformConnectionShPtr getConnection(const QString &connectionId);

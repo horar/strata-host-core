@@ -6,6 +6,7 @@ import tech.strata.fonts 1.0 as StrataFonts
 import QtQuick.Dialogs 1.3
 import "./common/SgUtils.js" as SgUtils
 import tech.strata.utils 1.0
+import tech.strata.logger 1.0
 
 FocusScope {
     id: platformDelegate
@@ -14,6 +15,7 @@ FocusScope {
     property int maxCommandsInHistory: 20
     property int maxCommandsInScrollback: 200
     property variant rootItem
+    property bool condensedMode: false
 
     signal sendCommandRequested(string message)
 
@@ -23,6 +25,12 @@ FocusScope {
         onRowsInserted: {
             if (scrollbackView.atYEnd) {
                 scrollbackViewAtEndTimer.restart()
+            }
+        }
+
+        function setCondensedToAll(condensed) {
+            for(var i = 0; i < count; ++i) {
+                setProperty(i, "condensed", condensed)
             }
         }
     }
@@ -100,10 +108,8 @@ FocusScope {
                     visible: model.type === "query"
                 }
 
-                Item {
-                    id: header
-                    width: headerRow.width
-                    height: headerRow.height
+                Common.SgText {
+                    id: timeText
                     anchors {
                         top: parent.top
                         topMargin: 1
@@ -111,34 +117,33 @@ FocusScope {
                         leftMargin: 1
                     }
 
-                    Row {
-                        id: headerRow
-                        spacing: 8
+                    text: {
+                        var date = new Date(model.timestamp)
+                        return date.toLocaleTimeString(Qt.locale(), "hh:mm:ss.zzz")
+                    }
 
-                        property int iconSize: 16
+                    fontSizeMultiplier: 1.1
+                    font.family: StrataFonts.Fonts.inconsolata
+                    color: cmdDelegate.helperTextColor
+                }
 
-                        Common.SgText {
-                            id: timeText
-                            anchors {
-                                verticalCenter: parent.verticalCenter
-                            }
+                Row {
+                    id: buttonRow
+                    anchors {
+                        left: timeText.right
+                        leftMargin: 2
+                        verticalCenter: timeText.verticalCenter
+                    }
 
-                            text: {
-                                var date = new Date(model.timestamp)
-                                return date.toLocaleTimeString(Qt.locale(), "hh:mm:ss.zzz")
-                            }
+                    spacing: 2
+                    property int iconSize: timeText.font.pixelSize
 
-                            fontSizeMultiplier: 1.1
-                            font.family: StrataFonts.Fonts.inconsolata
-                            color: cmdDelegate.helperTextColor
-                        }
+                    Item {
+                        height: buttonRow.iconSize
+                        width: buttonRow.iconSize
 
                         Common.SgIconButton {
-                            anchors {
-                                verticalCenter: parent.verticalCenter
-                            }
-                            height: timeText.font.pointSize
-                            width: height
+                            anchors.fill: parent
 
                             color: cmdDelegate.helperTextColor
                             visible: model.type === "query"
@@ -149,28 +154,22 @@ FocusScope {
                             }
                         }
                     }
-                }
 
-                Item {
-                    id: leftColumn
-                    width: condenseButton.width
-                    height: condenseButton.height
-                    anchors {
-                        left: header.left
-                        top: cmdText.top
-                    }
+                    Item {
+                        height: buttonRow.iconSize
+                        width: buttonRow.iconSize
 
-                    Common.SgIconButton {
-                        id: condenseButton
-                        height: cmdText.font.pointSize
-                        width: height
+                        Common.SgIconButton {
+                            id: condenseButton
+                            anchors.fill: parent
 
-                        color: cmdDelegate.helperTextColor
-                        hintText: qsTr("Condensed mode")
-                        source: model.condensed ? "qrc:/images/chevron-right.svg" : "qrc:/images/chevron-down.svg"
-                        onClicked: {
-                            var item = scrollbackModel.get(index)
-                            scrollbackModel.setProperty(index, "condensed", !item.condensed)
+                            color: cmdDelegate.helperTextColor
+                            hintText: qsTr("Condensed mode")
+                            source: model.condensed ? "qrc:/images/chevron-right.svg" : "qrc:/images/chevron-down.svg"
+                            onClicked: {
+                                var item = scrollbackModel.get(index)
+                                scrollbackModel.setProperty(index, "condensed", !item.condensed)
+                            }
                         }
                     }
                 }
@@ -178,9 +177,9 @@ FocusScope {
                 TextEdit {
                     id: cmdText
                     anchors {
-                        top: header.bottom
-                        left: leftColumn.right
-                        leftMargin: 2
+                        top: timeText.top
+                        left: buttonRow.right
+                        leftMargin: 1
                         right: parent.right
                         rightMargin: 2
                     }
@@ -226,18 +225,18 @@ FocusScope {
         }
 
         Row {
-            id: buttonRow
+            id: toolButtonRow
             anchors {
                 top: parent.top
                 topMargin: 6
                 left: cmdInput.left
             }
 
-            property int iconHeight: 20
+            property int iconHeight: 24
             spacing: 6
 
             Common.SgIconButton {
-                height: buttonRow.iconHeight
+                height: toolButtonRow.iconHeight
                 width: height
 
                 hintText: qsTr("Clear scrollback")
@@ -248,7 +247,7 @@ FocusScope {
             }
 
             Common.SgIconButton {
-                height: buttonRow.iconHeight
+                height: toolButtonRow.iconHeight
                 width: height
 
                 hintText: qsTr("Scroll to the bottom")
@@ -260,7 +259,19 @@ FocusScope {
             }
 
             Common.SgIconButton {
-                height: buttonRow.iconHeight
+                height: toolButtonRow.iconHeight
+                width: height
+
+                hintText: condensedMode ? qsTr("Expand all commands") : qsTr("Collapse all commands")
+                source: condensedMode ? "qrc:/images/list-expand.svg" : "qrc:/images/list-collapse.svg"
+                onClicked: {
+                    condensedMode = ! condensedMode
+                    scrollbackModel.setCondensedToAll(condensedMode)
+                }
+            }
+
+            Common.SgIconButton {
+                height: toolButtonRow.iconHeight
                 width: height
 
                 hintText: qsTr("Export to file")
@@ -274,7 +285,7 @@ FocusScope {
         Common.SgTextField {
             id: cmdInput
             anchors {
-                top: buttonRow.bottom
+                top: toolButtonRow.bottom
                 left: parent.left
                 right: btnSend.left
                 margins: 6
@@ -346,6 +357,7 @@ FocusScope {
 
     function appendCommand(command) {
         //add it to scrollback
+        command["condensed"] = condensedMode
         scrollbackModel.append(command)
         if (scrollbackModel.count > maxCommandsInScrollback) {
             scrollbackModel.remove(0)
@@ -393,21 +405,22 @@ FocusScope {
 
     function showFileExportDialog() {
         var dialog = SgUtils.createDialogFromComponent(platformDelegate, fileDialogComponent)
-
         dialog.accepted.connect(function() {
             var result = SgUtilsCpp.atomicWrite(
                         SgUtilsCpp.urlToPath(dialog.fileUrl),
                         getTextForExport())
 
             if (result === false) {
+                console.error(LoggerModule.Logger.sciCategory, "failed to export content into", dialog.fileUrl)
+
                 SgUtils.showMessageDialog(
                             rootItem,
                             Common.SgMessageDialog.Error,
                             "Export Failed",
                             "Writting into selected file failed.")
+            } else {
+                console.log(Logger.sciCategory, "content exported into", dialog.fileUrl)
             }
-
-            console.log("showFileExportDialog() atomicWrite()", dialog.fileUrl, result)
 
             dialog.destroy()})
 
@@ -429,8 +442,8 @@ FocusScope {
             return message
         }
 
-        if (model.condensed) {
-            JSON.stringify(messageObj)
+        if (condensed) {
+            return JSON.stringify(messageObj)
         }
 
         return JSON.stringify(messageObj, undefined, 4)

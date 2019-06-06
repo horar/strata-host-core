@@ -68,9 +68,9 @@ private:
     int serial_wait_timeout_;
 
 #ifdef _WIN32
-    zmq::context_t* context_;
-    zmq::socket_t* write_socket_;  // After serial port read, writes to this socket
-    zmq::socket_t* read_socket_;
+    std::unique_ptr<zmq::context_t> context_;
+    std::unique_ptr<zmq::socket_t> write_socket_;  // After serial port read, writes to this socket
+    std::unique_ptr<zmq::socket_t> read_socket_;
 #endif
 };
 
