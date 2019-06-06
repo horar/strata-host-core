@@ -1,6 +1,7 @@
 include(ExternalProject)
 
 file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/3rd_party/include)
+file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/3rd_party/lib)
 
 # root of all 3rd party project (git submodules)
 set(SOURCE_DIR_EXTERN ${CMAKE_SOURCE_DIR}/../extern)
