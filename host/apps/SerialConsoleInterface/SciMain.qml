@@ -335,16 +335,14 @@ Item {
             padding: 0
             hasTitle: false
 
-            Column {
-                ProgramDeviceWizard {
-                    width: root.width - 20
-                    height: root.height - 20
+            contentItem: ProgramDeviceWizard {
+                implicitWidth: root.width - 20
+                implicitHeight: root.height - 20
 
-                    onCancelRequested: {
-                        dialog.close()
-                        programDeviceDialogOpened = false
-                        refrestDeviceInfo()
-                    }
+                onCancelRequested: {
+                    dialog.close()
+                    programDeviceDialogOpened = false
+                    refrestDeviceInfo()
                 }
             }
         }
