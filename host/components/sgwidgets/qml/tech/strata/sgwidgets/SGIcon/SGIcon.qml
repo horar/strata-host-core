@@ -8,12 +8,7 @@ import QtGraphicalEffects 1.12
  */
 
 Item {
-    width: image.width
-    height: image.height
-
     property alias iconColor: overlay.color
-    property int iconWidth: image.width
-    property int iconHeight: image.height
 
     property alias asynchronous: image.asynchronous
     property alias autoTransform: image.autoTransform
@@ -36,8 +31,12 @@ Item {
 
     Image {
         id: image
+        width: parent.width
+        height: parent.height
+
         visible: !useOverlay
         fillMode: Image.PreserveAspectFit
+        sourceSize: Qt.size(width, height)
     }
 
     ColorOverlay {
