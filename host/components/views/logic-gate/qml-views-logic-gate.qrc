@@ -5,15 +5,6 @@
         <file>PartOne.qml</file>
         <file>PartTwo.qml</file>
         <file>PlatformInterface.qml</file>
-        <file>content-views/Datasheets.qml</file>
-        <file>content-views/Documents.qml</file>
-        <file>content-views/Downloads.qml</file>
-        <file>content-views/content-widgets/SGAccordion.qml</file>
-        <file>content-views/content-widgets/SGAccordionItem.qml</file>
-        <file>content-views/content-widgets/SGRadioButton.qml</file>
-        <file>content-views/content-widgets/SGRadioButtonContainer.qml</file>
-        <file>content-views/content-widgets/SGSelectorButton.qml</file>
-        <file>content-views/content-widgets/docLoading.gif</file>
         <file>images/nl7sz58/and_nc.png</file>
         <file>images/nl7sz58/buffer.png</file>
         <file>images/nl7sz58/inverter.png</file>
@@ -45,8 +36,6 @@
         <file>sgwidgets/images/sliderHandle.svg</file>
         <file>sgwidgets/images/sliderHandleActive.svg</file>
         <file>sgwidgets/images/sliderValue.svg</file>
-        <file>content-views/content-widgets/angle-right-solid.svg</file>
-        <file>content-views/content-widgets/SGIcon.qml</file>
         <file>images/question-circle-solid.svg</file>
     </qresource>
 </RCC>
