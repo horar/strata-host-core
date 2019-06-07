@@ -4,4 +4,7 @@ project(component-fonts
 )
 
 add_subdirectory(qml)
-add_subdirectory(src)
+
+if(BUILD_EXAMPLES)
+    add_subdirectory(src)
+endif()

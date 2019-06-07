@@ -52,5 +52,6 @@ else()
 	)
 endif()
 
-# FIXME: [LC] broken with 'cblitecore' submodule build
-add_subdirectory(examples)
+if(BUILD_EXAMPLES)
+    add_subdirectory(examples)
+endif()

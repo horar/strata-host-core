@@ -19,6 +19,9 @@ include(FeatureSummary)
 include(CTest)
 include(SetupCompileOptions)
 
+option(BUILD_EXAMPLES "Build project examples" OFF)
+add_feature_info(BUILD_EXAMPLES BUILD_EXAMPLES "Build project examples")
+
 if(APPLE)
     find_program(BREW_PROGRAM brew)
     mark_as_advanced(BREW_PROGRAM)
