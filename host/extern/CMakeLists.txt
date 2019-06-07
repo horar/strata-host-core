@@ -1,3 +1,8 @@
+option(BUILD_DONT_CLEAN_EXTERNAL "Don't clean external project (Makefile only)" OFF)
+add_feature_info(BUILD_DONT_CLEAN_EXTERNAL BUILD_DONT_CLEAN_EXTERNAL "Don't clean external project (Makefile only)")
+set_directory_properties(PROPERTIES CLEAN_NO_CUSTOM ${BUILD_DONT_CLEAN_EXTERNAL})
+
+
 include(ExternalProject)
 
 file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/3rd_party/include)
