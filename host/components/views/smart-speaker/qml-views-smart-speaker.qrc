@@ -36,5 +36,6 @@
         <file>views/basic-partial-views/WirelessBackView.qml</file>
         <file>views/basic-partial-views/WirelessFrontView.qml</file>
         <file>views/basic-partial-views/WirelessView.qml</file>
+        <file>views/images/angle-down-solid.svg</file>
     </qresource>
 </RCC>
