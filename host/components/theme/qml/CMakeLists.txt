@@ -1,4 +1,4 @@
-project(theme
+project(component-theme
     VERSION 0.0.0
     LANGUAGES NONE
 )

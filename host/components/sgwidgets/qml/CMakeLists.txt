@@ -1,4 +1,4 @@
-project(sgwidgets
+project(component-sgwidgets
     VERSION 0.0.0
     LANGUAGES NONE
 )
