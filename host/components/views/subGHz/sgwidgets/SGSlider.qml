@@ -205,7 +205,7 @@ Item {
                 readOnly: false
                 font {
 //                    family: inconsolata.name // inconsolata is monospaced and has clear chars for O/0 etc
-                    pixelSize: (Qt.platform.os === "osx") ? 12 : 10;
+                    pixelSize: (Qt.platform.os === "osx") ? 12 : 10
                 }
                 horizontalAlignment: TextInput.AlignRight
                 validator: realNumberValidator

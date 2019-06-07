@@ -12,10 +12,10 @@ if (APPLE)
 endif()
 
 add_library(${PROJECT_NAME}
-        src/EvEventBase.cpp
-        src/EvEvent.cpp
-        src/EvEventsMgr.cpp
-        )
+	src/EvEventBase.cpp
+	src/EvEvent.cpp
+	src/EvEventsMgr.cpp
+)
 
 if(WIN32)
     target_sources(${PROJECT_NAME}
@@ -32,7 +32,7 @@ target_link_libraries(${PROJECT_NAME}
         )
 
 if (APPLE)
-    target_link_libraries(${PROJECT_NAME} PUBLIC ${IOKIT_LIBRARY} ${FOUNDATION_LIBRARY} )
+    target_link_libraries(${PROJECT_NAME} PUBLIC ${IOKIT_LIBRARY} ${FOUNDATION_LIBRARY})
 endif()
 
 if (WIN32)

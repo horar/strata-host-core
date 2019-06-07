@@ -83,7 +83,7 @@ Rectangle {
                 readOnly: false
                 font {
                   family: "Courier" // Monospaced font for better text width uniformity
-                  pixelSize: (Qt.platform.os === "osx") ? 12 : 10;
+                  pixelSize: (Qt.platform.os === "osx") ? 12 : 10
                 }
                 horizontalAlignment: TextInput.AlignRight
                 validator: realNumberValidation ? realNumberValidator : null
