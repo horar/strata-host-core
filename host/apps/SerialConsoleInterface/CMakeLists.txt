@@ -100,6 +100,7 @@ target_compile_definitions(${PROJECT_NAME}
     PRIVATE QT_DISABLE_DEPRECATED_BEFORE=0x060000
 )
 
+# [LC] update QML mobule import paths for this project here
 list(APPEND QML_DIRS "${CMAKE_CURRENT_SOURCE_DIR}")
 list(APPEND QML_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/logging/qml")
 list(APPEND QML_DIRS ":/")

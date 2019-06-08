@@ -1,0 +1,4 @@
+module tech.strata.sgwidgets.SGHelpTour
+
+SGPeekThroughOverlay 1.0 SGPeekThroughOverlay.qml
+SGTourControl 1.0 SGTourControl.qml

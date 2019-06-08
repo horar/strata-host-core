@@ -223,7 +223,7 @@ Item {
                     width: height
 
                     hasAlternativeColor: true
-                    source: sidePane.shown ? "qrc:/images/chevron-right.svg" : "qrc:/images/chevron-left.svg"
+                    source: sidePane.shown ? "qrc:/images/side-pane-right-close.svg" : "qrc:/images/side-pane-right-open.svg"
                     onClicked: {
                         sidePane.shown = !sidePane.shown
                     }
@@ -335,16 +335,14 @@ Item {
             padding: 0
             hasTitle: false
 
-            Column {
-                ProgramDeviceWizard {
-                    width: root.width - 20
-                    height: root.height - 20
+            contentItem: ProgramDeviceWizard {
+                implicitWidth: root.width - 20
+                implicitHeight: root.height - 20
 
-                    onCancelRequested: {
-                        dialog.close()
-                        programDeviceDialogOpened = false
-                        refrestDeviceInfo()
-                    }
+                onCancelRequested: {
+                    dialog.close()
+                    programDeviceDialogOpened = false
+                    refrestDeviceInfo()
                 }
             }
         }
