@@ -1,5 +1,9 @@
 module tech.strata.sgwidgets
 
+## version 1.0
+SGText 1.0 SGText/SGText_1_0.qml
+
+## version 0.9
 SGAccordion 0.9 SGAccordion/SGAccordion.qml
 SGAccordionItem 0.9 SGAccordion/SGAccordionItem.qml
 SGButton 0.9 SGButton/SGButton.qml
