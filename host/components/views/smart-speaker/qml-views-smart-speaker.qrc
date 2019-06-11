@@ -27,7 +27,6 @@
         <file>views/basic-partial-views/CrossoverFrequencyView.qml</file>
         <file>views/basic-partial-views/InputVoltageView.qml</file>
         <file>views/basic-partial-views/MixerView.qml</file>
-        <file>views/basic-partial-views/ParametricEQView.qml</file>
         <file>views/images/icon-bluetooth.svg</file>
         <file>views/images/icon-wireless.svg</file>
         <file>views/basic-partial-views/BluetoothBackView.qml</file>
@@ -37,5 +36,7 @@
         <file>views/basic-partial-views/WirelessFrontView.qml</file>
         <file>views/basic-partial-views/WirelessView.qml</file>
         <file>views/images/angle-down-solid.svg</file>
+        <file>views/basic-partial-views/ParametricEQBand.qml</file>
+        <file>views/basic-partial-views/ParametricEQView.qml</file>
     </qresource>
 </RCC>
