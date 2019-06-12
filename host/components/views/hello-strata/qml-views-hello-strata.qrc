@@ -1,0 +1,25 @@
+<RCC>
+    <qresource prefix="/views/hello-strata">
+        <file>content-views/content-widgets/angle-right-solid.svg</file>
+        <file>content-views/content-widgets/docLoading.gif</file>
+        <file>content-views/content-widgets/SGSelectorButton.qml</file>
+        <file>content-views/Datasheets.qml</file>
+        <file>content-views/Documents.qml</file>
+        <file>content-views/Downloads.qml</file>
+        <file>control-views/DACAndPWMToLEDControl.qml</file>
+        <file>control-views/HelloStrataControl.qml</file>
+        <file>control-views/HelloStrataControl_TabView.qml</file>
+        <file>control-views/LEDDriverControl.qml</file>
+        <file>control-views/LightSensorControl.qml</file>
+        <file>control-views/MechanicalButtonsToInterruptsControl.qml</file>
+        <file>control-views/PlatformInterface.qml</file>
+        <file>control-views/PotentiometerToADCControl.qml</file>
+        <file>control-views/PWMHeatGeneratorAndTempSensorControl.qml</file>
+        <file>control-views/PWMMotorControlControl.qml</file>
+        <file>control-views/PWMToFiltersControl.qml</file>
+        <file>control-views/question-circle-solid.svg</file>
+        <file>Content.qml</file>
+        <file>Control.qml</file>
+        <file>control-views/thumbnail-view-icon.svg</file>
+    </qresource>
+</RCC>
