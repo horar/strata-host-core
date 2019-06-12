@@ -1,0 +1,4 @@
+module tech.strata.sgwidgets.SGRadioButton
+
+SGRadioButton 1.0 SGRadioButton.qml
+SGRadioButtonContainer 1.0 SGRadioButtonContainer.qml

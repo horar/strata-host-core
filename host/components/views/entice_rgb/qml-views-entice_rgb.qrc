@@ -1,0 +1,11 @@
+<RCC>
+    <qresource prefix="/views/entice_rgb">
+        <file>Content.qml</file>
+        <file>Control.qml</file>
+        <file>PlatformInterface.qml</file>
+        <file>sgwidgets/SGHueSlider.qml</file>
+        <file>sgwidgets/images/sliderHandle.svg</file>
+        <file>sgwidgets/images/sliderHandleActive.svg</file>
+        <file>sgwidgets/images/sliderValue.svg</file>
+    </qresource>
+</RCC>

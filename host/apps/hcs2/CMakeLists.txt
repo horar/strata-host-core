@@ -81,9 +81,10 @@ target_link_libraries(${PROJECT_NAME}
     PRIVATE connector libBase64 couchbase-lite-cpp sgwget
     PRIVATE ${LIBEVENT2_LIBRARIES}
 )
-
-if (WIN32)
-    target_link_libraries(${PROJECT_NAME} PRIVATE Setupapi.lib Ws2_32.lib )
+if(WIN32)
+    target_link_libraries(${PROJECT_NAME}
+        PRIVATE Setupapi.lib Ws2_32.lib
+	)
 endif()
 
 if (APPLE)
@@ -91,3 +92,9 @@ if (APPLE)
         PRIVATE ${FOUNDATION_LIBRARY} ${IOKIT_LIBRARY}
     )
 endif()
+
+set_target_properties(${PROJECT_NAME} PROPERTIES
+        OUTPUT_NAME "hcs"
+        )
+
+

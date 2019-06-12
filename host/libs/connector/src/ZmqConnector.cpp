@@ -30,17 +30,17 @@ bool ZmqConnector::close()
     return true;
 }
 
-int ZmqConnector::getFileDescriptor()
+connector_handle_t ZmqConnector::getFileDescriptor()
 {
     if (false == socket_->valid()) {
-        return false;
+#if defined(_WIN32)
+        return 0;
+#else
+        return -1;
+#endif
     }
 
-#ifdef _WIN32
-    unsigned long long int server_socket_file_descriptor;
-#else
-    int server_socket_file_descriptor = 0;
-#endif
+    connector_handle_t server_socket_file_descriptor;
     size_t server_socket_file_descriptor_size = sizeof(server_socket_file_descriptor);
     socket_->getsockopt(ZMQ_FD, &server_socket_file_descriptor,
                         &server_socket_file_descriptor_size);

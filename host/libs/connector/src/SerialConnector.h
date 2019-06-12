@@ -42,10 +42,12 @@ public:
     bool send(const std::string& message) override;
     bool read(std::string& notification) override;
 
+    // blocking read
     bool read(std::string& notification, ReadMode read_mode) override;
     bool blockingRead(std::string& notification) override;
 
     int getFileDescriptor() override;
+    connector_handle_t getFileDescriptor() override;
 
     void openPlatform();
     void windowsPlatformReadHandler();

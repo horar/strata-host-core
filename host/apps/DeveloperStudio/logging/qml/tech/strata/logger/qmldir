@@ -1,0 +1,4 @@
+module tech.strata.logger
+typeinfo plugins.qmltypes
+
+singleton Logger 1.0 Logger.qml
