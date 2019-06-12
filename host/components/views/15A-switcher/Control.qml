@@ -110,7 +110,8 @@ Rectangle {
         }
         source: "question-circle-solid.svg"
         iconColor: helpMouse.containsMouse ? "lightgrey" : "grey"
-        sourceSize.height: 40
+        height: 40
+        width: 40
         visible: true
 
         MouseArea {
