@@ -68,7 +68,7 @@ Item {
             bottom: root.bottom
             bottomMargin: 20
         }
-        width: 300
+        width: 350
 
         Text {
             id: name
@@ -149,8 +149,8 @@ Item {
             interactive: false
             preferredHighlightBegin: .5
             preferredHighlightEnd: .5
-            property real delegateHeight: 120
-            property real delegateWidth: 120
+            property real delegateHeight: 100
+            property real delegateWidth: 100
             delegate: Item {
                     id: delegate
                     z: PathView.delZ ? PathView.delZ : 1 // if/then due to random bug that assigns undefined occassionally
@@ -175,6 +175,18 @@ Item {
                         z:-1
                         radius: height/2
                         opacity: 1
+                    }
+
+                    MouseArea {
+                        id: delegateMouse
+                        anchors.fill: delegate
+                        hoverEnabled: true
+                    }
+
+                    ToolTip {
+                        text: model.icon.toUpperCase();
+                        y: delegate.height
+                        visible: delegateMouse.containsMouse
                     }
                 }
 

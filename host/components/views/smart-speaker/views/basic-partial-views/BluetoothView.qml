@@ -1,5 +1,6 @@
 import QtQuick 2.10
 import QtQuick.Controls 2.2
+import tech.strata.sgwidgets 1.0
 
 Flipable{
     id:root
@@ -31,6 +32,7 @@ Flipable{
     MouseArea{
         id:flipper
         anchors.fill:parent
+        enabled: !flipped       //this enables us to use other actions to flip back
 
         onClicked: {
             root.flipped = !root.flipped
@@ -44,6 +46,11 @@ Flipable{
 
     back:BluetoothBackView {
         id:back
+
+        onActivated: {
+            front.connectedDevice = selectedDevice
+            root.flipped = !root.flipped
+        }
     }
 
 }

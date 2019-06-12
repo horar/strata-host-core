@@ -3,15 +3,6 @@
         <file>Content.qml</file>
         <file>Control.qml</file>
         <file>PlatformInterface.qml</file>
-        <file>content-views/Datasheets.qml</file>
-        <file>content-views/Documents.qml</file>
-        <file>content-views/Downloads.qml</file>
-        <file>content-views/content-widgets/SGAccordion.qml</file>
-        <file>content-views/content-widgets/SGAccordionItem.qml</file>
-        <file>content-views/content-widgets/SGRadioButton.qml</file>
-        <file>content-views/content-widgets/SGRadioButtonContainer.qml</file>
-        <file>content-views/content-widgets/SGSelectorButton.qml</file>
-        <file>content-views/content-widgets/docLoading.gif</file>
         <file>sgwidgets/SGAccordion.qml</file>
         <file>sgwidgets/SGAccordionItem.qml</file>
         <file>sgwidgets/SGCapacityBar.qml</file>
@@ -65,7 +56,5 @@
         <file>views/images/icon-usb-disconnected.svg</file>
         <file>views/images/icon-voltage.svg</file>
         <file>views/images/powerconverter.png</file>
-        <file>content-views/content-widgets/angle-right-solid.svg</file>
-        <file>content-views/content-widgets/SGIcon.qml</file>
     </qresource>
 </RCC>

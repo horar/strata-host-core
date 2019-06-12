@@ -14,5 +14,5 @@ private:
 
     static inline QStringList coreResources_{
         QStringLiteral("fonts.rcc"), QStringLiteral("theme.rcc"), QStringLiteral("pdfjs.rcc"),
-        QStringLiteral("sgwidgets.rcc")};
+        QStringLiteral("common.rcc"), QStringLiteral("sgwidgets.rcc")};
 };

@@ -6,15 +6,6 @@
         <file>Control.qml</file>
         <file>FAEControl.qml</file>
         <file>PlatformInterface.qml</file>
-        <file>content-views/Datasheets.qml</file>
-        <file>content-views/Documents.qml</file>
-        <file>content-views/Downloads.qml</file>
-        <file>content-views/content-widgets/SGAccordion.qml</file>
-        <file>content-views/content-widgets/SGAccordionItem.qml</file>
-        <file>content-views/content-widgets/SGRadioButton.qml</file>
-        <file>content-views/content-widgets/SGRadioButtonContainer.qml</file>
-        <file>content-views/content-widgets/SGSelectorButton.qml</file>
-        <file>content-views/content-widgets/docLoading.gif</file>
         <file>images/icons/backIcon.svg</file>
         <file>images/icons/infoIcon.svg</file>
         <file>images/icons/leftArrow.svg</file>
@@ -67,8 +58,6 @@
         <file>sgwidgets/images/sliderHandle.svg</file>
         <file>sgwidgets/images/sliderHandleActive.svg</file>
         <file>sgwidgets/images/sliderValue.svg</file>
-        <file>content-views/content-widgets/angle-right-solid.svg</file>
-        <file>content-views/content-widgets/SGIcon.qml</file>
         <file>images/icons/question-circle-solid.svg</file>
     </qresource>
 </RCC>

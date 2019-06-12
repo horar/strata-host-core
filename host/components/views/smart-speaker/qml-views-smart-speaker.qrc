@@ -1,16 +1,5 @@
 <RCC>
     <qresource prefix="/views/smart-speaker">
-        <file>content-views/content-widgets/angle-right-solid.svg</file>
-        <file>content-views/content-widgets/docLoading.gif</file>
-        <file>content-views/content-widgets/SGAccordion.qml</file>
-        <file>content-views/content-widgets/SGAccordionItem.qml</file>
-        <file>content-views/content-widgets/SGIcon.qml</file>
-        <file>content-views/content-widgets/SGRadioButton.qml</file>
-        <file>content-views/content-widgets/SGRadioButtonContainer.qml</file>
-        <file>content-views/content-widgets/SGSelectorButton.qml</file>
-        <file>content-views/Datasheets.qml</file>
-        <file>content-views/Documents.qml</file>
-        <file>content-views/Downloads.qml</file>
         <file>views/basic-partial-views/PortInfo.qml</file>
         <file>views/basic-partial-views/PortStatBox.qml</file>
         <file>views/images/icon-boost.svg</file>
@@ -27,7 +16,6 @@
         <file>views/basic-partial-views/CrossoverFrequencyView.qml</file>
         <file>views/basic-partial-views/InputVoltageView.qml</file>
         <file>views/basic-partial-views/MixerView.qml</file>
-        <file>views/basic-partial-views/ParametricEQView.qml</file>
         <file>views/images/icon-bluetooth.svg</file>
         <file>views/images/icon-wireless.svg</file>
         <file>views/basic-partial-views/BluetoothBackView.qml</file>
@@ -36,5 +24,8 @@
         <file>views/basic-partial-views/WirelessBackView.qml</file>
         <file>views/basic-partial-views/WirelessFrontView.qml</file>
         <file>views/basic-partial-views/WirelessView.qml</file>
+        <file>views/images/angle-down-solid.svg</file>
+        <file>views/basic-partial-views/ParametricEQBand.qml</file>
+        <file>views/basic-partial-views/ParametricEQView.qml</file>
     </qresource>
 </RCC>

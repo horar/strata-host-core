@@ -71,7 +71,7 @@ Rectangle {
             color: root.statusTextColor
             font {
                 family: inconsolata.name  // inconsolata is monospaced and has clear chars for O/0 etc
-                pixelSize: (Qt.platform.os === "osx") ? 12 : 10;
+                pixelSize: (Qt.platform.os === "osx") ? 12 : 10
             }
             selectByMouse: true
             readOnly: true
