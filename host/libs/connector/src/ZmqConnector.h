@@ -27,7 +27,7 @@ public:
     bool send(const std::string& message) override;
     bool read(std::string& notification) override;
 
-    int getFileDescriptor() override;
+    connector_handle_t getFileDescriptor() override;
 
 private:
     std::unique_ptr<zmq::context_t> context_;

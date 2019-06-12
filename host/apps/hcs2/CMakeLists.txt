@@ -92,3 +92,9 @@ if (APPLE)
         PRIVATE ${FOUNDATION_LIBRARY} ${IOKIT_LIBRARY}
     )
 endif()
+
+set_target_properties(${PROJECT_NAME} PROPERTIES
+        OUTPUT_NAME "hcs"
+        )
+
+
