@@ -143,7 +143,7 @@ SGResponsiveScrollView {
                     }
                 }
                 anchors {
-                    top: name.bottom
+                    top: parent.top
                     topMargin: 10
                     horizontalCenter: parent.horizontalCenter
                 }
