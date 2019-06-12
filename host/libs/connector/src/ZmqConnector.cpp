@@ -47,6 +47,40 @@ int ZmqConnector::getFileDescriptor()
     return server_socket_file_descriptor;
 }
 
+bool ZmqConnector::read(std::string& message,ReadMode read_mode)
+{
+    switch (read_mode)
+    {
+        case ReadMode::BLOCKING:
+            if (blockingRead(message)) {
+                return true;
+            }
+            break;
+        case ReadMode::NONBLOCKING:
+            if (read(message)) {
+                return true;
+            }
+            break;
+        default:
+            CONNECTOR_DEBUG_LOG("[Socket] read failed\n",);
+            break;           
+    }
+    return false;
+}
+
+bool ZmqConnector::blockingRead(std::string& message)
+{
+    if (false == socket_->valid()) {
+        return false;
+    }
+
+    if (s_recv(*socket_, message)) {
+        CONNECTOR_DEBUG_LOG("[Socket] Rx'ed message : %s\n", message.c_str());
+        return true;
+    }
+    return false;
+}
+
 bool ZmqConnector::read(std::string& message)
 {
     if (false == socket_->valid()) {
