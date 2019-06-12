@@ -104,6 +104,13 @@ Item {
                     NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT, data)
                 }
             }
+            Button {
+                text: "5A-switcher-6357"
+                onClicked: {
+                    var data = { class_id: "5A-switcher-6357"}
+                    NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT, data)
+                }
+            }
 
             // UI events
             Button {
