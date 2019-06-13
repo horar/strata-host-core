@@ -7,9 +7,9 @@ import QtQuick.Extras 1.4
 import "qrc:/js/navigation_control.js" as NavigationControl
 import "qrc:/views/XDFN-LDO/sgwidgets"
 import "qrc:/js/help_layout_manager.js" as Help
-import "content-views/content-widgets"
 
 import tech.strata.fonts 1.0
+import tech.strata.sgwidgets 1.0
 
 Rectangle {
     id: controlNavigation
@@ -110,7 +110,8 @@ Rectangle {
         }
         source: "question-circle-solid.svg"
         iconColor: helpMouse.containsMouse ? "lightgrey" : "grey"
-        sourceSize.height: 40
+        height: 40
+        width: 40
         visible: true
 
         MouseArea {
