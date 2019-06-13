@@ -2,7 +2,10 @@
 #include <QCoreApplication>
 #include <QCommandLineParser>
 
+#include <EvEventsMgr.h>    //for EvEventsMgrInstance (windows WSA)
+
 #include "HostControllerService.h"
+
 
 int main(int argc, char *argv[])
 {
@@ -10,6 +13,8 @@ int main(int argc, char *argv[])
     QCoreApplication::setApplicationName(QStringLiteral("HCS"));
 
     QCoreApplication theApp(argc, argv);
+
+    spyglass::EvEventsMgrInstance instance;
 
     QCommandLineParser parser;
     parser.setApplicationDescription("HCS");
