@@ -168,7 +168,6 @@ public:
     // blocking read
     virtual bool read(std::string& notification, ReadMode read_mode) = 0;
     virtual bool blockingRead(std::string& notification) = 0;
-    virtual int getFileDescriptor() = 0;
     virtual connector_handle_t getFileDescriptor() = 0;
 
     /**
