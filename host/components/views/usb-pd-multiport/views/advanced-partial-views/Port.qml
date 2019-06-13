@@ -39,8 +39,12 @@ Item {
         property var periodicValues: platformInterface.request_usb_power_notification
 
         onPeriodicValuesChanged: {
-            var theInputPower = platformInterface.request_usb_power_notification.input_voltage * platformInterface.request_usb_power_notification.input_current +2;//PTJ-1321 2 Watt compensation
-            var theOutputPower = platformInterface.request_usb_power_notification.output_voltage * platformInterface.request_usb_power_notification.output_current;
+            var inputCurrent = platformInterface.request_usb_power_notification.input_current;
+            var correctedInputCurrent= platformInterface.adjust_current ? inputCurrent * 1.3333 : inputCurrent
+            var outputCurrent = platformInterface.request_usb_power_notification.output_current;
+            var correctedOutputCurrent= platformInterface.adjust_current ? outputCurrent * 1.3333 : outputCurrent
+            var theInputPower = platformInterface.request_usb_power_notification.input_voltage * correctedInputCurrent +2;//PTJ-1321 2 Watt compensation
+            var theOutputPower = platformInterface.request_usb_power_notification.output_voltage * correctedOutputCurrent;
 
             if (platformInterface.request_usb_power_notification.port === portNumber){
                 //sum eight values of the efficency and average before displaying
@@ -81,7 +85,9 @@ Item {
         }
         inputPower:{
             if (platformInterface.request_usb_power_notification.port === portNumber){
-                return ((platformInterface.request_usb_power_notification.input_voltage * platformInterface.request_usb_power_notification.input_current)+2).toFixed(2); //PTJ-1321 adding 2 watts compensation
+                var inputCurrent = platformInterface.request_usb_power_notification.input_current;
+                var correctedInputCurrent= platformInterface.adjust_current ? inputCurrent * 1.3333 : inputCurrent
+                return ((platformInterface.request_usb_power_notification.input_voltage * correctedInputCurrent)+2).toFixed(2); //PTJ-1321 adding 2 watts compensation
             }
             else{
                 return portInfo.inputPower;
@@ -89,7 +95,9 @@ Item {
         }
         outputPower:{
             if (platformInterface.request_usb_power_notification.port === portNumber){
-                return (platformInterface.request_usb_power_notification.output_voltage * platformInterface.request_usb_power_notification.output_current).toFixed(2);
+                var outputCurrent = platformInterface.request_usb_power_notification.output_current;
+                var correctedOutputCurrent= platformInterface.adjust_current ? outputCurrent * 1.3333 : outputCurrent
+                return (platformInterface.request_usb_power_notification.output_voltage * correctedOutputCurrent).toFixed(2);
             }
             else{
                 return portInfo.outputPower;
@@ -308,8 +316,11 @@ Item {
                 //console.log("new power notification for port ",portNumber);
                 if (platformInterface.request_usb_power_notification.port === portNumber){
                     //console.log("voltage=",platformInterface.request_usb_power_notification.output_voltage," count=",count);
+
+                    var outputCurrent = platformInterface.request_usb_power_notification.output_current;
+                    var correctedOutputCurrent= platformInterface.adjust_current ? outputCurrent * 1.3333 : outputCurrent
                     count += interval;
-                    stream = platformInterface.request_usb_power_notification.output_current
+                    stream = correctedOutputCurrent
                 }
             }
 
@@ -343,8 +354,10 @@ Item {
                 //console.log("new power notification for port ",portNumber);
                 if (platformInterface.request_usb_power_notification.port === portNumber){
                     //console.log("voltage=",platformInterface.request_usb_power_notification.output_voltage," count=",count);
+                    var inputCurrent = platformInterface.request_usb_power_notification.input_current;
+                    var correctedInputCurrent= platformInterface.adjust_current ? inputCurrent * 1.3333 : inputCurrent
                     count += interval;
-                    stream = platformInterface.request_usb_power_notification.input_current
+                    stream = correctedInputCurrent
                 }
             }
 
@@ -377,9 +390,10 @@ Item {
                 //console.log("new power notification for port ",portNumber);
                 if (platformInterface.request_usb_power_notification.port === portNumber){
                     //console.log("voltage=",platformInterface.request_usb_power_notification.output_voltage," count=",count);
+                    var outputCurrent = platformInterface.request_usb_power_notification.output_current;
+                    var correctedOutputCurrent= platformInterface.adjust_current ? outputCurrent * 1.3333 : outputCurrent
                     count += interval;
-                    stream = platformInterface.request_usb_power_notification.output_voltage *
-                            platformInterface.request_usb_power_notification.output_current;
+                    stream = platformInterface.request_usb_power_notification.output_voltage *correctedOutputCurrent;
                 }
             }
 
@@ -412,9 +426,10 @@ Item {
                 //console.log("new power notification for port ",portNumber);
                 if (platformInterface.request_usb_power_notification.port === portNumber){
                     //console.log("voltage=",platformInterface.request_usb_power_notification.output_voltage," count=",count);
+                    var inputCurrent = platformInterface.request_usb_power_notification.input_current;
+                    var correctedInputCurrent= platformInterface.adjust_current ? inputCurrent * 1.3333 : inputCurrent
                     count += interval;
-                    stream = platformInterface.request_usb_power_notification.input_voltage *
-                            platformInterface.request_usb_power_notification.input_current;
+                    stream = platformInterface.request_usb_power_notification.input_voltage * correctedInputCurrent;
                 }
             }
 
@@ -450,8 +465,12 @@ Item {
             property var periodicValues: platformInterface.request_usb_power_notification.output_voltage
 
             onPeriodicValuesChanged: {
-                var theInputPower = platformInterface.request_usb_power_notification.input_voltage * platformInterface.request_usb_power_notification.input_current +2;//PTJ-1321 2 Watt compensation
-                var theOutputPower = platformInterface.request_usb_power_notification.output_voltage * platformInterface.request_usb_power_notification.output_current;
+                var inputCurrent = platformInterface.request_usb_power_notification.input_current;
+                var correctedInputCurrent= platformInterface.adjust_current ? inputCurrent * 1.3333 : inputCurrent
+                var outputCurrent = platformInterface.request_usb_power_notification.output_current;
+                var correctedOutputCurrent= platformInterface.adjust_current ? outputCurrent * 1.3333 : outputCurrent
+                var theInputPower = platformInterface.request_usb_power_notification.input_voltage * correctedInputCurrent +2;//PTJ-1321 2 Watt compensation
+                var theOutputPower = platformInterface.request_usb_power_notification.output_voltage * correctedOutputCurrent;
 
                 if (platformInterface.request_usb_power_notification.port === portNumber){
                     //sum eight values of the efficency and average before displaying
@@ -469,7 +488,7 @@ Item {
                         //console.log("publishing new efficency",graph6.theEfficiencyAverage);
                     }
 
-                    if (theInputPower == 0)
+                    if (theInputPower === 0)
                         stream = 0;
                     else{
                         stream = theEfficiencyAverage;
