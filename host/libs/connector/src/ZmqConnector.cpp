@@ -47,7 +47,7 @@ connector_handle_t ZmqConnector::getFileDescriptor()
     return server_socket_file_descriptor;
 }
 
-bool ZmqConnector::read(std::string& message,ReadMode read_mode)
+bool ZmqConnector::read(std::string& message, ReadMode read_mode)
 {
     switch (read_mode)
     {

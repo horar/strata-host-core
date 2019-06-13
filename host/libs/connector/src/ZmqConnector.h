@@ -28,7 +28,7 @@ public:
     bool read(std::string& notification) override;
 
     //blocking read
-    bool read(std::string& notification,ReadMode read_mode) override;
+    bool read(std::string& notification, ReadMode read_mode) override;
     bool blockingRead(std::string& notification) override;
 
     connector_handle_t getFileDescriptor() override;
