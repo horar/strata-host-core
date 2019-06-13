@@ -3,6 +3,12 @@ macro(add_view)
     set(projectVersion VERSION)
     cmake_parse_arguments(local "" "${projectName}" "${projectVersion}" ${ARGN})
 
+    if(NOT BUILD_VIEWS)
+        mark_as_advanced(VIEWS_${local_NAME})
+        return()
+    endif()
+    mark_as_advanced(CLEAR VIEWS_${local_NAME})
+
     message(STATUS "Strata view '${local_NAME}' v${local_VERSION}")
 
     option(VIEWS_${local_NAME} "Strata '${local_NAME}' v${local_VERSION} view" ON)

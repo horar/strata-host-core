@@ -1,3 +1,8 @@
+option(BUILD_DONT_CLEAN_EXTERNAL "Don't clean external project (Makefile only)" OFF)
+add_feature_info(BUILD_DONT_CLEAN_EXTERNAL BUILD_DONT_CLEAN_EXTERNAL "Don't clean external project (Makefile only)")
+set_directory_properties(PROPERTIES CLEAN_NO_CUSTOM ${BUILD_DONT_CLEAN_EXTERNAL})
+
+
 include(ExternalProject)
 
 file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/3rd_party/include)
@@ -93,36 +98,38 @@ endif()
 #
 # googletest
 #
-ExternalProject_Add(libgtest
-    INSTALL_DIR ${CMAKE_BINARY_DIR}/3rd_party
-    SOURCE_DIR ${SOURCE_DIR_EXTERN}/googletest
+if(BUILD_TESTING)
+    ExternalProject_Add(libgtest
+        INSTALL_DIR ${CMAKE_BINARY_DIR}/3rd_party
+        SOURCE_DIR ${SOURCE_DIR_EXTERN}/googletest
 
-    CMAKE_ARGS ${CMAKE_ARGS}
-        -Dgtest_force_shared_crt=YES
-        -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
-        -DCMAKE_VERBOSE_MAKEFILE=${CMAKE_VERBOSE_MAKEFILE}
-        -DCMAKE_OSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET}
-        -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
-)
+        CMAKE_ARGS ${CMAKE_ARGS}
+            -Dgtest_force_shared_crt=YES
+            -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
+            -DCMAKE_VERBOSE_MAKEFILE=${CMAKE_VERBOSE_MAKEFILE}
+            -DCMAKE_OSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET}
+            -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
+    )
 
-add_library(gtest::gtest STATIC IMPORTED GLOBAL)
-set_target_properties(gtest::gtest PROPERTIES
-    INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_BINARY_DIR}/3rd_party/include"
-    IMPORTED_LOCATION  "${CMAKE_BINARY_DIR}/3rd_party/lib/${CMAKE_STATIC_LIBRARY_PREFIX}gtest${CMAKE_STATIC_LIBRARY_SUFFIX}"
-    IMPORTED_LOCATION_DEBUG  "${CMAKE_BINARY_DIR}/3rd_party/lib/${CMAKE_STATIC_LIBRARY_PREFIX}gtestd${CMAKE_STATIC_LIBRARY_SUFFIX}"
-)
+    add_library(gtest::gtest STATIC IMPORTED GLOBAL)
+    set_target_properties(gtest::gtest PROPERTIES
+        INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_BINARY_DIR}/3rd_party/include"
+        IMPORTED_LOCATION  "${CMAKE_BINARY_DIR}/3rd_party/lib/${CMAKE_STATIC_LIBRARY_PREFIX}gtest${CMAKE_STATIC_LIBRARY_SUFFIX}"
+        IMPORTED_LOCATION_DEBUG  "${CMAKE_BINARY_DIR}/3rd_party/lib/${CMAKE_STATIC_LIBRARY_PREFIX}gtestd${CMAKE_STATIC_LIBRARY_SUFFIX}"
+    )
 
-add_dependencies(gtest::gtest DEPENDS libgtest)
+    add_dependencies(gtest::gtest DEPENDS libgtest)
 
 
-add_library(gtest::gmock STATIC IMPORTED GLOBAL)
-set_target_properties(gtest::gmock PROPERTIES
-    INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_BINARY_DIR}/3rd_party/include"
-    IMPORTED_LOCATION  "${CMAKE_BINARY_DIR}/3rd_party/lib/${CMAKE_STATIC_LIBRARY_PREFIX}gmock${CMAKE_STATIC_LIBRARY_SUFFIX}"
-    IMPORTED_LOCATION_DEBUG  "${CMAKE_BINARY_DIR}/3rd_party/lib/${CMAKE_STATIC_LIBRARY_PREFIX}gmockd${CMAKE_STATIC_LIBRARY_SUFFIX}"
-)
+    add_library(gtest::gmock STATIC IMPORTED GLOBAL)
+    set_target_properties(gtest::gmock PROPERTIES
+        INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_BINARY_DIR}/3rd_party/include"
+        IMPORTED_LOCATION  "${CMAKE_BINARY_DIR}/3rd_party/lib/${CMAKE_STATIC_LIBRARY_PREFIX}gmock${CMAKE_STATIC_LIBRARY_SUFFIX}"
+        IMPORTED_LOCATION_DEBUG  "${CMAKE_BINARY_DIR}/3rd_party/lib/${CMAKE_STATIC_LIBRARY_PREFIX}gmockd${CMAKE_STATIC_LIBRARY_SUFFIX}"
+    )
 
-add_dependencies(gtest::gmock DEPENDS libgtest)
+    add_dependencies(gtest::gmock DEPENDS libgtest)
+endif()
 
 
 #

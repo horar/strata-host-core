@@ -10,8 +10,8 @@ int main(int argc, char *argv[])
 
     QApplication app(argc, argv);
 
-    const auto resources = {QStringLiteral("fonts.rcc"), QStringLiteral("theme.rcc"),
-                            QStringLiteral("sgwidgets.rcc")};
+    const auto resources = {QStringLiteral("component-fonts.rcc"), QStringLiteral("component-theme.rcc"),
+                            QStringLiteral("component-sgwidgets.rcc")};
     const auto resourcePath = QCoreApplication::applicationDirPath();
     for (const auto &resourceName : resources) {
         qDebug() << "Loading '" << resourceName << "':"
