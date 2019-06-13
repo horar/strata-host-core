@@ -128,8 +128,9 @@ EvEventsMgrInstance::EvEventsMgrInstance()
     memset(&wsaData, 0, sizeof(wsaData));
     if (wsa_init_done == false)
     {
-        if( WSAStartup( MAKEWORD(2,0), &wsaData ) != 0 )
-            return( MBEDTLS_ERR_NET_SOCKET_FAILED );
+        if (WSAStartup( MAKEWORD(2,0), &wsaData ) != 0) {
+            throw std::runtime_error("WSAStartup failed!");
+        }
 
         wsa_init_done = true;
     }
