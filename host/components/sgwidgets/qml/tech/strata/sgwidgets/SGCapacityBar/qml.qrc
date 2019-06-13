@@ -1,6 +1,5 @@
 <RCC>
     <qresource prefix="/tech/strata/sgwidgets/SGCapacityBar">
-        <file>qmldir</file>
         <file>SGCapacityBar.qml</file>
         <file>SGCapacityBarElement.qml</file>
     </qresource>

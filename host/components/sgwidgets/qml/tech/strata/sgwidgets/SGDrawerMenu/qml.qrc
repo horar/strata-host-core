@@ -1,6 +1,5 @@
 <RCC>
     <qresource prefix="/tech/strata/sgwidgets/SGDrawerMenu">
-        <file>qmldir</file>
         <file>SGDrawerMenu.qml</file>
         <file>SGDrawerMenuItem.qml</file>
         <file>icons/comments-solid.svg</file>

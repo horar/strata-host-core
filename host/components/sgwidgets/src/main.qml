@@ -3,27 +3,7 @@ import QtQuick.Layouts 1.12
 import QtQuick.Controls 2.12
 
 //import Strata.Quick.Controls 1.0
-//import tech.strata.sgwidgets 0.9
-
-import tech.strata.sgwidgets.SGDrawerMenu 0.9
-import tech.strata.sgwidgets.SGAccordion 0.9
-import tech.strata.sgwidgets.SGSwitch 0.9
-import tech.strata.sgwidgets.SGToolTipPopup 0.9
-import tech.strata.sgwidgets.SGSlider 0.9
-import tech.strata.sgwidgets.SGRadioButton 0.9
-import tech.strata.sgwidgets.SGSegmentedButtonStrip 0.9
-import tech.strata.sgwidgets.SGStatusLight 0.9
-import tech.strata.sgwidgets.SGSubmitInfoBox 0.9
-import tech.strata.sgwidgets.SGStatusListBox 0.9
-import tech.strata.sgwidgets.SGPopout 0.9
-import tech.strata.sgwidgets.SGLabelledInfoBox 0.9
-import tech.strata.sgwidgets.SGGraphTimed 0.9
-import tech.strata.sgwidgets.SGGraphStatic 0.9
-import tech.strata.sgwidgets.SGComboBox 0.9
-import tech.strata.sgwidgets.SGCircularGauge 0.9
-import tech.strata.sgwidgets.SGCapacityBar 0.9
-import tech.strata.sgwidgets.SGHueSlider 0.9
-import tech.strata.sgwidgets.SGRGBSlider 0.9
+import tech.strata.sgwidgets 0.9
 
 //import Spyglass.Theme 1.0
 //import Spyglass.Widgets 1.0 as XXX
