@@ -64,17 +64,6 @@
         <file>views/images/videoIcon.png</file>
         <file>views/basic-partial-views/AudioWaveform.qml</file>
         <file>views/basic-partial-views/AudioSample.qml</file>
-        <file>content-views/content-widgets/angle-right-solid.svg</file>
-        <file>content-views/content-widgets/docLoading.gif</file>
-        <file>content-views/content-widgets/SGAccordion.qml</file>
-        <file>content-views/content-widgets/SGAccordionItem.qml</file>
-        <file>content-views/content-widgets/SGRadioButton.qml</file>
-        <file>content-views/content-widgets/SGRadioButtonContainer.qml</file>
-        <file>content-views/content-widgets/SGSelectorButton.qml</file>
-        <file>content-views/Datasheets.qml</file>
-        <file>content-views/Documents.qml</file>
-        <file>content-views/Downloads.qml</file>
-        <file>content-views/content-widgets/SGIcon.qml</file>
         <file>sgwidgets/SGResponsiveScrollView.qml</file>
         <file>views/basic-partial-views/PortGraphWindow.qml</file>
     </qresource>

@@ -12,11 +12,11 @@ Rectangle {
     id: boardBringUP
     property string user_id
     property string platform_name
-    property int smallFontSize: (Qt.platform.os === "osx") ? 12  : 8;
-    property int mediumFontSize: (Qt.platform.os === "osx") ? 15  : 12;
-    property int mediumLargeFontSize: (Qt.platform.os === "osx") ? 20  : 14;
-    property int largeFontSize: (Qt.platform.os === "osx") ? 24  : 16;
-    property int extraLargeFontSize: (Qt.platform.os === "osx") ? 36  : 24;
+    property int smallFontSize: (Qt.platform.os === "osx") ? 12  : 8
+    property int mediumFontSize: (Qt.platform.os === "osx") ? 15  : 12
+    property int mediumLargeFontSize: (Qt.platform.os === "osx") ? 20  : 14
+    property int largeFontSize: (Qt.platform.os === "osx") ? 24  : 16
+    property int extraLargeFontSize: (Qt.platform.os === "osx") ? 36  : 24
     property color lightGreyColor: "#EBEAE9"
     property color mediumGreyColor: "#E4E3E2"
     property color darkGreyColor: "#DBDAD9"

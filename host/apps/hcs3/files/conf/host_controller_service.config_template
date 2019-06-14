@@ -1,0 +1,23 @@
+//
+// Host Controller Service configuration file
+//
+//
+{
+    "host_controller_service": {
+        "command_address": "tcp://*:5564",     // hcs command address
+        "subscriber_address": "tcp://*:5563",  // client subscribe address
+        "remote_address": "tcp://18.222.75.160:83",    // remote address to connect to cobra
+        "simulated_platform":false,            // simulate platform hw
+        "discovery_server_address": "tcp://18.222.75.160:81",   // discovery service address
+        "discovery_activity_monitor_address": "tcp://18.222.75.160:82"    // discovery service publisher for activity
+    },
+
+    "database":{
+        "file_server":"http://18.222.75.160/c3alt?fl=",
+        "gateway_sync":"ws://54.201.138.154:80/spyglass",
+        "channels":[
+            "development",
+            "test"
+        ]
+    }
+}

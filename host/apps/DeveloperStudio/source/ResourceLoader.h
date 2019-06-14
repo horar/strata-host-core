@@ -13,6 +13,7 @@ private:
     void loadViewResources();
 
     static inline QStringList coreResources_{
-        QStringLiteral("fonts.rcc"), QStringLiteral("theme.rcc"), QStringLiteral("pdfjs.rcc"),
-        QStringLiteral("sgwidgets.rcc")};
+        QStringLiteral("component-fonts.rcc"), QStringLiteral("component-theme.rcc"),
+        QStringLiteral("component-pdfjs.rcc"), QStringLiteral("component-common.rcc"),
+        QStringLiteral("component-sgwidgets.rcc")};
 };

@@ -1,6 +1,5 @@
 <RCC>
     <qresource prefix="/tech/strata/sgwidgets/SGPdfViewer">
-        <file>qmldir</file>
         <file>SGPdfViewer.qml</file>
     </qresource>
 </RCC>
