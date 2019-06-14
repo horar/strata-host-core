@@ -1,4 +1,4 @@
-project(common
+project(component-common
     VERSION 0.0.0
     LANGUAGES NONE
 )

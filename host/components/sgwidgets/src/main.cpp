@@ -26,8 +26,9 @@ int main(int argc, char* argv[])
     resourcePath = QCoreApplication::applicationDirPath();
 #endif
 
-    const auto resources = {QStringLiteral("fonts.rcc"), QStringLiteral("theme.rcc"),
-                            QStringLiteral("sgwidgets.rcc")};
+    const auto resources = {QStringLiteral("component-fonts.rcc"),
+                            QStringLiteral("component-theme.rcc"),
+                            QStringLiteral("component-sgwidgets.rcc")};
     for (const auto& resourceName : resources) {
         qDebug() << "Loading '" << resourceName << "':"
                  << QResource::registerResource(
