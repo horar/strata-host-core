@@ -8,7 +8,6 @@ import QtQuick.Controls 1.4
 import "qrc:/js/navigation_control.js" as NavigationControl
 import "qrc:/views/5A-switcher/sgwidgets"
 import "qrc:/js/help_layout_manager.js" as Help
-import "content-views/content-widgets"
 
 Item {
     id: root
@@ -437,7 +436,8 @@ Item {
                 }
                 source: "question-circle-solid.svg"
                 iconColor: helpMouse.containsMouse ? "lightgrey" : "grey"
-                sourceSize.height: 40
+                height: 40
+                width: 40
                 visible: true
 
                 MouseArea {

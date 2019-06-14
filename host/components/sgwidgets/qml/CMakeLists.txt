@@ -1,4 +1,4 @@
-project(sgwidgets
+project(component-sgwidgets
     VERSION 0.0.0
     LANGUAGES NONE
 )
@@ -9,7 +9,7 @@ find_package(Qt5 ${VERSION_QT5}
 )
 
 file(GLOB_RECURSE QRC_SRC qml.qrc)
-add_custom_target(src-qrcs SOURCES ${QRC_SRC})
+add_custom_target(${PROJECT_NAME}-src-qrcs SOURCES ${QRC_SRC})
 qt5_add_binary_resources(${PROJECT_NAME}
     ${QRC_SRC}
     OPTIONS ARGS --compress 9 --threshold 0 --verbose

@@ -1,7 +1,5 @@
-project(component-fonts
-    VERSION 0.0.0
-    LANGUAGES NONE
-)
-
 add_subdirectory(qml)
-add_subdirectory(src)
+
+if(BUILD_EXAMPLES)
+    add_subdirectory(src)
+endif()

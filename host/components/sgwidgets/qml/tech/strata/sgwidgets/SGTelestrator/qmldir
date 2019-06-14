@@ -1,8 +1,0 @@
-module tech.strata.sgwidgets.SGTelestrator
-
-SGColorChip 1.0 SGColorChip.qml
-SGLineThickness 1.0 SGLineThickness.qml
-SGTelestrator 1.0 SGTelestrator.qml
-
-# TODO: internal??
-Server 1.0 Server.qml
