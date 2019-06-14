@@ -1,7 +1,7 @@
 import QtQuick 2.12
 import QtQuick.Window 2.12
 
-import tech.strata.sgwidgets 1.0
+import tech.strata.sgwidgets 0.9
 import tech.strata.fonts 1.0
 
 Window {

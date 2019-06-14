@@ -7,7 +7,7 @@ import "qrc:/help_layout_manager.js" as Help
 See help_layout_manager for API that is used in this file.
 */
 
-import tech.strata.sgwidgets 1.0
+import tech.strata.sgwidgets 0.9
 import tech.strata.fonts 1.0
 
 Window {

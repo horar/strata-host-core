@@ -1,177 +1,90 @@
 import QtQuick 2.9
 import QtQuick.Controls 2.2
 import QtQuick.Layouts 1.12
+//import tech.strata.sgwidgets 0.9
+import QtQuick.Controls 2.4
 
 Rectangle {
     id: root
-    width: 200
-    height:200
+    //width: parent.width
+    //height:parent.height
     color:"dimgray"
     opacity:1
     radius: 10
 
     property int bandWidth: root.width/6
+    property int bandHeight: root.height - (eqText.height + 10)
+
+    onBandWidthChanged: {
+        console.log("band width is",bandWidth)
+    }
+
+//    Rectangle{
+//        anchors.top:eqText.bottom
+//        anchors.left:root.left
+//        anchors.leftMargin: 20
+//        anchors.right:root.right
+//        anchors.bottom:root.bottom
+//        color:"transparent"
+//        border.color:"red"
+//    }
 
     Text{
         id:eqText
-        text:"Parametric EQ"
+        text:"Equalizer"
         color:"white"
         font.pixelSize: 36
         anchors.top:parent.top
+        anchors.topMargin:10
         anchors.horizontalCenter: parent.horizontalCenter
     }
 
-    Row{
-        id:dialRow1
-        anchors.top:eqText.bottom
-        //anchors.bottom:parent.bottom
-        //anchors.bottomMargin:50
-        width:parent.width
-        height:100
-        spacing: 20
+  Row{
+      id:bands
+      anchors.top:eqText.bottom
+      anchors.left:root.left
+      anchors.leftMargin: 20
+      anchors.right:root.right
+      anchors.bottom:root.bottom
+      spacing: 10
 
-        Dial {
-            Layout.alignment: Qt.AlignHCenter
-            //Layout.topMargin: 50
-            width:50
-            inputMode: "Vertical"
-        }
+      ParametricEQBand{
+          id:band1
+          width:bandWidth
+          height: bandHeight
+          name:"100Hz"
 
-        Dial {
-            Layout.alignment: Qt.AlignHCenter
-            //Layout.topMargin: 50
-            width:50
-        }
+      }
+      ParametricEQBand{
+          id:band2
+          width:bandWidth
+          height: bandHeight
+          name:"250 Hz"
 
-        Dial {
-            Layout.alignment: Qt.AlignHCenter
-            //Layout.topMargin: 50
-            width:50
-        }
+      }
+      ParametricEQBand{
+          id:band3
+          width:bandWidth
+          height: bandHeight
+          name:"1 kHz"
 
-        Dial {
-            Layout.alignment: Qt.AlignHCenter
-            //Layout.topMargin: 50
-            width:50
-        }
+      }
+      ParametricEQBand{
+          id:band4
+          width:bandWidth
+          height: bandHeight
+          name:"4 kHz"
 
-        Dial {
-            Layout.alignment: Qt.AlignHCenter
-            //Layout.topMargin: 50
-            width:50
-        }
+      }
+      ParametricEQBand{
+          id:band5
+          width:bandWidth
+          height: bandHeight
+          name:"10 kHz"
 
-        Dial {
-            Layout.alignment: Qt.AlignHCenter
-            //Layout.topMargin: 50
-            width:50
-        }
-    }
+      }
 
-    Row{
-        id:dialRow2
-        anchors.top:dialRow1.bottom
-        width:parent.width
-        spacing: 20
-        height:100
-
-        Dial {
-            Layout.alignment: Qt.AlignHCenter
-            //Layout.topMargin: 50
-            width:50
-            inputMode: "Vertical"
-        }
-
-        Dial {
-            Layout.alignment: Qt.AlignHCenter
-            //Layout.topMargin: 50
-            width:50
-        }
-
-        Dial {
-            Layout.alignment: Qt.AlignHCenter
-            //Layout.topMargin: 50
-            width:50
-        }
-
-        Dial {
-            Layout.alignment: Qt.AlignHCenter
-            //Layout.topMargin: 50
-            width:50
-        }
-
-        Dial {
-            Layout.alignment: Qt.AlignHCenter
-            //Layout.topMargin: 50
-            width:50
-        }
-
-        Dial {
-            Layout.alignment: Qt.AlignHCenter
-            //Layout.topMargin: 50
-            width:50
-        }
-    }
-
-    Row{
-        id:dialRow3
-        anchors.top:dialRow2.bottom
-        width:parent.width
-        spacing: 20
-        height:100
-
-        Dial {
-            Layout.alignment: Qt.AlignHCenter
-            //Layout.topMargin: 50
-            width:50
-            inputMode: "Vertical"
-        }
-
-        Dial {
-            Layout.alignment: Qt.AlignHCenter
-            //Layout.topMargin: 50
-            width:50
-        }
-
-        Dial {
-            Layout.alignment: Qt.AlignHCenter
-            //Layout.topMargin: 50
-            width:50
-        }
-
-        Dial {
-            Layout.alignment: Qt.AlignHCenter
-            //Layout.topMargin: 50
-            width:50
-        }
-
-        Dial {
-            Layout.alignment: Qt.AlignHCenter
-            //Layout.topMargin: 50
-            width:50
-        }
-
-        Dial {
-            Layout.alignment: Qt.AlignHCenter
-            //Layout.topMargin: 50
-            width:50
-        }
-    }
-    Row{
-        id:dialRow10
-        anchors.top: dialRow1.bottom
-
-//        Label {
-//            text: "Volume"
-//            Layout.alignment: Qt.AlignHCenter
-//            //Layout.topMargin: 12
-//            color:"white"
-//            width:50
-//        }
-
-
-
-
-    }
-
+  }
 }
+
+

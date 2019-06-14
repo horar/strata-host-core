@@ -1,6 +1,5 @@
 <RCC>
     <qresource prefix="/tech/strata/sgwidgets/SGHelpTour">
-        <file>qmldir</file>
         <file>images/corner-fade.png</file>
         <file>images/side-fade.png</file>
         <file>images/top-fade.png</file>

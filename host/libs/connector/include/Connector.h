@@ -140,6 +140,12 @@
 #define CONNECTOR_DEBUG_LOG(lvl, fmt, ...)
 #endif
 
+#ifdef _WIN32
+    typedef intptr_t connector_handle_t;
+#else
+    typedef int connector_handle_t;
+#endif
+
 class Connector
 {
 public:
@@ -154,7 +160,7 @@ public:
     virtual bool send(const std::string& message) = 0;
     virtual bool read(std::string& notification) = 0;
 
-    virtual int getFileDescriptor() = 0;
+    virtual connector_handle_t getFileDescriptor() = 0;
 
     /**
      * @brief addSubscriber - a hack due to ZmqPublisherConnector class
