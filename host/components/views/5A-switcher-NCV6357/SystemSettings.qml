@@ -5,7 +5,7 @@ import QtGraphicalEffects 1.0
 import QtQuick.Controls.Styles 1.4
 import QtQuick.Extras 1.4
 import "qrc:/js/navigation_control.js" as NavigationControl
-import tech.strata.sgwidgets 1.0
+import tech.strata.sgwidgets 0.9
 import "qrc:/js/help_layout_manager.js" as Help
 //import "content-views/content-widgets"
 
