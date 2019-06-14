@@ -17,6 +17,18 @@ SGResponsiveScrollView {
     property var defaultMargin: 20
     property var defaultPadding: 20
     property var factor: Math.min(root.height/minimumHeight,root.width/minimumWidth)
+    property bool hideHeader: false
+
+    onHideHeaderChanged: {
+        if (hideHeader) {
+            header.visible = false
+            content.anchors.top = container.top
+        }
+        else {
+            header.visible = true
+            content.anchors.top = header.bottom
+        }
+    }
 
     Rectangle {
         id: container
@@ -50,7 +62,7 @@ SGResponsiveScrollView {
 
             Button {
                 id: btn
-                text: qsTr("Zoom")
+                text: qsTr("Maximize")
                 anchors {
                     top: parent.top
                     right: parent.right
@@ -89,7 +101,7 @@ SGResponsiveScrollView {
 
                 SGSlider {
                     id: pwmslider
-                    label:"<b>PWM</b>"
+                    label:"<b>" + qsTr("PWM Positive Duty Cycle (%)") + "</b>"
                     textColor: "black"
                     labelLeft: false
                     width: parent.width-2*defaultPadding
@@ -123,6 +135,10 @@ SGResponsiveScrollView {
 
                     SGSwitch {
                         id: toggleswitch
+                        label: "<b>" + qsTr("Motor Enable") + "</b>"
+                        labelLeft: false
+                        switchHeight: 32
+                        switchWidth: 65
                         checkedLabel: qsTr("On")
                         uncheckedLabel: qsTr("Off")
                         anchors.bottom: parent.bottom

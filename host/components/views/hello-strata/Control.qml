@@ -21,7 +21,6 @@ Item {
     property var minContentHeight: 660+20
     property var minContentWidth: 850+20
     property var rightBarWidth: 80
-    property bool thumbnailViewMode: false
     property var factor: Math.min(controlNavigation.height/minContentHeight,(controlNavigation.width-rightBarWidth)/minContentWidth)
 
     PlatformInterface {
@@ -48,64 +47,41 @@ Item {
 
             HelloStrataControl {
                 onSignalPotentiometerToADCControl: {
-                    controlContainer.currentIndex = 2
-                }
-                onSignalPWMHeatGeneratorAndTempSensorControl: {
-                    controlContainer.currentIndex = 3
-                }
-                onSignalPWMToFiltersControl: {
-                    controlContainer.currentIndex = 4
+                    controlContainer.currentIndex = 1
+                    tabView.currentTab = 0
                 }
                 onSignalDACAndPWMToLEDControl: {
-                    controlContainer.currentIndex = 5
+                    controlContainer.currentIndex = 1
+                    tabView.currentTab = 1
                 }
                 onSignalPWMMotorControlControl: {
-                    controlContainer.currentIndex = 6
+                    controlContainer.currentIndex = 1
+                    tabView.currentTab = 2
                 }
+                onSignalPWMHeatGeneratorAndTempSensorControl: {
+                    controlContainer.currentIndex = 1
+                    tabView.currentTab = 3
+                } 
                 onSignalLightSensorControl: {
-                    controlContainer.currentIndex = 7
+                    controlContainer.currentIndex = 1
+                    tabView.currentTab = 4
+                }
+                onSignalPWMToFiltersControl: {
+                    controlContainer.currentIndex = 1
+                    tabView.currentTab = 5
                 }
                 onSignalLEDDriverControl: {
-                    controlContainer.currentIndex = 8
+                    controlContainer.currentIndex = 1
+                    tabView.currentTab = 6
                 }
                 onSignalMechanicalButtonsToInterruptsControl: {
-                    controlContainer.currentIndex = 9
+                    controlContainer.currentIndex = 1
+                    tabView.currentTab = 7
                 }
             }
 
             HelloStrataControl_TabView {
-            }
-
-            PotentiometerToADCControl {
-                onZoom: { controlContainer.currentIndex = 0 }
-            }
-
-            PWMHeatGeneratorAndTempSensorControl {
-                onZoom: { controlContainer.currentIndex = 0 }
-            }
-
-            PWMToFiltersControl {
-                onZoom: { controlContainer.currentIndex = 0 }
-            }
-
-            DACAndPWMToLEDControl {
-                onZoom: { controlContainer.currentIndex = 0 }
-            }
-
-            PWMMotorControlControl {
-                onZoom: { controlContainer.currentIndex = 0 }
-            }
-
-            LightSensorControl {
-                onZoom: { controlContainer.currentIndex = 0 }
-            }
-
-            LEDDriverControl {
-                onZoom: { controlContainer.currentIndex = 0 }
-            }
-
-            MechanicalButtonsToInterruptsControl {
-                onZoom: { controlContainer.currentIndex = 0 }
+                id:tabView
             }
         }
     }
@@ -164,7 +140,7 @@ Item {
             }
 
             source: "control-views/thumbnail-view-icon.svg"
-            iconColor: thumbnailMouse.containsMouse ? "lightgrey" : (thumbnailViewMode ? "green" : "grey")
+            iconColor: thumbnailMouse.containsMouse ? "lightgrey" : (controlContainer.currentIndex === 0 ? "green" : "grey")
             height: 40
             width: 40
 
@@ -174,8 +150,7 @@ Item {
                     fill: thumbnailIcon
                 }
                 onClicked: {
-                    thumbnailViewMode = !thumbnailViewMode
-                    controlContainer.currentIndex = thumbnailViewMode ? 0 : 1
+                    controlContainer.currentIndex = 1-controlContainer.currentIndex
                 }
                 hoverEnabled: true
             }

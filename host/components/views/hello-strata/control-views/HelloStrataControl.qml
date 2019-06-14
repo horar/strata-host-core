@@ -21,11 +21,7 @@ SGResponsiveScrollView {
     signal signalLEDDriverControl
     signal signalMechanicalButtonsToInterruptsControl
 
-    property var factor: min(root.height/root.minimumHeight,root.width/root.minimumWidth)
-
-    function min(a,b) {
-        return a<b ? a : b
-    }
+    property var factor: Math.max(1,Math.min(root.height/root.minimumHeight,root.width/root.minimumWidth))
 
     Rectangle {
         id: container

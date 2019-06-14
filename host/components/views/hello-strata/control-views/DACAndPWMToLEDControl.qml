@@ -17,6 +17,18 @@ SGResponsiveScrollView {
     property var defaultMargin: 20
     property var defaultPadding: 20
     property var factor: Math.min(root.height/minimumHeight,root.width/minimumWidth)
+    property bool hideHeader: false
+
+    onHideHeaderChanged: {
+        if (hideHeader) {
+            header.visible = false
+            content.anchors.top = container.top
+        }
+        else {
+            header.visible = true
+            content.anchors.top = header.bottom
+        }
+    }
 
     Rectangle {
         id: container
@@ -38,7 +50,7 @@ SGResponsiveScrollView {
 
             Text {
                 id: name
-                text: "<b>" + qsTr("DAC and PWM to LED") + "</b>"
+                text: "<b>" + qsTr("DAC & PWM LED") + "</b>"
                 font.pixelSize: 14*factor
                 color:"black"
                 anchors.left: parent.left
@@ -50,7 +62,7 @@ SGResponsiveScrollView {
 
             Button {
                 id: btn
-                text: qsTr("Zoom")
+                text: qsTr("Maximize")
                 anchors {
                     top: parent.top
                     right: parent.right
@@ -102,7 +114,7 @@ SGResponsiveScrollView {
                 }
 
                 SGSlider {
-                    label:"<b>PWM</b>"
+                    label:"<b>" + qsTr("PWM Positive Duty Cycle (%)") + "</b>"
                     textColor: "black"
                     labelLeft: false
                     width: parent.width-2*defaultPadding
@@ -116,17 +128,18 @@ SGResponsiveScrollView {
                 }
 
                 SGSubmitInfoBox {
-                    label: "<b>" + qsTr("Frequency of the PWM") + "</b>"
+                    label: "<b>" + qsTr("PWM Frequency") + "</b>"
                     textColor: "black"
                     labelLeft: false
                     infoBoxWidth: 100
                     showButton: true
                     buttonText: qsTr("Apply")
-                    unit: "Hz"
-                    placeholderText: "0.1 - 1000000"
+                    unit: "kHz"
+                    value: "1"
+                    placeholderText: "0.0001 - 1000"
                     validator: DoubleValidator {
-                        bottom: 0.1
-                        top: 1000000
+                        bottom: 0.0001
+                        top: 1000
                     }
                     onApplied: platformInterface.setPwmLedFreq.update(value)
                 }

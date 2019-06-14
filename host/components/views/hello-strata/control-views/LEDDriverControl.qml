@@ -21,6 +21,18 @@ SGResponsiveScrollView {
     property var lightSizeValue: 15*factor
     property var switchHeightValue: 15*factor
     property var switchWidthValue: 25*factor
+    property bool hideHeader: false
+
+    onHideHeaderChanged: {
+        if (hideHeader) {
+            header.visible = false
+            content.anchors.top = container.top
+        }
+        else {
+            header.visible = true
+            content.anchors.top = header.bottom
+        }
+    }
 
     Rectangle {
         id: container
@@ -54,7 +66,7 @@ SGResponsiveScrollView {
 
             Button {
                 id: btn
-                text: qsTr("Zoom")
+                text: qsTr("Maximize")
                 anchors {
                     top: parent.top
                     right: parent.right
@@ -95,7 +107,6 @@ SGResponsiveScrollView {
                 Row {
                     id: ledcontrol
                     spacing: 60*factor
-                    anchors.horizontalCenter: parent.horizontalCenter
 
                     GridLayout {
                         rowSpacing: 5*factor
@@ -104,99 +115,115 @@ SGResponsiveScrollView {
                         columns: 4
 
                         SGSwitch {
+                            id: switch1
                             switchHeight: switchHeightValue
                             switchWidth: switchWidthValue
-                            onClicked: { light1.status = this.checked ? "green" : "off" }
+                            onCheckedChanged: { light1.status = this.checked ? "yellow" : "off" }
                         }
 
                         SGSwitch {
+                            id: switch2
                             switchHeight: switchHeightValue
                             switchWidth: switchWidthValue
-                            onClicked: { light2.status = this.checked ? "green" : "off" }
+                            onCheckedChanged: { light2.status = this.checked ? "yellow" : "off" }
                         }
 
                         SGSwitch {
+                            id: switch3
                             switchHeight: switchHeightValue
                             switchWidth: switchWidthValue
-                            onClicked: { light3.status = this.checked ? "green" : "off" }
+                            onCheckedChanged: { light3.status = this.checked ? "yellow" : "off" }
                         }
 
                         SGSwitch {
+                            id: switch4
                             switchHeight: switchHeightValue
                             switchWidth: switchWidthValue
-                            onClicked: { light4.status = this.checked ? "green" : "off" }
+                            onCheckedChanged: { light4.status = this.checked ? "yellow" : "off" }
                         }
 
                         SGSwitch {
+                            id: switch5
                             switchHeight: switchHeightValue
                             switchWidth: switchWidthValue
-                            onClicked: { light5.status = this.checked ? "green" : "off" }
+                            onCheckedChanged: { light5.status = this.checked ? "red" : "off" }
                         }
 
                         SGSwitch {
+                            id: switch6
                             switchHeight: switchHeightValue
                             switchWidth: switchWidthValue
-                            onClicked: { light6.status = this.checked ? "green" : "off" }
+                            onCheckedChanged: { light6.status = this.checked ? "red" : "off" }
                         }
 
                         SGSwitch {
+                            id: switch7
                             switchHeight: switchHeightValue
                             switchWidth: switchWidthValue
-                            onClicked: { light7.status = this.checked ? "green" : "off" }
+                            onCheckedChanged: { light7.status = this.checked ? "red" : "off" }
                         }
 
                         SGSwitch {
+                            id: switch8
                             switchHeight: switchHeightValue
                             switchWidth: switchWidthValue
-                            onClicked: { light8.status = this.checked ? "green" : "off" }
+                            onCheckedChanged: { light8.status = this.checked ? "red" : "off" }
                         }
 
                         SGSwitch {
+                            id: switch9
                             switchHeight: switchHeightValue
                             switchWidth: switchWidthValue
-                            onClicked: { light9.status = this.checked ? "green" : "off" }
+                            onCheckedChanged: { light9.status = this.checked ? "orange" : "off" }
                         }
 
                         SGSwitch {
+                            id: switch10
                             switchHeight: switchHeightValue
                             switchWidth: switchWidthValue
-                            onClicked: { light10.status = this.checked ? "green" : "off" }
+                            onCheckedChanged: { light10.status = this.checked ? "orange" : "off" }
                         }
 
                         SGSwitch {
+                            id: switch11
                             switchHeight: switchHeightValue
                             switchWidth: switchWidthValue
-                            onClicked: { light11.status = this.checked ? "green" : "off" }
+                            onCheckedChanged: { light11.status = this.checked ? "orange" : "off" }
                         }
 
                         SGSwitch {
+                            id: switch12
                             switchHeight: switchHeightValue
                             switchWidth: switchWidthValue
-                            onClicked: { light12.status = this.checked ? "green" : "off" }
+                            onCheckedChanged: { light12.status = this.checked ? "orange" : "off" }
                         }
 
                         SGSwitch {
+                            id: switch13
                             switchHeight: switchHeightValue
                             switchWidth: switchWidthValue
-                            onClicked: { light13.status = this.checked ? "green" : "off" }
+                            onCheckedChanged: { light13.status = this.checked ? "green" : "off" }
                         }
 
                         SGSwitch {
+                            id: switch14
                             switchHeight: switchHeightValue
                             switchWidth: switchWidthValue
-                            onClicked: { light14.status = this.checked ? "green" : "off" }
+                            onCheckedChanged: { light14.status = this.checked ? "green" : "off" }
                         }
 
                         SGSwitch {
+                            id: switch15
                             switchHeight: switchHeightValue
                             switchWidth: switchWidthValue
-                            onClicked: { light15.status = this.checked ? "green" : "off" }
+                            onCheckedChanged: { light15.status = this.checked ? "green" : "off" }
                         }
 
                         SGSwitch {
+                            id: switch16
                             switchHeight: switchHeightValue
                             switchWidth: switchWidthValue
-                            onClicked: { light16.status = this.checked ? "green" : "off" }
+                            onCheckedChanged: { light16.status = this.checked ? "green" : "off" }
                         }
                     }
 
@@ -288,55 +315,86 @@ SGResponsiveScrollView {
                     }
                 }
 
-                Row {
-                    spacing: 25
-                    SGRadioButtonContainer {
-                        radioGroup: Column {
-                            spacing: 10
-                            SGRadioButton {
-                                text: "<b>" + qsTr("Blink 0") + "</b>"
-                                checked: true
+                Column {
+                    spacing: 20
+                    Row {
+                        spacing: 25
+                        SGRadioButtonContainer {
+                            radioGroup: Column {
+                                spacing: 10
+                                SGRadioButton {
+                                    text: "<b>" + qsTr("Blink 0") + "</b>"
+                                    checked: true
+                                }
+                                SGRadioButton {
+                                    text: "<b>" + qsTr("Blink 1") + "</b>"
+                                }
                             }
-                            SGRadioButton {
-                                text: "<b>" + qsTr("Blink 1") + "</b>"
+                            anchors.bottom: parent.bottom
+                        }
+
+                        SGSubmitInfoBox {
+                            label: "<b>" + qsTr("Frequency") + "</b>"
+                            textColor: "black"
+                            labelLeft: false
+                            infoBoxWidth: 100
+                            showButton: false
+                            unit: "Hz"
+                            placeholderText: "0.1 - 1000000"
+                            validator: DoubleValidator {
+                                bottom: 0.1
+                                top: 1000000
+                            }
+                            anchors.bottom: parent.bottom
+                        }
+
+                        SGSubmitInfoBox {
+                            label: "<b>" + "PWM" + "</b>"
+                            textColor: "black"
+                            labelLeft: false
+                            infoBoxWidth: 60
+                            showButton: false
+                            unit: "%"
+                            placeholderText: "0 - 100"
+                            validator: DoubleValidator {
+                                bottom: 0
+                                top: 100
+                            }
+                            anchors.bottom: parent.bottom
+                        }
+                    }
+
+                    Row {
+                        spacing: 20
+                        Button {
+                            id: applybtn
+                            text: qsTr("Apply")
+                            anchors.bottom: parent.bottom
+                        }
+
+                        Button {
+                            id: resetbtn
+                            text: qsTr("Reset")
+                            anchors.bottom: parent.bottom
+                            onClicked: {
+                                switch1.checked = false
+                                switch2.checked = false
+                                switch3.checked = false
+                                switch4.checked = false
+                                switch5.checked = false
+                                switch6.checked = false
+                                switch7.checked = false
+                                switch8.checked = false
+                                switch9.checked = false
+                                switch10.checked = false
+                                switch11.checked = false
+                                switch12.checked = false
+                                switch13.checked = false
+                                switch14.checked = false
+                                switch15.checked = false
+                                switch16.checked = false
                             }
                         }
-                        anchors.bottom: parent.bottom
-                    }
-
-                    SGSubmitInfoBox {
-                        label: "<b>" + qsTr("Frequency") + "</b>"
-                        textColor: "black"
-                        labelLeft: false
-                        infoBoxWidth: 100
-                        showButton: false
-                        unit: "Hz"
-                        placeholderText: "0.1 - 1000000"
-                        validator: DoubleValidator {
-                            bottom: 0.1
-                            top: 1000000
-                        }
-                        anchors.bottom: parent.bottom
-                    }
-
-                    SGSubmitInfoBox {
-                        label: "<b>" + "PWM" + "</b>"
-                        textColor: "black"
-                        labelLeft: false
-                        infoBoxWidth: 50
-                        showButton: false
-                        unit: "%"
-                        placeholderText: "0 - 100"
-                        validator: DoubleValidator {
-                            bottom: 0
-                            top: 100
-                        }
-                        anchors.bottom: parent.bottom
-                    }
-
-                    Button {
-                        text: qsTr("Apply")
-                        anchors.bottom: parent.bottom
                     }
                 }
             }

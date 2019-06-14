@@ -17,6 +17,18 @@ SGResponsiveScrollView {
     property var defaultMargin: 20
     property var defaultPadding: 20
     property var factor: Math.min(root.height/minimumHeight,root.width/minimumWidth)
+    property bool hideHeader: false
+
+    onHideHeaderChanged: {
+        if (hideHeader) {
+            header.visible = false
+            content.anchors.top = container.top
+        }
+        else {
+            header.visible = true
+            content.anchors.top = header.bottom
+        }
+    }
 
     Rectangle {
         id: container
@@ -38,7 +50,7 @@ SGResponsiveScrollView {
 
             Text {
                 id: name
-                text: "<b>" + qsTr("PWM to Filters") + "</b>"
+                text: "<b>" + qsTr("PWM Filters") + "</b>"
                 font.pixelSize: 14*factor
                 color:"black"
                 anchors.left: parent.left
@@ -50,7 +62,7 @@ SGResponsiveScrollView {
 
             Button {
                 id: btn
-                text: qsTr("Zoom")
+                text: qsTr("Maximize")
                 anchors {
                     top: parent.top
                     right: parent.right
@@ -83,12 +95,89 @@ SGResponsiveScrollView {
             }
 
             Column {
-                spacing: defaultPadding
+                spacing: 5
                 width: parent.width
                 padding: defaultPadding
 
+                Row {
+                    spacing: 20
+                    Column {
+                        spacing: 5
+                        SGCircularGauge {
+                            id: rcGauge
+                            width: Math.min(content.height,content.width)*0.4
+                            height: Math.min(content.height,content.width)*0.4
+                            unitLabel: "v"
+                            value: 1
+                            tickmarkStepSize: 0.5
+                            minimumValue: 0
+                            maximumValue: 3.3
+                        }
+                        SGSwitch {
+                            label: "RC_OUT"
+                            checkedLabel: "Bits"
+                            uncheckedLabel: "Volts"
+                            switchHeight: 20
+                            switchWidth: 50
+                            onCheckedChanged: {
+                                if (this.checked) {
+                                    rcGauge.unitLabel = ""
+                                    rcGauge.value = 0
+                                    rcGauge.tickmarkStepSize = 512
+                                    rcGauge.minimumValue = 0
+                                    rcGauge.maximumValue = 4096
+                                }
+                                else {
+                                    rcGauge.unitLabel = "v"
+                                    rcGauge.value = 1
+                                    rcGauge.minimumValue = 0
+                                    rcGauge.maximumValue = 3.3
+                                    rcGauge.tickmarkStepSize = 0.5
+                                }
+                            }
+                        }
+                    }
+                    Column {
+                        spacing: 5
+                        SGCircularGauge {
+                            id: lcGauge
+                            width: Math.min(content.height,content.width)*0.4
+                            height: Math.min(content.height,content.width)*0.4
+                            unitLabel: "v"
+                            value: 1
+                            tickmarkStepSize: 0.5
+                            minimumValue: 0
+                            maximumValue: 3.3
+                        }
+                        SGSwitch {
+                            label: "LC_OUT"
+                            checkedLabel: "Bits"
+                            uncheckedLabel: "Volts"
+                            switchHeight: 20
+                            switchWidth: 50
+                            onCheckedChanged: {
+                                if (this.checked) {
+                                    lcGauge.unitLabel = ""
+                                    lcGauge.value = 0
+                                    lcGauge.tickmarkStepSize = 512
+                                    lcGauge.minimumValue = 0
+                                    lcGauge.maximumValue = 4096
+                                }
+                                else {
+                                    lcGauge.unitLabel = "v"
+                                    lcGauge.value = 1
+                                    lcGauge.minimumValue = 0
+                                    lcGauge.maximumValue = 3.3
+                                    lcGauge.tickmarkStepSize = 0.5
+                                }
+                            }
+                        }
+                    }
+                    anchors.horizontalCenter: parent.horizontalCenter
+                }
+
                 SGSlider {
-                    label:"<b>PWM</b>"
+                    label:"<b>" + qsTr("PWM Positive Duty Cycle (%)") + "</b>"
                     textColor: "black"
                     labelLeft: false
                     width: parent.width-2*defaultPadding
@@ -101,17 +190,18 @@ SGResponsiveScrollView {
                 }
 
                 SGSubmitInfoBox {
-                    label: "<b>" + qsTr("Set Frequency") + "</b>"
+                    label: "<b>" + qsTr("PWM Frequency") + "</b>"
                     textColor: "black"
-                    labelLeft: false
+                    labelLeft: true
                     infoBoxWidth: 100
                     showButton: true
                     buttonText: qsTr("Apply")
-                    unit: "Hz"
-                    placeholderText: "0.1 - 1000000"
+                    unit: "kHz"
+                    value: "1"
+                    placeholderText: "0.0001 - 1000"
                     validator: DoubleValidator {
-                        bottom: 0.1
-                        top: 1000000
+                        bottom: 0.0001
+                        top: 1000
                     }
                 }
 

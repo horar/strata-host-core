@@ -18,6 +18,18 @@ SGResponsiveScrollView {
     property var defaultPadding: 20
     property var factor: Math.min(root.height/minimumHeight,root.width/minimumWidth)
     property var lightSizeValue: 25*factor
+    property bool hideHeader: false
+
+    onHideHeaderChanged: {
+        if (hideHeader) {
+            header.visible = false
+            content.anchors.top = container.top
+        }
+        else {
+            header.visible = true
+            content.anchors.top = header.bottom
+        }
+    }
 
     Rectangle {
         id: container
@@ -39,7 +51,7 @@ SGResponsiveScrollView {
 
             Text {
                 id: name
-                text: "<b>" + qsTr("Mechanical Buttons to Interrupts") + "</b>"
+                text: "<b>" + qsTr("Mechanical Buttons") + "</b>"
                 font.pixelSize: 14*factor
                 color:"black"
                 anchors.left: parent.left
@@ -51,7 +63,7 @@ SGResponsiveScrollView {
 
             Button {
                 id: btn
-                text: qsTr("Zoom")
+                text: qsTr("Maximize")
                 anchors {
                     top: parent.top
                     right: parent.right

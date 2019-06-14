@@ -17,6 +17,18 @@ SGResponsiveScrollView {
     property var defaultMargin: 20
     property var defaultPadding: 20
     property var factor: Math.min(root.height/minimumHeight,root.width/minimumWidth)
+    property bool hideHeader: false
+
+    onHideHeaderChanged: {
+        if (hideHeader) {
+            header.visible = false
+            content.anchors.top = container.top
+        }
+        else {
+            header.visible = true
+            content.anchors.top = header.bottom
+        }
+    }
 
     Rectangle {
         id: container
@@ -38,7 +50,7 @@ SGResponsiveScrollView {
 
             Text {
                 id: name
-                text: "<b>" + qsTr("Potentiometer to ADC") + "</b>"
+                text: "<b>" + qsTr("Potentiometer") + "</b>"
                 font.pixelSize: 14*factor
                 color:"black"
                 anchors.left: parent.left
@@ -50,7 +62,7 @@ SGResponsiveScrollView {
 
             Button {
                 id: btn
-                text: qsTr("Zoom")
+                text: qsTr("Maximize")
                 anchors {
                     top: parent.top
                     right: parent.right
@@ -86,8 +98,12 @@ SGResponsiveScrollView {
                 spacing: 50
 
                 SGSwitch {
-                    switchHeight: 15*factor
-                    switchWidth: 25*factor
+                    switchHeight: 32
+                    switchWidth: 65
+                    label: "Volts/Bits"
+                    labelLeft: false
+                    checkedLabel: "Bits"
+                    uncheckedLabel: "Volts"
                     onCheckedChanged: {
                         if (this.checked) {
                             gauge.unitLabel = ""

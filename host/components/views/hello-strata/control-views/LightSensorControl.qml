@@ -17,6 +17,18 @@ SGResponsiveScrollView {
     property var defaultMargin: 20
     property var defaultPadding: 20
     property var factor: Math.min(root.height/minimumHeight,root.width/minimumWidth)
+    property bool hideHeader: false
+
+    onHideHeaderChanged: {
+        if (hideHeader) {
+            header.visible = false
+            content.anchors.top = container.top
+        }
+        else {
+            header.visible = true
+            content.anchors.top = header.bottom
+        }
+    }
 
     Rectangle {
         id: container
@@ -50,7 +62,7 @@ SGResponsiveScrollView {
 
             Button {
                 id: btn
-                text: qsTr("Zoom")
+                text: qsTr("Maximize")
                 anchors {
                     top: parent.top
                     right: parent.right
@@ -82,70 +94,94 @@ SGResponsiveScrollView {
                 right:parent.right
             }
 
-            Row {
+            Column {
+                padding: defaultPadding
                 spacing: 10
 
-                SGLabelledInfoBox {
-                    label: "<b>" + "Lux (lx)" + "</b>"
-                    labelLeft: false
-                    info: "800"
-                }
-                Column {
-                    spacing: 10
+                Row {
+                    spacing: 20
 
-                    Row {
-                        spacing: 35
+                    Column {
+                        spacing: 10
+                        SGLabelledInfoBox {
+                            label: "<b>" + "Lux (lx)" + "</b>"
+                            labelLeft: false
+                            info: "800"
+                        }
 
-                        Column {
-                            spacing: 10
-
+                        Row {
+                            spacing: 20
                             SGSwitch {
-                                label: "<b>" + qsTr("Sleep/Active") + "</b>"
+                                //label: "<b>" + qsTr("Sleep/Active") + "</b>"
+                                switchHeight: 32
+                                switchWidth: 67
                                 labelLeft: false
                                 checkedLabel: qsTr("Active")
                                 uncheckedLabel: qsTr("Sleep")
+                                anchors.bottom: parent.bottom
                             }
 
+                            SGComboBox {
+                                label: "<b>" + qsTr("Integration Time") + "</b>"
+                                labelLeft: false
+                                model: ["12.5ms", "100ms", "200ms", "Manual"]
+                                comboBoxWidth: 100
+                                anchors.bottom: parent.bottom
+                            }
+                        }
+
+                        Row {
+                            spacing: 20
                             SGSwitch {
-                                label: "<b>" + qsTr("Start/Stop") + "</b>"
+                                //label: "<b>" + qsTr("Start/Stop") + "</b>"
+                                switchHeight: 32
+                                switchWidth: 67
                                 labelLeft: false
                                 checkedLabel: qsTr("Start")
                                 uncheckedLabel: qsTr("Stop")
+                                anchors.bottom: parent.bottom
+                            }
+
+                            SGComboBox {
+                                label: "<b>" + qsTr("Gain") + "</b>"
+                                labelLeft: false
+                                model: ["0.25", "1", "2", "8"]
+                                comboBoxWidth: 100
+                                anchors.bottom: parent.bottom
                             }
                         }
-
-                        SGComboBox {
-                            label: "<b>" + qsTr("Integration Time") + "</b>"
-                            labelLeft: false
-                            model: ["12.5ms", "100ms", "200ms", "Manual"]
-                            comboBoxWidth: 100
-                        }
-
-                        SGComboBox {
-                            label: "<b>" + qsTr("Gain") + "</b>"
-                            labelLeft: false
-                            model: ["0.25", "1", "2", "8"]
-                            comboBoxWidth: 100
-                        }
+                        anchors.bottom: parent.bottom
                     }
 
-                    SGSlider {
-                        label:"<b>" + qsTr("Sensitivity") + "</b>"
-                        textColor: "black"
-                        labelLeft: false
-                        width: root.width*0.7
-                        stepSize: 0.01
-                        from: 66.7
-                        to: 150
-                        startLabel: "66.7%"
-                        endLabel: "150%"
-                        toolTipDecimalPlaces: 2
+                    SGCircularGauge {
+                        id: gauge
+                        width: Math.min(content.height,content.width)*0.5
+                        height: Math.min(content.height,content.width)*0.5
+                        unitLabel: "Light Intensity"
+                        value: 100000
+                        tickmarkStepSize: 50000
+                        minimumValue: 0
+                        maximumValue: 65535*8
+                        anchors.bottom: parent.bottom
                     }
                 }
+
+                SGSlider {
+                    label:"<b>" + qsTr("Sensitivity") + "</b>"
+                    textColor: "black"
+                    labelLeft: false
+                    width: root.width - 2*defaultPadding
+                    stepSize: 0.01
+                    from: 66.7
+                    to: 150
+                    startLabel: "66.7%"
+                    endLabel: "150%"
+                    toolTipDecimalPlaces: 2
+                }
                 anchors {
-                    top: parent.top
-                    topMargin: 10
-                    horizontalCenter: parent.horizontalCenter
+                    left: parent.left
+                    right: parent.right
+                    verticalCenter: parent.verticalCenter
                 }
             }
         }

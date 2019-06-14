@@ -17,6 +17,18 @@ SGResponsiveScrollView {
     property var defaultMargin: 20
     property var defaultPadding: 20
     property var factor: Math.min(root.height/minimumHeight,root.width/minimumWidth)
+    property bool hideHeader: false
+
+    onHideHeaderChanged: {
+        if (hideHeader) {
+            header.visible = false
+            content.anchors.top = container.top
+        }
+        else {
+            header.visible = true
+            content.anchors.top = header.bottom
+        }
+    }
 
     Rectangle {
         id: container
@@ -38,7 +50,7 @@ SGResponsiveScrollView {
 
             Text {
                 id: name
-                text: "<b>" + qsTr("PWM Heat Generator and Temp Sensor") + "</b>"
+                text: "<b>" + qsTr("PWM Heat Generator") + "</b>"
                 font.pixelSize: 14*factor
                 color:"black"
                 anchors.left: parent.left
@@ -50,7 +62,7 @@ SGResponsiveScrollView {
 
             Button {
                 id: btn
-                text: qsTr("Zoom")
+                text: qsTr("Maximize")
                 anchors {
                     top: parent.top
                     right: parent.right
@@ -85,14 +97,13 @@ SGResponsiveScrollView {
             Row {
                 spacing: defaultPadding
                 height: parent.height
+                padding: defaultPadding
 
                 Column {
                     spacing: defaultPadding
-
-
                     SGSlider {
                         id: pwmslider
-                        label:"<b>PWM</b>"
+                        label:"<b>" + qsTr("PWM Positive Duty Cycle (%)") + "</b>"
                         textColor: "black"
                         labelLeft: false
                         width: content.width*0.4
@@ -106,20 +117,9 @@ SGResponsiveScrollView {
 
                     SGStatusLight {
                         id: alertLED
-                        label: "<b>" + qsTr("OS/Alert") + "</b>"
-                        //anchors.bottom: parent.bottom
+                        label: "<b>" + qsTr("OS/ALERT") + "</b>"
                     }
 
-    //                Row {
-    //                    spacing: defaultPadding
-    //                    SGLabelledInfoBox {
-    //                        label: "<b>" + qsTr("Board Temperature") + "</b>"
-    //                        labelLeft: false
-    //                        info: "0" + " Fahrenheit"
-    //                        infoBoxWidth: 120
-    //                        anchors.bottom: parent.bottom
-    //                    }
-    //                }
                     anchors.verticalCenter: parent.verticalCenter
                 }
 
@@ -132,9 +132,8 @@ SGResponsiveScrollView {
                     tickmarkStepSize: 10
                     minimumValue: -55
                     maximumValue: 125
+                    anchors.verticalCenter: parent.verticalCenter
                 }
-
-                anchors.horizontalCenter: parent.horizontalCenter
             }
         }
     }
