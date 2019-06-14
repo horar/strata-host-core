@@ -233,16 +233,16 @@ Item {
 
 
         SGSlider {
-            id: currentLimit
+            id: currentLimitSlider
             label: "Current limit:"
             value: {
                 if (platformInterface.output_current_exceeds_maximum.port === portNumber){
                     var currentLimit = platformInterface.output_current_exceeds_maximum.current_limit
-                    var correctedCurrentLimit = platformInterface.adjust_current ? currentLimit * 1.333 : currentLimit
+                    var correctedCurrentLimit = platformInterface.adjust_current ? currentLimit * platformInterface.oldFirmwareScaleFactor : currentLimit
                     return correctedCurrentLimit;
                 }
                 else{
-                    return currentLimit.value;
+                    return value;
                 }
 
             }
@@ -275,7 +275,7 @@ Item {
             minimumValue: 1
             maximumValue: 6
             anchors {
-                verticalCenter: currentLimit.verticalCenter
+                verticalCenter: currentLimitSlider.verticalCenter
                 verticalCenterOffset: -7
                 right: currentLimitInputUnits.left
                 rightMargin: 5
@@ -284,11 +284,11 @@ Item {
             value:{
                if (platformInterface.output_current_exceeds_maximum.port === portNumber){
                    var currentLimit = platformInterface.output_current_exceeds_maximum.current_limit
-                   var correctedCurrentLimit = platformInterface.adjust_current ? currentLimit * 1.333 : currentLimit
+                   var correctedCurrentLimit = platformInterface.adjust_current ? currentLimit * platformInterface.oldFirmwareScaleFactor : currentLimit
                    return correctedCurrentLimit.toFixed(0)
                 }
                 else{
-                   return currentLimit.value;
+                   return value;
                  }
             }
             onApplied:{
@@ -316,7 +316,7 @@ Item {
                 pixelSize: 13
             }
             anchors {
-                top: currentLimit.bottom
+                top: currentLimitInput.bottom
                 topMargin: 15
                 left:parent.left
                 leftMargin: 30

@@ -40,9 +40,9 @@ Item {
 
         onPeriodicValuesChanged: {
             var inputCurrent = platformInterface.request_usb_power_notification.input_current;
-            var correctedInputCurrent= platformInterface.adjust_current ? inputCurrent * 1.3333 : inputCurrent
+            var correctedInputCurrent= platformInterface.adjust_current ? inputCurrent * platformInterface.oldFirmwareScaleFactor : inputCurrent
             var outputCurrent = platformInterface.request_usb_power_notification.output_current;
-            var correctedOutputCurrent= platformInterface.adjust_current ? outputCurrent * 1.3333 : outputCurrent
+            var correctedOutputCurrent= platformInterface.adjust_current ? outputCurrent * platformInterface.oldFirmwareScaleFactor : outputCurrent
             var theInputPower = platformInterface.request_usb_power_notification.input_voltage * correctedInputCurrent +2;//PTJ-1321 2 Watt compensation
             var theOutputPower = platformInterface.request_usb_power_notification.output_voltage * correctedOutputCurrent;
 
@@ -86,7 +86,7 @@ Item {
         inputPower:{
             if (platformInterface.request_usb_power_notification.port === portNumber){
                 var inputCurrent = platformInterface.request_usb_power_notification.input_current;
-                var correctedInputCurrent= platformInterface.adjust_current ? inputCurrent * 1.3333 : inputCurrent
+                var correctedInputCurrent= platformInterface.adjust_current ? inputCurrent * platformInterface.oldFirmwareScaleFactor : inputCurrent
                 return ((platformInterface.request_usb_power_notification.input_voltage * correctedInputCurrent)+2).toFixed(2); //PTJ-1321 adding 2 watts compensation
             }
             else{
@@ -96,7 +96,7 @@ Item {
         outputPower:{
             if (platformInterface.request_usb_power_notification.port === portNumber){
                 var outputCurrent = platformInterface.request_usb_power_notification.output_current;
-                var correctedOutputCurrent= platformInterface.adjust_current ? outputCurrent * 1.3333 : outputCurrent
+                var correctedOutputCurrent= platformInterface.adjust_current ? outputCurrent * platformInterface.oldFirmwareScaleFactor : outputCurrent
                 return (platformInterface.request_usb_power_notification.output_voltage * correctedOutputCurrent).toFixed(2);
             }
             else{
@@ -318,7 +318,7 @@ Item {
                     //console.log("voltage=",platformInterface.request_usb_power_notification.output_voltage," count=",count);
 
                     var outputCurrent = platformInterface.request_usb_power_notification.output_current;
-                    var correctedOutputCurrent= platformInterface.adjust_current ? outputCurrent * 1.3333 : outputCurrent
+                    var correctedOutputCurrent= platformInterface.adjust_current ? outputCurrent * platformInterface.oldFirmwareScaleFactor : outputCurrent
                     count += interval;
                     stream = correctedOutputCurrent
                 }
@@ -355,7 +355,7 @@ Item {
                 if (platformInterface.request_usb_power_notification.port === portNumber){
                     //console.log("voltage=",platformInterface.request_usb_power_notification.output_voltage," count=",count);
                     var inputCurrent = platformInterface.request_usb_power_notification.input_current;
-                    var correctedInputCurrent= platformInterface.adjust_current ? inputCurrent * 1.3333 : inputCurrent
+                    var correctedInputCurrent= platformInterface.adjust_current ? inputCurrent * platformInterface.oldFirmwareScaleFactor : inputCurrent
                     count += interval;
                     stream = correctedInputCurrent
                 }
@@ -391,7 +391,7 @@ Item {
                 if (platformInterface.request_usb_power_notification.port === portNumber){
                     //console.log("voltage=",platformInterface.request_usb_power_notification.output_voltage," count=",count);
                     var outputCurrent = platformInterface.request_usb_power_notification.output_current;
-                    var correctedOutputCurrent= platformInterface.adjust_current ? outputCurrent * 1.3333 : outputCurrent
+                    var correctedOutputCurrent= platformInterface.adjust_current ? outputCurrent * platformInterface.oldFirmwareScaleFactor : outputCurrent
                     count += interval;
                     stream = platformInterface.request_usb_power_notification.output_voltage *correctedOutputCurrent;
                 }
@@ -427,7 +427,7 @@ Item {
                 if (platformInterface.request_usb_power_notification.port === portNumber){
                     //console.log("voltage=",platformInterface.request_usb_power_notification.output_voltage," count=",count);
                     var inputCurrent = platformInterface.request_usb_power_notification.input_current;
-                    var correctedInputCurrent= platformInterface.adjust_current ? inputCurrent * 1.3333 : inputCurrent
+                    var correctedInputCurrent= platformInterface.adjust_current ? inputCurrent * platformInterface.oldFirmwareScaleFactor : inputCurrent
                     count += interval;
                     stream = platformInterface.request_usb_power_notification.input_voltage * correctedInputCurrent;
                 }
@@ -466,9 +466,9 @@ Item {
 
             onPeriodicValuesChanged: {
                 var inputCurrent = platformInterface.request_usb_power_notification.input_current;
-                var correctedInputCurrent= platformInterface.adjust_current ? inputCurrent * 1.3333 : inputCurrent
+                var correctedInputCurrent= platformInterface.adjust_current ? inputCurrent * platformInterface.oldFirmwareScaleFactor : inputCurrent
                 var outputCurrent = platformInterface.request_usb_power_notification.output_current;
-                var correctedOutputCurrent= platformInterface.adjust_current ? outputCurrent * 1.3333 : outputCurrent
+                var correctedOutputCurrent= platformInterface.adjust_current ? outputCurrent * platformInterface.oldFirmwareScaleFactor : outputCurrent
                 var theInputPower = platformInterface.request_usb_power_notification.input_voltage * correctedInputCurrent +2;//PTJ-1321 2 Watt compensation
                 var theOutputPower = platformInterface.request_usb_power_notification.output_voltage * correctedOutputCurrent;
 

@@ -44,6 +44,7 @@ Item {
     //be multiplied by 1.33. This property will be true if that adjustment should be made, and will be set when the
     //firmware info changes
     property var adjust_current:false
+    property var oldFirmwareScaleFactor: 1.333
 
     property var get_firmware_info:{
         "bootloader":"",
@@ -53,14 +54,14 @@ Item {
         }
     }
 
-    //if the firmware is dated earlier than 3/14/2019, then set adjust_current to true;
+    //if the firmware is dated earlier than 6/11/2019, then set adjust_current to true;
     onGet_firmware_infoChanged: {
         console.log("get_firmware_info changed. firmware date is=",get_firmware_info.application.date);
         var year= get_firmware_info.application.date.substr(0,4);
         var month = get_firmware_info.application.date.substr(5,2);
         var day = get_firmware_info.application.date.substr(8,2);
         console.log("year=",year,"month=",month,"day=",day);
-        if (year<=2019 && month<=3 && day < 14){
+        if (year<=2019 && month<=6 && day < 11){
             adjust_current = true;
         }
 
