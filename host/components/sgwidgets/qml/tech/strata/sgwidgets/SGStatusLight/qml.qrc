@@ -1,6 +1,5 @@
 <RCC>
     <qresource prefix="/tech/strata/sgwidgets/SGStatusLight">
-        <file>qmldir</file>
         <file>SGStatusLight.qml</file>
         <file>images/greenStatusLight.svg</file>
         <file>images/redStatusLight.svg</file>
