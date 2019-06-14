@@ -141,7 +141,7 @@
 #endif
 
 #ifdef _WIN32
-    typedef void* connector_handle_t;
+    typedef intptr_t connector_handle_t;
 #else
     typedef int connector_handle_t;
 #endif
