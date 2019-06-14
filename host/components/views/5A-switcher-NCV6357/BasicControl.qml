@@ -304,7 +304,7 @@ Item {
                 SGLabelledInfoBox {
                     id: inputVoltage
                     label: "Input Voltage"
-                    info: platformInterface.status_voltage_current.vin.toFixed(2)
+                    info: platformInterface.status_voltage_current.vin.toFixed(2) + "V"
                     //unit: "V"
                     infoBoxWidth: parent.width/3
                     infoBoxHeight : parent.height/12
@@ -492,7 +492,7 @@ Item {
                 SGLabelledInfoBox {
                     id: outputVoltage
                     label: "Output Voltage"
-                    info: platformInterface.status_voltage_current.vout
+                    info: platformInterface.status_voltage_current.vout + "V"
                    // unit: "V"
                     infoBoxWidth: parent.width/3
                     infoBoxHeight : parent.height/12
@@ -509,7 +509,7 @@ Item {
                 SGLabelledInfoBox {
                     id: ouputCurrent
                     label: "Output Current"
-                    info: platformInterface.status_voltage_current.iout.toFixed(2)
+                    info: platformInterface.status_voltage_current.iout.toFixed(2) + "A"
                     //unit: "A"
                     infoBoxWidth: parent.width/3
                     infoBoxHeight :  parent.height/12

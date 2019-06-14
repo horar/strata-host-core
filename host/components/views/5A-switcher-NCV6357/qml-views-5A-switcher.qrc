@@ -10,6 +10,5 @@
         <file>Telemetry.qml</file>
         <file>TimeAndWarningSettings.qml</file>
         <file>question-circle-solid.svg</file>
-        <file>DiagnoticRadioButton.qml</file>
     </qresource>
 </RCC>

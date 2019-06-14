@@ -67,11 +67,15 @@ Item {
 
     property var read_output_voltage0_status: platformInterface.initial_status_0.vout_vsel0_status
     onRead_output_voltage0_statusChanged: {
+        console.log(read_output_voltage0_status)
+
         platformInterface.output_voltage_selector0 = read_output_voltage0_status
+        outputVolCombo.currentIndex = read_output_voltage0_status
     }
     property var read_output_voltage1_status: platformInterface.initial_status_0.vout_vsel1_status
     onRead_output_voltage1_statusChanged: {
         platformInterface.output_voltage_selector1 = read_output_voltage1_status
+        outputVolCombo2.currentIndex = read_output_voltage1_status
     }
 
     property var dcdc_mode0_status: platformInterface.initial_status_1.ppwmvsel0_mode_status
@@ -98,10 +102,12 @@ Item {
         platformInterface.ipeak_state = read_ipeak_state
     }
 
+
+
     Component.onCompleted: {
         var value;
-        for(var i = 0 ; i <= 127 ; ++i ) {
-            value = (i * 6.25) + 600
+        for(var i = 0 ; i <= 216 ; ++i ) {
+            value = (i * 12.5) + 600
             outputvoltage0.push(value + "mV")
         }
         outputVolCombo.model = outputvoltage0
@@ -210,16 +216,16 @@ Item {
                             currentIndex: platformInterface.ipeak_state
                             //fontSize: (parent.width + parent.height)/22
                             label :"Set Inductor\nPeak Current"
-                            model: [ "7.0A (Iout = 5.3A)", "7.7A (Iout = 5.8A)","8.2A (Iout = 6.3A)", "8.8A (Iout = 6.8A)" ]
+                            model: [ "5.2A(Iout = 3.5A)", "5.8A(Iout = 4.0A)","6.2A(Iout = 4.5A)", "6.8A(Iout = 5.0A)" ]
                             anchors {
                                 horizontalCenter: parent.horizontalCenter
                             }
                             comboBoxWidth: parent.width/2
                             comboBoxHeight: parent.height/2
                             onActivated: {
-                                platformInterface.set_ipeak_current.update(currentIndex)
+                                platformInterface.set_thermal_threshold.update(currentIndex)
                                 platformInterface.ipeak_state = currentIndex
-                                platformInterface.set_ipeak_current.show()
+                                platformInterface.set_thermal_threshold.show()
                             }
                         }
                     }
@@ -331,16 +337,20 @@ Item {
                             height: parent.height/5
                             SGComboBox {
                                 id: outputVolCombo
-                                currentIndex: platformInterface.output_voltage_selector0
+                                currentIndex: {
+                                   platformInterface.output_voltage_selector0
+
+                                }
                                 //fontSize: (parent.width + parent.height)/25
                                 label : "Programmed Output Voltage 0"
                                 model: outputvoltage0
                                 comboBoxWidth: parent.width/4
                                 comboBoxHeight: parent.height/2
                                 onActivated: {
-                                    platformInterface.vselect_prog0.update(currentIndex)
+                                    platformInterface.set_prog_vselect0.update(currentIndex)
                                     platformInterface.output_voltage_selector0 = currentIndex
-                                    platformInterface.vselect_prog0.show()
+                                    console.log("dh",platformInterface.output_voltage_selector0)
+                                    platformInterface.set_prog_vselect0.show()
                                 }
                             }
                         }
@@ -357,9 +367,9 @@ Item {
                                 comboBoxWidth: parent.width/4
                                 comboBoxHeight: parent.height/2
                                 onActivated: {
-                                    platformInterface.vselect_prog1.update(currentIndex)
+                                    platformInterface.set_prog_vsel1.update(currentIndex)
                                     platformInterface.output_voltage_selector1 = currentIndex
-                                    platformInterface.vselect_prog1.show()
+                                    platformInterface.set_prog_vsel1.show()
                                 }
                             }
                         }

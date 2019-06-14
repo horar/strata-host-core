@@ -28,7 +28,7 @@ Item {
         resetLed.status = platformInterface.reset_indicator
     }
 
-    property var status_interrupt: platformInterface.status_interrupt.intb
+    property var status_interrupt: platformInterface.initial_status_0.pgood_status
     onStatus_interruptChanged:  {
         if(status_interrupt === "bad") {
             errorLed.status = "red"
@@ -92,17 +92,17 @@ Item {
     }
 
 
-    property bool check_intd_initial_state:platformInterface.initial_status_0.intb_status
-    onCheck_intd_initial_stateChanged: {
-        if(check_intd_initial_state === "good"){
-            platformInterface.intd_state = "green"
-            basicControl.warningVisible = false
-        }
-        else {
-            platformInterface.intd_state = "red"
-            basicControl.warningVisible = true
-        }
-    }
+//    property bool check_intd_initial_state:platformInterface.initial_status_0.intb_status
+//    onCheck_intd_initial_stateChanged: {
+//        if(check_intd_initial_state === "good"){
+//            platformInterface.intd_state = "green"
+//            basicControl.warningVisible = false
+//        }
+//        else {
+//            platformInterface.intd_state = "red"
+//            basicControl.warningVisible = true
+//        }
+//    }
 
     Component.onCompleted: {
         Help.registerTarget(tempGauge, "This gauge displays the board temperature next to the part in degrees Celsius. (make sure to change label on this to board temperature)", 0, "advance5AHelp")
@@ -471,7 +471,7 @@ Item {
                             Layout.alignment: Qt.AlignCenter
                             Layout.leftMargin: 10
                             // Optional Configuration:
-                            label: "Interrupt \n Error" // Default: "" (if not entered, label will not appear)
+                            label: "PGood" // Default: "" (if not entered, label will not appear)
                             status: platformInterface.inbt_state
                         }
 

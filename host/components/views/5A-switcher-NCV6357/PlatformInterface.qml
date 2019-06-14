@@ -47,15 +47,18 @@ Item {
         "enable_status": "",
         "vingood_status": "",
         "vsel_status": "",
-        "intb_status": "",
-        "vout_vsel0_status": 0,
-        "vout_vsel1_status": 0,
-        "active_discharge_status": "",
-        "dvs_speed_status":	0,
-        "delay_enable_status":	0
+        "pgood_status": "",
+        "vout_vsel0_status": 4,
+        "vout_vsel1_status": 4,
+        "pgood_enable_status": "",
+        "dvs_pgood_enable_status":	"",
+        "reset_timeout_pgood_status": 1,
+        "active_discharge_status": ""
     }
 
     property var initial_status_1:{
+        "dvs_speed_status":         0,
+        "delay_enable_status":      5,
         "sleep_mode_status":		"",
         "dvs_mode_status":			"",
         "ppwmvsel1_mode_status":	"",
@@ -146,7 +149,6 @@ Item {
                                        show: function () { CorePlatformInterface.show(this) }
                                    })
 
-
     property var  set_vselect: ({
 
                                     "cmd": "set_vselect",
@@ -168,6 +170,27 @@ Item {
                                 })
 
 
+    property var  set_prog_vselect0: ({
+
+                                          "cmd": "set_prog_vsel0",
+                                          "payload": {
+                                              "prog_vsel0": " ",
+                                          },
+
+                                          // Update will set and send in one shot
+                                          update: function (prog_vsel0) {
+                                              this.set(prog_vsel0)
+                                              CorePlatformInterface.send(this)
+                                          },
+                                          // Set can set single or multiple properties before sending to platform
+                                          set: function (prog_vsel0) {
+                                              this.payload.prog_vsel0 = prog_vsel0;
+                                          },
+                                          send: function () { CorePlatformInterface.send(this) },
+                                          show: function () { CorePlatformInterface.show(this) }
+                                      })
+
+
     property var  read_initial_status: ({
 
                                             "cmd":"read_initial_status",
@@ -179,23 +202,23 @@ Item {
 
                                         })
 
-    property var vselect_prog1: ({
-                                     "cmd" : "set_prog_vsel1",
-                                     "payload": {
-                                         "prog_vsel1": 0,
-                                     },
+    property var set_prog_vsel1: ({
+                                      "cmd" : "set_prog_vsel1",
+                                      "payload": {
+                                          "prog_vsel1": 0,
+                                      },
 
-                                     update: function (prog_vsel1) {
-                                         this.set(prog_vsel1)
-                                         CorePlatformInterface.send(this)
-                                     },
-                                     set: function (prog_vsel1) {
-                                         this.payload.prog_vsel1 = prog_vsel1;
-                                     },
-                                     send: function () { CorePlatformInterface.send(this) },
-                                     show: function () { CorePlatformInterface.show(this) }
+                                      update: function (prog_vsel1) {
+                                          this.set(prog_vsel1)
+                                          CorePlatformInterface.send(this)
+                                      },
+                                      set: function (prog_vsel1) {
+                                          this.payload.prog_vsel1 = prog_vsel1;
+                                      },
+                                      send: function () { CorePlatformInterface.send(this) },
+                                      show: function () { CorePlatformInterface.show(this) }
 
-                                 })
+                                  })
 
     property var enable_prog1: ({
                                     "cmd" : "set_enable_vsel1",
@@ -256,23 +279,23 @@ Item {
 
                                  })
 
-    property var pgood_enable: ({
-                                    "cmd" : "set_pgood_enable",
-                                    "payload": {
-                                        "pgood": "",
-                                    },
+    //    property var set_pgood_enable: ({
+    //                                    "cmd" : "set_pgood_enable",
+    //                                    "payload": {
+    //                                        "pgood": "",
+    //                                    },
 
-                                    update: function (pgood) {
-                                        this.set(pgood)
-                                        CorePlatformInterface.send(this)
-                                    },
-                                    set: function (pgood) {
-                                        this.payload.pgood = pgood;
-                                    },
-                                    send: function () { CorePlatformInterface.send(this) },
-                                    show: function () { CorePlatformInterface.show(this) }
+    //                                    update: function (pgood) {
+    //                                        this.set(pgood)
+    //                                        CorePlatformInterface.send(this)
+    //                                    },
+    //                                    set: function (pgood) {
+    //                                        this.payload.pgood = pgood;
+    //                                    },
+    //                                    send: function () { CorePlatformInterface.send(this) },
+    //                                    show: function () { CorePlatformInterface.show(this) }
 
-                                })
+    //                                })
 
     property var pgood_on_dvs: ({
                                     "cmd" : "set_pgood_on_dvs",
@@ -678,10 +701,64 @@ Item {
                                                         show: function () { CorePlatformInterface.show(this) }
                                                     })
 
+    property var set_pgood_enable : ({
+                                         "cmd" : "set_pgood_enable",
+                                         "payload": {
+                                             "pgood": "" ,
+                                         },
+
+                                         update: function (pgood) {
+                                             this.set(pgood)
+                                             CorePlatformInterface.send(this)
+                                         },
+                                         set: function (pgood) {
+                                             this.payload.pgood = pgood;
+                                         },
+                                         send: function () { CorePlatformInterface.send(this) },
+                                         show: function () { CorePlatformInterface.show(this) }
+                                     })
+
+    property var set_pgood_on_dvs: ({
+                                        "cmd" : "set_pgood_on_dvs",
+                                        "payload": {
+                                            "pgood": "" ,
+                                        },
+
+                                        update: function (pgood) {
+                                            this.set(pgood)
+                                            CorePlatformInterface.send(this)
+                                        },
+                                        set: function (pgood) {
+                                            this.payload.pgood = pgood;
+                                        },
+                                        send: function () { CorePlatformInterface.send(this) },
+                                        show: function () { CorePlatformInterface.show(this) }
+                                    })
+    property var  set_timeout_reset_pgood: ({
+
+                                                "cmd": "set_timeout_reset_pgood",
+                                                "payload": {
+                                                    "timeout_reset": " ",
+                                                },
+
+                                                // Update will set and send in one shot
+                                                update: function (timeout_reset) {
+                                                    this.set(timeout_reset)
+                                                    CorePlatformInterface.send(this)
+                                                },
+                                                // Set can set single or multiple properties before sending to platform
+                                                set: function (timeout_reset) {
+                                                    this.payload.vsel = timeout_reset;
+                                                },
+                                                send: function () { CorePlatformInterface.send(this) },
+                                                show: function () { CorePlatformInterface.show(this) }
+                                            })
+
+
     property var pause_periodic: ({
                                       "cmd" : "pause_periodic",
                                       "payload": {
-                                           "pause_flag": "",
+                                          "pause_flag": "",
                                       },
 
                                       // Update will set and send in one shot
@@ -695,7 +772,7 @@ Item {
                                       },
                                       send: function () { CorePlatformInterface.send(this) },
                                       show: function () { CorePlatformInterface.show(this) }
-                                 })
+                                  })
 
     // -------------------  end commands
 
@@ -739,44 +816,54 @@ Item {
     property string reset_indicator
     property var mask_register_state
     property bool reset_flag: false
+    property var pgood_enable_status
+    property var pgood_enable
+    property int timeout_status
+
+
 
     // DEBUG Window for testing motor vortex UI without a platform
-    //    Window {
-    //        id: debug
-    //        visible: true
-    //        width: 200
-    //        height: 200
+    Window {
+        id: debug
+        visible: true
+        width: 200
+        height: 200
 
-    //        Button {
-    //            id: button2
-    //         //   anchors { top: button1.bottom }
-    //            text: "send vin"
-    //            onClicked: {
-    //                CorePlatformInterface.data_source_handler('{
-    //                    "value":"read_voltage_current",
-    //                    "payload":{
-    //                                "vin":'+ (Math.random()*5+10).toFixed(2) +',
-    //                                "vout": '+ (Math.random()*5+10).toFixed(2) +',
-    //                                "iin": '+ (Math.random()*5+10).toFixed(2) +',
-    //                                "iout": '+ (Math.random()*5+10).toFixed(2) +',
-    //                                "vin_bad": "off"
+        Button {
+            id: button2
+            //   anchors { top: button1.bottom }
+            text: "send vin"
+            onClicked: {
+                CorePlatformInterface.data_source_handler('{
+                        "value":"initial_status_0",
+                        "payload":{
+                                "enable_status":"on",
+                                "vingood_status": "good",
+                                "vsel_status": "off",
+                                "pgood_status": "bad",
+                                "vout_vsel0_status": '+ (Math.floor(Math.random() * 216) + 0).toFixed(0) +',
+                                "vout_vsel1_status": 4,
+                                "pgood_enable_status": "on",
+                                "dvs_pgood_enable_status":	"on",
+                                "reset_timeout_pgood_status": 1,
+                                "active_discharge_status": "off"
 
-    //                               }
-    //                             }')
-    //            }
-    //        }
-    //        Button {
-    //            anchors { top: button2.bottom }
-    //            text: "send"
-    //            onClicked: {
-    //                CorePlatformInterface.data_source_handler('{
-    //                            "value":"read_temperature_sensor",
-    //                            "payload":{
-    //                                     "temperature": '+ (Math.random()*100).toFixed(0) +'
-    //                            }
-    //                    }
-    //            ')
-    //            }
-    //        }
-    //    }
+                                   }
+                                 }')
+            }
+        }
+        //        Button {
+        //            anchors { top: button2.bottom }
+        //            text: "send"
+        //            onClicked: {
+        //                CorePlatformInterface.data_source_handler('{
+        //                            "value":"read_temperature_sensor",
+        //                            "payload":{
+        //                                     "temperature": '+ (Math.random()*100).toFixed(0) +'
+        //                            }
+        //                    }
+        //            ')
+        //            }
+        //        }
+    }
 }

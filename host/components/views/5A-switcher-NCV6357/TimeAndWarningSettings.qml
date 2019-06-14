@@ -19,12 +19,12 @@ Item {
     property bool ppwm_button_state
     property bool auto_button_state
 
-    property var read_dvs_speed_state: platformInterface.initial_status_0.dvs_speed_status
+    property var read_dvs_speed_state: platformInterface.initial_status_1.dvs_speed_status
     onRead_dvs_speed_stateChanged: {
         platformInterface.dvs_speed_state = read_dvs_speed_state
     }
 
-    property var read_delay_enable_state: platformInterface.initial_status_0.delay_enable_status
+    property var read_delay_enable_state: platformInterface.initial_status_1.delay_enable_status
     onRead_delay_enable_stateChanged: {
         platformInterface.delay_enable_state = read_delay_enable_state
     }
@@ -54,6 +54,7 @@ Item {
         }
     }
 
+
     property var read_dvs_mode_state: platformInterface.initial_status_1.dvs_mode_status
     onRead_dvs_mode_stateChanged:
     {
@@ -67,6 +68,31 @@ Item {
         }
     }
 
+    property var read_pgood_status : platformInterface.initial_status_0.pgood_enable_status
+    onRead_pgood_statusChanged: {
+        if(read_pgood_status === "on") {
+            platformInterface.pgood_enable_status = true
+        }
+        else  {
+            platformInterface.pgood_enable_status = false
+        }
+    }
+    property var read_pgood_enable : platformInterface.initial_status_0.dvs_pgood_enable_status
+    onRead_pgood_enableChanged: {
+        if(read_pgood_enable === "on") {
+            platformInterface.pgood_enable = true
+        }
+        else  {
+            platformInterface.pgood_enable = false
+        }
+    }
+
+    property var reset_timeout_pgood: platformInterface.initial_status_0.reset_timeout_pgood_status
+    onReset_timeout_pgoodChanged: {
+        platformInterface.timeout_status = reset_timeout_pgood
+        thresholdCombo.currentIndex = reset_timeout_pgood
+
+    }
     Component.onCompleted: {
         helpIcon.visible = true
         Help.registerTarget(dvsSpeedContainer,"DVS speed sets the slew rate of the regulator when switching between voltages.", 0, "advance5Asetting2Help")
@@ -85,7 +111,7 @@ Item {
             top: parent.top
             bottom: parent.bottom
         }
-        width: parent.width/2
+        width: parent.width/3
         height: parent.height
 
         Item {
@@ -204,13 +230,13 @@ Item {
     }
 
     Item {
-        id: lastColumn
+        id: middleColumn
         anchors {
             left: leftColumn.right
             top: parent.top
             bottom: parent.bottom
         }
-        width: parent.width/2
+        width: parent.width/3
         height: parent.height
 
         Item {
@@ -365,29 +391,177 @@ Item {
                 }
             }
 
-            SGIcon {
-                id: helpIcon
-                anchors {
-                    right: parent.right
-                    rightMargin: 7
-                    top: parent.top
-                }
-                source: "question-circle-solid.svg"
-                iconColor: helpMouse.containsMouse ? "lightgrey" : "grey"
-                sourceSize.height: 40
-                visible: true
 
-                MouseArea {
-                    id: helpMouse
-                    anchors {
-                        fill: helpIcon
-                    }
-                    onClicked: {
-                        Help.startHelpTour("advance5Asetting2Help")
-                    }
-                    hoverEnabled: true
-                }
+            SGLayoutDivider {
+                id: divider2
+                position: "right"
             }
+        }
+    }
+    Item {
+
+        id: lastColumn
+        anchors {
+            left: middleColumn.right
+            top: parent.top
+            bottom: parent.bottom
+        }
+        width: parent.width/3
+        height: parent.height
+
+        Item {
+            id: margins3
+            anchors {
+                fill: parent
+                margins: 15
+            }
+            Rectangle {
+                width : parent.width/1.1
+                height: parent.height/1.3
+                color: "transparent"
+                border.color: "black"
+                border.width: 3
+                radius: 10
+                anchors {
+                    centerIn: parent
+                }
+                Rectangle {
+                    id: powerGoodSwitchContainer
+                    width : parent.width - 30
+                    height: parent.height/4
+                    anchors {
+                        top: parent.top
+                        topMargin: 40
+                        horizontalCenter: parent.horizontalCenter
+                    }
+                    SGSwitch {
+                        id: powerGoodSwitch
+                        label : "Power Good"
+                        checkedLabel: "Enable"
+                        uncheckedLabel: "Disable"
+                        switchWidth: 85       // Default: 52 (change for long custom checkedLabels when labelsInside)
+                        switchHeight: 26               // Default: 26
+                        textColor: "black"              // Default: "black"
+                        handleColor: "white"            // Default: "white"
+                        grooveColor: "#ccc"             // Default: "#ccc"
+                        grooveFillColor: "#0cf"         // Default: "#0cf"
+                        //fontSizeLabel: (parent.width + parent.height)/32
+                        anchors {
+                            horizontalCenter: parent.horizontalCenter
+                            horizontalCenterOffset: -(activeDischargeSwitch.width - width)/2
+                        }
+
+                        checked: platformInterface.pgood_enable_status
+                        onToggled : {
+                            platformInterface.pgood_enable_status = checked
+                            if(checked){
+                                platformInterface.set_pgood_enable.update("on")
+                                platformInterface.set_pgood_enable.show()
+                            }
+                            else{
+                                platformInterface.set_pgood_enable.update("off")
+                                platformInterface.set_pgood_enable.show()
+                            }
+                        }
+                    }
+
+                }
+                Rectangle {
+                    id: powerGoodSwitchDVContainer
+                    width : parent.width - 30
+                    height: parent.height/4
+                    anchors {
+                        top: powerGoodSwitchContainer.bottom
+                        topMargin: 10
+                        horizontalCenter: parent.horizontalCenter
+                    }
+                    SGSwitch {
+                        id: powerGoodDVSwitch
+                        label : "Power Good \n Active on DVS"
+                        checkedLabel: "Enable"
+                        uncheckedLabel: "Disable"
+                        switchWidth: 85       // Default: 52 (change for long custom checkedLabels when labelsInside)
+                        switchHeight: 26               // Default: 26
+                        textColor: "black"              // Default: "black"
+                        handleColor: "white"            // Default: "white"
+                        grooveColor: "#ccc"             // Default: "#ccc"
+                        grooveFillColor: "#0cf"         // Default: "#0cf"
+                        //fontSizeLabel: (parent.width + parent.height)/32
+                        anchors {
+                            horizontalCenter: parent.horizontalCenter
+                            horizontalCenterOffset: -(activeDischargeSwitch.width - width)/2
+                        }
+
+                        checked: platformInterface.pgood_enable
+                        onToggled : {
+                            platformInterface.pgood_enable = checked
+                            if(checked){
+                                platformInterface.set_pgood_on_dvs.update("on")
+                                platformInterface.set_pgood_on_dvs.show()
+                            }
+                            else{
+                                platformInterface.set_pgood_on_dvs.update("off")
+                                platformInterface.set_pgood_on_dvs.show()
+                            }
+                        }
+                    }
+
+                }
+                Rectangle {
+                    id: resetTimeoutContainer
+                    width : parent.width - 30
+                    height: parent.height/4
+                    anchors {
+                        top: powerGoodSwitchDVContainer.bottom
+                        topMargin: 10
+                        horizontalCenter: parent.horizontalCenter
+                    }
+                    color: "transparent"
+                    SGComboBox {
+                        id: resetTimeoutCombo
+                        currentIndex: platformInterface.timeout_status
+                        //fontSize: (parent.width + parent.height)/32
+                        label : "Reset Timeout For\nPower Good"
+                        model: [ "0ms","8ms", "32ms", "64ms" ]
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        comboBoxWidth: parent.width/2
+                        comboBoxHeight: parent.height/2
+                        onActivated: {
+                            platformInterface.set_timeout_reset_pgood.update(currentIndex)
+                            platformInterface.set_timeout_reset_pgood = currentIndex
+                        }
+
+                    }
+
+                }
+
+
+
+
+            }
+        }
+    }
+    SGIcon {
+        id: helpIcon
+        anchors {
+            right: parent.right
+            rightMargin: 7
+            top: parent.top
+        }
+        source: "question-circle-solid.svg"
+        iconColor: helpMouse.containsMouse ? "lightgrey" : "grey"
+        sourceSize.height: 40
+        visible: true
+
+        MouseArea {
+            id: helpMouse
+            anchors {
+                fill: helpIcon
+            }
+            onClicked: {
+                Help.startHelpTour("advance5Asetting2Help")
+            }
+            hoverEnabled: true
         }
     }
 }

@@ -32,6 +32,7 @@ Item {
         register_mask_binary = ("00000000"+read_mask_register_status.toString(2)).substr(-8)
     }
 
+
     Component.onCompleted: {
         helpIcon.visible = true
         Help.registerTarget(diagnoticsContainer, "Clicking the blank circles under each interrupt will fill the circle in signaling that the interrupt has been masked. By clicking read, the LEDs will light up to give the user the current status of the interrupt sense register (INTSEN).", 0, "advance5Asetting3Help")
@@ -96,15 +97,6 @@ Item {
                     Layout.alignment: Qt.AlignCenter
                 }
 
-                Text {
-                    id: maskTitle
-                    text: "Write Mask\nregister"
-                    horizontalAlignment: Text.AlignHCenter
-                    Layout.alignment: Qt.AlignCenter
-                    font.bold: true
-                    width: parent.width
-
-                }
 
                 Button {
                     id: readTitle
@@ -150,22 +142,6 @@ Item {
                     Layout.alignment: Qt.AlignCenter
                 }
 
-                DiagnoticRadioButton {
-                    id: tsd1
-                    Layout.alignment: Qt.AlignCenter
-                    property var register_value: register_mask_binary
-                    onRegister_valueChanged: {
-                        checked = parseInt(register_value[0])
-                    }
-                    onClicked:{
-                        if (checked) {
-                            platformInterface.mask_thermal_shutdown_interrupt.update("masked")
-                        }
-                        else {
-                            platformInterface.mask_thermal_shutdown_interrupt.update("unmasked")
-                        }
-                    }
-                }
 
                 SGStatusLight {
                     id: tsd2
@@ -197,28 +173,7 @@ Item {
                     Layout.alignment: Qt.AlignCenter
                 }
 
-                DiagnoticRadioButton{
-                    id: twarn1
-                    Layout.alignment: Qt.AlignCenter
 
-                    property var register_value: register_mask_binary
-                    onRegister_valueChanged: {
-                        checked = parseInt(register_value[1])
-                    }
-
-                    onClicked: {
-                        if (checked) {
-                            platformInterface.mask_thermal_warn_interrupt.update("masked")
-                            platformInterface.mask_thermal_warn_interrupt.show()
-                        }
-                        else {
-                            platformInterface.mask_thermal_warn_interrupt.update("unmasked")
-                            platformInterface.mask_thermal_warn_interrupt.show()
-                        }
-
-                    }
-
-                }
 
                 SGStatusLight {
                     id: twarn2
@@ -252,27 +207,7 @@ Item {
                     font.bold: true
                     Layout.alignment: Qt.AlignCenter
                 }
-                DiagnoticRadioButton{
-                    id: tprew1
-                    Layout.alignment: Qt.AlignCenter
 
-                    property var register_value: register_mask_binary
-                    onRegister_valueChanged: {
-                        checked = parseInt(register_value[2])
-                    }
-
-                    onClicked: {
-                        if (checked) {
-                            platformInterface.mask_thermal_prewarn_interrupt.update("masked")
-                            platformInterface.mask_thermal_prewarn_interrupt.show()
-                        }
-                        else {
-                            platformInterface.mask_thermal_prewarn_interrupt.update("unmasked")
-                            platformInterface.mask_thermal_prewarn_interrupt.show()
-                        }
-                    }
-
-                }
                 SGStatusLight {
                     id: tprew2
                     lightSize: 25
@@ -302,25 +237,6 @@ Item {
                     font.bold: true
                     Layout.alignment: Qt.AlignCenter
 
-                }
-                DiagnoticRadioButton{
-                    id: ishort1
-                    property var register_value: register_mask_binary
-                    onRegister_valueChanged: {
-                        checked = parseInt(register_value[4])
-                    }
-                    Layout.alignment: Qt.AlignCenter
-
-                    onClicked: {
-                        if (checked) {
-                            platformInterface.mask_short_circuit_interrupt.update("masked")
-                            platformInterface.mask_short_circuit_interrupt.show()
-                        }
-                        else {
-                            platformInterface.mask_short_circuit_interrupt.update("unmasked")
-                            platformInterface.mask_short_circuit_interrupt.show()
-                        }
-                    }
                 }
 
                 SGStatusLight {
@@ -356,26 +272,7 @@ Item {
                     text: "UVLO"
                     font.bold: true
                 }
-                DiagnoticRadioButton{
-                    id: uvlo1
-                    Layout.alignment: Qt.AlignCenter
 
-                    property var register_value: register_mask_binary
-                    onRegister_valueChanged: {
-                        checked = parseInt(register_value[5])
-                    }
-
-                    onClicked: {
-                        if (checked) {
-                            platformInterface.mask_uvlo_interrupt.update("masked")
-                            platformInterface.mask_uvlo_interrupt.show()
-                        }
-                        else {
-                            platformInterface.mask_uvlo_interrupt.update("unmasked")
-                            platformInterface.mask_uvlo_interrupt.show()
-                        }
-                    }
-                }
                 SGStatusLight {
                     id: uvlo2
                     lightSize: 25
@@ -406,24 +303,6 @@ Item {
                     Layout.alignment: Qt.AlignCenter
                     text: "IDCDC"
                     font.bold: true
-                }
-                DiagnoticRadioButton{
-                    id: idcdc1
-                    Layout.alignment: Qt.AlignCenter
-                    property var register_value: register_mask_binary
-                    onRegister_valueChanged: {
-                        checked = parseInt(register_value[6])
-                    }
-                    onClicked: {
-                        if (checked) {
-                            platformInterface.mask_ocp_interrupt.update("masked")
-                            platformInterface.mask_ocp_interrupt.show()
-                        }
-                        else {
-                            platformInterface.mask_ocp_interrupt.update("unmasked")
-                            platformInterface.mask_ocp_interrupt.show()
-                        }
-                    }
                 }
 
                 SGStatusLight {
@@ -456,25 +335,7 @@ Item {
                     font.bold: true
                     Layout.alignment: Qt.AlignCenter
                 }
-                DiagnoticRadioButton{
-                    id: pg1
-                    Layout.alignment: Qt.AlignCenter
-                    property var register_value: register_mask_binary
-                    onRegister_valueChanged: {
-                        checked = parseInt(register_value[7])
-                    }
 
-                    onClicked: {
-                        if (checked) {
-                            platformInterface.mask_pgood_interrupt.update("masked")
-                            platformInterface.mask_pgood_interrupt.show()
-                        }
-                        else {
-                            platformInterface.mask_pgood_interrupt.update("unmasked")
-                            platformInterface.mask_pgood_interrupt.show()
-                        }
-                    }
-                }
                 SGStatusLight {
                     id: pg2
                     Layout.alignment: Qt.AlignCenter
