@@ -124,10 +124,9 @@ bool EvEventsMgrInstance::wsa_init_done = false;
 EvEventsMgrInstance::EvEventsMgrInstance()
 {
 #if defined(_WIN32)
-    WSADATA wsaData;
-    memset(&wsaData, 0, sizeof(wsaData));
     if (wsa_init_done == false)
     {
+        WSADATA wsaData;
         if (WSAStartup( MAKEWORD(2,0), &wsaData ) != 0) {
             throw std::runtime_error("WSAStartup failed!");
         }
