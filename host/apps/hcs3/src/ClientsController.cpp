@@ -30,7 +30,7 @@ bool ClientsController::initialize(HCS_Dispatcher* dispatcher, rapidjson::Value&
     }
 
     dispatcher_ = dispatcher;
-    client_event_.create(spyglass::EvEvent::EvType::eEvTypeHandle, static_cast<spyglass::ev_handle_t>(client_connector_->getFileDescriptor()), 0);
+    client_event_.create(spyglass::EvEvent::EvType::eEvTypeHandle, reinterpret_cast<spyglass::ev_handle_t>(client_connector_->getFileDescriptor()), 0);
     client_event_.setCallback(std::bind(&ClientsController::onDescriptorHandle, this, std::placeholders::_1, std::placeholders::_2));
 
     events_manager_.registerEvent(&client_event_);
