@@ -335,13 +335,40 @@ Item {
                     }
                 }
                 Rectangle{
+                    id: clockFrequencySetting
+                    width:  parent.width
+                    height : parent.height/6
+                    color: "transparent"
+                    anchors{
+                        top:frequencySetting.bottom
+                    }
+
+                    SGComboBox {
+                        label: "Clock Frequency"   // Default: "" (if not entered, label will not appear)
+                        labelLeft: true           // Default: true
+                        comboBoxWidth: parent.width/3          // Default: 120 (set depending on model info length)
+                        textColor: "white"          // Default: "black"
+                        indicatorColor: "#aaa"      // Default: "#aaa"
+                        borderColor: "white"         // Default: "#aaa"
+                        boxColor: "black"           // Default: "white"
+                        dividers: true              // Default: false
+                        comboBoxHeight: parent.height/2
+                        anchors.centerIn: parent
+                        fontSize: 15
+                        model: ["10 kHz", "50 kHz", "100 kHz", "500 kHz", "1 MHz", "32 MHz"]
+
+                    }
+                }
+
+                Rectangle{
                     id: dataModel
                     width:  parent.width/0.9
-                    height : parent.height/2.5
+                    height : parent.height/4.5
                     color: "transparent"
 
                     anchors{
-                        top:frequencySetting.bottom
+                        top:clockFrequencySetting.bottom
+                        topMargin: 10
                     }
 
                     SGStatusListBox {
