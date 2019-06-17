@@ -33,5 +33,7 @@
         <file>views/sar-adc/sgwidgets/SGRadioButtonContainer.qml</file>
         <file>views/sar-adc/sgwidgets/SGRadioButton.qml</file>
         <file>views/sar-adc/sgwidgets/SGSubmitInfoBox.qml</file>
+        <file>views/sar-adc/sgwidgets/SGComboBox.qml</file>
+        <file>views/sar-adc/sgwidgets/fonts/sgicons.ttf</file>
     </qresource>
 </RCC>
