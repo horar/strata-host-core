@@ -384,7 +384,7 @@ Item {
                                 fontSize: (parent.width + parent.height)/25
                                 label : "DCDC Mode"
                                 model: [
-                                    "Auto", "PPWW"
+                                    "Auto", "PPWM"
                                 ]
                                 onActivated: {
                                     if(currentIndex == 0) {
@@ -409,7 +409,7 @@ Item {
                                 fontSize: (parent.width + parent.height)/25
                                 label : "DCDC Mode"
                                 model: [
-                                    "Auto", "PPWW"
+                                    "Auto", "PPWM"
                                 ]
                                 comboBoxWidth: parent.width/3
                                 comboBoxHeight: parent.height/2

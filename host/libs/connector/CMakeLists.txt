@@ -11,11 +11,15 @@ find_package(Threads REQUIRED)
 set(EXT_LIBS_PATH ${CMAKE_SOURCE_DIR}/ext_libs)
 
 add_library(connector
-    src/Connector_impl.cpp
+    src/Connector.cpp
     src/SerialConnector.cpp
-    src/PubSubConnector.cpp
-    src/RequestReplyConnector.cpp
-    src/ZMQConnector.cpp
+    src/ZmqConnector.cpp
+    src/ZmqRouterConnector.cpp
+    src/ZmqDealerConnector.cpp
+    src/ZmqPublisherConnector.cpp
+    src/ZmqSubscriberConnector.cpp
+    src/ZmqRequestConnector.cpp
+    src/ZmqResponseConnector.cpp
 )
 
 target_link_libraries(${PROJECT_NAME}
@@ -25,9 +29,12 @@ target_link_libraries(${PROJECT_NAME}
 )
 
 target_include_directories(${PROJECT_NAME}
-    PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
+    PUBLIC include
     PUBLIC ${SERIALPORT_INCLUDE_DIR}
     PUBLIC ${EXT_LIBS_PATH}/zmq/include
     PUBLIC ${ZEROMQ_INCLUDE_DIR}
     PUBLIC ${RAPIDJSON_INCLUDE_DIR}
 )
+
+add_subdirectory(test)
+

@@ -318,7 +318,7 @@ Popup {
             number = 10
         }
 
-        if(position === Item.Top) {
+        if (position === Item.Top) {
             return model.count - number
         }
 

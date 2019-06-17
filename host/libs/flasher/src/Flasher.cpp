@@ -177,7 +177,7 @@ Flasher::Flasher()
 }
 
 
-Flasher::Flasher(spyglass::PlatformConnection* connector, const std::string& firmwareFilename)
+Flasher::Flasher(spyglass::PlatformConnectionShPtr connector, const std::string& firmwareFilename)
 : serial_(connector)
 , serial_listener_guard_(connector)
 , firmwareFilename_(firmwareFilename)
@@ -190,7 +190,7 @@ Flasher::~Flasher()
 {
 }
 
-void Flasher::setConnector(spyglass::PlatformConnection* connector)
+void Flasher::setConnector(spyglass::PlatformConnectionShPtr connector)
 {
     serial_ = connector;
     serial_listener_guard_.attach(serial_);

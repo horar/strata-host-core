@@ -1,47 +1,33 @@
 #ifndef HOSTCONTROLLERCLIENT_H
 #define HOSTCONTROLLERCLIENT_H
 
-#include <iostream>
+#include <Connector.h>
+
+#include <memory>
 #include <string>
-#include <stdlib.h>
-#include <zhelpers.hpp>
-#include <zmq_addon.hpp>
 
 // TODO move this to a configuration file
 
 //  // Remote connection support
 //  #define HOST_CONTROLLER_SERVICE_IN_ADDRESS "tcp://127.0.0.1:5563"
 
-namespace Spyglass {
-
-class HostControllerClient {
-
+namespace Spyglass
+{
+class HostControllerClient
+{
 public:
-    HostControllerClient(const char* net_in_address);
+    HostControllerClient(const char *net_in_address);
     ~HostControllerClient();
 
-    inline bool sendCmd(const std::string& cmd)
-    {
-        return s_send(*notificationSocket_, cmd.c_str());
-    }
+    bool sendCmd(const std::string &cmd);
 
-    inline std::string receiveCommandAck()
-    {
-        return std::string(s_recv(*notificationSocket_));
-    }
-
-    inline std::string receiveNotification()
-    {
-        return std::string(s_recv(*notificationSocket_));
-    }
+    std::string receiveCommandAck();
+    std::string receiveNotification();
 
 private:
-    zmq::context_t *context_;
-    zmq::socket_t *sendCmdSocket_;
-    zmq::socket_t *notificationSocket_;
-
+    std::unique_ptr<Connector> connector_;
 };
 
-}
+}  // namespace Spyglass
 
-#endif // HOSTCONTROLLERCLIENT_H
+#endif  // HOSTCONTROLLERCLIENT_H

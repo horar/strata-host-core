@@ -68,14 +68,14 @@ int main(int argc, char *argv[])
         choosen_port = portsList.front();
     }
 
-    std::unique_ptr<spyglass::PlatformConnection> connection(new spyglass::PlatformConnection(nullptr));
+    spyglass::PlatformConnectionShPtr connection = std::make_shared<spyglass::PlatformConnection>(nullptr);
 
     if (!connection->open(choosen_port)) {
         std::cerr << "Couldn't open the serial port!" << std::endl;
         return 1;
     }
 
-    Flasher flasher(connection.get(), firmware_file_path);
+    Flasher flasher(connection, firmware_file_path);
 
     //Note: if you need output commands send/recv to std::cout or some other ostream
     //flasher.setCommunicationMsgStream(&std::cout);
