@@ -2,6 +2,7 @@ project(component-common
     VERSION 0.0.0
     LANGUAGES NONE
 )
+message(STATUS "${PROJECT_NAME} v${PROJECT_VERSION}")
 
 find_package(Qt5 ${VERSION_QT5}
     COMPONENTS Core
@@ -16,10 +17,5 @@ qt5_add_binary_resources(${PROJECT_NAME}
     DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${PROJECT_NAME}.rcc
 )
 
-# [LC] update QML mobule import paths for this project here
-list(APPEND QML_DIRS "${CMAKE_CURRENT_SOURCE_DIR}")
-
-# Additional import path used to resolve QML modules in Qt Creator's code model
-set(QML_IMPORT_PATH "${QML_DIRS};${QML_IMPORT_PATH}"
-    CACHE STRING "Qt Creator extra qml import paths" FORCE
-)
+include(MacroAddQmlImportPath)
+add_qml_import_path(PATH "${CMAKE_CURRENT_SOURCE_DIR}")
