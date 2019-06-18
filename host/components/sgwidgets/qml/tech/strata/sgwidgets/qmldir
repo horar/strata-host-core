@@ -12,6 +12,7 @@ SGDialog 1.0 dialogs/SGDialog_1_0.qml
 SGMessageDialog 1.0 dialogs/SGMessageDialog_1_0.qml
 SGIcon 1.0 SGIcon/SGIcon_1_0.qml
 SGText 1.0 SGText/SGText_1_0.qml
+SGTextField 1.0 SGTextField/SGTextField_1_0.qml
 
 ## version 0.9
 SGAccordion 0.9 SGAccordion/SGAccordion.qml
