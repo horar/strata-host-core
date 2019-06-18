@@ -30,12 +30,42 @@ Item {
         "maximum_power":0.0
     }
 
+
+
     onRequest_usb_power_notificationChanged: {
 //        console.log("output voltage=",request_usb_power_notification.output_voltage,
 //                    "output current=",request_usb_power_notification.output_current,
 //                    "power=",request_usb_power_notification.output_voltage * request_usb_power_notification.output_current);
     }
 
+
+    //after the first run of boards was already out in the wild, it was discovered that the input and output
+    //current readings weren't correct. If the firmware date is earlier than 6/11/2019, then the amplitude should
+    //be multiplied by 1.33. This property will be true if that adjustment should be made, and will be set when the
+    //firmware info changes
+    property var adjust_current:false
+    property var oldFirmwareScaleFactor: 1.333
+
+    property var get_firmware_info:{
+        "bootloader":"",
+        "application":{
+            "date":"0",
+            "version":"0"
+        }
+    }
+
+    //if the firmware is dated earlier than 6/11/2019, then set adjust_current to true;
+    onGet_firmware_infoChanged: {
+        console.log("get_firmware_info changed. firmware date is=",get_firmware_info.application.date);
+        var year= get_firmware_info.application.date.substr(0,4);
+        var month = get_firmware_info.application.date.substr(5,2);
+        var day = get_firmware_info.application.date.substr(8,2);
+        console.log("year=",year,"month=",month,"day=",day);
+        if (year<=2019 && month<=6 && day < 11){
+            adjust_current = true;
+        }
+
+    }
 
     // @notification usb_pd_port_connect
     // @description: sent when a device is connected or disconnected
@@ -46,6 +76,8 @@ Item {
     }
     onUsb_pd_port_connectChanged: {
         console.log("usb_pd_port_connect changed. port_id=",usb_pd_port_connect.port_id," connection_state=",usb_pd_port_connect.connection_state);
+        //ask for a firmware version from the new device
+         getFirmwareInfo.send();
     }
 
     property var usb_pd_port_disconnect:{
@@ -257,6 +289,14 @@ Item {
                  }
      })
 
+    property var getFirmwareInfo:({
+                 "cmd":"get_firmware_info",
+                 "payload":{
+                  },
+                 send: function(){
+                      CorePlatformInterface.send(this)
+                 }
+     })
 
 
    property var refresh:({
