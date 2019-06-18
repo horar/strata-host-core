@@ -14,8 +14,6 @@ find_package(Qt5 ${VERSION_QT5}
 add_executable(${PROJECT_NAME}
     main.cpp
     SciModel.cpp
-    SgUtilsCpp.cpp
-    SgJLinkConnector.cpp
     qml.qrc
     images/images.qrc
 

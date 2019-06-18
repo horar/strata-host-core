@@ -1,10 +1,9 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.12
 import tech.strata.fonts 1.0 as StrataFonts
-import "./common" as Common
-import "./common/SgUtils.js" as SgUtils
-import tech.strata.utils 1.0
-import "./common/Colors.js" as Colors
+import tech.strata.sgwidgets 1.0 as SGWidgets
+import tech.strata.commoncpp 1.0 as CommonCpp
+
 import QtQuick.Dialogs 1.3
 import tech.strata.logger 1.0
 
@@ -46,10 +45,14 @@ Item {
         }
     }
 
+    CommonCpp.SGJLinkConnector {
+        id: jLinkConnector
+    }
+
     Component {
         id: initPageComponent
 
-        SciBasePage {
+        SGWidgets.SGPage {
             id: settingsPage
 
             title: qsTr("Program Device Settings")
@@ -77,7 +80,7 @@ Item {
 
                     spacing: wizard.spacing
 
-                    Common.SgText {
+                    SGWidgets.SGText {
                         id: firmwareHeader
 
                         text: "Firmware"
@@ -86,7 +89,6 @@ Item {
 
                     Column {
                         id: optionWrapper
-
                         width: parent.width
 
                         Row {
@@ -107,7 +109,7 @@ Item {
                                 }
                             }
 
-                            Common.SgTextFieldEditor {
+                            SGWidgets.SGTextFieldEditor {
                                 id: pathEdit
 
                                 label: qsTr("Firmware data file")
@@ -129,7 +131,7 @@ Item {
                                 function inputValidationErrorMsg() {
                                     if (text.length === 0) {
                                         return qsTr("Firmware data file is required")
-                                    } else if (!SgUtilsCpp.isFile(text)) {
+                                    } else if (!CommonCpp.SGUtilsCpp.isFile(text)) {
                                         return qsTr("Firmware data file path does not refer to a file")
                                     }
 
@@ -137,7 +139,7 @@ Item {
                                 }
                             }
 
-                            Common.SgButton {
+                            SGWidgets.SGButton {
                                 id: selectButton
                                 anchors {
                                     verticalCenter: manualButton.verticalCenter
@@ -176,7 +178,7 @@ Item {
                                 }
                             }
 
-                            Common.SgTextFieldEditor {
+                            SGWidgets.SGTextFieldEditor {
                                 id: opnEdit
                                 itemWidth: pathEdit.itemWidth
                                 label: "Ordering Part Number"
@@ -185,7 +187,7 @@ Item {
                         }
                     }
 
-                    Common.SgText {
+                    SGWidgets.SGText {
                         id: bootloaderHeader
 
                         text: "Bootloader"
@@ -198,7 +200,7 @@ Item {
                         width: parent.width
                         height: jlinkInputColumn.y + jlinkInputColumn.height
 
-                        Common.SgCheckBox {
+                        SGWidgets.SGCheckBox {
                             id: jlinkCheck
                             text: qsTr("Use SEGGER JLink to program bootloader")
                             checked: wizard.useJLink
@@ -225,7 +227,7 @@ Item {
                                 enabled: jlinkCheck.checked
                                 spacing: wizard.spacing
 
-                                Common.SgTextFieldEditor {
+                                SGWidgets.SGTextFieldEditor {
                                     id: jlinkExePathEdit
 
                                     itemWidth: pathEdit.itemWidth
@@ -236,9 +238,9 @@ Item {
                                     function inputValidationErrorMsg() {
                                         if (text.length === 0) {
                                             return qsTr("JLink Commander is required")
-                                        } else if (!SgUtilsCpp.isFile(text)) {
+                                        } else if (!CommonCpp.SGUtilsCpp.isFile(text)) {
                                             return qsTr("JLink Commander is not a valid file")
-                                        } else if(!SgUtilsCpp.isExecutable(text)) {
+                                        } else if(!CommonCpp.SGUtilsCpp.isExecutable(text)) {
                                             return qsTr("JLink Commander is not executable")
                                         }
 
@@ -246,7 +248,7 @@ Item {
                                     }
                                 }
 
-                                Common.SgButton {
+                                SGWidgets.SGButton {
                                     id: selectJFlashLiteButton
                                     y: jlinkExePathEdit.itemY + (jlinkExePathEdit.item.height - height) / 2
 
@@ -266,7 +268,7 @@ Item {
                                 enabled: jlinkCheck.checked && manualButton.checked
                                 spacing: wizard.spacing
 
-                                Common.SgTextFieldEditor {
+                                SGWidgets.SGTextFieldEditor {
                                     id: bootloaderPathEdit
                                     anchors.verticalCenter: parent.verticalCenter
 
@@ -289,7 +291,7 @@ Item {
                                     function inputValidationErrorMsg() {
                                         if (text.length === 0) {
                                             return qsTr("Bootloader data file is required")
-                                        } else if (!SgUtilsCpp.isFile(text)) {
+                                        } else if (!CommonCpp.SGUtilsCpp.isFile(text)) {
                                             return qsTr("Bootloader data file does not refer to a file")
                                         }
 
@@ -297,7 +299,7 @@ Item {
                                     }
                                 }
 
-                                Common.SgButton {
+                                SGWidgets.SGButton {
                                     y: bootloaderPathEdit.itemY + (bootloaderPathEdit.item.height - height) / 2
 
                                     text: "Select"
@@ -326,13 +328,13 @@ Item {
 
                 spacing: 20
 
-                Common.SgButton {
+                SGWidgets.SGButton {
                     text: qsTr("Close")
                     onClicked: cancelRequested()
                     focusPolicy: Qt.NoFocus
                 }
 
-                Common.SgButton {
+                SGWidgets.SGButton {
                     text: qsTr("Begin")
                     focusPolicy: Qt.NoFocus
 
@@ -368,15 +370,15 @@ Item {
                         }
 
                         if (errorList.length) {
-                            SgUtils.showMessageDialog(
+                            SGWidgets.SGDialogJS.showMessageDialog(
                                         settingsPage,
-                                        Common.SgMessageDialog.Error,
+                                        SGWidgets.SGMessageDialog.Error,
                                         qsTr("Validation Failed"),
-                                        SgUtils.generateHtmlUnorderedList(errorList))
+                                        SGWidgets.SGUtilsJS.generateHtmlUnorderedList(errorList))
 
                         } else {
                             if (wizard.useJLink) {
-                                sciModel.jLinkConnector.exePath = SgUtilsCpp.urlToPath(jlinkExePathEdit.text)
+                                jLinkConnector.exePath = CommonCpp.SGUtilsCpp.urlToPath(jlinkExePathEdit.text)
                             }
 
                             stackView.push(processPageComponent)
@@ -390,7 +392,7 @@ Item {
     Component {
         id: processPageComponent
 
-        SciBasePage {
+        SGWidgets.SGPage {
             id: processPage
             title: qsTr("Programming Device")
             hasBack: processingStatus !== ProgramDeviceWizard.ProgrammingApplication
@@ -459,9 +461,10 @@ Item {
             }
 
             Connections {
-                target: sciModel.jLinkConnector
+                target: jLinkConnector
 
                 onProcessFinished: {
+
                     console.log(Logger.sciCategory, "JLink process finished with status=", status)
                     if (status) {
                         doProgramDeviceApplication()
@@ -496,7 +499,7 @@ Item {
                     if (sciModel.boardController.connectionIds.length === 1) {
                         if (wizard.useJLink) {
                             processingStatus = ProgramDeviceWizard.WaitingForJLink
-                            var jLinkConnected = sciModel.jLinkConnector.isBoardConnected()
+                            var jLinkConnected = jLinkConnector.isBoardConnected()
                             if (jLinkConnected === false) {
                                 jLinkCheckTimer.restart()
                                 return
@@ -521,9 +524,9 @@ Item {
                             msg += "\n"
                             msg += "Do you want to program it anyway ?"
 
-                            warningDialog = SgUtils.showMessageDialog(
+                            warningDialog = SGWidgets.SGDialogJS.showMessageDialog(
                                         processPage,
-                                        Common.SgMessageDialog.Warning,
+                                        SGWidgets.SGMessageDialog.Warning,
                                         "Device already with firmware",
                                         msg,
                                         Dialog.Yes | Dialog.No,
@@ -538,9 +541,9 @@ Item {
                                 msg = "Connected device does not have a bootloader and cannot be programmed.\n\n"
                                 msg += "In order to program this device, please go back and check bootloader option."
 
-                                warningDialog = SgUtils.showMessageDialog(
+                                warningDialog = SGWidgets.SGDialogJS.showMessageDialog(
                                             processPage,
-                                            Common.SgMessageDialog.Error,
+                                            SGWidgets.SGMessageDialog.Error,
                                             "Device without bootloader",
                                             msg,
                                             Dialog.Ok,
@@ -568,7 +571,7 @@ Item {
             function doProgramDeviceBootloader() {
                 processingStatus = ProgramDeviceWizard.ProgrammingBootloader
                 processPage.subtextNote = "Programming"
-                sciModel.jLinkConnector.flashBoardRequested(wizard.bootloaderPath, true)
+                jLinkConnector.flashBoardRequested(wizard.bootloaderPath, true)
             }
 
             function doProgramDeviceApplication() {
@@ -580,7 +583,7 @@ Item {
                 tryProgramDevice()
             }
 
-            Common.SgText {
+            SGWidgets.SGText {
                 id: statusText
                 y: Math.floor(parent.height * 0.3)
                 anchors {
@@ -628,16 +631,16 @@ Item {
                              || processingStatus === ProgramDeviceWizard.ProgrammingApplication
                 }
 
-                Common.SgIcon {
+                SGWidgets.SGIcon {
                     id: iconIndicator
                     width: parent.width
                     height: width
 
                     source: {
                         if (processingStatus === ProgramDeviceWizard.ProgrammingSucceed) {
-                            return "qrc:/images/check.svg"
+                            return "qrc:/sgimages/check.svg"
                         } else if (processingStatus === ProgramDeviceWizard.ProgrammingFailed) {
-                            return "qrc:/images/times-circle.svg"
+                            return "qrc:/sgimages/times-circle.svg"
                         }
 
                         return ""
@@ -645,9 +648,9 @@ Item {
 
                     iconColor: {
                         if (processingStatus === ProgramDeviceWizard.ProgrammingSucceed) {
-                            return Colors.STRATA_GREEN
+                            return SGWidgets.SGColorsJS.STRATA_GREEN
                         } else if (processingStatus === ProgramDeviceWizard.ProgrammingFailed) {
-                            return Colors.TANGO_SCARLETRED2
+                            return SGWidgets.SGColorsJS.TANGO_SCARLETRED2
                         }
 
                         return "black"
@@ -655,7 +658,7 @@ Item {
                 }
             }
 
-            Common.SgText {
+            SGWidgets.SGText {
                 id: statusSubtext
                 anchors {
                     top: statusIndicator.visible ? statusIndicator.bottom : statusText.bottom
@@ -702,7 +705,7 @@ Item {
 
                 spacing: wizard.spacing
 
-                Common.SgButton {
+                SGWidgets.SGButton {
                     id: cancelBtn
 
                     text: qsTr("Done")
@@ -713,7 +716,7 @@ Item {
                     onClicked: cancelRequested()
                 }
 
-                Common.SgButton {
+                SGWidgets.SGButton {
                     id: confirmErrorBtn
 
                     text: qsTr("Continue")
@@ -735,7 +738,7 @@ Item {
     }
 
     function getFilePath(title, nameFilterList, callback) {
-        var dialog = SgUtils.createDialogFromComponent(
+        var dialog = SGWidgets.SGDialogJS.createDialogFromComponent(
                     wizard,
                     fileDialogComponent,
                     {
@@ -745,7 +748,7 @@ Item {
 
         dialog.accepted.connect(function() {
             if (callback) {
-                callback(SgUtilsCpp.urlToPath(dialog.fileUrl))
+                callback(CommonCpp.SGUtilsCpp.urlToPath(dialog.fileUrl))
             }
 
             dialog.destroy()

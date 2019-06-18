@@ -2,11 +2,11 @@ import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Window 2.12
 import QtQuick.Layouts 1.12
-import "./common/Colors.js" as Colors
-import tech.strata.sci 1.0 as SciCommon
-import "./common" as Common
+import tech.strata.sci 1.0 as SciCommonCpp
+import tech.strata.sgwidgets 1.0 as SGWidgets
 import tech.strata.fonts 1.0 as StrataFonts
-import "./common/SgUtils.js" as SgUtils
+import tech.strata.commoncpp 1.0 as CommonCpp
+
 
 Item {
     id: root
@@ -16,7 +16,7 @@ Item {
 
     property bool programDeviceDialogOpened: false
 
-    SciCommon.SciModel {
+    SciCommonCpp.SciModel {
         id: sciModel
     }
 
@@ -122,31 +122,30 @@ Item {
 
                     background: Rectangle {
                         implicitHeight: 40
-                        color: index === currentIndex ? "#eeeeee" : Colors.STRATA_DARK
+                        color: index === currentIndex ? "#eeeeee" : SGWidgets.SGColorsJS.STRATA_DARK
                     }
 
                     contentItem: Item {
-                        Common.SGStatusLight {
+                        SGWidgets.SGStatusLight {
                             id: statusLight
                             anchors {
                                 left: parent.left
                                 verticalCenter: parent.verticalCenter
                             }
-                            height: Math.round(buttonText.paintedHeight) + 10
-                            width: height
+                            lightSize: Math.round(buttonText.paintedHeight) + 10
 
-                            iconStatus: {
+                            status: {
                                 if (model.status === "connected") {
-                                    return Common.SGStatusLight.Green
+                                    return SGWidgets.SGStatusLight.Green
                                 } if (model.status === "disconnected") {
-                                    return Common.SGStatusLight.Off
+                                    return SGWidgets.SGStatusLight.Off
                                 }
 
-                                return Common.SGStatusLight.Orange
+                                return SGWidgets.SGStatusLight.Orange
                             }
                         }
 
-                        Common.SgText {
+                        SGWidgets.SGText {
                             id: buttonText
                             anchors {
                                 left: statusLight.right
@@ -163,10 +162,8 @@ Item {
                             elide: Text.ElideRight
                         }
 
-                        Common.SgIconButton {
+                        SGWidgets.SGIconButton {
                             id: deleteButton
-                            height: Math.round(buttonText.paintedHeight) + 5
-                            width: height
                             anchors {
                                 right: parent.right
                                 rightMargin: 2
@@ -175,10 +172,10 @@ Item {
 
                             visible: delegate.hovered
                             hasAlternativeColor: model.index !== delegate.currentIndex
-                            source: "qrc:/images/times.svg"
+                            icon.source: "qrc:/sgimages/times.svg"
                             onClicked: {
                                 if (model.status === "connected") {
-                                    SgUtils.showConfirmationDialog(
+                                    SGWidgets.SGDialogJS.showConfirmationDialog(
                                                 root,
                                                 "Device is active",
                                                 "Do you really want to disconnect " + model.verboseName + " ?",
@@ -218,12 +215,10 @@ Item {
 
                 spacing: 4
 
-                Common.SgIconButton {
-                    height: 30
-                    width: height
-
+                SGWidgets.SGIconButton {
                     hasAlternativeColor: true
-                    source: sidePane.shown ? "qrc:/images/side-pane-right-close.svg" : "qrc:/images/side-pane-right-open.svg"
+                    icon.source: sidePane.shown ? "qrc:/images/side-pane-right-close.svg" : "qrc:/images/side-pane-right-open.svg"
+                    iconSize: 26
                     onClicked: {
                         sidePane.shown = !sidePane.shown
                     }
@@ -316,7 +311,7 @@ Item {
 
             spacing: 10
 
-            Common.SgButton {
+            SGWidgets.SGButton {
                 text: "Program\nDevice"
                 onClicked: showProgramDeviceDialogDialog()
             }
@@ -326,7 +321,7 @@ Item {
     Component {
         id: programDeviceDialogComponent
 
-        Common.SgDialog {
+        SGWidgets.SGDialog {
             id: dialog
 
             modal: true
@@ -380,7 +375,7 @@ Item {
     }
 
     function showProgramDeviceDialogDialog() {
-        var dialog = SgUtils.createDialogFromComponent(root, programDeviceDialogComponent)
+        var dialog = SGWidgets.SGDialogJS.createDialogFromComponent(root, programDeviceDialogComponent)
 
         programDeviceDialogOpened = true
         dialog.open()

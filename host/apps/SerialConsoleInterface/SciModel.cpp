@@ -38,11 +38,6 @@ BoardsController *SciModel::boardController()
     return &boardController_;
 }
 
-SgJLinkConnector *SciModel::jLinkConnector()
-{
-    return &jLinkConnector_;
-}
-
 void SciModel::programDeviceDoneHandler(const QString& connectionId, bool status)
 {
     emit programDeviceDone(connectionId, status);
