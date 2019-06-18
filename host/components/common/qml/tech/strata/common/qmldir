@@ -1,3 +1,4 @@
 module tech.strata.common
 
 ContentView 1.0 ContentView/ContentView.qml
+ProgramDeviceWizard 1.0 ProgramDeviceWizard/ProgramDeviceWizard.qml
