@@ -14,7 +14,7 @@ echo "======================================================================="
 echo " Preparing environment.."
 echo "======================================================================="
 echo Setting up environment for Qt usage..
-set PATH=C:\dev\Qt\5.12.3\msvc2017_64\bin;%PATH%
+set PATH=C:\dev\Qt\5.12.4\msvc2017_64\bin;%PATH%
 
 echo Setting up environment for 'JOM' usage..
 set PATH="C:\dev\Qt\Tools\QtCreator\bin";%PATH%
@@ -41,7 +41,7 @@ echo " Generating project.."
 echo "======================================================================="
 cd build
 cmake -G "NMake Makefiles JOM" ^
-	-DCMAKE_BUILD_TYPE=Release ^
+	-DCMAKE_BUILD_TYPE=RelWithDebInfo ^
     ..\
 REM cmake -G "Visual Studio 14 2015 Win64" ^
 REM 	-T v141 ^
