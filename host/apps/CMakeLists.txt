@@ -2,7 +2,8 @@ include(CMakeDependentOption)
 
 option(APPS_HCS "Build 'hcs' service" ON)
 add_feature_info(APPS_HCS APPS_HCS "Host controller service")
-option(APPS_HCS_V3 "Build 'hcs' service version 3" ON)
+cmake_dependent_option(APPS_HCS_V3 "Build 'hcs' service version 3" ON
+                            "APPS_HCS" OFF)
 add_feature_info(APPS_HCS_V3 APPS_HCS_V3 "Host controller service - version 3")
 option(APPS_FLASHER "Build 'Flasher' app" ON)
 add_feature_info(APPS_FLASHER APPS_FLASHER "Platform flasher cli")

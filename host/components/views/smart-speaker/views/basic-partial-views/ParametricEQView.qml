@@ -1,7 +1,7 @@
 import QtQuick 2.9
 import QtQuick.Controls 2.2
 import QtQuick.Layouts 1.12
-//import tech.strata.sgwidgets 1.0
+//import tech.strata.sgwidgets 0.9
 import QtQuick.Controls 2.4
 
 Rectangle {
