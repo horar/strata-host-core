@@ -1,0 +1,12 @@
+<RCC>
+    <qresource prefix="/sgimages/">
+        <file>check.svg</file>
+        <file>chevron-left.svg</file>
+        <file>chevron-right.svg</file>
+        <file>chevron-down.svg</file>
+        <file>exclamation.svg</file>
+        <file>exclamation-triangle.svg</file>
+        <file>times.svg</file>
+        <file>times-circle.svg</file>
+    </qresource>
+</RCC>
