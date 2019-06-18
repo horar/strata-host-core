@@ -1,6 +1,7 @@
 module tech.strata.sgwidgets
 
 ## version 1.0
+SGColorsJS 1.0 utils/SGColors_1_0.js
 SGUtilsJS 1.0 utils/SGUtils_1_0.js
 
 SGButton 1.0 SGButton/SGButton_1_0.qml
