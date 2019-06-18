@@ -300,6 +300,11 @@ void HostControllerService::onCmdPlatformSelect(const rapidjson::Value* payload)
             return;
         }
 
+        if (board->setClientId(client->getClientId()) == false) {
+            qDebug() << "Board is allready assigned to some client!";
+            return;
+        }
+
         client->setPlatformId(platformId);
     }
 }
@@ -311,7 +316,7 @@ void HostControllerService::onCmdHostDisconnectPlatform(const rapidjson::Value* 
 
     PlatformBoard* board = boards_.getBoardByClientId(client->getClientId());
     if (board != nullptr) {
-        board->setClientId(std::string());
+        board->resetClientId();
     }
 
     storage_->resetPlatformDoc();
@@ -579,11 +584,22 @@ void HostControllerService::handleStorageResponse(const PlatformMessage& msg)
     clients_.sendMessage(msg.from_client, strbuf.GetString() );
 }
 
-bool HostControllerService::disptachMessageToPlatforms(const std::string& /*dealer_id*/, const std::string& /*read_message*/)
+bool HostControllerService::disptachMessageToPlatforms(const std::string& dealer_id, const std::string& message )
 {
+    PlatformBoard* board = boards_.getBoardByClientId(dealer_id);
+    if (board == nullptr) {
+        qDebug() << "No board attached to client.";
+        return false;
+    }
 
+    std::string connectionId = board->getConnectionId();
+    if (connectionId.empty()) {
+        qDebug() << "Connection is not available.";
+        return false;
+    }
 
-    return false;
+    boards_.sendMessage(connectionId, message );
+    return true;
 }
 
 bool HostControllerService::broadcastMessage(const std::string& message)

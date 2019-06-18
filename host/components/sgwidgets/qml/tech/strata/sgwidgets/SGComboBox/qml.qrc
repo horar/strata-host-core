@@ -1,6 +1,5 @@
 <RCC>
     <qresource prefix="/tech/strata/sgwidgets/SGComboBox">
-        <file>qmldir</file>
         <file>SGComboBox.qml</file>
         <file>icons/angle-down-solid.svg</file>
     </qresource>

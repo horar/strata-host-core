@@ -93,5 +93,8 @@ Item {
     Component.onCompleted: {
         console.log("Requesting platform Refresh")
         platformInterface.refresh.send() //ask the platform for all the current values
+
+        console.log("asking for firmware version")
+        platformInterface.getFirmwareInfo.send()
     }
 }

@@ -135,9 +135,13 @@ PlatformBoard::ProcessResult PlatformBoard::parseInitialMsg(const std::string& m
 
         }
         else if (notify_value == "platform_id") {
+
+            PlatformIdVer version = PlatformIdVer::eVersion1;
+
             const char* nameIdentifier = "verbose_name";
             if (notify_payload.HasMember("platform_id_version")) {
                 nameIdentifier = "name";
+                version = PlatformIdVer::eVersion2;
             }
 
             if (notify_payload.HasMember("platform_id") == false ||
@@ -145,9 +149,21 @@ PlatformBoard::ProcessResult PlatformBoard::parseInitialMsg(const std::string& m
                 return ProcessResult::eValidationError;
             }
 
-            properties_["platform_id"] = notify_payload["platform_id"].GetString();
-            properties_["class_id"] = notify_payload["class_id"].GetString();
-            properties_["name"] = notify_payload[nameIdentifier].GetString();
+            switch(version)
+            {
+                case PlatformIdVer::eVersion1:
+                    properties_["platform_id"] = notify_payload["platform_id"].GetString();
+                    properties_["class_id"] = properties_["platform_id"];  //TODO: test this with old boards
+                    properties_["name"] = notify_payload[nameIdentifier].GetString();
+                    break;
+                case PlatformIdVer::eVersion2:
+                    properties_["platform_id"] = notify_payload["platform_id"].GetString();
+                    properties_["class_id"] = notify_payload["class_id"].GetString();
+                    properties_["name"] = notify_payload[nameIdentifier].GetString();
+
+                default:
+                    break;
+            }
 
             return ProcessResult::eProcessed;
 
@@ -174,3 +190,11 @@ void PlatformBoard::resetClientId()
     clientId_.clear();
 }
 
+std::string PlatformBoard::getConnectionId() const
+{
+    if (!connection_) {
+        return std::string();
+    }
+
+    return connection_->getName();
+}

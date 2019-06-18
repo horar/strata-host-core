@@ -1,6 +1,5 @@
 <RCC>
     <qresource prefix="/tech/strata/sgwidgets/SGGraphTimed">
-        <file>qmldir</file>
         <file>SGGraphTimed.qml</file>
         <file>PerformanceTest.qml</file>
     </qresource>
