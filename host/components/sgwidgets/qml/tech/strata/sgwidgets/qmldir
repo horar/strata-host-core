@@ -3,6 +3,7 @@ module tech.strata.sgwidgets
 ## version 1.0
 SGButton 1.0 SGButton/SGButton_1_0.qml
 SGCheckBox 1.0 SGCheckBox/SGCheckBox_1_0.qml
+SGIcon 1.0 SGIcon/SGIcon_1_0.qml
 SGText 1.0 SGText/SGText_1_0.qml
 
 ## version 0.9
