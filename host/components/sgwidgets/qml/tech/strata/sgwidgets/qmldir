@@ -3,9 +3,13 @@ module tech.strata.sgwidgets
 ## version 1.0
 SGColorsJS 1.0 utils/SGColors_1_0.js
 SGUtilsJS 1.0 utils/SGUtils_1_0.js
+SGDialogJS 1.0 dialogs/SGDialog_1_0.js
 
 SGButton 1.0 SGButton/SGButton_1_0.qml
 SGCheckBox 1.0 SGCheckBox/SGCheckBox_1_0.qml
+SGConfirmationDialog 1.0 dialogs/SGConfirmationDialog_1_0.qml
+SGDialog 1.0 dialogs/SGDialog_1_0.qml
+SGMessageDialog 1.0 dialogs/SGMessageDialog_1_0.qml
 SGIcon 1.0 SGIcon/SGIcon_1_0.qml
 SGText 1.0 SGText/SGText_1_0.qml
 
