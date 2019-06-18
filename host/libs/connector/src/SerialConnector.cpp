@@ -65,7 +65,7 @@ SerialConnector::SerialConnector() : Connector()
     if (write_socket_->bind(SERIAL_SOCKET_ADDRESS) != 0) {
         CONNECTOR_DEBUG_LOG("%s Serial Connector failed in write socket bind\n", "SerialConnector");
         return;
-    } 
+    }
     if (read_socket_->connect(SERIAL_SOCKET_ADDRESS) != 0) {
         CONNECTOR_DEBUG_LOG("%s Serial Connector failed in read socket connect\n", "SerialConnector");
         return;
@@ -288,6 +288,31 @@ bool SerialConnector::read(string &notification)
 #endif
 }
 
+bool SerialConnector::blockingRead(string &notification)
+{
+    CONNECTOR_DEBUG_LOG("blocking read is not supported in the serial library\n",0);
+    return false;
+}
+
+bool SerialConnector::read(string &notification, ReadMode read_mode)
+{
+    switch (read_mode)
+    {
+        case ReadMode::BLOCKING:
+            assert(blockingRead(notification) == false);
+            break;
+        case ReadMode::NONBLOCKING:
+            if (read(notification)) {
+                return true;
+            }
+            break;
+        default:
+            CONNECTOR_DEBUG_LOG("[Socket] read failed\n",);
+            break;           
+    }
+    return false;
+}
+
 // @f write
 // @b writes to the connected device
 //
@@ -310,17 +335,16 @@ bool SerialConnector::send(const std::string &message)
     return false;
 }
 
-int SerialConnector::getFileDescriptor()
+connector_handle_t SerialConnector::getFileDescriptor()
 {
+    connector_handle_t file_descriptor;
 #ifndef _WIN32
-    int file_descriptor;
     sp_get_port_handle(platform_socket_, &file_descriptor);
 #else
-    unsigned long long int file_descriptor;
     size_t file_descriptor_size = sizeof(file_descriptor);
     read_socket_->getsockopt(ZMQ_FD, &file_descriptor, &file_descriptor_size);
 #endif
-    return static_cast<int>(file_descriptor);
+    return file_descriptor;
 }
 
 // @f windowsPlatformReadHandler

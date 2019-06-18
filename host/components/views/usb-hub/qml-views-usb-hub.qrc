@@ -41,8 +41,6 @@
         <file>views/basic-partial-views/PortStatBox.qml</file>
         <file>views/basic-partial-views/USBAPortInfo.qml</file>
         <file>views/basic-partial-views/VideoPortInfo.qml</file>
-        <file>views/images/AudioAnim.gif</file>
-        <file>views/images/AudioAnimReverse.gif</file>
         <file>views/images/DisplayPortAnim.gif</file>
         <file>views/images/DisplayPortAnimReverse.gif</file>
         <file>views/images/FourPortWireframeAdvancedView.png</file>
@@ -66,5 +64,9 @@
         <file>views/basic-partial-views/AudioSample.qml</file>
         <file>sgwidgets/SGResponsiveScrollView.qml</file>
         <file>views/basic-partial-views/PortGraphWindow.qml</file>
+        <file>views/images/headphonesCable.png</file>
+        <file>views/images/videoCable.png</file>
+        <file>views/images/AudioAnimReverse.gif</file>
+        <file>views/images/AudioAnim.gif</file>
     </qresource>
 </RCC>

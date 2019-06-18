@@ -3,7 +3,7 @@ import QtGraphicalEffects 1.0
 import QtQuick.Dialogs 1.3
 import QtQuick.Controls 2.3
 import QtQuick.Layouts 1.3
-//import "qrc:/views/smart-speaker/sgwidgets"
+import tech.strata.sgwidgets 0.9
 import "../views/basic-partial-views"
 
 Rectangle {
@@ -95,6 +95,8 @@ Rectangle {
             anchors.leftMargin: 50
             anchors.top: eqView.bottom
             anchors.topMargin:50
+
+            device: "not paired"
         }
 
         WirelessView{
@@ -105,7 +107,7 @@ Rectangle {
             anchors.leftMargin: 50
             anchors.verticalCenter: bluetoothView.verticalCenter
 
-            networkName:"network"
+            networkName:"not connected"
         }
 
         PortInfo{

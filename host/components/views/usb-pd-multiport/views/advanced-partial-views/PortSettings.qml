@@ -233,14 +233,16 @@ Item {
 
 
         SGSlider {
-            id: currentLimit
+            id: currentLimitSlider
             label: "Current limit:"
             value: {
                 if (platformInterface.output_current_exceeds_maximum.port === portNumber){
-                    return platformInterface.output_current_exceeds_maximum.current_limit;
+                    var currentLimit = platformInterface.output_current_exceeds_maximum.current_limit
+                    var correctedCurrentLimit = platformInterface.adjust_current ? currentLimit * platformInterface.oldFirmwareScaleFactor : currentLimit
+                    return correctedCurrentLimit;
                 }
                 else{
-                    return currentLimit.value;
+                    return value;
                 }
 
             }
@@ -259,7 +261,10 @@ Item {
                 rightMargin: 10
             }
 
-            onMoved: platformInterface.request_over_current_protection.update(portNumber, value)
+            onMoved: {
+                var correctedValue = platformInterface.adjust_current ? value * .75 : value
+                platformInterface.request_over_current_protection.update(portNumber, correctedValue)
+            }
 
         }
 
@@ -270,7 +275,7 @@ Item {
             minimumValue: 1
             maximumValue: 6
             anchors {
-                verticalCenter: currentLimit.verticalCenter
+                verticalCenter: currentLimitSlider.verticalCenter
                 verticalCenterOffset: -7
                 right: currentLimitInputUnits.left
                 rightMargin: 5
@@ -278,13 +283,18 @@ Item {
 
             value:{
                if (platformInterface.output_current_exceeds_maximum.port === portNumber){
-                   return platformInterface.output_current_exceeds_maximum.current_limit.toFixed(0)
+                   var currentLimit = platformInterface.output_current_exceeds_maximum.current_limit
+                   var correctedCurrentLimit = platformInterface.adjust_current ? currentLimit * platformInterface.oldFirmwareScaleFactor : currentLimit
+                   return correctedCurrentLimit.toFixed(0)
                 }
                 else{
-                   return currentLimit.value;
+                   return value;
                  }
             }
-            onApplied: platformInterface.request_over_current_protection.update(portNumber, intValue)
+            onApplied:{
+                var correctedValue = platformInterface.adjust_current ? intValue * .75 : intValue
+                platformInterface.request_over_current_protection.update(portNumber, correctedValue);
+            }
 
         }
 
@@ -306,7 +316,7 @@ Item {
                 pixelSize: 13
             }
             anchors {
-                top: currentLimit.bottom
+                top: currentLimitInput.bottom
                 topMargin: 15
                 left:parent.left
                 leftMargin: 30
