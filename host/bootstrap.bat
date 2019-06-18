@@ -41,7 +41,7 @@ echo " Generating project.."
 echo "======================================================================="
 cd build
 cmake -G "NMake Makefiles JOM" ^
-	-DCMAKE_BUILD_TYPE=Release ^
+	-DCMAKE_BUILD_TYPE=RelWithDebInfo ^
     ..\
 REM cmake -G "Visual Studio 14 2015 Win64" ^
 REM 	-T v141 ^
