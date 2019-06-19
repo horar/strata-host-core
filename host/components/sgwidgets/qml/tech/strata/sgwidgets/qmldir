@@ -13,6 +13,7 @@ SGDialog 1.0 dialogs/SGDialog_1_0.qml
 SGMessageDialog 1.0 dialogs/SGMessageDialog_1_0.qml
 SGIcon 1.0 SGIcon/SGIcon_1_0.qml
 SGIconButton 1.0 SGIconButton/SGIconButton_1_0.qml
+SGPage 1.0 SGPage/SGPage_1_0.qml
 SGSuggestionPopup 1.0 SGSuggestionPopup/SGSuggestionPopup_1_0.qml
 SGText 1.0 SGText/SGText_1_0.qml
 SGTextField 1.0 SGTextField/SGTextField_1_0.qml
