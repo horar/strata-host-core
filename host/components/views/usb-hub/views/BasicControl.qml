@@ -1005,23 +1005,28 @@ Item {
                 anchors.horizontalCenter: port4Device.horizontalCenter
                 anchors.horizontalCenterOffset: 10
                 anchors.bottom: port4Device.verticalCenter
-                anchors.bottomMargin: -10
+                anchors.bottomMargin: -13
+                source: "images/usbACord.gif"
             }
 
             PlugAnimation {
                 id: displayPortAnimation
-                anchors.horizontalCenter: videoIcon.horizontalCenter
-                anchors.horizontalCenterOffset: 10
-                anchors.bottom: videoIcon.verticalCenter
-                anchors.bottomMargin: -20
+                anchors.left: videoIconCable.left
+                anchors.leftMargin: 15
+                anchors.bottom: videoIconCable.top
+                source: "images/DisplayPortAnim.gif"
+                width: 427/6.125
+                height: 800/6.125
             }
 
             PlugAnimation {
                 id: audioAnimation
-                anchors.horizontalCenter: audioIcon.horizontalCenter
-                anchors.horizontalCenterOffset: 10
-                anchors.bottom: audioIcon.verticalCenter
-                anchors.bottomMargin: -20
+                anchors.left: audioIconCable.left
+                anchors.leftMargin: 15
+                anchors.bottom: audioIconCable.top
+                source: "images/AudioAnim.gif"
+                width: 427/6.125
+                height: 933/6.125
             }
 
 
@@ -1735,13 +1740,24 @@ Item {
                 }
             }
 
+            Image {
+                id: videoIconCable
+                anchors.verticalCenter: port4Device.verticalCenter
+                anchors.verticalCenterOffset: -4
+                anchors.left:port4Device.right
+                anchors.leftMargin: 10
+                source:"./images/videoCable.png"
+                fillMode:Image.PreserveAspectFit
+                sourceSize.width: 73/2
+            }
+
             Image{
                 id:videoIcon
                 source:"./images/videoIcon.png"
-                anchors.verticalCenter: port4Device.verticalCenter
-                anchors.left:port4Device.right
-                anchors.leftMargin: 40
+                anchors.verticalCenter: videoIconCable.verticalCenter
+                anchors.left: videoIconCable.right
                 fillMode:Image.PreserveAspectFit
+                sourceSize.width: 247/2
                 opacity: displayPort.portConnected ? 1 : .5
 
                 MouseArea{
@@ -1765,13 +1781,25 @@ Item {
                 }
             }
 
+            Image {
+                id: audioIconCable
+                anchors.verticalCenter: port4Device.verticalCenter
+                anchors.verticalCenterOffset: 8
+                anchors.left: videoIcon.right
+                anchors.leftMargin: 5
+                source:"./images/headphonesCable.png"
+                fillMode:Image.PreserveAspectFit
+                sourceSize.width: 120/2
+            }
+
             Image{
                 id:audioIcon
                 source:"./images/headphonesIcon.png"
-                anchors.verticalCenter: port4Device.verticalCenter
-                anchors.left:videoIcon.right
-                anchors.leftMargin: 80
-                fillMode:Image.PreserveAspectFit
+                anchors.verticalCenter: audioIconCable.verticalCenter
+                anchors.left: audioIconCable.right
+                anchors.leftMargin: -32/2
+                fillMode: Image.PreserveAspectFit
+                sourceSize.width: 232/2
                 opacity: audioPort.portConnected ? 1 : .5
 
                 MouseArea{
