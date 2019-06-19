@@ -238,7 +238,10 @@ Item {
             value: {
                 if (platformInterface.output_current_exceeds_maximum.port === portNumber){
                     var currentLimit = platformInterface.output_current_exceeds_maximum.current_limit
-                    var correctedCurrentLimit = platformInterface.adjust_current ? currentLimit * platformInterface.oldFirmwareScaleFactor : currentLimit
+                    var correctedCurrentLimit = currentLimit;
+                    if (platformInterface.adjust_current && currentLimit !== 6){
+                        correctedCurrentLimit = currentLimit * platformInterface.oldFirmwareScaleFactor;
+                    }
                     return correctedCurrentLimit;
                 }
                 else{
@@ -284,7 +287,10 @@ Item {
             value:{
                if (platformInterface.output_current_exceeds_maximum.port === portNumber){
                    var currentLimit = platformInterface.output_current_exceeds_maximum.current_limit
-                   var correctedCurrentLimit = platformInterface.adjust_current ? currentLimit * platformInterface.oldFirmwareScaleFactor : currentLimit
+                   var correctedCurrentLimit = currentLimit;
+                   if (platformInterface.adjust_current && currentLimit !== 6){
+                       correctedCurrentLimit = currentLimit * platformInterface.oldFirmwareScaleFactor;
+                   }
                    return correctedCurrentLimit.toFixed(0)
                 }
                 else{
