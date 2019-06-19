@@ -19,9 +19,6 @@ QtObject {
     property LoggingCategory devStudioLoginCategory: LoggingCategory {
         name: "strata.devstudio.login"
     }
-    property LoggingCategory devStudioMetricsCategory: LoggingCategory {
-        name: "strata.devstudio.metrics"
-    }
     property LoggingCategory devStudioHelpCategory: LoggingCategory {
         name: "strata.devstudio.help"
     }
