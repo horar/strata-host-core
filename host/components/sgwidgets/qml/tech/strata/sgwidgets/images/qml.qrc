@@ -6,6 +6,11 @@
         <file>chevron-down.svg</file>
         <file>exclamation.svg</file>
         <file>exclamation-triangle.svg</file>
+        <file>statusLightGreen.svg</file>
+        <file>statusLightOff.svg</file>
+        <file>statusLightOrange.svg</file>
+        <file>statusLightRed.svg</file>
+        <file>statusLightYellow.svg</file>
         <file>times.svg</file>
         <file>times-circle.svg</file>
     </qresource>
