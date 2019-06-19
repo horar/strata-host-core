@@ -40,22 +40,22 @@ Item {
         source: {
             switch(root.status) {
                 case "green":
-                    "./images/greenStatusLight.svg"
+                    "qrc:/sgimages/statusLightGreen.svg"
                     break;
                 case "red":
-                    "./images/redStatusLight.svg"
+                    "qrc:/sgimages/statusLightRed.svg"
                     break;
                 case "yellow":
-                    "./images/yellowStatusLight.svg"
+                    "qrc:/sgimages/statusLightYellow.svg"
                     break;
                 case "orange":
-                    "./images/orangeStatusLight.svg"
+                    "qrc:/sgimages/statusLightOrange.svg"
                     break;
                 case "off":
-                    "./images/offStatusLight.svg"
+                    "qrc:/sgimages/statusLightOff.svg"
                     break;
                 default:
-                    "./images/offStatusLight.svg"
+                    "qrc:/sgimages/statusLightOff.svg"
             }
         }
         mipmap: true
