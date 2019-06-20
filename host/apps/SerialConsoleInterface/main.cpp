@@ -44,7 +44,11 @@ void addImportPaths(QQmlApplicationEngine *engine) {
     applicationDir.cdUp();
 #endif
 
-    applicationDir.cd("imports");
+    bool status = applicationDir.cd("imports");
+    if (status == false) {
+        qCCritical(logCategorySci) << "failed to find import path.";
+    }
+
     engine->addImportPath(applicationDir.path());
 
     engine->addImportPath("qrc:///");
