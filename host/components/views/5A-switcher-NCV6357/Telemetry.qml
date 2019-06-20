@@ -64,6 +64,13 @@ Item {
         }
     }
 
+    property var pgood_status_interrupt: platformInterface.status_interrupt.pgood
+    onPgood_status_interruptChanged: {
+        if(pgood_status_interrupt === "bad"){
+            errorLed.status = "red"
+        }
+    }
+
     function addToHistoryLog()
     {
         var errorArray = platformInterface.status_ack_register.events_detected
@@ -221,7 +228,7 @@ Item {
                         outerColor: "#999"
                         unitLabel: "W"
                         //gaugeTitle: "Output" +"\n"+" Power"
-                       // decimal: 2
+                        //decimal: 1
                         value: platformInterface.status_voltage_current.output_power
                         Behavior on value { NumberAnimation { duration: 300 } }
                     }
@@ -472,7 +479,7 @@ Item {
                             Layout.leftMargin: 10
                             // Optional Configuration:
                             label: "PGood" // Default: "" (if not entered, label will not appear)
-                            status: platformInterface.inbt_state
+//                            status: platformInterface.inbt_state
                         }
 
                     }

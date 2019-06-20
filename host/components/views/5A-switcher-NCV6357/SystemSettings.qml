@@ -32,6 +32,7 @@ Item {
         if(read_enable_state === "on") {
             platformInterface.enabled = true
             platformInterface.intd_state = true
+            basicControl.warningVisible = false
         }
         else  {
             platformInterface.enabled = false
@@ -192,6 +193,7 @@ Item {
                                 if(checked){
                                     platformInterface.set_enable.update("on")
                                     platformInterface.intd_state = true
+                                    basicControl.warningVisible = false
                                     if(platformInterface.reset_flag === true) {
                                         platformInterface.reset_status_indicator.update("reset")
                                         platformInterface.reset_indicator = "off"
@@ -201,6 +203,7 @@ Item {
                                 else{
                                     platformInterface.set_enable.update("off")
                                     platformInterface.intd_state = false
+                                    basicControl.warningVisible = true
                                 }
                                 platformInterface.enabled = checked
                             }
@@ -217,9 +220,9 @@ Item {
                             //fontSize: (parent.width + parent.height)/22
                             label :"Set Inductor\nPeak Current"
                             model: [ "5.2A(Iout = 3.5A)", "5.8A(Iout = 4.0A)","6.2A(Iout = 4.5A)", "6.8A(Iout = 5.0A)" ]
-                            anchors {
-                                horizontalCenter: parent.horizontalCenter
-                            }
+                            borderColor: "black"
+                            textColor: "black"          // Default: "black"
+                            indicatorColor: "black"
                             comboBoxWidth: parent.width/2
                             comboBoxHeight: parent.height/2
                             onActivated: {
@@ -337,6 +340,9 @@ Item {
                             height: parent.height/5
                             SGComboBox {
                                 id: outputVolCombo
+                                borderColor: "black"
+                                textColor: "black"          // Default: "black"
+                                indicatorColor: "black"      // Default: "#aaa"
                                 currentIndex: {
                                    platformInterface.output_voltage_selector0
 
@@ -366,6 +372,9 @@ Item {
                                 model: outputvoltage0
                                 comboBoxWidth: parent.width/4
                                 comboBoxHeight: parent.height/2
+                                borderColor: "black"
+                                textColor: "black"          // Default: "black"
+                                indicatorColor: "black"
                                 onActivated: {
                                     platformInterface.set_prog_vsel1.update(currentIndex)
                                     platformInterface.output_voltage_selector1 = currentIndex
@@ -392,9 +401,10 @@ Item {
                                 currentIndex: platformInterface.dcdc_mode0
                                 //fontSize: (parent.width + parent.height)/25
                                 label : "DCDC Mode"
-                                model: [
-                                    "Auto", "PPWM"
-                                ]
+                                model: ["Auto", "PPWM"]
+                                borderColor: "black"
+                                textColor: "black"          // Default: "black"
+                                indicatorColor: "black"
                                 onActivated: {
                                     if(currentIndex == 0) {
                                         platformInterface.ppwm_vsel0_mode.update("auto")
@@ -417,9 +427,11 @@ Item {
                                 currentIndex: platformInterface.dcdc_mode1
                                 //fontSize: (parent.width + parent.height)/25
                                 label : "DCDC Mode"
-                                model: [
-                                    "Auto", "PPWM"
-                                ]
+                                model: ["Auto", "PPWM"]
+
+                                borderColor: "black"
+                                textColor: "black"          // Default: "black"
+                                indicatorColor: "black"
                                 comboBoxWidth: parent.width/3
                                 comboBoxHeight: parent.height/2
                                 onActivated: {

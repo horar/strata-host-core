@@ -65,6 +65,15 @@ Item {
 
         }
     }
+    property var pgood_status_interrupt: platformInterface.status_interrupt.pgood
+    onPgood_status_interruptChanged: {
+        if(pgood_status_interrupt === "bad"){
+            platformInterface.enabled = false
+            warningVisible = true
+        }
+    }
+
+
 
     Component.onCompleted:  {
         Help.registerTarget(ledLight, "The LED will light up green when input voltage is ready and greater than 4.5V. It will light up red when under 4.5V to warn the user that input voltage is not high enough.", 1, "basic5AHelp")
@@ -98,7 +107,7 @@ Item {
                     top: parent.top
                     horizontalCenter: parent.horizontalCenter
                 }
-                text:  "<b> NCV6356 </b>"
+                text:  "<b> NCV6357 </b>"
                 font.pixelSize: (parent.width + parent.height)/ 30
                 color: "black"
             }
@@ -358,6 +367,7 @@ Item {
                     outerColor: "#999"
                     unitLabel: "°C"
 
+
                     //gaugeTitle : "Board" +"\n" + "Temperature"
                     value: platformInterface.status_temperature_sensor.temperature
                     Behavior on value { NumberAnimation { duration: 300 } }
@@ -448,6 +458,7 @@ Item {
                         if(checked){
                             platformInterface.set_enable.update("on")
                             platformInterface.intd_state = true
+                            warningVisible = false
                             if(platformInterface.reset_flag === true) {
                                 platformInterface.reset_status_indicator.update("reset")
                                 platformInterface.reset_indicator = "off"
@@ -457,6 +468,7 @@ Item {
                         else{
                             platformInterface.set_enable.update("off")
                             platformInterface.intd_state = false
+                            warningVisible = true
                         }
                     }
                 }

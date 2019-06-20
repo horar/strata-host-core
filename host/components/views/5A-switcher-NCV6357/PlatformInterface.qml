@@ -79,7 +79,7 @@ Item {
     }
 
     property var status_interrupt: {
-        "intb": ""
+        "pgood": "bad"
     }
 
 
