@@ -36,7 +36,7 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
     CXX_EXTENSIONS OFF
     AUTOMOC ON
     AUTORCC ON
-    LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/imports/tech/strata/${PROJECT_NAME}
+    LIBRARY_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/imports/tech/strata/${PROJECT_NAME}
 )
 
 # Copy 'qmldir' and 'qmltypes' file next to plugin lib
