@@ -1,5 +1,10 @@
 import QtQuick 2.12
-import tech.strata.sgwidgets 1.0 as SGWidgets
+
+/*
+There is a bug in Qt related to enums and qualifiers - QTBUG-76531
+As a result, we cannot use qualifier when using enums.
+*/
+import tech.strata.sgwidgets 1.0
 
 Item {
     id: root
@@ -47,16 +52,16 @@ Item {
 
             source: {
                 switch(root.status) {
-                case SGWidgets.SGStatusLight.Green: return "qrc:/sgimages/statusLightGreen.svg"
-                case SGWidgets.SGStatusLight.Red: return "qrc:/sgimages/statusLightRed.svg"
-                case SGWidgets.SGStatusLight.Yellow: return "qrc:/sgimages/statusLightYellow.svg"
-                case SGWidgets.SGStatusLight.Orange: return "qrc:/sgimages/statusLightOrange.svg"
+                case SGStatusLight.Green: return "qrc:/sgimages/statusLightGreen.svg"
+                case SGStatusLight.Red: return "qrc:/sgimages/statusLightRed.svg"
+                case SGStatusLight.Yellow: return "qrc:/sgimages/statusLightYellow.svg"
+                case SGStatusLight.Orange: return "qrc:/sgimages/statusLightOrange.svg"
                 default: return "qrc:/sgimages/statusLightOff.svg"
                 }
             }
         }
 
-        SGWidgets.SGText {
+        SGText {
             id: textItem
             anchors.verticalCenter: parent.verticalCenter
         }

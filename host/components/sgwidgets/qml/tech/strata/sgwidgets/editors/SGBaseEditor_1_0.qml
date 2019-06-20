@@ -1,5 +1,5 @@
 import QtQuick 2.12
-import tech.strata.sgwidgets 1.0 as SGWidgets
+import tech.strata.sgwidgets 1.0
 
 FocusScope {
     id: delegate
@@ -34,7 +34,7 @@ FocusScope {
         Invalid
     }
 
-    property int validStatus: SGWidgets.SGBaseEditor.Unknown
+    property int validStatus: SGBaseEditor.Unknown
 
     Connections {
         target: inputValidation && loader.status == Loader.Ready ? loader.item : null
@@ -70,20 +70,20 @@ FocusScope {
             }
         }
 
-        validStatus = SGWidgets.SGBaseEditor.Unknown
+        validStatus = SGBaseEditor.Unknown
         errorText = ""
     }
 
     function callInputValidationErrorMsg() {
         errorText = inputValidationErrorMsg()
         if (errorText.length > 0) {
-            validStatus = SGWidgets.SGBaseEditor.Invalid
+            validStatus = SGBaseEditor.Invalid
         } else if (errorText.length === 0) {
-            validStatus = SGWidgets.SGBaseEditor.Valid
+            validStatus = SGBaseEditor.Valid
         }
     }
 
-    SGWidgets.SGText {
+    SGText {
         id: text
         anchors {
             left: loader.left
@@ -117,9 +117,9 @@ FocusScope {
         width: height
 
         sourceComponent: {
-            if (validStatus === SGWidgets.SGBaseEditor.Invalid) {
+            if (validStatus === SGBaseEditor.Invalid) {
                 return errorComponent
-            } else if (validStatus === SGWidgets.SGBaseEditor.Valid) {
+            } else if (validStatus === SGBaseEditor.Valid) {
                 return okayComponent
             }
 
@@ -127,7 +127,7 @@ FocusScope {
         }
     }
 
-    SGWidgets.SGText {
+    SGText {
         id: helperTextItem
         anchors {
             left: loader.left
@@ -138,8 +138,8 @@ FocusScope {
 
         //fontSizeMultiplier: 0.9
         font.italic: true
-        text: validStatus === SGWidgets.SGBaseEditor.Invalid ? errorText : helperText
-        color: validStatus === SGWidgets.SGBaseEditor.Invalid ? SGWidgets.SGColorsJS.ERROR_COLOR : Qt.darker("grey",1.5)
+        text: validStatus === SGBaseEditor.Invalid ? errorText : helperText
+        color: validStatus === SGBaseEditor.Invalid ? SGColorsJS.ERROR_COLOR : Qt.darker("grey",1.5)
     }
 
     Component {
@@ -149,10 +149,10 @@ FocusScope {
             Rectangle {
                 anchors.fill: parent
                 radius: Math.round(width/2)
-                color: SGWidgets.SGColorsJS.ERROR_COLOR
+                color: SGColorsJS.ERROR_COLOR
             }
 
-            SGWidgets.SGIcon {
+            SGIcon {
                 anchors.centerIn: parent
                 height: Math.floor(parent.height - 4)
                 width: height
@@ -172,7 +172,7 @@ FocusScope {
                 color: Qt.lighter("green")
             }
 
-            SGWidgets.SGIcon {
+            SGIcon {
                 anchors.centerIn: parent
                 height: Math.floor(parent.height - 4)
                 width: height

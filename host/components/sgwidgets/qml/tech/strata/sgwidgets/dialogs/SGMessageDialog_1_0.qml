@@ -1,15 +1,15 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.12
-import tech.strata.sgwidgets 1.0 as SGWidgets
+import tech.strata.sgwidgets 1.0
 
 /*
   In most cases, it would be sufficient to call showMessageDialog() from SGDialogJS.
 
   example:
 
-    SGWidgets.SGDialogJS.showMessageDialog(
+    SGDialogJS.showMessageDialog(
                 parent,
-                SGWidgets.SGMessageDialog.Info,
+                SGMessageDialog.Info,
                 "Time limit reached",
                 "Do you want conninue ?",
                 Dialog.Yes | Dialog.No,
@@ -21,11 +21,11 @@ import tech.strata.sgwidgets 1.0 as SGWidgets
                 })
 */
 
-SGWidgets.SGDialog {
+SGDialog {
     id: dialog
 
     /* Dialog type */
-    property int type: SGWidgets.SGMessageDialog.Info
+    property int type: SGMessageDialog.Info
 
     /* Title of a dialog */
     title: ""
@@ -48,19 +48,19 @@ SGWidgets.SGDialog {
     closePolicy: Popup.CloseOnEscape
 
     headerBgColor: {
-        if (dialog.type === SGWidgets.SGMessageDialog.Warning) {
-            return SGWidgets.SGColorsJS.WARNING_COLOR
-        } else if (dialog.type === SGWidgets.SGMessageDialog.Error) {
-            return SGWidgets.SGColorsJS.ERROR_COLOR
+        if (dialog.type === SGMessageDialog.Warning) {
+            return SGColorsJS.WARNING_COLOR
+        } else if (dialog.type === SGMessageDialog.Error) {
+            return SGColorsJS.ERROR_COLOR
         }
 
-        return SGWidgets.SGColorsJS.STRATA_BLUE
+        return SGColorsJS.STRATA_BLUE
     }
 
     headerIcon: {
-        if (dialog.type === SGWidgets.SGMessageDialog.Warning) {
+        if (dialog.type === SGMessageDialog.Warning) {
             return "qrc:/sgimages/exclamation-triangle.svg"
-        } else if (dialog.type === SGWidgets.SGMessageDialog.Error) {
+        } else if (dialog.type === SGMessageDialog.Error) {
             return "qrc:/sgimages/times-circle.svg"
         }
 
@@ -85,7 +85,7 @@ SGWidgets.SGDialog {
                 width: content.width
                 height: messageText.paintedHeight + 12
 
-                SGWidgets.SGText {
+                SGText {
                     id: messageText
                     anchors {
                         top: parent.top
@@ -104,7 +104,7 @@ SGWidgets.SGDialog {
 
     footer: DialogButtonBox {
         id: dialogBox
-        delegate: SGWidgets.SGButton {
+        delegate: SGButton {
             width: implicitWidth
         }
 
