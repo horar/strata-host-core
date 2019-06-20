@@ -89,38 +89,140 @@ Item {
     // @command: motor_running_command
     // @description: sends motor running command to platform
     //
-    property var motor_running_command : ({
-            "cmd" : "motor_running",
-            "payload": {
-                "running": false // default value
-            },
+    property var set_enable_1: ({
+                                    "cmd" : "set_enable_1",
+                                    "payload": {
+                                        "enable": " ",
+                                    },
 
-            update: function (running) {
-                this.set(running)
-                this.send(this)
-            },
-            set: function (running) {
-                this.payload.running = running
-            },
-            send: function () { platformInterface.send(this) },
-            show: function () { platformInterface.show(this) }
-        })
+                                    // Update will set and send in one shot
+                                    update: function (enable) {
+                                        this.set(enable)
+                                        CorePlatformInterface.send(this)
+                                    },
+                                    // Set can set single or multiple properties before sending to platform
+                                    set: function (enable) {
+                                        this.payload.enable = enable;
+                                    },
 
+                                    send: function () { CorePlatformInterface.send(this) },
+                                    show: function () { CorePlatformInterface.show(this) }
 
+                                })
 
-    // -------------------------------------------------------------------
-    // Helper functions
+    property var set_enable_2: ({
+                                    "cmd" : "set_enable_2",
+                                    "payload": {
+                                        "enable": " ",
+                                    },
 
-    function send (command) {
-        console.log("send:", JSON.stringify(command));
-        coreInterface.sendCommand(JSON.stringify(command))
-    }
+                                    // Update will set and send in one shot
+                                    update: function (enable) {
+                                        this.set(enable)
+                                        CorePlatformInterface.send(this)
+                                    },
+                                    // Set can set single or multiple properties before sending to platform
+                                    set: function (enable) {
+                                        this.payload.enable = enable;
+                                    },
 
-    function show (command) {
-        console.log("show:", JSON.stringify(command));
-    }
+                                    send: function () { CorePlatformInterface.send(this) },
+                                    show: function () { CorePlatformInterface.show(this) }
 
+                                })
 
+    property var set_SR_1: ({
+                                "cmd" : "set_SR_1",
+                                "payload": {
+                                    "slew_rate": "slow",
+                                },
+
+                                // Update will set and send in one shot
+                                update: function (slew_rate) {
+                                    this.set(slew_rate)
+                                    CorePlatformInterface.send(this)
+                                },
+                                // Set can set single or multiple properties before sending to platform
+                                set: function (slew_rate) {
+                                    this.payload.slew_rate = slew_rate;
+                                },
+
+                                send: function () { CorePlatformInterface.send(this) },
+                                show: function () { CorePlatformInterface.show(this) }
+
+                            })
+
+    property var set_SR_2: ({
+                                "cmd" : "set_SR_2",
+                                "payload": {
+                                    "slew_rate": "slow",
+                                },
+
+                                // Update will set and send in one shot
+                                update: function (slew_rate) {
+                                    this.set(slew_rate)
+                                    CorePlatformInterface.send(this)
+                                },
+                                // Set can set single or multiple properties before sending to platform
+                                set: function (slew_rate) {
+                                    this.payload.slew_rate = slew_rate;
+                                },
+
+                                send: function () { CorePlatformInterface.send(this) },
+                                show: function () { CorePlatformInterface.show(this) }
+
+                            })
+
+    property var set_ilim_1: ({
+                                  "cmd" : "set_ilim_1",
+                                  "payload": {
+                                      "ilim": "55",
+                                  },
+
+                                  // Update will set and send in one shot
+                                  update: function (ilim) {
+                                      this.set(ilim)
+                                      CorePlatformInterface.send(this)
+                                  },
+                                  // Set can set single or multiple properties before sending to platform
+                                  set: function (ilim) {
+                                      this.payload.ilim = ilim;
+                                  },
+
+                                  send: function () { CorePlatformInterface.send(this) },
+                                  show: function () { CorePlatformInterface.show(this) }
+
+                              })
+
+    property var set_ilim_2: ({
+                                  "cmd" : "set_ilim_2",
+                                  "payload": {
+                                      "ilim": "55",
+                                  },
+
+                                  // Update will set and send in one shot
+                                  update: function (ilim) {
+                                      this.set(ilim)
+                                      CorePlatformInterface.send(this)
+                                  },
+                                  // Set can set single or multiple properties before sending to platform
+                                  set: function (ilim) {
+                                      this.payload.ilim = ilim;
+                                  },
+
+                                  send: function () { CorePlatformInterface.send(this) },
+                                  show: function () { CorePlatformInterface.show(this) }
+
+                              })
+
+    property var sc_on: ({ "cmd" : "sc_on",
+                             update: function () {
+                                 CorePlatformInterface.send(this)
+                             },
+                             send: function () { CorePlatformInterface.send(this) },
+                             show: function () { CorePlatformInterface.show(this) }
+
+                         })
 
     // -------------------------------------------------------------------
     // Listens to message notifications coming from CoreInterface.cpp

@@ -89,10 +89,10 @@ Item {
         }
     }
 
-    DebugExample {
-        anchors {
-            right: controlContainer.right
-            bottom: controlContainer.bottom
-        }
-    }
+//    DebugExample {
+//        anchors {
+//            right: controlContainer.right
+//            bottom: controlContainer.bottom
+//        }
+//    }
 }

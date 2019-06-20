@@ -47,7 +47,7 @@ Item {
             }
             color: "#696969"
 
-            ColumnLayout {
+            RowLayout {
                 anchors.fill: parent
 
                 SGCircularGauge {
@@ -56,8 +56,8 @@ Item {
                     minimumValue: 0
                     maximumValue: 100
                     tickmarkStepSize: 10
-                    width: parent.width
-                    height: parent.height/3
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
                     gaugeRearColor: "white"                  // Default: "#ddd"(background color that gets filled in by gauge)
                     centerColor: "white"
                     outerColor: "white"
@@ -73,8 +73,8 @@ Item {
                 SGCircularGauge {
                     id: sgCircularGauge2
                     value: 50
-                    width: parent.width
-                    height: parent.height/3
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
                     minimumValue: 0
                     maximumValue: 100
                     tickmarkStepSize: 10
@@ -268,6 +268,12 @@ Item {
                         grooveColor: "black"             // Default: "#ccc"
                         grooveFillColor: "black"         // Default: "#0cf"
                         Layout.alignment: Qt.AlignHCenter
+                        onToggled: {
+                            if(checked)
+                                platformInterface.set_enable_1.update("on")
+                            else
+                                platformInterface.set_enable_1.update("off")
+                        }
                     }
 
                     SGComboBox {
@@ -284,6 +290,9 @@ Item {
                         model: ["100", "55", "38", "29"]
                         Layout.alignment: Qt.AlignCenter
                         fontSize: ratioCalc * 20
+                        onActivated: {
+                            platformInterface.set_ilim_1.update(currentText)
+                        }
                     }
 
                     SGComboBox {
@@ -299,8 +308,12 @@ Item {
                         dividers: true              // Default: false
                         model: ["1ms", "5ms"]
                         Layout.alignment: Qt.AlignCenter
-
                         fontSize: ratioCalc * 20
+                        onActivated: {
+                            if(currentIndex === 0)
+                                platformInterface.set_SR_1.update("slow")
+                            else platformInterface.set_SR_1.update("default")
+                        }
                     }
 
 
@@ -344,8 +357,11 @@ Item {
                         verticalAlignment: Text.AlignVCenter
                         elide: Text.ElideRight
                     }
-                }
 
+                    onClicked: {
+                        platformInterface.sc_on.update()
+                    }
+                }
             }
 
             Rectangle {
@@ -379,6 +395,12 @@ Item {
                         grooveColor: "black"             // Default: "#ccc"
                         grooveFillColor: "black"         // Default: "#0cf"
                         Layout.alignment: Qt.AlignHCenter
+                        onToggled: {
+                            if(checked)
+                                platformInterface.set_enable_2.update("on")
+                            else
+                                platformInterface.set_enable_2.update("off")
+                        }
                     }
 
                     SGComboBox {
@@ -395,6 +417,9 @@ Item {
                         model: ["100", "55", "38", "29"]
                         Layout.alignment: Qt.AlignHCenter
                         fontSize: ratioCalc * 20
+                        onActivated: {
+                            platformInterface.set_ilim_2.update(currentText)
+                        }
                     }
 
                     SGComboBox {
@@ -411,6 +436,11 @@ Item {
                         model: ["1ms", "5ms"]
                         Layout.alignment: Qt.AlignHCenter
                         fontSize: ratioCalc * 20
+                        onActivated: {
+                            if(currentIndex === 0)
+                                platformInterface.set_SR_2.update("slow")
+                            else platformInterface.set_SR_2.update("default")
+                        }
                     }
                 }
             }

@@ -213,6 +213,12 @@ Item {
                             grooveColor: "black"             // Default: "#ccc"
                             grooveFillColor: "black"         // Default: "#0cf"
                             Layout.alignment: Qt.AlignCenter
+                            onToggled: {
+                                if(checked)
+                                    platformInterface.set_enable_1.update("on")
+                                else  platformInterface.set_enable_1.update("off")
+
+                            }
                         }
 
 
@@ -234,6 +240,13 @@ Item {
                             grooveFillColor: "black"         // Default: "#0cf"
                             Layout.alignment: Qt.AlignCenter
                             Layout.topMargin: 10
+
+                            onToggled: {
+                                if(checked)
+                                    platformInterface.set_enable_2.update("on")
+                                else  platformInterface.set_enable_2.update("off")
+
+                            }
 
                         }
 

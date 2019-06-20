@@ -49,5 +49,6 @@ var uuid_map = {
     "218": "usb-hub",
     "219": "15A-switcher",
     "220": "15A-switcher",
-    "222": "subGHz"
+    "222": "subGHz",
+    "227" : "eFuse"
 }
