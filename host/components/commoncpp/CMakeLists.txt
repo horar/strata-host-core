@@ -45,7 +45,11 @@ add_custom_command(
     POST_BUILD
     COMMAND
         ${CMAKE_COMMAND} -E copy_if_different
-        ${CMAKE_CURRENT_LIST_DIR}/imports/tech/strata/${PROJECT_NAME}/*
+        ${CMAKE_CURRENT_LIST_DIR}/imports/tech/strata/${PROJECT_NAME}/qmldir
+        $<TARGET_FILE_DIR:${PROJECT_NAME}>/
+    COMMAND
+        ${CMAKE_COMMAND} -E copy_if_different
+        ${CMAKE_CURRENT_LIST_DIR}/imports/tech/strata/${PROJECT_NAME}/plugins.qmltypes
         $<TARGET_FILE_DIR:${PROJECT_NAME}>/
 )
 
