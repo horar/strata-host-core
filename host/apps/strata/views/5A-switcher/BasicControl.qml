@@ -22,7 +22,6 @@ Item {
 
     // When the load is turned on before enable is on, the part sends out the surge and resets the mcu.
     // Detect the mcu reset and turn of the pause periodic.
-    // Part of Windows Serial USB mouse hack
     property var read_mcu_reset_state: platformInterface.status_mcu_reset.mcu_reset
     onRead_mcu_reset_stateChanged: {
         if(read_mcu_reset_state === "occurred") {

@@ -19,3 +19,6 @@
 [submodule "host/ext_libs/threadpool"]
 	path = host/ext_libs/threadpool
 	url = https://github.com/progschj/ThreadPool
+[submodule "host/extern/googletest"]
+	path = host/extern/googletest
+	url = https://github.com/google/googletest.git

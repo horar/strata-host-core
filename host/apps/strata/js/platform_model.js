@@ -13,7 +13,7 @@
 //TODO: when CoreInterface makes this obsolete, uncomment populatePlatforms() calls so the CoreInterface list is used (main.qml, sgstatusbar.qml)
 
 var platforms = { "list":
-    [
+        [
         {
             "on_part_number": "STR-LOGIC-GATES-EVK",
             "verbose_name": "Multi-function Logic Gate with GUI Control",
@@ -29,7 +29,7 @@ var platforms = { "list":
             "available":{
                 "documents": true,
                 "control": true
-                       },
+            },
             "class_id": "201",
             "connection": "view"
         },
@@ -51,7 +51,7 @@ var platforms = { "list":
             "available":{
                 "documents": true,
                 "control": true
-                       },
+            },
             "class_id": "202",
             "connection": "view"
         },
@@ -75,7 +75,7 @@ var platforms = { "list":
             "available":{
                 "documents": true,
                 "control": true
-                       },
+            },
             "class_id": "203",
             "connection": "view"
         },
@@ -206,6 +206,31 @@ var platforms = { "list":
         },
 
         {
+            "on_part_number": "STR-NCP171-EVK",
+            "verbose_name": "NCP171 - 80mA Dual Power Mode LDO",
+            "description": "The STR-NCP171-EVK provides an evaluation kit for the NCP171 series of 80 mA dual mode XDFN4 package LDOs.",
+            "image": "210.png",
+            "application_icons": [
+                "computing",
+                "consumer",
+                "powersupply"
+            ],
+            "product_icons": [
+                "analog",
+                "dc",
+                "discrete"
+            ],
+            "available":{
+                "documents": true,
+                "control": true
+            },
+            "class_id": "217",
+            "connection": "view"
+        },
+
+
+
+        {
             "on_part_number": "STR-NCV6356-EVK",
             "verbose_name": "NCV6356 5A AOT Step Down Converter",
             "description": "The STR-NCV6356-EVK provides an evaluation kit for the NCV6356 configurable 5.0 A Adaptive-On-Time (AOT) step down converter a with I2C programmable output voltage.",
@@ -324,29 +349,7 @@ var platforms = { "list":
             "connection": "view"
         },
 
-           // Listed as Demo in most recent docs sent to me by Oatman
-//        {
-//            "on_part_number": "STR-NCP171-EVK",
-//            "verbose_name": "NCP171 - 80mA Dual Power Mode LDO",
-//            "description": "The STR-NCP171-EVK provides an evaluation kit for the NCP171 series of 80 mA dual mode XDFN4 package LDOs.",
-//            "image": "210.png",
-//            "application_icons": [
-//                "computing",
-//                "consumer",
-//                "powersupply"
-//            ],
-//            "product_icons": [
-//                "analog",
-//                "dc",
-//                "discrete"
-//            ],
-//            "available":{
-//                "documents": false,
-//                "control": false
-//            },
-//            "class_id": "217",
-//            "connection": "view"
-//        },
+
 
         {
             "on_part_number": "STR-SENSORS-EVK",
@@ -372,77 +375,77 @@ var platforms = { "list":
             "connection": "view"
         },
 
-//        {   // Platform is not publicly available
-//            "on_part_number": "STR-VORTEX-FOUNTAIN-DEMO",
-//            "verbose_name": "Vortex Fountain Motor Platform Demo",
-//            "description": "This demo uses sensor-less 3 phase BLDC motor controller LV8907 to drive the pump which creates a water voretx and is lit with color mixing LEDs driven by CAT9532.",
-//            "image": "204.png",
-//            "application_icons": [
-//                "consumer",
-//                "industrial",
-//                "ledlighting",
-//                "motorcontrol",
-//                "powersupply"
-//            ],
-//            "product_icons": [
-//                "dc",
-//                "digital",
-//                "discrete",
-//                "led"
-//            ],
-//            "available":{
-//                "documents": false,
-//                "control": false
-//                       },
-//            "class_id": "204",
-//            "connection": "view"
-//        },
+        //        {   // Platform is not publicly available
+        //            "on_part_number": "STR-VORTEX-FOUNTAIN-DEMO",
+        //            "verbose_name": "Vortex Fountain Motor Platform Demo",
+        //            "description": "This demo uses sensor-less 3 phase BLDC motor controller LV8907 to drive the pump which creates a water voretx and is lit with color mixing LEDs driven by CAT9532.",
+        //            "image": "204.png",
+        //            "application_icons": [
+        //                "consumer",
+        //                "industrial",
+        //                "ledlighting",
+        //                "motorcontrol",
+        //                "powersupply"
+        //            ],
+        //            "product_icons": [
+        //                "dc",
+        //                "digital",
+        //                "discrete",
+        //                "led"
+        //            ],
+        //            "available":{
+        //                "documents": false,
+        //                "control": false
+        //                       },
+        //            "class_id": "204",
+        //            "connection": "view"
+        //        },
 
-//        {
-//            "on_part_number": "STR-Strata",
-//            "verbose_name": "Example Platform",
-//            "description": "This example platform is just a template that keeps a record of all the available icons and also show a 'coming soon' platform",
-//            "image": "notFound.png",
-//            "application_icons": [
-//                "automotive",
-//                "computing",
-//                "consumer",
-//                "industrial",
-//                "ledlighting",
-//                "medical",
-//                "militaryaerospace",
-//                "motorcontrol",
-//                "networkingtelecom",
-//                "powersupply",
-//                "whitegoods",
-//                "wirelessiot"
-//            ],
-//            "product_icons": [
-//                "ac",
-//                "analog",
-//                "audio",
-//                "connectivity",
-//                "dc",
-//                "digital",
-//                "discrete",
-//                "esd",
-//                "imagesensors",
-//                "infrared",
-//                "led",
-//                "mcu",
-//                "memory",
-//                "optoisolator",
-//                "pm",
-//                "sensor",
-//                "video"
-//            ],
-//            "available":{
-//                "documents": false,
-//                "control": false
-//            },
-//            "class_id": "209",
-//            "connection": "view"
-//        }
+        //        {
+        //            "on_part_number": "STR-Strata",
+        //            "verbose_name": "Example Platform",
+        //            "description": "This example platform is just a template that keeps a record of all the available icons and also show a 'coming soon' platform",
+        //            "image": "notFound.png",
+        //            "application_icons": [
+        //                "automotive",
+        //                "computing",
+        //                "consumer",
+        //                "industrial",
+        //                "ledlighting",
+        //                "medical",
+        //                "militaryaerospace",
+        //                "motorcontrol",
+        //                "networkingtelecom",
+        //                "powersupply",
+        //                "whitegoods",
+        //                "wirelessiot"
+        //            ],
+        //            "product_icons": [
+        //                "ac",
+        //                "analog",
+        //                "audio",
+        //                "connectivity",
+        //                "dc",
+        //                "digital",
+        //                "discrete",
+        //                "esd",
+        //                "imagesensors",
+        //                "infrared",
+        //                "led",
+        //                "mcu",
+        //                "memory",
+        //                "optoisolator",
+        //                "pm",
+        //                "sensor",
+        //                "video"
+        //            ],
+        //            "available":{
+        //                "documents": false,
+        //                "control": false
+        //            },
+        //            "class_id": "209",
+        //            "connection": "view"
+        //        }
     ]
 }
 

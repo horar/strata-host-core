@@ -1,12 +1,17 @@
-project(hcc_test
+project(connector-test
+    VERSION 1.0
     LANGUAGES CXX
 )
 
-add_executable(${PROJECT_NAME}
-    main.cpp
+
+add_executable(connector-test
+    connector-test.cpp
 )
 
-target_link_libraries(${PROJECT_NAME} PRIVATE HostControllerClient)
+target_link_libraries(${PROJECT_NAME}
+    PRIVATE connector
+    PRIVATE gtest::gtest
+)
 
 if (WIN32)
     target_link_libraries(${PROJECT_NAME} PRIVATE Setupapi.lib Ws2_32.lib )
