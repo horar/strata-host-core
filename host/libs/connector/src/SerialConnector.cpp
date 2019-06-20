@@ -288,6 +288,31 @@ bool SerialConnector::read(string &notification)
 #endif
 }
 
+bool SerialConnector::blockingRead(string &notification)
+{
+    CONNECTOR_DEBUG_LOG("blocking read is not supported in the serial library\n",0);
+    return false;
+}
+
+bool SerialConnector::read(string &notification, ReadMode read_mode)
+{
+    switch (read_mode)
+    {
+        case ReadMode::BLOCKING:
+            assert(blockingRead(notification) == false);
+            break;
+        case ReadMode::NONBLOCKING:
+            if (read(notification)) {
+                return true;
+            }
+            break;
+        default:
+            CONNECTOR_DEBUG_LOG("[Socket] read failed\n",);
+            break;           
+    }
+    return false;
+}
+
 // @f write
 // @b writes to the connected device
 //

@@ -31,6 +31,8 @@ public:
     void resetClientId();
     std::string getClientId() const { return clientId_; }
 
+    std::string getConnectionId() const;
+
 private:
     ProcessResult parseInitialMsg(const std::string& msg, bool& wasNotification);
 
@@ -41,6 +43,12 @@ private:
         eWaitingForPlatformInfo,
         eConnected,
     };
+
+    enum class PlatformIdVer {
+        eVersion1 = 1,
+        eVersion2,
+    };
+
 
     std::map<std::string, std::string> properties_;
 
