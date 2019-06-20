@@ -29,7 +29,7 @@ void loadResources() {
 
         qCInfo(logCategorySci)
                 << "Loading"
-                << resourceName << "':"
+                << resourceName << ":"
                 << QResource::registerResource(resourcePath);
     }
 }
