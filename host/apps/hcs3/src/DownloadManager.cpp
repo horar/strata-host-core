@@ -1,6 +1,8 @@
 
 #include "DownloadManager.h"
 
+#include "logging/LoggingQtCategories.h"
+
 DownloadManager::DownloadManager(QObject* parent) : QObject(parent), numberOfDownloads_(4)
 {
     manager_.reset(new QNetworkAccessManager(this) );
@@ -20,7 +22,8 @@ DownloadManager::~DownloadManager()
 void DownloadManager::setBaseUrl(const QString& baseUrl)
 {
     baseUrl_ = baseUrl;
-    qDebug() << "baseUrl:" << baseUrl_;
+
+    qCDebug(logCategoryHcs) << "baseUrl:" << baseUrl_;
 }
 
 void DownloadManager::setMaxDownloadCount(uint count)
@@ -57,7 +60,7 @@ void DownloadManager::beginDownload(DownloadItem& item)
     QString realUrl(baseUrl_ + item.url);
     QNetworkReply* reply = downloadFile(realUrl);
     if (reply == nullptr) {
-        qDebug() << "downloadFile failed! url:" << item.url;
+        qCDebug(logCategoryHcs) << "downloadFile failed! url:" << item.url;
         return;
     }
 
@@ -121,6 +124,7 @@ void DownloadManager::onDownloadFinished(QNetworkReply *reply)
     }
     else {
         if (isHttpRedirect(reply)) {
+            qCWarning(logCategoryHcs) << "Redirection on a file download. " << reply->url().toString();
             //TODO: do we support redirects ?
             //   fputs("Request was redirected.\n", stderr);
 
@@ -142,7 +146,7 @@ void DownloadManager::onDownloadFinished(QNetworkReply *reply)
                 findItItem->state = "done";
             }
 
-            qDebug() << "Downloaded:" << findItItem->url;
+            qCDebug(logCategoryHcs) << "Downloaded:" << findItItem->url;
 
             emit downloadFinished(findItItem->url);
 

@@ -6,6 +6,9 @@
 
 #include "HostControllerService.h"
 
+#include <QtLoggerSetup.h>
+#include "logging/LoggingQtCategories.h"
+
 
 int main(int argc, char *argv[])
 {
@@ -13,6 +16,9 @@ int main(int argc, char *argv[])
     QCoreApplication::setApplicationName(QStringLiteral("HCS"));
 
     QCoreApplication theApp(argc, argv);
+
+    const QtLoggerSetup loggerInitialization(theApp);
+    qCInfo(logCategoryHcs) << QStringLiteral("%1 v%2").arg(QCoreApplication::applicationName()).arg(QCoreApplication::applicationVersion());
 
     spyglass::EvEventsMgrInstance instance;
 

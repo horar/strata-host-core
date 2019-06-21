@@ -5,6 +5,8 @@
 #include "Dispatcher.h"
 #include "Database.h"
 
+#include "logging/LoggingQtCategories.h"
+
 #include <QStandardPaths>
 #include <QFile>
 #include <QCryptographicHash>
@@ -40,7 +42,7 @@ void StorageManager::init()
     Q_ASSERT(baseFolder_.isEmpty() == false);
 
     if (baseUrl_.isEmpty()) {
-        qDebug() << "Base URL is empty.";
+        qCDebug(logCategoryHcs) << "Base URL is empty.";
         return;
     }
 
@@ -70,7 +72,7 @@ bool StorageManager::requestPlatformDoc(const std::string& classId, const std::s
 
         //Only one platform document for now
         if (plat_doc_ != nullptr) {
-            qDebug() << "Platform Document already assigned.";
+            qCDebug(logCategoryHcs) << "Platform Document already assigned.";
             return false;
         }
     }
@@ -78,7 +80,7 @@ bool StorageManager::requestPlatformDoc(const std::string& classId, const std::s
 
     std::string document;
     if (db_->getDocument(classId, g_class_doc_root_item, document) == false) {
-        qDebug() << "Platform document not found.";
+        qCDebug(logCategoryHcs) << "Platform document not found.";
         return false;
     }
 
@@ -91,7 +93,7 @@ bool StorageManager::requestPlatformDoc(const std::string& classId, const std::s
 
     PlatformDocument* doc = new PlatformDocument(classId, std::string());
     if (doc->parseDocument(document) == false) {
-        qDebug() << "Parse platform document failed!";
+        qCWarning(logCategoryHcs) << "Parse platform document failed!";
 
         db_->remReplChannel(classId);
 
@@ -150,7 +152,7 @@ bool StorageManager::checkAndDownload(const std::string& groupName)
 
     std::vector<std::string> urlList;
     if (plat_doc_->getDocumentFilesList(groupName, urlList) == false) {
-        qDebug() << "Platform document:" << QString::fromStdString(plat_doc_->getClassId()) << "group:" << QString::fromStdString(groupName) << "not found!";
+        qCDebug(logCategoryHcs) << "Platform document:" << QString::fromStdString(plat_doc_->getClassId()) << "group:" << QString::fromStdString(groupName) << "not found!";
         return false;
     }
 
@@ -215,7 +217,7 @@ void StorageManager::onDownloadFiles(const QStringList& files, const QString& pr
     for(const auto& item : files) {
 
         if (createFolderWhenNeeded( QDir(prefix).filePath(item) ) == false) {
-            qDebug() << "createFolderWhenNeeded() failed!";
+            qCDebug(logCategoryHcs) << "createFolderWhenNeeded() failed!";
             return;
         }
 
@@ -253,7 +255,7 @@ void StorageManager::onDownloadFiles2(const QStringList& files, const QString& s
 
         QString filename = QDir(save_path).filePath(fi.fileName());
 
-        qDebug() << "Download:" << item << " To:" << filename;
+        qCDebug(logCategoryHcs) << "Download:" << item << " To:" << filename;
         downloader_->download(item, filename);
     }
 }
@@ -297,7 +299,7 @@ void StorageManager::onDownloadFinished(const QString& url)
     else {
         findIt->state = EItemState::eError;
 
-        qDebug() << "Checksum error! " << url << " " << findIt->checksum;
+        qCDebug(logCategoryHcs) << "Checksum error! " << url << " " << findIt->checksum;
     }
 
     //check all done ??
@@ -321,7 +323,7 @@ void StorageManager::onDownloadFinishedError(const QString& url, const QString& 
 void StorageManager::createAndSendResponse()
 {
     if (plat_doc_ == nullptr) {     //is PlatformDocument already released ?
-        qDebug() << "Platform doc. empty.";
+        qCDebug(logCategoryHcs) << "Platform doc. empty.";
         return;
     }
 
@@ -361,7 +363,7 @@ void StorageManager::createAndSendResponse()
 
     response->AddMember("class_id", rapidjson::Value(plat_doc_->getClassId().c_str(), allocator), allocator);
 
-    qDebug() << "all downloaded. Send response.";
+    qCDebug(logCategoryHcs) << "ClassId:" << QString::fromStdString(plat_doc_->getClassId()) << " all downloaded. Send response.";
 
     PlatformMessage msg;
     msg.msg_type = PlatformMessage::eMsgStorageResponse;

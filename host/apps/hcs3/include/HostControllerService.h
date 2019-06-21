@@ -14,6 +14,7 @@
 #include "Dispatcher.h"
 #include "ClientsController.h"
 #include "Database.h"
+#include "LoggingAdapter.h"
 
 
 struct PlatformMessage;
@@ -96,6 +97,7 @@ private:
     BoardsController boards_;
     ClientsController clients_;     //UI or other clients
     Database db_;
+    LoggingAdapter logAdapter_;
 
     StorageManager* storage_{nullptr};
 

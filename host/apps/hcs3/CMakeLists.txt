@@ -19,6 +19,8 @@ set(HEADERS
     include/PlatformBoard.h
     include/DownloadManager.h
     include/StorageManager.h
+    include/LoggingAdapter.h
+    logging/LoggingQtCategories.h
 )
 
 add_executable(${PROJECT_NAME}
@@ -33,6 +35,8 @@ add_executable(${PROJECT_NAME}
     src/DownloadManager.cpp
     src/StorageManager.cpp
     src/PlatformDocument.cpp
+    src/LoggingAdapter.cpp
+    logging/LoggingQtCategories.cpp
     ${HEADERS}
 )
 
@@ -47,6 +51,7 @@ target_link_libraries(${PROJECT_NAME}
     connector
     EventsMgr
     couchbase-lite-cpp
+    QtLogger
 )
 
 set_target_properties(${PROJECT_NAME} PROPERTIES
