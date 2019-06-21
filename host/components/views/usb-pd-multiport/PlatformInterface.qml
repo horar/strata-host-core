@@ -63,7 +63,12 @@ Item {
         console.log("year=",year,"month=",month,"day=",day);
         if (year<=2019 && month<=6 && day < 11){
             adjust_current = true;
-        }
+            }
+          else{
+            adjust_current = false;
+            }
+
+        console.log("adjust_current set to",adjust_current);
 
     }
 
