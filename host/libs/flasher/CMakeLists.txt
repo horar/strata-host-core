@@ -18,13 +18,6 @@ add_library(${PROJECT_NAME}Connector
     include/FlasherConnector.h
 )
 
-#target_link_libraries(${PROJECT_NAME} PRIVATE
-#    RapidJSON::RapidJSON
-#    PlatformManager
-#    base64
-#    crc16
-#)
-
 target_include_directories(${PROJECT_NAME}
     PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
@@ -38,8 +31,7 @@ target_link_libraries(${PROJECT_NAME}
 )
 
 target_link_libraries(${PROJECT_NAME}Connector
-    Qt5::Core
-    ${PROJECT_NAME}
+    PUBLIC Qt5::Core ${PROJECT_NAME}
 )
 
 set_target_properties(${PROJECT_NAME}Connector PROPERTIES
