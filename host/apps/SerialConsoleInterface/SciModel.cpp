@@ -1,15 +1,18 @@
 #include "SciModel.h"
 #include "PlatformBoard.h"
-#include "ProgramDeviceTask.h"
 #include "logging/LoggingQtCategories.h"
 #include <PlatformConnection.h>
-
-#include <QThreadPool>
 
 SciModel::SciModel(QObject *parent)
     : QObject(parent)
 {
     boardController_.initialize();
+
+    connect(&flasherConnector_, &FlasherConnector::taskDone,
+            this, &SciModel::programDeviceDoneHandler);
+
+    connect(&flasherConnector_, &FlasherConnector::notify,
+            this, &SciModel::notify);
 }
 
 SciModel::~SciModel()
@@ -28,14 +31,7 @@ void SciModel::programDevice(const QString &connectionId, const QString &firmwar
         return;
     }
 
-    ProgramDeviceTask *task = new ProgramDeviceTask(connection, firmwarePath);
-    connect(task, &ProgramDeviceTask::taskDone,
-            this, &SciModel::programDeviceDoneHandler);
-
-    connect(task, &ProgramDeviceTask::notify,
-            this, &SciModel::notify);
-
-    QThreadPool::globalInstance()->start(task);
+    flasherConnector_.start(connection, firmwarePath);
 }
 
 BoardsController *SciModel::boardController()
