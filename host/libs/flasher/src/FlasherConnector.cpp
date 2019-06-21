@@ -1,6 +1,5 @@
 #include "FlasherConnector.h"
 
-#include <QDebug>
 #include <QThreadPool>
 
 FlasherTask::FlasherTask(spyglass::PlatformConnectionShPtr connection, const QString &firmwarePath)
