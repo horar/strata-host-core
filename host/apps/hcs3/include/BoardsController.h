@@ -61,7 +61,6 @@ private:
     ConnectionHandler conn_handler_;
 
     HCS_Dispatcher* dispatcher_{nullptr};
-
 };
 
 

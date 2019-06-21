@@ -10,8 +10,8 @@ using namespace Spyglass;
 
 Database::Database()
 {
-
 }
+
 Database::~Database()
 {
     if (sg_replicator_) {
