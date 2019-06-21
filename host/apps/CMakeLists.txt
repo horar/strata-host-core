@@ -42,3 +42,5 @@ endif()
 if (APPS_PRT)
     add_subdirectory(PlatformRegistrationTool)
 endif()
+
+add_subdirectory(couchbase-browser)
