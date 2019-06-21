@@ -236,9 +236,8 @@ Item {
             id: currentLimitSlider
             label: "Current limit:"
 
-            var defaultCurrentValue = 6
-
             value: {
+                var defaultCurrentValue = 6
                 if (platformInterface.output_current_exceeds_maximum.port === portNumber){
                     var currentLimit = platformInterface.output_current_exceeds_maximum.current_limit
                     var correctedCurrentLimit = currentLimit;
@@ -287,9 +286,8 @@ Item {
                 rightMargin: 5
             }
 
-            var defaultCurrentValue = 6
-
             value:{
+               var defaultCurrentValue = 6
                if (platformInterface.output_current_exceeds_maximum.port === portNumber){
                    var currentLimit = platformInterface.output_current_exceeds_maximum.current_limit
                    var correctedCurrentLimit = currentLimit;
