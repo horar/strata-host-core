@@ -1,4 +1,3 @@
-
 project(SerialConsoleInterface
     LANGUAGES CXX
     VERSION 0.1.0
@@ -19,8 +18,12 @@ add_executable(${PROJECT_NAME}
     PlatformBoard.cpp
     ProgramDeviceTask.cpp
     SgUtilsCpp.cpp
+    SgJLinkConnector.cpp
     qml.qrc
     images/images.qrc
+
+    logging/LoggingQtCategories.cpp
+    logging/qml/tech/strata/logger/qml.qrc
 )
 
 if(APPLE)
@@ -50,10 +53,12 @@ target_link_libraries(${PROJECT_NAME}
     Qt5::Quick
     PlatformManager
     flasher
+
+    QtLogger
 )
 
 set(PRODUCT_NAME_LONG "Serial Console Interface")
-set(PRODUCT_NAME_COPYRIGHT "Copyright (C) 2019 On Semiconductor")
+set(PRODUCT_NAME_COPYRIGHT "Copyright (C) 2019 ON Semiconductor")
 
 set_target_properties(${PROJECT_NAME} PROPERTIES
     CXX_STANDARD 17
@@ -78,6 +83,11 @@ if(APPLE)
         MACOSX_BUNDLE_INFO_STRING ${PRODUCT_NAME_LONG}
     )
 endif()
+if(WIN32)
+    set_target_properties(${PROJECT_NAME} PROPERTIES
+        WIN32_EXECUTABLE ON
+    )
+endif()
 
 target_compile_options(${PROJECT_NAME}
     PRIVATE $<$<CXX_COMPILER_ID:AppleClang>:-Wall -Wextra>
@@ -89,8 +99,7 @@ target_compile_definitions(${PROJECT_NAME}
     PRIVATE QT_DISABLE_DEPRECATED_BEFORE=0x060000
 )
 
-list(APPEND QML_DIRS "${CMAKE_CURRENT_SOURCE_DIR}")
-list(APPEND QML_DIRS ":/")
-set(QML_IMPORT_PATH "${QML_DIRS}"
-    CACHE STRING "Qt Creator extra qml import paths" FORCE
-)
+include(MacroAddQmlImportPath)
+add_qml_import_path(PATH "${CMAKE_CURRENT_SOURCE_DIR}")
+add_qml_import_path(PATH "${CMAKE_CURRENT_SOURCE_DIR}/logging/qml")
+add_qml_import_path(PATH ":/")

@@ -53,15 +53,9 @@ if(APPLE)
 endif()
 if(WIN32)
     target_sources(${PROJECT_NAME} PRIVATE
-        resources/platformRegisrationTool.rc
+        resources/platformRegistrationTool.rc
     )
 endif()
-
-list(APPEND QML_DIRS "${CMAKE_CURRENT_SOURCE_DIR}")
-list(APPEND QML_DIRS ":/")
-set(QML_IMPORT_PATH "${QML_DIRS}"
-    CACHE STRING "Qt Creator extra qml import paths" FORCE
-)
 
 target_link_libraries(${PROJECT_NAME}
     Qt5::Core
@@ -78,7 +72,7 @@ target_include_directories(${PROJECT_NAME}
 
 
 set(PRODUCT_NAME_LONG "Platform Registration Tool")
-set(PRODUCT_NAME_COPYRIGHT "Copyright (C) 2019 On Semiconductor")
+set(PRODUCT_NAME_COPYRIGHT "Copyright (C) 2019 ON Semiconductor")
 set_target_properties(${PROJECT_NAME} PROPERTIES
     CXX_STANDARD 17
     CXX_STANDARD_REQUIRED ON
@@ -102,6 +96,11 @@ if(APPLE)
         MACOSX_BUNDLE_INFO_STRING ${PRODUCT_NAME_LONG}
     )
 endif()
+if(WIN32)
+    set_target_properties(${PROJECT_NAME} PROPERTIES
+        WIN32_EXECUTABLE ON
+    )
+endif()
 
 target_compile_options(${PROJECT_NAME}
     PRIVATE $<$<CXX_COMPILER_ID:AppleClang>:-Wall -Wextra>
@@ -112,3 +111,7 @@ target_compile_definitions(${PROJECT_NAME}
     PRIVATE QT_DEPRECATED_WARNINGS
     PRIVATE QT_DISABLE_DEPRECATED_BEFORE=0x060000
 )
+
+include(MacroAddQmlImportPath)
+add_qml_import_path(PATH "${CMAKE_CURRENT_SOURCE_DIR}")
+add_qml_import_path(PATH ":/")

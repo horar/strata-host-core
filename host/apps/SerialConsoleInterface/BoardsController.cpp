@@ -3,7 +3,8 @@
 #include "PlatformBoard.h"
 
 #include <PlatformConnection.h>
-#include <QDebug>
+#include "logging/LoggingQtCategories.h"
+#include <QJsonDocument>
 
 BoardsController::BoardsController(QObject *parent) : QObject(parent), conn_handler_()
 {
@@ -23,7 +24,7 @@ void BoardsController::initialize()
         platform_mgr_.StartLoop();
     } else {
         //TODO: notify user
-        qDebug() << "BoardsController::BoardsController() Initialization of platform manager failed.";
+        qCCritical(logCategorySci) << "Initialization of platform manager failed";
     }
 }
 
@@ -33,6 +34,8 @@ void BoardsController::sendCommand(QString connection_id, QString message)
     if (!conn) {
         return;
     }
+
+    qCInfo(logCategorySci) << "message to send" << connection_id << message;
 
     conn->addMessage(message.toStdString() );
 }
@@ -74,7 +77,21 @@ void BoardsController::reconnect(const QString &connectionId)
 
     closeConnection(connectionId);
 
+    newConnection(QString::fromStdString(connection->getName()));
+
     board->sendInitialMsg();
+}
+
+bool BoardsController::disconnect(const QString &connectionId)
+{
+    bool isRemoved = platform_mgr_.removeConnection(connectionId.toStdString());
+    if (isRemoved == false) {
+        qCWarning(logCategorySci) << "board could not be disconnected" << connectionId;
+        return false;
+    }
+
+    closeConnection(connectionId);
+    return true;
 }
 
 QStringList BoardsController::connectionIds() const
@@ -87,32 +104,39 @@ spyglass::PlatformConnectionShPtr BoardsController::getConnection(const QString 
     return platform_mgr_.getConnection(connectionId.toStdString());
 }
 
-void BoardsController::newConnection(spyglass::PlatformConnectionShPtr connection)
+void BoardsController::newConnection(const QString &connectionId)
 {
-    if (!connection) {
-        return;
-    }
-
-    QString connectionId = QString::fromStdString(connection->getName());
+    qCInfo(logCategorySci) << "new connection" << connectionId;
 
     if (connectionIds_.indexOf(connectionId) < 0) {
         connectionIds_.append(connectionId);
         emit connectionIdsChanged();
     }
     else {
-        qDebug() << "ERROR: this board is already connected" << connectionId;
+        qCWarning(logCategorySci) << "board is already connected" << connectionId;
     }
 
     emit connectedBoard(connectionId);
 }
 
+void BoardsController::activeConnection(const QString &connectionId)
+{
+    qCInfo(logCategorySci).noquote()
+            << "active connection"
+            << QJsonDocument::fromVariant(getConnectionInfo(connectionId)).toJson(QJsonDocument::Compact);
+
+    emit activeBoard(connectionId);
+}
+
 void BoardsController::closeConnection(const QString &connectionId)
 {
+    qCInfo(logCategorySci) << "close connection" << connectionId;
+
     int ret = connectionIds_.removeAll(connectionId);
     emit connectionIdsChanged();
 
     if (ret != 1) {
-        qDebug() << "ERROR: suspicious number of boards removed" << connectionId << ret;
+        qCWarning(logCategorySci) << "suspicious number of boards removed" << connectionId << ret;
     }
 
     emit disconnectedBoard(connectionId);
@@ -120,6 +144,16 @@ void BoardsController::closeConnection(const QString &connectionId)
 
 void BoardsController::notifyMessageFromConnection(const QString &connectionId, const QString &message)
 {
+    QJsonParseError error;
+    QJsonDocument::fromJson(message.toUtf8(), &error);
+    if (error.error != QJsonParseError::NoError) {
+        qCWarning(logCategorySci).noquote()
+                << "received message"
+                << "connectionId=" << connectionId
+                << "error=" << error.errorString()
+                << "message=" << message;
+    }
+
     emit notifyBoardMessage(connectionId, message);
 }
 
@@ -151,6 +185,8 @@ void BoardsController::ConnectionHandler::onNewConnection(spyglass::PlatformConn
         std::lock_guard<std::mutex> lock(connectionsLock_);
         connections_.insert({connection.get(), board});
     }
+
+    receiver_->newConnection(QString::fromStdString(connection->getName()));
 
     board->sendInitialMsg();
 }
@@ -188,13 +224,13 @@ void BoardsController::ConnectionHandler::onNotifyReadConnection(spyglass::Platf
         switch(status)
         {
             case PlatformBoard::ProcessResult::eIgnored:
-                if (board->isPlatformConnected()) {
+                if (board->isPlatformActive()) {
                     receiver_->notifyMessageFromConnection(connId, QString::fromStdString(message));
                 }
                 break;
             case PlatformBoard::ProcessResult::eProcessed:
-                if (board->isPlatformConnected()) {
-                    receiver_->newConnection(connection);
+                if (board->isPlatformActive()) {
+                    receiver_->activeConnection(QString::fromStdString(connection->getName()));
                 }
                 break;
             case PlatformBoard::ProcessResult::eParseError:

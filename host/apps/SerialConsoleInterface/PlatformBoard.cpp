@@ -35,13 +35,13 @@ PlatformBoard::ProcessResult PlatformBoard::handleMessage(const std::string& msg
         if (ProcessResult::eProcessed == ret && wasNotification) {
             if (state_ == State::eWaitingForFirmwareInfo) {
                 if (applicationVersion_.empty()) {
-                    state_ = State::eConnected;
+                    state_ = State::eActive;
                 } else {
                     sendPlatformInfoMsg();
                 }
 
             } else if (state_ == State::eWaitingForPlatformInfo) {
-                state_ = State::eConnected;
+                state_ = State::eActive;
             }
         }
 
@@ -69,6 +69,17 @@ std::string PlatformBoard::getBootloaderVersion() const
 std::string PlatformBoard::getApplicationVersion() const
 {
     return applicationVersion_;
+}
+
+bool PlatformBoard::isPlatformConnected() const
+{
+    return state_ == State::eWaitingForFirmwareInfo
+            || state_ == State::eWaitingForPlatformInfo;
+}
+
+bool PlatformBoard::isPlatformActive() const
+{
+    return state_ == State::eActive;
 }
 
 PlatformBoard::ProcessResult PlatformBoard::parseInitialMsg(const std::string& msg, bool& wasNotification)

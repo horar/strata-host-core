@@ -23,12 +23,14 @@ public:
     Q_INVOKABLE void sendCommand(QString connection_id, QString cmd);
     Q_INVOKABLE QVariantMap getConnectionInfo(const QString &connectionId);
     Q_INVOKABLE void reconnect(const QString &connectionId);
+    Q_INVOKABLE bool disconnect(const QString &connectionId);
 
     QStringList connectionIds() const;
     spyglass::PlatformConnectionShPtr getConnection(const QString &connectionId);
 
     //callbacks from ConnectionHandler
-    void newConnection(spyglass::PlatformConnectionShPtr connection);
+    void newConnection(const QString &connectionId);
+    void activeConnection(const QString &connectionId);
     void closeConnection(const QString &connectionId);
     void notifyMessageFromConnection(const QString &connectionId, const QString &message);
 
@@ -36,6 +38,7 @@ signals:
     void connectedBoard(QString connectionId);
     void disconnectedBoard(QString connectionId);
     void notifyBoardMessage(QString connectionId, QString message);
+    void activeBoard(QString connectionId);
     void connectionIdsChanged();
 
 private:

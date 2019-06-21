@@ -24,5 +24,7 @@
         <file>common/SgUtils.js</file>
         <file>common/SgButton.qml</file>
         <file>common/SgMessageDialog.qml</file>
+        <file>common/SgCheckBox.qml</file>
+        <file>common/SgConfirmationDialog.qml</file>
     </qresource>
 </RCC>

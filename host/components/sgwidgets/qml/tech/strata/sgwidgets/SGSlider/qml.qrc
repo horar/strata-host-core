@@ -1,0 +1,9 @@
+<RCC>
+    <qresource prefix="/tech/strata/sgwidgets/SGSlider">
+        <file>SGSlider.qml</file>
+        <file>images/sliderThumb.svg</file>
+        <file>images/sliderValue.svg</file>
+        <file>images/sliderHandle.svg</file>
+        <file>images/sliderHandleActive.svg</file>
+    </qresource>
+</RCC>

@@ -27,14 +27,12 @@ Item {
     Connections {
         target:  sciModel.boardController
 
-        onConnectedBoard: {
+        onActiveBoard: {
             if (programDeviceDialogOpened) {
                 return
             }
 
             var connectionInfo = sciModel.boardController.getConnectionInfo(connectionId)
-
-            console.log("onConnectedBoard()",JSON.stringify(connectionInfo))
 
             var effectiveVerboseName = connectionInfo.verboseName
 
@@ -71,7 +69,6 @@ Item {
         }
 
         onDisconnectedBoard: {
-            console.log("onDisconnectedBoard()", connectionId)
             for (var i = 0; i < tabModel.count; ++i) {
                 var item = tabModel.get(i)
                 if (item.connectionId === connectionId) {
@@ -180,7 +177,23 @@ Item {
                             hasAlternativeColor: model.index !== delegate.currentIndex
                             source: "qrc:/images/times.svg"
                             onClicked: {
-                                removeBoard(model.connectionId)
+                                if (model.status === "connected") {
+                                    SgUtils.showConfirmationDialog(
+                                                root,
+                                                "Device is active",
+                                                "Do you really want to disconnect " + model.verboseName + " ?",
+                                                "Disconnect",
+                                                function () {
+                                                    var ret = sciModel.boardController.disconnect(connectionId)
+                                                    if (ret) {
+                                                        removeBoard(model.connectionId)
+                                                    }
+                                                },
+                                                "Keep Connected"
+                                                )
+                                } else {
+                                    removeBoard(model.connectionId)
+                                }
                             }
                         }
                     }
@@ -210,7 +223,7 @@ Item {
                     width: height
 
                     hasAlternativeColor: true
-                    source: sidePane.shown ? "qrc:/images/chevron-right.svg" : "qrc:/images/chevron-left.svg"
+                    source: sidePane.shown ? "qrc:/images/side-pane-right-close.svg" : "qrc:/images/side-pane-right-open.svg"
                     onClicked: {
                         sidePane.shown = !sidePane.shown
                     }
@@ -322,16 +335,14 @@ Item {
             padding: 0
             hasTitle: false
 
-            Column {
-                ProgramDeviceWizard {
-                    width: root.width - 20
-                    height: root.height - 20
+            contentItem: ProgramDeviceWizard {
+                implicitWidth: root.width - 20
+                implicitHeight: root.height - 20
 
-                    onCancelRequested: {
-                        dialog.close()
-                        programDeviceDialogOpened = false
-                        refrestDeviceInfo()
-                    }
+                onCancelRequested: {
+                    dialog.close()
+                    programDeviceDialogOpened = false
+                    refrestDeviceInfo()
                 }
             }
         }

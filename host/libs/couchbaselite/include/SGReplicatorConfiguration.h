@@ -6,7 +6,7 @@
 * $Date: 11/9/18
 * @brief Replicator Configuration
 ******************************************************************************
-* @copyright Copyright 2018 On Semiconductor
+* @copyright Copyright 2018 ON Semiconductor
 */
 
 #ifndef SGREPLICATORCONFIGURATION_H

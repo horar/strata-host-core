@@ -8,7 +8,7 @@
     opening, closing, reading and writing to/from a serial port
 ******************************************************************************
 
-* @copyright Copyright 2018 On Semiconductor
+* @copyright Copyright 2018 ON Semiconductor
 */
 
 #include "SerialConnector.h"
@@ -49,13 +49,27 @@ SerialConnector::SerialConnector() : Connector()
 {
     CONNECTOR_DEBUG_LOG("%s Creating a Serial Connector Object\n", "SerialConnector");
 #ifdef _WIN32
-    context_ = new (zmq::context_t);
+    context_ = unique_ptr<zmq::context_t>(new (zmq::context_t));
     // creating the push socket and binding to a address
-    write_socket_ = new zmq::socket_t(*context_, ZMQ_PUSH);
-    write_socket_->bind(SERIAL_SOCKET_ADDRESS);
-    // creating the pull socket and connecting it to the PUSH socket
-    read_socket_ = new zmq::socket_t(*context_, ZMQ_PULL);
-    read_socket_->connect(SERIAL_SOCKET_ADDRESS);
+    write_socket_ = unique_ptr<zmq::socket_t>(new zmq::socket_t(*context_, ZMQ_PUSH));
+     // creating the pull socket and connecting it to the PUSH socket
+    read_socket_ = unique_ptr<zmq::socket_t>( new zmq::socket_t(*context_, ZMQ_PULL));
+    if (!write_socket_->init() ) {
+        CONNECTOR_DEBUG_LOG("%s Serial Connector failed in write socket init\n", "SerialConnector");
+        return;
+    }
+    if (!read_socket_->init()) {
+        CONNECTOR_DEBUG_LOG("%s Serial Connector failed in read socket init\n", "SerialConnector");
+        return;
+    }
+    if (write_socket_->bind(SERIAL_SOCKET_ADDRESS) != 0) {
+        CONNECTOR_DEBUG_LOG("%s Serial Connector failed in write socket bind\n", "SerialConnector");
+        return;
+    }
+    if (read_socket_->connect(SERIAL_SOCKET_ADDRESS) != 0) {
+        CONNECTOR_DEBUG_LOG("%s Serial Connector failed in read socket connect\n", "SerialConnector");
+        return;
+    }
 #endif
     CONNECTOR_DEBUG_LOG("%s Creating thread for serial port scan\n", "SerialConnector");
     open_platform_thread_ = new thread(&SerialConnector::openPlatform, this);
@@ -175,9 +189,7 @@ bool SerialConnector::open(const std::string &serial_port_name)
             // wiki link:
             // https://ons-sec.atlassian.net/wiki/spaces/SPYG/pages/6815754/Platform+Command+Dispatcher
             // // @ref 2) in KNOWN BUGS/HACKS in Connector.h
-            if (!read(read_message)) {
-                break;
-            }
+            read(read_message);
             if (getPlatformID(read_message)) {
                 serial_wait_timeout_ = 0;
                 return true;
@@ -232,12 +244,7 @@ bool SerialConnector::read(string &notification)
         sp_wait(event_, 250);
         error = sp_nonblocking_read(platform_socket_, &temp, 1);
 
-        // LOG_DEBUG(DEBUG,"Temp:%c\n",temp);
-
-        // [prasanth]: if the return value from read is less than 0, then the resource is
-        // unavailable but we are checking if it is equal to 0 for loadboard since it takes 5sec to
-        // load
-        if (error <= 0) {
+        if (error < 0) {
             cout << "error number " << error << endl;
             CONNECTOR_DEBUG_LOG("Platform Disconnected:%c\n", temp);
             setDealerID(std::string());
@@ -281,6 +288,31 @@ bool SerialConnector::read(string &notification)
 #endif
 }
 
+bool SerialConnector::blockingRead(string &notification)
+{
+    CONNECTOR_DEBUG_LOG("blocking read is not supported in the serial library\n",0);
+    return false;
+}
+
+bool SerialConnector::read(string &notification, ReadMode read_mode)
+{
+    switch (read_mode)
+    {
+        case ReadMode::BLOCKING:
+            assert(blockingRead(notification) == false);
+            break;
+        case ReadMode::NONBLOCKING:
+            if (read(notification)) {
+                return true;
+            }
+            break;
+        default:
+            CONNECTOR_DEBUG_LOG("[Socket] read failed\n",);
+            break;           
+    }
+    return false;
+}
+
 // @f write
 // @b writes to the connected device
 //
@@ -303,17 +335,16 @@ bool SerialConnector::send(const std::string &message)
     return false;
 }
 
-int SerialConnector::getFileDescriptor()
+connector_handle_t SerialConnector::getFileDescriptor()
 {
+    connector_handle_t file_descriptor;
 #ifndef _WIN32
-    int file_descriptor;
     sp_get_port_handle(platform_socket_, &file_descriptor);
 #else
-    unsigned long long int file_descriptor;
     size_t file_descriptor_size = sizeof(file_descriptor);
     read_socket_->getsockopt(ZMQ_FD, &file_descriptor, &file_descriptor_size);
 #endif
-    return static_cast<bool>(file_descriptor);
+    return file_descriptor;
 }
 
 // @f windowsPlatformReadHandler

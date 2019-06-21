@@ -2,6 +2,7 @@
 #define SCIMODEL_H
 
 #include "BoardsController.h"
+#include "SgJLinkConnector.h"
 
 #include <PlatformManager.h>
 
@@ -13,6 +14,7 @@ class SciModel : public QObject
     Q_DISABLE_COPY(SciModel)
 
     Q_PROPERTY(BoardsController* boardController READ boardController CONSTANT)
+    Q_PROPERTY(SgJLinkConnector* jLinkConnector READ jLinkConnector CONSTANT)
 
 public:
     explicit SciModel(QObject *parent = nullptr);
@@ -21,6 +23,7 @@ public:
     Q_INVOKABLE void programDevice(const QString &connectionId, const QString &firmwarePath);
 
     BoardsController* boardController();
+    SgJLinkConnector* jLinkConnector();
 
 signals:
     void notify(QString connectionId, QString message);
@@ -31,6 +34,7 @@ private slots:
 
 private:
     BoardsController boardController_;
+    SgJLinkConnector jLinkConnector_;
 };
 
 #endif  // SCIMODEL_H

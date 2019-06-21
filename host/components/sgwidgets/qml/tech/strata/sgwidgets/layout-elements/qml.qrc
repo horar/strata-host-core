@@ -1,0 +1,8 @@
+<!DOCTYPE RCC><RCC version="1.0">
+    <qresource prefix="/tech/strata/sgwidgets/layout-elements">
+        <file>SGDivider.qml</file>
+        <file>SGLayoutDebug.qml</file>
+        <file>SGLayoutDivider.qml</file>
+        <file>SGTitleBar.qml</file>
+    </qresource>
+</RCC>

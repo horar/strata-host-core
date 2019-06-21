@@ -7,7 +7,7 @@
 * @brief serial port configuration parameters
 ******************************************************************************
 
-* @copyright Copyright 2018 On Semiconductor
+* @copyright Copyright 2018 ON Semiconductor
 */
 
 #ifndef SERIALPORTCONFIGURATION_H_

@@ -6,7 +6,7 @@
 * $Date:
 * @brief Add mutability functionality to SGDocument
 ******************************************************************************
-* @copyright Copyright 2018 On Semiconductor
+* @copyright Copyright 2018 ON Semiconductor
 */
 #include "SGMutableDocument.h"
 #define DEBUG(...) printf("SGMutableDocument: "); printf(__VA_ARGS__)

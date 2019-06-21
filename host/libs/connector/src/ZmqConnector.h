@@ -27,7 +27,11 @@ public:
     bool send(const std::string& message) override;
     bool read(std::string& notification) override;
 
-    int getFileDescriptor() override;
+    //blocking read
+    bool read(std::string& notification, ReadMode read_mode) override;
+    bool blockingRead(std::string& notification) override;
+
+    connector_handle_t getFileDescriptor() override;
 
 private:
     std::unique_ptr<zmq::context_t> context_;
@@ -35,6 +39,8 @@ private:
 protected:
     // timeout for request socket in milli seconds
     const int32_t REQUEST_SOCKET_TIMEOUT{5000};
+    // timeout for polling a socket in milliseconds
+    const int32_t SOCKET_POLLING_TIMEOUT{10};
 
     std::unique_ptr<zmq::socket_t> socket_;
 };

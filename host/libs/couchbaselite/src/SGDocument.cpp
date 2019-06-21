@@ -6,7 +6,7 @@
 * $Date:
 * @brief Document c++ object to map a raw document in DB to c++ object. Similar to ORM. Gives read only to the document body
 ******************************************************************************
-* @copyright Copyright 2018 On Semiconductor
+* @copyright Copyright 2018 ON Semiconductor
 */
 #include <string>
 #include "SGDocument.h"
@@ -37,6 +37,15 @@ namespace Spyglass {
 
     bool SGDocument::exist() const {
         return c4document_ != nullptr;
+    }
+
+    std::string SGDocument::getRevision()
+    {
+        if (c4document_ == nullptr) {
+            return std::string();
+        }
+
+        return fleece::slice(c4document_->revID).asString();
     }
 
     const std::string SGDocument::getBody() const {
