@@ -14,11 +14,11 @@ Item {
     width: parent.width / parent.height > initialAspectRatio ? parent.height * initialAspectRatio : parent.width
     height: parent.width / parent.height < initialAspectRatio ? parent.width / initialAspectRatio : parent.height
 
-    property var temp1_noti: platformInterface.status.temp1
+    property var temp1_noti: platformInterface.status.temperature1
     onTemp1_notiChanged: {
         sgCircularGauge.value = temp1_noti
     }
-    property var temp2_noti: platformInterface.status.temp2
+    property var temp2_noti: platformInterface.status.temperature2
     onTemp2_notiChanged: {
         sgCircularGauge2.value = temp2_noti
     }
@@ -271,7 +271,7 @@ Item {
                             onToggled: {
                                 if(checked)
                                     platformInterface.set_enable_2.update("on")
-                                else  platformInterface.set_enable_2.update("off")
+                                else platformInterface.set_enable_2.update("off")
 
                             }
 

@@ -13,8 +13,8 @@ Item {
     }
 
     property var status: {
-        "temp1":	25,		//temperature of sensor 1 in degrees C (-55 to 125)
-        "temp2":	50,		//temperature of sensor 2 in degrees C (-55 to 125)
+        "temperature1":	25,		//temperature of sensor 1 in degrees C (-55 to 125)
+        "temperature2":	50,		//temperature of sensor 2 in degrees C (-55 to 125)
         "vin": 12.00,			//input voltage (float) two decimal point accuracy
         "vout": 13.00,			//output voltage (float) two decimal point accuracy
         "iin": 1.00	,			//input current (float) two decimal point accuracy
@@ -22,8 +22,8 @@ Item {
     }
 
     property var periodic_status: {
-        "temp1":	25,		//temperature of sensor 1 in degrees C (-55 to 125)
-        "temp2":	25,		//temperature of sensor 2 in degrees C (-55 to 125)
+        "temperature1":	25,		//temperature of sensor 1 in degrees C (-55 to 125)
+        "temperature2":	25,		//temperature of sensor 2 in degrees C (-55 to 125)
         "vin": 12.00,			//input voltage (float) two decimal point accuracy
         "vout": 12.00,			//output voltage (float) two decimal point accuracy
         "iin": 1.00	,			//input current (float) two decimal point accuracy
