@@ -44,6 +44,8 @@ void DownloadManager::download(const QString& url, const QString& filename)
 
     downloadList_.push_back(item);
 
+    qCDebug(logCategoryHcs) << "Download:" << url << "to file:" << filename;
+
     if (static_cast<uint>(currentDownloads_.size()) < numberOfDownloads_) {
 
         QList<DownloadItem>::iterator findIt = findNextDownload();

@@ -4,6 +4,8 @@
 #include "HCS_Client.h"
 #include "StorageManager.h"
 
+#include "logging/LoggingQtCategories.h"
+
 #include <rapidjson/document.h>
 #include <rapidjson/stringbuffer.h>
 #include <rapidjson/writer.h>
@@ -45,10 +47,12 @@ bool HostControllerService::initialize(const QString& config)
     }
 
     dispatcher_.setMsgHandler(std::bind(&HostControllerService::handleMesages, this, std::placeholders::_1) );
+    db_.setLogAdapter(&logAdapter_);
 
     rapidjson::Value& db_cfg = config_["database"];
 
     if (!db_.open("strata_db")) {
+        qCCritical(logCategoryHcs) << "HCS: failed to open database.";
         return false;
     }
 
@@ -64,6 +68,7 @@ bool HostControllerService::initialize(const QString& config)
     db_.initReplicator(db_cfg["gateway_sync"].GetString());
 
     if (boards_.initialize(&dispatcher_) == false) {
+        qCCritical(logCategoryHcs) << "HCS: failed to initialize boards controller.";
         return false;
     }
 
@@ -81,6 +86,7 @@ void HostControllerService::start()
 
     dispatcherThread_ = std::thread(&HCS_Dispatcher::dispatch, &dispatcher_);
 
+    qCInfo(logCategoryHcs) << "Host controller service started.";
 }
 
 void HostControllerService::stop()
@@ -92,6 +98,7 @@ void HostControllerService::stop()
     dispatcher_.stop();
 
     dispatcherThread_.join();
+    qCInfo(logCategoryHcs) << "Host controller service stoped.";
 }
 
 bool HostControllerService::parseConfig(const QString& config)
@@ -106,7 +113,7 @@ bool HostControllerService::parseConfig(const QString& config)
 
     QFile file(filename);
     if (file.open(QIODevice::ReadOnly) == false) {
-        qDebug() << "Unable to open config file:" << filename;
+        qCCritical(logCategoryHcs) << "Unable to open config file:" << filename;
         return false;
     }
 
@@ -115,12 +122,12 @@ bool HostControllerService::parseConfig(const QString& config)
 
     rapidjson::Document configuration;
     if (configuration.Parse<rapidjson::kParseCommentsFlag>(data.data()).HasParseError()) {
-        qDebug() << "Parse error on config file!";
+        qCCritical(logCategoryHcs) << "Parse error on config file!";
         return false;
     }
 
     if( ! configuration.HasMember("host_controller_service") ) {
-        qDebug() << "ERROR: No Host Controller Configuration parameters.";
+        qCCritical(logCategoryHcs) << "ERROR: No Host Controller Configuration parameters.";
         return false;
     }
 
@@ -157,7 +164,7 @@ void HostControllerService::platformConnected(const PlatformMessage& item)
 
     std::string classId = board->getProperty("class_id");
     if (classId.empty()) {
-        qDebug() << "Connected platform doesn't have class Id.";
+        qCWarning(logCategoryHcs) << "Connected platform doesn't have class Id.";
         return;
     }
 
@@ -173,12 +180,12 @@ void HostControllerService::platformDisconnected(const PlatformMessage& item)
 {
     rapidjson::Document doc;
     if (doc.Parse<rapidjson::kParseCommentsFlag>(item.message.data()).HasParseError()) {
-        qDebug() << "Parse error!";
+        qCWarning(logCategoryHcs) << "Parse error!";
         return;
     }
 
     if (doc.HasMember("class_id") == false || doc.HasMember("platform_id") == false) {
-        qDebug() << "Parse error! no members";
+        qCWarning(logCategoryHcs) << "Parse error! no members";
         return;
     }
 
@@ -232,7 +239,7 @@ void HostControllerService::onCmdRegisterClient(const rapidjson::Value* )
 {
     std::string platformList;
     if (boards_.createPlatformsList(platformList) == false) {
-        //TODO: error handling ??
+        qCWarning(logCategoryHcs) << "Failed to create platform list.";
         return;
     }
 
@@ -270,7 +277,7 @@ void HostControllerService::onCmdPlatformSelect(const rapidjson::Value* payload)
     }
 
     QString clientId = QByteArray::fromRawData(client->getClientId().data(), client->getClientId().size() ).toHex();
-    qDebug() << "Client:" << clientId <<  " Selected platform:" << QString::fromStdString(classId);
+    qCInfo(logCategoryHcs) << "Client:" << clientId <<  " Selected platform:" << QString::fromStdString(classId);
 
     //TODO: download all necessary documents from db/cloud  (asynchronous)
     //      and send message to client
@@ -296,12 +303,12 @@ void HostControllerService::onCmdPlatformSelect(const rapidjson::Value* payload)
 
         std::string platformId = board->getProperty("platform_id");
         if (platformId.empty()) {
-            qDebug() << "Board don't have platfomId!";
+            qCWarning(logCategoryHcs) << "Board don't have platfomId!";
             return;
         }
 
         if (board->setClientId(client->getClientId()) == false) {
-            qDebug() << "Board is allready assigned to some client!";
+            qCWarning(logCategoryHcs) << "Board is allready assigned to some client!";
             return;
         }
 
@@ -333,7 +340,7 @@ void HostControllerService::onCmdHostJwtToken(const rapidjson::Value* payload)
 
     if (payload->HasMember("jwt") == false ||
         payload->HasMember("user_name") == false) {
-        qDebug() << "CmdHostJwtToken() invalid payload.";
+        qCWarning(logCategoryHcs) << "CmdHostJwtToken() invalid payload.";
         return;
     }
 
@@ -461,7 +468,7 @@ void HostControllerService::handleClientMsg(const PlatformMessage& msg)  //const
     //check the client's ID (dealer_id) is in list
     HCS_Client* client = getClientById(msg.from_client);
     if (client == nullptr) {
-        qDebug() << "new Client:" << clientId;
+        qCInfo(logCategoryHcs) << "new Client:" << clientId;
 
         client = new HCS_Client(msg.from_client);
         clientList_.push_back(client);
@@ -471,7 +478,7 @@ void HostControllerService::handleClientMsg(const PlatformMessage& msg)  //const
 
     rapidjson::Document service_command;
     if (service_command.Parse(msg.message.c_str()).HasParseError()) {
-        qDebug() << "Client:" << clientId << "parse error!";
+        qCWarning(logCategoryHcs) << "Client:" << clientId << "parse error!";
         return;
     }
 
@@ -484,7 +491,7 @@ void HostControllerService::handleClientMsg(const PlatformMessage& msg)  //const
     }
 
     std::string cmd_name = firstIt->value.GetString();
-    qDebug() << "Client:" << clientId << "Type:" << QString::fromStdString(msg_type) << "cmd:" << QString::fromStdString(cmd_name);
+    qCInfo(logCategoryHcs) << "Client:" << clientId << "Type:" << QString::fromStdString(msg_type) << "cmd:" << QString::fromStdString(cmd_name);
 
     if (msg_type == "hcs::cmd") {
 
@@ -522,7 +529,9 @@ void HostControllerService::handleStorageRequest(const PlatformMessage& msg)
 
     std::string classId = (*request_doc)["class_id"].GetString();
 
-    storage_->requestPlatformDoc(classId, msg.from_client);
+    if (storage_->requestPlatformDoc(classId, msg.from_client) == false) {
+        qCCritical(logCategoryHcs) << "Requested platform document error.";
+    }
 
     delete msg.msg_document;
 }
@@ -578,8 +587,8 @@ void HostControllerService::handleStorageResponse(const PlatformMessage& msg)
     rapidjson::Writer<rapidjson::StringBuffer> writer(strbuf);
     doc.Accept(writer);
 
-    qDebug() << "sending response to client.";
-    qDebug() << "Msg: " << QString::fromStdString( strbuf.GetString() );
+    qCInfo(logCategoryHcs) << "sending response to client.";
+    qCInfo(logCategoryHcs) << "Msg: " << QString::fromStdString( strbuf.GetString() );
 
     clients_.sendMessage(msg.from_client, strbuf.GetString() );
 }
@@ -588,13 +597,13 @@ bool HostControllerService::disptachMessageToPlatforms(const std::string& dealer
 {
     PlatformBoard* board = boards_.getBoardByClientId(dealer_id);
     if (board == nullptr) {
-        qDebug() << "No board attached to client.";
+        qCWarning(logCategoryHcs) << "No board attached to client.";
         return false;
     }
 
     std::string connectionId = board->getConnectionId();
     if (connectionId.empty()) {
-        qDebug() << "Connection is not available.";
+        qCWarning(logCategoryHcs) << "Connection is not available.";
         return false;
     }
 
@@ -604,7 +613,7 @@ bool HostControllerService::disptachMessageToPlatforms(const std::string& dealer
 
 bool HostControllerService::broadcastMessage(const std::string& message)
 {
-    qDebug() << "broadcast msg:" << QString::fromStdString(message);
+    qCInfo(logCategoryHcs) << "broadcast msg:" << QString::fromStdString(message);
     for(auto item : clientList_) {
         std::string clientId = item->getClientId();
         clients_.sendMessage(clientId, message);

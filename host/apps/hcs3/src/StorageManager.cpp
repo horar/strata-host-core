@@ -152,7 +152,7 @@ bool StorageManager::checkAndDownload(const std::string& groupName)
 
     std::vector<std::string> urlList;
     if (plat_doc_->getDocumentFilesList(groupName, urlList) == false) {
-        qCDebug(logCategoryHcs) << "Platform document:" << QString::fromStdString(plat_doc_->getClassId()) << "group:" << QString::fromStdString(groupName) << "not found!";
+        qCCritical(logCategoryHcs) << "Platform document:" << QString::fromStdString(plat_doc_->getClassId()) << "group:" << QString::fromStdString(groupName) << "not found!";
         return false;
     }
 
