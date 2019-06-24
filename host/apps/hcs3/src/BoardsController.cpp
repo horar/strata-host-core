@@ -45,6 +45,11 @@ void BoardsController::sendMessage(const std::string& connectionId, const std::s
         return;
     }
 
+    if (logAdapter_) {
+        std::string logText = "Sending msg to:" + connectionId;
+        logAdapter_->Log(LoggingAdapter::eLvlDebug, logText);
+    }
+
     conn->addMessage(message);
 }
 
