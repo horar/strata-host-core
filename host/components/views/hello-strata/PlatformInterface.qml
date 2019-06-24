@@ -26,7 +26,7 @@ Item {
 
     // notification
     property var pot_noti: {
-        "value": 0
+        "cmd_data": 0
     }
 
     // change mode between "volts" and "bits"
@@ -299,10 +299,10 @@ Item {
 
     // notification
     property var pwm_fil_noti_rc_out: {
-        "value": 0
+        "rc_out": 0
     }
     property var pwm_fil_noti_lc_out: {
-        "value": 0
+        "lc_out": 0
     }
 
     property var pwm_fil_set_rc_out_mode: ({

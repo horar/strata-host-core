@@ -20,7 +20,7 @@ Item {
 
     // UI state & notification
     property string mode:platformInterface.pot_ui_mode
-    property real value: platformInterface.pot_noti.value
+    property var value: platformInterface.pot_noti
 
     onModeChanged: {
         sgswitch.checked = mode === "bits"
@@ -28,10 +28,10 @@ Item {
 
     onValueChanged: {
         if (mode === "volts") {
-            voltGauge.value = value
+            voltGauge.value = value.cmd_data
         }
         else {
-            bitsGauge.value = value
+            bitsGauge.value = value.cmd_data
         }
     }
 

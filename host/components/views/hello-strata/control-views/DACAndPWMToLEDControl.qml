@@ -132,7 +132,7 @@ Item {
                     toolTipDecimalPlaces: 3
                     onValueChanged: {
                         if (platformInterface.dac_led_ui_volt !== value) {
-                            platformInterface.dac_led_set_voltage.update(value)
+                            platformInterface.dac_led_set_voltage.update(1)
                             platformInterface.dac_led_ui_volt = value
                         }
                     }

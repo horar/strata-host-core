@@ -25,8 +25,8 @@ Item {
     property string lc_mode: platformInterface.pwm_fil_ui_lc_mode
     property real duty: platformInterface.pwm_fil_ui_duty
     property real freq: platformInterface.pwm_fil_ui_freq
-    property real rc_out: platformInterface.pwm_fil_noti_rc_out.value
-    property real lc_out: platformInterface.pwm_fil_noti_lc_out.value
+    property var rc_out: platformInterface.pwm_fil_noti_rc_out
+    property var lc_out: platformInterface.pwm_fil_noti_lc_out
 
     onRc_modeChanged: {
         rcsw.checked = rc_mode === "bits"
@@ -46,19 +46,19 @@ Item {
 
     onRc_outChanged: {
         if (rc_mode === "volts") {
-            rcVoltsGauge.value = rc_out
+            rcVoltsGauge.value = rc_out.rc_out
         }
         else {
-            rcBitsGauge.value = rc_out
+            rcBitsGauge.value = rc_out.rc_out
         }
     }
 
     onLc_outChanged: {
         if (lc_mode === "volts") {
-            lcVoltsGauge.value = lc_out
+            lcVoltsGauge.value = lc_out.lc_out
         }
         else {
-            lcBitsGauge.value = lc_out
+            lcBitsGauge.value = lc_out.lc_out
         }
     }
 

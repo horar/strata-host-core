@@ -189,7 +189,7 @@ Item {
                             onCheckedChanged: {
                                 light1.status = this.checked ? "yellow" : "off"
                                 platformInterface.led_driver_ui_y1 = this.checked
-                                platformInterface.set_led_driver.update(0,this.checked ? 1 : 0)
+                                platformInterface.set_led_driver.update(15,this.checked ? 1 : 0)
                             }
                         }
 
@@ -200,7 +200,7 @@ Item {
                             onCheckedChanged: {
                                 light2.status = this.checked ? "yellow" : "off"
                                 platformInterface.led_driver_ui_y2 = this.checked
-                                platformInterface.set_led_driver.update(1,this.checked ? 1 : 0)
+                                platformInterface.set_led_driver.update(14,this.checked ? 1 : 0)
                             }
                         }
 
@@ -211,7 +211,7 @@ Item {
                             onCheckedChanged: {
                                 light3.status = this.checked ? "yellow" : "off"
                                 platformInterface.led_driver_ui_y3 = this.checked
-                                platformInterface.set_led_driver.update(2,this.checked ? 1 : 0)
+                                platformInterface.set_led_driver.update(13,this.checked ? 1 : 0)
                             }
                         }
 
@@ -222,7 +222,7 @@ Item {
                             onCheckedChanged: {
                                 light4.status = this.checked ? "yellow" : "off"
                                 platformInterface.led_driver_ui_y4 = this.checked
-                                platformInterface.set_led_driver.update(3,this.checked ? 1 : 0)
+                                platformInterface.set_led_driver.update(12,this.checked ? 1 : 0)
                             }
                         }
 
@@ -233,7 +233,7 @@ Item {
                             onCheckedChanged: {
                                 light5.status = this.checked ? "red" : "off"
                                 platformInterface.led_driver_ui_r1 = this.checked
-                                platformInterface.set_led_driver.update(4,this.checked ? 1 : 0)
+                                platformInterface.set_led_driver.update(11,this.checked ? 1 : 0)
                             }
                         }
 
@@ -244,7 +244,7 @@ Item {
                             onCheckedChanged: {
                                 light6.status = this.checked ? "red" : "off"
                                 platformInterface.led_driver_ui_r2 = this.checked
-                                platformInterface.set_led_driver.update(5,this.checked ? 1 : 0)
+                                platformInterface.set_led_driver.update(10,this.checked ? 1 : 0)
                             }
                         }
 
@@ -255,7 +255,7 @@ Item {
                             onCheckedChanged: {
                                 light7.status = this.checked ? "red" : "off"
                                 platformInterface.led_driver_ui_r3 = this.checked
-                                platformInterface.set_led_driver.update(6,this.checked ? 1 : 0)
+                                platformInterface.set_led_driver.update(9,this.checked ? 1 : 0)
                             }
                         }
 
@@ -266,7 +266,7 @@ Item {
                             onCheckedChanged: {
                                 light8.status = this.checked ? "red" : "off"
                                 platformInterface.led_driver_ui_r4 = this.checked
-                                platformInterface.set_led_driver.update(7,this.checked ? 1 : 0)
+                                platformInterface.set_led_driver.update(8,this.checked ? 1 : 0)
                             }
                         }
 
@@ -277,7 +277,7 @@ Item {
                             onCheckedChanged: {
                                 light9.status = this.checked ? "blue" : "off"
                                 platformInterface.led_driver_ui_b1 = this.checked
-                                platformInterface.set_led_driver.update(8,this.checked ? 1 : 0)
+                                platformInterface.set_led_driver.update(7,this.checked ? 1 : 0)
                             }
                         }
 
@@ -288,7 +288,7 @@ Item {
                             onCheckedChanged: {
                                 light10.status = this.checked ? "blue" : "off"
                                 platformInterface.led_driver_ui_b2 = this.checked
-                                platformInterface.set_led_driver.update(9,this.checked ? 1 : 0)
+                                platformInterface.set_led_driver.update(6,this.checked ? 1 : 0)
                             }
                         }
 
@@ -299,7 +299,7 @@ Item {
                             onCheckedChanged: {
                                 light11.status = this.checked ? "blue" : "off"
                                 platformInterface.led_driver_ui_b3 = this.checked
-                                platformInterface.set_led_driver.update(10,this.checked ? 1 : 0)
+                                platformInterface.set_led_driver.update(5,this.checked ? 1 : 0)
                             }
                         }
 
@@ -310,7 +310,7 @@ Item {
                             onCheckedChanged: {
                                 light12.status = this.checked ? "blue" : "off"
                                 platformInterface.led_driver_ui_b4 = this.checked
-                                platformInterface.set_led_driver.update(11,this.checked ? 1 : 0)
+                                platformInterface.set_led_driver.update(4,this.checked ? 1 : 0)
                             }
                         }
 
@@ -321,7 +321,7 @@ Item {
                             onCheckedChanged: {
                                 light13.status = this.checked ? "green" : "off"
                                 platformInterface.led_driver_ui_g1 = this.checked
-                                platformInterface.set_led_driver.update(12,this.checked ? 1 : 0)
+                                platformInterface.set_led_driver.update(3,this.checked ? 1 : 0)
                             }
                         }
 
@@ -332,7 +332,7 @@ Item {
                             onCheckedChanged: {
                                 light14.status = this.checked ? "green" : "off"
                                 platformInterface.led_driver_ui_g2 = this.checked
-                                platformInterface.set_led_driver.update(13,this.checked ? 1 : 0)
+                                platformInterface.set_led_driver.update(2,this.checked ? 1 : 0)
                             }
                         }
 
@@ -343,7 +343,7 @@ Item {
                             onCheckedChanged: {
                                 light15.status = this.checked ? "green" : "off"
                                 platformInterface.led_driver_ui_g3 = this.checked
-                                platformInterface.set_led_driver.update(14,this.checked ? 1 : 0)
+                                platformInterface.set_led_driver.update(1,this.checked ? 1 : 0)
                             }
                         }
 
@@ -354,7 +354,7 @@ Item {
                             onCheckedChanged: {
                                 light16.status = this.checked ? "green" : "off"
                                 platformInterface.led_driver_ui_g4 = this.checked
-                                platformInterface.set_led_driver.update(15,this.checked ? 1 : 0)
+                                platformInterface.set_led_driver.update(0,this.checked ? 1 : 0)
                             }
                         }
                     }

@@ -20,25 +20,25 @@ Item {
     property real lightSizeValue: 25*factor
 
     // notification
-    property bool sw1: platformInterface.mechanical_buttons_noti_sw1.value
-    property bool sw2: platformInterface.mechanical_buttons_noti_sw2.value
-    property bool sw3: platformInterface.mechanical_buttons_noti_sw3.value
-    property bool sw4: platformInterface.mechanical_buttons_noti_sw4.value
+    property var sw1: platformInterface.mechanical_buttons_noti_sw1
+    property var sw2: platformInterface.mechanical_buttons_noti_sw2
+    property var sw3: platformInterface.mechanical_buttons_noti_sw3
+    property var sw4: platformInterface.mechanical_buttons_noti_sw4
 
     onSw1Changed: {
-        led1.status = sw1 ? "green" : "off"
+        led1.status = sw1.value ? "green" : "off"
     }
 
     onSw2Changed: {
-        led2.status = sw2 ? "green" : "off"
+        led2.status = sw2.value ? "green" : "off"
     }
 
     onSw3Changed: {
-        led3.status = sw3 ? "green" : "off"
+        led3.status = sw3.value ? "green" : "off"
     }
 
     onSw4Changed: {
-        led4.status = sw4 ? "green" : "off"
+        led4.status = sw4.value ? "green" : "off"
     }
 
     // hide in tab view

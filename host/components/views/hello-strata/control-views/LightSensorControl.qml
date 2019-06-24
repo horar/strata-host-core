@@ -24,8 +24,8 @@ Item {
     property int time: platformInterface.i2c_light_ui_time
     property int gain: platformInterface.i2c_light_ui_gain
     property real sensitivity: platformInterface.i2c_light_ui_sensitivity
-    property real lux: platformInterface.i2c_light_noti_lux.value
-    property real light_intensity: platformInterface.i2c_light_noti_light_intensity.value
+    property var lux: platformInterface.i2c_light_noti_lux
+    property var light_intensity: platformInterface.i2c_light_noti_light_intensity
 
     onStartChanged: {
         startsw.checked = start
@@ -48,11 +48,11 @@ Item {
     }
 
     onLuxChanged: {
-        luxinfo.info = lux.toString()
+        luxinfo.info = lux.value.toString()
     }
 
     onLight_intensityChanged: {
-        gauge.value = light_intensity
+        gauge.value = light_intensity.value
     }
 
     // hide in tab view

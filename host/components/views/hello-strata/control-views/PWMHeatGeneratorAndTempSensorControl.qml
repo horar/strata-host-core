@@ -20,19 +20,19 @@ Item {
 
     // UI state & notification
     property real duty: platformInterface.i2c_temp_ui_duty
-    property bool alert: platformInterface.i2c_temp_noti_alert.value
-    property real tempValue: platformInterface.i2c_temp_noti_value.value
+    property var alert: platformInterface.i2c_temp_noti_alert
+    property var tempValue: platformInterface.i2c_temp_noti_value
 
     onDutyChanged: {
         pwmslider.value = duty*100
     }
 
     onAlertChanged: {
-        alertLED.status = alert ? "red" : "off"
+        alertLED.status = alert.value ? "red" : "off"
     }
 
     onTempValueChanged: {
-        gauge.value = tempValue
+        gauge.value = tempValue.value
     }
 
     // hide in tab view
