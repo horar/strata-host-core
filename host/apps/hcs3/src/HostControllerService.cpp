@@ -52,7 +52,7 @@ bool HostControllerService::initialize(const QString& config)
     rapidjson::Value& db_cfg = config_["database"];
 
     if (!db_.open("strata_db")) {
-        qCCritical(logCategoryHcs) << "HCS: failed to open database.";
+        qCCritical(logCategoryHcs) << "Failed to open database.";
         return false;
     }
 
@@ -68,7 +68,7 @@ bool HostControllerService::initialize(const QString& config)
     db_.initReplicator(db_cfg["gateway_sync"].GetString());
 
     if (boards_.initialize(&dispatcher_) == false) {
-        qCCritical(logCategoryHcs) << "HCS: failed to initialize boards controller.";
+        qCCritical(logCategoryHcs) << "Failed to initialize boards controller.";
         return false;
     }
 

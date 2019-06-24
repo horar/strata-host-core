@@ -1,8 +1,6 @@
 #ifndef HCS_BOARDCONTROLER_H__
 #define HCS_BOARDCONTROLER_H__
 
-#include <QObject>
-
 #include <PlatformManager.h>
 #include <set>
 

@@ -11,7 +11,6 @@ public:
         eLvlInfo,           //QtInfoMsg
         eLvlWarning,        //QtWarningMsg
         eLvlCritical,       //QtCriticalMsg
-        eLvlFatal           //QtFatalMsg
     };
 
 public:
