@@ -1,11 +1,11 @@
 #ifndef SCIMODEL_H
 #define SCIMODEL_H
 
-#include "BoardsController.h"
 #include "SgJLinkConnector.h"
 
 #include <FlasherConnector.h>
 #include <PlatformManager.h>
+#include <BoardsController.h>
 
 #include <QObject>
 

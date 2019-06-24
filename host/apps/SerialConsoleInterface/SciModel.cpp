@@ -1,5 +1,4 @@
 #include "SciModel.h"
-#include "PlatformBoard.h"
 #include "logging/LoggingQtCategories.h"
 #include <PlatformConnection.h>
 
