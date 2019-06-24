@@ -6,33 +6,79 @@ import tech.strata.sgwidgets 1.0
 
 import "qrc:/js/help_layout_manager.js" as Help
 
-SGResponsiveScrollView {
+Item {
     id: root
 
-    minimumHeight: 660*0.3
-    minimumWidth: 850/3
+    clip:true
+
+    property real minimumHeight
+    property real minimumWidth
 
     signal zoom
 
-    property var defaultMargin: 20
-    property var defaultPadding: 20
-    property var factor: Math.min(root.height/minimumHeight,root.width/minimumWidth)
-    property bool hideHeader: false
+    property real defaultMargin: 20
+    property real defaultPadding: 20
+    property real factor: Math.min(root.height/minimumHeight,root.width/minimumWidth)
 
+    // UI state & notification
+    property string rc_mode: platformInterface.pwm_fil_ui_rc_mode
+    property string lc_mode: platformInterface.pwm_fil_ui_lc_mode
+    property real duty: platformInterface.pwm_fil_ui_duty
+    property real freq: platformInterface.pwm_fil_ui_freq
+    property real rc_out: platformInterface.pwm_fil_noti_rc_out.value
+    property real lc_out: platformInterface.pwm_fil_noti_lc_out.value
+
+    onRc_modeChanged: {
+        rcsw.checked = rc_mode === "bits"
+    }
+
+    onLc_modeChanged: {
+        lcsw.checked = lc_mode === "bits"
+    }
+
+    onDutyChanged: {
+        sgslider.value = duty*100
+    }
+
+    onFreqChanged: {
+        freqbox.value = freq
+    }
+
+    onRc_outChanged: {
+        if (rc_mode === "volts") {
+            rcVoltsGauge.value = rc_out
+        }
+        else {
+            rcBitsGauge.value = rc_out
+        }
+    }
+
+    onLc_outChanged: {
+        if (lc_mode === "volts") {
+            lcVoltsGauge.value = lc_out
+        }
+        else {
+            lcBitsGauge.value = lc_out
+        }
+    }
+
+    // hide in tab view
+    property bool hideHeader: false
     onHideHeaderChanged: {
         if (hideHeader) {
             header.visible = false
             content.anchors.top = container.top
+            container.border.width = 0
         }
         else {
             header.visible = true
             content.anchors.top = header.bottom
+            container.border.width = 1
         }
     }
 
     Rectangle {
         id: container
-        parent: root.contentItem
         anchors.fill:parent
         border {
             width: 1
@@ -103,17 +149,34 @@ SGResponsiveScrollView {
                     spacing: 20
                     Column {
                         spacing: 5
-                        SGCircularGauge {
-                            id: rcGauge
+                        Item {
                             width: Math.min(content.height,content.width)*0.4
                             height: Math.min(content.height,content.width)*0.4
-                            unitLabel: "v"
-                            value: 1
-                            tickmarkStepSize: 0.5
-                            minimumValue: 0
-                            maximumValue: 3.3
+                            SGCircularGauge {
+                                id: rcVoltsGauge
+                                visible: true
+                                anchors.fill: parent
+                                unitLabel: "V"
+                                value: 1
+                                tickmarkStepSize: 0.5
+                                minimumValue: 0
+                                maximumValue: 3.3
+                                anchors.horizontalCenter: parent.horizontalCenter
+                            }
+                            SGCircularGauge {
+                                id: rcBitsGauge
+                                visible: false
+                                anchors.fill: parent
+                                unitLabel: "Bits"
+                                value: 0
+                                tickmarkStepSize: 512
+                                minimumValue: 0
+                                maximumValue: 4096
+                                anchors.horizontalCenter: parent.horizontalCenter
+                            }
                         }
                         SGSwitch {
+                            id: rcsw
                             label: "RC_OUT"
                             checkedLabel: "Bits"
                             uncheckedLabel: "Volts"
@@ -121,35 +184,55 @@ SGResponsiveScrollView {
                             switchWidth: 50
                             onCheckedChanged: {
                                 if (this.checked) {
-                                    rcGauge.unitLabel = ""
-                                    rcGauge.value = 0
-                                    rcGauge.tickmarkStepSize = 512
-                                    rcGauge.minimumValue = 0
-                                    rcGauge.maximumValue = 4096
+                                    if (platformInterface.pwm_fil_ui_rc_mode !== "bits") {
+                                        platformInterface.pwm_fil_set_rc_out_mode.update("bits")
+                                        platformInterface.pwm_fil_ui_rc_mode = "bits"
+                                    }
+                                    rcBitsGauge.visible = true
+                                    rcVoltsGauge.visible = false
                                 }
                                 else {
-                                    rcGauge.unitLabel = "v"
-                                    rcGauge.value = 1
-                                    rcGauge.minimumValue = 0
-                                    rcGauge.maximumValue = 3.3
-                                    rcGauge.tickmarkStepSize = 0.5
+                                    if (platformInterface.pwm_fil_ui_rc_mode !== "volts") {
+                                        platformInterface.pwm_fil_set_rc_out_mode.update("volts")
+                                        platformInterface.pwm_fil_ui_rc_mode = "volts"
+                                    }
+                                    rcVoltsGauge.visible = true
+                                    rcBitsGauge.visible = false
                                 }
                             }
+                            anchors.horizontalCenter: parent.horizontalCenter
                         }
                     }
                     Column {
                         spacing: 5
-                        SGCircularGauge {
-                            id: lcGauge
+                        Item {
                             width: Math.min(content.height,content.width)*0.4
                             height: Math.min(content.height,content.width)*0.4
-                            unitLabel: "v"
-                            value: 1
-                            tickmarkStepSize: 0.5
-                            minimumValue: 0
-                            maximumValue: 3.3
+                            SGCircularGauge {
+                                id: lcVoltsGauge
+                                visible: true
+                                anchors.fill: parent
+                                unitLabel: "V"
+                                value: 1
+                                tickmarkStepSize: 0.5
+                                minimumValue: 0
+                                maximumValue: 3.3
+                                anchors.horizontalCenter: parent.horizontalCenter
+                            }
+                            SGCircularGauge {
+                                id: lcBitsGauge
+                                visible: false
+                                anchors.fill: parent
+                                unitLabel: "Bits"
+                                value: 0
+                                tickmarkStepSize: 512
+                                minimumValue: 0
+                                maximumValue: 4096
+                                anchors.horizontalCenter: parent.horizontalCenter
+                            }
                         }
                         SGSwitch {
+                            id: lcsw
                             label: "LC_OUT"
                             checkedLabel: "Bits"
                             uncheckedLabel: "Volts"
@@ -157,26 +240,30 @@ SGResponsiveScrollView {
                             switchWidth: 50
                             onCheckedChanged: {
                                 if (this.checked) {
-                                    lcGauge.unitLabel = ""
-                                    lcGauge.value = 0
-                                    lcGauge.tickmarkStepSize = 512
-                                    lcGauge.minimumValue = 0
-                                    lcGauge.maximumValue = 4096
+                                    if (platformInterface.pwm_fil_ui_lc_mode !== "bits") {
+                                        platformInterface.pwm_fil_set_lc_out_mode.update("bits")
+                                        platformInterface.pwm_fil_ui_lc_mode = "bits"
+                                    }
+                                    lcBitsGauge.visible = true
+                                    lcVoltsGauge.visible = false
                                 }
                                 else {
-                                    lcGauge.unitLabel = "v"
-                                    lcGauge.value = 1
-                                    lcGauge.minimumValue = 0
-                                    lcGauge.maximumValue = 3.3
-                                    lcGauge.tickmarkStepSize = 0.5
+                                    if (platformInterface.pwm_fil_ui_lc_mode !== "volts") {
+                                        platformInterface.pwm_fil_set_lc_out_mode.update("volts")
+                                        platformInterface.pwm_fil_ui_lc_mode = "volts"
+                                    }
+                                    lcVoltsGauge.visible = true
+                                    lcBitsGauge.visible = false
                                 }
                             }
+                            anchors.horizontalCenter: parent.horizontalCenter
                         }
                     }
                     anchors.horizontalCenter: parent.horizontalCenter
                 }
 
                 SGSlider {
+                    id: sgslider
                     label:"<b>" + qsTr("PWM Positive Duty Cycle (%)") + "</b>"
                     textColor: "black"
                     labelLeft: false
@@ -187,9 +274,16 @@ SGResponsiveScrollView {
                     startLabel: "0"
                     endLabel: "100 %"
                     toolTipDecimalPlaces: 2
+                    onValueChanged: {
+                        if (platformInterface.pwm_fil_ui_duty !== value/100) {
+                            platformInterface.pwm_fil_set_duty.update(value/100)
+                            platformInterface.pwm_fil_ui_duty = value/100
+                        }
+                    }
                 }
 
                 SGSubmitInfoBox {
+                    id: freqbox
                     label: "<b>" + qsTr("PWM Frequency") + "</b>"
                     textColor: "black"
                     labelLeft: true
@@ -203,6 +297,11 @@ SGResponsiveScrollView {
                         bottom: 0.0001
                         top: 1000
                     }
+                    onValueChanged: {
+                        if (platformInterface.pwm_fil_ui_freq !== value)
+                            platformInterface.pwm_fil_ui_freq = value
+                    }
+                    onApplied: platformInterface.pwm_fil_set_freq.update(value)
                 }
 
                 anchors.verticalCenter: parent.verticalCenter

@@ -7,12 +7,9 @@
         <file>content-views/Documents.qml</file>
         <file>content-views/Downloads.qml</file>
         <file>control-views/DACAndPWMToLEDControl.qml</file>
-        <file>control-views/HelloStrataControl.qml</file>
-        <file>control-views/HelloStrataControl_TabView.qml</file>
         <file>control-views/LEDDriverControl.qml</file>
         <file>control-views/LightSensorControl.qml</file>
         <file>control-views/MechanicalButtonsToInterruptsControl.qml</file>
-        <file>control-views/PlatformInterface.qml</file>
         <file>control-views/PotentiometerToADCControl.qml</file>
         <file>control-views/PWMHeatGeneratorAndTempSensorControl.qml</file>
         <file>control-views/PWMMotorControlControl.qml</file>
@@ -21,5 +18,8 @@
         <file>Content.qml</file>
         <file>Control.qml</file>
         <file>control-views/thumbnail-view-icon.svg</file>
+        <file>PlatformInterface.qml</file>
+        <file>HelloStrataControl_TabView.qml</file>
+        <file>HelloStrataControl.qml</file>
     </qresource>
 </RCC>

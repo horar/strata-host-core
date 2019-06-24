@@ -18,10 +18,12 @@ Item {
         controlContainer.currentIndex = 1
     }
 
-    property var minContentHeight: 660+20
-    property var minContentWidth: 850+20
-    property var rightBarWidth: 80
-    property var factor: Math.min(controlNavigation.height/minContentHeight,(controlNavigation.width-rightBarWidth)/minContentWidth)
+    property real minContentHeight: 688
+    property real minContentWidth: 1024-rightBarWidth
+    property real rightBarWidth: 80
+    property real factor: Math.min(controlNavigation.height/minContentHeight,(controlNavigation.width-rightBarWidth)/minContentWidth)
+    property real vFactor: Math.max(1,height/minContentHeight)
+    property real hFactor: Math.max(1,(width-rightBarWidth)/minContentWidth)
 
     PlatformInterface {
         id: platformInterface
@@ -38,14 +40,17 @@ Item {
 
         StackLayout {
             id: controlContainer
-            height: minContentHeight*factor
-            width: minContentWidth*factor
+            height: controlNavigation.height
+            width: controlNavigation.width-rightBarWidth
             anchors {
                 verticalCenter: parent.verticalCenter
                 horizontalCenter: parent.horizontalCenter
             }
 
             HelloStrataControl {
+                minimumHeight: minContentHeight*1.245
+                minimumWidth: minContentWidth*1.245
+
                 onSignalPotentiometerToADCControl: {
                     controlContainer.currentIndex = 1
                     tabView.currentTab = 0
@@ -82,6 +87,8 @@ Item {
 
             HelloStrataControl_TabView {
                 id:tabView
+                minimumHeight: minContentHeight
+                minimumWidth: minContentWidth
             }
         }
     }

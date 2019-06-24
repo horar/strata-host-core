@@ -6,33 +6,72 @@ import tech.strata.sgwidgets 1.0
 
 import "qrc:/js/help_layout_manager.js" as Help
 
-SGResponsiveScrollView {
+Item {
     id: root
 
-    minimumHeight: 660*0.4
-    minimumWidth: 850/3
+    property real minimumHeight
+    property real minimumWidth
 
     signal zoom
 
-    property var defaultMargin: 20
-    property var defaultPadding: 20
-    property var factor: Math.min(root.height/minimumHeight,root.width/minimumWidth)
-    property bool hideHeader: false
+    property real defaultMargin: 20
+    property real defaultPadding: 20
+    property real factor: Math.min(root.height/minimumHeight,root.width/minimumWidth)
 
+    // UI state & notification
+    property bool start: platformInterface.i2c_light_ui_start
+    property bool active: platformInterface.i2c_light_ui_active
+    property int time: platformInterface.i2c_light_ui_time
+    property int gain: platformInterface.i2c_light_ui_gain
+    property real sensitivity: platformInterface.i2c_light_ui_sensitivity
+    property real lux: platformInterface.i2c_light_noti_lux.value
+    property real light_intensity: platformInterface.i2c_light_noti_light_intensity.value
+
+    onStartChanged: {
+        startsw.checked = start
+    }
+
+    onActiveChanged: {
+        activesw.checked = active
+    }
+
+    onTimeChanged: {
+        timebox.currentIndex = time
+    }
+
+    onGainChanged: {
+        gainbox.currentIndex = gain
+    }
+
+    onSensitivityChanged: {
+        sgslider.value = sensitivity*100
+    }
+
+    onLuxChanged: {
+        luxinfo.info = lux.toString()
+    }
+
+    onLight_intensityChanged: {
+        gauge.value = light_intensity
+    }
+
+    // hide in tab view
+    property bool hideHeader: false
     onHideHeaderChanged: {
         if (hideHeader) {
             header.visible = false
             content.anchors.top = container.top
+            container.border.width = 0
         }
         else {
             header.visible = true
             content.anchors.top = header.bottom
+            container.border.width = 1
         }
     }
 
     Rectangle {
         id: container
-        parent: root.contentItem
         anchors.fill:parent
         border {
             width: 1
@@ -100,57 +139,86 @@ SGResponsiveScrollView {
 
                 Row {
                     spacing: 20
+                    anchors.horizontalCenter: parent.horizontalCenter
 
                     Column {
                         spacing: 10
+                        anchors.verticalCenter: parent.verticalCenter
                         SGLabelledInfoBox {
+                            id:luxinfo
                             label: "<b>" + "Lux (lx)" + "</b>"
                             labelLeft: false
                             info: "800"
                         }
 
                         Row {
-                            spacing: 20
+                            spacing: 10
                             SGSwitch {
-                                //label: "<b>" + qsTr("Sleep/Active") + "</b>"
+                                id:activesw
+                                anchors.bottom: parent.bottom
                                 switchHeight: 32
                                 switchWidth: 67
                                 labelLeft: false
                                 checkedLabel: qsTr("Active")
-                                uncheckedLabel: qsTr("Sleep")
-                                anchors.bottom: parent.bottom
+                                uncheckedLabel: qsTr("Sleep")               
+                                onCheckedChanged: {
+                                    if (platformInterface.i2c_light_ui_active != checked) {
+                                        platformInterface.i2c_light_active.update(checked)
+                                        platformInterface.i2c_light_ui_active = checked
+                                    }
+                                }
                             }
 
                             SGComboBox {
+                                id:timebox
                                 label: "<b>" + qsTr("Integration Time") + "</b>"
+                                anchors.bottom: parent.bottom
                                 labelLeft: false
                                 model: ["12.5ms", "100ms", "200ms", "Manual"]
                                 comboBoxWidth: 100
-                                anchors.bottom: parent.bottom
+                                onCurrentIndexChanged: {
+                                    if (platformInterface.i2c_light_ui_time != currentIndex) {
+                                        platformInterface.i2c_light_set_integration_time.update(currentText)
+                                        platformInterface.i2c_light_ui_time = currentIndex
+                                    }
+                                }
                             }
                         }
 
                         Row {
-                            spacing: 20
+                            spacing: 10
+
                             SGSwitch {
-                                //label: "<b>" + qsTr("Start/Stop") + "</b>"
+                                id:startsw
+                                anchors.bottom: parent.bottom
                                 switchHeight: 32
                                 switchWidth: 67
                                 labelLeft: false
                                 checkedLabel: qsTr("Start")
                                 uncheckedLabel: qsTr("Stop")
-                                anchors.bottom: parent.bottom
+                                onCheckedChanged: {
+                                    if (platformInterface.i2c_light_ui_start != checked) {
+                                        platformInterface.i2c_light_start.update(checked)
+                                        platformInterface.i2c_light_ui_start = checked
+                                    }
+                                }
                             }
 
                             SGComboBox {
+                                id:gainbox
                                 label: "<b>" + qsTr("Gain") + "</b>"
+                                anchors.bottom: parent.bottom
                                 labelLeft: false
                                 model: ["0.25", "1", "2", "8"]
                                 comboBoxWidth: 100
-                                anchors.bottom: parent.bottom
+                                onCurrentIndexChanged: {
+                                    if (platformInterface.i2c_light_ui_gain != currentIndex) {
+                                        platformInterface.i2c_light_set_gain.update(parseInt(currentText))
+                                        platformInterface.i2c_light_ui_gain = currentIndex
+                                    }
+                                }
                             }
                         }
-                        anchors.bottom: parent.bottom
                     }
 
                     SGCircularGauge {
@@ -162,11 +230,13 @@ SGResponsiveScrollView {
                         tickmarkStepSize: 50000
                         minimumValue: 0
                         maximumValue: 65535*8
-                        anchors.bottom: parent.bottom
+                        anchors.verticalCenter: parent.verticalCenter
                     }
+
                 }
 
                 SGSlider {
+                    id: sgslider
                     label:"<b>" + qsTr("Sensitivity") + "</b>"
                     textColor: "black"
                     labelLeft: false
@@ -177,6 +247,12 @@ SGResponsiveScrollView {
                     startLabel: "66.7%"
                     endLabel: "150%"
                     toolTipDecimalPlaces: 2
+                    onValueChanged: {
+                        if (platformInterface.i2c_light_ui_sensitivity != value/100) {
+                            platformInterface.i2c_light_set_sensitivity.update(value/100)
+                            platformInterface.i2c_light_ui_sensitivity = value/100
+                        }
+                    }
                 }
                 anchors {
                     left: parent.left

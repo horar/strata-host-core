@@ -6,33 +6,52 @@ import tech.strata.sgwidgets 1.0
 
 import "qrc:/js/help_layout_manager.js" as Help
 
-SGResponsiveScrollView {
+Item {
     id: root
 
-    minimumHeight: 660*0.3
-    minimumWidth: 850/3
+    property real minimumHeight
+    property real minimumWidth
 
     signal zoom
 
-    property var defaultMargin: 20
-    property var defaultPadding: 20
-    property var factor: Math.min(root.height/minimumHeight,root.width/minimumWidth)
-    property bool hideHeader: false
+    property real defaultMargin: 20
+    property real defaultPadding: 20
+    property real factor: Math.min(root.height/minimumHeight,root.width/minimumWidth)
 
+    // UI state & notification
+    property real duty: platformInterface.i2c_temp_ui_duty
+    property bool alert: platformInterface.i2c_temp_noti_alert.value
+    property real tempValue: platformInterface.i2c_temp_noti_value.value
+
+    onDutyChanged: {
+        pwmslider.value = duty*100
+    }
+
+    onAlertChanged: {
+        alertLED.status = alert ? "red" : "off"
+    }
+
+    onTempValueChanged: {
+        gauge.value = tempValue
+    }
+
+    // hide in tab view
+    property bool hideHeader: false
     onHideHeaderChanged: {
         if (hideHeader) {
             header.visible = false
             content.anchors.top = container.top
+            container.border.width = 0
         }
         else {
             header.visible = true
             content.anchors.top = header.bottom
+            container.border.width = 1
         }
     }
 
     Rectangle {
         id: container
-        parent: root.contentItem
         anchors.fill:parent
         border {
             width: 1
@@ -113,6 +132,12 @@ SGResponsiveScrollView {
                         startLabel: "0"
                         endLabel: "100 %"
                         toolTipDecimalPlaces: 2
+                        onValueChanged: {
+                            if (platformInterface.i2c_temp_ui_duty !== value/100) {
+                                platformInterface.i2c_temp_set_duty.update(value/100)
+                                platformInterface.i2c_temp_ui_duty = value/100
+                            }
+                        }
                     }
 
                     SGStatusLight {
@@ -127,7 +152,7 @@ SGResponsiveScrollView {
                     id: gauge
                     width: Math.min(content.height,content.width)*0.8
                     height: Math.min(content.height,content.width)*0.8
-                    unitLabel: "C"
+                    unitLabel: "°C"
                     value: 30
                     tickmarkStepSize: 10
                     minimumValue: -55

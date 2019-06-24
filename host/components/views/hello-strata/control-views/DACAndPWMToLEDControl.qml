@@ -6,33 +6,52 @@ import tech.strata.sgwidgets 1.0
 
 import "qrc:/js/help_layout_manager.js" as Help
 
-SGResponsiveScrollView {
+Item {
     id: root
 
-    minimumHeight: 660*0.4
-    minimumWidth: 850/3
+    property real minimumHeight
+    property real minimumWidth
 
     signal zoom
 
-    property var defaultMargin: 20
-    property var defaultPadding: 20
-    property var factor: Math.min(root.height/minimumHeight,root.width/minimumWidth)
-    property bool hideHeader: false
+    property real defaultMargin: 20
+    property real defaultPadding: 20
+    property real factor: Math.min(root.height/minimumHeight,root.width/minimumWidth)
 
+    // UI state
+    property real freq: platformInterface.pwm_led_ui_freq
+    property real duty: platformInterface.pwm_led_ui_duty
+    property real volt: platformInterface.dac_led_ui_volt
+
+    onFreqChanged: {
+        freqBox.value = freq
+    }
+
+    onDutyChanged: {
+        pwmSlider.value = duty*100
+    }
+
+    onVoltChanged: {
+        dacSlider.value = volt
+    }
+
+    // hide in tab view
+    property bool hideHeader: false
     onHideHeaderChanged: {
         if (hideHeader) {
             header.visible = false
             content.anchors.top = container.top
+            container.border.width = 0
         }
         else {
             header.visible = true
             content.anchors.top = header.bottom
+            container.border.width = 1
         }
     }
 
     Rectangle {
         id: container
-        parent: root.contentItem
         anchors.fill:parent
         border {
             width: 1
@@ -100,6 +119,7 @@ SGResponsiveScrollView {
                 padding: defaultPadding
 
                 SGSlider {
+                    id: dacSlider
                     label:"<b>DAC</b>"
                     textColor: "black"
                     labelLeft: false
@@ -110,10 +130,16 @@ SGResponsiveScrollView {
                     startLabel: "0"
                     endLabel: "3.3 V"
                     toolTipDecimalPlaces: 3
-                    onValueChanged: platformInterface.setDacLed.update(value)
+                    onValueChanged: {
+                        if (platformInterface.dac_led_ui_volt !== value) {
+                            platformInterface.dac_led_set_voltage.update(value)
+                            platformInterface.dac_led_ui_volt = value
+                        }
+                    }
                 }
 
                 SGSlider {
+                    id: pwmSlider
                     label:"<b>" + qsTr("PWM Positive Duty Cycle (%)") + "</b>"
                     textColor: "black"
                     labelLeft: false
@@ -124,10 +150,16 @@ SGResponsiveScrollView {
                     startLabel: "0"
                     endLabel: "100 %"
                     toolTipDecimalPlaces: 2
-                    onValueChanged: platformInterface.setPwmLedDuty.update(value/100)
+                    onValueChanged: {
+                        if (platformInterface.pwm_led_ui_duty !== value/100) {
+                            platformInterface.pwm_led_set_duty.update(value/100)
+                            platformInterface.pwm_led_ui_duty = value/100
+                        }
+                    }
                 }
 
                 SGSubmitInfoBox {
+                    id: freqBox
                     label: "<b>" + qsTr("PWM Frequency") + "</b>"
                     textColor: "black"
                     labelLeft: false
@@ -141,7 +173,11 @@ SGResponsiveScrollView {
                         bottom: 0.0001
                         top: 1000
                     }
-                    onApplied: platformInterface.setPwmLedFreq.update(value)
+                    onValueChanged: {
+                        if (platformInterface.pwm_led_ui_freq !== value)
+                            platformInterface.pwm_led_ui_freq = value
+                    }
+                    onApplied: platformInterface.pwm_led_set_freq.update(value)
                 }
 
                 anchors.verticalCenter: parent.verticalCenter

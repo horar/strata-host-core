@@ -4,16 +4,13 @@ import QtQuick.Controls 2.5
 
 import tech.strata.sgwidgets 1.0
 
-import "qrc:/js/help_layout_manager.js" as Help
+import "control-views"
 
 SGResponsiveScrollView {
     id: root
 
-    minimumHeight: 660+20
-    minimumWidth: 850+20+40
-
     property alias currentTab: tabs.currentIndex
-    property var factor: Math.max(1,Math.min(root.height/root.minimumHeight,root.width/root.minimumWidth))
+    property real factor: Math.max(1,Math.min(root.height/root.minimumHeight,root.width/root.minimumWidth))
 
     onCurrentTabChanged: {
         tabBar.index = currentTab
@@ -108,48 +105,64 @@ SGResponsiveScrollView {
                 id: tabs
                 anchors.fill: parent
                 PotentiometerToADCControl {
+                    minimumHeight: (root.minimumHeight - 30)/2
+                    minimumWidth: root.minimumWidth/2
                     Layout.preferredHeight: Math.min(parent.height, this.minimumHeight/this.minimumWidth*parent.width)
                     Layout.preferredWidth: Math.min(parent.width, parent.height/(this.minimumHeight/this.minimumWidth))
                     hideHeader: true
                 }
 
                 DACAndPWMToLEDControl {
+                    minimumHeight: (root.minimumHeight - 30)/2
+                    minimumWidth: root.minimumWidth/2
                     Layout.preferredHeight: Math.min(parent.height, this.minimumHeight/this.minimumWidth*parent.width)
                     Layout.preferredWidth: Math.min(parent.width, parent.height/(this.minimumHeight/this.minimumWidth))
                     hideHeader: true
                 }
 
                 PWMMotorControlControl {
+                    minimumHeight: (root.minimumHeight - 30)/2
+                    minimumWidth: root.minimumWidth/2
                     Layout.preferredHeight: Math.min(parent.height, this.minimumHeight/this.minimumWidth*parent.width)
                     Layout.preferredWidth: Math.min(parent.width, parent.height/(this.minimumHeight/this.minimumWidth))
                     hideHeader: true
                 }
 
                 PWMHeatGeneratorAndTempSensorControl {
+                    minimumHeight: (root.minimumHeight - 30)/2
+                    minimumWidth: root.minimumWidth/2
                     Layout.preferredHeight: Math.min(parent.height, this.minimumHeight/this.minimumWidth*parent.width)
                     Layout.preferredWidth: Math.min(parent.width, parent.height/(this.minimumHeight/this.minimumWidth))
                     hideHeader: true
                 }
 
                 LightSensorControl {
+                    minimumHeight: (root.minimumHeight - 30)/2
+                    minimumWidth: root.minimumWidth/2
                     Layout.preferredHeight: Math.min(parent.height, this.minimumHeight/this.minimumWidth*parent.width)
                     Layout.preferredWidth: Math.min(parent.width, parent.height/(this.minimumHeight/this.minimumWidth))
                     hideHeader: true
                 }
 
                 PWMToFiltersControl {
+                    minimumHeight: (root.minimumHeight - 30)/2
+                    minimumWidth: root.minimumWidth/2
                     Layout.preferredHeight: Math.min(parent.height, this.minimumHeight/this.minimumWidth*parent.width)
                     Layout.preferredWidth: Math.min(parent.width, parent.height/(this.minimumHeight/this.minimumWidth))
                     hideHeader: true
                 }
 
                 LEDDriverControl {
+                    minimumHeight: (root.minimumHeight - 30)/2
+                    minimumWidth: root.minimumWidth/2
                     Layout.preferredHeight: Math.min(parent.height, this.minimumHeight/this.minimumWidth*parent.width)
                     Layout.preferredWidth: Math.min(parent.width, parent.height/(this.minimumHeight/this.minimumWidth))
                     hideHeader: true
                 }
 
                 MechanicalButtonsToInterruptsControl {
+                    minimumHeight: (root.minimumHeight - 30)/2
+                    minimumWidth: root.minimumWidth/2
                     Layout.preferredHeight: Math.min(parent.height, this.minimumHeight/this.minimumWidth*parent.width)
                     Layout.preferredWidth: Math.min(parent.width, parent.height/(this.minimumHeight/this.minimumWidth))
                     hideHeader: true

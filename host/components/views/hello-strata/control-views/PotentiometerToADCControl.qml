@@ -6,33 +6,52 @@ import tech.strata.sgwidgets 1.0
 
 import "qrc:/js/help_layout_manager.js" as Help
 
-SGResponsiveScrollView {
+Item {
     id: root
 
-    minimumHeight: 660*0.3
-    minimumWidth: 850/3
+    property real minimumHeight
+    property real minimumWidth
 
     signal zoom
 
-    property var defaultMargin: 20
-    property var defaultPadding: 20
-    property var factor: Math.min(root.height/minimumHeight,root.width/minimumWidth)
-    property bool hideHeader: false
+    property real defaultMargin: 20
+    property real defaultPadding: 20
+    property real factor: Math.min(root.height/minimumHeight,root.width/minimumWidth)
 
+    // UI state & notification
+    property string mode:platformInterface.pot_ui_mode
+    property real value: platformInterface.pot_noti.value
+
+    onModeChanged: {
+        sgswitch.checked = mode === "bits"
+    }
+
+    onValueChanged: {
+        if (mode === "volts") {
+            voltGauge.value = value
+        }
+        else {
+            bitsGauge.value = value
+        }
+    }
+
+    // hide in tab view
+    property bool hideHeader: false
     onHideHeaderChanged: {
         if (hideHeader) {
             header.visible = false
             content.anchors.top = container.top
+            container.border.width = 0
         }
         else {
             header.visible = true
             content.anchors.top = header.bottom
+            container.border.width = 1
         }
     }
 
     Rectangle {
         id: container
-        parent: root.contentItem
         anchors.fill:parent
         border {
             width: 1
@@ -98,40 +117,58 @@ SGResponsiveScrollView {
                 spacing: 50
 
                 SGSwitch {
+                    id: sgswitch
                     switchHeight: 32
                     switchWidth: 65
                     label: "Volts/Bits"
                     labelLeft: false
                     checkedLabel: "Bits"
                     uncheckedLabel: "Volts"
+
                     onCheckedChanged: {
                         if (this.checked) {
-                            gauge.unitLabel = ""
-                            gauge.value = 0
-                            gauge.tickmarkStepSize = 512
-                            gauge.minimumValue = 0
-                            gauge.maximumValue = 4096
+                            if (platformInterface.pot_ui_mode !== "bits") {
+                                platformInterface.pot_mode.update("bits")
+                                platformInterface.pot_ui_mode = "bits"
+                            }
+                            bitsGauge.visible = true
+                            voltGauge.visible = false
                         }
                         else {
-                            gauge.unitLabel = "v"
-                            gauge.value = 1
-                            gauge.minimumValue = 0
-                            gauge.maximumValue = 3.3
-                            gauge.tickmarkStepSize = 0.5
+                            if (platformInterface.pot_ui_mode !== "volts") {
+                                platformInterface.pot_mode.update("volts")
+                                platformInterface.pot_ui_mode = "volts"
+                            }
+                            voltGauge.visible = true
+                            bitsGauge.visible = false
                         }
                     }
                     anchors.verticalCenter: parent.verticalCenter
                 }
 
-                SGCircularGauge {
-                    id: gauge
+                Item {
                     width: Math.min(content.height,content.width)*0.8
                     height: Math.min(content.height,content.width)*0.8
-                    unitLabel: "v"
-                    value: 1
-                    tickmarkStepSize: 0.5
-                    minimumValue: 0
-                    maximumValue: 3.3
+                    SGCircularGauge {
+                        id: voltGauge
+                        visible: true
+                        anchors.fill: parent
+                        unitLabel: "V"
+                        value: 1
+                        tickmarkStepSize: 0.5
+                        minimumValue: 0
+                        maximumValue: 3.3
+                    }
+                    SGCircularGauge {
+                        id: bitsGauge
+                        visible: false
+                        anchors.fill: parent
+                        unitLabel: "Bits"
+                        value: 0
+                        tickmarkStepSize: 512
+                        minimumValue: 0
+                        maximumValue: 4096
+                    }
                 }
 
                 anchors.horizontalCenter: parent.horizontalCenter

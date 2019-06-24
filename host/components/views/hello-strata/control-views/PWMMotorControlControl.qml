@@ -6,33 +6,52 @@ import tech.strata.sgwidgets 1.0
 
 import "qrc:/js/help_layout_manager.js" as Help
 
-SGResponsiveScrollView {
+Item {
     id: root
 
-    minimumHeight: 660*0.3
-    minimumWidth: 850/3
+    property real minimumHeight
+    property real minimumWidth
 
     signal zoom
 
-    property var defaultMargin: 20
-    property var defaultPadding: 20
-    property var factor: Math.min(root.height/minimumHeight,root.width/minimumWidth)
-    property bool hideHeader: false
+    property real defaultMargin: 20
+    property real defaultPadding: 20
+    property real factor: Math.min(root.height/minimumHeight,root.width/minimumWidth)
 
+    // UI state
+    property real duty: platformInterface.pwm_mot_ui_duty
+    property bool forward: platformInterface.pwm_mot_ui_forward
+    property bool enable: platformInterface.pwm_mot_ui_enable
+
+    onDutyChanged: {
+        pwmslider.value = duty*100
+    }
+
+    onForwardChanged: {
+        combobox.currentIndex = forward ? 0 : 1
+    }
+
+    onEnableChanged: {
+        toggleswitch.checked = enable
+    }
+
+    // hide in tab view
+    property bool hideHeader: false
     onHideHeaderChanged: {
         if (hideHeader) {
             header.visible = false
             content.anchors.top = container.top
+            container.border.width = 0
         }
         else {
             header.visible = true
             content.anchors.top = header.bottom
+            container.border.width = 1
         }
     }
 
     Rectangle {
         id: container
-        parent: root.contentItem
         anchors.fill:parent
         border {
             width: 1
@@ -111,7 +130,12 @@ SGResponsiveScrollView {
                     startLabel: "0"
                     endLabel: "100 %"
                     toolTipDecimalPlaces: 2
-                    onValueChanged: platformInterface.driveMotor.update(value/100, combobox.currentText === "Forward")
+                    onValueChanged: {
+                        if (platformInterface.pwm_mot_ui_duty !== value/100) {
+                            platformInterface.pwm_mot_set_duty.update(value/100)
+                            platformInterface.pwm_mot_ui_duty = value/100
+                        }
+                    }
                 }
 
                 Row {
@@ -122,15 +146,20 @@ SGResponsiveScrollView {
                         labelLeft: false
                         model: [qsTr("Forward"), qsTr("Reverse")]
                         anchors.bottom: parent.bottom
-                        onCurrentTextChanged: platformInterface.driveMotor.update(pwmslider.value/100, currentText === "Forward")
+                        onCurrentTextChanged: {
+                            if (platformInterface.pwm_mot_ui_forward !== (currentText === "Forward")) {
+                                platformInterface.pwm_mot_set_direction.update(currentText === "Forward")
+                                platformInterface.pwm_mot_ui_forward = currentText === "Forward"
+                            }
+                        }
                     }
 
                     Button {
                         id: brakebtn
                         text: qsTr("Brake")
                         anchors.bottom: parent.bottom
-                        onPressed: platformInterface.brakeMotor.update(true)
-                        onReleased: platformInterface.brakeMotor.update(false)
+                        onPressed: platformInterface.pwm_mot_brake.update(true)
+                        onReleased: platformInterface.pwm_mot_brake.update(false)
                     }
 
                     SGSwitch {
@@ -142,7 +171,12 @@ SGResponsiveScrollView {
                         checkedLabel: qsTr("On")
                         uncheckedLabel: qsTr("Off")
                         anchors.bottom: parent.bottom
-                        onCheckedChanged: platformInterface.enableMotor.update(checked === true)
+                        onCheckedChanged: {
+                            if (platformInterface.pwm_mot_ui_enable !== checked) {
+                                platformInterface.pwm_mot_enable.update(checked === true)
+                                platformInterface.pwm_mot_ui_enable = checked
+                            }
+                        }
                     }
                 }
 

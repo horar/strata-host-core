@@ -6,34 +6,58 @@ import tech.strata.sgwidgets 1.0
 
 import "qrc:/js/help_layout_manager.js" as Help
 
-SGResponsiveScrollView {
+Item {
     id: root
 
-    minimumHeight: 660*0.3
-    minimumWidth: 850/3
+    property real minimumHeight
+    property real minimumWidth
 
     signal zoom
 
-    property var defaultMargin: 20
-    property var defaultPadding: 20
-    property var factor: Math.min(root.height/minimumHeight,root.width/minimumWidth)
-    property var lightSizeValue: 25*factor
-    property bool hideHeader: false
+    property real defaultMargin: 20
+    property real defaultPadding: 20
+    property real factor: Math.min(root.height/minimumHeight,root.width/minimumWidth)
+    property real lightSizeValue: 25*factor
 
+    // notification
+    property bool sw1: platformInterface.mechanical_buttons_noti_sw1.value
+    property bool sw2: platformInterface.mechanical_buttons_noti_sw2.value
+    property bool sw3: platformInterface.mechanical_buttons_noti_sw3.value
+    property bool sw4: platformInterface.mechanical_buttons_noti_sw4.value
+
+    onSw1Changed: {
+        led1.status = sw1 ? "green" : "off"
+    }
+
+    onSw2Changed: {
+        led2.status = sw2 ? "green" : "off"
+    }
+
+    onSw3Changed: {
+        led3.status = sw3 ? "green" : "off"
+    }
+
+    onSw4Changed: {
+        led4.status = sw4 ? "green" : "off"
+    }
+
+    // hide in tab view
+    property bool hideHeader: false
     onHideHeaderChanged: {
         if (hideHeader) {
             header.visible = false
             content.anchors.top = container.top
+            container.border.width = 0
         }
         else {
             header.visible = true
             content.anchors.top = header.bottom
+            container.border.width = 1
         }
     }
 
     Rectangle {
         id: container
-        parent: root.contentItem
         anchors.fill:parent
         border {
             width: 1
@@ -98,22 +122,26 @@ SGResponsiveScrollView {
             Row {
                 spacing: 20*factor
                 SGStatusLight {
-                    label: "<b>" + qsTr("Status") + "</b>"
+                    id: led1
+                    label: "<b>" + qsTr("SW1") + "</b>"
                     labelLeft: false
                     lightSize: lightSizeValue
                 }
                 SGStatusLight {
-                    label: "<b>" + qsTr("Status") + "</b>"
+                    id: led2
+                    label: "<b>" + qsTr("SW2") + "</b>"
                     labelLeft: false
                     lightSize: lightSizeValue
                 }
                 SGStatusLight {
-                    label: "<b>" + qsTr("Status") + "</b>"
+                    id: led3
+                    label: "<b>" + qsTr("SW3") + "</b>"
                     labelLeft: false
                     lightSize: lightSizeValue
                 }
                 SGStatusLight {
-                    label: "<b>" + qsTr("Status") + "</b>"
+                    id: led4
+                    label: "<b>" + qsTr("SW4") + "</b>"
                     labelLeft: false
                     lightSize: lightSizeValue
                 }
