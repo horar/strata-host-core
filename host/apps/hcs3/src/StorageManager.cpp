@@ -42,7 +42,7 @@ void StorageManager::init()
     Q_ASSERT(baseFolder_.isEmpty() == false);
 
     if (baseUrl_.isEmpty()) {
-        qCDebug(logCategoryHcs) << "Base URL is empty.";
+        qCDebug(logCategoryHcsStorage) << "Base URL is empty.";
         return;
     }
 
@@ -72,7 +72,7 @@ bool StorageManager::requestPlatformDoc(const std::string& classId, const std::s
 
         //Only one platform document for now
         if (plat_doc_ != nullptr) {
-            qCDebug(logCategoryHcs) << "Platform Document already assigned.";
+            qCDebug(logCategoryHcsStorage) << "Platform Document already assigned.";
             return false;
         }
     }
@@ -80,7 +80,7 @@ bool StorageManager::requestPlatformDoc(const std::string& classId, const std::s
 
     std::string document;
     if (db_->getDocument(classId, g_class_doc_root_item, document) == false) {
-        qCDebug(logCategoryHcs) << "Platform document not found.";
+        qCDebug(logCategoryHcsStorage) << "Platform document not found.";
         return false;
     }
 
@@ -93,7 +93,7 @@ bool StorageManager::requestPlatformDoc(const std::string& classId, const std::s
 
     PlatformDocument* doc = new PlatformDocument(classId, std::string());
     if (doc->parseDocument(document) == false) {
-        qCWarning(logCategoryHcs) << "Parse platform document failed!";
+        qCWarning(logCategoryHcsStorage) << "Parse platform document failed!";
 
         db_->remReplChannel(classId);
 
@@ -101,6 +101,7 @@ bool StorageManager::requestPlatformDoc(const std::string& classId, const std::s
         return false;
     }
 
+    //TODO: add support for multiple documents.
     plat_doc_ = doc;
     clientId_ = clientId;
 
@@ -127,8 +128,9 @@ void StorageManager::resetPlatformDoc()
     QMutexLocker locker(&requestMutex_);
 
     if (plat_doc_ != nullptr) {
-
         std::string classId = plat_doc_->getClassId();
+        qCInfo(logCategoryHcsStorage) << "Stop processing platform doc:" << QString::fromStdString(classId);
+
         db_->remReplChannel(classId);
 
         delete plat_doc_;
@@ -147,12 +149,13 @@ QString StorageManager::createFilenameFromItem(const QString& item, const QStrin
 bool StorageManager::checkAndDownload(const std::string& groupName)
 {
     if (plat_doc_ == nullptr) {
+        qCDebug(logCategoryHcsStorage) << "platform doc is empty";
         return false;
     }
 
     std::vector<std::string> urlList;
     if (plat_doc_->getDocumentFilesList(groupName, urlList) == false) {
-        qCCritical(logCategoryHcs) << "Platform document:" << QString::fromStdString(plat_doc_->getClassId()) << "group:" << QString::fromStdString(groupName) << "not found!";
+        qCCritical(logCategoryHcsStorage) << "Platform document:" << QString::fromStdString(plat_doc_->getClassId()) << "group:" << QString::fromStdString(groupName) << "not found!";
         return false;
     }
 
@@ -217,7 +220,7 @@ void StorageManager::onDownloadFiles(const QStringList& files, const QString& pr
     for(const auto& item : files) {
 
         if (createFolderWhenNeeded( QDir(prefix).filePath(item) ) == false) {
-            qCDebug(logCategoryHcs) << "createFolderWhenNeeded() failed!";
+            qCWarning(logCategoryHcsStorage) << "createFolderWhenNeeded() failed!";
             return;
         }
 
@@ -255,7 +258,7 @@ void StorageManager::onDownloadFiles2(const QStringList& files, const QString& s
 
         QString filename = QDir(save_path).filePath(fi.fileName());
 
-        qCDebug(logCategoryHcs) << "Download:" << item << " To:" << filename;
+        qCDebug(logCategoryHcsStorage) << "Download:" << item << " To:" << filename;
         downloader_->download(item, filename);
     }
 }
@@ -299,7 +302,7 @@ void StorageManager::onDownloadFinished(const QString& url)
     else {
         findIt->state = EItemState::eError;
 
-        qCDebug(logCategoryHcs) << "Checksum error! " << url << " " << findIt->checksum;
+        qCWarning(logCategoryHcsStorage) << "Checksum error! " << url << " " << findIt->checksum;
     }
 
     //check all done ??
@@ -323,7 +326,7 @@ void StorageManager::onDownloadFinishedError(const QString& url, const QString& 
 void StorageManager::createAndSendResponse()
 {
     if (plat_doc_ == nullptr) {     //is PlatformDocument already released ?
-        qCDebug(logCategoryHcs) << "Platform doc. empty.";
+        qCDebug(logCategoryHcsStorage) << "Platform doc. empty.";
         return;
     }
 
@@ -363,7 +366,7 @@ void StorageManager::createAndSendResponse()
 
     response->AddMember("class_id", rapidjson::Value(plat_doc_->getClassId().c_str(), allocator), allocator);
 
-    qCDebug(logCategoryHcs) << "ClassId:" << QString::fromStdString(plat_doc_->getClassId()) << " all downloaded. Send response.";
+    qCInfo(logCategoryHcsStorage) << "ClassId:" << QString::fromStdString(plat_doc_->getClassId()) << " all downloaded. Send response.";
 
     PlatformMessage msg;
     msg.msg_type = PlatformMessage::eMsgStorageResponse;
@@ -406,6 +409,7 @@ bool StorageManager::checkFileChecksum(const QString& filename, const QString& c
 {
     QFile file(filename);
     if (!file.open(QIODevice::ReadOnly)) {
+        qCWarning(logCategoryHcsStorage) << "Unable to open file:" << filename;
         return false;
     }
 
@@ -418,6 +422,8 @@ bool StorageManager::checkFileChecksum(const QString& filename, const QString& c
 
 void StorageManager::requestDownloadFiles(const std::vector<std::string>& files, const std::string& save_path)
 {
+    qCDebug(logCategoryHcsStorage) << "Download files to:" << QString::fromUtf8(save_path.c_str(), save_path.size() );
+
     QStringList qtFiles;
     for(const auto& item : files) {
         qtFiles.push_back(QString::fromStdString(item));

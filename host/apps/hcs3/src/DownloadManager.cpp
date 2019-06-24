@@ -23,7 +23,7 @@ void DownloadManager::setBaseUrl(const QString& baseUrl)
 {
     baseUrl_ = baseUrl;
 
-    qCDebug(logCategoryHcs) << "baseUrl:" << baseUrl_;
+    qCDebug(logCategoryHcsDownloader) << "baseUrl:" << baseUrl_;
 }
 
 void DownloadManager::setMaxDownloadCount(uint count)
@@ -44,7 +44,7 @@ void DownloadManager::download(const QString& url, const QString& filename)
 
     downloadList_.push_back(item);
 
-    qCDebug(logCategoryHcs) << "Download:" << url << "to file:" << filename;
+    qCDebug(logCategoryHcsDownloader) << "Download:" << url << "to file:" << filename;
 
     if (static_cast<uint>(currentDownloads_.size()) < numberOfDownloads_) {
 
@@ -62,11 +62,12 @@ void DownloadManager::beginDownload(DownloadItem& item)
     QString realUrl(baseUrl_ + item.url);
     QNetworkReply* reply = downloadFile(realUrl);
     if (reply == nullptr) {
-        qCDebug(logCategoryHcs) << "downloadFile failed! url:" << item.url;
+        qCDebug(logCategoryHcsDownloader) << "downloadFile failed! url:" << item.url;
         return;
     }
 
     mapReplyToFile_.insert(reply, item.filename);
+    qCDebug(logCategoryHcsDownloader) << "Begin downloading" << item.filename;
 
     item.state = "pending";
 }
@@ -100,6 +101,7 @@ bool DownloadManager::isHttpRedirect(QNetworkReply *reply)
 void DownloadManager::readyRead()
 {
     QNetworkReply* reply = qobject_cast<QNetworkReply*>( QObject::sender() );
+    Q_ASSERT(reply);
     QByteArray buffer = reply->readAll();
     if (buffer.size() > 0) {
         writeToFile(reply, buffer);
@@ -121,12 +123,13 @@ void DownloadManager::onDownloadFinished(QNetworkReply *reply)
             findItItem->state = "done";
         }
 
+        qCWarning(logCategoryHcsDownloader) << "download error on:" << reply->url();
         emit downloadFinishedError(findItItem->url, reply->errorString());
 
     }
     else {
         if (isHttpRedirect(reply)) {
-            qCWarning(logCategoryHcs) << "Redirection on a file download. " << reply->url().toString();
+            qCWarning(logCategoryHcsDownloader) << "Redirection on a file download. " << reply->url().toString();
             //TODO: do we support redirects ?
             //   fputs("Request was redirected.\n", stderr);
 
@@ -148,7 +151,7 @@ void DownloadManager::onDownloadFinished(QNetworkReply *reply)
                 findItItem->state = "done";
             }
 
-            qCDebug(logCategoryHcs) << "Downloaded:" << findItItem->url;
+            qCInfo(logCategoryHcsDownloader) << "Downloaded:" << findItItem->url;
 
             emit downloadFinished(findItItem->url);
 
@@ -169,17 +172,22 @@ void DownloadManager::writeToFile(QNetworkReply* reply, const QByteArray& buffer
 {
     auto findIt = mapReplyToFile_.find(reply);
     if (findIt == mapReplyToFile_.end()) {
+        qCDebug(logCategoryHcsDownloader) << "Reply:" << reply->url() << "not found in map.";
         return;
     }
 
     QFile file( findIt.value() );
     if (file.open(QIODevice::ReadWrite) == false) {
+        qCWarning(logCategoryHcsDownloader) << "Unable to open file:" << findIt.value() << "for:" << reply->url();
         return;
     }
     uint64_t file_size = file.size();
     file.seek(file_size);
 
-    file.write(buffer);
+    qint64 written = file.write(buffer);
+    if (written != buffer.size()) {
+        qCWarning(logCategoryHcsDownloader) << "Unable to write to file:" << findIt.value() << "for:" << reply->url();
+    }
 }
 
 QList<DownloadManager::DownloadItem>::iterator DownloadManager::findNextDownload()
@@ -208,11 +216,18 @@ QList<DownloadManager::DownloadItem>::iterator DownloadManager::findItemByFilena
 
 void DownloadManager::slotError()
 {
+    QNetworkReply* reply = qobject_cast<QNetworkReply*>( QObject::sender() );
+    Q_ASSERT(reply);
+
+    qCWarning(logCategoryHcsDownloader) << "download error on:" << reply->url();
 }
 
 void DownloadManager::sslErrors(const QList<QSslError>& /*errors*/)
 {
+    QNetworkReply* reply = qobject_cast<QNetworkReply*>( QObject::sender() );
+    Q_ASSERT(reply);
 
+    qCWarning(logCategoryHcsDownloader) << "download SSL error on:" << reply->url();
 }
 
 void DownloadManager::stopAllDownloads()
