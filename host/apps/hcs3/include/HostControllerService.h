@@ -99,6 +99,7 @@ private:
     Database db_;
     LoggingAdapter dbLogAdapter_;
     LoggingAdapter boardsLogAdapter_;
+    LoggingAdapter clientsLogAdapter_;
 
     StorageManager* storage_{nullptr};
 

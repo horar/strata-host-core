@@ -19,6 +19,7 @@
 HostControllerService::HostControllerService(QObject* parent) : QObject(parent)
     , dbLogAdapter_("strata.hcs.database")
     , boardsLogAdapter_("strata.hcs.boards")
+    , clientsLogAdapter_("strata.hcs.clients")
 {
     //handlers for 'cmd'
     clientCmdHandler_.insert( { std::string("request_hcs_status"), std::bind(&HostControllerService::onCmdHCSStatus, this, std::placeholders::_1) });
@@ -48,8 +49,11 @@ bool HostControllerService::initialize(const QString& config)
         return false;
     }
 
-    dispatcher_.setMsgHandler(std::bind(&HostControllerService::handleMesages, this, std::placeholders::_1) );
     db_.setLogAdapter(&dbLogAdapter_);
+    boards_.setLogAdapter(&boardsLogAdapter_);
+    clients_.setLogAdapter(&clientsLogAdapter_);
+
+    dispatcher_.setMsgHandler(std::bind(&HostControllerService::handleMesages, this, std::placeholders::_1) );
 
     rapidjson::Value& db_cfg = config_["database"];
 

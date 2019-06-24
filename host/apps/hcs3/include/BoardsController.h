@@ -4,9 +4,11 @@
 #include <PlatformManager.h>
 #include <set>
 
+#include "LoggingAdapter.h"
+
 class PlatformBoard;
 class HCS_Dispatcher;
-class LoggingAdapter;
+
 
 class BoardsController final
 {
@@ -31,6 +33,8 @@ public:
     void newConnection(spyglass::PlatformConnectionShPtr connection);
     void closeConnection(const std::string& connectionId);
     void notifyMessageFromConnection(const std::string& connectionId, const std::string& message);
+
+    void logging(LoggingAdapter::LogLevel level, const std::string& log_text);
 
 private:
     class ConnectionHandler : public spyglass::PlatformConnHandler

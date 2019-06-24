@@ -188,6 +188,13 @@ void BoardsController::notifyMessageFromConnection(const std::string& connection
     }
 }
 
+void BoardsController::logging(LoggingAdapter::LogLevel level, const std::string& log_text)
+{
+    if (logAdapter_) {
+        logAdapter_->Log(level, log_text);
+    }
+}
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 BoardsController::ConnectionHandler::ConnectionHandler() : receiver_(nullptr)
@@ -261,7 +268,8 @@ void BoardsController::ConnectionHandler::onNotifyReadConnection(spyglass::Platf
                 break;
             case PlatformBoard::ProcessResult::eParseError:
             case PlatformBoard::ProcessResult::eValidationError:
-                //TODO: add some error to log file...
+                std::string log_text = "Parsing or Validation error on connection:" + connection->getName();
+                receiver_->logging(LoggingAdapter::eLvlWarning, log_text);
                 break;
         }
     }
