@@ -16,9 +16,24 @@ public:
     BoardsController();
     ~BoardsController();
 
-    bool initialize(HCS_Dispatcher* dispatcher);
+    /**
+     * Setup logging adapter
+     * @param adapter
+     */
     void setLogAdapter(LoggingAdapter* adapter);
 
+    /**
+     * Initializes the boards controller
+     * @param dispatcher
+     * @return
+     */
+    bool initialize(HCS_Dispatcher* dispatcher);
+
+    /**
+     * Sends message to specified connection Id
+     * @param connectionId
+     * @param message
+     */
     void sendMessage(const std::string& connectionId, const std::string& message);
 
     PlatformBoard* getPlatformBoard(const std::string& connectionId);
