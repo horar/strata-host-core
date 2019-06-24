@@ -3,6 +3,8 @@
 
 #include <string>
 
+class QLoggingCategory;
+
 class LoggingAdapter final
 {
 public:
@@ -14,7 +16,8 @@ public:
     };
 
 public:
-    LoggingAdapter() = default;
+    LoggingAdapter(const char* log_category);
+    ~LoggingAdapter();
 
     /**
      * Logging function for pure C++ code (without QT)
@@ -22,6 +25,9 @@ public:
      * @param log_text logging text
      */
     void Log(LogLevel level, const std::string& log_text);
+
+private:
+    QLoggingCategory* category_;
 
 };
 

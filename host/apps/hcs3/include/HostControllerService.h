@@ -97,7 +97,8 @@ private:
     BoardsController boards_;
     ClientsController clients_;     //UI or other clients
     Database db_;
-    LoggingAdapter logAdapter_;
+    LoggingAdapter dbLogAdapter_;
+    LoggingAdapter boardsLogAdapter_;
 
     StorageManager* storage_{nullptr};
 

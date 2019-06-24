@@ -2,6 +2,7 @@
 #include "BoardsController.h"
 #include "PlatformBoard.h"
 #include "Dispatcher.h"
+#include "LoggingAdapter.h"
 
 #include <PlatformConnection.h>
 
@@ -30,6 +31,11 @@ bool BoardsController::initialize(HCS_Dispatcher* dispatcher)
     platform_mgr_.setPlatformHandler(&conn_handler_);
     platform_mgr_.StartLoop();
     return true;
+}
+
+void BoardsController::setLogAdapter(LoggingAdapter* adapter)
+{
+    logAdapter_ = adapter;
 }
 
 void BoardsController::sendMessage(const std::string& connectionId, const std::string& message)
@@ -126,6 +132,11 @@ void BoardsController::newConnection(spyglass::PlatformConnectionShPtr connectio
     item.msg_document = nullptr;
 
     dispatcher_->addMessage(item);
+
+    if (logAdapter_) {
+        std::string logText = "New board connected on:" + connection->getName();
+        logAdapter_->Log(LoggingAdapter::eLvlInfo, logText);
+    }
 }
 
 void BoardsController::closeConnection(const std::string& connectionId)
@@ -149,6 +160,11 @@ void BoardsController::closeConnection(const std::string& connectionId)
     item.msg_document = nullptr;
 
     dispatcher_->addMessage(item);
+
+    if (logAdapter_) {
+        std::string logText = "Board disconnected on:" + connectionId;
+        logAdapter_->Log(LoggingAdapter::eLvlInfo, logText);
+    }
 }
 
 void BoardsController::notifyMessageFromConnection(const std::string& connectionId, const std::string& message)
@@ -160,6 +176,11 @@ void BoardsController::notifyMessageFromConnection(const std::string& connection
     item.msg_document = nullptr;
 
     dispatcher_->addMessage(item);
+
+    if (logAdapter_) {
+        std::string logText = "Board msg on:" + connectionId;
+        logAdapter_->Log(LoggingAdapter::eLvlDebug, logText);
+    }
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////

@@ -6,6 +6,7 @@
 
 class PlatformBoard;
 class HCS_Dispatcher;
+class LoggingAdapter;
 
 class BoardsController final
 {
@@ -14,6 +15,7 @@ public:
     ~BoardsController();
 
     bool initialize(HCS_Dispatcher* dispatcher);
+    void setLogAdapter(LoggingAdapter* adapter);
 
     void sendMessage(const std::string& connectionId, const std::string& message);
 
@@ -59,6 +61,7 @@ private:
     ConnectionHandler conn_handler_;
 
     HCS_Dispatcher* dispatcher_{nullptr};
+    LoggingAdapter* logAdapter_{nullptr};
 };
 
 

@@ -3,25 +3,38 @@
 
 #include "logging/LoggingQtCategories.h"
 #include <QString>
+#include <QLoggingCategory>
+
+LoggingAdapter::LoggingAdapter(const char* log_category)
+{
+    category_ = new QLoggingCategory(log_category);
+}
+
+LoggingAdapter::~LoggingAdapter()
+{
+    delete category_;
+}
 
 void LoggingAdapter::Log(LogLevel level, const std::string& log_text)
 {
+    const QLoggingCategory& logCategory = *category_;
+
     switch(level)
     {
         case eLvlDebug:
-            qCDebug(logCategoryHcs) << QString::fromStdString(log_text);
+            qCDebug(logCategory) << QString::fromStdString(log_text);
             break;
 
         case eLvlInfo:
-            qCInfo(logCategoryHcs) << QString::fromStdString(log_text);
+            qCInfo(logCategory) << QString::fromStdString(log_text);
             break;
 
         case eLvlWarning:
-            qCWarning(logCategoryHcs) << QString::fromStdString(log_text);
+            qCWarning(logCategory) << QString::fromStdString(log_text);
             break;
 
         case eLvlCritical:
-            qCCritical(logCategoryHcs) << QString::fromStdString(log_text);
+            qCCritical(logCategory) << QString::fromStdString(log_text);
             break;
 
         default:
