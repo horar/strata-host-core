@@ -3,7 +3,7 @@ import QtQuick.Controls 2.3
 import "content-views"
 
 import tech.strata.fonts 1.0
-import tech.strata.sgwidgets 1.0
+import tech.strata.sgwidgets 0.9
 
 Rectangle {
     id: view

@@ -84,7 +84,7 @@ int main(int argc, char *argv[])
 
 #ifdef Q_OS_WIN
 #if WINDOWS_INSTALLER_BUILD
-    const QString hcsPath{ QDir::cleanPath(QString("%1/HCS/hcs2.exe").arg(app.applicationDirPath())) };
+    const QString hcsPath{ QDir::cleanPath(QString("%1/HCS/hcs.exe").arg(app.applicationDirPath())) };
     QString hcsConfigPath;
     TCHAR programDataPath[MAX_PATH];
     if (SUCCEEDED(SHGetFolderPath(NULL, CSIDL_COMMON_APPDATA, NULL, 0, programDataPath))) {
@@ -94,16 +94,16 @@ int main(int argc, char *argv[])
         qCCritical(logCategoryStrataDevStudio) << "Failed to get ProgramData path using windows API call...";
     }
 #else
-    const QString hcsPath{ QDir::cleanPath(QString("%1/hcs2.exe").arg(app.applicationDirPath())) };
+    const QString hcsPath{ QDir::cleanPath(QString("%1/hcs.exe").arg(app.applicationDirPath())) };
     const QString hcsConfigPath{ QDir::cleanPath(QString("%1/../../apps/hcs2/files/conf/host_controller_service.config_template").arg(app.applicationDirPath()))};
 #endif
 #endif
 #ifdef Q_OS_MACOS
-    const QString hcsPath{ QDir::cleanPath(QString("%1/../../../hcs2").arg(app.applicationDirPath())) };
+    const QString hcsPath{ QDir::cleanPath(QString("%1/../../../hcs").arg(app.applicationDirPath())) };
     const QString hcsConfigPath{ QDir::cleanPath(QString("%1/../../../../../apps/hcs2/files/conf/host_controller_service.config_template").arg(app.applicationDirPath()))};
 #endif
 #ifdef Q_OS_LINUX
-    const QString hcsPath{ QDir::cleanPath(QString("%1/hcs2").arg(app.applicationDirPath())) };
+    const QString hcsPath{ QDir::cleanPath(QString("%1/hcs").arg(app.applicationDirPath())) };
     const QString hcsConfigPath{ QDir::cleanPath(QString("%1/../../apps/hcs2/files/conf/host_controller_service.config").arg(app.applicationDirPath()))};
 #endif
 

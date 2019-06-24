@@ -6,7 +6,8 @@
 
 int main(int argc, char* argv[])
 {
-    qDebug() << "LOAD:" << QResource::registerResource(QStringLiteral("../../../fonts.rcc"));
+    qDebug() << "LOAD:"
+             << QResource::registerResource(QStringLiteral("../../../component-fonts.rcc"));
 
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 

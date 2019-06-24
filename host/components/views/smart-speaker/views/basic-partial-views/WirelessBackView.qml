@@ -1,5 +1,6 @@
 import QtQuick 2.9
 import QtQuick.Controls 2.2
+import tech.strata.sgwidgets 0.9
 
 Rectangle {
     id: root
@@ -9,6 +10,7 @@ Rectangle {
     opacity:1
     radius: 10
 
+    signal activated(string selectedNetwork)
 
     Text{
         id:networkName
@@ -20,40 +22,20 @@ Rectangle {
         anchors.horizontalCenter: parent.horizontalCenter
     }
 
-    Button {
-        id: fileButton
-        text: "Current Network"
-        onClicked: menu.open()
-
+    SGComboBox{
+        id: networkCombo
         anchors.top: networkName.bottom
         anchors.horizontalCenter: parent.horizontalCenter
 
-        background: Rectangle {
-                    implicitWidth: 100
-                    implicitHeight: 40
-                    color: fileButton.down ? "black" : "grey"
-                    border.color: "black"
-                    border.width: 0
-                    radius: 10
-                }
-        Menu {
-            id: menu
-            y: networkButton.height
+        model:  ["Network One", "Network Two", "Network Three"]
+        boxColor: "silver"
 
-            MenuItem {
-                text: "Network one"
-            }
-            MenuItem {
-                text: "Network two"
-            }
-            MenuItem {
-                text: "Network three"
-            }
-
-            onCurrentIndexChanged: {
-                fileButton.text = menu.itemAt[currentIndex].text
-            }
+        onActivated:{
+            //set the name of the selected device on the other side
+            console.log("chose value",currentText)
+            parent.activated(currentText);
         }
+
     }
 
 }

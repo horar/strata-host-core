@@ -30,21 +30,55 @@ bool ZmqConnector::close()
     return true;
 }
 
-int ZmqConnector::getFileDescriptor()
+connector_handle_t ZmqConnector::getFileDescriptor()
+{
+    if (false == socket_->valid()) {
+#if defined(_WIN32)
+        return 0;
+#else
+        return -1;
+#endif
+    }
+
+    connector_handle_t server_socket_file_descriptor;
+    size_t server_socket_file_descriptor_size = sizeof(server_socket_file_descriptor);
+    socket_->getsockopt(ZMQ_FD, &server_socket_file_descriptor,
+                        &server_socket_file_descriptor_size);
+    return server_socket_file_descriptor;
+}
+
+bool ZmqConnector::read(std::string& message, ReadMode read_mode)
+{
+    switch (read_mode)
+    {
+        case ReadMode::BLOCKING:
+            if (blockingRead(message)) {
+                return true;
+            }
+            break;
+        case ReadMode::NONBLOCKING:
+            if (read(message)) {
+                return true;
+            }
+            break;
+        default:
+            CONNECTOR_DEBUG_LOG("[Socket] read failed\n",);
+            break;           
+    }
+    return false;
+}
+
+bool ZmqConnector::blockingRead(std::string& message)
 {
     if (false == socket_->valid()) {
         return false;
     }
 
-#ifdef _WIN32
-    unsigned long long int server_socket_file_descriptor;
-#else
-    int server_socket_file_descriptor = 0;
-#endif
-    size_t server_socket_file_descriptor_size = sizeof(server_socket_file_descriptor);
-    socket_->getsockopt(ZMQ_FD, &server_socket_file_descriptor,
-                        &server_socket_file_descriptor_size);
-    return server_socket_file_descriptor;
+    if (s_recv(*socket_, message)) {
+        CONNECTOR_DEBUG_LOG("[Socket] Rx'ed message : %s\n", message.c_str());
+        return true;
+    }
+    return false;
 }
 
 bool ZmqConnector::read(std::string& message)
