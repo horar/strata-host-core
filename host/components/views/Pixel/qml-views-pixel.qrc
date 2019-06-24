@@ -1,0 +1,13 @@
+<RCC>
+    <qresource prefix="/views/pixel">
+        <file>Content.qml</file>
+        <file>Control.qml</file>
+        <file>control-views/IntensityControl.qml</file>
+        <file>control-views/SetupControl.qml</file>
+        <file>control-views/DebugMenu.qml</file>
+        <file>control-views/PlatformInterface.qml</file>
+        <file>control-views/question-circle-solid.svg</file>
+        <file>control-views/ControlDemo.qml</file>
+        <file>control-views/Pixelcontrol.qml</file>
+    </qresource>
+</RCC>

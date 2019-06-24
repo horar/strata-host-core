@@ -97,10 +97,27 @@ Item {
                     NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT, data)
                 }
             }
+
             Button {
                 text: "SmartSpeaker"
                 onClicked: {
                     var data = { class_id: "225"}
+                    NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT, data)
+                }
+            }
+
+            Button {
+                text: "Pixel UI"
+                onClicked: {
+                    var data = { class_id: "224"}
+                    NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT, data)
+                }
+            }
+
+            Button {
+                text: "ACF UI"
+                onClicked: {
+                    var data = { class_id: "acf"}
                     NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT, data)
                 }
             }
