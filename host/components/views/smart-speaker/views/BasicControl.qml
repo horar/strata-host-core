@@ -26,107 +26,126 @@ Rectangle {
     property real widthRatio: root.width / 1200
 
 
-    //----------------------------------------------------------------------------------------
-    //                      Views
-    //----------------------------------------------------------------------------------------
-
-
     Rectangle{
         id:deviceBackground
         color:backgroundColor
         radius:10
         height:(7*parent.height)/16
-        anchors.left:root.left
+        anchors.left:parent.left
         anchors.leftMargin: 12
-        anchors.right: root.right
+        anchors.right: parent.right
         anchors.rightMargin: 12
-        anchors.top:root.top
+        anchors.top:parent.top
         anchors.topMargin: 12
-        anchors.bottom:root.bottom
+        anchors.bottom:parent.bottom
         anchors.bottomMargin: 12
+    }
+    //----------------------------------------------------------------------------------------
+    //                      Views
+    //----------------------------------------------------------------------------------------
 
-
-        Text{
-            id:boardName
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.top:parent.top
-            text:"smart speaker"
-            color:"white"
-            font.pixelSize: 75
+    ScrollView {
+        //this allows the view to scroll if the window gets smaller than the basicView's minimum size
+        id: scrollView
+        anchors {
+            fill: root
         }
 
-        ParametricEQView{
-            id:eqView
-            height:500
-            width:400
-            anchors.left:parent.left
-            anchors.leftMargin:50
-            anchors.top:boardName.bottom
-            anchors.topMargin:50
+        Rectangle{
+            //put the contents of the basicControl view inside a rectangle of fixed size so that
+            //the contents can be scrolled when the window gets smaller
+            id:scrollViewContentRect
+            anchors.fill:parent
+            implicitHeight: 900
+            implicitWidth: 1300
+            color:"transparent"
 
-        }
-        CrossoverFrequencyView{
-            id:crossoverView
-            height:500
-            width:100
-            anchors.left: eqView.right
-            anchors.leftMargin: 20
-            anchors.verticalCenter: eqView.verticalCenter
 
-            crossoverFrequency:200
-        }
 
-        MixerView{
-            id:mixerView
-            height:500
-            width:600
-            anchors.left:crossoverView.right
-            anchors.leftMargin:20
-            anchors.verticalCenter: eqView.verticalCenter
-        }
 
-        //bottom row
 
-        BluetoothView{
-            id:bluetoothView
-            height:200
-            width:200
-            anchors.left: parent.left
-            anchors.leftMargin: 50
-            anchors.top: eqView.bottom
-            anchors.topMargin:50
+            Text{
+                id:boardName
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.top:parent.top
+                text:"smart speaker"
+                color:"white"
+                font.pixelSize: 75
+            }
 
-            device: "not paired"
-        }
+            ParametricEQView{
+                id:eqView
+                height:500
+                width:500
+                anchors.left:parent.left
+                anchors.leftMargin:50
+                anchors.top:boardName.bottom
+                anchors.topMargin:50
 
-        WirelessView{
-            id:wirelessView
-            height:200
-            width:200
-            anchors.left: bluetoothView.right
-            anchors.leftMargin: 50
-            anchors.verticalCenter: bluetoothView.verticalCenter
+            }
+            //        CrossoverFrequencyView{
+            //            id:crossoverView
+            //            height:500
+            //            width:100
+            //            anchors.left: eqView.right
+            //            anchors.leftMargin: 20
+            //            anchors.verticalCenter: eqView.verticalCenter
 
-            networkName:"not connected"
-        }
+            //            crossoverFrequency:200
+            //        }
 
-        PortInfo{
-            id:portInfoView
-            height:200
-            anchors.left: wirelessView.right
-            anchors.leftMargin: 50
-            anchors.verticalCenter: bluetoothView.verticalCenter
-        }
+            MixerView{
+                id:mixerView
+                height:500
+                width:600
+                anchors.left:eqView.right
+                anchors.leftMargin:50
+                anchors.verticalCenter: eqView.verticalCenter
+            }
 
-        InputVoltageView{
-            id:inputVoltageView
-            height:200
-            width:200
-            anchors.left: portInfoView.right
-            anchors.leftMargin: 50
-            anchors.verticalCenter: bluetoothView.verticalCenter
+            //bottom row
 
-            inputVoltage:"20"
+            BluetoothView{
+                id:bluetoothView
+                height:200
+                width:200
+                anchors.left: parent.left
+                anchors.leftMargin: 50
+                anchors.top: eqView.bottom
+                anchors.topMargin:50
+
+                device: "not paired"
+            }
+
+            WirelessView{
+                id:wirelessView
+                height:200
+                width:200
+                anchors.left: bluetoothView.right
+                anchors.leftMargin: 50
+                anchors.verticalCenter: bluetoothView.verticalCenter
+
+                networkName:"not connected"
+            }
+
+            PortInfo{
+                id:portInfoView
+                height:200
+                anchors.left: wirelessView.right
+                anchors.leftMargin: 50
+                anchors.verticalCenter: bluetoothView.verticalCenter
+            }
+
+            InputVoltageView{
+                id:inputVoltageView
+                height:200
+                width:200
+                anchors.left: portInfoView.right
+                anchors.leftMargin: 50
+                anchors.verticalCenter: bluetoothView.verticalCenter
+
+                inputVoltage:"20"
+            }
         }
     }
 
