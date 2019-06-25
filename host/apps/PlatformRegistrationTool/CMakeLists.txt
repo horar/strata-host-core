@@ -99,10 +99,6 @@ if(WIN32)
     )
 endif()
 
-target_compile_options(${PROJECT_NAME}
-    PRIVATE $<$<CXX_COMPILER_ID:AppleClang>:-Wall -Wextra>
-)
-
 target_compile_definitions(${PROJECT_NAME}
 #    PRIVATE QT_QML_DEBUG
     PRIVATE QT_DEPRECATED_WARNINGS

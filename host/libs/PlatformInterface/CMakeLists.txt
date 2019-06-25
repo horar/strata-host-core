@@ -33,10 +33,6 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
     AUTOMOC ON
 )
 
-target_compile_options(${PROJECT_NAME}
-    PRIVATE $<$<CXX_COMPILER_ID:AppleClang>:-Wall -Wextra>
-)
-
 target_compile_definitions(${PROJECT_NAME}
     PRIVATE QT_DEPRECATED_WARNINGS
     PRIVATE QT_DISABLE_DEPRECATED_BEFORE=0x060000
