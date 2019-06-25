@@ -1,6 +1,5 @@
 .pragma library
 .import QtQuick 2.0 as QtQuickModule
-.import "metrics.js" as Metrics
 .import "uuid_map.js" as UuidMap
 
 .import tech.strata.logger 1.0 as LoggerModule
@@ -87,9 +86,6 @@ function getQMLFile(class_id, filename) {
 */
 function init(flipable_parent, control_parent, content_parent, bar_parent)
 {
-    // Create metrics object to track usage
-    Metrics.init(context)
-
     flipable_parent_    = flipable_parent
     control_container_ = control_parent
     content_container_ = content_parent
@@ -274,9 +270,6 @@ function updateState(event, data)
                     // Show control when connected
                     var qml_control = getQMLFile(context.class_id, "Control")
                     createView(qml_control, control_container_)
-
-                    // Restart timer of control
-                    Metrics.restartTimer()
                 }
                 else {
                     // Disconnected; Show detection page
@@ -287,10 +280,6 @@ function updateState(event, data)
                 if(context.class_id !== ""){
                     var qml_content = getQMLFile(context.class_id, "Content")
                     var contentObject = createView(qml_content, content_container_)
-
-                    // Insert Listener
-                    Metrics.injectEventToTree(contentObject)
-                    Metrics.restartTimer()
                 }
                 else {
                     // Otherwise; no platform has been connected or chosen
@@ -323,18 +312,6 @@ function updateState(event, data)
                 break;
 
             case events.TOGGLE_CONTROL_CONTENT:
-                // Send request to metrics service when entering and leaving platform control view
-                var pageName = '';
-                if(flipable_parent_.flipped===false){
-                    console.log(LoggerModule.Logger.devStudioNavigationControlCategory, "In flipable ",context.class_id)
-                    pageName = context.class_id +' Control'
-                }else {
-                    var currentTabName = Metrics.getCurrentTab()
-                    pageName = context.class_id +' '+ currentTabName
-                }
-
-                Metrics.sendMetricsToCloud(pageName)
-
                 // Flip to show control/content
                 flipable_parent_.flipped = !flipable_parent_.flipped
 

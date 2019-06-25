@@ -1,4 +1,4 @@
-#include "BoardsController.h"
+#include <BoardsController.h>
 #include "SciModel.h"
 #include "SgUtilsCpp.h"
 #include "SgJLinkConnector.h"

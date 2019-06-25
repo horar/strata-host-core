@@ -1,11 +1,13 @@
-#include "ProgramDeviceTask.h"
+#include "FlasherConnector.h"
 
-ProgramDeviceTask::ProgramDeviceTask(spyglass::PlatformConnectionShPtr connection, const QString &firmwarePath)
+#include <QThreadPool>
+
+FlasherTask::FlasherTask(spyglass::PlatformConnectionShPtr connection, const QString &firmwarePath)
     : connection_(connection), firmwarePath_(firmwarePath)
 {
 }
 
-void ProgramDeviceTask::run()
+void FlasherTask::run()
 {
     Q_ASSERT(connection_ != nullptr);
     if (connection_ == nullptr) {
@@ -30,4 +32,22 @@ void ProgramDeviceTask::run()
     }
 
     emit taskDone(connectionId, false);
+}
+
+FlasherConnector::FlasherConnector(QObject *parent)
+    : QObject(parent)
+{
+}
+
+void FlasherConnector::start(spyglass::PlatformConnectionShPtr connection, const QString &firmwarePath)
+{
+    FlasherTask *task = new FlasherTask(connection, firmwarePath);
+
+    connect(task, &FlasherTask::taskDone,
+            this, &FlasherConnector::taskDone);
+
+    connect(task, &FlasherTask::notify,
+            this, &FlasherConnector::notify);
+
+    QThreadPool::globalInstance()->start(task);
 }

@@ -24,7 +24,7 @@ void BoardsController::initialize()
         platform_mgr_.StartLoop();
     } else {
         //TODO: notify user
-        qCCritical(logCategorySci) << "Initialization of platform manager failed";
+        qCCritical(logCategoryBoardsController) << "Initialization of platform manager failed";
     }
 }
 
@@ -35,7 +35,7 @@ void BoardsController::sendCommand(QString connection_id, QString message)
         return;
     }
 
-    qCInfo(logCategorySci) << "message to send" << connection_id << message;
+    qCInfo(logCategoryBoardsController) << "message to send" << connection_id << message;
 
     conn->addMessage(message.toStdString() );
 }
@@ -86,7 +86,7 @@ bool BoardsController::disconnect(const QString &connectionId)
 {
     bool isRemoved = platform_mgr_.removeConnection(connectionId.toStdString());
     if (isRemoved == false) {
-        qCWarning(logCategorySci) << "board could not be disconnected" << connectionId;
+        qCWarning(logCategoryBoardsController) << "board could not be disconnected" << connectionId;
         return false;
     }
 
@@ -106,14 +106,14 @@ spyglass::PlatformConnectionShPtr BoardsController::getConnection(const QString 
 
 void BoardsController::newConnection(const QString &connectionId)
 {
-    qCInfo(logCategorySci) << "new connection" << connectionId;
+    qCInfo(logCategoryBoardsController) << "new connection" << connectionId;
 
     if (connectionIds_.indexOf(connectionId) < 0) {
         connectionIds_.append(connectionId);
         emit connectionIdsChanged();
     }
     else {
-        qCWarning(logCategorySci) << "board is already connected" << connectionId;
+        qCWarning(logCategoryBoardsController) << "board is already connected" << connectionId;
     }
 
     emit connectedBoard(connectionId);
@@ -121,7 +121,7 @@ void BoardsController::newConnection(const QString &connectionId)
 
 void BoardsController::activeConnection(const QString &connectionId)
 {
-    qCInfo(logCategorySci).noquote()
+    qCInfo(logCategoryBoardsController).noquote()
             << "active connection"
             << QJsonDocument::fromVariant(getConnectionInfo(connectionId)).toJson(QJsonDocument::Compact);
 
@@ -130,13 +130,13 @@ void BoardsController::activeConnection(const QString &connectionId)
 
 void BoardsController::closeConnection(const QString &connectionId)
 {
-    qCInfo(logCategorySci) << "close connection" << connectionId;
+    qCInfo(logCategoryBoardsController) << "close connection" << connectionId;
 
     int ret = connectionIds_.removeAll(connectionId);
     emit connectionIdsChanged();
 
     if (ret != 1) {
-        qCWarning(logCategorySci) << "suspicious number of boards removed" << connectionId << ret;
+        qCWarning(logCategoryBoardsController) << "suspicious number of boards removed" << connectionId << ret;
     }
 
     emit disconnectedBoard(connectionId);
@@ -147,7 +147,7 @@ void BoardsController::notifyMessageFromConnection(const QString &connectionId, 
     QJsonParseError error;
     QJsonDocument::fromJson(message.toUtf8(), &error);
     if (error.error != QJsonParseError::NoError) {
-        qCWarning(logCategorySci).noquote()
+        qCWarning(logCategoryBoardsController).noquote()
                 << "received message"
                 << "connectionId=" << connectionId
                 << "error=" << error.errorString()

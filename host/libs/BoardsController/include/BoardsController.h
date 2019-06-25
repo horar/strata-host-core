@@ -1,5 +1,5 @@
-#ifndef SCI_BOARDCONTROLER_H
-#define SCI_BOARDCONTROLER_H
+#ifndef BOARDSCONTROLER_H
+#define BOARDSCONTROLER_H
 
 #include <QObject>
 #include <QVariantMap>
@@ -69,5 +69,4 @@ private:
     QStringList connectionIds_;
 };
 
-
-#endif //SCI_BOARDCONTROLER_H
+#endif //BOARDSCONTROLER_H

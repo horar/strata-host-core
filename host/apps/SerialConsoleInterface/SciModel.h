@@ -1,10 +1,11 @@
 #ifndef SCIMODEL_H
 #define SCIMODEL_H
 
-#include "BoardsController.h"
 #include "SgJLinkConnector.h"
 
+#include <FlasherConnector.h>
 #include <PlatformManager.h>
+#include <BoardsController.h>
 
 #include <QObject>
 
@@ -35,6 +36,7 @@ private slots:
 private:
     BoardsController boardController_;
     SgJLinkConnector jLinkConnector_;
+    FlasherConnector flasherConnector_;
 };
 
 #endif  // SCIMODEL_H

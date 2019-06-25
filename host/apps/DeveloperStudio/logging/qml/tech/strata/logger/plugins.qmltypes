@@ -33,7 +33,6 @@ Module {
             isPointer: true
         }
         Property { name: "devStudioLoginCategory"; type: "QQmlLoggingCategory"; isPointer: true }
-        Property { name: "devStudioMetricsCategory"; type: "QQmlLoggingCategory"; isPointer: true }
         Property { name: "devStudioHelpCategory"; type: "QQmlLoggingCategory"; isPointer: true }
         Property { name: "devStudioFeedbackCategory"; type: "QQmlLoggingCategory"; isPointer: true }
         Property {
