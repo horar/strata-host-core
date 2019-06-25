@@ -75,9 +75,6 @@ target_include_directories(${PROJECT_NAME}
 set(PRODUCT_NAME_LONG "Strata Developer Studio")
 set(PRODUCT_NAME_COPYRIGHT "Copyright (C) 2018-2019 ON Semiconductor")
 set_target_properties(${PROJECT_NAME} PROPERTIES
-    CXX_STANDARD 17
-    CXX_STANDARD_REQUIRED ON
-    CXX_EXTENSIONS OFF
     AUTOMOC ON
     AUTORCC ON
     #AUTORCC_OPTIONS "--compress;9"
