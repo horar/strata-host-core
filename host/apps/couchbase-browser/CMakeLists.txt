@@ -4,10 +4,40 @@ project(couchbase-browser
 )
 
 # Find the QtWidgets library
-find_package(Qt5 COMPONENTS Widgets REQUIRED)
+find_package(Qt5 ${VERSION_QT5}
+    COMPONENTS Widgets Core Gui Quick WebView WebEngine Qml
+    REQUIRED
+)
 
-set(CMAKE_AUTOUIC ON)
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC ON)
+#set(CMAKE_AUTOUIC ON)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+set(SRCS
+    src/databaseinterface.cpp
+    src/databaseinterface.h
+    src/main.cpp
+)
+
+add_executable(${PROJECT_NAME})
+target_sources(${PROJECT_NAME} PRIVATE
+    ${SRCS}
+    qmlui.qrc
+)
+
+target_link_libraries(${PROJECT_NAME}
+    couchbase-lite-cpp
+    Qt5::Core
+    Qt5::Qml
+    Qt5::Quick
+    Qt5::Gui
+    Qt5::Widgets
+    Qt5::WebEngine
+    Qt5::WebView
+)
 
 if(APPLE)
     find_library(IOKIT_LIB IOKit REQUIRED)
@@ -18,46 +48,14 @@ if(APPLE)
     if (NOT FOUNDATION_LIB)
         message(FATAL_ERROR "Foundation framework not found")
     endif()
-endif()
-
-#add_executable(${PROJECT_NAME}
-#    src/main.cpp
-#)
-
-set(SRCS
-    src/databaseinterface.cpp
-    src/databaseinterface.h
-    src/cb_browser.ui
-    src/cb_browser.cpp
-    src/cb_browser.h
-    src/main.cpp
-)
-
-#qt5_wrap_ui(UI_HEADERS
-#    src/cb_browser.ui
-#)
-
-add_executable(${PROJECT_NAME} ${SRCS})
-
-#add_executable(${PROJECT_NAME} ${UI_HEADERS})
-
-#add_executable(${PROJECT_NAME} ${SRCS} ${UI_HEADERS})
-
-target_link_libraries(${PROJECT_NAME}
-#    flasher
-#    PlatformManager
-#    StrataSerialPort
-    couchbase-lite-cpp
-    Qt5::Widgets
-)
-
-
-
-
-
-if (APPLE)
     target_link_libraries(${PROJECT_NAME}
         ${IOKIT_LIB}
         ${FOUNDATION_LIB}
     )
 endif()
+
+set(PRODUCT_NAME_LONG "Couchbase Browser")
+set(PRODUCT_NAME_COPYRIGHT "Copyright (C) 2019 ON Semiconductor")
+set_target_properties(${PROJECT_NAME} PROPERTIES
+    OUTPUT_NAME "${PRODUCT_NAME_LONG}"
+)

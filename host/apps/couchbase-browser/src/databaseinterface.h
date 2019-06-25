@@ -1,16 +1,17 @@
 #ifndef DATABASEINTERFACE_H
 #define DATABASEINTERFACE_H
 
+#include <QObject>
 #include <QCoreApplication>
 #include <QTextStream>
 #include <QFileDialog>
 #include <QTextEdit>
 #include <QDir>
+#include <QQmlProperty>
+#include <QDebug>
 
 #include <iostream>
 
-#include "cb_browser.h"
-#include "ui_cb_browser.h"
 #include "SGFleece.h"
 #include "SGCouchBaseLite.h"
 
@@ -20,24 +21,31 @@ using namespace fleece::impl;
 using namespace std::placeholders;
 using namespace Spyglass;
 
-class DatabaseInterface
+class DatabaseInterface : public QObject
 {
+    Q_OBJECT
+
 public:
-    DatabaseInterface(QString file_path);
+    explicit DatabaseInterface(QObject *parent = nullptr);
+
+    //DatabaseInterface(QString file_path);
+
+    QObject *mainComponent;
+    void setMainComponent(QObject *component);
 
     QString m_file_path, m_db_path, m_db_name;
 
-    void setFilePath(QString file_path);
+    Q_INVOKABLE void setFilePath(QString file_path);
 
-    QString getFilePath();
+    Q_INVOKABLE QString getFilePath();
 
-    void setDBPath(QString db_path);
+    Q_INVOKABLE void setDBPath(QString db_path);
 
-    QString getDBPath();
+    Q_INVOKABLE QString getDBPath();
 
-    void setDBName(QString db_name);
+    Q_INVOKABLE void setDBName(QString db_name);
 
-    QString getDBName();
+    Q_INVOKABLE QString getDBName();
 
     void parseFilePath();
 
@@ -47,13 +55,13 @@ public:
 
     vector<string> document_keys;
 
-    vector<pair<string,string>> document_contents;
+    vector<QString> document_contents;
 
     int setDocumentKeys();
 
-    void setDocumentContents();
+    Q_INVOKABLE void setDocumentContents();
 
-    vector<pair<string,string>> getDocumentContents();
+    Q_INVOKABLE vector<QString> getDocumentContents();
 };
 
 #endif // DATABASEINTERFACE_H

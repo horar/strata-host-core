@@ -2,15 +2,26 @@
 
 #define DEBUG(...) printf("TEST Database Interface: "); printf(__VA_ARGS__)
 
-DatabaseInterface::DatabaseInterface(QString file_path) : m_file_path(file_path)
+DatabaseInterface::DatabaseInterface(QObject *parent) :
+    QObject(parent)
 {
-    parseFilePath();
+}
 
-    db_init();
+//DatabaseInterface::DatabaseInterface(QString file_path) : m_file_path(file_path)
+//{
+//    parseFilePath();
+
+//    db_init();
+//}
+
+void DatabaseInterface::setMainComponent(QObject *component)
+{
+    mainComponent = component;
 }
 
 int DatabaseInterface::db_init()
 {
+    qDebug() << m_db_name << m_db_path;
     sg_db = new SGDatabase(m_db_name.toStdString(), m_db_path.toStdString());
 
 
@@ -43,6 +54,10 @@ int DatabaseInterface::db_init()
 void DatabaseInterface::setFilePath(QString file_path)
 {
     m_file_path = file_path;
+    parseFilePath();
+    db_init();
+
+    QQmlProperty::write(mainComponent,"fileName",getDBName());
 }
 
 QString DatabaseInterface::getFilePath()
@@ -94,23 +109,25 @@ int DatabaseInterface::setDocumentKeys()
 
 void DatabaseInterface::setDocumentContents()
 {
-    QString str;
+   QString final_str;
 
-    // Printing the list of documents key from the local DB.
-    for(std::vector <string>::iterator iter = document_keys.begin(); iter != document_keys.end(); iter++) {
+   document_contents.clear();
 
-        SGDocument usbPDDocument(sg_db, (*iter));
+   // Printing the list of documents key from the local DB.
+   for(std::vector <string>::iterator iter = document_keys.begin(); iter != document_keys.end(); iter++) {
 
-        pair<string,string> keyAndValue;
+       SGDocument usbPDDocument(sg_db, (*iter));
 
-        keyAndValue.first = (*iter).c_str();
-        keyAndValue.second = usbPDDocument.getBody().c_str();
+       final_str = "{\"id\":\""  + QString((*iter).c_str()) + QString("\", \"body\": ") + QString(usbPDDocument.getBody().c_str()) + QString("}");
 
-        document_contents.push_back(keyAndValue);
-    }
+       cout << final_str.toStdString() << endl;
+
+       document_contents.push_back(final_str);
+   }
+   QQmlProperty::write(mainComponent,"contentArray",final_str);
 }
 
-vector<pair<string,string>> DatabaseInterface::getDocumentContents()
+vector<QString> DatabaseInterface::getDocumentContents()
 {
     return document_contents;
 }

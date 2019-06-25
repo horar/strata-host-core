@@ -1,0 +1,15 @@
+<RCC>
+    <qresource prefix="/">
+        <file>qml/Images/closeIcon.png</file>
+        <file>qml/Images/createDocumentIcon.png</file>
+        <file>qml/Images/OnLogo copy.png</file>
+        <file>qml/Images/OnLogo.png</file>
+        <file>qml/Images/openFolderIcon.png</file>
+        <file>qml/Images/saveIcon.png</file>
+        <file>qml/BodyDisplay.qml</file>
+        <file>qml/main.qml</file>
+        <file>qml/MainWindow.qml</file>
+        <file>qml/SystemMenu.qml</file>
+        <file>qml/TableSelector.qml</file>
+    </qresource>
+</RCC>
