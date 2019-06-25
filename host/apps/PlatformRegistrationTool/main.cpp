@@ -13,8 +13,12 @@ int main(int argc, char *argv[])
 {
     QCoreApplication::setOrganizationName(QStringLiteral("ON Semiconductor"));
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+    QSettings::setDefaultFormat(QSettings::IniFormat);
 
     QGuiApplication app(argc, argv);
+
+    const QtLoggerSetup loggerInitialization(app);
+    qCInfo(logCategoryPrt) << QStringLiteral("%1 v%2").arg(QCoreApplication::applicationName()).arg(QCoreApplication::applicationVersion());
 
     QQmlApplicationEngine engine;
 
