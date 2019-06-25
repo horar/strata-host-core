@@ -15,9 +15,6 @@ add_executable(${PROJECT_NAME})
 target_sources(${PROJECT_NAME} PRIVATE
     main.cpp
     PrtModel.cpp
-    SgSortFilterProxyModel.cpp
-    SgJLinkConnector.cpp
-
     images/images.qrc
     qml.qrc
 
@@ -65,8 +62,7 @@ target_link_libraries(${PROJECT_NAME}
     Qt5::Qml
     Qt5::Quick
 
-    PlatformManager
-    flasher
+    BoardsController
     QtLogger
 )
 
