@@ -336,6 +336,8 @@ Item {
                 implicitHeight: root.height - 20
 
                 boardController: sciModel.boardController
+                closeButtonVisible: true
+                requestCancelOnClose: true
 
                 onCancelRequested: {
                     dialog.close()
