@@ -27,7 +27,10 @@ Item {
         "vin": 12.00,			//input voltage (float) two decimal point accuracy
         "vout": 12.00,			//output voltage (float) two decimal point accuracy
         "iin": 1.00	,			//input current (float) two decimal point accuracy
-        "iout": 1.00			//output current (float) two decimal point accuracy
+        "iout": 1.00,			//output current (float) two decimal point accuracy
+        "vin_led": "good",
+        "tf1_led": "good",
+        "tf2_led": "good",
     }
 
 
@@ -205,6 +208,8 @@ Item {
 
                               })
 
+    property bool enable_1: false
+    property bool enable_2: false
     // -------------------------------------------------------------------
     // Listens to message notifications coming from CoreInterface.cpp
     // Forward messages to core_platform_interface.js to process

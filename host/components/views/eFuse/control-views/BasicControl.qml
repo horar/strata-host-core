@@ -14,30 +14,39 @@ Item {
     width: parent.width / parent.height > initialAspectRatio ? parent.height * initialAspectRatio : parent.width
     height: parent.width / parent.height < initialAspectRatio ? parent.width / initialAspectRatio : parent.height
 
-    property var temp1_noti: platformInterface.status.temperature1
+    property var temp1_noti: platformInterface.periodic_status.temperature1
     onTemp1_notiChanged: {
-        sgCircularGauge.value = temp1_noti
+        sgCircularGauge.value = temp1_noti.toFixed(2)
     }
-    property var temp2_noti: platformInterface.status.temperature2
+    property var temp2_noti: platformInterface.periodic_status.temperature2
     onTemp2_notiChanged: {
-        sgCircularGauge2.value = temp2_noti
+        sgCircularGauge2.value = temp2_noti.toFixed(2)
     }
-    property var vin_noti: platformInterface.status.vin
+    property var vin_noti: platformInterface.periodic_status.vin
     onVin_notiChanged: {
         inputVoltage.info = vin_noti.toFixed(2)
     }
-    property var vout_noti: platformInterface.status.vout
+    property var vout_noti: platformInterface.periodic_status.vout
     onVout_notiChanged: {
         ouputVoltage.info = vout_noti.toFixed(2)
     }
-    property var iin_noti: platformInterface.status.iin
+    property var iin_noti: platformInterface.periodic_status.iin
     onIin_notiChanged: {
         inputCurrent.info = iin_noti.toFixed(2)
     }
-    property var iout_noti: platformInterface.status.iout
+    property var iout_noti: platformInterface.periodic_status.iout
     onIout_notiChanged: {
         ouputCurrent.info = iout_noti.toFixed(2)
     }
+
+    property var vin_status_noti: platformInterface.periodic_status.vin_led
+    onVin_status_notiChanged: {
+        if(vin_status_noti === "good"){
+            vinLed.status = "green"
+        }
+        else vinLed.status = "red"
+    }
+
 
 
 
@@ -78,7 +87,7 @@ Item {
 
                 SGCircularGauge {
                     id: sgCircularGauge
-                    value: platformInterface.periodic_status.temperature1.toFixed(2)
+                    //value: platformInterface.periodic_status.temperature1.toFixed(2)
                     minimumValue: -55
                     maximumValue: 125
                     tickmarkStepSize: 10
@@ -102,7 +111,7 @@ Item {
                     height: parent.height
                     minimumValue: -55
                     maximumValue: 125
-                    value: platformInterface.periodic_status.temperature2.toFixed(2)
+                    //value: platformInterface.periodic_status.temperature2.toFixed(2)
                     tickmarkStepSize: 10
                     gaugeRearColor: "white"                  // Default: "#ddd"(background color that gets filled in by gauge)
                     centerColor: "white"
@@ -240,10 +249,13 @@ Item {
                             grooveColor: "black"             // Default: "#ccc"
                             grooveFillColor: "black"         // Default: "#0cf"
                             Layout.alignment: Qt.AlignCenter
+                            checked: platformInterface.enable_1
                             onToggled: {
                                 if(checked)
                                     platformInterface.set_enable_1.update("on")
                                 else  platformInterface.set_enable_1.update("off")
+
+                                platformInterface.enable_1 = checked
 
                             }
                         }
@@ -267,17 +279,20 @@ Item {
                             grooveFillColor: "black"         // Default: "#0cf"
                             Layout.alignment: Qt.AlignCenter
                             Layout.topMargin: 10
+                            checked: platformInterface.enable_2
 
                             onToggled: {
                                 if(checked)
                                     platformInterface.set_enable_2.update("on")
                                 else platformInterface.set_enable_2.update("off")
 
+                                platformInterface.enable_2 = checked
                             }
 
                         }
 
                         SGStatusLight {
+                            id:vinLed
                             width: parent.width
                             height: parent.height/3
                             label: "<b>Input Voltage  Good:</b>" // Default: "" (if not entered, label will not appear)
