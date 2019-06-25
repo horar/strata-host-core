@@ -171,7 +171,7 @@ Item {
                             }
 
                             visible: delegate.hovered
-                            hasAlternativeColor: model.index !== delegate.currentIndex
+                            alternativeColorEnabled: model.index !== delegate.currentIndex
                             icon.source: "qrc:/sgimages/times.svg"
                             onClicked: {
                                 if (model.status === "connected") {
@@ -216,7 +216,7 @@ Item {
                 spacing: 4
 
                 SGWidgets.SGIconButton {
-                    hasAlternativeColor: true
+                    alternativeColorEnabled: true
                     icon.source: sidePane.shown ? "qrc:/images/side-pane-right-close.svg" : "qrc:/images/side-pane-right-open.svg"
                     iconSize: 26
                     onClicked: {
