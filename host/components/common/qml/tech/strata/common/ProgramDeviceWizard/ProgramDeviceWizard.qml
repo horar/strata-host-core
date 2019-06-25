@@ -15,6 +15,7 @@ Item {
     property string bootloaderPath
     property bool useJLink: false
     property int spacing: 10
+    property bool closeButtonVisible: false
     property bool requestCancelOnClose: false
 
     signal cancelRequested()
@@ -337,6 +338,7 @@ Item {
                         }
                     }
                     focusPolicy: Qt.NoFocus
+                    visible: closeButtonVisible
                 }
 
                 SGWidgets.SGButton {
