@@ -343,6 +343,7 @@ Item {
 
                 SGWidgets.SGButton {
                     text: qsTr("Begin")
+                    icon.source: "qrc:/sgimages/chip-flash.svg"
                     focusPolicy: Qt.NoFocus
 
                     onClicked: {
