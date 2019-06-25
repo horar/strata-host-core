@@ -13,7 +13,7 @@ Button {
     icon.width: iconSize
     icon.height: iconSize
 
-    property bool hasAlternativeColor: false
+    property bool alternativeColorEnabled: false
     property alias fontSizeMultipier: textItem.fontSizeMultiplier
     property int minimumContentHeight: -1
     property int minimumContentWidth: -1
@@ -116,7 +116,7 @@ Button {
                 }
 
                 text: control.text
-                hasAlternativeColor: control.checked || control.hasAlternativeColor
+                alternativeColorEnabled: control.checked || control.alternativeColorEnabled
                 horizontalAlignment: Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter
                 opacity: enabled ? 1 : 0.5

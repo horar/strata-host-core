@@ -9,10 +9,10 @@ SGWidgets.SGButton {
     backgroundOnlyOnHovered: true
     scaleToFit: true
 
-    iconColor: hasAlternativeColor ? alternativeIconColor : implicitIconColor
-    color: hasAlternativeColor ? "#555555" : implicitColor
+    iconColor: alternativeColorEnabled ? alternativeIconColor : implicitIconColor
+    color: alternativeColorEnabled ? "#555555" : implicitColor
 
     property color implicitIconColor: "black"
     property color alternativeIconColor: "white"
-    property bool hasAlternativeColor: false
+    property bool alternativeColorEnabled: false
 }

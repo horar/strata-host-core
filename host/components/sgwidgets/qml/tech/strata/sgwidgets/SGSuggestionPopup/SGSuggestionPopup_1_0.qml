@@ -275,7 +275,7 @@ Popup {
 
                 elide: Text.ElideRight
                 text: popup.textRole? model[popup.textRole] : modelData
-                hasAlternativeColor: parent.ListView.isCurrentItem
+                alternativeColorEnabled: parent.ListView.isCurrentItem
             }
 
             MouseArea {

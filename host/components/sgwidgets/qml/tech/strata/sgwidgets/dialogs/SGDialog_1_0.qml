@@ -50,7 +50,7 @@ Dialog {
             text: dialog.title
             fontSizeMultiplier: 1.5
             font.bold: true
-            hasAlternativeColor: true
+            alternativeColorEnabled: true
         }
     }
 

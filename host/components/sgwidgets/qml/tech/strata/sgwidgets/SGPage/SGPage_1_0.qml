@@ -32,7 +32,7 @@ Page {
 
             icon.source: "qrc:/sgimages/chevron-left.svg"
             iconSize: parent.height - 16
-            hasAlternativeColor: true
+            alternativeColorEnabled: true
             visible: hasBack
             onClicked: goBack()
         }
@@ -45,7 +45,7 @@ Page {
 
             text: page.title
             fontSizeMultiplier: 2.0
-            hasAlternativeColor: true
+            alternativeColorEnabled: true
         }
     }
 }
