@@ -25,6 +25,7 @@ var uuid_map = {
     "TEST.2018.002.0.0": "motor-vortex",
     "entice_rgb" : "entice_rgb",
     "template": "template",
+    "ACF-PSU": "ACF-PSU",
     /*****
         CES HACK (class_id)
     *****/
@@ -49,5 +50,5 @@ var uuid_map = {
     "219": "15A-switcher",
     "220": "15A-switcher",
     "222": "subGHz",
-    "225": "smart-speaker"
+    "225": "smart-speaker",
 }

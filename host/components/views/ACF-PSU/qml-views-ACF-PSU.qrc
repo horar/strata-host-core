@@ -1,0 +1,11 @@
+<RCC>
+    <qresource prefix="/views/ACF-PSU">
+        <file>Content.qml</file>
+        <file>Control.qml</file>
+        <file>control-views/AdvancedControl.qml</file>
+        <file>control-views/BasicControl.qml</file>
+        <file>control-views/DebugMenu.qml</file>
+        <file>control-views/PlatformInterface.qml</file>
+        <file>control-views/question-circle-solid.svg</file>
+    </qresource>
+</RCC>
