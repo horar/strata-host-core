@@ -15,6 +15,7 @@ Item {
     property string bootloaderPath
     property bool useJLink: false
     property int spacing: 10
+    property bool requestCancelOnClose: false
 
     signal cancelRequested()
 
@@ -330,7 +331,11 @@ Item {
 
                 SGWidgets.SGButton {
                     text: qsTr("Close")
-                    onClicked: cancelRequested()
+                    onClicked: {
+                        if(requestCancelOnClose) {
+                            cancelRequested()
+                        }
+                    }
                     focusPolicy: Qt.NoFocus
                 }
 
@@ -713,7 +718,14 @@ Item {
                              || processingStatus === ProgramDeviceWizard.WaitingForJLink
                              || processingStatus === ProgramDeviceWizard.ProgrammingSucceed
 
-                    onClicked: cancelRequested()
+                    onClicked: {
+                        if (requestCancelOnClose) {
+                            cancelRequested()
+                            return
+                        }
+
+                        stackView.pop(stackView.initialItem)
+                    }
                 }
 
                 SGWidgets.SGButton {
