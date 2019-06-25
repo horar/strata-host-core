@@ -25,6 +25,10 @@ int main(int argc, char *argv[])
     // Store mainComponent in DatabaseInterface
     databaseInterface->setMainComponent(mainComponent);
 
+    QString JSON_resp = databaseInterface->getJSONResponse();
+
+    QQmlProperty::write(mainComponent,"contentArray",JSON_resp);
+
     // Run the app
     return app.exec();
 }

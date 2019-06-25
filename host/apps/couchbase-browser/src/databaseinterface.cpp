@@ -1,5 +1,8 @@
 #include "databaseinterface.h"
 
+#include "QJsonDocument"
+#include "QJsonObject"
+
 #define DEBUG(...) printf("TEST Database Interface: "); printf(__VA_ARGS__)
 
 DatabaseInterface::DatabaseInterface(QObject *parent) :
@@ -21,11 +24,7 @@ void DatabaseInterface::setMainComponent(QObject *component)
 
 int DatabaseInterface::db_init()
 {
-    qDebug() << m_db_name << m_db_path;
     sg_db = new SGDatabase(m_db_name.toStdString(), m_db_path.toStdString());
-
-
-    //  SGDatabase sg_db(database_name.toStdString(), database_path.toStdString());
 
     if (!sg_db->isOpen()) {
         DEBUG("Db is not open yet\n");
@@ -46,7 +45,10 @@ int DatabaseInterface::db_init()
     cout << "about to call set document contens...." << endl;
 
     setDocumentKeys();
-    setDocumentContents();
+
+    setJSONResponse();
+
+    //setDocumentContents();
 
     return 0;
 }
@@ -107,27 +109,48 @@ int DatabaseInterface::setDocumentKeys()
     return 0;
 }
 
-void DatabaseInterface::setDocumentContents()
+//void DatabaseInterface::setDocumentContents()
+//{
+//   QString temp_str, final_str = "";
+
+//   document_contents.clear();
+
+//   // Printing the list of documents key from the local DB.
+//   for(std::vector <string>::iterator iter = document_keys.begin(); iter != document_keys.end(); iter++) {
+
+//       SGDocument usbPDDocument(sg_db, (*iter));
+
+//       temp_str = "{\"id\":\""  + QString((*iter).c_str()) + QString("\", \"body\": ") + QString(usbPDDocument.getBody().c_str()) + QString("}");
+
+//       document_contents.push_back(final_str);
+
+//       final_str = final_str + temp_str;
+//   }
+
+//   QQmlProperty::write(mainComponent,"contentArray",final_str);
+//}
+
+void DatabaseInterface::setJSONResponse()
 {
-   QString final_str;
+    QString temp_str = "";
 
-   document_contents.clear();
+    // Printing the list of documents key from the local DB.
+    for(std::vector <string>::iterator iter = document_keys.begin(); iter != document_keys.end(); iter++) {
 
-   // Printing the list of documents key from the local DB.
-   for(std::vector <string>::iterator iter = document_keys.begin(); iter != document_keys.end(); iter++) {
+        SGDocument usbPDDocument(sg_db, (*iter));
 
-       SGDocument usbPDDocument(sg_db, (*iter));
+        temp_str = "{\"id\":\""  + QString((*iter).c_str()) + QString("\", \"body\": ") + QString(usbPDDocument.getBody().c_str()) + QString("}");
 
-       final_str = "{\"id\":\""  + QString((*iter).c_str()) + QString("\", \"body\": ") + QString(usbPDDocument.getBody().c_str()) + QString("}");
-
-       cout << final_str.toStdString() << endl;
-
-       document_contents.push_back(final_str);
-   }
-   QQmlProperty::write(mainComponent,"contentArray",final_str);
+        JSONResponse = JSONResponse + temp_str;
+    }
 }
 
-vector<QString> DatabaseInterface::getDocumentContents()
+//vector<QString> DatabaseInterface::getDocumentContents()
+//{
+//    return document_contents;
+//}
+
+QString DatabaseInterface::getJSONResponse()
 {
-    return document_contents;
+    return JSONResponse;
 }

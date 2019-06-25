@@ -55,13 +55,19 @@ public:
 
     vector<string> document_keys;
 
-    vector<QString> document_contents;
+//    vector<QString> document_contents;
 
     int setDocumentKeys();
 
-    Q_INVOKABLE void setDocumentContents();
+    QString JSONResponse;
 
-    Q_INVOKABLE vector<QString> getDocumentContents();
+    //Q_INVOKABLE void setDocumentContents();
+
+    Q_INVOKABLE void setJSONResponse();
+
+//    Q_INVOKABLE vector<QString> getDocumentContents();
+
+    Q_INVOKABLE QString getJSONResponse();
 };
 
 #endif // DATABASEINTERFACE_H
