@@ -11,5 +11,10 @@
         <file>qml/MainWindow.qml</file>
         <file>qml/SystemMenu.qml</file>
         <file>qml/TableSelector.qml</file>
+        <file>qml/Images/Save-as-icon.png</file>
+        <file>qml/Images/newTabIcon.png</file>
+        <file>qml/Images/replicateDatabase.png</file>
+        <file>qml/Images/stopReplication.png</file>
+        <file>qml/PopupWindow.qml</file>
     </qresource>
 </RCC>

@@ -32,19 +32,6 @@ Item {
                     id: mainMenuView
                     anchors.fill: parent
                 }
-                Image {
-                    id: onLogo
-                    width: 50
-                    height: 50
-                    source: "Images/OnLogo.png"
-                    fillMode: Image.PreserveAspectCrop
-                    anchors {
-                        verticalCenter: parent.verticalCenter
-                        right: parent.right
-                        rightMargin: 10
-                    }
-                }
-
             }
             Rectangle {
                 id: selectorContainer
@@ -56,6 +43,18 @@ Item {
 
                 TableSelector {
                     id: tableSelectorView
+                }
+                Image {
+                    id: onLogo
+                    width: 50
+                    height: 50
+                    source: "Images/OnLogo.png"
+                    fillMode: Image.PreserveAspectCrop
+                    anchors {
+                        bottom: parent.bottom
+                        bottomMargin: 20
+                        horizontalCenter: parent.horizontalCenter
+                    }
                 }
             }
             Rectangle {
