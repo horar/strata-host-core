@@ -56,22 +56,31 @@ Item {
     // @notification: motor_running_notification
     // @description: update motor running status
     //
-    property var motor_running_notification : {
-        "running": false
-    }
-    onMotor_running_notificationChanged: {
-        _motor_running_control = motor_running_notification.running
+//    property var motor_running_notification : {
+//        "running": false
+//    }
+//    onMotor_running_notificationChanged: {
+//        _motor_running_control = motor_running_notification.running
+//    }
+
+    // @notification: input_voltage_notification
+    // @description: update input voltage
+    //
+    property var input_notification : {
+        "vin": 0,
+        "iin": 0,
+        "pin": 0
     }
 
-    // @notification: motor_speed_notification
-    // @description: update motor speed
-    //
-    property var motor_speed_notification : {
-        "speed": 0
+    property var output_notification : {
+        "vout": 0,
+        "iout": 0,
+        "pout": 0
     }
-    onMotor_speed_notificationChanged: {
-        _motor_speed = motor_speed_notification.speed
-    }
+
+//    property var graph_notification: {
+//        "input_voltage":0.0
+//    }
 
 
 

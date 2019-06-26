@@ -9,6 +9,57 @@ Item{
     width: parent.width
     height: parent.height
 
+    property var read_vin : platformInterface.input_notification.vin //"100 Vrms"
+
+    onRead_vinChanged: {
+        labelledInfoBox1.info = read_vin + "Vrms"
+        graph1.inputData = read_vin
+
+    }
+
+    property var read_iin :  platformInterface.input_notification.iin //" 2.0 Arms"
+
+    onRead_iinChanged: {
+        labelledInfoBox2.info = read_iin + "Arms"
+        graph3.inputData = read_iin
+    }
+
+    property var read_pin : platformInterface.input_notification.pin //" 120 W"
+
+    onRead_pinChanged: {
+        labelledInfoBox4.info = read_pin + "W"
+        graph5.inputData = read_pin
+    }
+
+    property var read_vout : platformInterface.output_notification.vout //" 12.02V"
+
+    onRead_voutChanged: {
+        labelledInfoBox3.info = read_vout + "V"
+        graph2.inputData = read_iout
+    }
+
+    property var read_iout: platformInterface.output_notification.iout //" 8.50A"
+
+    onRead_ioutChanged: {
+        labelledInfoBox6.info = read_iout + "A"
+        graph4.inputData = read_iout
+    }
+
+    property var read_pout: platformInterface.output_notification.pout // " 120W"
+
+    onRead_poutChanged: {
+        labelledInfoBox5.info = read_pout + "VA"
+        graph6.inputData = read_pout
+    }
+
+//    property  var graph_input_voltage_value: platformInterface.graph_notification.input_voltage
+//    onGraph_input_voltage_valueChanged: {
+//        console.log(
+//                    "graph_input_voltage_value",graph_input_voltage_value)
+//        graph1.inputData = graph_input_voltage_value
+
+//    }
+
     Rectangle{
         id:title
         width: parent.width/3
@@ -65,7 +116,7 @@ Item{
                                 id: labelledInfoBox1
                                 infoBoxWidth: 100
                                 label: "INPUT VOLTAGE"
-                                info: "100 Vrms"
+                                //info:
                                 labelLeft: false
                                 Layout.alignment: Qt.AlignCenter
                             }
@@ -360,10 +411,11 @@ Item{
                 yAxisTitle: "<b>[V]</b>"
                 xAxisTitle: "<b>1 sec/div</b>"
 
-                minYValue: 70                    // Default: 0
-                maxYValue: 100                   // Default: 10
+                minYValue: 0                    // Default: 0
+                maxYValue: 270                   // Default: 10
                 minXValue: 0                    // Default: 0
                 maxXValue: 5                    // Default: 10
+                inputData: 0.0
             }
 
             SGGraphTimed {
@@ -379,7 +431,7 @@ Item{
                 yAxisTitle: "<b>[V]</b>"
                 xAxisTitle: "<b>1 sec/div</b>"
                 minYValue: 0                    // Default: 0
-                maxYValue: 25                   // Default: 10
+                maxYValue: 15                   // Default: 10
                 minXValue: 0                    // Default: 0
                 maxXValue: 5                    // Default: 10
 
@@ -419,7 +471,7 @@ Item{
                 xAxisTitle: "<b>1 sec/div</b>"
 
                 minYValue: 0                    // Default: 0
-                maxYValue: 5                   // Default: 10
+                maxYValue: 15                   // Default: 10
                 minXValue: 0                    // Default: 0
                 maxXValue: 5                    // Default: 10
 

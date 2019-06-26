@@ -55,42 +55,73 @@ Rectangle {
 
             Button {
                 id: motorRunningTrue
-                text: "Send motor_running_notification, 'running': true"
+                text: "read input vol"
                 onClicked: {
                     CorePlatformInterface.data_source_handler('{
-                                "value":"motor_running_notification",
+                                "value":"input_notification",
                                 "payload":{
-                                         "running": true
+                                            "vin": ' + (Math.random()*264).toFixed(0) + ',
+                                            "iin": '+ (Math.random()*5).toFixed(2) +',
+                                            "pin": '+ (Math.random()*125).toFixed(0) +'
                                 }
                         }')
                 }
             }
 
             Button {
-                id: motorRunningFalse
-                text: "Send motor_running_notification, 'running': false"
+                id: motorRunningTrue2
+                text: "read output vol"
                 onClicked: {
                     CorePlatformInterface.data_source_handler('{
-                                "value":"motor_running_notification",
+                                "value":"output_notification",
                                 "payload":{
-                                         "running": false
+                                            "vout": ' + (Math.random()*15).toFixed(2) + ',
+                                            "iout": '+ (Math.random()*15).toFixed(2) +',
+                                            "pout": '+ (Math.random()*150).toFixed(2) +'
                                 }
                         }')
                 }
             }
 
-            Button {
-                id: motorSpeed
-                text: "Send motor_speed_notification, 'speed': random"
-                onClicked: {
-                    CorePlatformInterface.data_source_handler('{
-                                "value":"motor_speed_notification",
-                                "payload":{
-                                         "speed": ' + (Math.random()*100).toFixed(2) + '
-                                }
-                        }')
-                }
-            }
+//            Button {
+//                id: motorRunningTrue3
+//                text: "graph data"
+//                onClicked: {
+//                    CorePlatformInterface.data_source_handler('{
+//                                "value":"graph_notification",
+//                                "payload":{
+//                                            "input_voltage": ' + (Math.random()*264).toFixed(3) + '
+
+//                                }
+//                        }')
+//                }
+//            }
+
+//            Button {
+//                id: motorRunningFalse
+//                text: "Send motor_running_notification, 'running': false"
+//                onClicked: {
+//                    CorePlatformInterface.data_source_handler('{
+//                                "value":"motor_running_notification",
+//                                "payload":{
+//                                         "running": false
+//                                }
+//                        }')
+//                }
+//            }
+
+//            Button {
+//                id: motorSpeed
+//                text: "Send motor_speed_notification, 'speed': random"
+//                onClicked: {
+//                    CorePlatformInterface.data_source_handler('{
+//                                "value":"motor_speed_notification",
+//                                "payload":{
+//                                         "speed": ' + (Math.random()*100).toFixed(2) + '
+//                                }
+//                        }')
+//                }
+//            }
         }
     }
 
