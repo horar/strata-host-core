@@ -1,2 +1,0 @@
-add_subdirectory(ContentView)
-add_subdirectory(ProgramDeviceWizard)
