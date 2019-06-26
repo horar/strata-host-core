@@ -98,7 +98,7 @@ Item {
                                 })
 
     property var set_SR_1: ({
-                                "cmd" : "set_SR_1",
+                                "cmd" : "set_slew_rate_1",
                                 "payload": {
                                     "slew_rate": "slow",
                                 },
@@ -119,7 +119,7 @@ Item {
                             })
 
     property var set_SR_2: ({
-                                "cmd" : "set_SR_2",
+                                "cmd" : "set_slew_rate_2",
                                 "payload": {
                                     "slew_rate": "slow",
                                 },
@@ -139,8 +139,8 @@ Item {
 
                             })
 
-    property var set_ilim_1: ({
-                                  "cmd" : "set_ilim_1",
+    property var set_rlim_1: ({
+                                  "cmd" : "set_rlim_1",
                                   "payload": {
                                       "ilim": "55",
                                   },
@@ -160,8 +160,8 @@ Item {
 
                               })
 
-    property var set_ilim_2: ({
-                                  "cmd" : "set_ilim_2",
+    property var set_rlim_2: ({
+                                  "cmd" : "set_rlim_2",
                                   "payload": {
                                       "ilim": "55",
                                   },

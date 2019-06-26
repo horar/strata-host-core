@@ -344,7 +344,7 @@ Item {
                         Layout.alignment: Qt.AlignCenter
                         fontSize: ratioCalc * 20
                         onActivated: {
-                            platformInterface.set_ilim_1.update(currentText)
+                            platformInterface.set_rlim_1.update(currentText)
                         }
                     }
 
@@ -364,8 +364,8 @@ Item {
                         fontSize: ratioCalc * 20
                         onActivated: {
                             if(currentIndex === 0)
-                                platformInterface.set_SR_1.update("slow")
-                            else platformInterface.set_SR_1.update("default")
+                                platformInterface.set_SR_1.update("default")
+                            else platformInterface.set_SR_1.update("slow")
                         }
                     }
 
@@ -474,7 +474,7 @@ Item {
                         Layout.alignment: Qt.AlignHCenter
                         fontSize: ratioCalc * 20
                         onActivated: {
-                            platformInterface.set_ilim_2.update(currentText)
+                            platformInterface.set_rlim_2.update(currentText)
                         }
                     }
 
@@ -494,8 +494,8 @@ Item {
                         fontSize: ratioCalc * 20
                         onActivated: {
                             if(currentIndex === 0)
-                                platformInterface.set_SR_2.update("slow")
-                            else platformInterface.set_SR_2.update("default")
+                                platformInterface.set_SR_2.update("default")
+                            else platformInterface.set_SR_2.update("slow")
                         }
                     }
                 }
