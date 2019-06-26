@@ -37,7 +37,9 @@ Item{
 
     property bool sliderStatus
     property real slider_label_opacity: 0.5
-    property alias slider_value: vslider.value
+    property var slider_value
+    property alias slider_set_initial_value: vslider.value
+
 
     Column {
         spacing: 5
@@ -72,7 +74,15 @@ Item{
             enabled: sliderStatus
             opacity: slider_label_opacity
 
-            onMoved: root.moved()
+
+
+            //onMoved: root.moved()
+            onPressedChanged: {
+                if(!pressed){
+                    slider_value = value
+                }
+            }
+
 
             orientation: Qt.Vertical
             anchors.horizontalCenter: parent.horizontalCenter

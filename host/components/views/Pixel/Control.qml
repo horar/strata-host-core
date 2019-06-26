@@ -42,6 +42,8 @@ Item {
             text: qsTr("Pixel Control")
             onClicked: {
                 controlContainer.currentIndex = 1
+               // platformInterface.auto_addr_enable_state = false
+
             }
         }
 
@@ -50,6 +52,7 @@ Item {
             text: qsTr("Pixel Demo")
             onClicked: {
                 controlContainer.currentIndex = 2
+                platformInterface.auto_addr_enable_state = false
             }
         }
     }

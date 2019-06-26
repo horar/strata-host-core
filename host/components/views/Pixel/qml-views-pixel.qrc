@@ -9,5 +9,10 @@
         <file>control-views/question-circle-solid.svg</file>
         <file>control-views/ControlDemo.qml</file>
         <file>control-views/Pixelcontrol.qml</file>
+        <file>control-views/SGSlideCustomize.qml</file>
+        <file>control-views/images/sliderHandle.svg</file>
+        <file>control-views/images/sliderHandleActive.svg</file>
+        <file>control-views/images/sliderThumb.svg</file>
+        <file>control-views/images/sliderValue.svg</file>
     </qresource>
 </RCC>

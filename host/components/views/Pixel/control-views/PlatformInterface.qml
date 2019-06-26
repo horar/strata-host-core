@@ -114,105 +114,105 @@ Item {
                                     })
 
     property var boost_v_control : ({
-                                         "cmd" : "boost_v_control",
-                                         "payload": {
-                                             "data": 60
-                                         },
+                                        "cmd" : "boost_v_control",
+                                        "payload": {
+                                            "data": 60
+                                        },
 
-                                         update: function (data) {
-                                             this.set(data)
-                                             this.send(this)
-                                         },
-                                         set: function (data_a) {
-                                             this.payload.data = data_a
-                                         },
-                                         send: function () { CorePlatformInterface.send(this) },
-                                         show: function () { CorePlatformInterface.show(this) }
-                                     })
+                                        update: function (data) {
+                                            this.set(data)
+                                            this.send(this)
+                                        },
+                                        set: function (data_a) {
+                                            this.payload.data = data_a
+                                        },
+                                        send: function () { CorePlatformInterface.send(this) },
+                                        show: function () { CorePlatformInterface.show(this) }
+                                    })
 
     property var buck_i_control : ({
-                                        "cmd" : "buck_i_control",
-                                        "payload": {
-                                            "ch": 1,
-                                            "data": 200
-                                        },
+                                       "cmd" : "buck_i_control",
+                                       "payload": {
+                                           "ch": 1,
+                                           "data": 200
+                                       },
 
-                                        update: function (ch_a,data_a) {
-                                            this.set(ch_a,data_a)
-                                            this.send(this)
-                                        },
+                                       update: function (ch_a,data_a) {
+                                           this.set(ch_a,data_a)
+                                           this.send(this)
+                                       },
 
-                                        set: function (ch_a,data_a) {
-                                            this.payload.ch = ch_a
-                                            this.payload.data = data_a
-                                        },
+                                       set: function (ch_a,data_a) {
+                                           this.payload.ch = ch_a
+                                           this.payload.data = data_a
+                                       },
 
-                                        send: function () { CorePlatformInterface.send(this) },
-                                        show: function () { CorePlatformInterface.show(this) }
-                                    })
+                                       send: function () { CorePlatformInterface.send(this) },
+                                       show: function () { CorePlatformInterface.show(this) }
+                                   })
 
     property var dim_control : ({
-                                        "cmd" : "dim_control",
-                                        "payload": {
-                                            "ch": 1,
-                                            "dim_data": 100
-                                        },
+                                    "cmd" : "dim_control",
+                                    "payload": {
+                                        "ch": 1,
+                                        "dim_data": 100
+                                    },
 
-                                        update: function (ch_a,dim_data_a) {
-                                            this.set(ch_a,dim_data_a)
-                                            this.send(this)
-                                        },
+                                    update: function (ch_a,dim_data_a) {
+                                        this.set(ch_a,dim_data_a)
+                                        this.send(this)
+                                    },
 
-                                        set: function (ch_a,dim_data_a) {
-                                            this.payload.ch = ch_a
-                                            this.payload.dim_data = dim_data_a
-                                        },
+                                    set: function (ch_a,dim_data_a) {
+                                        this.payload.ch = ch_a
+                                        this.payload.dim_data = dim_data_a
+                                    },
 
-                                        send: function () { CorePlatformInterface.send(this) },
-                                        show: function () { CorePlatformInterface.show(this) }
-                                    })
+                                    send: function () { CorePlatformInterface.send(this) },
+                                    show: function () { CorePlatformInterface.show(this) }
+                                })
 
     property var pxn_datasend : ({
-                                        "cmd" : "pxn_data",
-                                        "payload": {
-                                            "ch": 1,
-                                            "led_num": 1,
-                                            "data": 80
-                                        },
+                                     "cmd" : "pxn_data",
+                                     "payload": {
+                                         "ch": 1,
+                                         "led_num": 1,
+                                         "data": 80
+                                     },
 
-                                        update: function (ch_a,led_num_a,data_a) {
-                                            this.set(ch_a,led_num_a,data_a)
-                                            this.send(this)
-                                        },
+                                     update: function (ch_a,led_num_a,data_a) {
+                                         this.set(ch_a,led_num_a,data_a)
+                                         this.send(this)
+                                     },
 
-                                        set: function (ch_a,led_num_a,data_a) {
-                                            this.payload.ch = ch_a
-                                            this.payload.led_num = led_num_a
-                                            this.payload.data = data_a
-                                        },
+                                     set: function (ch_a,led_num_a,data_a) {
+                                         this.payload.ch = ch_a
+                                         this.payload.led_num = led_num_a
+                                         this.payload.data = data_a
+                                     },
 
-                                        send: function () { CorePlatformInterface.send(this) },
-                                        show: function () { CorePlatformInterface.show(this) }
-                                    })
+                                     send: function () { CorePlatformInterface.send(this) },
+                                     show: function () { CorePlatformInterface.show(this) }
+                                 })
 
     property var pxn_autoaddr : ({
-                                        "cmd" : "pxn_config",
-                                        "payload": {
-                                            "auto_config": 1
-                                        },
+                                     "cmd" : "pxn_config",
+                                     "payload": {
+                                         "auto_config": 1
+                                     },
 
-                                        update: function (auto_config_a) {
-                                            this.set(auto_config_a)
-                                            this.send(this)
-                                        },
+                                     update: function (auto_config_a) {
+                                         this.set(auto_config_a)
+                                         this.send(this)
+                                     },
 
-                                        set: function (auto_config_a) {
-                                            this.payload.auto_config = auto_config_a
-                                        },
+                                     set: function (auto_config_a) {
+                                         this.payload.auto_config = auto_config_a
+                                     },
 
-                                        send: function () { CorePlatformInterface.send(this) },
-                                        show: function () { CorePlatformInterface.show(this) }
-                                    })
+                                     send: function () { CorePlatformInterface.send(this) },
+                                     show: function () { CorePlatformInterface.show(this) }
+                                 })
 
 
 
@@ -221,11 +221,18 @@ Item {
     property bool buck1_enable_state: false
     property bool buck2_enable_state: false
     property bool buck3_enable_state: false
+    property bool buck4_enable_state: false
+    property bool buck5_enable_state: false
+    property bool buck6_enable_state: false
+    property bool auto_addr_enable_state: false
 
     property bool boost_led_state: false
     property bool buck1_led_state: false
     property bool buck2_led_state: false
     property bool buck3_led_state: false
+    property bool buck4_led_state: false
+    property bool buck5_led_state: false
+    property bool buck6_led_state: false
 
     // -------------------------------------------------------------------
     // Listens to message notifications coming from CoreInterface.cpp
