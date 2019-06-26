@@ -1,5 +1,5 @@
 project(StrataDeveloperStudio
-    VERSION 0.0.0
+    VERSION 1.3.0.1
     DESCRIPTION "Strata Developer Studio"
     LANGUAGES CXX
 )
