@@ -7,7 +7,9 @@ import "qrc:/js/help_layout_manager.js" as Help
 
 Item {
     id: intensitycontrol
-    anchors.fill: parent
+//    anchors.fill: parent
+    width: parent.width
+    height: parent.height
 
     property bool auto_addr_sw_status: platformInterface.auto_addr_enable_state
     onAuto_addr_sw_statusChanged: {

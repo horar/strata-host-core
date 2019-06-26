@@ -6,8 +6,8 @@ import "qrc:/js/help_layout_manager.js" as Help
 
 Item {
     id:setupcontrol
-    anchors.fill: parent
-
+    width: parent.width
+    height: parent.height
 
     property bool check_boost_enable_state: platformInterface.boost_enable_state
     onCheck_boost_enable_stateChanged: {
@@ -181,12 +181,11 @@ Item {
     Rectangle{
         id:title
         width: parent.width/3
-        height: parent.height/11
+        height: parent.height/10
         anchors{
             top: parent.top
             horizontalCenter: parent.horizontalCenter
         }
-        //        color: "yellow"
         color:"transparent"
         Text {
             text: "Boost & Buck Regulator Setup"
@@ -218,6 +217,7 @@ Item {
                     Layout.fillHeight: true
                     Layout.fillWidth: true
                     width: parent.width/1.5
+                    Layout.alignment: Qt.AlignCenter
                     stepSize: 0.1                // Default: 1.0
                     value: 50                 // Default: average of from and to
                     from: 0                      // Default: 0.0
@@ -245,6 +245,7 @@ Item {
                     Layout.fillHeight: true
                     Layout.fillWidth: true
                     width: parent.width/1.5
+                    Layout.alignment: Qt.AlignCenter
                     stepSize: 0.01                // Default: 1.0
                     value: 1                  // Default: average of from and to
                     from: 0                      // Default: 0.0
@@ -272,6 +273,7 @@ Item {
                     Layout.fillHeight: true
                     Layout.fillWidth: true
                     width: parent.width/1.5
+                    Layout.alignment: Qt.AlignCenter
                     stepSize: 0.01                // Default: 1.0
                     value: 1                  // Default: average of from and to
                     from: 0                      // Default: 0.0
@@ -299,6 +301,7 @@ Item {
                     Layout.fillHeight: true
                     Layout.fillWidth: true
                     width: parent.width/1.5
+                    Layout.alignment: Qt.AlignCenter
                     stepSize: 0.01                // Default: 1.0
                     value: 1                  // Default: average of from and to
                     from: 0                      // Default: 0.0
@@ -325,6 +328,7 @@ Item {
                     labelLeft: false             // Default: true
                     Layout.fillHeight: true
                     Layout.fillWidth: true
+                    Layout.alignment: Qt.AlignCenter
 
                     width: parent.width/1.5
                     stepSize: 0.01                // Default: 1.0
@@ -353,6 +357,7 @@ Item {
                     labelLeft: false             // Default: true
                     Layout.fillHeight: true
                     Layout.fillWidth: true
+                    Layout.alignment: Qt.AlignCenter
 
                     width: parent.width/1.5
                     stepSize: 0.01                // Default: 1.0
@@ -381,6 +386,7 @@ Item {
                     labelLeft: false             // Default: true
                     Layout.fillHeight: true
                     Layout.fillWidth: true
+                    Layout.alignment: Qt.AlignCenter
 
                     width: parent.width/1.5
                     stepSize: 0.01                // Default: 1.0
@@ -406,32 +412,30 @@ Item {
 
         Rectangle{
             id: rec2
-            Layout.preferredWidth:parent.width/5
+            Layout.preferredWidth:parent.width/6
             Layout.preferredHeight: parent.height-100
+            Layout.leftMargin: 50
             color:"transparent"
 
             ColumnLayout{
                 anchors.fill: parent
-                spacing: 10
 
                 SGSwitch{
                     id: sgSwitch1
+
                     label: "<b>Boost Enable:</b>"         // Default: "" (if nothing entered, label will not appear)
                     labelLeft: false
-                    // Default: true (controls whether label appears at left side or on top of switch)
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
                     Layout.alignment: Qt.AlignCenter
-                    checkedLabel: "Enable"       // Default: "" (if not entered, label will not appear)
-                    uncheckedLabel: "Disable"    // Default: "" (if not entered, label will not appear)
-                    labelsInside: true              // Default: true (controls whether checked labels appear inside the control or outside of it
-                    switchWidth: parent.width/2.5              // Default: 52 (change for long custom checkedLabels when labelsInside)
-                    switchHeight: parent.height/20                // Default: 26
+                    switchWidth: parent.width/3                 // Default: 52 (change for long custom checkedLabels when labelsInside)
+                    switchHeight: parent.height/25                // Default: 26
                     textColor: "black"              // Default: "black"
                     handleColor: "white"            // Default: "white"
                     grooveColor: "#ccc"             // Default: "#ccc"
                     grooveFillColor: "#0cf"         // Default: "#0cf"
                     checked: platformInterface.boost_enable_state
                     onToggled: {
-
                         if(checked){
                             platformInterface.set_boost_enable.update(1)
                             platformInterface.boost_enable_state = true
@@ -446,13 +450,12 @@ Item {
                 SGSwitch{
                     id: sgSwitch2
                     label: "<b>Buck1 Enable:</b>"         // Default: "" (if nothing entered, label will not appear)
-                    labelLeft: false                // Default: true (controls whether label appears at left side or on top of switch)
+                    labelLeft: false
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
                     Layout.alignment: Qt.AlignCenter
-                    checkedLabel: "Enable"       // Default: "" (if not entered, label will not appear)
-                    uncheckedLabel: "Disable"    // Default: "" (if not entered, label will not appear)
-                    labelsInside: true              // Default: true (controls whether checked labels appear inside the control or outside of it
-                    switchWidth: parent.width/2.5                 // Default: 52 (change for long custom checkedLabels when labelsInside)
-                    switchHeight: parent.height/20                // Default: 26
+                    switchWidth: parent.width/3                 // Default: 52 (change for long custom checkedLabels when labelsInside)
+                    switchHeight: parent.height/25                // Default: 26
                     textColor: "black"              // Default: "black"
                     handleColor: "white"            // Default: "white"
                     grooveColor: "#ccc"             // Default: "#ccc"
@@ -472,13 +475,12 @@ Item {
                 SGSwitch{
                     id: sgSwitch3
                     label: "<b>Buck2 Enable:</b>"         // Default: "" (if nothing entered, label will not appear)
-                    labelLeft: false                // Default: true (controls whether label appears at left side or on top of switch)
+                    labelLeft: false
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
                     Layout.alignment: Qt.AlignCenter
-                    checkedLabel: "Enable"       // Default: "" (if not entered, label will not appear)
-                    uncheckedLabel: "Disable"    // Default: "" (if not entered, label will not appear)
-                    labelsInside: true              // Default: true (controls whether checked labels appear inside the control or outside of it
-                    switchWidth: parent.width/2.5                 // Default: 52 (change for long custom checkedLabels when labelsInside)
-                    switchHeight: parent.height/20                // Default: 26
+                    switchWidth: parent.width/3                 // Default: 52 (change for long custom checkedLabels when labelsInside)
+                    switchHeight: parent.height/25                // Default: 26
                     textColor: "black"              // Default: "black"
                     handleColor: "white"            // Default: "white"
                     grooveColor: "#ccc"             // Default: "#ccc"
@@ -498,13 +500,12 @@ Item {
                 SGSwitch{
                     id: sgSwitch4
                     label: "<b>Buck3 Enable:</b>"         // Default: "" (if nothing entered, label will not appear)
-                    labelLeft: false                // Default: true (controls whether label appears at left side or on top of switch)
+                    labelLeft: false
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
                     Layout.alignment: Qt.AlignCenter
-                    checkedLabel: "Enable"       // Default: "" (if not entered, label will not appear)
-                    uncheckedLabel: "Disable"    // Default: "" (if not entered, label will not appear)
-                    labelsInside: true              // Default: true (controls whether checked labels appear inside the control or outside of it
-                    switchWidth: parent.width/2.5                 // Default: 52 (change for long custom checkedLabels when labelsInside)
-                    switchHeight: parent.height/20                // Default: 26
+                    switchWidth: parent.width/3                 // Default: 52 (change for long custom checkedLabels when labelsInside)
+                    switchHeight: parent.height/25                // Default: 26
                     textColor: "black"              // Default: "black"
                     handleColor: "white"            // Default: "white"
                     grooveColor: "#ccc"             // Default: "#ccc"
@@ -524,17 +525,17 @@ Item {
                 SGSwitch{
                     id: sgSwitch5
                     label: "<b>Buck4 Enable:</b>"         // Default: "" (if nothing entered, label will not appear)
-                    labelLeft: false                // Default: true (controls whether label appears at left side or on top of switch)
+                    labelLeft: false
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
                     Layout.alignment: Qt.AlignCenter
-                    checkedLabel: "Enable"       // Default: "" (if not entered, label will not appear)
-                    uncheckedLabel: "Disable"    // Default: "" (if not entered, label will not appear)
-                    labelsInside: true              // Default: true (controls whether checked labels appear inside the control or outside of it
-                    switchWidth: parent.width/2.5                 // Default: 52 (change for long custom checkedLabels when labelsInside)
-                    switchHeight: parent.height/20                // Default: 26
+                    switchWidth: parent.width/3                 // Default: 52 (change for long custom checkedLabels when labelsInside)
+                    switchHeight: parent.height/25                // Default: 26
                     textColor: "black"              // Default: "black"
                     handleColor: "white"            // Default: "white"
                     grooveColor: "#ccc"             // Default: "#ccc"
                     grooveFillColor: "#0cf"         // Default: "#0cf"
+                    checked: platformInterface.buck4_enable_state
                     onToggled: {
                         if(checked){
                             platformInterface.set_buck_enable.update(4,1)
@@ -549,17 +550,17 @@ Item {
                 SGSwitch{
                     id: sgSwitch6
                     label: "<b>Buck5 Enable:</b>"         // Default: "" (if nothing entered, label will not appear)
-                    labelLeft: false                // Default: true (controls whether label appears at left side or on top of switch)
+                    labelLeft: false
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
                     Layout.alignment: Qt.AlignCenter
-                    checkedLabel: "Enable"       // Default: "" (if not entered, label will not appear)
-                    uncheckedLabel: "Disable"    // Default: "" (if not entered, label will not appear)
-                    labelsInside: true              // Default: true (controls whether checked labels appear inside the control or outside of it
-                    switchWidth: parent.width/2.5                 // Default: 52 (change for long custom checkedLabels when labelsInside)
-                    switchHeight: parent.height/20                // Default: 26
+                    switchWidth: parent.width/3                 // Default: 52 (change for long custom checkedLabels when labelsInside)
+                    switchHeight: parent.height/25                // Default: 26
                     textColor: "black"              // Default: "black"
                     handleColor: "white"            // Default: "white"
                     grooveColor: "#ccc"             // Default: "#ccc"
                     grooveFillColor: "#0cf"         // Default: "#0cf"
+                    checked: platformInterface.buck5_enable_state
                     onToggled: {
                         if(checked) {
                             platformInterface.set_buck_enable.update(5,1)
@@ -574,17 +575,17 @@ Item {
                 SGSwitch{
                     id: sgSwitch7
                     label: "<b>Buck6 Enable:</b>"         // Default: "" (if nothing entered, label will not appear)
-                    labelLeft: false                // Default: true (controls whether label appears at left side or on top of switch)
+                    labelLeft: false
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
                     Layout.alignment: Qt.AlignCenter
-                    checkedLabel: "Enable"       // Default: "" (if not entered, label will not appear)
-                    uncheckedLabel: "Disable"    // Default: "" (if not entered, label will not appear)
-                    labelsInside: true              // Default: true (controls whether checked labels appear inside the control or outside of it
-                    switchWidth: parent.width/2.5                 // Default: 52 (change for long custom checkedLabels when labelsInside)
-                    switchHeight: parent.height/20                // Default: 26
+                    switchWidth: parent.width/3                 // Default: 52 (change for long custom checkedLabels when labelsInside)
+                    switchHeight: parent.height/25                // Default: 26
                     textColor: "black"              // Default: "black"
                     handleColor: "white"            // Default: "white"
                     grooveColor: "#ccc"             // Default: "#ccc"
                     grooveFillColor: "#0cf"         // Default: "#0cf"
+                    checked: platformInterface.buck6_enable_state
                     onToggled: {
                         if(checked) {
                             platformInterface.set_buck_enable.update(6,1)

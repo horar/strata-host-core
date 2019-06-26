@@ -8,7 +8,9 @@ import "qrc:/js/help_layout_manager.js" as Help
 Rectangle {
 
     id: controldemo
-    anchors.fill: parent
+//    anchors.fill: parent
+    width: parent.width
+    height: parent.height
     color:"black"
 
     Rectangle{
