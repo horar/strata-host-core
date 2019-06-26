@@ -5,10 +5,20 @@
 
 #define DEBUG(...) printf("TEST Database Interface: "); printf(__VA_ARGS__)
 
+void onDocumentEnded(bool pushing, std::string doc_id, std::string error_message, bool is_error,bool transient){
+    DEBUG("onDocumentError: pushing: %d, Doc Id: %s, is error: %d, error message: %s, transient:%d\n", pushing, doc_id.c_str(), is_error, error_message.c_str(), transient);
+    // send signal here
+}
+
 DatabaseInterface::DatabaseInterface(QString file_path) : m_file_path(file_path)
 {
     parseFilePath();
     db_init();
+}
+
+DatabaseInterface::~DatabaseInterface()
+{
+    std::cout << "\n\nDestructor activated\n\n" << endl;
 }
 
 int DatabaseInterface::db_init()
@@ -34,7 +44,46 @@ int DatabaseInterface::db_init()
     setDocumentKeys();
     setJSONResponse();
 
+    // temporarily hard coded:
+    rep_init();
+
     return 0;
+}
+
+void DatabaseInterface::rep_init()
+{
+    qDebug() << "\n\nin rep_init()\n\n";
+
+    std::string url = "ws://localhost:4984/db2";
+
+    url_endpoint = new SGURLEndpoint(url);
+
+    if(url_endpoint->init())
+    {
+        DEBUG("url_endpoint is valid \n");
+    }
+    else
+    {
+        DEBUG("Invalid url_endpoint\n");
+        return;
+    }
+
+    DEBUG("host %s, \n", url_endpoint->getHost().c_str());
+    DEBUG("schema %s, \n", url_endpoint->getSchema().c_str());
+    DEBUG("getPath %s, \n", url_endpoint->getPath().c_str());
+
+    sg_replicator_configuration = new SGReplicatorConfiguration(sg_db, url_endpoint);
+    sg_replicator_configuration->setReplicatorType(SGReplicatorConfiguration::ReplicatorType::kPull);
+    sg_replicator = new SGReplicator(sg_replicator_configuration);
+    sg_replicator->addDocumentEndedListener(onDocumentEnded);\
+    if(sg_replicator->start() == false)
+    {
+        std::cout << "\n PROBLEM WITH REPLICATION START, EXITING." << endl;
+        return;
+    }
+
+    setDocumentKeys();
+    setJSONResponse();
 }
 
 void DatabaseInterface::setFilePath(QString file_path)
@@ -78,6 +127,8 @@ void DatabaseInterface::parseFilePath()
 
 int DatabaseInterface::setDocumentKeys()
 {
+    document_keys.clear();
+
     if(!sg_db->getAllDocumentsKey(document_keys)) {
         DEBUG("Failed to run getAllDocumentsKey()\n");
         return 1;
@@ -88,11 +139,12 @@ int DatabaseInterface::setDocumentKeys()
 void DatabaseInterface::setJSONResponse()
 {
     QString temp_str = "";
+    JSONResponse = "{";
 
     // Printing the list of documents key from the local DB.
     for(std::vector <string>::iterator iter = document_keys.begin(); iter != document_keys.end(); iter++) {
         SGDocument usbPDDocument(sg_db, (*iter));
-        temp_str = "{\"id\":\""  + QString((*iter).c_str()) + QString("\", \"body\": ") + QString(usbPDDocument.getBody().c_str()) + QString("}");
+        temp_str = "\"" + QString((*iter).c_str()) + "\":" + QString(usbPDDocument.getBody().c_str()) + (iter + 1 == document_keys.end() ? "}" : "\",");
         JSONResponse = JSONResponse + temp_str;
     }
 }

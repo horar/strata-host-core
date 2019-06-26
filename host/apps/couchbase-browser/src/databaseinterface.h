@@ -27,6 +27,12 @@ class DatabaseInterface
 public:
     DatabaseInterface(QString file_path);
 
+    ~DatabaseInterface();
+
+    void testReceive();
+
+//    void testReceive(bool pushing, std::string doc_id, std::string error_message, bool is_error, bool error_is_transient);
+
     QString m_file_path, m_db_path, m_db_name;
 
     void setFilePath(QString file_path);
@@ -56,6 +62,12 @@ public:
     void setJSONResponse();
 
     QString getJSONResponse();
+
+    void rep_init();
+
+    SGReplicatorConfiguration *sg_replicator_configuration{nullptr};
+    SGURLEndpoint *url_endpoint{nullptr};
+    SGReplicator *sg_replicator{nullptr};
 };
 
 #endif // DATABASEINTERFACE_H
