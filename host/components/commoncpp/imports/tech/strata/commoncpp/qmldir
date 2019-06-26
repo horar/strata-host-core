@@ -1,4 +1,4 @@
 module tech.strata.commoncpp
 
-plugin commoncpp
+plugin component-commoncpp
 typeinfo plugins.qmltypes

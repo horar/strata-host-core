@@ -1,4 +1,4 @@
-project(commoncpp
+project(component-commoncpp
     VERSION 0.0.0
     LANGUAGES CXX
 )
@@ -17,8 +17,8 @@ target_sources(${PROJECT_NAME}
     SGJLinkConnector.cpp
     logging/LoggingQtCategories.cpp
 
-    imports/tech/strata/${PROJECT_NAME}/qmldir
-    imports/tech/strata/${PROJECT_NAME}/plugins.qmltypes
+    imports/tech/strata/commoncpp/qmldir
+    imports/tech/strata/commoncpp/plugins.qmltypes
 )
 
 target_link_libraries(${PROJECT_NAME}
@@ -36,7 +36,7 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
     CXX_EXTENSIONS OFF
     AUTOMOC ON
     AUTORCC ON
-    LIBRARY_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/imports/tech/strata/${PROJECT_NAME}
+    LIBRARY_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/imports/tech/strata/commoncpp
 )
 
 # Copy 'qmldir' and 'qmltypes' file next to plugin lib
@@ -45,11 +45,11 @@ add_custom_command(
     POST_BUILD
     COMMAND
         ${CMAKE_COMMAND} -E copy_if_different
-        ${CMAKE_CURRENT_LIST_DIR}/imports/tech/strata/${PROJECT_NAME}/qmldir
+        ${CMAKE_CURRENT_LIST_DIR}/imports/tech/strata/commoncpp/qmldir
         $<TARGET_FILE_DIR:${PROJECT_NAME}>/
     COMMAND
         ${CMAKE_COMMAND} -E copy_if_different
-        ${CMAKE_CURRENT_LIST_DIR}/imports/tech/strata/${PROJECT_NAME}/plugins.qmltypes
+        ${CMAKE_CURRENT_LIST_DIR}/imports/tech/strata/commoncpp/plugins.qmltypes
         $<TARGET_FILE_DIR:${PROJECT_NAME}>/
 )
 
