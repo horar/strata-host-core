@@ -5,8 +5,15 @@ pipeline {
         stage('build') {
             steps {
                 echo "Building installer"
-                cd deployment/Strata
-                sh ./deploy_strata_windows.sh
+                script {
+                    env.workspace= pwd()
+                    echo env.workspace
+               } 
+                dir("deployment/Strata") { 
+                //    bat 'bash deploy_strata_windows.sh'
+                    sh "deploy_strata_windows.sh"
+                    echo "done" 
+                }
             }
         }
     }
