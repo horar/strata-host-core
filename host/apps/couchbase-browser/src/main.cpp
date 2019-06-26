@@ -3,7 +3,7 @@
 #include <QQmlContext>
 #include <QQmlComponent>
 #include <QDebug>
-#include "databaseinterface.h"
+#include "qmlbridge.h"
 
 int main(int argc, char *argv[])
 {
@@ -12,22 +12,21 @@ int main(int argc, char *argv[])
     // Create new engine
     QQmlApplicationEngine *engine = new QQmlApplicationEngine();
 
-    // Load main.qml
+    // Create new component for making multiple windows
     const QUrl mainDir(QStringLiteral("qrc:/qml/main.qml"));
-    engine->load(mainDir);
-    QObject *mainComponent = engine->rootObjects()[0];
+    QQmlComponent *component = new QQmlComponent(&(*engine),mainDir);
 
     // Make DatabaseInterface callable from QML
-    qmlRegisterType<DatabaseInterface>("DI", 1, 0, "DatabaseInterface");
-    DatabaseInterface *databaseInterface = new DatabaseInterface();
-    engine->rootContext()->setContextProperty("databaseInterface",databaseInterface);
+    qmlRegisterType<QMLBridge>("DI", 1, 0, "QMLBridge");
+    QMLBridge *qmlBridge = new QMLBridge();
+    engine->rootContext()->setContextProperty("qmlBridge",qmlBridge);
 
-    // Store mainComponent in DatabaseInterface
-    //databaseInterface->setMainComponent(mainComponent);
+    // Store engine and component in QMLBridge
+    qmlBridge->init(engine, component);
 
-    QString JSON_resp = databaseInterface->getJSONResponse();
+    //QString JSON_resp = databaseInterface->getJSONResponse();
 
-    QQmlProperty::write(mainComponent,"contentArray",JSON_resp);
+    //QQmlProperty::write(mainComponent,"contentArray",JSON_resp);
 
     // Run the app
     return app.exec();

@@ -19,6 +19,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(SRCS
     src/databaseinterface.cpp
     src/databaseinterface.h
+    src/qmlbridge.cpp
+    src/qmlbridge.h
     src/main.cpp
 )
 

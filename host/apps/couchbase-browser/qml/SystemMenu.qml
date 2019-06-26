@@ -152,7 +152,7 @@ Item {
             title: "Please select a database"
             folder: shortcuts.home
             onAccepted: {
-                databaseInterface.setFilePath(fileUrls.toString().replace("file://",""))
+                qmlBridge.setFilePath(fileUrls.toString().replace("file://",""))
             }
         }
 
