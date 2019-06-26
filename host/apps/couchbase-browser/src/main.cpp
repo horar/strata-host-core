@@ -23,7 +23,7 @@ int main(int argc, char *argv[])
     engine->rootContext()->setContextProperty("databaseInterface",databaseInterface);
 
     // Store mainComponent in DatabaseInterface
-    databaseInterface->setMainComponent(mainComponent);
+    //databaseInterface->setMainComponent(mainComponent);
 
     QString JSON_resp = databaseInterface->getJSONResponse();
 

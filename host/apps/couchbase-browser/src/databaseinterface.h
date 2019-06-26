@@ -21,31 +21,25 @@ using namespace fleece::impl;
 using namespace std::placeholders;
 using namespace Spyglass;
 
-class DatabaseInterface : public QObject
+class DatabaseInterface
 {
-    Q_OBJECT
 
 public:
-    explicit DatabaseInterface(QObject *parent = nullptr);
-
-    //DatabaseInterface(QString file_path);
-
-    QObject *mainComponent;
-    void setMainComponent(QObject *component);
+    DatabaseInterface(QString file_path);
 
     QString m_file_path, m_db_path, m_db_name;
 
-    Q_INVOKABLE void setFilePath(QString file_path);
+    void setFilePath(QString file_path);
 
-    Q_INVOKABLE QString getFilePath();
+    QString getFilePath();
 
-    Q_INVOKABLE void setDBPath(QString db_path);
+    void setDBPath(QString db_path);
 
-    Q_INVOKABLE QString getDBPath();
+    QString getDBPath();
 
-    Q_INVOKABLE void setDBName(QString db_name);
+    void setDBName(QString db_name);
 
-    Q_INVOKABLE QString getDBName();
+    QString getDBName();
 
     void parseFilePath();
 
@@ -55,19 +49,13 @@ public:
 
     vector<string> document_keys;
 
-//    vector<QString> document_contents;
-
     int setDocumentKeys();
 
     QString JSONResponse;
 
-    //Q_INVOKABLE void setDocumentContents();
+    void setJSONResponse();
 
-    Q_INVOKABLE void setJSONResponse();
-
-//    Q_INVOKABLE vector<QString> getDocumentContents();
-
-    Q_INVOKABLE QString getJSONResponse();
+    QString getJSONResponse();
 };
 
 #endif // DATABASEINTERFACE_H
