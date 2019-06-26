@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/views/subGHz">
+        <file>Button.qml</file>
         <file>sgwidgets/fonts/Inconsolata.otf</file>
         <file>sgwidgets/fonts/sgicons.ttf</file>
         <file>sgwidgets/images/sliderHandle.svg</file>
