@@ -6,14 +6,40 @@ import "qrc:/js/help_layout_manager.js" as Help
 
 Item{
     id:mainmenu
-    anchors.fill: parent
+    width: parent.width
+    height: parent.height
+
+    Rectangle{
+        id:title
+        width: parent.width/3
+        height: parent.height/20
+        anchors{
+            top: parent.top
+            topMargin: 20
+            horizontalCenter: parent.horizontalCenter
+        }
+        //        color: "yellow"
+        color:"transparent"
+        Text {
+            text: "ACF PSU"
+            font.pixelSize: 25
+            anchors.fill:parent
+            color: "black"
+            horizontalAlignment: Text.AlignHCenter
+        }
+    }
 
     RowLayout{
         id:rowright
         width: parent.width
-        height:parent.height/2.5
+        height:parent.height/2.2
+        anchors{
+            top: title.bottom
 
-        //        anchors.top: title.bottom
+
+        }
+
+
         Rectangle{
             Layout.preferredWidth:parent.width/1.5
             Layout.preferredHeight: parent.height-100
@@ -35,15 +61,15 @@ Item{
                             id : a
                             anchors.fill: parent
 
-                            SGLabelledInfoBox {
+                            SGLabelledinfoBoxCustomize {
                                 id: labelledInfoBox1
                                 infoBoxWidth: 100
                                 label: "INPUT VOLTAGE"
-                                info: yourSpeedValue + " Vrms"
+                                info: "100 Vrms"
                                 labelLeft: false
                                 Layout.alignment: Qt.AlignCenter
                             }
-                            SGLabelledInfoBox {
+                            SGLabelledinfoBoxCustomize {
                                 id: labelledInfoBox2
                                 infoBoxWidth: 110
                                 label: "INPUT CURRENT"
@@ -51,7 +77,7 @@ Item{
                                 labelLeft: false
                                 Layout.alignment: Qt.AlignCenter
                             }
-                            SGLabelledInfoBox {
+                            SGLabelledinfoBoxCustomize {
                                 id: labelledInfoBox3
                                 infoBoxWidth: 120
                                 label: "OUTPUT VOLTAGE"
@@ -71,7 +97,7 @@ Item{
                             id : b
                             anchors.fill: parent
 
-                            SGLabelledInfoBox {
+                            SGLabelledinfoBoxCustomize {
                                 id: labelledInfoBox4
                                 infoBoxWidth: 150
                                 label: "INPUT (ACTIVE) POWER"
@@ -79,7 +105,7 @@ Item{
                                 labelLeft: false
                                 Layout.alignment: Qt.AlignCenter
                             }
-                            SGLabelledInfoBox {
+                            SGLabelledinfoBoxCustomize {
                                 id: labelledInfoBox5
                                 infoBoxWidth: 120
                                 label: "REACTIVE POWER"
@@ -87,7 +113,7 @@ Item{
                                 labelLeft: false
                                 Layout.alignment: Qt.AlignCenter
                             }
-                            SGLabelledInfoBox {
+                            SGLabelledinfoBoxCustomize {
                                 id: labelledInfoBox6
                                 infoBoxWidth: 120
                                 label: "OUTPUT CURRENT"
@@ -108,7 +134,7 @@ Item{
                             id : c
                             anchors.fill: parent
 
-                            SGLabelledInfoBox {
+                            SGLabelledinfoBoxCustomize {
                                 id: labelledInfoBox7
                                 infoBoxWidth: 120
                                 label: "APPARENT POWER"
@@ -116,7 +142,7 @@ Item{
                                 labelLeft: false
                                 Layout.alignment: Qt.AlignCenter
                             }
-                            SGLabelledInfoBox {
+                            SGLabelledinfoBoxCustomize {
                                 id: labelledInfoBox8
                                 infoBoxWidth: 100
                                 label: "POWER FACTOR"
@@ -124,7 +150,7 @@ Item{
                                 labelLeft: false
                                 Layout.alignment: Qt.AlignCenter
                             }
-                            SGLabelledInfoBox {
+                            SGLabelledinfoBoxCustomize {
                                 id: labelledInfoBox9
                                 infoBoxWidth: 110
                                 label: "OUTPUT POWER"
@@ -144,7 +170,7 @@ Item{
                             id : d
                             anchors.fill: parent
 
-                            SGLabelledInfoBox {
+                            SGLabelledinfoBoxCustomize {
                                 id: labelledInfoBox10
                                 infoBoxWidth: 110
                                 label: "LINE FREQUENCY"
@@ -152,7 +178,7 @@ Item{
                                 labelLeft: false
                                 Layout.alignment: Qt.AlignCenter
                             }
-                            SGLabelledInfoBox {
+                            SGLabelledinfoBoxCustomize {
                                 id: labelledInfoBox11
                                 infoBoxWidth: 100
                                 label: "LOSS (Pin-Pout)"
@@ -160,7 +186,7 @@ Item{
                                 labelLeft: false
                                 Layout.alignment: Qt.AlignCenter
                             }
-                            SGLabelledInfoBox {
+                            SGLabelledinfoBoxCustomize {
                                 id: labelledInfoBox12
                                 infoBoxWidth: 100
                                 label: "<b>EFFICIENCY</b>"
@@ -177,372 +203,264 @@ Item{
 
         }
         Rectangle{
-            //            Layout.preferredHeight: parent.height-100
-            //            Layout.preferredWidth: parent.width - 50
-            color: "red"//"transparent"
-            Layout.rightMargin: 10
-            Layout.fillHeight: true
+            Layout.preferredHeight: parent.height - 80
             Layout.fillWidth: true
+            color: "red"//"transparent"
+            Layout.rightMargin: 5
 
             Rectangle{
                 anchors.fill:parent
                 anchors.centerIn: parent
 
                 SGGraphTimed {
-                    id: graph
+                    id: graph0
                     anchors {
                         fill: parent             // Set custom anchors for responsive sizing
                     }
-                    title: "Graph"                  // Default: empty
-                    xAxisTitle: "Seconds"           // Default: empty
-                    yAxisTitle: "why axis"          // Default: empty
-                    textColor: "#ffffff"            // Default: #000000 (black) - Must use hex colors for this property
-                    dataLineColor: "white"          // Default: #000000 (black)
-                    axesColor: "#cccccc"            // Default: Qt.rgba(.2, .2, .2, 1) (dark gray)
-                    gridLineColor: "#666666"        // Default: Qt.rgba(.8, .8, .8, 1) (light gray)
-                    underDataColor: "transparent"   // Default: Qt.rgba(.5, .5, .5, .3) (transparent gray)
-                    backgroundColor: "black"        // Default: #ffffff (white)
+                    title: "<b>Efficiency</b>"                  // Default: empty
+                    yAxisTitle: "<b>η [%]</b>"
+                    xAxisTitle: "<b>1 sec/div<b>"
                     minYValue: 0                    // Default: 0
-                    maxYValue: 20                   // Default: 10
-                    minXValue: -5                   // Default: 0
-                    maxXValue: 0                    // Default: 5
-                    showXGrids: false               // Default: false
-                    showYGrids: true                // Default: false
-                    xAxisTickCount: 10              // Default: tickCount automatically calculated with built in applyNiceNumbers() if not specified here
-                    yAxisTickCount: 10              // Default: tickCount automatically calculated with built in applyNiceNumbers() if not specified here
-                    throttlePlotting: true          // Default: true - Restricts plotting to every 100ms or more to save resources, false plots on every inputData change (NOT RECOMMENDED)
-                    repeatOldData: visible          // Default: visible - If no new data has been sent after 200ms, graph will plot a new point at the current time with the last input value
+                    maxYValue: 25                   // Default: 10
+                    minXValue: 0                    // Default: 0
+                    maxXValue: 5                    // Default: 10
 
-                    //                    inputData: yourUpdatingData  // Set the graph's data source here
                 }
             }
         }
     }
 
     Rectangle{
-        id:rec2
+        id:root
         width: parent.width
         height: parent.height/2
         anchors.top: rowright.bottom
         color: "transparent"
 
-        ColumnLayout{
-            anchors.fill: parent
+        SGSegmentedButtonStrip {
+            id: graphSelector
+            label: "<b>Show Graphs:</b>"
+            labelLeft: false
+            anchors {
+                top: parent.top
+                topMargin: 20
+                horizontalCenter: parent.horizontalCenter
+            }
+            textColor: "#666"
+            activeTextColor: "white"
+            radius: 4
+            buttonHeight: 25
+            exclusive: false
+            buttonImplicitWidth: 50
+            property int howManyChecked: 0
 
-            Rectangle{
-                Layout.preferredWidth: parent.width
-                Layout.preferredHeight: parent.height/10
-                color: "transparent"
-                Layout.leftMargin: 50
+            segmentedButtons: GridLayout {
+                columnSpacing: 2
+                rowSpacing: 2
 
-                SGSegmentedButtonStrip {
-                    id: segmentedButtons
-
-                    segmentedButtons: GridLayout {
-                        columnSpacing: 5
-
-                        SGSegmentedButton{
-                            id:voutgraph
-                            text: qsTr("Vout")
-                            checked: true  // Sets default checked button when exclusive
-                            onClicked: {
-                                graph1.opacity = 1.0
-                                graph1.enabled = true
-                                graph2.opacity = 0.5
-                                graph2.enabled = false
-                                graph3.opacity = 0.5
-                                graph3.enabled = false
-                                graph4.opacity = 0.5
-                                graph4.enabled = false
-                                graph5.opacity = 0.5
-                                graph5.enabled = false
-                                graph6.opacity = 0.5
-                                graph6.enabled = false
-                            }
-                        }
-
-                        SGSegmentedButton{
-                            id:ioutgraph
-                            text: qsTr("Iout")
-                            checked: false  // Sets default checked button when exclusive
-                            onClicked: {
-                                graph1.opacity = 0.5
-                                graph1.enabled = false
-                                graph2.opacity = 1.0
-                                graph2.enabled = true
-                                graph3.opacity = 0.5
-                                graph3.enabled = false
-                                graph4.opacity = 0.5
-                                graph4.enabled = false
-                                graph5.opacity = 0.5
-                                graph5.enabled = false
-                                graph6.opacity = 0.5
-                                graph6.enabled = false
-
-                            }
-                        }
-
-                        SGSegmentedButton{
-                            id:poutgraph
-                            text: qsTr("Pout")
-                            checked: false  // Sets default checked button when exclusive
-                            onClicked: {
-                                graph1.opacity = 0.5
-                                graph1.enabled = false
-                                graph2.opacity = 0.5
-                                graph2.enabled = false
-                                graph3.opacity = 1.0
-                                graph3.enabled = true
-                                graph4.opacity = 0.5
-                                graph4.enabled = false
-                                graph5.opacity = 0.5
-                                graph5.enabled = false
-                                graph6.opacity = 0.5
-                                graph6.enabled = false
-                            }
-                        }
-
-                        SGSegmentedButton{
-                            id:pingraph
-                            text: qsTr("Pin")
-                            checked: false  // Sets default checked button when exclusive
-                            onClicked: {
-                                graph1.opacity = 0.5
-                                graph1.enabled = false
-                                graph2.opacity = 0.5
-                                graph2.enabled = false
-                                graph3.opacity = 0.5
-                                graph3.enabled = false
-                                graph4.opacity = 1.0
-                                graph4.enabled = true
-                                graph5.opacity = 0.5
-                                graph5.enabled = false
-                                graph6.opacity = 0.5
-                                graph6.enabled = false
-                            }
-                        }
-
-                        SGSegmentedButton{
-                            id:iingraph
-                            text: qsTr("Iin")
-                            checked: false  // Sets default checked button when exclusive
-                            onClicked: {
-                                graph1.opacity = 0.5
-                                graph1.enabled = false
-                                graph2.opacity = 0.5
-                                graph2.enabled = false
-                                graph3.opacity = 0.5
-                                graph3.enabled = false
-                                graph4.opacity = 0.5
-                                graph4.enabled = false
-                                graph5.opacity = 1.0
-                                graph5.enabled = true
-                                graph6.opacity = 0.5
-                                graph6.enabled = false
-                            }
-                        }
-
-                        SGSegmentedButton{
-                            id:pfgraph
-                            text: qsTr("PF")
-                            checked: false  // Sets default checked button when exclusive
-                            onClicked: {
-                                graph1.opacity = 0.5
-                                graph1.enabled = false
-                                graph2.opacity = 0.5
-                                graph2.enabled = false
-                                graph3.opacity = 0.5
-                                graph3.enabled = false
-                                graph4.opacity = 0.5
-                                graph4.enabled = false
-                                graph5.opacity = 0.5
-                                graph5.enabled = false
-                                graph6.opacity = 1.0
-                                graph6.enabled = true
-                            }
+                SGSegmentedButton{
+                    text: qsTr("Vin")
+                    onCheckedChanged: {
+                        if (checked) {
+                            graph1.visible = true
+                            graphSelector.howManyChecked++
+                        } else {
+                            graph1.visible = false
+                            graphSelector.howManyChecked--
                         }
                     }
                 }
+
+                SGSegmentedButton{
+                    text: qsTr("Vout")
+                    onCheckedChanged: {
+                        if (checked) {
+                            graph2.visible = true
+                            graphSelector.howManyChecked++
+                        } else {
+                            graph2.visible = false
+                            graphSelector.howManyChecked--
+                        }
+                    }
+                }
+
+                SGSegmentedButton{
+                    text: qsTr("Iin")
+                    onCheckedChanged: {
+                        if (checked) {
+                            graph3.visible = true
+                            graphSelector.howManyChecked++
+                        } else {
+                            graph3.visible = false
+                            graphSelector.howManyChecked--
+                        }
+                    }
+                }
+
+                SGSegmentedButton{
+                    text: qsTr("Iout")
+                    onCheckedChanged: {
+                        if (checked) {
+                            graph4.visible = true
+                            graphSelector.howManyChecked++
+                        } else {
+                            graph4.visible = false
+                            graphSelector.howManyChecked--
+                        }
+                    }
+                }
+
+                SGSegmentedButton{
+                    text: qsTr("Pin")
+                    onCheckedChanged: {
+                        if (checked) {
+                            graph5.visible = true
+                            graphSelector.howManyChecked++
+                        } else {
+                            graph5.visible = false
+                            graphSelector.howManyChecked--
+                        }
+                    }
+                }
+
+                SGSegmentedButton{
+                    text: qsTr("Pout")
+                    onCheckedChanged: {
+                        if (checked) {
+                            graph6.visible = true
+                            graphSelector.howManyChecked++
+                        } else {
+                            graph6.visible = false
+                            graphSelector.howManyChecked--
+                        }
+                    }
+                }
+           }
+        }
+        Row {
+            id: portGraphs
+            anchors {
+                top: graphSelector.bottom
+                topMargin: 15
+                left: parent.left
+                right: parent.right
+            }
+            height:250
+
+            SGGraphTimed {
+                id: graph1
+                title: "<b>Input Voltage</b>"
+                visible: false
+                anchors {
+                    top: portGraphs.top
+                    bottom: portGraphs.bottom
+                    bottomMargin:0
+                }
+                width: portGraphs.width /  Math.max(1, graphSelector.howManyChecked)
+                yAxisTitle: "<b>[V]</b>"
+                xAxisTitle: "<b>1 sec/div</b>"
+
+                minYValue: 70                    // Default: 0
+                maxYValue: 100                   // Default: 10
+                minXValue: 0                    // Default: 0
+                maxXValue: 5                    // Default: 10
             }
 
-            Rectangle{
-                Layout.preferredWidth:parent.width - 40
-                Layout.fillHeight: true
-                Layout.alignment: Qt.AlignCenter
-                color: "transparent"
-
-                RowLayout{
-                    anchors.fill: parent
-
-                    SGGraphTimed {
-                        id: graph1
-                        Layout.fillHeight: true
-                        Layout.fillWidth: true
-                        opacity: 0.5
-                        enabled: false
-                        xAxisTitle: "Seconds"           // Default: empty
-                        yAxisTitle: "why axis"          // Default: empty
-                        textColor: "#ffffff"            // Default: #000000 (black) - Must use hex colors for this property
-                        dataLineColor: "white"          // Default: #000000 (black)
-                        axesColor: "#cccccc"            // Default: Qt.rgba(.2, .2, .2, 1) (dark gray)
-                        gridLineColor: "#666666"        // Default: Qt.rgba(.8, .8, .8, 1) (light gray)
-                        underDataColor: "transparent"   // Default: Qt.rgba(.5, .5, .5, .3) (transparent gray)
-                        backgroundColor: "black"        // Default: #ffffff (white)
-                        minYValue: 0                    // Default: 0
-                        maxYValue: 20                   // Default: 10
-                        minXValue: -5                   // Default: 0
-                        maxXValue: 0                    // Default: 5
-                        showXGrids: false               // Default: false
-                        showYGrids: true                // Default: false
-                        xAxisTickCount: 10              // Default: tickCount automatically calculated with built in applyNiceNumbers() if not specified here
-                        yAxisTickCount: 10              // Default: tickCount automatically calculated with built in applyNiceNumbers() if not specified here
-                        throttlePlotting: true          // Default: true - Restricts plotting to every 100ms or more to save resources, false plots on every inputData change (NOT RECOMMENDED)
-                        repeatOldData: visible          // Default: visible - If no new data has been sent after 200ms, graph will plot a new point at the current
-
-                        //                        inputData: yourUpdatingData  // Set the graph's data source here
-
-                    }
-
-                    SGGraphTimed {
-                        id: graph2
-                        Layout.fillHeight: true
-                        Layout.fillWidth: true
-                        opacity: 0.5
-                        enabled: false
-                        xAxisTitle: "Seconds"           // Default: empty
-                        yAxisTitle: "why axis"          // Default: empty
-                        textColor: "#ffffff"            // Default: #000000 (black) - Must use hex colors for this property
-                        dataLineColor: "white"          // Default: #000000 (black)
-                        axesColor: "#cccccc"            // Default: Qt.rgba(.2, .2, .2, 1) (dark gray)
-                        gridLineColor: "#666666"        // Default: Qt.rgba(.8, .8, .8, 1) (light gray)
-                        underDataColor: "transparent"   // Default: Qt.rgba(.5, .5, .5, .3) (transparent gray)
-                        backgroundColor: "black"        // Default: #ffffff (white)
-                        minYValue: 0                    // Default: 0
-                        maxYValue: 20                   // Default: 10
-                        minXValue: -5                   // Default: 0
-                        maxXValue: 0                    // Default: 5
-                        showXGrids: false               // Default: false
-                        showYGrids: true                // Default: false
-                        xAxisTickCount: 10              // Default: tickCount automatically calculated with built in applyNiceNumbers() if not specified here
-                        yAxisTickCount: 10              // Default: tickCount automatically calculated with built in applyNiceNumbers() if not specified here
-                        throttlePlotting: true          // Default: true - Restricts plotting to every 100ms or more to save resources, false plots on every inputData change (NOT RECOMMENDED)
-                        repeatOldData: visible          // Default: visible - If no new data has been sent after 200ms, graph will plot a new point at the current
-
-                        //                        inputData: yourUpdatingData  // Set the graph's data source here
-                    }
-
-                    SGGraphTimed {
-                        id: graph3
-                        Layout.fillHeight: true
-                        Layout.fillWidth: true
-                        opacity: 0.5
-                        enabled: false
-                        xAxisTitle: "Seconds"           // Default: empty
-                        yAxisTitle: "why axis"          // Default: empty
-                        textColor: "#ffffff"            // Default: #000000 (black) - Must use hex colors for this property
-                        dataLineColor: "white"          // Default: #000000 (black)
-                        axesColor: "#cccccc"            // Default: Qt.rgba(.2, .2, .2, 1) (dark gray)
-                        gridLineColor: "#666666"        // Default: Qt.rgba(.8, .8, .8, 1) (light gray)
-                        underDataColor: "transparent"   // Default: Qt.rgba(.5, .5, .5, .3) (transparent gray)
-                        backgroundColor: "black"        // Default: #ffffff (white)
-                        minYValue: 0                    // Default: 0
-                        maxYValue: 20                   // Default: 10
-                        minXValue: -5                   // Default: 0
-                        maxXValue: 0                    // Default: 5
-                        showXGrids: false               // Default: false
-                        showYGrids: true                // Default: false
-                        xAxisTickCount: 10              // Default: tickCount automatically calculated with built in applyNiceNumbers() if not specified here
-                        yAxisTickCount: 10              // Default: tickCount automatically calculated with built in applyNiceNumbers() if not specified here
-                        throttlePlotting: true          // Default: true - Restricts plotting to every 100ms or more to save resources, false plots on every inputData change (NOT RECOMMENDED)
-                        repeatOldData: visible          // Default: visible - If no new data has been sent after 200ms, graph will plot a new point at the current
-
-                        //                        inputData: yourUpdatingData  // Set the graph's data source here
-                    }
-
-                    SGGraphTimed {
-                        id: graph4
-                        Layout.fillHeight: true
-                        Layout.fillWidth: true
-                        opacity: 0.5
-                        enabled: false
-                        xAxisTitle: "Seconds"           // Default: empty
-                        yAxisTitle: "why axis"          // Default: empty
-                        textColor: "#ffffff"            // Default: #000000 (black) - Must use hex colors for this property
-                        dataLineColor: "white"          // Default: #000000 (black)
-                        axesColor: "#cccccc"            // Default: Qt.rgba(.2, .2, .2, 1) (dark gray)
-                        gridLineColor: "#666666"        // Default: Qt.rgba(.8, .8, .8, 1) (light gray)
-                        underDataColor: "transparent"   // Default: Qt.rgba(.5, .5, .5, .3) (transparent gray)
-                        backgroundColor: "black"        // Default: #ffffff (white)
-                        minYValue: 0                    // Default: 0
-                        maxYValue: 20                   // Default: 10
-                        minXValue: -5                   // Default: 0
-                        maxXValue: 0                    // Default: 5
-                        showXGrids: false               // Default: false
-                        showYGrids: true                // Default: false
-                        xAxisTickCount: 10              // Default: tickCount automatically calculated with built in applyNiceNumbers() if not specified here
-                        yAxisTickCount: 10              // Default: tickCount automatically calculated with built in applyNiceNumbers() if not specified here
-                        throttlePlotting: true          // Default: true - Restricts plotting to every 100ms or more to save resources, false plots on every inputData change (NOT RECOMMENDED)
-                        repeatOldData: visible          // Default: visible - If no new data has been sent after 200ms, graph will plot a new point at the current
-
-                        //                        inputData: yourUpdatingData  // Set the graph's data source here
-                    }
-
-                    SGGraphTimed {
-                        id: graph5
-                        Layout.fillHeight: true
-                        Layout.fillWidth: true
-                        opacity: 0.5
-                        enabled: false
-                        xAxisTitle: "Seconds"           // Default: empty
-                        yAxisTitle: "why axis"          // Default: empty
-                        textColor: "#ffffff"            // Default: #000000 (black) - Must use hex colors for this property
-                        dataLineColor: "white"          // Default: #000000 (black)
-                        axesColor: "#cccccc"            // Default: Qt.rgba(.2, .2, .2, 1) (dark gray)
-                        gridLineColor: "#666666"        // Default: Qt.rgba(.8, .8, .8, 1) (light gray)
-                        underDataColor: "transparent"   // Default: Qt.rgba(.5, .5, .5, .3) (transparent gray)
-                        backgroundColor: "black"        // Default: #ffffff (white)
-                        minYValue: 0                    // Default: 0
-                        maxYValue: 20                   // Default: 10
-                        minXValue: -5                   // Default: 0
-                        maxXValue: 0                    // Default: 5
-                        showXGrids: false               // Default: false
-                        showYGrids: true                // Default: false
-                        xAxisTickCount: 10              // Default: tickCount automatically calculated with built in applyNiceNumbers() if not specified here
-                        yAxisTickCount: 10              // Default: tickCount automatically calculated with built in applyNiceNumbers() if not specified here
-                        throttlePlotting: true          // Default: true - Restricts plotting to every 100ms or more to save resources, false plots on every inputData change (NOT RECOMMENDED)
-                        repeatOldData: visible          // Default: visible - If no new data has been sent after 200ms, graph will plot a new point at the current
-
-                        //                        inputData: yourUpdatingData  // Set the graph's data source here
-                    }
-
-                    SGGraphTimed {
-                        id: graph6
-                        Layout.fillHeight: true
-                        Layout.fillWidth: true
-                        opacity: 0.5
-                        enabled: false
-                        xAxisTitle: "Seconds"           // Default: empty
-                        yAxisTitle: "why axis"          // Default: empty
-                        textColor: "#ffffff"            // Default: #000000 (black) - Must use hex colors for this property
-                        dataLineColor: "white"          // Default: #000000 (black)
-                        axesColor: "#cccccc"            // Default: Qt.rgba(.2, .2, .2, 1) (dark gray)
-                        gridLineColor: "#666666"        // Default: Qt.rgba(.8, .8, .8, 1) (light gray)
-                        underDataColor: "transparent"   // Default: Qt.rgba(.5, .5, .5, .3) (transparent gray)
-                        backgroundColor: "black"        // Default: #ffffff (white)
-                        minYValue: 0                    // Default: 0
-                        maxYValue: 20                   // Default: 10
-                        minXValue: -5                   // Default: 0
-                        maxXValue: 0                    // Default: 5
-                        showXGrids: false               // Default: false
-                        showYGrids: true                // Default: false
-                        xAxisTickCount: 10              // Default: tickCount automatically calculated with built in applyNiceNumbers() if not specified here
-                        yAxisTickCount: 10              // Default: tickCount automatically calculated with built in applyNiceNumbers() if not specified here
-                        throttlePlotting: true          // Default: true - Restricts plotting to every 100ms or more to save resources, false plots on every inputData change (NOT RECOMMENDED)
-                        repeatOldData: visible          // Default: visible - If no new data has been sent after 200ms, graph will plot a new point at the current
-
-                        //                        inputData: yourUpdatingData  // Set the graph's data source here
-                    }
+            SGGraphTimed {
+                id: graph2
+                title: "<b>Output Voltage</b>"
+                visible: false
+                anchors {
+                    top: portGraphs.top
+                    bottom: portGraphs.bottom
+                    bottomMargin:0
                 }
+                width: portGraphs.width /  Math.max(1, graphSelector.howManyChecked)
+                yAxisTitle: "<b>[V]</b>"
+                xAxisTitle: "<b>1 sec/div</b>"
+                minYValue: 0                    // Default: 0
+                maxYValue: 25                   // Default: 10
+                minXValue: 0                    // Default: 0
+                maxXValue: 5                    // Default: 10
+
+            }
+
+            SGGraphTimed {
+                id: graph3
+                title: "<b>Input Current</b>"
+                visible: false
+                anchors {
+                    top: portGraphs.top
+                    bottom: portGraphs.bottom
+                    bottomMargin:0
+                }
+                width: portGraphs.width /  Math.max(1, graphSelector.howManyChecked)
+                yAxisTitle: "<b>[A]</b>"
+                xAxisTitle: "<b>1 sec/div</b>"
+
+                minYValue: 0                    // Default: 0
+                maxYValue: 5                   // Default: 10
+                minXValue: 0                    // Default: 0
+                maxXValue: 5                    // Default: 10
+
+            }
+
+            SGGraphTimed {
+                id: graph4
+                title: "<b>Output Current</b>"
+                visible: false
+                anchors {
+                    top: portGraphs.top
+                    bottom: portGraphs.bottom
+                    bottomMargin:0
+                }
+                width: portGraphs.width /  Math.max(1, graphSelector.howManyChecked)
+                yAxisTitle: "<b>[A]</b>"
+                xAxisTitle: "<b>1 sec/div</b>"
+
+                minYValue: 0                    // Default: 0
+                maxYValue: 5                   // Default: 10
+                minXValue: 0                    // Default: 0
+                maxXValue: 5                    // Default: 10
+
+            }
+
+            SGGraphTimed {
+                id: graph5
+                title: "<b>Input Power</b>"
+                visible: false
+                anchors {
+                    top: portGraphs.top
+                    bottom: portGraphs.bottom
+                    bottomMargin:0
+                }
+                width: portGraphs.width /  Math.max(1, graphSelector.howManyChecked)
+                yAxisTitle: "<b>[W]</b>"
+                xAxisTitle: "<b>1 sec/div</b>"
+                minYValue: 0                    // Default: 0
+                maxYValue: 125                   // Default: 10
+                minXValue: 0                    // Default: 0
+                maxXValue: 5                    // Default: 10
+
+            }
+
+            SGGraphTimed {
+                id: graph6
+                title: "<b>Output Power</b>"
+                visible: false
+                anchors {
+                    top: portGraphs.top
+                    bottom: portGraphs.bottom
+                    bottomMargin:0
+                }
+                width: portGraphs.width /  Math.max(1, graphSelector.howManyChecked)
+                yAxisTitle: "<b>[W]</b>"
+                xAxisTitle: "<b>1 sec/div</b>"
+                minYValue: 0                    // Default: 0
+                maxYValue: 125                   // Default: 10
+                minXValue: 0                    // Default: 0
+                maxXValue: 5                    // Default: 10
+
             }
         }
     }
