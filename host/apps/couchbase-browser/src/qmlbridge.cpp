@@ -32,6 +32,13 @@ void QMLBridge::setFilePath(int id, QString file_path)
     QQmlProperty::write(allWindows[id],"content",allDatabases[id]->getJSONResponse());
 }
 
+void QMLBridge::closeFile(int id)
+{
+    allDatabases.erase(id);
+    QQmlProperty::write(allWindows[id],"fileName","");
+    QQmlProperty::write(allWindows[id],"content","");
+}
+
 void QMLBridge::newUpdateSignal(int id)
 {
     QQmlProperty::write(allWindows[id],"fileName",allDatabases[id]->getDBName());

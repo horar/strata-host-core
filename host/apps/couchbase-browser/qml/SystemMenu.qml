@@ -9,6 +9,7 @@ Item {
 
     signal newWindowSignal();
     signal setFilePathSignal(string file_path);
+    signal closeSignal();
 
     RowLayout {
         id: row
@@ -66,7 +67,7 @@ Item {
             Layout.leftMargin: 5
             filename: "Images/closeIcon"
             label: "<b>Close</b>"
-
+            onButtonPress: closeSignal();
         }
 
 
@@ -77,7 +78,6 @@ Item {
             folder: shortcuts.home
             onAccepted: {
                 setFilePathSignal(fileUrls.toString().replace("file://",""));
-                //qmlBridge.setFilePath(id,fileUrls.toString().replace("file://",""))
                 hiddenMenuLayout.visible = true
             }
         }

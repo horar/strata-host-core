@@ -27,6 +27,10 @@ Item {
             else
                 tableSelectorView.currentIndex = newIndex;
         }
+        else {
+            tableSelectorView.model = [];
+            bodyView.content = "";
+        }
     }
 
     Rectangle {
@@ -57,6 +61,7 @@ Item {
                     }
                     onNewWindowSignal: qmlBridge.createNewWindow();
                     onSetFilePathSignal: qmlBridge.setFilePath(id, file_path)
+                    onCloseSignal: qmlBridge.closeFile(id);
                 }
             }
             Rectangle {

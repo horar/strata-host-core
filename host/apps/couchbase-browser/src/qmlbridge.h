@@ -19,6 +19,7 @@ class QMLBridge : public QObject
         void init(QQmlApplicationEngine *engine, QQmlComponent *component);
         Q_INVOKABLE int createNewWindow();
         Q_INVOKABLE void setFilePath(int id, QString file_path);
+        Q_INVOKABLE void closeFile(int id);
 
     public slots:
         void newUpdateSignal(int id);
