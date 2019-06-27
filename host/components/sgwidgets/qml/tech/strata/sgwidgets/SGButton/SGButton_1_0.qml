@@ -14,7 +14,7 @@ Button {
     icon.height: iconSize
 
     property bool alternativeColorEnabled: false
-    property alias fontSizeMultipier: textItem.fontSizeMultiplier
+    property alias fontSizeMultiplier: textItem.fontSizeMultiplier
     property int minimumContentHeight: -1
     property int minimumContentWidth: -1
     property bool backgroundOnlyOnHovered: false
