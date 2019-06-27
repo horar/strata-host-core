@@ -36,5 +36,6 @@ QString QMLBridge::getDBName()
 
 void QMLBridge::newUpdateSignal()
 {
-    qDebug() << "Got signal" << endl;
+    QQmlProperty::write(windowObject,"fileName",db->getDBName());
+    QQmlProperty::write(windowObject,"content",db->getJSONResponse());
 }
