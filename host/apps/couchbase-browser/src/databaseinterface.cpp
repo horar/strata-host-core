@@ -13,10 +13,10 @@ DatabaseInterface::DatabaseInterface(QObject *parent) : QObject (parent)
 {
 }
 
-DatabaseInterface::DatabaseInterface(QString file_path) : file_path_(file_path)
+DatabaseInterface::DatabaseInterface(const QString &file_path, const int &id) : file_path_(file_path), id_(id)
 {
-    parseFilePath();
-    db_init();
+    if(parseFilePath())
+        db_init();
 }
 
 DatabaseInterface::~DatabaseInterface()
@@ -33,7 +33,19 @@ void DatabaseInterface::emitUpdate(bool /*pushing*/, std::string /*doc_id*/, std
     QString s = getJSONResponse();
     cout << "\nJSON response: \n" << s.toStdString() << endl;
 
-    emit newUpdate();
+    emit newUpdate(this->id_);
+}
+
+bool DatabaseInterface::createNewDoc(const QString &id, const QString &body)
+{
+    if(id.isEmpty() || body.isEmpty()) {
+        DEBUG("Document's id or body contents may not be empty.");
+        return false;
+    }
+
+    SGMutableDocument newDoc(sg_db_,id.toStdString());
+
+    return true;
 }
 
 int DatabaseInterface::db_init()
@@ -133,13 +145,32 @@ QString DatabaseInterface::getDBName()
     return db_name_;
 }
 
-void DatabaseInterface::parseFilePath()
+bool DatabaseInterface::parseFilePath()
 {
+    QFileInfo info(file_path_);
+
+    if(!info.exists() || info.fileName() != "db.sqlite3") {
+        DEBUG("Problem with path to database file. The file must be located according to: \".../db/(db_name)/db.sqlite3\" \n");
+        return false;
+    }
+
     QDir dir(file_path_);
-    dir.cdUp();
+
+    if(!dir.cdUp()) {
+        DEBUG("Problem with path to database file. The file must be located according to: \".../db/(db_name)/db.sqlite3\" \n");
+        return false;
+    }
+
     setDBName(dir.dirName());
-    dir.cdUp(); dir.cdUp();
+
+    if(!dir.cdUp() || !dir.cdUp()) {
+        DEBUG("Problem with path to database file. The file must be located according to: \".../db/(db_name)/db.sqlite3\" \n");
+        return false;
+    }
+
     setDBPath(dir.path() + dir.separator());
+
+    return true;
 }
 
 int DatabaseInterface::setDocumentKeys()
