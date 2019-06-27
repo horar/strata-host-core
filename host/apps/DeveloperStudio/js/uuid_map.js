@@ -30,7 +30,7 @@ var uuid_map = {
         CES HACK (class_id)
     *****/
     "101": "logic-gate",
-    "201": "logic-gate",
+    //"201": "logic-gate",
     "202": "usb-pd",
     "203": "usb-pd-multiport",
     "204": "motor-vortex",
@@ -51,6 +51,7 @@ var uuid_map = {
     "220": "15A-switcher",
     "222": "subGHz",
     "225": "smart-speaker",
-    "224": "pixel"
+    "224": "pixel",
+    "201" : "pixel"
 
 }
