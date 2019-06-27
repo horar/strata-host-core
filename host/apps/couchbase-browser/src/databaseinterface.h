@@ -30,6 +30,8 @@ public:
 
     QString getJSONResponse();
 
+    bool createNewDoc(const QString &id, const QString &body);
+
 private:
     QString file_path_, db_path_, db_name_, JSONResponse_;
 
@@ -78,8 +80,6 @@ private:
     void setDBstatus(bool status);
 
     void setRepstatus(bool status);
-
-    bool createNewDoc(const QString &id, const QString &body);
 
 signals:
     void newUpdate(int i);

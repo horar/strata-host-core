@@ -22,25 +22,31 @@ int QMLBridge::createNewWindow()
     return ids;
 }
 
-void QMLBridge::setFilePath(int id, QString file_path)
+void QMLBridge::setFilePath(int windowId, QString file_path)
 {
-    DatabaseInterface *db = new DatabaseInterface(file_path, id);
-    //allDatabases.insert(databasePair(id, db));
-    allDatabases[id] = db;
-    QObject::connect(&(*allDatabases[id]),&DatabaseInterface::newUpdate, this, &QMLBridge::newUpdateSignal);
-    QQmlProperty::write(allWindows[id],"fileName",allDatabases[id]->getDBName());
-    QQmlProperty::write(allWindows[id],"content",allDatabases[id]->getJSONResponse());
+    DatabaseInterface *db = new DatabaseInterface(file_path, windowId);
+    allDatabases[windowId] = db;
+    QObject::connect(&(*allDatabases[windowId]),&DatabaseInterface::newUpdate, this, &QMLBridge::newUpdateSignal);
+    QQmlProperty::write(allWindows[windowId],"fileName",allDatabases[windowId]->getDBName());
+    QQmlProperty::write(allWindows[windowId],"content",allDatabases[windowId]->getJSONResponse());
 }
 
-void QMLBridge::closeFile(int id)
+void QMLBridge::createNewDocument(int windowId, QString id, QString body)
 {
-    allDatabases.erase(id);
-    QQmlProperty::write(allWindows[id],"fileName","");
-    QQmlProperty::write(allWindows[id],"content","");
+    qDebug() << windowId << id << body << endl;
+    qDebug() << allDatabases[windowId]->createNewDoc(id, body);
 }
 
-void QMLBridge::newUpdateSignal(int id)
+void QMLBridge::closeFile(int windowId)
 {
-    QQmlProperty::write(allWindows[id],"fileName",allDatabases[id]->getDBName());
-    QQmlProperty::write(allWindows[id],"content",allDatabases[id]->getJSONResponse());
+    delete allDatabases[windowId];
+    allDatabases.erase(windowId);
+    QQmlProperty::write(allWindows[windowId],"fileName","");
+    QQmlProperty::write(allWindows[windowId],"content","");
+}
+
+void QMLBridge::newUpdateSignal(int windowId)
+{
+    QQmlProperty::write(allWindows[windowId],"fileName",allDatabases[windowId]->getDBName());
+    QQmlProperty::write(allWindows[windowId],"content",allDatabases[windowId]->getJSONResponse());
 }

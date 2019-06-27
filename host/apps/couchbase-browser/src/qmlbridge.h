@@ -18,11 +18,12 @@ class QMLBridge : public QObject
         explicit QMLBridge(QObject *parent = nullptr);
         void init(QQmlApplicationEngine *engine, QQmlComponent *component);
         Q_INVOKABLE int createNewWindow();
-        Q_INVOKABLE void setFilePath(int id, QString file_path);
-        Q_INVOKABLE void closeFile(int id);
+        Q_INVOKABLE void setFilePath(int windowId, QString file_path);
+        Q_INVOKABLE void createNewDocument(int windowId, QString id, QString body);
+        Q_INVOKABLE void closeFile(int windowId);
 
     public slots:
-        void newUpdateSignal(int id);
+        void newUpdateSignal(int windowId);
 
     private:
         QQmlApplicationEngine *engine = nullptr;

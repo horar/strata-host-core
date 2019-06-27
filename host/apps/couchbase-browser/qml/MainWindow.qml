@@ -61,6 +61,7 @@ Item {
                     }
                     onNewWindowSignal: qmlBridge.createNewWindow();
                     onSetFilePathSignal: qmlBridge.setFilePath(id, file_path)
+                    onNewDocumentSignal: qmlBridge.createNewDocument(id, docID, docBody)
                     onCloseSignal: qmlBridge.closeFile(id);
                 }
             }

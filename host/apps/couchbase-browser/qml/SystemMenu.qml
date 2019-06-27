@@ -9,6 +9,7 @@ Item {
 
     signal newWindowSignal();
     signal setFilePathSignal(string file_path);
+    signal newDocumentSignal(string docID, string docBody);
     signal closeSignal();
 
     RowLayout {
@@ -151,6 +152,7 @@ Item {
     }
     NewDocumentPopup {
         id: newDoc
+        onSubmit: newDocumentSignal(docID, docBody)
     }
 }
 

@@ -11,6 +11,12 @@ Window {
     minimumHeight: 550
     minimumWidth: 500
     visible: false
+
+    property alias docID: idNameField.text;
+    property alias docBody: bodyTextArea.text;
+
+    signal submit();
+
     Rectangle {
         anchors.fill: parent
         color: "#393e46"
@@ -104,6 +110,7 @@ Window {
                     text: "Submit"
                     anchors.centerIn: parent
                     onClicked: {
+                        submit();
                     }
                 }
             }
