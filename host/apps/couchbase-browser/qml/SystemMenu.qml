@@ -7,8 +7,6 @@ import QtQuick.Dialogs 1.3
 Item {
     id: root
 
-    property int numberOfItems: 3
-
     signal newWindowSignal();
     signal setFilePathSignal(string file_path);
 
@@ -33,7 +31,7 @@ Item {
             Layout.leftMargin: 5
             filename: "Images/createDocumentIcon"
             label: "<b>New Doc</b>"
-            onButtonPress: fileDialog.visible = true
+            onButtonPress: newDoc.visible = true
         }
         CustomMenuItem {
             id: newDB
@@ -150,6 +148,9 @@ Item {
     }
     PopupWindow {
         id: login
+    }
+    NewDocumentPopup {
+        id: newDoc
     }
 }
 
