@@ -21,17 +21,20 @@ using namespace fleece::impl;
 using namespace std::placeholders;
 using namespace Spyglass;
 
-class DatabaseInterface
+class DatabaseInterface : public QObject
 {
+    Q_OBJECT
 
 public:
+    explicit DatabaseInterface(QObject *parent = nullptr);
+
     DatabaseInterface(QString file_path);
 
     ~DatabaseInterface();
 
     void testReceive();
 
-//    void testReceive(bool pushing, std::string doc_id, std::string error_message, bool is_error, bool error_is_transient);
+    static void testReceive(bool pushing, std::string doc_id, std::string error_message, bool is_error, bool error_is_transient);
 
     QString m_file_path, m_db_path, m_db_name;
 
@@ -68,6 +71,10 @@ public:
     SGReplicatorConfiguration *sg_replicator_configuration{nullptr};
     SGURLEndpoint *url_endpoint{nullptr};
     SGReplicator *sg_replicator{nullptr};
+
+signals:
+    void newUpdate(bool flag);
+
 };
 
 #endif // DATABASEINTERFACE_H

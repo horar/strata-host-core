@@ -5,9 +5,15 @@
 
 #define DEBUG(...) printf("TEST Database Interface: "); printf(__VA_ARGS__)
 
+DatabaseInterface::DatabaseInterface(QObject *parent) :
+    QObject (parent)
+{
+}
+
 void onDocumentEnded(bool pushing, std::string doc_id, std::string error_message, bool is_error,bool transient){
     DEBUG("onDocumentError: pushing: %d, Doc Id: %s, is error: %d, error message: %s, transient:%d\n", pushing, doc_id.c_str(), is_error, error_message.c_str(), transient);
     // send signal here
+    emit newUpdate(true);
 }
 
 DatabaseInterface::DatabaseInterface(QString file_path) : m_file_path(file_path)
@@ -75,7 +81,7 @@ void DatabaseInterface::rep_init()
     sg_replicator_configuration = new SGReplicatorConfiguration(sg_db, url_endpoint);
     sg_replicator_configuration->setReplicatorType(SGReplicatorConfiguration::ReplicatorType::kPull);
     sg_replicator = new SGReplicator(sg_replicator_configuration);
-    sg_replicator->addDocumentEndedListener(onDocumentEnded);\
+    sg_replicator->addDocumentEndedListener(onDocumentEnded);
     if(sg_replicator->start() == false)
     {
         std::cout << "\n PROBLEM WITH REPLICATION START, EXITING." << endl;
