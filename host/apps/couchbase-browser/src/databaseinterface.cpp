@@ -158,7 +158,7 @@ void DatabaseInterface::setJSONResponse()
     // Printing the list of documents key from the local DB.
     for(std::vector <string>::iterator iter = document_keys.begin(); iter != document_keys.end(); iter++) {
         SGDocument usbPDDocument(sg_db, (*iter));
-        temp_str = "\"" + QString((*iter).c_str()) + "\":" + QString(usbPDDocument.getBody().c_str()) + (iter + 1 == document_keys.end() ? "}" : "\",");
+        temp_str = "\"" + QString((*iter).c_str()) + "\":" + QString(usbPDDocument.getBody().c_str()) + (iter + 1 == document_keys.end() ? "}" : ",");
         JSONResponse = JSONResponse + temp_str;
     }
 }

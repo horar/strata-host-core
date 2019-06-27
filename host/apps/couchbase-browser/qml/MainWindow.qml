@@ -4,7 +4,29 @@ Item {
     id: root
     anchors.fill: parent
 
-    property alias content: bodyView.content
+    property var content: ""
+    property var jsonObj
+
+    onContentChanged: {
+        if (content !== "") {
+            let tempModel = ["All documents"];
+            jsonObj = JSON.parse(content);
+            for (let i in jsonObj) tempModel.push(i);
+            let prevID = tableSelectorView.model[tableSelectorView.currentIndex];
+            let newIndex = tempModel.indexOf(prevID);
+            if (newIndex === -1) newIndex = 0;
+            tableSelectorView.model = tempModel;
+
+            if (tableSelectorView.currentIndex === newIndex) {
+                if (tableSelectorView.currentIndex !== 0)
+                    bodyView.content = JSON.stringify(jsonObj[tableSelectorView.model[tableSelectorView.currentIndex]]);
+                else
+                    bodyView.content = JSON.stringify(jsonObj);
+            }
+            else
+                tableSelectorView.currentIndex = newIndex;
+        }
+    }
 
     Rectangle {
         id: background
@@ -47,6 +69,14 @@ Item {
 
                 TableSelector {
                     id: tableSelectorView
+                    onCurrentIndexChanged: {
+                        if (content !== "") {
+                            if (currentIndex !== 0)
+                                bodyView.content = JSON.stringify(jsonObj[model[currentIndex]]);
+                            else
+                                bodyView.content = JSON.stringify(jsonObj);
+                        }
+                    }
                 }
                 Image {
                     id: onLogo

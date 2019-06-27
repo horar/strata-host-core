@@ -6,6 +6,9 @@ import QtQuick.Controls.Styles 1.4
 Item {
     id: root
     anchors.fill: parent
+    property alias model: keySelectorComboBox.model
+    property alias currentIndex: keySelectorComboBox.currentIndex
+
     Rectangle {
         id: background
         anchors.fill: parent
@@ -36,7 +39,7 @@ Item {
                         top: keySelectorLabel.bottom
                         horizontalCenter: parent.horizontalCenter
                     }
-                    model: ["first","second","third"]
+                    model:[]
                 }
             }
 

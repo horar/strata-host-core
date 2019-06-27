@@ -12,7 +12,7 @@ Window {
     title: qsTr("Couchbase Browser") + ((fileName !== "") ? " - " + fileName : "")
     property int id: 0
     property string fileName: ""
-    property var content: null
+    property var content: ""
     MainWindow {
         id: mainview
     }

@@ -21,6 +21,7 @@ Item {
                 //anchors.fill: parent
                 wrapMode: "Wrap"
                 selectByMouse: true
+                text: ""
             }
         }
     }
