@@ -17,6 +17,10 @@ class QMLBridge : public QObject
         Q_INVOKABLE int CreateNewWindow();
         Q_INVOKABLE void setFilePath(QString file_path);
         Q_INVOKABLE QString getDBName();
+
+    public slots:
+        void newUpdateSignal();
+
     private:
         QQmlApplicationEngine *engine = nullptr;
         QQmlComponent *component = nullptr;

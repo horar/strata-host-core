@@ -24,6 +24,7 @@ int QMLBridge::CreateNewWindow()
 void QMLBridge::setFilePath(QString file_path)
 {
     db = new DatabaseInterface(file_path);
+    QObject::connect(&(*db),&DatabaseInterface::newUpdate, this, &QMLBridge::newUpdateSignal);
     QQmlProperty::write(windowObject,"fileName",db->getDBName());
     QQmlProperty::write(windowObject,"content",db->getJSONResponse());
 }
@@ -31,4 +32,9 @@ void QMLBridge::setFilePath(QString file_path)
 QString QMLBridge::getDBName()
 {
     return db->getDBName();
+}
+
+void QMLBridge::newUpdateSignal()
+{
+    qDebug() << "Got signal" << endl;
 }

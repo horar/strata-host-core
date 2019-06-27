@@ -75,7 +75,7 @@ public:
     SGReplicator *sg_replicator{nullptr};
 
 signals:
-    void newUpdate(bool flag);
+    void newUpdate();
 
 };
 

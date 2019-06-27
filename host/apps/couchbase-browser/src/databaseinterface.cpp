@@ -30,7 +30,7 @@ DatabaseInterface::~DatabaseInterface()
 void DatabaseInterface::test(bool /*pushing*/, std::string doc_id, std::string /*error_message*/, bool /*is_error*/, bool /*error_is_transient*/)
 {
     std::cout << "\n\nin test function \n\n" << endl;
-
+    emit newUpdate();
 }
 
 int DatabaseInterface::db_init()
