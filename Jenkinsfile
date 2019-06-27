@@ -8,9 +8,9 @@ pipeline {
                 script {
                     env.workspace= pwd()
                     echo env.workspace
-               } 
+                }
+                // change dir to deployment/Strata (required by installer)
                 dir("deployment/Strata") { 
-                //    bat 'bash deploy_strata_windows.sh'
                     sh "deploy_strata_windows.sh"
                     echo "done" 
                 }
