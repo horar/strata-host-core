@@ -59,7 +59,7 @@ private:
 
     void setDBName(QString db_name);
 
-    void parseFilePath();
+    bool parseFilePath();
 
     int db_init();
 

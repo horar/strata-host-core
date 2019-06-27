@@ -15,8 +15,8 @@ DatabaseInterface::DatabaseInterface(QObject *parent) : QObject (parent)
 
 DatabaseInterface::DatabaseInterface(QString file_path) : file_path_(file_path)
 {
-    parseFilePath();
-    db_init();
+    if(parseFilePath())
+        db_init();
 }
 
 DatabaseInterface::~DatabaseInterface()
@@ -133,13 +133,36 @@ QString DatabaseInterface::getDBName()
     return db_name_;
 }
 
-void DatabaseInterface::parseFilePath()
+bool DatabaseInterface::parseFilePath()
 {
+    std::cout << "\nFile path received: " << getFilePath().toStdString() << endl;
+
+    QFileInfo info(file_path_);
+
+    if(!info.exists() || info.fileName() != "db.sqlite3") {
+        DEBUG("Problem with path to database file. The file must be located according to: \".../db/(db_name)/db.sqlite3\" \n");
+        return false;
+    }
+
     QDir dir(file_path_);
-    dir.cdUp();
+
+    if(!dir.cdUp()) {
+        DEBUG("Problem with path to database file. The file must be located according to: \".../db/(db_name)/db.sqlite3\" \n");
+        return false;
+    }
+
     setDBName(dir.dirName());
-    dir.cdUp(); dir.cdUp();
+
+    if(!dir.cdUp() || !dir.cdUp()) {
+        DEBUG("Problem with path to database file. The file must be located according to: \".../db/(db_name)/db.sqlite3\" \n");
+        return false;
+    }
+
+    cout << "\nPassed all filename checks." << endl;
+
     setDBPath(dir.path() + dir.separator());
+
+    return true;
 }
 
 int DatabaseInterface::setDocumentKeys()
