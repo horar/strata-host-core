@@ -15,4 +15,5 @@
         <file>control-views/images/sliderThumb.svg</file>
         <file>control-views/images/sliderValue.svg</file>
     </qresource>
+    <qresource prefix="/"/>
 </RCC>

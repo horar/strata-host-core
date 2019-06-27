@@ -9,12 +9,84 @@ Item {
     width: parent.width
     height: parent.height
 
+    Component.onCompleted: {
+
+        sgSwitch1.checked = false
+        sgSwitch2.enabled = false
+        sgSwitch3.enabled = false
+        sgSwitch4.enabled = false
+        sgSwitch5.enabled = false
+        sgSwitch6.enabled = false
+        sgSwitch7.enabled = false
+
+        sgSlider1.enabled = false
+        sgSlider2.enabled = false
+        sgSlider3.enabled = false
+        sgSlider4.enabled = false
+        sgSlider5.enabled = false
+        sgSlider6.enabled = false
+        sgSlider7.enabled = false
+        sgSlider8.enabled = false
+        sgSlider9.enabled = false
+        sgSlider10.enabled = false
+
+    }
+
     property bool check_boost_enable_state: platformInterface.boost_enable_state
     onCheck_boost_enable_stateChanged: {
         if(check_boost_enable_state === true){
             sgSwitch1.checked = true
+            sgSwitch2.enabled = true
+            sgSwitch3.enabled = true
+            sgSwitch4.enabled = true
+            sgSwitch5.enabled = true
+            sgSwitch6.enabled = true
+            sgSwitch7.enabled = true
+
+            sgSlider1.enabled = true
+
         }
-        else sgSwitch1.checked = false
+        else {
+            sgSwitch1.checked = false
+            sgSwitch2.enabled = false
+            sgSwitch3.enabled = false
+            sgSwitch4.enabled = false
+            sgSwitch5.enabled = false
+            sgSwitch6.enabled = false
+            sgSwitch7.enabled = false
+
+            sgSlider1.enabled = false
+            sgSlider2.enabled = false
+            sgSlider3.enabled = false
+            sgSlider4.enabled = false
+            sgSlider5.enabled = false
+            sgSlider6.enabled = false
+            sgSlider7.enabled = false
+            sgSlider8.enabled = false
+            sgSlider9.enabled = false
+            sgSlider10.enabled = false
+
+            platformInterface.buck1_enable_state = false
+            platformInterface.buck2_enable_state = false
+            platformInterface.buck3_enable_state = false
+            platformInterface.buck4_enable_state = false
+            platformInterface.buck5_enable_state = false
+            platformInterface.buck6_enable_state = false
+
+            platformInterface.buck1_led_state = false
+            platformInterface.buck2_led_state = false
+            platformInterface.buck3_led_state = false
+            platformInterface.buck4_led_state = false
+            platformInterface.buck5_led_state = false
+            platformInterface.buck6_led_state = false
+
+            platformInterface.set_buck_enable.update(1,0)
+            platformInterface.set_buck_enable.update(2,0)
+            platformInterface.set_buck_enable.update(3,0)
+            platformInterface.set_buck_enable.update(4,0)
+            platformInterface.set_buck_enable.update(5,0)
+            platformInterface.set_buck_enable.update(6,0)
+        }
     }
 
     property bool check_boost_led_state: platformInterface.boost_led_state
@@ -29,8 +101,12 @@ Item {
     onCheck_buck1_enable_stateChanged: {
         if (check_buck1_enable_state === true){
             sgSwitch2.checked = true
+            sgSlider2.enabled = true
         }
-        else sgSwitch2.checked = false
+        else {
+            sgSwitch2.checked = false
+            sgSlider2.enabled = false
+        }
     }
 
     property bool check_buck1_led_state: platformInterface.buck1_led_state
@@ -45,8 +121,12 @@ Item {
     onCheck_buck2_enable_stateChanged: {
         if (check_buck2_enable_state === true){
             sgSwitch3.checked = true
+            sgSlider3.enabled = true
         }
-        else sgSwitch3.checked = false
+        else {
+            sgSwitch3.checked = false
+            sgSlider3.enabled = false
+        }
     }
 
     property bool check_buck2_led_state: platformInterface.buck2_led_state
@@ -61,8 +141,12 @@ Item {
     onCheck_buck3_enable_stateChanged: {
         if (check_buck3_enable_state === true){
             sgSwitch4.checked = true
+            sgSlider4.enabled = true
         }
-        else sgSwitch4.checked = false
+        else {
+            sgSwitch4.checked = false
+            sgSlider4.enabled = false
+        }
     }
 
     property bool check_buck3_led_state: platformInterface.buck3_led_state
@@ -78,8 +162,14 @@ Item {
     onCheck_buck4_enable_stateChanged: {
         if (check_buck4_enable_state === true){
             sgSwitch5.checked = true
+            sgSlider5.enabled = true
+            sgSlider8.enabled = true
         }
-        else sgSwitch5.checked = false
+        else {
+            sgSwitch5.checked = false
+            sgSlider5.enabled = false
+            sgSlider8.enabled = false
+        }
     }
 
     property bool check_buck4_led_state: platformInterface.buck4_led_state
@@ -94,8 +184,14 @@ Item {
     onCheck_buck5_enable_stateChanged: {
         if (check_buck5_enable_state === true){
             sgSwitch6.checked = true
+            sgSlider6.enabled = true
+            sgSlider9.enabled = true
         }
-        else sgSwitch6.checked = false
+        else {
+            sgSwitch6.checked = false
+            sgSlider6.enabled = false
+            sgSlider9.enabled = false
+        }
     }
 
     property bool check_buck5_led_state: platformInterface.buck5_led_state
@@ -110,8 +206,14 @@ Item {
     onCheck_buck6_enable_stateChanged: {
         if (check_buck6_enable_state === true){
             sgSwitch7.checked = true
+            sgSlider7.enabled = true
+            sgSlider10.enabled = true
         }
-        else sgSwitch7.checked = false
+        else {
+            sgSwitch7.checked = false
+            sgSlider7.enabled = false
+            sgSlider10.enabled = false
+        }
     }
 
     property bool check_buck6_led_state: platformInterface.buck6_led_state
