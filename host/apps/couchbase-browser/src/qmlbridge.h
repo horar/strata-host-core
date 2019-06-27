@@ -8,26 +8,28 @@
 #include <QString>
 #include "databaseinterface.h"
 
+//typedef std::pair<int, QObject*> windowPair;
+//typedef std::pair<int, DatabaseInterface*> databasePair;
+
 class QMLBridge : public QObject
 {
     Q_OBJECT
     public:
         explicit QMLBridge(QObject *parent = nullptr);
         void init(QQmlApplicationEngine *engine, QQmlComponent *component);
-        Q_INVOKABLE int CreateNewWindow();
-        Q_INVOKABLE void setFilePath(QString file_path);
-        Q_INVOKABLE QString getDBName();
+        Q_INVOKABLE int createNewWindow();
+        Q_INVOKABLE void setFilePath(int id, QString file_path);
 
     public slots:
-        void newUpdateSignal();
+        void newUpdateSignal(int id);
 
     private:
         QQmlApplicationEngine *engine = nullptr;
         QQmlComponent *component = nullptr;
 
         int ids = -1;
-        QObject *windowObject = nullptr;
-        DatabaseInterface *db = nullptr;
+        std::map<int, QObject*> allWindows;
+        std::map<int, DatabaseInterface*> allDatabases;
 };
 
 #endif // QMLBRIDGE_H

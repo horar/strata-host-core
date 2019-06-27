@@ -4,6 +4,7 @@ Item {
     id: root
     anchors.fill: parent
 
+    property var id
     property var content: ""
     property var jsonObj
 
@@ -56,7 +57,8 @@ Item {
                         fill: parent
                         bottomMargin: 10
                     }
-
+                    onNewWindowSignal: qmlBridge.createNewWindow();
+                    onSetFilePathSignal: qmlBridge.setFilePath(id, file_path)
                 }
             }
             Rectangle {

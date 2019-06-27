@@ -9,6 +9,9 @@ Item {
 
     property int numberOfItems: 3
 
+    signal newWindowSignal();
+    signal setFilePathSignal(string file_path);
+
     RowLayout {
         id: row
         height: parent.height
@@ -75,7 +78,8 @@ Item {
             title: "Please select a database"
             folder: shortcuts.home
             onAccepted: {
-                qmlBridge.setFilePath(fileUrls.toString().replace("file://",""))
+                setFilePathSignal(fileUrls.toString().replace("file://",""));
+                //qmlBridge.setFilePath(id,fileUrls.toString().replace("file://",""))
                 hiddenMenuLayout.visible = true
             }
         }
@@ -138,6 +142,9 @@ Item {
                 Layout.alignment: Qt.AlignCenter
                 label: "<b>New Tab</b>"
                 filename: "Images/newTabIcon"
+                onButtonPress: {
+                    newWindowSignal();
+                }
             }
         }
     }
