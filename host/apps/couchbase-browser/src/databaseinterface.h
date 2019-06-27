@@ -22,7 +22,7 @@ class DatabaseInterface : public QObject
 public:
     explicit DatabaseInterface(QObject *parent = nullptr);
 
-    DatabaseInterface(QString file_path);
+    DatabaseInterface(const QString &file_path, const int &id);
 
     ~DatabaseInterface();
 
@@ -32,6 +32,8 @@ public:
 
 private:
     QString file_path_, db_path_, db_name_, JSONResponse_;
+
+    int id_;
 
     bool DBstatus_, Repstatus_;
 
@@ -77,8 +79,10 @@ private:
 
     void setRepstatus(bool status);
 
+    bool createNewDoc(const QString &id, const QString &body);
+
 signals:
-    void newUpdate();
+    void newUpdate(int i);
 
 };
 

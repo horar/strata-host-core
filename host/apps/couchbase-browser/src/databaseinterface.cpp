@@ -13,7 +13,7 @@ DatabaseInterface::DatabaseInterface(QObject *parent) : QObject (parent)
 {
 }
 
-DatabaseInterface::DatabaseInterface(QString file_path) : file_path_(file_path)
+DatabaseInterface::DatabaseInterface(const QString &file_path, const int &id) : file_path_(file_path), id_(id)
 {
     if(parseFilePath())
         db_init();
@@ -33,7 +33,19 @@ void DatabaseInterface::emitUpdate(bool /*pushing*/, std::string /*doc_id*/, std
     QString s = getJSONResponse();
     cout << "\nJSON response: \n" << s.toStdString() << endl;
 
-    emit newUpdate();
+    emit newUpdate(this->id_);
+}
+
+bool DatabaseInterface::createNewDoc(const QString &id, const QString &body)
+{
+    if(id.isEmpty() || body.isEmpty()) {
+        DEBUG("Document's id or body contents may not be empty.");
+        return false;
+    }
+
+    SGMutableDocument newDoc(sg_db_,id.toStdString());
+
+    return true;
 }
 
 int DatabaseInterface::db_init()
@@ -135,8 +147,6 @@ QString DatabaseInterface::getDBName()
 
 bool DatabaseInterface::parseFilePath()
 {
-    std::cout << "\nFile path received: " << getFilePath().toStdString() << endl;
-
     QFileInfo info(file_path_);
 
     if(!info.exists() || info.fileName() != "db.sqlite3") {
@@ -157,8 +167,6 @@ bool DatabaseInterface::parseFilePath()
         DEBUG("Problem with path to database file. The file must be located according to: \".../db/(db_name)/db.sqlite3\" \n");
         return false;
     }
-
-    cout << "\nPassed all filename checks." << endl;
 
     setDBPath(dir.path() + dir.separator());
 
