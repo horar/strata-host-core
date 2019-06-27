@@ -32,7 +32,7 @@ public:
 
     ~DatabaseInterface();
 
-    void test(bool pushing, std::string doc_id, std::string error_message, bool is_error, bool              error_is_transient);
+    void emitUpdate(bool pushing, std::string doc_id, std::string error_message, bool is_error, bool error_is_transient);
 
     void testReceive();
 
