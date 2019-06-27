@@ -2,6 +2,7 @@ import QtQuick 2.9
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.7
 import "../sgwidgets"
+import tech.strata.fonts 1.0
 import "qrc:/js/help_layout_manager.js" as Help
 
 Item {
@@ -45,21 +46,62 @@ Item {
         }
         else vinLed.status = "red"
     }
-    property var thermal1_status_noti: platformInterface.periodic_status.tf1_led
+    property var thermal1_status_noti: platformInterface.thermal_shutdown_eFuse1.status
     onThermal1_status_notiChanged: {
-        if(thermal1_status_noti === "good"){
-            thermalLed1.status = "off"
+        if(thermal1_status_noti === "yes"){
+            plotSetting1.visible = true
+            plotSetting1.enabled = true
+            thermalLed1.status = "red"
+            warningBox2.visible = true
+            eFuse1.enabled = false
+            eFuse2.enabled = false
+            eFuse1.opacity = 0.5
+            eFuse2.opacity =  0.5
+            //platformInterface.enable_1 = false
         }
-        else thermalLed1.status = "red"
+        else {
+            warningBox2.visible = false
+            thermalLed1.status = "off"
+
+        }
     }
 
-    property var thermal2_status_noti: platformInterface.periodic_status.tf2_led
+    property var thermal2_status_noti: platformInterface.thermal_shutdown_eFuse2.status
     onThermal2_status_notiChanged: {
-        if(thermal2_status_noti === "good"){
-            thermalLed2.status = "off"
+        if(thermal2_status_noti === "yes"){
+            plotSetting1.visible = true
+            plotSetting1.enabled = true
+            thermalLed2.status = "red"
+            warningBox2.visible = true
+            eFuse1.enabled = false
+            eFuse2.enabled = false
+            eFuse1.opacity = 0.5
+            eFuse2.opacity =  0.5
+            //platformInterface.enable_2 = false
+
         }
-        else thermalLed2.status = "red"
+        else {
+            thermalLed2.status = "off"
+            warningBox2.visible = false
+
+        }
     }
+    property var periodic_status_en1: platformInterface.enable_status.en1
+    onPeriodic_status_en1Changed: {
+        if(periodic_status_en1 === "on"){
+            platformInterface.enable_1 = true
+        }
+        else  platformInterface.enable_1 = false
+    }
+
+    property var periodic_status_en2: platformInterface.enable_status.en2
+    onPeriodic_status_en2Changed: {
+        if(periodic_status_en2 === "on"){
+            platformInterface.enable_2 = true
+        }
+        else  platformInterface.enable_2 = false
+    }
+
 
     Rectangle{
         width: parent.width
@@ -99,7 +141,7 @@ Item {
 
                 SGCircularGauge {
                     id: sgCircularGauge
-                      value: platformInterface.periodic_status.temperature1.toFixed(2)
+                    value: platformInterface.periodic_status.temperature1.toFixed(2)
                     minimumValue: 0
                     maximumValue: 100
                     tickmarkStepSize: 10
@@ -374,7 +416,7 @@ Item {
             }
             Rectangle {
                 id: middleSetting
-                width: parent.width/5
+                width: parent.width/4.5
                 height: parent.height/1.5
                 color: "#696969"
                 anchors {
@@ -383,36 +425,142 @@ Item {
                     top: titleControl.bottom
                     topMargin: 5
                 }
-                Button {
-                    id: plotSetting2
-                    width: ratioCalc * 130
-                    height : ratioCalc * 50
-                    text: qsTr("Short Circuit EN")
-                    checkable: true
-                    background: Rectangle {
-                        id: backgroundContainer2
-                        implicitWidth: 100
-                        implicitHeight: 40
-                        opacity: enabled ? 1 : 0.3
-                        border.color: plotSetting2.down ? "#17a81a" : "black"//"#21be2b"
-                        border.width: 1
-                        color: "#33b13b"
-                        radius: 10
-                    }
-                    anchors.centerIn: parent
+                ColumnLayout{
+                    anchors.fill: parent
+                    Rectangle{
+                        Layout.fillHeight: true
+                        Layout.fillWidth: true
+                        color: "transparent"
+                        Rectangle {
+                            id: warningBox2
+                            color: "red"
+                            anchors.centerIn: parent
+                            width: parent.width
+                            height: parent.height/1.5
 
-                    contentItem: Text {
-                        text: plotSetting2.text
-                        font: plotSetting2.font
-                        opacity: enabled ? 1.0 : 0.3
-                        color: plotSetting2.down ? "#17a81a" : "white"//"#21be2b"
-                        horizontalAlignment: Text.AlignHCenter
-                        verticalAlignment: Text.AlignVCenter
-                        elide: Text.ElideRight
+                            Text {
+                                id: warningText2
+                                anchors {
+                                    centerIn: warningBox2
+                                }
+                                text: "<b>CLICK RESET BUTTON</b>"
+                                font.pixelSize: (parent.width + parent.height)/32
+                                color: "white"
+                            }
+
+                            Text {
+                                id: warningIconleft
+                                anchors {
+                                    right: warningText2.left
+                                    verticalCenter: warningText2.verticalCenter
+                                    rightMargin: 5
+                                }
+                                text: "\ue80e"
+                                font.family: Fonts.sgicons
+                                font.pixelSize: (parent.width + parent.height)/19
+                                color: "white"
+                            }
+
+                            Text {
+                                id: warningIconright
+                                anchors {
+                                    left: warningText2.right
+                                    verticalCenter: warningText2.verticalCenter
+                                    leftMargin: 5
+                                }
+                                text: "\ue80e"
+                                font.family: Fonts.sgicons
+
+                                font.pixelSize: (parent.width + parent.height)/19
+                                color: "white"
+                            }
+                        }
                     }
 
-                    onClicked: {
-                        platformInterface.sc_on.update()
+                    Rectangle{
+                        Layout.fillHeight: true
+                        Layout.fillWidth: true
+                        color: "#696969"
+                        Button {
+                            id: plotSetting1
+                            visible: false
+
+
+                            text: qsTr("Reset")
+                            checkable: true
+                            background: Rectangle {
+                                id: backgroundContainer1
+                                implicitWidth: 100
+                                implicitHeight: 40
+                                opacity: enabled ? 1 : 0.3
+                                border.color: plotSetting2.down ? "#17a81a" : "black"//"#21be2b"
+                                border.width: 1
+                                color: "#33b13b"
+                                radius: 10
+                            }
+                            anchors.centerIn: parent
+
+                            contentItem: Text {
+                                text: plotSetting1.text
+                                font: plotSetting1.font
+                                opacity: enabled ? 1.0 : 0.3
+                                color: plotSetting1.down ? "#17a81a" : "white"//"#21be2b"
+                                horizontalAlignment: Text.AlignHCenter
+                                verticalAlignment: Text.AlignVCenter
+                                elide: Text.ElideRight
+                            }
+
+                            onClicked: {
+                                platformInterface.reset.update()
+                                eFuse1.enabled = true
+                                eFuse2.enabled = true
+                                eFuse1.opacity = 1.0
+                                eFuse2.opacity =  1.0
+                                platformInterface.get_enable_status.update()
+                                thermalLed2.status = "off"
+                                thermalLed1.status = "off"
+                                warningBox2.visible = false
+                                plotSetting1.visible = false
+                                plotSetting1.enabled = false
+                            }
+                        }
+                    }
+                    Rectangle{
+                        Layout.fillHeight: true
+                        Layout.fillWidth: true
+                        color: "#696969"
+                        Button {
+                            id: plotSetting2
+
+                            text: qsTr("Short Circuit EN")
+                            checkable: true
+                            //anchors.top: plotSetting1.bottom
+                            background: Rectangle {
+                                id: backgroundContainer2
+                                implicitWidth: 100
+                                implicitHeight: 40
+                                opacity: enabled ? 1 : 0.3
+                                border.color: plotSetting2.down ? "#17a81a" : "black"//"#21be2b"
+                                border.width: 1
+                                color: "#33b13b"
+                                radius: 10
+                            }
+                            anchors.centerIn: parent
+
+                            contentItem: Text {
+                                text: plotSetting2.text
+                                font: plotSetting2.font
+                                opacity: enabled ? 1.0 : 0.3
+                                color: plotSetting2.down ? "#17a81a" : "white"//"#21be2b"
+                                horizontalAlignment: Text.AlignHCenter
+                                verticalAlignment: Text.AlignVCenter
+                                elide: Text.ElideRight
+                            }
+
+                            onClicked: {
+                                platformInterface.sc_on.update()
+                            }
+                        }
                     }
                 }
             }

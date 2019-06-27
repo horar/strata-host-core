@@ -28,10 +28,25 @@ Item {
         "vout": 12.00,			//output voltage (float) two decimal point accuracy
         "iin": 1.00	,			//input current (float) two decimal point accuracy
         "iout": 1.00,			//output current (float) two decimal point accuracy
-        "vin_led": "good",
-        "tf1_led": "good",
-        "tf2_led": "good",
+        "vin_led": "good"
     }
+
+    property var enable_status: {
+        "en1":	"off",		//on or off for state of the enable switch
+         "en2":	"on"
+    }
+
+
+    property var thermal_shutdown_eFuse1: {
+        "status": "no"
+    }
+
+    property var thermal_shutdown_eFuse2: {
+        "status": "no"
+    }
+
+
+
 
 
 
@@ -142,17 +157,17 @@ Item {
     property var set_rlim_1: ({
                                   "cmd" : "set_rlim_1",
                                   "payload": {
-                                      "ilim": "55",
+                                      "rlim": "55",
                                   },
 
                                   // Update will set and send in one shot
-                                  update: function (ilim) {
-                                      this.set(ilim)
+                                  update: function (rlim) {
+                                      this.set(rlim)
                                       CorePlatformInterface.send(this)
                                   },
                                   // Set can set single or multiple properties before sending to platform
-                                  set: function (ilim) {
-                                      this.payload.ilim = ilim;
+                                  set: function (rlim) {
+                                      this.payload.rlim = rlim;
                                   },
 
                                   send: function () { CorePlatformInterface.send(this) },
@@ -163,17 +178,17 @@ Item {
     property var set_rlim_2: ({
                                   "cmd" : "set_rlim_2",
                                   "payload": {
-                                      "ilim": "55",
+                                      "rlim": "55",
                                   },
 
                                   // Update will set and send in one shot
-                                  update: function (ilim) {
-                                      this.set(ilim)
+                                  update: function (rlim) {
+                                      this.set(rlim)
                                       CorePlatformInterface.send(this)
                                   },
                                   // Set can set single or multiple properties before sending to platform
-                                  set: function (ilim) {
-                                      this.payload.ilim = ilim;
+                                  set: function (rlim) {
+                                      this.payload.rlim = rlim;
                                   },
 
                                   send: function () { CorePlatformInterface.send(this) },
@@ -182,6 +197,15 @@ Item {
                               })
 
     property var sc_on: ({ "cmd" : "sc_on",
+                             update: function () {
+                                 CorePlatformInterface.send(this)
+                             },
+                             send: function () { CorePlatformInterface.send(this) },
+                             show: function () { CorePlatformInterface.show(this) }
+
+                         })
+
+    property var reset: ({ "cmd" : "reset",
                              update: function () {
                                  CorePlatformInterface.send(this)
                              },
@@ -200,6 +224,15 @@ Item {
                                 })
 
     property var get_status: ({ "cmd" : "get_status",
+                                  update: function () {
+                                      CorePlatformInterface.send(this)
+                                  },
+                                  send: function () { CorePlatformInterface.send(this) },
+                                  show: function () { CorePlatformInterface.show(this) }
+
+                              })
+
+    property var get_enable_status: ({ "cmd" : "get_enable_status",
                                   update: function () {
                                       CorePlatformInterface.send(this)
                                   },

@@ -48,7 +48,25 @@ Item {
     }
 
 
+    property var periodic_status_en1: platformInterface.enable_status.en1
+    onPeriodic_status_en1Changed: {
+        if(periodic_status_en1 === "on"){
+            platformInterface.enable_1 = true
+        }
+        else  platformInterface.enable_1 = false
+    }
 
+    property var periodic_status_en2: platformInterface.enable_status.en2
+    onPeriodic_status_en2Changed: {
+        if(periodic_status_en2 === "on"){
+            platformInterface.enable_2 = true
+        }
+        else  platformInterface.enable_2 = false
+    }
+
+    Component.onCompleted: {
+        platformInterface.get_enable_status.update()
+    }
 
     Rectangle{
         width: parent.width
