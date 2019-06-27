@@ -13,7 +13,7 @@ Item {
         ColumnLayout {
             id: comboBoxContainer
             width: parent.width
-            height: 300
+            height: implicitHeight
             Rectangle {
                 id: keySelectorContainer
                 Layout.preferredHeight: 80
@@ -22,11 +22,12 @@ Item {
                 color: "transparent"
                 Label {
                     id: keySelectorLabel
-                    text: "<b>Select Key:</b>"
+                    text: "<b>Select Document:</b>"
                     color: "white"
                     anchors {
                         left: keySelectorComboBox.left
-                        verticalCenter: parent.verticalCenter
+                        top: parent.top
+                        topMargin: 15
                     }
                 }
                 ComboBox {
@@ -38,30 +39,7 @@ Item {
                     model: ["first","second","third"]
                 }
             }
-//            Rectangle {
-//                id: keySelectorContainer
-//                Layout.preferredHeight: 80
-//                Layout.preferredWidth: parent.width - 30
-//                Layout.alignment: Qt.AlignHCenter + Qt.AlignTop
-//                color: "transparent"
-//                Label {
-//                    id: keySelectorLabel
-//                    color: "white"
-//                    text: "<b>Select Key:</b>"
-//                    anchors {
-//                        left: keySelectorComboBox.left
-//                        verticalCenter: parent.verticalCenter
-//                    }
-//                }
-//                ComboBox {
-//                    id: keySelectorComboBox
-//                    anchors {
-//                        top: keySelectorLabel.bottom
-//                        horizontalCenter: parent.horizontalCenter
-//                    }
-//                    model: ["first","second","third"]
-//                }
-//            }
+
         }
 
     }

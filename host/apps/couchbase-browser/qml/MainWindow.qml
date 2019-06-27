@@ -23,14 +23,18 @@ Item {
             Rectangle {
                 id: menuContainer
                 Layout.preferredWidth: parent.width
-                Layout.preferredHeight: 90
+                Layout.preferredHeight: 82
                 Layout.row: 0
                 Layout.columnSpan: 2
                 color: "steelblue"
 
                 SystemMenu {
                     id: mainMenuView
-                    anchors.fill: parent
+                    anchors {
+                        fill: parent
+                        bottomMargin: 10
+                    }
+
                 }
             }
             Rectangle {
