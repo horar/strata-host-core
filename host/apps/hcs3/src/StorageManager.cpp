@@ -9,6 +9,7 @@
 
 #include <QStandardPaths>
 #include <QFile>
+#include <QDir>
 #include <QCryptographicHash>
 
 #include <rapidjson/stringbuffer.h>

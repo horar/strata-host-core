@@ -1,7 +1,8 @@
 
 #include "DownloadManager.h"
-
 #include "logging/LoggingQtCategories.h"
+
+#include <QFile>
 
 DownloadManager::DownloadManager(QObject* parent) : QObject(parent), numberOfDownloads_(4)
 {
@@ -81,10 +82,11 @@ QNetworkReply* DownloadManager::downloadFile(const QString& url)
     }
 
     QObject::connect(reply, &QNetworkReply::readyRead, this, &DownloadManager::readyRead);
-    QObject::connect(reply, SIGNAL(error(QNetworkReply::NetworkError)), this, SLOT(slotError()) );
+    QObject::connect(reply, QOverload<QNetworkReply::NetworkError>::of(&QNetworkReply::error),
+                      this, &DownloadManager::slotError);
 
 #if QT_CONFIG(ssl)
-    connect(reply, SIGNAL(sslErrors(QList<QSslError>)), SLOT(sslErrors(QList<QSslError>)));
+    connect(reply, &QNetworkReply::sslErrors, this, &DownloadManager::sslErrors);
 #endif
 
     currentDownloads_.append(reply);
@@ -214,20 +216,26 @@ QList<DownloadManager::DownloadItem>::iterator DownloadManager::findItemByFilena
     return findIt;
 }
 
-void DownloadManager::slotError()
+void DownloadManager::slotError(QNetworkReply::NetworkError /*err*/)
 {
     QNetworkReply* reply = qobject_cast<QNetworkReply*>( QObject::sender() );
     Q_ASSERT(reply);
 
-    qCWarning(logCategoryHcsDownloader) << "download error on:" << reply->url();
+    qCWarning(logCategoryHcsDownloader) << "download error on:" << reply->url() << "err:" << reply->errorString();
 }
 
-void DownloadManager::sslErrors(const QList<QSslError>& /*errors*/)
+void DownloadManager::sslErrors(const QList<QSslError>& errors)
 {
     QNetworkReply* reply = qobject_cast<QNetworkReply*>( QObject::sender() );
     Q_ASSERT(reply);
 
-    qCWarning(logCategoryHcsDownloader) << "download SSL error on:" << reply->url();
+    QString errorText;
+    for(const auto item : errors) {
+        errorText += item.errorString();
+        errorText += ",";
+    }
+
+    qCWarning(logCategoryHcsDownloader) << "download SSL error on:" << reply->url() << "err:" << errorText;
 }
 
 void DownloadManager::stopAllDownloads()
