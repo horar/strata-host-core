@@ -138,7 +138,7 @@ Item {
                 Layout.preferredHeight: 50
                 Layout.preferredWidth: 50
                 Layout.alignment: Qt.AlignCenter
-                label: "<b>New Tab</b>"
+                label: "<b>New Window</b>"
                 filename: "Images/newTabIcon"
                 onButtonPress: {
                     newWindowSignal();
