@@ -3,16 +3,17 @@
 #include "QJsonDocument"
 #include "QJsonObject"
 
+using namespace std;
 using namespace std::placeholders;
+using namespace Spyglass;
 
 #define DEBUG(...) printf("TEST Database Interface: "); printf(__VA_ARGS__)
 
-DatabaseInterface::DatabaseInterface(QObject *parent) :
-    QObject (parent)
+DatabaseInterface::DatabaseInterface(QObject *parent) : QObject (parent)
 {
 }
 
-DatabaseInterface::DatabaseInterface(QString file_path) : m_file_path(file_path)
+DatabaseInterface::DatabaseInterface(QString file_path) : file_path_(file_path)
 {
     parseFilePath();
     db_init();
@@ -37,24 +38,26 @@ void DatabaseInterface::emitUpdate(bool /*pushing*/, std::string /*doc_id*/, std
 
 int DatabaseInterface::db_init()
 {
-    sg_db = new SGDatabase(m_db_name.toStdString(), m_db_path.toStdString());
+    sg_db_ = new SGDatabase(db_name_.toStdString(), db_path_.toStdString());
+    setDBstatus(false);
 
-    if (!sg_db->isOpen()) {
+    if (!sg_db_->isOpen()) {
         DEBUG("Db is not open yet\n");
     }
 
-    if (sg_db->open() != SGDatabaseReturnStatus::kNoError) {
+    if (sg_db_->open() != SGDatabaseReturnStatus::kNoError) {
         DEBUG("Can't open DB!\n");
         return 1;
     }
 
-    if (sg_db->isOpen()) {
+    if (sg_db_->isOpen()) {
         DEBUG("DB is open using isOpen API\n");
     } else {
         DEBUG("DB is not open, exiting!\n");
         return 1;
     }
 
+    setDBstatus(true);
     setDocumentKeys();
     setJSONResponse();
 
@@ -68,71 +71,71 @@ void DatabaseInterface::rep_init()
 {
     // temporarily hard coded:
 
+    setRepstatus(false);
+
     qDebug() << "\n\nin rep_init()\n\n";
 
     std::string url = "ws://localhost:4984/db2";
 
-    url_endpoint = new SGURLEndpoint(url);
+    url_endpoint_ = new SGURLEndpoint(url);
 
-    if(url_endpoint->init())
-    {
+    if(url_endpoint_->init()) {
         DEBUG("url_endpoint is valid \n");
-    }
-    else
-    {
+    } else {
         DEBUG("Invalid url_endpoint\n");
         return;
     }
 
-    DEBUG("host %s, \n", url_endpoint->getHost().c_str());
-    DEBUG("schema %s, \n", url_endpoint->getSchema().c_str());
-    DEBUG("getPath %s, \n", url_endpoint->getPath().c_str());
+    DEBUG("host %s, \n", url_endpoint_->getHost().c_str());
+    DEBUG("schema %s, \n", url_endpoint_->getSchema().c_str());
+    DEBUG("getPath %s, \n", url_endpoint_->getPath().c_str());
 
-    sg_replicator_configuration = new SGReplicatorConfiguration(sg_db, url_endpoint);
-    sg_replicator_configuration->setReplicatorType(SGReplicatorConfiguration::ReplicatorType::kPull);
-    sg_replicator = new SGReplicator(sg_replicator_configuration);
-    sg_replicator->addDocumentEndedListener(std::bind(&DatabaseInterface::emitUpdate, this, _1, _2, _3, _4, _5));
+    sg_replicator_configuration_ = new SGReplicatorConfiguration(sg_db_, url_endpoint_);
+    sg_replicator_configuration_->setReplicatorType(SGReplicatorConfiguration::ReplicatorType::kPull);
+    sg_replicator_ = new SGReplicator(sg_replicator_configuration_);
+    sg_replicator_->addDocumentEndedListener(std::bind(&DatabaseInterface::emitUpdate, this, _1, _2, _3, _4, _5));
 
-    if(sg_replicator->start() == false)
-    {
-        std::cout << "\n PROBLEM WITH REPLICATION START, EXITING." << endl;
+    if(sg_replicator_->start() == false) {
+        DEBUG("Problem with start of replication.");
         return;
     }
+
+    setRepstatus(true);
 }
 
 void DatabaseInterface::setFilePath(QString file_path)
 {
-    m_file_path = file_path;
+    file_path_ = file_path;
 }
 
 QString DatabaseInterface::getFilePath()
 {
-    return m_file_path;
+    return file_path_;
 }
 
 void DatabaseInterface::setDBPath(QString db_path)
 {
-    m_db_path = db_path;
+    db_path_ = db_path;
 }
 
 QString DatabaseInterface::getDBPath()
 {
-    return m_db_path;
+    return db_path_;
 }
 
 void DatabaseInterface::setDBName(QString db_name)
 {
-    m_db_name = db_name;
+    db_name_ = db_name;
 }
 
 QString DatabaseInterface::getDBName()
 {
-    return m_db_name;
+    return db_name_;
 }
 
 void DatabaseInterface::parseFilePath()
 {
-    QDir dir(m_file_path);
+    QDir dir(file_path_);
     dir.cdUp();
     setDBName(dir.dirName());
     dir.cdUp(); dir.cdUp();
@@ -141,9 +144,9 @@ void DatabaseInterface::parseFilePath()
 
 int DatabaseInterface::setDocumentKeys()
 {
-    document_keys.clear();
+    document_keys_.clear();
 
-    if(!sg_db->getAllDocumentsKey(document_keys)) {
+    if(!sg_db_->getAllDocumentsKey(document_keys_)) {
         DEBUG("Failed to run getAllDocumentsKey()\n");
         return 1;
     }
@@ -153,17 +156,37 @@ int DatabaseInterface::setDocumentKeys()
 void DatabaseInterface::setJSONResponse()
 {
     QString temp_str = "";
-    JSONResponse = "{";
+    JSONResponse_ = "{";
 
     // Printing the list of documents key from the local DB.
-    for(std::vector <string>::iterator iter = document_keys.begin(); iter != document_keys.end(); iter++) {
-        SGDocument usbPDDocument(sg_db, (*iter));
-        temp_str = "\"" + QString((*iter).c_str()) + "\":" + QString(usbPDDocument.getBody().c_str()) + (iter + 1 == document_keys.end() ? "}" : ",");
-        JSONResponse = JSONResponse + temp_str;
+    for(std::vector <string>::iterator iter = document_keys_.begin(); iter != document_keys_.end(); iter++) {
+        SGDocument usbPDDocument(sg_db_, (*iter));
+        temp_str = "\"" + QString((*iter).c_str()) + "\":" + QString(usbPDDocument.getBody().c_str()) + (iter + 1 == document_keys_.end() ? "}" : ",");
+        JSONResponse_ = JSONResponse_ + temp_str;
     }
 }
 
 QString DatabaseInterface::getJSONResponse()
 {
-    return JSONResponse;
+    return JSONResponse_;
+}
+
+bool DatabaseInterface::getDBstatus()
+{
+    return DBstatus_;
+}
+
+bool DatabaseInterface::getRepstatus()
+{
+    return Repstatus_;
+}
+
+void DatabaseInterface::setDBstatus(bool status)
+{
+    DBstatus_ = status;
+}
+
+void DatabaseInterface::setRepstatus(bool status)
+{
+    Repstatus_ = status;
 }

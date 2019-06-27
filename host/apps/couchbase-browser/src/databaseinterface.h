@@ -15,12 +15,6 @@
 #include "SGFleece.h"
 #include "SGCouchBaseLite.h"
 
-using namespace std;
-using namespace fleece;
-using namespace fleece::impl;
-using namespace std::placeholders;
-using namespace Spyglass;
-
 class DatabaseInterface : public QObject
 {
     Q_OBJECT
@@ -32,13 +26,28 @@ public:
 
     ~DatabaseInterface();
 
+    QString getDBName();
+
+    QString getJSONResponse();
+
+private:
+    QString file_path_, db_path_, db_name_, JSONResponse_;
+
+    bool DBstatus_, Repstatus_;
+
+    std::vector<std::string> document_keys_;
+
+    Spyglass::SGDatabase *sg_db_{nullptr};
+
+    Spyglass::SGReplicatorConfiguration *sg_replicator_configuration_{nullptr};
+
+    Spyglass::SGURLEndpoint *url_endpoint_{nullptr};
+
+    Spyglass::SGReplicator *sg_replicator_{nullptr};
+
     void emitUpdate(bool pushing, std::string doc_id, std::string error_message, bool is_error, bool error_is_transient);
 
-    void testReceive();
-
     static void testReceive(bool pushing, std::string doc_id, std::string error_message, bool is_error, bool error_is_transient);
-
-    QString m_file_path, m_db_path, m_db_name;
 
     void setFilePath(QString file_path);
 
@@ -50,29 +59,23 @@ public:
 
     void setDBName(QString db_name);
 
-    QString getDBName();
-
     void parseFilePath();
-
-    SGDatabase *sg_db{nullptr};
 
     int db_init();
 
-    vector<string> document_keys;
-
     int setDocumentKeys();
-
-    QString JSONResponse;
 
     void setJSONResponse();
 
-    QString getJSONResponse();
-
     void rep_init();
 
-    SGReplicatorConfiguration *sg_replicator_configuration{nullptr};
-    SGURLEndpoint *url_endpoint{nullptr};
-    SGReplicator *sg_replicator{nullptr};
+    bool getDBstatus();
+
+    bool getRepstatus();
+
+    void setDBstatus(bool status);
+
+    void setRepstatus(bool status);
 
 signals:
     void newUpdate();
