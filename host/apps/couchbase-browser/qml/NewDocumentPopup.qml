@@ -7,8 +7,8 @@ import QtQuick.Dialogs 1.3
 Window {
     id: root
     width: 500
-    height: 500
-    minimumHeight: 250
+    height: 550
+    minimumHeight: 550
     minimumWidth: 500
     visible: false
     Rectangle {
@@ -16,12 +16,12 @@ Window {
         color: "#393e46"
         ColumnLayout {
             spacing: 1
-            width: parent.width - 10
-            height: implicitHeight
+            width: parent.width
+            height: parent.height
             anchors.horizontalCenter: parent.horizontalCenter
             Rectangle {
                 Layout.preferredHeight: 80
-                Layout.preferredWidth: parent.width
+                Layout.preferredWidth: parent.width - 25
                 Layout.alignment: Qt.AlignHCenter + Qt.AlignTop
                 color: "transparent"
                 Label {
@@ -38,7 +38,7 @@ Window {
                 Rectangle {
                     id: idContainer
                     height: parent.height / 2
-                    width: parent.width / 2
+                    width: parent.width - 25
                     anchors {
                         centerIn: parent
                     }
@@ -58,14 +58,14 @@ Window {
                 }
             }
             Rectangle {
-                Layout.preferredHeight: root.height / 2
+                Layout.preferredHeight: parent.height / 1.75
                 Layout.preferredWidth: parent.width
                 Layout.alignment: Qt.AlignHCenter + Qt.AlignTop
                 color: "transparent"
                 Rectangle {
                     id: bodyContainer
-                    height: parent.height / 2
-                    width: parent.width / 2
+                    height: parent.height
+                    width: parent.width - 25
                     anchors {
                         centerIn: parent
                     }
@@ -92,8 +92,6 @@ Window {
                     }
                 }
             }
-
-
             Rectangle {
                 Layout.preferredHeight: 80
                 Layout.preferredWidth: parent.width
@@ -106,7 +104,6 @@ Window {
                     text: "Submit"
                     anchors.centerIn: parent
                     onClicked: {
-                        validate();
                     }
                 }
             }
