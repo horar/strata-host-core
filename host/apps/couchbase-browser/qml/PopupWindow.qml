@@ -22,7 +22,7 @@ Window {
         databaseName = databaseNameField.text
         userName = usernameField.text
         password = passwordField.text
-        valid = ((hostName.length == 0)||(databaseName.length == 0)||(userName.length == 0)||(password.length == 0)) ? false : true
+        valid = ((hostName.length == 0)||(databaseName.length == 0)) ? false : true
         if(valid == true){
             hostNameField.text = ""
             databaseNameField.text = ""
