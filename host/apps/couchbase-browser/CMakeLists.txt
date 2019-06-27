@@ -1,3 +1,5 @@
+cmake_minimum_required(VERSION 3.8 FATAL_ERROR)
+
 project(couchbase-browser
     VERSION 1.0.0
     LANGUAGES CXX
@@ -12,7 +14,6 @@ find_package(Qt5 ${VERSION_QT5}
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
-#set(CMAKE_AUTOUIC ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 

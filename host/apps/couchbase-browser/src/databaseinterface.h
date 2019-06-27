@@ -47,7 +47,7 @@ private:
 
     Spyglass::SGReplicator *sg_replicator_{nullptr};
 
-    void emitUpdate(bool pushing, std::string doc_id, std::string error_message, bool is_error, bool error_is_transient);
+    void emitUpdate();
 
     static void testReceive(bool pushing, std::string doc_id, std::string error_message, bool is_error, bool error_is_transient);
 
@@ -63,7 +63,7 @@ private:
 
     bool parseFilePath();
 
-    int db_init();
+    bool db_init();
 
     int setDocumentKeys();
 

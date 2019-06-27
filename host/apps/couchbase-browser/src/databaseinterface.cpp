@@ -15,8 +15,11 @@ DatabaseInterface::DatabaseInterface(QObject *parent) : QObject (parent)
 
 DatabaseInterface::DatabaseInterface(const QString &file_path, const int &id) : file_path_(file_path), id_(id)
 {
-    if(parseFilePath())
-        db_init();
+    if(!parseFilePath()) {
+        DEBUG("Problem parsing file path.");
+    } else if(!db_init()) {
+        DEBUG("Problem initializing database.");
+    }
 }
 
 DatabaseInterface::~DatabaseInterface()
@@ -24,15 +27,10 @@ DatabaseInterface::~DatabaseInterface()
     std::cout << "\n\nDestructor activated\n\n" << endl;
 }
 
-void DatabaseInterface::emitUpdate(bool /*pushing*/, std::string /*doc_id*/, std::string /*error_message*/, bool /*is_error*/, bool /*error_is_transient*/)
+void DatabaseInterface::emitUpdate()
 {
     setDocumentKeys();
     setJSONResponse();
-
-    // temporary
-    QString s = getJSONResponse();
-    cout << "\nJSON response: \n" << s.toStdString() << endl;
-
     emit newUpdate(this->id_);
 }
 
@@ -45,10 +43,21 @@ bool DatabaseInterface::createNewDoc(const QString &id, const QString &body)
 
     SGMutableDocument newDoc(sg_db_,id.toStdString());
 
+    if (!newDoc.exist()) {
+        DEBUG("Error initializing new document.");
+        return false;
+    }
+
+    if(!newDoc.setBody(body.toStdString())) {
+        DEBUG("Error setting body contents to created document.");
+        return false;
+    }
+
+    emitUpdate();
     return true;
 }
 
-int DatabaseInterface::db_init()
+ bool DatabaseInterface::db_init()
 {
     sg_db_ = new SGDatabase(db_name_.toStdString(), db_path_.toStdString());
     setDBstatus(false);
@@ -59,14 +68,14 @@ int DatabaseInterface::db_init()
 
     if (sg_db_->open() != SGDatabaseReturnStatus::kNoError) {
         DEBUG("Can't open DB!\n");
-        return 1;
+        return false;
     }
 
     if (sg_db_->isOpen()) {
         DEBUG("DB is open using isOpen API\n");
     } else {
         DEBUG("DB is not open, exiting!\n");
-        return 1;
+        return false;
     }
 
     setDBstatus(true);
@@ -76,7 +85,7 @@ int DatabaseInterface::db_init()
     // temporarily hard coded:
     rep_init();
 
-    return 0;
+    return true;
 }
 
 void DatabaseInterface::rep_init()
@@ -105,7 +114,7 @@ void DatabaseInterface::rep_init()
     sg_replicator_configuration_ = new SGReplicatorConfiguration(sg_db_, url_endpoint_);
     sg_replicator_configuration_->setReplicatorType(SGReplicatorConfiguration::ReplicatorType::kPull);
     sg_replicator_ = new SGReplicator(sg_replicator_configuration_);
-    sg_replicator_->addDocumentEndedListener(std::bind(&DatabaseInterface::emitUpdate, this, _1, _2, _3, _4, _5));
+    sg_replicator_->addDocumentEndedListener(std::bind(&DatabaseInterface::emitUpdate, this));
 
     if(sg_replicator_->start() == false) {
         DEBUG("Problem with start of replication.");
