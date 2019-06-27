@@ -1,10 +1,11 @@
 
 #include "Database.h"
 #include "Dispatcher.h"
+#include "LoggingAdapter.h"
 
 #include <SGCouchBaseLite.h>
 #include <SGFleece.h>
-#include <include/LoggingAdapter.h>
+#include <string>
 
 using namespace Spyglass;
 
@@ -44,9 +45,11 @@ bool Database::open(const std::string& db_name)
 
     // opening the db
     sg_database_ = new SGDatabase(db_name);
-    if (sg_database_->open() != SGDatabaseReturnStatus::kNoError) {
+    SGDatabaseReturnStatus ret = sg_database_->open();
+    if (ret != SGDatabaseReturnStatus::kNoError) {
         if (logAdapter_) {
-            logAdapter_->Log(LoggingAdapter::eLvlInfo, "Failed to open database");
+            std::string logText = "Failed to open database err:" + std::to_string(static_cast<int>(ret));
+            logAdapter_->Log(LoggingAdapter::eLvlWarning, logText);
         }
         return false;
     }
