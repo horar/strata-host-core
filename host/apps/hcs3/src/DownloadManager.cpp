@@ -180,7 +180,8 @@ void DownloadManager::writeToFile(QNetworkReply* reply, const QByteArray& buffer
 
     QFile file( findIt.value() );
     if (file.open(QIODevice::ReadWrite) == false) {
-        qCWarning(logCategoryHcsDownloader) << "Unable to open file:" << findIt.value() << "for:" << reply->url();
+        qCWarning(logCategoryHcsDownloader) << "Unable to open file:" << findIt.value() <<
+                    "for:" << reply->url() << "err:" << file.errorString();
         return;
     }
     uint64_t file_size = file.size();
@@ -188,7 +189,8 @@ void DownloadManager::writeToFile(QNetworkReply* reply, const QByteArray& buffer
 
     qint64 written = file.write(buffer);
     if (written != buffer.size()) {
-        qCWarning(logCategoryHcsDownloader) << "Unable to write to file:" << findIt.value() << "for:" << reply->url();
+        qCWarning(logCategoryHcsDownloader) << "Unable to write to file:" << findIt.value() <<
+                    "for:" << reply->url() << "err:" << file.errorString();
     }
 }
 
