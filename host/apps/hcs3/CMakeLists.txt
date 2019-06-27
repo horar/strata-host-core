@@ -20,7 +20,7 @@ set(HEADERS
     include/DownloadManager.h
     include/StorageManager.h
     include/LoggingAdapter.h
-    logging/LoggingQtCategories.h
+    src/logging/LoggingQtCategories.h
 )
 
 add_executable(${PROJECT_NAME}
@@ -36,7 +36,7 @@ add_executable(${PROJECT_NAME}
     src/StorageManager.cpp
     src/PlatformDocument.cpp
     src/LoggingAdapter.cpp
-    logging/LoggingQtCategories.cpp
+    src/logging/LoggingQtCategories.cpp
     ${HEADERS}
 )
 
