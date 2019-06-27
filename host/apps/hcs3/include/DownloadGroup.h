@@ -24,8 +24,7 @@ public:
     bool isFilenameInList(const QString& filename) const;
     bool getUrlForFilename(const QString& filename, QString& urlResult);
 
-    void onDownloadFinished(const QString& filename);
-    void onDownloadFinishedError(const QString& filename, const QString& error);
+    void onDownloadFinished(const QString& filename, bool withError);
 
     bool isAllDownloaded();
 
@@ -37,7 +36,8 @@ private:
         eUnknown = 0,
         ePending,
         eDone,        //eg. downloaded + checked
-        eError
+        eError,
+        eStopped
     };
 
     struct ItemState {

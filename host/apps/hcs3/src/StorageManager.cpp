@@ -117,7 +117,9 @@ bool StorageManager::requestPlatformDoc(const std::string& classId, const std::s
     QString prefix = "documents/" + QString::fromStdString(g_document_views);
 
     QStringList downloadList;
-    bool ret = fillDownloadList(newItem, g_document_views, prefix, downloadList);
+    if (!fillDownloadList(newItem, g_document_views, prefix, downloadList)) {
+        return false;
+    }
 
     if (!downloadList.empty()) {
 
@@ -301,15 +303,17 @@ void StorageManager::onDownloadFiles2(const QStringList& files, const QString& s
     }
 }
 
-//bool StorageManager::createFolderWhenNeeded(const QString& relativeFilename)
-//{
-//    QFileInfo fi(relativeFilename);
-//
-//    QDir basePath(baseFolder_);
-//    return basePath.mkpath(fi.path());
-//}
-
 void StorageManager::onDownloadFinished(const QString& filename)
+{
+    fileDownloadFinished(filename, false);
+}
+
+void StorageManager::onDownloadFinishedError(const QString& filename, const QString& )
+{
+    fileDownloadFinished(filename, true);
+}
+
+void StorageManager::fileDownloadFinished(const QString& filename, bool withError)
 {
     DownloadGroup* group = findDownloadGroup(filename);
     if (group == nullptr) {
@@ -317,7 +321,7 @@ void StorageManager::onDownloadFinished(const QString& filename)
         return;
     }
 
-    group->onDownloadFinished(filename);
+    group->onDownloadFinished(filename, withError);
 
     QString fileURL;
     group->getUrlForFilename(filename, fileURL);
@@ -344,34 +348,23 @@ void StorageManager::onDownloadFinished(const QString& filename)
     PlatformDocument::nameValueMap element = platDoc->findElementByFile(fileURL.toStdString(), "views");
     Q_ASSERT( !element.empty() );
 
-    bool checksumOK = true;
-    auto findIt = element.find("md5");
-    if (findIt != element.end()) {
+    qDebug() << "file" << QString::fromStdString( element["file"] );
 
+    if (withError == false) {
 
-//TODO:        checksumOK = checkFileChecksum(findIt->filename, findIt->checksum);
+        bool checksumOK = true;
+        auto findIt = element.find("md5");
+        if (findIt != element.end()) {
+            checksumOK = checkFileChecksum(filename, QString::fromStdString(findIt->second) );
+        }
+
+        if (!checksumOK) {
+            qDebug() << "Checksum error on file:" << fileURL;
+        }
+
+        //TODO: Determine what to do when checksum is wrong..
+
     }
-
-//
-//    if (checksumOK) {
-//
-//
-//        std::string name = element["name"];
-//        std::string filename = findIt->filename.toStdString();
-//
-//        filesList_.push_back(std::make_pair(filename, name));
-//    }
-//
-
-
-/*
-
-    PlatformDocument* platDoc = findPlatformDoc( requestItem_->classId );
-*/
-
-
-//
-//
 
     if (group->isAllDownloaded()) {
 
@@ -381,62 +374,6 @@ void StorageManager::onDownloadFinished(const QString& filename)
 
         createAndSendResponse(request, platDoc);
     }
-
-
-#if 0
-    auto findIt = findItemByUrl(url);
-    if (findIt == downloadList_.end()) {
-        return;
-    }
-
-    uint64_t thisGroupId = findIt.key();
-    findIt->state = EItemState::eDone;
-
-    bool checksumOK = true;
-    if (!findIt->checksum.isEmpty()) {
-        checksumOK = checkFileChecksum(findIt->filename, findIt->checksum);
-    }
-
-    if (checksumOK) {
-        if (plat_doc_ == nullptr) {
-            return;
-        }
-
-        PlatformDocument::nameValueMap element = plat_doc_->findElementByFile(url.toStdString(), "views");
-        Q_ASSERT( !element.empty() );
-
-        std::string name = element["name"];
-        std::string filename = findIt->filename.toStdString();
-
-        filesList_.push_back(std::make_pair(filename, name));
-    }
-    else {
-        findIt->state = EItemState::eError;
-
-        qDebug() << "Checksum error! " << url << " " << findIt->checksum;
-    }
-
-    //check all done ??
-    if (isAllDoneForGroupId(thisGroupId)) {
-
-        QMutexLocker locker(&requestMutex_);
-        createAndSendResponse();
-    }
-#endif
-
-}
-
-void StorageManager::onDownloadFinishedError(const QString& filename, const QString& /*error*/)
-{
-
-#if 0
-    auto findIt = findItemByUrl(url);
-    if (findIt == downloadList_.end()) {
-        return;
-    }
-
-    findIt->state = EItemState::eError;
-#endif
 }
 
 void StorageManager::createAndSendResponse(RequestItem* requestItem, PlatformDocument* platformDoc)
@@ -491,20 +428,6 @@ void StorageManager::createAndSendResponse(RequestItem* requestItem, PlatformDoc
     dispatcher_->addMessage(msg);
 }
 
-#if 0
-QMultiMap<uint64_t, StorageManager::ItemState>::iterator StorageManager::findItemByUrl(const QString& url)
-{
-    QMultiMap<uint64_t, StorageManager::ItemState>::iterator findIt;
-    for(findIt = downloadList_.begin(); findIt != downloadList_.end(); ++findIt) {
-        if (findIt->url == url) {
-            break;
-        }
-    }
-
-    return findIt;
-}
-#endif
-
 PlatformDocument* StorageManager::findPlatformDoc(const std::string& classId)
 {
     std::lock_guard<std::mutex> lock(documentsMutex_);
@@ -549,7 +472,6 @@ DownloadGroup* StorageManager::findDownloadGroup(const QString& filename)
             return it->second;
         }
     }
-
     return nullptr;
 }
 

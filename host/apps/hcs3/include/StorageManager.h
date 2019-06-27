@@ -131,6 +131,8 @@ private:
 
     bool fillRequestFilesList(PlatformDocument* platformDoc, const std::string& groupName, const QString& prefix, RequestItem* request);
 
+    void fileDownloadFinished(const QString& filename, bool withError);
+
 private:
     QString baseUrl_;       //base part of the URL to download
     QString baseFolder_;    //base folder for store downloaded files

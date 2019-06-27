@@ -79,24 +79,14 @@ bool DownloadGroup::getUrlForFilename(const QString& filename, QString& urlResul
     return false;
 }
 
-void DownloadGroup::onDownloadFinished(const QString& filename)
+void DownloadGroup::onDownloadFinished(const QString& filename, bool withError)
 {
     ItemState* found = findItemByFilename(filename);
     if (found == nullptr) {
         return;
     }
 
-    found->state = EItemState::eDone;
-}
-
-void DownloadGroup::onDownloadFinishedError(const QString& filename, const QString& error)
-{
-    ItemState* found = findItemByFilename(filename);
-    if (found == nullptr) {
-        return;
-    }
-
-    found->state = EItemState::eError;
+    found->state = withError ? EItemState::eError : EItemState::eDone;
 }
 
 bool DownloadGroup::isAllDownloaded()
@@ -104,8 +94,8 @@ bool DownloadGroup::isAllDownloaded()
     int total_count = downloadList_.size();
 
     int done_count = 0;
-    for (auto it = downloadList_.begin(); it != downloadList_.end(); ++it) {
-        if (it->state == EItemState::eDone || it->state == EItemState::eError) {
+    for(const auto& item : downloadList_) {
+        if (item.state == EItemState::eDone || item.state == EItemState::eError) {
             done_count++;
         }
     }
@@ -126,9 +116,12 @@ DownloadGroup::ItemState* DownloadGroup::findItemByFilename(const QString& filen
 
 void DownloadGroup::stopDownload()
 {
-    //TODO:
-
-
+    QVector<ItemState>::iterator it;
+    for(it = downloadList_.begin(); it != downloadList_.end(); ++it) {
+        if (it->state == EItemState::ePending) {
+            downloadManager_->stopDownloadByFilename( it->filename );
+            it->state = EItemState::eStopped;
+        }
+    }
 }
-
 
