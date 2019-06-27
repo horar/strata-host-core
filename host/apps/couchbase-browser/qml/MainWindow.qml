@@ -19,9 +19,9 @@ Item {
 
             if (tableSelectorView.currentIndex === newIndex) {
                 if (tableSelectorView.currentIndex !== 0)
-                    bodyView.content = JSON.stringify(jsonObj[tableSelectorView.model[tableSelectorView.currentIndex]]);
+                    bodyView.content = JSON.stringify(jsonObj[tableSelectorView.model[tableSelectorView.currentIndex]],null,4);
                 else
-                    bodyView.content = JSON.stringify(jsonObj);
+                    bodyView.content = JSON.stringify(jsonObj,null,4);
             }
             else
                 tableSelectorView.currentIndex = newIndex;
@@ -72,9 +72,9 @@ Item {
                     onCurrentIndexChanged: {
                         if (content !== "") {
                             if (currentIndex !== 0)
-                                bodyView.content = JSON.stringify(jsonObj[model[currentIndex]]);
+                                bodyView.content = JSON.stringify(jsonObj[model[currentIndex]],null,4);
                             else
-                                bodyView.content = JSON.stringify(jsonObj);
+                                bodyView.content = JSON.stringify(jsonObj,null,4);
                         }
                     }
                 }
