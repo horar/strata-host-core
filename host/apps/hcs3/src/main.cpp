@@ -1,6 +1,7 @@
 
 #include <QCoreApplication>
 #include <QCommandLineParser>
+#include <QSettings>
 
 #include <EvEventsMgr.h>    //for EvEventsMgrInstance (windows WSA)
 
@@ -14,6 +15,7 @@ int main(int argc, char *argv[])
 {
     QCoreApplication::setOrganizationName(QStringLiteral("ON Semiconductor"));
     QCoreApplication::setApplicationName(QStringLiteral("HCS"));
+    QSettings::setDefaultFormat(QSettings::IniFormat);
 
     QCoreApplication theApp(argc, argv);
 
