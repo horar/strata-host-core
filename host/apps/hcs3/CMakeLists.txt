@@ -19,6 +19,7 @@ set(HEADERS
     include/PlatformBoard.h
     include/DownloadManager.h
     include/StorageManager.h
+    include/DownloadGroup.h
 )
 
 add_executable(${PROJECT_NAME}
@@ -33,6 +34,7 @@ add_executable(${PROJECT_NAME}
     src/DownloadManager.cpp
     src/StorageManager.cpp
     src/PlatformDocument.cpp
+    src/DownloadGroup.cpp
     ${HEADERS}
 )
 

@@ -6,13 +6,17 @@
 #include <QStringList>
 #include <QScopedPointer>
 #include <QMap>
-#include <QMutex>
+#include <QAtomicInteger>
+
+#include <mutex>
+#include <map>
 
 class HCS_Dispatcher;
 
 class DownloadManager;
 class PlatformDocument;
 class Database;
+class DownloadGroup;
 
 class StorageManager : public QObject
 {
@@ -44,7 +48,7 @@ public:
     /**
      * Resets current platform document. Should be called after client deselects platform
      */
-    void resetPlatformDoc();
+    void resetPlatformDoc(const std::string& clientId);
 
     /**
      * Notification about the update of the document (from Database)
@@ -67,23 +71,39 @@ private slots:
     void onDownloadFiles(const QStringList& files, const QString& prefix, uint64_t uiGroupId);
     void onDownloadFiles2(const QStringList& files, const QString& save_path);
 
-    void onDownloadFinished(const QString& url);
-    void onDownloadFinishedError(const QString& url, const QString& error);
+    void onDownloadFinished(const QString& filename);
+    void onDownloadFinishedError(const QString& filename, const QString& error);
 
 private:
 
-    enum class EItemState {
+/*    enum class EItemState {
         eUnknown = 0,
         ePending,
         eDone,        //eg. downloaded + checked
         eError
-    };
+    }; */
 
+/*
     struct ItemState {
         QString url;
         QString filename;
         QString checksum;
         EItemState state;
+    };
+*/
+
+    struct StorageItem {
+        std::string classId;        //what document is requested
+        std::string revisionId;     //not used yet
+        PlatformDocument* platformDocument;
+    };
+
+    struct RequestItem {
+        std::string clientId;       //from what client is request
+        std::string classId;
+
+        uint64_t uiDownloadGroupId; //download groupId or zero for invalid
+        std::vector<std::pair<std::string, std::string> > filesList;   //downloaded files
     };
 
     /**
@@ -93,44 +113,52 @@ private:
 
     bool isInitialized() const;
 
-    /**
-     * Starts downloading (when necessary) of documents for specified group
-     * @param groupName
-     * @return
-     */
-    bool checkAndDownload(const std::string &groupName);
 
-    bool createFolderWhenNeeded(const QString& relativeFilename);
 
-    bool isAllDoneForGroupId(uint64_t uiGroupId);
+    void createAndSendResponse(RequestItem* requestItem, PlatformDocument* platformDoc);
 
-    void createAndSendResponse();
-
-    QMultiMap<uint64_t, ItemState>::iterator findItemByUrl(const QString& url);
+//    QMultiMap<uint64_t, ItemState>::iterator findItemByUrl(const QString& url);
 
     static bool checkFileChecksum(const QString& filename, const QString& checksum);
 
     QString createFilenameFromItem(const QString& item, const QString& prefix);
 
+    PlatformDocument* findPlatformDoc(const std::string& classId);
+
+    DownloadGroup* findDownloadGroup(const QString& filename);
+
+    bool fillDownloadList(const StorageItem& storageItem, const std::string& groupName, const QString& prefix, QStringList& downloadList);
+
+    bool fillRequestFilesList(PlatformDocument* platformDoc, const std::string& groupName, const QString& prefix, RequestItem* request);
+
 private:
-    QString baseUrl_;
-    QString baseFolder_;
+    QString baseUrl_;       //base part of the URL to download
+    QString baseFolder_;    //base folder for store downloaded files
 
     QScopedPointer<DownloadManager> downloader_;
 
-    QMultiMap<uint64_t, ItemState> downloadList_;
-
     Database* db_{nullptr};
-
-    QMutex requestMutex_;
-
-    //Only one PlatformDocument for now
-    PlatformDocument* plat_doc_{nullptr};
-    std::string clientId_;
-
     HCS_Dispatcher* dispatcher_{nullptr};
 
-    std::vector<std::pair<std::string, std::string> > filesList_;
+    QMutex requestMutex_;
+    std::map<std::string, RequestItem*> clientsRequests_;
+
+    QAtomicInteger<uint64_t> idGenerator_;
+    std::mutex downloadGroupsMutex_;
+    std::map<uint64_t, DownloadGroup*> downloadGroups_;
+
+    std::mutex documentsMutex_;
+    std::map<std::string, PlatformDocument*> documentsMap_;
+
+
+    //Only one PlatformDocument for now
+//    PlatformDocument* plat_doc_{nullptr};
+//    std::string clientId_;
+
+
+
+
+
 };
 
 #endif //HOST_HCS_STORAGEMANAGER_H__

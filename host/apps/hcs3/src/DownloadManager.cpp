@@ -37,7 +37,7 @@ void DownloadManager::download(const QString& url, const QString& filename)
     DownloadItem item;
     item.url = url;
     item.filename = filename;
-    item.state = "idle";
+    item.state = eStateIdle;
 
     downloadList_.push_back(item);
 
@@ -52,6 +52,30 @@ void DownloadManager::download(const QString& url, const QString& filename)
     }
 }
 
+bool DownloadManager::stopDownloadByFilename(const QString& filename)
+{
+    auto findIt = findItemByFilename(filename);
+    if (findIt == downloadList_.end()) {
+        return false;
+    }
+
+    if (findIt->state == eStateIdle) {
+        downloadList_.erase(findIt);
+        return true;
+    }
+    else if (findIt->state == eStatePending) {
+        QNetworkReply* reply = findReplyByFilename(filename);
+        Q_ASSERT(reply);
+
+        findIt->state = eStateCanceled;
+        reply->abort();
+
+        //TODO: should we delete the reply or not ??
+    }
+
+    return true;
+}
+
 void DownloadManager::beginDownload(DownloadItem& item)
 {
     QString realUrl(baseUrl_ + item.url);
@@ -63,7 +87,7 @@ void DownloadManager::beginDownload(DownloadItem& item)
 
     mapReplyToFile_.insert(reply, item.filename);
 
-    item.state = "pending";
+    item.state = eStatePending;
 }
 
 QNetworkReply* DownloadManager::downloadFile(const QString& url)
@@ -113,10 +137,10 @@ void DownloadManager::onDownloadFinished(QNetworkReply *reply)
 
         auto findItItem = findItemByFilename(findIt.value());
         if (findItItem != downloadList_.end()) {
-            findItItem->state = "done";
+            findItItem->state = eStateDone;
         }
 
-        emit downloadFinishedError(findItItem->url, reply->errorString());
+        emit downloadFinishedError(findItItem->filename, reply->errorString());
 
     }
     else {
@@ -139,12 +163,12 @@ void DownloadManager::onDownloadFinished(QNetworkReply *reply)
 
             auto findItItem = findItemByFilename(findIt.value());
             if (findItItem != downloadList_.end()) {
-                findItItem->state = "done";
+                findItItem->state = eStateDone;
             }
 
             qDebug() << "Downloaded:" << findItItem->url;
 
-            emit downloadFinished(findItItem->url);
+            emit downloadFinished(findItItem->filename);
 
             if (static_cast<uint>(currentDownloads_.size()) <= numberOfDownloads_) {
                 auto it = findNextDownload();
@@ -159,28 +183,29 @@ void DownloadManager::onDownloadFinished(QNetworkReply *reply)
     reply->deleteLater();
 }
 
-void DownloadManager::writeToFile(QNetworkReply* reply, const QByteArray& buffer)
+bool DownloadManager::writeToFile(QNetworkReply* reply, const QByteArray& buffer)
 {
     auto findIt = mapReplyToFile_.find(reply);
     if (findIt == mapReplyToFile_.end()) {
-        return;
+        return false;
     }
 
     QFile file( findIt.value() );
     if (file.open(QIODevice::ReadWrite) == false) {
-        return;
+        return false;
     }
     uint64_t file_size = file.size();
     file.seek(file_size);
 
     file.write(buffer);
+    return true;
 }
 
 QList<DownloadManager::DownloadItem>::iterator DownloadManager::findNextDownload()
 {
     QList<DownloadItem>::iterator findIt;
     for(findIt = downloadList_.begin(); findIt != downloadList_.end(); ++findIt) {
-        if (findIt->state == "idle") {
+        if (findIt->state == eStateIdle) {
             break;
         }
     }
@@ -198,6 +223,18 @@ QList<DownloadManager::DownloadItem>::iterator DownloadManager::findItemByFilena
     }
 
     return findIt;
+}
+
+QNetworkReply* DownloadManager::findReplyByFilename(const QString& filename)
+{
+    QMap<QNetworkReply*, QString>::iterator it;
+    for(it = mapReplyToFile_.begin(); it != mapReplyToFile_.end(); ++it) {
+        if (it.value() == filename) {
+            return it.key();
+        }
+    }
+
+    return nullptr;
 }
 
 void DownloadManager::slotError()

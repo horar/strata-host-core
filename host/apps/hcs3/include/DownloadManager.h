@@ -12,10 +12,18 @@ class DownloadManager : public QObject
 {
     Q_OBJECT
 
+    enum EDownloadState {
+        eStateUnknown = 0,
+        eStateIdle,
+        eStatePending,
+        eStateDone,
+        eStateCanceled,
+    };
+
     struct DownloadItem {
         QString url;        //parital URL
         QString filename;
-        QString state;
+        EDownloadState state;
     };
 
 public:
@@ -51,9 +59,15 @@ public:
      */
     void stopAllDownloads();
 
+    /**
+     *
+     * @param filename
+     */
+    bool stopDownloadByFilename(const QString& filename);
+
 signals:
-    void downloadFinished(QString url);
-    void downloadFinishedError(QString url, QString error);
+    void downloadFinished(QString filename);
+    void downloadFinishedError(QString filename, QString error);
 
     //TODO: void progress()
 
@@ -70,10 +84,12 @@ private:
     void beginDownload(DownloadItem& item);
     QNetworkReply* downloadFile(const QString& url);
 
-    void writeToFile(QNetworkReply* reply, const QByteArray& buffer);
+    bool writeToFile(QNetworkReply* reply, const QByteArray& buffer);
 
     QList<DownloadItem>::iterator findNextDownload();
     QList<DownloadItem>::iterator findItemByFilename(const QString& filename);
+
+    QNetworkReply* findReplyByFilename(const QString& filename);
 
 private:
     QScopedPointer<QNetworkAccessManager> manager_;
