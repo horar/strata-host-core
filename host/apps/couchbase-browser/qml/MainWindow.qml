@@ -42,8 +42,8 @@ Item {
             anchors.fill: parent
             rows: 2
             columns: 2
-            columnSpacing: 1
-            rowSpacing: 1
+            columnSpacing: 2
+            rowSpacing: 2
 
 
             Rectangle {
