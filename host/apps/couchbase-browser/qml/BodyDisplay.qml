@@ -9,7 +9,7 @@ Item {
         id: background
         width: parent.width
         height: parent.height
-        color: "white"
+        color: "#393e46"
 
         ScrollView {
             id: scroller
@@ -22,6 +22,7 @@ Item {
                 wrapMode: "Wrap"
                 selectByMouse: true
                 text: ""
+                color: "#eeeeee"
             }
         }
     }

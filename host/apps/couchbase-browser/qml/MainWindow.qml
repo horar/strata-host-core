@@ -31,8 +31,7 @@ Item {
     Rectangle {
         id: background
         anchors.fill: parent
-        color: "midnightblue"
-
+        color: "#b55400"
         GridLayout {
             id: gridview
             anchors.fill: parent
@@ -48,8 +47,7 @@ Item {
                 Layout.preferredHeight: 82
                 Layout.row: 0
                 Layout.columnSpan: 2
-                color: "steelblue"
-
+                color: "#222831"
                 SystemMenu {
                     id: mainMenuView
                     anchors {
@@ -65,7 +63,7 @@ Item {
                 Layout.preferredHeight: (parent.height - menuContainer.height)
                 Layout.row: 1
                 Layout.alignment: Qt.AlignTop
-                color: "steelblue"
+                color: "#222831"
 
                 TableSelector {
                     id: tableSelectorView

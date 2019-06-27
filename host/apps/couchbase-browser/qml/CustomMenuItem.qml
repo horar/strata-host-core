@@ -8,7 +8,6 @@ import QtQuick.Dialogs 1.3
 Rectangle {
     id: root
     color: "transparent"
-
     property alias filename: icon.source
     property alias label: iconLabel.text
     signal buttonPress()
@@ -17,7 +16,7 @@ Rectangle {
         anchors.fill: parent
         hoverEnabled: true
         onContainsMouseChanged: {
-            root.color = (containsMouse) ? "lightgrey" : "transparent"
+            root.color = (containsMouse) ? "#b55400" : "transparent"
         }
         onClicked: {
             buttonPress()
@@ -26,7 +25,7 @@ Rectangle {
     Label {
         id: iconLabel
         text: "<b>Open</b>"
-        color: "white"
+        color: "#eeeeee"
         anchors {
             top: root.bottom
             horizontalCenter: root.horizontalCenter
