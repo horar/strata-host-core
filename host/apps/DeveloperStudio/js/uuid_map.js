@@ -25,7 +25,6 @@ var uuid_map = {
     "TEST.2018.002.0.0": "motor-vortex",
     "entice_rgb" : "entice_rgb",
     "template": "template",
-    "ACF-PSU": "ACF-PSU",
     /*****
         CES HACK (class_id)
     *****/
@@ -51,4 +50,5 @@ var uuid_map = {
     "220": "15A-switcher",
     "222": "subGHz",
     "225": "smart-speaker",
+    "224": "ACF-PSU" // change this to actual AC - DC UUID which is 231
 }

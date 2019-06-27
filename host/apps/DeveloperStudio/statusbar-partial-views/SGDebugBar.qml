@@ -108,7 +108,7 @@ Item {
             Button {
                 text: "ACF-PSU"
                 onClicked: {
-                    var data = { class_id: "ACF-PSU"}
+                    var data = { class_id: "224"}
                     NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT, data)
                 }
             }
