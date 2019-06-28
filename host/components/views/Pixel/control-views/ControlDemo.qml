@@ -13,15 +13,15 @@ Rectangle {
     height: parent.height
     color:"black"
 
-//    property bool demo_mode_tab_state: platformInterface.demo_mode_enable_state
-//    onDemo_mode_tab_stateChanged: {
-//        if (demo_mode_tab_state === true) {
-//            segmentedButtons21.checked = true
-//            segmentedButtons22.checked = false
-//            segmentedButtons23.checked = false
-//            segmentedButtons24.checked = false
-//            segmentedButtons25.checked = false
-//        }
+    function send_demo_state(mode_state, led_num_state, intensity_state, time_state){
+        platformInterface.pxn_demo_setting.update(mode_state,led_num_state,time_state,intensity_state)
+    }
+
+//    function send_demo_state(demo_mode_state, demo_lednum_state, demo_time_state, demo_intensity_state){
+//        platformInterface.pxn_demo_mode.update(demo_mode_state)
+//        platformInterface.pxn_demo_lednum.update(demo_lednum_state)
+//        platformInterface.pxn_demo_time.update(demo_time_state)
+//        platformInterface.pxn_demo_intensity.update(demo_intensity_state)
 
 //    }
 
@@ -61,8 +61,6 @@ Rectangle {
                     color: "black"
 
                     SGSegmentedButtonStrip{
-
-
                         id: segmentedButtons1
                         anchors.centerIn: parent
 
@@ -80,24 +78,37 @@ Rectangle {
                             SGSegmentedButton{
                                 text: qsTr("Star")
                                 checked: true  // Sets default checked button when exclusive
+                                onClicked: {
+                                    send_demo_state(1,(segmentedButtons2.index+1),sgSlider1.value,sgSlider2.value)
+                                }
                             }
 
                             SGSegmentedButton{
                                 text: qsTr("Curtain")
-                                checked: true  // Sets default checked button when exclusive
+                                onClicked: {
+                                    send_demo_state(2,(segmentedButtons2.index+1),sgSlider1.value,sgSlider2.value)
+                                }
                             }
 
                             SGSegmentedButton{
                                 text: qsTr("B.Hall")
-                                checked: true  // Sets default checked button when exclusive
+                                onClicked: {
+                                    send_demo_state(3,(segmentedButtons2.index+1),sgSlider1.value,sgSlider2.value)
+                                }
                             }
 
                             SGSegmentedButton{
                                 text: qsTr("Mix")
+                                onClicked: {
+                                    send_demo_state(4,(segmentedButtons2.index+1),sgSlider1.value,sgSlider2.value)
+                                }
                             }
 
                             SGSegmentedButton{
                                 text: qsTr("Off")
+                                onClicked: {
+                                    send_demo_state(5,(segmentedButtons2.index+1),sgSlider1.value,sgSlider2.value)
+                                }
                             }
                         }
                     }
@@ -109,7 +120,6 @@ Rectangle {
                     color: "black"
 
                     SGSegmentedButtonStrip{
-
                         id: segmentedButtons2
                         anchors.centerIn: parent
 
@@ -122,58 +132,42 @@ Rectangle {
 
 
                         segmentedButtons: GridLayout {
-
                             columnSpacing: 2
 
                             SGSegmentedButton{
-                                id:segmentedButtons21
                                 text: qsTr("1")
                                 checked: true  // Sets default checked button when exclusive
                                 onClicked: {
-                                     platformInterface.pxn_demo_mode.update(1)
+                                    send_demo_state((segmentedButtons1.index+1),1,sgSlider1.value,sgSlider2.value)
                                 }
-
-
                             }
 
                             SGSegmentedButton{
-                                id:segmentedButtons22
                                 text: qsTr("2")
-                                checked: true  // Sets default checked button when exclusive
                                 onClicked: {
-                                     platformInterface.pxn_demo_mode.update(2)
+                                    send_demo_state((segmentedButtons1.index+1),2,sgSlider1.value,sgSlider2.value)
                                 }
-
                             }
 
                             SGSegmentedButton{
-                                id:segmentedButtons23
                                 text: qsTr("3")
-                                checked: true  // Sets default checked button when exclusive
                                 onClicked: {
-                                     platformInterface.pxn_demo_mode.update(3)
+                                    send_demo_state((segmentedButtons1.index+1),3,sgSlider1.value,sgSlider2.value)
                                 }
-
                             }
 
                             SGSegmentedButton{
-                                id:segmentedButtons24
                                 text: qsTr("4")
-//                                checked: true
                                 onClicked: {
-                                     platformInterface.pxn_demo_mode.update(4)
+                                    send_demo_state((segmentedButtons1.index+1),4,sgSlider1.value,sgSlider2.value)
                                 }
-
                             }
 
                             SGSegmentedButton{
-                                id:segmentedButtons25
                                 text: qsTr("5")
-//                                checked: true
                                 onClicked: {
-                                     platformInterface.pxn_demo_mode.update(5)
+                                    send_demo_state((segmentedButtons1.index+1),5,sgSlider1.value,sgSlider2.value)
                                 }
-
                             }
                         }
                     }
@@ -206,7 +200,7 @@ Rectangle {
                         inputBox: true               // Default: true
 
                         onSlider_valueChanged: {
-                            platformInterface.pxn_demo_time.update(value)
+                            send_demo_state((segmentedButtons1.index+1),(segmentedButtons2.index + 1),sgSlider1.value,sgSlider2.value)
                         }
                     }
                 }
@@ -238,7 +232,7 @@ Rectangle {
                         inputBox: true               // Default: true
 
                         onSlider_valueChanged: {
-                            platformInterface.pxn_demo_intensity.update(value)
+                            send_demo_state((segmentedButtons1.index+1),(segmentedButtons2.index + 1),sgSlider1.value,sgSlider2.value)
                         }
                     }
                 }

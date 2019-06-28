@@ -11,6 +11,8 @@ Item {
 
     Component.onCompleted: {
 
+        platformInterface.device_init.update(1)
+
         sgSwitch1.checked = false
         sgSwitch2.enabled = false
         sgSwitch3.enabled = false

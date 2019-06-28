@@ -60,6 +60,13 @@ Item {
 
     }
 
+//    property var demo_mode : {
+//        "state": "off"
+
+//    }
+
+
+
 
     // -------------------------------------------------------------------
     // Outgoing Commands
@@ -215,65 +222,50 @@ Item {
                                  })
 
 
-    property var pxn_demo_time : ({
-                                  "cmd" : "pxn_demo_time",
+    property var pxn_demo_setting : ({
+                                  "cmd" : "pxn_demo_setting",
                                   "payload": {
+                                      "mode": 1,
+                                      "led_num": 1,
+                                      "intensity": 50,
                                       "demo_time": 1.00
+
                                   },
 
-                                  update: function (demo_time_a) {
-                                      this.set(demo_time_a)
+                                  update: function (mode_a, led_num_a, intensity_a, time_a) {
+                                      this.set(mode_a,led_num_a,intensity_a,time_a)
                                       this.send(this)
                                   },
 
-                                  set: function (demo_time_a) {
-                                      this.payload.demo_time = demo_time_a
-                                  },
-
-                                  send: function () { CorePlatformInterface.send(this) },
-                                  show: function () { CorePlatformInterface.show(this) }
-                              })
-
-    property var pxn_demo_intensity : ({
-                                  "cmd" : "pxn_demo_intensity",
-                                  "payload": {
-                                      "intensity": 50
-                                  },
-
-                                  update: function (intensity_a) {
-                                      this.set(intensity_a)
-                                      this.send(this)
-                                  },
-
-                                  set: function (intensity_a) {
+                                  set: function (mode_a,led_num_a,intensity_a,time_a) {
+                                      this.payload.mode = mode_a
+                                      this.payload.led_num = led_num_a
                                       this.payload.intensity = intensity_a
+                                      this.payload.time = time_a
                                   },
 
                                   send: function () { CorePlatformInterface.send(this) },
                                   show: function () { CorePlatformInterface.show(this) }
                               })
 
-
-    property var pxn_demo_mode : ({
-                                  "cmd" : "pxn_demo_mode",
+    property var device_init : ({
+                                  "cmd" : "device_initialization",
                                   "payload": {
-                                      "demo_mode": 1
+                                      "init": 1
                                   },
 
-                                  update: function (demo_mode_a) {
-                                      this.set(demo_mode_a)
+                                  update: function (init_a) {
+                                      this.set(init_a)
                                       this.send(this)
                                   },
 
-                                  set: function (demo_mode_a) {
-                                      this.payload.demo_mode = demo_mode_a
+                                  set: function (init_a) {
+                                      this.payload.init = init_a
                                   },
 
                                   send: function () { CorePlatformInterface.send(this) },
                                   show: function () { CorePlatformInterface.show(this) }
                               })
-
-
 
 
     property bool boost_enable_state: false
