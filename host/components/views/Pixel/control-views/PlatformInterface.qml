@@ -254,6 +254,26 @@ Item {
                               })
 
 
+    property var pxn_demo_mode : ({
+                                  "cmd" : "pxn_demo_mode",
+                                  "payload": {
+                                      "demo_mode": 1
+                                  },
+
+                                  update: function (demo_mode_a) {
+                                      this.set(demo_mode_a)
+                                      this.send(this)
+                                  },
+
+                                  set: function (demo_mode_a) {
+                                      this.payload.demo_mode = demo_mode_a
+                                  },
+
+                                  send: function () { CorePlatformInterface.send(this) },
+                                  show: function () { CorePlatformInterface.show(this) }
+                              })
+
+
 
 
     property bool boost_enable_state: false
@@ -264,6 +284,7 @@ Item {
     property bool buck5_enable_state: false
     property bool buck6_enable_state: false
     property bool auto_addr_enable_state: false
+//    property bool demo_mode_enable_state: false
 
     property bool boost_led_state: false
     property bool buck1_led_state: false

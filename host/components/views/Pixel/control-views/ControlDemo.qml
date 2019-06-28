@@ -13,6 +13,18 @@ Rectangle {
     height: parent.height
     color:"black"
 
+//    property bool demo_mode_tab_state: platformInterface.demo_mode_enable_state
+//    onDemo_mode_tab_stateChanged: {
+//        if (demo_mode_tab_state === true) {
+//            segmentedButtons21.checked = true
+//            segmentedButtons22.checked = false
+//            segmentedButtons23.checked = false
+//            segmentedButtons24.checked = false
+//            segmentedButtons25.checked = false
+//        }
+
+//    }
+
     Rectangle{
         id:title
         width: parent.width/3
@@ -114,26 +126,54 @@ Rectangle {
                             columnSpacing: 2
 
                             SGSegmentedButton{
+                                id:segmentedButtons21
                                 text: qsTr("1")
                                 checked: true  // Sets default checked button when exclusive
+                                onClicked: {
+                                     platformInterface.pxn_demo_mode.update(1)
+                                }
+
+
                             }
 
                             SGSegmentedButton{
+                                id:segmentedButtons22
                                 text: qsTr("2")
                                 checked: true  // Sets default checked button when exclusive
+                                onClicked: {
+                                     platformInterface.pxn_demo_mode.update(2)
+                                }
+
                             }
 
                             SGSegmentedButton{
+                                id:segmentedButtons23
                                 text: qsTr("3")
                                 checked: true  // Sets default checked button when exclusive
+                                onClicked: {
+                                     platformInterface.pxn_demo_mode.update(3)
+                                }
+
                             }
 
                             SGSegmentedButton{
+                                id:segmentedButtons24
                                 text: qsTr("4")
+//                                checked: true
+                                onClicked: {
+                                     platformInterface.pxn_demo_mode.update(4)
+                                }
+
                             }
 
                             SGSegmentedButton{
+                                id:segmentedButtons25
                                 text: qsTr("5")
+//                                checked: true
+                                onClicked: {
+                                     platformInterface.pxn_demo_mode.update(5)
+                                }
+
                             }
                         }
                     }
