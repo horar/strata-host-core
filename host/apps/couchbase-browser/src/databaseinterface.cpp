@@ -38,8 +38,10 @@ DatabaseInterface::~DatabaseInterface()
 
 void DatabaseInterface::emitUpdate()
 {
-    setDocumentKeys();
-    setJSONResponse();
+    if(setDocumentKeys()) {
+        setJSONResponse();
+    }
+
     emit newUpdate(this->id_);
 }
 
@@ -89,7 +91,9 @@ bool DatabaseInterface::createNewDoc_(const QString &id, const QString &body)
     //        return false;
     //    }
 
-    //    sg_db_->save(&newDoc);
+    //     if(sg_db_->save(&newDoc) == SGDatabaseReturnStatus::kNoError) {
+    //             cout << "\nthis works." << endl;
+    //    }
 
     return true;
 }
@@ -117,8 +121,8 @@ bool DatabaseInterface::createNewDoc_(const QString &id, const QString &body)
     }
 
     setDBstatus(true);
-    setDocumentKeys();
-    setJSONResponse();
+    setRepstatus(false);
+    emitUpdate();
 
     // temporarily hard coded:
 //    rep_init();
@@ -126,70 +130,45 @@ bool DatabaseInterface::createNewDoc_(const QString &id, const QString &body)
     return true;
 }
 
-void DatabaseInterface::rep_init()
+QString DatabaseInterface::rep_init(const QString &url, const QString &username, const QString &password)
 {
-    // temporarily hard coded:
-
-    setRepstatus(false);
-
-    qDebug() << "\n\nin rep_init()\n\n";
-
-    std::string url = "ws://localhost:4984/db2";
-
-    url_endpoint_ = new SGURLEndpoint(url);
-
-    if(url_endpoint_->init()) {
-        DEBUG("url_endpoint is valid \n");
-    } else {
-        DEBUG("Invalid url_endpoint\n");
-        return;
+    if(url.isEmpty()) {
+        return ("URL may not be empty.");
     }
 
-    DEBUG("host %s, \n", url_endpoint_->getHost().c_str());
-    DEBUG("schema %s, \n", url_endpoint_->getSchema().c_str());
-    DEBUG("getPath %s, \n", url_endpoint_->getPath().c_str());
+    url_ = url;
+    username_ = username;
+    password_ = password;
 
+    url_endpoint_ = new SGURLEndpoint(url_.toStdString());
+
+    if(!url_endpoint_->init()) {
+        return("Invalid URL endpoint.");
+    }
+
+    return rep_init_();
+}
+
+QString DatabaseInterface::rep_init_()
+{
     sg_replicator_configuration_ = new SGReplicatorConfiguration(sg_db_, url_endpoint_);
     sg_replicator_configuration_->setReplicatorType(SGReplicatorConfiguration::ReplicatorType::kPull);
+
+    if(!username_.isEmpty() && !password_.isEmpty()) {
+        SGBasicAuthenticator basic_authenticator(username_.toStdString(),password_.toStdString());
+        sg_replicator_configuration_->setAuthenticator(&basic_authenticator);
+    }
+
     sg_replicator_ = new SGReplicator(sg_replicator_configuration_);
     sg_replicator_->addDocumentEndedListener(std::bind(&DatabaseInterface::emitUpdate, this));
 
     if(sg_replicator_->start() == false) {
-        DEBUG("Problem with start of replication.");
-        return;
+        return("Problem with start of replication.");
     }
 
     setRepstatus(true);
-}
 
-void DatabaseInterface::setFilePath(QString file_path)
-{
-    file_path_ = file_path;
-}
-
-QString DatabaseInterface::getFilePath()
-{
-    return file_path_;
-}
-
-void DatabaseInterface::setDBPath(QString db_path)
-{
-    db_path_ = db_path;
-}
-
-QString DatabaseInterface::getDBPath()
-{
-    return db_path_;
-}
-
-void DatabaseInterface::setDBName(QString db_name)
-{
-    db_name_ = db_name;
-}
-
-QString DatabaseInterface::getDBName()
-{
-    return db_name_;
+    return("");
 }
 
 bool DatabaseInterface::parseFilePath()
@@ -220,21 +199,15 @@ bool DatabaseInterface::parseFilePath()
     return true;
 }
 
-int DatabaseInterface::setDocumentKeys()
+bool DatabaseInterface::setDocumentKeys()
 {
     document_keys_.clear();
 
     if(!sg_db_->getAllDocumentsKey(document_keys_)) {
         DEBUG("Failed to run getAllDocumentsKey()\n");
-        return 1;
+        return false;
     }
-
-    cout << "\nAll document keys: " << endl;
-
-    for(int i = 0; i < document_keys_.size(); ++i)
-        cout << document_keys_.at(i) << endl;
-
-    return 0;
+    return true;
 }
 
 void DatabaseInterface::setJSONResponse()
@@ -248,9 +221,6 @@ void DatabaseInterface::setJSONResponse()
         temp_str = "\"" + QString((*iter).c_str()) + "\":" + QString(usbPDDocument.getBody().c_str()) + (iter + 1 == document_keys_.end() ? "}" : ",");
         JSONResponse_ = JSONResponse_ + temp_str;
     }
-
-    cout << "\n\nFINAL STRING:\n\n" << endl;
-    cout << JSONResponse_.toStdString() << endl;
 }
 
 QString DatabaseInterface::getJSONResponse()
@@ -276,4 +246,34 @@ void DatabaseInterface::setDBstatus(bool status)
 void DatabaseInterface::setRepstatus(bool status)
 {
     Repstatus_ = status;
+}
+
+void DatabaseInterface::setFilePath(QString file_path)
+{
+    file_path_ = file_path;
+}
+
+QString DatabaseInterface::getFilePath()
+{
+    return file_path_;
+}
+
+void DatabaseInterface::setDBPath(QString db_path)
+{
+    db_path_ = db_path;
+}
+
+QString DatabaseInterface::getDBPath()
+{
+    return db_path_;
+}
+
+void DatabaseInterface::setDBName(QString db_name)
+{
+    db_name_ = db_name;
+}
+
+QString DatabaseInterface::getDBName()
+{
+    return db_name_;
 }
