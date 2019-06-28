@@ -81,6 +81,8 @@ private:
 
     void setRepstatus(bool status);
 
+    bool createNewDoc_(const QString &id, const QString &body);
+
 signals:
     void newUpdate(int i);
 

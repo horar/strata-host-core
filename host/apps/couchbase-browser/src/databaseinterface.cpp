@@ -20,6 +20,15 @@ DatabaseInterface::DatabaseInterface(const QString &file_path, const int &id) : 
     } else if(!db_init()) {
         DEBUG("Problem initializing database.");
     }
+
+    // temporary
+
+//    QString b = "{\"my name\": \"victor\"}";
+
+//    createNewDoc("victor_id", b);
+
+    createNewDoc("a","b");
+
 }
 
 DatabaseInterface::~DatabaseInterface()
@@ -41,25 +50,54 @@ bool DatabaseInterface::createNewDoc(const QString &id, const QString &body)
         return false;
     }
 
-    SGMutableDocument newDoc(sg_db_,id.toStdString());
-
-    if (!newDoc.exist()) {
-        DEBUG("Error initializing new document.");
-        return false;
+    if(createNewDoc_(id,body)) {
+        return true;
     }
 
-    if(!newDoc.setBody(body.toStdString())) {
-        DEBUG("Error setting body contents to created document.");
-        return false;
-    }
 
-    emitUpdate();
+//    cout << "\nCreate doc: " << id.toStdString() << "   " << body.toStdString() << endl;
+
+//    emitUpdate();
+
+
+
+//    SGMutableDocument usbPDDocument(sg_db_, "victorsDDOCUMENT");
+
+
+//     DEBUG("document Id: %s, body: %s\n", usbPDDocument.getId().c_str(), usbPDDocument.getBody().c_str());
+
+//     std::string json_data = R"foo({"name":"VICTORVICTORVICTORVICTORVICTOR","age":200,"myobj":{"mykey":"myvalue","myarray":[1,2,3,4]} })foo";
+//         if( usbPDDocument.setBody(json_data) ){
+//             DEBUG("json_data is a valid json\n");
+//         }
+
+//     if(sg_db_->save(&usbPDDocument) == SGDatabaseReturnStatus::kNoError) {
+//             cout << "\nthis works." << endl;
+//    }
+
+//    emitUpdate();
+
+    return true;
+}
+
+bool DatabaseInterface::createNewDoc_(const QString &id, const QString &body)
+{
+    //    SGMutableDocument newDoc(sg_db_,id.toStdString());
+
+    //    if(!newDoc.setBody(body.toStdString())) {
+    //        DEBUG("Error setting content of created document. Body must be in JSON format.");
+    //        return false;
+    //    }
+
+    //    sg_db_->save(&newDoc);
+
     return true;
 }
 
  bool DatabaseInterface::db_init()
 {
     sg_db_ = new SGDatabase(db_name_.toStdString(), db_path_.toStdString());
+
     setDBstatus(false);
 
     if (!sg_db_->isOpen()) {
@@ -83,7 +121,7 @@ bool DatabaseInterface::createNewDoc(const QString &id, const QString &body)
     setJSONResponse();
 
     // temporarily hard coded:
-    rep_init();
+//    rep_init();
 
     return true;
 }
@@ -190,6 +228,12 @@ int DatabaseInterface::setDocumentKeys()
         DEBUG("Failed to run getAllDocumentsKey()\n");
         return 1;
     }
+
+    cout << "\nAll document keys: " << endl;
+
+    for(int i = 0; i < document_keys_.size(); ++i)
+        cout << document_keys_.at(i) << endl;
+
     return 0;
 }
 
@@ -204,6 +248,9 @@ void DatabaseInterface::setJSONResponse()
         temp_str = "\"" + QString((*iter).c_str()) + "\":" + QString(usbPDDocument.getBody().c_str()) + (iter + 1 == document_keys_.end() ? "}" : ",");
         JSONResponse_ = JSONResponse_ + temp_str;
     }
+
+    cout << "\n\nFINAL STRING:\n\n" << endl;
+    cout << JSONResponse_.toStdString() << endl;
 }
 
 QString DatabaseInterface::getJSONResponse()
