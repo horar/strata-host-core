@@ -5,6 +5,7 @@ Item {
     id: root
     anchors.fill:parent
     property alias content: text.text
+    property alias message: statusText.text
 
     Rectangle {
         id: background
@@ -51,7 +52,6 @@ Item {
                 height: parent.height
                 anchors.horizontalCenter: parent.horizontalCenter
                 padding: 3
-                text: "messages should appear here"
                 color: "#eee"
             }
         }

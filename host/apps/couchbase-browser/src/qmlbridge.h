@@ -8,19 +8,19 @@
 #include <QString>
 #include "databaseinterface.h"
 
-//typedef std::pair<int, QObject*> windowPair;
-//typedef std::pair<int, DatabaseInterface*> databasePair;
-
 class QMLBridge : public QObject
 {
     Q_OBJECT
     public:
         explicit QMLBridge(QObject *parent = nullptr);
         void init(QQmlApplicationEngine *engine, QQmlComponent *component);
-        Q_INVOKABLE int createNewWindow();
+        Q_INVOKABLE QString getDBName(int windowId);
         Q_INVOKABLE void setFilePath(int windowId, QString file_path);
-        Q_INVOKABLE void createNewDocument(int windowId, QString id, QString body);
+        Q_INVOKABLE bool createNewDocument(int windowId, QString id, QString body);
         Q_INVOKABLE void closeFile(int windowId);
+        Q_INVOKABLE QString startReplicator(int windowId, QString hostName, QString username, QString password);
+        Q_INVOKABLE void stopReplicator(int windowId);
+        Q_INVOKABLE void createNewWindow();
 
     public slots:
         void newUpdateSignal(int windowId);

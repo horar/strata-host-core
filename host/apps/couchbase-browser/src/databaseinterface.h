@@ -32,8 +32,10 @@ public:
 
     bool createNewDoc(const QString &id, const QString &body);
 
+    QString rep_init(const QString &url, const QString &username, const QString &password);
+
 private:
-    QString file_path_, db_path_, db_name_, JSONResponse_;
+    QString file_path_, db_path_, db_name_, JSONResponse_, url_, username_, password_;
 
     int id_;
 
@@ -67,7 +69,7 @@ private:
 
     bool db_init();
 
-    int setDocumentKeys();
+    bool setDocumentKeys();
 
     void setJSONResponse();
 
@@ -80,6 +82,10 @@ private:
     void setDBstatus(bool status);
 
     void setRepstatus(bool status);
+
+    bool createNewDoc_(const QString &id, const QString &body);
+
+    QString rep_init_();
 
 signals:
     void newUpdate(int i);
