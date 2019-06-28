@@ -65,7 +65,7 @@ Item {
                     onNewDocumentSignal: newDocPopup.visible = true
                     onNewDatabaseSignal: newDatabasesPopup.visible = true
                     //onSaveSignal:
-                    //onSaveAsSignal:
+                    onSaveAsSignal: saveAsPopup.visible = true
                     onCloseSignal: {
                         qmlBridge.closeFile(id)
                         bodyView.message = "Closed file"
@@ -159,6 +159,9 @@ Item {
                 NewDatabasePopup {
                     id: newDatabasesPopup
 
+                }
+                NewDatabasePopup {
+                    id: saveAsPopup
                 }
             }
         }
