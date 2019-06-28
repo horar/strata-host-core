@@ -12,10 +12,10 @@ Window {
     minimumWidth: 500
     visible: false
 
+    signal submit();
+
     property alias docID: idNameField.text;
     property alias docBody: bodyTextArea.text;
-
-    signal submit();
 
     Rectangle {
         anchors.fill: parent

@@ -14,8 +14,10 @@ Window {
     visible: false
 
     signal start()
+
     property string folderPath
     property string filename
+
     function clearFields(){
         filenameField.text = ""
         selectFolderField.text = ""
@@ -122,7 +124,7 @@ Window {
                         centerIn: parent
                     }
                     Label {
-                        text: "Filename:"
+                        text: "Database Name:"
                         color: "white"
                         anchors {
                             bottom: filenameContainer.top
@@ -132,7 +134,7 @@ Window {
                     TextField {
                         id: filenameField
                         anchors.fill: parent
-                        placeholderText: "Enter Filename"
+                        placeholderText: "Enter Database Name"
                     }
                 }
             }
