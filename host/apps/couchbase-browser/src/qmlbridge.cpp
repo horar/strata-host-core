@@ -19,9 +19,10 @@ QString QMLBridge::getDBName(int windowId)
 
 void QMLBridge::setFilePath(int windowId, QString file_path)
 {
-    DatabaseInterface *db = new DatabaseInterface(file_path, windowId);
+    DatabaseInterface *db = new DatabaseInterface(windowId);
     allDatabases[windowId] = db;
     QObject::connect(&(*allDatabases[windowId]),&DatabaseInterface::newUpdate, this, &QMLBridge::newUpdateSignal);
+    allDatabases[windowId]->setFilePath(file_path);
 }
 
 bool QMLBridge::createNewDocument(int windowId, QString id, QString body)
