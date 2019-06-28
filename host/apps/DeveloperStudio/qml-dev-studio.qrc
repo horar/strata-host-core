@@ -12,14 +12,12 @@
         <file>js/feedback.js</file>
         <file>js/help_layout_manager.js</file>
         <file>js/login.js</file>
-        <file>js/metrics.js</file>
         <file>js/navigation_control.js</file>
         <file>js/platform_model.js</file>
         <file>js/platform_selection.js</file>
         <file>js/restclient.js</file>
         <file>js/uuid_map.js</file>
         <file>main.qml</file>
-        <file>statusbar-partial-views/SGAnalyticsPopup.qml</file>
         <file>statusbar-partial-views/SGComboBox.qml</file>
         <file>statusbar-partial-views/SGConfirmationPopup.qml</file>
         <file>statusbar-partial-views/SGFeedbackPopup.qml</file>

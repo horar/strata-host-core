@@ -1,13 +1,10 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.12
-import "./common" as Common
-import "./common/Colors.js" as Colors
+import tech.strata.sgwidgets 1.0 as SGWidgets
 import tech.strata.fonts 1.0 as StrataFonts
 import QtQuick.Dialogs 1.3
-import "./common/SgUtils.js" as SgUtils
-import tech.strata.utils 1.0
 import tech.strata.logger 1.0
-
+import tech.strata.commoncpp 1.0 as CommonCpp
 FocusScope {
     id: platformDelegate
 
@@ -104,11 +101,11 @@ FocusScope {
                         right: parent.right
                         bottom: divider.top
                     }
-                    color: Qt.lighter(Colors.STRATA_GREEN, 2.3)
+                    color: Qt.lighter(SGWidgets.SGColorsJS.STRATA_GREEN, 2.3)
                     visible: model.type === "query"
                 }
 
-                Common.SgText {
+                SGWidgets.SGText {
                     id: timeText
                     anchors {
                         top: parent.top
@@ -136,19 +133,20 @@ FocusScope {
                     }
 
                     spacing: 2
-                    property int iconSize: timeText.font.pixelSize
+                    property int iconSize: timeText.font.pixelSize - 4
 
                     Item {
                         height: buttonRow.iconSize
                         width: buttonRow.iconSize
 
-                        Common.SgIconButton {
+                        SGWidgets.SGIconButton {
                             anchors.fill: parent
 
-                            color: cmdDelegate.helperTextColor
+                            iconColor: cmdDelegate.helperTextColor
                             visible: model.type === "query"
                             hintText: qsTr("Resend")
-                            source: "qrc:/images/redo.svg"
+                            icon.source: "qrc:/images/redo.svg"
+                            iconSize: buttonRow.iconSize
                             onClicked: {
                                 cmdInput.text = JSON.stringify(JSON.parse(model.message))
                             }
@@ -159,13 +157,15 @@ FocusScope {
                         height: buttonRow.iconSize
                         width: buttonRow.iconSize
 
-                        Common.SgIconButton {
+                        SGWidgets.SGIconButton {
                             id: condenseButton
                             anchors.fill: parent
 
-                            color: cmdDelegate.helperTextColor
+                            iconColor: cmdDelegate.helperTextColor
                             hintText: qsTr("Condensed mode")
-                            source: model.condensed ? "qrc:/images/chevron-right.svg" : "qrc:/images/chevron-down.svg"
+                            icon.source: model.condensed ? "qrc:/sgimages/chevron-right.svg" : "qrc:/sgimages/chevron-down.svg"
+                            iconSize: buttonRow.iconSize
+
                             onClicked: {
                                 var item = scrollbackModel.get(index)
                                 scrollbackModel.setProperty(index, "condensed", !item.condensed)
@@ -228,61 +228,53 @@ FocusScope {
             id: toolButtonRow
             anchors {
                 top: parent.top
-                topMargin: 6
+                topMargin: 2
                 left: cmdInput.left
             }
 
             property int iconHeight: 24
-            spacing: 6
+            spacing: 2
 
-            Common.SgIconButton {
-                height: toolButtonRow.iconHeight
-                width: height
-
+            SGWidgets.SGIconButton {
                 hintText: qsTr("Clear scrollback")
-                source: "qrc:/images/broom.svg"
+                icon.source: "qrc:/images/broom.svg"
+                iconSize: toolButtonRow.iconHeight
                 onClicked: {
                     scrollbackModel.clear()
                 }
             }
 
-            Common.SgIconButton {
-                height: toolButtonRow.iconHeight
-                width: height
-
+            SGWidgets.SGIconButton {
                 hintText: qsTr("Scroll to the bottom")
-                source: "qrc:/images/arrow-bottom.svg"
+                icon.source: "qrc:/images/arrow-bottom.svg"
+                iconSize: toolButtonRow.iconHeight
                 onClicked: {
                     scrollbackView.positionViewAtEnd()
                     scrollbackViewAtEndTimer.start()
                 }
             }
 
-            Common.SgIconButton {
-                height: toolButtonRow.iconHeight
-                width: height
-
+            SGWidgets.SGIconButton {
                 hintText: condensedMode ? qsTr("Expand all commands") : qsTr("Collapse all commands")
-                source: condensedMode ? "qrc:/images/list-expand.svg" : "qrc:/images/list-collapse.svg"
+                icon.source: condensedMode ? "qrc:/images/list-expand.svg" : "qrc:/images/list-collapse.svg"
+                iconSize: toolButtonRow.iconHeight
                 onClicked: {
                     condensedMode = ! condensedMode
                     scrollbackModel.setCondensedToAll(condensedMode)
                 }
             }
 
-            Common.SgIconButton {
-                height: toolButtonRow.iconHeight
-                width: height
-
+            SGWidgets.SGIconButton {
                 hintText: qsTr("Export to file")
-                source: "qrc:/images/file-export.svg"
+                icon.source: "qrc:/images/file-export.svg"
+                iconSize: toolButtonRow.iconHeight
                 onClicked: {
                     showFileExportDialog()
                 }
             }
         }
 
-        Common.SgTextField {
+        SGWidgets.SGTextField {
             id: cmdInput
             anchors {
                 top: toolButtonRow.bottom
@@ -327,7 +319,7 @@ FocusScope {
             }
         }
 
-        Common.SgButton {
+        SGWidgets.SGButton {
             id: btnSend
             anchors {
                 verticalCenter: cmdInput.verticalCenter
@@ -404,18 +396,18 @@ FocusScope {
     }
 
     function showFileExportDialog() {
-        var dialog = SgUtils.createDialogFromComponent(platformDelegate, fileDialogComponent)
+        var dialog = SGWidgets.SGDialogJS.createDialogFromComponent(platformDelegate, fileDialogComponent)
         dialog.accepted.connect(function() {
-            var result = SgUtilsCpp.atomicWrite(
-                        SgUtilsCpp.urlToPath(dialog.fileUrl),
+            var result = CommonCpp.SGUtilsCpp.atomicWrite(
+                        CommonCpp.SGUtilsCpp.urlToPath(dialog.fileUrl),
                         getTextForExport())
 
             if (result === false) {
                 console.error(LoggerModule.Logger.sciCategory, "failed to export content into", dialog.fileUrl)
 
-                SgUtils.showMessageDialog(
+                SGWidgets.SGDialogJS.showMessageDialog(
                             rootItem,
-                            Common.SgMessageDialog.Error,
+                            SGWidgets.SGMessageDialog.Error,
                             "Export Failed",
                             "Writting into selected file failed.")
             } else {
