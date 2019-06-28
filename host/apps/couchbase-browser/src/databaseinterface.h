@@ -3,16 +3,10 @@
 
 #include <QObject>
 #include <QCoreApplication>
-#include <QTextStream>
-#include <QFileDialog>
-#include <QTextEdit>
 #include <QDir>
 #include <QQmlProperty>
 #include <QDebug>
 
-#include <iostream>
-
-#include "SGFleece.h"
 #include "SGCouchBaseLite.h"
 
 class DatabaseInterface : public QObject
@@ -34,6 +28,8 @@ public:
 
     QString rep_init(const QString &url, const QString &username, const QString &password);
 
+    void rep_stop();
+
     QString setFilePath(QString file_path);
 
 private:
@@ -52,6 +48,8 @@ private:
     Spyglass::SGURLEndpoint *url_endpoint_{nullptr};
 
     Spyglass::SGReplicator *sg_replicator_{nullptr};
+
+    Spyglass::SGBasicAuthenticator *sg_basic_authenticator_{nullptr};
 
     void emitUpdate();
 
