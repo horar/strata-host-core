@@ -3,6 +3,7 @@ import QtQuick.Layouts 1.12
 import QtQuick.Controls 2.12
 import QtQuick.Window 2.12
 import QtQuick.Dialogs 1.3
+import Qt.labs.platform 1.0
 
 Window {
     id: root
@@ -13,23 +14,26 @@ Window {
     visible: false
 
     signal start()
-
-    property alias hostName: hostNameField.text
-    property alias username: usernameField.text
-    property alias password: passwordField.text
-
-    function clearInput()
-    {
-        hostNameField.text = ""
-        usernameField.text = ""
-        passwordField.text = ""
+    property string folderPath
+    property string filename
+    function clearFields(){
+        filenameField.text = ""
+        selectFolderField.text = ""
     }
-
     function validate(){
-        if(hostName.length !== 0){
-            start();
+        if((selectFolderField.text.length == 0) || (filenameField.text.length == 0)){
+            popup.visible = true
         }
+        else{
+            folderPath = selectFolderField.text
+            filename = filenameField.text
+            console.log(folderPath + " " + filename)
+            root.visible = false
+            clearFields()
+        }
+
     }
+
     Popup {
         id: popup
         width: 300
@@ -42,7 +46,6 @@ Window {
     }
     Rectangle {
         anchors.fill: parent
-
         color: "#393e46"
         ColumnLayout {
             spacing: 1
@@ -66,24 +69,43 @@ Window {
                 Layout.alignment: Qt.AlignHCenter + Qt.AlignTop
                 color: "transparent"
                 Rectangle {
-                    id: hostNameContainer
+                    id: selectFolderContainer
                     height: parent.height / 2
                     width: parent.width / 2
                     anchors {
                         centerIn: parent
                     }
                     Label {
-                        text: "Host Name:"
+                        text: "Select Folder:"
                         color: "white"
                         anchors {
-                            bottom: hostNameContainer.top
-                            left: hostNameContainer.left
+                            bottom: selectFolderContainer.top
+                            left: selectFolderContainer.left
                         }
                     }
                     TextField {
-                        id: hostNameField
+                        id: selectFolderField
                         anchors.fill: parent
-                        placeholderText: "Enter Host Name"
+                        placeholderText: "Enter Path"
+                    }
+                    Button  {
+                        height: parent.height
+                        width: 40
+                        onPressed: {
+                            folderDialog.visible = true
+                        }
+                        anchors {
+                            left: parent.right
+                            leftMargin: 5
+                            verticalCenter: parent.verticalCenter
+                        }
+                        Image {
+                            source: "Images/openFolderIcon.png"
+                            width: parent.width / 1.5
+                            height: parent.height / 1.5
+                            anchors.centerIn: parent
+                            fillMode: Image.PreserveAspectFit
+                        }
                     }
                 }
             }
@@ -93,55 +115,28 @@ Window {
                 Layout.alignment: Qt.AlignHCenter + Qt.AlignTop
                 color: "transparent"
                 Rectangle {
-                    id: usernameContainer
+                    id: filenameContainer
                     height: parent.height / 2
                     width: parent.width / 2
                     anchors {
                         centerIn: parent
                     }
                     Label {
-                        text: "Username:"
+                        text: "Filename:"
                         color: "white"
                         anchors {
-                            bottom: usernameContainer.top
-                            left: usernameContainer.left
+                            bottom: filenameContainer.top
+                            left: filenameContainer.left
                         }
                     }
                     TextField {
-                        id: usernameField
+                        id: filenameField
                         anchors.fill: parent
-                        placeholderText: "Enter Username"
+                        placeholderText: "Enter Filename"
                     }
                 }
             }
-            Rectangle {
-                Layout.preferredHeight: 80
-                Layout.preferredWidth: parent.width
-                Layout.alignment: Qt.AlignHCenter + Qt.AlignTop
-                color: "transparent"
-                Rectangle {
-                    id: passwordContainer
-                    height: parent.height / 2
-                    width: parent.width / 2
-                    anchors {
-                        centerIn: parent
-                    }
-                    Label {
-                        text: "Password:"
-                        color: "white"
-                        anchors {
-                            bottom: passwordContainer.top
-                            left: passwordContainer.left
-                        }
-                    }
-                    TextField {
-                        id: passwordField
-                        anchors.fill: parent
-                        placeholderText: "Enter Password"
-                        echoMode: "Password"
-                    }
-                }
-            }
+
             Rectangle {
                 Layout.preferredHeight: 80
                 Layout.preferredWidth: parent.width
@@ -153,9 +148,20 @@ Window {
                     width: parent.width / 4
                     text: "Submit"
                     anchors.centerIn: parent
-                    onClicked: validate();
+                    onClicked: {
+                        validate()
+                    }
                 }
             }
         }
     }
+    //place dialog box here
+    FolderDialog {
+        id: folderDialog
+        onAccepted: {
+            folderPath = folderDialog.folder
+            selectFolderField.text = folderPath
+        }
+    }
+
 }

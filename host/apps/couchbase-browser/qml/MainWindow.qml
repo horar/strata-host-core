@@ -63,7 +63,7 @@ Item {
                     }
                     onOpenFileSignal: openFileDialog.visible = true
                     onNewDocumentSignal: newDocPopup.visible = true
-                    //onNewDatabaseSignal:
+                    onNewDatabaseSignal: newDatabasesPopup.visible = true
                     //onSaveSignal:
                     //onSaveAsSignal:
                     onCloseSignal: {
@@ -130,7 +130,8 @@ Item {
                     folder: shortcuts.home
                     onAccepted: {
                         qmlBridge.setFilePath(id, fileUrls.toString().replace("file://",""));
-                        mainMenuView.showReplicatorButton = true
+                        bodyView.message = "Opened file";
+                        mainMenuView.openedFile = true
                     }
                 }
 
@@ -154,6 +155,10 @@ Item {
                         else
                             bodyView.message = "Cannot create new document";
                     }
+                }
+                NewDatabasePopup {
+                    id: newDatabasesPopup
+
                 }
             }
         }

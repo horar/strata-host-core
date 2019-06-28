@@ -17,7 +17,7 @@ Item {
     signal newWindowSignal()
 
     property bool replicatorStarted: false
-    property bool showReplicatorButton: false
+    property bool openedFile: false
 
     RowLayout {
         id: row
@@ -34,15 +34,6 @@ Item {
             onButtonPress: openFileSignal()
         }
         CustomMenuItem {
-            id: newDocument
-            Layout.preferredHeight: 50
-            Layout.preferredWidth: 50
-            Layout.leftMargin: 5
-            filename: "Images/createDocumentIcon"
-            label: "<b>New Doc</b>"
-            onButtonPress: newDocumentSignal()
-        }
-        CustomMenuItem {
             id: newDB
             Layout.preferredHeight: 50
             Layout.preferredWidth: 50
@@ -52,6 +43,16 @@ Item {
             onButtonPress: newDatabaseSignal()
         }
         CustomMenuItem {
+            id: newDocument
+            Layout.preferredHeight: 50
+            Layout.preferredWidth: 50
+            Layout.leftMargin: 5
+            filename: "Images/createDocumentIcon"
+            label: "<b>New Doc</b>"
+            onButtonPress: newDocumentSignal()
+            disable: !openedFile || replicatorStarted
+        }
+        CustomMenuItem {
             id: save
             Layout.preferredHeight: 50
             Layout.preferredWidth: 50
@@ -59,6 +60,7 @@ Item {
             filename: "Images/saveIcon"
             label: "<b>Save</b>"
             onButtonPress: saveSignal()
+            disable: !openedFile || replicatorStarted
         }
         CustomMenuItem {
             id: saveAs
@@ -68,6 +70,7 @@ Item {
             filename: "Images/Save-as-icon"
             label: "<b>Save As</b>"
             onButtonPress: saveAsSignal()
+            disable: !openedFile
         }
         CustomMenuItem {
             id: close
@@ -77,10 +80,14 @@ Item {
             filename: "Images/closeIcon"
             label: "<b>Close</b>"
             onButtonPress: {
-                if (replicatorStarted) stopReplicatorSignal()
+                if (replicatorStarted) {
+                    stopReplicatorSignal()
+                    replicatorStarted = false
+                }
                 closeSignal()
-                showReplicatorButton = false
+                openedFile = false
             }
+            visible: openedFile
         }
     }
     Rectangle {
@@ -94,7 +101,6 @@ Item {
         RowLayout {
             id: hiddenMenuLayout
             anchors.fill: parent
-            visible: showReplicatorButton
             CustomMenuItem {
                 id: startReplication
                 visible: !replicatorStarted
@@ -104,6 +110,7 @@ Item {
                 label: "<b>Start Replication</b>"
                 filename: "Images/replicateDatabase"
                 onButtonPress: startReplicatorSignal()
+                disable: !openedFile
             }
             CustomMenuItem {
                 id: stopReplication
