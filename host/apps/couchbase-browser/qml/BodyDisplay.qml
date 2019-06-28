@@ -4,6 +4,7 @@ import QtQuick.Controls 2.12
 Item {
     id: root
     anchors.fill:parent
+
     property alias content: text.text
     property alias message: statusText.text
 

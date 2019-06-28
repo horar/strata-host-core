@@ -5,9 +5,11 @@ import QtQuick.Controls.Styles 1.4
 
 Rectangle {
     anchors.fill: parent
+    color: "transparent"
+
     property alias model: keySelectorComboBox.model
     property alias currentIndex: keySelectorComboBox.currentIndex
-    color: "transparent"
+
     ColumnLayout {
         id: comboBoxContainer
         width: parent.width

@@ -10,9 +10,12 @@ Window {
     width: 1280
     height: 720
     title: qsTr("Couchbase Browser") + ((fileName !== "") ? " - " + fileName : "")
+
     property alias id: mainview.id
+
     property string fileName: ""
     property var content: ""
+
     MainWindow {
         id: mainview
     }

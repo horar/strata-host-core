@@ -8,10 +8,14 @@ import QtQuick.Dialogs 1.3
 Rectangle {
     id: root
     color: "transparent"
+
+    signal buttonPress()
+
     property alias filename: icon.source
     property alias label: iconLabel.text
+
     property bool disable: false
-    signal buttonPress()
+
     MouseArea {
         id: customButton
         anchors.fill: parent

@@ -14,8 +14,10 @@ Window {
     visible: false
 
     signal start()
+
     property string folderPath
     property string filename
+
     function clearFields(){
         filenameField.text = ""
         selectFolderField.text = ""
