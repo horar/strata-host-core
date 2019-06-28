@@ -146,7 +146,7 @@ void StorageManager::updatePlatformDoc(const std::string& /*classId*/)
     //Updates are not supported yet
 }
 
-void StorageManager::resetPlatformDoc(const std::string& clientId)
+void StorageManager::cancelDownloadPlatformDoc(const std::string& clientId)
 {
     //find request by clientId
     // and cancel it
@@ -184,6 +184,8 @@ void StorageManager::resetPlatformDoc(const std::string& clientId)
 
             std::lock_guard<std::mutex> lock(downloadGroupsMutex_);
             downloadGroups_.erase(request->uiDownloadGroupId);
+
+            delete group;
         }
     }
 

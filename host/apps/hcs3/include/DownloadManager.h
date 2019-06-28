@@ -55,15 +55,16 @@ public:
     uint downloadCount() const { return currentDownloads_.size(); }
 
     /**
+     * Stops download given by filename.
+     * @param filename
+     * @return returns true when succeeded otherwise false
+     */
+    bool stopDownloadByFilename(const QString& filename);
+
+    /**
      * Stops all downloads
      */
     void stopAllDownloads();
-
-    /**
-     *
-     * @param filename
-     */
-    bool stopDownloadByFilename(const QString& filename);
 
 signals:
     void downloadFinished(QString filename);

@@ -48,7 +48,7 @@ public:
     /**
      * Resets current platform document. Should be called after client deselects platform
      */
-    void resetPlatformDoc(const std::string& clientId);
+    void cancelDownloadPlatformDoc(const std::string& clientId);
 
     /**
      * Notification about the update of the document (from Database)
@@ -76,22 +76,6 @@ private slots:
 
 private:
 
-/*    enum class EItemState {
-        eUnknown = 0,
-        ePending,
-        eDone,        //eg. downloaded + checked
-        eError
-    }; */
-
-/*
-    struct ItemState {
-        QString url;
-        QString filename;
-        QString checksum;
-        EItemState state;
-    };
-*/
-
     struct StorageItem {
         std::string classId;        //what document is requested
         std::string revisionId;     //not used yet
@@ -111,15 +95,12 @@ private:
      */
     void init();
 
-    bool isInitialized() const;
 
+    bool isInitialized() const;
 
 
     void createAndSendResponse(RequestItem* requestItem, PlatformDocument* platformDoc);
 
-//    QMultiMap<uint64_t, ItemState>::iterator findItemByUrl(const QString& url);
-
-    static bool checkFileChecksum(const QString& filename, const QString& checksum);
 
     QString createFilenameFromItem(const QString& item, const QString& prefix);
 
@@ -132,6 +113,9 @@ private:
     bool fillRequestFilesList(PlatformDocument* platformDoc, const std::string& groupName, const QString& prefix, RequestItem* request);
 
     void fileDownloadFinished(const QString& filename, bool withError);
+
+
+    static bool checkFileChecksum(const QString& filename, const QString& checksum);
 
 private:
     QString baseUrl_;       //base part of the URL to download
@@ -151,15 +135,6 @@ private:
 
     std::mutex documentsMutex_;
     std::map<std::string, PlatformDocument*> documentsMap_;
-
-
-    //Only one PlatformDocument for now
-//    PlatformDocument* plat_doc_{nullptr};
-//    std::string clientId_;
-
-
-
-
 
 };
 
