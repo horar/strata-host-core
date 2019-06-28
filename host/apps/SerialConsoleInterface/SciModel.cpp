@@ -1,5 +1,4 @@
 #include "SciModel.h"
-#include "PlatformBoard.h"
 #include "logging/LoggingQtCategories.h"
 #include <PlatformConnection.h>
 
@@ -37,11 +36,6 @@ void SciModel::programDevice(const QString &connectionId, const QString &firmwar
 BoardsController *SciModel::boardController()
 {
     return &boardController_;
-}
-
-SgJLinkConnector *SciModel::jLinkConnector()
-{
-    return &jLinkConnector_;
 }
 
 void SciModel::programDeviceDoneHandler(const QString& connectionId, bool status)
