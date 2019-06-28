@@ -33,7 +33,7 @@ Item {
             DropShadow {
                 width: parent.width
                 height: 3
-                horizontalOffset: 4
+                horizontalOffset: 5
                 verticalOffset: -6
                 radius: 8
                 samples: 17
@@ -51,7 +51,7 @@ Item {
                 height: parent.height
                 anchors.horizontalCenter: parent.horizontalCenter
                 padding: 3
-                text: "asd;flkjads;fklajds;lfkja;dsfklja"
+                text: "messages should appear here"
                 color: "#eee"
             }
         }
