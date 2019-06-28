@@ -15,12 +15,16 @@ Item {
 
         ScrollView {
             id: scroller
-            anchors.fill: parent
+            anchors {
+                top: parent.top
+                left: parent.left
+                right: parent.right
+                bottom: statusBar.top
+            }
             clip: true
 
             TextArea {
                 id: text
-                //anchors.fill: parent
                 wrapMode: "Wrap"
                 selectByMouse: true
                 text: ""
@@ -31,17 +35,6 @@ Item {
             id: statusBar
             width: parent.width
             height: 25
-            DropShadow {
-                width: parent.width
-                height: 3
-                horizontalOffset: 5
-                verticalOffset: -6
-                radius: 8
-                samples: 17
-                source: statusBar
-                color: "black"
-
-            }
             anchors {
                 bottom: parent.bottom
                 left: parent.left
