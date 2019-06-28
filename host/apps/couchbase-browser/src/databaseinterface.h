@@ -22,7 +22,7 @@ class DatabaseInterface : public QObject
 public:
     explicit DatabaseInterface(QObject *parent = nullptr);
 
-    DatabaseInterface(const QString &file_path, const int &id);
+    DatabaseInterface(const int &id);
 
     ~DatabaseInterface();
 
@@ -33,6 +33,8 @@ public:
     bool createNewDoc(const QString &id, const QString &body);
 
     QString rep_init(const QString &url, const QString &username, const QString &password);
+
+    QString setFilePath(QString file_path);
 
 private:
     QString file_path_, db_path_, db_name_, JSONResponse_, url_, username_, password_;
@@ -54,8 +56,6 @@ private:
     void emitUpdate();
 
     static void testReceive(bool pushing, std::string doc_id, std::string error_message, bool is_error, bool error_is_transient);
-
-    void setFilePath(QString file_path);
 
     QString getFilePath();
 

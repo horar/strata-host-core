@@ -10,27 +10,24 @@ DatabaseInterface::DatabaseInterface(QObject *parent) : QObject (parent)
 {
 }
 
-DatabaseInterface::DatabaseInterface(const QString &file_path, const int &id) : file_path_(file_path), id_(id)
+DatabaseInterface::DatabaseInterface(const int &id) : id_(id)
 {
-    if(!parseFilePath()) {
-        DEBUG("Problem parsing file path.");
-    } else if(!db_init()) {
-        DEBUG("Problem initializing database.");
-    }
-
-    // temporary
-
-//    QString b = "{\"my name\": \"victor\"}";
-
-//    createNewDoc("victor_id", b);
-
-    createNewDoc("a","b");
-
 }
 
 DatabaseInterface::~DatabaseInterface()
 {
     std::cout << "\n\nDestructor activated\n\n" << endl;
+}
+
+QString DatabaseInterface::setFilePath(QString file_path)
+{
+    file_path_ = file_path;
+    if(!parseFilePath()) {
+        return("Problem with path to database file. The file must be located according to: \".../db/(db_name)/db.sqlite3\" \n");
+    } else if(!db_init()) {
+        return("Problem initializing database.");
+    }
+    return("");
 }
 
 void DatabaseInterface::emitUpdate()
@@ -120,10 +117,6 @@ bool DatabaseInterface::createNewDoc_(const QString &id, const QString &body)
     setDBstatus(true);
     setRepstatus(false);
     emitUpdate();
-
-    // temporarily hard coded:
-//    rep_init();
-
     return true;
 }
 
@@ -243,11 +236,6 @@ void DatabaseInterface::setDBstatus(bool status)
 void DatabaseInterface::setRepstatus(bool status)
 {
     Repstatus_ = status;
-}
-
-void DatabaseInterface::setFilePath(QString file_path)
-{
-    file_path_ = file_path;
 }
 
 QString DatabaseInterface::getFilePath()
