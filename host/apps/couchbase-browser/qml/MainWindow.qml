@@ -1,5 +1,7 @@
 import QtQuick 2.0
 import QtQuick.Layouts 1.12
+import QtQuick.Dialogs 1.3
+
 Item {
     id: root
     anchors.fill: parent
@@ -59,10 +61,21 @@ Item {
                         fill: parent
                         bottomMargin: 10
                     }
-                    onNewWindowSignal: qmlBridge.createNewWindow();
-                    onSetFilePathSignal: qmlBridge.setFilePath(id, file_path)
-                    onNewDocumentSignal: qmlBridge.createNewDocument(id, docID, docBody)
-                    onCloseSignal: qmlBridge.closeFile(id);
+                    onOpenFileSignal: openFileDialog.visible = true
+                    onNewDocumentSignal: newDocPopup.visible = true
+                    //onNewDatabaseSignal:
+                    //onSaveSignal:
+                    //onSaveAsSignal:
+                    onCloseSignal: {
+                        qmlBridge.closeFile(id)
+                        bodyView.message = "Closed file"
+                    }
+                    onStartReplicatorSignal: loginPopup.visible = true
+                    onStopReplicatorSignal: {
+                        qmlBridge.stopReplicator(id)
+                        bodyView.message = "Stopped replicator"
+                    }
+                    onNewWindowSignal: qmlBridge.createNewWindow()
                 }
             }
             Rectangle {
@@ -105,6 +118,42 @@ Item {
                 color: "steelblue"
                 BodyDisplay {
                     id: bodyView
+                }
+            }
+            Item {
+                id: popupWindow
+
+                FileDialog {
+                    id: openFileDialog
+                    visible: false
+                    title: "Please select a database"
+                    folder: shortcuts.home
+                    onAccepted: {
+                        qmlBridge.setFilePath(id, fileUrls.toString().replace("file://",""));
+                        mainMenuView.showReplicatorButton = true
+                    }
+                }
+
+                LoginPopup {
+                    id: loginPopup
+                    onStart: {
+                        let message = qmlBridge.startReplicator(id,hostName,username,password).length;
+                        if (message === 0) {
+                            bodyView.message = "Started replicator successfully";
+                            mainMenuView.replicatorStarted = true;
+                            visible = false;
+                        }
+                        else bodyView.message = message;
+                    }
+                }
+                NewDocumentPopup {
+                    id: newDocPopup
+                    onSubmit: {
+                        if (qmlBridge.createNewDocument(id,docID,docBody))
+                            bodyView.message = "Created new document successfully!";
+                        else
+                            bodyView.message = "Cannot create new document";
+                    }
                 }
             }
         }

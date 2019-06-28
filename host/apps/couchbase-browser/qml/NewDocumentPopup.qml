@@ -111,6 +111,7 @@ Window {
                     anchors.centerIn: parent
                     onClicked: {
                         submit();
+                        root.visible = false;
                     }
                 }
             }

@@ -12,32 +12,23 @@ Window {
     minimumWidth: 500
     visible: false
 
-    property string hostName
-    property string databaseName
-    property string userName
-    property string password
-    property bool valid: false
+    signal start()
+
+    property alias hostName: hostNameField.text
+    property alias username: usernameField.text
+    property alias password: passwordField.text
+
+    function clearInput()
+    {
+        hostNameField.text = ""
+        usernameField.text = ""
+        passwordField.text = ""
+    }
+
     function validate(){
-        hostName = hostNameField.text
-        databaseName = databaseNameField.text
-        userName = usernameField.text
-        password = passwordField.text
-        valid = ((hostName.length == 0)||(databaseName.length == 0)) ? false : true
-        if(valid == true){
-            hostNameField.text = ""
-            databaseNameField.text = ""
-            usernameField.text = ""
-            passwordField.text = ""
-            valid = false
-            root.visible = false
+        if(hostName.length !== 0){
+            start();
         }
-        else {
-            popup.visible = true
-        }
-        console.log(hostName)
-        console.log(databaseName)
-        console.log(userName)
-        console.log(password)
     }
     Popup {
         id: popup
@@ -92,33 +83,6 @@ Window {
                         id: hostNameField
                         anchors.fill: parent
                         placeholderText: "Enter Host Name"
-                    }
-                }
-            }
-            Rectangle {
-                Layout.preferredHeight: 80
-                Layout.preferredWidth: parent.width
-                Layout.alignment: Qt.AlignHCenter + Qt.AlignTop
-                color: "transparent"
-                Rectangle {
-                    id: databaseNameContainer
-                    height: parent.height / 2
-                    width: parent.width / 2
-                    anchors {
-                        centerIn: parent
-                    }
-                    Label {
-                        text: "Database Name:"
-                        color: "white"
-                        anchors {
-                            bottom: databaseNameContainer.top
-                            left: databaseNameContainer.left
-                        }
-                    }
-                    TextField {
-                        id: databaseNameField
-                        anchors.fill: parent
-                        placeholderText: "Enter Database Name"
                     }
                 }
             }
@@ -188,9 +152,7 @@ Window {
                     width: parent.width / 4
                     text: "Submit"
                     anchors.centerIn: parent
-                    onClicked: {
-                        validate();
-                    }
+                    onClicked: validate();
                 }
             }
         }

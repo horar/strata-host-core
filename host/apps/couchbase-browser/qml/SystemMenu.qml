@@ -2,15 +2,22 @@ import QtQuick 2.0
 import QtQuick.Layouts 1.12
 import QtQuick.Controls 2.12
 import QtQuick.Window 2.12
-import QtQuick.Dialogs 1.3
 
 Item {
     id: root
 
-    signal newWindowSignal();
-    signal setFilePathSignal(string file_path);
-    signal newDocumentSignal(string docID, string docBody);
-    signal closeSignal();
+    signal openFileSignal()
+    signal newDocumentSignal()
+    signal newDatabaseSignal()
+    signal saveSignal()
+    signal saveAsSignal()
+    signal closeSignal()
+    signal startReplicatorSignal()
+    signal stopReplicatorSignal()
+    signal newWindowSignal()
+
+    property bool replicatorStarted: false
+    property bool showReplicatorButton: false
 
     RowLayout {
         id: row
@@ -18,13 +25,13 @@ Item {
         width: implicitWidth
         spacing: 25
         CustomMenuItem {
-            id: open
+            id: openFile
             Layout.preferredHeight: 50
             Layout.preferredWidth: 50
             Layout.leftMargin: 5
             filename: "Images/openFolderIcon"
             label: "<b>Open</b>"
-            onButtonPress: fileDialog.visible = true
+            onButtonPress: openFileSignal()
         }
         CustomMenuItem {
             id: newDocument
@@ -33,7 +40,7 @@ Item {
             Layout.leftMargin: 5
             filename: "Images/createDocumentIcon"
             label: "<b>New Doc</b>"
-            onButtonPress: newDoc.visible = true
+            onButtonPress: newDocumentSignal()
         }
         CustomMenuItem {
             id: newDB
@@ -42,7 +49,7 @@ Item {
             Layout.leftMargin: 5
             filename: "Images/newDatabase"
             label: "<b>New DB</b>"
-            onButtonPress: fileDialog.visible = true
+            onButtonPress: newDatabaseSignal()
         }
         CustomMenuItem {
             id: save
@@ -51,6 +58,7 @@ Item {
             Layout.leftMargin: 5
             filename: "Images/saveIcon"
             label: "<b>Save</b>"
+            onButtonPress: saveSignal()
         }
         CustomMenuItem {
             id: saveAs
@@ -59,7 +67,7 @@ Item {
             Layout.leftMargin: 5
             filename: "Images/Save-as-icon"
             label: "<b>Save As</b>"
-            onButtonPress: fileDialog.visible = true
+            onButtonPress: saveAsSignal()
         }
         CustomMenuItem {
             id: close
@@ -68,18 +76,10 @@ Item {
             Layout.leftMargin: 5
             filename: "Images/closeIcon"
             label: "<b>Close</b>"
-            onButtonPress: closeSignal();
-        }
-
-
-        FileDialog {
-            id: fileDialog
-            visible: false
-            title: "Please select a database"
-            folder: shortcuts.home
-            onAccepted: {
-                setFilePathSignal(fileUrls.toString().replace("file://",""));
-                hiddenMenuLayout.visible = true
+            onButtonPress: {
+                if (replicatorStarted) stopReplicatorSignal()
+                closeSignal()
+                showReplicatorButton = false
             }
         }
     }
@@ -89,42 +89,39 @@ Item {
         height: parent.height
         color: "transparent"
         anchors {
-            right: newTabContainer.left
+            right: newWindowContainer.left
         }
         RowLayout {
             id: hiddenMenuLayout
             anchors.fill: parent
-            visible: false
+            visible: showReplicatorButton
             CustomMenuItem {
                 id: startReplication
+                visible: !replicatorStarted
                 Layout.preferredHeight: 50
                 Layout.preferredWidth: 50
                 Layout.alignment: Qt.AlignCenter
                 label: "<b>Start Replication</b>"
                 filename: "Images/replicateDatabase"
-                onButtonPress: {
-                    login.visible = true
-                    startReplication.visible = false
-                    stopReplication.visible = true
-                }
+                onButtonPress: startReplicatorSignal()
             }
             CustomMenuItem {
                 id: stopReplication
-                visible: false
+                visible: replicatorStarted
                 Layout.preferredHeight: 50
                 Layout.preferredWidth: 50
                 Layout.alignment: Qt.AlignCenter
                 label: "<b>Stop Replication</b>"
                 filename: "Images/stopReplication"
                 onButtonPress: {
-                    startReplication.visible = true
-                    stopReplication.visible = false
+                    stopReplicatorSignal()
+                    replicatorStarted = false
                 }
             }
         }
     }
     Rectangle {
-        id: newTabContainer
+        id: newWindowContainer
         width: 100
         height: parent.height
         color: "transparent"
@@ -132,27 +129,18 @@ Item {
             right: parent.right
         }
         RowLayout {
-            id: newTabLayout
+            id: newWindowLayout
             anchors.fill: parent
             CustomMenuItem {
-                id: newTab
+                id: newWindow
                 Layout.preferredHeight: 50
                 Layout.preferredWidth: 50
                 Layout.alignment: Qt.AlignCenter
                 label: "<b>New Window</b>"
                 filename: "Images/newTabIcon"
-                onButtonPress: {
-                    newWindowSignal();
-                }
+                onButtonPress: newWindowSignal()
             }
         }
-    }
-    PopupWindow {
-        id: login
-    }
-    NewDocumentPopup {
-        id: newDoc
-        onSubmit: newDocumentSignal(docID, docBody)
     }
 }
 

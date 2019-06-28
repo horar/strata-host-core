@@ -35,6 +35,5 @@ Rectangle {
         id: icon
         anchors.fill: parent
         fillMode: Image.PreserveAspectFit
-
     }
 }

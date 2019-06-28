@@ -12,14 +12,9 @@ void QMLBridge::init(QQmlApplicationEngine *engine, QQmlComponent *component)
     createNewWindow();
 }
 
-int QMLBridge::createNewWindow()
+QString QMLBridge::getDBName(int windowId)
 {
-    ids++;
-    engine->load(QUrl(QStringLiteral("qrc:/qml/main.qml")));
-    //allWindows.insert(windowPair(ids,engine->rootObjects()[ids]));
-    allWindows[ids] = engine->rootObjects()[ids];
-    QQmlProperty::write(allWindows[ids],"id",ids);
-    return ids;
+    return allDatabases[windowId]->getDBName();
 }
 
 void QMLBridge::setFilePath(int windowId, QString file_path)
@@ -31,10 +26,10 @@ void QMLBridge::setFilePath(int windowId, QString file_path)
     QQmlProperty::write(allWindows[windowId],"content",allDatabases[windowId]->getJSONResponse());
 }
 
-void QMLBridge::createNewDocument(int windowId, QString id, QString body)
+bool QMLBridge::createNewDocument(int windowId, QString id, QString body)
 {
     qDebug() << windowId << id << body << endl;
-    qDebug() << allDatabases[windowId]->createNewDoc(id, body);
+    return allDatabases[windowId]->createNewDoc(id, body);
 }
 
 void QMLBridge::closeFile(int windowId)
@@ -43,6 +38,25 @@ void QMLBridge::closeFile(int windowId)
     allDatabases.erase(windowId);
     QQmlProperty::write(allWindows[windowId],"fileName","");
     QQmlProperty::write(allWindows[windowId],"content","");
+}
+
+QString QMLBridge::startReplicator(int windowId, QString hostName, QString username, QString password)
+{
+    return "";
+    //return allDatabases[windowId]->rep_init(hostName,username,password);
+}
+
+void QMLBridge::stopReplicator(int windowId)
+{
+    //allDatabases[windowId]->rep_stop();
+}
+
+void QMLBridge::createNewWindow()
+{
+    ids++;
+    engine->load(QUrl(QStringLiteral("qrc:/qml/main.qml")));
+    allWindows[ids] = engine->rootObjects()[ids];
+    QQmlProperty::write(allWindows[ids],"id",ids);
 }
 
 void QMLBridge::newUpdateSignal(int windowId)
