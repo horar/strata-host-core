@@ -63,7 +63,7 @@ Item {
                     }
                     onOpenFileSignal: openFileDialog.visible = true
                     onNewDocumentSignal: newDocPopup.visible = true
-                    //onNewDatabaseSignal:
+                    onNewDatabaseSignal: newDatabasesPopup.visible = true
                     //onSaveSignal:
                     //onSaveAsSignal:
                     onCloseSignal: {
@@ -154,6 +154,10 @@ Item {
                         else
                             bodyView.message = "Cannot create new document";
                     }
+                }
+                NewDatabasePopup {
+                    id: newDatabasesPopup
+
                 }
             }
         }

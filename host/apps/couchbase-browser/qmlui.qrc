@@ -19,5 +19,6 @@
         <file>qml/Images/newDatabase.png</file>
         <file>qml/CustomMenuItem.qml</file>
         <file>qml/NewDocumentPopup.qml</file>
+        <file>qml/NewDatabasePopup.qml</file>
     </qresource>
 </RCC>
