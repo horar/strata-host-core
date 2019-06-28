@@ -130,7 +130,8 @@ Item {
                     folder: shortcuts.home
                     onAccepted: {
                         qmlBridge.setFilePath(id, fileUrls.toString().replace("file://",""));
-                        mainMenuView.showReplicatorButton = true
+                        bodyView.message = "Opened file";
+                        mainMenuView.openedFile = true
                     }
                 }
 

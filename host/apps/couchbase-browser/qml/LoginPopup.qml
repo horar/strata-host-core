@@ -42,6 +42,7 @@ Window {
     }
     Rectangle {
         anchors.fill: parent
+
         color: "#393e46"
         ColumnLayout {
             spacing: 1

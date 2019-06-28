@@ -10,6 +10,7 @@ Rectangle {
     color: "transparent"
     property alias filename: icon.source
     property alias label: iconLabel.text
+    property bool disable: false
     signal buttonPress()
     MouseArea {
         id: customButton
@@ -35,5 +36,16 @@ Rectangle {
         id: icon
         anchors.fill: parent
         fillMode: Image.PreserveAspectFit
+    }
+
+    onDisableChanged: {
+        if (disable) {
+            opacity = 0.5
+            enabled = false
+        }
+        else {
+            opacity = 1
+            enabled = true
+        }
     }
 }
