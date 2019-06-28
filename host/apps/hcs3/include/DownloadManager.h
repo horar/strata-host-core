@@ -69,14 +69,19 @@ signals:
     void downloadFinished(QString filename);
     void downloadFinishedError(QString filename, QString error);
 
-    //TODO: void progress()
+    void downloadAbort(QNetworkReply* reply);
+
+    void downloadProgress(QString filename, qint64 bytesReceived, qint64 bytesTotal);
 
 private slots:
     void readyRead();
     void onDownloadFinished(QNetworkReply *reply);
 
-    void slotError();  //QNetworkReply::NetworkError err
+    void slotError(QNetworkReply::NetworkError err);
     void sslErrors(const QList<QSslError> &errors);
+
+    void onDownloadAbort(QNetworkReply* reply);
+    void onDownloadProgress(qint64 bytesReceived, qint64 bytesTotal);
 
 private:
     bool isHttpRedirect(QNetworkReply *reply);
@@ -90,16 +95,20 @@ private:
     QList<DownloadItem>::iterator findItemByFilename(const QString& filename);
 
     QNetworkReply* findReplyByFilename(const QString& filename);
+    QString findFilenameForReply(QNetworkReply* reply);
 
 private:
     QScopedPointer<QNetworkAccessManager> manager_;
     QVector<QNetworkReply*>  currentDownloads_;
+
+    QMutex mapReplyFileMutex_;
     QMap<QNetworkReply*, QString> mapReplyToFile_;
 
     uint numberOfDownloads_;
 
     QString baseUrl_;
 
+    QMutex downloadListMutex_;
     QList<DownloadItem> downloadList_;
 };
 

@@ -30,7 +30,6 @@ public:
 
     void stopDownload();
 
-
 private:
     enum class EItemState {
         eUnknown = 0,
