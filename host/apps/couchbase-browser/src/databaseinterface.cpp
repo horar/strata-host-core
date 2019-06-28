@@ -1,10 +1,7 @@
 #include "databaseinterface.h"
 
-#include "QJsonDocument"
-#include "QJsonObject"
-
 using namespace std;
-using namespace std::placeholders;
+//using namespace std::placeholders;
 using namespace Spyglass;
 
 #define DEBUG(...) printf("TEST Database Interface: "); printf(__VA_ARGS__)
@@ -160,7 +157,7 @@ QString DatabaseInterface::rep_init_()
     }
 
     sg_replicator_ = new SGReplicator(sg_replicator_configuration_);
-    sg_replicator_->addDocumentEndedListener(std::bind(&DatabaseInterface::emitUpdate, this));
+    sg_replicator_->addDocumentEndedListener(bind(&DatabaseInterface::emitUpdate, this));
 
     if(sg_replicator_->start() == false) {
         return("Problem with start of replication.");
