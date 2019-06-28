@@ -1,10 +1,7 @@
 #include "databaseinterface.h"
 
-#include "QJsonDocument"
-#include "QJsonObject"
-
 using namespace std;
-using namespace std::placeholders;
+//using namespace std::placeholders;
 using namespace Spyglass;
 
 #define DEBUG(...) printf("TEST Database Interface: "); printf(__VA_ARGS__)
@@ -13,27 +10,33 @@ DatabaseInterface::DatabaseInterface(QObject *parent) : QObject (parent)
 {
 }
 
-DatabaseInterface::DatabaseInterface(const QString &file_path, const int &id) : file_path_(file_path), id_(id)
+DatabaseInterface::DatabaseInterface(const int &id) : id_(id)
 {
-    if(!parseFilePath()) {
-        DEBUG("Problem parsing file path.");
-    } else if(!db_init()) {
-        DEBUG("Problem initializing database.");
-    }
-
-    // temporary
-
-//    QString b = "{\"my name\": \"victor\"}";
-
-//    createNewDoc("victor_id", b);
-
-    createNewDoc("a","b");
-
 }
 
 DatabaseInterface::~DatabaseInterface()
 {
-    std::cout << "\n\nDestructor activated\n\n" << endl;
+    if (getRepstatus()) {
+        sg_replicator_->stop();
+    }
+
+    delete sg_replicator_;
+    delete url_endpoint_;
+    delete sg_replicator_configuration_;
+    delete sg_basic_authenticator_;
+    delete sg_db_;
+    setRepstatus(false);
+}
+
+QString DatabaseInterface::setFilePath(QString file_path)
+{
+    file_path_ = file_path;
+    if(!parseFilePath()) {
+        return("Problem with path to database file. The file must be located according to: \".../db/(db_name)/db.sqlite3\" \n");
+    } else if(!db_init()) {
+        return("Problem initializing database.");
+    }
+    return("");
 }
 
 void DatabaseInterface::emitUpdate()
@@ -43,6 +46,14 @@ void DatabaseInterface::emitUpdate()
     }
 
     emit newUpdate(this->id_);
+}
+
+void DatabaseInterface::rep_stop()
+{
+    if (getRepstatus()) {
+        sg_replicator_->stop();
+    }
+    setRepstatus(false);
 }
 
 bool DatabaseInterface::createNewDoc(const QString &id, const QString &body)
@@ -103,6 +114,7 @@ bool DatabaseInterface::createNewDoc_(const QString &id, const QString &body)
     sg_db_ = new SGDatabase(db_name_.toStdString(), db_path_.toStdString());
 
     setDBstatus(false);
+    setRepstatus(false);
 
     if (!sg_db_->isOpen()) {
         DEBUG("Db is not open yet\n");
@@ -121,12 +133,7 @@ bool DatabaseInterface::createNewDoc_(const QString &id, const QString &body)
     }
 
     setDBstatus(true);
-    setRepstatus(false);
     emitUpdate();
-
-    // temporarily hard coded:
-//    rep_init();
-
     return true;
 }
 
@@ -151,16 +158,20 @@ QString DatabaseInterface::rep_init(const QString &url, const QString &username,
 
 QString DatabaseInterface::rep_init_()
 {
+    if(getRepstatus()) {
+        return("Replicator is already running, cannot start again.");
+    }
+
     sg_replicator_configuration_ = new SGReplicatorConfiguration(sg_db_, url_endpoint_);
     sg_replicator_configuration_->setReplicatorType(SGReplicatorConfiguration::ReplicatorType::kPull);
 
     if(!username_.isEmpty() && !password_.isEmpty()) {
-        SGBasicAuthenticator basic_authenticator(username_.toStdString(),password_.toStdString());
-        sg_replicator_configuration_->setAuthenticator(&basic_authenticator);
+        sg_basic_authenticator_ = new SGBasicAuthenticator(username_.toStdString(),password_.toStdString());
+        sg_replicator_configuration_->setAuthenticator(sg_basic_authenticator_);
     }
 
     sg_replicator_ = new SGReplicator(sg_replicator_configuration_);
-    sg_replicator_->addDocumentEndedListener(std::bind(&DatabaseInterface::emitUpdate, this));
+    sg_replicator_->addDocumentEndedListener(bind(&DatabaseInterface::emitUpdate, this));
 
     if(sg_replicator_->start() == false) {
         return("Problem with start of replication.");
@@ -246,11 +257,6 @@ void DatabaseInterface::setDBstatus(bool status)
 void DatabaseInterface::setRepstatus(bool status)
 {
     Repstatus_ = status;
-}
-
-void DatabaseInterface::setFilePath(QString file_path)
-{
-    file_path_ = file_path;
 }
 
 QString DatabaseInterface::getFilePath()
