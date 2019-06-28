@@ -56,7 +56,7 @@ Item {
     }
 
     property var auto_addressing : {
-        "state": "off",
+        "state": "off"
 
     }
 
@@ -213,6 +213,45 @@ Item {
                                      send: function () { CorePlatformInterface.send(this) },
                                      show: function () { CorePlatformInterface.show(this) }
                                  })
+
+
+    property var pxn_demo_time : ({
+                                  "cmd" : "pxn_demo_time",
+                                  "payload": {
+                                      "demo_time": 1.00
+                                  },
+
+                                  update: function (demo_time_a) {
+                                      this.set(demo_time_a)
+                                      this.send(this)
+                                  },
+
+                                  set: function (demo_time_a) {
+                                      this.payload.demo_time = demo_time_a
+                                  },
+
+                                  send: function () { CorePlatformInterface.send(this) },
+                                  show: function () { CorePlatformInterface.show(this) }
+                              })
+
+    property var pxn_demo_intensity : ({
+                                  "cmd" : "pxn_demo_intensity",
+                                  "payload": {
+                                      "intensity": 50
+                                  },
+
+                                  update: function (intensity_a) {
+                                      this.set(intensity_a)
+                                      this.send(this)
+                                  },
+
+                                  set: function (intensity_a) {
+                                      this.payload.intensity = intensity_a
+                                  },
+
+                                  send: function () { CorePlatformInterface.send(this) },
+                                  show: function () { CorePlatformInterface.show(this) }
+                              })
 
 
 

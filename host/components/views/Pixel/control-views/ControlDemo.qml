@@ -143,7 +143,7 @@ Rectangle {
                     Layout.fillWidth: true
                     Layout.fillHeight: true
                     color: "black"
-                    SGSlider{
+                    SGSlideCustomize{
                         id:sgSlider1
                         anchors.centerIn: parent
                         label: "<b>Transition Time (sec)</b>"          // Default: "" (if not entered, label will not appear)
@@ -164,6 +164,10 @@ Rectangle {
                         live: false                  // Default: false (will only send valueChanged signal when slider is released)
                         labelTopAligned: false       // Default: false (only applies to label on left of slider, decides vertical centering of label)
                         inputBox: true               // Default: true
+
+                        onSlider_valueChanged: {
+                            platformInterface.pxn_demo_time.update(value)
+                        }
                     }
                 }
 
@@ -171,7 +175,7 @@ Rectangle {
                     Layout.fillWidth: true
                     Layout.fillHeight: true
                     color: "black"
-                    SGSlider{
+                    SGSlideCustomize{
                         id:sgSlider2
                         anchors.centerIn: parent
                         label: "<b>Intensity (%)</b>"          // Default: "" (if not entered, label will not appear)
@@ -192,6 +196,10 @@ Rectangle {
                         live: false                  // Default: false (will only send valueChanged signal when slider is released)
                         labelTopAligned: false       // Default: false (only applies to label on left of slider, decides vertical centering of label)
                         inputBox: true               // Default: true
+
+                        onSlider_valueChanged: {
+                            platformInterface.pxn_demo_intensity.update(value)
+                        }
                     }
                 }
 
