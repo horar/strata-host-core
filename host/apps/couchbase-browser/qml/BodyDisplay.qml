@@ -1,4 +1,5 @@
 import QtQuick 2.12
+import QtGraphicalEffects 1.12
 import QtQuick.Controls 2.12
 Item {
     id: root
@@ -23,6 +24,35 @@ Item {
                 selectByMouse: true
                 text: ""
                 color: "#eeeeee"
+            }
+        }
+        Rectangle {
+            id: statusBar
+            width: parent.width
+            height: 25
+            DropShadow {
+                width: parent.width
+                height: 3
+                horizontalOffset: 4
+                verticalOffset: -6
+                radius: 8
+                samples: 17
+                source: statusBar
+                color: "black"
+
+            }
+            anchors {
+                bottom: parent.bottom
+                left: parent.left
+            }
+            color: "#b55400"
+            Text {
+                id: statusText
+                height: parent.height
+                anchors.horizontalCenter: parent.horizontalCenter
+                padding: 3
+                text: "asd;flkjads;fklajds;lfkja;dsfklja"
+                color: "#eee"
             }
         }
     }
