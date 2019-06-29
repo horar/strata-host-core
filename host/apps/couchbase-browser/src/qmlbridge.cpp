@@ -25,13 +25,21 @@ QString QMLBridge::setFilePath(int windowId, QString file_path)
     return allDatabases[windowId]->setFilePath(file_path);
 }
 
-QString QMLBridge::createNewDatabase(int windowId, QString folder_path, QString dbName)
+QString QMLBridge::createNewDatabase(QString folder_path, QString dbName)
 {
     createNewWindow();
     QDir dir(folder_path);
     QString path = dir.path() + dir.separator() + "db" + dir.separator() + dbName + dir.separator() + "db.sqlite3";
     qDebug() << path << endl;
-    return setFilePath(ids,path);
+    QString message = setFilePath(ids,path);
+    if (message.length() != 0) {
+        delete allWindows[ids];
+        allWindows.erase(ids);
+        delete allDatabases[ids];
+        allDatabases.erase(ids);
+        ids--;
+    }
+    return message;
 }
 
 bool QMLBridge::createNewDocument(int windowId, QString id, QString body)
@@ -55,14 +63,14 @@ QString QMLBridge::startReplicator(int windowId, QString hostName, QString usern
 
 void QMLBridge::stopReplicator(int windowId)
 {
-    //allDatabases[windowId]->rep_stop();
+    allDatabases[windowId]->rep_stop();
 }
 
 void QMLBridge::createNewWindow()
 {
     ids++;
     engine->load(QUrl(QStringLiteral("qrc:/qml/main.qml")));
-    allWindows[ids] = engine->rootObjects()[ids];
+    allWindows[ids] = engine->rootObjects().last();
     QQmlProperty::write(allWindows[ids],"id",ids);
 }
 

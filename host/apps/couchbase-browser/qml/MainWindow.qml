@@ -162,16 +162,20 @@ Item {
                 NewDatabasePopup {
                     id: newDatabasesPopup
                     onSubmit: {
-                        let message = qmlBridge.createNewDatabase(id, folderPath.toString().replace("file://",""), filename);
+                        let message = qmlBridge.createNewDatabase(folderPath.toString().replace("file://",""), filename);
                         if (message.length === 0) {
                             bodyView.message = "Created new database successfully";
                         }
                         else bodyView.message = message;
+                        visible = false;
                     }
 
                 }
                 NewDatabasePopup {
                     id: saveAsPopup
+                    onSubmit:  {
+                        visible = false;
+                    }
                 }
             }
         }
