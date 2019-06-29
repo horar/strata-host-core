@@ -53,6 +53,7 @@ Item {
             onClicked: {
                 controlContainer.currentIndex = 2
                 platformInterface.auto_addr_enable_state = false
+                platformInterface.periodic_hdl_start
             }
         }
     }

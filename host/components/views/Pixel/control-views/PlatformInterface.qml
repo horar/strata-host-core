@@ -267,6 +267,25 @@ Item {
                                   show: function () { CorePlatformInterface.show(this) }
                               })
 
+    property var periodic_hdl_start : ({
+                                  "cmd" : "start_periodic",
+                                  "payload": {
+                                      "function": "periodic_example_response"
+                                  },
+
+                                  update: function (function_a) {
+                                      this.set(function_a)
+                                      this.send(function_a)
+                                  },
+
+                                  set: function (function_a) {
+                                      this.payload.function = function_a
+                                  },
+
+                                  send: function () { CorePlatformInterface.send(this) },
+                                  show: function () { CorePlatformInterface.show(this) }
+                              })
+
 
     property bool boost_enable_state: false
     property bool buck1_enable_state: false
