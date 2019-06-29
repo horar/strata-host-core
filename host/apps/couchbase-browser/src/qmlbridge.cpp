@@ -17,12 +17,21 @@ QString QMLBridge::getDBName(int windowId)
     return allDatabases[windowId]->getDBName();
 }
 
-void QMLBridge::setFilePath(int windowId, QString file_path)
+QString QMLBridge::setFilePath(int windowId, QString file_path)
 {
     DatabaseInterface *db = new DatabaseInterface(windowId);
     allDatabases[windowId] = db;
     QObject::connect(&(*allDatabases[windowId]),&DatabaseInterface::newUpdate, this, &QMLBridge::newUpdateSignal);
-    allDatabases[windowId]->setFilePath(file_path);
+    return allDatabases[windowId]->setFilePath(file_path);
+}
+
+QString QMLBridge::createNewDatabase(int windowId, QString folder_path, QString dbName)
+{
+    createNewWindow();
+    QDir dir(folder_path);
+    QString path = dir.path() + dir.separator() + "db" + dir.separator() + dbName + dir.separator() + "db.sqlite3";
+    qDebug() << path << endl;
+    return setFilePath(ids,path);
 }
 
 bool QMLBridge::createNewDocument(int windowId, QString id, QString body)

@@ -129,17 +129,20 @@ Item {
                     title: "Please select a database"
                     folder: shortcuts.home
                     onAccepted: {
-                        qmlBridge.setFilePath(id, fileUrls.toString().replace("file://",""));
-                        bodyView.message = "Opened file";
-                        mainMenuView.openedFile = true
+                        let message = qmlBridge.setFilePath(id, fileUrls.toString().replace("file://",""));
+                        if (message.length === 0) {
+                            bodyView.message = "Opened file";
+                            mainMenuView.openedFile = true
+                        }
+                        else bodyView.message = message;
                     }
                 }
 
                 LoginPopup {
                     id: loginPopup
                     onStart: {
-                        let message = qmlBridge.startReplicator(id,hostName,username,password).length;
-                        if (message === 0) {
+                        let message = qmlBridge.startReplicator(id,hostName,username,password);
+                        if (message.length === 0) {
                             bodyView.message = "Started replicator successfully";
                             mainMenuView.replicatorStarted = true;
                             visible = false;
@@ -158,6 +161,13 @@ Item {
                 }
                 NewDatabasePopup {
                     id: newDatabasesPopup
+                    onSubmit: {
+                        let message = qmlBridge.createNewDatabase(id, folderPath.toString().replace("file://",""), filename);
+                        if (message.length === 0) {
+                            bodyView.message = "Created new database successfully";
+                        }
+                        else bodyView.message = message;
+                    }
 
                 }
                 NewDatabasePopup {

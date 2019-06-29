@@ -13,25 +13,18 @@ Window {
     minimumWidth: 500
     visible: false
 
-    signal start()
+    signal submit()
 
-    property string folderPath
-    property string filename
+    property alias folderPath: selectFolderField.text
+    property alias filename: filenameField.text
 
     function clearFields(){
-        filenameField.text = ""
-        selectFolderField.text = ""
+        folderPath = ""
+        filename = ""
     }
     function validate(){
-        if((selectFolderField.text.length == 0) || (filenameField.text.length == 0)){
-            popup.visible = true
-        }
-        else{
-            folderPath = selectFolderField.text
-            filename = filenameField.text
-            console.log(folderPath + " " + filename)
-            root.visible = false
-            clearFields()
+        if((selectFolderField.text.length !== 0) && (filenameField.text.length !== 0)){
+            submit()
         }
 
     }
@@ -161,8 +154,7 @@ Window {
     FolderDialog {
         id: folderDialog
         onAccepted: {
-            folderPath = folderDialog.folder
-            selectFolderField.text = folderPath
+            selectFolderField.text = folderDialog.folder
         }
     }
 
