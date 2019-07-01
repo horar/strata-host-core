@@ -28,16 +28,6 @@ Popup {
 
     }
 
-    Popup {
-        id: popup
-        width: 300
-        height: 200
-        visible: false
-        Label {
-            text: "All fields must be valid"
-            anchors.centerIn: parent
-        }
-    }
     Rectangle {
         anchors.fill: parent
         color: "#393e46"

@@ -8,7 +8,7 @@ Popup {
     id: root
     width: 500
     height: 500
-    visible: false
+    visible: true
     padding: 0
 
     signal start()
@@ -31,17 +31,13 @@ Popup {
         if(hostName.length !== 0){
             start();
         }
-    }
-    Popup {
-        id: popup
-        width: 300
-        height: 200
-        visible: false
-        Label {
-            text: "All fields must be valid"
-            anchors.centerIn: parent
+        else {
+            hostNameFieldBackground.border.color = "red"
+            hostNameFieldBackground.border.width = 2
+            header.text = "Invalid Input"
         }
     }
+
     Rectangle {
         anchors.fill: parent
         color: "#393e46"
@@ -61,9 +57,10 @@ Popup {
                 Layout.alignment: Qt.AlignHCenter + Qt.AlignTop
                 color: "transparent"
                 Label {
+                    id: header
                     text: "Please enter the requested information"
                     anchors.centerIn: parent
-                    color: "white"
+                    color: "#eee"
                 }
             }
             Rectangle {
@@ -79,8 +76,8 @@ Popup {
                         centerIn: parent
                     }
                     Label {
-                        text: "Host Name:"
-                        color: "white"
+                        text: "URL:"
+                        color: "#eee"
                         anchors {
                             bottom: hostNameContainer.top
                             left: hostNameContainer.left
@@ -89,7 +86,17 @@ Popup {
                     TextField {
                         id: hostNameField
                         anchors.fill: parent
-                        placeholderText: "Enter Host Name"
+                        placeholderText: "Enter URL"
+                        onActiveFocusChanged: {
+                            hostNameFieldBackground.border.color = "transparent"
+                            header.text = "Please enter the requested information"
+                        }
+                        Rectangle {
+                            id: hostNameFieldBackground
+                            width: parent.width
+                            height: parent.height
+                            color: "transparent"
+                        }
                     }
                 }
             }
@@ -134,7 +141,7 @@ Popup {
                     }
                     Label {
                         text: "Password:"
-                        color: "white"
+                        color: "#eee"
                         anchors {
                             bottom: passwordContainer.top
                             left: passwordContainer.left
