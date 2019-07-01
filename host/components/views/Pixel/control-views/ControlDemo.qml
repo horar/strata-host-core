@@ -14,7 +14,26 @@ Rectangle {
     color:"black"
 
     function send_demo_state(mode_state, led_num_state, intensity_state, time_state){
-        platformInterface.pxn_demo_setting.update(mode_state,led_num_state,time_state,intensity_state)
+        if (mode_state === 5) {
+            platformInterface.periodic_hdl_stop.update()
+            platformInterface.demo_stop = true
+
+        } else {
+            platformInterface.pxn_demo_setting.update(mode_state,led_num_state,time_state,intensity_state)
+
+            if (platformInterface.demo_stop === true)
+            {
+                platformInterface.periodic_hdl_start.update(time_state)
+                platformInterface.demo_stop = false
+                console.log("handler start")
+            } else {
+                platformInterface.periodic_hdl_update.update(time_state)
+                console.log("handlar update")
+            }
+
+//            platformInterface.periodic_hdl_update.update(time_state)
+        }
+
     }
 
 //    function send_demo_state(demo_mode_state, demo_lednum_state, demo_time_state, demo_intensity_state){
@@ -180,17 +199,17 @@ Rectangle {
                     SGSlideCustomize{
                         id:sgSlider1
                         anchors.centerIn: parent
-                        label: "<b>Transition Time (sec)</b>"          // Default: "" (if not entered, label will not appear)
+                        label: "<b>Transition Time (mSec)</b>"          // Default: "" (if not entered, label will not appear)
                         textColor: "white"           // Default: "black"
                         labelLeft: false             // Default: true
                         Layout.fillHeight: true
                         width: parent.width/2
-                        stepSize: 0.05                // Default: 1.0
-                        value: 1                  // Default: average of from and to
-                        from: 0.05                      // Default: 0.0
-                        to: 2.0                    // Default: 100.0
-                        startLabel: "0.05"              // Default: from
-                        endLabel: "2.0"            // Default: to
+                        stepSize: 100                // Default: 1.0
+                        value: 1000                        // Default: average of from and to
+                        from: 500                      // Default: 0.0
+                        to: 2000                    // Default: 100.0
+                        startLabel: "500"              // Default: from
+                        endLabel: "2000"            // Default: to
                         showToolTip: false            // Default: true
                         toolTipDecimalPlaces: 0      // Default: 0
                         grooveColor: "#ddd"          // Default: "#dddddd"

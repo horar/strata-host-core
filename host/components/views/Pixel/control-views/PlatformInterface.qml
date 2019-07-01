@@ -60,10 +60,10 @@ Item {
 
     }
 
-//    property var demo_mode : {
-//        "state": "off"
+    //    property var demo_mode : {
+    //        "state": "off"
 
-//    }
+    //    }
 
 
 
@@ -223,68 +223,110 @@ Item {
 
 
     property var pxn_demo_setting : ({
-                                  "cmd" : "pxn_demo_setting",
-                                  "payload": {
-                                      "mode": 1,
-                                      "led_num": 1,
-                                      "intensity": 50,
-                                      "demo_time": 1.00
+                                         "cmd" : "pxn_demo_setting",
+                                         "payload": {
+                                             "mode": 1,
+                                             "led_num": 1,
+                                             "intensity": 50,
+                                             "demo_time": 1.00
 
-                                  },
+                                         },
 
-                                  update: function (mode_a, led_num_a, intensity_a, time_a) {
-                                      this.set(mode_a,led_num_a,intensity_a,time_a)
-                                      this.send(this)
-                                  },
+                                         update: function (mode_a, led_num_a, intensity_a, time_a) {
+                                             this.set(mode_a,led_num_a,intensity_a,time_a)
+                                             this.send(this)
+                                         },
 
-                                  set: function (mode_a,led_num_a,intensity_a,time_a) {
-                                      this.payload.mode = mode_a
-                                      this.payload.led_num = led_num_a
-                                      this.payload.intensity = intensity_a
-                                      this.payload.time = time_a
-                                  },
+                                         set: function (mode_a,led_num_a,intensity_a,time_a) {
+                                             this.payload.mode = mode_a
+                                             this.payload.led_num = led_num_a
+                                             this.payload.intensity = intensity_a
+                                             this.payload.time = time_a
+                                         },
 
-                                  send: function () { CorePlatformInterface.send(this) },
-                                  show: function () { CorePlatformInterface.show(this) }
-                              })
+                                         send: function () { CorePlatformInterface.send(this) },
+                                         show: function () { CorePlatformInterface.show(this) }
+                                     })
 
     property var device_init : ({
-                                  "cmd" : "device_initialization",
-                                  "payload": {
-                                      "init": 1
-                                  },
+                                    "cmd" : "device_initialization",
+                                    "payload": {
+                                        "init": 1
+                                    },
 
-                                  update: function (init_a) {
-                                      this.set(init_a)
-                                      this.send(this)
-                                  },
+                                    update: function (init_a) {
+                                        this.set(init_a)
+                                        this.send(this)
+                                    },
 
-                                  set: function (init_a) {
-                                      this.payload.init = init_a
-                                  },
+                                    set: function (init_a) {
+                                        this.payload.init = init_a
+                                    },
 
-                                  send: function () { CorePlatformInterface.send(this) },
-                                  show: function () { CorePlatformInterface.show(this) }
-                              })
+                                    send: function () { CorePlatformInterface.send(this) },
+                                    show: function () { CorePlatformInterface.show(this) }
+                                })
+
 
     property var periodic_hdl_start : ({
-                                  "cmd" : "start_periodic",
-                                  "payload": {
-                                      "function": "periodic_example_response"
-                                  },
+                                           "cmd" : "start_periodic",
+                                           "payload": {
+                                               "function": "periodic_example_response",
+                                               "run_count":-1,
+                                               "interval": 1000
+                                           },
 
-                                  update: function (function_a) {
-                                      this.set(function_a)
-                                      this.send(function_a)
-                                  },
+                                           update: function (interval_a) {
+                                               this.set(interval_a)
+                                               this.send(this)
+                                           },
 
-                                  set: function (function_a) {
-                                      this.payload.function = function_a
-                                  },
+                                           set: function (interval_a) {
+                                               this.payload.interval = interval_a
+                                           },
 
-                                  send: function () { CorePlatformInterface.send(this) },
-                                  show: function () { CorePlatformInterface.show(this) }
-                              })
+                                           send: function () { CorePlatformInterface.send(this) },
+                                           show: function () { CorePlatformInterface.show(this) }
+                                       })
+
+    property var periodic_hdl_update : ({
+                                           "cmd" : "update_periodic",
+                                           "payload": {
+                                               "function": "periodic_example_response",
+                                               "run_count":-1,
+                                               "interval": 1000
+                                           },
+
+                                           update: function (interval_a) {
+                                               this.set(interval_a)
+                                               this.send(this)
+                                           },
+
+                                           set: function (interval_a) {
+                                               this.payload.interval = interval_a
+                                           },
+
+                                           send: function () { CorePlatformInterface.send(this) },
+                                           show: function () { CorePlatformInterface.show(this) }
+                                       })
+
+    property var periodic_hdl_stop : ({
+                                           "cmd" : "stop_periodic",
+                                           "payload": {
+                                               "function": "periodic_example_response"
+                                           },
+
+                                           update: function () {
+                                               this.set()
+                                               this.send()
+                                           },
+
+                                           set: function () {
+                                           },
+
+                                           send: function () { CorePlatformInterface.send(this) },
+                                           show: function () { CorePlatformInterface.show(this) }
+                                       })
 
 
     property bool boost_enable_state: false
@@ -295,7 +337,8 @@ Item {
     property bool buck5_enable_state: false
     property bool buck6_enable_state: false
     property bool auto_addr_enable_state: false
-//    property bool demo_mode_enable_state: false
+    property bool demo_mode_enable_state: false
+    property bool demo_stop : true
 
     property bool boost_led_state: false
     property bool buck1_led_state: false
