@@ -115,22 +115,23 @@ bool DatabaseInterface::createNewDoc_(const QString &id, const QString &body)
 {
     sg_db_ = new SGDatabase(db_name_.toStdString(), db_path_.toStdString());
 
+    if(sg_db_ == nullptr) {
+        DEBUG("Problem with initialization of database.");
+        return false;
+    }
+
     setDBstatus(false);
     setRepstatus(false);
 
-    if (!sg_db_->isOpen()) {
-        DEBUG("Db is not open yet\n");
-    }
-
     if (sg_db_->open() != SGDatabaseReturnStatus::kNoError) {
-        DEBUG("Can't open DB!\n");
+        DEBUG("Can't open database.\n");
         return false;
     }
 
     if (sg_db_->isOpen()) {
-        DEBUG("DB is open using isOpen API\n");
+        DEBUG("Database is open using isOpen API.\n");
     } else {
-        DEBUG("DB is not open, exiting!\n");
+        DEBUG("Database is not open, exiting.\n");
         return false;
     }
 
@@ -152,7 +153,7 @@ QString DatabaseInterface::rep_init(const QString &url, const QString &username,
 
     url_endpoint_ = new SGURLEndpoint(url_.toStdString());
 
-    if(!url_endpoint_->init() || !url_endpoint_) {
+    if(!url_endpoint_->init() || url_endpoint_ == nullptr) {
         return("Invalid URL endpoint.");
     }
 
@@ -167,14 +168,28 @@ QString DatabaseInterface::rep_init_()
 
     sg_replicator_configuration_ = new SGReplicatorConfiguration(sg_db_, url_endpoint_);
 
+    if(sg_replicator_configuration_ == nullptr) {
+        return("Problem with start of replication.");
+    }
+
     sg_replicator_configuration_->setReplicatorType(rep_type_);
 
     if(!username_.isEmpty() && !password_.isEmpty()) {
         sg_basic_authenticator_ = new SGBasicAuthenticator(username_.toStdString(),password_.toStdString());
+        if(sg_basic_authenticator_ == nullptr) {
+            return("Problem with authentication.");
+        }
         sg_replicator_configuration_->setAuthenticator(sg_basic_authenticator_);
+    } else {
+        return("Username or password cannot be empty.");
     }
 
     sg_replicator_ = new SGReplicator(sg_replicator_configuration_);
+
+    if(sg_replicator_ == nullptr) {
+        return("Problem with start of replication.");
+    }
+
     sg_replicator_->addDocumentEndedListener(bind(&DatabaseInterface::emitUpdate, this));
 
     if(sg_replicator_->start() == false) {
