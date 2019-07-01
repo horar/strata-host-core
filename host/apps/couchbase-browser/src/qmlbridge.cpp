@@ -39,6 +39,7 @@ QString QMLBridge::createNewDatabase(QString folder_path, QString dbName)
         allDatabases.erase(ids);
         ids--;
     }
+    else QQmlProperty::write(allWindows[ids],"openedFile",true);
     return message;
 }
 

@@ -5,13 +5,12 @@ import QtQuick.Window 2.12
 import QtQuick.Dialogs 1.3
 import Qt.labs.platform 1.0
 
-Window {
+Popup {
     id: root
     width: 500
     height: 500
-    minimumHeight: 250
-    minimumWidth: 500
     visible: false
+    padding: 0
 
     signal submit()
 
@@ -42,6 +41,11 @@ Window {
     Rectangle {
         anchors.fill: parent
         color: "#393e46"
+        border {
+            width: 2
+            color: "#b55400"
+        }
+
         ColumnLayout {
             spacing: 1
             width: parent.width - 10

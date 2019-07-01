@@ -9,6 +9,7 @@ Item {
     property var id
     property var content: ""
     property var jsonObj
+    property alias openedFile: mainMenuView.openedFile
 
     onContentChanged: {
         if (content !== "") {
@@ -120,62 +121,67 @@ Item {
                     id: bodyView
                 }
             }
-            Item {
-                id: popupWindow
+        }
 
-                FileDialog {
-                    id: openFileDialog
-                    visible: false
-                    title: "Please select a database"
-                    folder: shortcuts.home
-                    onAccepted: {
-                        let message = qmlBridge.setFilePath(id, fileUrls.toString().replace("file://",""));
-                        if (message.length === 0) {
-                            bodyView.message = "Opened file";
-                            mainMenuView.openedFile = true
-                        }
-                        else bodyView.message = message;
-                    }
-                }
+        Item {
+            id: popupWindow
+            anchors.fill: parent
 
-                LoginPopup {
-                    id: loginPopup
-                    onStart: {
-                        let message = qmlBridge.startReplicator(id,hostName,username,password);
-                        if (message.length === 0) {
-                            bodyView.message = "Started replicator successfully";
-                            mainMenuView.replicatorStarted = true;
-                            visible = false;
-                        }
-                        else bodyView.message = message;
+            FileDialog {
+                id: openFileDialog
+                visible: false
+                title: "Please select a database"
+                folder: shortcuts.home
+                onAccepted: {
+                    let message = qmlBridge.setFilePath(id, fileUrls.toString().replace("file://",""));
+                    if (message.length === 0) {
+                        bodyView.message = "Opened file";
+                        mainMenuView.openedFile = true
                     }
+                    else bodyView.message = message;
                 }
-                NewDocumentPopup {
-                    id: newDocPopup
-                    onSubmit: {
-                        if (qmlBridge.createNewDocument(id,docID,docBody))
-                            bodyView.message = "Created new document successfully!";
-                        else
-                            bodyView.message = "Cannot create new document";
-                    }
-                }
-                NewDatabasePopup {
-                    id: newDatabasesPopup
-                    onSubmit: {
-                        let message = qmlBridge.createNewDatabase(folderPath.toString().replace("file://",""), filename);
-                        if (message.length === 0) {
-                            bodyView.message = "Created new database successfully";
-                        }
-                        else bodyView.message = message;
+            }
+
+            LoginPopup {
+                id: loginPopup
+                anchors.centerIn: parent
+                onStart: {
+                    let message = qmlBridge.startReplicator(id,hostName,username,password);
+                    if (message.length === 0) {
+                        bodyView.message = "Started replicator successfully";
+                        mainMenuView.replicatorStarted = true;
                         visible = false;
                     }
-
+                    else bodyView.message = message;
                 }
-                NewDatabasePopup {
-                    id: saveAsPopup
-                    onSubmit:  {
-                        visible = false;
+            }
+            NewDocumentPopup {
+                id: newDocPopup
+                onSubmit: {
+                    if (qmlBridge.createNewDocument(id,docID,docBody))
+                        bodyView.message = "Created new document successfully!";
+                    else
+                        bodyView.message = "Cannot create new document";
+                }
+            }
+            NewDatabasePopup {
+                id: newDatabasesPopup
+                anchors.centerIn: parent
+                onSubmit: {
+                    let message = qmlBridge.createNewDatabase(folderPath.toString().replace("file://",""), filename);
+                    if (message.length === 0) {
+                        bodyView.message = "Created new database successfully";
                     }
+                    else bodyView.message = message;
+                    visible = false;
+                }
+
+            }
+            NewDatabasePopup {
+                id: saveAsPopup
+                anchors.centerIn: parent
+                onSubmit:  {
+                    visible = false;
                 }
             }
         }

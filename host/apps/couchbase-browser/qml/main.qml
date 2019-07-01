@@ -10,8 +10,10 @@ Window {
     width: 1280
     height: 720
     title: qsTr("Couchbase Browser") + ((fileName !== "") ? " - " + fileName : "")
+    flags: Qt.WindowFullscreenButtonHint
 
     property alias id: mainview.id
+    property alias openedFile: mainview.openedFile
 
     property string fileName: ""
     property var content: ""
