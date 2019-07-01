@@ -1,7 +1,8 @@
 #include "databaseinterface.h"
 
+#include <iostream>
+
 using namespace std;
-//using namespace std::placeholders;
 using namespace Spyglass;
 
 #define DEBUG(...) printf("TEST Database Interface: "); printf(__VA_ARGS__)
@@ -32,7 +33,7 @@ QString DatabaseInterface::setFilePath(QString file_path)
 {
     file_path_ = file_path;
     if(!parseFilePath()) {
-        return("Problem with path to database file. The file must be located according to: \".../db/(db_name)/db.sqlite3\" \n");
+        return("(setFilePath)Problem with path to database file. The file must be located according to: \".../db/(db_name)/db.sqlite3\" \n");
     } else if(!db_init()) {
         return("Problem initializing database.");
     }
@@ -53,6 +54,7 @@ void DatabaseInterface::rep_stop()
     if (getRepstatus()) {
         sg_replicator_->stop();
     }
+
     setRepstatus(false);
 }
 
@@ -113,22 +115,23 @@ bool DatabaseInterface::createNewDoc_(const QString &id, const QString &body)
 {
     sg_db_ = new SGDatabase(db_name_.toStdString(), db_path_.toStdString());
 
+    if(sg_db_ == nullptr) {
+        DEBUG("Problem with initialization of database.");
+        return false;
+    }
+
     setDBstatus(false);
     setRepstatus(false);
 
-    if (!sg_db_->isOpen()) {
-        DEBUG("Db is not open yet\n");
-    }
-
     if (sg_db_->open() != SGDatabaseReturnStatus::kNoError) {
-        DEBUG("Can't open DB!\n");
+        DEBUG("Can't open database.\n");
         return false;
     }
 
     if (sg_db_->isOpen()) {
-        DEBUG("DB is open using isOpen API\n");
+        DEBUG("Database is open using isOpen API.\n");
     } else {
-        DEBUG("DB is not open, exiting!\n");
+        DEBUG("Database is not open, exiting.\n");
         return false;
     }
 
@@ -137,7 +140,7 @@ bool DatabaseInterface::createNewDoc_(const QString &id, const QString &body)
     return true;
 }
 
-QString DatabaseInterface::rep_init(const QString &url, const QString &username, const QString &password)
+QString DatabaseInterface::rep_init(const QString &url, const QString &username, const QString &password, const Spyglass::SGReplicatorConfiguration::ReplicatorType &rep_type)
 {
     if(url.isEmpty()) {
         return ("URL may not be empty.");
@@ -146,10 +149,11 @@ QString DatabaseInterface::rep_init(const QString &url, const QString &username,
     url_ = url;
     username_ = username;
     password_ = password;
+    rep_type_ = rep_type;
 
     url_endpoint_ = new SGURLEndpoint(url_.toStdString());
 
-    if(!url_endpoint_->init()) {
+    if(!url_endpoint_->init() || url_endpoint_ == nullptr) {
         return("Invalid URL endpoint.");
     }
 
@@ -163,14 +167,29 @@ QString DatabaseInterface::rep_init_()
     }
 
     sg_replicator_configuration_ = new SGReplicatorConfiguration(sg_db_, url_endpoint_);
-    sg_replicator_configuration_->setReplicatorType(SGReplicatorConfiguration::ReplicatorType::kPull);
+
+    if(sg_replicator_configuration_ == nullptr) {
+        return("Problem with start of replication.");
+    }
+
+    sg_replicator_configuration_->setReplicatorType(rep_type_);
 
     if(!username_.isEmpty() && !password_.isEmpty()) {
         sg_basic_authenticator_ = new SGBasicAuthenticator(username_.toStdString(),password_.toStdString());
+        if(sg_basic_authenticator_ == nullptr) {
+            return("Problem with authentication.");
+        }
         sg_replicator_configuration_->setAuthenticator(sg_basic_authenticator_);
+    } else {
+        return("Username or password cannot be empty.");
     }
 
     sg_replicator_ = new SGReplicator(sg_replicator_configuration_);
+
+    if(sg_replicator_ == nullptr) {
+        return("Problem with start of replication.");
+    }
+
     sg_replicator_->addDocumentEndedListener(bind(&DatabaseInterface::emitUpdate, this));
 
     if(sg_replicator_->start() == false) {
@@ -186,26 +205,58 @@ bool DatabaseInterface::parseFilePath()
 {
     QFileInfo info(file_path_);
 
-    if(!info.exists() || info.fileName() != "db.sqlite3") {
-        DEBUG("Problem with path to database file. The file must be located according to: \".../db/(db_name)/db.sqlite3\" \n");
+    if(info.exists()) {
+        return parseExistingFile();
+    } else {
+        return parseNewFile();
+    }
+}
+
+bool DatabaseInterface::parseExistingFile()
+{
+    QDir dir(file_path_);
+    QFileInfo info(file_path_);
+
+    if(info.fileName() != "db.sqlite3") {
         return false;
     }
 
-    QDir dir(file_path_);
-
     if(!dir.cdUp()) {
-        DEBUG("Problem with path to database file. The file must be located according to: \".../db/(db_name)/db.sqlite3\" \n");
         return false;
     }
 
     setDBName(dir.dirName());
 
     if(!dir.cdUp() || !dir.cdUp()) {
-        DEBUG("Problem with path to database file. The file must be located according to: \".../db/(db_name)/db.sqlite3\" \n");
         return false;
     }
 
     setDBPath(dir.path() + dir.separator());
+    return true;
+}
+
+bool DatabaseInterface::parseNewFile()
+{
+    QString folder_path = file_path_;
+    folder_path.replace("db.sqlite3", "");
+    QDir dir(folder_path);
+
+    if(!dir.mkpath(folder_path)) {
+        return false;
+    }
+
+    QFile file(file_path_);
+    setDBName(dir.dirName());
+
+    if(!dir.cdUp() || !dir.cdUp()) {
+        return false;
+    }
+
+    setDBPath(dir.path() + dir.separator());
+
+    if(!file.open(QIODevice::ReadWrite)) {
+        return false;
+    }
 
     return true;
 }
