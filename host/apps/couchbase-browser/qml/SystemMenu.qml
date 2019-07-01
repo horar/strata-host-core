@@ -98,7 +98,7 @@ Item {
         spacing: 50
         anchors {
             right: parent.right
-            rightMargin: 50
+            rightMargin: 25
             top: parent.top
         }
         CustomMenuItem {

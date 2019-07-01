@@ -79,7 +79,7 @@ Popup {
                         centerIn: parent
                     }
                     Label {
-                        text: "Host Name:"
+                        text: "URL:"
                         color: "white"
                         anchors {
                             bottom: hostNameContainer.top
@@ -89,7 +89,7 @@ Popup {
                     TextField {
                         id: hostNameField
                         anchors.fill: parent
-                        placeholderText: "Enter Host Name"
+                        placeholderText: "Enter URL"
                     }
                 }
             }
@@ -134,7 +134,7 @@ Popup {
                     }
                     Label {
                         text: "Password:"
-                        color: "white"
+                        color: "#eee"
                         anchors {
                             bottom: passwordContainer.top
                             left: passwordContainer.left

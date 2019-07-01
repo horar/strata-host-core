@@ -14,21 +14,19 @@ Rectangle {
         id: comboBoxContainer
         width: parent.width
         height: implicitHeight
-        spacing: 20
+        spacing: 5
         Label {
             id: keySelectorLabel
             text: "<b>Select Document:</b>"
             color: "white"
-            Layout.alignment: Qt.AlignHCenter
-            anchors {
-                left: keySelectorComboBox.left
-                top: parent.top
-                topMargin: 15
-            }
+            Layout.alignment: Qt.AlignLeft
+            Layout.leftMargin: 5
+            Layout.topMargin: 10
         }
         ComboBox {
             id: keySelectorComboBox
-            Layout.alignment: Qt.AlignHCenter
+            Layout.alignment: Qt.AlignLeft
+            Layout.leftMargin: 5
             model:[]
         }
 
