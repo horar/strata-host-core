@@ -21,98 +21,72 @@ Window {
         anchors.fill: parent
         color: "#393e46"
         ColumnLayout {
-            spacing: 1
+            spacing: 15
             width: parent.width
-            height: parent.height
+            height: implicitHeight
             anchors.horizontalCenter: parent.horizontalCenter
+            Label {
+                text: "Please enter the requested information"
+                Layout.alignment: Qt.AlignHCenter
+                Layout.margins: 20
+                color: "#eee"
+            }
             Rectangle {
-                Layout.preferredHeight: 80
+                id: idContainer
+                Layout.preferredHeight: 40
                 Layout.preferredWidth: parent.width - 25
                 Layout.alignment: Qt.AlignHCenter + Qt.AlignTop
-                color: "transparent"
+                Layout.margins: 10
                 Label {
-                    text: "Please enter the requested information"
-                    anchors.centerIn: parent
+                    text: "ID:"
                     color: "white"
-                }
-            }
-            Rectangle {
-                Layout.preferredHeight: 80
-                Layout.preferredWidth: parent.width
-                Layout.alignment: Qt.AlignHCenter + Qt.AlignTop
-                color: "transparent"
-                Rectangle {
-                    id: idContainer
-                    height: parent.height / 2
-                    width: parent.width - 25
                     anchors {
-                        centerIn: parent
+                        bottom: idContainer.top
+                        left: idContainer.left
                     }
-                    Label {
-                        text: "ID:"
-                        color: "white"
-                        anchors {
-                            bottom: idContainer.top
-                            left: idContainer.left
-                        }
-                    }
-                    TextField {
-                        id: idNameField
-                        anchors.fill: parent
-                        placeholderText: "Enter ID"
-                    }
+                }
+                TextField {
+                    id: idNameField
+                    anchors.fill: parent
+                    placeholderText: "Enter ID"
                 }
             }
             Rectangle {
-                Layout.preferredHeight: parent.height / 1.75
-                Layout.preferredWidth: parent.width
+                id: bodyContainer
+                Layout.preferredHeight: root.height / 1.75
+                Layout.preferredWidth: parent.width - 25
                 Layout.alignment: Qt.AlignHCenter + Qt.AlignTop
-                color: "transparent"
-                Rectangle {
-                    id: bodyContainer
-                    height: parent.height
-                    width: parent.width - 25
+                Label {
+                    text: "Body:"
+                    color: "#eeeeee"
                     anchors {
-                        centerIn: parent
+                        bottom: bodyContainer.top
+                        left: bodyContainer.left
                     }
-                    Label {
-                        text: "Body:"
-                        color: "#eeeeee"
-                        anchors {
-                            bottom: bodyContainer.top
-                            left: bodyContainer.left
-                        }
-                    }
-                    ScrollView {
-                        id: scrollview
+                }
+                ScrollView {
+                    id: scrollview
+                    anchors.fill: parent
+                    clip: true
+                    TextArea {
+                        id: bodyTextArea
                         anchors.fill: parent
-                        clip: true
-                        TextArea {
-                            id: bodyTextArea
-                            anchors.fill: parent
-                            placeholderText: "Enter Body"
-                            wrapMode: "Wrap"
-                            selectByMouse: true
-                            text: ""
-                        }
+                        placeholderText: "Enter Body"
+                        wrapMode: "Wrap"
+                        selectByMouse: true
+                        text: ""
                     }
                 }
             }
-            Rectangle {
-                Layout.preferredHeight: 80
-                Layout.preferredWidth: parent.width
+            Button {
+                id: submitButton
+                Layout.preferredHeight: 40
+                Layout.preferredWidth: 100
                 Layout.alignment: Qt.AlignHCenter + Qt.AlignTop
-                color: "transparent"
-                Button {
-                    id: submitButton
-                    height: parent.height / 2
-                    width: parent.width / 4
-                    text: "Submit"
-                    anchors.centerIn: parent
-                    onClicked: {
-                        submit();
-                        root.visible = false;
-                    }
+                text: "Submit"
+                onClicked: {
+                    submit();
+                    root.visible = false;
                 }
             }
         }
