@@ -1,5 +1,7 @@
 #include "databaseinterface.h"
 
+#include <iostream>
+
 using namespace std;
 //using namespace std::placeholders;
 using namespace Spyglass;
@@ -32,7 +34,7 @@ QString DatabaseInterface::setFilePath(QString file_path)
 {
     file_path_ = file_path;
     if(!parseFilePath()) {
-        return("Problem with path to database file. The file must be located according to: \".../db/(db_name)/db.sqlite3\" \n");
+        return("(setFilePath)Problem with path to database file. The file must be located according to: \".../db/(db_name)/db.sqlite3\" \n");
     } else if(!db_init()) {
         return("Problem initializing database.");
     }
@@ -113,6 +115,8 @@ bool DatabaseInterface::createNewDoc_(const QString &id, const QString &body)
 {
     sg_db_ = new SGDatabase(db_name_.toStdString(), db_path_.toStdString());
 
+    cout << "\n(db_init) db_name_: " << db_name_.toStdString() << ", db_path: " << db_path_.toStdString() << endl;
+
     setDBstatus(false);
     setRepstatus(false);
 
@@ -186,26 +190,53 @@ bool DatabaseInterface::parseFilePath()
 {
     QFileInfo info(file_path_);
 
-    if(!info.exists() || info.fileName() != "db.sqlite3") {
-        DEBUG("Problem with path to database file. The file must be located according to: \".../db/(db_name)/db.sqlite3\" \n");
+    if(info.exists()) {
+        return parseExistingFile();
+    } else {
+        return parseNewFile();
+    }
+}
+
+bool DatabaseInterface::parseExistingFile()
+{
+    QDir dir(file_path_);
+    QFileInfo info(file_path_);
+
+    if(info.fileName() != "db.sqlite3") {
         return false;
     }
 
-    QDir dir(file_path_);
-
     if(!dir.cdUp()) {
-        DEBUG("Problem with path to database file. The file must be located according to: \".../db/(db_name)/db.sqlite3\" \n");
         return false;
     }
 
     setDBName(dir.dirName());
 
     if(!dir.cdUp() || !dir.cdUp()) {
-        DEBUG("Problem with path to database file. The file must be located according to: \".../db/(db_name)/db.sqlite3\" \n");
+        return false;
+    }
+    setDBPath(dir.path() + dir.separator());
+    return true;
+}
+
+bool DatabaseInterface::parseNewFile()
+{
+    QString folder_path = file_path_;
+    folder_path.replace("db.sqlite3", "");
+    QDir dir(folder_path);
+
+    if(!dir.mkpath(folder_path)) {
         return false;
     }
 
+    QFile file(file_path_);
+    setDBName(dir.dirName());
+    dir.cdUp(); dir.cdUp();
     setDBPath(dir.path() + dir.separator());
+
+    if(!file.open(QIODevice::ReadWrite)) {
+        return false;
+    }
 
     return true;
 }

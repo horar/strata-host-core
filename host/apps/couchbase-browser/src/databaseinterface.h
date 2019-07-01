@@ -85,6 +85,10 @@ private:
 
     QString rep_init_();
 
+    bool parseExistingFile();
+
+    bool parseNewFile();
+
 signals:
     void newUpdate(int i);
 
