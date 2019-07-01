@@ -7,6 +7,8 @@ Item {
 
     property alias content: text.text
     property alias message: statusText.text
+    property alias readOnly: text.readOnly
+
 
     Rectangle {
         id: background
@@ -30,6 +32,7 @@ Item {
                 selectByMouse: true
                 text: ""
                 color: "#eeeeee"
+                readOnly: true
             }
         }
         Rectangle {

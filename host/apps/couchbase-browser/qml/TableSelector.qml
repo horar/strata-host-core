@@ -7,8 +7,12 @@ Rectangle {
     anchors.fill: parent
     color: "transparent"
 
+    signal sendIndex(int index)
+
     property alias model: keySelectorComboBox.model
     property alias currentIndex: keySelectorComboBox.currentIndex
+
+    Component.onCompleted: sendIndex(keySelectorComboBox.currentIndex)
 
     ColumnLayout {
         id: comboBoxContainer
@@ -28,6 +32,9 @@ Rectangle {
             Layout.alignment: Qt.AlignLeft
             Layout.leftMargin: 5
             model:[]
+            onActivated: {
+                sendIndex(keySelectorComboBox.currentIndex)
+            }
         }
 
     }

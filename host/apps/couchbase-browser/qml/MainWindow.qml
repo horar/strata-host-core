@@ -76,6 +76,7 @@ Item {
                         bodyView.message = "Stopped replicator"
                     }
                     onNewWindowSignal: qmlBridge.createNewWindow()
+
                 }
             }
             Rectangle {
@@ -96,6 +97,9 @@ Item {
                                 bodyView.content = JSON.stringify(jsonObj,null,4);
                         }
                     }
+                    onSendIndex: {
+                        (index === 0 || index === -1) ? bodyView.readOnly = true : bodyView.readOnly = false
+                     }
                 }
                 Image {
                     id: onLogo
@@ -115,7 +119,7 @@ Item {
                 Layout.preferredWidth: (parent.width - selectorContainer.width)
                 Layout.preferredHeight: (parent.height - menuContainer.height)
                 Layout.alignment: Qt.AlignTop
-                color: "steelblue"
+                color: "transparent"
                 BodyDisplay {
                     id: bodyView
                 }
