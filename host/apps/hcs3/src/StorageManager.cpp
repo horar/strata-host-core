@@ -203,13 +203,6 @@ QString StorageManager::createFilenameFromItem(const QString& item, const QStrin
     return QDir(baseFolder_).filePath(tmpName);
 }
 
-
-//        QString checksum;
-//        PlatformDocument::nameValueMap element = plat_doc_->findElementByFile(item.toStdString(), "views");
-//        if (!element.empty()) {
-//            checksum = QString::fromStdString( element["md5"] );
-//        }
-
 bool StorageManager::fillDownloadList(const StorageItem& storageItem, const std::string& groupName, const QString& prefix, QStringList& downloadList)
 {
     std::vector<std::string> urlList;
@@ -295,9 +288,8 @@ void StorageManager::onDownloadUserFiles(const QStringList& files, const QString
 
     for(const auto& item : files) {
 
-        //strip class_id
+        //strip path from provided URL
         QFileInfo fi(item);
-
         QString filename = QDir(save_path).filePath(fi.fileName());
 
         qDebug() << "Download:" << item << " To:" << filename;
@@ -319,6 +311,7 @@ void StorageManager::fileDownloadFinished(const QString& filename, bool withErro
 {
     DownloadGroup* group = findDownloadGroup(filename);
     if (group == nullptr) {
+        qDebug() << "downloadFinished, group not found! " << filename;
         //Error...
         return;
     }
@@ -389,8 +382,8 @@ void StorageManager::createAndSendResponse(RequestItem* requestItem, PlatformDoc
 
     rapidjson::Value views_array(rapidjson::kArrayType);
     for(const auto& item : requestItem->filesList) {
-        std::string filename = item.first;
-        std::string name     = item.second;
+        const std::string& filename = item.first;
+        const std::string& name     = item.second;
 
         rapidjson::Value array_object;
         array_object.SetObject();
