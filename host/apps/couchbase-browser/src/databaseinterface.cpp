@@ -3,7 +3,6 @@
 #include <iostream>
 
 using namespace std;
-//using namespace std::placeholders;
 using namespace Spyglass;
 
 #define DEBUG(...) printf("TEST Database Interface: "); printf(__VA_ARGS__)
@@ -55,6 +54,7 @@ void DatabaseInterface::rep_stop()
     if (getRepstatus()) {
         sg_replicator_->stop();
     }
+
     setRepstatus(false);
 }
 
@@ -115,8 +115,6 @@ bool DatabaseInterface::createNewDoc_(const QString &id, const QString &body)
 {
     sg_db_ = new SGDatabase(db_name_.toStdString(), db_path_.toStdString());
 
-    cout << "\n(db_init) db_name_: " << db_name_.toStdString() << ", db_path: " << db_path_.toStdString() << endl;
-
     setDBstatus(false);
     setRepstatus(false);
 
@@ -141,7 +139,7 @@ bool DatabaseInterface::createNewDoc_(const QString &id, const QString &body)
     return true;
 }
 
-QString DatabaseInterface::rep_init(const QString &url, const QString &username, const QString &password)
+QString DatabaseInterface::rep_init(const QString &url, const QString &username, const QString &password, const Spyglass::SGReplicatorConfiguration::ReplicatorType &rep_type)
 {
     if(url.isEmpty()) {
         return ("URL may not be empty.");
@@ -150,10 +148,11 @@ QString DatabaseInterface::rep_init(const QString &url, const QString &username,
     url_ = url;
     username_ = username;
     password_ = password;
+    rep_type_ = rep_type;
 
     url_endpoint_ = new SGURLEndpoint(url_.toStdString());
 
-    if(!url_endpoint_->init()) {
+    if(!url_endpoint_->init() || !url_endpoint_) {
         return("Invalid URL endpoint.");
     }
 
@@ -167,7 +166,8 @@ QString DatabaseInterface::rep_init_()
     }
 
     sg_replicator_configuration_ = new SGReplicatorConfiguration(sg_db_, url_endpoint_);
-    sg_replicator_configuration_->setReplicatorType(SGReplicatorConfiguration::ReplicatorType::kPull);
+
+    sg_replicator_configuration_->setReplicatorType(rep_type_);
 
     if(!username_.isEmpty() && !password_.isEmpty()) {
         sg_basic_authenticator_ = new SGBasicAuthenticator(username_.toStdString(),password_.toStdString());
@@ -215,6 +215,7 @@ bool DatabaseInterface::parseExistingFile()
     if(!dir.cdUp() || !dir.cdUp()) {
         return false;
     }
+
     setDBPath(dir.path() + dir.separator());
     return true;
 }
@@ -231,7 +232,11 @@ bool DatabaseInterface::parseNewFile()
 
     QFile file(file_path_);
     setDBName(dir.dirName());
-    dir.cdUp(); dir.cdUp();
+
+    if(!dir.cdUp() || !dir.cdUp()) {
+        return false;
+    }
+
     setDBPath(dir.path() + dir.separator());
 
     if(!file.open(QIODevice::ReadWrite)) {

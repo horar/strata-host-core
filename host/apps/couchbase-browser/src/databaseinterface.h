@@ -26,7 +26,8 @@ public:
 
     bool createNewDoc(const QString &id, const QString &body);
 
-    QString rep_init(const QString &url, const QString &username, const QString &password);
+    QString rep_init(const QString &url, const QString &username, const QString &password,
+        const Spyglass::SGReplicatorConfiguration::ReplicatorType &rep_type = Spyglass::SGReplicatorConfiguration::ReplicatorType::kPull);
 
     void rep_stop();
 
@@ -51,9 +52,11 @@ private:
 
     Spyglass::SGBasicAuthenticator *sg_basic_authenticator_{nullptr};
 
+    Spyglass::SGReplicatorConfiguration::ReplicatorType rep_type_;
+
     void emitUpdate();
 
-    static void testReceive(bool pushing, std::string doc_id, std::string error_message, bool is_error, bool error_is_transient);
+//    static void testReceive(bool pushing, std::string doc_id, std::string error_message, bool is_error, bool error_is_transient);
 
     QString getFilePath();
 
