@@ -16,6 +16,9 @@ Popup {
     property alias hostName: hostNameField.text
     property alias username: usernameField.text
     property alias password: passwordField.text
+    property alias push: pushButton.checked
+    property alias pull: pullButton.checked
+    property alias pushAndPull: pushAndPullButton.checked
 
     function clearInput()
     {
@@ -104,7 +107,7 @@ Popup {
                     }
                     Label {
                         text: "Username:"
-                        color: "white"
+                        color: "#eee"
                         anchors {
                             bottom: usernameContainer.top
                             left: usernameContainer.left
@@ -144,6 +147,74 @@ Popup {
                         echoMode: "Password"
                     }
                 }
+
+            }
+            Rectangle {
+                Layout.preferredHeight: 80
+                Layout.preferredWidth: parent.width
+                Layout.alignment: Qt.AlignHCenter + Qt.AlignTop
+                color: "transparent"
+                Rectangle {
+                    id: selectorContainer
+                    height: parent.height / 2
+                    width: parent.width / 2
+                    color: "transparent"
+                    anchors {
+                        centerIn: parent
+                        verticalCenterOffset: -10
+                    }
+                    RowLayout {
+                        anchors.fill: parent
+
+                        RadioButton {
+                            id: pushButton
+                            text: qsTr("")
+                            Layout.alignment: Qt.AlignLeft
+                        }
+                        RadioButton {
+                            id: pushAndPullButton
+                            checked: true
+                            text: qsTr("")
+                            Layout.alignment: Qt.AlignHCenter
+                        }
+                        RadioButton {
+                            id: pullButton
+                            text: qsTr("")
+                            Layout.alignment: Qt.AlignRight
+                        }
+                    }
+                    Label {
+                        id: pushLabel
+                        text: "Push"
+                        color: "#eee"
+                        anchors {
+                            top: selectorContainer.bottom
+                            left: selectorContainer.left
+                            leftMargin: 10
+                        }
+                    }
+                    Label {
+                        id: pullLabel
+                        text: "Pull"
+                        color: "#eee"
+                        anchors {
+                            top: selectorContainer.bottom
+                            right: selectorContainer.right
+                            rightMargin: 12
+                        }
+                    }
+                    Label {
+                        id: pushAndPullLabel
+                        text: "Push & Pull"
+                        color: "#eee"
+                        anchors {
+                            top: selectorContainer.bottom
+                            horizontalCenter: selectorContainer.horizontalCenter
+
+                        }
+                    }
+                }
+
             }
             Rectangle {
                 Layout.preferredHeight: 80
