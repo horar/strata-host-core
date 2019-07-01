@@ -24,13 +24,20 @@ Popup {
     function validate(){
         if((selectFolderField.text.length !== 0) && (filenameField.text.length !== 0)){
             submit()
+            header.text = "Please enter the requested information"
         }
         else {
             //hightlight the background of selectfolderfield and filenameField
-            folderFieldBackground.border.color = "red"
-            folderFieldBackground.border.width = 2
-            filenameFieldBackground.border.color = "red"
-            filenameFieldBackground.border.width = 2
+            if(selectFolderField.text.length == 0){
+                folderFieldBackground.border.color = "red"
+                folderFieldBackground.border.width = 2
+                header.text = "Invalid Input"
+            }
+            if(filenameField.text.length == 0){
+                filenameFieldBackground.border.color = "red"
+                filenameFieldBackground.border.width = 2
+                header.text = "Invalid Input"
+            }
         }
 
     }
@@ -54,6 +61,7 @@ Popup {
                 Layout.alignment: Qt.AlignHCenter + Qt.AlignTop
                 color: "transparent"
                 Label {
+                    id: header
                     text: "Please enter the requested information"
                     anchors.centerIn: parent
                     color: "white"
