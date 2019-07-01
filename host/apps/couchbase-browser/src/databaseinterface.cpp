@@ -162,6 +162,10 @@ QString DatabaseInterface::rep_init(const QString &url, const QString &username,
 
 QString DatabaseInterface::rep_init_()
 {
+    if(!getDBstatus()) {
+        return("Database must be open and running for replication to be activated.");
+    }
+
     if(getRepstatus()) {
         return("Replicator is already running, cannot start again.");
     }
@@ -180,8 +184,6 @@ QString DatabaseInterface::rep_init_()
             return("Problem with authentication.");
         }
         sg_replicator_configuration_->setAuthenticator(sg_basic_authenticator_);
-    } else {
-        return("Username or password cannot be empty.");
     }
 
     sg_replicator_ = new SGReplicator(sg_replicator_configuration_);
@@ -197,6 +199,7 @@ QString DatabaseInterface::rep_init_()
     }
 
     setRepstatus(true);
+    emitUpdate();
 
     return("");
 }
@@ -280,9 +283,13 @@ void DatabaseInterface::setJSONResponse()
     // Printing the list of documents key from the local DB.
     for(std::vector <string>::iterator iter = document_keys_.begin(); iter != document_keys_.end(); iter++) {
         SGDocument usbPDDocument(sg_db_, (*iter));
-        temp_str = "\"" + QString((*iter).c_str()) + "\":" + QString(usbPDDocument.getBody().c_str()) + (iter + 1 == document_keys_.end() ? "}" : ",");
-        JSONResponse_ = JSONResponse_ + temp_str;
+        temp_str = "\"" + QString((*iter).c_str()) + "\":" + QString(usbPDDocument.getBody().c_str()) + (iter + 1 != document_keys_.end() ? "," : "");
+        JSONResponse_ += temp_str;
     }
+
+    JSONResponse_ += "}";
+
+    cout << "\n\n\nJSON response: \n" << JSONResponse_.toStdString() << endl;
 }
 
 QString DatabaseInterface::getJSONResponse()
