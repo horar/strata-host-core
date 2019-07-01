@@ -90,63 +90,47 @@ Item {
             visible: openedFile
         }
     }
-    Rectangle {
-        id: hiddenMenuBackground
-        width: 100
+
+    RowLayout {
+        id: newWindowLayout
         height: parent.height
-        color: "transparent"
-        anchors {
-            right: newWindowContainer.left
-        }
-        RowLayout {
-            id: hiddenMenuLayout
-            anchors.fill: parent
-            CustomMenuItem {
-                id: startReplication
-                visible: !replicatorStarted
-                Layout.preferredHeight: 50
-                Layout.preferredWidth: 50
-                Layout.alignment: Qt.AlignCenter
-                label: "<b>Replicate</b>"
-                filename: "Images/replicateDatabase"
-                onButtonPress: startReplicatorSignal()
-                disable: !openedFile
-            }
-            CustomMenuItem {
-                id: stopReplication
-                visible: replicatorStarted
-                Layout.preferredHeight: 50
-                Layout.preferredWidth: 50
-                Layout.alignment: Qt.AlignCenter
-                label: "<b>Stop Replication</b>"
-                filename: "Images/stopReplication"
-                onButtonPress: {
-                    stopReplicatorSignal()
-                    replicatorStarted = false
-                }
-            }
-        }
-    }
-    Rectangle {
-        id: newWindowContainer
-        width: 100
-        height: parent.height
-        color: "transparent"
+        width: implicitWidth
+        spacing: 50
         anchors {
             right: parent.right
+            rightMargin: 50
+            top: parent.top
         }
-        RowLayout {
-            id: newWindowLayout
-            anchors.fill: parent
-            CustomMenuItem {
-                id: newWindow
-                Layout.preferredHeight: 50
-                Layout.preferredWidth: 50
-                Layout.alignment: Qt.AlignCenter
-                label: "<b>New Window</b>"
-                filename: "Images/newTabIcon"
-                onButtonPress: newWindowSignal()
+        CustomMenuItem {
+            id: startReplication
+            visible: !replicatorStarted
+            Layout.preferredHeight: 50
+            Layout.preferredWidth: 50
+            label: "<b>Replicate</b>"
+            filename: "Images/replicateDatabase"
+            onButtonPress: startReplicatorSignal()
+            disable: !openedFile
+        }
+        CustomMenuItem {
+            id: stopReplication
+            visible: replicatorStarted
+            Layout.preferredHeight: 50
+            Layout.preferredWidth: 50
+            label: "<b>Stop Replication</b>"
+            filename: "Images/stopReplication"
+            onButtonPress: {
+                stopReplicatorSignal()
+                replicatorStarted = false
             }
+        }
+        CustomMenuItem {
+            id: newWindow
+            Layout.preferredHeight: 50
+            Layout.preferredWidth: 50
+            Layout.alignment: Qt.AlignCenter
+            label: "<b>New Window</b>"
+            filename: "Images/newTabIcon"
+            onButtonPress: newWindowSignal()
         }
     }
 }
