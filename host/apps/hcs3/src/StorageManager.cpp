@@ -48,8 +48,8 @@ void StorageManager::init()
     downloader_.reset( new DownloadManager );
     downloader_->setBaseUrl(baseUrl_);
 
-    QObject::connect(this, &StorageManager::downloadFiles, this, &StorageManager::onDownloadFiles, Qt::QueuedConnection);
-    QObject::connect(this, &StorageManager::downloadFiles2, this, &StorageManager::onDownloadFiles2, Qt::QueuedConnection);
+    QObject::connect(this, &StorageManager::downloadContentFiles, this, &StorageManager::onDownloadContentFiles, Qt::QueuedConnection);
+    QObject::connect(this, &StorageManager::downloadUserFiles, this, &StorageManager::onDownloadUserFiles, Qt::QueuedConnection);
     QObject::connect(downloader_.get(), &DownloadManager::downloadFinished, this, &StorageManager::onDownloadFinished);
     QObject::connect(downloader_.get(), &DownloadManager::downloadFinishedError, this, &StorageManager::onDownloadFinishedError);
 }
@@ -126,7 +126,7 @@ bool StorageManager::requestPlatformDoc(const std::string& classId, const std::s
         idGenerator_++;
         uint64_t groupId = idGenerator_.loadAcquire();
 
-        emit downloadFiles(downloadList, prefix, groupId);
+        emit downloadContentFiles(downloadList, prefix, groupId);
 
         newRequest->uiDownloadGroupId = groupId;
         clientsRequests_.insert({clientId, newRequest.take() });
@@ -269,7 +269,7 @@ bool StorageManager::fillRequestFilesList(PlatformDocument* platformDoc, const s
     return false;
 }
 
-void StorageManager::onDownloadFiles(const QStringList& files, const QString& prefix, uint64_t uiGroupId)
+void StorageManager::onDownloadContentFiles(const QStringList& files, const QString& prefix, uint64_t uiGroupId)
 {
     Q_ASSERT(!downloader_.isNull());
     if (downloader_.isNull()) {
@@ -286,7 +286,7 @@ void StorageManager::onDownloadFiles(const QStringList& files, const QString& pr
     downloadGroups_.insert( { uiGroupId, newGroup} );
 }
 
-void StorageManager::onDownloadFiles2(const QStringList& files, const QString& save_path)
+void StorageManager::onDownloadUserFiles(const QStringList& files, const QString& save_path)
 {
     Q_ASSERT(!downloader_.isNull());
     if (downloader_.isNull()) {
@@ -463,7 +463,7 @@ void StorageManager::requestDownloadFiles(const std::vector<std::string>& files,
 
     QString path = QString::fromUtf8(save_path.c_str(), save_path.size() );
 
-    emit downloadFiles2(qtFiles, path);
+    emit downloadUserFiles(qtFiles, path);
 }
 
 DownloadGroup* StorageManager::findDownloadGroup(const QString& filename)

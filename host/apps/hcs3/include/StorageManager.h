@@ -64,12 +64,12 @@ public:
     void requestDownloadFiles(const std::vector<std::string>& files, const std::string& save_path);
 
 signals:
-    void downloadFiles(QStringList files, QString prefix, uint64_t uiGroupId);
-    void downloadFiles2(QStringList files, QString save_path);
+    void downloadContentFiles(QStringList files, QString prefix, uint64_t uiGroupId);
+    void downloadUserFiles(QStringList files, QString save_path);
 
 private slots:
-    void onDownloadFiles(const QStringList& files, const QString& prefix, uint64_t uiGroupId);
-    void onDownloadFiles2(const QStringList& files, const QString& save_path);
+    void onDownloadContentFiles(const QStringList& files, const QString& prefix, uint64_t uiGroupId);
+    void onDownloadUserFiles(const QStringList& files, const QString& save_path);
 
     void onDownloadFinished(const QString& filename);
     void onDownloadFinishedError(const QString& filename, const QString& error);
