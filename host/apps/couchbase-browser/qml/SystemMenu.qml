@@ -107,7 +107,7 @@ Item {
                 Layout.preferredHeight: 50
                 Layout.preferredWidth: 50
                 Layout.alignment: Qt.AlignCenter
-                label: "<b>Start Replication</b>"
+                label: "<b>Replicate</b>"
                 filename: "Images/replicateDatabase"
                 onButtonPress: startReplicatorSignal()
                 disable: !openedFile
