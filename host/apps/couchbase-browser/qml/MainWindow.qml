@@ -9,6 +9,7 @@ Item {
     property var id
     property var content: ""
     property var jsonObj
+    property alias openedFile: mainMenuView.openedFile
 
     onContentChanged: {
         if (content !== "") {

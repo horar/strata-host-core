@@ -13,6 +13,7 @@ Window {
     flags: Qt.WindowFullscreenButtonHint
 
     property alias id: mainview.id
+    property alias openedFile: mainview.openedFile
 
     property string fileName: ""
     property var content: ""
