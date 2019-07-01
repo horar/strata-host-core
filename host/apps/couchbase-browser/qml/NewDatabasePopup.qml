@@ -25,6 +25,13 @@ Popup {
         if((selectFolderField.text.length !== 0) && (filenameField.text.length !== 0)){
             submit()
         }
+        else {
+            //hightlight the background of selectfolderfield and filenameField
+            folderFieldBackground.border.color = "red"
+            folderFieldBackground.border.width = 2
+            filenameFieldBackground.border.color = "red"
+            filenameFieldBackground.border.width = 2
+        }
 
     }
 
@@ -76,6 +83,15 @@ Popup {
                         id: selectFolderField
                         anchors.fill: parent
                         placeholderText: "Enter Path"
+                        onActiveFocusChanged: {
+                            folderFieldBackground.border.color = "transparent"
+                        }
+                        Rectangle {
+                            id: folderFieldBackground
+                            width: parent.width
+                            height: parent.height
+                            color: "transparent"
+                        }
                     }
                     Button  {
                         height: parent.height
@@ -122,6 +138,15 @@ Popup {
                         id: filenameField
                         anchors.fill: parent
                         placeholderText: "Enter Database Name"
+                        onActiveFocusChanged: {
+                            filenameFieldBackground.border.color = "transparent"
+                        }
+                        Rectangle {
+                            id: filenameFieldBackground
+                            width: parent.width
+                            height: parent.height
+                            color: "transparent"
+                        }
                     }
                 }
             }

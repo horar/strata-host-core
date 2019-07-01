@@ -8,7 +8,7 @@ Popup {
     id: root
     width: 500
     height: 500
-    visible: true
+    visible: false
     padding: 0
 
     signal start()
