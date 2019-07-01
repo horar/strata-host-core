@@ -2,9 +2,8 @@ import QtQuick 2.12
 import QtQuick.Controls 2.12
 import tech.strata.sgwidgets 1.0 as SGWidgets
 import tech.strata.commoncpp 1.0 as CommonCpp
-
 import QtQuick.Dialogs 1.3
-import tech.strata.logger 1.0
+import tech.strata.common 1.0
 
 Item {
     id: wizard
@@ -458,7 +457,7 @@ Item {
                 }
 
                 onProgramDeviceDone: {
-                    console.log(Logger.sciCategory, "program device done", status)
+                    console.log(Logger.pdwCategory, "program device done", status)
                     if (status) {
                         processingStatus = ProgramDeviceWizard.ProgrammingSucceed
                     } else {
@@ -472,8 +471,7 @@ Item {
                 target: jLinkConnector
 
                 onProcessFinished: {
-
-                    console.log(Logger.sciCategory, "JLink process finished with status=", status)
+                    console.log(Logger.pdwCategory, "JLink process finished with status=", status)
                     if (status) {
                         doProgramDeviceApplication()
                     } else {
@@ -483,7 +481,7 @@ Item {
                 }
 
                 onNotify: {
-                    console.log(Logger.sciCategory, "flash notification", message)
+                    console.log(Logger.pdwCategory, "flash notification", message)
                 }
             }
 
