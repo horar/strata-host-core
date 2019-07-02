@@ -146,7 +146,7 @@ Item {
                 id: loginPopup
                 anchors.centerIn: parent
                 onStart: {
-                    let message = qmlBridge.startReplicator(id,hostName,username,password);
+                    let message = qmlBridge.startReplicator(id,hostName,username,password,rep_type);
                     if (message.length === 0) {
                         bodyView.message = "Started replicator successfully";
                         mainMenuView.replicatorStarted = true;

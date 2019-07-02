@@ -60,6 +60,7 @@ void QMLBridge::closeFile(int windowId)
 QString QMLBridge::startReplicator(int windowId, QString url, QString username, QString password, QString type)
 {
     Spyglass::SGReplicatorConfiguration::ReplicatorType rep_type;
+    qDebug() << type << endl;
     if (type == "pull") rep_type = Spyglass::SGReplicatorConfiguration::ReplicatorType::kPull;
     if (type == "push") rep_type = Spyglass::SGReplicatorConfiguration::ReplicatorType::kPush;
     if (type == "pushpull") rep_type = Spyglass::SGReplicatorConfiguration::ReplicatorType::kPushAndPull;
