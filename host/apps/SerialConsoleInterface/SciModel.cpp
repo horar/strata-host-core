@@ -42,3 +42,8 @@ void SciModel::programDeviceDoneHandler(const QString& connectionId, bool status
 {
     emit programDeviceDone(connectionId, status);
 }
+
+void SciModel::stopProgramming()
+{
+    flasherConnector_.stopAll();
+}
