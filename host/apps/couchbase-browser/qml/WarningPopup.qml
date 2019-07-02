@@ -6,20 +6,35 @@ import QtQuick.Dialogs 1.3
 
 Popup {
     id: root
-    width: message.width + 50
+    width: 800
     height: 300
     visible: false
     padding: 0
 
+    signal overwrite()
+    signal deny()
+
+    property alias messageToDisplay: message.text
+
     Rectangle {
         anchors.fill: parent
-        color: "#222831"
+        color: "#393e46"
         border.color: "#b55400"
-        Label {
+        Text {
             id: message
-            anchors.centerIn: parent
+            maximumLineCount: 25
+            width: parent.width - 50
+            height: 100
+            horizontalAlignment: Text.AlignHCenter
+            anchors {
+                top: parent.top
+                topMargin: 50
+                horizontalCenter: parent.horizontalCenter
+            }
             color: "#eee"
-            text: "WARNING! STARTING REPLICATION WILL OVERWRITE ANY UNSAVED DATA. DO YOU WISH TO CONTINUE?"
+            wrapMode: Text.Wrap
+            font.pixelSize: 22
+            text: "Warning! Starting replication will override all changes."
         }
         Button {
             id: yesButton
@@ -30,6 +45,7 @@ Popup {
                 horizontalCenterOffset: -100
                 verticalCenterOffset: 50
             }
+            onClicked: overwrite()
             text: "Yes"
         }
         Button {
@@ -42,6 +58,7 @@ Popup {
                 verticalCenterOffset: 50
             }
             text: "No"
+            onClicked: deny()
         }
     }
 }

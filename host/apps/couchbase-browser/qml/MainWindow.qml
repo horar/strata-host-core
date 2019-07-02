@@ -10,6 +10,16 @@ Item {
     property var content: ""
     property var jsonObj
 
+    function startReplicator(){
+        let message = qmlBridge.startReplicator(id,hostName,username,password);
+        if (message.length === 0) {
+            bodyView.message = "Started replicator successfully";
+            mainMenuView.replicatorStarted = true;
+            visible = false;
+        }
+        else bodyView.message = message;
+    }
+
     onContentChanged: {
         if (content !== "") {
             let tempModel = ["All documents"];
@@ -72,7 +82,7 @@ Item {
                     }
                     onStartReplicatorSignal: {
                         loginPopup.visible = true
-                        warningPopup.visible = true
+
 
                     }
                     onStopReplicatorSignal: {
@@ -153,13 +163,14 @@ Item {
                 id: loginPopup
                 anchors.centerIn: parent
                 onStart: {
-                    let message = qmlBridge.startReplicator(id,hostName,username,password);
-                    if (message.length === 0) {
-                        bodyView.message = "Started replicator successfully";
-                        mainMenuView.replicatorStarted = true;
-                        visible = false;
+                    if(bodyView.content.length !== 0){
+                         warningPopup.visible = true
+
                     }
-                    else bodyView.message = message;
+                    else {
+                        startReplicator()
+                    }
+
                 }
             }
             NewDocumentPopup {
@@ -194,6 +205,13 @@ Item {
             WarningPopup {
                 id: warningPopup
                 anchors.centerIn: parent
+                onOverwrite: {
+                    startReplicator()
+                    warningPopup.visible = false
+                }
+                onDeny: {
+                    warningPopup.visible = false
+                }
             }
         }
     }
