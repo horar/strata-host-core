@@ -20,21 +20,26 @@ QString QMLBridge::setFilePath(int windowId, QString file_path)
     return allDatabases[windowId]->setFilePath(file_path);
 }
 
-QString QMLBridge::createNewDatabase(QString folder_path, QString dbName)
+QString QMLBridge::createNewDatabase(int windowId, bool createWindow, QString folder_path, QString dbName)
 {
-    createNewWindow();
     QDir dir(folder_path);
     QString path = dir.path() + dir.separator() + "db" + dir.separator() + dbName + dir.separator() + "db.sqlite3";
     qDebug() << path << endl;
-    QString message = setFilePath(ids,path);
-    if (message.length() != 0) {
-        delete allWindows[ids];
-        allWindows.erase(ids);
-        delete allDatabases[ids];
-        allDatabases.erase(ids);
-        ids--;
+    if (createWindow) {
+        createNewWindow();
+        windowId = ids;
     }
-    else QQmlProperty::write(allWindows[ids],"openedFile",true);
+    QString message = setFilePath(windowId,path);
+    if (message.length() != 0) {
+        delete allDatabases[windowId];
+        allDatabases.erase(windowId);
+        if (createWindow) {
+            delete allWindows[ids];
+            allWindows.erase(ids);
+            ids--;
+        }
+    }
+    else QQmlProperty::write(allWindows[windowId],"openedFile",true);
     return message;
 }
 
@@ -59,7 +64,7 @@ void QMLBridge::closeFile(int windowId)
     delete allDatabases[windowId];
     allDatabases.erase(windowId);
     QQmlProperty::write(allWindows[windowId],"fileName","");
-    QQmlProperty::write(allWindows[windowId],"content","");
+    QQmlProperty::write(allWindows[windowId],"allDocuments","{}");
 }
 
 QString QMLBridge::startReplicator(int windowId, QString url, QString username, QString password, QString type)
@@ -88,5 +93,5 @@ void QMLBridge::createNewWindow()
 void QMLBridge::newUpdateSignal(int windowId)
 {
     QQmlProperty::write(allWindows[windowId],"fileName",allDatabases[windowId]->getDBName());
-    QQmlProperty::write(allWindows[windowId],"content",allDatabases[windowId]->getJSONResponse());
+    QQmlProperty::write(allWindows[windowId],"allDocuments",allDatabases[windowId]->getJSONResponse());
 }

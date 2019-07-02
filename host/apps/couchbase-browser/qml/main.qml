@@ -16,12 +16,12 @@ Window {
     property alias openedFile: mainview.openedFile
 
     property string fileName: ""
-    property var content: ""
+    property var allDocuments: ""
 
     MainWindow {
         id: mainview
     }
-    onContentChanged: {
-        mainview.content = content
+    onAllDocumentsChanged: {
+        mainview.allDocuments = allDocuments
     }
 }

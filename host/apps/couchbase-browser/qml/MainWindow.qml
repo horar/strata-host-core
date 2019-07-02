@@ -7,14 +7,14 @@ Item {
     anchors.fill: parent
 
     property var id
-    property var content: ""
+    property var allDocuments: "{}"
     property var jsonObj
     property alias openedFile: mainMenuView.openedFile
 
-    onContentChanged: {
-        if (content !== "") {
+    onAllDocumentsChanged: {
+        if (allDocuments !== "{}") {
             let tempModel = ["All documents"];
-            jsonObj = JSON.parse(content);
+            jsonObj = JSON.parse(allDocuments);
             for (let i in jsonObj) tempModel.push(i);
             let prevID = tableSelectorView.model[tableSelectorView.currentIndex];
             let newIndex = tempModel.indexOf(prevID);
@@ -65,11 +65,7 @@ Item {
                     onOpenFileSignal: openFileDialog.visible = true
                     onNewDatabaseSignal: newDatabasesPopup.visible = true
                     onNewDocumentSignal: newDocPopup.visible = true
-                    onDeleteDocumentSignal: {
-                        if (tableSelectorView.currentIndex !== 0)
-                        qmlBridge.deleteDoc(id,tableSelectorView.model[tableSelectorView.currentIndex])
-                        tableSelectorView.currentIndex = 0
-                    }
+                    onDeleteDocumentSignal: deletePopup.visible = true
                     //onEditDocumentSignal:
                     onSaveAsSignal: saveAsPopup.visible = true
                     onCloseSignal: {
@@ -91,7 +87,7 @@ Item {
             }
             Rectangle {
                 id: selectorContainer
-                Layout.preferredWidth: 150
+                Layout.preferredWidth: 160
                 Layout.preferredHeight: (parent.height - menuContainer.height)
                 Layout.row: 1
                 Layout.alignment: Qt.AlignTop
@@ -99,12 +95,18 @@ Item {
 
                 TableSelector {
                     id: tableSelectorView
+                    height: parent.height
+                    Component.onCompleted: console.log(height, root.height);
                     onCurrentIndexChanged: {
-                        if (content !== "") {
-                            if (currentIndex !== 0)
+                        if (allDocuments !== "{}") {
+                            if (currentIndex !== 0) {
+                                mainMenuView.onSingleDocument = true;
                                 bodyView.content = JSON.stringify(jsonObj[model[currentIndex]],null,4);
-                            else
+                            }
+                            else {
+                                mainMenuView.onSingleDocument = false;
                                 bodyView.content = JSON.stringify(jsonObj,null,4);
+                            }
                         }
                     }
                 }
@@ -179,7 +181,7 @@ Item {
                 id: newDatabasesPopup
                 anchors.centerIn: parent
                 onSubmit: {
-                    let message = qmlBridge.createNewDatabase(folderPath.toString().replace("file://",""), filename);
+                    let message = qmlBridge.createNewDatabase(id,mainMenuView.openedFile,folderPath.toString().replace("file://",""), filename);
                     if (message.length === 0) {
                         bodyView.message = "Created new database successfully";
                     }
@@ -195,6 +197,19 @@ Item {
                     visible = false;
                 }
             }
+            WarningPopup {
+                id: deletePopup
+                messageToDisplay: "Are you sure that you want to permanently delete document \""+tableSelectorView.model[tableSelectorView.currentIndex]+"\"";
+                onAllow: {
+                    deletePopup.visible = false
+                    qmlBridge.deleteDoc(id,tableSelectorView.model[tableSelectorView.currentIndex])
+                    tableSelectorView.currentIndex = 0
+                }
+                onDeny: {
+                    deletePopup.visible = false
+                }
+            }
         }
     }
 }
+

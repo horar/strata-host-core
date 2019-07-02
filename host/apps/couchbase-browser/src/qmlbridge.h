@@ -15,7 +15,7 @@ class QMLBridge : public QObject
         explicit QMLBridge(QObject *parent = nullptr);
         void init(QQmlApplicationEngine *engine, QQmlComponent *component);
         Q_INVOKABLE QString setFilePath(int windowId, QString file_path);
-        Q_INVOKABLE QString createNewDatabase(QString folder_path, QString dbName);
+        Q_INVOKABLE QString createNewDatabase(int windowId, bool createWindow, QString folder_path, QString dbName);
         Q_INVOKABLE QString createNewDocument(int windowId, QString id, QString body);
         Q_INVOKABLE QString editDoc(int windowId, QString id, QString body);
         Q_INVOKABLE QString deleteDoc(int windowId, QString id);
