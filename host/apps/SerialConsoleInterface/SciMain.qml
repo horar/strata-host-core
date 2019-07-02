@@ -6,6 +6,7 @@ import tech.strata.sci 1.0 as SciCommonCpp
 import tech.strata.sgwidgets 1.0 as SGWidgets
 import tech.strata.fonts 1.0 as StrataFonts
 import tech.strata.commoncpp 1.0 as CommonCpp
+import tech.strata.common 1.0 as Common
 
 
 Item {
@@ -330,9 +331,13 @@ Item {
             padding: 0
             hasTitle: false
 
-            contentItem: ProgramDeviceWizard {
+            contentItem: Common.ProgramDeviceWizard {
                 implicitWidth: root.width - 20
                 implicitHeight: root.height - 20
+
+                boardController: sciModel.boardController
+                closeButtonVisible: true
+                requestCancelOnClose: true
 
                 onCancelRequested: {
                     dialog.close()

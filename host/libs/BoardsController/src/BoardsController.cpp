@@ -26,6 +26,12 @@ void BoardsController::initialize()
         //TODO: notify user
         qCCritical(logCategoryBoardsController) << "Initialization of platform manager failed";
     }
+
+    connect(&flasherConnector_, &FlasherConnector::taskDone,
+            this, &BoardsController::programDeviceDoneHandler);
+
+    connect(&flasherConnector_, &FlasherConnector::notify,
+            this, &BoardsController::notify);
 }
 
 void BoardsController::sendCommand(QString connection_id, QString message)
@@ -94,6 +100,21 @@ bool BoardsController::disconnect(const QString &connectionId)
     return true;
 }
 
+void BoardsController::programDevice(const QString &connectionId, const QString &firmwarePath)
+{
+    qCInfo(logCategoryBoardsController) << connectionId << firmwarePath;
+
+    spyglass::PlatformConnectionShPtr connection = getConnection(connectionId);
+    if (connection == nullptr) {
+        qCWarning(logCategoryBoardsController) << "unknown connection id" << connectionId;
+        notify(connectionId, "Connection Id not valid.");
+        programDeviceDone(connectionId, false);
+        return;
+    }
+
+    flasherConnector_.start(connection, firmwarePath);
+}
+
 QStringList BoardsController::connectionIds() const
 {
     return connectionIds_;
@@ -157,6 +178,10 @@ void BoardsController::notifyMessageFromConnection(const QString &connectionId, 
     emit notifyBoardMessage(connectionId, message);
 }
 
+void BoardsController::programDeviceDoneHandler(const QString& connectionId, bool status)
+{
+    emit programDeviceDone(connectionId, status);
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 

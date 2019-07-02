@@ -46,8 +46,6 @@ endif()
 target_link_libraries(${PROJECT_NAME}
     Qt5::Core
     Qt5::Quick
-    PlatformManager
-    flasherConnector
     BoardsController
 
     QtLogger
