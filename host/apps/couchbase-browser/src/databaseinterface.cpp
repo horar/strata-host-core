@@ -44,8 +44,8 @@ QString DatabaseInterface::setFilePath(QString file_path)
 //    editDoc("","");
 
 //    temporary
-    cout << "\nCalling deleteDoc..."<< endl;
-    deleteDoc("");
+//    cout << "\nCalling deleteDoc..."<< endl;
+//    deleteDoc("");
 
 
     return("");
@@ -174,7 +174,7 @@ QString DatabaseInterface::rep_init(const QString &url, const QString &username,
 }
 
 QString DatabaseInterface::rep_init_()
-{
+{std::cout << "\nIn function rep_init_()" << endl;
     if(!getDBstatus()) {
         return("Database must be open and running for replication to be activated.");
     }
@@ -197,6 +197,10 @@ QString DatabaseInterface::rep_init_()
             return("Problem with authentication.");
         }
         sg_replicator_configuration_->setAuthenticator(sg_basic_authenticator_);
+    }
+
+    if(!channels_.empty()) {
+        sg_replicator_configuration_->setChannels(channels_);
     }
 
     sg_replicator_ = new SGReplicator(sg_replicator_configuration_);
@@ -320,7 +324,7 @@ QString DatabaseInterface::editDoc_(SGMutableDocument &doc, const QString &body)
 }
 
 QString DatabaseInterface::deleteDoc(const QString &id)
-{
+{ cout << "\nIn deleteDoc()" << endl;
     if(id.isEmpty()) {
         return("Received empty id, cannot delete.");
     }
