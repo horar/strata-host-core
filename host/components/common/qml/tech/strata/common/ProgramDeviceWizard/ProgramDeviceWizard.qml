@@ -49,6 +49,7 @@ Item {
         id: workflow
         anchors {
             top: parent.top
+            topMargin: 8
             horizontalCenter: parent.horizontalCenter
         }
 
