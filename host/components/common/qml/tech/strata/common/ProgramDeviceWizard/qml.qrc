@@ -1,5 +1,10 @@
 <!DOCTYPE RCC><RCC version="1.0">
     <qresource prefix="/tech/strata/common/ProgramDeviceWizard">
         <file>ProgramDeviceWizard.qml</file>
+        <file>CanvasShapes.js</file>
+        <file>FeedbackArrow.qml</file>
+        <file>Arrow.qml</file>
+        <file>WorkflowNode.qml</file>
+        <file>WorkflowNodeText.qml</file>
     </qresource>
 </RCC>

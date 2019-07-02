@@ -16,10 +16,12 @@ Item {
     property int spacing: 10
     property bool closeButtonVisible: false
     property bool requestCancelOnClose: false
+    property int processingStatus: ProgramDeviceWizard.SetupProgramming
 
     signal cancelRequested()
 
     enum ProcessingStatus {
+        SetupProgramming,
         WaitingForDevice,
         WaitingForJLink,
         ProgrammingBootloader,
@@ -39,10 +41,195 @@ Item {
         color: "#eeeeee"
     }
 
+    property int circleSize: 30
+    property color baseColor: "#303030"
+    property int arrowTailLength: 80
+
+    Item {
+        id: workflow
+        anchors {
+            top: parent.top
+            horizontalCenter: parent.horizontalCenter
+        }
+
+        width: childrenRect.width
+        height: childrenRect.height
+
+        focus: false
+
+        FeedbackArrow {
+            id: feedbackArrow
+            width: state4.x - state2.x + 2*padding + wingWidth + 4
+            height: 40
+            x: state2.x - padding + Math.round(state2.width/2) - wingWidth - 2
+
+            padding: 2
+            color: baseColor
+        }
+
+        WorkflowNode {
+            id: state1
+            anchors {
+                horizontalCenter: label1.horizontalCenter
+                top: feedbackArrow.bottom
+            }
+
+            source: "qrc:/sgimages/cog.svg"
+            color: baseColor
+            iconColor: baseColor
+            highlight: processingStatus === ProgramDeviceWizard.SetupProgramming
+        }
+
+        Arrow {
+            id: arrow2
+            anchors {
+                left: state1.right
+                verticalCenter: state1.verticalCenter
+            }
+
+            color: baseColor
+            tailLength: arrowTailLength
+        }
+
+        WorkflowNode {
+            id: state2
+            anchors {
+                verticalCenter: state1.verticalCenter
+                left: arrow2.right
+            }
+
+            source: "qrc:/sgimages/plug.svg"
+            color: baseColor
+            iconColor: baseColor
+            highlight: processingStatus === ProgramDeviceWizard.WaitingForDevice
+                       || processingStatus === ProgramDeviceWizard.WaitingForJLink
+        }
+
+        Arrow {
+            id: arrow3
+            anchors {
+                left: state2.right
+                verticalCenter: state1.verticalCenter
+            }
+
+            color: baseColor
+            tailLength: arrowTailLength
+        }
+
+        WorkflowNode {
+            id: state3
+            anchors {
+                verticalCenter: state1.verticalCenter
+                left: arrow3.right
+            }
+
+            source: "qrc:/sgimages/bolt.svg"
+            color: baseColor
+            iconColor: baseColor
+            highlight: processingStatus === ProgramDeviceWizard.ProgrammingBootloader
+                       || processingStatus === ProgramDeviceWizard.ProgrammingApplication
+        }
+
+        Arrow {
+            id: arrow4
+            anchors {
+                left: state3.right
+                verticalCenter: state1.verticalCenter
+            }
+
+            color: baseColor
+            tailLength: arrowTailLength
+        }
+
+        WorkflowNode {
+            id: state4
+            anchors {
+                left: arrow4.right
+                verticalCenter: state1.verticalCenter
+            }
+
+            source: "qrc:/sgimages/check.svg"
+            color: baseColor
+            iconColor: baseColor
+            highlight: processingStatus === ProgramDeviceWizard.ProgrammingSucceed
+                       || processingStatus === ProgramDeviceWizard.ProgrammingFailed
+        }
+
+        Arrow {
+            id: arrow5
+            anchors {
+                left: state4.right
+                verticalCenter: state1.verticalCenter
+            }
+
+            color: baseColor
+            tailLength: Math.round(arrowTailLength/2)
+        }
+
+        WorkflowNodeText {
+            anchors {
+                left: arrow5.right
+                verticalCenter: state1.verticalCenter
+            }
+
+            color: baseColor
+            text: "End"
+            standalone: true
+        }
+
+        WorkflowNodeText {
+            id: label1
+            anchors {
+                left: parent.left
+                top: state1.bottom
+            }
+
+            text: "Settings"
+            color: baseColor
+            highlight: state1.highlight
+        }
+
+        WorkflowNodeText {
+            anchors {
+                horizontalCenter: state2.horizontalCenter
+                top: state2.bottom
+            }
+
+            text: "Connect New\nDevice"
+            color: baseColor
+            highlight: state2.highlight
+        }
+
+        WorkflowNodeText {
+            anchors {
+                horizontalCenter: state3.horizontalCenter
+                top: state3.bottom
+            }
+
+            text: "Programming"
+            color: baseColor
+            highlight: state3.highlight
+        }
+
+        WorkflowNodeText {
+            anchors {
+                horizontalCenter: state4.horizontalCenter
+                top: state4.bottom
+            }
+
+            text: "Done"
+            color: baseColor
+            highlight: state4.highlight
+        }
+    }
+
     StackView {
         id: stackView
         anchors {
-            fill:parent
+            top: workflow.bottom
+            bottom: parent.bottom
+            left: parent.left
+            right: parent.right
         }
     }
 
@@ -53,11 +240,8 @@ Item {
     Component {
         id: initPageComponent
 
-        SGWidgets.SGPage {
+        FocusScope {
             id: settingsPage
-
-            title: qsTr("Program Device Settings")
-            hasBack: false
 
             Item {
                 anchors.fill: parent
@@ -73,13 +257,10 @@ Item {
                 Column {
                     anchors {
                         top: parent.top
-                        topMargin: wizard.spacing
                         horizontalCenter: parent.horizontalCenter
                     }
 
                     width: parent.width - 50
-
-                    spacing: wizard.spacing
 
                     SGWidgets.SGText {
                         id: firmwareHeader
@@ -388,6 +569,7 @@ Item {
                                 jLinkConnector.exePath = CommonCpp.SGUtilsCpp.urlToPath(jlinkExePathEdit.text)
                             }
 
+                            processingStatus = ProgramDeviceWizard.WaitingForDevice
                             stackView.push(processPageComponent)
                         }
                     }
@@ -399,13 +581,10 @@ Item {
     Component {
         id: processPageComponent
 
-        SGWidgets.SGPage {
+        FocusScope {
             id: processPage
-            title: qsTr("Programming Device")
-            hasBack: processingStatus !== ProgramDeviceWizard.ProgrammingApplication
 
             property int verticalSpacing: 8
-            property int processingStatus: ProgramDeviceWizard.WaitingForDevice
             property string subtextNote
             property variant warningDialog: null
 
@@ -530,18 +709,20 @@ Item {
                             msg += "\n"
                             msg += "Do you want to program it anyway ?"
 
-                            warningDialog = SGWidgets.SGDialogJS.showMessageDialog(
+                            warningDialog = SGWidgets.SGDialogJS.showConfirmationDialog(
                                         processPage,
-                                        SGWidgets.SGMessageDialog.Warning,
                                         "Device already with firmware",
                                         msg,
-                                        Dialog.Yes | Dialog.No,
+                                        "Program it",
                                         function() {
                                             startProgramDevice()
                                         },
+                                        "Cancel",
                                         function() {
                                             processingStatus = ProgramDeviceWizard.WaitingForDevice
-                                        })
+                                        },
+                                        SGWidgets.SGMessageDialog.Warning,
+                                        )
                         } else {
                             if (wizard.useJLink == false && connectionInfo.bootloaderVersion.length === 0) {
                                 msg = "Connected device does not have a bootloader and cannot be programmed.\n\n"
@@ -591,8 +772,9 @@ Item {
 
             SGWidgets.SGText {
                 id: statusText
-                y: Math.floor(parent.height * 0.3)
                 anchors {
+                    top: parent.top
+                    topMargin: 80
                     horizontalCenter: parent.horizontalCenter
                 }
 
@@ -601,7 +783,7 @@ Item {
                     if (processingStatus === ProgramDeviceWizard.WaitingForDevice) {
                         return "Waiting for device to connect"
                     } else if (processingStatus === ProgramDeviceWizard.WaitingForJLink) {
-                            return "Waiting for JLink connection"
+                        return "Waiting for JLink connection"
                     } else if (processingStatus === ProgramDeviceWizard.ProgrammingBootloader) {
                         return "Programming bootloader..."
                     } else if (processingStatus === ProgramDeviceWizard.ProgrammingApplication) {
@@ -611,6 +793,8 @@ Item {
                     } else if (processingStatus === ProgramDeviceWizard.ProgrammingFailed) {
                         return "Programming failed"
                     }
+
+                    return ""
                 }
             }
 
@@ -689,7 +873,8 @@ Item {
                         return msg
                     } else if (processingStatus === ProgramDeviceWizard.ProgrammingSucceed) {
                         msg = "To program another device, simply plug it in and\n new process will start automatically\n\n"
-                        msg += "Press Done if you don't want to program another device"
+                        msg += "or "
+                        msg += "press End."
                         return msg
                     } else if(processingStatus === ProgramDeviceWizard.ProgrammingFailed) {
                         msg = processPage.subtextNote
@@ -704,8 +889,8 @@ Item {
 
             Row {
                 anchors {
-                    top: statusSubtext.bottom
-                    topMargin: 4 * processPage.verticalSpacing
+                    bottom: parent.bottom
+                    bottomMargin: 10
                     horizontalCenter: parent.horizontalCenter
                 }
 
@@ -714,10 +899,8 @@ Item {
                 SGWidgets.SGButton {
                     id: cancelBtn
 
-                    text: qsTr("Done")
-                    visible: processingStatus === ProgramDeviceWizard.WaitingForDevice
-                             || processingStatus === ProgramDeviceWizard.WaitingForJLink
-                             || processingStatus === ProgramDeviceWizard.ProgrammingSucceed
+                    text: qsTr("End")
+                    visible:processingStatus === ProgramDeviceWizard.ProgrammingSucceed
 
                     onClicked: {
                         if (requestCancelOnClose) {
@@ -725,6 +908,20 @@ Item {
                             return
                         }
 
+                        processingStatus = ProgramDeviceWizard.SetupProgramming
+                        stackView.pop(stackView.initialItem)
+                    }
+                }
+
+                SGWidgets.SGButton {
+                    id: backBtn
+
+                    text: qsTr("Back")
+                    visible: processingStatus === ProgramDeviceWizard.WaitingForDevice
+                             || processingStatus === ProgramDeviceWizard.WaitingForJLink
+
+                    onClicked: {
+                        processingStatus = ProgramDeviceWizard.SetupProgramming
                         stackView.pop(stackView.initialItem)
                     }
                 }
