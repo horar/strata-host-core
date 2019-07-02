@@ -60,7 +60,7 @@ Item {
             Layout.leftMargin: 5
             filename: "Images/deleteDocumentIcon"
             label: "<b>Delete Doc</b>"
-            onButtonPress: deleteDocumentSignal
+            onButtonPress: deleteDocumentSignal()
             disable: !openedFile
         }
         CustomMenuItem {
