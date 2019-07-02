@@ -1,12 +1,15 @@
 import QtQuick 2.12
 import QtGraphicalEffects 1.12
 import QtQuick.Controls 2.12
+
 Item {
     id: root
     anchors.fill:parent
 
     property alias content: text.text
     property alias message: statusText.text
+    property alias readOnly: text.readOnly
+
 
     Rectangle {
         id: background
@@ -30,6 +33,7 @@ Item {
                 selectByMouse: true
                 text: ""
                 color: "#eeeeee"
+                readOnly: true
             }
         }
         Rectangle {

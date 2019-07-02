@@ -71,12 +71,17 @@ Item {
                         qmlBridge.closeFile(id)
                         bodyView.message = "Closed file"
                     }
-                    onStartReplicatorSignal: loginPopup.visible = true
+                    onStartReplicatorSignal: {
+                        loginPopup.visible = true
+                        warningPopup.visible = true
+
+                    }
                     onStopReplicatorSignal: {
                         qmlBridge.stopReplicator(id)
                         bodyView.message = "Stopped replicator"
                     }
                     onNewWindowSignal: qmlBridge.createNewWindow()
+
                 }
             }
             Rectangle {
@@ -97,6 +102,9 @@ Item {
                                 bodyView.content = JSON.stringify(jsonObj,null,4);
                         }
                     }
+                    onSendIndex: {
+                        (index === 0 || index === -1) ? bodyView.readOnly = true : bodyView.readOnly = false
+                     }
                 }
                 Image {
                     id: onLogo
@@ -116,7 +124,7 @@ Item {
                 Layout.preferredWidth: (parent.width - selectorContainer.width)
                 Layout.preferredHeight: (parent.height - menuContainer.height)
                 Layout.alignment: Qt.AlignTop
-                color: "steelblue"
+                color: "transparent"
                 BodyDisplay {
                     id: bodyView
                 }
@@ -183,6 +191,10 @@ Item {
                 onSubmit:  {
                     visible = false;
                 }
+            }
+            WarningPopup {
+                id: warningPopup
+                anchors.centerIn: parent
             }
         }
     }
