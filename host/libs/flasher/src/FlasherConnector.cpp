@@ -26,7 +26,6 @@ void FlasherWorker::process()
         emit notify(connectionId, "Programming");
         if (flasher.flash(true)) {
 
-            qDebug() << "task done.";
             emit taskDone(connectionId, true);
             emit finished();
             return;
@@ -35,7 +34,6 @@ void FlasherWorker::process()
         emit notify(connectionId, "Initializing of bootloader failed");
     }
 
-    qDebug() << "task done.";
     emit taskDone(connectionId, false);
     emit finished();
 }
