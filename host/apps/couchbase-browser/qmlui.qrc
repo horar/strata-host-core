@@ -20,5 +20,6 @@
         <file>qml/CustomMenuItem.qml</file>
         <file>qml/NewDocumentPopup.qml</file>
         <file>qml/NewDatabasePopup.qml</file>
+        <file>qml/WarningPopup.qml</file>
     </qresource>
 </RCC>

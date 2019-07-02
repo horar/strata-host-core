@@ -71,7 +71,11 @@ Item {
                         qmlBridge.closeFile(id)
                         bodyView.message = "Closed file"
                     }
-                    onStartReplicatorSignal: loginPopup.visible = true
+                    onStartReplicatorSignal: {
+                        loginPopup.visible = true
+                        warningPopup.visible = true
+
+                    }
                     onStopReplicatorSignal: {
                         qmlBridge.stopReplicator(id)
                         bodyView.message = "Stopped replicator"
@@ -187,6 +191,10 @@ Item {
                 onSubmit:  {
                     visible = false;
                 }
+            }
+            WarningPopup {
+                id: warningPopup
+                anchors.centerIn: parent
             }
         }
     }
