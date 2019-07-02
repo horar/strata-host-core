@@ -9,8 +9,6 @@
 #include <Flasher.h>
 #include <PlatformConnection.h>
 
-class Flasher;
-
 class FlasherWorker : public QObject
 {
     Q_OBJECT
@@ -29,10 +27,9 @@ public slots:
     void process();
 
 signals:
-    void finished();
-
     void taskDone(QString connectionId, bool status);
     void notify(QString connectionId, QString message);
+    void finished();
 
 private:
 
