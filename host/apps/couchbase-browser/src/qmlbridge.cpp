@@ -57,9 +57,13 @@ void QMLBridge::closeFile(int windowId)
     QQmlProperty::write(allWindows[windowId],"content","");
 }
 
-QString QMLBridge::startReplicator(int windowId, QString hostName, QString username, QString password)
+QString QMLBridge::startReplicator(int windowId, QString url, QString username, QString password, QString type)
 {
-    return allDatabases[windowId]->rep_init(hostName,username,password);
+    Spyglass::SGReplicatorConfiguration::ReplicatorType rep_type;
+    if (type == "pull") rep_type = Spyglass::SGReplicatorConfiguration::ReplicatorType::kPull;
+    if (type == "push") rep_type = Spyglass::SGReplicatorConfiguration::ReplicatorType::kPush;
+    if (type == "pushpull") rep_type = Spyglass::SGReplicatorConfiguration::ReplicatorType::kPushAndPull;
+    return allDatabases[windowId]->rep_init(url,username,password,rep_type);
 }
 
 void QMLBridge::stopReplicator(int windowId)

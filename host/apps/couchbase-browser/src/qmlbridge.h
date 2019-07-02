@@ -19,7 +19,7 @@ class QMLBridge : public QObject
         Q_INVOKABLE QString createNewDatabase(QString folder_path, QString dbName);
         Q_INVOKABLE bool createNewDocument(int windowId, QString id, QString body);
         Q_INVOKABLE void closeFile(int windowId);
-        Q_INVOKABLE QString startReplicator(int windowId, QString hostName, QString username, QString password);
+        Q_INVOKABLE QString startReplicator(int windowId, QString url, QString username, QString password, QString type);
         Q_INVOKABLE void stopReplicator(int windowId);
         Q_INVOKABLE void createNewWindow();
 
