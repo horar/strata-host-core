@@ -1,7 +1,6 @@
 #include "FlasherConnector.h"
 
 #include <QThread>
-#include <QDebug>
 
 FlasherWorker::FlasherWorker(spyglass::PlatformConnectionShPtr connection, const QString &firmwarePath, QObject *parent)
     : QObject(parent), connection_(connection), firmwarePath_(firmwarePath), stopFlag_(false)
