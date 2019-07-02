@@ -24,10 +24,11 @@ public:
 
     QString getJSONResponse();
 
-    bool createNewDoc(const QString &id, const QString &body);
+    QString createNewDoc(const QString &id, const QString &body);
 
-    QString rep_init(const QString &url, const QString &username, const QString &password,
-        const Spyglass::SGReplicatorConfiguration::ReplicatorType &rep_type = Spyglass::SGReplicatorConfiguration::ReplicatorType::kPull);
+    QString rep_init(const QString &url, const QString &username = "", const QString &password = "",
+        const Spyglass::SGReplicatorConfiguration::ReplicatorType &rep_type = Spyglass::SGReplicatorConfiguration::ReplicatorType::kPull,
+        const std::vector<QString> &channels = std::vector<QString> ());
 
     void rep_stop();
 
@@ -44,7 +45,7 @@ private:
 
     bool DBstatus_, Repstatus_;
 
-    std::vector<std::string> document_keys_;
+    std::vector<std::string> document_keys_, channels_ = {};
 
     Spyglass::SGDatabase *sg_db_{nullptr};
 
@@ -86,7 +87,7 @@ private:
 
     void setRepstatus(bool status);
 
-    bool createNewDoc_(const QString &id, const QString &body);
+    QString createNewDoc_(const QString &id, const QString &body);
 
     QString rep_init_();
 

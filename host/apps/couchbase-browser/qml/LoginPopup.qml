@@ -13,26 +13,37 @@ Popup {
 
     signal start()
 
-    property alias hostName: hostNameField.text
+    property alias url: urlField.text
     property alias username: usernameField.text
     property alias password: passwordField.text
     property string rep_type: "pull"
 
     function clearInput()
     {
-        hostNameField.text = ""
+        urlField.text = ""
         usernameField.text = ""
         passwordField.text = ""
     }
 
     function validate(){
-        if(hostName.length !== 0){
-            start();
+        if(url.length !== 0){
+            warningPopup.visible = true
         }
         else {
-            hostNameFieldBackground.border.color = "red"
-            hostNameFieldBackground.border.width = 2
+            urlFieldBackground.border.color = "red"
+            urlFieldBackground.border.width = 2
             header.text = "Invalid Input"
+        }
+    }
+
+    WarningPopup {
+        id: warningPopup
+        onOverwrite: {
+            warningPopup.visible = false
+            start()
+        }
+        onDeny: {
+            warningPopup.visible = false
         }
     }
 
@@ -67,7 +78,7 @@ Popup {
                 Layout.alignment: Qt.AlignHCenter + Qt.AlignTop
                 color: "transparent"
                 Rectangle {
-                    id: hostNameContainer
+                    id: urlContainer
                     height: parent.height / 2
                     width: parent.width / 2
                     anchors {
@@ -77,20 +88,20 @@ Popup {
                         text: "URL:"
                         color: "#eee"
                         anchors {
-                            bottom: hostNameContainer.top
-                            left: hostNameContainer.left
+                            bottom: urlContainer.top
+                            left: urlContainer.left
                         }
                     }
                     TextField {
-                        id: hostNameField
+                        id: urlField
                         anchors.fill: parent
                         placeholderText: "Enter URL"
                         onActiveFocusChanged: {
-                            hostNameFieldBackground.border.color = "transparent"
+                            urlFieldBackground.border.color = "transparent"
                             header.text = "Please enter the requested information"
                         }
                         Rectangle {
-                            id: hostNameFieldBackground
+                            id: urlFieldBackground
                             width: parent.width
                             height: parent.height
                             color: "transparent"

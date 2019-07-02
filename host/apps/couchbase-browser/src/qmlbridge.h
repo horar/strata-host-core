@@ -14,10 +14,11 @@ class QMLBridge : public QObject
     public:
         explicit QMLBridge(QObject *parent = nullptr);
         void init(QQmlApplicationEngine *engine, QQmlComponent *component);
-        Q_INVOKABLE QString getDBName(int windowId);
         Q_INVOKABLE QString setFilePath(int windowId, QString file_path);
         Q_INVOKABLE QString createNewDatabase(QString folder_path, QString dbName);
-        Q_INVOKABLE bool createNewDocument(int windowId, QString id, QString body);
+        Q_INVOKABLE QString createNewDocument(int windowId, QString id, QString body);
+        Q_INVOKABLE QString editDoc(int windowId, QString id, QString body);
+        Q_INVOKABLE QString deleteDoc(int windowId, QString id);
         Q_INVOKABLE void closeFile(int windowId);
         Q_INVOKABLE QString startReplicator(int windowId, QString url, QString username, QString password, QString type);
         Q_INVOKABLE void stopReplicator(int windowId);

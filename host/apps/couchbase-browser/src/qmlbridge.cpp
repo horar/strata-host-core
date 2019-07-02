@@ -12,11 +12,6 @@ void QMLBridge::init(QQmlApplicationEngine *engine, QQmlComponent *component)
     createNewWindow();
 }
 
-QString QMLBridge::getDBName(int windowId)
-{
-    return allDatabases[windowId]->getDBName();
-}
-
 QString QMLBridge::setFilePath(int windowId, QString file_path)
 {
     DatabaseInterface *db = new DatabaseInterface(windowId);
@@ -43,10 +38,20 @@ QString QMLBridge::createNewDatabase(QString folder_path, QString dbName)
     return message;
 }
 
-bool QMLBridge::createNewDocument(int windowId, QString id, QString body)
+QString QMLBridge::createNewDocument(int windowId, QString id, QString body)
 {
     qDebug() << windowId << id << body << endl;
     return allDatabases[windowId]->createNewDoc(id, body);
+}
+
+QString QMLBridge::editDoc(int windowId, QString id, QString body)
+{
+    return allDatabases[windowId]->editDoc(id, body);
+}
+
+QString QMLBridge::deleteDoc(int windowId, QString id)
+{
+    return allDatabases[windowId]->deleteDoc(id);
 }
 
 void QMLBridge::closeFile(int windowId)

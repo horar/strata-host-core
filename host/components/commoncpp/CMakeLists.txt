@@ -15,6 +15,7 @@ target_sources(${PROJECT_NAME}
     CommonCppPlugin.cpp
     SGUtilsCpp.cpp
     SGJLinkConnector.cpp
+    SGSortFilterProxyModel.cpp
     logging/LoggingQtCategories.cpp
 
     imports/tech/strata/commoncpp/qmldir

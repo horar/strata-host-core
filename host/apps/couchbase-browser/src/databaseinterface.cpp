@@ -26,6 +26,7 @@ DatabaseInterface::~DatabaseInterface()
     delete sg_replicator_configuration_;
     delete sg_basic_authenticator_;
     delete sg_db_;
+    setDBstatus(false);
     setRepstatus(false);
 }
 
@@ -68,17 +69,13 @@ void DatabaseInterface::rep_stop()
     setRepstatus(false);
 }
 
-bool DatabaseInterface::createNewDoc(const QString &id, const QString &body)
+QString DatabaseInterface::createNewDoc(const QString &id, const QString &body)
 {
     if(id.isEmpty() || body.isEmpty()) {
-        DEBUG("Document's id or body contents may not be empty.");
-        return false;
+        return ("Document's id or body contents may not be empty.");
     }
 
-    if(createNewDoc_(id,body)) {
-        return true;
-    }
-
+    return createNewDoc_(id,body);
 
 //    cout << "\nCreate doc: " << id.toStdString() << "   " << body.toStdString() << endl;
 
@@ -86,7 +83,7 @@ bool DatabaseInterface::createNewDoc(const QString &id, const QString &body)
 
 
 
-//    SGMutableDocument usbPDDocument(sg_db_, "victorsDDOCUMENT");
+//    SGMutableDocument usbPDDocument(sg_db_, "victorsDDOCUMENT");``
 
 
 //     DEBUG("document Id: %s, body: %s\n", usbPDDocument.getId().c_str(), usbPDDocument.getBody().c_str());
@@ -101,11 +98,9 @@ bool DatabaseInterface::createNewDoc(const QString &id, const QString &body)
 //    }
 
 //    emitUpdate();
-
-    return true;
 }
 
-bool DatabaseInterface::createNewDoc_(const QString &id, const QString &body)
+QString DatabaseInterface::createNewDoc_(const QString &id, const QString &body)
 {
     //    SGMutableDocument newDoc(sg_db_,id.toStdString());
 
@@ -118,7 +113,7 @@ bool DatabaseInterface::createNewDoc_(const QString &id, const QString &body)
     //             cout << "\nthis works." << endl;
     //    }
 
-    return true;
+    return("");
 }
 
  bool DatabaseInterface::db_init()
@@ -150,7 +145,8 @@ bool DatabaseInterface::createNewDoc_(const QString &id, const QString &body)
     return true;
 }
 
-QString DatabaseInterface::rep_init(const QString &url, const QString &username, const QString &password, const Spyglass::SGReplicatorConfiguration::ReplicatorType &rep_type)
+QString DatabaseInterface::rep_init(const QString &url, const QString &username, const QString &password, const Spyglass::SGReplicatorConfiguration::ReplicatorType &rep_type,
+                                    const vector<QString> &channels)
 {
     if(url.isEmpty()) {
         return ("URL may not be empty.");
@@ -160,6 +156,13 @@ QString DatabaseInterface::rep_init(const QString &url, const QString &username,
     username_ = username;
     password_ = password;
     rep_type_ = rep_type;
+
+    if(!channels.empty()) {
+        channels_.clear();
+        for(auto &val : channels) {
+            channels_.push_back(val.toStdString());
+        }
+    }
 
     url_endpoint_ = new SGURLEndpoint(url_.toStdString());
 
@@ -306,8 +309,6 @@ QString DatabaseInterface::editDoc_(SGMutableDocument &doc, const QString &body)
 //    SGMutableDocument d(sg_db_, (*iter));
 
 //    SGMutableDocument doc(sg_db_,temp_name.toStdString());
-
-
 
     doc.setBody(body.toStdString());
 

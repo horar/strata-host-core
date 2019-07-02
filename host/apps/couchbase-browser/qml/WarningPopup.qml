@@ -4,12 +4,13 @@ import QtQuick.Controls 2.12
 import QtQuick.Window 2.12
 import QtQuick.Dialogs 1.3
 
-Popup {
+Window {
     id: root
     width: 800
     height: 300
     visible: false
-    padding: 0
+    //padding: 0
+    modality: Qt.WindowModal
 
     signal overwrite()
     signal deny()

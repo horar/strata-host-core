@@ -11,16 +11,6 @@ Item {
     property var jsonObj
     property alias openedFile: mainMenuView.openedFile
 
-    function startReplicator(){
-        let message = qmlBridge.startReplicator(id,hostName,username,password);
-        if (message.length === 0) {
-            bodyView.message = "Started replicator successfully";
-            mainMenuView.replicatorStarted = true;
-            visible = false;
-        }
-        else bodyView.message = message;
-    }
-
     onContentChanged: {
         if (content !== "") {
             let tempModel = ["All documents"];
@@ -73,9 +63,10 @@ Item {
                         bottomMargin: 10
                     }
                     onOpenFileSignal: openFileDialog.visible = true
-                    onNewDocumentSignal: newDocPopup.visible = true
                     onNewDatabaseSignal: newDatabasesPopup.visible = true
-                    //onSaveSignal:
+                    onNewDocumentSignal: newDocPopup.visible = true
+                    onDeleteDocumentSignal: qmlBridge.deleteDoc(id,model[tableSelectorView.currentIndex])
+                    //onEditDocumentSignal:
                     onSaveAsSignal: saveAsPopup.visible = true
                     onCloseSignal: {
                         qmlBridge.closeFile(id)
@@ -161,27 +152,23 @@ Item {
                 id: loginPopup
                 anchors.centerIn: parent
                 onStart: {
-                    if(bodyView.content.length !== 0){
-                         warningPopup.visible = true
-                    let message = qmlBridge.startReplicator(id,hostName,username,password,rep_type);
+                    let message = qmlBridge.startReplicator(id,url,username,password,rep_type);
                     if (message.length === 0) {
                         bodyView.message = "Started replicator successfully";
                         mainMenuView.replicatorStarted = true;
                         visible = false;
                     }
-                    else {
-                        startReplicator()
-                    }
-
+                    else bodyView.message = message;
                 }
             }
             NewDocumentPopup {
                 id: newDocPopup
                 onSubmit: {
-                    if (qmlBridge.createNewDocument(id,docID,docBody))
+                    let message = qmlBridge.createNewDocument(id,docID,docBody);
+                    if (message.length === 0)
                         bodyView.message = "Created new document successfully!";
                     else
-                        bodyView.message = "Cannot create new document";
+                        bodyView.message = message;
                 }
             }
             NewDatabasePopup {
@@ -204,18 +191,7 @@ Item {
                     visible = false;
                 }
             }
-            WarningPopup {
-                id: warningPopup
-                anchors.centerIn: parent
-                onOverwrite: {
-                    startReplicator()
-                    warningPopup.visible = false
-                }
-                onDeny: {
-                    warningPopup.visible = false
-                }
-            }
         }
     }
 }
-}
+
