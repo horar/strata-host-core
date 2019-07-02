@@ -19,6 +19,7 @@ Item {
 
     property bool replicatorStarted: false
     property bool openedFile: false
+    property bool onSingleDocument: false
 
     RowLayout {
         id: row
@@ -61,7 +62,7 @@ Item {
             filename: "Images/deleteDocumentIcon"
             label: "<b>Delete Doc</b>"
             onButtonPress: deleteDocumentSignal()
-            disable: !openedFile
+            disable: !openedFile || !onSingleDocument
         }
         CustomMenuItem {
             id: editDocument
@@ -71,7 +72,7 @@ Item {
             filename: "Images/editIcon"
             label: "<b>Edit Doc</b>"
             onButtonPress: editDocumentSignal()
-            disable: !openedFile
+            disable: !openedFile || !onSingleDocument
         }
         CustomMenuItem {
             id: saveAs

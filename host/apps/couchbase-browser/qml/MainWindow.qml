@@ -7,14 +7,14 @@ Item {
     anchors.fill: parent
 
     property var id
-    property var content: ""
+    property var allDocuments: "{}"
     property var jsonObj
     property alias openedFile: mainMenuView.openedFile
 
-    onContentChanged: {
-        if (content !== "") {
+    onAllDocumentsChanged: {
+        if (allDocuments !== "{}") {
             let tempModel = ["All documents"];
-            jsonObj = JSON.parse(content);
+            jsonObj = JSON.parse(allDocuments);
             for (let i in jsonObj) tempModel.push(i);
             let prevID = tableSelectorView.model[tableSelectorView.currentIndex];
             let newIndex = tempModel.indexOf(prevID);
@@ -100,11 +100,15 @@ Item {
                 TableSelector {
                     id: tableSelectorView
                     onCurrentIndexChanged: {
-                        if (content !== "") {
-                            if (currentIndex !== 0)
+                        if (allDocuments !== "{}") {
+                            if (currentIndex !== 0) {
+                                mainMenuView.onSingleDocument = true;
                                 bodyView.content = JSON.stringify(jsonObj[model[currentIndex]],null,4);
-                            else
+                            }
+                            else {
+                                mainMenuView.onSingleDocument = false;
                                 bodyView.content = JSON.stringify(jsonObj,null,4);
+                            }
                         }
                     }
                 }
