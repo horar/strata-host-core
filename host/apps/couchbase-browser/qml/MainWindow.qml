@@ -87,7 +87,7 @@ Item {
             }
             Rectangle {
                 id: selectorContainer
-                Layout.preferredWidth: 150
+                Layout.preferredWidth: 160
                 Layout.preferredHeight: (parent.height - menuContainer.height)
                 Layout.row: 1
                 Layout.alignment: Qt.AlignTop
@@ -95,6 +95,8 @@ Item {
 
                 TableSelector {
                     id: tableSelectorView
+                    height: parent.height
+                    Component.onCompleted: console.log(height, root.height);
                     onCurrentIndexChanged: {
                         if (allDocuments !== "{}") {
                             if (currentIndex !== 0) {
