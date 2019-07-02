@@ -24,20 +24,24 @@ Popup {
     function validate(){
         if((selectFolderField.text.length !== 0) && (filenameField.text.length !== 0)){
             submit()
+            header.text = "Please enter the requested information"
+        }
+        else {
+            //hightlight the background of selectfolderfield and filenameField
+            if(selectFolderField.text.length == 0){
+                folderFieldBackground.border.color = "red"
+                folderFieldBackground.border.width = 2
+                header.text = "Invalid Input"
+            }
+            if(filenameField.text.length == 0){
+                filenameFieldBackground.border.color = "red"
+                filenameFieldBackground.border.width = 2
+                header.text = "Invalid Input"
+            }
         }
 
     }
 
-    Popup {
-        id: popup
-        width: 300
-        height: 200
-        visible: false
-        Label {
-            text: "All fields must be valid"
-            anchors.centerIn: parent
-        }
-    }
     Rectangle {
         anchors.fill: parent
         color: "#393e46"
@@ -57,6 +61,7 @@ Popup {
                 Layout.alignment: Qt.AlignHCenter + Qt.AlignTop
                 color: "transparent"
                 Label {
+                    id: header
                     text: "Please enter the requested information"
                     anchors.centerIn: parent
                     color: "white"
@@ -86,6 +91,15 @@ Popup {
                         id: selectFolderField
                         anchors.fill: parent
                         placeholderText: "Enter Path"
+                        onActiveFocusChanged: {
+                            folderFieldBackground.border.color = "transparent"
+                        }
+                        Rectangle {
+                            id: folderFieldBackground
+                            width: parent.width
+                            height: parent.height
+                            color: "transparent"
+                        }
                     }
                     Button  {
                         height: parent.height
@@ -132,6 +146,15 @@ Popup {
                         id: filenameField
                         anchors.fill: parent
                         placeholderText: "Enter Database Name"
+                        onActiveFocusChanged: {
+                            filenameFieldBackground.border.color = "transparent"
+                        }
+                        Rectangle {
+                            id: filenameFieldBackground
+                            width: parent.width
+                            height: parent.height
+                            color: "transparent"
+                        }
                     }
                 }
             }
