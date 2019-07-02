@@ -65,7 +65,11 @@ Item {
                     onOpenFileSignal: openFileDialog.visible = true
                     onNewDatabaseSignal: newDatabasesPopup.visible = true
                     onNewDocumentSignal: newDocPopup.visible = true
-                    onDeleteDocumentSignal: qmlBridge.deleteDoc(id,model[tableSelectorView.currentIndex])
+                    onDeleteDocumentSignal: {
+                        if (tableSelectorView.currentIndex !== 0)
+                        qmlBridge.deleteDoc(id,tableSelectorView.model[tableSelectorView.currentIndex])
+                        tableSelectorView.currentIndex = 0
+                    }
                     //onEditDocumentSignal:
                     onSaveAsSignal: saveAsPopup.visible = true
                     onCloseSignal: {
