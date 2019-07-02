@@ -29,9 +29,23 @@ Rectangle {
         }
         ComboBox {
             id: keySelectorComboBox
-            Layout.alignment: Qt.AlignLeft
-            Layout.leftMargin: 5
+            width: parent.width - 10
+            Layout.alignment: Qt.AlignHCenter
             model:[]
+            delegate: ItemDelegate {
+                    contentItem: Text {
+                        width: keySelectorComboBox.width
+                        text: modelData
+                        color: "#b55400"
+                    }
+                    highlighted: keySelectorComboBox.highlightedIndex === index
+                }
+            background: Rectangle {
+                    implicitWidth: keySelectorComboBox.width
+                    implicitHeight: 40
+                    border.color: keySelectorComboBox.pressed ? "#17a81a" : "#b55400"
+                    radius: 2
+                }
             onActivated: {
                 sendIndex(keySelectorComboBox.currentIndex)
             }
