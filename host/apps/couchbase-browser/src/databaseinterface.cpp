@@ -37,6 +37,16 @@ QString DatabaseInterface::setFilePath(QString file_path)
     } else if(!db_init()) {
         return("Problem initializing database.");
     }
+
+//    temporary
+//    cout << "\nCalling editDoc..."<< endl;
+//    editDoc("","");
+
+//    temporary
+    cout << "\nCalling deleteDoc..."<< endl;
+    deleteDoc("");
+
+
     return("");
 }
 
@@ -264,6 +274,72 @@ bool DatabaseInterface::parseNewFile()
     return true;
 }
 
+QString DatabaseInterface::editDoc(const QString &id, const QString &body)
+{
+    if(id.isEmpty()) {
+        return("Received empty id, cannot edit.");
+    }
+
+    SGMutableDocument doc(sg_db_,id.toStdString());
+
+    if(!doc.exist()) {
+        return("\nDocument with id = \"" + id + "\" does not exist. Cannot edit.");
+    }
+
+    return  editDoc_(doc, body);
+}
+
+QString DatabaseInterface::editDoc_(SGMutableDocument &doc, const QString &body)
+{
+//    C4Document *c4_doc = sg_db_->getDocumentById(id.toStdString());
+
+//    SGDocument sg_doc;
+
+//    sg_doc.setC4document(c4_doc);
+
+//    SGDocument doc = sg_db_->getDocumentById(id.toStdString());
+
+//    std::vector <string>::iterator iter = document_keys_.begin();
+
+//    QString temp_name = "first_Doc";
+
+//    SGMutableDocument d(sg_db_, (*iter));
+
+//    SGMutableDocument doc(sg_db_,temp_name.toStdString());
+
+
+
+    doc.setBody(body.toStdString());
+
+    // needs to be saved to show up
+
+    emitUpdate();
+
+    return("");
+}
+
+QString DatabaseInterface::deleteDoc(const QString &id)
+{
+    if(id.isEmpty()) {
+        return("Received empty id, cannot delete.");
+    }
+
+    SGDocument doc(sg_db_,id.toStdString());
+
+    if(!doc.exist()) {
+        return("\nDocument with id = \"" + id + "\" does not exist. Cannot delete.");
+    }
+
+    return deleteDoc_(doc);
+}
+
+QString DatabaseInterface::deleteDoc_(SGDocument &doc)
+{
+    sg_db_->deleteDocument(&doc);
+    emitUpdate();
+    return("");
+}
+
 bool DatabaseInterface::setDocumentKeys()
 {
     document_keys_.clear();
@@ -288,8 +364,6 @@ void DatabaseInterface::setJSONResponse()
     }
 
     JSONResponse_ += "}";
-
-    cout << "\n\n\nJSON response: \n" << JSONResponse_.toStdString() << endl;
 }
 
 QString DatabaseInterface::getJSONResponse()
