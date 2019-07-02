@@ -7,16 +7,15 @@ Item {
     id: root
 
     signal openFileSignal()
-    signal newDocumentSignal()
     signal newDatabaseSignal()
-    signal saveSignal()
+    signal newDocumentSignal()
+    signal deleteDocumentSignal()
+    signal editDocumentSignal()
     signal saveAsSignal()
     signal closeSignal()
     signal startReplicatorSignal()
     signal stopReplicatorSignal()
     signal newWindowSignal()
-    signal editDocumentSignal()
-    signal deleteDocumentSignal()
 
     property bool replicatorStarted: false
     property bool openedFile: false
@@ -52,7 +51,7 @@ Item {
             filename: "Images/createDocumentIcon"
             label: "<b>New Doc</b>"
             onButtonPress: newDocumentSignal()
-            disable: !openedFile || replicatorStarted
+            disable: !openedFile
         }
         CustomMenuItem {
             id: deleteDocument
@@ -62,7 +61,7 @@ Item {
             filename: "Images/deleteDocumentIcon"
             label: "<b>Delete Doc</b>"
             onButtonPress: deleteDocumentSignal
-            disable: !openedFile || replicatorStarted
+            disable: !openedFile
         }
         CustomMenuItem {
             id: editDocument
@@ -72,17 +71,7 @@ Item {
             filename: "Images/editIcon"
             label: "<b>Edit Doc</b>"
             onButtonPress: editDocumentSignal()
-            disable: !openedFile || replicatorStarted
-        }
-        CustomMenuItem {
-            id: save
-            Layout.preferredHeight: 50
-            Layout.preferredWidth: 50
-            Layout.leftMargin: 5
-            filename: "Images/saveIcon"
-            label: "<b>Save</b>"
-            onButtonPress: saveSignal()
-            disable: !openedFile || replicatorStarted
+            disable: !openedFile
         }
         CustomMenuItem {
             id: saveAs
