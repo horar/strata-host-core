@@ -60,10 +60,9 @@ Item {
 
     }
 
-    //    property var demo_mode : {
-    //        "state": "off"
-
-    //    }
+    property var demo_led_state: {
+        "led" : 1
+    }
 
 
 
@@ -227,21 +226,20 @@ Item {
                                          "payload": {
                                              "mode": 1,
                                              "led_num": 1,
-                                             "intensity": 50,
-                                             "demo_time": 1.00
-
+                                             "demo_time": 1000,
+                                             "intensity": 50
                                          },
 
-                                         update: function (mode_a, led_num_a, intensity_a, time_a) {
-                                             this.set(mode_a,led_num_a,intensity_a,time_a)
+                                         update: function (mode_a, led_num_a, demo_time_a, intensity_a) {
+                                             this.set(mode_a, led_num_a, demo_time_a, intensity_a)
                                              this.send(this)
                                          },
 
-                                         set: function (mode_a,led_num_a,intensity_a,time_a) {
+                                         set: function (mode_a, led_num_a, demo_time_a, intensity_a) {
                                              this.payload.mode = mode_a
                                              this.payload.led_num = led_num_a
+                                             this.payload.demo_time = demo_time_a
                                              this.payload.intensity = intensity_a
-                                             this.payload.time = time_a
                                          },
 
                                          send: function () { CorePlatformInterface.send(this) },
@@ -290,43 +288,43 @@ Item {
                                        })
 
     property var periodic_hdl_update : ({
-                                           "cmd" : "update_periodic",
-                                           "payload": {
-                                               "function": "periodic_example_response",
-                                               "run_count":-1,
-                                               "interval": 1000
-                                           },
+                                            "cmd" : "update_periodic",
+                                            "payload": {
+                                                "function": "periodic_example_response",
+                                                "run_count":-1,
+                                                "interval": 1000
+                                            },
 
-                                           update: function (interval_a) {
-                                               this.set(interval_a)
-                                               this.send(this)
-                                           },
+                                            update: function (interval_a) {
+                                                this.set(interval_a)
+                                                this.send(this)
+                                            },
 
-                                           set: function (interval_a) {
-                                               this.payload.interval = interval_a
-                                           },
+                                            set: function (interval_a) {
+                                                this.payload.interval = interval_a
+                                            },
 
-                                           send: function () { CorePlatformInterface.send(this) },
-                                           show: function () { CorePlatformInterface.show(this) }
-                                       })
+                                            send: function () { CorePlatformInterface.send(this) },
+                                            show: function () { CorePlatformInterface.show(this) }
+                                        })
 
     property var periodic_hdl_stop : ({
-                                           "cmd" : "stop_periodic",
-                                           "payload": {
-                                               "function": "periodic_example_response"
-                                           },
+                                          "cmd" : "stop_periodic",
+                                          "payload": {
+                                              "function": "periodic_example_response"
+                                          },
 
-                                           update: function () {
-                                               this.set()
-                                               this.send()
-                                           },
+                                          update: function () {
+                                              this.set()
+                                              this.send()
+                                          },
 
-                                           set: function () {
-                                           },
+                                          set: function () {
+                                          },
 
-                                           send: function () { CorePlatformInterface.send(this) },
-                                           show: function () { CorePlatformInterface.show(this) }
-                                       })
+                                          send: function () { CorePlatformInterface.send(this) },
+                                          show: function () { CorePlatformInterface.show(this) }
+                                      })
 
 
     property bool boost_enable_state: false

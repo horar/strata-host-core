@@ -13,7 +13,7 @@ Rectangle {
     height: parent.height
     color:"black"
 
-    function send_demo_state(mode_state, led_num_state, intensity_state, time_state){
+    function send_demo_state(mode_state, led_num_state, time_state, intensity_state){
         if (mode_state === 5) {
             platformInterface.periodic_hdl_stop.update()
             platformInterface.demo_stop = true
@@ -25,13 +25,55 @@ Rectangle {
             {
                 platformInterface.periodic_hdl_start.update(time_state)
                 platformInterface.demo_stop = false
-                console.log("handler start")
             } else {
                 platformInterface.periodic_hdl_update.update(time_state)
-                console.log("handlar update")
             }
+        }
 
-//            platformInterface.periodic_hdl_update.update(time_state)
+    }
+
+    property var led_state : platformInterface.demo_led_state.led
+    onLed_stateChanged: {
+        if (led_state === 1){
+            sgStatusLight11.status = "green"
+        } else if (led_state === 2) {
+            sgStatusLight11.status = "off"
+            sgStatusLight12.status = "green"
+        } else if (led_state === 3) {
+            sgStatusLight12.status = "off"
+            sgStatusLight13.status = "green"
+        } else if (led_state === 4) {
+            sgStatusLight13.status = "off"
+            sgStatusLight14.status = "green"
+        } else if (led_state === 5) {
+            sgStatusLight14.status = "off"
+            sgStatusLight15.status = "green"
+        } else if (led_state === 6) {
+            sgStatusLight15.status = "off"
+            sgStatusLight16.status = "green"
+        } else if (led_state === 7) {
+            sgStatusLight16.status = "off"
+            sgStatusLight17.status = "green"
+        } else if (led_state === 8) {
+            sgStatusLight17.status = "off"
+            sgStatusLight18.status = "green"
+        } else if (led_state === 9) {
+            sgStatusLight18.status = "off"
+            sgStatusLight19.status = "green"
+        } else if (led_state === 10) {
+            sgStatusLight19.status = "off"
+            sgStatusLight1A.status = "green"
+        } else if (led_state === 11) {
+            sgStatusLight1A.status = "off"
+            sgStatusLight1B.status = "green"
+        } else if (led_state === 12) {
+            sgStatusLight1B.status = "off"
+            sgStatusLight1C.status = "green"
+        }
+
+        else {
+            sgStatusLight1C.status = "off"
+//            sgStatusLight12.status = "off"
         }
 
     }
@@ -204,7 +246,7 @@ Rectangle {
                         labelLeft: false             // Default: true
                         Layout.fillHeight: true
                         width: parent.width/2
-                        stepSize: 100                // Default: 1.0
+                        stepSize: 500                // Default: 1.0
                         value: 1000                        // Default: average of from and to
                         from: 500                      // Default: 0.0
                         to: 2000                    // Default: 100.0
@@ -220,6 +262,8 @@ Rectangle {
 
                         onSlider_valueChanged: {
                             send_demo_state((segmentedButtons1.index+1),(segmentedButtons2.index + 1),sgSlider1.value,sgSlider2.value)
+                            // e.g. function send_demo_state(mode_state, led_num_state, time_state, intensity_state)
+//                            delay(sgSlider1.value)
                         }
                     }
                 }
@@ -640,6 +684,5 @@ Rectangle {
                 }
             }
         }
-
     }
 }
