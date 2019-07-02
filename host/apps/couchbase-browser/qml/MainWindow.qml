@@ -65,11 +65,7 @@ Item {
                     onOpenFileSignal: openFileDialog.visible = true
                     onNewDatabaseSignal: newDatabasesPopup.visible = true
                     onNewDocumentSignal: newDocPopup.visible = true
-                    onDeleteDocumentSignal: {
-                        if (tableSelectorView.currentIndex !== 0)
-                        qmlBridge.deleteDoc(id,tableSelectorView.model[tableSelectorView.currentIndex])
-                        tableSelectorView.currentIndex = 0
-                    }
+                    onDeleteDocumentSignal: deletePopup.visible = true
                     //onEditDocumentSignal:
                     onSaveAsSignal: saveAsPopup.visible = true
                     onCloseSignal: {
@@ -197,6 +193,18 @@ Item {
                 anchors.centerIn: parent
                 onSubmit:  {
                     visible = false;
+                }
+            }
+            WarningPopup {
+                id: deletePopup
+                messageToDisplay: "Are you sure that you want to permanently delete document \""+tableSelectorView.model[tableSelectorView.currentIndex]+"\"";
+                onAllow: {
+                    deletePopup.visible = false
+                    qmlBridge.deleteDoc(id,tableSelectorView.model[tableSelectorView.currentIndex])
+                    tableSelectorView.currentIndex = 0
+                }
+                onDeny: {
+                    deletePopup.visible = false
                 }
             }
         }

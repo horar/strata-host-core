@@ -38,7 +38,7 @@ Popup {
 
     WarningPopup {
         id: warningPopup
-        onOverwrite: {
+        onAllow: {
             warningPopup.visible = false
             start()
         }

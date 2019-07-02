@@ -12,7 +12,7 @@ Window {
     //padding: 0
     modality: Qt.WindowModal
 
-    signal overwrite()
+    signal allow()
     signal deny()
 
     property alias messageToDisplay: message.text
@@ -46,7 +46,7 @@ Window {
                 horizontalCenterOffset: -100
                 verticalCenterOffset: 50
             }
-            onClicked: overwrite()
+            onClicked: allow()
             text: "Yes"
         }
         Button {
