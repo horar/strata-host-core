@@ -11,6 +11,16 @@ Item {
     property var jsonObj
     property alias openedFile: mainMenuView.openedFile
 
+    function startReplicator(){
+        let message = qmlBridge.startReplicator(id,hostName,username,password);
+        if (message.length === 0) {
+            bodyView.message = "Started replicator successfully";
+            mainMenuView.replicatorStarted = true;
+            visible = false;
+        }
+        else bodyView.message = message;
+    }
+
     onContentChanged: {
         if (content !== "") {
             let tempModel = ["All documents"];
@@ -73,7 +83,7 @@ Item {
                     }
                     onStartReplicatorSignal: {
                         loginPopup.visible = true
-                        warningPopup.visible = true
+
 
                     }
                     onStopReplicatorSignal: {
@@ -102,9 +112,6 @@ Item {
                                 bodyView.content = JSON.stringify(jsonObj,null,4);
                         }
                     }
-                    onSendIndex: {
-                        (index === 0 || index === -1) ? bodyView.readOnly = true : bodyView.readOnly = false
-                     }
                 }
                 Image {
                     id: onLogo
@@ -154,13 +161,12 @@ Item {
                 id: loginPopup
                 anchors.centerIn: parent
                 onStart: {
-                    let message = qmlBridge.startReplicator(id,hostName,username,password,rep_type);
-                    if (message.length === 0) {
-                        bodyView.message = "Started replicator successfully";
-                        mainMenuView.replicatorStarted = true;
-                        visible = false;
+                    if (mainMenuView.openedFile){
+                         warningPopup.visible = true
                     }
-                    else bodyView.message = message;
+                    else {
+                        startReplicator()
+                    }
                 }
             }
             NewDocumentPopup {
@@ -195,6 +201,13 @@ Item {
             WarningPopup {
                 id: warningPopup
                 anchors.centerIn: parent
+                onOverwrite: {
+                    warningPopup.visible = false
+                    startReplicator()
+                }
+                onDeny: {
+                    warningPopup.visible = false
+                }
             }
         }
     }
