@@ -15,6 +15,8 @@ Item {
     signal startReplicatorSignal()
     signal stopReplicatorSignal()
     signal newWindowSignal()
+    signal editDocumentSignal()
+    signal deleteDocumentSignal()
 
     property bool replicatorStarted: false
     property bool openedFile: false
@@ -50,6 +52,26 @@ Item {
             filename: "Images/createDocumentIcon"
             label: "<b>New Doc</b>"
             onButtonPress: newDocumentSignal()
+            disable: !openedFile || replicatorStarted
+        }
+        CustomMenuItem {
+            id: deleteDocument
+            Layout.preferredHeight: 50
+            Layout.preferredWidth: 50
+            Layout.leftMargin: 5
+            filename: "Images/deleteDocumentIcon"
+            label: "<b>Delete Doc</b>"
+            onButtonPress: deleteDocumentSignal
+            disable: !openedFile || replicatorStarted
+        }
+        CustomMenuItem {
+            id: editDocument
+            Layout.preferredHeight: 50
+            Layout.preferredWidth: 50
+            Layout.leftMargin: 5
+            filename: "Images/editIcon"
+            label: "<b>Edit Doc</b>"
+            onButtonPress: editDocumentSignal()
             disable: !openedFile || replicatorStarted
         }
         CustomMenuItem {
