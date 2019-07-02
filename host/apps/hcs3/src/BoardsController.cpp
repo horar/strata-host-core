@@ -47,7 +47,7 @@ void BoardsController::sendMessage(const std::string& connectionId, const std::s
 
     if (logAdapter_) {
         std::string logText = "Sending msg to:" + connectionId;
-        logAdapter_->Log(LoggingAdapter::eLvlDebug, logText);
+        logAdapter_->Log(LoggingAdapter::LogLevel::eLvlDebug, logText);
     }
 
     conn->addMessage(message);
@@ -140,7 +140,7 @@ void BoardsController::newConnection(spyglass::PlatformConnectionShPtr connectio
 
     if (logAdapter_) {
         std::string logText = "New board connected on:" + connection->getName();
-        logAdapter_->Log(LoggingAdapter::eLvlInfo, logText);
+        logAdapter_->Log(LoggingAdapter::LogLevel::eLvlInfo, logText);
     }
 }
 
@@ -168,7 +168,7 @@ void BoardsController::closeConnection(const std::string& connectionId)
 
     if (logAdapter_) {
         std::string logText = "Board disconnected on:" + connectionId;
-        logAdapter_->Log(LoggingAdapter::eLvlInfo, logText);
+        logAdapter_->Log(LoggingAdapter::LogLevel::eLvlInfo, logText);
     }
 }
 
@@ -184,7 +184,7 @@ void BoardsController::notifyMessageFromConnection(const std::string& connection
 
     if (logAdapter_) {
         std::string logText = "Board msg on:" + connectionId;
-        logAdapter_->Log(LoggingAdapter::eLvlDebug, logText);
+        logAdapter_->Log(LoggingAdapter::LogLevel::eLvlDebug, logText);
     }
 }
 
@@ -269,7 +269,7 @@ void BoardsController::ConnectionHandler::onNotifyReadConnection(spyglass::Platf
             case PlatformBoard::ProcessResult::eParseError:
             case PlatformBoard::ProcessResult::eValidationError:
                 std::string log_text = "Parsing or Validation error on connection:" + connection->getName();
-                receiver_->logging(LoggingAdapter::eLvlWarning, log_text);
+                receiver_->logging(LoggingAdapter::LogLevel::eLvlWarning, log_text);
                 break;
         }
     }

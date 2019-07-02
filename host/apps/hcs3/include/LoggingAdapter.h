@@ -8,7 +8,7 @@ class QLoggingCategory;
 class LoggingAdapter final
 {
 public:
-    enum LogLevel {
+    enum class LogLevel {
         eLvlDebug = 0,      //QtDebugMsg
         eLvlInfo,           //QtInfoMsg
         eLvlWarning,        //QtWarningMsg

@@ -49,7 +49,7 @@ bool Database::open(const std::string& db_name)
     if (ret != SGDatabaseReturnStatus::kNoError) {
         if (logAdapter_) {
             std::string logText = "Failed to open database err:" + std::to_string(static_cast<int>(ret));
-            logAdapter_->Log(LoggingAdapter::eLvlWarning, logText);
+            logAdapter_->Log(LoggingAdapter::LogLevel::eLvlWarning, logText);
         }
         return false;
     }
@@ -103,7 +103,7 @@ void Database::updateChannels()
     if (wasRunning) {
         if (sg_replicator_->start() == false) {
             if (logAdapter_) {
-                logAdapter_->Log(LoggingAdapter::eLvlInfo, "Replicator start failed!");
+                logAdapter_->Log(LoggingAdapter::LogLevel::eLvlInfo, "Replicator start failed!");
             }
         }
     }
@@ -134,7 +134,7 @@ bool Database::initReplicator(const std::string& replUrl)
     url_endpoint_ = new SGURLEndpoint(replUrl);
     if (url_endpoint_->init() == false) {
         if (logAdapter_) {
-            logAdapter_->Log(LoggingAdapter::eLvlInfo, "Replicator endpoint URL is failed!");
+            logAdapter_->Log(LoggingAdapter::LogLevel::eLvlInfo, "Replicator endpoint URL is failed!");
         }
         return false;
     }
@@ -147,7 +147,7 @@ bool Database::initReplicator(const std::string& replUrl)
 
     if (sg_replicator_->start() == false) {
         if (logAdapter_) {
-            logAdapter_->Log(LoggingAdapter::eLvlWarning, "Replicator start failed!");
+            logAdapter_->Log(LoggingAdapter::LogLevel::eLvlWarning, "Replicator start failed!");
         }
 
         delete sg_replicator_; sg_replicator_ = nullptr;
