@@ -1,12 +1,15 @@
 <RCC>
     <qresource prefix="/sgimages/">
+        <file>bolt.svg</file>
         <file>check.svg</file>
         <file>chevron-left.svg</file>
         <file>chevron-right.svg</file>
         <file>chevron-down.svg</file>
         <file>chip-flash.svg</file>
+        <file>cog.svg</file>
         <file>exclamation.svg</file>
         <file>exclamation-triangle.svg</file>
+        <file>plug.svg</file>
         <file>statusLightGreen.svg</file>
         <file>statusLightOff.svg</file>
         <file>statusLightOrange.svg</file>
