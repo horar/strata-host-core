@@ -19,8 +19,16 @@ Window {
         id: prtModel
     }
 
-    Common.ProgramDeviceWizard {
+    Rectangle {
         anchors.fill: parent
+        color: "#eeeeee"
+    }
+
+    Common.ProgramDeviceWizard {
+        anchors {
+            fill: parent
+            margins: 4
+        }
         boardController: prtModel.boardController
     }
 }
