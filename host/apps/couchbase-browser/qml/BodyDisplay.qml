@@ -8,7 +8,7 @@ Item {
 
     property alias content: text.text
     property alias message: statusText.text
-    property alias readOnly: text.readOnly
+    //property alias readOnly: text.readOnly
 
 
     Rectangle {
@@ -51,6 +51,7 @@ Item {
                 anchors.horizontalCenter: parent.horizontalCenter
                 padding: 3
                 color: "#eee"
+
             }
         }
     }
