@@ -78,6 +78,9 @@ signals:
     void taskDone(QString connectionId, bool status);
     void notify(QString connectionId, QString message);
 
+private slots:
+    void onTaskDone(QString connectionId, bool status);
+
 private:
     QMutex connectionToWorkerMutex_;
     QMap<QString, FlasherWorker*> connectionToWorker_;

@@ -80,7 +80,7 @@ bool FlasherConnector::start(spyglass::PlatformConnectionShPtr connection, const
     QThread* thread = new QThread;
     worker->moveToThread(thread);
 
-    connect(worker, &FlasherWorker::taskDone, this, &FlasherConnector::taskDone);
+    connect(worker, &FlasherWorker::taskDone, this, &FlasherConnector::onTaskDone);
     connect(worker, &FlasherWorker::notify, this, &FlasherConnector::notify);
 
     connect(thread, &QThread::started, worker, &FlasherWorker::process);
@@ -90,6 +90,22 @@ bool FlasherConnector::start(spyglass::PlatformConnectionShPtr connection, const
 
     thread->start();
     return true;
+}
+
+void FlasherConnector::onTaskDone(QString connectionId, bool status)
+{
+    FlasherWorker* worker = nullptr;
+    {
+        QMutexLocker lock(&connectionToWorkerMutex_);
+        auto findIt = connectionToWorker_.find(connectionId);
+        if (findIt == connectionToWorker_.end()) {
+            return;
+        }
+
+        connectionToWorker_.erase(findIt);
+    }
+
+    emit taskDone(connectionId, status);
 }
 
 void FlasherConnector::stop(const QString& connectionId)
