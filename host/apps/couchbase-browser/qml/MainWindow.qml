@@ -181,7 +181,7 @@ Item {
                 id: newDatabasesPopup
                 anchors.centerIn: parent
                 onSubmit: {
-                    let message = qmlBridge.createNewDatabase(folderPath.toString().replace("file://",""), filename);
+                    let message = qmlBridge.createNewDatabase(id,mainMenuView.openedFile,folderPath.toString().replace("file://",""), filename);
                     if (message.length === 0) {
                         bodyView.message = "Created new database successfully";
                     }
