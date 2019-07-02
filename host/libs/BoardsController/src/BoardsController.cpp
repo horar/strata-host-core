@@ -115,6 +115,11 @@ void BoardsController::programDevice(const QString &connectionId, const QString 
     flasherConnector_.start(connection, firmwarePath);
 }
 
+void BoardsController::stopProgrammingDevice()
+{
+    flasherConnector_.stopAll();
+}
+
 QStringList BoardsController::connectionIds() const
 {
     return connectionIds_;
