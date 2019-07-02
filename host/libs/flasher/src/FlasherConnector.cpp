@@ -8,10 +8,6 @@ FlasherWorker::FlasherWorker(spyglass::PlatformConnectionShPtr connection, const
 {
 }
 
-FlasherWorker::~FlasherWorker()
-{
-}
-
 void FlasherWorker::process()
 {
     Q_ASSERT(connection_ != nullptr);

@@ -14,10 +14,11 @@ class Flasher;
 class FlasherWorker : public QObject
 {
     Q_OBJECT
+    Q_DISABLE_COPY(FlasherWorker)
 
 public:
     FlasherWorker(spyglass::PlatformConnectionShPtr connection, const QString &firmwarePath, QObject *parent = nullptr);
-    ~FlasherWorker();
+    ~FlasherWorker() = default;
 
     /**
      * Stop request, must be called from other thread
@@ -50,7 +51,7 @@ private:
 
 //////////////////////////////////////////////////////////////////////////////////////
 
-class FlasherConnector: public QObject
+class FlasherConnector : public QObject
 {
     Q_OBJECT
     Q_DISABLE_COPY(FlasherConnector)
