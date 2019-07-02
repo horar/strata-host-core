@@ -33,6 +33,10 @@ public:
 
     QString setFilePath(QString file_path);
 
+    QString editDoc(const QString &id, const QString &body);
+
+    QString deleteDoc(const QString &id);
+
 private:
     QString file_path_, db_path_, db_name_, JSONResponse_, url_, username_, password_;
 
@@ -55,8 +59,6 @@ private:
     Spyglass::SGReplicatorConfiguration::ReplicatorType rep_type_;
 
     void emitUpdate();
-
-//    static void testReceive(bool pushing, std::string doc_id, std::string error_message, bool is_error, bool error_is_transient);
 
     QString getFilePath();
 
@@ -91,6 +93,10 @@ private:
     bool parseExistingFile();
 
     bool parseNewFile();
+
+    QString editDoc_(Spyglass::SGMutableDocument &doc, const QString &body);
+
+    QString deleteDoc_(Spyglass::SGDocument &doc);
 
 signals:
     void newUpdate(int i);

@@ -37,6 +37,16 @@ QString DatabaseInterface::setFilePath(QString file_path)
     } else if(!db_init()) {
         return("Problem initializing database.");
     }
+
+//    temporary
+//    cout << "\nCalling editDoc..."<< endl;
+//    editDoc("","");
+
+//    temporary
+    cout << "\nCalling deleteDoc..."<< endl;
+    deleteDoc("");
+
+
     return("");
 }
 
@@ -162,6 +172,10 @@ QString DatabaseInterface::rep_init(const QString &url, const QString &username,
 
 QString DatabaseInterface::rep_init_()
 {
+    if(!getDBstatus()) {
+        return("Database must be open and running for replication to be activated.");
+    }
+
     if(getRepstatus()) {
         return("Replicator is already running, cannot start again.");
     }
@@ -180,8 +194,6 @@ QString DatabaseInterface::rep_init_()
             return("Problem with authentication.");
         }
         sg_replicator_configuration_->setAuthenticator(sg_basic_authenticator_);
-    } else {
-        return("Username or password cannot be empty.");
     }
 
     sg_replicator_ = new SGReplicator(sg_replicator_configuration_);
@@ -197,6 +209,7 @@ QString DatabaseInterface::rep_init_()
     }
 
     setRepstatus(true);
+    emitUpdate();
 
     return("");
 }
@@ -261,6 +274,72 @@ bool DatabaseInterface::parseNewFile()
     return true;
 }
 
+QString DatabaseInterface::editDoc(const QString &id, const QString &body)
+{
+    if(id.isEmpty()) {
+        return("Received empty id, cannot edit.");
+    }
+
+    SGMutableDocument doc(sg_db_,id.toStdString());
+
+    if(!doc.exist()) {
+        return("\nDocument with id = \"" + id + "\" does not exist. Cannot edit.");
+    }
+
+    return  editDoc_(doc, body);
+}
+
+QString DatabaseInterface::editDoc_(SGMutableDocument &doc, const QString &body)
+{
+//    C4Document *c4_doc = sg_db_->getDocumentById(id.toStdString());
+
+//    SGDocument sg_doc;
+
+//    sg_doc.setC4document(c4_doc);
+
+//    SGDocument doc = sg_db_->getDocumentById(id.toStdString());
+
+//    std::vector <string>::iterator iter = document_keys_.begin();
+
+//    QString temp_name = "first_Doc";
+
+//    SGMutableDocument d(sg_db_, (*iter));
+
+//    SGMutableDocument doc(sg_db_,temp_name.toStdString());
+
+
+
+    doc.setBody(body.toStdString());
+
+    // needs to be saved to show up
+
+    emitUpdate();
+
+    return("");
+}
+
+QString DatabaseInterface::deleteDoc(const QString &id)
+{
+    if(id.isEmpty()) {
+        return("Received empty id, cannot delete.");
+    }
+
+    SGDocument doc(sg_db_,id.toStdString());
+
+    if(!doc.exist()) {
+        return("\nDocument with id = \"" + id + "\" does not exist. Cannot delete.");
+    }
+
+    return deleteDoc_(doc);
+}
+
+QString DatabaseInterface::deleteDoc_(SGDocument &doc)
+{
+    sg_db_->deleteDocument(&doc);
+    emitUpdate();
+    return("");
+}
+
 bool DatabaseInterface::setDocumentKeys()
 {
     document_keys_.clear();
@@ -280,9 +359,11 @@ void DatabaseInterface::setJSONResponse()
     // Printing the list of documents key from the local DB.
     for(std::vector <string>::iterator iter = document_keys_.begin(); iter != document_keys_.end(); iter++) {
         SGDocument usbPDDocument(sg_db_, (*iter));
-        temp_str = "\"" + QString((*iter).c_str()) + "\":" + QString(usbPDDocument.getBody().c_str()) + (iter + 1 == document_keys_.end() ? "}" : ",");
-        JSONResponse_ = JSONResponse_ + temp_str;
+        temp_str = "\"" + QString((*iter).c_str()) + "\":" + QString(usbPDDocument.getBody().c_str()) + (iter + 1 != document_keys_.end() ? "," : "");
+        JSONResponse_ += temp_str;
     }
+
+    JSONResponse_ += "}";
 }
 
 QString DatabaseInterface::getJSONResponse()

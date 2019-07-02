@@ -16,9 +16,7 @@ Popup {
     property alias hostName: hostNameField.text
     property alias username: usernameField.text
     property alias password: passwordField.text
-    property alias push: pushButton.checked
-    property alias pull: pullButton.checked
-    property alias pushAndPull: pushAndPullButton.checked
+    property string rep_type: "pull"
 
     function clearInput()
     {
@@ -177,17 +175,20 @@ Popup {
                             id: pushButton
                             text: qsTr("")
                             Layout.alignment: Qt.AlignLeft
+                            onClicked: rep_type = "push"
                         }
                         RadioButton {
                             id: pushAndPullButton
                             checked: true
                             text: qsTr("")
                             Layout.alignment: Qt.AlignHCenter
+                            onClicked: rep_type = "pushpull"
                         }
                         RadioButton {
                             id: pullButton
                             text: qsTr("")
                             Layout.alignment: Qt.AlignRight
+                            onClicked: rep_type = "pull"
                         }
                     }
                     Label {

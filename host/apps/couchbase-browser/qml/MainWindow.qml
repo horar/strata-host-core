@@ -9,6 +9,7 @@ Item {
     property var id
     property var content: ""
     property var jsonObj
+    property alias openedFile: mainMenuView.openedFile
 
     function startReplicator(){
         let message = qmlBridge.startReplicator(id,hostName,username,password);
@@ -160,9 +161,17 @@ Item {
                 id: loginPopup
                 anchors.centerIn: parent
                 onStart: {
+<<<<<<< HEAD
                     if(bodyView.content.length !== 0){
                          warningPopup.visible = true
 
+=======
+                    let message = qmlBridge.startReplicator(id,hostName,username,password,rep_type);
+                    if (message.length === 0) {
+                        bodyView.message = "Started replicator successfully";
+                        mainMenuView.replicatorStarted = true;
+                        visible = false;
+>>>>>>> origin/SCT-455-integrate-c-backend-to-qml-ui-fo
                     }
                     else {
                         startReplicator()
