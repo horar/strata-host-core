@@ -15,11 +15,11 @@ add_executable(${PROJECT_NAME})
 target_sources(${PROJECT_NAME} PRIVATE
     main.cpp
     PrtModel.cpp
-    SgSortFilterProxyModel.cpp
-    SgJLinkConnector.cpp
-
     images/images.qrc
     qml.qrc
+
+    logging/LoggingQtCategories.cpp
+    logging/qml/tech/strata/logger/qml.qrc
 )
 
 if(APPLE)
@@ -62,8 +62,8 @@ target_link_libraries(${PROJECT_NAME}
     Qt5::Qml
     Qt5::Quick
 
-    PlatformManager
-    flasher
+    BoardsController
+    QtLogger
 )
 
 target_include_directories(${PROJECT_NAME}

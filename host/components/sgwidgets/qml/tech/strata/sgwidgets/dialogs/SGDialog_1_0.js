@@ -52,13 +52,15 @@ function showConfirmationDialog(
     acceptButtonText,
     callbackAccepted,
     rejectButtonText,
-    callbackRejected) {
+    callbackRejected,
+    type) {
 
     var properties = {
         "title": title,
         "text": text,
         "acceptButtonText": acceptButtonText,
         "rejectButtonText": rejectButtonText,
+        "type": type,
     }
 
     var dialog = createDialog(parent, "SGConfirmationDialog_1_0.qml", properties)
