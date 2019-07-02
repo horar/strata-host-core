@@ -3,6 +3,5 @@
         <file>main.qml</file>
         <file>SciMain.qml</file>
         <file>PlatformDelegate.qml</file>
-        <file>ProgramDeviceWizard.qml</file>
     </qresource>
 </RCC>

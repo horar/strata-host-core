@@ -5,7 +5,7 @@
 #include <QtQml/qqmlparserstatus.h>
 #include <QCollator>
 
-class SgSortFilterProxyModel : public QSortFilterProxyModel, public QQmlParserStatus
+class SGSortFilterProxyModel : public QSortFilterProxyModel, public QQmlParserStatus
 {
     Q_OBJECT
     Q_INTERFACES(QQmlParserStatus)
@@ -25,7 +25,7 @@ class SgSortFilterProxyModel : public QSortFilterProxyModel, public QQmlParserSt
     Q_ENUMS(FilterSyntax)
 
 public:
-    explicit SgSortFilterProxyModel(QObject *parent = nullptr);
+    explicit SGSortFilterProxyModel(QObject *parent = nullptr);
 
     int count() const;
 

@@ -1,7 +1,7 @@
-#include "SgSortFilterProxyModel.h"
+#include "SGSortFilterProxyModel.h"
 #include <QDebug>
 
-SgSortFilterProxyModel::SgSortFilterProxyModel(QObject *parent)
+SGSortFilterProxyModel::SGSortFilterProxyModel(QObject *parent)
     : QSortFilterProxyModel(parent),
       complete_(true),
       naturalSort_(true),
@@ -20,17 +20,17 @@ SgSortFilterProxyModel::SgSortFilterProxyModel(QObject *parent)
     collator_.setNumericMode(true);
 }
 
-int SgSortFilterProxyModel::count() const
+int SGSortFilterProxyModel::count() const
 {
     return rowCount();
 }
 
-QObject *SgSortFilterProxyModel::sourceModel() const
+QObject *SGSortFilterProxyModel::sourceModel() const
 {
     return QSortFilterProxyModel::sourceModel();
 }
 
-void SgSortFilterProxyModel::setSourceModel(QObject *sourceModel)
+void SGSortFilterProxyModel::setSourceModel(QObject *sourceModel)
 {
     if (sourceModel == static_cast<QObject *>(QSortFilterProxyModel::sourceModel())) {
         return;
@@ -56,12 +56,12 @@ void SgSortFilterProxyModel::setSourceModel(QObject *sourceModel)
     emit sourceModelChanged();
 }
 
-QString SgSortFilterProxyModel::sortRole() const
+QString SGSortFilterProxyModel::sortRole() const
 {
     return sortRole_;
 }
 
-void SgSortFilterProxyModel::setSortRole(const QString &role)
+void SGSortFilterProxyModel::setSortRole(const QString &role)
 {
     if (sortRole_ != role) {
         sortRole_ = role;
@@ -71,12 +71,12 @@ void SgSortFilterProxyModel::setSortRole(const QString &role)
     }
 }
 
-QString SgSortFilterProxyModel::filterRole() const
+QString SGSortFilterProxyModel::filterRole() const
 {
     return filterRole_;
 }
 
-void SgSortFilterProxyModel::setFilterRole(const QString &role)
+void SGSortFilterProxyModel::setFilterRole(const QString &role)
 {
     if (filterRole_ != role) {
         filterRole_ = role;
@@ -86,12 +86,12 @@ void SgSortFilterProxyModel::setFilterRole(const QString &role)
     }
 }
 
-QString SgSortFilterProxyModel::filterPattern() const
+QString SGSortFilterProxyModel::filterPattern() const
 {
     return filterRegExp().pattern();
 }
 
-void SgSortFilterProxyModel::setFilterPattern(const QString &filter)
+void SGSortFilterProxyModel::setFilterPattern(const QString &filter)
 {
     if (filterPattern() != filter) {
         setFilterRegExp(QRegExp(filter,
@@ -102,12 +102,12 @@ void SgSortFilterProxyModel::setFilterPattern(const QString &filter)
     }
 }
 
-SgSortFilterProxyModel::FilterSyntax SgSortFilterProxyModel::filterPatternSyntax() const
+SGSortFilterProxyModel::FilterSyntax SGSortFilterProxyModel::filterPatternSyntax() const
 {
     return static_cast<FilterSyntax>(filterRegExp().patternSyntax());
 }
 
-void SgSortFilterProxyModel::setFilterPatternSyntax(SgSortFilterProxyModel::FilterSyntax syntax)
+void SGSortFilterProxyModel::setFilterPatternSyntax(SGSortFilterProxyModel::FilterSyntax syntax)
 {
     if (filterPatternSyntax() != syntax) {
         setFilterRegExp(QRegExp(filterPattern(),
@@ -118,12 +118,12 @@ void SgSortFilterProxyModel::setFilterPatternSyntax(SgSortFilterProxyModel::Filt
     }
 }
 
-bool SgSortFilterProxyModel::naturalSort() const
+bool SGSortFilterProxyModel::naturalSort() const
 {
     return naturalSort_;
 }
 
-void SgSortFilterProxyModel::setNaturalSort(bool naturalSort)
+void SGSortFilterProxyModel::setNaturalSort(bool naturalSort)
 {
     if (naturalSort_ != naturalSort) {
         naturalSort_ = naturalSort;
@@ -135,12 +135,12 @@ void SgSortFilterProxyModel::setNaturalSort(bool naturalSort)
     }
 }
 
-bool SgSortFilterProxyModel::sortAscending() const
+bool SGSortFilterProxyModel::sortAscending() const
 {
     return sortAscending_;
 }
 
-void SgSortFilterProxyModel::setSortAscending(bool sortAscending)
+void SGSortFilterProxyModel::setSortAscending(bool sortAscending)
 {
     if (sortAscending_ != sortAscending) {
         sortAscending_ = sortAscending;
@@ -152,12 +152,12 @@ void SgSortFilterProxyModel::setSortAscending(bool sortAscending)
     }
 }
 
-bool SgSortFilterProxyModel::caseSensitive() const
+bool SGSortFilterProxyModel::caseSensitive() const
 {
     return sortCaseSensitivity() == Qt::CaseSensitive;
 }
 
-void SgSortFilterProxyModel::setCaseSensitive(bool sensitive)
+void SGSortFilterProxyModel::setCaseSensitive(bool sensitive)
 {
     if (caseSensitive() != sensitive) {
         Qt::CaseSensitivity sensitivity = sensitive ? Qt::CaseSensitive : Qt::CaseInsensitive;
@@ -169,12 +169,12 @@ void SgSortFilterProxyModel::setCaseSensitive(bool sensitive)
     }
 }
 
-bool SgSortFilterProxyModel::invokeCustomFilter() const
+bool SGSortFilterProxyModel::invokeCustomFilter() const
 {
     return invokeCustomFilter_;
 }
 
-void SgSortFilterProxyModel::setInvokeCustomFilter(bool invokeCustomFilter)
+void SGSortFilterProxyModel::setInvokeCustomFilter(bool invokeCustomFilter)
 {
     if (invokeCustomFilter_ != invokeCustomFilter) {
         invokeCustomFilter_ = invokeCustomFilter;
@@ -186,12 +186,12 @@ void SgSortFilterProxyModel::setInvokeCustomFilter(bool invokeCustomFilter)
     }
 }
 
-bool SgSortFilterProxyModel::invokeCustomLessThan() const
+bool SGSortFilterProxyModel::invokeCustomLessThan() const
 {
     return invokeCustomLessThan_;
 }
 
-void SgSortFilterProxyModel::setInvokeCustomLessThan(bool invokeCustomLessThan)
+void SGSortFilterProxyModel::setInvokeCustomLessThan(bool invokeCustomLessThan)
 {
     if (invokeCustomLessThan_ != invokeCustomLessThan) {
         invokeCustomLessThan_ = invokeCustomLessThan;
@@ -203,12 +203,12 @@ void SgSortFilterProxyModel::setInvokeCustomLessThan(bool invokeCustomLessThan)
     }
 }
 
-void SgSortFilterProxyModel::classBegin()
+void SGSortFilterProxyModel::classBegin()
 {
     complete_ = false;
 }
 
-void SgSortFilterProxyModel::componentComplete()
+void SGSortFilterProxyModel::componentComplete()
 {
     complete_ = true;
     doSetFilterRole();
@@ -217,12 +217,12 @@ void SgSortFilterProxyModel::componentComplete()
     QSortFilterProxyModel::sort(0, sortAscending_ ? Qt::AscendingOrder : Qt::DescendingOrder);
 }
 
-int SgSortFilterProxyModel::naturalCompare(const QString &left, const QString &right) const
+int SGSortFilterProxyModel::naturalCompare(const QString &left, const QString &right) const
 {
     return collator_.compare(left, right);
 }
 
-QVariant SgSortFilterProxyModel::get(int row) const
+QVariant SGSortFilterProxyModel::get(int row) const
 {
     QVariantMap value;
 
@@ -238,12 +238,12 @@ QVariant SgSortFilterProxyModel::get(int row) const
     return value;
 }
 
-int SgSortFilterProxyModel::mapIndexToSource(int i)
+int SGSortFilterProxyModel::mapIndexToSource(int i)
 {
     return mapToSource(index(i, 0, QModelIndex())).row();
 }
 
-int SgSortFilterProxyModel::mapIndexFromSource(int i)
+int SGSortFilterProxyModel::mapIndexFromSource(int i)
 {
     if (sourceModel() == nullptr) {
         return -1;
@@ -252,7 +252,7 @@ int SgSortFilterProxyModel::mapIndexFromSource(int i)
     return mapFromSource(QSortFilterProxyModel::sourceModel()->index(i, 0)).row();
 }
 
-int SgSortFilterProxyModel::roleKey(const QString &role) const
+int SGSortFilterProxyModel::roleKey(const QString &role) const
 {
     QHash<int, QByteArray> roles = roleNames();
     QHashIterator<int, QByteArray> i(roles);
@@ -266,7 +266,7 @@ int SgSortFilterProxyModel::roleKey(const QString &role) const
     return -1;
 }
 
-QHash<int, QByteArray> SgSortFilterProxyModel::roleNames() const
+QHash<int, QByteArray> SGSortFilterProxyModel::roleNames() const
 {
     if (sourceModel() == nullptr) {
         return QHash<int, QByteArray>();
@@ -275,7 +275,7 @@ QHash<int, QByteArray> SgSortFilterProxyModel::roleNames() const
     return QSortFilterProxyModel::sourceModel()->roleNames();
 }
 
-bool SgSortFilterProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const
+bool SGSortFilterProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const
 {
     if (invokeCustomFilter_) {
         return callFilterAcceptsRow(sourceRow);
@@ -287,7 +287,7 @@ bool SgSortFilterProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex &
     return QSortFilterProxyModel::filterAcceptsRow(sourceRow, sourceParent);
 }
 
-bool SgSortFilterProxyModel::lessThan(const QModelIndex &sourceLeft,
+bool SGSortFilterProxyModel::lessThan(const QModelIndex &sourceLeft,
                                       const QModelIndex &sourceRight) const
 {
     if (invokeCustomLessThan_) {
@@ -307,7 +307,7 @@ bool SgSortFilterProxyModel::lessThan(const QModelIndex &sourceLeft,
     return QSortFilterProxyModel::lessThan(sourceLeft, sourceRight);
 }
 
-void SgSortFilterProxyModel::doSetSortRole()
+void SGSortFilterProxyModel::doSetSortRole()
 {
     if (!complete_ || sourceModel() == nullptr) {
         return;
@@ -319,7 +319,7 @@ void SgSortFilterProxyModel::doSetSortRole()
     }
 }
 
-void SgSortFilterProxyModel::doSetFilterRole()
+void SGSortFilterProxyModel::doSetFilterRole()
 {
     if (!sourceModel()) {
         return;
@@ -331,7 +331,7 @@ void SgSortFilterProxyModel::doSetFilterRole()
     }
 }
 
-bool SgSortFilterProxyModel::callFilterAcceptsRow(int sourceRow) const
+bool SGSortFilterProxyModel::callFilterAcceptsRow(int sourceRow) const
 {
     if (metaObject()->indexOfMethod("filterAcceptsRow(QVariant)") != -1) {
         QVariant accepted = false;
@@ -349,7 +349,7 @@ bool SgSortFilterProxyModel::callFilterAcceptsRow(int sourceRow) const
     return false;
 }
 
-bool SgSortFilterProxyModel::callLessThan(int leftRow, int rightRow) const
+bool SGSortFilterProxyModel::callLessThan(int leftRow, int rightRow) const
 {
     if (metaObject()->indexOfMethod("lessThan(QVariant,QVariant)") != -1) {
         QVariant retVal = false;
@@ -368,14 +368,14 @@ bool SgSortFilterProxyModel::callLessThan(int leftRow, int rightRow) const
     return false;
 }
 
-void SgSortFilterProxyModel::disconnectFromSourceModel()
+void SGSortFilterProxyModel::disconnectFromSourceModel()
 {
     if (QSortFilterProxyModel::sourceModel()) {
         disconnect(QSortFilterProxyModel::sourceModel(), nullptr, this, SLOT(sourceModelRolesMaybeChanged()));
     }
 }
 
-void SgSortFilterProxyModel::sourceModelRolesMaybeChanged()
+void SGSortFilterProxyModel::sourceModelRolesMaybeChanged()
 {
     if (QSortFilterProxyModel::sourceModel()->roleNames().count() > 0) {
         doSetFilterRole();

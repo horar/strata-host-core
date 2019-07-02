@@ -1,20 +1,21 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.12
-import tech.strata.fonts 1.0 as StrataFonts
 import tech.strata.sgwidgets 1.0 as SGWidgets
 import tech.strata.commoncpp 1.0 as CommonCpp
-
 import QtQuick.Dialogs 1.3
-import tech.strata.logger 1.0
+import tech.strata.common 1.0
 
 Item {
     id: wizard
 
+    property variant boardController: null
     property string connectionId
     property string firmwarePath
     property string bootloaderPath
     property bool useJLink: false
     property int spacing: 10
+    property bool closeButtonVisible: false
+    property bool requestCancelOnClose: false
 
     signal cancelRequested()
 
@@ -330,12 +331,18 @@ Item {
 
                 SGWidgets.SGButton {
                     text: qsTr("Close")
-                    onClicked: cancelRequested()
+                    onClicked: {
+                        if(requestCancelOnClose) {
+                            cancelRequested()
+                        }
+                    }
                     focusPolicy: Qt.NoFocus
+                    visible: closeButtonVisible
                 }
 
                 SGWidgets.SGButton {
                     text: qsTr("Begin")
+                    icon.source: "qrc:/sgimages/chip-flash.svg"
                     focusPolicy: Qt.NoFocus
 
                     onClicked: {
@@ -403,7 +410,7 @@ Item {
             property variant warningDialog: null
 
             Connections {
-                target: sciModel.boardController
+                target: wizard.boardController
 
                 onConnectedBoard: {
                     waitForActiveBoardTimer.connectionId = connectionId
@@ -443,14 +450,14 @@ Item {
             }
 
             Connections {
-                target: sciModel
+                target: wizard.boardController
 
                 onNotify: {
                     processPage.subtextNote = message
                 }
 
                 onProgramDeviceDone: {
-                    console.log(Logger.sciCategory, "program device done", status)
+                    console.log(Logger.pdwCategory, "program device done", status)
                     if (status) {
                         processingStatus = ProgramDeviceWizard.ProgrammingSucceed
                     } else {
@@ -464,8 +471,7 @@ Item {
                 target: jLinkConnector
 
                 onProcessFinished: {
-
-                    console.log(Logger.sciCategory, "JLink process finished with status=", status)
+                    console.log(Logger.pdwCategory, "JLink process finished with status=", status)
                     if (status) {
                         doProgramDeviceApplication()
                     } else {
@@ -475,7 +481,7 @@ Item {
                 }
 
                 onNotify: {
-                    console.log(Logger.sciCategory, "flash notification", message)
+                    console.log(Logger.pdwCategory, "flash notification", message)
                 }
             }
 
@@ -496,7 +502,7 @@ Item {
                 if (processingStatus === ProgramDeviceWizard.WaitingForDevice
                         || processingStatus === ProgramDeviceWizard.WaitingForJLink) {
 
-                    if (sciModel.boardController.connectionIds.length === 1) {
+                    if (wizard.boardController.connectionIds.length === 1) {
                         if (wizard.useJLink) {
                             processingStatus = ProgramDeviceWizard.WaitingForJLink
                             var jLinkConnected = jLinkConnector.isBoardConnected()
@@ -506,7 +512,7 @@ Item {
                             }
                         }
 
-                        var connectionInfo = sciModel.boardController.getConnectionInfo(sciModel.boardController.connectionIds[0])
+                        var connectionInfo = wizard.boardController.getConnectionInfo(wizard.boardController.connectionIds[0])
                         var bootloaderWarning = wizard.useJLink && connectionInfo.bootloaderVersion.length > 0
                         var firmwareWarning = connectionInfo.applicationVersion.length > 0
 
@@ -576,7 +582,7 @@ Item {
 
             function doProgramDeviceApplication() {
                 processingStatus = ProgramDeviceWizard.ProgrammingApplication
-                sciModel.programDevice(sciModel.boardController.connectionIds[0], firmwarePath)
+                wizard.boardController.programDevice(wizard.boardController.connectionIds[0], firmwarePath)
             }
 
             Component.onCompleted: {
@@ -713,7 +719,14 @@ Item {
                              || processingStatus === ProgramDeviceWizard.WaitingForJLink
                              || processingStatus === ProgramDeviceWizard.ProgrammingSucceed
 
-                    onClicked: cancelRequested()
+                    onClicked: {
+                        if (requestCancelOnClose) {
+                            cancelRequested()
+                            return
+                        }
+
+                        stackView.pop(stackView.initialItem)
+                    }
                 }
 
                 SGWidgets.SGButton {
