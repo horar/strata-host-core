@@ -820,8 +820,6 @@ Item {
     property var pgood_enable
     property int timeout_status
 
-
-
     // DEBUG Window for testing motor vortex UI without a platform
     Window {
         id: debug

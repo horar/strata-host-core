@@ -51,14 +51,14 @@ Item {
         if(read_vin === "good") {
             ledLight.status = "green"
             vinlable = "over"
-            ledLight.label = "VIN Ready ("+ vinlable + " 2.25V)"
+            ledLight.label = "VIN Ready ("+ vinlable + " 2.5V)"
             enableSwitch.enabled  = true
             enableSwitch.opacity = 1.0
         }
         else {
             ledLight.status = "red"
             vinlable = "under"
-            ledLight.label = "VIN Ready ("+ vinlable + " 2.25V)"
+            ledLight.label = "VIN Ready ("+ vinlable + " 2.5V)"
             enableSwitch.enabled  = false
             enableSwitch.opacity = 0.5
             platformInterface.enabled = false
@@ -245,7 +245,7 @@ Item {
                         if(vinMonitor === "good") {
                             status = "green"
                             vinlable = "over"
-                            label = "VIN Ready ("+ vinlable + " 2.25V)"
+                            label = "VIN Ready ("+ vinlable + " 2.5V)"
                             //Show enableSwitch if vin is "good"
                             enableSwitch.enabled  = true
                             enableSwitch.opacity = 1.0
@@ -253,7 +253,7 @@ Item {
                         else if(vinMonitor === "bad") {
                             status = "red"
                             vinlable = "under"
-                            label = "VIN Ready ("+ vinlable + " 2.25V)"
+                            label = "VIN Ready ("+ vinlable + " 2.5V)"
                             //Hide enableSwitch if vin is "good"
                             enableSwitch.enabled  = false
                             enableSwitch.opacity = 0.5

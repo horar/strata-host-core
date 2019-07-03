@@ -59,7 +59,7 @@ Item {
             ledLight.status = "red"
             platformInterface.hide_enable = false
             vinlable = "under"
-            ledLight.label = "VIN Ready \n ("+ vinlable + " 2.25V)"
+            ledLight.label = "VIN Ready \n ("+ vinlable + " 2.5V)"
 
         }
     }
@@ -432,9 +432,8 @@ Item {
                             }
                             onClicked: {
                                 platformInterface.force_reset_registers.update("reset")
-                                platformInterface.rearm_device.update("off")
+//                                platformInterface.rearm_device.update("off")
                                 platformInterface.read_initial_status.update()
-
                             }
                         }
                     }
@@ -449,7 +448,7 @@ Item {
                         SGStatusLight {
                             id: ledLight
                             // Optional Configuration:
-                            label: "VIN Ready" +"\n" + "(under 2.25V)" // Default: "" (if not entered, label will not appear)
+                            label: "VIN Ready" +"\n" + "(under 2.5V)" // Default: "" (if not entered, label will not appear)
                             Layout.alignment: Qt.AlignCenter
 
                             property string vinMonitor: platformInterface.status_vin_good.vingood
@@ -458,7 +457,7 @@ Item {
                                     status = "green"
                                     vinlable = "over"
                                     platformInterface.hide_enable = true
-                                    label = "VIN Ready \n ("+ vinlable + " 2.25V)"
+                                    label = "VIN Ready \n ("+ vinlable + " 2.5V)"
                                     platformInterface.read_initial_status.update()
 
                                 }
@@ -466,7 +465,7 @@ Item {
                                     status = "red"
                                     platformInterface.hide_enable = false
                                     vinlable = "under"
-                                    label = "VIN Ready \n ("+ vinlable + " 2.25V)"
+                                    label = "VIN Ready \n ("+ vinlable + " 2.5V)"
                                     platformInterface.enabled = false
                                     platformInterface.set_enable.update("off")
                                 }

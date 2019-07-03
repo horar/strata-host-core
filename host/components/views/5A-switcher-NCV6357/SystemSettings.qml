@@ -27,6 +27,30 @@ Item {
         }
     }
 
+    property var read_vsel_basic_status: platformInterface.vsel_state
+    onRead_vsel_basic_statusChanged: {
+        if(read_vsel_basic_status === true) {
+            outputVolCombo.enabled = false
+            outputVolCombo.opacity = 0.5
+            dcdcModeCombo.enabled = false
+            dcdcModeCombo.opacity = 0.5
+            outputVolCombo2.enabled = true
+            outputVolCombo2.opacity = 1.0
+            dcdcModeCombo1.enabled = true
+            dcdcModeCombo1.opacity = 1.0
+        }
+        else {
+            outputVolCombo.enabled = true
+            outputVolCombo.opacity = 1.0
+            dcdcModeCombo.enabled = true
+            dcdcModeCombo.opacity = 1.0
+            outputVolCombo2.enabled = false
+            outputVolCombo2.opacity = 0.5
+            dcdcModeCombo1.enabled = false
+            dcdcModeCombo1.opacity = 0.5
+        }
+    }
+
     property var read_enable_state: platformInterface.initial_status_0.enable_status
     onRead_enable_stateChanged: {
         if(read_enable_state === "on") {
@@ -44,25 +68,9 @@ Item {
     onRead_vsel_statusChanged: {
         if(read_vsel_status === "on") {
             platformInterface.vsel_state = true
-            outputVolCombo.enabled = false
-            outputVolCombo.opacity = 0.5
-            dcdcModeCombo.enabled = false
-            dcdcModeCombo.opacity = 0.5
-            outputVolCombo2.enabled = true
-            outputVolCombo2.opacity = 1.0
-            dcdcModeCombo1.enabled = true
-            dcdcModeCombo1.opacity = 1.0
         }
         else {
             platformInterface.vsel_state = false
-            outputVolCombo.enabled = true
-            outputVolCombo.opacity = 1.0
-            dcdcModeCombo.enabled = true
-            dcdcModeCombo.opacity = 1.0
-            outputVolCombo2.enabled = false
-            outputVolCombo2.opacity = 0.5
-            dcdcModeCombo1.enabled = false
-            dcdcModeCombo1.opacity = 0.5
         }
     }
 
@@ -102,8 +110,6 @@ Item {
     onRead_ipeak_stateChanged: {
         platformInterface.ipeak_state = read_ipeak_state
     }
-
-
 
     Component.onCompleted: {
         var value;
@@ -226,9 +232,8 @@ Item {
                             comboBoxWidth: parent.width/2
                             comboBoxHeight: parent.height/2
                             onActivated: {
-                                platformInterface.set_thermal_threshold.update(currentIndex)
+                                platformInterface.set_ipeak_current.update(currentIndex)
                                 platformInterface.ipeak_state = currentIndex
-                                platformInterface.set_thermal_threshold.show()
                             }
                         }
                     }
@@ -295,25 +300,9 @@ Item {
                         platformInterface.vsel_state = checked
                         if(checked){
                             platformInterface.set_vselect.update("on")
-                            outputVolCombo.enabled = false
-                            outputVolCombo.opacity = 0.5
-                            dcdcModeCombo.enabled = false
-                            dcdcModeCombo.opacity = 0.5
-                            outputVolCombo2.enabled = true
-                            outputVolCombo2.opacity = 1.0
-                            dcdcModeCombo1.enabled = true
-                            dcdcModeCombo1.opacity = 1.0
                         }
                         else{
                             platformInterface.set_vselect.update("off")
-                            outputVolCombo.enabled = true
-                            outputVolCombo.opacity = 1.0
-                            dcdcModeCombo.enabled = true
-                            dcdcModeCombo.opacity = 1.0
-                            outputVolCombo2.enabled = false
-                            outputVolCombo2.opacity = 0.5
-                            dcdcModeCombo1.enabled = false
-                            dcdcModeCombo1.opacity = 0.5
                         }
                     }
                 }
