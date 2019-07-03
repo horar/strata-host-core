@@ -14,11 +14,6 @@ find_package(Qt5 ${VERSION_QT5}
 add_executable(${PROJECT_NAME}
     main.cpp
     SciModel.cpp
-    BoardsController.cpp
-    PlatformBoard.cpp
-    ProgramDeviceTask.cpp
-    SgUtilsCpp.cpp
-    SgJLinkConnector.cpp
     qml.qrc
     images/images.qrc
 
@@ -51,8 +46,7 @@ endif()
 target_link_libraries(${PROJECT_NAME}
     Qt5::Core
     Qt5::Quick
-    PlatformManager
-    flasher
+    BoardsController
 
     QtLogger
 )
@@ -78,7 +72,7 @@ if(APPLE)
         MACOSX_BUNDLE_BUNDLE_NAME "${PRODUCT_NAME_LONG}"
         MACOSX_BUNDLE_BUNDLE_VERSION "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}"
         MACOSX_BUNDLE_COPYRIGHT "${PRODUCT_NAME_COPYRIGHT}"
-        MACOSX_BUNDLE_GUI_IDENTIFIER com.onsemi.spyglass
+        MACOSX_BUNDLE_GUI_IDENTIFIER com.onsemi.strata.sci
         MACOSX_BUNDLE_ICON_FILE sciLogoGreen.icns
         MACOSX_BUNDLE_INFO_STRING ${PRODUCT_NAME_LONG}
     )

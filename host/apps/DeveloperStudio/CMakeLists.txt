@@ -1,8 +1,22 @@
 project(StrataDeveloperStudio
-    VERSION 0.0.0
+    DESCRIPTION "Strata Developer Studio"
     LANGUAGES CXX
 )
+set(PROJECT_VERSION_MAJOR 1)
+set(PROJECT_VERSION_MINOR 3)
+set(PROJECT_VERSION_PATCH 0)
+if("$ENV{BUILD_ID}" STREQUAL "")
+    set(PROJECT_VERSION_TWEAK 1)
+else()
+    set(PROJECT_VERSION_TWEAK $ENV{BUILD_ID})
+endif()
+set(PROJECT_VERSION ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}.${PROJECT_VERSION_TWEAK})
+
 message(STATUS "${PROJECT_NAME} v${PROJECT_VERSION}")
+
+
+set(PROJECT_COMPANY "ON Semiconductor")
+set(PROJECT_COPYRIGHT "Copyright (C) 2018-2019 ${PROJECT_COMPANY}")
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
@@ -44,8 +58,14 @@ if(APPLE)
     )
 endif()
 if(WIN32)
+    configure_file(
+        resources/main.rc.in
+        resources/main.rc
+        @ONLY
+    )
+
     target_sources(${PROJECT_NAME} PRIVATE
-        resources/strata.rc
+        ${CMAKE_CURRENT_BINARY_DIR}/resources/main.rc
     )
 endif()
 
@@ -73,8 +93,6 @@ target_include_directories(${PROJECT_NAME}
     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/source
 )
 
-set(PRODUCT_NAME_LONG "Strata Developer Studio")
-set(PRODUCT_NAME_COPYRIGHT "Copyright (C) 2018-2019 ON Semiconductor")
 set_target_properties(${PROJECT_NAME} PROPERTIES
     CXX_STANDARD 17
     CXX_STANDARD_REQUIRED ON
@@ -83,18 +101,18 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
     AUTORCC ON
     #AUTORCC_OPTIONS "--compress;9"
 
-    OUTPUT_NAME "${PRODUCT_NAME_LONG}"
+    OUTPUT_NAME "${PROJECT_DESCRIPTION}"
 )
 if(APPLE)
     set_target_properties(${PROJECT_NAME} PROPERTIES
         MACOSX_BUNDLE ON
         MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.plist"
-        MACOSX_BUNDLE_BUNDLE_NAME "${PRODUCT_NAME_LONG}"
-        MACOSX_BUNDLE_BUNDLE_VERSION "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}"
-        MACOSX_BUNDLE_COPYRIGHT "${PRODUCT_NAME_COPYRIGHT}"
-        MACOSX_BUNDLE_GUI_IDENTIFIER com.onsemi.spyglass
+        MACOSX_BUNDLE_BUNDLE_NAME "${PROJECT_DESCRIPTION}"
+        MACOSX_BUNDLE_BUNDLE_VERSION "${PROJECT_VERSION}"
+        MACOSX_BUNDLE_COPYRIGHT "${PROJECT_COPYRIGHT}"
+        MACOSX_BUNDLE_GUI_IDENTIFIER com.onsemi.strata.devstudio
         MACOSX_BUNDLE_ICON_FILE onLogoGreen.icns
-        MACOSX_BUNDLE_INFO_STRING ${PRODUCT_NAME_LONG}
+        MACOSX_BUNDLE_INFO_STRING ${PROJECT_DESCRIPTION}
     )
 endif()
 

@@ -296,7 +296,11 @@ Item {
             }
 
             onClicked: {
-                PlatformSelection.selectPlatform(index)
+                if (root.ListView.view.filteredList){
+                    PlatformSelection.selectPlatform(model.filteredIndex)
+                } else {
+                    PlatformSelection.selectPlatform(index)
+                }
             }
         }
 
