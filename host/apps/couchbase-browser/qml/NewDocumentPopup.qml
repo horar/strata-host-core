@@ -18,6 +18,7 @@ Window {
 
     property alias docID: idNameField.text;
     property alias docBody: bodyTextArea.text;
+    property bool changed: false
 
     Rectangle {
         anchors.fill: parent
@@ -90,6 +91,7 @@ Window {
                     submit();
                     root.visible = false;
                 }
+                enabled: changed
             }
         }
     }

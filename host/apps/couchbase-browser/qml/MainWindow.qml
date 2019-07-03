@@ -10,22 +10,35 @@ Item {
     property var allDocuments: "{}"
     property var jsonObj
     property alias openedFile: mainMenuView.openedFile
+    property string openedDocumentID
+    property string openedDocumentBody
+
+    function updateOpenDocument() {
+        if (tableSelectorView.currentIndex !== 0) {
+            mainMenuView.onSingleDocument = true;
+            openedDocumentID = tableSelectorView.model[tableSelectorView.currentIndex];
+            openedDocumentBody = JSON.stringify(jsonObj[openedDocumentID],null,4);
+            bodyView.content = openedDocumentBody;
+        }
+        else {
+            mainMenuView.onSingleDocument = false;
+            openedDocumentID = tableSelectorView.model[0];
+            bodyView.content = JSON.stringify(jsonObj,null,4);
+        }
+    }
 
     onAllDocumentsChanged: {
         if (allDocuments !== "{}") {
             let tempModel = ["All documents"];
             jsonObj = JSON.parse(allDocuments);
             for (let i in jsonObj) tempModel.push(i);
-            let prevID = tableSelectorView.model[tableSelectorView.currentIndex];
+            let prevID = openedDocumentID;
             let newIndex = tempModel.indexOf(prevID);
             if (newIndex === -1) newIndex = 0;
             tableSelectorView.model = tempModel;
 
             if (tableSelectorView.currentIndex === newIndex) {
-                if (tableSelectorView.currentIndex !== 0)
-                    bodyView.content = JSON.stringify(jsonObj[tableSelectorView.model[tableSelectorView.currentIndex]],null,4);
-                else
-                    bodyView.content = JSON.stringify(jsonObj,null,4);
+                update();
             }
             else
                 tableSelectorView.currentIndex = newIndex;
@@ -66,7 +79,7 @@ Item {
                     onNewDatabaseSignal: newDatabasesPopup.visible = true
                     onNewDocumentSignal: newDocPopup.visible = true
                     onDeleteDocumentSignal: deletePopup.visible = true
-                    //onEditDocumentSignal:
+                    onEditDocumentSignal: editDocPopup.visible = true
                     onSaveAsSignal: saveAsPopup.visible = true
                     onCloseSignal: {
                         qmlBridge.closeFile(id)
@@ -99,14 +112,7 @@ Item {
                     Component.onCompleted: console.log(height, root.height);
                     onCurrentIndexChanged: {
                         if (allDocuments !== "{}") {
-                            if (currentIndex !== 0) {
-                                mainMenuView.onSingleDocument = true;
-                                bodyView.content = JSON.stringify(jsonObj[model[currentIndex]],null,4);
-                            }
-                            else {
-                                mainMenuView.onSingleDocument = false;
-                                bodyView.content = JSON.stringify(jsonObj,null,4);
-                            }
+                            updateOpenDocument();
                         }
                     }
                 }
@@ -169,12 +175,54 @@ Item {
             }
             NewDocumentPopup {
                 id: newDocPopup
+                changed: true
                 onSubmit: {
                     let message = qmlBridge.createNewDocument(id,docID,docBody);
                     if (message.length === 0)
                         bodyView.message = "Created new document successfully!";
                     else
                         bodyView.message = message;
+                }
+            }
+            NewDocumentPopup {
+                id: editDocPopup
+                docID: openedDocumentID
+                docBody: openedDocumentBody
+                onDocIDChanged: {
+                    if (docID !== openedDocumentID || docBody !== openedDocumentBody) {
+                        changed = true
+                    }
+                    else changed = false
+                }
+                onDocBodyChanged: {
+                    if (docID !== openedDocumentID || docBody !== openedDocumentBody) {
+                        changed = true
+                    }
+                    else changed = false
+                }
+
+                onSubmit:  {
+                    let message = ""
+                    if (docID !== openedDocumentID) {
+                        message = qmlBridge.createNewDocument(id,docID,docBody)
+                        if (message.length === 0) {
+                            message = qmlBridge.deleteDoc(id,openedDocumentID)
+                            if (message.length === 0) {
+                                bodyView.message = "Edited document successfully"
+                                tableSelectorView.currentIndex = tableSelectorView.model.indexOf(docID)
+                            }
+                            else bodyView.message = message + " | " + qmlBridge.deleteDoc(id,docID,docBody)
+                        }
+                        else bodyView.message = message
+                    }
+                    else {
+                        message = qmlBridge.editDoc(id,docID,docBody)
+                        if (message.length === 0) {
+                            bodyView.message = "Edited document successfully"
+                        }
+                        else bodyView.message = message;
+                    }
+                    visible = false
                 }
             }
             NewDatabasePopup {
@@ -199,11 +247,10 @@ Item {
             }
             WarningPopup {
                 id: deletePopup
-                messageToDisplay: "Are you sure that you want to permanently delete document \""+tableSelectorView.model[tableSelectorView.currentIndex]+"\"";
+                messageToDisplay: "Are you sure that you want to permanently delete document \""+openedDocumentID+"\"";
                 onAllow: {
                     deletePopup.visible = false
-                    qmlBridge.deleteDoc(id,tableSelectorView.model[tableSelectorView.currentIndex])
-                    tableSelectorView.currentIndex = 0
+                    qmlBridge.deleteDoc(id,openedDocumentID)
                 }
                 onDeny: {
                     deletePopup.visible = false
