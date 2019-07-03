@@ -34,19 +34,10 @@ QString DatabaseInterface::setFilePath(QString file_path)
 {
     file_path_ = file_path;
     if(!parseFilePath()) {
-        return("(setFilePath)Problem with path to database file. The file must be located according to: \".../db/(db_name)/db.sqlite3\" \n");
+        return("Problem with path to database file. The file must be located according to: \".../db/(db_name)/db.sqlite3\"\n");
     } else if(!db_init()) {
         return("Problem initializing database.");
     }
-
-//    temporary
-//    cout << "\nCalling editDoc..."<< endl;
-//    editDoc("","");
-
-//    temporary
-    cout << "\nCalling deleteDoc..."<< endl;
-    deleteDoc("");
-
 
     return("");
 }
@@ -199,6 +190,10 @@ QString DatabaseInterface::rep_init_()
         sg_replicator_configuration_->setAuthenticator(sg_basic_authenticator_);
     }
 
+    if(!channels_.empty()) {
+        sg_replicator_configuration_->setChannels(channels_);
+    }
+
     sg_replicator_ = new SGReplicator(sg_replicator_configuration_);
 
     if(sg_replicator_ == nullptr) {
@@ -206,9 +201,11 @@ QString DatabaseInterface::rep_init_()
     }
 
     sg_replicator_->addDocumentEndedListener(bind(&DatabaseInterface::emitUpdate, this));
+    sg_replicator_->addChangeListener(bind(&DatabaseInterface::emitUpdate, this));
+    sg_replicator_->addValidationListener(bind(&DatabaseInterface::emitUpdate, this));
 
     if(sg_replicator_->start() == false) {
-        return("Problem with start of replication.");
+        return("Problem with start of replicator.");
     }
 
     setRepstatus(true);
@@ -257,7 +254,7 @@ bool DatabaseInterface::parseNewFile()
     folder_path.replace("db.sqlite3", "");
     QDir dir(folder_path);
 
-    if(!dir.mkpath(folder_path)) {
+    if(!dir.isAbsolute() || !dir.mkpath(folder_path)) {
         return false;
     }
 
@@ -341,6 +338,39 @@ QString DatabaseInterface::deleteDoc_(SGDocument &doc)
     return("");
 }
 
+QString DatabaseInterface::saveAs(const QString &id, const QString &path)
+{
+    if(id.isEmpty() || path.isEmpty()) {
+        return("Received empty id or path, unable to save.");
+    }
+
+    QDir dir(path);
+
+    if(!dir.isAbsolute()) {
+        return("Received invalid path, unable to save.");
+    }
+
+    return(saveAs_(id, path));
+}
+
+QString DatabaseInterface::saveAs_(const QString &id, const QString &path)
+{
+    SGDatabase temp_db(id.toStdString(), path.toStdString());
+
+    if(temp_db.open() != SGDatabaseReturnStatus::kNoError) {
+        return("Problem saving database.");
+    }
+
+    for(std::vector <string>::iterator iter = document_keys_.begin(); iter != document_keys_.end(); iter++) {
+        SGMutableDocument temp_doc(&temp_db, (*iter));
+        SGDocument existing_doc(sg_db_, (*iter));
+        temp_doc.setBody(existing_doc.getBody());
+//        temp_db.save(&temp_doc);
+    }
+
+    return("");
+}
+
 bool DatabaseInterface::setDocumentKeys()
 {
     document_keys_.clear();
@@ -357,7 +387,6 @@ void DatabaseInterface::setJSONResponse()
     QString temp_str = "";
     JSONResponse_ = "{";
 
-    // Printing the list of documents key from the local DB.
     for(std::vector <string>::iterator iter = document_keys_.begin(); iter != document_keys_.end(); iter++) {
         SGDocument usbPDDocument(sg_db_, (*iter));
         temp_str = "\"" + QString((*iter).c_str()) + "\":" + QString(usbPDDocument.getBody().c_str()) + (iter + 1 != document_keys_.end() ? "," : "");
