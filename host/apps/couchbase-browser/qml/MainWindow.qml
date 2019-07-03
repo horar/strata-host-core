@@ -162,7 +162,6 @@ Item {
 
             LoginPopup {
                 id: loginPopup
-                anchors.centerIn: parent
                 onStart: {
                     let message = qmlBridge.startReplicator(id,url,username,password,rep_type);
                     if (message.length === 0) {

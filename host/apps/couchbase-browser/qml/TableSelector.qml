@@ -15,12 +15,13 @@ Rectangle {
         id: label
         width: parent.width
         height: 30
-        text: "<b>Table Selector</b>"
+        text: "<b>Document Selector:</b>"
         color: "#eee"
         anchors {
             top: parent.top
             topMargin: 5
             horizontalCenter: parent.horizontalCenter
+            horizontalCenterOffset: 5
         }
 
     }
