@@ -4,9 +4,11 @@
 
 #include <QObject>
 #include <QString>
-#include <QtNetwork>
+#include <QNetworkAccessManager>
+#include <QNetworkReply>
 #include <QVector>
 #include <QList>
+#include <QMap>
 
 class DownloadManager : public QObject
 {
@@ -79,7 +81,7 @@ private slots:
     void onDownloadFinished(QNetworkReply *reply);
 
     void slotError(QNetworkReply::NetworkError err);
-    void sslErrors(const QList<QSslError> &errors);
+    void sslErrors(const QList<QSslError>& errors);
 
     void onDownloadAbort(QNetworkReply* reply);
     void onDownloadProgress(qint64 bytesReceived, qint64 bytesTotal);

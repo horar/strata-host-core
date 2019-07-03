@@ -14,10 +14,6 @@ find_package(Qt5 ${VERSION_QT5}
 add_executable(${PROJECT_NAME}
     main.cpp
     SciModel.cpp
-    BoardsController.cpp
-    PlatformBoard.cpp
-    SgUtilsCpp.cpp
-    SgJLinkConnector.cpp
     qml.qrc
     images/images.qrc
 
@@ -50,8 +46,7 @@ endif()
 target_link_libraries(${PROJECT_NAME}
     Qt5::Core
     Qt5::Quick
-    PlatformManager
-    flasherConnector
+    BoardsController
 
     QtLogger
 )

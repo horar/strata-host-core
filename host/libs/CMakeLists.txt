@@ -11,5 +11,6 @@ add_subdirectory(PlatformInterface)
 add_subdirectory(couchbaselite)
 add_subdirectory(EventsMgr)
 add_subdirectory(PlatformManager)
+add_subdirectory(BoardsController)
 
 add_subdirectory(loggers)

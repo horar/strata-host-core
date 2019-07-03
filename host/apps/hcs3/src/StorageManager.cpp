@@ -5,8 +5,11 @@
 #include "Dispatcher.h"
 #include "Database.h"
 
+#include "logging/LoggingQtCategories.h"
+
 #include <QStandardPaths>
 #include <QFile>
+#include <QDir>
 #include <QCryptographicHash>
 
 #include <rapidjson/stringbuffer.h>
@@ -41,7 +44,7 @@ void StorageManager::init()
     Q_ASSERT(baseFolder_.isEmpty() == false);
 
     if (baseUrl_.isEmpty()) {
-        qDebug() << "Base URL is empty.";
+        qCDebug(logCategoryHcsStorage) << "Base URL is empty.";
         return;
     }
 
@@ -113,8 +116,8 @@ bool StorageManager::requestPlatformDoc(const std::string& classId, const std::s
 
     newItem.platformDocument = platDoc;
 
-
-    QString prefix = "documents/" + QString::fromStdString(g_document_views);
+    QString prefix("documents/");
+    prefix += QString::fromStdString(g_document_views);
 
     QStringList downloadList;
     if (!fillDownloadList(newItem, g_document_views, prefix, downloadList)) {
@@ -207,7 +210,7 @@ bool StorageManager::fillDownloadList(const StorageItem& storageItem, const std:
 {
     std::vector<std::string> urlList;
     if (storageItem.platformDocument->getDocumentFilesList(groupName, urlList) == false) {
-        qDebug() << "Platform document:" << QString::fromStdString(storageItem.classId) << "group:" << QString::fromStdString(groupName) << "not found!";
+        qCDebug(logCategoryHcsStorage) << "Platform document:" << QString::fromStdString(storageItem.classId) << "group:" << QString::fromStdString(groupName) << "not found!";
         return false;
     }
 
@@ -270,7 +273,6 @@ void StorageManager::onDownloadContentFiles(const QStringList& files, const QStr
     }
 
     //  create Download group...
-
     DownloadGroup* newGroup = new DownloadGroup(uiGroupId, downloader_.get());
     newGroup->setBaseFolder(baseFolder_);
     newGroup->downloadFiles(files, prefix);
@@ -292,7 +294,7 @@ void StorageManager::onDownloadUserFiles(const QStringList& files, const QString
         QFileInfo fi(item);
         QString filename = QDir(save_path).filePath(fi.fileName());
 
-        qDebug() << "Download:" << item << " To:" << filename;
+        qCDebug(logCategoryHcsStorage) << "Download:" << item << " To:" << filename;
         downloader_->download(item, filename);
     }
 }
@@ -363,7 +365,8 @@ void StorageManager::fileDownloadFinished(const QString& filename, bool withErro
 
     if (group->isAllDownloaded()) {
 
-        QString prefix = "documents/" + QString::fromStdString(g_document_views);
+        QString prefix("documents/");
+        prefix += QString::fromStdString(g_document_views);
 
         fillRequestFilesList(platDoc, g_document_views, prefix, request);
 
@@ -413,7 +416,7 @@ void StorageManager::createAndSendResponse(RequestItem* requestItem, PlatformDoc
 
     response->AddMember("class_id", rapidjson::Value(requestItem->classId.c_str(), allocator), allocator);
 
-    qDebug() << "all downloaded. Send response.";
+    qCInfo(logCategoryHcsStorage) << "ClassId:" << QString::fromStdString(requestItem->classId) << " all downloaded. Send response.";
 
     PlatformMessage msg;
     msg.msg_type = PlatformMessage::eMsgStorageResponse;
@@ -437,6 +440,7 @@ bool StorageManager::checkFileChecksum(const QString& filename, const QString& c
 {
     QFile file(filename);
     if (!file.open(QIODevice::ReadOnly)) {
+        qCWarning(logCategoryHcsStorage) << "Unable to open file:" << filename;
         return false;
     }
 
@@ -449,6 +453,8 @@ bool StorageManager::checkFileChecksum(const QString& filename, const QString& c
 
 void StorageManager::requestDownloadFiles(const std::vector<std::string>& files, const std::string& save_path)
 {
+    qCDebug(logCategoryHcsStorage) << "Download files to:" << QString::fromUtf8(save_path.c_str(), save_path.size() );
+
     QStringList qtFiles;
     for(const auto& item : files) {
         qtFiles.push_back(QString::fromStdString(item));
