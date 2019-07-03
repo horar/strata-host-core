@@ -181,7 +181,7 @@ Popup {
                     color: "#d9d9d9"
 
                     anchors {
-                        top: clearButton.bottom
+                        top: parent.top
                     }
                     ScrollView {
                         anchors.fill: parent
