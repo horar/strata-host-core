@@ -162,7 +162,7 @@ void DownloadManager::onDownloadProgress(qint64 bytesReceived, qint64 bytesTotal
 void DownloadManager::onDownloadFinished(QNetworkReply* reply)
 {
     QUrl url = reply->url();
-    if (reply->error()) {
+    if (reply->error() != QNetworkReply::NoError) {
 
         QString filename = findFilenameForReply(reply);
         if (filename.isEmpty()) {
@@ -174,9 +174,10 @@ void DownloadManager::onDownloadFinished(QNetworkReply* reply)
             findItItem->state = eStateDone;
         }
 
-        qCWarning(logCategoryHcsDownloader) << "download error on:" << reply->url();
-        emit downloadFinishedError(findItItem->filename, reply->errorString());
+        qCWarning(logCategoryHcsDownloader) << "download error on:" << filename << "from:"
+                    << reply->url() << "err:" << reply->errorString();
 
+        emit downloadFinishedError(filename, reply->errorString());
     }
     else {
         if (isHttpRedirect(reply)) {
@@ -202,9 +203,9 @@ void DownloadManager::onDownloadFinished(QNetworkReply* reply)
                 findItItem->state = eStateDone;
             }
 
-            qCInfo(logCategoryHcsDownloader) << "Downloaded:" << findItItem->url;
+            qCInfo(logCategoryHcsDownloader) << "Downloaded:" << filename << "from:" << findItItem->url;
 
-            emit downloadFinished(findItItem->filename);
+            emit downloadFinished(filename);
 
             if (static_cast<uint>(currentDownloads_.size()) <= numberOfDownloads_) {
                 auto it = findNextDownload();

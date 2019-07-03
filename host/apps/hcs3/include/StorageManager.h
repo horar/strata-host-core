@@ -66,6 +66,7 @@ public:
 signals:
     void downloadContentFiles(QStringList files, QString prefix, uint64_t uiGroupId);
     void downloadUserFiles(QStringList files, QString save_path);
+    void cancelDownloadContentFiles(uint64_t uiGroupId);
 
 private slots:
     void onDownloadContentFiles(const QStringList& files, const QString& prefix, uint64_t uiGroupId);
@@ -73,6 +74,8 @@ private slots:
 
     void onDownloadFinished(const QString& filename);
     void onDownloadFinishedError(const QString& filename, const QString& error);
+
+    void onCancelDownloadContentFiles(uint64_t uiGroupId);
 
 private:
 
@@ -98,9 +101,7 @@ private:
 
     bool isInitialized() const;
 
-
     void createAndSendResponse(RequestItem* requestItem, PlatformDocument* platformDoc);
-
 
     QString createFilenameFromItem(const QString& item, const QString& prefix);
 
