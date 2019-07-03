@@ -73,8 +73,9 @@ Rectangle {
 
         else {
             sgStatusLight1C.status = "off"
-//            sgStatusLight12.status = "off"
         }
+//        DemoPattern.demo_star1(led_state)
+
 
     }
 
