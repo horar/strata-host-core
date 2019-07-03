@@ -247,12 +247,12 @@ Rectangle {
                         labelLeft: false             // Default: true
                         Layout.fillHeight: true
                         width: parent.width/2
-                        stepSize: 500                // Default: 1.0
-                        value: 1000                        // Default: average of from and to
-                        from: 500                      // Default: 0.0
-                        to: 2000                    // Default: 100.0
-                        startLabel: "500"              // Default: from
-                        endLabel: "2000"            // Default: to
+                        stepSize: 120                // Default: 1.0
+                        value: 1200                        // Default: average of from and to
+                        from: 600                      // Default: 0.0
+                        to: 3000                    // Default: 100.0
+                        startLabel: "600"              // Default: from
+                        endLabel: "3000"            // Default: to
                         showToolTip: false            // Default: true
                         toolTipDecimalPlaces: 0      // Default: 0
                         grooveColor: "#ddd"          // Default: "#dddddd"
