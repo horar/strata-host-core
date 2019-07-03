@@ -3,7 +3,7 @@
 #include <QThread>
 
 FlasherWorker::FlasherWorker(spyglass::PlatformConnectionShPtr connection, const QString &firmwarePath, QObject *parent)
-    : QObject(parent), connection_(connection), firmwarePath_(firmwarePath), stopFlag_(false)
+    : QObject(parent), connection_(connection), firmwarePath_(firmwarePath), stopFlag_(0)
 {
 }
 
@@ -39,12 +39,12 @@ void FlasherWorker::process()
 
 void FlasherWorker::stop()
 {
-    stopFlag_.store(true);
+    stopFlag_.store(1);
 }
 
 bool FlasherWorker::isCancelRequested()
 {
-    return (stopFlag_.load() == true);
+    return (stopFlag_.load() == 1);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -94,7 +94,6 @@ bool FlasherConnector::start(spyglass::PlatformConnectionShPtr connection, const
 
 void FlasherConnector::onTaskDone(QString connectionId, bool status)
 {
-    FlasherWorker* worker = nullptr;
     {
         QMutexLocker lock(&connectionToWorkerMutex_);
         auto findIt = connectionToWorker_.find(connectionId);
