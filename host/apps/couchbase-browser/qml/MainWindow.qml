@@ -118,8 +118,8 @@ Item {
                 }
                 Image {
                     id: onLogo
-                    width: 80
-                    height: 80
+                    width: 50
+                    height: 50
                     source: "Images/CBBrowserLogo.png"
                     fillMode: Image.PreserveAspectCrop
                     anchors {
