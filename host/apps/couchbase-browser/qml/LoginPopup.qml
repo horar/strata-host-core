@@ -7,8 +7,8 @@ import QtQuick.Dialogs 1.3
 Popup {
     id: root
     width: 500
-    height: 500
-    visible: false
+    height: 700
+    visible: true
     padding: 0
 
     signal start()
@@ -16,8 +16,14 @@ Popup {
     property alias url: urlField.text
     property alias username: usernameField.text
     property alias password: passwordField.text
-    property string rep_type: "pull"
 
+    property string rep_type: "pull"
+    property var channels: []
+
+    function add(){
+        channels = (channelInputField.text)
+        channelViewField.text += (channels + "\n")
+    }
     function clearInput()
     {
         urlField.text = ""
@@ -60,18 +66,7 @@ Popup {
             width: parent.width - 10
             height: implicitHeight
             anchors.horizontalCenter: parent.horizontalCenter
-            Rectangle {
-                Layout.preferredHeight: 80
-                Layout.preferredWidth: parent.width
-                Layout.alignment: Qt.AlignHCenter + Qt.AlignTop
-                color: "transparent"
-                Label {
-                    id: header
-                    text: "Please enter the requested information"
-                    anchors.centerIn: parent
-                    color: "#eee"
-                }
-            }
+
             Rectangle {
                 Layout.preferredHeight: 80
                 Layout.preferredWidth: parent.width
@@ -161,6 +156,120 @@ Popup {
                         anchors.fill: parent
                         placeholderText: "Enter Password"
                         echoMode: "Password"
+                    }
+                }
+
+            }
+            Rectangle {
+                id: channelLayoutContainer
+                Layout.preferredHeight: 160
+                Layout.preferredWidth: parent.width / 2
+                Layout.alignment: Qt.AlignHCenter + Qt.AlignTop
+                Layout.topMargin: 20
+                Label {
+                    text: "Selected Channels:"
+                    color: "#eee"
+                    anchors {
+                        bottom: parent.top
+                        left: parent.left
+                    }
+                }
+                Rectangle {
+                    id: channelViewContainer
+                    width: parent.width
+                    height: parent.height -20
+                    color: "#d9d9d9"
+
+                    anchors {
+                        top: clearButton.bottom
+                    }
+                    ScrollView {
+                        anchors.fill: parent
+                        TextArea {
+                            id: channelViewField
+                            wrapMode: "Wrap"
+                            selectByMouse: true
+                            text: ""
+                            color: "black"
+                            readOnly: true
+                        }
+                    }
+                }
+                Rectangle {
+                    id: channelInputContainer
+                    height: 30
+                    width: parent.width
+                    color: "transparent"
+                    anchors {
+                        bottom: channelLayoutContainer.bottom
+                    }
+                    TextField {
+                        id: channelInputField
+                        height: parent.height
+                        width: parent.width - 50
+                        autoScroll: true
+                        anchors {
+                            right: addButton.left
+                        }
+                        placeholderText: "Enter Channel"
+                        Keys.onReturnPressed: add()
+                        Keys.onEnterPressed: add()
+
+                    }
+                    Button {
+                        id: addButton
+                        width: 50
+                        height: parent.height
+
+                        anchors {
+                            top: parent.top
+                            right: parent.right
+                        }
+                        text: "Add"
+                        onClicked: {
+                            add()
+                        }
+                        background: Rectangle{
+                            color: "#b55400"
+                        }
+
+                    }
+                }
+            }
+            Rectangle {
+                Layout.preferredHeight: 80
+                Layout.preferredWidth: parent.width
+                Layout.alignment: Qt.AlignHCenter + Qt.AlignTop
+                color: "transparent"
+                Rectangle {
+                    id: buttonContainer
+                    height: parent.height / 2
+                    width: parent.width / 2
+                    color: "transparent"
+                    anchors {
+                        centerIn: parent
+                    }
+                    RowLayout {
+                        spacing: 2
+                        anchors.fill: parent
+                        Button {
+                            id: clearAllButton
+                            Layout.alignment: Qt.AlignHCenter
+                            width: (parent.width / 2) - 1
+                            height: parent.height - 2
+                            text:  "Clear All"
+                            onClicked: channelViewField.text = ""
+                        }
+                        Button {
+                            id: clearLastButton
+                            Layout.alignment: Qt.AlignHCenter
+                            width: (parent.width / 2) - 1
+                            height: parent.height - 2
+                            text: "Clear Last"
+                            onClicked: {
+                                //make view remove last selection
+                            }
+                        }
                     }
                 }
 
