@@ -432,7 +432,7 @@ Item {
                             }
                             onClicked: {
                                 platformInterface.force_reset_registers.update("reset")
-//                                platformInterface.rearm_device.update("off")
+                                platformInterface.rearm_device.update("off")
                                 platformInterface.read_initial_status.update()
                             }
                         }

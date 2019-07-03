@@ -279,24 +279,6 @@ Item {
 
                                  })
 
-    //    property var set_pgood_enable: ({
-    //                                    "cmd" : "set_pgood_enable",
-    //                                    "payload": {
-    //                                        "pgood": "",
-    //                                    },
-
-    //                                    update: function (pgood) {
-    //                                        this.set(pgood)
-    //                                        CorePlatformInterface.send(this)
-    //                                    },
-    //                                    set: function (pgood) {
-    //                                        this.payload.pgood = pgood;
-    //                                    },
-    //                                    send: function () { CorePlatformInterface.send(this) },
-    //                                    show: function () { CorePlatformInterface.show(this) }
-
-    //                                })
-
     property var pgood_on_dvs: ({
                                     "cmd" : "set_pgood_on_dvs",
                                     "payload": {
@@ -578,129 +560,6 @@ Item {
 
                                        })
 
-    property var mask_pgood_interrupt: ({
-                                            "cmd" : "mask_pgood_interrupt",
-                                            "payload": {
-                                                "pgood_interrupt": "" ,
-                                            },
-
-                                            update: function (pgood_interrupt) {
-                                                this.set(pgood_interrupt)
-                                                CorePlatformInterface.send(this)
-                                            },
-                                            set: function (pgood_interrupt) {
-                                                this.payload.pgood_interrupt = pgood_interrupt;
-                                            },
-                                            send: function () { CorePlatformInterface.send(this) },
-                                            show: function () { CorePlatformInterface.show(this) }
-                                        })
-
-    property var mask_ocp_interrupt: ({
-                                          "cmd" : "mask_ocp_interrupt",
-                                          "payload": {
-                                              "ocp_interrupt": "" ,
-                                          },
-
-                                          update: function (ocp_interrupt) {
-                                              this.set(ocp_interrupt)
-                                              CorePlatformInterface.send(this)
-                                          },
-                                          set: function (ocp_interrupt) {
-                                              this.payload.ocp_interrupt = ocp_interrupt;
-                                          },
-                                          send: function () { CorePlatformInterface.send(this) },
-                                          show: function () { CorePlatformInterface.show(this) }
-                                      })
-
-
-
-    property var mask_uvlo_interrupt: ({
-                                           "cmd" : "mask_uvlo_interrupt",
-                                           "payload": {
-                                               "uvlo_interrupt": "" ,
-                                           },
-
-                                           update: function (uvlo_interrupt) {
-                                               this.set(uvlo_interrupt)
-                                               CorePlatformInterface.send(this)
-                                           },
-                                           set: function (uvlo_interrupt) {
-                                               this.payload.uvlo_interrupt = uvlo_interrupt;
-                                           },
-                                           send: function () { CorePlatformInterface.send(this) },
-                                           show: function () { CorePlatformInterface.show(this) }
-                                       })
-
-    property var mask_short_circuit_interrupt: ({
-                                                    "cmd" : "mask_short_circuit_interrupt",
-                                                    "payload": {
-                                                        "short_circuit_interrupt": "" ,
-                                                    },
-
-                                                    update: function (short_circuit_interrupt) {
-                                                        this.set(short_circuit_interrupt)
-                                                        CorePlatformInterface.send(this)
-                                                    },
-                                                    set: function (short_circuit_interrupt) {
-                                                        this.payload.short_circuit_interrupt = short_circuit_interrupt;
-                                                    },
-                                                    send: function () { CorePlatformInterface.send(this) },
-                                                    show: function () { CorePlatformInterface.show(this) }
-                                                })
-
-
-    property var mask_thermal_prewarn_interrupt : ({
-                                                       "cmd" : "mask_thermal_prewarn_interrupt",
-                                                       "payload": {
-                                                           "thermal_prewarn_interrupt": "" ,
-                                                       },
-
-                                                       update: function (thermal_prewarn_interrupt) {
-                                                           this.set(thermal_prewarn_interrupt)
-                                                           CorePlatformInterface.send(this)
-                                                       },
-                                                       set: function (thermal_prewarn_interrupt) {
-                                                           this.payload.thermal_prewarn_interrupt = thermal_prewarn_interrupt;
-                                                       },
-                                                       send: function () { CorePlatformInterface.send(this) },
-                                                       show: function () { CorePlatformInterface.show(this) }
-                                                   })
-
-
-    property var mask_thermal_warn_interrupt : ({
-                                                    "cmd" : "mask_thermal_warn_interrupt",
-                                                    "payload": {
-                                                        "thermal_warn_interrupt": "" ,
-                                                    },
-
-                                                    update: function (thermal_warn_interrupt) {
-                                                        this.set(thermal_warn_interrupt)
-                                                        CorePlatformInterface.send(this)
-                                                    },
-                                                    set: function (thermal_warn_interrupt) {
-                                                        this.payload.thermal_warn_interrupt = thermal_warn_interrupt;
-                                                    },
-                                                    send: function () { CorePlatformInterface.send(this) },
-                                                    show: function () { CorePlatformInterface.show(this) }
-                                                })
-
-    property var mask_thermal_shutdown_interrupt : ({
-                                                        "cmd" : "mask_thermal_shutdown_interrupt",
-                                                        "payload": {
-                                                            "thermal_shutdown_interrupt": "" ,
-                                                        },
-
-                                                        update: function (thermal_shutdown_interrupt) {
-                                                            this.set(thermal_shutdown_interrupt)
-                                                            CorePlatformInterface.send(this)
-                                                        },
-                                                        set: function (thermal_shutdown_interrupt) {
-                                                            this.payload.thermal_shutdown_interrupt = thermal_shutdown_interrupt;
-                                                        },
-                                                        send: function () { CorePlatformInterface.send(this) },
-                                                        show: function () { CorePlatformInterface.show(this) }
-                                                    })
-
     property var set_pgood_enable : ({
                                          "cmd" : "set_pgood_enable",
                                          "payload": {
@@ -734,6 +593,7 @@ Item {
                                         send: function () { CorePlatformInterface.send(this) },
                                         show: function () { CorePlatformInterface.show(this) }
                                     })
+
     property var  set_timeout_reset_pgood: ({
 
                                                 "cmd": "set_timeout_reset_pgood",
