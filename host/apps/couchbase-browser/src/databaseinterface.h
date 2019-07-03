@@ -38,6 +38,8 @@ public:
 
     QString deleteDoc(const QString &id);
 
+    QString saveAs(const QString &id, const QString &path);
+
 private:
     QString file_path_, db_path_, db_name_, JSONResponse_, url_, username_, password_;
 
@@ -98,6 +100,8 @@ private:
     QString editDoc_(Spyglass::SGMutableDocument &doc, const QString &body);
 
     QString deleteDoc_(Spyglass::SGDocument &doc);
+
+    QString saveAs_(const QString &id, const QString &path);
 
 signals:
     void newUpdate(int i);
