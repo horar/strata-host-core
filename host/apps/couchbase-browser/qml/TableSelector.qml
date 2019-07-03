@@ -7,58 +7,55 @@ Rectangle {
     anchors.fill: parent
     color: "transparent"
 
-    property alias model: keySelectorComboBox.model
-    property alias currentIndex: keySelectorComboBox.currentIndex
+    property alias model: listView.model
+    property alias currentIndex: listView.currentIndex
 
-    ColumnLayout {
-        id: comboBoxContainer
+
+    Label {
+        id: label
         width: parent.width
-        height: implicitHeight
-        spacing: 5
-        Label {
-            id: keySelectorLabel
-            text: "<b>Select Document:</b>"
-            color: "white"
-            Layout.alignment: Qt.AlignLeft
-            Layout.leftMargin: 5
-            Layout.topMargin: 10
+        height: 30
+        text: "<b>Table Selector</b>"
+        color: "#eee"
+        anchors {
+            top: parent.top
+            topMargin: 5
+            horizontalCenter: parent.horizontalCenter
         }
-        ComboBox {
-            id: keySelectorComboBox
+
+    }
+    ListView {
+        id: listView
+        width: parent.width - 10
+        height: parent.height - 170
+        model: [""]
+        delegate: listDelegate
+        anchors {
+            top: label.bottom
+            topMargin: 5
+            horizontalCenter: parent.horizontalCenter
+        }
+    }
+    Component {
+        id: listDelegate
+        Rectangle  {
+            id: content
             width: parent.width
-            Layout.alignment: Qt.AlignHCenter
-            model:[]
-            delegate: ItemDelegate {
-                width: keySelectorComboBox.width
-                contentItem: Text {
-                    width: keySelectorComboBox.width
-                    text: modelData
-                    color: "#b55400"
-                }
-                highlighted: keySelectorComboBox.highlightedIndex === index
-            }
-            background: Rectangle {
-                implicitWidth: keySelectorComboBox.width
-                implicitHeight: 40
-                color: "lightgrey"
-                border.color: keySelectorComboBox.pressed ? "#17a81a" : "#b55400"
-                radius: 2
-            }
-            popup: Popup {
-                height: Math.min(root.height,contentHeight)
-                width: keySelectorComboBox.width
-                contentItem:  ListView {
-                    clip: true
-                    implicitHeight: contentHeight
-                    implicitWidth: keySelectorComboBox.width
-                    model: keySelectorComboBox.popup.visible ? keySelectorComboBox.delegateModel : null
-                    currentIndex: keySelectorComboBox.highlightedIndex
-                    ScrollIndicator.vertical: ScrollIndicator { }
-                }
-                background: Rectangle {
-                    color: "lightgrey"
+            height: 30
+            border.width: 1
+            border.color: "#393e46"
+            color: "#b55400"
+            radius: 3
+            ColumnLayout {
+                id: column
+                anchors {fill: parent; margins: 2}
+                Text {
+                    id: itemText
+                    Layout.alignment: Qt.AlignHCenter
+                    text: "this is dummy text"
+                    color: "#eee"
                 }
             }
-        } 
+        }
     }
 }

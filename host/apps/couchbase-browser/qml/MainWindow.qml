@@ -118,9 +118,9 @@ Item {
                 }
                 Image {
                     id: onLogo
-                    width: 50
-                    height: 50
-                    source: "Images/OnLogo.png"
+                    width: 80
+                    height: 80
+                    source: "Images/CBBrowserLogo.png"
                     fillMode: Image.PreserveAspectCrop
                     anchors {
                         bottom: parent.bottom
