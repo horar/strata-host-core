@@ -9,7 +9,6 @@ Item {
     id: wizard
 
     property variant boardController: null
-    property string connectionId
     property string firmwarePath
     property string bootloaderPath
     property bool useJLink: false
@@ -17,6 +16,9 @@ Item {
     property bool closeButtonVisible: false
     property bool requestCancelOnClose: false
     property int processingStatus: ProgramDeviceWizard.SetupProgramming
+    property bool loopMode: true
+    property bool checkFirmware: true
+    property string currentConnectionId
 
     signal cancelRequested()
 
@@ -41,7 +43,6 @@ Item {
         color: "#eeeeee"
     }
 
-    property int circleSize: 30
     property color baseColor: "#303030"
     property int arrowTailLength: 80
 
@@ -61,9 +62,10 @@ Item {
         FeedbackArrow {
             id: feedbackArrow
             width: state4.x - state2.x + 2*padding + wingWidth + 4
-            height: 40
+            height: loopMode ? 40 : 0
             x: state2.x - padding + Math.round(state2.width/2) - wingWidth - 2
 
+            visible: loopMode
             padding: 2
             color: baseColor
         }
@@ -72,7 +74,7 @@ Item {
             id: state1
             anchors {
                 horizontalCenter: label1.horizontalCenter
-                top: feedbackArrow.bottom
+                top: loopMode ? feedbackArrow.bottom : parent.top
             }
 
             source: "qrc:/sgimages/cog.svg"
@@ -158,11 +160,14 @@ Item {
 
         Arrow {
             id: arrow5
+            width: loopMode ? undefined : 0
             anchors {
                 left: state4.right
                 verticalCenter: state1.verticalCenter
             }
 
+
+            visible: loopMode
             color: baseColor
             tailLength: Math.round(arrowTailLength/2)
         }
@@ -174,7 +179,7 @@ Item {
             }
 
             color: baseColor
-            text: "End"
+            text: loopMode ? "End" : ""
             standalone: true
         }
 
@@ -196,7 +201,7 @@ Item {
                 top: state2.bottom
             }
 
-            text: "Connect New\nDevice"
+            text: loopMode ? "Connect New\nDevice" : "Device Check"
             color: baseColor
             highlight: state2.highlight
         }
@@ -560,7 +565,7 @@ Item {
 
                         if (errorList.length) {
                             SGWidgets.SGDialogJS.showMessageDialog(
-                                        settingsPage,
+                                        wizard,
                                         SGWidgets.SGMessageDialog.Error,
                                         qsTr("Validation Failed"),
                                         SGWidgets.SGUtilsJS.generateHtmlUnorderedList(errorList))
@@ -666,8 +671,7 @@ Item {
             }
 
             function callTryProgramDevice() {
-                if (processingStatus === ProgramDeviceWizard.ProgrammingSucceed)
-                {
+                if (processingStatus === ProgramDeviceWizard.ProgrammingSucceed) {
                     processingStatus = ProgramDeviceWizard.WaitingForDevice
                 }
 
@@ -679,73 +683,100 @@ Item {
                     warningDialog.reject()
                 }
 
-                if (processingStatus === ProgramDeviceWizard.WaitingForDevice
-                        || processingStatus === ProgramDeviceWizard.WaitingForJLink) {
+                if (processingStatus !== ProgramDeviceWizard.WaitingForDevice
+                        && processingStatus !== ProgramDeviceWizard.WaitingForJLink)
+                {
+                    return
+                }
 
-                    if (wizard.boardController.connectionIds.length === 1) {
-                        if (wizard.useJLink) {
-                            processingStatus = ProgramDeviceWizard.WaitingForJLink
-                            var jLinkConnected = jLinkConnector.isBoardConnected()
-                            if (jLinkConnected === false) {
-                                jLinkCheckTimer.restart()
-                                return
-                            }
-                        }
+                if (wizard.boardController.connectionIds.length === 0) {
+                    processingStatus = ProgramDeviceWizard.WaitingForDevice
+                    return
+                }
 
-                        var connectionInfo = wizard.boardController.getConnectionInfo(wizard.boardController.connectionIds[0])
-                        var bootloaderWarning = wizard.useJLink && connectionInfo.bootloaderVersion.length > 0
-                        var firmwareWarning = connectionInfo.applicationVersion.length > 0
+                if (currentConnectionId.length > 0 && wizard.boardController.connectionIds.indexOf(currentConnectionId) < 0) {
+                    processingStatus = ProgramDeviceWizard.WaitingForDevice
+                    return
+                }
 
-                        if (bootloaderWarning || firmwareWarning) {
-                            var msg = "Connected device already has a "
-
-                            if (bootloaderWarning) {
-                                msg += "bootloader of version " + connectionInfo.bootloaderVersion
-                            } else {
-                                msg += "firmware " + connectionInfo.verboseName
-                                msg += " of version " + connectionInfo.applicationVersion
-                            }
-
-                            msg += "\n"
-                            msg += "\n"
-                            msg += "Do you want to program it anyway ?"
-
-                            warningDialog = SGWidgets.SGDialogJS.showConfirmationDialog(
-                                        processPage,
-                                        "Device already with firmware",
-                                        msg,
-                                        "Program it",
-                                        function() {
-                                            startProgramDevice()
-                                        },
-                                        "Cancel",
-                                        function() {
-                                            processingStatus = ProgramDeviceWizard.WaitingForDevice
-                                        },
-                                        SGWidgets.SGMessageDialog.Warning,
-                                        )
-                        } else {
-                            if (wizard.useJLink == false && connectionInfo.bootloaderVersion.length === 0) {
-                                msg = "Connected device does not have a bootloader and cannot be programmed.\n\n"
-                                msg += "In order to program this device, please go back and check bootloader option."
-
-                                warningDialog = SGWidgets.SGDialogJS.showMessageDialog(
-                                            processPage,
-                                            SGWidgets.SGMessageDialog.Error,
-                                            "Device without bootloader",
-                                            msg,
-                                            Dialog.Ok,
-                                            function() {
-                                                processingStatus = ProgramDeviceWizard.WaitingForDevice
-                                            })
-                            } else {
-                                startProgramDevice()
-                            }
-                        }
-                    } else {
-                        processingStatus = ProgramDeviceWizard.WaitingForDevice
+                if (wizard.useJLink) {
+                    processingStatus = ProgramDeviceWizard.WaitingForJLink
+                    var jLinkConnected = jLinkConnector.isBoardConnected()
+                    if (jLinkConnected === false) {
+                        jLinkCheckTimer.restart()
+                        return
                     }
                 }
+
+                var effectiveConnectionId = currentConnectionId.length > 0 ? currentConnectionId : wizard.boardController.connectionIds[0]
+                var connectionInfo = wizard.boardController.getConnectionInfo(effectiveConnectionId)
+
+                var hasFirmware = connectionInfo.applicationVersion.length > 0
+                var hasBootloader = hasFirmware || connectionInfo.bootloaderVersion.length > 0
+
+                if (checkFirmware && hasFirmware) {
+                    //already has firmware
+                    showFirmwareWarning(false, connectionInfo.applicationVersion, connectionInfo.verboseName)
+                    return
+                }
+
+                if (checkFirmware && useJLink && hasBootloader) {
+                    //already has bootloader
+                    showFirmwareWarning(true, connectionInfo.bootloaderVersion)
+                    return
+                }
+
+                if (useJLink === false && hasBootloader === false) {
+                    //does not have bootloader, cannot continue
+                    var msg = "Connected device does not have a bootloader and cannot be programmed.\n\n"
+                    msg += "In order to program this device, please go back and check bootloader option."
+
+                    warningDialog = SGWidgets.SGDialogJS.showMessageDialog(
+                                wizard,
+                                SGWidgets.SGMessageDialog.Error,
+                                "Device without bootloader",
+                                msg,
+                                Dialog.Ok,
+                                function() {
+                                    processingStatus = ProgramDeviceWizard.WaitingForDevice
+                                })
+                    return
+                }
+
+                startProgramDevice()
+            }
+
+            function showFirmwareWarning(isBootloader, version, name) {
+                var msg = "Connected device already has a "
+                var title = "Device already with "
+
+                if (isBootloader) {
+                    msg += "bootloader of version " + version
+                    title += "bootloader"
+                } else {
+                    msg += "firmware " + name
+                    msg += " of version " + version
+                    title += "firmware"
+                }
+
+                msg += "\n"
+                msg += "\n"
+                msg += "Do you want to program it anyway ?"
+
+                warningDialog = SGWidgets.SGDialogJS.showConfirmationDialog(
+                            wizard,
+                            title,
+                            msg,
+                            "Program it",
+                            function() {
+                                startProgramDevice()
+                            },
+                            "Cancel",
+                            function() {
+                                processingStatus = ProgramDeviceWizard.WaitingForDevice
+                            },
+                            SGWidgets.SGMessageDialog.Warning,
+                            )
             }
 
             function startProgramDevice() {
@@ -873,15 +904,19 @@ Item {
                         msg += "Do not unplug the device until process is complete"
                         return msg
                     } else if (processingStatus === ProgramDeviceWizard.ProgrammingSucceed) {
-                        msg = "To program another device, simply plug it in and\n new process will start automatically\n\n"
-                        msg += "or "
-                        msg += "press End."
-                        return msg
+                        if (loopMode) {
+                            msg = "To program another device, simply plug it in and\n new process will start automatically\n\n"
+                            msg += "or "
+                            msg += "press End."
+                            return msg
+                        }
                     } else if(processingStatus === ProgramDeviceWizard.ProgrammingFailed) {
-                        msg = processPage.subtextNote
-                        msg += "\n\n"
-                        msg += "Unplug the device and press Continue"
-                        return msg
+                        if (loopMode) {
+                            msg = processPage.subtextNote
+                            msg += "\n\n"
+                            msg += "Unplug the device and press Continue"
+                            return msg
+                        }
                     }
 
                     return ""
@@ -900,8 +935,9 @@ Item {
                 SGWidgets.SGButton {
                     id: cancelBtn
 
-                    text: qsTr("End")
-                    visible:processingStatus === ProgramDeviceWizard.ProgrammingSucceed
+                    text: loopMode ? qsTr("End") : qsTr("Close")
+                    visible: processingStatus === ProgramDeviceWizard.ProgrammingSucceed
+                             || (loopMode === false && processingStatus === ProgramDeviceWizard.ProgrammingFailed)
 
                     onClicked: {
                         if (requestCancelOnClose) {
@@ -931,7 +967,7 @@ Item {
                     id: confirmErrorBtn
 
                     text: qsTr("Continue")
-                    visible: processingStatus === ProgramDeviceWizard.ProgrammingFailed
+                    visible: loopMode && processingStatus === ProgramDeviceWizard.ProgrammingFailed
 
                     onClicked: {
                         processingStatus = ProgramDeviceWizard.WaitingForDevice
