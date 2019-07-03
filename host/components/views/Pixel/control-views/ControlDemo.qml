@@ -12,6 +12,9 @@ Rectangle {
     width: parent.width
     height: parent.height
     color:"black"
+    DemoPattern {
+        id:demoLEDPattern
+    }
 
     function send_demo_state(mode_state, led_num_state, time_state, intensity_state){
         if (mode_state === 5) {
@@ -74,7 +77,7 @@ Rectangle {
         else {
             sgStatusLight1C.status = "off"
         }
-        DemoPattern.demo_star1(led_state)
+        demoLEDPattern.demo_star1(led_state)
 
 
     }
