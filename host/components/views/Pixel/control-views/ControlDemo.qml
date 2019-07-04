@@ -8,16 +8,27 @@ import "qrc:/js/help_layout_manager.js" as Help
 Rectangle {
 
     id: controldemo
-//    anchors.fill: parent
+    //    anchors.fill: parent
     width: parent.width
     height: parent.height
     color:"black"
-    DemoPattern {
-        id:demoLEDPattern
+    DemoPattern1 {
+        id:demoLEDPattern1
+    }
+    DemoPattern2 {
+        id:demoLEDPattern2
+    }
+
+    property bool demo_off_detect : platformInterface.demo_off
+    onDemo_off_detectChanged: {
+        if(demo_off_detect === true){
+            demoLEDPattern1.led_all_off()
+        }
     }
 
     function send_demo_state(mode_state, led_num_state, time_state, intensity_state){
         if (mode_state === 5) {
+            platformInterface.pxn_demo_setting.update(mode_state,led_num_state,time_state,intensity_state)
             platformInterface.periodic_hdl_stop.update()
             platformInterface.demo_stop = true
 
@@ -37,49 +48,33 @@ Rectangle {
 
     property var led_state : platformInterface.demo_led_state.led
     onLed_stateChanged: {
-        if (led_state === 1){
-            sgStatusLight11.status = "green"
-        } else if (led_state === 2) {
-            sgStatusLight11.status = "off"
-            sgStatusLight12.status = "green"
-        } else if (led_state === 3) {
-            sgStatusLight12.status = "off"
-            sgStatusLight13.status = "green"
-        } else if (led_state === 4) {
-            sgStatusLight13.status = "off"
-            sgStatusLight14.status = "green"
-        } else if (led_state === 5) {
-            sgStatusLight14.status = "off"
-            sgStatusLight15.status = "green"
-        } else if (led_state === 6) {
-            sgStatusLight15.status = "off"
-            sgStatusLight16.status = "green"
-        } else if (led_state === 7) {
-            sgStatusLight16.status = "off"
-            sgStatusLight17.status = "green"
-        } else if (led_state === 8) {
-            sgStatusLight17.status = "off"
-            sgStatusLight18.status = "green"
-        } else if (led_state === 9) {
-            sgStatusLight18.status = "off"
-            sgStatusLight19.status = "green"
-        } else if (led_state === 10) {
-            sgStatusLight19.status = "off"
-            sgStatusLight1A.status = "green"
-        } else if (led_state === 11) {
-            sgStatusLight1A.status = "off"
-            sgStatusLight1B.status = "green"
-        } else if (led_state === 12) {
-            sgStatusLight1B.status = "off"
-            sgStatusLight1C.status = "green"
+        if (platformInterface.star_demo === true && platformInterface.demo_led_num_1 === true){
+            demoLEDPattern1.led_all_off()
+            demoLEDPattern1.demo_star1(led_state)
+        } else if (platformInterface.star_demo === true && platformInterface.demo_led_num_2 === true){
+            demoLEDPattern1.led_all_off()
+            demoLEDPattern1.demo_star2(led_state)
+        } else if (platformInterface.star_demo === true && platformInterface.demo_led_num_3 === true){
+            demoLEDPattern1.led_all_off()
+            demoLEDPattern1.demo_star3(led_state)
+        } else if (platformInterface.star_demo === true && platformInterface.demo_led_num_4 === true){
+            demoLEDPattern1.led_all_off()
+            demoLEDPattern1.demo_star4(led_state)
+        } else if (platformInterface.star_demo === true && platformInterface.demo_led_num_5 === true){
+            demoLEDPattern1.led_all_off()
+            demoLEDPattern1.demo_star5(led_state)
         }
 
-        else {
-            sgStatusLight1C.status = "off"
+        if (platformInterface.curtain_demo === true && platformInterface.demo_led_num_1 === true){
+            demoLEDPattern2.led_all_off()
+            demoLEDPattern2.demo_cirtain1(led_state)
+        } else if (platformInterface.curtain_demo === true && platformInterface.demo_led_num_2 === true){
+            demoLEDPattern2.led_all_off()
+            demoLEDPattern2.demo_cirtain2(led_state)
+        } else if (platformInterface.curtain_demo === true && platformInterface.demo_led_num_3 === true){
+            demoLEDPattern2.led_all_off()
+            demoLEDPattern2.demo_cirtain3(led_state)
         }
-        demoLEDPattern.demo_star1(led_state)
-
-
     }
 
 //    function send_demo_state(demo_mode_state, demo_lednum_state, demo_time_state, demo_intensity_state){
@@ -144,35 +139,60 @@ Rectangle {
                                 text: qsTr("Star")
                                 checked: true  // Sets default checked button when exclusive
                                 onClicked: {
-                                    send_demo_state(1,(segmentedButtons2.index+1),sgSlider1.value,sgSlider2.value)
+                                    platformInterface.star_demo = true
+                                    platformInterface.curtain_demo = false
+                                    platformInterface.bhall_demo = false
+                                    platformInterface.mix_demo = false
+                                    platformInterface.demo_off = false
+                                    send_demo_state((segmentedButtons1.index+1),(segmentedButtons2.index+1),sgSlider1.value,sgSlider2.value)
                                 }
                             }
 
                             SGSegmentedButton{
                                 text: qsTr("Curtain")
                                 onClicked: {
-                                    send_demo_state(2,(segmentedButtons2.index+1),sgSlider1.value,sgSlider2.value)
+                                    platformInterface.star_demo = false
+                                    platformInterface.curtain_demo = true
+                                    platformInterface.bhall_demo = false
+                                    platformInterface.mix_demo = false
+                                    platformInterface.demo_off = false
+                                    send_demo_state((segmentedButtons1.index+1),(segmentedButtons2.index+1),sgSlider1.value,sgSlider2.value)
                                 }
                             }
 
                             SGSegmentedButton{
                                 text: qsTr("B.Hall")
                                 onClicked: {
-                                    send_demo_state(3,(segmentedButtons2.index+1),sgSlider1.value,sgSlider2.value)
+                                    platformInterface.star_demo = false
+                                    platformInterface.curtain_demo = false
+                                    platformInterface.bhall_demo = true
+                                    platformInterface.mix_demo = false
+                                    platformInterface.demo_off = false
+                                    send_demo_state((segmentedButtons1.index+1),(segmentedButtons2.index+1),sgSlider1.value,sgSlider2.value)
                                 }
                             }
 
                             SGSegmentedButton{
                                 text: qsTr("Mix")
                                 onClicked: {
-                                    send_demo_state(4,(segmentedButtons2.index+1),sgSlider1.value,sgSlider2.value)
+                                    platformInterface.star_demo = false
+                                    platformInterface.curtain_demo = false
+                                    platformInterface.bhall_demo = false
+                                    platformInterface.mix_demo = true
+                                    platformInterface.demo_off = false
+                                    send_demo_state((segmentedButtons1.index+1),(segmentedButtons2.index+1),sgSlider1.value,sgSlider2.value)
                                 }
                             }
 
                             SGSegmentedButton{
                                 text: qsTr("Off")
                                 onClicked: {
-                                    send_demo_state(5,(segmentedButtons2.index+1),sgSlider1.value,sgSlider2.value)
+                                    platformInterface.star_demo = false
+                                    platformInterface.curtain_demo = false
+                                    platformInterface.bhall_demo = false
+                                    platformInterface.mix_demo = false
+                                    platformInterface.demo_off = true
+                                    send_demo_state((segmentedButtons1.index+1),(segmentedButtons2.index+1),sgSlider1.value,sgSlider2.value)
                                 }
                             }
                         }
@@ -203,6 +223,11 @@ Rectangle {
                                 text: qsTr("1")
                                 checked: true  // Sets default checked button when exclusive
                                 onClicked: {
+                                    platformInterface.demo_led_num_1 = true
+                                    platformInterface.demo_led_num_2 = false
+                                    platformInterface.demo_led_num_3 = false
+                                    platformInterface.demo_led_num_4 = false
+                                    platformInterface.demo_led_num_5 = false
                                     send_demo_state((segmentedButtons1.index+1),1,sgSlider1.value,sgSlider2.value)
                                 }
                             }
@@ -210,6 +235,11 @@ Rectangle {
                             SGSegmentedButton{
                                 text: qsTr("2")
                                 onClicked: {
+                                    platformInterface.demo_led_num_1 = false
+                                    platformInterface.demo_led_num_2 = true
+                                    platformInterface.demo_led_num_3 = false
+                                    platformInterface.demo_led_num_4 = false
+                                    platformInterface.demo_led_num_5 = false
                                     send_demo_state((segmentedButtons1.index+1),2,sgSlider1.value,sgSlider2.value)
                                 }
                             }
@@ -217,6 +247,11 @@ Rectangle {
                             SGSegmentedButton{
                                 text: qsTr("3")
                                 onClicked: {
+                                    platformInterface.demo_led_num_1 = false
+                                    platformInterface.demo_led_num_2 = false
+                                    platformInterface.demo_led_num_3 = true
+                                    platformInterface.demo_led_num_4 = false
+                                    platformInterface.demo_led_num_5 = false
                                     send_demo_state((segmentedButtons1.index+1),3,sgSlider1.value,sgSlider2.value)
                                 }
                             }
@@ -224,6 +259,11 @@ Rectangle {
                             SGSegmentedButton{
                                 text: qsTr("4")
                                 onClicked: {
+                                    platformInterface.demo_led_num_1 = false
+                                    platformInterface.demo_led_num_2 = false
+                                    platformInterface.demo_led_num_3 = false
+                                    platformInterface.demo_led_num_4 = true
+                                    platformInterface.demo_led_num_5 = false
                                     send_demo_state((segmentedButtons1.index+1),4,sgSlider1.value,sgSlider2.value)
                                 }
                             }
@@ -231,6 +271,11 @@ Rectangle {
                             SGSegmentedButton{
                                 text: qsTr("5")
                                 onClicked: {
+                                    platformInterface.demo_led_num_1 = false
+                                    platformInterface.demo_led_num_2 = false
+                                    platformInterface.demo_led_num_3 = false
+                                    platformInterface.demo_led_num_4 = false
+                                    platformInterface.demo_led_num_5 = true
                                     send_demo_state((segmentedButtons1.index+1),5,sgSlider1.value,sgSlider2.value)
                                 }
                             }
@@ -250,8 +295,8 @@ Rectangle {
                         labelLeft: false             // Default: true
                         Layout.fillHeight: true
                         width: parent.width/2
-                        stepSize: 120                // Default: 1.0
-                        value: 1200                        // Default: average of from and to
+                        stepSize: 150                // Default: 1.0
+                        value: 1500                        // Default: average of from and to
                         from: 600                      // Default: 0.0
                         to: 3000                    // Default: 100.0
                         startLabel: "600"              // Default: from

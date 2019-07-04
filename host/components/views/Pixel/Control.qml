@@ -55,6 +55,7 @@ Item {
             text: qsTr("Pixel Demo")
             onClicked: {
                 controlContainer.currentIndex = 2
+                platformInterface.ask_id.update()
                 platformInterface.auto_addr_enable_state = false
             }
         }

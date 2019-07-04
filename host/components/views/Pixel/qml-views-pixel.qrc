@@ -14,6 +14,7 @@
         <file>control-views/images/sliderHandleActive.svg</file>
         <file>control-views/images/sliderThumb.svg</file>
         <file>control-views/images/sliderValue.svg</file>
-        <file>control-views/DemoPattern.qml</file>
+        <file>control-views/DemoPattern1.qml</file>
+        <file>control-views/DemoPattern2.qml</file>
     </qresource>
 </RCC>

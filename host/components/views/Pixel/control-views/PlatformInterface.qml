@@ -326,6 +326,24 @@ Item {
                                           show: function () { CorePlatformInterface.show(this) }
                                       })
 
+    property var ask_id :           ({
+                                          "cmd" : "request_platform_id",
+//                                          "payload": {
+//                                              "function": "periodic_example_response"
+//                                          },
+
+                                          update: function () {
+                                              this.set()
+                                              this.send()
+                                          },
+
+                                          set: function () {
+                                          },
+
+                                          send: function () { CorePlatformInterface.send(this) },
+                                          show: function () { CorePlatformInterface.show(this) }
+                                      })
+
 
     property bool boost_enable_state: false
     property bool buck1_enable_state: false
@@ -345,6 +363,18 @@ Item {
     property bool buck4_led_state: false
     property bool buck5_led_state: false
     property bool buck6_led_state: false
+
+    property bool demo_led_num_1: false
+    property bool demo_led_num_2: false
+    property bool demo_led_num_3: false
+    property bool demo_led_num_4: false
+    property bool demo_led_num_5: false
+
+    property bool star_demo: false
+    property bool curtain_demo: false
+    property bool bhall_demo: false
+    property bool mix_demo: false
+    property bool demo_off: false
 
     // -------------------------------------------------------------------
     // Listens to message notifications coming from CoreInterface.cpp
