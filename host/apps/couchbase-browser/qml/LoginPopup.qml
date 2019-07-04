@@ -4,12 +4,14 @@ import QtQuick.Controls 2.12
 import QtQuick.Window 2.12
 import QtQuick.Dialogs 1.3
 
-Popup {
+Window {
     id: root
     width: 500
     height: 700
+    minimumWidth: 500
+    minimumHeight: 700
     visible: false
-    padding: 0
+    flags: Qt.Tool
 
     signal start()
 
@@ -60,12 +62,29 @@ Popup {
             width: 2
             color: "#b55400"
         }
+        Rectangle {
+            id: statusBar
+            width: parent.width
+            height: 25
+            anchors {
+                top: parent.top
+            }
+            color: "#b55400"
+            TextArea {
+                height: parent.height
+                width: parent.width
+                horizontalAlignment: Qt.AlignCenter
+                color: "#eee"
+                text: ""
+            }
+        }
 
         ColumnLayout {
             spacing: 1
             width: parent.width - 10
-            height: implicitHeight
+            height: parent.height - 25
             anchors.horizontalCenter: parent.horizontalCenter
+            anchors.top: statusBar.bottom
 
             Rectangle {
                 Layout.preferredHeight: 80
@@ -299,13 +318,13 @@ Popup {
                         }
                         RadioButton {
                             id: pushAndPullButton
-                            checked: true
                             text: qsTr("")
                             Layout.alignment: Qt.AlignHCenter
                             onClicked: rep_type = "pushpull"
                         }
                         RadioButton {
                             id: pullButton
+                            checked: true
                             text: qsTr("")
                             Layout.alignment: Qt.AlignRight
                             onClicked: rep_type = "pull"

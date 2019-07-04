@@ -23,5 +23,6 @@
         <file>qml/WarningPopup.qml</file>
         <file>qml/Images/editIcon.png</file>
         <file>qml/Images/deleteDocumentIcon.png</file>
+        <file>qml/Images/CBBrowserLogo.png</file>
     </qresource>
 </RCC>

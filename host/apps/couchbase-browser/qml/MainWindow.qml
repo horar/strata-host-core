@@ -120,7 +120,7 @@ Item {
                     id: onLogo
                     width: 50
                     height: 50
-                    source: "Images/OnLogo.png"
+                    source: "Images/CBBrowserLogo.png"
                     fillMode: Image.PreserveAspectCrop
                     anchors {
                         bottom: parent.bottom
@@ -162,7 +162,6 @@ Item {
 
             LoginPopup {
                 id: loginPopup
-                anchors.centerIn: parent
                 onStart: {
                     let message = qmlBridge.startReplicator(id,url,username,password,rep_type);
                     if (message.length === 0) {
