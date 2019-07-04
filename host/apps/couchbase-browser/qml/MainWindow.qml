@@ -173,9 +173,8 @@ Item {
                     else bodyView.message = message;
                 }
             }
-            NewDocumentPopup {
+            DocumentPopup {
                 id: newDocPopup
-                changed: true
                 onSubmit: {
                     let message = qmlBridge.createNewDocument(id,docID,docBody);
                     if (message.length === 0)
@@ -184,22 +183,10 @@ Item {
                         bodyView.message = message;
                 }
             }
-            NewDocumentPopup {
+            DocumentPopup {
                 id: editDocPopup
-                docID: openedDocumentID
-                docBody: openedDocumentBody
-                onDocIDChanged: {
-                    if (docID !== openedDocumentID || docBody !== openedDocumentBody) {
-                        changed = true
-                    }
-                    else changed = false
-                }
-                onDocBodyChanged: {
-                    if (docID !== openedDocumentID || docBody !== openedDocumentBody) {
-                        changed = true
-                    }
-                    else changed = false
-                }
+                originalID: openedDocumentID
+                originalBody: openedDocumentBody
 
                 onSubmit:  {
                     let message = ""
@@ -225,7 +212,7 @@ Item {
                     visible = false
                 }
             }
-            NewDatabasePopup {
+            DatabasePopup {
                 id: newDatabasesPopup
                 anchors.centerIn: parent
                 onSubmit: {
@@ -238,7 +225,7 @@ Item {
                 }
 
             }
-            NewDatabasePopup {
+            DatabasePopup {
                 id: saveAsPopup
                 anchors.centerIn: parent
                 onSubmit:  {
