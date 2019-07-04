@@ -10,7 +10,7 @@ Window {
     height: 700
     minimumWidth: 500
     minimumHeight: 700
-    visible: false
+    visible: true
     flags: Qt.Tool
 
     signal start()
@@ -22,9 +22,21 @@ Window {
     property string rep_type: "pull"
     property var channels: []
 
+    function checkDuplicate(arr,value){
+        for(let i = 0; i < arr.length; i++){
+            if(arr[i] === value){
+                return true
+            }
+        }
+        return false
+    }
     function add(){
-        channels = (channelInputField.text)
-        channelViewField.text += (channels + "\n")
+        var temp = channelInputField.text
+        if(checkDuplicate(channels,temp) === false){
+            channels.push(temp)
+            channelViewField.text += temp + "\n"
+        }
+        channelInputField.text = ""
     }
     function clearInput()
     {
@@ -76,6 +88,7 @@ Window {
                 horizontalAlignment: Qt.AlignCenter
                 color: "#eee"
                 text: ""
+                readOnly: true
             }
         }
 
