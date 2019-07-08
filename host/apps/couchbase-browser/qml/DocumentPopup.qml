@@ -30,6 +30,27 @@ Window {
     Rectangle {
         anchors.fill: parent
         color: "#393e46"
+        border {
+            width: 2
+            color: "#b55400"
+        }
+        Rectangle {
+            id: statusBar
+            width: parent.width
+            height: 30
+            color: "#b55400"
+            anchors {
+                top: parent.top
+            }
+            TextArea {
+                height: parent.height
+                width: parent.width
+                horizontalAlignment: Qt.AlignCenter
+                color: "#eee"
+                text: ""
+                readOnly: true
+            }
+        }
         ColumnLayout {
             spacing: 20
             width: parent.width-50
