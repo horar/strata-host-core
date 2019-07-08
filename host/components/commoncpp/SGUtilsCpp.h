@@ -15,6 +15,7 @@ public:
     virtual ~SGUtilsCpp();
 
     Q_INVOKABLE QString urlToPath(const QUrl &url);
+    Q_INVOKABLE QString urlToLocalFile(const QUrl &url);
     Q_INVOKABLE bool isFile(const QString &file);
     Q_INVOKABLE bool isExecutable(const QString &file);
     Q_INVOKABLE bool atomicWrite(const QString &path, const QString &content);

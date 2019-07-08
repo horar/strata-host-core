@@ -159,6 +159,11 @@ Module {
             Parameter { name: "url"; type: "QUrl" }
         }
         Method {
+            name: "urlToLocalFile"
+            type: "string"
+            Parameter { name: "url"; type: "QUrl" }
+        }
+        Method {
             name: "isFile"
             type: "bool"
             Parameter { name: "file"; type: "string" }
