@@ -45,7 +45,14 @@ Item {
         if(vin_status_noti === "good"){
             vinLed.status = "green"
         }
-        else vinLed.status = "red"
+        else {
+            eFuse1.enabled = false
+            eFuse2.enabled = false
+            eFuse1.opacity = 0.5
+            eFuse2.opacity =  0.5
+            vinLed.status = "red"
+
+        }
     }
 
 
