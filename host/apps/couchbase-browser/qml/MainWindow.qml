@@ -183,30 +183,14 @@ Item {
             }
             DocumentPopup {
                 id: editDocPopup
-                originalID: openedDocumentID
-                originalBody: openedDocumentBody
-
-                onSubmit:  {
-                    let message = ""
-                    if (docID !== openedDocumentID) {
-                        message = qmlBridge.createNewDocument(id,docID,docBody)
-                        if (message.length === 0) {
-                            message = qmlBridge.deleteDoc(id,openedDocumentID)
-                            if (message.length === 0) {
-                                bodyView.message = "Edited document successfully"
-                                tableSelectorView.currentIndex = tableSelectorView.model.indexOf(docID)
-                            }
-                            else bodyView.message = message + " | " + qmlBridge.deleteDoc(id,docID,docBody)
-                        }
-                        else bodyView.message = message
+                docID: openedDocumentID
+                docBody: openedDocumentBody
+                onSubmit: {
+                    let message = qmlBridge.editDoc(id,openedDocumentID,docID,docBody)
+                    if (message.length === 0) {
+                        bodyView.message = "Edited document successfully"
                     }
-                    else {
-                        message = qmlBridge.editDoc(id,docID,docBody)
-                        if (message.length === 0) {
-                            bodyView.message = "Edited document successfully"
-                        }
-                        else bodyView.message = message;
-                    }
+                    else bodyView.message = message;
                     visible = false
                 }
             }

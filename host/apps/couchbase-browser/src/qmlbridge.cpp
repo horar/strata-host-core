@@ -49,9 +49,9 @@ QString QMLBridge::createNewDocument(int windowId, QString id, QString body)
     return allDatabases[windowId]->createNewDoc(id, body);
 }
 
-QString QMLBridge::editDoc(int windowId, QString id, QString body)
+QString QMLBridge::editDoc(int windowId, QString oldId, QString newId, QString body)
 {
-    return allDatabases[windowId]->editDoc(id, body);
+    return allDatabases[windowId]->editDoc(oldId, newId, body);
 }
 
 QString QMLBridge::deleteDoc(int windowId, QString id)
