@@ -92,12 +92,9 @@ Item {
             filename: "Images/closeIcon"
             label: "<b>Close</b>"
             onButtonPress: {
-                if (replicatorStarted) {
-                    stopReplicatorSignal()
-                    replicatorStarted = false
-                }
                 closeSignal()
                 openedFile = false
+                replicatorStarted = false
             }
             visible: openedFile
         }
