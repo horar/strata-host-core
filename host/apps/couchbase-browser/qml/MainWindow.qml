@@ -212,7 +212,6 @@ Item {
             }
             DatabasePopup {
                 id: newDatabasesPopup
-                anchors.centerIn: parent
                 onSubmit: {
                     let message = qmlBridge.createNewDatabase(id,mainMenuView.openedFile,folderPath.toString().replace("file://",""), filename);
                     if (message.length === 0) {
@@ -225,7 +224,6 @@ Item {
             }
             DatabasePopup {
                 id: saveAsPopup
-                anchors.centerIn: parent
                 onSubmit:  {
                     visible = false;
                 }

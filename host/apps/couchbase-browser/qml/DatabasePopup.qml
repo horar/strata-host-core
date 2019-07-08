@@ -5,13 +5,12 @@ import QtQuick.Window 2.12
 import QtQuick.Dialogs 1.3
 import Qt.labs.platform 1.0
 
-Popup {
+Window {
     id: root
     width: 500
     height: 500
     visible: false
-    padding: 0
-
+    flags: Qt.Tool
     signal submit()
 
     property alias folderPath: selectFolderField.text
@@ -76,6 +75,7 @@ Popup {
                     id: selectFolderContainer
                     height: parent.height / 2
                     width: parent.width / 2
+                    color: "transparent"
                     anchors {
                         centerIn: parent
                     }
@@ -89,17 +89,21 @@ Popup {
                     }
                     TextField {
                         id: selectFolderField
-                        anchors.fill: parent
+                        height: parent.height
+                        width: parent.width - 40
                         placeholderText: "Enter Path"
                         onActiveFocusChanged: {
-                            folderFieldBackground.border.color = "transparent"
+                            folderFieldBackground.border.color = activeFocus ? "#b55400" : "transparent"
                         }
-                        Rectangle {
+                        background: Rectangle {
                             id: folderFieldBackground
-                            width: parent.width
-                            height: parent.height
-                            color: "transparent"
+                            color: "white"
+                            border {
+                                width: 2
+                                color: "transparent"
+                            }
                         }
+
                     }
                     Button  {
                         height: parent.height
@@ -108,7 +112,7 @@ Popup {
                             folderDialog.visible = true
                         }
                         anchors {
-                            left: parent.right
+                            left: selectFolderField.right
                             leftMargin: 5
                             verticalCenter: parent.verticalCenter
                         }
@@ -147,14 +151,16 @@ Popup {
                         anchors.fill: parent
                         placeholderText: "Enter Database Name"
                         onActiveFocusChanged: {
-                            filenameFieldBackground.border.color = "transparent"
+                            filenameFieldBackground.border.color = activeFocus ? "#b55400" : "transparent"
                         }
-                        Rectangle {
+                        background: Rectangle {
                             id: filenameFieldBackground
-                            width: parent.width
-                            height: parent.height
-                            color: "transparent"
+                            border {
+                                width: 2
+                                color: "transparent"
+                            }
                         }
+
                     }
                 }
             }

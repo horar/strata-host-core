@@ -10,6 +10,8 @@ Window {
     height: 700
     minimumWidth: 500
     minimumHeight: 700
+    maximumHeight: 700
+    maximumWidth: 500
     visible: false
     flags: Qt.Tool
 
