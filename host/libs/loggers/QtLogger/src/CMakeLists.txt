@@ -10,10 +10,6 @@ add_library(${PROJECT_NAME} STATIC
 
 set_target_properties(${PROJECT_NAME} PROPERTIES
     AUTOMOC ON
-
-    CXX_STANDARD 17
-    CXX_STANDARD_REQUIRED ON
-    CXX_EXTENSIONS OFF
 )
 
 target_link_libraries(${PROJECT_NAME}

@@ -19,6 +19,8 @@ set(HEADERS
     include/PlatformBoard.h
     include/DownloadManager.h
     include/StorageManager.h
+    include/LoggingAdapter.h
+    src/logging/LoggingQtCategories.h
 )
 
 add_executable(${PROJECT_NAME}
@@ -33,6 +35,8 @@ add_executable(${PROJECT_NAME}
     src/DownloadManager.cpp
     src/StorageManager.cpp
     src/PlatformDocument.cpp
+    src/LoggingAdapter.cpp
+    src/logging/LoggingQtCategories.cpp
     ${HEADERS}
 )
 
@@ -47,18 +51,14 @@ target_link_libraries(${PROJECT_NAME}
     connector
     EventsMgr
     couchbase-lite-cpp
+    QtLogger
 )
 
 set_target_properties(${PROJECT_NAME} PROPERTIES
-        CXX_STANDARD 17
-        CXX_STANDARD_REQUIRED ON
-        CXX_EXTENSIONS OFF
-        AUTOMOC ON
-        AUTORCC ON
-        #AUTORCC_OPTIONS "--compress;9"
+    AUTOMOC ON
+    AUTORCC ON
+    #AUTORCC_OPTIONS "--compress;9"
 
-        OUTPUT_NAME "hcs"
-        )
-
-
+    OUTPUT_NAME "hcs"
+)
 
