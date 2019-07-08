@@ -22,15 +22,34 @@ Window {
     property string rep_type: "pull"
     property var channels: []
 
+    function checkDuplicate(arr,value){
+        for(let i = 0; i < arr.length; i++){
+            if(arr[i] === value){
+                return true
+            }
+        }
+        return false
+    }
     function add(){
-        channels = (channelInputField.text)
-        channelViewField.text += (channels + "\n")
+        var temp = channelInputField.text
+        if(checkDuplicate(channels,temp) === false){
+            channels.push(temp)
+            channelViewField.text += temp + "\n"
+        }
+        channelInputField.text = ""
     }
     function clearInput()
     {
         urlField.text = ""
         usernameField.text = ""
         passwordField.text = ""
+    }
+    function clearLast(){
+        channelViewField.text = ""
+        for (let i = 0; i < channels.length - 1; i++){
+            channelViewField.text += channels[i] + "\n"
+        }
+        channels.pop();
     }
 
     function validate(){
@@ -76,6 +95,7 @@ Window {
                 horizontalAlignment: Qt.AlignCenter
                 color: "#eee"
                 text: ""
+                readOnly: true
             }
         }
 
@@ -287,6 +307,7 @@ Window {
                             text: "Clear Last"
                             onClicked: {
                                 //make view remove last selection
+                                clearLast();
                             }
                         }
                     }

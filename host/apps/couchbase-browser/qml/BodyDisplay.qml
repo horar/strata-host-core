@@ -20,7 +20,7 @@ Item {
         ScrollView {
             id: scroller
             anchors {
-                top: parent.top
+                top: statusBar.top
                 left: parent.left
                 right: parent.right
                 bottom: statusBar.top
@@ -41,7 +41,7 @@ Item {
             width: parent.width
             height: 25
             anchors {
-                bottom: parent.bottom
+                top: parent.top
                 left: parent.left
             }
             color: "#b55400"
