@@ -94,9 +94,6 @@ target_include_directories(${PROJECT_NAME}
 )
 
 set_target_properties(${PROJECT_NAME} PROPERTIES
-    CXX_STANDARD 17
-    CXX_STANDARD_REQUIRED ON
-    CXX_EXTENSIONS OFF
     AUTOMOC ON
     AUTORCC ON
     #AUTORCC_OPTIONS "--compress;9"
@@ -132,10 +129,6 @@ if(WIN32)
         VERBATIM
     )
 endif()
-
-target_compile_options(${PROJECT_NAME}
-    PRIVATE $<$<CXX_COMPILER_ID:AppleClang>:-Wall -Wextra>
-)
 
 target_compile_definitions(${PROJECT_NAME}
 #    PRIVATE QT_QML_DEBUG
