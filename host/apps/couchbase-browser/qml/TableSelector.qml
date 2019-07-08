@@ -53,13 +53,26 @@ Rectangle {
                         listView.currentIndex = index
                     }
                     hoverEnabled: true
+                    onEntered: {
+                        if (listView.height < listView.contentHeight)
+                            scrollBar.policy = ScrollBar.AlwaysOn
+                        else
+                            scrollBar.policy = ScrollBar.AlwaysOff
+                    }
+                    onExited: {
+                        if (listView.height < listView.contentHeight)
+                            scrollBar.policy = ScrollBar.AsNeeded
+                        else
+                            scrollBar.policy = ScrollBar.AlwaysOff
+                    }
                 }
             }
         }
         ScrollBar.vertical: ScrollBar {
+            id: scrollBar
             width: 10
             anchors.right: listView.left
-            policy: ScrollBar.AlwaysOn
+            policy: ScrollBar.AlwaysOff
         }
 
         anchors {
