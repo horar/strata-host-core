@@ -8,8 +8,6 @@ Item {
 
     property alias content: text.text
     property alias message: statusText.text
-    //property alias readOnly: text.readOnly
-
 
     Rectangle {
         id: background
@@ -17,25 +15,6 @@ Item {
         height: parent.height
         color: "#393e46"
 
-        ScrollView {
-            id: scroller
-            anchors {
-                top: statusBar.top
-                left: parent.left
-                right: parent.right
-                bottom: statusBar.top
-            }
-            clip: true
-
-            TextArea {
-                id: text
-                wrapMode: "Wrap"
-                selectByMouse: true
-                text: ""
-                color: "#eeeeee"
-                readOnly: true
-            }
-        }
         Rectangle {
             id: statusBar
             width: parent.width
@@ -52,6 +31,26 @@ Item {
                 padding: 3
                 color: "#eee"
 
+            }
+        }
+
+        ScrollView {
+            id: scroller
+            anchors {
+                top: statusBar.bottom
+                left: parent.left
+                right: parent.right
+                bottom: parent.bottom
+            }
+            clip: true
+
+            TextArea {
+                id: text
+                wrapMode: "Wrap"
+                selectByMouse: true
+                text: ""
+                color: "#eeeeee"
+                readOnly: true
             }
         }
     }

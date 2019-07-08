@@ -38,7 +38,7 @@ Item {
             tableSelectorView.model = tempModel;
 
             if (tableSelectorView.currentIndex === newIndex) {
-                update();
+                updateOpenDocument();
             }
             else
                 tableSelectorView.currentIndex = newIndex;
@@ -109,7 +109,6 @@ Item {
                 TableSelector {
                     id: tableSelectorView
                     height: parent.height
-                    Component.onCompleted: console.log(height, root.height);
                     onCurrentIndexChanged: {
                         if (allDocuments !== "{}") {
                             updateOpenDocument();
