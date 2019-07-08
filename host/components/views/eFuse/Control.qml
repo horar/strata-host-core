@@ -11,9 +11,12 @@ Item {
         fill: parent
     }
 
-
     PlatformInterface {
         id: platformInterface
+    }
+
+    MutiplePlatform {
+        id: efuseClassID
     }
 
     Component.onCompleted: {

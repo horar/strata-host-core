@@ -80,6 +80,7 @@ Item {
             color: root.centerColor
             anchors {
                 top:parent.bottom
+                topMargin: 10
                 horizontalCenter: parent.horizontalCenter
             }
             horizontalAlignment: Text.AlignHCenter

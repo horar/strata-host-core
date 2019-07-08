@@ -14,6 +14,7 @@ Item {
     width: parent.width / parent.height > initialAspectRatio ? parent.height * initialAspectRatio : parent.width
     height: parent.width / parent.height < initialAspectRatio ? parent.width / initialAspectRatio : parent.height
 
+
     property var temp1_noti: platformInterface.periodic_status.temperature1
     onTemp1_notiChanged: {
         sgCircularGauge.value = temp1_noti.toFixed(2)
@@ -66,19 +67,20 @@ Item {
 
     Component.onCompleted: {
         platformInterface.get_enable_status.update()
+        efuseClassID.check_class_id()
     }
 
     Rectangle{
         width: parent.width
         height: parent.height
-        color: "#a9a9a9"
+        color: "transparent"
         id: graphContainer
 
         Text {
             id: partNumber
-            text: "eFuse" + " " + platformInterface.board_id.board_id
+            text: efuseClassID.partNumber
             font.bold: true
-            color: "white"
+            color: "black"
             anchors{
                 top: parent.top
                 topMargin: 20
@@ -98,7 +100,7 @@ Item {
                 top: partNumber.bottom
                 topMargin: 20
             }
-            color: "#696969"
+            color: "transparent"
 
             RowLayout {
                 anchors.fill: parent
@@ -108,15 +110,15 @@ Item {
                     //value: platformInterface.periodic_status.temperature1.toFixed(2)
                     minimumValue: -55
                     maximumValue: 125
-                    tickmarkStepSize: 10
+                    tickmarkStepSize: 20
                     width: parent.width/1.5
                     height: parent.height
-                    gaugeRearColor: "white"                  // Default: "#ddd"(background color that gets filled in by gauge)
-                    centerColor: "white"
-                    outerColor: "white"
+                    gaugeRearColor: "#ddd"                // Default: "#ddd"(background color that gets filled in by gauge)
+                    centerColor: "black"
+                    outerColor: "#999"
                     gaugeFrontColor1: Qt.rgba(0,.75,1,1)
                     gaugeFrontColor2: Qt.rgba(1,0,0,1)
-                    unitLabel: "RPM"
+                    unitLabel: "˚C"
                     gaugeTitle: "Temp Sensor 1"
                     Layout.alignment: Qt.AlignCenter
 
@@ -129,14 +131,13 @@ Item {
                     height: parent.height
                     minimumValue: -55
                     maximumValue: 125
-                    //value: platformInterface.periodic_status.temperature2.toFixed(2)
-                    tickmarkStepSize: 10
-                    gaugeRearColor: "white"                  // Default: "#ddd"(background color that gets filled in by gauge)
-                    centerColor: "white"
-                    outerColor: "white"
+                    tickmarkStepSize: 20
+                    gaugeRearColor: "#ddd"                // Default: "#ddd"(background color that gets filled in by gauge)
+                    centerColor: "black"
+                    outerColor: "#999"
                     gaugeFrontColor1: Qt.rgba(0,.75,1,1)
                     gaugeFrontColor2: Qt.rgba(1,0,0,1)
-                    unitLabel: "RPM"                        // Default: "RPM"
+                    unitLabel: "˚C"                        // Default: "RPM"
                     gaugeTitle: "Temp Sensor 2"
                     Layout.alignment: Qt.AlignCenter
 
@@ -155,7 +156,7 @@ Item {
                 top: topSetting.bottom
                 topMargin: 20
             }
-            color: "#696969"
+            color: "transparent"
 
             RowLayout {
                 anchors.fill: parent
@@ -169,6 +170,20 @@ Item {
                     ColumnLayout {
                         anchors.fill: parent
 
+                        Text {
+                            id: inputTitle
+                            width: parent.width
+                            height: parent.height/2
+                            Layout.alignment: Qt.AlignCenter
+                            text: "Input"
+                            font.bold: true
+                            color: "black"
+                            font.pixelSize: ratioCalc * 30
+                            horizontalAlignment: Text.AlignHCenter
+
+                        }
+
+
                         SGLabelledInfoBox {
                             id: inputVoltage
                             width: parent.width
@@ -178,7 +193,7 @@ Item {
                             info: platformInterface.periodic_status.vin.toFixed(2)
                             unit: "V"
                             infoBoxColor: "black"
-                            labelColor: "white"
+                            labelColor: "black"
                             unitSize: ratioCalc * 20
                             fontSize: ratioCalc * 20
                             Layout.alignment: Qt.AlignCenter
@@ -193,7 +208,7 @@ Item {
                             info: platformInterface.periodic_status.iin.toFixed(2)
                             unit: "A"
                             infoBoxColor: "black"
-                            labelColor: "white"
+                            labelColor: "black"
                             fontSize: ratioCalc * 20
                             unitSize: ratioCalc * 20
                             Layout.alignment: Qt.AlignCenter
@@ -208,6 +223,19 @@ Item {
 
                     ColumnLayout {
                         anchors.fill: parent
+                        Text {
+                            id: ouputTitle
+                            width: parent.width
+                            height: parent.height/2
+                            Layout.alignment: Qt.AlignCenter
+                            text: "Output"
+                            font.bold: true
+                            color: "black"
+                            font.pixelSize: ratioCalc * 30
+                            horizontalAlignment: Text.AlignHCenter
+
+                        }
+
 
                         SGLabelledInfoBox {
                             id: ouputVoltage
@@ -218,7 +246,7 @@ Item {
                             info: platformInterface.periodic_status.vout.toFixed(2)
                             unit: "V"
                             infoBoxColor: "black"
-                            labelColor: "white"
+                             labelColor: "black"
                             unitSize: ratioCalc * 20
                             fontSize: ratioCalc * 20
                             Layout.alignment: Qt.AlignCenter
@@ -233,7 +261,7 @@ Item {
                             info: platformInterface.periodic_status.iin.toFixed(2)
                             unit: "A"
                             infoBoxColor: "black"
-                            labelColor: "white"
+                            labelColor: "black"
                             fontSize: ratioCalc * 20
                             unitSize: ratioCalc * 20
                             Layout.alignment: Qt.AlignCenter
@@ -250,6 +278,18 @@ Item {
 
                     ColumnLayout {
                         anchors.fill: parent
+                        Text {
+                            id: controlTitle
+                            width: parent.width
+                            height: parent.height/2
+                            Layout.alignment: Qt.AlignCenter
+                            text: "Controls"
+                            font.bold: true
+                            color: "black"
+                            font.pixelSize: ratioCalc * 30
+                            horizontalAlignment: Text.AlignHCenter
+
+                        }
                         SGSwitch {
                             id: eFuse1
                             label: "Enable 1"
@@ -262,7 +302,7 @@ Item {
                             labelsInside: true              // Default: true (controls whether checked labels appear inside the control or outside of it
                             switchWidth: 88                // Default: 52 (change for long custom checkedLabels when labelsInside)
                             switchHeight: 26                // Default: 26
-                            textColor: "white"              // Default: "black"
+                            textColor: "black"              // Default: "black"
                             handleColor: "#33b13b"            // Default: "white"
                             grooveColor: "black"             // Default: "#ccc"
                             grooveFillColor: "black"         // Default: "#0cf"
@@ -291,7 +331,7 @@ Item {
                             labelsInside: true              // Default: true (controls whether checked labels appear inside the control or outside of it
                             switchWidth: 88                 // Default: 52 (change for long custom checkedLabels when labelsInside)
                             switchHeight: 26                // Default: 26
-                            textColor: "white"              // Default: "black"
+                            textColor: "black"             // Default: "black"
                             handleColor: "#33b13b"            // Default: "white"
                             grooveColor: "black"             // Default: "#ccc"
                             grooveFillColor: "black"         // Default: "#0cf"
@@ -316,7 +356,7 @@ Item {
                             label: "<b>Input Voltage  Good:</b>" // Default: "" (if not entered, label will not appear)
                             labelLeft: true       // Default: true
                             lightSize: ratioCalc * 40          // Default: 50
-                            textColor: "white"      // Default: "black"
+                            textColor: "black"      // Default: "black"
                             fontSize: ratioCalc * 20
                             Layout.alignment: Qt.AlignCenter
 

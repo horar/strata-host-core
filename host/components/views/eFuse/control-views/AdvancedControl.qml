@@ -29,7 +29,7 @@ Item {
     }
     property var vout_noti: platformInterface.periodic_status.vout
     onVout_notiChanged: {
-        ouputVoltage.info = vout_noti.toFixed(2)
+        outputVoltage.info = vout_noti.toFixed(2)
     }
     property var iin_noti: platformInterface.periodic_status.iin
     onIin_notiChanged: {
@@ -37,20 +37,26 @@ Item {
     }
     property var iout_noti: platformInterface.periodic_status.iout
     onIout_notiChanged: {
-        ouputCurrent.info = iout_noti.toFixed(2)
+        outputCurrent.info = iout_noti.toFixed(2)
     }
     property var vin_status_noti: platformInterface.periodic_status.vin_led
     onVin_status_notiChanged: {
         if(vin_status_noti === "good"){
-            vinLed.status = "green"
+            vinLight.status = "green"
         }
-        else vinLed.status = "red"
+        else {
+            vinLight.status = "red"
+            eFuse1.enabled = false
+            eFuse2.enabled = false
+            eFuse1.opacity = 0.5
+            eFuse2.opacity =  0.5
+        }
     }
     property var thermal1_status_noti: platformInterface.thermal_shutdown_eFuse1.status
     onThermal1_status_notiChanged: {
         if(thermal1_status_noti === "yes"){
-            plotSetting1.visible = true
-            plotSetting1.enabled = true
+            resetButton.visible = true
+            resetButton.enabled = true
             thermalLed1.status = "red"
             warningBox2.visible = true
             eFuse1.enabled = false
@@ -69,21 +75,18 @@ Item {
     property var thermal2_status_noti: platformInterface.thermal_shutdown_eFuse2.status
     onThermal2_status_notiChanged: {
         if(thermal2_status_noti === "yes"){
-            plotSetting1.visible = true
-            plotSetting1.enabled = true
+            resetButton.visible = true
+            resetButton.enabled = true
             thermalLed2.status = "red"
             warningBox2.visible = true
             eFuse1.enabled = false
             eFuse2.enabled = false
             eFuse1.opacity = 0.5
             eFuse2.opacity =  0.5
-            //platformInterface.enable_2 = false
-
         }
         else {
             thermalLed2.status = "off"
             warningBox2.visible = false
-
         }
     }
     property var periodic_status_en1: platformInterface.enable_status.en1
@@ -106,14 +109,14 @@ Item {
     Rectangle{
         width: parent.width
         height: parent.height
-        color: "#a9a9a9"
+        color: "transparent"
         id: graphContainer
 
         Text {
             id: partNumber
-            text: "eFuse" + " " + platformInterface.board_id.board_id
+            text: efuseClassID.partNumber
             font.bold: true
-            color: "white"
+            color: "black"
             anchors{
                 top: parent.top
                 topMargin: 20
@@ -127,6 +130,7 @@ Item {
             id: topSetting
             width: parent.width/2.4
             height: parent.height/2
+            color: "transparent"
 
             anchors {
                 left: parent.left
@@ -134,7 +138,6 @@ Item {
                 top: partNumber.bottom
                 topMargin: 20
             }
-            color: "#696969"
 
             RowLayout {
                 anchors.fill: parent
@@ -147,12 +150,12 @@ Item {
                     tickmarkStepSize: 10
                     Layout.fillHeight: true
                     Layout.fillWidth: true
-                    gaugeRearColor: "white"                  // Default: "#ddd"(background color that gets filled in by gauge)
-                    centerColor: "white"
-                    outerColor: "white"
+                    gaugeRearColor: "#ddd"                // Default: "#ddd"(background color that gets filled in by gauge)
+                    centerColor: "black"
+                    outerColor: "#999"
                     gaugeFrontColor1: Qt.rgba(0,.75,1,1)
                     gaugeFrontColor2: Qt.rgba(1,0,0,1)
-                    unitLabel: "RPM"
+                    unitLabel: "˚C"
                     gaugeTitle: "Temp Sensor 1"
                     Layout.alignment: Qt.AlignCenter
 
@@ -167,12 +170,12 @@ Item {
                     minimumValue: 0
                     maximumValue: 100
                     tickmarkStepSize: 10
-                    gaugeRearColor: "white"                  // Default: "#ddd"(background color that gets filled in by gauge)
-                    centerColor: "white"
-                    outerColor: "white"
+                    gaugeRearColor: "#ddd"                // Default: "#ddd"(background color that gets filled in by gauge)
+                    centerColor: "black"
+                    outerColor: "#999"
                     gaugeFrontColor1: Qt.rgba(0,.75,1,1)
                     gaugeFrontColor2: Qt.rgba(1,0,0,1)
-                    unitLabel: "RPM"                        // Default: "RPM"
+                    unitLabel: "˚C"                        // Default: "RPM"
                     gaugeTitle: "Temp Sensor 2"
                     Layout.alignment: Qt.AlignCenter
 
@@ -184,6 +187,10 @@ Item {
             id: leftSetting
             width: parent.width/2
             height: parent.height/2
+            color: "transparent"
+            border.color: "black"
+            border.width: 5
+            radius: 10
 
             anchors {
                 left: topSetting.right
@@ -191,93 +198,148 @@ Item {
                 top: partNumber.bottom
                 topMargin: 20
             }
-            color: "#696969"
-            ColumnLayout {
+
+            Rectangle {
                 anchors.fill: parent
+                color: "transparent"
                 Text {
+                    id: title
+                    anchors{
+                        top: parent.top
+                        topMargin: 5
+                        horizontalCenter: parent.horizontalCenter
+                    }
+
                     text: "Telemetry"
                     font.bold: true
-                    color: "white"
+                    color: "black"
                     font.pixelSize: ratioCalc * 30
                     horizontalAlignment: Text.AlignHCenter
-                    Layout.alignment: Qt.AlignCenter
 
+                }
+                Rectangle {
+                    id: line
+                    height: 2
+                    width: parent.width - 15
+                    anchors {
+                        top: title.bottom
+                        topMargin: 8
+                        left: parent.left
+                        leftMargin: 5
+                    }
+                    border.color: "gray"
+                    radius: 2
                 }
 
                 SGLabelledInfoBox {
                     id: inputVoltage
-                    Layout.preferredWidth: parent.width/2
-                    Layout.preferredHeight: parent.height/6
+                    anchors{
+                        top: line.bottom
+                        topMargin: 10
+                        horizontalCenter: parent.horizontalCenter
+                        horizontalCenterOffset: 12
+                    }
+                    width: parent.width/2
+                    height: parent.height/6
                     infoBoxWidth: parent.width/3
                     label: "Input Voltage "
                     info: platformInterface.periodic_status.vin.toFixed(2)
                     unit: "V"
                     infoBoxColor: "black"
-                    labelColor: "white"
+                    labelColor: "black"
                     unitSize: ratioCalc * 20
                     fontSize: ratioCalc * 20
-                    Layout.alignment: Qt.AlignCenter
+
                 }
 
                 SGLabelledInfoBox {
                     id: inputCurrent
-                    Layout.preferredWidth: parent.width/2
-                    Layout.preferredHeight: parent.height/6
+                    anchors{
+                        top: inputVoltage.bottom
+                        horizontalCenter: parent.horizontalCenter
+                        horizontalCenterOffset: 12
+
+                    }
+                    width: parent.width/2
+                    height: parent.height/6
                     infoBoxWidth: parent.width/3
                     label: "Input Current "
                     info: platformInterface.periodic_status.iin.toFixed(2)
                     unit: "A"
                     infoBoxColor: "black"
-                    labelColor: "white"
+                    labelColor: "black"
                     fontSize: ratioCalc * 20
                     unitSize: ratioCalc * 20
-                    Layout.alignment: Qt.AlignCenter
+
                 }
                 SGLabelledInfoBox {
-                    id: ouputVoltage
-                    Layout.preferredWidth: parent.width/2
-                    Layout.preferredHeight: parent.height/6
+                    id: outputVoltage
+                    width: parent.width/2
+                    height: parent.height/6
+                    anchors{
+                        top: inputCurrent.bottom
+                        horizontalCenter: parent.horizontalCenter
+
+                    }
                     infoBoxWidth: parent.width/3
                     label: "Output Voltage "
                     info: platformInterface.periodic_status.vout.toFixed(2)
                     unit: "V"
                     infoBoxColor: "black"
-                    labelColor: "white"
+                    labelColor: "black"
                     unitSize: ratioCalc * 20
                     fontSize: ratioCalc * 20
-                    Layout.alignment: Qt.AlignCenter
+
                 }
 
                 SGLabelledInfoBox {
-                    id: ouputCurrent
-                    Layout.preferredWidth: parent.width/2
-                    Layout.preferredHeight: parent.height/6
+                    id: outputCurrent
+                    width: parent.width/2
+                    height: parent.height/6
+                    anchors{
+                        top: outputVoltage.bottom
+                        horizontalCenter: parent.horizontalCenter
+                    }
+
                     infoBoxWidth: parent.width/3
                     label: "Output Current "
                     info: platformInterface.periodic_status.vout.toFixed(2)
                     unit: "A"
                     infoBoxColor: "black"
-                    labelColor: "white"
+                    labelColor: "black"
                     fontSize: ratioCalc * 20
                     unitSize: ratioCalc * 20
-                    Layout.alignment: Qt.AlignCenter
-                }
 
-                SGStatusLight {
+                }
+                Rectangle {
                     id:vinLed
-                    width: parent.width
-                    height: parent.height/8
-                    label: "<b>Input Voltage Good:</b>" // Default: "" (if not entered, label will not appear)
-                    labelLeft: true       // Default: true
-                    lightSize: ratioCalc * 30         // Default: 50
-                    textColor: "white"      // Default: "black"
-                    fontSize: ratioCalc * 20
-                    Layout.alignment: Qt.AlignCenter
+                    width: parent.width/2
+                    height: parent.height/12
+                    anchors{
+                        top: outputCurrent.bottom
+                        horizontalCenter: parent.horizontalCenter
+                    }
+                    color: "transparent"
+                    SGStatusLight {
+                        id: vinLight
+                        width: parent.width/2
+                        height: parent.height
+                        label: "<b>Input Voltage Good:</b>" // Default: "" (if not entered, label will not appear)
+                        labelLeft: true       // Default: true
+                        lightSize: ratioCalc * 30         // Default: 50
+                        textColor: "black"      // Default: "black"
+                        fontSize: ratioCalc * 20
+                        anchors.centerIn: parent
+                    }
                 }
                 RowLayout {
-                    Layout.preferredWidth: parent.width
-                    Layout.preferredHeight: parent.height/8
-                    Layout.alignment: Qt.AlignCenter
+                    width: parent.width
+                    height: parent.height/12
+                    anchors{
+                        top: vinLed.bottom
+                        horizontalCenter: parent.horizontalCenter
+                        bottom: parent.bottom
+                    }
                     SGStatusLight {
                         id: thermalLed1
                         width: parent.width/2
@@ -285,7 +347,7 @@ Item {
                         label: "<b>Thermal Failure 1:</b>" // Default: "" (if not entered, label will not appear)
                         labelLeft: true       // Default: true
                         lightSize: ratioCalc * 30           // Default: 50
-                        textColor: "white"      // Default: "black"
+                        textColor: "black"      // Default: "black"
                         fontSize: ratioCalc * 20
                         Layout.alignment: Qt.AlignCenter
                     }
@@ -296,7 +358,7 @@ Item {
                         label: "<b>Thermal Failure 2:</b>" // Default: "" (if not entered, label will not appear)
                         labelLeft: true       // Default: true
                         lightSize: ratioCalc * 30           // Default: 50
-                        textColor: "white"      // Default: "black"
+                        textColor: "black"      // Default: "black"
                         fontSize: ratioCalc * 20
                         Layout.alignment: Qt.AlignCenter
                     }
@@ -308,19 +370,28 @@ Item {
         Rectangle {
             id: bottomSetting
             width: parent.width
-            height: parent.height/3
+            height: parent.height/4
 
             anchors {
                 top: topSetting.bottom
-                topMargin: 10
+                topMargin: 20
+                left: parent.left
+                leftMargin: 10
+                right: parent.right
+                rightMargin: 10
+                bottom: parent.bottom
+                bottomMargin: 10
             }
-            color: "#696969"
+            color: "transparent"
+            border.color: "black"
+            border.width: 5
+            radius: 10
 
             Text {
                 id: titleControl
                 text: "Control"
                 font.bold: true
-                color: "white"
+                color: "black"
                 anchors{
                     top: parent.top
                     topMargin: 20
@@ -329,37 +400,56 @@ Item {
                 font.pixelSize: 35
                 horizontalAlignment: Text.AlignHCenter
             }
+            Rectangle {
+                id: lineUnderControlTitle
+                height: 2
+                width: parent.width - 15
+                anchors {
+                    top: titleControl.bottom
+                    topMargin: 8
+                    left: parent.left
+                    leftMargin: 5
+                }
+                border.color: "gray"
+                radius: 2
+            }
+
 
             Rectangle {
                 id: bottomLeftSetting
-                width: parent.width/2.5
+                width: parent.width/3
                 height: parent.height/1.5
-                color: "#696969"
+                color: "transparent"
                 anchors {
                     left: parent.left
-                    top: titleControl.bottom
+                    leftMargin: 15
+                    top: lineUnderControlTitle.bottom
                     topMargin: 5
                 }
 
-                ColumnLayout {
+                Rectangle {
                     anchors.fill: parent
+                    color: "transparent"
                     SGSwitch {
                         id: eFuse1
                         label: "Enable 1"
-                        width: parent.width
-                        height: parent.height/3
                         fontSizeLabel: ratioCalc * 20
                         labelLeft: true              // Default: true (controls whether label appears at left side or on top of switch)
                         checkedLabel: "On"       // Default: "" (if not entered, label will not appear)
                         uncheckedLabel: "Off"    // Default: "" (if not entered, label will not appear)
                         labelsInside: true              // Default: true (controls whether checked labels appear inside the control or outside of it
-                        switchWidth: 88                // Default: 52 (change for long custom checkedLabels when labelsInside)
-                        switchHeight: 26                // Default: 26
-                        textColor: "white"              // Default: "black"
+                        switchWidth: parent.width/5                // Default: 52 (change for long custom checkedLabels when labelsInside)
+                        switchHeight: parent.height/8              // Default: 26
+                        textColor: "black"              // Default: "black"
                         handleColor: "#33b13b"            // Default: "white"
                         grooveColor: "black"             // Default: "#ccc"
                         grooveFillColor: "black"         // Default: "#0cf"
-                        Layout.alignment: Qt.AlignHCenter
+                        anchors{
+                            top: parent.top
+                            topMargin: 20
+                            horizontalCenter: parent.horizontalCenter
+                        }
+
                         checked: platformInterface.enable_1
                         onToggled: {
                             if(checked)
@@ -373,17 +463,22 @@ Item {
 
                     SGComboBox {
                         id: rlim1
-                        comboBoxWidth: parent.width/4
-                        comboBoxHeight: parent.height/6
+                        comboBoxWidth: parent.width/2
+                        comboBoxHeight: parent.height/5
                         label: "<b>RLIM 1</b>"   // Default: "" (if not entered, label will not appear)
                         labelLeft: true            // Default: true
-                        textColor: "white"         // Default: "black"
+                        textColor: "black"         // Default: "black"
                         indicatorColor: "#33b13b"      // Default: "#aaa"
                         borderColor: "black"         // Default: "#aaa"
                         boxColor: "black"           // Default: "white"
                         dividers: true              // Default: false
                         model: ["100", "55", "38", "29"]
-                        Layout.alignment: Qt.AlignCenter
+                        anchors{
+                            top: eFuse1.bottom
+                            topMargin: 20
+                            horizontalCenter: parent.horizontalCenter
+                        }
+
                         fontSize: ratioCalc * 20
                         onActivated: {
                             platformInterface.set_rlim_1.update(currentText)
@@ -392,17 +487,23 @@ Item {
 
                     SGComboBox {
                         id: sr1
-                        comboBoxWidth: parent.width/4
-                        comboBoxHeight: parent.height/6
-                        label: "<b>\t SR 1</b>"   // Default: "" (if not entered, label will not appear)
+                        comboBoxWidth: parent.width/2
+                        comboBoxHeight: parent.height/5
+                        label: "<b>\t Slew Rate 1</b>"   // Default: "" (if not entered, label will not appear)
                         labelLeft: true            // Default: true
-                        textColor: "white"         // Default: "black"
+                        textColor: "black"         // Default: "black"
                         indicatorColor: "#33b13b"      // Default: "#aaa"
                         borderColor: "black"         // Default: "#aaa"
                         boxColor: "black"           // Default: "white"
                         dividers: true              // Default: false
                         model: ["1ms", "5ms"]
-                        Layout.alignment: Qt.AlignCenter
+                        anchors{
+                            top: rlim1.bottom
+                            topMargin: 20
+                            horizontalCenter: parent.horizontalCenter
+                            horizontalCenterOffset: (rlim1.width - width)/2
+                        }
+
                         fontSize: ratioCalc * 20
                         onActivated: {
                             if(currentIndex === 0)
@@ -418,25 +519,31 @@ Item {
                 id: middleSetting
                 width: parent.width/4.5
                 height: parent.height/1.5
-                color: "#696969"
+                color: "transparent"
                 anchors {
                     left: bottomLeftSetting.right
                     leftMargin: 20
                     top: titleControl.bottom
-                    topMargin: 5
+                    horizontalCenter: titleControl.horizontalCenter
+
                 }
-                ColumnLayout{
+                Rectangle{
                     anchors.fill: parent
+                    color: "transparent"
                     Rectangle{
-                        Layout.fillHeight: true
-                        Layout.fillWidth: true
+                        id: warningBox
+                        width: parent.width
+                        height: parent.height/5
                         color: "transparent"
+                        anchors{
+                            top: parent.top
+                        }
+
                         Rectangle {
                             id: warningBox2
                             color: "red"
                             anchors.centerIn: parent
-                            width: parent.width
-                            height: parent.height/1.5
+                            anchors.fill: parent
 
                             Text {
                                 id: warningText2
@@ -478,13 +585,21 @@ Item {
                     }
 
                     Rectangle{
-                        Layout.fillHeight: true
-                        Layout.fillWidth: true
-                        color: "#696969"
-                        Button {
-                            id: plotSetting1
-                            visible: false
+                        id:resetButtonContainer
+                        width: parent.width
+                        height: parent.height/7
+                        color: "transparent"
+                        anchors {
+                            top: warningBox.bottom
+                            topMargin: 20
+                        }
 
+                        Button {
+                            id: resetButton
+                            visible: false
+                            anchors.horizontalCenter: {
+                                parent.horizontalCenter
+                            }
 
                             text: qsTr("Reset")
                             checkable: true
@@ -493,18 +608,17 @@ Item {
                                 implicitWidth: 100
                                 implicitHeight: 40
                                 opacity: enabled ? 1 : 0.3
-                                border.color: plotSetting2.down ? "#17a81a" : "black"//"#21be2b"
+                                border.color: resetButton.down ? "#17a81a" : "black"//"#21be2b"
                                 border.width: 1
                                 color: "#33b13b"
                                 radius: 10
                             }
-                            anchors.centerIn: parent
 
                             contentItem: Text {
-                                text: plotSetting1.text
-                                font: plotSetting1.font
+                                text: resetButton.text
+                                font: resetButton.font
                                 opacity: enabled ? 1.0 : 0.3
-                                color: plotSetting1.down ? "#17a81a" : "white"//"#21be2b"
+                                color: resetButton.down ? "#17a81a" : "white"//"#21be2b"
                                 horizontalAlignment: Text.AlignHCenter
                                 verticalAlignment: Text.AlignVCenter
                                 elide: Text.ElideRight
@@ -520,41 +634,46 @@ Item {
                                 thermalLed2.status = "off"
                                 thermalLed1.status = "off"
                                 warningBox2.visible = false
-                                plotSetting1.visible = false
-                                plotSetting1.enabled = false
+                                resetButton.visible = false
+                                resetButton.enabled = false
                             }
                         }
                     }
                     Rectangle{
-                        Layout.fillHeight: true
-                        Layout.fillWidth: true
-                        color: "#696969"
+                        width: parent.width
+                        height: parent.height/7
+                        color: "transparent"
+                        anchors {
+                            top: resetButtonContainer.bottom
+                            topMargin: 30
+                        }
                         Button {
-                            id: plotSetting2
-
-                            text: qsTr("Short Circuit EN")
+                            id: circuitEnableButton
+                            text:"Short Circuit EN"
                             checkable: true
-                            //anchors.top: plotSetting1.bottom
                             background: Rectangle {
                                 id: backgroundContainer2
                                 implicitWidth: 100
                                 implicitHeight: 40
                                 opacity: enabled ? 1 : 0.3
-                                border.color: plotSetting2.down ? "#17a81a" : "black"//"#21be2b"
+                                border.color: circuitEnableButton.down ? "#17a81a" : "black"//"#21be2b"
                                 border.width: 1
                                 color: "#33b13b"
                                 radius: 10
                             }
-                            anchors.centerIn: parent
+                            anchors{
+                                horizontalCenter: parent.horizontalCenter
+                            }
 
                             contentItem: Text {
-                                text: plotSetting2.text
-                                font: plotSetting2.font
+                                text: circuitEnableButton.text
+                                font: circuitEnableButton.font
                                 opacity: enabled ? 1.0 : 0.3
-                                color: plotSetting2.down ? "#17a81a" : "white"//"#21be2b"
+                                color: circuitEnableButton.down ? "#17a81a" : "white"//"#21be2b"
                                 horizontalAlignment: Text.AlignHCenter
                                 verticalAlignment: Text.AlignVCenter
                                 elide: Text.ElideRight
+                                wrapMode: Text.WordWrap
                             }
 
                             onClicked: {
@@ -569,33 +688,37 @@ Item {
                 id: bottomRightSetting
                 width: parent.width/2.5
                 height: parent.height/1.5
-                color: "#696969"
+                color: "transparent"
                 anchors {
                     left: middleSetting.right
-                    leftMargin: 20
+                    leftMargin: 15
                     top: titleControl.bottom
                     topMargin: 5
                 }
 
-                ColumnLayout {
+                Rectangle {
                     anchors.fill: parent
+                    color: "transparent"
                     SGSwitch {
                         id: eFuse2
                         label: "Enable 2"
-                        width: parent.width
-                        height: parent.height/2
+                        anchors{
+                            top: parent.top
+                            topMargin: 20
+                            horizontalCenter: parent.horizontalCenter
+                        }
+                        switchWidth: parent.width/6               // Default: 52 (change for long custom checkedLabels when labelsInside)
+                        switchHeight: parent.height/8
                         fontSizeLabel: ratioCalc * 20
                         labelLeft: true              // Default: true (controls whether label appears at left side or on top of switch)
                         checkedLabel: "On"       // Default: "" (if not entered, label will not appear)
                         uncheckedLabel: "Off"    // Default: "" (if not entered, label will not appear)
                         labelsInside: true              // Default: true (controls whether checked labels appear inside the control or outside of it
-                        switchWidth: 88                // Default: 52 (change for long custom checkedLabels when labelsInside)
-                        switchHeight: 26                // Default: 26
-                        textColor: "white"              // Default: "black"
+                        textColor: "black"              // Default: "black"
                         handleColor: "#33b13b"            // Default: "white"
                         grooveColor: "black"             // Default: "#ccc"
                         grooveFillColor: "black"         // Default: "#0cf"
-                        Layout.alignment: Qt.AlignHCenter
+                        
                         checked: platformInterface.enable_2
                         onToggled: {
                             if(checked)
@@ -609,17 +732,22 @@ Item {
 
                     SGComboBox {
                         id: rlim2
-                        comboBoxWidth: parent.width/4
-                        comboBoxHeight: parent.height/6
+                        comboBoxWidth: parent.width/2
+                        comboBoxHeight: parent.height/5
+                        anchors{
+                            top: eFuse2.bottom
+                            topMargin: 20
+                            horizontalCenter: parent.horizontalCenter
+                        }
+                        
                         label: "<b>RLIM 2</b>"   // Default: "" (if not entered, label will not appear)
                         labelLeft: true            // Default: true
-                        textColor: "white"         // Default: "black"
+                        textColor: "black"         // Default: "black"
                         indicatorColor: "#33b13b"      // Default: "#aaa"
                         borderColor: "black"         // Default: "#aaa"
                         boxColor: "black"           // Default: "white"
                         dividers: true              // Default: false
                         model: ["100", "55", "38", "29"]
-                        Layout.alignment: Qt.AlignHCenter
                         fontSize: ratioCalc * 20
                         onActivated: {
                             platformInterface.set_rlim_2.update(currentText)
@@ -628,18 +756,23 @@ Item {
 
                     SGComboBox {
                         id: sr2
-                        comboBoxWidth: parent.width/4
-                        comboBoxHeight: parent.height/6
-                        label: "<b>\t SR 2</b>"   // Default: "" (if not entered, label will not appear)
+                        comboBoxWidth: parent.width/2
+                        comboBoxHeight: parent.height/5
+                        label: "<b>\t Slew Rate 2</b>"   // Default: "" (if not entered, label will not appear)
                         labelLeft: true            // Default: true
-                        textColor: "white"         // Default: "black"
+                        textColor: "black"         // Default: "black"
                         indicatorColor: "#33b13b"      // Default: "#aaa"
                         borderColor: "black"         // Default: "#aaa"
                         boxColor: "black"           // Default: "white"
                         dividers: true              // Default: false
                         model: ["1ms", "5ms"]
-                        Layout.alignment: Qt.AlignHCenter
                         fontSize: ratioCalc * 20
+                        anchors{
+                            top: rlim2.bottom
+                            topMargin: 20
+                            horizontalCenter: parent.horizontalCenter
+                            horizontalCenterOffset: (rlim2.width - width)/2
+                        }
                         onActivated: {
                             if(currentIndex === 0)
                                 platformInterface.set_SR_2.update("default")

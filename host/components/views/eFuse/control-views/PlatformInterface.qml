@@ -32,7 +32,7 @@ Item {
     }
 
     property var enable_status: {
-        "en1":	"off",		//on or off for state of the enable switch
+         "en1":	"off",		//on or off for state of the enable switch
          "en2":	"on"
     }
 

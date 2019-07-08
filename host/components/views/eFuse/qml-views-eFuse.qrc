@@ -46,5 +46,6 @@
         <file>sgwidgets/SGSubmitInfoBox.qml</file>
         <file>sgwidgets/SGSwitch.qml</file>
         <file>sgwidgets/SGToolTipPopup.qml</file>
+        <file>control-views/MutiplePlatform.qml</file>
     </qresource>
 </RCC>
