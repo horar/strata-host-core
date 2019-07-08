@@ -55,15 +55,10 @@ target_link_libraries(${PROJECT_NAME}
 )
 
 set_target_properties(${PROJECT_NAME} PROPERTIES
-        CXX_STANDARD 17
-        CXX_STANDARD_REQUIRED ON
-        CXX_EXTENSIONS OFF
-        AUTOMOC ON
-        AUTORCC ON
-        #AUTORCC_OPTIONS "--compress;9"
+    AUTOMOC ON
+    AUTORCC ON
+    #AUTORCC_OPTIONS "--compress;9"
 
-        OUTPUT_NAME "hcs"
-        )
-
-
+    OUTPUT_NAME "hcs"
+)
 
