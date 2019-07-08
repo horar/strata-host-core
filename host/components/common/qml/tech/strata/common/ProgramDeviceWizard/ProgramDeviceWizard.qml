@@ -567,7 +567,7 @@ Item {
 
                         } else {
                             if (wizard.useJLink) {
-                                jLinkConnector.exePath = CommonCpp.SGUtilsCpp.urlToPath(jlinkExePathEdit.text)
+                                jLinkConnector.exePath = CommonCpp.SGUtilsCpp.urlToLocalFile(jlinkExePathEdit.text)
                             }
 
                             processingStatus = ProgramDeviceWizard.WaitingForDevice
@@ -959,7 +959,7 @@ Item {
 
         dialog.accepted.connect(function() {
             if (callback) {
-                callback(CommonCpp.SGUtilsCpp.urlToPath(dialog.fileUrl))
+                callback(CommonCpp.SGUtilsCpp.urlToLocalFile(dialog.fileUrl))
             }
 
             dialog.destroy()
