@@ -134,7 +134,6 @@ Window {
                         placeholderText: "Enter URL"
                         onActiveFocusChanged: {
                             urlFieldBackground.border.color = "transparent"
-                            header.text = "Please enter the requested information"
                         }
                         Rectangle {
                             id: urlFieldBackground
