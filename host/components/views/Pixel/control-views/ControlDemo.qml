@@ -18,6 +18,10 @@ Rectangle {
     DemoPattern2 {
         id:demoLEDPattern2
     }
+    DemoPattern3 {
+        id:demoLEDPattern3
+    }
+
 
     property bool demo_off_detect : platformInterface.demo_off
     onDemo_off_detectChanged: {
@@ -74,16 +78,293 @@ Rectangle {
         } else if (platformInterface.curtain_demo === true && platformInterface.demo_led_num_3 === true){
             demoLEDPattern2.led_all_off()
             demoLEDPattern2.demo_cirtain3(led_state)
+        } else if (platformInterface.curtain_demo === true && platformInterface.demo_led_num_4 === true){
+            demoLEDPattern2.led_all_off()
+            demoLEDPattern2.demo_cirtain4(led_state)
+        } else if (platformInterface.curtain_demo === true && platformInterface.demo_led_num_5 === true){
+            demoLEDPattern2.led_all_off()
+            demoLEDPattern2.demo_cirtain5(led_state)
+        }
+
+        if (platformInterface.bhall_demo === true && platformInterface.demo_led_num_1 === true){
+            demoLEDPattern3.led_all_on()
+            demoLEDPattern3.demo_bhall1(led_state)
+        } else if (platformInterface.bhall_demo === true && platformInterface.demo_led_num_2 === true){
+            demoLEDPattern3.led_all_on()
+            demoLEDPattern3.demo_bhall2(led_state)
+        } else if (platformInterface.bhall_demo === true && platformInterface.demo_led_num_3 === true){
+            demoLEDPattern3.led_all_on()
+            demoLEDPattern3.demo_bhall3(led_state)
+        } else if (platformInterface.bhall_demo === true && platformInterface.demo_led_num_4 === true){
+            demoLEDPattern3.led_all_on()
+            demoLEDPattern3.demo_bhall4(led_state)
+        } else if (platformInterface.bhall_demo === true && platformInterface.demo_led_num_5 === true){
+            demoLEDPattern3.led_all_on()
+            demoLEDPattern3.demo_bhall5(led_state)
         }
     }
 
-//    function send_demo_state(demo_mode_state, demo_lednum_state, demo_time_state, demo_intensity_state){
-//        platformInterface.pxn_demo_mode.update(demo_mode_state)
-//        platformInterface.pxn_demo_lednum.update(demo_lednum_state)
-//        platformInterface.pxn_demo_time.update(demo_time_state)
-//        platformInterface.pxn_demo_intensity.update(demo_intensity_state)
+    //    function send_demo_state(demo_mode_state, demo_lednum_state, demo_time_state, demo_intensity_state){
+    //        platformInterface.pxn_demo_mode.update(demo_mode_state)
+    //        platformInterface.pxn_demo_lednum.update(demo_lednum_state)
+    //        platformInterface.pxn_demo_time.update(demo_time_state)
+    //        platformInterface.pxn_demo_intensity.update(demo_intensity_state)
 
-//    }
+    //    }
+
+    property bool check_demo_led11_state: platformInterface.demo_led11_state
+    onCheck_demo_led11_stateChanged: {
+        if (check_demo_led11_state === true)
+            sgStatusLight11.status = "green"
+        else sgStatusLight11.status = "off"
+    }
+
+    property bool check_demo_led12_state: platformInterface.demo_led12_state
+    onCheck_demo_led12_stateChanged: {
+        if (check_demo_led12_state === true)
+            sgStatusLight12.status = "green"
+        else sgStatusLight12.status = "off"
+    }
+
+    property bool check_demo_led13_state: platformInterface.demo_led13_state
+    onCheck_demo_led13_stateChanged: {
+        if (check_demo_led13_state === true)
+            sgStatusLight13.status = "green"
+        else sgStatusLight13.status = "off"
+    }
+
+    property bool check_demo_led14_state: platformInterface.demo_led14_state
+    onCheck_demo_led14_stateChanged: {
+        if (check_demo_led14_state === true)
+            sgStatusLight14.status = "green"
+        else sgStatusLight14.status = "off"
+    }
+
+    property bool check_demo_led15_state: platformInterface.demo_led15_state
+    onCheck_demo_led15_stateChanged: {
+        if (check_demo_led15_state === true)
+            sgStatusLight15.status = "green"
+        else sgStatusLight15.status = "off"
+    }
+
+    property bool check_demo_led16_state: platformInterface.demo_led16_state
+    onCheck_demo_led16_stateChanged: {
+        if (check_demo_led16_state === true)
+            sgStatusLight16.status = "green"
+        else sgStatusLight16.status = "off"
+    }
+
+    property bool check_demo_led17_state: platformInterface.demo_led17_state
+    onCheck_demo_led17_stateChanged: {
+        if (check_demo_led17_state === true)
+            sgStatusLight17.status = "green"
+        else sgStatusLight17.status = "off"
+    }
+
+    property bool check_demo_led18_state: platformInterface.demo_led18_state
+    onCheck_demo_led18_stateChanged: {
+        if (check_demo_led18_state === true)
+            sgStatusLight18.status = "green"
+        else sgStatusLight18.status = "off"
+    }
+
+    property bool check_demo_led19_state: platformInterface.demo_led19_state
+    onCheck_demo_led19_stateChanged: {
+        if (check_demo_led19_state === true)
+            sgStatusLight19.status = "green"
+        else sgStatusLight19.status = "off"
+    }
+
+    property bool check_demo_led1A_state: platformInterface.demo_led1A_state
+    onCheck_demo_led1A_stateChanged: {
+        if (check_demo_led1A_state === true)
+            sgStatusLight1A.status = "green"
+        else sgStatusLight1A.status = "off"
+    }
+
+    property bool check_demo_led1B_state: platformInterface.demo_led1B_state
+    onCheck_demo_led1B_stateChanged: {
+        if (check_demo_led1B_state === true)
+            sgStatusLight1B.status = "green"
+        else sgStatusLight1B.status = "off"
+    }
+
+    property bool check_demo_led1C_state: platformInterface.demo_led1C_state
+    onCheck_demo_led1C_stateChanged: {
+        if (check_demo_led1C_state === true)
+            sgStatusLight1C.status = "green"
+        else sgStatusLight1C.status = "off"
+    }
+
+    property bool check_demo_led21_state: platformInterface.demo_led21_state
+    onCheck_demo_led21_stateChanged: {
+        if (check_demo_led21_state === true)
+            sgStatusLight21.status = "green"
+        else sgStatusLight21.status = "off"
+    }
+
+    property bool check_demo_led22_state: platformInterface.demo_led22_state
+    onCheck_demo_led22_stateChanged: {
+        if (check_demo_led22_state === true)
+            sgStatusLight22.status = "green"
+        else sgStatusLight22.status = "off"
+    }
+
+    property bool check_demo_led23_state: platformInterface.demo_led23_state
+    onCheck_demo_led23_stateChanged: {
+        if (check_demo_led23_state === true)
+            sgStatusLight23.status = "green"
+        else sgStatusLight23.status = "off"
+    }
+
+    property bool check_demo_led24_state: platformInterface.demo_led24_state
+    onCheck_demo_led24_stateChanged: {
+        if (check_demo_led24_state === true)
+            sgStatusLight24.status = "green"
+        else sgStatusLight24.status = "off"
+    }
+
+    property bool check_demo_led25_state: platformInterface.demo_led25_state
+    onCheck_demo_led25_stateChanged: {
+        if (check_demo_led25_state === true)
+            sgStatusLight25.status = "green"
+        else sgStatusLight25.status = "off"
+    }
+
+    property bool check_demo_led26_state: platformInterface.demo_led26_state
+    onCheck_demo_led26_stateChanged: {
+        if (check_demo_led26_state === true)
+            sgStatusLight26.status = "green"
+        else sgStatusLight26.status = "off"
+    }
+
+    property bool check_demo_led27_state: platformInterface.demo_led27_state
+    onCheck_demo_led27_stateChanged: {
+        if (check_demo_led27_state === true)
+            sgStatusLight27.status = "green"
+        else sgStatusLight27.status = "off"
+    }
+
+    property bool check_demo_led28_state: platformInterface.demo_led28_state
+    onCheck_demo_led28_stateChanged: {
+        if (check_demo_led28_state === true)
+            sgStatusLight28.status = "green"
+        else sgStatusLight28.status = "off"
+    }
+
+    property bool check_demo_led29_state: platformInterface.demo_led29_state
+    onCheck_demo_led29_stateChanged: {
+        if (check_demo_led29_state === true)
+            sgStatusLight29.status = "green"
+        else sgStatusLight29.status = "off"
+    }
+
+    property bool check_demo_led2A_state: platformInterface.demo_led2A_state
+    onCheck_demo_led2A_stateChanged: {
+        if (check_demo_led2A_state === true)
+            sgStatusLight2A.status = "green"
+        else sgStatusLight2A.status = "off"
+    }
+
+    property bool check_demo_led2B_state: platformInterface.demo_led2B_state
+    onCheck_demo_led2B_stateChanged: {
+        if (check_demo_led2B_state === true)
+            sgStatusLight2B.status = "green"
+        else sgStatusLight2B.status = "off"
+    }
+
+    property bool check_demo_led2C_state: platformInterface.demo_led2C_state
+    onCheck_demo_led2C_stateChanged: {
+        if (check_demo_led2C_state === true)
+            sgStatusLight2C.status = "green"
+        else sgStatusLight2C.status = "off"
+    }
+
+    property bool check_demo_led31_state: platformInterface.demo_led31_state
+    onCheck_demo_led31_stateChanged: {
+        if (check_demo_led31_state === true)
+            sgStatusLight31.status = "green"
+        else sgStatusLight31.status = "off"
+    }
+
+    property bool check_demo_led32_state: platformInterface.demo_led32_state
+    onCheck_demo_led32_stateChanged: {
+        if (check_demo_led32_state === true)
+            sgStatusLight32.status = "green"
+        else sgStatusLight32.status = "off"
+    }
+
+    property bool check_demo_led33_state: platformInterface.demo_led33_state
+    onCheck_demo_led33_stateChanged: {
+        if (check_demo_led33_state === true)
+            sgStatusLight33.status = "green"
+        else sgStatusLight33.status = "off"
+    }
+
+    property bool check_demo_led34_state: platformInterface.demo_led34_state
+    onCheck_demo_led34_stateChanged: {
+        if (check_demo_led34_state === true)
+            sgStatusLight34.status = "green"
+        else sgStatusLight34.status = "off"
+    }
+
+    property bool check_demo_led35_state: platformInterface.demo_led35_state
+    onCheck_demo_led35_stateChanged: {
+        if (check_demo_led35_state === true)
+            sgStatusLight35.status = "green"
+        else sgStatusLight35.status = "off"
+    }
+
+    property bool check_demo_led36_state: platformInterface.demo_led36_state
+    onCheck_demo_led36_stateChanged: {
+        if (check_demo_led36_state === true)
+            sgStatusLight36.status = "green"
+        else sgStatusLight36.status = "off"
+    }
+
+    property bool check_demo_led37_state: platformInterface.demo_led37_state
+    onCheck_demo_led37_stateChanged: {
+        if (check_demo_led37_state === true)
+            sgStatusLight37.status = "green"
+        else sgStatusLight37.status = "off"
+    }
+
+    property bool check_demo_led38_state: platformInterface.demo_led38_state
+    onCheck_demo_led38_stateChanged: {
+        if (check_demo_led38_state === true)
+            sgStatusLight38.status = "green"
+        else sgStatusLight38.status = "off"
+    }
+
+    property bool check_demo_led39_state: platformInterface.demo_led39_state
+    onCheck_demo_led39_stateChanged: {
+        if (check_demo_led39_state === true)
+            sgStatusLight39.status = "green"
+        else sgStatusLight39.status = "off"
+    }
+
+    property bool check_demo_led3A_state: platformInterface.demo_led3A_state
+    onCheck_demo_led3A_stateChanged: {
+        if (check_demo_led3A_state === true)
+            sgStatusLight3A.status = "green"
+        else sgStatusLight3A.status = "off"
+    }
+
+    property bool check_demo_led3B_state: platformInterface.demo_led3B_state
+    onCheck_demo_led3B_stateChanged: {
+        if (check_demo_led3B_state === true)
+            sgStatusLight3B.status = "green"
+        else sgStatusLight3B.status = "off"
+    }
+
+    property bool check_demo_led3C_state: platformInterface.demo_led3C_state
+    onCheck_demo_led3C_stateChanged: {
+        if (check_demo_led3C_state === true)
+            sgStatusLight3C.status = "green"
+        else sgStatusLight3C.status = "off"
+    }
+
+
 
     Rectangle{
         id:title
@@ -312,7 +593,7 @@ Rectangle {
                         onSlider_valueChanged: {
                             send_demo_state((segmentedButtons1.index+1),(segmentedButtons2.index + 1),sgSlider1.value,sgSlider2.value)
                             // e.g. function send_demo_state(mode_state, led_num_state, time_state, intensity_state)
-//                            delay(sgSlider1.value)
+                            //                            delay(sgSlider1.value)
                         }
                     }
                 }
@@ -358,7 +639,7 @@ Rectangle {
             Layout.preferredWidth: parent.width/2.6
             Layout.preferredHeight: parent.height/2
             color: "transparent"
-//            color: "black"
+            //            color: "black"
 
             RowLayout{
                 id: array1

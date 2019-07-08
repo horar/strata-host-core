@@ -376,6 +376,44 @@ Item {
     property bool mix_demo: false
     property bool demo_off: false
 
+    property bool demo_led11_state: false
+    property bool demo_led12_state: false
+    property bool demo_led13_state: false
+    property bool demo_led14_state: false
+    property bool demo_led15_state: false
+    property bool demo_led16_state: false
+    property bool demo_led17_state: false
+    property bool demo_led18_state: false
+    property bool demo_led19_state: false
+    property bool demo_led1A_state: false
+    property bool demo_led1B_state: false
+    property bool demo_led1C_state: false
+    property bool demo_led21_state: false
+    property bool demo_led22_state: false
+    property bool demo_led23_state: false
+    property bool demo_led24_state: false
+    property bool demo_led25_state: false
+    property bool demo_led26_state: false
+    property bool demo_led27_state: false
+    property bool demo_led28_state: false
+    property bool demo_led29_state: false
+    property bool demo_led2A_state: false
+    property bool demo_led2B_state: false
+    property bool demo_led2C_state: false
+    property bool demo_led31_state: false
+    property bool demo_led32_state: false
+    property bool demo_led33_state: false
+    property bool demo_led34_state: false
+    property bool demo_led35_state: false
+    property bool demo_led36_state: false
+    property bool demo_led37_state: false
+    property bool demo_led38_state: false
+    property bool demo_led39_state: false
+    property bool demo_led3A_state: false
+    property bool demo_led3B_state: false
+    property bool demo_led3C_state: false
+
+
     // -------------------------------------------------------------------
     // Listens to message notifications coming from CoreInterface.cpp
     // Forward messages to core_platform_interface.js to process
