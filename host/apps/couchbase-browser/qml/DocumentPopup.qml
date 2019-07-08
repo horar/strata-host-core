@@ -54,7 +54,7 @@ Window {
                 }
                 TextField {
                     id: idTextField
-                    text: originalID
+                    text: ""
                     height: 40
                     width: parent.width
                     anchors.top: idLabel.bottom
@@ -80,7 +80,7 @@ Window {
                     clip: true
                     TextArea {
                         id: bodyTextArea
-                        text: originalBody
+                        text: ""
                         color: validBody ? "black" : "red"
                         placeholderText: "Enter Body"
                         wrapMode: "Wrap"
