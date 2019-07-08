@@ -26,6 +26,8 @@ public:
     Q_INVOKABLE void reconnect(const QString &connectionId);
     Q_INVOKABLE bool disconnect(const QString &connectionId);
     Q_INVOKABLE void programDevice(const QString &connectionId, const QString &firmwarePath);
+    Q_INVOKABLE void stopProgrammingDevice(const QString &connectionId);
+    Q_INVOKABLE void stopAllProgrammingDevices();
 
     QStringList connectionIds() const;
     spyglass::PlatformConnectionShPtr getConnection(const QString &connectionId);

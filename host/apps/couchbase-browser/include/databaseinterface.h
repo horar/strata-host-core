@@ -24,6 +24,10 @@ public:
 
     QString getJSONResponse();
 
+    bool getDBstatus();
+
+    bool getRepstatus();
+
     QString createNewDoc(const QString &id, const QString &body);
 
     QString rep_init(const QString &url, const QString &username = "", const QString &password = "",
@@ -34,7 +38,7 @@ public:
 
     QString setFilePath(QString file_path);
 
-    QString editDoc(const QString &id, const QString &body);
+    QString editDoc(const QString &oldId, const QString &newId = "", const QString &body = "");
 
     QString deleteDoc(const QString &id);
 
@@ -45,7 +49,7 @@ private:
 
     int id_;
 
-    bool DBstatus_, Repstatus_;
+    bool DBstatus_ = false, Repstatus_ = false;
 
     std::vector<std::string> document_keys_, channels_ = {};
 
@@ -81,23 +85,19 @@ private:
 
     void rep_init();
 
-    bool getDBstatus();
-
-    bool getRepstatus();
-
     void setDBstatus(bool status);
 
     void setRepstatus(bool status);
-
-    QString createNewDoc_(const QString &id, const QString &body);
-
-    QString rep_init_();
 
     bool parseExistingFile();
 
     bool parseNewFile();
 
-    QString editDoc_(Spyglass::SGMutableDocument &doc, const QString &body);
+    QString createNewDoc_(const QString &id, const QString &body);
+
+    QString rep_init_();
+
+    QString editDoc_(Spyglass::SGMutableDocument &doc, const QString &newId, const QString &body);
 
     QString deleteDoc_(Spyglass::SGDocument &doc);
 
