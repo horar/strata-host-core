@@ -10,7 +10,7 @@ Window {
     height: 700
     minimumWidth: 500
     minimumHeight: 700
-    visible: true
+    visible: false
     flags: Qt.Tool
 
     signal start()
@@ -43,6 +43,13 @@ Window {
         urlField.text = ""
         usernameField.text = ""
         passwordField.text = ""
+    }
+    function clearLast(){
+        channelViewField.text = ""
+        for (let i = 0; i < channels.length - 1; i++){
+            channelViewField.text += channels[i] + "\n"
+        }
+        channels.pop();
     }
 
     function validate(){
@@ -300,6 +307,7 @@ Window {
                             text: "Clear Last"
                             onClicked: {
                                 //make view remove last selection
+                                clearLast();
                             }
                         }
                     }
