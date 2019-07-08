@@ -20,7 +20,7 @@ class QMLBridge : public QObject
         Q_INVOKABLE QString editDoc(int windowId, QString oldId, QString newId, QString body);
         Q_INVOKABLE QString deleteDoc(int windowId, QString id);
         Q_INVOKABLE void closeFile(int windowId);
-        Q_INVOKABLE QString startReplicator(int windowId, QString url, QString username, QString password, QString type);
+        Q_INVOKABLE QString startReplicator(int windowId, QString url, QString username, QString password, QString type, std::vector<QString> channels);
         Q_INVOKABLE void stopReplicator(int windowId);
         Q_INVOKABLE void createNewWindow();
 
