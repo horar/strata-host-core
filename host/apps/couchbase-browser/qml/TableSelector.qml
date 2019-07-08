@@ -25,38 +25,47 @@ Rectangle {
         }
 
     }
+
     ListView {
         id: listView
-        width: parent.width - 10
-        height: parent.height - 170
-        model: [""]
-        delegate: listDelegate
+        width: parent.width - 20
+        height: model.length === 0 ? 0 : parent.height - 170
+        model: []
+        delegate: Component {
+            Rectangle  {
+                width: parent.width
+                height: 30
+                border.width: 1
+                border.color: "#393e46"
+                color: listView.currentIndex === index ? "#612b00" : mouseArea.containsMouse ? "#8c4100" : "#b55400"
+                radius: 3
+
+                Text {
+                    anchors.centerIn: parent
+                    text: model.modelData
+                    color: "#eee"
+                }
+
+                MouseArea {
+                    id: mouseArea
+                    anchors.fill: parent
+                    onClicked: {
+                        listView.currentIndex = index
+                    }
+                    hoverEnabled: true
+                }
+            }
+        }
+        ScrollBar.vertical: ScrollBar {
+            width: 10
+            anchors.right: listView.left
+            policy: ScrollBar.AlwaysOn
+        }
+
         anchors {
             top: label.bottom
             topMargin: 5
             horizontalCenter: parent.horizontalCenter
-        }
-    }
-    Component {
-        id: listDelegate
-        Rectangle  {
-            id: content
-            width: parent.width
-            height: 30
-            border.width: 1
-            border.color: "#393e46"
-            color: "#b55400"
-            radius: 3
-            ColumnLayout {
-                id: column
-                anchors {fill: parent; margins: 2}
-                Text {
-                    id: itemText
-                    Layout.alignment: Qt.AlignHCenter
-                    text: "this is dummy text"
-                    color: "#eee"
-                }
-            }
         }
     }
 }
