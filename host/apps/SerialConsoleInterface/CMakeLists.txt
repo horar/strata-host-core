@@ -55,9 +55,6 @@ set(PRODUCT_NAME_LONG "Serial Console Interface")
 set(PRODUCT_NAME_COPYRIGHT "Copyright (C) 2019 ON Semiconductor")
 
 set_target_properties(${PROJECT_NAME} PROPERTIES
-    CXX_STANDARD 17
-    CXX_STANDARD_REQUIRED ON
-    CXX_EXTENSIONS OFF
     AUTOMOC ON
     AUTORCC ON
     #AUTORCC_OPTIONS "--compress;9"
@@ -72,7 +69,7 @@ if(APPLE)
         MACOSX_BUNDLE_BUNDLE_NAME "${PRODUCT_NAME_LONG}"
         MACOSX_BUNDLE_BUNDLE_VERSION "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}"
         MACOSX_BUNDLE_COPYRIGHT "${PRODUCT_NAME_COPYRIGHT}"
-        MACOSX_BUNDLE_GUI_IDENTIFIER com.onsemi.spyglass
+        MACOSX_BUNDLE_GUI_IDENTIFIER com.onsemi.strata.sci
         MACOSX_BUNDLE_ICON_FILE sciLogoGreen.icns
         MACOSX_BUNDLE_INFO_STRING ${PRODUCT_NAME_LONG}
     )
@@ -82,10 +79,6 @@ if(WIN32)
         WIN32_EXECUTABLE ON
     )
 endif()
-
-target_compile_options(${PROJECT_NAME}
-    PRIVATE $<$<CXX_COMPILER_ID:AppleClang>:-Wall -Wextra>
-)
 
 target_compile_definitions(${PROJECT_NAME}
 #    PRIVATE QT_QML_DEBUG

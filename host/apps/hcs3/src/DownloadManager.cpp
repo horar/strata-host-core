@@ -1,5 +1,8 @@
 
 #include "DownloadManager.h"
+#include "logging/LoggingQtCategories.h"
+
+#include <QFile>
 
 DownloadManager::DownloadManager(QObject* parent) : QObject(parent), numberOfDownloads_(4)
 {
@@ -20,7 +23,8 @@ DownloadManager::~DownloadManager()
 void DownloadManager::setBaseUrl(const QString& baseUrl)
 {
     baseUrl_ = baseUrl;
-    qDebug() << "baseUrl:" << baseUrl_;
+
+    qCDebug(logCategoryHcsDownloader) << "baseUrl:" << baseUrl_;
 }
 
 void DownloadManager::setMaxDownloadCount(uint count)
@@ -41,6 +45,8 @@ void DownloadManager::download(const QString& url, const QString& filename)
 
     downloadList_.push_back(item);
 
+    qCDebug(logCategoryHcsDownloader) << "Download:" << url << "to file:" << filename;
+
     if (static_cast<uint>(currentDownloads_.size()) < numberOfDownloads_) {
 
         QList<DownloadItem>::iterator findIt = findNextDownload();
@@ -57,11 +63,12 @@ void DownloadManager::beginDownload(DownloadItem& item)
     QString realUrl(baseUrl_ + item.url);
     QNetworkReply* reply = downloadFile(realUrl);
     if (reply == nullptr) {
-        qDebug() << "downloadFile failed! url:" << item.url;
+        qCDebug(logCategoryHcsDownloader) << "downloadFile failed! url:" << item.url;
         return;
     }
 
     mapReplyToFile_.insert(reply, item.filename);
+    qCDebug(logCategoryHcsDownloader) << "Begin downloading" << item.filename;
 
     item.state = "pending";
 }
@@ -75,10 +82,11 @@ QNetworkReply* DownloadManager::downloadFile(const QString& url)
     }
 
     QObject::connect(reply, &QNetworkReply::readyRead, this, &DownloadManager::readyRead);
-    QObject::connect(reply, SIGNAL(error(QNetworkReply::NetworkError)), this, SLOT(slotError()) );
+    QObject::connect(reply, QOverload<QNetworkReply::NetworkError>::of(&QNetworkReply::error),
+                      this, &DownloadManager::slotError);
 
 #if QT_CONFIG(ssl)
-    connect(reply, SIGNAL(sslErrors(QList<QSslError>)), SLOT(sslErrors(QList<QSslError>)));
+    connect(reply, &QNetworkReply::sslErrors, this, &DownloadManager::sslErrors);
 #endif
 
     currentDownloads_.append(reply);
@@ -95,6 +103,7 @@ bool DownloadManager::isHttpRedirect(QNetworkReply *reply)
 void DownloadManager::readyRead()
 {
     QNetworkReply* reply = qobject_cast<QNetworkReply*>( QObject::sender() );
+    Q_ASSERT(reply);
     QByteArray buffer = reply->readAll();
     if (buffer.size() > 0) {
         writeToFile(reply, buffer);
@@ -116,11 +125,13 @@ void DownloadManager::onDownloadFinished(QNetworkReply *reply)
             findItItem->state = "done";
         }
 
+        qCWarning(logCategoryHcsDownloader) << "download error on:" << reply->url();
         emit downloadFinishedError(findItItem->url, reply->errorString());
 
     }
     else {
         if (isHttpRedirect(reply)) {
+            qCWarning(logCategoryHcsDownloader) << "Redirection on a file download. " << reply->url().toString();
             //TODO: do we support redirects ?
             //   fputs("Request was redirected.\n", stderr);
 
@@ -142,7 +153,7 @@ void DownloadManager::onDownloadFinished(QNetworkReply *reply)
                 findItItem->state = "done";
             }
 
-            qDebug() << "Downloaded:" << findItItem->url;
+            qCInfo(logCategoryHcsDownloader) << "Downloaded:" << findItItem->url;
 
             emit downloadFinished(findItItem->url);
 
@@ -163,17 +174,24 @@ void DownloadManager::writeToFile(QNetworkReply* reply, const QByteArray& buffer
 {
     auto findIt = mapReplyToFile_.find(reply);
     if (findIt == mapReplyToFile_.end()) {
+        qCDebug(logCategoryHcsDownloader) << "Reply:" << reply->url() << "not found in map.";
         return;
     }
 
     QFile file( findIt.value() );
     if (file.open(QIODevice::ReadWrite) == false) {
+        qCWarning(logCategoryHcsDownloader) << "Unable to open file:" << findIt.value() <<
+                    "for:" << reply->url() << "err:" << file.errorString();
         return;
     }
     uint64_t file_size = file.size();
     file.seek(file_size);
 
-    file.write(buffer);
+    qint64 written = file.write(buffer);
+    if (written != buffer.size()) {
+        qCWarning(logCategoryHcsDownloader) << "Unable to write to file:" << findIt.value() <<
+                    "for:" << reply->url() << "err:" << file.errorString();
+    }
 }
 
 QList<DownloadManager::DownloadItem>::iterator DownloadManager::findNextDownload()
@@ -200,13 +218,26 @@ QList<DownloadManager::DownloadItem>::iterator DownloadManager::findItemByFilena
     return findIt;
 }
 
-void DownloadManager::slotError()
+void DownloadManager::slotError(QNetworkReply::NetworkError /*err*/)
 {
+    QNetworkReply* reply = qobject_cast<QNetworkReply*>( QObject::sender() );
+    Q_ASSERT(reply);
+
+    qCWarning(logCategoryHcsDownloader) << "download error on:" << reply->url() << "err:" << reply->errorString();
 }
 
-void DownloadManager::sslErrors(const QList<QSslError>& /*errors*/)
+void DownloadManager::sslErrors(const QList<QSslError>& errors)
 {
+    QNetworkReply* reply = qobject_cast<QNetworkReply*>( QObject::sender() );
+    Q_ASSERT(reply);
 
+    QString errorText;
+    for(const auto item : errors) {
+        errorText += item.errorString();
+        errorText += ",";
+    }
+
+    qCWarning(logCategoryHcsDownloader) << "download SSL error on:" << reply->url() << "err:" << errorText;
 }
 
 void DownloadManager::stopAllDownloads()

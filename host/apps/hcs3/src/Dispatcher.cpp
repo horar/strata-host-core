@@ -1,6 +1,9 @@
 
 #include "Dispatcher.h"
 
+const unsigned int g_waitForMessageTime = 500;  //in ms
+
+
 HCS_Dispatcher::HCS_Dispatcher()
 {
 
@@ -36,7 +39,7 @@ void HCS_Dispatcher::dispatch()
 
     while(stop_ == false) {
 
-        ret = waitForMessage(msg, 500);
+        ret = waitForMessage(msg, g_waitForMessageTime);
         if (ret < 0) {
             break;
         }
