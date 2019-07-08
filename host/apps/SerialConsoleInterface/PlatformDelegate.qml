@@ -399,7 +399,7 @@ FocusScope {
         var dialog = SGWidgets.SGDialogJS.createDialogFromComponent(platformDelegate, fileDialogComponent)
         dialog.accepted.connect(function() {
             var result = CommonCpp.SGUtilsCpp.atomicWrite(
-                        CommonCpp.SGUtilsCpp.urlToPath(dialog.fileUrl),
+                        CommonCpp.SGUtilsCpp.urlToLocalFile(dialog.fileUrl),
                         getTextForExport())
 
             if (result === false) {
