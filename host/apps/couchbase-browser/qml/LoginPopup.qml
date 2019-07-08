@@ -61,7 +61,6 @@ Window {
         else {
             urlFieldBackground.border.color = "red"
             urlFieldBackground.border.width = 2
-            header.text = "Invalid Input"
         }
     }
 
@@ -363,104 +362,101 @@ Window {
                         centerIn: parent
                         verticalCenterOffset: -10
                     }
-                    Row {
-                        anchors.fill: parent
-                        RadioButton {
-                            id: pushButton
+                    RadioButton {
+                        id: pushButton
+                        width: 30
+                        height: 30
+                        text: qsTr("")
+                        anchors {
+                            left: parent.left
+                        }
+                        onCheckedChanged: {
+                            pushButtonBackground.color = pushButton.checked ? "#b55400" : "transparent"
+                        }
+                        onClicked: {
+                            rep_type = "push"
+                        }
+                        indicator: Rectangle {
                             width: 30
                             height: 30
-                            text: qsTr("")
-                            anchors {
-                                left: parent.left
-                            }
-                            onCheckedChanged: {
-                                pushButtonBackground.color = pushButton.checked ? "#b55400" : "transparent"
-                            }
-                            onClicked: {
-                                rep_type = "push"
-                            }
-                            indicator: Rectangle {
-                                width: 30
-                                height: 30
-                                radius: 13
-                                border.color: "#b55400"
-                                border.width: 2
+                            radius: 13
+                            border.color: "#b55400"
+                            border.width: 2
+                            color: "transparent"
+
+                            Rectangle {
+                                id: pushButtonBackground
+                                width: 20
+                                height: 20
+                                anchors.centerIn: parent
                                 color: "transparent"
-
-                                Rectangle {
-                                    id: pushButtonBackground
-                                    width: 20
-                                    height: 20
-                                    anchors.centerIn: parent
-                                    color: "transparent"
-                                    radius: 13
-                                }
+                                radius: 13
                             }
-
                         }
-                        RadioButton {
-                            id: pushAndPullButton
+
+                    }
+                    RadioButton {
+                        id: pushAndPullButton
+                        width: 30
+                        height: 30
+                        text: qsTr("")
+                        anchors {
+                            horizontalCenter: parent.horizontalCenter
+                        }
+                        onClicked: rep_type = "pushpull"
+                        onCheckedChanged: {
+                            pushAndPullButtonBackground.color = pushAndPullButton.checked ? "#b55400" : "transparent"
+                        }
+
+                        indicator: Rectangle {
                             width: 30
                             height: 30
-                            text: qsTr("")
-                            anchors {
-                                horizontalCenter: parent.horizontalCenter
-                            }
-                            onClicked: rep_type = "pushpull"
-                            onCheckedChanged: {
-                                pushAndPullButtonBackground.color = pushAndPullButton.checked ? "#b55400" : "transparent"
-                            }
+                            radius: 13
+                            border.color: "#b55400"
+                            border.width: 2
+                            color: "transparent"
 
-                            indicator: Rectangle {
-                                width: 30
-                                height: 30
-                                radius: 13
-                                border.color: "#b55400"
-                                border.width: 2
+                            Rectangle {
+                                id: pushAndPullButtonBackground
+                                width: 20
+                                height: 20
+                                anchors.centerIn: parent
                                 color: "transparent"
-
-                                Rectangle {
-                                    id: pushAndPullButtonBackground
-                                    width: 20
-                                    height: 20
-                                    anchors.centerIn: parent
-                                    color: "transparent"
-                                    radius: 13
-                                }
+                                radius: 13
                             }
-
                         }
-                        RadioButton {
-                            id: pullButton
+
+                    }
+                    RadioButton {
+                        id: pullButton
+                        width: 30
+                        height: 30
+                        text: qsTr("")
+                        anchors {
+                            right: parent.right
+                        }
+                        onClicked: rep_type = "pull"
+                        onCheckedChanged: {
+                            pullButtonBackground.color = pullButton.checked ? "#b55400" : "transparent"
+                        }
+                        indicator: Rectangle {
                             width: 30
                             height: 30
-                            text: qsTr("")
-                            anchors {
-                                right: parent.right
-                            }
-                            onClicked: rep_type = "pull"
-                            onCheckedChanged: {
-                                pullButtonBackground.color = pullButton.checked ? "#b55400" : "transparent"
-                            }
-                            indicator: Rectangle {
-                                width: 30
-                                height: 30
-                                radius: 13
-                                border.color: "#b55400"
-                                border.width: 2
+                            radius: 13
+                            border.color: "#b55400"
+                            border.width: 2
+                            color: "transparent"
+
+                            Rectangle {
+                                id: pullButtonBackground
+                                width: 20
+                                height: 20
+                                anchors.centerIn: parent
                                 color: "transparent"
-
-                                Rectangle {
-                                    id: pullButtonBackground
-                                    width: 20
-                                    height: 20
-                                    anchors.centerIn: parent
-                                    color: "transparent"
-                                    radius: 13
-                                }
+                                radius: 13
                             }
-
                         }
+
                     }
                     Label {
                         id: pushLabel
