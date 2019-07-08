@@ -19,13 +19,19 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(SRCS
     src/databaseinterface.cpp
-    src/databaseinterface.h
     src/qmlbridge.cpp
-    src/qmlbridge.h
     src/main.cpp
 )
 
-add_executable(${PROJECT_NAME})
+set(HEADERS
+    include/databaseinterface.h
+    include/qmlbridge.h
+)
+
+add_executable(${PROJECT_NAME}
+    ${HEADERS}
+)
+
 target_sources(${PROJECT_NAME} PRIVATE
     ${SRCS}
     qmlui.qrc
@@ -40,6 +46,10 @@ target_link_libraries(${PROJECT_NAME}
     Qt5::Widgets
     Qt5::WebEngine
     Qt5::WebView
+)
+
+target_include_directories(${PROJECT_NAME}
+    PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
 
 if(APPLE)

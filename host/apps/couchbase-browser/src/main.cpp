@@ -24,10 +24,6 @@ int main(int argc, char *argv[])
     // Store engine and component in QMLBridge
     qmlBridge->init(engine, component);
 
-    //QString JSON_resp = databaseInterface->getJSONResponse();
-
-    //QQmlProperty::write(mainComponent,"contentArray",JSON_resp);
-
     // Run the app
     return app.exec();
 }

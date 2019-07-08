@@ -16,11 +16,8 @@ DatabaseInterface::DatabaseInterface(const int &id) : id_(id)
 }
 
 DatabaseInterface::~DatabaseInterface()
-{
-    if (getRepstatus()) {
-        sg_replicator_->stop();
-    }
-
+{cout << "\n\nIn the ~DatabaseInterface\n" << endl;
+    rep_stop();
     delete sg_replicator_;
     delete url_endpoint_;
     delete sg_replicator_configuration_;
@@ -39,6 +36,13 @@ QString DatabaseInterface::setFilePath(QString file_path)
         return("Problem initializing database.");
     }
 
+    // temporary
+//    SGMutableDocument newdoc(sg_db_, "victorNewDoc");
+//    newdoc.set("number", 30);
+//    newdoc.set("Name", "victor luiz");
+
+    emitUpdate();
+
     return("");
 }
 
@@ -54,7 +58,7 @@ void DatabaseInterface::emitUpdate()
 void DatabaseInterface::rep_stop()
 {
     if (getRepstatus()) {
-        sg_replicator_->stop();
+        sg_replicator_->stop(); cout << "\nStopped replicator." << endl;
     }
 
     setRepstatus(false);
@@ -136,7 +140,7 @@ QString DatabaseInterface::createNewDoc_(const QString &id, const QString &body)
     return true;
 }
 
-QString DatabaseInterface::rep_init(const QString &url, const QString &username, const QString &password, const Spyglass::SGReplicatorConfiguration::ReplicatorType &rep_type,
+QString DatabaseInterface::rep_init(const QString &url, const QString &username, const QString &password, const SGReplicatorConfiguration::ReplicatorType &rep_type,
                                     const vector<QString> &channels)
 {
     if(url.isEmpty()) {
@@ -274,22 +278,26 @@ bool DatabaseInterface::parseNewFile()
     return true;
 }
 
-QString DatabaseInterface::editDoc(const QString &id, const QString &body)
+QString DatabaseInterface::editDoc(const QString &oldId, const QString &newId, const QString &body)
 {
-    if(id.isEmpty()) {
+    if(oldId.isEmpty()) {
         return("Received empty id, cannot edit.");
     }
 
-    SGMutableDocument doc(sg_db_,id.toStdString());
-
-    if(!doc.exist()) {
-        return("\nDocument with id = \"" + id + "\" does not exist. Cannot edit.");
+    if(newId.isEmpty() && body.isEmpty()) {
+        return("Received empty new id and body, nothing to edit.");
     }
 
-    return  editDoc_(doc, body);
+    SGMutableDocument doc(sg_db_,oldId.toStdString());
+
+    if(!doc.exist()) {
+        return("\nDocument with id = \"" + oldId + "\" does not exist. Cannot edit.");
+    }
+
+    return editDoc_(doc, newId, body);
 }
 
-QString DatabaseInterface::editDoc_(SGMutableDocument &doc, const QString &body)
+QString DatabaseInterface::editDoc_(SGMutableDocument &doc, const QString &newId, const QString &body)
 {
 //    C4Document *c4_doc = sg_db_->getDocumentById(id.toStdString());
 
@@ -307,7 +315,13 @@ QString DatabaseInterface::editDoc_(SGMutableDocument &doc, const QString &body)
 
 //    SGMutableDocument doc(sg_db_,temp_name.toStdString());
 
-    doc.setBody(body.toStdString());
+    if(!newId.isEmpty()) {
+        doc.setId(newId.toStdString());
+    }
+
+    if(!body.isEmpty()) {
+        doc.setBody(body.toStdString());
+    }
 
     // needs to be saved to show up
 
