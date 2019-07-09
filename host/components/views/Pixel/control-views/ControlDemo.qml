@@ -22,7 +22,6 @@ Rectangle {
         id:demoLEDPattern3
     }
 
-
     property bool demo_off_detect : platformInterface.demo_off
     onDemo_off_detectChanged: {
         if(demo_off_detect === true){
@@ -363,7 +362,6 @@ Rectangle {
             sgStatusLight3C.status = "green"
         else sgStatusLight3C.status = "off"
     }
-
 
 
     Rectangle{
