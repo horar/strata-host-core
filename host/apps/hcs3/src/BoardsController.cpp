@@ -2,6 +2,7 @@
 #include "BoardsController.h"
 #include "PlatformBoard.h"
 #include "Dispatcher.h"
+#include "LoggingAdapter.h"
 
 #include <PlatformConnection.h>
 
@@ -32,11 +33,21 @@ bool BoardsController::initialize(HCS_Dispatcher* dispatcher)
     return true;
 }
 
+void BoardsController::setLogAdapter(LoggingAdapter* adapter)
+{
+    logAdapter_ = adapter;
+}
+
 void BoardsController::sendMessage(const std::string& connectionId, const std::string& message)
 {
     spyglass::PlatformConnectionShPtr conn = platform_mgr_.getConnection(connectionId);
     if (conn == nullptr) {
         return;
+    }
+
+    if (logAdapter_) {
+        std::string logText = "Sending msg to:" + connectionId;
+        logAdapter_->Log(LoggingAdapter::LogLevel::eLvlDebug, logText);
     }
 
     conn->addMessage(message);
@@ -126,6 +137,11 @@ void BoardsController::newConnection(spyglass::PlatformConnectionShPtr connectio
     item.msg_document = nullptr;
 
     dispatcher_->addMessage(item);
+
+    if (logAdapter_) {
+        std::string logText = "New board connected on:" + connection->getName();
+        logAdapter_->Log(LoggingAdapter::LogLevel::eLvlInfo, logText);
+    }
 }
 
 void BoardsController::closeConnection(const std::string& connectionId)
@@ -149,6 +165,11 @@ void BoardsController::closeConnection(const std::string& connectionId)
     item.msg_document = nullptr;
 
     dispatcher_->addMessage(item);
+
+    if (logAdapter_) {
+        std::string logText = "Board disconnected on:" + connectionId;
+        logAdapter_->Log(LoggingAdapter::LogLevel::eLvlInfo, logText);
+    }
 }
 
 void BoardsController::notifyMessageFromConnection(const std::string& connectionId, const std::string& message)
@@ -160,6 +181,18 @@ void BoardsController::notifyMessageFromConnection(const std::string& connection
     item.msg_document = nullptr;
 
     dispatcher_->addMessage(item);
+
+    if (logAdapter_) {
+        std::string logText = "Board msg on:" + connectionId;
+        logAdapter_->Log(LoggingAdapter::LogLevel::eLvlDebug, logText);
+    }
+}
+
+void BoardsController::logging(LoggingAdapter::LogLevel level, const std::string& log_text)
+{
+    if (logAdapter_) {
+        logAdapter_->Log(level, log_text);
+    }
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -235,7 +268,8 @@ void BoardsController::ConnectionHandler::onNotifyReadConnection(spyglass::Platf
                 break;
             case PlatformBoard::ProcessResult::eParseError:
             case PlatformBoard::ProcessResult::eValidationError:
-                //TODO: add some error to log file...
+                std::string log_text = "Parsing or Validation error on connection:" + connection->getName();
+                receiver_->logging(LoggingAdapter::LogLevel::eLvlWarning, log_text);
                 break;
         }
     }

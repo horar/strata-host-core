@@ -16,6 +16,7 @@ namespace Spyglass {
 };
 
 class HCS_Dispatcher;
+class LoggingAdapter;
 
 class Database final
 {
@@ -24,6 +25,7 @@ public:
     ~Database();
 
     void setDispatcher(HCS_Dispatcher* dispatcher);
+    void setLogAdapter(LoggingAdapter* adapter);
 
     /**
      * Opens the database
@@ -80,6 +82,7 @@ private:
     Spyglass::SGBasicAuthenticator *basic_authenticator_{nullptr};
 
     HCS_Dispatcher* dispatcher_{nullptr};
+    LoggingAdapter* logAdapter_{nullptr};
 
     std::set<std::string> channels_;
 };

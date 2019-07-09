@@ -55,6 +55,12 @@ public:
      */
     void setFirmwareFilename(const std::string& firmwareFilename);
 
+    /**
+     * Sets cancel callback check function
+     * @param cancelCallback
+     */
+    void setCancelCallback(std::function<bool()> cancelCallback);
+
     /*!
      * The method checks whether bootloader is ready or tries to initialize it.
      * @return returns true when device is in bootloader mode otherwise false
@@ -152,6 +158,8 @@ private:
 
     std::string firmwareFilename_;
     std::ostream* dbg_out_stream_;
+
+    std::function<bool()> cancelCallback_;
 };
 
 #endif

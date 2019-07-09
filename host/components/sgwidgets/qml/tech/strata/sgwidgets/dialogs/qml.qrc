@@ -1,0 +1,8 @@
+<!DOCTYPE RCC><RCC version="1.0">
+    <qresource prefix="/tech/strata/sgwidgets/dialogs">
+        <file>SGDialog_1_0.js</file>
+        <file>SGDialog_1_0.qml</file>
+        <file>SGConfirmationDialog_1_0.qml</file>
+        <file>SGMessageDialog_1_0.qml</file>
+    </qresource>
+</RCC>
