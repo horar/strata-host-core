@@ -3,7 +3,7 @@
 #include <QQmlContext>
 #include <QQmlComponent>
 #include <QDebug>
-#include "Database.h"
+#include "database.h"
 
 int main(int argc, char *argv[])
 {
