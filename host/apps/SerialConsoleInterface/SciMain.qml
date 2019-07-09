@@ -355,9 +355,12 @@ Item {
                     currentConnectionId: connectionId
 
                     onCancelRequested: {
-                        dialog.close()
-                        programDeviceDialogOpened = false
-                        sciModel.boardController.reconnect(connectionId)
+                        if (programDeviceDialogOpened) {
+                            dialog.close()
+                            programDeviceDialogOpened = false
+                            refrestDeviceInfo()
+
+                        }
                     }
                 }
             }
@@ -405,5 +408,14 @@ Item {
 
         programDeviceDialogOpened = true
         dialog.open()
+    }
+
+    function refrestDeviceInfo() {
+        //we need deep copy
+        var connectionIds = JSON.parse(JSON.stringify(sciModel.boardController.connectionIds))
+
+        for (var i = 0; i < connectionIds.length; ++i) {
+            sciModel.boardController.reconnect(connectionIds[i])
+        }
     }
 }
