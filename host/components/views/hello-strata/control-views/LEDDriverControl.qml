@@ -43,7 +43,7 @@ Item {
     property bool g3: platformInterface.led_driver_ui_g3
     property bool g4: platformInterface.led_driver_ui_g4
 
-    property int blink_state: platformInterface.led_driver_ui_blink_state
+    property int state: platformInterface.led_driver_ui_state
     property real freq0: platformInterface.led_driver_ui_freq0
     property real pwm0: platformInterface.led_driver_ui_pwm0
     property real freq1: platformInterface.led_driver_ui_freq1
@@ -69,23 +69,16 @@ Item {
     onG3Changed: switch15.checked = g3
     onG4Changed: switch16.checked = g4
 
-    onBlink_stateChanged: {
-        if (blink_state === 0) {
-            radiobtns.radioButtons.blink0.checked = true
-            freqbox.value = freq0
-            pwmbox.value = pwm0
-        }
-        else {
-            radiobtns.radioButtons.blink1.checked = true
-            freqbox.value = freq1
-            pwmbox.value = pwm1
-        }
+    onStateChanged: {
+        if (state === 1) radiobtns.radioButtons.onstate.checked = true
+        if (state === 2) radiobtns.radioButtons.blink0.checked = true
+        if (state === 3) radiobtns.radioButtons.blink1.checked = true
     }
 
-    onFreq0Changed: if (blink_state === 0) freqbox.value = freq0
-    onPwm0Changed: if (blink_state === 0) pwmbox.value = pwm0
-    onFreq1Changed: if (blink_state === 1) freqbox.value = freq1
-    onPwm1Changed: if (blink_state === 1) pwmbox.value = pwm1
+    onFreq0Changed: freqbox0.value = freq0
+    onPwm0Changed: pwmbox0.value = pwm0
+    onFreq1Changed: freqbox1.value = freq1
+    onPwm1Changed: pwmbox1.value = pwm1
 
     // hide in tab view
     property bool hideHeader: false
@@ -189,7 +182,7 @@ Item {
                             onCheckedChanged: {
                                 light1.status = this.checked ? "yellow" : "off"
                                 platformInterface.led_driver_ui_y1 = this.checked
-                                platformInterface.set_led_driver.update(15,this.checked ? 1 : 0)
+                                platformInterface.set_led_driver.update(15,this.checked ? platformInterface.led_driver_ui_state : 0)
                             }
                         }
 
@@ -200,7 +193,7 @@ Item {
                             onCheckedChanged: {
                                 light2.status = this.checked ? "yellow" : "off"
                                 platformInterface.led_driver_ui_y2 = this.checked
-                                platformInterface.set_led_driver.update(14,this.checked ? 1 : 0)
+                                platformInterface.set_led_driver.update(14,this.checked ? platformInterface.led_driver_ui_state : 0)
                             }
                         }
 
@@ -211,7 +204,7 @@ Item {
                             onCheckedChanged: {
                                 light3.status = this.checked ? "yellow" : "off"
                                 platformInterface.led_driver_ui_y3 = this.checked
-                                platformInterface.set_led_driver.update(13,this.checked ? 1 : 0)
+                                platformInterface.set_led_driver.update(13,this.checked ? platformInterface.led_driver_ui_state : 0)
                             }
                         }
 
@@ -222,7 +215,7 @@ Item {
                             onCheckedChanged: {
                                 light4.status = this.checked ? "yellow" : "off"
                                 platformInterface.led_driver_ui_y4 = this.checked
-                                platformInterface.set_led_driver.update(12,this.checked ? 1 : 0)
+                                platformInterface.set_led_driver.update(12,this.checked ? platformInterface.led_driver_ui_state : 0)
                             }
                         }
 
@@ -233,7 +226,7 @@ Item {
                             onCheckedChanged: {
                                 light5.status = this.checked ? "red" : "off"
                                 platformInterface.led_driver_ui_r1 = this.checked
-                                platformInterface.set_led_driver.update(11,this.checked ? 1 : 0)
+                                platformInterface.set_led_driver.update(11,this.checked ? platformInterface.led_driver_ui_state : 0)
                             }
                         }
 
@@ -244,7 +237,7 @@ Item {
                             onCheckedChanged: {
                                 light6.status = this.checked ? "red" : "off"
                                 platformInterface.led_driver_ui_r2 = this.checked
-                                platformInterface.set_led_driver.update(10,this.checked ? 1 : 0)
+                                platformInterface.set_led_driver.update(10,this.checked ? platformInterface.led_driver_ui_state : 0)
                             }
                         }
 
@@ -255,7 +248,7 @@ Item {
                             onCheckedChanged: {
                                 light7.status = this.checked ? "red" : "off"
                                 platformInterface.led_driver_ui_r3 = this.checked
-                                platformInterface.set_led_driver.update(9,this.checked ? 1 : 0)
+                                platformInterface.set_led_driver.update(9,this.checked ? platformInterface.led_driver_ui_state : 0)
                             }
                         }
 
@@ -266,7 +259,7 @@ Item {
                             onCheckedChanged: {
                                 light8.status = this.checked ? "red" : "off"
                                 platformInterface.led_driver_ui_r4 = this.checked
-                                platformInterface.set_led_driver.update(8,this.checked ? 1 : 0)
+                                platformInterface.set_led_driver.update(8,this.checked ? platformInterface.led_driver_ui_state : 0)
                             }
                         }
 
@@ -277,7 +270,7 @@ Item {
                             onCheckedChanged: {
                                 light9.status = this.checked ? "blue" : "off"
                                 platformInterface.led_driver_ui_b1 = this.checked
-                                platformInterface.set_led_driver.update(7,this.checked ? 1 : 0)
+                                platformInterface.set_led_driver.update(7,this.checked ? platformInterface.led_driver_ui_state : 0)
                             }
                         }
 
@@ -288,7 +281,7 @@ Item {
                             onCheckedChanged: {
                                 light10.status = this.checked ? "blue" : "off"
                                 platformInterface.led_driver_ui_b2 = this.checked
-                                platformInterface.set_led_driver.update(6,this.checked ? 1 : 0)
+                                platformInterface.set_led_driver.update(6,this.checked ? platformInterface.led_driver_ui_state : 0)
                             }
                         }
 
@@ -299,7 +292,7 @@ Item {
                             onCheckedChanged: {
                                 light11.status = this.checked ? "blue" : "off"
                                 platformInterface.led_driver_ui_b3 = this.checked
-                                platformInterface.set_led_driver.update(5,this.checked ? 1 : 0)
+                                platformInterface.set_led_driver.update(5,this.checked ? platformInterface.led_driver_ui_state : 0)
                             }
                         }
 
@@ -310,7 +303,7 @@ Item {
                             onCheckedChanged: {
                                 light12.status = this.checked ? "blue" : "off"
                                 platformInterface.led_driver_ui_b4 = this.checked
-                                platformInterface.set_led_driver.update(4,this.checked ? 1 : 0)
+                                platformInterface.set_led_driver.update(4,this.checked ? platformInterface.led_driver_ui_state : 0)
                             }
                         }
 
@@ -321,7 +314,7 @@ Item {
                             onCheckedChanged: {
                                 light13.status = this.checked ? "green" : "off"
                                 platformInterface.led_driver_ui_g1 = this.checked
-                                platformInterface.set_led_driver.update(3,this.checked ? 1 : 0)
+                                platformInterface.set_led_driver.update(3,this.checked ? platformInterface.led_driver_ui_state : 0)
                             }
                         }
 
@@ -332,7 +325,7 @@ Item {
                             onCheckedChanged: {
                                 light14.status = this.checked ? "green" : "off"
                                 platformInterface.led_driver_ui_g2 = this.checked
-                                platformInterface.set_led_driver.update(2,this.checked ? 1 : 0)
+                                platformInterface.set_led_driver.update(2,this.checked ? platformInterface.led_driver_ui_state : 0)
                             }
                         }
 
@@ -343,7 +336,7 @@ Item {
                             onCheckedChanged: {
                                 light15.status = this.checked ? "green" : "off"
                                 platformInterface.led_driver_ui_g3 = this.checked
-                                platformInterface.set_led_driver.update(1,this.checked ? 1 : 0)
+                                platformInterface.set_led_driver.update(1,this.checked ? platformInterface.led_driver_ui_state : 0)
                             }
                         }
 
@@ -354,7 +347,7 @@ Item {
                             onCheckedChanged: {
                                 light16.status = this.checked ? "green" : "off"
                                 platformInterface.led_driver_ui_g4 = this.checked
-                                platformInterface.set_led_driver.update(0,this.checked ? 1 : 0)
+                                platformInterface.set_led_driver.update(0,this.checked ? platformInterface.led_driver_ui_state : 0)
                             }
                         }
                     }
@@ -447,105 +440,151 @@ Item {
                     }
                 }
 
-                Column {
-                    spacing: 20
-                    anchors.left: ledcontrol.left
-                    Row {
-                        spacing: 30
-                        SGRadioButtonContainer {
-                            id: radiobtns
-                            radioGroup: GridLayout {
-                                columnSpacing: 10
-                                rowSpacing: 10
-                                columns: 1
-                                property alias blink0: blink0
-                                property alias blink1: blink1
-                                SGRadioButton {
-                                    id: blink0
-                                    text: "<b>" + qsTr("Blink 0") + "</b>"
-                                    checked: true
-                                    onCheckedChanged: {
-                                        if (checked) platformInterface.led_driver_ui_blink_state = 0
-                                    }
-                                }
-                                SGRadioButton {
-                                    id: blink1
-                                    text: "<b>" + qsTr("Blink 1") + "</b>"
-                                    onCheckedChanged:  {
-                                        if (checked) platformInterface.led_driver_ui_blink_state = 1
-                                    }
+                Row {
+                    spacing: 10
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    SGRadioButtonContainer {
+                        id: radiobtns
+                        anchors.bottom: parent.bottom
+                        radioGroup: GridLayout {
+                            columnSpacing: 10
+                            rowSpacing: 30
+                            columns: 1
+                            property alias blink0: blink0
+                            property alias blink1: blink1
+                            property alias onstate: onstate
+
+                            SGRadioButton {
+                                id: blink0
+                                text: "<b>" + qsTr("Blink 0") + "</b>"
+                                onCheckedChanged: {
+                                    if (checked) platformInterface.led_driver_ui_state = 2
                                 }
                             }
-                            anchors.bottom: parent.bottom
-                        }
-
-                        SGSubmitInfoBox {
-                            id: freqbox
-                            label: "<b>" + qsTr("Frequency") + "</b>"
-                            textColor: "black"
-                            labelLeft: false
-                            infoBoxWidth: 100
-                            showButton: false
-                            unit: "kHz"
-                            placeholderText: "0.0001 - 1000"
-                            validator: DoubleValidator {
-                                bottom: 0.0001
-                                top: 1000
+                            SGRadioButton {
+                                id: blink1
+                                text: "<b>" + qsTr("Blink 1") + "</b>"
+                                onCheckedChanged:  {
+                                    if (checked) platformInterface.led_driver_ui_state = 3
+                                }
                             }
-                            anchors.bottom: parent.bottom
-                            onValueChanged: {
-                                if (blink_state === 0) platformInterface.led_driver_ui_freq0 = value
-                                else platformInterface.led_driver_ui_freq1 = value
-                            }
-                        }
-
-                        SGSubmitInfoBox {
-                            id:pwmbox
-                            label: "<b>" + "PWM" + "</b>"
-                            textColor: "black"
-                            labelLeft: false
-                            infoBoxWidth: 60
-                            showButton: false
-                            unit: "%"
-                            placeholderText: "0 - 100"
-                            validator: DoubleValidator {
-                                bottom: 0
-                                top: 100
-                            }
-                            anchors.bottom: parent.bottom
-                            onValueChanged: {
-                                if (blink_state === 0) platformInterface.led_driver_ui_pwm0 = value
-                                else platformInterface.led_driver_ui_pwm1 = value
+                            SGRadioButton {
+                                id: onstate
+                                text: "<b>" + qsTr("On") + "</b>"
+                                checked: true
+                                onCheckedChanged: {
+                                    if (checked) platformInterface.led_driver_ui_state = 1
+                                }
                             }
                         }
                     }
 
-                    Row {
-                        spacing: 20
-                        Button {
-                            id: applybtn
-                            text: qsTr("Apply")
-                            anchors.bottom: parent.bottom
-                            onClicked: {
-                                if (blink_state === 0) {
-                                    if (freqbox.textInput.acceptableInput)
-                                        platformInterface.set_led_driver_freq0.update(freqbox.value)
-                                    if (pwmbox.textInput.acceptableInput)
-                                        platformInterface.set_led_driver_duty0.update(pwmbox.value)
+                    Column {
+                        spacing: 10
+                        Row {
+                            spacing: 30
+                            SGSubmitInfoBox {
+                                id: freqbox0
+                                label: "<b>" + qsTr("Frequency") + "</b>"
+                                textColor: "black"
+                                labelLeft: false
+                                infoBoxWidth: 100
+                                showButton: false
+                                unit: "kHz"
+                                placeholderText: "0.0001 - 1000"
+                                validator: DoubleValidator {
+                                    bottom: 0.0001
+                                    top: 1000
                                 }
-                                else {
-                                    if (freqbox.textInput.acceptableInput)
-                                        platformInterface.set_led_driver_freq1.update(freqbox.value)
-                                    if (pwmbox.textInput.acceptableInput)
-                                        platformInterface.set_led_driver_duty1.update(pwmbox.value)
+                                anchors.bottom: parent.bottom
+                                onValueChanged: platformInterface.led_driver_ui_freq0 = value
+                            }
+
+                            SGSubmitInfoBox {
+                                id:pwmbox0
+                                label: "<b>" + "PWM" + "</b>"
+                                textColor: "black"
+                                labelLeft: false
+                                infoBoxWidth: 60
+                                showButton: false
+                                unit: "%"
+                                placeholderText: "0 - 100"
+                                validator: DoubleValidator {
+                                    bottom: 0
+                                    top: 100
+                                }
+                                anchors.bottom: parent.bottom
+                                onValueChanged: platformInterface.led_driver_ui_pwm0 = value
+                            }
+
+                            Button {
+                                id: applybtn0
+                                text: qsTr("Apply")
+                                width: 75
+                                anchors.bottom: parent.bottom
+                                onClicked: {
+                                    if (freqbox0.textInput.acceptableInput)
+                                        platformInterface.set_led_driver_freq0.update(freqbox0.value)
+                                    if (pwmbox0.textInput.acceptableInput)
+                                        platformInterface.set_led_driver_duty0.update(pwmbox0.value)
                                 }
                             }
                         }
 
+                        Row {
+                            spacing: 30
+                            SGSubmitInfoBox {
+                                id: freqbox1
+                                label: "<b>" + qsTr("Frequency") + "</b>"
+                                textColor: "black"
+                                labelLeft: false
+                                infoBoxWidth: 100
+                                showButton: false
+                                unit: "kHz"
+                                placeholderText: "0.0001 - 1000"
+                                validator: DoubleValidator {
+                                    bottom: 0.0001
+                                    top: 1000
+                                }
+                                anchors.bottom: parent.bottom
+                                onValueChanged: platformInterface.led_driver_ui_freq1 = value
+                            }
+
+                            SGSubmitInfoBox {
+                                id:pwmbox1
+                                label: "<b>" + "PWM" + "</b>"
+                                textColor: "black"
+                                labelLeft: false
+                                infoBoxWidth: 60
+                                showButton: false
+                                unit: "%"
+                                placeholderText: "0 - 100"
+                                validator: DoubleValidator {
+                                    bottom: 0
+                                    top: 100
+                                }
+                                anchors.bottom: parent.bottom
+                                onValueChanged: platformInterface.led_driver_ui_pwm1 = value
+                            }
+
+                            Button {
+                                id: applybtn1
+                                text: qsTr("Apply")
+                                width: 75
+                                anchors.bottom: parent.bottom
+                                onClicked: {
+                                    if (freqbox1.textInput.acceptableInput)
+                                        platformInterface.set_led_driver_freq1.update(freqbox1.value)
+                                    if (pwmbox1.textInput.acceptableInput)
+                                        platformInterface.set_led_driver_duty1.update(pwmbox1.value)
+                                }
+                            }
+                        }
                         Button {
                             id: resetbtn
                             text: qsTr("Reset")
-                            anchors.bottom: parent.bottom
+                            width: 75
+                            anchors.right: parent.right
                             onClicked: {
                                 switch1.checked = false
                                 switch2.checked = false

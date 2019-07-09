@@ -389,7 +389,7 @@ Item {
     property bool led_driver_ui_g3: false
     property bool led_driver_ui_g4: false
 
-    property int led_driver_ui_blink_state: 0
+    property int led_driver_ui_state: 0
     property real led_driver_ui_freq0: 1
     property real led_driver_ui_pwm0: 50
     property real led_driver_ui_freq1: 1

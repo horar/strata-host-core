@@ -26,11 +26,11 @@ Item {
     property var sw4: platformInterface.mechanical_buttons_noti_sw4
 
     onSw1Changed: {
-        led1.status = sw1.value ? "green" : "off"
+        led1.status = sw1.value ? "off" : "green"
     }
 
     onSw2Changed: {
-        led2.status = sw2.value ? "green" : "off"
+        led2.status = sw2.value ? "off" : "green"
     }
 
     onSw3Changed: {

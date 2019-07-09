@@ -22,6 +22,7 @@ SGResponsiveScrollView {
     property real vFactor: Math.max(1,height/root.minimumHeight)
     property real hFactor: Math.max(1,width/root.minimumWidth)
     property real defaultSpacing: 10
+    scrollBarColor: "lightgrey"
 
     Rectangle {
         id: container
