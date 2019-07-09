@@ -154,11 +154,6 @@ Module {
         isSingleton: true
         exportMetaObjectRevisions: [0]
         Method {
-            name: "urlToPath"
-            type: "string"
-            Parameter { name: "url"; type: "QUrl" }
-        }
-        Method {
             name: "urlToLocalFile"
             type: "string"
             Parameter { name: "url"; type: "QUrl" }
