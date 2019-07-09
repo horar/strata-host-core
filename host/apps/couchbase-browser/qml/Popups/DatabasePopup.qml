@@ -4,6 +4,8 @@ import QtQuick.Controls 2.12
 import QtQuick.Window 2.12
 import QtQuick.Dialogs 1.3
 import Qt.labs.platform 1.0
+import "../Components"
+import "../Images"
 
 Window {
     id: root
@@ -111,7 +113,7 @@ Window {
                             verticalCenter: parent.verticalCenter
                         }
                         Image {
-                            source: "Images/openFolderIcon.png"
+                            source: "../Images/openFolderIcon.png"
                             width: parent.width / 1.5
                             height: parent.height / 1.5
                             anchors.centerIn: parent

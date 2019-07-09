@@ -15,15 +15,22 @@
         <file>qml/Images/newTabIcon.png</file>
         <file>qml/Images/replicateDatabase.png</file>
         <file>qml/Images/stopReplication.png</file>
-        <file>qml/LoginPopup.qml</file>
         <file>qml/Images/newDatabase.png</file>
-        <file>qml/CustomMenuItem.qml</file>
-        <file>qml/DocumentPopup.qml</file>
-        <file>qml/DatabasePopup.qml</file>
-        <file>qml/WarningPopup.qml</file>
         <file>qml/Images/editIcon.png</file>
         <file>qml/Images/deleteDocumentIcon.png</file>
         <file>qml/Images/CBBrowserLogo.png</file>
-        <file>qml/StatusBar.qml</file>
+        <file>include/databaseinterface.h</file>
+        <file>include/qmlbridge.h</file>
+        <file>qml/Components/CustomMenuItem.qml</file>
+        <file>qml/Components/StatusBar.qml</file>
+        <file>qml/Images/CBBrowserLogo-01.png</file>
+        <file>qml/Popups/DatabasePopup.qml</file>
+        <file>qml/Popups/DocumentPopup.qml</file>
+        <file>qml/Popups/LoginPopup.qml</file>
+        <file>qml/Popups/WarningPopup.qml</file>
+        <file>src/databaseinterface.cpp</file>
+        <file>src/main.cpp</file>
+        <file>src/qmlbridge.cpp</file>
+        <file>test/cb-browser-test.cpp</file>
     </qresource>
 </RCC>
