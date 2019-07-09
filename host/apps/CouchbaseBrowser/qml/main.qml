@@ -13,14 +13,17 @@ Window {
     flags: Qt.WindowFullscreenButtonHint
 
     property alias id: mainview.id
-    property alias openedFile: mainview.openedFile
-
     property string fileName: ""
     property var allDocuments: ""
 
     MainWindow {
         id: mainview
     }
+
+    onFileNameChanged: {
+        mainview.openedFile = fileName.length != 0
+    }
+
     onAllDocumentsChanged: {
         mainview.allDocuments = allDocuments
     }

@@ -46,5 +46,5 @@ if (APPS_PRT)
 endif()
 
 if (APPS_CBB)
-    add_subdirectory(couchbase-browser)
+    add_subdirectory(CouchbaseBrowser)
 endif()
