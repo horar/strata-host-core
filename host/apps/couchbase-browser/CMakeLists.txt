@@ -18,14 +18,14 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(SRCS
-    src/databaseinterface.cpp
-    src/qmlbridge.cpp
+    src/databaseImpl.cpp
+    src/database.cpp
     src/main.cpp
 )
 
 set(HEADERS
-    include/databaseinterface.h
-    include/qmlbridge.h
+    include/databaseImpl.h
+    include/database.h
 )
 
 add_executable(${PROJECT_NAME}

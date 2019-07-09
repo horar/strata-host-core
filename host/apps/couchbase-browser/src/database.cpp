@@ -1,26 +1,26 @@
-#include "qmlbridge.h"
+#include "Database.h"
 
-QMLBridge::QMLBridge(QObject *parent) :
+Database::Database(QObject *parent) :
     QObject(parent)
 {
 }
 
-void QMLBridge::init(QQmlApplicationEngine *engine, QQmlComponent *component)
+void Database::init(QQmlApplicationEngine *engine, QQmlComponent *component)
 {
     this->engine = engine;
     this->component = component;
     createNewWindow();
 }
 
-QString QMLBridge::setFilePath(int windowId, QString file_path)
+QString Database::setFilePath(int windowId, QString file_path)
 {
-    DatabaseInterface *db = new DatabaseInterface(windowId);
+    DatabaseImpl *db = new DatabaseImpl(windowId);
     allDatabases[windowId] = db;
-    QObject::connect(&(*allDatabases[windowId]),&DatabaseInterface::newUpdate, this, &QMLBridge::newUpdateSignal);
+    QObject::connect(&(*allDatabases[windowId]),&DatabaseImpl::newUpdate, this, &Database::newUpdateSignal);
     return allDatabases[windowId]->setFilePath(file_path);
 }
 
-QString QMLBridge::createNewDatabase(int windowId, bool createWindow, QString folder_path, QString dbName)
+QString Database::createNewDatabase(int windowId, bool createWindow, QString folder_path, QString dbName)
 {
     QDir dir(folder_path);
     QString path = dir.path() + dir.separator() + "db" + dir.separator() + dbName + dir.separator() + "db.sqlite3";
@@ -43,23 +43,23 @@ QString QMLBridge::createNewDatabase(int windowId, bool createWindow, QString fo
     return message;
 }
 
-QString QMLBridge::createNewDocument(int windowId, QString id, QString body)
+QString Database::createNewDocument(int windowId, QString id, QString body)
 {
     qDebug() << windowId << id << body << endl;
     return allDatabases[windowId]->createNewDoc(id, body);
 }
 
-QString QMLBridge::editDoc(int windowId, QString oldId, QString newId, QString body)
+QString Database::editDoc(int windowId, QString oldId, QString newId, QString body)
 {
     return allDatabases[windowId]->editDoc(oldId, newId, body);
 }
 
-QString QMLBridge::deleteDoc(int windowId, QString id)
+QString Database::deleteDoc(int windowId, QString id)
 {
     return allDatabases[windowId]->deleteDoc(id);
 }
 
-void QMLBridge::closeFile(int windowId)
+void Database::closeFile(int windowId)
 {
     delete allDatabases[windowId];
     allDatabases.erase(windowId);
@@ -67,7 +67,7 @@ void QMLBridge::closeFile(int windowId)
     QQmlProperty::write(allWindows[windowId],"allDocuments","{}");
 }
 
-QString QMLBridge::startReplicator(int windowId, QString url, QString username, QString password, QString type, std::vector<QString> channels)
+QString Database::startReplicator(int windowId, QString url, QString username, QString password, QString type, std::vector<QString> channels)
 {
     Spyglass::SGReplicatorConfiguration::ReplicatorType rep_type;
     qDebug() << type << endl;
@@ -80,12 +80,12 @@ QString QMLBridge::startReplicator(int windowId, QString url, QString username, 
     return allDatabases[windowId]->rep_init(url,username,password,rep_type,channels);
 }
 
-void QMLBridge::stopReplicator(int windowId)
+void Database::stopReplicator(int windowId)
 {
     allDatabases[windowId]->rep_stop();
 }
 
-void QMLBridge::createNewWindow()
+void Database::createNewWindow()
 {
     ids++;
     engine->load(QUrl(QStringLiteral("qrc:/qml/main.qml")));
@@ -93,7 +93,7 @@ void QMLBridge::createNewWindow()
     QQmlProperty::write(allWindows[ids],"id",ids);
 }
 
-void QMLBridge::newUpdateSignal(int windowId)
+void Database::newUpdateSignal(int windowId)
 {
     QQmlProperty::write(allWindows[windowId],"fileName",allDatabases[windowId]->getDBName());
     QQmlProperty::write(allWindows[windowId],"allDocuments",allDatabases[windowId]->getJSONResponse());

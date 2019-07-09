@@ -82,7 +82,7 @@ Item {
                     onEditDocumentSignal: editDocPopup.visible = true
                     onSaveAsSignal: saveAsPopup.visible = true
                     onCloseSignal: {
-                        qmlBridge.closeFile(id)
+                        database.closeFile(id)
                         bodyView.message = "Closed file"
                     }
                     onStartReplicatorSignal: {
@@ -91,10 +91,10 @@ Item {
 
                     }
                     onStopReplicatorSignal: {
-                        qmlBridge.stopReplicator(id)
+                        database.stopReplicator(id)
                         bodyView.message = "Stopped replicator"
                     }
-                    onNewWindowSignal: qmlBridge.createNewWindow()
+                    onNewWindowSignal: database.createNewWindow()
 
                 }
             }
@@ -150,7 +150,7 @@ Item {
                 title: "Please select a database"
                 folder: shortcuts.home
                 onAccepted: {
-                    let message = qmlBridge.setFilePath(id, fileUrls.toString().replace("file://",""));
+                    let message = database.setFilePath(id, fileUrls.toString().replace("file://",""));
                     if (message.length === 0) {
                         bodyView.message = "Opened file";
                         mainMenuView.openedFile = true
@@ -162,7 +162,7 @@ Item {
             LoginPopup {
                 id: loginPopup
                 onStart: {
-                    let message = qmlBridge.startReplicator(id,url,username,password,rep_type,channels);
+                    let message = database.startReplicator(id,url,username,password,rep_type,channels);
                     if (message.length === 0) {
                         bodyView.message = "Started replicator successfully";
                         mainMenuView.replicatorStarted = true;
@@ -174,7 +174,7 @@ Item {
             DocumentPopup {
                 id: newDocPopup
                 onSubmit: {
-                    let message = qmlBridge.createNewDocument(id,docID,docBody);
+                    let message = database.createNewDocument(id,docID,docBody);
                     if (message.length === 0)
                         bodyView.message = "Created new document successfully!";
                     else
@@ -186,7 +186,7 @@ Item {
                 docID: openedDocumentID
                 docBody: openedDocumentBody
                 onSubmit: {
-                    let message = qmlBridge.editDoc(id,openedDocumentID,docID,docBody)
+                    let message = database.editDoc(id,openedDocumentID,docID,docBody)
                     if (message.length === 0) {
                         bodyView.message = "Edited document successfully"
                     }
@@ -197,7 +197,7 @@ Item {
             DatabasePopup {
                 id: newDatabasesPopup
                 onSubmit: {
-                    let message = qmlBridge.createNewDatabase(id,mainMenuView.openedFile,folderPath.toString().replace("file://",""), filename);
+                    let message = database.createNewDatabase(id,mainMenuView.openedFile,folderPath.toString().replace("file://",""), filename);
                     if (message.length === 0) {
                         bodyView.message = "Created new database successfully";
                     }
@@ -217,7 +217,7 @@ Item {
                 messageToDisplay: "Are you sure that you want to permanently delete document \""+openedDocumentID+"\"";
                 onAllow: {
                     deletePopup.visible = false
-                    qmlBridge.deleteDoc(id,openedDocumentID)
+                    database.deleteDoc(id,openedDocumentID)
                 }
                 onDeny: {
                     deletePopup.visible = false

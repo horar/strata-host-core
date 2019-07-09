@@ -1,4 +1,4 @@
-#include <databaseinterface.h>
+#include <databaseImpl.h>
 
 #include <QObject>
 #include <iostream>
@@ -8,7 +8,7 @@ int main()
 {
     std::cout << "\nHello from cb-browser-test main()" << std::endl;
 
-    DatabaseInterface *db = new DatabaseInterface(1);
+    DatabaseImpl *db = new DatabaseImpl(1);
 
     delete db;
 

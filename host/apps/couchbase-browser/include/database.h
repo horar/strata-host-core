@@ -1,18 +1,18 @@
-#ifndef QMLBRIDGE_H
-#define QMLBRIDGE_H
+#ifndef DATABASE_H
+#define DATABASE_H
 
 #include <QQmlApplicationEngine>
 #include <QQmlComponent>
 #include <QQmlProperty>
 #include <QObject>
 #include <QString>
-#include "databaseinterface.h"
+#include "databaseImpl.h"
 
-class QMLBridge : public QObject
+class Database : public QObject
 {
     Q_OBJECT
     public:
-        explicit QMLBridge(QObject *parent = nullptr);
+        explicit Database(QObject *parent = nullptr);
         void init(QQmlApplicationEngine *engine, QQmlComponent *component);
         Q_INVOKABLE QString setFilePath(int windowId, QString file_path);
         Q_INVOKABLE QString createNewDatabase(int windowId, bool createWindow, QString folder_path, QString dbName);
@@ -33,7 +33,7 @@ class QMLBridge : public QObject
 
         int ids = -1;
         std::map<int, QObject*> allWindows;
-        std::map<int, DatabaseInterface*> allDatabases;
+        std::map<int, DatabaseImpl*> allDatabases;
 };
 
 #endif // QMLBRIDGE_H
