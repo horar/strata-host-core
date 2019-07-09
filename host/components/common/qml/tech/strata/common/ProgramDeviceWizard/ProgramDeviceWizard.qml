@@ -572,7 +572,7 @@ Item {
 
                         } else {
                             if (wizard.useJLink) {
-                                jLinkConnector.exePath = CommonCpp.SGUtilsCpp.urlToLocalFile(jlinkExePathEdit.text)
+                                jLinkConnector.exePath = jlinkExePathEdit.text
                             }
 
                             processingStatus = ProgramDeviceWizard.WaitingForDevice
