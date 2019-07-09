@@ -6,6 +6,7 @@
 #include <QSaveFile>
 #include <QTextStream>
 #include <QDebug>
+#include <QDir>
 
 SGUtilsCpp::SGUtilsCpp(QObject *parent)
     : QObject(parent)
@@ -16,9 +17,9 @@ SGUtilsCpp::~SGUtilsCpp()
 {
 }
 
-QString SGUtilsCpp::urlToPath(const QUrl &url)
+QString SGUtilsCpp::urlToLocalFile(const QUrl &url)
 {
-    return QUrl(url).path();
+    return QDir::toNativeSeparators(QUrl(url).toLocalFile());
 }
 
 bool SGUtilsCpp::isFile(const QString &file)
