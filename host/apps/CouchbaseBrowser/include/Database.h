@@ -37,4 +37,4 @@ class Database : public QObject
         std::map<int, DatabaseImpl*> allDatabases;
 };
 
-#endif // QMLBRIDGE_H
+#endif // DATABASE_H

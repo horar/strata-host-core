@@ -108,4 +108,4 @@ signals:
 
 };
 
-#endif // DATABASEINTERFACE_H
+#endif // DATABASEIMPL_H
