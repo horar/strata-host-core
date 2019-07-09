@@ -3,7 +3,7 @@
 #include <QQmlContext>
 #include <QQmlComponent>
 #include <QDebug>
-#include "qmlbridge.h"
+#include "database.h"
 
 int main(int argc, char *argv[])
 {
@@ -17,12 +17,12 @@ int main(int argc, char *argv[])
     QQmlComponent *component = new QQmlComponent(&(*engine),mainDir);
 
     // Make DatabaseInterface callable from QML
-    qmlRegisterType<QMLBridge>("DI", 1, 0, "QMLBridge");
-    QMLBridge *qmlBridge = new QMLBridge();
-    engine->rootContext()->setContextProperty("qmlBridge",qmlBridge);
+    //qmlRegisterType<Database>("Database", 1, 0, "Database");
+    Database *database = new Database();
+    engine->rootContext()->setContextProperty("database",database);
 
     // Store engine and component in QMLBridge
-    qmlBridge->init(engine, component);
+    database->init(engine, component);
 
     // Run the app
     return app.exec();

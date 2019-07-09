@@ -1,34 +1,34 @@
-#include <databaseinterface.h>
+#include <databaseImpl.h>
 
 #include <QObject>
 #include <iostream>
 #include <gtest/gtest.h>
 
-class DatabaseInterfaceTest : public ::testing::Test
+class DatabaseImplTest : public ::testing::Test
 {
 public:
-    DatabaseInterfaceTest() {}
+    DatabaseImplTest() {}
 
 protected:
     void SetUp() override {}
 
     virtual void TearDown() override {}
 
-    DatabaseInterface *db = new DatabaseInterface(1);
+    DatabaseImpl *db = new DatabaseImpl(1);
 };
 
-TEST_F(DatabaseInterfaceTest, DBstatus)
+TEST_F(DatabaseImplTest, DBstatus)
 {
     EXPECT_FALSE(db->getDBstatus());
 }
 
-TEST_F(DatabaseInterfaceTest, CTOR)
+TEST_F(DatabaseImplTest, CTOR)
 {
-    DatabaseInterface *db2 = new DatabaseInterface(5);
+    DatabaseImpl *db2 = new DatabaseImpl(5);
 
     EXPECT_NE(db2, nullptr);
 
-    DatabaseInterface *db3 = new DatabaseInterface(5.5);
+    DatabaseImpl *db3 = new DatabaseImpl(5.5);
 
     EXPECT_NE(db3, nullptr);
 }

@@ -1,5 +1,5 @@
-#ifndef DATABASEINTERFACE_H
-#define DATABASEINTERFACE_H
+#ifndef DATABASEIMPL_H
+#define DATABASEIMPL_H
 
 #include <QObject>
 #include <QCoreApplication>
@@ -9,16 +9,16 @@
 
 #include "SGCouchBaseLite.h"
 
-class DatabaseInterface : public QObject
+class DatabaseImpl : public QObject
 {
     Q_OBJECT
 
 public:
-    explicit DatabaseInterface(QObject *parent = nullptr);
+    explicit DatabaseImpl(QObject *parent = nullptr);
 
-    DatabaseInterface(const int &id);
+    DatabaseImpl(const int &id);
 
-    ~DatabaseInterface();
+    ~DatabaseImpl();
 
     QString getDBName();
 

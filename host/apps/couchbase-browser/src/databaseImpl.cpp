@@ -1,4 +1,4 @@
-#include "databaseinterface.h"
+#include "databaseImpl.h"
 
 #include <iostream>
 
@@ -7,15 +7,15 @@ using namespace Spyglass;
 
 #define DEBUG(...) printf("TEST Database Interface: "); printf(__VA_ARGS__)
 
-DatabaseInterface::DatabaseInterface(QObject *parent) : QObject (parent)
+DatabaseImpl::DatabaseImpl(QObject *parent) : QObject (parent)
 {
 }
 
-DatabaseInterface::DatabaseInterface(const int &id) : id_(id)
+DatabaseImpl::DatabaseImpl(const int &id) : id_(id)
 {
 }
 
-DatabaseInterface::~DatabaseInterface()
+DatabaseImpl::~DatabaseImpl()
 {
     rep_stop();
     delete sg_replicator_;
@@ -27,7 +27,7 @@ DatabaseInterface::~DatabaseInterface()
     setRepstatus(false);
 }
 
-QString DatabaseInterface::setFilePath(QString file_path)
+QString DatabaseImpl::setFilePath(QString file_path)
 {
     file_path_ = file_path;
     if(!parseFilePath()) {
@@ -40,7 +40,7 @@ QString DatabaseInterface::setFilePath(QString file_path)
     return("");
 }
 
-void DatabaseInterface::emitUpdate()
+void DatabaseImpl::emitUpdate()
 {
     if(setDocumentKeys()) {
         setJSONResponse();
@@ -49,7 +49,7 @@ void DatabaseInterface::emitUpdate()
     emit newUpdate(this->id_);
 }
 
-void DatabaseInterface::rep_stop()
+void DatabaseImpl::rep_stop()
 {
     if (getRepstatus()) {
         sg_replicator_->stop();
@@ -58,7 +58,7 @@ void DatabaseInterface::rep_stop()
     setRepstatus(false);
 }
 
-QString DatabaseInterface::createNewDoc(const QString &id, const QString &body)
+QString DatabaseImpl::createNewDoc(const QString &id, const QString &body)
 {
     if(id.isEmpty() || body.isEmpty()) {
         return ("Document's id or body contents may not be empty.");
@@ -89,7 +89,7 @@ QString DatabaseInterface::createNewDoc(const QString &id, const QString &body)
 //    emitUpdate();
 }
 
-QString DatabaseInterface::createNewDoc_(const QString &id, const QString &body)
+QString DatabaseImpl::createNewDoc_(const QString &id, const QString &body)
 {
     //    SGMutableDocument newDoc(sg_db_,id.toStdString());
 
@@ -105,7 +105,7 @@ QString DatabaseInterface::createNewDoc_(const QString &id, const QString &body)
     return("");
 }
 
- bool DatabaseInterface::db_init()
+ bool DatabaseImpl::db_init()
 {
     sg_db_ = new SGDatabase(db_name_.toStdString(), db_path_.toStdString());
 
@@ -134,7 +134,7 @@ QString DatabaseInterface::createNewDoc_(const QString &id, const QString &body)
     return true;
 }
 
-QString DatabaseInterface::rep_init(const QString &url, const QString &username, const QString &password, const SGReplicatorConfiguration::ReplicatorType &rep_type,
+QString DatabaseImpl::rep_init(const QString &url, const QString &username, const QString &password, const SGReplicatorConfiguration::ReplicatorType &rep_type,
                                     const vector<QString> &channels)
 {
     if(url.isEmpty()) {
@@ -162,7 +162,7 @@ QString DatabaseInterface::rep_init(const QString &url, const QString &username,
     return rep_init_();
 }
 
-QString DatabaseInterface::rep_init_()
+QString DatabaseImpl::rep_init_()
 {
     if(!getDBstatus()) {
         return("Database must be open and running for replication to be activated.");
@@ -198,9 +198,9 @@ QString DatabaseInterface::rep_init_()
         return("Problem with start of replication.");
     }
 
-    sg_replicator_->addDocumentEndedListener(bind(&DatabaseInterface::emitUpdate, this));
-    sg_replicator_->addChangeListener(bind(&DatabaseInterface::emitUpdate, this));
-    sg_replicator_->addValidationListener(bind(&DatabaseInterface::emitUpdate, this));
+    sg_replicator_->addDocumentEndedListener(bind(&DatabaseImpl::emitUpdate, this));
+    sg_replicator_->addChangeListener(bind(&DatabaseImpl::emitUpdate, this));
+    sg_replicator_->addValidationListener(bind(&DatabaseImpl::emitUpdate, this));
 
     if(sg_replicator_->start() == false) {
         return("Problem with start of replicator.");
@@ -212,7 +212,7 @@ QString DatabaseInterface::rep_init_()
     return("");
 }
 
-bool DatabaseInterface::parseFilePath()
+bool DatabaseImpl::parseFilePath()
 {
     QFileInfo info(file_path_);
 
@@ -223,7 +223,7 @@ bool DatabaseInterface::parseFilePath()
     }
 }
 
-bool DatabaseInterface::parseExistingFile()
+bool DatabaseImpl::parseExistingFile()
 {
     QDir dir(file_path_);
     QFileInfo info(file_path_);
@@ -246,7 +246,7 @@ bool DatabaseInterface::parseExistingFile()
     return true;
 }
 
-bool DatabaseInterface::parseNewFile()
+bool DatabaseImpl::parseNewFile()
 {
     QString folder_path = file_path_;
     folder_path.replace("db.sqlite3", "");
@@ -272,7 +272,7 @@ bool DatabaseInterface::parseNewFile()
     return true;
 }
 
-QString DatabaseInterface::editDoc(const QString &oldId, const QString &newId, const QString &body)
+QString DatabaseImpl::editDoc(const QString &oldId, const QString &newId, const QString &body)
 {
     if(oldId.isEmpty()) {
         return("Received empty id, cannot edit.");
@@ -291,7 +291,7 @@ QString DatabaseInterface::editDoc(const QString &oldId, const QString &newId, c
     return editDoc_(doc, newId, body);
 }
 
-QString DatabaseInterface::editDoc_(SGMutableDocument &doc, const QString &newId, const QString &body)
+QString DatabaseImpl::editDoc_(SGMutableDocument &doc, const QString &newId, const QString &body)
 {
 //    C4Document *c4_doc = sg_db_->getDocumentById(id.toStdString());
 
@@ -324,7 +324,7 @@ QString DatabaseInterface::editDoc_(SGMutableDocument &doc, const QString &newId
     return("");
 }
 
-QString DatabaseInterface::deleteDoc(const QString &id)
+QString DatabaseImpl::deleteDoc(const QString &id)
 {
     if(id.isEmpty()) {
         return("Received empty id, cannot delete.");
@@ -339,14 +339,14 @@ QString DatabaseInterface::deleteDoc(const QString &id)
     return deleteDoc_(doc);
 }
 
-QString DatabaseInterface::deleteDoc_(SGDocument &doc)
+QString DatabaseImpl::deleteDoc_(SGDocument &doc)
 {
     sg_db_->deleteDocument(&doc);
     emitUpdate();
     return("");
 }
 
-QString DatabaseInterface::saveAs(const QString &id, const QString &path)
+QString DatabaseImpl::saveAs(const QString &id, const QString &path)
 {
     if(id.isEmpty() || path.isEmpty()) {
         return("Received empty id or path, unable to save.");
@@ -361,7 +361,7 @@ QString DatabaseInterface::saveAs(const QString &id, const QString &path)
     return(saveAs_(id, path));
 }
 
-QString DatabaseInterface::saveAs_(const QString &id, const QString &path)
+QString DatabaseImpl::saveAs_(const QString &id, const QString &path)
 {
     SGDatabase temp_db(id.toStdString(), path.toStdString());
 
@@ -379,7 +379,7 @@ QString DatabaseInterface::saveAs_(const QString &id, const QString &path)
     return("");
 }
 
-bool DatabaseInterface::setDocumentKeys()
+bool DatabaseImpl::setDocumentKeys()
 {
     document_keys_.clear();
 
@@ -390,7 +390,7 @@ bool DatabaseInterface::setDocumentKeys()
     return true;
 }
 
-void DatabaseInterface::setJSONResponse()
+void DatabaseImpl::setJSONResponse()
 {
     QString temp_str = "";
     JSONResponse_ = "{";
@@ -404,52 +404,52 @@ void DatabaseInterface::setJSONResponse()
     JSONResponse_ += "}";
 }
 
-QString DatabaseInterface::getJSONResponse()
+QString DatabaseImpl::getJSONResponse()
 {
     return JSONResponse_;
 }
 
-bool DatabaseInterface::getDBstatus()
+bool DatabaseImpl::getDBstatus()
 {
     return DBstatus_;
 }
 
-bool DatabaseInterface::getRepstatus()
+bool DatabaseImpl::getRepstatus()
 {
     return Repstatus_;
 }
 
-void DatabaseInterface::setDBstatus(bool status)
+void DatabaseImpl::setDBstatus(bool status)
 {
     DBstatus_ = status;
 }
 
-void DatabaseInterface::setRepstatus(bool status)
+void DatabaseImpl::setRepstatus(bool status)
 {
     Repstatus_ = status;
 }
 
-QString DatabaseInterface::getFilePath()
+QString DatabaseImpl::getFilePath()
 {
     return file_path_;
 }
 
-void DatabaseInterface::setDBPath(QString db_path)
+void DatabaseImpl::setDBPath(QString db_path)
 {
     db_path_ = db_path;
 }
 
-QString DatabaseInterface::getDBPath()
+QString DatabaseImpl::getDBPath()
 {
     return db_path_;
 }
 
-void DatabaseInterface::setDBName(QString db_name)
+void DatabaseImpl::setDBName(QString db_name)
 {
     db_name_ = db_name;
 }
 
-QString DatabaseInterface::getDBName()
+QString DatabaseImpl::getDBName()
 {
     return db_name_;
 }
