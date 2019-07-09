@@ -16,7 +16,7 @@ DatabaseInterface::DatabaseInterface(const int &id) : id_(id)
 }
 
 DatabaseInterface::~DatabaseInterface()
-{cout << "\n\nIn the ~DatabaseInterface\n" << endl;
+{
     rep_stop();
     delete sg_replicator_;
     delete url_endpoint_;
@@ -36,13 +36,7 @@ QString DatabaseInterface::setFilePath(QString file_path)
         return("Problem initializing database.");
     }
 
-    // temporary
-//    SGMutableDocument newdoc(sg_db_, "victorNewDoc");
-//    newdoc.set("number", 30);
-//    newdoc.set("Name", "victor luiz");
-
     emitUpdate();
-
     return("");
 }
 
@@ -58,7 +52,7 @@ void DatabaseInterface::emitUpdate()
 void DatabaseInterface::rep_stop()
 {
     if (getRepstatus()) {
-        sg_replicator_->stop(); cout << "\nStopped replicator." << endl;
+        sg_replicator_->stop();
     }
 
     setRepstatus(false);
