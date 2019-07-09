@@ -1,6 +1,8 @@
 import QtQuick 2.0
 import QtQuick.Layouts 1.12
 import QtQuick.Dialogs 1.3
+import "Popups"
+import "Components"
 
 Item {
     id: root
@@ -15,37 +17,37 @@ Item {
 
     function updateOpenDocument() {
         if (tableSelectorView.currentIndex !== 0) {
-            mainMenuView.onSingleDocument = true;
-            openedDocumentID = tableSelectorView.model[tableSelectorView.currentIndex];
-            openedDocumentBody = JSON.stringify(jsonObj[openedDocumentID],null,4);
-            bodyView.content = openedDocumentBody;
-        }
-        else {
-            mainMenuView.onSingleDocument = false;
-            openedDocumentID = tableSelectorView.model[0];
-            bodyView.content = JSON.stringify(jsonObj,null,4);
+            mainMenuView.onSingleDocument = true
+            openedDocumentID = tableSelectorView.model[tableSelectorView.currentIndex]
+            openedDocumentBody = JSON.stringify(jsonObj[openedDocumentID],
+                                                null, 4)
+            bodyView.content = openedDocumentBody
+        } else {
+            mainMenuView.onSingleDocument = false
+            openedDocumentID = tableSelectorView.model[0]
+            bodyView.content = JSON.stringify(jsonObj, null, 4)
         }
     }
 
     onAllDocumentsChanged: {
         if (allDocuments !== "{}") {
-            let tempModel = ["All documents"];
-            jsonObj = JSON.parse(allDocuments);
-            for (let i in jsonObj) tempModel.push(i);
-            let prevID = openedDocumentID;
-            let newIndex = tempModel.indexOf(prevID);
-            if (newIndex === -1) newIndex = 0;
-            tableSelectorView.model = tempModel;
+            var tempModel = ["All documents"]
+            jsonObj = JSON.parse(allDocuments)
+            for (i in jsonObj)
+                tempModel.push(i)
+            var prevID = openedDocumentID
+            var newIndex = tempModel.indexOf(prevID)
+            if (newIndex === -1)
+                newIndex = 0
+            tableSelectorView.model = tempModel
 
             if (tableSelectorView.currentIndex === newIndex) {
-                updateOpenDocument();
-            }
-            else
-                tableSelectorView.currentIndex = newIndex;
-        }
-        else {
-            tableSelectorView.model = [];
-            bodyView.content = "";
+                updateOpenDocument()
+            } else
+                tableSelectorView.currentIndex = newIndex
+        } else {
+            tableSelectorView.model = []
+            bodyView.content = ""
         }
     }
 
@@ -60,7 +62,6 @@ Item {
             columns: 2
             columnSpacing: 2
             rowSpacing: 2
-
 
             Rectangle {
                 id: menuContainer
@@ -87,15 +88,12 @@ Item {
                     }
                     onStartReplicatorSignal: {
                         loginPopup.visible = true
-
-
                     }
                     onStopReplicatorSignal: {
                         database.stopListening(id)
                         bodyView.message = "Stopped replicator"
                     }
                     onNewWindowSignal: database.newWindow()
-
                 }
             }
             Rectangle {
@@ -111,7 +109,7 @@ Item {
                     height: parent.height
                     onCurrentIndexChanged: {
                         if (allDocuments !== "{}") {
-                            updateOpenDocument();
+                            updateOpenDocument()
                         }
                     }
                 }
@@ -152,10 +150,10 @@ Item {
                 onAccepted: {
                     let message = database.open(id, fileUrls);
                     if (message.length === 0) {
-                        bodyView.message = "Opened file";
+                        bodyView.message = "Opened file"
                         mainMenuView.openedFile = true
-                    }
-                    else bodyView.message = message;
+                    } else
+                        bodyView.message = message
                 }
             }
 
@@ -164,11 +162,11 @@ Item {
                 onStart: {
                     let message = database.startListening(id,url,username,password,rep_type,channels);
                     if (message.length === 0) {
-                        bodyView.message = "Started replicator successfully";
-                        mainMenuView.replicatorStarted = true;
-                        visible = false;
-                    }
-                    else bodyView.message = message;
+                        bodyView.message = "Started replicator successfully"
+                        mainMenuView.replicatorStarted = true
+                        visible = false
+                    } else
+                        bodyView.message = message
                 }
             }
             DocumentPopup {
@@ -176,9 +174,9 @@ Item {
                 onSubmit: {
                     let message = database.newDocument(id,docID,docBody);
                     if (message.length === 0)
-                        bodyView.message = "Created new document successfully!";
+                        bodyView.message = "Created new document successfully!"
                     else
-                        bodyView.message = message;
+                        bodyView.message = message
                 }
             }
             DocumentPopup {
@@ -189,8 +187,8 @@ Item {
                     let message = database.editDocument(id,openedDocumentID,docID,docBody)
                     if (message.length === 0) {
                         bodyView.message = "Edited document successfully"
-                    }
-                    else bodyView.message = message;
+                    } else
+                        bodyView.message = message
                     visible = false
                 }
             }
@@ -199,12 +197,11 @@ Item {
                 onSubmit: {
                     let message = database.newDatabase(id,folderPath,filename);
                     if (message.length === 0) {
-                        bodyView.message = "Created new database successfully";
-                    }
-                    else bodyView.message = message;
-                    visible = false;
+                        bodyView.message = "Created new database successfully"
+                    } else
+                        bodyView.message = message
+                    visible = false
                 }
-
             }
             DatabasePopup {
                 id: saveAsPopup
@@ -219,7 +216,8 @@ Item {
             }
             WarningPopup {
                 id: deletePopup
-                messageToDisplay: "Are you sure that you want to permanently delete document \""+openedDocumentID+"\"";
+                messageToDisplay: "Are you sure that you want to permanently delete document \""
+                                  + openedDocumentID + "\""
                 onAllow: {
                     deletePopup.visible = false
                     database.deleteDocument(id,openedDocumentID)
@@ -231,4 +229,3 @@ Item {
         }
     }
 }
-

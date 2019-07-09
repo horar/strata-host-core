@@ -1,28 +1,31 @@
 <RCC>
     <qresource prefix="/">
+        <file>qml/BodyDisplay.qml</file>
+        <file>qml/main.qml</file>
+        <file>qml/MainWindow.qml</file>
+        <file>qml/SystemMenu.qml</file>
+        <file>qml/TableSelector.qml</file>
+        <file>qml/Popups/DatabasePopup.qml</file>
+        <file>qml/Popups/DocumentPopup.qml</file>
+        <file>qml/Popups/LoginPopup.qml</file>
+        <file>qml/Popups/WarningPopup.qml</file>
+        <file>qml/Components/CustomMenuItem.qml</file>
+        <file>qml/Components/StatusBar.qml</file>
+        <file>qml/Components/UserInputBox.qml</file>
         <file>qml/Images/closeIcon.png</file>
         <file>qml/Images/createDocumentIcon.png</file>
         <file>qml/Images/OnLogo copy.png</file>
         <file>qml/Images/OnLogo.png</file>
         <file>qml/Images/openFolderIcon.png</file>
         <file>qml/Images/saveIcon.png</file>
-        <file>qml/BodyDisplay.qml</file>
-        <file>qml/main.qml</file>
-        <file>qml/MainWindow.qml</file>
-        <file>qml/SystemMenu.qml</file>
-        <file>qml/TableSelector.qml</file>
         <file>qml/Images/Save-as-icon.png</file>
         <file>qml/Images/newTabIcon.png</file>
         <file>qml/Images/replicateDatabase.png</file>
         <file>qml/Images/stopReplication.png</file>
-        <file>qml/LoginPopup.qml</file>
         <file>qml/Images/newDatabase.png</file>
-        <file>qml/CustomMenuItem.qml</file>
-        <file>qml/DocumentPopup.qml</file>
-        <file>qml/DatabasePopup.qml</file>
-        <file>qml/WarningPopup.qml</file>
         <file>qml/Images/editIcon.png</file>
         <file>qml/Images/deleteDocumentIcon.png</file>
         <file>qml/Images/CBBrowserLogo.png</file>
+        <file>qml/Images/CBBrowserLogo-01.png</file>
     </qresource>
 </RCC>

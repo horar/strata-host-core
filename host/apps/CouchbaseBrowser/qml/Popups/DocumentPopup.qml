@@ -4,6 +4,7 @@ import QtQuick.Controls 2.12
 import QtQuick.Window 2.12
 import QtQuick.Dialogs 1.3
 import QtQuick 2.12
+import "../Components"
 
 Window {
     id: root
@@ -16,6 +17,8 @@ Window {
 
     property alias docID: idTextField.text;
     property alias docBody: bodyTextArea.text;
+    property alias message: statusBar.message
+
     property bool validBody: true
 
     function isJSONString() {
@@ -34,35 +37,15 @@ Window {
             width: 2
             color: "#b55400"
         }
-        Rectangle {
+        StatusBar {
             id: statusBar
-            width: parent.width
-            height: 30
-            color: "#b55400"
-            anchors {
-                top: parent.top
-            }
-            TextArea {
-                height: parent.height
-                width: parent.width
-                horizontalAlignment: Qt.AlignCenter
-                color: "#eee"
-                text: ""
-                readOnly: true
-            }
+            anchors.top: parent.top
         }
         ColumnLayout {
             spacing: 20
             width: parent.width-50
-            height: parent.height-50
+            height: parent.height-100
             anchors.centerIn: parent
-            Label {
-                text: "Please enter the requested information"
-                color: "#eee"
-                Layout.alignment: Qt.AlignHCenter
-                topPadding: 30
-                bottomPadding: 10
-            }
             Item {
                 id: idContainer
                 Layout.preferredHeight: idLabel.height+idTextField.height
@@ -95,7 +78,7 @@ Window {
                 }
                 ScrollView {
                     id: scrollview
-                    height: parent.height-bodyLabel.height
+                    height: parent.height-50
                     width: parent.width
                     anchors.top: bodyLabel.bottom
                     clip: true
