@@ -13,7 +13,7 @@ Window {
     minimumHeight: 600
     maximumHeight: 600
     maximumWidth: 400
-    visible: true
+    visible: false
     flags: Qt.Tool
 
     signal start()
