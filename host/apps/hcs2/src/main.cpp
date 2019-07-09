@@ -8,7 +8,7 @@
         and cloud
 ******************************************************************************
 
-* @copyright Copyright 2018 On Semiconductor
+* @copyright Copyright 2018 ON Semiconductor
 */
 
 #include "HostControllerService.h"

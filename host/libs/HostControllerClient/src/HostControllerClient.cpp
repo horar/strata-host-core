@@ -3,7 +3,7 @@
 namespace Spyglass
 {
 HostControllerClient::HostControllerClient(const char* net_in_address)
-    : connector_(ConnectorFactory::getConnector(ConnectorFactory::CONNECTOR_TYPE::ROUTER))
+    : connector_(ConnectorFactory::getConnector(ConnectorFactory::CONNECTOR_TYPE::DEALER))
 {
     connector_->open(net_in_address);
 }
@@ -26,7 +26,7 @@ std::string HostControllerClient::receiveCommandAck()
 std::string HostControllerClient::receiveNotification()
 {
     std::string message;
-    return (connector_->read(message) ? message : std::string());
+    return (connector_->read(message,ReadMode::BLOCKING) ? message : std::string());
 }
 
 }  // namespace Spyglass

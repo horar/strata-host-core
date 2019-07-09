@@ -6,7 +6,7 @@
 * $Date: 2018-06-13 17:46:28 +0100 (Wed, 23 June 2018) $
 * @brief Flasher header file.
 ******************************************************************************
-* @copyright Copyright 2018 On Semiconductor
+* @copyright Copyright 2018 ON Semiconductor
 *
 * @internal
 *
@@ -54,6 +54,12 @@ public:
      * The method sets filename of new image to flash.
      */
     void setFirmwareFilename(const std::string& firmwareFilename);
+
+    /**
+     * Sets cancel callback check function
+     * @param cancelCallback
+     */
+    void setCancelCallback(std::function<bool()> cancelCallback);
 
     /*!
      * The method checks whether bootloader is ready or tries to initialize it.
@@ -152,6 +158,8 @@ private:
 
     std::string firmwareFilename_;
     std::ostream* dbg_out_stream_;
+
+    std::function<bool()> cancelCallback_;
 };
 
 #endif

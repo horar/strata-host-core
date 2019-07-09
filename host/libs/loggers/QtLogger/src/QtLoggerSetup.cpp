@@ -1,5 +1,7 @@
 #include "QtLoggerSetup.h"
 
+#include "moc_QtLoggerSetup.cpp"
+
 #include "LoggingQtCategories.h"
 
 #include <SpdLogger.h>
@@ -12,7 +14,8 @@
 
 #include <spdlog/spdlog.h>
 
-void qtLogCallback(const QtMsgType type, const QMessageLogContext& context, const QString& msg) {
+void qtLogCallback(const QtMsgType type, const QMessageLogContext& context, const QString& msg)
+{
     const QString formattedMsg{qFormatLogMessage(type, context, msg)};
 
     switch (type) {
@@ -36,18 +39,43 @@ void qtLogCallback(const QtMsgType type, const QMessageLogContext& context, cons
     // spdlog::trace(formattedMsg.toStdString());
 }
 
-QtLoggerSetup::QtLoggerSetup(const QCoreApplication& app) {
+void QtLoggerSetup::reload()
+{
+    QSettings settings;
+    const auto logLevel{settings.value(QStringLiteral("log/level")).toString()};
+    if (logLevel_ != logLevel) {
+        qCDebug(logCategoryQtLogger, "...reconfiguring loggers...");
+
+        setupSpdLog(*QCoreApplication::instance());
+        setupQtLog();
+    }
+}
+
+QtLoggerSetup::QtLoggerSetup(const QCoreApplication& app)
+{
     generateDefaultSettings();
 
     setupSpdLog(app);
     setupQtLog();
+
+    QSettings settings;
+    if (watchdog_.addPath(settings.fileName()) == false) {
+        qCCritical(logCategoryQtLogger, "Failed to register '%s' to system watcher",
+                   qUtf8Printable(settings.fileName()));
+        return;
+    }
+
+    QObject::connect(&watchdog_, &QFileSystemWatcher::fileChanged,
+                     [this](const QString&) { this->reload(); });
 }
 
-QtLoggerSetup::~QtLoggerSetup() {
+QtLoggerSetup::~QtLoggerSetup()
+{
     qCInfo(logCategoryQtLogger) << "...Qt logging finished";
 }
 
-void QtLoggerSetup::generateDefaultSettings() const {
+void QtLoggerSetup::generateDefaultSettings() const
+{
     QSettings settings;
     settings.beginGroup(QStringLiteral("log"));
 
@@ -61,7 +89,7 @@ void QtLoggerSetup::generateDefaultSettings() const {
     if (settings.contains(QStringLiteral("level-comment")) == false) {
         settings.setValue(
             QStringLiteral("level-comment"),
-            QStringLiteral("log level is one of: debug, info, warn, err, critical, off"));
+            QStringLiteral("log level is one of: debug, info, warning, error, critical, off"));
     }
     if (settings.contains(QStringLiteral("level")) == false) {
         settings.setValue(QStringLiteral("level"), QStringLiteral("info"));
@@ -90,28 +118,29 @@ void QtLoggerSetup::generateDefaultSettings() const {
     settings.endGroup();
 }
 
-void QtLoggerSetup::setupSpdLog(const QCoreApplication& app) {
+void QtLoggerSetup::setupSpdLog(const QCoreApplication& app)
+{
     QSettings settings;
     settings.beginGroup(QStringLiteral("log"));
     const auto maxFileSize{settings.value(QStringLiteral("maxFileSize")).toUInt()};
     const auto maxNoFiles{settings.value(QStringLiteral("maxNoFiles")).toUInt()};
-    const auto level{settings.value(QStringLiteral("level")).toString()};
+    logLevel_ = {settings.value(QStringLiteral("level")).toString()};
     const auto messagePattern{settings.value(QStringLiteral("spdlogMessagePattern")).toString()};
     settings.endGroup();
 
     const QString logPath{QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)};
     if (const QDir logDir{logPath}; logDir.exists() == false) {
         if (logDir.mkpath(logPath) == false) {
-            spdlog::critical("Failed to create log file!!");
+            spdlog::critical("Failed to create log file folder!!");
         }
     }
 
-    static const SpdLogger logger(
-        QStringLiteral("%1/%2.log").arg(logPath).arg(app.applicationName()).toStdString(),
-        messagePattern.toStdString(), level.toStdString(), maxFileSize, maxNoFiles);
+    logger_.setup(QStringLiteral("%1/%2.log").arg(logPath).arg(app.applicationName()).toStdString(),
+                  messagePattern.toStdString(), logLevel_.toStdString(), maxFileSize, maxNoFiles);
 }
 
-void QtLoggerSetup::setupQtLog() {
+void QtLoggerSetup::setupQtLog()
+{
     QSettings settings;
     settings.beginGroup(QStringLiteral("log"));
     const auto filterRules{settings.value(QStringLiteral("qtFilterRules")).toString()};
@@ -123,7 +152,7 @@ void QtLoggerSetup::setupQtLog() {
 
     qInstallMessageHandler(qtLogCallback);
 
-    qCInfo(logCategoryQtLogger) << "Qt logging started...";
+    qCInfo(logCategoryQtLogger) << "Qt logging initiated...";
 
     qCDebug(logCategoryQtLogger) << "Application setup:";
     qCDebug(logCategoryQtLogger) << "\tfile:" << settings.fileName();

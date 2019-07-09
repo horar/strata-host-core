@@ -2,11 +2,12 @@ import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Window 2.12
 import QtQuick.Layouts 1.12
-import "./common/Colors.js" as Colors
-import tech.strata.sci 1.0 as SciCommon
-import "./common" as Common
+import tech.strata.sci 1.0 as SciCommonCpp
+import tech.strata.sgwidgets 1.0 as SGWidgets
 import tech.strata.fonts 1.0 as StrataFonts
-import "./common/SgUtils.js" as SgUtils
+import tech.strata.commoncpp 1.0 as CommonCpp
+import tech.strata.common 1.0 as Common
+
 
 Item {
     id: root
@@ -16,7 +17,7 @@ Item {
 
     property bool programDeviceDialogOpened: false
 
-    SciCommon.SciModel {
+    SciCommonCpp.SciModel {
         id: sciModel
     }
 
@@ -27,14 +28,12 @@ Item {
     Connections {
         target:  sciModel.boardController
 
-        onConnectedBoard: {
+        onActiveBoard: {
             if (programDeviceDialogOpened) {
                 return
             }
 
             var connectionInfo = sciModel.boardController.getConnectionInfo(connectionId)
-
-            console.log("onConnectedBoard()",JSON.stringify(connectionInfo))
 
             var effectiveVerboseName = connectionInfo.verboseName
 
@@ -71,7 +70,6 @@ Item {
         }
 
         onDisconnectedBoard: {
-            console.log("onDisconnectedBoard()", connectionId)
             for (var i = 0; i < tabModel.count; ++i) {
                 var item = tabModel.get(i)
                 if (item.connectionId === connectionId) {
@@ -99,7 +97,7 @@ Item {
 
         TabBar {
             id: tabBar
-            width: Math.min(tabBarWrapper.width - iconRowWrapper.width, 500 * tabModel.count)
+            width: Math.min(tabBarWrapper.width /*- iconRowWrapper.width*/, 500 * tabModel.count)
             anchors {
                 left: parent.left
                 top: parent.top
@@ -125,31 +123,30 @@ Item {
 
                     background: Rectangle {
                         implicitHeight: 40
-                        color: index === currentIndex ? "#eeeeee" : Colors.STRATA_DARK
+                        color: index === currentIndex ? "#eeeeee" : SGWidgets.SGColorsJS.STRATA_DARK
                     }
 
                     contentItem: Item {
-                        Common.SGStatusLight {
+                        SGWidgets.SGStatusLight {
                             id: statusLight
                             anchors {
                                 left: parent.left
                                 verticalCenter: parent.verticalCenter
                             }
-                            height: Math.round(buttonText.paintedHeight) + 10
-                            width: height
+                            lightSize: Math.round(buttonText.paintedHeight) + 10
 
-                            iconStatus: {
+                            status: {
                                 if (model.status === "connected") {
-                                    return Common.SGStatusLight.Green
+                                    return SGWidgets.SGStatusLight.Green
                                 } if (model.status === "disconnected") {
-                                    return Common.SGStatusLight.Off
+                                    return SGWidgets.SGStatusLight.Off
                                 }
 
-                                return Common.SGStatusLight.Orange
+                                return SGWidgets.SGStatusLight.Orange
                             }
                         }
 
-                        Common.SgText {
+                        SGWidgets.SGText {
                             id: buttonText
                             anchors {
                                 left: statusLight.right
@@ -166,10 +163,8 @@ Item {
                             elide: Text.ElideRight
                         }
 
-                        Common.SgIconButton {
+                        SGWidgets.SGIconButton {
                             id: deleteButton
-                            height: Math.round(buttonText.paintedHeight) + 5
-                            width: height
                             anchors {
                                 right: parent.right
                                 rightMargin: 2
@@ -177,10 +172,26 @@ Item {
                             }
 
                             visible: delegate.hovered
-                            hasAlternativeColor: model.index !== delegate.currentIndex
-                            source: "qrc:/images/times.svg"
+                            alternativeColorEnabled: model.index !== delegate.currentIndex
+                            icon.source: "qrc:/sgimages/times.svg"
                             onClicked: {
-                                removeBoard(model.connectionId)
+                                if (model.status === "connected") {
+                                    SGWidgets.SGDialogJS.showConfirmationDialog(
+                                                root,
+                                                "Device is active",
+                                                "Do you really want to disconnect " + model.verboseName + " ?",
+                                                "Disconnect",
+                                                function () {
+                                                    var ret = sciModel.boardController.disconnect(connectionId)
+                                                    if (ret) {
+                                                        removeBoard(model.connectionId)
+                                                    }
+                                                },
+                                                "Keep Connected"
+                                                )
+                                } else {
+                                    removeBoard(model.connectionId)
+                                }
                             }
                         }
                     }
@@ -197,6 +208,9 @@ Item {
                 bottom: tabBar.bottom
             }
 
+            //hiden until there is content in side pane again
+            visible: false
+
             Row {
                 id: iconRow
                 anchors {
@@ -205,12 +219,10 @@ Item {
 
                 spacing: 4
 
-                Common.SgIconButton {
-                    height: 30
-                    width: height
-
-                    hasAlternativeColor: true
-                    source: sidePane.shown ? "qrc:/images/chevron-right.svg" : "qrc:/images/chevron-left.svg"
+                SGWidgets.SGIconButton {
+                    alternativeColorEnabled: true
+                    icon.source: sidePane.shown ? "qrc:/images/side-pane-right-close.svg" : "qrc:/images/side-pane-right-open.svg"
+                    iconSize: 26
                     onClicked: {
                         sidePane.shown = !sidePane.shown
                     }
@@ -242,9 +254,16 @@ Item {
                 id: platformDelegate
                 width: platformContentContainer.width
                 height: platformContentContainer.height
+                rootItem: root
 
                 onSendCommandRequested: {
                     sendCommand(connectionId, message)
+                }
+
+                onProgramDeviceRequested: {
+                    if (model.status === "connected") {
+                        showProgramDeviceDialogDialog(model.connectionId)
+                    }
                 }
 
                 Connections {
@@ -254,7 +273,7 @@ Item {
                             return
                         }
 
-                        if (platformDelegate.connectionId === connectionId) {
+                        if (model.connectionId === connectionId) {
                             var timestamp = Date.now()
                             appendCommand(createCommand(timestamp, message, "response"))
                         }
@@ -302,17 +321,14 @@ Item {
 
             spacing: 10
 
-            Common.SgButton {
-                text: "Program\nDevice"
-                onClicked: showProgramDeviceDialogDialog()
-            }
+            //menu
         }
     }
 
     Component {
         id: programDeviceDialogComponent
 
-        Common.SgDialog {
+        SGWidgets.SGDialog {
             id: dialog
 
             modal: true
@@ -321,15 +337,30 @@ Item {
             padding: 0
             hasTitle: false
 
-            Column {
-                ProgramDeviceWizard {
-                    width: root.width - 20
-                    height: root.height - 20
+            property string connectionId
+
+            contentItem: SGWidgets.SGPage {
+                implicitWidth: root.width - 20
+                implicitHeight: root.height - 20
+
+                title: "Program Device Wizard"
+                hasBack: false
+
+                contentItem: Common.ProgramDeviceWizard {
+                    boardController: sciModel.boardController
+                    closeButtonVisible: true
+                    requestCancelOnClose: true
+                    loopMode: false
+                    checkFirmware: false
+                    currentConnectionId: connectionId
 
                     onCancelRequested: {
-                        dialog.close()
-                        programDeviceDialogOpened = false
-                        refrestDeviceInfo()
+                        if (programDeviceDialogOpened) {
+                            dialog.close()
+                            programDeviceDialogOpened = false
+                            refrestDeviceInfo()
+
+                        }
                     }
                 }
             }
@@ -367,16 +398,24 @@ Item {
         }
     }
 
-    function showProgramDeviceDialogDialog() {
-        var dialog = SgUtils.createDialogFromComponent(root, programDeviceDialogComponent)
+    function showProgramDeviceDialogDialog(connectionId) {
+        var dialog = SGWidgets.SGDialogJS.createDialogFromComponent(
+                    root,
+                    programDeviceDialogComponent,
+                    {
+                        "connectionId": connectionId
+                    })
 
         programDeviceDialogOpened = true
         dialog.open()
     }
 
     function refrestDeviceInfo() {
-        for (var i = 0; i < sciModel.boardController.connectionIds.length; ++i) {
-            sciModel.boardController.reconnect(sciModel.boardController.connectionIds[i])
+        //we need deep copy
+        var connectionIds = JSON.parse(JSON.stringify(sciModel.boardController.connectionIds))
+
+        for (var i = 0; i < connectionIds.length; ++i) {
+            sciModel.boardController.reconnect(connectionIds[i])
         }
     }
 }

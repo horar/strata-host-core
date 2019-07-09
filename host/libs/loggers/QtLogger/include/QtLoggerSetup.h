@@ -1,6 +1,9 @@
 #pragma once
 
+#include <SpdLogger.h>
+
 #include <QCoreApplication>
+#include <QFileSystemWatcher>
 
 /**
  * @brief The QtLoggerSetup class
@@ -9,7 +12,10 @@
  * Optionally, insert default settings into configuration file on application start
  * if these don't exists.
  */
-class QtLoggerSetup final {
+class QtLoggerSetup final : public QObject
+{
+    Q_OBJECT
+
 public:
     /**
      * @brief QtLoggerSetup
@@ -22,6 +28,8 @@ public:
     ~QtLoggerSetup();
 
 private:
+    void reload();
+
     /**
      * @brief Write default logging setup values into application config file
      *
@@ -37,4 +45,8 @@ private:
      * @brief Setup Qt logging framework from values defined in application setup
      */
     void setupQtLog();
+
+    SpdLogger logger_;
+    QFileSystemWatcher watchdog_;
+    QString logLevel_;
 };

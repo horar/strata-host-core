@@ -1,0 +1,27 @@
+<RCC>
+    <qresource prefix="/views/sar-adc">
+        <file>Content.qml</file>
+        <file>Control.qml</file>
+        <file>control-views/BasicControl.qml</file>
+        <file>control-views/PlatformInterface.qml</file>
+        <file>control-views/question-circle-solid.svg</file>
+        <file>sgwidgets/SGSwitch.qml</file>
+        <file>sgwidgets/SGSubmitInfoBox.qml</file>
+        <file>sgwidgets/SGStatusListBox.qml</file>
+        <file>sgwidgets/SGSlider.qml</file>
+        <file>sgwidgets/SGResponsiveScrollView.qml</file>
+        <file>sgwidgets/SGRadioButtonContainer.qml</file>
+        <file>sgwidgets/SGRadioButton.qml</file>
+        <file>sgwidgets/SGLabelledInfoBox.qml</file>
+        <file>sgwidgets/SGIcon.qml</file>
+        <file>sgwidgets/SGGraphStatic.qml</file>
+        <file>sgwidgets/SGCircularGauge.qml</file>
+        <file>sgwidgets/fonts/digitalseven.ttf</file>
+        <file>sgwidgets/fonts/sgicons.ttf</file>
+        <file>sgwidgets/images/sliderHandle.svg</file>
+        <file>sgwidgets/images/sliderHandleActive.svg</file>
+        <file>sgwidgets/images/sliderValue.svg</file>
+        <file>control-views/DebugExample.qml</file>
+        <file>sgwidgets/SGComboBox.qml</file>
+    </qresource>
+</RCC>

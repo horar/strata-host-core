@@ -7,7 +7,7 @@
 * @brief Discovery Service for interaction between HCS and Server
 ******************************************************************************
 
-* @copyright Copyright 2018 On Semiconductor
+* @copyright Copyright 2018 ON Semiconductor
 */
 
 #include "DiscoveryService.h"

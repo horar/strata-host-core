@@ -7,7 +7,7 @@ unset( RAPIDJSON_INCLUDE_DIR )
 
 message( STATUS "Looking for RapidJSON library" )
 
-set(SHARED_LIBS_PATH ${CMAKE_SOURCE_DIR}/../shared)
+set(SHARED_LIBS_PATH ${CMAKE_SOURCE_DIR}/../extern)
 
 find_path( RAPIDJSON_INCLUDE_DIR "rapidjson/rapidjson.h" PATHS ${SHARED_LIBS_PATH}/rapidjson/include )
 
