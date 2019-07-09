@@ -28,9 +28,27 @@ Item {
     }
 
     property var receive_notification : {
-        "rssi":-00,                   		// -dBm
-        "packet_error_rate":0,            // PER %
-        "data_packet":""	// string representing received data
+        "sensor_id":0,                       //in hex
+        "sensor_type": "multi_soil",
+        "rssi":0,                   		// -dBm
+        "packet_error_rate":0,              // PER %
+        "data_packet":"",                    // string representing received data
+        "bme680":{                        //actually a subgroup within payload
+            "temperature":0,                    //in °C
+            "pressure": 0,                      //in atm?
+            "humidity": 0,                      //in %
+            "gas":0,                        //??
+            },
+        "bme400":{
+            "x":0,
+            "y":0,
+            "z":0,
+            "temperature":0                 //in °C
+        },
+        "stemma":{
+            "soil":0,
+            "temperature":0
+        }
     }
 
     // --------------------------------------------------------------------------------------------
@@ -115,13 +133,37 @@ Item {
             onClicked: {
                 var rssiValue = ((Math.random() *50) -100).toFixed(0) ;
                 var packetErrorRate = (Math.random()*10).toFixed(0) ;
+                var temperature = (Math.random()*100).toFixed(0) ;
+                var pressure = (Math.random()*100).toFixed(0) ;
+                var humidity = (Math.random()*100).toFixed(0) ;
+                var xpos = (Math.random()*100).toFixed(0) ;
+                var ypos = (Math.random()*100).toFixed(0) ;
+                var zpos = (Math.random()*100).toFixed(0) ;
+                var soil = (Math.random()*100).toFixed(0) ;
                 //console.log("receiving:",rssiValue, packetErrorRate);
                 CorePlatformInterface.data_source_handler('{
                                    "value":"receive_notification",
                                    "payload": {
-                                            "rssi":"'+rssiValue+'",
-                                            "packet_error_rate":"'+packetErrorRate+'",
-                                            "data_packet":"DEADBEEFFACEFEED"
+                                         "sensor_id":0,                       //in hex
+                                         "sensor_type": "multi_soil",
+                                         "rssi":"'+rssiValue+'",                   		// -dBm
+                                         "packet_error_rate":'+packetErrorRate+',              // PER %
+                                         "data_packet":""DEADBEEFFACEFEED"",                    // string representing received data
+                                    "bme680":{                        //actually a subgroup within payload
+                                        "temperature":'+temperature+',                    //in °C
+                                        "pressure": '+pressure+',                      //in atm?
+                                        "humidity": '+humidity+',                      //in %
+                                        "gas":0,                        //??
+                                        },
+                                    "bme400":{
+                                        "x":'+xpos+',
+                                        "y":'+xpos+',
+                                        "z":'+xpos+',
+                                        "temperature":'+temperature+'                 //in °C
+                                        },
+                                    "stemma":{
+                                        "soil":+soil+',
+                                        "temperature":'+temperature+'
                                         }
                                     }')
             }
