@@ -32,7 +32,7 @@ Item {
     onStatus_interruptChanged:  {
         if(status_interrupt === "bad") {
             errorLed.status = "red"
-            basicControl.warningVisible = true
+//            basicControl.warningVisible = true
         }
     }
 
@@ -40,7 +40,7 @@ Item {
     onRead_enable_stateChanged: {
         if(read_enable_state === "on") {
             platformInterface.enabled = true
-            basicControl.warningVisible = false
+//            basicControl.warningVisible = false
         }
         else  {
             platformInterface.enabled = false
@@ -68,6 +68,10 @@ Item {
     onPgood_status_interruptChanged: {
         if(pgood_status_interrupt === "bad"){
             errorLed.status = "red"
+            basicControl.warningVisible = true
+            platformInterface.enabled = false
+            platformInterface.set_enable.update("off")
+            platformInterface.intd_state = false
         }
     }
 
@@ -88,28 +92,15 @@ Item {
             faultModel.clear()
             addToHistoryLog()
         }
-        else if(check_intd_state == false)   {
-            if( errorLed.status === "green") {
-                basicControl.warningVisible = false
-            }
-            else if ( errorLed.status === "red"){
-                basicControl.warningVisible = true
-            }
-        }
+//        else if(check_intd_state == false)   {
+//            if( errorLed.status === "green") {
+//                basicControl.warningVisible = false
+//            }
+//            else if ( errorLed.status === "red"){
+//                basicControl.warningVisible = true
+//            }
+//        }
     }
-
-
-//    property bool check_intd_initial_state:platformInterface.initial_status_0.intb_status
-//    onCheck_intd_initial_stateChanged: {
-//        if(check_intd_initial_state === "good"){
-//            platformInterface.intd_state = "green"
-//            basicControl.warningVisible = false
-//        }
-//        else {
-//            platformInterface.intd_state = "red"
-//            basicControl.warningVisible = true
-//        }
-//    }
 
     Component.onCompleted: {
         Help.registerTarget(tempGauge, "This gauge displays the board temperature next to the part in degrees Celsius. (make sure to change label on this to board temperature)", 0, "advance5AHelp")

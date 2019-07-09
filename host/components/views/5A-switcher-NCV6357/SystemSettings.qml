@@ -55,12 +55,9 @@ Item {
     onRead_enable_stateChanged: {
         if(read_enable_state === "on") {
             platformInterface.enabled = true
-            platformInterface.intd_state = true
-            basicControl.warningVisible = false
         }
         else  {
             platformInterface.enabled = false
-            platformInterface.intd_state = false
         }
     }
 
@@ -198,8 +195,8 @@ Item {
                             onToggled : {
                                 if(checked){
                                     platformInterface.set_enable.update("on")
-                                    platformInterface.intd_state = true
-                                    basicControl.warningVisible = false
+//                                    platformInterface.intd_state = true
+//                                    basicControl.warningVisible = false
                                     if(platformInterface.reset_flag === true) {
                                         platformInterface.reset_status_indicator.update("reset")
                                         platformInterface.reset_indicator = "off"
@@ -208,8 +205,8 @@ Item {
                                 }
                                 else{
                                     platformInterface.set_enable.update("off")
-                                    platformInterface.intd_state = false
-                                    basicControl.warningVisible = true
+//                                    platformInterface.intd_state = false
+//                                    basicControl.warningVisible = true
                                 }
                                 platformInterface.enabled = checked
                             }

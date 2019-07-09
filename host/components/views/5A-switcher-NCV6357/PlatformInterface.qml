@@ -66,7 +66,6 @@ Item {
         "reset_indicator_status":	"",
         "thermal_pre_status":		0,
         "ipeak_status":             0,
-        "read_int_msk":				0,
         "read_int_sen":				0
     }
 
@@ -79,7 +78,7 @@ Item {
     }
 
     property var status_interrupt: {
-        "pgood": "bad"
+        "pgood": ""
     }
 
 
@@ -661,7 +660,8 @@ Item {
     property bool hide_enable: false
     property bool intd_state
     property bool vsel_state
-    property bool inbt_state
+//    property bool inbt_state
+    property bool pgood_state
     property bool warning_visibility
     property int output_voltage_selector0
     property int output_voltage_selector1

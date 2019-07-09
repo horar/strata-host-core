@@ -15,22 +15,23 @@ Item {
     property alias warningVisible: warningBox.visible
     property string vinlable: ""
 
-    // When the load is turned on before enable is on, the part sends out the surge and resets the mcu.
-    // Detect the mcu reset and turn of the pause periodic.
-    property var read_mcu_reset_state: platformInterface.status_mcu_reset.mcu_reset
-    onRead_mcu_reset_stateChanged: {
-        if(read_mcu_reset_state === "occurred") {
-            platformInterface.pause_periodic.update(false)
-        }
-        else  {
-            platformInterface.status_mcu_reset.mcu_reset = ""
-        }
-    }
+//    // When the load is turned on before enable is on, the part sends out the surge and resets the mcu.
+//    // Detect the mcu reset and turn of the pause periodic.
+//    property var read_mcu_reset_state: platformInterface.status_mcu_reset.mcu_reset
+//    onRead_mcu_reset_stateChanged: {
+//        if(read_mcu_reset_state === "occurred") {
+//            platformInterface.pause_periodic.update(false)
+//        }
+//        else  {
+//            platformInterface.status_mcu_reset.mcu_reset = ""
+//        }
+//    }
+
     property var read_enable_state: platformInterface.initial_status_0.enable_status
     onRead_enable_stateChanged: {
         if(read_enable_state === "on") {
             platformInterface.enabled = true
-            warningBox.visible = false
+//            warningBox.visible = false
         }
         else  {
             platformInterface.enabled = false
@@ -69,7 +70,7 @@ Item {
     onPgood_status_interruptChanged: {
         if(pgood_status_interrupt === "bad"){
             platformInterface.enabled = false
-            warningVisible = true
+//            warningVisible = true
         }
     }
 
@@ -445,20 +446,20 @@ Item {
                     grooveFillColor: "#0cf"         // Default: "#0cf"
                   //  fontSizeLabel: (parent.width + parent.height)/40
                     checked: platformInterface.enabled
-                    onCheckedChanged: {
-                        if(checked) {
-                            platformInterface.intd_state = true
-                        }
-                        else {
-                            platformInterface.intd_state = false
-                        }
-                    }
+//                    onCheckedChanged: {
+//                        if(checked) {
+//                            platformInterface.intd_state = true
+//                        }
+//                        else {
+//                            platformInterface.intd_state = false
+//                        }
+//                    }
                     onToggled: {
                         platformInterface.enabled = checked
                         if(checked){
                             platformInterface.set_enable.update("on")
-                            platformInterface.intd_state = true
-                            warningVisible = false
+//                            platformInterface.intd_state = true
+//                            warningVisible = false
                             if(platformInterface.reset_flag === true) {
                                 platformInterface.reset_status_indicator.update("reset")
                                 platformInterface.reset_indicator = "off"
@@ -467,8 +468,8 @@ Item {
                         }
                         else{
                             platformInterface.set_enable.update("off")
-                            platformInterface.intd_state = false
-                            warningVisible = true
+//                            platformInterface.intd_state = false
+//                            warningVisible = true
                         }
                     }
                 }
