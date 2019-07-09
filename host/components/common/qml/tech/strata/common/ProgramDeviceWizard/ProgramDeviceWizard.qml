@@ -249,6 +249,16 @@ Item {
         FocusScope {
             id: settingsPage
 
+            Connections {
+                target: wizard.boardController
+
+                onDisconnectedBoard: {
+                    if (isCancelable(connectionId)) {
+                        cancelRequested()
+                    }
+                }
+            }
+
             Item {
                 anchors.fill: parent
 
@@ -604,12 +614,17 @@ Item {
 
                 onActiveBoard: {
                     waitForActiveBoardTimer.stop()
-
                     callTryProgramDevice()
                 }
 
                 onDisconnectedBoard: {
                     waitForActiveBoardTimer.stop()
+
+                    if (isCancelable(connectionId)) {
+                        cancelRequested()
+                        return
+                    }
+
                     callTryProgramDevice()
                 }
             }
@@ -671,6 +686,10 @@ Item {
             }
 
             function callTryProgramDevice() {
+                if (loopMode === false && processingStatus === ProgramDeviceWizard.ProgrammingSucceed) {
+                    return
+                }
+
                 if (processingStatus === ProgramDeviceWizard.ProgrammingSucceed) {
                     processingStatus = ProgramDeviceWizard.WaitingForDevice
                 }
@@ -1006,5 +1025,15 @@ Item {
         })
 
         dialog.open();
+    }
+
+
+    function isCancelable(connectionId) {
+        return loopMode === false
+                && currentConnectionId.length > 0
+                && connectionId === currentConnectionId
+                && (processingStatus === ProgramDeviceWizard.SetupProgramming
+                    || processingStatus === ProgramDeviceWizard.WaitingForDevice
+                    || processingStatus === ProgramDeviceWizard.WaitingForJLink)
     }
 }
