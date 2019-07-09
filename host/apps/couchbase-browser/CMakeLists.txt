@@ -65,6 +65,20 @@ if(APPLE)
         ${IOKIT_LIB}
         ${FOUNDATION_LIB}
     )
+
+    target_sources(${PROJECT_NAME} PRIVATE
+        resources/icons/app/app.icns
+    )
+    set_source_files_properties(
+        resources/icons/app/app.icns
+        PROPERTIES MACOSX_PACKAGE_LOCATION Resources
+    )
+
+    configure_file(
+        ${CMAKE_CURRENT_SOURCE_DIR}/resources/Info.plist.in
+        ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.plist
+        @ONLY
+    )
 endif()
 
 set(PRODUCT_NAME_LONG "Couchbase Browser")
@@ -73,10 +87,23 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
     OUTPUT_NAME "${PRODUCT_NAME_LONG}"
 )
 
+if(APPLE)
+    set_target_properties(${PROJECT_NAME} PROPERTIES
+        MACOSX_BUNDLE ON
+        MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.plist"
+        MACOSX_BUNDLE_BUNDLE_NAME "${PRODUCT_NAME_LONG}"
+        MACOSX_BUNDLE_BUNDLE_VERSION "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}"
+        MACOSX_BUNDLE_COPYRIGHT "${PRODUCT_NAME_COPYRIGHT}"
+        MACOSX_BUNDLE_GUI_IDENTIFIER com.onsemi.strata.cbb
+        MACOSX_BUNDLE_ICON_FILE app.icns
+        MACOSX_BUNDLE_INFO_STRING ${PRODUCT_NAME_LONG}
+    )
+endif()
+
 # Add cbtest library for testing purpose
 add_library(cbtest
     ${HEADERS}
-    )
+)
 
 target_sources(cbtest PRIVATE
     ${SRCS}

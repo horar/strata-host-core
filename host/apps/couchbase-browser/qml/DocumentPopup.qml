@@ -16,23 +16,7 @@ Window {
 
     property alias docID: idTextField.text;
     property alias docBody: bodyTextArea.text;
-    property string originalID: ""
-    property string originalBody: "{}"
-    property bool idChanged: false
-    property bool bodyChanged: false
     property bool validBody: true
-
-    onIdChangedChanged: {
-        submitButton.enabled = (idChanged || bodyChanged) && validBody
-    }
-
-    onBodyChangedChanged: {
-        submitButton.enabled = (idChanged || bodyChanged) && validBody
-    }
-
-    onValidBodyChanged: {
-        submitButton.enabled = (idChanged || bodyChanged) && validBody
-    }
 
     function isJSONString() {
         try {
@@ -43,31 +27,30 @@ Window {
         return true;
     }
 
-    function isBodyChanged() {
-        if (!isJSONString()) return true
-
-        var originalJSON = JSON.parse(originalBody)
-        var newJSON = JSON.parse(docBody)
-        let originalKeys = []
-        let newKeys = []
-        let i = 0
-        for (i in originalJSON) originalKeys.push(i);
-        for (i in newJSON) newKeys.push(i);
-
-        if (originalKeys.length !== newKeys.length) return true;
-
-        for (i = 0;i<originalKeys.length;i++)
-        if (originalKeys[i] !== newKeys[i]) return true;
-
-        for (i = 0;i<originalKeys.length;i++)
-        if (originalJSON[originalKeys[i]] !== newJSON[originalKeys[i]]) return true;
-
-        return false;
-    }
-
     Rectangle {
         anchors.fill: parent
         color: "#393e46"
+        border {
+            width: 2
+            color: "#b55400"
+        }
+        Rectangle {
+            id: statusBar
+            width: parent.width
+            height: 30
+            color: "#b55400"
+            anchors {
+                top: parent.top
+            }
+            TextArea {
+                height: parent.height
+                width: parent.width
+                horizontalAlignment: Qt.AlignCenter
+                color: "#eee"
+                text: ""
+                readOnly: true
+            }
+        }
         ColumnLayout {
             spacing: 20
             width: parent.width-50
@@ -92,15 +75,12 @@ Window {
                 }
                 TextField {
                     id: idTextField
-                    text: originalID
+                    text: ""
                     height: 40
                     width: parent.width
                     anchors.top: idLabel.bottom
                     placeholderText: "Enter ID"
                     validator: RegExpValidator { regExp: /^(?!\s*$).+/ }
-                    onTextChanged: {
-                        idChanged = text !== originalID
-                    }
                 }
             }
             Item {
@@ -121,7 +101,7 @@ Window {
                     clip: true
                     TextArea {
                         id: bodyTextArea
-                        text: originalBody
+                        text: ""
                         color: validBody ? "black" : "red"
                         placeholderText: "Enter Body"
                         wrapMode: "Wrap"
@@ -133,7 +113,6 @@ Window {
                         onTextChanged: {
                             if (text === "") text = "{}";
                             validBody = isJSONString()
-                            bodyChanged = isBodyChanged()
                         }
                     }
                 }
@@ -148,7 +127,7 @@ Window {
                     submit();
                     root.visible = false;
                 }
-                enabled: false
+                enabled: validBody
             }
         }
     }

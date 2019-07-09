@@ -162,7 +162,7 @@ Item {
             LoginPopup {
                 id: loginPopup
                 onStart: {
-                    let message = qmlBridge.startReplicator(id,url,username,password,rep_type);
+                    let message = qmlBridge.startReplicator(id,url,username,password,rep_type,channels);
                     if (message.length === 0) {
                         bodyView.message = "Started replicator successfully";
                         mainMenuView.replicatorStarted = true;
@@ -183,36 +183,19 @@ Item {
             }
             DocumentPopup {
                 id: editDocPopup
-                originalID: openedDocumentID
-                originalBody: openedDocumentBody
-
-                onSubmit:  {
-                    let message = ""
-                    if (docID !== openedDocumentID) {
-                        message = qmlBridge.createNewDocument(id,docID,docBody)
-                        if (message.length === 0) {
-                            message = qmlBridge.deleteDoc(id,openedDocumentID)
-                            if (message.length === 0) {
-                                bodyView.message = "Edited document successfully"
-                                tableSelectorView.currentIndex = tableSelectorView.model.indexOf(docID)
-                            }
-                            else bodyView.message = message + " | " + qmlBridge.deleteDoc(id,docID,docBody)
-                        }
-                        else bodyView.message = message
+                docID: openedDocumentID
+                docBody: openedDocumentBody
+                onSubmit: {
+                    let message = qmlBridge.editDoc(id,openedDocumentID,docID,docBody)
+                    if (message.length === 0) {
+                        bodyView.message = "Edited document successfully"
                     }
-                    else {
-                        message = qmlBridge.editDoc(id,docID,docBody)
-                        if (message.length === 0) {
-                            bodyView.message = "Edited document successfully"
-                        }
-                        else bodyView.message = message;
-                    }
+                    else bodyView.message = message;
                     visible = false
                 }
             }
             DatabasePopup {
                 id: newDatabasesPopup
-                anchors.centerIn: parent
                 onSubmit: {
                     let message = qmlBridge.createNewDatabase(id,mainMenuView.openedFile,folderPath.toString().replace("file://",""), filename);
                     if (message.length === 0) {
@@ -225,7 +208,6 @@ Item {
             }
             DatabasePopup {
                 id: saveAsPopup
-                anchors.centerIn: parent
                 onSubmit:  {
                     visible = false;
                 }
