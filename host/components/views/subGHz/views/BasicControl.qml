@@ -171,7 +171,7 @@ Rectangle {
                 anchors.bottom:parent.verticalCenter
                 width:parent.width/2
                 label: "Soil Moisture"
-                value: platformInterface.receive_notification.rssi
+                value: platformInterface.receive_notification.stemma.soil.toFixed(2)
                 unit: "%"
                 icon:""
                 labelSize: 18
@@ -201,10 +201,7 @@ Rectangle {
                 anchors.bottom:parent.verticalCenter
                 width:parent.width/2
                 label: "Pressure"
-                value: {
-                    var errorRate = platformInterface.receive_notification.packet_error_rate.toFixed(2) //returns 0.xx
-                    return errorRate.substring(1);
-                }
+                value: platformInterface.receive_notification.bme680.pressure.toFixed(2)
                 unit: "atm"
                 icon:""
                 labelSize: 18
@@ -234,7 +231,7 @@ Rectangle {
                 width:parent.width/2
                 label: "Temperature"
                 value: {
-                    var errorRate = platformInterface.receive_notification.packet_error_rate.toFixed(2) //returns 0.xx
+                    var errorRate = platformInterface.receive_notification.bme680.temperature.toFixed(2) //returns 0.xx
                     return errorRate.substring(1);
                 }
                 unit: "°C"
@@ -264,7 +261,7 @@ Rectangle {
                 width:parent.width/2
                 label: "Humidity"
                 value: {
-                    var errorRate = platformInterface.receive_notification.packet_error_rate.toFixed(2) //returns 0.xx
+                    var errorRate = platformInterface.receive_notification.bme680.humidity.toFixed(2) //returns 0.xx
                     return errorRate.substring(1);
                 }
                 unit: "%"
