@@ -1,18 +1,26 @@
 
 #include <QCoreApplication>
 #include <QCommandLineParser>
+#include <QSettings>
 
 #include <EvEventsMgr.h>    //for EvEventsMgrInstance (windows WSA)
 
 #include "HostControllerService.h"
+
+#include <QtLoggerSetup.h>
+#include "logging/LoggingQtCategories.h"
 
 
 int main(int argc, char *argv[])
 {
     QCoreApplication::setOrganizationName(QStringLiteral("ON Semiconductor"));
     QCoreApplication::setApplicationName(QStringLiteral("HCS"));
+    QSettings::setDefaultFormat(QSettings::IniFormat);
 
     QCoreApplication theApp(argc, argv);
+
+    const QtLoggerSetup loggerInitialization(theApp);
+    qCInfo(logCategoryHcs) << QStringLiteral("%1 v%2").arg(QCoreApplication::applicationName()).arg(QCoreApplication::applicationVersion());
 
     spyglass::EvEventsMgrInstance instance;
 

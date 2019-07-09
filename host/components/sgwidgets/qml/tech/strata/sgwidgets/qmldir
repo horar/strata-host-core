@@ -1,5 +1,29 @@
 module tech.strata.sgwidgets
 
+## version 1.0
+SGColorsJS 1.0 utils/SGColors_1_0.js
+SGUtilsJS 1.0 utils/SGUtils_1_0.js
+SGDialogJS 1.0 dialogs/SGDialog_1_0.js
+
+SGBaseEditor 1.0 editors/SGBaseEditor_1_0.qml
+SGButton 1.0 SGButton/SGButton_1_0.qml
+SGCheckBox 1.0 SGCheckBox/SGCheckBox_1_0.qml
+SGConfirmationDialog 1.0 dialogs/SGConfirmationDialog_1_0.qml
+SGDialog 1.0 dialogs/SGDialog_1_0.qml
+SGMessageDialog 1.0 dialogs/SGMessageDialog_1_0.qml
+SGIcon 1.0 SGIcon/SGIcon_1_0.qml
+SGIconButton 1.0 SGIconButton/SGIconButton_1_0.qml
+SGPage 1.0 SGPage/SGPage_1_0.qml
+SGStatusLight 1.0 SGStatusLight/SGStatusLight_1_0.qml
+SGStatusLogBox 1.0 SGStatusLogBox/SGStatusLogBox_1_0.qml
+SGStatusLogBoxSelectableDelegates 1.0 SGStatusLogBox/SGStatusLogBoxSelectableDelegates_1_0.qml
+SGStatusLogBoxSelectableText 1.0 SGStatusLogBox/SGStatusLogBoxSelectableText_1_0.qml
+SGSuggestionPopup 1.0 SGSuggestionPopup/SGSuggestionPopup_1_0.qml
+SGText 1.0 SGText/SGText_1_0.qml
+SGTextField 1.0 SGTextField/SGTextField_1_0.qml
+SGTextFieldEditor 1.0 editors/SGTextFieldEditor_1_0.qml
+
+## version 0.9
 SGAccordion 0.9 SGAccordion/SGAccordion.qml
 SGAccordionItem 0.9 SGAccordion/SGAccordionItem.qml
 SGButton 0.9 SGButton/SGButton.qml
@@ -15,7 +39,6 @@ SGHelpTour 0.9 SGHelpTour/SGHelpTour.qml
 SGHueSlider 0.9 SGHueSlider/SGHueSlider.qml
 SGIcon 0.9 SGIcon/SGIcon.qml
 SGLabelledInfoBox 0.9 SGLabelledInfoBox/SGLabelledInfoBox.qml
-SGOutputLogBox 0.9 SGOutputLogBox/SGOutputLogBox.qml
 SGPdfViewer 0.9 SGPdfViewer/SGPdfViewer.qml
 SGPopout 0.9 SGPopout/SGPopout.qml
 SGRGBSlider 0.9 SGRGBSlider/SGRGBSlider.qml
@@ -26,7 +49,6 @@ SGSegmentedButton 0.9 SGSegmentedButtonStrip/SGSegmentedButton.qml
 SGSegmentedButtonStrip 0.9 SGSegmentedButtonStrip/SGSegmentedButtonStrip.qml
 SGSlider 0.9 SGSlider/SGSlider.qml
 SGStatusLight 0.9 SGStatusLight/SGStatusLight.qml
-SGStatusListBox 0.9 SGStatusListBox/SGStatusListBox.qml
 SGSubmitInfoBox 0.9 SGSubmitInfoBox/SGSubmitInfoBox.qml
 SGSwitch 0.9 SGSwitch/SGSwitch.qml
 SGTelestrator 0.9 SGTelestrator/SGTelestrator.qml

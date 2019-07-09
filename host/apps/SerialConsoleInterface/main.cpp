@@ -1,15 +1,59 @@
 #include <BoardsController.h>
 #include "SciModel.h"
-#include "SgUtilsCpp.h"
-#include "SgJLinkConnector.h"
 
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
 #include <QSettings>
+#include <QResource>
+#include <QDir>
 
 #include <QtLoggerSetup.h>
 #include "logging/LoggingQtCategories.h"
+
+void loadResources() {
+    QDir applicationDir(QCoreApplication::applicationDirPath());
+
+    const auto resources = {
+        QStringLiteral("component-fonts.rcc"),
+        QStringLiteral("component-common.rcc"),
+        QStringLiteral("component-sgwidgets.rcc")};
+
+#ifdef Q_OS_MACOS
+    applicationDir.cdUp();
+    applicationDir.cdUp();
+    applicationDir.cdUp();
+#endif
+
+    for (const auto& resourceName : resources) {
+        QString resourcePath = applicationDir.filePath(resourceName);
+
+        qCInfo(logCategorySci)
+                << "Loading"
+                << resourceName << ":"
+                << QResource::registerResource(resourcePath);
+    }
+}
+
+
+void addImportPaths(QQmlApplicationEngine *engine) {
+    QDir applicationDir(QCoreApplication::applicationDirPath());
+
+#ifdef Q_OS_MACOS
+    applicationDir.cdUp();
+    applicationDir.cdUp();
+    applicationDir.cdUp();
+#endif
+
+    bool status = applicationDir.cd("imports");
+    if (status == false) {
+        qCCritical(logCategorySci) << "failed to find import path.";
+    }
+
+    engine->addImportPath(applicationDir.path());
+
+    engine->addImportPath("qrc:///");
+}
 
 int main(int argc, char *argv[])
 {
@@ -22,14 +66,14 @@ int main(int argc, char *argv[])
     const QtLoggerSetup loggerInitialization(app);
     qCInfo(logCategorySci) << QStringLiteral("%1 v%2").arg(QCoreApplication::applicationName()).arg(QCoreApplication::applicationVersion());
 
-    qmlRegisterSingletonType(QUrl("qrc:/fonts/Fonts.qml"), "tech.strata.fonts", 1, 0, "Fonts");
-    qmlRegisterSingletonType<SgUtilsCpp>("tech.strata.utils", 1, 0,"SgUtilsCpp", sgUtilsCppSingletonProvider);
     qmlRegisterType<SciModel>("tech.strata.sci", 1, 0, "SciModel");
     qmlRegisterUncreatableType<BoardsController>("tech.strata.sci", 1, 0, "BoardsController", "can not instantiate BoardsController in qml");
-    qmlRegisterUncreatableType<SgJLinkConnector>("tech.strata.sci", 1, 0, "SgJLinkConnector", "can not instantiate SgJLinkConnector in qml");
+
+    loadResources();
 
     QQmlApplicationEngine engine;
-    engine.addImportPath("qrc:///");
+
+    addImportPaths(&engine);
 
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
     if (engine.rootObjects().isEmpty()) {

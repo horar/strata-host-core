@@ -5,6 +5,7 @@
 #include <QVariantMap>
 
 #include <PlatformManager.h>
+#include <FlasherConnector.h>
 
 class PlatformBoard;
 
@@ -24,6 +25,9 @@ public:
     Q_INVOKABLE QVariantMap getConnectionInfo(const QString &connectionId);
     Q_INVOKABLE void reconnect(const QString &connectionId);
     Q_INVOKABLE bool disconnect(const QString &connectionId);
+    Q_INVOKABLE void programDevice(const QString &connectionId, const QString &firmwarePath);
+    Q_INVOKABLE void stopProgrammingDevice(const QString &connectionId);
+    Q_INVOKABLE void stopAllProgrammingDevices();
 
     QStringList connectionIds() const;
     spyglass::PlatformConnectionShPtr getConnection(const QString &connectionId);
@@ -40,6 +44,12 @@ signals:
     void notifyBoardMessage(QString connectionId, QString message);
     void activeBoard(QString connectionId);
     void connectionIdsChanged();
+
+    void notify(QString connectionId, QString message);
+    void programDeviceDone(QString connectionId, bool status);
+
+private slots:
+    void programDeviceDoneHandler(const QString& connectionId, bool status);
 
 private:
     class ConnectionHandler : public spyglass::PlatformConnHandler
@@ -63,10 +73,10 @@ private:
         std::map<spyglass::PlatformConnection*, PlatformBoard*> connections_;
     };
 
-private:
     spyglass::PlatformManager platform_mgr_;
     ConnectionHandler conn_handler_;
     QStringList connectionIds_;
+    FlasherConnector flasherConnector_;
 };
 
 #endif //BOARDSCONTROLER_H

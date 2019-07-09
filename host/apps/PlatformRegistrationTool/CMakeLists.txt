@@ -15,11 +15,11 @@ add_executable(${PROJECT_NAME})
 target_sources(${PROJECT_NAME} PRIVATE
     main.cpp
     PrtModel.cpp
-    SgSortFilterProxyModel.cpp
-    SgJLinkConnector.cpp
-
     images/images.qrc
     qml.qrc
+
+    logging/LoggingQtCategories.cpp
+    logging/qml/tech/strata/logger/qml.qrc
 )
 
 if(APPLE)
@@ -62,8 +62,8 @@ target_link_libraries(${PROJECT_NAME}
     Qt5::Qml
     Qt5::Quick
 
-    PlatformManager
-    flasher
+    BoardsController
+    QtLogger
 )
 
 target_include_directories(${PROJECT_NAME}
@@ -74,9 +74,6 @@ target_include_directories(${PROJECT_NAME}
 set(PRODUCT_NAME_LONG "Platform Registration Tool")
 set(PRODUCT_NAME_COPYRIGHT "Copyright (C) 2019 ON Semiconductor")
 set_target_properties(${PROJECT_NAME} PROPERTIES
-    CXX_STANDARD 17
-    CXX_STANDARD_REQUIRED ON
-    CXX_EXTENSIONS OFF
     AUTOMOC ON
     AUTORCC ON
     #AUTORCC_OPTIONS "--compress;9"
@@ -101,10 +98,6 @@ if(WIN32)
         WIN32_EXECUTABLE ON
     )
 endif()
-
-target_compile_options(${PROJECT_NAME}
-    PRIVATE $<$<CXX_COMPILER_ID:AppleClang>:-Wall -Wextra>
-)
 
 target_compile_definitions(${PROJECT_NAME}
 #    PRIVATE QT_QML_DEBUG
