@@ -5,6 +5,7 @@ import QtGraphicalEffects 1.0
 import QtQuick.Controls.Styles 1.4
 import QtQuick.Extras 1.4
 import tech.strata.sgwidgets 0.9
+import tech.strata.sgwidgets 1.0 as WidgetsNewVersion
 import "qrc:/js/navigation_control.js" as NavigationControl
 import "qrc:/js/help_layout_manager.js" as Help
 
@@ -330,7 +331,7 @@ Item {
                     topMargin: 10
                 }
 
-                SGStatusListBox {
+                WidgetsNewVersion.SGStatusLogBox {
                     id: interruptError
                     height: parent.height/2.2
                     width: parent.width/1.1
@@ -353,7 +354,7 @@ Item {
                     id: faultModel
 
                 }
-                SGStatusListBox {
+                WidgetsNewVersion.SGStatusLogBox {
                     id: faultHistory
                     height: parent.height/2.2
                     width: parent.width/1.1
