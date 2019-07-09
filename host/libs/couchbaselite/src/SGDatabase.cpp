@@ -189,8 +189,9 @@ namespace Spyglass {
         alloc_slice fleece_data;
         try{
             fleece_data = JSONConverter::convertJSON(doc->mutable_dict_->toJSONString());
-        }catch (const FleeceException&  e){
+        }catch (const FleeceException& e){
             DEBUG("Convert body error: %s\n", e.what());
+            return SGDatabaseReturnStatus::kInvalidDocBody;
         }
 
         if(!c4db_beginTransaction(c4db_, &c4error_)){
