@@ -129,7 +129,7 @@ Window {
                         }
                         anchors {
                             left: selectFolderField.right
-                            leftMargin: 5
+                            leftMargin: 0
                             verticalCenter: parent.verticalCenter
                         }
                         Image {
