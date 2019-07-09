@@ -97,7 +97,7 @@ Item {
 
         TabBar {
             id: tabBar
-            width: Math.min(tabBarWrapper.width - iconRowWrapper.width, 500 * tabModel.count)
+            width: Math.min(tabBarWrapper.width /*- iconRowWrapper.width*/, 500 * tabModel.count)
             anchors {
                 left: parent.left
                 top: parent.top
@@ -208,6 +208,9 @@ Item {
                 bottom: tabBar.bottom
             }
 
+            //hiden until there is content in side pane again
+            visible: false
+
             Row {
                 id: iconRow
                 anchors {
@@ -257,6 +260,12 @@ Item {
                     sendCommand(connectionId, message)
                 }
 
+                onProgramDeviceRequested: {
+                    if (model.status === "connected") {
+                        showProgramDeviceDialogDialog(model.connectionId)
+                    }
+                }
+
                 Connections {
                     target:  sciModel.boardController
                     onNotifyBoardMessage: {
@@ -264,7 +273,7 @@ Item {
                             return
                         }
 
-                        if (platformDelegate.connectionId === connectionId) {
+                        if (model.connectionId === connectionId) {
                             var timestamp = Date.now()
                             appendCommand(createCommand(timestamp, message, "response"))
                         }
@@ -312,10 +321,7 @@ Item {
 
             spacing: 10
 
-            SGWidgets.SGButton {
-                text: "Program\nDevice"
-                onClicked: showProgramDeviceDialogDialog()
-            }
+            //menu
         }
     }
 
@@ -331,18 +337,28 @@ Item {
             padding: 0
             hasTitle: false
 
-            contentItem: Common.ProgramDeviceWizard {
+            property string connectionId
+
+            contentItem: SGWidgets.SGPage {
                 implicitWidth: root.width - 20
                 implicitHeight: root.height - 20
 
-                boardController: sciModel.boardController
-                closeButtonVisible: true
-                requestCancelOnClose: true
+                title: "Program Device Wizard"
+                hasBack: false
 
-                onCancelRequested: {
-                    dialog.close()
-                    programDeviceDialogOpened = false
-                    refrestDeviceInfo()
+                contentItem: Common.ProgramDeviceWizard {
+                    boardController: sciModel.boardController
+                    closeButtonVisible: true
+                    requestCancelOnClose: true
+                    loopMode: false
+                    checkFirmware: false
+                    currentConnectionId: connectionId
+
+                    onCancelRequested: {
+                        dialog.close()
+                        programDeviceDialogOpened = false
+                        sciModel.boardController.reconnect(connectionId)
+                    }
                 }
             }
         }
@@ -379,16 +395,15 @@ Item {
         }
     }
 
-    function showProgramDeviceDialogDialog() {
-        var dialog = SGWidgets.SGDialogJS.createDialogFromComponent(root, programDeviceDialogComponent)
+    function showProgramDeviceDialogDialog(connectionId) {
+        var dialog = SGWidgets.SGDialogJS.createDialogFromComponent(
+                    root,
+                    programDeviceDialogComponent,
+                    {
+                        "connectionId": connectionId
+                    })
 
         programDeviceDialogOpened = true
         dialog.open()
-    }
-
-    function refrestDeviceInfo() {
-        for (var i = 0; i < sciModel.boardController.connectionIds.length; ++i) {
-            sciModel.boardController.reconnect(sciModel.boardController.connectionIds[i])
-        }
     }
 }

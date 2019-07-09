@@ -8,13 +8,13 @@ import tech.strata.commoncpp 1.0 as CommonCpp
 FocusScope {
     id: platformDelegate
 
-    property string connectionId: model.connectionId
     property int maxCommandsInHistory: 20
     property int maxCommandsInScrollback: 200
     property variant rootItem
     property bool condensedMode: false
 
     signal sendCommandRequested(string message)
+    signal programDeviceRequested()
 
     ListModel {
         id: scrollbackModel
@@ -51,7 +51,7 @@ FocusScope {
             top: parent.top
             topMargin: 4
             bottom: inputWrapper.top
-            bottomMargin: 4
+            bottomMargin: 2
             left: parent.left
             right: parent.right
         }
@@ -228,7 +228,6 @@ FocusScope {
             id: toolButtonRow
             anchors {
                 top: parent.top
-                topMargin: 2
                 left: cmdInput.left
             }
 
@@ -239,6 +238,7 @@ FocusScope {
                 hintText: qsTr("Clear scrollback")
                 icon.source: "qrc:/images/broom.svg"
                 iconSize: toolButtonRow.iconHeight
+                padding: 4
                 onClicked: {
                     scrollbackModel.clear()
                 }
@@ -248,6 +248,7 @@ FocusScope {
                 hintText: qsTr("Scroll to the bottom")
                 icon.source: "qrc:/images/arrow-bottom.svg"
                 iconSize: toolButtonRow.iconHeight
+                padding: 4
                 onClicked: {
                     scrollbackView.positionViewAtEnd()
                     scrollbackViewAtEndTimer.start()
@@ -258,6 +259,7 @@ FocusScope {
                 hintText: condensedMode ? qsTr("Expand all commands") : qsTr("Collapse all commands")
                 icon.source: condensedMode ? "qrc:/images/list-expand.svg" : "qrc:/images/list-collapse.svg"
                 iconSize: toolButtonRow.iconHeight
+                padding: 4
                 onClicked: {
                     condensedMode = ! condensedMode
                     scrollbackModel.setCondensedToAll(condensedMode)
@@ -268,8 +270,19 @@ FocusScope {
                 hintText: qsTr("Export to file")
                 icon.source: "qrc:/images/file-export.svg"
                 iconSize: toolButtonRow.iconHeight
+                padding: 4
                 onClicked: {
                     showFileExportDialog()
+                }
+            }
+
+            SGWidgets.SGIconButton {
+                hintText: qsTr("Program Device")
+                icon.source: "qrc:/sgimages/chip-flash.svg"
+                iconSize: toolButtonRow.iconHeight
+                padding: 4
+                onClicked: {
+                    programDeviceRequested()
                 }
             }
         }
@@ -280,6 +293,7 @@ FocusScope {
                 top: toolButtonRow.bottom
                 left: parent.left
                 right: btnSend.left
+                topMargin: 2
                 margins: 6
             }
 
