@@ -32,5 +32,6 @@
         <file>src/main.cpp</file>
         <file>src/qmlbridge.cpp</file>
         <file>test/cb-browser-test.cpp</file>
+        <file>qml/Components/UserInputBox.qml</file>
     </qresource>
 </RCC>

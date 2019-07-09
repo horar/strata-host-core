@@ -13,14 +13,14 @@ Window {
     minimumHeight: 600
     maximumHeight: 600
     maximumWidth: 400
-    visible: false
+    visible: true
     flags: Qt.Tool
 
     signal start()
 
-    property alias url: urlField.text
-    property alias username: usernameField.text
-    property alias password: passwordField.text
+    property alias url: urlContainer.userInput
+    property alias username: usernameContainer.userInput
+    property alias password: passwordContainer.userInput
 
     property string rep_type: "pull"
     property var channels: []
@@ -40,12 +40,6 @@ Window {
             channelViewField.text += temp + "\n"
         }
         channelInputField.text = ""
-    }
-    function clearInput()
-    {
-        urlField.text = ""
-        usernameField.text = ""
-        passwordField.text = ""
     }
     function clearLast(){
         channelViewField.text = ""
@@ -91,93 +85,28 @@ Window {
             height: parent.height - 130
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: parent.verticalCenter
-            Rectangle {
+            UserInputBox {
                 id: urlContainer
                 Layout.preferredHeight: 30
                 Layout.preferredWidth: parent.width / 2
                 Layout.alignment: Qt.AlignHCenter + Qt.AlignTop
-                Label {
-                    text: "URL:"
-                    color: "#eee"
-                    anchors {
-                        bottom: urlContainer.top
-                        left: urlContainer.left
-                    }
-                }
-                TextField {
-                    id: urlField
-                    anchors.fill: parent
-                    placeholderText: "Enter URL"
-                    onActiveFocusChanged: {
-                        urlFieldBackground.border.color = activeFocus ? "#b55400" : "transparent"
-                    }
-                    background: Rectangle {
-                        id: urlFieldBackground
-                        border {
-                            width: 2
-                            color: "transparent"
-                        }
-                    }
-                }
+                label: "URL:"
             }
-            Rectangle {
+            UserInputBox {
                 id: usernameContainer
                 Layout.preferredHeight: 30
                 Layout.preferredWidth: parent.width / 2
                 Layout.alignment: Qt.AlignHCenter + Qt.AlignTop
-                Label {
-                    text: "Username:"
-                    color: "#eee"
-                    anchors {
-                        bottom: usernameContainer.top
-                        left: usernameContainer.left
-                    }
-                }
-                TextField {
-                    id: usernameField
-                    anchors.fill: parent
-                    placeholderText: "Enter Username"
-                    onActiveFocusChanged: {
-                        usernameFieldBackground.border.color = activeFocus ? "#b55400" : "transparent"
-                    }
-                    background: Rectangle {
-                        id: usernameFieldBackground
-                        border {
-                            width: 2
-                            color: "transparent"
-                        }
-                    }
-                }
+                label: "Username:"
             }
-            Rectangle {
+            UserInputBox {
                 id: passwordContainer
                 Layout.preferredHeight: 30
                 Layout.preferredWidth: parent.width / 2
                 Layout.alignment: Qt.AlignHCenter + Qt.AlignTop
-                Label {
-                    text: "Password:"
-                    color: "#eee"
-                    anchors {
-                        bottom: passwordContainer.top
-                        left: passwordContainer.left
-                    }
-                }
-                TextField {
-                    id: passwordField
-                    anchors.fill: parent
-                    placeholderText: "Enter Password"
-                    echoMode: "Password"
-                    onActiveFocusChanged: {
-                        passwordFieldBackground.border.color = activeFocus ? "#b55400" : "transparent"
-                    }
-                    background: Rectangle {
-                        id: passwordFieldBackground
-                        border {
-                            width: 2
-                            color: "transparent"
-                        }
-                    }
-                }
+                label: "Password:"
+                isPassword: true
+
             }
             Rectangle {
                 id: channelLayoutContainer
