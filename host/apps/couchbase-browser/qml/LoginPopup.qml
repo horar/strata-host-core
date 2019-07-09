@@ -6,12 +6,12 @@ import QtQuick.Dialogs 1.3
 
 Window {
     id: root
-    width: 500
-    height: 700
-    minimumWidth: 500
-    minimumHeight: 700
-    maximumHeight: 700
-    maximumWidth: 500
+    width: 400
+    height: 600
+    minimumWidth: 400
+    minimumHeight: 600
+    maximumHeight: 600
+    maximumWidth: 400
     visible: false
     flags: Qt.Tool
 
@@ -53,7 +53,6 @@ Window {
         }
         channels.pop();
     }
-
     function validate(){
         if(url.length !== 0){
             warningPopup.visible = true
@@ -63,7 +62,6 @@ Window {
             urlFieldBackground.border.width = 2
         }
     }
-
     WarningPopup {
         id: warningPopup
         onAllow: {
@@ -74,158 +72,118 @@ Window {
             warningPopup.visible = false
         }
     }
-
     Rectangle {
+        id: background
         anchors.fill: parent
         color: "#393e46"
         border {
             width: 2
             color: "#b55400"
         }
-        Rectangle {
+        StatusBar {
             id: statusBar
-            width: parent.width
-            height: 25
-            anchors {
-                top: parent.top
-            }
-            color: "#b55400"
-            TextArea {
-                height: parent.height
-                width: parent.width
-                horizontalAlignment: Qt.AlignCenter
-                color: "#eee"
-                text: ""
-                readOnly: true
-            }
+            anchors.top: parent.top
         }
-
         ColumnLayout {
-            spacing: 1
+            spacing: 15
             width: parent.width - 10
-            height: parent.height - 25
+            height: parent.height - 130
             anchors.horizontalCenter: parent.horizontalCenter
-            anchors.top: statusBar.bottom
-
+            anchors.verticalCenter: parent.verticalCenter
             Rectangle {
-                Layout.preferredHeight: 80
-                Layout.preferredWidth: parent.width
+                id: urlContainer
+                Layout.preferredHeight: 30
+                Layout.preferredWidth: parent.width / 2
                 Layout.alignment: Qt.AlignHCenter + Qt.AlignTop
-                color: "transparent"
-                Rectangle {
-                    id: urlContainer
-                    height: parent.height / 2
-                    width: parent.width / 2
+                Label {
+                    text: "URL:"
+                    color: "#eee"
                     anchors {
-                        centerIn: parent
+                        bottom: urlContainer.top
+                        left: urlContainer.left
                     }
-                    Label {
-                        text: "URL:"
-                        color: "#eee"
-                        anchors {
-                            bottom: urlContainer.top
-                            left: urlContainer.left
-                        }
+                }
+                TextField {
+                    id: urlField
+                    anchors.fill: parent
+                    placeholderText: "Enter URL"
+                    onActiveFocusChanged: {
+                        urlFieldBackground.border.color = activeFocus ? "#b55400" : "transparent"
                     }
-                    TextField {
-                        id: urlField
-                        anchors.fill: parent
-                        placeholderText: "Enter URL"
-                        onActiveFocusChanged: {
-                            urlFieldBackground.border.color = activeFocus ? "#b55400" : "transparent"
-                        }
-                        background: Rectangle {
-                            id: urlFieldBackground
-                            border {
-                                width: 2
-                                color: "transparent"
-                            }
+                    background: Rectangle {
+                        id: urlFieldBackground
+                        border {
+                            width: 2
+                            color: "transparent"
                         }
                     }
                 }
             }
             Rectangle {
-                Layout.preferredHeight: 80
-                Layout.preferredWidth: parent.width
+                id: usernameContainer
+                Layout.preferredHeight: 30
+                Layout.preferredWidth: parent.width / 2
                 Layout.alignment: Qt.AlignHCenter + Qt.AlignTop
-                color: "transparent"
-                Rectangle {
-                    id: usernameContainer
-                    height: parent.height / 2
-                    width: parent.width / 2
+                Label {
+                    text: "Username:"
+                    color: "#eee"
                     anchors {
-                        centerIn: parent
+                        bottom: usernameContainer.top
+                        left: usernameContainer.left
                     }
-                    Label {
-                        text: "Username:"
-                        color: "#eee"
-                        anchors {
-                            bottom: usernameContainer.top
-                            left: usernameContainer.left
-                        }
+                }
+                TextField {
+                    id: usernameField
+                    anchors.fill: parent
+                    placeholderText: "Enter Username"
+                    onActiveFocusChanged: {
+                        usernameFieldBackground.border.color = activeFocus ? "#b55400" : "transparent"
                     }
-                    TextField {
-                        id: usernameField
-                        anchors.fill: parent
-                        placeholderText: "Enter Username"
-                        onActiveFocusChanged: {
-                            usernameFieldBackground.border.color = activeFocus ? "#b55400" : "transparent"
-                        }
-                        background: Rectangle {
-                            id: usernameFieldBackground
-                            border {
-                                width: 2
-                                color: "transparent"
-                            }
+                    background: Rectangle {
+                        id: usernameFieldBackground
+                        border {
+                            width: 2
+                            color: "transparent"
                         }
                     }
                 }
             }
             Rectangle {
-                Layout.preferredHeight: 80
-                Layout.preferredWidth: parent.width
+                id: passwordContainer
+                Layout.preferredHeight: 30
+                Layout.preferredWidth: parent.width / 2
                 Layout.alignment: Qt.AlignHCenter + Qt.AlignTop
-                color: "transparent"
-                Rectangle {
-                    id: passwordContainer
-                    height: parent.height / 2
-                    width: parent.width / 2
+                Label {
+                    text: "Password:"
+                    color: "#eee"
                     anchors {
-                        centerIn: parent
+                        bottom: passwordContainer.top
+                        left: passwordContainer.left
                     }
-                    Label {
-                        text: "Password:"
-                        color: "#eee"
-                        anchors {
-                            bottom: passwordContainer.top
-                            left: passwordContainer.left
-                        }
+                }
+                TextField {
+                    id: passwordField
+                    anchors.fill: parent
+                    placeholderText: "Enter Password"
+                    echoMode: "Password"
+                    onActiveFocusChanged: {
+                        passwordFieldBackground.border.color = activeFocus ? "#b55400" : "transparent"
                     }
-                    TextField {
-                        id: passwordField
-                        anchors.fill: parent
-                        placeholderText: "Enter Password"
-                        echoMode: "Password"
-                        onActiveFocusChanged: {
-                            passwordFieldBackground.border.color = activeFocus ? "#b55400" : "transparent"
-                        }
-                        background: Rectangle {
-                            id: passwordFieldBackground
-                            border {
-                                width: 2
-                                color: "transparent"
-                            }
+                    background: Rectangle {
+                        id: passwordFieldBackground
+                        border {
+                            width: 2
+                            color: "transparent"
                         }
                     }
                 }
-
             }
             Rectangle {
                 id: channelLayoutContainer
                 Layout.preferredHeight: 160
                 Layout.preferredWidth: parent.width / 2
                 Layout.alignment: Qt.AlignHCenter + Qt.AlignTop
-                Layout.topMargin: 20
+                color: "maroon"
                 Label {
                     text: "Selected Channels:"
                     color: "#eee"
@@ -239,7 +197,6 @@ Window {
                     width: parent.width
                     height: parent.height -20
                     color: "#d9d9d9"
-
                     anchors {
                         top: parent.top
                     }
@@ -259,7 +216,7 @@ Window {
                     id: channelInputContainer
                     height: 30
                     width: parent.width
-                    color: "transparent"
+                    color: "orange"
                     anchors {
                         bottom: channelLayoutContainer.bottom
                     }
@@ -284,7 +241,6 @@ Window {
                                 color: "transparent"
                             }
                         }
-
                     }
                     Button {
                         id: addButton
@@ -306,39 +262,26 @@ Window {
                             id: buttonBackground
                             color: "#b55400"
                         }
-
-                    }
-                }
-            }
-            Rectangle {
-                Layout.preferredHeight: 80
-                Layout.preferredWidth: parent.width
-                Layout.alignment: Qt.AlignHCenter + Qt.AlignTop
-                color: "transparent"
-                Rectangle {
-                    id: buttonContainer
-                    height: parent.height / 2
-                    width: parent.width / 2
-                    color: "transparent"
-                    anchors {
-                        centerIn: parent
                     }
                     RowLayout {
                         spacing: 2
-                        anchors.fill: parent
+                        width: parent.width
+                        anchors {
+                            top: channelInputContainer.bottom
+                            topMargin: 15
+                            horizontalCenter: parent.horizontalCenter
+                        }
                         Button {
                             id: clearAllButton
-                            Layout.alignment: Qt.AlignHCenter
-                            width: (parent.width / 2) - 1
-                            height: parent.height - 2
+                            Layout.preferredWidth: (parent.width / 2) - 1
+                            Layout.preferredHeight: 30
                             text:  "Clear All"
                             onClicked: channelViewField.text = ""
                         }
                         Button {
                             id: clearLastButton
-                            Layout.alignment: Qt.AlignHCenter
-                            width: (parent.width / 2) - 1
-                            height: parent.height - 2
+                            Layout.preferredWidth: (parent.width / 2) - 1
+                            Layout.preferredHeight: 30
                             text: "Clear Last"
                             onClicked: {
                                 clearLast();
@@ -346,162 +289,141 @@ Window {
                         }
                     }
                 }
-
             }
             Rectangle {
-                Layout.preferredHeight: 80
-                Layout.preferredWidth: parent.width
+                id: selectorContainer
+                Layout.preferredHeight: 30
+                Layout.preferredWidth: parent.width / 2
                 Layout.alignment: Qt.AlignHCenter + Qt.AlignTop
                 color: "transparent"
-                Rectangle {
-                    id: selectorContainer
-                    height: parent.height / 2
-                    width: parent.width / 2
-                    color: "transparent"
+                RadioButton {
+                    id: pushButton
+                    width: 30
+                    height: 30
+                    text: qsTr("")
                     anchors {
-                        centerIn: parent
-                        verticalCenterOffset: -10
+                        left: parent.left
                     }
-                    RadioButton {
-                        id: pushButton
+                    onCheckedChanged: {
+                        pushButtonBackground.color = pushButton.checked ? "#b55400" : "transparent"
+                    }
+                    onClicked: {
+                        rep_type = "push"
+                    }
+                    indicator: Rectangle {
                         width: 30
                         height: 30
-                        text: qsTr("")
-                        anchors {
-                            left: parent.left
-                        }
-                        onCheckedChanged: {
-                            pushButtonBackground.color = pushButton.checked ? "#b55400" : "transparent"
-                        }
-                        onClicked: {
-                            rep_type = "push"
-                        }
-                        indicator: Rectangle {
-                            width: 30
-                            height: 30
-                            radius: 13
-                            border.color: "#b55400"
-                            border.width: 2
+                        radius: 13
+                        border.color: "#b55400"
+                        border.width: 2
+                        color: "transparent"
+
+                        Rectangle {
+                            id: pushButtonBackground
+                            width: 20
+                            height: 20
+                            anchors.centerIn: parent
                             color: "transparent"
-
-                            Rectangle {
-                                id: pushButtonBackground
-                                width: 20
-                                height: 20
-                                anchors.centerIn: parent
-                                color: "transparent"
-                                radius: 13
-                            }
-                        }
-
-                    }
-                    RadioButton {
-                        id: pushAndPullButton
-                        width: 30
-                        height: 30
-                        text: qsTr("")
-                        anchors {
-                            horizontalCenter: parent.horizontalCenter
-                        }
-                        onClicked: rep_type = "pushpull"
-                        onCheckedChanged: {
-                            pushAndPullButtonBackground.color = pushAndPullButton.checked ? "#b55400" : "transparent"
-                        }
-
-                        indicator: Rectangle {
-                            width: 30
-                            height: 30
                             radius: 13
-                            border.color: "#b55400"
-                            border.width: 2
-                            color: "transparent"
-
-                            Rectangle {
-                                id: pushAndPullButtonBackground
-                                width: 20
-                                height: 20
-                                anchors.centerIn: parent
-                                color: "transparent"
-                                radius: 13
-                            }
-                        }
-
-                    }
-                    RadioButton {
-                        id: pullButton
-                        width: 30
-                        height: 30
-                        text: qsTr("")
-                        anchors {
-                            right: parent.right
-                        }
-                        onClicked: rep_type = "pull"
-                        onCheckedChanged: {
-                            pullButtonBackground.color = pullButton.checked ? "#b55400" : "transparent"
-                        }
-                        indicator: Rectangle {
-                            width: 30
-                            height: 30
-                            radius: 13
-                            border.color: "#b55400"
-                            border.width: 2
-                            color: "transparent"
-
-                            Rectangle {
-                                id: pullButtonBackground
-                                width: 20
-                                height: 20
-                                anchors.centerIn: parent
-                                color: "transparent"
-                                radius: 13
-                            }
-                        }
-
-                    }
-                    Label {
-                        id: pushLabel
-                        text: "Push"
-                        color: "#eee"
-                        anchors {
-                            top: selectorContainer.bottom
-                            left: selectorContainer.left
-                        }
-                    }
-                    Label {
-                        id: pullLabel
-                        text: "Pull"
-                        color: "#eee"
-                        anchors {
-                            top: selectorContainer.bottom
-                            right: selectorContainer.right
-                        }
-                    }
-                    Label {
-                        id: pushAndPullLabel
-                        text: "Push & Pull"
-                        color: "#eee"
-                        anchors {
-                            top: selectorContainer.bottom
-                            horizontalCenter: selectorContainer.horizontalCenter
-
                         }
                     }
                 }
+                RadioButton {
+                    id: pushAndPullButton
+                    width: 30
+                    height: 30
+                    text: qsTr("")
+                    anchors {
+                        horizontalCenter: parent.horizontalCenter
+                    }
+                    onClicked: rep_type = "pushpull"
+                    onCheckedChanged: {
+                        pushAndPullButtonBackground.color = pushAndPullButton.checked ? "#b55400" : "transparent"
+                    }
 
+                    indicator: Rectangle {
+                        width: 30
+                        height: 30
+                        radius: 13
+                        border.color: "#b55400"
+                        border.width: 2
+                        color: "transparent"
+
+                        Rectangle {
+                            id: pushAndPullButtonBackground
+                            width: 20
+                            height: 20
+                            anchors.centerIn: parent
+                            color: "transparent"
+                            radius: 13
+                        }
+                    }
+                }
+                RadioButton {
+                    id: pullButton
+                    width: 30
+                    height: 30
+                    text: qsTr("")
+                    anchors {
+                        right: parent.right
+                    }
+                    onClicked: rep_type = "pull"
+                    onCheckedChanged: {
+                        pullButtonBackground.color = pullButton.checked ? "#b55400" : "transparent"
+                    }
+                    indicator: Rectangle {
+                        width: 30
+                        height: 30
+                        radius: 13
+                        border.color: "#b55400"
+                        border.width: 2
+                        color: "transparent"
+
+                        Rectangle {
+                            id: pullButtonBackground
+                            width: 20
+                            height: 20
+                            anchors.centerIn: parent
+                            color: "transparent"
+                            radius: 13
+                        }
+                    }
+                }
+                Label {
+                    id: pushLabel
+                    text: "Push"
+                    color: "#eee"
+                    anchors {
+                        top: selectorContainer.bottom
+                        left: selectorContainer.left
+                    }
+                }
+                Label {
+                    id: pullLabel
+                    text: "Pull"
+                    color: "#eee"
+                    anchors {
+                        top: selectorContainer.bottom
+                        right: selectorContainer.right
+                    }
+                }
+                Label {
+                    id: pushAndPullLabel
+                    text: "Push & Pull"
+                    color: "#eee"
+                    anchors {
+                        top: selectorContainer.bottom
+                        horizontalCenter: selectorContainer.horizontalCenter
+                    }
+                }
             }
-            Rectangle {
-                Layout.preferredHeight: 80
-                Layout.preferredWidth: parent.width
-                Layout.alignment: Qt.AlignHCenter + Qt.AlignTop
-                color: "transparent"
-                Button {
-                    id: submitButton
-                    height: parent.height / 2
-                    width: parent.width / 4
-                    text: "Submit"
-                    anchors.centerIn: parent
-                    onClicked: validate();
-                }
+            Button {
+                id: submitButton
+                Layout.preferredHeight: 30
+                Layout.preferredWidth: 80
+                Layout.alignment: Qt.AlignHCenter
+                text: "Submit"
+                onClicked: validate();
             }
         }
     }

@@ -24,5 +24,6 @@
         <file>qml/Images/editIcon.png</file>
         <file>qml/Images/deleteDocumentIcon.png</file>
         <file>qml/Images/CBBrowserLogo.png</file>
+        <file>qml/StatusBar.qml</file>
     </qresource>
 </RCC>

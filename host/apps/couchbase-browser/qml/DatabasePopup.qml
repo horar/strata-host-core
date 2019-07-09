@@ -23,19 +23,19 @@ Window {
     function validate(){
         if((selectFolderField.text.length !== 0) && (filenameField.text.length !== 0)){
             submit()
-            header.text = "Please enter the requested information"
+            statusBar.message = "Please enter the requested information"
         }
         else {
             //hightlight the background of selectfolderfield and filenameField
             if(selectFolderField.text.length == 0){
                 folderFieldBackground.border.color = "red"
                 folderFieldBackground.border.width = 2
-                header.text = "Invalid Input"
+                statusBar.message = "Invalid Input"
             }
             if(filenameField.text.length == 0){
                 filenameFieldBackground.border.color = "red"
                 filenameFieldBackground.border.width = 2
-                header.text = "Invalid Input"
+                statusBar.message = "Invalid Input"
             }
         }
 
@@ -48,39 +48,17 @@ Window {
             width: 2
             color: "#b55400"
         }
-        Rectangle {
+        StatusBar {
             id: statusBar
-            width: parent.width
-            height: 30
-            color: "#b55400"
-            anchors {
-                top: parent.top
-            }
-            TextArea {
-                height: parent.height
-                width: parent.width
-                horizontalAlignment: Qt.AlignCenter
-                color: "#eee"
-                text: ""
-                readOnly: true
-            }
+            anchors.top: parent.top
         }
         ColumnLayout {
             spacing: 1
             width: parent.width - 10
-            height: implicitHeight
-            anchors.horizontalCenter: parent.horizontalCenter
-            Rectangle {
-                Layout.preferredHeight: 80
-                Layout.preferredWidth: parent.width
-                Layout.alignment: Qt.AlignHCenter + Qt.AlignTop
-                color: "transparent"
-                Label {
-                    id: header
-                    text: "Please enter the requested information"
-                    anchors.centerIn: parent
-                    color: "white"
-                }
+            height: parent.height / 2
+            anchors {
+                horizontalCenter: parent.horizontalCenter
+                verticalCenter: parent.verticalCenter
             }
             Rectangle {
                 Layout.preferredHeight: 80

@@ -7,33 +7,17 @@ Item {
     anchors.fill:parent
 
     property alias content: text.text
-    property alias message: statusText.text
+    property alias message: statusBar.message
 
     Rectangle {
         id: background
         width: parent.width
         height: parent.height
         color: "#393e46"
-
-        Rectangle {
+        StatusBar {
             id: statusBar
-            width: parent.width
-            height: 25
-            anchors {
-                top: parent.top
-                left: parent.left
-            }
-            color: "#b55400"
-            Text {
-                id: statusText
-                height: parent.height
-                anchors.horizontalCenter: parent.horizontalCenter
-                padding: 3
-                color: "#eee"
-
-            }
+            anchors.top:parent.top
         }
-
         ScrollView {
             id: scroller
             anchors {
@@ -43,7 +27,6 @@ Item {
                 bottom: parent.bottom
             }
             clip: true
-
             TextArea {
                 id: text
                 wrapMode: "Wrap"
