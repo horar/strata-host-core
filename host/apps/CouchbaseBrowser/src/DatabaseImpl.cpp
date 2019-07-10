@@ -17,17 +17,10 @@ DatabaseImpl::DatabaseImpl(const int &id) : id_(id)
 
 DatabaseImpl::~DatabaseImpl()
 {
-    stopListening();
-    delete sg_replicator_;
-    delete url_endpoint_;
-    delete sg_replicator_configuration_;
-    delete sg_basic_authenticator_;
-    delete sg_db_;
-    setDBstatus(false);
-    setRepstatus(false);
+    closeDB();
 }
 
-QString DatabaseImpl::setFilePath(QString file_path)
+QString DatabaseImpl::openDB(QString &file_path)
 {
     file_path.replace("file://","");
     file_path_ = file_path;
@@ -39,6 +32,22 @@ QString DatabaseImpl::setFilePath(QString file_path)
 
     emitUpdate();
     return("");
+}
+
+void DatabaseImpl::closeDB()
+{
+    if(!getDBstatus()) {
+        return;
+    }
+
+    stopListening();
+    delete sg_replicator_;
+    delete url_endpoint_;
+    delete sg_replicator_configuration_;
+    delete sg_basic_authenticator_;
+    delete sg_db_;
+    setDBstatus(false);
+    setRepstatus(false);
 }
 
 void DatabaseImpl::emitUpdate()
@@ -282,40 +291,40 @@ bool DatabaseImpl::parseNewFile()
     return true;
 }
 
-QString DatabaseImpl::editDoc(const QString &oldId, const QString &newId, const QString &body)
+QString DatabaseImpl::editDoc(QString &oldId, QString newId, const QString body)
 {
+    oldId = oldId.simplified();
+    newId = newId.simplified();
+
     if(oldId.isEmpty()) {
-        return("Received empty ID, cannot edit.");
+        return("Received empty existing ID, cannot edit.");
     }
 
     if(newId.isEmpty() && body.isEmpty()) {
         return("Received empty new ID and body, nothing to edit.");
     }
 
-    SGMutableDocument doc(sg_db_,oldId.toStdString());
-
-    if(!doc.exist()) {
-        return("\nDocument with ID = \"" + oldId + "\" does not exist. Cannot edit.");
-    }
-
-    return editDoc_(doc, newId, body);
-}
-
-QString DatabaseImpl::editDoc_(SGMutableDocument &doc, const QString &newId, const QString &body)
-{
-    if(!newId.isEmpty()) {
-        doc.setId(newId.toStdString());
-    }
-
-    if(!body.isEmpty()) {
+    // Only need to edit body (no need to re-create document)
+    if(newId.isEmpty() || newId == oldId) {
+        SGMutableDocument doc(sg_db_,oldId.toStdString());
         doc.setBody(body.toStdString());
+        if(sg_db_->save(&doc) != SGDatabaseReturnStatus::kNoError) {
+            return("Error saving document to database.");
+        }
+        emitUpdate();
+    }
+    // Other case: need to edit ID
+    else {
+        // Create new doc with new ID and body, then delete old doc
+        if(!createNewDoc(newId, body).isEmpty()) {
+            return("Problem with creation of document with ID = " + newId);
+        }
+        // Delete existing document with ID = OLD ID
+        if(!deleteDoc(oldId).isEmpty()) {
+            return("Problem with deletion of document with ID = " + oldId);
+        }
     }
 
-    if(sg_db_->save(&doc) != SGDatabaseReturnStatus::kNoError) {
-        return("Error saving document to database.");
-    }
-
-    emitUpdate();
     return("");
 }
 
@@ -348,7 +357,6 @@ QString DatabaseImpl::saveAs(const QString &id, QString &path)
     }
 
     path.replace("file://","");
-
     QDir dir(path);
     path = dir.path() + dir.separator();
 
@@ -378,7 +386,6 @@ QString DatabaseImpl::saveAs_(const QString &id, const QString &path)
         temp_db.save(&temp_doc);
     }
 
-    cout << "\nSaved database with ID " << id.toStdString() << " to " << path.toStdString() << endl;
     return("");
 }
 
@@ -390,6 +397,7 @@ bool DatabaseImpl::setDocumentKeys()
         DEBUG("Failed to run getAllDocumentsKey()\n");
         return false;
     }
+
     return true;
 }
 
