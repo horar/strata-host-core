@@ -65,15 +65,6 @@ Item {
 
         }
     }
-//    property var pgood_status_interrupt: platformInterface.status_interrupt.pgood
-//    onPgood_status_interruptChanged: {
-//        if(pgood_status_interrupt === "bad"){
-//            platformInterface.enabled = false
-////            warningVisible = true
-//        }
-//    }
-
-
 
     Component.onCompleted:  {
         Help.registerTarget(ledLight, "The LED will light up green when input voltage is ready and greater than 4.5V. It will light up red when under 4.5V to warn the user that input voltage is not high enough.", 1, "basic5AHelp")

@@ -53,22 +53,12 @@ Item {
 
     property var read_enable_state: platformInterface.initial_status_0.enable_status
     onRead_enable_stateChanged: {
-        if(read_enable_state === "on") {
-            platformInterface.enabled = true
-        }
-        else  {
-            platformInterface.enabled = false
-        }
+        platformInterface.enabled = (read_enable_state === "on") ? true : false
     }
 
     property var read_vsel_status: platformInterface.initial_status_0.vsel_status
     onRead_vsel_statusChanged: {
-        if(read_vsel_status === "on") {
-            platformInterface.vsel_state = true
-        }
-        else {
-            platformInterface.vsel_state = false
-        }
+        platformInterface.vsel_state = (read_vsel_status === "on") ? true : false
     }
 
     property var read_output_voltage0_status: platformInterface.initial_status_0.vout_vsel0_status
@@ -86,21 +76,11 @@ Item {
 
     property var dcdc_mode0_status: platformInterface.initial_status_1.ppwmvsel0_mode_status
     onDcdc_mode0_statusChanged: {
-        if(dcdc_mode0_status === "forced_ppwm"){
-            platformInterface.dcdc_mode0 = 1
-        }
-        else {
-            platformInterface.dcdc_mode0 = 0
-        }
+        platformInterface.dcdc_mode0 = (dcdc_mode0_status === "forced_ppwm") ? true : false
     }
     property var dcdc_mode1_status: platformInterface.initial_status_1.ppwmvsel1_mode_status
     onDcdc_mode1_statusChanged: {
-        if(dcdc_mode1_status === "forced_ppwm"){
-            platformInterface.dcdc_mode1 = 1
-        }
-        else {
-            platformInterface.dcdc_mode1 = 0
-        }
+        platformInterface.dcdc_mode1 = (dcdc_mode1_status === "forced_ppwm") ? true : false
     }
 
     property var read_ipeak_state: platformInterface.initial_status_1.ipeak_status
@@ -162,6 +142,7 @@ Item {
                 }
 
                 Column {
+
                     anchors.fill: parent
                     spacing:  20
                     Rectangle {
@@ -183,7 +164,7 @@ Item {
                             checked: platformInterface.enabled
                             //fontSizeLabel: (parent.width + parent.height)/22
                             onCheckedChanged: {
-                                platformInterface.intd_state = (checked === "on") ? true : false
+                                platformInterface.intd_state = (checked) ? true : false
                             }
 
                             onToggled : {
