@@ -30,10 +30,10 @@ public:
 
     QString createNewDoc(const QString &id, const QString &body);
 
-    QString rep_init(const QString &url, const QString &username = "", const QString &password = "",
+    QString startListening(const QString &url, const QString &username = "", const QString &password = "",
         const QString &rep_type = "pull", const std::vector<QString> &channels = std::vector<QString> ());
 
-    void rep_stop();
+    void stopListening();
 
     QString setFilePath(QString file_path);
 
@@ -42,6 +42,8 @@ public:
     QString deleteDoc(const QString &id);
 
     QString saveAs(const QString &id, const QString &path);
+
+    QString setChannels(const std::vector<QString> &channels);
 
 private:
     QString file_path_, db_path_, db_name_, JSONResponse_, url_, username_, password_;
@@ -94,7 +96,7 @@ private:
 
     QString createNewDoc_(const QString &id, const QString &body);
 
-    QString rep_init_();
+    QString startRep();
 
     QString editDoc_(Spyglass::SGMutableDocument &doc, const QString &newId, const QString &body);
 
