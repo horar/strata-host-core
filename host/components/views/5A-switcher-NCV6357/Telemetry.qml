@@ -33,7 +33,7 @@ Item {
     onStatus_interruptChanged:  {
         if(status_interrupt === "bad") {
             errorLed.status = "red"
-//            basicControl.warningVisible = true
+            //            basicControl.warningVisible = true
         }
     }
 
@@ -41,7 +41,7 @@ Item {
     onRead_enable_stateChanged: {
         if(read_enable_state === "on") {
             platformInterface.enabled = true
-//            basicControl.warningVisible = false
+            //            basicControl.warningVisible = false
         }
         else  {
             platformInterface.enabled = false
@@ -79,10 +79,9 @@ Item {
     function addToHistoryLog()
     {
         var errorArray = platformInterface.status_ack_register.events_detected
-        for (var i in errorArray){
-            faultHistoryModel.insert(0,{ status : errorArray[i] })
+        for (var i = 0; i < errorArray.length; i++){
+            faultHistory.append(errorArray[i].toString())
         }
-
     }
 
     property bool check_intd_state: platformInterface.intd_state
@@ -93,14 +92,14 @@ Item {
             faultModel.clear()
             addToHistoryLog()
         }
-//        else if(check_intd_state == false)   {
-//            if( errorLed.status === "green") {
-//                basicControl.warningVisible = false
-//            }
-//            else if ( errorLed.status === "red"){
-//                basicControl.warningVisible = true
-//            }
-//        }
+        //        else if(check_intd_state == false)   {
+        //            if( errorLed.status === "green") {
+        //                basicControl.warningVisible = false
+        //            }
+        //            else if ( errorLed.status === "red"){
+        //                basicControl.warningVisible = true
+        //            }
+        //        }
     }
 
     Component.onCompleted: {
@@ -178,7 +177,7 @@ Item {
                         tickmarkStepSize: 10
                         outerColor: "#999"
                         unitLabel: "%"
-                       // gaugeTitle: "Efficiency"
+                        // gaugeTitle: "Efficiency"
                         value: platformInterface.status_voltage_current.efficiency
                         Behavior on value { NumberAnimation { duration: 300 } }
 
@@ -198,8 +197,8 @@ Item {
                         tickmarkStepSize: 0.5
                         outerColor: "#999"
                         unitLabel: "W"
-                       // gaugeTitle: "Power"+ "\n" + "Loss"
-                       // decimal: 2
+                        // gaugeTitle: "Power"+ "\n" + "Loss"
+                        // decimal: 2
                         value: platformInterface.status_voltage_current.power_dissipated
                         Behavior on value { NumberAnimation { duration: 300 } }
                     }
@@ -271,7 +270,7 @@ Item {
                         infoBoxWidth: parent.width/5.5
                         infoBoxHeight : parent.height/5
                         //fontSize: (parent.width + parent.height)/50
-                       // unitSize: (parent.width + parent.height)/40
+                        // unitSize: (parent.width + parent.height)/40
                         anchors {
                             top: parent.top
                             topMargin : 10
@@ -341,19 +340,17 @@ Item {
                         horizontalCenter: parent.horizontalCenter
                     }
                     title: "Faults Log:"
-                    model: faultModel
-                }
 
+
+
+                }
                 property var errorArray: platformInterface.status_ack_register.events_detected
                 onErrorArrayChanged: {
-                    for (var i in errorArray){
-                        faultModel.insert(0,{ status : errorArray[i] })
+                    for (var i = 0; i < errorArray.length; i++){
+                        interruptError.append(errorArray[i].toString())
                     }
                 }
-                ListModel {
-                    id: faultModel
 
-                }
                 WidgetsNewVersion.SGStatusLogBox {
                     id: faultHistory
                     height: parent.height/2.2
@@ -364,11 +361,11 @@ Item {
                         horizontalCenter: parent.horizontalCenter
                     }
                     title: "Faults History:"
-                    model: faultHistoryModel
-                    ListModel {
-                        id: faultHistoryModel
+                    //                    model: faultHistoryModel
+                    //                    ListModel {
+                    //                        id: faultHistoryModel
 
-                    }
+                    //                    }
                 }
             }
 
@@ -470,7 +467,7 @@ Item {
                             Layout.leftMargin: 10
                             // Optional Configuration:
                             label: "PGood" // Default: "" (if not entered, label will not appear)
-//                            status: platformInterface.inbt_state
+                            //                            status: platformInterface.inbt_state
                         }
 
                     }
