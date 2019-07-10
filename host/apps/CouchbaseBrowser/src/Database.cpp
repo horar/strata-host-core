@@ -38,7 +38,7 @@ QString Database::editDocument(int windowId, QString oldId, QString newId, QStri
 
 QString Database::saveAs(int windowId, QString folder_path, QString dbName)
 {
-    // need to implement
+    return allDatabases[windowId]->saveAs(dbName, folder_path);
 }
 void Database::close(int windowId)
 {
@@ -101,5 +101,5 @@ void Database::newUpdateSignal(int windowId)
 
 QString Database::searchDocById(int windowId, QString id)
 {
-    return allDatabases[windowId]->searchDocById(id);
+    //return allDatabases[windowId]->searchDocById(id);
 }
