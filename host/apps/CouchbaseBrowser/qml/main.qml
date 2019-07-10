@@ -12,7 +12,6 @@ Window {
     title: qsTr("Couchbase Browser") + ((fileName !== "") ? " - " + fileName : "")
     flags: Qt.WindowFullscreenButtonHint
 
-    property alias id: mainview.id
     property string fileName: ""
     property var allDocuments: ""
 

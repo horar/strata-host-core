@@ -2,6 +2,8 @@ import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
 import QtQuick.Dialogs 1.3
+
+import com.onsemi.couchbase 1.0
 import "Popups"
 import "Components"
 
@@ -9,7 +11,6 @@ Item {
     id: root
     anchors.fill: parent
 
-    property var id
     property var allDocuments: "{}"
     property var jsonObj
     property alias openedFile: mainMenuView.openedFile
@@ -51,6 +52,10 @@ Item {
         }
     }
 
+    Database {
+        id:database
+    }
+
     Rectangle {
         id: background
         anchors.fill: parent
@@ -77,17 +82,15 @@ Item {
                     onEditDocumentSignal: editDocPopup.visible = true
                     onSaveAsSignal: saveAsPopup.visible = true
                     onCloseSignal: {
-                        database.close(id)
+                        database.closeDB()
                         statusBar.message = "Closed file"
                     }
-                    onStartListeningSignal: {
-                        loginPopup.visible = true
-                    }
+                    onStartListeningSignal: loginPopup.visible = true
                     onStopListeningSignal: {
-                        database.stopListening(id)
+                        database.stopListening()
                         statusBar.message = "Stopped listening"
                     }
-                    onNewWindowSignal: database.newWindow()
+                    //onNewWindowSignal: database.newWindow()
                 }
             }
             RowLayout {
@@ -165,7 +168,7 @@ Item {
                 title: "Please select a database"
                 folder: shortcuts.home
                 onAccepted: {
-                    let message = database.open(id, fileUrls);
+                    let message = database.open(fileUrls);
                     if (message.length === 0) {
                         statusBar.message = "Opened file"
                         mainMenuView.openedFile = true
@@ -177,9 +180,9 @@ Item {
             LoginPopup {
                 id: loginPopup
                 onStart: {
-                    let message = database.startListening(id,url,username,password,rep_type);
+                    let message = database.startListening(url,username,password,rep_type);
                     if (message.length === 0) {
-                        message = database.setChannels(id,channels)
+                        message = database.setChannels(channels)
                         statusBar.message = "Started listening successfully"
                         mainMenuView.startedListening = true
                         visible = false
@@ -194,7 +197,7 @@ Item {
             DocumentPopup {
                 id: newDocPopup
                 onSubmit: {
-                    let message = database.newDocument(id,docID,docBody);
+                    let message = database.newDocument(docID,docBody);
                     if (message.length === 0)
                         statusBar.message = "Created new document successfully!"
                     else
@@ -206,7 +209,7 @@ Item {
                 docID: openedDocumentID
                 docBody: openedDocumentBody
                 onSubmit: {
-                    let message = database.editDocument(id,openedDocumentID,docID,docBody)
+                    let message = database.editDocument(openedDocumentID,docID,docBody)
                     if (message.length === 0) {
                         statusBar.message = "Edited document successfully"
                     } else
@@ -217,7 +220,7 @@ Item {
             DatabasePopup {
                 id: newDatabasesPopup
                 onSubmit: {
-                    let message = database.newDatabase(id,folderPath,filename);
+                    let message = database.newDatabase(folderPath,filename);
                     if (message.length === 0) {
                         statusBar.message = "Created new database successfully"
                     } else
@@ -228,7 +231,7 @@ Item {
             DatabasePopup {
                 id: saveAsPopup
                 onSubmit:  {
-                    let message = database.saveAs(id,folderPath,filename);
+                    let message = database.saveAs(folderPath,filename);
                     if (message.length === 0) {
                         statusBar.message = "Saved database successfully";
                     }
@@ -242,7 +245,7 @@ Item {
                                   + openedDocumentID + "\""
                 onAllow: {
                     deletePopup.visible = false
-                    database.deleteDocument(id,openedDocumentID)
+                    database.deleteDocument(openedDocumentID)
                 }
                 onDeny: {
                     deletePopup.visible = false
