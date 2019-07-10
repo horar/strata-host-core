@@ -26,11 +26,13 @@ Item {
 
     RowLayout {
         id: row
-        height: parent.height
+        height: implicitHeight
         width: implicitWidth
         spacing: 25
+        anchors.verticalCenter: parent.verticalCenter
         CustomMenuItem {
             id: openFile
+            Component.onCompleted: console.log(height, width)
             Layout.preferredHeight: 50
             Layout.preferredWidth: 50
             Layout.leftMargin: 5
@@ -96,13 +98,13 @@ Item {
 
     RowLayout {
         id: newWindowLayout
-        height: parent.height
+        height: implicitHeight
         width: implicitWidth
         spacing: 50
         anchors {
             right: parent.right
             rightMargin: 25
-            top: parent.top
+            verticalCenter: parent.verticalCenter
         }
         CustomMenuItem {
             id: startListening
