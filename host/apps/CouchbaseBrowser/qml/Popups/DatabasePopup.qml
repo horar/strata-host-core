@@ -13,34 +13,26 @@ Window {
     height: 500
     visible: false
     flags: Qt.Tool
-    signal submit()
+    signal submit
 
-    property alias folderPath: selectFolderField.text
-    property alias filename: filenameField.text
+    property alias folderPath: selectFolderContainer.userInput
+    property alias filename: filenameContainer.userInput
 
-    function clearFields(){
+    function clearFields() {
         folderPath = ""
         filename = ""
     }
-    function validate(){
-        if((selectFolderField.text.length !== 0) && (filenameField.text.length !== 0)){
-            submit()
-            statusBar.message = "Please enter the requested information"
+    function validate() {
+        if (selectFolderContainer.isEmpty() === true) {
+            statusBar.message = "Please supply all requested information"
+        }
+        else if(filenameContainer.isEmpty() === true){
+            statusBar.message = "Please supply all requested information"
         }
         else {
-            //hightlight the background of selectfolderfield and filenameField
-            if(selectFolderField.text.length == 0){
-                folderFieldBackground.border.color = "red"
-                folderFieldBackground.border.width = 2
-                statusBar.message = "Invalid Input"
-            }
-            if(filenameField.text.length == 0){
-                filenameFieldBackground.border.color = "red"
-                filenameFieldBackground.border.width = 2
-                statusBar.message = "Invalid Input"
-            }
+            statusBar.message = ""
+            submit()
         }
-
     }
 
     Rectangle {
@@ -52,7 +44,7 @@ Window {
         }
         StatusBar {
             id: statusBar
-            anchors.top: parent.top
+            anchors.bottom: parent.bottom
         }
         ColumnLayout {
             spacing: 1
@@ -63,128 +55,55 @@ Window {
                 verticalCenter: parent.verticalCenter
             }
             Rectangle {
-                Layout.preferredHeight: 80
-                Layout.preferredWidth: parent.width
+                Layout.preferredHeight: 30
+                Layout.preferredWidth: parent.width / 2
                 Layout.alignment: Qt.AlignHCenter + Qt.AlignTop
                 color: "transparent"
-                Rectangle {
+                UserInputBox {
                     id: selectFolderContainer
-                    height: parent.height / 2
-                    width: parent.width / 2
-                    color: "transparent"
-                    anchors {
-                        centerIn: parent
-                    }
-                    Label {
-                        text: "Select Folder:"
-                        color: "white"
-                        anchors {
-                            bottom: selectFolderContainer.top
-                            left: selectFolderContainer.left
-                        }
-                    }
-                    TextField {
-                        id: selectFolderField
-                        height: parent.height
-                        width: parent.width - 40
-                        placeholderText: "Enter Path"
-                        onActiveFocusChanged: {
-                            folderFieldBackground.border.color = activeFocus ? "#b55400" : "transparent"
-                        }
-                        background: Rectangle {
-                            id: folderFieldBackground
-                            color: "white"
-                            border {
-                                width: 2
-                                color: "transparent"
-                            }
-                        }
-
-                    }
-                    Button  {
-                        height: parent.height
-                        width: 40
-                        onPressed: {
-                            folderDialog.visible = true
-                        }
-                        anchors {
-                            left: selectFolderField.right
-                            leftMargin: 0
-                            verticalCenter: parent.verticalCenter
-                        }
-                        Image {
-                            source: "../Images/openFolderIcon.png"
-                            width: parent.width / 1.5
-                            height: parent.height / 1.5
-                            anchors.centerIn: parent
-                            fillMode: Image.PreserveAspectFit
-                        }
-                    }
+                    width: parent.width
                 }
-            }
-            Rectangle {
-                Layout.preferredHeight: 80
-                Layout.preferredWidth: parent.width
-                Layout.alignment: Qt.AlignHCenter + Qt.AlignTop
-                color: "transparent"
-                Rectangle {
-                    id: filenameContainer
-                    height: parent.height / 2
-                    width: parent.width / 2
-                    anchors {
-                        centerIn: parent
-                    }
-                    Label {
-                        text: "Database Name:"
-                        color: "white"
-                        anchors {
-                            bottom: filenameContainer.top
-                            left: filenameContainer.left
-                        }
-                    }
-                    TextField {
-                        id: filenameField
-                        anchors.fill: parent
-                        placeholderText: "Enter Database Name"
-                        onActiveFocusChanged: {
-                            filenameFieldBackground.border.color = activeFocus ? "#b55400" : "transparent"
-                        }
-                        background: Rectangle {
-                            id: filenameFieldBackground
-                            border {
-                                width: 2
-                                color: "transparent"
-                            }
-                        }
-
-                    }
-                }
-            }
-
-            Rectangle {
-                Layout.preferredHeight: 80
-                Layout.preferredWidth: parent.width
-                Layout.alignment: Qt.AlignHCenter + Qt.AlignTop
-                color: "transparent"
                 Button {
-                    id: submitButton
-                    height: parent.height / 2
-                    width: parent.width / 4
-                    text: "Submit"
-                    anchors.centerIn: parent
-                    onClicked: {
-                        validate()
+                    height: 30
+                    width: 40
+                    anchors {
+                        left: parent.right
+                    }
+                    background: Rectangle {
+                        color: "transparent"
+                    }
+                    onClicked: folderDialog.visible = true
+                    Image {
+                        id: folderImage
+                        anchors.fill: parent
+                        anchors.centerIn: parent
+                        source: "../Images/openFolderIcon.png"
+                        fillMode: Image.PreserveAspectFit
                     }
                 }
             }
+            UserInputBox {
+                id: filenameContainer
+                Layout.preferredHeight: 30
+                Layout.preferredWidth: parent.width / 2
+                Layout.alignment: Qt.AlignHCenter + Qt.AlignTop
+            }
+            Button {
+                id: submitButton
+                Layout.preferredHeight: 35
+                Layout.preferredWidth: 100
+                Layout.alignment: Qt.AlignHCenter + Qt.AlignTop
+                text: "Submit"
+                onClicked: {
+                    validate()
+                }
+            }
+        }
+        FolderDialog {
+            id: folderDialog
+            onAccepted: {
+                selectFolderField.text = folderDialog.folder
+            }
         }
     }
-    //place dialog box here
-    FolderDialog {
-        id: folderDialog
-        onAccepted: {
-            selectFolderField.text = folderDialog.folder
-        }
-    }
-
 }

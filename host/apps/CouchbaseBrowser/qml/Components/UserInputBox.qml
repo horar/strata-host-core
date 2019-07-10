@@ -7,19 +7,28 @@ Rectangle {
     width: parent.width / 2
 
     property alias label: label.text
-    property alias userInput: inputField.text
     property alias acceptPassword: inputField.echoMode
     property color borderColor: "transparent"
     property bool isPassword: false
-    function clearField(){
-        inputField.text = ""
+    property string userInput: ""
+    function clearField() {
+        userInput = ""
+    }
+    function isEmpty() {
+        userInput = inputField.text
+        if (userInput === "") {
+            fieldBackground.border.color = "red"
+            borderColor = "red"
+            return true
+        }
+        fieldBackground.border.color = "transparent"
+        return false
     }
     Component.onCompleted: {
-        if(isPassword === true){
+        if (isPassword === true) {
             inputField.echoMode = "Password"
         }
     }
-
 
     Label {
         id: label
@@ -34,6 +43,7 @@ Rectangle {
         id: inputField
         anchors.fill: parent
         placeholderText: ("Enter " + label.text)
+        text: userInput
         onActiveFocusChanged: {
             fieldBackground.border.color = activeFocus ? "#b55400" : "transparent"
         }
