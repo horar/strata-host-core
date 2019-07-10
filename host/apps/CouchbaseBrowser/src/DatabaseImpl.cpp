@@ -92,17 +92,17 @@ QString DatabaseImpl::createNewDoc(const QString &id, const QString &body)
 
 QString DatabaseImpl::createNewDoc_(const QString &id, const QString &body)
 {
-    //    SGMutableDocument newDoc(sg_db_,id.toStdString());
+    SGMutableDocument newDoc(sg_db_,id.toStdString());
 
-    //    if(!newDoc.setBody(body.toStdString())) {
-    //        DEBUG("Error setting content of created document. Body must be in JSON format.");
-    //        return false;
-    //    }
+    if(!newDoc.setBody(body.toStdString())) {
+        return("Error setting content of created document. Body must be in JSON format.");
+    }
 
-    //     if(sg_db_->save(&newDoc) == SGDatabaseReturnStatus::kNoError) {
-    //             cout << "\nthis works." << endl;
-    //    }
+    if(sg_db_->save(&newDoc) != SGDatabaseReturnStatus::kNoError) {
+        return("Error saving document to database.");
+    }
 
+    emitUpdate();
     return("");
 }
 
