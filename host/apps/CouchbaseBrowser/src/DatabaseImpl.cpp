@@ -72,6 +72,10 @@ QString DatabaseImpl::createNewDoc_(const QString &id, const QString &body)
 {
     SGMutableDocument newDoc(sg_db_,id.toStdString());
 
+    if(newDoc.exist()) {
+        return("A document with ID \"" + id + "\" already exists. Modify the ID and try again.");
+    }
+
     if(!newDoc.setBody(body.toStdString())) {
         return("Error setting content of created document. Body must be in JSON format.");
     }
@@ -281,17 +285,17 @@ bool DatabaseImpl::parseNewFile()
 QString DatabaseImpl::editDoc(const QString &oldId, const QString &newId, const QString &body)
 {
     if(oldId.isEmpty()) {
-        return("Received empty id, cannot edit.");
+        return("Received empty ID, cannot edit.");
     }
 
     if(newId.isEmpty() && body.isEmpty()) {
-        return("Received empty new id and body, nothing to edit.");
+        return("Received empty new ID and body, nothing to edit.");
     }
 
     SGMutableDocument doc(sg_db_,oldId.toStdString());
 
     if(!doc.exist()) {
-        return("\nDocument with id = \"" + oldId + "\" does not exist. Cannot edit.");
+        return("\nDocument with ID = \"" + oldId + "\" does not exist. Cannot edit.");
     }
 
     return editDoc_(doc, newId, body);
@@ -318,13 +322,13 @@ QString DatabaseImpl::editDoc_(SGMutableDocument &doc, const QString &newId, con
 QString DatabaseImpl::deleteDoc(const QString &id)
 {
     if(id.isEmpty()) {
-        return("Received empty id, cannot delete.");
+        return("Received empty ID, cannot delete.");
     }
 
     SGDocument doc(sg_db_,id.toStdString());
 
     if(!doc.exist()) {
-        return("\nDocument with id = \"" + id + "\" does not exist. Cannot delete.");
+        return("\nDocument with ID = \"" + id + "\" does not exist. Cannot delete.");
     }
 
     return deleteDoc_(doc);
@@ -337,19 +341,22 @@ QString DatabaseImpl::deleteDoc_(SGDocument &doc)
     return("");
 }
 
-QString DatabaseImpl::saveAs(const QString &id, const QString &path)
+QString DatabaseImpl::saveAs(const QString &id, QString &path)
 {
     if(id.isEmpty() || path.isEmpty()) {
-        return("Received empty id or path, unable to save.");
+        return("Received empty ID or path, unable to save.");
     }
 
-    QDir dir(path);
+    path.replace("file://","");
 
-    if(!dir.isAbsolute()) {
+    QDir dir(path);
+    path = dir.path() + dir.separator();
+
+    if(!dir.exists() || !dir.isAbsolute()) {
         return("Received invalid path, unable to save.");
     }
 
-    return(saveAs_(id, path));
+    return saveAs_(id, path);
 }
 
 QString DatabaseImpl::saveAs_(const QString &id, const QString &path)
@@ -360,13 +367,18 @@ QString DatabaseImpl::saveAs_(const QString &id, const QString &path)
         return("Problem saving database.");
     }
 
+    if(!temp_db.isOpen()) {
+        return("Problem saving database.");
+    }
+
     for(std::vector <string>::iterator iter = document_keys_.begin(); iter != document_keys_.end(); iter++) {
         SGMutableDocument temp_doc(&temp_db, (*iter));
         SGDocument existing_doc(sg_db_, (*iter));
         temp_doc.setBody(existing_doc.getBody());
-//        temp_db.save(&temp_doc);
+        temp_db.save(&temp_doc);
     }
 
+    cout << "\nSaved database with ID " << id.toStdString() << " to " << path.toStdString() << endl;
     return("");
 }
 
