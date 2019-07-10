@@ -39,7 +39,7 @@ Window {
         }
         StatusBar {
             id: statusBar
-            anchors.top: parent.top
+            anchors.bottom: parent.bottom
         }
         ColumnLayout {
             spacing: 20

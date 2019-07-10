@@ -13,7 +13,7 @@ Window {
     minimumHeight: 450
     maximumHeight: 450
     maximumWidth: 400
-    visible: true
+    visible: false
     flags: Qt.Tool
 
     signal start()
@@ -58,7 +58,7 @@ Window {
         }
         StatusBar {
             id: statusBar
-            anchors.top: parent.top
+            anchors.bottom: parent.bottom
         }
         ColumnLayout {
             spacing: 15
@@ -328,6 +328,7 @@ Window {
         id: warningPopup
         onAllow: {
             warningPopup.visible = false
+            root.close()
             start()
         }
         onDeny: {

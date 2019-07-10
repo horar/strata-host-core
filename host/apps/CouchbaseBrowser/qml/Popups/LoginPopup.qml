@@ -31,8 +31,7 @@ Window {
         passwordContainer.clearField()
     }
     function validate(){
-        if(urlContainer.userInput === ""){
-            urlContainer.borderColor = "red"
+        if(urlContainer.isEmpty() === true){
             statusBar.message = "URL field cannot be empty"
         }
         else {
@@ -50,7 +49,7 @@ Window {
         }
         StatusBar {
             id: statusBar
-            anchors.top: parent.top
+            anchors.bottom: parent.bottom
         }
         ColumnLayout {
             spacing: 15

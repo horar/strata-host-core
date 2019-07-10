@@ -31,6 +31,7 @@ Window {
         }
         else {
             statusBar.message = ""
+            clearFields()
             submit()
         }
     }
@@ -62,6 +63,7 @@ Window {
                 UserInputBox {
                     id: selectFolderContainer
                     width: parent.width
+                    label: "Folder:"
                 }
                 Button {
                     height: 30
@@ -87,6 +89,7 @@ Window {
                 Layout.preferredHeight: 30
                 Layout.preferredWidth: parent.width / 2
                 Layout.alignment: Qt.AlignHCenter + Qt.AlignTop
+                label: "Filename:"
             }
             Button {
                 id: submitButton
