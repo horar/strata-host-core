@@ -31,12 +31,12 @@ Item {
 
     onAllDocumentsChanged: {
         if (allDocuments !== "{}") {
-            var tempModel = ["All documents"]
+            let tempModel = ["All documents"]
             jsonObj = JSON.parse(allDocuments)
-            for (i in jsonObj)
+            for (let i in jsonObj)
                 tempModel.push(i)
-            var prevID = openedDocumentID
-            var newIndex = tempModel.indexOf(prevID)
+            let prevID = openedDocumentID
+            let newIndex = tempModel.indexOf(prevID)
             if (newIndex === -1)
                 newIndex = 0
             tableSelectorView.model = tempModel
