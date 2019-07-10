@@ -15,7 +15,7 @@ Window {
 
     signal submit();
 
-    property alias docID: idTextField.text;
+    property alias docID: idContainer.userInput
     property alias docBody: bodyTextArea.text;
     property alias message: statusBar.message
 
@@ -46,25 +46,11 @@ Window {
             width: parent.width-50
             height: parent.height-100
             anchors.centerIn: parent
-            Item {
+            UserInputBox {
                 id: idContainer
-                Layout.preferredHeight: idLabel.height+idTextField.height
+                Layout.preferredHeight: 30
                 Layout.fillWidth: true
-                Label {
-                    id: idLabel
-                    text: "ID:"
-                    color: "white"
-                    anchors.top: parent.top
-                }
-                TextField {
-                    id: idTextField
-                    text: ""
-                    height: 40
-                    width: parent.width
-                    anchors.top: idLabel.bottom
-                    placeholderText: "Enter ID"
-                    validator: RegExpValidator { regExp: /^(?!\s*$).+/ }
-                }
+                label: "ID:"
             }
             Item {
                 id: bodyContainer
@@ -107,8 +93,8 @@ Window {
                 Layout.alignment: Qt.AlignHCenter
                 text: "Submit"
                 onClicked: {
-                    submit();
                     root.visible = false;
+                    submit();
                 }
                 enabled: validBody
             }
