@@ -247,9 +247,9 @@ bool DatabaseImpl::parseFilePath()
     QFileInfo info(file_path_);
 
     if(info.exists()) {
-        cout << "\nExists. " << endl; return parseExistingFile();
+        return parseExistingFile();
     } else {
-        cout << "\nDoes not exist. " << endl; return parseNewFile();
+        return parseNewFile();
     }
 }
 
