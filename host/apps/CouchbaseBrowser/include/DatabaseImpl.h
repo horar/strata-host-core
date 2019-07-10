@@ -34,9 +34,11 @@ public:
 
     void stopListening();
 
-    QString setFilePath(QString file_path);
+    QString openDB(QString &file_path);
 
-    QString editDoc(const QString &oldId, const QString &newId = "", const QString &body = "");
+    void closeDB();
+
+    QString editDoc(QString &oldId, QString newId = "", const QString body = "");
 
     QString deleteDoc(const QString &id);
 
@@ -96,8 +98,6 @@ private:
     QString createNewDoc_(const QString &id, const QString &body);
 
     QString startRep();
-
-    QString editDoc_(Spyglass::SGMutableDocument &doc, const QString &newId, const QString &body);
 
     QString deleteDoc_(Spyglass::SGDocument &doc);
 
