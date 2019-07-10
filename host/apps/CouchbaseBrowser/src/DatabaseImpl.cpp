@@ -66,28 +66,6 @@ QString DatabaseImpl::createNewDoc(const QString &id, const QString &body)
     }
 
     return createNewDoc_(id,body);
-
-//    cout << "\nCreate doc: " << id.toStdString() << "   " << body.toStdString() << endl;
-
-//    emitUpdate();
-
-
-
-//    SGMutableDocument usbPDDocument(sg_db_, "victorsDDOCUMENT");``
-
-
-//     DEBUG("document Id: %s, body: %s\n", usbPDDocument.getId().c_str(), usbPDDocument.getBody().c_str());
-
-//     std::string json_data = R"foo({"name":"VICTORVICTORVICTORVICTORVICTOR","age":200,"myobj":{"mykey":"myvalue","myarray":[1,2,3,4]} })foo";
-//         if( usbPDDocument.setBody(json_data) ){
-//             DEBUG("json_data is a valid json\n");
-//         }
-
-//     if(sg_db_->save(&usbPDDocument) == SGDatabaseReturnStatus::kNoError) {
-//             cout << "\nthis works." << endl;
-//    }
-
-//    emitUpdate();
 }
 
 QString DatabaseImpl::createNewDoc_(const QString &id, const QString &body)
@@ -178,9 +156,7 @@ QString DatabaseImpl::setChannels(const vector<QString> &channels)
     }
 
     sg_replicator_configuration_->setChannels(channels_);
-
     startRep();
-
     return("");
 }
 
@@ -323,22 +299,6 @@ QString DatabaseImpl::editDoc(const QString &oldId, const QString &newId, const 
 
 QString DatabaseImpl::editDoc_(SGMutableDocument &doc, const QString &newId, const QString &body)
 {
-//    C4Document *c4_doc = sg_db_->getDocumentById(id.toStdString());
-
-//    SGDocument sg_doc;
-
-//    sg_doc.setC4document(c4_doc);
-
-//    SGDocument doc = sg_db_->getDocumentById(id.toStdString());
-
-//    std::vector <string>::iterator iter = document_keys_.begin();
-
-//    QString temp_name = "first_Doc";
-
-//    SGMutableDocument d(sg_db_, (*iter));
-
-//    SGMutableDocument doc(sg_db_,temp_name.toStdString());
-
     if(!newId.isEmpty()) {
         doc.setId(newId.toStdString());
     }
@@ -347,10 +307,11 @@ QString DatabaseImpl::editDoc_(SGMutableDocument &doc, const QString &newId, con
         doc.setBody(body.toStdString());
     }
 
-    // needs to be saved to show up
+    if(sg_db_->save(&doc) != SGDatabaseReturnStatus::kNoError) {
+        return("Error saving document to database.");
+    }
 
     emitUpdate();
-
     return("");
 }
 
