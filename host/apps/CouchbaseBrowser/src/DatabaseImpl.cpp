@@ -17,7 +17,7 @@ DatabaseImpl::DatabaseImpl(const int &id) : id_(id)
 
 DatabaseImpl::~DatabaseImpl()
 {
-    rep_stop();
+    stopListening();
     delete sg_replicator_;
     delete url_endpoint_;
     delete sg_replicator_configuration_;
@@ -50,7 +50,7 @@ void DatabaseImpl::emitUpdate()
     emit newUpdate(this->id_);
 }
 
-void DatabaseImpl::rep_stop()
+void DatabaseImpl::stopListening()
 {
     if (getRepstatus()) {
         sg_replicator_->stop();
@@ -135,8 +135,7 @@ QString DatabaseImpl::createNewDoc_(const QString &id, const QString &body)
     return true;
 }
 
-QString DatabaseImpl::rep_init(const QString &url, const QString &username, const QString &password, const QString &rep_type,
-                                    const vector<QString> &channels)
+QString DatabaseImpl::startListening(const QString &url, const QString &username, const QString &password, const QString &rep_type, const vector<QString> &channels)
 {
     if(url.isEmpty()) {
         return ("URL may not be empty.");
@@ -160,10 +159,32 @@ QString DatabaseImpl::rep_init(const QString &url, const QString &username, cons
         return("Invalid URL endpoint.");
     }
 
-    return rep_init_();
+    return startRep();
 }
 
-QString DatabaseImpl::rep_init_()
+QString DatabaseImpl::setChannels(const vector<QString> &channels)
+{
+    if(!getRepstatus()) {
+        return("Replicator is not running, cannot set or modify channels.");
+    }
+
+    stopListening();
+
+    if(!channels.empty()) {
+        channels_.clear();
+        for(auto &val : channels) {
+            channels_.push_back(val.toStdString());
+        }
+    }
+
+    sg_replicator_configuration_->setChannels(channels_);
+
+    startRep();
+
+    return("");
+}
+
+QString DatabaseImpl::startRep()
 {
     if(!getDBstatus()) {
         return("Database must be open and running for replication to be activated.");
@@ -179,9 +200,15 @@ QString DatabaseImpl::rep_init_()
         return("Problem with start of replication.");
     }
 
-
-//   write switch statment
-//    sg_replicator_configuration_->setReplicatorType(rep_type_);
+    if(rep_type_ == "pull") {
+        sg_replicator_configuration_->setReplicatorType(SGReplicatorConfiguration::ReplicatorType::kPull);
+    } else if(rep_type_ == "push") {
+        sg_replicator_configuration_->setReplicatorType(SGReplicatorConfiguration::ReplicatorType::kPush);
+    } else if(rep_type_ == "pushpull") {
+        sg_replicator_configuration_->setReplicatorType(SGReplicatorConfiguration::ReplicatorType::kPushAndPull);
+    } else {
+        return("Unidentified replicator type selected.");
+    }
 
     if(!username_.isEmpty() && !password_.isEmpty()) {
         sg_basic_authenticator_ = new SGBasicAuthenticator(username_.toStdString(),password_.toStdString());
@@ -220,9 +247,9 @@ bool DatabaseImpl::parseFilePath()
     QFileInfo info(file_path_);
 
     if(info.exists()) {
-        cout << "\nExists. " << endl; return parseExistingFile();
+        return parseExistingFile();
     } else {
-        cout << "\nDoes not exist. " << endl; return parseNewFile();
+        return parseNewFile();
     }
 }
 
