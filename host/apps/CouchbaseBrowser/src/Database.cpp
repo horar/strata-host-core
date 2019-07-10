@@ -48,14 +48,19 @@ void Database::close(int windowId)
     QQmlProperty::write(allWindows[windowId],"allDocuments","{}");
 }
 
-QString Database::startListening(int windowId, QString url, QString username, QString password, QString type, std::vector<QString> channels)
+QString Database::startListening(int windowId, QString url, QString username, QString password, QString type)
 {
-    return allDatabases[windowId]->rep_init(url,username,password,type,channels);
+    return allDatabases[windowId]->startListening(url,username,password,type);
+}
+
+QString Database::setChannels(int windowId, std::vector<QString> channels)
+{
+    return allDatabases[windowId]->setChannels(channels);
 }
 
 void Database::stopListening(int windowId)
 {
-    allDatabases[windowId]->rep_stop();
+    allDatabases[windowId]->stopListening();
 }
 
 QString Database::newDatabase(int windowId, QString folder_path, QString dbName)
@@ -92,4 +97,9 @@ void Database::newUpdateSignal(int windowId)
 {
     QQmlProperty::write(allWindows[windowId],"fileName",allDatabases[windowId]->getDBName());
     QQmlProperty::write(allWindows[windowId],"allDocuments",allDatabases[windowId]->getJSONResponse());
+}
+
+QString Database::searchDocById(int windowId, QString id)
+{
+    return allDatabases[windowId]->searchDocById(id);
 }

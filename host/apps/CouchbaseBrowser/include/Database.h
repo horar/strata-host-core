@@ -20,10 +20,12 @@ class Database : public QObject
         Q_INVOKABLE QString editDocument(int windowId, QString oldId, QString newId, QString body);
         Q_INVOKABLE QString saveAs(int windowId, QString folder_path, QString dbName);
         Q_INVOKABLE void close(int windowId);
-        Q_INVOKABLE QString startListening(int windowId, QString url, QString username, QString password, QString type, std::vector<QString> channels);
+        Q_INVOKABLE QString startListening(int windowId, QString url, QString username, QString password, QString type);
+        Q_INVOKABLE QString setChannels(int windowId, std::vector<QString> channels);
         Q_INVOKABLE void stopListening(int windowId);
         Q_INVOKABLE QString newDatabase(int windowId, QString folder_path, QString dbName);
         Q_INVOKABLE void newWindow();
+        Q_INVOKABLE QString searchDocById(int windowId, QString id);
 
     public slots:
         void newUpdateSignal(int windowId);

@@ -160,11 +160,16 @@ Item {
             LoginPopup {
                 id: loginPopup
                 onStart: {
-                    let message = database.startListening(id,url,username,password,rep_type,channels);
+                    let message = database.startListening(id,url,username,password,rep_type);
                     if (message.length === 0) {
+                        message = database.setChannels(id,channels)
                         bodyView.message = "Started listening successfully"
                         mainMenuView.startedListening = true
                         visible = false
+                        if (message.length === 0)
+                            bodyView.message = "Set channels successfully"
+                        else
+                            bodyView.message = message
                     } else
                         bodyView.message = message
                 }
