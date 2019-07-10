@@ -31,8 +31,7 @@ public:
     QString createNewDoc(const QString &id, const QString &body);
 
     QString rep_init(const QString &url, const QString &username = "", const QString &password = "",
-        const Spyglass::SGReplicatorConfiguration::ReplicatorType &rep_type = Spyglass::SGReplicatorConfiguration::ReplicatorType::kPull,
-        const std::vector<QString> &channels = std::vector<QString> ());
+        const QString &rep_type = "pull", const std::vector<QString> &channels = std::vector<QString> ());
 
     void rep_stop();
 
@@ -63,7 +62,7 @@ private:
 
     Spyglass::SGBasicAuthenticator *sg_basic_authenticator_{nullptr};
 
-    Spyglass::SGReplicatorConfiguration::ReplicatorType rep_type_;
+    QString rep_type_;
 
     void emitUpdate();
 

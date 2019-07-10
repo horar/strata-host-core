@@ -29,6 +29,7 @@ DatabaseImpl::~DatabaseImpl()
 
 QString DatabaseImpl::setFilePath(QString file_path)
 {
+    file_path.replace("file://","");
     file_path_ = file_path;
     if(!parseFilePath()) {
         return("Problem with path to database file. The file must be located according to: \".../db/(db_name)/db.sqlite3\"\n");
@@ -134,7 +135,7 @@ QString DatabaseImpl::createNewDoc_(const QString &id, const QString &body)
     return true;
 }
 
-QString DatabaseImpl::rep_init(const QString &url, const QString &username, const QString &password, const SGReplicatorConfiguration::ReplicatorType &rep_type,
+QString DatabaseImpl::rep_init(const QString &url, const QString &username, const QString &password, const QString &rep_type,
                                     const vector<QString> &channels)
 {
     if(url.isEmpty()) {
@@ -178,7 +179,9 @@ QString DatabaseImpl::rep_init_()
         return("Problem with start of replication.");
     }
 
-    sg_replicator_configuration_->setReplicatorType(rep_type_);
+
+//   write switch statment
+//    sg_replicator_configuration_->setReplicatorType(rep_type_);
 
     if(!username_.isEmpty() && !password_.isEmpty()) {
         sg_basic_authenticator_ = new SGBasicAuthenticator(username_.toStdString(),password_.toStdString());
@@ -217,9 +220,9 @@ bool DatabaseImpl::parseFilePath()
     QFileInfo info(file_path_);
 
     if(info.exists()) {
-        return parseExistingFile();
+        cout << "\nExists. " << endl; return parseExistingFile();
     } else {
-        return parseNewFile();
+        cout << "\nDoes not exist. " << endl; return parseNewFile();
     }
 }
 
