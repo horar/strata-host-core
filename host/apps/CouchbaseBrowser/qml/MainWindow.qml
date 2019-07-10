@@ -20,8 +20,7 @@ Item {
         if (documentSelectorDrawer.currentIndex !== 0) {
             mainMenuView.onSingleDocument = true
             openedDocumentID = documentSelectorDrawer.model[documentSelectorDrawer.currentIndex]
-            openedDocumentBody = JSON.stringify(jsonObj[openedDocumentID],
-                                                null, 4)
+            openedDocumentBody = JSON.stringify(jsonObj[openedDocumentID],null, 4)
             bodyView.content = openedDocumentBody
         } else {
             mainMenuView.onSingleDocument = false
@@ -114,8 +113,6 @@ Item {
                 id: bodyContainer
                 Layout.preferredWidth: parent.width
                 Layout.preferredHeight: parent.height - menuContainer.height - statusBarContainer.height
-                //Layout.fillHeight: true
-                //color: "#222831"
 
                 DocumentSelectorDrawer {
                     id: documentSelectorDrawer
@@ -137,9 +134,7 @@ Item {
                 Rectangle {
                     Layout.preferredHeight: height
                     Layout.fillWidth: true
-                    //Layout.preferredWidth: width
                     height: parent.height
-                    //width: parent.width - documentSelectorDrawer.width
                     color: "transparent"
                     BodyDisplay {
                         id: bodyView
@@ -159,17 +154,6 @@ Item {
 //                    }
 //                }
             }
-//            Rectangle {
-//                id: bodyContainer
-//                Layout.preferredWidth: (parent.width - selectorContainer.width)
-//                Layout.preferredHeight: (parent.height - menuContainer.height)
-//                Layout.row: 1
-//                Layout.column: 1
-//                color: "transparent"
-//                BodyDisplay {
-//                    id: bodyView
-//                }
-//            }
         }
 
         Item {
@@ -178,7 +162,6 @@ Item {
 
             FileDialog {
                 id: openFileDialog
-                visible: false
                 title: "Please select a database"
                 folder: shortcuts.home
                 onAccepted: {
