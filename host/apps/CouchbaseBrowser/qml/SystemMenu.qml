@@ -32,7 +32,6 @@ Item {
         anchors.verticalCenter: parent.verticalCenter
         CustomMenuItem {
             id: openFile
-            Component.onCompleted: console.log(height, width)
             Layout.preferredHeight: 50
             Layout.preferredWidth: 50
             Layout.leftMargin: 5

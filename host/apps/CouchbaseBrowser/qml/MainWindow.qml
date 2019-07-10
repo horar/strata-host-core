@@ -100,7 +100,6 @@ Item {
                     Layout.preferredHeight: parent.height
                     Layout.preferredWidth: documentSelectorDrawer.width
                     text: "<b>Document Selector:</b>"
-                    anchors.top: parent.top
                     onClicked: documentSelectorDrawer.visible = !documentSelectorDrawer.visible
                 }
                 StatusBar {

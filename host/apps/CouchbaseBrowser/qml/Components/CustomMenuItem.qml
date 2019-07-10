@@ -23,8 +23,6 @@ Item {
         Image {
             id: icon
             anchors.fill: parent
-            Component.onCompleted: console.log(height, width)
-
             fillMode: Image.PreserveAspectFit
 
             MouseArea {
