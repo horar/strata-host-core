@@ -86,12 +86,12 @@ Item {
                         database.close(id)
                         bodyView.message = "Closed file"
                     }
-                    onStartReplicatorSignal: {
+                    onStartListeningSignal: {
                         loginPopup.visible = true
                     }
-                    onStopReplicatorSignal: {
+                    onStopListeningSignal: {
                         database.stopListening(id)
-                        bodyView.message = "Stopped replicator"
+                        bodyView.message = "Stopped listening"
                     }
                     onNewWindowSignal: database.newWindow()
                 }
@@ -117,7 +117,7 @@ Item {
                     id: onLogo
                     width: 50
                     height: 50
-                    source: "Images/CBBrowserLogo.png"
+                    source: "Images/cbbrowserLogo.png"
                     fillMode: Image.PreserveAspectCrop
                     anchors {
                         bottom: parent.bottom
@@ -162,8 +162,8 @@ Item {
                 onStart: {
                     let message = database.startListening(id,url,username,password,rep_type,channels);
                     if (message.length === 0) {
-                        bodyView.message = "Started replicator successfully"
-                        mainMenuView.replicatorStarted = true
+                        bodyView.message = "Started listening successfully"
+                        mainMenuView.startedListening = true
                         visible = false
                     } else
                         bodyView.message = message

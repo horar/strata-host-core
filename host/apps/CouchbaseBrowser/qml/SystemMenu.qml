@@ -16,11 +16,11 @@ Item {
     signal editDocumentSignal()
     signal saveAsSignal()
     signal closeSignal()
-    signal startReplicatorSignal()
-    signal stopReplicatorSignal()
+    signal startListeningSignal()
+    signal stopListeningSignal()
     signal newWindowSignal()
 
-    property bool replicatorStarted: false
+    property bool startedListening: false
     property bool openedFile: false
     property bool onSingleDocument: false
 
@@ -37,15 +37,6 @@ Item {
             filename: "Images/openFolderIcon"
             label: "<b>Open</b>"
             onButtonPress: openFileSignal()
-        }
-        CustomMenuItem {
-            id: newDB
-            Layout.preferredHeight: 50
-            Layout.preferredWidth: 50
-            Layout.leftMargin: 5
-            filename: "Images/newDatabase"
-            label: "<b>New DB</b>"
-            onButtonPress: newDatabaseSignal()
         }
         CustomMenuItem {
             id: newDocument
@@ -82,7 +73,7 @@ Item {
             Layout.preferredHeight: 50
             Layout.preferredWidth: 50
             Layout.leftMargin: 5
-            filename: "Images/Save-as-icon"
+            filename: "Images/saveAsIcon"
             label: "<b>Save As</b>"
             onButtonPress: saveAsSignal()
             disable: !openedFile
@@ -97,7 +88,7 @@ Item {
             onButtonPress: {
                 closeSignal()
                 openedFile = false
-                replicatorStarted = false
+                startedListening = false
             }
             visible: openedFile
         }
@@ -114,26 +105,35 @@ Item {
             top: parent.top
         }
         CustomMenuItem {
-            id: startReplication
-            visible: !replicatorStarted
+            id: startListening
+            visible: !startedListening
             Layout.preferredHeight: 50
             Layout.preferredWidth: 50
-            label: "<b>Replicate</b>"
-            filename: "Images/replicateDatabase"
-            onButtonPress: startReplicatorSignal()
+            label: "<b>Start Listening</b>"
+            filename: "Images/startListeningIcon"
+            onButtonPress: startListeningSignal()
             disable: !openedFile
         }
         CustomMenuItem {
-            id: stopReplication
-            visible: replicatorStarted
+            id: stopListening
+            visible: startedListening
             Layout.preferredHeight: 50
             Layout.preferredWidth: 50
-            label: "<b>Stop Replication</b>"
-            filename: "Images/stopReplication"
+            label: "<b>Stop Listening</b>"
+            filename: "Images/stopListeningIcon"
             onButtonPress: {
-                stopReplicatorSignal()
-                replicatorStarted = false
+                stopListeningSignal()
+                startedListening = false
             }
+        }
+        CustomMenuItem {
+            id: newDB
+            Layout.preferredHeight: 50
+            Layout.preferredWidth: 50
+            Layout.leftMargin: 5
+            filename: "Images/newDatabaseIcon"
+            label: "<b>New DB</b>"
+            onButtonPress: newDatabaseSignal()
         }
         CustomMenuItem {
             id: newWindow

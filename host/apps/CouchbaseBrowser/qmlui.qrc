@@ -14,18 +14,15 @@
         <file>qml/Components/UserInputBox.qml</file>
         <file>qml/Images/closeIcon.png</file>
         <file>qml/Images/createDocumentIcon.png</file>
-        <file>qml/Images/OnLogo copy.png</file>
-        <file>qml/Images/OnLogo.png</file>
         <file>qml/Images/openFolderIcon.png</file>
         <file>qml/Images/saveIcon.png</file>
-        <file>qml/Images/Save-as-icon.png</file>
+        <file>qml/Images/saveAsIcon.png</file>
         <file>qml/Images/newTabIcon.png</file>
-        <file>qml/Images/replicateDatabase.png</file>
-        <file>qml/Images/stopReplication.png</file>
-        <file>qml/Images/newDatabase.png</file>
+        <file>qml/Images/startListeningIcon.png</file>
+        <file>qml/Images/stopListeningIcon.png</file>
+        <file>qml/Images/newDatabaseIcon.png</file>
         <file>qml/Images/editIcon.png</file>
         <file>qml/Images/deleteDocumentIcon.png</file>
-        <file>qml/Images/CBBrowserLogo.png</file>
-        <file>qml/Images/CBBrowserLogo-01.png</file>
+        <file>qml/Images/cbbrowserLogo.png</file>
     </qresource>
 </RCC>
