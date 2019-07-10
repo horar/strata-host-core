@@ -9,8 +9,11 @@ Rectangle {
     property alias label: label.text
     property alias userInput: inputField.text
     property alias acceptPassword: inputField.echoMode
+    property color borderColor: "transparent"
     property bool isPassword: false
-
+    function clearField(){
+        inputField.text = ""
+    }
     Component.onCompleted: {
         if(isPassword === true){
             inputField.echoMode = "Password"
@@ -38,7 +41,7 @@ Rectangle {
             id: fieldBackground
             border {
                 width: 2
-                color: "transparent"
+                color: borderColor
             }
         }
     }
