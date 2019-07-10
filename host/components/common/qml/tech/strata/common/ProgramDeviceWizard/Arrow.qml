@@ -3,8 +3,8 @@ import "./CanvasShapes.js" as CanvasShapesJS
 
 Item {
     id: arrow
-    width: canvas.width + 2*padding
-    height: canvas.height + 2*padding
+    implicitWidth: canvas.width + 2*padding
+    implicitHeight: canvas.height + 2*padding
 
     property int cornerRadius: 30
     property int wingWidth: 4
@@ -26,7 +26,7 @@ Item {
         property point tipPoint: {
             if (orientation === Item.Right) {
                 return Qt.point(width, Math.round(height/2))
-            } else if(orientation === Item.Left) {
+            } else if (orientation === Item.Left) {
                 return Qt.point(0, Math.round(height/2))
             } else if (orientation === Item.Bottom) {
                 return Qt.point(Math.round(width/2), Math.round(height))
@@ -37,6 +37,10 @@ Item {
         }
 
         onPaint: {
+            if (arrow.visible === false) {
+                return
+            }
+
             var ctx = getContext("2d")
             CanvasShapesJS.drawArrow(
                         ctx,

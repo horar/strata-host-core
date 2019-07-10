@@ -4,7 +4,7 @@
         <file>qml/main.qml</file>
         <file>qml/MainWindow.qml</file>
         <file>qml/SystemMenu.qml</file>
-        <file>qml/TableSelector.qml</file>
+        <file>qml/DocumentSelectorDrawer.qml</file>
         <file>qml/Popups/DatabasePopup.qml</file>
         <file>qml/Popups/DocumentPopup.qml</file>
         <file>qml/Popups/LoginPopup.qml</file>

@@ -49,7 +49,7 @@ namespace Spyglass {
     }
 
     const std::string SGDocument::getBody() const {
-        return mutable_dict_->asDict()->toJSONString();
+        return mutable_dict_->toJSONString();
     }
 
     const fleece::impl::Dict *SGDocument::asDict() const {

@@ -1,4 +1,5 @@
-import QtQuick 2.0
+import QtQuick 2.12
+import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
 import QtQuick.Dialogs 1.3
 import "Popups"
@@ -16,15 +17,15 @@ Item {
     property string openedDocumentBody
 
     function updateOpenDocument() {
-        if (tableSelectorView.currentIndex !== 0) {
+        if (documentSelectorDrawer.currentIndex !== 0) {
             mainMenuView.onSingleDocument = true
-            openedDocumentID = tableSelectorView.model[tableSelectorView.currentIndex]
+            openedDocumentID = documentSelectorDrawer.model[documentSelectorDrawer.currentIndex]
             openedDocumentBody = JSON.stringify(jsonObj[openedDocumentID],
                                                 null, 4)
             bodyView.content = openedDocumentBody
         } else {
             mainMenuView.onSingleDocument = false
-            openedDocumentID = tableSelectorView.model[0]
+            openedDocumentID = documentSelectorDrawer.model[0]
             bodyView.content = JSON.stringify(jsonObj, null, 4)
         }
     }
@@ -39,14 +40,14 @@ Item {
             let newIndex = tempModel.indexOf(prevID)
             if (newIndex === -1)
                 newIndex = 0
-            tableSelectorView.model = tempModel
+            documentSelectorDrawer.model = tempModel
 
-            if (tableSelectorView.currentIndex === newIndex) {
+            if (documentSelectorDrawer.currentIndex === newIndex) {
                 updateOpenDocument()
             } else
-                tableSelectorView.currentIndex = newIndex
+                documentSelectorDrawer.currentIndex = newIndex
         } else {
-            tableSelectorView.model = []
+            documentSelectorDrawer.model = []
             bodyView.content = ""
         }
     }
@@ -55,26 +56,20 @@ Item {
         id: background
         anchors.fill: parent
         color: "#b55400"
-        GridLayout {
+        ColumnLayout {
             id: gridview
             anchors.fill: parent
-            rows: 2
-            columns: 2
-            columnSpacing: 2
-            rowSpacing: 2
+            spacing:0
 
             Rectangle {
                 id: menuContainer
                 Layout.preferredWidth: parent.width
-                Layout.preferredHeight: 82
-                Layout.row: 0
-                Layout.columnSpan: 2
+                Layout.preferredHeight: 70
                 color: "#222831"
                 SystemMenu {
                     id: mainMenuView
                     anchors {
                         fill: parent
-                        bottomMargin: 10
                     }
                     onOpenFileSignal: openFileDialog.visible = true
                     onNewDatabaseSignal: newDatabasesPopup.visible = true
@@ -84,58 +79,97 @@ Item {
                     onSaveAsSignal: saveAsPopup.visible = true
                     onCloseSignal: {
                         database.close(id)
-                        bodyView.message = "Closed file"
+                        statusBar.message = "Closed file"
                     }
                     onStartListeningSignal: {
                         loginPopup.visible = true
                     }
                     onStopListeningSignal: {
                         database.stopListening(id)
-                        bodyView.message = "Stopped listening"
+                        statusBar.message = "Stopped listening"
                     }
                     onNewWindowSignal: database.newWindow()
                 }
             }
-            Rectangle {
-                id: selectorContainer
-                Layout.preferredWidth: 160
-                Layout.preferredHeight: (parent.height - menuContainer.height)
-                Layout.row: 1
-                Layout.alignment: Qt.AlignTop
-                color: "#222831"
+            RowLayout {
+                id: statusBarContainer
+                Layout.preferredHeight: 30
+                Layout.preferredWidth: parent.width
+                Button {
+                    id: label
+                    Layout.preferredHeight: parent.height
+                    Layout.preferredWidth: documentSelectorDrawer.width
+                    text: "<b>Document Selector:</b>"
+                    onClicked: documentSelectorDrawer.visible = !documentSelectorDrawer.visible
+                }
+                StatusBar {
+                    id: statusBar
+                    color: "green"
+                    Layout.preferredHeight: parent.height
+                    Layout.preferredWidth: parent.width - label.width
+                }
+            }
 
-                TableSelector {
-                    id: tableSelectorView
+            RowLayout {
+                id: bodyContainer
+                Layout.preferredWidth: parent.width
+                Layout.preferredHeight: parent.height - menuContainer.height - statusBarContainer.height
+                //Layout.fillHeight: true
+                //color: "#222831"
+
+                DocumentSelectorDrawer {
+                    id: documentSelectorDrawer
+                    parent: bodyContainer
+                    Layout.preferredHeight: height
+                    Layout.preferredWidth: width
                     height: parent.height
+                    width: 160
+                    color: "#222831"
+                    visible: true
+
                     onCurrentIndexChanged: {
                         if (allDocuments !== "{}") {
                             updateOpenDocument()
                         }
                     }
                 }
-                Image {
-                    id: onLogo
-                    width: 50
-                    height: 50
-                    source: "Images/cbbrowserLogo.png"
-                    fillMode: Image.PreserveAspectCrop
-                    anchors {
-                        bottom: parent.bottom
-                        bottomMargin: 20
-                        horizontalCenter: parent.horizontalCenter
+
+                Rectangle {
+                    Layout.preferredHeight: height
+                    Layout.fillWidth: true
+                    //Layout.preferredWidth: width
+                    height: parent.height
+                    //width: parent.width - documentSelectorDrawer.width
+                    color: "transparent"
+                    BodyDisplay {
+                        id: bodyView
                     }
                 }
+
+//                Image {
+//                    id: onLogo
+//                    width: 50
+//                    height: 50
+//                    source: "Images/cbbrowserLogo.png"
+//                    fillMode: Image.PreserveAspectCrop
+//                    anchors {
+//                        bottom: parent.bottom
+//                        bottomMargin: 20
+//                        horizontalCenter: parent.horizontalCenter
+//                    }
+//                }
             }
-            Rectangle {
-                id: bodyContainer
-                Layout.preferredWidth: (parent.width - selectorContainer.width)
-                Layout.preferredHeight: (parent.height - menuContainer.height)
-                Layout.alignment: Qt.AlignTop
-                color: "transparent"
-                BodyDisplay {
-                    id: bodyView
-                }
-            }
+//            Rectangle {
+//                id: bodyContainer
+//                Layout.preferredWidth: (parent.width - selectorContainer.width)
+//                Layout.preferredHeight: (parent.height - menuContainer.height)
+//                Layout.row: 1
+//                Layout.column: 1
+//                color: "transparent"
+//                BodyDisplay {
+//                    id: bodyView
+//                }
+//            }
         }
 
         Item {
@@ -150,10 +184,10 @@ Item {
                 onAccepted: {
                     let message = database.open(id, fileUrls);
                     if (message.length === 0) {
-                        bodyView.message = "Opened file"
+                        statusBar.message = "Opened file"
                         mainMenuView.openedFile = true
                     } else
-                        bodyView.message = message
+                        statusBar.message = message
                 }
             }
 
@@ -163,15 +197,15 @@ Item {
                     let message = database.startListening(id,url,username,password,rep_type);
                     if (message.length === 0) {
                         message = database.setChannels(id,channels)
-                        bodyView.message = "Started listening successfully"
+                        statusBar.message = "Started listening successfully"
                         mainMenuView.startedListening = true
                         visible = false
                         if (message.length === 0)
-                            bodyView.message = "Set channels successfully"
+                            statusBar.message = "Set channels successfully"
                         else
-                            bodyView.message = message
+                            statusBar.message = message
                     } else
-                        bodyView.message = message
+                        statusBar.message = message
                 }
             }
             DocumentPopup {
@@ -179,9 +213,9 @@ Item {
                 onSubmit: {
                     let message = database.newDocument(id,docID,docBody);
                     if (message.length === 0)
-                        bodyView.message = "Created new document successfully!"
+                        statusBar.message = "Created new document successfully!"
                     else
-                        bodyView.message = message
+                        statusBar.message = message
                 }
             }
             DocumentPopup {
@@ -191,9 +225,9 @@ Item {
                 onSubmit: {
                     let message = database.editDocument(id,openedDocumentID,docID,docBody)
                     if (message.length === 0) {
-                        bodyView.message = "Edited document successfully"
+                        statusBar.message = "Edited document successfully"
                     } else
-                        bodyView.message = message
+                        statusBar.message = message
                     visible = false
                 }
             }
@@ -202,9 +236,9 @@ Item {
                 onSubmit: {
                     let message = database.newDatabase(id,folderPath,filename);
                     if (message.length === 0) {
-                        bodyView.message = "Created new database successfully"
+                        statusBar.message = "Created new database successfully"
                     } else
-                        bodyView.message = message
+                        statusBar.message = message
                     visible = false
                 }
             }
@@ -213,9 +247,9 @@ Item {
                 onSubmit:  {
                     let message = database.saveAs(id,folderPath,filename);
                     if (message.length === 0) {
-                        bodyView.message = "Saved database successfully";
+                        statusBar.message = "Saved database successfully";
                     }
-                    else bodyView.message = message;
+                    else statusBar.message = message;
                     visible = false;
                 }
             }

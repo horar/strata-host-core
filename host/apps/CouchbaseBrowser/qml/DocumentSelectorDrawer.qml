@@ -3,33 +3,17 @@ import QtQuick.Layouts 1.12
 import QtQuick.Controls 2.12
 
 Rectangle {
-    id: root
-    anchors.fill: parent
-    color: "transparent"
+    id: root   
 
     property alias model: listView.model
     property alias currentIndex: listView.currentIndex
 
-
-    Label {
-        id: label
-        width: parent.width
-        height: 30
-        text: "<b>Document Selector:</b>"
-        color: "#eee"
-        anchors {
-            top: parent.top
-            topMargin: 5
-            horizontalCenter: parent.horizontalCenter
-            horizontalCenterOffset: 5
-        }
-
-    }
-
     ListView {
         id: listView
+        height: parent.height - 20
         width: parent.width - 20
-        height: model.length === 0 ? 0 : parent.height - 170
+
+        anchors.verticalCenter: parent.verticalCenter
         model: []
         delegate: Component {
             Rectangle  {
@@ -75,10 +59,6 @@ Rectangle {
             policy: ScrollBar.AlwaysOff
         }
 
-        anchors {
-            top: label.bottom
-            topMargin: 5
-            horizontalCenter: parent.horizontalCenter
-        }
+        anchors.horizontalCenter: parent.horizontalCenter
     }
 }

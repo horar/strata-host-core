@@ -4,7 +4,6 @@
 #include <QObject>
 #include <QCoreApplication>
 #include <QDir>
-#include <QQmlProperty>
 #include <QDebug>
 
 #include "SGCouchBaseLite.h"
@@ -41,7 +40,7 @@ public:
 
     QString deleteDoc(const QString &id);
 
-    QString saveAs(const QString &id, const QString &path);
+    QString saveAs(const QString &id, QString &path);
 
     QString setChannels(const std::vector<QString> &channels);
 

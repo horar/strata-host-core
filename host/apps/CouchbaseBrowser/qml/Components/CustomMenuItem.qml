@@ -5,41 +5,48 @@ import QtQuick.Window 2.12
 import QtQuick.Dialogs 1.3
 
 
-Rectangle {
+Item {
     id: root
-    color: "transparent"
 
     signal buttonPress()
 
     property alias filename: icon.source
     property alias label: iconLabel.text
-
     property bool disable: false
 
-    MouseArea {
-        id: customButton
-        anchors.fill: parent
-        hoverEnabled: true
-        onContainsMouseChanged: {
-            root.color = (containsMouse) ? "#b55400" : "transparent"
-        }
-        onClicked: {
-            buttonPress()
+    Rectangle {
+        id: iconContainer
+        height: parent.height - iconLabel.height
+        width: height
+        color: "transparent"
+        anchors.horizontalCenter: parent.horizontalCenter
+        Image {
+            id: icon
+            anchors.fill: parent
+            fillMode: Image.PreserveAspectFit
+
+            MouseArea {
+                id: customButton
+                anchors.fill: parent
+                hoverEnabled: true
+                onContainsMouseChanged: {
+                    iconContainer.color = (containsMouse) ? "#b55400" : "transparent"
+                }
+                onClicked: {
+                    buttonPress()
+                }
+            }
         }
     }
+
     Label {
         id: iconLabel
         text: "<b>Open</b>"
         color: "#eeeeee"
         anchors {
-            top: root.bottom
-            horizontalCenter: root.horizontalCenter
+            top: iconContainer.bottom
+            horizontalCenter: parent.horizontalCenter
         }
-    }
-    Image {
-        id: icon
-        anchors.fill: parent
-        fillMode: Image.PreserveAspectFit
     }
 
     onDisableChanged: {
