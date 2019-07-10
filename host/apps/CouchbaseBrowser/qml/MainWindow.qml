@@ -168,7 +168,7 @@ Item {
                 title: "Please select a database"
                 folder: shortcuts.home
                 onAccepted: {
-                    let message = database.open(fileUrls);
+                    let message = database.openDB(fileUrls);
                     if (message.length === 0) {
                         statusBar.message = "Opened file"
                         mainMenuView.openedFile = true
