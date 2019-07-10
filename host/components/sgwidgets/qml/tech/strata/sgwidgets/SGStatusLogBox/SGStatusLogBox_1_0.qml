@@ -361,4 +361,8 @@ Rectangle {
         }
         return false
     }
+
+    function clear() {
+        model.clear()
+    }
 }
