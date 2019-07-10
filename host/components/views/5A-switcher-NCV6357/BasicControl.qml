@@ -31,7 +31,6 @@ Item {
     onRead_enable_stateChanged: {
         if(read_enable_state === "on") {
             platformInterface.enabled = true
-//            warningBox.visible = false
         }
         else  {
             platformInterface.enabled = false
@@ -66,13 +65,13 @@ Item {
 
         }
     }
-    property var pgood_status_interrupt: platformInterface.status_interrupt.pgood
-    onPgood_status_interruptChanged: {
-        if(pgood_status_interrupt === "bad"){
-            platformInterface.enabled = false
-//            warningVisible = true
-        }
-    }
+//    property var pgood_status_interrupt: platformInterface.status_interrupt.pgood
+//    onPgood_status_interruptChanged: {
+//        if(pgood_status_interrupt === "bad"){
+//            platformInterface.enabled = false
+////            warningVisible = true
+//        }
+//    }
 
 
 
@@ -446,20 +445,12 @@ Item {
                     grooveFillColor: "#0cf"         // Default: "#0cf"
                   //  fontSizeLabel: (parent.width + parent.height)/40
                     checked: platformInterface.enabled
-//                    onCheckedChanged: {
-//                        if(checked) {
-//                            platformInterface.intd_state = true
-//                        }
-//                        else {
-//                            platformInterface.intd_state = false
-//                        }
-//                    }
+
                     onToggled: {
                         platformInterface.enabled = checked
                         if(checked){
                             platformInterface.set_enable.update("on")
-//                            platformInterface.intd_state = true
-//                            warningVisible = false
+
                             if(platformInterface.reset_flag === true) {
                                 platformInterface.reset_status_indicator.update("reset")
                                 platformInterface.reset_indicator = "off"
@@ -468,8 +459,6 @@ Item {
                         }
                         else{
                             platformInterface.set_enable.update("off")
-//                            platformInterface.intd_state = false
-//                            warningVisible = true
                         }
                     }
                 }

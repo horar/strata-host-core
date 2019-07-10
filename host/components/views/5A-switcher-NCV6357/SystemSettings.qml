@@ -162,7 +162,6 @@ Item {
                 }
 
                 Column {
-
                     anchors.fill: parent
                     spacing:  20
                     Rectangle {
@@ -184,19 +183,12 @@ Item {
                             checked: platformInterface.enabled
                             //fontSizeLabel: (parent.width + parent.height)/22
                             onCheckedChanged: {
-                                if(checked) {
-                                    platformInterface.intd_state = true
-                                }
-                                else {
-                                    platformInterface.intd_state = false
-                                }
+                                platformInterface.intd_state = (checked === "on") ? true : false
                             }
 
                             onToggled : {
                                 if(checked){
                                     platformInterface.set_enable.update("on")
-//                                    platformInterface.intd_state = true
-//                                    basicControl.warningVisible = false
                                     if(platformInterface.reset_flag === true) {
                                         platformInterface.reset_status_indicator.update("reset")
                                         platformInterface.reset_indicator = "off"
@@ -205,8 +197,6 @@ Item {
                                 }
                                 else{
                                     platformInterface.set_enable.update("off")
-//                                    platformInterface.intd_state = false
-//                                    basicControl.warningVisible = true
                                 }
                                 platformInterface.enabled = checked
                             }

@@ -31,21 +31,19 @@ Item {
 
     property var status_interrupt: platformInterface.initial_status_0.pgood_status
     onStatus_interruptChanged:  {
-        if(status_interrupt === "bad") {
+        if(status_interrupt === "bad"){
             errorLed.status = "red"
-            //            basicControl.warningVisible = true
+            basicControl.warningVisible = true
+        }
+        else if(status_interrupt === "good"){
+            errorLed.status = "green"
+            basicControl.warningVisible = false
         }
     }
 
     property var read_enable_state: platformInterface.initial_status_0.enable_status
     onRead_enable_stateChanged: {
-        if(read_enable_state === "on") {
-            platformInterface.enabled = true
-            //            basicControl.warningVisible = false
-        }
-        else  {
-            platformInterface.enabled = false
-        }
+        platformInterface.enabled = (read_enable_state === "on") ? true : false
     }
 
     property var read_vin: platformInterface.initial_status_0.vingood_status
@@ -61,7 +59,6 @@ Item {
             platformInterface.hide_enable = false
             vinlable = "under"
             ledLight.label = "VIN Ready \n ("+ vinlable + " 2.5V)"
-
         }
     }
 
@@ -72,7 +69,10 @@ Item {
             basicControl.warningVisible = true
             platformInterface.enabled = false
             platformInterface.set_enable.update("off")
-            platformInterface.intd_state = false
+        }
+        else if(pgood_status_interrupt === "good"){
+            errorLed.status = "green"
+            basicControl.warningVisible = false
         }
     }
 
@@ -86,20 +86,10 @@ Item {
 
     property bool check_intd_state: platformInterface.intd_state
     onCheck_intd_stateChanged:  {
-        if(check_intd_state == true) {
-            errorLed.status = "green"
-            basicControl.warningVisible = false
-            faultModel.clear()
+        if(check_intd_state === false) {
+//            falutModel.clear()
             addToHistoryLog()
         }
-        //        else if(check_intd_state == false)   {
-        //            if( errorLed.status === "green") {
-        //                basicControl.warningVisible = false
-        //            }
-        //            else if ( errorLed.status === "red"){
-        //                basicControl.warningVisible = true
-        //            }
-        //        }
     }
 
     Component.onCompleted: {
