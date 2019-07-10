@@ -26,11 +26,11 @@ Item {
     }
 
 
-    property var read_mask_register_status: platformInterface.initial_status_1.read_int_msk
-    property var register_mask_binary: "00000000"
-    onRead_mask_register_statusChanged: {
-        register_mask_binary = ("00000000"+read_mask_register_status.toString(2)).substr(-8)
-    }
+//    property var read_mask_register_status: platformInterface.initial_status_1.read_int_msk
+//    property var register_mask_binary: "00000000"
+//    onRead_mask_register_statusChanged: {
+//        register_mask_binary = ("00000000"+read_mask_register_status.toString(2)).substr(-8)
+//    }
 
 
     Component.onCompleted: {
