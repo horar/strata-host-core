@@ -4,7 +4,6 @@
 #include <QObject>
 #include <QCoreApplication>
 #include <QDir>
-#include <QQmlProperty>
 #include <QDebug>
 
 #include "SGCouchBaseLite.h"

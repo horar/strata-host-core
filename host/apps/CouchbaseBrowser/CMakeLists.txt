@@ -100,44 +100,4 @@ if(APPLE)
     )
 endif()
 
-# Add cbtest library for testing purpose
-add_library(cbtest
-    ${HEADERS}
-)
-
-target_sources(cbtest PRIVATE
-    ${SRCS}
-    qmlui.qrc
-)
-
-target_link_libraries(cbtest
-    couchbase-lite-cpp
-    Qt5::Core
-    Qt5::Qml
-    Qt5::Quick
-    Qt5::Gui
-    Qt5::Widgets
-    Qt5::WebEngine
-    Qt5::WebView
-)
-
-target_include_directories(cbtest
-    PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
-)
-
-if(APPLE)
-    find_library(IOKIT_LIB IOKit REQUIRED)
-    if (NOT IOKIT_LIB)
-        message(FATAL_ERROR "IOKit framework not found")
-    endif()
-    find_library(FOUNDATION_LIB Foundation REQUIRED)
-    if (NOT FOUNDATION_LIB)
-        message(FATAL_ERROR "Foundation framework not found")
-    endif()
-    target_link_libraries(cbtest
-        ${IOKIT_LIB}
-        ${FOUNDATION_LIB}
-    )
-endif()
-
 add_subdirectory(test)
