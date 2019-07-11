@@ -1,4 +1,5 @@
 import QtQuick 2.12
+import QtQuick.Window 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
 import QtQuick.Dialogs 1.3
@@ -7,15 +8,23 @@ import com.onsemi.couchbase 1.0
 import "Popups"
 import "Components"
 
-Item {
+Window {
     id: root
-    anchors.fill: parent
+    visible: true
+    minimumWidth: 800
+    minimumHeight: 600
+    width: 1280
+    height: 720
+    title: qsTr("Couchbase Browser") + ((filename !== "") ? " - " + fileName : "")
+    flags: Qt.WindowFullscreenButtonHint
 
+    property string filename: ""
     property var allDocuments: "{}"
     property var jsonObj
     property alias openedFile: mainMenuView.openedFile
     property string openedDocumentID
     property string openedDocumentBody
+
 
     function updateOpenDocument() {
         if (documentSelectorDrawer.currentIndex !== 0) {
@@ -30,6 +39,7 @@ Item {
         }
     }
 
+    onFilenameChanged: openedFile = filename.length != 0
     onAllDocumentsChanged: {
         if (allDocuments !== "{}") {
             let tempModel = ["All documents"]
@@ -109,7 +119,7 @@ Item {
                 }
                 StatusBar {
                     id: statusBar
-                    color: "green"
+                    backgroundColor: "green"
                     Layout.preferredHeight: parent.height
                     Layout.preferredWidth: parent.width - label.width
                 }
