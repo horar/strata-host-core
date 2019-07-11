@@ -44,6 +44,9 @@ void DatabaseImpl::closeDB()
     delete sg_db_;
     setDBstatus(false);
     setRepstatus(false);
+    JSONResponse_ = "{}";
+
+    emit newUpdate();
 }
 
 void DatabaseImpl::emitUpdate()
