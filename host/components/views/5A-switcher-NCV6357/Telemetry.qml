@@ -86,8 +86,8 @@ Item {
 
     property bool check_intd_state: platformInterface.intd_state
     onCheck_intd_stateChanged:  {
-        if(check_intd_state === false) {
-//            falutModel.clear()
+        if(check_intd_state === true) {
+            interruptError.clear()
             addToHistoryLog()
         }
     }

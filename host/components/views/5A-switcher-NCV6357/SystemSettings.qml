@@ -175,6 +175,7 @@ Item {
                                         platformInterface.reset_indicator = "off"
                                         platformInterface.reset_flag = false
                                     }
+                                    platformInterface.intd_state = true
                                 }
                                 else{
                                     platformInterface.set_enable.update("off")
