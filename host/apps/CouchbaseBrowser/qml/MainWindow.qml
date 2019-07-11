@@ -238,7 +238,7 @@ Window {
             DatabasePopup {
                 id: newDatabasesPopup
                 onSubmit: {
-                    let message = database.createNewDatabase(folderPath,filename);
+                    let message = database.createNewDB(folderPath,filename);
                     if (message.length === 0) {
                         statusBar.message = "Created new database successfully"
                     } else
