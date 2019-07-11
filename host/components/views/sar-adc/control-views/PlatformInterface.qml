@@ -21,7 +21,7 @@ Item {
     }
 
     property var status: {
-        "status": "Status string goes here."
+        "status": ""
     }
 
 

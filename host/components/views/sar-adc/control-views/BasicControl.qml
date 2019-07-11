@@ -534,7 +534,6 @@ Item {
 
                     property var statusString: platformInterface.status.status
                     onStatusStringChanged:{
-                        console.log(statusString)
                         faultModel.insert(0, {status : statusString})
                     }
 
