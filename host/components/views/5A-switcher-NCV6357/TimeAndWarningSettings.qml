@@ -528,7 +528,7 @@ Item {
                         comboBoxHeight: parent.height/2
                         onActivated: {
                             platformInterface.set_timeout_reset_pgood.update(currentIndex)
-                            platformInterface.set_timeout_reset_pgood = currentIndex
+                            platformInterface.timeout_status = currentIndex
                         }
 
                     }
