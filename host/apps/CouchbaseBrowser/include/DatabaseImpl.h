@@ -2,9 +2,6 @@
 #define DATABASEIMPL_H
 
 #include <QObject>
-#include <QCoreApplication>
-#include <QDir>
-#include <QDebug>
 
 #include "SGCouchBaseLite.h"
 
@@ -37,6 +34,8 @@ public:
     Q_INVOKABLE QString saveAs(QString id, QString path);
 
     Q_INVOKABLE QString setChannels(std::vector<QString> channels);
+
+    Q_INVOKABLE QString searchDocById(QString id);
 
     bool getDBstatus();
 

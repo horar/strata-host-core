@@ -1,6 +1,9 @@
 #include "DatabaseImpl.h"
 
 #include <iostream>
+#include <QCoreApplication>
+#include <QDir>
+#include <QDebug>
 
 using namespace std;
 using namespace Spyglass;
@@ -73,6 +76,13 @@ void DatabaseImpl::stopListening()
     }
 
     setRepstatus(false);
+}
+
+QString DatabaseImpl::searchDocById(QString id)
+{
+    // TODO
+
+    return("");
 }
 
 QString DatabaseImpl::createNewDoc(QString id, QString body)
